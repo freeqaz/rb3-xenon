@@ -28,3 +28,46 @@ const std::vector<TrackChannels> &SongInfoCopy::GetTracks() const { return mTrac
 // ---- User (os/User.cpp compiled, but this TU5-discovered virtual has no body) ----
 // Renamed UnkTU5Virtual_beforeUserName -> IsNullUser in cb926469 (os/User.h:51).
 bool User::IsNullUser() const { return false; }
+
+// ---- CacheWav (synth/Utl.cpp) ------------------------------------------------
+// os/FileCache.cpp:384 calls CacheWav for .wav entries, but src/system/synth/ is
+// not in the native build (its TUs pull tomcrypt's broken <angled> sibling
+// includes and an `environ` clash), so the real definition never links.
+//
+// This is NOT a no-op stub: it is CacheWav's own kPlatformPC early-return
+// (synth/Utl.cpp:27-29), which is the semantically correct branch for a native
+// host. The other branches rewrite the path to `<dir>/gen/<base>.<ext>_<platform>`
+// and then ask a Holmes ASSET SERVER to cook it — console-development
+// machinery with no native counterpart. On PC the engine plays the loose .wav
+// as-is, which is exactly what returning `file` unchanged does.
+//
+// ⚠ If synth/Utl.cpp is ever added to the native build, DELETE this — it would
+// become a duplicate definition.
+#include "synth/Utl.h"
+const char *CacheWav(const char *file, CacheResourceResult &result) {
+    result = (CacheResourceResult)0;
+    return file;
+}
+
+// ---- CacheResource(const char*, const Hmx::Object*) (rndobj/Utl.cpp:1165) -----
+// Same situation as CacheWav above, one directory over: os/FileCache.cpp:381
+// calls it for .png/.bmp entries, but src/system/rndobj/ is not in the native
+// build (only rndobj/Anim.cpp is — see RNDOBJ_SOURCES in native/CMakeLists.txt).
+//
+// The real body forwards to CacheResource(cc, CacheResourceResult&)
+// (rndobj/Utl.cpp:1204), whose kCacheUnnecessary path returns the localized path
+// unchanged, and then only diverges to ask a Holmes asset server to cook the
+// image. Native hosts read loose assets, so `res == kCacheUnnecessary` is the
+// live branch and returning `cc` reproduces it. The nullptr-on-empty guard is
+// the real function's own (Utl.cpp:1166).
+//
+// ⚠ Delete this when rndobj/Utl.cpp joins the native build (X2 widens the fork
+// glob to rndobj/) — it would become a duplicate definition.
+namespace Hmx {
+    class Object;
+}
+const char *CacheResource(const char *cc, const Hmx::Object *) {
+    if (!cc || *cc == '\0')
+        return nullptr;
+    return cc;
+}
