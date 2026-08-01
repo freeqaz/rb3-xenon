@@ -149,7 +149,7 @@ a single obj's contribution** — if a split boundary falls mid-run and the bodi
 on one side read 100% while the other side reads 0.0%, the boundary is wrong.
 But the inverse does *not* hold: in the `0x8227a6xx` run each 0x80 body belongs
 to a *different* unit, so contiguity alone proves nothing there. Discriminate
-with the supplier check (`grep the .obj for the COMDAT`), not adjacency.
+with the supplier check (`command grep -a` or Python over the .obj for the COMDAT — a `.obj` is BINARY, and plain `grep` in an agent shell is shimmed to `ugrep -I`, which silently matches nothing in binary files; see CLAUDE.md "grep is BINARY-BLIND"), not adjacency.
 
 ---
 
