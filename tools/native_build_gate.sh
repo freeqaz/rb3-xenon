@@ -79,10 +79,30 @@ targets=$(find build -maxdepth 1 -type f -executable -name 'rb3-*' 2>/dev/null |
 # of X1 this script reported 8 healthy targets on a tree where nothing had
 # linked for two days: the binaries were stale leftovers from before the
 # breakage landed, and a stale binary is indistinguishable from a fresh one by
-# existence alone. Ask ninja instead: a dry run that still has work to do means
-# at least one target is NOT up to date with its inputs.
-stale="$(cd build && ninja -n 2>/dev/null | grep -c '^\[' || true)"
-[ -z "$stale" ] && stale=0
+# existence alone. Ask ninja instead -- but ask it HONESTLY.
+#
+# ⛔ DO NOT USE `ninja -n` HERE. It was used, and it made this gate incapable of
+# PASSING -- the exact mirror of the "cannot fail" defect the gate exists to
+# prevent. native/CMakeLists.txt installs file(GLOB ... CONFIGURE_DEPENDS ...)
+# on 8 directories, which adds a glob-recheck edge. A DRY RUN CANNOT EXECUTE THE
+# GLOB CHECK, so ninja conservatively assumes the CMake re-run is needed and
+# always plans 2 steps:
+#     $ ninja -n            -> [0/2] Re-checking globbed directories...
+#                              [1/2] Re-running CMake...
+#     $ ninja               -> ninja: no work to do.       (a REAL run checks)
+#     $ ninja -n            -> still 2, after two clean no-op builds
+# So `stale` was a CONSTANT 2 on every healthy tree and the PASS line below was
+# unreachable. Measured on main 2026-08-01.
+#
+# A real second `ninja` is the honest probe: `cmake --build` has already run, so
+# a genuine no-op must report "no work to do". If anything actually rebuilds,
+# that IS real staleness -- and unlike the dry run, this check can both pass and
+# fail. It cannot be fooled by a dry-run modelling gap, which is what bit here.
+noop="$(cd build && ninja 2>&1 | tail -1)"
+case "$noop" in
+    *"no work to do"*) stale=0 ;;
+    *)                 stale=1 ;;
+esac
 
 if [ $build_rc -ne 0 ] || [ "$errs" -ne 0 ]; then
     echo "NATIVE GATE: FAIL  (build rc=$build_rc, $errs error line(s))"
@@ -96,11 +116,23 @@ if [ $build_rc -ne 0 ] || [ "$errs" -ne 0 ]; then
 fi
 
 if [ "$stale" -ne 0 ]; then
-    echo "NATIVE GATE: FAIL  (build reported rc=0 but ninja still has $stale step(s) to do --"
+    echo "NATIVE GATE: FAIL  (build reported rc=0 but a second ninja was NOT a no-op --"
     echo "  the binaries on disk are NOT up to date with their inputs)"
+    echo "  second-ninja said: $noop"
     echo "log: $LOG"
     exit 1
 fi
+
+# ⛔ STILL OPEN -- the ORIGINAL Item-0 defect is NOT fixed by this hotfix.
+# `targets` above is computed by `find ... -executable` and is only PRINTED in
+# the PASS line below; it is never asserted against an EXPECTED set derived from
+# native/CMakeLists.txt. A tree that silently DROPS a target still passes. That
+# is live today: rb3-frame vanishes in any worktree because Dawn_DIR /
+# MILO_ENGINE_PATH default to paths relative to the source tree, cmake warns,
+# and the build still returns rc=0.
+# Fixing it needs EXPECTED = (committed manifest) union (targets parsed from
+# native/CMakeLists.txt), a per-target `ninja -t query` for CONFIGURED, and a
+# FAIL naming every missing target. Lane X2's GATE agent has that in flight.
 
 # The warning policy is -Wno-everything + explicit -Werror= opt-ins, so a
 # non-zero warning count here means something got past an opt-in that should
