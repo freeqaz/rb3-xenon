@@ -16,7 +16,14 @@
 
 // ---- SongInfoCopy::GetTracks (real one-line accessor, from char/CharBoneDir.cpp:17).
 // Replaces the weak no-op stub in dta_link_stubs.s. Not on the DTA parse path
-// today, but the real body is trivial and self-contained, so prefer it. ----
+// today, but the real body is trivial and self-contained, so prefer it.
+//
+// WEAK because X2's rb3-milo compiles char/CharBoneDir.cpp, whose line 17 IS the
+// real definition. `weak` lets the strong one win there while every other target
+// (which does not compile char/) keeps this copy -- strictly better than an
+// #ifdef on a per-target macro, since it needs no coordination when the next
+// target widens its glob. Same reasoning for CacheWav / CacheResource below. ----
+__attribute__((weak))
 const std::vector<TrackChannels> &SongInfoCopy::GetTracks() const { return mTrackChannels; }
 
 // ---- MsgSource (obj/Msg.h) — real bodies now live in src/system/obj/Msg.cpp
@@ -44,6 +51,7 @@ bool User::IsNullUser() const { return false; }
 // ⚠ If synth/Utl.cpp is ever added to the native build, DELETE this — it would
 // become a duplicate definition.
 #include "synth/Utl.h"
+__attribute__((weak))
 const char *CacheWav(const char *file, CacheResourceResult &result) {
     result = (CacheResourceResult)0;
     return file;
@@ -66,6 +74,7 @@ const char *CacheWav(const char *file, CacheResourceResult &result) {
 namespace Hmx {
     class Object;
 }
+__attribute__((weak))
 const char *CacheResource(const char *cc, const Hmx::Object *) {
     if (!cc || *cc == '\0')
         return nullptr;

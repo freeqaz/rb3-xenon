@@ -1467,11 +1467,18 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
 #undef gAltRev
 
 // sw2 scatter-include (default/LightPreset <- band3/game/Stats.cpp)
+// ⚠ NATIVE: guarded because band3/game/Stats.cpp is ALSO unconditionally
+// scatter-included by rndobj/EventTrigger.cpp, and it is not compiled
+// standalone in the native fork surface -- so exactly ONE includer must stay
+// active natively to define it. That one is rndobj/EventTrigger.cpp;
+// this edge is the duplicate. X360 keeps both (it never links).
+#ifndef HX_NATIVE
 #define gRev gRev_Stats
 #define gAltRev gAltRev_Stats
 #include "band3/game/Stats.cpp"
 #undef gRev
 #undef gAltRev
+#endif
 
 // sw2 scatter-include (default/LightPreset <- world/CameraShot.cpp)
 #define gRev gRev_CameraShot

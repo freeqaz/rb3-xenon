@@ -1467,8 +1467,19 @@ DataNode CharEyes::OnAddInterest(DataArray *arr) {
 // emitted ObjVector<ObjOwnerPtr<CharClip>>::resize/push_back at 0x82390110 /
 // 0x82390290, inside CharEyes' .text span (CharClipGroup::Sort is at 0x8238fee8,
 // already inside it too).
+// ⚠ NATIVE: guarded so char/CharClipGroup.cpp is compiled STANDALONE.
+// cmake/ScatterIncludes.cmake classifies this edge as CONDITIONAL (it warns
+// about it at configure time) even though the preprocessor nesting depth here
+// is 0, so it declines to prune the includee -- and the includee then gets
+// emitted twice: once standalone and once from this TU. An explicit
+// `#ifndef HX_NATIVE` is the shape that module documents as always correct
+// ("the guard makes the edge inert, and this module only prunes for edges that
+// are active"). X360 keeps the scatter-include, which is where it earns its
+// COMDAT placement.
+#ifndef HX_NATIVE
 #define gRev gRev_CharClipGroup
 #define gAltRev gAltRev_CharClipGroup
 #include "char/CharClipGroup.cpp"
 #undef gRev
 #undef gAltRev
+#endif

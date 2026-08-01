@@ -1321,7 +1321,13 @@ bool RndBitmap::LoadDIB(BinStream *bs, unsigned int offbits) {
     return true;
 }
 
-#ifndef HX_NATIVE
+// ⚠ X2 -- was `#ifndef HX_NATIVE` from the dc3 engine scaffold, because DC3's
+// consumer gets the bitmap load path from the ENGINE. rb3-milo does not link
+// the engine, and a milo whose RndBitmap cannot Load is not "a graph without
+// pixels" -- it is a DESYNCED STREAM, since this is what consumes the pixel
+// bytes. Same call as rndobj/Tex.cpp's PreLoad/PostLoad: use xenon's own
+// matched retail body, which is the more faithful of the two anyway. X360
+// unaffected (it never defines HX_NATIVE, so this always compiled there).
 void RndBitmap::Load(BinStream &bs) {
     u8 mipCt;
     LoadHeader(bs, mipCt);
@@ -1349,4 +1355,3 @@ void RndBitmap::Load(BinStream &bs) {
         ReadChunks(bs, newMip->mPixels, newMip->PixelBytes(), 0x8000);
     }
 }
-#endif

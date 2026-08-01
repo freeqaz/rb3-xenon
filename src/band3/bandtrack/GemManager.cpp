@@ -1651,6 +1651,16 @@ bool TrackDir::IsBlackKey(int) const { return false; }
 // COMDATs into the .text span pinned to default/band3/bandtrack/GemManager.
 // They are emitted by other TUs but objdiff pairs target<->base WITHIN a unit,
 // so this TU has to define them too.
+//
+// ⚠ MATCH BUILD ONLY. `stlpmtx_std::vector<...>::erase` and
+// `stlpmtx_std::_Param_Construct` are STLport namespace-level names; libstdc++
+// and libc++ expose neither, so these explicit instantiations cannot compile
+// natively at all. Their whole purpose is objdiff's within-unit pairing, which
+// only exists in the match build -- there is nothing for them to do natively.
+// Guarding them is what lets char/CharBonesMeshes.cpp (which reaches this TU
+// through a scatter-include chain) join the native fork surface; without it,
+// CharClip/CharClipSet/Char lose CharBonesMeshes on the LOAD path.
+#ifndef HX_NATIVE
 #include "rndobj/Text.h"
 #include "world/Crowd.h"
 #include "ui/LocalePanel.h"
@@ -1672,3 +1682,4 @@ static void sw3_Sink3_LocalePanelEntry(LocalePanel::Entry) {}
 void sw3_ForceEmit3_LocalePanelEntry(const LocalePanel::Entry &e) {
     sw3_Sink3_LocalePanelEntry(e);
 }
+#endif // !HX_NATIVE

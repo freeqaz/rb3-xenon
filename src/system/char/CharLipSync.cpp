@@ -447,8 +447,15 @@ void CharLipSync::PlayBack::Reset() {
 #undef gAltRev
 
 // sw2 scatter-include (default/CharLipSync <- gesture/SkeletonClip.cpp)
+// ⚠ NATIVE: guarded because gesture/SkeletonClip.cpp is ALSO unconditionally
+// scatter-included by rndobj/EventTrigger.cpp, and it is not compiled
+// standalone in the native fork surface -- so exactly ONE includer must stay
+// active natively to define it. That one is rndobj/EventTrigger.cpp;
+// this edge is the duplicate. X360 keeps both (it never links).
+#ifndef HX_NATIVE
 #define gRev gRev_SkeletonClip
 #define gAltRev gAltRev_SkeletonClip
 #include "gesture/SkeletonClip.cpp"
 #undef gRev
 #undef gAltRev
+#endif

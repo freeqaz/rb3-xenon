@@ -52,7 +52,21 @@ public:
         kCharDrawNone,
         kCharDrawOpaque,
         kCharDrawTranslucent,
-        kCharDrawAll
+        kCharDrawAll,
+        // X2: value 4 is REAL and REACHABLE -- Character::Draw builds it
+        // explicitly (`DrawLodOrShadow(lod, useAll ? (DrawMode)4 : mDrawMode)`,
+        // Character.cpp:923) for the shadow render passes (rndDrawMode
+        // kDrawShadowDepth/kDrawExtrude/kDrawShadowColor), and
+        // DrawLodOrShadow:928 tests `drawMode == 4` to dispatch
+        // mShadow->DrawShowing(). It was missing from the enumerator list, so
+        // the enum's declared range stopped at 3 and clang folded that test to
+        // a constant false (-Wtautological-constant-out-of-range-compare) --
+        // i.e. CHARACTER SHADOWS WERE DEAD in any build that trusts the range.
+        // MSVC does not narrow this way, so retail is unaffected and the X360
+        // match is untouched: an added enumerator emits no code, and the
+        // underlying type is `int` at 0..3 and at 0..4 alike. The two casts at
+        // the call sites are left as-is so the matched bodies are byte-stable.
+        kCharDrawShadow = 4
     };
     enum PollState {
         kCharCreated = 0,

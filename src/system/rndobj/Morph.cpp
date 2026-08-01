@@ -249,8 +249,16 @@ DataNode RndMorph::OnSetPoseWeight(const DataArray *arr) {
 #include "hamobj/HamMove.cpp"
 #undef gRev
 #undef gAltRev
+// ⚠ NATIVE: guarded because flow/FlowNode.cpp would otherwise be emitted TWICE in
+// rb3-milo's link -- once through this edge and once through
+// rndobj/Font.cpp -> bandobj/BandDirector.cpp. cmake/ScatterIncludes.cmake prunes an includee
+// from standalone compilation, which handles ONE includer; with two, one of
+// them has to go inert. X360 keeps both (it never links, so a duplicate
+// COMDAT is invisible there -- and both placements are load-bearing for it).
+#ifndef HX_NATIVE
 #define gRev gRev_FlowNode
 #define gAltRev gAltRev_FlowNode
 #include "flow/FlowNode.cpp"
 #undef gRev
 #undef gAltRev
+#endif
