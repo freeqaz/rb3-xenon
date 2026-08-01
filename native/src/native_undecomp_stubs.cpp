@@ -26,4 +26,5 @@ const std::vector<TrackChannels> &SongInfoCopy::GetTracks() const { return mTrac
 // broadcast now actually reaches sinks. ----
 
 // ---- User (os/User.cpp compiled, but this TU5-discovered virtual has no body) ----
-bool User::UnkTU5Virtual_beforeUserName() const { return false; }
+// Renamed UnkTU5Virtual_beforeUserName -> IsNullUser in cb926469 (os/User.h:51).
+bool User::IsNullUser() const { return false; }

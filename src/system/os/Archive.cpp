@@ -261,9 +261,15 @@ bool Archive::GetFileInfo(
 // shape documented in Debug.h for MILO_WARN -- not the tree-wide comma form
 // ((void)(args)) that MILO_FAIL otherwise uses. Scoped with push/pop_macro so
 // it does not touch the shared header or any other MILO_FAIL call site.
+// NOTE: MiloStripEval only exists `#ifndef HX_NATIVE` (Debug.h:89-107) — it is a
+// retail-codegen device, not a real logger. Guard the redefine, or the native
+// build (the project's only LINKING instrument) dies here with "use of
+// undeclared identifier 'MiloStripEval'". Same guard MidiParser.cpp:65 uses.
 #pragma push_macro("MILO_FAIL")
+#ifndef HX_NATIVE
 #undef MILO_FAIL
 #define MILO_FAIL(...) MiloStripEval(__VA_ARGS__)
+#endif
 
 void Archive::Read(int heap_headroom) {
     MILO_LOG("Reading the archive\n");

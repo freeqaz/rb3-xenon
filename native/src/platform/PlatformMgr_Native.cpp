@@ -17,7 +17,9 @@ PlatformMgr::PlatformMgr() {
     mDiskError = kNoDiskError;
     unk69 = false;
     mJobMgr = new JobMgr(this);
-    memset(&mOverlapped, 0, sizeof(mOverlapped));
+    // NOTE: the DC3-only XOVERLAPPED mOverlapped member was removed from
+    // os/PlatformMgr.h on 2026-07-31 (lane NCCC f59 — the member block size is
+    // load-bearing for the retail vbase offset). Nothing to zero here anymore.
 }
 
 PlatformMgr::~PlatformMgr() {
