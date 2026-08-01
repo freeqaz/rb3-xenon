@@ -1,0 +1,38 @@
+[
+ {
+  "addr": "0x823cc500",
+  "expect": "??_ECharDriverMidi@@UAAPAXI@Z",
+  "new": "??_GCharDriverMidi@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GCharDriverMidi@@UAAPAXI@Z; ??_GCharDriverMidi@@UAAPAXI@Z DEFINED in home unit default/CharDriverMidi"
+ },
+ {
+  "addr": "0x82627f58",
+  "expect": "??_ENewAwardPanel@@UAAPAXI@Z",
+  "new": "??_GNewAwardPanel@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GNewAwardPanel@@UAAPAXI@Z; ??_GNewAwardPanel@@UAAPAXI@Z DEFINED in home unit default/band3/meta_band/NewAwardPanel"
+ },
+ {
+  "addr": "0x8262dea0",
+  "expect": "??_EPatchSelectPanel@@UAAPAXI@Z",
+  "new": "??_GPatchSelectPanel@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GPatchSelectPanel@@UAAPAXI@Z; ??_GPatchSelectPanel@@UAAPAXI@Z DEFINED in home unit default/band3/meta_band/PatchSelectPanel"
+ },
+ {
+  "addr": "0x82632920",
+  "expect": "??_ESelectDifficultyPanel@@UAAPAXI@Z",
+  "new": "??_GSelectDifficultyPanel@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GSelectDifficultyPanel@@UAAPAXI@Z; ??_GSelectDifficultyPanel@@UAAPAXI@Z DEFINED in home unit default/SelectDifficultyPanel"
+ },
+ {
+  "addr": "0x82637898",
+  "expect": "??_ESongSelectPanel@@UAAPAXI@Z",
+  "new": "??_GSongSelectPanel@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GSongSelectPanel@@UAAPAXI@Z; ??_GSongSelectPanel@@UAAPAXI@Z DEFINED in home unit default/band3/meta_band/SongSelectPanel"
+ },
+ {
+  "addr": "0x82b7b0b0",
+  "expect": "??_EQuestFilterPanel@@UAAPAXI@Z",
+  "new": "??_GQuestFilterPanel@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GQuestFilterPanel@@UAAPAXI@Z; ??_GQuestFilterPanel@@UAAPAXI@Z DEFINED in home unit default/QuestFilterPanel"
+ }
+]

@@ -28723,7 +28723,7 @@
  "0x823aee98": "?Handle@CharData@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x823c1798": "??_ECharIKHead@@UAAPAXI@Z",
  "0x823c5140": "?ClassName@CharIKRod@@UBA?AVSymbol@@XZ",
- "0x823cc500": "??_ECharDriverMidi@@UAAPAXI@Z",
+ "0x823cc500": "??_GCharDriverMidi@@UAAPAXI@Z",
  "0x823cf970": "?SetType@CharSleeve@@UAAXVSymbol@@@Z",
  "0x823d0ba8": "?ClassName@CharClipSet@@UBA?AVSymbol@@XZ",
  "0x823e46d0": "??_ENetSession@@UAAPAXI@Z",
@@ -28735,11 +28735,11 @@
  "0x82588d10": "??_ESessionMgr@@UAAPAXI@Z",
  "0x825b04c0": "??_EInterstitialMgr@@UAAPAXI@Z",
  "0x825f3ae8": "?Handle@CampaignGoalsLeaderboardChoicePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82627f58": "??_ENewAwardPanel@@UAAPAXI@Z",
+ "0x82627f58": "??_GNewAwardPanel@@UAAPAXI@Z",
  "0x8262c280": "??_GStickerProvider@@UAAPAXI@Z",
- "0x8262dea0": "??_EPatchSelectPanel@@UAAPAXI@Z",
- "0x82632920": "??_ESelectDifficultyPanel@@UAAPAXI@Z",
- "0x82637898": "??_ESongSelectPanel@@UAAPAXI@Z",
+ "0x8262dea0": "??_GPatchSelectPanel@@UAAPAXI@Z",
+ "0x82632920": "??_GSelectDifficultyPanel@@UAAPAXI@Z",
+ "0x82637898": "??_GSongSelectPanel@@UAAPAXI@Z",
  "0x82652198": "??_EMatchmaker@@UAAPAXI@Z",
  "0x82682210": "??_EGameMicManager@@UAAPAXI@Z",
  "0x826aaab0": "?SyncProperty@GemTrainerPanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
@@ -28750,5 +28750,5 @@
  "0x827b2770": "??_EStorePreviewMgr@@UAAPAXI@Z",
  "0x827b3698": "??_EDeJitterPanel@@UAAPAXI@Z",
  "0x82b79530": "??_ETourBand@@UAAPAXI@Z",
- "0x82b7b0b0": "??_EQuestFilterPanel@@UAAPAXI@Z"
+ "0x82b7b0b0": "??_GQuestFilterPanel@@UAAPAXI@Z"
 }
