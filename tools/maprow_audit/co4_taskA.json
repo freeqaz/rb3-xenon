@@ -1,0 +1,6 @@
+[
+ {"addr": "0x8252e050", "expect": "?Eof@ArkFile@@UAA_NXZ", "new": null,
+  "why": "CO-4 TASK A mispair. Retail's ArkFile vtable slot 9 holds 0x8252e040, not 0x8252e050. Masked-byte: our 24 B body scores 1/6 words at 0x8252e050 but 6/6 at 0x8252e040, with 0 relocations (100% unmasked, anti-vacuity PASS). Delete here; re-insert at the correct address."},
+ {"addr": "0x8252e040", "expect": null, "new": "?Eof@ArkFile@@UAA_NXZ",
+  "why": "CO-4 TASK A mispair repair. 0x8252e040 was unoccupied; inside ArkFile.cpp's pin (home-unit gate PASS); vtable-slot channel (dethunked; known-good CONFIRM 360/400, fail-on-demand slot+1 CONFIRM 1/400) and masked-byte channel agree."}
+]
