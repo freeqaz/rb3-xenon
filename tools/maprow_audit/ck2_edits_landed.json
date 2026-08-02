@@ -1,0 +1,32 @@
+[
+ {
+  "addr": "0x82531d40",
+  "expect": "??_EWinSockSocket@@UAAPAXI@Z",
+  "new": "??_GWinSockSocket@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GWinSockSocket@@UAAPAXI@Z; ??_GWinSockSocket@@UAAPAXI@Z DEFINED in home unit default/NetworkSocket_Win"
+ },
+ {
+  "addr": "0x8236cde0",
+  "expect": "??_ECharBonesObject@@UAAPAXI@Z",
+  "new": "??_GCharBonesObject@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GCharBonesObject@@UAAPAXI@Z; ??_GCharBonesObject@@UAAPAXI@Z DEFINED in home unit default/Char"
+ },
+ {
+  "addr": "0x825b04c0",
+  "expect": "??_EInterstitialMgr@@UAAPAXI@Z",
+  "new": "??_GInterstitialMgr@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GInterstitialMgr@@UAAPAXI@Z; ??_GInterstitialMgr@@UAAPAXI@Z DEFINED in home unit default/band3/meta_band/InterstitialMgr"
+ },
+ {
+  "addr": "0x82652198",
+  "expect": "??_EMatchmaker@@UAAPAXI@Z",
+  "new": "??_GMatchmaker@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GMatchmaker@@UAAPAXI@Z; ??_GMatchmaker@@UAAPAXI@Z DEFINED in home unit default/Matchmaker"
+ },
+ {
+  "addr": "0x827b3698",
+  "expect": "??_EDeJitterPanel@@UAAPAXI@Z",
+  "new": "??_GDeJitterPanel@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GDeJitterPanel@@UAAPAXI@Z; ??_GDeJitterPanel@@UAAPAXI@Z DEFINED in home unit default/DeJitterPanel"
+ }
+]
