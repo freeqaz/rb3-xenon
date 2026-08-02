@@ -50,6 +50,15 @@ public:
     void Poll(); // retail 0x825A50F8
     void Finish(); // retail 0x825A3ED0
     void ClearPreview(); // retail 0x825A3DD0
+    /** retail 0x825BC900 — a frameless 2-instruction tail-jump thunk
+        `lwz r3,0x4c(r3); b 0x827B1B78`, i.e. `{ mPreviewMgr->ClearCurrentPreview(); }`.
+        Its single retail caller is MusicLibrary::ClearSongPreview (0x8253AD58), and
+        offset 0x4c is mPreviewMgr below, so the OWNING CLASS is evidenced even though
+        the METHOD NAME is not: neither oracle has a MusicLibraryStore at all. Named
+        after its address per the Unk825BCA38 precedent in MusicLibrary.h rather than
+        guessed. It has NO .pdata entry of its own — a live instance of
+        ".pdata-absence is not a not-a-function test". */
+    void Unk825BC900(); // retail 0x825BC900
     void SetStorePreview(int); // retail 0x825A4288
     /** retail 0x825A3E70 — linear search of mOffers by single-song id. */
     StoreOffer *FindOfferBySongID(int) const;

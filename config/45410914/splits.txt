@@ -436,7 +436,7 @@ MusicLibraryStore.cpp:
 	.pdata      start:0x82223468 end:0x82223490
 	.pdata      start:0x82223490 end:0x82223498
 	.pdata      start:0x82223498 end:0x822234A8
-	.text       start:0x825BC908 end:0x825BC9D4
+	.text       start:0x825BC900 end:0x825BC9D4
 	.text       start:0x825BC9D8 end:0x825BCA38
 	.text       start:0x825BCA38 end:0x825BD1F8
 	.text       start:0x825BD254 end:0x825BD3E8
@@ -4421,6 +4421,7 @@ Anim.cpp:
 	.pdata      start:0x82209CA8 end:0x82209DC8
 	.pdata      start:0x82209DC8 end:0x82209DD0
 	.pdata      start:0x82209DD0 end:0x82209F20
+	.pdata      start:0x82209F20 end:0x82209F48
 	.pdata      start:0x82209F48 end:0x82209F50
 	.pdata      start:0x82209F50 end:0x82209F58
 	.pdata      start:0x82209F58 end:0x82209F60
@@ -4434,6 +4435,7 @@ Anim.cpp:
 	.text       start:0x82402FA0 end:0x82404440
 	.text       start:0x82404440 end:0x8240466C
 	.text       start:0x8240466C end:0x82405980
+	.text       start:0x82405980 end:0x82405C40
 	.text       start:0x82405C40 end:0x82405CB4
 	.text       start:0x82405CB8 end:0x82405D1C
 	.text       start:0x82405D20 end:0x82405D90
@@ -4853,10 +4855,6 @@ Tex.cpp:
 PollAnim.cpp:
 	.pdata      start:0x82210948 end:0x82210A18
 	.text       start:0x82487A18 end:0x82488970
-
-ShaderProgram.cpp:
-	.pdata      start:0x82209F20 end:0x82209F48
-	.text       start:0x82405980 end:0x82405C40
 
 ByteGrinder.cpp:
 	.pdata      start:0x82239CF0 end:0x82239F68
@@ -11799,7 +11797,7 @@ band3/meta_band/MetaNetMsgs.cpp:
 
 band3/meta_band/SongSetlistProvider.cpp:
 	.pdata      start:0x82223218 end:0x82223230
-	.text       start:0x825BC6F8 end:0x825BC908
+	.text       start:0x825BC6F8 end:0x825BC900
 
 SongDB.cpp:
 	.pdata      start:0x821F1C50 end:0x821F1C70
