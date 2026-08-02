@@ -185,7 +185,7 @@ std::vector<BandProfile *> ProfileMgr::GetShouldAutosaveProfiles() {
 BandProfile *ProfileMgr::GetProfileFromPad(int pad) {
     BandProfile *ret = nullptr;
     FOREACH (it, mProfiles) {
-        if (pad == (*it)->GetPadNum()) {
+        if ((*it)->GetPadNum() == pad) {
             ret = *it;
             break;
         }
@@ -1168,7 +1168,7 @@ void ProfileMgr::SetMicVol(int i1, int i2) {
         return;
     if (!(i2 >= 0 && GetSliderStepCount() > i2))
         return;
-    if (i2 != mMicVolumes[i1]) {
+    if (mMicVolumes[i1] != i2) {
         mMicVolumes[i1] = i2;
     }
 }

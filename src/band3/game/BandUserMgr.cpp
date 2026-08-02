@@ -260,19 +260,6 @@ int BandUserMgr::GetBandUsers(std::vector<BandUser *> *users, int mask) const {
 
 int BandUserMgr::GetLocalBandUsers(std::vector<LocalBandUser *> *users, int mask) const {
     bool inSession = false;
-    int mBit2 = mask & 0x4;
-    int mBit3 = mask & 0x8;
-    int mBit6 = mask & 0x40;
-    int mBit7 = mask & 0x80;
-    int mBit11 = mask & 0x800;
-    int mBit12 = mask & 0x1000;
-    int mBit8 = mask & 0x100;
-    int mBit4 = mask & 0x10;
-    int mBit5 = mask & 0x20;
-    int mBit9 = mask & 0x200;
-    int mBit10 = mask & 0x400;
-    int mBit13 = mask & 0x2000;
-    int mBit14 = mask & 0x4000;
     int count = 0;
     FOREACH(it, mLocalUsers) {
         LocalBandUser *user = *it;
@@ -280,56 +267,80 @@ int BandUserMgr::GetLocalBandUsers(std::vector<LocalBandUser *> *users, int mask
 
         bool isParticipating = user->IsParticipating();
 
-        if (mSessionMgr) {
-            inSession = mSessionMgr->HasUser(user);
-        } else {
-            inSession = false;
-        }
+        // Retail dispatches through BandUser's own vftable slot 0 --
+        // `user->IsInSession(mSessionMgr)` -- with NO null check on mSessionMgr,
+        // where the rb3-Wii dev oracle has `mSessionMgr->HasUser(user)`. Same
+        // inversion the BandUser.h slot-0 comment records for InputMgr.
+        inSession = user->IsInSession(mSessionMgr);
 
+        // Same inversion again: the oracle routes these through ThePlatformMgr,
+        // retail calls the LocalUser virtuals on the user directly. Slots are
+        // pinned by two already-matching anchors in this very function --
+        // IsJoypadConnected @0x4 and CanSaveData @0x18 -- between which
+        // LocalUser's declaration order puts HasOnlinePrivilege @0x8 and
+        // IsSignedIn @0x10, exactly the slots retail dispatches here.
         bool isSignedIn = false;
-        if (mBit11) {
-            isSignedIn = ThePlatformMgr.IsUserSignedIn(user);
+        if (mask & 0x800) {
+            isSignedIn = user->IsSignedIn();
         }
 
         bool hasPrivilege = true;
-        if (mBit12) {
-            hasPrivilege = ThePlatformMgr.UserHasOnlinePrivilege(user) & 1;
+        if (mask & 0x1000) {
+            hasPrivilege = user->HasOnlinePrivilege() & 1;
         }
 
         bool canSaveData = false;
-        if (mBit4 || mBit5) {
+        if ((mask & 0x10) || (mask & 0x20)) {
             canSaveData = user->CanSaveData();
         }
 
         bool isConnected = user->IsJoypadConnected();
         ControllerType ctType = user->ConnectedControllerType();
 
-        bool rej2 = mBit2 && isParticipating;
-        if (rej2) continue;
-        bool rej3 = mBit3 && !isParticipating;
-        if (rej3) continue;
-        bool rej4 = mBit4 && canSaveData;
-        if (rej4) continue;
-        bool rej5 = mBit5 && !canSaveData;
-        if (rej5) continue;
-        bool rej6 = mBit6 && isConnected;
-        if (rej6) continue;
-        bool rej7 = mBit7 && !isConnected;
-        if (rej7) continue;
-        bool rej8 = mBit8 && ctType == kControllerGuitar;
-        if (rej8) continue;
-        bool rej9 = mBit9 && ctType == kControllerVocals;
-        if (rej9) continue;
-        bool rej10 = mBit10 && ctType == kControllerDrum;
-        if (rej10) continue;
-        bool rej11 = mBit11 && !isSignedIn;
-        if (rej11) continue;
-        bool rej12 = mBit12 && !hasPrivilege;
-        if (rej12) continue;
-        bool rej13 = mBit13 && inSession;
-        if (rej13) continue;
-        bool rej14 = mBit14 && !inSession;
-        if (rej14) continue;
+        // Positive "keep" polarity with a bool temp per filter, and the mask bit
+        // itself typed bool so MSVC normalizes it with extrwi -- see the
+        // GetRemoteBandUsers commit for the derivation. Leaving these hoisted
+        // above the loop (as the MWCC oracle does) parks 13 values in
+        // callee-saved regs + 7 stack spills and inflates the frame to 0x110.
+        bool bit2 = (mask & 0x4) != 0;
+        bool keep2 = !bit2 || !isParticipating;
+        if (!keep2) continue;
+        bool bit3 = (mask & 0x8) != 0;
+        bool keep3 = !bit3 || isParticipating;
+        if (!keep3) continue;
+        bool bit4 = (mask & 0x10) != 0;
+        bool keep4 = !bit4 || !canSaveData;
+        if (!keep4) continue;
+        bool bit5 = (mask & 0x20) != 0;
+        bool keep5 = !bit5 || canSaveData;
+        if (!keep5) continue;
+        bool bit6 = (mask & 0x40) != 0;
+        bool keep6 = !bit6 || !isConnected;
+        if (!keep6) continue;
+        bool bit7 = (mask & 0x80) != 0;
+        bool keep7 = !bit7 || isConnected;
+        if (!keep7) continue;
+        bool bit8 = (mask & 0x100) != 0;
+        bool keep8 = !bit8 || ctType != kControllerGuitar;
+        if (!keep8) continue;
+        bool bit9 = (mask & 0x200) != 0;
+        bool keep9 = !bit9 || ctType != kControllerVocals;
+        if (!keep9) continue;
+        bool bit10 = (mask & 0x400) != 0;
+        bool keep10 = !bit10 || ctType != kControllerDrum;
+        if (!keep10) continue;
+        bool bit11 = (mask & 0x800) != 0;
+        bool keep11 = !bit11 || isSignedIn;
+        if (!keep11) continue;
+        bool bit12 = (mask & 0x1000) != 0;
+        bool keep12 = !bit12 || hasPrivilege;
+        if (!keep12) continue;
+        bool bit13 = (mask & 0x2000) != 0;
+        bool keep13 = !bit13 || !inSession;
+        if (!keep13) continue;
+        bool bit14 = (mask & 0x4000) != 0;
+        bool keep14 = !bit14 || inSession;
+        if (!keep14) continue;
 
         if (users) {
             users->push_back(user);
@@ -341,14 +352,6 @@ int BandUserMgr::GetLocalBandUsers(std::vector<LocalBandUser *> *users, int mask
 
 int BandUserMgr::GetRemoteBandUsers(std::vector<RemoteBandUser *> *users, int mask) const {
     bool inSession = false;
-    int mBit2 = mask & 0x4;
-    int mBit3 = mask & 0x8;
-    int notBit5 = !(mask & 0x20);
-    int notBit7 = !(mask & 0x80);
-    int notBit11 = !(mask & 0x800);
-    int notBit12 = !(mask & 0x1000);
-    int mBit13 = mask & 0x2000;
-    int mBit14 = mask & 0x4000;
     int count = 0;
     FOREACH(it, mRemoteUsers) {
         RemoteBandUser *user = *it;
@@ -356,24 +359,39 @@ int BandUserMgr::GetRemoteBandUsers(std::vector<RemoteBandUser *> *users, int ma
 
         bool isParticipating = user->IsParticipating();
 
-        if (mSessionMgr) {
-            inSession = mSessionMgr->HasUser(user);
-        } else {
-            inSession = false;
-        }
+        // Retail dispatches through BandUser's own vftable slot 0 --
+        // `user->IsInSession(mSessionMgr)` -- with NO null check on mSessionMgr,
+        // where the rb3-Wii dev oracle has `mSessionMgr->HasUser(user)`. Same
+        // inversion the BandUser.h slot-0 comment records for InputMgr.
+        inSession = user->IsInSession(mSessionMgr);
 
-        bool rej2 = mBit2 && isParticipating;
-        if (rej2) continue;
-        bool rej3 = mBit3 && !isParticipating;
-        if (rej3) continue;
-        if (!notBit5) continue;
-        if (!notBit7) continue;
-        if (!notBit11) continue;
-        if (!notBit12) continue;
-        bool rej13 = mBit13 && inSession;
-        if (rej13) continue;
-        bool rej14 = mBit14 && !inSession;
-        if (rej14) continue;
+        // Retail materializes each filter into a bool temp and branches on it
+        // (li 0 / li 1 / clrlwi. / beq), rather than short-circuiting straight to
+        // the loop latch -- so these must stay as separate `keep` locals in
+        // POSITIVE ("survives the filter") polarity, not the oracle's `rej` form.
+        // The bits feeding a compound (`|| ...`) filter are BOOLs in retail:
+        // MSVC normalizes them to 0/1 with extrwi. The standalone filters below
+        // stay as raw `!(mask & BIT)`, which already emits nor+extrwi. and matches.
+        bool bit2 = (mask & 0x4) != 0;
+        bool keep2 = !bit2 || !isParticipating;
+        if (!keep2) continue;
+        bool bit3 = (mask & 0x8) != 0;
+        bool keep3 = !bit3 || isParticipating;
+        if (!keep3) continue;
+        bool keep5 = !(mask & 0x20);
+        if (!keep5) continue;
+        bool keep7 = !(mask & 0x80);
+        if (!keep7) continue;
+        bool keep11 = !(mask & 0x800);
+        if (!keep11) continue;
+        bool keep12 = !(mask & 0x1000);
+        if (!keep12) continue;
+        bool bit13 = (mask & 0x2000) != 0;
+        bool keep13 = !bit13 || !inSession;
+        if (!keep13) continue;
+        bool bit14 = (mask & 0x4000) != 0;
+        bool keep14 = !bit14 || inSession;
+        if (!keep14) continue;
 
         if (users) {
             users->push_back(user);
@@ -423,7 +441,7 @@ LocalBandUser *BandUserMgr::GetUserFromPad(int pad) {
     FOREACH (it, mLocalUsers) {
         LocalBandUser *pLocalUser = *it;
         MILO_ASSERT(pLocalUser, 0x23E);
-        if (pad == pLocalUser->GetPadNum())
+        if (pLocalUser->GetPadNum() == pad)
             return pLocalUser;
     }
     return nullptr;

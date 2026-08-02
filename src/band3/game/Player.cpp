@@ -419,7 +419,7 @@ void Player::LocalSetEnabledState(EnabledState estate, int i, BandUser *causer, 
     case kPlayerEnabled: {
         static Message enable_player_msg("enable_player");
         Export(enable_player_msg, true);
-        if (unk260.size() != 0) {
+        if (unk260.size() > 0) {
             Extent &ext = unk260.back();
             if (ext.unk4 == -1) {
                 ext.unk4 = i;
@@ -1133,9 +1133,9 @@ DataNode Player::OnSendNetGameplayMsg(DataArray *arr) {
     int opcode = arr->Int(2);
     int packet = arr->Int(3) != 0;
 
-    int arg1 = 0;
-    int arg2 = 0;
     int arg3 = 0;
+    int arg2 = 0;
+    int arg1 = 0;
 
     if (arr->Size() > 4)
         arg1 = arr->Int(4);
@@ -1154,9 +1154,9 @@ DataNode Player::OnSendNetGameplayMsgToPlayer(DataArray *arr) {
     int opcode = arr->Int(3);
     int packet = arr->Int(4) != 0;
 
-    int arg1 = 0;
-    int arg2 = 0;
     int arg3 = 0;
+    int arg2 = 0;
+    int arg1 = 0;
 
     if (arr->Size() > 5)
         arg1 = arr->Int(5);

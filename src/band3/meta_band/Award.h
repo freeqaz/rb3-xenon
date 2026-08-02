@@ -20,7 +20,7 @@ public:
     Symbol GetDescription() const;
     Symbol GetDisplayName() const;
     bool HasIconArt() const;
-    Symbol GetIconArt() const;
+    const char *GetIconArt() const;
     bool IsBonus() const;
     void GrantAward(const AwardEntry &, BandProfile *);
     bool InqAssets(std::vector<Symbol> &);

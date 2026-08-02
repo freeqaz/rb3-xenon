@@ -93,7 +93,7 @@ Symbol Award::GetDisplayName() const {
 }
 
 bool Award::HasIconArt() const { return mIcon != gNullStr; }
-Symbol Award::GetIconArt() const { return mIcon; }
+const char *Award::GetIconArt() const { return mIcon.Str(); }
 bool Award::IsBonus() const { return mIsBonus; }
 
 DECOMP_FORCEACTIVE(Award, "%s_howto", "%s_gray")
