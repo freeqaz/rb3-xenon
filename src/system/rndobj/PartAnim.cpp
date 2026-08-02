@@ -1,3 +1,10 @@
+// Retail inlines this TU's owner-only ObjPtr ctor(s) with the vtable
+// materialization pinned AFTER the member stores -- the
+// RB3_OBJPTR_FORCEINLINE_CTOR signature (see obj/ObjPtr_p.h). The
+// extent census shows delta ~= -16 * (surplus bl) for this TU's ctor,
+// i.e. one un-inlined ObjPtr ctor per surplus call.
+#define RB3_OBJPTR_FORCEINLINE_CTOR
+
 #include "rndobj/PartAnim.h"
 #include "obj/Object.h"
 #include "os/Debug.h"

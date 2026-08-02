@@ -1,3 +1,10 @@
+// Retail inlines this TU's single `ObjPtr<RndMesh> mMesh(this)` ctor with the
+// vtable materialization pinned AFTER the member stores (idx 87 stores mOwner,
+// then 88/90 materialize ??_7ObjPtr@RndMesh, then 91 stores it). That ordering
+// is the RB3_OBJPTR_FORCEINLINE_CTOR signature; RB3_OBJPTR_INLINE_OWNER_CTOR
+// hoists the vptr instead and is the wrong lever here.
+#define RB3_OBJPTR_FORCEINLINE_CTOR
+
 #include "ui/UIPicture.h"
 #include "UIComponent.h"
 #include "UITransitionHandler.h"
