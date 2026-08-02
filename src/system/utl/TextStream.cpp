@@ -12,7 +12,10 @@ TextStream &TextStream::operator<<(bool b) {
 }
 
 void TextStream::Space(int i) {
-    for (; i > 0; i--) {
+    // retail loops on `i != 0`, not `i > 0`: the initial test is `beq cr6` and
+    // the back-edge `bne` (vs our `ble`/`bgt`). Behaviour differs only for
+    // negative i, which retail does not guard against either.
+    for (; i; i--) {
         Print(" ");
     }
 }
