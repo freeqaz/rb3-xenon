@@ -168,6 +168,7 @@ DECOMP_FORCEACTIVE(CharacterCreatorPanel, "ui/character_creator/image/%s_keep.pn
 void CharacterCreatorPanel::AddGridThumbnails(Symbol s1, Symbol s2) {
     const char *artStr = "ui/character_creator/image/%s_keep.png";
     int count;
+    static Symbol eyebrows("eyebrows");
     if (s2 == eyebrows) {
         AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
         MILO_ASSERT(pAssetMgr, 0x144);
@@ -530,6 +531,7 @@ int CharacterCreatorPanel::GetFeatureIndex(Symbol s) {
 
 void CharacterCreatorPanel::ModifyFeature(Symbol s, float f) {
     if (mPreviewDesc) {
+        static Symbol head("head");
         DataArrayPtr ptr(head, s);
         float prop = mPreviewDesc->Property(ptr, true)->Float();
         float newfloat = prop + f;

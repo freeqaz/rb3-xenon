@@ -954,6 +954,7 @@ Symbol MetaPerformer::GetVenueOverride() { return mVenueOverride; }
 #pragma push
 #pragma pool_data off
 DataNode MetaPerformer::OnMsg(const RockCentralOpCompleteMsg &msg) {
+    static Symbol insta_rank("insta_rank");
     MILO_ASSERT(TheGameMode->Property(insta_rank), 0x566);
     int arg2 = msg.Arg2().Int();
     if (arg2 == unk33c) {

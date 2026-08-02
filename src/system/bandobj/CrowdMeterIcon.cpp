@@ -62,6 +62,7 @@ void CrowdMeterIcon::SetState(CrowdMeterState state, bool b) {
             }
             case kCrowdMeterWarning: {
                 float delay = unk240->GetPulseAnimStartDelay(false);
+                static Symbol loop("loop");
                 mIconStateAnim->Animate(
                     0.0f, false, delay, RndAnimatable::k1_fpb, 0.0f, 1.0f, 0.0f, 1.0f, loop
                 );

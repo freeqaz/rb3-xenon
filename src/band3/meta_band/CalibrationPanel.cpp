@@ -845,6 +845,7 @@ END_HANDLERS
 void CalibrationWelcomePanel::Enter() {
     UIPanel::Enter();
     MILO_ASSERT(TheInputMgr, 0x4E0);
+    static Symbol input_status_changed("input_status_changed");
     TheInputMgr->AddSink(this, input_status_changed);
     static InputStatusChangedMsg dummy;
     OnMsg(dummy);
