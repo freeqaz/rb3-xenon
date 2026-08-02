@@ -114,10 +114,13 @@ void CalibrationPanel::UpdateAnimation() {
             float f1 = mCycleTimeMs;
             float f10 = GetAudioTimeMs();
             f10 = std::fmod(mCycleTimeMs / 2.0f + f10, f1);
-            f10 = ReshapeTime(f10);
-            f10 = (f10 * mAnimCycleFrames) / mCycleTimeMs;
+            float recip = 1.0f / mCycleTimeMs;
+            f10 = ReshapeTime(f10, recip);
+            f10 = f10 * mAnimCycleFrames * recip;
             MILO_ASSERT(mAnimNumCycles == 1 || mAnimNumCycles == 2, 0xBE);
-            if (mAnimNumCycles == 2 && GetTestRep() % 2) {
+            // Retail branches AWAY on a non-zero remainder (`subf.` then `bne`),
+            // i.e. the extra cycle is added on EVEN reps, not odd ones.
+            if (mAnimNumCycles == 2 && GetTestRep() % 2 == 0) {
                 f10 = f10 + mAnimCycleFrames;
             }
             if (mHalfOffAnim) {
@@ -693,9 +696,9 @@ int CalibrationPanel::GetTestQuality() const {
     }
 }
 
-float CalibrationPanel::ReshapeTime(float f) {
+float CalibrationPanel::ReshapeTime(float f, float recip) {
     float cycle = mCycleTimeMs;
-    float f1 = f * (1.0f / cycle);
+    float f1 = f * recip;
     if (f1 <= 1.0f)
         f1 = f1 * f1;
     else

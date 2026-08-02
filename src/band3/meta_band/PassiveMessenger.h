@@ -94,14 +94,25 @@ public:
 
     void QueueMessage(DataArray *, PassiveMessageType, Symbol, int);
     void PostSetup();
-    void SetShowMessages(bool);
     PassiveMessageQueue *GetMessageQueue() const { return mMessageQueue; }
 
     DataNode OnQueueMessage(DataArray *);
 
-    class PassiveMessenger *mMessenger; // 0x38
-    PassiveMessageQueue *mMessageQueue; // 0x3c
-    bool mShowMessages; // 0x40
+    // Retail's PassiveMessagesPanel has EXACTLY TWO 4-byte members and no
+    // mShowMessages.  Two independent instruments agree:
+    //  (1) the retail ctor (fn_826296A0, asm/auto_03_8262709C_text.s) does
+    //      `addi r3, r3, 0x48` before calling the Hmx::Object ctor, pinning the
+    //      Object subobject at 0x48 and the vtordisp at 0x44 -- so the derived
+    //      block is [0x3c,0x44), 8 bytes, not the 12 a trailing bool needs;
+    //      sizeof = 0x48 + 0x28 = 0x70, exactly what NewObject allocates.
+    //  (2) map-independent string scan of orig/45410914/band.exe: the handler
+    //      name "set_show_messages" occurs 0 times, while positive controls
+    //      "passive_messages" and "queue_message" occur once each.
+    // So SetShowMessages/mShowMessages are rb3-Wii DEV-build-only code that
+    // retail compiled out -- the MILO_DEBUG force-define hazard described in
+    // CLAUDE.md.  Nothing in this tree defined or read them.
+    class PassiveMessenger *mMessenger; // 0x3c
+    PassiveMessageQueue *mMessageQueue; // 0x40
 };
 
 class PassiveMessenger : public Hmx::Object {

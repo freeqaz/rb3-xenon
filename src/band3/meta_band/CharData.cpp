@@ -31,9 +31,12 @@ const char *GetPrefabPortraitPath(PrefabChar *pPrefab) {
     static const char *strSuffix(
         SystemConfig(prefab_mgr)->FindStr(prefab_portrait_path_suffix)
     );
-    return MakeString(
-        "%s", FilePath(strPrefix, MakeString("%s%s", prefabSym.Str(), strSuffix)).c_str()
-    );
+    // Named local, NOT a temporary: retail reloads the char* from the frame slot
+    // (`lwz r4, 0x60(r31)` where the FilePath lives at r31+0x58), whereas
+    // `FilePath(...).c_str()` makes MSVC reuse the ctor's returned `this` in r3
+    // (`lwz r4, 0x8(r3)`). Same object, same field -- only the addressing differs.
+    FilePath fp(strPrefix, MakeString("%s%s", prefabSym.Str(), strSuffix));
+    return MakeString("%s", fp.c_str());
 }
 
 PrefabChar::PrefabChar(BandCharDesc *desc)
