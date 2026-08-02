@@ -6,7 +6,7 @@ DxLight::DxLight() {}
 
 void DxLight::Init() {
     REGISTER_OBJ_FACTORY(DxLight)
-    PhysMemTypeTracker tracker("D3D(phys):DxLight");
+    PhysMemTypeTracker tracker("D3D(phys):Global");
 }
 
 void DxLight::Terminate() {}

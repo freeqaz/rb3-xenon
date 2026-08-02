@@ -412,7 +412,7 @@ void DxRnd::SetDefaultRenderStates() {
 }
 
 void DxRnd::InitRenderState() {
-    PhysMemTypeTracker tracker("D3D(phys):DxRnd");
+    PhysMemTypeTracker tracker("D3D(phys):Global");
     if (!mD3DDevice) {
         return;
     }
@@ -666,7 +666,7 @@ void DxRnd::ModalDraw(Debug::ModalType t, const char *cc) {
 }
 
 void DxRnd::InitBuffers() {
-    PhysMemTypeTracker tracker("D3D(phys):DxRndBuffer");
+    PhysMemTypeTracker tracker("D3D(phys):Global");
     memset(&mPresentParams, 0, sizeof(D3DPRESENT_PARAMETERS));
     memset(&mVideoMode, 0, sizeof(XVIDEO_MODE));
     XGetVideoMode(&mVideoMode);

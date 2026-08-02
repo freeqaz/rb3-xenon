@@ -166,6 +166,19 @@ BEGIN_HANDLERS(MicInputArrow)
     HANDLE_CHECK(0x10B)
 END_HANDLERS
 
+// Retail's SyncProperty compares against FUNCTION-LOCAL static Symbols (guard word +
+// ??__F atexit funclet per prop), not the centralized globals in utl/Symbols*.h --
+// same divergence RB3_HANDLE_LOCAL_STATIC fixes for the HANDLE_* family. SYNC_PROP*
+// is not covered by that gate, so override it TU-locally (no other TU's codegen
+// moves).  Lane CT-4: measured +6 matched on DialogDisplay with the same lever.
+#undef SYNC_PROP
+#define SYNC_PROP(symbol, member)                                                        \
+    {                                                                                    \
+        static Symbol _ps(#symbol);                                                      \
+        if (sym == _ps)                                                                  \
+            return PropSync(member, _val, _prop, _i + 1, _op);                           \
+    }
+
 BEGIN_PROPSYNCS(MicInputArrow)
     SYNC_PROP(arrow_num, mArrowNum)
     SYNC_SUPERCLASS(UIComponent)

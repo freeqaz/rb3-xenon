@@ -345,8 +345,11 @@ bool TourPerformerLocal::SanityCheckFilterAgainstType(Symbol s1, Symbol s2) {
     // NOTE: these MUST stay at function scope -- `random`/`custom` also exist as
     // globals in utl/Symbols*.h, so a block-scoped declaration silently lets the
     // `else` arm bind the global instead (compiles clean, wrong codegen).
-    static Symbol random("random");
+    // DECLARATION ORDER IS LOAD-BEARING AND IS NOT VISIBLE TO THE DEFAULT RULER:
+    // retail constructs `custom` first, then `random` (lane CT-4).  Both operands
+    // are masked relocation args, so the swapped order scored exactly 100.0.
     static Symbol custom("custom");
+    static Symbol random("random");
     if (TheQuestMgr.HasFixedSetlist(s1)) {
         if (s2 == random || s2 == custom)
             return 0;

@@ -256,7 +256,7 @@ void NgPostProc::Select() {
 
 void NgPostProc::Init() {
     REGISTER_OBJ_FACTORY(NgPostProc);
-    PhysMemTypeTracker tracker("D3D(phys):NgPostProc");
+    PhysMemTypeTracker tracker("D3D(phys):Global");
     RebuildTex();
 }
 

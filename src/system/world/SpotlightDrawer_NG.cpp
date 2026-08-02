@@ -853,7 +853,7 @@ bool NgSpotlightDrawer::CheckFogTexture() {
 
 #ifndef HX_NATIVE
 bool NgSpotlightDrawer::CheckRTs(NgSpotlightDrawer::SpotlightResources *sr) {
-    PhysMemTypeTracker tracker(Symbol("D3D(phys):NgSpotlightDrawer"));
+    PhysMemTypeTracker tracker(Symbol("D3D(phys):Global"));
     DxTex::SetEDRamChecksEnabled(false);
     int w = RTWidth();
     int h = RTHeight();
