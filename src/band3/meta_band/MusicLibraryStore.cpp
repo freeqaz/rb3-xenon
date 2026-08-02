@@ -39,6 +39,11 @@ MusicLibraryStore::MusicLibraryStore()
     // change.
 }
 
+/* Retail 0x825BC900, immediately before ClearPreview: a frameless 2-instruction
+   tail-jump `lwz r3,0x4c(r3); b 0x827B1B78`. Name is address-form on purpose --
+   see the header note. */
+void MusicLibraryStore::Unk825BC900() { mPreviewMgr->ClearCurrentPreview(); }
+
 void MusicLibraryStore::ClearPreview() {
     if (mPreviewLoader) {
         delete mPreviewLoader;
