@@ -351,11 +351,21 @@ def _gate_objdiff_missing() -> None:
 
     Rationale (2026-07-29): objdiff's funclet pairing pass credits a target
     funclet at 100% even when every byte-identical base partner is already
-    consumed, so `matched_functions` over-counts by ~4% (measured: 39,743
-    reported vs 38,210 honest, all of it anonymous `fn_` symbols). Our fork
-    (branch `oversub-disclosure`) populates `Measures.masked_equal_functions`
-    so EVERY report states its own honest floor
+    consumed. Our fork populates `Measures.masked_equal_functions` so EVERY
+    report states its own honest floor
     (`matched_functions - masked_equal_functions`).
+
+    *** RULER CHANGE 2026-08-02 -- the size of this disclosure grew ~20x. ***
+    The fork originally reported pass-2b over-subscription ONLY, which read as
+    a ~4% over-count (measured then: 39,743 reported vs 38,210 honest). It now
+    discloses ALL funclet byte-signature pairings: masked_equal_functions
+    1,096 -> 22,640, honest 42,358 -> 20,814, a 52.10% disclosure share of
+    matched_functions. NO SCORE KEY MOVED -- matched_functions,
+    matched_code_percent and fuzzy_match_percent were verified identical
+    (11/11 keys); this is disclosure, not scoring. So the cost of falling back
+    to the downloaded release is NOT "~4% inflated": it is losing the
+    disclosure on roughly HALF the reported match count.
+    Authoritative record: docs/decomp/RULER_CHANGE_2026-08-02.md.
 
     The old behaviour here was a WARN plus a silent fallback to the DOWNLOADED
     objdiff release, which does not populate that field. A report generated
@@ -372,17 +382,19 @@ def _gate_objdiff_missing() -> None:
         print(
             "WARN: RB3_OBJDIFF_OPTIONAL=1 -- falling back to the downloaded "
             "objdiff-cli release. Reports will NOT carry "
-            "masked_equal_functions, so matched_functions will over-count by "
-            "~4% with nothing flagging it. Do not quote those numbers.",
+            "masked_equal_functions, so ~52% of matched_functions (22,640 of "
+            "43,454 at f48bcad7) goes undisclosed with nothing flagging it. "
+            "Do not quote those numbers.",
             file=sys.stderr,
         )
         return
     sys.exit(
         "FATAL: local objdiff fork (../objdiff) not found.\n"
         "  The downloaded objdiff-cli release does NOT populate\n"
-        "  Measures.masked_equal_functions, so its reports silently over-count\n"
-        "  matched_functions by ~4% (funclet over-subscription) with nothing\n"
-        "  flagging it -- a silently-wrong number is worse than no number.\n"
+        "  Measures.masked_equal_functions, so its reports silently omit the\n"
+        "  funclet-pairing disclosure that currently covers ~52% of\n"
+        "  matched_functions -- with nothing flagging it. A silently-wrong\n"
+        "  number is worse than no number.\n"
         "  Fix: clone/build the fork (cd ../objdiff && cargo build --release,\n"
         "  with the oversub-disclosure branch checked out), or pass --objdiff\n"
         "  explicitly. Genuinely fork-less environment: RB3_OBJDIFF_OPTIONAL=1\n"

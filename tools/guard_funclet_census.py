@@ -81,6 +81,25 @@ CALIBRATION AND KNOWN LIMITS  -- READ BEFORE BUDGETING OFF THIS TOOL
   it: fixing a site also repairs the OWNING body, which nothing here counts.
   Price with tools/ab_measure.py.
 
+*** RULER CHANGE 2026-08-02 BROKE THE masked_equal HALF OF THAT TABLE. ***
+  (lane DA-4).  The 310/732 split above was measured while
+  `masked_equal_functions` disclosed pass-2b OVER-SUBSCRIPTION ONLY.  The
+  objdiff fork now discloses EVERY funclet byte-signature pairing, so this
+  tool's default mode reads, at HEAD f48bcad7:
+
+        MATCHED 8,893  (of which masked_equal: 8,893)   <-- ALL of them
+        UNMATCHED 303
+        unmatched + masked = 9,196                      <-- the WHOLE population
+
+  i.e. the old "honest family size" line degenerates into restating the total
+  and looks like a 9x blow-up that never happened.  It is now guarded: the code
+  refuses to print that sum when masked/matched > 50% and points here instead.
+  *** `--deficit` IS UNAFFECTED *** -- it compares per-unit target-vs-ours bit
+  MULTISETS and never consults masked_equal, which is exactly why it is the
+  ruler-independent instrument.  Re-measured at f48bcad7 it gives a tree-wide
+  deficit of 1,002 across the same shape of units (was 1,042 at 475a47ec; lane
+  CZ-2's landings drained ~40).  See docs/decomp/RULER_CHANGE_2026-08-02.md.
+
 ⚠ Anti-vacuity: run it against units a previous batch already fixed.  If it
   does not go quiet there, it is measuring something else.
 
@@ -281,12 +300,30 @@ def main():
 
     unmatched = sum(len(r["unmatched"]) for r in rows)
     print(f"guard-clearing ??__F funclets in retail, inside paired units: {total}")
-    print(f"   MATCHED   : {matched}  (of which masked_equal / over-subscribed: {masked})")
+    print(f"   MATCHED   : {matched}  (of which masked_equal: {masked})")
     print(f"   UNMATCHED : {unmatched}  in "
           f"{sum(1 for r in rows if r['unmatched'])} units")
     print(f"   no report.json row (neither state): {no_row}")
-    print(f"   => honest family size = unmatched + masked = {unmatched + masked} "
-          f"(cross-check with --deficit)")
+    # *** RULER GUARD (lane DA-4, 2026-08-02). ***
+    # `unmatched + masked` was a valid family-size estimate ONLY while
+    # masked_equal_functions disclosed pass-2b OVER-SUBSCRIPTION alone (it read
+    # 310 + 732 = 1,042 and cross-checked exactly against --deficit).  Since the
+    # 2026-08-02 disclosure flip, masked_equal fires on EVERY funclet
+    # byte-signature pairing, so the sum silently collapses to the whole
+    # population (303 + 8,893 = 9,196) and reads like a catastrophe that did not
+    # happen.  Refuse to print it rather than print a number that means nothing.
+    share = (masked / matched) if matched else 0.0
+    if share > 0.5:
+        print(f"   => masked_equal covers {share:6.1%} of MATCHED -- this is the "
+              f"POST-2026-08-02 ruler, where masked_equal discloses ALL funclet\n"
+              f"      pairings, not just over-subscription.  `unmatched + masked` "
+              f"is NOT a family size on this ruler (it would read\n"
+              f"      {unmatched + masked}, i.e. essentially the whole population "
+              f"of {total}).  *** USE --deficit -- it is ruler-independent. ***\n"
+              f"      See docs/decomp/RULER_CHANGE_2026-08-02.md.")
+    else:
+        print(f"   => honest family size = unmatched + masked = {unmatched + masked} "
+              f"(cross-check with --deficit)")
     print()
     print("  unmatched/total  gates[HS]  source")
     for r in sorted(rows, key=lambda r: -len(r["unmatched"])):

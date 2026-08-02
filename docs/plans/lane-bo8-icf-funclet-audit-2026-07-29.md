@@ -17,6 +17,24 @@
 > **Honest floor: `matched_functions` 40,540 → 37,490 – 38,098** (a band, not a
 > number; the headline over-states by **6.0% – 7.5%**). Recommended quotation in §6.
 
+> ⚠⚠ **RULER-ANNOTATED 2026-08-02 (lane DA-4). This document is a HISTORICAL audit
+> and has NOT been rewritten — its numbers are correct on the ruler of 2026-07-29.**
+> On 2026-08-02 the objdiff fork was flipped so `masked_equal_functions` discloses
+> **all** funclet byte-signature pairings, not pass-2b over-subscription only:
+> **1,096 → 22,640**, honest `matched − masked_equal` **42,358 → 20,814**, with
+> **no score key moved**. Two things follow, and the second is the one that bites:
+> 1. Every absolute here (40,540 matched; 39,023 honest; the 37,490 – 38,098 band)
+>    is an old-ruler reading. The **formula** recommended in §6 is unchanged and
+>    still correct; only its value moved.
+> 2. ⛔ **The new 22,640 is NOT "this lane's band, finally measured" — do not
+>    reconcile the two.** They are *different corrections of different sets*. Axis 1
+>    here was **pass-2b over-subscription** (unsupported credit); the new disclosure
+>    covers **every funclet byte-signature pairing**, most of which is
+>    **supply-backed** (our compiler really did emit those bytes) and merely
+>    arbitrary in per-row attribution. Subtracting one from the other, or reading
+>    20,814 as a further collapse of the 37,490 band, is a category error.
+> Authoritative record: [`docs/decomp/RULER_CHANGE_2026-08-02.md`](../decomp/RULER_CHANGE_2026-08-02.md).
+
 **Baseline:** worktree `/home/free/tmp/laneBO8/wt-icf`, branch `laneBO8-icf` from main
 `7833c23d`. Full `./tools/ninja-locked` before any obj-derived measurement;
 `report.cache` dropped; **no split-forcing build was run**, so this lane never
@@ -373,6 +391,11 @@ funclets (2.4%), and named bodies are where real decompilation lives. The clean 
 is narrower: *pass-2b surplus never touches named functions.*
 
 ### Recommended quotation going forward
+
+> ⚠ **Ruler note (2026-08-02):** recommendation 1's **formula survives the disclosure
+> flip unchanged**; its parenthetical value does not. `matched − masked_equal` now
+> reads **20,814** (43,454 − 22,640) at `f48bcad7`, not 39,023 — and for the reason
+> in the head banner it is **not** comparable to the 37,490 – 38,098 band below.
 
 1. **Per-build headline = `matched_functions − masked_equal_functions`** (currently
    **39,023**). It is in every `report.json`, needs no census, is cheap and monotone.

@@ -1,10 +1,32 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current (MEASURED at HEAD `9f9b687f`, coordinator clean-worktree A/B 2026-07-31):
-41,639 strict-matched functions / honest proxy 40,154 / `matched_code_percent`
-36.412956** (honest = matched − masked_equal, per the BO-8 pricing rule).
-Denominator is the whole TU5 XEX (`total_functions` 69,367; `masked_equal` 1,485;
-`total_code` 10,580,036).
+**Current (read from `report.json` at HEAD `f48bcad7`, 2026-08-02): 43,454
+strict-matched functions / `masked_equal` 22,640 / honest proxy 20,814 /
+`matched_code_percent` 38.810524 / `fuzzy_match_percent` 45.912785.**
+Denominator is the whole TU5 XEX (`total_functions` 69,357; `total_code`
+10,688,688). Honest = matched − masked_equal.
+
+> ⚠⚠ **RULER CHANGE 2026-08-02 — READ BEFORE COMPARING THE HONEST FIGURE ABOVE TO
+> ANY EARLIER ONE IN THIS DOC.** On 2026-08-02 the objdiff fork was flipped so
+> `masked_equal_functions` discloses **all** funclet byte-signature pairings, not
+> just pass-2b over-subscription: **1,096 → 22,640**, moving honest **42,358 →
+> 20,814** at an unchanged tree. **No score key moved** (`matched_functions`,
+> `matched_code_percent`, `fuzzy_match_percent` verified identical, 11/11 keys) —
+> this was disclosure, never scoring. So the honest drop from the previous header
+> value is **~52% ruler and ~0% regression**, and the matched count in fact *rose*
+> 41,639 → 43,454 over the same period.
+> **Every honest figure and Δhonest recorded further down this document is on the
+> OLD ruler and has been deliberately left unmodified** — those are the evidence
+> trail for the waves that produced them and are correct as history. A pre-flip
+> Δhonest is still a valid delta *on its own ruler*; it is **not** comparable to a
+> post-flip one and must never be chained or summed with one. Δmatched and Δcode%
+> are unaffected throughout. Authoritative record:
+> [`docs/decomp/RULER_CHANGE_2026-08-02.md`](../decomp/RULER_CHANGE_2026-08-02.md).
+>
+> The prior header read: *"MEASURED at HEAD `9f9b687f`, coordinator clean-worktree
+> A/B 2026-07-31: 41,639 matched / honest proxy 40,154 / code% 36.412956;
+> `total_functions` 69,367; `masked_equal` 1,485; `total_code` 10,580,036"* —
+> retained here so the old-ruler reading is not lost.
 
 ## ⛔ Wave CD (2026-07-31) — STOP PRICING ON `name_check` AGGREGATE code%
 
@@ -1543,6 +1565,16 @@ wave survive. Stated as a gap rather than assumed benign by analogy.
 > Also settled there: **populating the ICF alias map cannot change any measure** —
 > `report generate` hardcodes `functionRelocDiffs=None`, under which `reloc_eq`
 > never consults `symbol_equivalences`. Measured: 3 groups → 1,408 groups, Δ = 0.
+
+> ⚠ **RULER-ANNOTATED 2026-08-02 (lane DA-4) — the section below is a HISTORICAL
+> derivation, left intact.** Its "~4%" / `1,582` / `38,161` / `38,210` figures were
+> measured under the pre-flip disclosure, where `masked_equal_functions` reported
+> **pass-2b over-subscription only**. Since 2026-08-02 the field discloses **all**
+> funclet byte-signature pairings — **22,640**, a **52.10%** disclosure share — so
+> "over-counts by ~4%" is no longer the right statement of the same fact. The
+> mechanism described below (`pair_funclets_by_bytes` not marking partners used) is
+> still accurate; only the SIZE of the disclosed set changed, and no score key moved.
+> See [`docs/decomp/RULER_CHANGE_2026-08-02.md`](../decomp/RULER_CHANGE_2026-08-02.md).
 
 **`matched_functions` over-counts by ~4%.** The cause is objdiff's own funclet
 pass (`pair_funclets_by_bytes`): it pairs each leftover funclet-like target onto

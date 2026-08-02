@@ -465,11 +465,30 @@ own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
   both (a) pinned section ranges in `splits.txt` and (b) a compiled `.obj` that
   objdiff equates byte-for-byte with the dtk target `.obj`.
   ⚠ **Do NOT hardcode the denominator — read `total_code` / `total_functions`
-  from `report.json`.** This doc said **11,790,708 code bytes** for months; the
-  measured value is **10,688,812** (lane CJ-3, 2026-08-02, confirmed
-  independently on the landed tree). A lane predicting a Δcode% off the stale
-  figure misses by ~10%. `total_code` also **moves** when splits pins change —
-  `4b3c098d` shifted it by 52,184 B — so it is not a constant to memorise at all.
+  from `report.json`.** This doc said **11,790,708 code bytes** for months; lane
+  CJ-3 measured **10,688,812** (2026-08-02, confirmed independently on the landed
+  tree). A lane predicting a Δcode% off the stale figure misses by ~10%.
+  `total_code` also **moves** when splits pins change — `4b3c098d` shifted it by
+  52,184 B — so it is not a constant to memorise at all.
+  ★ **And it moved again the same day**: at `f48bcad7` the measured value is
+  **10,688,688** (`total_functions` 69,357), 124 B below CJ-3's figure a few
+  commits earlier. Two "current" readings taken hours apart already disagree —
+  which is the point of the rule, not an exception to it. **Read the key.**
+- ★★★ **RULER CHANGE 2026-08-02 — every "honest" figure written before that date
+  is stale by ~21,500, and NOT because anything regressed.** The objdiff fork was
+  flipped so `masked_equal_functions` discloses **all** funclet byte-signature
+  pairings instead of pass-2b over-subscription only: **1,096 → 22,640**, so
+  honest (`matched − masked_equal`) went **42,358 → 20,814** and the disclosure
+  share went 2.52% → **52.10%**. `matched_functions`, `matched_code_percent` and
+  every other score key are **UNCHANGED** — this was disclosure, never scoring.
+  Baseline at `f48bcad7`: **43,454 matched / 22,640 masked_equal / 20,814 honest /
+  38.810524 code% / fuzzy 45.912785**.
+  ⚠ **Δhonest values do not compose across the flip.** A pre-flip Δhonest is
+  still valid *as a delta on the old ruler* but is not comparable to a post-flip
+  one; never chain them. `tools/ab_measure.py` has a same-ruler guard (`373d17c6`)
+  that pins objdiff-cli's sha256 across both legs and REFUSES on a mid-run swap —
+  which would otherwise fabricate Δhonest ≈ −21,500 from an untouched tree.
+  Authoritative record + rollback: `docs/decomp/RULER_CHANGE_2026-08-02.md`.
 - **Case sensitivity:** dc3's tree has case-variant files (e.g. `vec.cpp` vs
   `Vec.cpp`) that collide on Windows but coexist on Linux. Use the name dc3's
   `objects.json` actually builds (lowercase `vec.cpp`, `mtx.cpp`).
