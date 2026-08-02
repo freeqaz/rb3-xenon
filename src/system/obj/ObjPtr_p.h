@@ -303,6 +303,18 @@ template <class T>
 __forceinline
 #endif
 ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(owner, ptr) {
+    // The redundant re-assignment is LOAD-BEARING, exactly as documented for
+    // RB3_OBJPTR_INLINE_OWNER_CTOR_EH at the gate in obj/Object.h. Initialising
+    // mObject in the BASE mem-init emits its store BEFORE the derived vptr
+    // store, leaving a constant store free to float; MSVC then fills the
+    // addi->stw gap with it instead of the lis->addi gap -- a 3-instruction
+    // rotation costing ~1.1-2.1pp on every TU that inlines this ctor. Assigning
+    // it again here makes the base's store dead, so the surviving store lands
+    // after the vtable materialization and the schedule matches retail exactly.
+    // Retail's order {mOwner, vptr-lis, mObject, vptr-addi, vptr-store} is
+    // UNIVERSAL in the target: a shape scan over all non-stale target asm found
+    // 124 sites in retail's order and ZERO in ours.
+    this->mObject = ptr;
     if (this->mObject)
         this->mObject->AddRef(this);
 }

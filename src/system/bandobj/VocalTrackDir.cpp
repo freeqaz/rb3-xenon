@@ -8,7 +8,14 @@
 #include "utl/Messages.h"
 #include <cmath>
 
-INIT_REVS(VocalTrackDir)
+// One 4-byte aggregate instead of INIT_REVS's two independent statics -- see
+// the RevsT note in VocalTrackDir.h. The #define pair keeps LOAD_REVS /
+// ASSERT_REVS / packRevs and every `gRev` test below working unchanged, exactly
+// as ChordShapeGenerator.cpp does it. Scoped: #undef'd at the end of the
+// VocalTrackDir region so the rest of this unity TU is unaffected.
+VocalTrackDir::RevsT VocalTrackDir::gRevs = {0, 0};
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
 
 VocalTrackDir::VocalTrackDir()
     : BandTrack(this), mHiddenPartAlpha(0.3f), mEnableVocalsOptions(1), unk2a5(1), mIsTop(1), unk2a7(0),
@@ -425,6 +432,10 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
     }
     LoadTrack(bs, IsProxy(), gLoadingProxyFromDisk, true);
 }
+
+// End of the VocalTrackDir rev region (last gRev use is just above).
+#undef gRev
+#undef gAltRev
 
 void VocalTrackDir::SetConfiguration(Hmx::Object *o, HarmonyShowingState state) {
     if (o != mVoxCfg || state != unk4b4) {
