@@ -39,8 +39,16 @@ END_HANDLERS
 
 BEGIN_PROPSYNCS(FxSendMeterEffect)
     SYNC_PROP_MODIFY(reset_peaks, mResetPeaks, OnParametersChanged())
+#ifdef HX_NATIVE
+    // DC3-era additions; RB3-360 retail syncs only reset_peaks here.  Arbitrated
+    // on retail asm (lane CP-2), not on oracle agreement: objdiff's call diff for
+    // the 264 B retail body reports ??0Symbol@@ target 1 / base 3, and
+    // ?ChannelData@FxSendMeterEffect@@ base-only x2 -- retail never calls the
+    // channel accessors at all.  The 70-instruction insert cluster is exactly
+    // these two blocks.  rb3-Wii independently agrees (reset_peaks only).
     SYNC_PROP_SET(channel1, ChannelData(0), )
     SYNC_PROP_SET(channel2, ChannelData(1), )
+#endif
     SYNC_SUPERCLASS(FxSend)
 END_PROPSYNCS
 
