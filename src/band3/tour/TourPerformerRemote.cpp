@@ -16,19 +16,21 @@ void TourPerformerRemote::SyncLoad(BinStream &bs, uint ui) {
     MILO_ASSERT(pProgress, 38);
     pProgress->SyncLoad(bs);
     bs >> mQuestFilter;
+    int i = 0;
     uint bs_name = 0;
     bs >> bs_name;
     mFilterType = (TourSetlistType)bs_name;
-    mGigData.erase(mGigData.begin(), mGigData.end());
+    std::vector<GigData> &gd_vec = mGigData;
+    gd_vec.erase(gd_vec.begin(), gd_vec.end());
     int siz;
     bs >> siz;
-    for (int i = 0; i < siz; i++) {
+    for (; i < siz; i++) {
         GigData gd(420);
         bs >> gd.unk0;
         bs >> gd.unk4;
         bs >> gd.unk8;
         bs >> gd.unkc;
-        mGigData.push_back(gd);
+        gd_vec.push_back(gd);
     }
 }
 
