@@ -229,7 +229,18 @@ void WorldInstance::LoadPersistentObjects(BinStreamRev &bs) {
             bs.stream.ReadString(objName, 0x80);
 
             if (!Hmx::Object::RegisteredFactory(objClassName)) {
+#ifdef HX_NATIVE
+                // X4c: see the twin at obj/DirLoader.cpp. This is the PERSISTENT
+                // path and it is the unrecoverable one -- it DeleteObjects() and
+                // returns on the first miss, with no stream marker to re-sync on,
+                // so anything after it in the stream is lost. Note it therefore
+                // emits AT MOST ONE message per WorldInstance load.
+                MILO_NOTIFY(
+                    "[persistent] %s: Can't make %s", mStoredFile.c_str(), objClassName
+                );
+#else
                 MILO_NOTIFY("%s: Can't make %s", mStoredFile.c_str(), objClassName);
+#endif
                 DeleteObjects();
                 return;
             }
