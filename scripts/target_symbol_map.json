@@ -1,4 +1,10 @@
 {
+ "0x823c35d8": "?PropSync@@YA_NAAVConstraint@HamIKEffector@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x823213a0": "?SyncProperty@CheckboxDisplay@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x82689680": "?SyncProperty@GameConfig@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x82824c68": "?SyncProperty@Screenshot@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x822c7530": "?PropSync@@YA_NAAVDeltaArray@BandFaceDeform@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x82300128": "?SyncProperty@VocalTrackDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x823be828": "?SyncProperty@CharInterest@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x824ca808": "?SyncProperty@EventAnim@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8245d8d8": "?SyncProperty@RndWind@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
