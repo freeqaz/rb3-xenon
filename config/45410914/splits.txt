@@ -2112,7 +2112,7 @@ SfxMap.cpp:
 	.text       start:0x8272994C end:0x82729B08
 	.text       start:0x82729B08 end:0x82729BF0
 	.text       start:0x82729BF0 end:0x82729C88
-	.text       start:0x82729C88 end:0x82729D04
+	.text       start:0x82729C88 end:0x82729CC0
 
 aes.c:
 	.pdata      start:0x8225EA98 end:0x8225EAB8
@@ -2234,7 +2234,7 @@ TextFileStream.cpp:
 	.pdata      start:0x82242270 end:0x82242278
 	.pdata      start:0x82242278 end:0x82242290
 	.text       start:0x827C3BF0 end:0x827C3C68
-	.text       start:0x827C3C68 end:0x827C3D80
+	.text       start:0x827C3C68 end:0x827C3D40
 
 TextStream.cpp:
 	.pdata      start:0x82242230 end:0x82242270
@@ -4186,7 +4186,7 @@ HamLabel.cpp:
 	.pdata      start:0x821FE790 end:0x821FE7A0
 	.pdata      start:0x821FE7A8 end:0x821FE7B0
 	.text       start:0x82340580 end:0x823405F8
-	.text       start:0x82340670 end:0x823406F8
+	.text       start:0x82340670 end:0x823406E8
 
 SkeletonClip.cpp:
 	.pdata      start:0x821FEC88 end:0x821FEC90
@@ -5171,9 +5171,7 @@ Mat_NG.cpp:
 	.text       start:0x824A8F74 end:0x824AA3E0
 
 HamMaster.cpp:
-	.pdata      start:0x82213008 end:0x82213010
 	.pdata      start:0x8223D6D8 end:0x8223D6E0
-	.text       start:0x824B98F8 end:0x824B9950
 	.text       start:0x8276E328 end:0x8276E388
 
 CameraShot.cpp:
@@ -5622,11 +5620,11 @@ Bitmap.cpp:
 
 LightPresetManager.cpp:
 	.pdata      start:0x82212F20 end:0x82213008
-	.pdata      start:0x82213010 end:0x82213038
+	.pdata      start:0x82213008 end:0x82213038
 	.pdata      start:0x82213038 end:0x82213060
 	.pdata      start:0x82222488 end:0x82222490
 	.text       start:0x824B8860 end:0x824B98F8
-	.text       start:0x824B9950 end:0x824B9BC8
+	.text       start:0x824B98F8 end:0x824B9BC8
 	.text       start:0x824B9BC8 end:0x824B9ED8
 	.text       start:0x825AED58 end:0x825AEDB0
 
@@ -6153,7 +6151,7 @@ ADSR.cpp:
 	.pdata      start:0x8223A180 end:0x8223A188
 	.pdata      start:0x8223A188 end:0x8223A190
 	.text       start:0x82365100 end:0x82365108
-	.text       start:0x82729D04 end:0x82729E34
+	.text       start:0x82729CC0 end:0x82729E34
 	.text       start:0x82729E38 end:0x82729E70
 	.text       start:0x82729E70 end:0x82729F48
 	.text       start:0x82729F48 end:0x82729FA0
@@ -6332,9 +6330,7 @@ TransProxy.cpp:
 
 HamBattleData.cpp:
 	.pdata      start:0x821F4678 end:0x821F4680
-	.pdata      start:0x8223F068 end:0x8223F070
 	.text       start:0x822A0ED8 end:0x822A0F38
-	.text       start:0x8278DB80 end:0x8278DCA8
 
 Pollable.cpp:
 	.pdata      start:0x82238FE0 end:0x82239008
@@ -6507,7 +6503,7 @@ MakeString.cpp:
 	.pdata      start:0x82242298 end:0x822422A8
 	.pdata      start:0x822422A8 end:0x822422D0
 	.pdata      start:0x822422D0 end:0x822422F0
-	.text       start:0x827C3D80 end:0x827C3EF8
+	.text       start:0x827C3D40 end:0x827C3EF8
 	.text       start:0x827C3EF8 end:0x827C3FD0
 	.text       start:0x827C3FD0 end:0x827C4340
 	.text       start:0x827C4340 end:0x827C44B8
@@ -6881,7 +6877,7 @@ Mic.cpp:
 
 FxSendWah.cpp:
 	.pdata      start:0x8225B0E0 end:0x8225B188
-	.text       start:0x82B64298 end:0x82B64C2C
+	.text       start:0x82B64298 end:0x82B64C20
 
 Lit.cpp:
 	.pdata      start:0x822115D8 end:0x822115F0
@@ -7042,7 +7038,7 @@ Voice.cpp:
 	.pdata      start:0x8225B280 end:0x8225B288
 	.pdata      start:0x822619E0 end:0x82261B00
 	.text       start:0x822D8610 end:0x822D862C
-	.text       start:0x82B64C30 end:0x82B661F0
+	.text       start:0x82B64C20 end:0x82B661F0
 	.text       start:0x82B662E8 end:0x82B6639C
 	.text       start:0x82C42958 end:0x82C436F0
 
@@ -7420,8 +7416,8 @@ system/synth_xbox/SynthSample.cpp:
 	.text       start:0x82B6C850 end:0x82B6C8F0
 
 CrazeHollaback.cpp:
-	.pdata      start:0x821F6860 end:0x821F6880
-	.text       start:0x822C0B50 end:0x822C0D48
+	.pdata      start:0x821F6860 end:0x821F6878
+	.text       start:0x822C0B50 end:0x822C0CF8
 
 CharPosConstraint.cpp:
 	.pdata      start:0x82205D38 end:0x82205DB0
@@ -7449,9 +7445,9 @@ Screenshot.cpp:
 
 SpotlightEnder.cpp:
 	.pdata      start:0x822123B8 end:0x822123C8
-	.pdata      start:0x82215920 end:0x82215940
+	.pdata      start:0x82215920 end:0x82215938
 	.text       start:0x824AA5E0 end:0x824AA660
-	.text       start:0x824E9AF0 end:0x824E9DA8
+	.text       start:0x824E9AF0 end:0x824E9D20
 
 system/synth_xbox/FxSendPitchShift.cpp:
 	.pdata      start:0x8225B480 end:0x8225B498
@@ -7514,8 +7510,8 @@ FakeSongMgr.cpp:
 	.text       start:0x827CFB68 end:0x827CFB80
 
 PostProcer.cpp:
-	.pdata      start:0x82215940 end:0x82215950
-	.text       start:0x824E9DA8 end:0x824E9ED0
+	.pdata      start:0x82215938 end:0x82215950
+	.text       start:0x824E9D20 end:0x824E9ED0
 
 system/synth/FxSendBitCrush.cpp:
 	.pdata      start:0x82238A68 end:0x82238A88
@@ -10752,12 +10748,12 @@ BandSongPref.cpp:
 	.pdata      start:0x821F1F58 end:0x821F1F68
 	.pdata      start:0x821F6848 end:0x821F6858
 	.pdata      start:0x821F6858 end:0x821F6860
-	.pdata      start:0x821F6880 end:0x821F6890
+	.pdata      start:0x821F6878 end:0x821F6890
 	.pdata      start:0x821F6890 end:0x821F68B8
 	.text       start:0x8227A3A8 end:0x8227A428
 	.text       start:0x822C0A68 end:0x822C0B20
 	.text       start:0x822C0B20 end:0x822C0B50
-	.text       start:0x822C0D48 end:0x822C0E78
+	.text       start:0x822C0CF8 end:0x822C0E78
 	.text       start:0x822C0E78 end:0x822C10B8
 
 BinkClip.cpp:
@@ -12113,7 +12109,7 @@ BandLabel.cpp:
 	.pdata      start:0x821FE958 end:0x821FE960
 	.pdata      start:0x8222E918 end:0x8222E948
 	.text       start:0x823405F8 end:0x8234066C
-	.text       start:0x823406F8 end:0x82340740
+	.text       start:0x823406E8 end:0x82340740
 	.text       start:0x82340740 end:0x82341FF8
 	.text       start:0x82342068 end:0x823421A8
 	.text       start:0x82342220 end:0x82342228
@@ -12600,7 +12596,7 @@ system/beatmatch/GameGemList.cpp:
 	.pdata      start:0x8223F048 end:0x8223F050
 	.pdata      start:0x8223F050 end:0x8223F058
 	.pdata      start:0x8223F058 end:0x8223F068
-	.pdata      start:0x8223F070 end:0x8223F098
+	.pdata      start:0x8223F068 end:0x8223F098
 	.pdata      start:0x8223F0A0 end:0x8223F0B0
 	.pdata      start:0x8223F0B0 end:0x8223F0B8
 	.pdata      start:0x8223F0B8 end:0x8223F0C0
@@ -12628,7 +12624,7 @@ system/beatmatch/GameGemList.cpp:
 	.text       start:0x8278D8F8 end:0x8278D94C
 	.text       start:0x8278D950 end:0x8278D9C0
 	.text       start:0x8278D9C0 end:0x8278DB80
-	.text       start:0x8278DCA8 end:0x8278DEF0
+	.text       start:0x8278DB80 end:0x8278DEF0
 	.text       start:0x8278DF68 end:0x8278E098
 	.text       start:0x8278E098 end:0x8278E0DC
 	.text       start:0x8278E0E0 end:0x8278E168
