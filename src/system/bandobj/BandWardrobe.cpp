@@ -1032,6 +1032,7 @@ int BandWardrobe::FindBestScoringHint(Symbol *hints, SlotInfo *info, int &outSlo
         { 0, 0, 0, 4, 0 },
         { 16, 16, 0, 0, 6 },
     };
+    static Symbol done("done");
     int bestScore = 10000;
     outSlot = -1;
     int result = -1;

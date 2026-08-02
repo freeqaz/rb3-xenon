@@ -429,6 +429,7 @@ void PatchPanel::Poll() {
         }
     }
     if (unk51) {
+        static Message update_char_preview_msg("update_char_preview");
         unk51 = false;
         HandleType(update_char_preview_msg);
     }
@@ -646,6 +647,7 @@ inline void LayerProvider::InitData(RndDir *dir) {
 }
 
 inline void LayerProvider::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
+    static Symbol patch_new("patch_new");
     MILO_ASSERT(mPatch, 0xF7);
     if (idx == 0)
         label->SetTextToken(patch_new);

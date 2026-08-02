@@ -295,6 +295,18 @@ void CalibrationPanel::UpdateStream() {
 }
 
 DataNode CalibrationPanel::OnInitializeContent(DataArray *arr) {
+    static Symbol cal_video_desc_guitar("cal_video_desc_guitar");
+    static Symbol cal_video_desc_drum("cal_video_desc_drum");
+    static Symbol cal_video_desc_pad("cal_video_desc_pad");
+    static Symbol cal_video_desc_calbert("cal_video_desc_calbert");
+    static Symbol cal_audio_desc_guitar("cal_audio_desc_guitar");
+    static Symbol cal_audio_desc_drum("cal_audio_desc_drum");
+    static Symbol cal_audio_desc_pad("cal_audio_desc_pad");
+    static Symbol cal_audio_desc_calbert("cal_audio_desc_calbert");
+    static Symbol cal_hw_audio_title("cal_hw_audio_title");
+    static Symbol cal_hw_video_title("cal_hw_video_title");
+    static Symbol cal_audio_title("cal_audio_title");
+    static Symbol cal_video_title("cal_video_title");
     memset(unka4, 0, 0x14);
     memset(unkb8, 0, 0x14);
     RndTransAnim *tabanim = mDir->Find<RndTransAnim>("prog_bar_tab.tnm", true);

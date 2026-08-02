@@ -151,6 +151,8 @@ char StarDisplay::GetEmptyStarIcon() const {
 }
 
 void StarDisplay::UpdateDisplay() {
+    static Symbol tour_stars_simple_fmt("tour_stars_simple_fmt");
+    static Symbol tour_stars_fraction_fmt("tour_stars_fraction_fmt");
     bool show = mTotalStars > 5;
     if (mForceMixedMode)
         show = true;
