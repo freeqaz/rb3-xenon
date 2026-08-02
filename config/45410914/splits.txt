@@ -1965,13 +1965,15 @@ CharEyeDartRuleset.cpp:
 	.pdata      start:0x82205938 end:0x82205940
 	.pdata      start:0x82205940 end:0x82205950
 	.pdata      start:0x82205978 end:0x82205998
-	.pdata      start:0x822059A0 end:0x82205A08
+	.pdata      start:0x822059A0 end:0x822059B0
+	.pdata      start:0x822059B8 end:0x82205A08
 	.text       start:0x823BC918 end:0x823BD400
 	.text       start:0x823BDE70 end:0x823BDEC0
 	.text       start:0x823BDED0 end:0x823BE070
 	.text       start:0x823BE354 end:0x823BE360
 	.text       start:0x823BE46C end:0x823BE5D8
-	.text       start:0x823BE644 end:0x823BEE40
+	.text       start:0x823BE644 end:0x823BE828
+	.text       start:0x823BECD8 end:0x823BEE40
 	.text       start:0x823BEEA8 end:0x823BEEB0
 
 CharIKRod.cpp:
@@ -3406,12 +3408,14 @@ CharInterest.cpp:
 	.pdata      start:0x822058C0 end:0x82205938
 	.pdata      start:0x82205950 end:0x82205970
 	.pdata      start:0x82205998 end:0x822059A0
+	.pdata      start:0x822059B0 end:0x822059B8
 	.pdata      start:0x82205A08 end:0x82205A10
 	.text       start:0x822AF178 end:0x822AF1C8
 	.text       start:0x823BD400 end:0x823BDE6C
 	.text       start:0x823BDEC0 end:0x823BDED0
 	.text       start:0x823BE070 end:0x823BE354
 	.text       start:0x823BE5D8 end:0x823BE644
+	.text       start:0x823BE828 end:0x823BECD8
 	.text       start:0x823BEE40 end:0x823BEE90
 
 VorbisReader.cpp:
@@ -5056,9 +5060,11 @@ Wind.cpp:
 	.pdata      start:0x8220E5A0 end:0x8220E5B0
 	.pdata      start:0x8220E5B8 end:0x8220E618
 	.pdata      start:0x8220E618 end:0x8220E630
+	.pdata      start:0x8220E670 end:0x8220E678
 	.text       start:0x8245CC00 end:0x8245CC78
 	.text       start:0x8245CCE0 end:0x8245D360
 	.text       start:0x8245D360 end:0x8245D4C0
+	.text       start:0x8245D8D8 end:0x8245DB6C
 
 Line.cpp:
 	.pdata      start:0x8220FD28 end:0x8220FD30
@@ -5217,7 +5223,8 @@ Sfx.cpp:
 
 PropSync.cpp:
 	.pdata      start:0x82213EB8 end:0x82213ED8
-	.pdata      start:0x82213EF0 end:0x82213F28
+	.pdata      start:0x82213EF0 end:0x82213F00
+	.pdata      start:0x82213F08 end:0x82213F28
 	.pdata      start:0x82213F40 end:0x822140C0
 	.pdata      start:0x82214280 end:0x82214290
 	.pdata      start:0x82214298 end:0x822142B0
@@ -5226,7 +5233,8 @@ PropSync.cpp:
 	.pdata      start:0x8223D238 end:0x8223D2A0
 	.pdata      start:0x8223D2A0 end:0x8223D380
 	.text       start:0x824CA2E0 end:0x824CA4B8
-	.text       start:0x824CA6B8 end:0x824CAA90
+	.text       start:0x824CA6B8 end:0x824CA808
+	.text       start:0x824CA9F0 end:0x824CAA90
 	.text       start:0x824CAC58 end:0x824CBFE0
 	.text       start:0x824CDA98 end:0x824CDB80
 	.text       start:0x824CDBEC end:0x824CDBF0
@@ -5842,7 +5850,8 @@ HamSupereasyData.cpp:
 	.text       start:0x82670B0C end:0x82670B8C
 
 TransAnim.cpp:
-	.pdata      start:0x8220E658 end:0x8220E6E0
+	.pdata      start:0x8220E658 end:0x8220E670
+	.pdata      start:0x8220E678 end:0x8220E6E0
 	.pdata      start:0x8220E6E8 end:0x8220E718
 	.pdata      start:0x8220E718 end:0x8220E720
 	.pdata      start:0x8220E728 end:0x8220E760
@@ -5860,7 +5869,8 @@ TransAnim.cpp:
 	.pdata      start:0x8220E870 end:0x8220E998
 	.pdata      start:0x82230C68 end:0x82230C70
 	.pdata      start:0x82232B68 end:0x82232B70
-	.text       start:0x8245D868 end:0x8245DF70
+	.text       start:0x8245D868 end:0x8245D8D8
+	.text       start:0x8245DB6C end:0x8245DF70
 	.text       start:0x8245DFE8 end:0x8245E1F8
 	.text       start:0x8245E1F8 end:0x8245E2A8
 	.text       start:0x8245E358 end:0x8245E92C
@@ -10715,6 +10725,7 @@ EventAnim.cpp:
 	.pdata      start:0x82213E58 end:0x82213E68
 	.pdata      start:0x82213E68 end:0x82213EA0
 	.pdata      start:0x82213ED8 end:0x82213EF0
+	.pdata      start:0x82213F00 end:0x82213F08
 	.pdata      start:0x82213F28 end:0x82213F40
 	.pdata      start:0x82214290 end:0x82214298
 	.text       start:0x824C8D00 end:0x824C8E98
@@ -10733,6 +10744,7 @@ EventAnim.cpp:
 	.text       start:0x824C9D60 end:0x824C9ED8
 	.text       start:0x824C9ED8 end:0x824CA1F0
 	.text       start:0x824CA4B8 end:0x824CA6B8
+	.text       start:0x824CA808 end:0x824CA9F0
 	.text       start:0x824CAA90 end:0x824CAC58
 	.text       start:0x824CDB80 end:0x824CDBEC
 

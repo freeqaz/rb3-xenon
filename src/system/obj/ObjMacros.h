@@ -445,7 +445,10 @@ const char *PathName(const class Hmx::Object *obj);
 
 #endif // RB3_SYNCPROP_LOCAL_STATIC
 
-#define SYNC_PROP_BITFIELD(symbol, mask_member, line_num)                                \
+// Body of the bitfield property arm, parameterized on the Symbol to compare against so
+// that both the gated (function-local static) and ungated (centralized global) spellings
+// below can share it.  See the RB3_SYNCPROP_LOCAL_STATIC block above for the rationale.
+#define _OM_SYNC_PROP_BITFIELD(symbol, mask_member, line_num)                            \
     if (sym == symbol) {                                                                 \
         _i++;                                                                            \
         if (_i < _prop->Size()) {                                                        \
@@ -490,6 +493,38 @@ const char *PathName(const class Hmx::Object *obj);
             return PropSync(mask_member, _val, _prop, _i, _op);                          \
     }
 
+#ifdef RB3_SYNCPROP_LOCAL_STATIC
+
+// SYNC_PROP_BITFIELD belongs to the same family as SYNC_PROP / _SET / _MODIFY / _MODIFY_ALT
+// and must follow them into the gate: a gated TU that kept the global spelling here would
+// emit no guard word / no Symbol ctor for that one property and so break the guard-BIT
+// SEQUENCE (MSVC packs one bit per function-local static, in source order) for every
+// property declared after it.
+#define SYNC_PROP_BITFIELD(symbol, mask_member, line_num)                                \
+    {                                                                                    \
+        static Symbol _ps(#symbol);                                                      \
+        _OM_SYNC_PROP_BITFIELD(_ps, mask_member, line_num)                               \
+    }
+
+// Under the gate the plain macros ALREADY build their own function-local static from the
+// stringized property name, so the *_STATIC wrappers must not wrap a second time:
+// `{ _NEW_STATIC_SYMBOL(symbol) SYNC_PROP(_s, member) }` would expand to
+// `static Symbol _ps("_s")` and compare `sym` against the literal Symbol "_s" -- silently
+// wrong for every property.  Collapse them to the plain (already-local-static) forms.
+#define SYNC_PROP_STATIC(symbol, member) SYNC_PROP(symbol, member)
+
+#define SYNC_PROP_SET_STATIC(symbol, member, func) SYNC_PROP_SET(symbol, member, func)
+
+#define SYNC_PROP_MODIFY_STATIC(symbol, member, func) SYNC_PROP_MODIFY(symbol, member, func)
+
+#define SYNC_PROP_BITFIELD_STATIC(symbol, mask_member, line_num)                         \
+    SYNC_PROP_BITFIELD(symbol, mask_member, line_num)
+
+#else
+
+#define SYNC_PROP_BITFIELD(symbol, mask_member, line_num)                                \
+    _OM_SYNC_PROP_BITFIELD(symbol, mask_member, line_num)
+
 #define SYNC_PROP_STATIC(symbol, member)                                                 \
     { _NEW_STATIC_SYMBOL(symbol) SYNC_PROP(_s, member) }
 
@@ -501,6 +536,8 @@ const char *PathName(const class Hmx::Object *obj);
 
 #define SYNC_PROP_BITFIELD_STATIC(symbol, mask_member, line_num)                         \
     { _NEW_STATIC_SYMBOL(symbol) SYNC_PROP_BITFIELD(_s, mask_member, line_num) }
+
+#endif // RB3_SYNCPROP_LOCAL_STATIC
 
 #define SYNC_SUPERCLASS(parent)                                                          \
     if (parent::SyncProperty(_val, _prop, _i, _op))                                      \
