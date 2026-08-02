@@ -109,6 +109,25 @@ def function_bodies(path: Path):
 
     /Gy is on, so each function is its own code section; we take every code
     section that has exactly one external/static function symbol at offset 0.
+
+    ⚠⚠ THIS SILENTLY UNDERCOUNTS -- DO NOT USE AS A SUPPLY-SYMBOL ENUMERATOR.
+    The `value == 0` requirement below drops every EH-BEARING function. MSVC
+    emits an 8-byte EH prefix at the START of the COMDAT, so the function symbol
+    sits at **value 8**, `defs` comes back empty, and the section is skipped with
+    no warning. Measured on BandPatchMesh.obj (lane DB-4c, 2026-08-02): **26 of
+    433 code sections dropped**, and the dropped set includes real targets of
+    interest -- DA-2's own specimens `PropSync<RndMesh>` and
+    `PatchPair::PatchPair` among them.
+
+    Same root cause as the pin-boundary straddle sized in
+    tools/eh_prefix_straddle_census.py: the prefix precedes the entry, so any
+    "the function starts here" assumption is wrong for EH functions.
+
+    For enumeration use a next-function-symbol extent model instead (lane DB-4c
+    built one at /home/free/tmp/laneDB4c/sizer.py). The `value == 0` filter is
+    left AS IS deliberately: this helper has other consumers and changing its
+    population silently would be the exact defect class it just caused. Fixing
+    it needs its own lane with a consumer audit.
     """
     data = path.read_bytes()
     sections, symbols = parse_coff(data)

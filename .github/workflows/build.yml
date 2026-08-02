@@ -55,6 +55,23 @@ jobs:
     - name: Reloc symbol-index guard
       run: python3 tools/reloc_symidx_guard.py -v
 
+    # Guard: config/<version>/symbols.txt is BOTH an input to dtk's SPLIT and an
+    # output of it, so "correct" means FIXED POINT.  When the committed file is
+    # off jeff's fixpoint, dtk carves function boundaries it would immediately
+    # revise -- an over-fragmented row can never equal the retail function, so
+    # its bytes never enter matched_code.  Re-carving to the fixpoint was worth
+    # +2 matched / +292 B at a08f0fd2, and that was the SECOND time (954c01f8).
+    # It recurs because splits.txt span extensions and target_symbol_map.json
+    # row removals both feed jeff's merge derivation.
+    #
+    # The guard FORCES its own re-split (~10s) rather than trusting that the
+    # Build step split: a plain `git diff --quiet` CANNOT FAIL when SPLIT did not
+    # run, which is how lane DA-1's first check passed vacuously.  It fails
+    # loudly if the SPLIT edge is absent.  Prove it can fail:
+    #   python3 tools/symbols_fixpoint_guard.py --self-break
+    - name: symbols.txt fixpoint guard
+      run: python3 tools/symbols_fixpoint_guard.py -v --ci --version ${{ matrix.version }}
+
     # # Upload map files
     # - name: Upload map
     #   uses: actions/upload-artifact@v4
