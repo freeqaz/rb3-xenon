@@ -1,3 +1,25 @@
+// Retail INLINES the ObjPtr<UILabel> owner-only ctor at ??0UIListLabel@@'s
+// `mLabel(this)` member-init: 0x8281F7D0 has no `bl ??0?$ObjPtr@VUILabel@@`,
+// just the three stores (mOwner 0x74, mObject 0x78 = 0, vtable 0x70).  The _EH
+// variant is the right one of the family here because retail's `stw &mLabel,
+// 0x50(r31)` $T store is LIVE -- i.e. the EH cleanup region for the
+// partially-constructed base survives, which is exactly what that define
+// preserves.  Measured on this TU (lane CU-3), unit default/UIListLabel:
+//     (none)                            22/24  code 2428  ctor 69.62%
+//     RB3_OBJPTR_INLINE_OWNER_CTOR_EH   23/24  code 2468  ctor 87.81%   <== this
+//     RB3_OBJPTR_INLINE_OWNER_CTOR      22/24  code 2428  ctor 58.23%
+//     RB3_TU_OBJPTR_FORCEINLINE_CTOR    23/24  code 2468  ctor 87.81%
+// The +1 is the EH funclet fn_8281F860 (40 B, 99.90% -> 100%), not the ctor.
+// The ctor's residual 87.81% is size-exact (104 B both sides, every instruction
+// present) and is purely a scheduler tie-break: retail emits $T, vptr, lis,
+// li 0, mOwner, addi, mObject, ObjPtr-vptr; we hoist the `li 0` and sink the
+// lis/addi pair.  That is VERBATIM the residual obj/Object.h already documents
+// for this define ("we emit mObject/mOwner then lis+addi; retail emits mOwner,
+// lis, mObject, addi -- NOT source-steerable"), so it was not re-litigated:
+// combining the define with RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT and with
+// RB3_OBJPTR_INLINE_OWNER_CTOR was tried and both fall back to 58.23%, because
+// RB3_OBJPTR_INLINE_OWNER_CTOR wins the #ifdef chain.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH
 #include "ui/UIListLabel.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
@@ -112,31 +134,38 @@ UIListSlotElement *UIListLabel::CreateElement(UIList *uilist) {
 
 UIListLabelElement::~UIListLabelElement() { delete mLabel; }
 
+// RB3-360 retail implements rb3-Wii's RB3-era algorithm, NOT DC3's newer one.
+// Our previous body was a verbatim copy of DC3's multi-style version
+// (BoundsLeft/BoundsTop + _alloca over NumStyles()/Style(i)); retail instead
+// walks the label's meshes.  This is not an oracle preference -- it is what the
+// retail bytes at 0x8281FED8 call: ?CalcBox@@YAXPAVRndMesh@@AAVBox@@@Z,
+// ?GrowToContain@Box@@QAAXABVVector3@@_N@Z, ?TextObj@UILabel@@, and
+// ?SetColorOverride@UILabel@@, with NO BoundsLeft and NO NumStyles anywhere in
+// the 428-byte body.  Single-alpha (mAlpha 0x1bc / mAltAlpha 0x1f4, both
+// compiler-verified) rather than DC3's per-style alpha array.
 void UIListLabelElement::Draw(const Transform &tf, float f, UIColor *col, Box *box) {
-    auto& label = mLabel;
-    label->SetWorldXfm(tf);
-    RndText *text = label->TextObj();
+    mLabel->SetWorldXfm(tf);
     if (box) {
-        Vector3 minPt(text->BoundsLeft(), 0.0f, text->BoundsTop());
-        Box localbox = *box;
-        Vector3 maxPt(text->BoundsLeft() + text->BoundsRight(), 0.0f, text->BoundsTop() + text->BoundsBottom());
-        localbox.GrowToContain(minPt, false);
-        localbox.GrowToContain(maxPt, false);
+        Box localbox(box->mMin, box->mMax);
+        std::vector<RndMesh *> vec;
+        mLabel->TextObj()->GetMeshes(vec);
+        for (int i = 0; i < vec.size(); i++) {
+            Box vecbox;
+            CalcBox(vec[i], vecbox);
+            localbox.GrowToContain(vecbox.mMin, false);
+            localbox.GrowToContain(vecbox.mMax, false);
+        }
         box->GrowToContain(localbox.mMin, false);
         box->GrowToContain(localbox.mMax, false);
     } else {
-        float *savedAlphas = (float *)_alloca(text->NumStyles() * sizeof(float));
-        for (unsigned int i = 0; i < text->NumStyles(); i++) {
-            savedAlphas[i] = label->Style(i).GetAlpha();
-        }
-        label->LStyle(0).mColorOverride = col;
-        for (unsigned int i = 0; i < text->NumStyles(); i++) {
-            label->Style(i).SetAlpha(f * savedAlphas[i]);
-        }
-        label->DrawShowing();
-        for (unsigned int i = 0; i < text->NumStyles(); i++) {
-            label->Style(i).SetAlpha(savedAlphas[i]);
-        }
+        float oldalpha = mLabel->Alpha();
+        float oldaltalpha = mLabel->AltAlpha();
+        mLabel->SetColorOverride(col);
+        mLabel->SetAlpha(f * oldalpha);
+        mLabel->SetAltAlpha(f * oldaltalpha);
+        mLabel->DrawShowing();
+        mLabel->SetAlpha(oldalpha);
+        mLabel->SetAltAlpha(oldaltalpha);
     }
 }
 
