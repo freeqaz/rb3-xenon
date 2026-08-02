@@ -204,7 +204,7 @@ BEGIN_PROPSYNCS(RndFont)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndFont)
-    SAVE_REVS(0x11, 2)
+    SAVE_REVS(0x11, 0)
     SAVE_SUPERCLASS(RndFontBase)
     bs << mMats;
     bs << mCellSize << mDeprecatedSize;
