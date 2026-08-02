@@ -926,7 +926,19 @@ void DirLoader::CreateObjects() {
             *mStream >> b8;
         }
         if (!Hmx::Object::RegisteredFactory(classSym)) {
+#ifdef HX_NATIVE
+            // X4c: this format string is BYTE-IDENTICAL to the one in
+            // world/Instance.cpp:232, so a factory-miss log cannot be attributed
+            // to a path after the fact -- which is why X4a's 684/14 breakdown
+            // could not say whether the venue blocker is recoverable. The two
+            // paths have OPPOSITE recovery semantics: this one falls through to
+            // ReadDead(*mStream) below (guarded by mRev > 1), so the stream
+            // re-syncs; LoadPersistentObjects has no marker and desyncs. Tagging
+            // them apart is the whole measurement.
+            MILO_NOTIFY("[toplevel] %s: Can't make %s", mFile.c_str(), classSym);
+#else
             MILO_NOTIFY("%s: Can't make %s", mFile.c_str(), classSym);
+#endif
             goto release_obj;
         } else {
             MemPoint begin(MemPoint::kInitType0);
