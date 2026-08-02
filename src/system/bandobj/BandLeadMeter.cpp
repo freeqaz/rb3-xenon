@@ -76,7 +76,7 @@ BEGIN_HANDLERS(BandLeadMeter)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(BandLeadMeter)
-    SYNC_PROP_MODIFY(score_diff, mScoreDiff, SyncScores())
+    SYNC_PROP_MODIFY_ALT(score_diff, mScoreDiff, SyncScores())
     SYNC_PROP(needle_anim, mNeedleAnim)
     SYNC_PROP(logo_glow_anim, mLogoGlowAnim)
     SYNC_PROP(glow_mesh_1, mGlowMesh1)

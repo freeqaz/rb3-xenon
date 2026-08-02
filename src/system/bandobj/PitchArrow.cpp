@@ -295,7 +295,7 @@ BEGIN_PROPSYNCS(PitchArrow)
     SYNC_PROP(spin_rest_frame, mSpinRestFrame)
     SYNC_PROP(spin_begin_frame, mSpinBeginFrame)
     SYNC_PROP(spin_end_frame, mSpinEndFrame)
-    SYNC_PROP_MODIFY(arrow_style, mArrowStyle, SetArrowStyle(mArrowStyle))
+    SYNC_PROP_MODIFY_ALT(arrow_style, mArrowStyle, SetArrowStyle(mArrowStyle))
     SYNC_SUPERCLASS(RndDir)
 END_PROPSYNCS
 

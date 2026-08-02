@@ -110,9 +110,27 @@ BEGIN_PROPSYNCS(RndTransformable)
         mPreserveScale,
         SetTransConstraint(mConstraint, mTarget, _val.Int())
     )
-    SYNC_PROP_MODIFY(local_xfm, mLocalXfm, SetDirty())
-    SYNC_PROP_MODIFY(world_xfm, mWorldXfm, ComputeLocalXfm(mLocalXfm))
-    SYNC_VIRTUAL_SUPERCLASS(Hmx::Object)
+    /* Retail RB3's RndTransformable::SyncProperty (0x823F9680, 828 B) has
+     * EXACTLY FOUR prop arms -- trans_parent / trans_constraint / trans_target /
+     * preserve_scale -- and then falls straight through to `li r3,0`. Verified
+     * from retail bytes: four static-Symbol guard blocks (lbl_82CC00A4 bit 0x1,
+     * 82CC00A0 bit 0x2, 82CC009C bit 0x4, 82CC0098 bit 0x8) whose strings
+     * resolve to exactly those four names. There is no local_xfm and no
+     * world_xfm arm.
+     *
+     * DC3 has both arms here, but DC3 is NEWER than RB3 and an oracle agreeing
+     * with our source proves nothing -- retail is the arbiter. Their surplus is
+     * what inflates our frame to 0xd0 against retail's `stwu r1,-0xb0(r1)`.
+     *
+     * Retail likewise has NO superclass sync here. SYNC_VIRTUAL_SUPERCLASS
+     * (Object.h:1542) expands to
+     *     if (ClassName() == StaticClassName()) if (Hmx::Object::SyncProperty(...)) return true;
+     * which costs a virtual ClassName() dispatch + a Symbol compare + the
+     * Object::SyncProperty call -- 28 instructions retail simply does not have.
+     * It also needed two extra callee-saved regs (__savegprlr_24 vs retail's
+     * __savegprlr_26) and two Symbol temporaries, which is the REAL source of
+     * the +0x20 frame -- NOT the surplus props. END_PROPSYNCS already emits the
+     * `return false` that retail falls through to at 0x823F99B0. */
 END_PROPSYNCS
 
 BEGIN_SAVES(RndTransformable)
