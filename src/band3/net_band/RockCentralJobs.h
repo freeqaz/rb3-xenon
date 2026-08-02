@@ -26,11 +26,17 @@ public:
     virtual bool IsFinished();
     virtual DataNode Handle(DataArray *, bool);
 
-    void GetFriendsListToken();
-
     DataNode OnMsg(const PlatformMgrOpCompleteMsg &);
     DataNode OnMsg(const RockCentralOpCompleteMsg &);
 
+    // PRIVATE, not public: the retail target symbol at 0x8250c9b8 mangles as
+    // ?GetFriendsListToken@UpdateFriendsListJob@@AAAXXZ -- the leading 'A' is
+    // MSVC's "private, non-static, non-virtual" access code (public would be
+    // 'Q'). Making it public breaks target<->base name pairing in objdiff.
+private:
+    void GetFriendsListToken();
+
+public:
     int unk24;
     int unk28;
     std::vector<Friend *> mFriends; // 0x2c

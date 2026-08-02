@@ -27842,7 +27842,7 @@
  "0x82325940": "?Highlight@UIComponent@@$4PPPPPPPM@EA@AAXXZ",
  "0x82429b28": "??$__uninitialized_copy@PAVDataArrayPtr@@PAV1@@stlpmtx_std@@YAPAVDataArrayPtr@@PAV1@00ABU__false_type@0@@Z",
  "0x824f69a0": "??_Gexception@std@@UAAPAXI@Z",
- "0x8250cc00": "??_ERockCentralOpCompleteMsg@@W7AAPAXI@Z",
+ "0x8250cc00": "??_EUpdateFriendsListJob@@W7AAPAXI@Z",
  "0x823c8488": "??_GFilePath@@UAAPAXI@Z",
  "0x824d0618": "??$_M_splice_insert_dispatch@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UTarget@BandCamShot@@U?$_Nonconst_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@U?$_List_iterator@UTarget@BandCamShot@@U?$_Const_traits@UTarget@BandCamShot@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
  "0x82684f70": "?GetGemList@SongDB@@QBAPBVGameGemList@@H@Z",
@@ -28750,5 +28750,15 @@
  "0x827b2770": "??_EStorePreviewMgr@@UAAPAXI@Z",
  "0x827b3698": "??_EDeJitterPanel@@UAAPAXI@Z",
  "0x82b79530": "??_ETourBand@@UAAPAXI@Z",
- "0x82b7b0b0": "??_GQuestFilterPanel@@UAAPAXI@Z"
+ "0x82b7b0b0": "??_GQuestFilterPanel@@UAAPAXI@Z",
+ "0x8250c880": "?Start@UpdateFriendsListJob@@UAAXXZ",
+ "0x8250c8a8": "?IsFinished@UpdateFriendsListJob@@UAA_NXZ",
+ "0x8250c8c8": "??1Friend@@QAA@XZ",
+ "0x8250c938": "?OnMsg@UpdateFriendsListJob@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z",
+ "0x8250caf8": "??0UpdateFriendsListJob@@QAA@H@Z",
+ "0x8250cc08": "?OnMsg@UpdateFriendsListJob@@QAA?AVDataNode@@ABVPlatformMgrOpCompleteMsg@@@Z",
+ "0x8250ccf0": "?Handle@UpdateFriendsListJob@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x8250cee0": "??$DeleteAll@V?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+ "0x8250cf48": "??1UpdateFriendsListJob@@UAA@XZ",
+ "0x8250d080": "??_GUpdateFriendsListJob@@UAAPAXI@Z"
 }

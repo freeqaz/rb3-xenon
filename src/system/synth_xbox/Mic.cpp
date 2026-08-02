@@ -1,10 +1,14 @@
 #include "synth_xbox/Mic.h"
 #include "macros.h"
+#include "synth_xbox/ExternalMic.h"
+#include "synth_xbox/Synth.h"
+#include "utl/Std.h"
 #include "math/Decibels.h"
 #include "obj/Data.h"
 #include "obj/DataFunc.h"
 #include "os/CritSec.h"
 #include "os/Debug.h"
+#include "os/PlatformMgr.h"
 #include "os/System.h"
 #include "math/Trig.h"
 #include "math/Utl.h"
@@ -15,7 +19,7 @@
 
 extern void *_xhv_voicechat_mode;
 
-MicManagerXbox *sInstance;
+MicManagerXbox *MicManagerXbox::sInstance;
 
 namespace GainEffect {
 static float sGain;
@@ -147,6 +151,12 @@ float MicXbox::GetGain() const { return mGain; }
 
 int MicXbox::GetDroppedSamples() { return mDroppedSamples; }
 
+void MicXbox::SetGain(float gain) { mGain = Clamp(0.0f, 1.0f, gain); }
+
+Mic::Type MicXbox::GetType() const {
+    return ExternalMicClientMgr::ConnectedForClient(this) ? kMicNull : kDisconnected;
+}
+
 float MicXbox::GetOutputGain() const { return mOutputGain; }
 
 float MicXbox::GetSensitivity() const { return mSensitivity; }
@@ -205,6 +215,19 @@ void MicXbox::SetFxSend(FxSend *fx) {
     }
 }
 
+short *MicXbox::GetRecentBuf(int &iref) {
+    CritSecTracker t(&MicManagerXbox::GetInstance()->unk68);
+    unk302c.Peek(unk3054, 0xC00);
+    iref = 0x600;
+    return (short *)unk3054;
+}
+
+short *MicXbox::GetContinuousBuf(int &iref) {
+    CritSecTracker t(&MicManagerXbox::GetInstance()->unk68);
+    iref = unk3040.Read(unk3054, 0x6000) / sizeof(short);
+    return (short *)unk3054;
+}
+
 bool MicXbox::IsRunning() const { return mRunning; }
 void MicXbox::SetDMA(bool b) {}
 bool MicXbox::GetDMA() const { return false; }
@@ -215,6 +238,50 @@ bool MicXbox::GetCompressor() const { return false; }
 void MicXbox::SetCompressorParam(float f) {}
 float MicXbox::GetCompressorParam() const { return 0.0f; }
 int MicXbox::GetSampleRate() const { return 16000; }
+
+void MicXbox::Poll() {
+    if (mPlaybackVoice && mPlaybackVoice->IsPlaying()) {
+        int written = (char *)unk301c - (char *)unk1c;
+        int delta = written - mPlaybackVoice->GetAddr();
+        unk905c = ModRange(unk905c - 6144.0f, unk905c + 6144.0f, (float)delta);
+        unk9058 = unk9058 * 0.9f + unk905c * 0.1f;
+        if (unk905c > 12288.0f && unk9058 > 12288.0f) {
+            unk905c -= 12288.0f;
+            unk9058 -= 12288.0f;
+        }
+        if (unk905c < -12288.0f && unk9058 < -12288.0f) {
+            unk905c += 12288.0f;
+            unk9058 += 12288.0f;
+        }
+        float pos = ModRange(
+            (unkc ? 2700.0f : 1800.0f) - 600.0f,
+            (unkc ? 2700.0f : 1800.0f) - 600.0f + 12288.0f,
+            unk9058
+        );
+        float vol = mMute ? 0.0f : mVolume;
+        if (pos > (unkc ? 2700.0f : 1800.0f) + 600.0f) {
+            unk9054 = unk9054 > 1.0f ? 1.08f : 0.92f;
+            vol = 0.0f;
+        } else if (pos > (unkc ? 2700.0f : 1800.0f) + 150.0f) {
+            unk9054 = 1.0002f;
+        } else if (pos < (unkc ? 2700.0f : 1800.0f) - 150.0f) {
+            unk9054 = 0.9998f;
+        } else if (pos > (unkc ? 2700.0f : 1800.0f) + 300.0f) {
+            unk9054 = 1.0006f;
+        } else if (pos < (unkc ? 2700.0f : 1800.0f) - 300.0f) {
+            unk9054 = 0.9994f;
+        } else if ((unk9054 > 1.0f && pos < (unkc ? 2700.0f : 1800.0f) * 0.5f) || (unk9054 < 1.0f && pos > (unkc ? 2700.0f : 1800.0f) * 0.5f)) {
+            unk9054 = 1.0f;
+        }
+        mPlaybackVoice->SetVolume(vol);
+        mPlaybackVoice->SetSpeed(unk9054);
+    }
+    if (mChangeNotify && GetType() != unk10) {
+        MicrophonesChangedMsg msg(unk10 != 0);
+        ThePlatformMgr.Handle(msg, false);
+        unk10 = GetType();
+    }
+}
 
 void MicXbox::OnMicConnected(unsigned long ul, bool b, Symbol const &s) {
     unkc = b;
@@ -265,6 +332,68 @@ void MicManagerXbox::RequirePushToTalk(bool b, int pad) {
     } else {
         mPushToTalkPad = -1;
     }
+}
+
+void MicManagerXbox::AddMic(MicXbox *mic) {
+    FOREACH (it, unk0) {
+        if (*it == mic) {
+            return;
+        }
+    }
+    unk0.push_back(mic);
+    mic->SetChangeNotify(true);
+}
+
+void MicManagerXbox::RemoveMic(MicXbox *mic) {
+    FOREACH (it, unk0) {
+        if (*it == mic) {
+            unk0.erase(it);
+            mic->SetChangeNotify(false);
+            return;
+        }
+    }
+}
+
+void MicManagerXbox::Poll() {
+    FOREACH (it, unk0) {
+        (*it)->Poll();
+    }
+    FOREACH (it, unkc) {
+        ChatReceiver *receiver = *it;
+        int count = receiver->unk18;
+        if (count < 2) {
+            count = 0;
+        } else {
+            count--;
+        }
+        receiver->unk18 = count;
+    }
+    FOREACH (it, unk28) {
+        ChatBuffer &cb = *it;
+        if (cb.unk8[250] != 0) {
+            UINT32 count = cb.unk8[250];
+            unk1c->SubmitIncomingChatData(
+                *(UINT64 *)&cb, (unsigned char *)cb.unk8, &count
+            );
+            cb.unk8[250] -= count;
+            memcpy(cb.unk8, (char *)cb.unk8 + count, cb.unk8[250]);
+        } else if (!TheXboxSynth->mHeadsetSubmixes.empty() && *(UINT64 *)&cb == 0x00DEADBEEFFACEF0ULL) {
+            unk38.Split();
+            if (!unk38.Running() || unk38.Ms() > 2000.0f) {
+                unsigned char buf[0x14] = { 0 };
+                UINT32 count = sizeof(buf);
+                unk1c->SubmitIncomingChatData(*(UINT64 *)&cb, buf, &count);
+                unk38.Restart();
+            }
+        }
+    }
+}
+
+MicManagerXbox *MicManagerXbox::GetInstance() {
+    if (!sInstance) {
+        sInstance = new MicManagerXbox();
+    }
+    return sInstance;
 }
 
 #pragma endregion MicManagerXbox
