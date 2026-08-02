@@ -161,3 +161,31 @@ void BandPatchMesh::WorkVerts::SetMeshVerts() {
         }
     }
 }
+
+// -----------------------------------------------------------------------------------
+// MeshPair CUSTOM_PROPSYNC (lane CY-3).
+//
+// Retail fn_8234AC78 (0x8234AC78-0x8234AD88, 272 B) is THIS function, not the
+// SkeletonClip::MoveRating PropSync the target map claimed.  Retail evidence:
+// the two dispatch strings the body loads are literally "mesh" (0x820398F4) and
+// "patches" (0x8201AB64), member 1 is passed at +0x0 to
+// ??$PropSync@VRndMesh@@@@YA_N... (i.e. an ObjPtr<RndMesh>) and member 2 at
+// +0xc, which is exactly MeshPair's { ObjPtr<RndMesh> mesh; ObjVector<PatchPair>
+// patches; } layout.  The rb3-Wii oracle (src/system/bandobj/BandPatchMesh.cpp
+// :1502) has the identical two SYNC_PROPs.
+//
+// The old pairing scored 100.0 only because objdiff masks relocation arguments,
+// so MoveRating's 2-property PropSync (member 1 at +0x0, member 2 at +0xc --
+// STLport String is 12 B, so mExpected really sits at 0xc) is a byte-exact
+// SHAPE TWIN of this one; the property strings and the two callees are the only
+// differences and all four are masked relocs.
+// -----------------------------------------------------------------------------------
+BEGIN_CUSTOM_PROPSYNC(BandPatchMesh::MeshPair::PatchPair)
+    SYNC_PROP(patch, o.mPatch)
+    SYNC_PROP(tex, o.mTex)
+END_CUSTOM_PROPSYNC
+
+BEGIN_CUSTOM_PROPSYNC(BandPatchMesh::MeshPair)
+    SYNC_PROP(mesh, o.mesh)
+    SYNC_PROP(patches, o.patches)
+END_CUSTOM_PROPSYNC

@@ -43,6 +43,22 @@ BinStream &operator<<(BinStream &bs, const OnlineID &ssm) {
     return bs;
 }
 
+// sw2 scatter-include (default/OnlineID <- os/Keyboard.cpp)  [lane CY-3]
+// Retail 0x82524630/0x82524660 sit inside the OnlineID .text pin
+// [0x82524510, 0x82524A28) and are Keyboard{,Un}Subscribe, NOT the Joypad
+// pair: JoypadInitCommon stores gJoypadMsgSource to 0x82CCB2BC (read by the
+// REAL pair at 0x82524A08/0x82524A38), whereas 0x82524630/0x82524660 read
+// 0x82CCB29C, which is never stored anywhere in .text -- Keyboard.cpp's
+// gSource, never initialised on X360.  Their caller set (Rnd.cpp
+// FailRestartConsole, UIManager::Init/Terminate, CheatsInit/Terminate) is
+// exactly the oracle's three KeyboardSubscribe sites.  The two bodies are
+// masked-reloc SHAPE TWINS (both `if (g) g->AddSink(o)`), which is why the
+// old mis-assignment scored 100.0.  Without this include the corrected rows
+// have no base counterpart here and the repair costs -1 matched.
+#if !HX_NATIVE
+#include "os/Keyboard.cpp"
+#endif
+
 // sw2 scatter-include (default/OnlineID <- os/Joypad.cpp)
 #define gRev gRev_Joypad
 #define gAltRev gAltRev_Joypad

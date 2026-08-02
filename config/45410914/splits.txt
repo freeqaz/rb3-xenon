@@ -4189,7 +4189,8 @@ SkeletonClip.cpp:
 	.pdata      start:0x821FED80 end:0x821FEDA0
 	.pdata      start:0x821FEDA0 end:0x821FEDA8
 	.pdata      start:0x821FEDA8 end:0x821FEDB0
-	.pdata      start:0x821FEEC8 end:0x821FEF30
+	.pdata      start:0x821FEEC8 end:0x821FEF10
+	.pdata      start:0x821FEF18 end:0x821FEF30
 	.pdata      start:0x8220E138 end:0x8220E140
 	.pdata      start:0x8220E140 end:0x8220E150
 	.pdata      start:0x8220E150 end:0x8220E158
@@ -4207,7 +4208,8 @@ SkeletonClip.cpp:
 	.text       start:0x82348B28 end:0x82348D80
 	.text       start:0x82348D80 end:0x82348DEC
 	.text       start:0x82348DEC end:0x82348E20
-	.text       start:0x8234A148 end:0x8234AE48
+	.text       start:0x8234A148 end:0x8234AC78
+	.text       start:0x8234AD88 end:0x8234AE48
 	.text       start:0x82456260 end:0x824562B0
 	.text       start:0x824562B0 end:0x82456378
 	.text       start:0x82456378 end:0x824563D8
@@ -10479,6 +10481,7 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FED48 end:0x821FED50
 	.pdata      start:0x821FEDB8 end:0x821FEE08
 	.pdata      start:0x821FEE88 end:0x821FEEC8
+	.pdata      start:0x821FEF10 end:0x821FEF18
 	.pdata      start:0x821FEFD0 end:0x821FF000
 	.text       start:0x82345330 end:0x8234539C
 	.text       start:0x823453A0 end:0x82345520
@@ -10491,6 +10494,7 @@ BandPatchMesh.cpp:
 	.text       start:0x82348420 end:0x823484EC
 	.text       start:0x82348F9C end:0x823493D0
 	.text       start:0x82349DC0 end:0x8234A148
+	.text       start:0x8234AC78 end:0x8234AD88
 	.text       start:0x8234BCB0 end:0x8234C298
 
 SongData.cpp:
