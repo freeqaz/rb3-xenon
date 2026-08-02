@@ -1,4 +1,10 @@
 {
+ "0x823c73f8": "?SyncProperty@CharUpperTwist@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x8233a038": "?SyncProperty@BandCharDesc@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x827e02a0": "?SyncProperty@TrackDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x82351fc0": "?SyncProperty@BandTrack@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x822e8df8": "?SyncProperty@GemTrackDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x8230ae00": "?SyncProperty@OvershellDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8281fed8": "?Draw@UIListLabelElement@@UAAXABVTransform@@MPAVUIColor@@PAVBox@@@Z",
  "0x8232a618": "?SyncProperty@DialogDisplay@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8281f7d0": "??0UIListLabel@@IAA@XZ",

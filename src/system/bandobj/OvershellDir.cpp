@@ -95,6 +95,19 @@ BEGIN_PROPSYNCS(OvershellDir)
     SYNC_PROP(is_local, mIsLocal)
     SYNC_PROP(pad_num, mPadNum)
     SYNC_PROP(platform, mPlatform)
+    // NOTE (lane CU-2): slot_view is the ONE arm of this function that does not
+    // match (97.7%, 9 reordered instrs, target and base both 772 B).  Retail's
+    // layout is: func block FALLS THROUGH, `return false` sits after it as a LOCAL
+    // `li r3,0; b` (retail `beq 0x27c` == byte 636 == instr 159).  Measured, all
+    // three source spellings -- do not re-hunt:
+    //   SYNC_PROP_MODIFY (this)                     -> 97.7%, correct size
+    //   SYNC_PROP_MODIFY_ALT / `if (synced){...}`   -> 91.4%, 3 instrs SHORT
+    //   flattened `if (!PropSync(..)) return false` -> byte-identical to MODIFY
+    // The ALT polarity gets retail's fall-through right but MSVC then TAIL-MERGES
+    // the `return false`, which retail keeps local.  So the blocker is cross-jump
+    // suppression, not source order -- a codegen-layout wall, not a macro choice.
+    // (in_track_mode below already matches as plain MODIFY; do not change it --
+    //  measured 96.8% as _ALT.)
     SYNC_PROP_MODIFY(slot_view, mSlotView, ViewChanged())
     SYNC_PROP_MODIFY(in_track_mode, mInTrackMode, ViewChanged())
     SYNC_SUPERCLASS(PanelDir)
