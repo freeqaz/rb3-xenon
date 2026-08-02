@@ -1,4 +1,6 @@
 {
+ "0x82472ec0": "?Save@RndFont@@UAAXAAVBinStream@@@Z",
+ "0x825d5458": "?InitData@ViewSetting@@UAAXPAVRndDir@@@Z",
  "0x823c35d8": "?PropSync@@YA_NAAVConstraint@HamIKEffector@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x823213a0": "?SyncProperty@CheckboxDisplay@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82689680": "?SyncProperty@GameConfig@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",

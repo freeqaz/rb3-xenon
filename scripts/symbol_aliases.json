@@ -1869,15 +1869,6 @@
       "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
     },
     {
-      "name": "1?$ObjRefConcrete",
-      "address": "0x82472a40",
-      "survivor": "??1?$ObjRefConcrete@VRndFont@@VObjectDir@@@@UAA@XZ",
-      "folded": [
-        "??1?$ObjOwnerPtr@VRndFont@@@@UAA@XZ"
-      ],
-      "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
-    },
-    {
       "name": "_GFxSendWah360",
       "address": "0x82b64670",
       "survivor": "??_GFxSendWah360@@UAAPAXI@Z",
