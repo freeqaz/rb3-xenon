@@ -1044,6 +1044,54 @@ file(GLOB ENGINE_WORLD  CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/world/*.cpp)
 file(GLOB ENGINE_UI     CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/ui/*.cpp)
 set(MILO_FORK_SOURCES ${ENGINE_RNDOBJ} ${ENGINE_CHAR} ${ENGINE_WORLD} ${ENGINE_UI})
 
+# ---- X4b STEP-0: the classes every RB3 venue root needs -------------------
+# X4a measured 684 factory misses over 14 classes on a venue root and called
+# them "band3", concluding that a venue needs a compiled src/band3/. THAT
+# ATTRIBUTION IS WRONG, and the correction is most of the cost:
+#
+#   NONE of the 14 is in src/band3/. 5 are src/system/bandobj/, 7 are
+#   src/system/synth/, 1 is src/system/world/ and 1 is src/system/ui/ --
+#   and the last two (WorldCrowd in world/Crowd.cpp, UIColor in ui/UIColor.cpp)
+#   are ALREADY COMPILED here via ENGINE_WORLD/ENGINE_UI. They were missing
+#   only a line in the hand-rolled factory list, not any code at all.
+#
+# Measured with -fsyntax-only under this target's exact flags: 12 of the 13
+# defining TUs compile with ZERO errors. The single exception is
+# bandobj/BandCharacter.cpp (18 errors ~ 4 root defects, all stale
+# rb3-Wii-lineage code inside its own HX_NATIVE arms -- protected-member
+# access on mDraws/mLods/mStoredFile, a reference to RndMesh::
+# mNativeBonesRebound that xenon's RndMesh does not have, Refs() used as a
+# std::vector<ObjRef*>, and a MergeFilter::Action/SubdirAction mixup).
+# Counting TUs would have said "1 of 14 blocked"; counting DEFECTS says four,
+# in one file -- the same lesson X2 recorded when 13 rndobj failures turned
+# out to be 6 root causes.
+#
+# ⛔ SO WHY ARE THEY STILL NOT COMPILED HERE? A DIFFERENT BLOCKER, AND IT IS
+# THE BUILD SYSTEM, NOT THE CODE. X4b ATTEMPTED the wiring and backed it out.
+# Adding the 10 clean TUs above to MILO_FORK_SOURCES produces **807 duplicate
+# definition errors at link**, from exactly three colliding emitters:
+#
+#     EventTrigger.cpp  313    Font.cpp  244    CharIKScale.cpp  162
+#
+# None is a code defect. cmake/ScatterIncludes.cmake drops an `#include "*.cpp"`
+# includee only when that includee is ITSELF a target source. Here two DIFFERENT
+# target sources scatter-include the same NON-source file --
+#     bandobj/BandCamShot.cpp -> math/Geo.cpp   <- char/CharIKScale.cpp
+#     bandobj/BandCamShot.cpp -> flow/*.cpp     <- rndobj/EventTrigger.cpp
+#     bandobj/BandLabel.cpp   -> char/CharClip.cpp, bandobj/BandDirector.cpp
+#                                                  <- rndobj/Font.cpp
+# -- so the module has no reason to drop either copy and both get emitted.
+#
+# The fix is a dedupe pass in ScatterIncludes.cmake: compute the transitive
+# includee set per target and assign each includee to exactly ONE emitter. That
+# is a change to a module all 18 targets share, so it needs its own lane with an
+# A/B on every target -- the same reason X2 declined to make that module
+# transitive and listed _MILO_SCATTER_TRANSITIVE_PRUNE by hand instead.
+#
+# ⇒ Corrected cost of "a venue root loads": ONE build-system change (scatter
+# dedupe) + FOUR source defects in bandobj/BandCharacter.cpp. NOT "compile
+# src/band3/", which is 260 TUs this does not need at all.
+
 # Same platform/GFX filters the engine globs use. rndobj/ has no *_Xbox.cpp, but
 # keep the filters symmetric so a future one is dropped automatically. NOTE the
 # *_NG.cpp files (Rnd_NG, Env_NG, Lit_NG, Mat_NG, Fur_NG, PostProc_NG,

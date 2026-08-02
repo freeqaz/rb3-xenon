@@ -151,6 +151,7 @@
 #include "char/Waypoint.h"
 #include "world/CameraShot.h"
 #include "world/ColorPalette.h"
+#include "world/Crowd.h"
 #include "world/Crowd3DCharHandle.h"
 #include "world/Dir.h"
 #include "world/EventAnim.h"
@@ -164,6 +165,7 @@
 #include "world/SpotlightDrawer.h"
 #include "world/SpotlightDrawer_NG.h"
 #include "world/SpotlightEnder.h"
+#include "ui/UIColor.h"
 
 void RegisterMiloObjectFactories() {
     // The two roots. ObjectDir is what a milo whose dir class has no factory
@@ -301,4 +303,26 @@ void RegisterMiloObjectFactories() {
     REGISTER_OBJ_FACTORY(NgSpotlightDrawer)
     REGISTER_OBJ_FACTORY(SpotlightEnder)
 
+    // ★ X4b: two classes whose TUs were ALREADY COMPILED here and which were
+    // missing nothing but a line in this list.
+    //
+    // X4a measured 684 object-factory misses over 14 classes on an RB3 venue
+    // root and attributed them to "band3", concluding a venue needs a compiled
+    // src/band3/. NONE of the 14 is in src/band3/. These two are in
+    // src/system/world/ and src/system/ui/, both of which this target globs in
+    // full (ENGINE_WORLD / ENGINE_UI) -- so world/Crowd.cpp and ui/UIColor.cpp
+    // were compiled and linked into every rb3-milo and rb3-render binary the
+    // whole time, and DirLoader still reported "Can't make WorldCrowd" because
+    // nothing had registered them.
+    //
+    // WorldCrowd is the tell: WorldCrowd3DCharHandle above it comes from a
+    // sibling header and WAS registered, while WorldCrowd -- defined in
+    // world/Crowd.cpp, registered on X360 by world/World.cpp:24 -- was not.
+    // A hand-rolled list drifts silently from the module Init() it replaces;
+    // that is its one real cost, and this is an instance of it.
+    //
+    // Retires 8 of the 684 misses (WorldCrowd 6, UIColor 2). The other 676 need
+    // real build work -- see the STEP-0 note in native/CMakeLists.txt.
+    REGISTER_OBJ_FACTORY(WorldCrowd)
+    REGISTER_OBJ_FACTORY(UIColor)
 }
