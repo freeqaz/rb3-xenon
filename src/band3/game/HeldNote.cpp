@@ -39,7 +39,10 @@ unsigned int HeldNote::GetGemSlots() const { return !mGem ? 0 : mGem->GetSlots()
 // an early `beqlr`.  BOOL_MASK / permuter-class; the `bool done = true; if (!=)
 // done = false;` restructuring compiles byte-identical to this ternary, so the
 // source form is not the lever.  Deferred (permuter banned for lane CZ-1).
-bool HeldNote::IsDone() const { return unk_0xc == unk_0x10 ? true : false; }
+bool HeldNote::IsDone() const {
+    bool done = unk_0xc == unk_0x10;
+    return done;
+}
 
 bool HeldNote::HeldCompletely() const { return IsDone() && unk_0x20; }
 
