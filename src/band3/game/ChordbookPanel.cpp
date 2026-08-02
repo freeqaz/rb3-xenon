@@ -359,6 +359,7 @@ void ChordbookPanel::CreateController() {
 #pragma pool_data off
 void ChordbookPanel::DisplayChord(unsigned int idx) {
     MILO_ASSERT(idx < mNumChords, 0x381);
+    static Message reset_msg("reset");
     mDir->HandleType(reset_msg);
     mChordWid->Clear();
     mFretWid->Clear();
@@ -397,6 +398,8 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
             BandLabel *label = mDir->Find<BandLabel>(
                 MakeString("step_%02d_text.lbl", mNumSteps + 1), true
             );
+            static Symbol rg_chordbook_step_finger("rg_chordbook_step_finger");
+            static Symbol rg_chordbook_step_barre("rg_chordbook_step_barre");
             static Message set_step_text("set_step_text", 0, 0, 0, 0, 0);
             set_step_text[0] = label;
             if (lowstr == highstr) {
@@ -422,8 +425,10 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
     mStep[oldStepNum].unk5 = 1;
     BandLabel *label =
         mDir->Find<BandLabel>(MakeString("step_%02d_text.lbl", mNumSteps), true);
+    static Symbol rg_chordbook_step_strum("rg_chordbook_step_strum");
     label->SetTextToken(rg_chordbook_step_strum);
     label = mDir->Find<BandLabel>(MakeString("step_%02d.lbl", mNumSteps), true);
+    static Symbol rg_chordbook_strum("rg_chordbook_strum");
     label->SetTextToken(rg_chordbook_strum);
 
     GameGem &gem = mGameGemList->GetGem(mChords[idx].gemId);
@@ -438,6 +443,7 @@ void ChordbookPanel::DisplayChord(unsigned int idx) {
     for (int i = 0; i < mNumSteps; i++) {
         mStep[i].unk4 &= mInUse;
     }
+    static Message reset_chord_msg("reset_chord");
     mChordLegend->HandleType(reset_chord_msg);
     mDir->Find<RndPropAnim>("num_steps.anim", true)->SetFrame(mNumSteps, 1);
     int string = -1;

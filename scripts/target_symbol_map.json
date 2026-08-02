@@ -25599,7 +25599,7 @@
  "0x8253eb00": "?TryToSetHighlight@MusicLibrary@@QAAXVSymbol@@W4SongNodeType@@_N@Z",
  "0x82540bf0": "?BuildPartySetlist@MusicLibrary@@QAAXXZ",
  "0x8253e9f8": "?SetHighlightIx@MusicLibrary@@QAAXH_N@Z",
- "0x8253cd90": "?Custom@MusicLibrary@@UBAXHHPAVUIListCustom@@PAVObject@Hmx@@@Z",
+ "0x8253c330": "?Custom@MusicLibrary@@UBAXHHPAVUIListCustom@@PAVObject@Hmx@@@Z",
  "0x82540498": "?Reset@MusicLibraryTask@MusicLibrary@@QAAXXZ",
  "0x8253f330": "?DeleteHighlightedSetlist@MusicLibrary@@QAAXXZ",
  "0x8253b440": "?Mat@MusicLibrary@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z",

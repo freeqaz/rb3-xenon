@@ -39,6 +39,10 @@ public:
     void SetStorePreview(int); // retail 0x825A4288 — sets the store-song preview by song id
     bool IsDownloading(int); // retail 0x825BCBD0
     void LoadStoreArt(int, class Hmx::Object *); // retail 0x825BCC10
+    /** Called from retail MusicLibrary::OnEnter as `if (unk1a0)
+        unk19c->Unk825BCA38();`. Takes no argument (only r3 is set up). Semantics
+        unknown — named after its retail address rather than guessed at. */
+    void Unk825BCA38(); // retail 0x825BCA38
     char unk4[0x24]; // 0x4
     int mState; // 0x28 (2 = done, 4 = failed)
     char unk2c[0x1c]; // 0x2c

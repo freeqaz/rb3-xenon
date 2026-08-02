@@ -176,29 +176,59 @@ MusicLibrary::~MusicLibrary() {
 void MusicLibrary::OnLoad() {}
 
 void MusicLibrary::OnEnter() {
+#ifdef HX_NATIVE
+    /* Retail Xbox 360 OnEnter has NO SetHomeMenuEnabled call: enumerating all 62
+       `bl` targets in retail fn_82542238 (0x82542238, 1792 B) and mapping them
+       through target_symbol_map.json finds no
+       ?SetHomeMenuEnabled@PlatformMgr@@QAAX_N@Z — while the same enumeration DOES
+       find AddSink/SigninChangedMsg, so the search is not vacuous. The HOME menu
+       is a Wii-only concern; keep the call for the native host only. */
     ThePlatformMgr.SetHomeMenuEnabled(false);
+#endif
     unk40 = true;
     UIPanel *panel = ObjectDir::Main()->Find<UIPanel>("song_select_panel", true);
     mSongPreviewDelay = panel->TypeDef()->FindFloat("song_preview_delay");
+    /* Retail builds these six Symbols as FUNCTION-LOCAL statics, not as the
+       Symbols2.h file-scope globals the Wii dev branch uses. Proof: retail keeps
+       ONE guard word at 0x82DFD5AC and tests/sets bits 0x01,0x02,0x04,0x08,0x10,
+       0x20 around six ??0Symbol@@QAA@PBD@Z calls — the MSVC local-static guard
+       shape. Declaration order below is that bit order; each Symbol's identity was
+       cross-checked by reading its ctor string argument out of retail .rdata
+       (0x8208F7F0="qp_party_shuffle", 0x8208E630="qp_coop", 0x82091034=
+       "qp_practice", 0x8209102C="trainer", 0x82090FF8="custom_music_library_tasks",
+       0x8203AB78="practice"). Placement matters: MSVC emits the guarded init at
+       the point of declaration, so custom_music_library_tasks must stay INSIDE
+       the WentBack block. */
+    static Symbol qp_party_shuffle("qp_party_shuffle");
+    static Symbol qp_coop("qp_coop");
     if (TheGameMode->InMode(qp_party_shuffle)) {
         ClearSetlist();
         TheGameMode->SetMode(qp_coop);
     }
+    static Symbol qp_practice("qp_practice");
     if (TheGameMode->InMode(qp_practice)) {
         TheSessionMgr->mCritUserListener->ClearCriticalUser();
         TheGameMode->SetMode(qp_coop);
     }
+    static Symbol trainer("trainer");
     if (TheGameMode->InMode(trainer)) {
         ControllerType ty =
             (ControllerType)panel->Property("trainer_from_main_menu", true)->Int();
-        if (ty - 3 <= 1U) {
-            SetupTaskForTrainer(ty);
-        } else {
+        /* Retail: `cmpwi 4; beq out-of-line; cmpwi 3; beq out-of-line;` with the
+           ClearCriticalUser/SetMode arm laid out INLINE and SetupTaskForTrainer
+           out-of-line — i.e. SetupTaskForTrainer is the ELSE arm and the test is
+           two equality compares (4 before 3), not the `ty - 3 <= 1U` range check
+           the Wii branch used. 4/3 = kControllerRealGuitar/kControllerKeys, which
+           is also the semantically right pair (Trainer is Pro Guitar + Pro Keys). */
+        if (ty != kControllerRealGuitar && ty != kControllerKeys) {
             TheSessionMgr->mCritUserListener->ClearCriticalUser();
             TheGameMode->SetMode(qp_coop);
+        } else {
+            SetupTaskForTrainer(ty);
         }
     }
     if (!TheUI->WentBack()) {
+        static Symbol custom_music_library_tasks("custom_music_library_tasks");
         if (!TheGameMode->Property(custom_music_library_tasks, true)->Int()) {
             mTask.Reset();
             mTask.SetSongFilter(mFilter);
@@ -210,6 +240,7 @@ void MusicLibrary::OnEnter() {
         }
         unkec = false;
     }
+    static Symbol practice("practice");
     if (TheGameMode->InMode(practice)) {
         mTask.setlistMode = kSetlistForbidden;
     }
@@ -228,6 +259,14 @@ void MusicLibrary::OnEnter() {
     TheSongSortMgr->BuildSortTree(unkdc);
     TheSongSortMgr->BuildSortList(unkdc);
     TryToSetHighlight(unkd4, unkd8, true);
+    /* Retail-only, immediately after TryToSetHighlight and before the 0x180 store:
+         lbz r11, 0x1a0(this); cmplwi r11, 0; beq +; lwz r3, 0x19c(this);
+         bl fn_825BCA38
+       i.e. `if (unk1a0) unk19c->Unk825BCA38();`. Absent from the Wii dev branch,
+       which is why the 0x19c/0x1a0 tail fields were declared but never used here. */
+    if (unk1a0) {
+        unk19c->Unk825BCA38();
+    }
     unk15c = false;
     if (SongSortMgr::IsSetlistSort(unkdc)) {
         RefreshNetSetlists();
@@ -247,12 +286,17 @@ void MusicLibrary::OnEnter() {
     TheProfileMgr.AddSink(this, PrimaryProfileChangedMsg::Type());
     TheProfileMgr.AddSink(this, ProfileChangedMsg::Type());
     ThePlatformMgr.AddSink(this, SigninChangedMsg::Type());
+    /* Retail's sink list is exactly this one MINUS FriendsListChangedMsg and
+       UserLoginMsg. Verified by enumerating all 62 `bl` targets of retail
+       fn_82542238: the ten Type()/AddSink pairs present are Primary­ProfileChanged,
+       ProfileChanged, SigninChanged, LocalUserLeft, RemoteUserLeft,
+       AddLocalUserResult, NewRemoteUser, ServerStatusChanged,
+       RemoteMachineUpdated, RemoteMachineLeft — in that order, matching ours once
+       the two below are removed. Both are Wii-only: the Wii friends list, and
+       TheServer = gWiiServer (also a zeroed weak stub on the native link, which is
+       why UserLoginMsg was already excluded from native and now belongs nowhere). */
+#ifdef HX_NATIVE
     ThePlatformMgr.AddSink(this, FriendsListChangedMsg::Type());
-#ifndef HX_NATIVE
-    // TheServer (= gWiiServer, the Wii online/login server) is a zeroed weak stub
-    // on the native link (band3_link_stubs.s) — AddSink would walk a garbage
-    // mSinks list and crash. No login server offline. (Same gate as MainHubPanel.)
-    TheServer.AddSink(this, UserLoginMsg::Type());
 #endif
     TheSessionMgr->AddSink(this, LocalUserLeftMsg::Type());
     TheSessionMgr->AddSink(this, RemoteUserLeftMsg::Type());
@@ -1347,6 +1391,7 @@ void MusicLibrary::Custom(int, int idx, UIListCustom *slot, Hmx::Object *obj) co
         int numStars = sort->GetTotalStars(true);
         if (numStars > 0 && ossn) {
             if (!ossn->GetSongRecord()->IsDemo()) {
+                static Symbol force_mixed_mode("force_mixed_mode");
                 sdisp->SetValues(numStars, 5);
                 sdisp->SetProperty(force_mixed_mode, 0);
                 sdisp->SetShowing(true);
@@ -1361,6 +1406,7 @@ void MusicLibrary::Custom(int, int idx, UIListCustom *slot, Hmx::Object *obj) co
                 || sort->GetToken()
                     != LocationCmp::SetlistHeaderTypeToSym((LocationCmp::SetlistHeaderType
                     )0)) {
+                static Symbol force_mixed_mode("force_mixed_mode");
                 sdisp->SetValues(sort->GetTotalStars(false), sort->GetPotentialStars());
                 sdisp->SetProperty(force_mixed_mode, 1);
                 sdisp->SetShowing(true);
@@ -1371,6 +1417,7 @@ void MusicLibrary::Custom(int, int idx, UIListCustom *slot, Hmx::Object *obj) co
             SetlistSortNode *ssn = dynamic_cast<SetlistSortNode *>(sort);
             MILO_ASSERT(ssn, 0x74A);
             if (!ssn->GetSetlistRecord()->GetSetlist()->IsBattle()) {
+                static Symbol force_mixed_mode("force_mixed_mode");
                 sdisp->SetValues(sort->GetTotalStars(false), sort->GetPotentialStars());
                 sdisp->SetProperty(force_mixed_mode, 1);
                 sdisp->SetShowing(true);
