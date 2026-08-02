@@ -36,7 +36,13 @@ public:
     void UpdateStream();
     int GetTestRep() const;
     void ScanHardwareModeInputs();
-    float ReshapeTime(float);
+    // Retail inlines this everywhere (no standalone .text address in the retail
+    // map), and UpdateAnimation shares ONE `1.0f / mCycleTimeMs` reciprocal
+    // between the reshape and the frame scaling -- retail keeps it live in f11
+    // across the reshape's if/else diamond and reuses it with `fmuls`. MSVC will
+    // not CSE two separately-written `1.0f / mCycleTimeMs` across that diamond,
+    // so the reciprocal is passed in explicitly.
+    float ReshapeTime(float, float);
     float HandlePreAndPostTestAnim(float);
     void UpdateProgress(bool);
     void InitializeVisuals();

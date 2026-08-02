@@ -438,7 +438,17 @@ public:
         int maxsize,
         int savesize
     ) {
-        if (vec.size() != 0) {
+        // Named local, NOT `if (vec.size() != 0)`. Retail emits
+        // `subf; srawi. r11,r11,2; beq` -- i.e. it materialises the element
+        // count. Testing size() inline lets MSVC apply its "only the zero-ness
+        // matters" peephole and emit `clrrwi. r11,r11,2` (= bytes & ~3) instead;
+        // that fired for EVERY inline spelling tried ((int) cast, `> 0`, and the
+        // raw signed `end() - begin()`), so it is not a signedness question.
+        // Both idioms exist in retail (subf->srawi. 902x, subf->clrrwi. 75x), so
+        // the peephole is source-steerable, and binding the count to a named
+        // local is what suppresses it.
+        int oldsize = vec.size();
+        if (oldsize != 0) {
             MILO_NOTIFY("vector is not empty!");
             DeleteAll(vec);
         }

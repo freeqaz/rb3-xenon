@@ -101,20 +101,42 @@
 void UtlInit();
 
 // Classes with no header yet — defined inline for factory registration
-class TourDescPanel : public UIPanel {
+// TourDescPanel is NOT a UIPanel and has no filler member.  It is declared for
+// real (with its one member) at src/band3/tour/TourDescPanel.cpp:126 as
+// `class TourDescPanel : public TexLoadPanel { ... TourDescProvider
+// *m_pTourDescProvider; }`, and that declaration is compiler-verified
+// sizeof == 0x84 -- exactly what retail's TourDescPanel::NewObject allocates.
+// The previous `: public UIPanel` + `char unk_pad[0x18]` stub here was an
+// ODR-violating second definition of the same mangled class that happened to
+// land on 0x80.  Mirror the real declaration instead of inventing filler.
+class TourDescProvider;
+
+class TourDescPanel : public TexLoadPanel {
 public:
     TourDescPanel();
     OBJ_CLASSNAME(TourDescPanel);
     NEW_OBJ(TourDescPanel);
-    char unk_pad[0x18]; // sizeof(TourDescPanel) == 0x70
+    TourDescProvider *m_pTourDescProvider; // 0x54
 };
 
+// JoinInvitePanel has exactly ONE 4-byte member, at 0x3c, zero-initialised.
+// This is read directly off retail, not inferred: its constructor
+// (fn_826308C0, build/45410914/asm/auto_03_826308B4_text.s) ends with
+//   li   r29, 0x0  ...  stw r29, 0x3c(r30)     ; r30 == this
+// and its virtual-base branch does `addi r3, r3, 0x44` before calling the
+// Hmx::Object ctor, pinning the Object subobject at 0x44 and hence the
+// vtordisp at 0x40.  So the derived block is [0x3c,0x40) -- one word -- giving
+// sizeof = 0x3c + 4 + 4 + 0x28 = 0x6c, which is exactly what retail's
+// JoinInvitePanel::NewObject allocates.  The old `char unk_pad[0x8]` was two
+// words and therefore provably wrong.  The member's semantics are unrecoverable
+// (no oracle decompiles this class -- rb3-Wii carries the same placeholder --
+// and retail never reads the field anywhere), so it keeps the house unkNN name.
 class JoinInvitePanel : public UIPanel {
 public:
     JoinInvitePanel();
     OBJ_CLASSNAME(JoinInvitePanel);
     NEW_OBJ(JoinInvitePanel);
-    char unk_pad[0x8]; // sizeof(JoinInvitePanel) == 0x60
+    int unk3c; // 0x3c -- zero-initialised by the retail ctor
 };
 
 class WiiFriendsScreen : public UIPanel {

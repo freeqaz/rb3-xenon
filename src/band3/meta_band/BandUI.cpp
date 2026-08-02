@@ -378,18 +378,23 @@ void BandUI::SendTransitionComplete(UIScreen *s1, UIScreen *s2) {
 }
 
 DataNode BandUI::OnMsg(const UITransitionCompleteMsg &msg) {
-    // Retail X360: no HAQManager::Print calls (HAQ debug strip), and the
-    // screen-saver bool is computed branchlessly: `disable` defaults true when
-    // the property is absent (note: OPPOSITE of the Wii dev build's
-    // `!prop || prop->Int() == 0`, which enabled the saver when unset).
+    // Retail X360: no HAQManager::Print calls (HAQ debug strip). `disable`
+    // defaults FALSE when the property is absent, so an unset property leaves
+    // the screen saver ENABLED -- same sense as the Wii dev build's
+    // `SetScreenSaver(!prop || prop->Int() == 0)`.
+    //
+    // Asm proof (target 0x82539xxx, idx 41-54): `cmplwi r3,0 / beq ->A` where
+    // A is `mr r11,r28` (r28==0), i.e. the NULL path yields r11=0 and the tail
+    // computes SetScreenSaver(!r11) = SetScreenSaver(true). A previous pass had
+    // `!prop || prop->Int() != 0` here, which inverts the NULL path (branching
+    // to `li r11,1`) and was mislabelled "permuter-class bne/beq polarity" --
+    // it is a genuine behavioural difference, not a codegen artifact.
     Symbol s38 = gNullStr;
     UIScreen *screen = msg.GetNewScreen();
     if (screen) {
         s38 = screen->Name();
         const DataNode *prop = screen->Property("disable_screen_saver", false);
-        bool disable = !prop || prop->Int() != 0; // 99.1: residual 3-instr bne/beq
-        // polarity select (li-1-first vs mr-0-first) resists all standard
-        // steering forms — permuter-class.
+        bool disable = prop && prop->Int() != 0;
         ThePlatformMgr.SetScreenSaver(!disable);
     }
     if (TheUIEventMgr->HasActiveTransitionEvent()

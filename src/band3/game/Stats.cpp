@@ -447,6 +447,11 @@ void Stats::EndMultiplier(
     info.mDurationMs = f1 - info.mStartMs;
     info.mPoints = f2 - info.mPoints;
     SaveHighest(vec, info);
+    // AT_LIMIT (lane CM-1-C): retail loads info.mDurationMs (0x4(r31)) before
+    // fref (0x0(r30)); we emit the two lfs in the opposite order. Rewriting as
+    // `fref = info.mDurationMs + fref` to put the other value on the left is a
+    // NO-OP -- verified by recompile, byte-identical diff -- because MSVC
+    // canonicalises commutative operands. Not source-controllable.
     fref += info.mDurationMs;
     info = MultiplierInfo();
 }
