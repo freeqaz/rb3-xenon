@@ -101,7 +101,13 @@ public:
     void SendMessage(Symbol, Symbol);
     void SetCrowd(Symbol);
     void SetCharSpot(Symbol, Symbol);
-    void SetFog(Symbol);
+    /** Retail keeps this a real out-of-line call (fn_8228CFF0): the stagekit_fog
+     * arm of SyncProperty (0x82294F28) evaluates `_val.Sym()` and sets up
+     * r3=this, r4=symbol before the `bl`. With an empty inlinable body MSVC
+     * folds the call away AND elides the Sym() evaluation. The attribute must
+     * sit on the DECLARATION -- on the definition MSVC ignores it (measured:
+     * our obj still had no SetFog relocation at all). */
+    __declspec(noinline) void SetFog(Symbol);
     WorldDir *GetWorld();
     void EnterVenue();
     void PickIntroShot();
@@ -211,13 +217,18 @@ public:
     float unk108; // 0x108
     float mEndOfSongSec; // 0x10c
     bool unk110; // 0x110
-    BandSongPref *mSongPref; // 0x114
-    // TU5-inserted 16 bytes at the tail of BandDirector's own members. Purpose
-    // unknown (no rb3-Wii/DC3 oracle for this field), but layout-load-bearing:
-    // it pushes the shared Hmx::Object virtual base 0x128->0x138 (+0x10), which
-    // re-matches all 39 vbtable/vtordisp-adjust functions in this TU. Placed at
-    // the tail so no named member (read by other units) changes offset.
-    int mUnkTU5_0x118[4]; // 0x118 - TODO: TU5-inserted member (size 0x10)
+    // The 16 "TU5-inserted" bytes belong HERE, before mSongPref -- not at the
+    // tail where they were parked. Evidence (lane CR-2): retail's SyncProperty
+    // (0x82294824) reads mSongPref as `lwz r11, -0x8(r23)` with r23 == this+0x138
+    // (`subi r4, r23, 0x138` yields `this`), i.e. mSongPref@0x130; with the block
+    // at the tail the compiler placed mSongPref@0x120 and we emitted -0x18(r23).
+    // That is exactly this block's size, and it reproduces the layout this
+    // header's own SetCharacterLipSyncs comment already documented: four
+    // CharLipSync* at 0x120-0x12c, mSongPref at 0x130.
+    // Size is unchanged, so the Hmx::Object vbase stays at 0x138 and the 39
+    // vbtable/vtordisp-adjust functions in this TU keep matching.
+    class CharLipSync *mLipSyncs[4]; // 0x120 (song, part2, part3, part4)
+    BandSongPref *mSongPref; // 0x130
 };
 
 extern BandDirector *TheBandDirector;
