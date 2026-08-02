@@ -391,7 +391,7 @@ BEGIN_PROPSYNCS(BandUser)
     SYNC_SUPERCLASS(User)
 END_PROPSYNCS
 
-LocalBandUser::LocalBandUser() : mControllerTypeOverride(kControllerNone) {
+LocalBandUser::LocalBandUser() {
     unkc = 1;
     mHasSeenRealGuitarPrompt = 0;
 }
@@ -516,13 +516,15 @@ bool LocalBandUser::HasShownIntroHelp(TrackType t) const {
     return mShownIntrosSet.find(t) != mShownIntrosSet.end();
 }
 
+static ControllerType sDebugControllerTypeOverride = kControllerNone;
+
 ControllerType LocalBandUser::DebugGetControllerTypeOverride() const {
-    return mControllerTypeOverride;
+    return sDebugControllerTypeOverride;
 }
 
 void LocalBandUser::DebugSetControllerTypeOverride(ControllerType ct) {
     MILO_ASSERT_RANGE_EQ(ct, 0, kNumControllerTypes, 0x3B2);
-    mControllerTypeOverride = ct;
+    sDebugControllerTypeOverride = ct;
 }
 
 BEGIN_HANDLERS(LocalBandUser)

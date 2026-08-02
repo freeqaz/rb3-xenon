@@ -161,10 +161,29 @@ public:
     // LocalUser::GetPadNum -- exactly what the target calls.
     bool HasAsFriend(BandUser *) const;
 
-    bool unkc; // 0xc
-    bool mHasSeenRealGuitarPrompt; // 0xd
-    std::set<TrackType> mShownIntrosSet; // 0x10
-    ControllerType mControllerTypeOverride; // 0x28
+    bool unkc; // 0x8   (compiler-verified; the old "0xc" comment was WRONG)
+    bool mHasSeenRealGuitarPrompt; // 0x9
+    std::set<TrackType> mShownIntrosSet; // 0xc .. 0x24  (_Rb_tree sizeof 0x18)
+    // RETAIL HAS NO `ControllerType mControllerTypeOverride` HERE.  rb3-Wii DEV
+    // carries it; the retail 360 build compiled it out.  PROVEN (lane CP-3B) by
+    // disassembling retail's real ctor LocalBandUser::LocalBandUser @ 0x8268E678
+    // -- its complete this-relative store census over [0x8,0x28) is:
+    //     0x8  stb (=1)  unkc              0x1c stw       _M_node_count
+    //     0x9  stb (=0)  mHasSeenRealGuitar 0x20 stb      _Rb_tree::_M_key_compare
+    //     0xc/0x10/0x14/0x18  _M_header          (empty less<TrackType>, 1 BYTE)
+    // and NOTHING at 0x24 but the vtordisp `stwx`.  The store at 0x20 being a
+    // BYTE refutes the rival hypothesis that retail's _Rb_tree is 0x14 (comparator
+    // empty-base-optimised) with the ControllerType member living at 0x20 -- that
+    // would require a 4-byte `stw`.  Positive control: the same census DOES report
+    // 4-byte `stw` members in this very range (0x1c, four bytes away), so it could
+    // have returned the other answer.
+    // Retail layout therefore: set 0xc..0x24, vtordisp(User) 0x24, User 0x28,
+    // vtordisp(BandUser) 0x68, BandUser 0x6c, LocalUser 0x100 (no vtordisp),
+    // sizeof = 0x10C -- confirmed by retail's real factory NewLocalBandUser
+    // @ 0x8268EFD0 doing `li r3,0x10c`.  (The `li r3,0x110` cited by lane CO-1 as
+    // proof of a coupled "tail defect" is at 0x8268F050, which is really
+    // NewNullLocalBandUser -- sizeof(NullLocalBandUser) IS 0x110.  There is no
+    // tail defect and the two halves are NOT coupled.)
 };
 
 class RemoteBandUser : public virtual BandUser, public virtual RemoteUser {
