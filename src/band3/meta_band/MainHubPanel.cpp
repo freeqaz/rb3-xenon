@@ -309,10 +309,17 @@ DataNode MainHubPanel::OnMsg(const OvershellOverrideEndedMsg &msg) {
 DataNode MainHubPanel::OnMsg(const SessionDisconnectedMsg &msg) {
     if (mHubOverride == kMainHubOverride_Finding) {
         if (!ThePlatformMgr.IsAnyUserSignedIntoLive()) {
-            static Message init("init", wii_friends_session_ended);
+            static Symbol error_message("error_message");
+            static Symbol error_lost_connection("error_lost_connection");
+            static Symbol error_ethernet_unplugged("error_ethernet_unplugged");
+            static Message init("init", error_lost_connection);
+            init[0] = ThePlatformMgr.IsEthernetCableConnected()
+                ? error_lost_connection
+                : error_ethernet_unplugged;
             TheUIEventMgr->TriggerEvent(error_message, init);
         }
-        HandleType(cancel_find_override_msg);
+        static Message cancel_find_override("cancel_find_override");
+        HandleType(cancel_find_override);
     }
     if (mHubOverride == kMainHubOverride_Waiting) {
         MILO_ASSERT(!mWaitingStateLock->InLock(), 0x1F2);
@@ -463,7 +470,8 @@ void MainHubPanel::UpdateMessageProvider() {
     update_messages[1] = unkb8;
     DataNode handled = HandleType(update_messages);
     mMessageProvider->SetData(handled);
-    HandleType(refresh_message_provider_msg);
+    static Message refresh_message_provider("refresh_message_provider");
+    HandleType(refresh_message_provider);
 }
 
 DataNode MainHubPanel::OnMsg(const UserLoginMsg &msg) {

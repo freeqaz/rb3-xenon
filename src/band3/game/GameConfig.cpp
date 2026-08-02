@@ -160,6 +160,11 @@ void GameConfig::AssignTrack(BandUser *u) {
 }
 
 void GameConfig::AssignTracks() {
+    // Retail (fn_826899B8) initialises a function-local `static Symbol none("none")`
+    // as the very first thing in the body -- guard bit 0x1 of lbl_82E02448, object
+    // lbl_82E02444 -- and then never reads it (its only use was optimised away).
+    // The guarded ctor is real codegen, so keep the declaration.
+    static Symbol none("none");
     bool b11 = false;
     mPlayerTrackConfigList->Reset();
     std::vector<BandUser *> users;
@@ -176,6 +181,7 @@ void GameConfig::AssignTracks() {
         }
     }
     if (!b11) {
+        static Symbol mod_auto_vocals("mod_auto_vocals");
         bool mod_active = TheModifierMgr->IsModifierActive(mod_auto_vocals);
         bool first = mod_active & TheGame->mProperties.mAllowAutoVocals;
         MetaPerformer *pPerformer = MetaPerformer::Current();

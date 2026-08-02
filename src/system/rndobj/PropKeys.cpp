@@ -258,26 +258,22 @@ void PropKeys::SetTarget(Hmx::Object *o) {
 }
 
 PropKeys::ExceptionID PropKeys::PropExceptionID(Hmx::Object *o, DataArray *path) {
-    if (o && path) {
-        static Symbol rotation("rotation");
-        static Symbol scale("scale");
-        static Symbol position("position");
-        static Symbol event("event");
-        if (path->Size() == 1) {
-            Symbol sym = path->Sym(0);
-            if (sym == rotation && IsASubclass(o->ClassName(), "Trans")) {
-                return kTransQuat;
-            }
-            if (sym == scale && IsASubclass(o->ClassName(), "Trans")) {
-                return kTransScale;
-            }
-            if (sym == position && IsASubclass(o->ClassName(), "Trans")) {
-                return kTransPos;
-            }
-            if (sym == event && IsASubclass(o->ClassName(), "ObjectDir")) {
-                return kDirEvent;
-            }
-        }
+    if (!o || !path)
+        return kNoException;
+    String propString;
+    path->Print(propString, kDataArray, true);
+    propString = propString.substr(1, propString.length() - 2);
+    if (propString == "rotation" && IsASubclass(o->ClassName(), "Trans")) {
+        return kTransQuat;
+    }
+    if (propString == "scale" && IsASubclass(o->ClassName(), "Trans")) {
+        return kTransScale;
+    }
+    if (propString == "position" && IsASubclass(o->ClassName(), "Trans")) {
+        return kTransPos;
+    }
+    if (propString == "event" && IsASubclass(o->ClassName(), "ObjectDir")) {
+        return kDirEvent;
     }
     return kNoException;
 }

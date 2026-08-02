@@ -250,11 +250,10 @@ void BandStorePanel::ExitStore(StoreError err) const {
 BEGIN_HANDLERS(BandStorePanel)
     HANDLE_EXPR(get_request_prefix, GetRequestPrefix())
     HANDLE_ACTION(request, Request(String(_msg->Str(2)), _msg->Int(3)))
-    if (sym == request_prev_chunk) {
-        Request(String(mPrevChunkPath.c_str()), true);
-        mStartBrowserAtBottom = true;
-        return 0;
-    }
+    HANDLE_ACTION(
+        request_prev_chunk,
+        (Request(String(mPrevChunkPath.c_str()), true), mStartBrowserAtBottom = true)
+    )
     HANDLE_ACTION(request_next_chunk, Request(String(mNextChunkPath.c_str()), true))
     HANDLE_EXPR(should_start_browser_at_bottom, mStartBrowserAtBottom)
     // Retail's request_in_progress arm is a bare bool materialization

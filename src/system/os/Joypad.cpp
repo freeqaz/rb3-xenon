@@ -450,14 +450,9 @@ Symbol JoypadControllerTypePadNum(int padNum) {
 }
 
 bool JoypadTypeHasLeftyFlip(Symbol type) {
-    static Symbol none("none");
-    if (type == none) {
-        return false;
-    } else {
-        static Symbol lefty_flip("lefty_flip");
-        DataArray *found = gControllersCfg->FindArray(type)->FindArray(lefty_flip);
-        return found->Int(1) != 0;
-    }
+    static Symbol lefty_flip("lefty_flip");
+    DataArray *found = gControllersCfg->FindArray(type)->FindArray(lefty_flip);
+    return found->Int(1) != 0;
 }
 
 bool JoypadIsShiftButton(int padNum, JoypadButton btn) {

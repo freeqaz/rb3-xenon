@@ -1108,8 +1108,12 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
             <= 0.0f;
 
         if (!sDisableEyeClamping) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
             DataNode &clampCheat = DataVariable("disable_clamping");
             if (!clampCheat.Int(0) && !lidsOK) {
+#else
+            if (!lidsOK) {
+#endif
                 float midX =
                     (upperBlinkPos.x - lowerBlinkPos.x) * 0.5f + lowerBlinkPos.x;
                 float midY =
@@ -1156,6 +1160,7 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
             }
         }
 
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         DataNode &drawCheat = DataVariable("debug_clamping");
         if (drawCheat.Int(0)) {
             RndGraph *graph = RndGraph::GetOneFrame();
@@ -1219,9 +1224,10 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
                 );
             }
         }
+#endif
     }
 
-    if (!DataVariable("disable_llidnorm").Int(0) && !mLowerLidTrackRotate && 0.0f < dist) {
+    if (!mLowerLidTrackRotate && 0.0f < dist) {
         Vector3 srcPos = source->WorldXfm().v;
         Vector3 lidPos = lowerLid->WorldXfm().v;
         Vector3 dir(

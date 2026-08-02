@@ -824,7 +824,6 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
     static Symbol shuffle_setlist("shuffle_setlist");
     static Symbol play_setlist("play_setlist");
     static Symbol party_setlist("party_setlist");
-    static Symbol qp_party_shuffle("qp_party_shuffle");
     switch (node->GetType()) {
     case kNodeFunction:
         if (node->GetToken() == shuffle_setlist) {

@@ -1632,8 +1632,6 @@ void DataInitFuncs() {
     DataRegisterFunc("min", DataMin);
     DataRegisterFunc("max", DataMax);
     DataRegisterFunc("abs", DataAbs);
-    DataRegisterFunc("db_to_ratio", DataDbToRatio);
-    DataRegisterFunc("ratio_to_db", DataRatioToDb);
     DataRegisterFunc("+", DataAdd);
     DataRegisterFunc("+=", DataAddEq);
     DataRegisterFunc("-", DataSub);
@@ -1647,12 +1645,10 @@ void DataInitFuncs() {
     DataRegisterFunc("/=", DataDivideEq);
     DataRegisterFunc("sqrt", DataSqrt);
     DataRegisterFunc("mod", DataMod);
-    DataRegisterFunc("pow", DataPow);
     DataRegisterFunc("dist", DataDist);
     DataRegisterFunc("symbol", DataSymbol);
     DataRegisterFunc("int", DataInt);
     DataRegisterFunc("char", DataChar);
-    DataRegisterFunc("asc", DataAsc);
     DataRegisterFunc("round", DataRound);
     DataRegisterFunc("floor", DataFloor);
     DataRegisterFunc("ceil", DataCeil);
@@ -1688,9 +1684,6 @@ void DataInitFuncs() {
     DataRegisterFunc("localize", DataLocalize);
     DataRegisterFunc("localize_separated_int", DataLocalizeSeparatedInt);
     DataRegisterFunc("localize_float", DataLocalizeFloat);
-    DataRegisterFunc("sync_reload_locale", DataSyncReloadLocale);
-    DataRegisterFunc("print_unused", DataPrintUnused);
-    DataRegisterFunc("print_stack", DataPrintStack);
     DataRegisterFunc("startswith", DataStartsWith);
     DataRegisterFunc("print", DataPrint);
     DataRegisterFunc("time", DataTime);
@@ -1699,19 +1692,14 @@ void DataInitFuncs() {
     DataRegisterFunc("random_elem", DataRandomElem);
     DataRegisterFunc("random", DataRandom);
     DataRegisterFunc("random_seed", DataRandomSeed);
-    DataRegisterFunc("random_sort", DataRandomSort);
-    DataRegisterFunc("warn", DataWarn);
     DataRegisterFunc("notify", DataNotify);
     DataRegisterFunc("fail", DataFail);
-    DataRegisterFunc("assert", DataAssert);
-    DataRegisterFunc("notify_once", DataNotifyOnce);
     DataRegisterFunc("notify_once", DataNotifyOnce);
     DataRegisterFunc("switch", DataSwitch);
     DataRegisterFunc("cond", DataCond);
     DataRegisterFunc("insert_elems", DataInsertElems);
     DataRegisterFunc("insert_elem", DataInsertElem);
     DataRegisterFunc("print_array", DataPrintArray);
-    DataRegisterFunc("array_to_string", DataArrayToString);
     DataRegisterFunc("size", DataSize);
     DataRegisterFunc("remove_elem", DataRemoveElem);
     DataRegisterFunc("resize", DataResize);
@@ -1725,9 +1713,7 @@ void DataInitFuncs() {
     DataRegisterFunc("run", DataRun);
     DataRegisterFunc("read_file", OnReadFile);
     DataRegisterFunc("write_file", OnWriteFile);
-    DataRegisterFunc("write_string_to_file", OnWriteStringToFile);
     DataRegisterFunc("file_exists", OnFileExists);
-    DataRegisterFunc("file_mkdir", OnFileMkDir);
     DataRegisterFunc("file_read_only", OnFileReadOnly);
     DataRegisterFunc("handle_type", DataHandleType);
     DataRegisterFunc("handle_type_ret", DataHandleTypeRet);
@@ -1754,7 +1740,6 @@ void DataInitFuncs() {
     DataRegisterFunc("tolower", DataStrToLower);
     DataRegisterFunc("toupper", DataStrToUpper);
     DataRegisterFunc("strieq", DataStrieq);
-    DataRegisterFunc("flatten", DataFlatten);
     DataRegisterFunc("push_back", DataPushBack);
     DataRegisterFunc("sort", DataSort);
     DataRegisterFunc("var", DataVar);
@@ -1763,7 +1748,6 @@ void DataInitFuncs() {
     DataRegisterFunc("unpack_color", DataUnpackColor);
     DataRegisterFunc("set_this", OnSetThis);
     DataRegisterFunc("macro_elem", DataMacroElem);
-    DataRegisterFunc("macro_size", DataMacroSize);
     DataRegisterFunc("merge_dirs", DataMergeDirs);
     DataRegisterFunc("quote", DataQuote);
     DataRegisterFunc("'", DataQuote);
@@ -1779,8 +1763,6 @@ void DataInitFuncs() {
     DataRegisterFunc("file_list_paths", DataFileListPaths);
     DataRegisterFunc("disable_notify", DataDisableNotify);
     DataRegisterFunc("filter_notify", DataFilterNotify);
-    DataRegisterFunc("memory_usage_report", DataMemoryUsageReport);
-    DataRegisterFunc("memory_alloc_report", DataMemoryAllocReport);
     // key deriv dta
     char magic[8];
     memset(magic, 0, 8);

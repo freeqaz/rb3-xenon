@@ -163,7 +163,12 @@ void BandDirector::Enter() {
         mPostProcA = mWorldPostProc;
         mPostProcB = mWorldPostProc;
         mPostProcBlend = 0;
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        // RB3-360 retail: the string "motion_blur" occurs ZERO times in
+        // orig/45410914/band.exe, and Enter() emits no Symbol("rnd")/Symbol("motion_blur").
+        // The config read is rb3-Wii DEV-build only; kept for the native host.
         BandDirector::sMotionBlurBlendAmount = SystemConfig("rnd", "motion_blur")->Float(1);
+#endif
         mCamPostProc = 0;
         mLightPresetCatA = mLightPresetCatB = gNullStr;
         mLightPresetCatBlend = 0;

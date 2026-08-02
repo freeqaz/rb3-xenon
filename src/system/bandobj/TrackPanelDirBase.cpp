@@ -147,9 +147,11 @@ void TrackPanelDirBase::ReapplyConfiguration(bool b) {
 
 bool TrackPanelDirBase::ModifierActive(Symbol s) {
     Hmx::Object *gamemodeobj = FindObject("gamemode", true);
+    static Symbol mod_doublespeed("mod_doublespeed");
     if (gamemodeobj) {
         if (gamemodeobj->Property("always_show_hud", true)->Int() == 0) {
-            if (gamemodeobj->Property("is_practice", true)->Int() != 0)
+            if (s != mod_doublespeed
+                && gamemodeobj->Property("is_practice", true)->Int() != 0)
                 return false;
             else {
                 Hmx::Object *modmgr = FindObject("modifier_mgr", true);

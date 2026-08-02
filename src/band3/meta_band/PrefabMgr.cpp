@@ -348,6 +348,7 @@ PrefabMgr::CharCreatorPrefab::~CharCreatorPrefab() { RELEASE(unk0); }
 BEGIN_HANDLERS(PrefabMgr)
     HANDLE_ACTION(load_portraits, LoadPortraits(_msg->Obj<OvershellSlot>(2)))
     HANDLE_ACTION(unload_portraits, UnloadPortraits(_msg->Obj<OvershellSlot>(2)))
+    HANDLE_ACTION(assign_prefabs_to_slots, AssignPrefabsToSlots())
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0x241)
 END_HANDLERS

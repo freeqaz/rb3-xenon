@@ -397,6 +397,9 @@ void RndTexRenderer::DrawToTexture() {
                 f28,
                 Length(va0) / Length(v2c4)
             );
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+            // "rndtex.debug_mirror" occurs 0 times in retail band.exe -- this whole
+            // RndGraph debug-sphere overlay is dev-build only.
             if (DataVariable("rndtex.debug_mirror").Int()) {
                 RndGraph *graph = RndGraph::GetOneFrame();
                 Vector3 vecs278[4] = {
@@ -415,6 +418,7 @@ void RndTexRenderer::DrawToTexture() {
                     graph->AddSphere(vertVectors[i], 1.0f, Hmx::Color(1, 0, 0));
                 }
             }
+#endif
         }
         cam->SetTargetTex(mOutputTexture);
         cam->Select();

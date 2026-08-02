@@ -1713,13 +1713,17 @@ void OvershellSlot::SelectChar(int i1) {
 }
 
 DataNode OvershellSlot::OnMsg(const ButtonDownMsg &msg) {
+    static Symbol join("join");
+    static Symbol finding("finding");
     BandUser *pUser = BandUserMgr::GetBandUser(msg.GetUser());
     MILO_ASSERT(pUser && pUser->IsLocal(), 0xBC1);
     LocalBandUser *lUser = pUser->GetLocalBandUser();
-    const Message &btnMsg =
+    static Message btnMsg("button_pulse");
+    btnMsg.SetType(
         GetState()->GetView() == join || GetState()->GetView() == finding
-        ? button_pulse_unjoined_msg
-        : button_pulse_joined_msg;
+            ? "button_pulse_unjoined"
+            : "button_pulse_joined"
+    );
 
     if (!TheInputMgr->IsValidButtonForShell(msg.GetButton(), lUser)) {
         return 1;
@@ -1730,7 +1734,8 @@ DataNode OvershellSlot::OnMsg(const ButtonDownMsg &msg) {
         DataNode handled = mState->HandleMsg(msg);
         if (handled.Type() == kDataUnhandled) {
             if (msg.GetAction() == kAction_Cancel) {
-                handled = mState->HandleMsg(on_cancel_msg);
+                static Message on_cancel("on_cancel");
+                handled = mState->HandleMsg(on_cancel);
                 if (handled.Type() != kDataUnhandled) {
                     TheSynth->PlaySound("overshell_back.cue", 0, 0, 0);
                 }
@@ -1739,7 +1744,8 @@ DataNode OvershellSlot::OnMsg(const ButtonDownMsg &msg) {
                 on_start[0] = msg.GetUser();
                 handled = mState->HandleMsg(on_start);
             } else if (msg.GetAction() == kAction_ViewModify) {
-                handled = mState->HandleMsg(on_view_modify_msg);
+                static Message on_view_modify("on_view_modify");
+                handled = mState->HandleMsg(on_view_modify);
             }
         }
         if (mOvershell->mAllowsButtonPulse) {

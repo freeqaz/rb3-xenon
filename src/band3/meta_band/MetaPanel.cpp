@@ -328,11 +328,11 @@ MetaPanel::~MetaPanel() {
 
 void MetaPanel::Load() {
     UIPanel::Load();
-    DataArray *cfg = SystemConfig("synth", "metamusic", "metamusic_loop");
+    DataArray *cfg = SystemConfig("synth", "metamusic", "music");
     DataArray *loopArr = cfg->Array(PickLoopIndex(cfg->Size()));
-    String filename(MakeString("%s", loopArr->Str(0)));
+    String filename(MakeString("sfx/streams/%s", loopArr->Str(0)));
     float vol = loopArr->Float(1);
-    mMusic = new MetaMusic("metamusic");
+    mMusic = new MetaMusic("sfx/shell_fx.milo");
     mMusic->Load(filename.c_str(), vol, true, true);
     mSongPreview.Init();
     UpdateMusicMuteState();

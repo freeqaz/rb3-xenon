@@ -52,8 +52,6 @@ BEGIN_CUSTOM_HANDLERS(CameraManager)
     HANDLE(camera_random_seed, OnRandomSeed)
     HANDLE(iterate_shot, OnIterateShot)
     HANDLE(num_shots, OnNumCameraShots)
-    HANDLE(get_shot_list, OnGetShotList)
-    HANDLE_ACTION(reset_camshots, StartShot_(nullptr))
 END_CUSTOM_HANDLERS
 
 void CameraManager::Enter() {

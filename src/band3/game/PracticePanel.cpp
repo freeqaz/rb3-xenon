@@ -203,11 +203,13 @@ void PracticePanel::Poll() {
                     // SetRestartAllowed(false) after end_play_msg.
                     if (TheTaskMgr.GetSongPos().GetTotalTick() > ftick) {
                         if (!unk57) {
+                            static Message end_play_msg("end_play");
                             Handle(end_play_msg, true);
                             unk57 = true;
                         }
                         if (TheTaskMgr.GetSongPos().GetTotalTick()
                             > ftick + 1920.0f) {
+                            static Message loop_msg("loop");
                             Handle(loop_msg, true);
                             unk57 = false;
                             if (TheGame->GetActivePlayer(0)
