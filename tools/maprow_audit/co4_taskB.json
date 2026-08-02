@@ -1,0 +1,6 @@
+[
+ {"addr": "0x825f78f8",
+  "expect": "?IsUserOnCorrectInstrument@AccomplishmentPanel@@QAA_NXZ",
+  "new": "?IsUserOnCorrectInstrument@AccomplishmentPanel@@QAA_NPAVLocalBandUser@@@Z",
+  "why": "CO-4 TASK B. Same address, wrong SIGNATURE: retail takes an unused LocalBandUser* (lbl_82C72528 = .?AVLocalBandUser@@). Verified independently: .pdata size 112 == our compiled size 112; address inside AccomplishmentPanel.cpp pin 0x825f71a0-0x825fc9b0 (home-unit gate); masked byte compare ours-vs-retail 28/28 words equal with 20 unmasked (71% > 50% anti-vacuity floor). Displaced name QAA_NXZ is defined in no obj; new name has 0 prior map occurrences so injectivity is unchanged."}
+]
