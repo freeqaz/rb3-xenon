@@ -552,6 +552,9 @@ void MusicLibrary::SetupTaskForTrainer(ControllerType ty) {
 }
 
 void MusicLibrary::ReportSortAndFilters() {
+    static Symbol mode("mode");
+    static Symbol sort("sort");
+    static Symbol filters("filters");
     String str;
     mTask.GetSongFilterAsString(str);
     SendDataPoint(

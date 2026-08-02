@@ -15,6 +15,10 @@ GigFilter::GigFilter()
 GigFilter::~GigFilter() {}
 
 void GigFilter::Init(const DataArray *i_pConfig) {
+    static Symbol is_internal("is_internal");
+    static Symbol weight("weight");
+    static Symbol part_difficulty_filter("part_difficulty_filter");
+    static Symbol filter("filter");
     MILO_ASSERT(i_pConfig, 0x1E);
     mName = i_pConfig->Sym(0);
     i_pConfig->FindData(is_internal, mIsInternal, false);

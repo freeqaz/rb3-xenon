@@ -144,6 +144,7 @@ bool AccomplishmentSongFilterConditional::InqCompletedSongs(
 void AccomplishmentSongFilterConditional::UpdateIncrementalEntryName(
     UILabel *label, Symbol s
 ) {
+    static Symbol goal_filtersong_unknown("goal_filtersong_unknown");
     if (s == goal_filtersong_unknown) {
         label->SetTextToken(goal_filtersong_unknown);
     } else
@@ -153,6 +154,7 @@ void AccomplishmentSongFilterConditional::UpdateIncrementalEntryName(
 bool AccomplishmentSongFilterConditional::IsSymbolEntryFulfilled(
     BandProfile *profile, Symbol s
 ) const {
+    static Symbol goal_filtersong_unknown("goal_filtersong_unknown");
     if (s == goal_filtersong_unknown)
         return false;
     else

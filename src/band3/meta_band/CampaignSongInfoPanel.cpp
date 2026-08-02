@@ -58,6 +58,8 @@ inline void CampaignSourceProvider::Update() {
 }
 
 void CampaignSongInfoPanel::Refresh() {
+    static Message refresh_instrument_list_msg("refresh_instrument_list");
+    static Message update_details_msg("update_details");
     MILO_ASSERT(mCampaignSourceProvider, 0x88);
     mCampaignSourceProvider->Update();
     UIList *pSourceList = mDir->Find<UIList>("sources.lst", true);
