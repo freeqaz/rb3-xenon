@@ -72,7 +72,9 @@ Run artifacts (logs, patch copy, result.json) go to ~/tmp/ab_measure/<run>/.
 """
 
 import argparse
+import gzip
 import hashlib
+import inspect
 import json
 import os
 import re
@@ -265,7 +267,22 @@ class ABMeasure:
         return counts
 
     def restore_symbols(self):
+        """Restore the committed symbols.txt. ⚠ Only ever call this
+        IMMEDIATELY BEFORE a split-forcing build — never after one, and never
+        inside the settle loop (see settle()'s docstring: it is a discovered
+        dep of the SPLIT edge, so restoring it after a split re-dirties the
+        graph and settling becomes impossible)."""
         git(self.wt, "checkout", "--", SYMBOLS_REL)
+
+    def symbols_drift(self):
+        """Line-delta of post-split symbols.txt drift vs the committed file.
+        Reported as evidence, NOT treated as dirt."""
+        _, out = git(self.wt, "diff", "--numstat", "--", SYMBOLS_REL)
+        for line in out.splitlines():
+            f = line.split("\t")
+            if len(f) >= 3:
+                return {"insertions": int(f[0]), "deletions": int(f[1])}
+        return None
 
     def wipe_report(self):
         for rel in (REPORT_REL, CACHE_REL):
@@ -324,34 +341,88 @@ class ABMeasure:
 
     def settle(self, presplit=False):
         """Build until a build does zero work. The zero-work build IS the
-        proof leg A is settled. Bounded; refuses if never quiescent."""
+        proof leg A is settled. Bounded; refuses if never quiescent.
+
+        ⚠ symbols.txt is restored ONCE, HERE, BEFORE the loop — and NEVER
+        inside it. `config/<title>/symbols.txt` is a *discovered* dependency
+        of the SPLIT edge: build.ninja declares `depfile = $out_dir/dep`, and
+        `build/<title>/dep` reads
+
+            build/45410914/config.json: \\
+              orig/45410914/default.xex \\
+              config/45410914/splits.txt \\
+              config/45410914/symbols.txt
+
+        (which is why no *static* edge mentions symbols.txt — grepping
+        build.ninja for it finds nothing and proves nothing). dtk REWRITES
+        that same file as a side effect of splitting. So `git checkout --`
+        on it inside the loop re-dirties the very input whose consumption
+        produced the drift: the restored file becomes newer than
+        build/<title>/config.json, SPLIT re-runs, dtk drifts it again, we
+        restore again — the loop CANNOT converge whenever the committed
+        symbols.txt is not already the split's fixed point.
+
+        MEASURED at 23ad2f92 (lane CK-2), in a fresh worktree with NO source
+        change at all: a forced re-split drifts symbols.txt by 7 insertions /
+        16 deletions, and then
+
+          with the in-loop restore:  build 1 = 382 work edges, builds 2,3,4 =
+                                     2 work edges EACH, forever => REFUSAL
+          without it:                the very next build = 0 work edges
+
+        Both splits lanes of wave CJ were blocked by exactly this, and it is
+        data-dependent (a wave whose drift happened to be nil converged,
+        because `git checkout --` skips a write when the file already matches
+        the index, so no mtime bump).
+
+        ⇒ Post-split drift is EXPECTED STATE, not dirt. The guarantee the
+        restore protects is real but POSITIONAL: symbols.txt drift breaks a
+        split ("ends within symbol"), so every *split-forcing* build must be
+        preceded by a restore. Those restores still happen, in both the
+        places that force a split — here (pre-loop, incl. the presplit
+        branch) and in apply_patch() for leg B — so BOTH LEGS STILL SEE
+        IDENTICAL symbols.txt HANDLING: each leg starts from the committed
+        file, forces its split, and is measured at the resulting fixed point.
+        """
+        self.restore_symbols()
         if presplit:
             # splits/map patch: leg A must be measured in freshly-split state
             # so both legs share build state (footgun 8).
             self.say("  [settle] forcing re-split for leg A (splits/map patch "
                      "=> both legs must be measured in freshly-split state)")
-            self.restore_symbols()
+            # symbols.txt was already restored just above, unconditionally.
             (self.wt / STAMP_REL).unlink(missing_ok=True)
             (self.wt / CONFIG_YML_REL).touch()
         for attempt in range(1, self.max_settle + 1):
             counts = self._ninja([], f"settle_{attempt}.log")
             if counts["work"] == 0:
                 self.evidence["settle_builds"] = attempt
+                self.evidence["settle_symbols_drift"] = self.symbols_drift()
                 self.say(f"  [settle] quiescent after {attempt} build(s); the "
                          "reading of every pre-quiescent build is DISCARDED")
+                if self.evidence["settle_symbols_drift"]:
+                    self.say("  [settle] symbols.txt is drifted at the settle "
+                             "point — EXPECTED (it is a split OUTPUT as well as "
+                             "a discovered dep). NOT restored: restoring here is "
+                             "what made this loop non-convergent for wave CJ.")
                 return
             self.say(f"  [settle] build {attempt} did work "
                      f"(msvc={counts['msvc']} split={counts['split']} "
                      f"patch={counts['patch']} other={counts['other_work']}) — "
                      "its reading is discarded; retrying")
-            self.restore_symbols()  # a split run drifts symbols.txt; re-restore
+            # ⚠ DO NOT restore symbols.txt here. See the docstring: it is a
+            # discovered dep of the SPLIT edge AND a split output, so
+            # restoring re-dirties the graph and the loop cannot converge.
         raise Refusal(
             "settle",
             f"could not reach a zero-work build in {self.max_settle} attempts. "
             "Something keeps the graph dirty (future mtimes? concurrent writer? "
             f"perpetually-dirty edge?). Logs: {self.rundir}/settle_*.log. "
             "REFUSING to measure — a leg A with nonzero recompiles carries "
-            "~+193 matched / +0.51pp settling noise.",
+            "~+193 matched / +0.51pp settling noise. NOTE: if every retry "
+            "shows exactly split=1 patch=1, suspect something restoring "
+            "config/<title>/symbols.txt between builds — that is the wave-CJ "
+            "non-convergence and it is a defect in the RESTORER, not the graph.",
         )
 
     def read_leg(self, name):
@@ -366,7 +437,17 @@ class ABMeasure:
                 "settled when read; recompile counts are untrustworthy.",
             )
         m = read_measures_strict(self.wt / REPORT_REL)
+        # ARCHIVE the leg's report.json. Without this only the ninja LOGS
+        # survive a run, so post-hoc attribution (which unit? which function?)
+        # is impossible once the worktree moves on — and the worktree always
+        # moves on. gzip: the raw report is ~14 MB/leg.
+        arch = self.rundir / f"leg{name}_report.json.gz"
+        with open(self.wt / REPORT_REL, "rb") as fi, gzip.open(arch, "wb") as fo:
+            shutil.copyfileobj(fi, fo)
+        self.evidence.setdefault("archived_reports", {})[name] = str(arch)
         self.legs[name] = m
+        self.say(f"  [leg {name}] archived report -> {arch.name} "
+                 f"({arch.stat().st_size / 1e6:.1f} MB gz)")
         self.say(f"  [leg {name}] matched={m['matched_functions']} "
                  f"masked_equal={m['masked_equal_functions']} honest={m['honest']} "
                  f"code%={m['matched_code_percent']:.6f}")
@@ -416,37 +497,45 @@ class ABMeasure:
         # The recompile count for leg B is taken HERE, from this log,
         # before any report read (footgun 3).
         self.evidence["legB_counts"] = counts
-        if "source" in kinds and counts["msvc"] == 0:
-            raise Refusal(
-                "legB-build",
-                "source patch but ZERO MSVC recompiles in leg B build — the "
-                "change cannot have been compiled (absent-vs-absent A/B). Two "
-                "lanes hit this via run_objdiff hiding the compile; here the "
-                "build log itself shows no compile, so the patch touched "
-                "nothing the build consumes.",
-            )
-        if kinds & {"map", "splits"} and counts["split"] == 0:
-            raise Refusal(
-                "legB-build",
-                "map/splits patch but the SPLIT step did not run in leg B — "
-                "the target objs are unchanged and the A/B is measuring nothing.",
-            )
-        if "map" in kinds:
-            rp = counts["renamer_patched"]
-            if rp is None:
-                raise Refusal(
-                    "legB-build",
-                    "map patch but the renamer's '[APPLIED] N files checked, "
-                    "M files patched' line is absent from the leg B build log — "
-                    "cannot prove the map was applied.")
-            if rp == 0:
-                raise Refusal(
-                    "legB-build",
-                    "map patch but renamer reports '0 files patched' — the edit "
-                    "was INERT (lane CF-1's exact failure). A forced re-split "
-                    "should have prevented this; investigate before trusting "
-                    "any number from this worktree.")
+        check_legb_counts(kinds, counts)
         return counts
+
+
+def check_legb_counts(kinds, counts):
+    """Pure leg-B application assertions. Extracted from leg_b_build so the
+    selftest can DRIVE EVERY REFUSAL BRANCH without a build — in particular
+    the splits branch, which was the least-tested path in the tool and is the
+    one that broke for wave CJ. Raises Refusal; returns None on success."""
+    if "source" in kinds and counts["msvc"] == 0:
+        raise Refusal(
+            "legB-build",
+            "source patch but ZERO MSVC recompiles in leg B build — the "
+            "change cannot have been compiled (absent-vs-absent A/B). Two "
+            "lanes hit this via run_objdiff hiding the compile; here the "
+            "build log itself shows no compile, so the patch touched "
+            "nothing the build consumes.",
+        )
+    if kinds & {"map", "splits"} and counts["split"] == 0:
+        raise Refusal(
+            "legB-build",
+            "map/splits patch but the SPLIT step did not run in leg B — "
+            "the target objs are unchanged and the A/B is measuring nothing.",
+        )
+    if "map" in kinds:
+        rp = counts["renamer_patched"]
+        if rp is None:
+            raise Refusal(
+                "legB-build",
+                "map patch but the renamer's '[APPLIED] N files checked, "
+                "M files patched' line is absent from the leg B build log — "
+                "cannot prove the map was applied.")
+        if rp == 0:
+            raise Refusal(
+                "legB-build",
+                "map patch but renamer reports '0 files patched' — the edit "
+                "was INERT (lane CF-1's exact failure). A forced re-split "
+                "should have prevented this; investigate before trusting "
+                "any number from this worktree.")
 
 
 def unit_breakdown(a_units, b_units, limit=15):
@@ -484,6 +573,14 @@ def unit_breakdown(a_units, b_units, limit=15):
         "improvements_truncated": len(imps) > limit,
         "regressions_hidden": max(0, len(regs) - limit),
         "improvements_hidden": max(0, len(imps) - limit),
+        # FULL populations. The DISPLAY is truncated to `limit` (a 3,914-unit
+        # list is unreadable), but result.json is the machine-readable
+        # artifact and must not lose attribution: with only the top-15 rows
+        # archived, "which unit lost those 4 matches?" is unanswerable once
+        # the worktree moves on. Consumers wanting the short list should read
+        # unit_regressions_shown / unit_improvements_shown.
+        "full_regressions": regs,
+        "full_improvements": imps,
     }
     return regs[:limit], imps[:limit], meta
 
@@ -646,9 +743,13 @@ def main():
             "legA_recompiles": 0,
             "legB_recompiles": legb_counts["msvc"],
             "delta": delta,
-            "unit_regressions": regs,
-            "unit_improvements": imps,
-            "unit_breakdown_meta": ubmeta,
+            # FULL lists here — the display below is what gets truncated.
+            "unit_regressions": ubmeta["full_regressions"],
+            "unit_improvements": ubmeta["full_improvements"],
+            "unit_regressions_shown": regs,
+            "unit_improvements_shown": imps,
+            "unit_breakdown_meta": {k: v for k, v in ubmeta.items()
+                                    if not k.startswith("full_")},
         }
         if args.name_check:
             anc, bnc = ab.legs["A_nc"], ab.legs["B_nc"]
@@ -712,13 +813,47 @@ def main():
                   f"Δcode%={nc['delta_code_percent']:+.6f}pp — {nc['warning']}")
         print("========================================================")
 
-        if args.restore:
-            git(ab.wt, "apply", "-R", str(patch_path))
-            ab.restore_symbols()
-            print("  [restore] patch reverted from worktree (build state is now "
-                  "leg-B-built with leg-A source; the next run's settle phase "
-                  "handles it)")
+        # ⚠ Write the verdict BEFORE the optional restore. --restore is
+        # post-verdict CLEANUP and must never be able to void a verdict that
+        # was already measured and printed. Measured by lane CK-2: a real
+        # config/<title>/splits.txt patch measured cleanly end-to-end
+        # (settled in 2, both legs read, Δ0), and then `git apply -R` failed
+        # with "patch does not apply" — because splits.txt is itself a SPLIT
+        # OUTPUT (jeff rewrites it, dropping comments and re-deriving the
+        # .pdata lines), so the file leg B ends on is NOT the file the patch
+        # produced. That raised a Refusal AFTER the A/B RESULT block had
+        # printed, and the except branch then overwrote result.json with
+        # status "refused" — a fully valid measurement, on disk, labelled as
+        # having no verdict, and rc=2.
         result_path.write_text(json.dumps(status, indent=1))
+        if args.restore:
+            rc_r, out_r = git(ab.wt, "apply", "-R", str(patch_path),
+                              check=False)
+            if rc_r == 0:
+                ab.restore_symbols()
+                print("  [restore] patch reverted from worktree (build state "
+                      "is now leg-B-built with leg-A source; the next run's "
+                      "settle phase handles it)")
+            else:
+                # NOT a refusal: the verdict above stands on its own.
+                status["restore"] = {
+                    "ok": False,
+                    "note": "git apply -R failed; the worktree still carries "
+                            "the patch (or a split-rewritten form of it). The "
+                            "MEASUREMENT IS UNAFFECTED — it completed before "
+                            "this step. Expected for splits.txt patches: "
+                            "splits.txt is a split OUTPUT as well as an input.",
+                    "git_output": out_r[-2000:],
+                }
+                result_path.write_text(json.dumps(status, indent=1))
+                print("  [restore] ⚠ FAILED to revert the patch — the verdict "
+                      "above STANDS (it was measured before this step). Clean "
+                      "the worktree by hand before the next run:\n"
+                      f"      git -C {ab.wt} checkout -- <paths>\n"
+                      "    Expected for splits.txt patches: jeff rewrites "
+                      "splits.txt during the split, so the file is no longer "
+                      "what the patch produced and `git apply -R` cannot "
+                      "reverse it.")
         print(f"ab_measure: result written to {result_path}")
         return 0
 
@@ -873,6 +1008,88 @@ def selftest():
           "(the flag must discriminate, not always fire)")
     if not ok:
         fails.append("unit_breakdown no-false-flag")
+
+    # ---- SPLITS KIND (lane CK-2) ------------------------------------------
+    # The splits path was the least-tested in this tool and the one that
+    # broke: two lanes were real splits field trials and neither left a test.
+    for paths, want in ((["config/45410914/splits.txt"], {"splits"}),
+                        ([CONFIG_YML_REL], {"splits"}),
+                        (["config/45410914/splits.txt", "src/system/os/Foo.cpp"],
+                         {"splits", "source"})):
+        kinds, _ = classify_patch(paths)
+        ok = kinds == want
+        print(("  PASS" if ok else "  FAIL") +
+              f"  splits classify {paths} -> {sorted(kinds)} (want {sorted(want)})")
+        if not ok:
+            fails.append(f"splits classify {paths}")
+
+    check("splits patch that also touches symbols.txt REFUSES",
+          lambda: classify_patch(["config/45410914/splits.txt", SYMBOLS_REL]),
+          expect_refusal=True)
+
+    # leg-B application assertions, every branch, no build required.
+    base = {"msvc": 0, "split": 0, "patch": 0, "other_work": 0, "work": 0,
+            "renamer_patched": None}
+    check("legB splits patch with split=0 REFUSES (target objs unchanged)",
+          lambda: check_legb_counts({"splits"}, dict(base)), expect_refusal=True)
+    check("legB splits patch with split=1 PASSES",
+          lambda: check_legb_counts({"splits"}, dict(base, split=1, work=1)),
+          expect_refusal=False)
+    check("legB source patch with msvc=0 REFUSES (absent-vs-absent)",
+          lambda: check_legb_counts({"source"}, dict(base)), expect_refusal=True)
+    check("legB map patch with renamer line ABSENT REFUSES",
+          lambda: check_legb_counts({"map"}, dict(base, split=1)),
+          expect_refusal=True)
+    check("legB map patch with '0 files patched' REFUSES (CF-1 inert edit)",
+          lambda: check_legb_counts({"map"}, dict(base, split=1,
+                                                 renamer_patched=0)),
+          expect_refusal=True)
+    check("legB map patch with split=1 and 7 files patched PASSES",
+          lambda: check_legb_counts({"map"}, dict(base, split=1,
+                                                 renamer_patched=7)),
+          expect_refusal=False)
+
+    # ---- the settle loop must NOT restore symbols.txt (lane CK-2) ---------
+    # A SHAPE test, not a behavioural one (behaviour needs a ~5-min build) —
+    # stated plainly so nobody reads it as stronger than it is. It guards the
+    # exact regression that blocked wave CJ: symbols.txt is a discovered dep
+    # of the SPLIT edge AND a split output, so a restore inside the loop
+    # re-dirties the graph and settling becomes impossible. Measured at
+    # 23ad2f92: with the in-loop restore, builds 2/3/4 each did 2 work edges
+    # forever; without it, the next build did 0.
+    src_lines = inspect.getsource(ABMeasure.settle).splitlines()
+    loop_at = next((i for i, l in enumerate(src_lines)
+                    if l.strip().startswith("for attempt in range(")), None)
+    pre = [l for l in src_lines[:loop_at or 0]
+           if "self.restore_symbols()" in l and not l.strip().startswith("#")]
+    post = [l for l in src_lines[loop_at:]
+            if "self.restore_symbols()" in l and not l.strip().startswith("#")] \
+        if loop_at is not None else ["<no loop found>"]
+    ok = loop_at is not None and len(pre) == 1 and not post
+    print(("  PASS" if ok else "  FAIL") +
+          f"  settle() restores symbols.txt EXACTLY ONCE pre-loop "
+          f"(pre={len(pre)}, in-loop={len(post)}) — an in-loop restore "
+          "re-dirties a discovered SPLIT dep and settling becomes impossible "
+          "(wave CJ: 2 work edges forever)")
+    if not ok:
+        fails.append("settle in-loop restore")
+
+    # ---- result.json must carry the FULL unit populations (lane CK-2) -----
+    a_u = {f"u{i}": 5 for i in range(20)}
+    b_u = {f"u{i}": 4 for i in range(20)}
+    regs, imps, meta = unit_breakdown(a_u, b_u, limit=15)
+    ok = (len(regs) == 15 and len(meta["full_regressions"]) == 20
+          and sum(r["delta"] for r in meta["full_regressions"]) == -20
+          and sum(r["delta"] for r in regs) == -15)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  unit_breakdown exports FULL lists for result.json: "
+          f"shown={len(regs)} full={len(meta['full_regressions'])} "
+          f"sum_shown={sum(r['delta'] for r in regs)} "
+          f"sum_full={sum(r['delta'] for r in meta['full_regressions'])} "
+          "(the archived artifact must not lose attribution to the display "
+          "limit)")
+    if not ok:
+        fails.append("unit_breakdown full export")
 
     print(f"selftest: {'ALL PASS' if not fails else f'FAILURES: {fails}'}")
     return 0 if not fails else 1
