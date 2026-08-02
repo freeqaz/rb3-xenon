@@ -653,8 +653,10 @@ StoreOffer *StorePanel::FindOffer(Symbol) const { return nullptr; }
 void StorePanel::StoreUserProfileSwappedToUser(LocalUser *) {}
 
 BEGIN_HANDLERS(StorePanel)
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     HANDLE_EXPR(toggle_test_offers, mShowTestOffers = !mShowTestOffers)
     HANDLE_EXPR(test_offers, mShowTestOffers)
+#endif
     HANDLE_ACTION(load_art, LoadArt(_msg->Str(2), _msg->Obj<UIPanel>(3)))
     HANDLE_EXPR(album_tex, mAlbumTex)
     HANDLE_ACTION(cancel_art, (mPendingArtLoader = 0, mPendingArtCallback = 0))

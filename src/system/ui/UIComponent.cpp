@@ -50,6 +50,7 @@ UIComponent::~UIComponent() {
 BEGIN_PROPSYNCS(UIComponent)
     SYNC_PROP(nav_right, mNavRight)
     SYNC_PROP(nav_down, mNavDown)
+    SYNC_PROP_MODIFY(resource_name, mResourceName, ResourceFileUpdated(false))
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(RndTransformable)
 #ifdef HX_NATIVE

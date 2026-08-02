@@ -378,11 +378,19 @@ void CheatsInit() {
         JoypadSubscribe(gCheatsManager);
         KeyboardSubscribe(gCheatsManager);
 
+// Retail RB3-360 EXCLUDES the whole quick-cheats block.  Retail's CheatsInit
+// builds exactly five literal Symbols -- disable_cheats, long_cheats,
+// set_key_cheats_enabled, set_cheat_mode, get_cheat_mode -- so quick_cheats,
+// left, right and keyboard have no Symbol ctor anywhere in the body.  (Quick
+// cheats are joypad-shift/keyboard driven, a dev-console feature; rb3-Wii is
+// the DEV build and keeps them.)
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         DataArray *quickCheats = SystemConfig("quick_cheats");
         InitQuickJoyCheats(quickCheats->FindArray("left"), CheatsManager::kLeftShift);
         InitQuickJoyCheats(quickCheats->FindArray("right"), CheatsManager::kRightShift);
 
         InitKeyCheats(quickCheats->FindArray("keyboard"));
+#endif
 
         InitLongJoyCheats(SystemConfig("long_cheats"));
 

@@ -183,8 +183,10 @@ MetaPerformer::MetaPerformer(const BandSongMgr &mgr, const char *cc)
 
 MetaPerformer::~MetaPerformer() {
     TheNetSession->RemoveSink(this);
+    static Symbol mode_changed("mode_changed");
     if (TheGameMode)
         TheGameMode->RemoveSink(this, mode_changed);
+    static Symbol new_remote_user("new_remote_user");
     if (TheSessionMgr)
         TheSessionMgr->RemoveSink(this, new_remote_user);
     TheProfileMgr.RemoveSink(this, Symbol("primary_profile_changed_msg"));

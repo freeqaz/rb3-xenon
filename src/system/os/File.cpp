@@ -407,8 +407,13 @@ void FileInit() {
     DataRegisterFunc("file_relative_path", OnFileRelativePath);
     DataRegisterFunc("with_file_root", OnWithFileRoot);
     DataRegisterFunc("synch_proc", OnSynchProc);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    // Neither "toggle_fake_file_errors" nor "enumerate_frame_rate_results" occurs in
+    // retail band.exe -- dev-only DataRegisterFunc entries, exactly the
+    // loadmgr_debug/loadmgr_print class this lane already gated in LoadMgr::Init.
     DataRegisterFunc("toggle_fake_file_errors", OnToggleFakeFileErrors);
     DataRegisterFunc("enumerate_frame_rate_results", OnEnumerateFrameRateResults);
+#endif
     HolmesClientInit();
     const char *str = OptionStr("file_order", nullptr);
     if (str && *str) {

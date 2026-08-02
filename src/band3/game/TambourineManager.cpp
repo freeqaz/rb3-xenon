@@ -317,6 +317,7 @@ void TambourineManager::TambourineSucceed(int index) {
     static Message msg("send_tambourine_succeeding", 1, 0);
     msg[1] = pct;
     mPlayerRef.HandleType(msg);
+    static Message tambourine_hit_msg("tambourine_hit");
     mPlayerRef.Handle(tambourine_hit_msg, false);
     if (unk4c >= 8) {
         mPlayerRef.PopupHelp("tambourine", false);

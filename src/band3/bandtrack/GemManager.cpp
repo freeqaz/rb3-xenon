@@ -927,6 +927,7 @@ void GemManager::UpdateLeftyFlip(bool poll) {
         mTrackDir->Find<TrackWidget>("chord_label.wid", true);
     chordLabelWidget->SetTextAlignment(alignment);
     Symbol type = mTrackConfig.Type();
+    static Symbol real_keys("real_keys");
     if (type != real_keys) {
         RndDir *smasher = mTrackDir->SmasherPlate();
         if (smasher) {
@@ -945,6 +946,9 @@ void GemManager::UpdateLeftyFlip(bool poll) {
         Symbol widgetName;
         float crashY = 0.0f;
         float beardY = 0.0f;
+        static Symbol crash("crash");
+        static Symbol crash_cymbal("crash_cymbal");
+        static Symbol beard("beard");
         if (mGemData) {
             if (GetWidgetName(widgetName, 4, crash)) {
                 TrackWidget *w = GetWidgetByName(widgetName);

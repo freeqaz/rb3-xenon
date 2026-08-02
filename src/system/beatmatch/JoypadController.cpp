@@ -21,6 +21,11 @@ JoypadController::JoypadController(
       mCymbalConfiguration(0), mSink(bsink) {
     mVelocityAxes = cfg->FindArray("velocity_axes", false);
     mVelocityPressures = cfg->FindArray("velocity_pressures", false);
+    static Symbol joypad("joypad");
+    static Symbol controllers("controllers");
+    static Symbol pad_shift_button("pad_shift_button");
+    static Symbol cymbal_shift_button("cymbal_shift_button");
+    static Symbol secondary_button("secondary_button");
     if (user->IsLocal()) {
         mLocalUser = user->GetLocalUser();
         DataArray *sysConfig = SystemConfig(

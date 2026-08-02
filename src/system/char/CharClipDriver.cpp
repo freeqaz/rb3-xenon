@@ -207,10 +207,12 @@ void CharClipDriver::PlayEvents(float oldBeat) {
         ExecuteEvent(enter);
         mNextEvent = 0;
     }
+    static DataNode &instant(DataVariable("clip.instant"));
     while ((unsigned int)mNextEvent < mClip->mBeatEvents.size()) {
         CharClip::BeatEvent &ev = mClip->mBeatEvents[mNextEvent];
         if (ev.beat > mBeat)
             return;
+        instant = DataNode(oldBeat < ev.beat ? 1 : 0);
         ExecuteEvent(ev.event);
         mNextEvent++;
     }

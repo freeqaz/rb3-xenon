@@ -893,10 +893,20 @@ END_CUSTOM_PROPSYNC
 #pragma endregion
 #pragma region CamShot
 
+// The string "camera_spew" occurs ZERO times in retail band.exe (Python scan of the
+// whole image), so the DataVariable gate is dev-build-only across all 17 CAMERA_LOG
+// sites in this TU. Retail still EVALUATES the log arguments - CamShot::ShotOk
+// (0x824C0320) calls DataNode::Str() and discards the result, which is exactly what
+// the comma-form MILO_LOG (Debug.h:299, ((void)(__VA_ARGS__))) produces once the
+// inlined Name() is dead-eliminated. So gate the DataVariable test, not the log.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
 #define CAMERA_LOG(...)                                                                  \
     if (DataVariable("camera_spew") != 0) {                                              \
         MILO_LOG(__VA_ARGS__);                                                           \
     }
+#else
+#define CAMERA_LOG(...) MILO_LOG(__VA_ARGS__)
+#endif
 
 CamShot::CamShot()
     : mKeyframes(this), mLooping(false), mLoopKeyframe(0),

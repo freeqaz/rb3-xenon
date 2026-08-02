@@ -84,8 +84,10 @@ void TrainerPanel::StartSection(int sect) {
         tc->Enter();
     }
 
+    static Message reset_score_msg("reset_score");
     Handle(reset_score_msg, true);
     StartSectionImpl();
+    static Symbol start_section("start_section");
     SendDataPoint("trainers/section", start_section, sect);
 }
 

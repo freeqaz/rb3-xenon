@@ -71,6 +71,22 @@ DataArraySongInfo::DataArraySongInfo(
     if (FIND_WITH_BACKUP(pkg_name)) {
         mPackageName = member_arr->Str(1);
     }
+    static Symbol vocal_parts("vocal_parts");
+    if (FIND_WITH_BACKUP(vocal_parts)) {
+        mNumVocalParts = member_arr->Int(1);
+    }
+    static Symbol hopo_threshold("hopo_threshold");
+    if (FIND_WITH_BACKUP(hopo_threshold)) {
+        mHopoThreshold = member_arr->Int(1);
+    }
+    static Symbol mute_volume("mute_volume");
+    if (FIND_WITH_BACKUP(mute_volume)) {
+        mMuteVolume = member_arr->Float(1);
+    }
+    static Symbol mute_volume_vocals("mute_volume_vocals");
+    if (FIND_WITH_BACKUP(mute_volume_vocals)) {
+        mVocalMuteVolume = member_arr->Float(1);
+    }
     static Symbol pans("pans");
     if (FIND_WITH_BACKUP(pans)) {
         DataArray *pan_arr = member_arr->Array(1);
@@ -93,6 +109,29 @@ DataArraySongInfo::DataArraySongInfo(
         mCores.reserve(core_arr->Size());
         for (int i = 0; i < core_arr->Size(); i++) {
             mCores.push_back(core_arr->Int(i));
+        }
+    }
+    static Symbol crowd_channels("crowd_channels");
+    if (FIND_WITH_BACKUP(crowd_channels)) {
+        mCrowdChannels.reserve(member_arr->Size() - 1);
+        for (int i = 1; i < member_arr->Size(); i++) {
+            mCrowdChannels.push_back(member_arr->Int(i));
+        }
+    }
+    static Symbol drum_solo("drum_solo");
+    if (FIND_WITH_BACKUP(drum_solo)) {
+        DataArray *solo_arr = member_arr->FindArray("seqs")->Array(1);
+        mDrumSoloSamples.reserve(solo_arr->Size());
+        for (int i = 0; i < solo_arr->Size(); i++) {
+            mDrumSoloSamples.push_back(solo_arr->Sym(i));
+        }
+    }
+    static Symbol drum_freestyle("drum_freestyle");
+    if (FIND_WITH_BACKUP(drum_freestyle)) {
+        DataArray *freestyle_arr = member_arr->FindArray("seqs")->Array(1);
+        mDrumFreestyleSamples.reserve(freestyle_arr->Size());
+        for (int i = 0; i < freestyle_arr->Size(); i++) {
+            mDrumFreestyleSamples.push_back(freestyle_arr->Sym(i));
         }
     }
     static Symbol tracks("tracks");

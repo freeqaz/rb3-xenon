@@ -55,6 +55,7 @@ DataNode CriticalUserListener::OnMsg(const SigninChangedMsg &msg) {
         if (mCriticalUser) {
             int padnum = mCriticalUser->GetPadNum();
             if (msgInt & (1 << padnum)) {
+                static Symbol sign_out("sign_out");
                 static Message init("init", 0);
                 init[0] = 0;
                 TheUIEventMgr->TriggerEvent(sign_out, init);

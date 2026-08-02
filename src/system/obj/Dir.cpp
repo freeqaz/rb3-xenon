@@ -189,7 +189,11 @@ BEGIN_HANDLERS(ObjectDir)
     HANDLE_ACTION(delete_loader, RELEASE(mLoader))
     HANDLE_ACTION(reset_editor_state, ResetEditorState())
     HANDLE_EXPR(get_path_name, mPathName)
+// Retail RB3-360's ObjectDir::Handle enumerates 14 literal Symbols, ending at
+// get_path_name; get_file_name has no Symbol ctor in the retail body.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     HANDLE_EXPR(get_file_name, FileGetName(mPathName))
+#endif
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 

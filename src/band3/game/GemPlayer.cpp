@@ -2147,6 +2147,7 @@ void GemPlayer::CheckHeldNotes(float f1) {
 void GemPlayer::FinishHeldNote(float f1, HeldNote &note) {
     if (note.HasGem()) {
         mSustainHeld = 1;
+        static Symbol hold_note("hold_note");
         PopupHelp(hold_note, false);
         if (mTrack) {
             mTrack->ReleaseGem(f1, note.unk_0x4);
@@ -2156,6 +2157,7 @@ void GemPlayer::FinishHeldNote(float f1, HeldNote &note) {
         Export(msg, false);
         UpdateCrowdMeter(frac, note.unk_0x4);
         if (unk348) {
+            static Message whammy_end_msg("whammy_end");
             Handle(whammy_end_msg, false);
         }
         unk348 = false;

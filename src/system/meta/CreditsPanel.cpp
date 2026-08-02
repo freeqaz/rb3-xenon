@@ -114,17 +114,13 @@ bool CreditsPanel::Exiting() const {
 void CreditsPanel::Poll() {
     UIPanel::Poll();
     if (!mStream) {
-        DataArray *cfg = SystemConfig("sound", "credits");
-        String streamStr;
-        cfg->FindData("stream", streamStr, true);
-        float volume;
-        cfg->FindData("volume", volume, true);
-        mStream = TheSynth->NewStream(streamStr.c_str(), 0, 0, 0);
-        mStream->SetPan(0, -1);
-        mStream->SetPan(1, 1);
-        mStream->SetVolume(volume);
-        mStream->Faders()->AddLocal("fade");
+        mStream = TheSynth->NewStream("sfx/streams/credits", 0, 0, 0);
+        MILO_ASSERT_FMT(mStream, "sfx/streams/credits.foo missing");
         mStream->SetJump(Stream::kStreamEndMs, 0, 0);
+        mStream->SetPan(0, -1.0f);
+        mStream->SetPan(1, 1.0f);
+        mStream->SetVolume(-4.0f);
+        mStream->Faders()->AddLocal("fade");
     } else if (!mStream->IsPlaying() && mStream->IsReady() && !mPaused) {
         mStream->Play();
     }

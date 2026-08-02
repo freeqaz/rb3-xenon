@@ -492,12 +492,34 @@ DataNode OnLoadMgrPrint(DataArray *a) {
 
 void LoadMgr::Init() {
     SetEditMode(false);
+// Retail RB3-360's LoadMgr::Init contains NO `bl ?OptionBool@@YA_NPBD_N@Z` at
+// all (objdiff "Base only" on the 212 B retail body), so the null_platform
+// override is not in the retail source.  Dropping it also drops the r29/r30
+// pair retail never saves -- retail's prologue is a bare stw r12,-0x8(r1) with
+// a 0x70 frame where ours was __savegprlr_29 with 0x80.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (OptionBool("null_platform", false))
         mPlatform = kPlatformNone;
+#endif
+// Retail RB3-360 EXCLUDES these two dev registrations.  Retail's LoadMgr::Init
+// builds exactly four literal Symbols -- set_edit_mode, set_loader_period,
+// sysplatform_sym, sysplatform -- with no loadmgr_debug/loadmgr_print ctor in
+// the body (retail_props.py over band.exe).  rb3-Wii is the DEV build and keeps
+// them unguarded, so the oracle disagrees with retail here and retail wins.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     DataRegisterFunc("loadmgr_debug", OnSetLoadMgrDebug);
     DataRegisterFunc("loadmgr_print", OnLoadMgrPrint);
+#endif
     DataRegisterFunc("set_edit_mode", OnSetEditMode);
     DataRegisterFunc("set_loader_period", OnSetLoaderPeriod);
     DataRegisterFunc("sysplatform_sym", OnSysPlatformSym);
+// Retail emits `li r11,0x2` here, NOT a load of mPlatform from this+0x58 --
+// i.e. retail's source is a compile-time constant, and kPlatformXBox == 2
+// (os/Platform.h).  Keep the member read for the native host build, where the
+// platform is genuinely not the 360.
+#ifdef HX_NATIVE
     DataVariable("sysplatform") = (int)mPlatform;
+#else
+    DataVariable("sysplatform") = (int)kPlatformXBox;
+#endif
 }

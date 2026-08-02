@@ -247,10 +247,15 @@ void SongSectionController::Poll() {
 
 void SongSectionController::UpdateOverlay() {
     if (mOverlay) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        // "cheat.song_section_ctrl" occurs 0 times in retail band.exe -- retail
+        // compiled out the cheat DataVariable (same class as the quick_cheats block
+        // this lane already removed from CheatsInit). Native keeps the behaviour.
         if (!LOADMGR_EDITMODE) {
             static DataNode &disable = DataVariable("cheat.song_section_ctrl");
             mOverlay->SetShowing(disable.Int());
         }
+#endif
         if (mOverlay->Showing()) {
             String cursec(mMidiSection.Null() ? "<none>" : mMidiSection.Str());
             *mOverlay << "[current practice section]: " << cursec.c_str() << "\n";
