@@ -40,10 +40,10 @@ float KerningTable::Kerning(unsigned short us1, unsigned short us2) {
         return 0;
 }
 
-bool KerningTable::Valid(const RndFont::KernInfo &info, RndFontBase *font) {
+bool KerningTable::Valid(const RndFont::KernInfo &info, RndFont *font) {
     return !font
-        || (((RndFont *)font)->RndFont::CharDefined(info.mFirstChar)
-            && ((RndFont *)font)->RndFont::CharDefined(info.mSecondChar));
+        || (font->RndFont::CharDefined(info.mFirstChar)
+            && font->RndFont::CharDefined(info.mSecondChar));
 }
 
 void KerningTable::Save(BinStream &bs) {
@@ -55,7 +55,7 @@ void KerningTable::Save(BinStream &bs) {
 }
 
 void KerningTable::SetKerning(
-    const std::vector<RndFont::KernInfo> &info, RndFontBase *font
+    const std::vector<RndFont::KernInfo> &info, RndFont *font
 ) {
     int validcount = 0;
     for (int i = 0; i < info.size(); i++) {
@@ -83,7 +83,7 @@ void KerningTable::SetKerning(
     }
 }
 
-void KerningTable::GetKerning(std::vector<RndFontBase::KernInfo> &info) const {
+void KerningTable::GetKerning(std::vector<RndFont::KernInfo> &info) const {
     info.resize(mNumEntries);
     for (int i = 0; i < mNumEntries; i++) {
         info[i].mFirstChar = mEntries[i].key;
@@ -92,9 +92,9 @@ void KerningTable::GetKerning(std::vector<RndFontBase::KernInfo> &info) const {
     }
 }
 
-void KerningTable::Load(BinStreamRev &d, RndFontBase *f) {
+void KerningTable::Load(BinStreamRev &d, RndFont *f) {
     if (sFontRev < 7) {
-        std::vector<RndFontBase::KernInfo> info;
+        std::vector<RndFont::KernInfo> info;
         d >> info;
         SetKerning(info, f);
     } else {
@@ -188,7 +188,7 @@ void RndFont::Replace(ObjRef *from, Hmx::Object *to) {
 BEGIN_HANDLERS(RndFont)
     HANDLE_EXPR(texture_owner, mTextureOwner.Ptr())
     HANDLE_ACTION(bleed_test, BleedTest())
-    HANDLE_SUPERCLASS(RndFontBase)
+    HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(RndFont)
@@ -200,12 +200,22 @@ BEGIN_PROPSYNCS(RndFont)
     SYNC_PROP_SET(cell_height, (int)mCellSize.y, SetCellSize(mCellSize.x, _val.Int()))
     SYNC_PROP_SET(chars_in_map, GetASCIIChars(), SetASCIIChars(_val.Str()))
     SYNC_PROP_MODIFY(base_kerning, mBaseKerning, UpdateChars())
-    SYNC_SUPERCLASS(RndFontBase)
+    SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndFont)
     SAVE_REVS(0x11, 0)
-    SAVE_SUPERCLASS(RndFontBase)
+    // Former RndFontBase::Save, inlined. Retail's RndFont::Save (0x82472EC0)
+    // calls ?Save@Object@Hmx@@ directly and emits exactly ONE SAVE_REVS, so the
+    // base's own SAVE_REVS(0,0) is dropped here (Load below drops it to match).
+    SAVE_SUPERCLASS(Hmx::Object)
+    bs << mChars;
+    bs << mMonospace;
+    bs << mBaseKerning;
+    bs << (mKerningTable != nullptr);
+    if (mKerningTable) {
+        mKerningTable->Save(bs);
+    }
     bs << mMats;
     bs << mCellSize << mDeprecatedSize;
     bs << mTextureOwner;
@@ -264,7 +274,7 @@ __forceinline BinStream &operator>>(BinStream &bs, MatChar &mc) {
     return bs;
 }
 
-__forceinline BinStreamRev &operator>>(BinStreamRev &d, RndFontBase::KernInfo &info) {
+__forceinline BinStreamRev &operator>>(BinStreamRev &d, RndFont::KernInfo &info) {
     if (sFontRev < 0x11) {
         char x;
         d >> x;
@@ -310,7 +320,17 @@ BEGIN_LOADS(RndFont)
             Hmx::Object::Load(d.stream);
         }
     } else {
-        RndFontBase::Load(d.stream);
+        // Former RndFontBase::Load, inlined (no base rev -- see Save above).
+        Hmx::Object::Load(d.stream);
+        d >> mChars;
+        d >> mMonospace;
+        d >> mBaseKerning;
+        bool newKerning;
+        d >> newKerning;
+        if (newKerning) {
+            mKerningTable = new KerningTable();
+            mKerningTable->Load(d, this);
+        }
     }
     if (d.rev < 3) {
         String str;
@@ -672,9 +692,62 @@ bool RndFont::HasChar(unsigned short c) const {
     return mCharInfoMap.find(c) != mCharInfoMap.end();
 }
 
+// Former RndFontBase::SetASCIIChars, inlined.
 void RndFont::SetASCIIChars(String str) {
-    RndFontBase::SetASCIIChars(str);
+    if (DataOwner() != this) {
+        MILO_ASSERT(0, 0x167);
+    } else {
+        ASCIItoWideVector(mChars, str.c_str());
+    }
     UpdateChars();
+}
+
+// ---- former RndFontBase members, now RndFont's own ----
+
+float RndFont::Kerning(unsigned short us1, unsigned short us2) const {
+    if (DataOwner() != this) {
+        return DataOwner()->Kerning(us1, us2);
+    } else if (us1 == 0 || us2 == 0)
+        return 0;
+    else if (!mMonospace && mKerningTable) {
+        return mBaseKerning + mKerningTable->Kerning(us1, us2);
+    } else
+        return mBaseKerning;
+}
+
+String RndFont::GetASCIIChars() const {
+    if (DataOwner() != this) {
+        return DataOwner()->GetASCIIChars();
+    } else
+        return WideVectorToASCII(mChars);
+}
+
+void RndFont::SetBaseKerning(float f1) {
+    MILO_ASSERT(DataOwner() == this, 0x65);
+    mBaseKerning = f1;
+}
+
+void RndFont::SetKerning(const std::vector<KernInfo> &kernInfo) {
+    MILO_ASSERT(DataOwner() == this, 0x7C);
+    if (kernInfo.empty()) {
+        RELEASE(mKerningTable);
+    } else {
+        if (!mKerningTable) {
+            mKerningTable = new KerningTable();
+        }
+        mKerningTable->SetKerning(kernInfo, this);
+    }
+}
+
+void RndFont::GetKerning(std::vector<KernInfo> &kernInfo) const {
+    const RndFont *owner;
+    for (owner = this; owner->DataOwner() != owner; owner = owner->DataOwner())
+        ;
+    if (owner->mKerningTable) {
+        owner->mKerningTable->GetKerning(kernInfo);
+    } else {
+        kernInfo.clear();
+    }
 }
 
 RndMat *RndFont::Mat(int idx) const {

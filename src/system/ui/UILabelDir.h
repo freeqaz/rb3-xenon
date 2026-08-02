@@ -30,7 +30,7 @@ public:
     OBJ_MEM_OVERLOAD(0x19);
 
     bool AllowEditText() const;
-    RndFontBase *FontObj(Symbol) const;
+    RndFont *FontObj(Symbol) const;
     UIColor *GetStateColor(UIComponent::State) const;
     // ------------------------------------------------------------------
     // RB3 retail UILabelDir API (rb3-Wii oracle). DECLARATION-ONLY, non-virtual:

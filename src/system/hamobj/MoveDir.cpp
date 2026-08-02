@@ -582,7 +582,7 @@ void MoveDir::PostLoad(BinStream &bs) {
                 ObjDirPtr<UILabelDir> labelDirPtr;
                 labelDirPtr.LoadFile(path, false, true, kLoadFront, false);
                 if (labelDirPtr.IsLoaded()) {
-                    RndFontBase *font = labelDirPtr->FontObj(gNullStr);
+                    RndFont *font = labelDirPtr->FontObj(gNullStr);
                     MILO_ASSERT(font, 0xA52);
                     ReplaceObject(font, updateFont, false, false, true);
                     mUpdateFonts.push_back(labelDirPtr);
