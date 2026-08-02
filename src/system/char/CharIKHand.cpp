@@ -41,11 +41,21 @@ BEGIN_PROPSYNCS(CharIKHand)
     SYNC_PROP(move_elbow, mMoveElbow)
     SYNC_PROP(elbow_swing, mElbowSwing)
     SYNC_PROP(always_ik_elbow, mAlwaysIKElbow)
-    SYNC_PROP(constraint_wrist, mConstraintWrist)
+    // RB3 spells this property `constrain_wrist`; `constraint_wrist` is DC3's rename.
+    // Retail band.exe: "constrain_wrist" x1, "constraint_wrist" x0 (positive controls
+    // in the same scan: "elbow_collide" x1, "wrist_radians" x1).  The metric cannot
+    // see this -- objdiff masks the .rdata reloc arg -- so it is a correctness fix.
+    // Member name left as mConstraintWrist to avoid a header/Save/Load/Copy cascade.
+    SYNC_PROP(constrain_wrist, mConstraintWrist)
     SYNC_PROP(wrist_radians, mWristRadians)
     SYNC_PROP(elbow_collide, mElbowCollide)
     SYNC_PROP(clockwise, mClockwise)
+#ifdef HX_NATIVE
+    // DC3-only property: rb3-Wii (RB3's own dev build) has no `pull_shoulder` prop at
+    // all -- only the PullShoulder() method.  Retail's SyncProperty COMDAT holds 13
+    // ??0Symbol@@QAA@PBD@Z relocs, exactly rb3-Wii's 13-property list, against our 14.
     SYNC_PROP(pull_shoulder, mPullShoulder)
+#endif
     SYNC_SUPERCLASS(CharWeightable)
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain stops at the immediate superclass;

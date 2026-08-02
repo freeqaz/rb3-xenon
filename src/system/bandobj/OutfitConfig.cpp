@@ -1169,7 +1169,17 @@ BEGIN_CUSTOM_PROPSYNC(OutfitConfig::MeshAO)
 END_CUSTOM_PROPSYNC
 
 BEGIN_CUSTOM_PROPSYNC(OutfitConfig::Overlay)
+    // Retail builds both dispatch Symbols as FUNCTION-LOCAL STATICS: this COMDAT
+    // carries 2 ??0Symbol@@QAA@PBD@Z relocs against our 0.  This block sits ABOVE
+    // OutfitConfig.cpp's dialect_object_push region (line ~1210), so it gets
+    // obj/ObjMacros.h's plain global-compare SYNC_PROP.  Spelled with explicit
+    // interleaved statics (the MusicLibrary.cpp:2421 pattern) rather than
+    // SYNC_PROP_STATIC, because that variant expands to SYNC_PROP(_s, ...) and would
+    // stringify to a literal "_s" wherever Object.h:1420's local-static SYNC_PROP is
+    // the one in scope -- this spelling is correct under BOTH macro forms.
+    static Symbol category("category");
     SYNC_PROP(category, o.mCategory)
+    static Symbol texture("texture");
     SYNC_PROP(texture, o.mTexture)
 END_CUSTOM_PROPSYNC
 
