@@ -34,11 +34,17 @@ Transform)` wrong whenever its destination aliased an argument — the exact
 hazard class the charter named, present and provable (§2).
 
 ⚠ **The headline deliverable is qualified, and the qualification is the honest
-part.** The *bones* are posed and provably correct. The *skinned mesh* smears
-(§5). Bone evaluation and world compose are VERIFIED; the skinning palette is
-**not**, and §5 says why and names the suspect. A picture of a posed character
-is not the same claim as a picture of a *correct* character, and this document
-does not conflate them.
+part.** The *bones* are posed and provably correct. The *skinned mesh* smears.
+Bone evaluation and world compose are VERIFIED; the skinning palette is **not**.
+A picture of a posed character is not the same claim as a picture of a *correct*
+character, and this document does not conflate them.
+
+★ **A third silent defect was root-caused but not fixed** (§5.1): every skinned
+mesh is **truncated to 4 bones at load**, because `MaxBones()` reads a gfx-mode
+global that only `PreInitSystem` ever sets. That is the same root-cause shape as
+§3 — a bring-up sub-init the hand-rolled native drivers skipped — and it is the
+explanation for the `exceeds bone limit (20 of 4)` warning X3 recorded and left
+open. The one-line fix is measured and **deliberately not landed** (§5.2).
 
 ★ **X4a's central structural finding is RETRACTED on measurement** (§4). The 14
 "band3" classes blocking every venue root contain **zero** `src/band3/` classes,
