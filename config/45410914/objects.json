@@ -1965,6 +1965,13 @@
             "band3/tour/TourPerformerRemote.cpp": "NonMatching",
             "band3/tour/TourWeightManager.cpp": "NonMatching",
             "band3/tour/TourDescPanel.cpp": "NonMatching",
+            "band3/tour/TourChar.cpp": "NonMatching",
+            "band3/tour/TourChallengeResultsPanel.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
             "band3/tour/TourProgress.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
