@@ -1,5 +1,6 @@
 #pragma once
 #include "obj/Data.h"
+#include "obj/Msg.h"
 #include "os/CritSec.h"
 #include "os/Timer.h"
 #include "stl/_vector.h"
@@ -12,6 +13,13 @@
 #include "xdk/xvh2/xvh2.h"
 
 class MemStream;
+
+// Retail fn_82B5E7D0 is this class's (bool) ctor: it stakes a DataNode{b,0} on
+// the stack, calls Type() for the sret Symbol, then Message(Symbol, DataNode&).
+// The string at lbl_82194CD4 is "microphones_changed".
+DECLARE_MESSAGE(MicrophonesChangedMsg, "microphones_changed")
+    MicrophonesChangedMsg(bool b) : Message(Type(), b) {}
+END_MESSAGE
 
 class ChatReceiver {
     friend class MicManagerXbox;
@@ -121,7 +129,7 @@ public:
     public:
         int unk0;
         int unk4;
-        int unk8[252];
+        unsigned int unk8[252];
     };
 
     void RequirePushToTalk(bool, int);
@@ -137,7 +145,7 @@ public:
     std::vector<MicXbox *> unk0;
     std::vector<ChatReceiver *> unkc;
     int unk18;
-    int unk1c;
+    IXHV2Engine *unk1c;
     int unk20; // 0x20
     bool mMicsChanged; // 0x24
     std::vector<MicManagerXbox::ChatBuffer> unk28; // 0x28

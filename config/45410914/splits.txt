@@ -114,6 +114,10 @@ EntityUploader.cpp:
 	.text       start:0x8250D0D8 end:0x8250D4C0
 	.text       start:0x8250D4C8 end:0x8250F4E0
 
+RockCentralJobs.cpp:
+	.pdata      start:0x82217A00 end:0x82217AB8
+	.text       start:0x8250C808 end:0x8250D0D8
+
 RockCentral.cpp:
 	.pdata      start:0x821F1BF0 end:0x821F1BF8
 	.pdata      start:0x821F2B08 end:0x821F2B28
@@ -169,7 +173,6 @@ RockCentral.cpp:
 	.pdata      start:0x822173D8 end:0x82217408
 	.pdata      start:0x82217408 end:0x82217410
 	.pdata      start:0x82217410 end:0x82217830
-	.pdata      start:0x82217A00 end:0x82217AB8
 	.pdata      start:0x8221A840 end:0x8221A848
 	.pdata      start:0x8221FF18 end:0x8221FF20
 	.pdata      start:0x822204B0 end:0x822204C8
@@ -245,7 +248,6 @@ RockCentral.cpp:
 	.text       start:0x82507290 end:0x825074C0
 	.text       start:0x825074C0 end:0x82507634
 	.text       start:0x82507634 end:0x8250B138
-	.text       start:0x8250C808 end:0x8250D0D8
 	.text       start:0x8253B238 end:0x8253B29C
 	.text       start:0x8258DFD0 end:0x8258DFF0
 	.text       start:0x82593B2C end:0x82593B8C

@@ -4,6 +4,7 @@
 #include <vector>
 #include "xdk/xapilibi/handleapi.h"
 #include "xdk/xapilibi/processthreadsapi.h"
+#include "synth_xbox/Mic.h"
 #include "xdk/xapilibi/synchapi.h"
 #include "xdk/xapilibi/xbox.h"
 
@@ -116,6 +117,112 @@ void ExternalMic::Terminate() {
     }
     gMics.clear();
     ExternalMicClientMgr::Terminate();
+}
+
+std::vector<ExternalMicClientProxy *> ExternalMicClientMgr::mMicMasters;
+std::vector<unsigned long> ExternalMicClientMgr::mDevToMicMaster;
+std::vector<unsigned long> ExternalMicClientMgr::mMicMasterToDev;
+std::vector<MicXbox *> ExternalMicClientMgr::mAssocMicXbox;
+
+void ExternalMicClientMgr::Init() {
+    mAssocMicXbox.reserve(4);
+    mMicMasters.reserve(4);
+    mDevToMicMaster.reserve(4);
+    mMicMasterToDev.reserve(4);
+    for (int i = 0; i < 4; i++) {
+        mDevToMicMaster.push_back(-1);
+        mMicMasterToDev.push_back(-1);
+        mMicMasters.push_back(NULL);
+        mAssocMicXbox.push_back(NULL);
+    }
+}
+
+void ExternalMicClientMgr::Terminate() {
+    // The explicit null check is load-bearing: ExternalMicClientProxy has a
+    // trivial destructor, so a bare `delete p` lets MSVC elide the implicit
+    // test and call operator delete unconditionally. Retail tests first.
+    for (unsigned int i = 0; i < mMicMasters.size(); i++) {
+        if (mMicMasters[i]) {
+            delete mMicMasters[i];
+        }
+    }
+    mMicMasters.clear();
+}
+
+ExternalMicClientProxy *ExternalMicClientMgr::GetMasterForIndex(unsigned long dev) {
+    unsigned long master = mDevToMicMaster[dev];
+    if (master != -1) {
+        return mMicMasters[master];
+    }
+    for (unsigned int i = 0; i < mMicMasters.size(); i++) {
+        if (mMicMasters[i] == NULL) {
+            mMicMasters[i] = new ExternalMicClientProxy(i);
+        }
+        if (mMicMasterToDev[i] == -1) {
+            mDevToMicMaster[dev] = i;
+            mMicMasterToDev[i] = dev;
+            return mMicMasters[i];
+        }
+    }
+    return NULL;
+}
+
+void ExternalMicClientMgr::Associate(int i, MicXbox *mic) { mAssocMicXbox[i] = mic; }
+
+bool ExternalMicClientMgr::ConnectedForClient(const MicXbox *mic) {
+    for (unsigned int i = 0; i < mAssocMicXbox.size(); i++) {
+        if (mAssocMicXbox[i] == mic && mMicMasters[i] != NULL && mMicMasters[i]->mConnected) {
+            return true;
+        }
+    }
+    return false;
+}
+
+long ExternalMicClientProxy::OnMicConnected(unsigned long dev, bool b, const Symbol &s) {
+    mConnected = true;
+    MicXbox *mic = ExternalMicClientMgr::mAssocMicXbox[mIndex];
+    if (mic) {
+        mic->OnMicConnected(dev, b, s);
+        return 0;
+    }
+    return 0x8000FFFF;
+}
+
+void ExternalMicClientMgr::AddAudio(unsigned long dev, unsigned char *data, unsigned long len) {
+    ExternalMicClientProxy *master = GetMasterForIndex(dev);
+    if (master) {
+        MicXbox *mic = mAssocMicXbox[master->mIndex];
+        if (mic) {
+            mic->AddData(data, len);
+        }
+    }
+}
+
+float ExternalMicClientMgr::GetRequiredGain(unsigned long dev) {
+    ExternalMicClientProxy *master = GetMasterForIndex(dev);
+    if (master) {
+        MicXbox *mic = mAssocMicXbox[master->mIndex];
+        if (mic) {
+            return mic->GetGain();
+        }
+    }
+    return 0.0f;
+}
+
+void ExternalMicClientMgr::OnMicDisconnected(unsigned long dev) {
+    ExternalMicClientProxy *master = GetMasterForIndex(dev);
+    if (master) {
+        master->mConnected = false;
+        MicXbox *mic = mAssocMicXbox[master->mIndex];
+        if (mic) {
+            mic->OnMicDisconnected();
+        }
+        unsigned long m = mDevToMicMaster[dev];
+        if (m != -1) {
+            mMicMasterToDev[m] = -1;
+            mDevToMicMaster[dev] = -1;
+        }
+    }
 }
 
 // sw2 scatter-include (default/ExternalMic <- bandobj/OutfitConfig.cpp)

@@ -29,9 +29,16 @@ struct IXHV2Engine { /* Size=0x4 */
     virtual DWORD SetRemoteTalkerEffectParam(UINT64, DWORD, UINT32, const void *, UINT32);
     virtual UINT32 GetDataReadyFlags();
     virtual DWORD GetLocalChatData(UINT32, unsigned char *, UINT32 *, UINT32 *);
-    virtual DWORD NuiGetLocalChatData(
-        unsigned char *, UINT32 *, UINT32 *, NUI_TALKER_POSITION *, UINT32 *
-    );
+    // NOTE (lane CJ-3): RB3's XDK predates the Kinect/NUI additions to
+    // IXHV2Engine.  This slot exists in the DC3-era header we inherited, but
+    // retail RB3 calls SubmitIncomingChatData through vtable offset 0x54, not
+    // 0x58 -- i.e. there is exactly one fewer virtual before it.  Measured on
+    // MicManagerXbox::Poll: with NuiGetLocalChatData present the two call sites
+    // were the ONLY mismatches in the function (99.64%); removing it took the
+    // function to 100%.  It has no callers anywhere in the tree.
+    // virtual DWORD NuiGetLocalChatData(
+    //     unsigned char *, UINT32 *, UINT32 *, NUI_TALKER_POSITION *, UINT32 *
+    // );
     virtual DWORD SetPlaybackPriority(UINT64, UINT32, UINT32);
     virtual DWORD SubmitIncomingChatData(UINT64, const unsigned char *, UINT32 *);
     virtual DWORD IsSharedMicPresent(UINT32);

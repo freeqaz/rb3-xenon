@@ -1817,6 +1817,7 @@
                     "/DRB3_STRIP_CHEAT_HANDLERS"
                 ]
             },
+            "band3/net_band/RockCentralJobs.cpp": "NonMatching",
             "band3/tour/Tour.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
