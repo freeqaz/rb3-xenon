@@ -95,7 +95,18 @@ public:
     DataNode OnSetLyricColor(const DataArray *);
     DataNode OnIsolatePart(DataArray *);
 
-    DECLARE_REVS;
+    // NOT DECLARE_REVS (two separate gRev/gAltRev statics) -- identical
+    // reasoning to ChordShapeGenerator.h: MSVC does not lay out .bss in
+    // declaration order, so two independent statics force TWO address
+    // materializations, while retail's PostLoad addresses them as ONE 4-byte
+    // aggregate (altRev at +0, rev at +4) off a SINGLE `lis`. Verified against
+    // the target here: it stores `sth ...,0x0(rN)` / `sth ...,0x4(rN)` and
+    // reloads `lhz ...,0x4(rN)` all from one base, where we emitted a separate
+    // `lis` per symbol. Force retail's layout with an explicit struct.
+    struct RevsT {
+        __declspec(align(4)) unsigned short altRev, rev;
+    };
+    static RevsT gRevs;
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
     NEW_OBJ(VocalTrackDir)

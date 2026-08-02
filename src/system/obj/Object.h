@@ -605,6 +605,11 @@ public:
     // what wrecks ??0ScrollbarDisplay@@ (92.2% -> 70.3%) even though its
     // instruction multiset is correct.
     ObjPtr(Hmx::Object *owner, T *ptr = nullptr) : ObjRefConcrete<T>(owner, ptr) {
+        // Redundant re-assignment is LOAD-BEARING -- see the identical note on
+        // the primary template body in obj/ObjPtr_p.h. Without it the base
+        // mem-init's mObject store floats up into the addi->stw load-use stall
+        // and fills the wrong gap, a 3-instruction rotation vs retail.
+        this->mObject = ptr;
         if (this->mObject)
             this->mObject->AddRef(this);
     }

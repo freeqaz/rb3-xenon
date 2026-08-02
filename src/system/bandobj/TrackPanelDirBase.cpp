@@ -46,9 +46,17 @@ static inline GemTrackDir *AsGemTrack(RndDir *d) { return static_cast<GemTrackDi
 // present the vptr store stays last, as retail has it (3 mismatches, 99.4%).
 // The body's CONTENT is irrelevant -- a body reading no members measured
 // identically -- so this is about the ctor being non-empty, not about AddRef.
+// ⚠ CORRECTION (lane DC-2): the claim above that "the body's CONTENT is
+// irrelevant" is FALSE, and it is what left this ctor parked at 99.4%. The
+// residual 3 mismatches were the mObject store filling the addi->stw load-use
+// stall instead of the lis->addi gap. The redundant `mObject = ptr` below kills
+// the base mem-init's store so the surviving one lands after the vtable
+// materialization, exactly as retail has it. Same one-line fix as the primary
+// template in obj/ObjPtr_p.h; see the note there.
 template <>
 inline ObjPtr<RndDir>::ObjPtr(Hmx::Object *owner, RndDir *ptr)
     : ObjRefConcrete<RndDir>(owner, ptr) {
+    mObject = ptr;
     if (mObject)
         mObject->AddRef(this);
 }
