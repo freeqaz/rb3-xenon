@@ -74,50 +74,63 @@ BEGIN_COPYS(FxSend)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(7, 8)
+// Retail RB3 uses the rb3-Wii (ObjMacros.h) rev dialect -- file-scope rev
+// words written by Load -- not the DC3-derived obj/Object.h BinStreamRev
+// local.  Both words fold onto ONE base register at offsets 0/4, which only
+// happens for internal-linkage align(4) file-scope statics.
+static struct {
+    __declspec(align(4)) unsigned short rev;
+    __declspec(align(4)) unsigned short altRev;
+} gRevs;
+#define gRev gRevs.rev
+#define gAltRev gRevs.altRev
 
-BEGIN_LOADS(FxSend)
-    LOAD_REVS(bs)
-    ASSERT_REVS(7, 8)
-    LOAD_SUPERCLASS(Hmx::Object)
+void FxSend::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    // Retail rebuilds the chain only when the routing actually changed.
+    FxSend *oldPtr = mNextSend;
+    int oldStage = mStage;
+    SendChannels oldchans = mChannels;
     bs >> mNextSend;
     bs >> mStage;
     // Rev 2-4: Used percentage-based wet/dry mix
-    if (d.rev < 5) {
-        if (d.rev >= 2) {
-            float x;
-            d >> x;
-            mDryGain = RatioToDb((100.0f - x) / 100.0f);
-            mWetGain = RatioToDb(x / 100.0f);
+    if (gRev < 5) {
+        if (gRev >= 2) {
+            float f;
+            bs >> f;
+            mDryGain = RatioToDb((100.0f - f) / 100.0f);
+            mWetGain = RatioToDb(f / 100.0f);
         }
-        if (d.rev >= 3) {
-            d >> mBypass;
+        if (gRev >= 3) {
+            bs >> mBypass;
         }
     }
     // Rev 4: Added channel routing
-    if (d.rev >= 4) {
-        int channels;
-        d >> channels;
-        mChannels = (SendChannels)channels;
+    if (gRev >= 4) {
+        int chans;
+        bs >> chans;
+        mChannels = (SendChannels)chans;
     }
     // Rev 5: Switched to dB-based gains, added input gain
-    if (d.rev >= 5) {
-        d >> mDryGain;
-        d >> mWetGain;
-        d >> mInputGain;
+    if (gRev >= 5) {
+        bs >> mDryGain >> mWetGain >> mInputGain;
     }
     // Rev 6: Moved bypass here (was in rev 3 block for old versions)
-    if (d.rev >= 6) {
-        d >> mBypass;
+    if (gRev >= 6) {
+        bs >> mBypass;
     }
     // Rev 7: Added reverb send controls
-    if (d.rev >= 7) {
-        d >> mReverbMixDb;
-        d >> mReverbEnable;
+    if (gRev >= 7) {
+        bs >> mReverbMixDb >> mReverbEnable;
     }
-    RebuildChain();
+    if (mNextSend != oldPtr || mStage != oldStage || mChannels != oldchans)
+        RebuildChain();
     UpdateMix();
-END_LOADS
+}
 
 void FxSend::SetNextSend(FxSend *next) {
     if (next != mNextSend && CheckChain(next, mStage)) {

@@ -3,6 +3,17 @@
 #include "synth/FxSend.h"
 #include "utl/BinStream.h"
 
+// Retail RB3 uses the rb3-Wii (ObjMacros.h) rev dialect -- file-scope rev
+// words written by Load -- not the DC3-derived obj/Object.h BinStreamRev
+// local.  Both words fold onto ONE base register at offsets 0/4, which only
+// happens for internal-linkage align(4) file-scope statics.
+// Named per-class and used directly (no `#define gRev`) because this TU
+// scatter-includes FxSendWah.cpp below, which carries its own rev words.
+static struct {
+    __declspec(align(4)) unsigned short rev;
+    __declspec(align(4)) unsigned short altRev;
+} gRevsMeterEffect;
+
 BEGIN_COPYS(FxSendMeterEffect)
     COPY_SUPERCLASS(FxSend)
     CREATE_COPY(FxSendMeterEffect)
@@ -13,14 +24,14 @@ void FxSendMeterEffect::Save(BinStream &bs) {
     SAVE_SUPERCLASS(FxSend)
 }
 
-INIT_REVS(1, 0)
-
-BEGIN_LOADS(FxSendMeterEffect)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 0)
-    LOAD_SUPERCLASS(FxSend)
+void FxSendMeterEffect::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRevsMeterEffect.rev = getHmxRev(rev);
+    gRevsMeterEffect.altRev = getAltRev(rev);
+    FxSend::Load(bs);
     OnParametersChanged();
-END_LOADS
+}
 
 float FxSendMeterEffect::ChannelData(int idx) {
     if (mChannels.size() == 0)
