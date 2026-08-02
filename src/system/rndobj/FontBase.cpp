@@ -56,7 +56,12 @@ BEGIN_LOADS(RndFontBase)
     d >> newKerning;
     if (newKerning) {
         mKerningTable = new KerningTable();
-        mKerningTable->Load(d, this);
+        // KerningTable is retail-typed on RndFont (retail has no RndFontBase).
+        // The old code passed `this` and KerningTable::Valid then cast it to
+        // RndFont* and called RndFont::CharDefined NON-VIRTUALLY -- undefined
+        // behaviour for an RndFont3d. Passing null keeps every entry, which is
+        // strictly less broken. RndFont3d/RndFontBase are DC3-only anyway.
+        mKerningTable->Load(d, nullptr);
     }
 END_LOADS
 
@@ -98,7 +103,7 @@ void RndFontBase::SetKerning(const std::vector<KernInfo> &kernInfo) {
         if (!mKerningTable) {
             mKerningTable = new KerningTable();
         }
-        mKerningTable->SetKerning(kernInfo, this);
+        mKerningTable->SetKerning(kernInfo, nullptr); // see note in Load
     }
 }
 

@@ -162,7 +162,7 @@ void UILabelDir::PostLoad(BinStream &bs) {
 
 bool UILabelDir::AllowEditText() const { return mAllowEditText; }
 
-RndFontBase *UILabelDir::FontObj(Symbol s) const {
+RndFont *UILabelDir::FontObj(Symbol s) const {
     if (mGennedFonts.size() > 0) {
         return GetGennedFont(s);
     } else {

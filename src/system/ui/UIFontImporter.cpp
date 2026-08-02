@@ -677,7 +677,7 @@ DataNode UIFontImporter::OnSyncWithResourceFile(DataArray *a) {
                 mBottom = labelDir->mBottom;
                 mFillWithSafeWhite = labelDir->mFillWithSafeWhite;
                 if (mReferenceKerning && labelDir->mReferenceKerning) {
-                    std::vector<RndFontBase::KernInfo> kernInfo;
+                    std::vector<RndFont::KernInfo> kernInfo;
                     labelDir->mReferenceKerning->GetKerning(kernInfo);
                     mReferenceKerning->SetKerning(kernInfo);
                     mReferenceKerning->SetBaseKerning(
