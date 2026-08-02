@@ -47,6 +47,14 @@ jobs:
             --binutils /binutils --compilers /compilers
         ninja all_source progress build/${{ matrix.version }}/report.json
 
+    # Guard: a COFF relocation's SymbolTableIndex COUNTS AUX RECORDS, so
+    # indexing an aux-free symbol list returns a GARBAGE NAME.  Measured: only
+    # 20.99% of relocations resolve correctly without a correction.  The bug has
+    # shipped three times and always as a SILENT FALSE NEGATIVE.  Runs AFTER
+    # Build so the real-obj cross-check is exercised, not just the fixture.
+    - name: Reloc symbol-index guard
+      run: python3 tools/reloc_symidx_guard.py -v
+
     # # Upload map files
     # - name: Upload map
     #   uses: actions/upload-artifact@v4

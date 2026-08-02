@@ -548,6 +548,13 @@ class COFFParser:
     def _parse_symbols(self):
         self.symbols = []
         self.symbol_map = {}  # name -> symbol
+        # A relocation's SymbolTableIndex is a RAW index that COUNTS AUX
+        # RECORDS.  This loop skips aux records, so list position drifts below
+        # the raw index and `self.symbols[sym_idx]` returns a GARBAGE symbol.
+        # `self.symbols` stays aux-free (other consumers iterate it); relocation
+        # lookups must go through this raw-index map.
+        # See tools/reloc_symidx_guard.py.
+        self.symbols_by_raw = {}   # raw COFF symbol index -> symbol
         strtab_base = self.symtab_offset + self.num_symbols * 18
 
         i = 0
@@ -577,6 +584,7 @@ class COFFParser:
             }
             self.symbols.append(sym)
             self.symbol_map[name] = sym
+            self.symbols_by_raw[i] = sym
 
             # Skip aux symbols
             i += 1 + num_aux
@@ -588,7 +596,13 @@ class COFFParser:
         for i in range(sec['num_relocs']):
             off = sec['reloc_offset'] + i * 10
             vaddr, sym_idx, reloc_type = struct.unpack_from("<IIH", self.data, off)
-            sym = self.symbols[sym_idx] if sym_idx < len(self.symbols) else {'name': f'<sym#{sym_idx}>'}
+            # Resolve through the RAW-index map, never by list position.
+            # IMAGE_REL_PPC_PAIR (0x12) reuses this field to carry the low 16
+            # bits of a displacement, so it names no symbol at all.
+            if reloc_type == 0x12:
+                sym = {'name': f'<PPC_PAIR addend 0x{sym_idx:x}>'}
+            else:
+                sym = self.symbols_by_raw.get(sym_idx) or {'name': f'<sym#{sym_idx}>'}
             relocs.append({
                 'offset': vaddr,
                 'symbol_index': sym_idx,
