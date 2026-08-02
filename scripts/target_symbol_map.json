@@ -9541,7 +9541,7 @@
  "0x82762758": "?DataPushBack@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82762b58": "?Quasiquote@@YA?AVDataNode@@ABV1@@Z",
  "0x827659e0": "?GetSaveFlags@@YAXPAVDataArray@@AA_N1@Z",
- "0x827672c0": "?PropSync@@YA_NAAVTransformCrowd@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x827672c0": "?PropSync@@YA_NAAUEventSink@MsgSource@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82768738": "?DataThis@@YAPAVObject@Hmx@@XZ",
  "0x8276aa00": "??1Queue@@QAA@XZ",
  "0x8276e328": "??0HamMasterLoader@@QAA@PAVHamMaster@@@Z",
