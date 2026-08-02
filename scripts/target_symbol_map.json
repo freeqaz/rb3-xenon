@@ -3634,7 +3634,7 @@
  "0x822967a8": "?_M_insert_overflow_aux@?$vector@V?$Key@VObjectStage@@@@V?$StlNodeAlloc@V?$Key@VObjectStage@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$Key@VObjectStage@@@@ABV3@ABU__false_type@2@I_N@Z",
  "0x8229ef00": "??0?$ObjPtr@VRndMat@@@@QAA@ABV0@@Z",
  "0x822a20c8": "??$?6VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x822a68e0": "?Save@WorldDir@@UAAXAAVBinStream@@@Z",
+ "0x822a68e0": "?PropSync@@YA_NAAVMeshAO@OutfitConfig@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x822aed20": "?DoWorldEnd@DxRnd@@EAAXXZ",
  "0x822b7ab8": "?Load@FlowTrigger@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x822b7ba8": "??$_Destroy_Range@V?$reverse_iterator@PAVSingerStats@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSingerStats@@@0@0@Z",
