@@ -161,6 +161,57 @@ BinStream &operator<<(BinStream &bs, const ObjRefConcrete<T1, class ObjectDir> &
     return bs;
 }
 
+// ---------------------------------------------------------------------------
+// Codegen trait: does T1 reach Hmx::Object through a VIRTUAL base?
+//
+// Retail's ObjRefConcrete<T1,T2>::Load() no-dir path is a single unconditional
+// `SetObjConcrete(0)` call.  MSVC /O1 /Ob2 then makes a PER-INSTANTIATION
+// inlining decision on it:
+//
+//   * T1 with only non-virtual bases -- the inlined body is
+//     `if (mObject) { mObject->Release(this); mObject = 0; }`, cheap, so it is
+//     INLINED and retail shows the open-coded sequence.
+//   * T1 reaching Hmx::Object through a VIRTUAL base -- inlining would also have
+//     to emit the vbase displacement lookup (lwz +4 / lwz +4 / add / addi +4)
+//     to form the Hmx::Object subobject for the virtual Release, which under
+//     /O1 (favour size) loses to a 3-instruction call, so it is NOT inlined and
+//     retail shows `li r4,0 / mr r3,this / bl SetObjConcrete`.
+//
+// Our compiler declines to inline in BOTH cases, so neither source form alone
+// reproduces retail: writing `SetObjConcrete(0)` matched the 9 virtual-base
+// instantiations and broke the 18 non-virtual ones (measured 100% -> ~92%),
+// and open-coding it did the reverse.  The trait below picks per T1, and the
+// dead arm folds away at /O1 because the condition is a compile-time constant.
+//
+// The predicate is EXACT over the whole ObjRefConcrete<T,ObjectDir>::Load
+// population: a transitive-virtual-base scan of all 1,457 parsed classes
+// separates the two groups 27/27 (the 9 below all have a virtual base; the 18
+// that retail open-codes all have none).  So to extend this correctly, add a
+// type here iff it reaches Hmx::Object through `virtual` inheritance --
+// directly (BandCharDesc, CharWeightable, RndTransformable) or transitively
+// (RndGroup / RndMesh / RndTexBlender via RndDrawable+RndTransformable,
+// UIComponent -> UIList -> BandList).
+// ---------------------------------------------------------------------------
+template <class T>
+struct ObjRefVirtualBaseObject {
+    enum { value = 0 };
+};
+#define RB3_OBJREF_VIRTUAL_BASE(T)                                                       \
+    class T;                                                                             \
+    template <>                                                                          \
+    struct ObjRefVirtualBaseObject<T> {                                                  \
+        enum { value = 1 };                                                              \
+    };
+RB3_OBJREF_VIRTUAL_BASE(BandCharDesc)
+RB3_OBJREF_VIRTUAL_BASE(BandList)
+RB3_OBJREF_VIRTUAL_BASE(CharWeightable)
+RB3_OBJREF_VIRTUAL_BASE(RndGroup)
+RB3_OBJREF_VIRTUAL_BASE(RndMesh)
+RB3_OBJREF_VIRTUAL_BASE(RndTexBlender)
+RB3_OBJREF_VIRTUAL_BASE(RndTransformable)
+RB3_OBJREF_VIRTUAL_BASE(UIComponent)
+RB3_OBJREF_VIRTUAL_BASE(UIList)
+
 template <class T1, class T2>
 bool ObjRefConcrete<T1, T2>::Load(BinStream &bs, bool print, ObjectDir *dir) {
     char buf[128];
@@ -235,9 +286,37 @@ bool ObjRefConcrete<T1, T2>::Load(BinStream &bs, bool print, ObjectDir *dir) {
         }
     } else {
 #endif
-        if (mObject) {
-            mObject->Release(this);
-            mObject = nullptr;
+        // Retail X360: the no-dir path calls SetObjConcrete(nullptr) rather than
+        // open-coding `if (mObject) { mObject->Release(this); mObject = 0; }`.
+        // Semantically identical (SetObjConcrete's `obj != mObject` guard folds to
+        // the same null test, and its trailing AddRef branch folds away for a null
+        // argument), but the two forms are NOT codegen-identical for every T1:
+        //
+        //   - T1 with SINGLE inheritance from Hmx::Object: MSVC /O1 /Ob2 inlines
+        //     SetObjConcrete(0) back into exactly the open-coded sequence, so the
+        //     19 such instantiations were -- and stay -- byte-identical either way.
+        //   - T1 reaching Hmx::Object through a VIRTUAL BASE (RndTransformable,
+        //     RndGroup, RndMesh, UIComponent, UIList, BandList, CharWeightable,
+        //     BandCharDesc, RndTexBlender): inlining would have to emit the vbase
+        //     displacement lookup (lwz +4 / lwz +4 / add / addi +4) before the
+        //     virtual Release, so /Ob2's cost heuristic DECLINES and emits
+        //     `bl SetObjConcrete` instead. Retail shows exactly that single call
+        //     with r3=this, r4=0; open-coding it costs 8 surplus instructions
+        //     (+32 bytes) on each of those 9 instantiations.
+        //
+        // Verified on ?Load@?$ObjRefConcrete@VUIComponent@@... : target idx 59-61
+        // is `li r4,0 / mr r3,this / bl SetObjConcrete`, ours was the vbase-adjusted
+        // `bl Hmx::Object::Release` + a separate `stw 0, 8(this)`.
+        //
+        // Both arms are the SAME operation; only which one MSVC emits differs.
+        // See ObjRefVirtualBaseObject above for why the choice is per-T1.
+        if (ObjRefVirtualBaseObject<T1>::value) {
+            SetObjConcrete(nullptr);
+        } else {
+            if (mObject) {
+                mObject->Release(this);
+                mObject = nullptr;
+            }
         }
         if (buf[0] != '\0') {
             if (print)
