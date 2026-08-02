@@ -10,6 +10,7 @@ public:
     virtual DataNode Handle(DataArray *, bool);
 
     void UpdatePresence();
+    void SetNotInGame(); // retail-360-only: clears the in-game flag + song id, then refreshes presence (target fn at 0x82680C98)
     void SetSongID(int); // retail-360-only: GamePanel::Enter pushes the current songID into rich presence (target fn at 0x82662E70)
     Symbol GetPresenceMode();
     int GetPresenceContextFromMode(Symbol, bool);

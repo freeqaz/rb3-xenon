@@ -171,13 +171,16 @@ void UIStats::MaybePublish(UIScreen *from) {
                     || !(id == mLastRemoteID[remoteCount])) {
                     String key(MakeString("remote_user_%d", remoteCount));
                     // retail keeps the ControllerTypeToSym sret pointer in r30 and reads the
-                    // Symbol via `lwz r4, 0x0(r30)` — MSVC's shape for a member call on the
-                    // TEMPORARY itself. A NAMED Symbol local (rb3-Wii's shape, UIStats.cpp:207)
-                    // measured WORSE here: it homes the Symbol to r31 and costs 0x10 of extra
-                    // frame, shrinking the frame to 0x102e0 vs retail's 0x102f0 (99.1 vs 99.2).
+                    // Symbol via `lwz r4, 0x0(r30)` AFTER the ToString call — i.e. the 1-word
+                    // Symbol is loaded as part of the vararg setup, not as a separate
+                    // expression. `.Str()` forces the load EARLY (`lwz r30,0(r11)` then
+                    // `mr r4,r30`). Passing the UNNAMED temporary BY VALUE reproduces the late
+                    // load. A NAMED Symbol local (rb3-Wii's shape, UIStats.cpp:207) measured
+                    // WORSE (99.1 vs 99.2) — it homes the Symbol to r31 and costs 0x10 of
+                    // frame — but the unnamed-temporary form is a different shape.
                     String val(MakeString(
                         "%s:%s",
-                        ControllerTypeToSym((ControllerType)controllerType).Str(),
+                        ControllerTypeToSym((ControllerType)controllerType),
                         id.ToString()
                     ));
                     screenExit.AddPair(key.c_str(), DataNode(val));

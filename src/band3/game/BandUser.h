@@ -154,6 +154,12 @@ public:
     bool HasShownIntroHelp(TrackType) const;
     void SetShownIntroHelp(TrackType, bool);
     bool CanGetAchievements() const { return CanSaveData(); }
+    // retail-360-only (target fn at 0x8268B2A8). Lives on LocalBandUser, NOT
+    // BandUser: the retail body reaches GetPadNum through vbtable entry 0xc,
+    // and BandUser's vbtable has only entries 0x0/0x4 (one virtual base).
+    // LocalBandUser's entry 0xc is LocalUser (+256), whose vftable slot 0 is
+    // LocalUser::GetPadNum -- exactly what the target calls.
+    bool HasAsFriend(BandUser *) const;
 
     bool unkc; // 0xc
     bool mHasSeenRealGuitarPrompt; // 0xd

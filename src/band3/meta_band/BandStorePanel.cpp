@@ -248,7 +248,7 @@ void BandStorePanel::ExitStore(StoreError err) const {
 }
 
 BEGIN_HANDLERS(BandStorePanel)
-    HANDLE_EXPR(get_request_prefix, "dlc_store")
+    HANDLE_EXPR(get_request_prefix, GetRequestPrefix())
     HANDLE_ACTION(request, Request(String(_msg->Str(2)), _msg->Int(3)))
     if (sym == request_prev_chunk) {
         Request(String(mPrevChunkPath.c_str()), true);
@@ -257,7 +257,12 @@ BEGIN_HANDLERS(BandStorePanel)
     }
     HANDLE_ACTION(request_next_chunk, Request(String(mNextChunkPath.c_str()), true))
     HANDLE_EXPR(should_start_browser_at_bottom, mStartBrowserAtBottom)
-    HANDLE_EXPR(request_in_progress, mMetadataLoader != 0 || !(TheStoreMetadata.mFlags & 8))
+    // Retail's request_in_progress arm is a bare bool materialization
+    // (subic/subfe) with NO TheStoreMetadata.mFlags test: our version emitted
+    // six extra instructions here (lis/addi TheStoreMetadata, lwz +0x28,
+    // rlwinm. r11,r11,0,28,28 == the "& 8", plus two branches) against a
+    // retail arm whose surrounding instructions match exactly.
+    HANDLE_EXPR(request_in_progress, mMetadataLoader != 0)
     HANDLE_EXPR(num_offers, (int)unk38.size())
     HANDLE_EXPR(lone_offer, GetLoneOffer(false))
     HANDLE_EXPR(num_extra_offers, (int)unk40.size())

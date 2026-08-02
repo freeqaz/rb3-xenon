@@ -52,6 +52,14 @@ void PresenceMgr::UpdatePresence() {
     }
 }
 
+void PresenceMgr::SetNotInGame() {
+    if (!unk1c)
+        return;
+    unk38 = false;
+    unk34 = 0;
+    UpdatePresence();
+}
+
 Symbol PresenceMgr::GetPresenceMode() {
     if (!unk1c)
         return gNullStr;

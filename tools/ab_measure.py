@@ -91,6 +91,8 @@ STAMP_REL = f"build/{TITLE}/target_symbol_renames.stamp"
 SYMBOLS_REL = f"config/{TITLE}/symbols.txt"
 CONFIG_YML_REL = f"config/{TITLE}/config.yml"
 
+TOOL_REL = "tools/ab_measure.py"
+
 MAP_PATHS = {"scripts/target_symbol_map.json", "scripts/symbol_aliases.json"}
 SPLIT_PATHS = {f"config/{TITLE}/splits.txt", CONFIG_YML_REL}
 CONFIGGEN_PATHS = {
@@ -284,6 +286,34 @@ class ABMeasure:
                 return {"insertions": int(f[0]), "deletions": int(f[1])}
         return None
 
+    def tool_freshness(self, allow_stale=False):
+        """Gather the git facts for check_tool_freshness and record them as
+        evidence. I/O only — the decision lives in the pure function."""
+        me = Path(__file__).resolve()
+        _, running = git(self.wt, "hash-object", str(me))
+        running = running.strip()
+        rc, head = git(self.wt, "rev-parse", f"HEAD:{TOOL_REL}", check=False)
+        if rc != 0:                      # tool not tracked at HEAD: nothing to compare
+            self.evidence["tool_freshness"] = {"state": "untracked_at_head"}
+            return
+        head = head.strip()
+        history = {}
+        _, commits = git(self.wt, "log", "--format=%H", "-n", "80", "HEAD",
+                         "--", TOOL_REL)
+        for c in commits.split():
+            rc2, b = git(self.wt, "rev-parse", f"{c}:{TOOL_REL}", check=False)
+            if rc2 == 0:
+                b = b.strip()
+                if b != head:
+                    history.setdefault(b, c)
+        info = check_tool_freshness(running, head, history,
+                                    allow_stale=allow_stale)
+        info["history_versions"] = len(history)
+        self.evidence["tool_freshness"] = info
+        self.say(f"  [preflight] tool freshness: {info['state']} "
+                 f"(running blob {running[:12]}, HEAD blob {head[:12]}, "
+                 f"{len(history)} superseded version(s) known)")
+
     def wipe_report(self):
         for rel in (REPORT_REL, CACHE_REL):
             p = self.wt / rel
@@ -291,7 +321,7 @@ class ABMeasure:
                 p.unlink()
 
     # ---------- protocol stages ----------
-    def preflight(self, allow_dirty=False):
+    def preflight(self, allow_dirty=False, allow_stale_tool=False):
         if not self.wt.is_dir():
             raise Refusal("preflight",
                           f"worktree {self.wt} does not exist (create with "
@@ -312,6 +342,9 @@ class ABMeasure:
                 f"{self.wt} has no build.ninja — not a buildable worktree. Use "
                 "scripts/setup_worktree.sh (a bare `git worktree add` is "
                 "unbuildable here).")
+        # Is the RUNNING script itself superseded? Checked BEFORE any build,
+        # so a stale runner costs seconds instead of a hand-rolled protocol.
+        self.tool_freshness(allow_stale=allow_stale_tool)
         # symbols.txt drift is expected and auto-restored; anything else dirty
         # makes the A leg unattributable.
         self.restore_symbols()
@@ -422,7 +455,14 @@ class ABMeasure:
             "~+193 matched / +0.51pp settling noise. NOTE: if every retry "
             "shows exactly split=1 patch=1, suspect something restoring "
             "config/<title>/symbols.txt between builds — that is the wave-CJ "
-            "non-convergence and it is a defect in the RESTORER, not the graph.",
+            "non-convergence and it is a defect in the RESTORER, not the "
+            "graph. ⚠ FIRST SUSPECT, measured (lane CL-4): a STALE COPY OF "
+            "THIS SCRIPT. The wave-CJ bug was fixed in 4be4bcdc, but lane "
+            "CK-3's worktrees carried the pre-fix file and were refused here "
+            "— on PLAIN SOURCE patches — 24 minutes after the fix landed. "
+            "The preflight tool-freshness check now catches that; if it "
+            "reported 'not_in_history' you may be running a superseded "
+            "version from OUTSIDE this worktree's history.",
         )
 
     def read_leg(self, name):
@@ -538,6 +578,69 @@ def check_legb_counts(kinds, counts):
                 "any number from this worktree.")
 
 
+def check_tool_freshness(running_blob, head_blob, history, allow_stale=False):
+    """Pure decision: is the RUNNING ab_measure.py a STALE COMMITTED version
+    of itself relative to the worktree's HEAD? Extracted (like
+    check_legb_counts) so the selftest can drive EVERY branch with no git and
+    no build.
+
+    `history` maps blob-id -> commit for older committed versions of
+    TOOL_REL reachable from the worktree's HEAD, EXCLUDING HEAD's own blob.
+
+    WHY THIS EXISTS (lane CL-4, 2026-08-02). Lane CK-3 reported that the
+    settle non-convergence "ALSO HITS PLAIN SOURCE PATCHES", implying a
+    defect BROADER than the one lane CK-2 fixed in `4be4bcdc`. It is not
+    broader — it is the SAME defect, observed through worktrees that never
+    received the fix. Measured:
+
+      * all four CK-3 worktrees carried tools/ab_measure.py sha1
+        c807a506b340 — the PRE-fix file, whose settle() has an in-loop
+        restore_symbols();
+      * their base 23ad2f92 (00:44:46) predates the fix 4be4bcdc (01:08:58)
+        by 24 minutes;
+      * POSITIVE CONTROL: running that exact stale file against a plain
+        SOURCE patch (PresenceMgr, kinds=['source']) in a split-forced
+        worktree at 70a6266c REFUSES with settle builds 1-4 = split=1
+        patch=1 forever, while the fixed file settles in 2 and measures
+        Δmatched=+1. Same worktree, same patch, same HEAD — the tool
+        version is the ONLY variable.
+
+    The in-loop restore was never kind-conditional, so "plain source patches
+    too" was always implied by the one root cause; nothing extra to fix in
+    the loop. What DID cost three sub-lanes their budget (they hand-rolled
+    the protocol instead) is that NOTHING TOLD THEM their runner was stale.
+    That is this guard.
+
+    Deliberately NOT a refusal: an UNCOMMITTED local edit (a lane improving
+    the tool — including this one) and a version committed on some other
+    branch. Neither is in `history`, so both report and continue. Only a
+    provably-superseded committed version refuses.
+    """
+    if running_blob == head_blob:
+        return {"state": "matches_head", "blob": running_blob}
+    if running_blob in history:
+        commit = history[running_blob]
+        if allow_stale:
+            return {"state": "stale_override", "blob": running_blob,
+                    "superseded_by_head": head_blob, "running_commit": commit}
+        raise Refusal(
+            "tool-version",
+            f"the RUNNING {TOOL_REL} is a STALE COMMITTED version: its blob "
+            f"{running_blob[:12]} is the file as of {commit[:12]}, which the "
+            f"worktree's HEAD has already SUPERSEDED (HEAD blob "
+            f"{head_blob[:12]}). Re-run with the tool from the worktree "
+            f"itself, or `git -C <wt> log -p -- {TOOL_REL}` to see what you "
+            "are missing. This is exactly how lane CK-3's three porting "
+            "sub-lanes were refused by the wave-CJ settle bug 24 minutes "
+            "AFTER it had been fixed — the fix was in the repo and not in "
+            "their hands, and the refusal text pointed at the build graph, "
+            "so all three hand-rolled the protocol instead. "
+            "--allow-stale-tool to override deliberately.",
+        )
+    return {"state": "not_in_history", "blob": running_blob,
+            "head_blob": head_blob}
+
+
 def unit_breakdown(a_units, b_units, limit=15):
     """Top-N regressed/improved units PLUS the metadata needed to know the
     list is partial.
@@ -638,6 +741,9 @@ def main():
                     help="proceed even if the patch touches no build-relevant path")
     ap.add_argument("--restore", action="store_true",
                     help="revert the patch from the worktree after measuring")
+    ap.add_argument("--allow-stale-tool", action="store_true",
+                    help="run even if this script is a superseded committed "
+                         "version of itself (lane CK-3's silent failure mode)")
     ap.add_argument("--max-settle", type=int, default=4)
     ap.add_argument("--jobs", type=int,
                     default=int(os.environ.get("AB_NINJA_JOBS", "12")),
@@ -667,7 +773,8 @@ def main():
     ab = ABMeasure(args.worktree, rundir, args.jobs, args.max_settle)
     status = {"status": "refused", "stage": None, "reason": None}
     try:
-        dirty = ab.preflight(allow_dirty=args.from_dirty)
+        dirty = ab.preflight(allow_dirty=args.from_dirty,
+                             allow_stale_tool=args.allow_stale_tool)
 
         # --- obtain the patch ---
         patch_path = rundir / "patch.diff"
@@ -926,6 +1033,28 @@ def selftest():
         check("classify REFUSES a symbols.txt patch",
               lambda: classify_patch([SYMBOLS_REL]), expect_refusal=True)
 
+        # --- honest = matched - masked_equal, the HEADLINE quantity --------
+        # Lane CL-4 sabotage: flipping this '-' to a '+' in
+        # read_measures_strict left the ENTIRE selftest at ALL PASS. The
+        # Δfuzzy/compute_delta cases hand-build their dicts and never touch
+        # the strict reader, so nothing anywhere asserted the identity that
+        # the house honest-floor discipline is quoted from. Fixture uses
+        # DISTINCT, NONZERO values on purpose: with masked_equal == 0 (or
+        # matched == masked) '+' and '-' agree and the test would be vacuous.
+        h = json.loads(json.dumps(good))
+        h["measures"]["matched_functions"] = 42963
+        h["measures"]["masked_equal_functions"] = 1529
+        p_h = Path(td) / "honest.json"
+        p_h.write_text(json.dumps(h))
+        got = read_measures_strict(p_h)["honest"]
+        ok = got == 41434                       # 42963 - 1529, lane CL-4 leg A
+        print(("  PASS" if ok else "  FAIL") +
+              f"  read_measures_strict computes honest = matched - "
+              f"masked_equal: {got} (want 41434; the '+' sabotage gives "
+              "44492 and was INERT before this case existed)")
+        if not ok:
+            fails.append("honest identity")
+
     kinds, _ = classify_patch(["docs/foo.md"])
     if kinds:
         fails.append("inert classify")
@@ -1048,6 +1177,36 @@ def selftest():
           lambda: check_legb_counts({"map"}, dict(base, split=1,
                                                  renamer_patched=7)),
           expect_refusal=False)
+
+    # ---- STALE RUNNER guard (lane CL-4) -----------------------------------
+    # Behavioural, not a shape test: every branch of the decision is driven
+    # with synthetic blob ids. The branch that MATTERS is "stale" — it is the
+    # one that was silently reachable for all of lane CK-3.
+    HEADB, OLDB, LOCALB = "h" * 40, "o" * 40, "l" * 40
+    hist = {OLDB: "23ad2f92" + "0" * 32}
+    check("tool freshness PASSES when the runner is HEAD's version",
+          lambda: check_tool_freshness(HEADB, HEADB, hist),
+          expect_refusal=False)
+    check("tool freshness REFUSES a SUPERSEDED committed runner (CK-3)",
+          lambda: check_tool_freshness(OLDB, HEADB, hist), expect_refusal=True)
+    check("tool freshness PASSES an UNCOMMITTED local edit (no false alarm)",
+          lambda: check_tool_freshness(LOCALB, HEADB, hist),
+          expect_refusal=False)
+    check("tool freshness honours --allow-stale-tool",
+          lambda: check_tool_freshness(OLDB, HEADB, hist, allow_stale=True),
+          expect_refusal=False)
+    # ...and the three non-refusing branches must be DISTINGUISHABLE, or the
+    # guard degenerates into "always fine" for everything it does not refuse.
+    states = (check_tool_freshness(HEADB, HEADB, hist)["state"],
+              check_tool_freshness(LOCALB, HEADB, hist)["state"],
+              check_tool_freshness(OLDB, HEADB, hist, allow_stale=True)["state"])
+    ok = states == ("matches_head", "not_in_history", "stale_override")
+    print(("  PASS" if ok else "  FAIL") +
+          f"  tool freshness states are distinguishable: {states} "
+          "(a guard whose pass-states are indistinguishable cannot be "
+          "audited after the fact)")
+    if not ok:
+        fails.append("tool freshness states")
 
     # ---- the settle loop must NOT restore symbols.txt (lane CK-2) ---------
     # A SHAPE test, not a behavioural one (behaviour needs a ~5-min build) —

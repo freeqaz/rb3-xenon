@@ -21,6 +21,7 @@
 #include "obj/Data.h"
 #include "obj/ObjMacros.h"
 #include "os/ContentMgr.h"
+#include "xdk/xapilibi/xbox.h"
 #include "os/Debug.h"
 #include "os/Joypad.h"
 #include "os/System.h"
@@ -444,6 +445,18 @@ ControllerType LocalBandUser::ConnectedControllerType() const {
             return (ControllerType)ct;
         }
     }
+}
+
+bool LocalBandUser::HasAsFriend(BandUser *user) const {
+    if (user) {
+        XUID xuid = user->GetOnlineID()->GetXUID();
+        BOOL result;
+        if (XUserAreUsersFriends(GetPadNum(), &xuid, 1, &result, nullptr)
+            == ERROR_SUCCESS) {
+            return result;
+        }
+    }
+    return false;
 }
 
 bool LocalBandUser::HasSeenRealGuitarPrompt() const { return mHasSeenRealGuitarPrompt; }
