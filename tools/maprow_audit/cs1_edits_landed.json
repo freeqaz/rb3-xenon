@@ -1,0 +1,32 @@
+[
+ {
+  "addr": "0x82484a20",
+  "expect": "??_ERndMorph@@$4PPPPPPPM@A@AAPAXI@Z",
+  "new": "?SetType@RndMorph@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "why": "laneCS1: bijection-arbitrary thunk; branch-target method == vtable-family slot consensus; RTTI ancestry corroborates class; target not a reloc/shape fold; metric-neutral (home-unit gate verified by A/B)"
+ },
+ {
+  "addr": "0x827549f0",
+  "expect": "?PreLoad@ObjectDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "new": "?Save@ObjectDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "why": "laneCS1: bijection-arbitrary thunk; branch-target method == vtable-family slot consensus; RTTI ancestry corroborates class; target not a reloc/shape fold; metric-neutral (home-unit gate verified by A/B)"
+ },
+ {
+  "addr": "0x827f76a0",
+  "expect": "??_EUILabel@@$4PPPPPPPM@A@AAPAXI@Z",
+  "new": "?SyncProperty@UILabel@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "why": "laneCS1: bijection-arbitrary thunk; branch-target method == vtable-family slot consensus; RTTI ancestry corroborates class; target not a reloc/shape fold; metric-neutral (home-unit gate verified by A/B)"
+ },
+ {
+  "addr": "0x8280f970",
+  "expect": "??_EUIButton@@$4PPPPPPPM@A@AAPAXI@Z",
+  "new": "?SetType@UIButton@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "why": "laneCS1: bijection-arbitrary thunk; branch-target method == vtable-family slot consensus; RTTI ancestry corroborates class; target not a reloc/shape fold; metric-neutral (home-unit gate verified by A/B)"
+ },
+ {
+  "addr": "0x82827790",
+  "expect": "?Load@LabelShrinkWrapper@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "new": "?Save@LabelShrinkWrapper@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "why": "laneCS1: bijection-arbitrary thunk; branch-target method == vtable-family slot consensus; RTTI ancestry corroborates class; target not a reloc/shape fold; metric-neutral (home-unit gate verified by A/B)"
+ }
+]
