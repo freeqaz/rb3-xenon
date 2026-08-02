@@ -1,4 +1,7 @@
 {
+ "0x823be828": "?SyncProperty@CharInterest@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x824ca808": "?SyncProperty@EventAnim@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x8245d8d8": "?SyncProperty@RndWind@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x823c73f8": "?SyncProperty@CharUpperTwist@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8233a038": "?SyncProperty@BandCharDesc@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x827e02a0": "?SyncProperty@TrackDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
