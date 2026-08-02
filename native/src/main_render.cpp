@@ -139,13 +139,6 @@ extern void RegisterMiloObjectFactories();
 // os/System.cpp:58
 extern DataArray *gSystemConfig;
 
-// milo-native-engine src/platform/Mesh_Wgpu.cpp:159 — the draw body WITHOUT the
-// viewer-heuristic prefilter that RndMesh::DrawShowing applies first. Declared
-// non-static there and already extern'd by the engine's own
-// TransparentQueue.cpp:17, so this is a supported entry point, not a private
-// symbol being reached around. See the LOD note in the draw loop.
-extern void DrawMeshImmediate(RndMesh *mesh);
-
 namespace {
 
     int gFailures = 0;
@@ -950,25 +943,31 @@ namespace {
         // vertex buffer and a texture's GPU image are created on first use, and
         // the very first frame can legitimately draw a mesh whose texture has
         // not been uploaded yet.
-        // ⚠ THE ENGINE'S LOD NAME-FILTER MISFIRES ON RB3 CROWD CHARACTERS.
+        // ★ X4b: THE LOD RE-ISSUE WORKAROUND IS RETIRED — the engine fixed it.
         //
-        // Mesh_Wgpu.cpp:135 drops any mesh whose name contains "_lod", with the
-        // comment "drawn by Character::DrawLod in the full engine, but we
-        // iterate all meshes directly in the viewer". That is a reasonable DC3
-        // heuristic and it is WRONG for RB3: crowd_female01's entire body is
-        // ONE mesh named `female_crowd_body01_lod02.mesh` — RB3's crowd
-        // characters are authored AS the LOD-2 asset, there is no higher-detail
-        // sibling to prefer. Left alone, the character renders as two
-        // disembodied hands. (DC3's own viewer produced exactly that on this
-        // asset; the oracle screenshot shows the same two hands.)
+        // X3 and X4a carried a bypass here: any mesh whose name contained
+        // "_lod" was re-issued through DrawMeshImmediate instead of
+        // DrawShowing, because the engine's RndMesh::DrawShowing hardcoded a
+        // `strstr(Name(), "_lod")` skip. That skip was a DC3 viewer heuristic
+        // and it was WRONG for RB3: crowd_female01's entire body is ONE mesh
+        // named `female_crowd_body01_lod02.mesh` — RB3's crowd characters are
+        // authored AS the LOD-2 asset, with no higher-detail sibling to prefer.
+        // Left alone it rendered as two disembodied hands (DC3's own viewer
+        // produced exactly that on this asset).
         //
-        // So name-filtered meshes are re-issued through DrawMeshImmediate,
-        // which is the same draw body minus the prefilter, and the count is
-        // REPORTED so the deviation is never silent. The real fix is upstream —
-        // either the filter learns that a lod-suffixed mesh with no sibling is
-        // the only geometry there is, or the consumer drives
-        // Character::DrawShowing and lets DrawLodOrShadow choose. Both are
-        // X4-shaped; neither is a xenon change.
+        // Engine `138e160` moved both hardcoded content name-filters (`_lod`
+        // and `grid_80by60`) out of DrawShowing and behind the ShouldSkipMesh
+        // seam, which rb3-xenon answers `false` unconditionally
+        // (rb3_render_glue.cpp:45). DrawShowing therefore no longer drops
+        // anything here, and the bypass is dead weight.
+        //
+        // RETIRED ON MEASUREMENT, NOT ON THE COMMIT MESSAGE. A/B at the pin
+        // bump, bypass ON vs OFF, on the two X3 cells:
+        //     crowd_female01     sha256 30692a8d02c1ada0…  IDENTICAL
+        //     tracksystem_meshes sha256 cbdb29fa95a5b574…  IDENTICAL
+        // crowd_female01 is the case that would break first — its body mesh is
+        // the one that took the bypass — so this A/B is discriminating, not
+        // vacuous. Coverage 11.07% / 17960 colours both ways.
         // ⚠ THE VIEWPORT DEPTH RANGE IS [0,0] UNLESS SOMEONE SETS IT.
         //
         // NgRnd::Viewport's default ctor zeroes all six fields (rndobj/Rnd_NG.h:18
@@ -1000,29 +999,16 @@ namespace {
             TheNgRnd.SetViewport(v);
         }
 
-        int lodForced = 0;
         for (int f = 0; f < frames; f++) {
             TheRnd.BeginDrawing();
             r.drawn = 0;
-            lodForced = 0;
             for (size_t i = 0; i < meshes.size(); i++) {
                 RndMesh *m = meshes[i];
                 if (!m->Showing()) continue;
-                if (m->Mat() && strstr(m->Name(), "_lod")) {
-                    DrawMeshImmediate(m);
-                    lodForced++;
-                } else {
-                    m->DrawShowing();
-                }
+                m->DrawShowing();
                 r.drawn++;
             }
             TheRnd.EndDrawing();
-        }
-        if (lodForced) {
-            printf("  ⚠ LOD filter bypassed for %d mesh(es) — the engine's \"_lod\" name "
-                   "skip would have dropped them, and on RB3 crowd characters that IS "
-                   "the whole body\n",
-                   lodForced);
         }
         {
             char d[128];
