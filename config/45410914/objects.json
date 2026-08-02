@@ -1406,6 +1406,7 @@
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
+            "band3/game/HeldNote.cpp": "NonMatching",
             "band3/game/GuitarFx.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
