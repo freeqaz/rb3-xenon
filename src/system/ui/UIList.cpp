@@ -111,7 +111,16 @@ BEGIN_HANDLERS(UIList)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(UIList)
+#ifdef HX_NATIVE
+    // DC3-era addition at the HEAD of the chain; RB3-360 retail's UIList
+    // enumeration STARTS at `display_num`.  Arbitrated on RETAIL BYTES (lane
+    // CQ-3): the 2664 B retail body enumerates 18 property-name literals
+    // beginning display_num / grid_span / circular / scroll_time / paginate,
+    // with no `list_resource`.  Because this one sat FIRST, it displaced every
+    // subsequent block -- which is why this row read 0.49% despite our body
+    // being only 248 B larger than retail.  Native-only.
     SYNC_PROP_MODIFY(list_resource, mListDir, Update())
+#endif
     SYNC_PROP_SET(display_num, NumDisplay(), SetNumDisplay(_val.Int()))
     SYNC_PROP_SET(grid_span, GridSpan(), SetGridSpan(_val.Int()))
     SYNC_PROP_SET(circular, Circular(), SetCircular(_val.Int()))
@@ -146,11 +155,14 @@ BEGIN_PROPSYNCS(UIList)
     SYNC_PROP(extended_custom_entries, mExtendedCustomEntries)
     SYNC_PROP_SET(in_anim, GetInAnim(), SetInAnim(_val.Obj<RndAnimatable>()))
     SYNC_PROP_SET(out_anim, GetOutAnim(), SetOutAnim(_val.Obj<RndAnimatable>()))
+#ifdef HX_NATIVE
+    // DC3-era addition at the TAIL; retail's chain ends at `out_anim`.
     SYNC_PROP_SET(
         limit_circular_display_num_to_data_num,
         mLimitCircularDisplayNumToDataNum,
         LimitCircularDisplay(_val.Int())
     )
+#endif
     SYNC_SUPERCLASS(ScrollSelect)
     SYNC_SUPERCLASS(UIComponent)
 END_PROPSYNCS

@@ -221,7 +221,17 @@ BEGIN_PROPSYNCS(RndMesh)
     SYNC_PROP(bones, mBones)
     SYNC_PROP(has_ao_calculation, mHasAOCalc)
     SYNC_PROP_SET(keep_mesh_data, mKeepMeshData, SetKeepMeshData(_val.Int() > 0))
+#ifdef HX_NATIVE
+    // DC3-era addition; RB3-360 retail does NOT enumerate `verts` here.
+    // Arbitrated on RETAIL BYTES (lane CQ-3), not on oracle agreement: the
+    // property-name literal behind each `bl ??0Symbol@@` in the 1736 B retail
+    // body reads exactly
+    //   mat geom_owner mutable <bitfield> num_verts num_faces volume
+    //   has_valid_bones bones has_ao_calculation keep_mesh_data
+    // and stops there -- 11 properties, ours emitted 12.  Kept for the native
+    // port, which drives object property editing through SyncProperty.
     SYNC_PROP(verts, Verts())
+#endif
     SYNC_SUPERCLASS(RndTransformable)
     SYNC_SUPERCLASS(RndDrawable)
 #ifdef HX_NATIVE

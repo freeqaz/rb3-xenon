@@ -12,14 +12,21 @@ CharBlendBone::CharBlendBone()
       mTransZ(false), mRotation(false), mSetLocal(false) {}
 
 BEGIN_PROPSYNCS(CharBlendBone)
-    SYNC_PROP(target, mTargets)
+    // RETAIL NAME IS PLURAL.  Arbitrated on RETAIL BYTES (lane CQ-3): the first
+    // property-name literal in the 696 B retail body is "targets", not "target"
+    // (our member is already mTargets).  Renamed unconditionally -- this is a
+    // correctness fix, not a match-only one: RB3 .milo data keys off "targets".
+    SYNC_PROP(targets, mTargets)
     SYNC_PROP(src_one, mSrc1)
     SYNC_PROP(src_two, mSrc2)
     SYNC_PROP(trans_x, mTransX)
     SYNC_PROP(trans_y, mTransY)
     SYNC_PROP(trans_z, mTransZ)
     SYNC_PROP(rotation, mRotation)
+#ifdef HX_NATIVE
+    // DC3-era addition; retail's chain ends at `rotation` (7 literals, ours 8).
     SYNC_PROP(set_local, mSetLocal)
+#endif
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain stops at the immediate superclass;
     // DC3's extra direct Hmx::Object chain is native-only.

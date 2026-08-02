@@ -149,7 +149,6 @@ protected:
     float mBloomStreakAttenuation; // 0x50
     /** "Angle for light streak". Ranges from -360 to 360. */
     float mBloomStreakAngle; // 0x54
-    bool mForceCurrentInterp; // 0x58
     // RB3-360 retail places 12 bytes (3 words) BEFORE the embedded RndColorXfm
     // (not after, as a prior fix assumed). This shifts the ColorXfm sub-object
     // — and therefore its internal Transform — +0xc higher, which is what
@@ -165,10 +164,21 @@ protected:
         retail X360 is exactly 0xc ({vtable@0, mOwner@4, mObject@8} -- see
         obj/Object.h), so the pad's 0x5c..0x68 span is filled precisely and
         mColorXfm stays at 0x68 where every accessor already matches.
-        ⚠ It does NOT sit before mForceCurrentInterp: placing it at 0x58 (and
-        keeping 8 bytes of pad) shifts mColorXfm +8 and costs 27 matched
-        functions across PostProc/PostProc_NG -- measured, lane CE-1. */
-    ObjPtr<RndTex> mLuminanceMap; // 0x5c..0x68
+        ⚠ Lane CE-1 measured that placing it at 0x58 "and keeping 8 bytes of pad"
+        shifts mColorXfm +8 and costs 27 matched functions. That experiment moved
+        mLuminanceMap FORWARD WITHOUT MOVING mForceCurrentInterp AFTER IT, so it
+        was not this layout.
+        ★ RETAIL'S ACTUAL ORDER, read off retail bytes (lane CQ-3): in
+        ?SyncProperty@RndPostProc@@ (5148 B, 1287 instructions, the ONLY two
+        mismatches in the whole body) the `luminance_map` block does
+        `addi r3, r25, 0x54` and the `force_current_interp` block does
+        `addi r3, r25, 0x60`, with r25 == this+4 -- i.e. retail has
+        mLuminanceMap at 0x58 and mForceCurrentInterp at 0x64. A 12-byte ObjPtr
+        at 0x58 ends at 0x64, the bool takes 0x64, and 3 bytes of padding land
+        mColorXfm at 0x68 -- EXACTLY where it already is. So this swap does NOT
+        shift mColorXfm and does not reopen CE-1's cascade. */
+    ObjPtr<RndTex> mLuminanceMap; // 0x58..0x64
+    bool mForceCurrentInterp; // 0x64
     /** "Hue: -180 to 180, 0.0 is neutral" */
     /** "Saturation: -100 to 100, 0.0 is neutral" */
     /** "Lightness: -100 to 100, 0.0 is neutral" */
