@@ -33,20 +33,57 @@ def forgiven(n): return bool(PLACEHOLDER.match(n)) or n.startswith('$')
 
 
 def load_rep(p):
+    """★ CZ-3: key on the FULL unit name, not the bare stem.
+
+    ⚠ THIS TOOL WAS SILENTLY VACUOUS ON EVERY TREE AFTER f592571a (lane CY-1).
+    That commit made icf_site_census pair units from objdiff.json and emit
+    ``u["name"]`` -- the full unit path, e.g. ``default/band3/game/Game`` -- where
+    it previously emitted the bare stem ``Game``. This function kept building its
+    lookup on ``u["name"].split("/")[-1]``, so the join against sites.json went to
+    ZERO and the tool printed ``at-100 charged fns 0`` with every downstream table
+    empty and NO ERROR. Measured on this tree: sites unit keys join 0/895 against
+    stems and 895/895 against full names (pre-fix CY-4 artifact: 648/650 against
+    stems). CY-4's 209-pair SRC_imperfect_T attribution is therefore the last
+    VALID measurement and it is a PRE-FIX one.
+
+    Reverting to stems is not an option: keying on a bare stem is exactly the
+    ambiguity CY-1 removed (18 stems here map to >1 distinct our-obj -- Utl alone
+    has three), and last-wins on a stem silently pairs a unit against another
+    unit's obj.
+    """
     r = json.load(open(p)); o = {}
     for u in r["units"]:
-        stem = u["name"].split("/")[-1]
         for f in (u.get("functions") or []):
-            o[(stem, f["name"])] = (f["match_percent_normalized"],
-                                    f.get("fuzzy_match_percent", 0.0),
-                                    int(f["size"]))
+            o[(u["name"], f["name"])] = (f["match_percent_normalized"],
+                                         f.get("fuzzy_match_percent", 0.0),
+                                         int(f["size"]))
     return o, r.get("measures", {})
+
+
+def check_join(sites, d, label):
+    """REFUSE on an empty/collapsed join rather than reporting zeros.
+
+    The failure this guards against produced no exception and no warning -- only
+    a table of 0s that reads exactly like "nothing left to adjudicate", i.e. the
+    shape of a DECISIVE NEGATIVE. Any consumer of sites.json must assert its join
+    landed before believing a small number.
+    """
+    su = {u for u, _f, _r in sites}
+    ru = {u for u, _f in d}
+    hit = len(su & ru)
+    print("join check: %s -- sites units %d, report units %d, INTERSECTION %d (%.1f%%)"
+          % (label, len(su), len(ru), hit, 100.0 * hit / max(1, len(su))))
+    if hit == 0 or hit < 0.5 * len(su):
+        sys.exit("REFUSING: sites.json unit keys do not join against report.json "
+                 "unit names (%d/%d). This is the f592571a stem-vs-full-name "
+                 "breakage; do not read the zeros below as a result." % (hit, len(su)))
 
 
 def main():
     rep, sitesf, outf = sys.argv[1], sys.argv[2], sys.argv[3]
     d, meas = load_rep(rep)
     sites = json.load(open(sitesf))["records"]
+    check_join(sites, d, "at100_adjudicate")
     x = Xbin(ROOT)
     loc = Locator(x, cap=20000)
     print("our bodies %d  map names %d  pdata %d" % (len(x.ours), len(x.name2addr), len(x.pd)))

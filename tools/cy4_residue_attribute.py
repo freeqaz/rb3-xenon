@@ -203,13 +203,21 @@ def main():
         print("     e.g. %s: %s" % (k, [e[0][:52] for e in examples[k][:3]]))
 
     # ---- CONDITIONED NULL -------------------------------------------------
+    # ★ CZ-3: key on the FULL unit name -- see the note in
+    # at100_adjudicate.load_rep. After f592571a the census emits full unit paths,
+    # so the old stem key joined 0/895 and this conditioned null silently drew
+    # from an EMPTY population, printing 0/0 rather than refusing.
     rep = json.load(open(a.report))
     pct = {}
     for u in rep["units"]:
-        stem = u["name"].split("/")[-1]
         for f in (u.get("functions") or []):
-            pct[(stem, f["name"])] = f["match_percent_normalized"]
+            pct[(u["name"], f["name"])] = f["match_percent_normalized"]
     sites = json.load(open(a.sites))["records"]
+    _su = {u for u, _f, _r in sites}
+    _ru = {u for u, _f in pct}
+    if not (_su & _ru):
+        sys.exit("REFUSING: sites.json units do not join report.json units "
+                 "(0/%d) -- the f592571a stem-vs-full-name breakage." % len(_su))
     charged_fns = set()
     for unit, fn, rows in sites:
         rs = [r for r in rows if not forgiven(r[1])]
