@@ -310,15 +310,43 @@ void MusicLibrary::OnEnter() {
 
 void MusicLibrary::OnExit() {
     ClearSongPreview();
+    /* Retail builds this Symbol as a FUNCTION-LOCAL static, not as the Symbols2.h
+       file-scope global the Wii dev branch uses. Proof from retail bytes (dtk
+       fn_82542A00 @ 0x82542A00, 748 B): immediately after the ClearSongPreview
+       call it loads guard word 0x82DFD5B4, tests bit 0x1 (`clrlwi. r9,r11,31`),
+       and on the cold path does `ori r11,r11,0x1; stw` then calls
+       ??0Symbol@@QAA@PBD@Z (fn_827C0728) with r4 = 0x82090FF8 =
+       "custom_music_library_tasks". EXACTLY ONE bit is ever tested or set on that
+       word, so retail's OnExit has exactly ONE local static — corroborated
+       structurally by the single 32-byte guard/atexit thunk at 0x82542CEC that
+       follows the function (OnEnter, with six local statics, is followed by six).
+       Note this is OnEnter's static's twin, not the same object: a function-local
+       static is per-function, which is why OnEnter uses a different guard word
+       (0x82DFD5AC, six bits). */
+    static Symbol custom_music_library_tasks("custom_music_library_tasks");
     if (!TheGameMode->Property(custom_music_library_tasks, true)->Int()) {
         mFilter = mTask.GetFilter();
     }
     TheProfileMgr.RemoveSink(this, PrimaryProfileChangedMsg::Type());
     TheProfileMgr.RemoveSink(this, ProfileChangedMsg::Type());
     ThePlatformMgr.RemoveSink(this, SigninChangedMsg::Type());
+    /* Retail's RemoveSink list is exactly this one MINUS FriendsListChangedMsg and
+       UserLoginMsg — the mirror image of the OnEnter finding. Verified by resolving
+       every `bl` in retail fn_82542A00 through target_symbol_map.json: there are
+       exactly TEN MsgSource::RemoveSink (fn_82766970) calls, and the ten Type()
+       callees are, in order, PrimaryProfileChanged (fn_8235B978), ProfileChanged
+       (fn_824F6628), SigninChanged (fn_823EC538), LocalUserLeft (fn_823E0BA8),
+       RemoteUserLeft (fn_823E0D28), AddLocalUserResult (fn_8253A9A0),
+       NewRemoteUser (fn_823E0C28), ServerStatusChanged (fn_823EC318),
+       RemoteMachineUpdated (fn_8253A8A0), RemoteMachineLeft (fn_8253A920) — which
+       is our list, in our order, once the two below are gone. The receiver
+       multiset agrees independently: ProfileMgr x2, PlatformMgr x1, SessionMgr x4,
+       RockCentral x1, MachineMgr x2. That enumeration is NOT vacuous: 3 of the 22
+       addresses looked up returned no name, so the map can and does answer "no".
+       Both removed sinks are Wii-only (the Wii friends list; TheServer = gWiiServer,
+       also a zeroed weak stub on the native link). */
+#ifdef HX_NATIVE
     ThePlatformMgr.RemoveSink(this, FriendsListChangedMsg::Type());
-#ifndef HX_NATIVE
-    TheServer.RemoveSink(this, UserLoginMsg::Type()); // see OnEnter — TheServer stubbed offline
 #endif
     TheSessionMgr->RemoveSink(this, LocalUserLeftMsg::Type());
     TheSessionMgr->RemoveSink(this, RemoteUserLeftMsg::Type());
@@ -329,12 +357,34 @@ void MusicLibrary::OnExit() {
     TheSessionMgr->GetMachineMgr()->RemoveSink(this, RemoteMachineLeftMsg::Type());
     TheContentMgr.UnregisterCallback(TheMusicLibrary, true);
     mNetSetlists->CleanUp();
+    /* Retail-only, between CleanUp and the unke8 check: `lwz r3,0x19c(this);
+       bl fn_825BC908`, and the map names fn_825BC908
+       ?ClearPreview@MusicLibraryStore@@QAAXXZ. Unconditional here — unlike the
+       OnEnter counterpart, which guards its 0x19c call on unk1a0. Absent from the
+       Wii dev branch, which is why the 0x19c tail field was declared but unused.
+       ⚠ NOTE FOR THE MAP LANE: the callee's real class is MusicLibraryStore, whose
+       identified members cluster at 0x825BC908/0x825BC9D8/0x825BD458/0x825BD618;
+       our local stub class MusicLibraryUnkOp conflates that class with a second,
+       entirely UNMAPPED cluster at 0x825A3DC8-0x825A4860 (the addresses this
+       header annotates for Poll/Finish/ClearPreview/SetStorePreview/ctor are all
+       absent from target_symbol_map.json). The 0x825A3DC8 annotation on
+       ClearPreview below is therefore WRONG; the function retail calls here is
+       0x825BC908. Not repaired in this lane: it is an identification question and
+       it changes no codegen, because the default ruler masks relocation args. */
+    unk19c->ClearPreview();
     if (unke8 != kNumSongSortTypes) {
         TheSongSortMgr->GetSort(unke8)->CancelMakeReady();
         unke8 = kNumSongSortTypes;
     }
     unk40 = false;
+    /* Retail has NO SetHomeMenuEnabled call here: fn_82542A00 ends
+       `li r11,0; stb r11,0x50(this); addi r1,r31,0x90; b __restgprlr_27` — the
+       store of unk40 is the last thing before the epilogue, with no further bl.
+       Same Wii-only HOME-menu concern CO-2 removed from OnEnter; kept for the
+       native host only. */
+#ifdef HX_NATIVE
     ThePlatformMgr.SetHomeMenuEnabled(true);
+#endif
 }
 
 bool MusicLibrary::IsExiting() { return false; }
