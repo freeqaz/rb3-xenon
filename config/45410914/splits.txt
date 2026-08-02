@@ -7697,9 +7697,11 @@ FlowWhile.cpp:
 SessionJobs_Xbox.cpp:
 	.pdata      start:0x82208DA0 end:0x82208DC8
 	.pdata      start:0x822091B0 end:0x822091C8
+	.pdata      start:0x822091E8 end:0x822092D8
 	.pdata      start:0x82250128 end:0x82250130
 	.text       start:0x823F2A18 end:0x823F2C10
 	.text       start:0x823F61F8 end:0x823F6358
+	.text       start:0x823F64AC end:0x823F70E0
 	.text       start:0x82A58570 end:0x82A585BC
 
 CharFeedback.cpp:
