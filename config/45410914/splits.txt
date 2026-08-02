@@ -4189,7 +4189,8 @@ SkeletonClip.cpp:
 	.pdata      start:0x821FED80 end:0x821FEDA0
 	.pdata      start:0x821FEDA0 end:0x821FEDA8
 	.pdata      start:0x821FEDA8 end:0x821FEDB0
-	.pdata      start:0x821FEEC8 end:0x821FEF10
+	.pdata      start:0x821FEEC8 end:0x821FEEE0
+	.pdata      start:0x821FEEE8 end:0x821FEF10
 	.pdata      start:0x821FEF18 end:0x821FEF30
 	.pdata      start:0x8220E138 end:0x8220E140
 	.pdata      start:0x8220E140 end:0x8220E150
@@ -4208,7 +4209,8 @@ SkeletonClip.cpp:
 	.text       start:0x82348B28 end:0x82348D80
 	.text       start:0x82348D80 end:0x82348DEC
 	.text       start:0x82348DEC end:0x82348E20
-	.text       start:0x8234A148 end:0x8234AC78
+	.text       start:0x8234A148 end:0x8234A288
+	.text       start:0x8234A3FC end:0x8234AC78
 	.text       start:0x8234AD88 end:0x8234AE48
 	.text       start:0x82456260 end:0x824562B0
 	.text       start:0x824562B0 end:0x82456378
@@ -5374,7 +5376,7 @@ File.cpp:
 
 Joypad.cpp:
 	.pdata      start:0x822190B0 end:0x822192A8
-	.text       start:0x82524A28 end:0x825276EC
+	.text       start:0x82524A08 end:0x825276EC
 
 StreamPlayer.cpp:
 	.pdata      start:0x822419C0 end:0x82241A10
@@ -7309,7 +7311,7 @@ VorbisMem.cpp:
 OnlineID.cpp:
 	.pdata      start:0x82219088 end:0x822190B0
 	.text       start:0x82524500 end:0x8252450C
-	.text       start:0x82524510 end:0x82524A28
+	.text       start:0x82524510 end:0x82524A08
 
 MetaMusicScene.cpp:
 	.pdata      start:0x82241900 end:0x82241918
@@ -10481,6 +10483,7 @@ BandPatchMesh.cpp:
 	.pdata      start:0x821FED48 end:0x821FED50
 	.pdata      start:0x821FEDB8 end:0x821FEE08
 	.pdata      start:0x821FEE88 end:0x821FEEC8
+	.pdata      start:0x821FEEE0 end:0x821FEEE8
 	.pdata      start:0x821FEF10 end:0x821FEF18
 	.pdata      start:0x821FEFD0 end:0x821FF000
 	.text       start:0x82345330 end:0x8234539C
@@ -10494,6 +10497,7 @@ BandPatchMesh.cpp:
 	.text       start:0x82348420 end:0x823484EC
 	.text       start:0x82348F9C end:0x823493D0
 	.text       start:0x82349DC0 end:0x8234A148
+	.text       start:0x8234A288 end:0x8234A3FC
 	.text       start:0x8234AC78 end:0x8234AD88
 	.text       start:0x8234BCB0 end:0x8234C298
 
@@ -11936,7 +11940,7 @@ VocalPart.cpp:
 	.pdata      start:0x82236BC8 end:0x82236BD0
 	.pdata      start:0x82236BD0 end:0x82236BD8
 	.pdata      start:0x82236BD8 end:0x82236BE0
-	.pdata      start:0x82236BE0 end:0x82236C08
+	.pdata      start:0x82236BE0 end:0x82236BF0
 	.text       start:0x826F0F20 end:0x826F0F78
 	.text       start:0x826F10A8 end:0x826F2144
 	.text       start:0x826F2148 end:0x826F28C8
@@ -11949,7 +11953,11 @@ VocalPart.cpp:
 	.text       start:0x826F3830 end:0x826F3954
 	.text       start:0x826F3958 end:0x826F3990
 	.text       start:0x826F3990 end:0x826F39F4
-	.text       start:0x826F39F8 end:0x826F3E98
+	.text       start:0x826F39F8 end:0x826F3B18
+
+HeldNote.cpp:
+	.pdata      start:0x82236BF0 end:0x82236C08
+	.text       start:0x826F3B18 end:0x826F3E98
 
 RGUtl.cpp:
 	.pdata      start:0x821FC040 end:0x821FC098
