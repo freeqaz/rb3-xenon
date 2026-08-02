@@ -15,6 +15,12 @@ void EyebrowsProvider::Update(Symbol s) {
     AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
     MILO_ASSERT(pAssetMgr, 0x1C);
     pAssetMgr->GetEyebrows(mEyebrows, mGender);
+    // Retail spells this as a function-local static (Symbol at 0x82E02004 with
+    // its guard word at 0x82E02008), not the Symbols4.h file-scope global the
+    // Wii oracle uses. Same conversion already applied in AssetMgr.cpp and
+    // AssetTypes.cpp. Declared at point of use: the retail guard test sits
+    // immediately before the push_back.
+    static Symbol none_eyebrows("none_eyebrows");
     mEyebrows.push_back(none_eyebrows);
 }
 

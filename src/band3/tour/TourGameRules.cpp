@@ -25,6 +25,16 @@ void TourGameRules::Init(const DataArray *i_pConfig) {
         else
             MILO_WARN("Too many targets specified for game type: %i", mGameType);
     }
+    // Placement matters: retail's guard test for this third static sits before
+    // the m_vTargets.size() read, not at the point of use below.
+    static Symbol challenge_specific_data("challenge_specific_data");
+    // Dev-build only: retail emits nothing between the challenge_specific_data
+    // Symbol ctor and the FindArray call -- the whole "pad out to 2 targets"
+    // safety net (16 instructions: size(), the <2 test, and the push_back(0)
+    // loop) is absent from the retail binary. It survives here only because
+    // MILO_DEBUG is force-defined tree-wide; guarded per-site with the house
+    // pattern so native builds keep the behaviour.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     int i = m_vTargets.size();
     if (i < 2) {
         MILO_WARN("Not enough targets specified for game type: %i", mGameType);
@@ -32,7 +42,7 @@ void TourGameRules::Init(const DataArray *i_pConfig) {
             m_vTargets.push_back(0);
         }
     }
-    static Symbol challenge_specific_data("challenge_specific_data");
+#endif
     mChallengeData = i_pConfig->FindArray(challenge_specific_data, false);
 }
 
