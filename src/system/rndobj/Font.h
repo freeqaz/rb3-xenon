@@ -16,8 +16,29 @@ class KerningTable;
 // 0x82472EC0) calls ?Save@Object@Hmx@@ directly with a single SAVE_REVS.
 // The RndFontBase split is a DC3-era addition; RndFont derives from
 // Hmx::Object here and carries the former base's members/methods itself.
-// Declaration order is preserved verbatim from the old base so that both the
-// member layout and the vtable slot order are unchanged by the collapse.
+//
+// MEMBER LAYOUT -- decoded instruction-by-instruction from retail bytes, not
+// inherited from either sibling repo. Three retail bodies agree:
+//   * Save       0x82472EC0: ObjPtr saves at +0x28/+0x34/+0x88 through ONE
+//                shared helper; Vector2 saves at +0x60 and +0x7c through one
+//                shared helper; lfs +0x68, lfs +0x5c; vector save at +0x6c;
+//                lwz +0x58 (kerning table) then a conditional KerningTable::Save;
+//                lbz +0x78, lbz +0x84; map node-count at +0x50 / leftmost +0x48
+//                (=> map at +0x40); per-char loop emits `sth` + 4x `lfs` at node
+//                +0x10/+0x14/+0x18/+0x1c/+0x20 and NEVER a `lwz`.
+//   * Print      0x82472C18: lwz +0x30 (mMat.mObject), Vector2 +0x60, lfs +0x68,
+//                lfs +0x5c, vector walk at +0x6c.
+//   * CharDefined 0x82473A98: two finds on the map at +0x40, then tests CharInfo
+//                +0x0/+0x4/+0xc.
+// That is the rb3-Wii generation's shape: ONE ObjPtr<RndMat> mMat (no
+// ObjPtrVec mMats), an mTexCellSize Vector2 (no mMaterialOffsets vector), an
+// mNextFont fallback chain, and a FOUR-FLOAT CharInfo with no page index. The
+// multi-page DC3 shape this file used to carry does not exist in RB3 retail.
+//
+// The VTABLE is deliberately NOT changed to rb3-Wii's. Retail's CharDefined and
+// Print are mangled `?...@RndFont@@UB...` -- public *virtual* const -- whereas
+// rb3-Wii declares both non-virtual. RB3-360 is a hybrid: Wii-era members under
+// a DC3-era vtable. Only the members move here.
 class RndFont : public Hmx::Object {
     friend class UIFontImporter;
     friend class RndText;
@@ -29,12 +50,24 @@ public:
         float kerning; // 0x4
     };
 
+    // Retail CharInfo is 20 bytes: four floats plus one trailing word.
+    // Two independent retail instruments pin it, and only this shape satisfies
+    // both:
+    //   * Save (0x82472EC0) / CharDefined (0x82473A98) put FLOATS at +0x0, +0x4,
+    //     +0x8, +0xc -- the per-char FOREACH emits `sth` then 4x `lfs` and never
+    //     a `lwz`, so DC3's leading `int mPage` cannot be there.
+    //   * _Rb_tree<...CharInfo>::_M_erase deallocates with `li r3, 0x28` -- a
+    //     40-byte node. _Rb_tree_node_base is 16 and the key sits at node+0x10,
+    //     so sizeof(pair<const u16, CharInfo>) is 24 and sizeof(CharInfo) is 20.
+    // Hence a fifth word AFTER the floats. Retail's Save does not serialize it
+    // and no decoded body reads it, so its meaning is unidentified -- it is NOT
+    // DC3's mPage (that was the first member and was serialized).
     struct CharInfo {
-        int mPage; // 0x0
-        float mU;
-        float mV;
-        float mCharWidth; // 0xc
-        float mAdvance;
+        float mU; // 0x0
+        float mV; // 0x4
+        float mCharWidth; // 0x8
+        float mAdvance; // 0xc
+        int mUnk10; // 0x10 -- unidentified; sized by the 0x28 node, never saved
     };
     virtual ~RndFont();
     virtual void Replace(ObjRef *, Hmx::Object *);
@@ -51,12 +84,13 @@ public:
     virtual float Kerning(unsigned short, unsigned short) const;
     virtual bool CharDefined(unsigned short) const;
     virtual float AspectRatio() const { return mCellSize.y / mCellSize.x; }
-    virtual RndMat *Mat() const {
-        if (mMats.size() > 0)
-            return (RndMat *)mMats[0];
-        else
-            return nullptr;
-    }
+    virtual RndMat *Mat() const { return mMat; }
+    // rb3-Wii's accessor, and NON-virtual on purpose. Retail reads the font's
+    // material with a plain `lwz r4, 0x30(font)` field load at every SetMat site
+    // in rndobj/Text.cpp (0x82458E20, 0x82458ED4, 0x8245911C, 0x824594C4) -- no
+    // vtable call appears anywhere. Callers that retail inlines must use this,
+    // not the virtual Mat() above (which stays, since it occupies a vtable slot).
+    RndMat *GetMat() const { return mMat; }
     virtual const RndFont *DataOwner() const { return mTextureOwner; }
     virtual float FontUnit() const { return mCellSize.x; }
     virtual float FontUnitInverse() const { return 1.0f / FontUnit(); }
@@ -74,14 +108,23 @@ public:
     const std::vector<unsigned short> &Chars() const { return mChars; }
     float BaseKerning() const { return mBaseKerning; }
 
+    // Retail inlines this into Save (0x82472EC0): `lwz r11,0x30(font)` ->
+    // `lwz r11,0x94(r11)` (RndMat::mDiffuseTex), with a null short-circuit.
+    RndTex *ValidTexture() const {
+        if (mMat)
+            return mMat->GetDiffuseTex();
+        else
+            return nullptr;
+    }
+    // Vestigial page-indexed forms. RB3 retail fonts are SINGLE-page (one
+    // ObjPtr<RndMat>), so the index is ignored; these exist only so the
+    // out-of-unit callers in ui/UIFontImporter.cpp keep compiling unchanged.
     RndMat *Mat(int) const;
     RndTex *ValidTexture(int) const;
     void SetCellSize(float, float);
-    int CharPage(unsigned short) const;
     void BleedTest();
     bool
     CharWidthAdvanceCoords(unsigned short, float &, float &, Vector2 &, Vector2 &) const;
-    int NumMats() const { return mMats.size(); }
     float DeprecatedSize() const { return mDeprecatedSize; }
     // RB3 retail API used by ui/UILabel.cpp (rb3-Wii oracle rndobj/Font.h).
     // DECLARATION-ONLY, non-virtual -> layout- and vtable-neutral.
@@ -90,28 +133,34 @@ public:
 
 protected:
     RndFont();
-    virtual bool HasChar(unsigned short) const;
+    // NON-virtual, and defined in-class on purpose: retail's CharDefined
+    // (0x82473A98) inlines the lookup -- it issues two direct `bl` calls to
+    // map::find with no vtable load -- so retail's HasChar cannot be virtual.
+    bool HasChar(unsigned short c) const {
+        return mCharInfoMap.find(c) != mCharInfoMap.end();
+    }
     virtual void SetASCIIChars(String);
 
     String GetASCIIChars() const;
 
-    void SetCharInfo(CharInfo *, RndBitmap &, const Vector2 &, int);
+    void SetCharInfo(CharInfo *, RndBitmap &, const Vector2 &);
     void UpdateChars();
-    void SetBitmapSize(const Vector2 &);
+    void SetBitmapSize(const Vector2 &, unsigned int, unsigned int);
 
-    // former RndFontBase members -- offsets unchanged by the collapse
-    std::vector<unsigned short> mChars; // 0x28
-    bool mMonospace; // 0x34
-    float mBaseKerning; // 0x38
-    KerningTable *mKerningTable; // 0x3c
-
-    ObjPtrVec<RndMat> mMats; // 0x40
-    ObjOwnerPtr<RndFont> mTextureOwner; // 0x5c
-    std::map<unsigned short, CharInfo> mCharInfoMap; // 0x68
-    Vector2 mCellSize; // 0x80
-    float mDeprecatedSize; // 0x88
-    std::vector<Vector2> mMaterialOffsets; // 0x8c
-    bool mPacked; // 0x98
+    // Retail-decoded layout (see the class comment for the deriving bytes).
+    // sizeof(RndFont) == 0x94.
+    ObjPtr<RndMat> mMat; // 0x28  (mObject at 0x30 -- retail's `lwz rN,0x30(font)`)
+    ObjOwnerPtr<RndFont> mTextureOwner; // 0x34
+    std::map<unsigned short, CharInfo> mCharInfoMap; // 0x40
+    KerningTable *mKerningTable; // 0x58
+    float mBaseKerning; // 0x5c
+    Vector2 mCellSize; // 0x60
+    float mDeprecatedSize; // 0x68
+    std::vector<unsigned short> mChars; // 0x6c
+    bool mMonospace; // 0x78
+    Vector2 mTexCellSize; // 0x7c
+    bool mPacked; // 0x84
+    ObjPtr<RndFont> mNextFont; // 0x88
 };
 
 class KerningTable {
@@ -257,17 +306,28 @@ protected:
     std::map<unsigned short, CharInfo *> mCharInfoMap; // 0x9c
 };
 
+// Single-page, per the rb3-Wii oracle. The DC3 page-indexed form
+// (BitmapLocker(RndFont*, int) + LoadPage(int)) presupposed the multi-page
+// ObjPtrVec<RndMat> font that RB3 retail does not have.
+//
+// NOTE for the map owner: scripts/target_symbol_map.json maps
+// 0x823fe968 -> ??0BitmapLocker@@QAA@PAVRndFont@@H@Z, but fn_823FE968 is NOT
+// this constructor -- it never reads r4 (so it is a ONE-argument function),
+// it calls a base-class constructor and installs a vtable at +0x0 (BitmapLocker
+// has neither), and it initialises fields out to +0x6c on a ~0x70-byte object.
+// It lives at 0x823FE968, far outside Font's 0x8247xxxx cluster, in one of the
+// scatter-included BandDirector.cpp / Tail.cpp ranges. That map row is a
+// misattribution and no source change here can make it match.
 class BitmapLocker {
     friend class RndFont;
 
 public:
-    BitmapLocker(RndFont *, int);
+    BitmapLocker(RndFont *);
     ~BitmapLocker();
-    void LoadPage(int);
 
-private:
-    RndFont *mFont; // 0x0
-    RndTex *mTex; // 0x4
-    RndBitmap *mBitmapPtr; // 0x8
-    RndBitmap mBitmap; // 0xc
+    RndBitmap *PtrToBitmap() const { return mPbm; }
+
+    RndTex *mTexture; // 0x0
+    RndBitmap *mPbm; // 0x4
+    RndBitmap mBm; // 0x8
 };

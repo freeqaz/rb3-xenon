@@ -76,7 +76,10 @@ void KerningTable::SetKerning(
             Entry &curEntry = mEntries[entryIdx++];
             curEntry.key = Key(curInfo.mFirstChar, curInfo.mSecondChar);
             curEntry.kerning = curInfo.kerning;
-            int index = TableIndex(curInfo.mSecondChar, curInfo.mFirstChar);
+            // (first, second) -- NOT swapped. TableIndex is symmetric so the
+            // swap was semantically invisible, but retail loads the two shorts
+            // in declaration order (rb3-Wii oracle agrees).
+            int index = TableIndex(curInfo.mFirstChar, curInfo.mSecondChar);
             curEntry.next = mTable[index];
             mTable[index] = &curEntry;
         }
@@ -126,43 +129,36 @@ void KerningTable::Load(BinStreamRev &d, RndFont *f) {
     }
 }
 
-BitmapLocker::BitmapLocker(RndFont *font, int pageIdx) : mFont(font), mTex(0), mBitmapPtr(0) {
-    LoadPage(pageIdx);
-}
-
-BitmapLocker::~BitmapLocker() {
-    if (mTex) {
-        mTex->UnlockBitmap();
-    }
-}
-
-void BitmapLocker::LoadPage(int pageIdx) {
-    if (mTex) {
-        mTex->UnlockBitmap();
-    }
-    mBitmapPtr = nullptr;
-    mTex = mFont->ValidTexture(pageIdx);
-    if (mTex) {
-        const char *filename = mTex->File().c_str();
+BitmapLocker::BitmapLocker(RndFont *font) : mTexture(0), mPbm(0) {
+    mTexture = font->ValidTexture();
+    if (mTexture) {
+        const char *filename = mTexture->File().c_str();
         int len = strlen(filename);
         if (UsingCD() || len < 4 || stricmp(filename + len - 4, ".bmp")) {
-            mTex->LockBitmap(mBitmap, 3);
-            if (mBitmap.Pixels()) {
-                mBitmapPtr = &mBitmap;
+            mTexture->LockBitmap(mBm, 3);
+            if (mBm.Pixels()) {
+                mPbm = &mBm;
             }
         } else {
-            mBitmap.LoadBmp(filename, false, true);
-            if (mBitmap.Pixels()) {
-                mBitmapPtr = &mBitmap;
+            mBm.LoadBmp(filename, false, true);
+            if (mBm.Pixels()) {
+                mPbm = &mBm;
             }
-            mTex = nullptr;
+            mTexture = nullptr;
         }
     }
 }
 
+BitmapLocker::~BitmapLocker() {
+    if (mTexture) {
+        mTexture->UnlockBitmap();
+    }
+}
+
 RndFont::RndFont()
-    : mMats(this, (EraseMode)0, kObjListNoNull), mTextureOwner(this, this),
-      mCellSize(1, 1), mDeprecatedSize(0), mPacked(0) {}
+    : mMat(this), mTextureOwner(this, this), mKerningTable(0), mBaseKerning(0.0f),
+      mCellSize(1.0f, 1.0f), mDeprecatedSize(0.0f), mMonospace(0),
+      mTexCellSize(0.0f, 0.0f), mPacked(0), mNextFont(this) {}
 
 RndFont::~RndFont() { RELEASE(mKerningTable); }
 
@@ -186,6 +182,7 @@ void RndFont::Replace(ObjRef *from, Hmx::Object *to) {
 }
 
 BEGIN_HANDLERS(RndFont)
+    HANDLE_EXPR(mat, Mat())
     HANDLE_EXPR(texture_owner, mTextureOwner.Ptr())
     HANDLE_ACTION(bleed_test, BleedTest())
     HANDLE_SUPERCLASS(Hmx::Object)
@@ -193,7 +190,7 @@ END_HANDLERS
 
 BEGIN_PROPSYNCS(RndFont)
     SYNC_PROP_MODIFY(texture_owner, mTextureOwner, UpdateChars())
-    SYNC_PROP_MODIFY(mats, mMats, UpdateChars())
+    SYNC_PROP_MODIFY(mat, mMat, UpdateChars())
     SYNC_PROP_MODIFY(monospace, mMonospace, UpdateChars())
     SYNC_PROP_MODIFY(packed, mPacked, UpdateChars())
     SYNC_PROP_SET(cell_width, (int)mCellSize.x, SetCellSize(_val.Int(), mCellSize.y))
@@ -203,49 +200,54 @@ BEGIN_PROPSYNCS(RndFont)
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
+// Transcribed from retail 0x82472EC0 (548 B). The write order below is the
+// instruction order of that function, one-for-one:
+//   packRevs(0,0x11) -> Hmx::Object::Save -> ObjPtr@0x28 -> Vector2@0x60 ->
+//   f32@0x68 -> f32@0x5c -> vector@0x6c -> bool(ptr@0x58) -> [KerningTable::Save]
+//   -> ObjPtr@0x34 -> u8@0x78 -> u8@0x84 -> tex w/h via mMat@0x30 ->
+//   Vector2@0x7c -> map count@0x50 -> per-char {u16, f32 x4} -> ObjPtr@0x88.
 BEGIN_SAVES(RndFont)
     SAVE_REVS(0x11, 0)
-    // Former RndFontBase::Save, inlined. Retail's RndFont::Save (0x82472EC0)
-    // calls ?Save@Object@Hmx@@ directly and emits exactly ONE SAVE_REVS, so the
-    // base's own SAVE_REVS(0,0) is dropped here (Load below drops it to match).
     SAVE_SUPERCLASS(Hmx::Object)
-    bs << mChars;
-    bs << mMonospace;
-    bs << mBaseKerning;
+    bs << mMat;
+    // One chained expression: retail keeps the BinStream& returned by the
+    // out-of-line Vector2 operator<< in r29 and threads it through the next
+    // three (inlined) writes. Splitting these into separate statements restarts
+    // each one from `bs` (r31) and costs three register mismatches.
+    bs << mCellSize << mDeprecatedSize << mBaseKerning << mChars;
     bs << (mKerningTable != nullptr);
     if (mKerningTable) {
         mKerningTable->Save(bs);
     }
-    bs << mMats;
-    bs << mCellSize << mDeprecatedSize;
     bs << mTextureOwner;
+    bs << mMonospace;
     bs << mPacked;
-    RndTex *validTex = ValidTexture(0);
+    RndTex *validTex = ValidTexture();
     if (validTex) {
         bs << validTex->Width() << validTex->Height();
     } else {
         bs << 0 << 0;
     }
-    bs << mMaterialOffsets;
+    bs << mTexCellSize;
     bs << mCharInfoMap.size();
     FOREACH (it, mCharInfoMap) {
         bs << it->first;
         const CharInfo &info = it->second;
-        bs << info.mPage;
         bs << info.mU;
         bs << info.mV;
         bs << info.mCharWidth;
         bs << info.mAdvance;
     }
+    bs << mNextFont;
 END_SAVES
 
 BEGIN_COPYS(RndFont)
     COPY_SUPERCLASS(Hmx::Object)
     CREATE_COPY_AS(RndFont, f)
     MILO_ASSERT(f, 0x451);
-    COPY_MEMBER_FROM(f, mMats)
+    COPY_MEMBER_FROM(f, mMat)
     COPY_MEMBER_FROM(f, mCellSize)
-    COPY_MEMBER_FROM(f, mMaterialOffsets)
+    COPY_MEMBER_FROM(f, mTexCellSize)
     COPY_MEMBER_FROM(f, mDeprecatedSize)
     COPY_MEMBER_FROM(f, mPacked)
     COPY_MEMBER_FROM(f, mCharInfoMap)
@@ -311,26 +313,19 @@ BinStream &operator>>(BinStream &bs, std::map<char, MatChar> &m) {
 
 INIT_REVS(0x11, 2)
 
+// Load order follows retail's Save (0x82472EC0) exactly -- they are the two
+// halves of one serialiser and MUST agree. The former DC3 `altRev >= 2` path
+// read mChars/mMonospace/mBaseKerning/kerning BEFORE the material, which does
+// not correspond to anything retail writes; keeping it against the decoded Save
+// above would have produced a genuinely unbalanced stream. The altRev branches
+// are dropped accordingly (retail's Save emits packRevs(0, 0x11) -- altRev is
+// always 0).
 BEGIN_LOADS(RndFont)
     LOAD_REVS(bs)
     ASSERT_REVS(0x11, 2)
     sFontRev = d.rev;
-    if (d.altRev < 2) {
-        if (d.rev > 7) {
-            Hmx::Object::Load(d.stream);
-        }
-    } else {
-        // Former RndFontBase::Load, inlined (no base rev -- see Save above).
+    if (d.rev > 7) {
         Hmx::Object::Load(d.stream);
-        d >> mChars;
-        d >> mMonospace;
-        d >> mBaseKerning;
-        bool newKerning;
-        d >> newKerning;
-        if (newKerning) {
-            mKerningTable = new KerningTable();
-            mKerningTable->Load(d, this);
-        }
     }
     if (d.rev < 3) {
         String str;
@@ -342,32 +337,25 @@ BEGIN_LOADS(RndFont)
         std::map<char, MatChar> charMap;
         d.stream >> charMap;
     } else {
-        if (d.altRev < 1) {
-            ObjPtr<RndMat> mat(this, NULL);
-            mat.Load(d.stream, true, NULL);
-            if (d.rev > 9 && d.rev < 0xc) {
-                char buf[0x80];
-                d.stream.ReadString(buf, 0x80);
-                if (!mat && buf[0] != '\0') {
-                    mat = LookupOrCreateMat(buf, Dir());
-                }
+        mMat.Load(d.stream, true, NULL);
+        if (d.rev > 9 && d.rev < 0xc) {
+            char buf[0x80];
+            d.stream.ReadString(buf, 0x80);
+            if (!mMat && buf[0] != '\0') {
+                mMat = LookupOrCreateMat(buf, Dir());
             }
-            mMats.clear();
-            mMats.push_back(mat);
-        } else {
-            mMats.Load(d.stream, true, NULL);
         }
         if (d.rev < 4) {
             float w, h;
             if (d.rev < 2) {
-                int w, h;
-                d.stream >> w >> h;
-                mCellSize.x = h;
-                mCellSize.y = w;
+                int wi, hi;
+                d.stream >> wi >> hi;
+                w = wi;
+                h = hi;
             } else {
-                d.stream >> mCellSize.y >> mCellSize.x;
+                d.stream >> w >> h;
             }
-            RndTex *validTex = ValidTexture(0);
+            RndTex *validTex = ValidTexture();
             if (validTex) {
                 RndBitmap bmap;
                 validTex->LockBitmap(bmap, 3);
@@ -378,10 +366,7 @@ BEGIN_LOADS(RndFont)
         } else {
             d.stream >> mCellSize;
         }
-        d.stream >> mDeprecatedSize;
-        if (d.altRev < 2) {
-            d.stream >> mBaseKerning;
-        }
+        d.stream >> mDeprecatedSize >> mBaseKerning;
         if (d.rev < 4) {
             mBaseKerning /= mDeprecatedSize;
         }
@@ -391,7 +376,7 @@ BEGIN_LOADS(RndFont)
             String str;
             d.stream >> str;
             ASCIItoWideVector(mChars, str.c_str());
-        } else if (d.altRev < 2) {
+        } else {
             d >> mChars;
         }
     } else {
@@ -405,7 +390,7 @@ BEGIN_LOADS(RndFont)
             } while (*ptr != '\0');
         }
     }
-    if (d.rev > 4 && d.altRev < 2) {
+    if (d.rev > 4) {
         bool hasKerning;
         d >> hasKerning;
         if (hasKerning) {
@@ -419,7 +404,7 @@ BEGIN_LOADS(RndFont)
     if (!mTextureOwner) {
         mTextureOwner = this;
     }
-    if (d.rev > 0xa && d.altRev < 2) {
+    if (d.rev > 0xa) {
         d >> mMonospace;
     }
     if (d.rev > 0xe) {
@@ -428,7 +413,7 @@ BEGIN_LOADS(RndFont)
     if (d.rev > 0xc) {
         int bw, bh;
         d.stream >> bw >> bh;
-        RndTex *validTex = ValidTexture(0);
+        RndTex *validTex = ValidTexture();
         if (validTex) {
             if (bw && validTex->Width()) {
                 mCellSize.x *= (float)validTex->Width() / (float)bw;
@@ -438,17 +423,11 @@ BEGIN_LOADS(RndFont)
             }
         }
     }
-    mMaterialOffsets.resize(mMats.size());
     if (d.rev > 0xd) {
-        if (d.altRev < 1) {
-            d.stream >> mMaterialOffsets[0];
-        } else {
-            d >> mMaterialOffsets;
-        }
+        d.stream >> mTexCellSize;
         if (d.rev < 0x11) {
             for (int i = 0; i < 0x100; i++) {
                 CharInfo &info = mCharInfoMap[i];
-                info.mPage = 0;
                 d.stream >> info.mU;
                 d.stream >> info.mV;
                 d.stream >> info.mCharWidth;
@@ -471,11 +450,6 @@ BEGIN_LOADS(RndFont)
                 unsigned short keyChar;
                 d.stream >> keyChar;
                 CharInfo &info = mCharInfoMap[keyChar];
-                if (d.altRev > 0) {
-                    d.stream >> info.mPage;
-                } else {
-                    info.mPage = 0;
-                }
                 d.stream >> info.mU;
                 d.stream >> info.mV;
                 d.stream >> info.mCharWidth;
@@ -495,15 +469,17 @@ BEGIN_LOADS(RndFont)
         SetKerning(kernInfos);
         MILO_LOG("NOTIFY: %s is old version, resave file\n", PathName(this));
     }
-    if (d.rev > 0x10 && d.altRev < 1) {
-        ObjPtr<RndFont> nextFont(this, NULL);
-        nextFont.Load(d.stream, true, NULL);
+    if (d.rev > 0x10) {
+        mNextFont.Load(d.stream, true, NULL);
     }
 END_LOADS
 
 void RndFont::UpdateChars() {
     if (mPacked) {
-        SetBitmapSize(mCellSize);
+        RndTex *tex = ValidTexture();
+        if (tex) {
+            SetBitmapSize(mCellSize, tex->Width(), tex->Height());
+        }
     } else {
         if (!mChars.empty() && mChars[0] == 160) {
             MILO_NOTIFY(
@@ -513,44 +489,27 @@ void RndFont::UpdateChars() {
             mChars[0] = ' ';
         }
         mCharInfoMap.clear();
-        int pageIdx = 0;
-        BitmapLocker locker(this, 0);
-        RndBitmap *bmap = locker.mBitmapPtr;
+        BitmapLocker locker(this);
+        RndBitmap *bmap = locker.PtrToBitmap();
         if (bmap) {
-            if (mMaterialOffsets.size() != mMats.size()) {
-                mMaterialOffsets.resize(mMats.size());
-            }
-            float posX = 0;
-            float posY = 0;
-            mMaterialOffsets[0].x = mCellSize.x / (float)bmap->Width();
-            mMaterialOffsets[0].y = mCellSize.y / (float)bmap->Height();
-            for (unsigned int i = 0; i < mChars.size(); i++) {
+            mTexCellSize.x = mCellSize.x / (float)bmap->Width();
+            mTexCellSize.y = mCellSize.y / (float)bmap->Height();
+            Vector2 pos(0, 0);
+            for (int i = 0; i < mChars.size(); i++) {
                 unsigned short curChar = mChars[i];
-                if (posX + mCellSize.x > (float)bmap->Width()) {
-                    posY += mCellSize.y;
-                    posX = 0;
+                if (pos.x + mCellSize.x > (float)bmap->Width()) {
+                    pos.x = 0;
+                    pos.y += mCellSize.y;
                 }
-                if (posY + mCellSize.y > (float)bmap->Height()) {
-                    pageIdx++;
-                    if (pageIdx >= (int)mMats.size()) {
-                        MILO_NOTIFY(
-                            "%s: too many characters for bitmap, truncating.", Name()
-                        );
-                        mChars.resize(i);
-                        break;
-                    }
-                    posX = 0;
-                    posY = 0;
-                    locker.LoadPage(pageIdx);
-                    mMaterialOffsets[pageIdx].x =
-                        mCellSize.x / (float)locker.mBitmapPtr->Width();
-                    mMaterialOffsets[pageIdx].y =
-                        mCellSize.y / (float)locker.mBitmapPtr->Height();
-                    bmap = locker.mBitmapPtr;
+                // Single-page: retail has one ObjPtr<RndMat>, so overflowing the
+                // bitmap truncates instead of advancing to the next page.
+                if (pos.y + mCellSize.y > (float)bmap->Height()) {
+                    MILO_NOTIFY("%s: too many characters for bitmap, truncating.", Name());
+                    mChars.resize(i);
+                    break;
                 }
-                Vector2 pos(posX, posY);
-                SetCharInfo(&mCharInfoMap[curChar], *bmap, pos, pageIdx);
-                posX += mCellSize.x;
+                SetCharInfo(&mCharInfoMap[curChar], *bmap, pos);
+                pos.x += mCellSize.x;
                 if (curChar == 0x20) {
                     mCharInfoMap[curChar].mCharWidth = 0;
                 } else if (curChar == 9) {
@@ -564,14 +523,16 @@ void RndFont::UpdateChars() {
 }
 
 void RndFont::BleedTest() {
-    String errStr;
-    for (unsigned int i = 0; i < mChars.size(); i++) {
-        unsigned short curChar = mChars[i];
-        CharInfo &curInfo = mCharInfoMap[curChar];
-        BitmapLocker locker(this, curInfo.mPage);
-        RndBitmap *bmap = locker.mBitmapPtr;
-        if (bmap) {
-            bool haswrap = ((RndMat *)mMats[curInfo.mPage])->GetTexWrap() == kTexWrapClamp;
+    // Single-page: the locker and the wrap test hoist out of the loop (rb3-Wii
+    // shape). The DC3 form re-locked a per-character page inside the loop.
+    BitmapLocker locker(this);
+    RndBitmap *bmap = locker.PtrToBitmap();
+    if (bmap) {
+        bool haswrap = mMat->GetTexWrap() == kTexWrapClamp;
+        String errStr;
+        for (int i = 0; i < mChars.size(); i++) {
+            unsigned short curChar = mChars[i];
+            CharInfo &curInfo = mCharInfoMap[curChar];
             int row_y = Round(curInfo.mV * (float)bmap->Height());
             int col_left = Round(curInfo.mU * (float)bmap->Width());
             int col_right = Round(curInfo.mCharWidth * mCellSize.x) + col_left;
@@ -621,11 +582,11 @@ void RndFont::BleedTest() {
                 }
             }
         }
-    }
-    if (errStr.length() != 0) {
-        MILO_NOTIFY("Bleeding in %s:\n%s", Name(), errStr);
-    } else {
-        MILO_NOTIFY("No bleeding over found.  ");
+        if (errStr.length() != 0) {
+            MILO_NOTIFY("Bleeding in %s:\n%s", Name(), errStr);
+        } else {
+            MILO_NOTIFY("No bleeding over found.  ");
+        }
     }
 }
 
@@ -671,16 +632,19 @@ bool RndFont::CharDefined(unsigned short c) const {
     }
 }
 
+// Transcribed from retail 0x82472C18 (352 B): it loads mMat.mObject from +0x30
+// and prints the material's name, then cellSize@0x60, deprecated size@0x68,
+// space@0x5c, then walks mChars@0x6c. There is no "pages:" line and no material
+// list -- that was the DC3 multi-page form.
 void RndFont::Print() const {
-    TheDebug << "   pages: " << mMats.size() << "\n";
-    FOREACH (it, mMats) {
-        TheDebug << "         " << *it << "\n";
-    }
+    TheDebug << "   mat: " << mMat << "\n";
     TheDebug << "   cellSize: " << mCellSize << "\n";
     TheDebug << "   deprecated size: " << mDeprecatedSize << "\n";
     TheDebug << "   space: " << mBaseKerning << "\n";
     TheDebug << "   chars: ";
-    for (size_t i = 0; i < mChars.size(); i++) {
+    // No cast on size(): retail compares UNSIGNED (`cmplw`) against a signed
+    // pointer-difference size (`srawi.`). An (int) cast here flips both.
+    for (int i = 0; i < mChars.size(); i++) {
         unsigned short us = mChars[i];
         TheDebug << WideCharToChar(&us);
     }
@@ -688,9 +652,8 @@ void RndFont::Print() const {
     TheDebug << "   kerning: TODO\n";
 }
 
-bool RndFont::HasChar(unsigned short c) const {
-    return mCharInfoMap.find(c) != mCharInfoMap.end();
-}
+// HasChar is now a non-virtual in-class inline (see Font.h) -- retail's
+// CharDefined inlines it.
 
 // Former RndFontBase::SetASCIIChars, inlined.
 void RndFont::SetASCIIChars(String str) {
@@ -750,22 +713,14 @@ void RndFont::GetKerning(std::vector<KernInfo> &kernInfo) const {
     }
 }
 
-RndMat *RndFont::Mat(int idx) const {
-    if (idx >= 0 && idx < mMats.size()) {
-        return (RndMat *)mMats[idx];
-    } else
-        return nullptr;
-}
+// Vestigial page-indexed forms -- RB3 retail fonts hold a single material, so
+// the index is ignored. Kept only for the out-of-unit ui/UIFontImporter.cpp
+// callers; nothing in this TU uses them.
+RndMat *RndFont::Mat(int) const { return mMat; }
 
-RndTex *RndFont::ValidTexture(int idx) const {
-    if (Mat(idx)) {
-        return Mat(idx)->GetDiffuseTex();
-    } else
-        return nullptr;
-}
+RndTex *RndFont::ValidTexture(int) const { return ValidTexture(); }
 
-void RndFont::SetCharInfo(CharInfo *info, RndBitmap &bmap, const Vector2 &pos, int page) {
-    info->mPage = page;
+void RndFont::SetCharInfo(CharInfo *info, RndBitmap &bmap, const Vector2 &pos) {
     if (!(!(!(!(mMonospace))))) {
         int width = bmap.Width();
         info->mAdvance = 1.0f;
@@ -821,32 +776,17 @@ void RndFont::SetCharInfo(CharInfo *info, RndBitmap &bmap, const Vector2 &pos, i
     MILO_ASSERT(info->mCharWidth >= 0, 0x422);
 }
 
-void RndFont::SetBitmapSize(const Vector2 &cs) {
+// Single-page: the atlas cell fraction is one Vector2 member, not a per-material
+// vector (rb3-Wii RndFont::SetBitmapSize).
+void RndFont::SetBitmapSize(const Vector2 &cs, unsigned int w, unsigned int h) {
     mCellSize = cs;
-    if (mMaterialOffsets.size() != mMats.size()) {
-        mMaterialOffsets.resize(mMats.size());
-    }
-    for (int i = 0; i < (int)mMats.size(); i++) {
-        RndMat *mat = mMats[i];
-        RndTex *tex = mat ? mat->GetDiffuseTex() : nullptr;
-        if (tex && tex->Width() != 0 && tex->Height() != 0) {
-            mMaterialOffsets[i].x = mCellSize.x / (float)tex->Width();
-            mMaterialOffsets[i].y = mCellSize.y / (float)tex->Height();
-        }
-    }
+    mTexCellSize.x = mCellSize.x / w;
+    mTexCellSize.y = mCellSize.y / h;
 }
 
 void RndFont::SetCellSize(float x, float y) {
     mCellSize.Set(x, y);
     UpdateChars();
-}
-
-int RndFont::CharPage(unsigned short c) const {
-    if (HasChar(c)) {
-        return mCharInfoMap.find(c)->second.mPage;
-    } else {
-        return -1;
-    }
 }
 
 bool RndFont::CharWidthAdvanceCoords(
@@ -863,9 +803,9 @@ bool RndFont::CharWidthAdvanceCoords(
             charW = info.mCharWidth;
             advW = owner->mMonospace ? 1.0f : info.mAdvance;
             uvMin.x = info.mU;
-            uvMax.x = owner->mMaterialOffsets[info.mPage].x * info.mCharWidth + info.mU;
+            uvMax.x = owner->mTexCellSize.x * info.mCharWidth + info.mU;
             uvMin.y = info.mV;
-            uvMax.y = owner->mMaterialOffsets[info.mPage].y + info.mV;
+            uvMax.y = owner->mTexCellSize.y + info.mV;
             return true;
         }
     }

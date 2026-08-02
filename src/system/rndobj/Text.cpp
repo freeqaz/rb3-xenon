@@ -13,7 +13,7 @@
 //   RndText::unkbp4..7 etc. -> mUseAltStyle/mNeedsUpdate/mMeshDirty/mManualLines,
 //                              mFramesSinceDraw, mRotateLineVerts, mMeshCallback,
 //                              mCurHeight, mCurWidth
-//   font->GetMat()          -> font->Mat()
+//   font->GetMat()          -> font->GetMat()  (kept: retail's load is NON-virtual)
 //   std::vector<Line>       -> HX_VECTOR(Line)  (StlNodeAlloc flavour, retail-proven)
 //   SYNC_PROP_MODIFY_ALT    -> SYNC_PROP_MODIFY (this tree's dialect)
 //   INIT_REVS(RndText)      -> INIT_REVS(21, 0) / BEGIN_LOADS + d.rev
@@ -96,8 +96,8 @@ void RndText::Init() {
 void RndText::Mats(std::list<class RndMat *> &matList, bool) {
     // Chainless (see the FONT-CHAIN DIVERGENCE note at the top).
     RndFont *font = mFont;
-    if (font && font->Mat())
-        matList.push_back(font->Mat());
+    if (font && font->GetMat())
+        matList.push_back(font->GetMat());
 }
 
 RndDrawable *RndText::CollideShowing(const Segment &s, float &f, Plane &p) {
@@ -232,11 +232,11 @@ BEGIN_LOADS(RndText)
     if (d.rev >= 5 && d.rev <= 10) {
         bool b;
         bs >> b;
-        if (mFont && mFont->Mat()) {
+        if (mFont && mFont->GetMat()) {
             int i = 0;
             if (b)
                 i = 2;
-            mFont->Mat()->SetZMode((ZMode)i);
+            mFont->GetMat()->SetZMode((ZMode)i);
         }
     }
     if (d.rev > 7)
@@ -1194,24 +1194,14 @@ void RndText::UpdateMesh(RndFont *font) {
         meshInfo->displayableChars = mFixedLength;
     }
     MILO_ASSERT(mesh->Verts().size() >= meshInfo->displayableChars * 4, 0x6CF);
-    // FONT MAT DIVERGENCE (RB3-360 retail vs DC3-ported Font.h).
     // Retail reads the font's material with a single non-virtual field load,
-    // `lwz r4, 0x30(font)`, and repeats that idiom at every SetMat site in this
-    // TU (0x82458E20, 0x82458ED4, 0x8245911C, 0x824594C4) -- there is no vtable
-    // call anywhere. That places a raw RndMat* at RndFont+0x30, which is exactly
-    // `RndFont : public Hmx::Object` (sizeof 0x28) with a leading
-    // `ObjPtr<RndMat> mMat` at 0x28 whose mObject lands at 0x30 -- i.e. the
-    // rb3-Wii shape (`RndMat *GetMat() const { return mMat; }`), NOT the
-    // DC3 shape our Font.h currently carries (RndFontBase base + virtual Mat()
-    // over an ObjPtrVec<RndMat> mMats at 0x44, whose 0x30 is the middle of
-    // RndFontBase::mChars). Correcting that is a Font.h/FontBase.h layout lane
-    // with tree-wide blast radius; until then read the retail slot directly for
-    // the match build and keep the real accessor for the native build.
-#ifdef HX_NATIVE
-    mesh->SetMat(font->Mat());
-#else
-    mesh->SetMat(*(RndMat *const *)((const char *)font + 0x30));
-#endif
+    // `lwz r4, 0x30(font)`, at every SetMat site in this TU (0x82458E20,
+    // 0x82458ED4, 0x8245911C, 0x824594C4) -- there is no vtable call anywhere.
+    // RndFont::mMat now sits at 0x28 (mObject at 0x30), so the plain non-virtual
+    // GetMat() accessor compiles to exactly that load. The raw
+    // `*(RndMat *const *)((const char *)font + 0x30)` cast that used to stand in
+    // here -- and its HX_NATIVE escape hatch -- are no longer needed.
+    mesh->SetMat(font->GetMat());
     CreateLines(font);
     if (mMeshCallback) {
         struct _Callback {
@@ -1430,7 +1420,7 @@ void RndText::ApplyLineText(
                     curMesh->Verts().resize(mFixedLength * 4);
                     uvar8 |= 0xBF;
                 }
-                curMesh->SetMat(curFontKey->Mat());
+                curMesh->SetMat(curFontKey->GetMat());
             }
             RndMesh::Vert *theVert = curMesh->Verts().begin() + line.startIdx * 4;
             RndMesh::Vert *vertd8 = theVert;
