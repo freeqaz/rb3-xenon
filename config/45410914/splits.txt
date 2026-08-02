@@ -2977,6 +2977,7 @@ CharDriver.cpp:
 	.pdata      start:0x822020E8 end:0x822020F8
 	.pdata      start:0x822020F8 end:0x82202100
 	.pdata      start:0x82202100 end:0x82202128
+	.pdata      start:0x82202128 end:0x822021B0
 	.pdata      start:0x82206910 end:0x82206918
 	.pdata      start:0x82206920 end:0x82206928
 	.pdata      start:0x82206930 end:0x82206988
@@ -2988,6 +2989,7 @@ CharDriver.cpp:
 	.text       start:0x8237A400 end:0x8237A4A0
 	.text       start:0x8237A4A0 end:0x8237A5A4
 	.text       start:0x8237A5A4 end:0x8237AA00
+	.text       start:0x8237AA00 end:0x8237B218
 	.text       start:0x823CED00 end:0x823CED44
 	.text       start:0x823CEDE4 end:0x823CEE60
 	.text       start:0x823CF61C end:0x823CFAE0
@@ -3835,7 +3837,6 @@ FilterQueue.cpp:
 MoveAsyncDetector.cpp:
 	.pdata      start:0x821FBF88 end:0x821FBF90
 	.pdata      start:0x821FBF90 end:0x821FBF98
-	.pdata      start:0x821FBFC0 end:0x821FBFE0
 	.pdata      start:0x821FBFE8 end:0x821FBFF0
 	.pdata      start:0x821FC008 end:0x821FC040
 	.pdata      start:0x821FEC68 end:0x821FEC88
@@ -3845,7 +3846,6 @@ MoveAsyncDetector.cpp:
 	.text       start:0x82317970 end:0x82317998
 	.text       start:0x823179A4 end:0x82317AA0
 	.text       start:0x82317B94 end:0x82317B98
-	.text       start:0x82317C54 end:0x82317E48
 	.text       start:0x82317F7C end:0x82318000
 	.text       start:0x82318074 end:0x82318078
 	.text       start:0x823180EC end:0x823180F0
@@ -4015,6 +4015,7 @@ CharIKHand.cpp:
 	.pdata      start:0x82201A30 end:0x82201A38
 	.pdata      start:0x82201B30 end:0x82201B40
 	.pdata      start:0x82203B50 end:0x82203B58
+	.pdata      start:0x82203C00 end:0x82203C78
 	.pdata      start:0x82203C80 end:0x82203CA0
 	.pdata      start:0x82203CA0 end:0x82203CA8
 	.pdata      start:0x82203CB0 end:0x82203CF8
@@ -4022,6 +4023,7 @@ CharIKHand.cpp:
 	.text       start:0x82372CA8 end:0x82372D18
 	.text       start:0x82373CE8 end:0x82373DD8
 	.text       start:0x82397F08 end:0x82397F38
+	.text       start:0x82398A10 end:0x82399140
 	.text       start:0x823991C0 end:0x823992E0
 	.text       start:0x823992E0 end:0x82399348
 	.text       start:0x823993A4 end:0x823999A4
@@ -4550,7 +4552,7 @@ Morph.cpp:
 	.pdata      start:0x821F5048 end:0x821F5050
 	.pdata      start:0x821FEE08 end:0x821FEE40
 	.pdata      start:0x82202F30 end:0x82202F38
-	.pdata      start:0x82203BD8 end:0x82203C78
+	.pdata      start:0x82203BD8 end:0x82203C00
 	.pdata      start:0x82203C78 end:0x82203C80
 	.pdata      start:0x82204568 end:0x82204570
 	.pdata      start:0x822104B8 end:0x822104C0
@@ -4569,7 +4571,7 @@ Morph.cpp:
 	.text       start:0x822A9BC8 end:0x822A9C28
 	.text       start:0x823493D0 end:0x823498F0
 	.text       start:0x8238AB44 end:0x8238ABA4
-	.text       start:0x82398798 end:0x82399140
+	.text       start:0x82398798 end:0x82398A10
 	.text       start:0x82399140 end:0x823991BC
 	.text       start:0x823A40F0 end:0x823A4144
 	.text       start:0x82482F50 end:0x82482F98
@@ -7196,11 +7198,13 @@ UIListMesh.cpp:
 	.pdata      start:0x82246E98 end:0x82246EB0
 	.pdata      start:0x82246EB0 end:0x82246EB8
 	.pdata      start:0x82246EB8 end:0x82246ED0
+	.pdata      start:0x82246ED0 end:0x82246EE8
 	.text       start:0x82814450 end:0x82814850
 	.text       start:0x82814850 end:0x828149B0
 	.text       start:0x828149B0 end:0x82814A58
 	.text       start:0x82814A58 end:0x82814AC8
 	.text       start:0x82814AC8 end:0x82814C30
+	.text       start:0x82814C30 end:0x82814DA0
 
 WahEffect.cpp:
 	.pdata      start:0x8225EA68 end:0x8225EA70
@@ -7303,7 +7307,6 @@ File_Win.cpp:
 CharLipSyncDriver.cpp:
 	.pdata      start:0x821F1968 end:0x821F1970
 	.pdata      start:0x822011D8 end:0x822011E8
-	.pdata      start:0x82202128 end:0x822021B0
 	.pdata      start:0x82202FA0 end:0x82203018
 	.pdata      start:0x82203018 end:0x82203020
 	.pdata      start:0x82203020 end:0x822030F8
@@ -7316,7 +7319,6 @@ CharLipSyncDriver.cpp:
 	.pdata      start:0x82203258 end:0x82203260
 	.text       start:0x82274150 end:0x822741B0
 	.text       start:0x8236AEA8 end:0x8236AF28
-	.text       start:0x8237AA00 end:0x8237B218
 	.text       start:0x8238B198 end:0x8238BB08
 	.text       start:0x8238BB08 end:0x8238BC14
 	.text       start:0x8238BC18 end:0x8238C740
@@ -7333,11 +7335,9 @@ DeJitterPanel.cpp:
 	.text       start:0x827B3080 end:0x827B36E8
 
 UIListHighlight.cpp:
-	.pdata      start:0x82246ED0 end:0x82246EE8
 	.pdata      start:0x82247960 end:0x82247968
 	.pdata      start:0x82247968 end:0x822479E0
 	.pdata      start:0x822479E0 end:0x822479E8
-	.text       start:0x82814C30 end:0x82814DA0
 	.text       start:0x8281EF80 end:0x8281F064
 	.text       start:0x8281F068 end:0x8281F620
 	.text       start:0x8281F620 end:0x8281F648
@@ -7733,13 +7733,15 @@ CharBoneOffset.cpp:
 
 CharWeightable.cpp:
 	.pdata      start:0x82204CD8 end:0x82204D20
+	.pdata      start:0x82204D38 end:0x82204D60
 	.text       start:0x823AE918 end:0x823AEE20
+	.text       start:0x823AEF98 end:0x823AF210
 
 CharPollGroup.cpp:
-	.pdata      start:0x82204D38 end:0x82204EC0
+	.pdata      start:0x82204D60 end:0x82204EC0
 	.pdata      start:0x82204EE0 end:0x82204EF8
 	.pdata      start:0x822067E8 end:0x822067F0
-	.text       start:0x823AEF98 end:0x823B08CC
+	.text       start:0x823AF210 end:0x823B08CC
 	.text       start:0x823B0B00 end:0x823B0C78
 	.text       start:0x823CD980 end:0x823CD9B0
 
@@ -12888,6 +12890,7 @@ MicInputArrow.cpp:
 	.pdata      start:0x821FBFA8 end:0x821FBFB0
 	.pdata      start:0x821FBFB0 end:0x821FBFB8
 	.pdata      start:0x821FBFB8 end:0x821FBFC0
+	.pdata      start:0x821FBFC0 end:0x821FBFE0
 	.pdata      start:0x821FBFE0 end:0x821FBFE8
 	.pdata      start:0x821FBFF0 end:0x821FBFF8
 	.pdata      start:0x821FBFF8 end:0x821FC000
@@ -12898,6 +12901,7 @@ MicInputArrow.cpp:
 	.text       start:0x82317B18 end:0x82317B94
 	.text       start:0x82317B98 end:0x82317C10
 	.text       start:0x82317C10 end:0x82317C54
+	.text       start:0x82317C54 end:0x82317E48
 	.text       start:0x82317E48 end:0x82317F7C
 	.text       start:0x82318000 end:0x82318074
 	.text       start:0x82318078 end:0x823180EC
