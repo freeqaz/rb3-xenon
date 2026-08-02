@@ -421,7 +421,9 @@ own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
   whole splits.txt entry in the same edit: an empty unit still emits a 42-byte
   `obj/<unit>.obj` — the split succeeds, then `report.json` hard-fails with
   `Failed to open <unit>.obj: Invalid COFF/PE section headers` (verified; with
-  the entry removed the full build passes).
+  the entry removed the full build passes). ⇒ a **single-function unit can never
+  be completed by a boundary move** — it VANISHES instead of reaching 100% (lane
+  DG-2 `1cbcabc8`: 3 of 23 candidates, a case the candidate filter never tested).
 - `tools/project.py` — patched so objects in `objects.json` get a compile edge
   even without a `splits.txt` address range (compile-only scaffolding).
 - `tools/fingerprint_match.py` — function-identification tool (extract / report
@@ -506,12 +508,25 @@ own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
   (`?Frame@SIVideo@@QAAPADH@Z`, 72 B, fuzzy 99.72222 → 100.0, mpn 100.0 on BOTH
   sides ⇒ **+72 B / +0 fns**), and it is the same mechanism as "naming pays +1
   honest / +0.000000pp code%" running in the opposite direction.
-  ⚠ **Do NOT read the 0.954 pp as an available lever.** "Arg-only" is NOT
-  "relocation-only" — it includes register args. A 3-specimen sample was **3/3
-  register-class** (`mr r4,r5`→`r4,r3`; a `$4…` vbase thunk with REGISTER_SWAP
-  r3↔r4; `?Poll@CharLookAt@@UAAXXZ` with 5 FPR commutative swaps), i.e. permuter
-  territory, which is OFF by standing directive. The boundary/naming sub-class is
-  real (SIVideo) but **unsized**. 176 of the 219 sit at fuzzy ≥ 99.
+  ★★★ **And mpn's arg-blindness is not merely a pricing quirk — IT HIDES REAL
+  BUGS.** A caller that indexes the wrong container type, or calls the wrong
+  callee, scores a clean **100 before AND after** the fix — five lanes, five
+  waves (TourWeightManager `d7a9775a`, LayerDir `81d23046`, SetPropertyValue
+  `dbab6082`). ⇒ **Never read a 100% row as evidence that a member type or callee
+  is right, and expect a correct fix here to be Δmatched 0 — land it anyway.**
+  ⚠ **Do NOT read the 0.954 pp as a lever — it is SIZED AND EMPTY** (DC-4
+  `dcd456f6`, exact 219/219): **184 register** (permuter, OFF by directive) ·
+  **21 branch_dest** · **14 shift/mask** · **0 unknown**. ⛔ Two corrections to
+  this doc's own earlier reading: the boundary/**naming** sub-class is not "real
+  but unsized", it is **ZERO and structurally impossible** — objdiff's `reloc_eq`
+  returns true *regardless of target name* under `functionRelocDiffs=none`, so
+  naming costs zero on BOTH rulers; and the 14 shift/mask rows (twice sold as a
+  "struct-size oracle") adjudicate on retail bytes to **0 real defects** (DD-1
+  `78e19b99`, refuted before as BZ-3) — do not re-fund. 176 of the 219 sit at
+  fuzzy ≥ 99. ⚠ And a `REGISTER_SWAP` label on a **sub-100** row is a SYMPTOM,
+  not a diagnosis: 13-/24-instruction swaps and a full prologue delta all
+  DISSOLVED once the real source defect was fixed (`5d8fc966`, `c14bba5c`,
+  `d7a9775a`; 12 instances) — never defer a row as permuter-bound on that label.
   ⚠ Note `run_objdiff` prints its own "normalized (raw)" pair that does **not**
   equal these report keys (97.5/95.0 where report.json says mpn 100.0 / fuzzy
   97.5). **Believe `report.json`.**
@@ -565,6 +580,10 @@ What it enforces — the manual steps survive here only as the explanation of
 - **Settle-to-zero-work before leg A.** A fresh worktree's first build reads
   ~+193 matched / +0.51pp of settling noise; the tool discards every
   pre-quiescent reading and refuses if it can't reach a zero-work build.
+  ⚠ **Unsettled is WRONG, not merely noisy — the SIGN flips.** Lane DF-2 read
+  **+23 matched / 17 bodies at 100** off apply-revert cycles in its worktree; the
+  settled A/B found **0 at 100 and most bodies WORSE** (82.25 → 34.48). Applies
+  to *any* in-worktree `report.json` read, not just an A/B leg.
 - **`report.json` + `report.cache` wiped before EVERY read** (stale cache
   inflates); measures parsed **by exact key** — a missing key (e.g. the old
   `.get('masked_equal', 0)` wrong-key bug) REFUSES instead of defaulting to 0.
@@ -624,8 +643,9 @@ compiles → diff via objdiff. See `project_rb3_xenon_roadmap.md` Phase 5 and
 `scripts/` holds dc3's MSVC object patchers. They rewrite the COFF **symbol
 table** (not machine code) of `.obj` files to neutralize build-environment-specific
 naming that MSVC bakes in, so objdiff compares real code rather than naming noise.
-They are **wired and active** in `configure.py:284-368` (`config.custom_build_steps`,
-mirroring dc3 `configure.py:294-357`):
+They are **wired and active** in `configure.py` (`config.custom_build_steps`,
+mirroring dc3's block of the same name — line ranges deliberately omitted, both
+cited ranges had drifted by hundreds of lines):
 
 - **pre-compile** — `obj_target_symbol_renamer` rewrites the dtk-split *target* obj's
   anonymous `fn_<addr>` symbols to MSVC mangled names from
