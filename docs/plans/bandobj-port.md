@@ -1,6 +1,53 @@
 # Plan: port `system/bandobj/` (rb3-Wii → 360) so Object-subclass TUs compile + match
 
-**Status oracle (verified this session):** rb3-xenon = **110 matched fns**.
+> ## ⚠ SUPERSEDED IN PART — dated correction, 2026-08-02
+>
+> **This document was written 2026-05-26 (`1c530de2`) and its opening status block is
+> now false.** It is kept intact below because its dependency analysis, its Wii→360
+> porting-concern catalogue (§3) and its dc3-Rosetta sourcing decision (§4) are still
+> the best writeups of those topics in the tree. Read the corrections first.
+>
+> **1. `src/system/bandobj/` is NOT absent — it landed, and the plan executed.**
+> Verified on `main` @ `4c19740e`: **52 `.cpp` + 60 `.h`** in `src/system/bandobj/`,
+> and **51 bandobj TUs pinned** in `config/45410914/objects.json` (not 7). The staged
+> plan in §5 ran to completion and beyond:
+> `297f5114` (2026-05-26, Stage 1 StreakMeter+BandLabel) → `87b96e49` (Stage 2
+> CrowdAudio+BinkClip) → `2e542d81` (Stage 3 BandDirector+BandSongPref) →
+> `e33d851c`/`1aae14cc`/`1fbbdfa2`/`4ce7dd0f`/`2ad663d4` (2026-06-06/07,
+> VocalTrackDir +29, TrackPanelDir +21, **BandCharacter +86**, BandCharDesc +17,
+> BandWardrobe +5, all @100%) → `704dbb81` (2026-06-10, BandIKEffector +27).
+> **Stage 4 — "defer BandCharacter to a later wave" — was NOT deferred**; it landed
+> 2026-06-06 and was the largest single win in the campaign.
+>
+> **2. The `Hmx::Object` 0x2c→0x28 blocker is resolved.** `docs/plans/hmx-object-layout.md`
+> is history, not a gate; the retail 0x28 layout is in `src/system/obj/Object.h`
+> (see the comments at `:85`, `:558`, `:1791`).
+>
+> **3. There are no "Missing configuration" bandobj warnings left.** Every class this
+> plan targeted is a **scored unit** in `build/45410914/report.json`. Current spread:
+> `BandWardrobe` 91.92% · `BandCharacter` 85.99% · `BandCamShot` 77.02% ·
+> `BandLabel` 67.84%.
+>
+> **4. §6's match expectation was low.** It predicted "≈20-30 new matches" for
+> Stages 1-3 with BandCharacter deferred. The five pinned-TU ports alone report
+> **+158 @100%** in their commit messages (29+21+86+17+5); Stages 1-3 did not
+> quantify, and `704dbb81`'s **+27** is a combined BandIKEffector + MidiInstrument
+> lever, so it is not solely bandobj. Even read conservatively the estimate was low
+> by ~5x, and the deferral advice in §5 Stage 4 was the costliest part of it.
+>
+> **What is live now is a different question entirely** — not "does bandobj compile
+> and match under MSVC-X360" (it does), but "does it compile and link under
+> **clang/LP64** for the native port". That is
+> [`band3-native-unblock-priority-2026-08-02.md`](band3-native-unblock-priority-2026-08-02.md)
+> and [`x4b-animation-2026-08-02.md`](x4b-animation-2026-08-02.md) §4. Short version:
+> 12 of 13 relevant TUs are clang-clean; the blockers are a
+> `cmake/ScatterIncludes.cmake` dedupe gap (807 duplicate-definition link errors) and
+> ~4 stale rb3-Wii-lineage defects inside `bandobj/BandCharacter.cpp`'s own
+> `HX_NATIVE` arms.
+
+---
+
+**Status oracle (as written 2026-05-26 — see the correction block above):** rb3-xenon = **110 matched fns**.
 `src/system/bandobj/` is **absent** from our tree (`find src -path '*bandobj*'` →
 empty). The whole subsystem's `.cpp`+`.h` live only in `../rb3/src/system/bandobj/`
 (125 files, Wii/MWCC). **7 bandobj TUs are already wired+pinned** in

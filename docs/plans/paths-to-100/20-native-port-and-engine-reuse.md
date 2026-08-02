@@ -2,6 +2,61 @@
 
 Status: DRAFT-RFC | Date: 2026-07-08 | Author: Claude Opus (paths-to-100 wave) | Theme: endgame
 
+> ## ⚠ AMENDMENT — 2026-08-02: the native track advanced past this RFC, and one of its premises needs correcting
+>
+> Recorded rather than rewritten; the RFC body below is as filed 2026-07-08.
+>
+> **1. The ladder is further along than "M0/M1" and one rung was mis-sized.**
+> `native/` now has 18 targets, not one. `rb3-render` (X3) draws RB3-360 `.milo_xbox`
+> geometry through `milo-native-engine`, `rb3-milo` (X2) stands up a live object graph
+> from the ark, and X4b drives a real `CharClip` with a bone-length oracle. See
+> `docs/plans/x2-*`, `x3-first-render-2026-08-01.md`,
+> `x4a-venue-render-2026-08-02.md`, `x4b-animation-2026-08-02.md`.
+>
+> **2. ⛔ "The playable path is gated on `src/band3/`" is too strong for the current
+> milestone, and the intermediate claim it produced has been retracted.**
+> X4a measured 684 object-factory misses over 14 classes blocking every RB3 venue root
+> and concluded band3 had moved onto the critical path. **X4b re-measured it and
+> retracted the attribution** (`1ac037bb`, `x4b-animation-2026-08-02.md` §4): **zero
+> of the 14 are `src/band3/` classes.** Five are `src/system/bandobj/`, seven
+> `src/system/synth/`, one `world/`, one `ui/`. `src/band3/` is 260 TUs the venue root
+> does not need. The root cause of the wrong headline was inferring class ownership
+> from a `"Can't make %s"` log line rather than from the class declaration — a Milo
+> class name is an `OBJ_CLASSNAME` serialization token, not a source address.
+>
+> **What is actually on the critical path for venue/lighting:** one
+> `cmake/ScatterIncludes.cmake` dedupe pass (807 duplicate-definition link errors from
+> 3 emitters) plus ~4 defects in `bandobj/BandCharacter.cpp` — a **build-system**
+> problem and one file, not a game-layer port. Ranking, per-class evidence, and the
+> stub-vs-port verdict:
+> [`../band3-native-unblock-priority-2026-08-02.md`](../band3-native-unblock-priority-2026-08-02.md).
+>
+> **3. The "Synergy accounting" section (below) needs a correction of sign, not of
+> magnitude.** Its stated dual yield — *"port a band3 TU for matching → it also
+> compiles natively; wire it natively → undefined symbols become match-worklist
+> items"* — does not apply to the 14 venue-blocking classes: **all 13 of their real
+> TUs are already pinned AND scored** (67.84%–100.00%), so compiling them natively
+> moves `matched_functions` by ~0.
+>
+> ★ But the *observed* dual yield is larger than the RFC claims, and different in
+> kind. Native bring-up does not surface undefined symbols so much as **semantic
+> transcription defects inside already-scored units**, which the X360 match build
+> **structurally cannot see** (it compiles TUs and diffs objects; it never links and
+> never runs). Four found in two weeks:
+> `WorldInstance::DeleteTransientObjects` walking a ring *copy* forever
+> (`default/Instance`, 85% fn-matched · X4a §2.2); ~4 stale-lineage defects in
+> `bandobj/BandCharacter.cpp` (`default/BandCharacter` **85.99%**, 508/603 · X4b §4.1);
+> `FOREACH_OBJREF` still expanding to `std::vector<ObjRef*>` (`obj/ObjMacros.h:730-736`
+> · X4b §9); `TrigTableInit()` never running, so `sin == cos == 0` across every native
+> target for four milestones (X4b §3).
+> **This is a better argument for funding the native track than the one the RFC
+> makes** — and it should be measured as "defects found in scored units", not only as
+> the "band3 TUs compilable-under-both-toolchains" counter proposed below.
+>
+> **4. Unchanged and still correct:** the engine-reuse thesis, the "expected value in
+> path-to-100% terms: ZERO direct" honesty, the milo-native-engine consumer model, and
+> the rejection of porting a renderer.
+
 ## Summary
 
 A parallel endgame track that is orthogonal to byte-matching: run RB3 as a native
@@ -201,6 +256,11 @@ replaces them by *compiling the real subsystems*:
   classify `The*/g*/_ZT*` as data else function).
 
 ### Synergy accounting (make it a metric)
+> ⚠ **Amended 2026-08-02 — see the block at the top of this file (item 3).** For the
+> classes actually blocking the venue milestone the counter below reads ~0, because
+> their TUs are already pinned *and* scored. The yield that did materialise is
+> "semantic defects found in already-scored units", and it should be counted too.
+
 Add a line to the metrics dashboard (`18-metrics-and-dashboard.md`): **"band3 TUs
 compilable-under-both-toolchains."** Every increment is a match candidate *and* a
 native-link candidate. This turns the two tracks into one shared burndown and
