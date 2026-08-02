@@ -1,0 +1,82 @@
+[
+ {
+  "addr": "0x8239ebe0",
+  "expect": "?SyncProperty@CharCuff@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "new": "?Load@CharCuff@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "prov": "A:slot",
+  "home": "pinned:CharCuff:DEFINED",
+  "cycle_len": 3
+ },
+ {
+  "addr": "0x8239de28",
+  "expect": "?Load@CharCuff@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "new": "?SetType@CharCuff@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "prov": "B:branch+slot",
+  "home": "pinned:CharCuff:DEFINED",
+  "cycle_len": 3
+ },
+ {
+  "addr": "0x8239ebc0",
+  "expect": "?SetType@CharCuff@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "new": "?SyncProperty@CharCuff@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "prov": "B:branch+slot",
+  "home": "pinned:CharCuff:DEFINED",
+  "cycle_len": 3
+ },
+ {
+  "addr": "0x823a38a0",
+  "expect": "?SyncProperty@CharFaceServo@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "new": "?Load@CharFaceServo@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "prov": "A:slot",
+  "home": "pinned:CharFaceServo:DEFINED",
+  "cycle_len": 3
+ },
+ {
+  "addr": "0x823a2b60",
+  "expect": "?Load@CharFaceServo@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "new": "?SetType@CharFaceServo@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "prov": "B:branch+slot",
+  "home": "pinned:CharFaceServo:DEFINED",
+  "cycle_len": 3
+ },
+ {
+  "addr": "0x823a3628",
+  "expect": "?SetType@CharFaceServo@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "new": "?SyncProperty@CharFaceServo@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "prov": "B:branch+slot",
+  "home": "pinned:CharFaceServo:DEFINED",
+  "cycle_len": 3
+ },
+ {
+  "addr": "0x823d6588",
+  "expect": "?SetType@CharGuitarString@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "new": "?Load@CharGuitarString@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "prov": "A:slot",
+  "home": "pinned:CharGuitarString:DEFINED",
+  "cycle_len": 2
+ },
+ {
+  "addr": "0x823d5e48",
+  "expect": "?Load@CharGuitarString@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "new": "?SetType@CharGuitarString@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "prov": "B:branch+slot",
+  "home": "pinned:CharGuitarString:DEFINED",
+  "cycle_len": 2
+ },
+ {
+  "addr": "0x823bfe10",
+  "expect": "?SetType@CharIKFoot@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "new": "?Load@CharIKFoot@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "prov": "A:slot",
+  "home": "pinned:CharIKFoot:DEFINED",
+  "cycle_len": 2
+ },
+ {
+  "addr": "0x823bf7b0",
+  "expect": "?Load@CharIKFoot@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "new": "?SetType@CharIKFoot@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "prov": "B:branch+slot",
+  "home": "pinned:CharIKFoot:DEFINED",
+  "cycle_len": 2
+ }
+]

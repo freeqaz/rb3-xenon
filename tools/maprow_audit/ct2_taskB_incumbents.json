@@ -1,0 +1,530 @@
+[
+ {
+  "addr": "0x822bacb0",
+  "want": "?Copy@CrowdMeterIcon@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "cur": "?PreLoad@CrowdMeterIcon@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x822bae58"
+  ],
+  "incumbent_addr": "0x822bae58",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x822d5a70",
+  "want": "?SyncProperty@EndingBonus@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "?PostLoad@EndingBonus@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x822d5848"
+  ],
+  "incumbent_addr": "0x822d5848",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x822dba60",
+  "want": "?Copy@OverdriveMeter@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "cur": "?Save@OverdriveMeter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x822dbaa0"
+  ],
+  "incumbent_addr": "0x822dbaa0",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x822f4aa8",
+  "want": "?SyncProperty@PitchArrow@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "?PostLoad@PitchArrow@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x822f4890"
+  ],
+  "incumbent_addr": "0x822f4890",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x8231e400",
+  "want": "?SyncProperty@StarDisplay@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "?Save@StarDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x8231e778"
+  ],
+  "incumbent_addr": "0x8231e778",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?PostLoad@StarDisplay@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82341940",
+  "want": "?Copy@BandLabel@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "cur": "?Load@BandLabel@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x82341b38"
+  ],
+  "incumbent_addr": "0x82341b38",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?PreLoad@BandLabel@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x823593f8",
+  "want": "?Save@TrackPanelDirBase@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?PostLoad@TrackPanelDirBase@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x82309d98"
+  ],
+  "incumbent_addr": "0x82309d98",
+  "incumbent_verdict": "AGREE_METHOD",
+  "incumbent_target_row": "?Save@TrackPanelDir@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_CORRECT"
+ },
+ {
+  "addr": "0x82377cf8",
+  "want": "?SetType@CharDriver@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Replace@CharDriver@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "owners": [
+   "0x8237a9c0"
+  ],
+  "incumbent_addr": "0x8237a9c0",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x8239de28",
+  "want": "?SetType@CharCuff@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Load@CharCuff@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x8239ebc0"
+  ],
+  "incumbent_addr": "0x8239ebc0",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?SyncProperty@CharCuff@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x8239ebc0",
+  "want": "?SyncProperty@CharCuff@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "?SetType@CharCuff@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "owners": [
+   "0x8239ebe0"
+  ],
+  "incumbent_addr": "0x8239ebe0",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x823a2b60",
+  "want": "?SetType@CharFaceServo@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Load@CharFaceServo@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x823a3628"
+  ],
+  "incumbent_addr": "0x823a3628",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?SyncProperty@CharFaceServo@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x823a3628",
+  "want": "?SyncProperty@CharFaceServo@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "?SetType@CharFaceServo@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "owners": [
+   "0x823a38a0"
+  ],
+  "incumbent_addr": "0x823a38a0",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x823aee10",
+  "want": "?SetType@CharWeightable@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Load@CharWeightable@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x823aedf0"
+  ],
+  "incumbent_addr": "0x823aedf0",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x823bf7b0",
+  "want": "?SetType@CharIKFoot@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Load@CharIKFoot@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x823bfe10"
+  ],
+  "incumbent_addr": "0x823bfe10",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x823c52f8",
+  "want": "?SetType@CharIKRod@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Copy@CharIKRod@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "owners": [
+   "0x823c6860"
+  ],
+  "incumbent_addr": "0x823c6860",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x823c5738",
+  "want": "?Copy@CharIKRod@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "cur": "?SyncProperty@CharIKRod@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "owners": [
+   "0x823c52f8"
+  ],
+  "incumbent_addr": "0x823c52f8",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?SetType@CharIKRod@@UAAXVSymbol@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x823c5ba0",
+  "want": "?SyncProperty@CharIKRod@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "?Load@CharIKRod@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x823c5738"
+  ],
+  "incumbent_addr": "0x823c5738",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?Copy@CharIKRod@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x823cc4f0",
+  "want": "?SetType@CharDriverMidi@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Load@CharDriverMidi@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x823cd9c0"
+  ],
+  "incumbent_addr": "0x823cd9c0",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "??_ECharBoneTwist@@UAAPAXI@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x823d5e48",
+  "want": "?SetType@CharGuitarString@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Load@CharGuitarString@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x823d6588"
+  ],
+  "incumbent_addr": "0x823d6588",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x823d6908",
+  "want": "?SyncProperty@RndTransformable@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "?Replace@RndTransformable@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "owners": [
+   "0x82317a88"
+  ],
+  "incumbent_addr": "0x82317a88",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x823dd010",
+  "want": "?Load@Waypoint@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?Highlight@Waypoint@@$4PPPPPPPM@A@AAXXZ",
+  "owners": [
+   "0x822cb008"
+  ],
+  "incumbent_addr": "0x822cb008",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?PreLoad@BandLeadMeter@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82434418",
+  "want": "?SetType@RndCam@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Load@RndCam@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x82434d98"
+  ],
+  "incumbent_addr": "0x82434d98",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x82434d88",
+  "want": "?SyncProperty@RndCam@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "?Save@RndCam@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x82435510"
+  ],
+  "incumbent_addr": "0x82435510",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x8244e128",
+  "want": "?SetType@RndParticleSys@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Replace@RndParticleSys@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "owners": [
+   "0x8244dfa0"
+  ],
+  "incumbent_addr": "0x8244dfa0",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "??_GRndParticleSys@@UAAPAXI@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x8245adc8",
+  "want": "?SyncProperty@RndText@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "??_ERndText@@$4PPPPPPPM@A@AAPAXI@Z",
+  "owners": [
+   "0x8245c480"
+  ],
+  "incumbent_addr": "0x8245c480",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x8245bd18",
+  "want": "?Load@RndText@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?Highlight@RndText@@$4PPPPPPPM@A@AAXXZ",
+  "owners": [
+   "0x8245bd28"
+  ],
+  "incumbent_addr": "0x8245bd28",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x82471030",
+  "want": "?Handle@RndMeshAnim@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cur": "?ClassName@RndMeshAnim@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "owners": [
+   "0x82470160"
+  ],
+  "incumbent_addr": "0x82470160",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "??$?5VVector2@@@BinStreamRev@@QAAAAV0@AAVVector2@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82478790",
+  "want": "?SetType@RndMovie@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "??_ERndMovie@@$4PPPPPPPM@A@AAPAXI@Z",
+  "owners": [
+   "0x824787a0"
+  ],
+  "incumbent_addr": "0x824787a0",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x8247b7f0",
+  "want": "?Save@RndLine@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?Load@RndLine@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x824048b8"
+  ],
+  "incumbent_addr": "0x824048b8",
+  "incumbent_verdict": "AGREE_METHOD",
+  "incumbent_target_row": "?Save@RndDir@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_CORRECT"
+ },
+ {
+  "addr": "0x82487530",
+  "want": "?SetType@RndEnvAnim@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Replace@RndEnvAnim@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+  "owners": [
+   "0x82487a08"
+  ],
+  "incumbent_addr": "0x82487a08",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?Load@RndEnvAnim@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82487570",
+  "want": "?Save@RndEnvAnim@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?Load@RndEnvAnim@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x824873a8"
+  ],
+  "incumbent_addr": "0x824873a8",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "??_GFlowQueueable@@UAAPAXI@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82488328",
+  "want": "?SetType@RndPollAnim@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Load@RndPollAnim@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x82488338"
+  ],
+  "incumbent_addr": "0x82488338",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x824888e0",
+  "want": "?Load@RndPollAnim@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?Poll@RndPollAnim@@$4PPPPPPPM@A@AAXXZ",
+  "owners": [
+   "0x82488328"
+  ],
+  "incumbent_addr": "0x82488328",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?SetType@RndPollAnim@@UAAXVSymbol@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82493b08",
+  "want": "??_ERndMotionBlur@@$4PPPPPPPM@A@AAPAXI@Z",
+  "cur": "?Copy@RndMotionBlur@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "owners": [
+   "0x82494570"
+  ],
+  "incumbent_addr": "0x82494570",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?Load@RndMotionBlur@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x824e9508",
+  "want": "?SetType@WorldReflection@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Highlight@WorldReflection@@$4PPPPPPPM@A@AAXXZ",
+  "owners": [
+   "0x824e9558"
+  ],
+  "incumbent_addr": "0x824e9558",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?Load@WorldReflection@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x824e9558",
+  "want": "?Load@WorldReflection@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?SetType@WorldReflection@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "owners": [
+   "0x824e9960"
+  ],
+  "incumbent_addr": "0x824e9960",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x8268e3a8",
+  "want": "?GetCymbalConfiguration@LocalBandUser@@$4PPPPPPPM@A@BAHXZ",
+  "cur": "?GetFriendsConsoleCodes@LocalBandUser@@$4PPPPPPPM@A@BAABV?$vector@_KV?$StlNodeAlloc@_K@stlpmtx_std@@@stlpmtx_std@@XZ",
+  "owners": [
+   "0x8268e398"
+  ],
+  "incumbent_addr": "0x8268e398",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?GetRemoteBandUser@RemoteBandUser@@UAAPAV1@XZ",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82752288",
+  "want": "?Handle@ObjectDir@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cur": "?ClassName@ObjectDir@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+  "owners": [
+   "0x827520e0"
+  ],
+  "incumbent_addr": "0x827520e0",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "??$?5W4InlineDirType@@@BinStreamRev@@QAAAAV0@AAW4InlineDirType@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82819d70",
+  "want": "?SetType@UIFontImporter@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "cur": "?Copy@UIFontImporter@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "owners": [
+   "0x8281c540"
+  ],
+  "incumbent_addr": "0x8281c540",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?SyncProperty@UIFontImporter@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82819d80",
+  "want": "?Save@UIFontImporter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?Load@UIFontImporter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x8281ace8"
+  ],
+  "incumbent_addr": "0x8281ace8",
+  "incumbent_verdict": "TARGET_UNNAMED",
+  "incumbent_target_row": null,
+  "verdict": "INCUMBENT_UNKNOWN"
+ },
+ {
+  "addr": "0x8281c540",
+  "want": "?SyncProperty@UIFontImporter@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cur": "?SetType@UIFontImporter@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+  "owners": [
+   "0x8281c550"
+  ],
+  "incumbent_addr": "0x8281c550",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?Load@UIFontImporter@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x8281c550",
+  "want": "?Load@UIFontImporter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?SyncProperty@UIFontImporter@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "owners": [
+   "0x82819d80"
+  ],
+  "incumbent_addr": "0x82819d80",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?Save@UIFontImporter@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x82824d80",
+  "want": "?Save@Screenshot@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "cur": "?Load@Screenshot@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x823c8a68"
+  ],
+  "incumbent_addr": "0x823c8a68",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?SetType@CharBlendBone@@UAAXVSymbol@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ },
+ {
+  "addr": "0x828277a0",
+  "want": "?Copy@LabelShrinkWrapper@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "cur": "?PreLoad@LabelShrinkWrapper@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+  "owners": [
+   "0x82826e38"
+  ],
+  "incumbent_addr": "0x82826e38",
+  "incumbent_verdict": "METHOD_DIFFERS",
+  "incumbent_target_row": "?Load@StarDisplay@@UAAXAAVBinStream@@@Z",
+  "verdict": "INCUMBENT_DEFECTIVE"
+ }
+]
