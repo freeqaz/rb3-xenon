@@ -6003,13 +6003,11 @@ FileMergerOrganizer.cpp:
 	.pdata      start:0x822073B0 end:0x822073C0
 	.pdata      start:0x822073C0 end:0x822073E0
 	.pdata      start:0x822073E0 end:0x822073E8
-	.pdata      start:0x82231338 end:0x82231340
 	.text       start:0x823D93C8 end:0x823D9518
 	.text       start:0x823D9738 end:0x823DA0B8
 	.text       start:0x823DA108 end:0x823DA360
 	.text       start:0x823DA360 end:0x823DA6E0
 	.text       start:0x823DA6E0 end:0x823DA758
-	.text       start:0x8268EFD0 end:0x8268F01C
 
 CheatProvider.cpp:
 	.pdata      start:0x821FEE78 end:0x821FEE88
@@ -10018,6 +10016,7 @@ BandUser.cpp:
 	.pdata      start:0x82231128 end:0x82231148
 	.pdata      start:0x82231148 end:0x82231150
 	.pdata      start:0x82231150 end:0x82231338
+	.pdata      start:0x82231338 end:0x82231340
 	.pdata      start:0x82231340 end:0x82231348
 	.pdata      start:0x82231348 end:0x82231358
 	.pdata      start:0x82231358 end:0x82231368
@@ -10040,6 +10039,7 @@ BandUser.cpp:
 	.text       start:0x8268CC20 end:0x8268CE18
 	.text       start:0x8268CE18 end:0x8268D8F8
 	.text       start:0x8268D8F8 end:0x8268EFD0
+	.text       start:0x8268EFD0 end:0x8268F01C
 	.text       start:0x8268F01C end:0x8268F050
 	.text       start:0x8268F050 end:0x8268F0D0
 	.text       start:0x8268F0D0 end:0x8268F144
