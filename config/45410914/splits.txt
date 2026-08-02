@@ -2124,7 +2124,7 @@ crypt.c:
 
 Biquad.cpp:
 	.pdata      start:0x8225BD60 end:0x8225BD68
-	.text       start:0x82B75188 end:0x82B75270
+	.text       start:0x82B75188 end:0x82B75240
 
 FilterCoeffs.cpp:
 	.pdata      start:0x8225BD50 end:0x8225BD60
@@ -2142,7 +2142,7 @@ StreamReceiver360.cpp:
 
 FIFOSampleBuffer.cpp:
 	.pdata      start:0x8225BD68 end:0x8225BDA0
-	.text       start:0x82B75270 end:0x82B755E0
+	.text       start:0x82B75240 end:0x82B755E0
 
 FIRFilter.cpp:
 	.pdata      start:0x8225BDA0 end:0x8225BDA8
@@ -7696,11 +7696,11 @@ FlowWhile.cpp:
 
 SessionJobs_Xbox.cpp:
 	.pdata      start:0x82208DA0 end:0x82208DC8
-	.pdata      start:0x822091B0 end:0x822091C8
+	.pdata      start:0x822091A8 end:0x822091C8
 	.pdata      start:0x822091E8 end:0x822092D8
 	.pdata      start:0x82250128 end:0x82250130
 	.text       start:0x823F2A18 end:0x823F2C10
-	.text       start:0x823F61F8 end:0x823F6358
+	.text       start:0x823F6198 end:0x823F6358
 	.text       start:0x823F64AC end:0x823F70E0
 	.text       start:0x82A58570 end:0x82A585BC
 
@@ -9582,13 +9582,13 @@ Server.cpp:
 	.pdata      start:0x822086B8 end:0x822086D0
 	.pdata      start:0x82209158 end:0x82209160
 	.pdata      start:0x82209160 end:0x82209178
-	.pdata      start:0x82209178 end:0x822091B0
+	.pdata      start:0x82209178 end:0x822091A8
 	.text       start:0x823EC418 end:0x823EC514
 	.text       start:0x823EC518 end:0x823EC538
 	.text       start:0x823ECD48 end:0x823ECD58
 	.text       start:0x823F5C98 end:0x823F5D3C
 	.text       start:0x823F5D3C end:0x823F5DD8
-	.text       start:0x823F5DD8 end:0x823F61F4
+	.text       start:0x823F5DD8 end:0x823F6198
 
 system/bandobj/BandTrack.cpp:
 	.pdata      start:0x821FF0D8 end:0x821FF0E8
