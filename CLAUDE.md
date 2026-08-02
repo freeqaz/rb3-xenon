@@ -489,6 +489,36 @@ own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
   that pins objdiff-cli's sha256 across both legs and REFUSES on a mid-run swap —
   which would otherwise fabricate Δhonest ≈ −21,500 from an untouched tree.
   Authoritative record + rollback: `docs/decomp/RULER_CHANGE_2026-08-02.md`.
+- ★★★ **THE TWO HEADLINE NUMBERS ARE COMPUTED ON DIFFERENT RULERS** — verified
+  exactly, on both legs of an A/B, with the rival hypothesis failing in both
+  directions (lane DB-4, 2026-08-02):
+
+  | measure | rule | verified |
+  |---|---|---|
+  | `matched_functions` | **count** of rows with `match_percent_normalized == 100` | 43,456 / 43,458 exact |
+  | `matched_code`      | **Σ size** of rows with `fuzzy_match_percent == 100`    | 4,148,656 / 4,148,948 exact |
+
+  `mpn` **excludes arg-only penalties**, so the two disagree on **219 rows /
+  101,996 B (0.954 pp of `total_code`)** at `9c8e4f2c`: counted as matched
+  *functions*, bytes withheld from matched *code*. ⇒ **A change can move bytes
+  with Δfunctions = 0, or functions with Δbytes = 0** — that is not an anomaly to
+  chase, it is the definition. It explains DA-1's SIVideo row exactly
+  (`?Frame@SIVideo@@QAAPADH@Z`, 72 B, fuzzy 99.72222 → 100.0, mpn 100.0 on BOTH
+  sides ⇒ **+72 B / +0 fns**), and it is the same mechanism as "naming pays +1
+  honest / +0.000000pp code%" running in the opposite direction.
+  ⚠ **Do NOT read the 0.954 pp as an available lever.** "Arg-only" is NOT
+  "relocation-only" — it includes register args. A 3-specimen sample was **3/3
+  register-class** (`mr r4,r5`→`r4,r3`; a `$4…` vbase thunk with REGISTER_SWAP
+  r3↔r4; `?Poll@CharLookAt@@UAAXXZ` with 5 FPR commutative swaps), i.e. permuter
+  territory, which is OFF by standing directive. The boundary/naming sub-class is
+  real (SIVideo) but **unsized**. 176 of the 219 sit at fuzzy ≥ 99.
+  ⚠ Note `run_objdiff` prints its own "normalized (raw)" pair that does **not**
+  equal these report keys (97.5/95.0 where report.json says mpn 100.0 / fuzzy
+  97.5). **Believe `report.json`.**
+- ★ **`total_code` is EXACTLY Σ(listed function sizes)** — verified whole-binary
+  (10,688,672 == 10,688,672) and per-unit (CheatProvider 7,512 == 7,512). So
+  bytes with no listed function row — notably the 8-byte EH prefixes — are **not
+  in the denominator at all**.
 - **Case sensitivity:** dc3's tree has case-variant files (e.g. `vec.cpp` vs
   `Vec.cpp`) that collide on Windows but coexist on Linux. Use the name dc3's
   `objects.json` actually builds (lowercase `vec.cpp`, `mtx.cpp`).
