@@ -24,7 +24,7 @@ void TourPropertyCollection::SetPropertyValue(Symbol s, float f) {
 }
 
 float TourPropertyCollection::GetPropertyValue(Symbol s) const {
-    std::map<Symbol, float>::const_iterator it = mTourProperties.find(s);
+    std::hash_map<Symbol, float>::const_iterator it = mTourProperties.find(s);
     if (it != mTourProperties.end())
         return it->second;
     else {

@@ -57,14 +57,14 @@ LessonMgr::LessonMgr() {
 }
 
 LessonMgr::~LessonMgr() {
-    for (std::map<Symbol, Lesson *>::iterator it = mLessonsMap.begin();
+    for (std::hash_map<Symbol, Lesson *>::iterator it = mLessonsMap.begin();
          it != mLessonsMap.end();
          ++it) {
         RELEASE(it->second);
     }
     mLessonsMap.clear();
 
-    for (std::map<Symbol, std::vector<Symbol> *>::iterator it =
+    for (std::hash_map<Symbol, std::vector<Symbol> *>::iterator it =
              mTrainerToCategoriesMap.begin();
 #ifdef HX_NATIVE
          // Retail iterates with the WRONG map's end() (proven by target asm:
@@ -80,7 +80,7 @@ LessonMgr::~LessonMgr() {
     }
     mTrainerToCategoriesMap.clear();
 
-    for (std::map<Symbol, std::vector<Symbol> *>::iterator it =
+    for (std::hash_map<Symbol, std::vector<Symbol> *>::iterator it =
              mCategoryToLessonsMap.begin();
 #ifdef HX_NATIVE
          // Retail iterates with the WRONG map's end() (proven by target asm:
@@ -101,7 +101,7 @@ void LessonMgr::Init() { TheLessonMgr = new LessonMgr(); }
 LessonMgr *LessonMgr::GetLessonMgr() { return TheLessonMgr; }
 
 Lesson *LessonMgr::GetLesson(Symbol s) const {
-    std::map<Symbol, Lesson *>::const_iterator it = mLessonsMap.find(s);
+    std::hash_map<Symbol, Lesson *>::const_iterator it = mLessonsMap.find(s);
     if (it != mLessonsMap.end())
         return it->second;
     else
@@ -109,7 +109,7 @@ Lesson *LessonMgr::GetLesson(Symbol s) const {
 }
 
 std::vector<Symbol> *LessonMgr::GetCategoriesFromTrainer(Symbol s) const {
-    std::map<Symbol, std::vector<Symbol> *>::const_iterator it =
+    std::hash_map<Symbol, std::vector<Symbol> *>::const_iterator it =
         mTrainerToCategoriesMap.find(s);
     if (it != mTrainerToCategoriesMap.end())
         return it->second;
@@ -118,7 +118,7 @@ std::vector<Symbol> *LessonMgr::GetCategoriesFromTrainer(Symbol s) const {
 }
 
 std::vector<Symbol> *LessonMgr::GetLessonsFromCategory(Symbol s) const {
-    std::map<Symbol, std::vector<Symbol> *>::const_iterator it =
+    std::hash_map<Symbol, std::vector<Symbol> *>::const_iterator it =
         mCategoryToLessonsMap.find(s);
     if (it != mCategoryToLessonsMap.end())
         return it->second;

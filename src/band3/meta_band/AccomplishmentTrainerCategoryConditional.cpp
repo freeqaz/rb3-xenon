@@ -61,6 +61,13 @@ bool AccomplishmentTrainerCategoryConditional::InqIncrementalSymbols(
             if (o_rSymbols.size() >= mNumLessons)
                 break;
         }
+        // Retail uses a FUNCTION-LOCAL STATIC here, not the Symbols3.h global:
+        // the target emits the guard word + `bl ??0Symbol@@QAA@PBD@Z` init
+        // sequence, where our global-referencing build emitted a plain
+        // lis/addi of ?goal_filtersong_unknown@@3VSymbol@@A. Placement is
+        // codegen-load-bearing -- the guard test must PRECEDE the
+        // o_rSymbols.size() read below, which is where the target puts it.
+        static Symbol goal_filtersong_unknown("goal_filtersong_unknown");
         if (o_rSymbols.size() < mNumLessons) {
             int numsyms = o_rSymbols.size();
             int numlessons = mNumLessons;

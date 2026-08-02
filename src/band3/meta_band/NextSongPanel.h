@@ -3,6 +3,28 @@
 #include "rndobj/Group.h"
 #include "ui/UILabel.h"
 #include "ui/UIPanel.h"
+#include <hash_map>
+
+// mDetailCounts is a hash_map (see the member comment below). hash<Symbol> is
+// normally supplied by meta/FixedSizeSaveableStream.h, but this header does not
+// include it, and the member declaration would otherwise instantiate the
+// primary template before that explicit specialization is seen.
+#ifndef RB3_HASH_SYMBOL_DEFINED
+#define RB3_HASH_SYMBOL_DEFINED
+#if HX_NATIVE
+namespace std {
+template <> struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#else
+namespace stlpmtx_std {
+_STLP_TEMPLATE_NULL struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#endif
+#endif
 
 class NextSongPanel : public UIPanel {
 public:
@@ -34,15 +56,15 @@ public:
     Symbol GetPerformanceAward(int);
 
     float mEnterTime; // 0x3c
-    std::map<Symbol, int> mDetailCounts; // 0x40 (0x18)
-    // Retail RB3-360 has 4 extra bytes between mDetailCounts and
-    // mDetailsPageSize (2026-07-26: UpdateScrollArrows' target asm reads
-    // mDetailsPageSize at 0x5c and mDetailsHeight[] at 0x68, while unk70[]
-    // stays at 0x78 — so the +4 lives BEFORE mDetailsPageSize, not after
-    // mDetailsHeight where it was previously parked).  Likely the retail
-    // std::map<Symbol,int> node header being 0x1c; modelled as an explicit
-    // pad so no STL layout is disturbed.
-    int unk58_retailpad; // 0x58
+    // hash_map, not map. Retail's container at 0x40 spans 0x1c bytes, which a
+    // previous pass modelled as an explicit +4 pad (unk58_retailpad) on the
+    // guess that a std::map node header was 0x1c. It is not: STLport map is
+    // 0x18 and hash_map is 0x1c, and NextSongPanel's .text span defines and
+    // calls ZERO _Rb_tree<Symbol,...> symbols while calling
+    // hashtable<pair<const Symbol,int>>::_M_find and the hash_map default
+    // ctor. So the +4 IS the hash_map, and the pad is deleted with it --
+    // every following member keeps its retail offset.
+    std::hash_map<Symbol, int> mDetailCounts; // 0x40 (0x1c)
     float mDetailsPageSize; // 0x5c
     float mDetailsFooterSize; // 0x60
     float mDetailsScrollStep; // 0x64
