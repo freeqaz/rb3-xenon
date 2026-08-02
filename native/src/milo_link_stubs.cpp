@@ -98,6 +98,7 @@ float gCharHighlightY = -1.0f;
 
 #include "char/CharClip.h"
 #include "char/Waypoint.h"
+#include "rndobj/EnvAnim.h"
 
 // `operator<<(BinStream&, const ObjOwnerPtr<T>&)` is DECLARED (obj/Object.h:755)
 // and its definition is COMMENTED OUT in obj/ObjPtr_p.h:394 -- and it is
@@ -112,9 +113,28 @@ float gCharHighlightY = -1.0f;
 // back with ptr.Load(bs, true, nullptr). So this is the Milo convention
 // reconstructed, not invented.
 //
-// Explicitly instantiated for exactly the two Ts the link asks for.
+// Explicitly instantiated for exactly the Ts the link asks for.
 // char/CharClipGroup.cpp saves ObjOwnerPtr<CharClip> vectors and
 // char/Waypoint.cpp saves ObjOwnerPtr<Waypoint>; neither runs during a load.
+//
+// ⚠ X4a: RndEnvAnim was ADDED HERE, and the way it arrived is the finding.
+// `81d23046` (lane DD-2, "SAVE_OBJ stubs") replaced RndEnvAnim::Save's
+// MILO_ASSERT stub with a real body whose `bs << mKeysOwner` is the tree's
+// third ObjOwnerPtr save site -- and it landed on main having broken
+// rb3-milo AND rb3-render's link, undetected. That is EXACTLY the defect class
+// tools/native_build_gate.sh exists for (its header already records `b2958f2d`
+// doing the same thing), so the gate is not at fault; it was not run.
+//
+// ⛔ THIS LIST IS A RECURRENCE TRAP, and it will fire again. The declaration in
+// obj/Object.h:760-761 is an EXACT match for an ObjOwnerPtr argument, so it beats
+// the base-class `operator<<(BinStream&, const ObjRefConcrete<T1,ObjectDir>&)`
+// (ObjPtr_p.h:156, which IS defined) in overload resolution. Every new
+// `bs << someObjOwnerPtr` therefore compiles clean everywhere and fails only at
+// NATIVE LINK -- invisible to the X360 build, which never links. The permanent
+// fix is to move this definition into ObjPtr_p.h under `#ifdef HX_NATIVE` so
+// implicit instantiation covers every future T; it is deliberately NOT done here
+// because a shared-header edit is a wider blast radius than this lane's charter,
+// and it is recorded as owed work in docs/plans/x4a-venue-render-2026-08-02.md.
 template <class T1>
 BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &ptr) {
     if (ptr.Ptr())
@@ -125,6 +145,7 @@ BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &ptr) {
 }
 template BinStream &operator<< <CharClip>(BinStream &, const ObjOwnerPtr<CharClip> &);
 template BinStream &operator<< <Waypoint>(BinStream &, const ObjOwnerPtr<Waypoint> &);
+template BinStream &operator<< <RndEnvAnim>(BinStream &, const ObjOwnerPtr<RndEnvAnim> &);
 
 // ===========================================================================
 // (2) GPU / RENDER BACKEND — X360 src/system/rnddx9/, deleted by X3
