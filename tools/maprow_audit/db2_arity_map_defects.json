@@ -1,0 +1,909 @@
+{
+ "stats": {
+  "analysed": 15664,
+  "consistent": 15625,
+  "excl:demangle-failed": 4342,
+  "excl:byval-aggregate": 1002,
+  "excl:param-list-unparsable": 358,
+  "FLAG_BEYOND": 30,
+  "FLAG_FPSLOT": 9,
+  "bail:incomplete disassembly": 39,
+  "excl:varargs": 10
+ },
+ "rows": [
+  {
+   "symbol": "?MakeEventAnim@@YAPAVEventAnim@@PAVBandCamShot@@@Z",
+   "demangled": "class EventAnim * __cdecl MakeEventAnim(class BandCamShot *)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": false,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x822b7ecc  mr r22, r4",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "ICALL",
+    "TAILCALL"
+   ],
+   "size": 1588,
+   "addr": "0x822b7eb8"
+  },
+  {
+   "symbol": "?DrawPreClear@OutfitConfig@@UAAXXZ",
+   "demangled": "public: virtual void __cdecl OutfitConfig::DrawPreClear(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x8229f97c  mr r31, r4",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "ICALL",
+    "TAILCALL"
+   ],
+   "size": 1012,
+   "addr": "0x8229f960"
+  },
+  {
+   "symbol": "?SecondsToBeat@@YAMM@Z",
+   "demangled": "float __cdecl SecondsToBeat(float)",
+   "verdict": "FLAG_FPSLOT",
+   "declared_slots": 1,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3"
+   ],
+   "highest_legit": null,
+   "witness": "0x824383b4  mr r30, r3",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 648,
+   "addr": "0x82438398"
+  },
+  {
+   "symbol": "?TriggerCalibration@CalibrationPanel@@QAAXH@Z",
+   "demangled": "public: void __cdecl CalibrationPanel::TriggerCalibration(int)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 2,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5"
+   ],
+   "highest_legit": "r4",
+   "witness": "0x8260baa8  mr r27, r5",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "ICALL",
+    "TAILCALL"
+   ],
+   "size": 600,
+   "addr": "0x8260ba80"
+  },
+  {
+   "symbol": "?clear@?$_Rb_tree@DU?$less@D@stlpmtx_std@@U?$pair@$$CBDUMatChar@@@2@U?$_Select1st@U?$pair@$$CBDUMatChar@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBDUMatChar@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBDUMatChar@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+   "demangled": "public: void __cdecl stlpmtx_std::_Rb_tree<char, struct stlpmtx_std::less<char>, struct stlpmtx_std::pair<char const, struct MatChar>, struct stlpmtx_std::_Select1st<struct stlpmtx_std::pair<char const, struct MatChar>>, struct stlpmtx_std::priv::_MapTraitsT<struct stlpmtx_std::pair<char const, struct MatChar>>, class stlpmtx_std::StlNodeAlloc<struct stlpmtx_std::pair<char const, struct MatChar>>>::clear(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x82472ed8  mr r31, r4",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 548,
+   "addr": "0x82472ec0"
+  },
+  {
+   "symbol": "?Intersect@?$kdTree@VTriangle@@@@QBA_NABVVector3@@0MAAM@Z",
+   "demangled": "public: bool __cdecl kdTree<class Triangle>::Intersect(class Vector3 const &, class Vector3 const &, float, float &) const",
+   "verdict": "FLAG_FPSLOT",
+   "declared_slots": 5,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4,
+    5,
+    7
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5",
+    "r6"
+   ],
+   "highest_legit": null,
+   "witness": "0x8248cf98  mr r25, r6",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 496,
+   "addr": "0x8248cf78"
+  },
+  {
+   "symbol": "?DoFade@Fader@@QAAXMM@Z",
+   "demangled": "public: void __cdecl Fader::DoFade(float, float)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 3,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5",
+    "r6",
+    "r7"
+   ],
+   "highest_legit": "r5",
+   "witness": "0x8270be78  mr r25, r7",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 448,
+   "addr": "0x8270be58"
+  },
+  {
+   "symbol": "?OnMBTFromTick@Song@@QAA?AVDataNode@@PBVDataArray@@@Z",
+   "demangled": "public: class DataNode __cdecl Song::OnMBTFromTick(class DataArray const *)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 3,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4,
+    5
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5",
+    "r6",
+    "r7"
+   ],
+   "highest_legit": "r5",
+   "witness": "0x8229cc34  mr r26, r7",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 344,
+   "addr": "0x8229cc10"
+  },
+  {
+   "symbol": "?Copy@RndSpline@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+   "demangled": "public: virtual void __cdecl RndSpline::Copy(class Hmx::Object const *, enum Hmx::Object::CopyType)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 3,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4,
+    5
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5",
+    "r6",
+    "r7"
+   ],
+   "highest_legit": "r5",
+   "witness": "0x8247a6e4  mr r25, r7",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 248,
+   "addr": "0x8247a6c0"
+  },
+  {
+   "symbol": "?OnOverlayPrint@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z",
+   "demangled": "protected: class DataNode __cdecl Rnd::OnOverlayPrint(class DataArray const *)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 3,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4,
+    5
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5",
+    "r6"
+   ],
+   "highest_legit": "r5",
+   "witness": "0x82356144  mr r26, r6",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 240,
+   "addr": "0x82356118"
+  },
+  {
+   "symbol": "?FillCompressedVerts@DxMesh@@IAAXXZ",
+   "demangled": "protected: void __cdecl DxMesh::FillCompressedVerts(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5",
+    "r6"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x82419158  mr r31, r6",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 232,
+   "addr": "0x82419138"
+  },
+  {
+   "symbol": "?RefreshBarks@HamMove@@QAAXXZ",
+   "demangled": "public: void __cdecl HamMove::RefreshBarks(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x8269d4cc  cmpwi cr6, r4, 0",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "ICALL",
+    "TAILCALL"
+   ],
+   "size": 228,
+   "addr": "0x8269d4b8"
+  },
+  {
+   "symbol": "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+   "demangled": "public: void __cdecl stlpmtx_std::_Rb_tree<unsigned short, struct stlpmtx_std::less<unsigned short>, struct stlpmtx_std::pair<unsigned short const, struct RndFont::CharInfo>, struct stlpmtx_std::_Select1st<struct stlpmtx_std::pair<unsigned short const, struct RndFont::CharInfo>>, struct stlpmtx_std::priv::_MapTraitsT<struct stlpmtx_std::pair<unsigned short const, struct RndFont::CharInfo>>, class stlpmtx_std::StlNodeAlloc<struct stlpmtx_std::pair<unsigned short const, struct RndFont::CharInfo>>>::clear(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5",
+    "r6",
+    "r7",
+    "r8"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x826dddb8  cmplwi cr6, r8, 0",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 220,
+   "addr": "0x826ddd78"
+  },
+  {
+   "symbol": "?AddHead@?$CPointerList@UIGraphNode@LEAPCORE@@$0BA@$0PPPPPPPP@$0A@@@QAAPAXPAUIGraphNode@LEAPCORE@@@Z",
+   "demangled": "public: void * __cdecl CPointerList<struct LEAPCORE::IGraphNode, 16, 4294967295, 0>::AddHead(struct LEAPCORE::IGraphNode *)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 2,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5",
+    "r6"
+   ],
+   "highest_legit": "r4",
+   "witness": "0x82bf44f8  mr r28, r6",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "ICALL",
+    "TAILCALL"
+   ],
+   "size": 208,
+   "addr": "0x82bf44d8"
+  },
+  {
+   "symbol": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSetlistRecord@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+   "demangled": "public: void __cdecl stlpmtx_std::_Rb_tree<class Symbol, struct stlpmtx_std::less<class Symbol>, struct stlpmtx_std::pair<class Symbol const, class SetlistRecord>, struct stlpmtx_std::_Select1st<struct stlpmtx_std::pair<class Symbol const, class SetlistRecord>>, struct stlpmtx_std::priv::_MapTraitsT<struct stlpmtx_std::pair<class Symbol const, class SetlistRecord>>, class stlpmtx_std::StlNodeAlloc<struct stlpmtx_std::pair<class Symbol const, class SetlistRecord>>>::clear(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x82597120  mr r28, r5",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 200,
+   "addr": "0x825970f8"
+  },
+  {
+   "symbol": "?EaseExpoInOut@@YAMMMM@Z",
+   "demangled": "float __cdecl EaseExpoInOut(float, float, float)",
+   "verdict": "FLAG_FPSLOT",
+   "declared_slots": 3,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5"
+   ],
+   "highest_legit": null,
+   "witness": "0x822f0188  lwz r11, 0x60(r3)",
+   "flags": [
+    "HELPER_CALL",
+    "ICALL",
+    "TAILCALL"
+   ],
+   "size": 188,
+   "addr": "0x822f0178"
+  },
+  {
+   "symbol": "?SynthInit@@YAXXZ",
+   "demangled": "void __cdecl SynthInit(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 0,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3",
+    "r5"
+   ],
+   "highest_legit": "r2",
+   "witness": "0x82412a9c  lwz r11, 0(r5)",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 164,
+   "addr": "0x82412a90"
+  },
+  {
+   "symbol": "?DoWorldEnd@DxRnd@@EAAXXZ",
+   "demangled": "private: virtual void __cdecl DxRnd::DoWorldEnd(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x822aed30  mr r31, r4",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 160,
+   "addr": "0x822aed20"
+  },
+  {
+   "symbol": "?XbcDoWork@@YAJXZ",
+   "demangled": "long __cdecl XbcDoWork(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 0,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5"
+   ],
+   "highest_legit": "r2",
+   "witness": "0x82c098d0  mr r4, r5",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 144,
+   "addr": "0x82c098c0"
+  },
+  {
+   "symbol": "?GetPrimaryNextMajorLevelIcon@Campaign@@QAA?AVString@@XZ",
+   "demangled": "public: class String __cdecl Campaign::GetPrimaryNextMajorLevelIcon(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 2,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5"
+   ],
+   "highest_legit": "r4",
+   "witness": "0x825a6958  mr r4, r5",
+   "flags": [
+    "CALL"
+   ],
+   "size": 128,
+   "addr": "0x825a6938"
+  },
+  {
+   "symbol": "?GetFilterParameters@CX2Voice@XAUDIO2@@UAAXPAUXAUDIO2_FILTER_PARAMETERS@@@Z",
+   "demangled": "public: virtual void __cdecl XAUDIO2::CX2Voice::GetFilterParameters(struct XAUDIO2_FILTER_PARAMETERS *)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 2,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5"
+   ],
+   "highest_legit": "r4",
+   "witness": "0x82be4edc  mr r29, r5",
+   "flags": [
+    "HELPER_CALL",
+    "ICALL",
+    "TAILCALL"
+   ],
+   "size": 124,
+   "addr": "0x82be4ec0"
+  },
+  {
+   "symbol": "?AddTail@?$CPointerList@UIXAudio2EngineCallback@@$00$0PPPPPPPP@$0A@@@QAAPAXPAUIXAudio2EngineCallback@@@Z",
+   "demangled": "public: void * __cdecl CPointerList<struct IXAudio2EngineCallback, 1, 4294967295, 0>::AddTail(struct IXAudio2EngineCallback *)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 2,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5"
+   ],
+   "highest_legit": "r4",
+   "witness": "0x82bc235c  mr r29, r5",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 120,
+   "addr": "0x82bc2348"
+  },
+  {
+   "symbol": "?push_back@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAlloc@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$Key@VSymbol@@@@@Z",
+   "demangled": "public: void __cdecl stlpmtx_std::vector<class Key<class Symbol>, class stlpmtx_std::StlNodeAlloc<class Key<class Symbol>>>::push_back(class Key<class Symbol> const &)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 2,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3,
+    4
+   ],
+   "observed_gprs": [
+    "r3",
+    "r5",
+    "r6"
+   ],
+   "highest_legit": "r4",
+   "witness": "0x82666094  mr r3, r6",
+   "flags": [
+    "CALL"
+   ],
+   "size": 120,
+   "addr": "0x82666078"
+  },
+  {
+   "symbol": "?EaseElasticInOut@@YAMMMM@Z",
+   "demangled": "float __cdecl EaseElasticInOut(float, float, float)",
+   "verdict": "FLAG_FPSLOT",
+   "declared_slots": 3,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": null,
+   "witness": "0x822cad68  lwz r11, 8(r3)",
+   "flags": [
+    "CALL"
+   ],
+   "size": 116,
+   "addr": "0x822cad58"
+  },
+  {
+   "symbol": "??_DWorldDir@@QAAXXZ",
+   "demangled": "public: void __cdecl WorldDir::`vbase dtor'(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x825d5470  mr r31, r4",
+   "flags": [
+    "CALL"
+   ],
+   "size": 108,
+   "addr": "0x825d5458"
+  },
+  {
+   "symbol": "?EaseElasticOutIn@@YAMMMM@Z",
+   "demangled": "float __cdecl EaseElasticOutIn(float, float, float)",
+   "verdict": "FLAG_FPSLOT",
+   "declared_slots": 3,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": null,
+   "witness": "0x82643a70  mr r30, r3",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 108,
+   "addr": "0x82643a60"
+  },
+  {
+   "symbol": "?clear@?$_List_base@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+   "demangled": "public: void __cdecl stlpmtx_std::_List_base<struct CharBones::Bone, class stlpmtx_std::StlNodeAlloc<struct CharBones::Bone>>::clear(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x82469398  lwz r11, 0(r5)",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 108,
+   "addr": "0x82469388"
+  },
+  {
+   "symbol": "?EaseExpoOut@@YAMMMM@Z",
+   "demangled": "float __cdecl EaseExpoOut(float, float, float)",
+   "verdict": "FLAG_FPSLOT",
+   "declared_slots": 3,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r4"
+   ],
+   "highest_legit": null,
+   "witness": "0x825a4c04  cmplwi cr6, r4, 0",
+   "flags": [
+    "CALL"
+   ],
+   "size": 100,
+   "addr": "0x825a4bf0"
+  },
+  {
+   "symbol": "?SynthUtlInit@@YAXXZ",
+   "demangled": "void __cdecl SynthUtlInit(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 0,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3",
+    "r5"
+   ],
+   "highest_legit": "r2",
+   "witness": "0x827bfbb0  mr r29, r5",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 96,
+   "addr": "0x827bfb98"
+  },
+  {
+   "symbol": "?Terminate@RndMat@@SAXXZ",
+   "demangled": "public: static void __cdecl RndMat::Terminate(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 0,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3"
+   ],
+   "highest_legit": "r2",
+   "witness": "0x82553fd8  lwz r11, 0(r3)",
+   "flags": [
+    "ICALL"
+   ],
+   "size": 96,
+   "addr": "0x82553fc8"
+  },
+  {
+   "symbol": "?clear@?$ObjPtrList@VCamShot@@VObjectDir@@@@QAAXXZ",
+   "demangled": "public: void __cdecl ObjPtrList<class CamShot, class ObjectDir>::clear(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x824cb964  stw r4, 4(r3)",
+   "flags": [
+    "CALL"
+   ],
+   "size": 96,
+   "addr": "0x824cb940"
+  },
+  {
+   "symbol": "?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ",
+   "demangled": "public: void __cdecl ObjPtrList<class Task, class ObjectDir>::clear(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x82714368  mr r30, r4",
+   "flags": [
+    "ICALL"
+   ],
+   "size": 96,
+   "addr": "0x82714350"
+  },
+  {
+   "symbol": "?EaseBackOutIn@@YAMMMM@Z",
+   "demangled": "float __cdecl EaseBackOutIn(float, float, float)",
+   "verdict": "FLAG_FPSLOT",
+   "declared_slots": 3,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3"
+   ],
+   "highest_legit": null,
+   "witness": "0x825f5c04  lwz r11, 0x20(r3)",
+   "flags": [
+    "CALL"
+   ],
+   "size": 92,
+   "addr": "0x825f5bf8"
+  },
+  {
+   "symbol": "?SetAllocator@SampleData@@SAXP6APAXHPBDH0H@ZP6AXPAX0H0@Z@Z",
+   "demangled": "public: static void __cdecl SampleData::SetAllocator(void * (__cdecl *)(int, char const *, int, char const *, int), void (__cdecl *)(void *, char const *, int, char const *))",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 2,
+   "has_this": false,
+   "gpr_slots_readable": [
+    3,
+    4
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r5"
+   ],
+   "highest_legit": "r4",
+   "witness": "0x823f0ef4  mr r28, r5",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 92,
+   "addr": "0x823f0ed8"
+  },
+  {
+   "symbol": "?DataRandomSort@@YA?AVDataNode@@PAVDataArray@@@Z",
+   "demangled": "class DataNode __cdecl DataRandomSort(class DataArray *)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 2,
+   "has_this": false,
+   "gpr_slots_readable": [
+    3,
+    4
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4",
+    "r6"
+   ],
+   "highest_legit": "r4",
+   "witness": "0x82b8e7ac  mr r27, r6",
+   "flags": [
+    "CALL",
+    "HELPER_CALL",
+    "TAILCALL"
+   ],
+   "size": 88,
+   "addr": "0x82b8e790"
+  },
+  {
+   "symbol": "?EaseSineInOut@@YAMMMM@Z",
+   "demangled": "float __cdecl EaseSineInOut(float, float, float)",
+   "verdict": "FLAG_FPSLOT",
+   "declared_slots": 3,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3"
+   ],
+   "highest_legit": null,
+   "witness": "0x8256b714  mr r31, r3",
+   "flags": [
+    "CALL"
+   ],
+   "size": 76,
+   "addr": "0x8256b6e8"
+  },
+  {
+   "symbol": "?GetNumSongsForCurrentGig@TourProgress@@QBAHXZ",
+   "demangled": "public: int __cdecl TourProgress::GetNumSongsForCurrentGig(void) const",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 1,
+   "has_this": true,
+   "gpr_slots_readable": [
+    3
+   ],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": "r3",
+   "witness": "0x823620dc  lwz r4, 0x6c(r4)",
+   "flags": [
+    "CALL",
+    "HELPER_CALL"
+   ],
+   "size": 72,
+   "addr": "0x823620c8"
+  },
+  {
+   "symbol": "?EaseSineIn@@YAMMMM@Z",
+   "demangled": "float __cdecl EaseSineIn(float, float, float)",
+   "verdict": "FLAG_FPSLOT",
+   "declared_slots": 3,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3",
+    "r4"
+   ],
+   "highest_legit": null,
+   "witness": "0x825d7954  mr r31, r3",
+   "flags": [
+    "CALL"
+   ],
+   "size": 68,
+   "addr": "0x825d7940"
+  },
+  {
+   "symbol": "??__FTheRockCentral@@YAXXZ",
+   "demangled": "void __cdecl `dynamic atexit destructor for 'TheRockCentral''(void)",
+   "verdict": "FLAG_BEYOND",
+   "declared_slots": 0,
+   "has_this": false,
+   "gpr_slots_readable": [],
+   "observed_gprs": [
+    "r3"
+   ],
+   "highest_legit": "r2",
+   "witness": "0x8250af9c  mr r31, r3",
+   "flags": [
+    "CALL"
+   ],
+   "size": 60,
+   "addr": "0x8250af88"
+  }
+ ]
+}

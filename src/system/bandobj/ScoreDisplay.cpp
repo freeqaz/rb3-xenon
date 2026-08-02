@@ -48,9 +48,28 @@ void ScoreDisplay::CopyMembers(const UIComponent *o, Hmx::Object::CopyType ty) {
 BEGIN_SAVES(ScoreDisplay)
     SAVE_REVS(2, 0)
     bs << unk114;
-    bs << mScore;
+    // Retail uses TWO by-value temp slots: {packRevs, unk114, mGlobally} share
+    // 0x50 and {mScore, mRank} share 0x54. `bs << x` cannot produce the second
+    // slot: BinStream's scalar operators are macro-generated as
+    // WriteEndian(&rhs, sizeof(rhs)) over a BY-VALUE PARAMETER, and MSVC
+    // coalesces those inlined parameter objects -- across differing widths, as
+    // the 0x50 group (4/2/1 bytes) proves. Only an address that escapes into a
+    // call IN SOURCE pins a local to its own slot.
+    // Three hypotheses were falsified bit-for-bit before this one: a distinct
+    // operator<< overload via a (long) cast, an explicit single-use named
+    // local, and a named local REUSED across both writes -- MSVC copy-
+    // propagates every local it can into the anonymous temp.
+    // Control that this is Harmonix's own idiom and not a decomp invention:
+    // operator<<(BinStream&, const BandCamShot::Target&) is at 100.0 with
+    // slots [0x50,0x54] and does exactly this -- `unsigned char b = ...;
+    // bs.Write(&b, 1);` -- reusing one explicitly-addressed local.
+    // Semantically identical to `bs << mScore`: operator<<(BinStream&,int) IS
+    // WriteEndian(&rhs, 4).
+    int i = mScore;
+    bs.WriteEndian(&i, 4);
     bs << mTextColor;
-    bs << mRank;
+    i = mRank;
+    bs.WriteEndian(&i, 4);
     bs << mGlobally;
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
