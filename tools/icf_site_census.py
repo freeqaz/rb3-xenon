@@ -134,7 +134,10 @@ def load_unit_objs(root: Path):
 def index_fns(path):
     out = {}
     if USE_LEGACY_READER:
-        for name, raw, relocs in function_bodies(Path(path)):
+        # DC-4: legacy_ok=True -- this branch IS the deliberate legacy hatch
+        # (ICF_CENSUS_LEGACY_READER=1), so it must not trip the frozen-reader
+        # warning. A warning that fires on its own sanctioned use is noise.
+        for name, raw, relocs in function_bodies(Path(path), legacy_ok=True):
             out.setdefault(name, (len(raw), relocs))
     else:
         for name, raw, relocs, _entry in function_bodies_ext(Path(path)):

@@ -28,7 +28,13 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "tools"))
-from icf_fold_evidence import function_bodies, masked_body   # noqa: E402
+# ★ DC-4 (2026-08-02): the former `from icf_fold_evidence import function_bodies,
+# masked_body` here was DEAD (AST-verified: both appeared exactly once, on the
+# import line, and were never referenced). It is removed so nobody reads this
+# file as a live consumer of the frozen legacy reader. This tool's population
+# comes ENTIRELY through `collect` below, which lane DC-4 moved to the corrected
+# EH-aware reader -- so THIS AUDIT'S NUMBERS MOVE WITH IT (intended: the audit
+# must grade the same population that gets shipped).
 from icf_alias_build import collect, placeholder             # noqa: E402
 
 sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "harvest"))
