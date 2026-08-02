@@ -26,7 +26,12 @@ BEGIN_PROPSYNCS(CharWeightable)
     SYNC_PROP_SET(
         weight_owner, mWeightOwner.Ptr(), SetWeightOwner(_val.Obj<CharWeightable>())
     )
-    SYNC_VIRTUAL_SUPERCLASS(Hmx::Object)
+    /* Retail's ?SyncProperty@CharWeightable@@UAA... (0x823AEF98, 472 B, 118
+     * instrs) has no superclass sync: it ends at 0x823AF164 with `li r3,0` and
+     * its only indirect call is a slot-0 vtable dispatch in the weight_owner
+     * arm -- not the slot-4 ClassName() dispatch that SYNC_VIRTUAL_SUPERCLASS
+     * emits, and there is no StaticClassName() call anywhere in the body.
+     * Same defect as RndTransformable::SyncProperty. */
 END_PROPSYNCS
 
 BEGIN_SAVES(CharWeightable)
