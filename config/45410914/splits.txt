@@ -4711,11 +4711,13 @@ HamIKEffector.cpp:
 	.pdata      start:0x821F69B8 end:0x821F69C0
 	.pdata      start:0x82203B68 end:0x82203B70
 	.pdata      start:0x82205DD8 end:0x82205DE0
+	.pdata      start:0x82205DF8 end:0x82205E00
 	.pdata      start:0x82206128 end:0x82206130
 	.pdata      start:0x8221E710 end:0x8221E718
 	.text       start:0x822C27B0 end:0x822C2934
 	.text       start:0x82398100 end:0x82398258
 	.text       start:0x823C3300 end:0x823C3354
+	.text       start:0x823C35D8 end:0x823C36E8
 	.text       start:0x823C6880 end:0x823C68C4
 	.text       start:0x825748E8 end:0x82574938
 
@@ -7363,12 +7365,13 @@ CharPosConstraint.cpp:
 	.pdata      start:0x82205D38 end:0x82205DB0
 	.pdata      start:0x82205DB0 end:0x82205DD8
 	.pdata      start:0x82205DE8 end:0x82205DF0
-	.pdata      start:0x82205DF8 end:0x82205E10
+	.pdata      start:0x82205E00 end:0x82205E10
 	.text       start:0x823C26A0 end:0x823C30C0
 	.text       start:0x823C30C0 end:0x823C3300
 	.text       start:0x823C3354 end:0x823C3360
 	.text       start:0x823C342C end:0x823C3458
-	.text       start:0x823C35CC end:0x823C3728
+	.text       start:0x823C35CC end:0x823C35D8
+	.text       start:0x823C36E8 end:0x823C3728
 
 Screenshot.cpp:
 	.pdata      start:0x822062C0 end:0x82206330
