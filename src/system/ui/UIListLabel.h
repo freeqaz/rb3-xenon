@@ -30,8 +30,7 @@ protected:
     UIListLabel();
 
     /** "label to draw/transform" */
-    ObjPtr<UILabel> mLabel; // 0x78
-    bool mHighlightAltStyles;
+    ObjPtr<UILabel> mLabel; // 0x70
 };
 
 class UIListLabelElement : public UIListSlotElement {
