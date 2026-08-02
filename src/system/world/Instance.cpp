@@ -178,6 +178,25 @@ void WorldInstance::PreLoad(BinStream &bs) {
     } else
         bs >> mDir;
 
+    // ⚠ ORDER DIVERGENCE FROM rb3-Wii, OBSERVED AND DELIBERATELY NOT "FIXED".
+    //
+    // rb3-Wii's faithful RB3 decomp (rb3/src/system/world/Instance.cpp) pushes
+    // the rev BEFORE RndDir::PreLoad; this body (byte-identical to DC3's) pushes
+    // it after. The mirrored transposition exists in PostLoad below.
+    //
+    // X4a tried swapping both to rb3-Wii's order on the theory that it was the
+    // venue-load stream corruptor. THAT THEORY IS REFUTED: BinStream::PushRev /
+    // PopRev (utl/BinStream.cpp:284, :144) only push/pop a process-wide
+    // `sRevStack` — they never touch the byte stream — and BOTH orderings are
+    // internally consistent LIFO (xenon pushes last and pops first; rb3-Wii
+    // pushes first and pops last). The swap was built and run: the venue failure
+    // reproduced with a byte-identical 3494-line log and the identical
+    // `version 41` / `String chars 774778671` numbers. Zero runtime effect.
+    //
+    // So this is left alone. It remains an open MATCH question — PreLoad is
+    // 76.92% and PostLoad 59.07% in default/Instance, and rb3-Wii is the better
+    // oracle than DC3 for RB3 game-era code — but it is a match lane's call,
+    // backed by an A/B, not something to change on a refuted runtime theory.
     RndDir::PreLoad(bs);
     if (mProxyFile.length() != 0) {
         MILO_NOTIFY(
@@ -250,6 +269,76 @@ void WorldInstance::DeleteTransientObjects() {
         || Dir()->InlineSubDirType() != kInlineAlways)) {
         for (ObjDirItr<Hmx::Object> obj(this, false); obj != nullptr; ++obj) {
             if (this != obj) {
+#ifdef HX_NATIVE
+                // ⛔ X4a: `auto refs = obj->Refs();` IS AN UNTERMINATED WALK, and
+                //    it hangs the first venue load 100% of the time.
+                //
+                // Hmx::Object::Refs() returns `const ObjRef &mRefs` — the LIVE
+                // RING HEAD (obj/Object.h:1973). `auto` deduces ObjRef BY VALUE,
+                // so `refs` is a COPY of the head node. ObjRef::end() is
+                // `iterator((ObjRef *)this)` (:206), i.e. the address of the copy
+                // — and no node in the real ring ever points at that stack
+                // address. The walk runs …→ last → &obj->mRefs → first → … and
+                // `it != refs.end()` is NEVER true.
+                //
+                // ★ It does not even need a non-empty ring to hang. On an EMPTY
+                // ring obj->mRefs.next == &obj->mRefs, so begin() yields the real
+                // head, end() yields &refs, they differ, and ++it lands back on
+                // the head forever. And because the head is a plain ObjRef whose
+                // RefOwner() is null (:157), the `if` never fires — so it spins
+                // SILENTLY at 100% CPU with no output and no crash. MEASURED:
+                // rb3-render on world/venue/small_club/small_club_01 sat at
+                // 11m39s wall / 11m35s CPU inside
+                // DeleteTransientObjects → __dynamic_cast, stack captured under
+                // gdb; the venue is the first asset in the ladder that loads a
+                // WorldInstance proxy, so X2 and X3 could not reach this.
+                //
+                // ★ THIS IS A TRANSCRIPTION DEFECT, NOT A DESIGN. Three
+                // independent witnesses:
+                //   1. rb3-Wii's faithful decomp (rb3/src/system/world/Instance.cpp)
+                //      writes `std::vector<ObjRef *> refs = obj->Refs();` — its
+                //      Refs() returns a VECTOR SNAPSHOT BY VALUE — then iterates
+                //      that vector (rbegin/rend). Mutating the ring is safe there
+                //      because the vector is detached.
+                //   2. The residue proves it: rb3-Wii wraps `MemDoTempAllocations`
+                //      around the COPY, because building the vector ALLOCATES.
+                //      xenon kept the scope and dropped the allocation it existed
+                //      to scope — a loop that allocates nothing.
+                //   3. DC3 (dc3-decomp/.../Instance.cpp) splices matching refs onto
+                //      a private local ring with MoveBefore and then ReplaceList()s
+                //      them in one shot — never walking a ring it is mutating.
+                //
+                // Fixed with idiom (3), which is ALSO what this very file's
+                // WorldInstance::SyncDir already does ~50 lines below under the
+                // same #ifdef (`ObjRef refs; refs.Clear(); … MoveBefore(&refs);
+                // refs.ReplaceList(p->to);`). So this is not a new mechanism —
+                // it is the surrounding, working code, applied to the one site
+                // that diverged from it. MoveBefore returns the spliced node's
+                // OLD PREDECESSOR, so `it = it->MoveBefore(&refs)` leaves ++it
+                // resuming correctly in the source ring.
+                //
+                // ⚠ The X360 arm below is preserved TOKEN-FOR-TOKEN, statement
+                // order included, because default/Instance is 85% fn-matched and
+                // this body is scored there. That neutrality is MEASURED, not
+                // argued — see docs/plans/x4a-venue-render-2026-08-02.md.
+                ObjectDir *dir_ref = Dir();
+                Hmx::Object *to = mDir->Find<Hmx::Object>(obj->Name(), true);
+                MILO_ASSERT(obj->ClassName() == to->ClassName(), 0x1CB);
+                {
+                    MemDoTempAllocations m;
+                    ObjRef refs;
+                    refs.Clear();
+                    for (ObjRef::iterator it = obj->Refs().begin();
+                         it != obj->Refs().end(); ++it) {
+                        if (RefPtrOf(it)->RefOwner()
+                            && RefPtrOf(it)->RefOwner()->Dir() == this) {
+                            it = it->MoveBefore(&refs);
+                        }
+                    }
+                    refs.ReplaceList(to);
+                }
+                delete obj;
+#else
                 auto refs = obj->Refs();
                 ObjectDir *dir_ref = Dir();
                 Hmx::Object *to = mDir->Find<Hmx::Object>(obj->Name(), true);
@@ -261,25 +350,14 @@ void WorldInstance::DeleteTransientObjects() {
                             // ObjRef::Replace(Hmx::Object*) is an elided stub off
                             // HX_NATIVE; dispatch the real ring Replace (slot +8)
                             // with the outgoing object as `from`.
-#ifdef HX_NATIVE
-                            // On this side the ring entry IS the ref
-                            // (obj/Object.h:277 -- RefPtrOf is the identity
-                            // overload), so ObjRef::Replace takes only the
-                            // replacement: there is no separate `from` node to
-                            // name. The identity overload also returns
-                            // `const ObjRef *` (ring iteration hands out const
-                            // nodes) while Replace mutates, hence the
-                            // const_cast. The retail arm below is unchanged.
-                            const_cast<ObjRef *>(RefPtrOf(it))->Replace(to);
-#else
                             RefPtrOf(it)->Replace(
                                 reinterpret_cast<ObjRef *>((Hmx::Object *)obj), to
                             );
-#endif
                         }
                     }
                 }
                 delete obj;
+#endif
             }
         }
     } else {
@@ -298,6 +376,11 @@ void WorldInstance::SetProxyFile(const FilePath &fp, bool override) {
 }
 
 void WorldInstance::PostLoad(BinStream &bs) {
+    // ⚠ See the note in PreLoad above: this is the mirrored half of an ordering
+    // divergence from rb3-Wii (which calls RndDir::PostLoad FIRST and pops
+    // after). X4a's theory that it corrupted the venue stream is REFUTED —
+    // PopRev does not read the stream — and swapping it was measured to change
+    // nothing at runtime. Left as-is; open as a match question, not a bug fix.
     int revs = bs.PopRev(this);
     BinStreamRev d(bs, revs);
     RndDir::PostLoad(bs);
