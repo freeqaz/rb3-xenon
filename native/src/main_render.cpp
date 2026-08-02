@@ -103,6 +103,7 @@
 #include "rndobj/Dir.h"
 #include "rndobj/Draw.h"
 #include "rndobj/Env.h"
+#include "rndobj/PostProc.h"
 #include "rndobj/Lit.h"
 #include "rndobj/Mat.h"
 #include "rndobj/Mesh.h"
@@ -149,6 +150,31 @@ namespace {
 
     int gFailures = 0;
     bool gVerbose = false;
+
+    // ---------------------------------------------------------------------
+    // X4a: --postproc — select a REAL shipped RndPostProc before drawing.
+    // ---------------------------------------------------------------------
+    // X3 left RndPostProc entirely UNREACHED, and the X4 charter asks for a
+    // per-subsystem VERIFIED/SYNTHESIZED/UNREACHED verdict backed by evidence.
+    // For post-processing that evidence is available cheaply and honestly,
+    // because the engine's own branch is a simple predicate:
+    //
+    //   Rnd_Wgpu.cpp:454  bool hasPostProc = RndPostProc::Current() != nullptr;
+    //   Rnd_Wgpu.cpp:459-462  the colour attachment is retargeted to
+    //                         mIntermediateView instead of FrameTarget()
+    //   Rnd_Wgpu.cpp:508-509  mPostProcPass.Run(...) on the intermediate
+    //
+    // So selecting a real RndPostProc and re-rendering the SAME geometry is a
+    // controlled A/B on exactly that branch: if the PNG changes, the pass ran.
+    // A synthesised RndPostProc would prove much less (it would be our
+    // parameters), so this loads RB3's shipped
+    // world/shared/fx/gen/post_process_fx_venue.milo_xbox — 40 real PostProc
+    // objects and, measurably, ZERO band3 classes, which is why it is loadable
+    // in a target that compiles no band3 (see the venue note in
+    // docs/plans/x4a-venue-render-2026-08-02.md).
+    const char *gPostProcFile = nullptr;
+    const char *gPostProcName = nullptr;
+    ObjDirPtr<ObjectDir> gPostProcDir;
     bool gDumpCam = false;
     bool gManualCam = false;
 
@@ -880,6 +906,44 @@ namespace {
         Vector3 origin(0, 0, 0);
         if (env) env->Select(&origin);
 
+        // ---- X4a: post-processing, selected from a REAL shipped asset ------
+        // Reported unconditionally (including "none") so a reader can always
+        // tell which of the two A/B legs a given PNG is.
+        RndPostProc *post = nullptr;
+        if (gPostProcFile) {
+            if (!(ObjectDir *)gPostProcDir) {
+                FilePath pp(gPostProcFile);
+                gPostProcDir.LoadFile(pp, false, false, kLoadFront, false);
+            }
+            ObjectDir *ppDir = gPostProcDir;
+            if (!ppDir) {
+                printf("  ⚠ postproc: '%s' did NOT load — rendering without one\n",
+                       gPostProcFile);
+            } else {
+                int n = 0;
+                for (ObjDirItr<RndPostProc> it(ppDir, true); it; ++it) {
+                    n++;
+                    if (!post || (gPostProcName && !strcmp(it->Name(), gPostProcName)))
+                        if (!post || gPostProcName) post = it;
+                }
+                if (post) {
+                    post->Select();
+                    printf("  postproc: SELECTED '%s' from %s (%d PostProc object(s) "
+                           "in the file) — RndPostProc::Current()=%p\n",
+                           post->Name(), gPostProcFile, n,
+                           (void *)RndPostProc::Current());
+                } else {
+                    printf("  ⚠ postproc: %s loaded but contains no RndPostProc\n",
+                           gPostProcFile);
+                }
+            }
+        }
+        if (!post) {
+            printf("  postproc: none selected — RndPostProc::Current()=%p (the "
+                   "engine's Rnd_Wgpu.cpp:454 branch takes the no-postproc arm)\n",
+                   (void *)RndPostProc::Current());
+        }
+
         if (dumpRnd) DumpRndMembers("after scene setup, before first frame");
 
         // Draw. Several frames because the GPU-resource path is lazy: a mesh's
@@ -1031,6 +1095,10 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--width") == 0 && i + 1 < argc) width = atoi(argv[++i]);
         else if (strcmp(argv[i], "--height") == 0 && i + 1 < argc) height = atoi(argv[++i]);
         else if (strcmp(argv[i], "--frames") == 0 && i + 1 < argc) frames = atoi(argv[++i]);
+        else if (strcmp(argv[i], "--postproc") == 0 && i + 1 < argc)
+            gPostProcFile = argv[++i];
+        else if (strcmp(argv[i], "--postproc-name") == 0 && i + 1 < argc)
+            gPostProcName = argv[++i];
         else pos.push_back(argv[i]);
     }
     if (pos.size() < 2) {
