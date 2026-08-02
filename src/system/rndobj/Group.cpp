@@ -22,7 +22,7 @@ bool SortInWorld(const GroupDrawDist &a, const GroupDrawDist &b) {
 bool gInReplace;
 
 RndGroup::RndGroup()
-    : mObjects(this, kObjListOwnerControl), mDrawOnly(this), mEnv(this), mLod(this),
+    : mObjects(this, kObjListOwnerControl), mEnv(this), mDrawOnly(this), mLod(this),
       mLodScreenSize(0), mDrawLod(false), mSortInWorld(false) {}
 
 void RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
@@ -51,9 +51,30 @@ BEGIN_HANDLERS(RndGroup)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
+void RndGroup::UpdateLODState() {
+    if (mLod && mLodScreenSize > 0) {
+        mDrawLod = true;
+    } else
+        mDrawLod = false;
+}
+
+// Retail-verified against fn_82453578: SIX properties in this order (guard
+// bits 0..5 of one word at lbl_82CC2F20), not the three we carried.
+// NOTE: this TU is in the Object.h macro dialect, whose SYNC_PROP already
+// stringifies into a function-local static and whose SYNC_PROP_MODIFY is the
+// positive-first (_ALT) shape -- so RB3_SYNCPROP_LOCAL_STATIC is INERT here
+// and SYNC_PROP_MODIFY_ALT does not exist.  (Predicted this was the same
+// local-static lever as VocalTrackDir; it is not.)
+// The rb3-Wii DEV oracle spells sort_in_world as a hand-rolled inline block --
+// RETAIL DOES NOT: it is a plain SYNC_PROP calling PropSync(bool&)
+// (fn_82280290).  lod_screen_size cross-jumps into lod's tail, and
+// UpdateLODState() is inlined at that shared tail.
 BEGIN_PROPSYNCS(RndGroup)
     SYNC_PROP_MODIFY(objects, mObjects, Update())
+    SYNC_PROP(environ, mEnv)
     SYNC_PROP(draw_only, mDrawOnly)
+    SYNC_PROP_MODIFY(lod, mLod, UpdateLODState())
+    SYNC_PROP_MODIFY(lod_screen_size, mLodScreenSize, UpdateLODState())
     SYNC_PROP(sort_in_world, mSortInWorld)
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(RndTransformable)

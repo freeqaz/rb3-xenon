@@ -11,9 +11,9 @@
 INIT_REVS(VocalTrackDir)
 
 VocalTrackDir::VocalTrackDir()
-    : BandTrack(this), mHiddenPartAlpha(0.3f), unk2a4(1), unk2a5(1), mIsTop(1), unk2a7(0),
+    : BandTrack(this), mHiddenPartAlpha(0.3f), mEnableVocalsOptions(1), unk2a5(1), mIsTop(1), unk2a7(0),
       mFeedbackStateLead(0), mFeedbackStateHarm1(0), mFeedbackStateHarm2(0),
-      mVocalMics(this, 0), unk2f0(this, 0), mMinPitchRange(12.0f),
+      mVocalMics(this, 0), mVocalistVolume(this, 0), mMinPitchRange(12.0f),
       mPitchDisplayMargin(3.0f), mArrowSmoothing(0.85f),
       mConfigurableObjects(this, kObjListNoNull), mVoxCfg(this, 0),
       mTambourineSmasher(this, 0), mTambourineNowShowTrig(this, 0),
@@ -54,9 +54,9 @@ BEGIN_COPYS(VocalTrackDir)
     COPY_SUPERCLASS(RndDir)
     CREATE_COPY(VocalTrackDir)
     BEGIN_COPYING_MEMBERS
-        COPY_MEMBER(unk2a4)
+        COPY_MEMBER(mEnableVocalsOptions)
         COPY_MEMBER(mIsTop)
-        COPY_MEMBER(unk2f0)
+        COPY_MEMBER(mVocalistVolume)
         COPY_MEMBER(mMinPitchRange)
         COPY_MEMBER(mArrowSmoothing)
         COPY_MEMBER(mConfigurableObjects)
@@ -283,7 +283,7 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
                 bs >> f88;
             }
             bs >> f88;
-            bs >> unk2f0;
+            bs >> mVocalistVolume;
             bs >> ba9;
             bs >> mMinPitchRange;
             bs >> mArrowSmoothing;
@@ -333,7 +333,7 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
             bs >> mVoxCfg;
             if (!LOADMGR_EDITMODE)
                 mVoxCfg = 0;
-            bs >> unk2f0;
+            bs >> mVocalistVolume;
             bs >> mMinPitchRange;
             bs >> mArrowSmoothing;
             if (gRev < 3)
@@ -1200,6 +1200,10 @@ void VocalTrackDir::SortArrowFx() {
 }
 
 BEGIN_PROPSYNCS(VocalTrackDir)
+    // Retail-only (absent from the rb3-Wii DEV oracle): recovered from retail
+    // bytes -- 85 local-static Symbol ctor sites in fn_82300128, offsets
+    // resolved at vbase bias 0x73C against the compiler's class layout.
+    SYNC_PROP(enable_vocals_options, mEnableVocalsOptions)
     SYNC_PROP(is_top, mIsTop)
     SYNC_PROP(feedback_state_lead, mFeedbackStateLead)
     SYNC_PROP(feedback_state_harm_1, mFeedbackStateHarm1)
@@ -1239,6 +1243,7 @@ BEGIN_PROPSYNCS(VocalTrackDir)
     SYNC_PROP(static_coming_alpha, mLyricAlphaMap[9])
     SYNC_PROP(static_now_alpha, mLyricAlphaMap[0xA])
     SYNC_PROP(static_past_alpha, mLyricAlphaMap[0xB])
+    SYNC_PROP(vocalist_volume, mVocalistVolume) // retail-only; ObjPtr, offset 0x340
     SYNC_PROP(min_pitch_range, mMinPitchRange)
     SYNC_PROP(pitch_display_margin, mPitchDisplayMargin)
     SYNC_PROP(arrow_smoothing, mArrowSmoothing)

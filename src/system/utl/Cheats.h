@@ -48,7 +48,9 @@ public:
     bool KeyCheatsEnabled() { return mKeyCheatsEnabled; };
     void CallCheatScript(bool b1, DataArray *da, LocalUser *lu, bool b2);
     void RebuildKeyCheatsForMode();
+#ifdef HX_NATIVE
     void SetUnsafeCheatsUsed(bool b) { mUnsafeCheatsUsed = b; };
+#endif
     void AddQuickJoyCheat(const QuickJoyCheat &cheat, ShiftMode mode) {
         mQuickJoyCheats[mode].push_back(cheat);
     }
@@ -81,11 +83,18 @@ protected:
     bool mUnlockAll; // 0xba
     std::list<CheatLog> mBuffer; // 0xbc
     int mMaxBuffer; // 0xc4
-    bool mCtrlOverriddeMode; // 0xc8
-    bool mIsOverridingKeyboard; // 0xc9
-    Hmx::Object *mPreviousOverride; // 0xcc
-    bool mUnsafeCheatsUsed; // 0xd0
-    bool mDisplayCheats; // 0xd1
+#ifdef HX_NATIVE
+    // NOT PRESENT IN RB3 RETAIL.  These five are DC3-era additions (dc3-decomp
+    // is NEWER than RB3).  Retail's CheatsInit allocates the object with
+    // `li r3, 0xc0`, and our class measured 0xd0 -- exactly these 10 bytes plus
+    // their 6 bytes of tail padding.  Independently, the rb3-Wii DEV oracle's
+    // CheatsManager also ends at mMaxBuffer.  Kept for the native build only.
+    bool mCtrlOverriddeMode;
+    bool mIsOverridingKeyboard;
+    Hmx::Object *mPreviousOverride;
+    bool mUnsafeCheatsUsed;
+    bool mDisplayCheats;
+#endif
     // String mMessage; // 0xd4
     // float mMessageTimer; // 0xdc
 };

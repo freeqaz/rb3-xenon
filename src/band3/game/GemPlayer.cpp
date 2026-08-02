@@ -2161,7 +2161,17 @@ void GemPlayer::FinishHeldNote(float f1, HeldNote &note) {
             Handle(whammy_end_msg, false);
         }
         unk348 = false;
+        // rb3-Wii is the DEV build and calls this unconditionally; RETAIL
+        // COMPILED IT OUT.  Two independent proofs: retail's FinishHeldNote
+        // (508 B vs our 516 = exactly these 2 instructions) goes straight from
+        // the mWhammying store to HeldCompletely(), and every debug-overlay
+        // format string of this family is absent from band.exe --
+        // 'held%s (%.2f) %.2f pts', ' X %d', '%s (%dms) %d pts -- ...' -- while
+        // the real gameplay string 'endgame_swing_%s_%d' from the same TU IS
+        // present (positive control).
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         PrintFinishHeldNote();
+#endif
         mStats.IncrementSustainGemsHit(note.HeldCompletely());
         note = HeldNote();
     }

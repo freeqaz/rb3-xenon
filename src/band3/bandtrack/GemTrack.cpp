@@ -522,7 +522,12 @@ void GemTrack::DrawBeatLine(Symbol s1, int i2, int i3, bool b4) {
             i2 = TickToBeat(GetLoopTick(i3));
         }
         RangeShift *curshift = mCurrentRangeShift;
-        if ((int)std::floor(TickToBeat(curshift->unk0)) - i2 <= 3U) {
+        // Retail: `bl floor / frsp f0,f1 / fctiwz` -- the double from floor() is
+        // rounded through FLOAT before the int cast -- then `subf. / blt /
+        // cmpwi 4 / bge`, i.e. a SIGNED two-sided test, not our `<= 3U`
+        // (which compiles to a single cmplwi).
+        int shiftDelta = (int)(float)std::floor(TickToBeat(curshift->unk0)) - i2;
+        if (shiftDelta >= 0 && shiftDelta < 4) {
             int endKey = curshift->unkc - mOffset;
             if (endKey != 0) {
                 Symbol sfc;

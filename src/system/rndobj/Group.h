@@ -82,13 +82,20 @@ protected:
 
     /** Update RndGroup's class members based on the contents of the group. */
     void Update();
+    /** Recompute mDrawLod from mLod / mLodScreenSize. */
+    void UpdateLODState();
 
     /** The objects of this group. */
     ObjPtrList<Hmx::Object> mObjects; // 0xe8 (after ObjPtr layout fix)
-    /** "if set, only draws this member of the group" */
-    ObjPtr<RndDrawable> mDrawOnly; // 0xfc
     /** Environment for this group */
-    ObjPtr<RndEnviron> mEnv; // 0x108
+    // ORDER IS RETAIL-VERIFIED: RndGroup::SyncProperty syncs `environ` at
+    // this+0xfc and `draw_only` at this+0x108 (vbase bias 0x148).  We had
+    // them the other way round.  Corroborated by the PropSync callee: environ
+    // uses its own overload while draw_only shares lod's, i.e. both of those
+    // are ObjPtr<RndDrawable>.
+    ObjPtr<RndEnviron> mEnv; // 0xfc
+    /** "if set, only draws this member of the group" */
+    ObjPtr<RndDrawable> mDrawOnly; // 0x108
     /** LOD drawable for this group */
     ObjPtr<RndDrawable> mLod; // 0x114
     /** Screen size threshold for LOD switching */
