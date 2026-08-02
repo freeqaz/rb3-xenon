@@ -15,17 +15,24 @@ All 39 bones satisfy the rigid-skeleton invariant exactly.
 
 ```
 === char/crowd/gen/crowd_female01.milo_xbox ===
-  clips: loaded 'char/crowd/anim/gen/female_base.milo_xbox'
-  clips: 44 CharClip(s) available; playing 'crowd_reaching_01' (beats 0.00..30.00, 61 frames)
+  clips: loaded 'char/crowd/anim/gen/female_base.milo_xbox' (root 'female_base' [CharClipSet])
+  clips: 44 CharClip(s) available; playing 'crowd_reaching_01' (beats 3.57..10.71, 101 frames)
   clips: bones stuffed into CharServoBone 'bone.servo'
-  clips: polled 41 time(s) to beat 8.145 (bpm 120.0, 2.000 s)
+  clips: polled 41 time(s) to beat 7.571 (bpm 120.0, 2.000 s)
   [PASS] clip-driven — a real shipped CharClip was played through Character::Poll()
   [PASS] bone-length-invariant — max ratio 0.9999 over 39 bone(s)
                                  (deviation 7.47e-05; tolerance 1e-3)
-  [PASS] draws-issued — 6 of 6 · [PASS] png
-  [PASS] image-not-empty — coverage 23.12%, 21601 distinct colours
+  [PASS] draws-issued — 6 of 6 meshes issued a draw, 1 frame(s)
+  [PASS] png — sha256 f64471c105ff98c2…
+  [PASS] image-not-empty — coverage 22.80%, 20185 distinct colours
 RESULT: ALL GATES PASSED (0 gate failure(s))
 ```
+
+⚠ **Cite the clip by name.** With no `--clip` the driver takes the first
+`CharClip` in the dir, which for this asset is `crowd_carry_surfer_01`
+(`sha256 7c7dd7ee1c11f1f0…`, coverage 23.12%) — a different, equally valid
+result. Every number in this document is from the **`--clip crowd_reaching_01`**
+run above, which is what the Reproduce block runs.
 
 ★ **Two defects were found, and both were silent.** Neither produced an assert,
 a log line, or a crash. One made **every `Sine()` and `Cosine()` in the entire
@@ -59,7 +66,7 @@ and two of them were already compiled and linked into every binary.
 | a | Full native target gate, **fresh**, on the rebased tree | ✅ **PASS — 18/18** | `tools/native_build_gate.sh` → `PASS (rc=0, 0 errors, 0 warnings, 18/18)`. Run in a worktree with **no `build/` directory at all**, so no binary could be stale by construction — every target reported `relinked this run`. |
 | b | Zero `milo-native-engine` source edits | ✅ **PASS** | Engine `HEAD` = `138e1606…` = the new pin. Two engine requests are filed as text in §7, not as edits. |
 | c | Shared-`src/` edits `HX_NATIVE`-gated, X360 arm token-for-token | ✅ **PASS — 2 files** | `math/mtx.cpp` and `math/Trig.cpp`. Both changes are entirely inside `#ifdef HX_NATIVE`; the match build passes no `/D` at all, so the X360 token stream is unchanged. Neither is a decomp-bug promotion, so no objdiff A/B debt is incurred. |
-| d | PNG determinism ×2 on every cited image | ✅ **PASS** | Posed cell `sha256 7c7dd7ee1c11f1f0…` identical ×2 at `--frames 1`. X3 cells identical ×2. |
+| d | PNG determinism ×2 on every cited image | ✅ **PASS** | Posed cell `sha256 f64471c105ff98c2…` identical ×2 at `--frames 1`. X3 cells identical ×2 (`cbdb29fa…`, `30692a8d…`). All measured on the rebased tree after a from-zero relink. |
 | e | X3 + X4a no-regression | ✅ **PASS — byte-identical, 4/4** | `cbdb29fa95a5b574…`, `30692a8d02c1ada0…`, `d9624b900a1b0699…`, `d30f600d8ea3bcfe…` — the exact SHAs X3 and X4a recorded. Re-verified **after each** of the three landed source changes, not once at the end. |
 
 ### Reproduce
@@ -366,6 +373,10 @@ cap.
 | bind pose, `kNewGfx` | **15.78%** | 18882 | ✅ **better — and this CONFIRMS the diagnosis** |
 | posed, truncated (today) | 23.12% | 21601 | smeared |
 | posed, `kNewGfx` | **0.00%** | 1 | ❌ frame empty — geometry leaves the camera |
+
+(The two posed rows are the default-clip `crowd_carry_surfer_01` leg, which is
+how the A/B was run; the comparison is ON vs OFF at a fixed clip, so the choice
+of clip does not affect the conclusion.)
 
 ★ The bind-pose row is the confirming evidence: the extra 4.7 points of coverage
 are precisely the vertices the truncation had pinned at bind coordinates, now
