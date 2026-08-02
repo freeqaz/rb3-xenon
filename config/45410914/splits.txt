@@ -3124,7 +3124,6 @@ HamCamTransform.cpp:
 	.pdata      start:0x82213A38 end:0x82213A40
 	.pdata      start:0x822382C0 end:0x822382C8
 	.pdata      start:0x8223B108 end:0x8223B150
-	.pdata      start:0x8223D028 end:0x8223D040
 	.pdata      start:0x8223D138 end:0x8223D140
 	.text       start:0x82273860 end:0x82273938
 	.text       start:0x8229D350 end:0x8229D434
@@ -3177,7 +3176,6 @@ HamCamTransform.cpp:
 	.text       start:0x824C5650 end:0x824C56D4
 	.text       start:0x8270A9B8 end:0x8270AA38
 	.text       start:0x82744854 end:0x82744E38
-	.text       start:0x827672C0 end:0x82767418
 	.text       start:0x827685E0 end:0x82768630
 
 Spline.cpp:
@@ -6188,6 +6186,7 @@ Msg.cpp:
 	.pdata      start:0x8223CFD0 end:0x8223CFF0
 	.pdata      start:0x8223CFF0 end:0x8223CFF8
 	.pdata      start:0x8223D008 end:0x8223D028
+	.pdata      start:0x8223D028 end:0x8223D040
 	.pdata      start:0x8223D058 end:0x8223D080
 	.pdata      start:0x8223D080 end:0x8223D088
 	.pdata      start:0x8223D088 end:0x8223D0A0
@@ -6219,6 +6218,7 @@ Msg.cpp:
 	.text       start:0x82766CC0 end:0x82766E88
 	.text       start:0x82766E88 end:0x82766EF8
 	.text       start:0x82766FA8 end:0x827672C0
+	.text       start:0x827672C0 end:0x82767418
 	.text       start:0x827674F0 end:0x82767780
 	.text       start:0x82767780 end:0x827677D8
 	.text       start:0x827677D8 end:0x82767A48

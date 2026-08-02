@@ -187,8 +187,17 @@ DataNode SetBSPParams(DataArray *da) {
 void GeoInit() {
     DataArray *cfg = SystemConfig("math");
     auto _tmp4 = cfg->FindArray("bsp_check_scale")->Float(1);
-    auto _tmp2 = cfg->FindArray("bsp_max_depth")->Int(1);
-    SetBSPParams(cfg->FindArray("bsp_pos_tol")->Float(1), cfg->FindArray("bsp_dir_tol")->Float(1), _tmp2, cfg->FindArray("bsp_max_candidates")->Int(1), _tmp4);
+    // Retail constructs the property Symbols in the order
+    //   math, bsp_check_scale, bsp_max_candidates, bsp_max_depth, bsp_dir_tol,
+    //   bsp_pos_tol, set_bsp_params
+    // MSVC evaluates call arguments right-to-left, so whichever FindArray is
+    // HOISTED runs first and the rest run in reverse argument order.  Hoisting
+    // bsp_max_depth (as this line used to) yields ..depth, candidates.. -- the
+    // swap retail does not have.  Hoisting bsp_max_candidates instead
+    // reproduces retail's order.  ⚠ Property names are RELOCATION ARGS, which
+    // report.rs:394 masks, so this ordering is invisible to the default ruler.
+    auto _tmp2 = cfg->FindArray("bsp_max_candidates")->Int(1);
+    SetBSPParams(cfg->FindArray("bsp_pos_tol")->Float(1), cfg->FindArray("bsp_dir_tol")->Float(1), cfg->FindArray("bsp_max_depth")->Int(1), _tmp2, _tmp4);
     DataRegisterFunc("set_bsp_params", SetBSPParams);
 }
 

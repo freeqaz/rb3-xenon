@@ -125,6 +125,18 @@ class Image:
         return s["rawptr"] + d if d < s["rawsize"] else None
 
     def cstr(self, va, maxlen=512):
+        """C string at `va`, or None if unmapped / not printable ASCII.
+
+        ⚠ A ZERO-LENGTH string is a REAL RESULT, not a failure.  This returned
+        None for `raw == b""` until lane CV-3, and that one line manufactured a
+        whole artifact class: retail's `Symbol("")` (the NUL at .rdata 0x82000C55)
+        decoded to None -> dropped from the list, while OUR side went through
+        demangle_literal() which correctly returns "".  The lists then differed by
+        a phantom extra entry and 5 rows read as at-100 defects.  CS-4 saw the
+        5 rows and attributed them to "literal ours vs global char* retail";
+        CT-4 proved that mechanism false for all 5 but left the bug in place.
+        Fixed at the root here -- both sides now yield "".
+        """
         off = self.va_to_off(va)
         if off is None:
             return None
@@ -133,7 +145,7 @@ class Image:
             return None
         raw = self.data[off:end]
         if not raw:
-            return None
+            return ""
         try:
             s = raw.decode("ascii")
         except UnicodeDecodeError:
@@ -173,10 +185,26 @@ def defines(w):
         return {_ra(w)}
     if op in (20, 21, 23):                           # rlwimi rlwinm rlwnm
         return {_ra(w)}
-    if op in (32, 33, 34, 35, 40, 41, 42, 43, 48, 49, 50, 51, 58):
-        # lwz(u) lbz(u) lhz(u) lha(u) lfs lfd ld  -- RT written (float ones write FPRs)
-        return {_rt(w)} if op in (32, 33, 34, 35, 40, 41, 42, 43, 58) else set()
-    if op in (36, 37, 38, 39, 44, 45, 52, 53, 54, 55, 62):   # stores
+    if op in (32, 34, 40, 42, 58):                   # lwz lbz lhz lha ld -- RT
+        return {_rt(w)}
+    if op in (33, 35, 41, 43):                       # lwzu lbzu lhzu lhau
+        return {_rt(w), _ra(w)}                      # ⚠ update form writes RA TOO
+    if op in (48, 50):                               # lfs lfd -- FPR only
+        return set()
+    if op in (49, 51):                               # lfsu lfdu -- FPR + RA
+        return {_ra(w)}
+    if op in (36, 38, 44, 47, 52, 54, 62):           # stw stb sth stmw stfs stfd std
+        return set()
+    if op in (37, 39, 45, 53, 55):                   # stwu stbu sthu stfsu stfdu
+        return {_ra(w)}                              # ⚠ update form writes RA
+    if op in (59, 63):
+        # ★ FP arithmetic (fadds/fmr/frsp/fcfid/...).  These write FPRs and can
+        # NEVER touch a GPR, but returning None made them BARRIERS -- which is
+        # how lane CV-3's image scanner lost 7 property lists: an `fmr f30,f1`
+        # scheduled between `lis r11,hi` and `addi r4,r11,lo` truncated the
+        # backward scan.  Conservatism is only safe when it costs nothing; here
+        # it cost real coverage, silently, in the "list looks SHORTER" direction
+        # -- i.e. it manufactures fake "our source has SURPLUS properties".
         return set()
     if op in (16, 18):                               # bc, b/bl
         return None if (w & 1) else set()            # lk=1 clobbers r3..r12
@@ -438,6 +466,150 @@ class Extractor:
         """Resolved property names only (legacy CQ-3 shape)."""
         sl = self.slots(obj_path, symbol)
         return None if sl is None else [n for k, n in sl if k == "literal"]
+
+
+# ------------------------------------------------- whole-image scanner ------
+
+SYMBOL_CTOR_VA = 0x827C0728        # ??0Symbol@@QAA@PBD@Z in retail band.exe
+
+
+class ImageScanner:
+    """Pin-independent, map-independent retail property census (lane CV-3).
+
+    `Extractor` can only see a function that lives in a unit with a `.text` pin,
+    because it reads dtk-split TARGET objs.  This class reads band.exe directly:
+    every `bl 0x827C0728` in `.text`, backward-resolved for r4, grouped into
+    functions by `.pdata`.  It answers "what is the TRUE denominator" without
+    trusting splits.txt, the symbol map, or objdiff pairing.
+
+    ⚠ It is NOT a replacement for `Extractor`.  It has no notion of OUR side, so
+    it cannot find a defect on its own -- it sizes the population and supplies
+    retail lists for functions that have no target obj at all.
+
+    MEASURED 2026-08-02 on band.exe: 11,990 sites / 3,556 owning functions, of
+    which 11,844 sites (98.78%) fall inside a pinned `.text` range.  So the
+    "pinned" filter -- the third of the finder's three filters -- is NOT a
+    blind spot; the blind spots are `named` and `at-100`.
+    """
+
+    def __init__(self, image, ctor_va=SYMBOL_CTOR_VA):
+        self.img = image
+        self.ctor = ctor_va
+        self.text = next(s for s in image.sections if s["name"] == ".text")
+        self.blob = image.data[self.text["rawptr"]:
+                               self.text["rawptr"] + self.text["rawsize"]]
+        self.base = self.text["va"]
+        self.starts = self._pdata_starts()
+        self.stats = {"sites": 0, "literal": 0, "dynamic": 0, "unresolved": 0,
+                      "bad_string": 0}
+
+    def _pdata_starts(self):
+        pd = next((s for s in self.img.sections if s["name"] == ".pdata"), None)
+        if pd is None:
+            return []
+        out = []
+        for i in range(pd["rawsize"] // 8):
+            b = struct.unpack_from(">I", self.img.data, pd["rawptr"] + i * 8)[0]
+            if b:
+                out.append(b)
+        out.sort()
+        return out
+
+    def owner(self, va):
+        """`.pdata` BeginAddress covering `va`.
+
+        ⚠ `.pdata`-absence is NOT a 'not a function' test on this binary (see
+        CLAUDE.md band.exe read traps) -- this is a grouping key, nothing more.
+        """
+        i = _bisect.bisect_right(self.starts, va) - 1
+        return self.starts[i] if i >= 0 else None
+
+    def call_sites(self):
+        """Every `bl <ctor>` VA in `.text`, ascending."""
+        out, blob, base = [], self.blob, self.base
+        for off in range(0, len(blob) - 3, 4):
+            w = struct.unpack_from(">I", blob, off)[0]
+            if (w >> 26) == 18 and (w & 3) == 1:      # b, LK=1, AA=0
+                d = w & 0x03FFFFFC
+                if d & 0x02000000:
+                    d -= 0x04000000
+                if base + off + d == self.ctor:
+                    out.append(base + off)
+        return out
+
+    def _word(self, va):
+        return struct.unpack_from(">I", self.blob, va - self.base)[0]
+
+    def _resolve_r4(self, call_va, window=64):
+        """Backward-scan the LINKED image for r4's `lis`/`addi` pair.
+
+        Unlike the obj-level tracker there are no relocations here; the address
+        is materialised as `addis rX,0,hi` + `addi r4,rX,lo`.  Returns a VA, or
+        None when r4 comes from a load/computation (genuinely dynamic).
+        """
+        lo_imm = None
+        need = 4
+        va = call_va - 4
+        stop = max(self.base, call_va - window * 4)
+        while va >= stop:
+            w = self._word(va)
+            dset = defines(w)
+            if dset is None:
+                return None
+            if need in dset:
+                op, ra = _op(w), _ra(w)
+                if op == 14:                                  # addi rD,rA,simm
+                    if ra == 0:
+                        return _simm(w) & 0xFFFFFFFF
+                    if lo_imm is not None:
+                        return None                           # two addis, give up
+                    lo_imm, need = _simm(w), ra
+                    va -= 4
+                    continue
+                if op == 15:                                  # addis rD,rA,simm
+                    if ra != 0:
+                        return None
+                    hi = (_simm(w) << 16) & 0xFFFFFFFF
+                    return (hi + (lo_imm or 0)) & 0xFFFFFFFF
+                return None
+            va -= 4
+        return None
+
+    def census(self):
+        """-> {owner_va: [(site_va, kind, name_or_None), ...]} in call order."""
+        out = {}
+        for site in self.call_sites():
+            self.stats["sites"] += 1
+            va = self._resolve_r4(site)
+            if va is None:
+                self.stats["dynamic"] += 1
+                rec = ("dynamic", None)
+            else:
+                s = self.img.cstr(va)
+                if s is None:
+                    self.stats["bad_string"] += 1
+                    rec = ("unnamed", va)
+                else:
+                    self.stats["literal"] += 1
+                    rec = ("literal", s)
+            o = self.owner(site)
+            if o is None:
+                self.stats["unresolved"] += 1
+                continue
+            out.setdefault(o, []).append((site,) + rec)
+        return out
+
+    def lists(self):
+        """-> {owner_va: [literal names in call order]} (owners with >=1 name)."""
+        out = {}
+        for o, sl in self.census().items():
+            names = [n for _, k, n in sl if k == "literal"]
+            if names:
+                out[o] = names
+        return out
+
+
+import bisect as _bisect  # noqa: E402  (used by ImageScanner.owner)
 
 
 # ------------------------------------------------------------------ CLI -----
@@ -703,6 +875,97 @@ def cmd_stats(a, ex, root):
     print(f"resolved {t['resolved']}/{t['sites']} = {100.0*t['resolved']/tot:.2f}%")
 
 
+def cmd_scan(a, ex, root):
+    """Whole-binary census + the control that can FALSIFY the image scanner.
+
+    The scanner (linked-image lis/addi) and the Extractor (obj relocations) are
+    INDEPENDENT mechanisms reading independent artifacts.  On a pinned, named
+    retail symbol they must produce the same list; a disagreement falsifies one
+    of them.  This is deliberately not the `retail-vs-ours` shape, which cannot
+    fail (identical bytes -> the tracker agrees with itself).
+    """
+    sc = ImageScanner(ex.img)
+    lists = sc.lists()
+    print("[image scan] " + json.dumps(sc.stats))
+    print(f"  owning functions with >=1 named property: {len(lists)}")
+
+    # pin coverage
+    rng, cur = [], None
+    for ln in open(os.path.join(root, "config/45410914/splits.txt")):
+        m = re.match(r"^(\S.*):\s*$", ln)
+        if m:
+            cur = m.group(1)
+            continue
+        m = re.match(r"\s+\.text\s+start:0x([0-9A-Fa-f]+)\s+end:0x([0-9A-Fa-f]+)", ln)
+        if m and cur:
+            rng.append((int(m.group(1), 16), int(m.group(2), 16)))
+    rng.sort()
+    import bisect
+    st = [r[0] for r in rng]
+    inpin = 0
+    for o in lists:
+        i = bisect.bisect_right(st, o) - 1
+        if i >= 0 and o < rng[i][1]:
+            inpin += 1
+    print(f"  of those, inside a pinned .text range: {inpin} "
+          f"({100.0 * inpin / max(1, len(lists)):.2f}%)  UNPINNED: {len(lists) - inpin}")
+
+    if a.control:
+        units = {u["name"]: u for u in load_units(root)}
+        addr = {}
+        try:
+            sm = json.load(open(os.path.join(root, "scripts/target_symbol_map.json")))
+            for k, v in sm.items():
+                # ⚠ the map carries non-address bookkeeping keys
+                # (e.g. `_splits_fill_unresolved_comment`) -- int(k,16) throws.
+                if re.fullmatch(r"0x[0-9A-Fa-f]{8}", k) and isinstance(v, str):
+                    addr[v] = int(k, 16)
+        except OSError:
+            pass
+        ok = bad = skip = 0
+        bads = []
+        for u in load_units(root):
+            tp = u.get("target_path")
+            if not tp or not os.path.exists(os.path.join(root, tp)):
+                continue
+            p = os.path.join(root, tp)
+            c = ex.obj(p)
+            if c is None:
+                continue
+            for name in list(c.symbol_map):
+                if name.startswith((".", "except_data", "__", "$")) or name not in addr:
+                    continue
+                try:
+                    t = ex.props(p, name)
+                except Exception:
+                    continue
+                if not t:
+                    continue
+                s = lists.get(addr[name])
+                if s is None:
+                    skip += 1
+                elif s == t:
+                    ok += 1
+                else:
+                    bad += 1
+                    if len(bads) < 8:
+                        bads.append((name, addr[name], t, s))
+            ex._objs.pop(p, None)
+            ex._boundcache.pop(p, None)
+            for k in [k for k in ex._seccache if k[0] == p]:
+                ex._seccache.pop(k, None)
+        print(f"\n[control image-scan vs obj-extractor]  agree={ok} DISAGREE={bad} "
+              f"no-pdata-owner={skip}")
+        print("  Two independent mechanisms (linked-image lis/addi vs COFF relocs).")
+        print("  Unlike retail-vs-ours, this control CAN fail.")
+        for n, va, t, s in bads:
+            print(f"   {n[:70]} @ {va:#x}\n     obj  ={t}\n     image={s}")
+    if a.out:
+        json.dump({f"{k:#010x}": v for k, v in lists.items()},
+                  open(a.out, "w"), indent=0)
+        print(f"\nwrote {a.out}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -721,11 +984,15 @@ def main():
     c.add_argument("--control", default="all",
                    choices=["all", "retail-vs-ours", "retail-vs-source", "misname"])
     sub.add_parser("stats", help="site-class census over all target objs")
+    sc = sub.add_parser("scan", help="pin-independent whole-binary census (CV-3)")
+    sc.add_argument("--control", action="store_true",
+                    help="cross-check the image scanner against the obj extractor")
+    sc.add_argument("--out", default=None, help="write {owner_va: [names]} JSON")
     a = ap.parse_args()
     root = a.root or _repo_root()
     ex = Extractor(root, bound_to_symbol=not a.no_bound)
     {"dump": cmd_dump, "index": cmd_index, "control": cmd_control,
-     "verify": cmd_verify, "stats": cmd_stats}[a.cmd](a, ex, root)
+     "verify": cmd_verify, "stats": cmd_stats, "scan": cmd_scan}[a.cmd](a, ex, root)
 
 
 if __name__ == "__main__":
