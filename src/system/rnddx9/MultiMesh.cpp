@@ -91,7 +91,7 @@ void DxMultiMesh::UpdateGeometryBuffers() {
     void *temp_r11_4;
     s32 temp_r3_2;
     void *temp_r27;
-    Symbol sym("D3D(phys)3Mesh");
+    Symbol sym("D3D(phys):Mesh");
     PhysMemTypeTracker tracker(sym);
     s32 temp_r8;
     void *var_r3;

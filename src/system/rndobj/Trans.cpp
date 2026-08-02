@@ -87,7 +87,7 @@ BEGIN_HANDLERS(RndTransformable)
     HANDLE_ACTION(
         distribute_children, DistributeChildren(_msg->Int(2) != 0, _msg->Float(3))
     )
-    HANDLE(get_trans_children, OnGetChildren)
+    HANDLE(get_children, OnGetChildren)
     HANDLE_VIRTUAL_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
