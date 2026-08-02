@@ -61,7 +61,12 @@
                     "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
-            "system/bandobj/BandCharDesc.cpp": "NonMatching",
+            "system/bandobj/BandCharDesc.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
             "system/bandobj/BandButton.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -114,7 +119,8 @@
             "system/bandobj/BandTrack.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
             "system/bandobj/BandWardrobe.cpp": {
@@ -151,7 +157,8 @@
             "system/bandobj/OvershellDir.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
             "system/bandobj/PlayerDiffIcon.cpp": {
@@ -202,7 +209,8 @@
             "system/bandobj/GemTrackDir.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
             "system/bandobj/NoteTube.cpp": "NonMatching",
@@ -227,7 +235,12 @@
                     "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
-            "system/track/TrackDir.cpp": "NonMatching",
+            "system/track/TrackDir.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
             "system/track/TrackWidget.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -356,7 +369,12 @@
             "system/ui/ScrollSelect.cpp": "NonMatching",
             "system/ui/UIScreen.cpp": "NonMatching",
             "system/ui/UIPanel.cpp": "NonMatching",
-            "system/world/EventAnim.cpp": "NonMatching",
+            "system/world/EventAnim.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
             "system/world/FreeCamera.cpp": "NonMatching",
             "system/world/LightHue.cpp": "NonMatching",
             "system/world/Instance.cpp": "NonMatching",
@@ -422,7 +440,12 @@
             "system/char/CharIKRod.cpp": "NonMatching",
             "system/char/CharSleeve.cpp": "NonMatching",
             "system/char/CharTaskMgr.cpp": "NonMatching",
-            "system/char/CharUpperTwist.cpp": "NonMatching",
+            "system/char/CharUpperTwist.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
             "system/flow/FlowIf.cpp": "NonMatching",
             "system/oggvorbis/bitrate.c": "NonMatching",
             "system/oggvorbis/lsp.c": "NonMatching",
@@ -673,7 +696,12 @@
             "system/synth/SampleInst.cpp": "NonMatching",
             "system/os/User.cpp": "NonMatching",
             "system/flow/Flow.cpp": "NonMatching",
-            "system/char/CharInterest.cpp": "NonMatching",
+            "system/char/CharInterest.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
             "system/synth/VorbisReader.cpp": "NonMatching",
             "system/movie/TexMovie.cpp": "NonMatching",
             "system/char/CharCuff.cpp": "NonMatching",
@@ -751,7 +779,12 @@
             "system/rndobj/PartLauncher.cpp": "NonMatching",
             "system/obj/DataNode.cpp": "NonMatching",
             "system/os/FileCache.cpp": "NonMatching",
-            "system/rndobj/Wind.cpp": "NonMatching",
+            "system/rndobj/Wind.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
             "system/rndobj/Line.cpp": "NonMatching",
             "system/rndobj/Font3d.cpp": "NonMatching",
             "system/rndobj/Movie.cpp": "NonMatching",

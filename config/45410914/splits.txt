@@ -2011,21 +2011,25 @@ CharUpperTwist.cpp:
 	.pdata      start:0x821FD2E0 end:0x821FD2E8
 	.pdata      start:0x82206138 end:0x82206180
 	.pdata      start:0x822061B0 end:0x822061C0
+	.pdata      start:0x822061D8 end:0x822061E0
 	.pdata      start:0x82206200 end:0x82206210
 	.pdata      start:0x8220FD20 end:0x8220FD28
 	.text       start:0x82329FD8 end:0x8232A3A8
 	.text       start:0x8232A438 end:0x8232A4B0
 	.text       start:0x823C69B0 end:0x823C6E30
 	.text       start:0x823C70E8 end:0x823C7204
+	.text       start:0x823C73F8 end:0x823C7558
 	.text       start:0x823C7620 end:0x823C7768
 	.text       start:0x82479100 end:0x82479144
 
 FlowIf.cpp:
 	.pdata      start:0x82206198 end:0x822061B0
-	.pdata      start:0x822061C0 end:0x82206200
+	.pdata      start:0x822061C0 end:0x822061D8
+	.pdata      start:0x822061E0 end:0x82206200
 	.text       start:0x823C6FE8 end:0x823C7000
 	.text       start:0x823C7000 end:0x823C70E8
-	.text       start:0x823C7204 end:0x823C761C
+	.text       start:0x823C7204 end:0x823C73F8
+	.text       start:0x823C7558 end:0x823C761C
 
 bitrate.c:
 	.pdata      start:0x822610F0 end:0x82261100
