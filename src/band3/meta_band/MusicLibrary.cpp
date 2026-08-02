@@ -367,10 +367,15 @@ void MusicLibrary::OnExit() {
        our local stub class MusicLibraryUnkOp conflates that class with a second,
        entirely UNMAPPED cluster at 0x825A3DC8-0x825A4860 (the addresses this
        header annotates for Poll/Finish/ClearPreview/SetStorePreview/ctor are all
-       absent from target_symbol_map.json). The 0x825A3DC8 annotation on
-       ClearPreview below is therefore WRONG; the function retail calls here is
-       0x825BC908. Not repaired in this lane: it is an identification question and
-       it changes no codegen, because the default ruler masks relocation args. */
+       absent from target_symbol_map.json, and each lies strictly INSIDE an
+       unrelated named function, so none can be a function start).
+       UPDATE (lane CR-3): the ClearPreview annotation is now corrected to
+       0x825BC908 in the header, and ClearSongPreview -- which was calling this
+       same ClearPreview but should call the distinct thunk 0x825BC900 -- is fixed.
+       Still NOT repaired: unk19c is declared MusicLibraryUnkOp* when its real type
+       is MusicLibraryStore*. Retyping it touches ~10 call sites plus mStoreArt and
+       the ctor, risks regressing a large matched TU, and pays 0 in both currencies,
+       so it was left to a lane that can afford the whole-file A/B. */
     unk19c->ClearPreview();
     if (unke8 != kNumSongSortTypes) {
         TheSongSortMgr->GetSort(unke8)->CancelMakeReady();
@@ -563,10 +568,20 @@ void MusicLibrary::ReportSortAndFilters() {
 void MusicLibrary::ClearSongPreview() {
     mLastSongPreview = gNullStr;
     mSongPreviewTimer.Reset();
-    // Retail calls the single-arg Start(Symbol) (fn_827808B0), then unconditionally
-    // clears the pending content op's preview (fn_825A3DC8(unk19c)).
+    // Retail calls the single-arg Start(Symbol) (fn_827808B0), then tail-calls
+    // 0x825BC900 on unk19c.
     mSongPreview.Start(gNullStr);
-    unk19c->ClearPreview();
+    /* ⚠ NOT ClearPreview -- this was a 100/100 function calling the WRONG callee
+       (lane CR-3). Retail ClearSongPreview (0x8253AD00) ends `lwz r3,0x19c(r31);
+       bl 0x825BC900`, whereas OnExit ends `lwz r3,0x19c(this); bl 0x825BC908`.
+       They are two DIFFERENT functions eight bytes apart: 0x825BC908 is
+       ?ClearPreview@MusicLibraryStore@@QAAXXZ (208 B, own .pdata), while
+       0x825BC900 is a 2-instruction thunk `mPreviewMgr->ClearCurrentPreview()`.
+       The prior "retail fn_825A3DC8" annotation here was wrong on both counts.
+       Invisible to the default ruler (relocation args are masked), so this fix is
+       worth exactly 0 matched functions and 0 bytes -- it is a correctness repair,
+       and a metric that hides a wrong callee is worse than a lower metric. */
+    unk19c->Unk825BC900();
 }
 
 void MusicLibrary::StartSongPreview() {

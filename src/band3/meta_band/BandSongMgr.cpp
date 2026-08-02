@@ -55,9 +55,34 @@ struct ExclusionEntry {
     int songID;
 };
 
+/* TWO entries, not the four the rb3-Wii dev oracle carries. This is a real
+   behaviour change and it is deliberate: our target is TU5, and TU5 shrank this
+   table. Evidence is retail bytes, not the oracle (lane CR-3):
+
+     - TU5 .rdata @0x8209DE28 holds exactly two {const char*, int} pairs:
+       0x8209DE00 "hierkommtalex"/1005106 and 0x8209DDF0 "rockandrollstar"/1005109.
+       Index [2] is string-pool garbage, so the array genuinely ends at two.
+     - TU5's IsInExclusionList (0x825755B8) bounds its loop `cmplwi r7,0x10`
+       = 16 bytes = 2 entries, which is where our `i < 2U` came from.
+     - TU0 (orig/45410914/tu0-archive/band.exe) has the OTHER shape: a FOUR-entry
+       table @0x8209C1B4 in exactly the Wii order (danicalifornia/8,
+       blackholesun/3, hierkommtalex/1005106, rockandrollstar/1005109) and a loop
+       bounded `cmplwi r7,0x20` = 4 entries. So the Wii oracle == TU0, and TU5 is
+       a deliberate Harmonix source change (those two songs stopped being excluded).
+     - Corroborated independently by string presence: TU0 contains bare C-strings
+       for all four names; TU5 contains bare strings ONLY for hierkommtalex and
+       rockandrollstar. (danicalifornia/blackholesun still appear in TU5 but only
+       inside "./songs/updates/<name>/<name>_update.mid" paths -- which is the
+       false positive that made an earlier lane conclude "all four are present in
+       retail". Presence is not table membership.)
+
+   Keeping the Wii's four entries alongside TU5's `i < 2U` bound was the worst of
+   both worlds: it checked danicalifornia/blackholesun and never looked at the two
+   songs TU5 actually excludes. Not scored either way -- BandSongMgr.cpp pins only
+   .text, so this array is not in the diffed sections. Note also that retail's copy
+   lives in .rdata, i.e. it is const in the real source; left non-const here because
+   nothing measures it and const-ness is not what this fix is about. */
 ExclusionEntry exclusionList[] = {
-    { "danicalifornia", 8 },
-    { "blackholesun", 3 },
     { "hierkommtalex", 1005106 },
     { "rockandrollstar", 1005109 },
 };
@@ -565,6 +590,39 @@ void BandSongMgr::AddSongData(
         // r16..r31, one more callee-save than the rb3-Wii shape) -- without it
         // every GPR in the loop is off by one.
         bool isReservedSongID = songID == 0x05E69EC1;
+        /* ⛔ KNOWN 1-INSTRUCTION MISMATCH, DELIBERATELY NOT "FIXED" (lane CR-3).
+           AddSongData is 99.632% / 652 B with exactly one mismatch in 163: retail
+           TU5 has `li r3,0` at index [60] where we emit this `bl`. Do not chase it
+           -- it is not reachable from C++, and both obvious source forms make the
+           function strictly WORSE. Measured, not assumed:
+
+             - TU5 @0x82579080: lwz r4,0x54(r31) / mr r3,r26 / mr r5,r27  -- a full,
+               live 3-argument setup for IsInExclusionList(this, name, songID) --
+               then `li r3,0`, then `clrlwi. r11,r3,0x18; bne`. The branch is NOT
+               folded even though r3 is provably 0, and six instructions of dead
+               code are left standing.
+             - TU0 @0x8256160C has the SAME argument setup and the SAME
+               normalize+branch, with a real `bl 0x8255DF90`. One instruction
+               differs between the two builds.
+             - In TU5 the callee survives at 0x825755B8 with ZERO callers in .text
+               and ZERO data references anywhere in the image.
+
+           Two source hypotheses were built and both were REFUTED empirically
+           against this compiler (cl 10224, /O1):
+             (A) `bool excluded = false; if (excluded)`  -> 94.9%
+             (B) early `return false;` in IsInExclusionList so it inlines as a
+                 constant (this was the standing hypothesis: "inlined callee folded
+                 to return false with the call-site bool-normalize left in") -> 94.9%
+           Both produce the IDENTICAL diff: MSVC deletes the three argument-setup
+           instructions AND folds the branch away (7 deletes, 2 replaces). This
+           compiler never leaves a bool-normalize on a constant, so hypothesis (B)
+           is false as a mechanism, not merely unlucky.
+
+           A live argument setup feeding a call that is not made, with the callee
+           left in the image unreferenced, is the signature of a post-compile
+           instruction substitution in the shipped TU5 image -- not of codegen.
+           Trading one mismatched instruction for six is a regression; leaving the
+           honest `bl` here costs exactly 1 matched function and 652 B. */
         if (IsInExclusionList(curSym.Str(), songID)) {
             MILO_LOG("Skipping song %s because not licensed for RB3.\n", curSym);
         } else if (songID == 0) {
@@ -605,6 +663,14 @@ void BandSongMgr::AddSongData(
     }
 }
 
+/* Matches retail TU5 100% (27/27 instructions). The literal 2U is the length of
+   exclusionList above and must move with it -- TU5 bounds this `cmplwi r7,0x10`
+   (2 entries); TU0 bounds it `cmplwi r7,0x20` (4). Deliberately spelled as a
+   literal rather than sizeof(): the literal is what currently reproduces retail
+   byte-for-byte, and there is nothing to gain by perturbing a 100% function.
+   NOTE: in TU5 this function is UNREACHABLE -- see the refusal note in
+   AddSongData. It has zero callers anywhere in TU5's .text and zero data
+   references; TU0 calls it exactly once, from AddSongData. */
 bool BandSongMgr::IsInExclusionList(const char *name, int songID) const {
     unsigned int i = 0;
     do {

@@ -35,7 +35,38 @@ public:
     virtual ~MusicLibraryUnkOp();
     void Poll(); // retail 0x825A50F8
     void Finish(); // retail 0x825A3ED0
-    void ClearPreview(); // retail 0x825A3DC8 — clears the op's active preview
+    /** Called from retail MusicLibrary::OnExit as `lwz r3,0x19c(this);
+        bl 0x825BC908`, and target_symbol_map.json names 0x825BC908
+        ?ClearPreview@MusicLibraryStore@@QAAXXZ (a 208-byte real body with its own
+        .pdata entry). ⚠ The "retail 0x825A3DC8" this line used to carry is WRONG:
+        0x825A3DC8 is +8 INTO _M_fill_insert<BeatCollisionData> and cannot be a
+        function start. Do NOT call this from ClearSongPreview -- that is a
+        different function; see Unk825BC900 below. */
+    void ClearPreview(); // retail 0x825BC908
+    /** MusicLibrary::ClearSongPreview's tail call. Retail (0x8253AD54):
+        `lwz r3,0x19c(r31); bl 0x825BC900`, and 0x825BC900 is a frameless
+        2-instruction tail-jump thunk:
+
+            0x825BC900  lwz r3, 0x4c(r3)
+            0x825BC904  b   0x827B1B78   ; ?ClearCurrentPreview@StorePreviewMgr@@QAAXXZ
+
+        i.e. a one-line method `{ mPreviewMgr->ClearCurrentPreview(); }`. Offset
+        0x4c is independently corroborated: MusicLibraryStore.h already declares
+        `StorePreviewMgr *mPreviewMgr; // 0x4c`.
+
+        ⚠ NAME UNKNOWN AND DELIBERATELY NOT GUESSED. 0x825BC900 is absent from
+        target_symbol_map.json, has no .pdata entry of its own (it is absorbed into
+        the extent of the function ending at 0x825BC8F8 -- a live instance of
+        ".pdata-absence is not a not-a-function test"), and neither oracle can name
+        it: DC3 and rb3-Wii have no MusicLibraryStore at all, and their only
+        ClearCurrentPreview callers are StorePreviewMgr's own
+        HANDLE_ACTION(clear_current_preview,...). Named after its address per the
+        Unk825BCA38 precedent below.
+
+        ⚠ Its true owner is MusicLibraryStore, not this stub -- see the class note.
+        Pays 0 in both currencies (the default ruler masks relocation args, which is
+        exactly why this bug scored 100/100 while calling the wrong function). */
+    void Unk825BC900(); // retail 0x825BC900
     void SetStorePreview(int); // retail 0x825A4288 — sets the store-song preview by song id
     bool IsDownloading(int); // retail 0x825BCBD0
     void LoadStoreArt(int, class Hmx::Object *); // retail 0x825BCC10
