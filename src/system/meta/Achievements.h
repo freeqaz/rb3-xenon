@@ -3,6 +3,8 @@
 #include "xdk/XAPILIB.h"
 #include <vector>
 
+class LocalUser;
+
 /**
  * @brief Handles Achievements.
  */
@@ -25,7 +27,7 @@ public:
     virtual DataNode Handle(DataArray *, bool);
 
     void Poll();
-    void Submit(int, Symbol, int);
+    void Submit(LocalUser *, Symbol, int);
     void SetAllowAchievements(bool allow) { mAllowAchievements = allow; }
 
     static void Init();

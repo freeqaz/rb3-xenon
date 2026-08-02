@@ -739,6 +739,16 @@ echo "==> Priming ninja state (SPLIT + config.json — scoped to avoid a full 72
     prime_log="$(mktemp)"
     if "$NINJA" "build/$VERSION/config.json" >"$prime_log" 2>&1; then
         tail -5 "$prime_log"
+        # The scoped prime above re-runs the SPLIT, which regenerates every target
+        # .obj *un-renamed*. The obj_target_symbol_renamer edge does NOT declare
+        # those objs as inputs (only the script, target_symbol_map.json and
+        # config.json), so whether it re-fires afterwards is decided by an mtime
+        # race between the just-written config.json and the reflink-COPIED stamp.
+        # When the copied stamp wins, the renames are never applied: target objs
+        # keep raw fn_<addr> names, nothing pairs, and the worktree silently
+        # measures ~4,731 matched functions LOW (42,963 -> 38,232) with a plain
+        # `ninja` unable to repair it. Drop the stamp so the renamer always runs.
+        rm -f "build/$VERSION/target_symbol_renames.stamp"
     else
         echo "WARN: ninja prime failed (the main tree may not build yet)." >&2
         echo "      The worktree is still configured and usable; fix the build inside it." >&2

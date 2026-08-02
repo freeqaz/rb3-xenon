@@ -3,6 +3,7 @@
 
 #include "obj/Object.h"
 #include "os/PlatformMgr.h"
+#include "os/User.h"
 #include "os/ThreadCall.h"
 
 Achievements *TheAchievements;
@@ -49,7 +50,8 @@ int Achievements::SubmitAchievementsFunc() {
 }
 #endif
 
-void Achievements::Submit(int i1, Symbol s2, int i3) {
+void Achievements::Submit(LocalUser *l, Symbol s2, int i3) {
+    int i1 = l->GetPadNum();
     if (ThePlatformMgr.IsPadNumSignedIn(i1)) {
         MILO_LOG("Achievement awarded: %s (id:%d, pad:%i)\n", s2, i3, i1);
         mAchieved.push_back(GetAchievementData(i1, i3));

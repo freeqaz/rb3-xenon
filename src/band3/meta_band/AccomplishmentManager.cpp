@@ -400,35 +400,34 @@ void AccomplishmentManager::ConfigureAccomplishmentCategoryData(DataArray *arr) 
         if (HasAccomplishmentCategory(name)) {
             MILO_WARN("%s accomplishment category already exists, skipping", name.Str());
             delete pAccomplishmentCategory;
-        } else {
-            Symbol group = pAccomplishmentCategory->GetGroup();
-            if (!HasAccomplishmentGroup(group)) {
+            continue;
+        }
+        Symbol group = pAccomplishmentCategory->GetGroup();
+        if (!HasAccomplishmentGroup(group)) {
+            MILO_WARN(
+                "%s accomplishment category has invalid group: %s, skipping",
+                name.Str(),
+                group.Str()
+            );
+            delete pAccomplishmentCategory;
+            continue;
+        }
+        if (pAccomplishmentCategory->HasAward()) {
+            Symbol award = pAccomplishmentCategory->GetAward();
+            if (!HasAward(award)) {
                 MILO_WARN(
-                    "%s accomplishment category has invalid group: %s, skipping",
+                    "%s accomplishment category is using unknown award: %s!",
                     name.Str(),
-                    group.Str()
+                    award.Str()
                 );
                 delete pAccomplishmentCategory;
-            } else {
-                if (pAccomplishmentCategory->HasAward()) {
-                    Symbol award = pAccomplishmentCategory->GetAward();
-                    if (!HasAward(award)) {
-                        MILO_WARN(
-                            "%s accomplishment category is using unknown award: %s!",
-                            name.Str(),
-                            award.Str()
-                        );
-                        delete pAccomplishmentCategory;
-                        continue;
-                    }
-                    AddAwardSource(
-                        pAccomplishmentCategory->GetAward(),
-                        pAccomplishmentCategory->GetName()
-                    );
-                }
-                mAccomplishmentCategory[name] = pAccomplishmentCategory;
+                continue;
             }
+            AddAwardSource(
+                pAccomplishmentCategory->GetAward(), pAccomplishmentCategory->GetName()
+            );
         }
+        mAccomplishmentCategory[name] = pAccomplishmentCategory;
     }
 }
 
@@ -441,24 +440,24 @@ void AccomplishmentManager::ConfigureAccomplishmentGroupData(DataArray *arr) {
         if (HasAccomplishmentGroup(name)) {
             MILO_WARN("%s accomplishment category already exists, skipping", name.Str());
             delete pAccomplishmentGroup;
-        } else {
-            if (pAccomplishmentGroup->HasAward()) {
-                Symbol award = pAccomplishmentGroup->GetAward();
-                if (!HasAward(award)) {
-                    MILO_WARN(
-                        "%s accomplishment group is using unknown award: %s!",
-                        name.Str(),
-                        award.Str()
-                    );
-                    delete pAccomplishmentGroup;
-                    continue;
-                }
-                AddAwardSource(
-                    pAccomplishmentGroup->GetAward(), pAccomplishmentGroup->GetName()
-                );
-            }
-            mAccomplishmentGroups[name] = pAccomplishmentGroup;
+            continue;
         }
+        if (pAccomplishmentGroup->HasAward()) {
+            Symbol award = pAccomplishmentGroup->GetAward();
+            if (!HasAward(award)) {
+                MILO_WARN(
+                    "%s accomplishment group is using unknown award: %s!",
+                    name.Str(),
+                    award.Str()
+                );
+                delete pAccomplishmentGroup;
+                continue;
+            }
+            AddAwardSource(
+                pAccomplishmentGroup->GetAward(), pAccomplishmentGroup->GetName()
+            );
+        }
+        mAccomplishmentGroups[name] = pAccomplishmentGroup;
     }
 }
 
@@ -915,7 +914,7 @@ void AccomplishmentManager::EarnAccomplishmentForProfile(BandProfile *p, Symbol 
         MILO_ASSERT(pAccomplishment, 0x510);
         int id = pAccomplishment->GetContextID();
         if (id != -1) {
-            TheAchievements->Submit(pProfileUser->GetPadNum(), s, id);
+            TheAchievements->Submit(pProfileUser, s, id);
         }
     }
 }
@@ -1205,6 +1204,7 @@ void AccomplishmentManager::HandleSongCompleted(Symbol s, Difficulty diff) {
         std::vector<LocalBandUser *> users;
         TheBandUserMgr->GetLocalParticipants(users);
         bool multiplayer = users.size() > 1;
+        static Symbol acc_multiplayersession("acc_multiplayersession");
         for (std::vector<LocalBandUser *>::iterator it = users.begin(); it != users.end();
              ++it) {
             LocalBandUser *pUser = *it;
@@ -1541,14 +1541,16 @@ Symbol AccomplishmentManager::GetNameForFirstNewAward(LocalBandUser *i_pUser) co
 }
 
 Symbol AccomplishmentManager::GetAwardDescription(Symbol s) const {
+    Symbol ret;
     if (s != "") {
         Award *pAward = GetAward(s);
         MILO_ASSERT(pAward, 0x96C);
-        return pAward->GetDescription();
+        ret = pAward->GetDescription();
     } else {
         MILO_ASSERT(false, 0x972);
-        return "";
+        ret = "";
     }
+    return ret;
 }
 
 Symbol AccomplishmentManager::GetAwardNameDisplay(Symbol s) const {
@@ -1633,7 +1635,7 @@ String AccomplishmentManager::GetAwardIcon(Symbol s) const {
         Award *pAward = GetAward(s);
         MILO_ASSERT(pAward, 0x9F0);
         const char *pFmt = "ui/accomplishments/award_art/%s_keep.png";
-        ret = MakeString(pFmt, pAward->GetIconArt().Str());
+        ret = MakeString(pFmt, pAward->GetIconArt());
     } else
         MILO_ASSERT(false, 0x9F9);
     return ret;
@@ -1647,8 +1649,10 @@ void AccomplishmentManager::ClearFirstNewAward(LocalBandUser *i_pUser) {
 }
 
 bool AccomplishmentManager::HasNewRewardVignettes() const {
-    if (!TheSessionMgr->GetLocalHost())
-        return false;
+    // NOTE: the rb3-Wii DEV oracle opens with `if (!TheSessionMgr->GetLocalHost())
+    // return false;`. RB3-360 retail has no such guard -- the target emits the
+    // "tour" Symbol construction directly after the prologue, and GetLocalHost is
+    // a virtual call that could not have been optimized away. Do not reinstate.
     if (TheGameMode->InMode("tour")) {
         TourProgress *pTourProgress = TheTour->GetTourProgress();
         if (pTourProgress && pTourProgress->IsOnTour())
@@ -1740,6 +1744,7 @@ Symbol AccomplishmentManager::GetFirstUnfinishedAccomplishmentEntry(
                 break;
             }
         }
+        static Symbol goal_filtersong_unknown("goal_filtersong_unknown");
         if (symFirst == goal_filtersong_unknown) {
             symFirst = pAccomplishment->GetFirstUnfinishedAccomplishmentEntry(i_pProfile);
         }
