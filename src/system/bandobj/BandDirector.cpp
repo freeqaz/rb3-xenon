@@ -759,14 +759,64 @@ void BandDirector::HarvestDircuts() {
     }
 }
 
-// Retail 0x8228DD38 (0x244 bytes). Placeholder: the real body re-drives the
-// per-character lip-sync assignment from the four CharLipSync* members retail
-// caches at 0x120-0x12c (see the declaration comment in BandDirector.h). Those
-// members do not exist in our layout yet — the block still lives inlined in
-// OnFileLoaded below, exactly as in the rb3-Wii dev source — so this is a no-op
-// for now, which is behaviour-identical to what the call site in
-// BandWardrobe::SetPlayMode did before the call was restored.
-void BandDirector::SetCharacterLipSyncs() {}
+// Retail 0x8228DD38 (0x244 bytes). Factored out of OnFileLoaded (lane CT-3):
+// the rb3-Wii dev source has this block inlined inside VenueLoaded, but retail
+// calls it from two places -- OnFileLoaded (0x82292350) and
+// BandWardrobe::SetPlayMode (0x823308F4) -- so it reads everything from members:
+// the four CharLipSync* cached at 0x120-0x12c by OnFileLoaded and mSongPref at
+// 0x130. Gated on TheBandWardrobe alone; there is no `dir` guard here, because
+// the caching already happened under `if (dir)` at the top of OnFileLoaded.
+void BandDirector::SetCharacterLipSyncs() {
+    if (TheBandWardrobe) {
+        Symbol guitarmodeinst =
+            mSongPref ? GetModeInst(mSongPref->Part2Inst()) : GetModeInst("guitar");
+        Symbol bassmodeinst =
+            mSongPref ? GetModeInst(mSongPref->Part3Inst()) : GetModeInst("bass");
+        Symbol drummodeinst =
+            mSongPref ? GetModeInst(mSongPref->Part4Inst()) : GetModeInst("drum");
+
+        BandCharacter *bchar2 = nullptr;
+        BandCharacter *bchar3 = nullptr;
+        BandCharacter *bchar4 = nullptr;
+        CharLipSyncDriver *thelipsyncdriver = nullptr;
+        for (int i = 0; i < 4; i++) {
+            BandCharacter *bcharcur = TheBandWardrobe->GetCharacter(i);
+            Symbol bcharinst = bcharcur->InstrumentType();
+            if (bcharinst == "mic") {
+                bcharcur->SetLipSync(mLipSyncs[0]);
+                bcharcur->SetSingalong(1.0f);
+                thelipsyncdriver = bcharcur->GetLipSyncDriver();
+            } else if (bcharinst == guitarmodeinst)
+                bchar2 = bcharcur;
+            else if (bcharinst == bassmodeinst)
+                bchar3 = bcharcur;
+            else if (bcharinst == drummodeinst)
+                bchar4 = bcharcur;
+        }
+
+        if (bchar2) {
+            bchar2->SetSingalong(0.0f);
+            if (mLipSyncs[1])
+                bchar2->SetLipSync(mLipSyncs[1]);
+            else
+                bchar2->SetSongOwner(thelipsyncdriver);
+        }
+        if (bchar3) {
+            bchar3->SetSingalong(0.0f);
+            if (mLipSyncs[2])
+                bchar3->SetLipSync(mLipSyncs[2]);
+            else
+                bchar3->SetSongOwner(thelipsyncdriver);
+        }
+        if (bchar4) {
+            bchar4->SetSingalong(0.0f);
+            if (mLipSyncs[3])
+                bchar4->SetLipSync(mLipSyncs[3]);
+            else
+                bchar4->SetSongOwner(thelipsyncdriver);
+        }
+    }
+}
 
 void BandDirector::AddSymbolKey(Symbol s1, Symbol s2, float f) {
     if (mPropAnim) {
@@ -1047,9 +1097,24 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
         if (dir) {
             mPropAnim = dir->Find<RndPropAnim>("song.anim", false);
             mSongPref = dir->Find<BandSongPref>("BandSongPref", false);
+            // Retail caches all four lip-syncs HERE (0x822915E4/5FC/614/62C),
+            // not down in the venue block; SetCharacterLipSyncs reads them
+            // back off this+0x120..0x12c.
+            mLipSyncs[0] = dir->Find<CharLipSync>("song.lipsync", false);
+            mLipSyncs[1] = dir->Find<CharLipSync>("part2.lipsync", false);
+            mLipSyncs[2] = dir->Find<CharLipSync>("part3.lipsync", false);
+            mLipSyncs[3] = dir->Find<CharLipSync>("part4.lipsync", false);
             if (TheBandWardrobe && mSongPref) {
                 TheBandWardrobe->SetSongAnimGenre(mSongPref->GetAnimGenre());
             }
+        } else {
+            // Retail .L_82291658: the dir-null arm clears the cached finds.
+            mPropAnim = nullptr;
+            mSongPref = nullptr;
+            mLipSyncs[0] = nullptr;
+            mLipSyncs[1] = nullptr;
+            mLipSyncs[2] = nullptr;
+            mLipSyncs[3] = nullptr;
         }
         if (!mPropAnim) {
             unk110 = true;
@@ -1059,7 +1124,10 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
             mPropAnim->SetName("song.anim", mMerger->Dir());
             mPropAnim->SetType("song_anim");
             mPropAnim->SetRate(RndAnimatable::k480_fpb);
+            mPropAnim->AddKeys(this, DataArrayPtr(Symbol("shot_5")), PropKeys::kSymbol);
             mPropAnim->AddKeys(this, DataArrayPtr(Symbol("shot_bg")), PropKeys::kSymbol);
+            mPropAnim->AddKeys(this, DataArrayPtr(Symbol("shot_bk")), PropKeys::kSymbol);
+            mPropAnim->AddKeys(this, DataArrayPtr(Symbol("shot_gk")), PropKeys::kSymbol);
             mPropAnim->AddKeys(
                 this, DataArrayPtr(Symbol("bass_intensity")), PropKeys::kSymbol
             );
@@ -1071,6 +1139,9 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
             );
             mPropAnim->AddKeys(
                 this, DataArrayPtr(Symbol("mic_intensity")), PropKeys::kSymbol
+            );
+            mPropAnim->AddKeys(
+                this, DataArrayPtr(Symbol("keyboard_intensity")), PropKeys::kSymbol
             );
             mPropAnim->AddKeys(this, DataArrayPtr(Symbol("crowd")), PropKeys::kSymbol);
             mPropAnim->AddKeys(
@@ -1119,9 +1190,12 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
             );
         } else
             unk110 = false;
-        const char *instIntensities[] = { "mic_intensity",  "bass_intensity",
-                                          "drum_intensity", "guitar_intensity",
-                                          "key_intensity",  0 };
+        // "key_intensity" (the rb3-Wii dev spelling) does not exist anywhere in
+        // retail band.exe; retail stores keyboard_intensity into the 5th slot of
+        // this stack array (stw r23, 0x1a0(r31) at 0x82292...).
+        const char *instIntensities[] = { "mic_intensity",     "bass_intensity",
+                                          "drum_intensity",    "guitar_intensity",
+                                          "keyboard_intensity", 0 };
         for (int i = 0; instIntensities[i] != 0; i++) {
             DataArrayPtr dptr((Symbol(instIntensities[i])));
             SymbolKeys *skeys =
@@ -1137,63 +1211,7 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
                     if (m)
                         m->StartLoad(true);
                 }
-                if (dir) {
-                    CharLipSync *sync = dir->Find<CharLipSync>("song.lipsync", false);
-                    Symbol guitarmodeinst = mSongPref
-                        ? GetModeInst(mSongPref->Part2Inst())
-                        : GetModeInst("guitar");
-                    Symbol bassmodeinst = mSongPref ? GetModeInst(mSongPref->Part3Inst())
-                                                    : GetModeInst("bass");
-                    Symbol drummodeinst = mSongPref ? GetModeInst(mSongPref->Part4Inst())
-                                                    : GetModeInst("drum");
-
-                    BandCharacter *bchar2 = nullptr;
-                    BandCharacter *bchar3 = nullptr;
-                    BandCharacter *bchar4 = nullptr;
-                    CharLipSyncDriver *thelipsyncdriver = nullptr;
-                    for (int i = 0; i < 4; i++) {
-                        BandCharacter *bcharcur = TheBandWardrobe->GetCharacter(i);
-                        Symbol bcharinst = bcharcur->InstrumentType();
-                        if (bcharinst == "mic") {
-                            bcharcur->SetLipSync(sync);
-                            bcharcur->SetSingalong(1.0f);
-                            thelipsyncdriver = bcharcur->GetLipSyncDriver();
-                        } else if (bcharinst == guitarmodeinst)
-                            bchar2 = bcharcur;
-                        else if (bcharinst == bassmodeinst)
-                            bchar3 = bcharcur;
-                        else if (bcharinst == drummodeinst)
-                            bchar4 = bcharcur;
-                    }
-
-                    if (bchar2) {
-                        bchar2->SetSingalong(0.0f);
-                        CharLipSync *lipsync2 =
-                            dir->Find<CharLipSync>("part2.lipsync", false);
-                        if (lipsync2)
-                            bchar2->SetLipSync(lipsync2);
-                        else
-                            bchar2->SetSongOwner(thelipsyncdriver);
-                    }
-                    if (bchar3) {
-                        bchar3->SetSingalong(0.0f);
-                        CharLipSync *lipsync3 =
-                            dir->Find<CharLipSync>("part3.lipsync", false);
-                        if (lipsync3)
-                            bchar3->SetLipSync(lipsync3);
-                        else
-                            bchar3->SetSongOwner(thelipsyncdriver);
-                    }
-                    if (bchar4) {
-                        bchar4->SetSingalong(0.0f);
-                        CharLipSync *lipsync4 =
-                            dir->Find<CharLipSync>("part4.lipsync", false);
-                        if (lipsync4)
-                            bchar4->SetLipSync(lipsync4);
-                        else
-                            bchar4->SetSongOwner(thelipsyncdriver);
-                    }
-                }
+                SetCharacterLipSyncs();
             } else {
                 FilePathTracker tracker(FileRoot());
                 FilePath fp("world/shared/world_chars.milo");

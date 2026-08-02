@@ -89,10 +89,11 @@ public:
      *   0x120 song.lipsync, 0x124 part2.lipsync, 0x128 part3.lipsync,
      *   0x12c part4.lipsync (all CharLipSync*, cached by OnFileLoaded at
      *   0x822915E4/5FC/614/62C), and mSongPref at 0x130.
-     * TODO: body cannot be written faithfully until BandDirector's tail layout
-     * is corrected (see mUnkTU5_0x118 below) -- retail has mEndOfSongSec@0x118,
-     * unk110@0x11c, the four CharLipSync* at 0x120-0x12c and mSongPref@0x130.
-     * Also note retail uses Part4Inst() for the drum mode inst where the Wii dev
+     * DONE (lane CT-3): body written from the retail bytes, 145/145 instructions
+     * equal. The old "cannot be written until the tail layout is corrected" TODO
+     * here was STALE -- lane CR-2 had already moved mLipSyncs[4] to 0x120 and
+     * mSongPref to 0x130, which is exactly what the body needs.
+     * Note retail uses Part4Inst() for the drum mode inst where the Wii dev
      * source erroneously re-uses Part3Inst(). */
     void SetCharacterLipSyncs();
     void SetSongEnd(float);

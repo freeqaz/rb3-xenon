@@ -42,7 +42,14 @@ BEGIN_SAVES(CharWeightable)
 END_SAVES
 
 BEGIN_COPYS(CharWeightable)
-    COPY_VIRTUAL_SUPERCLASS(Hmx::Object)
+    /* Retail (0x823AEE30, 0x88 B) has NO superclass copy: the body opens
+     * straight into __RTDynamicCast, saves only r29-r31 and uses a 0x70 frame.
+     * COPY_VIRTUAL_SUPERCLASS expands to `if (ClassName() == StaticClassName())
+     * Hmx::Object::Copy(o, ty);`, which cost 26 surplus instructions, two Symbol
+     * temps (frame 0x80) and one extra callee-save. Same defect class as this
+     * TU's SyncProperty (see the END_PROPSYNCS note above).
+     * NOT a blanket removal: SAVE_/LOAD_VIRTUAL_SUPERCLASS below are CORRECT --
+     * Save and Load are both already at 100% with them. */
     CREATE_COPY(CharWeightable)
     BEGIN_COPYING_MEMBERS
         if (ty == kCopyShallow) {
