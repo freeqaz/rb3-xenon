@@ -3,6 +3,22 @@
 #include "synth/FxSend.h"
 #include "utl/BinStream.h"
 
+// Rev dialect: retail RB3 stores the loaded revision into file-scope rev words
+// (the obj/ObjMacros.h INIT_REVS/LOAD_REVS shape); it does NOT construct a
+// BinStreamRev local the way the DC3-derived obj/Object.h dialect does.
+// Retail folds both rev words onto ONE base register with offsets 0/4, which
+// only happens for internal-linkage, align(4) file-scope statics (here rev+0,
+// altRev+4) -- not for DECLARE_REVS/INIT_REVS class statics.  Same recipe as
+// bandobj/BandWardrobe.cpp, which needs the opposite member order.
+// Spelled out longhand rather than by including ObjMacros.h, which would also
+// swap the SYNC_PROP and HANDLE families -- those already match here.
+static struct {
+    __declspec(align(4)) unsigned short rev;
+    __declspec(align(4)) unsigned short altRev;
+} gRevs;
+#define gRev gRevs.rev
+#define gAltRev gRevs.altRev
+
 BEGIN_COPYS(FxSendChorus)
     COPY_SUPERCLASS(FxSend)
     CREATE_COPY(FxSendChorus)
@@ -42,35 +58,28 @@ void FxSendChorus::Save(BinStream &bs) {
     bs << mTempo;
 }
 
-INIT_REVS(4, 0)
-
-BEGIN_LOADS(FxSendChorus)
-    LOAD_REVS(bs)
-    ASSERT_REVS(4, 0)
-    LOAD_SUPERCLASS(FxSend)
-    if (d.rev == 1) {
+void FxSendChorus::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    FxSend::Load(bs);
+    if (gRev == 1) {
         mDryGain = -3.0f;
         mWetGain = -3.0f;
         UpdateMix();
     }
-    bs >> mDelayMs >> mRate >> mDepth;
-    if (d.rev < 4) {
-        int feedbackInt;
-        bs >> feedbackInt;
-        mFeedbackPct = feedbackInt;
-        int offsetInt;
-        bs >> offsetInt;
-        mOffsetPct = offsetInt;
-    } else {
-        bs >> mFeedbackPct >> mOffsetPct;
-    }
-    if (d.rev >= 3) {
-        d >> mTempoSync;
+    bs >> mDelayMs >> mRate >> mDepth >> mFeedbackPct >> mOffsetPct;
+    if (gRev >= 3) {
+        // Separate statements, not `bs >> mTempoSync >> mSyncType`: retail
+        // re-materialises bs from its callee-saved register for the Symbol
+        // read instead of consuming the stream returned by the bool read.
+        bs >> mTempoSync;
         bs >> mSyncType;
         bs >> mTempo;
     }
     OnParametersChanged();
-END_LOADS
+}
 
 BEGIN_HANDLERS(FxSendChorus)
     HANDLE_SUPERCLASS(FxSend)

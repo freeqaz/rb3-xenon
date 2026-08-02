@@ -3,6 +3,17 @@
 #include "synth/FxSend.h"
 #include "utl/BinStream.h"
 
+// Retail RB3 uses the rb3-Wii (ObjMacros.h) rev dialect -- file-scope rev
+// words written by Load -- not the DC3-derived obj/Object.h BinStreamRev
+// local.  Both words fold onto ONE base register at offsets 0/4, which only
+// happens for internal-linkage align(4) file-scope statics.
+// Named per-class and used directly (no `#define gRev`) because this file is
+// also scatter-included into FxSendMeterEffect.cpp, which has its own.
+static struct {
+    __declspec(align(4)) unsigned short rev;
+    __declspec(align(4)) unsigned short altRev;
+} gRevsWah;
+
 FxSendWah::FxSendWah()
     : mResonance(7.0f), mUpperFreq(5000.0f), mLowerFreq(1000.0f), mLfoFreq(1.35f),
       mMagic(0.3f), mDistAmount(0.5f), mAutoWah(0), mFrequency(0.5f), mTempoSync(0),
@@ -34,25 +45,21 @@ BEGIN_SAVES(FxSendWah)
     bs << mDistAmount << mAutoWah << mFrequency;
 END_SAVES
 
-INIT_REVS(3, 0)
-
-BEGIN_LOADS(FxSendWah)
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    LOAD_SUPERCLASS(FxSend)
-    d >> mResonance;
-    d >> mLowerFreq;
-    d >> mUpperFreq;
-    d >> mLfoFreq;
-    d >> mMagic;
-    if (d.rev >= 2) {
-        d >> mTempoSync >> mTempo >> mSyncType;
+void FxSendWah::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRevsWah.rev = getHmxRev(rev);
+    gRevsWah.altRev = getAltRev(rev);
+    FxSend::Load(bs);
+    bs >> mResonance >> mLowerFreq >> mUpperFreq >> mLfoFreq >> mMagic;
+    if (gRevsWah.rev >= 2) {
+        bs >> mTempoSync >> mTempo >> mSyncType;
     }
-    if (d.rev >= 3) {
-        d >> mDistAmount >> mAutoWah >> mFrequency;
+    if (gRevsWah.rev >= 3) {
+        bs >> mDistAmount >> mAutoWah >> mFrequency;
     }
     OnParametersChanged();
-END_LOADS
+}
 
 BEGIN_HANDLERS(FxSendWah)
     HANDLE_SUPERCLASS(FxSend)
