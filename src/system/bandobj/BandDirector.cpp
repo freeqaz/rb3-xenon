@@ -1144,7 +1144,7 @@ DataNode BandDirector::OnFileLoaded(DataArray *da) {
                         : GetModeInst("guitar");
                     Symbol bassmodeinst = mSongPref ? GetModeInst(mSongPref->Part3Inst())
                                                     : GetModeInst("bass");
-                    Symbol drummodeinst = mSongPref ? GetModeInst(mSongPref->Part3Inst())
+                    Symbol drummodeinst = mSongPref ? GetModeInst(mSongPref->Part4Inst())
                                                     : GetModeInst("drum");
 
                     BandCharacter *bchar2 = nullptr;
