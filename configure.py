@@ -729,6 +729,29 @@ config.custom_build_steps = {
                 "desc": "PATCH ??__F atexit scope counters (fuzzy match)",
             },
         },
+        # Insert an extent boundary at every EH-FUNCLET prefix. MSVC marks the
+        # end of an EH function only with a class-6 `$M#####` label, which
+        # objdiff does not treat as a boundary, so our function's extent runs
+        # 8 bytes past its true end and swallows the funclet's
+        # __CxxFrameHandler/__ehfuncinfo$ word pair -- reported as two trailing
+        # `<illegal>` inserts. dtk gives the TARGET side an `except_data_<addr>`
+        # symbol there, so only our side is wrong. See the script's docstring
+        # for the measured population. LAST in the chain: it only appends to
+        # the symbol table and never renames, so it cannot disturb the five
+        # name-rewriting patchers above.
+        {
+            "outputs": str(stamp_dir / "eh_boundary_patched.stamp"),
+            "rule": "run_script",
+            "order_only": "all_source",
+            "implicit": [
+                "scripts/obj_eh_boundary_patcher.py",
+                str(stamp_dir / "atexit_scope_patched.stamp"),
+            ],
+            "variables": {
+                "cmd": "python3 scripts/obj_eh_boundary_patcher.py --batch --apply",
+                "desc": "PATCH EH funclet extent boundaries",
+            },
+        },
     ],
 }
 

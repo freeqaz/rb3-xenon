@@ -99,9 +99,30 @@ def load_address_map(path: Path) -> Dict[str, str]:
     label) rather than `fn_<addr>` (a `.fn` with a frame) — e.g. leaf ctors
     with no stack frame like `Hmx::Object::Object` at 0x82737FE8. We register
     both forms so the rename hits whichever the target obj actually uses; an
-    address is only ever one or the other, so this is collision-free."""
+    address is only ever one or the other, so this is collision-free.
+
+    NULL VALUES (`"0xADDR": null`) mean "deliberately unclaimed" and are
+    SKIPPED. Defence in depth for the delete path in
+    `tools/maprow_audit/ci1_apply.py`: that applier used to emit JSON `null`
+    for a deletion, and this loop had no type check, so the None flowed
+    straight into `rename_symbols`. MEASURED behaviour before this guard
+    (lane CM-3, on a real target obj):
+
+      * address's `fn_<addr>` symbol PRESENT in some obj  -> AttributeError
+        ('NoneType' object has no attribute 'encode') at the `.encode("ascii")`
+        on line ~143, rc=1. Loud in the pipeline (the ninja step is
+        `$cmd && touch $out`, so no stamp -> build fails) but NOT atomic:
+        `--batch --apply` writes each obj as it goes, so every obj processed
+        before the crash is already modified on disk.
+      * address ABSENT from every obj -> rc=0, "0 files patched", SILENT no-op.
+
+    i.e. a null was a DATA-DEPENDENT LANDMINE, not a uniform failure. Skipping
+    it here makes a null mean exactly what a delete wants it to mean: no
+    rename, this address stays anonymous."""
     raw = json.loads(path.read_text())
     out: Dict[str, str] = {}
+    n_null = 0
+    n_bad = 0
     for k, v in raw.items():
         # Skip metadata / comment entries (keys not starting with 0x).
         if not k.lower().startswith("0x"):
@@ -112,8 +133,21 @@ def load_address_map(path: Path) -> Dict[str, str]:
         except ValueError:
             print(f"WARN: invalid address key {k!r} in {path}", file=sys.stderr)
             continue
+        if v is None:
+            # Explicit "unclaimed" row -- not an error, just no rename.
+            n_null += 1
+            continue
+        if not isinstance(v, str):
+            # A list/dict/number would crash the same way None did.
+            print(f"WARN: non-string value for {k!r} ({type(v).__name__}) in "
+                  f"{path} -- skipping", file=sys.stderr)
+            n_bad += 1
+            continue
         out[f"fn_{addr:08X}"] = v
         out[f"lbl_{addr:08X}"] = v
+    if n_null or n_bad:
+        print(f"[map] skipped {n_null} null (deliberately unclaimed) and "
+              f"{n_bad} non-string row(s) in {path}")
     return out
 
 
@@ -140,6 +174,15 @@ def rename_symbols(
         if sym_name not in renames:
             continue
         new_name = renames[sym_name]
+        if not isinstance(new_name, str):
+            # Second line of defence: load_address_map already drops null /
+            # non-string rows, but rename_symbols is importable and other
+            # tooling builds `renames` dicts by hand. Never let a non-string
+            # reach .encode() -- see load_address_map's docstring for the two
+            # measured failure modes.
+            print(f"WARN: skipping {sym_name}: rename target is "
+                  f"{type(new_name).__name__}, not str", file=sys.stderr)
+            continue
         new_bytes = new_name.encode("ascii")
 
         # Always append to the string table and convert to long-name form.
