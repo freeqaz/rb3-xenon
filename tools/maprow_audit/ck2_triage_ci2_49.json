@@ -1,0 +1,296 @@
+{
+ "0x822bd320": {
+  "name": "?Handle@BandCrowdMeter@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cls": "C_ok_defined",
+  "home": "default/BandCrowdMeter",
+  "n_homes": 1
+ },
+ "0x822c5af0": {
+  "name": "?Save@BandRetargetVignette@@UAAXAAVBinStream@@@Z",
+  "cls": "C_ok_defined",
+  "home": "default/BandRetargetVignette",
+  "n_homes": 1
+ },
+ "0x822c6a40": {
+  "name": "??_EBandRetargetVignette@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/Instance",
+  "n_homes": 1
+ },
+ "0x822c9210": {
+  "name": "?Save@BandLeadMeter@@UAAXAAVBinStream@@@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/CharCollide",
+  "n_homes": 1
+ },
+ "0x822d2c28": {
+  "name": "?Save@UnisonIcon@@UAAXAAVBinStream@@@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/MoveMgr",
+  "n_homes": 1
+ },
+ "0x8230a780": {
+  "name": "?Save@OvershellDir@@UAAXAAVBinStream@@@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/TrackPanelDir",
+  "n_homes": 1
+ },
+ "0x823175d8": {
+  "name": "?SyncProperty@InlineHelp@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cls": "C_ok_defined",
+  "home": "default/CrowdAudio",
+  "n_homes": 1
+ },
+ "0x82317c58": {
+  "name": "?Save@MicInputArrow@@UAAXAAVBinStream@@@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/MoveAsyncDetector",
+  "n_homes": 1
+ },
+ "0x82317d50": {
+  "name": "?SyncProperty@MicInputArrow@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/MoveAsyncDetector",
+  "n_homes": 1
+ },
+ "0x82318170": {
+  "name": "?Handle@MicInputArrow@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/MoveAsyncDetector",
+  "n_homes": 1
+ },
+ "0x82318c40": {
+  "name": "?ClassName@MicInputArrow@@UBA?AVSymbol@@XZ",
+  "cls": "C_ok_defined",
+  "home": "default/MicInputArrow",
+  "n_homes": 1
+ },
+ "0x823208a0": {
+  "name": "??_EAppScoreDisplay@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/ScoreDisplay",
+  "n_homes": 1
+ },
+ "0x823251a0": {
+  "name": "?SyncProperty@PlayerDiffIcon@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cls": "C_ok_defined",
+  "home": "default/PlayerDiffIcon",
+  "n_homes": 1
+ },
+ "0x823441e0": {
+  "name": "?Save@BandButton@@UAAXAAVBinStream@@@Z",
+  "cls": "C_ok_defined",
+  "home": "default/system/bandobj/BandButton",
+  "n_homes": 1
+ },
+ "0x8236cde0": {
+  "name": "??_GCharBonesObject@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/Char",
+  "n_homes": 1
+ },
+ "0x8238c9c8": {
+  "name": "?Load@CharLipSyncDriver@@UAAXAAVBinStream@@@Z",
+  "cls": "C_ok_defined",
+  "home": "default/CharLipSyncDriver",
+  "n_homes": 1
+ },
+ "0x82398a10": {
+  "name": "?SyncProperty@CharIKHand@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/Morph",
+  "n_homes": 1
+ },
+ "0x823993b0": {
+  "name": "?Load@CharIKHand@@UAAXAAVBinStream@@@Z",
+  "cls": "C_ok_defined",
+  "home": "default/CharIKHand",
+  "n_homes": 1
+ },
+ "0x823aee98": {
+  "name": "?Handle@CharData@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/FlowValueCase",
+  "n_homes": 1
+ },
+ "0x823c1798": {
+  "name": "??_ECharIKHead@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/FlowDistance",
+  "n_homes": 1
+ },
+ "0x823c5140": {
+  "name": "?ClassName@CharIKRod@@UBA?AVSymbol@@XZ",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/system/synth/FxSendDelay",
+  "n_homes": 1
+ },
+ "0x823cc500": {
+  "name": "??_GCharDriverMidi@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/CharDriverMidi",
+  "n_homes": 1
+ },
+ "0x823cf970": {
+  "name": "?SetType@CharSleeve@@UAAXVSymbol@@@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/CharDriver",
+  "n_homes": 1
+ },
+ "0x823d0ba8": {
+  "name": "?ClassName@CharClipSet@@UBA?AVSymbol@@XZ",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/ClipCollide",
+  "n_homes": 1
+ },
+ "0x823e46d0": {
+  "name": "??_ENetSession@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/MeshAnim",
+  "n_homes": 1
+ },
+ "0x82405980": {
+  "name": "?SyncProperty@RndDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/ShaderProgram",
+  "n_homes": 1
+ },
+ "0x82445608": {
+  "name": "?Load@RndTexRenderer@@UAAXAAVBinStream@@@Z",
+  "cls": "C_ok_defined",
+  "home": "default/TexRenderer",
+  "n_homes": 1
+ },
+ "0x82459998": {
+  "name": "?Copy@RndText@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+  "cls": "C_ok_defined",
+  "home": "default/Text",
+  "n_homes": 1
+ },
+ "0x82487a18": {
+  "name": "?EndFrame@RndPollAnim@@UAAMXZ",
+  "cls": "C_ok_defined",
+  "home": "default/PollAnim",
+  "n_homes": 1
+ },
+ "0x8257b128": {
+  "name": "??_EBandSongMgr@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/MetaPerformer",
+  "n_homes": 1
+ },
+ "0x82588d10": {
+  "name": "??_ESessionMgr@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/band3/meta_band/ModifierMgr",
+  "n_homes": 1
+ },
+ "0x825b04c0": {
+  "name": "??_GInterstitialMgr@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/band3/meta_band/InterstitialMgr",
+  "n_homes": 1
+ },
+ "0x825f3ae8": {
+  "name": "?Handle@CampaignGoalsLeaderboardChoicePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/AccomplishmentPanel",
+  "n_homes": 1
+ },
+ "0x82627f58": {
+  "name": "??_GNewAwardPanel@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/band3/meta_band/NewAwardPanel",
+  "n_homes": 1
+ },
+ "0x8262c280": {
+  "name": "??_GStickerProvider@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/band3/meta_band/PatchPanel",
+  "n_homes": 1
+ },
+ "0x8262dea0": {
+  "name": "??_GPatchSelectPanel@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/band3/meta_band/PatchSelectPanel",
+  "n_homes": 1
+ },
+ "0x82632920": {
+  "name": "??_GSelectDifficultyPanel@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/SelectDifficultyPanel",
+  "n_homes": 1
+ },
+ "0x82637898": {
+  "name": "??_GSongSelectPanel@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/band3/meta_band/SongSelectPanel",
+  "n_homes": 1
+ },
+ "0x82652198": {
+  "name": "??_GMatchmaker@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/Matchmaker",
+  "n_homes": 1
+ },
+ "0x82682210": {
+  "name": "??_EGameMicManager@@UAAPAXI@Z",
+  "cls": "D_weak_external",
+  "home": "default/GameMicManager",
+  "n_homes": 1
+ },
+ "0x826aaab0": {
+  "name": "?SyncProperty@GemTrainerPanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "cls": "F_absent_but_defined_elsewhere",
+  "home": "default/band3/game/Player",
+  "n_homes": 1
+ },
+ "0x826ba830": {
+  "name": "??_EVocalTrainerPanel@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/FreestylePanel",
+  "n_homes": 1
+ },
+ "0x826cb610": {
+  "name": "??_ETrainerPanel@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/band3/game/Stats",
+  "n_homes": 2
+ },
+ "0x827685e0": {
+  "name": "??_EMsgSource@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/HamCamTransform",
+  "n_homes": 1
+ },
+ "0x8276cf80": {
+  "name": "??_EDirUnloader@@UAAPAXI@Z",
+  "cls": "D_weak_external",
+  "home": "default/DirUnloader",
+  "n_homes": 1
+ },
+ "0x827b2770": {
+  "name": "??_EStorePreviewMgr@@UAAPAXI@Z",
+  "cls": "G_absent_everywhere",
+  "home": "default/MeshAnim",
+  "n_homes": 1
+ },
+ "0x827b3698": {
+  "name": "??_GDeJitterPanel@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/DeJitterPanel",
+  "n_homes": 1
+ },
+ "0x82b79530": {
+  "name": "??_ETourBand@@UAAPAXI@Z",
+  "cls": "D_weak_external",
+  "home": "default/TourBand",
+  "n_homes": 1
+ },
+ "0x82b7b0b0": {
+  "name": "??_GQuestFilterPanel@@UAAPAXI@Z",
+  "cls": "C_ok_defined",
+  "home": "default/QuestFilterPanel",
+  "n_homes": 1
+ }
+}

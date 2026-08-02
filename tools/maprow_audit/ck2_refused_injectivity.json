@@ -1,0 +1,32 @@
+[
+ {
+  "addr": "0x823e2b10",
+  "expect": "??_EMemStream@@UAAPAXI@Z",
+  "new": "??_GMemStream@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GMemStream@@UAAPAXI@Z; ??_GMemStream@@UAAPAXI@Z DEFINED in home unit default/network/net/NetSession"
+ },
+ {
+  "addr": "0x823a08c0",
+  "expect": "??_E?$ObjPtrList@VFader@@VObjectDir@@@@UAAPAXI@Z",
+  "new": "??_G?$ObjPtrList@VFader@@VObjectDir@@@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_G?$ObjPtrList@VFader@@VObjectDir@@@@UAAPAXI@Z; ??_G?$ObjPtrList@VFader@@VObjectDir@@@@UAAPAXI@Z DEFINED in home unit default/Faders"
+ },
+ {
+  "addr": "0x82682210",
+  "expect": "??_EGameMicManager@@UAAPAXI@Z",
+  "new": "??_GGameMicManager@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GGameMicManager@@UAAPAXI@Z; ??_GGameMicManager@@UAAPAXI@Z DEFINED in home unit default/GameMicManager"
+ },
+ {
+  "addr": "0x8276cf80",
+  "expect": "??_EDirUnloader@@UAAPAXI@Z",
+  "new": "??_GDirUnloader@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GDirUnloader@@UAAPAXI@Z; ??_GDirUnloader@@UAAPAXI@Z DEFINED in home unit default/DirUnloader"
+ },
+ {
+  "addr": "0x82b79530",
+  "expect": "??_ETourBand@@UAAPAXI@Z",
+  "new": "??_GTourBand@@UAAPAXI@Z",
+  "why": "incumbent is WEAK EXTERNAL (sc105) aliasing ??_GTourBand@@UAAPAXI@Z; ??_GTourBand@@UAAPAXI@Z DEFINED in home unit default/TourBand"
+ }
+]
