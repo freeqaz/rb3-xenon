@@ -5,6 +5,14 @@
 
 > **LOOSE BAND (ws2, BSim simconf 10–15).** These are CANDIDATES from the run-3 archive re-vetted at the looser ≥10 operating point (sibling-check REJECT applied). Measured band precision ≈ **0.85** (ws2 20-pair judging: 18 confirmed / 2 plausible / 0 wrong on non-contradicted rows). **Confirm-on-consume every id** (diff vtable-slot/type-tag/node-size immediates + strings + resolved callees vs the Wii body); **skip `rb3wii=contradicted` rows** unless separately judged. This is a future-round candidate pool — no strict matches are minted from it directly.
 
+> **Scope note, 2026-08-02 — this ranking is for the X360 MATCH.** Same caveat as the
+> strict worklist: every TU here is under `src/band3/`, and the *native* venue/render
+> milestone is ranked separately and disjointly in
+> [`band3-native-unblock-priority-2026-08-02.md`](band3-native-unblock-priority-2026-08-02.md).
+> The 14 classes blocking every RB3 venue root are `src/system/{bandobj,synth,world,ui}`
+> — **none in `src/band3/`** (X4a's contrary claim retracted; `x4b-animation-2026-08-02.md` §4).
+> Nothing below is superseded for matching purposes.
+
 ## What this is
 
 301 RB3 **game-code** functions across **105 TUs**, each pinned to a specific Wii (Bank-8, CodeWarrior-mangled) function by the forked-ghidriff/BSim Wii→Xenon identity pipeline. These are **net-new**: their Xenon address is NOT yet in the production pairing set (`target_symbol_map.json`), and they live in band3 TUs the active class-A port has **not yet reached**. band3 is RB3-specific gameplay/scoring/song/tracker code — **DC3 (Dance Central 3, no Rock Band gameplay) fundamentally cannot identify these.** This is the irreplaceable core of the Wii→Xenon lever.

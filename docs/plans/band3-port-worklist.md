@@ -3,6 +3,22 @@
 **Generated:** `tools/gen_band3_port_worklist.py` (regenerable). **Source:** `ghidriff_identities.json` (ACCEPT tier) minus `scripts/target_symbol_map.json`.
 **Data feed:** `band3_port_worklist.json` (machine-readable, one row per fn; gitignored/regenerable).
 
+> **Scope note, 2026-08-02 — this ranking is for the X360 MATCH, and that framing is
+> unchanged and correct.** Every TU here is under `src/band3/`. A second, **disjoint**
+> ranking now exists for the *native* port —
+> [`band3-native-unblock-priority-2026-08-02.md`](band3-native-unblock-priority-2026-08-02.md)
+> — which ranks by *native-unblock value* (object-factory misses retired ÷ wiring cost).
+> **The two share zero TUs.** The 14 classes blocking every RB3 venue root live in
+> `src/system/{bandobj,synth,world,ui}`, **none in `src/band3/`** (X4a's contrary claim
+> is retracted; see `x4b-animation-2026-08-02.md` §4). So:
+> - Picking a TU **to match**? Use this file. Nothing below is superseded.
+> - Picking a TU **to unblock the native venue/render milestone**? This file will not
+>   help — use the native-unblock doc.
+>
+> Stated because the failure mode is silent: this ranking scores `BandCamShot`
+> invisible (not `src/band3/`, and already 251/295 fns matched) while it is ~90% of the
+> native blocker; conversely `MusicLibrary.cpp` at rank 1 contributes nothing to it.
+
 ## What this is
 
 232 RB3 **game-code** functions across **93 TUs**, each pinned to a specific Wii (Bank-8, CodeWarrior-mangled) function by the forked-ghidriff/BSim Wii→Xenon identity pipeline. These are **net-new**: their Xenon address is NOT yet in the production pairing set (`target_symbol_map.json`), and they live in band3 TUs the active class-A port has **not yet reached**. band3 is RB3-specific gameplay/scoring/song/tracker code — **DC3 (Dance Central 3, no Rock Band gameplay) fundamentally cannot identify these.** This is the irreplaceable core of the Wii→Xenon lever.

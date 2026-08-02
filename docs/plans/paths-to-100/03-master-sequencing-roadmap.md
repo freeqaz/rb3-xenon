@@ -208,6 +208,23 @@ matches but delivers a playable artifact and the milo-native-engine extraction.
 Run in parallel from day 1; it never blocks and is never blocked by the matching
 phases.
 
+> **Note, 2026-08-02 — this phasing is CORROBORATED, not amended.** The X4a→X4b
+> venue investigation is the first case where a native milestone had a hard
+> dependency chain measured end to end, and both halves of the claim above held:
+> (a) *never blocked by matching* — all 13 TUs of the 14 venue-blocking classes are
+> already pinned **and scored** (67.84%–100.00%), so the native blocker turned out to
+> be a `cmake/ScatterIncludes.cmake` dedupe gap plus 4 defects in one file, with zero
+> matching prerequisites; (b) *EV +0 STRICT* — compiling those TUs natively cannot
+> move `matched_functions`, because they already count.
+> ⚠ One nuance worth carrying: the reverse arrow is *stronger* than doc 20 claims.
+> Native bring-up found four transcription defects inside already-scored units that
+> the match build structurally cannot observe (it never links, never runs). That is
+> real Phase-1 feed from Phase 4, and it is not in the EV line above.
+> Detail: [`../band3-native-unblock-priority-2026-08-02.md`](../band3-native-unblock-priority-2026-08-02.md) §8,
+> [`../x4b-animation-2026-08-02.md`](../x4b-animation-2026-08-02.md) §4.
+> ⛔ Do **not** carry forward X4a's "band3 is now the critical path" — retracted; zero
+> of the 14 blocking classes are `src/band3/`.
+
 ### Diminishing-returns curve — where does STRICT saturate?
 
 Anchoring to measured history: the big session gains are behind us. The capstone
