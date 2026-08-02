@@ -700,6 +700,7 @@ VocalTrackDir.cpp:
 	.pdata      start:0x821FA810 end:0x821FA818
 	.pdata      start:0x821FA818 end:0x821FA820
 	.pdata      start:0x821FA820 end:0x821FAAE0
+	.pdata      start:0x821FAAE0 end:0x821FAB30
 	.pdata      start:0x82245030 end:0x82245038
 	.text       start:0x8227ADC8 end:0x8227AE48
 	.text       start:0x822ECC48 end:0x822EE498
@@ -729,6 +730,7 @@ VocalTrackDir.cpp:
 	.text       start:0x822FFFA8 end:0x82300030
 	.text       start:0x82300030 end:0x823000D0
 	.text       start:0x823000D0 end:0x823028E8
+	.text       start:0x823028E8 end:0x823038A0
 	.text       start:0x827F3544 end:0x827F3568
 	.text       start:0x827F4278 end:0x827F42E0
 	.text       start:0x827F443C end:0x827F4478
@@ -13084,6 +13086,14 @@ band3/meta_band/TrainingMgr.cpp:
 band3/meta_band/CharSync.cpp:
 	.pdata      start:0x8221D220 end:0x8221D2D0
 	.text       start:0x82564410 end:0x82565088
+
+band3/tour/TourChar.cpp:
+	.pdata      start:0x8225C540 end:0x8225C5D8
+	.text       start:0x82B7FAA8 end:0x82B801A8
+
+band3/tour/TourChallengeResultsPanel.cpp:
+	.pdata      start:0x8225C498 end:0x8225C540
+	.text       start:0x82B7EFBC end:0x82B7FAA8
 
 band3/tour/TourDesc.cpp:
 	.pdata      start:0x82200D68 end:0x82200EB0
