@@ -302,8 +302,14 @@ Symbol Campaign::GetNextCampaignLevel(Symbol i_symCampaignLevel) const {
 
 String Campaign::GetCurrentMajorLevelIcon(LocalBandUser *i_pUser) {
     MILO_ASSERT(i_pUser, 0x206);
-    CampaignLevel *level =
-        GetCampaignLevel(GetMajorLevelForMetaScore(GetCampaignMetaScoreForUser(i_pUser)));
+    // Named Symbol local, NOT the nested form: retail loads the sret temp
+    // straight out of its own frame slot (`lwz r4,0x50(r1)`), which is what a
+    // named local compiles to. The nested call makes MSVC keep the callee's
+    // returned pointer instead (`mr r11,r3; lwz r4,0x0(r11)`) -- two extra
+    // instructions. Control: GetCampaignLevelIconForUser above is at 100% and
+    // uses exactly this named-local idiom.
+    Symbol majorLevel = GetMajorLevelForMetaScore(GetCampaignMetaScoreForUser(i_pUser));
+    CampaignLevel *level = GetCampaignLevel(majorLevel);
     if (level)
         return level->GetIconArt();
     else
@@ -312,9 +318,8 @@ String Campaign::GetCurrentMajorLevelIcon(LocalBandUser *i_pUser) {
 
 String Campaign::GetNextMajorLevelIcon(LocalBandUser *i_pUser) {
     MILO_ASSERT(i_pUser, 0x216);
-    CampaignLevel *level = GetCampaignLevel(
-        GetNextMajorLevelForMetaScore(GetCampaignMetaScoreForUser(i_pUser))
-    );
+    Symbol majorLevel = GetNextMajorLevelForMetaScore(GetCampaignMetaScoreForUser(i_pUser));
+    CampaignLevel *level = GetCampaignLevel(majorLevel);
     if (level)
         return level->GetIconArt();
     else
@@ -324,9 +329,8 @@ String Campaign::GetNextMajorLevelIcon(LocalBandUser *i_pUser) {
 String Campaign::GetPrimaryCurrentMajorLevelIcon() {
     BandMachineMgr *pMachineMgr = TheSessionMgr->mMachineMgr;
     MILO_ASSERT(pMachineMgr, 0x227);
-    CampaignLevel *level = GetCampaignLevel(
-        GetMajorLevelForMetaScore(pMachineMgr->GetLeaderPrimaryMetaScore())
-    );
+    Symbol majorLevel = GetMajorLevelForMetaScore(pMachineMgr->GetLeaderPrimaryMetaScore());
+    CampaignLevel *level = GetCampaignLevel(majorLevel);
     if (level)
         return level->GetIconArt();
     else
@@ -336,9 +340,8 @@ String Campaign::GetPrimaryCurrentMajorLevelIcon() {
 String Campaign::GetPrimaryNextMajorLevelIcon() {
     BandMachineMgr *pMachineMgr = TheSessionMgr->mMachineMgr;
     MILO_ASSERT(pMachineMgr, 0x238);
-    CampaignLevel *level = GetCampaignLevel(
-        GetNextMajorLevelForMetaScore(pMachineMgr->GetLeaderPrimaryMetaScore())
-    );
+    Symbol majorLevel = GetNextMajorLevelForMetaScore(pMachineMgr->GetLeaderPrimaryMetaScore());
+    CampaignLevel *level = GetCampaignLevel(majorLevel);
     if (level)
         return level->GetIconArt();
     else
