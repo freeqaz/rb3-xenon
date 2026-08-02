@@ -30,7 +30,7 @@ bool DebugChooseModeLabel(const UILabel *label) {
 
 #pragma region UIListLabel
 
-UIListLabel::UIListLabel() : mLabel(this), mHighlightAltStyles(0) {}
+UIListLabel::UIListLabel() : mLabel(this) {}
 
 RndTransformable *UIListLabel::RootTrans() { return mLabel; }
 
@@ -40,15 +40,13 @@ END_HANDLERS
 
 BEGIN_PROPSYNCS(UIListLabel)
     SYNC_PROP(label, mLabel)
-    SYNC_PROP(highlight_alt_styles, mHighlightAltStyles)
     SYNC_SUPERCLASS(UIListSlot)
 END_PROPSYNCS
 
 BEGIN_SAVES(UIListLabel)
-    SAVE_REVS(1, 1)
+    SAVE_REVS(1, 0)
     SAVE_SUPERCLASS(UIListSlot)
     bs << mLabel;
-    bs << mHighlightAltStyles;
 END_SAVES
 
 BEGIN_COPYS(UIListLabel)
@@ -56,23 +54,30 @@ BEGIN_COPYS(UIListLabel)
     CREATE_COPY_AS(UIListLabel, l)
     MILO_ASSERT(l, 0xba);
     COPY_MEMBER_FROM(l, mLabel)
-    COPY_MEMBER_FROM(l, mHighlightAltStyles)
 END_COPYS
 
-INIT_REVS(1, 1)
+// RB3-360 retail rev storage (same shape already proven in char/CharBone.cpp).
+// Retail's Load keeps NO BinStreamRev: it splits the packed rev word into two
+// mutable shorts and stores them at base+0 (altRev) / base+4 (rev), then calls
+// the superclass Load on the raw stream.  Object.h's LOAD_REVS instead builds a
+// BinStreamRev temporary (+0x30 of frame, a ctor/dtor pair and a vtable store),
+// which is what dropped ?Load@UIListLabel@@ to 41%.  Written LONGHAND rather
+// than switching this TU to the ObjMacros.h dialect, because that dialect also
+// redefines SYNC_PROP and would perturb SyncProperty (which matches at 100%).
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_UIListLabel;
+#define gAltRev gRevs_UIListLabel.altRev
+#define gRev gRevs_UIListLabel.rev
 
 BEGIN_LOADS(UIListLabel)
-    LOAD_REVS(bs)
-    ASSERT_REVS(1, 1)
-    LOAD_SUPERCLASS(UIListSlot)
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    UIListSlot::Load(bs);
     bs >> mLabel;
-    if (d.altRev < 1) {
-        String tmp;
-        bs >> tmp;
-    }
-    if (d.rev >= 1) {
-        d >> mHighlightAltStyles;
-    }
 END_LOADS
 
 const char *UIListLabel::GetDefaultText() const {
@@ -97,7 +102,7 @@ UIListSlotElement *UIListLabel::CreateElement(UIList *uilist) {
     Hmx::Object *newObj = Hmx::Object::NewObject(mLabel->ClassName());
     UILabel *l = dynamic_cast<UILabel *>(newObj);
     MILO_ASSERT(l, 0x89);
-    l->Copy(mLabel, kCopyDeep);
+    l->ResourceCopy(mLabel);
     l->SetTextToken(gNullStr);
     return new UIListLabelElement(this, l);
 }
@@ -125,11 +130,6 @@ void UIListLabelElement::Draw(const Transform &tf, float f, UIColor *col, Box *b
             savedAlphas[i] = label->Style(i).GetAlpha();
         }
         label->LStyle(0).mColorOverride = col;
-        if (mListLabel->mHighlightAltStyles) {
-            for (unsigned int i = 1; i < text->NumStyles(); i++) {
-                label->LStyle(i).mColorOverride = col;
-            }
-        }
         for (unsigned int i = 0; i < text->NumStyles(); i++) {
             label->Style(i).SetAlpha(f * savedAlphas[i]);
         }

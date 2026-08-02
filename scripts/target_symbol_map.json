@@ -1,4 +1,10 @@
 {
+ "0x8281f7d0": "??0UIListLabel@@IAA@XZ",
+ "0x8281f6e8": "?CreateElement@UIListLabel@@MAAPAVUIListSlotElement@@PAVUIList@@@Z",
+ "0x8281fa58": "?Save@UIListLabel@@UAAXAAVBinStream@@@Z",
+ "0x8281fac0": "?Copy@UIListLabel@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x8281fd50": "?Load@UIListLabel@@UAAXAAVBinStream@@@Z",
+ "0x8281fdd8": "?SyncProperty@UIListLabel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82542a00": "?OnExit@MusicLibrary@@QAAXXZ",
  "0x82484898": "?ClassName@RndMorph@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
  "0x824a2a38": "?ClassName@EventTrigger@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
