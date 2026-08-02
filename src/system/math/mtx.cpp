@@ -80,10 +80,42 @@ void Multiply(const Transform &a, const Transform &b, Transform &out) {
     // computation (b.m.y.y/b.m.z.y swapped, b.m.y.z/b.m.z.y swapped, b.v.y/b.v.z swapped).
     // These produce identical PPC assembly but wrong x86 results for non-trivial rotations.
     // Use the mathematically correct formula: out.v = a.v * b.m + b.v
-    Multiply(a.m, b.m, out.m);
-    out.v.x = a.v.x * b.m.x.x + a.v.y * b.m.y.x + a.v.z * b.m.z.x + b.v.x;
-    out.v.y = a.v.x * b.m.x.y + a.v.y * b.m.y.y + a.v.z * b.m.z.y + b.v.y;
-    out.v.z = a.v.x * b.m.x.z + a.v.y * b.m.y.z + a.v.z * b.m.z.z + b.v.z;
+    //
+    // ⚠ ALIAS-SAFETY IS LOAD-BEARING HERE, AND THIS ARM USED TO GET IT WRONG.
+    //
+    // `out` legitimately aliases EITHER argument at real call sites -- the
+    // X360 arm below proves retail knew that, since it branches on
+    // `if (&b != &out)` and hoists every b-side load into locals first. The
+    // native transcription dropped that guard and was broken BOTH ways:
+    //
+    //   dest == b  (rndobj/Trans.cpp:651 `Multiply(tf48, tf78, tf78)`)
+    //       `Multiply(a.m, b.m, out.m)` overwrites b.m, and the three
+    //       translation lines then read the PRODUCT matrix instead of b.
+    //   dest == a  (rndobj/Trans.cpp:697/709/710 `Multiply(mWorldXfm, tf, mWorldXfm)`)
+    //       writing out.v.x clobbers a.v.x, which the very next line reads.
+    //       (Subtler, and the one a "just reorder the stores" fix misses.)
+    //
+    // Measured before the fix, a = rotZ(30) t(10,0,0), b = rotZ(60) t(0,5,2):
+    //       reference (a,b,out)   v = [ 5.000  13.660  2.000 ]   correct
+    //       dest == b (a,b,b)     v = [-0.000  15.000  2.000 ]   WRONG
+    //       dest == a (a,b,a)     v = [ 5.000   9.330  2.000 ]   WRONG
+    //
+    // Fix pattern: SNAPSHOT EVERY OPERAND READ BEFORE THE FIRST STORE. Same
+    // shape as the rb3-Wii port's Rot.cpp fix for this identical bug, which
+    // cost that lane ~15 waves because it surfaces as skewed/exploded bone
+    // composition far from the arithmetic. Do NOT "optimise" these copies
+    // away -- they are the correctness, not overhead.
+    //
+    // The Hmx::Matrix3 overload is alias-safe by construction (it evaluates
+    // all nine products as call arguments before Set() stores), so a.m needs
+    // no snapshot; only the operands read AFTER a store do.
+    const Vector3 av = a.v;
+    const Hmx::Matrix3 bm = b.m;
+    const Vector3 bv = b.v;
+    Multiply(a.m, bm, out.m);
+    out.v.x = av.x * bm.x.x + av.y * bm.y.x + av.z * bm.z.x + bv.x;
+    out.v.y = av.x * bm.x.y + av.y * bm.y.y + av.z * bm.z.y + bv.y;
+    out.v.z = av.x * bm.x.z + av.y * bm.y.z + av.z * bm.z.z + bv.z;
 #else
     float fVar1 = a.v.y;
     float fVar2 = a.v.x;
