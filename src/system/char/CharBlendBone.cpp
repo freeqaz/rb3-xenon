@@ -9,7 +9,7 @@
 
 CharBlendBone::CharBlendBone()
     : mTargets(this), mSrc1(this), mSrc2(this), mTransX(false), mTransY(false),
-      mTransZ(false), mRotation(false), mSetLocal(false) {}
+      mTransZ(false), mRotation(false) {}
 
 BEGIN_PROPSYNCS(CharBlendBone)
     // RETAIL NAME IS PLURAL.  Arbitrated on RETAIL BYTES (lane CQ-3): the first
@@ -23,10 +23,9 @@ BEGIN_PROPSYNCS(CharBlendBone)
     SYNC_PROP(trans_y, mTransY)
     SYNC_PROP(trans_z, mTransZ)
     SYNC_PROP(rotation, mRotation)
-#ifdef HX_NATIVE
-    // DC3-era addition; retail's chain ends at `rotation` (7 literals, ours 8).
-    SYNC_PROP(set_local, mSetLocal)
-#endif
+    // DC3-era addition; retail's chain ends at `rotation` (7 literals).  The
+    // MEMBER is gone too (see CharBlendBone.h), so this cannot be HX_NATIVE-
+    // parked any more -- it is removed outright.
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain stops at the immediate superclass;
     // DC3's extra direct Hmx::Object chain is native-only.
@@ -35,7 +34,7 @@ BEGIN_PROPSYNCS(CharBlendBone)
 END_PROPSYNCS
 
 BEGIN_SAVES(CharBlendBone)
-    SAVE_REVS(4, 0)
+    SAVE_REVS(3, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     bs << mTargets;
     bs << mSrc1;
@@ -44,7 +43,6 @@ BEGIN_SAVES(CharBlendBone)
     bs << mTransY;
     bs << mTransZ;
     bs << mRotation;
-    bs << mSetLocal;
 END_SAVES
 
 BEGIN_COPYS(CharBlendBone)
@@ -58,15 +56,14 @@ BEGIN_COPYS(CharBlendBone)
         COPY_MEMBER(mTransY)
         COPY_MEMBER(mTransZ)
         COPY_MEMBER(mRotation)
-        COPY_MEMBER(mSetLocal)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(4, 0)
+INIT_REVS(3, 0)
 
 BEGIN_LOADS(CharBlendBone)
     LOAD_REVS(bs)
-    ASSERT_REVS(4, 0)
+    ASSERT_REVS(3, 0)
     MILO_ASSERT(d.rev > 2, 0x66);
     LOAD_SUPERCLASS(Hmx::Object)
     d >> mTargets;
@@ -76,13 +73,10 @@ BEGIN_LOADS(CharBlendBone)
     d >> mTransY;
     d >> mTransZ;
     d >> mRotation;
-    if (3 < d.rev) {
-        d >> mSetLocal;
-    }
 END_LOADS
 
 void CharBlendBone::Poll() {
-    for (ObjVector<ConstraintSystem>::iterator it = mTargets.begin(); it != mTargets.end();
+    for (ObjList<ConstraintSystem>::iterator it = mTargets.begin(); it != mTargets.end();
          ++it) {
         RndTransformable *target = it->mTarget;
         if (target && mSrc1 && mSrc2) {
@@ -103,18 +97,7 @@ void CharBlendBone::Poll() {
             if (mRotation) {
                 Interp(xfm1.m, xfm2.m, it->mWeight, tf48.m);
             }
-            if (mSetLocal) {
-                RndTransformable *parent = target->TransParent();
-                if (parent) {
-                    Transform inverted;
-                    Invert(parent->WorldXfm(), inverted);
-                    Multiply(tf48, inverted, target->DirtyLocalXfm());
-                } else {
-                    target->SetLocalXfm(tf48);
-                }
-            } else {
-                target->SetWorldXfm(tf48);
-            }
+            target->SetWorldXfm(tf48);
         }
     }
 }
@@ -124,7 +107,7 @@ void CharBlendBone::PollDeps(
 ) {
     changedBy.push_back(mSrc1);
     changedBy.push_back(mSrc2);
-    for (ObjVector<ConstraintSystem>::iterator it = mTargets.begin();
+    for (ObjList<ConstraintSystem>::iterator it = mTargets.begin();
          it != mTargets.end();
          ++it) {
         change.push_back((*it).mTarget);
@@ -144,21 +127,6 @@ CharBlendBone::ConstraintSystem::ConstraintSystem(Hmx::Object *o)
 BinStream &operator>>(BinStream &bs, CharBlendBone::ConstraintSystem &cs) {
     bs >> cs.mTarget;
     bs >> cs.mWeight;
-    return bs;
-}
-
-BinStream &operator>>(BinStreamRev &bsrev, ObjVector<CharBlendBone::ConstraintSystem> &vec) {
-    BinStream &bs = bsrev.stream;
-    int count;
-    bs.ReadEndian(&count, 4);
-    vec.resize(count);
-
-    CharBlendBone::ConstraintSystem *cs = vec.begin();
-    while (cs != vec.end()) {
-        bs >> *cs;
-        cs++;
-    }
-
     return bs;
 }
 
