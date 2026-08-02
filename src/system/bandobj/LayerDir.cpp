@@ -85,6 +85,12 @@ BinStream &operator>>(BinStream &bs, LayerDir::Layer &layer) {
     return bs;
 }
 
+// LANE DC-3: retail's LayerDir::Save is REVS(7,0) + `bs << mUseFreeCam` +
+// SAVE_SUPERCLASS(RndDir) + `bs << mLayers`, but retail streams mLayers through
+// `operator<<(BinStream&, const list<Symbol>&)` while our mLayers is
+// `list<LayerDir::Layer>` -- so the body does not compile as written.  Retail
+// wins (see CLAUDE.md gate), but changing the member type ripples through the
+// whole unit, so this stays stubbed until a lane owns that change.
 SAVE_OBJ(LayerDir, 0xC3)
 
 void LayerDir::PreLoad(BinStream &bs) {

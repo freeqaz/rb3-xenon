@@ -26,7 +26,10 @@ void UnisonIcon::SyncObjects() {
         mIconLabel = Find<BandLabel>("icon.lbl", false);
 }
 
-SAVE_OBJ(UnisonIcon, 0x2E)
+BEGIN_SAVES(UnisonIcon)
+    SAVE_REVS(0, 0)
+    SAVE_SUPERCLASS(RndDir)
+END_SAVES
 
 void UnisonIcon::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)

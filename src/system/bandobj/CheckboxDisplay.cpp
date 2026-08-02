@@ -32,7 +32,11 @@ void CheckboxDisplay::CopyMembers(const UIComponent *o, Hmx::Object::CopyType ty
     COPY_MEMBER_FROM(pDisplay, mChecked);
 }
 
-SAVE_OBJ(CheckboxDisplay, 0x3C)
+BEGIN_SAVES(CheckboxDisplay)
+    SAVE_REVS(0, 0)
+    bs << mChecked;
+    SAVE_SUPERCLASS(UIComponent)
+END_SAVES
 
 BEGIN_LOADS(CheckboxDisplay)
     PreLoad(bs);

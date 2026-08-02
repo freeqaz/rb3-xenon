@@ -85,7 +85,11 @@ void Fader::UpdateValue(float val) {
     std::for_each(mClients.begin(), mClients.end(), std::mem_fun(&FaderGroup::SetDirty));
 }
 
-SAVE_OBJ(Fader, 0x9B)
+BEGIN_SAVES(Fader)
+    SAVE_REVS(0, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    bs << mVal;
+END_SAVES
 
 BEGIN_LOADS(Fader)
     int rev;

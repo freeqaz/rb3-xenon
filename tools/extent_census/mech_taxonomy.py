@@ -41,9 +41,22 @@ def index(p):
     return _c[k]
 
 def names(p):
+    """raw-COFF-index -> symbol name.
+
+    ★ LANE DC-3 FIX.  This used to return a POSITIONAL list
+    (`[s.name for s in L[1]]`), but coffx compacts the symbol table: it skips
+    auxiliary records and drops C_FILE symbols entirely, while a relocation's
+    SymbolTableIndex is the RAW index.  Measured skew on MasterAudio.obj:
+    2561/2563 symbols had raw != positional.  Every relocation therefore
+    resolved to the WRONG symbol, which made the `our_memcpy` probe -- and so
+    the whole of class A -- silently vacuous: it reported 0 of 1,211 when the
+    true count is 39.  A decisive-looking negative produced by a lookup bug.
+    Only the memcpy probe was affected; the E/F/G/C/D split is computed from
+    `bl` COUNTS off raw instruction words and never consults a symbol name.
+    """
     k = ("n", p)
     if k not in _c:
-        L = load(p); _c[k] = [s.name for s in L[1]] if L else []
+        L = load(p); _c[k] = {s.raw: s.name for s in L[1]} if L else {}
     return _c[k]
 
 MEM = ("memcpy", "memset", "memmove")
@@ -58,8 +71,8 @@ def scan(p, sy, sc):
         if (w & 0xFC000003) == 0x48000001:
             nbl += 1
             si = rel.get(sy.addr + i)
-            if si is not None and si < len(nm):
-                b = nm[si].lstrip("_?")
+            if si is not None:
+                b = nm.get(si, "").lstrip("_?")
                 if any(b.startswith(m) for m in MEM): mem += 1
     return nbl, mem
 

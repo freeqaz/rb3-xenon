@@ -37,7 +37,11 @@ BEGIN_COPYS(MicInputArrow)
     COPY_SUPERCLASS_FROM(UIComponent, m)
 END_COPYS
 
-SAVE_OBJ(MicInputArrow, 0x53)
+BEGIN_SAVES(MicInputArrow)
+    SAVE_REVS(0, 0)
+    bs << mArrowNum;
+    SAVE_SUPERCLASS(UIComponent)
+END_SAVES
 
 BEGIN_LOADS(MicInputArrow)
     PreLoad(bs);
