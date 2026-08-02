@@ -272,7 +272,23 @@ BinStream &operator>>(BinStream &bs, BandIKEffector::Constraint &c) {
     return bs;
 }
 
-SAVE_OBJ(BandIKEffector, 0x354)
+BinStream &operator<<(BinStream &bs, const BandIKEffector::Constraint &c) {
+    bs << c.mTarget;
+    bs << c.mFinger;
+    bs << c.mWeight;
+    return bs;
+}
+
+BEGIN_SAVES(BandIKEffector)
+    SAVE_REVS(4, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    SAVE_SUPERCLASS(CharWeightable)
+    bs << mEffector;
+    bs << mMore;
+    bs << mElbow;
+    bs << mConstraints;
+    bs << mGround;
+END_SAVES
 
 BEGIN_LOADS(BandIKEffector)
     LOAD_REVS(bs)

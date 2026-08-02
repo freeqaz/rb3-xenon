@@ -15,7 +15,41 @@ SongSectionController::SongSectionController()
 
 SongSectionController::~SongSectionController() {}
 
-SAVE_OBJ(SongSectionController, 0x45)
+BinStream &operator<<(BinStream &bs, const SongSectionController::PracticeSectionMapping &m) {
+    bs << m.mPoolCategory;
+    bs << (int)m.mValidPracticeSections.size();
+    for (std::list<String>::const_iterator it = m.mValidPracticeSections.begin();
+         it != m.mValidPracticeSections.end();
+         ++it) {
+        bs << *it;
+    }
+    bs << (int)m.mInvalidPracticeSections.size();
+    for (std::list<String>::const_iterator it = m.mInvalidPracticeSections.begin();
+         it != m.mInvalidPracticeSections.end();
+         ++it) {
+        bs << *it;
+    }
+    return bs;
+}
+
+BinStream &operator<<(BinStream &bs, const SongSectionController::ContentPoolMapping &m) {
+    bs << m.mPoolCategory;
+    bs << (int)m.mTriggerOrder;
+    bs << m.mContentPools;
+    return bs;
+}
+
+BEGIN_SAVES(SongSectionController)
+    SAVE_REVS(3, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    SAVE_SUPERCLASS(RndPollable)
+    bs << mSectionMappings;
+    bs << mMappingsOwner;
+    bs << mDebugPoolCategory;
+    bs << mDebugSectionName;
+    bs << mContentPoolMappings;
+    bs << mWaitForEvent;
+END_SAVES
 
 BinStream &operator>>(BinStream &bs, SongSectionController::PracticeSectionMapping &m) {
     bs >> m.mPoolCategory;

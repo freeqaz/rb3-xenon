@@ -90,7 +90,17 @@ BEGIN_PROPSYNCS(BandLeadMeter)
     SYNC_SUPERCLASS(RndDir)
 END_PROPSYNCS
 
-SAVE_OBJ(BandLeadMeter, 0x99)
+BEGIN_SAVES(BandLeadMeter)
+    SAVE_REVS(8, 0)
+    bs << mScoreDiff;
+    if (!IsProxy()) {
+        bs << mNeedleAnim;
+        bs << mLogoGlowAnim << mGlowMesh1 << mGlowMesh2;
+        bs << mPeggedAnim1 << mPeggedAnim2;
+        bs << mLensMesh << mLensMatNeutral << mLensMat1 << mLensMat2;
+    }
+    SAVE_SUPERCLASS(RndDir)
+END_SAVES
 
 void BandLeadMeter::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);

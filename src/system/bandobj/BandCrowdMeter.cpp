@@ -388,7 +388,13 @@ BEGIN_HANDLERS(BandCrowdMeter)
     HANDLE_CHECK(0x249)
 END_HANDLERS
 
-SAVE_OBJ(BandCrowdMeter, 0x251)
+BEGIN_SAVES(BandCrowdMeter)
+    SAVE_REVS(3, 0)
+    if (!IsProxy())
+        bs << mLevelColors;
+    bs << mPeakValue;
+    SAVE_SUPERCLASS(RndDir)
+END_SAVES
 
 // Retail folds both rev words onto ONE base register with offsets 0/4, which
 // only happens for internal-linkage, align(4) file-scope statics (altRev+0,

@@ -322,7 +322,27 @@ DataNode PitchArrow::OnSyncColor(DataArray *da) {
     return DataNode(0);
 }
 
-SAVE_OBJ(PitchArrow, 0x1A1)
+BEGIN_SAVES(PitchArrow)
+    SAVE_REVS(2, 0)
+    bs << mPitched;
+    bs << mSpotlight;
+    bs << mDeploying;
+    bs << mScore;
+    bs << mHarmonyFX;
+    bs << mVolume;
+    bs << mTilt;
+    bs << mColorFade;
+    if (!IsProxy()) {
+        bs << mSpinSpeed;
+        bs << mSpinAnim;
+        bs << mSpinBeginFrame;
+        bs << mSpinEndFrame;
+        bs << mSpinRestFrame;
+    }
+    bs << mArrowStyle;
+    bs << mTestColor;
+    SAVE_SUPERCLASS(RndDir)
+END_SAVES
 
 void PitchArrow::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
