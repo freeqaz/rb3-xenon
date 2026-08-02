@@ -1524,10 +1524,23 @@ def generate_build_ninja(
             command=f"{objdiff} report generate $objdiff_report_args -o $out",
             description="REPORT",
         )
+        # ★ lane CN-1: the report is generated from the PATCHED objs, so it
+        # must DEPEND ON the post-compile patch stamps, not merely be ordered
+        # after them. `order_only="post-build"` never marks this edge dirty,
+        # and now that every obj patcher restores the obj mtime (required so
+        # the patcher edges converge -- see configure.py's post-compile block)
+        # `all_source` no longer changes either. Without this, a build in which
+        # only the patchers ran (e.g. after editing a patcher script) leaves
+        # report.json STALE and the change measures as inert.
+        report_implicit: List[str | Path] = [
+            objdiff, "objdiff.json", "all_source", str(icf_map_path)
+        ]
+        if config.custom_build_steps and "post-compile" in config.custom_build_steps:
+            report_implicit.append("post-compile")
         n.build(
             outputs=report_path,
             rule="report",
-            implicit=[objdiff, "objdiff.json", "all_source", str(icf_map_path)],
+            implicit=report_implicit,
             order_only="post-build",
         )
 
