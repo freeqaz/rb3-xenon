@@ -33,6 +33,20 @@ static struct {
 // Forward decl for stub defined at end-of-file (used by OnLightPresetKeyframeInterp).
 __declspec(noinline) int SymToPstKeyframe(Symbol);
 
+/** Xbox-360 Rock Band Stage Kit fog control (see BandDirector::SetFog).
+ *  The rb3-Wii dev source has SetFog empty because the Stage Kit -- a 360-only
+ *  USB peripheral with a fog machine and LEDs -- does not exist on Wii, so
+ *  there is NO source oracle for this one; the shape below is read off retail.
+ *  Retail BandDirector::SetFog is fn_8228CFF0 (0x6C bytes) and calls:
+ *    fn_82521C80 -> bool: `return fn_82524D40() != -1;` (device id probe)
+ *    fn_82521D80 -> void(bool): sends the command (fn_82521B30(0, b ? 1 : 2))
+ *                   and caches the state in the byte at 0x82CCB1B0
+ *  Both live in an unported 0x8252xxxx TU, so they are declared and not defined.
+ *  That is safe here: this TU is compiled to .obj only for matching and is
+ *  excluded from the native build (native/CMakeLists.txt:1110). */
+bool StageKitConnected();
+void StageKitSetFog(bool);
+
 const char *gVenues[5] = { "arena", "big_club", "festival", "small_club", "video" };
 
 BandDirector::VenueLoader::VenueLoader() : mDir(0), mLoader(0) {}
@@ -1760,7 +1774,16 @@ void BandDirector::SetCharSpot(Symbol s1, Symbol s2) {
     }
 }
 
-void BandDirector::SetFog(Symbol) {}
+// noinline lives on the declaration in BandDirector.h -- see the note there.
+// Body reconstructed from retail fn_8228CFF0: a function-static Symbol("on")
+// (guard word 0x82CBC9D4 bit 0, symbol at 0x82CBC9D0), a device probe, and the
+// fog command carrying the `on == s` equality (retail computes it with the
+// cntlzw/extrwi idiom at 0x8228D048).
+void BandDirector::SetFog(Symbol s) {
+    static Symbol on("on");
+    if (StageKitConnected())
+        StageKitSetFog(s == on);
+}
 
 Symbol BandDirector::GetModeInst(Symbol s) {
     if (s == "guitar" || s == "bass") {
@@ -1882,14 +1905,20 @@ BEGIN_PROPSYNCS(BandDirector)
     SYNC_PROP(cam_postproc, mCamPostProc)
     SYNC_PROP_SET(cur_shot, mCurShot.Ptr(), )
     SYNC_PROP_SET(cur_world, mCurWorld.Ptr(), )
-    SYNC_PROP_SET(bass_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "bass"); })
-    SYNC_PROP_SET(drum_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "drum"); })
+    // Retail (0x822944B8..) passes the INSTRUMENT symbol first and the incoming
+    // property value second: r4 = Symbol("bass"), r5 = _val.Sym().  That is the
+    // rb3-Wii oracle's order (BandDirector.cpp:2143).  The original port
+    // transcribed it swapped, and a later match-chasing commit (8aa2892a)
+    // wrapped the swapped form in a `{ Symbol v = ...; }` block rather than
+    // fixing the order -- so the swap survived as a real behavioural defect.
+    SYNC_PROP_SET(bass_intensity, Symbol("idle_realtime"), SendMessage("bass", _val.Sym()))
+    SYNC_PROP_SET(drum_intensity, Symbol("idle_realtime"), SendMessage("drum", _val.Sym()))
     SYNC_PROP_SET(
-        guitar_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "guitar"); }
+        guitar_intensity, Symbol("idle_realtime"), SendMessage("guitar", _val.Sym())
     )
-    SYNC_PROP_SET(mic_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "mic"); })
+    SYNC_PROP_SET(mic_intensity, Symbol("idle_realtime"), SendMessage("mic", _val.Sym()))
     SYNC_PROP_SET(
-        keyboard_intensity, Symbol("idle_realtime"), { Symbol v = _val.Sym(); SendMessage(v, "keyboard"); }
+        keyboard_intensity, Symbol("idle_realtime"), SendMessage("keyboard", _val.Sym())
     )
     SYNC_PROP_SET(
         part2_sing,
