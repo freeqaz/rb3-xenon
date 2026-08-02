@@ -19,6 +19,14 @@ THE QUESTION
         compiled.  The surplus is machine code we never generated.
         Already disclosed per item as `masked_equal` and summed into
         `measures.masked_equal_functions` -- read it, do not re-derive it.
+        NOTE (2026-08-02, lane CZ-4): `masked_equal_functions` is no longer
+        JUST this over-subscription surplus.  It now discloses EVERY funclet
+        byte-signature pairing (`SymbolDiff::masked_equal_symbol`), of which
+        over-subscription is a small subset -- 1,130 of 22,632 on rb3-xenon.
+        The wider class is SUPPLY-BACKED (we did emit those bodies); what it
+        discloses is that the per-row ATTRIBUTION is unverified, because the
+        pairing compared bodies with relocation targets masked.  So this axis
+        is now "attribution unverified", not "code we never generated".
 
     AXIS 2 -- IDENTITY.  Even a supply-backed pair can point somewhere else:
         our `bl` goes to `??1UIListProvider@@` where retail's goes to
@@ -127,7 +135,8 @@ def main():
     print("  named at 100%%             %6d" % sum(1 for v in at100.values() if not v["funclet"]))
     print()
     print("AXIS 1 -- SUPPLY (objdiff's own disclosure)")
-    print("  masked_equal_functions   %6d   pass-2b over-subscription surplus" % ME)
+    print("  masked_equal_functions   %6d   funclet byte-signature pairings "
+          "(attribution unverified; pass-2b surplus is a subset)" % ME)
     nf = sum(1 for v in at100.values() if v["masked_equal"] and not v["funclet"])
     print("  ... of which NAMED       %6d   (structurally must be 0)" % nf)
     print()

@@ -32,9 +32,14 @@ That is a structural property of the collision channel, not an accident of
 these 32: a name collision only survives to a DECISIVE verdict when both rivals
 are reloc-masked byte twins, and reloc-masked twins are precisely the functions
 the report cannot tell apart.  `masked_equal_functions` does NOT disclose them
-either -- its only producers are the funclet over-subscription / cross-unit
-byte-promotion paths (objdiff-core diff/mod.rs:1378,1384; objdiff-cli
-cmd/report.rs:846), never reloc masking.  So the at-100% reloc defect class is
+either -- its producers are the funclet byte-signature pairing paths
+(objdiff-core diff/mod.rs:1378,1384; objdiff-cli cmd/report.rs:846), never
+per-row reloc masking inside a name-matched pair.  (Lane CZ-4, 2026-08-02,
+widened that disclosure from the pass-2b over-subscription subset to ALL
+funclet byte-signature pairings, 1,130 -> 22,632; the sentence above still
+holds -- a reloc-masked NAMED collision is still not disclosed, since
+`masked_equal_symbol` is set only on funclet pairs, measured 0 named rows of
+24,345 flagged.)  So the at-100% reloc defect class is
 invisible to BOTH priced axes, and collision repoints can only ever be
 correctness work.
 

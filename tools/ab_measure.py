@@ -737,6 +737,48 @@ def find_objdiff(wt):
     return m.group(1)
 
 
+def ruler_identity(wt):
+    """Content identity of the objdiff binary = the RULER both legs are scored on.
+
+    Deltas compose only when both legs were measured with the SAME ruler. The
+    binary is NOT a ninja input (see CLAUDE.md), so swapping it triggers no
+    rebuild and no warning: a swap between leg A and leg B silently reprices the
+    delta and nothing in the run notices. That is not hypothetical -- lane CZ-4
+    widened `masked_equal_functions` by +21,502 with ZERO change to any score, so
+    a mid-run swap of that binary alone would manufacture a Δhonest of -21,502
+    out of an unchanged tree.
+
+    Returns a dict that is compared for equality across legs. When the path
+    cannot be resolved the result is explicitly marked unresolved rather than
+    omitted -- an unverifiable guard must announce itself, not pass quietly.
+    """
+    try:
+        path = find_objdiff(wt)
+    except Refusal:
+        return {"resolved": False, "reason": "path not in build.ninja"}
+    try:
+        st = os.stat(path)
+        h = hashlib.sha256(Path(path).read_bytes()).hexdigest()[:16]
+    except OSError as e:
+        return {"resolved": False, "reason": f"stat/read failed: {e}"}
+    return {"resolved": True, "path": path, "size": st.st_size, "sha256_16": h}
+
+
+def check_ruler_stable(a, b):
+    """REFUSE if the objdiff binary changed between the two legs."""
+    if not a.get("resolved") or not b.get("resolved"):
+        return "UNVERIFIED (%s)" % (a.get("reason") or b.get("reason") or "unknown")
+    if a != b:
+        raise Refusal(
+            "ruler",
+            "the objdiff-cli binary CHANGED between leg A and leg B "
+            f"(A sha256:{a['sha256_16']} size={a['size']}, "
+            f"B sha256:{b['sha256_16']} size={b['size']}). The two legs were "
+            "scored on DIFFERENT rulers, so the delta is meaningless. Re-run "
+            "the whole A/B on one binary.")
+    return "stable (sha256:%s)" % a["sha256_16"]
+
+
 def main():
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -837,6 +879,8 @@ def main():
 
         # --- settle + leg A ---
         ab.settle(presplit=bool(kinds & {"map", "splits"}))
+        # Pin the RULER before leg A is read, re-check after leg B (below).
+        ruler_a = ruler_identity(ab.wt)
         a = ab.read_leg("A")
         objdiff_bin = None
         if args.name_check:
@@ -850,6 +894,10 @@ def main():
         if args.name_check:
             ab.gen_name_check("B", objdiff_bin)
 
+        # Same ruler for both legs, or the delta is not a delta.
+        ruler_state = check_ruler_stable(ruler_a, ruler_identity(ab.wt))
+        print(f"  [ruler] objdiff-cli {ruler_state}")
+
         # --- verdict (only reachable if every stage above passed) ---
         regs, imps, ubmeta = unit_breakdown(a["_units"], b["_units"])
         delta = compute_delta(a, b)
@@ -857,6 +905,9 @@ def main():
             "status": "measured",
             "patch_sha256_16": sha,
             "kinds": sorted(kinds),
+            # Which ruler produced these numbers. Archived so a later reader can
+            # tell whether two runs are comparable at all.
+            "ruler": {"objdiff": ruler_a, "state": ruler_state},
             "evidence": ab.evidence,
             "legA": leg_public(a),
             "legB": leg_public(b),
@@ -1047,6 +1098,44 @@ def selftest():
               lambda: read_measures_strict(p_bad2), expect_refusal=True)
         check("classify REFUSES a symbols.txt patch",
               lambda: classify_patch([SYMBOLS_REL]), expect_refusal=True)
+
+        # --- SAME-RULER guard (lane CZ-4) ----------------------------------
+        # The objdiff-cli binary is not a ninja input, so swapping it between
+        # legs rebuilds nothing and warns about nothing -- the two legs are
+        # simply scored on different rulers and the delta is fiction. CZ-4's
+        # own disclosure change is the worst case available: it moves
+        # masked_equal_functions by +21,502 with EVERY score key unchanged, so
+        # a mid-run swap fabricates Δhonest = -21,502 from an untouched tree.
+        #
+        # These fixtures are hand-built (no binary needed). The equal case must
+        # PASS and the differing case must REFUSE; if the differing case ever
+        # passes, the guard has become vacuous.
+        r_a = {"resolved": True, "path": "/x/objdiff-cli", "size": 11652856,
+               "sha256_16": "aaaaaaaaaaaaaaaa"}
+        r_same = dict(r_a)
+        r_swapped = dict(r_a, size=11652880, sha256_16="bbbbbbbbbbbbbbbb")
+        r_unres = {"resolved": False, "reason": "path not in build.ninja"}
+        check("ruler guard PASSES when the objdiff binary is unchanged",
+              lambda: check_ruler_stable(r_a, r_same), expect_refusal=False)
+        check("ruler guard REFUSES a mid-run objdiff binary swap",
+              lambda: check_ruler_stable(r_a, r_swapped), expect_refusal=True)
+        # An unresolvable path must not masquerade as a pass: it reports
+        # UNVERIFIED, a state distinguishable from "stable" in the log.
+        check("ruler guard does not refuse when unresolvable (reports UNVERIFIED)",
+              lambda: check_ruler_stable(r_a, r_unres), expect_refusal=False)
+        if "UNVERIFIED" not in check_ruler_stable(r_a, r_unres):
+            fails.append("ruler guard unresolved state is not labelled UNVERIFIED")
+            print("  FAIL  ruler guard unresolved state is not labelled UNVERIFIED")
+        else:
+            print("  PASS  ruler guard unresolved state is labelled UNVERIFIED "
+                  "(a guard that cannot verify must say so, not pass quietly)")
+        if check_ruler_stable(r_a, r_same) == check_ruler_stable(r_a, r_unres):
+            fails.append("ruler guard pass-states are indistinguishable")
+            print("  FAIL  ruler guard pass-states are indistinguishable")
+        else:
+            print("  PASS  ruler guard pass-states are distinguishable: "
+                  f"{check_ruler_stable(r_a, r_same)!r} vs "
+                  f"{check_ruler_stable(r_a, r_unres)!r}")
 
         # --- honest = matched - masked_equal, the HEADLINE quantity --------
         # Lane CL-4 sabotage: flipping this '-' to a '+' in
