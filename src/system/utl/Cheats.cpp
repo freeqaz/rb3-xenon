@@ -13,8 +13,25 @@
 
 extern bool JoypadIsShiftButton(int, JoypadButton);
 
+// gDisable's ALIGNMENT is codegen-load-bearing.  Retail's CheatsInit encodes
+// the gDisable<->gCheatsManager distance as a constant: `addi r27, r30, 0x4`
+// and `lbz r11, 0x4(r30)`, i.e. gDisable sits at gCheatsManager+4.
+//
+// MSVC allocates this TU's plain .bss grouped by ALIGNMENT ASCENDING, so a
+// 1-byte `static bool` can never follow the 4-byte pointer -- measured, and
+// NOT fixable by declaration order (swapping the two is completely inert;
+// verified).  Our obj additionally carries Flow::sReflectingProperty, a
+// 1-byte static pulled in by the `flow/Flow.cpp` scatter-include below, which
+// takes .bss[0]; that is what produced gDisable@1 / gCheatsManager@4 and the
+// `subi r27, r30, 0x3` that stalled CheatsInit at 99.879%.
+//
+// Forcing gDisable into the 4-byte group reproduces retail exactly:
+//   sReflectingProperty@0, gCheatsManager@4, gDisable@8.
+// Retail's gDisable demonstrably occupies a 4-byte-aligned slot (it is still
+// a bool -- FindData takes bool& and the read is `lbz`), so this describes
+// retail's data layout rather than merely fitting the metric.
 static CheatsManager *gCheatsManager = nullptr;
-static bool gDisable = false;
+__declspec(align(4)) static bool gDisable = false;
 static bool sKeyCheatsEnabled = true;
 
 void InitQuickJoyCheats(const DataArray *cheats, CheatsManager::ShiftMode mode) {
@@ -158,19 +175,28 @@ void CallQuickCheat(DataArray *da, LocalUser *lu) {
 #pragma region CheatsManager
 
 CheatsManager::CheatsManager()
-    : mKeyCheatsEnabled(sKeyCheatsEnabled), mCtrlOverriddeMode(false),
-      mIsOverridingKeyboard(false), mPreviousOverride(nullptr), mUnsafeCheatsUsed(false) {
+    : mKeyCheatsEnabled(sKeyCheatsEnabled)
+#ifdef HX_NATIVE
+      ,
+      mCtrlOverriddeMode(false), mIsOverridingKeyboard(false),
+      mPreviousOverride(nullptr), mUnsafeCheatsUsed(false)
+#endif
+{
     mLastButtonTime.Start();
     SystemConfig()->FindData("cheats_buffer", mMaxBuffer);
+#ifdef HX_NATIVE
     DataArray *arr = SystemConfig()->FindArray("cheats_ctrl_mode", false);
     if (arr) {
         mCtrlOverriddeMode = arr->Int(1);
     }
+#endif
     SetName("cheats_mgr", ObjectDir::Main());
 }
 
 BEGIN_HANDLERS(CheatsManager)
+#ifdef HX_NATIVE
     HANDLE_ACTION(set_unsafe_cheat_used, mUnsafeCheatsUsed = true)
+#endif
     HANDLE_MESSAGE(ButtonDownMsg)
     HANDLE_MESSAGE(KeyboardKeyMsg)
     HANDLE_MESSAGE(KeyboardKeyReleaseMsg)
@@ -336,10 +362,12 @@ int CheatsManager::OnMsg(const ButtonDownMsg &msg) {
 }
 
 DataNode CheatsManager::OnMsg(const KeyboardKeyReleaseMsg &msg) {
+#ifdef HX_NATIVE
     if (msg->Int(2) == 0x11 && mIsOverridingKeyboard) {
         KeyboardOverride(mPreviousOverride);
         mIsOverridingKeyboard = false;
     }
+#endif
     return 1;
 }
 
@@ -348,13 +376,16 @@ DataNode CheatsManager::OnMsg(const KeyboardKeyMsg &msg) {
         return DATA_UNHANDLED;
     } else {
         int key = msg.GetKey();
+#ifdef HX_NATIVE
         if (key == 0x11 && mCtrlOverriddeMode) {
             if (!mIsOverridingKeyboard) {
                 mPreviousOverride = KeyboardOverride(this);
                 mIsOverridingKeyboard = true;
             }
             return 1;
-        } else {
+        } else
+#endif
+        {
             std::vector<KeyCheat *> cheatPtrs(mKeyCheatPtrsMode);
             FOREACH (it, cheatPtrs) {
                 KeyCheat *cur = *it;

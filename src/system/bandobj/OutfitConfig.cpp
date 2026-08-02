@@ -807,6 +807,16 @@ void OutfitConfig::UpdatePreClearState() {
     TheRnd.PreClearDrawAddOrRemove(this, true, false);
 }
 
+// Retail keeps the gender lookup OUT OF LINE -- fn_8229D718, 31 instructions,
+// ABI r3=hidden Symbol return slot / r4=OutfitConfig*, body exactly
+//   strstr(Dir()->GetPathName(), "female") ? "female" : "male"
+// then one Symbol::Symbol(const char*).  We inlined it, which is the entire
+// 14-instruction surplus that held FindBandCharDesc at 84.9%
+// (retail 388 B / 97 instrs vs our 111).
+Symbol OutfitConfigGender(OutfitConfig *cfg) {
+    return Symbol(strstr(cfg->Dir()->GetPathName(), "female") ? "female" : "male");
+}
+
 BandCharDesc *OutfitConfig::FindBandCharDesc() {
     if (Dir()) {
         static Symbol sBandCharName("BandCharacter");
@@ -819,9 +829,7 @@ BandCharDesc *OutfitConfig::FindBandCharDesc() {
             }
         }
     }
-    sBandCharDesc->SetGender(
-        Symbol(strstr(Dir()->GetPathName(), "female") ? "female" : "male")
-    );
+    sBandCharDesc->SetGender(OutfitConfigGender(this));
     return sBandCharDesc;
 }
 
