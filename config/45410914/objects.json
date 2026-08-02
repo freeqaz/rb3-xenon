@@ -1669,9 +1669,7 @@
                 "status": "NonMatching",
                 "extra_cflags": [
                     "/DRB3_HANDLE_LOCAL_STATIC",
-                    "/DRB3_NO_WII_META_MEMBERS",
-                    "/DRB3_METAPERFORMER_NOVTORDISP",
-                    "/vd0"
+                    "/DRB3_NO_WII_META_MEMBERS"
                 ]
             },
             "band3/meta_band/BandSongMetadata.cpp": {

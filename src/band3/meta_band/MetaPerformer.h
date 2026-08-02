@@ -176,7 +176,9 @@ public:
     void UpdateBattleInstarankData(DataResultList &);
     void ClearInstarankData();
     void ClearBattleInstarankData();
-    Symbol GetVenueOverride();
+#ifndef RB3_NO_WII_META_MEMBERS
+    Symbol GetVenueOverride(); // Wii/dev-only: absent from retail RB3-360
+#endif
     void SetBandNoFail(bool);
     void ExportUpdateMetaPerformer();
     void LoadFestival();
@@ -271,15 +273,31 @@ public:
     DataResultList mDataResults; // 0x344
     bool mHarmonyOverride; // 0x35c
     bool mRealDrumsOverride; // 0x35d
-    int unk360; // used in lock/unlock band or solo...some kind of mask?
-    Symbol mVenueOverride; // 0x364
+    int unk360; // 0x37c -- LAST own member in retail; vtordisp follows at 0x380.
 #ifndef RB3_NO_WII_META_MEMBERS
-    // Wii-only members. Retail Xbox drops both: the ctor (fn_8256A970) packs
-    // 0x38..0x384 with non-Wii members and places the MsgSource virtual base at
-    // exactly 0x384 with no room for these. Keeping them here adds
-    // mWiiPending(1)+pad+mLastVenue(4)+8-align = 0xc, pushing MsgSource to 0x390.
-    // Gated OFF for this TU via /DRB3_NO_WII_META_MEMBERS in objects.json.
+    // Wii/dev-build-only members. Retail Xbox drops all three: the ctor packs
+    // 0x38..0x380 with non-Wii members, then a vtordisp word at 0x380 and the
+    // Hmx::Object virtual base at 0x384.
+    //
+    // mVenueOverride (lane CO-1/METAPERF, 2026-08-02): retail RB3-360 has NO
+    // venue-override feature at all. Evidence, each with a live control:
+    //   1. retail ctor stores 0x354/0x358/0x35c/0x360/0x378/0x379/0x37c and
+    //      NOTHING at 0x380 (0x8258212C); grep of the whole target
+    //      MetaPerformer.s finds 3 accesses to 0x37c and ZERO to 0x380.
+    //   2. band.exe contains 0 occurrences of "no_venue_override",
+    //      "set_venue_override", "get_venue_override" -- while the positive
+    //      controls "is_now_using_vocal_harmony" and "select_random_venue" are
+    //      present (1 each) and "venue" appears 128 times, so this is a real
+    //      absence and not a blind scan.
+    //   3. the get/set_venue_override handlers were already #ifdef HX_NATIVE.
+    // Keeping it added 4 surplus bytes at 0x380, which a prior lane absorbed
+    // with a TU-wide /vd0 that stripped MsgSource's vtordisp -- that made
+    // HANDLE_SUPERCLASS(MsgSource) emit `subi r4,r24,0x34c` instead of retail's
+    // 0x348, because the adjustor is vbase - MsgSource - (Object vfptr offset
+    // inside a standalone MsgSource): 0x384-0x20-0x18 vs 0x384-0x20-0x1c.
+    // Dropping the member lets /vd0 go, so MsgSource keeps its vtordisp.
     unsigned char mWiiPending; // tail (Wii-only)
     Symbol mLastVenue; // tail (Wii-only)
+    Symbol mVenueOverride; // tail (Wii/dev-only)
 #endif
 };

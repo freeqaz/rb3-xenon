@@ -160,16 +160,22 @@ MetaPerformer::MetaPerformer(const BandSongMgr &mgr, const char *cc)
       mSetlist(gNullStr), mSetlistIsLocal(0), mSetlistIsHmx(0),
       mSongMgr((BandSongMgr *)&mgr), mHasOnlineScoring(0), mSkippedSong(0), unk2c0(0),
       mFestivalReward(0), mCheatInFinale(0), mCheating(0), unk338(0), unk33c(-1),
-      mRecordBattleContextID(-1), mHarmonyOverride(0), mRealDrumsOverride(0), unk360(2),
-      mVenueOverride(gNullStr) {
+      mRecordBattleContextID(-1), mHarmonyOverride(0), mRealDrumsOverride(0), unk360(2)
+#ifndef RB3_NO_WII_META_MEMBERS
+      ,
+      mVenueOverride(gNullStr)
+#endif
+{
     SetName(cc, ObjectDir::Main());
     mQpPerformer = new QuickplayPerformerImpl();
     if (TheGameMode)
         TheGameMode->AddSink(this, mode_changed);
     if (TheSessionMgr)
         TheSessionMgr->AddSink(this, new_remote_user);
+#ifndef RB3_NO_WII_META_MEMBERS
     if (mVenueOverride == gNullStr)
         mVenueOverride = no_venue_override;
+#endif
     TheNetSession->AddSink(this);
     TheProfileMgr.AddSink(this, Symbol("primary_profile_changed_msg"));
     mIsBattle = false;
@@ -939,7 +945,9 @@ void MetaPerformer::ClearInstarankData() {
 }
 
 void MetaPerformer::ClearBattleInstarankData() { mBattleInstarank.Clear(); }
+#ifndef RB3_NO_WII_META_MEMBERS
 Symbol MetaPerformer::GetVenueOverride() { return mVenueOverride; }
+#endif
 
 #pragma push
 #pragma pool_data off
@@ -1079,12 +1087,12 @@ void MetaPerformer::SetVenue(Symbol s) {
 #ifndef RB3_NO_WII_META_MEMBERS
     mLastVenue = mVenue;
 #endif
+#ifndef RB3_NO_WII_META_MEMBERS
     if (mVenueOverride != no_venue_override) {
         mVenue = mVenueOverride;
-#ifndef RB3_NO_WII_META_MEMBERS
         mLastVenue = mVenueOverride;
-#endif
     }
+#endif
     if (changed && TheSessionMgr && HasSyncPermission()) {
         SetSyncDirty(-1, false);
     }
