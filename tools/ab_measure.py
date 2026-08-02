@@ -110,6 +110,15 @@ NON_WORK_DESCS = {"REPORT", "PROGRESS", "CHANGESFMT", "CHANGES"}
 WORKLINE_RE = re.compile(r"^\[\d+/\d+\]\s+(\S+)")
 RENAMER_RE = re.compile(
     r"\[(?:APPLIED|DRY RUN)\]\s+(\d+) files checked,\s+(\d+) files patched")
+# ⚠ SIX patchers emit the identical '[APPLIED] N files checked, M files
+# patched' line, so a bare search binds the LAST one — and guard/bool_mangle
+# legitimately report 0. Lane CT-1 hit the resulting FALSE REFUSAL: a leg B
+# recompiling only 2 TUs fired no later patcher, so the gate read the renamer's
+# real 1045 correctly; add more recompiles and a later 0 overwrites it. The
+# mirror case is the dangerous one — a genuinely INERT map edit would PASS the
+# gate whenever any later patcher reports >0. Bind the figure to the renamer's
+# own ninja step instead of to line order.
+RENAMER_STEP_RE = re.compile(r"^\[\d+/\d+\]\s+PATCH target fn_")
 
 # Required top-level measures keys. Per-unit measures legitimately omit
 # zero-valued keys (serde skips defaults; 3,005/3,914 units omit
@@ -159,7 +168,13 @@ def count_lines(log_text):
     work counts and the renamer 'files patched' figure if present."""
     msvc = split = patch = other = 0
     renamer_patched = None
+    in_renamer_step = False
     for line in log_text.splitlines():
+        if RENAMER_STEP_RE.match(line):
+            in_renamer_step = True
+        elif WORKLINE_RE.match(line):
+            # any other ninja step ends the renamer's output region
+            in_renamer_step = False
         m = WORKLINE_RE.match(line)
         if m:
             desc = m.group(1)
@@ -174,7 +189,7 @@ def count_lines(log_text):
             else:
                 other += 1
         rm = RENAMER_RE.search(line)
-        if rm:
+        if rm and in_renamer_step:
             renamer_patched = int(rm.group(2))
     return {
         "msvc": msvc, "split": split, "patch": patch, "other_work": other,
@@ -1176,6 +1191,46 @@ def selftest():
     check("legB map patch with split=1 and 7 files patched PASSES",
           lambda: check_legb_counts({"map"}, dict(base, split=1,
                                                  renamer_patched=7)),
+          expect_refusal=False)
+
+    # ---- renamer figure must come from the RENAMER's step (lane CT-1) ------
+    # SIX patchers emit an identical '[APPLIED] N files checked, M files
+    # patched' line. Binding by line order took the LAST one. On a real leg-B
+    # log that was the EH boundary patcher (51), NOT the renamer (1045) — so
+    # this gate had been reading the wrong patcher's number since 5f05def4,
+    # passing only because 51 > 0. Both directions are tested: the mirror case
+    # (inert renamer masked by a later non-zero) is the dangerous one.
+    _RENAMER_STEP = "[1/67] PATCH target fn_<addr> -> MSVC mangled names"
+    _EH_STEP = "[63/67] PATCH EH funclet extent boundaries"
+    _APPLIED = "[APPLIED] {n} files checked, {m} files patched, 0 total"
+
+    def _rp(*lines):
+        """Return renamer_patched for a synthetic log, as a Refusal-or-pass
+        so it composes with check()'s contract."""
+        return count_lines("\n".join(lines))["renamer_patched"]
+
+    def _expect_rp(log_lines, want):
+        got = _rp(*log_lines)
+        if got != want:
+            raise Refusal("renamer-figure",
+                          f"expected renamer_patched={want}, got {got}")
+
+    check("renamer figure ignores a LATER patcher's 0 (CT-1 false refusal)",
+          lambda: _expect_rp([
+              _RENAMER_STEP, _APPLIED.format(n=13151, m=1045),
+              "[60/67] PATCH  guard variables to match ??_B naming",
+              _APPLIED.format(n=287, m=0)], 1045),
+          expect_refusal=False)
+    check("renamer figure ignores a LATER patcher's NON-ZERO "
+          "(mirror case: an INERT map edit must still REFUSE)",
+          lambda: _expect_rp([
+              _RENAMER_STEP, _APPLIED.format(n=13151, m=0),
+              _EH_STEP, _APPLIED.format(n=1096, m=51)], 0),
+          expect_refusal=False)
+    check("renamer figure is None when the renamer step never ran "
+          "(absence must not read as 0)",
+          lambda: _expect_rp([
+              _EH_STEP, _APPLIED.format(n=1096, m=51)], None),
           expect_refusal=False)
 
     # ---- STALE RUNNER guard (lane CL-4) -----------------------------------
