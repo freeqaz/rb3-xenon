@@ -1623,25 +1623,23 @@ extern DataArray *SystemConfig(Symbol, Symbol, Symbol);
         );                                                                               \
     }
 #else
-#define ASSERT_REVS(rev1, rev2)                                                          \
-    if (d.rev > rev1) {                                                                  \
-        MILO_FAIL(                                                                       \
-            "%s can't load new %s version %d > %d",                                      \
-            PathName(this),                                                              \
-            ClassName(),                                                                 \
-            d.rev,                                                                       \
-            gRev                                                                         \
-        );                                                                               \
-    }                                                                                    \
-    if (d.altRev > rev2) {                                                               \
-        MILO_FAIL(                                                                       \
-            "%s can't load new %s alt version %d > %d",                                  \
-            PathName(this),                                                              \
-            ClassName(),                                                                 \
-            d.altRev,                                                                    \
-            gAltRev                                                                      \
-        );                                                                               \
-    }
+// RETAIL-MATCH (lane CP-2, 2026-08-02): retail RB3 compiles ASSERT_REVS OUT
+// entirely.  Proven from retail asm, not inferred: ?Load@RndMotionBlur@@ (target
+// 148 B) goes straight from the rev halfword-stores to `bl Object::Load` with NO
+// PathName/ClassName calls, while our 320 B body emitted TWO `bl ?PathName@@`
+// blocks plus a `bctrl` virtual ClassName().
+//
+// Cause: MILO_FAIL is `((void)(__VA_ARGS__))` (os/Debug.h:188) — a COMMA
+// EXPRESSION, so it does NOT compile the body out; every argument is still
+// evaluated and PathName(this)/ClassName() are real calls with side effects the
+// compiler must emit.  The rb3-Wii dialect (obj/ObjMacros.h) already gates this
+// check behind VERSION_SZBE69_B8 (a DEV-build macro) and expands to nothing
+// otherwise; only this DC3-derived copy was left ungated.  Same family as the
+// MILO_DEBUG force-define documented in CLAUDE.md.
+//
+// The HX_NATIVE branch above is deliberately untouched, so the native port keeps
+// its version-mismatch warning.
+#define ASSERT_REVS(rev1, rev2)
 #endif
 
 #define LOAD_SUPERCLASS(parent) parent::Load(d.stream);
