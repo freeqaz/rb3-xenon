@@ -509,6 +509,66 @@ namespace {
         }
     }
 
+    // X4c: for a SKINNED mesh, `meshWorld * bindVert` is NOT where the geometry
+    // is -- the palette places it, and the engine forces object.world to
+    // identity for skinned meshes. The two agree only at bind pose (where
+    // skin_b == meshWorld for every b, which is exactly the palette invariant),
+    // so framing the camera on bind verts silently mis-frames every posed
+    // character. Bounds are taken AFTER the pose (SceneBounds is called at the
+    // call site below DriveCharacterClip), so the live palette is available.
+    bool SkinnedMeshBounds(Bounds &b, RndMesh *m) {
+        if (!m->IsSkinned()) return false;
+        // Scoped to POSED renders only. At bind pose the two framings agree by
+        // construction (skin_b == meshWorld for every b -- that IS the palette
+        // invariant), so the only thing using the palette at bind would buy is a
+        // float-ordering difference that spends X3's byte-identical evidence PNG
+        // for nothing. Restricting it here keeps the bind cell reproducible and
+        // still fixes the case that was actually broken.
+        if (!(gClipsFile && gBeat >= 0.0f)) return false;
+        RndMesh *owner = m->GetGeomOwner();
+        if (!owner) owner = m;
+        int ncv = owner->NumCompressedVerts();
+        const unsigned char *data = owner->CompressedVerts();
+        if (ncv <= 0 || !data) return false;
+        int nb = m->NumBones();
+        if (nb <= 0) return false;
+        std::vector<Transform> pal((size_t)nb);
+        for (int i = 0; i < nb; i++) {
+            RndTransformable *bt = m->BoneTransAt(i);
+            if (bt) Multiply(m->BoneOffsetAt(i), bt->WorldXfm(), pal[i]);
+            else pal[i].Reset();
+        }
+        for (int i = 0; i < ncv; i++) {
+            const unsigned char *rec = data + (size_t)i * 36;
+            auto be32 = [&](int off) {
+                unsigned int v;
+                memcpy(&v, rec + off, 4);
+                return __builtin_bswap32(v);
+            };
+            float p[3];
+            for (int k = 0; k < 3; k++) {
+                unsigned int v = be32(k * 4);
+                float f;
+                memcpy(&f, &v, 4);
+                p[k] = f;
+            }
+            unsigned int wv = be32(28), iv = be32(32);
+            float w[4] = { (wv & 0x3FF) / 1023.0f, ((wv >> 10) & 0x3FF) / 1023.0f,
+                           ((wv >> 20) & 0x3FF) / 1023.0f, ((wv >> 30) & 0x3) / 3.0f };
+            float acc[3] = { 0, 0, 0 };
+            for (int k = 0; k < 4; k++) {
+                int bi = (iv >> (k * 8)) & 0xFF;
+                if (w[k] == 0.0f || bi >= nb) continue;
+                const Transform &t = pal[bi];
+                acc[0] += w[k] * (t.m.x.x * p[0] + t.m.y.x * p[1] + t.m.z.x * p[2] + t.v.x);
+                acc[1] += w[k] * (t.m.x.y * p[0] + t.m.y.y * p[1] + t.m.z.y * p[2] + t.v.y);
+                acc[2] += w[k] * (t.m.x.z * p[0] + t.m.y.z * p[1] + t.m.z.z * p[2] + t.v.z);
+            }
+            b.Add(acc[0], acc[1], acc[2]);
+        }
+        return true;
+    }
+
     Bounds SceneBounds(ObjectDir *dir) {
         Bounds b;
         for (ObjDirItr<RndMesh> it(dir, true); it; ++it) {
@@ -517,6 +577,11 @@ namespace {
             const Transform &xfm = m->WorldXfm();
             RndMesh *owner = m->GetGeomOwner();
             if (!owner) owner = m;
+
+            if (SkinnedMeshBounds(b, m)) {
+                b.meshes++;
+                continue;
+            }
 
             int nv = owner->NumVerts();
             int ncv = owner->NumCompressedVerts();
@@ -1743,11 +1808,13 @@ int main(int argc, char **argv) {
     //   RB3_GFX_MODE=old  -> leave kOldGfx         (4 bones, the X4b baseline)
     {
         const char *gm = getenv("RB3_GFX_MODE");
-        if (gm && (!strcmp(gm, "new") || !strcmp(gm, "loadonly"))) {
-            SetGfxMode(kNewGfx);
-            printf("  gfx-mode: kNewGfx (RB3_GFX_MODE=%s) — MaxBones()=40\n", gm);
+        if (gm && !strcmp(gm, "old")) {
+            printf("  gfx-mode: kOldGfx (RB3_GFX_MODE=old) — MaxBones()=4, meshes "
+                   "TRUNCATED\n");
         } else {
-            printf("  gfx-mode: kOldGfx (default) — MaxBones()=4\n");
+            SetGfxMode(kNewGfx);
+            printf("  gfx-mode: kNewGfx%s — MaxBones()=40\n",
+                   (gm && !strcmp(gm, "loadonly")) ? " (RB3_GFX_MODE=loadonly)" : "");
         }
     }
 

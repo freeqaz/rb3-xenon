@@ -12,6 +12,79 @@
 #line 8 "CharBonesSamples.cpp"
 static int gVer;
 
+#ifdef HX_NATIVE
+namespace {
+    // X4c: byte-swap one section of a big-endian sample block.
+    //
+    // ⛔ THE BUG THIS REPLACES. The previous code hardcoded a 4-byte element
+    // width for the POS/SCALE section. That is only correct when the section is
+    // uncompressed Vector3s. At kCompressVects and above, CharBones::TypeSize
+    // (CharBones.cpp:69-91) says POS/SCALE is **6 bytes -- three SHORTS**, which
+    // is not even a multiple of 4: the loop ran twice (p=0, p=4) and the second
+    // bswap32 OVERRAN 2 BYTES INTO THE QUAT SECTION. Measured on the shipped
+    // asset char/crowd/anim/gen/female_base.milo_xbox (compression=2, POS
+    // section exactly 6 bytes), the result was
+    //
+    //     pos.x <- the original Y channel
+    //     pos.y <- the original X channel
+    //     pos.z <- the FIRST QUAT channel's raw short, rescaled by 1300/32767
+    //     quat[0].x <- byte-reversed original Z          (also corrupted)
+    //
+    // i.e. the root bone's Z became an unrelated quaternion component: a value
+    // of plausible magnitude with no temporal coherence. That is exactly the
+    // measured signature -- pelvis Z reading +42.5, +43.1, +10.6, -52.3, +24.4,
+    // -34.3 across successive beats.
+    //
+    // ★ It survived because it is INVISIBLE TO A RIGID-SKELETON CHECK: a
+    // wrong-but-unit quaternion still preserves every bone length and every
+    // determinant, and a garbage translation on the ROOT is inherited rigidly by
+    // the entire skeleton. X4b's bone-length oracle passed at 0.9999 throughout.
+    //
+    // ★ And it is RB3-specific: DC3 fixed the same defect (178b3ce4) but it was
+    // a no-op there, because all DC3 clips are kCompressRots, where POS is
+    // uncompressed float and the old width happened to be right. RB3's crowd
+    // clips are kCompressVects, so RB3 is the title where it actually fires.
+    //
+    // The widths MUST be derived from the same conditions as TypeSize, or this
+    // silently rots again the next time a compression level is used.
+    inline void SwapBESection(char *begin, int bytes, int elemWidth) {
+        if (bytes <= 0 || elemWidth <= 1) return; // width 1 == bytes, nothing to do
+        char *end = begin + bytes;
+        if (elemWidth == 2) {
+            for (char *p = begin; p + 2 <= end; p += 2) {
+                unsigned short u;
+                memcpy(&u, p, 2);
+                u = __builtin_bswap16(u);
+                memcpy(p, &u, 2);
+            }
+        } else {
+            for (char *p = begin; p + 4 <= end; p += 4) {
+                unsigned int u;
+                memcpy(&u, p, 4);
+                u = __builtin_bswap32(u);
+                memcpy(p, &u, 4);
+            }
+        }
+    }
+}
+
+// Element widths for the three sections, mirroring CharBones::TypeSize exactly.
+// POS/SCALE: 6 bytes (3 shorts) compressed, else Vector3 (3 floats).
+// QUAT:      4 bytes (4 BYTES -> no swap) at kCompressQuats, 8 (4 shorts) when
+//            compressed at all, else Hmx::Quat (4 floats).
+// ROT:       2 bytes (short) when compressed at all, else float.
+int CharBonesSamples::NativePosElemWidth() const {
+    return (mCompression >= kCompressVects) ? 2 : 4;
+}
+int CharBonesSamples::NativeQuatElemWidth() const {
+    if (mCompression >= kCompressQuats) return 1;
+    return (mCompression != kCompressNone) ? 2 : 4;
+}
+int CharBonesSamples::NativeRotElemWidth() const {
+    return (mCompression != kCompressNone) ? 2 : 4;
+}
+#endif
+
 void CharBonesSamples::SetVer(int ver) { gVer = ver; }
 
 CharBonesSamples::CharBonesSamples()
@@ -113,35 +186,12 @@ void CharBonesSamples::LoadData(BinStream &bs) {
                 // Byte-swap floats (4 bytes) in POS/SCALE sections and
                 // shorts (2 bytes) in QUAT/ROT sections to native LE order.
                 if (!bs.LittleEndian()) {
-                    // POS + SCALE sections: float data (4 bytes each)
-                    for (char *p = mStart; p < mStart + _sub1; p += 4) {
-                        unsigned int *u = (unsigned int *)p;
-                        *u = __builtin_bswap32(*u);
-                    }
-                    // QUAT section: shorts (2 bytes each) when compressed, floats when not
-                    if (mCompression >= kCompressRots) {
-                        for (char *p = mStart + _sub1; p < mStart + mOffsets[TYPE_ROTX]; p += 2) {
-                            unsigned short *u = (unsigned short *)p;
-                            *u = __builtin_bswap16(*u);
-                        }
-                    } else {
-                        for (char *p = mStart + _sub1; p < mStart + mOffsets[TYPE_ROTX]; p += 4) {
-                            unsigned int *u = (unsigned int *)p;
-                            *u = __builtin_bswap32(*u);
-                        }
-                    }
-                    // ROT sections: shorts (2 bytes each) when compressed, floats when not
-                    if (mCompression != kCompressNone) {
-                        for (char *p = mStart + mOffsets[TYPE_ROTX]; p < mStart + _sub0; p += 2) {
-                            unsigned short *u = (unsigned short *)p;
-                            *u = __builtin_bswap16(*u);
-                        }
-                    } else {
-                        for (char *p = mStart + mOffsets[TYPE_ROTX]; p < mStart + _sub0; p += 4) {
-                            unsigned int *u = (unsigned int *)p;
-                            *u = __builtin_bswap32(*u);
-                        }
-                    }
+                    SwapBESection(mStart, _sub1 - mOffsets[TYPE_POS],
+                                  NativePosElemWidth());
+                    SwapBESection(mStart + _sub1, mOffsets[TYPE_ROTX] - _sub1,
+                                  NativeQuatElemWidth());
+                    SwapBESection(mStart + mOffsets[TYPE_ROTX],
+                                  _sub0 - mOffsets[TYPE_ROTX], NativeRotElemWidth());
                 }
 #endif
             } else {
@@ -216,32 +266,11 @@ void CharBonesSamples::LoadData(BinStream &bs) {
         if (!bs.LittleEndian()) {
             for (int i = 0; i < mNumSamples; i++) {
                 char *s = mRawData + mTotalSize * i;
-                for (char *p = s; p < s + _sub1; p += 4) {
-                    unsigned int *u = (unsigned int *)p;
-                    *u = __builtin_bswap32(*u);
-                }
-                if (mCompression >= kCompressRots) {
-                    for (char *p = s + _sub1; p < s + mOffsets[TYPE_ROTX]; p += 2) {
-                        unsigned short *u = (unsigned short *)p;
-                        *u = __builtin_bswap16(*u);
-                    }
-                } else {
-                    for (char *p = s + _sub1; p < s + mOffsets[TYPE_ROTX]; p += 4) {
-                        unsigned int *u = (unsigned int *)p;
-                        *u = __builtin_bswap32(*u);
-                    }
-                }
-                if (mCompression != kCompressNone) {
-                    for (char *p = s + mOffsets[TYPE_ROTX]; p < s + _sub0; p += 2) {
-                        unsigned short *u = (unsigned short *)p;
-                        *u = __builtin_bswap16(*u);
-                    }
-                } else {
-                    for (char *p = s + mOffsets[TYPE_ROTX]; p < s + _sub0; p += 4) {
-                        unsigned int *u = (unsigned int *)p;
-                        *u = __builtin_bswap32(*u);
-                    }
-                }
+                SwapBESection(s, _sub1 - mOffsets[TYPE_POS], NativePosElemWidth());
+                SwapBESection(s + _sub1, mOffsets[TYPE_ROTX] - _sub1,
+                              NativeQuatElemWidth());
+                SwapBESection(s + mOffsets[TYPE_ROTX], _sub0 - mOffsets[TYPE_ROTX],
+                              NativeRotElemWidth());
             }
         }
 #endif
