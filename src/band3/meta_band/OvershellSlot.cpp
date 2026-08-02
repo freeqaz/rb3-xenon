@@ -1191,6 +1191,23 @@ void OvershellSlot::UpdateState() {
                 ShowState(kState_OptionsExtras);
             }
         }
+        // laneCN-3: reconstructed from retail asm (UpdateState idx 227-251); the
+        // rb3-Wii oracle does NOT have this clause (its LinkingCode path is the
+        // Wii TheServer.IsConnected()/CancelLinkingCode() shape instead), so this
+        // is retail-only and had to come from the disassembly, not the oracle.
+        //   cmpwi cr6, r3, 0x3a  -> kState_LinkingCodeError (58)
+        //   two bool virtuals on the localUser LocalUser vbase subobject, slots
+        //   +0x18 then +0x14, both required true, then ShowState(0x2f =
+        //   kState_LinkingCode). Slots resolved with cl /d1reportSingleClassLayout
+        //   (vtable LocalBandUser@LocalUser@): [6]=+0x18 CanSaveData,
+        //   [5]=+0x14 IsSignedInOnline. A first guess of
+        //   IsSignedInOnline()+HasOnlinePrivilege() reached mpn 100 but left the
+        //   two slot immediates wrong (raw 99.2%) -- i.e. CREDITED BUT NOT
+        //   BYTE-MATCHED, worth +1 matched function and 0 of the 2,240 bytes.
+        if (mState->GetStateID() == kState_LinkingCodeError
+            && localUser->CanSaveData() && localUser->IsSignedInOnline()) {
+            ShowState(kState_LinkingCode);
+        }
         if (mState->InCharEditFlow() && !localUser->CanSaveData()) {
             ShowState(kState_ChooseChar);
         }

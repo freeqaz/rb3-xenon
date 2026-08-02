@@ -1368,7 +1368,13 @@ void RockCentral::SyncSetlists(
             int guidIdx = 0;
             for (int j = 0; j < pairs.size(); j++) {
                 if (pairs[j].first == playerIds[i]) {
-                    ADD_BUFFER_PAIR(buf, pairs[j].second, "pid%03d_guid%03d", i, guidIdx++);
+                    // Retail uses a SECOND, distinct 15-byte buffer for the guid key
+                    // (target writes r31+0xc0 while the "pid%03d" key writes r31+0xb0);
+                    // reusing `buf` here costs the 0x10 frame delta.
+                    char guidBuf[15];
+                    ADD_BUFFER_PAIR(
+                        guidBuf, pairs[j].second, "pid%03d_guid%03d", i, guidIdx++
+                    );
                 }
             }
         }

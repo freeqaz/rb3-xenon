@@ -283,12 +283,19 @@ DataNode Leaderboard::OnMsg(const RockCentralOpCompleteMsg &msg) {
     case kEnumWaiting:
         if (msg.Success()) {
             mDataResultList.Update(0);
-            if (mDataResultList.NumDataResults() != 0) {
-                DataResult *res = mDataResultList.GetDataResult(0);
-                DataNode node;
-                if (res->GetDataResultValue("max_rank", node)) {
-                    unk40 = node.Int();
-                }
+            // laneCN-3: retail has NO NumDataResults() guard here. Our source was
+            // byte-identical to the rb3-Wii oracle, so the ORACLE AGREES WITH THE
+            // WRONG CODE -- retail asm is the only arbiter. objdiff showed 11 PURE
+            // inserts at idx 36-46 (list-size traversal `lwz 0x38(r30); addi
+            // r10,r30,0x38; cmplw/beq/lwz/addi` then `cmpwi r9,0; beq`) with NO
+            // corresponding target instructions, i.e. retail computes no count at
+            // all -- not a cheaper count, not an empty() compare, nothing. Same
+            // "rb3-Wii DEV build has a guard retail compiled out" class as the
+            // laneAY-B `IsValid()` sites in MetaPerformer.cpp.
+            DataResult *res = mDataResultList.GetDataResult(0);
+            DataNode node;
+            if (res->GetDataResultValue("max_rank", node)) {
+                unk40 = node.Int();
             }
             mHasStats = true;
             mDataResultList.Clear();

@@ -315,7 +315,13 @@ MetaPanel::~MetaPanel() {
     RELEASE(mTour);
     RELEASE(mCampaign);
     RELEASE(mNameGenerator);
-    RELEASE(mMetaMusicMgr);
+    // laneCN-3: retail does NOT release mMetaMusicMgr here -- it emits only FOUR
+    // RELEASEs, not five. objdiff alignment is decisive: our 4th release loads
+    // -0x94(r30) where retail's 4th loads -0x90(r30) (idx 48 diff_arg), and our
+    // 5th (-0x90, the SAME slot retail uses for its 4th) is 9 PURE inserts at idx
+    // 57-65 with no target counterpart. So retail still HAS the member at -0x94
+    // (otherwise its -0x90 member would have shifted down); it simply never
+    // releases it. Leaving RELEASE(mHAQMgr) as the final one.
     RELEASE(mHAQMgr);
     TheBandUI.RemoveSink(this, "current_screen_changed");
 }
