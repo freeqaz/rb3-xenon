@@ -455,10 +455,23 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     }
 #endif
 
-    // Reset vocal overlay
+    /* Retail's Poll contains NO VocalOverlay code at all. Evidence (map-
+       independent, control-validated): scanning all 847 instructions of retail
+       fn_826EB030 for memory operands finds ZERO accesses to the mVocalOverlay
+       slot at 0x3c8, while every control offset known present in the target
+       column of the diff does fire (0x38c x5, 0x374 x2, 0x360 x1, 0x190 x1).
+       VocalOverlay is the dev overlay, created only by ToggleOverlay().
+       ⚠ Do NOT try to settle this by enumerating retail's `bl` targets: only
+       1 of Poll's 80 call sites is in target_symbol_map.json, so a name search
+       returns 0 for EVERYTHING (including Singer/VocalPart/Player, which are
+       certainly called) -- a vacuous instrument shaped like a decisive negative.
+       The member itself is KEPT: retail still uses 0x3cc, so the slot is not
+       removed from the class; only the code is gated. */
+#ifdef HX_NATIVE
     if (mVocalOverlay) {
         mVocalOverlay->Reset((int)mSingers.size());
     }
+#endif
 
     // Declaration order matches target register allocation
     float frameMinPitch = 9985.578125f;
@@ -557,10 +570,24 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 
         singerPitches[pSinger->mSingerIndex] = pSinger->mFrameMicPitch;
 
+#ifdef HX_NATIVE
         if (mVocalOverlay) {
             mVocalOverlay->AppendSingerPitch(pSinger->mSingerIndex, pSinger->mFrameMicPitch);
         }
-        singersArray.push_back(pSinger);
+#endif
+        /* Retail guards this push_back; we did it unconditionally. Retail
+           0x826EB410..0x826EB434:
+             lfs f0,0x5c(pSinger); fcmpu cr6,f0,f29; bne cr6,DO
+             lwz r11,0x2b8(pSinger); lfs f0,0x4(r11); fcmpu cr6,f0,f29
+             ble cr6,SKIP
+           DO: addi r4,r31,0x68; addi r3,r31,0x90; bl push_back
+           f29 is loaded once at 0x826EB0AC from 0x82000D78, which decodes to
+           0.0f. 0x2b8 is mTalkyMatcher and its +0x4 float is mVoiceBeat.unk4 --
+           the same slot the AppendTalkyData call site loads as its float arg. */
+        if (pSinger->mFrameMicPitch != 0.0f
+            || pSinger->mTalkyMatcher->mVoiceBeat.unk4 > 0.0f) {
+            singersArray.push_back(pSinger);
+        }
 
         // Score singer against each part
         float var_f22 = 1000.0f;
@@ -655,9 +682,11 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     pSinger->mBestTargetPitch = fBestTargetPitch;
                     bAnyAssigned = true;
                 }
+#ifdef HX_NATIVE
                 if (mVocalOverlay) {
                     mVocalOverlay->AddPossiblePart(pSinger->mSingerIndex, pBestPart);
                 }
+#endif
             }
             if (!bAnyAssigned) break;
 
@@ -673,120 +702,46 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 }
             }
 
-            // Inlined STL std::remove_if Duff's device: unrolled 4-at-a-time
-            // find_if + remove_copy_if + erase. MWCC does not inline the
-            // generic std::find_if wrapper, so hand-roll the body to match
-            // target's inlined codegen (see Stats.cpp:520 for the same trick).
-            {
-                VocalPart **partFirst = &partsArray[0];
-                VocalPart **partLast = partFirst + partsArray.size();
-                std::mem_fun_t<bool, VocalPart> partPred(&VocalPart::HasBestSingerCandidate);
-                std::mem_fun_t<bool, VocalPart> partFindPred(partPred);
-                VocalPart **partFound;
-                int partTrip = (int)(partLast - partFirst) >> 2;
-                for (; partTrip > 0; --partTrip) {
-                    if (partFindPred(*partFirst)) { partFound = partFirst; goto partRemoved; }
-                    ++partFirst;
-                    if (partFindPred(*partFirst)) { partFound = partFirst; goto partRemoved; }
-                    ++partFirst;
-                    if (partFindPred(*partFirst)) { partFound = partFirst; goto partRemoved; }
-                    ++partFirst;
-                    if (partFindPred(*partFirst)) { partFound = partFirst; goto partRemoved; }
-                    ++partFirst;
-                }
-                switch (partLast - partFirst) {
-                case 3:
-                    if (partFindPred(*partFirst)) { partFound = partFirst; goto partRemoved; }
-                    ++partFirst;
-                case 2:
-                    if (partFindPred(*partFirst)) { partFound = partFirst; goto partRemoved; }
-                    ++partFirst;
-                case 1:
-                    if (partFindPred(*partFirst)) { partFound = partFirst; goto partRemoved; }
-                case 0:
-                default:
-                    partFound = partLast;
-                }
-            partRemoved:
-                if (partFound != partLast) {
-                    VocalPart **partSrc = partFound + 1;
-                    std::mem_fun_t<bool, VocalPart> partCopyPred(partPred);
-                    for (; partSrc != partLast; ++partSrc) {
-                        if (!partCopyPred(*partSrc)) {
-                            *partFound = *partSrc;
-                            ++partFound;
-                        }
-                    }
-                }
-#ifdef HX_NATIVE
-                // libstdc++'s vector::iterator is not a raw T**, so erase()
-                // can't accept the raw pointers we threaded through the Duff's
-                // device above. Convert the pointer range back to iterators by
-                // offsetting from begin().
-                {
-                    ptrdiff_t _foundOff = partFound - &partsArray[0];
-                    partsArray.erase(partsArray.begin() + _foundOff, partsArray.end());
-                }
-#else
-                partsArray.erase(partFound, partLast);
-#endif
-            }
-            {
-                Singer **singerFirst = &singersArray[0];
-                Singer **singerLast = singerFirst + singersArray.size();
-                std::const_mem_fun_t<bool, Singer> singerPred(&Singer::HasAssignedPart);
-                std::const_mem_fun_t<bool, Singer> singerFindPred(singerPred);
-                Singer **singerFound;
-                int singerTrip = (int)(singerLast - singerFirst) >> 2;
-                for (; singerTrip > 0; --singerTrip) {
-                    if (singerFindPred(*singerFirst)) { singerFound = singerFirst; goto singerRemoved; }
-                    ++singerFirst;
-                    if (singerFindPred(*singerFirst)) { singerFound = singerFirst; goto singerRemoved; }
-                    ++singerFirst;
-                    if (singerFindPred(*singerFirst)) { singerFound = singerFirst; goto singerRemoved; }
-                    ++singerFirst;
-                    if (singerFindPred(*singerFirst)) { singerFound = singerFirst; goto singerRemoved; }
-                    ++singerFirst;
-                }
-                switch (singerLast - singerFirst) {
-                case 3:
-                    if (singerFindPred(*singerFirst)) { singerFound = singerFirst; goto singerRemoved; }
-                    ++singerFirst;
-                case 2:
-                    if (singerFindPred(*singerFirst)) { singerFound = singerFirst; goto singerRemoved; }
-                    ++singerFirst;
-                case 1:
-                    if (singerFindPred(*singerFirst)) { singerFound = singerFirst; goto singerRemoved; }
-                case 0:
-                default:
-                    singerFound = singerLast;
-                }
-            singerRemoved:
-                if (singerFound != singerLast) {
-                    Singer **singerSrc = singerFound + 1;
-                    std::const_mem_fun_t<bool, Singer> singerCopyPred(singerPred);
-                    for (; singerSrc != singerLast; ++singerSrc) {
-                        if (!singerCopyPred(*singerSrc)) {
-                            *singerFound = *singerSrc;
-                            ++singerFound;
-                        }
-                    }
-                }
-#ifdef HX_NATIVE
-                {
-                    ptrdiff_t _foundOff = singerFound - &singersArray[0];
-                    singersArray.erase(singersArray.begin() + _foundOff, singersArray.end());
-                }
-#else
-                singersArray.erase(singerFound, singerLast);
-#endif
-            }
+            /* Retail does NOT inline these two remove_if calls. It materialises
+               the predicate as a single word in r5 -- the value of
+               &VocalPart::HasBestSingerCandidate, since an MSVC pointer-to-member
+               for a non-virtual single-inheritance class is just the code address
+               -- then makes one out-of-line `bl remove_if` followed by
+               `bl vector<T*>::erase`. Retail 0x826EB030, the two `lis/addi
+               ?HasBestSingerCandidate@VocalPart@@QAA_NXZ` + `bl` sites.
+
+               What used to be here was a hand-rolled 4-at-a-time Duff's device
+               justified by the comment "MWCC does not inline the generic
+               std::find_if wrapper, so hand-roll the body to match target's
+               inlined codegen". That reasoning is about the WRONG COMPILER --
+               MWCC is the Wii toolchain and this is the MSVC X360 match build --
+               and it was measurably backwards: the hand-inlining produced two
+               59-instruction blocks (118 instructions) that appear in our object
+               and nowhere in retail. */
+            partsArray.erase(
+                std::remove_if(
+                    partsArray.begin(),
+                    partsArray.end(),
+                    std::mem_fun_t<bool, VocalPart>(&VocalPart::HasBestSingerCandidate)
+                ),
+                partsArray.end()
+            );
+            singersArray.erase(
+                std::remove_if(
+                    singersArray.begin(),
+                    singersArray.end(),
+                    std::const_mem_fun_t<bool, Singer>(&Singer::HasAssignedPart)
+                ),
+                singersArray.end()
+            );
         } while (!partsArray.empty() && !singersArray.empty());
     }
 
+#ifdef HX_NATIVE
     if (mVocalOverlay) {
         mVocalOverlay->EqualizeSingerStrings();
     }
+#endif
 
     // Finalize octave offsets and assigned parts for each singer
     static bool bDoCorrect = true;
@@ -894,12 +849,15 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         }
         pSinger->SetOctaveOffset(iOctaveOffset);
 
+#ifdef HX_NATIVE
         if (mVocalOverlay) {
             mVocalOverlay->AppendAssignedPart(pSinger, mVocalParts);
         }
+#endif
 
         pSinger->UpdatePitchHistory(fFramePitch);
 
+#ifdef HX_NATIVE
         if (mVocalOverlay) {
             mVocalOverlay->AppendEnergy(pSinger->mSingerIndex, pSinger->mLastFrameMicEnergy, fCompMS);
         }
@@ -915,11 +873,14 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         if (mVocalOverlay) {
             mVocalOverlay->AppendDeploymentTime(pSinger->mSingerIndex, pSinger->mTotalTambourineDeployment);
         }
+#endif
     }
 
+#ifdef HX_NATIVE
     if (mVocalOverlay) {
         mVocalOverlay->AppendDeploymentMarker(mLastDeploymentSinger);
     }
+#endif
 
     // AfterPoll each part
     FOREACH (pIt3, mVocalParts) {
@@ -950,6 +911,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         mLastDeploymentSinger = iMaximumFreestyleDeploymentSinger;
     }
 
+#ifdef HX_NATIVE
     if (mVocalOverlay) {
         mVocalOverlay->AppendPartData(mVocalParts);
     }
@@ -959,6 +921,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     if (mVocalOverlay) {
         mVocalOverlay->FinalizeDisplayString();
     }
+#endif
 
     // Chat handling
     bool bCanChat = false;
