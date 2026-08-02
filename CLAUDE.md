@@ -460,11 +460,16 @@ own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
   relocations, and unaligned symbols. These are **tolerated** — jeff was patched
   to downgrade asm-write failures to warnings (see jeff `src/cmd/xex.rs`), so
   `config.json` is still emitted and the build proceeds.
-- `Progress: 0.00% matched` is the current baseline. Denominator is the **whole
-  binary** (11,790,708 code bytes / 66,003 functions), so this is the honest
-  dc3-comparable metric — there's no denominator gaming. Matches register only
-  when a unit has both (a) pinned section ranges in `splits.txt` and (b) a
-  compiled `.obj` that objdiff equates byte-for-byte with the dtk target `.obj`.
+- Denominator is the **whole binary**, so this is the honest dc3-comparable
+  metric — there's no denominator gaming. Matches register only when a unit has
+  both (a) pinned section ranges in `splits.txt` and (b) a compiled `.obj` that
+  objdiff equates byte-for-byte with the dtk target `.obj`.
+  ⚠ **Do NOT hardcode the denominator — read `total_code` / `total_functions`
+  from `report.json`.** This doc said **11,790,708 code bytes** for months; the
+  measured value is **10,688,812** (lane CJ-3, 2026-08-02, confirmed
+  independently on the landed tree). A lane predicting a Δcode% off the stale
+  figure misses by ~10%. `total_code` also **moves** when splits pins change —
+  `4b3c098d` shifted it by 52,184 B — so it is not a constant to memorise at all.
 - **Case sensitivity:** dc3's tree has case-variant files (e.g. `vec.cpp` vs
   `Vec.cpp`) that collide on Windows but coexist on Linux. Use the name dc3's
   `objects.json` actually builds (lowercase `vec.cpp`, `mtx.cpp`).
