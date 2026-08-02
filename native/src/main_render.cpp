@@ -1415,6 +1415,57 @@ int main(int argc, char **argv) {
     }
     Gate("archive-mounted", true, TheArchive->GetArkfileName(0));
 
+    // ⛔ THE SKINNING SMEAR IS ROOT-CAUSED HERE, AND THE ONE-LINE FIX IS
+    // DELIBERATELY NOT APPLIED. READ THIS BEFORE ADDING `SetGfxMode(kNewGfx)`.
+    //
+    // RndMesh::MaxBones() is `GetGfxMode() != kOldGfx ? 40 : 4`
+    // (rndobj/Mesh.h:227), and RndMesh::Load ENFORCES it destructively --
+    // rndobj/Mesh.cpp:567-578 does `mBones.resize(MaxBones())` after a
+    // MILO_NOTIFY. gGfxMode is a zero-initialised global (os/System.cpp:53),
+    // i.e. kOldGfx, and the ONLY thing that ever sets kNewGfx is
+    // PreInitSystem (os/System.cpp:505) -- which this driver deliberately does
+    // not call (see the StandUpConfig note above). So every skinned mesh in
+    // this target was being TRUNCATED TO 4 BONES at load:
+    //
+    //     female_crowd_body01_lod02.mesh: exceeds bone limit (20 of 4)
+    //     clap/fist/horns/lighter.mesh:   exceeds bone limit (12 of 4)
+    //
+    // X3 recorded that warning and left "nobody has explained the 4" open;
+    // X4a carried it forward. This is the explanation, and it is not benign:
+    // the bones are DELETED, so vertices weighted to bones 4..19 index palette
+    // slots the engine fills with identity (BoneSetup.cpp:256-261) while
+    // object.world is forced to identity for skinned meshes. Those vertices
+    // stay pinned at bind coordinates while bones 0..3 animate -- which is
+    // exactly the "clean at bind, smears as the pose deviates" signature X4b
+    // measured before finding this.
+    //
+    // ★ SECOND INSTANCE OF THE SAME ROOT-CAUSE SHAPE IN THIS MILESTONE. The
+    // trig-table defect (Trig.cpp) was also a SystemInit/PreInitSystem sub-init
+    // that the hand-rolled bring-up skipped, also silent, also latent for four
+    // milestones. PreInitSystem/SystemInit run ~10 such sub-inits; two have now
+    // bitten. The rest are unaudited -- see the X4b doc's handoff table.
+    //
+    // ⛔ WHY THE FIX IS NOT APPLIED. `SetGfxMode(kNewGfx)` here was BUILT AND
+    // MEASURED, and it is not a one-liner -- gGfxMode has 22 consumers across
+    // Character, ShaderMgr, ShaderProgram, ShadowMap, rndobj/Utl, world/Crowd
+    // and more, so it is a broad behavioural switch, not a targeted bone cap.
+    //
+    //   bind pose  coverage 11.07% -> 15.78%, 17960 -> 18882 colours.
+    //              BETTER, and it CONFIRMS the diagnosis: the extra coverage is
+    //              exactly the vertices that were pinned at bind coordinates by
+    //              the truncation, now skinned by their real bones.
+    //   POSED      coverage 23.12% -> 0.00%, 1 distinct colour. The frame goes
+    //              EMPTY -- the geometry leaves the camera entirely.
+    //              Not the engine's "skin fling clamp": re-measured with
+    //              RB3_NO_SKIN_CLAMP=1 and it is still 0.00%.
+    //
+    // So restoring the bones is necessary but not sufficient: something else
+    // gated on kNewGfx breaks the posed draw. Landing it would trade a smeared
+    // character for no character and would regress X3's and X4a's evidence
+    // PNGs, so it is recorded here and handed to X4c rather than applied.
+    // The truncation above is the CAUSE of the smear; kNewGfx's blast radius
+    // is the reason the cure needs its own lane.
+
     if (!StandUpConfig()) {
         printf("\nRESULT: FAILED (%d gate failure(s))\n", gFailures);
         return 1;
