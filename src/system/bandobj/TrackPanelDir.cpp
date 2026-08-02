@@ -346,6 +346,7 @@ void TrackPanelDir::SetBotbBandIcon(ObjectDir *target, RndDir *source, bool b3) 
             target->Find<RndTexRenderer>("band_logo.rndtex", false);
         RndMat *logomat = target->Find<RndMat>("logo.mat", false);
         if (tex && texrenderer && logomat) {
+            static Symbol output_texture("output_texture");
             texrenderer->SetProperty(output_texture, tex);
             texrenderer->SetDraw(source);
             logomat->SetDiffuseTex(tex);

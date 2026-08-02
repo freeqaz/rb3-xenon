@@ -397,6 +397,7 @@ Symbol TourProgress::GetQuestFilter(int i_iIndex) const {
 }
 
 bool TourProgress::HasQuestFilter(Symbol s) const {
+    static Symbol filter_dynamic_artist("filter_dynamic_artist");
     bool isdynamic = s == filter_dynamic_artist;
     for (int i = 0; i < 3; i++) {
         Symbol filt = GetQuestFilter(i);

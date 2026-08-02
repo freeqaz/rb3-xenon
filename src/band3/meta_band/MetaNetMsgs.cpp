@@ -27,6 +27,8 @@ void BandEventPreviewMsg::Dispatch() {
 }
 
 void TriggerBackSoundMsg::Dispatch() {
+    static Symbol synth("synth");
+    static Symbol play("play");
     DataArrayPtr ptr(synth, play, "button_down");
     ptr->Execute();
 }

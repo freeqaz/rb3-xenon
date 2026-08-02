@@ -546,6 +546,7 @@ void CustomizePanel::PreviewMakeup(Symbol s) {
         return;
     else {
         std::vector<BandCharDesc::Patch> &rPatches = mPreviewDesc->mPatches;
+        static Symbol none_makeup("none_makeup");
         if (s == none_makeup) {
             if (mCurrentMakeupIndex != -1) {
                 MILO_ASSERT_RANGE(mCurrentMakeupIndex, 0, rPatches.size(), 0x3F3);
@@ -1055,6 +1056,7 @@ bool CustomizePanel::IsAssetPatchable() {
 const char *CustomizePanel::GetPlacementMeshFromCurrentCamShot() {
     CamShot *pCurrentShot = mClosetMgr->GetCurrentShot();
     MILO_ASSERT(pCurrentShot, 0x6B6);
+    static Symbol placement_mesh("placement_mesh");
     const char *meshStr = pCurrentShot->Property(placement_mesh, true)->Str();
     return MakeString("%s_placement_%s.mesh", mClosetMgr->GetGender().Str(), meshStr);
 }

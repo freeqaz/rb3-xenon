@@ -79,8 +79,10 @@ void Leaderboard::Text(int, int data, UIListLabel *slot, UILabel *label) const {
                     AppLabel *appLabel = dynamic_cast<AppLabel *>(label);
                     MILO_ASSERT(appLabel, 0x80);
                     appLabel->SetLeaderboardName(row);
-                } else
+                } else {
+                    static Symbol percentile_fmt("percentile_fmt");
                     label->SetTokenFmt(percentile_fmt, 100 - row.mRank);
+                }
             } else {
                 AppLabel *appLabel = dynamic_cast<AppLabel *>(label);
                 MILO_ASSERT(appLabel, 0x8E);
@@ -91,6 +93,7 @@ void Leaderboard::Text(int, int data, UIListLabel *slot, UILabel *label) const {
             label->SetTextToken(DifficultyToShortSym(row.mDiffID));
             return;
         } else if (slot->Matches("percentage") && ShowsDifficultyAndPct()) {
+            static Symbol eg_percent_format("eg_percent_format");
             label->SetTokenFmt(eg_percent_format, row.mNotesPct);
             return;
         }
