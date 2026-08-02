@@ -102,6 +102,7 @@
 #include "os/Archive.h"
 #include "os/Debug.h"
 #include "os/File.h"
+#include "boot_invariants.h"
 #include "os/System.h"
 #include "rndobj/Cam.h"
 #include "rndobj/Dir.h"
@@ -1767,6 +1768,12 @@ int main(int argc, char **argv) {
         return 2;
     }
     if (dumpRnd) DumpRndMembers("immediately after TheRnd.Init()");
+
+    // X4c: run the boot invariants once the config and renderer are up. Both of
+    // X4b's silent defects are covered here; see boot_invariants.h for why each
+    // check is shaped the way it is. Advisory by default (a driver may skip a
+    // sub-init it genuinely does not need); RB3_STRICT_BOOT=1 makes it fatal.
+    BootInvariants::CheckAll(true);
 
     // CharBoneDir::Init() — see main_milo.cpp: without it CharServoBone::Load
     // dereferences a null sCharClipTypes. It also loads the shipped bone
