@@ -45,6 +45,29 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 - **Match-counts age fast.** Any doc dated ≤ 2026-06 carries a matched-function count from its
   era (e.g. 394, 3919, 6568, 9793). Current progress lives in the orchestrator DB
   (`decomp.db`) / `build/45410914/report.json` and MEMORY.md, not in these docs.
+- ★★★ **RULER CHANGE 2026-08-02 — every "honest" number anywhere under `docs/` predating
+  that date is on the OLD ruler.** The objdiff fork now discloses **all** funclet
+  byte-signature pairings in `masked_equal_functions` rather than pass-2b
+  over-subscription only: **1,096 → 22,640**, so honest (`matched − masked_equal`)
+  moved **42,358 → 20,814** (disclosure share 2.52% → **52.10%**). **No score key moved**
+  — `matched_functions`, `matched_code_percent`, `fuzzy_match_percent` are all identical;
+  this was disclosure, not scoring. Baseline at `f48bcad7`: **43,454 matched / 22,640
+  masked_equal / 20,814 honest / 38.810524 code% / fuzzy 45.912785 / `total_code`
+  10,688,688 / `total_functions` 69,357**. Authoritative record:
+  **[decomp/RULER_CHANGE_2026-08-02.md](decomp/RULER_CHANGE_2026-08-02.md)**.
+  Three consequences for reading this index:
+  1. **A dated doc's honest figure is CORRECT AS HISTORY.** `[HIST]` records and lane
+     logs recording "honest N at the time" have not been rewritten and must not be —
+     they are the evidence trail. Read them on their own ruler.
+  2. **Deltas survive the flip; absolutes do not.** A pre-flip Δhonest remains valid as
+     a delta *on the old ruler*, but pre- and post-flip Δhonest values are **not
+     comparable and must never be chained or summed.** (Δmatched and Δcode% are
+     unaffected — those keys did not move.)
+  3. **A tool can be stale too, not just prose.** The flip silently broke
+     `tools/guard_funclet_census.py`'s derived estimator, whose "phantom credit" line
+     assumed masked_equal ≈ over-subscription only; under the new disclosure it fires
+     on *every* funclet pairing. Its `--deficit` mode is ruler-independent and is the
+     one to use. If a tool derives anything from `masked_equal_functions`, re-check it.
 - **Two different "mapped"s — never compare them.** dtk's own progress box says *mapped* for
   bytes **pinned** to a `splits.txt` unit (the prerequisite to matching). `tools/scope_map.py`'s
   dashboard footer counts bytes **classified into a scope tier** by any of its 8 layers, pinned
@@ -163,6 +186,12 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 - [../CLAUDE.md](../CLAUDE.md) — project framing, build tracks, decomp priority, worktree/git
   rules, toolchain wiring. Authoritative current state.
+- ★ [decomp/RULER_CHANGE_2026-08-02.md](decomp/RULER_CHANGE_2026-08-02.md) — **the
+  authoritative record of the `masked_equal_functions` disclosure flip** (honest
+  42,358 → 20,814, no score key moved). **Read this before quoting or comparing any
+  "honest" figure**, and before trusting a pre-2026-08-02 Δhonest. Includes the
+  11-key no-change verification, the mid-run-swap hazard, the `ab_measure.py`
+  same-ruler guard, and the rollback.
 - [decomp/TOOLING.md](decomp/TOOLING.md) — ★ **the audited tooling inventory (2026-07-29)**:
   every tool in `tools/`, `scripts/`, `scripts/harvest/` run and status-graded
   (WORKING/BROKEN/SUPERSEDED/ONE-SHOT), a "start here for task X" routing table, the
@@ -236,6 +265,20 @@ Each of these is a **pricing or refutation** — read the verdict before re-open
   label in `auto_00_82000400_rdata.s`.
 
 ### Active worklists (open work to pull from)
+
+- [plans/auto03-sourceless-guard-funclets-2026-08-02.md](plans/auto03-sourceless-guard-funclets-2026-08-02.md) —
+  the **75 source-less `auto_03_*` guard funclets** in 15 units, sized and identified
+  (lane DA-4). Pin geometry is free everywhere (0–12 B gaps); identification is the only
+  cost. **Tier 1 = `auto_03_82B7EFBC` is `TourChallengeResultsPanel.cpp`** — header already
+  in-tree, 120-line Wii oracle, span hard-bracketed at both ends. ⚠ **50.7% of the pool is
+  RBN audition code with NO oracle** (rb3-Wii, DC3 and our tree all return zero) — the
+  biggest half is the least tractable, so budget it as reconstruction, not a port.
+- [plans/lane-da4-rndspline-mispair-2026-08-02.md](plans/lane-da4-rndspline-mispair-2026-08-02.md) —
+  `?Copy@RndSpline@@` @ `0x8247a6c0` is a **CONFIRMED map defect** (it is
+  `RndLine::SyncProperty`; interns `"width"`, `PropSync`s `mWidth` at `this-0x34` on
+  compiler-authoritative layout). REPORTED, NOT EDITED. ⛔ **The repair is blocked by a
+  name collision at `0x8247b638`** and must be one atomic edit; 5 more scrambled thunks in
+  `0x8247b620–0x8247b810` are flagged but unadjudicated.
 
 - [plans/band3-port-worklist-loose.md](plans/band3-port-worklist-loose.md) — loose 301-fn
   game-code worklist (0.85 precision), for ws2 regen.

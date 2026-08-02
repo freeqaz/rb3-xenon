@@ -26,6 +26,25 @@ So `masked_equal` counts *surplus* members of duplicate-pairing groups that
 nonetheless scored a normalized 100. It is a DISCLOSURE of soft credit, never an
 addition to it.
 
+*** SUPERSEDED IN PART, 2026-08-02 (lane DA-4): "surplus" IS NO LONGER RIGHT. ***
+The fork was flipped so the disclosure covers EVERY funclet byte-signature
+pairing, not just the over-subscribed surplus of a group: masked_equal_functions
+1,096 -> 22,640 (52.10% of matched_functions), honest 42,358 -> 20,814, with NO
+score key moving. Read the sentence above as the OLD semantics.
+What this means for THIS tool:
+  * Its ARITHMETIC AND CLASSES ARE UNAFFECTED. It attributes a delta between two
+    reports, and both reports are produced by one binary, so the same-ruler
+    assumption holds. RESOLVED / LOST_CREDIT / VANISHED / NEW_SURPLUS / NEW_ROW
+    all still mean what they say.
+  * ⚠ But NEVER feed it an OLD.json produced before the flip and a NEW.json
+    produced after -- that is a cross-ruler comparison and it would report
+    ~+21,500 NEW_SURPLUS rows from an untouched tree. tools/ab_measure.py has a
+    same-ruler guard for exactly this (373d17c6); this tool does NOT.
+  * "NEW_SURPLUS ... working as designed" is now the COMMON case, not the rare
+    one, since most funclet pairings are supply-backed and merely arbitrary in
+    per-row attribution.
+See docs/decomp/RULER_CHANGE_2026-08-02.md.
+
 => A masked_equal DROP is therefore ambiguous on its face and must be split:
      RESOLVED     still 100, flag gone  -> duplicate pairing resolved. GOOD:
                                            honest gains a genuinely real point.

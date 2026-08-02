@@ -163,6 +163,18 @@ long-standing blind spot that scanners sort by *percentage* rather than *penalty
 
 ## 3. Re-derived honest floor (supersedes 37,490–38,098)
 
+> ⚠ **RULER-ANNOTATED 2026-08-02 (lane DA-4) — historical, left intact.** This
+> section's table is an old-ruler derivation: its `masked_equal` row is explicitly
+> labelled *"funclet pass-2b oversubscription"*, which is exactly what changed. Since
+> 2026-08-02 `masked_equal_functions` discloses **all** funclet byte-signature
+> pairings (**1,096 → 22,640**), so the same subtraction now yields **20,814**, not
+> 39,435 — at an unchanged tree, with **no score key moved**. The section's *method*
+> (headline → honest → byte-identical floor) is still the right shape; only the
+> middle row's population changed, and it is now a **broader, mostly supply-backed**
+> set rather than an unsupported-credit set, so "over-states by 4.22%" cannot simply
+> be recomputed against it. ⛔ Do **not** read 20,814 as this floor collapsing.
+> See [`docs/decomp/RULER_CHANGE_2026-08-02.md`](../RULER_CHANGE_2026-08-02.md).
+
 | definition | count |
 |---|--:|
 | headline `matched_functions` (norm == 100) | 40,953 |
