@@ -43,7 +43,18 @@ BEGIN_PROPSYNCS(RndEnvAnim)
     SYNC_SUPERCLASS(RndAnimatable)
 END_PROPSYNCS
 
-void RndEnvAnim::Save(BinStream &) { MILO_ASSERT(0, 0x46); }
+// Retail loads the save revision from a MUTABLE .data global (0x82C70A34,
+// value 4) rather than folding an immediate, so this must not be a literal or
+// a const: at /O1 either would become `li r11, 4`.
+static int gSaveRev = 4;
+
+void RndEnvAnim::Save(BinStream &bs) {
+    bs << gSaveRev;
+    Hmx::Object::Save(bs);
+    RndAnimatable::Save(bs);
+    bs << mEnviron << mAmbientColorKeys << mKeysOwner << mFogColorKeys;
+    bs << mFogRangeKeys;
+}
 
 void RndEnvAnim::Load(BinStream &bs) {
     int rev;

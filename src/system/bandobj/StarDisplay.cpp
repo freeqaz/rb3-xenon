@@ -45,7 +45,13 @@ void StarDisplay::CopyMembers(const UIComponent *ui, Hmx::Object::CopyType ct) {
     mEmptyIconOverride = starDisplay->mEmptyIconOverride;
 }
 
-SAVE_OBJ(StarDisplay, 86)
+BEGIN_SAVES(StarDisplay)
+    SAVE_REVS(6, 0)
+    bs << mStars << mTotalStars << mForceMixedMode << mShowDenominator << mShowEmptyStars
+       << (int)mAlignment;
+    bs << mIconOverride << mEmptyIconOverride;
+    SAVE_SUPERCLASS(UIComponent)
+END_SAVES
 
 BEGIN_LOADS(StarDisplay)
     PreLoad(bs);

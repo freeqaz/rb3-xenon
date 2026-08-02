@@ -69,7 +69,34 @@ BEGIN_COPYS(TrackWidget)
     COPY_MEMBER_FROM(tw, mAllowLineRotation)
 END_COPYS
 
-SAVE_OBJ(TrackWidget, 0x64)
+BEGIN_SAVES(TrackWidget)
+    SAVE_REVS(15, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    SAVE_SUPERCLASS(RndDrawable)
+    bs << mMeshes;
+    bs << mWideWidget;
+    bs << mMeshesLeft;
+    bs << mMeshesSpan;
+    bs << mMeshesRight;
+    bs << mEnviron;
+    bs << mBaseLength;
+    bs << mBaseWidth;
+    bs << mAllowRotation;
+    bs << mFont;
+    bs << mTextObj;
+    bs << mCharsPerInst;
+    bs << mMaxTextInstances;
+    bs << mWidgetType;
+    bs << mMat;
+    bs << (int)mTextAlignment;
+    bs << mTextColor;
+    bs << mAltTextColor;
+    bs << mYOffset;
+    bs << mXOffset;
+    bs << mZOffset;
+    bs << mAllowShift;
+    bs << mAllowLineRotation;
+END_SAVES
 
 BEGIN_LOADS(TrackWidget)
     LOAD_REVS(bs)

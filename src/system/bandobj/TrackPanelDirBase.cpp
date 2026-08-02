@@ -86,7 +86,16 @@ TrackPanelDirBase::TrackPanelDirBase()
     }
 }
 
-SAVE_OBJ(TrackPanelDirBase, 0x3F)
+BEGIN_SAVES(TrackPanelDirBase)
+    SAVE_REVS(0, 0)
+    SAVE_SUPERCLASS(PanelDir)
+    if (!IsProxy()) {
+        bs << mViewTimeEasy;
+        bs << mViewTimeExpert;
+        bs << mNetTrackAlpha;
+        bs << mConfigurableObjects;
+    }
+END_SAVES
 
 float TrackPanelDirBase::GetPulseAnimStartDelay(bool b) const {
     float beat =

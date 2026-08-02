@@ -108,7 +108,14 @@ void BandRetargetVignette::EnterDir() const {
     }
 }
 
-SAVE_OBJ(BandRetargetVignette, 0x9F)
+BEGIN_SAVES(BandRetargetVignette)
+    SAVE_REVS(4, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    SAVE_SUPERCLASS(RndPollable)
+    bs << mPlayer;
+    bs << mBone;
+    bs << mProp;
+END_SAVES
 
 BEGIN_LOADS(BandRetargetVignette)
     LOAD_REVS(bs)

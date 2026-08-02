@@ -85,13 +85,51 @@ BinStream &operator>>(BinStream &bs, LayerDir::Layer &layer) {
     return bs;
 }
 
-// LANE DC-3: retail's LayerDir::Save is REVS(7,0) + `bs << mUseFreeCam` +
-// SAVE_SUPERCLASS(RndDir) + `bs << mLayers`, but retail streams mLayers through
-// `operator<<(BinStream&, const list<Symbol>&)` while our mLayers is
-// `list<LayerDir::Layer>` -- so the body does not compile as written.  Retail
-// wins (see CLAUDE.md gate), but changing the member type ripples through the
-// whole unit, so this stays stubbed until a lane owns that change.
-SAVE_OBJ(LayerDir, 0xC3)
+// LANE DD-2: the element writer retail's list operator<< calls.  Mirrors the
+// operator>> above with every rev branch resolved at the save rev (7).
+BinStream &operator<<(BinStream &bs, const LayerDir::Layer &layer) {
+    bs << layer.mName;
+    bs << layer.mMat;
+    bs << layer.mActive;
+    bs << layer.mColor;
+    bs << layer.mColorPalette;
+    bs << layer.mAlpha;
+    bs << layer.mBitmap;
+    bs << layer.mLayerOptional;
+    bs << layer.mAllowColor;
+    bs << layer.mAllowAlpha;
+    bs << layer.mAlphaMin;
+    bs << layer.mAlphaMax;
+    {
+        unsigned int length = layer.mBitmapList.size();
+        bs << length;
+        for (std::list<FilePath>::const_iterator it = layer.mBitmapList.begin();
+             it != layer.mBitmapList.end();
+             it++) {
+            bs << *it;
+        }
+    }
+    bs << layer.mProxy;
+    bs << layer.mColorIdx;
+    return bs;
+}
+
+// LANE DD-2, correcting lane DC-3's deferral.  DC-3 read retail's call as
+// `operator<<(BinStream&, const list<Symbol>&)` and concluded our
+// `list<LayerDir::Layer>` member had the wrong TYPE.  That callee name is a
+// RELOCATION ARGUMENT, which objdiff masks under functionRelocDiffs=none, so it
+// cannot witness a type mismatch -- retail's list<Layer> writer simply ICF-folded
+// with list<Symbol>'s and the map named the fold survivor.  Same artifact as
+// BandIKEffector, whose Save calls `?Save@FlowValueCase@@` for CharWeightable
+// and still matches 100%.  No member-type change is needed; the only real
+// blocker was the missing elementwise operator<< added above.
+BEGIN_SAVES(LayerDir)
+    SAVE_REVS(7, 0)
+    bs << mUseFreeCam;
+    SAVE_SUPERCLASS(RndDir)
+    if (!IsProxy())
+        bs << mLayers;
+END_SAVES
 
 void LayerDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);

@@ -1166,7 +1166,16 @@ void BandCharacter::SetClipTypes(Symbol s1, Symbol s2) {
     }
 }
 
-SAVE_OBJ(BandCharacter, 0x3EB)
+BEGIN_SAVES(BandCharacter)
+    SAVE_REVS(8, 0)
+    SAVE_SUPERCLASS(Character)
+    SAVE_SUPERCLASS(BandCharDesc)
+    bs << mPlayFlags;
+    bs << mTempo;
+    bs << mDrumVenue;
+    bs << mTestPrefab;
+    bs << mInstrumentType;
+END_SAVES
 
 BEGIN_LOADS(BandCharacter)
     PreLoad(bs);
