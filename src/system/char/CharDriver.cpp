@@ -765,7 +765,13 @@ BEGIN_PROPSYNCS(CharDriver)
     SYNC_PROP(default_play_starved, mDefaultPlayStarved)
     SYNC_PROP(test_clip, mTestClip)
     SYNC_PROP(play_multiple_clips, mPlayMultipleClips)
+#ifdef HX_NATIVE
+    // RB3-360 retail strips this editor-only property: retail's SyncProperty COMDAT
+    // holds 12 ??0Symbol@@QAA@PBD@Z relocs against our 13, and objdiff attributes the
+    // surplus block to the `display_zoom` string literal.  (rb3-Wii's DEV build DOES
+    // carry it unguarded at CharDriver.cpp:919 -- it is dev-only, not DC3-only.)
     SYNC_PROP(display_zoom, CharClipDisplay::sZoom)
+#endif
     SYNC_SUPERCLASS(CharWeightable)
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain stops at the immediate superclass;
