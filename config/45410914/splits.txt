@@ -3865,7 +3865,8 @@ MoveAsyncDetector.cpp:
 	.pdata      start:0x821FBF90 end:0x821FBF98
 	.pdata      start:0x821FBFE8 end:0x821FBFF0
 	.pdata      start:0x821FC010 end:0x821FC040
-	.pdata      start:0x821FEC68 end:0x821FEC88
+	.pdata      start:0x821FEC68 end:0x821FEC70
+	.pdata      start:0x821FEC78 end:0x821FEC88
 	.pdata      start:0x822000A0 end:0x822000A8
 	.pdata      start:0x82234690 end:0x82234698
 	.text       start:0x823178F8 end:0x82317900
@@ -3878,7 +3879,8 @@ MoveAsyncDetector.cpp:
 	.text       start:0x82318164 end:0x82318170
 	.text       start:0x82318438 end:0x82318500
 	.text       start:0x82347214 end:0x82347218
-	.text       start:0x82347284 end:0x82347478
+	.text       start:0x82347284 end:0x82347320
+	.text       start:0x82347438 end:0x82347478
 	.text       start:0x82347720 end:0x82347770
 	.text       start:0x8235C538 end:0x8235C604
 	.text       start:0x826C75E0 end:0x826C7650
@@ -10478,7 +10480,9 @@ BeatMatchController.cpp:
 BandPatchMesh.cpp:
 	.pdata      start:0x821FEB98 end:0x821FEBA0
 	.pdata      start:0x821FEBD0 end:0x821FEBD8
+	.pdata      start:0x821FEBE0 end:0x821FEBE8
 	.pdata      start:0x821FEC30 end:0x821FEC38
+	.pdata      start:0x821FEC70 end:0x821FEC78
 	.pdata      start:0x821FECC8 end:0x821FECD0
 	.pdata      start:0x821FED48 end:0x821FED50
 	.pdata      start:0x821FEDB8 end:0x821FEE08
@@ -10490,7 +10494,9 @@ BandPatchMesh.cpp:
 	.text       start:0x823453A0 end:0x82345520
 	.text       start:0x82345638 end:0x82345824
 	.text       start:0x823461C8 end:0x823462A4
+	.text       start:0x823464F8 end:0x82346560
 	.text       start:0x82346EB8 end:0x82346F64
+	.text       start:0x82347320 end:0x82347438
 	.text       start:0x823474D0 end:0x82347528
 	.text       start:0x82347530 end:0x823475FC
 	.text       start:0x82347A18 end:0x82347B74
@@ -12215,7 +12221,7 @@ MessageTimer.cpp:
 	.pdata      start:0x821F1850 end:0x821F1868
 	.pdata      start:0x821F1868 end:0x821F1870
 	.pdata      start:0x821FEBD8 end:0x821FEBE0
-	.pdata      start:0x821FEBE0 end:0x821FEC18
+	.pdata      start:0x821FEBE8 end:0x821FEC18
 	.pdata      start:0x821FEC38 end:0x821FEC40
 	.pdata      start:0x821FEC98 end:0x821FECA0
 	.pdata      start:0x821FECD8 end:0x821FECE0
@@ -12229,7 +12235,8 @@ MessageTimer.cpp:
 	.text       start:0x82272CF8 end:0x82272DB4
 	.text       start:0x82346160 end:0x823461C4
 	.text       start:0x823462A4 end:0x82346360
-	.text       start:0x823463B8 end:0x82346DE0
+	.text       start:0x823463B8 end:0x823464F8
+	.text       start:0x82346560 end:0x82346DE0
 	.text       start:0x82346F68 end:0x82347030
 	.text       start:0x823476D0 end:0x82347720
 	.text       start:0x82347BE8 end:0x82347C48
