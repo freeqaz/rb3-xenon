@@ -12,6 +12,7 @@ judgment calls a workflow prompt can't.
 | [`hasreal-grind.md`](hasreal-grind.md) | Near-miss [90,100) HAS_REAL (~330 fns): real struct-offset/codegen bugs | After body-port waves; per-fn grind |
 | [`nearmiss-harvest.md`](nearmiss-harvest.md) | Named real-bodied 96–99.99%: evaluation-order sculpting, local-.cpp-only Fable lanes | Recurring wave; regen pool from fresh report.json each round (+28 over rounds 1–4) |
 | [`offset-drift-sweep.md`](offset-drift-sweep.md) | Whole 85–99.99% band with shared-header/TU-static **layout** drift (the header-edit complement of nearmiss-harvest) | Recurring; mechanical sweep + recon-before-edit; one header fix closes many fns (+31 over rounds 1–2) |
+| [`levers-that-pay.md`](levers-that-pay.md) | The **eight matching levers of waves DC..DG**, each with precondition / trap / worked example and a LIVE-DRAINED-REFUTED state; plus the reachable-ceiling targeting partition | Read FIRST when picking a lane's target — it says what to try AND what is already drained. Pairs with [`../INSTRUMENT_DESIGN.md`](../INSTRUMENT_DESIGN.md) (how to build a control that can fail) |
 
 Shared invariants (every playbook assumes these):
 - Work in a worktree from `scripts/setup_worktree.sh`; never mutate the main repo's
