@@ -428,6 +428,8 @@ MusicLibrary.cpp:
 MusicLibraryStore.cpp:
 	.pdata      start:0x82223230 end:0x82223238
 	.pdata      start:0x82223238 end:0x82223240
+	.pdata      start:0x82223240 end:0x822232E8
+	.pdata      start:0x822232F0 end:0x82223308
 	.pdata      start:0x82223310 end:0x82223318
 	.pdata      start:0x82223318 end:0x82223338
 	.pdata      start:0x82223338 end:0x82223388
@@ -439,6 +441,9 @@ MusicLibraryStore.cpp:
 	.pdata      start:0x82223498 end:0x822234A8
 	.text       start:0x825BC908 end:0x825BC9D4
 	.text       start:0x825BC9D8 end:0x825BCA38
+	.text       start:0x825BCA38 end:0x825BD1F8
+	.text       start:0x825BD254 end:0x825BD3E8
+	.text       start:0x825BD450 end:0x825BD458
 	.text       start:0x825BD458 end:0x825BD564
 	.text       start:0x825BD564 end:0x825BD618
 	.text       start:0x825BD618 end:0x825BDC60
@@ -7653,11 +7658,9 @@ LocaleOrdinal.cpp:
 FlowWhile.cpp:
 	.pdata      start:0x821FE950 end:0x821FE958
 	.pdata      start:0x821FE978 end:0x821FE980
-	.pdata      start:0x82209CA0 end:0x82209CA8
 	.text       start:0x8230B608 end:0x8230B618
 	.text       start:0x823423DC end:0x82342438
 	.text       start:0x82342680 end:0x823426F8
-	.text       start:0x82402F68 end:0x82402FA0
 
 SessionJobs_Xbox.cpp:
 	.pdata      start:0x82208DA0 end:0x82208DC8
@@ -8812,11 +8815,9 @@ band3/meta_band/AppMiniLeaderboardDisplay.cpp:
 
 band3/meta_band/UIStats.cpp:
 	.pdata      start:0x8221CDB8 end:0x8221CDC0
-	.pdata      start:0x8221CDC0 end:0x8221D100
-	.pdata      start:0x8221D108 end:0x8221D220
+	.pdata      start:0x8221CDC0 end:0x8221CE18
 	.text       start:0x825605F4 end:0x82560660
-	.text       start:0x82560660 end:0x82563258
-	.text       start:0x825632BC end:0x82564410
+	.text       start:0x82560660 end:0x82560B08
 	.text       start:0x82566228 end:0x82566238
 
 band3/meta_band/NewAwardPanel.cpp:
@@ -8857,8 +8858,6 @@ band3/meta_band/StoreOfferProvider.cpp:
 	.text       start:0x826640CC end:0x82665BAC
 
 band3/meta_band/BandStorePanel.cpp:
-	.pdata      start:0x82223240 end:0x822232E8
-	.pdata      start:0x822232F0 end:0x82223308
 	.pdata      start:0x82228078 end:0x82228098
 	.pdata      start:0x82228098 end:0x82228148
 	.pdata      start:0x82228158 end:0x82228178
@@ -8868,9 +8867,6 @@ band3/meta_band/BandStorePanel.cpp:
 	.pdata      start:0x82228220 end:0x82228318
 	.pdata      start:0x82228340 end:0x82228348
 	.pdata      start:0x82228388 end:0x82228490
-	.text       start:0x825BCA38 end:0x825BD1F8
-	.text       start:0x825BD254 end:0x825BD3E8
-	.text       start:0x825BD450 end:0x825BD458
 	.text       start:0x826050A8 end:0x8260527C
 	.text       start:0x8260527C end:0x826058E8
 	.text       start:0x826059E8 end:0x82605C38
