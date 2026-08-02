@@ -82,15 +82,19 @@ def main():
 
     rep = json.load(open(a.report))
     size, pct = {}, {}
+    # ★ CZ-3: FULL unit name, not stem -- see at100_adjudicate.load_rep. With the
+    # stem key, pct.get((unit, fn)) was ALWAYS None, so the `!= 100.0` test below
+    # skipped every row and the accounting reported an empty tree as "done".
     for u in rep["units"]:
-        stem = u["name"].split("/")[-1]
         for f in (u.get("functions") or []):
-            size[(stem, f["name"])] = int(f["size"])
-            pct[(stem, f["name"])] = f["match_percent_normalized"]
+            size[(u["name"], f["name"])] = int(f["size"])
+            pct[(u["name"], f["name"])] = f["match_percent_normalized"]
 
     ORDER = ["a_wrong", "a_wrong_shapetwin", "b_backlog", "d_body_unreadable",
              "d_no_target_addr", "c_shapetwin_ours", "c_fold_ours"]
     sites = json.load(open(a.sites))["records"]
+    if not ({u for u, _f, _r in sites} & {u for u, _f in pct}):
+        sys.exit("REFUSING: sites/report unit keys do not join (f592571a breakage)")
 
     before = collections.Counter(); beforeb = collections.Counter()
     after = collections.Counter(); afterb = collections.Counter()

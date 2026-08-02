@@ -60,11 +60,14 @@ def main():
     sites = json.load(open(a.sites))["records"]
     rep = json.load(open(a.report))
     fnsize, fnpct = {}, {}
+    # ★ CZ-3: FULL unit name, not stem -- see at100_adjudicate.load_rep. After
+    # f592571a the census emits full unit paths and this join silently went to 0.
     for u in rep["units"]:
-        stem = u["name"].split("/")[-1]
         for f in (u.get("functions") or []):
-            fnsize[(stem, f["name"])] = int(f["size"])
-            fnpct[(stem, f["name"])] = f["match_percent_normalized"]
+            fnsize[(u["name"], f["name"])] = int(f["size"])
+            fnpct[(u["name"], f["name"])] = f["match_percent_normalized"]
+    if not ({u for u, _f, _r in sites} & {u for u, _f in fnpct}):
+        sys.exit("REFUSING: sites/report unit keys do not join (f592571a breakage)")
 
     # ---------- (1) whole-census sizing -----------------------------------
     tot_sites = tot_charged_fns = 0
