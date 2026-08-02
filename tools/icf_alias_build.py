@@ -30,6 +30,7 @@ import argparse
 import collections
 import glob
 import json
+import os
 import pickle
 import sys
 from pathlib import Path
@@ -37,6 +38,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "tools"))
 from icf_fold_evidence import function_bodies, masked_body  # noqa: E402
+from coff_bodies_ext import function_bodies_ext             # noqa: E402
 from icf_alias_finder import coff_referenced_symbols        # noqa: E402
 
 sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "harvest"))
@@ -104,11 +106,52 @@ def relocs_agree(rt, ob, mapped=frozenset(), strict=True, tally=None) -> bool:
     return True
 
 
-def collect(paths):
+def collect(paths, label=""):
+    """Index {name: (masked_body, relocs, size)} over a set of objs.
+
+    ★ DC-4 (2026-08-02): reads through the CORRECTED body reader. The frozen
+    legacy `icf_fold_evidence.function_bodies` accepted a code section only when
+    it held EXACTLY ONE type-0x20 def AT OFFSET 0, and both halves of that gate
+    misfire on every EH-bearing function (8-byte EH prefix pushes the entry to
+    value 8; `__unwind$NNN` is a second type-0x20 def). Tree-wide on our objs
+    that is 78,190 symbols seen of 95,247 -- 17,057 / 21.8% invisible.
+
+    ⚠ THIS MOVES BOTH SIDES OF THE T1 COMPARISON, and it is the same population
+    fix CY-1 made in icf_site_census: measured there, ext-minus-legacy is +55 on
+    TARGET objs vs +2,822 on OUR objs (51x asymmetry), i.e. the recovery is in
+    our MSVC /Gy COMDATs and the dtk target side barely moves. Symmetry of the
+    EH prefix is preserved on both sides: dtk names the target-side prefix
+    `except_data_` (a non-0x20 symbol) so it is excluded from the slice exactly
+    as our unnamed prefix is, and `except_data_` is already in _PLACEHOLDER.
+    ICF_ALIAS_LEGACY_READER=1 re-derives any pre-DC-4 candidate set.
+
+    ⚠⚠ CONSUMERS: this function is ALSO what tools/icf_alias_audit.py reads
+    (it imports `collect`, not the reader), so the audit's population moves with
+    it. That is intended -- the audit exists to gate precision on this very set,
+    and auditing a set built from a different population than the one shipped
+    would be worse than useless.
+    """
+    use_legacy = os.environ.get("ICF_ALIAS_LEGACY_READER") == "1"
     out = {}
+    n_objs = 0
     for p in paths:
-        for name, raw, relocs in function_bodies(Path(p)):
+        n_objs += 1
+        if use_legacy:
+            it = ((n, r, rl) for n, r, rl in function_bodies(Path(p), legacy_ok=True))
+        else:
+            it = ((n, r, rl) for n, r, rl, _e in function_bodies_ext(Path(p)))
+        for name, raw, relocs in it:
             out.setdefault(name, (masked_body(raw, relocs), relocs, len(raw)))
+    # Population guard: a collapsed COFF read yields a small dict and then a
+    # table of zeros that reads exactly like "no alias evidence exists" -- the
+    # decisive-negative shape (cf. f592571a / lane CZ-3). Refuse instead.
+    if n_objs and len(out) < 0.5 * n_objs:
+        sys.exit("REFUSING: collect(%s) read %d symbols from %d objs -- the COFF "
+                 "read collapsed. Do not read the evidence counts as a result."
+                 % (label or "?", len(out), n_objs))
+    print("      collect(%s): %d objs -> %d symbols [%s reader]"
+          % (label or "?", n_objs, len(out), "LEGACY" if use_legacy else "corrected"),
+          file=sys.stderr)
     return out
 
 
@@ -128,6 +171,8 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--stats", default="")
     ap.add_argument("--worklist", default="", help="write the post-alias triage backlog")
+    ap.add_argument("--why", default="",
+                    help="★ DC-4: dump the PER-PAIR decision (the `why` dict). The\nsummary census cannot distinguish \"this pair was REFUTED\" from \"this pair was\nnever proposed\", and conflating those is the defect-manufacturing direction --\na landed alias that a reader change silently stopped reproducing must be shown\nto be an actual refutation before anyone acts on it.")
     ap.add_argument("--sites", default=str(Path.home() / "tmp" / "cd9_allsites.json"),
                     help="census from tools/icf_site_census.py (.json) or a legacy .pkl")
     ap.add_argument("--evidence", default=str(Path.home() / "tmp" / "cd9_evidence.json"),
@@ -161,20 +206,22 @@ def main() -> int:
             cls_of[m] = i
             cls_size[m] = len(c["members"])
 
-    our_objs = glob.glob(str(PROJECT_ROOT / "build/45410914/src/**/*.obj"), recursive=True)
+    # DC-4: sorted() is load-bearing -- see icf_fold_evidence.main (name
+    # collisions + first-wins setdefault => order-dependent results).
+    our_objs = sorted(glob.glob(str(PROJECT_ROOT / "build/45410914/src/**/*.obj"), recursive=True))
     print("reading our objs ...", file=sys.stderr)
-    ours = collect(our_objs)
+    ours = collect(our_objs, "ours")
     referenced = set()
     for p in our_objs:
         referenced |= coff_referenced_symbols(Path(p).read_bytes())
-    tgt = glob.glob(str(PROJECT_ROOT / "build/45410914/obj/*.obj"))
+    tgt = sorted(glob.glob(str(PROJECT_ROOT / "build/45410914/obj/*.obj")))
     if filter_live:
         try:
             tgt = filter_live(tgt, str(PROJECT_ROOT))
         except Exception:
             pass
     print("reading retail target objs ...", file=sys.stderr)
-    retail = collect(tgt)
+    retail = collect(tgt, "retail/target")
     # tools/icf_alias_finder.py --validate gate (c): the target objs must name
     # EXACTLY the survivor out of each group. So the survivor has to be present in a
     # live pinned unit, and no folded spelling may be. T1 satisfies this implicitly
@@ -226,6 +273,30 @@ def main() -> int:
             pairs[(t, b)] += 1
             pair_fns[(t, b)].add((unit, fn))
     observed = set(pairs)
+    # ★ DC-4: JOIN GUARD. Every (t, b) here comes from the sites census; the
+    # adjudicators then look t up in `retail`/`mapped` and b up in `ours`. Those
+    # are NAME-keyed joins against tables built from a completely different
+    # source (the COFF objs and target_symbol_map.json). If a census-format or
+    # reader change ever desynchronises the naming on either side, the join goes
+    # to ~zero and every downstream count reads as "no fold evidence exists" --
+    # the DECISIVE-NEGATIVE shape. That is not hypothetical: CY-1's f592571a
+    # changed icf_site_census's emitted unit key from bare stem to full path,
+    # four consumers still joined on stems (0/895), and cy4_final_accounting
+    # REPORTED AN EMPTY TREE AS DONE with nothing raised (lane CZ-3, d8fbe230).
+    # This tool joins on SYMBOL names rather than unit names so it did not share
+    # that specific break, but the failure SHAPE is identical, so assert the join
+    # landed instead of trusting a small number.
+    if pairs:
+        _sn = {t for t, _b in pairs} | {b for _t, b in pairs}
+        _kn = set(ours) | set(retail)
+        _hit = len(_sn & _kn)
+        print("join check: census names %d, obj-table names %d, INTERSECTION %d "
+              "(%.1f%%)" % (len(_sn), len(_kn), _hit, 100.0 * _hit / len(_sn)),
+              file=sys.stderr)
+        if _hit == 0 or _hit < 0.20 * len(_sn):
+            sys.exit("REFUSING: the sites census does not join against the COFF "
+                     "symbol tables (%d/%d names). Do not read the decision "
+                     "census below as a result." % (_hit, len(_sn)))
     if args.enumerate == "hash":
         pairs = collections.Counter({p: pairs.get(p, 0) for p in hash_cand})
     elif args.enumerate == "both":
@@ -334,6 +405,10 @@ def main() -> int:
         print("     %-38s %6d slots" % (k, v))
     print("\ngroups=%d aliases=%d sites=%d fns=%d"
           % (len(gl), sum(len(g["folded"]) for g in gl), n_sites, len(fset)))
+    if args.why:
+        Path(args.why).write_text(json.dumps(
+            {"decisions": [[t, b, w] for (t, b), w in why.items()]}))
+        print("why: %d per-pair decisions -> %s" % (len(why), args.why))
 
     emitted = [{k: v for k, v in g.items() if not k.startswith("_")} for g in gl]
 

@@ -104,7 +104,9 @@ class Xbin:
         self.dup_diff = 0
         for p in glob.glob(root + "/build/45410914/src/**/*.obj", recursive=True):
             try:
-                bl = ([(n, r, rl) for n, r, rl in function_bodies(Path(p))]
+                # DC-4: legacy_ok=True -- deliberate legacy hatch
+                # (CW2_LEGACY_READER=1); must not trip the frozen-reader warning.
+                bl = ([(n, r, rl) for n, r, rl in function_bodies(Path(p), legacy_ok=True)]
                       if USE_LEGACY else
                       [(n, r, rl) for n, r, rl, _o in function_bodies_ext(Path(p))])
             except Exception:
