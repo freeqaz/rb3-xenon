@@ -30,6 +30,16 @@ public:
 
     static void SetVer(int);
 
+#ifdef HX_NATIVE
+    // X4c: per-section byte-swap element widths for the big-endian .milo_xbox
+    // sample block, mirroring CharBones::TypeSize. See CharBonesSamples.cpp --
+    // hardcoding 4 here corrupted the root position channel on every compressed
+    // RB3 clip.
+    int NativePosElemWidth() const;
+    int NativeQuatElemWidth() const;
+    int NativeRotElemWidth() const;
+#endif
+
 protected:
     void ReadCounts(BinStream &, int);
     void SetPreview(int);
