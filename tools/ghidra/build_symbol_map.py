@@ -77,6 +77,7 @@ DECOMP_DB = os.path.join(REPO, "decomp.db")
 COFF_MACHINE_XBOX360 = 0x01F2
 # XBOX360 PPC COFF relocation record: vaddr(u32) + symidx(u32) + type(u16) = 10 bytes
 RELOC_SIZE = 10
+IMAGE_REL_PPC_PAIR = 0x12   # addend carrier: its SymbolTableIndex is NOT a symbol
 
 
 def _read_coff(path):
@@ -117,6 +118,14 @@ def _read_coff(path):
         sec_off += 40
 
     syms = []
+    # A relocation's SymbolTableIndex is a RAW index that COUNTS AUX RECORDS,
+    # but this loop advances past aux records without appending them -- so list
+    # position drifts below the raw index.  `syms[symi]` would therefore return
+    # a GARBAGE NAME (measured repo-wide: only 20.99% of relocations resolve
+    # correctly without this correction).  Keep `syms` aux-free for iteration
+    # (every other consumer walks it) and resolve relocations through an
+    # explicit raw-index map instead.  See tools/reloc_symidx_guard.py.
+    syms_by_raw = {}
     i = 0
     off = symptr
     while i < nsym:
@@ -124,7 +133,9 @@ def _read_coff(path):
         nm = raw[0:8]
         value, secnum, typ, sclass, naux = struct.unpack_from("<IhHBB", raw, 8)
         name = resolve_name(nm)
-        syms.append(dict(name=name, value=value, secnum=secnum, sclass=sclass))
+        sym = dict(name=name, value=value, secnum=secnum, sclass=sclass)
+        syms.append(sym)
+        syms_by_raw[i] = sym
         i += 1 + naux
         off += 18 * (1 + naux)
 
@@ -137,8 +148,14 @@ def _read_coff(path):
                 if ro + RELOC_SIZE > len(d):
                     break
                 rva, symi, rtype = struct.unpack_from("<IIH", d, ro)
-                if symi < len(syms):
-                    callees.append(syms[symi]["name"])
+                # IMAGE_REL_PPC_PAIR reuses the SymbolTableIndex field to carry
+                # the low 16 bits of a displacement -- it is NOT a symbol index
+                # and never denotes a callee.  20.3% of our relocations are PAIR.
+                if rtype == IMAGE_REL_PPC_PAIR:
+                    continue
+                sym = syms_by_raw.get(symi)
+                if sym is not None:
+                    callees.append(sym["name"])
         s["callees"] = callees
     return secs, syms
 
