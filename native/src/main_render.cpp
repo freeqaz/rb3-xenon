@@ -87,7 +87,11 @@
 //             1 = a gate failed.  2 = no usable GPU (reported, not faked).
 
 #include "char/CharBoneDir.h"
+#include "char/CharClip.h"
+#include "char/CharDriver.h"
+#include "char/CharServoBone.h"
 #include "char/Character.h"
+#include "obj/Task.h"
 #include "math/Color.h"
 #include "math/Vec.h"
 #include "obj/Data.h"
@@ -170,6 +174,25 @@ namespace {
     ObjDirPtr<ObjectDir> gPostProcDir;
     bool gDumpCam = false;
     bool gManualCam = false;
+
+    // ---- X4b: clip-driven character animation -------------------------------
+    // crowd_female01 ships a CharDriver ('main.drv'), a CharServoBone
+    // ('bone.servo') and two EMPTY CharClipSets ('female_base', 'male_base') --
+    // measured with rb3-milo: 68 objects, 12 classes, ZERO CharClip. The clips
+    // live in a separate asset that the character's 'crowd_clips.fm' FileMerger
+    // pulls in. Enumerating the ark (Archive::Enumerate on char/crowd) finds it:
+    //
+    //     char/crowd/anim/gen/female_base.milo_xbox   44 CharClip, 12 CharClipGroup
+    //
+    // i.e. the CharClipSet name in the character IS the clip milo's basename.
+    // That file is the animation source; it is real shipped RB3 content, not
+    // synthesised, and it contains no band3 classes so it loads in this target.
+    const char *gClipsFile = nullptr;
+    const char *gClipName = nullptr;
+    float gBeat = -1.0f; // <0 => no animation requested
+    float gBpm = 120.0f;
+    bool gBoneAudit = false;
+    ObjDirPtr<ObjectDir> gClipsDir;
 
     void Gate(const char *name, bool ok, const char *detail) {
         printf("  [%s] %s%s%s\n", ok ? "PASS" : "FAIL", name,
@@ -794,6 +817,212 @@ namespace {
     const double kMinCoverage = 0.01; // >=1% of pixels differ from background
     const size_t kMinDistinct = 16;
 
+    // =====================================================================
+    // X4b — THE BONE-LENGTH INVARIANT ORACLE
+    // =====================================================================
+    // A rigid skeleton cannot change its bone lengths. Whatever pose a clip
+    // asks for, the world-space distance from a bone to its parent must equal
+    // the length of that bone's LOCAL translation, because
+    //
+    //     WorldXfm(child) = LocalXfm(child) * WorldXfm(parent)
+    //
+    // puts the child's origin at  rotate(LocalXfm(child).v, parentRot) +
+    // WorldXfm(parent).v, and a rotation preserves length. So
+    //
+    //     liveDist / |LocalXfm(child).v|  ==  1.000   exactly
+    //
+    // for every bone whose parent carries a pure rotation (no scale/shear).
+    //
+    // ★ WHY THIS IS THE RIGHT INSTRUMENT: it needs NO ground truth. There is no
+    // reference PNG to diff, no retail capture to compare against, and no
+    // "looks about right" judgement. Any ratio != 1.000 is a mathematical proof
+    // that a transform on the compose path is wrong. It is the same oracle
+    // rb3-Wii's native port used, and it is precisely the instrument that
+    // catches an alias-unsafe Multiply -- which is how it earns its place here
+    // (see the mtx.cpp fix landed alongside this milestone).
+    //
+    // Both quantities are read AT THE SAME INSTANT, after the pose is applied.
+    // That is deliberate: sampling |LocalXfm().v| at bind instead would fold in
+    // any clip-driven translation channel and turn a real signal into noise.
+    struct BoneRatio {
+        const char *name;
+        const char *parent;
+        float localLen;
+        float liveDist;
+        float ratio;
+        // det(localXfm.m) and det(parentWorldXfm.m). For a rigid rig BOTH are
+        // 1.000. They are carried because they SEPARATE the two ways this
+        // invariant can break: a bad local pose (localDet != 1) versus a bad
+        // world compose (localDet == 1 but parentDet != 1). Without them a
+        // failing ratio says only "something is wrong".
+        float localDet;
+        float parentWorldDet;
+        float selfWorldDet;
+        int depth;
+    };
+
+    struct BoneAuditResult {
+        int checked = 0;
+        int skippedShort = 0;
+        float maxRatio = 1.0f; // max over |ratio - 1| , reported as the ratio
+        float maxDev = 0.0f;
+        std::vector<BoneRatio> worst;
+    };
+
+    BoneAuditResult AuditBoneLengths(ObjectDir *dir) {
+        BoneAuditResult res;
+        std::vector<BoneRatio> all;
+        for (ObjDirItr<RndTransformable> it(dir, true); it; ++it) {
+            RndTransformable *t = it;
+            RndTransformable *p = t->TransParent();
+            if (!p) continue;
+            const Vector3 &lv = t->LocalXfm().v;
+            float localLen = sqrtf(lv.x * lv.x + lv.y * lv.y + lv.z * lv.z);
+            // A zero-length local offset carries no length information (the
+            // child sits exactly on its parent), so the ratio is undefined
+            // rather than wrong. Counted and reported, never silently dropped.
+            if (localLen < 1e-4f) { res.skippedShort++; continue; }
+            const Vector3 &cw = t->WorldXfm().v;
+            const Vector3 &pw = p->WorldXfm().v;
+            float dx = cw.x - pw.x, dy = cw.y - pw.y, dz = cw.z - pw.z;
+            float liveDist = sqrtf(dx * dx + dy * dy + dz * dz);
+            float ratio = liveDist / localLen;
+            int depth = 0;
+            for (RndTransformable *q = p; q; q = q->TransParent()) depth++;
+            BoneRatio br = { t->Name(),  p->Name(), localLen, liveDist, ratio,
+                             Det(t->LocalXfm().m), Det(p->WorldXfm().m),
+                             Det(t->WorldXfm().m), depth };
+            all.push_back(br);
+            res.checked++;
+            float dev = fabsf(ratio - 1.0f);
+            if (dev > res.maxDev) { res.maxDev = dev; res.maxRatio = ratio; }
+        }
+        // Sorted by DEPTH, not by badness. A collapse propagates down the
+        // chain, so the interesting row is the FIRST one where the determinant
+        // leaves 1.000 -- everything below it is a consequence, not a cause.
+        // Sorting worst-first hides exactly the row you need.
+        std::sort(all.begin(), all.end(), [](const BoneRatio &a, const BoneRatio &b) {
+            return a.depth < b.depth;
+        });
+        res.worst = all;
+        return res;
+    }
+
+    void ReportBoneAudit(const BoneAuditResult &res) {
+        printf("  --- bone-length invariant (liveDist / |LocalXfm().v|, must be 1.000) ---\n");
+        printf("      %-3s %-28s %-22s %9s %9s %8s %8s %10s\n", "dep", "bone", "parent",
+               "authored", "live", "ratio", "detLocal", "detWorld");
+        for (size_t i = 0; i < res.worst.size(); i++) {
+            const BoneRatio &b = res.worst[i];
+            printf("      %-3d %-28s %-22s %9.4f %9.4f %8.4f %8.4f %10.4g%s\n",
+                   b.depth, b.name ? b.name : "(unnamed)", b.parent ? b.parent : "(none)",
+                   b.localLen, b.liveDist, b.ratio, b.localDet, b.selfWorldDet,
+                   fabsf(b.ratio - 1.0f) > 1e-3f ? "  <<" : "");
+        }
+        printf("      %d bone(s) checked, %d skipped (zero-length local offset)\n",
+               res.checked, res.skippedShort);
+    }
+
+    // =====================================================================
+    // X4b — drive a real CharClip through the engine's own poll path
+    // =====================================================================
+    // This is deliberately the ENGINE's path, not a hand-rolled evaluator:
+    //   TheTaskMgr.SetSecondsAndBeat()  advances the clock
+    //   Character::Poll()               -> RndDir::Poll() -> CharPollGroup::Poll()
+    //                                   -> CharDriver -> CharServoBone -> IK ...
+    // in CharPollableSorter dependency order. A bespoke "evaluate the clip and
+    // write bones" loop would prove that OUR math works; this proves the
+    // shipped rig works. Shape borrowed from dc3-decomp's milo_viewer
+    // (native/src/viewer/milo_viewer.cpp:269-358 + ViewerAnimation.cpp:168),
+    // which X3 named as the reference for this milestone.
+    bool DriveCharacterClip(Character *chr, const char *&clipPlayedOut) {
+        clipPlayedOut = nullptr;
+        if (!chr) {
+            printf("  ⚠ animation: --clips given but the scene has no Character\n");
+            return false;
+        }
+        FilePath cf(gClipsFile);
+        gClipsDir.LoadFile(cf, false, false, kLoadFront, false);
+        ObjectDir *clips = gClipsDir;
+        if (!clips) {
+            printf("  ⚠ animation: clip file '%s' did NOT load\n", gClipsFile);
+            return false;
+        }
+        printf("  clips: loaded '%s' (root '%s' [%s])\n", gClipsFile,
+               clips->Name() ? clips->Name() : "(unnamed)", clips->ClassName().Str());
+
+        CharDriver *driver = chr->Driver();
+        if (!driver) {
+            printf("  ⚠ animation: character '%s' has no CharDriver\n", chr->Name());
+            return false;
+        }
+        driver->SetClips(clips);
+
+        // Pick the clip. An explicit --clip name is honoured; otherwise the
+        // first CharClip in the dir is used and the choice is PRINTED, so a
+        // reader always knows which clip produced the picture.
+        CharClip *clip = nullptr;
+        int nClips = 0;
+        for (ObjDirItr<CharClip> it(clips, true); it; ++it) {
+            nClips++;
+            if (gClipName) {
+                if (strcmp(it->Name(), gClipName) == 0) clip = it;
+            } else if (!clip) {
+                clip = it;
+            }
+        }
+        if (!clip) {
+            printf("  ⚠ animation: no clip '%s' among %d CharClip(s) in %s\n",
+                   gClipName ? gClipName : "(first)", nClips, gClipsFile);
+            return false;
+        }
+        printf("  clips: %d CharClip(s) available; playing '%s' (beats %.2f..%.2f, "
+               "%d frames)\n",
+               nClips, clip->Name(), clip->StartBeat(), clip->EndBeat(),
+               clip->NumFrames());
+
+        // StuffBones registers each clip's animated channels with the servo's
+        // bone array. Without it the driver plays into an empty bone set and
+        // the character stays in bind pose while REPORTING that it animated --
+        // the exact silent-success failure this milestone must not produce.
+        CharServoBone *servo = chr->Find<CharServoBone>("bone.servo", false);
+        if (servo) {
+            for (ObjDirItr<CharClip> it(clips, true); it; ++it) it->StuffBones(*servo);
+            printf("  clips: bones stuffed into CharServoBone '%s'\n", servo->Name());
+        } else {
+            printf("  ⚠ animation: no CharServoBone 'bone.servo' — bones will not move\n");
+        }
+
+        driver->Enter();
+        driver->Play(clip, CharClip::kPlayNow | CharClip::kPlayLoop, -1.0f, 1e30f, 0.0f);
+
+        // Step the clock to the requested beat. Stepping rather than jumping is
+        // what the engine expects: CharDriver blends between poll instants, and
+        // a single huge jump would evaluate a blend over the whole clip.
+        float startBeat = clip->StartBeat();
+        float targetBeat = startBeat + gBeat;
+        float step = 0.1f;
+        float beat = startBeat, seconds = 0.0f;
+        float stepSeconds = step * 60.0f / gBpm;
+        TheTaskMgr.SetSecondsAndBeat(seconds, beat, true);
+        int polls = 0;
+        while (beat + step < targetBeat) {
+            beat += step;
+            seconds += stepSeconds;
+            TheTaskMgr.SetSecondsAndBeat(seconds, beat, false);
+            chr->Poll();
+            polls++;
+        }
+        seconds = (targetBeat - startBeat) * 60.0f / gBpm;
+        TheTaskMgr.SetSecondsAndBeat(seconds, targetBeat, false);
+        chr->Poll();
+        polls++;
+        printf("  clips: polled %d time(s) to beat %.3f (bpm %.1f, %.3f s)\n", polls,
+               targetBeat, gBpm, seconds);
+        clipPlayedOut = clip->Name();
+        return true;
+    }
+
     CellResult RenderCell(const char *arkPath, const char *outDir, int frames,
                           float azimuth, float elevation, float distScale,
                           bool dumpRnd) {
@@ -871,6 +1100,32 @@ namespace {
             break;
         }
         if (character) printf("  character: '%s'\n", character->Name());
+
+        // ---- X4b: drive a clip, then prove the pose with the bone oracle ----
+        // Order matters. The clip is applied BEFORE SceneBounds/PlaceCamera so
+        // the camera frames the POSED figure, not the bind pose; and the bone
+        // audit runs immediately after the pose so it measures the same instant
+        // the picture is taken.
+        const char *clipPlayed = nullptr;
+        bool posed = false;
+        if (gClipsFile && gBeat >= 0.0f) {
+            posed = DriveCharacterClip(character, clipPlayed);
+            Gate("clip-driven", posed,
+                 posed ? "a real shipped CharClip was played through Character::Poll()"
+                       : "no clip was applied — the figure below is BIND POSE");
+        }
+        if (gBoneAudit) {
+            BoneAuditResult ba = AuditBoneLengths(dir);
+            ReportBoneAudit(ba);
+            char d[192];
+            snprintf(d, sizeof(d),
+                     "max ratio %.4f over %d bone(s) (deviation %.2e; tolerance 1e-3)",
+                     ba.maxRatio, ba.checked, ba.maxDev);
+            // A rigid skeleton has NO tolerance to spare in exact arithmetic;
+            // 1e-3 is float round-off headroom over a multi-level compose, not
+            // a fudge factor. A real transform bug misses by percent, not ppm.
+            Gate("bone-length-invariant", ba.checked > 0 && ba.maxDev < 1e-3f, d);
+        }
 
         Bounds b = SceneBounds(dir);
         if (b.valid) {
@@ -1081,6 +1336,11 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--width") == 0 && i + 1 < argc) width = atoi(argv[++i]);
         else if (strcmp(argv[i], "--height") == 0 && i + 1 < argc) height = atoi(argv[++i]);
         else if (strcmp(argv[i], "--frames") == 0 && i + 1 < argc) frames = atoi(argv[++i]);
+        else if (strcmp(argv[i], "--clips") == 0 && i + 1 < argc) gClipsFile = argv[++i];
+        else if (strcmp(argv[i], "--clip") == 0 && i + 1 < argc) gClipName = argv[++i];
+        else if (strcmp(argv[i], "--beat") == 0 && i + 1 < argc) gBeat = (float)atof(argv[++i]);
+        else if (strcmp(argv[i], "--bpm") == 0 && i + 1 < argc) gBpm = (float)atof(argv[++i]);
+        else if (strcmp(argv[i], "--bone-audit") == 0) gBoneAudit = true;
         else if (strcmp(argv[i], "--postproc") == 0 && i + 1 < argc)
             gPostProcFile = argv[++i];
         else if (strcmp(argv[i], "--postproc-name") == 0 && i + 1 < argc)
@@ -1092,6 +1352,8 @@ int main(int argc, char **argv) {
                 "usage: %s <dataDir> <outDir> [<arkPath> ...] "
                 "[--width N] [--height N] [--frames N] [--dump-rnd] [--dump-cam]\n"
                 "       [--cam-manual] [--verbose]\n"
+                "  X4b animation: --clips <arkPath> [--clip <name>] --beat <b>\n"
+                "                 [--bpm <n>] [--bone-audit]\n"
                 "  with no arkPath the two X3 cells run:\n"
                 "    ui/track/gen/tracksystem_meshes.milo_xbox   (130 static meshes)\n"
                 "    char/crowd/gen/crowd_female01.milo_xbox     (skinned character)\n",
