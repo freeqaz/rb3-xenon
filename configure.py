@@ -666,12 +666,35 @@ config.custom_build_steps = {
     # nondeterministic match output). Each stamp is an implicit input of the
     # next (same fix as dc3 3cc46ca1, where serializing recovered a lost
     # matched function).
+    #
+    # ★★★ `all_source` IS AN IMPLICIT INPUT, NOT AN ORDER-ONLY ONE (lane CN-1).
+    # It used to be `order_only`, which in ninja constrains ORDER but NEVER
+    # makes the edge dirty. So when a source change recompiled an obj, the
+    # freshly compiled obj arrived UNPATCHED, the stamp was still considered
+    # current, and the patchers NEVER RE-FIRED -- the patches were silently
+    # gone and the whole-binary metric dropped with nothing failing (measured:
+    # a fresh worktree read 43,097 instead of 43,147, and a 9-file source patch
+    # cost 84 matched functions that a revert did not restore). As an implicit
+    # input, `all_source` propagates the objs' mtimes through the phony, so any
+    # obj newer than a stamp re-triggers that patcher.
+    #
+    # ⚠ THIS ONLY CONVERGES BECAUSE EVERY PATCHER RESTORES THE OBJ mtime.
+    # ninja's `deps = msvc` stores each obj's mtime next to its dep record in
+    # .ninja_deps and RECOMPILES the obj when the file on disk is newer
+    # ("stored deps info out of date"). A patcher that bumps the mtime would
+    # therefore make ninja recompile the obj it just patched, which -- now that
+    # the recompile re-triggers the patcher -- would OSCILLATE forever. Before
+    # this lane, obj_anon_ns bumped 27 objs and obj_dynamic_init bumped 188
+    # (198 unique) and the next build recompiled exactly those 198. All six
+    # patchers now write via _write_preserving_mtime(); do not remove that.
     "post-compile": [
         {
             "outputs": str(stamp_dir / "anon_ns_patched.stamp"),
             "rule": "run_script",
-            "order_only": "all_source",
-            "implicit": "scripts/obj_anon_ns_patcher.py",
+            "implicit": [
+                "scripts/obj_anon_ns_patcher.py",
+                "all_source",
+            ],
             "variables": {
                 "cmd": "python3 scripts/obj_anon_ns_patcher.py --batch --apply",
                 "desc": "PATCH anonymous namespace hashes",
@@ -680,10 +703,10 @@ config.custom_build_steps = {
         {
             "outputs": str(stamp_dir / "dynamic_init_patched.stamp"),
             "rule": "run_script",
-            "order_only": "all_source",
             "implicit": [
                 "scripts/obj_dynamic_init_patcher.py",
                 str(stamp_dir / "anon_ns_patched.stamp"),
+                "all_source",
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_dynamic_init_patcher.py --batch --apply",
@@ -693,10 +716,10 @@ config.custom_build_steps = {
         {
             "outputs": str(stamp_dir / "guard_patched.stamp"),
             "rule": "run_script",
-            "order_only": "all_source",
             "implicit": [
                 "scripts/obj_guard_patcher.py",
                 str(stamp_dir / "dynamic_init_patched.stamp"),
+                "all_source",
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_guard_patcher.py --batch --apply",
@@ -706,10 +729,10 @@ config.custom_build_steps = {
         {
             "outputs": str(stamp_dir / "bool_mangle_patched.stamp"),
             "rule": "run_script",
-            "order_only": "all_source",
             "implicit": [
                 "scripts/obj_bool_mangle_patcher.py",
                 str(stamp_dir / "guard_patched.stamp"),
+                "all_source",
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_bool_mangle_patcher.py --batch --apply",
@@ -719,10 +742,10 @@ config.custom_build_steps = {
         {
             "outputs": str(stamp_dir / "atexit_scope_patched.stamp"),
             "rule": "run_script",
-            "order_only": "all_source",
             "implicit": [
                 "scripts/obj_atexit_scope_patcher.py",
                 str(stamp_dir / "bool_mangle_patched.stamp"),
+                "all_source",
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_atexit_scope_patcher.py --batch --apply",
@@ -742,10 +765,10 @@ config.custom_build_steps = {
         {
             "outputs": str(stamp_dir / "eh_boundary_patched.stamp"),
             "rule": "run_script",
-            "order_only": "all_source",
             "implicit": [
                 "scripts/obj_eh_boundary_patcher.py",
                 str(stamp_dir / "atexit_scope_patched.stamp"),
+                "all_source",
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_eh_boundary_patcher.py --batch --apply",

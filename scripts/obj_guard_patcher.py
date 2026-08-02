@@ -217,8 +217,7 @@ def patch_obj_file(decomp_path, orig_path, apply=False, verbose=False):
                        f' (class {old_cls}->{new_cls})')
 
     if apply:
-        with open(decomp_path, 'wb') as f:
-            f.write(decomp_data)
+        _write_preserving_mtime(decomp_path, decomp_data)
 
     return len(patches), details
 
@@ -284,5 +283,28 @@ def main():
         print('Run with --apply to modify files.')
 
 
+
+def _write_preserving_mtime(path, data):
+    """Write `data` to `path`, then restore the file's original mtime.
+
+    ★ LOAD-BEARING, NOT COSMETIC (lane CN-1, measured). ninja's `deps = msvc`
+    stores each obj's mtime beside its dep record in .ninja_deps. If the obj on
+    disk is later NEWER than that stored mtime, ninja reports
+        ninja explain: stored deps info out of date for '<obj>'
+    and RECOMPILES the obj -- silently discarding every symbol-table patch this
+    script just applied. Because the patcher stamps take `all_source` as an
+    implicit input, ninja then re-runs the patchers, which bump the mtime again:
+    without this mtime restore the build OSCILLATES forever. See
+    scripts/obj_eh_boundary_patcher.py, which has done this since lane CM-3
+    (its comment misnames the file as .ninja_log -- the real one is .ninja_deps).
+    """
+    import os as _os
+    p = str(path)
+    st = _os.stat(p)
+    with open(p, 'wb') as f:
+        f.write(data)
+    _os.utime(p, ns=(st.st_atime_ns, st.st_mtime_ns))
+
 if __name__ == '__main__':
     main()
+
