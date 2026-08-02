@@ -41,7 +41,10 @@ TrackPanelDir::TrackPanelDir()
 
 TrackPanelDir::~TrackPanelDir() { delete mGemTrackRsrcMgr; }
 
-SAVE_OBJ(TrackPanelDir, 0x3F)
+BEGIN_SAVES(TrackPanelDir)
+    SAVE_REVS(1, 0)
+    SAVE_SUPERCLASS(TrackPanelDirBase)
+END_SAVES
 
 void TrackPanelDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);

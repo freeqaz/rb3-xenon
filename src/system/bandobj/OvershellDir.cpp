@@ -24,7 +24,10 @@ OvershellDir::OvershellDir()
       mOnlineEnabled(0), mIsLocal(1), mPadNum(1), mPlatform("xbox"),
       mDefaultOption(gNullStr), mDefaultOptionIndex(0) {}
 
-SAVE_OBJ(OvershellDir, 0x1E)
+BEGIN_SAVES(OvershellDir)
+    SAVE_REVS(1, 0)
+    SAVE_SUPERCLASS(PanelDir)
+END_SAVES
 
 void OvershellDir::PreLoad(BinStream &bs) {
     int rev;

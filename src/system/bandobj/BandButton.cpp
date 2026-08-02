@@ -25,7 +25,10 @@ BEGIN_COPYS(BandButton)
     COPY_SUPERCLASS(UIButton)
 END_COPYS
 
-SAVE_OBJ(BandButton, 0x42)
+BEGIN_SAVES(BandButton)
+    SAVE_REVS(16, 0)
+    SAVE_SUPERCLASS(UIButton)
+END_SAVES
 
 BEGIN_LOADS(BandButton)
     PreLoad(bs);

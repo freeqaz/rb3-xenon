@@ -47,7 +47,12 @@ BEGIN_COPYS(PlayerDiffIcon)
     COPY_SUPERCLASS_FROM(UIComponent, p)
 END_COPYS
 
-SAVE_OBJ(PlayerDiffIcon, 0x36)
+BEGIN_SAVES(PlayerDiffIcon)
+    SAVE_REVS(0, 0)
+    bs << mNumPlayers;
+    bs << mDiff;
+    SAVE_SUPERCLASS(UIComponent)
+END_SAVES
 
 BEGIN_LOADS(PlayerDiffIcon)
     PreLoad(bs);
