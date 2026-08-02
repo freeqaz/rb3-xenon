@@ -195,7 +195,14 @@ BEGIN_PROPSYNCS(PanelDir)
     SYNC_PROP(postprocs_before_draw, mCanEndWorld)
     SYNC_PROP(use_specified_cam, mUseSpecifiedCam)
     SYNC_PROP(focus_component, mFocusComponent)
-    SYNC_PROP(owner_panel, mOwnerPanel) {
+    SYNC_PROP(owner_panel, mOwnerPanel)
+#ifdef HX_NATIVE
+    // DC3-era editor additions; RB3-360 retail's PanelDir chain ends at
+    // `owner_panel`.  Arbitrated on RETAIL BYTES (lane CQ-3): the 564 B retail
+    // body enumerates exactly cam / postprocs_before_draw / use_specified_cam /
+    // focus_component / owner_panel -- five literals, ours emitted eight.
+    // These three drive the DC3 edit-mode panel filters; native-only.
+    {
         static Symbol _s("front_view_only_panels");
         if (sym == _s) {
             PropSyncEditModePanels(mFrontFilenames, _val, _prop, _i + 1, _op);
@@ -210,6 +217,7 @@ BEGIN_PROPSYNCS(PanelDir)
         }
     }
     SYNC_PROP_MODIFY(show_view_only_panels, mShowEditModePanels, SyncEditModePanels())
+#endif
     SYNC_SUPERCLASS(RndDir)
 END_PROPSYNCS
 

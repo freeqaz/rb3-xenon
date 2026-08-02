@@ -156,7 +156,13 @@ END_CUSTOM_PROPSYNC
 
 BEGIN_PROPSYNCS(WorldDir)
     SYNC_PROP_MODIFY(hud_filename, mHUDFilename, SyncHUD())
+#ifdef HX_NATIVE
+    // DC3-era addition; RB3-360 retail goes straight from `hud_filename` to
+    // `echo_msgs`.  Arbitrated on RETAIL BYTES (lane CQ-3): the 1484 B retail
+    // body enumerates 13 property-name literals and `show_hud` is not among
+    // them.  Native-only so the host engine keeps the HUD toggle.
     SYNC_PROP_MODIFY(show_hud, mShowHUD, SyncHUD())
+#endif
     SYNC_PROP(echo_msgs, mEchoMsgs)
     SYNC_PROP_OVERRIDE(hide_overrides, mHideOverrides, SyncHides)
     SYNC_PROP(bitmap_overrides, mBitmapOverrides)

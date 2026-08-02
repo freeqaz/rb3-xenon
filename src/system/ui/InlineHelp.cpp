@@ -147,7 +147,14 @@ BEGIN_HANDLERS(InlineHelp)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(InlineHelp)
+#ifdef HX_NATIVE
+    // DC3-era addition; RB3-360 retail's InlineHelp chain STARTS at `config`.
+    // Arbitrated on RETAIL BYTES (lane CQ-3): the 640 B retail body enumerates
+    // config horizontal spacing text_color use_connected_controllers -- five
+    // literals, ours emitted six, with `resource` prepended at the HEAD (which
+    // is why every later block was displaced).  Native-only.
     SYNC_PROP_MODIFY(resource, mResourceDir, Update())
+#endif
     SYNC_PROP_MODIFY(config, mConfig, SyncLabelsToConfig())
     SYNC_PROP(horizontal, mHorizontal)
     SYNC_PROP(spacing, mSpacing)

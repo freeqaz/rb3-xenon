@@ -67,6 +67,11 @@ BEGIN_PROPSYNCS(TexMovie)
         }
     }
     SYNC_PROP(loop, mLoop)
+#ifdef HX_NATIVE
+    // DC3-era additions; RB3-360 retail's TexMovie chain ends at `loop`.
+    // Arbitrated on RETAIL BYTES (lane CQ-3): the 580 B retail body enumerates
+    // exactly output_texture / bink_movie_file / loop -- three literals, ours
+    // emitted five.  Native-only.
     SYNC_PROP(is_localized, mIsLocalized)
     {
         _NEW_STATIC_SYMBOL(is_empty)
@@ -81,6 +86,7 @@ BEGIN_PROPSYNCS(TexMovie)
             return true;
         }
     }
+#endif
     SYNC_SUPERCLASS(RndDrawable)
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain does not include this superclass;

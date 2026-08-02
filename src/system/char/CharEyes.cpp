@@ -365,12 +365,20 @@ BEGIN_PROPSYNCS(CharEyes)
     SYNC_PROP_BITFIELD(default_interest_categories, mDefaultFilterFlags, 0x685)
     SYNC_PROP(head_lookat, mHeadLookAt)
     SYNC_PROP(max_extrapolation, mMaxExtrapolation)
+#ifdef HX_NATIVE
+    // DC3-era debug additions; RB3-360 retail goes straight from
+    // `max_extrapolation` to `min_target_dist`.  Arbitrated on RETAIL BYTES
+    // (lane CQ-3): the 1600 B retail body enumerates 15 property-name literals
+    // and none of these six appears.  They are all debug toggles backed by
+    // FILE-STATIC flags (sDisable*), which is consistent with them being added
+    // for DC3's tuning workflow.  Native-only.
     SYNC_PROP(disable_eye_dart, sDisableEyeDart)
     SYNC_PROP(disable_eye_jitter, sDisableEyeJitter)
     SYNC_PROP(disable_interest_objects, sDisableInterestObjects)
     SYNC_PROP(disable_procedural_blink, sDisableProceduralBlink)
     SYNC_PROP(disable_eye_clamping, sDisableEyeClamping)
     SYNC_PROP_BITFIELD(interest_filter_testing, mInterestFilterFlags, 0x68E)
+#endif
     SYNC_PROP(min_target_dist, mMinTargetDist)
     SYNC_PROP(ulid_track_up, mUpperLidTrackUp)
     SYNC_PROP(ulid_track_down, mUpperLidTrackDown)
