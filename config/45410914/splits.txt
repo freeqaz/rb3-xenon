@@ -4973,14 +4973,12 @@ Env.cpp:
 BaseMaterial.cpp:
 	.pdata      start:0x821F7C60 end:0x821F7C68
 	.pdata      start:0x8220CA60 end:0x8220CB00
-	.pdata      start:0x8223D658 end:0x8223D660
 	.pdata      start:0x8223D668 end:0x8223D670
 	.pdata      start:0x8223D678 end:0x8223D680
 	.pdata      start:0x8223D688 end:0x8223D698
 	.text       start:0x822D57F8 end:0x822D5828
 	.text       start:0x82435520 end:0x82435528
 	.text       start:0x82435528 end:0x8243619C
-	.text       start:0x8276D540 end:0x8276D758
 	.text       start:0x8276D778 end:0x8276D7A0
 	.text       start:0x8276D7C0 end:0x8276D7E8
 	.text       start:0x8276D808 end:0x8276D858
@@ -6158,7 +6156,6 @@ PoolAlloc.cpp:
 Msg.cpp:
 	.pdata      start:0x821F1A90 end:0x821F1AA0
 	.pdata      start:0x821F1AA0 end:0x821F1AB0
-	.pdata      start:0x821F4750 end:0x821F4768
 	.pdata      start:0x821FB560 end:0x821FB568
 	.pdata      start:0x821FB568 end:0x821FB570
 	.pdata      start:0x82202F98 end:0x82202FA0
@@ -6190,7 +6187,6 @@ Msg.cpp:
 	.pdata      start:0x8225D860 end:0x8225D870
 	.text       start:0x822756A0 end:0x82275750
 	.text       start:0x82275750 end:0x82275808
-	.text       start:0x822A1EE0 end:0x822A2030
 	.text       start:0x8230DF20 end:0x8230DF5C
 	.text       start:0x8230DF5C end:0x8230DF88
 	.text       start:0x8238B130 end:0x8238B198
@@ -6952,6 +6948,7 @@ DataFile.cpp:
 	.pdata      start:0x8223D578 end:0x8223D598
 	.pdata      start:0x8223D5A8 end:0x8223D5D0
 	.pdata      start:0x8223D638 end:0x8223D658
+	.pdata      start:0x8223D658 end:0x8223D660
 	.pdata      start:0x8223D660 end:0x8223D668
 	.pdata      start:0x8223D670 end:0x8223D678
 	.pdata      start:0x8223D680 end:0x8223D688
@@ -6970,6 +6967,7 @@ DataFile.cpp:
 	.text       start:0x8276CB80 end:0x8276CE10
 	.text       start:0x8276D244 end:0x8276D248
 	.text       start:0x8276D29C end:0x8276D540
+	.text       start:0x8276D540 end:0x8276D758
 	.text       start:0x8276D758 end:0x8276D778
 	.text       start:0x8276D7A0 end:0x8276D7C0
 	.text       start:0x8276D7E8 end:0x8276D808
@@ -11525,6 +11523,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4710 end:0x821F4718
 	.pdata      start:0x821F4720 end:0x821F4728
 	.pdata      start:0x821F4728 end:0x821F4750
+	.pdata      start:0x821F4750 end:0x821F4768
 	.pdata      start:0x821F4768 end:0x821F4778
 	.pdata      start:0x821F47D8 end:0x821F47E8
 	.pdata      start:0x821F47E8 end:0x821F4808
@@ -11560,6 +11559,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A16D8 end:0x822A1B80
 	.text       start:0x822A1C00 end:0x822A1C54
 	.text       start:0x822A1C58 end:0x822A1EE0
+	.text       start:0x822A1EE0 end:0x822A2030
 	.text       start:0x822A2030 end:0x822A2038
 	.text       start:0x822A2038 end:0x822A20C4
 	.text       start:0x822A26A8 end:0x822A28F4

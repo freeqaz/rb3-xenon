@@ -152,7 +152,17 @@ void StoreInfoPanel::GetRecommendationIndexPath(const char *cc, String &str) {
     }
 }
 
-void StoreInfoPanel::PushRecommendationFailure() { HandleType(no_recommendations_msg); }
+// Retail builds these as FUNCTION-LOCAL STATICS, not the centralized globals in
+// Symbols4.h/Messages2.h: the retail body at 0x82639010 contains an inline
+// Symbol("no_recommendations") ctor + guard and is 176 B, exactly the shape of
+// PushRecommendationsReady below.  Referencing the globals compiled to 88 B and
+// left this function unpairable, while our PushRecommendationsReady
+// coincidentally matched retail's Failure body at 100% with the wrong name.
+void StoreInfoPanel::PushRecommendationFailure() {
+    static Symbol no_recommendations("no_recommendations");
+    static Message no_recommendations_msg(no_recommendations);
+    HandleType(no_recommendations_msg);
+}
 void StoreInfoPanel::PushRecommendationsReady() {
     static Symbol recommendations_ready("recommendations_ready");
     static Message recommendations_ready_msg(recommendations_ready);
