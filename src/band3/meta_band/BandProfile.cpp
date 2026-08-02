@@ -917,7 +917,7 @@ void BandProfile::FakeProfileFill() {
     mTourProgress->FakeFill();
     LessonMgr *pLessonMgr = LessonMgr::GetLessonMgr();
     MILO_ASSERT(pLessonMgr, 0x5F3);
-    const std::map<Symbol, Lesson *> &lessons = pLessonMgr->LessonsMap();
+    const std::hash_map<Symbol, Lesson *> &lessons = pLessonMgr->LessonsMap();
     FOREACH (it, lessons) {
         Symbol key = it->first;
         mLessonCompletions[key] = 1.0f;

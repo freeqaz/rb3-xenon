@@ -791,7 +791,7 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
 void NextSongPanel::SetupDetailLine(DataArray *detail, int slot, const char *cc, float f) {
     Symbol sym = detail->Sym(0);
     RndDir *rdir = mDir->Find<RndDir>(MakeString("slot%i", slot), true);
-    std::map<Symbol, int>::iterator it = mDetailCounts.find(sym);
+    std::hash_map<Symbol, int>::iterator it = mDetailCounts.find(sym);
     if (it == mDetailCounts.end())
         mDetailCounts[sym] = 1;
     else

@@ -3,6 +3,21 @@
 #include "beatmatch/TrackType.h"
 #include "game/Defines.h"
 #include "obj/Object.h"
+#include <hash_map>
+
+// Retail keys these three tables with STLport hash_maps, not std::maps: the
+// LessonMgr .text span defines and calls ZERO _Rb_tree<Symbol,...> symbols
+// while calling hashtable<pair<const Symbol,_>>::_M_find and the hash_map
+// default ctor, and these three members are the unit's only Symbol-keyed
+// containers.
+#ifndef RB3_HASH_SYMBOL_DEFINED
+#define RB3_HASH_SYMBOL_DEFINED
+namespace stlpmtx_std {
+_STLP_TEMPLATE_NULL struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#endif
 
 class Lesson {
 public:
@@ -32,13 +47,13 @@ public:
     Difficulty GetDifficulty() const;
     int GetTotalCountFromCategory(Symbol);
     int GetCompletedCountFromCategory(BandProfile *, Symbol);
-    const std::map<Symbol, Lesson *> &LessonsMap() const { return mLessonsMap; }
+    const std::hash_map<Symbol, Lesson *> &LessonsMap() const { return mLessonsMap; }
 
     static void Init();
     static LessonMgr *GetLessonMgr();
 
     std::vector<Symbol> mTrainers; // 0x1c
-    std::map<Symbol, std::vector<Symbol> *> mTrainerToCategoriesMap; // 0x24
-    std::map<Symbol, std::vector<Symbol> *> mCategoryToLessonsMap; // 0x3c
-    std::map<Symbol, Lesson *> mLessonsMap; // 0x54
+    std::hash_map<Symbol, std::vector<Symbol> *> mTrainerToCategoriesMap; // 0x24
+    std::hash_map<Symbol, std::vector<Symbol> *> mCategoryToLessonsMap; // 0x3c
+    std::hash_map<Symbol, Lesson *> mLessonsMap; // 0x54
 };
