@@ -7961,7 +7961,7 @@
  "0x823fe968": "??0BitmapLocker@@QAA@PAVRndFont@@H@Z",
  "0x82400590": "?StaticClassName@RndAnimFilter@@SA?AVSymbol@@XZ",
  "0x82402ef0": "?StaticClassName@RndPostProc@@SA?AVSymbol@@XZ",
- "0x82402f68": "?Copy@FlowWhile@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x82402f68": "?Replace@RndDir@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82406738": "?Highlight@RndDrawable@@UAAXXZ",
  "0x82407948": "??5@YAAAVBinStream@@AAV0@AAVColor@Hmx@@@Z",
  "0x82408fd0": "?ReclassifyLights@RndEnviron@@IAAXXZ",
