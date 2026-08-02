@@ -26686,8 +26686,6 @@
  "0x82498c60": "??1RndLight@@UAA@XZ",
  "0x8268ddb8": "?SetShownIntroHelp@LocalBandUser@@QAAXW4TrackType@@_N@Z",
  "0x8268ee00": "?SyncSave@BandUser@@$R4CI@7PPPPPPPM@JI@BAXAAVBinStream@@I@Z",
- "0x8268eee0": "??_DNullLocalBandUser@@QAAXXZ",
- "0x8268ef78": "??_GNullLocalBandUser@@UAAPAXI@Z",
  "0x82399c78": "?Save@CharIKScale@@UAAXAAVBinStream@@@Z",
  "0x82399d68": "?Handle@CharIKScale@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8239a1d8": "?Replace@CharWeightable@@$2PPPPPPPM@DI@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
@@ -28425,7 +28423,7 @@
  "0x8268b478": "?GetCurrentHardcoreIconLevel@LocalBandUser@@UBAHXZ",
  "0x8268c158": "?CanSaveData@NullLocalBandUser@@UBA_NXZ",
  "0x8268dd50": "?GetLocalBandUser@LocalBandUser@@UAAPAV1@XZ",
- "0x8268eab8": "?GetLocalBandUser@LocalBandUser@@UBAPAV1@XZ",
+ "0x8268eab8": "??_GNullLocalBandUser@@UAAPAXI@Z",
  "0x826b5990": "?SyncProperty@ChordbookPanel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x826cc0b0": "?Handle@TrainerPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x827461a0": "?Replace@TexMovie@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
@@ -29094,5 +29092,6 @@
  "0x827f22a8": "?Poll@UILabel@@UAAXXZ",
  "0x8280a320": "?CollidePlane@UISlider@@UAAHABVPlane@@@Z",
  "0x82b92ec0": "?Unload@TrackPanel@@UAAXXZ",
- "0x82b93888": "?Exit@TrackPanel@@UAAXXZ"
+ "0x82b93888": "?Exit@TrackPanel@@UAAXXZ",
+ "0x8268e5d8": "??_DNullLocalBandUser@@QAAXXZ"
 }

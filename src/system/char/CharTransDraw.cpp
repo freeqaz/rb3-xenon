@@ -4,7 +4,7 @@
 #include "rndobj/Draw.h"
 #include "utl/Std.h"
 
-CharTransDraw::CharTransDraw() : mChars(this), mForceDraw(false) {}
+CharTransDraw::CharTransDraw() : mChars(this) {}
 
 CharTransDraw::~CharTransDraw() { SetDrawModes(Character::kCharDrawAll); }
 
@@ -16,7 +16,6 @@ void CharTransDraw::SetDrawModes(Character::DrawMode mode) {
 
 BEGIN_PROPSYNCS(CharTransDraw)
     SYNC_PROP(chars, mChars)
-    SYNC_PROP(force_draw, mForceDraw)
     SYNC_SUPERCLASS(RndDrawable)
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain stops at the immediate superclass;
@@ -30,7 +29,6 @@ BEGIN_SAVES(CharTransDraw)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndDrawable)
     bs << mChars;
-    bs << mForceDraw;
 END_SAVES
 
 BEGIN_COPYS(CharTransDraw)
@@ -39,7 +37,6 @@ BEGIN_COPYS(CharTransDraw)
     CREATE_COPY(CharTransDraw)
     BEGIN_COPYING_MEMBERS
         COPY_MEMBER(mChars)
-        COPY_MEMBER(mForceDraw)
     END_COPYING_MEMBERS
 END_COPYS
 
@@ -51,9 +48,6 @@ void CharTransDraw::Load(BinStream &bs) {
     LOAD_SUPERCLASS(Hmx::Object)
     LOAD_SUPERCLASS(RndDrawable)
     d >> mChars;
-    if (d.altRev > 0) {
-        d >> mForceDraw;
-    }
     SetDrawModes(Character::kCharDrawOpaque);
 END_LOADS
 
@@ -64,12 +58,6 @@ void CharTransDraw::DrawShowing() {
         if (c->Showing()) {
             c->SetDrawMode(Character::kCharDrawTranslucent);
             c->Draw();
-            c->SetDrawMode(Character::kCharDrawOpaque);
-        } else if (mForceDraw) {
-            c->SetDrawMode(Character::kCharDrawTranslucent);
-            c->SetShowing(true);
-            c->Draw();
-            c->SetShowing(false);
             c->SetDrawMode(Character::kCharDrawOpaque);
         }
     }
