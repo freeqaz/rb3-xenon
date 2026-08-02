@@ -1011,6 +1011,23 @@ void DirLoader::LoadHeader() {
     }
     *mStream >> mRev;
     if (mRev < 7) {
+#ifdef HX_NATIVE
+        // ⚠ THE X360 LINE BELOW PRINTS NOTHING USEFUL, AND THAT COST X4a AN HOUR.
+        // `mFile` is a FilePath (utl/Loader.h:50), i.e. a class, passed straight
+        // into MakeString's VARARGS against a `%s`. That is undefined behaviour;
+        // in practice it prints empty, so the diagnostic for "this milo is
+        // unloadable" names no milo. Compare :1002, which correctly passes
+        // mFile.c_str().
+        //
+        // Not corrected in place because default/DirLoader is a scored unit and
+        // MakeString's argument list is part of the codegen; a native-only
+        // companion line costs the X360 build nothing and makes the failure
+        // legible. Reported as owed work (a one-token match A/B) in
+        // docs/plans/x4a-venue-render-2026-08-02.md.
+        MILO_LOG("DirLoader: rev %d < 7 in '%s' at stream offset %d (proxy '%s')\n",
+                 mRev, mFile.c_str(), mStream ? mStream->Tell() : -1,
+                 mProxyName ? mProxyName : "(none)");
+#endif
         Cleanup(MakeString("Can't load old ObjectDir %s", mFile));
         return;
     }
