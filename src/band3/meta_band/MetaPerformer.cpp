@@ -334,6 +334,29 @@ bool MetaPerformer::HasValidBattleInstarank() const {
     //    asm, not inferred.
     //  - Forcing an int composite type (`? 0 :`) is folded away by MSVC, which
     //    still knows the bool is 0/1. Byte-identical output.
+    // laneCN-3 (2026-08-02) re-checked the above rather than trusting it, and
+    // RE-VERIFIED laneAY-B's control from retail asm: 0x82583FF4 really does
+    // `lbz r11,-0x2a0(r24); stw r11,0(r29)` (raw, no normalize). That address is
+    // this+0xe4 = mBandInstarank+4 -- the SAME mIsValid field as our site's
+    // this+0x88 = mBattleInstarank+4. Same field, same type, normalized at one
+    // site and raw at the other ⇒ the member's TYPE is provably not the lever,
+    // and any char/int flip is refuted independently of the sibling-site
+    // argument. The residue is a pure source-FORM/codegen question.
+    // NEW negative (5th form tried): `HasBattle() && mBattleInstarank.IsValid()`
+    // is NOT it either -- it gets the instruction COUNT right (no more
+    // insert/delete, 1876 aligned both sides) but selects a BRANCH-based bool
+    // (`cmplwi; li r11,1; bne; mr`) where retail uses the BRANCHLESS carry trick
+    // (`subic; subfe`). Net 7 mismatches vs the ternary's 5 -- strictly worse,
+    // reverted. Do not retry `&&`.
+    // ⛔ SEPARATELY: even a perfect fix here CANNOT take Handle to 100%. There is
+    // a second, independent defect at idx 1845 -- HANDLE_SUPERCLASS(MsgSource)
+    // emits `subi r4,r24,0x34c` where retail has `0x348`. r24 is the incoming
+    // `this` (the Object virtual base; `MetaPerformer::Handle` adjustor = -900 =
+    // 0x384, per cl /d1reportSingleClassLayout), so retail places the MsgSource
+    // subobject 4 bytes later than we do. That is a VIRTUAL-BASE PLACEMENT
+    // difference, the same family as the UIPanel vbase-thunk wall -- not fixable
+    // from this function. Fix the vbase shape first; only then is Handle worth
+    // re-opening.
     return !HasBattle() ? false : mBattleInstarank.IsValid();
 }
 

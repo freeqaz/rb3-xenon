@@ -796,11 +796,13 @@ int AccomplishmentPanel::GetTotalAccomplishments() {
     return mAccomplishmentProvider->NumData();
 }
 
-int AccomplishmentPanel::GetNumCompleted() {
-    AccomplishmentProvider * &_ref0 = mAccomplishmentProvider;
-    MILO_ASSERT(_ref0, 0x6EF);
+// Retail X360 places this on AccomplishmentProvider, not AccomplishmentPanel:
+// the get_num_completed handler arm loads mAccomplishmentProvider and calls
+// this with the provider as `this` (retail 0x825F73A0 reads this->mGoals at
+// +0x2c/+0x30 directly). The rb3-Wii dev oracle has it on the panel.
+int AccomplishmentProvider::GetNumCompleted() {
     int count = 0;
-    std::vector<Symbol> &goals = _ref0->mGoals;
+    std::vector<Symbol> &goals = mGoals;
     BandProfile *profile = TheCampaign->GetProfile();
     for (std::vector<Symbol>::iterator it = goals.begin(); it != goals.end(); ++it) {
         if (IsAccomplished(*it, profile))
@@ -809,7 +811,7 @@ int AccomplishmentPanel::GetNumCompleted() {
     return count;
 }
 
-bool AccomplishmentPanel::IsUserOnCorrectInstrument() {
+bool AccomplishmentPanel::IsUserOnCorrectInstrument(LocalBandUser *) {
     LocalBandUser *pUser = TheCampaign->GetUser();
     MILO_ASSERT(pUser, 0x6F8);
     Symbol selacc = SelectedAccomplishment();
@@ -1418,10 +1420,13 @@ BEGIN_HANDLERS(AccomplishmentPanel)
     HANDLE_EXPR(can_navigate_list, CanNavigateList())
     HANDLE_EXPR(can_launch_goal, CanLaunchGoal())
     HANDLE_ACTION(launch_goal, LaunchGoal(_msg->Obj<LocalBandUser>(2)))
-    HANDLE_EXPR(is_user_on_correct_instrument, IsUserOnCorrectInstrument())
+    HANDLE_EXPR(
+        is_user_on_correct_instrument,
+        IsUserOnCorrectInstrument(_msg->Obj<LocalBandUser>(2))
+    )
     HANDLE_EXPR(has_correct_playercount, HasCorrectPlayerCount())
     HANDLE_EXPR(get_total, GetTotalAccomplishments())
-    HANDLE_EXPR(get_num_completed, GetNumCompleted())
+    HANDLE_EXPR(get_num_completed, mAccomplishmentProvider->GetNumCompleted())
     HANDLE_EXPR(has_leaderboard, HasLeaderboard())
     HANDLE_EXPR(get_accomplishment_description, GetAccomplishmentDescription())
     HANDLE_EXPR(get_accomplishment_name, GetAccomplishmentName())

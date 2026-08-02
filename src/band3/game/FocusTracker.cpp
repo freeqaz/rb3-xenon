@@ -227,6 +227,13 @@ FocusTracker::GetNextFocusPlayer(const TrackerPlayerID &pid, float f, bool &b) c
         } else if (ret.mGuid == empty.mGuid) {
             break;
         }
+        // Lane CN-3e: retail materializes the LOOP-AGAIN flag via cntlzw/extrwi
+        // (a dead bool) and branches bne; this form materializes the opposite
+        // polarity. Measured alternatives, all WORSE -- keep this one:
+        //   `b1 = !canfocus || !wantsfocus; while(b1)`  -> 97.5% (4 mismatches)
+        //   explicit `if (canfocus) b1=!wantsfocus; else b1=true;` -> 96.1%,
+        //     and it triggers an r11<->r28 regalloc cascade breaking idx 74-79.
+        // Remaining delta is MSVC bool-materialization = permuter class (banned).
         bool canfocus = PlayerCanHaveFocus(ret);
         b1 = canfocus && wantsfocus;
     } while (!b1);

@@ -76,9 +76,10 @@ public:
     }
 
     Accomplishment *GetAccomplishment(int data) const;
+    int GetNumCompleted();
 
-    std::vector<Symbol> mGoals; // 0x20
-    const std::vector<DynamicTex *> &mIcons; // 0x28
+    std::vector<Symbol> mGoals; // 0x2c
+    const std::vector<DynamicTex *> &mIcons; // 0x38
 };
 
 class AccomplishmentGroupProvider : public UIListProvider, public Hmx::Object {
@@ -217,8 +218,10 @@ public:
     void RefreshGroupList();
     void RefreshHeader();
     int GetTotalAccomplishments();
-    int GetNumCompleted();
-    bool IsUserOnCorrectInstrument();
+    // Retail X360 takes an (unused) LocalBandUser* here; the handler passes
+    // _msg->Obj<LocalBandUser>(2). The rb3-Wii dev oracle has the older 0-arg
+    // form. Verified from retail asm at 0x825F78F8 (r4 is never read).
+    bool IsUserOnCorrectInstrument(LocalBandUser *);
     bool HasCorrectPlayerCount();
     Symbol GetSelectedDetailsEntry();
     Symbol GetAccomplishmentName();
