@@ -672,13 +672,20 @@ void AccomplishmentPanel::LaunchGoal(LocalBandUser *user) {
 Symbol AccomplishmentPanel::GetMusicLibraryBackScreen() {
     MILO_ASSERT(GetState() == kUp, 0x662);
     static Message get_musiclibrary_backscreen_msg("get_musiclibrary_backscreen");
-    return Handle(get_musiclibrary_backscreen_msg, true).Sym();
+    // Retail re-materializes the temp's address (`addi r4, r31, 0x58`) instead of
+    // reusing the sret pointer returned in r3 -- the signature of a NAMED
+    // addressable local rather than an unnamed temporary. Verified against retail
+    // bytes: 46/48 -> 48/48 instructions equal.
+    DataNode node = Handle(get_musiclibrary_backscreen_msg, true);
+    return node.Sym();
 }
 
 Symbol AccomplishmentPanel::GetMusicLibraryNextScreen() {
     MILO_ASSERT(GetState() == kUp, 0x66E);
     static Message get_musiclibrary_nextscreen_msg("get_musiclibrary_nextscreen");
-    return Handle(get_musiclibrary_nextscreen_msg, true).Sym();
+    // Same named-local shape as GetMusicLibraryBackScreen (see note there).
+    DataNode node = Handle(get_musiclibrary_nextscreen_msg, true);
+    return node.Sym();
 }
 
 void AccomplishmentPanel::SelectGoal(Symbol s) {

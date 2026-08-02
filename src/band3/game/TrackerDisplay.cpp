@@ -134,7 +134,12 @@ void TrackerDisplay::SetTimeProgress(float ms) const {
 }
 
 void TrackerDisplay::HandleIncrement() {
-    static Message msg("target_progress");
+    // Retail guards TWO statics on one guard word (bits 0x1 and 0x2): a Symbol at
+    // 0x82E03198 built from the literal, then a Message at 0x82E03190 built FROM
+    // that Symbol. A single `static Message msg("...")` builds the Symbol as a
+    // stack temp and emits only one guard bit.
+    static Symbol target_progress("target_progress");
+    static Message msg(target_progress);
     SendMsg(msg);
 }
 
@@ -154,7 +159,9 @@ void TrackerDisplay::HandleTargetPass(int i, DataArrayPtr &ptr) const {
 }
 
 void TrackerDisplay::LastTargetPass() const {
-    static Message msg("last_target_passed");
+    // Same two-static shape as HandleIncrement (see note there).
+    static Symbol last_target_passed("last_target_passed");
+    static Message msg(last_target_passed);
     SendMsg(msg);
 }
 
@@ -269,7 +276,9 @@ void TrackerPlayerDisplay::SetProgressPercentage(float perc, bool b) const {
 
 void TrackerPlayerDisplay::FillProgressAndReset(bool b) const {
     if (!b || (mPlayer && mPlayer->GetTrackType() == kTrackVocals)) {
-        static Message fill_progress_and_reset_msg("fill_progress_and_reset");
+        // Same two-static shape as HandleIncrement (see note there).
+        static Symbol fill_progress_and_reset("fill_progress_and_reset");
+        static Message fill_progress_and_reset_msg(fill_progress_and_reset);
         SendMsg(fill_progress_and_reset_msg);
     }
     bool cansend = HasLocalPlayer();
