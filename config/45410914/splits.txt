@@ -360,12 +360,14 @@ BandWardrobe.cpp:
 TrackPanelDir.cpp:
 	.pdata      start:0x821FAB30 end:0x821FAB40
 	.pdata      start:0x821FAB40 end:0x821FAF18
+	.pdata      start:0x821FAF48 end:0x821FAF60
 	.pdata      start:0x821FAFF0 end:0x821FB208
 	.pdata      start:0x82208F58 end:0x82208F68
 	.pdata      start:0x82208F88 end:0x82208FB0
 	.text       start:0x823038A0 end:0x823038B0
 	.text       start:0x823038B0 end:0x82303A68
 	.text       start:0x82303A68 end:0x82307630
+	.text       start:0x82308060 end:0x823082D0
 	.text       start:0x82308D60 end:0x8230A7E0
 	.text       start:0x823F4168 end:0x823F4268
 	.text       start:0x823F43A0 end:0x823F43C0
@@ -7658,7 +7660,6 @@ LocaleOrdinal.cpp:
 FlowWhile.cpp:
 	.pdata      start:0x821FE950 end:0x821FE958
 	.pdata      start:0x821FE978 end:0x821FE980
-	.text       start:0x8230B608 end:0x8230B618
 	.text       start:0x823423DC end:0x82342438
 	.text       start:0x82342680 end:0x823426F8
 
@@ -8324,7 +8325,8 @@ band3/game/Player.cpp:
 	.pdata      start:0x82232C58 end:0x82232C60
 	.pdata      start:0x82232C70 end:0x82232C78
 	.pdata      start:0x82232D18 end:0x82232D38
-	.pdata      start:0x82232DE8 end:0x82232E28
+	.pdata      start:0x82232DE8 end:0x82232DF8
+	.pdata      start:0x82232E00 end:0x82232E28
 	.text       start:0x826A2290 end:0x826A2420
 	.text       start:0x826A2420 end:0x826A24D4
 	.text       start:0x826A24D8 end:0x826A24F8
@@ -8341,7 +8343,8 @@ band3/game/Player.cpp:
 	.text       start:0x826A9164 end:0x826A9180
 	.text       start:0x826A9CF0 end:0x826A9D70
 	.text       start:0x826A9EB0 end:0x826A9EC0
-	.text       start:0x826AA968 end:0x826AAF78
+	.text       start:0x826AA968 end:0x826AAAB0
+	.text       start:0x826AAB94 end:0x826AAF78
 
 band3/game/SyncGameStartPanel.cpp:
 	.pdata      start:0x82232C88 end:0x82232D18
@@ -9147,6 +9150,7 @@ band3/meta_band/ClosetMgr.cpp:
 
 band3/game/GemTrainerPanel.cpp:
 	.pdata      start:0x82232D78 end:0x82232DE8
+	.pdata      start:0x82232DF8 end:0x82232E00
 	.pdata      start:0x82232E60 end:0x82232E70
 	.pdata      start:0x82232E70 end:0x82232E78
 	.pdata      start:0x82232E78 end:0x82232EB0
@@ -9159,6 +9163,7 @@ band3/game/GemTrainerPanel.cpp:
 	.pdata      start:0x82232F30 end:0x82232F38
 	.pdata      start:0x82232F38 end:0x822330A0
 	.text       start:0x826A9EC0 end:0x826AA968
+	.text       start:0x826AAAB0 end:0x826AAB94
 	.text       start:0x826AB31C end:0x826AB49C
 	.text       start:0x826AB4A0 end:0x826AB508
 	.text       start:0x826AB508 end:0x826AB798
@@ -10026,7 +10031,7 @@ BandMachine.cpp:
 	.text       start:0x825C1DE0 end:0x825C1E30
 
 BandSongMetadata.cpp:
-	.pdata      start:0x821FAF20 end:0x821FAF60
+	.pdata      start:0x821FAF20 end:0x821FAF48
 	.pdata      start:0x82200488 end:0x822004B0
 	.pdata      start:0x82200B00 end:0x82200B08
 	.pdata      start:0x82200B38 end:0x82200B40
@@ -10043,7 +10048,7 @@ BandSongMetadata.cpp:
 	.pdata      start:0x82221348 end:0x822216F8
 	.pdata      start:0x82221798 end:0x822217B8
 	.pdata      start:0x822217B8 end:0x82221800
-	.text       start:0x82307B78 end:0x823082D0
+	.text       start:0x82307B78 end:0x82308060
 	.text       start:0x8235FBA8 end:0x8235FE3C
 	.text       start:0x82365510 end:0x82365560
 	.text       start:0x823658F8 end:0x82365974
@@ -12940,6 +12945,7 @@ OvershellDir.cpp:
 	.text       start:0x8230AA78 end:0x8230B260
 	.text       start:0x8230B2C0 end:0x8230B598
 	.text       start:0x8230B598 end:0x8230B608
+	.text       start:0x8230B608 end:0x8230B618
 	.text       start:0x8230B618 end:0x8230BE44
 
 PlayerDiffIcon.cpp:
