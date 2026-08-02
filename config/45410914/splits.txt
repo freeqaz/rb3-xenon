@@ -3089,7 +3089,6 @@ HamCamTransform.cpp:
 	.pdata      start:0x821F4D70 end:0x821F4D80
 	.pdata      start:0x821F4D80 end:0x821F4D90
 	.pdata      start:0x821F4D98 end:0x821F4DB0
-	.pdata      start:0x821F4DB8 end:0x821F4DC0
 	.pdata      start:0x821F4DC8 end:0x821F4DE0
 	.pdata      start:0x821F4DE8 end:0x821F4DF0
 	.pdata      start:0x821F4E08 end:0x821F4E48
@@ -3109,7 +3108,6 @@ HamCamTransform.cpp:
 	.pdata      start:0x821F51A0 end:0x821F51D0
 	.pdata      start:0x821F51D8 end:0x821F5238
 	.pdata      start:0x821F5250 end:0x821F5290
-	.pdata      start:0x821FE140 end:0x821FE148
 	.pdata      start:0x821FEFB0 end:0x821FEFD0
 	.pdata      start:0x821FF018 end:0x821FF030
 	.pdata      start:0x821FF050 end:0x821FF0B8
@@ -3122,9 +3120,7 @@ HamCamTransform.cpp:
 	.pdata      start:0x822138F8 end:0x82213900
 	.pdata      start:0x82213938 end:0x82213940
 	.pdata      start:0x82213A38 end:0x82213A40
-	.pdata      start:0x822382C0 end:0x822382C8
 	.pdata      start:0x8223B108 end:0x8223B150
-	.pdata      start:0x8223D138 end:0x8223D140
 	.text       start:0x82273860 end:0x82273938
 	.text       start:0x8229D350 end:0x8229D434
 	.text       start:0x8229E3C0 end:0x8229E424
@@ -3138,7 +3134,6 @@ HamCamTransform.cpp:
 	.text       start:0x822A7008 end:0x822A70A0
 	.text       start:0x822A70A0 end:0x822A7250
 	.text       start:0x822A72B0 end:0x822A73D0
-	.text       start:0x822A7504 end:0x822A7580
 	.text       start:0x822A7610 end:0x822A7730
 	.text       start:0x822A77B8 end:0x822A77E8
 	.text       start:0x822A79A4 end:0x822A7D10
@@ -3161,7 +3156,6 @@ HamCamTransform.cpp:
 	.text       start:0x822AB0B0 end:0x822AB380
 	.text       start:0x822AB3D8 end:0x822AB838
 	.text       start:0x822AB9FC end:0x822ABC10
-	.text       start:0x823399C0 end:0x82339A30
 	.text       start:0x8234BA70 end:0x8234BCB0
 	.text       start:0x8234C410 end:0x8234C778
 	.text       start:0x8234CAB8 end:0x8234D080
@@ -3174,9 +3168,7 @@ HamCamTransform.cpp:
 	.text       start:0x824C46B8 end:0x824C4718
 	.text       start:0x824C4998 end:0x824C4A00
 	.text       start:0x824C5650 end:0x824C56D4
-	.text       start:0x8270A9B8 end:0x8270AA38
 	.text       start:0x82744854 end:0x82744E38
-	.text       start:0x827685E0 end:0x82768630
 
 Spline.cpp:
 	.pdata      start:0x821F4778 end:0x821F4788
