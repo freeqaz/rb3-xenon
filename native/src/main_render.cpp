@@ -908,6 +908,250 @@ namespace {
         return res;
     }
 
+    // -----------------------------------------------------------------------
+    // X4c: the SKINNING PALETTE oracle.
+    //
+    // X4b's bone-length invariant proves the Character's RndTransformable
+    // hierarchy is right. It says NOTHING about the palette the GPU actually
+    // gets, which is a different quantity built from a different input --
+    // RndBone::mOffset, read from the asset, not computed from the hierarchy.
+    // The smear lived in exactly that gap, so it needs its own invariant.
+    //
+    // The invariant is exact and needs no ground truth. Mesh.cpp:1076-1083
+    // builds mOffset as `meshWorld * Invert(boneWorld)`, therefore
+    //
+    //     skin_b := mOffset_b * boneWorld_b  ==  meshWorld     for EVERY b
+    //
+    // AT BIND POSE. So at bind every bone's skin matrix must be the SAME
+    // matrix, and that matrix must be the mesh's own world transform. Two
+    // falsifiable consequences, both checked here:
+    //
+    //   1. det(skin_b) == 1.000 for every b, at bind AND posed (rigid rig).
+    //   2. at bind, spread(skin_b over b) == 0.
+    //
+    // A bone whose mOffset is garbage, or whose mBone failed to resolve, fails
+    // (1) immediately -- which is the check that would have caught a truncated
+    // or mis-resolved palette at load instead of at the picture.
+    struct PaletteRow {
+        const char *mesh;
+        int idx;
+        const char *bone;
+        bool resolved;
+        float detOffset;
+        float detWorld;
+        float detSkin;
+        float skinTransMag;
+        float devFromMesh; // max |skin - meshWorld| element, bind-pose check
+    };
+
+    struct PaletteAuditResult {
+        int meshes = 0;
+        int bones = 0;
+        int unresolved = 0;
+        int badDet = 0;
+        float worstDetDev = 0.0f;
+        float maxSkinTrans = 0.0f;
+        std::vector<PaletteRow> rows;
+    };
+
+    PaletteAuditResult AuditPalette(ObjectDir *dir) {
+        PaletteAuditResult res;
+        for (ObjDirItr<RndMesh> it(dir, true); it; ++it) {
+            RndMesh *m = it;
+            if (!m->IsSkinned()) continue;
+            res.meshes++;
+            const Transform &mw = m->WorldXfm();
+            for (int b = 0; b < m->NumBones(); b++) {
+                PaletteRow row;
+                row.mesh = m->Name();
+                row.idx = b;
+                RndTransformable *bt = m->BoneTransAt(b);
+                row.resolved = (bt != nullptr);
+                row.bone = bt ? bt->Name() : "(UNRESOLVED)";
+                const Transform &off = m->BoneOffsetAt(b);
+                row.detOffset = Det(off.m);
+                if (!bt) {
+                    res.unresolved++;
+                    row.detWorld = row.detSkin = row.skinTransMag = row.devFromMesh = 0.0f;
+                    res.rows.push_back(row);
+                    res.bones++;
+                    continue;
+                }
+                const Transform &bw = bt->WorldXfm();
+                row.detWorld = Det(bw.m);
+                Transform skin;
+                Multiply(off, bw, skin);
+                row.detSkin = Det(skin.m);
+                row.skinTransMag = sqrtf(skin.v.x * skin.v.x + skin.v.y * skin.v.y
+                                         + skin.v.z * skin.v.z);
+                float dev = 0.0f;
+                const float *s = &skin.m.x.x, *w = &mw.m.x.x;
+                for (int k = 0; k < 9; k++) dev = std::max(dev, fabsf(s[k] - w[k]));
+                dev = std::max(dev, fabsf(skin.v.x - mw.v.x));
+                dev = std::max(dev, fabsf(skin.v.y - mw.v.y));
+                dev = std::max(dev, fabsf(skin.v.z - mw.v.z));
+                row.devFromMesh = dev;
+                float dd = fabsf(row.detSkin - 1.0f);
+                if (dd > 1e-2f) res.badDet++;
+                if (dd > res.worstDetDev) res.worstDetDev = dd;
+                if (row.skinTransMag > res.maxSkinTrans)
+                    res.maxSkinTrans = row.skinTransMag;
+                res.rows.push_back(row);
+                res.bones++;
+            }
+        }
+        return res;
+    }
+
+    // X4c: histogram the BLENDINDICES actually stored in the shipped compressed
+    // vertex stream. The palette can be perfect and the draw still wrong if the
+    // verts index it with a different convention than mBones' array order --
+    // e.g. D3D9's 3-float4-rows-per-bone packing, where index == boneIdx*3.
+    // 36-byte record, UBYTE4 BLENDINDICES at offset 32 (engine
+    // VertexFormats.cpp:274; the field names are swapped in the struct).
+    void ReportVertexBoneIndices(ObjectDir *dir) {
+        printf("  --- BLENDINDICES histogram (shipped compressed verts) ---\n");
+        for (ObjDirItr<RndMesh> it(dir, true); it; ++it) {
+            RndMesh *m = it;
+            if (!m->IsSkinned()) continue;
+            RndMesh *owner = m->GetGeomOwner();
+            if (!owner) owner = m;
+            int ncv = owner->NumCompressedVerts();
+            const unsigned char *data = owner->CompressedVerts();
+            if (ncv <= 0 || !data) continue;
+            int hist[256] = { 0 };
+            int maxIdx = -1;
+            for (int i = 0; i < ncv; i++) {
+                const unsigned char *rec = data + (size_t)i * 36;
+                unsigned int be;
+                memcpy(&be, rec + 32, 4);
+                be = __builtin_bswap32(be);
+                for (int k = 0; k < 4; k++) {
+                    int bi = (be >> (k * 8)) & 0xFF;
+                    hist[bi]++;
+                    if (bi > maxIdx) maxIdx = bi;
+                }
+            }
+            printf("      %-34s nBones=%2d ncv=%5d maxIdx=%3d  used:", m->Name(),
+                   m->NumBones(), ncv, maxIdx);
+            int distinct = 0, gcd = 0;
+            for (int i = 0; i < 256; i++) {
+                if (!hist[i]) continue;
+                distinct++;
+                if (distinct <= 24) printf(" %d(%d)", i, hist[i]);
+                int a = i, bg = gcd;
+                while (bg) { int t = a % bg; a = bg; bg = t; }
+                gcd = a;
+            }
+            printf("%s  [distinct=%d gcd=%d]\n", distinct > 24 ? " ..." : "", distinct,
+                   gcd);
+        }
+    }
+
+    // X4c: CPU linear-blend-skin the shipped verts with the LIVE palette and
+    // report where the posed geometry actually lands. This is the measurement
+    // that decides between "the math flings the mesh" and "the math is fine and
+    // the draw is at fault" -- the two remaining explanations for the empty
+    // posed frame. Mirrors the engine's decode exactly (VertexFormats.cpp:343).
+    void ReportSkinnedBounds(ObjectDir *dir) {
+        printf("  --- CPU-skinned bounds (LBS with the live palette) ---\n");
+        for (ObjDirItr<RndMesh> it(dir, true); it; ++it) {
+            RndMesh *m = it;
+            if (!m->IsSkinned()) continue;
+            RndMesh *owner = m->GetGeomOwner();
+            if (!owner) owner = m;
+            int ncv = owner->NumCompressedVerts();
+            const unsigned char *data = owner->CompressedVerts();
+            if (ncv <= 0 || !data) continue;
+            int nb = m->NumBones();
+            std::vector<Transform> pal((size_t)nb);
+            for (int b = 0; b < nb; b++) {
+                RndTransformable *bt = m->BoneTransAt(b);
+                if (bt) Multiply(m->BoneOffsetAt(b), bt->WorldXfm(), pal[b]);
+                else pal[b].Reset();
+            }
+            float mn[3] = { 1e30f, 1e30f, 1e30f }, mx[3] = { -1e30f, -1e30f, -1e30f };
+            double wsumMin = 1e30, wsumMax = -1e30;
+            int nan = 0;
+            for (int i = 0; i < ncv; i++) {
+                const unsigned char *rec = data + (size_t)i * 36;
+                auto be32 = [&](int off) {
+                    unsigned int v; memcpy(&v, rec + off, 4);
+                    return __builtin_bswap32(v);
+                };
+                float p[3];
+                for (int k = 0; k < 3; k++) {
+                    unsigned int v = be32(k * 4); float f; memcpy(&f, &v, 4); p[k] = f;
+                }
+                unsigned int wv = be32(28), iv = be32(32);
+                float w[4] = { (wv & 0x3FF) / 1023.0f, ((wv >> 10) & 0x3FF) / 1023.0f,
+                               ((wv >> 20) & 0x3FF) / 1023.0f, ((wv >> 30) & 0x3) / 3.0f };
+                double wsum = (double)w[0] + w[1] + w[2] + w[3];
+                if (wsum < wsumMin) wsumMin = wsum;
+                if (wsum > wsumMax) wsumMax = wsum;
+                float acc[3] = { 0, 0, 0 };
+                for (int k = 0; k < 4; k++) {
+                    int bi = (iv >> (k * 8)) & 0xFF;
+                    if (w[k] == 0.0f || bi >= nb) continue;
+                    const Transform &t = pal[bi];
+                    acc[0] += w[k] * (t.m.x.x * p[0] + t.m.y.x * p[1] + t.m.z.x * p[2] + t.v.x);
+                    acc[1] += w[k] * (t.m.x.y * p[0] + t.m.y.y * p[1] + t.m.z.y * p[2] + t.v.y);
+                    acc[2] += w[k] * (t.m.x.z * p[0] + t.m.y.z * p[1] + t.m.z.z * p[2] + t.v.z);
+                }
+                bool ok = true;
+                for (int k = 0; k < 3; k++) if (acc[k] != acc[k]) ok = false;
+                if (!ok) { nan++; continue; }
+                for (int k = 0; k < 3; k++) {
+                    if (acc[k] < mn[k]) mn[k] = acc[k];
+                    if (acc[k] > mx[k]) mx[k] = acc[k];
+                }
+            }
+            printf("      %-34s nb=%2d  skinned bbox (%.1f %.1f %.1f)..(%.1f %.1f %.1f)"
+                   "  wsum %.3f..%.3f  nan=%d\n",
+                   m->Name(), nb, mn[0], mn[1], mn[2], mx[0], mx[1], mx[2],
+                   wsumMin, wsumMax, nan);
+        }
+    }
+
+    // X4c: the bone-length invariant is INVARIANT UNDER A RIGID FLIP of the
+    // whole skeleton -- every pairwise distance is preserved by a 180deg
+    // rotation -- so it cannot tell a correct pose from an inverted one. This
+    // prints absolute world positions of a few landmark bones, which can.
+    void ReportBoneWorldPositions(ObjectDir *dir) {
+        static const char *kLandmarks[] = { "bone_pelvis.mesh", "bone_spine.mesh",
+                                            "bone_head.mesh",   "bone_L-ankle.mesh",
+                                            "bone_R-ankle.mesh" };
+        printf("  --- landmark bone WORLD positions (absolute; flip-sensitive) ---\n");
+        for (ObjDirItr<RndTransformable> it(dir, true); it; ++it) {
+            RndTransformable *t = it;
+            if (!t->Name()) continue;
+            for (size_t k = 0; k < sizeof(kLandmarks) / sizeof(kLandmarks[0]); k++) {
+                if (strcmp(t->Name(), kLandmarks[k]) != 0) continue;
+                const Vector3 &w = t->WorldXfm().v;
+                const Vector3 &l = t->LocalXfm().v;
+                printf("      %-22s world (%8.2f %8.2f %8.2f)  local (%7.2f %7.2f %7.2f)\n",
+                       t->Name(), w.x, w.y, w.z, l.x, l.y, l.z);
+            }
+        }
+    }
+
+    void ReportPaletteAudit(const PaletteAuditResult &res) {
+        printf("  --- skinning-palette invariant (skin = mOffset * boneWorld) ---\n");
+        printf("      %-34s %3s %-26s %9s %9s %9s %11s %11s\n", "mesh", "idx", "bone",
+               "detOffset", "detWorld", "detSkin", "|skin.v|", "devVsMeshW");
+        for (size_t i = 0; i < res.rows.size(); i++) {
+            const PaletteRow &r = res.rows[i];
+            printf("      %-34s %3d %-26s %9.4f %9.4f %9.4f %11.4g %11.4g%s\n",
+                   r.mesh ? r.mesh : "(unnamed)", r.idx, r.bone ? r.bone : "(null)",
+                   r.detOffset, r.detWorld, r.detSkin, r.skinTransMag, r.devFromMesh,
+                   (!r.resolved || fabsf(r.detSkin - 1.0f) > 1e-2f) ? "   <<< BAD" : "");
+        }
+        printf("      %d skinned mesh(es), %d bone(s), %d unresolved, %d bad det; "
+               "worst |det-1| %.3e, max |skin.v| %.4g\n",
+               res.meshes, res.bones, res.unresolved, res.badDet, res.worstDetDev,
+               res.maxSkinTrans);
+    }
+
     void ReportBoneAudit(const BoneAuditResult &res) {
         printf("  --- bone-length invariant (liveDist / |LocalXfm().v|, must be 1.000) ---\n");
         printf("      %-3s %-28s %-22s %9s %9s %8s %8s %10s\n", "dep", "bone", "parent",
@@ -1115,6 +1359,19 @@ namespace {
                        : "no clip was applied — the figure below is BIND POSE");
         }
         if (gBoneAudit) {
+            ReportBoneWorldPositions(dir);
+            ReportVertexBoneIndices(dir);
+            ReportSkinnedBounds(dir);
+            PaletteAuditResult pa = AuditPalette(dir);
+            ReportPaletteAudit(pa);
+            {
+                char pd[192];
+                snprintf(pd, sizeof(pd),
+                         "%d bone(s) over %d mesh(es); %d unresolved, %d bad det "
+                         "(worst |det-1| %.2e)",
+                         pa.bones, pa.meshes, pa.unresolved, pa.badDet, pa.worstDetDev);
+                Gate("palette-invariant", pa.unresolved == 0 && pa.badDet == 0, pd);
+            }
             BoneAuditResult ba = AuditBoneLengths(dir);
             ReportBoneAudit(ba);
             char d[192];
@@ -1252,6 +1509,20 @@ namespace {
             v.MinZ = 0.0f;
             v.MaxZ = 1.0f;
             TheNgRnd.SetViewport(v);
+        }
+
+        // X4c BISECT: kNewGfx has 22 consumers. Exactly ONE of them
+        // (RndMesh::MaxBones, read in RndMesh::Load) is needed to stop the
+        // bone truncation; the other 21 are read at DRAW time. Flipping the
+        // global back to kOldGfx here -- after every Load(), before the first
+        // draw -- separates the two populations with no src/ change at all.
+        //   RB3_GFX_MODE=loadonly => 40 bones at load, kOldGfx at draw.
+        {
+            const char *gm = getenv("RB3_GFX_MODE");
+            if (gm && !strcmp(gm, "loadonly")) {
+                SetGfxMode(kOldGfx);
+                printf("  gfx-mode: reverted to kOldGfx for DRAW (bones kept from load)\n");
+            }
         }
 
         for (int f = 0; f < frames; f++) {
@@ -1465,6 +1736,19 @@ int main(int argc, char **argv) {
     // PNGs, so it is recorded here and handed to X4c rather than applied.
     // The truncation above is the CAUSE of the smear; kNewGfx's blast radius
     // is the reason the cure needs its own lane.
+    //
+    // X4c: env-gated so the ON/OFF A/B is a run-time flag, not a recompile.
+    //   RB3_GFX_MODE=new  -> SetGfxMode(kNewGfx)   (40 bones, no truncation)
+    //   RB3_GFX_MODE=old  -> leave kOldGfx         (4 bones, the X4b baseline)
+    {
+        const char *gm = getenv("RB3_GFX_MODE");
+        if (gm && (!strcmp(gm, "new") || !strcmp(gm, "loadonly"))) {
+            SetGfxMode(kNewGfx);
+            printf("  gfx-mode: kNewGfx (RB3_GFX_MODE=%s) — MaxBones()=40\n", gm);
+        } else {
+            printf("  gfx-mode: kOldGfx (default) — MaxBones()=4\n");
+        }
+    }
 
     if (!StandUpConfig()) {
         printf("\nRESULT: FAILED (%d gate failure(s))\n", gFailures);
