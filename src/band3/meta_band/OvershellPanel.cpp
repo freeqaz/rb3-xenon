@@ -407,7 +407,7 @@ OvershellSlot *OvershellPanel::GetSlot(int slot) {
     FOREACH (it, mSlots) {
         OvershellSlot *pSlot = *it;
         MILO_ASSERT(pSlot, 0x35D);
-        if (slot == pSlot->GetSlotNum())
+        if (pSlot->GetSlotNum() == slot)
             return pSlot;
     }
     return nullptr;
