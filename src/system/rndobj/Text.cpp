@@ -216,15 +216,17 @@ BEGIN_LOADS(RndText)
                                        kBottomLeft, kBottomCenter, kBottomRight };
         mAlign = align_choices[idx];
     } else {
-        int align;
-        bs >> align;
-        MILO_ASSERT(align < 255, 0xE7);
-        mAlign = align;
+        // Retail reads straight into the member (ReadEndian dest = r30-0xa0);
+        // an `int align` local + assign tail-merges the two branch stores.
+        bs >> mAlign;
+        MILO_ASSERT(mAlign < 255, 0xE7);
     }
     if (gRevs_Text.rev < 2) {
         Vector2 v2;
         bs >> v2;
-        SetLocalPos(v2.x, 0, -v2.y * 0.75f);
+        // Retail builds a Vector3 temp (r31+0x90) and copies 16 bytes into
+        // mLocalXfm.v -- i.e. the const Vector3& overload, not the 3-float one.
+        SetLocalPos(Vector3(v2.x, 0, -v2.y * 0.75f));
     }
     bs >> mText;
     if (gRevs_Text.rev < 0x14) {
@@ -250,32 +252,35 @@ BEGIN_LOADS(RndText)
         String str;
         bs >> str;
     }
-    if (gRevs_Text.rev >= 5 && gRevs_Text.rev <= 10) {
+    // Retail spells these bounds `> 4` / `< 11` (cmplwi 4;ble + cmplwi 0xb;bge),
+    // not `>= 5` / `<= 10` -- same predicate, different constant+polarity.
+    if (gRevs_Text.rev > 4 && gRevs_Text.rev < 11) {
         bool b;
         bs >> b;
         if (mFont && mFont->GetMat()) {
-            int i = 0;
-            if (b)
-                i = 2;
-            mFont->GetMat()->SetZMode((ZMode)i);
+            // Retail computes b ? 2 : 0 BRANCHLESSLY (subfic/subfe/and mask);
+            // the if-form emits a real branch.
+            mFont->GetMat()->SetZMode((ZMode)(b ? 2 : 0));
         }
     }
     if (gRevs_Text.rev > 7)
         bs >> mLeading;
-    int fixedLength;
     if (gRevs_Text.rev > 0xB) {
-        bs >> fixedLength;
+        bs >> mFixedLength;
     } else if (gRevs_Text.rev > 8) {
+        // Retail writes the MEMBER in both arms (stw -0x88(r30)) and then
+        // re-loads it for the ResizeText test.  The inherited rb3-Wii shape
+        // assigned mText.length() into the `bool b` and threw it away, leaving
+        // `fixedLength` genuinely UNINITIALIZED on this path.
         bool b;
         bs >> b;
         if (b) {
-            b = mText.length();
+            mFixedLength = mText.length();
         } else
-            b = false;
+            mFixedLength = 0;
     }
-    MILO_ASSERT(fixedLength < 65535, 0x13C);
-    MILO_ASSERT(fixedLength >= 0, 0x13D);
-    mFixedLength = fixedLength;
+    MILO_ASSERT(mFixedLength < 65535, 0x13C);
+    MILO_ASSERT(mFixedLength >= 0, 0x13D);
     if (mFixedLength != 0)
         ResizeText(mFixedLength);
     if (gRevs_Text.rev > 9)
@@ -294,17 +299,17 @@ BEGIN_LOADS(RndText)
         bs >> mTextMarkup;
     }
     if (gRevs_Text.rev > 0xE) {
-        int capsMode;
-        bs >> capsMode;
-        MILO_ASSERT(capsMode < 255, 0x158);
-        mCapsMode = capsMode;
+        // Retail: ReadEndian dest = &mCapsMode (r30-0x9c) directly.
+        bs >> mCapsMode;
+        MILO_ASSERT(mCapsMode < 255, 0x158);
     } else
         mCapsMode = kCapsModeNone;
-    if (gRevs_Text.rev >= 0x12 && gRevs_Text.rev <= 0x14) {
+    if (gRevs_Text.rev >= 0x12 && gRevs_Text.rev < 0x15) {
         bool b;
         bs >> b;
     }
-    if (gRevs_Text.rev == 0x13 || gRevs_Text.rev == 0x14) {
+    // Retail: a RANGE test (cmplwi 0x13;blt + cmplwi 0x15;bge), not two ==.
+    if (gRevs_Text.rev >= 0x13 && gRevs_Text.rev < 0x15) {
         int i, j, k;
         bs >> i >> j >> k;
     }

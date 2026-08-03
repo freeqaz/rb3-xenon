@@ -105,7 +105,21 @@ BEGIN_LOADS(CharLipSyncDriver) // register error
     if (gRevs_CharLipSyncDriver.rev < 1) {
         FilePath fp;
         bs >> fp;
+        // PER-SITE, deliberate -- do NOT "fix" this back to plain MILO_NOTIFY.
+        // Debug.h keeps MILO_NOTIFY as the comma form because that population is
+        // ORDERING-dominated (measured -20 whole-binary as a blanket switch).
+        // This site needs the other half of that rule: COPYING.  Retail's
+        // stripped residue here copy-constructs the FilePath argument --
+        // ??0String@@QAA@ABV0@@Z into r31+0x70 followed by `stw r26, 0x70(r31)`
+        // stamping ??_7FilePath@@6B@, i.e. an inlined FilePath copy-ctor, so the
+        // argument is `fp` and NOT `(String &)fp` -- and evaluates RIGHT-TO-LEFT
+        // (copy at idx 59, PathName at idx 62).  Only MiloStripEval, a real
+        // function call taking its params BY VALUE, reproduces both halves.
+#ifdef HX_NATIVE
         MILO_NOTIFY("%s old version, won't load %s", PathName(this), (String &)fp);
+#else
+        MiloStripEval("%s old version, won't load %s", PathName(this), fp);
+#endif
         String str;
         bs >> str;
     } else
