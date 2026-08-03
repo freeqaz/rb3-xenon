@@ -1134,13 +1134,11 @@ OvershellSlot.cpp:
 
 OvershellPartSelectProvider.cpp:
 	.pdata      start:0x8222EAE0 end:0x8222EAF0
-	.pdata      start:0x8222EAF0 end:0x8222EB00
-	.pdata      start:0x8222EB00 end:0x8222EB30
+	.pdata      start:0x8222EAF0 end:0x8222EB30
 	.pdata      start:0x8222EB30 end:0x8222EB88
 	.text       start:0x826684A0 end:0x826684C0
 	.text       start:0x826684C0 end:0x826688A8
-	.text       start:0x826688A8 end:0x82668A38
-	.text       start:0x82668A40 end:0x82668C70
+	.text       start:0x826688A8 end:0x82668C70
 	.text       start:0x82668C70 end:0x82669288
 
 GuitarController.cpp:
@@ -6950,7 +6948,6 @@ Rnd_Xbox.cpp:
 	.pdata      start:0x8223A810 end:0x8223AAE8
 	.text       start:0x8235CC80 end:0x8235CCC8
 	.text       start:0x8241C560 end:0x8241C590
-	.text       start:0x82668A38 end:0x82668A40
 	.text       start:0x827378B8 end:0x82738A48
 	.text       start:0x82738AB4 end:0x82739020
 	.text       start:0x82739078 end:0x82739080
