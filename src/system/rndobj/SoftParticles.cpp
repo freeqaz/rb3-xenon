@@ -5,6 +5,47 @@
 #include "rndobj/Draw.h"
 #include "rndobj/SoftParticleBuffer.h"
 
+// RETAIL-MATCH (lane DI-1, 2026-08-02): retail RB3's RndSoftParticles::Load
+// stores the load revisions as two align(4) `unsigned short` GLOBALS -- the
+// target emits `sth` into lbl_82CC6A68 and lbl_82CC6A68+4 -- and passes `bs`
+// straight through to the superclass Load (`mr r4, r30`).
+//
+// The DC3-derived obj/Object.h dialect instead expands LOAD_REVS to a stack
+// `BinStreamRev d(bs, revs)` temp: a ctor/dtor pair, `stw` of rev/altRev as
+// ints, a vtable store, and +0x30 of stack frame (target frame 0x70, ours
+// 0xa0).  This TU pays all of that for nothing -- its Load body reads through
+// `bs` and never touches `d` (only the Object.h LOAD_SUPERCLASS does, via
+// `d.stream`).  There are two competing LOAD_REVS definitions in the tree
+// (obj/ObjMacros.h:614 = the rb3-Wii gRev/gAltRev dialect retail used,
+// obj/Object.h:1611 = this DC3 one) and which a TU gets is decided purely by
+// include order -- the same macro-competition hazard already documented for
+// SYNC_PROP and OBJ_SET_TYPE.  Override per-TU rather than tree-wide: the
+// blast radius of flipping the dialect globally is every engine Load, and it
+// has not been priced.
+//
+// SAVE_REVS is unaffected -- it expands to `packRevs(alt, rev)` on literals
+// and never reads gRev, so the already-matching Save is untouched.
+#undef INIT_REVS
+#define INIT_REVS(rev, alt)                                                              \
+    static __declspec(align(4)) unsigned short gRev;                                     \
+    static __declspec(align(4)) unsigned short gAltRev;
+#undef LOAD_REVS
+// Residue (lane DI-1): 4 instructions of pure register naming.  Retail copies
+// the original word aside and shifts IN PLACE (`mr r10,r11; srwi r11,r11,16`);
+// we shift into a fresh register (`srwi r10,r11,16`) and so emit ONE FEWER
+// instruction than retail (160 B vs 164 B).  Closing it means making codegen
+// strictly worse, i.e. it is register-allocation naming = permuter class, and
+// the permuter is OFF by standing directive.  Writing the shift back into
+// `revs` was tried and is WORSE: it forces a `stw r11, 0x50, r1` spill because
+// MSVC keeps the stream-target's stack slot coherent.
+#define LOAD_REVS(bs)                                                                    \
+    int revs;                                                                            \
+    bs >> revs;                                                                          \
+    gRev = (unsigned short)((unsigned int)revs >> 16);                                   \
+    gAltRev = (unsigned short)revs;
+#undef LOAD_SUPERCLASS
+#define LOAD_SUPERCLASS(parent) parent::Load(bs);
+
 RndSoftParticles::RndSoftParticles()
     : mParticles(this), mBlend(BaseMaterial::kBlendSrcAlphaAdd) {}
 
