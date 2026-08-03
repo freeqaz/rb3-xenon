@@ -2021,6 +2021,7 @@ CharSleeve.cpp:
 	.pdata      start:0x82206988 end:0x82206990
 	.pdata      start:0x82206990 end:0x822069A8
 	.pdata      start:0x822069A8 end:0x82206A18
+	.pdata      start:0x82206A18 end:0x82206A20
 	.pdata      start:0x82206A20 end:0x82206A30
 	.text       start:0x82375CE0 end:0x82375D50
 	.text       start:0x823CEE60 end:0x823CF61C
@@ -2029,6 +2030,7 @@ CharSleeve.cpp:
 	.text       start:0x823CFAF8 end:0x823CFBA0
 	.text       start:0x823CFBA0 end:0x823CFC30
 	.text       start:0x823CFC30 end:0x823D0458
+	.text       start:0x823D0458 end:0x823D049C
 	.text       start:0x823D049C end:0x823D0640
 
 CharUpperTwist.cpp:
@@ -4677,6 +4679,7 @@ CharLookAt.cpp:
 CharHair.cpp:
 	.pdata      start:0x82204640 end:0x82204968
 	.pdata      start:0x82204970 end:0x82204AC0
+	.pdata      start:0x82204AC0 end:0x82204AC8
 	.pdata      start:0x82204AC8 end:0x82204AD0
 	.pdata      start:0x82204AD0 end:0x82204AD8
 	.pdata      start:0x82204AD8 end:0x82204AE8
@@ -4691,6 +4694,7 @@ CharHair.cpp:
 	.pdata      start:0x82238D90 end:0x82238D98
 	.text       start:0x823A4EC8 end:0x823A94F0
 	.text       start:0x823A9540 end:0x823AA9BC
+	.text       start:0x823AA9C0 end:0x823AAA04
 	.text       start:0x823AAA08 end:0x823AAB4C
 	.text       start:0x823AAB50 end:0x823AABC8
 	.text       start:0x823AABC8 end:0x823AAD78
@@ -4704,10 +4708,6 @@ CharHair.cpp:
 	.text       start:0x8263B438 end:0x8263B5B0
 	.text       start:0x827149D8 end:0x82714A48
 	.text       start:0x82715C00 end:0x82715C88
-
-FlowSwitch.cpp:
-	.pdata      start:0x82204AC0 end:0x82204AC8
-	.text       start:0x823AA9C0 end:0x823AAA04
 
 CharUtl.cpp:
 	.pdata      start:0x82204510 end:0x82204518
@@ -4738,14 +4738,12 @@ CharWeightSetter.cpp:
 	.pdata      start:0x822055B8 end:0x822055E8
 	.pdata      start:0x82205618 end:0x82205620
 	.pdata      start:0x82205620 end:0x82205670
-	.pdata      start:0x82206A18 end:0x82206A20
 	.text       start:0x823B8608 end:0x823B8760
 	.text       start:0x823B8760 end:0x823B89E0
 	.text       start:0x823B89E0 end:0x823B9560
 	.text       start:0x823B9560 end:0x823B9744
 	.text       start:0x823B9B28 end:0x823B9D30
 	.text       start:0x823B9D38 end:0x823BA1E0
-	.text       start:0x823D0458 end:0x823D049C
 
 HamIKEffector.cpp:
 	.pdata      start:0x821F69B8 end:0x821F69C0
@@ -6033,6 +6031,7 @@ CharMirror.cpp:
 	.pdata      start:0x82206788 end:0x822067B8
 	.pdata      start:0x822067B8 end:0x822067E8
 	.pdata      start:0x82206800 end:0x82206808
+	.pdata      start:0x82206808 end:0x82206830
 	.pdata      start:0x82206830 end:0x82206848
 	.pdata      start:0x82206848 end:0x82206850
 	.pdata      start:0x82206850 end:0x82206878
@@ -6041,6 +6040,7 @@ CharMirror.cpp:
 	.text       start:0x823CD4F0 end:0x823CD868
 	.text       start:0x823CD868 end:0x823CD980
 	.text       start:0x823CDB80 end:0x823CDBF0
+	.text       start:0x823CDBF0 end:0x823CDD00
 	.text       start:0x823CDD00 end:0x823CE020
 	.text       start:0x823CE020 end:0x823CE0D8
 	.text       start:0x823CE0D8 end:0x823CE3D0
@@ -7519,12 +7519,10 @@ CharDriverMidi.cpp:
 	.pdata      start:0x82206658 end:0x822066B0
 	.pdata      start:0x822066B0 end:0x82206760
 	.pdata      start:0x822067F0 end:0x82206800
-	.pdata      start:0x82206808 end:0x82206830
 	.text       start:0x823CBF28 end:0x823CBF34
 	.text       start:0x823CBF38 end:0x823CC608
 	.text       start:0x823CC608 end:0x823CD1A0
 	.text       start:0x823CD9BC end:0x823CDB80
-	.text       start:0x823CDBF0 end:0x823CDD00
 
 CharIKSliderMidi.cpp:
 	.pdata      start:0x82206180 end:0x82206198
