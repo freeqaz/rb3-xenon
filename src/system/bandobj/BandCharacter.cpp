@@ -856,6 +856,47 @@ void BandCharacter::RebindOutfitBonesToOwnSkeleton() {
             bool torso = mn && (strstr(mn, "trackjacket") || strstr(mn, "vestdenim") ||
                                 strstr(mn, "plaidshirt") || strstr(mn, "shred"));
             if (!torso) continue;
+        } else {
+            // ★★★ X14: UNDER THE FULL SCOPE, REBIND A MESH ALL-OR-NOTHING.
+            //
+            // ⛔ THIS IS WHY THE FULL SCOPE SHARDED, AND IT IS NOT THE
+            // ROTATION-BASIS STORY. A mesh's bone slots are rebound one at a
+            // time, and a slot whose name does not resolve under this member
+            // (`!own`) is silently left on the shared magnet. So a mesh with a
+            // MIX of resolvable and unresolvable bones ends up half on the
+            // member's placed skeleton and half at the venue origin, and the
+            // weighted vertices are stretched between the two. That is the tear.
+            //
+            // MEASURED on small_club_01: the unresolvable slots are precisely the
+            // `bone_hair_*` set — they exist in the shared skeleton and NOT under
+            // the member's own root. Hair meshes therefore tore, and only hair:
+            // youngozzie_resource bbox extent 10.71x11.01x29.25 ->
+            // 78.74x83.49x42.74, blownback_resource 9.45x11.05x11.78 ->
+            // 23.20x157.15x17.64, while head.mesh (7.78 -> 7.77) and
+            // hands_naked (50.44 -> 50.45) were untouched.
+            //
+            // Requiring every slot to resolve before touching any of them removes
+            // the tear BY CONSTRUCTION rather than by a name whitelist. A mesh
+            // that fails the test is left EXACTLY as shipped — it keeps drawing
+            // off the shared skeleton, which is a disclosed residual, not a fix.
+            bool allResolvable = true;
+            for (int b = 0; b < mesh->NumBones(); b++) {
+                RndTransformable *bt = mesh->BoneTransAt(b);
+                if (!bt || !bt->Name()) continue;
+                if (!Find<RndTransformable>(bt->Name(), false)) {
+                    allResolvable = false;
+                    break;
+                }
+            }
+            if (!allResolvable) {
+                if (probe)
+                    fprintf(stderr,
+                        "[SKEL_REBIND]   SKIP (partial) '%s' numBones=%d — at least "
+                        "one bone name does not resolve under this member; a partial "
+                        "rebind would TEAR it\n",
+                        mesh->Name() ? mesh->Name() : "?", mesh->NumBones());
+                continue;
+            }
         }
         meshes++;
         if (probe && meshes <= 16) {
