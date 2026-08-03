@@ -104,6 +104,24 @@ binary reproduced the old number **to the digit** (46.10219).
 DR-1's first perf run; and `--concise` prints one decimal, which made rounding
 look like ruler disagreement in its first gap instrument. Both caught and redone.
 
+## ★ EQUAL LENGTH IS NECESSARY BUT NOT SUFFICIENT — a failed prediction, reconciled
+
+Lane DR-2 predicted `CrowdAudio::SetTypeDef` would trip the bug (removing 3
+instructions made our count *exactly* equal the target's) and **it did not** —
+`report.json` read a clean 100.0. That is not a counterexample; it is the model
+working:
+
+- The old fast path fired on **39,008** equal-length pairs, but **38,500** of
+  those had **element-wise identical opcodes**, where old ≡ new *provably*. Only
+  the **508** with differing opcodes were EXPOSED.
+- ⇒ **You need equal length AND a differing opcode at a paired index.**
+- ★★★ **A row that CROSSES TO 100 can never show the bug**, because 100 requires
+  every instruction equal — which is exactly the retained condition. This is the
+  same structural fact that makes the fix headline-neutral.
+
+⇒ **Do not expect the bug on a crossing. Expect it on a SUB-100 row whose length
+just became equal** — the signature is a wall of `replace` with no insert/delete.
+
 ## DQ-3 interaction — INDEPENDENT
 
 The equal-length bug **contributes ZERO** to the `diff` vs `report generate` gap.
