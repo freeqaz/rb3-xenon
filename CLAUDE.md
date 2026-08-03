@@ -557,6 +557,20 @@ run the gate before you land. Two traps, both real:
   **10,688,688** (`total_functions` 69,357), 124 B below CJ-3's figure a few
   commits earlier. Two "current" readings taken hours apart already disagree —
   which is the point of the rule, not an exception to it. **Read the key.**
+  ★★★ **AND SEVERAL `report.json` NUMBERS ARE JSON *STRINGS*, NOT NUMBERS** —
+  confirmed on `matched_code` and `functions[].size` (2026-08-03, four lanes).
+  Un-coerced, `+` silently **concatenates** and a `>` comparison compares
+  lexicographically, so a size filter reads a clean, decisive-looking **`0 rows`**
+  — which is exactly how one lane lost a census. **`int()`-coerce every numeric
+  you pull out of `report.json`**, and treat a suspiciously empty result here as a
+  type bug before believing it.
+- ★★★ **THE SOURCE-ONLY UNIT CEILING IS NOT A CONSTANT AND NOT MONOTONIC.**
+  Measured 253 (DS-4) → reproduced 253 (DT-1) → **293** (EB-3, after ~33 units
+  crossed in as unpaired-anon went to zero) → **290** (EC-2, when three units
+  proved never completable by any amount of source work). **It moves in BOTH
+  directions**, so a prior lane's ceiling is neither a target nor a floor —
+  re-measure it exactly like `total_code`. ⛔ Corollary: "N units of headroom
+  remain" is only true at the commit it was measured on.
 - ★★★ **RULER CHANGE 2026-08-02 — every "honest" figure written before that date
   is stale by ~21,500, and NOT because anything regressed.** The objdiff fork was
   flipped so `masked_equal_functions` discloses **all** funclet byte-signature

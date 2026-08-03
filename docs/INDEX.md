@@ -264,6 +264,90 @@ Each of these is a **pricing or refutation** — read the verdict before re-open
   `build/45410914/asm/<Unit>.s`, grep its `addi r4, r11, lbl_…` sequence, and resolve each
   label in `auto_00_82000400_rdata.s`.
 
+### 2026-08-03 results (waves EB→EE, 43,848 → ~43,872 matched · 254 → 255 units)
+
+Ten lanes. The metric moved modestly; **six lanes returned a correction to an instrument
+or to a prior lane's claim**, three of them refuting the premise they were dispatched on.
+Read the verdict before re-opening any of these.
+
+- ★ [decomp/OBJDIFF_DIFF_VS_REPORT_SETTLED_2026-08-03.md](decomp/OBJDIFF_DIFF_VS_REPORT_SETTLED_2026-08-03.md) —
+  **SETTLED: `objdiff-cli diff` and `report generate` disagree on ZERO rows for real.**
+  The "64% disagree" was a **field-pairing error**: "normalized" names two orthogonal axes
+  (`diff`'s is *relocation*-normalized; `report`'s `mpn` is *arg-penalty-excluded*), and
+  **`diff` never emits `mpn` at all** — so the reported sign was *arithmetically forced* by
+  the field chosen. The 14.75 pp residue is one flag (`ppc.calculatePoolRelocations`).
+  **Conversion rule:** `diff.normalized_match_percent == report.fuzzy_match_percent` exactly
+  under `-c functionRelocDiffs=none -c ppc.calculatePoolRelocations=false`; **`mpn` is NOT
+  derivable from any `diff` field** ⇒ a sub-100 `run_objdiff` reading never proves a row
+  unmatched. `run_objdiff` was aligned to the grader at `131c723d` — **never compare a
+  reading across that commit**. ⚠ `diff_inspect.py`/`stack_layout.py` deliberately stay
+  **unaligned**: `functionRelocDiffs=none` masks wrong `bl` callees, and defect-visibility
+  beats grader-alignment for a diagnosis tool. **The two-ruler split is intentional.**
+- ★ [decomp/EC3_DEFECT_DENSITY_BY_FUZZY_2026-08-03.md](decomp/EC3_DEFECT_DENSITY_BY_FUZZY_2026-08-03.md)
+  + `decomp/defect-signature-census-EC3.tsv` — **defect density by fuzzy stratum over the
+  FULL population (1,644 named charged rows).** Codegen share rises monotonically with fuzzy
+  (~60×), but ⛔ **"the real source defects are in the LOW-% rows" is REFUTED**: `<40` is only
+  62.1% source-shaped (37.3% of it is map/foreign + unwritten stubs) vs **90.9%** in the
+  middle, and `≥99` is still 61.1% source-shaped at a median of **2** mismatches vs **40**.
+  ⇒ **Rank by DEFECT SIGNATURE, not by fuzzy%; the fix is the FILTER, not a reversed sort.**
+  Resolves the apparent conflict with "crossing probability falls with fuzzy" — density and
+  work-to-cross are different questions; both collapse to *work the high-fuzzy band, filtered
+  by signature*.
+- ★★ **The body-port class is THE vein** — `decomp/bodyport-queue-EE2.tsv`.
+  `SOURCE_INSDEL` 549 rows/289,752 B **+** `SOURCE_CALLCOUNT` 462/267,024 B =
+  **1,011 rows / 556,776 B — 61.5% of named charged rows, 73.1% of charged bytes.**
+  ⛔ **`SOURCE_INSDEL` alone is the WRONG SCOPE** (drops 46%: one root cause splits across
+  both classes — a missing *argument copy* surfaces as call-count, not insert/delete).
+  ⛔ **No cheap targeting filter exists** — `Load`/`Save`/`Copy` enrich only **1.31×** and the
+  class spans 385 units. A per-row vein read off retail bytes. Queue: 43 rows, fuzzy ≥97 and
+  ≥500 B, **66,088 B / +0.6183 pp if all cross**.
+- [decomp/UNIT_COMPLETION_FRONTIER_EB3_2026-08-03.md](decomp/UNIT_COMPLETION_FRONTIER_EB3_2026-08-03.md)
+  + [decomp/EB3_COMPLETABLE_FRONTIER_FINDINGS_2026-08-03.md](decomp/EB3_COMPLETABLE_FRONTIER_FINDINGS_2026-08-03.md) —
+  re-census: source-only ceiling **253 → 293**, COMPLETABLE **39, not ~6**. ★★★ **The ceiling
+  MOVES — and lane EC-2 then moved it DOWN to 290, so it is NOT MONOTONIC.** Never treat a
+  prior lane's ceiling as a floor; re-measure it like `total_code`.
+  ⛔ Statement-order permutation is **INERT** (10 variants, all byte-identical — MSVC /O1
+  normalises independent assignment order).
+- [decomp/EC2_MISATTRIBUTION_SIZED_2026-08-03.md](decomp/EC2_MISATTRIBUTION_SIZED_2026-08-03.md)
+  + [decomp/EC4_SLIVER_PIN_CLASS_SIZED_BINARY_WIDE_2026-08-03.md](decomp/EC4_SLIVER_PIN_CLASS_SIZED_BINARY_WIDE_2026-08-03.md) —
+  **misattributed rows, sized twice; read EC-4 second, it CORRECTS EC-2.** EC-2's
+  "WHOLE-block pins are 80% foreign / 9.58× enriched" is **n=17 and CONFOUNDED BY ISOLATION**
+  — the control was **5× less isolated** than the population it nulled; standardised, **1.23×**
+  with no stratum significant. ★★★ The proof: at `iso=0%`, rows **byte-equal to retail —
+  therefore provably attributed correctly — read 86.75% "foreign"**, because with no LTCG
+  `.text` groups TUs **by subsystem** and a sliver pin is nothing but a TU boundary.
+  ⛔ MID blockers are **0.94% and 2.33× enriched, NOT 0.0%** (that was an n=31 artifact).
+  Rescued: a same-source-**directory** oracle reads 2.63× standardised ⇒ **~36 real rows
+  binary-wide (3.16%)**. ⛔ **Convertibility is ZERO — do not make this a standing sweep.**
+- **Extent-carving vein DRAINED** (`5555db76`) — ★★★ the celebrated **"null 0/15,576" could
+  not fire**: its condition (`base_size > claimed_size`) is unsatisfiable on an already-matched
+  row, so the zero was *structural*, not empirical. The rule that actually worked has two
+  unstated witnesses (**no exact retail `.pdata` record** + **last instruction is not a
+  terminator**), 26/26, rejecting 17 of 21 candidates. Symmetric direction is **empty**
+  (`OVER_PINNED = 0` binary-wide); 400 W2 hits reduce to **10 named+charged, none able to
+  cross**. Tooling: `scripts/harvest/extent_sweep/`. **Do not fund another extent lane.**
+- **Uniform-immediate-delta class CLOSED** — `decomp/uniform-immediate-delta-classification-ED2.tsv`.
+  47 rows / 9,268 B ⇒ **only 2 rows / 900 B real**; 23 (49%) are ICF fold aliases, 16 STL
+  stride, 3 stack codegen. ★★★ **The r31 trap eats the BIGGEST rows** — MSVC establishes a
+  **second frame pointer** (`subi r31,r1,N`), so "check for r1" is necessary but
+  **insufficient**; the 980 B `CharIKHand::Load` is a `String` temp at frame+104 vs +120.
+  ⛔ The 16 `_M_insert_overflow_aux` rows do **not** resolve to wrong `sizeof(T)` — **retail's
+  own immediates contradict themselves** (`NavItem` 12/32/48/96) ⇒ fold aliases, no class to
+  name. ⚠ "47" is a **subset**; the full uniform-delta population is **91 rows / 32,992 B**.
+- ★★ **The rev dialect is THREE dialects, and is a per-TU READING OFF TARGET BYTES, never a
+  rule** (landed `044ffc1a`, `fa65ca2a`; +6 / +8 / +5 matched across three lanes).
+  Retail **never constructs** a `BinStreamRev` — it **CASTS** a raw `BinStream&` (`??_R0`
+  count **0**, vs 1 each for `BinStream`/`MemStream`/`FileStream`, with `/GR` on).
+  **(1)** `lwz`+`cmpwi` on a **stack slot** ⇒ *no storage at all* — the static burns a
+  callee-saved register and inflates the frame; **(2)** `lhz`+`cmplwi` off a **base register**
+  ⇒ keep one aggregate; **(3)** two separate statics (CharHair). Our source's
+  `__declspec(align(4))` **predicts nothing**. ⚠⚠ **`RB3_OBJPTR_INLINE_OWNER_CTOR` is
+  TU-WIDE**: the define that closes a `Load` **destroys constructor rows in the same TU** —
+  observed in *both* polarities, and **the whole-binary aggregate read POSITIVE every time**.
+  Remedy is per-site 1-arg/2-arg `ObjPtr` spelling. ★ The `revB` gate is load-bearing:
+  keeping `d >>` for **container** reads preserved 412 B of byte-exact retail code that
+  DY-1's `bs >>` conversion would have deleted.
+
 ### Active worklists (open work to pull from)
 
 - [plans/auto03-sourceless-guard-funclets-2026-08-02.md](plans/auto03-sourceless-guard-funclets-2026-08-02.md) —
