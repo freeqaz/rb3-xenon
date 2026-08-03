@@ -2871,7 +2871,18 @@ END_PROPSYNCS
 // sw2 scatter-include (default/BandCharacter <- band3/bandtrack/GemTrack.cpp)
 #define gRev gRev_GemTrack
 #define gAltRev gAltRev_GemTrack
+// X7: native skips this edge -- ui/UIList.cpp:1104 ALSO unconditionally
+// scatter-includes band3/bandtrack/GemTrack.cpp, and UIList.cpp is a
+// long-standing rb3-render source. With BandCharacter.cpp added as a source
+// too, GemTrack is emitted TWICE (measured: 65 duplicate definitions,
+// ToggleShift / sUpdateShifting / sEnableShift et al.). Guarding the NEW
+// emitter leaves exactly one copy, from UIList.cpp, and BandCharacter needs
+// none of GemTrack's symbols. Same mechanism and same comment form as
+// obj/Dir.cpp:1607-1610. X360 arm unchanged: HX_NATIVE is not defined there,
+// so retail's COMDAT pairing is preserved exactly.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/bandtrack/GemTrack.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 

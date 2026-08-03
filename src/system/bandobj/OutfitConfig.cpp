@@ -71,10 +71,19 @@ void OutfitConfig::MatSwap::SwapResource() {
                     replace = true;
             }
             if (replace)
+#ifdef HX_NATIVE
+                // X7: native ObjRef IS the ring-ref (RefPtrOf is identity and
+                // returns `const ObjRef *`, obj/Object.h:277), and its Replace
+                // takes ONE argument -- the ref already points at the outgoing
+                // object. The two-argument form below is ObjRefOwner's, which
+                // only exists on the X360 ObjRefNode model.
+                cur->Replace(mMat);
+#else
                 // ObjRef::Replace(Hmx::Object*) is an elided stub off HX_NATIVE.
                 RefPtrOf(cur)->Replace(
                     reinterpret_cast<ObjRef *>((RndMat *)mResourceMat), mMat
                 );
+#endif
         }
     }
 }
@@ -93,10 +102,14 @@ void OutfitConfig::MatSwap::UnSwapResource() {
                     replace = true;
             }
             if (replace)
+#ifdef HX_NATIVE
+                cur->Replace(mResourceMat); // see SwapResource above
+#else
                 // ObjRef::Replace(Hmx::Object*) is an elided stub off HX_NATIVE.
                 RefPtrOf(cur)->Replace(
                     reinterpret_cast<ObjRef *>((RndMat *)mMat), mResourceMat
                 );
+#endif
         }
     }
 }
@@ -1049,7 +1062,15 @@ void OutfitConfig::Mats(std::list<RndMat *> &list, bool allocTempMats) {
              rit != it->mResourceMat->Refs().end();) {
             // X360: capture the ring-ref (ObjRefNode::refPtr@8) BEFORE advancing.
             // Retail loads refPtr then next: `lwz r29,0x8(r28); lwz r28,0x0(r28)`.
+            // X7: RefPtrOf has two shapes -- ObjRefOwner* off the ring model
+            // (obj/Object.h:271) and identity `const ObjRef*` on it (:277).
+            // Only the static type differs; RefOwner() is the interface used
+            // below and both provide it, so the loop body is unchanged.
+#ifdef HX_NATIVE
+            const ObjRef *cur = RefPtrOf(rit);
+#else
             ObjRefOwner *cur = RefPtrOf(rit);
+#endif
             ++rit;
             RndMesh *mesh = dynamic_cast<RndMesh *>(cur->RefOwner());
             if (mesh) {
@@ -1061,10 +1082,17 @@ void OutfitConfig::Mats(std::list<RndMat *> &list, bool allocTempMats) {
                     // with the outgoing object as `from`:
                     //   lwz r11,0(r29); mr r3,r29; lwz r5,0x8(r31)
                     //   lwz r4,0x14(r31); lwz r11,0x8(r11); mtctr; bctrl
+#ifdef HX_NATIVE
+                    // X7: on the ring model Replace is the 1-arg ObjRef form
+                    // and `cur` is a const ObjRef*. Same three-way shape as
+                    // MatSwap::SwapResource above.
+                    const_cast<ObjRef *>(cur)->Replace(it->mMat);
+#else
                     cur->Replace(
                         reinterpret_cast<ObjRef *>((RndMat *)it->mResourceMat),
                         it->mMat
                     );
+#endif
                 }
                 // The sret result MUST be a NAMED LOCAL, not a temporary.
                 // Retail copies the 8-byte MatShaderOptions with a single
@@ -1166,7 +1194,23 @@ BEGIN_CUSTOM_PROPSYNC(OutfitConfig::MatSwap)
 END_CUSTOM_PROPSYNC
 
 BEGIN_CUSTOM_PROPSYNC(OutfitConfig::MeshAO::Seam)
+    // X7: `index` is ALSO a POSIX function (`char *index(const char *, int)`,
+    // strings.h), which glibc pulls in transitively here. The non-local-static
+    // SYNC_PROP expands to `if (sym == index)`, so the comparison binds the
+    // libc function instead of the Symbol global and fails with "invalid
+    // operands to binary expression ('Symbol' and 'char *(const char *, int)')".
+    // The local-static SYNC_PROP variant stringizes the name into its own
+    // `static Symbol _ps("index")` and never names the global, which is both
+    // the fix and what retail actually emits.
+#ifdef HX_NATIVE
+    {
+        static Symbol _ps("index");
+        if (sym == _ps)
+            return PropSync(o.mIndex, _val, _prop, _i + 1, _op);
+    }
+#else
     SYNC_PROP(index, o.mIndex)
+#endif
     SYNC_PROP(coeff, o.mCoeff)
 END_CUSTOM_PROPSYNC
 
@@ -1216,6 +1260,28 @@ END_PROPSYNCS
 // VARIABLE, never a macro, in OutfitConfig's own primary TU). One shared
 // SW_SCATTER_OWNER_INCLUDE region inside: (a) keeps BandCamShot's own nested
 // scatter-includes inert, (b) prevents the per-shim guard from blocking siblings.
+// ⛔ X7: the ENTIRE owner region is skipped natively.
+//
+// OutfitConfig is an OWNER TU: it exists to emit four foreign spans so retail's
+// COMDAT placement is reproduced. That is load-bearing for the X360 match and
+// meaningless for a native link, where it produces nothing but duplicates --
+// measured, all four:
+//
+//   bandobj/BandCamShot.cpp        <- ALSO emitted by bandobj/BandCharDesc.cpp:1144
+//   rndobj/FontBase.cpp            <- a target source, compiled standalone
+//   char/CharSignalApplier.cpp     <- a target source, compiled standalone
+//   band3/meta_band/ContextChecker.cpp  <- band3; no target needs it
+//
+// 130 duplicate definitions between them. OutfitConfig's own body needs none
+// of the four. This is the THIRD instance this lane of the same
+// ScatterIncludes gap (two target sources unconditionally emitting one
+// non-source), and the third time the fix is the tree's existing
+// `#if !HX_NATIVE` guard rather than anything in the .cmake -- see the X7 note
+// in native/CMakeLists.txt for why CMake structurally cannot fix this class.
+//
+// X360 arm byte-identical: HX_NATIVE is undefined there, so the whole region
+// compiles exactly as before.
+#if !HX_NATIVE
 #ifndef gRev
 #define SW_SCATTER_OWNER_INCLUDE
 
@@ -1253,6 +1319,7 @@ END_PROPSYNCS
 
 #undef SW_SCATTER_OWNER_INCLUDE
 #endif // ifndef gRev (OutfitConfig-as-owner inert guard)
+#endif // !HX_NATIVE (X7: native skips the whole owner region)
 
 // ZS-MISSING-INSTANTIATION: retail out-of-lined this by-value MakeString COMDAT
 // in this TU; force emission (BandWardrobe idiom).

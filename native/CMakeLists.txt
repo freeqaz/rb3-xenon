@@ -1215,6 +1215,21 @@ set(MILO_TARGET_COMMON_SOURCES
     # one, and re-deriving that per-TU is what let this land without the
     # dedupe lane.
     ${REPO_ROOT}/src/system/bandobj/BandConfiguration.cpp
+    # ---- X7: the band MEMBERS ------------------------------------------
+    ${REPO_ROOT}/src/system/bandobj/BandCharacter.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandCharDesc.cpp
+    # BandCharacter's own dependency layer, measured from the link, not guessed:
+    # OutfitConfig (outfit recompose / texture patching), BandHeadShaper (face
+    # visemes), BandPatchMesh + BandRetargetVignette (leaf drawables), and
+    # meta/FixedSizeSaveable (BandCharDesc's serialization base).
+    ${REPO_ROOT}/src/system/bandobj/BandHeadShaper.cpp
+    ${REPO_ROOT}/src/system/bandobj/OutfitConfig.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandPatchMesh.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandRetargetVignette.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandFaceDeform.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandIKEffector.cpp
+    ${REPO_ROOT}/src/system/meta/FixedSizeSaveable.cpp
+    ${REPO_ROOT}/src/system/meta/FixedSizeSaveableStream.cpp
     ${DTA_LEXER}
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/milo_link_stubs.cpp
