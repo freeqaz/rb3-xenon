@@ -516,22 +516,33 @@ void CharHair::SimulateZeroTime() {
 
 INIT_REVS(11, 0)
 
-static unsigned short sHairRev;
+// Retail holds the loaded revision in TWO separate file statics 4 bytes apart
+// (altRev @0x82CBF3F4, rev @0x82CBF3F8). They must stay SEPARATE symbols:
+// Strand::Load addresses `rev` directly (`lis`+`lhz`); an aggregate turns that
+// into `lis`+`addi`+`lhz 0x4` (measured regression 100%% -> 96.6%%).
+static __declspec(align(4)) unsigned short sHairAltRev;
+static __declspec(align(4)) unsigned short sHairRev;
 
 void CharHair::Load(BinStream &bs) {
-    LOAD_REVS(bs);
-    sHairRev = d.rev;
-    ASSERT_REVS(11, 0);
+    // Retail does NOT construct a BinStreamRev here: there is no ??_7BinStreamRev@@6B@,
+    // no ??0BinStream/??1BinStream call, and `.?AVBinStreamRev@@` is absent from the
+    // retail RTTI pool (while BinStream/MemStream/FileStream are all present). The
+    // rev wrapper is reached by a CAST and the loaded revision lives in file statics.
+    int revs;
+    bs >> revs;
+    sHairRev = getHmxRev(revs);
+    sHairAltRev = getAltRev(revs);
+    BinStreamRev &d = (BinStreamRev &)bs;
     LOAD_SUPERCLASS(Hmx::Object)
     bs >> mStiffness >> mTorsion >> mInertia >> mGravity >> mWeight >> mFriction;
-    if (d.rev < 8) {
+    if (sHairRev < 8) {
         mMinSlack = 0.0f;
         mMaxSlack = 0.0f;
     } else
         bs >> mMinSlack >> mMaxSlack;
     d >> mStrands;
-    d >> mSimulate;
-    if (d.rev > 10)
+    bs >> mSimulate;
+    if (sHairRev > 10)
         bs >> mWind;
 }
 
