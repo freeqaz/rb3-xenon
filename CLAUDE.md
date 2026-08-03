@@ -451,9 +451,12 @@ this. The matching build is structurally incapable of catching that class.
 So: if your change touches `src/system/**`, `src/band3/**` or any shared header,
 run the gate before you land. Two traps, both real:
 
-- **Seed the cache explicitly first** — the gate's own `cmake` line omits
-  `-DMILO_ENGINE_PATH=` and `-DDawn_DIR=`, and without them three targets
-  silently **SKIP** while the gate still reports `PASS`.
+- **Seed the cache explicitly first, with all four flags.** The gate's own
+  `cmake` line omits `-DMILO_ENGINE_PATH=` and `-DDawn_DIR=`, and without them
+  three targets silently **SKIP** while the gate still reports `PASS`. It
+  *also* sets the compiler (`native_build_gate.sh:228`) — so a seed configure
+  supplying only those two picks up system `g++` and fails with ~104 errors
+  that look exactly like a broken `main`. Pass the compiler flags too.
 - **Delete stale binaries first.** The gate counts binaries on disk and
   `ninja -k1` masks failures, so a stale tree can report green over a broken
   build.
