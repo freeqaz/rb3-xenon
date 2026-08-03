@@ -419,13 +419,14 @@ DataNode BandUI::OnMsg(const UIScreenChangeMsg &msg) {
     return DataNode(kDataUnhandled, 0);
 }
 
-DataNode BandUI::OnMsg(const ProcessedJoinRequestMsg &msg) {
-    if (msg.GetProcessed()) {
-        VerifyBuildVersionMsg msg;
-        TheNetSession->SendMsgToAll(msg, kReliable);
-    }
-    return 0;
-}
+// Retail X360 body is just `return 0;` — the Wii dev build's
+// `if (msg.GetProcessed()) { VerifyBuildVersionMsg m; TheNetSession->SendMsgToAll(m, kReliable); }`
+// was dropped in retail. Ground truth: the Handle dispatch calls fn_8228D358,
+// whose retail bytes are exactly
+//     39600000 li r11,0 / 91630000 stw r11,0x0(r3) / 91630004 stw r11,0x4(r3) / 4e800020 blr
+// i.e. a 16-byte DataNode(0) return, ICF-folded with every other `return 0;`
+// handler in the binary (hence the far-away address).
+DataNode BandUI::OnMsg(const ProcessedJoinRequestMsg &) { return 0; }
 
 DataNode BandUI::OnMsg(const ConnectionStatusChangedMsg &msg) {
     // Retail: guard+ctor at entry, never read (likely from stripped dev code —
