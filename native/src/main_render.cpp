@@ -709,6 +709,16 @@ namespace {
     int DriveSceneCharacters(ObjectDir *dir, const char *clipName, float beat,
                              float bpm) {
         std::vector<Character *> chars = CollectDeep<Character>(dir);
+        // X13: the set that was actually Enter()/Play()'d. The poll loop below
+        // used to walk every character WITH A DRIVER, which is a strictly
+        // larger set -- its own comment already said "every DRIVEN character",
+        // so the code and the comment disagreed. Polling a CharDriver that was
+        // never Enter()ed and whose clip dir is EMPTY segfaults: with
+        // RB3_BAND_PLACE=1 the four band members bind to 'body_clips', which
+        // holds 0 clips, so they are skipped for lack of a clip and then polled
+        // anyway. Measured: rc=139 with RB3_BAND_PLACE=1, rc=0 without it --
+        // the crash tracked the band's presence, not the crowd's animation.
+        std::vector<Character *> drivenChars;
         int driven = 0, noDriver = 0, noClip = 0, noServo = 0;
         printf("  --- scene clip drive: '%s' @ beat %.2f over %d character(s) ---\n",
                clipName, beat, (int)chars.size());
@@ -757,9 +767,29 @@ namespace {
                         avail += cl[k]->Name();
                     }
                 }
-                printf("    %-22s bound set '%s' has no clip '%s' (%d clip(s) in %d "
-                       "set(s); e.g. %s) — SKIPPED\n",
-                       c->Name(), bound ? bound->Name() : "(none)", clipName, nClips,
+                // X13: the old message enumerated EVERY set, which is not the
+                // set the drive path actually searches. `bound` is the only set
+                // consulted (deliberately -- see the no-cross-set-fallback note
+                // above), so a reader picking a clip name off this line was
+                // reading names that could never be selected. Print the BOUND
+                // set's own inventory, in full, and label the other line as the
+                // wider catalogue it is.
+                std::string boundAvail;
+                int nBound = 0;
+                if (bound) {
+                    std::vector<CharClip *> bc = CollectDeep<CharClip>(bound);
+                    nBound = (int)bc.size();
+                    for (size_t k = 0; k < bc.size(); k++) {
+                        if (!boundAvail.empty()) boundAvail += ", ";
+                        boundAvail += bc[k]->Name();
+                    }
+                }
+                printf("    %-22s bound set '%s' has no clip '%s' — SKIPPED\n"
+                       "        bound set inventory (%d clip(s), THE ONLY ONES "
+                       "SELECTABLE): %s\n"
+                       "        wider catalogue: %d clip(s) in %d set(s); e.g. %s\n",
+                       c->Name(), bound ? bound->Name() : "(none)", clipName, nBound,
+                       boundAvail.empty() ? "(none)" : boundAvail.c_str(), nClips,
                        (int)sets.size(), avail.c_str());
                 noClip++;
                 continue;
@@ -782,6 +812,7 @@ namespace {
                    useSet ? useSet->Name() : (bound ? bound->Name() : "?"), src,
                    useClip->StartBeat(), useClip->EndBeat(),
                    servo ? "" : "  ⚠ NO bone.servo — will not move");
+            drivenChars.push_back(c);
             driven++;
         }
         if (driven == 0) {
@@ -801,14 +832,12 @@ namespace {
             b += step;
             seconds += stepSeconds;
             TheTaskMgr.SetSecondsAndBeat(seconds, b, false);
-            for (size_t i = 0; i < chars.size(); i++)
-                if (chars[i]->Driver()) chars[i]->Poll();
+            for (size_t i = 0; i < drivenChars.size(); i++) drivenChars[i]->Poll();
             polls++;
         }
         seconds = beat * 60.0f / bpm;
         TheTaskMgr.SetSecondsAndBeat(seconds, beat, false);
-        for (size_t i = 0; i < chars.size(); i++)
-            if (chars[i]->Driver()) chars[i]->Poll();
+        for (size_t i = 0; i < drivenChars.size(); i++) drivenChars[i]->Poll();
         polls++;
         printf("    => drove %d character(s), polled %d time(s) to beat %.2f "
                "(%d no-driver, %d no-clip, %d no-servo)\n",
@@ -1846,6 +1875,7 @@ namespace {
     struct HandPoseStats {
         int bonesChecked = 0;
         float worstRecomposeDev = 0.0f;
+        int bonesInadmissible = 0;
         const char *worstRecomposeBone = nullptr;
         int handMeshes = 0;
         float worstBoneToGeomGap = -1.0f;
@@ -1854,6 +1884,26 @@ namespace {
     };
 
     // Elementwise max |WorldXfm - LocalXfm*parentWorldXfm| over the 12 floats.
+    // X13 ⛔ THE BIND-POSE-ONLY CAVEAT, MADE EXPLICIT.
+    //
+    // `W == L*parentW` is NOT the engine's world rule. RndTransformable::
+    // WorldXfm_Force (rndobj/Trans.cpp:666-687) selects among FOUR different
+    // compositions on mConstraint, and then either ApplyDynamicConstraint() or
+    // UpdatedWorldXfm() may overwrite mWorldXfm outright; SetWorldXfm
+    // (Trans.cpp:419) writes it directly and clears mDirty, which is how IK
+    // publishes a solved bone. At bind pose none of those arms fire and the
+    // plain product is exact (X12: 0.000e+00 over 7434 bones). UNDER ANIMATION
+    // THEY DO FIRE, and a flat L*parentW check then reports a deviation that is
+    // the ENGINE'S DESIGN, not a defect.
+    //
+    // So this returns the deviation AND the reason it may be meaningless. Only
+    // `kConstraintNone` + no dynamic constraint bones are admissible evidence;
+    // everything else is counted and reported, never folded into a verdict.
+    bool RecomposeAdmissible(RndTransformable *t) {
+        return t->TransConstraint() == RndTransformable::kConstraintNone
+            && !t->HasDynamicConstraint();
+    }
+
     float RecomposeDev(RndTransformable *t) {
         RndTransformable *p = t->TransParent();
         if (!p) return 0.0f;
@@ -2051,22 +2101,38 @@ namespace {
             printf("    --- %s --- character world (%9.3f %9.3f %9.3f)\n",
                    c->Name() ? c->Name() : "(unnamed)", cw.x, cw.y, cw.z);
 
-            // (1) recompose identity over EVERY bone of this figure
+            // (1) recompose identity over every bone of this figure, SPLIT by
+            // admissibility (X13). The inadmissible population is printed, not
+            // hidden: a reader must be able to see how much of the skeleton the
+            // check could not speak for.
             float worst = 0.0f; const char *worstName = nullptr; int nb = 0;
+            float worstIn = 0.0f; const char *worstInName = nullptr; int nbIn = 0;
             for (size_t i = 0; i < bones.size(); i++) {
                 if (!bones[i]->TransParent()) continue;
                 float d = RecomposeDev(bones[i]);
-                nb++;
-                if (d > worst) { worst = d; worstName = bones[i]->Name(); }
+                if (RecomposeAdmissible(bones[i])) {
+                    nb++;
+                    if (d > worst) { worst = d; worstName = bones[i]->Name(); }
+                } else {
+                    nbIn++;
+                    if (d > worstIn) { worstIn = d; worstInName = bones[i]->Name(); }
+                }
             }
             st.bonesChecked += nb;
+            st.bonesInadmissible += nbIn;
             if (worst > st.worstRecomposeDev) {
                 st.worstRecomposeDev = worst;
                 st.worstRecomposeBone = worstName;
             }
-            printf("      recompose  W == L*parentW : worst dev %.3e over %d bone(s)"
-                   "  (worst: %s)\n",
+            printf("      recompose  W == L*parentW : worst dev %.3e over %d "
+                   "ADMISSIBLE bone(s) (worst: %s)\n",
                    worst, nb, worstName ? worstName : "-");
+            if (nbIn > 0)
+                printf("                 %d constrained/dynamic bone(s) EXCLUDED "
+                       "(worst dev there %.3e on %s) — for these the engine does NOT "
+                       "compose L*parentW (Trans.cpp:666-687), so a deviation is "
+                       "expected and proves nothing\n",
+                       nbIn, worstIn, worstInName ? worstInName : "-");
 
             // (2) absolute arm-chain landmark world positions
             for (int side = 0; side < 2; side++) {
@@ -2190,6 +2256,19 @@ namespace {
                     for (int k = 0; k < 3; k++)
                         if (dv[k] > devFromMesh) devFromMesh = dv[k];
                 }
+                // X13: print the palette's OWN translation, not just the
+                // deviation. X12 inferred "skin.v is ~0" from a max-elementwise
+                // deviation that happened to equal the placement's y; a max over
+                // |a-b| cannot establish either operand. Printing skin.v[0]
+                // decides it directly, and it is what the renderer uploads
+                // (milo-native-engine Rnd_Wgpu_RB3.cpp:3823/:4079).
+                if (m->NumBones() > 0 && m->BoneTransAt(0)) {
+                    Transform s0;
+                    Multiply(m->BoneOffsetAt(0), m->BoneTransAt(0)->WorldXfm(), s0);
+                    printf("          palette skin[0].v (%9.3f %9.3f %9.3f)  bone '%s'\n",
+                           s0.v.x, s0.v.y, s0.v.z,
+                           m->BoneTransAt(0)->Name() ? m->BoneTransAt(0)->Name() : "?");
+                }
                 printf("          meshWorld.v (%9.3f %9.3f %9.3f)   palette-vs-meshWorld "
                        "dev %.4g%s\n",
                        mw.v.x, mw.v.y, mw.v.z, devFromMesh,
@@ -2217,10 +2296,19 @@ namespace {
             }
         }
 
-        printf("  === hand-pose summary: %d bone(s) recomposed (worst dev %.3e, %s); "
-               "%d hand mesh(es) measured ===\n",
+        printf("  === hand-pose summary: %d ADMISSIBLE bone(s) recomposed (worst dev "
+               "%.3e, %s), %d excluded as constrained/dynamic; %d hand mesh(es) "
+               "measured ===\n",
                st.bonesChecked, st.worstRecomposeDev,
-               st.worstRecomposeBone ? st.worstRecomposeBone : "-", st.handMeshes);
+               st.worstRecomposeBone ? st.worstRecomposeBone : "-",
+               st.bonesInadmissible, st.handMeshes);
+        // X13: X12's oracle passed `handpose-reached-a-skeleton` on the crowd
+        // while measuring ZERO hand meshes -- a partial vacuity of exactly the
+        // kind X12 documented in the OLD audit. Gate the mesh denominator too.
+        Gate("handpose-measured-hand-geometry", st.handMeshes > 0,
+             st.handMeshes > 0 ? ""
+                               : "a skeleton was reached but NO hand mesh was measured "
+                                 "— every geometry verdict above is vacuous");
         // A vacuous green is what the OLD audit produced. Refuse to emit one.
         Gate("handpose-reached-a-skeleton", st.anyHandBone,
              st.anyHandBone ? ""
