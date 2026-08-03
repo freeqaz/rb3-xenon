@@ -2290,6 +2290,25 @@ namespace {
         float worstBoneToGeomGap = -1.0f;
         const char *worstGapMesh = nullptr;
         bool anyHandBone = false;
+        // ---- X18: the residual, SPLIT BY WHO LAST WROTE THE WORLD ----------
+        // admByWriter counts every admissible bone; devByWriter counts only the
+        // deviating ones. Both are printed, so the denominator of each class is
+        // visible and a "0 deviating PUBLISHED bones" line can never be
+        // confused with "there were no PUBLISHED bones to begin with".
+        int admByWriter[5] = { 0, 0, 0, 0, 0 };
+        int devByWriter[5] = { 0, 0, 0, 0, 0 };
+        // The CORRECTED gate's residual: restricted to kWorldComposed bones,
+        // the only population `W == L*parentW` actually models.
+        float worstComposedDev = 0.0f;
+        const char *worstComposedBone = nullptr;
+        int bonesComposed = 0;
+        // ---- X18: DISTINCT-OBJECT accounting -------------------------------
+        // Every per-figure count on this ladder has been a count of bone SLOTS
+        // (figure, bone) rather than of bone OBJECTS. The SetWorldXfm control
+        // proved the band's eight entries share one skeleton, so those are not
+        // independent measurements and 7380 is not 7380 things.
+        std::set<RndTransformable *> distinctAdm;
+        std::set<RndTransformable *> distinctDev;
     };
 
     // Elementwise max |WorldXfm - LocalXfm*parentWorldXfm| over the 12 floats.
@@ -2456,6 +2475,21 @@ namespace {
     // any cited evidence frame.
     float gHandPerturb = 0.0f;
 
+    // ---- X18 POSITIVE CONTROL #2, THE ONE THAT MATCHES THE INSTRUMENT ------
+    // gHandPerturb above displaces a bone via SetLocalXfm, which SetDirty()s
+    // and therefore RE-COMPOSES: the tag must stay COMPOSED and the recompose
+    // deviation must stay ~0. RB3_HANDPOSE_PUBLISH displaces the SAME bone by
+    // the SAME amount via SetWorldXfm, which publishes directly: the tag MUST
+    // flip to PUBLISHED and a deviation of exactly this size MUST appear.
+    //
+    // ★ The pair is the control. Same bone, same displacement, opposite
+    // predictions on both the tag and the deviation. If the writer-tag
+    // instrument were blind, or if it just echoed "this bone moved", the two
+    // arms would be indistinguishable. They are not, and that is what makes a
+    // null result from this instrument mean something.
+    float gHandPublish = 0.0f;
+    float gHandStale = 0.0f;
+
     void ReportHandPose(ObjectDir *dir) {
         // Bone names are the GAME'S OWN (gesture/JointUtl.cpp:39 CharBoneName).
         // ⚠ BUT THE CASING THERE DOES NOT MATCH THE RB3 CHARACTER ASSETS.
@@ -2480,6 +2514,10 @@ namespace {
             printf("  ⚠⚠ RB3_HANDPOSE_PERTURB=%.3f ACTIVE — bone_L-hand is DELIBERATELY "
                    "displaced. This is a POSITIVE CONTROL run, not a valid frame.\n",
                    gHandPerturb);
+        if (gHandPublish != 0.0f)
+            printf("  ⚠⚠ RB3_HANDPOSE_PUBLISH=%.3f ACTIVE — bone_L-hand is DELIBERATELY "
+                   "published via SetWorldXfm. POSITIVE CONTROL run, not a valid frame.\n",
+                   gHandPublish);
 
         HandPoseStats st;
         for (size_t ci = 0; ci < chars.size(); ci++) {
@@ -2502,6 +2540,30 @@ namespace {
                 lh->SetLocalXfm(lx);
             }
 
+            // X18 positive control #2 — the SetWorldXfm twin of the above.
+            if (gHandPublish != 0.0f && lh) {
+                Transform wx = lh->WorldXfm(); // force-composes first, so the
+                wx.v.x += gHandPublish; // published value differs from L*parentW
+                lh->SetWorldXfm(wx); // by EXACTLY gHandPublish on x
+            }
+
+            // X18 control #3 — THE ONE THAT MAKES THE CORRECTED GATE'S PASS
+            // MEAN SOMETHING. Forges a dirty-propagation failure: move the
+            // PARENT (which correctly dirties the child), then force the child
+            // clean+COMPOSED without letting it recompose. The child's cached
+            // world is now stale by exactly gHandStale, it is tagged COMPOSED,
+            // and the corrected gate MUST FAIL on it. If it does not, the
+            // corrected gate is blind and every PASS it has ever emitted is
+            // worthless.
+            if (gHandStale != 0.0f && lh && lh->TransParent()) {
+                RndTransformable *par = lh->TransParent();
+                lh->WorldXfm(); // compose the child first
+                Transform pw = par->WorldXfm();
+                pw.v.x += gHandStale;
+                par->SetWorldXfm(pw); // dirties lh, as the engine should
+                lh->NativeMakeStaleForTest(); // ...and we suppress that
+            }
+
             // ★ THE COMPARATIVE CONTROL, printed in the SAME block (X11's rule:
             // put the working arm next to the broken one). The character's own
             // world placement, so a "hand geometry is at the origin" reading can
@@ -2510,23 +2572,84 @@ namespace {
             printf("    --- %s --- character world (%9.3f %9.3f %9.3f)\n",
                    c->Name() ? c->Name() : "(unnamed)", cw.x, cw.y, cw.z);
 
+            // ---- X18: OBJECT IDENTITY OF THE MEASURED HAND BONE ------------
+            // Caught by the SetWorldXfm positive control: publishing +P on
+            // bone_L-hand produced a per-figure progression P, 2P, ... 8P over
+            // the eight BAND entries while each of the eight CROWD figures read
+            // exactly P. A displacement that compounds across figures can only
+            // mean successive figures are resolving to the SAME object. Five
+            // lanes of per-figure hand numbers depend on these being distinct,
+            // so the pointer is printed rather than assumed.
+            if (lh) {
+                int nNamed = 0;
+                for (size_t i = 0; i < bones.size(); i++)
+                    if (bones[i]->Name()
+                        && strcmp(bones[i]->Name(), "bone_L-hand.mesh") == 0)
+                        nNamed++;
+                RndTransformable *root = lh;
+                while (root->TransParent()) root = root->TransParent();
+                printf("        identity  bone_L-hand.mesh = %p  world (%9.3f %9.3f "
+                       "%9.3f)  (%d bone(s) of this name in this figure; chain root "
+                       "'%s')\n",
+                       (void *)lh, lh->WorldXfm().v.x, lh->WorldXfm().v.y,
+                       lh->WorldXfm().v.z, nNamed,
+                       root->Name() ? root->Name() : "?");
+            }
+
             // (1) recompose identity over every bone of this figure, SPLIT by
             // admissibility (X13). The inadmissible population is printed, not
             // hidden: a reader must be able to see how much of the skeleton the
             // check could not speak for.
+            // ---- X18: SNAPSHOT THE WRITER TAGS **BEFORE** MEASURING --------
+            //
+            // ⚠ THE ORDERING HAZARD THAT WOULD HAVE MADE THIS INSTRUMENT LIE.
+            // RecomposeDev() calls p->WorldXfm() and t->WorldXfm(), and
+            // WorldXfm() is NOT an observation: when mDirty it runs
+            // WorldXfm_Force (Trans.h:118), which rewrites mWorldXfm and — with
+            // this lane's tag — stamps the bone COMPOSED. Measuring one bone
+            // therefore re-tags its whole ancestor chain. Any ancestor sitting
+            // LATER in bones[] would then be read as COMPOSED no matter how its
+            // world was really produced, and the instrument would systematically
+            // under-report PUBLISHED. A whole-figure pre-pass is the fix: plain
+            // tag reads, no WorldXfm() call, nothing mutated.
+            std::vector<unsigned char> tags(bones.size());
+            for (size_t i = 0; i < bones.size(); i++)
+                tags[i] = bones[i]->WorldWriterTag();
+
             float worst = 0.0f; const char *worstName = nullptr; int nb = 0;
             float worstIn = 0.0f; const char *worstInName = nullptr; int nbIn = 0;
+            float worstC = 0.0f; const char *worstCName = nullptr; int nbC = 0;
             for (size_t i = 0; i < bones.size(); i++) {
                 if (!bones[i]->TransParent()) continue;
                 float d = RecomposeDev(bones[i]);
                 if (RecomposeAdmissible(bones[i])) {
                     nb++;
+                    const unsigned char tg = tags[i] < 5 ? tags[i] : 0;
+                    st.admByWriter[tg]++;
+                    st.distinctAdm.insert(bones[i]);
+                    if (d > 1e-3f) {
+                        st.devByWriter[tg]++;
+                        st.distinctDev.insert(bones[i]);
+                    }
+                    // The corrected residual: ONLY bones the identity models.
+                    if (tg == RndTransformable::kWorldComposed) {
+                        nbC++;
+                        if (d > worstC) { worstC = d; worstCName = bones[i]->Name(); }
+                    }
                     if (d > worst) { worst = d; worstName = bones[i]->Name(); }
                 } else {
                     nbIn++;
                     if (d > worstIn) { worstIn = d; worstInName = bones[i]->Name(); }
                 }
             }
+            st.bonesComposed += nbC;
+            if (worstC > st.worstComposedDev) {
+                st.worstComposedDev = worstC;
+                st.worstComposedBone = worstCName;
+            }
+            printf("      recompose[COMPOSED-only, X18] : worst dev %.3e over %d "
+                   "bone(s) (worst: %s)\n",
+                   worstC, nbC, worstCName ? worstCName : "-");
             st.bonesChecked += nb;
             st.bonesInadmissible += nbIn;
             if (worst > st.worstRecomposeDev) {
@@ -2588,12 +2711,25 @@ namespace {
                     // no-Poll arm ⇒ nothing ever recomposed it) or MOVED-BUT-
                     // WRONG. A `diff` of two arms' dump blocks answers that
                     // directly, with no further instrumentation.
+                    // X18: the writer tag, from the pre-pass snapshot (NOT read
+                    // live here — by this point the measurement loop above has
+                    // already re-composed ancestors and a live read would lie).
+                    const char *wtag =
+                        RndTransformable::WorldWriterName(tags[i] < 5 ? tags[i] : 0);
+                    const char *ptag = "?";
+                    for (size_t j = 0; j < bones.size(); j++)
+                        if (bones[j] == p) {
+                            ptag = RndTransformable::WorldWriterName(
+                                tags[j] < 5 ? tags[j] : 0);
+                            break;
+                        }
                     const Vector3 &bw = b->WorldXfm().v;
-                    printf("        %-6s dev %.3e  bone '%s'  parent '%s' (parent dev "
-                           "%.3e)  world (%9.3f %9.3f %9.3f)\n",
+                    printf("        %-6s dev %.3e  bone '%s' [%s]  parent '%s' [%s] "
+                           "(parent dev %.3e)  world (%9.3f %9.3f %9.3f)  pub=%p\n",
                            parentClean ? "ROOT" : "inherit", d,
-                           b->Name() ? b->Name() : "?",
-                           p && p->Name() ? p->Name() : "?", pd, bw.x, bw.y, bw.z);
+                           b->Name() ? b->Name() : "?", wtag,
+                           p && p->Name() ? p->Name() : "?", ptag, pd, bw.x, bw.y, bw.z,
+                           b->WorldPubCaller());
                 }
                 // ⚠ ANTI-VACUITY. A dump that prints nothing reads identically
                 // to a clean figure. Say which one this is, in the log, always.
@@ -2846,6 +2982,72 @@ namespace {
              st.bonesChecked > 0
                  ? ""
                  : "no bone had a parent — recompose identity never evaluated");
+
+        // ---- X18: THE WRITER-CLASSIFIED VIEW OF THE SAME RESIDUAL ----------
+        //
+        // `W == L*parentW` is the rule for exactly ONE of the five ways
+        // mWorldXfm gets a value (Trans.cpp: ctor / Load / Copy / SetWorldXfm /
+        // WorldXfm_Force). RecomposeAdmissible() screens CONSTRAINTS but not
+        // PUBLICATION, so bones written by any of the other four are held to a
+        // rule the engine never applied to them. This table says how much of
+        // the reported residual is in that position.
+        //
+        // ★ BOTH numerator AND denominator per class. "0 deviating PUBLISHED"
+        // and "there were no PUBLISHED bones" are completely different findings
+        // and four vacuous passes on this ladder came from conflating them.
+        printf("  === X18 writer classification of the ADMISSIBLE population ===\n");
+        // PIE load base, so the pub= return addresses above can be resolved
+        // with addr2line offline. Printed rather than assumed -- ASLR moves it
+        // every run and a stale base silently resolves to the wrong function.
+        {
+            // ⚠ NOT the first maps line -- that is whatever the allocator
+            // mapped first, and using it resolved every publisher to '??'.
+            // Match the executable's own path.
+            FILE *mf = fopen("/proc/self/maps", "r");
+            char ln[512];
+            char exe[512] = { 0 };
+            ssize_t n = readlink("/proc/self/exe", exe, sizeof exe - 1);
+            if (n > 0) exe[n] = 0;
+            while (mf && fgets(ln, sizeof ln, mf)) {
+                if (exe[0] && strstr(ln, exe)) {
+                    printf("      image base: %s", ln);
+                    break;
+                }
+            }
+            if (mf) fclose(mf);
+        }
+        int totAdm = 0, totDev = 0;
+        for (int w = 0; w < 5; w++) {
+            totAdm += st.admByWriter[w];
+            totDev += st.devByWriter[w];
+            printf("      %-10s : %5d admissible, %4d deviating (>1e-3)\n",
+                   RndTransformable::WorldWriterName((unsigned char)w),
+                   st.admByWriter[w], st.devByWriter[w]);
+        }
+        printf("      %-10s : %5d admissible, %4d deviating\n", "TOTAL", totAdm, totDev);
+        printf("      DISTINCT OBJECTS: %d admissible, %d deviating "
+               "(slot counts above are (figure,bone) pairs, NOT objects)\n",
+               (int)st.distinctAdm.size(), (int)st.distinctDev.size());
+
+        // The CORRECTED gate. Same identity, same threshold, restricted to the
+        // population the identity actually models.
+        //
+        // ⚠ WHAT THIS DOES *NOT* COVER, stated where it cannot be missed: it
+        // asserts only that composed bones compose. It says NOTHING about
+        // whether a PUBLISHED world is the RIGHT world — an IK solver that
+        // publishes a hand into the floor passes this gate. It also says
+        // nothing about LOADED/COPIED/NEVER bones. Those need a geometric
+        // oracle (the hand-mesh gap gates above), not an algebraic one.
+        Gate("handpose-recompose-composed[X18]",
+             st.bonesComposed > 0 && st.worstComposedDev < 1e-3f,
+             st.bonesComposed > 0
+                 ? ""
+                 : "ZERO composed bones — the corrected gate has an EMPTY "
+                   "denominator and its verdict is vacuous");
+        printf("      corrected residual: worst dev %.3e over %d COMPOSED bone(s) "
+               "(worst: %s)\n",
+               st.worstComposedDev, st.bonesComposed,
+               st.worstComposedBone ? st.worstComposedBone : "-");
     }
 
     // Direct alias-safety probe for the compose family (charter hazard class;
@@ -4107,6 +4309,8 @@ int main(int argc, char **argv) {
         return 1;
     }
     if (const char *hp = getenv("RB3_HANDPOSE_PERTURB")) gHandPerturb = (float)atof(hp);
+    if (const char *hp = getenv("RB3_HANDPOSE_PUBLISH")) gHandPublish = (float)atof(hp);
+    if (const char *hp = getenv("RB3_HANDPOSE_STALE")) gHandStale = (float)atof(hp);
     const char *dataDir = pos[0];
     const char *outDir = pos[1];
     // mkdir -p. A single mkdir() silently no-ops on a missing PARENT and the
