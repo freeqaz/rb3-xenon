@@ -2059,8 +2059,12 @@ FlowIf.cpp:
 	.text       start:0x823C7558 end:0x823C761C
 
 bitrate.c:
-	.pdata      start:0x822610F0 end:0x82261100
-	.text       start:0x82C36A28 end:0x82C36B98
+	.pdata      start:0x822610F0 end:0x822610F8
+	.text       start:0x82C36A28 end:0x82C36B38
+
+envelope.c:
+	.pdata      start:0x822610F8 end:0x82261100
+	.text       start:0x82C36B38 end:0x82C36B98
 
 lsp.c:
 	.pdata      start:0x822613C8 end:0x82261490
