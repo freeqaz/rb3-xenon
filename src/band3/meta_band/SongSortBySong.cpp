@@ -15,16 +15,17 @@ int SongCmp::Compare(const SongSortCmp *s, SongNodeType nodeType) const {
     switch (nodeType) {
     case kNodeShortcut:
     case kNodeHeader:
-        return mHeaderSym == cmp->mHeaderSym
-            ? 0
-            : strcmp(mHeaderSym.Str(), cmp->mHeaderSym.Str());
+        if (mHeaderSym == cmp->mHeaderSym)
+            break;
+        return strcmp(mHeaderSym.Str(), cmp->mHeaderSym.Str());
     case kNodeSong:
     case kNodeStoreSong:
         return AlphaKeyStrCmp(mName, cmp->mName, true);
     default:
         MILO_FAIL("invalid type of node comparison.\n");
-        return 0;
+        break;
     }
+    return 0;
 }
 
 void SongSortBySong::Init() {
