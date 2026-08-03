@@ -15172,7 +15172,6 @@
  "0x8251bbf0": "?XPrivilegeCheck@?A0x8a9ffbf2@@YA_NW4_XPRIVILEGE_TYPE@@0_K@Z",
  "0x8251bec8": "?SetPadContext@PlatformMgr@@QBAXHHH@Z",
  "0x8251bf18": "?SetPadPresence@PlatformMgr@@QBAXHH@Z",
- "0x8251bfa8": "??_GMoggClipMap@@UAAPAXI@Z",
  "0x8251c248": "?GetPadNumFromXuid@?A0x8a9ffbf2@@YAH_K@Z",
  "0x8251c840": "?SetPadProperty@PlatformMgr@@QBAXHHPBG@Z",
  "0x8251cbe0": "??0RGConnectedAccessoriesMsg@@QAA@HH@Z",
