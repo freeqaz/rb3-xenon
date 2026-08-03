@@ -117,6 +117,7 @@
 #include "rndobj/Rnd_NG.h"
 #include "rndobj/Tex.h"
 #include "rndobj/Trans.h"
+#include "rndobj/TransProxy.h"
 #include "utl/FilePath.h"
 #include "utl/Str.h"
 #include "utl/Symbol.h"
@@ -203,6 +204,8 @@ namespace {
     float gAzimuth = -999.0f;
     float gElevation = -999.0f;
     ObjDirPtr<ObjectDir> gClipsDir;
+    ObjDirPtr<ObjectDir> gPlayerDir; // X5: the player0 lighting stand-in
+    const char *gPlayerStandIn = nullptr;
 
     void Gate(const char *name, bool ok, const char *detail) {
         printf("  [%s] %s%s%s\n", ok ? "PASS" : "FAIL", name,
@@ -1385,6 +1388,46 @@ namespace {
         return out;
     }
 
+    // ★ X5: POSITIVE evidence that the player-anchor chain actually bound.
+    //
+    // "the warning stopped printing" is an absence, and the charter's rule is
+    // that silence is not success. RndTransProxy::Sync() (rndobj/TransProxy.cpp
+    // :73-90) calls SetTransParent(target) ONLY when it resolved mProxy and
+    // found mPart inside it; on failure it explicitly SetTransParent(nullptr).
+    // So a non-null TransParent() is a direct, per-object assertion that the
+    // proxy is bound AND that the named part was found inside the target.
+    void ReportTransProxyBinding(ObjectDir *dir) {
+        std::vector<RndTransProxy *> tps = CollectDeep<RndTransProxy>(dir);
+        int bound = 0, unbound = 0, boundPlayer = 0;
+        for (size_t i = 0; i < tps.size(); i++) {
+            bool b = tps[i]->TransParent() != nullptr;
+            if (b) {
+                bound++;
+                if (strstr(tps[i]->Name(), "player")) boundPlayer++;
+            } else {
+                unbound++;
+            }
+        }
+        printf("  --- TransProxy binding: %d bound / %d unbound of %d "
+               "(%d bound proxies are player anchors) ---\n",
+               bound, unbound, (int)tps.size(), boundPlayer);
+    }
+
+    // ★ X5: object counts BY CLASS over the whole tree. The charter's preferred
+    // scene oracle -- an absolute census that a coverage% or a mesh total
+    // cannot substitute for.
+    void ReportClassHistogram(ObjectDir *dir) {
+        std::vector<Hmx::Object *> all = CollectDeep<Hmx::Object>(dir);
+        std::map<std::string, int> hist;
+        for (size_t i = 0; i < all.size(); i++)
+            hist[all[i]->ClassName().Str()]++;
+        printf("  --- class histogram (%d object(s), %d class(es)) ---\n",
+               (int)all.size(), (int)hist.size());
+        for (std::map<std::string, int>::const_iterator it = hist.begin();
+             it != hist.end(); ++it)
+            printf("    %-28s %d\n", it->first.c_str(), it->second);
+    }
+
     // ★ X5: drive EVERY Character in the scene from the clip set the scene
     // itself ships.
     //
@@ -1602,6 +1645,46 @@ namespace {
         CellResult r;
         printf("\n=== %s ===\n", arkPath);
 
+        // ★ X5: the player0 lighting stand-in, loaded BEFORE the venue.
+        //
+        // world/shared/chars.milo ships player0..3 as BandCharacter objects.
+        // BandCharacter has no factory (its TU does not compile), so all four
+        // are factory misses, and the 49 `.lit`/`.tp` refs to `player0` dangle.
+        // X4d handed that off as "needs BandCharacter, i.e. the ScatterIncludes
+        // lane".
+        //
+        // There is a cheaper seam that does NOT need BandCharacter and does NOT
+        // repeat X4d's refuted base-class BIND. Binding BandCharacter to
+        // Character::NewObject would make the FACTORY mis-parse BandCharacter's
+        // payload as a Character -- exactly the rc=134 failure X4d measured for
+        // BandCamShot/CamShot. We do not touch the factory at all: the four
+        // misses stay misses and ReadDead still recovers them.
+        //
+        // Instead we exploit an ALREADY-PRESENT native fallback. ObjPtr's name
+        // resolution (obj/ObjPtr_p.h:246) walks up the parent dir chain and
+        // finally tries ObjectDir::Main(). So an ObjectDir NAMED `player0` and
+        // registered in Main() BEFORE the venue loads is found by the venue's
+        // own `.tp`/`.lit` refs as they load. A Character is an ObjectDir whose
+        // contents are exactly the `bone_*.mesh` transforms the `.tp`s look up
+        // via mPart, so a real shipped character serves.
+        //
+        // ⚠ STATED PLAINLY: this is a STAND-IN. It is a Character, not the
+        // asset's BandCharacter, so its wardrobe/BandCharDesc state is ours,
+        // not the asset's. It proves the anchor+lighting chain end to end and
+        // it does not substitute for landing the real TU.
+        if (gPlayerStandIn && !(ObjectDir *)gPlayerDir) {
+            FilePath pf(gPlayerStandIn);
+            gPlayerDir.LoadFile(pf, false, false, kLoadFront, false);
+            ObjectDir *pd = gPlayerDir;
+            if (pd) {
+                pd->SetName("player0", ObjectDir::Main());
+                printf("  player0 stand-in: '%s' [%s] registered in ObjectDir::Main()\n",
+                       gPlayerStandIn, pd->ClassName().Str());
+            } else {
+                printf("  ⚠ player0 stand-in: '%s' did NOT load\n", gPlayerStandIn);
+            }
+        }
+
         ObjDirPtr<ObjectDir> dirPtr;
         FilePath fp(arkPath);
         dirPtr.LoadFile(fp, false, false, kLoadFront, false);
@@ -1623,6 +1706,8 @@ namespace {
 
         if (gDumpTree) {
             ReportCharacterPlacement(dir);
+            ReportClassHistogram(dir);
+            ReportTransProxyBinding(dir);
             int dirs = 0, emptyProxies = 0, totalObjs = 0;
             printf("  --- dir tree census ---\n");
             DumpDirTree(dir, 0, dirs, emptyProxies, totalObjs);
@@ -1996,6 +2081,8 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--dump-tree") == 0) gDumpTree = true;
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
             gSceneClip = argv[++i];
+        else if (strcmp(argv[i], "--player-standin") == 0 && i + 1 < argc)
+            gPlayerStandIn = argv[++i];
         else if (strcmp(argv[i], "--dist-scale") == 0 && i + 1 < argc)
             gDistScale = (float)atof(argv[++i]);
         else if (strcmp(argv[i], "--azimuth") == 0 && i + 1 < argc)
