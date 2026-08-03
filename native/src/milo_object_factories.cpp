@@ -176,6 +176,7 @@
 #include "bandobj/BandCharacter.h"
 #include "bandobj/BandConfiguration.h"
 #include "bandobj/BandWardrobe.h"
+#include "bandobj/OutfitConfig.h"
 
 void RegisterMiloObjectFactories() {
     // The two roots. ObjectDir is what a milo whose dir class has no factory
@@ -464,35 +465,36 @@ void RegisterMiloObjectFactories() {
         // Init() additionally runs Register(), the two bandchardesc_* DataFuncs
         // and ReloadPrefabs -- all of which the bare factory line dropped.
         BandCharDesc::Init();
-        // ⛔ X9: OutfitConfig::Init() BELONGS HERE and CANNOT GO HERE YET.
+        // ★ X20: OutfitConfig IS NOW REGISTERED. Five lanes deferred this on a
+        // symbol bill nobody had derived. MEASURED cost: 48 undefined symbols,
+        // retired by two compile definitions on OutfitConfig.cpp (see
+        // native/CMakeLists.txt) plus native/src/x20_bandpatchmesh_link.cpp.
+        // Effect, measured in the same run: `Can't make OutfitConfig` 40 -> 0,
+        // and 40 OutfitConfig instances now exist in the graph, 4 of them the
+        // per-member `skin.cfg`.
         //
-        // It is the FIFTH instance of this file's documented drift and it gates
-        // the band's HEAD AND HANDS: with the band on its marks every member
-        // reports nine SHOWN-BUT-EMPTY meshes, and they are exactly
-        //   head.mesh eyes.mesh tongue.mesh upper/lowerteeth.mesh
-        //   hands_naked.mesh fingernails_resource.mesh eyebrows1_resource.mesh
-        //   <hair>_resource.mesh
-        // -- selected correctly by the recompose (Showing() true) but carrying
-        // zero vertices -- while the log emits `Can't make OutfitConfig` 40
-        // times, once per head/hands/hair/facehair/eyebrows resource milo,
-        // because OutfitConfig::Init() (bandobj/OutfitConfig.cpp:404-409) never
-        // ran its Register().
+        // ⚠ AND IT DID NOT TEXTURE THE BAND. The skin materials still carry
+        // dummy_torso/legs/feet.tex. Registration was NECESSARY AND IS NOT
+        // SUFFICIENT; the chain has further links (see
+        // docs/plans/x20-textures-2026-08-03.md §3). Do not read this call as
+        // having closed the texture question.
+        OutfitConfig::Init();
         //
-        // MEASURED: adding the call here does NOT link (rc=1). Referencing
-        // Init() retains OutfitConfig.cpp sections that need BandPatchMesh
-        // (::Render ::ReProject ::PreRender ::PostRender ::Compress
-        // ::ListDrawChildren, its copy-ctor/operator=/operator>>) plus
-        // gRB3OutfitComposeActive and the Symbol `recompose` -- none defined in
-        // this target.
+        // ⛔ X9's blocker note that stood here is RETRACTED, and the retraction
+        // is the useful part. It read: "BandPatchMesh.cpp is NOT compiled
+        // standalone. It is SCATTER-INCLUDED into world/LightPreset.cpp:1503 ...
+        // and LightPreset.cpp is not in rb3-render's source list". The premise
+        // was checked and is false: X20 measured 125 BandPatchMesh symbols
+        // ALREADY DEFINED in rb3-render's link, emitted from
+        // rndobj/TexBlender.cpp.o. TexBlender.cpp:383 scatter-includes
+        // AmbientOcclusion.cpp UNCONDITIONALLY, which chains
+        // AmbientOcclusion -> PropKeys -> rndobj/Utl -> UIListDir -> LightPreset
+        // -> BandPatchMesh. X9 was looking at math/Rot.cpp:431, which has the
+        // same edge but under `#if !HX_NATIVE`.
         //
-        // WHY: BandPatchMesh.cpp is NOT compiled standalone. It is
-        // SCATTER-INCLUDED into src/system/world/LightPreset.cpp:1503 -- an X360
-        // TU-PACKING decision made for objdiff SCORING -- and LightPreset.cpp is
-        // not in rb3-render's source list (only LightPresetManager.cpp is). So
-        // an X360 match-build packing choice silently decides what the NATIVE
-        // link contains. That is X7's "a stub's blast radius is the source list
-        // it sits in", inverted: here the TU you need sits in a list your target
-        // is not built from. Unblocking it is its own lane. — X9
+        // What was genuinely missing was never the TU: it was the nine ORDINARY
+        // members that src/system/bandobj/BandPatchMesh.cpp -- a 191-line
+        // PARTIAL port, as its own header states -- never wrote at all.
         BandWardrobe::Init();
         // BandCharacter IS an ObjectDir subclass (-> Character -> RndDir ->
         // ObjectDir), which is why its load failure was a desync rather than a

@@ -124,6 +124,7 @@
 #include "bandobj/BandCharacter.h"     // X14: identify the four band members by type
 #include "bandobj/BandConfiguration.h"  // X7: the band-slot placement census
 #include "bandobj/BandWardrobe.h"      // X8: the shipped enter_venue placement path
+#include "bandobj/OutfitConfig.h"     // X20: the skin-texture config census
 
 // X8: defined in native/src/{milo_link_stubs,m6_symbols}.cpp -- intern the
 // hand-defined Symbol dispatch-key globals after Symbol::Init().
@@ -147,6 +148,12 @@ void InternSymbolGlobals_M6Symbols();
 #include <sys/stat.h>
 #include <unistd.h>
 #include <vector>
+
+// X20: prints how many times the two UNPORTED BandPatchMesh members
+// (ReProject / PreRender, which need the patch-projection subsystem) actually
+// executed. Defined in native/src/x20_bandpatchmesh_link.cpp. Called next to
+// the skin-material census so the census's verdict carries its own qualifier.
+extern "C" void Rb3X20ReportBandPatchMeshStubs();
 
 extern void InitMakeString();
 // native/src/platform/File_Native.cpp
@@ -4143,6 +4150,81 @@ namespace {
             if (hits == 0)
                 printf("      ⚠ ZERO skin materials found — this census is VACUOUS "
                        "for this scene; do not read a verdict from it.\n");
+            // ★ X20: the census above is only trustworthy if nothing on the way
+            // to it ran a NO-OP in place of real engine behaviour. Registering
+            // OutfitConfig required two BandPatchMesh members whose bodies need
+            // the unported patch-PROJECTION subsystem; both are counted, and the
+            // counts print HERE, next to the verdict they qualify, rather than
+            // in a comment claiming they are never reached.
+            Rb3X20ReportBandPatchMeshStubs();
+
+            // ---- X20: does an OutfitConfig NAMED `skin.*` actually exist? ----
+            //
+            // X19 located the blocker as "OutfitConfig is not registered".  X20
+            // registered it (`Can't make OutfitConfig` 40 -> 0, MEASURED) and
+            // the skin materials DID NOT CHANGE.  ★ A control that misses its
+            // prediction is a finding: registration was necessary and is not
+            // sufficient, so the chain has a further link nobody had reached.
+            //
+            // BandCharacter::SyncOutfitConfig (BandCharacter.cpp:1630) only
+            // calls SetSkinTextures when the config's name parses to the Symbol
+            // `skin` (:1661).  So the two candidate causes are (a) no such
+            // config object is in the graph at all, or (b) it is there and
+            // nothing calls SyncOutfitConfig on it.  Enumerating separates them;
+            // counting could not.
+            {
+                // ★ POINTED AT CollectDeep, NOT ObjDirItr. My first spelling of
+                // this census used `ObjDirItr<OutfitConfig>(dir, true)` and
+                // reported 0 instances -- which would have "confirmed" the
+                // registration had failed, when it had not.  ObjDirItr does not
+                // follow ObjectDir::SubDirs(), and the band members' configs
+                // live in their own sub-dirs; this driver's own comment at
+                // main_render.cpp:2242 records the same blindness costing an
+                // earlier oracle a vacuous PASS.  The census REFUSED to be read
+                // (it prints VACUOUS at 0), which is the only reason the wrong
+                // number did not become a finding.
+                std::vector<OutfitConfig *> cfgs = CollectDeep<OutfitConfig>(dir);
+                int nCfg = 0, nSkin = 0;
+                for (size_t ci = 0; ci < cfgs.size(); ci++) {
+                    nCfg++;
+                    const char *nm = cfgs[ci]->Name();
+                    if (!nm) continue;
+                    if (!strncmp(nm, "skin.", 5)) nSkin++;
+                    if (nCfg <= 24)
+                        printf("    outfitcfg '%s'\n", nm);
+                }
+                printf("  === X20 OUTFITCONFIG CENSUS: %d instance(s) in the "
+                       "graph, %d named skin.* ===\n", nCfg, nSkin);
+                if (nCfg == 0)
+                    printf("      ⚠ ZERO OutfitConfig instances — this census is "
+                           "VACUOUS; do not read a verdict from it.\n");
+
+                // ---- X20: WHICH of the two call sites is blocked, and why ----
+                //
+                // SyncOutfitConfig has exactly two callers (grep over src/ +
+                // native/): BandCharacter::SetDeformation (:1738, over unk620)
+                // and BandCharacter::OnPostMerge (:2868, over unk630).
+                // SetDeformation's ENTIRE body -- the OutfitConfig loop included
+                // -- sits under `CharClip *clip = GetDeformClip(mGender); if
+                // (clip)` (:1675).  GetDeformClip (BandCharDesc.cpp:59) returns
+                // 0 whenever the file-static `gDeforms` is null, and gDeforms is
+                // only ever assigned in BandCharDesc::Init (:95) from the
+                // SystemConfig("objects","BandCharDesc") `deform_path` entry.
+                //
+                // This is a READ-ONLY query of that static; it places nothing and
+                // changes no state.
+                {
+                    CharClip *dm = BandCharDesc::GetDeformClip(Symbol("male"));
+                    CharClip *df = BandCharDesc::GetDeformClip(Symbol("female"));
+                    printf("  === X20 DEFORM-CLIP PROBE: male=%s female=%s ===\n",
+                           dm ? (dm->Name() ? dm->Name() : "(unnamed)") : "NULL",
+                           df ? (df->Name() ? df->Name() : "(unnamed)") : "NULL");
+                    if (!dm && !df)
+                        printf("      => SetDeformation() returns at its `if (clip)` "
+                               "guard, so its SyncOutfitConfig loop (BandCharacter."
+                               "cpp:1735-1739) CANNOT run. That is call site 1 of 2.\n");
+                }
+            }
         }
         if (r.meshes == 0) return r;
 
