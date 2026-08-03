@@ -115,35 +115,47 @@ BEGIN_COPYS(RndLine)
     UpdateInternal();
 END_COPYS
 
-BinStreamRev &operator>>(BinStreamRev &d, RndLine::Point &pt) {
-    d >> pt.point >> pt.color;
-    return d;
+BinStream &operator>>(BinStream &bs, RndLine::Point &pt) {
+    bs >> pt.point >> pt.color;
+    return bs;
 }
 
 INIT_REVS(4, 0)
 
+// RETAIL-MATCH: retail's compiled body never constructs a BinStreamRev "d"
+// local at all -- ReadEndian and the bool reads dispatch directly through
+// `bs` (verified: target asm for the bool loads is `bl ??5BinStream@@...`,
+// i.e. BinStream::operator>>(bool&), not a BinStreamRev override), and the
+// rev comparisons use the raw int. This mirrors rb3-Wii's hand-written form
+// (obj/ObjMacros.h dialect) rather than dc3's LOAD_REVS(bs)/`d`-decorator
+// idiom. Keep the BinStreamRev+ASSERT_REVS path for the native port only,
+// where it's real diagnostic behavior gated by HX_NATIVE and inert for the
+// match build (ASSERT_REVS expands to nothing when HX_NATIVE is undefined).
 BEGIN_LOADS(RndLine)
-    LOAD_REVS(bs)
+    int rev;
+    bs >> rev;
+#ifdef HX_NATIVE
+    BinStreamRev d(bs, rev);
     ASSERT_REVS(4, 0)
-    if (d.rev > 3) {
+#endif
+    if (rev > 3) {
         Hmx::Object::Load(bs);
     }
     RndDrawable::Load(bs);
-    if (d.rev < 3) {
+    if (rev < 3) {
         ObjPtrList<Hmx::Object> objList(this);
         int x;
         bs >> x >> objList;
     }
     RndTransformable::Load(bs);
     bs >> mMat;
-    d >> mPoints;
-    bs >> mWidth;
-    if (d.rev > 0) {
+    bs >> mPoints >> mWidth;
+    if (rev > 0) {
         bs >> mFoldAngle;
-        d >> mHasCaps;
+        bs >> mHasCaps;
     }
-    if (d.rev > 1) {
-        d >> mLinePairs;
+    if (rev > 1) {
+        bs >> mLinePairs;
     }
     UpdateInternal();
 END_LOADS
@@ -739,9 +751,8 @@ void RndLine::UpdateLine(const Transform &camXfm, float nearPlane) {
     numPts = (int)mPoints.size();
     for (i = 0; i < numPts; i++) {
         Point *pt = &mPoints[i];
-        float *viewPos = (float *)&pt->unk[0];
-        Multiply(pt->point, viewXfm, *(Vector3 *)viewPos);
-        if (viewPos[1] < clipDist) {
+        Multiply(pt->point, viewXfm, *(Vector3 *)&pt->unk[0]);
+        if (((float *)&pt->unk[0])[1] < clipDist) {
             lastClipped = i;
             if (firstClipped == -1) {
                 firstClipped = i;
@@ -756,53 +767,53 @@ void RndLine::UpdateLine(const Transform &camXfm, float nearPlane) {
         int endIdx;
         if (lastClipped != -1) {
             if (firstClipped > numPts - lastClipped - 1) {
+                Point *prevPt = &mPoints[firstClipped - 1];
                 Point *pt = &mPoints[firstClipped];
-                float *curView = (float *)&pt->unk[0];
-                float *prevView = (float *)&pt[-1].unk[0];
-                Interp(*(Vector3 *)prevView, *(Vector3 *)curView,
-                       (clipDist - prevView[1]) / (curView[1] - prevView[1]),
-                       *(Vector3 *)curView);
+                Interp(*(Vector3 *)&prevPt->unk[0], *(Vector3 *)&pt->unk[0],
+                       (clipDist - ((float *)&prevPt->unk[0])[1])
+                           / (((float *)&pt->unk[0])[1]
+                              - ((float *)&prevPt->unk[0])[1]),
+                       *(Vector3 *)&pt->unk[0]);
                 endIdx = firstClipped;
                 startIdx = 0;
             } else {
                 Point *pt = &mPoints[lastClipped];
-                float *curView = (float *)&pt->unk[0];
-                float *nextView = (float *)&pt[1].unk[0];
-                Interp(*(Vector3 *)curView, *(Vector3 *)nextView,
-                       (clipDist - curView[1]) / (nextView[1] - curView[1]),
-                       *(Vector3 *)curView);
-                endIdx = numPts - 1;
+                Point *nextPt = &mPoints[lastClipped + 1];
+                Interp(*(Vector3 *)&pt->unk[0], *(Vector3 *)&nextPt->unk[0],
+                       (clipDist - ((float *)&pt->unk[0])[1])
+                           / (((float *)&nextPt->unk[0])[1]
+                              - ((float *)&pt->unk[0])[1]),
+                       *(Vector3 *)&pt->unk[0]);
                 startIdx = lastClipped;
+                endIdx = numPts - 1;
             }
         } else {
-            endIdx = numPts - 1;
             startIdx = 0;
+            endIdx = numPts - 1;
         }
         UpdateLine(&mPoints[startIdx], &mPoints[endIdx]);
     } else {
         i = 0;
         while (i < numPts - 1) {
             Point *pt1 = &mPoints[i];
-            float dist1 = ((float *)&pt1->unk[0])[1];
-            Point *pt2 = pt1 + 1;
-            if (dist1 < clipDist) {
-                float dist2 = ((float *)&pt2->unk[0])[1];
-                if (dist2 < clipDist) {
+            Point *pt2 = &mPoints[i + 1];
+            if (((float *)&pt1->unk[0])[1] < clipDist) {
+                if (((float *)&pt2->unk[0])[1] < clipDist) {
                     pt2 = pt1;
                 } else {
-                    float d1 = ((float *)&pt1->unk[0])[1];
-                    Interp(*(Vector3 *)&pt1->unk[0], *(Vector3 *)&pt1[1].unk[0],
-                           (clipDist - d1) / (dist2 - d1),
+                    Interp(*(Vector3 *)&pt1->unk[0], *(Vector3 *)&pt2->unk[0],
+                           (clipDist - ((float *)&pt1->unk[0])[1])
+                               / (((float *)&pt2->unk[0])[1]
+                                  - ((float *)&pt1->unk[0])[1]),
                            *(Vector3 *)&pt1->unk[0]);
-                    pt2 = pt1 + 1;
                 }
             } else {
-                float dist2 = ((float *)&pt2->unk[0])[1];
-                if (dist2 < clipDist) {
+                if (((float *)&pt2->unk[0])[1] < clipDist) {
                     Interp(*(Vector3 *)&pt2->unk[0], *(Vector3 *)&pt1->unk[0],
-                           (clipDist - dist2) / (dist1 - dist2),
+                           (clipDist - ((float *)&pt2->unk[0])[1])
+                               / (((float *)&pt1->unk[0])[1]
+                                  - ((float *)&pt2->unk[0])[1]),
                            *(Vector3 *)&pt2->unk[0]);
-                    pt2 = pt1 + 1;
                 }
             }
             UpdateLinePair(pt1, pt2);

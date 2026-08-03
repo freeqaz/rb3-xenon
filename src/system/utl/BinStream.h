@@ -72,8 +72,13 @@ public:
     bool WaitUntilReady(int sleepMs = 0);
 #endif
 
-    void PushRev(int, Hmx::Object *);
-    int PopRev(Hmx::Object *);
+    // retail: neither takes an implicit BinStream `this` (call sites never load
+    // it into r3) -- the rev stack is a process-wide static (see BinStream.cpp),
+    // so these are compiled as static member functions, matching retail's ABI
+    // (verified: TrackPanelDirBase::PostLoad/PreLoad's PushRev/PopRev call sites
+    // pass ONLY (revs, obj) / (obj), never `bs` itself).
+    static void PushRev(int, Hmx::Object *);
+    static int PopRev(Hmx::Object *);
 
     MEM_OVERLOAD(BinStream, 0x55);
 

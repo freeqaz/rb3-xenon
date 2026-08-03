@@ -1,4 +1,9 @@
 // Ported from rb3-Wii src/system/bandobj/OutfitConfig.cpp (MWCC -> MSVC X360).
+// Lane NCCC f264: RB3_TU_OBJPTR_DEFER_OWNER -- reused (not a new gate) for the
+// ObjPtr<RndMat> copy ctor double-vtable-store fix; see obj/ObjPtr_p.h's copy
+// ctor section for why the same gate covers both the two-arg and copy ctors
+// without a new Object.h declaration. Must precede every include.
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "bandobj/OutfitConfig.h"
 #include "bandobj/BandCharacter.h"
 #include "bandobj/BandHeadShaper.h"
@@ -837,9 +842,7 @@ BEGIN_COPYS(OutfitConfig)
     COPY_SUPERCLASS(RndDrawable)
     CREATE_COPY(OutfitConfig)
     BEGIN_COPYING_MEMBERS
-        COPY_MEMBER(mColors[0])
-        COPY_MEMBER(mColors[1])
-        COPY_MEMBER(mColors[2])
+        for (int i = 0; i < 3; i++) mColors[i] = c->mColors[i];
         COPY_MEMBER(mMats)
         COPY_MEMBER(mMeshAO)
         COPY_MEMBER(mPiercings)

@@ -459,11 +459,13 @@ void UIManager::GotoScreenImpl(UIScreen *scr, bool b1, bool b2) {
         }
 #endif
 
-        // Log the transition for debugging
+// Retail RB3-360 EXCLUDES this trace too (dc3-decomp-only addition, absent
+// from both retail's Ghidra decomp at fn_828036E8 and rb3-Wii's dev build --
+// rb3-Wii goes straight from CancelTransition() to mWentBack = b2). Keep the
+// name computation for the native debug printf only.
+#ifdef HX_NATIVE
         const char *curName = mCurrentScreen ? mCurrentScreen->Name() : "<none>";
         const char *newName = scr ? scr->Name() : "<none>";
-        TheDebug << MakeString("transition from %s to %s\n", curName, newName);
-#ifdef HX_NATIVE
         if (DebugUIFlow()) printf("DC3 UI: Transition '%s' -> '%s' (wentBack=%d)\n", curName, newName, (int)b2);
 #endif
 

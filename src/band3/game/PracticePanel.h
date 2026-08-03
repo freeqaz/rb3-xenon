@@ -3,6 +3,7 @@
 #include "game/VocalGuidePitch.h"
 #include "synth/Faders.h"
 #include "ui/UIPanel.h"
+#include "utl/Symbol.h"
 
 class PracticePanel : public UIPanel {
 public:
@@ -55,14 +56,19 @@ public:
     // RB3-360 layout (retail ctor Function_82693E60 init map; byte offsets):
     // unk54 sits BETWEEN unk4c and mScorePart. NewObject()'s `li r3, 0x94`
     // (sizeof == 148, not 144) proved retail keeps one more byte-sized field
-    // than previously assumed here. rb3-Wii's dev build carries a 3-field
-    // "restart allowed" group (unk59 bool / unk5c int / unk60 bool) between
-    // unk58 and mMetronome, but reinstating all three overshoots (+12, not
-    // +4 -- verified by hand-computing the padded layout). Reinstating just
-    // the first (unk59) accounts for the whole delta: the field itself (1B)
-    // plus the alignment padding it forces before the pointer-aligned
-    // mMetronome (3B) == +4 total. NewObject/Handle/MarkGemsAsProcessed/
-    // SetPitchShiftRatio/ToggleGuidePart all verified 100% with this layout.
+    // than previously assumed here.
+    //
+    // mMetronome/unk64 SWAP (2026-08-03, lane NCCC-0803-b2bb/f15): the
+    // constructor's off:+4 diff on the `new Metronome()` store in Enter()
+    // (target `stw r3, 0x60, r30` vs our `stw r3, 0x64, r30`, a CLEAN 1:1
+    // pairing, not LCS misalignment) proves mMetronome is at 0x60, not 0x64.
+    // Offset 0x64 is a DIFFERENT field: the ctor loads a value from a fixed
+    // global (`lbl_82C71838`) and stores it there instead of a literal 0;
+    // that global is `gNullStr` (confirmed via Enter()'s own tail code,
+    // which loads the same global immediately before `bl ??0Symbol@@...`
+    // as the `const char*` ctor arg). `Symbol()`'s default ctor is exactly
+    // `mStr(gNullStr)` (see utl/Symbol.h) -- a single 4-byte pointer field,
+    // so 0x64 is a default-constructed `Symbol`, not a scratch int.
     bool mInVocalMode; // 0x3c
     Fader *mFader; // 0x40
     float unk40; // 0x44
@@ -75,8 +81,8 @@ public:
     bool unk56; // 0x5d
     bool unk57; // 0x5e
     bool unk58; // 0x5f
-    bool unk59; // 0x60 (rb3-Wii "restart allowed" group, first field only)
-    Metronome *mMetronome; // 0x64 (was 0x60; padded up by unk59)
+    Metronome *mMetronome; // 0x60 (was mistakenly placed at 0x64; see note above)
+    Symbol unk64; // 0x64 (default-constructed; mStr==gNullStr)
 };
 
 extern PracticePanel *ThePracticePanel;

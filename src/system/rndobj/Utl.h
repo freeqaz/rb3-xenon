@@ -97,6 +97,9 @@ const char *CacheResource(const char *, const Hmx::Object *);
 int GenerationCount(RndTransformable *, RndTransformable *);
 bool GroupedUnder(RndGroup *, Hmx::Object *);
 
+RndAnimatable *AnimController(Hmx::Object *);
+void AddMotionSphere(RndTransformable *, Sphere &);
+
 void EndianSwapBitmap(RndBitmap &bmap);
 void SwapDxtEndianness(RndBitmap *bmap);
 

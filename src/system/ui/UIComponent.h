@@ -91,6 +91,7 @@ public:
     class ObjectDir *ResourceDir();
     void ResourceFileUpdated(bool);
     void UpdateResource();
+    void UpdateMeshes(State);
     void MockSelect();
 
     static void Init();

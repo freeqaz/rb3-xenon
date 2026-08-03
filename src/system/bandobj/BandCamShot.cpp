@@ -14,20 +14,16 @@
 #include "utl/Std.h"
 #include "world/EventAnim.h"
 
-// Family-A counterexample: retail compiled BandCamShot::Handle WITH the
-// MessageTimer instrumentation (frame 0xc0; small functions ICF-fold into its
-// timer-bearing prologue — fn_822A4664 et al. carry a 0xc0 subi). The global
-// match-build BEGIN_HANDLERS is timer-off (most Family-A is), so restore the
-// timer arm for THIS TU only, the inverse of GuitarController.
-#ifndef HX_NATIVE
-#undef BEGIN_HANDLERS
-#define BEGIN_HANDLERS(objType)                                                          \
-    DataNode objType::Handle(DataArray *_msg, bool _warn) {                              \
-        Symbol sym = _msg->Sym(1);                                                       \
-        MessageTimer timer(                                                              \
-            (MessageTimer::Active()) ? static_cast<Hmx::Object *>(this) : 0, sym         \
-        );
-#endif
+// NCCC-0803-b2bb/f220/sonnet: the prior "Family-A counterexample" override
+// below (re-enabling MessageTimer instrumentation for BandCamShot::Handle
+// only) is REFUTED by objdiff — the retail target has ZERO Timer/MessageTimer
+// call sites anywhere in this function's disassembly (confirmed via
+// run_diff_inspect mode=mismatches: rows 9-32 are a 20-instruction insert-only
+// block — DataNode::Sym, MessageTimer::sActive, Timer ctor/Restart/SplitMs,
+// AddTime@MessageTimer — present ONLY in our compiled Base, absent from
+// Target; "Function Call Diff" lists Restart/SplitMs/AddTime/Sym/Timer ctor
+// under "Base only", never under "Target only"). Reverting to the plain
+// (timer-off) BEGIN_HANDLERS to match retail.
 #include "utl/Symbols.h"
 #include "utl/Messages.h"
 #include "utl/Messages2.h"

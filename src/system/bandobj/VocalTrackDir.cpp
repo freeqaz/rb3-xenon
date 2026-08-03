@@ -657,10 +657,10 @@ void VocalTrackDir::SetMicDisplayLabel(Symbol s) {
 }
 
 void VocalTrackDir::SetMissingMicsForDisplay(bool b1, bool b2, bool b3) {
+    int bit0 = b1 ? 1 : 0;
     int bit1 = b2 ? 2 : 0;
     int bit2 = b3 ? 4 : 0;
-    int frame = (int)b1 + bit1;
-    frame += bit2;
+    int frame = bit1 + bit2 + bit0;
     mVocalMics->Find<RndAnimatable>("arrow_configuration.anim", true)
         ->SetFrame(frame, 1.0f);
 }
@@ -759,6 +759,10 @@ void VocalTrackDir::Reset() {
 
 void VocalTrackDir::Retract(bool b) {
     BandTrack::Retract(b);
+    // Retail-only: mVocalistVolume is absent from the rb3-Wii dev oracle, so the
+    // Wii source omits this line. Retail stores 0 to (mVocalistVolume->mPtr)+0xa8,
+    // i.e. RndDir's RndDrawable::mShowing. (this-bias for this override is 0x1dc.)
+    mVocalistVolume->SetShowing(false);
     if (b) {
         mPitchArrow1->ClearParticles();
         mPitchArrow2->ClearParticles();
@@ -883,11 +887,11 @@ void VocalTrackDir::ConfigPanels() {
     unk42c = lyrictrans ? lyrictrans->LocalXfm().v.x : mTrackRightX;
     if (ObjectDir::sMainDir->FindObject("milo", false)) {
         if (mPitchArrow1)
-            mPitchArrow1->SetLocalPos(0, 0, 0.25f * (mPitchTopZ * 3.0f + mPitchBottomZ));
+            mPitchArrow1->SetLocalPos(Vector3(0, 0, 0.25f * (mPitchTopZ * 3.0f + mPitchBottomZ)));
         if (mPitchArrow2)
-            mPitchArrow2->SetLocalPos(0, 0, 0.5f * (mPitchBottomZ + mPitchTopZ));
+            mPitchArrow2->SetLocalPos(Vector3(0, 0, 0.5f * (mPitchBottomZ + mPitchTopZ)));
         if (mPitchArrow3)
-            mPitchArrow3->SetLocalPos(0, 0, 0.25f * (mPitchBottomZ * 3.0f + mPitchTopZ));
+            mPitchArrow3->SetLocalPos(Vector3(0, 0, 0.25f * (mPitchBottomZ * 3.0f + mPitchTopZ)));
     }
 }
 

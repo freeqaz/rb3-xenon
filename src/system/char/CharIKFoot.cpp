@@ -1,3 +1,16 @@
+// Retail X360: CharIKFoot::CharIKFoot() inlines its three owner-only
+// ObjPtr(this) members (mFootBone, mData, mMe) as raw {vtable, mOwner,
+// mObject=0} stores rather than calling the out-of-line ObjPtr ctor
+// (confirmed via objdiff: target has no `bl ??0?$ObjPtr@...@@` at any of
+// the three member-init points, base did). See the per-TU lever doc on
+// RB3_OBJPTR_INLINE_OWNER_CTOR in obj/Object.h.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+// Residual after the above: retail spills &mFoo to a frame temp (0x54(r31))
+// BEFORE materializing the ObjPtr vtable address, our empty-body inline let
+// the scheduler hoist the vtable `lis` first. RB3_OBJPTR_INLINE_OWNER_CTOR_EH
+// keeps the (dead, folds-away) AddRef arm so the front end opens an EH
+// cleanup region that pins the &mFoo store live, matching retail's order.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH
 #include "char/CharIKFoot.h"
 #include "CharIKHand.h"
 #include "char/Character.h"
@@ -9,9 +22,8 @@
 
 CharIKFoot::CharIKFoot()
     : mFootBone(this), mFootFsmState(0), mData(this), mDataIndex(0), mMe(this) {
-    auto& _ref0 = mFootBone;
-    _ref0 = Hmx::Object::New<RndTransformable>();
-    _ref0->DirtyLocalXfm().Reset();
+    mFootBone = Hmx::Object::New<RndTransformable>();
+    mFootBone->DirtyLocalXfm().Reset();
 }
 
 void CharIKFoot::SetName(const char *cc, ObjectDir *dir) {

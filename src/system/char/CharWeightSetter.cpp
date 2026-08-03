@@ -1,3 +1,11 @@
+// Retail inlines the owner-only ObjPtr ctor for mBase/mDriver here (see
+// run_diff_inspect: idx 48/59 show TGT `stw ..., 0x24/0x30, r30` vs our
+// `bl ??0?$ObjPtr@VCharWeightable/VCharDriver@@...`). Take retail's exact
+// owner-only ctor SHAPE (base ctor stores only owner, derived body assigns
+// mObject after the derived vptr store) per the DEFER_OBJECT lever in
+// obj/Object.h -- same combo CharClipSet.cpp uses for mPreviewChar.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "char/CharWeightSetter.h"
 #include "char/CharWeightable.h"
 #include "obj/Object.h"

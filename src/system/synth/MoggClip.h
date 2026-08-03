@@ -34,7 +34,7 @@ public:
     virtual void SynthPoll();
     // Playable
     virtual void Play(float);
-    virtual void Stop(bool);
+    virtual void Stop();
     virtual void Pause(bool);
     virtual bool DonePlaying();
     virtual void SetVolume(float);

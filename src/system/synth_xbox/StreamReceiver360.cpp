@@ -18,14 +18,11 @@ StreamReceiver360::StreamReceiver360(int sampleRate, int numBuffers, bool slip)
       mSampleRate(sampleRate), mNumBufs(numBuffers), mVolume(1.0f), mPan(0.0f), mSpeed(1.0f),
       mFxSend(0), mTagged(false) {
     mStreamBuf = (unsigned char *)_MemAllocTemp(
-        numBuffers << 14, "StreamReceiver.cpp", 0x33, "StreamBuffer", 0);
+        numBuffers * 0xC000, "StreamReceiver.cpp", 0x33, "StreamBuffer", 0);
 
-    Voice *mem = (Voice *)PoolAlloc(
-        0x7c, 0x7c, "e:\\lazer_build_gmc1\\system\\src\\synth360\\Voice.h", 0x28, "Voice"
-    );
-    mVoice = mem ? new (mem) Voice(false, 1, false) : 0;
+    mVoice = new Voice(false, 1, false);
 
-    mVoice->SetData(mStreamBuf, numBuffers << 14, 0);
+    mVoice->SetData(mStreamBuf, numBuffers * 0xC000, 0);
     mVoice->SetLoopRegion(0, -1);
     mVoice->SetSampleRate(mSampleRate);
 
@@ -69,13 +66,14 @@ void StreamReceiver360::SetADSR(const ADSRImpl &adsr) {
 
 void StreamReceiver360::Tag() {
     mTagged = true;
+    Voice **pVoice = &mVoice;
     if (mSlipVoice) {
         int val;
         Voice *target;
         if (mVoice != 0) {
             mSlipVoice->mTagState = 1;
             val = 2;
-            target = mVoice;
+            target = *pVoice;
         } else {
             if (mSlipVoice == 0) return;
             val = 3;
@@ -84,8 +82,8 @@ void StreamReceiver360::Tag() {
         target->mTagState = val;
         return;
     }
-    if (mVoice == 0) return;
-    mVoice->mTagState = 4;
+    if (*pVoice == 0) return;
+    (*pVoice)->mTagState = 4;
 }
 
 void StreamReceiver360::Poll() {

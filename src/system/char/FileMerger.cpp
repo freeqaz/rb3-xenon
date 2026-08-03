@@ -1,3 +1,24 @@
+// This TU #includes CharIKHand.cpp below (unity-build merge), so ObjPtr_p.h's
+// per-site owner-only ctor gate must be set HERE, before the first transitive
+// include of obj/Object.h (line 1 -> FileMerger.h -> Object.h) -- the template
+// body in ObjPtr_p.h is textually fixed at that first inclusion, so a #define
+// placed later in this file (e.g. at the top of the merged CharIKHand.cpp
+// section) has no effect on this TU's compile. CharIKHand::CharIKHand()
+// constructs mHand(this)/mFinger(this)/mElbowCollide(this) as ObjPtr<T>, and
+// retail's target asm never calls the two-arg ObjPtr ctor for any of the
+// three (Function Call Diff showed all 3 `bl ...ObjPtr...ctor` as base-only) --
+// it inlines three raw stores per member in the order {mOwner, vptr-lis,
+// mObject=0, vptr-addi, vptr-store}, exactly the
+// RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT shape documented at its definition
+// site in obj/Object.h. Scope check: the only other ObjPtr(this) site pulled
+// into this merged TU is RndMorph::RndMorph()'s mTarget(this) (via the
+// `#include "rndobj/Morph.cpp"` further down) -- but that ctor is not pinned
+// by any .text range under the FileMerger.cpp splits.txt entry (it's scored
+// under the separate standalone `default/Morph` unit instead), so it is not
+// diff-scored here and this gate cannot regress it.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+
 #include "char/FileMerger.h"
 #include "char/FileMergerOrganizer.h"
 #include "CharClipGroup.h"

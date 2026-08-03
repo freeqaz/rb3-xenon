@@ -99,8 +99,10 @@ void TourProgress::SaveFixed(FixedSizeSaveableStream &stream) const {
     FixedSizeSaveable::SaveSymbolID(stream, m_symTourDesc);
     stream << mNumCompletedGigs;
     FixedSizeSaveable::SaveSymbolID(stream, mCurrentQuest);
-    for (int i = 0; i < 3; i++)
-        FixedSizeSaveable::SaveFixedSymbol(stream, mQuestFilters[i]);
+    for (int i = 0; i < 3; i++) {
+        Symbol sym(gNullStr);
+        FixedSizeSaveable::SaveFixedSymbol(stream, sym);
+    }
     FixedSizeSaveable::SaveStd(stream, unk70, 10, 4);
 }
 

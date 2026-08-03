@@ -40,8 +40,7 @@ public:
                 sect.unkc = GetMidiReader()->GetTempoMap()->TickToTime(tick);
                 sect.unk8 = 0;
                 sect.unk14 = true;
-                int m, b, t;
-                GetMidiReader()->GetMeasureMap()->TickToMeasureBeatTick(tick, m, b, t);
+                GetMidiReader()->GetMeasureMap()->TickToMeasureBeatTick(tick, sect.unk18, sect.unk1c, sect.unk20);
                 mSectionList->push_back(sect);
             }
         }

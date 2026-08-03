@@ -13,13 +13,13 @@ HeadsetXferEffect::HeadsetXferEffect() {
 }
 
 void HeadsetXferEffect::DoProcess(
-    const HeadsetXferEffectParams &, float *__restrict buffer, unsigned int frames,
+    const HeadsetXferEffectParams &, float *__restrict buffer, unsigned int,
     unsigned int
 ) {
     // Capture the incoming mono frames into the transfer ring buffer read by
-    // HeadsetPlaybackEffect. (Retail HeadsetXferEffect unit is not yet ported.)
-    int idx = mState;
-    int page = (idx % 2) * 256;
-    memcpy((float *)mBuffer + page, buffer, frames * sizeof(float));
-    mState = idx + 1;
+    // HeadsetPlaybackEffect. Retail always copies a full page (256 floats),
+    // ignoring the frames parameter.
+    int page = (mState % 2) * 256;
+    memcpy((float *)mBuffer + page, buffer, 256 * sizeof(float));
+    mState = mState + 1;
 }

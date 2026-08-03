@@ -37,7 +37,23 @@ public:
 #endif
 
     NEW_OBJ(StreamRecorder)
-    OBJ_MEM_OVERLOAD(0x24)
+    // Retail RB3-360 StreamRecorder::NewObject (va 0x823134f8) shows the
+    // plain out-of-line global operator new pattern (`li r3,size; bl <thunk>`,
+    // no StaticClassName() call, no inline 2-arg MemAlloc) -- NOT the
+    // OBJ_MEM_OVERLOAD exception form documented in MemMgr.h (that form is
+    // proven live for e.g. RndDir). dc3-decomp's newer StreamRecorder.h does
+    // carry OBJ_MEM_OVERLOAD(0x24), but the RB3 retail bytes disagree; per
+    // CLAUDE.md's dc3-is-newer caveat, trust retail bytes over the dc3 port.
+    // Bare removal isn't enough: without an own override StreamRecorder
+    // silently inherits RndDrawable's OBJ_MEM_OVERLOAD(0x25) (verified: the
+    // rebuilt asm then called ?StaticClassName@RndDrawable@@... instead of
+    // StreamRecorder's -- same wrong shape, different class name). Shadow it
+    // with the plain class-agnostic NEW_OVERLOAD/DELETE_OVERLOAD pair
+    // (already used by other RndDrawable-derived classes, e.g.
+    // bandobj/OutfitConfig.h) so the call site is the simple noinline
+    // ICF-foldable thunk retail's bytes show.
+    NEW_OVERLOAD;
+    DELETE_OVERLOAD;
 
 protected:
     StreamRecorder();

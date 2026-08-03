@@ -883,29 +883,25 @@ void Spotlight::BuildNGShaft(Spotlight::BeamDef &def) {
 }
 
 void Spotlight::Poll() {
-    if (!TheLoadMgr.EditMode()) {
-        if (!Showing())
-            return;
-        if (mIntensity == 0)
-            return;
-    }
+    if (!Showing())
+        return;
+    if (mIntensity == 0)
+        return;
     Hmx::Matrix3 m;
     if (!mUpdating) {
         RndTransformable *target = nullptr;
         if (mTargetLoaded)
             target = mTarget;
         if (!target
-            || (!TheLoadMgr.EditMode() && !mSnapToTarget
+            || (!mSnapToTarget
                 && target->WorldXfm().v == mLastTargetPos)) {
             if (!target && !mAnimateOrientationFromPreset && !DoFloorSpot()) {
                 UpdateTransforms();
-            } else {
-                CheckFloorSpotTransform();
-                mOrientMatrix = WorldXfm().m;
-                UpdateSlaves();
+                return;
             }
-            Normalize(mLocalXfm.m, m);
-            SetLocalRot(m);
+            CheckFloorSpotTransform();
+            mOrientMatrix = WorldXfm().m;
+            UpdateSlaves();
             return;
         }
         mLastTargetPos = target->WorldXfm().v;
@@ -918,7 +914,6 @@ void Spotlight::Poll() {
     } else {
         MakeRotMatrix(mDampQuat, m);
     }
-    Normalize(m, m);
     SetLocalRot(m);
     mOrientMatrix = m;
     UpdateTransforms();
@@ -1393,9 +1388,9 @@ void Spotlight::BuildNGSheet(BeamDef &def) {
 
     def.mBeam = Hmx::Object::New<RndMesh>();
     int numSections = def.mNumSections;
-    std::vector<RndMesh::Face> &faces = def.mBeam->Faces();
-
     RndMesh::VertVector &verts = def.mBeam->Verts();
+
+    std::vector<RndMesh::Face> &faces = def.mBeam->Faces();
     if (numSections <= 1) numSections = 5;
     int numSegments = def.mNumSegments;
     if (numSegments <= 2) numSegments = 10;
@@ -1417,8 +1412,8 @@ void Spotlight::BuildNGSheet(BeamDef &def) {
     int iVert = 0;
     for (int row = 0; row < numRows; row++) {
         float t = (float)row / (float)numSections;
-        float oneMinusT = 1.0f - t;
         for (int col = 0; col < numCols; col++) {
+            float oneMinusT = 1.0f - t;
             float segFrac = (float)col / (float)numSegments * 2.0f - 1.0f;
             float xTop = segFrac * topRadius;
             float xBot = segFrac * bottomRadius;
@@ -1431,24 +1426,18 @@ void Spotlight::BuildNGSheet(BeamDef &def) {
             );
 
             Vector3 &p = verts[iVert].pos;
-            float px = p.x, py = p.y, pz = p.z;
-            p.x = (pz * orientMtx.z.x + (px * orientMtx.x.x + py * orientMtx.y.x));
-            p.z = py * orientMtx.y.z + px * orientMtx.x.z + pz * orientMtx.z.z;
-            p.y = py * orientMtx.y.y + px * orientMtx.x.y + pz * orientMtx.z.y;
+            float px = p.x, pz = p.z, py = p.y;
+            p.z = pz * orientMtx.z.z + px * orientMtx.x.z + py * orientMtx.y.z;
+            p.y = pz * orientMtx.z.y + px * orientMtx.x.y + py * orientMtx.y.y;
+            p.x = pz * orientMtx.z.x + px * orientMtx.x.x + py * orientMtx.y.x;
 
             verts[iVert].norm.Set(0.0f, 0.0f, 1.0f);
 
             Vector3 &n = verts[iVert].norm;
-            float nx = n.x, ny = n.y, nz = n.z;
-            n.x = nx * orientMtx.x.x + nz * orientMtx.z.x + ny * orientMtx.y.x;
-            n.z = ny * orientMtx.y.z + nx * orientMtx.x.z + nz * orientMtx.z.z;
-            n.y = ny * orientMtx.y.y + nx * orientMtx.x.y + nz * orientMtx.z.y;
+            Multiply(n, orientMtx, n);
 
-            verts[iVert].color.red = oneMinusT;
-            verts[iVert].color.green = oneMinusT;
-            verts[iVert].color.blue = oneMinusT;
-            verts[iVert].color.alpha = oneMinusT;
-            verts[iVert].tex.Set(absSegFrac, t);
+            verts[iVert].color.Set(oneMinusT, oneMinusT, oneMinusT, oneMinusT);
+            verts[iVert].tex.Set(std::fabs(segFrac), t);
             iVert++;
         }
     }
@@ -1458,18 +1447,28 @@ void Spotlight::BuildNGSheet(BeamDef &def) {
     int rowStart = 0;
     for (int row = 0; row < numSections; row++) {
         for (int col = 0; col < numSegments; col++) {
-            short base = (short)(rowStart + col);
-            short next = base + 1;
-            short baseNext = base + (short)numCols;
-            short nextNext = baseNext + 1;
-            if ((iFace & 2) == 0) {
-                faces[iFace].Set(base, next, baseNext);
-                faces[iFace + 1].Set(baseNext, next, nextNext);
+            unsigned short base = (unsigned short)(rowStart + col);
+            int next = base + 1;
+            int baseNext = base + numCols;
+            int nextNext = baseNext + 1;
+            if (iFace & 2) {
+                faces[iFace].Set(
+                    (unsigned short)baseNext, (unsigned short)base, (unsigned short)nextNext
+                );
+                iFace++;
+                faces[iFace].Set(
+                    (unsigned short)nextNext, (unsigned short)base, (unsigned short)next
+                );
             } else {
-                faces[iFace].Set(baseNext, base, nextNext);
-                faces[iFace + 1].Set(nextNext, base, next);
+                faces[iFace].Set(
+                    (unsigned short)base, (unsigned short)next, (unsigned short)baseNext
+                );
+                iFace++;
+                faces[iFace].Set(
+                    (unsigned short)baseNext, (unsigned short)next, (unsigned short)nextNext
+                );
             }
-            iFace += 2;
+            iFace++;
         }
         rowStart += numCols;
     }

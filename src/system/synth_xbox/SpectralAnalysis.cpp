@@ -19,17 +19,15 @@ void SpectralAnalysis::Analyze(const float *in, float *out) {
 
     // Magnitude spectrum back into mData0.
     unsigned int bins = (unsigned int)mHalfPlusOne;
+    float *im = &mData5[0];
     if (bins != 0) {
         float *mag = &mData0[0];
-        float *im = &mData5[0];
         float *re = &mData4[0];
         long reBias = (char *)re - (char *)im;
         long magBias = (char *)mag - (char *)im;
         do {
-            float acc = im[0] * im[0];
             float rp = *(float *)((char *)im + reBias);
-            acc = rp * rp + acc;
-            *(float *)((char *)im + magBias) = sqrtf(acc);
+            *(float *)((char *)im + magBias) = sqrtf(rp * rp + im[0] * im[0]);
             im += 1;
         } while (--bins != 0);
     }
@@ -100,12 +98,8 @@ void SpectralAnalysis::SetMode(unsigned int windowSize, unsigned int hop) {
     }
 
     // Grow the FFT size (power of two) until it spans the window plus hop.
-    if (windowSize + hop > 8) {
-        unsigned int doubled;
-        do {
-            doubled = (unsigned int)mFftSize * 2;
-            mFftSize = doubled;
-        } while (doubled < (unsigned int)mWindowSize + hop);
+    while ((unsigned int)mFftSize < (unsigned int)mWindowSize + hop) {
+        mFftSize = (unsigned int)mFftSize * 2;
     }
 
     mHalfPlusOne = ((unsigned int)mFftSize >> 1) + 1;
@@ -113,17 +107,20 @@ void SpectralAnalysis::SetMode(unsigned int windowSize, unsigned int hop) {
     mFft2.SetMode((unsigned int)mFftSize >> 1);
 
     mData0.assign(mFftSize, 0.0f);
-    mData1.resize(((unsigned int)mFftSize >> 1) + 2, 0.0f);
+    mData1.resize((unsigned int)mFftSize + 2, 0.0f);
     mData4.resize(((unsigned int)mFftSize >> 1) + 1, 0.0f);
     mData5.resize(((unsigned int)mFftSize >> 1) + 1, 0.0f);
     mSinTable.resize((unsigned int)mFftSize >> 1, 0.0f);
     mCosTable.resize((unsigned int)mFftSize >> 1, 0.0f);
 
     // Precompute the analysis-window sin/cos table over [0, pi).
+    static const double kPi = 3.141592653589793;
     for (unsigned int i = 0; i < ((unsigned int)mFftSize >> 1); i++) {
-        double angle = (i * 3.141592653589793) / (double)((unsigned int)mFftSize >> 1);
-        mSinTable[i] = (float)sin(angle);
-        mCosTable[i] = (float)cos(angle);
+        double angle = (i * kPi) / (double)((unsigned int)mFftSize >> 1);
+        double s = sin(angle);
+        mSinTable[i] = (float)s;
+        double c = cos(angle);
+        mCosTable[i] = (float)c;
     }
 }
 

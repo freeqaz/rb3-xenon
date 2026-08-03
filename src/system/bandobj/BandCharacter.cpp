@@ -1507,6 +1507,30 @@ void BandCharacter::DrawLodOrShadowMode(int i, DrawMode mode) {
     }
 }
 
+// Retail X360 (0x82280f98): the two SetEnv(nullptr) calls below inline
+// ObjRefConcrete<RndEnviron,ObjectDir>::SetObjConcrete fully -- RndEnviron
+// reaches Hmx::Object through single (non-virtual) inheritance, so per the
+// SetObjConcrete-inlining trait documented in obj/ObjPtr_p.h it should always
+// be cheap enough to inline. Our compiler's per-callsite /Ob2 cost heuristic
+// declines here even though the source is verified byte-identical to the
+// rb3-Wii oracle (BandCharacter.cpp:3547) and the callee body matches the
+// established retail non-native SetObjConcrete pattern. TU-local explicit
+// specialization forces the same body retail already emits inline; scoped to
+// this .cpp only (not declared in the shared header) so it cannot affect any
+// other translation unit's SetObjConcrete<RndEnviron,ObjectDir> calls.
+#ifndef HX_NATIVE
+template <>
+__forceinline void ObjRefConcrete<RndEnviron, ObjectDir>::SetObjConcrete(RndEnviron *obj) {
+    if (obj != mObject) {
+        if (mObject)
+            mObject->Release(this);
+        mObject = obj;
+        if (mObject)
+            mObject->AddRef(this);
+    }
+}
+#endif
+
 void BandCharacter::DrawLodOrShadow(int i, Character::DrawMode mode) {
     RndEnvironTracker tracker(mEnv, &WorldXfm().v);
     mInstDir->SetEnv(nullptr);
@@ -1772,6 +1796,20 @@ void BandCharacter::SetDeformation() {
     }
 }
 
+// Stands in for a CharServoBone regulate-waypoint accessor that retail's
+// codegen proves existed (the counterpart of SetRegulateWaypoint, which both
+// oracles have). Retail loads the waypoint as `mr r10,r3 ; lwz r4,0xa4(r10)` --
+// i.e. it keeps the UNADJUSTED CharServoBone* and folds mRegulate@0x9c plus
+// ObjRefConcrete::mObject@+8 into one displacement. Reading `servo->mRegulate`
+// directly instead inlines ObjPtr's `operator T*()` with this = servo+0x9c, and
+// because the load gets scheduled away from that addi the fold never happens:
+// `addi r10,r3,0x9c ; lwz r4,0x8(r10)`. Going through a function whose
+// parameter is the unadjusted servo restores retail's shape exactly.
+// Neither oracle declares this accessor -- MWCC folds both forms identically,
+// so only MSVC's address-fold behaviour reveals it. Promoting it to a real
+// inline member of CharServoBone would be more faithful but is a header edit.
+static Waypoint *RegulateOf(CharServoBone *s) { return s->mRegulate; }
+
 void BandCharacter::PlayGroup(
     const char *cc, bool b, int i, float f, TaskUnits u, Symbol s
 ) {
@@ -1781,17 +1819,17 @@ void BandCharacter::PlayGroup(
     }
     if (*cc) {
         bool b528 = mForceNextGroup;
-        bool b3 = false;
+        bool b3 = b | b528;
         unk5a3 = false;
         mForceNextGroup = false;
-        b3 = (b | b528) || f != 0;
-        CharClipDriver *driver = SetState(cc, mPlayFlags, i, b3, true);
+        CharClipDriver *driver =
+            SetState(cc, mPlayFlags, i, b3 || f != 0, true);
         if (driver) {
             mFrozen = false;
             driver->SetBeatOffset(f, u, s);
         }
         if (BoneServo()->mRegulate && !mTeleported) {
-            Teleport(BoneServo()->mRegulate);
+            Teleport(RegulateOf(BoneServo()));
         }
     }
 }
@@ -1914,16 +1952,14 @@ void BandCharacter::SetDircuts() {
         }
         if (idx == maxNum) {
             const char *cstr = str.c_str();
-            FilePath fp;
-            fp.Set(FilePath::Root().c_str(), cstr);
+            FilePath fp(cstr);
             FileMerger::Merger &cur = mFileMerger->mMergers[slots[i]];
             cur.mSelected = fp;
             cur.mForceReload = false;
         }
     }
     for (; i < maxNum; i++) {
-        FilePath fp;
-        fp.Set(FilePath::Root().c_str(), "");
+        FilePath fp("");
         FileMerger::Merger &cur = mFileMerger->mMergers[slots[i]];
         cur.mSelected = fp;
         cur.mForceReload = false;
@@ -2913,7 +2949,7 @@ DataNode BandCharacter::OnPostMerge(DataArray *da) {
     }
     RndTransformable *bone = Find<RndTransformable>("bone_guitar_lh_mod.mesh", false);
     if (bone)
-        bone->ResetLocalXfm();
+        bone->DirtyLocalXfm().Reset();
     unk680 = mInstDir->Find<RndMesh>("mic_stand.mesh", false);
     unk68c = Find<RndMesh>("drum_L-stick.mesh", false);
     unk698 = Find<RndMesh>("drum_R-stick.mesh", false);
@@ -2943,9 +2979,8 @@ void BandCharacter::SaveBoneAndChildren(RndTransformable *bone) {
 DataNode BandCharacter::OnPortraitBegin(DataArray *da) {
     EnableBlinks(false, true);
     BoneState state;
-    state.mBone = this;
     state.mXfm = mLocalXfm;
-    unk6e4.push_front(state);
+    unk6e4.push_back(state);
     RndTransformable *bone = Find<RndTransformable>("bone_pelvis.mesh", true);
     SaveBoneAndChildren(bone);
     strcpy(unk6f4, mGroupName);

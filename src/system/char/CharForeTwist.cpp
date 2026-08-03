@@ -70,16 +70,22 @@ void CharForeTwist::Poll() {
         return;
     const Transform &parentxfm = mHand->TransParent()->WorldXfm();
     const Transform &handxfm = mHand->WorldXfm();
-    float clamped = Clamp(-1.0f, 1.0f, Dot(parentxfm.m.y, handxfm.m.z));
+    const Vector3 &py = parentxfm.m.y;
+    const Vector3 &hz = handxfm.m.z;
+    float clamped = Clamp(-1.0f, 1.0f, Dot(py, hz));
     Vector3 v98;
-    Cross(parentxfm.m.y, handxfm.m.z, v98);
+    Cross(py, hz, v98);
     float clamp2 = Clamp(-1.0f, 1.0f, Dot(parentxfm.m.x, v98));
     float newbias = mBias * DEG2RAD;
     float tan2res = std::atan2(clamp2, clamped);
     float angle = LimitAng(mOffset * DEG2RAD + tan2res + newbias);
     float finalfloat = angle - newbias;
+#ifdef HX_NATIVE
+    // Guard against NaN propagation into MakeRotMatrixX (native-only safety net;
+    // retail X360 has no such check per the target disassembly).
     if (IsNaN(finalfloat))
         return;
+#endif
     Hmx::Matrix3 m58;
     MakeRotMatrixX(finalfloat * 0.33333f, m58);
     RndTransformable *twistparent = mTwist2->TransParent();

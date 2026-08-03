@@ -342,6 +342,15 @@ __declspec(noinline) int _outline_GetSize(GemStatus* _obj) {
 }
 
 
+// PROBE: retail materialises `&mStats` (`subi r11, r30, 0x2f0`) before the
+// flags&8 branch and then never uses it -- the signature of an inlined callee
+// that takes mStats by reference. A plain `Stats &stats = mStats;` local was
+// measured Delta-0 (MSVC folds it away), so test the by-reference-argument form.
+static void _stats_inc_up(Stats &s) { s.mUpstrumCount++; }
+static void _stats_inc_down(Stats &s) { s.mDownstrumCount++; }
+static void _stats_inc_0x30(Stats &s) { s.m0x30++; }
+static void _gs_inc_hits(GemStatus &g) { g.mHits++; }
+
 #pragma push
 #pragma pool_data off
 void GemPlayer::Hit(
@@ -353,12 +362,18 @@ void GemPlayer::Hit(
             return;
         HandleFirstGemAfterRollback(gem_id);
         InputReceived();
-        if (gem_id == _outline_GetSize(mGemStatus) - 1) {
+        if (gem_id == mGemStatus->GetSize() - 1) {
             unk3e1 = 1;
         }
         const GameGem &gem = TheSongDB->GetGem(mTrackNum, gem_id);
         unsigned int gemSlots = gem.mSlots;
         float delta = gem.mMs - (ms + mSyncOffset);
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        // Delta-tracking debug console command ("enable_deltas"/"print_deltas").
+        // Absent from retail (0 hits for "enable_deltas"/"print_deltas" strings
+        // in orig/45410914/{default.xex,band.exe}); retail's Hit() goes straight
+        // from computing `delta` to the unk1fe/unk1fd/unk1ff writes below with no
+        // sTracker load/branch at all (confirmed via Ghidra decomp @0x826c76b0).
         if (sTracker) {
             int cur = sTracker->mCur;
             if (cur < 1000) {
@@ -369,11 +384,15 @@ void GemPlayer::Hit(
                 sTracker->mCur = 1001;
             }
         }
+#endif
         unk1fe = 0;
         unk1fd = 0;
         unk1ff = 0;
         int _tmp1 = gem.GetTick();
-        int ignoreAt = IgnoreGemsAt(_tmp1);
+        // bool, not int: IgnoreGemsAt returns bool, and retail tests this with an
+        // UNSIGNED compare (`cmplwi cr6, r21, 0x0`) at the `if (!ignoreAt)` site.
+        // Widening to int makes MSVC emit a signed `cmpwi` there.
+        bool ignoreAt = IgnoreGemsAt(_tmp1);
         if (ignoreAt) {
             if (mTrack) {
                 const GameGem &gem2 = TheSongDB->GetGem(mTrackNum, gem_id);
@@ -394,19 +413,19 @@ void GemPlayer::Hit(
                 && mUser->GetTrackType() != kTrackRealBass) {
                 unsigned int remaining = gemSlots;
                 int slot = 0;
-                while (remaining) {
+                while ((int)remaining) {
                     unsigned int bit = 1U << slot;
                     if (remaining & bit) {
                         remaining -= bit;
                         FretButtonDown(slot, ms);
                         RemoveFretReleasesInSlot(slot);
-                        float msPlusOffset = ms + mSyncOffset;
                         float endMs;
                         if (gem.IgnoreDuration()) {
                             endMs = 200.0f;
                         } else {
                             endMs = (float)gem.mDurationMs;
                         }
+                        float msPlusOffset = ms + mSyncOffset;
                         UpcomingFretRelease release;
                         release.unk0 = slot;
                         release.unk4 = msPlusOffset + endMs;
@@ -427,9 +446,9 @@ void GemPlayer::Hit(
                 mTrack->Hit(ms, gem_id, hitFlags);
             }
             if ((int)flags & 8) {
-                mStats.mUpstrumCount++;
+                _stats_inc_up(mStats);
             } else {
-                mStats.mDownstrumCount++;
+                _stats_inc_down(mStats);
             }
             if (!mTrack->Lefty()) {
                 mStats.m0x34 = 1;
@@ -437,45 +456,43 @@ void GemPlayer::Hit(
         }
         if (gemSlots != gem_hit_slots) {
             mStatCollector.PassGem(ms, gem, gem_id);
-            if (gem_id != -1) {
-                mGemStatus->mGems[gem_id] |= 2;
-            }
-            if (gem_id != -1) {
-                mGemStatus->mGems[gem_id] |= 4;
-            }
+            mGemStatus->Set0x2(gem_id);
+            mGemStatus->Set0x4(gem_id);
         } else {
             mStatCollector.HitGem(ms, gem, gem_id, gem_hit_slots, flags);
-            if (gem_id != -1) {
-                mGemStatus->mGems[gem_id] |= 1;
-            }
-            mGemStatus->mHits++;
+            mGemStatus->SetHit(gem_id);
+            _gs_inc_hits(*mGemStatus);
         }
-        if (((int)flags & 2) && gem_id != -1) {
-            mGemStatus->mGems[gem_id] |= 0x80;
+        if ((int)flags & 2) {
+            mGemStatus->SetSolo(gem_id);
         }
         UpdateSectionStats();
-        if (((int)flags & 4) && gem_id != -1) {
-            mGemStatus->mGems[gem_id] |= 0x20;
+        if ((int)flags & 4) {
+            mGemStatus->Set0x20(gem_id);
         }
     block_96:
         unk3c0 = 0;
         SetRemoteAnnoyingMode(false);
-#ifdef HX_NATIVE
-        // msg[3] below writes mData->Node(5) (Message::operator[](i) == Node(i+2)),
-        // but the 3-arg ctor only allocates DataArray(5) (nodes 0-4). On PPC the
-        // out-of-bounds Node(5) read/write is benign; native's bounds-checked
-        // DataArray::Node OSFatals ("Array doesn't have node 5"). Allocate one more
-        // arg slot (DataArray(6)) so Node(5) is in-bounds.
-        static Message msg("hit", 0, 0, 0, 0.0f);
-#else
+        // Message args are indexed from ZERO: operator[](i) == Node(i+2), and the
+        // 3-DataNode ctor fills Node(2)/Node(3)/Node(4) with arg1/arg2/arg3, so
+        // arg1 == msg[0]. Verified against retail: this function's three
+        // assignments target mNodes+0x10/0x18/0x20 (Node(2)/Node(3)/Node(4)) and
+        // the retail 3-DataNode ctor @0x8232BFB0 writes exactly those nodes.
+        // Indexing from 1 wrote Node(5) -- one past DataArray(5) -- a real
+        // out-of-bounds store. The old `#ifdef HX_NATIVE` 4-arg ctor here was
+        // MASKING that overrun (native's bounds-checked DataArray::Node was
+        // correctly OSFatal-ing on it), so it is no longer needed.
         static Message msg("hit", 0, 0, 0.0f);
-#endif
-        float numTotalF = (float)GameGem::CountBitsInSlotType(gemSlots);
+        // Declaration order matters: retail calls CountBitsInSlotType(gem_hit_slots)
+        // FIRST (its result lands in f30) and gemSlots second (f0), then divides
+        // `fdivs f30, f30, f0`. Declaring numTotalF first inverts both the call
+        // order and the divide operands.
         float numHitF = (float)GameGem::CountBitsInSlotType(gem_hit_slots);
+        float numTotalF = (float)GameGem::CountBitsInSlotType(gemSlots);
         float ratio = numHitF / numTotalF;
-        msg[1] = gem_id;
-        msg[2] = (int)flags;
-        msg[3] = ratio;
+        msg[0] = gem_id;
+        msg[1] = (int)flags;
+        msg[2] = ratio;
         Export(msg, true);
         if (mIsInCoda) {
             if (gemSlots == gem_hit_slots) {
@@ -491,7 +508,7 @@ void GemPlayer::Hit(
                 BuildHitStreak(gem_id, delta);
                 EndMissStreak();
                 if ((int)flags & 8) {
-                    mStats.m0x30++;
+                    _stats_inc_0x30(mStats);
                 }
                 Player::Hit();
                 AddHeadPoints(ms, gem_id, numGemSlots, flags);
@@ -499,41 +516,41 @@ void GemPlayer::Hit(
             if (gem.IgnoreDuration()) {
                 UpdateCrowdMeter((float)numGemSlots / (float)gem.NumSlots(), gem_id);
             } else {
+                // Assign the ctor's temporary DIRECTLY (no named local): retail
+                // feeds the ctor return value into the copy (`mr r4, r3`), which
+                // a named `tmp` defeats -- MSVC then re-materialises the temp's
+                // address (`addi r4, r31, 0xe0`) instead.
                 HeldNote &note = GetUnusedHeldNote();
-                HeldNote tmp(
+                note = HeldNote(
                     (TrackType)mUser->GetTrackType(), gem_id, gem, gem_hit_slots
                 );
-                note = tmp;
             }
-            HandleCommonPhraseNote(gem.NumSlots() == numGemSlots, gem_id);
+            HandleCommonPhraseNote(numGemSlots == gem.NumSlots(), gem_id);
             if (mBehavior->GetHasSolos()) {
                 HandleSoloGem(gem_id, true, ms, ((unsigned int)flags >> 1) & 1);
             }
             if (TheGame->mProperties.mInDrumTrainer) {
-#ifdef HX_NATIVE
-                // dtmsg[1] writes Node(3) but the 1-arg ctor only allocates
-                // DataArray(3) (nodes 0-2); add one arg slot so Node(3) is in-bounds
-                // (same Message::operator[](i)==Node(i+2) overrun as "hit"/"send_hit").
-                static Message dtmsg("drum_trainer_unmute", 0, 0);
-#else
+                // Zero-based (see the "hit" Message above): the single ctor arg is
+                // dtmsg[0] == Node(2). Retail writes mNodes+0x10 here.
                 static Message dtmsg("drum_trainer_unmute", 0);
-#endif
-                dtmsg[1] = gem.GetSlot();
+                dtmsg[0] = gem.GetSlot();
                 Export(dtmsg, false);
             }
         }
         if (IsLocal()) {
-#ifdef HX_NATIVE
-            // msg[3] writes Node(5) but the 3-arg ctor only allocates DataArray(5)
-            // (nodes 0-4); add one arg slot so Node(5) is in-bounds (see the "hit"
-            // Message above — same Message::operator[](i)==Node(i+2) overrun).
-            static Message msg("send_hit", 0, 0, 0, 0.0f);
-#else
-            static Message msg("send_hit", 0, 0, 0.0f);
-#endif
-            msg[1] = mStats.GetCurrentStreak();
-            msg[2] = (int)mScore;
-            msg[3] = mCrowd->GetDisplayValue();
+            // NOTE: third DataNode arg is an INT 0 here, unlike the "hit" Message
+            // above which uses a FLOAT 0.0f. Verified against retail asm
+            // @0x826C7FBC: the ctor's three DataNode temps (r5=0xa0, r6=0x68,
+            // r7=0x78) are ALL `stw r25` (value 0) + `stw r25` (type word 0 ==
+            // int), whereas "hit" @0x826C7B30 stores `lfs f0, lbl_82000D78` +
+            // `stw r20` (float type word) into its r7 temp. Writing 0.0f here
+            // makes the 0.0f literal live across both static-init sites, so MSVC
+            // CSEs it into a 4th callee-saved FPR (f29) and emits
+            // __savefpr_28/__restfpr_28 instead of retail's 3 explicit stfd.
+            static Message msg("send_hit", 0, 0, 0);
+            msg[0] = mStats.GetCurrentStreak();
+            msg[1] = (int)mScore;
+            msg[2] = mCrowd->GetDisplayValue();
             HandleType(msg);
         }
         unk1fe = 1;
@@ -1083,12 +1100,11 @@ bool GemPlayer::DoneWithSong() const {
     }
 }
 
+void CheckControllerReenable(BeatMatchController *ctrl);
+
 void GemPlayer::Poll(float ms, const SongPos &pos) {
     BeatMatchController *ctrl = mController;
-    if (ctrl->IsDisabled() && ctrl->unk25) {
-        ctrl->Disable(false);
-        ctrl->unk25 = false;
-    }
+    CheckControllerReenable(ctrl);
     CheckFretReleases(ms);
     if (!mGameOver) {
         bool hasHeld = false;
@@ -1132,10 +1148,7 @@ void GemPlayer::Poll(float ms, const SongPos &pos) {
             beatPhase = beat - (float)std::floor(beat);
 
             bool deploying = IsDeployingBandEnergy();
-            bool soloFx = false;
-            if (unk315 && !unk314) {
-                soloFx = true;
-            }
+            bool soloFx = unk315 && !unk314;
 
             if (force_guitar_fx.Int(0) > 0) {
                 soloFx = true;
@@ -1146,14 +1159,16 @@ void GemPlayer::Poll(float ms, const SongPos &pos) {
             // (Wii-only mFxPos->FXCore cache removed — retail Xbox has no unk3a0)
 
             if (TheGame->mProperties.mEnableWhammy) {
-                int fxBank = 4;
-                if (mFxPos >= 0) {
-                    fxBank = mFxPos;
-                }
                 hasHeld = HasAnyActiveHeldNotes();
-                float whammyBar = mController->GetWhammyBar();
                 mGuitarFx->Poll(
-                    fxBank, deploying, soloFx, tempo, beatPhase, whammyBar, hasHeld, unk33d
+                    mFxPos,
+                    deploying,
+                    soloFx,
+                    tempo,
+                    beatPhase,
+                    mController->GetWhammyBar(),
+                    hasHeld,
+                    unk33d
                 );
             }
 
@@ -1167,10 +1182,7 @@ void GemPlayer::Poll(float ms, const SongPos &pos) {
             beatPhase = beat - (float)std::floor(beat);
 
             bool deploying = IsDeployingBandEnergy();
-            bool soloFx = false;
-            if (unk315 && !unk314) {
-                soloFx = true;
-            }
+            bool soloFx = unk315 && !unk314;
 
             if (force_keys_fx.Int(0) > 0) {
                 soloFx = true;
@@ -1481,25 +1493,24 @@ void GemPlayer::AddCodaPoints() {
 
 void GemPlayer::LocalSetEnabledState(EnabledState state, int i2, BandUser *user, bool b4) {
     Player::LocalSetEnabledState(state, i2, user, b4);
-    if (state - 3 > 1U) {
-        if (state != kPlayerEnabled) {
-            if (state != kPlayerDisabled)
+    if (state != kPlayerEnabled) {
+        if (state != kPlayerDisabled) {
+            if (state <= kPlayerBeingSaved)
                 return;
-        } else {
-            mMatcher->Enable(true);
-            mCommonPhraseCapturer->Enabled(this, mTrackNum, i2, true);
-            InputReceived();
-            SetAutoOn(false);
-            return;
+            if (state > kPlayerDisconnected)
+                return;
         }
+    } else {
+        mMatcher->Enable(true);
+        mCommonPhraseCapturer->Enabled(this, mTrackNum, i2, true);
+        InputReceived();
+        SetAutoOn(false);
+        return;
     }
     if (TheGamePanel->GetState() != UIPanel::kUnloaded) {
         mMatcher->Enable(false);
         mCommonPhraseCapturer->Enabled(this, mTrackNum, i2, false);
-        bool b1 = false;
-        if (unk315 && !unk314) {
-            b1 = true;
-        }
+        bool b1 = unk315 ? !unk314 : false;
         if (b1)
             unk314 = true;
         if (state == kPlayerDroppingIn) {
@@ -1964,20 +1975,12 @@ void GemPlayer::UpdateCrowdMeter(float noteScore, int gem_id) {
         if (mDrumSlotWeights) {
             const GameGem &gem = TheSongDB->GetGem(mTrackNum, gem_id);
             int slot = gem.GetSlot();
+            int gemTick = gem.GetTick();
             const TickedInfoCollection<String> &submixes =
                 TheSongDB->GetData()->GetSubmixes(mTrackNum);
             const char *mappingStr = mDrumSlotWeightMapping.Str();
-            if (submixes.mInfos.size() != 0) {
-                int gemTick = gem.GetTick();
-                const TickedInfo<String> *it = std::upper_bound(
-                    submixes.mInfos.begin(),
-                    submixes.mInfos.end(),
-                    gemTick,
-                    TickedInfoCollection<String>::Cmp
-                );
-                if (it != submixes.mInfos.begin()) {
-                    --it;
-                }
+            if (submixes.mInfos.begin() != submixes.mInfos.end()) {
+                const TickedInfo<String> *it = submixes.IteratorAt(gemTick, false);
                 mappingStr = it->mInfo.c_str();
             }
             const DataArray *arr = mDrumSlotWeights->FindArray(Symbol(mappingStr), false);
@@ -2013,6 +2016,7 @@ void GemPlayer::UpdateCrowdMeter(float noteScore, int gem_id) {
         CheckCrowdFailure();
     }
     if (unk1ff) {
+        static Message send_update_crowd_msg("send_update_crowd");
         HandleType(send_update_crowd_msg);
     }
 }
@@ -2392,26 +2396,25 @@ int GemPlayer::GetSoloData(int tick, float &pct, float &solo_pct, int &numGems) 
     unk316 = true;
     int hit;
     int solo;
-    const GameGemList *gemList = TheSongDB->GetGemList(mTrackNum);
-    int idx = gemList->ClosestMarkerIdxAtOrAfterTick(startTick);
+    int idx = TheSongDB->GetGemList(mTrackNum)->ClosestMarkerIdxAtOrAfterTick(startTick);
     hit = 0;
     solo = 0;
     if (idx != -1) {
         const std::vector<GameGem> &gems = TheSongDB->GetGems(mTrackNum);
-        for (; (unsigned int)idx < gems.size(); idx++) {
-            if (gems[idx].GetTick() >= endTick) break;
+        for (unsigned int i = idx; i < gems.size(); i++) {
+            if (gems[i].GetTick() >= endTick) break;
             if (unk316) {
-                if (!mGemStatus->GetEncountered(idx)) {
+                if (!mGemStatus->GetEncountered(i)) {
                     unk316 = false;
                 }
             }
             numGems++;
-            if (!mGemStatus->GetHit(idx)) {
-                if (!mGemStatus->GetIgnored(idx))
+            if (!mGemStatus->GetHit(i)) {
+                if (!mGemStatus->GetIgnored(i))
                     continue;
             }
             hit++;
-            if (mGemStatus->GetSolo(idx)) {
+            if (mGemStatus->GetSolo(i)) {
                 solo++;
             }
         }
@@ -2431,10 +2434,10 @@ void GemPlayer::HandleCommonPhraseNote(int hit, int gem_id) {
         mCommonPhraseCapturer->HandlePhraseNote(this, mTrackNum, gem_id, hit != 0);
         if (hit != 0) {
             int phraseId = TheSongDB->GetPhraseID(mTrackNum, gem_id);
-            if (phraseId != -1 && GetBandTrack() != nullptr) {
-                int trackIdx;
+            if (phraseId != -1) {
                 EndingBonus *bonus = GetTrackPanelDir()->GetEndingBonus();
-                trackIdx = GetBandTrack()->mTrackIdx;
+                BandTrack *bandTrack = GetBandTrack();
+                int trackIdx = bandTrack->mTrackIdx;
                 bonus->SetProgress(trackIdx, GetCommonPhraseFraction(phraseId));
             }
         }
@@ -2635,12 +2638,13 @@ bool GemPlayer::GetCodaFreestyleExtents(Extent &extent) const {
     if (codaStartTick == -1)
         return false;
     DrumFillInfo *fillInfo = TheSongDB->GetData()->GetDrumFillInfo(mTrackNum);
-    if (fillInfo->mFills.empty())
+    std::vector<FillExtent> &fills = fillInfo->mFills;
+    if (fills.empty())
         return false;
-    int lastStart = fillInfo->mFills.back().start;
+    int lastStart = fills.back().start;
     if (lastStart >= codaStartTick) {
-        extent.unk0 = lastStart;
-        extent.unk4 = fillInfo->mFills.back().end;
+        extent.unk0 = fills.back().start;
+        extent.unk4 = fills.back().end;
         return true;
     }
     return false;

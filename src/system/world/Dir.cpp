@@ -68,6 +68,7 @@ BEGIN_HANDLERS(WorldDir)
     }
 #ifdef WORLDDIR_DC3_TAIL
 #endif
+    HANDLE_MEMBER_PTR((&mCameraManager))
     HANDLE_MEMBER_PTR((&mLightPresetMgr))
     HANDLE_SUPERCLASS(PanelDir)
 END_HANDLERS
@@ -460,17 +461,15 @@ void WorldDir::PostLoad(BinStream &bs) {
 
 void WorldDir::SyncObjects() {
     PanelDir::SyncObjects();
-    if (IsSubDir())
-        return;
-    mCameraManager.SyncObjects(this);
+    mCameraManager.SyncObjects();
+    mLightPresetMgr.SyncObjects();
+#ifdef WORLDDIR_DC3_TAIL
+    m3DSoundMgr.SyncObjects();
+#endif
     mCrowds.clear();
     for (ObjDirItr<WorldCrowd> it(this, true); it != nullptr; ++it) {
         mCrowds.push_back(it);
     }
-#ifdef WORLDDIR_DC3_TAIL
-    m3DSoundMgr.SyncObjects();
-#endif
-    mLightPresetMgr.SyncObjects();
 #ifdef WORLDDIR_DC3_TAIL
     if (!mPhysicsMgr) {
         if (CreatePhysicsManager) {

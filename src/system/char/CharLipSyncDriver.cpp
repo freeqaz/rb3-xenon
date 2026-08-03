@@ -1,3 +1,10 @@
+// laneNCCC-f330: retail's ctor inlines the owner-only ObjPtr ctor (with the
+// AddRef arm retained -> EH cleanup slot) for the MAJORITY of members here
+// (mClips/mSongOwner/mBones/mOverrideOptions/mAlternateDriver), while the
+// CharClip/CharLipSync-typed members (mLipSync/mBlinkClip/mTestClip/
+// mOverrideClip) stay out-of-line -- see the explicit 2-arg respelling below.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH
 #include "char/CharLipSyncDriver.h"
 #include "char/Char.h"
 #include "char/CharFaceServo.h"
@@ -25,9 +32,9 @@ float Mod(float a, float b) {
 }
 
 CharLipSyncDriver::CharLipSyncDriver()
-    : mLipSync(this), mClips(this), mBlinkClip(this), mSongOwner(this), mSongOffset(0),
-      mLoop(0), mMainPlayback(0), mBones(this), mTestClip(this), mTestWeight(1),
-      mOverrideClip(this), mOverrideWeight(0), mOverrideOptions(this),
+    : mLipSync(this, nullptr), mClips(this), mBlinkClip(this, nullptr), mSongOwner(this),
+      mSongOffset(0), mLoop(0), mMainPlayback(0), mBones(this), mTestClip(this, nullptr),
+      mTestWeight(1), mOverrideClip(this, nullptr), mOverrideWeight(0), mOverrideOptions(this),
       mApplyOverrideAdditively(0), mAlternateDriver(this) {}
 
 CharLipSyncDriver::~CharLipSyncDriver() { RELEASE(mMainPlayback); }

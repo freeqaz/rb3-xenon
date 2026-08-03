@@ -145,7 +145,7 @@ int BinStream::PopRev(Hmx::Object *o) {
     MILO_ASSERT(sRevStack, 0x34);
 #ifdef HX_NATIVE
     if (sRevStack->empty()) {
-        fprintf(stderr, "PopRev ABORT: empty stack for %s '%s' (stream=%p)\n", o->ClassName(), o->Name(), (void*)this);
+        fprintf(stderr, "PopRev ABORT: empty stack for %s '%s'\n", o->ClassName(), o->Name());
         abort();
     }
 #endif

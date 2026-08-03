@@ -10,6 +10,7 @@
 
 Hmx::Object *ObjectStage::sOwner;
 Message PropKeys::sInterpMessage(gNullStr, 0, 0, 0, 0, 0);
+int PropKeys::sPropKeysLoadRev = 0;
 
 float CalcSpline(float t, float *const p) {
     float p1 = p[1];
@@ -66,7 +67,7 @@ void PropKeys::Save(BinStream &bs) {
 }
 
 void PropKeys::Load(BinStreamRev &d) {
-    if (d.rev < 7)
+    if (sPropKeysLoadRev < 7)
         MILO_FAIL("PropKeys::Load should not be called before version 7");
     else {
         int iVal;
@@ -75,20 +76,20 @@ void PropKeys::Load(BinStreamRev &d) {
         d >> mTarget;
         d >> mProp;
 
-        if (d.rev >= 8)
+        if (sPropKeysLoadRev >= 8)
             d >> iVal;
         else if (mKeysType == kObject || mKeysType == kBool)
             iVal = 0;
         else
             iVal = 1;
 
-        if (d.rev < 11 && iVal == 4) {
+        if (sPropKeysLoadRev < 11 && iVal == 4) {
             mPropExceptionID = kMacro;
             mInterpolation = kStep;
         } else
             mInterpolation = (Interpolation)iVal;
 
-        if (d.rev > 9) {
+        if (sPropKeysLoadRev > 9) {
             Symbol sym;
             d >> sym;
             if (!sym.Null()) {
@@ -96,12 +97,12 @@ void PropKeys::Load(BinStreamRev &d) {
             }
         }
 
-        if (d.rev > 10) {
+        if (sPropKeysLoadRev > 10) {
             d >> iVal;
             mPropExceptionID = (ExceptionID)iVal;
         }
 
-        if (d.rev > 0xC) {
+        if (sPropKeysLoadRev > 0xC) {
             d >> unk34;
         }
         SetPropExceptionID();

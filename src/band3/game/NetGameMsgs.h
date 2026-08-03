@@ -80,7 +80,9 @@ class PlayerStatsMsg : public NetMessage {
 public:
     PlayerStatsMsg() {}
     PlayerStatsMsg(User *, int, const Stats &);
-    virtual ~PlayerStatsMsg() {}
+    // NOTE(NCCC-0803-b2bb/f368): destructor deliberately NOT declared, see
+    // SyncStore.h's SyncObjMsg for the mechanism (explicit `virtual ~Foo(){}`
+    // emits a redundant vptr store at dtor entry retail doesn't have).
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();

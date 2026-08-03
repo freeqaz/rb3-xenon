@@ -253,9 +253,9 @@ int SongDB::GetNumUnisonPhrases(int x) const {
     int num = 0;
     int phraseCount = pa->NumPhrases();
     int tracks = TheGame->GetScoringTracks();
-    int mask = 1 << x;
     for (int i = 0; i < phraseCount; i++) {
         int phraseTracks = pa->GetPhraseTracks(i);
+        int mask = 1 << x;
         if (phraseTracks & mask && (tracks & phraseTracks - mask)) {
             num++;
         }

@@ -394,10 +394,9 @@ void BandWardrobe::ClearDircuts() {
 }
 
 bool BandWardrobe::AddDircut(BandCamShot *shot) {
-    if (shot)
-        return DircutRecurse(shot, GetShotFlags(shot));
-    else
+    if (!shot)
         return true;
+    return DircutRecurse(shot, GetShotFlags(shot));
 }
 
 void BandWardrobe::SendMessage(Symbol s1, Symbol s2, bool b) {
@@ -1303,6 +1302,8 @@ DataNode BandWardrobe::OnExtraLoaded(DataArray *da) {
 }
 
 DataNode BandWardrobe::OnSelectExtras(DataArray *da) {
+    static Symbol extras("extras");
+    static Symbol proxies("proxies");
     FileMerger *merger = da->Obj<FileMerger>(2);
     if (unk20 != merger) {
         ObjectDir *mergerdir = merger->Dir();

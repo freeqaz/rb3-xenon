@@ -18,6 +18,49 @@ static struct {
 #define gAltRev gRevs.altRev
 #define gRev gRevs.rev
 
+// RB3-360 retail OPEN-CODES the inlined ObjRefConcrete<MoggClip,ObjectDir>::
+// SetObjConcrete(0) at every `mMogg = 0` site in this TU, rather than emitting
+// the `bl`.  Verified two ways on ?Poll@CrowdAudio@@UAAXXZ: the target asm at
+// idx 68-74 is `lwz r3,0x1c(r30) / addi r29,r30,0x14 / cmplwi / beq / mr r4,r29
+// / bl <Hmx::Object::Release> / stw r28,8(r29)`, and retail's Ghidra decomp
+// reads `if (*(this+0x1c)) { Function_8275B378(*(this+0x1c), this+0x14);
+// *(this+0x1c) = 0; }`.  That is exactly SetObjConcrete's retail body with the
+// `obj != mObject` guard folded against the null argument and the trailing
+// AddRef arm folded away.
+//
+// This is the per-T1 inline-policy split documented at length in
+// obj/ObjPtr_p.h (see ObjRefVirtualBaseObject): MSVC /O1 /Ob2 inlines
+// SetObjConcrete(0) for a T1 that reaches Hmx::Object WITHOUT a virtual base --
+// MoggClip qualifies -- and declines for the virtual-base instantiations, which
+// would first need the vbase displacement lookup.  Our compiler declines in
+// BOTH cases, so the non-virtual arm has to be written out at the call site,
+// the same way ObjRefConcrete::Load's no-dir path already does it.
+//
+// mObject is protected in ObjRefConcrete and that class lives in the
+// codegen-sacred obj/Object.h, so access is taken through a layout-identical
+// derived type: it declares no members and is never instantiated, so no vtable,
+// RTTI or dtor COMDAT is emitted for it (confirmed against the unit's symbol
+// list after the change).
+//
+// HX_NATIVE keeps the plain assignment: native's SetObjConcrete additionally
+// handles InDeleteObjects()/sRingsDirty via SafeReleaseFromRing, which
+// open-coding would silently skip.
+namespace {
+    struct MoggPtrRef : public ObjPtr<MoggClip> {
+        static __forceinline void Clear(ObjPtr<MoggClip> &p) {
+#ifdef HX_NATIVE
+            p = nullptr;
+#else
+            MoggPtrRef &r = static_cast<MoggPtrRef &>(p);
+            if (r.mObject) {
+                r.mObject->Release(&r);
+                r.mObject = 0;
+            }
+#endif
+        }
+    };
+}
+
 CrowdAudio *TheCrowdAudio;
 
 void CrowdAudio::Init() { Register(); }
@@ -98,8 +141,8 @@ void CrowdAudio::Poll() {
         if (secs > mLoopChangeTime)
             PlayExcitementLoop();
         if (mOldMogg && mReleaseFader->mVal == -96.0f) {
-            mOldMogg->Stop(false);
-            mOldMogg = 0;
+            mOldMogg->MoggClip::Stop();
+            MoggPtrRef::Clear(mOldMogg);
         }
         if (mCurrentMogg && mCurrentMogg->IsStreaming() && mOldMogg
             && !mReleaseFader->IsFading()) {
@@ -108,8 +151,8 @@ void CrowdAudio::Poll() {
             mReleaseFader->DoFade(-96.0f, mReleaseTime);
         }
         if (mFadingMogg && mOtherBankFader->mVal == -96.0f) {
-            mFadingMogg->Stop(false);
-            mFadingMogg = 0;
+            mFadingMogg->MoggClip::Stop();
+            MoggPtrRef::Clear(mFadingMogg);
         }
         MaybeClap(othersecs);
     }
@@ -120,8 +163,8 @@ void CrowdAudio::SetPaused(bool b) {
         if (mState < 4) {
             mPaused = b;
             if (mPaused && mOldMogg) {
-                mOldMogg->Stop(false);
-                mOldMogg = 0;
+                mOldMogg->MoggClip::Stop();
+                MoggPtrRef::Clear(mOldMogg);
             }
             if (mCurrentMogg)
                 mCurrentMogg->MoggClip::Pause(mPaused);
@@ -192,7 +235,7 @@ bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
                 b2 = true;
             } else {
                 if (mCurrentMogg)
-                    mCurrentMogg->Stop(false);
+                    mCurrentMogg->MoggClip::Stop();
                 mOldMogg->RemoveFader(mReleaseFader);
                 mCurrentMogg = mOldMogg;
                 mOldMogg = 0;
@@ -201,7 +244,7 @@ bool CrowdAudio::PlayLoop(const DataArray *loopInfo, bool force) {
         if (b2 || force) {
             if (mOldMogg) {
                 if (mCurrentMogg)
-                    mCurrentMogg->Stop(false);
+                    mCurrentMogg->MoggClip::Stop();
             } else if (clip == mCurrentMogg) {
                 MILO_ASSERT(force, 0x1AA);
             } else {
@@ -295,15 +338,15 @@ void CrowdAudio::SetEnabled(bool b) {
 
 void CrowdAudio::StopAllMoggs() {
     if (mCurrentMogg) {
-        mCurrentMogg->Stop(false);
+        mCurrentMogg->MoggClip::Stop();
         mCurrentMogg = 0;
     }
     if (mOldMogg) {
-        mOldMogg->Stop(false);
+        mOldMogg->MoggClip::Stop();
         mOldMogg = 0;
     }
     if (mFadingMogg) {
-        mFadingMogg->Stop(false);
+        mFadingMogg->MoggClip::Stop();
         mFadingMogg = 0;
     }
 }
@@ -382,8 +425,8 @@ void CrowdAudio::SetBank(ObjectDir *dir) {
         }
         if (mState == 2) {
             if (mFadingMogg) {
-                mFadingMogg->Stop(false);
-                mFadingMogg = 0;
+                mFadingMogg->MoggClip::Stop();
+                MoggPtrRef::Clear(mFadingMogg);
             }
             if (PlayExcitementLoop()) {
                 mFadingMogg = mOldMogg;
@@ -392,12 +435,12 @@ void CrowdAudio::SetBank(ObjectDir *dir) {
                 if (mOldMogg) {
                     mFadingMogg = mOldMogg;
                     if (mCurrentMogg) {
-                        mCurrentMogg->Stop(false);
+                        mCurrentMogg->MoggClip::Stop();
                     }
                 }
-                mCurrentMogg = 0;
+                MoggPtrRef::Clear(mCurrentMogg);
             }
-            mOldMogg = 0;
+            MoggPtrRef::Clear(mOldMogg);
         }
     }
 }

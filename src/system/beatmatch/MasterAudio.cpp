@@ -353,11 +353,8 @@ bool MasterAudio::Fail() {
 }
 
 bool MasterAudio::IsReady() {
-    bool b = false;
-    if (mSongStream && mSongStream->IsReady())
-        b = true;
-    mStreamEnabled = b;
-    return b;
+    mStreamEnabled = mSongStream && mSongStream->IsReady();
+    return mStreamEnabled;
 }
 
 bool MasterAudio::IsFinished() const {

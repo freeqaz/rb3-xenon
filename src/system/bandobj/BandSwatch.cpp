@@ -69,10 +69,10 @@ RndMat *BandSwatch::Mat(int, int, UIListMesh *) const {
 int BandSwatch::NumData() const { return unk1e8.size(); }
 
 UIColor *BandSwatch::SlotColorOverride(int, int idx, UIListWidget *, UIColor *col) const {
-    if (unk1e8.empty())
-        return col;
-    else
+    if (!unk1e8.empty())
         return unk1e8[idx];
+    else
+        return col;
 }
 
 void BandSwatch::SetColors(ColorPalette *palette) { mColorPalette = palette; }

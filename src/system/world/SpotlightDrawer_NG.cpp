@@ -109,8 +109,6 @@ void NgSpotlightDrawer::SpotlightResources::Clear() {
 }
 
 
-static float sBeamBrighten = 2.0f;
-static float sSphereScale = 0.5f;
 static float sSheetIntensity = 8.0f;
 static float sSheetW = 0.0f;
 
@@ -134,15 +132,12 @@ void NgSpotlightDrawer::RenderScene() {}
 bool NgSpotlightDrawer::CheckCam() {
     mSavedCam = RndCam::Current();
     RndCam *cam;
-    if (TheLoadMgr.EditMode()) {
-        cam = RndCam::Current();
-    } else if (TheWorld && TheWorld->Cam()) {
+    if (TheWorld && TheWorld->Cam()) {
         cam = TheWorld->Cam();
-    } else {
+    } else if (RndCam::Current()) {
         cam = RndCam::Current();
-        if (!cam) {
-            cam = TheRnd.GetDefaultCam();
-        }
+    } else {
+        cam = TheRnd.GetDefaultCam();
     }
     mSpotCam->Copy(cam, Hmx::Object::kCopyShallow);
     mSpotCam->SetTransParent(nullptr, false);
@@ -171,9 +166,12 @@ void NgSpotlightDrawer::RenderCone(Spotlight *sl) {
 }
 
 void NgSpotlightDrawer::RenderSphere(Spotlight *sl) {
+    static float sBeamBrighten = 2.0f;
+    static float sSphereScale = 0.5f;
     MILO_ASSERT(sl->HasBeam(), 0x470);
     float zero = 0.0f;
     Vector4 sphereParams(zero, zero, 0.625f, sl->mBeam.mTopRadius * sSphereScale);
+    const Spotlight::BeamDef &beam = sl->mBeam;
     TheShaderMgr.SetPConstant((PShaderConstant)0x5b, sphereParams);
 
     Spotlight *colorOwner = sl->mColorOwner;
@@ -194,8 +192,8 @@ void NgSpotlightDrawer::RenderSphere(Spotlight *sl) {
     Vector4 colorVec(r, g, b, a);
     TheShaderMgr.SetPConstant((PShaderConstant)0x5a, colorVec);
 
-    SetXSectionTexture(sl->mBeam);
-    sl->mBeam.mBeam->DrawShowing();
+    SetXSectionTexture(beam);
+    beam.mBeam->DrawShowing();
 }
 
 void NgSpotlightDrawer::RenderSheet(Spotlight *sl) {
@@ -248,17 +246,18 @@ void NgSpotlightDrawer::RenderBeams(const Hmx::Matrix4 &viewProj) {
         float zero = 0.0f;
         do {
             Spotlight *sl = it->mSpotlight;
-            if (sl->mBeam.mLength > zero) {
+            bool hasLength = sl->mBeam.mLength > zero;
+            if (hasLength) {
                 unsigned int shape = sl->mBeam.mShape;
                 int shaderShape;
                 if (shape < 2) {
                     shaderShape = 0;
                 } else if (shape == 2) {
                     shaderShape = 1;
+                } else if (shape >= 5) {
+                    MILO_ASSERT(false, 0x456);
+                    shaderShape = 0;
                 } else {
-                    if (shape >= 5) {
-                        MILO_ASSERT(false, 0x456);
-                    }
                     shaderShape = 2;
                 }
                 TheShaderMgr.unk1c = shaderShape;

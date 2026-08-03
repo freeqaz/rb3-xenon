@@ -45,21 +45,19 @@ int fft_real_forward_scalar(float* data, unsigned long size, float* context) {
     {
         if (ret == 0) {
             float inv_n = 1.0f / (float)(double)(long long)(unsigned int)size;
-            float sin_a = (float)sin(inv_n * (float)M_PI);
             double sin_2a = sin(inv_n * (float)(2.0 * M_PI));
-
-            double cc = (double)sin_a * (double)sin_a;
+            float sin_a = (float)sin(inv_n * (float)M_PI);
 
             // DC / Nyquist bins.
-            float re0 = data[0];
-            float im0 = data[1];
             double c = 1.0;
             double s = 0.0;
             float ss = (float)sin_2a;
+            float re0 = data[0];
+            float im0 = data[1];
             data[1] = re0 - im0;
             data[0] = im0 + re0;
 
-            cc = cc * 2.0;
+            double cc = (double)sin_a * (double)sin_a * 2.0;
 
             unsigned int count = size >> 2;
             float* lo = data + 2;
@@ -125,18 +123,15 @@ int CalculateSinCosTable(long n, float* table) {
     long count = n / 4;
     long half = n / 2;
     double twoPi = 6.2831854820251465;
-    float* p = table - 1;
     long j = 0;
-    for (long i = 0; i < count; ++i) {
+    for (long i = 0; i < count; ++i, j += 2) {
         float angle = (float)((double)i * twoPi / (double)n);
         float cv = (float)cos(angle);
         float sv = (float)sin(angle);
-        p[1] = cv;
-        p += 2;
-        p[0] = sv;
+        table[j] = cv;
+        table[j + 1] = sv;
         table[j + half] = -sv;
         table[j + half + 1] = cv;
-        j += 2;
     }
     return 0;
 }
@@ -281,14 +276,15 @@ int fft_scalar(float* a, float* b, unsigned long size, long sign, float* twiddle
                         int ctr = blk;
                         do {
                             float* hi = (float*)((char*)src + stride4);
-                            float t_im = src[1] - hi[1];
+                            float hi_im = hi[1];
+                            float l_im = src[1];
                             float h_re = hi[0];
                             float l_re = src[0];
                             float t_re = l_re - h_re;
                             dst[0] = h_re + l_re;
-                            float l_im = src[1];
                             src += 2;
-                            dst[1] = l_im + hi[1];
+                            dst[1] = l_im + hi_im;
+                            float t_im = l_im - hi_im;
                             *(float*)((char*)dst + blk8) = t_re * wr - t_im * wi;
                             *(float*)((char*)dst + blk8 + 4) = t_re * wi + t_im * wr;
                             dst += 2;

@@ -173,17 +173,20 @@ Waypoint *Waypoint::FindNearest(const Vector3 &pos, int flags) {
     float bestDist = 1e30;
     for (std::list<Waypoint *>::iterator it = sWaypoints->begin(); it != sWaypoints->end();
          ++it) {
-        Waypoint *wp = *it;
-        if (wp->mFlags & flags) {
-            const Vector3 &wpPos = wp->WorldXfm().v;
+        if ((*it)->mFlags & flags) {
+            const Vector3 &wpPos = (*it)->WorldXfm().v;
             float dy = pos.y - wpPos.y;
             float dz = pos.z - wpPos.z;
             float dx = pos.x - wpPos.x;
-            float dist = (dy * dy + (dx * dx + dz * dz));
-            if (bestDist > dist) {
+            float dist = dy * dy + dx * dx + dz * dz;
+            bool closer;
+            if (dist < bestDist) {
                 bestDist = dist;
-                best = wp;
+                closer = true;
+            } else {
+                closer = false;
             }
+            if (closer) best = *it;
         }
     }
     return best;

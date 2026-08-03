@@ -449,15 +449,19 @@ bool BeatMatcher::InFill(int tick, bool b2) {
     if (mCurTrack >= mTrackTypes.size())
         return false;
     TrackType curTrackType = mTrackTypes[mCurTrack];
-    if (!FillsEnabled(mCurTrack))
+    if (!FillsEnabled(tick))
         return false;
     else {
         tick = mSongData->GetTempoMap()->GetLoopTick(tick);
-        if (curTrackType == kTrackDrum || curTrackType == kTrackGuitar
-            || curTrackType == kTrackBass || curTrackType == kTrackNone) {
+        switch (curTrackType) {
+        case kTrackDrum:
+        case kTrackGuitar:
+        case kTrackBass:
+        case kTrackNone:
             return mSongData->GetFillInfo(mCurTrack)->FillAt(tick, b2);
-        } else
+        default:
             return false;
+        }
     }
 }
 

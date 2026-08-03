@@ -337,27 +337,24 @@ void CharIKFingers::CalculateFingerDest(FingerNum num) {
                 Multiply(finger.mFinger03->LocalXfm(), f2Xfm, f3Xfm);
                 Multiply(finger.mFingertip->LocalXfm(), f3Xfm, tipXfm);
                 Vector3 targetPos;
-                if (Distance(tipXfm.v, finger.mTargetWorldPos) > Distance(tipXfm.v, finger.mRefWorldPos)) {
+                if (Distance(tipXfm.v, finger.mTargetWorldPos) < Distance(tipXfm.v, finger.mRefWorldPos)) {
                     targetPos = finger.mTargetWorldPos;
                 } else
                     targetPos = finger.mRefWorldPos;
 
-                Vector3 f1x(f1Xfm.m.x);
-                Vector3 f1y(f1Xfm.m.y);
-                Vector3 f1z(f1Xfm.m.z);
-                Vector3 f1pos(f1Xfm.v);
                 Vector3 toTarget;
-                Subtract(targetPos, f1pos, toTarget);
+                Subtract(targetPos, f1Xfm.v, toTarget);
+                Vector3 f1x(f1Xfm.m.x);
 
                 float len02 = Length(finger.mFinger02->LocalXfm().v);
                 float lenTip = Length(finger.mFingertip->LocalXfm().v);
-                float len03 = Length(finger.mFinger03->LocalXfm().v);
                 float toTargetLen = Length(toTarget);
+                float len03 = Length(finger.mFinger03->LocalXfm().v);
+                Vector3 f1z(f1Xfm.m.z);
                 float angle03 = std::acos(
                     ((len02 * len02 + lenTip * lenTip) - (toTargetLen - len03) * (toTargetLen - len03))
                     / (len02 * 2.0f * lenTip)
                 );
-                angle03 = -angle03;
                 if (angle03 < 0.87f)
                     angle03 = 0.87f;
                 float angle02 = angle03 * 0.5f + 1.5707964f;
@@ -367,7 +364,7 @@ void CharIKFingers::CalculateFingerDest(FingerNum num) {
                 finger.mDestFinger02Angle = PI - angle02;
                 finger.mDestFinger03Angle = PI - angle02;
                 Hmx::Quat curl03;
-                curl03.Set(f1z, -(angle02 * 2.0f - 2 * PI));
+                curl03.Set(f1z, (2.0f * PI - 2.0f * angle02) * 0.5f);
                 Multiply(f1x, curl03, f1x);
                 Hmx::Quat alignQuat;
                 MakeRotQuat(f1x, toTarget, alignQuat);

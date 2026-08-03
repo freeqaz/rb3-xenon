@@ -34,8 +34,8 @@ void NewAwardPanel::Enter() {
 void NewAwardPanel::LoadIcons() {
     AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
     MILO_ASSERT(pAssetMgr, 0xAE);
-    const std::map<int, String> &icons = pAssetMgr->GetIconPaths();
-    for (std::map<int, String>::const_iterator it = icons.begin(); it != icons.end();
+    const std::hash_map<int, String> &icons = pAssetMgr->GetIconPaths();
+    for (std::hash_map<int, String>::const_iterator it = icons.begin(); it != icons.end();
          ++it) {
         Symbol sym = GetSymbolFromAssetType((AssetType)it->first);
         String path(it->second);

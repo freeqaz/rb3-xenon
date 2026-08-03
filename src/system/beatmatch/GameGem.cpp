@@ -306,7 +306,7 @@ void GameGem::SetFret(unsigned int string, signed char fret) {
     mFrets[string] = fret;
 }
 
-Symbol GameGem::GetChordNameOverride() const { return mChordNameOverride; }
+const char *GameGem::GetChordNameOverride() const { return mChordNameOverride.Str(); }
 
 // fn_80460EF4
 void GameGem::PackRealGuitarData() {

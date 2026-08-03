@@ -54,6 +54,10 @@ void FreestylePanel::Poll() {
     UIPanel::Poll();
     if (TheUI->FocusPanel() != this || !mUser || !mController || mFreestylePaused)
         return;
+    bool lefty = mController->mLefty;
+    if (lefty != mUser->GetGameplayOptions()->GetLefty()) {
+        mController->mLefty = mUser->GetGameplayOptions()->GetLefty();
+    }
     mController->SetSecondPedalHiHat(TheProfileMgr.GetSecondPedalHiHat());
     if (mMetronome->Enabled()) {
         mBeatTimer -= TheTaskMgr.DeltaUISeconds();
@@ -88,14 +92,6 @@ void FreestylePanel::HandleSolo() {
             }
             mLastSwingSecs = -1.0f;
             mSoloStartSecs = -1.0f;
-        }
-    }
-    if (!mUser || !mController)
-        return;
-    else {
-        bool lefty = mController->mLefty;
-        if (lefty != mUser->GetGameplayOptions()->GetLefty()) {
-            mController->mLefty = mUser->GetGameplayOptions()->GetLefty();
         }
     }
 }

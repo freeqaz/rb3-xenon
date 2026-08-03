@@ -43,7 +43,33 @@ bool CharEyes::sDisableProceduralBlink;
 bool CharEyes::sDisableEyeClamping;
 // CharLookAt::sDisableJitter is defined in CharLookAt.cpp
 
-INIT_REVS(18, 0)
+// RETAIL-MATCH (lane NCCC-0803-b2bb/f407, idx407): retail CharEyes::Load
+// writes directly into two file-static ushorts (DAT_82cbf088 = gAltRev,
+// DAT_82cbf08c = gRev; the split is a plain bitfield split of the packed rev
+// int, no BinStreamRev wrapper object is ever constructed -- confirmed via
+// Ghidra decompile of fn_8238a5e0: `_ReadEndian(...)` straight into a stack
+// temp, then a raw 2x16-bit store into the DAT_ locations, then branches
+// compare DAT_82cbf08c (gRev) directly). The Object.h dialect's
+// `INIT_REVS(18, 0)` declares these as FILE-SCOPE CONST (`= 18`), which is
+// wrong for this class: retail's Load() actually ASSIGNS into them each call
+// (mutable storage), matching the ObjMacros.h dialect instead. Declare plain
+// mutable file statics so CharEyes::Load can assign gRev/gAltRev without
+// building a BinStreamRev local (that extra object -- vtable store + a
+// `BinStream(bool)` base-ctor call -- was costing 32 bytes of frame retail
+// doesn't have; see the Load() body below).
+//
+// Declaration order matters for codegen, not just semantics: retail's anchor
+// register is computed once against &gAltRev, then every later gRev access
+// reaches it via a +4 immediate offset from that SAME register (gAltRev is
+// the LOWER address, gRev sits 4 bytes above it). Our compiler lays out
+// consecutive uninitialized file statics in REVERSE declaration order, so
+// declaring gAltRev first put OUR gAltRev at the HIGHER address (gRev below
+// it) -- exactly backwards from retail, producing a wall of -0x4-vs-+0x4
+// diff_arg mismatches on every gRev read even though the values were
+// correct. Declaring gRev first (matching ObjMacros.h's DECLARE_REVS order)
+// flips our layout to match.
+static unsigned short gRev;
+static unsigned short gAltRev;
 
 #if !defined(__EMSCRIPTEN__) && !defined(__APPLE__)
 float pow(float base, float exp) { return std::pow(base, exp); }
@@ -461,19 +487,26 @@ BEGIN_SAVES(CharEyes)
     bs << mLowerLidTrackRotate;
 END_SAVES
 
-BEGIN_LOADS(CharEyes)
-    LOAD_REVS(bs)
-    int gRev = d.rev;
-    int gAltRev = d.altRev;
-    ASSERT_REVS(0x12, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
+// Hand-written rather than BEGIN_LOADS/LOAD_REVS: the Object.h dialect's
+// LOAD_REVS builds a stack-local BinStreamRev (`BinStreamRev d(bs, revs);`),
+// which retail's fn_8238a5e0 does NOT do (see the gRev/gAltRev comment above
+// this file's INIT_REVS site). ASSERT_REVS(0x12, 0) is intentionally omitted
+// -- lane CP-2 proved it's a retail-matched no-op in non-native builds
+// (MILO_FAIL is a comma-expression, so leaving the macro in would still emit
+// live PathName()/ClassName() calls retail's asm does not have).
+void CharEyes::Load(BinStream &bs) {
+    int revs;
+    bs >> revs;
+    gRev = getHmxRev(revs);
+    gAltRev = getAltRev(revs);
+    Hmx::Object::Load(bs);
     if (gRev > 5)
-        LOAD_SUPERCLASS(CharWeightable)
+        CharWeightable::Load(bs);
     if (gRev > 4)
-        d >> mEyes;
+        bs >> mEyes;
     else {
         ObjPtrList<CharLookAt> pList(this, kObjListNoNull);
-        d.stream >> pList;
+        bs >> pList;
         mEyes.resize(pList.size());
         int idx = 0;
         for (ObjPtrList<CharLookAt>::iterator it = pList.begin(); it != pList.end();
@@ -488,51 +521,51 @@ BEGIN_LOADS(CharEyes)
     }
     if (gRev > 2 && gRev < 5) {
         ObjPtr<RndTransformable> tPtr(this);
-        d.stream >> tPtr;
+        bs >> tPtr;
     }
     mInterests.clear();
     if (gRev > 3 && gRev <= 8) {
         ObjPtr<RndTransformable> tPtr(this);
         int cnt;
-        d.stream >> cnt;
+        bs >> cnt;
         for (int i = 0; i < cnt; i++) {
-            d.stream >> tPtr;
+            bs >> tPtr;
             int x;
-            d.stream >> x;
+            bs >> x;
         }
     } else if (gRev > 8)
-        d >> mInterests;
+        bs >> mInterests;
     if (gRev > 4)
-        d.stream >> mFaceServo;
+        bs >> mFaceServo;
     else
         mFaceServo = 0;
     if (gRev > 7)
-        d.stream >> mCamWeight;
+        bs >> mCamWeight;
     if (gRev > 9)
-        d.stream >> mDefaultFilterFlags;
+        bs >> mDefaultFilterFlags;
     if (gRev > 10)
-        d.stream >> mViewDirection;
+        bs >> mViewDirection;
     if (gRev > 0xB)
-        d.stream >> mHeadLookAt;
+        bs >> mHeadLookAt;
     if (gRev > 0xC)
-        d.stream >> mMaxExtrapolation;
+        bs >> mMaxExtrapolation;
     if (gRev > 0xD)
-        d.stream >> mMinTargetDist;
+        bs >> mMinTargetDist;
     if (gRev > 0xE) {
-        d.stream >> mUpperLidTrackUp;
-        d.stream >> mUpperLidTrackDown;
-        d.stream >> mLowerLidTrackUp;
+        bs >> mUpperLidTrackUp;
+        bs >> mUpperLidTrackDown;
+        bs >> mLowerLidTrackUp;
         if (gRev < 0x11) {
             int x, y;
-            d.stream >> x;
-            d.stream >> mLowerLidTrackDown;
-            d.stream >> y;
+            bs >> x;
+            bs >> mLowerLidTrackDown;
+            bs >> y;
         } else
-            d.stream >> mLowerLidTrackDown;
+            bs >> mLowerLidTrackDown;
     }
     if (gRev > 0x11)
-        d >> mLowerLidTrackRotate;
-END_LOADS
+        bs >> mLowerLidTrackRotate;
+}
 
 BEGIN_COPYS(CharEyes)
     COPY_SUPERCLASS(Hmx::Object)
@@ -1242,12 +1275,6 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
 }
 
 void CharEyes::ProceduralBlinkUpdate() {
-    static DataNode &disableCheat = DataVariable("cheat.disable_procedural_blinks");
-
-    if (sDisableProceduralBlink)
-        return;
-    if (disableCheat.Int(0))
-        return;
     if (!mHeadIKActive && !mBlinkEnabled)
         return;
 

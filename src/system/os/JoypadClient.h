@@ -31,7 +31,7 @@ public:
     void PollClient() { Poll(); }
     void SetRepeatMask(int);
 
-    LocalUser *mUser; // 0x2c
+    User *mUser; // 0x28
     Hmx::Object *mSink; // 0x30
     int mBtnMask; // 0x34
     float mHoldMs; // 0x38

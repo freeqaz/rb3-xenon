@@ -183,19 +183,27 @@ BEGIN_COPYS(Character)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(0x15, 0)
+// ObjMacros.h-dialect INIT_REVS(objType): plain mutable class statics rather
+// than Object.h's `static const` + BinStreamRev-wrapper pair (see gRev/gAltRev
+// declaration in Character.h). ASSERT_REVS(0x15, 0) compiles to nothing in the
+// retail (non-HX_NATIVE) build either way, so the version number here is
+// documentation only.
+Character::RevState Character::gRevs = {0, 0};
 
 void Character::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x15, 0)
-    if (d.rev > 1) {
+    int rev;
+    bs >> rev;
+    gRevs.rev = getHmxRev(rev);
+    gRevs.altRev = getAltRev(rev);
+    // ASSERT_REVS(0x15, 0) -- no-op in retail build
+    if (gRevs.rev > 1) {
         RndDir::PreLoad(bs);
-        if (d.rev < 7) {
+        if (gRevs.rev < 7) {
             SetRate(k1_fpb);
         }
     } else {
         int revToPush;
-        d >> revToPush;
+        bs >> revToPush;
         if (revToPush > 3) {
             RndTransformable::Load(bs);
             RndDrawable::Load(bs);
@@ -203,7 +211,8 @@ void Character::PreLoad(BinStream &bs) {
         ObjectDir::PreLoad(bs);
         bs.PushRev(revToPush, this);
     }
-    d.PushRev(this);
+    unsigned short curRev = gRevs.rev;
+    bs.PushRev(packRevs(gRevs.altRev, curRev), this);
 }
 
 BinStreamRev &operator>>(BinStreamRev &d, Character::Lod &lod) {

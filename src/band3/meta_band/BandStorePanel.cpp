@@ -83,11 +83,11 @@ const char *BandStorePanel::GetIndexFile() const {
 
 const char *BandStorePanel::GetRequestPrefix() const { return sRequestPrefix; }
 
-int BandStorePanel::StoreUser() const {
+LocalUser *BandStorePanel::StoreUser() const {
     LocalBandUser *l = TheInputMgr->GetUser()
         ? TheInputMgr->GetUser()->GetLocalBandUser()
         : 0;
-    return (int)(LocalUser *)l;
+    return l;
 }
 
 StoreOffer *BandStorePanel::MakeNewOffer(const StorePackedOfferBase *base, bool isRbn) {
@@ -120,7 +120,7 @@ StoreOffer *BandStorePanel::GetLoneOffer(bool extras) const {
 }
 
 bool BandStorePanel::IsLoaded() const {
-    return StorePanel::IsLoaded() || !mLoadOk;
+    return StorePanel::IsLoaded() && (TheNetCacheMgr->IsReady() || !mLoadOk);
 }
 
 void BandStorePanel::Unload() {
@@ -134,7 +134,7 @@ void BandStorePanel::Unload() {
 
 void BandStorePanel::Enter() {
     StorePanel::Enter();
-    LocalBandUser *u = dynamic_cast<LocalBandUser *>((LocalUser *)StoreUser());
+    LocalBandUser *u = dynamic_cast<LocalBandUser *>(StoreUser());
     if (u && !u->IsJoypadConnected()) {
         ExitError(kStoreErrorStoreServer);
     }
@@ -223,15 +223,15 @@ void BandStorePanel::Request(const String &path, bool extra) {
             MILO_ASSERT(!mMetadataLoader, 0x1B6);
             mLastRequest = path;
             mLastRequestExtra = extra;
+            mStartBrowserAtBottom = false;
             String url(sRequestPrefix);
             Symbol region = PlatformRegionToSymbol(ThePlatformMgr.GetRegion());
             url += MakeString("/%s%s", region, path);
             Server *server = TheNet.GetServer();
             if (server && server->IsConnected()) {
-                url += MakeString("?pid=%u", server->GetMasterProfileID());
+                url += MakeString("?pid=%u", server->GetPlayerID(StoreUser()->GetPadNum()));
             }
             mMetadataLoader = new DataNetLoader(url);
-            mStartBrowserAtBottom = false;
             static Message updateMsg("update_loading_status");
             TheUI->Handle(updateMsg.mData, false);
         }

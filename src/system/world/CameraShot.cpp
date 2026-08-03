@@ -363,6 +363,12 @@ bool CamShotFrame::HasTargets() const {
 void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
     CamShotFrame *me = const_cast<CamShotFrame *>(this);
 
+    // NB(rb3-xenon, idx233): declared here (not just before `if (mParent)`)
+    // to match retail's register allocation -- retail's Ghidra decomp fetches
+    // mParent as the very first field read after `this`, matching rb3-Wii's
+    // BuildTransform which declares `parent` right after `me`.
+    RndTransformable *parent = mParent;
+
     Vector3 targetPos;
     GetCurrentTargetPosition(targetPos);
 
@@ -429,7 +435,6 @@ void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
         tf = mWorldOffset;
     }
 
-    RndTransformable *parent = mParent;
     if (parent) {
         bool useLiveParent;
         if (!mParentFirstFrame || mCamShot->mShotStarted) {
@@ -484,11 +489,33 @@ void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
     // rb3-Wii's BuildTransform likewise has no such multiply. X360-neutral (the
     // removed text was already excluded when HX_NATIVE is undefined).
 
-    mCamShot->ApplyDynamicOffsetPreLookAt(tf, HasTargets());
+    // NB(rb3-xenon, idx233): retail RB3's BuildTransform has NO
+    // ApplyDynamicOffsetPreLookAt/PostLookAt calls here -- both virtuals are a
+    // DC3-era addition (absent from the rb3-Wii oracle's CamShot entirely, and
+    // still empty-bodied stubs in CameraShot.h). Retail's Ghidra decomp goes
+    // straight from the `if (mParent) {...}` block to the `if (b3)` block with
+    // zero intervening calls -- same pattern as the ApplyFinalCamTransform fix
+    // above in Interp().
     if (b3) {
-        ApplyScreenOffset(tf, cam);
+        // NB(rb3-xenon, idx233): manually inlined -- ApplyScreenOffset has
+        // exactly one call site and retail's Ghidra decomp shows its body
+        // inlined here directly (HasTargets loop + LookAt + subtract/sqrt/
+        // multiply, no `bl`), but our /Ob2 auto-inline heuristic left it as
+        // a real out-of-line call, which was the dominant divergence (a
+        // 39-instruction delete-only cluster).
+        if (HasTargets()) {
+            tf.LookAt(mLastTargetPos, tf.m.z);
+        }
+        Vector3 v;
+        Subtract(tf.v, mLastTargetPos, v);
+        float length = std::sqrt(v.y * v.y + v.z * v.z + v.x * v.x);
+        Vector3 vother(
+            -(mScreenOffset.x / cam->LocalProjectXfm().m.x.x) * length,
+            0,
+            (mScreenOffset.y / cam->LocalProjectXfm().m.z.y) * length
+        );
+        Multiply(vother, tf, tf.v);
     }
-    mCamShot->ApplyDynamicOffsetPostLookAt(tf);
 }
 
 void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam *cam) {
@@ -1426,7 +1453,9 @@ void CamShot::SetFrame(float frame, float blend) {
     RndCam *cam = GetCam();
     if (!cam)
         return;
-    SetFrames(mAnims, frame);
+    FOREACH (it, mAnims) {
+        (*it)->SetFrame(frame, 1);
+    }
     if (mKeyframes.empty())
         return;
     mSetFrameActive = true;
@@ -1663,56 +1692,57 @@ void CamShot::Shake(float freq, float amp, const Vector2 &maxAngle, Vector3 &off
 }
 
 bool CamShot::SetPos(CamShotFrame &frame, RndCam *cam) {
-    cam = cam ? cam : GetCam();
-    if (!cam)
+    RndCam *c = cam ? cam : GetCam();
+    if (!c) {
         return false;
-
-    Transform tf(cam->WorldXfm());
-    if (frame.HasTargets()) {
-        Vector3 targetPos;
-        frame.GetCurrentTargetPosition(targetPos);
-        cam->WorldToScreen(targetPos, frame.mScreenOffset);
-        frame.mScreenOffset += Vector2(-0.5f, -0.5f);
-        frame.mScreenOffset.x *= 2.0f;
-        frame.mScreenOffset.y *= -2.0f;
-
-        Vector3 camToTarget;
-        Subtract(targetPos, tf.v, camToTarget);
-        Vector3 yComponent(cam->WorldXfm().m.y);
-        yComponent *= Dot(camToTarget, cam->WorldXfm().m.y);
-        Vector3 projectedCamPos;
-        ::Add(cam->WorldXfm().v, yComponent, projectedCamPos);
-        Vector3 targetOffset;
-        Subtract(targetPos, projectedCamPos, targetOffset);
-        ::Add(tf.v, targetOffset, tf.v);
     } else {
-        frame.mScreenOffset.Zero();
-    }
+        cam = c;
+        frame.mWorldOffset = cam->WorldXfm();
+        if (frame.HasTargets()) {
+            Vector3 targetPos;
+            frame.GetCurrentTargetPosition(targetPos);
+            cam->WorldToScreen(targetPos, frame.mScreenOffset);
+            frame.mScreenOffset += Vector2(-0.5f, -0.5f);
+            frame.mScreenOffset.x *= 2.0f;
+            frame.mScreenOffset.y *= -2.0f;
 
-    frame.mFOV = cam->YFov();
-
-    RndTransformable *frameParent = frame.mParent;
-    if (frameParent) {
-        Transform parentXfm(frameParent->WorldXfm());
-        if (!frame.mUseParentRotation) {
-            parentXfm.m.Identity();
+            Vector3 camToTarget;
+            Subtract(targetPos, frame.mWorldOffset.v, camToTarget);
+            Vector3 yComponent(cam->WorldXfm().m.y);
+            yComponent *= Dot(cam->WorldXfm().m.y, camToTarget);
+            Vector3 projectedCamPos;
+            ::Add(yComponent, cam->WorldXfm().v, projectedCamPos);
+            Vector3 targetOffset;
+            Subtract(targetPos, projectedCamPos, targetOffset);
+            ::Add(frame.mWorldOffset.v, targetOffset, frame.mWorldOffset.v);
+        } else {
+            frame.mScreenOffset.Zero();
         }
-        Transform invParent;
-        FastInvert(parentXfm, invParent);
-        Multiply(tf, invParent, tf);
-    }
 
-    if (mPath && &mKeyframes[0] == &frame) {
-        Transform pathXfm;
-        mPath->MakeTransform(0, pathXfm, true, 1.0f);
-        tf.v -= pathXfm.v;
-        if (!frame.HasTargets()) {
-            tf.m.Identity();
+        frame.mFOV = cam->YFov();
+
+        RndTransformable *frameParent = frame.mParent;
+        if (frameParent) {
+            Transform parentXfm(frameParent->WorldXfm());
+            if (!frame.mUseParentRotation) {
+                parentXfm.m.Identity();
+            }
+            Transform invParent;
+            FastInvert(parentXfm, invParent);
+            Multiply(frame.mWorldOffset, invParent, frame.mWorldOffset);
         }
-    }
 
-    frame.mWorldOffset = tf;
-    return true;
+        if (mPath && &mKeyframes[0] == &frame) {
+            Transform pathXfm;
+            mPath->MakeTransform(0, pathXfm, true, 1.0f);
+            frame.mWorldOffset.v -= pathXfm.v;
+            if (!frame.HasTargets()) {
+                frame.mWorldOffset.m.Identity();
+            }
+        }
+
+        return true;
+    }
 }
 
 DataNode CamShot::OnHasTargets(DataArray *da) {
@@ -1793,7 +1823,7 @@ void CamShot::SetFrames(ObjPtrList<RndAnimatable> &anims, float frame) {
 
 void CamShot::SetShotOver() {
     static Message msg("shot_over");
-    Export(msg, true);
+    HandleType(msg);
     mShotOver = true;
 }
 

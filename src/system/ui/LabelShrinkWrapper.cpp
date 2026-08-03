@@ -87,28 +87,28 @@ void LabelShrinkWrapper::Enter() { UIComponent::Enter(); }
 void LabelShrinkWrapper::Poll() { UIComponent::Poll(); }
 
 void LabelShrinkWrapper::Update() {
+    // NOTE(laneNCCC-f164): retail's Ghidra decomp calls UIComponent::Update()
+    // unconditionally at entry and has NO if/else null-check branch at all
+    // (matches rb3-Wii's shape, ../rb3/src/system/ui/LabelShrinkWrapper.cpp:81);
+    // the dc3-derived if(pTypeDef && pDir){...}else{clear bones} shape does not
+    // exist in retail. MILO_ASSERT no-ops here (HX_NATIVE undefined), so the
+    // Wii oracle's asserts generate no code either way.
+    UIComponent::Update();
     const DataArray *pTypeDef = TypeDef();
     RndDir *pDir = mResource->Dir();
-    if (pTypeDef && pDir) {
-        static Symbol topleft_bone("topleft_bone");
-        static Symbol topright_bone("topright_bone");
-        static Symbol bottomleft_bone("bottomleft_bone");
-        static Symbol bottomright_bone("bottomright_bone");
-        m_pTopLeftBone = pDir->Find<RndMesh>(pTypeDef->FindStr(topleft_bone), true);
-        MILO_ASSERT(m_pTopLeftBone, 0xc5);
-        m_pTopRightBone = pDir->Find<RndMesh>(pTypeDef->FindStr(topright_bone), true);
-        MILO_ASSERT(m_pTopRightBone, 0xc7);
-        m_pBottomLeftBone = pDir->Find<RndMesh>(pTypeDef->FindStr(bottomleft_bone), true);
-        MILO_ASSERT(m_pBottomLeftBone, 0xc9);
-        m_pBottomRightBone =
-            pDir->Find<RndMesh>(pTypeDef->FindStr(bottomright_bone), true);
-        MILO_ASSERT(m_pBottomRightBone, 0xcb);
-    } else {
-        m_pBottomRightBone = nullptr;
-        m_pBottomLeftBone = nullptr;
-        m_pTopRightBone = nullptr;
-        m_pTopLeftBone = nullptr;
-    }
+    static Symbol topleft_bone("topleft_bone");
+    static Symbol topright_bone("topright_bone");
+    static Symbol bottomleft_bone("bottomleft_bone");
+    static Symbol bottomright_bone("bottomright_bone");
+    m_pTopLeftBone = pDir->Find<RndMesh>(pTypeDef->FindStr(topleft_bone), true);
+    MILO_ASSERT(m_pTopLeftBone, 0xc5);
+    m_pTopRightBone = pDir->Find<RndMesh>(pTypeDef->FindStr(topright_bone), true);
+    MILO_ASSERT(m_pTopRightBone, 0xc7);
+    m_pBottomLeftBone = pDir->Find<RndMesh>(pTypeDef->FindStr(bottomleft_bone), true);
+    MILO_ASSERT(m_pBottomLeftBone, 0xc9);
+    m_pBottomRightBone =
+        pDir->Find<RndMesh>(pTypeDef->FindStr(bottomright_bone), true);
+    MILO_ASSERT(m_pBottomRightBone, 0xcb);
 }
 
 void LabelShrinkWrapper::Init() { REGISTER_OBJ_FACTORY(LabelShrinkWrapper) }

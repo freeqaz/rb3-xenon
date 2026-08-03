@@ -128,8 +128,7 @@ int StarDisplay::GetStarCountForSymbol(Symbol s) {
     return 0;
 }
 
-// this gets inlined, but "*" has to be part of the stringbase - fix this
-inline bool StarDisplay::HasStarIcon() const {
+bool StarDisplay::HasStarIcon() const {
     return mIconOverride != gNullStr && strcmp(mIconOverride.Str(), "*") != 0;
 }
 
@@ -179,11 +178,7 @@ void StarDisplay::UpdateDisplay() {
         mRsrcStarsLabel->SetTextToken(gNullStr);
         for (int i = 0; i < mTotalStars; i++) {
             char icon;
-            bool hasStarIcon;
-            if (mStars == 6 &&
-                (hasStarIcon = mIconOverride != gNullStr &&
-                     strcmp(mIconOverride.Str(), "*") != 0,
-                 !hasStarIcon))
+            if (mStars == 6 && !HasStarIcon())
                 icon = '=';
             else if (i < mStars)
                 icon = GetStarIcon();

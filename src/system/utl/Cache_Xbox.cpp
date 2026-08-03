@@ -386,49 +386,45 @@ int CacheXbox::ThreadWrite() {
                     break;
                 }
             }
+            ++nextPos;
         }
-        nextPos = mThreadStr.find('\\', nextPos + 1);
+        nextPos = mThreadStr.find('\\', nextPos);
     }
 
-    HANDLE hFile = CreateFileA(
-        mThreadStr.c_str(),
-        0x40000000,  // GENERIC_WRITE
-        0,           // No sharing
-        nullptr,     // No security
-        2,           // CREATE_ALWAYS
-        0x80,        // FILE_ATTRIBUTE_NORMAL
-        nullptr      // No template
-    );
+    HANDLE hFile = (HANDLE)-1;
+    if (success) {
+        hFile = CreateFileA(
+            mThreadStr.c_str(),
+            0x40000000,  // GENERIC_WRITE
+            0,           // No sharing
+            nullptr,     // No security
+            2,           // CREATE_ALWAYS
+            0x80,        // FILE_ATTRIBUTE_NORMAL
+            nullptr      // No template
+        );
+    }
 
     if (hFile == (HANDLE)-1) {
         DWORD err = GetLastError();
-        if (err >= 2) {
-            if (err <= 3) {
-                return 8;
-            } else if (err != 0x15) {
-                if (IsDeviceConnected(mCacheID.DeviceID())) {
-                    MILO_NOTIFY("CacheXbox::WriteAsync() - Unhandled error from CreateFile(): %d\n", err);
-                    return -1;
-                }
-            }
+        if (err >= 2 && (err <= 3 || err == 0x15)) {
+            return 8;
         }
-        return 8;
-    }
+    } else {
+        DWORD bytesWritten = 0;
+        int result = WriteFile(hFile, mData, mSize, &bytesWritten, nullptr);
+        if (result != 0) {
+            CloseHandle(hFile);
+            XContentFlush(mCacheID.Name(), nullptr);
+            return 0;
+        }
 
-    DWORD bytesWritten = 0;
-    int result = WriteFile(hFile, mData, mSize, &bytesWritten, nullptr);
-    if (result != 0) {
+        GetLastError();
         CloseHandle(hFile);
         XContentFlush(mCacheID.Name(), nullptr);
-        return 0;
     }
 
-    DWORD err = GetLastError();
-    CloseHandle(hFile);
-    XContentFlush(mCacheID.Name(), nullptr);
-
     if (IsDeviceConnected(mCacheID.DeviceID())) {
-        MILO_NOTIFY("CacheXbox::ThreadWrite() - Unhandled error %d from WriteFile()\n", err);
+        MILO_NOTIFY("CacheXbox::ThreadWrite() - Unhandled error from CreateFile()/WriteFile()\n");
         return -1;
     }
 

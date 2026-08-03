@@ -74,6 +74,31 @@ public:
         unk19c->Unk825BCA38();`. Takes no argument (only r3 is set up). Semantics
         unknown — named after its retail address rather than guessed at. */
     void Unk825BCA38(); // retail 0x825BCA38
+    /** Called from retail MusicLibrary::SelectNode's kNodeStoreSong case as
+        `unk19c->Unk825BD8C8(user, songIDs)` where songIDs is a freshly built
+        one-element std::vector<int> holding the just-downloaded song's id.
+        The param is `user` implicitly upcast across the virtual-base graph --
+        retail computes this via a raw vbtable-offset add (`lwz`+`lwz`+`add`,
+        no vcall), which is exactly what an implicit pointer-to-virtual-base
+        conversion compiles to; passing `user` (a LocalBandUser*) directly
+        reproduces that codegen.
+        The base is LocalUser, NOT User: LocalBandUser has three virtual bases
+        (User, BandUser, LocalUser -- see BandUser.h:133), and retail indexes
+        the vbtable at 0xc (slot 3 = LocalUser) where a `User*` param indexes
+        0x4 (slot 1). /d1reportSingleClassLayoutLocalBandUser confirms the
+        arithmetic: retail's `user + vbtable[3] + 4` resolves to +0x100, which
+        is exactly `{vfptr} [LocalUser]`, whereas slot 1 resolves to +0x28, the
+        User subobject. Declaring `User*` cost exactly one instruction (idx 131,
+        `lwz r11,0x4,r11` vs retail `lwz r11,0xc,r11`) -- an argument-only diff
+        that match_percent_normalized is blind to, so the row read 100.0%
+        normalized while still being wrong. Deep-dived
+        via Ghidra decompile of 0x825BD8C8 itself (a much larger
+        MusicLibraryStore method: filters/erases matching offers from a
+        vector<int>, calls FindOfferBySongID, and issues a download request) --
+        only the CALL SHAPE into it is reproduced here, not its body (reloc
+        args are score-invisible per CLAUDE.md, so an undefined declaration is
+        sufficient, matching the IsDownloading/LoadStoreArt precedent above). */
+    void Unk825BD8C8(class LocalUser *, const std::vector<int> &); // retail 0x825BD8C8
     char unk4[0x24]; // 0x4
     int mState; // 0x28 (2 = done, 4 = failed)
     char unk2c[0x1c]; // 0x2c

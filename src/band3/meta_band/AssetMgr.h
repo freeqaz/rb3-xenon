@@ -49,10 +49,20 @@ public:
     void EquipAssets(LocalBandUser *, const std::vector<Symbol> &);
 
     const std::hash_map<Symbol, Asset *> &GetAssets() const { return mAssets; }
-    const std::map<int, String> &GetIconPaths() const { return mIconPaths; }
+    const std::hash_map<int, String> &GetIconPaths() const { return mIconPaths; }
 
     std::hash_map<Symbol, Asset *> mAssets; // 0x28
-    std::map<int, String> mIconPaths; // 0x34
+    // Retail X360 stores the icon-path table in an STLport hash_map too, not a
+    // std::map: NewAwardPanel::LoadIcons loads the chain head from
+    // AssetMgr+0x48 (= &mIconPaths + 4, the hashtable's _M_elems slist, since
+    // the three empty functor members occupy the first 4 bytes), reads the key
+    // at node+0x4 and the String at node+0x8 (an slist node is just
+    // {_M_next, value}), and terminates the walk on a NULL node. A red-black
+    // tree cannot terminate on NULL -- it stops at the header sentinel -- and
+    // its _Rb_tree_node_base header would put the value at node+0x10, so the
+    // container cannot be a std::map. Offset verified with
+    // /d1reportSingleClassLayout (the old "// 0x34" comment here was stale).
+    std::hash_map<int, String> mIconPaths; // 0x44
 };
 
 static AssetMgr *TheAssetMgr;

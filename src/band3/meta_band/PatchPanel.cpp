@@ -605,7 +605,7 @@ END_HANDLERS
 
 BEGIN_PROPSYNCS(PatchPanel)
     SYNC_PROP(patch, mPatch)
-    SYNC_PROP_MODIFY(mode, mMode, Handle(Message("on_set_mode"), false))
+    SYNC_PROP_MODIFY_ALT(mode, mMode, Handle(Message("on_set_mode"), false))
     SYNC_PROP_MODIFY(edit_layer_idx, mEditLayerIdx, StoreUndo())
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS

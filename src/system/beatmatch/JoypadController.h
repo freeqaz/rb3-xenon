@@ -35,7 +35,7 @@ public:
     int OnMsg(const ButtonDownMsg &);
     int OnMsg(const ButtonUpMsg &);
 
-    JoypadData *GetJoypadData() const {
+    __declspec(noinline) JoypadData *GetJoypadData() const {
         return mLocalUser ? JoypadGetPadData(mLocalUser->GetPadNum()) : 0;
     }
     bool HasYellowCymbal(JoypadData *data) const {

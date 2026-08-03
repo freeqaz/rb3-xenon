@@ -15,9 +15,9 @@ BEGIN_PROPSYNCS(FlowValueCase)
 END_PROPSYNCS
 
 BEGIN_SAVES(FlowValueCase)
-    SAVE_REVS(1, 0)
-    SAVE_SUPERCLASS(FlowNode)
+    SAVE_REVS(2, 0)
     bs << mValue;
+    SAVE_SUPERCLASS(FlowNode)
 END_SAVES
 
 BEGIN_COPYS(FlowValueCase)

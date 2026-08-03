@@ -108,6 +108,7 @@ public:
     void ResetTimingData();
     void ReadTimingData(const DataArray *);
     void RebuildHUD();
+    void JumpReset();
     RndMesh *CreateMarker(Symbol, float, bool);
     void CreateMarkers();
     void ConfigNoteTube(bool, int, int, bool, float);

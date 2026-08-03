@@ -101,20 +101,16 @@ void DeployCountTracker::Poll_(float) {
             bool ismaxmult = pPlayer->GetIndividualMultiplier()
                 == pPlayer->GetMaxIndividualMultipler();
             bool b8 = pPlayer->CanDeployOverdrive();
-            int u12 = 0;
-            if (!mRequireFullEnergy || energy) u12 = 1;
-            int b5 = 0;
-            if (!mRequireMaxMultiplier || ismaxmult) b5 = 1;
-            bool b4 = (bool)((b8 & u12) & b5);
+            int u12 = !mRequireFullEnergy || energy;
+            bool b4 = b8 & u12;
+            int b5 = !mRequireMaxMultiplier || ismaxmult;
             bool c1 = data.unk2;
+            b4 = b4 & b5;
             bool deploying = pPlayer->IsDeployingBandEnergy();
-            if (deploying && !data.unk3) {
-                bool b2 = true;
-                if (mRequireFullEnergy && !data.unk0)
-                    b2 = false;
-                bool b3 = true;
-                if (mRequireMaxMultiplier && !data.unk1)
-                    b3 = false;
+            bool wasDeploying = data.unk3;
+            if (deploying && !wasDeploying) {
+                bool b2 = !mRequireFullEnergy || data.unk0;
+                bool b3 = !mRequireMaxMultiplier || data.unk1;
                 if (b2 && b3) {
                     LocalDeploy(id);
                     static Message send_tracker_deploy_msg("send_tracker_deploy");

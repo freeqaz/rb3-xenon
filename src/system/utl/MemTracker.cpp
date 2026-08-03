@@ -303,11 +303,7 @@ void MemTracker::SetAllocInfoName(const char *name) {
 }
 
 void MemTracker::StartLog(TextStream &ts) {
-    if (mLog) {
-        StopLog();
-    }
-    MILO_ASSERT(!mLog, 0x113);
-    *mLog = ts;
+    mLog = &ts;
     *mLog << "(elf " << TheSystemArgs.front() << ")\n";
     *mLog << "(data\n";
 }

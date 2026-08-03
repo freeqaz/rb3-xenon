@@ -134,7 +134,7 @@ UILabel::~UILabel() { delete mText; }
 void UILabel::Init() {
     TheUI->InitResources("UILabel");
     REGISTER_OBJ_FACTORY(UILabel)
-    UILabelDir::Init();
+    REGISTER_OBJ_FACTORY(UILabelDir)
 }
 
 void UILabel::Terminate() {}
@@ -361,17 +361,21 @@ void UILabel::Draw() {
         RndDrawable::Draw();
 }
 
-// retail 0x827F4910. NOTE: retail inlines RndText member loads here
-// (`lwz r11, 0xec(r11)` = RndText::mFont); our RndText is the DC3-shaped one, so
-// this body is CAPPED until RndText's layout is reconstructed. Kept structurally
-// faithful anyway.
+// retail 0x827F4910. RndText::mFont payload is at 0xec (RndText.h), confirmed
+// against retail (`lwz r11, 0xec(r11)`). Every Mat() lookup here uses the
+// FONT's material through the non-virtual GetMat() (see rndobj/Font.h) --
+// retail reads it with a plain `lwz r11, 0x30(font)` field load, never a
+// vtable call; using the virtual Mat() here inserts a spurious vtable
+// load+bctrl (RndFont's Mat() vtable slot is at +0x6c) that retail doesn't
+// have. The tail also has no `sInDebugHighlight` reentrancy guard -- retail
+// is a plain `if (sDebugHighlight) Highlight();`.
 void UILabel::DrawShowing() {
     if (mAlpha <= 0)
         return;
     if (mText->GetFont()) {
-        mText->GetFont()->Mat()->SetAlpha(mAlpha);
+        mText->GetFont()->GetMat()->SetAlpha(mAlpha);
         if (mAltStyleEnabled && AltFont()) {
-            RndMat *fontMat = AltFont()->Mat();
+            RndMat *fontMat = AltFont()->GetMat();
             if (fontMat)
                 fontMat->SetAlpha(mAltAlpha);
         }
@@ -379,28 +383,28 @@ void UILabel::DrawShowing() {
         Update();
 
     if (mColorOverride) {
-        RndMat *fontMat = mText->GetFont()->Mat();
+        RndMat *fontMat = mText->GetFont()->GetMat();
         if (fontMat) {
             fontMat->SetColor(mColorOverride->GetColor());
         }
     } else {
         Hmx::Color color;
         mLabelDir->GetStateColor(mState, color);
-        RndMat *fontMat = mText->GetFont()->Mat();
+        RndMat *fontMat = mText->GetFont()->GetMat();
         if (fontMat)
             fontMat->SetColor(color);
     }
 
     if (mAltStyleEnabled && AltFont()) {
         if (mAltTextColor) {
-            RndMat *fontMat = AltFont()->Mat();
+            RndMat *fontMat = AltFont()->GetMat();
             if (fontMat) {
                 fontMat->SetColor(mAltTextColor->GetColor());
             }
         } else {
             Hmx::Color color;
             mLabelDir->GetStateColor(mState, color);
-            RndMat *fontMat = AltFont()->Mat();
+            RndMat *fontMat = AltFont()->GetMat();
             if (fontMat)
                 fontMat->SetColor(color);
         }
@@ -408,10 +412,8 @@ void UILabel::DrawShowing() {
 
     UpdateAndDrawHighlightMesh();
     mText->DrawShowing();
-    if (sDebugHighlight && !sInDebugHighlight) {
-        sInDebugHighlight = true;
+    if (sDebugHighlight) {
         Highlight();
-        sInDebugHighlight = false;
     }
 }
 
@@ -799,19 +801,21 @@ void UILabel::FitText() {
         float linewidth = mText->MaxLineWidth();
         if (linewidth) {
             Transform tf;
-            tf.Reset();
+            tf.v.Zero();
             float xscale = mWidth / linewidth;
             float f1, f2;
             mText->GetVerticalBounds(f1, f2);
             float fabs = std::fabs(f2 - f1);
             float fvec;
-            bool doDiv = fabs > 0.0f && mHeight > 0.0f;
-            if (doDiv) {
+            if (fabs > 0.0f && mHeight > 0.0f) {
                 fvec = mHeight / fabs;
             } else
                 fvec = 1.0f;
             float diff = mText->GetFont()->CellDiff();
+            tf.m.x.Set(1.0f, 0.0f, 0.0f);
+            tf.m.z.Set(0.0f, 0.0f, 1.0f);
             Scale(tf.m.x, xscale, tf.m.x);
+            tf.m.y.Set(0.0f, 1.0f, 0.0f);
             Scale(tf.m.y, 1.0f, tf.m.y);
             Scale(tf.m.z, fvec / diff, tf.m.z);
             mText->SetLocalXfm(tf);
@@ -835,30 +839,34 @@ void UILabel::FitText() {
         }
         RndText *t = mText;
         if (size != t->Size()) {
-            t->DeferUpdateText();
+            RndTextUpdateDeferrer resize(t);
             float ratio = size / mTextSize;
             mText->SetSize(size);
             mText->SetAltSizeAndZOffset(mAltTextSize * ratio, mAltZOffset * ratio);
-            t->ResolveUpdateText();
         } else {
             t->SetText(text);
         }
     } else if (mFitType == kFitEllipsis) {
         String ellipsis("...");
-        String text(mText->RawText());
+        String text(mText->RawText().c_str());
         int textLen = text.length();
         HX_VECTOR(RndText::Line) lines;
         unsigned int truncPos = text.rfind(mPreserveTruncText.c_str());
         unsigned int truncLen = mPreserveTruncText.length();
         if (truncPos == (unsigned int)(textLen - truncLen)) {
-            ellipsis += mPreserveTruncText.c_str();
+            // Retail calls the out-of-line String::operator+=() that reads the
+            // argument's mStr@8 (fn_827BE070: `lwz r4,8(r4); b operator+=(const
+            // char*)`), passing &mPreserveTruncText directly rather than its
+            // c_str(). Our operator+=(const FixedString&) is exactly that body
+            // (Str.cpp reinterprets to String&), and retail ICF-folds the two.
+            ellipsis += reinterpret_cast<const FixedString &>(mPreserveTruncText);
         }
         int ellipsisLen = ellipsis.length();
         float w, h;
         mText->GetStringDimensions(w, h, lines, text.c_str(), mTextSize);
         if (mTextSize > 0.0f && mWidth > 0.0f
-            && (w > mWidth || (int)lines.size() > 1)) {
-            text.insert(textLen, ellipsis.c_str());
+            && (w > mWidth || lines.size() > 1)) {
+            text.insert(textLen, ellipsis);
             textLen = textLen + ellipsisLen;
             goto ell_check;
         ell_body : {
@@ -870,15 +878,19 @@ void UILabel::FitText() {
                 textLen = spacePos + ellipsisLen;
                 text.erase(textLen);
             }
-            for (int j = textLen - ellipsisLen, i = 0; i < ellipsisLen; j++, i++) {
-                text[j] = ellipsis[i];
+            // Retail computes (textLen - ellipsisLen) in the loop PREHEADER --
+            // after the i<ellipsisLen entry guard -- and indexes text[] as
+            // base+i each iteration (`add r4, r26, r29`), so it is loop-
+            // invariant code motion, not an incrementing j.
+            for (int i = 0; i < ellipsisLen; i++) {
+                text[textLen - ellipsisLen + i] = ellipsis[i];
             }
             mText->GetStringDimensions(w, h, lines, text.c_str(), mTextSize);
         }
         ell_check:
             if (textLen <= 1)
                 goto ell_done;
-            if ((int)lines.size() > 1)
+            if (lines.size() > 1)
                 goto ell_body;
             if (w >= mWidth)
                 goto ell_body;

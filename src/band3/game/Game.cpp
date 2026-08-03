@@ -405,11 +405,7 @@ void Game::Reset() {
     mRealtime = false;
     mTimeOffset = 0;
     mPauseTime = 0;
-    mSongPos.AccessTotalTick() = 0;
-    mSongPos.AccessTotalBeat() = 0;
-    mSongPos.AccessMeasure() = 0;
-    mSongPos.AccessBeat() = 0;
-    mSongPos.AccessTick() = 0;
+    mSongPos = SongPos(0, 0, 0, 0, 0);
     mResult = kRestart;
     unk124 = 0;
     mTime.Restart();
@@ -423,9 +419,8 @@ void Game::Reset() {
     if (DataVarExists("beatmatch_start_mbt")) {
         int m, b, t;
         ParseMBT(DataVariable("beatmatch_start_mbt").Str(), m, b, t);
-        unk134 =
-            TickToMs(TheSongDB->GetData()->GetMeasureMap()->MeasureBeatTickToTick(m, b, t)
-            );
+        MeasureMap *measureMap = TheSongDB->GetData()->GetMeasureMap();
+        unk134 = TickToMs(measureMap->MeasureBeatTickToTick(m, b, t));
     }
 }
 
@@ -624,8 +619,8 @@ void Game::Rollback(float f1, float toMs) {
     unkd8 = toMs;
     unk120 = true;
     if (mProperties.mInPracticeMode) {
-        ObjectDir::Main()->Find<MidiParser>("practice_metronome", true)
-            ->Reset(MsToBeat(toMs));
+        MidiParser *metronome = ObjectDir::Main()->Find<MidiParser>("practice_metronome", true);
+        metronome->Reset(MsToBeat(toMs));
     }
 }
 

@@ -46,3 +46,16 @@ bool BeatMatchController::IsOurPadNum(int i) const {
         return false;
     return mUser->GetLocalUser()->GetPadNum() == i;
 }
+
+// Cross-TU helper (kept out-of-line deliberately — retail calls this via a
+// direct bl from GemPlayer::Poll rather than inlining it, per the compiled
+// call shape at 0x826c6d00). Not a member so it doesn't need a header edit;
+// forward-declared locally where it's used.
+void CheckControllerReenable(BeatMatchController *ctrl) {
+    if (ctrl->unk25) {
+        if (ctrl->IsDisabled()) {
+            ctrl->Disable(false);
+        }
+        ctrl->unk25 = false;
+    }
+}

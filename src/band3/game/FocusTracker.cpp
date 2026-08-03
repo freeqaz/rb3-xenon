@@ -295,7 +295,8 @@ void FocusTracker::RemoteSetFocusPlayer(Player *p, int i1, int i2, FocusFlags fl
 }
 
 TrackerPlayerID FocusTracker::GetFirstFocusPlayer(bool &b) const {
-    return GetNextFocusPlayer(mSource->GetFirstPlayer(), 0, b);
+    TrackerPlayerID pid = mSource->GetFirstPlayer();
+    return GetNextFocusPlayer(pid, 0, b);
 }
 
 void FocusTracker::SetTrackFocus(const TrackerPlayerID &pid, bool b, FocusFlags flags) {
@@ -547,8 +548,9 @@ void AccuracyFocusTracker::ConfigureTrackerSpecificData(const DataArray *arr) {
 void AccuracyFocusTracker::TranslateRelativeTargets() {
     float f31 = (float)mSectionManager.CountNonEmptySections(mSource, false);
     for (int i = 0; i < mTargets.size(); i++) {
-        float &ref = mTargets[i];
-        ref = std::floor(f31 * ref);
+        float target = mTargets[i];
+        float translated = std::floor(target * f31);
+        mTargets[i] = translated;
     }
 }
 

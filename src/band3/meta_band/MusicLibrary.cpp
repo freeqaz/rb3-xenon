@@ -558,10 +558,11 @@ void MusicLibrary::ReportSortAndFilters() {
     static Symbol filters("filters");
     String str;
     mTask.GetSongFilterAsString(str);
+    Symbol curMode = TheGameMode->mMode;
     SendDataPoint(
         "music_library/sort_and_filters",
         mode,
-        TheGameMode->mMode,
+        curMode,
         sort,
         GetCurrentSortName(true),
         filters,
@@ -845,7 +846,7 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
             if (IsLeaderLocal()) {
                 BuildPartySetlist();
                 static Symbol qp_party_shuffle("qp_party_shuffle");
-                if (!mSetlist.empty()) {
+                if (mSetlist.size() != 0) {
                     TheGameMode->SetMode(qp_party_shuffle);
                     if (TheNetSession) {
                         SetPartyShuffleModeMsg msg;
@@ -871,7 +872,8 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
             if (TheSongSortMgr->GetRandomSongs(
                     1, &s30, nullptr, &symvec, nullptr, true, true
                 )) {
-                SelectNode(GetCurrentSort()->GetNode(s30.front()), user, false);
+                Symbol firstSong = s30.front();
+                SelectNode(GetCurrentSort()->GetNode(firstSong), user, false);
                 SetSyncDirty(-1, true);
             } else if (!b3) {
                 UIScreen *screen =
@@ -895,7 +897,10 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
                 SetMakingSetlist(true);
             }
             FOREACH (it, node->mChildren) {
-                SelectNode(*it, user, true);
+                SortNode *child = *it;
+                if (child->GetType() != kNodeStoreSong) {
+                    SelectNode(child, user, true);
+                }
             }
             if (makeSetlist) {
                 if (mSetlist.size() != 0) {
@@ -927,18 +932,24 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
                 UIScreen *screen =
                     ObjectDir::Main()->Find<UIScreen>("parental_control_screen", true);
                 TheUI->PushScreen(screen);
-            } else if (IsSongAllowedInSetlist(songID, b3)) {
-                if (!songNode->IsEnabled())
-                    break;
-                AppendToSetlist(songID);
-                bool wasMaking = GetMakingSetlist(false);
-                if (!wasMaking) {
-                    PlaySetlist(true);
-                } else {
-                    if (SetlistIsFull()) {
-                        TryToSetHighlight(play_setlist, kNodeFunction, false);
+            } else if (GetAllowUGC() || !songNode->GetSongRecord()->Data()->IsUGC()) {
+                if (IsSongAllowedInSetlist(songID, b3)) {
+                    if (!songNode->IsEnabled())
+                        break;
+                    AppendToSetlist(songID);
+                    bool wasMaking = GetMakingSetlist(false);
+                    if (!wasMaking) {
+                        PlaySetlist(true);
+                    } else {
+                        if (SetlistIsFull()) {
+                            TryToSetHighlight(play_setlist, kNodeFunction, false);
+                        }
                     }
                 }
+            } else if (!b3) {
+                UIScreen *screen =
+                    ObjectDir::Main()->Find<UIScreen>("ugc_not_allowed_screen", true);
+                TheUI->PushScreen(screen);
             }
         }
         break;
@@ -953,6 +964,16 @@ void MusicLibrary::SelectNode(SortNode *node, LocalBandUser *user, bool b3) {
             UIScreen *screen =
                 ObjectDir::Main()->Find<UIScreen>("leader_setlist_warning_screen", true);
             TheUI->PushScreen(screen);
+        }
+        break;
+    }
+    case kNodeStoreSong: {
+        StoreSongSortNode *sn = dynamic_cast<StoreSongSortNode *>(node);
+        int songID = sn->mOffer->GetSingleSongID();
+        if (!unk19c->IsDownloading(songID)) {
+            std::vector<int> songIDs;
+            songIDs.push_back(songID);
+            unk19c->Unk825BD8C8(user, songIDs);
         }
         break;
     }

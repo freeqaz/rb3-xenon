@@ -151,9 +151,7 @@ void TrackerManager::ConfigureQuestGoal() {
 
 void TrackerManager::ConfigureAccomplishmentGoal() {
     if (TheCampaign) {
-        BandProfile *campaignprofile = TheCampaign->GetProfile();
-        BandProfile *primaryprofile = TheProfileMgr.GetPrimaryProfile();
-        if (primaryprofile == campaignprofile && !mTracker) {
+        if (!mTracker) {
             Symbol goal = TheCampaign->GetCurrentGoal();
             MILO_ASSERT(TheAccomplishmentMgr, 0x15E);
             Accomplishment *acc = TheAccomplishmentMgr->GetAccomplishment(goal);

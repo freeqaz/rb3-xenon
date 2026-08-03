@@ -271,6 +271,10 @@ bool RndDir::MakeWorldSphere(Sphere &s, bool b) {
              ++it) {
             Sphere locSphere;
             (*it)->MakeWorldSphere(locSphere, true);
+            RndTransformable *trans = dynamic_cast<RndTransformable *>(*it);
+            if (trans) {
+                AddMotionSphere(trans, locSphere);
+            }
             s.GrowToContain(locSphere);
         }
         return true;

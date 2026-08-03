@@ -418,37 +418,37 @@ void RndConsole::Break(DataArray *arr) {
 void RndConsole::ExecuteLine() {
     String &line_txt = mInput->CurrentLine();
     DataNode n40, n48;
-    if (!line_txt.empty()) {
-        mBuffer.push_front(line_txt);
-        if (line_txt[line_txt.length() - 1] == '/') {
-            line_txt.erase(line_txt.length() - 1, 1);
-            SetShowing(false);
-        }
-        if (mBuffer.size() > mMaxBuffer) {
-            mBuffer.pop_back();
-        }
-        mBufPtr = mBuffer.end();
-        MILO_LOG("> %s\n", line_txt);
-        n40 = DataReadString(line_txt.c_str());
-        n40.Array()->Release();
-        mInput->CurrentLine().erase();
-        LogCheat(-1, 0, n40.Array());
-        MILO_TRY {
-            if (n40.Array()->Type(0) == kDataCommand && n40.Array()->Size() == 1) {
-                n48 = n40.Array()->Command(0)->Execute();
-            } else {
-                n48 = n40.Array()->Execute();
-            }
-        }
-        MILO_CATCH(msg) {
-            MILO_NOTIFY("Script error: %s", msg);
-            n48 = 0;
-        }
-        String output;
-        output << "Evaluates to " << n48 << "\n";
-        mInput->Print(output.c_str());
-        MILO_LOG("%s", output);
+    if (line_txt.empty())
+        MILO_FAIL("Empty command");
+    mBuffer.push_front(line_txt);
+    if (line_txt[line_txt.length() - 1] == '/') {
+        line_txt.erase(line_txt.length() - 1, 1);
     }
+    if (mBuffer.size() > mMaxBuffer) {
+        mBuffer.pop_back();
+    }
+    mBufPtr = mBuffer.end();
+    // Retail's stripped LOG residue here COPY-CONSTRUCTS the String arg
+    // (Ghidra: String::String(const String&) into a stack temp, then
+    // ~String() immediately -- no ordering concern since there's only one
+    // non-format arg). The global MILO_LOG comma form doesn't reproduce
+    // that copy (see os/Debug.h's MiloStripEval comment: switching LOG
+    // globally to MiloStripEval measured -5, so it's per-site here instead).
+    MiloStripEval("> %s\n", line_txt);
+    n40 = DataReadString(line_txt.c_str());
+    n40.Array()->Release();
+    mInput->CurrentLine().erase();
+    LogCheat(-1, 0, n40.Array());
+    if (n40.Array()->Type(0) == kDataCommand && n40.Array()->Size() == 1) {
+        n48 = n40.Array()->Command(0)->Execute();
+    } else {
+        n48 = n40.Array()->Execute();
+    }
+    String output;
+    output << "Evaluates to " << n48 << "\n";
+    mInput->Print(output.c_str());
+    // Same per-site MiloStripEval reasoning as above.
+    MiloStripEval("%s", output);
 }
 
 bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {

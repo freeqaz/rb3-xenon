@@ -589,7 +589,7 @@ void Gem::InitChordInfo(int i1, bool b2) {
         unk_0x44 = RGGetChordShapeID(mGameGem, false);
         unk_0x48 = RGGetChordShapeID(mGameGem, true);
         if (mGameGem.GetShowChordNames()) {
-            const char *name = mGameGem.GetChordNameOverride().Str();
+            const char *name = mGameGem.GetChordNameOverride();
             if (name[0] != '\0') {
                 char buf[32];
                 RGParseOverrideChord(buf, 32, name);

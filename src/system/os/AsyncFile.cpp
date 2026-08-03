@@ -49,8 +49,8 @@ void PrintDiscFile(const char *file) {
 }
 
 AsyncFile::AsyncFile(const char *c, int i)
-    : mMode(i), mFail(false), mFilename(c), mTell(0), mOffset(0), mSize(0), mUCSize(0),
-      mBuffer(0), mData(0), mBytesLeft(0), mBytesRead(0) {}
+    : mMode(i), mFail(false), mFilename(c), mTell(0), mOffset(0), mBuffer(0), mData(0),
+      mBytesLeft(0) {}
 
 AsyncFile::~AsyncFile() {}
 
@@ -168,23 +168,18 @@ int AsyncFile::Seek(int i, int j) {
 
     // Calculate new file position based on seek mode
     // j=0 (SEEK_SET): absolute, j=1 (SEEK_CUR): relative, j=2 (SEEK_END): from end
-    unsigned int newPos = mTell;
-    if ((unsigned int)j == 1) {
-        newPos = mTell + i;
+    long long tell = mTell;
+    if (j == 1) {
+        tell += i;
     } else if (j == 0) {
-        newPos = i;
+        tell = (long long)i;
     } else if (j == 2) {
-        newPos = mSize + i;
+        tell = (unsigned int)(mSize + i);
     }
 
     // Clamp position to valid file range [0, mSize]
-    if (newPos > mSize) {
-        mTell = mSize;
-    } else if ((int)newPos < 0) {
-        mTell = 0;
-    } else {
-        mTell = newPos;
-    }
+    ClampEq(tell, 0LL, (long long)(unsigned int)mSize);
+    mTell = (unsigned int)tell;
 
     _SeekToTell();
     if (mBuffer && (mMode & FILE_OPEN_READ)) {

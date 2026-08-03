@@ -376,17 +376,14 @@ void CheckShadow() {
         Hmx::Matrix4 projMtx;
         shadowCam->GetViewProjectXfms(viewXfm, projMtx);
         Hmx::Matrix4 viewProj = Hmx::operator*(viewXfm, projMtx);
-        static Hmx::Matrix4 sShadowTexMatrix;
-        static bool sInit;
-        if (!sInit) {
-            sShadowTexMatrix.x = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-            sShadowTexMatrix.y = Vector4(0.0f, -0.5f, 0.0f, 0.0f);
-            sShadowTexMatrix.z = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
-            sShadowTexMatrix.w = Vector4(0.0f, 0.501953125f, 0.0f, 1.0f);
-            sInit = true;
-        }
-        Hmx::Matrix4 result = Hmx::operator*(viewProj, sShadowTexMatrix);
-        TheShaderMgr.SetVConstant((VShaderConstant)0x28, result);
+        static Hmx::Matrix4 sShadowTexMatrix(
+            Vector4(0.0f, 0.0f, 0.0f, 0.0f),
+            Vector4(0.0f, -0.5f, 0.0f, 0.0f),
+            Vector4(0.0f, 0.0f, 1.0f, 0.0f),
+            Vector4(0.0f, 0.501953125f, 0.0f, 1.0f)
+        );
+        viewProj = Hmx::operator*(viewProj, sShadowTexMatrix);
+        TheShaderMgr.SetVConstant((VShaderConstant)0x28, viewProj);
     }
 }
 

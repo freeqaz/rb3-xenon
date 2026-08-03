@@ -13,7 +13,20 @@ Screenshot::~Screenshot() {
 Screenshot::Screenshot() : mTex(nullptr), mMat(nullptr) {}
 
 BEGIN_PROPSYNCS(Screenshot)
-    SYNC_PROP_MODIFY(tex_path, mTexPath, Sync())
+    // RB3-360 retail's SyncProperty COMDAT tail-returns straight from
+    // PropSync(mTexPath,...) for tex_path -- no `andi. op,0x11` gate, no
+    // Sync() call (confirmed against target_symbol_map: the branch calls
+    // fn_82769330==PropSync(FilePath&,...) then converts the bool result
+    // directly, unlike dc3/rb3-Wii's SYNC_PROP_MODIFY[_ALT](..., Sync())).
+    {
+        static Symbol _s("tex_path");
+        if (sym == _s) {
+            if (PropSync(mTexPath, _val, _prop, _i + 1, _op))
+                return true;
+            else
+                return false;
+        }
+    }
     SYNC_SUPERCLASS(RndDrawable)
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain stops at the immediate superclass;

@@ -128,7 +128,7 @@ void LyricPlate::BakeLyric(Lyric *lyric) {
     lyric->mXWidth = 0;
     Transform tf68;
     tf68.Reset();
-    tf68.v.Set(f7, 0, fsub);
+    tf68.v = Vector3(f7, 0, fsub);
     lyric->mIdx = mText->AddLineUTF8(
         lyric->mText,
         tf68,

@@ -200,6 +200,11 @@ INIT_REVS(15, 0)
 BEGIN_LOADS(RndPropAnim)
     LOAD_REVS(bs)
     ASSERT_REVS(15, 0)
+    // Retail sets PropKeys' class-static "current load rev" here (rb3-Wii:
+    // SetPropKeysRev(gRev)) before any nested PropKeys::Load() call — see the
+    // PropKeys.h comment on PropKeys::sPropKeysLoadRev (named to dodge this
+    // TU's scatter-include gRev macro wrapping).
+    PropKeys::sPropKeysLoadRev = d.rev;
     LOAD_SUPERCLASS(Hmx::Object)
     LOAD_SUPERCLASS(RndAnimatable)
 

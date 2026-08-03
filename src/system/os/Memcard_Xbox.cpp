@@ -190,14 +190,15 @@ MCResult MCContainerXbox::Mount(CreateType ct) {
         break;
     }
     ULARGE_INTEGER u;
-    u.u.HighPart = Cid().unk8;
+    u.QuadPart = Cid().unk8;
 
     DWORD res = XContentCreateEx(
         Cid().mUserIndex, mDriveName.c_str(), &data, u5, nullptr, nullptr, 0, u, nullptr
     );
     if (res == ERROR_SUCCESS) {
         BOOL b = false;
-        if (XContentGetCreator(Cid().mUserIndex, &data, &b, nullptr, nullptr) == 0) {
+        res = XContentGetCreator(Cid().mUserIndex, &data, &b, nullptr, nullptr);
+        if (res == ERROR_SUCCESS) {
             if (!b) {
                 XContentClose(mDriveName.c_str(), nullptr);
                 res = ERROR_FILE_CORRUPT;
@@ -212,7 +213,7 @@ MCResult MCContainerXbox::Mount(CreateType ct) {
     }
     auto _result = TranslateCommonWinErrorToMCResult(res);
     if (res == ERROR_ALREADY_EXISTS) {
-                _result = kMCCorrupt;
+        _result = kMCCorrupt;
     }
     return _result;
 }

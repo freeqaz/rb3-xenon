@@ -59,7 +59,19 @@ public:
     virtual bool Unloading() const;
     virtual bool IsSongInLibrary(int const &) const { return false; }
     virtual void ExitStore(StoreError) const;
-    virtual Profile *StoreProfile() const;
+    // Retail 360 has StoreUser() — NOT StoreProfile() — in this vtable position
+    // (slot 17 / dispatch offset 0x44). Proven from band.exe: BandStorePanel's
+    // primary vtable slot 0x44 = 0x82605720, whose body is
+    // TheInputMgr->GetUser()->GetLocalBandUser() followed by the compiler's
+    // LocalBandUser* -> LocalUser* virtual-base adjust (vbptr@4, vbtable idx 3 —
+    // and LocalBandUser is the only class with >=3 virtual bases here:
+    // `class LocalBandUser : public virtual BandUser, public virtual LocalUser`).
+    // BandStorePanel::Request then calls slot 0 on the result, which is
+    // LocalUser::GetPadNum() (LocalUser's FIRST new virtual, since its other
+    // members all override User). The rb3-Wii oracle agrees exactly:
+    // StorePanel.h:33 `virtual int StoreUser() const = 0; // fix ret type`,
+    // in this same position, and declares no StoreProfile at all.
+    virtual LocalUser *StoreUser() const;
     // RB3 overrides this as MakeNewOffer(const StorePackedOfferBase *, bool) —
     // a different signature. Make the base non-pure so BandStorePanel compiles.
     virtual StoreOffer *MakeNewOffer(DataArray *) { return 0; }
@@ -110,6 +122,11 @@ protected:
     virtual int UpdateOffers(std::list<EnumProduct> const &, bool);
     virtual void UpdateFromEnumProduct(StorePurchaseable *, EnumProduct const *);
     virtual void StoreUserProfileSwappedToUser(LocalUser *);
+    // Retail has no StoreProfile() virtual at all (see the StoreUser() note
+    // above). Six StorePanel.cpp bodies still call it, so it is kept — but
+    // parked at the TAIL of the vtable, where it cannot perturb the dispatch
+    // offsets of slots 0..27, all of which are retail-aligned.
+    virtual Profile *StoreProfile() const;
 
     DataNode OnMsg(SigninChangedMsg const &);
     DataNode OnMsg(ProfileSwappedMsg const &);

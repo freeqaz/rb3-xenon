@@ -181,8 +181,8 @@ void FastInvert(const Hmx::Matrix3 &min, Hmx::Matrix3 &mout) {
 QuatXfm::QuatXfm(const Transform &tf) : v(tf.v), q(tf.m) {}
 
 void Transform::LookAt(const Vector3 &target, const Vector3 &up) {
-    m.z.Set(target.x - v.x, target.y - v.y, target.z - v.z);
-    m.y = up;
+    Subtract(target, v, m.y);
+    m.z = up;
     Normalize(m, m);
 }
 

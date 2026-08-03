@@ -780,7 +780,6 @@ void AccomplishmentPanel::RefreshGoalList() {
     MILO_ASSERT(mAccomplishmentProvider, 0x6C8);
     mAccomplishmentProvider->Update(SelectedAccomplishmentCategory());
     UIList *uilist = mDir->Find<UIList>("accomplishments.lst", true);
-    uilist->Refresh(true);
     uilist->SetProvider(mAccomplishmentGridProvider);
     SelectGoal(mGoal);
 }

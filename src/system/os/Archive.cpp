@@ -348,35 +348,44 @@ void Archive::Merge(Archive &shadow) {
 }
 
 void ArchiveInit() {
-    if (UsingCD() || OptionBool("force_ark", false)) {
-        Symbol plat = PlatformSymbol(TheLoadMgr.GetPlatform());
-        const char *hdrName;
-        bool hardDrive = false;
-        bool b4 = false;
-        if (UsingCD()) {
-            String titlePath(TheContentMgr.TitleContentPath());
-            if (!titlePath.empty()) {
-                b4 = true;
-                hardDrive = b4;
-                hdrName = MakeString("%s/gen/patch_%s", titlePath.c_str(), plat);
-            }
-        } else {
-            hdrName = MakeString("gen/patch_%s", plat);
-            b4 = true;
+    // Retail RB3-360's ArchiveInit has NO `bl ?UsingCD@@YA_NXZ` and NO
+    // `bl ?OptionBool@@YA_NPBD_N@Z` for "force_ark" anywhere in the compiled
+    // body (objdiff "Base only" on the 456 B retail body): the outer
+    // `if (UsingCD() || OptionBool("force_ark", false))` gate and the inner
+    // `if (UsingCD()) {...} else {...}` split are both fully eliminated, and
+    // `plat` is built from a hardcoded `kPlatformXBox` constant, not
+    // `TheLoadMgr.GetPlatform()` (confirmed: retail's static Symbol table for
+    // PlatformSymbol() is called with a literal index 2, and reading the
+    // retail bytes at that table slot spells "xbox", matching
+    // PlatformSymbol()'s sym[kPlatformXBox] in System.cpp). Dropping both
+    // checks and hardcoding the platform reproduces retail's unconditional,
+    // always-hardDrive-capable body.
+    Symbol plat = PlatformSymbol(kPlatformXBox);
+    const char *hdrName;
+    bool hardDrive = false;
+    bool b4 = false;
+    {
+        String titlePath(TheContentMgr.TitleContentPath());
+        if (!titlePath.empty()) {
+            hardDrive = true;
+            b4 = hardDrive;
+            hdrName = MakeString("%s/gen/patch_%s", titlePath.c_str(), plat);
         }
-        if (b4 && FileExists(MakeString("%s.hdr", hdrName), 0x10000, nullptr)) {
-            Archive archive(hdrName, 0);
-            if (hardDrive) {
-                archive.SetLocationHardDrive();
-            }
-            TheArchive = new Archive(MakeString("gen/main_%s", plat), archive.HashFill());
-            TheArchive->Merge(archive);
-        } else {
-            TheArchive = new Archive(MakeString("gen/main_%s", plat), 0);
-        }
-        static int preinitArk = 1;
-        TheArchive->SetArchivePermission(1, &preinitArk);
     }
+    // Retail also calls the 2-arg FileExists overload here, not the 3-arg
+    // (const char*, int, String*) one.
+    if (b4 && FileExists(MakeString("%s.hdr", hdrName), 0x10000)) {
+        Archive archive(hdrName, 0);
+        if (hardDrive) {
+            archive.SetLocationHardDrive();
+        }
+        TheArchive = new Archive(MakeString("gen/main_%s", plat), archive.HashFill());
+        TheArchive->Merge(archive);
+    } else {
+        TheArchive = new Archive(MakeString("gen/main_%s", plat), 0);
+    }
+    static int preinitArk = 1;
+    TheArchive->SetArchivePermission(1, &preinitArk);
     gDebugArkOrder = OptionBool("debug_arkorder", false);
     TheBlockMgr.Init();
 }

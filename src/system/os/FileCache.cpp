@@ -341,12 +341,17 @@ void FileCache::DumpOverSize(int iii) {
         }
         if (u9 == -1)
             break;
+        // NOTE(NCCC-0803-b2bb/f244/sonnet): DC3 (newer engine) gates a
+        // "Forced to dump entry with size" debug spew here on the dropped
+        // 4th ctor param (`unk19`/`b2`, see FileCache.h). Retail's actual
+        // DumpOverSize disassembly (build/45410914/asm/FileCache.s @
+        // 0x825193A0) has NO TheDebug/MakeString instructions at all -- this
+        // block never existed in RB3. `unk19` stays as a class member (struct
+        // layout / earlier ctor-param-drop rationale), but the debug body
+        // itself was dead code carried over from the DC3 port and is dropped
+        // here to match retail exactly. It is the only MakeString call site
+        // in this TU, so no other function's COMDAT depended on it.
         FileCacheEntry *delEntry = mEntries[u9];
-        if (unk19) {
-            int sz = delEntry->mSize;
-            auto _tmp0 = MakeString("Forced to dump entry with size %i (max size %i)", sz, mMaxSize);
-            TheDebug.Notify(_tmp0);
-        }
         i2 -= delEntry->mSize;
         delete delEntry;
         mEntries.erase(mEntries.begin() + u9);

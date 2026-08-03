@@ -17,7 +17,18 @@
 #include "utl/TimeConversion.h"
 #include <cmath>
 
-INIT_REVS(TrackPanelDirBase);
+// Retail folds both rev words onto ONE base register with offsets 0/4 (see
+// BandWardrobe.cpp for the same proven pattern) -- only possible for
+// internal-linkage, align(4) file-scope statics, not DECLARE_REVS/INIT_REVS
+// class statics. gRev/gAltRev have no external qualified references
+// (TrackPanelDirBase::gRev / ::gAltRev), so this is a drop-in swap local to
+// this TU.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
+#define gAltRev gRevs.altRev
+#define gRev gRevs.rev
 
 // Base TrackPanelDirBase stores mGemTracks as ObjVector<ObjPtr<RndDir> > (to keep
 // layout without pulling GemTrackDir.h into the widely-included header).

@@ -110,9 +110,7 @@ void BandHighlight::Poll() {
 void BandHighlight::DrawShowing() {
     SyncDir();
     mHelpTextLabel->SetShowing(GetState() != kDisabled);
-    // NOTE: Wii oracle also calls UpdateMeshes(GetState()) here; retail-360
-    // UIComponent (this repo's port) has no UpdateMeshes member yet, so it is
-    // omitted. DrawShowing is not a worklist target for this packet.
+    UpdateMeshes(GetState());
     mResource->Dir()->DrawShowing();
 }
 

@@ -24,6 +24,7 @@ public:
     void Update();
     void Poll();
     void Succeed();
+    void Clear();
 
     State mState;
     OnlineID mUserID;

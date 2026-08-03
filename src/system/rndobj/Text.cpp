@@ -180,10 +180,34 @@ BEGIN_SAVES(RndText)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndDrawable)
     SAVE_SUPERCLASS(RndTransformable)
-    bs << mFont;
-    bs << mAlign;
-    bs << mText;
-    bs << mStyle.mTextColor;
+    // `bs << mFont` would exact-match the ObjOwnerPtr<T1>-specific operator<<
+    // (Object.h:843), which is declared but never DEFINED anywhere in the tree
+    // -- an unresolved external. Retail's actual callee (fn_8238B5B8, ghidra-
+    // decompiled: `obj ? obj->Name() : ""` then `bs << name`) is the
+    // ObjRefConcrete<T1,ObjectDir> name-based save (ObjPtr_p.h:193), the same
+    // one RndFont::mNextFont (a plain ObjPtr<RndFont>) already uses. Casting to
+    // the base reference removes the ObjOwnerPtr<T1> candidate from overload
+    // resolution (no ObjRefConcrete-argument -> ObjOwnerPtr<T1> deduction
+    // exists) so the name-based overload is selected instead, matching retail.
+    // Chained (not two statements) to match retail: the font-save call's
+    // returned BinStream& is reused directly as the receiver for mAlign's
+    // write (target keeps it live in r29 across the call), vs re-fetching
+    // `bs` from r30 for a second statement.
+    bs << (const ObjRefConcrete<RndFont> &)mFont << mAlign << mText;
+    // Retail streams this field via operator<<(BinStream&, Vector4 const&),
+    // not Hmx::Color's own operator<< (measured: target callee is
+    // `??6@YAAAVBinStream@@AAV0@ABVVector4@@@Z`, ours was
+    // `??6@YAAAVBinStream@@AAV0@ABVColor@Hmx@@@Z`). Hmx::Color
+    // {red,green,blue,alpha} and Vector4 {x,y,z,w} are identical 4-float POD
+    // layouts, so this is a safe reinterpret to match retail's call target.
+    bs << (const Vector4 &)mStyle.mTextColor;
+    // Tried chaining these trailing scalar writes into one expression (like
+    // the font/align/text group above) to reproduce retail's second stack
+    // temp slot (stack-layout diff showed TGT_ONLY slot at 0x58, live insns
+    // 45..78, alongside the reused 0x54 slot). That regressed instead: frame
+    // size grew +0x10 and a stwu/prologue mismatch appeared, so chaining adds
+    // an extra temp rather than reproducing retail's specific two-slot
+    // allocation. Left as separate statements -- this is the 99.9% form.
     bs << mWrapWidth;
     bs << mLeading;
     bs << mFixedLength;
@@ -558,15 +582,11 @@ void RndText::Print() {
 RndText::RndText()
     : mFont(this), mWrapWidth(0), mAlign(kTopLeft), mCapsMode(kCapsModeNone),
       mLeading(1), mFixedLength(0),
-      mStyle(mFont, 1, 0, Hmx::Color(1, 1, 1, 1), 0),
-      mAltStyle(nullptr, 1, 0, Hmx::Color(1, 1, 1, 1), 0), mDeferUpdate(0),
-      mMeshCallback(nullptr), mCurHeight(0), mCurWidth(0), mFramesSinceDraw(0) {
-    mTextMarkup = false;
-    mUseAltStyle = false;
-    mNeedsUpdate = false;
+      mStyle(mFont, 1, 0, Hmx::Color(1, 1, 1, 1), 0), mTextMarkup(false),
+      mAltStyle(nullptr, 1, 0, Hmx::Color(1, 1, 1, 1), 0), mUseAltStyle(false),
+      mDeferUpdate(0), mNeedsUpdate(false), mMeshCallback(nullptr), mCurHeight(0),
+      mCurWidth(0) {
     mMeshDirty = false;
-    mManualLines = false;
-    mRotateLineVerts = false;
 }
 
 RndText::~RndText() {

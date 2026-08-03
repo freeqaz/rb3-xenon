@@ -104,8 +104,7 @@ void SpotDrawParams::Save(BinStream &bs) {
 }
 
 BEGIN_SAVES(SpotlightDrawer)
-    SAVE_REVS(6, 0)
-    SAVE_SUPERCLASS(Hmx::Object)
+    SAVE_REVS(5, 0)
     SAVE_SUPERCLASS(RndDrawable)
     mParams.Save(bs);
 END_SAVES
@@ -214,10 +213,10 @@ void SpotlightDrawer::DrawLenses(
     SpotlightDrawer::SpotlightEntry *const &spotEnd
 ) {
     MILO_ASSERT(spotIter != spotEnd, 0x2b1);
-    for (; spotEnd != spotIter; ++spotIter) {
+    for (; spotIter != spotEnd; ++spotIter) {
         Spotlight *sl = spotIter->mSpotlight;
-        if (Spotlight::sDiskMesh) {
-            MILO_ASSERT(sl->LensMesh(), 0x2b9);
+        if (sl->LensMesh()) {
+            MILO_ASSERT(Spotlight::sDiskMesh, 0x2b9);
             Spotlight::sDiskMesh->SetMat(sl->LensMesh());
             Spotlight::sDiskMesh->Draw();
         }
@@ -543,18 +542,16 @@ void SpotlightDrawer::DrawWorld() {
         SortLights();
         DrawMeshVec(sCans);
         sCans.resize(0);
-        RndEnviron *cur = RndEnviron::sCurrent;
         if (!sLights.empty()) {
+            RndEnviron *cur = RndEnviron::sCurrent;
             Vector3 *pos = RndEnviron::CurrentPos();
             MILO_ASSERT(sEnviron->GetUseApprox() == false, 0x1dc);
             sEnviron->Select(nullptr);
-            if (GetGfxMode() == kOldGfx) {
-                DrawShadow();
-            }
             std::vector<SpotlightEntry>::iterator itEnd = sLights.end();
             if (sLights.begin() != itEnd) {
                 std::vector<SpotlightEntry>::iterator it = sLights.begin();
                 do {
+                    SpotlightEntry *e1 = it;
                     Spotlight *spot = it->mSpotlight;
                     Hmx::Color c;
                     float intensity = spot->Intensity();
@@ -564,40 +561,22 @@ void SpotlightDrawer::DrawWorld() {
                         spot->Color().blue * intensity,
                         1.0f
                     );
-                    const SpotlightEntry *e1 = &(*it);
-                    const SpotlightEntry *e2 = &(*it) + 1;
-                    for (; e2 != &(*itEnd); ++e2) {
+                    SpotlightEntry *e2 = it + 1;
+                    for (; e2 != itEnd; ++e2) {
                         if (e2->mColorKey != it->mColorKey)
                             break;
                     }
                     SetAmbientColor(c);
                     if (sHaveAdditionals) {
-                        DrawAdditional(
-                            const_cast<SpotlightEntry *>(e1),
-                            const_cast<SpotlightEntry *const &>(e2)
-                        );
+                        DrawAdditional(it, e2);
                     }
                     if (sHaveLenses) {
-                        DrawAccessories<LensExtract>(
-                            const_cast<SpotlightEntry *>(e1),
-                            const_cast<SpotlightEntry *const &>(e2)
-                        );
-                    }
-                    if (!DrawNGSpotlights() && !sNoBeams
-                        && TheRnd.GetDrawMode() != Rnd::kDrawOcclusionDepth) {
-                        DrawBeams(
-                            const_cast<SpotlightEntry *>(e1),
-                            const_cast<SpotlightEntry *const &>(e2)
-                        );
+                        DrawAccessories<LensExtract>(e1, e2);
                     }
                     if (sHaveFlares) {
-                        DrawFlares(
-                            const_cast<SpotlightEntry *>(e1),
-                            const_cast<SpotlightEntry *const &>(e2)
-                        );
+                        DrawFlares(it, e2);
                     }
-                    it = sLights.begin()
-                        + (e2 - &(*sLights.begin()));
+                    it = e2;
                 } while (it != itEnd);
             }
             if (cur) {

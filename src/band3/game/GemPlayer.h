@@ -199,6 +199,24 @@ public:
         }
     }
 
+    // Retail calls these as inlined accessors rather than open-coding
+    // `if (id != -1) mGemStatus->mGems[id] |= X` at the site: the `this` load
+    // (`lwz r11, 0x8(r30)`) is evaluated BEFORE the `idx != -1` guard, and each
+    // call re-loads it, which is what stops MSVC merging two adjacent guards.
+    // See GemPlayer::Hit @0x826C7B?? (|=0x80) and the |=0x20 site after
+    // UpdateSectionStats().
+    void SetSolo(int idx) {
+        if (idx != -1) {
+            mGems[idx] |= 0x80;
+        }
+    }
+
+    void Set0x20(int idx) {
+        if (idx != -1) {
+            mGems[idx] |= 0x20;
+        }
+    }
+
     void Clear0xBF(int idx) {
         if (idx != -1) {
             mGems[idx] &= 0xBF;

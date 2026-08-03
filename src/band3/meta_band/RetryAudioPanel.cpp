@@ -22,10 +22,9 @@ void RetryAudioPanel::PollForLoading() {
 }
 
 bool RetryAudioPanel::IsLoaded() const {
-    if (UIPanel::IsLoaded()) {
-        return mFinished;
-    } else
+    if (!UIPanel::IsLoaded())
         return false;
+    return mFinished;
 }
 
 inline static const char *VOContextStr() { return "vo_retry_context"; }

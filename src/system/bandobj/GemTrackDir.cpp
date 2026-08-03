@@ -12,8 +12,24 @@
 #include "utl/Messages.h"
 #include "decomp.h"
 
-INIT_REVS(GemTrackDir)
 bool kKeyShifting = true;
+
+// Retail RB3 keeps the object-version stack as FREE functions (the rb3-Wii
+// obj/ObjVersion.h pair): the target calls PushRev(packedRevs, this) /
+// PopRev(this) with no BinStream `this`. dc3's newer engine moved them onto
+// BinStream, which is what our in-tree utl/BinStream.h declares. Same lever
+// as OvershellDir.cpp / BandSwatch.cpp / BandWardrobe.cpp / BandDirector.cpp.
+void PushRev(int, Hmx::Object *);
+int PopRev(Hmx::Object *);
+
+// Retail folds both rev words onto ONE base register with offsets 0/4, which
+// only happens for internal-linkage, align(4) file-scope statics (altRev+0,
+// rev+4) -- not for the DECLARE_REVS/INIT_REVS class statics. Same lever as
+// OvershellDir.cpp / BandSwatch.cpp / BandWardrobe.cpp / BandDirector.cpp.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gGemTrackRevs;
 
 #pragma push
 #pragma dont_inline on
@@ -109,13 +125,16 @@ BEGIN_LOADS(GemTrackDir)
 END_LOADS
 
 void GemTrackDir::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs);
+    int rev;
+    bs >> rev;
+    gGemTrackRevs.rev = getHmxRev(rev);
+    gGemTrackRevs.altRev = getAltRev(rev);
     ASSERT_REVS(0xC, 0);
-    if (gRev < 9) {
+    if (gGemTrackRevs.rev < 9) {
         int i68 = 0;
         bs >> i68;
         bs >> mEffectSelector;
-        if (gRev < 1) {
+        if (gGemTrackRevs.rev < 1) {
             if (gLoadingProxyFromDisk) {
                 ObjPtr<RndTex> tex(0, 0);
                 bs >> tex;
@@ -124,7 +143,7 @@ void GemTrackDir::PreLoad(BinStream &bs) {
         }
     }
     if (!IsProxy()) {
-        if (gRev >= 9)
+        if (gGemTrackRevs.rev >= 9)
             bs >> mEffectSelector;
         bs >> mSurfaceMesh;
         bs >> mSurfaceMat;
@@ -134,7 +153,7 @@ void GemTrackDir::PreLoad(BinStream &bs) {
         bs >> mBassSuperStreakOffTrig;
         bs >> mKickDrummerTrig;
         bs >> mSpotlightPhraseSuccessTrig;
-        if (gRev < 0xC) {
+        if (gGemTrackRevs.rev < 0xC) {
             ObjPtr<EventTrigger> trig(this, 0);
             bs >> trig;
         }
@@ -150,7 +169,7 @@ void GemTrackDir::PreLoad(BinStream &bs) {
             bs >> mGemMashAnims[i];
         }
 
-        if (gRev >= 6 && gRev <= 10) {
+        if (gGemTrackRevs.rev >= 6 && gGemTrackRevs.rev <= 10) {
             ObjPtr<RndAnimatable> anim(this, 0);
             bs >> anim;
         }
@@ -161,16 +180,16 @@ void GemTrackDir::PreLoad(BinStream &bs) {
         for (int i = 0; i < 3; i++) {
             bs >> mFillHitTrigs[i];
         }
-        if (gRev >= 11) {
+        if (gGemTrackRevs.rev >= 11) {
             for (int i = 0; i < 6; i++) {
                 bs >> mRealGuitarMashAnims[i];
             }
         }
-        if (gRev >= 2)
+        if (gGemTrackRevs.rev >= 2)
             bs >> mStreakMeterOffset;
-        if (gRev >= 3)
+        if (gGemTrackRevs.rev >= 3)
             bs >> mStreakMeterTilt;
-        if (gRev >= 4) {
+        if (gGemTrackRevs.rev >= 4) {
             int oldsize = mFretPosOffsets.size();
             bs >> mFretPosOffsets;
             while (mFretPosOffsets.size() < oldsize) {
@@ -180,12 +199,12 @@ void GemTrackDir::PreLoad(BinStream &bs) {
                 mFretPosOffsets.pop_back();
             }
         }
-        if (gRev >= 5)
+        if (gGemTrackRevs.rev >= 5)
             bs >> mKickDrummerResetTrig;
-        if (gRev >= 7)
+        if (gGemTrackRevs.rev >= 7)
             bs >> mChordLabelPosOffset;
-        if (gRev >= 8) {
-            if (gRev < 10) {
+        if (gGemTrackRevs.rev >= 8) {
+            if (gGemTrackRevs.rev < 10) {
                 ObjPtr<EventTrigger> trig(this, 0);
                 bs >> trig;
                 bs >> trig;
@@ -193,22 +212,22 @@ void GemTrackDir::PreLoad(BinStream &bs) {
             bs >> mPeakStateOnTrig;
             bs >> mPeakStateOffTrig;
         }
-        if (gRev >= 12) {
+        if (gGemTrackRevs.rev >= 12) {
             for (int i = 1; i < 5; i++) {
                 bs >> mFillLaneAnims[i];
             }
         }
     }
     LoadTrack(bs, IsProxy(), gLoadingProxyFromDisk, false);
-    bs.PushRev(packRevs(gAltRev, gRev), this);
+    PushRev(packRevs(gGemTrackRevs.altRev, gGemTrackRevs.rev), this);
     TrackDir::PreLoad(bs);
 }
 
 void GemTrackDir::PostLoad(BinStream &bs) {
     TrackDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
-    gRev = getHmxRev(revs);
-    gAltRev = getAltRev(revs);
+    int revs = PopRev(this);
+    gGemTrackRevs.rev = getHmxRev(revs);
+    gGemTrackRevs.altRev = getAltRev(revs);
 }
 
 void GemTrackDir::SyncFingerFeedback() {

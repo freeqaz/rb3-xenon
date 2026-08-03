@@ -46,6 +46,14 @@ RndCam::~RndCam() {
 
 unsigned int RndCam::ProjectZ(float) { return 0; }
 
+// Forward declaration: retail keeps every SetFrustum call site out-of-line
+// (see the definition + comment below OnSetFrustum). SyncProperty's three
+// SYNC_PROP_SET call sites need the same noinline trampoline -- without a
+// forward declaration here, /Ob2 auto-inlines SetFrustum's full clamp body
+// into each branch (measured: base 1048 B vs target 856 B, 3 duplicated
+// ~64-byte clamp/store clusters at idx 54-73/115-132/172-190 in objdiff).
+static void _outline_SetFrustum(RndCam *cam, float n, float f, float y, float a);
+
 BEGIN_HANDLERS(RndCam)
     HANDLE(set_frustum, OnSetFrustum)
     HANDLE(set_z_range, OnSetZRange)
@@ -57,12 +65,16 @@ END_HANDLERS
 
 BEGIN_PROPSYNCS(RndCam)
     SYNC_SUPERCLASS(RndTransformable)
-    SYNC_PROP_SET(near_plane, mNearPlane, SetFrustum(_val.Float(), mFarPlane, mYFov, 1))
-    SYNC_PROP_SET(far_plane, mFarPlane, SetFrustum(mNearPlane, _val.Float(), mYFov, 1))
+    SYNC_PROP_SET(
+        near_plane, mNearPlane, _outline_SetFrustum(this, _val.Float(), mFarPlane, mYFov, 1)
+    )
+    SYNC_PROP_SET(
+        far_plane, mFarPlane, _outline_SetFrustum(this, mNearPlane, _val.Float(), mYFov, 1)
+    )
     SYNC_PROP_SET(
         y_fov,
         mYFov * RAD2DEG,
-        SetFrustum(mNearPlane, mFarPlane, _val.Float() * DEG2RAD, 1)
+        _outline_SetFrustum(this, mNearPlane, mFarPlane, _val.Float() * DEG2RAD, 1)
     )
     SYNC_PROP(z_range, mZRange)
     SYNC_PROP_MODIFY(screen_rect, mScreenRect, UpdateLocal())

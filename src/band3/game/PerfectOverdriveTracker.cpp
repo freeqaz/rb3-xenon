@@ -262,6 +262,7 @@ String PerfectOverdriveTracker::GetPlayerContributionString(Symbol s) const {
     static Symbol perfect_overdrive_tracker_contrib_format_vox("perfect_overdrive_tracker_contrib_format_vox");
     static Symbol perfect_overdrive_tracker_contribution_format_1("perfect_overdrive_tracker_contribution_format_1");
     static Symbol perfect_overdrive_tracker_contribution_format("perfect_overdrive_tracker_contribution_format");
+    static Symbol vocals("vocals");
     TrackerPlayerID pid = mSource->GetIDFromInstrument(s);
     int i4 = 0;
     if (pid.NotNull()) {
@@ -269,14 +270,13 @@ String PerfectOverdriveTracker::GetPlayerContributionString(Symbol s) const {
         MILO_ASSERT(pPlayer, 0x1EE);
         i4 = pPlayer->mStats.unk1c0;
     }
-    static Symbol vocals("vocals");
     if (s == vocals) {
         Symbol sym = i4 == 1 ? perfect_overdrive_tracker_contrib_format_vox_1
                              : perfect_overdrive_tracker_contrib_format_vox;
-        return MakeString(Localize(sym, 0), i4);
+        return MakeString(Localize(sym, 0), (const char *)i4);
     } else {
         Symbol sym = i4 == 1 ? perfect_overdrive_tracker_contribution_format_1
                              : perfect_overdrive_tracker_contribution_format;
-        return MakeString(Localize(sym, 0), i4);
+        return MakeString(Localize(sym, 0), (const char *)i4);
     }
 }

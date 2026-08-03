@@ -1,3 +1,9 @@
+// NCCC-0803-b2bb/f221/sonnet: retail inlines the owner-only ObjPtr ctor for
+// mTrackDir/mUpcomingShiftMaskAnim in this TU (see obj/Object.h per-site
+// lever docs) -- must be defined before ANY include, incl. GemTrack.h which
+// transitively pulls in obj/Object.h.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "bandtrack/GemTrack.h"
 
 #ifdef HX_NATIVE
@@ -532,23 +538,17 @@ void GemTrack::DrawBeatLine(Symbol s1, int i2, int i3, bool b4) {
             if (endKey != 0) {
                 Symbol sfc;
                 int startKey;
+                const char *shiftWid;
                 if (endKey < 0) {
                     startKey = 0;
                     endKey = 3;
-                    if (flip_shift_arrows.Int()) {
-                        sfc = "key_shift_right.wid";
-                    } else {
-                        sfc = "key_shift_left.wid";
-                    }
+                    shiftWid = flip_shift_arrows.Int() ? "key_shift_right.wid" : "key_shift_left.wid";
                 } else {
                     endKey = mRange;
                     startKey = endKey - 3;
-                    if (flip_shift_arrows.Int()) {
-                        sfc = "key_shift_left.wid";
-                    } else {
-                        sfc = "key_shift_right.wid";
-                    }
+                    shiftWid = flip_shift_arrows.Int() ? "key_shift_left.wid" : "key_shift_right.wid";
                 }
+                sfc = shiftWid;
                 MILO_ASSERT(startKey <= endKey, 0x297);
                 for (; startKey < endKey; startKey++) {
                     int semitone = WhiteKeyToSemitone(startKey);

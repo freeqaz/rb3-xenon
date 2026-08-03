@@ -57,12 +57,12 @@ u64 StreamReceiver::GetBytesPlayed() {
     GetPlayCursor();
     return (u64)mLastPlayCursor;
 #else
-    unsigned long long numBuffers = (unsigned long long)mNumBuffers;
     unsigned long long buffersSent = (unsigned long long)mBuffersSent;
-    unsigned long long bufferOffset = buffersSent << 0xe;
-    unsigned long long totalPlayed = (unsigned long long)mLastPlayCursor + (buffersSent / numBuffers) * numBuffers * 0x4000;
+    unsigned long long numBuffers = (unsigned long long)mNumBuffers;
+    unsigned long long bufferOffset = buffersSent * 0xc000;
+    unsigned long long totalPlayed = (unsigned long long)mLastPlayCursor + (buffersSent / numBuffers) * numBuffers * 0xc000;
 
-    for (; totalPlayed >= bufferOffset; totalPlayed = totalPlayed - numBuffers * 0x4000)
+    for (; totalPlayed >= bufferOffset; totalPlayed = totalPlayed - numBuffers * 0xc000)
         ;
     return totalPlayed;
 #endif

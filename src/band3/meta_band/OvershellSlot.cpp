@@ -1589,10 +1589,6 @@ DataNode OvershellSlot::OnMsg(const AddLocalUserResultMsg &msg) {
         mBandUserMgr->SetSlot(pUser, mSlotNum);
         ClearPotentialUsers();
         mSongOptionsRequired = false;
-        BandProfile *pf = TheProfileMgr.GetProfileForUser(pUser);
-        if (pf)
-            pf->DeleteAll();
-        TheWiiProfileMgr.SetPadToGuest(pUser->GetPadNum());
         BandProfile *cpf = TheProfileMgr.GetProfileForUser(pUser);
         CharData *cdata = nullptr;
         if (cpf)
@@ -1794,13 +1790,11 @@ DataNode OvershellSlot::OnMsg(const UIComponentScrollMsg &msg) {
     mState->HandleMsg(msg);
     if (pUser && pUser->IsLocal()) {
         if (list) {
+            static Symbol button_toggle("button_toggle");
             DataArrayPtr ptr("play_instr_sfx_local", pUser, button_toggle);
             ptr->Execute();
         } else
             TheSynth->PlaySound("slider.cue", 0, 0, 0);
-    }
-    if (list) {
-        Handle(print_haq_focus_status_msg, true);
     }
     return 1;
 }
@@ -1914,9 +1908,12 @@ __declspec(noinline) bool OvershellSlot::CanChangeSynapseOption() {
 }
 
 void OvershellSlot::UpdateProfilesList() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0xC97);
-    mSwappableProfilesProvider->Reload(pUser->GetLocalBandUser());
+    // Retail X360's Reload() takes no argument -- see the header comment on
+    // OvershellProfileProvider::Reload. rb3-Wii's oracle version reads
+    // `GetUser()->GetLocalBandUser()` into a second arg here, but the retail
+    // X360 disassembly shows no GetUserFromSlot/IsLocal/GetLocalBandUser calls
+    // at all in this function.
+    mSwappableProfilesProvider->Reload();
     static Message updateProfilesMsg("update_profiles_provider", 0);
     updateProfilesMsg[0] = mSwappableProfilesProvider;
     mOvershellDir->HandleType(updateProfilesMsg);
@@ -2189,6 +2186,6 @@ OvershellProfileProvider::GetWiiProfileListMode() {
     return (WiiProfileListMode)0;
 }
 int OvershellProfileProvider::GetWiiProfileCount(LocalBandUser *) const { return 0; }
-void OvershellProfileProvider::Reload(LocalBandUser *) {}
+void OvershellProfileProvider::Reload() {}
 const char *OvershellProfileProvider::GetWiiProfileSelectedName() const { return ""; }
 #endif

@@ -15,6 +15,14 @@ int gEvalIndex;
 std::map<Symbol, DataNode> gDataVars;
 DataNode gEvalNode[8];
 
+// sw3 scatter: RB3 retail linker placed DataFunc.cpp's gDataThisPtr dynamic
+// initializer + scalar-deleting-destructor glue inside this TU's .text span
+// (same phenomenon as the DataArray.cpp/BandSongMetadata.cpp scatter-includes
+// below -- static-initializer COMDATs land by link order, not by TU).
+#if !HX_NATIVE  // native: gDataThisPtr is really defined in DataFunc.cpp
+DataThisPtr gDataThisPtr;
+#endif
+
 bool DataNode::CompatibleType(DataType ty) const {
     if (mType == ty)
         return true;
@@ -168,9 +176,9 @@ const char *DataVarName(const DataNode *var) {
     return "<null>";
 }
 
-inline bool HasChar(const char *str, char c) {
+inline bool HasSpace(const char *str) {
     while (*str != '\0') {
-        if (*str++ == c)
+        if (*str++ == ' ')
             return true;
     }
     return false;
@@ -202,8 +210,7 @@ void DataNode::Print(TextStream &ts, bool b) const {
         }
         break;
     case kDataSymbol:
-        if (!HasChar(mValue.symbol, ' ') && !HasChar(mValue.symbol, '#')
-            && !HasChar(mValue.symbol, '-'))
+        if (!HasSpace(mValue.symbol))
             ts << mValue.symbol;
         else
             ts << "'" << mValue.symbol << "'";

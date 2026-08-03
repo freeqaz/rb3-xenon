@@ -89,25 +89,11 @@ void NgMat::SetupShader(bool b1, bool b2) {
 }
 
 void NgMat::SetBasicState() {
-    RndRenderState::CullMode cm;
-    switch (mCull) {
-    case kCullNone:
-        cm = (RndRenderState::CullMode)0;
-        break;
-    case kCullRegular:
-        cm = (RndRenderState::CullMode)2;
-        break;
-    case kCullBackwards:
-        cm = (RndRenderState::CullMode)6;
-        break;
-    default:
-        cm = (RndRenderState::CullMode)2;
-        break;
-    }
+    RndRenderState::CullMode cm = mCull ? (RndRenderState::CullMode)2 : (RndRenderState::CullMode)0;
     TheRenderState.SetCullMode(cm);
     TheRenderState.SetBlendEnable(mBlendEnable);
     TheRenderState.SetBlendOp(mBlendOp);
-    TheRenderState.SetBlend(mBlendSrc, mBlendDest, mBlendSrc, mBlendDest);
+    TheRenderState.SetBlend(mBlendSrc, mBlendDest, (RndRenderState::Blend)1, (RndRenderState::Blend)1);
     TheRenderState.SetAlphaTestEnable(mAlphaCut);
     if (mAlphaCut) {
         TheRenderState.SetAlphaFunc((RndRenderState::TestFunc)5, mAlphaThreshold);
@@ -145,7 +131,9 @@ void NgMat::SetBasicState() {
     if (cur == 6) {
         bool white = mTexWrap == kTexBorderWhite;
         TheRenderState.SetBorderColor(0, white);
+#ifdef RB3_DC3_MAT
         TheRenderState.SetBorderColor(6, white);
+#endif
         TheRenderState.SetBorderColor(1, white);
         TheRenderState.SetBorderColor(2, white);
         TheRenderState.SetBorderColor(3, white);
@@ -414,24 +402,6 @@ void NgMat::RefreshState() {
         mBlendDest = (RndRenderState::Blend)7;
         mBlendEnable = true;
         break;
-    case kScreen:
-        mBlendOp = (RndRenderState::BlendOp)0;
-        mBlendSrc = (RndRenderState::Blend)9;
-        mBlendDest = (RndRenderState::Blend)1;
-        mBlendEnable = true;
-        break;
-    case kLighten:
-        mBlendSrc = (RndRenderState::Blend)1;
-        mBlendOp = (RndRenderState::BlendOp)3;
-        mBlendDest = (RndRenderState::Blend)1;
-        mBlendEnable = true;
-        break;
-    case kDarken:
-        mBlendSrc = (RndRenderState::Blend)1;
-        mBlendOp = (RndRenderState::BlendOp)2;
-        mBlendDest = (RndRenderState::Blend)1;
-        mBlendEnable = true;
-        break;
     default:
         break;
     }
@@ -482,10 +452,10 @@ void NgMat::RefreshState() {
 
     // Second texgen matrix - identity
     mTexGenMatrix2.Zero();
+    mTexGenMatrix2.z.z = 1.0f;
+    mTexGenMatrix2.w.w = 1.0f;
     mTexGenMatrix2.x.x = 1.0f;
     mTexGenMatrix2.y.y = 1.0f;
-    mTexGenMatrix2.w.w = 1.0f;
-    mTexGenMatrix2.z.z = 1.0f;
 
     // TexGen
     Transform xfmTmp;
@@ -576,8 +546,6 @@ void NgMat::RefreshState() {
     case kBlendAdd:
     case kBlendSrcAlphaAdd:
     case kBlendSubtract:
-    case kScreen:
-    case kLighten:
         unk2d8 = 0.0f;
         unk2dc = 0.0f;
         unk2e0 = 0.0f;
@@ -593,7 +561,6 @@ void NgMat::RefreshState() {
         unk2d4 = 1;
         break;
     case kBlendMultiply:
-    case kDarken:
         unk2d8 = 1.0f;
         unk2dc = 1.0f;
         unk2e0 = 1.0f;

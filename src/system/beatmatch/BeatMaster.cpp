@@ -131,7 +131,8 @@ void BeatMaster::Poll(float f) {
         mSinks[i]->UpdateSongPos(mSongPos);
     }
     mMidiParserMgr->Poll();
-    float tick = mSongPos.GetTotalTick();
+    float posTick = mSongPos.GetTotalTick();
+    int tick = (int)posTick;
     CheckBeat();
     CheckSubmixes(tick);
     mAudio->Poll();
@@ -162,11 +163,7 @@ void BeatMaster::Jump(float f) {
 }
 
 void BeatMaster::Reset() {
-    mLastSongPos.AccessTotalTick() = 0.0f;
-    mLastSongPos.AccessTotalBeat() = 0.0f;
-    mLastSongPos.AccessMeasure() = 0;
-    mLastSongPos.AccessBeat() = 0;
-    mLastSongPos.AccessTick() = 0;
+    mLastSongPos = SongPos();
     for (int i = 0; i < mSubmixIdxs.size(); i++) {
         mSubmixIdxs[i] = 0;
     }

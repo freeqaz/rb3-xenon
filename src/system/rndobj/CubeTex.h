@@ -66,6 +66,15 @@ private:
 protected:
     RndCubeTex();
 
+    // RETAIL-MATCH: retail RndCubeTex tracks its load revision as a single
+    // plain 4-byte static int (ReadEndian(&gRev,4) directly, no BinStreamRev
+    // wrapper, no PushRev/PopRev across PreLoad/PostLoad) -- the ObjMacros.h
+    // DECLARE_REVS/gRev(u16)+gAltRev(u16) split and the Object.h BinStreamRev
+    // dialect both mismatch retail's asm for this class. Verified against
+    // fn_82495690 (PreLoad) and fn_82495C78 (PostLoad): both read/compare the
+    // full 4 bytes at the same static address, and PostLoad has no PopRev call.
+    static int gRev;
+
     CubeTexProperties props; // 0x2c
     CubeTexProperties moreprops[kNumCubeFaces]; // 0x40
     FilePath mFile[kNumCubeFaces]; // 0xb8

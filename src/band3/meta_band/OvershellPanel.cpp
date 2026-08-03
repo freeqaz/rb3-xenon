@@ -722,7 +722,8 @@ void OvershellPanel::ResolveSlotStates() {
             if (pUser->GetLocalBandUser()->ConnectedControllerType()
                 == pUser->GetControllerType()) {
                 curSlot->RevertToOverrideFlowReturnState();
-            } else if (mActiveStatus - 1U <= 1) {
+            } else if (mActiveStatus == kOvershellInShell
+                       || mActiveStatus == kOvershellInGameShell) {
                 curSlot->AttemptRemoveUser();
             }
         }
@@ -741,92 +742,66 @@ void OvershellPanel::ResolveSlotStates() {
                            && !SongOptionsRequired()
                            && mSlots[i]->InOverrideFlow(kOverrideFlow_SongSettings)) {
                     mSlots[i]->EndOverrideFlow(kOverrideFlow_SongSettings, true);
-                } else if (curSlot->GetState()->GetStateID() < 200) {
-                    // goto-into-else folds the "guest" branch tail and the "loaded-unlocked
-                    // non-guest" branch tail into one block; rewrite regresses match.
-#if defined(HX_NATIVE)
-                    // The native/web port has no Wii profile manager (TheWiiProfileMgr
-                    // is a zeroed no-op stub: mPadProfileIndex[]/mWiiProfiles[] flags
-                    // are all 0). So IsPadAGuest() reads -2!=0 -> FALSE and the
-                    // non-guest branch below would route the profileless guest's slot
-                    // into kState_WaitWii (0x81) forever — its view never becomes
-                    // choose_part, so the SongSettings override flow stalls and the
-                    // player can never pick a part/difficulty. On the disc a guest pad
-                    // (no Wii profile) IS a guest: IsPadAGuest TRUE -> the `therest`
-                    // path runs ShowSongOptions() -> kState_ChoosePart. Our offline
-                    // guest (splash fix lands it in kState_JoinedDefault) is exactly
-                    // that case, so take the guest branch. Faithful to the disc's
-                    // "guest continues into the part-select flow" outcome.
-                    if (false) {
-#else
-                    if (!TheWiiProfileMgr.IsPadAGuest(curLocalUser->GetPadNum())) {
-#endif
-                        int padIdx =
-                            TheWiiProfileMgr.GetIndexForPad(curLocalUser->GetPadNum());
-                        if (padIdx >= 0) {
-                            if (TheWiiProfileMgr.IsIndexLoaded(padIdx)
-                                && !TheWiiProfileMgr.IsIndexLocked(padIdx)) {
-                                goto therest;
-                            }
+                } else {
+                    // Retail X360 has no reachable path here that checks
+                    // GetStateID() < 200, nor any TheWiiProfileMgr guest/pad
+                    // check, nor a kState_WaitWii (0x81) LeaveWaitWii() check —
+                    // confirmed against the retail disassembly at
+                    // .L_825B6CD8..L_825B6D84 (va 0x825b6cd8), which falls
+                    // straight from the EndOverrideFlow test into the
+                    // InSongSettingsFlow test below with none of that in
+                    // between. The Wii-Remote pad/profile pairing this guarded
+                    // is Wii-only hardware; X360 never emits calls to
+                    // IsPadAGuest/GetIndexForPad/IsIndexLoaded/IsIndexLocked/
+                    // ShowWaitWii/LeaveWaitWii from this function at all.
+                    if (curSlot->GetState()->InSongSettingsFlow()) {
+                        if (!curSlot->InOverrideFlow(kOverrideFlow_SongSettings)) {
+                            curSlot->RevertToOverrideFlowReturnState();
+                        }
+                    } else if (curSlot->InOverrideFlow(kOverrideFlow_SongSettings)) {
+                        OvershellSlotStateID o12 = theID;
+                        if (curSlot->InGame()) {
+                            o12 = kState_JoinedDefault;
+                        }
+                        curSlot->SetOverrideFlowReturnState((OvershellSlotStateID)o12
+                        );
+                        curSlot->ShowSongOptions();
+                    }
 
-                            if (curSlot->GetState()->GetStateID() != 0x81) {
-                                curSlot->ShowWaitWii();
-                            }
-                        }
-                    } else {
-                    therest:
-                        if (curSlot->GetState()->GetStateID() == 0x81) {
-                            curSlot->LeaveWaitWii();
-                        }
-                        if (curSlot->GetState()->InSongSettingsFlow()) {
-                            if (!curSlot->InOverrideFlow(kOverrideFlow_SongSettings)) {
+                    if (!curSlot->SongOptionsRequired()) {
+                        if (curSlot->GetState()->InRegisterOnlineFlow()) {
+                            if (!curSlot->InOverrideFlow(kOverrideFlow_RegisterOnline
+                                )) {
                                 curSlot->RevertToOverrideFlowReturnState();
                             }
-                        } else if (curSlot->InOverrideFlow(kOverrideFlow_SongSettings)) {
-                            OvershellSlotStateID o12 = theID;
-                            if (curSlot->InGame()) {
-                                o12 = kState_JoinedDefault;
+                        } else if (curSlot->InOverrideFlow(
+                                       kOverrideFlow_RegisterOnline
+                                   )) {
+                            if (!curSlot->GetState()->InRegisterOnlineFlow()) {
+                                curSlot->SetOverrideFlowReturnState(theID);
                             }
-                            curSlot->SetOverrideFlowReturnState((OvershellSlotStateID)o12
-                            );
-                            curSlot->ShowSongOptions();
+                            curSlot->ShowState((OvershellSlotStateID)0x8B);
                         }
-
-                        if (!curSlot->SongOptionsRequired()) {
-                            if (curSlot->GetState()->InRegisterOnlineFlow()) {
-                                if (!curSlot->InOverrideFlow(kOverrideFlow_RegisterOnline
-                                    )) {
-                                    curSlot->RevertToOverrideFlowReturnState();
-                                }
-                            } else if (curSlot->InOverrideFlow(
-                                           kOverrideFlow_RegisterOnline
-                                       )) {
-                                if (!curSlot->GetState()->InRegisterOnlineFlow()) {
-                                    curSlot->SetOverrideFlowReturnState(theID);
-                                }
-                                curSlot->ShowState((OvershellSlotStateID)0x8B);
+                        if (curSlot->GetState()->RequiresOnlineSession()
+                            && !mSessionMgr->IsOnlineEnabled()) {
+                            curSlot->LeaveOptions();
+                        }
+                        if (curSlot->GetState()->RequiresRemoteUsers()
+                            && mSessionMgr->IsLocal()) {
+                            curSlot->ShowOnlineOptions();
+                        }
+                        if (curSlot->GetState()->GetStateID() == 0x29) {
+                            BandUser *pUser = curSlot->GetState()
+                                                  ->Property("kick_user")
+                                                  ->Obj<BandUser>();
+                            MILO_ASSERT(pUser, 0x632);
+                            if (!mSessionMgr->HasUser(pUser)) {
+                                curSlot->LeaveKickConfirmation();
                             }
-                            if (curSlot->GetState()->RequiresOnlineSession()
-                                && !mSessionMgr->IsOnlineEnabled()) {
-                                curSlot->LeaveOptions();
-                            }
-                            if (curSlot->GetState()->RequiresRemoteUsers()
-                                && mSessionMgr->IsLocal()) {
-                                curSlot->ShowOnlineOptions();
-                            }
-                            if (curSlot->GetState()->GetStateID() == 0x29) {
-                                BandUser *pUser = curSlot->GetState()
-                                                      ->Property("kick_user")
-                                                      ->Obj<BandUser>();
-                                MILO_ASSERT(pUser, 0x632);
-                                if (!mSessionMgr->HasUser(pUser)) {
-                                    curSlot->LeaveKickConfirmation();
-                                }
-                            }
-                            if (curSlot->GetState()->GetStateID() == 0x1E
-                                && !mSessionMgr->AreInvitesAllowed()) {
-                                curSlot->ShowOnlineOptions();
-                            }
+                        }
+                        if (curSlot->GetState()->GetStateID() == 0x1E
+                            && !mSessionMgr->AreInvitesAllowed()) {
+                            curSlot->ShowOnlineOptions();
                         }
                     }
                 }
@@ -1525,15 +1500,19 @@ void OvershellPanel::LeaveOptions() {
 }
 
 void OvershellPanel::CheckForControllerDisconnects() {
-    if (!DataVariable(fake_controllers).Int()) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    if (!DataVariable(fake_controllers).Int())
+#endif
+    {
         LocalBandUser *localUser;
         for (int i = 0; i < mSlots.size(); i++) {
             BandUser *user = mSlots[i]->GetUser();
             OvershellSlotStateID id = mSlots[i]->GetState()->GetStateID();
-            if (user && user->IsLocal() && user->IsParticipating()) {
+            if (user && user->IsLocal()) {
                 localUser = user->GetLocalBandUser();
                 if (localUser->ConnectedControllerType() != user->GetControllerType()
                     && mActiveStatus != kOvershellInactive) {
+                    static Symbol pad_lost("pad_lost");
                     bool b2 = (TheUIEventMgr && TheUIEventMgr->HasDialogEvent(pad_lost));
                     bool removeOnDisconnect =
                         TheGameMode->Property("remove_user_on_disconnect_in_song")->Int();

@@ -3017,7 +3017,6 @@ CharDriver.cpp:
 	.pdata      start:0x82206920 end:0x82206928
 	.pdata      start:0x82206930 end:0x82206978
 	.pdata      start:0x82206980 end:0x82206988
-	.pdata      start:0x822072E0 end:0x822072E8
 	.text       start:0x82376D40 end:0x82376D98
 	.text       start:0x82376D98 end:0x823793C4
 	.text       start:0x82379410 end:0x8237A320
@@ -3031,7 +3030,6 @@ CharDriver.cpp:
 	.text       start:0x823CF61C end:0x823CF970
 	.text       start:0x823CFAAC end:0x823CFAE0
 	.text       start:0x823CFAEC end:0x823CFAF8
-	.text       start:0x823D9518 end:0x823D9570
 
 PostProc.cpp:
 	.pdata      start:0x8220C570 end:0x8220C578
@@ -6037,12 +6035,12 @@ CharMirror.cpp:
 	.text       start:0x823CE0D8 end:0x823CE3D0
 
 FileMergerOrganizer.cpp:
-	.pdata      start:0x822072B8 end:0x822072E0
+	.pdata      start:0x822072B8 end:0x822072E8
 	.pdata      start:0x82207308 end:0x822073A8
 	.pdata      start:0x822073B0 end:0x822073C0
 	.pdata      start:0x822073C0 end:0x822073E0
 	.pdata      start:0x822073E0 end:0x822073E8
-	.text       start:0x823D93C8 end:0x823D9518
+	.text       start:0x823D93C8 end:0x823D9570
 	.text       start:0x823D9738 end:0x823DA0B8
 	.text       start:0x823DA108 end:0x823DA360
 	.text       start:0x823DA360 end:0x823DA6E0
@@ -8969,10 +8967,10 @@ band3/meta_band/CampaignKey.cpp:
 
 band3/meta_band/AccomplishmentTourConditional.cpp:
 	.pdata      start:0x82221800 end:0x82221818
-	.pdata      start:0x82221818 end:0x82221860
+	.pdata      start:0x82221818 end:0x82221858
 	.text       start:0x825A4338 end:0x825A4340
 	.text       start:0x825A4778 end:0x825A48D4
-	.text       start:0x825A48E0 end:0x825A4BF0
+	.text       start:0x825A48E0 end:0x825A4BC8
 
 band3/meta_band/SavedSetlist.cpp:
 	.pdata      start:0x82221D78 end:0x82221F40
@@ -12293,13 +12291,13 @@ Campaign.cpp:
 	.pdata      start:0x821F8E40 end:0x821F8E50
 	.pdata      start:0x821F9020 end:0x821F9030
 	.pdata      start:0x822072F8 end:0x82207308
-	.pdata      start:0x82221860 end:0x82221D38
+	.pdata      start:0x82221858 end:0x82221D38
 	.pdata      start:0x82221D38 end:0x82221D78
 	.text       start:0x822E8A78 end:0x822E8CB8
 	.text       start:0x822E8CB8 end:0x822E8D60
 	.text       start:0x822EA814 end:0x822EAA64
 	.text       start:0x823D9628 end:0x823D9738
-	.text       start:0x825A4BF0 end:0x825A92D8
+	.text       start:0x825A4BC8 end:0x825A92D8
 	.text       start:0x825A92D8 end:0x825A95A0
 
 system/synth/SynthSample.cpp:
