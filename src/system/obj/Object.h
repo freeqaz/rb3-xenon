@@ -2201,10 +2201,20 @@ namespace Hmx {
         /** Create a new Object derivative based on its entry in the factory list. */
         template <class T>
         static T *New() {
+#ifdef HX_NATIVE
             T *obj = dynamic_cast<T *>(Hmx::Object::NewObject(T::StaticClassName()));
             if (!obj)
                 MILO_FAIL("Couldn't instantiate class %s", T::StaticClassName());
             return obj;
+#else
+            // Retail RB3-360's New<T> is a bare dynamic_cast: the target body of
+            // Hmx::Object::New<MoggClip> (VoiceoverPanel.cpp 0x8262F700, 72 B) ends
+            // at the __RTDynamicCast and has NO null test and NO second
+            // StaticClassName call.  MILO_FAIL evaluates its arguments here (see
+            // os/Debug.h), so the guard above is not free -- it costs 5
+            // instructions and a saved r31 per instantiation.
+            return dynamic_cast<T *>(Hmx::Object::NewObject(T::StaticClassName()));
+#endif
         }
     };
 
