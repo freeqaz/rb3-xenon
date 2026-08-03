@@ -334,6 +334,16 @@ public:
         float ax = a * vec.x;
         float cz = c * vec.z;
         float by = b * vec.y;
+        // lane DR-3 NEGATIVE RESULT -- do not retry.  Retail emits the c*z term
+        // before b*y at every inlined site (RndMesh/UIList::GetDistanceToPlane,
+        // Geo Intersect/OnSide), and the obvious lever is to sum in declaration
+        // order (`ax + cz + by + d`) so the grouping stops forcing `by` first.
+        // MEASURED INERT: 974 TUs recompiled and all four rows returned
+        // byte-identical percentages (99.958 / 99.818 / 99.915 / 99.898).
+        // MSVC reassociates the sum chain under /fp:fast, so term order in a sum
+        // is not source-controllable -- the same inertness DQ-3 proved for the
+        // operands of a single commutative fmuls.  ~1.2 KB sits behind this and
+        // is NOT reachable this way.
         return ax + by + cz + d;
     }
 
