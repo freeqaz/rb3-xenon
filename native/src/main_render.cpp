@@ -2543,6 +2543,75 @@ namespace {
                        "expected and proves nothing\n",
                        nbIn, worstIn, worstInName ? worstInName : "-");
 
+            // ---- X17: THE FULL DEVIATING SET, NOT JUST THE ARGMAX ------------
+            //
+            // Every lane from X13 to X16 reasoned about this residual from SIX
+            // per-figure `worst:` names. An argmax is not a set: X16's
+            // one-defect hypothesis ("the residual is on prop/trouser/hair
+            // bones, the same family as X15's rebind-skip list") is a claim
+            // about the SET, and the argmax is exactly the sample most likely
+            // to look like whatever story you already have. RB3_RECOMPOSE_DUMP
+            // prints the whole admissible deviating population so the set
+            // relation can be computed instead of eyeballed.
+            //
+            // It also prints each deviating bone's PARENT and the parent's own
+            // deviation, because `W == L*parentW` is a chain identity: if a
+            // parent's world is wrong, every descendant inherits a deviation it
+            // did not cause. Only a bone whose parent is CLEAN is a candidate
+            // SITE; the rest are propagation. Those are labelled ROOT.
+            if (getenv("RB3_RECOMPOSE_DUMP")) {
+                int nDev = 0, nRoot = 0;
+                // `=all` dumps EVERY admissible bone, not just the deviating
+                // ones. That is what makes a cross-ARM diff possible: the
+                // default (no-Poll) arm has an empty deviating set by
+                // construction, so a deviation-filtered dump can never be
+                // compared against it. With `all`, both arms emit the same
+                // rows for the same bones and `diff` answers "did this bone's
+                // world move at all under Poll?" directly.
+                const char *dm = getenv("RB3_RECOMPOSE_DUMP");
+                const bool dumpAll = dm && strcmp(dm, "all") == 0;
+                const float kEps = dumpAll ? -1.0f : 1e-3f; // the gate's own threshold
+                for (size_t i = 0; i < bones.size(); i++) {
+                    RndTransformable *b = bones[i];
+                    if (!b->TransParent()) continue;
+                    if (!RecomposeAdmissible(b)) continue;
+                    float d = RecomposeDev(b);
+                    if (d <= kEps) continue;
+                    nDev++;
+                    RndTransformable *p = b->TransParent();
+                    float pd = (p && p->TransParent()) ? RecomposeDev(p) : 0.0f;
+                    bool parentClean = (pd <= kEps);
+                    if (parentClean) nRoot++;
+                    // X17: print the bone's PUBLISHED world translation too. The
+                    // discriminator that matters for the next lane is whether
+                    // this world is STALE (bit-identical to the same bone in the
+                    // no-Poll arm ⇒ nothing ever recomposed it) or MOVED-BUT-
+                    // WRONG. A `diff` of two arms' dump blocks answers that
+                    // directly, with no further instrumentation.
+                    const Vector3 &bw = b->WorldXfm().v;
+                    printf("        %-6s dev %.3e  bone '%s'  parent '%s' (parent dev "
+                           "%.3e)  world (%9.3f %9.3f %9.3f)\n",
+                           parentClean ? "ROOT" : "inherit", d,
+                           b->Name() ? b->Name() : "?",
+                           p && p->Name() ? p->Name() : "?", pd, bw.x, bw.y, bw.z);
+                }
+                // ⚠ ANTI-VACUITY. A dump that prints nothing reads identically
+                // to a clean figure. Say which one this is, in the log, always.
+                if (nDev == 0)
+                    printf("        [dump] figure CLEAN — 0 admissible bone(s) over "
+                           "%.0e (denominator %d bone(s), so this is a real zero, not "
+                           "an empty walk)\n", (double)kEps, nb);
+                else
+                    printf("        [dump] %d deviating admissible bone(s) of %d, of "
+                           "which %d ROOT (parent clean ⇒ candidate defect SITE) and "
+                           "%d inherited\n", nDev, nb, nRoot, nDev - nRoot);
+                // A figure whose argmax is non-zero MUST have a non-empty set.
+                if (worst > kEps && nDev == 0)
+                    printf("        ⛔ [dump] INSTRUMENT SELF-CONTRADICTION: argmax "
+                           "%.3e > %.0e but the dump found 0 — do not trust this "
+                           "block\n", worst, (double)kEps);
+            }
+
             // (2b) X13 ★ THE PLACEMENT CHAIN, WALKED TO THE ROOT.
             //
             // Milestone 2: at bind pose the palette and meshWorld disagree by
