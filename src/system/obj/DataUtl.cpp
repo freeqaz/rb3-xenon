@@ -63,21 +63,30 @@ bool DataUpdateArray(DataArray *a1, DataArray *a2) {
 // BEFORE publishing the pointer) is not reachable from `gVarStackPtr++; ->Set(var);`,
 // which forces the global store first.  Semantics are identical.  42.71 -> 62.71 mpn.
 //
-// Residual (2 of 9 instrs, lane DK-2c): retail keeps ONE load of gVarStackPtr and uses
-// base-update (`stwu`); we emit `stw` plus a reload, because the `DataNode*` store may
-// alias the `VarStack*` global and MSVC will not prove otherwise at /O1.  The fusion
-// only appears when the increment is on the GLOBAL itself -- which is exactly what
-// forces the reload -- so the two halves appear mutually exclusive from source.
-// MEASURED DEAD ENDS, do not re-hunt (all three land back at 38.4, BELOW baseline):
+// CLOSED at 100% (lane DS-4/B).  The earlier reading -- "the reload is an aliasing
+// problem, the two halves are mutually exclusive from source, this needs more than
+// another spelling" -- was WRONG.  It WAS another spelling.
+//
+// `stwu rS,d(rA)` is MSVC's update-form peephole for `*(++p) = x`: it fuses the
+// pointer bump with a store whose displacement is the NEW slot's offset 0.  So the
+// `++` has to ride on the member at offset 0 (`var`), not on the one at offset 4
+// (`value`).  Fusing it with `value` -- `gVarStackPtr[1].var = var;
+// (++gVarStackPtr)->value = *var;` -- leaves the `var` store as a plain `stw` and
+// then forces a reload of the global, which is what looked like an alias barrier.
+// Move the `++` to the first statement and the reload disappears with it; the
+// publish (`stw r11,gVarStackPtr`) sinks below the fused store on its own.  62.71
+// -> 100.
+//
+// MEASURED DEAD ENDS, do not re-hunt (all three land at 38.4, BELOW the old
+// baseline) -- note every one of them uses a LOCAL COPY of the pointer, which is
+// what actually kills the fusion; none of them tested `++` on the global itself:
 //   VarStack *p = gVarStackPtr + 1; p->var = var; gVarStackPtr = p; p->value = *var;
 //   VarStack *p = gVarStackPtr; p++;  p->var = var; gVarStackPtr = p; p->value = *var;
 //   VarStack *p = gVarStackPtr; p[1].var = var; gVarStackPtr = &p[1]; p[1].value = *var;
-// Any local copy of the pointer kills the `stwu`; closing this needs the aliasing
-// question settled, not another spelling.
 void DataPushVar(DataNode *var) {
     MILO_ASSERT(gVarStackPtr + 1 - gVarStack < VAR_STACK_SIZE, 0x137);
-    gVarStackPtr[1].var = var;
-    (++gVarStackPtr)->value = *var;
+    (++gVarStackPtr)->var = var;
+    gVarStackPtr->value = *var;
 }
 
 void DataMergeTags(DataArray *dest, DataArray *src) {
