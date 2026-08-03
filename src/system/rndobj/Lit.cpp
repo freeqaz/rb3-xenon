@@ -255,6 +255,14 @@ BEGIN_LOADS(RndLight)
     // test, keeping the revision live in r11 and exiting the dead arm with
     // `b 0x1c0` straight past the rev>5 block. As two separate `if`s we reload
     // the revision at that point (`lhz r11,0x4,r27`) and mismatch.
+    // The arm really is unreachable, so clang -Werror rejects it
+    // (-Wtautological-overlap-compare); MSVC never sees the pragma. Suppressed
+    // rather than restructured -- any rewrite that satisfies clang by changing
+    // the comparisons also changes the X360 codegen that reaches 100%.
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wtautological-overlap-compare"
+#endif
     if (gRevs_Lit.rev > 4 && gRevs_Lit.rev < 5) {
         bool tmp;
         bs >> tmp;
@@ -264,6 +272,9 @@ BEGIN_LOADS(RndLight)
         bs >> mAnimateColorFromPreset;
         bs >> mAnimatePositionFromPreset;
     }
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
     if (gRevs_Lit.rev > 6) {
         bs >> mTopRadius >> mBotRadius;
         if (gRevs_Lit.rev < 0xE) {
