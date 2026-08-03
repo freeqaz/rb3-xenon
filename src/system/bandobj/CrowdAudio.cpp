@@ -308,43 +308,48 @@ void CrowdAudio::StopAllMoggs() {
     }
 }
 
+// Lane DR-2: retail X360 runs this body UNCONDITIONALLY.  rb3-Wii's DEV build
+// wraps it in `if (TypeDef() != arr)` and we inherited that, which cost exactly
+// the three leading instructions retail does not have:
+//     lwz r10, -168(r11) / cmplw cr6, r10, r4 / beq cr6, <end>
+// This is the usual oracle trap running in reverse -- the oracle AGREED with our
+// source and both were wrong for retail.  Adjudicated on retail bytes, per the
+// standing rule.
 void CrowdAudio::SetTypeDef(DataArray *arr) {
-    if (TypeDef() != arr) {
-        Hmx::Object::SetTypeDef(arr);
-        mIntro = 0;
-        mLevels = 0;
-        mVenueIntro = 0;
-        mVenueOutro = 0;
-        mClapOffsetMs = 0;
-        mCrowdVol = 0;
-        mCamShotVol = 0;
-        mResultsDuck = 0;
-        mResultsFadeDuration = 1000.0f;
-        mVenueChangeFadeDuration = 1000.0f;
-        mCloseupFadeDuration = 1000.0f;
-        mCrossfadeDuration = 1000.0f;
-        mReleaseTime = 5000.0f;
-        mFadeInFromLoadingDuration = 1000.0f;
-        if (arr) {
-            arr->FindData("clap_early_amount_ms", mClapOffsetMs, false);
-            arr->FindData("crowd_volume", mCrowdVol, false);
-            DataArray *streamArr = arr->FindArray("streams", false);
-            if (streamArr) {
-                mIntro = streamArr->FindArray("intro");
-                mLevels = streamArr->FindArray("levels");
-                mVenueIntro = streamArr->FindArray("venue_intro");
-                mVenueOutro = streamArr->FindArray("venue_outro");
-            }
-            arr->FindData("results_duck", mResultsDuck, false);
-            arr->FindData("results_fade_ms", mResultsFadeDuration, false);
-            arr->FindData("venue_change_fade_ms", mVenueChangeFadeDuration, false);
-            arr->FindData("closeup_fade_ms", mCloseupFadeDuration, false);
-            arr->FindData("crossfade_ms", mCrossfadeDuration, false);
-            arr->FindData("release_ms", mReleaseTime, false);
-            arr->FindData("fade_in_from_loading_ms", mFadeInFromLoadingDuration, false);
+    Hmx::Object::SetTypeDef(arr);
+    mIntro = 0;
+    mLevels = 0;
+    mVenueIntro = 0;
+    mVenueOutro = 0;
+    mClapOffsetMs = 0;
+    mCrowdVol = 0;
+    mCamShotVol = 0;
+    mResultsDuck = 0;
+    mResultsFadeDuration = 1000.0f;
+    mVenueChangeFadeDuration = 1000.0f;
+    mCloseupFadeDuration = 1000.0f;
+    mCrossfadeDuration = 1000.0f;
+    mReleaseTime = 5000.0f;
+    mFadeInFromLoadingDuration = 1000.0f;
+    if (arr) {
+        arr->FindData("clap_early_amount_ms", mClapOffsetMs, false);
+        arr->FindData("crowd_volume", mCrowdVol, false);
+        DataArray *streamArr = arr->FindArray("streams", false);
+        if (streamArr) {
+            mIntro = streamArr->FindArray("intro");
+            mLevels = streamArr->FindArray("levels");
+            mVenueIntro = streamArr->FindArray("venue_intro");
+            mVenueOutro = streamArr->FindArray("venue_outro");
         }
-        UpdateVolume();
+        arr->FindData("results_duck", mResultsDuck, false);
+        arr->FindData("results_fade_ms", mResultsFadeDuration, false);
+        arr->FindData("venue_change_fade_ms", mVenueChangeFadeDuration, false);
+        arr->FindData("closeup_fade_ms", mCloseupFadeDuration, false);
+        arr->FindData("crossfade_ms", mCrossfadeDuration, false);
+        arr->FindData("release_ms", mReleaseTime, false);
+        arr->FindData("fade_in_from_loading_ms", mFadeInFromLoadingDuration, false);
     }
+    UpdateVolume();
 }
 
 void CrowdAudio::SetBank(ObjectDir *dir) {
