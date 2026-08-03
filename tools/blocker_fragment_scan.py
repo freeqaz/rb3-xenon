@@ -1,6 +1,13 @@
 """Classify unpaired-anon blocker rows as FRAGMENT vs COMPLETE.
 
 Usage:  venv/bin/python tools/blocker_fragment_scan.py <ceiling_blocker_partition.json>
+                                                       [game|engine|all]
+
+The tier argument selects WHICH units are the treatment population.  It
+defaults to `game` so DU-1's measurement reproduces byte-for-byte; `engine`
+(src/system/**) was added by lane DW-3 to test whether DU-1's game-tier
+framing transfers.  The DETECTOR and the CONTROL are untouched by the flag --
+only the unit-selection predicate moves, so the two tiers cannot drift apart.
 
 A retail function that symbols.txt has chopped into several fn_ rows shows a
 tell that needs no map and no source: the row's LAST instruction is not a
@@ -37,7 +44,14 @@ def is_fragment(ins):
 part=json.load(open(sys.argv[1] if len(sys.argv)>1 else 'part.json'))
 rep=json.load(open(root/'build/45410914/report.json'))
 m=json.load(open(root/'scripts/target_symbol_map.json'))
-def tier(sp): return sp and (sp.startswith('src/band3/') or sp.startswith('src/network/'))
+TIER=sys.argv[2] if len(sys.argv)>2 else 'game'
+if TIER not in ('game','engine','all'):
+    print(f"REFUSING: unknown tier {TIER!r} (want game|engine|all)"); sys.exit(4)
+def tier(sp):
+    if not sp: return False
+    g = sp.startswith('src/band3/') or sp.startswith('src/network/')
+    e = sp.startswith('src/system/')
+    return {'game':g,'engine':e,'all':g or e}[TIER]
 unitsrc={r['unit']:r['source_path'] for r in part}
 def asmp(unit):
     stem=unit.split('/',1)[1] if unit.startswith('default/') else unit
@@ -86,8 +100,8 @@ for u in rep['units']:
 tf=[t for t in treat if t[4] is not None]
 cf=[c for c in ctrl if c[3] is not None]
 nt=sum(1 for t in tf if t[4]); nc=sum(1 for c in cf if c[3])
-print(f"TREATMENT  game unpaired-anon blockers : {nt}/{len(tf)} = {100*nt/max(len(tf),1):.1f}% fall-through")
-print(f"CONTROL    game MAPPED rows same units : {nc}/{len(cf)} = {100*nc/max(len(cf),1):.1f}% fall-through")
+print(f"TREATMENT  {TIER} unpaired-anon blockers : {nt}/{len(tf)} = {100*nt/max(len(tf),1):.1f}% fall-through")
+print(f"CONTROL    {TIER} MAPPED rows same units : {nc}/{len(cf)} = {100*nc/max(len(cf),1):.1f}% fall-through")
 if len(cf)==0: print("!! CONTROL EMPTY -- refusing to interpret"); sys.exit(4)
 print(f"ENRICHMENT : {(nt/len(tf))/max(nc/len(cf),1e-9):.2f}x\n")
 print("per-unit blocker verdicts (FRAG = falls through into next row):")
