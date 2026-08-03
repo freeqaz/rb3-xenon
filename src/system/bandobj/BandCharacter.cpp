@@ -2671,7 +2671,10 @@ DataNode BandCharacter::OnPreClear(DataArray *da) {
     return DataNode(0);
 }
 
-void BandCharacter::SavePrefabFromCloset() { MILO_ASSERT(0, 0xB95); }
+DataNode BandCharacter::SavePrefabFromCloset(const char *name) {
+    MILO_ASSERT(0, 0xB95);
+    return DataNode(0);
+}
 
 DataNode BandCharacter::OnSavePrefab(DataArray *da) {
     if (mTestPrefab)

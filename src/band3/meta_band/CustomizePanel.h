@@ -108,7 +108,7 @@ public:
     void SetupCurrentOutfit(Symbol);
     bool HasPatch();
     void RotatePatch(int);
-    bool HasLicense(Symbol);
+    int HasLicense(Symbol);
     Symbol GetAssetShot(Symbol);
     void SetFocusComponent(CustomizeState, Symbol);
     void StoreFocusComponent();
@@ -124,7 +124,7 @@ public:
     void PrepareAssetPatchEdit();
     void SetCurrentCharacterPatch();
     void FinishPatchEdit();
-    void SavePrefab();
+    DataNode SavePrefab(const char *);
     void SetupAssetPatchData(Symbol);
     bool IsAssetPatchable();
     CharData *GetCharData() const { return mCharData; }

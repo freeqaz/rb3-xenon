@@ -131,7 +131,16 @@ public:
     bool IsLoading();
     const char *FlagString(int);
     void SetContext(Symbol);
-    void SavePrefabFromCloset();
+    // RB3-360 retail (lane DQ-1): retail's save_from_closet arm builds a DataNode
+    // temp from `bl fn_822824F8(this, "")` and inline-destructs it, and
+    // CustomizePanel::SavePrefab *returns* this call's result — so retail's
+    // signature is `DataNode SavePrefabFromCloset(const char* = "")`, not the
+    // rb3-Wii dev-build `void ...()`.  fn_822824F8 lives inside BandCharacter's
+    // own .text span (0x82280F8C-0x82285D98) and interns its char* argument into
+    // mPrefab (+0x274) via Symbol(); its real body is ~0x400 B and is NOT ported
+    // here.  Only the signature is corrected, which is what the two Handle
+    // dispatchers actually observe.
+    DataNode SavePrefabFromCloset(const char * = "");
     void SetSingalong(float);
     void GameOver();
     void ClearDircuts();
