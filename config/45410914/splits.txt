@@ -4297,8 +4297,7 @@ MoveMgr.cpp:
 	.pdata      start:0x821FED28 end:0x821FED48
 	.pdata      start:0x821FED60 end:0x821FED70
 	.pdata      start:0x821FEE70 end:0x821FEE78
-	.text       start:0x822CFD10 end:0x822CFD60
-	.text       start:0x822CFD60 end:0x822D16F8
+	.text       start:0x822CFD10 end:0x822D16F8
 	.text       start:0x822D1768 end:0x822D2C28
 	.text       start:0x822D2C80 end:0x822D2D58
 	.text       start:0x822D3910 end:0x822D3928
@@ -6884,8 +6883,7 @@ Lit.cpp:
 	.text       start:0x82497C60 end:0x824981E0
 	.text       start:0x824981E0 end:0x82498380
 	.text       start:0x82498380 end:0x82498D80
-	.text       start:0x82498D80 end:0x82498D90
-	.text       start:0x82498D90 end:0x8249A120
+	.text       start:0x82498D80 end:0x8249A120
 	.text       start:0x82B661F0 end:0x82B662E8
 
 sslgen.c:
