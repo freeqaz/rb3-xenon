@@ -576,6 +576,44 @@ Comparison order is directional and **not** canonicalized. Proven end-to-end on
 slot` took it **99.524 → 100.0**, +84 B / +0.000786pp / **Δmatched 0**.
 ⚠ Note Δmatched 0 while bytes moved — **this class pays bytes, never functions.**
 
+### ⚠ 9.0.2 `STRUCTURAL` is THREE things, and `replace` is NOT "a missing instruction"
+
+DQ-3 recommended the `STRUCTURAL` class at `mm≤3` on the grounds that
+*"insert/delete/replace means a genuinely missing or extra instruction, i.e. real
+source divergence."* **The class IS worth funding — DR-2 crossed 5 rows out of it
+(`c49f5121`, `264d1edd`, `028c2367`) — but that rationale is wrong for the
+largest half.** Measured with `tools/structural_decompose.py` (reproduced on main,
+`49ffc85a`):
+
+| shape | rows | bytes |
+|---|---:|---:|
+| **literally `insert`/`delete`** | **32** | **4,108** |
+| provably pure **transposition** (scheduling — same instructions, different order) | 11 | 2,552 |
+| everything else (`replace` etc.) | ~89 | ~10,552 |
+| **class total** | **132** | **17,212** |
+
+⛔ **`replace` does NOT mean something is missing.** objdiff emits it when
+`target[i]` and `base[i]` pair at the *same index* with a different opcode —
+lengths equal, nothing absent. It is the biggest sub-class (**67 of 132 rows**).
+
+★★★ **The corrected lever: rank by REPEATED INSTRUCTION SHAPE across template
+instantiations, which cuts ACROSS `match_type`.** DR-2's best find was a
+`replace`-only family that the "missing instruction" framing would have
+deprioritised.
+
+★ Free consistency check the tool gives you: re-running post-lane yields
+127 rows / 15,908 B — the baseline minus exactly the 5 rows / 1,304 B landed,
+**closing to the byte**.
+
+⚠ **Two families flagged and deliberately NOT touched** (a lane may take them):
+`_M_allocate_and_copy` ×3 (300 B) where retail element sizes 20/16/64 vs ours
+16/12/88 are **all different** ⇒ not one folded body ⇒ read as a **map-pairing**
+defect, *not* a source one (and note "differing shift ⇒ our `sizeof` is wrong"
+has been refuted **twice**); and a `stw rN, 0x50(r31)` **EH-spill family**
+(`StoreMainPanel::FinishLoad`, `TrackDir::~TrackDir`, `FftIpp::~FftIpp`) all
+differing by exactly one store to the *same* frame slot, in both directions —
+systematic, likely the "missing stack temp" family, no source lever found.
+
 ### 9.1 The reachable-ceiling partition
 
 ⏱ **Live as of 2026-08-02 — check the tree before re-funding any of this.**
