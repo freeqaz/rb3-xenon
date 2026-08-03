@@ -1272,6 +1272,92 @@ void Rnd::DrawPreClear() {
 #endif // !HX_NATIVE
     ObjPtrList<RndDrawable> *drawList;
     drawList = mReleaseImmediate ? &mDraws : &mPreClearDraws;
+#ifdef HX_NATIVE
+    // ★ X21 — THE PRE-CLEAR LIST SELECTION IS INVERTED RELATIVE TO THE ORACLE,
+    // AND THAT IS WHY THE OUTFIT COMPOSE PASS NEVER RUNS.
+    //
+    //   rb3-Wii (MWCC oracle, rndobj/Rnd.cpp:742):
+    //       drawList = unk130 ? &unk110 : &mDraws;
+    //   here:
+    //       drawList = mReleaseImmediate ? &mDraws : &mPreClearDraws;
+    //
+    // The member correspondence is exact, by offset and by order: Wii's
+    // unk110@0x110 / mDraws@0x120 / unk130@0x130 are this class's
+    // mPreClearDraws@0x128 / mDraws@0x13c / mReleaseImmediate@0x150 — first
+    // list, second list, and the bool immediately after the second list. So the
+    // two ARMS ARE SWAPPED, not the members renamed.
+    //
+    // It matters because BOTH builds register the same way:
+    // Rnd::PreClearDrawAddOrRemove is `b3 ? mPreClearDraws : mDraws` in this
+    // tree AND `b3 ? unk110 : mDraws` on Wii, and OutfitConfig::
+    // UpdatePreClearState (bandobj/OutfitConfig.cpp:865, token-identical to
+    // rb3-Wii's :1026) calls it with b3=FALSE — i.e. every OutfitConfig lands in
+    // mDraws. With mReleaseImmediate false (its value all frame: only
+    // movie/Splash.cpp:190,252 ever writes it, for the boot splash) the
+    // inverted expression reads mPreClearDraws, so the 40 registered
+    // OutfitConfigs are never dispatched and nothing ever paints the
+    // *_diffuse_output render targets.
+    //
+    // MEASURED before this fix, in the same run and from the same env
+    // predicate that emitted 734 other trace lines (so the zeros are absences,
+    // not a dead instrument):
+    //     [X21] Rnd::DrawPreClear ENTER releaseImmediate=0
+    //           mPreClearDraws=0 mDraws=40 listUsed=0
+    //     OutfitConfig::DrawPreClear  -> 0 calls
+    //     OutfitConfig::MatSwap::Compose -> 0 calls
+    //
+    // ⚠ THIS FUNCTION CANNOT BE SCORED. `?DrawPreClear@Rnd@@MAAXXZ` has
+    // target_size=0 in objdiff, has no ICF alias, and the string does not occur
+    // anywhere under build/45410914/asm — there is no X360 target body to diff
+    // against. So the correction is asserted from the rb3-Wii oracle plus the
+    // offset correspondence above, NOT from a match measurement, and it is
+    // confined to HX_NATIVE: the X360 arm above is left byte-identical and this
+    // change's blast radius on the scored build is zero by construction.
+    // A scored lane should revisit the retail arm if a target body ever appears.
+    //
+    // ⛔ OPT-IN, NOT DEFAULT-ON — DELIBERATELY, AND THIS IS THE LANE'S SECOND
+    // FINDING. The house rule makes native render fixes default-ON once ON-vs-OFF
+    // evidence exists. The evidence exists and it says DO NOT SHIP THIS ALONE.
+    //
+    // With the corrected polarity the dispatch is demonstrably repaired:
+    //     listUsed 0 -> 40, OutfitConfig::DrawPreClear 0 -> 40 calls,
+    //     MatSwap::Compose 0 -> 44 calls
+    // and then the FRAME DIES. The composite opens render-target passes that the
+    // dc3 GPU backend cannot host at this point in the frame:
+    //     WebGPU error: Recording in [CommandEncoder "FrameEncoder"] which is
+    //     locked while [RenderPassEncoder "MainPassResume"] is open
+    //     -> [FAIL] image-not-empty — coverage 0.00%, 1 distinct colour
+    // A black frame is a regression against a venue that currently renders, and
+    // "a crash is not a frame" (X7). So the correction stays reachable for the
+    // lane that fixes the backend, and stays OFF until then.
+    //
+    // The downstream half is an ENGINE change and is filed as such — see
+    // docs/plans/x21-compose-path-2026-08-03.md §"Engine change request".
+    // Short form: rb3-xenon builds MILO_ENGINE_GPU_BACKEND=dc3, whose DrawRect
+    // path (engine src/gfx/DrawRect2D.cpp) has no colorMod awareness, drops
+    // mat->GetColor() entirely, has no 2-texture interp pass and no pipeline
+    // cache — so even once dispatched it cannot perform the composite. The
+    // working implementation lives in the engine's `rb3` flavor only
+    // (src/platform/RB3Quad.cpp:366-459), which this build does not link.
+    {
+        static int on = -1;
+        if (on < 0) on = getenv("RB3_X21_PRECLEAR_POLARITY_FIX") ? 1 : 0;
+        if (on) drawList = mReleaseImmediate ? &mPreClearDraws : &mDraws;
+    }
+    // X21 M2: separates "the pre-clear dispatcher is never called" from "it is
+    // called over an EMPTY list". Those have different owners and different
+    // fixes, and a zero at OutfitConfig::DrawPreClear cannot tell them apart.
+    // Once-only: this runs per frame and the answer does not vary within a run.
+    if (getenv("RB3_X21_TRACE")) {
+        static int once = 0;
+        if (!once++)
+            fprintf(stderr,
+                    "[X21] Rnd::DrawPreClear ENTER releaseImmediate=%d "
+                    "mPreClearDraws=%d mDraws=%d listUsed=%d\n",
+                    (int)mReleaseImmediate, (int)mPreClearDraws.size(),
+                    (int)mDraws.size(), (int)drawList->size());
+    }
+#endif
     if (drawList->size() > 0) {
         mWorldCamCopied = true;
         RndCam *prevCam = RndCam::Current();
