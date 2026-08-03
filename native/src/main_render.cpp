@@ -987,6 +987,167 @@ namespace {
                    "FOREIGN dir=%d | non-skin=%d, no mat=%d\n",
                    (int)bm.size(), onOwn, onShared, other, noMat);
         }
+        // ---- X22b: EVERY SHOWING MESH, not just the five SKIN materials ----
+        //
+        // ⛔ FIVE LANES HAVE CENSUSED `torso_naked/legs_skin/feet_skin/
+        // feet_socks_skin/head_naked` AND CALLED THE RESULT "why the band is
+        // pink". Those five are the EXPOSED-SKIN materials. A clothed band member
+        // is mostly CLOTH -- vestdenim_resource.mesh, trackjacket_resource.mesh --
+        // and those draw through entirely different materials that no skin census
+        // has ever looked at. The skin-material question and the "why is the band
+        // pink" question were assumed to be the same question and never checked.
+        //
+        // ★ Same failure shape as the retired "58 skin material instances": a
+        // number measured over the wrong set, read as though it covered the
+        // frame. So this census is keyed on WHAT ACTUALLY DRAWS -- every showing
+        // mesh with geometry -- and prints the material and diffuse for each,
+        // with no name filter of any kind.
+        printf("  --- X22b showing-mesh census (ALL materials, no name filter) ---\n");
+        for (int i = 0; i < 4; i++) {
+            BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
+            if (!bc) continue;
+            std::vector<RndMesh *> bm = CollectDeep<RndMesh>(bc);
+            int shown = 0;
+            for (size_t j = 0; j < bm.size(); j++) {
+                if (!bm[j]->Showing() || bm[j]->NumVerts() == 0) continue;
+                if (reachCount[bm[j]] != 1) continue; // this member's own
+                shown++;
+                RndMat *mat = bm[j]->Mat();
+                RndTex *tx = mat ? mat->GetDiffuseTex() : 0;
+                printf("      [%d] mesh '%-34s verts=%-5d mat='%-24s matdir='%s' "
+                       "diffuse=%s\n",
+                       i, (std::string(bm[j]->Name()) + "'").c_str(), bm[j]->NumVerts(),
+                       mat ? (std::string(mat->Name() ? mat->Name() : "?") + "'").c_str()
+                           : "(NO MAT)'",
+                       (mat && mat->Dir()) ? PathName(mat->Dir()) : "(none)",
+                       tx ? (tx->Name() ? tx->Name() : "(unnamed)") : "NULL");
+            }
+            printf("      [%d] %d showing mesh(es) with geometry\n", i, shown);
+        }
+
+        // ---- X22c: WHAT COLOUR IS `dummy_*.tex`? ----
+        //
+        // Carried on the handoff list since X19 and never done. Everything above
+        // says the clothing draws through `dummy_torso/legs/feet.tex`; nothing
+        // above says those are the PINK. Without this the chain
+        // "cloth material -> dummy texture -> pink pixels" has an unmeasured last
+        // link, and a lane could correctly identify the binding and still be
+        // wrong about the colour on screen.
+        //
+        // These ship as DXT (mOrder & 0x38). For DXT1/3/5 the first two u16 of
+        // each 8-byte colour block are the RGB565 endpoints, so decoding block 0
+        // gives the dominant colour without a full decompressor.
+        {
+            static const char *kDummies[] = { "dummy_torso.tex", "dummy_legs.tex",
+                                              "dummy_feet.tex", "dummy_guitar.tex" };
+            BandCharacter *any = 0;
+            for (int i = 0; i < 4 && !any; i++) any = TheBandWardrobe->GetCharacter(i);
+            for (int k = 0; k < 4 && any; k++) {
+                RndTex *t = any->Find<RndTex>(kDummies[k], false);
+                if (!t) { printf("      dummy '%s' NOT FOUND\n", kDummies[k]); continue; }
+                const RndBitmap &bm = t->Bitmap();
+                const unsigned char *px = bm.Pixels();
+                printf("      dummy '%-18s %dx%d bpp=%d order=0x%x pixels=%p",
+                       kDummies[k], bm.Width(), bm.Height(), bm.Bpp(),
+                       (unsigned)bm.Order(), (const void *)px);
+                if (px && (bm.Order() & 0x38)) {
+                    unsigned c0 = (unsigned)px[0] | ((unsigned)px[1] << 8);
+                    unsigned c1 = (unsigned)px[2] | ((unsigned)px[3] << 8);
+                    // RGB565 -> 8-bit per channel
+                    int r0 = ((c0 >> 11) & 0x1f) * 255 / 31,
+                        g0 = ((c0 >> 5) & 0x3f) * 255 / 63,
+                        b0 = (c0 & 0x1f) * 255 / 31;
+                    int r1 = ((c1 >> 11) & 0x1f) * 255 / 31,
+                        g1 = ((c1 >> 5) & 0x3f) * 255 / 63,
+                        b1 = (c1 & 0x1f) * 255 / 31;
+                    printf("  DXT block0 endpoints rgb(%d,%d,%d) rgb(%d,%d,%d)",
+                           r0, g0, b0, r1, g1, b1);
+                } else if (px && bm.Bpp() >= 24) {
+                    printf("  texel0 bgr(%d,%d,%d)", px[0], px[1], px[2]);
+                }
+                printf("\n");
+            }
+        }
+
+        // ---- X22d: are the CLOTH materials MatSwap targets of the compose? ----
+        //
+        // The step that would otherwise be assumed. X22b shows the cloth
+        // materials sitting on `dummy_*.tex`; X22c shows those are magenta. That
+        // says what IS bound, not what SHOULD be, and "the compose pass owns
+        // these" is exactly the kind of claim this ladder has inherited unchecked
+        // before. `OutfitConfig::MatSwap::mMat` is the material a compose writes
+        // its composited output onto, so if the cloth materials appear here, the
+        // compose is their author by the asset's own declaration -- not by
+        // inference from a name.
+        {
+            std::set<RndMat *> seen;
+            int cfgs = 0, swaps = 0, onDummy = 0;
+            for (int i = 0; i < 4; i++) {
+                BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
+                if (!bc) continue;
+                std::vector<OutfitConfig *> ocs = CollectDeep<OutfitConfig>(bc);
+                for (size_t c = 0; c < ocs.size(); c++) {
+                    cfgs++;
+                    for (int m = 0; m < (int)ocs[c]->mMats.size(); m++) {
+                        RndMat *mm = ocs[c]->mMats[m].mMat;
+                        if (!mm || !seen.insert(mm).second) continue;
+                        swaps++;
+                        RndTex *tx = mm->GetDiffuseTex();
+                        const char *tn = tx ? (tx->Name() ? tx->Name() : "?") : "NULL";
+                        bool dummy = tx && strncmp(tn, "dummy_", 6) == 0;
+                        if (dummy) onDummy++;
+                        printf("      matswap mat='%-26s dir='%-58s diffuse=%s%s\n",
+                               (std::string(mm->Name() ? mm->Name() : "?") + "'").c_str(),
+                               (std::string(mm->Dir() ? PathName(mm->Dir()) : "(none)")
+                                + "'").c_str(),
+                               tn, dummy ? "   <- STILL ON THE PLACEHOLDER" : "");
+                    }
+                }
+            }
+            // ⚠⚠ X22e DIAGNOSTIC ARM, OFF BY DEFAULT, NOT A PORT AND NOT A FIX.
+            //
+            // `MatSwap::SwapResource()` (bandobj/OutfitConfig.cpp:60) is the
+            // SHIPPED function that repoints every Mesh-owned reference from
+            // mResourceMat to mMat -- i.e. the "swap" the class is named for. Its
+            // only caller is `OutfitConfig::DrawPreClear()` (:1088), which X21
+            // MEASURED at 0 calls. `MatSwap::Compose()` (:1097) sits eleven lines
+            // below it in the SAME function, so the swap and the composite are
+            // gated behind one dispatch.
+            //
+            // That makes them indistinguishable from the outside, and they are
+            // two different repairs with two different owners: the swap is pure
+            // consumer-side object plumbing, the composite needs a backend that
+            // can paint the render targets. Dispatching the swap ALONE separates
+            // them -- if the band clothes itself in composed textures, the
+            // backend work is not on the critical path for the clothing; if it
+            // goes black, the RTs are unpainted and the compose is strictly
+            // required.
+            //
+            // ⛔ Diagnostic only. It calls one half of a function whose halves are
+            // ordered, and skips the PreRender/patch work between them.
+            if (getenv("RB3_X22_SWAP_RESOURCE")) {
+                int swapped = 0;
+                for (int i = 0; i < 4; i++) {
+                    BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
+                    if (!bc) continue;
+                    std::vector<OutfitConfig *> ocs = CollectDeep<OutfitConfig>(bc);
+                    for (size_t c = 0; c < ocs.size(); c++)
+                        for (int m = 0; m < (int)ocs[c]->mMats.size(); m++) {
+                            ocs[c]->mMats[m].SwapResource();
+                            swapped++;
+                        }
+                }
+                printf("      ⚠ RB3_X22_SWAP_RESOURCE — called MatSwap::SwapResource "
+                       "on %d swap(s). DIAGNOSTIC ONLY.\n", swapped);
+            }
+
+            printf("  === X22d: %d OutfitConfig(s), %d DISTINCT MatSwap target "
+                   "material(s), %d still on a dummy_* placeholder ===\n",
+                   cfgs, swaps, onDummy);
+            if (swaps == 0)
+                printf("      ⚠ ZERO MatSwap targets — VACUOUS, not a pass.\n");
+        }
+
         printf("  === X22 SUMMARY: %d member(s) examined; repoint targets "
                "OWNED=%d MISSING=%d; skin meshes on own=%d on foreign=%d ===\n",
                members, ownedTargets, missingTargets, meshesOnOwn, meshesOnShared);

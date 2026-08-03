@@ -156,6 +156,14 @@ public:
     // member, mNativeReboundOnce guard). Called from Poll once Find resolves to the
     // moving instance. No-op on Wii (HX_NATIVE only). Opt-out RB3_NO_SKEL_REBIND=1.
     void RebindOutfitBonesToOwnSkeleton();
+    // X22 native-only: repoint this member's outfit skin meshes off the SHARED
+    // char/main/shared/char_shared.milo material and onto the member's OWN
+    // same-named one. Reproduces the consequence of retail's Filter()
+    // sCharSharedDir -> ReplaceRefs arm (:2519), which the native FilterSubdir
+    // shim prevents from ever being reached. Per-mesh SetMat, NOT the global
+    // ::ReplaceRefs (which would cross-wire all four members). No-op on
+    // Wii/X360. Opt-out RB3_NO_SKINMAT_REBIND=1.
+    void RebindSharedSkinMatsToOwn();
 #endif
     CharClipDriver *SetState(const char *, int, int, bool, bool);
     bool InVignetteOrCloset() const;
@@ -305,5 +313,10 @@ public:
     int mNativeReboundOnce;
     int mNativeReboundQuiet;
     int mNativeReboundBody; // ever rebound a >=20-bone body/face mesh (latch gate)
+    // X22 native-only: latch for RebindSharedSkinMatsToOwn. Counts consecutive
+    // scans that repointed nothing; the walk stops once a sustained quiet period
+    // passes, so late-streaming LOD pieces (shoes/pants) are still caught. Same
+    // append-after-the-matched-layout rule as the members above.
+    int mNativeSkinMatQuiet;
 #endif
 };

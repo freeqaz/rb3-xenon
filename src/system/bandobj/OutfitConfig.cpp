@@ -556,6 +556,35 @@ void OutfitConfig::SetSkinTextures(ObjectDir *dir1, ObjectDir *dir2, BandCharDes
                 } else {
                     curmat->SetDiffuseTex(curtex);
                 }
+#ifdef HX_NATIVE
+                // ⚠⚠ X22 DIAGNOSTIC ARM, OFF BY DEFAULT, NOT A PORT AND NOT A FIX.
+                //
+                // The `if (cfg)` branch above binds `%s_skin_diffuse_output.tex`
+                // -- a RENDER TARGET that the outfit compose pass is supposed to
+                // paint. X21 MEASURED that the compose pass never dispatches on
+                // this backend (Rnd::DrawPreClear list-selection polarity, and a
+                // dc3 backend with no compose state machine at all), so that RT
+                // is never written.
+                //
+                // That leaves TWO indistinguishable explanations for a band that
+                // is still pink after the skin materials are correctly repointed:
+                //   (a) the repoint did not really take effect, or
+                //   (b) it did, and the texture it now points at is an unpainted
+                //       render target.
+                // A frame alone cannot separate them -- both look identical.
+                // This arm binds the AUTHORED diffuse (`male_torso_diff.tex`,
+                // which SetSkinTextures already located as `curtex` and which the
+                // no-config path above binds unconditionally) INSTEAD of the RT.
+                // If the band then renders in skin tones, (a) is excluded and the
+                // remaining blocker is exactly the compose pass.
+                //
+                // ⛔ This is NOT a shippable substitute for the compose. It drops
+                // the two-colour tint/interp the compose exists to produce, so
+                // the result is the base skin texture without per-character
+                // colouring. Diagnostic only; never on by default.
+                if (getenv("RB3_X22_AUTHORED_DIFFUSE"))
+                    curmat->SetDiffuseTex(curtex);
+#endif
             }
             // Specular map. Retail binds it UNCONDITIONALLY (SetSpecularMap is
             // out-of-line and is called even with a null texture), then warns.
