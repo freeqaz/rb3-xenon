@@ -160,6 +160,8 @@ namespace {
 
     int gFailures = 0;
     bool gVerbose = false;
+    // X11: --mesh-detail — per-Dir comparative dump of empty vs loading meshes.
+    bool gMeshDetail = false;
 
     // ---------------------------------------------------------------------
     // X4a: --postproc — select a REAL shipped RndPostProc before drawing.
@@ -886,6 +888,63 @@ namespace {
                 printf("\n      FULL-BUT-HIDDEN (%d):", (int)fullHidden.size());
                 for (size_t j = 0; j < fullHidden.size() && j < 24; j++) printf(" %s", fullHidden[j]);
                 printf("\n");
+            }
+            // ★ X11: a COMPARATIVE read, per X10's method -- "a cause constant
+            // across the working and broken arms is not the cause". Printing
+            // only the empty meshes cannot say what is different about them, so
+            // for every shown-but-empty mesh also print the loading meshes that
+            // live in the SAME milo Dir. head.mesh (empty) and eyes.mesh (2xx
+            // verts) come out of one file, so every whole-file explanation --
+            // load failure, revision, compression flag, endianness -- is
+            // refuted or confirmed on one line.
+            static std::set<ObjectDir *> seen;
+            // Watchlist so the probe keeps reporting AFTER the meshes are fixed --
+            // a probe that goes silent on success cannot show a regression.
+            static const char *kWatch[] = { "head.mesh", "hands_naked.mesh",
+                                            "eyebrows", "wrist", "eyes.mesh",
+                                            "tongue.mesh", "male_neck_ao.mesh" };
+            if (gVerbose && gMeshDetail) {
+                printf("      --- X11 mesh detail (empty vs loading, per Dir) ---\n");
+                for (size_t j = 0; j < cm.size(); j++) {
+                    RndMesh *m = cm[j];
+                    bool nv = m->NumVerts() > 0 || m->NumCompressedVerts() > 0;
+                    bool watch = false;
+                    for (size_t w = 0; w < sizeof(kWatch) / sizeof(kWatch[0]); w++)
+                        if (m->Name() && strstr(m->Name(), kWatch[w])) watch = true;
+                    if (!((m->Showing() && !nv) || watch)) continue;
+                    ObjectDir *d = m->Dir();
+                    if (d && !seen.insert(d).second) continue;
+                    printf("      DIR %s\n", d ? PathName(d) : "(null)");
+                    std::vector<RndMesh *> sib = d ? CollectDeep<RndMesh>(d)
+                                                   : std::vector<RndMesh *>();
+                    int printed = 0;
+                    for (size_t k = 0; k < sib.size() && printed < 14; k++) {
+                        RndMesh *s = sib[k];
+                        bool snv = s->NumVerts() > 0 || s->NumCompressedVerts() > 0;
+                        bool swatch = false;
+                        for (size_t w = 0; w < sizeof(kWatch) / sizeof(kWatch[0]); w++)
+                            if (s->Name() && strstr(s->Name(), kWatch[w])) swatch = true;
+                        if (!swatch && snv && printed > 5) continue;
+                        RndMesh *go = s->GetGeomOwner();
+                        // X11: a skinned mesh with NULL bone slots collapses its
+                        // verts onto whatever the identity transform gives, which
+                        // looks exactly like "drew in the wrong place". Count them
+                        // rather than judging placement by eye.
+                        int nullBones = 0;
+                        for (int bi = 0; bi < s->NumBones(); bi++)
+                            if (!s->BoneTransAt(bi)) nullBones++;
+                        printf("        %-34s %-5s v=%-5d cv=%-5d f=%-5d bones=%-3d "
+                               "nullbones=%-3d mat=%-22s owner=%s\n",
+                               s->Name() ? s->Name() : "(unnamed)",
+                               snv ? "LOAD" : "EMPTY", s->NumVerts(),
+                               (int)s->NumCompressedVerts(), s->NumFaces(),
+                               s->NumBones(), nullBones,
+                               s->Mat() ? (s->Mat()->Name() ? s->Mat()->Name() : "(unnamed)")
+                                        : "(none)",
+                               go == s ? "self" : (go ? PathName(go) : "NULL"));
+                        printed++;
+                    }
+                }
             }
             char key[96];
             snprintf(key, sizeof(key), "%.2f,%.2f,%.2f", w.x, w.y, w.z);
@@ -2668,6 +2727,7 @@ int main(int argc, char **argv) {
     std::vector<const char *> pos;
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--verbose") == 0) gVerbose = true;
+        else if (strcmp(argv[i], "--mesh-detail") == 0) gMeshDetail = true;
         else if (strcmp(argv[i], "--dump-rnd") == 0) dumpRnd = true;
         else if (strcmp(argv[i], "--dump-cam") == 0) gDumpCam = true;
         else if (strcmp(argv[i], "--cam-manual") == 0) gManualCam = true;

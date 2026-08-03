@@ -952,6 +952,13 @@ void RndMesh::SetGeomOwner(RndMesh *m) {
 }
 
 void RndMesh::SetKeepMeshData(bool keep) {
+#ifdef HX_NATIVE
+    // X11 diagnostic (env-gated, no behaviour change): catch EVERY caller that
+    // drops CPU geometry, not just the one already found in BandCharacter.
+    if (!keep && mKeepMeshData && getenv("RB3_TRACE_KEEPMESH"))
+        fprintf(stderr, "[KEEPMESH-ANY] '%s' loses verts=%d faces=%d\n",
+                Name() ? Name() : "(unnamed)", mVerts.size(), (int)mFaces.size());
+#endif
     if (keep != mKeepMeshData) {
         mKeepMeshData = keep;
         if (!mKeepMeshData) {
