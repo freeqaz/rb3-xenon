@@ -959,6 +959,31 @@ void BandCharacter::RebindOutfitBonesToOwnSkeleton() {
             Name() ? Name() : "?", meshes, slots, reboundBones, reboundMeshes,
             mNativeReboundBody, mNativeReboundQuiet, mNativeReboundOnce);
     }
+    // X14 ⛔ THE ZERO CASE WAS THE SILENT ONE.
+    //
+    // The line above is gated on `meshes > 0 || reboundBones > 0`, so the single
+    // most important outcome — the collector reached NOTHING — printed nothing at
+    // all, and read as "the probe is off". That is the empty-set-passes failure
+    // this house has now hit in four consecutive lanes. Report the zero LOUDLY,
+    // and report the PRE-FILTER denominator separately from the post-filter one:
+    // `meshes` is counted after the torso-name filter, so a zero there is
+    // ambiguous between "collected nothing" and "collected only non-torso", which
+    // have different causes and different fixes.
+    else if (probe) {
+        fprintf(stderr,
+            "[SKEL_REBIND] ⛔ member='%s' collector reached NOTHING: "
+            "targets(preTorsoFilter)=%d meshes(postFilter)=%d | "
+            "mOutfitDir=%p mInstDir=%p ownDraws=%d ownLods=%d "
+            "outfitDraws=%d outfitLods=%d\n",
+            Name() ? Name() : "?", (int)targets.size(), meshes,
+            (void *)mOutfitDir, (void *)mInstDir, NumDraws(), (int)Lods().size(),
+            mOutfitDir ? ((Character *)mOutfitDir)->NumDraws() : -1,
+            mOutfitDir ? (int)((Character *)mOutfitDir)->Lods().size() : -1);
+        for (std::vector<RndMesh *>::iterator ti = targets.begin();
+             ti != targets.end(); ++ti)
+            fprintf(stderr, "[SKEL_REBIND]     target '%s' numBones=%d\n",
+                    (*ti)->Name() ? (*ti)->Name() : "?", (*ti)->NumBones());
+    }
 }
 #endif
 

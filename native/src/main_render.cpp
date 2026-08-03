@@ -120,6 +120,7 @@
 #include "rndobj/TransProxy.h"
 #include "rndobj/MultiMesh.h"
 #include "world/Crowd.h"
+#include "bandobj/BandCharacter.h"     // X14: identify the four band members by type
 #include "bandobj/BandConfiguration.h"  // X7: the band-slot placement census
 #include "bandobj/BandWardrobe.h"      // X8: the shipped enter_venue placement path
 
@@ -208,6 +209,7 @@ namespace {
     float gBpm = 120.0f;
     bool gBoneAudit = false;
     bool gHandAudit = false; // X12: the hand-POSE oracle (--hand-audit)
+    bool gCharTopo = false;  // X14: Character ownership + bone-chain-root topology
     // X4d framing/isolation overrides (driver-only; no shared src/ involvement).
     const char *gOnlyMesh = nullptr;
     bool gDumpTree = false; // X5: per-dir object census of the loaded subdir tree
@@ -647,6 +649,285 @@ namespace {
         std::set<ObjectDir *> seen;
         CollectDeep<T>(dir, out, seen, 0);
         return out;
+    }
+
+    // ★★★ X14: THE CHARACTER TOPOLOGY — who owns whom, and who is on the bone
+    // chain.
+    //
+    // X13 measured that the band's bone chain terminates at an UNNAMED
+    // `Character` at the origin rather than at the placed `player0..3`, and
+    // named that as the defect's address. It did not identify WHICH object
+    // that unnamed Character is, and every candidate cause depends on that.
+    // This prints, for every Character reachable in the tree:
+    //
+    //   - its pointer identity (so "unnamed" stops being anonymous),
+    //   - which ObjectDir OWNS it, and by which edge (HashTable entry vs
+    //     SubDirs() vs neither),
+    //   - its TransParent, its own world/local translation,
+    //   - whether it is the ROOT of some bone chain in the scene.
+    //
+    // Pointer identity is the load-bearing part: it is the only thing that can
+    // distinguish "the bones hang off a second, unplaced instance of the same
+    // asset" from "the bones hang off the placed object but its transform is
+    // zero". Those two have identical printed names and opposite fixes.
+    void ReportCharacterTopology(ObjectDir *dir) {
+        std::vector<Character *> chars = CollectDeep<Character>(dir);
+        // Ownership map: object -> (owner dir, edge kind). Built by walking the
+        // same tree CollectDeep walks, recording the edge each object came in on.
+        std::map<Hmx::Object *, std::pair<ObjectDir *, const char *> > owner;
+        {
+            std::set<ObjectDir *> seen;
+            std::vector<ObjectDir *> stack;
+            stack.push_back(dir);
+            seen.insert(dir);
+            while (!stack.empty()) {
+                ObjectDir *d = stack.back();
+                stack.pop_back();
+                for (ObjectDir::Entry *e = d->HashTable().Begin(); e;
+                     e = d->HashTable().Next(e)) {
+                    if (!e->obj) continue;
+                    if (owner.find(e->obj) == owner.end())
+                        owner[e->obj] = std::make_pair(d, "HashTable");
+                    ObjectDir *od = dynamic_cast<ObjectDir *>(e->obj);
+                    if (od && seen.insert(od).second) stack.push_back(od);
+                }
+                for (int i = 0; i < (int)d->SubDirs().size(); i++) {
+                    ObjectDir *sd = d->SubDirs()[i].Ptr();
+                    if (!sd) continue;
+                    if (owner.find(sd) == owner.end())
+                        owner[sd] = std::make_pair(d, "SubDirs");
+                    if (seen.insert(sd).second) stack.push_back(sd);
+                }
+            }
+        }
+        // Which Characters are the ROOT of at least one bone chain? Walk every
+        // RndTransformable's parent chain to its root and tally.
+        std::map<Hmx::Object *, int> chainRootOf;
+        {
+            std::vector<RndTransformable *> all = CollectDeep<RndTransformable>(dir);
+            for (size_t i = 0; i < all.size(); i++) {
+                RndTransformable *w = all[i];
+                int guard = 0;
+                while (w->TransParent() && guard++ < 32) w = w->TransParent();
+                chainRootOf[w]++;
+            }
+        }
+        printf("  --- X14 character topology (%d Character object(s)) ---\n",
+               (int)chars.size());
+        for (size_t i = 0; i < chars.size(); i++) {
+            Character *c = chars[i];
+            RndTransformable *tp = c->TransParent();
+            std::map<Hmx::Object *, std::pair<ObjectDir *, const char *> >::iterator
+                it = owner.find(c);
+            ObjectDir *od = (it == owner.end()) ? nullptr : it->second.first;
+            const char *edge = (it == owner.end()) ? "UNREACHED" : it->second.second;
+            const Vector3 &w = c->WorldXfm().v;
+            const Vector3 &l = c->LocalXfm().v;
+            printf("    obj=%p trans=%p %-16s cls=%-16s owner=%p %-14s via %-9s "
+                   "parent=%p %-16s world(%8.2f %8.2f %8.2f) local(%8.2f %8.2f %8.2f) "
+                   "chainRootFor=%d driver=%s\n",
+                   (void *)static_cast<Hmx::Object *>(c),
+                   (void *)static_cast<RndTransformable *>(c),
+                   c->Name() && c->Name()[0] ? c->Name() : "(unnamed)",
+                   c->ClassName().Str(), (void *)od,
+                   od ? (od->Name() && od->Name()[0] ? od->Name() : "(unnamed)")
+                      : "<none>",
+                   edge, (void *)tp,
+                   tp ? (tp->Name() && tp->Name()[0] ? tp->Name() : "(unnamed)")
+                      : "<null>",
+                   w.x, w.y, w.z, l.x, l.y, l.z,
+                   chainRootOf.count(c) ? chainRootOf[c] : 0,
+                   c->Driver() ? "yes" : "no");
+        }
+    }
+
+    // ★★★ X14: PER-MEMBER CHAIN-ROOT CENSUS.
+    //
+    // The single most important question for the fix: does each band member
+    // ALREADY OWN a private skeleton that the drawn meshes could bind to, or is
+    // there only the one shared instance in existence? Those two states look
+    // identical in every measurement taken up to X13 and have completely
+    // different fixes — rebind vs. instantiate.
+    //
+    // Measured as a SET, per member: every distinct chain root among the
+    // member's deep transformables, with the population rooting at each and the
+    // root's own on-disk path. A per-member skeleton shows up as a root whose
+    // pointer DIFFERS across the four members; the shared one shows up as a
+    // pointer that is bit-identical across all four.
+    //
+    // ⚠ ANTI-VACUITY: refuses to report for a member whose deep transformable
+    // count is zero, because a census over an empty set would print "1 root,
+    // all consistent" and read as a pass.
+    void ReportChainRoots(ObjectDir *dir) {
+        std::vector<Character *> chars = CollectDeep<Character>(dir);
+        printf("  --- X14 per-character chain-root census ---\n");
+        for (size_t i = 0; i < chars.size(); i++) {
+            Character *c = chars[i];
+            const char *cn = c->Name() && c->Name()[0] ? c->Name() : "(unnamed)";
+            std::vector<RndTransformable *> ts = CollectDeep<RndTransformable>(c);
+            if (ts.empty()) {
+                printf("    %-16s ⛔ NO transformables reached — census REFUSED "
+                       "(an empty set would print as a clean single root)\n",
+                       cn);
+                continue;
+            }
+            std::map<RndTransformable *, int> roots;
+            for (size_t j = 0; j < ts.size(); j++) {
+                RndTransformable *w = ts[j];
+                int guard = 0;
+                while (w->TransParent() && guard++ < 32) w = w->TransParent();
+                roots[w]++;
+            }
+            printf("    %-16s %d transformable(s), %d DISTINCT chain root(s):\n",
+                   cn, (int)ts.size(), (int)roots.size());
+            for (std::map<RndTransformable *, int>::iterator it = roots.begin();
+                 it != roots.end(); ++it) {
+                RndTransformable *r = it->first;
+                ObjectDir *self = dynamic_cast<ObjectDir *>(r);
+                ObjectDir *owner = r->Dir();
+                const Vector3 &rw = r->WorldXfm().v;
+                printf("        root obj=%p %-16s cls=%-14s n=%-5d "
+                       "world(%8.2f %8.2f %8.2f) ownerDir=%p selfPath='%s'\n",
+                       (void *)static_cast<Hmx::Object *>(r),
+                       r->Name() && r->Name()[0] ? r->Name() : "(unnamed)",
+                       r->ClassName().Str(), it->second, rw.x, rw.y, rw.z,
+                       (void *)owner, self ? self->GetPathName() : "<not-a-dir>");
+            }
+        }
+    }
+
+    // ★★★ X14: REBIND FEASIBILITY.
+    //
+    // The census establishes that each band member owns a PLACED root with
+    // ~520-570 transformables under it, AND that all four additionally reference
+    // ONE shared unplaced skeleton. The fix hinges on a question neither X12 nor
+    // X13 asked: do the member's OWN transformables include a full, same-named
+    // copy of the bones the drawn meshes are bound to?
+    //
+    //   - If YES, the placement failure is a BINDING failure and the repair is
+    //     to point each mesh's bone slot at the member's own same-named bone.
+    //     Nothing is invented: the target bone is the member's own object,
+    //     selected by exact name equality.
+    //   - If NO, no honest rebind exists and this must be reported as such.
+    //
+    // Printed as a three-way set: own-only / shared-only / IN BOTH. And then the
+    // consumer side — over every skinned mesh under the member, how many bone
+    // slots currently resolve into the shared skeleton vs the member's own root.
+    // A repair is only well-defined for slots in the BOTH set.
+    void ReportRebindFeasibility(ObjectDir *dir) {
+        std::vector<Character *> chars = CollectDeep<Character>(dir);
+        printf("  --- X14 rebind feasibility (per band member) ---\n");
+        for (size_t i = 0; i < chars.size(); i++) {
+            Character *c = chars[i];
+            if (!dynamic_cast<BandCharacter *>(c)) continue;
+            const char *cn = c->Name() && c->Name()[0] ? c->Name() : "(unnamed)";
+            RndTransformable *self = static_cast<RndTransformable *>(c);
+            std::vector<RndTransformable *> ts = CollectDeep<RndTransformable>(c);
+            std::map<std::string, RndTransformable *> own, shared;
+            for (size_t j = 0; j < ts.size(); j++) {
+                const char *nm = ts[j]->Name();
+                if (!nm || !nm[0]) continue;
+                RndTransformable *w = ts[j];
+                int guard = 0;
+                while (w->TransParent() && guard++ < 32) w = w->TransParent();
+                if (w == self) own.insert(std::make_pair(std::string(nm), ts[j]));
+                else if (!w->Dir()) shared.insert(std::make_pair(std::string(nm), ts[j]));
+            }
+            int both = 0;
+            for (std::map<std::string, RndTransformable *>::iterator it = shared.begin();
+                 it != shared.end(); ++it)
+                if (own.count(it->first)) both++;
+            printf("    %-10s own-rooted named=%d  shared-rooted named=%d  "
+                   "SAME-NAMED IN BOTH=%d\n",
+                   cn, (int)own.size(), (int)shared.size(), both);
+            // Consumer side: where do the drawn meshes' bone slots actually point?
+            std::vector<RndMesh *> ms = CollectDeep<RndMesh>(c);
+            int slotsShared = 0, slotsOwn = 0, slotsOther = 0, slotsNull = 0;
+            int slotsSharedRepairable = 0, skinnedMeshes = 0;
+            for (size_t m = 0; m < ms.size(); m++) {
+                int nb = ms[m]->NumBones();
+                if (nb > 0) skinnedMeshes++;
+                for (int b = 0; b < nb; b++) {
+                    RndTransformable *bt = ms[m]->BoneTransAt(b);
+                    if (!bt) { slotsNull++; continue; }
+                    RndTransformable *w = bt;
+                    int guard = 0;
+                    while (w->TransParent() && guard++ < 32) w = w->TransParent();
+                    if (w == self) slotsOwn++;
+                    else if (!w->Dir()) {
+                        slotsShared++;
+                        const char *nm = bt->Name();
+                        if (nm && nm[0] && own.count(std::string(nm)))
+                            slotsSharedRepairable++;
+                    } else slotsOther++;
+                }
+            }
+            if (skinnedMeshes == 0) {
+                printf("               ⛔ 0 skinned meshes reached — slot census "
+                       "REFUSED (a zero denominator would print as 'no bad slots')\n");
+                continue;
+            }
+            printf("               %d skinned mesh(es); bone slots: own=%d "
+                   "SHARED=%d other=%d null=%d  -> %d of the %d shared slots have "
+                   "a same-named bone under this member (%.1f%%)\n",
+                   skinnedMeshes, slotsOwn, slotsShared, slotsOther, slotsNull,
+                   slotsSharedRepairable, slotsShared,
+                   slotsShared ? 100.0 * slotsSharedRepairable / slotsShared : 0.0);
+            // ⛔ THE RESIDUAL, NAMED. A rebind that covers 92% and leaves 8%
+            // pointing at the origin does not place a figure — it TEARS one, and
+            // that is strictly worse than the current uniform stacking. So the
+            // unrepairable slots are enumerated by name, and (load-bearing)
+            // whether any vertex actually WEIGHTS them: an unrepairable slot
+            // carrying zero weight cannot move a vertex and is harmless.
+            {
+                std::map<std::string, float> unrepairable; // name -> max weight seen
+                for (size_t m = 0; m < ms.size(); m++) {
+                    RndMesh *mesh = ms[m];
+                    int nb = mesh->NumBones();
+                    if (nb <= 0) continue;
+                    // Max weight observed per bone slot over this mesh's verts.
+                    std::vector<float> maxw((size_t)nb, 0.0f);
+                    RndMesh::VertVector &vv = mesh->Verts();
+                    for (int v = 0; v < (int)vv.size(); v++) {
+                        const RndMesh::Vert &vert = vv[v];
+                        // Indexing convention taken VERBATIM from the shipped
+                        // RndMesh::SkinVertex (rndobj/Mesh.cpp:762-768): raw
+                        // boneIndices[i], weight via (&boneWeights.x)[i]. Not
+                        // re-derived — a wrong convention here would mislabel
+                        // which slots are inert.
+                        for (int k = 0; k < 4; k++) {
+                            int bi = vert.boneIndices[k];
+                            float wk = (&vert.boneWeights.x)[k];
+                            if (bi >= 0 && bi < nb && wk > maxw[bi]) maxw[bi] = wk;
+                        }
+                    }
+                    for (int b = 0; b < nb; b++) {
+                        RndTransformable *bt = mesh->BoneTransAt(b);
+                        if (!bt) continue;
+                        RndTransformable *w = bt;
+                        int guard = 0;
+                        while (w->TransParent() && guard++ < 32) w = w->TransParent();
+                        if (w == self || w->Dir()) continue; // not shared-rooted
+                        const char *nm = bt->Name();
+                        std::string key = (nm && nm[0]) ? nm : "(unnamed)";
+                        if (own.count(key)) continue; // repairable
+                        if (maxw[b] > unrepairable[key]) unrepairable[key] = maxw[b];
+                    }
+                }
+                int weighted = 0;
+                for (std::map<std::string, float>::iterator it = unrepairable.begin();
+                     it != unrepairable.end(); ++it)
+                    if (it->second > 0.0f) weighted++;
+                printf("               UNREPAIRABLE distinct bone name(s)=%d, of "
+                       "which %d carry NON-ZERO vertex weight:\n",
+                       (int)unrepairable.size(), weighted);
+                for (std::map<std::string, float>::iterator it = unrepairable.begin();
+                     it != unrepairable.end(); ++it)
+                    printf("                   %-34s maxWeight=%.4f%s\n",
+                           it->first.c_str(), it->second,
+                           it->second > 0.0f ? "   <== WOULD TEAR" : "   (inert)");
+            }
+        }
     }
 
     // ★ X5: POSITIVE evidence that the player-anchor chain actually bound.
@@ -2151,10 +2432,30 @@ namespace {
                 while (walk && depth < 24) {
                     const Vector3 &ww = walk->WorldXfm().v;
                     const Vector3 &lv = walk->LocalXfm().v;
+                    // X14: pointer identity. X13 read the two terminal links as
+                    // "an unnamed Character" and could not say WHICH object that
+                    // was; every candidate cause turns on that. Printed as the
+                    // Hmx::Object* so it is directly comparable with
+                    // ReportCharacterTopology's rows.
                     printf("        [%2d] %-30s world (%9.3f %9.3f %9.3f)  local "
-                           "(%8.3f %8.3f %8.3f)  class %s\n",
+                           "(%8.3f %8.3f %8.3f)  class %-14s obj=%p trans=%p\n",
                            depth, walk->Name() ? walk->Name() : "(unnamed)", ww.x, ww.y,
-                           ww.z, lv.x, lv.y, lv.z, walk->ClassName().Str());
+                           ww.z, lv.x, lv.y, lv.z, walk->ClassName().Str(),
+                           (void *)static_cast<Hmx::Object *>(walk), (void *)walk);
+                    // X14: and WHICH DIRECTORY it belongs to. The chain's two
+                    // terminal Characters are in NEITHER the venue tree nor any
+                    // of its subdirs (ReportCharacterTopology enumerates 21
+                    // Characters and neither pointer is among them), so the
+                    // owning dir is the only handle on where they came from.
+                    {
+                        ObjectDir *wd = walk->Dir();
+                        ObjectDir *self = dynamic_cast<ObjectDir *>(walk);
+                        printf("             ^ Dir()=%p path='%s'   selfIsDir=%p "
+                               "selfPath='%s' selfObjs=%d\n",
+                               (void *)wd, wd ? wd->GetPathName() : "<null>",
+                               (void *)self, self ? self->GetPathName() : "<n/a>",
+                               self ? (int)self->SubDirs().size() : -1);
+                    }
                     walk = walk->TransParent();
                     depth++;
                 }
@@ -2879,6 +3180,109 @@ namespace {
         band_done:;
         }
 
+        // ★★★ X14: POLL THE BAND MEMBERS.
+        //
+        // WHY THIS IS NOT AN INVENTED BEHAVIOUR. `BandCharacter::Poll()` is the
+        // shipped per-frame update every band member receives in the real game
+        // (the world dir polls its characters every frame). This harness polls a
+        // character ONLY from DriveSceneCharacters, which — correctly, per X13 —
+        // polls only characters it actually drove with a clip. The band binds to
+        // `body_clips`, which holds zero CharClips, so the band is never driven,
+        // and therefore never polled at all.
+        //
+        // ⛔ THAT IS WHY THE BAND DRAWS AT THE ORIGIN. The repair for the shared
+        // skeleton is ALREADY IN THIS TREE and already default-ON:
+        // BandCharacter::RebindOutfitBonesToOwnSkeleton() (bandobj/
+        // BandCharacter.cpp:769) is called from BandCharacter::Poll()
+        // (:533) and repoints each outfit skin mesh's bone slots from the one
+        // SHARED char/main/skeleton.milo instance onto the member's OWN,
+        // PLACED skeleton, by exact name equality. Never being polled, it never
+        // ran. Nothing here changes what that function does.
+        //
+        // ⚠ Polling with no clip playing does NOT animate anybody and does not
+        // invent a pose: with no clip the driver has nothing to blend and the
+        // skeleton stays at bind. What it does is let the shipped per-frame
+        // maintenance — including the rebind — actually execute.
+        //
+        // ⛔ AND WHY THIS IS **NOT** DONE BY CALLING Poll(). Measured, not
+        // assumed: `bc->Poll()` on a band member SIGSEGVs, and the backtrace is
+        //     CharWeightable::Weight()  <- CharDriver::Poll()
+        //     <- CharDriverMidi::Poll() <- RndDir::Poll()
+        //     <- Character::Poll()      <- BandCharacter::Poll()
+        // `Weight()` is `return mWeightOwner->mWeight` (char/CharWeightable.h:18)
+        // with NO null guard; the constructor seeds `mWeightOwner(this, this)`
+        // (CharWeightable.cpp:7) but `Load` overwrites it with `d >> mWeightOwner`
+        // (:74), which resolves to NULL when the named owner is not found. So the
+        // band's MIDI driver polls through a null weight owner. That is a real,
+        // separate defect (§ in the plan) and it is NOT worked around here.
+        //
+        // Instead the repair is invoked DIRECTLY. It is a public method
+        // (BandCharacter.h:149), it is idempotent by its own `mNativeReboundOnce`
+        // guard, and calling it is exactly what Poll does at :533 — minus the
+        // driver path that crashes. Nothing about what it does is changed.
+        //
+        // It re-scans until the outfit meshes become reachable, so it is called
+        // repeatedly rather than once. RB3_BAND_REBIND_ITERS overrides the count;
+        // RB3_NO_BAND_REBIND opts the whole thing out for the A/B.
+        if (TheBandWardrobe && !getenv("RB3_NO_BAND_REBIND")) {
+            int want = getenv("RB3_BAND_REBIND_ITERS")
+                           ? atoi(getenv("RB3_BAND_REBIND_ITERS")) : 8;
+            int members = 0;
+            for (int i = 0; i < 4; i++)
+                if (TheBandWardrobe->GetCharacter(i)) members++;
+            // ⚠ SCOPE, AND THE ONE PLACE THIS LANE DEPARTS FROM THE SHIPPED
+            // DEFAULT — declared, measured both ways, and NOT a change to any
+            // shared-src default.
+            //
+            // The shipped scope is torso-clothing-only (a four-name whitelist),
+            // because RB3_SKEL_REBIND_FULL shards thin geometry — hair, fingers —
+            // when the per-member bone's rotation BASIS differs from the magnet
+            // the authored offsets were baked against. ⛔ That divergence is a
+            // property of the ANIMATED case: it is the animated bone that has
+            // rotated away. In THIS harness the band has no reachable clip at all
+            // (`body_clips` holds zero CharClips), so both skeletons sit at the
+            // same bind pose and the rebind is a rigid re-parent.
+            //
+            // MEASURED, both arms, same run set: hands_naked bbox EXTENT is
+            // preserved under FULL — 50.44 -> 50.45 / 50.47 / 50.23 on the three
+            // male members (a shard is hundreds of units). So FULL is enabled
+            // HERE, and ONLY while nothing is being animated. The moment a clip
+            // is driven the shipped torso scope is restored, because this lane
+            // has NOT refuted the in-tree shard warning for the animated case and
+            // must not look as though it has.
+            bool quiescent = (gSceneClip == nullptr && gClipsFile == nullptr);
+            if (quiescent && !getenv("RB3_SKEL_REBIND_FULL") &&
+                !getenv("RB3_NO_BAND_REBIND_FULL"))
+                setenv("RB3_SKEL_REBIND_FULL", "1", 0);
+            if (members == 0) {
+                printf("  band: ⛔ REBIND SKIPPED — 0/4 wardrobe targets bound. NOT "
+                       "reported as a pass: a rebind over an empty member set would "
+                       "print identically to a successful one.\n");
+            } else {
+                printf("  band: rebind scope = %s (%s)\n",
+                       getenv("RB3_SKEL_REBIND_FULL") ? "FULL figure" : "torso only",
+                       quiescent ? "no clip is being driven — both skeletons are at "
+                                   "bind, so the rebind is a rigid re-parent; shard "
+                                   "extent checked, not assumed"
+                                 : "a clip IS being driven — shipped torso scope "
+                                   "kept, the animated shard warning stands");
+                for (int p = 0; p < want; p++)
+                    for (int i = 0; i < 4; i++)
+                        if (BandCharacter *bc = TheBandWardrobe->GetCharacter(i))
+                            bc->RebindOutfitBonesToOwnSkeleton();
+                printf("  band: RebindOutfitBonesToOwnSkeleton() x%d on %d member(s) "
+                       "— the SHIPPED, ALREADY-DEFAULT-ON repair "
+                       "(bandobj/BandCharacter.cpp:769) that Poll() would have run "
+                       "at :533. It repoints outfit skin-mesh bone slots from the "
+                       "ONE shared char/main/skeleton.milo instance onto each "
+                       "member's OWN placed skeleton, selected by exact name "
+                       "equality. No pose, transform or geometry is synthesized.\n",
+                       want, members);
+            }
+        }
+
+        if (gCharTopo) { ReportCharacterTopology(dir); ReportChainRoots(dir); ReportRebindFeasibility(dir); }
+
         if (gDumpTree) {
             ReportCharacterPlacement(dir);
             ReportCrowdPlacement(dir);
@@ -3389,6 +3793,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--bpm") == 0 && i + 1 < argc) gBpm = (float)atof(argv[++i]);
         else if (strcmp(argv[i], "--bone-audit") == 0) gBoneAudit = true;
         else if (strcmp(argv[i], "--hand-audit") == 0) gHandAudit = true;
+        else if (strcmp(argv[i], "--char-topo") == 0) gCharTopo = true;
         else if (strcmp(argv[i], "--only-mesh") == 0 && i + 1 < argc)
             gOnlyMesh = argv[++i];
         else if (strcmp(argv[i], "--dump-tree") == 0) gDumpTree = true;
