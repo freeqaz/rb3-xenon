@@ -1233,6 +1233,9 @@ set(MILO_TARGET_COMMON_SOURCES
     ${DTA_LEXER}
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/milo_link_stubs.cpp
+    # X7: band-member undecomp stubs. NOT in NATIVE_SHIMS -- see the file header;
+    # putting them there broke 8 of 18 targets that compile no char/ or bandobj.
+    ${CMAKE_SOURCE_DIR}/src/x7_band_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
 )
 
