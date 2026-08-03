@@ -581,7 +581,7 @@ Defines.cpp:
 
 GameMode.cpp:
 	.pdata      start:0x822313F0 end:0x822314A0
-	.text       start:0x8268FCA8 end:0x826907B8
+	.text       start:0x8268FC60 end:0x826907B8
 
 BandCharDesc.cpp:
 	.pdata      start:0x821F26D0 end:0x821F26D8
@@ -7080,7 +7080,7 @@ MemcardMgr_Xbox.cpp:
 	.pdata      start:0x82240A28 end:0x82240A30
 	.pdata      start:0x82240A30 end:0x82240B80
 	.text       start:0x8251BB00 end:0x8251BFA8
-	.text       start:0x8251D0E0 end:0x8251D4D8
+	.text       start:0x8251D0E0 end:0x8251D4C8
 	.text       start:0x82553478 end:0x82553484
 	.text       start:0x827AB8E8 end:0x827ABA48
 	.text       start:0x827ABA48 end:0x827ABB14
@@ -7277,7 +7277,7 @@ system/synth_xbox/FxSendSynapse.cpp:
 
 PropertyEventProvider.cpp:
 	.pdata      start:0x8223D200 end:0x8223D208
-	.text       start:0x8268FC38 end:0x8268FCA8
+	.text       start:0x8268FC38 end:0x8268FC60
 	.text       start:0x826F0F18 end:0x826F0F20
 	.text       start:0x826F0F78 end:0x826F0F98
 	.text       start:0x82768F98 end:0x82768FF4
@@ -8861,7 +8861,7 @@ band3/meta_band/BandStorePanel.cpp:
 	.pdata      start:0x82228388 end:0x82228490
 	.text       start:0x826050A8 end:0x8260527C
 	.text       start:0x8260527C end:0x826058E8
-	.text       start:0x826059E8 end:0x82605C38
+	.text       start:0x82605970 end:0x82605C38
 	.text       start:0x82606008 end:0x82606150
 	.text       start:0x82606218 end:0x8260625C
 	.text       start:0x82606260 end:0x82606720
@@ -9070,7 +9070,7 @@ GameMicManager.cpp:
 	.pdata      start:0x822189F8 end:0x82218A28
 	.pdata      start:0x82230590 end:0x82230610
 	.pdata      start:0x82230610 end:0x82230718
-	.text       start:0x8251D4D8 end:0x8251D8A4
+	.text       start:0x8251D4C8 end:0x8251D8A4
 	.text       start:0x8268117C end:0x82681864
 	.text       start:0x82681864 end:0x82682668
 
@@ -12911,7 +12911,7 @@ system/ui/UILabelDir.cpp:
 
 system/gesture/DrawUtl.cpp:
 	.pdata      start:0x82228148 end:0x82228158
-	.text       start:0x826058E8 end:0x826059E8
+	.text       start:0x826058E8 end:0x82605970
 
 system/meta/MemcardAction.cpp:
 	.text       start:0x827B3050 end:0x827B307C
