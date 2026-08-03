@@ -27623,7 +27623,7 @@
  "0x82610318": "?ClassName@CharacterCreatorPanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
  "0x82612c38": "?ClassName@ChooseColorPanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
  "0x823f4698": "??3Loader@@SAXPAX@Z",
- "0x827bb260": "??1ConnectionStatusPanel@@UAA@XZ",
+ "0x827bb260": "?CustAlloc@ReclaimableAlloc@@QAAPAXH@Z",
  "0x8251fb18": "?NotifyDeleted@XboxContentMgr@@MAAXPAVContent@@@Z",
  "0x827a3860": "?_M_clear@?$vector@VTrackChannels@@V?$StlNodeAlloc@VTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
  "0x827edb98": "?Compact@DataEventList@@QAAXXZ",
