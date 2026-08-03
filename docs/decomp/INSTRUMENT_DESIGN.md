@@ -33,7 +33,7 @@ those failures take, each with a worked case, then the rules that catch them.
 | 5 | **An improvement is a false positive** | a confirmed fix | DF-3's Campaign container swap **improved 73.30 → 89.00** and was still wrong (`dbab6082`) | you adjudicated on the metric, not on retail bytes |
 | 6 | **Unsettled measurement** | success, with the sign inverted | DF-2 read **+23 matched / 17 at 100**; settled A/B: **zero at 100**, most worse | number came from anything but `ab_measure.py` |
 | 7 | **Stale census** | a property of the tree | DG-2: **2 of 23** candidates already landed *by the lane that produced the JSON* (`1cbcabc8`); and a ceiling of 70 quoted from a **superseded model** where the current one says 81 (`362217af`) | census consumed after anything landed — or a number carried over from an older MODEL |
-| 8 | **Structurally blind metric** | a clean 100% | `mpn` masks reloc args ⇒ wrong callee / wrong container reads 100 (five lanes, five waves); and the match build **never links**, so a link break is invisible (`dce343a1`) | the defect lives in a field the ruler normalizes away — or in a failure class the build cannot witness |
+| 8 | **Structurally blind metric** | a clean 100% | `mpn` masks reloc args ⇒ wrong callee / wrong container reads 100 (five lanes, five waves); and the match build **never links**, so a link break is invisible (`dce343a1` — ⚠ but the *predicted* second instance was FALSE, see §8) | the defect lives in a field the ruler normalizes away — or in a failure class the build cannot witness |
 
 ---
 
@@ -258,16 +258,39 @@ this session a landed decomp change broke the native build this way:
   **commented out** (`ObjPtr_p.h:485-486`); being an exact match it **beats the
   base-class overload that IS defined**, so the call compiles clean and fails only
   at link. It reached main and left `rb3-milo`/`rb3-render` NOBINARY.
-- **`362217af`.** DG-3 routed the same breakage *in advance*: *"a link break is
-  EXPECTED … `native_link_glue.cpp` instantiates `operator<<` for
-  `ObjPtrList`/`ObjPtrVec`/`ObjOwnerPtr`/`ObjDirPtr` but NOT plain `ObjPtr<T>` …
-  **The match build cannot see this — it never links.**"*
+- **`362217af` — ⛔ THE SECOND INSTANCE NEVER HAPPENED, and correcting it is the
+  more useful lesson.** DG-3 predicted the same breakage in advance (*"a link
+  break is EXPECTED … `native_link_glue.cpp` instantiates `operator<<` for
+  `ObjPtrList`/`ObjPtrVec`/`ObjOwnerPtr`/`ObjDirPtr` but NOT plain `ObjPtr<T>`"*),
+  a coordinator propagated it, and `c833a0fe` landed a fix for it. **Lane DJ-4
+  ran the gate: PASS 18/18 — and then removed `c833a0fe`'s two instantiations
+  and it still linked 18/18.** The fix is **inert dead code**; the break was
+  never real.
+  ★ **The reasoning had inverted a load-bearing detail.** `bs << mMat` binds to
+  `operator<<(BinStream&, const ObjRefConcrete<T1,ObjectDir>&)`, which is
+  **defined** at `ObjPtr_p.h:156` and implicitly instantiated. The exact-match
+  `ObjPtr<T1>` declaration at `Object.h:686` is **commented out**, so it never
+  enters overload resolution — **that is precisely what makes plain `ObjPtr`
+  SAFE.** `ObjOwnerPtr` broke for the **opposite** reason: its declaration
+  (`Object.h:761`) is **live** while its *definition* is commented out, so the
+  exact match wins and has no body. Same two files, same commented-out lines,
+  **opposite consequence** — and the near-identical surface is exactly why the
+  prediction felt sound.
 
 ⇒ **Know which failure classes your build structurally cannot witness, and name
 the instrument that can.** Here that instrument is **`tools/native_build_gate.sh`**
 — cheap, and the only thing standing between a match-positive change and a
-silently broken native tree. ⚠ The explicit-instantiation list is a **recurrence
-trap**: it will fire again at the next `ObjOwnerPtr`/`ObjPtr<T>` save site.
+silently broken native tree.
+⚠ **The recurrence signature is NARROWER than first recorded.** Not "a new
+`bs <<` over a smart-pointer member" — that over-fires, and did. It is:
+**a `bs <<` over a smart pointer whose exact-match `operator<<` is *DECLARED*
+(definition commented out or absent).** A commented-out *declaration* is safe;
+a live declaration with no definition is the trap.
+★★ And note how the gate was kept honest: in a bare worktree `rb3-milo` and
+`rb3-render` **silently skip** unless `MILO_ENGINE_PATH`/`Dawn_DIR` are seeded,
+which would have made the whole run **vacuous for exactly the two targets that
+matter**. DJ-4 seeded them, *then* proved the gate could fail by removing the
+instantiations. A PASS from an unseeded gate is worth nothing.
 
 ---
 
@@ -433,6 +456,13 @@ Use these rather than hand-rolling; each already embodies a rule above.
   **anti-vacuity guard as a hard refusal** (rule 7: ≥4 real non-relocated words
   AND ≥50% of body). Report coverage with every verdict — DD-1's stride audit
   carries the same guard and passed at 67–85% of body.
+  ⚠⚠ **Passing the guard is NOT identification.** On compiler-generated
+  destructors the bodies are *shape-identical*, and DJ-4 measured this tool
+  returning **7 exact candidates for one 76-byte body**. Byte identity is
+  necessary and nowhere near sufficient — **the callee discriminates**, and you
+  must resolve `bl` targets rather than mask them: DJ-4's first comparator
+  masked branch displacements and read **9 of 14 as IDENTICAL**, where resolving
+  them showed **18 of 51 rows name a class their own callee contradicts.**
   *Provenance: promoted from `~/tmp/laneDE3/identity.py`.*
 - **`tools/retail_rtti.py`** — section-aware retail PE/RTTI resolver
   (vtable VA → COL → TypeDescriptor → class). Section-aware is the whole point:

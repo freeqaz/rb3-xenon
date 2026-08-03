@@ -586,6 +586,21 @@ links**, so link breakage is invisible to every number in this file (§8).
 | ICF alias **withdrawal** | ⛔ REFUTED — **RETAIN 7 of 8** | DD-4 `b206d005`: *"cannot demonstrate the fold"* is **not** grounds to withdraw. The condemning test **would reject the survivor as an alias of itself** (vacuous on that stratum). Only `??1?$ObjRefConcrete@VRndFont@@` withdrawn |
 | Sibling-stride **repoints** | ⛔ declined | DD-1's 6 candidates measured **−2 with zero gain**. ★ **Byte identity proves which retail body you EQUAL, not which is your HOME** — the home-unit gate killed 3 that passed a strong byte test |
 | Pin over anonymous functions | ⛔ cannot pay (and that is fine) | `SessionJobs_Xbox.cpp` 31-function span: **Δ0 exactly, as predicted**, `total_code` unmoved ⇒ free attribution, zero dilution. Real yield needs a naming pass |
+| Plain `??_E` (vector deleting dtor) rows | ⛔ **UNPAIRABLE BY CONSTRUCTION** — sized, closed | DJ-4: **50 rows / 3,768 B / 0.035252pp**, and the "17× vs `??_G`" disparity is a **symbol-form artifact, not codegen**. MSVC emits plain `??_E<Foo>` as a **bodiless COFF WEAK-EXTERNAL ALIAS to `??_G<Foo>`** — our tree has **10,161 alias records vs 16 real `??_E` bodies** — so a target row spelled `??_E<Foo>@@UAAPAXI@Z` has nothing on our side to pair with. Respelling `??_E`→`??_G` pays **0**: 4 candidates blocked (`??_G` already in the map **and paired at 100** ⇒ our single body is spent), the other 9 have **no `??_G` body in that unit's obj** |
 
 **Also standing, from earlier waves:** the `/D`-gate half of §1 (14 TUs, **−2**);
 AT_LIMIT re-triage (yield 0, never re-fund); the `base_path` vein (**+0**).
+
+★ **The `??_E` case is also a clean rule-4 specimen** (one-label classifier): the
+disparity is only visible once `??_E` is split by **mangled form**. Plain `??_E`
+(weak aliases, no body) passes **1/51 = 2.0%**; `??_E` **thunks** (`W…`/`$4…`,
+which ARE real definitions) pass **379/386 = 98.2%**. Same mangling family,
+opposite storage class, opposite outcome — the thunks are the known-opposite case
+that turns "plain `??_E` is sick" from a bare rate into a finding. Against a
+size-matched null (named plain rows 40–130 B, **17.0%** sub-100) plain `??_E` is
+**5.8× the null** while `??_G` is **0.36×**, i.e. *healthier* than average.
+⚠ And do not adjudicate these on masked bytes: deleting destructors are
+shape-identical, so a masked comparator returns **7 exact candidates** for one
+76 B body. The **resolved (unmasked) `bl` target** — which names the class whose
+`??1`/`??_D` the body calls — is what discriminates, and it shows **18 of 51 rows
+name a class the callee contradicts**.
