@@ -167,6 +167,14 @@
 #include "world/SpotlightEnder.h"
 #include "ui/UIColor.h"
 
+// ---- X7: the band-slot placement pair -----------------------------------
+// Both of these are LEAF classes (BandWardrobe is `public virtual Hmx::Object`,
+// BandConfiguration is `public Hmx::Object`), NOT ObjectDir subclasses, so
+// neither carries the nested-dir desync hazard the header note above warns
+// about for an unregistered *Dir.
+#include "bandobj/BandConfiguration.h"
+#include "bandobj/BandWardrobe.h"
+
 void RegisterMiloObjectFactories() {
     // The two roots. ObjectDir is what a milo whose dir class has no factory
     // falls back to (DirLoader::LoadHeader prefers RndDir, obj/DirLoader.cpp:996).
@@ -284,7 +292,37 @@ void RegisterMiloObjectFactories() {
     REGISTER_OBJ_FACTORY(ClipGraphGenerator)
     REGISTER_OBJ_FACTORY(FileMerger)
     REGISTER_OBJ_FACTORY(FileMergerOrganizer)
-    REGISTER_OBJ_FACTORY(Waypoint)
+    // ⛔ X7 DEFECT FIX -- Waypoint needs its MODULE INIT, not just its factory.
+    //
+    // This line used to read `REGISTER_OBJ_FACTORY(Waypoint)`, and that was a
+    // LATENT NULL-DEREF LANDMINE, live since X2 and reachable by any asset
+    // that contains a Waypoint:
+    //
+    //   Waypoint::Waypoint() (char/Waypoint.cpp:17-25) unconditionally does
+    //   `sWaypoints->push_back(this)` with NO null check, and
+    //   `Waypoint::sWaypoints` (char/Waypoint.cpp:14) is a POINTER that is
+    //   allocated only by Waypoint::Init() (char/Waypoint.cpp:132) --  which
+    //   the real game reaches through CharInit() (char/Char.cpp:119) and which
+    //   this hand-rolled list replaced without carrying over.
+    //
+    // Registering the factory without running the init therefore armed a
+    // constructor that segfaults on its first call. Nothing had called it: no
+    // venue root loaded so far ships a Waypoint object, and the four that
+    // BandConfiguration's ctor news up are the first ever constructed here.
+    // Measured: SIGSEGV in Waypoint::Waypoint -> list<Waypoint*>::push_front,
+    // eight frames under DirLoader::CreateObjects.
+    //
+    // Calling the engine's own Waypoint::Init() is strictly better than
+    // hand-allocating the list: it is the retail body, and it also registers
+    // the three waypoint_* DataFuncs and the exit callback that the hand-rolled
+    // line silently dropped. Safe here -- RegisterMiloObjectFactories() runs
+    // after Symbol::Init() and DataInit() (main_render.cpp:2488, :2496).
+    //
+    // ★ This is the third instance of the failure mode this file's own header
+    // warns about: "a hand-rolled list drifts silently from the module Init()
+    // it replaces". X4b found it as two MISSING registrations; this is the
+    // same drift producing a registration that is actively unsafe.
+    Waypoint::Init();
 
     // --- world/ -- venue scene: dirs, instances, lights, camera shots (15 classes)
     REGISTER_OBJ_FACTORY(CamShot)
@@ -325,6 +363,37 @@ void RegisterMiloObjectFactories() {
     // real build work -- see the STEP-0 note in native/CMakeLists.txt.
     REGISTER_OBJ_FACTORY(WorldCrowd)
     REGISTER_OBJ_FACTORY(UIColor)
+
+    // ★ X7: the band-slot placement pair -- and BandWardrobe is X4b's finding
+    // repeating EXACTLY.
+    //
+    // bandobj/BandWardrobe.cpp was ALREADY COMPILED INTO EVERY rb3-render
+    // BINARY and had been since X3. It arrives through an UNCONDITIONAL
+    // scatter-include chain that is entirely inside this target's own glob:
+    //
+    //     rndobj/Console.cpp  ->  world/Crowd.cpp:1434  ->  bandobj/BandWardrobe.cpp
+    //
+    // Measured: 91 BandWardrobe symbols DEFINED in Console.cpp.o (`nm -C`),
+    // including FindTarget, GetPlayMode, SetVenueDir and the TheBandWardrobe
+    // singleton. They were absent from the linked binary only because
+    // --gc-sections drops them as unreferenced -- and nothing referenced them
+    // because this list never named the class. So "Can't make BandWardrobe"
+    // was a MISSING LINE HERE, not unported code and NOT the ScatterIncludes
+    // dedupe lane it has been attributed to for four milestones.
+    //
+    // BandConfiguration is a genuine (one-line) build add -- see the X7 note
+    // in native/CMakeLists.txt. X6 ported the TU and wired objects.json but
+    // not the native source list, so the class was unbuildable here.
+    // ⚠ STAGED. Registering BandWardrobe is a ONE-LINE change that LINKS the
+    // whole BandCharacter + BandCharDesc surface: --gc-sections stops dropping
+    // BandWardrobe's 91 bodies, and LoadMainCharacters / StartClipLoads /
+    // LoadPrefabPrefs / AddDircut then need BandCharacter::{SetInstrumentType,
+    // StartLoad, SetPrefab, SetTempoGenreVenue, AddDircut, ClearDircuts,
+    // SetContext} and BandCharDesc::{GetInstrumentSym, GetInstrumentFromSym,
+    // GetAnimInstrument, FindPrefab, InstrumentOutfit::GetPiece} plus
+    // `typeinfo for BandCharacter`. Measured: 28 undefined references.
+    // Enabled below once those two TUs compile.
+    REGISTER_OBJ_FACTORY(BandConfiguration)
 
     // X4d MEASUREMENT HARNESS (RB3_BIND_BANDCAMSHOT=1), off by default.
     //

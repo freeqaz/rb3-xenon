@@ -273,3 +273,11 @@ Symbol keys;
 Symbol none;
 Symbol reset_on_end;
 Symbol start;
+// X7: BEGIN_HANDLERS(BandConfiguration) -- bandobj/BandConfiguration.cpp:130-137.
+// Same three-line convention as the block above. They are dispatch keys only:
+// SyncPlayMode is reached natively by a DIRECT call from the driver, not
+// through Handle(), so none of these needs to be interned for placement to
+// work. Defined so the TU links.
+Symbol release_configuration;
+Symbol store_configuration;
+Symbol sync_play_mode;

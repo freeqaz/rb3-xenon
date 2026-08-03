@@ -120,6 +120,7 @@
 #include "rndobj/TransProxy.h"
 #include "rndobj/MultiMesh.h"
 #include "world/Crowd.h"
+#include "bandobj/BandConfiguration.h"  // X7: the band-slot placement census
 #include "utl/FilePath.h"
 #include "utl/Str.h"
 #include "utl/Symbol.h"
@@ -838,6 +839,64 @@ namespace {
                (distinct <= 1 && chars.size() > 1)
                    ? "  <== ALL STACKED (nothing placed them)"
                    : "");
+    }
+
+    // ★ X7: ABSOLUTE census of the BAND's shipped placement data.
+    //
+    // Same question X6 asked of the crowd, asked of the band before porting
+    // anything: are the four band-member stage positions BAKED IN THE ASSET,
+    // or would they have to be computed by code that is not ported?
+    //
+    // BandConfiguration::Load (bandobj/BandConfiguration.cpp) reads
+    // sNumPlayModes and then, per slot, a (Symbol targName, Transform xfm)
+    // pair PER PLAY MODE straight out of the venue .milo. If those transforms
+    // are non-identity and distinct, band placement is shipped data exactly
+    // like the crowd's was, and SyncPlayMode is a lookup rather than a
+    // computation.
+    //
+    // Printing ABSOLUTE positions, not a count -- and printing every play-mode
+    // row, because a single row would not distinguish "one authored layout" ted
+    // from "three".
+    void ReportBandPlacement(ObjectDir *dir) {
+        std::vector<BandConfiguration *> cfgs = CollectDeep<BandConfiguration>(dir);
+        printf("  --- band placement (%d BandConfiguration object(s)) ---\n",
+               (int)cfgs.size());
+        if (cfgs.empty()) {
+            printf("    (none -- this venue root ships no BandConfiguration)\n");
+            return;
+        }
+        std::set<std::string> distinct;
+        int nonIdentity = 0, namedSlots = 0;
+        printf("    sNumPlayModes (from the file) = %d\n",
+               BandConfiguration::TargTransforms::sNumPlayModes);
+        for (size_t c = 0; c < cfgs.size(); c++) {
+            BandConfiguration *cfg = cfgs[c];
+            printf("    [%s]  dir=%s\n", cfg->Name() ? cfg->Name() : "(unnamed)",
+                   cfg->Dir() ? (cfg->Dir()->Name() ? cfg->Dir()->Name() : "(unnamed)")
+                              : "<NULL>");
+            for (int slot = 0; slot < 4; slot++) {
+                for (int mode = 0; mode < 3; mode++) {
+                    const BandConfiguration::TargTransform &tt =
+                        cfg->mXfms[slot].xfms[mode];
+                    const Vector3 &p = tt.xfm.v;
+                    bool ident = (p.x == 0.0f && p.y == 0.0f && p.z == 0.0f);
+                    if (!ident) nonIdentity++;
+                    if (!tt.targName.Null()) namedSlots++;
+                    char key[96];
+                    snprintf(key, sizeof(key), "%.3f,%.3f,%.3f", p.x, p.y, p.z);
+                    if (!ident) distinct.insert(key);
+                    printf("      slot %d mode %d  targ=%-14s pos=(%9.3f %9.3f "
+                           "%9.3f)%s\n",
+                           slot, mode,
+                           tt.targName.Null() ? "<empty>" : tt.targName.Str(), p.x,
+                           p.y, p.z, ident ? "   <== IDENTITY" : "");
+                }
+            }
+        }
+        printf("    => %d named slot-rows, %d NON-IDENTITY transform(s) at %d "
+               "DISTINCT position(s)%s\n",
+               namedSlots, nonIdentity, (int)distinct.size(),
+               nonIdentity == 0 ? "  <== NO SHIPPED BAND PLACEMENT" : "");
     }
 
     // ★ X6: ABSOLUTE census of the crowd's SHIPPED placement data.
@@ -1856,6 +1915,7 @@ namespace {
         if (gDumpTree) {
             ReportCharacterPlacement(dir);
             ReportCrowdPlacement(dir);
+            ReportBandPlacement(dir);
             ReportClassHistogram(dir);
             ReportTransProxyBinding(dir);
             int dirs = 0, emptyProxies = 0, totalObjs = 0;
