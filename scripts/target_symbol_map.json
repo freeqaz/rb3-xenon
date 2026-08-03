@@ -29188,5 +29188,7 @@
  "0x8270de60": "?Play@MoggClip@@QAAXXZ",
  "0x826a97e0": "?OnMsg@SyncGameStartPanel@@QAA?AVDataNode@@ABVSessionDisconnectedMsg@@@Z",
  "0x8231f2d8": "?Handle@ReviewDisplay@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x826169c8": "?SavePrefab@CustomizePanel@@QAA?AVDataNode@@PBD@Z"
+ "0x826169c8": "?SavePrefab@CustomizePanel@@QAA?AVDataNode@@PBD@Z",
+ "0x82722f18": "?Load@FxSendFlanger@@UAAXAAVBinStream@@@Z",
+ "0x82b697c8": "?RemoveOwnerVoice@FxSend360@@UAAXPAVVoice@@@Z"
 }

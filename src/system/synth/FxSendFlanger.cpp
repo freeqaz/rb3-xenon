@@ -42,50 +42,63 @@ void FxSendFlanger::Save(BinStream &bs) {
     bs << mTempo;
 }
 
-INIT_REVS(7, 0)
+// RB3 retail is rev 6 and uses the rb3-Wii ObjMacros LOAD dialect, NOT this
+// tree's DC3-derived `BinStreamRev d` wrapper — written LONGHAND here rather
+// than by switching the shared macro (which 280+ other TUs depend on).
+//
+// Adjudicated on retail bytes at fn_82722F18 (332 B), not on the oracle:
+//   * every read passes the RAW incoming BinStream (`mr r3,r31`) and the
+//     superclass call is `bl ?Load@FxSend@@` with r4=bs — there is no
+//     BinStreamRev stack object anywhere in the body.  The `d` wrapper would
+//     dispatch ReadEndian on `&d` (`addi r3,r1,N`) instead.
+//   * the revs are stored to a pair of FILE-SCOPE `unsigned short`s four bytes
+//     apart (`sth r10,0x0(r29)` / `sth r11,0x4(r29)` on lbl_82E03D7C) and
+//     RELOADED with `lhz` after every call, because they are globals the callee
+//     could touch.  A stack-local `int rev` can never produce that shape.  The
+//     `__declspec(align(4))` still carried by Object.h's INIT_REVS is a fossil
+//     of exactly this layout.
+//   * the three percent members are read DIRECTLY into `this` (0x5c/0x60/0x64)
+//     under plain `>=` tests.  DC3 (newer, rev 7) reads them through an `int
+//     pct` temp for revs 4..6 and natively only at rev >= 7; retail has no
+//     upper bound and no temp.  That rev-7 arm is the whole 488 -> 332 B gap.
+// Declared gAltRev-first: MSVC emits these .bss statics in REVERSE declaration
+// order, and retail wants gRev at lbl+0 / gAltRev at lbl+4 (measured — the
+// natural order put gRev at +4 and cost 7 instruction-immediate diffs).
+static __declspec(align(4)) unsigned short gAltRev;
+static __declspec(align(4)) unsigned short gRev;
 
-BEGIN_LOADS(FxSendFlanger)
-    LOAD_REVS(bs)
-    ASSERT_REVS(7, 0)
-    LOAD_SUPERCLASS(FxSend)
-    if (d.rev <= 4) {
+void FxSendFlanger::Load(BinStream &bs) {
+    int revs;
+    bs >> revs;
+    gRev = getHmxRev(revs);
+    gAltRev = getAltRev(revs);
+    FxSend::Load(bs);
+    if (gRev <= 4) {
         mDryGain = -3.0f;
         mWetGain = -3.0f;
         UpdateMix();
     }
-    d >> mDelayMs >> mRate;
+    bs >> mDelayMs;
+    bs >> mRate;
     int dummy;
-
-    if (d.rev >= 4 && d.rev <= 6) {
-        int pct;
-        d >> pct;
-        mDepthPct = pct;
-    } else if (d.rev >= 7) {
-        d >> mDepthPct;
+    if (gRev >= 4) {
+        bs >> mDepthPct;
     } else {
-        d >> dummy;
+        bs >> dummy;
     }
-    if (d.rev >= 2 && d.rev <= 6) {
-        int pct;
-        d >> pct;
-        mFeedbackPct = pct;
-    } else if (d.rev >= 7) {
-        d >> mFeedbackPct;
+    if (gRev >= 2) {
+        bs >> mFeedbackPct;
     }
-    if (d.rev >= 3 && d.rev <= 6) {
-        int pct;
-        d >> pct;
-        mOffsetPct = pct;
-    } else if (d.rev >= 7) {
-        d >> mOffsetPct;
+    if (gRev >= 3) {
+        bs >> mOffsetPct;
     }
-    if (d.rev >= 6) {
-        d >> mTempoSync;
-        d >> mSyncType;
-        d >> mTempo;
+    if (gRev >= 6) {
+        bs >> mTempoSync;
+        bs >> mSyncType;
+        bs >> mTempo;
     }
     OnParametersChanged();
-END_LOADS
+}
 
 BEGIN_HANDLERS(FxSendFlanger)
     HANDLE_SUPERCLASS(FxSend)
