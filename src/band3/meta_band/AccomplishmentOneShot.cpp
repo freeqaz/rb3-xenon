@@ -35,6 +35,31 @@ AccomplishmentType AccomplishmentOneShot::GetType() const {
 bool AccomplishmentOneShot::AreOneShotConditionsMet(
     ScoreType score, Difficulty diff, Performer *i_pPerformer, Symbol s, int i
 ) {
+    // Retail declares the whole condition-name set as function-local statics at
+    // the top of this function (13 guard bits in one word at 0x82DFFF84, slots
+    // 0x82DFFF50..0x82DFFF80), where the rb3-Wii oracle reads the file-scope
+    // globals from Symbols*.cpp.  Same storage-class divergence as
+    // InitializeTrackerDesc below; invisible to a source diff.
+    //
+    // ORDER IS LOAD-BEARING: MSVC assigns guard bits in DECLARATION order, and
+    // this sequence is read straight off the retail ctor calls (bit0 stars,
+    // bit1 unison_percent, ...), NOT off the if-chain's use order below.
+    // `all_awesomes` is declared but never read -- Symbol(const char*) interns
+    // into the global symbol table, so the ctor has side effects and MSVC
+    // cannot elide the guarded init of an otherwise-unread static.
+    static Symbol stars("stars");
+    static Symbol unison_percent("unison_percent");
+    static Symbol unison_phrases("unison_phrases");
+    static Symbol upstrum_percent("upstrum_percent");
+    static Symbol times_revived("times_revived");
+    static Symbol saves("saves");
+    static Symbol awesomes("awesomes");
+    static Symbol double_awesomes("double_awesomes");
+    static Symbol triple_awesomes("triple_awesomes");
+    static Symbol all_awesomes("all_awesomes");
+    static Symbol all_double_awesomes("all_double_awesomes");
+    static Symbol all_triple_awesomes("all_triple_awesomes");
+    static Symbol full_combo("full_combo");
     MILO_ASSERT(i_pPerformer, 0x3c);
     const Stats &stats = i_pPerformer->GetStats();
     for (std::list<AccomplishmentCondition>::iterator it = m_lConditions.begin();
@@ -54,13 +79,14 @@ bool AccomplishmentOneShot::AreOneShotConditionsMet(
                 if (stats.mUnisonPhraseCount >= iii)
                     return true;
             } else if (sym == upstrum_percent) {
+                // Retail CALLS Stats::GetUpstrumPercent here (bl to the emitted
+                // COMDAT) rather than inlining it: the body carries no float
+                // ops at all.  The rb3-Wii oracle has the percentage expanded
+                // by hand because MWCC inlined it there, which is why our port
+                // inherited literal float math and a callee-saved f31 holding
+                // 100.0f that retail never materialises.
                 if (it->mScoreType == score) {
-                    int i4 = stats.mHitCount + stats.m0x08;
-                    if (i4 > 0)
-                        i4 = (float)stats.mUpstrumCount * 100.0f / (float)i4;
-                    else
-                        i4 = 0;
-                    if (i4 >= iii)
+                    if (stats.GetUpstrumPercent() >= iii)
                         return true;
                 }
             } else if (sym == times_revived) {
@@ -70,8 +96,11 @@ bool AccomplishmentOneShot::AreOneShotConditionsMet(
                 if (stats.mPlayersSaved >= iii)
                     return true;
             } else if (sym == awesomes) {
-                if ((score - 3 <= 1U) && it->mScoreType == score
-                    && stats.mHitCount >= iii)
+                // Retail emits TWO explicit `cmpwi` (4 then 3), not the
+                // unsigned range trick: `score - 3 <= 1U` folds to
+                // subi/cmplwi/bgt.  Harmony is tested first, then Vocals.
+                if ((score == kScoreHarmony || score == kScoreVocals)
+                    && it->mScoreType == score && stats.mHitCount >= iii)
                     return true;
             } else if (sym == double_awesomes) {
                 if (it->mScoreType == score && stats.mDoubleHarmonyHit >= iii)
