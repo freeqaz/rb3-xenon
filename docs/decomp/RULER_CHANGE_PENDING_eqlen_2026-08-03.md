@@ -155,6 +155,39 @@ DQ-3's direction reproduced exactly (**report > diff in 221/221, 0 the other
 way**), but ⛔ **64% of rows still disagree at identical config — that residue is
 NOT settled.**
 
+> ## ✅ SETTLED — lane EB-4, 2026-08-03: the 64% is a FIELD-PAIRING ERROR
+>
+> **Nothing is defective.** The residue was `diff`'s `normalized_match_percent`
+> being compared against report's **`match_percent_normalized`** — two fields
+> sharing the word *"normalized"* on **orthogonal axes**. `diff`'s means
+> **relocation**-normalized; report's means **arg-penalty-excluded**
+> (`code.rs:285`: `diff_score − arg_diff_score`), so **`mpn ≥ fuzzy` ALWAYS**.
+>
+> ⇒ **"report > diff in 221/221, 0 the other way" was ARITHMETICALLY FORCED by
+> the field chosen — it was never evidence of a report-side bug.** Two figures
+> above independently confirm the pairing: the **7.27 pp** max gap is this
+> lane's measured max `mpn − normalized` (**7.2973 pp** over 1,639 rows), and
+> **77.12%** of named sub-100 rows have `mpn ≠ fuzzy` (DR-1's 64% is the same
+> statistic on a 250-row sample).
+>
+> On the **correct** pairing — `diff.normalized_match_percent` vs
+> `report.fuzzy_match_percent` — agreement is **1639/1639 and 1030/1030,
+> EXACT**, covering sub-100, at-100, at-0, anonymous `fn_*`, and the
+> `mpn==100 & fuzzy<100` boundary class. **Genuine defects: 0.**
+>
+> Also **REFUTED**: the suspected *"report-side symbol pairing /
+> `symbol_equivalences` wired differently from `diff`"* — `report.rs:450-460`
+> and `diff.rs:884-908` load the **same** `map_file` identically (784 ICF
+> equivalences), and `diff` receives it whenever `-p` is passed.
+>
+> The genuinely eliminable part is **one flag**, not four:
+> `ppc.calculatePoolRelocations` (report `false`, diff schema-default `true`)
+> is **necessary and sufficient** — 118/1,639 → **0** alone;
+> `combineTextSections` is **inert**, `combineDataSections` moves **1** row.
+> Fixed repo-side in `mcp_server.py`; **no binary swapped.**
+>
+> Full record: `docs/decomp/OBJDIFF_DIFF_VS_REPORT_SETTLED_2026-08-03.md`.
+
 ## Swap procedure
 
 Staged binary: `/home/free/code/milohax/objdiff/target/release/objdiff-cli.laneDR1-staged`
@@ -192,7 +225,7 @@ git -C /home/free/code/milohax/objdiff branch -D laneDR1-eqlen-fix
 
 ## ⛔ NOT settled
 
-- The **64% residual `diff`-vs-`report` disagreement at identical config**.
+- ~~The **64% residual `diff`-vs-`report` disagreement at identical config**.~~ **✅ SETTLED by lane EB-4, 2026-08-03 — field-pairing error, 0 defects. Do not re-fund.**
   Suspected report-side symbol pairing (funclet byte-signature pairing /
   `symbol_equivalences`) wired differently from `diff` — **untested**.
 - ~~**Whether past lane conclusions should be re-examined.**~~ **SETTLED by lane
