@@ -3730,7 +3730,6 @@ Font.cpp:
 	.pdata      start:0x821FA188 end:0x821FA190
 	.pdata      start:0x821FECB8 end:0x821FECC8
 	.pdata      start:0x82202620 end:0x82202628
-	.pdata      start:0x82209890 end:0x82209898
 	.pdata      start:0x8220EFB8 end:0x8220EFC0
 	.pdata      start:0x8220F808 end:0x8220F828
 	.pdata      start:0x8220F828 end:0x8220F830
@@ -3763,7 +3762,6 @@ Font.cpp:
 	.text       start:0x822FC180 end:0x822FC248
 	.text       start:0x82347930 end:0x82347A18
 	.text       start:0x82380598 end:0x823806D8
-	.text       start:0x823FE968 end:0x823FE9F8
 	.text       start:0x82469388 end:0x824693F4
 	.text       start:0x824723A0 end:0x824726C8
 	.text       start:0x824726C8 end:0x82472724
@@ -4890,10 +4888,8 @@ FftIpp.cpp:
 	.text       start:0x82B761A0 end:0x82B765F0
 
 Tex.cpp:
-	.pdata      start:0x82209868 end:0x82209890
-	.pdata      start:0x82209898 end:0x822099F8
-	.text       start:0x823FE6D8 end:0x823FE968
-	.text       start:0x823FE9F8 end:0x82400590
+	.pdata      start:0x82209868 end:0x822099F8
+	.text       start:0x823FE6D8 end:0x82400590
 	.text       start:0x82400698 end:0x82400720
 
 PollAnim.cpp:

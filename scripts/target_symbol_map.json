@@ -8322,7 +8322,7 @@
  "0x823ee4c8": "??0InviteAcceptedMsg@@QAA@HI_N@Z",
  "0x823f5c20": "?NewObject@UIScreen@@SAPAVObject@Hmx@@XZ",
  "0x823f71e0": "?ApplyDynamicConstraint@RndTransformable@@AAAXXZ",
- "0x823fe968": "??0BitmapLocker@@QAA@PAVRndFont@@H@Z",
+ "0x823fe968": "??0RndTex@@IAA@XZ",
  "0x82400590": "?StaticClassName@RndAnimFilter@@SA?AVSymbol@@XZ",
  "0x82402ef0": "?StaticClassName@RndPostProc@@SA?AVSymbol@@XZ",
  "0x82402f68": "?Replace@RndDir@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
