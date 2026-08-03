@@ -1107,7 +1107,21 @@ _STWU_RE = re.compile(r'stwu\s+r1,\s*(-?0x[0-9a-fA-F]+|-?\d+)(?:\(r1\)|,\s*r1\b)
 
 
 def _extract_frame_size_from_instrs(instrs, side='target'):
-    """Find stwu r1, -N(r1) in prologue and return N (positive)."""
+    """Frame size, or None if it could not be determined.
+
+    ★ Delegates to scripts/analysis/stack_layout.py, which is the maintained
+    implementation (lane DQ-2, 2026-08-03). This local version handled only
+    `stwu r1, -N, r1` and so read None on the big-frame `lis/ori + stwux` form
+    (3 functions in the retail binary; measured, not estimated). Keeping two
+    independent prologue parsers is how they drift apart, so this one now just
+    forwards. Falls back to the old stwu-only scan if the import fails.
+    """
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from stack_layout import _scan_frame_size  # type: ignore
+        return _scan_frame_size(instrs, side, min(80, len(instrs)))[0]
+    except Exception:
+        pass
     for ins in instrs[:20]:
         s = ins.get(side)
         if not s:
@@ -1182,6 +1196,7 @@ def _cluster_into_slots(accesses):
                 'access_count': len(current_accesses),
                 'ops_summary': ', '.join(f"{op} x{n}" for op, n in ops.most_common()),
                 'first_index': min(a['index'] for a in current_accesses),
+                'indices': frozenset(a['index'] for a in current_accesses),
                 'type_hint': _infer_type(current_accesses, slot_size),
             })
             current_base = acc['offset']
@@ -1197,6 +1212,7 @@ def _cluster_into_slots(accesses):
             'access_count': len(current_accesses),
             'ops_summary': ', '.join(f"{op} x{n}" for op, n in ops.most_common()),
             'first_index': min(a['index'] for a in current_accesses),
+            'indices': frozenset(a['index'] for a in current_accesses),
             'type_hint': _infer_type(current_accesses, slot_size),
         })
 
@@ -1243,7 +1259,17 @@ def _diff_layouts(target_slots, source_slots):
         tgt = tgt_by_off.get(off)
         src = src_by_off.get(off)
         if tgt and src:
-            status = 'MATCH'
+            # ★ v1 said MATCH on OFFSET EQUALITY ALONE -- it did not even compare
+            #   the access pattern, let alone which variable lives there. Two
+            #   builds that both use slot 0x60, for different variables at
+            #   different program points, read "MATCH". Require the aligned
+            #   access rows to agree; otherwise say so (lane DQ-2, 2026-08-03).
+            #   See scripts/analysis/stack_layout.py for the maintained version.
+            ti, si = tgt.get('indices'), src.get('indices')
+            if ti is not None and si is not None and ti != si:
+                status = 'PERMUTED'
+            else:
+                status = 'MATCH'
         elif tgt and not src:
             status = 'TGT_ONLY'
         elif src and not tgt:
@@ -1348,8 +1374,19 @@ def cmd_stack_layout(instrs, symbol=None, project_dir=None):
     tgt_only = [r for r in rows if r['status'] == 'TGT_ONLY']
     src_only = [r for r in rows if r['status'] == 'SRC_ONLY']
     matched = [r for r in rows if r['status'] == 'MATCH']
+    permuted = [r for r in rows if r['status'] == 'PERMUTED']
 
-    if not swapped and not tgt_only and not src_only:
+    if tgt_frame is None or src_frame is None:
+        print("  ⛔ Frame size could not be determined on "
+              f"{'target' if tgt_frame is None else 'our build'} — no frame "
+              "verdict. (A frame we cannot read is not a frame that matches.)")
+    if permuted:
+        print(f"  {len(permuted)} slot(s) PERMUTED: present on both sides at the same "
+              "offset but\n    accessed at different program points — the same slot SET "
+              "with variables\n    assigned differently. Slot-allocation shaping, not a "
+              "missing/extra local.")
+
+    if not swapped and not tgt_only and not src_only and not permuted:
         print("  All stack slots match. No layout mismatches.")
         if tgt_frame and src_frame and tgt_frame != src_frame:
             print(f"  Frame size difference ({src_frame - tgt_frame:+d}) is likely from "

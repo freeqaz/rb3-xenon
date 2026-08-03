@@ -109,16 +109,28 @@ def _stack_signal_summary(instrs: list) -> "str | None":
     swapped = counts.get("SWAPPED", 0)
     shifted = counts.get("SHIFTED", 0)
     differ = counts.get("DIFFER", 0)
+    permuted = counts.get("PERMUTED", 0)
     tgt_only = counts.get("TGT_ONLY", 0)
     base_only = counts.get("BASE_ONLY", 0)
-    actionable = swapped + shifted + differ + tgt_only + base_only
-    frame_delta = base_prol.frame_size - tgt_prol.frame_size
+    actionable = swapped + shifted + differ + permuted + tgt_only + base_only
+
+    # ★ frame_size is TRI-STATE since 2026-08-03 (lane DQ-2): None means we could
+    #   not determine it. v1 defaulted it to 0, so an unparsed prologue on both
+    #   sides gave frame_delta == 0 and this function returned None -- SUPPRESSING
+    #   the stack signal entirely on exactly the functions with the biggest,
+    #   least-understood frames. A silent absence reads as "nothing to see here".
+    frame_known = tgt_prol.frame_known and base_prol.frame_known
+    frame_delta = ((base_prol.frame_size - tgt_prol.frame_size)
+                   if frame_known else None)
 
     if actionable == 0 and frame_delta == 0:
         return None
 
     parts: list = []
-    if frame_delta != 0:
+    if not frame_known:
+        parts.append("frame Δ UNKNOWN (prologue not parsed — callee-save "
+                     "filtering unreliable)")
+    elif frame_delta != 0:
         callee_bytes = (
             (base_prol.saved_gpr_count - tgt_prol.saved_gpr_count) * 8
             + (base_prol.saved_fpr_count - tgt_prol.saved_fpr_count) * 8
@@ -135,6 +147,8 @@ def _stack_signal_summary(instrs: list) -> "str | None":
         verdict_pieces.append(f"{shifted} SHIFTED")
     if differ:
         verdict_pieces.append(f"{differ} DIFFER")
+    if permuted:
+        verdict_pieces.append(f"{permuted} PERMUTED")
     if tgt_only or base_only:
         verdict_pieces.append(f"{tgt_only}/{base_only} TGT/BASE-only")
     if verdict_pieces:
@@ -150,6 +164,8 @@ def _stack_signal_summary(instrs: list) -> "str | None":
         hint = " — likely extra local on one side"
     elif differ > 0 and frame_delta == 0:
         hint = " — different variables in same slots"
+    elif permuted > 0:
+        hint = " — same slot SET, variables assigned differently (slot-allocation shaping)"
 
     return (f"**Stack:** {' | '.join(parts)}{hint}. "
             f"Run `run_diff_inspect mode=stack-layout` for the full table.")
