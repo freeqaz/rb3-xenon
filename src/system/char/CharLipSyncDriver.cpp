@@ -75,41 +75,59 @@ BEGIN_SAVES(CharLipSyncDriver)
     bs << mAlternateDriver;
 END_SAVES
 
-INIT_REVS(7, 0)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
+// base, and the RAW incoming BinStream is forwarded to every read and to the
+// superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
+// emits ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
+// destructor that retail has none of, and dispatches each read on `&d`.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// The pair MUST share one aggregate -- two separate file statics are laid out
+// independently and will not fold onto a single base register.  No `#define
+// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
+// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
+// the alias would silently shadow for the rest of the amalgamated TU.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharLipSyncDriver;
 BEGIN_LOADS(CharLipSyncDriver) // register error
-    LOAD_REVS(bs)
-    ASSERT_REVS(7, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(CharWeightable)
-    d >> mBones;
-    d >> mClips;
-    if (d.rev < 1) {
+    int rev;
+    bs >> rev;
+    gRevs_CharLipSyncDriver.rev = getHmxRev(rev);
+    gRevs_CharLipSyncDriver.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    CharWeightable::Load(bs);
+    bs >> mBones;
+    bs >> mClips;
+    if (gRevs_CharLipSyncDriver.rev < 1) {
         FilePath fp;
-        d >> fp;
+        bs >> fp;
         MILO_NOTIFY("%s old version, won't load %s", PathName(this), (String &)fp);
         String str;
-        d >> str;
+        bs >> str;
     } else
-        d >> mLipSync;
-    if (d.rev > 1) {
+        bs >> mLipSync;
+    if (gRevs_CharLipSyncDriver.rev > 1) {
         mTestClip.Load(bs, true, mClips);
-        d >> mTestWeight;
+        bs >> mTestWeight;
     }
-    if (d.rev > 2) {
+    if (gRevs_CharLipSyncDriver.rev > 2) {
         mOverrideClip.Load(bs, true, mClips);
-        if (d.rev < 5) {
+        if (gRevs_CharLipSyncDriver.rev < 5) {
             int x;
-            d >> x;
+            bs >> x;
         }
-        d >> mOverrideOptions;
+        bs >> mOverrideOptions;
     }
-    if (d.rev > 3)
-        d >> mApplyOverrideAdditively;
-    if (d.rev > 5)
-        d >> mOverrideWeight;
-    if (d.rev > 6)
-        d >> mAlternateDriver;
+    if (gRevs_CharLipSyncDriver.rev > 3)
+        bs >> mApplyOverrideAdditively;
+    if (gRevs_CharLipSyncDriver.rev > 5)
+        bs >> mOverrideWeight;
+    if (gRevs_CharLipSyncDriver.rev > 6)
+        bs >> mAlternateDriver;
     Sync();
 END_LOADS
 

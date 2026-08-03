@@ -117,24 +117,42 @@ BEGIN_COPYS(CharIKHand)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(0xC, 0)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
+// base, and the RAW incoming BinStream is forwarded to every read and to the
+// superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
+// emits ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
+// destructor that retail has none of, and dispatches each read on `&d`.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// The pair MUST share one aggregate -- two separate file statics are laid out
+// independently and will not fold onto a single base register.  No `#define
+// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
+// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
+// the alias would silently shadow for the rest of the amalgamated TU.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_CharIKHand;
 BEGIN_LOADS(CharIKHand)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0xC, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(CharWeightable)
+    int rev;
+    bs >> rev;
+    gRevs_CharIKHand.rev = getHmxRev(rev);
+    gRevs_CharIKHand.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    CharWeightable::Load(bs);
     bs >> mHand;
-    if (d.rev > 4)
+    if (gRevs_CharIKHand.rev > 4)
         bs >> mFinger;
     else
         mFinger = 0;
-    if (d.rev < 3) {
+    if (gRevs_CharIKHand.rev < 3) {
         ObjPtr<RndTransformable> tPtr(this, 0);
         bs >> tPtr;
         mTargets.clear();
         mTargets.push_back(IKTarget(ObjPtr<RndTransformable>(tPtr), 0));
-    } else if (d.rev < 0xB) {
+    } else if (gRevs_CharIKHand.rev < 0xB) {
         ObjPtrList<RndTransformable> tList(this, kObjListNoNull);
         bs >> tList;
         mTargets.clear();
@@ -144,40 +162,40 @@ BEGIN_LOADS(CharIKHand)
             mTargets.push_back(IKTarget(ObjPtr<RndTransformable>(tPtr), 0));
         }
     } else
-        d >> mTargets;
+        bs >> mTargets;
 
-    d >> mOrientation;
-    d >> mStretch;
-    if (d.rev > 1)
-        d >> mScalable;
+    bs >> mOrientation;
+    bs >> mStretch;
+    if (gRevs_CharIKHand.rev > 1)
+        bs >> mScalable;
     else
         mScalable = false;
 
-    if (d.rev > 3)
-        d >> mMoveElbow;
+    if (gRevs_CharIKHand.rev > 3)
+        bs >> mMoveElbow;
     else
         mMoveElbow = true;
 
-    if (d.rev > 5)
+    if (gRevs_CharIKHand.rev > 5)
         bs >> mElbowSwing;
     else
         mElbowSwing = 0.0f;
 
-    if (d.rev > 6)
-        d >> mAlwaysIKElbow;
-    if (d.rev > 7) {
-        d >> mConstraintWrist;
-        d >> mWristRadians;
+    if (gRevs_CharIKHand.rev > 6)
+        bs >> mAlwaysIKElbow;
+    if (gRevs_CharIKHand.rev > 7) {
+        bs >> mConstraintWrist;
+        bs >> mWristRadians;
     }
-    if (d.rev == 9) {
+    if (gRevs_CharIKHand.rev == 9) {
         String s;
-        d >> s;
+        bs >> s;
         bool b;
-        d >> b;
+        bs >> b;
     }
-    if (d.rev > 0xB) {
-        d >> mElbowCollide;
-        d >> mClockwise;
+    if (gRevs_CharIKHand.rev > 0xB) {
+        bs >> mElbowCollide;
+        bs >> mClockwise;
     }
     SetHand(mHand);
 END_LOADS
