@@ -775,18 +775,34 @@ void ObjPtrList<T1, T2>::ReplaceNode(struct ObjPtrList::Node *node, Hmx::Object 
     } else {
         Hmx::Object *old = static_cast<ObjRefConcrete<T1, T2> *>(node)->SetObj(obj);
         if (!old && mListMode == kObjListNoNull) {
-            // During ReplaceList, erasing frees the node while other ObjRefs in
-            // the ring still hold prev/next pointers to it. Subsequent ring
-            // operations write through dangling pointers and corrupt glibc's
-            // heap metadata ("corrupted double-linked list"). Suppress the erase;
-            // the null entry persists until the list is destroyed or cleaned up.
-            // Matches the guard in ObjPtrVec::ReplaceNode.
-            if (!gInReplaceList) {
-                erase(node);
-            } else {
-                MILO_WARN("ObjPtrList::ReplaceNode: suppressed erase during ReplaceList (owner=%s)",
-                    mOwner ? PathName(dynamic_cast<Hmx::Object*>(mOwner)) : "<null>");
-            }
+            // Erase unconditionally, exactly as rb3-Wii does
+            // (rb3/src/system/obj/ObjPtr_p.h:266-268, `if (mMode ==
+            // kObjListNoNull && !to) { it = erase(it).mNode; continue; }`).
+            //
+            // ⚠ THE `gInReplaceList` SUPPRESSION THAT USED TO BE HERE WAS A
+            // FALSE ANALOGY, and its own last line said where it came from
+            // ("Matches the guard in ObjPtrVec::ReplaceNode"). In ObjPtrVec the
+            // guard is REAL: that container's Nodes live INLINE in a
+            // std::vector, so erase() memmoves surviving nodes via CopyRef,
+            // which rewrites live ring prev/next pointers underneath an
+            // in-progress ring walk. ObjPtrList's Nodes are individually
+            // heap-allocated and are never moved, so that mechanism cannot
+            // occur here.
+            //
+            // Nor can the "frees a node other ObjRefs still point to" hazard the
+            // old comment described: `old` is SetObj's return, which is the NEW
+            // referent (ObjPtr_p.h:143-153 `return mObject;`). Reaching this arm
+            // therefore means SetObjConcrete(nullptr) ALREADY ran
+            // `mObject->Release(this)` and unlinked this node from the ring. By
+            // the time erase() runs the node holds no ring membership at all, so
+            // `delete node` reaches ~ObjRefConcrete with mObject == nullptr and
+            // performs NO ring operation (ObjPtr_p.h:34-43).
+            //
+            // Suppressing the erase instead left a NULL entry in a
+            // kObjListNoNull list — which the shipped
+            // BandCharacter::SyncObjects loop dereferences — and the entry never
+            // left, so even a null-skip would spin on !empty().
+            erase(node);
         }
     }
 }
