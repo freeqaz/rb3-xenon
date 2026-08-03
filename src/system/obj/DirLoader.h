@@ -62,7 +62,13 @@ public:
     static Symbol GetDirClass(const char *);
     static const char *CachedPath(const char *, bool);
     static bool ShouldBlockSubdirLoad(const FilePath &);
-    static bool SaveObjects(const char *, ObjectDir *, bool);
+    // RETAIL-ADJUDICATED arity: ObjectDir::Handle's `save_objects` action calls
+    // this with TWO argument registers (r3,r4) and never materialises r5, which
+    // is volatile and clobbered by the immediately preceding `bl DataNode::Str`.
+    // DC3 (a NEWER engine revision) grew a third `bool` parameter; the rb3-Wii
+    // oracle, which is RB3-era, has the two-parameter form. Retail agrees with
+    // rb3-Wii.
+    static bool SaveObjects(const char *, ObjectDir *);
     static void SaveObjects(BinStream &, ObjectDir *);
     static void WriteTypeMemDump(TextFileStream *);
     static Loader *New(const FilePath &, LoaderPos);
@@ -101,9 +107,20 @@ private:
     bool mPostLoad; // 0x5c
     bool mLoadDir; // 0x5d
     bool mDeleteSelf; // 0x5e
-    const char *mProxyName; // 0x60
-    int mPad64; // 0x64 - unused padding (dead code from RB2)
-    Timer mTimer; // 0x68
+    const char *mProxyName; // 0x64 (compiler-verified)
+#ifndef HX_NATIVE
+    // 0x68 (compiler-verified). RETAIL-ADJUDICATED, not inferred from the header
+    // comments (which are a known lie class): ObjectDir::Handle's `proxy_dir`
+    // expression reads `mLoader->mProxyDir` as `lwz r11, 0x68(r11)`. This slot
+    // used to be `int mPad64 // unused padding (dead code from RB2)`; it is not
+    // padding, it is mProxyDir, exactly as the rb3-Wii oracle has it
+    // (mProxyName @0x60 / mProxyDir @0x64 / mTimer @0x68 in Wii's own base
+    // layout). sizeof(DirLoader) stays 168 (0xa8) = retail's PoolAlloc size.
+    class ObjectDir *mProxyDir; // 0x68
+#else
+    int mPad64; // 0x68 - native keeps the ObjOwnerPtr mProxyDir below instead
+#endif
+    Timer mTimer; // 0x70 (compiler-verified)
     bool mAccessed;
     bool mForceFailCallback;
     bool mHasEditorDir; // 0x9a - gates ReadEditorDirDead in LoadObjs
@@ -119,8 +136,6 @@ private:
     // size-probe investigation).
     class ObjectDir *mParentDir; // 0x9c
     ObjOwnerPtr<ObjectDir> mProxyDir; // 0xa0
-#else
-    class ObjectDir *mProxyDir;
 #endif
 
     static bool sCacheMode;

@@ -87,13 +87,18 @@ DirLoader::DirLoader(
 )
     : Loader(fp, pos), mOwnStream(false), mStream(stream), mRev(0), mCounter(0),
       mObjects(nullptr, kObjListAllowNull), mCallback(cb), mDir(dir), mPostLoad(false),
-      mLoadDir(true), mDeleteSelf(false), mProxyName(nullptr), mAccessed(0), mForceFailCallback(0),
-      mHasEditorDir(0), mSubDir(bbb),
-#ifdef HX_NATIVE
-      mParentDir(dir2), mProxyDir(this) {
-#else
-      mProxyDir(nullptr) {
+      mLoadDir(true), mDeleteSelf(false), mProxyName(nullptr),
+#ifndef HX_NATIVE
+      // declaration order: mProxyDir now sits at 0x68, before mAccessed
+      mProxyDir(nullptr),
 #endif
+      mAccessed(0), mForceFailCallback(0),
+      mHasEditorDir(0), mSubDir(bbb)
+#ifdef HX_NATIVE
+      ,
+      mParentDir(dir2), mProxyDir(this)
+#endif
+{
     if (dir) {
         mDeleteSelf = true;
         mProxyName = dir->Name();
@@ -678,7 +683,7 @@ void DirLoader::SaveObjects(BinStream &bs, ObjectDir *dir) {
     }
 }
 
-bool DirLoader::SaveObjects(const char *file, ObjectDir *dir, bool) {
+bool DirLoader::SaveObjects(const char *file, ObjectDir *dir) {
     if (sCacheMode && dir->InlineSubDirType() != kInlineNever) {
         MILO_LOG("Not caching %s because it is an inlined subdir.\n", file);
         return false;
