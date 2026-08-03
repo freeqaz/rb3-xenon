@@ -4093,6 +4093,57 @@ namespace {
                      r.meshes, r.skinned, r.withMat, r.withTex);
             Gate("drawable-census", r.meshes > 0, d);
         }
+
+        // ---- X19: WHY THE BAND IS PINK — the SKIN materials, individually ----
+        //
+        // Six lanes have reported "the band renders untextured pink" as an
+        // aggregate. The census above prints "341 of 411 textured", which cannot
+        // distinguish the three live hypotheses for the band's own materials:
+        //
+        //   (a) the diffuse slot is NULL      -> OutfitConfig::SetSkinTextures
+        //                                        never bound it
+        //   (b) it is bound but never uploaded-> a renderer/upload gap
+        //   (c) it is bound AND uploaded      -> the pink is shader/lighting,
+        //                                        not a missing texture
+        //
+        // OutfitConfig::SetSkinTextures (bandobj/OutfitConfig.cpp:473-575) is the
+        // ONLY code in the tree that binds skin diffuse/spec/norm onto exactly
+        // these five material names (its own table at :475-479). So naming them
+        // explicitly is not a guess about which meshes matter.
+        //
+        // ⚠ AGGREGATES CANNOT ANSWER THIS, which is the whole point: a scene
+        // that is 341/411 textured is equally consistent with a fully-textured
+        // band and a fully-untextured one, because the venue dominates the count.
+        {
+            static const char *kSkinMats[] = { "torso_naked", "legs_skin",
+                                               "feet_skin",   "feet_socks_skin",
+                                               "head_naked" };
+            int hits = 0, nullDiffuse = 0, haveDiffuse = 0;
+            for (size_t mi = 0; mi < meshes.size(); mi++) {
+                RndMat *mat = meshes[mi]->Mat();
+                if (!mat || !mat->Name()) continue;
+                bool isSkin = false;
+                for (int k = 0; k < 5; k++)
+                    if (strstr(mat->Name(), kSkinMats[k])) { isSkin = true; break; }
+                if (!isSkin) continue;
+                hits++;
+                RndTex *tx = mat->GetDiffuseTex();
+                if (tx) haveDiffuse++; else nullDiffuse++;
+                printf("    skinmat '%-22s mesh '%-30s diffuse=%s\n",
+                       (std::string(mat->Name()) + "'").c_str(),
+                       (std::string(meshes[mi]->Name()) + "'").c_str(),
+                       tx ? (tx->Name() ? tx->Name() : "(unnamed tex)") : "NULL");
+            }
+            printf("  === X19 SKIN-MATERIAL DIFFUSE CENSUS: %d skin material "
+                   "instance(s), %d with a diffuse, %d NULL ===\n",
+                   hits, haveDiffuse, nullDiffuse);
+            // ⚠ Denominator printed BEFORE any verdict is read off it: "0 NULL"
+            // and "there were no skin materials at all" are different findings,
+            // and four vacuous passes on this ladder came from conflating them.
+            if (hits == 0)
+                printf("      ⚠ ZERO skin materials found — this census is VACUOUS "
+                       "for this scene; do not read a verdict from it.\n");
+        }
         if (r.meshes == 0) return r;
 
         if (r.withMat < r.meshes) {
