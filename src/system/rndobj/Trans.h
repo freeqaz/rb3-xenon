@@ -191,6 +191,71 @@ protected:
     Constraint mConstraint; // 0xa0
     bool mPreserveScale; // 0xa4
     ObjPtr<RndTransformable> mTarget; // 0xa8  (ObjPtr = 0xc retail)
+
+#ifdef HX_NATIVE
+    // ─── X18 NATIVE-ONLY DIAGNOSTIC: WHO LAST WROTE mWorldXfm ──────────────
+    //
+    // WHY THIS EXISTS. The hand-pose oracle checks `W == L*parentW`. That is
+    // NOT the engine's world rule -- it is only one of the ways mWorldXfm gets
+    // its value. WorldXfm() (Trans.h:118) returns the CACHED mWorldXfm whenever
+    // !mDirty, so a bone whose world was written by any path OTHER than
+    // WorldXfm_Force will fail the check even though the engine is behaving
+    // exactly as designed. X17 flagged this as the gate's blind spot and could
+    // not settle whether the residual it reports is a defect or an artifact.
+    //
+    // A last-writer tag settles it, because it is the ONLY thing the deviation
+    // number cannot tell you. mWorldXfm is private to this class and is written
+    // in exactly five places in Trans.cpp (verified by grep over src/ + native/:
+    // no other TU touches it). All five are tagged, so no writer can be
+    // silently misclassified as another.
+    //
+    // ⛔ NOT INVENTED: this changes no transform, no pose, no traversal and no
+    // control flow. It is a write-only byte, read only by the audit path.
+    // X360 blast radius is zero BY CONSTRUCTION -- the member, its
+    // initialisation and every assignment are inside `#ifdef HX_NATIVE`, which
+    // the X360 arm does not define, so the retail class layout is untouched.
+public:
+    enum WorldWriter {
+        kWorldNeverWritten = 0, // still the ctor's Reset() identity
+        kWorldComposed = 1, // WorldXfm_Force -- the ONLY path the gate models
+        kWorldPublished = 2, // SetWorldXfm / SetWorldPos -- IK, placement
+        kWorldLoaded = 3, // read straight off the .milo stream
+        kWorldCopied = 4, // Copy() from another RndTransformable
+    };
+    unsigned char WorldWriterTag() const { return mWorldWriterTag; }
+    // Return address of whoever last called SetWorldXfm on this bone. Resolved
+    // to a symbol offline with addr2line -- names the publisher without
+    // guessing from bone names.
+    void *WorldPubCaller() const { return mWorldPubCaller; }
+    // ⚠ TEST-ONLY NEGATIVE-CONTROL HOOK, never called outside the audit.
+    // Forges the ONE state the corrected gate exists to catch: a bone that is
+    // marked clean and tagged COMPOSED while its cached world is stale with
+    // respect to its parent -- i.e. a dirty-propagation failure. Without this
+    // the corrected gate has only ever been observed PASSING, and a gate never
+    // seen to fail is not evidence of anything.
+    void NativeMakeStaleForTest() {
+        mDirty = false;
+        mWorldWriterTag = kWorldComposed;
+    }
+    static const char *WorldWriterName(unsigned char w) {
+        switch (w) {
+        case kWorldComposed:
+            return "COMPOSED";
+        case kWorldPublished:
+            return "PUBLISHED";
+        case kWorldLoaded:
+            return "LOADED";
+        case kWorldCopied:
+            return "COPIED";
+        default:
+            return "NEVER";
+        }
+    }
+
+protected:
+    unsigned char mWorldWriterTag;
+    void *mWorldPubCaller;
+#endif
 };
 
 class RndTransformableRemover : public RndTransformable {

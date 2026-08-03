@@ -22,6 +22,10 @@ RndTransformable::RndTransformable()
       mDirty(true) {
     mLocalXfm.Reset();
     mWorldXfm.Reset();
+#ifdef HX_NATIVE
+    mWorldWriterTag = kWorldNeverWritten; // X18 diagnostic, see Trans.h
+    mWorldPubCaller = nullptr;
+#endif
 }
 
 RndTransformable::~RndTransformable() {
@@ -148,6 +152,9 @@ BEGIN_COPYS(RndTransformable)
     BEGIN_COPYING_MEMBERS
         const Transform &srcWorldXfm = c->mWorldXfm;
         mWorldXfm = srcWorldXfm;
+#ifdef HX_NATIVE
+        mWorldWriterTag = kWorldCopied; // X18
+#endif
         const Transform &srcLocalXfm = c->mLocalXfm;
         mLocalXfm = srcLocalXfm;
         if (ty != kCopyFromMax) {
@@ -175,6 +182,9 @@ BEGIN_LOADS(RndTransformable)
         bs >> t >> t;
     } else {
         bs >> mLocalXfm >> mWorldXfm;
+#ifdef HX_NATIVE
+        mWorldWriterTag = kWorldLoaded; // X18 -- world came straight off disk
+#endif
     }
     if (gRev < 9) {
         ObjPtrList<RndTransformable> l(this);
@@ -419,6 +429,13 @@ DataNode RndTransformable::OnGetLocalScaleIndex(const DataArray *a) {
 void RndTransformable::SetWorldXfm(const Transform &tf) {
     mWorldXfm = tf;
     mDirty = false;
+#ifdef HX_NATIVE
+    // X18: THE tag that matters. This is how IK and placement publish a world
+    // directly; mDirty=false means WorldXfm() will hand this cached value back
+    // forever, and `W == L*parentW` is NOT expected to hold for it.
+    mWorldWriterTag = kWorldPublished;
+    mWorldPubCaller = __builtin_return_address(0);
+#endif
     UpdatedWorldXfm();
     FOREACH (it, mChildren) {
         (*it)->SetDirty();
@@ -427,6 +444,9 @@ void RndTransformable::SetWorldXfm(const Transform &tf) {
 
 void RndTransformable::SetWorldPos(const Vector3 &pos) {
     mWorldXfm.v = pos;
+#ifdef HX_NATIVE
+    mWorldWriterTag = kWorldPublished; // X18; note this one does NOT clear mDirty
+#endif
     UpdatedWorldXfm();
     FOREACH (it, mChildren) {
         (*it)->SetDirty();
@@ -666,6 +686,12 @@ void RndTransformable::SetTransParent(RndTransformable *t, bool recalcLocal) {
 const Transform &RndTransformable::WorldXfm_Force() {
     START_AUTO_TIMER("updateworldxfm");
     mDirty = false;
+#ifdef HX_NATIVE
+    // X18: the ONLY path the `W == L*parentW` oracle actually models. Tagged
+    // BEFORE the constraint arms below, which may overwrite mWorldXfm; those
+    // bones are screened out of the gate separately by HasDynamicConstraint().
+    mWorldWriterTag = kWorldComposed;
+#endif
     if (!mParent) {
         mWorldXfm = mLocalXfm;
     } else if (mConstraint == kConstraintParentWorld) {
