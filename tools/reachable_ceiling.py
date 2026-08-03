@@ -70,6 +70,65 @@ twice been burned by a weak enrichment used as a deterministic classifier
 (pin-tail 1.25x, name_check fold-alias 1.95x).  An unvalidated proximity flag
 would be a third.
 
+ATTRIBUTION: IS THE BLOCKER EVEN OURS?  (lane DL-2, 2026-08-03)
+---------------------------------------------------------------
+Lane DK-3 reported that some units this census ranks as source-reachable are
+blocked by symbols our source does not own -- map/splits ATTRIBUTION defects,
+not source work -- and named `HamRibbon` and `FlowDistance` as the worst cases,
+each occurring **0 times in band.exe** against a control of `ObjectDir` 168.
+
+DL-2 tried to turn that into a classifier.  **Two of the three claims did not
+survive, and the refutations are more useful than the fix would have been.**
+
+1. ** `FlowDistance` IS AT_100 AT HEAD ** with zero sub-100 rows -- it is not a
+   blocker at all any more.  The staleness axis (shape 7) applies to lane
+   findings, not just to JSON artifacts.
+2. ** `HamRibbon`'s blockers are STL template bodies **
+   (`?_M_erase@?$vector@V?$Key@VTransform@@@@...`), which carry NO class anchor.
+   So DK-3's evidence is UNIT-level, not blocker-level.
+3. ** THE UNIT-LEVEL TEST FAILS ITS NULL, DECISIVELY. **  "unit stem occurs 0
+   times in band.exe" fires on:
+
+       AT_100 (untreated)        72/204 = 35.3%   <-- the null
+       all sub-100 buckets      221/745 = 29.7%
+       ENRICHMENT                          0.84x  <-- BELOW ONE
+
+   An already-complete unit is *more* likely to trip it than a blocked one.
+   DK-3's quoted null -- a fabricated name scoring 0 -- measured whether the
+   SCANNER works, not whether the PREDICATE discriminates.  That is exactly
+   shape 4 (base-rate error), and the same failure as pin-tail 1.25x and the
+   name_check fold-alias 1.95x.  ** DO NOT RE-FUND THE UNIT-STEM TEST. **
+
+What DOES survive is the BLOCKER-CLASS form, and only as a calibrated
+suspicion::
+
+    named rows whose CLASS is absent from band.exe
+      AT_100  (untreated null) 1152/15237 =  7.56%
+      SUB_100 (charged)         565/ 2250 = 25.11%
+      ENRICHMENT                             3.32x
+
+3.32x is real and it is NOT a classifier: roughly one flagged row in three is
+expected to be a false positive, because a non-polymorphic helper class carries
+no RTTI and no factory-registration string (`CSHA1` reads 0 and is perfectly
+real).  So this tool:
+
+  * ATTACHES the label to each named blocker (`CLASS_ABSENT_FROM_RETAIL` /
+    `CLASS_PRESENT_IN_RETAIL` / `NO_CLASS_ANCHOR` / `UNKNOWN_NO_RETAIL_BINARY`),
+    named after WHAT WAS MEASURED, never after the inferred remedy (rule 14);
+  * RECOMPUTES and PRINTS the null + enrichment on every run, so the number
+    travels with the flag and cannot be laundered into a verdict; and
+  * ** DOES NOT REMOVE FLAGGED UNITS FROM COMPLETABLE OR FROM THE CEILING. **
+    At a 7.56% base rate that would silently delete real source work -- the
+    over-correction the brief warned against, in the opposite direction.
+
+The three-way anon model (unpaired / paired / at-100) is untouched: it was
+independently verified (`anon@100 == masked_equal_functions` exactly) and is
+still checked every run.
+
+The retail scan is pure-Python `bytes.count`, immune to the binary-blind `grep`
+shim -- and `--sabotage retail-blind` models that shim exactly, to prove the
+known-positive control can fail.
+
 EXIT CODES (a refusal is a distinct code, never a zero-filled report)
 ----------------------------------------------------------------------
     0   census produced
@@ -77,6 +136,8 @@ EXIT CODES (a refusal is a distinct code, never a zero-filled report)
     3   STALE INPUT refused (report.json older than the tree it describes)
     4   COLLAPSED JOIN / unusable input refused (the CY-1 lesson: a tool that
         reports an empty tree as done is shaped exactly like a decisive negative)
+    5   ATTRIBUTION SCANNER VACUOUS refused (a known-present class read absent,
+        so every blocker would be flagged foreign)
 """
 from __future__ import annotations
 
@@ -190,6 +251,12 @@ HEADER_CAVEATS = [
     "structurally blind to wrong callees; 'at 100' is not 'correct'.",
     "A unit flagged unit_vanishes_if_drained CANNOT be completed by a boundary "
     "move: the move drains its only function and the unit must be DELETED.",
+    "THE ATTRIBUTION FLAG IS A SUSPICION, NOT A VERDICT, AND ITS UNIT-LEVEL "
+    "SIBLING IS REFUTED.  'blocker class absent from band.exe' is ~3.3x enriched "
+    "over an untreated population that already trips it at ~7.6%, so ~1 flag in 3 "
+    "is a false positive and flagged units are deliberately LEFT IN COMPLETABLE. "
+    "The unit-STEM form measured 0.84x (ANTI-enriched: 35.3% of AT_100 units trip "
+    "it) and must not be re-funded.  Adjudicate on retail bytes, never on a flag.",
 ]
 
 
@@ -615,6 +682,149 @@ def cls_of(name):
     return m.group(1) if m else None
 
 
+# ---------------------------------------------------------------------------
+# ATTRIBUTION (DL-2) -- a CALIBRATED SUSPICION, never a classifier
+# ---------------------------------------------------------------------------
+CLASS_PRESENT = "CLASS_PRESENT_IN_RETAIL"
+CLASS_ABSENT = "CLASS_ABSENT_FROM_RETAIL"
+NO_ANCHOR = "NO_CLASS_ANCHOR"          # free fn / STL template -> not judged
+NO_BINARY = "UNKNOWN_NO_RETAIL_BINARY"  # cannot judge; NOT 'present'
+
+ATTRIBUTION_LEGEND = {
+    CLASS_PRESENT: "the blocker's class name occurs in band.exe",
+    CLASS_ABSENT: (
+        "the blocker's class name occurs ZERO times in band.exe.  A SUSPICION "
+        "ONLY -- measured enrichment ~3.3x over the untreated population, whose "
+        "own rate is ~7.6%, so ~1 in 3 flags is expected to be a false positive "
+        "(a non-polymorphic helper carries no RTTI and no registration string; "
+        "CSHA1 reads 0 and is real).  Adjudicate on retail bytes, never on this."
+    ),
+    NO_ANCHOR: (
+        "no class parsed from the mangled name -- a free function or an STL "
+        "template instantiation.  NOT JUDGED.  This is the majority of the "
+        "highest-penalty blockers, and it is where HamRibbon's actually sit."
+    ),
+    NO_BINARY: "band.exe unavailable -- the question was not asked, not answered",
+}
+
+
+class RetailNames:
+    """Does a class name occur anywhere in the retail image?
+
+    Pure-Python `bytes.count`, so it is immune to the binary-blind `grep` shim
+    (a shell `grep` here returns only FALSE NEGATIVES on band.exe, which would
+    make every class read absent -- the exact vacuity `--sabotage retail-blind`
+    reproduces).
+    """
+
+    def __init__(self, path: Path, sabotage=None):
+        self.path = Path(path)
+        self.sabotage = sabotage
+        self.data = self.path.read_bytes() if self.path.exists() else None
+        self._memo = {}
+
+    @property
+    def available(self):
+        return self.data is not None
+
+    def count(self, cls):
+        if self.data is None:
+            return None
+        if self.sabotage == "retail-blind":
+            return 0                      # models the binary-blind grep shim
+        if cls not in self._memo:
+            self._memo[cls] = self.data.count(cls.encode())
+        return self._memo[cls]
+
+    def label(self, mangled):
+        cls = cls_of(mangled)
+        if cls is None:
+            return NO_ANCHOR, None, None
+        if self.data is None:
+            return NO_BINARY, cls, None
+        n = self.count(cls)
+        return (CLASS_PRESENT if n else CLASS_ABSENT), cls, n
+
+
+def attribution_controls(RN: RetailNames):
+    """Rule 1 + rule 4: assert a KNOWN POSITIVE before any absence is believed,
+    and show the instrument producing the OTHER label on a known-opposite case."""
+    rows = []
+    if not RN.available:
+        rows.append(("retail binary present", False, f"missing {RN.path}"))
+        return rows
+    n = RN.count("ObjectDir")
+    rows.append(("known-positive: 'ObjectDir' occurs in band.exe", n == 168,
+                 f"count={n} (want 168; a vacuous scanner reads 0 and would flag "
+                 f"EVERY blocker foreign)"))
+    n2 = RN.count("RndText")
+    rows.append(("second known-positive: 'RndText' occurs", bool(n2),
+                 f"count={n2} (want >0; note it is only 2 -- a LOW count is not "
+                 f"absence, which is why the threshold is ==0 and not a margin)"))
+    n3 = RN.count("ZzQqDefinitelyNotAClassDL2")
+    rows.append(("known-negative: a fabricated class reads 0", n3 == 0,
+                 f"count={n3} (want 0; proves the scanner is not matching "
+                 f"everything -- rule 4, the second label)"))
+    return rows
+
+
+def annotate_attribution(records, report_doc, RN: RetailNames):
+    """Label every NAMED blocker, and RECOMPUTE the null + enrichment so the
+    calibration always travels with the flag (rule 3, rule 15)."""
+    for r in records:
+        for b in r["blocker_rows"]:
+            if b["kind"] != "named":
+                continue
+            lab, cls, n = RN.label(b["name"])
+            b["attribution"] = {"label": lab, "class": cls, "retail_occurrences": n}
+
+    # --- THE NULL, recomputed from report.json every run.  The untreated
+    # population is NAMED rows already at mpn==100: whatever their true
+    # correctness, they are the rows nobody is proposing to reclassify.
+    null_abs = null_anch = chg_abs = chg_anch = 0
+    for u in report_doc.get("units", []):
+        for f in u.get("functions") or []:
+            nm = f["name"]
+            if ANON_RX.match(nm):
+                continue
+            lab, _c, _n = RN.label(nm)
+            if lab in (NO_ANCHOR, NO_BINARY):
+                continue
+            at100 = (f["match_percent_normalized"] == 100.0)
+            if at100:
+                null_anch += 1
+                null_abs += (lab == CLASS_ABSENT)
+            else:
+                chg_anch += 1
+                chg_abs += (lab == CLASS_ABSENT)
+    nr = (null_abs / null_anch) if null_anch else 0.0
+    cr = (chg_abs / chg_anch) if chg_anch else 0.0
+    return {
+        "available": RN.available,
+        "retail_exe": str(RN.path),
+        "sabotage": RN.sabotage,
+        "null_untreated_at100": {"absent": null_abs, "class_anchored": null_anch,
+                                 "rate_pct": 100.0 * nr},
+        "charged_sub100": {"absent": chg_abs, "class_anchored": chg_anch,
+                           "rate_pct": 100.0 * cr},
+        "enrichment": (cr / nr) if nr else None,
+        "discriminating": bool(nr and cr / nr > 1.0),
+        "legend": ATTRIBUTION_LEGEND,
+        "verdict": (
+            "SUSPICION ONLY.  Enrichment is reported above; the untreated "
+            "population already trips this flag at the stated rate, so a flagged "
+            "row is a TRIAGE CANDIDATE, not an attribution defect.  Flagged units "
+            "are deliberately NOT removed from COMPLETABLE or from the ceiling."
+        ),
+        "refuted_sibling_test": (
+            "THE UNIT-STEM FORM OF THIS TEST IS REFUTED, DO NOT RE-FUND IT: "
+            "'unit stem occurs 0 times in band.exe' measured 35.3% on AT_100 vs "
+            "29.7% on sub-100 units = 0.84x, i.e. ANTI-enriched.  It fires on one "
+            "healthy unit in three."
+        ),
+    }
+
+
 def _load_soa(root: Path):
     p = root / "scripts/harvest/size_order_automap.py"
     if not p.exists():
@@ -816,6 +1026,30 @@ def emit_text(payload, out=sys.stdout):
     w("  The COMPLETABLE ones are NOT that class: their blocker is a NAMED sub-100\n"
       "  row, so source work is the lever and no move is contemplated.\n")
 
+    at = p.get("attribution")
+    if at:
+        w("\n-- BLOCKER ATTRIBUTION (a CALIBRATED SUSPICION, never a classifier) --\n")
+        for c in at["controls"]:
+            w(f"  [{'PASS' if c['ok'] else 'FAIL'}] {c['check']}\n         {c['detail']}\n")
+        n, c = at["null_untreated_at100"], at["charged_sub100"]
+        w(f"  class ABSENT from band.exe:\n")
+        w(f"    NULL   (named rows already at 100) {n['absent']:6d}/{n['class_anchored']:6d}"
+          f" = {n['rate_pct']:5.2f}%\n")
+        w(f"    CHARGED(named rows sub-100)        {c['absent']:6d}/{c['class_anchored']:6d}"
+          f" = {c['rate_pct']:5.2f}%\n")
+        e = at["enrichment"]
+        w(f"    ENRICHMENT                         {'n/a' if e is None else f'{e:.2f}x'}"
+          f"   discriminating={at['discriminating']}\n")
+        w(f"  ** {at['verdict']}\n")
+        w(f"  ** {at['refuted_sibling_test']}\n")
+        cnt = collections.Counter(
+            b.get("attribution", {}).get("label")
+            for r in p["units"] for b in r["blocker_rows"]
+            if b["kind"] == "named" and b.get("attribution"))
+        w("  labels over NAMED blocker rows:\n")
+        for k, v in cnt.most_common():
+            w(f"    {k:26s} {v:5d}\n")
+
     if p.get("top_completable"):
         w("\n-- CHEAPEST COMPLETABLE UNITS (source-reachable, 1 blocker) --\n")
         for r in p["top_completable"][:15]:
@@ -887,6 +1121,14 @@ def main(argv=None):
     ap.add_argument("--no-strict", action="store_true",
                     help="downgrade the consistency control to a warning (NOT recommended)")
     ap.add_argument("--quiet", action="store_true")
+    ap.add_argument("--retail-exe", default=None,
+                    help="retail PE for the attribution flag (default orig/45410914/band.exe)")
+    ap.add_argument("--no-attribution", action="store_true",
+                    help="skip the blocker-attribution labelling entirely")
+    ap.add_argument("--sabotage", choices=["retail-blind"], default=None,
+                    help="make the retail scanner always read 0 -- models the "
+                         "binary-blind grep shim.  VACUITY CONTROL: the run MUST "
+                         "then REFUSE with exit 5.")
     args = ap.parse_args(argv)
 
     root = Path(args.root).resolve() if args.root else Path(__file__).resolve().parents[1]
@@ -918,6 +1160,58 @@ def main(argv=None):
         collapsed_join_gate(join)
         consistency = run_consistency_control(records, join, report, doc,
                                               strict=not args.no_strict)
+        # -- ATTRIBUTION (DL-2).  Controls FIRST: if a known-present class reads
+        # absent, every blocker would be flagged foreign and the census would be
+        # a confident lie in the opposite direction from CY-1's.  Refuse.
+        attribution = None
+        if not args.no_attribution:
+            rexe = Path(args.retail_exe) if args.retail_exe \
+                else root / "orig/45410914/band.exe"
+            RN = RetailNames(rexe, sabotage=args.sabotage)
+            ctl = attribution_controls(RN)
+            if any(not ok for _n, ok, _d in ctl):
+                raise Refusal(5, "REFUSING: ATTRIBUTION SCANNER IS VACUOUS", [
+                    f"{n}: {d}" for n, ok, d in ctl if not ok
+                ] + [
+                    "",
+                    "A known-present class read as absent.  Every blocker would "
+                    "then be flagged foreign -- a decisive-looking negative "
+                    "produced by a dead instrument.",
+                    "This is the binary-blind `grep` shim's failure shape; the "
+                    "real scan is pure-Python bytes.count for exactly that reason.",
+                    "Re-run with --no-attribution for the bucket-only census.",
+                ])
+            # ★ NON-INTERFERENCE PIN.  The brief's explicit warning was "do not
+            # over-correct: the three-way anon model is RIGHT".  Snapshot every
+            # scoring field BEFORE labelling and require it unchanged after, so
+            # a future edit that lets the attribution flag feed back into
+            # bucketing, the ceiling or the anon split fails HERE rather than
+            # silently deleting real source work at a 7.6% false-positive rate.
+            before = [(r["unit"], r["bucket"], r["reachable_blockers"],
+                       tuple(sorted(r["rows"].items()))) for r in records]
+            attribution = annotate_attribution(records, doc, RN)
+            after = [(r["unit"], r["bucket"], r["reachable_blockers"],
+                      tuple(sorted(r["rows"].items()))) for r in records]
+            if before != after:
+                bad = [b[0] for b, a in zip(before, after) if b != a][:10]
+                raise Refusal(2, "CONSISTENCY CONTROL FAILED: ATTRIBUTION IS NOT "
+                                 "PURELY ADDITIVE", [
+                    "Labelling blockers changed bucket / reachable_blockers / row "
+                    "counts, which it must never do.",
+                    f"first divergent units: {bad}",
+                    "At a measured ~7.6% false-positive rate on the untreated "
+                    "population, letting this flag drive bucketing would delete "
+                    "real source work.",
+                ])
+            attribution["controls"] = [{"check": n, "ok": ok, "detail": d}
+                                       for n, ok, d in ctl]
+            attribution["controls"].append({
+                "check": "attribution is purely additive (buckets/ceiling/anon "
+                         "split unchanged)",
+                "ok": True,
+                "detail": f"{len(records)} unit records identical in bucket, "
+                          f"reachable_blockers and row counts before/after labelling"})
+
         sub_stats = None
         if not args.no_subclass:
             sub_stats = subclassify(records, root, addr2name, args.subclass_limit)
@@ -956,6 +1250,7 @@ def main(argv=None):
             "bucket_legend": LEGEND,
             "sub_bucket_legend": SUB_BUCKET_LEGEND,
             "anon_gate": join,
+            "attribution": attribution,
             "consistency": consistency,
             "subclassification": sub_stats,
             "summary": summary,

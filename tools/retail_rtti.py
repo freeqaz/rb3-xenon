@@ -11,7 +11,9 @@ unified, controlled version.  Import it, don't re-derive it.
     R = RetailRtti()                       # defaults to orig/45410914/band.exe
     R.class_of_vtable(0x820F1400)          # -> '.?AVHitSink@@'
     R.hierarchy_of_class('RndText')        # -> [(col_va, [BaseClassDescriptor,...]), ...]
-    R.classes_installed_by(0x823F6198, 92) # -> [(addr, '.?AVXboxJob@@'), ...]
+    R.classes_installed_by(0x823F6198)     # -> (status, scanned, [(addr, cls), ...])
+                                           #    scan bounded by retail .pdata; see
+                                           #    "THE SECOND TRAP" below.
 
 ★ THE ADDRESS TRAP THIS TOOL EXISTS TO KILL
 -------------------------------------------
@@ -54,16 +56,54 @@ SUBSUMES (lane-local scratch, now retired):
   ~/tmp/laneDG2/ownership.py    — vtable-membership ownership scan (which
                                   class's vtable *contains* a function).
 
+★★ THE SECOND TRAP: `installs` USED TO OVER-SCAN (lane DL-2, 2026-08-03)
+------------------------------------------------------------------------
+`installs` took a fixed `--size`, defaulting to **256 bytes**.  On the
+`??_G`/`??_E` population, bodies are **68-80 B**, so the scan ran 3-4x past the
+end of the function and decoded **the next function's** vtable stores as though
+they belonged to this one.  Reproduced before the fix on `0x82634FE0`, whose
+true `.pdata` extent is **68 B**::
+
+    installs 0x82634FE0            -> 0x820aa02c -> .?AVBasicStartLockMsg@@   (WRONG)
+    installs 0x82634FE0 --size 68  -> constructs no address that resolves      (RIGHT)
+
+Lane DK-1 was about to act on 5 such rows; every one would have been a
+confident wrong repoint.
+
+The scan is now bounded by **retail's own function-extent table** -- the
+`.pdata` RUNTIME_FUNCTION array, via `tools/pdata_map_audit.load_extents`.  And
+because a **leaf function has no `.pdata` entry**, the tool now returns THREE
+labels instead of silently guessing (the same shape as rule 8: a *sufficient*
+test used as a *necessary* one):
+
+    BOUNDED    extent known; the scan is confined to it.  An EMPTY result is a
+               REAL ANSWER -- "this function stores no vtable" -- which is the
+               correct verdict for a vbase-adjustor thunk that tail-calls the
+               real dtor (13 of DK-1's 18 candidates were exactly that).
+    UNBOUNDED  no `.pdata` entry (leaf).  The tool REFUSES (exit 4) rather than
+               over-scan.  `--allow-unbounded` opts in and LABELS the result.
+    NO_CODE    the address is not in a section with data.
+
+⇒ A caller can now distinguish "no vtable stored" from "could not determine".
+That distinction did not previously exist: both printed the same sentence.
+
+⚠ The INVERSE direction still has known false negatives and is NOT fixed here:
+lane DK-4's vtable-*installer* scanner found **0 installers** for a vtable that
+`installs` locates from the other direction.  Recorded, deliberately untouched.
+
 CLI
 ---
     python3 tools/retail_rtti.py sections
     python3 tools/retail_rtti.py class RndText
     python3 tools/retail_rtti.py vtable 0x820F1400
     python3 tools/retail_rtti.py col 0x821dae8c
-    python3 tools/retail_rtti.py installs 0x823F6198 --size 92
+    python3 tools/retail_rtti.py installs 0x823F6198          # .pdata-bounded
+    python3 tools/retail_rtti.py installs 0x82634FE0          # -> BOUNDED, empty
+    python3 tools/retail_rtti.py installs 0x826e34d0          # -> UNBOUNDED, exit 4
     python3 tools/retail_rtti.py owner 0x823F6198
     python3 tools/retail_rtti.py --selftest          # exits non-zero on failure
     python3 tools/retail_rtti.py --selftest --sabotage naive-va   # MUST fail
+    python3 tools/retail_rtti.py --selftest --sabotage overscan   # MUST fail
 """
 from __future__ import annotations
 
@@ -78,6 +118,16 @@ DEFAULT_EXE = "orig/45410914/band.exe"
 #: the .rdata-only shortcut.  Present ONLY so the sabotage leg can reproduce
 #: the historical defect; never used on the real path.
 NAIVE_IMAGE_BASE = 0x82000000
+
+#: The pre-DL-2 fixed scan window.  Present ONLY so `--sabotage overscan` can
+#: reproduce the over-scan defect; never used on the real path.
+LEGACY_OVERSCAN_SIZE = 256
+
+#: `installs` result labels.  Three, because the world has three answers and
+#: collapsing them is what shipped five wrong repoints.
+BOUNDED = "BOUNDED"        # extent known -- an empty hit list is a REAL answer
+UNBOUNDED = "UNBOUNDED"    # no .pdata entry (leaf) -- undecidable, refuse
+NO_CODE = "NO_CODE"        # address not backed by section data
 
 
 def _find_default_exe() -> Path:
@@ -428,14 +478,76 @@ class RetailRtti(RetailPE):
                     regs.pop((w >> 21) & 31, None)
         return addrs
 
-    def classes_installed_by(self, fn_va: int, size: int) -> List[Tuple[int, str]]:
-        """Addresses this function materialises that resolve as vtables."""
+    # -- retail's own function-extent table (.pdata) -----------------------
+    #
+    # Deliberately DELEGATED to tools/pdata_map_audit rather than re-decoded
+    # here: this module exists because three lanes independently re-wrote the
+    # same resolver and two baked in wrong arithmetic.  A second .pdata decoder
+    # would be that mistake again -- and pdata_map_audit's decode is the one
+    # with the inverted-assumption control (it keeps the wrong `>>2` shift as a
+    # live sabotage leg).
+    @property
+    def extents(self) -> Dict[int, int]:
+        ext = getattr(self, "_extents", None)
+        if ext is None:
+            import importlib.util
+            p = Path(__file__).resolve().parent / "pdata_map_audit.py"
+            spec = importlib.util.spec_from_file_location("_pdata_dl2", p)
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            ext = mod.load_extents(str(self.path))
+            self._extents = ext
+        return ext
+
+    def function_extent(self, fn_va: int) -> Optional[int]:
+        """Byte length of the function starting at `fn_va`, from retail .pdata.
+
+        None means 'retail has no RUNTIME_FUNCTION for this address' -- almost
+        always a LEAF function.  It does NOT mean 'not a function' (band.exe
+        read trap).  Callers must not treat None as a length.
+        """
+        return self.extents.get(fn_va)
+
+    def classes_installed_by(self, fn_va: int, size: Optional[int] = None,
+                             allow_unbounded: bool = False,
+                             overscan: bool = False,
+                             ) -> Tuple[str, Optional[int], List[Tuple[int, str]]]:
+        """-> (status, scanned_bytes, [(vtable_va, class), ...]).
+
+        `size=None` (the default) bounds the scan by retail's `.pdata` extent.
+        An explicit `size` is honoured but still reported, so an over-scan is
+        at least VISIBLE.  With no extent and no explicit size the answer is
+        UNBOUNDED and the hit list is EMPTY BY REFUSAL -- never by measurement.
+        """
+        if self.va2raw(fn_va) is None:
+            return NO_CODE, None, []
+
+        if overscan:                       # sabotage leg only
+            size = LEGACY_OVERSCAN_SIZE
+
+        status = BOUNDED
+        if size is None:
+            size = self.function_extent(fn_va)
+            if size is None:
+                if not allow_unbounded:
+                    return UNBOUNDED, None, []
+                status = UNBOUNDED
+                size = LEGACY_OVERSCAN_SIZE
+        else:
+            ext = self.function_extent(fn_va)
+            # An explicit size larger than retail's own extent is the exact
+            # defect this fix exists to stop -- surface it, do not silence it.
+            if ext is not None and size > ext:
+                status = "OVERSCAN"
+            elif ext is None:
+                status = UNBOUNDED if not allow_unbounded else UNBOUNDED
+
         out = []
         for a in dict.fromkeys(self.constructed_addresses(fn_va, size)):
             n = self.class_of_vtable(a)
             if n:
                 out.append((a, n))
-        return out
+        return status, size, out
 
     def owning_vtables(self, fn_va: int, max_slots: int = 256) -> List[Tuple[str, int, int]]:
         """Which class's vtable CONTAINS this function -> (class, vtable, slot).
@@ -458,8 +570,75 @@ class RetailRtti(RetailPE):
 # CONTROLS.  A selftest that cannot fail is vacuous; this one is *proven* able
 # to fail by `--selftest --sabotage naive-va` (see the module docstring).
 # ==========================================================================
-def _controls(R: RetailRtti) -> List[Tuple[str, bool, str]]:
+def _controls(R: RetailRtti, overscan: bool = False) -> List[Tuple[str, bool, str]]:
     res: List[Tuple[str, bool, str]] = []
+
+    # (A) THE EXTENT TABLE MUST ACTUALLY LOAD.  If it came back tiny/empty every
+    #     address would read UNBOUNDED and `installs` would refuse everything --
+    #     a different silent failure, shaped like caution instead of like a zero.
+    try:
+        ext = R.extents
+        ok = len(ext) > 40000 and ext.get(0x82634FE0) == 68
+        res.append(("retail .pdata extent table loaded", ok,
+                    f"entries={len(ext)} extent(0x82634FE0)={ext.get(0x82634FE0)} "
+                    f"(want >40000 and 68)"))
+    except Exception as e:
+        res.append(("retail .pdata extent table loaded", False, f"EXC {e!r}"))
+
+    # (B) ★★ THE REGRESSION PIN for the DL-2 over-scan defect, asserted FROM BOTH
+    #     SIDES so it cannot be silently reverted:
+    #       - bounded by retail's 68-byte extent  => NO hits (the true answer)
+    #       - the old fixed 256-byte window       => a hit, and a WRONG one
+    #     Requiring the two to DISAGREE is what makes this control able to fail:
+    #     if someone removes the bounding, the first half goes red; if someone
+    #     removes the over-scan reproduction, the second half goes red.
+    try:
+        st_b, sc_b, hits_b = R.classes_installed_by(0x82634FE0, overscan=overscan)
+        st_o, sc_o, hits_o = R.classes_installed_by(0x82634FE0, overscan=True)
+        wrong = [n for _a, n in hits_o]
+        ok = (st_b == BOUNDED and sc_b == 68 and hits_b == []
+              and sc_o == LEGACY_OVERSCAN_SIZE
+              and ".?AVBasicStartLockMsg@@" in wrong)
+        res.append(("installs 0x82634FE0: bounded=EMPTY vs overscan=WRONG HIT", ok,
+                    f"bounded(status={st_b}, scanned={sc_b}, hits={hits_b}) "
+                    f"vs overscan(scanned={sc_o}, hits={wrong}) "
+                    f"(want BOUNDED/68/[] and 256/BasicStartLockMsg)"))
+    except Exception as e:
+        res.append(("installs 0x82634FE0: bounded=EMPTY vs overscan=WRONG HIT",
+                    False, f"EXC {e!r}"))
+
+    # (C) KNOWN POSITIVE for `installs` (rule 1): the bounding must not be
+    #     vacuous.  A tool that refuses or returns [] for EVERYTHING would pass
+    #     control (B)'s first half trivially.  ??0XLSPConnection@@ is 120 B and
+    #     installs its OWN vtable INSIDE that extent.
+    try:
+        st, sc, hits = R.classes_installed_by(0x827D9998, overscan=overscan)
+        ok = (st == BOUNDED and sc == 120
+              and ".?AVXLSPConnection@@" in [n for _a, n in hits])
+        res.append(("installs known-positive ??0XLSPConnection@@ within extent", ok,
+                    f"status={st} scanned={sc} hits={[n for _a,n in hits]} "
+                    f"(want BOUNDED/120/contains .?AVXLSPConnection@@)"))
+    except Exception as e:
+        res.append(("installs known-positive ??0XLSPConnection@@ within extent",
+                    False, f"EXC {e!r}"))
+
+    # (D) THE THIRD LABEL (rule 4 + rule 8).  A leaf function has NO .pdata
+    #     entry, so "installs nothing" is UNDECIDABLE there, not false.  The
+    #     classifier must produce UNBOUNDED -- distinct from BOUNDED-with-no-hits
+    #     -- or the tool is back to one label for two different worlds.
+    try:
+        leaf = 0x826E34D0                      # ??0HitSink@@QAA@XZ, no RUNTIME_FUNCTION
+        st, sc, hits = R.classes_installed_by(leaf, overscan=overscan)
+        st_ok, _sc2, _h2 = R.classes_installed_by(leaf, allow_unbounded=True,
+                                                  overscan=overscan)
+        ok = (R.function_extent(leaf) is None and st == UNBOUNDED
+              and sc is None and hits == [] and st_ok == UNBOUNDED)
+        res.append(("leaf w/o .pdata -> UNBOUNDED (undecidable), not empty-BOUNDED",
+                    ok, f"extent={R.function_extent(leaf)} status={st} scanned={sc} "
+                        f"hits={hits} (want None/UNBOUNDED/None/[])"))
+    except Exception as e:
+        res.append(("leaf w/o .pdata -> UNBOUNDED (undecidable), not empty-BOUNDED",
+                    False, f"EXC {e!r}"))
 
     # (0) SKEW: the section-aware map and the naive shortcut must DISAGREE on a
     #     .data TypeDescriptor, and only the section-aware one may be right.
@@ -538,7 +717,7 @@ def run_selftest(path: Optional[Path], sabotage: Optional[str]) -> int:
     if sabotage:
         print("  (sabotage leg: this run is EXPECTED to FAIL — it proves the "
               "selftest is not vacuous)")
-    rows = _controls(R)
+    rows = _controls(R, overscan=(sabotage == "overscan"))
     nfail = 0
     for name, ok, detail in rows:
         print(f"  [{'PASS' if ok else 'FAIL'}] {name}\n         {detail}")
@@ -563,15 +742,23 @@ def main(argv: Optional[List[str]] = None) -> int:
                "used except in the --sabotage vacuity control.")
     ap.add_argument("--exe", type=Path, default=None, help="retail PE (default orig/45410914/band.exe)")
     ap.add_argument("--selftest", action="store_true", help="run hard-wired controls; non-zero exit on failure")
-    ap.add_argument("--sabotage", choices=["naive-va"], default=None,
-                    help="deliberately break VA mapping (vacuity control: --selftest MUST then fail)")
+    ap.add_argument("--sabotage", choices=["naive-va", "overscan"], default=None,
+                    help="deliberately break VA mapping ('naive-va') or restore the "
+                         "pre-DL-2 fixed 256-byte installs window ('overscan'). "
+                         "Vacuity controls: --selftest MUST then fail.")
     sub = ap.add_subparsers(dest="cmd")
     sub.add_parser("sections", help="print the PE section table + VA/raw skews")
     p = sub.add_parser("class", help="full RTTI dump for a class"); p.add_argument("name")
     p = sub.add_parser("vtable", help="vtable VA -> class (+ slots)"); p.add_argument("va"); p.add_argument("-n", type=int, default=0)
     p = sub.add_parser("col", help="decode a COL's hierarchy"); p.add_argument("va")
     p = sub.add_parser("installs", help="which class's vtable a function installs")
-    p.add_argument("va"); p.add_argument("--size", type=int, default=256)
+    p.add_argument("va")
+    p.add_argument("--size", type=int, default=None,
+                   help="explicit scan window; DEFAULT IS RETAIL'S .pdata EXTENT. "
+                        "A size exceeding that extent is reported as OVERSCAN.")
+    p.add_argument("--allow-unbounded", action="store_true",
+                   help="for leaf functions with no .pdata entry: scan anyway and "
+                        "LABEL the result UNBOUNDED instead of refusing (exit 4)")
     p = sub.add_parser("owner", help="which class's vtable CONTAINS this function"); p.add_argument("va")
     a = ap.parse_args(argv)
 
@@ -634,13 +821,39 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     if a.cmd == "installs":
         va = int(a.va, 16)
-        hits = R.classes_installed_by(va, a.size)
+        status, scanned, hits = R.classes_installed_by(
+            va, a.size, allow_unbounded=a.allow_unbounded,
+            overscan=(a.sabotage == "overscan"))
+        ext = R.function_extent(va)
+        print(f"{va:#x}  status={status}  .pdata extent="
+              f"{'NONE (leaf / no RUNTIME_FUNCTION)' if ext is None else f'{ext} bytes'}"
+              f"  scanned={scanned}")
+        if status == NO_CODE:
+            print("  REFUSED: address is not backed by section data.")
+            return 4
+        if status == UNBOUNDED and not a.allow_unbounded:
+            print("  REFUSED: retail has no .pdata extent for this address, so any\n"
+                  "  scan window would be a guess.  Scanning past the end decodes the\n"
+                  "  NEXT function's vtable stores and yields a confident wrong answer\n"
+                  "  (reproduced on 0x82634FE0 -> .?AVBasicStartLockMsg@@).\n"
+                  "  Pass --size N if you know the extent, or --allow-unbounded to\n"
+                  "  accept an explicitly-labelled guess.")
+            return 4
+        if status == "OVERSCAN":
+            print(f"  ** WARNING: --size {a.size} EXCEEDS retail's own extent ({ext}). "
+                  f"Hits beyond\n  **          offset {ext} belong to the NEXT function.")
+        if status == UNBOUNDED:
+            print("  ** UNBOUNDED (--allow-unbounded): no retail extent; these hits are\n"
+                  "  **            NOT attributable to this function with confidence.")
         if not hits:
-            print(f"{va:#x}: constructs no address that resolves as a vtable "
-                  f"(scanned {a.size} bytes)")
+            # ★ A REAL ANSWER, not a failure -- and the two must not print alike.
+            print(f"  no vtable stored: this function constructs no address that "
+                  f"resolves as a vtable\n  within its own {scanned}-byte body "
+                  f"(expected for a vbase-adjustor thunk that\n  tail-calls the real "
+                  f"dtor -- 13 of DK-1's 18 candidates were exactly that).")
             return 1
         for addr, n in hits:
-            print(f"{va:#x} installs {addr:#x} -> {n}")
+            print(f"  installs {addr:#x} -> {n}")
         return 0
 
     if a.cmd == "owner":
