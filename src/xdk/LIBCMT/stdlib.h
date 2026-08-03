@@ -6,10 +6,22 @@
 extern "C" {
 #endif
 
-void *malloc(size_t size);
-void *calloc(size_t nitems, size_t size);
-void *realloc(void *ptr, size_t size);
-void free(void *);
+/* The genuine MSVC CRT declares the allocators with __declspec(noalias) and
+ * __declspec(restrict); the returned storage provably aliases nothing else,
+ * which lets the optimizer keep an allocation's pointer live in a register
+ * instead of reloading it from memory after a store through it. */
+#if defined(_MSC_VER)
+#define _CRT_ALLOC_DECL __declspec(noalias) __declspec(restrict)
+#define _CRT_NOALIAS_DECL __declspec(noalias)
+#else
+#define _CRT_ALLOC_DECL
+#define _CRT_NOALIAS_DECL
+#endif
+
+_CRT_ALLOC_DECL void *malloc(size_t size);
+_CRT_ALLOC_DECL void *calloc(size_t nitems, size_t size);
+_CRT_ALLOC_DECL void *realloc(void *ptr, size_t size);
+_CRT_NOALIAS_DECL void free(void *);
 
 #pragma intrinsic(_alloca)
 void *_alloca(size_t size);
