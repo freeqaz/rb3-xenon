@@ -106,8 +106,7 @@ void CrowdRating::CalculateValue() {
         float maxVal = kMax;
         float rawValue = mRawValue;
         float val = rawValue >= maxVal ? 1.0f : (rawValue - kMin) / (maxVal - kMin);
-        bool reject = CantFailYet() && val < kWarningLevel;
-        if (reject) {
+        if (CantFailYet() && val < kWarningLevel) {
             val = kWarningLevel;
         }
         SetValue(val);
@@ -135,6 +134,7 @@ float CrowdRating::GetDisplayValue() const {
 
 FORCE_LOCAL_INLINE
 bool CrowdRating::CantFailYet() const {
-    return mSongFraction <= kFreeRide ? true : false;
+    bool cantFail = mSongFraction <= kFreeRide;
+    return cantFail;
 }
 END_FORCE_LOCAL_INLINE

@@ -69,8 +69,11 @@ void EditSetlistPanel::Poll() {
         if (status != 0x3E4) {
             if (status == 0) {
                 unsigned int *p = *(unsigned int **)((char *)unk94 + 2);
-                bool b1 = p[0] < 1;
-                bool b2 = p[1] < 1;
+                bool b1 = true, b2 = true;
+                if (p[0])
+                    b1 = false;
+                if (p[1])
+                    b2 = false;
                 CleanupStringVerify();
                 VerifyStringsComplete(b1, b2);
             } else {

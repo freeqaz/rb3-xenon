@@ -469,6 +469,7 @@ END_FORCE_LOCAL_INLINE
 
 void MusicLibrary::SetTask(MusicLibraryTask &task) { mTask = task; }
 SongSortMgr::SongFilter &MusicLibrary::GetFilter() { return mTask.filter; }
+bool MusicLibrary::GetAllowUGC() { return mTask.requiresStandardParts; }
 
 void MusicLibrary::ResetFilters() {
     if (!mTask.filterLocked) {

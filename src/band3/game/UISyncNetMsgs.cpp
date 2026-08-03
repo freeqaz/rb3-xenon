@@ -75,9 +75,8 @@ void ComponentSelectNetMsg::Dispatch() {
         if (mShowSelect && handled == DataNode(kDataUnhandled, 0)) {
             UIScreen *screen = TheUI->CurrentScreen();
             if (screen) {
-                UIPanel *panel = screen->FocusPanel();
-                if (panel) {
-                    PanelDir *dir = panel->LoadedDir();
+                if (screen->FocusPanel()) {
+                    PanelDir *dir = screen->FocusPanel()->LoadedDir();
                     if (dir) {
                         UIComponent *c = dir->FindComponent(mComponentName.c_str());
                         if (c)

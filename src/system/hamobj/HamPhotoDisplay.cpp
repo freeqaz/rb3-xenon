@@ -35,6 +35,21 @@ BEGIN_PROPSYNCS(HamPhotoDisplay)
     SYNC_SUPERCLASS(RndDir)
 END_PROPSYNCS
 
+// NOTE (lane DI-2/A, deferred): RB3-360 retail's Save DIVERGES from dc3's here.
+// Retail's call order is WriteEndian -> operator<< -> RndDir::Save (SAVE_SUPERCLASS
+// LAST) and it makes exactly ONE operator<< call, not two.  Reordering alone was
+// measured and REGRESSES 83.2 -> 67.9 mpn: with two operator<< calls the reorder
+// needs a third callee-save (r29) and an 0x80 frame, so the prologue degrades to
+// `bl __savegprlr_29` where retail uses manual std r30/r31 with an 0x70 frame --
+// which is itself evidence that retail really does have only one operator<<.
+// The two levers are coupled and cannot be landed separately.
+// Blocked on a layout question that is NOT local to this TU: retail's Hmx::Object
+// virtual base sits at +0x228, ours at +0x200 (+0x28), while RndDir's sub-object is
+// at +0x1E0 on BOTH sides.  dc3's own header comments (mMesh1 0x1fc / mMesh2 0x210,
+// i.e. ObjPtr == 20 bytes) are dc3's offsets -- our ObjPtr<RndMesh> is 12 bytes --
+// so closing this needs a tree-wide ObjPtr/RndDir size decision, not a Save edit.
+// Left at dc3's verbatim body (83.2 mpn) on purpose; do not "fix" by dropping a
+// member save without first settling which member retail writes.
 BEGIN_SAVES(HamPhotoDisplay)
     SAVE_REVS(1, 0)
     SAVE_SUPERCLASS(RndDir)

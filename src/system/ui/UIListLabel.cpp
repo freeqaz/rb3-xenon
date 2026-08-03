@@ -15,10 +15,26 @@
 // li 0, mOwner, addi, mObject, ObjPtr-vptr; we hoist the `li 0` and sink the
 // lis/addi pair.  That is VERBATIM the residual obj/Object.h already documents
 // for this define ("we emit mObject/mOwner then lis+addi; retail emits mOwner,
-// lis, mObject, addi -- NOT source-steerable"), so it was not re-litigated:
-// combining the define with RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT and with
-// RB3_OBJPTR_INLINE_OWNER_CTOR was tried and both fall back to 58.23%, because
-// RB3_OBJPTR_INLINE_OWNER_CTOR wins the #ifdef chain.
+// lis, mObject, addi -- NOT source-steerable").
+//
+// ★ RE-TESTED (lane DI-2/C, ctor now reads 93.08%): the residual is exactly 3
+// instructions, a cyclic rotation of {lis, li 0, stw mOwner} -- retail issues
+// them in that order, we issue {stw mOwner, lis, li 0}.  THREE structurally
+// distinct ObjPtr ctor spellings were compiled and all three emit BYTE-IDENTICAL
+// code for this ctor (same 93.08%, same 3 replaces):
+//     RB3_OBJPTR_INLINE_OWNER_CTOR_EH                        (this)
+//     RB3_OBJPTR_INLINE_TWOARG_CTOR                          (in-class 2-arg body)
+//     RB3_OBJPTR_INLINE_OWNER_CTOR + ..._DEFER_OBJECT        (1-arg base + body)
+// (The old note's claim that the DEFER pairing "falls back to 58.23% because
+// RB3_OBJPTR_INLINE_OWNER_CTOR wins the #ifdef chain" is wrong on both counts --
+// DEFER_OBJECT is NESTED inside that define, and the pairing measures 93.08%.)
+// Retail's order is precisely a critical-path-first list schedule of the block
+// (lis->addi->stw = 3-node chain, li->stw = 2, stw mOwner = 1); ours emits the
+// mOwner store first because it belongs to the BASE-ctor scheduling region,
+// which the EH state transition separates from the derived body.  Since that
+// same EH region is what keeps the $T store (and the +1 funclet) alive, the two
+// requirements are in tension and no ObjPtr-ctor spelling satisfies both.
+// Conclusion unchanged, now on three-way evidence: scheduler wall, not source.
 #define RB3_OBJPTR_INLINE_OWNER_CTOR_EH
 #include "ui/UIListLabel.h"
 #include "obj/Object.h"

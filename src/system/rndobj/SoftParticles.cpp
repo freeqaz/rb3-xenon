@@ -5,45 +5,34 @@
 #include "rndobj/Draw.h"
 #include "rndobj/SoftParticleBuffer.h"
 
-// RETAIL-MATCH (lane DI-1, 2026-08-02): retail RB3's RndSoftParticles::Load
-// stores the load revisions as two align(4) `unsigned short` GLOBALS -- the
-// target emits `sth` into lbl_82CC6A68 and lbl_82CC6A68+4 -- and passes `bs`
-// straight through to the superclass Load (`mr r4, r30`).
-//
-// The DC3-derived obj/Object.h dialect instead expands LOAD_REVS to a stack
-// `BinStreamRev d(bs, revs)` temp: a ctor/dtor pair, `stw` of rev/altRev as
-// ints, a vtable store, and +0x30 of stack frame (target frame 0x70, ours
-// 0xa0).  This TU pays all of that for nothing -- its Load body reads through
-// `bs` and never touches `d` (only the Object.h LOAD_SUPERCLASS does, via
-// `d.stream`).  There are two competing LOAD_REVS definitions in the tree
-// (obj/ObjMacros.h:614 = the rb3-Wii gRev/gAltRev dialect retail used,
-// obj/Object.h:1611 = this DC3 one) and which a TU gets is decided purely by
-// include order -- the same macro-competition hazard already documented for
-// SYNC_PROP and OBJ_SET_TYPE.  Override per-TU rather than tree-wide: the
-// blast radius of flipping the dialect globally is every engine Load, and it
-// has not been priced.
-//
-// SAVE_REVS is unaffected -- it expands to `packRevs(alt, rev)` on literals
-// and never reads gRev, so the already-matching Save is untouched.
+// ---------------------------------------------------------------------------
+// Retail RB3 uses the obj/ObjMacros.h rev dialect (file-scope statics gRev /
+// gAltRev written at load time), not obj/Object.h's local BinStreamRev wrapper.
+// Proven from retail asm for ?Load@RndSoftParticles@@ (target 164 B): after
+// `bl BinStream::ReadEndian` it does `mr r10,r11 ; srwi r11,r11,16` and two
+// `sth`s into a static pair, then passes the ORIGINAL bs to both
+// Hmx::Object::Load and RndDrawable::Load.  No BinStream ctor/dtor pair and no
+// ??_7BinStreamRev@@6B@ vtable store.  gAltRev is declared first because retail
+// puts it at the base address and gRev at +4.  See ui/UILabel.cpp for the same
+// treatment.  Bracketed with push_macro/pop_macro so the dialect cannot leak.
+// ---------------------------------------------------------------------------
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#pragma push_macro("ASSERT_REVS")
+#pragma push_macro("LOAD_SUPERCLASS")
 #undef INIT_REVS
-#define INIT_REVS(rev, alt)                                                              \
-    static __declspec(align(4)) unsigned short gRev;                                     \
-    static __declspec(align(4)) unsigned short gAltRev;
 #undef LOAD_REVS
-// Residue (lane DI-1): 4 instructions of pure register naming.  Retail copies
-// the original word aside and shifts IN PLACE (`mr r10,r11; srwi r11,r11,16`);
-// we shift into a fresh register (`srwi r10,r11,16`) and so emit ONE FEWER
-// instruction than retail (160 B vs 164 B).  Closing it means making codegen
-// strictly worse, i.e. it is register-allocation naming = permuter class, and
-// the permuter is OFF by standing directive.  Writing the shift back into
-// `revs` was tried and is WORSE: it forces a `stw r11, 0x50, r1` spill because
-// MSVC keeps the stream-target's stack slot coherent.
-#define LOAD_REVS(bs)                                                                    \
-    int revs;                                                                            \
-    bs >> revs;                                                                          \
-    gRev = (unsigned short)((unsigned int)revs >> 16);                                   \
-    gAltRev = (unsigned short)revs;
+#undef ASSERT_REVS
 #undef LOAD_SUPERCLASS
+#define INIT_REVS(objType)                                                               \
+    static unsigned short gAltRev = 0;                                                   \
+    static unsigned short gRev = 0;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+#define ASSERT_REVS(rev1, rev2)
 #define LOAD_SUPERCLASS(parent) parent::Load(bs);
 
 RndSoftParticles::RndSoftParticles()
@@ -83,7 +72,7 @@ BEGIN_COPYS(RndSoftParticles)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(1, 0)
+INIT_REVS(RndSoftParticles)
 
 BEGIN_LOADS(RndSoftParticles)
     LOAD_REVS(bs)
@@ -108,3 +97,8 @@ void RndSoftParticles::ListDrawChildren(std::list<RndDrawable *> &draws) {
         draws.push_back(*it);
     }
 }
+
+#pragma pop_macro("LOAD_SUPERCLASS")
+#pragma pop_macro("ASSERT_REVS")
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")

@@ -29,12 +29,14 @@ void DrumTrackWatcherImpl::Restart() {
 }
 
 int DrumTrackWatcherImpl::RelevantGem(int i1, int i2, int i3) {
-    int g = i1;
+    // Declaration order is codegen-load-bearing: retail initialises
+    // num_unplayed (`li r7,0`) BEFORE copying i1 into g (`mr r8,r4`).
     int num_unplayed = 0;
+    int g = i1;
     for (; g <= i2; g++) {
         GameGem &gem = mGemList->GetGem(g);
         int slot = gem.GetSlot();
-        if (i3 == slot)
+        if (slot == i3)
             return g;
         if (!gem.GetPlayed())
             num_unplayed++;
@@ -42,13 +44,21 @@ int DrumTrackWatcherImpl::RelevantGem(int i1, int i2, int i3) {
     bool choose_any = (num_unplayed == 0);
     int closest_gem = -1;
     int closest_gem_distance = 999;
-    for (; i1 <= i2; i1++) {
-        GameGem &gem = mGemList->GetGem(i1);
+    // Second loop takes its OWN index copied from i1 rather than mutating the
+    // parameter (which is what the rb3-Wii DEV oracle does, verbatim).  Retail
+    // emits `mr r8, r4` TWICE -- once per loop -- and that second copy only
+    // exists if loop 2 has its own variable; mutating i1 in place pins the
+    // parameter's register for the whole loop, which pushes `this` out of r3
+    // into r7 (an extra `mr r7, r3` in the prologue) and cascades into a
+    // 25-instruction regalloc divergence that reads as a permuter-class defect.
+    int j = i1;
+    for (; j <= i2; j++) {
+        GameGem &gem = mGemList->GetGem(j);
         if (choose_any || !gem.GetPlayed()) {
             int absval = abs(i3 - gem.GetSlot());
             if (absval < closest_gem_distance) {
                 closest_gem_distance = absval;
-                closest_gem = i1;
+                closest_gem = j;
             }
         }
     }
@@ -154,8 +164,27 @@ void DrumTrackWatcherImpl::CheckForKickAutoplay(float f) {
 }
 
 bool DrumTrackWatcherImpl::CheckCymbal(const GameGem &gem, GemHitFlags flags) const {
+    // `!= (bool)(flags & kGemHitFlagCymbal)`, NOT the rb3-Wii DEV oracle's
+    // `!= (unsigned int)(flags >> 2 & 1)`.  Retail normalises EACH side to a
+    // single bit (`extrwi ...,1,29` / `extrwi ...,1,27`) and compares them with
+    // `cmplw cr6` + `bnelr cr6` -- a genuine bool==bool.  Any int-typed spelling
+    // lets MSVC align the two bit positions and fuse them into `xor` + a
+    // record-form bit test, which is 5 instructions wrong and one byte-length
+    // too long (84.55% -> 85.9%); the bool cast reaches 99.5%.
+    //
+    // RESIDUAL (1 instruction, lane DI-2/C): target `and. r11, r11, r10`
+    // (rA = the `1<<slot` shift), we emit `and. r11, r10, r11` (rA = the
+    // mGameCymbalLanes load).  MSVC canonicalises this AND's operand order and
+    // it is NOT source-steerable -- five spellings all compile byte-identical:
+    //   `1 << gem.GetSlot() & mGameCymbalLanes`   (this, = the oracle)
+    //   `mGameCymbalLanes & 1 << gem.GetSlot()`   (operands swapped)
+    //   `1U << gem.GetSlot() & mGameCymbalLanes`  (unsigned shift)
+    //   both swap variants with the slot hoisted into a local first
+    // Note the SAME `(1<<i) & member` shape inside the inlined GameGem::GetSlot
+    // just above (instr 4) DOES match as `and. rD, slw, mem`, so MSVC can emit
+    // retail's order -- the inversion is specific to this outer expression.
     if ((1 << gem.GetSlot() & mGameCymbalLanes)
-        && (gem.IsCymbal() != (unsigned int)(flags >> 2 & 1)))
+        && (gem.IsCymbal() != (bool)(flags & kGemHitFlagCymbal)))
         return false;
     else
         return true;

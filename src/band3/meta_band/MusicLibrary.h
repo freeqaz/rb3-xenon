@@ -169,6 +169,11 @@ public:
     int GetMaxSetlistSize();
     void SetTask(MusicLibraryTask &);
     SongSortMgr::SongFilter &GetFilter();
+    // retail fn_8253ACF8: `lbz r3, 0x76(r3); blr` == mTask + 0x22. The rb3-Wii
+    // decomp calls that member `requiresStandardParts`, but Tour.cpp feeds it
+    // `Quest::IsUGCAllowed()` (Tour::LaunchQuestFilter ->
+    // CreateAndSubmitMusicLibraryTask), so it is really the allow-UGC flag.
+    bool GetAllowUGC();
     int SongAtSetlistIndex(int);
     int SetlistSize();
     bool SetlistIsFull();

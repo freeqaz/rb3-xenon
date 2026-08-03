@@ -255,11 +255,17 @@ Symbol TourPerformerLocal::GetRandomQuestFilter(
         GigFilter *pFilter = TheQuestMgr.GetQuestFilter(filterSym);
         MILO_ASSERT(pFilter, 0x18b);
         cumWeight += pFilter->GetWeight();
-        static Symbol filter_dynamic_artist("filter_dynamic_artist");
         if (roll < cumWeight) {
+            // Placement is codegen-load-bearing: declared before the `if`, MSVC
+            // puts the one-time guard test in the LOOP BODY (retail's loop has
+            // none -- it runs GetQuestFilter/GetWeight/fcmpu and nothing else).
+            // Retail initializes it inside this taken branch; guard bit 0x1
+            // confirms it is still the FIRST static declared in the function.
+            static Symbol filter_dynamic_artist("filter_dynamic_artist");
             if (filterSym == filter_dynamic_artist) {
                 Symbol artist = GetRandomArtistFromMap(i_rSongsWithArtist, i_iNumSongs);
-                filterSym = Symbol(MakeString("filter_artist_%s", artist.Str()));
+                Symbol artistFilter(MakeString("filter_artist_%s", artist.Str()));
+                filterSym = artistFilter;
             }
             return filterSym;
         }

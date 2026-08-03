@@ -6,12 +6,32 @@
 #include "ui/UIPanel.h"
 #include "utl/Symbols.h"
 
+// Retail constructs mColorOptions with an out-of-line `bl` to the map default
+// ctor (target 180 B); /Ob2 inlines it for us into ~10 stores plus a 16-byte
+// stack temp (base 252 B, +0x10 of frame). The class layout is compiler-verified
+// identical to retail (mColorOptions @0x48, 28 B, ints @0x64/0x68), so this is
+// purely an inline-policy divergence -- the same lever used in VocalPlayer.cpp,
+// EQEffect.cpp and mtx.cpp (auto_inline(off) is the WRONG lever here -- it only
+// stops THIS function being inlined elsewhere, not callees being inlined into it;
+// measured byte-identical. See obj/Object.h:632.)
+//
+// TRADE-OFF, measured (lane DI-2/D) -- this pragma is NOT free. MSVC generates
+// the implicit dtor family for this class inside whatever inline_depth region
+// the ctor sits in (moving the ctor to end-of-TU does not escape it), so
+// ??_GChooseColorPanel stops inlining ??1/??_D and regresses 100 -> 38.5
+// (ours 20 insns vs retail's 17). Unit 27/29 -> 28/29, but:
+//     matched +1 / masked_equal +1 / honest +0 / matched_code +180 B
+// i.e. the extra matched FUNCTION is disclosure (anon byte-pairing); the 180
+// CODE bytes are real (exactly this ctor). Neither shape is a behavioural bug.
+// Drop this pragma if you would rather keep ??_G byte-exact.
+#pragma inline_depth(0)
 ChooseColorPanel::ChooseColorPanel()
     : mCurrentOutfitConfig(0), mCurrentOutfitPiece(0), mNumOptions(-1),
       mCurrentOption(-1) {
     mClosetMgr = ClosetMgr::GetClosetMgr();
     MILO_ASSERT(mClosetMgr, 0x19);
 }
+#pragma inline_depth()
 
 void ChooseColorPanel::Load() {
     UIPanel::Load();
