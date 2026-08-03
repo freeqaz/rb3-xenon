@@ -29104,5 +29104,7 @@
  "0x825bc1d8": "?Dispatch@VerifyBuildVersionMsg@@UAAXXZ",
  "0x826ec000": "?Replace@MsgSource@@$4PPPPPPPM@BPM@AAXPAVObject@Hmx@@0@Z",
  "0x826f0e88": "?GetMapKey@RGTutor@@QBAHHABVGameGem@@@Z",
- "0x826f0f08": "?Loop@RGTutor@@QAAXXZ"
+ "0x826f0f08": "?Loop@RGTutor@@QAAXXZ",
+ "0x826758e8": "?GetToken@StoreSongSortNode@@UBA?AVSymbol@@XZ",
+ "0x826a97e0": "?OnMsg@SyncGameStartPanel@@QAA?AVDataNode@@ABVSessionDisconnectedMsg@@@Z"
 }

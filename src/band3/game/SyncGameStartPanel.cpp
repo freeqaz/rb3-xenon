@@ -77,7 +77,11 @@ DataNode SyncGameStartPanel::OnMsg(const SyncStartGameMsg &msg) {
 }
 
 DataNode SyncGameStartPanel::OnMsg(const SessionDisconnectedMsg &msg) {
-    if (mState - 1U <= 1 && !mLockStepMgr.InLock()) {
+    // Retail emits two explicit compares here (cmpwi 1 / beq, cmpwi 2 / bne at
+    // 0x826A97FC..0x826A9808), not the `mState - 1U <= 1` range idiom, which
+    // /O1 lowers to subi+cmplwi -- one instruction fewer, and exactly the 4-byte
+    // shortfall our symbol showed (156B vs retail 160B).
+    if ((mState == 1 || mState == 2) && !mLockStepMgr.InLock()) {
         mLockStepMgr.StartLock();
     }
     if (mState == kWaitingForSessionStart && !mLockStepMgr.InLock()) {
