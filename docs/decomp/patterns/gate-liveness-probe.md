@@ -229,8 +229,9 @@ The compiler emits a byte-identical object with and without the flag. That is a
 silent metric — and it makes these six removable as pure hygiene at zero risk.
 Removed here; the A/B is the control (see below).
 
-⚠ The 158 `HANDLE_LOCAL_STATIC` gates were **not** swept — see "What was not
-done".
+✅ The 158 `HANDLE_LOCAL_STATIC` gates **were swept by lane DL-4** (2026-08-03) —
+see "The HANDLE_LOCAL_STATIC sweep" below. Coverage **158/158, zero unprobeable**;
+12 provably-dead gates removed at a measured Δ0.
 
 ```
 python3 tools/gate_liveness.py band3/tour/TourProgress.cpp
@@ -240,15 +241,142 @@ python3 tools/gate_liveness.py --flag RB3_HANDLE_LOCAL_STATIC --quiet-inert <uni
 ⚠ Cost is 2 real (uncached) compiles per TU. A 441-TU sweep at 8 workers takes
 tens of minutes and contends with other lanes' builds.
 
-## What was NOT done
+## The HANDLE_LOCAL_STATIC sweep (lane DL-4, 2026-08-03) — 158/158, 12 dead
 
-- **The 158 `/DRB3_HANDLE_LOCAL_STATIC` gates were not swept.** That is the
-  largest gated population by a factor of four and the most likely place for
-  more provably-dead flags, on the evidence that 6 of 40 SYNCPROP gates were
-  completely dead. It is ~316 uncached compiles, deferred purely for budget.
-  Nothing about it is hard; the tool takes `--flag`.
+The largest gated population, swept in full. **316 uncached compiles, coverage
+158/158, zero unprobeable units** (better than the map sweep's 95.9% — every
+gated TU has a build edge).
+
+| verdict | n | meaning |
+|---|---:|---|
+| **LIVE** | **139** | gate changes TU-owned codegen; kept |
+| **DEAD** | **12** | obj byte-identical on **all** sections incl. relocations ⇒ removed |
+| **NEEDED-TO-COMPILE** | **7** | the *off* leg does not compile at all |
+| **INERT** (template-only) | **0** | no shared-template floor exists for this gate |
+
+Two verdict classes differ from the `MAP_0x1C` sweep and both matter:
+
+- **`INERT` is empty.** The template floor was a property of
+  `vector<map<int,float>>`, not of gating in general. The HANDLE gate touches no
+  STL instantiation, so the `owned` vs `template` split — indispensable for
+  `MAP_0x1C` — never fires here. The discriminator is still *required*: you
+  cannot know it will be empty until you measure it.
+- **`NEEDED-TO-COMPILE` is new and is strictly stronger than LIVE.** Ungated,
+  `HANDLE(symbol, func)` expands to `if (sym == symbol)` where `symbol` is a
+  **bare identifier**; these 7 TUs were written for the local-static dialect and
+  have no global `Symbol` of that name, so removal is a `C2065 undeclared
+  identifier` (`update_char_cache`, `has_any_asset_offers`, `view_gamercard`, …).
+  A gate the source cannot compile without is not a bookkeeping question.
+
+### The mechanism behind the 12 dead — established, not assumed
+
+`obj/Object.h:1288` defines the `HANDLE` family **unconditionally** through
+`_NEW_STATIC_SYMBOL(s)` ≡ `static Symbol _s(#s);`. **Object.h's version is
+already the local-static form the gate exists to switch on.** So the dead 12
+split into exactly two mechanisms:
+
+| mechanism | n | why the flag is a no-op |
+|---|---:|---|
+| includes `ObjMacros.h` but uses **zero** gated macros | 7 | nothing to switch |
+| never includes `ObjMacros.h` | 5 | `Object.h`'s already-local-static version wins by include order |
+
+⇒ Removal here costs **no faithfulness at all**, which is the crucial difference
+from the four `MAP_0x1C` INERT gates that DJ-3/DK-3 correctly **kept**: those
+change a shared template's stride with no retail evidence either way, so removal
+would have been a guess. These 12 change nothing, and the 5 already emit the
+retail shape unconditionally.
+
+⚠ **This was found by chasing a discordance, not by assuming the mechanism.**
+`BandDirector.cpp` (**40** gated-macro uses) and `CharClipGroup.cpp` (7) read
+DEAD — flatly contradicting the naive "uses the macro ⇒ gate matters" model.
+They are two of the five whose `HANDLE` comes from `Object.h`. Had that been
+waved off as probe noise, the mechanism would have stayed hidden.
+
+### Three independent instruments, 158/158 agreement
+
+1. **all-sections object byte identity** (bodies *and* relocations) — the proof;
+2. a **compile-free static rule**: `DEAD ⟺ (no ObjMacros.h) OR (0 gated uses)`;
+3. the **ninja dep closure**: all 139 LIVE include `ObjMacros.h`, **0 counterexamples**.
+
+⚠ Instrument 3 is the proxy CLAUDE.md warns is "wrong 18/231" for SYNC_PROP. It
+is clean *here* — but only as corroboration; the byte identity is what proves it.
+
+### Controls — re-run, never inherited
+
+| control | result |
+|---|---|
+| positive `TourProgress` / `MAP_0x1C` | LIVE `owned=101`, DK-3's exact figure **and** symbol breakdown |
+| null `--flag RB3_NULL_CONTROL_XYZZY` | DEAD on three of the **actual target** TUs |
+| DK-3's 6 proven-dead SYNCPROP gates | **6/6 reproduce DEAD** under this lane's separate all-sections comparator |
+
+★ The 6/6 also rules out the **opposite vacuity**: had MSVC embedded the command
+line in any section (`.drectve`, `.debug$S`), the flag string would differ and
+**nothing could ever have read DEAD**. A comparator that can only say LIVE would
+have looked exactly like a thorough sweep finding no dead flags.
+
+### A/B — the exact zero IS the control
+
+```
+leg A  43664 / 22707 / 20957 / 39.153187
+leg B  43664 / 22707 / 20957 / 39.153187     (12 REAL recompiles, configgen re-run)
+Δmatched +0  Δmasked_equal +0  Δhonest +0  Δcode% +0.000000  Δfuzzy +0.000000
+```
+
+Twelve TUs genuinely recompiled under changed cflags and every scoring key is
+unchanged. That is not a null result — a nonzero delta would have **falsified**
+the byte-identity proof.
+
+### No WRONG gates, and the reason is structural
+
+`owned` over the 139 LIVE gates runs **54 … 3460, median 293**. The vestigial
+low-`owned` tail that produced the map sweep's one WRONG gate
+(`TourPerformerLocal`, `owned=6`) **does not exist here** — this population is
+bimodal: 0 (the dead 12) or ≥54. So there is no principled ranking for a WRONG
+hunt, and the n=1 "low owned ⇒ suspect" rule has nothing to select on.
+
+Six of the lowest-`owned` `band3/` gates were screened individually anyway (never
+batched — DK-3 established that ranking does not predict sign). **All six
+regressed; 0 WRONG gates.**
+
+| unit removed | owned | Δmatched | Δmasked_equal | **Δhonest** |
+|---|---:|---:|---:|---:|
+| `band3/tour/TourSavable.cpp` | 54 | −1 | +0 | **−1** |
+| `band3/meta_band/SetlistToStorePanel.cpp` | 75 | −2 | −1 | **−1** |
+| `band3/game/FadePanel.cpp` | 80 | −3 | −2 | **−1** |
+| `band3/meta_band/VoiceoverPanel.cpp` | 87 | −3 | −2 | **−1** |
+| `band3/meta_band/BandStoreOffer.cpp` | 91 | −7 | −6 | **−1** |
+| `band3/meta_band/InterstitialPanel.cpp` | 91 | −4 | −2 | **−2** |
+
+★ **Report Δhonest separately — the headline overstates the cost here.** Δmatched
+spans −1…−7 but Δhonest is **−1 or −2 in every single case**: most of the loss is
+`masked_equal` funclet pairings. This is the mirror image of DK-3's RockCentral
+result (+6 matched, +6 masked, Δhonest **0**), and the same lesson in the opposite
+direction — quoting either figure alone misrepresents the change.
+
+⚠ `owned` did **not** rank the damage (54 → −1 but 91 → −7): consistent with
+DK-3's finding that magnitude counts *perturbation*, not lost matches. Do not use
+`owned` to prioritise anything but LIVE-vs-DEAD.
+
+Combined with the 7 TUs that do not compile ungated, the evidence is that this
+gate is **claimed correctly wherever it is claimed** — the opposite of `MAP_0x1C`,
+whose converse sweep hit 1-in-11 with 10× downside.
+
+## What was NOT done
 - **The 15 remaining converse candidates were not screened** (table above).
   Expected value is low and it is recorded rather than ground.
+- **(DL-4) The 133 unscreened LIVE HANDLE gates were not individually A/B'd.**
+  6 of 139 were screened, all regressing. Screening the rest is ~133 A/B runs to
+  chase a class whose one known instance had a structural signature (`owned=6`)
+  that **provably does not occur in this population** (minimum 54). Recorded with
+  numbers so the next lane can decide rather than re-derive.
+- **(DL-4) No converse sweep for `HANDLE_LOCAL_STATIC`** — i.e. which *ungated*
+  TUs would benefit. That is a different population from this lane's charge, and
+  the `MAP_0x1C` converse result (1 positive in 11, worst case −172) is an
+  explicit warning against speculative application.
+- **(DL-4) The 7 NEEDED-TO-COMPILE units were not investigated further.** They
+  are settled as un-removable; whether their *sources* should instead be rewritten
+  to the `Object.h` dialect (which would make the gate unnecessary, as it already
+  is for the 5 dead ones) is a real question this lane did not open.
 - **The 4 `MAP_0x1C` INERT gates were NOT removed** — deliberately. They are
   inert for owned code but do change a shared template COMDAT, so unlike the
   six SYNCPROP flags they are not byte-identical and the deadness proof does
