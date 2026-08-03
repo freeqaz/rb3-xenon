@@ -11,7 +11,7 @@
 #include "utl/Symbols4.h"
 
 VoiceoverPanel::VoiceoverPanel()
-    : mVoiceOver(Hmx::Object::New<BinkClip>()), mFader(Hmx::Object::New<Fader>()),
+    : mVoiceOver(Hmx::Object::New<MoggClip>()), mFader(Hmx::Object::New<Fader>()),
       mVolumeOffsetSymbol(0), mWaitingForLoad(0), mWaitingForMount(0), mLoadingFailed(0),
       mDLCName(0), mDLCVoiceoverPath(0) {
     mVoiceOver->AddFader(mFader);
@@ -80,29 +80,23 @@ void VoiceoverPanel::ContentFailed(const char *contentName) {
 void VoiceoverPanel::SetVoiceoverFile(const char *cc, Symbol s) {
     mWaitingForLoad = true;
     mLoadingFailed = false;
-    char buf[128];
-    strcpy(buf, cc);
-    char *str = strstr(buf, "mogg");
-    if (str) {
-        str[0] = 'b';
-        str[1] = 'i';
-        str[2] = 'k';
-        str[3] = '\0';
-    }
-
+    // The rb3-Wii build rewrote the ".mogg" path to ".bik" here because its
+    // voiceover clip was a BinkClip.  Retail RB3-360 feeds a MoggClip and keeps the
+    // path as-is: 0x8262F5E8 contains no strcpy/strstr and no stack buffer, and
+    // passes the incoming pointer straight to MoggClip::SetFile (0x8270DF60).
     if (!s.Null()) {
         const char *name = TheSongMgr.ContentName(s, true);
         if (name) {
             if (!TheContentMgr.MountContent(name)) {
                 mDLCName = name;
-                mDLCVoiceoverPath = buf;
+                mDLCVoiceoverPath = cc;
                 mWaitingForMount = true;
                 return;
             }
         }
     }
     mWaitingForMount = false;
-    mVoiceOver->SetFile(buf);
+    mVoiceOver->SetFile(cc);
 }
 
 void VoiceoverPanel::SetVoiceoverSymbol(Symbol s) {

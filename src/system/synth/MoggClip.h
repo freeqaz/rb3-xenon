@@ -52,6 +52,14 @@ public:
     // SetLoopStart/SetLoopEnd are inlined at their call sites in the target,
     // so they stay header-inline here.
     void SetLoop(bool);
+    // Retail RB3-360 has a NON-VIRTUAL, NO-ARG Play() at 0x8270DE60 (proven: the
+    // address is a .pdata entry, never a vtable slot, and every caller reaches it
+    // with a direct `bl` -- CrowdAudio 0x82312730, Sfx 0x8271AADC, VoiceoverPanel
+    // 0x8262F568 + 0x8262F6D8).  Its body reads NO float parameter: f1 is loaded
+    // from a 0.0f constant and the volume comes from mVolume + mControllerVolume.
+    // This is the rb3-Wii MoggClip::Play() shape; the virtual Play(float) below is
+    // DC3's newer-engine form and has no retail counterpart.
+    void Play();
     void SetLoopStart(int i) { mLoopStartSample = i; }
     void SetLoopEnd(int i) { mLoopEndSample = i; }
     void EndLoop();
