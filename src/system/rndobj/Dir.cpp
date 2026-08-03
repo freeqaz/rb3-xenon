@@ -38,10 +38,17 @@ BEGIN_PROPSYNCS(RndDir)
     SYNC_PROP(polls, mPolls)
     SYNC_PROP(draws, mDraws)
     SYNC_PROP(test_event, mTestEvent)
+    // Retail RB3-360 walks the superclass chain ObjectDir FIRST, then the Rnd
+    // bases.  Proven on retail bytes (lane DR-3): the `bl ?SyncProperty@...`
+    // callees pair as ObjectDir/RndTransformable/RndDrawable/RndAnimatable
+    // against our RndTransformable/RndDrawable/RndAnimatable/ObjectDir, and the
+    // vbase displacements (-0x13c/-0x54/-0x118/-0x108) rotate to match.
+    // NB the callee difference itself is INVISIBLE to the score under
+    // functionRelocDiffs=none; the displacement immediate is the only witness.
+    SYNC_SUPERCLASS(ObjectDir)
     SYNC_SUPERCLASS(RndTransformable)
     SYNC_SUPERCLASS(RndDrawable)
     SYNC_SUPERCLASS(RndAnimatable)
-    SYNC_SUPERCLASS(ObjectDir)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndDir)

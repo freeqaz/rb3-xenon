@@ -8,7 +8,7 @@ void NormalizeAboutX(Hmx::Matrix3 &m) {
     Cross(m.z, m.x, m.y);
 }
 
-CharUpperTwist::CharUpperTwist() : mUpperArm(this), mTwist1(this), mTwist2(this) {}
+CharUpperTwist::CharUpperTwist() : mTwist1(this), mTwist2(this), mUpperArm(this) {}
 CharUpperTwist::~CharUpperTwist() {}
 
 BEGIN_HANDLERS(CharUpperTwist)
@@ -29,18 +29,18 @@ END_PROPSYNCS
 BEGIN_SAVES(CharUpperTwist)
     SAVE_REVS(1, 0)
     SAVE_SUPERCLASS(Hmx::Object)
-    bs << mTwist2;
     bs << mUpperArm;
     bs << mTwist1;
+    bs << mTwist2;
 END_SAVES
 
 BEGIN_COPYS(CharUpperTwist)
     COPY_SUPERCLASS(Hmx::Object)
     CREATE_COPY(CharUpperTwist)
     BEGIN_COPYING_MEMBERS
-        COPY_MEMBER(mTwist2)
         COPY_MEMBER(mUpperArm)
         COPY_MEMBER(mTwist1)
+        COPY_MEMBER(mTwist2)
     END_COPYING_MEMBERS
 END_COPYS
 
@@ -56,37 +56,37 @@ BEGIN_LOADS(CharUpperTwist)
 END_LOADS
 
 void CharUpperTwist::Poll() {
-    if (!mTwist2 || !mTwist1 || !mUpperArm)
+    if (!mUpperArm || !mTwist2 || !mTwist1)
         return;
-    const Transform &twist2parentworld = mTwist2->TransParent()->WorldXfm();
-    const Transform &twist2world = mTwist2->WorldXfm();
+    const Transform &upperparentworld = mUpperArm->TransParent()->WorldXfm();
+    const Transform &upperworld = mUpperArm->WorldXfm();
     Hmx::Quat q;
-    MakeRotQuat(twist2parentworld.m.x, twist2world.m.x, q);
+    MakeRotQuat(upperparentworld.m.x, upperworld.m.x, q);
     Vector3 v68;
-    Multiply(twist2parentworld.m.y, q, v68);
+    Multiply(upperparentworld.m.y, q, v68);
     Transform tf48;
-    tf48.m.x = twist2world.m.x;
-    tf48.v = mUpperArm->WorldXfm().v;
-    Interp(v68, twist2world.m.y, 0.333f, tf48.m.y);
-    NormalizeAboutX(tf48.m);
-    mUpperArm->SetWorldXfm(tf48);
-#ifdef HX_NATIVE
-    // Back-compute mLocalXfm so it survives dirty cascades (same as CharForeTwist fix).
-    if (mUpperArm->TransParent()) {
-        Transform invParent;
-        Invert(mUpperArm->TransParent()->WorldXfm(), invParent);
-        Multiply(tf48, invParent, mUpperArm->mLocalXfm);
-    }
-#endif
+    tf48.m.x = upperworld.m.x;
     tf48.v = mTwist1->WorldXfm().v;
-    Interp(v68, twist2world.m.y, 0.666f, tf48.m.y);
+    Interp(v68, upperworld.m.y, 0.333f, tf48.m.y);
     NormalizeAboutX(tf48.m);
     mTwist1->SetWorldXfm(tf48);
 #ifdef HX_NATIVE
+    // Back-compute mLocalXfm so it survives dirty cascades (same as CharForeTwist fix).
     if (mTwist1->TransParent()) {
         Transform invParent;
         Invert(mTwist1->TransParent()->WorldXfm(), invParent);
         Multiply(tf48, invParent, mTwist1->mLocalXfm);
+    }
+#endif
+    tf48.v = mTwist2->WorldXfm().v;
+    Interp(v68, upperworld.m.y, 0.666f, tf48.m.y);
+    NormalizeAboutX(tf48.m);
+    mTwist2->SetWorldXfm(tf48);
+#ifdef HX_NATIVE
+    if (mTwist2->TransParent()) {
+        Transform invParent;
+        Invert(mTwist2->TransParent()->WorldXfm(), invParent);
+        Multiply(tf48, invParent, mTwist2->mLocalXfm);
     }
 #endif
 }

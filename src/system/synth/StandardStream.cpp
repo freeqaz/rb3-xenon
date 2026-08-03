@@ -314,7 +314,11 @@ void StandardStream::SetLoop(String &s1, String &s2) {
             mEndMarker = mMarkerList[i];
         }
     }
-    SetJump(mStartMarker.posMS, mEndMarker.posMS, nullptr);
+    // A loop jumps FROM the end marker TO the start marker, so the end is the
+    // first argument.  Our port had these reversed -- a real behavioural bug,
+    // not a cosmetic one.  Retail bytes load f1<-0x15c (mEndMarker.posMS) and
+    // f2<-0x148 (mStartMarker.posMS); the rb3-Wii oracle agrees.  (lane DR-3)
+    SetJump(mEndMarker.posMS, mStartMarker.posMS, nullptr);
 }
 
 bool StandardStream::CurrentJumpPoints(Marker &start, Marker &end) {

@@ -263,7 +263,10 @@ void BandList::StartRevealAnim(int i, Transform &tf) {
     int i7 = 0;
     for (int i = 0; i < numdisp; i++) {
         RevealState rstate = mRevealStates[i];
-        if (rstate == kConcealing || rstate == kRevealed)
+        // Retail tests kRevealed (3) before kConcealing (2) -- `||` short-circuit
+        // order is preserved by codegen, so this operand order is load-bearing
+        // (unlike commutative arithmetic, which MSVC canonicalises).  lane DR-3
+        if (rstate == kRevealed || rstate == kConcealing)
             i7++;
     }
     float f1 = 0;
