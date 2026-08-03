@@ -96,11 +96,11 @@ const char *StoreMenuProvider::GetFileName(int i) {
 }
 
 BEGIN_HANDLERS(StoreMenuProvider)
-    HANDLE_EXPR(get_highlight_ix, 0)
-    HANDLE_ACTION(set_highlight_ix, mIxHighlight = _msg->Int(2))
-    HANDLE_EXPR(get_string, GetFileName(_msg->Int(2)))
-    HANDLE_EXPR(has_banner_data, NULL != mBannerData)
-    HANDLE_EXPR(get_banner_data, mBannerData)
+    HANDLE_EXPR_STATIC(get_highlight_ix, 0)
+    HANDLE_ACTION_STATIC(set_highlight_ix, mIxHighlight = _msg->Int(2))
+    HANDLE_EXPR_STATIC(get_string, GetFileName(_msg->Int(2)))
+    HANDLE_EXPR_STATIC(has_banner_data, NULL != mBannerData)
+    HANDLE_EXPR_STATIC(get_banner_data, mBannerData)
     HANDLE_SUPERCLASS(Hmx::Object)
     HANDLE_CHECK(0x6C)
 END_HANDLERS
