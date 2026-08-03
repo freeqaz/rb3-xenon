@@ -64,6 +64,17 @@ int ctr_encrypt_fast(
         }
         cipher_descriptor[ctr->cipher].ecb_encrypt(ctr->ctr, ctr->pad, &ctr->key);
 
+        /* The `int *d` local is CODEGEN-LOAD-BEARING, not a tidy-up (lane DK-2d).
+         * Retail makes `src` the update-form induction variable (`lwzu 0x10(r29)`
+         * on r29 = src-0x10) and advances `dst` with a plain `addi`. Writing the
+         * stores as `((int *)(dst + n))[i]` makes MSVC pick the MIRROR IMAGE --
+         * dst becomes the `stwu` pointer and src the plain one -- which costs 10
+         * instructions. Hoisting only the dst address into a local flips the IV
+         * selection to src and the whole body falls into retail's schedule.
+         * The word order is equally load-bearing: retail emits loads and stores
+         * in word order 1,2,3,0, and MSVC rotates the source order by +1, so the
+         * source must be written 0,1,2,3 to emit 1,2,3,0. Writing 1,2,3,0 here
+         * emits 2,3,0,1 (measured: 19 mismatches vs 4). */
         x0 = ((const int *)(src + n))[0];
         x1 = ((const int *)(src + n))[1];
         x2 = ((const int *)(src + n))[2];
@@ -74,10 +85,20 @@ int ctr_encrypt_fast(
         x2 ^= ((int *)ctr->pad)[2];
         x3 ^= ((int *)ctr->pad)[3];
 
-        ((int *)(dst + n))[0] = x0;
-        ((int *)(dst + n))[1] = x1;
-        ((int *)(dst + n))[2] = x2;
-        ((int *)(dst + n))[3] = x3;
+        {
+            /* RESIDUAL (1 instruction, 99.8% mpn): retail's word-1 xor is
+             * `xor r8,r8,r11` (pad as rS) where ours is `xor r8,r11,r8`. Same
+             * registers, same dest, only the rS/rB encoding differs. NOT
+             * source-steerable -- MSVC canonicalizes commutative operands:
+             * `pad[1] ^ x1`, making the pad the accumulator variable, and
+             * reordering the xor statements all produced byte-identical output.
+             * Register-allocation class; permuter is off by standing directive. */
+            int *d = (int *)(dst + n);
+            d[0] = x0;
+            d[1] = x1;
+            d[2] = x2;
+            d[3] = x3;
+        }
     }
     return 0;
 }

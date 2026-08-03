@@ -58,10 +58,26 @@ bool DataUpdateArray(DataArray *a1, DataArray *a2) {
     return false;
 }
 
+// Retail fuses the slot advance and the `var` store into a single `stwu r3,0xc(r11)`
+// and only then writes gVarStackPtr back.  That ordering (store the new slot's `var`
+// BEFORE publishing the pointer) is not reachable from `gVarStackPtr++; ->Set(var);`,
+// which forces the global store first.  Semantics are identical.  42.71 -> 62.71 mpn.
+//
+// Residual (2 of 9 instrs, lane DK-2c): retail keeps ONE load of gVarStackPtr and uses
+// base-update (`stwu`); we emit `stw` plus a reload, because the `DataNode*` store may
+// alias the `VarStack*` global and MSVC will not prove otherwise at /O1.  The fusion
+// only appears when the increment is on the GLOBAL itself -- which is exactly what
+// forces the reload -- so the two halves appear mutually exclusive from source.
+// MEASURED DEAD ENDS, do not re-hunt (all three land back at 38.4, BELOW baseline):
+//   VarStack *p = gVarStackPtr + 1; p->var = var; gVarStackPtr = p; p->value = *var;
+//   VarStack *p = gVarStackPtr; p++;  p->var = var; gVarStackPtr = p; p->value = *var;
+//   VarStack *p = gVarStackPtr; p[1].var = var; gVarStackPtr = &p[1]; p[1].value = *var;
+// Any local copy of the pointer kills the `stwu`; closing this needs the aliasing
+// question settled, not another spelling.
 void DataPushVar(DataNode *var) {
-    gVarStackPtr++;
-    MILO_ASSERT(gVarStackPtr - gVarStack < VAR_STACK_SIZE, 0x137);
-    gVarStackPtr->Set(var);
+    MILO_ASSERT(gVarStackPtr + 1 - gVarStack < VAR_STACK_SIZE, 0x137);
+    gVarStackPtr[1].var = var;
+    (++gVarStackPtr)->value = *var;
 }
 
 void DataMergeTags(DataArray *dest, DataArray *src) {
