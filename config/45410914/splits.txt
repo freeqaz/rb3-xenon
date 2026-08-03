@@ -12657,12 +12657,16 @@ system/beatmatch/PhraseDB.cpp:
 	.text       start:0x8279366C end:0x827936C0
 
 system/beatmatch/FillInfo.cpp:
-	.pdata      start:0x8223EEF8 end:0x8223EF08
+	.pdata      start:0x8223EEF8 end:0x8223EF00
 	.pdata      start:0x8223F388 end:0x8223F3A0
 	.pdata      start:0x8223F3A8 end:0x8223F3B8
-	.text       start:0x8278C348 end:0x8278C438
+	.text       start:0x8278C348 end:0x8278C3A8
 	.text       start:0x82792270 end:0x8279242C
 	.text       start:0x82792460 end:0x8279252C
+
+system/beatmatch/DrumMap.cpp:
+	.pdata      start:0x8223EF00 end:0x8223EF08
+	.text       start:0x8278C3A8 end:0x8278C438
 
 system/beatmatch/TimeSpanVector.cpp:
 	.pdata      start:0x8223F4E0 end:0x8223F4E8
