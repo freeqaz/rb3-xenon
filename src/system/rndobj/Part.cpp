@@ -643,67 +643,86 @@ void RndParticleSys::Mats(std::list<RndMat *> &mats, bool) {
     }
 }
 
+// Retail RB3-360 CASTS a raw BinStream& here rather than constructing a
+// BinStreamRev, and keeps the revision in ONE aligned(4) aggregate addressed
+// off a SINGLE base -- read off the target bytes, not assumed:
+//     sth r11, 0x4, r28, lbl_82CC2C70   <- rev    @ +4
+//     sth r10, 0x0, r28, lbl_82CC2C70   <- altRev @ +0
+// with every reload `lhz 0x4(base)` + `cmplwi` (unsigned short).  The previous
+// `volatile int rev` local is what produced our 32-bit `lwz 0x50(r31)`+`cmpwi`.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Part;
+#define gPartAltRev gRevs_Part.altRev
+#define gPartRev gRevs_Part.rev
+
 INIT_REVS(0x29, 0)
 
 BEGIN_LOADS(RndParticleSys)
-    LOAD_REVS(bs)
-    volatile int rev = d.rev;
-    ASSERT_REVS(0x29, 0)
-    BinStream *stream = &d.stream;
-    if (rev > 0x16)
-        LOAD_SUPERCLASS(Hmx::Object);
-    if (rev > 0x1B)
-        LOAD_SUPERCLASS(RndPollable);
-    if (rev > 0) {
-        LOAD_SUPERCLASS(RndAnimatable)
-        LOAD_SUPERCLASS(RndTransformable)
-        LOAD_SUPERCLASS(RndDrawable)
+    int revs;
+    bs >> revs;
+    gPartRev = getHmxRev(revs);
+    gPartAltRev = getAltRev(revs);
+    BinStreamRev &d = (BinStreamRev &)bs;
+    if (gPartRev > 0x16)
+        Hmx::Object::Load(bs);
+    if (gPartRev > 0x1B)
+        RndPollable::Load(bs);
+    if (gPartRev > 0) {
+        RndAnimatable::Load(bs);
+        RndTransformable::Load(bs);
+        RndDrawable::Load(bs);
     }
-    (*stream) >> (Key<float> &)mLife;
-    if (rev > 0x23)
-        (*stream) >> mScreenAspect;
-    (*stream) >> mBoxExtent1;
-    (*stream) >> mBoxExtent2;
-    (*stream) >> (Key<float> &)mSpeed;
-    (*stream) >> (Key<float> &)mPitch;
-    (*stream) >> (Key<float> &)mYaw;
-    (*stream) >> (Key<float> &)mEmitRate;
-    if (rev > 0x20) {
-        (*stream) >> mMaxBurst;
-        (*stream) >> (Key<float> &)mBurstInterval;
-        (*stream) >> (Key<float> &)mBurstPeak;
-        (*stream) >> (Key<float> &)mBurstLength;
+    bs >> (Key<float> &)mLife;
+    if (gPartRev > 0x23)
+        bs >> mScreenAspect;
+    bs >> mBoxExtent1;
+    bs >> mBoxExtent2;
+    bs >> (Key<float> &)mSpeed;
+    bs >> (Key<float> &)mPitch;
+    bs >> (Key<float> &)mYaw;
+    bs >> (Key<float> &)mEmitRate;
+    if (gPartRev > 0x20) {
+        bs >> mMaxBurst;
+        bs >> (Key<float> &)mBurstInterval;
+        bs >> (Key<float> &)mBurstPeak;
+        bs >> (Key<float> &)mBurstLength;
     }
-    (*stream) >> (Key<float> &)mStartSize;
-    if (rev > 0xF)
-        (*stream) >> (Key<float> &)mDeltaSize;
-    (*stream) >> mStartColorLow;
-    (*stream) >> mStartColorHigh;
-    (*stream) >> mEndColorLow;
-    (*stream) >> mEndColorHigh;
-    if (rev > 0x19)
-        (*stream) >> mBounce;
-    else if (rev > 1) {
+    bs >> (Key<float> &)mStartSize;
+    if (gPartRev > 0xF)
+        bs >> (Key<float> &)mDeltaSize;
+    bs >> mStartColorLow;
+    bs >> mStartColorHigh;
+    bs >> mEndColorLow;
+    bs >> mEndColorHigh;
+    if (gPartRev > 0x19)
+        bs >> mBounce;
+    else if (gPartRev > 1) {
         bool ba7;
         Plane p150;
-        d >> ba7;
-        if (rev > 0xB) {
-            (*stream) >> (Hmx::Color &)p150;
+        bs >> ba7;
+        if (gPartRev > 0xB) {
+            bs >> (Hmx::Color &)p150;
         } else {
             Vector3 v1;
             float f1, f2, f3;
-            (*stream) >> v1;
-            (*stream) >> f1 >> f2 >> f3;
+            bs >> v1;
+            bs >> f1 >> f2 >> f3;
             p150.Set(f1, f2, f3, -(v1.x * f1 + v1.y * f2 + v1.z * f3));
         }
         if (ba7) {
-            bool old = TheLoadMgr.EditMode();
+            // Retail does NOT save/restore the edit mode: there is no
+            // `lbz r27,0x5c(TheLoadMgr)` read, and the second call passes the
+            // literal `li r4,0x0`.  It also keeps `base` const -- retail binds
+            // MakeString<const char*> (??$MakeString@PBD@@), our (char*) cast
+            // bound MakeString<char*> (??$MakeString@PAD@@).
             TheLoadMgr.SetEditMode(true);
-            char *base = (char *)FileGetBase(Name());
+            const char *base = FileGetBase(Name());
             mBounce = Dir()->New<RndTransformable>(
                 MakeString("%s_bounce.trans", base)
             );
-            TheLoadMgr.SetEditMode(old);
+            TheLoadMgr.SetEditMode(false);
             Transform tf140;
             float a = p150.a;
             float b = p150.b;
@@ -730,113 +749,113 @@ BEGIN_LOADS(RndParticleSys)
         std::list<Plane> planes;
         d >> planes;
     }
-    (*stream) >> mForceDir;
-    (*stream) >> mMat;
-    if (rev > 0x17 && rev < 0x19) {
+    bs >> mForceDir;
+    bs >> mMat;
+    if (gPartRev > 0x17 && gPartRev < 0x19) {
         char buf[0x80];
-        (*stream).ReadString(buf, 0x80);
+        bs.ReadString(buf, 0x80);
         if (!mMat && buf[0] != '\0') {
             mMat = LookupOrCreateMat(buf, Dir());
         }
     }
-    if (rev > 0x11) {
-        (*stream) >> (int &)mType >> mGrowRatio >> mShrinkRatio >> mMidColorRatio;
-        (*stream) >> mMidColorLow >> mMidColorHigh;
-    } else if (rev < 0xD) {
+    if (gPartRev > 0x11) {
+        bs >> (int &)mType >> mGrowRatio >> mShrinkRatio >> mMidColorRatio;
+        bs >> mMidColorLow >> mMidColorHigh;
+    } else if (gPartRev < 0xD) {
         int i94;
-        (*stream) >> i94;
+        bs >> i94;
     }
-    (*stream) >> mMaxParticles;
-    if (rev > 2) {
-        if (rev < 7) {
+    bs >> mMaxParticles;
+    if (gPartRev > 2) {
+        if (gPartRev < 7) {
             int i98;
-            (*stream) >> i98;
-        } else if (rev < 0xD) {
+            bs >> i98;
+        } else if (gPartRev < 0xD) {
             int i9c;
-            (*stream) >> i9c;
+            bs >> i9c;
         }
     }
-    if (rev > 3) {
-        (*stream) >> (Key<float> &)mBubblePeriod >> (Key<float> &)mBubbleSize;
-        (*stream) >> mBubble;
+    if (gPartRev > 3) {
+        bs >> (Key<float> &)mBubblePeriod >> (Key<float> &)mBubbleSize;
+        bs >> mBubble;
     }
-    if (rev > 0x1D) {
-        d >> mRotate;
-        (*stream) >> (Key<float> &)mRPM >> mRPMDrag;
-        if (rev > 0x24) {
-            d >> mRandomDirection;
+    if (gPartRev > 0x1D) {
+        bs >> mRotate;
+        bs >> (Key<float> &)mRPM >> mRPMDrag;
+        if (gPartRev > 0x24) {
+            bs >> mRandomDirection;
         }
-        (*stream) >> mDrag;
+        bs >> mDrag;
     }
-    if (rev > 0x1F) {
-        (*stream) >> (Key<float> &)mStartOffset >> (Key<float> &)mEndOffset;
-        d >> mAlignWithVelocity;
-        d >> mStretchWithVelocity;
-        d >> mConstantArea;
-        (*stream) >> mStretchScale;
+    if (gPartRev > 0x1F) {
+        bs >> (Key<float> &)mStartOffset >> (Key<float> &)mEndOffset;
+        bs >> mAlignWithVelocity;
+        bs >> mStretchWithVelocity;
+        bs >> mConstantArea;
+        bs >> mStretchScale;
     }
-    if (rev > 0x21) {
-        d >> mPerspectiveStretch;
+    if (gPartRev > 0x21) {
+        bs >> mPerspectiveStretch;
     }
-    if (rev > 4 && rev < 15) {
+    if (gPartRev > 4 && gPartRev < 15) {
         bool baf;
-        d >> baf;
+        bs >> baf;
         int u1 = 0;
         if (baf)
             u1 = 2;
         if (mMat)
             mMat->SetZMode((ZMode)u1);
     }
-    if (rev > 5 && rev < 17) {
+    if (gPartRev > 5 && gPartRev < 17) {
         String str;
-        (*stream) >> str;
+        bs >> str;
     }
-    if (rev == 8) {
+    if (gPartRev == 8) {
         bool b1b0;
-        d >> b1b0;
+        bs >> b1b0;
     }
-    if (rev > 0xC && rev < 0xE) {
+    if (gPartRev > 0xC && gPartRev < 0xE) {
         int i1a0;
-        (*stream) >> i1a0;
+        bs >> i1a0;
     }
-    if (rev > 0x13) {
-        (*stream) >> mRelativeMotion;
-    } else if (rev > 0xC) {
+    if (gPartRev > 0x13) {
+        bs >> mRelativeMotion;
+    } else if (gPartRev > 0xC) {
         bool i1b1;
-        d >> i1b1;
+        bs >> i1b1;
         mRelativeMotion = i1b1;
     }
-    if (rev > 0x1A)
-        (*stream) >> mMotionParent;
+    if (gPartRev > 0x1A)
+        bs >> mMotionParent;
     SetRelativeMotion(mRelativeMotion, mMotionParent);
-    if (rev > 0x12)
-        (*stream) >> mMeshEmitter;
-    if (rev > 0x1E || rev == 0x15)
-        (*stream) >> mSubSamples;
+    if (gPartRev > 0x12)
+        bs >> mMeshEmitter;
+    if (gPartRev > 0x1E || gPartRev == 0x15)
+        bs >> mSubSamples;
     SetSubSamples(mSubSamples);
-    if (rev > 0x1B) {
-        d >> mFrameDrive;
+    if (gPartRev > 0x1B) {
+        bs >> mFrameDrive;
     } else
         mFrameDrive = true;
-    if (rev > 0x22) {
-        d >> mPauseOffscreen;
+    if (gPartRev > 0x22) {
+        bs >> mPauseOffscreen;
     } else
         mPauseOffscreen = false;
-    if (rev > 0x1C) {
-        d >> mFastForward;
+    if (gPartRev > 0x1C) {
+        bs >> mFastForward;
     } else
         mFastForward = false;
     mNeedForward = mFastForward;
 
-    if (rev > 0x26) {
+    if (gPartRev > 0x26) {
 #ifdef HX_NATIVE
         // DC3-era UV-tile-animation load (absent in retail RB3).
         d >> mAnimateUVs;
-        (*stream) >> mTileHoldTime;
-        (*stream) >> mNumTilesAcross;
-        (*stream) >> mNumTilesDown;
-        (*stream) >> mNumTilesTotal;
-        (*stream) >> mStartingTile;
+        bs >> mTileHoldTime;
+        bs >> mNumTilesAcross;
+        bs >> mNumTilesDown;
+        bs >> mNumTilesTotal;
+        bs >> mStartingTile;
         d >> mLoopUVAnim;
         d >> mRandomAnimStart;
         mTotalTileTime = (float)mNumTilesTotal * mTileHoldTime;
@@ -846,25 +865,25 @@ BEGIN_LOADS(RndParticleSys)
         mInvTotalTileTime = 1.0f / mTotalTileTime;
 #endif
     }
-    if (rev > 0x27) {
+    if (gPartRev > 0x27) {
 #ifdef HX_NATIVE
         // DC3-era particle attractors (absent in retail RB3).
         d >> mAttractors;
 #endif
     }
-    if (rev > 0x28) {
+    if (gPartRev > 0x28) {
 #ifdef HX_NATIVE
         d >> mBirthMomentum;
-        (*stream) >> mBirthMomentumAmount;
+        bs >> mBirthMomentumAmount;
 #endif
     }
 
-    if (rev <= 0xA || (d >> mPreserveParticles, !mPreserveParticles)) {
+    if (gPartRev <= 0xA || (bs >> mPreserveParticles, !mPreserveParticles)) {
         SetPool(mMaxParticles, mType);
     } else {
         int count;
         RndParticle tempParticle;
-        (*stream) >> count;
+        bs >> count;
         SetPool(mMaxParticles, mType);
         for (int i = 0; i < count; i++) {
             RndParticle *p = AllocParticle();
@@ -882,7 +901,7 @@ BEGIN_LOADS(RndParticleSys)
                 );
                 p = &tempParticle;
             }
-            (*stream) >> *p;
+            bs >> *p;
         }
     }
 
