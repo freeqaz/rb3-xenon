@@ -12039,8 +12039,7 @@ SongSortByDiff.cpp:
 	.pdata      start:0x8222DF78 end:0x8222DFD8
 	.pdata      start:0x8222DFD8 end:0x8222DFF0
 	.text       start:0x8265D248 end:0x8265D748
-	.text       start:0x8265D748 end:0x8265D8C4
-	.text       start:0x8265D8C4 end:0x8265D8E8
+	.text       start:0x8265D748 end:0x8265D878
 
 SongSortByPlays.cpp:
 	.text       start:0x8265C6B8 end:0x8265C730
@@ -12048,7 +12047,7 @@ SongSortByPlays.cpp:
 SongSortByRank.cpp:
 	.pdata      start:0x8222DFF0 end:0x8222E060
 	.pdata      start:0x8222E060 end:0x8222E158
-	.text       start:0x8265D8E8 end:0x8265DF84
+	.text       start:0x8265D878 end:0x8265DF84
 	.text       start:0x8265DF88 end:0x8265EEEC
 
 SongSortByRecent.cpp:

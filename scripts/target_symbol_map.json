@@ -1,4 +1,8 @@
 {
+ "0x8265d878": "?Compare@RankCmp@@UBAHPBVSongSortCmp@@W4SongNodeType@@@Z",
+ "0x82658ed8": "??$?8PAVUIScreen@@V?$StlNodeAlloc@PAVUIScreen@@@stlpmtx_std@@@stlpmtx_std@@YA_NABV?$vector@PAVUIScreen@@V?$StlNodeAlloc@PAVUIScreen@@@stlpmtx_std@@@0@0@Z",
+ "0x82658db0": "?Type@NonDestructiveTransitionEvent@@UBA?AVSymbol@@XZ",
+ "0x8265b188": "?Compare@StarsCmp@@UBAHPBVSongSortCmp@@W4SongNodeType@@@Z",
  "0x823e3558": "?Replace@MsgSource@@$4PPPPPPPM@FI@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x824f6fc8": "?Replace@MsgSource@@$4PPPPPPPM@LA@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x825483c0": "?Replace@MsgSource@@$4PPPPPPPM@KI@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
