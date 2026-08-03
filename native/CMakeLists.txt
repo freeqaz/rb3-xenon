@@ -217,6 +217,10 @@ set(META_SONG_SOURCES
     ${REPO_ROOT}/src/system/meta/SongMgr.cpp
     ${REPO_ROOT}/src/system/meta/SongMetadata.cpp
     ${REPO_ROOT}/src/system/meta/DataArraySongInfo.cpp
+    # Added 2026-08-03: lane DP-1's BandSongMgr::Handle match (c6e8408f) calls
+    # Jukebox::Jukebox(int), defined in meta/Jukebox.cpp. The X360 build compiles
+    # it; rb3-song links a superset and did not, so main's native gate went 17/18.
+    ${REPO_ROOT}/src/system/meta/Jukebox.cpp
 )
 # RB3 game-layer song manager + metadata (src/band3/meta_band). MetaPerformer /
 # MusicLibrary are NOT wired: they aren't on the load path (off-path symbols are
