@@ -207,6 +207,7 @@ namespace {
     float gBeat = -1.0f; // <0 => no animation requested
     float gBpm = 120.0f;
     bool gBoneAudit = false;
+    bool gHandAudit = false; // X12: the hand-POSE oracle (--hand-audit)
     // X4d framing/isolation overrides (driver-only; no shared src/ involvement).
     const char *gOnlyMesh = nullptr;
     bool gDumpTree = false; // X5: per-dir object census of the loaded subdir tree
@@ -1786,6 +1787,461 @@ namespace {
         }
     }
 
+    // =====================================================================
+    // X12 — the HAND-POSE oracle
+    // =====================================================================
+    //
+    // X11 restored hands_naked.mesh / malewrist_*.mesh and explicitly did NOT
+    // verify their POSE. This is that measurement.
+    //
+    // ⛔ WHY THE EXISTING --bone-audit CANNOT ANSWER IT. Measured, not argued.
+    // Every audit above walks `ObjDirItr<T>(dir, true)`, which does NOT follow
+    // ObjectDir::SubDirs() or proxies. On small_club_01 with RB3_BAND_PLACE=1
+    // that walk reaches the venue's light targets and NOTHING ELSE:
+    //     character: 'lighttarget'
+    //     palette-invariant PASS -- 0 bone(s) over 0 mesh(es)    <- VACUOUS
+    // while the deep mesh walk in the same run reports 411 meshes, 134 skinned.
+    // A green over an empty set is not evidence. CollectDeep's own comment
+    // (main_render.cpp:620) documents this exact blindness -- "eight-member
+    // crowd censusing as '0 skinned meshes'" -- but the bone audits were never
+    // re-pointed at it. So this oracle uses CollectDeep, like the mesh walk.
+    //
+    // ⛔ WHY NOT THE BONE-LENGTH RATIO. The charter's standing warning, and
+    // rb3-Wii lost four milestones to it: liveDist/|LocalXfm().v| is invariant
+    // under ANY rigid motion of a subtree. A hand rigidly displaced a metre from
+    // the wrist, or rotated 180deg, scores a perfect 1.0000. Every check below
+    // is ABSOLUTE (world positions, world-space gaps) or EXACT (a recompose
+    // identity), never a ratio.
+    //
+    // The three measurements, in increasing order of what they can catch:
+    //
+    //   1. RECOMPOSE IDENTITY.  WorldXfm == LocalXfm * parent->WorldXfm, for
+    //      every bone, elementwise. Needs no ground truth and no asset. This is
+    //      the direct test for the alias-unsafe-compose family that cost
+    //      rb3-Wii ~15 waves and bit xenon in X4b -- a Multiply that stores
+    //      into its destination before reading an aliased operand breaks THIS
+    //      identity, at the first bone where it happens.
+    //
+    //   2. ARM-CHAIN LANDMARK WORLD POSITIONS.  Absolute, flip-sensitive.
+    //      Bone names are the GAME'S OWN, copied from the shipped skeleton list
+    //      in gesture/JointUtl.cpp:39 (CharBoneName) -- not invented.
+    //
+    //   3. HAND-GEOMETRY vs HAND-BONE AGREEMENT -- the one that actually
+    //      answers "are the hands attached to the sleeves". CPU-skins the hand
+    //      mesh with the LIVE palette and asks, in world space, how far the
+    //      skinned hand geometry sits from the hand bone it is supposed to hang
+    //      off. A detached hand shows a large gap here and NOWHERE else.
+    //
+    // ⚠ ReportSkinnedBounds (above) cannot do (3): it reads only
+    // `owner->CompressedVerts()` and `continue`s when NumCompressedVerts()==0.
+    // X11 §2 established the restored meshes are precisely the UNCOMPRESSED
+    // population (v>0, cv=0) -- so that instrument silently skips exactly the
+    // meshes in question. This one skins whichever array the mesh actually has,
+    // and says which.
+    //
+    // ⛔ NOT INVENTED: no transform, pose or vertex is substituted anywhere
+    // below. The uncompressed path calls the SHIPPED RndMesh::SkinVertex
+    // (rndobj/Mesh.cpp:762) rather than re-deriving a skinning convention.
+
+    struct HandPoseStats {
+        int bonesChecked = 0;
+        float worstRecomposeDev = 0.0f;
+        const char *worstRecomposeBone = nullptr;
+        int handMeshes = 0;
+        float worstBoneToGeomGap = -1.0f;
+        const char *worstGapMesh = nullptr;
+        bool anyHandBone = false;
+    };
+
+    // Elementwise max |WorldXfm - LocalXfm*parentWorldXfm| over the 12 floats.
+    float RecomposeDev(RndTransformable *t) {
+        RndTransformable *p = t->TransParent();
+        if (!p) return 0.0f;
+        Transform composed;
+        Multiply(t->LocalXfm(), p->WorldXfm(), composed);
+        const Transform &w = t->WorldXfm();
+        const float *A = (const float *)&composed.m;
+        const float *B = (const float *)&w.m;
+        float dev = 0.0f;
+        // Matrix3 rows are Vector3 but 16-byte strided (x,y,z,pad) -- compare
+        // the 3 live floats of each row, skipping the pad, so a garbage pad
+        // cannot manufacture a failure.
+        for (int r = 0; r < 3; r++)
+            for (int c = 0; c < 3; c++) {
+                float d = fabsf(A[r * 4 + c] - B[r * 4 + c]);
+                if (d > dev) dev = d;
+            }
+        float dv[3] = { fabsf(composed.v.x - w.v.x), fabsf(composed.v.y - w.v.y),
+                        fabsf(composed.v.z - w.v.z) };
+        for (int k = 0; k < 3; k++) if (dv[k] > dev) dev = dv[k];
+        return dev;
+    }
+
+    RndTransformable *FindBoneNamed(const std::vector<RndTransformable *> &bones,
+                                    const char *name) {
+        for (size_t i = 0; i < bones.size(); i++)
+            if (bones[i]->Name() && strcmp(bones[i]->Name(), name) == 0) return bones[i];
+        return nullptr;
+    }
+
+    // Skinned world-space extent of a mesh, from whichever vertex array it has.
+    struct SkinExtent {
+        bool valid = false;
+        const char *source = "none";
+        int nverts = 0;
+        float mn[3], mx[3];
+        double cx = 0, cy = 0, cz = 0; // centroid
+    };
+
+    SkinExtent SkinnedExtent(RndMesh *m) {
+        SkinExtent e;
+        e.mn[0] = e.mn[1] = e.mn[2] = 1e30f;
+        e.mx[0] = e.mx[1] = e.mx[2] = -1e30f;
+        RndMesh *owner = m->GetGeomOwner();
+        if (!owner) owner = m;
+        double sx = 0, sy = 0, sz = 0;
+        int n = 0;
+        if (owner->NumVerts() > 0) {
+            // UNCOMPRESSED -- the population X11 restored, and the one
+            // ReportSkinnedBounds skips. Uses the game's own skinner.
+            e.source = "mVerts(SkinVertex)";
+            RndMesh::VertVector &vv = m->Verts();
+            for (int i = 0; i < vv.size(); i++) {
+                Vector3 w = m->SkinVertex(vv[i], nullptr);
+                if (w.x != w.x || w.y != w.y || w.z != w.z) continue;
+                const float p[3] = { w.x, w.y, w.z };
+                for (int k = 0; k < 3; k++) {
+                    if (p[k] < e.mn[k]) e.mn[k] = p[k];
+                    if (p[k] > e.mx[k]) e.mx[k] = p[k];
+                }
+                sx += w.x; sy += w.y; sz += w.z; n++;
+            }
+        } else if (owner->NumCompressedVerts() > 0 && owner->CompressedVerts()) {
+            // COMPRESSED -- decode mirrors VertexFormats.cpp:343 exactly, the
+            // same 36-byte BE record ReportSkinnedBounds already uses.
+            e.source = "mCompressedVerts(LBS)";
+            const unsigned char *data = owner->CompressedVerts();
+            int ncv = (int)owner->NumCompressedVerts();
+            int nb = m->NumBones();
+            std::vector<Transform> pal((size_t)nb);
+            for (int b = 0; b < nb; b++) {
+                RndTransformable *bt = m->BoneTransAt(b);
+                if (bt) Multiply(m->BoneOffsetAt(b), bt->WorldXfm(), pal[b]);
+                else pal[b].Reset();
+            }
+            for (int i = 0; i < ncv; i++) {
+                const unsigned char *rec = data + (size_t)i * 36;
+                auto be32 = [&](int off) {
+                    unsigned int v; memcpy(&v, rec + off, 4);
+                    return __builtin_bswap32(v);
+                };
+                float p[3];
+                for (int k = 0; k < 3; k++) {
+                    unsigned int v = be32(k * 4); float f; memcpy(&f, &v, 4); p[k] = f;
+                }
+                unsigned int wv = be32(28), iv = be32(32);
+                float w[4] = { (wv & 0x3FF) / 1023.0f, ((wv >> 10) & 0x3FF) / 1023.0f,
+                               ((wv >> 20) & 0x3FF) / 1023.0f, ((wv >> 30) & 0x3) / 3.0f };
+                float acc[3] = { 0, 0, 0 };
+                if (nb == 0) continue;
+                for (int k = 0; k < 4; k++) {
+                    int bi = (iv >> (k * 8)) & 0xFF;
+                    if (w[k] == 0.0f || bi >= nb) continue;
+                    const Transform &t = pal[bi];
+                    acc[0] += w[k] * (t.m.x.x * p[0] + t.m.y.x * p[1] + t.m.z.x * p[2] + t.v.x);
+                    acc[1] += w[k] * (t.m.x.y * p[0] + t.m.y.y * p[1] + t.m.z.y * p[2] + t.v.y);
+                    acc[2] += w[k] * (t.m.x.z * p[0] + t.m.y.z * p[1] + t.m.z.z * p[2] + t.v.z);
+                }
+                bool ok = true;
+                for (int k = 0; k < 3; k++) if (acc[k] != acc[k]) ok = false;
+                if (!ok) continue;
+                for (int k = 0; k < 3; k++) {
+                    if (acc[k] < e.mn[k]) e.mn[k] = acc[k];
+                    if (acc[k] > e.mx[k]) e.mx[k] = acc[k];
+                }
+                sx += acc[0]; sy += acc[1]; sz += acc[2]; n++;
+            }
+        }
+        e.nverts = n;
+        if (n > 0) {
+            e.valid = true;
+            e.cx = sx / n; e.cy = sy / n; e.cz = sz / n;
+        }
+        return e;
+    }
+
+    float DistToExtentBox(const SkinExtent &e, const Vector3 &p) {
+        // 0 when the point is INSIDE the skinned mesh's world box -- which is
+        // what "the hand bone sits inside the hand geometry" means.
+        float d2 = 0.0f;
+        const float pt[3] = { p.x, p.y, p.z };
+        for (int k = 0; k < 3; k++) {
+            float over = 0.0f;
+            if (pt[k] < e.mn[k]) over = e.mn[k] - pt[k];
+            else if (pt[k] > e.mx[k]) over = pt[k] - e.mx[k];
+            d2 += over * over;
+        }
+        return sqrtf(d2);
+    }
+
+    // ---- POSITIVE CONTROL -------------------------------------------------
+    // An instrument that cannot fail is worthless (the charter's rule, and X9's
+    // cross-repo negative was trustworthy only because the same instrument
+    // found 227 live instances). RB3_HANDPOSE_PERTURB=<units> rigidly displaces
+    // bone_L-hand along +X by a KNOWN amount before measuring. Every metric
+    // below must move by exactly that amount; the bone-length ratio metric must
+    // NOT (it is rigid-invariant) -- which demonstrates both that this
+    // instrument sees what the old one cannot, and that it is not blind.
+    //
+    // ⚠ DIAGNOSTIC ONLY, opt-in, announced loudly in the log. It is never on in
+    // any cited evidence frame.
+    float gHandPerturb = 0.0f;
+
+    void ReportHandPose(ObjectDir *dir) {
+        // Bone names are the GAME'S OWN (gesture/JointUtl.cpp:39 CharBoneName).
+        // ⚠ BUT THE CASING THERE DOES NOT MATCH THE RB3 CHARACTER ASSETS.
+        // JointUtl spells it `bone_L-foreArm.mesh` (capital A); the shipped RB3
+        // band/crowd skeletons spell it `bone_L-forearm.mesh` (lowercase). The
+        // first run of this oracle printed `bone_L-foreArm.mesh ABSENT` while
+        // simultaneously reporting `bone_L-hand.mesh`'s parent as
+        // `bone_L-forearm.mesh` — the instrument contradicting itself on one
+        // line, which is how the mismatch was caught. JointUtl is Kinect/gesture
+        // code (DC3-era); it is NOT authoritative for RB3 character assets.
+        // Both spellings are probed so this can never silently miss again.
+        static const char *kArmL[] = { "bone_L-upperArm.mesh", "bone_L-forearm.mesh",
+                                       "bone_L-foreArm.mesh", "bone_L-hand.mesh",
+                                       "bone_L-middlefinger03.mesh" };
+        static const char *kArmR[] = { "bone_R-upperArm.mesh", "bone_R-forearm.mesh",
+                                       "bone_R-foreArm.mesh", "bone_R-hand.mesh",
+                                       "bone_R-middlefinger03.mesh" };
+        std::vector<Character *> chars = CollectDeep<Character>(dir);
+        printf("  === X12 HAND-POSE ORACLE (%d Character(s) via CollectDeep) ===\n",
+               (int)chars.size());
+        if (gHandPerturb != 0.0f)
+            printf("  ⚠⚠ RB3_HANDPOSE_PERTURB=%.3f ACTIVE — bone_L-hand is DELIBERATELY "
+                   "displaced. This is a POSITIVE CONTROL run, not a valid frame.\n",
+                   gHandPerturb);
+
+        HandPoseStats st;
+        for (size_t ci = 0; ci < chars.size(); ci++) {
+            Character *c = chars[ci];
+            std::vector<RndTransformable *> bones = CollectDeep<RndTransformable>(c);
+            std::vector<RndMesh *> meshes = CollectDeep<RndMesh>(c);
+            if (bones.empty()) continue;
+            // Only report figures that actually carry an arm chain; the venue
+            // is full of RndTransformables that are not skeletons.
+            RndTransformable *lh = FindBoneNamed(bones, "bone_L-hand.mesh");
+            RndTransformable *rh = FindBoneNamed(bones, "bone_R-hand.mesh");
+            if (!lh && !rh) continue;
+            st.anyHandBone = true;
+
+            if (gHandPerturb != 0.0f && lh) {
+                Transform lx = lh->LocalXfm();
+                lx.v.x += gHandPerturb;
+                // SetLocalXfm already SetDirty()s (Trans.h:94-97), so the next
+                // WorldXfm() recomputes the whole subtree — no manual poke.
+                lh->SetLocalXfm(lx);
+            }
+
+            // ★ THE COMPARATIVE CONTROL, printed in the SAME block (X11's rule:
+            // put the working arm next to the broken one). The character's own
+            // world placement, so a "hand geometry is at the origin" reading can
+            // be checked against where this figure is actually standing.
+            const Vector3 &cw = c->WorldXfm().v;
+            printf("    --- %s --- character world (%9.3f %9.3f %9.3f)\n",
+                   c->Name() ? c->Name() : "(unnamed)", cw.x, cw.y, cw.z);
+
+            // (1) recompose identity over EVERY bone of this figure
+            float worst = 0.0f; const char *worstName = nullptr; int nb = 0;
+            for (size_t i = 0; i < bones.size(); i++) {
+                if (!bones[i]->TransParent()) continue;
+                float d = RecomposeDev(bones[i]);
+                nb++;
+                if (d > worst) { worst = d; worstName = bones[i]->Name(); }
+            }
+            st.bonesChecked += nb;
+            if (worst > st.worstRecomposeDev) {
+                st.worstRecomposeDev = worst;
+                st.worstRecomposeBone = worstName;
+            }
+            printf("      recompose  W == L*parentW : worst dev %.3e over %d bone(s)"
+                   "  (worst: %s)\n",
+                   worst, nb, worstName ? worstName : "-");
+
+            // (2) absolute arm-chain landmark world positions
+            for (int side = 0; side < 2; side++) {
+                const char **chain = side ? kArmR : kArmL;
+                for (int k = 0; k < 5; k++) {
+                    RndTransformable *b = FindBoneNamed(bones, chain[k]);
+                    if (!b) continue; // the alternate-casing probe; absence is normal
+                    const Vector3 &w = b->WorldXfm().v;
+                    RndTransformable *p = b->TransParent();
+                    float gap = -1.0f;
+                    if (p) {
+                        const Vector3 &pw = p->WorldXfm().v;
+                        float dx = w.x - pw.x, dy = w.y - pw.y, dz = w.z - pw.z;
+                        gap = sqrtf(dx * dx + dy * dy + dz * dz);
+                    }
+                    printf("      %-28s world (%9.3f %9.3f %9.3f)  parent %-22s "
+                           "dist %8.3f\n",
+                           chain[k], w.x, w.y, w.z,
+                           p && p->Name() ? p->Name() : "(none)", gap);
+                }
+            }
+
+            // (3) hand GEOMETRY vs hand BONE, in world space
+            for (size_t mi = 0; mi < meshes.size(); mi++) {
+                RndMesh *m = meshes[mi];
+                const char *nm = m->Name();
+                if (!nm) continue;
+                bool isHand = strstr(nm, "hands_") || strstr(nm, "wrist") ||
+                              strstr(nm, "hand_");
+                // ★ CONTROL SET — meshes X11 measured as drawing correctly. If
+                // these land in the SAME place as the hands, then "the hands
+                // are at the origin" is a property of the whole figure and NOT
+                // a hand defect (X10's rule: a cause constant across the
+                // working and broken arms is not the cause). Measured with the
+                // identical instrument, printed in the identical block.
+                bool isControl = strstr(nm, "torso") || strstr(nm, "resource") ||
+                                 strstr(nm, "head.mesh") || strstr(nm, "eyes.mesh") ||
+                                 strstr(nm, "shirt") || strstr(nm, "jacket") ||
+                                 strstr(nm, "pants") || strstr(nm, "boot");
+                if (!isHand && !isControl) continue;
+                const char *tag = isHand ? "HAND " : "ctrl ";
+                SkinExtent e = SkinnedExtent(m);
+                if (!e.valid) {
+                    printf("      %s%-34s NO GEOMETRY (skinned=%d bones=%d)\n", tag, nm,
+                           (int)m->IsSkinned(), m->NumBones());
+                    continue;
+                }
+                if (isHand) st.handMeshes++;
+                Vector3 cen((float)e.cx, (float)e.cy, (float)e.cz);
+                // ★ THE SHARPEST DISCRIMINATOR — a SET IDENTITY, not a count.
+                // BandCharacter.cpp:722-729 records that outfit skin meshes are
+                // bound at parse/merge time to a STATIC SHARED MAGNET
+                // (char/main/skeleton.milo), and :757-768 that the high-bone
+                // head/hand/face meshes are DELIBERATELY never rebound to the
+                // member's own skeleton. If that is what we are looking at,
+                // this mesh's bone slots resolve to transforms that are NOT in
+                // this character's subtree — and every one of the four members
+                // skins its hands off the SAME foreign bones. That is a
+                // falsifiable prediction with an address, so test it directly
+                // rather than inferring it from a gap.
+                int foreign = 0, owned = 0, nullslot = 0;
+                for (int bi = 0; bi < m->NumBones(); bi++) {
+                    RndTransformable *bt = m->BoneTransAt(bi);
+                    if (!bt) { nullslot++; continue; }
+                    bool mine = false;
+                    for (size_t q = 0; q < bones.size(); q++)
+                        if (bones[q] == bt) { mine = true; break; }
+                    if (mine) owned++; else foreign++;
+                }
+                printf("          bone slots: %d owned by this character, %d FOREIGN, "
+                       "%d null%s\n",
+                       owned, foreign, nullslot,
+                       foreign > 0 ? "   <<< bound off-skeleton" : "");
+                // Name the first few foreign bones and where they sit, so the
+                // magnet (if that is what it is) is identified by ADDRESS, not
+                // by adjective.
+                int shown = 0;
+                for (int bi = 0; bi < m->NumBones() && shown < 4; bi++) {
+                    RndTransformable *bt = m->BoneTransAt(bi);
+                    if (!bt) continue;
+                    bool mine = false;
+                    for (size_t q = 0; q < bones.size(); q++)
+                        if (bones[q] == bt) { mine = true; break; }
+                    if (mine) continue;
+                    const Vector3 &bw = bt->WorldXfm().v;
+                    printf("            foreign[%d] %-26s world (%9.3f %9.3f %9.3f)\n",
+                           bi, bt->Name() ? bt->Name() : "(unnamed)", bw.x, bw.y, bw.z);
+                    shown++;
+                }
+                printf("      %s%-34s [%s] n=%d  bbox (%8.2f %8.2f %8.2f)..(%8.2f %8.2f "
+                       "%8.2f)  centroid (%8.2f %8.2f %8.2f)\n",
+                       tag, nm, e.source, e.nverts, e.mn[0], e.mn[1], e.mn[2], e.mx[0],
+                       e.mx[1], e.mx[2], e.cx, e.cy, e.cz);
+                if (isControl) continue; // controls need no bone-gap analysis
+                // The decisive number: how far is each hand bone from the
+                // geometry that is supposed to hang off it? 0 == inside.
+                RndTransformable *cand[2] = { lh, rh };
+                for (int k = 0; k < 2; k++) {
+                    if (!cand[k]) continue;
+                    float g = DistToExtentBox(e, cand[k]->WorldXfm().v);
+                    printf("          gap %-18s -> geometry box : %8.3f%s\n",
+                           cand[k]->Name(), g, g == 0.0f ? "   (INSIDE)" : "");
+                    if (st.worstGapMesh == nullptr || g < st.worstBoneToGeomGap ||
+                        st.worstBoneToGeomGap < 0.0f) {
+                        // track the BEST (min) gap per mesh -- a hand mesh only
+                        // needs to contain ONE of the two hand bones.
+                    }
+                    if (g > st.worstBoneToGeomGap) {
+                        st.worstBoneToGeomGap = g;
+                        st.worstGapMesh = nm;
+                    }
+                }
+            }
+        }
+
+        printf("  === hand-pose summary: %d bone(s) recomposed (worst dev %.3e, %s); "
+               "%d hand mesh(es) measured ===\n",
+               st.bonesChecked, st.worstRecomposeDev,
+               st.worstRecomposeBone ? st.worstRecomposeBone : "-", st.handMeshes);
+        // A vacuous green is what the OLD audit produced. Refuse to emit one.
+        Gate("handpose-reached-a-skeleton", st.anyHandBone,
+             st.anyHandBone ? ""
+                            : "no figure with bone_L/R-hand was reached — this oracle "
+                              "measured NOTHING and any pass above is vacuous");
+        Gate("handpose-recompose", st.bonesChecked > 0 && st.worstRecomposeDev < 1e-3f,
+             st.bonesChecked > 0
+                 ? ""
+                 : "no bone had a parent — recompose identity never evaluated");
+    }
+
+    // Direct alias-safety probe for the compose family (charter hazard class;
+    // cost rb3-Wii ~15 waves, bit xenon in X4b). Compares Multiply(a,b,out)
+    // against the same call with `out` aliasing each argument. Reference and
+    // subject are the SAME function, so this cannot pass by construction --
+    // it fails loudly if the snapshot fix in mtx.cpp:77 ever regresses.
+    void AliasProbe() {
+        printf("  --- X12 alias-safety probe: Multiply(Transform,Transform,Transform) ---\n");
+        Transform a, b;
+        a.Reset(); b.Reset();
+        const float ca = cosf(0.5236f), sa = sinf(0.5236f); // 30deg
+        a.m.x.Set(ca, sa, 0); a.m.y.Set(-sa, ca, 0); a.m.z.Set(0, 0, 1);
+        a.v.Set(10, 0, 0);
+        const float cb = cosf(1.0472f), sb = sinf(1.0472f); // 60deg
+        b.m.x.Set(cb, sb, 0); b.m.y.Set(-sb, cb, 0); b.m.z.Set(0, 0, 1);
+        b.v.Set(0, 5, 2);
+        Transform ref; Multiply(a, b, ref);
+        Transform ab = a, bb = b;               // dest == a
+        Multiply(ab, bb, ab);
+        Transform ab2 = a, bb2 = b;             // dest == b
+        Multiply(ab2, bb2, bb2);
+        auto dev = [&](const Transform &t) {
+            float d = 0.0f;
+            const float *A = (const float *)&ref.m, *B = (const float *)&t.m;
+            for (int r = 0; r < 3; r++)
+                for (int c = 0; c < 3; c++) {
+                    float e = fabsf(A[r * 4 + c] - B[r * 4 + c]); if (e > d) d = e;
+                }
+            float dv[3] = { fabsf(ref.v.x - t.v.x), fabsf(ref.v.y - t.v.y),
+                            fabsf(ref.v.z - t.v.z) };
+            for (int k = 0; k < 3; k++) if (dv[k] > d) d = dv[k];
+            return d;
+        };
+        float da = dev(ab), db = dev(bb2);
+        printf("      reference   v = [%8.3f %8.3f %8.3f]\n", ref.v.x, ref.v.y, ref.v.z);
+        printf("      dest == a   v = [%8.3f %8.3f %8.3f]   dev %.3e\n", ab.v.x, ab.v.y,
+               ab.v.z, da);
+        printf("      dest == b   v = [%8.3f %8.3f %8.3f]   dev %.3e\n", bb2.v.x,
+               bb2.v.y, bb2.v.z, db);
+        Gate("alias-safe-multiply-transform", da < 1e-5f && db < 1e-5f,
+             (da < 1e-5f && db < 1e-5f)
+                 ? ""
+                 : "Multiply(Transform,Transform,Transform) is NOT alias-safe — the "
+                   "X4b snapshot fix in math/mtx.cpp:77 has regressed");
+    }
+
     void ReportPaletteAudit(const PaletteAuditResult &res) {
         printf("  --- skinning-palette invariant (skin = mOffset * boneWorld) ---\n");
         printf("      %-34s %3s %-26s %9s %9s %9s %11s %11s\n", "mesh", "idx", "bone",
@@ -2457,6 +2913,14 @@ namespace {
             Gate("bone-length-invariant", ba.checked > 0 && ba.maxDev < 1e-3f, d);
         }
 
+        // X12: the hand-POSE oracle. Runs at the SAME instant as the picture
+        // and the other audits, and after any clip has been applied, so it
+        // measures the pose that is actually rendered.
+        if (gHandAudit) {
+            AliasProbe();
+            ReportHandPose(dir);
+        }
+
         Bounds b = SceneBounds(dir);
         if (b.valid) {
             printf("  bbox: (%.2f %.2f %.2f) .. (%.2f %.2f %.2f) over %d meshes "
@@ -2739,6 +3203,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--beat") == 0 && i + 1 < argc) gBeat = (float)atof(argv[++i]);
         else if (strcmp(argv[i], "--bpm") == 0 && i + 1 < argc) gBpm = (float)atof(argv[++i]);
         else if (strcmp(argv[i], "--bone-audit") == 0) gBoneAudit = true;
+        else if (strcmp(argv[i], "--hand-audit") == 0) gHandAudit = true;
         else if (strcmp(argv[i], "--only-mesh") == 0 && i + 1 < argc)
             gOnlyMesh = argv[++i];
         else if (strcmp(argv[i], "--dump-tree") == 0) gDumpTree = true;
@@ -2773,6 +3238,7 @@ int main(int argc, char **argv) {
                 argv[0]);
         return 1;
     }
+    if (const char *hp = getenv("RB3_HANDPOSE_PERTURB")) gHandPerturb = (float)atof(hp);
     const char *dataDir = pos[0];
     const char *outDir = pos[1];
     // mkdir -p. A single mkdir() silently no-ops on a missing PARENT and the
