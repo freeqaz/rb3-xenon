@@ -21,7 +21,13 @@ namespace {
     int gPadsToKeepAliveNext; // 0x10
     int gKeepAliveCountdown; // 0x14
     unsigned int gHolmesPressed; // 0x18
-    Hmx::Object *gJoypadMsgSource; // 0x1c
+    // Retail creates a MsgSource here, not a bare Hmx::Object: JoypadInitCommon's
+    // first call (0x82524688) __RTDynamicCasts to the RTTI at 0x82C6B6DC, whose
+    // type-descriptor name is ".?AVMsgSource@@".  This was invisible to the metric
+    // because a callee is a relocation ARGUMENT that the normalized ruler masks --
+    // the row read a clean 100% with the wrong class.  (The variable's own name,
+    // and the AddSink/RemoveSink uses below, both agree it is a MsgSource.)
+    MsgSource *gJoypadMsgSource; // 0x1c
     bool gJoypadLibInitialized; // 0x20
     KeyboardJoypadExporter *gKeyboardExporter; // 0x24
     JoypadData gJoypadData[kNumJoypads]; // 0x28
@@ -230,7 +236,7 @@ namespace {
 }
 
 void JoypadInitCommon(DataArray *joypad_config) {
-    gJoypadMsgSource = Hmx::Object::New<Hmx::Object>();
+    gJoypadMsgSource = Hmx::Object::New<MsgSource>();
 
     float thresh;
     joypad_config->FindData("threshold", thresh, true);
