@@ -434,6 +434,18 @@ void MoggClip::SetPan(int i1, float f2) {
 // three produced BYTE-IDENTICAL output.  Codegen wall, permuter-class; do not
 // re-dig from source.  Costs nothing: the row pays 0 bytes at both 92.9% and 78.7%
 // (matched_code is all-or-nothing per row), so correctness is free here.
+//
+// lane EA-1: a FOURTH form refuted -- both channels written as explicit multiplies
+// SIMULTANEOUSLY (`f2 * -0.5f + f1` AND `f2 * 0.5f + f1`).  This was worth trying
+// because DX-3's third form changed only channel 0 while channel 1 stayed a
+// division, which keeps the shared `f2*0.5` alive no matter what channel 0 says --
+// so the CSE had never actually been denied both of its operands at once.  It
+// still emits byte-identical code: 78.7%, the same 7 mismatches.  The two retail
+// constants were re-verified straight from .rdata rather than inherited:
+// lbl_820392FC = 0xBF000000 = -0.5, lbl_82075090 = 0x3F000000 = +0.5, so the
+// channels in this file are the CORRECT way round and the higher-scoring variant
+// is the wrong one.  MoggClip is 54/55 and this is the residual row; it is a
+// codegen wall, NOT "one source fix from complete".
 void MoggClip::SetupPanInfo(float f1, float f2, bool stereo) {
     if (stereo) {
         SetPan(0, -f2 / 2.0f + f1);
