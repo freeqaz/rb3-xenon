@@ -10,6 +10,12 @@
 // EH region it opens is what pins the ctor's schedule (and its EH funclet). The
 // member site wants that arm; the Load local does not. No single spelling
 // satisfies both -- see the residual note on Load below.
+// ★★ The residual noted on Load below (retail materializes the ObjPtr vtable
+// one slot BEFORE the mOwner store, we emit it one slot after) is the SAME
+// base-mem-init-vs-derived-body scheduling question obj/Object.h documents for
+// mObject under ..._DEFER_OBJECT, just applied to mOwner. Deferring both pins
+// the mOwner store after the vptr store. See obj/Object.h (lane DS-4/C).
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "char/CharBonesBlender.h"
 #include "char/CharBoneDir.h"

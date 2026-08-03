@@ -1,3 +1,10 @@
+// Retail's ??0?$ObjOwnerPtr@VCharWeightable@@ emits {lis, mOwner, mObject,
+// cmplwi, addi, vptr-store}: BOTH member stores sit after the vtable
+// materialization. Our default spelling initializes mOwner in the base
+// mem-init list, which puts its store in the base ctor's scheduling region --
+// free to float above the `lis` -- giving {mOwner, lis, mObject, ...}. The
+// defer-both gate pins it. See obj/Object.h.
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "char/CharWeightable.h"
 #include "obj/Object.h"
 #include "synth_xbox/PitchCorrectedVoice.h"

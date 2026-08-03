@@ -418,6 +418,23 @@ template <class T>
 #if defined(RB3_OBJPTR_FORCEINLINE_CTOR) || defined(RB3_TU_OBJPTR_FORCEINLINE_CTOR)
 __forceinline
 #endif
+#ifdef RB3_TU_OBJPTR_DEFER_OWNER
+ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>() {
+    // DEFER-BOTH (lane DS-4/C). Same reasoning as the redundant `mObject`
+    // re-assignment below, applied to mOwner as well: a member store emitted
+    // from the BASE mem-init list sits in the base ctor's scheduling region and
+    // is free to float ABOVE the derived vptr materialization, which is what
+    // makes our stream {mOwner, lis, mObject, addi, vptr} instead of retail's
+    // {lis, mOwner, mObject, addi, vptr}. Writing both members in the DERIVED
+    // body over a base ctor that initializes nothing pins both stores after the
+    // vptr store, and the lis->addi gap is then filled by them -- retail's exact
+    // order. See the gate comment on ObjRefConcrete() in obj/Object.h.
+    this->mOwner = owner;
+    this->mObject = ptr;
+    if (this->mObject)
+        this->mObject->AddRef(this);
+}
+#else
 ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(owner, ptr) {
     // The redundant re-assignment is LOAD-BEARING, exactly as documented for
     // RB3_OBJPTR_INLINE_OWNER_CTOR_EH at the gate in obj/Object.h. Initialising
@@ -434,6 +451,7 @@ ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(owner, ptr) {
     if (this->mObject)
         this->mObject->AddRef(this);
 }
+#endif // RB3_TU_OBJPTR_DEFER_OWNER
 #endif
 
 template <class T>
@@ -489,6 +507,18 @@ Hmx::Object *ObjOwnerPtr<T>::RefOwner() const {
 // Retail X360: the ring-ref is mOwner (an ObjRefOwner), NOT this. We pass a null
 // object to the base ctor (so it does not AddRef(this)), then AddRef(mOwner).
 // The base ctor stores mOwner (as Hmx::Object*, reinterpreted) and mObject.
+#ifdef RB3_TU_OBJPTR_DEFER_OWNER
+// DEFER-BOTH (lane DS-4/C): base ctor initializes nothing, so BOTH the mOwner
+// and mObject stores land after the derived vptr store, matching retail's
+// {lis, mOwner, mObject, cmplwi, addi, vptr-store}. See obj/Object.h.
+template <class T>
+ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr) : ObjRefConcrete<T>() {
+    mOwner = reinterpret_cast<Hmx::Object *>(owner);
+    mObject = ptr;
+    if (mObject)
+        mObject->AddRef(owner);
+}
+#else
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr)
     : ObjRefConcrete<T>(reinterpret_cast<Hmx::Object *>(owner), nullptr) {
@@ -496,6 +526,7 @@ ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr)
     if (mObject)
         mObject->AddRef(owner);
 }
+#endif
 
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)

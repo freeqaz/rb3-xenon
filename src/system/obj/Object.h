@@ -322,6 +322,31 @@ protected:
     T1 *mObject; // 0x8
 public:
     ObjRefConcrete(Hmx::Object *owner, T1 *obj);
+#ifdef RB3_TU_OBJPTR_DEFER_OWNER
+    // TU-gated (lane DS-4/C): the DEFER-**BOTH** base ctor. Initializes NOTHING,
+    // so the derived ctor body owns the mOwner store as well as the mObject
+    // store, and BOTH land after the derived vptr store.
+    //
+    // Why this exists when RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT already defers
+    // mObject: three units in this batch want retail's order
+    //     {vptr-lis, mOwner, mObject, ..., vptr-addi, vptr-store}
+    // whereas EVERY pre-existing spelling emits
+    //     {mOwner, vptr-lis, mObject, ..., vptr-addi, vptr-store}
+    // because mOwner comes from the BASE mem-init list and is therefore free to
+    // float above the vptr materialization. The mechanism is identical to the
+    // one DEFER_OBJECT documents for mObject -- a store emitted before the
+    // derived vptr store may be hoisted, one emitted after it is pinned -- and
+    // the remedy is the same: move the store past the vptr store by assigning
+    // it in the derived body over a base ctor that never wrote it.
+    //
+    // This closes a residual that ui/UIListLabel.cpp and obj/Object.h both
+    // previously recorded as "NOT source-steerable" / "scheduler wall, not
+    // source" on three-way evidence. That conclusion was sound about the three
+    // spellings it tested -- all three left mOwner in the base mem-init list,
+    // so all three were the SAME experiment for this store, and they duly came
+    // out byte-identical. Deferring mOwner was never among them.
+    ObjRefConcrete() {}
+#endif
 #ifdef RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
     // TU-gated (lane NCCC f70): owner-only base ctor leaving mObject to the
     // DERIVED ctor body, so the mObject store lands AFTER the derived vptr
