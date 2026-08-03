@@ -2134,6 +2134,36 @@ namespace {
                        "expected and proves nothing\n",
                        nbIn, worstIn, worstInName ? worstInName : "-");
 
+            // (2b) X13 ★ THE PLACEMENT CHAIN, WALKED TO THE ROOT.
+            //
+            // Milestone 2: at bind pose the palette and meshWorld disagree by
+            // exactly the character's placement. That is decided here rather
+            // than argued: walk bone_L-hand's TransParent chain to its root and
+            // print every link's world translation. If the placement were
+            // reaching the skeleton, the root of this chain would sit at the
+            // character's venue slot. Printed for EVERY figure, so the crowd
+            // (placement 0,0,0) sits next to the band (placement non-zero) as
+            // the comparative control.
+            if (lh) {
+                printf("      --- TransParent chain of bone_L-hand.mesh to root ---\n");
+                RndTransformable *walk = lh;
+                int depth = 0;
+                while (walk && depth < 24) {
+                    const Vector3 &ww = walk->WorldXfm().v;
+                    const Vector3 &lv = walk->LocalXfm().v;
+                    printf("        [%2d] %-30s world (%9.3f %9.3f %9.3f)  local "
+                           "(%8.3f %8.3f %8.3f)  class %s\n",
+                           depth, walk->Name() ? walk->Name() : "(unnamed)", ww.x, ww.y,
+                           ww.z, lv.x, lv.y, lv.z, walk->ClassName().Str());
+                    walk = walk->TransParent();
+                    depth++;
+                }
+                if (!walk)
+                    printf("        ^ chain ROOT reached (no TransParent). If its world "
+                           "is NOT the character's venue slot, the placement never "
+                           "reaches the skeleton and the palette is character-LOCAL.\n");
+            }
+
             // (2) absolute arm-chain landmark world positions
             for (int side = 0; side < 2; side++) {
                 const char **chain = side ? kArmR : kArmL;
