@@ -16,6 +16,32 @@
 #include "rndobj/SoftParticleBuffer.h"
 #include "rndobj/Stats_NG.h"
 #include "rndobj/Tex.h"
+// ⛔ The ??$MakeString@HH@@ row in this unit IS NOT SOURCE-CLOSABLE, and the
+// splits pin behind it is WRONG (lane DS-4/C). Do not perturb the MakeString
+// call sites below trying to move it.
+//
+// splits.txt pins a second .text block 0x82399348-0x823993A4 to Rnd_NG and the
+// map names 0x82399348 `??$MakeString@HH@@YAPBDPBDHH@Z`. Retail's body there is
+// NOT a MakeString: it is `if (this != &o) { reserve(o.size()); vector<
+// HamIKEffector::Constraint>::operator=(...) }` -- element size 16 via
+// `srawi r4,r11,4`, and it CALLS ??4?$vector@VConstraint@HamIKEffector@@.
+// Map-independent proof: every MakeString must build a FormatString, whose
+// ~2 KB buffer forces a huge frame. A scan of ALL 114 bl-sites targeting
+// ??0FormatString@@QAA@PBD@Z (0x827c4380) finds frames of 0x870-0x8b0 WITHOUT
+// EXCEPTION (our own base frame is 0x880). 0x82399348's frame is 0x70, so it
+// cannot be any MakeString instantiation.
+//
+// Nor can it be repinned, because retail has NO distinct MakeString<int,int>:
+// those 114 sites resolve to 34 map-named instantiations plus exactly ONE
+// unnamed small caller, 0x8278f3b8 (0x5c/4 calls) -- and that one is REFUTED as
+// <int,int>: its two streamed args go to DIFFERENT callees (0x827c40e8 int-class
+// vs 0x827c4240 float-class), i.e. it is MakeString<int,float>. <int,int> needs
+// both in one class. ⚠ Note 0x827c40e8 serves int, char, uchar AND char*, so it
+// is an ICF FOLD CLASS, not a type -- it can only refute, never confirm.
+// Consistent with that, build/45410914/icf_aliases.map carries
+// ??$MakeString@PBDPBD@@ @0x8229D148 as a synthetic ICF-alias row and no
+// ??$MakeString@HH@@ row at all: <int,int> was folded away, so there is no home
+// address to pin. Fixing this is map/splits work (drop or re-home the block).
 #include "utl/MakeString.h"
 #include "rndobj/PostProc_NG.h"
 #include "rndobj/DOFProc_NG.h"

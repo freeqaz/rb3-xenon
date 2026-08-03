@@ -50,6 +50,27 @@ END_PROPSYNCS
 // so closing this needs a tree-wide ObjPtr/RndDir size decision, not a Save edit.
 // Left at dc3's verbatim body (83.2 mpn) on purpose; do not "fix" by dropping a
 // member save without first settling which member retail writes.
+// ⛔ ?Save@HamPhotoDisplay@@ IS NOT SOURCE-CLOSABLE -- the pinned target is a
+// MISIDENTIFIED CARVE, not a version-drift bug in this file (lane DS-4/C).
+// Do NOT "fix" the body to fit it; the DC3 source below is correct for DC3 and
+// the target belongs to a different class.
+//
+// This unit is a 3-block carve (NewObject / Save / ??_G) whose names came from
+// DC3 by transfer. Retail's 0x822cdc80 disagrees with THIS class three ways:
+//   1. member block size. Distance ObjectDir->RndDir is 0x1E0 on BOTH sides
+//      (so the shared engine layout is right), but RndDir->`this` is 0x20 for
+//      us vs 0x48 for retail. 0x20 is EXACTLY mMesh1(0xc)+mMesh2(0xc)+
+//      mIndex1(4)+mIndex2(4) -- i.e. retail's own member block is 0x28 BIGGER,
+//      with its saved ObjPtr at member-offset 0x38. Members we cannot name.
+//   2. saved member count. Retail issues ONE operator<<(ObjRefConcrete<RndMesh>)
+//      where `bs << mMesh1 << mMesh2` issues two, and the size arithmetic is
+//      exact: base 140 B - 3 insns (subi/mr/bl) = 128 B = target.
+//   3. SAVE_SUPERCLASS position. Retail calls ?Save@RndDir@@ LAST (tail), after
+//      the IsProxy-guarded block; SAVE_SUPERCLASS emits it FIRST.
+// And decisively: rb3-Wii -- RB3's OWN source oracle -- has no HamPhotoDisplay
+// and no hamobj/ directory at all, so RB3 never had this class to drift from.
+// Closing this row is map/identification work (find the real RB3 class), not
+// source work.
 BEGIN_SAVES(HamPhotoDisplay)
     SAVE_REVS(1, 0)
     SAVE_SUPERCLASS(RndDir)
