@@ -325,4 +325,22 @@ void RegisterMiloObjectFactories() {
     // real build work -- see the STEP-0 note in native/CMakeLists.txt.
     REGISTER_OBJ_FACTORY(WorldCrowd)
     REGISTER_OBJ_FACTORY(UIColor)
+
+    // X4d MEASUREMENT HARNESS (RB3_BIND_BANDCAMSHOT=1), off by default.
+    //
+    // BandCamShot is 611 of the 675 outstanding factory misses. It derives from
+    // CamShot (bandobj/BandCamShot.h:15), which IS registered above, so the
+    // name can be bound to the base allocator without compiling a single TU.
+    // Written long-hand because REGISTER_OBJ_FACTORY keys on
+    // T::StaticClassName(), which would say "CamShot", not "BandCamShot".
+    //
+    // The open question X4c could not answer is whether ReadDead absorbs the
+    // resulting SHORT READ -- the base Load() consumes fewer bytes than the
+    // derived object wrote. That is now measurable: RB3_STREAM_AUDIT reports
+    // the per-object ReadDead distance, so the short read shows up as an exact
+    // byte count instead of a guess. Left OFF by default because a base-class
+    // substitute is a behavioural stand-in, not a port.
+    if (getenv("RB3_BIND_BANDCAMSHOT")) {
+        Hmx::Object::RegisterFactory(Symbol("BandCamShot"), CamShot::NewObject);
+    }
 }

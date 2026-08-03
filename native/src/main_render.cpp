@@ -193,6 +193,11 @@ namespace {
     float gBeat = -1.0f; // <0 => no animation requested
     float gBpm = 120.0f;
     bool gBoneAudit = false;
+    // X4d framing/isolation overrides (driver-only; no shared src/ involvement).
+    const char *gOnlyMesh = nullptr;
+    float gDistScale = -1.0f;   // <0 = use the per-cell default
+    float gAzimuth = -999.0f;
+    float gElevation = -999.0f;
     ObjDirPtr<ObjectDir> gClipsDir;
 
     void Gate(const char *name, bool ok, const char *detail) {
@@ -1470,6 +1475,15 @@ namespace {
 
         RndCam *cam = Hmx::Object::New<RndCam>();
         cam->SetName("x3_cam", dir);
+        // X4d: an explicit arkPath previously always got distScale 0.9, the
+        // constant tuned for the WIDE FLAT track piece -- so rendering the tall
+        // narrow character by path cropped its head and hands, while the same
+        // asset framed correctly as a default cell (1.15). That is the framing
+        // caveat the X4c coordinator review raised; these overrides make the
+        // framing explicit and reproducible instead of implicit per-cell.
+        if (gDistScale > 0.0f) distScale = gDistScale;
+        if (gAzimuth > -900.0f) azimuth = gAzimuth;
+        if (gElevation > -900.0f) elevation = gElevation;
         PlaceCamera(cam, b, azimuth, elevation, distScale);
 
         bool syntheticEnv = false;
@@ -1597,6 +1611,14 @@ namespace {
             for (size_t i = 0; i < meshes.size(); i++) {
                 RndMesh *m = meshes[i];
                 if (!m->Showing()) continue;
+                // X4d: --only-mesh <substr> isolates one drawable. A crowd
+                // character ships SIX skinned meshes -- the body plus five
+                // mutually-exclusive hand props (horns/fist/clap/lighter/
+                // lighter.1) that the game picks ONE of per crowd member. This
+                // driver draws all six at once, so anything that looks like a
+                // stray skinning artifact has to be attributed per-mesh before
+                // it is called a defect.
+                if (gOnlyMesh && !strstr(m->Name(), gOnlyMesh)) continue;
                 m->DrawShowing();
                 r.drawn++;
             }
@@ -1678,6 +1700,14 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--beat") == 0 && i + 1 < argc) gBeat = (float)atof(argv[++i]);
         else if (strcmp(argv[i], "--bpm") == 0 && i + 1 < argc) gBpm = (float)atof(argv[++i]);
         else if (strcmp(argv[i], "--bone-audit") == 0) gBoneAudit = true;
+        else if (strcmp(argv[i], "--only-mesh") == 0 && i + 1 < argc)
+            gOnlyMesh = argv[++i];
+        else if (strcmp(argv[i], "--dist-scale") == 0 && i + 1 < argc)
+            gDistScale = (float)atof(argv[++i]);
+        else if (strcmp(argv[i], "--azimuth") == 0 && i + 1 < argc)
+            gAzimuth = (float)atof(argv[++i]);
+        else if (strcmp(argv[i], "--elevation") == 0 && i + 1 < argc)
+            gElevation = (float)atof(argv[++i]);
         else if (strcmp(argv[i], "--postproc") == 0 && i + 1 < argc)
             gPostProcFile = argv[++i];
         else if (strcmp(argv[i], "--postproc-name") == 0 && i + 1 < argc)
