@@ -87,7 +87,7 @@ bool DrumTrackWatcherImpl::Swing(int slot, bool b1, bool b2, GemHitFlags flags) 
         GameGem &gem = mGemList->GetGem(relevant);
         if (!gem.GetPlayed() && Playable(relevant)) {
             MILO_ASSERT(gem.NumSlots() == 1, 0x8D);
-            if (slot == gem.GetSlot()) {
+            if (gem.GetSlot() == slot) {
                 if (CheckCymbal(gem, flags))
                     OnHit(now, slot, relevant, gem.GetSlots(), flags);
                 else

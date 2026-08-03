@@ -91,7 +91,7 @@ bool PlayerTrackConfigList::UserPresent(const UserGuid &u) {
 
 const UserGuid &PlayerTrackConfigList::TrackPlayer(int trk) const {
     for (int i = 0; i < mConfigs.size(); i++) {
-        if (trk == mConfigs[i].TrackNum())
+        if (mConfigs[i].TrackNum() == trk)
             return ConfigAt(i).mUserGuid;
     }
     return gNullUserGuid;
