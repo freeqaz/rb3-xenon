@@ -837,16 +837,43 @@ namespace {
             // drops a mesh with no vertices (Mesh_Wgpu "no vertices").
             int showing = 0, withVerts = 0, drawable = 0;
             // ★ X9: the two per-mesh predicates disagree, and WHICH way they
-            // disagree is the whole remaining defect. With the band on its marks
-            // a member reports showing=19 / verts>0=44 / DRAWABLE=9 — so ~10
-            // meshes are SHOWN-BUT-EMPTY and ~35 are FULL-BUT-HIDDEN. An
-            // aggregate cannot tell those two populations apart (the charter's
-            // standing warning), so name them.
+            // disagree is the whole remaining defect. An aggregate cannot tell
+            // those two populations apart (the charter's standing warning), so
+            // name them.
+            //
+            // ⛔ X10: THIS PROBE WAS WRONG, AND IT MISDIRECTED TWO LANES.
+            //
+            // It asked `NumVerts() > 0`. Mesh.h:203 is
+            //     int NumVerts() const { return mVerts.size(); }
+            // -- THIS mesh's own mVerts, with no mGeomOwner indirection (unlike
+            // Verts() at :240 and NumCompressedVerts() at :262, which both DO
+            // indirect). But RndMesh::LoadVertices's HX_NATIVE arm
+            // (Mesh.cpp:1705-1739) explicitly does `mVerts.resize(0)` and parks
+            // the shipped blob in mCompressedVerts whenever the per-mesh
+            // compression flag is set -- which is exactly the population that
+            // skinned character meshes belong to. So a mesh with perfectly good
+            // geometry reports NumVerts()==0.
+            //
+            // MEASURED, not argued. On small_club_01 with RB3_BAND_PLACE=1:
+            //     showing && NumVerts()>0            =  30   <- the old probe
+            //     showing && (verts>0 || cverts>0)   = 219
+            //     renderer actually issued            = 203 draws
+            // The old predicate undercounts real draws by ~7x. And the positive
+            // control is in the same log: the venue's own stage.mesh reports
+            // verts=0 cverts=140, and the stage is visibly rendered in every
+            // frame X6..X9 shipped.
+            //
+            // Consequence: X9's headline "nine SHOWN-BUT-EMPTY meshes per
+            // member, all head/hands" was an artifact for SIX of the nine.
+            // youngozzie_resource.mesh (hair) carries cverts=2348/faces=3012;
+            // eyes, tongue, upper/lowerteeth and fingernails are all populated.
+            // The genuinely-empty set is THREE: head.mesh, hands_naked.mesh and
+            // eyebrows*_resource.mesh (cverts=0 AND faces=0).
             std::vector<const char *> shownEmpty, fullHidden;
             for (size_t j = 0; j < cm.size(); j++) {
                 if (cm[j]->IsSkinned()) skinned++;
                 bool sh = cm[j]->Showing();
-                bool nv = cm[j]->NumVerts() > 0;
+                bool nv = cm[j]->NumVerts() > 0 || cm[j]->NumCompressedVerts() > 0;
                 if (sh) showing++;
                 if (nv) withVerts++;
                 if (sh && nv) drawable++;
