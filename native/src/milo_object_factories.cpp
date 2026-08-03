@@ -464,6 +464,35 @@ void RegisterMiloObjectFactories() {
         // Init() additionally runs Register(), the two bandchardesc_* DataFuncs
         // and ReloadPrefabs -- all of which the bare factory line dropped.
         BandCharDesc::Init();
+        // ⛔ X9: OutfitConfig::Init() BELONGS HERE and CANNOT GO HERE YET.
+        //
+        // It is the FIFTH instance of this file's documented drift and it gates
+        // the band's HEAD AND HANDS: with the band on its marks every member
+        // reports nine SHOWN-BUT-EMPTY meshes, and they are exactly
+        //   head.mesh eyes.mesh tongue.mesh upper/lowerteeth.mesh
+        //   hands_naked.mesh fingernails_resource.mesh eyebrows1_resource.mesh
+        //   <hair>_resource.mesh
+        // -- selected correctly by the recompose (Showing() true) but carrying
+        // zero vertices -- while the log emits `Can't make OutfitConfig` 40
+        // times, once per head/hands/hair/facehair/eyebrows resource milo,
+        // because OutfitConfig::Init() (bandobj/OutfitConfig.cpp:404-409) never
+        // ran its Register().
+        //
+        // MEASURED: adding the call here does NOT link (rc=1). Referencing
+        // Init() retains OutfitConfig.cpp sections that need BandPatchMesh
+        // (::Render ::ReProject ::PreRender ::PostRender ::Compress
+        // ::ListDrawChildren, its copy-ctor/operator=/operator>>) plus
+        // gRB3OutfitComposeActive and the Symbol `recompose` -- none defined in
+        // this target.
+        //
+        // WHY: BandPatchMesh.cpp is NOT compiled standalone. It is
+        // SCATTER-INCLUDED into src/system/world/LightPreset.cpp:1503 -- an X360
+        // TU-PACKING decision made for objdiff SCORING -- and LightPreset.cpp is
+        // not in rb3-render's source list (only LightPresetManager.cpp is). So
+        // an X360 match-build packing choice silently decides what the NATIVE
+        // link contains. That is X7's "a stub's blast radius is the source list
+        // it sits in", inverted: here the TU you need sits in a list your target
+        // is not built from. Unblocking it is its own lane. — X9
         BandWardrobe::Init();
         // BandCharacter IS an ObjectDir subclass (-> Character -> RndDir ->
         // ObjectDir), which is why its load failure was a desync rather than a
