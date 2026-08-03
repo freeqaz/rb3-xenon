@@ -1,3 +1,8 @@
+// Retail INLINES this TU's single ObjPtr<RndCam> owner-ctor (three stores, no
+// `bl`) but keeps ObjPtr<Hmx::Object>'s out of line.  The define is TU-WIDE, so
+// the two Hmx::Object sites in Load are spelled with the explicit two-arg ctor,
+// which stays declared-only/out-of-line.  Must precede every include.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
 #include "rndobj/Gen.h"
 #include "math/Geo.h"
 #include "math/Rand.h"
@@ -12,21 +17,24 @@
 #include "rndobj/Trans.h"
 #include "rndobj/Utl.h"
 
-// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
-// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
-// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
-// does not lay .bss out in declaration order, so two separate statics get other
-// globals interleaved between them and will not fold onto one base register.
-static struct {
-    __declspec(align(4)) unsigned short altRev;
-    __declspec(align(4)) unsigned short rev;
-} gRevs_Gen;
-#define gAltRev gRevs_Gen.altRev
-#define gRev gRevs_Gen.rev
+// RB3-360 retail rev storage for THIS unit: there is none.  Adjudicated on retail
+// bytes -- the target reads the revision straight into a stack local and reloads
+// it with `lwz` + SIGNED `cmpwi` at every test (`lwz r11,0x54(r31)`;
+// `cmpwi cr6,r11,0x9`), with no store between the ReadEndian and the first
+// reload.  So retail neither masked the packed rev nor spilled it to a file
+// static: it kept the raw 32-bit `int` and compared it signed.  Nothing outside
+// Load reads a revision in this TU (the alt-rev word was written and never
+// read), so the aggregate was pure overhead -- it also burned a callee-saved
+// register for its base pointer, which is why our prologue used __savegprlr_25
+// against retail's __savegprlr_26 and our frame was 0x10 larger.
 
 RndGenerator::RndGenerator()
-    : mPath(this), mPathStartFrame(0), mPathEndFrame(0), mMesh(this), mMultiMesh(this),
-      mParticleSys(this), mNextFrameGen(-9999999), mRateGenLow(100), mRateGenHigh(100),
+    // Four two-arg spellings: retail's ??0RndGenerator@@ calls these ObjPtr
+    // ctors OUT OF LINE, and RB3_OBJPTR_INLINE_OWNER_CTOR (needed for Load's
+    // ObjPtr<RndCam> site) is TU-WIDE, so it would inline them here too --
+    // measured 81.3% -> 61.1% before this spelling was applied.
+    : mPath(this, nullptr), mPathStartFrame(0), mPathEndFrame(0), mMesh(this, nullptr),
+      mMultiMesh(this, nullptr), mParticleSys(this, nullptr), mNextFrameGen(-9999999), mRateGenLow(100), mRateGenHigh(100),
       mScaleGenLow(1), mScaleGenHigh(1), mPathVarMaxX(0), mPathVarMaxY(0),
       mPathVarMaxZ(0) {}
 
@@ -97,37 +105,35 @@ END_COPYS
 BEGIN_LOADS(RndGenerator)
     int rev;
     bs >> rev;
-    gRev = getHmxRev(rev);
-    gAltRev = getAltRev(rev);
-    if (gRev > 9) {
+    if (rev > 9) {
         Hmx::Object::Load(bs);
     }
-    if (gRev > 1) {
+    if (rev > 1) {
         RndTransformable::Load(bs);
         RndDrawable::Load(bs);
         RndAnimatable::Load(bs);
     }
     ResetInstances();
     bs >> mMesh >> mPath;
-    if (gRev < 7) {
+    if (rev < 7) {
         bool bd0;
         bs >> bd0;
         if (!bd0) {
             MILO_NOTIFY("%s no longer supports childOfGen", Name());
         }
     }
-    if (gRev < 1) {
+    if (rev < 1) {
         bs >> mRateGenHigh;
         bs >> mScaleGenHigh;
     }
-    if (gRev < 8) {
+    if (rev < 8) {
         ObjPtr<RndCam> cam(this);
         bool bd0;
         int ic0;
         bs >> bd0 >> ic0 >> cam;
     }
 
-    if (gRev > 0) {
+    if (rev > 0) {
         bs >> mRateGenLow;
         bs >> mRateGenHigh;
         bs >> mScaleGenLow;
@@ -135,7 +141,7 @@ BEGIN_LOADS(RndGenerator)
         bs >> mPathVarMaxX;
         bs >> mPathVarMaxY;
         bs >> mPathVarMaxZ;
-        if (gRev < 9) {
+        if (rev < 9) {
             mPathVarMaxX *= DEG2RAD;
             mPathVarMaxY *= DEG2RAD;
             mPathVarMaxZ *= DEG2RAD;
@@ -145,20 +151,20 @@ BEGIN_LOADS(RndGenerator)
         mScaleGenLow = mScaleGenHigh;
         mPathVarMaxX = mPathVarMaxY = mPathVarMaxZ = 0;
     }
-    if (gRev == 3) {
+    if (rev == 3) {
         int x;
-        ObjPtr<Hmx::Object> obj(this);
+        ObjPtr<Hmx::Object> obj(this, nullptr);
         bs >> obj >> x;
     }
-    if (gRev > 3 && gRev < 0xB) {
-        ObjPtr<Hmx::Object> obj(this);
+    if (rev > 3 && rev < 0xB) {
+        ObjPtr<Hmx::Object> obj(this, nullptr);
         bs >> obj;
     }
-    if (gRev > 4 && gRev < 0xB) {
+    if (rev > 4 && rev < 0xB) {
         bool bd0;
         bs >> bd0;
     }
-    if (gRev > 5) {
+    if (rev > 5) {
         bs >> mPathEndFrame;
         bs >> mPathStartFrame;
     } else {
@@ -166,7 +172,7 @@ BEGIN_LOADS(RndGenerator)
             mPathEndFrame = mPath->EndFrame();
         mPathStartFrame = 0;
     }
-    if (gRev > 6) {
+    if (rev > 6) {
         bs >> mMultiMesh >> mParticleSys;
     }
 END_LOADS
