@@ -277,6 +277,13 @@ void GamePanel::Exit() {
         TheTaskMgr.ClearTimelineTasks(kTaskBeats);
         TheTaskMgr.ClearTimelineTasks(kTaskTutorialSeconds);
     }
+    // Retail-360 addition (absent on Wii, exactly like the SetSongID call in
+    // Enter above): clear rich presence on the way out.  Sits AFTER the
+    // !mMultiEvent block, not inside it -- retail's `bne 80` guarding that block
+    // is byte-identical to ours, so the join point is unmoved, while the
+    // later `beq cr6` displacement is 184 vs our 172, i.e. exactly the 12 bytes
+    // of these 3 instructions, all of them past the join.
+    ThePresenceMgr.SetNotInGame();
     UIPanel::Exit();
     mReplay = true;
     ThePlatformMgr.SetNotifyUILocation((NotifyLocation)1);
