@@ -2199,25 +2199,53 @@ namespace Hmx {
         static void RegisterFactory(Symbol name, ObjectFunc *func);
 
         /** Create a new Object derivative based on its entry in the factory list. */
-        // ⛔ DO NOT "optimize away" the MILO_FAIL guard below to close
-        // ??$New@VMoggClip@@@Object@Hmx@@SAPAVMoggClip@@XZ (VoiceoverPanel.cpp
-        // 0x8262F700, 72 B, stuck at 61%).  That target body genuinely has no null
-        // test and no second StaticClassName call -- but REMOVING the guard was
-        // MEASURED (lane DW-1, whole-binary ab_measure) and it is NET NEGATIVE:
-        //   Δmatched +0 · Δcode% -0.005614pp / -600 B
-        //   VoiceoverPanel 37->38 (reaches 100%) but Joypad LOSES JoypadInitCommon
-        //   (672 B, 100% -> 98.21%).
-        // JoypadInitCommon's first statement is Hmx::Object::New<Hmx::Object>() and
-        // it matches retail at 100% WITH the guard, so retail's New<T> HAS it.  The
-        // two retail witnesses genuinely disagree; the 0x8262F700 discrepancy is
-        // still UNEXPLAINED and is not a guard-removal problem.  MILO_FAIL evaluates
-        // its arguments on purpose -- see os/Debug.h.
+        // ⚠ REFUTED (lane DY-2a) -- the ⛔ that used to sit here said "retail's
+        // New<T> HAS the MILO_FAIL guard" on the strength of JoypadInitCommon
+        // matching at 100% with it.  That inference does not hold, and the guard
+        // is now gone.  Recorded in full because the old note would otherwise
+        // keep this vein closed:
+        //
+        //  - JoypadInitCommon does NOT inline New<T>.  Its index-4 instruction is
+        //    `bl fn_82524688`, an OUT-OF-LINE call.  A callee is a RELOCATION
+        //    ARGUMENT and the normalized ruler MASKS it, so JoypadInitCommon
+        //    scored 100% regardless of what that callee contained -- it was
+        //    structurally incapable of witnessing the guard.
+        //
+        //  - TWO independent retail COMDATs settle it directly, on bytes:
+        //      fn_8262F700  New<MoggClip>    (VoiceoverPanel)
+        //      fn_82524688  New<MsgSource>   (callee of JoypadInitCommon)
+        //    Both are 18 instructions / 72 B with the IDENTICAL shape --
+        //    StaticClassName -> NewObject -> __RTDynamicCast -> return -- and
+        //    NEITHER has a null test or a second StaticClassName call.  A single
+        //    template cannot emit a guarded and an unguarded instantiation, and
+        //    both witnesses say unguarded.
+        //
+        //  - DW-1's measured -600 B was real but MISATTRIBUTED, and chasing it
+        //    uncovered the actual defect.  Joypad.cpp was calling
+        //    New<Hmx::Object>, for which dynamic_cast is an IDENTITY conversion:
+        //    no __RTDynamicCast, a 3-instruction body, so once the guard stopped
+        //    padding it MSVC inlined it into JoypadInitCommon (168 -> 171 insns,
+        //    exactly the 3 inserts) where retail keeps the `bl`.  Retail casts to
+        //    ".?AVMsgSource@@" (RTTI 0x82C6B6DC), and with New<MsgSource> the
+        //    __RTDynamicCast is back, the body is 18 insns, nothing inlines, and
+        //    JoypadInitCommon is 168/168 again.  So the guard was never load-
+        //    bearing -- a wrong template argument was.
+        //    (auto_inline(off) was tried here as an inline-policy lever and is
+        //    NOT needed once the class is right; both rows verified 100% without
+        //    it.  Do not re-add it -- it would sit in a PCH header.)
+        //
+        // HX_NATIVE keeps the real fatal check -- retail's silence on a failed
+        // factory lookup is a matching artifact, not behaviour worth porting.
         template <class T>
         static T *New() {
+#ifdef HX_NATIVE
             T *obj = dynamic_cast<T *>(Hmx::Object::NewObject(T::StaticClassName()));
             if (!obj)
                 MILO_FAIL("Couldn't instantiate class %s", T::StaticClassName());
             return obj;
+#else
+            return dynamic_cast<T *>(Hmx::Object::NewObject(T::StaticClassName()));
+#endif
         }
     };
 
