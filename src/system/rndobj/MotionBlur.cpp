@@ -41,14 +41,35 @@ BEGIN_COPYS(RndMotionBlur)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(1, 0)
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape), not DC3's Object.h
+// BinStreamRev stack decorator.  Adjudicated on retail bytes at 0x82493EA8
+// (148 B): the body reads the packed rev, stores `revs >> 16` and `revs` as two
+// HALFWORDS four bytes apart onto ONE internal-linkage base (lbl_82CC6A48 +0/+4)
+// and then passes the RAW incoming BinStream to every read and to both
+// superclass Loads.  Our BinStreamRev form emitted ??0BinStream, a
+// ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream destructor that retail
+// has none of, and dispatched each read on `&d` instead of `bs`.
+//
+// Spelled out longhand rather than by including obj/ObjMacros.h: that header
+// also swaps the SYNC_PROP and HANDLE families, which are already byte-exact
+// here under the Object.h dialect.  Same established lever as rndobj/Flare.cpp.
+// The pair MUST live in ONE aligned(4) aggregate -- two separate file statics
+// are laid out independently and cannot fold onto a single base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_MotionBlur;
+#define gAltRev gRevs_MotionBlur.altRev
+#define gRev gRevs_MotionBlur.rev
 
 BEGIN_LOADS(RndMotionBlur)
-    LOAD_REVS(bs);
-    ASSERT_REVS(1, 0);
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndDrawable)
-    d >> mDrawList;
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    RndDrawable::Load(bs);
+    bs >> mDrawList;
 END_LOADS
 
 void RndMotionBlur::DrawShowing() {
