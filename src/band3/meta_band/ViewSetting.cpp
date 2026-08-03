@@ -41,8 +41,11 @@
 
 void ViewSetting::InitData(RndDir *dir) {
     if (dir) {
-        mEvenMat = dir->Find<RndMat>("bg_even.mat", false);
-        mOddMat = dir->Find<RndMat>("bg_odd.mat", false);
+        // Retail passes Find()'s default fail=true here (li r5,1), unlike
+        // ViewSettingsProvider::InitData below which really does pass false
+        // (proven: that row is byte-exact retail at 100%).
+        mEvenMat = dir->Find<RndMat>("bg_even.mat");
+        mOddMat = dir->Find<RndMat>("bg_odd.mat");
     }
 }
 
