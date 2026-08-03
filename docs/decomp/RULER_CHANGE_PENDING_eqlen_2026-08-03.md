@@ -178,10 +178,111 @@ git -C /home/free/code/milohax/objdiff branch -D laneDR1-eqlen-fix
 - The **64% residual `diff`-vs-`report` disagreement at identical config**.
   Suspected report-side symbol pairing (funclet byte-signature pairing /
   `symbol_equivalences`) wired differently from `diff` — **untested**.
-- **Whether past lane conclusions should be re-examined.** 97 rows moved by
-  ≥10 pp; they were **not** cross-referenced against landed lane decisions. Any
-  lane that reverted a change after seeing a large unexplained collapse is a
-  candidate for re-opening.
+- ~~**Whether past lane conclusions should be re-examined.**~~ **SETTLED by lane
+  DS-2, 2026-08-03 — see below. No lane was misled. Do not re-fund.**
 - DR-1's absolute figures are from a worktree off an earlier main (main has since
   advanced). The comparison is binary-vs-binary on a **fixed** tree, so it is
   common-mode and valid — but the absolutes are of that tree, not current main.
+  ✅ **Re-derived on current main by DS-2 and IDENTICAL**: 508 exposed / 257
+  changed / 97 ≥10 pp, `matched_functions` 43,678 and `matched_code` 4,215,804
+  Δ0 across the binary swap. The exposed set is stable across the tree drift.
+
+## ✅ RESOLVED — lane DS-2: no lane conclusion was corrupted
+
+Reproduction first: DR-1's blast-radius figures reproduce **exactly**, both from
+its own artifacts and re-derived on current main (40,114 reached / 39,008 eqlen /
+508 exposed / 257 changed / 97 ≥10 pp).
+
+### ★ The 257/97 figures were never the harm-capable population — SPLIT BY DIRECTION
+
+DR-1 reported the movers without splitting them. The split is decisive:
+
+| | count | ≥10 pp |
+|---|---|---|
+| **UNDER**-reported (`fix > base`) — bug DEFLATED ⇒ abandonment-capable | **63** | **15** |
+| **OVER**-reported (`fix < base`) — bug INFLATED ⇒ cannot cause abandonment | 194 | 82 |
+
+An inflated score never makes anyone abandon anything. **82 of the 97 large
+movers are DOWN**, so the population that could have made a lane see a collapse
+is **15 rows, not 97** — an 6.5× smaller worry than the open question implied.
+
+### ★★★ THE INSTRUMENT INVERTS ON EXACTLY THE POPULATION IT WAS AIMED AT
+
+Exposure requires **today's** source to produce an equal instruction count. A
+lane that **reverted** its fix put the source *back* into the unequal-length
+state ⇒ **reverted work is BY CONSTRUCTION largely ABSENT from the exposed set.**
+Verified, not argued: on the reverted `BoxMap` state both binaries agree exactly
+(85.214 / 73.783 / 65.722), i.e. the row is not exposed at all.
+
+⇒ Scanning the exposed set for reverts is structurally incapable of finding them.
+It finds a *different* population — rows filed as walls **at the landed state**.
+Hunting reverted work requires **re-applying the patch and scoring a 2×2** (both
+binaries × both source states). Both populations were worked separately.
+
+### CONTROL — the harm-capable stratum is NOT enriched for lane attention
+
+"Touched" = has a `decomp.db.attempts` row or a terminal `functions.verdict`.
+
+| stratum | n | touched | enrichment |
+|---|---|---|---|
+| CONTROL: all sub-100 rows | 25,667 | 9.9% | 1.00× |
+| EXPOSED (508) | 506 | 64.8% | 6.6× |
+| UNDER-reported (63) | 63 | 34.9% | 3.5× |
+| **UNDER-reported ≥10 pp (15)** | 15 | **13.3% (2/15)** | **1.35×** |
+
+⚠ **The 6.6× on EXPOSED is REVERSE CAUSATION, not harm.** Equal instruction count
+is a *consequence* of a lane having driven our size to the target's, so exposure
+is enriched for lane attention by construction. The reading that matters is the
+gradient *within*: harm-capability and lane attention move in **opposite**
+directions, bottoming out at the base rate (2 of 15, vs 1.5 expected) exactly
+where the deflation is largest. **13 of the 15 biggest deflations were never
+worked by anyone** — nobody was there to be misled.
+
+### The four adjudicated re-open candidates — ALL CLEAR
+
+Every revert found in `git log` decided on a **whole-binary** Δmatched/Δcode is
+immune by construction (those keys are Δ0). Only per-row sub-100 decisions could
+be corrupted; there were four, and all four survive re-adjudication:
+
+| candidate | decided on | verdict |
+|---|---|---|
+| `914d6a99` BoxMap `ApplyLight(Point/Spot)` | per-row mpn 73.783→65.663 / 65.722→63.989 | **CLEARED — 2×2 run.** Re-applied; both binaries report the *identical* numbers. Regression is real, revert correct. |
+| `54e8341b` AX-7 `NextSongPanel::FinishLoad` | per-row mpn 52.11→40.6 | **CLEARED AND ALREADY RECOVERED** — laneAY-B supplied the missing `highscore_1.lbl` statement; the row is **mpn 100** today. "Body first, then statics" was right. |
+| `c37e3012` laneBF-8 SYNC_PROP local-static | — | **CLEARED — never lost**: reapplied at `79a507b4`, lever later extended by CT-4/CU-2. |
+| `2c023f0e` CO-2 DisplayChord hoist | per-row mpn 97.2→96.7 | Not exposed; regression re-measured stable across two independent readings by CO-2 itself. |
+
+And every `AT_LIMIT` verdict sitting on an under-reported row is justified by a
+**named mechanism**, never by the number — the four laneBF/W6 rows (+12.2/+8.5/
++6.6/+4.2) carry a *class* verdict (family-stride map-mispair, routed to the
+splits channel) with `start_percent == end_percent`, i.e. **no work was ever
+attempted, so no number could have deterred it**; `PropAnim::Handle` (+4.5) was
+proven a wall with five instruments; `CustomizePanel::PreviewMakeup` (+5.7) is
+`COMPLETE` at 100%.
+
+⚠ Limitation, stated because it bounds the claim: map/splits/body-port lanes
+often never write `decomp.db`, so the touch rates are **floors**. They undercount
+numerator and denominator alike, so the enrichment *ratio* holds.
+
+### What the bug DID cost — a corrected diagnosis, not lost work
+
+`?SetNumPoints@RndLine@@QAAXH@Z` reads **69.693 → 99.156**. Under the old ruler
+its residual looked like a 123-instruction `replace` wall; the truth is **one
+insert + one delete**. Its DB note calls the residue a "remat-vs-spill band;
+permuter long-shot". The real, now-visible mechanism is sharper: target calls
+`__savegprlr_28`, we call `__savegprlr_27` — **we burn one extra callee-saved
+register** because MSVC CSEs `num*2` into `r28` and holds it across the loop,
+while retail puts it in volatile `r4` (dead at the call) and **rematerializes**
+`slwi r11,r30,1` for `(num-1)*2`. That one choice produces the extra `mr r4,r28`,
+the missing `slwi`, the r27↔r28 swaps and the whole +0x10 frame delta.
+⛔ Not source-addressable: both oracles (rb3-Wii, DC3) already spell these
+expressions as we do — the previous lane deliberately adopted rb3-Wii's
+mutate-`num`-in-place shape to get 90.1→97.0. A 5th spelling (`num*2-2`) was
+tried by DS-2 and moved it **0.000 pp** (MSVC canonicalises). Genuinely
+permuter-class, and the permuter is banned. **Parked, with the mechanism named.**
+
+⇒ **The lasting value here is triage, not recovery**: 13 rows now known to be far
+closer to matching than the campaign's records say (e.g. `CrowdAudio::SetBank`
+74.06 not 49.01; `PatchPanel::SyncProperty` 97.19 not 87.04). Those are forward
+candidates, not salvage.
+
+Reproduce: `scripts/harvest/eqlen_lane_xref.py <rep_oldbin.json> <rep_newbin.json>`.
