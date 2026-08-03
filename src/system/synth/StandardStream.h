@@ -62,7 +62,10 @@ public:
     virtual void SetFXCore(int, FXCore) {}
     virtual FXCore GetFXCore(int) const { return kFXCoreNone; }
     virtual void SetFXSend(int, FxSend *);
-    virtual void SetADSR(int, const ADSR &) {}
+    // NOTE: no `SetADSR(int, const ADSR&)` redeclaration here. The
+    // SetADSR(int, const ADSRImpl&) declared further down IS the override of
+    // Stream's slot 0x74 (see Stream.h). Re-declaring the ADSR& form here
+    // would take that slot and force the ADSRImpl form into a new one.
     virtual void SetSpeed(float);
     virtual float GetSpeed() const { return mSpeed; }
     virtual void LoadMarkerList(const char *);

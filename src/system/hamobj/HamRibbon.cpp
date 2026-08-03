@@ -1,3 +1,25 @@
+// ⛔ The three sub-100 vector<Key<Transform>> rows in default/HamRibbon are MAP
+// DEFECTS, not source defects -- lane DJ-2d, 2026-08-03.  Do not chase them.
+//
+// ?resize@ (0x82788B00, 99.94%) and ?_M_fill_insert@ (0x82788390, 99.96%) differ
+// from ours in exactly ONE immediate: the element stride.  Retail uses 0x18
+// (24 B); we emit 0x44 (68 B).  68 is CORRECT for us and unreachable for
+// retail's function: Key<Transform> is { Transform value; float frame; } and
+// /d1reportSingleClassLayout gives sizeof(Transform)==64 (Matrix3 @0x0 48 B +
+// Vector3 @0x30 16 B), so sizeof(Key<Transform>)==0x44 necessarily.  DC3's
+// HamRibbon.h is byte-identical to ours on mChaseKeys, and the member spacing
+// confirms it (mChaseKeys 0x8c -> mNumSegments 0x98 == sizeof(vector) 0x0c).
+// Retail's functions there are a DIFFERENT instantiation over some 24-byte
+// element; only the map name is wrong.  ⚠ Do not "fix" this by inventing a
+// 24-byte key type -- that is metric-fitting against a misattributed pin.
+//
+// ?_M_erase@ (0x826CA800, 0.44%) is not a vector function at all: retail there
+// reads two globals, indexes a vector with a 0x18 stride and calls
+// ?GetCurrentEndTick@TrainerPanel@@QBAHXZ -- practice-mode tick logic.  A named
+// callee like that is not plausibly an ICF fold-alias.
+//
+// Note default/HamRibbon's five pinned ranges contain NO actual HamRibbon
+// method (no ctor, no Poll, no DrawShowing) -- only scattered COMDAT helpers.
 #include "hamobj/HamRibbon.h"
 #include "math/Mtx.h"
 #include "math/Rot.h"

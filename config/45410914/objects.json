@@ -404,7 +404,12 @@
             "system/gesture/DepthBuffer3D.cpp": "NonMatching",
             "system/synth/BinkClip.cpp": "NonMatching",
             "system/synth/MicClientMapper.cpp": "NonMatching",
-            "system/synth/tomcrypt/ctr.c": "NonMatching",
+            "system/synth/tomcrypt/ctr.c": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/TP"
+                ]
+            },
             "system/char/CharBonesBlender.cpp": "NonMatching",
             "system/char/CharFaceServo.cpp": {
                 "status": "NonMatching",

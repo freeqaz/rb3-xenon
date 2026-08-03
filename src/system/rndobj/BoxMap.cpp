@@ -176,14 +176,12 @@ bool BoxMapLighting::CacheData(LightParams_Spot &spot) {
 void BoxMapLighting::ApplyLight(
     const BoxLightArray<LightParams_Directional, 50> &arr
 ) const {
-    int idx = gLightIndex;
     for (unsigned int i = 0; i < arr.NumElements(); i++) {
         const Hmx::Color *src = (const Hmx::Color *)&arr[i];
-        gLightBuffer1[idx] = src[0];
-        gLightBuffer2[idx] = src[1];
-        idx++;
+        gLightBuffer1[gLightIndex] = src[0];
+        gLightBuffer2[gLightIndex] = src[1];
+        gLightIndex++;
     }
-    gLightIndex = idx;
 }
 
 void BoxMapLighting::ApplyLight(

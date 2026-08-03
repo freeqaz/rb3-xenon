@@ -1,3 +1,21 @@
+// ⛔ DO NOT try to "fix" ??0FlowRun@@IAA@XZ from source -- lane DJ-2d,
+// 2026-08-03.  The row reads 48.96% mpn / 292 B and looks like a nearly-there
+// ctor, but it is a MAP DEFECT: scripts/target_symbol_map.json maps it to
+// retail 0x82618BA8, which is ??0CustomizePanel@@ -- a different class.
+// Three independent channels agree:
+//   1. RTTI  -- the vtables that function installs (0x820C3F0C / 0x820C3ECC /
+//      0x820C3E74) decode via their ??_R4 Complete Object Locators to
+//      .?AVCustomizePanel@@ at subobject offsets 0x0 / 0x3c / 0xb8.
+//   2. Neighbours -- 0x82618BA8 is flanked in the map by
+//      ?StoreFocusComponent@CustomizePanel@@ and ??_GCustomizePanel@@.
+//   3. Gap -- CustomizePanel has NO ctor row anywhere in the map; this address
+//      is exactly the row it is missing.
+// The splits pin 0x82618BA8..0x82618CCC is also byte-exactly the hole between
+// CustomizePanel.cpp's own ...end:0x82618BA8 and start:0x82618CCC blocks.
+// Remedy is a coupled map+splits move owned by the map lane, NOT source.
+// ⚠ FlowRun.cpp is a SINGLE-function unit: draining this block requires
+// deleting its whole splits.txt entry in the same edit, or report.json
+// hard-fails on the 42-byte empty obj (see CLAUDE.md "Build wiring").
 #include "flow/FlowRun.h"
 #include "FlowRun.h"
 #include "flow/Flow.h"

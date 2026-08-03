@@ -32,7 +32,7 @@ public:
     virtual void SetFXCore(int, FXCore) {}
     virtual FXCore GetFXCore(int) const { return kFXCoreNone; }
     virtual void SetFXSend(int, FxSend *) {}
-    virtual void SetADSR(int, const ADSR &) {}
+    virtual void SetADSR(int, const ADSRImpl &) {}
     virtual void SetSpeed(float);
     virtual float GetSpeed() const { return mTimer.GetSpeed(); }
     virtual void LoadMarkerList(const char *) {}
