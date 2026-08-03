@@ -290,7 +290,11 @@ DataNode UIStats::OnMsg(const ButtonUpMsg &msg) {
 
 DataNode UIStats::OnMsg(const JoypadConnectionMsg &msg) {
     MILO_ASSERT(msg.GetUser(), 0x166);
-    EventLog(msg.GetUser()->GetPadNum(), 0x18, msg->Int(3) != 0);
+    // retail passes the BOOL accessor, not the raw `!= 0` comparison: the target
+    // masks the argument (`clrlwi r6,rX,24`) before the call, which MSVC only emits
+    // when the value has passed through a bool-typed result (here the inlined
+    // `Connected()` return) rather than a comparison rvalue it knows is 0/1.
+    EventLog(msg.GetUser()->GetPadNum(), 0x18, msg.Connected());
     return DataNode(kDataUnhandled, 0);
 }
 

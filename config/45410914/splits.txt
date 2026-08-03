@@ -5930,6 +5930,7 @@ PropKeys.cpp:
 	.pdata      start:0x8220BBD8 end:0x8220BC98
 	.pdata      start:0x8220BCA0 end:0x8220BCD0
 	.pdata      start:0x8222B678 end:0x8222B680
+	.pdata      start:0x8222B680 end:0x8222B690
 	.pdata      start:0x8222BE08 end:0x8222BE10
 	.pdata      start:0x8222BE10 end:0x8222BE18
 	.pdata      start:0x8222D7A0 end:0x8222D7A8
@@ -5951,6 +5952,7 @@ PropKeys.cpp:
 	.text       start:0x82424D78 end:0x82425BC8
 	.text       start:0x82425C28 end:0x82425FCC
 	.text       start:0x82638C10 end:0x82638C60
+	.text       start:0x82638C60 end:0x82638CC0
 	.text       start:0x8263FD04 end:0x8263FD30
 	.text       start:0x8263FD60 end:0x8263FDC0
 	.text       start:0x82656180 end:0x82656350
@@ -5977,7 +5979,7 @@ LocalePanel.cpp:
 RhythmDetector.cpp:
 	.pdata      start:0x821F1628 end:0x821F1638
 	.pdata      start:0x821F1638 end:0x821F1648
-	.pdata      start:0x821F1680 end:0x821F16C0
+	.pdata      start:0x821F1678 end:0x821F16C0
 	.pdata      start:0x821F16C8 end:0x821F1750
 	.pdata      start:0x8222B190 end:0x8222B198
 	.pdata      start:0x8222D830 end:0x8222D838
@@ -5985,7 +5987,7 @@ RhythmDetector.cpp:
 	.text       start:0x822702F0 end:0x822703A4
 	.text       start:0x822703A8 end:0x82270414
 	.text       start:0x82270418 end:0x82270438
-	.text       start:0x822707C8 end:0x82270B1C
+	.text       start:0x82270690 end:0x82270B1C
 	.text       start:0x82270B84 end:0x82271748
 	.text       start:0x826342F0 end:0x82634354
 	.text       start:0x82657660 end:0x826576C8
@@ -8913,10 +8915,14 @@ band3/meta_band/StandIn.cpp:
 
 band3/meta_band/StoreInfoPanel.cpp:
 	.pdata      start:0x8222B660 end:0x8222B668
+	.pdata      start:0x8222B668 end:0x8222B678
 	.pdata      start:0x8222B690 end:0x8222B698
+	.pdata      start:0x8222B698 end:0x8222B6A8
 	.pdata      start:0x8222B6A8 end:0x8222B860
 	.text       start:0x82638B60 end:0x82638BB0
+	.text       start:0x82638BB0 end:0x82638C10
 	.text       start:0x82638CC0 end:0x82638D04
+	.text       start:0x82638D04 end:0x82638D58
 	.text       start:0x82638D58 end:0x8263A718
 
 band3/meta_band/StoreMainPanel.cpp:
@@ -8967,15 +8973,9 @@ band3/meta_band/NameGenerator.cpp:
 band3/meta_band/SongSelectPanel.cpp:
 	.pdata      start:0x8222B4A8 end:0x8222B4F8
 	.pdata      start:0x8222B4F8 end:0x8222B660
-	.pdata      start:0x8222B668 end:0x8222B678
-	.pdata      start:0x8222B680 end:0x8222B690
-	.pdata      start:0x8222B698 end:0x8222B6A8
 	.text       start:0x826371E8 end:0x82637670
 	.text       start:0x82637678 end:0x82638B50
 	.text       start:0x82638B54 end:0x82638B60
-	.text       start:0x82638BB0 end:0x82638C10
-	.text       start:0x82638C60 end:0x82638CC0
-	.text       start:0x82638D04 end:0x82638D58
 
 band3/meta_band/CampaignKey.cpp:
 	.pdata      start:0x8222E158 end:0x8222E168
@@ -12750,9 +12750,9 @@ system/dsp/SndAnalysis.cpp:
 	.text       start:0x82B816F0 end:0x82B81DE0
 
 band3/game/CommonPhraseCapturer.cpp:
-	.pdata      start:0x821F1660 end:0x821F1680
+	.pdata      start:0x821F1660 end:0x821F1678
 	.pdata      start:0x82236870 end:0x82236938
-	.text       start:0x82270580 end:0x822707C8
+	.text       start:0x82270580 end:0x82270690
 	.text       start:0x826EC860 end:0x826ED658
 
 system/beatmatch/PhraseList.cpp:

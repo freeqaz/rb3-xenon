@@ -6,7 +6,13 @@
 #include "utl/Symbol.h"
 #include "utl/Symbols3.h"
 
-FaceTypeProvider::FaceTypeProvider() { Update(male); }
+FaceTypeProvider::FaceTypeProvider() {
+    // Retail 360 builds the gender symbol as a FUNCTION-LOCAL STATIC here
+    // (guard word + guarded ??0Symbol@@QAA@PBD@Z from the "male" literal),
+    // not as a reference to the Symbols3 global `male`.
+    static Symbol male("male");
+    Update(male);
+}
 
 void FaceTypeProvider::Update(Symbol genderSym) {
     mFaceTypes.clear();
