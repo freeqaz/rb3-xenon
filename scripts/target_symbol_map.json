@@ -29181,5 +29181,7 @@
  "0x825bc1d8": "?Dispatch@VerifyBuildVersionMsg@@UAAXXZ",
  "0x826ec000": "?Replace@MsgSource@@$4PPPPPPPM@BPM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82bb5270": "?Process@DelayEffect@@QAAXPAMHH@Z",
- "0x82746150": "?PlatformInit@BinkMovieSys@@QAAXXZ"
+ "0x82746150": "?PlatformInit@BinkMovieSys@@QAAXXZ",
+ "0x82481038": "?DrawShowing@RndMultiMeshProxy@@UAAXXZ",
+ "0x827ab850": "?SaveLoadAllComplete@MemcardMgr@@QAAXXZ"
 }

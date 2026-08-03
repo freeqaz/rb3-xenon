@@ -31,7 +31,11 @@ void RndMultiMeshProxy::DrawShowing() {
     if (mMultiMesh && mMultiMesh->Mesh()) {
         RndMesh *theMesh = mMultiMesh->Mesh();
         theMesh->SetWorldXfm(mIndex->mXfm);
-        mMultiMesh->Mesh()->DrawShowing();
+        // Retail emits a DIRECT `bl RndDrawable::Draw()` here, not a vcall.
+        // DC3's copy calls DrawShowing(), which compiles to a 4-instruction
+        // virtual dispatch -- exactly the 12B gap (92B retail vs 104B).  See
+        // the Draw.h header note: Draw() is non-virtual in retail.  (lane DW-3)
+        mMultiMesh->Mesh()->Draw();
     }
 }
 
