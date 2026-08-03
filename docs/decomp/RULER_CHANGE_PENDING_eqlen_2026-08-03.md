@@ -1,10 +1,27 @@
-# PENDING ruler change — objdiff equal-length fast-path fix (lane DR-1)
+# Ruler change — objdiff equal-length fast-path fix (lane DR-1) — ✅ LANDED
 
-> **STATUS 2026-08-03: BUILT, GATED, STAGED — *NOT* SWAPPED.**
-> Held deliberately: lanes DR-2 and DR-3 are mid-flight and will run
-> `ab_measure`, which pins `objdiff-cli`'s sha256 across both legs and **REFUSES
-> on a mid-run swap**. Swapping now would abort their runs (safely, but
-> wastefully). **Swap when no A/B is in flight.**
+> **STATUS 2026-08-03: SWAPPED AND LIVE.** (The filename still says "PENDING";
+> it is kept so existing references resolve. This banner is authoritative.)
+>
+> Live binary sha256 **`0bcc7dd0d5af9281…`** (was `ff7fcf5213f29b14…`); the
+> `../objdiff` fork was fast-forwarded to `4e932e6` so the next
+> `cargo build --release` **cannot silently revert it**. Backup for rollback:
+> `objdiff-cli.pre-laneDR1-ff7fcf52`, next to the live binary.
+>
+> **Timing:** held until DR-2 and DR-3 finished, because `ab_measure` pins
+> `objdiff-cli`'s sha256 across both legs and **REFUSES on a mid-run swap**.
+> Swapped when no A/B was in flight.
+>
+> **Post-swap baseline measured on main** (settled, exact keys):
+> `matched_functions` **43,678** · `matched_code` **4,215,804** ·
+> `matched_code_percent` **39.441795** · `masked_equal` 22,707 ·
+> honest **20,971** · `fuzzy` **46.086872** · 208 of 1,022 units at 100%.
+> ★ **Self-verifying:** DR-1's pre-swap 43,668 + DR-2's +4 + DR-3's +6 = 43,678
+> **exactly** ⇒ `matched_functions` moved by **precisely zero** across the ruler
+> change, as predicted structurally.
+>
+> ⚠ **Only `fuzzy` is on a new ruler.** Never chain a pre-swap Δfuzzy with a
+> post-swap one. Δmatched and Δcode compose across the swap unchanged.
 
 ## The bug being fixed
 
