@@ -328,43 +328,41 @@ int MetaPerformer::GetBattleID() const {
 }
 
 bool MetaPerformer::HasValidBattleInstarank() const {
-    // Oracle-verbatim (rb3-Wii MetaPerformer.cpp:334). This ternary is the retail
-    // shape: it makes the two arms come out in retail's physical order (0-arm
-    // first, load second) -- verified, idx 1602/1604 go from mismatched to equal.
-    // (laneAY-B's if/return form scored higher on fuzzy but had the arms swapped.)
-    // Residue: retail normalizes the loaded byte with subic/subfe (!=0), and the
-    // resulting 3-instruction arm is why retail emits a full if/else diamond
-    // instead of our 2-instruction branch-over. Not reproducible from source:
-    //  - Instarank::mIsValid really is bool (rb3-Wii agrees); a char/int flip
-    //    WOULD emit the normalization here but retail's sibling band site
-    //    (0x82583FF4: `lbz r11,-0x2a0(r24); stw r11,0(r29)`) stores the byte RAW
-    //    with no normalize, so the flip breaks that site. Confirmed from retail
-    //    asm, not inferred.
-    //  - Forcing an int composite type (`? 0 :`) is folded away by MSVC, which
-    //    still knows the bool is 0/1. Byte-identical output.
-    // laneCN-3 (2026-08-02) re-checked the above rather than trusting it, and
-    // RE-VERIFIED laneAY-B's control from retail asm: 0x82583FF4 really does
-    // `lbz r11,-0x2a0(r24); stw r11,0(r29)` (raw, no normalize). That address is
-    // this+0xe4 = mBandInstarank+4 -- the SAME mIsValid field as our site's
-    // this+0x88 = mBattleInstarank+4. Same field, same type, normalized at one
-    // site and raw at the other ⇒ the member's TYPE is provably not the lever,
-    // and any char/int flip is refuted independently of the sibling-site
-    // argument. The residue is a pure source-FORM/codegen question.
-    // NEW negative (5th form tried): `HasBattle() && mBattleInstarank.IsValid()`
-    // is NOT it either -- it gets the instruction COUNT right (no more
-    // insert/delete, 1876 aligned both sides) but selects a BRANCH-based bool
-    // (`cmplwi; li r11,1; bne; mr`) where retail uses the BRANCHLESS carry trick
-    // (`subic; subfe`). Net 7 mismatches vs the ternary's 5 -- strictly worse,
-    // reverted. Do not retry `&&`.
-    // ⛔ SEPARATELY: even a perfect fix here CANNOT take Handle to 100%. There is
-    // a second, independent defect at idx 1845 -- HANDLE_SUPERCLASS(MsgSource)
-    // emits `subi r4,r24,0x34c` where retail has `0x348`. r24 is the incoming
-    // `this` (the Object virtual base; `MetaPerformer::Handle` adjustor = -900 =
-    // 0x384, per cl /d1reportSingleClassLayout), so retail places the MsgSource
-    // subobject 4 bytes later than we do. That is a VIRTUAL-BASE PLACEMENT
-    // difference, the same family as the UIPanel vbase-thunk wall -- not fixable
-    // from this function. Fix the vbase shape first; only then is Handle worth
-    // re-opening.
+    // ✅ RESOLVED laneDN-4 (2026-08-03). MetaPerformer::Handle is now 100%
+    // (all 1876 instructions equal); measured +1 matched / +7504 B / +0.070205pp.
+    // Oracle-verbatim ternary (rb3-Wii MetaPerformer.cpp:334) -- KEEP: it puts the
+    // two arms in retail's physical order (0-arm first, load second).
+    // Retail normalizes the loaded byte with the branchless carry trick
+    // (`subic r10,r11,0x1; subfe r11,r10,r11`), and that 3-instruction arm is why
+    // retail emits a full if/else diamond where we had a 2-instruction branch-over.
+    // The fix: Instarank::mIsValid is byte-sized but NOT bool (see Instarank.h), so
+    // returning it from this bool-returning function IS that conversion.
+    //
+    // ⛔ The refutation that stood here for two lanes was INVERTED, and it is worth
+    // keeping the correction visible. laneAY-B argued (laneCN-3 re-verified the
+    // asm and agreed) that the sibling band site 0x82583FF4 stores the SAME field
+    // RAW -- `lbz r11,-0x2a0(r24); stw r11,0(r29)` -- so "a char/int flip breaks
+    // that site" and the member's type "is provably not the lever". The retail-asm
+    // read was correct; the inference was not. An unsigned char loaded with lbz and
+    // stored into a DataNode's int slot IS exactly `lbz; stw` -- no normalization
+    // is required there under EITHER type. So the sibling site is consistent with
+    // both and refutes neither, while only the non-bool type explains this site.
+    // The bool conversion must exist at exactly ONE place (here), which is why
+    // MetaPerformer::HasValidInstarankData had to stop routing through bool.
+    //
+    // Negatives that still stand -- do not retry:
+    //  - `HasBattle() && mBattleInstarank.IsValid()` gets the instruction COUNT
+    //    right but selects a BRANCH-based bool (`cmplwi; li r11,1; bne; mr`)
+    //    instead of the branchless carry trick. Strictly worse.
+    //  - Forcing an int composite type (`? 0 :`) is folded away by MSVC.
+    //  - Making Instarank::IsValid() itself return unsigned char desyncs the whole
+    //    tail of Handle (99.9 -> 85.8, 440 replaces). The accessor stays bool; the
+    //    raw-byte path bypasses it.
+    //
+    // Also cleared: a note here claimed a second, independent vbase defect at
+    // idx 1845 (HANDLE_SUPERCLASS(MsgSource) `subi r4,r24,0x34c` vs retail 0x348)
+    // meant Handle "CANNOT" reach 100%. That defect no longer exists -- objdiff
+    // region 1607-1875 reads 100%. It was fixed elsewhere and the note went stale.
     return !HasBattle() ? false : mBattleInstarank.IsValid();
 }
 
@@ -1516,7 +1514,15 @@ bool MetaPerformer::HasValidUserScore(BandUser *user) {
     return false;
 }
 
-bool MetaPerformer::HasValidInstarankData() const { return mBandInstarank.IsValid(); }
+// laneDN-4: returns the raw byte, NOT bool. `HANDLE_EXPR(has_valid_instarank_data,
+// ...)` builds a DataNode(int) from this, and retail stores the loaded byte RAW
+// (`lbz r11,-0x2a0(r24); stw r11,0(r29)` @0x82583FF4) with no !=0 normalization.
+// Routing through bool -- either as this return type or via Instarank::IsValid()
+// -- inserts `subic/subfe` that retail does not have. The bool conversion belongs
+// only at MetaPerformer::HasValidBattleInstarank, which is where retail does it.
+unsigned char MetaPerformer::HasValidInstarankData() const {
+    return mBandInstarank.mIsValid;
+}
 
 void MetaPerformer::UpdateInstarankRankLabel(UILabel *label) {
     MILO_ASSERT(label, 0x8D0);

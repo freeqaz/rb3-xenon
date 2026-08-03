@@ -203,7 +203,7 @@ public:
     bool HasSoloHighscore(BandUser *);
     bool HasValidBandScore();
     bool HasValidUserScore(BandUser *);
-    bool HasValidInstarankData() const;
+    unsigned char HasValidInstarankData() const;
     void UpdateInstarankRankLabel(UILabel *);
     void UpdateInstarankHighscore1Label(UILabel *);
     void UpdateInstarankHighscore2Label(UILabel *);
