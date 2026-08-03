@@ -41,6 +41,12 @@ void VerifyBuildVersionMsg::Save(BinStream &bs) const { bs << mVersion; }
 void VerifyBuildVersionMsg::Load(BinStream &bs) { bs >> mVersion; }
 
 void VerifyBuildVersionMsg::Dispatch() {
+    // Retail uses a FUNCTION-LOCAL static Symbol here, not the file-scope
+    // `version` from utl/Symbols.h that the ctor above uses. Retail's body
+    // opens with the `clrlwi./bne/ori/stw` once-init guard and a
+    // Symbol(const char*) call before `String versionStr;` is constructed —
+    // 11 instructions (44 B) that the global form never emits.
+    static Symbol version("version");
     String versionStr;
     SystemConfig()->FindData(version, versionStr, true);
     if (versionStr != mVersion) {

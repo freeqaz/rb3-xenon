@@ -13,7 +13,11 @@ public:
     OBJ_SET_TYPE(StoreMenuPanel);
     NEW_OBJ(StoreMenuPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~StoreMenuPanel();
+    // NO user-declared destructor: retail's ??1StoreMenuPanel@@UAA@XZ emits no
+    // vfptr/vtordisp re-initialization, which MSVC only generates for a
+    // USER-DECLARED dtor. The implicit one still destroys mMenuStack and calls
+    // ~UIPanel (matches retail exactly). Cf. MoviePanel/ChooseColorPanel (no
+    // declared dtor, no stores) vs DeJitterPanel/TrainingPanel (declared, stores).
     virtual void FinishLoad();
     virtual void Unload();
     virtual void Enter();

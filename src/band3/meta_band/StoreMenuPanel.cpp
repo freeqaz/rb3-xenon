@@ -30,8 +30,6 @@ StoreMenuPanel::StoreMenuPanel()
     : mMenuStack(), mCurrentMenuIx(0), mPendingMenuIx(-1), mList(0),
       mStartingHighlightIx(0) {}
 
-StoreMenuPanel::~StoreMenuPanel() {}
-
 void StoreMenuPanel::SetPendingMenuIx(int ix) {
     mPendingMenuIx = ix;
     if (mList)
