@@ -34,7 +34,16 @@ public:
     OBJ_SET_TYPE(PatchSelectPanel);
     NEW_OBJ(PatchSelectPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~PatchSelectPanel() {}
+    // NO user-declared destructor -- deliberate, do not re-add `virtual
+    // ~PatchSelectPanel() {}` (lane DS-4/A).  For a class with a virtual base
+    // + vtordisp, an *explicitly declared* dtor (even empty and inline) makes
+    // MSVC emit the vptr/vtordisp reset preamble inside ~X; that preamble is
+    // then inlined into the compiler-generated `??_D` vbase destructor, which
+    // grows past the /Ob2 inline threshold, so `??_G` is left calling `??_D`
+    // out of line.  With an *implicitly* declared dtor the preamble is
+    // omitted, `??_D` is 5 instructions, /Ob2 inlines it, and `??_G` becomes
+    // byte-exact with retail (22/22 instructions).  The base UIPanel dtor is
+    // virtual, so the implicit dtor is still virtual -- behaviour unchanged.
     virtual void Draw();
     virtual void Enter();
     virtual void Load();

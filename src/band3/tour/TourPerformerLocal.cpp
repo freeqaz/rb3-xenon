@@ -278,8 +278,8 @@ Symbol TourPerformerLocal::GetRandomFixedSetlist(
     TourProgress *i_pProgress, int i_iNumSongs, Symbol i_symFixedSetlistGroup
 ) {
     MILO_ASSERT(i_pProgress, 0x1a5);
-    float totalWeight = 0.0f;
     std::vector<Symbol> validSetlists;
+    float totalWeight = 0.0f;
     for (std::map<Symbol, FixedSetlist *>::iterator it =
              TheQuestMgr.mMapFixedSetlists.begin();
          it != TheQuestMgr.mMapFixedSetlists.end();
