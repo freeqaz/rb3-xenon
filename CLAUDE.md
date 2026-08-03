@@ -653,9 +653,23 @@ a sabotaged (vacuous) log classifier.
 What it enforces — the manual steps survive here only as the explanation of
 *why* (do not hand-run them as the normal path anymore):
 
-- **Settle-to-zero-work before leg A.** A fresh worktree's first build reads
-  ~+193 matched / +0.51pp of settling noise; the tool discards every
-  pre-quiescent reading and refuses if it can't reach a zero-work build.
+- **Settle-to-zero-work before leg A — ★ and, since lane DT-3, before leg B
+  too, over BOTH the default target AND the report target.** A fresh
+  worktree's first build reads ~+193 matched / +0.51pp of settling noise; the
+  tool discards every pre-quiescent reading and refuses if it can't reach a
+  zero-work build.
+  ⚠ **Leg B used to get exactly ONE build with no retry** while the leg *reads*
+  build the **report** target — and the graph intermittently produces a
+  **second wave of dirtiness after a build finishes**. Measured twice on a
+  PCH-cascading patch (`src/system/obj/Object.h` is a PCH input; 9 engine dirs
+  / ~281 TUs compile through the PCH): leg B's default build did **956** objs
+  and the very next report build did **1101** — the same 956 *again* plus 145
+  — so the read's zero-work guard correctly REFUSED a legitimate measurement
+  (lane DS-1). ⚠⚠ It is **NOT deterministic**: an immediate re-run of the same
+  patch, same worktree, old tool, did **not** reproduce it, and four
+  hand-driven probes did not either. That intermittency is the argument for
+  the loop — a single *unverified* build cannot be trusted either way. Cost of
+  the fix: **+2.9 s** of zero-work ninja invocations per run (measured).
   ⚠ **Unsettled is WRONG, not merely noisy — the SIGN flips.** Lane DF-2 read
   **+23 matched / 17 bodies at 100** off apply-revert cycles in its worktree; the
   settled A/B found **0 at 100 and most bodies WORSE** (82.25 → 34.48). Applies
@@ -672,7 +686,22 @@ What it enforces — the manual steps survive here only as the explanation of
 - **Source patches must recompile ≥1 TU in leg B** or the run refuses as
   absent-vs-absent. The leg B recompile count is taken from the build log
   BEFORE any report step (`run_objdiff`-style flows compile invisibly, so a
-  later count reads 0 and proves nothing).
+  later count reads 0 and proves nothing). ★ With leg B now settling, the
+  application assertions read the **FIRST ITERATION's** counts, never the
+  aggregate — otherwise unrelated work in a later settle build could
+  masquerade as "the patch compiled".
+- ★ **UNIT COMPLETIONS are reported by SET-DIFF of AT_100 membership, not by
+  "whose matched count rose"** (lane DT-3, fixing lane DS-4's finding).
+  **3 of DS-4's 13 unit completions had Δmatched = 0** — the fix removed a
+  **wrongly-attributed row from the DENOMINATOR** (12/13 → 12/12), a class the
+  old per-unit list could not see at all (nor could it see a unit *falling
+  off* 100% the same way). Each completion is labelled with the mechanism its
+  row counts imply (`MATCHED_ROSE` / `DENOMINATOR_SHRANK` / `MIXED` /
+  `NEW_UNIT`), on **both** rulers — units are counted on `mpn`, **bytes follow
+  fuzzy**. ⚠ **Units and bytes are SEPARATE measures**: DS-4's 13 completions
+  moved code% by **+0.0123pp**, so unit completion is *not* a code% play.
+  AT_100 is derived two ways that share no arithmetic (row-wise `mpn == 100`
+  vs `matched_functions == total_functions`) and **REFUSES** if they disagree.
 - **Deltas only from legs measured in-run.** There is deliberately no
   `--baseline` flag: deltas compose, absolutes do not, and a baseline file is
   an absolute somebody else measured (the coordinator once briefed 41955 by
@@ -680,6 +709,23 @@ What it enforces — the manual steps survive here only as the explanation of
 - Default ruler = the ninja report edge (hard-coded `functionRelocDiffs=none`);
   `--name-check` adds the opt-in name_check ruler with its noise-floor warning
   (nc aggregate code% is build-unstable ~0.05pp).
+
+Controls re-executed 2026-08-03 (lane DT-3), all on the live tree at
+`matched 43,694 / code% 39.466717 / 221 units at 100% of 1,023`: neutral 1-TU
+comment ⇒ **Δ0 with exactly 1 leg-B recompile**; PCH-cascading `Object.h`
+comment ⇒ **Δ0 with 2,057 recompiles, MEASURED** where the old tool's shape
+refused; bad edit (immediates, not relocs) ⇒ **−1 matched / −72 B**, with
+`MidiChannel` correctly reported as **falling off 100% on both rulers**;
+map-row deletion ⇒ full re-split, `renamer_patched=1044`, **Δmatched 0 /
+Δfuzzy −0.000077pp**; future-mtime sabotage ⇒ **REFUSED at settle** after 4
+bounded attempts; patch to a TU absent from the ninja dep graph ⇒ **REFUSED
+absent-vs-absent**.
+⚠ Two fixture lessons from that run, both worth reusing: a **float-constant**
+edit measures **Δ0** because the constant is a *relocation argument* the
+default ruler masks — a bad-edit control must move an **immediate**; and a
+`src/` file being absent from `objects.json` does **NOT** make it absent from
+the build (`rnddx9/Cam.cpp` is `#include`d by 3 TUs and recompiled them). Pick
+the fixture with `ninja -t deps`, not with `objects.json`.
 
 Controls executed 2026-08-01 (lane AB-TOOL): neutral comment edit ⇒ Δ0 with 1
 real leg-B recompile; bad branch-condition edit ⇒ exactly −1 matched / −88 B;
