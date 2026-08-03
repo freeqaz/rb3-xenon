@@ -2,6 +2,19 @@
 
 **Lane DK-3, 2026-08-03.** Tool: `tools/gate_liveness.py`.
 
+> ★★★ **COMPARATOR CHANGE 2026-08-03 (lane DO-4) — every `owned`/`template`
+> figure written in this file BEFORE that date is a **v1** figure, and v1 was
+> defective.** The comparator paired the two legs' sections by **index**
+> (`zip`), which misaligns after any inserted section and never compares past
+> the shorter object. `owned` totals changed on **202 of 250** units (median
+> |Δ|/v2 = **32.7%**, max **1062%**).
+> **The LABELS did not move: 0 label flips in 250** (LIVE 223 · DEAD 21 · INERT 5).
+> So every **verdict** in this document stands; the **magnitudes** are re-based.
+> Old figures are reproducible on demand with `--comparator positional`, and
+> every run now prints a banner naming the comparator.
+> Full old → new table and the proof: **"THE COMPARATOR WAS PAIRING SECTIONS BY
+> INDEX"** at the end of this file.
+
 ## The question this answers
 
 We carry per-TU preprocessor gates (`/DRB3_MAP_0x1C`, `/DRB3_HANDLE_LOCAL_STATIC`,
@@ -78,13 +91,13 @@ gate was **harmful** there.
 
 ## Validation — 11/11 against an independent metric census
 
-| control | result |
+| control | result (v1 → **v2**) |
 |---|---|
-| positive: TourProgress (metric −20) | **LIVE**, owned=101 (`Handle` 33w, ctor 21w, `ResetTourData` 6w) |
-| null: `--flag RB3_NULL_CONTROL_XYZZY` | **INERT** on both TUs tested ⇒ compile is deterministic and the comparator can fire negative |
-| DJ-3's 6 NEEDED | **all LIVE**, owned 17…207 |
-| DJ-3's 4 INERT | **all INERT**, owned=0, template=119 |
-| DJ-3's 1 WRONG (TourPerformerLocal) | **LIVE**, owned=6 |
+| positive: TourProgress (metric −20) | **LIVE**, owned=101 → **108** (`Handle` 33w, ctor 21w, `ResetTourData` 6w — per-symbol breakdown **IDENTICAL** under both) |
+| null: `--flag RB3_NULL_CONTROL_XYZZY` | **INERT** on both TUs tested ⇒ compile is deterministic and the comparator can fire negative (DO-4: re-run on **5** real target TUs, all owned=0) |
+| DJ-3's 6 NEEDED | **all LIVE**, owned 17…207 → **17…231** |
+| DJ-3's 4 INERT | **all INERT**, owned=0, template=119 → **unchanged 4/4** |
+| DJ-3's 1 WRONG (TourPerformerLocal) | **LIVE**, owned=6 → **6** (unchanged) |
 
 Perfect concordance with a census produced by a completely different method.
 Magnitudes rank only loosely with the metric penalty (CharacterCreatorPanel
@@ -172,23 +185,29 @@ but note that ranking did not predict sign, so treat the order as arbitrary and
 screen each one. `Scheduler.cpp` is Quazal, i.e. inside the `/Od` region and
 explicitly low-value per the standing scope directive.
 
-| unit | penalty B | owned words |
-|---|---:|---:|
-| `network/Core/Scheduler.cpp` | 589 | 9 |
-| `band3/bandtrack/TrackPanel.cpp` | 99 | 125 |
-| `band3/meta_band/ProfileMgr.cpp` | 98 | 2 |
-| `band3/meta_band/BandProfile.cpp` | 51 | 359 |
-| `band3/game/FocusTracker.cpp` | 29 | 85 |
-| `system/bandobj/GemTrackDir.cpp` | 24 | 365 |
-| `band3/tour/TourDescPanel.cpp` | 22 | 5 |
-| `band3/bandtrack/GemTrack.cpp` | 22 | 4 |
-| `system/rndobj/EventTrigger.cpp` | 14 | 2 |
-| `band3/meta_band/UIStats.cpp` | 9 | 25 |
-| `band3/meta_band/SongRecord.cpp` | 8 | 55 |
-| `band3/game/OverdriveTracker.cpp` | 5 | 48 |
-| `band3/game/PerfectOverdriveTracker.cpp` | 4 | 25 |
-| `band3/bandtrack/GemManager.cpp` | 0 | 178 |
-| `band3/meta_band/MetaPanel.cpp` | 0 | 7 |
+| unit | penalty B | owned words (v1) | **v2** |
+|---|---:|---:|---:|
+| `network/Core/Scheduler.cpp` | 589 | 9 | 9 |
+| `band3/bandtrack/TrackPanel.cpp` | 99 | 125 | **145** |
+| `band3/meta_band/ProfileMgr.cpp` | 98 | 2 | 2 |
+| `band3/meta_band/BandProfile.cpp` | 51 | 359 | **366** |
+| `band3/game/FocusTracker.cpp` | 29 | 85 | 85 |
+| `system/bandobj/GemTrackDir.cpp` | 24 | 365 | **411** |
+| `band3/tour/TourDescPanel.cpp` | 22 | 5 | 5 |
+| `band3/bandtrack/GemTrack.cpp` | 22 | 4 | 4 |
+| `system/rndobj/EventTrigger.cpp` | 14 | 2 | 2 |
+| `band3/meta_band/UIStats.cpp` | 9 | 25 | 25 |
+| `band3/meta_band/SongRecord.cpp` | 8 | 55 | 55 |
+| `band3/game/OverdriveTracker.cpp` | 5 | 48 | 48 |
+| `band3/game/PerfectOverdriveTracker.cpp` | 4 | 25 | 25 |
+| `band3/bandtrack/GemManager.cpp` | 0 | 178 | 178 |
+| `band3/meta_band/MetaPanel.cpp` | 0 | 7 | 7 |
+
+★ **(DO-4) This table doubles as a fidelity control on the legacy comparator:
+re-running all 15 under `--comparator positional` reproduced the published
+`owned words` column EXACTLY, 15/15.** Only 3 change under v2, because `MAP_0x1C`
+rarely inserts a section — the defect is concentrated in gates that add
+function-local statics (`HANDLE`/`SYNCPROP`), not in this one.
 
 Given the measured 1-in-11 hit rate and the size of the losses, the expected
 value of grinding this list is low. It is recorded so the next lane can decide
@@ -328,24 +347,26 @@ the byte-identity proof.
 
 ### No WRONG gates, and the reason is structural
 
-`owned` over the 139 LIVE gates runs **54 … 3460, median 293**. The vestigial
+`owned` over the 139 LIVE gates runs **54 … 3460, median 293**
+*(v2: **75 … 3965, median 377** — the argument below is **strengthened**, since the
+floor rises 54 → 75 and moves further from `TourPerformerLocal`'s 6)*. The vestigial
 low-`owned` tail that produced the map sweep's one WRONG gate
 (`TourPerformerLocal`, `owned=6`) **does not exist here** — this population is
-bimodal: 0 (the dead 12) or ≥54. So there is no principled ranking for a WRONG
+bimodal: 0 (the dead 12) or ≥54 (v2: ≥75). So there is no principled ranking for a WRONG
 hunt, and the n=1 "low owned ⇒ suspect" rule has nothing to select on.
 
 Six of the lowest-`owned` `band3/` gates were screened individually anyway (never
 batched — DK-3 established that ranking does not predict sign). **All six
 regressed; 0 WRONG gates.**
 
-| unit removed | owned | Δmatched | Δmasked_equal | **Δhonest** |
-|---|---:|---:|---:|---:|
-| `band3/tour/TourSavable.cpp` | 54 | −1 | +0 | **−1** |
-| `band3/meta_band/SetlistToStorePanel.cpp` | 75 | −2 | −1 | **−1** |
-| `band3/game/FadePanel.cpp` | 80 | −3 | −2 | **−1** |
-| `band3/meta_band/VoiceoverPanel.cpp` | 87 | −3 | −2 | **−1** |
-| `band3/meta_band/BandStoreOffer.cpp` | 91 | −7 | −6 | **−1** |
-| `band3/meta_band/InterstitialPanel.cpp` | 91 | −4 | −2 | **−2** |
+| unit removed | owned (v1) | **owned (v2)** | Δmatched | Δmasked_equal | **Δhonest** |
+|---|---:|---:|---:|---:|---:|
+| `band3/tour/TourSavable.cpp` | 54 | **77** | −1 | +0 | **−1** |
+| `band3/meta_band/SetlistToStorePanel.cpp` | 75 | **106** | −2 | −1 | **−1** |
+| `band3/game/FadePanel.cpp` | 80 | **97** | −3 | −2 | **−1** |
+| `band3/meta_band/VoiceoverPanel.cpp` | 87 | **143** | −3 | −2 | **−1** |
+| `band3/meta_band/BandStoreOffer.cpp` | 91 | **242** | −7 | −6 | **−1** |
+| `band3/meta_band/InterstitialPanel.cpp` | 91 | **192** | −4 | −2 | **−2** |
 
 ★ **Report Δhonest separately — the headline overstates the cost here.** Δmatched
 spans −1…−7 but Δhonest is **−1 or −2 in every single case**: most of the loss is
@@ -356,6 +377,16 @@ direction — quoting either figure alone misrepresents the change.
 ⚠ `owned` did **not** rank the damage (54 → −1 but 91 → −7): consistent with
 DK-3's finding that magnitude counts *perturbation*, not lost matches. Do not use
 `owned` to prioritise anything but LIVE-vs-DEAD.
+
+⚠⚠ **(DO-4) The comparator fix does NOT rescue `owned` as a damage ranker — stated
+explicitly because the opposite is the tempting claim.** It would have been easy to
+present v2 as "now the magnitudes rank the damage": v2 does break v1's 91/91 tie in
+the right direction (242 → −7 above 192 → −4). But scored properly over these six,
+Spearman ρ is **0.97 for v1 and 0.90 for v2** — v2 is nominally *worse*, and at
+**n = 6 neither is distinguishable from chance**. **DL-4's warning stands unchanged.**
+What the fix buys is that `owned` is now a *correct* measure of perturbation, not a
+*useful* measure of damage. (INSTRUMENT_DESIGN shape 5: an improvement is exactly
+where a false positive is cheapest to believe.)
 
 Combined with the 7 TUs that do not compile ungated, the evidence is that this
 gate is **claimed correctly wherever it is claimed** — the opposite of `MAP_0x1C`,
@@ -507,6 +538,12 @@ ninja build/45410914/pch/system.pch
 With the PCH built, `Faders.cpp` probes **LIVE, `owned=376`** (DN-3; reproduced
 exactly by DN-2 with the shipped tool). `MessageTimer`, `FlowMultiSetProperty`
 and `MetaMusic` unblock the same way.
+⚠ **(DO-4) `376/211` is a v1 figure and it is the single worst one in this file:
+corrected it is `owned=118, template=0`.** `Faders.cpp` is where the pairing defect
+was reproduced — off=389 sections vs on=396, **188 of 389 `zip()` pairs comparing
+two different symbols**. The `template=211` was pure mis-pairing artifact; the HANDLE
+gate touches no STL instantiation, so its true template floor is **0**. The verdict
+(LIVE) is unaffected.
 
 ⚠ **This affects ANY lane compiling a PCH-eligible TU outside ninja in a fresh
 worktree** — the nine dirs `hamobj synth flow gesture meta obj os utl movie`.
@@ -550,3 +587,383 @@ the truncated PCH**. Same root cause, now named.
   with numbers so a future lane can decide rather than re-derive — landing it
   would re-base every published `owned` total, which is not free while other
   lanes are quoting them.
+  ✅ **FIXED AND MIGRATED by lane DO-4** (2026-08-03) — see
+  "THE COMPARATOR WAS PAIRING SECTIONS BY INDEX" at the end of this file. DN-2's
+  108 reproduced exactly; both comparators now ship (`--comparator positional`
+  reproduces any pre-DO-4 figure); 0 label flips over 250 units.
+
+## Lane DN-3 (2026-08-03): the predicate was wrong, PrefabMgr is not viable, and `_STATIC` was silently miscompiling
+
+> ⚠ **COMPARATOR PROVENANCE.** Every `owned`/attributed word-count in this section
+> was measured with the **v1 positional** comparator, which lane DO-4 later proved
+> defective. v2 values are given inline as `v1 N → v2 M`. **Every conclusion in
+> this section survives the correction** — that was checked, not assumed (§6).
+> This section was written for commit `1c09c7d5` but its patch collided with DN-2's
+> edit to the same file and was dropped; merged here by DO-4.
+
+### 1. `HANDLE_*_STATIC` was SILENTLY WRONG under the gate — fixed, measured Δ0
+
+DM-3 flagged this as "a live trap for the 160 amalgam TUs". It is worse than a
+trap for amalgams: it was a **latent silent miscompile for the whole dialect**.
+Preprocessing `band3/meta_band/CharSync.cpp` (`cl /E`) under both gate states:
+
+```
+gate OFF   { static Symbol _s("update_char_cache"); if (sym == _s) { (UpdateCharCache()); return 0; } }
+gate ON    { static Symbol _s("update_char_cache");                                  // emitted, never compared
+             { static Symbol _hs("_s"); if (sym == _hs) { (UpdateCharCache()); return 0; } } }
+```
+
+Under the gate the handler compares against `Symbol("_s")` and is **unreachable**.
+It compiles, it links, and **the metric cannot see it** — the only difference is
+the string relocation argument, which `match_percent_normalized` masks (CLAUDE.md,
+"Reloc args are SCORE-INVISIBLE"). Correctness-not-metric class.
+
+Fixed by writing the `_STATIC` family **per gate state**: under the gate the plain
+`HANDLE` family already stringizes into a function-local `static Symbol _hs`, so
+the `_STATIC` forms must **forward the name** rather than wrap it. The identical
+hole existed under `obj/dialect_object_push.h` — its Object.h-dialect `HANDLE` also
+stringizes — and is closed symmetrically.
+
+**Exposure was 0** (census: no gated object's include closure contained a `_STATIC`
+use; the only shimmed body, `rndobj/Text.cpp`, uses none), so the fix is Δ0 *by
+construction*:
+
+```
+leg A  43668 matched / 22707 masked_equal / 20961 honest / 39.156220 code%
+leg B  43668         / 22707              / 20961        / 39.156220     (337 real recompiles)
+Δmatched +0  Δmasked_equal +0  Δhonest +0  Δcode% +0.000000pp  Δfuzzy +0.000000
+```
+
+The exact zero **is** the control — a nonzero delta would have falsified the census.
+It matters prophylactically because the COMDAT-scatter workflow is *actively* adding
+`#include "*.cpp"` edges, and scatter-including any of the 12 `_STATIC`-using files
+(`OvershellSlot.cpp` alone has **129** sites) into a gated TU would have silently
+disabled that many handlers.
+
+⚠ **Residual, NOT closed:** a third dialect exists — a TU that includes `ObjMacros.h`
+(so `HANDLE_STATIC` is defined) but where **`Object.h`'s stringizing `HANDLE` wins by
+include order**, compiled *ungated*. There the wrapping form still yields
+`Symbol("_s")`. Zero instances today, and closing it needs a self-contained `_STATIC`
+definition that no longer forwards to `HANDLE` — which would **decouple** the two
+families and let them drift. Left coupled deliberately; documented instead.
+
+### 2. The convertibility predicate is on the CONSUMER SET, not on amalgam-ness
+
+DM-3 screened "is this TU an amalgam?" That is **necessary but not sufficient**. The
+`_STATIC` spelling is a property of a **file**; the gate is a property of an
+**object**. When one file is compiled into objects with *different* gate states, no
+spelling can satisfy both — `HANDLE_STATIC` is unconditionally local-static.
+
+The correct predicate: *file `f` is rewritable iff **every** object whose include
+closure contains `f` currently carries the gate.*
+
+Sharpest counterexample: **`band3/tour/TourSavable.cpp` has zero `.cpp` includes** —
+not an amalgam by any definition, and DL-4 individually A/B'd it (−1 on removal) —
+yet `system/os/AsyncFile.cpp` (gate **OFF**) scatter-includes it. Converting it
+changes `AsyncFile.obj`. Measured: AsyncFile `owned=54` (**v2: 77**), and **all 54
+(v2: all 77) changed words are in `TourSavable` symbols**.
+
+Re-derived over all **140** gated objects at `fac3e802`:
+
+| class | n |
+|---|---:|
+| **convertible** (consumer set closed, no `_IF`) | **111** |
+| blocked by **gate-OFF consumer conflict** | **24** |
+| blocked by `HANDLE_ACTION_IF`/`_IF_ELSE` (no `_STATIC` form) | **5** |
+
+★ The screen is a **conservative screen, not a proof** — it is structural, and the
+probe adjudicates. Sampling 12 of the 24 blocks and **attributing changed words to
+the embedded class** (not merely reading LIVE — a consumer can be LIVE for its own
+handlers). ⚠ Note this is a *class-attributed* count, **not** the `owned` total;
+`owned ≥ attributed`, and under v1 the gap was mostly mis-pairing spray:
+
+| consumer / embedded class | v1 attributed | **v2 attributed** |
+|---|---:|---:|
+| `AsyncFile` / `TourSavable` | 54 | **77** |
+| `Timer` / `Campaign` | 879 | **1613** |
+| `DataNode` / `BandSongMetadata` | 178 | **395** |
+| `Gem` / `OutfitConfig` | 525 | **199** |
+| `UIList` / `GemTrack` | 374 | **365** |
+| `CharIKFingers` / `SongSectionController` | 389 | **440** |
+| `Accomplishment` / `BandCrowdMeter` | 311 | **453** |
+| `CubeTex` / `AppLabel` | 748 | **1462** |
+| `BandCharDesc` / `BandWardrobe` | 320 | **777** |
+| `MeshDeform` / `BandUI` | 1246 | **1371** |
+| *screen false positives:* `system/meta/StoreOffer.cpp`, `system/rndobj/Morph.cpp` | 0 | **0** |
+
+⇒ ~83% precision; ~20 of the 24 blocks are real. **All ten stay > 0 and both false
+positives stay 0 under v2, so this verdict is unchanged.** The two INERT cases
+corroborate DL-4's mechanism #2 (their `HANDLE` comes from `Object.h`, so the gate
+is a no-op) — and they are exactly the residual third dialect in §1, so they are
+**not** freely convertible either.
+
+★ v2 additionally **sharpens** the argument: for **8 of the 10**, v2's `owned`
+equals its attributed count exactly, i.e. *every* changed word lives in the embedded
+class. Under v1 that was never visible, because mis-paired sections sprayed
+word-counts onto unrelated symbols (`UIList` v1 `owned=3555` vs attributed 374).
+
+### 3. PrefabMgr: NOT VIABLE — and it is not a 4-TU patch
+
+DM-3 recorded "needs a coupled 4-TU patch". Measured, the closure is **10 objects**,
+and **5 of them are gate-OFF consumers**, each independently confirmed gate-sensitive
+*with the change attributed to the embedded class*:
+
+| gate-OFF consumer | v1 `owned` | **v2 `owned`** | top changed symbol |
+|---|---:|---:|---|
+| `system/rndobj/PropAnim.cpp` | 1707 | **1841** | `?Handle@GemPlayer@@…` 778 w |
+| `system/flow/FlowMultiSetProperty.cpp` | 968 | **2267** | `?Handle@Band@@…` 157 w |
+| `system/obj/MessageTimer.cpp` | 852 | **1841** | `?Handle@GemPlayer@@…` 778 w |
+| `system/rnddx9/Rnd_Xbox.cpp` | 771 | **770** | `?Handle@AccomplishmentManager@@…` 371 w |
+| `system/synth/MetaMusic.cpp` | 240 | **157** | `?Handle@MetaMusic@@…` + GemPlayer funclets |
+
+All five remain LIVE under v2 ⇒ **the "not viable" verdict is unchanged.**
+
+The rewrite set is **5 files / 103 macro sites** (`PrefabMgr` 3, `BandSongMgr` 23,
+`AccomplishmentManager` 21, `GemPlayer` 55 — reached via `MessageTimer.cpp`, which
+DM-3's 4-file list missed — and `BandSwatch` 1). `rndobj/Text.cpp` is **not** in it:
+it is wrapped in `dialect_object_push.h` inside PrefabMgr and is therefore
+gate-independent there (probed standalone: **DEAD, byte-identical on all sections**).
+
+★ PrefabMgr's off-leg failure is exactly **one** error —
+`C2065: 'assign_prefabs_to_slots' : undeclared identifier`. One missing global forces
+a gate that collaterally governs **99 macro sites in three foreign bodies**.
+
+The only shape that works is a **local dialect shim**: convert PrefabMgr's own 3
+sites and wrap its four embedded `#include`s in a push/pop restoring the *gated*
+ObjMacros forms (exactly parallel to the existing `dialect_object_push.h`). That
+retires one flag in exchange for ~130 lines of duplicated macro definitions to keep
+in lockstep with `ObjMacros.h`, and relocates the silent-wrong hazard from a flag
+visible in `objects.json` into a header buried at an include site. **Declined as a
+bad trade.** PrefabMgr's gate is genuinely LIVE and genuinely needed-to-compile —
+the gate list is already *honest* about it; converting would only make it *shorter*.
+
+### 4. `Faders.cpp` is NOT unprobeable — DM-3's coverage correction is WITHDRAWN
+
+Superseded in place by **"★★ THE TRUNCATED-PCH TRAP"** above, which carries the same
+root cause (`setup_worktree.sh:323` truncates the reflinked PCH to 0 bytes) plus
+DN-2's exposure census (379 of 380 TUs; `MoviePanel` is the one `/Y-` immune unit and
+therefore a vacuous PCH control). **DL-4's "158/158, zero unprobeable" stands.**
+
+### 5. Judgement on the 111: DECLINED
+
+- The churn does not retire the mechanism. 29 objects keep the gate regardless, so
+  `ObjMacros.h`'s `#ifdef` block — and the dialect — survive in full. The list gets
+  **shorter, not more honest**; §2's classification is what makes it honest, at
+  ~1/100th the cost.
+- 111 files of mechanical edits collide directly with the active COMDAT-scatter
+  lanes editing these same `band3/` sources.
+- Δ0 by construction, so there is no yield to offset either.
+
+### What lane DN-3 did NOT do
+- **Did not convert the 111.** All-or-nothing per the brief; reasoning above.
+- **Did not add `HANDLE_ACTION_IF_STATIC`/`_IF_ELSE_STATIC`.** They would unblock 5
+  TUs inside a conversion that is not happening — dead code in a shared header.
+- **Did not close the third dialect** (§1 residual). Zero instances; the fix
+  decouples the `_STATIC` and `HANDLE` families.
+- **Did not probe 12 of the 24 blocked consumers** — 12 were sampled and the
+  precision figure is reported instead of a per-row verdict.
+- **Did not touch `tools/gate_liveness.py` or `scripts/setup_worktree.sh`** (§4 is a
+  caller-side diagnosis; those files belong to another lane).
+
+### 6. (DO-4) Does the comparator fix change any DN-3 conclusion? No — checked
+
+| DN-3 claim | depends on | after the v2 correction |
+|---|---|---|
+| §2 predicate is the consumer set, not amalgam-ness | `TourSavable`'s words appear in `AsyncFile` | **holds** — 54 → 77, still 100% attributed to `TourSavable` |
+| §2 ~83% precision, 10 genuine / 2 false positives | 10 blocks > 0, 2 blocks = 0 | **holds** — all 10 > 0, both FPs still exactly 0 |
+| §3 PrefabMgr not viable (5 gate-OFF consumers) | all 5 LIVE | **holds** — all 5 LIVE |
+| §1 exposure 0, Δ0 A/B | preprocessor census + `ab_measure` | **unaffected** — not a probe measurement |
+
+## ★★★ THE COMPARATOR WAS PAIRING SECTIONS BY INDEX (lane DO-4, 2026-08-03)
+
+DN-2 found this defect, prototyped the fix, and **correctly declined to ship it** —
+because landing it re-bases every published `owned` figure while other lanes are
+quoting them. That judgement was right, and it is why this section exists: the
+deliverable is not the fix, it is the **migration**.
+
+### The defect, reproduced BEFORE the fix
+
+The comparator paired the two legs' sections with `zip(A, B)`. **Three** independent
+bugs, and the first two fire exactly when a gate adds a function-local static — the
+case the tool is most often pointed at:
+
+| # | bug | consequence |
+|---|---|---|
+| 1 | **misalignment** — a local static inserts `.bss`/`.rdata`/`.pdata` **between** `.text` sections | `zip()` compares a `.text` body against a `.bss` body and bills the garbage word-count to the `.text` symbol |
+| 2 | **truncation** — `zip()` stops at the shorter list | sections past the shorter object's count are **never compared**; a `.text` COMDAT the gate *adds* can be invisible |
+| 3 | **tail loss** — the word loop ran to `min(len)−3` | the tail of any **size-changed** COMDAT was silently dropped |
+
+Reproduced on `system/synth/Faders.cpp` + `/DRB3_HANDLE_LOCAL_STATIC`:
+
+```
+sections: off=389  on=396
+zip() compares 389 pairs; 7 sections of the longer obj NEVER COMPARED
+zip() pairs comparing DIFFERENT symbols:  188 of 389   (48%)
+shipped tool verdict: owned=376 template=211   <-- the published Faders figure
+```
+
+The `.text` **set** is identical (231 symbols both legs, zero anon, zero duplicate
+keys); it is the 7 inserted **non-`.text`** sections that shear the alignment.
+
+⚠ Bug 2 is the dangerous one, because `owned == 0` is the tool's **one decisive
+verdict** ("the metric CANNOT move"). A truncating comparator can manufacture it.
+
+Bug 3's sole witness in the whole population — worth recording because it is
+independent of pairing and would have survived a pairing-only fix:
+`?GetAverageTestTime@CalibrationPanel@@QAAHXZ` shrinks **220 → 216 B** under
+`/DRB3_LOG_NO_EVAL`; v1 counts **42** changed words, v2 counts **43**.
+
+### The fix
+
+Pair `.text` COMDATs **by symbol**; count a section present in only one leg as
+wholly changed; count words to `max(len)`. Keyability was verified, not assumed:
+**0 anon and 0 duplicate `.text` symbols** across the population. Unkeyable input
+**REFUSES** rather than returning a number (INSTRUMENT_DESIGN rule 6).
+
+**Both comparators ship**, so no published figure becomes unreproducible:
+
+```
+--comparator symbol       v2, correct, DEFAULT
+--comparator positional   v1, legacy, reproduces any pre-DO-4 figure verbatim
+```
+
+Every run prints a **banner** naming the comparator, every result dict carries a
+`comparator` key, and v1's rows print their own mis-pair count. A number with no
+comparator attached is a v1 number.
+
+### The migration, measured over 250 units
+
+Both comparators are scored from the **same compile pair**, so the delta is
+attributable purely to pairing.
+
+| | |
+|---|---:|
+| units probed | **250** |
+| **LABEL FLIPS** | **0** (LIVE 223 · DEAD 21 · INERT 5) |
+| `owned` total changed | **202 / 250** |
+| median \|v1−v2\|/v2 · p90 · max | **32.7% · 138.7% · 1062%** |
+| v1 mis-paired ≥1 section | **200 / 240** (max **3,781** mis-pairs) |
+| legs with different section counts | **194 / 240** |
+| misaligned **and** number changed | **200 / 200** |
+| not misaligned **and** number changed | **1 / 40** (the `CalibrationPanel` size case) |
+
+⇒ Misalignment is very nearly a **deterministic** predictor of a wrong magnitude,
+and its absence of a right one.
+
+★★ **The LABELS were robust to the defect; the MAGNITUDES were not.** That is the
+whole reason three lanes' controls passed over it: the label is a coarse threshold
+(`owned > 0`) on a quantity that mis-pairing inflates rather than zeroes, so garbage
+and signal both clear the bar. It also **vindicates DL-4's standing advice** — "do
+not use `owned` to prioritise anything but LIVE-vs-DEAD" — which was the right call
+on numbers that were, it turns out, mostly noise.
+
+⚠ **Zero flips is a measurement, not a structural guarantee.** The selftest
+demonstrates the two comparators returning **opposite labels** on synthetic input in
+*both* directions, so they can disagree; they simply do not on this population.
+
+### Worst movers (v1 → v2), with mis-pair counts
+
+| unit | v1 | v2 | mis-paired pairs |
+|---|---:|---:|---:|
+| `system/bandobj/BandCamShot.cpp` | 5414 | **813** | 3781 |
+| `system/ui/UIList.cpp` | 3555 | **365** | 2847 |
+| `band3/meta_band/ViewSetting.cpp` | 3460 | **583** | 2554 |
+| `band3/meta_band/MusicLibrary.cpp` | 1664 | **3965** | 385 |
+| `band3/meta_band/OvershellPanel.cpp` | 1262 | **3630** | 136 |
+| `system/track/TrackDir.cpp` | 1767 | **152** | 1393 |
+| `band3/meta_band/ProfileMgr.cpp` | 1192 | **2697** | 171 |
+| `system/bandobj/VocalTrackDir.cpp` | 680 | **2491** | 211 |
+
+The error is **not** a consistent bias — it runs both ways, which is why no
+correction factor could have salvaged a v1 figure.
+
+### Controls, re-run rather than inherited
+
+| control | v1 | **v2** | verdict |
+|---|---|---|---|
+| positive `TourProgress` / `MAP_0x1C` | owned=101 | **108** | LIVE, unchanged; **per-symbol breakdown IDENTICAL** (`Handle` 33w, ctor 21w, `ResetTourData` 6w) |
+| null `--flag RB3_NULL_CONTROL_XYZZY` | owned=0 | **0** | on **5** real target TUs (TourProgress, Faders, PropAnim, BandDirector, RockCentral) |
+| 4 `MAP_0x1C` INERT | 0 / tmpl 119 | **0 / 119** | **4/4** unchanged |
+| DK-3's 6 DEAD SYNCPROP | byte-identical | **byte-identical** | **6/6** unchanged |
+| DL-4's DEAD discordance case `BandDirector` | DEAD | **DEAD** | unchanged |
+| DJ-3's 6 NEEDED | 17…207 | **17…231** | all LIVE |
+| DJ-3's 1 WRONG `TourPerformerLocal` | 6 | **6** | unchanged |
+| DK-3's 15-candidate table | — | — | **15/15 reproduced exactly** under `--comparator positional` |
+| DN-3's 10 class-attributed blocks | — | — | **10/10 reproduced exactly** under v1 |
+
+★ **Where the `TourProgress` +7 comes from — it is signal, not rounding.** v2 reports
+`added=1, removed=1` `.text` COMDATs: the gate swaps the vbase-deleting-destructor
+thunk `??_ETourProgress@@$4PPPPPPPM@BAA@AAPAXI@Z` for
+`??_ETourProgress@@$4PPPPPPPM@PI@AAPAXI@Z` — **the changed `sizeof(map)` changes the
+vbase displacement, which is encoded in the mangled name.** v1 cross-compared the two
+different thunks as one positional pair and counted **1** differing word; v2 counts
+both 4-word bodies (removed + added) = 8. 101 + 8 − 1 = **108**.
+
+### ★★ Structural corroboration, independent of every control above
+
+DL-4 argued **on mechanism** that the `HANDLE` gate touches no STL instantiation, so
+the shared-template floor — indispensable for `MAP_0x1C` — cannot exist for it, and
+recorded `INERT (template-only) = 0`.
+
+| comparator | HANDLE units with `template > 0` | `MAP_0x1C` units with `template > 0` |
+|---|---:|---:|
+| v1 | **132 / 153** ← contradicts the mechanism | 24 / 27 |
+| **v2** | **0 / 153** ← matches it exactly | **24 / 27** (all = 119) |
+
+v2 reproduces the mechanism's prediction **in both directions** — zero floor where
+theory says none can exist, the exact 119-word floor where theory says it must.
+v1 was silently contradicting a claim already in this document, and nobody noticed
+because nobody cross-read the two.
+
+### The regression case, and the control demonstrated FAILING
+
+`python3 tools/gate_liveness.py --selftest` builds three synthetic COFF pairs
+**in memory** (no toolchain, no filesystem — so it can never skip, and never writes
+to the RAM-backed `/tmp`):
+
+| fixture | ground truth | v2 | v1 |
+|---|---|---|---|
+| 1 — gate inserts `.bss` between `.text`, **no** body changes | INERT | **owned=0 ✓** | **owned=6, LIVE ✗** (false LIVE) |
+| 2 — same insertion **plus** 2 genuinely changed words in `?B@@` | LIVE, 2w in `?B@@` | **owned=2, attributed to `?B@@` ✓** | — |
+| 3 — gate **ADDS** a `.text` COMDAT past the shorter obj's end | LIVE, 4w | **owned=4, added=1 ✓** | **owned=0, INERT ✗** (false DECISIVE verdict) |
+| refusal — duplicate `.text` symbol | refuse | **raises ✓** | — |
+
+Fixture 2 exists so the fixture set cannot be passed by a comparator hardcoded to
+zero (rule 2), and fixtures 1 and 3 make v1 fail in **opposite** directions.
+
+★ The v1 assertions are deliberately written as **"v1 STAYS WRONG"**. If someone
+later "cleans up" the legacy path, the selftest fails loudly instead of silently
+destroying the reproducibility of every pre-DO-4 figure.
+
+**Proven able to fail** — three sabotages, each failing in the expected assertions:
+
+| sabotage | result |
+|---|---|
+| `compare_symbol := compare_positional` (re-introduce the bug) | **FAIL** (5 assertions) |
+| `compare_symbol := const 0` (the "always INERT" vacuity) | **FAIL** (4 assertions) |
+| `compare_positional := compare_symbol` (fix the legacy path) | **FAIL** (3 assertions) |
+
+### Measurement status: read-only, and no A/B is reported
+
+`gate_liveness.py` appears in **zero** of `configure.py`, `tools/project.py`,
+`config/45410914/objects.json`, `build.ninja`. It has no build edge and emits no
+build output, so **it cannot move the metric and no A/B was run** — reporting a Δ0
+here would be fabricating a measurement (`ab_measure` would correctly refuse it as
+absent-vs-absent). All probe writes go to a `mkdtemp` under `--scratch`
+(default `~/tmp`) and are `rmtree`'d; `/Fo` points inside it; the build tree was
+verified untouched after a 500-compile sweep.
+
+### What lane DO-4 did NOT do
+
+- **Did not re-run the whole-population sweeps' CONCLUSIONS** (DK-3's 441-TU converse
+  sweep, DL-4's 158/158). Their *labels* are what those conclusions rest on, and
+  labels are proven unmoved — but the sweeps themselves were not re-executed at HEAD.
+- **Did not re-derive DN-3's 12 unsampled blocked consumers.** DN-3 sampled 12 of 24;
+  the other 12 remain unprobed under either comparator.
+- **Did not re-screen any gate for LIVE-vs-DEAD.** No verdict changed, so no lever
+  reopened; in particular the 4 `MAP_0x1C` INERT gates stay kept for the same reason.
+- **Did not attempt to make `owned` a damage predictor.** It is not one, and v2 does
+  not make it one (see the Spearman note above).
+- **Did not touch `scripts/setup_worktree.sh`.** The 0-byte-PCH trap is real but is an
+  environment precondition; DN-2 established that "fixing" it inside the probe masks
+  an environment problem inside the instrument. Documented in the tool's docstring.

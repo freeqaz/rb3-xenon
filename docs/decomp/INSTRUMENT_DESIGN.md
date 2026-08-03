@@ -481,6 +481,22 @@ Use these rather than hand-rolling; each already embodies a rule above.
 - **`tools/native_build_gate.sh`** — the instrument for the failure class the
   match build **structurally cannot witness** (link breakage). Run it before
   landing anything that adds a serialization call site.
+- **`tools/gate_liveness.py --selftest`** — the reference implementation of a
+  **versioned comparator migration**, and of a regression fixture that pins a
+  *specific* bug. It ships **two** comparators (`--comparator symbol|positional`)
+  with a printed banner naming which produced a number, so a superseded figure
+  stays reproducible instead of silently changing meaning. Three synthetic COFF
+  pairs are built **in memory** (no toolchain, no filesystem ⇒ can never skip),
+  and the legacy comparator is asserted to **STAY WRONG** in both directions —
+  false LIVE on an inert pair, false `owned=0` on a live one — so a later
+  "cleanup" fails loudly. Proven able to fail under three sabotages.
+  ★ Its migration also supplies the cleanest instance of a general hazard:
+  **a coarse label can be robust to a defect that destroys the magnitude it is
+  computed from.** `owned > 0` gave **0 label flips in 250** while **202 of 250**
+  `owned` totals were wrong (median 32.7%, max 1062%) — which is precisely why
+  three lanes' controls passed over it. If your instrument reports a label *and*
+  a number, validate them **separately**; agreement on the label is not evidence
+  about the number.
 
 - **Known-positive RTTI controls** — a section-aware big-endian PE/RTTI decoder
   must reproduce these before its *absences* are believed: **`RndText` decodes to
