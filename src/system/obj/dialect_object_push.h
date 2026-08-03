@@ -34,6 +34,9 @@
 #pragma push_macro("HANDLE_ACTION")
 #pragma push_macro("HANDLE_ACTION_IF")
 #pragma push_macro("HANDLE_ACTION_IF_ELSE")
+#pragma push_macro("HANDLE_STATIC")
+#pragma push_macro("HANDLE_EXPR_STATIC")
+#pragma push_macro("HANDLE_ACTION_STATIC")
 #pragma push_macro("END_HANDLERS")
 
 #undef INIT_REVS
@@ -48,6 +51,9 @@
 #undef HANDLE_ACTION
 #undef HANDLE_ACTION_IF
 #undef HANDLE_ACTION_IF_ELSE
+#undef HANDLE_STATIC
+#undef HANDLE_EXPR_STATIC
+#undef HANDLE_ACTION_STATIC
 #undef END_HANDLERS
 
 // --- Object.h dialect (verbatim token sequence from obj/Object.h) ---
@@ -172,6 +178,16 @@
             return 0;                                                                    \
         }                                                                                \
     }
+
+// HANDLE_*_STATIC must FORWARD here, not wrap: the Object.h HANDLE installed just
+// above already stringizes its argument, so the wrapping form would expand to
+// `static Symbol _s("_s")` and make the handler unreachable -- the same silent,
+// metric-invisible break documented at ObjMacros.h's _STATIC block (lane DN-3).
+// Expansion-neutral today: the only shimmed body (rndobj/Text.cpp) uses none.
+
+#define HANDLE_STATIC(symbol, func) HANDLE(symbol, func)
+#define HANDLE_EXPR_STATIC(symbol, expr) HANDLE_EXPR(symbol, expr)
+#define HANDLE_ACTION_STATIC(symbol, expr) HANDLE_ACTION(symbol, expr)
 
 // END_HANDLERS diverges in the match build: Object.h retains the PathName(this)
 // side effect at the unhandled tail; ObjMacros.h returns a bare kDataUnhandled.

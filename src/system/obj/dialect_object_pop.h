@@ -2,6 +2,9 @@
 // Pops the ObjMacros.h-dialect macro definitions saved by the matching push,
 // restoring the consumer's own dialect after an Object.h-dialect owner #include.
 #pragma pop_macro("END_HANDLERS")
+#pragma pop_macro("HANDLE_ACTION_STATIC")
+#pragma pop_macro("HANDLE_EXPR_STATIC")
+#pragma pop_macro("HANDLE_STATIC")
 #pragma pop_macro("HANDLE_ACTION_IF_ELSE")
 #pragma pop_macro("HANDLE_ACTION_IF")
 #pragma pop_macro("HANDLE_ACTION")
