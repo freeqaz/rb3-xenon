@@ -2199,22 +2199,25 @@ namespace Hmx {
         static void RegisterFactory(Symbol name, ObjectFunc *func);
 
         /** Create a new Object derivative based on its entry in the factory list. */
+        // ⛔ DO NOT "optimize away" the MILO_FAIL guard below to close
+        // ??$New@VMoggClip@@@Object@Hmx@@SAPAVMoggClip@@XZ (VoiceoverPanel.cpp
+        // 0x8262F700, 72 B, stuck at 61%).  That target body genuinely has no null
+        // test and no second StaticClassName call -- but REMOVING the guard was
+        // MEASURED (lane DW-1, whole-binary ab_measure) and it is NET NEGATIVE:
+        //   Δmatched +0 · Δcode% -0.005614pp / -600 B
+        //   VoiceoverPanel 37->38 (reaches 100%) but Joypad LOSES JoypadInitCommon
+        //   (672 B, 100% -> 98.21%).
+        // JoypadInitCommon's first statement is Hmx::Object::New<Hmx::Object>() and
+        // it matches retail at 100% WITH the guard, so retail's New<T> HAS it.  The
+        // two retail witnesses genuinely disagree; the 0x8262F700 discrepancy is
+        // still UNEXPLAINED and is not a guard-removal problem.  MILO_FAIL evaluates
+        // its arguments on purpose -- see os/Debug.h.
         template <class T>
         static T *New() {
-#ifdef HX_NATIVE
             T *obj = dynamic_cast<T *>(Hmx::Object::NewObject(T::StaticClassName()));
             if (!obj)
                 MILO_FAIL("Couldn't instantiate class %s", T::StaticClassName());
             return obj;
-#else
-            // Retail RB3-360's New<T> is a bare dynamic_cast: the target body of
-            // Hmx::Object::New<MoggClip> (VoiceoverPanel.cpp 0x8262F700, 72 B) ends
-            // at the __RTDynamicCast and has NO null test and NO second
-            // StaticClassName call.  MILO_FAIL evaluates its arguments here (see
-            // os/Debug.h), so the guard above is not free -- it costs 5
-            // instructions and a saved r31 per instantiation.
-            return dynamic_cast<T *>(Hmx::Object::NewObject(T::StaticClassName()));
-#endif
         }
     };
 
