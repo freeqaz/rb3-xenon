@@ -487,6 +487,36 @@ shape, which nobody has censused.
 
 ## 9. TARGETING DISCIPLINE — where to point a lane
 
+### ★★★ 9.0 DO NOT RANK BY "PENALTY". Rank by SIZE-IF-IT-CROSSES.
+Lane DN-4 (`2a851aec`, 2026-08-03) — this corrects an instruction that was in
+every source brief for ~8 waves, including in this file's own framing.
+
+**`matched_code` is ALL-OR-NOTHING PER ROW.** Verified at HEAD rather than taken
+from a doc: `Σ size where fuzzy == 100` **equals `matched_code` exactly**
+(4,185,280, Δ0), and `count where mpn == 100` **equals `matched_functions`
+exactly** (43,668, Δ0).
+
+⇒ **A partial improvement on a row pays LITERALLY ZERO.** A 7.5 KB row sitting at
+fuzzy 99.8 carries only ~14 B of "penalty" but is worth **7,504 B the moment it
+crosses**. So *"sort by penalty (bytes at stake)"* points a lane at 3 KB altivec
+bodies stuck at 0% — the rows with the most penalty and the least chance of
+crossing — and **buries the actual vein.**
+
+| band | rows | value if crossed | share of value | share of penalty |
+|---|---:|---:|---:|---:|
+| all source-addressable | — | 850,620 B / 7.96pp | 100% | 100% |
+| **mpn<100 at fuzzy ≥ 95** | **413** | **213,744 B / 2.00pp** | **46%** | **4%** |
+
+★ **Rank by the row's SIZE, gated on it being close enough to cross.** The
+≥95-fuzzy band is the best ROI in the tree: 46% of the available value at 4% of
+the penalty. DN-4's single row from that band paid **+0.070205pp — ~5.9× the
+entire DG-3 wave.**
+⚠ Corollary for a *unit*-completion lane: this is a **byte/function** ranking. A
+7.5 KB row crossing may move zero units (DN-4's did). Pick the ranking that
+matches what you are being scored on, and say which you used.
+
+### 9.1 The reachable-ceiling partition
+
 ⏱ **Live as of 2026-08-02 — check the tree before re-funding any of this.**
 Wave **DI** is working these follow-ons right now: **DI-1** the mislabelled
 MAP_ONLY source-workable pool (the 31 below), **DI-2** the COMPLETABLE bucket,
