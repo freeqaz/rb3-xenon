@@ -393,10 +393,38 @@ interning; rb3-xenon's RB3 engine is more complete than DC3's so several dc3
 `_Native` shims are redundant; ~74 rendering/MIDI/synth/Win32 symbols off the DTA
 path are satisfied by weak stubs in `native/src/dta_link_stubs.s`.
 
-**Architectural goal:** the native engine should eventually be **extracted into a
-standalone `../milo-native-engine`** repo — a shared native Milo runtime consumed
-by the per-game decomps (rb3-xenon, dc3-decomp, …) rather than each carrying its
-own `native/`. For now it lives in `native/` and borrows from `../dc3-decomp`.
+**Architectural goal — DONE as of X1 (2026-08-01).** The shared native Milo
+runtime lives in `../milo-native-engine` and is consumed here via
+`add_subdirectory` with a soft SHA pin (`MILO_ENGINE_PIN` in
+`native/CMakeLists.txt`, currently `138e1606`). rb3-xenon, rb3 (Wii) and
+dc3-decomp all consume it; xenon uses `MILO_ENGINE_GPU_BACKEND=dc3` because its
+`rndobj/` is DC3-shaped. **Only the coordinator bumps the pin; lanes file engine
+change requests as text.** As of X4d the native build loads and renders real
+venue roots with their own shipped lighting, and drives characters from real
+`CharClip`s — it is no longer a headless DTA reader. Ladder and per-milestone
+docs: `docs/plans/x{1,2,3}-*.md`, `docs/plans/x4{a,b,c,d}-*.md`.
+
+### ⚠ Run the native gate before landing shared-`src/` changes
+
+**`tools/native_build_gate.sh` (expect `PASS 18/18, rc=0`).** This has now
+caught `main` broken by a matching lane **three separate times** (X4a, X4d ×2),
+each time costing the native lane a repair it did not own.
+
+Why it happens: the X360 match build **compiles** `src/`, but the native targets
+**link** a superset of it. A change that matches perfectly can still leave an
+undefined symbol, an uninstantiated template, or a missing operator that only a
+linker sees — `ObjOwnerPtr<>`'s save operator and `RndEnvAnim::Save` were exactly
+this. The matching build is structurally incapable of catching that class.
+
+So: if your change touches `src/system/**`, `src/band3/**` or any shared header,
+run the gate before you land. Two traps, both real:
+
+- **Seed the cache explicitly first** — the gate's own `cmake` line omits
+  `-DMILO_ENGINE_PATH=` and `-DDawn_DIR=`, and without them three targets
+  silently **SKIP** while the gate still reports `PASS`.
+- **Delete stale binaries first.** The gate counts binaries on disk and
+  `ninja -k1` masks failures, so a stale tree can report green over a broken
+  build.
 
 ## Build wiring
 
