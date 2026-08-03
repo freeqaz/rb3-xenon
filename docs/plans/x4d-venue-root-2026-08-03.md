@@ -9,7 +9,7 @@
 
 ## Verdict
 
-★ **A REAL RB3 VENUE ROOT LOADS AND RENDERS.** `world/venue/small_club/small_club_01`
+★ **REAL RB3 VENUE ROOTS LOAD AND RENDER — 6 of 6 roots load, 5 of 6 render (§5.1).** `world/venue/small_club/small_club_01`
 returns `rc=0` with every gate green — root `small_club_01` as a **`WorldDir`**,
 114 meshes, 96 drawn, 38.92% coverage, 111930 distinct colours. The frame is
 recognisably RB3's small club: brick walls, plank floors, the bar, the staircase,
@@ -347,6 +347,32 @@ materials, textures and environment. It is a room, correctly lit by its own
 
 ---
 
+## 5.1 ★ Generalisation — the fix is not specific to `small_club_01`
+
+X4a's §9.6 caveat was that all its numbers came from **one** asset. One venue
+loading could have been luck, so one root per family was swept:
+
+| venue root | loads | meshes | its own `RndEnviron` | coverage |
+|---|---|---|---|---|
+| `small_club/small_club_01` | ✅ rc=0 | 114 (0 skinned) | `geom_norim.env` | 38.92% |
+| `small_club/small_club_02` | ✅ rc=0 | 159 (0 skinned) | `geom_norim.env` | 60.91% |
+| `arena/arena_01` | ✅ rc=0 | **251** (0 skinned) | `geom.env` | **74.49%** |
+| `big_club/big_club_01` | ✅ rc=0 | 136 (0 skinned) | `water.env` | 29.88% |
+| `festival/festival_01` | ✅ rc=0 | **307 (2 SKINNED)** | `RB3_chars.env` | 61.16% |
+| `video/video_05` | ✅ **loads** | 15 (12 drawn) | `crowd.env` | ⚠ **0.00% — renders empty** |
+
+> **6 of 6 venue roots LOAD. 5 of 6 also render.** Every one supplies its **own**
+> `RndEnviron` — five distinct ones — so real venue lighting is general, not a
+> property of the one asset. `arena_01` is more than twice `small_club_01`'s
+> geometry, and **`festival_01` is the first venue to bring skinned meshes**.
+
+⚠ **`video_05` is an honest miss, and it is a *render* failure, not a load
+failure.** It loads as a `WorldDir`, finds `crowd.env`, and issues 12 draws — then
+rasterizes nothing. **Not framing**: `--dist-scale 3.0` leaves it at 0.00%, and its
+bbox/camera are sane. It is also the family that trips the bbox-outlier trim (raw
+extremes ±694 vs a robust span of ~108), i.e. it has at least one wild mesh. Out
+of scope for this milestone; filed in §8.
+
 ## 6. The E1 riders
 
 ### 6.1 Framing — the whole character, and *why* it was cropped
@@ -458,6 +484,7 @@ not a platitude.
 | item | why | owner |
 |---|---|---|
 | ⛔ **Match lanes are not covering the native build — 4th instance** | §1.1. `ASSERT_REVS` is **empty on X360** and non-empty only under `HX_NATIVE`, so a per-TU macro-dialect switch broke `rb3-render`/`rb3-milo` while the X360 gate stayed green. Three prior repairs of the same shape already exist on `main` (`c833a0fe`, `dce343a1`, `61162969`). **Add a native smoke build to the match-lane gate.** The TU sweep is done and is now clean: exactly 3 files `#undef LOAD_REVS` — `obj/dialect_object_push.h`, `ui/UILabel.cpp`, `rndobj/SoftParticles.cpp` — and all three now override `ASSERT_REVS` correctly. (Sweep run with a positive control, since DI-1's own commit records a vacuous-grep incident in this area.) | **match lanes / infra** |
+| ⚠ **`video_05` loads but renders an empty frame** | §5.1. `WorldDir`, own `crowd.env`, 12 draws issued, 0.00% coverage. **Not framing** — `--dist-scale 3.0` leaves it unchanged and its bbox/camera are sane. The `video_*` family also trips the bbox-outlier trim (raw extremes ±694 vs a ~108 robust span), so it has at least one wild mesh. A render-side defect, cleanly isolated from loading. | X4e |
 | ⛔ **`MILO_FAIL` on a bad string length does not stop the read** | `BinStream::ReadString` prints `String chars N > 256` and then reads N bytes into a fixed stack buffer, smashing the frame. The diagnostic is *correct* and the code proceeds anyway. A native-only early-out turns a stack smash into a legible error, and would have made this milestone's crash self-describing. | X4e / native |
 | ⚠ **The `InlineProxy` / `mInlineProxyType` shape divergence** | Latent, not live (§7.4). Native consults a DC3-era tri-state enum whose value is **never deserialized on the load path** (`mInlineProxyType` keeps its ctor default `kInlineCached`), while RB3 stores a bool. It agrees today by coincidence of the default. | native |
 | ⚠ **4-byte `InlineDirType` read at `Dir.cpp:1226` for `d.rev > 0x1B`** | Retail reads a 1-byte bool at all revs. Not reached at rev 27; a rev ≥ 0x1C asset would over-read 3 bytes per proxy dir. | native |
