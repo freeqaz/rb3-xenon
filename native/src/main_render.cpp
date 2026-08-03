@@ -2699,17 +2699,32 @@ namespace {
             float worst = 0.0f; const char *worstName = nullptr; int nb = 0;
             float worstIn = 0.0f; const char *worstInName = nullptr; int nbIn = 0;
             float worstC = 0.0f; const char *worstCName = nullptr; int nbC = 0;
+            // ---- X19: OWN-ROOTED vs FOREIGN-ROOTED, PER FIGURE ---------------
+            // X18 reported one global "7380 slots = 3306 objects" and warned
+            // that five lanes of per-figure numbers may not be independent. That
+            // warning is too coarse to act on: it does not say WHICH numbers.
+            // This splits each figure's admissible population by whether the
+            // bone's chain root is THIS Character (its own placed skeleton) or
+            // something else (the one shared char/main/skeleton.milo instance).
+            // The own-rooted half is genuinely per-figure; the foreign half is
+            // the same objects re-counted in every band collection.
+            int nbOwn = 0, nbForeign = 0, devOwn = 0, devForeign = 0;
             for (size_t i = 0; i < bones.size(); i++) {
                 if (!bones[i]->TransParent()) continue;
                 float d = RecomposeDev(bones[i]);
                 if (RecomposeAdmissible(bones[i])) {
                     nb++;
+                    RndTransformable *rr = bones[i];
+                    while (rr->TransParent()) rr = rr->TransParent();
+                    const bool own = ((Hmx::Object *)rr == (Hmx::Object *)c);
+                    if (own) nbOwn++; else nbForeign++;
                     const unsigned char tg = tags[i] < 5 ? tags[i] : 0;
                     st.admByWriter[tg]++;
                     st.distinctAdm.insert(bones[i]);
                     if (d > 1e-3f) {
                         st.devByWriter[tg]++;
                         st.distinctDev.insert(bones[i]);
+                        if (own) devOwn++; else devForeign++;
                     }
                     // The corrected residual: ONLY bones the identity models.
                     if (tg == RndTransformable::kWorldComposed) {
@@ -2730,6 +2745,10 @@ namespace {
             printf("      recompose[COMPOSED-only, X18] : worst dev %.3e over %d "
                    "bone(s) (worst: %s)\n",
                    worstC, nbC, worstCName ? worstCName : "-");
+            printf("      rootedness[X19] : %d own-rooted (%d deviating), %d "
+                   "foreign-rooted (%d deviating)  <- foreign = the ONE shared "
+                   "skeleton, re-counted in every band collection\n",
+                   nbOwn, devOwn, nbForeign, devForeign);
             st.bonesChecked += nb;
             st.bonesInadmissible += nbIn;
             if (worst > st.worstRecomposeDev) {
