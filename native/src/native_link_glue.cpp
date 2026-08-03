@@ -314,6 +314,29 @@ BINSTREAM_OP_OBJOWNERPTR(Spotlight)
 #undef BINSTREAM_OP_OBJOWNERPTR
 
 // ============================================================================
+// BinStream operator<< for plain ObjPtr<T>
+// ============================================================================
+// RndFont::Save streams `bs << mMat` (ObjPtr<RndMat>) and `bs << mNextFont`
+// (ObjPtr<RndFont>). Object.h's `operator<<(BinStream&, const ObjPtr<T1>&)`
+// declaration is commented out, so these cannot be `template <>` explicit
+// specializations -- they are plain overloads. (Uncommenting the primary
+// template in obj/Object.h would work too, but Object.h is the decomp PCH
+// header and is codegen-load-bearing, so it is deliberately left untouched.)
+
+#define BINSTREAM_OP_OBJPTR(T) \
+BinStream &operator<<(BinStream &bs, const ObjPtr<T> &ptr) { \
+    Hmx::Object *obj = ptr; \
+    const char *name = obj ? obj->Name() : ""; \
+    bs << name; \
+    return bs; \
+}
+
+BINSTREAM_OP_OBJPTR(RndMat)
+BINSTREAM_OP_OBJPTR(RndFont)
+
+#undef BINSTREAM_OP_OBJPTR
+
+// ============================================================================
 // BinStream operator<< for ObjDirPtr<T>
 // ============================================================================
 
