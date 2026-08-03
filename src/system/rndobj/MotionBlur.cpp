@@ -59,14 +59,15 @@ static struct {
     __declspec(align(4)) unsigned short altRev;
     __declspec(align(4)) unsigned short rev;
 } gRevs_MotionBlur;
-#define gAltRev gRevs_MotionBlur.altRev
-#define gRev gRevs_MotionBlur.rev
+// No `#define gRev` alias here: rndobj/Anim.cpp scatter-INCLUDES this file and
+// wraps the include in its own `#define gRev gRev_MotionBlur`, which such an
+// alias would silently shadow for the rest of the amalgamated TU.
 
 BEGIN_LOADS(RndMotionBlur)
     int rev;
     bs >> rev;
-    gRev = getHmxRev(rev);
-    gAltRev = getAltRev(rev);
+    gRevs_MotionBlur.rev = getHmxRev(rev);
+    gRevs_MotionBlur.altRev = getAltRev(rev);
     Hmx::Object::Load(bs);
     RndDrawable::Load(bs);
     bs >> mDrawList;

@@ -48,20 +48,38 @@ END_PROPSYNCS
 RndScreenMask::RndScreenMask()
     : mMat(this), mColor(1, 1, 1, 1), mRect(0, 0, 1, 1), mUseCamRect(false) {}
 
-INIT_REVS(2, 0)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
+// base, and the RAW incoming BinStream is forwarded to every read and to the
+// superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
+// emits ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
+// destructor that retail has none of, and dispatches each read on `&d`.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// The pair MUST share one aggregate -- two separate file statics are laid out
+// independently and will not fold onto a single base register.  No `#define
+// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
+// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
+// the alias would silently shadow for the rest of the amalgamated TU.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_ScreenMask;
 BEGIN_LOADS(RndScreenMask)
-    LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndDrawable)
-    d >> mMat;
-    d >> mColor;
-    if (d.rev > 0) {
-        d >> mRect;
+    int rev;
+    bs >> rev;
+    gRevs_ScreenMask.rev = getHmxRev(rev);
+    gRevs_ScreenMask.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    RndDrawable::Load(bs);
+    bs >> mMat;
+    bs >> mColor;
+    if (gRevs_ScreenMask.rev > 0) {
+        bs >> mRect;
     }
-    if (d.rev > 1) {
-        d >> mUseCamRect;
+    if (gRevs_ScreenMask.rev > 1) {
+        bs >> mUseCamRect;
     }
 END_LOADS
 
