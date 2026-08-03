@@ -79,8 +79,8 @@ void EnvelopeGenerator::DoProcess(
     float one = 1.0f;
     int i = 0;
     if (rampFrames > 0) {
-        float *mono = buffer;
         float *stereo = buffer;
+        float *mono = buffer;
         for (; i < rampFrames; i++) {
             if (nch == 1) {
                 mono[0] = mono[0] * gain;
@@ -94,7 +94,15 @@ void EnvelopeGenerator::DoProcess(
         }
     }
 
-    if (rampFrames < 256) {
+    // Tested on `i`, NOT on rampFrames -- equivalent (i == rampFrames when the
+    // ramp loop ran, i == 0 otherwise, and 0 < 256), but codegen-load-bearing:
+    //  * on the rampFrames<=0 path `i` is the constant 0, so MSVC folds this
+    //    branch away and the `ble` above jumps straight past it (retail does);
+    //    that in turn keeps 0.0f/1.0f materialised before the ramp loop.
+    //  * it makes the mono fill loop's entry guard below the IDENTICAL
+    //    comparison, so dominator redundancy elimination drops it.
+    // Spelling it `rampFrames < 256` costs 8 bytes across three sites.
+    if (i < 256) {
         if (unk90 == 0) {
             gain = one;
             unk90 = 1;
@@ -102,7 +110,15 @@ void EnvelopeGenerator::DoProcess(
             unk90 = 3;
             gain = zero;
             if (nch == 1) {
-                for (unsigned int j = i; j < 256; j++) {
+                // Signed index is load-bearing: retail drops this loop's entry
+                // guard entirely because it is the SAME comparison as the
+                // dominating `rampFrames < 256` test (`cmpwi ..,0x100`/`bge`),
+                // so dominator-based redundancy elimination removes it. An
+                // `unsigned` index emits `cmplwi` instead — a different opcode,
+                // not recognised as redundant, leaving an extra cmplwi/bge pair.
+                // (The stereo loop below keeps its guard because its bound 512
+                // does not match the dominating test.)
+                for (int j = i; j < 256; j++) {
                     buffer[j] = 0;
                 }
             } else {
