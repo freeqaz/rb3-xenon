@@ -1,4 +1,8 @@
 {
+ "0x82548f70": "?OnMsg@ProfileMgr@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z",
+ "0x8257b5c8": "?GetBattleID@MetaPerformer@@QBAHXZ",
+ "0x8257b5e8": "?HasBattle@MetaPerformer@@QBA_NXZ",
+ "0x82514988": "?IsSignedIn@PlatformMgr@@QBA_NH@Z",
  "0x824f6358": "??0InvExpInterpolator@@QAA@MMMMM@Z",
  "0x82768748": "?DataPushVar@@YAXPAVDataNode@@@Z",
  "0x8253acf8": "?GetAllowUGC@MusicLibrary@@QAA_NXZ",
@@ -525,7 +529,7 @@
  "0x8276a900": "?LoadDtz@@YAPAVDataArray@@PBDH@Z",
  "0x82761860": "?DataFindExists@@YA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x827621c8": "?DataStringFlags@@YA?AVDataNode@@PAVDataArray@@@Z",
- "0x82756de8": "?SaveObjects@DirLoader@@SA_NPBDPAVObjectDir@@_N@Z",
+ "0x82756de8": "?SaveObjects@DirLoader@@SA_NPBDPAVObjectDir@@@Z",
  "0x82407270": "?DumpLoad@RndDrawable@@SAXAAVBinStream@@@Z",
  "0x8271efe8": "?Save@SynthEmitter@@UAAXAAVBinStream@@@Z",
  "0x8250d748": "?BeginRockCentralOps@EntityUploader@@QAAHH@Z",
