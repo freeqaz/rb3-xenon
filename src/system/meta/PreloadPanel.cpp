@@ -139,7 +139,11 @@ void PreloadPanel::PollForLoading() {
 
 void PreloadPanel::FinishLoad() {
     UIPanel::FinishLoad();
-    TheLoadMgr.SetLoaderPeriod(10);
+    // RB3 retail does NOT reset the loader period here -- this call is a
+    // DC3-era addition (our engine source is a verbatim DC3 copy, and DC3 is
+    // NEWER than RB3).  Confirmed absent in the rb3-Wii oracle, and retail is
+    // exactly 24 bytes / 6 instructions shorter: the two 10.0f stores into
+    // TheLoadMgr+0x10/+0x14 plus their address/constant materialisation.
     TheContentMgr.UnregisterCallback(this, true);
     ClearAndShrink(mPreloadedFiles);
     TheContentMgr.SetReadFailureHandler(mAppReadFailureHandler);
