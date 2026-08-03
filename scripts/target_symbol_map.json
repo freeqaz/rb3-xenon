@@ -1,4 +1,7 @@
 {
+ "0x82317cc8": "?PreLoad@MicInputArrow@@UAAXAAVBinStream@@@Z",
+ "0x824aa340": "?NewObject@NgMat@@SAPAVObject@Hmx@@XZ",
+ "0x8279ef10": "?InTrill@RealGuitarTrackWatcherImpl@@UBA_NH@Z",
  "0x82487880": "?Deactivate@FlowQueueable@@UAAX_N@Z",
  "0x826f5780": "?CheckKickGem@StatCollector@@QAAXABVGameGem@@H_N@Z",
  "0x826f57e8": "?GemPassedNow@StatCollector@@QAAXMABVGameGem@@H_N@Z",
