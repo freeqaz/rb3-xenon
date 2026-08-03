@@ -529,8 +529,15 @@ Stream *Synth360::NewStream(const char *name, float volume, float pan, bool b) {
     return new StreamNull(volume);
 }
 
-Stream *Synth360::NewBufStream(const void *buf, int size, Symbol ext, float startMs, bool b) {
-    return new StandardStream(new BufFile(buf, size), startMs, 0.0f, ext, b, false);
+// Retail 0x82B5B608.  Both incoming bools are FORWARDED to the StandardStream ctor
+// (r8 -> floatSamples, r9 -> pollingEnabled); neither is a literal.
+Stream *Synth360::NewBufStream(
+    const void *buf, int size, Symbol ext, float startMs, bool floatSamples,
+    bool pollingEnabled
+) {
+    return new StandardStream(
+        new BufFile(buf, size), startMs, 0.0f, ext, floatSamples, pollingEnabled
+    );
 }
 
 // Retail @82B2CC10 (0xFC): hxma -> XMAReader, mogg -> VorbisReader, else 0.

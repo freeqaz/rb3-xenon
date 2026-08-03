@@ -140,7 +140,7 @@ void MoggClip::Play() {
     if (EnsureLoaded()) {
         KillStream();
         mStream = dynamic_cast<StandardStream *>(
-            TheSynth->NewBufStream(mData, mDataSize, "mogg", 0, false)
+            TheSynth->NewBufStream(mData, mDataSize, "mogg", 0, false, true)
         );
         mFader->SetVal(0);
         SetLoop(mLoop);
@@ -156,7 +156,7 @@ void MoggClip::Play() {
 void MoggClip::Play(float f1) {
     if (EnsureLoaded()) {
         KillStream();
-        Stream *stream = TheSynth->NewBufStream(mData, mDataSize, "mogg", 0, false);
+        Stream *stream = TheSynth->NewBufStream(mData, mDataSize, "mogg", 0, false, true);
         mStream = dynamic_cast<StandardStream *>(stream);
         if (!mStream) {
             delete stream;

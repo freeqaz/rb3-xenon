@@ -151,7 +151,7 @@ void MetaMusic::Start() {
             if (mPlayFromBuffer) {
                 MILO_ASSERT(mBuf, 0x128);
                 mStream =
-                    TheSynth->NewBufStream(mBuf, mBufSize, mExt, ChooseStartMs(), true);
+                    TheSynth->NewBufStream(mBuf, mBufSize, mExt, ChooseStartMs(), true, true);
             } else {
                 MILO_ASSERT(!mFilename.empty(), 0x12D);
                 mStream =
