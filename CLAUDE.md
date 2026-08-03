@@ -404,6 +404,29 @@ venue roots with their own shipped lighting, and drives characters from real
 `CharClip`s — it is no longer a headless DTA reader. Ladder and per-milestone
 docs: `docs/plans/x{1,2,3}-*.md`, `docs/plans/x4{a,b,c,d}-*.md`.
 
+### ⚠ Never put render/gate flags in a shell variable — zsh will not word-split it
+
+**Three consecutive native lanes (X4b, X4c, X5) hit this, and it does not
+error — it runs something else and returns `rc=0`.** X4c produced two wrong
+measurements from it; X5's camera sweep silently rendered the *default* cells
+instead of the venue and passed.
+
+```zsh
+FLAGS="--frames 1 --clip crowd_reaching_01"
+./build/rb3-render $ASSETS out $FLAGS       # ⛔ ONE argv entry: "--frames 1 --clip …"
+```
+
+zsh (unlike bash) does **not** word-split unquoted parameter expansions. The
+whole string arrives as a single argument, the parser rejects or ignores it,
+and the driver falls back to defaults — so you get a green run and a plausible
+PNG of the wrong thing. Write the flags out in full at every call site, or use
+an array (`flags=(--frames 1 …); cmd $flags`).
+
+**The general shape:** a harness whose failure mode is "renders something else
+and passes" is worse than one that crashes. When a render or gate result looks
+right, confirm it rendered what you asked for — cell name in the log, not just
+`rc=0`.
+
 ### ⚠ Run the native gate before landing shared-`src/` changes
 
 **`tools/native_build_gate.sh` (expect `PASS 18/18, rc=0`).** This has now
