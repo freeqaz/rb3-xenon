@@ -176,10 +176,20 @@ protected:
     FilePath mFilepath; // 0x64
     /** The number of mips in this texture's mipmap. */
     int mNumMips; // 0x6c
-    // /** Whether or not this texture's width and height are powers of 2. */
-    // bool mIsPowerOf2; // 0x70
     /** Unused. Presumably, whether to use specialized computations for the PS3. */
-    bool mOptimizeForPS3; // 0x70
+    bool mOptimizeForPS3; // 0x68
+    /** Whether or not this texture's width and height are powers of 2. */
+    // RB3-360 retail HAS this member; DC3 (a newer engine revision) dropped it and
+    // this header inherited DC3's commented-out form, which is why RndTex::RndTex
+    // was one instruction short: retail zeroes TWO bools, `stb r29,0x68` then
+    // `stb r29,0x69`.
+    // ⚠ ORDER IS THE REVERSE OF rb3-Wii, which has mIsPowerOf2 (0x5C) BEFORE
+    // mOptimizeForPS3 (0x5D). Declaring it the Wii way moved mOptimizeForPS3 to
+    // 0x69 and measured -1 matched / -404 matched_code over 625 recompiled TUs.
+    // Retail adjudicates directly: ?Save@RndTex@@ (100%) reads mOptimizeForPS3
+    // with `lbz r11, 0x68(r30)`, so mOptimizeForPS3 is at 0x68 and mIsPowerOf2
+    // takes 0x69. Declared last => no existing member offset moves.
+    bool mIsPowerOf2; // 0x69
     FileLoader *mLoader; // 0x74
 };
 
