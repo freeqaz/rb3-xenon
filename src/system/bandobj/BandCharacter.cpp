@@ -879,22 +879,45 @@ void BandCharacter::RebindOutfitBonesToOwnSkeleton() {
             // the tear BY CONSTRUCTION rather than by a name whitelist. A mesh
             // that fails the test is left EXACTLY as shipped — it keeps drawing
             // off the shared skeleton, which is a disclosed residual, not a fix.
+            //
+            // ⛔ X15 CORRECTION TO X14's HANDOFF. X14 wrote that this rule "now
+            // names them precisely (`SKIP (partial)` lines under
+            // SKEL_REBIND_PROBE=1), so the target list is mechanical". It did
+            // not: the line named the MESH and never the unresolved BONE, which
+            // is the thing a repair needs. It also let X14 describe the residual
+            // as hair-only. MEASURED on small_club_01, the skip set is SEVEN
+            // meshes and THREE of them are trousers —
+            // `buttflappants_resource.mesh`, `buttflappants_belts.mesh`,
+            // `tightdistressedpants_resource.1.mesh` — alongside the four hair
+            // pieces. So the loop below no longer breaks on the first failure;
+            // it collects and prints every unresolved bone name, and the count,
+            // so the next lane gets the actual target list instead of a mesh
+            // name it has to re-derive.
             bool allResolvable = true;
+            int unresolved = 0;
+            String missing;
             for (int b = 0; b < mesh->NumBones(); b++) {
                 RndTransformable *bt = mesh->BoneTransAt(b);
                 if (!bt || !bt->Name()) continue;
                 if (!Find<RndTransformable>(bt->Name(), false)) {
                     allResolvable = false;
-                    break;
+                    unresolved++;
+                    if (probe) {
+                        if (unresolved > 1) missing += ", ";
+                        missing += bt->Name();
+                    } else {
+                        break; // no probe -> the first failure is all that matters
+                    }
                 }
             }
             if (!allResolvable) {
                 if (probe)
                     fprintf(stderr,
-                        "[SKEL_REBIND]   SKIP (partial) '%s' numBones=%d — at least "
-                        "one bone name does not resolve under this member; a partial "
-                        "rebind would TEAR it\n",
-                        mesh->Name() ? mesh->Name() : "?", mesh->NumBones());
+                        "[SKEL_REBIND]   SKIP (partial) '%s' numBones=%d — %d of them "
+                        "do not resolve under this member; a partial rebind would TEAR "
+                        "it. UNRESOLVED: %s\n",
+                        mesh->Name() ? mesh->Name() : "?", mesh->NumBones(), unresolved,
+                        missing.c_str());
                 continue;
             }
         }
