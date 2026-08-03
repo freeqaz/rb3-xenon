@@ -35,6 +35,18 @@
 // same EH region is what keeps the $T store (and the +1 funclet) alive, the two
 // requirements are in tension and no ObjPtr-ctor spelling satisfies both.
 // Conclusion unchanged, now on three-way evidence: scheduler wall, not source.
+//
+// ★★ RESOLVED (lane DS-4/C): the "cyclic rotation of {lis, li 0, stw mOwner}"
+// above IS source-steerable after all, and the three-way byte-identity result
+// is what should have given it away -- all three spellings left mOwner in the
+// BASE mem-init list, so for THIS store they were one experiment run three
+// times, not three experiments. A store emitted from the base mem-init sits in
+// the base ctor's scheduling region and may float above the derived vptr
+// materialization; a store emitted from the derived BODY is pinned after it.
+// That is the identical mechanism obj/Object.h already documents for mObject
+// under ..._DEFER_OBJECT -- it simply had never been applied to mOwner.
+// Deferring BOTH members takes this ctor 92.3% -> 100%.
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #define RB3_OBJPTR_INLINE_OWNER_CTOR_EH
 #include "ui/UIListLabel.h"
 #include "obj/Object.h"
