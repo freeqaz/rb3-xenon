@@ -24,8 +24,21 @@ inline bool IsFloatOne(float f) {
     return fabs(f - 1.0f) < 0.000099999997f ? true : false;
 }
 
-INIT_REVS(TrackWidget)
-
+// RB3-360 retail keeps the two rev words in ONE INTERNAL-LINKAGE align(4) pair,
+// not in the DECLARE_REVS class statics: measured on retail bytes, the class
+// statics make MSVC emit TWO `lis` pairs (`lis r9, ?gAltRev@TrackWidget@@2GA`
+// alongside the base for gRev) because it cannot relate two EXTERNAL symbols,
+// while retail folds both words onto one base register at +0x0/+0x4.
+// DECLARE_REVS is dropped from the header in the same edit so the unqualified
+// `gRev` in the member functions below resolves to these file-scope words
+// rather than being shadowed by the class-scope declaration.
+static struct {
+    unsigned short altRev;
+    unsigned short pad;
+    unsigned short rev;
+} gRevs_TrackWidget;
+#define gRev gRevs_TrackWidget.rev
+#define gAltRev gRevs_TrackWidget.altRev
 TrackWidget::TrackWidget()
     : mMeshes(this), mMeshesLeft(this), mMeshesSpan(this), mMeshesRight(this),
       mEnviron(this), mBaseLength(1), mBaseWidth(1), mXOffset(0), mYOffset(0),
