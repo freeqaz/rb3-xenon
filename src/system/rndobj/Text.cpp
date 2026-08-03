@@ -84,8 +84,27 @@ float gSuperscriptScale = 0.7f;
 float gGuitarScale = 0.7f;
 float gGuitarZOffset = 1.0f;
 
-INIT_REVS(21, 0)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape), not DC3's Object.h
+// BinStreamRev stack decorator.  DC3's form emits a ??0BinStream, a
+// ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream destructor that retail
+// has none of, and dispatches each read on `&d` instead of the raw `bs`.
+//
+// Adjudicated for THIS unit on retail bytes: the target obj carries NO symbol
+// mangled with AAVBinStreamRev@@, i.e. retail instantiated no rev-decorated
+// operator>> here, so forwarding the raw stream deletes nothing.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// No `#define gRev` alias -- several of these TUs are scatter-INCLUDED into
+// another unit whose own gRev macro such an alias would silently shadow.
+// The pair MUST share ONE internal-linkage aggregate (two file statics get two
+// `lis` pairs), altRev FIRST (MSVC lays .bss out in REVERSE), and the padding
+// MUST be an explicit member -- __declspec(align(4)) is unreliable here.
+static struct {
+    unsigned short altRev;
+    unsigned short pad;
+    unsigned short rev;
+} gRevs_Text;
 void RndText::Init() {
     Register();
     SystemConfig("rnd")->FindData("text_superscript_scale", gSuperscriptScale, false);
@@ -175,20 +194,22 @@ BEGIN_SAVES(RndText)
 END_SAVES
 
 BEGIN_LOADS(RndText)
-    LOAD_REVS(bs)
-    ASSERT_REVS(21, 0)
-    if (d.rev > 15)
+    int rev;
+    bs >> rev;
+    gRevs_Text.rev = getHmxRev(rev);
+    gRevs_Text.altRev = getAltRev(rev);
+    if (gRevs_Text.rev > 15)
         Hmx::Object::Load(bs);
     RndDrawable::Load(bs);
-    if (d.rev < 7) {
+    if (gRevs_Text.rev < 7) {
         ObjPtrList<Hmx::Object> dir(this);
         int dump;
         bs >> dump >> dir;
     }
-    if (d.rev > 1)
+    if (gRevs_Text.rev > 1)
         RndTransformable::Load(bs);
     bs >> mFont;
-    if (d.rev < 3) {
+    if (gRevs_Text.rev < 3) {
         int idx;
         bs >> idx;
         Alignment align_choices[6] = { kTopLeft,    kTopCenter,    kTopRight,
@@ -200,36 +221,36 @@ BEGIN_LOADS(RndText)
         MILO_ASSERT(align < 255, 0xE7);
         mAlign = align;
     }
-    if (d.rev < 2) {
+    if (gRevs_Text.rev < 2) {
         Vector2 v2;
         bs >> v2;
         SetLocalPos(v2.x, 0, -v2.y * 0.75f);
     }
     bs >> mText;
-    if (d.rev < 0x14) {
+    if (gRevs_Text.rev < 0x14) {
         std::vector<unsigned short> vec;
         ASCIItoWideVector(vec, mText.c_str());
         WideVectorToUTF8(vec, mText);
     }
-    if (d.rev != 0) {
+    if (gRevs_Text.rev != 0) {
         bs >> mStyle.mTextColor;
     }
-    if (d.rev > 0xC)
+    if (gRevs_Text.rev > 0xC)
         bs >> mWrapWidth;
-    else if (d.rev > 3) {
+    else if (gRevs_Text.rev > 3) {
         bool b;
         bs >> b;
         bs >> mWrapWidth;
         if (!b)
             mWrapWidth = 0.0f;
-        if (d.rev < 5 && (mWrapWidth < 0.0f || mWrapWidth > 1000.0f))
+        if (gRevs_Text.rev < 5 && (mWrapWidth < 0.0f || mWrapWidth > 1000.0f))
             mWrapWidth = 0.0f;
     }
-    if (d.rev == 5) {
+    if (gRevs_Text.rev == 5) {
         String str;
         bs >> str;
     }
-    if (d.rev >= 5 && d.rev <= 10) {
+    if (gRevs_Text.rev >= 5 && gRevs_Text.rev <= 10) {
         bool b;
         bs >> b;
         if (mFont && mFont->GetMat()) {
@@ -239,12 +260,12 @@ BEGIN_LOADS(RndText)
             mFont->GetMat()->SetZMode((ZMode)i);
         }
     }
-    if (d.rev > 7)
+    if (gRevs_Text.rev > 7)
         bs >> mLeading;
     int fixedLength;
-    if (d.rev > 0xB) {
+    if (gRevs_Text.rev > 0xB) {
         bs >> fixedLength;
-    } else if (d.rev > 8) {
+    } else if (gRevs_Text.rev > 8) {
         bool b;
         bs >> b;
         if (b) {
@@ -257,37 +278,37 @@ BEGIN_LOADS(RndText)
     mFixedLength = fixedLength;
     if (mFixedLength != 0)
         ResizeText(mFixedLength);
-    if (d.rev > 9)
+    if (gRevs_Text.rev > 9)
         bs >> mStyle.mItalics;
-    if (d.rev > 0xC)
+    if (gRevs_Text.rev > 0xC)
         bs >> mStyle.mSize;
     else if (mFont) {
         mStyle.mSize = mFont->DeprecatedSize();
     }
-    if (d.rev < 0xD) {
+    if (gRevs_Text.rev < 0xD) {
         mStyle.mItalics /= mStyle.mSize;
     }
-    if (d.rev > 0xD) {
+    if (gRevs_Text.rev > 0xD) {
         // 360: mTextMarkup is a real bool member, so this is a plain read.
         // rb3-Wii needs LOAD_BITFIELD here because it lives in RndDrawable.
         bs >> mTextMarkup;
     }
-    if (d.rev > 0xE) {
+    if (gRevs_Text.rev > 0xE) {
         int capsMode;
         bs >> capsMode;
         MILO_ASSERT(capsMode < 255, 0x158);
         mCapsMode = capsMode;
     } else
         mCapsMode = kCapsModeNone;
-    if (d.rev >= 0x12 && d.rev <= 0x14) {
+    if (gRevs_Text.rev >= 0x12 && gRevs_Text.rev <= 0x14) {
         bool b;
         bs >> b;
     }
-    if (d.rev == 0x13 || d.rev == 0x14) {
+    if (gRevs_Text.rev == 0x13 || gRevs_Text.rev == 0x14) {
         int i, j, k;
         bs >> i >> j >> k;
     }
-    if (d.rev < 0x11 && mCapsMode != kCapsModeNone) {
+    if (gRevs_Text.rev < 0x11 && mCapsMode != kCapsModeNone) {
         SetText(mText.c_str());
     }
     mAltStyle = mStyle;

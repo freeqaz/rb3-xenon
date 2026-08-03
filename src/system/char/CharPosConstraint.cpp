@@ -50,15 +50,36 @@ void CharPosConstraint::PollDeps(
     }
 }
 
-INIT_REVS(2, 0)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape), not DC3's Object.h
+// BinStreamRev stack decorator.  DC3's form emits a ??0BinStream, a
+// ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream destructor that retail
+// has none of, and dispatches each read on `&d` instead of the raw `bs`.
+//
+// Adjudicated for THIS unit on retail bytes: the target obj carries NO symbol
+// mangled with AAVBinStreamRev@@, i.e. retail instantiated no rev-decorated
+// operator>> here, so forwarding the raw stream deletes nothing.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// No `#define gRev` alias -- several of these TUs are scatter-INCLUDED into
+// another unit whose own gRev macro such an alias would silently shadow.
+// The pair MUST share ONE internal-linkage aggregate (two file statics get two
+// `lis` pairs), altRev FIRST (MSVC lays .bss out in REVERSE), and the padding
+// MUST be an explicit member -- __declspec(align(4)) is unreliable here.
+static struct {
+    unsigned short altRev;
+    unsigned short pad;
+    unsigned short rev;
+} gRevs_CharPosConstraint;
 void CharPosConstraint::Load(BinStream &bs) {
-    LOAD_REVS(bs);
-    ASSERT_REVS(2, 0);
+    int rev;
+    bs >> rev;
+    gRevs_CharPosConstraint.rev = getHmxRev(rev);
+    gRevs_CharPosConstraint.altRev = getAltRev(rev);
     Hmx::Object::Load(bs);
     bs >> mTargets;
     bs >> mSrc;
-    if (d.rev > 1) {
+    if (gRevs_CharPosConstraint.rev > 1) {
         bs >> mBox;
     } else {
         mBox.Set(Vector3(1, 1, 0), Vector3(-1, -1, 1000));
