@@ -88,8 +88,8 @@ ExclusionEntry exclusionList[] = {
 };
 
 BandSongMgr::BandSongMgr()
-    : unkc0(0), unk124(1), unk140(0), mUpgradeMgr(0), mLicenseMgr(0), mMaxSongCount(-1),
-      unk13c(0) {
+    : unkc0(0), unk124(1), mJukebox(2000), mUpgradeMgr(0), mLicenseMgr(0),
+      mMaxSongCount(-1), unk13c(0) {
     ClearAndShrink(mContentAltDirs);
     TheBaseSongManger = this;
 }
@@ -545,7 +545,17 @@ bool BandSongMgr::IsSongUnplayable(int songID, BandUserMgr &mgr, bool bvar3) con
     }
 }
 
-int BandSongMgr::GetCurSongCount() const { return unk140 + mCachedSongMetadata.size(); }
+// Byte-adjudicated in AllowContentToBeAdded (retail 0x8257ADE8):
+//     lwz r11,0x68(r30) / lwz r10,0x48(r30) / add r11,r10,r11
+// i.e. TWO plain member loads and no call at all. 0x48-0x34 == 0x68-0x54 == 0x14,
+// which is _M_num_elements inside each hash_map, so this is just the two sizes
+// summed. The old form read a cache at +0x154 -- an offset that appears ZERO
+// times in the whole pinned retail TU under any base register -- and a first
+// attempt to replace it with GetValidSongCount() was refuted the same way:
+// retail's AllowContentToBeAdded calls GetValidSongCount ZERO times.
+int BandSongMgr::GetCurSongCount() const {
+    return mUncachedSongMetadata.size() + mCachedSongMetadata.size();
+}
 bool BandSongMgr::CanAddSong() const {
     int maxSongCount = mMaxSongCount;
     return GetCurSongCount() + 1 < maxSongCount;
@@ -560,7 +570,6 @@ void BandSongMgr::AddSongData(DataArray *a, DataLoader *dl, ContentLocT lt) {
     }
     std::vector<int> vec;
     AddSongData(a, mUncachedSongMetadata, cc, lt, vec);
-    unk140 = GetValidSongCount(mUncachedSongMetadata);
 }
 
 void BandSongMgr::AddSongData(
@@ -751,7 +760,27 @@ int BandSongMgr::GetValidSongs(
 }
 
 int BandSongMgr::GetPosInRecentList(int) { return -1; }
-bool BandSongMgr::IsDemo(int) const { return false; }
+// Retail fn_82575F68 (0xA4 B). rb3-Wii's DEV decomp has `return false;` here and
+// so did we -- BYTE-IDENTICAL to the oracle, so a source diff showed NOTHING.
+// The tell was in the CALLER: retail's `is_demo` handler in Handle() emits
+// `bl fn_82575F68`, while a `return false;` stub gets /Ob2-inlined to nothing,
+// costing Handle 4 instructions and perturbing its register allocation.
+// Reconstructed from the retail bytes, not from oracle preference:
+//   vtable slot 0x40 -> Data(int) (same slot fn_827A8EC8/ContentName uses),
+//   bl ?IsUGC@BandSongMetadata@@QBA_NXZ, the 0x05E69EC1 reserved-song-ID guard
+//   this TU already names at AddSongs, ??0Symbol@@QAA@PBD@Z on ContentName's
+//   result, then __find over the vector at +0x138/+0x13c (= unk11c) with the
+//   result compared against the END pointer -- `subf/cntlzw/extrwi ...,1,26`
+//   sets r3 iff (result == end), i.e. the return is TRUE when NOT FOUND.
+bool BandSongMgr::IsDemo(int songID) const {
+    BandSongMetadata *data = (BandSongMetadata *)Data(songID);
+    if (data->IsUGC())
+        return false;
+    if (songID == 0x05E69EC1)
+        return false;
+    Symbol shortname(ContentName(songID));
+    return std::find(unk11c.begin(), unk11c.end(), shortname) == unk11c.end();
+}
 
 bool BandSongMgr::IsRestricted(int songID) const {
     BandSongMetadata *data = (BandSongMetadata *)Data(songID);
@@ -1092,7 +1121,12 @@ BEGIN_HANDLERS(BandSongMgr)
     HANDLE_EXPR(rank_tier_token, RankTierToken(_msg->Int(2)))
     HANDLE_EXPR(num_vocal_parts, GetNumVocalParts(_msg->Sym(2)))
     HANDLE_ACTION(
-        add_recent_song, AddRecentSong(GetSongIDFromShortName(_msg->Sym(2), true))
+        // Retail calls ?Play@Jukebox@@QAAXH@Z here, NOT AddRecentSong -- both are
+        // `void f(int)` so the callee name is a relocation argument and therefore
+        // SCORE-INVISIBLE; what exposed it was the `this` pointer, retail passing
+        // `this + 0x148` where we passed `this`. AddRecentSong is still real and
+        // still 100%; it is just called from AddSongs, not from here.
+        add_recent_song, mJukebox.Play(GetSongIDFromShortName(_msg->Sym(2), true))
     )
     HANDLE_EXPR(
         part_plays_in_song,
