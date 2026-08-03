@@ -1128,6 +1128,20 @@ void DirLoader::LoadHeader() {
             return;
     }
     *mStream >> mRev;
+#ifdef HX_NATIVE
+    // X8 diagnostic: attribute a proxy class conversion to its ACTUAL cause.
+    // X7 read "Proxy ... class BandCharacter not RndDir, converting" as a
+    // conversion defect; `RndDir` can only reach SetupDir from the mRev<=0xC
+    // arm below (the rev>0xD arm would log "not registered, defaulting to"
+    // first, and it never did), so the rev itself is the measurement.
+    if (getenv("RB3_TRACE_DIRHEADER")) {
+        MILO_LOG("DirLoader::LoadHeader '%s' rev=%d(0x%x) stream=%s tell=%d "
+                 "proxy='%s'\n",
+                 mFile.c_str(), mRev, mRev, mOwnStream ? "OWN-FILE" : "PARENT",
+                 mStream ? mStream->Tell() : -1,
+                 mProxyName ? mProxyName : "(none)");
+    }
+#endif
     if (mRev < 7) {
 #ifdef HX_NATIVE
         // ⚠ THE X360 LINE BELOW PRINTS NOTHING USEFUL, AND THAT COST X4a AN HOUR.

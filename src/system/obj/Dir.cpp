@@ -1126,6 +1126,33 @@ void ObjectDir::SetSubDirFlag(bool flag) { mIsSubDir = flag; }
 
 bool ObjectDir::InlineProxy(BinStream &bs) {
 #ifdef HX_NATIVE
+    // ⛔ X8 DEFECT FIX — THE BAND'S WALL, and it was never in DirLoader::SetupDir.
+    //
+    // retail / rb3-Wii oracle (rb3/src/system/obj/Dir.cpp:613-619):
+    //     return AllowsInlineProxy() && bs.Cached();
+    //
+    // `AllowsInlineProxy()` is VIRTUAL (rb3-Wii Dir.h:244, this tree Dir.h:495)
+    // and `BandCharacter` overrides it to a hard `false` in BOTH trees
+    // (rb3-Wii BandCharacter.h:64, rb3-xenon BandCharacter.h:71) — a band member
+    // is NEVER inlined into its parent milo. The DC3-era InlineDirType arm below
+    // reads the mInlineProxyType FIELD directly and so never dispatches through
+    // that override, which is the entire defect: chars.milo's `player0` answered
+    // InlineProxy() == true, was handed the PARENT stream instead of opening
+    // char/main/main.milo from disk, and read its "rev" out of the four bytes
+    // following the 0xADDEADDE that terminates the preceding object.
+    //
+    // Measured (X8): those bytes are `00 00 00 08` at chars.milo inner offset
+    // 3469450, so mRev == 8, which lands in DirLoader::LoadHeader's 7..0xC arm
+    // and calls SetupDir(dirSym) with dirSym == "RndDir". That is where X7's
+    // "Proxy ... class BandCharacter not RndDir, converting" came from — a
+    // SYMPTOM of a stream already off the rails, not the cause. The asset itself
+    // declares `BandCharacter` as main.milo's root class (rev 0x1C), so there is
+    // no class disagreement to reconcile.
+    //
+    // Restore the virtual dispatch retail has, then keep the native enum
+    // semantics for everything the override does not veto.
+    if (!AllowsInlineProxy())
+        return false;
     return (mInlineProxyType == kInlineCached && bs.Cached())
         || mInlineProxyType == kInlineAlways;
 #else
