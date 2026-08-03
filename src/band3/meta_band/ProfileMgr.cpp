@@ -377,7 +377,23 @@ DataNode ProfileMgr::OnMsg(const UserLoginMsg &) {
     return 1;
 }
 
-DataNode ProfileMgr::OnMsg(const ServerStatusChangedMsg &) { return 1; }
+// Retail X360 DIVERGES from the rb3-Wii dev build here: the Wii oracle has a
+// bare `{ return 1; }`, but retail's body (fn_82548F70, 0x60 bytes) reads node 2
+// of the message and, when the server is up, re-runs the same three profile
+// web checks as OnMsg(UserLoginMsg&):
+//     lwz r4,0x4(r5) / lwz r11,0x0(r4) / addi r3,r11,0x10 / bl DataNode::Int
+//     cmpwi r3,0 / beq .L  -> bl CheckProfileWebLinkStatus
+//                             bl CheckProfileWebSetlistStatus
+//                             bl HandlePendingProfileUploads
+//     .L: return 1
+DataNode ProfileMgr::OnMsg(const ServerStatusChangedMsg &msg) {
+    if (msg->Int(2) != 0) {
+        CheckProfileWebLinkStatus();
+        CheckProfileWebSetlistStatus();
+        HandlePendingProfileUploads();
+    }
+    return 1;
+}
 
 DataNode ProfileMgr::OnMsg(const GameMicsChangedMsg &) {
     UpdateAllMicLevels();
