@@ -171,7 +171,7 @@ ObjectDir::~ObjectDir() {
 BEGIN_HANDLERS(ObjectDir)
     HANDLE_ACTION(iterate, Iterate(_msg, true))
     HANDLE_ACTION(iterate_self, Iterate(_msg, false))
-    HANDLE_ACTION(save_objects, DirLoader::SaveObjects(_msg->Str(2), this, false))
+    HANDLE_ACTION(save_objects, DirLoader::SaveObjects(_msg->Str(2), this))
     HANDLE(find, OnFind)
     HANDLE_EXPR(exists, FindObject(_msg->Str(2), false) != nullptr)
     HANDLE_ACTION(sync_objects, SyncObjects())
