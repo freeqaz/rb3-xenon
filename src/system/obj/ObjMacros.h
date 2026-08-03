@@ -220,6 +220,37 @@ const char *PathName(const class Hmx::Object *obj);
 
 #define _NEW_STATIC_SYMBOL(str) static Symbol _s(#str);
 
+// -----------------------------------------------------------------------------------
+// HANDLE_*_STATIC -- the gate-independent spelling of the local-static dialect.
+//
+// These MUST be written per gate state. Under RB3_HANDLE_LOCAL_STATIC the plain
+// HANDLE family ALREADY stringizes its argument into a function-local
+// `static Symbol _hs(#symbol)`, so the _STATIC forms must forward the *name*
+// rather than wrap it. Wrapping under the gate expands to
+//
+//     { static Symbol _s("update_char_cache");        // emitted, never compared
+//       { static Symbol _hs("_s"); if (sym == _hs) {...} } }
+//
+// i.e. the handler compares against Symbol("_s") and becomes UNREACHABLE. That
+// compiles, links, and is INVISIBLE to the match metric -- the only difference is
+// the string relocation argument, which objdiff's match_percent_normalized masks
+// (see CLAUDE.md, "Reloc args are SCORE-INVISIBLE"). Verified by preprocessing
+// band3/meta_band/CharSync.cpp under both gate states (lane DN-3, 2026-08-03).
+//
+// Writing them gate-aware makes _STATIC unconditionally correct, so a file using
+// this spelling can be scatter-#included into a gated TU (the active
+// COMDAT-scatter workflow does exactly this) without silently miscompiling.
+// Δ0 by construction at the time of writing: no gated object's include closure
+// contained a _STATIC use, so no expansion changes.
+// -----------------------------------------------------------------------------------
+#ifdef RB3_HANDLE_LOCAL_STATIC
+
+#define HANDLE_STATIC(symbol, func) HANDLE(symbol, func)
+#define HANDLE_EXPR_STATIC(symbol, expr) HANDLE_EXPR(symbol, expr)
+#define HANDLE_ACTION_STATIC(symbol, expr) HANDLE_ACTION(symbol, expr)
+
+#else
+
 #define HANDLE_STATIC(sym, func)                                                         \
     {                                                                                    \
         _NEW_STATIC_SYMBOL(sym)                                                          \
@@ -231,6 +262,8 @@ const char *PathName(const class Hmx::Object *obj);
 
 #define HANDLE_ACTION_STATIC(symbol, expr)                                               \
     { _NEW_STATIC_SYMBOL(symbol) HANDLE_ACTION(_s, expr) }
+
+#endif // RB3_HANDLE_LOCAL_STATIC
 
 #define HANDLE_METHOD(func) _HANDLE_CHECKED(func(_msg))
 
