@@ -29106,5 +29106,6 @@
  "0x826f0e88": "?GetMapKey@RGTutor@@QBAHHABVGameGem@@@Z",
  "0x826f0f08": "?Loop@RGTutor@@QAAXXZ",
  "0x826758e8": "?GetToken@StoreSongSortNode@@UBA?AVSymbol@@XZ",
- "0x826a97e0": "?OnMsg@SyncGameStartPanel@@QAA?AVDataNode@@ABVSessionDisconnectedMsg@@@Z"
+ "0x826a97e0": "?OnMsg@SyncGameStartPanel@@QAA?AVDataNode@@ABVSessionDisconnectedMsg@@@Z",
+ "0x823699b8": "?Handle@TourSavable@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z"
 }
