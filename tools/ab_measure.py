@@ -661,7 +661,7 @@ class ABMeasure:
             "— on PLAIN SOURCE patches — 24 minutes after the fix landed. "
             "The preflight tool-freshness check now catches that; if it "
             "reported 'not_in_history' you may be running a superseded "
-            "version from OUTSIDE this worktree's history.",
+            "version from OUTSIDE this worktree's history."
         )
 
     def read_leg(self, name):
@@ -1900,6 +1900,23 @@ def selftest():
         fails.append("DS-1 renamer merge")
     check("[DS-1] an INERT map edit still REFUSES after the settle loop",
           lambda: check_legb_counts({"map"}, m0), expect_refusal=True)
+
+    # A refusal REASON must be a STRING. Caught for real in this lane: the
+    # extracted _settle_hint() kept the original raise's trailing comma and
+    # silently became a 1-TUPLE, so the settle refusal printed as
+    # ["could not reach ..."] in result.json. Cosmetic, but result.json is
+    # the machine-readable artifact and a tuple-vs-str reason breaks any
+    # consumer that greps it.
+    class _Stub:
+        max_settle = 4
+        rundir = Path("/x")
+    hint = ABMeasure._settle_hint(_Stub(), leg="B", log_glob="legB_build_*.log")
+    ok = isinstance(hint, str) and "leg B" in hint
+    print(("  PASS" if ok else "  FAIL") +
+          f"  refusal hint is a STRING, not a tuple: {type(hint).__name__} "
+          f"(leg-aware: {'leg B' in str(hint)})")
+    if not ok:
+        fails.append("settle hint type")
 
     # ---- DEFECT 2: unit accounting undercounts (lane DS-4) ----------------
     # DS-4 measured 3 of 13 unit completions at Δmatched == 0: the fix removed
