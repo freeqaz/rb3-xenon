@@ -128,8 +128,11 @@ spot.
 > video backdrop and is not a failure.
 
 `small_club_01` detail: x ∈ [-161, 161], y ∈ [-298, -22], z ∈ {68.6, 69.5,
-73.6, 74.5} — a constant floor height per archetype (males 5 units taller than
-females, i.e. the archetype's own eye height), spread across the audience area.
+73.6, 74.5} — a **constant height per archetype**, with the male archetypes
+exactly 5.0 units above the female ones, spread across the audience area. (The
+5.0 is measured; what it *represents* — a height offset baked into the
+billboard's anchor, or the archetype's own stature — I did not determine, and
+am not asserting.)
 These are floor positions in a room whose bbox spans ~500 units. **They are not
 near the venue origin, which in `small_club_01` is at ceiling height** — the
 exact defect X5 named.
