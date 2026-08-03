@@ -1389,8 +1389,7 @@ Rand.cpp:
 SHA1.cpp:
 	.pdata      start:0x82215E98 end:0x82215EC8
 	.pdata      start:0x82215ED0 end:0x82215EE8
-	.text       start:0x824F31D0 end:0x824F4DC4
-	.text       start:0x824F4DC4 end:0x824F4E74
+	.text       start:0x824F31D0 end:0x824F4E74
 	.text       start:0x824F4F38 end:0x824F5040
 
 Trig.cpp:
@@ -10766,8 +10765,7 @@ system/synth/MoggClip.cpp:
 Color.cpp:
 	.pdata      start:0x82215F08 end:0x82215F10
 	.text       start:0x824F52B8 end:0x824F5364
-	.text       start:0x824F5368 end:0x824F54D0
-	.text       start:0x824F54D0 end:0x824F58C0
+	.text       start:0x824F5368 end:0x824F58C0
 
 EventAnim.cpp:
 	.pdata      start:0x82213D50 end:0x82213D70
