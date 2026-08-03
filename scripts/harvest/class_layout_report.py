@@ -88,6 +88,65 @@ CAVEATS
     ``PropertyEventListener``, ...) auto-resolution can land on a TU where the
     class is not complete — **pass ``--tu`` explicitly** rather than concluding
     the class does not exist.
+
+★★ THE THREE-LABEL CONTRACT (lane DL-2, 2026-08-03)
+---------------------------------------------------
+This tool used to have **two** outcomes where the world has **three**, and the
+collapse produced a *false answer*, not a missing one::
+
+    OK             the compiler reported the class -> layout/adjustors are real
+    CLASS_ABSENT   the compiler ran CLEAN but did not report this class
+                   (forward-declared only / unreferenced / wrong TU).  A REAL
+                   answer -- "not here" -- and legitimately empty.
+    COMPILE_FAILED the compiler could not answer at all.  NEVER a zero.
+
+The defect that forced this (reproduced before the fix): the compile command is
+lifted verbatim from ninja, so for the **nine PCH-eligible engine dirs**
+(``flow synth meta obj os utl movie hamobj gesture``) it carries
+``/Yu"decomp_pch.h"`` and the layout compile dies with::
+
+    fatal error C1094: '-Zm100' : command line option is inconsistent with
+    value used to build precompiled header ('-Zm0')
+
+``--json`` mode then emitted ``{"classes": {}, "adjustors": {}}`` **and exited
+0** -- indistinguishable from "this class has no members and no adjustors".
+Every ``Flow*``/``Meta*``/``Ham*``/``Obj*``/``Utl*``/``Os*``/``Synth*``/
+``Movie*``/``Gesture*`` class read a silent false zero; lane DK-1 caught it only
+because ``FlowSwitch`` read NONE where a prior lane had measured ``-120``.
+
+Fix: force ``/Y-`` (ignore all PCH options) into the layout compile, **after the
+guest program name** -- inserting it at ``argv[1]`` makes wibo try to ``exec``
+``/Y-`` itself.  And make the three labels *structural*: ``--json`` carries a
+``status`` key and the exit code is **0 / 1 / 3**, never 0-for-failure.
+
+``--selftest`` proves all of it, and ``--selftest --sabotage pch`` restores the
+PCH-carrying command line **and points ``/Fp`` at a file that cannot exist**, so
+the PCH is unusable regardless of today's on-disk state.  ``/Y-`` ignores
+``/Fp`` outright, so the FIXED tool is immune and the UNFIXED one always fails
+=> the sabotage discriminates the fix DETERMINISTICALLY, and MUST fail (rule 2:
+a control that only checks the happy path is vacuous).
+
+⚠⚠ **THE C1094 IS INTERMITTENT, WHICH MAKES THE DEFECT WORSE, NOT BETTER.**
+Measured 2026-08-03: it fires only while the **on-disk PCH disagrees with the
+layout compile's command shape** -- the state a **fresh reflinked worktree
+starts in**, because ``setup_worktree.sh`` reflinks main's ``build/45410914/``.
+Run a local full ``ninja`` and the PCH is rebuilt, after which the ``/Yu`` path
+*succeeds* and the false zero disappears until the next fresh worktree.  An
+earlier draft of the regression control re-ran that compile and went **red after
+an unrelated rebuild**.  So the committed pin (leg D) is **offline**: it feeds
+`classify()` the verbatim captured C1094 transcript and the identical *empty*
+parse with a *clean* transcript, and requires COMPILE_FAILED(3) vs
+CLASS_ABSENT(1) -- same parsed content, different label.  The live PCH probe
+survives as leg **E, informational, never gating**.
+⇒ A tool that returns a false zero only *sometimes* is harder to catch than one
+that always does; ``/Y-`` makes this tool immune to **both** PCH states.
+
+COST
+----
+``/Y-`` means one PCH-less TU compile per class (~14 s here).  Use
+``--all-classes`` (``/d1reportAllClassLayout``) to get **every** class in the TU
+from a **single** compile -- measured 700 classes / 51 adjustor sets in 13.8 s,
+against 700 separate compiles.
 """
 
 import argparse
@@ -187,8 +246,17 @@ def resolve_tu(project_dir, cls, verbose=False):
 
 # ------------------------------------------------------------------ the invoke
 
-def build_command(project_dir, obj, cls, scratch_obj):
-    """The real compile command, minus caching, plus the layout flag."""
+def build_command(project_dir, obj, cls, scratch_obj, use_pch=False, all_classes=False,
+                  break_pch=False):
+    """The real compile command, minus caching, plus the layout flag.
+
+    ``use_pch=False`` (the default, and the DL-2 fix) strips ``/Yu`` / ``/Yc`` /
+    ``/Fp`` and forces ``/Y-``.  Without it the nine PCH-eligible engine dirs
+    die with ``C1094: '-Zm100' inconsistent with ... ('-Zm0')`` and this tool
+    used to report that as an empty layout.  ``use_pch=True`` exists ONLY so
+    ``--selftest --sabotage pch`` can reproduce the defect and prove the
+    detector fires.
+    """
     r = subprocess.run(["ninja", "-t", "commands", obj],
                        cwd=project_dir, capture_output=True, text=True)
     if r.returncode != 0:
@@ -218,7 +286,34 @@ def build_command(project_dir, obj, cls, scratch_obj):
         if a.startswith("/Fo"):
             out.append("/Fo" + scratch_obj)
             continue
+        # ---- DL-2: neutralise the PCH, which the layout compile cannot honour.
+        if not use_pch and (a.startswith("/Yu") or a.startswith("/Yc")
+                            or a.startswith("/Fp")):
+            continue
+        # `--sabotage pch` DETERMINISM: point /Fp at a file that cannot exist, so
+        # the PCH is unusable regardless of whether the on-disk one happens to be
+        # consistent right now.  This reproduces the STATE DK-1 met (PCH not
+        # usable by the layout compile) rather than the particular -Zm symptom,
+        # which is not reproducible on demand.  `/Y-` ignores /Fp entirely, so
+        # the FIXED tool is immune and the UNFIXED tool always fails => the
+        # sabotage discriminates the fix, deterministically.
+        if break_pch and a.startswith("/Fp"):
+            out.append("/Fpthis-pch-does-not-exist-dl2.pch")
+            continue
         out.append(a)
+    if not use_pch:
+        # ⚠ AFTER the guest program name.  `out[0]` is the objcache/wibo wrapper
+        # and the cl.exe element follows it; putting `/Y-` at index 1 makes wibo
+        # try to exec "/Y-" as the program.
+        i = next((n for n, a in enumerate(out) if a.lower().endswith("cl.exe")), 0)
+        out.insert(i + 1, "/Y-")
+
+    if all_classes:
+        # One compile, every class in the TU.  The flag takes no operand, so the
+        # empty-name ICE below cannot apply to it.
+        out.insert(-1, "/d1reportAllClassLayout")
+        return out, env
+
     # A BARE `/d1reportSingleClassLayout` (empty `cls`) makes the MSVC front end
     # dereference a NULL class-name string and die.  Verified 2026-07-30 (lane BR-1):
     # under wine the same input yields a clean
@@ -238,7 +333,44 @@ def build_command(project_dir, obj, cls, scratch_obj):
     return out, env
 
 
-def run_report(project_dir, cls, tu=None, verbose=False):
+# ------------------------------------------------------- the three-label gate
+#
+# A tool that cannot distinguish "the answer is zero" from "I could not answer"
+# is the failure shape lane DL-2 exists to remove.  Keep these THREE labels
+# apart structurally -- in the exit code and in the JSON -- never by prose.
+OK = "OK"                          # class reported; layout is real
+CLASS_ABSENT = "CLASS_ABSENT"      # clean compile, class not in this TU
+COMPILE_FAILED = "COMPILE_FAILED"  # compiler could not answer -- NOT a zero
+
+EXIT_FOR = {OK: 0, CLASS_ABSENT: 1, COMPILE_FAILED: 3}
+
+# `c1xx : fatal error C1094:`, `foo.cpp(12) : error C2065:`, `LNK1104`, ...
+RE_DIAG = re.compile(r"^.*?\b((?:fatal )?error\s+[A-Z]+\d+)\s*:\s*(.*)$", re.M)
+
+
+def diagnostics(text):
+    """Every compiler/linker diagnostic in the output (empty == clean run)."""
+    return [f"{m.group(1)}: {m.group(2).strip()}" for m in RE_DIAG.finditer(text)]
+
+
+def classify(text, parsed, cls, exact=True):
+    """-> (status, diagnostics).  The whole point of this function is that
+    COMPILE_FAILED and CLASS_ABSENT can never collapse into each other."""
+    diags = diagnostics(text)
+    if diags:
+        # A diagnostic means the front end never laid the class out.  Even if
+        # some earlier class parsed, the report is untrustworthy -- refuse.
+        return COMPILE_FAILED, diags
+    if cls is None:                     # --all-classes: no single class asked for
+        return (OK if parsed["classes"] else CLASS_ABSENT), diags
+    keys = [k for k in parsed["classes"]
+            if k == cls or k.endswith("::" + cls)] if exact \
+        else list(parsed["classes"])
+    return (OK if keys else CLASS_ABSENT), diags
+
+
+def run_report(project_dir, cls, tu=None, verbose=False,
+               use_pch=False, all_classes=False, break_pch=False):
     if tu:
         obj = _obj_for_source(project_dir, tu)
         if not obj:
@@ -246,13 +378,18 @@ def run_report(project_dir, cls, tu=None, verbose=False):
                              f"(add it to config/45410914/objects.json first)")
         src = tu
     else:
+        if not cls:
+            raise SystemExit("--all-classes without a class name needs an "
+                             "explicit --tu (there is nothing to resolve on).")
         src, obj = resolve_tu(project_dir, cls, verbose)
         if not src:
             raise SystemExit(
                 f"could not find a compiled TU in which '{cls}' is complete.\n"
                 f"pass --tu <path.cpp> explicitly.")
     with tempfile.TemporaryDirectory(dir=os.path.expanduser("~/tmp")) as td:
-        argv, env = build_command(project_dir, obj, cls, os.path.join(td, "layout.obj"))
+        argv, env = build_command(project_dir, obj, cls, os.path.join(td, "layout.obj"),
+                                  use_pch=use_pch, all_classes=all_classes,
+                                  break_pch=break_pch)
         if verbose:
             print("# " + " ".join(shlex.quote(a) for a in argv), file=sys.stderr)
         p = subprocess.run(argv, cwd=project_dir, capture_output=True, text=True, env=env)
@@ -465,11 +602,158 @@ def emit(parsed, cls, exact, offset_query, raw_text, show_vtable):
     return 0
 
 
+# ============================================================================
+# CONTROLS
+#
+# INSTRUMENT_DESIGN rules 1, 2, 4 and 6 made runnable:
+#   1  a known-positive is asserted BEFORE any zero from this tool is believed;
+#   2  the empty-check is PAIRED with a deliberately sabotaged leg (leg D always
+#      runs, so a revert of the /Y- fix fails a plain --selftest);
+#   4  the classifier is shown producing a SECOND label (CLASS_ABSENT) on a
+#      known-opposite case -- a one-label classifier is not believed;
+#   6  a failure REFUSES (exit 3) rather than returning a misleading zero.
+# ============================================================================
+
+#: `__delDtor` this-adjustor, the value lanes actually consume as "K".
+def _delDtor_K(parsed, cls):
+    return (parsed["adjustors"].get(cls) or {}).get("__delDtor")
+
+
+def _probe(project_dir, cls, tu=None, use_pch=False, verbose=False, break_pch=False):
+    """-> (status, diagnostics, K, parsed, text).  Never raises for a compiler fault.
+
+    ⚠ MEASURED 2026-08-03, and it is the reason the diagnostic is the ONLY
+    admissible discriminator: for a prefix that matches nothing the compiler
+    reports **no classes at all**, so ``classes == {}`` is byte-for-byte the
+    same shape as the C1094 failure.  "Did it produce output?" therefore cannot
+    separate CLASS_ABSENT from COMPILE_FAILED -- only "did it emit a
+    diagnostic?" can.  Any future refactor that tries to infer status from the
+    parsed content instead re-introduces the false zero.
+    """
+    try:
+        _src, text = run_report(project_dir, cls, tu, verbose, use_pch=use_pch,
+                                break_pch=break_pch)
+    except SystemExit as e:
+        return COMPILE_FAILED, [str(e)[:200]], None, {"classes": {}, "adjustors": {}}, ""
+    parsed = parse(text)
+    status, diags = classify(text, parsed, cls, exact=True)
+    return status, diags, _delDtor_K(parsed, cls), parsed, text
+
+
+def run_selftest(project_dir, sabotage=None, verbose=False):
+    """`--selftest` must PASS on the fixed tool and FAIL under `--sabotage pch`."""
+    use_pch = (sabotage == "pch")
+    print(f"class_layout_report selftest  project_dir={project_dir}"
+          + (f"  SABOTAGE={sabotage}" if sabotage else ""))
+    if sabotage:
+        print("  (sabotage leg: this run is EXPECTED to FAIL -- it proves the "
+              "selftest is not vacuous)")
+    rows = []
+
+    def chk(name, ok, detail):
+        rows.append((name, bool(ok), detail))
+
+    # -- A  KNOWN POSITIVE, IN A PCH DIR.  This is the exact reading the
+    #       unpatched tool lost: FlowSwitch lives in src/system/flow, one of the
+    #       nine PCH-eligible dirs, and read NONE where DK-1 measured -120.
+    st, dg, k, _p, _t = _probe(project_dir, "FlowSwitch", use_pch=use_pch,
+                               verbose=verbose, break_pch=use_pch)
+    chk("A. PCH-dir known positive: FlowSwitch K == 0x78",
+        st == OK and k == 0x78,
+        f"status={st} K={k if k is None else hex(k)} diags={dg[:2]} (want OK / 0x78)")
+
+    # -- B  NON-PCH CONTROL.  src/system/char is excluded from the PCH, so this
+    #       path worked BEFORE the fix; it proves /Y- did not break it.
+    st, dg, k, _p, _t = _probe(project_dir, "CharHair", use_pch=use_pch,
+                               verbose=verbose, break_pch=use_pch)
+    chk("B. non-PCH control: CharHair K == 0x7c",
+        st == OK and k == 0x7C,
+        f"status={st} K={k if k is None else hex(k)} diags={dg[:2]} (want OK / 0x7c)")
+
+    # -- C  THE SECOND LABEL (rule 4).  A clean compile that simply does not
+    #       report the class must read CLASS_ABSENT -- a REAL "not here" answer,
+    #       with NO diagnostics -- and must not be confused with a failure.
+    st, dg, _k, p, text = _probe(project_dir, "ZzzNoSuchClassDL2",
+                                 tu="src/system/flow/FlowSwitch.cpp",
+                                 use_pch=use_pch, verbose=verbose,
+                                 break_pch=use_pch)
+    # cl.exe echoes the source file name when it actually runs, so "banner
+    # present AND zero diagnostics" is what makes this absence a REAL answer
+    # rather than a crash.  (The parsed content cannot tell them apart -- see
+    # _probe's docstring.)
+    chk("C. clean compile, class absent -> CLASS_ABSENT (not COMPILE_FAILED)",
+        st == CLASS_ABSENT and not dg and "FlowSwitch.cpp" in text,
+        f"status={st} diags={dg[:2]} compiler_ran={'FlowSwitch.cpp' in text} "
+        f"classes_seen={len(p['classes'])} (want CLASS_ABSENT / no diags / ran)")
+
+    # -- D  ★ THE REGRESSION PIN, ALWAYS ON, AND DELIBERATELY OFFLINE.
+    #
+    #       This pins the actual bug: **an empty parse PLUS a diagnostic must
+    #       classify COMPILE_FAILED (exit 3), never CLASS_ABSENT and never OK.**
+    #       It runs `classify()` against the VERBATIM C1094 transcript captured
+    #       from the real failure, so it is deterministic.
+    #
+    #       ⚠ WHY NOT JUST RE-RUN THE PCH COMPILE:  measured 2026-08-03, the
+    #       C1094 IS NOT REPRODUCIBLE ON DEMAND.  It fires only while the
+    #       on-disk PCH disagrees with the layout compile's command shape --
+    #       the state a FRESH REFLINKED WORKTREE starts in, since
+    #       setup_worktree.sh reflinks main's build/45410914/.  A local full
+    #       `ninja` rebuilds the PCH and the /Yu path then SUCCEEDS.  An earlier
+    #       draft of this leg did re-run the compile and went RED after an
+    #       unrelated rebuild.  That makes the defect INTERMITTENT, which is
+    #       strictly worse than permanent: a tool that returns a false zero only
+    #       sometimes is harder to catch.  Leg E below still probes the live
+    #       environment, but INFORMATIONALLY -- it must never gate.
+    C1094_TRANSCRIPT = (
+        "FlowSwitch.cpp\n"
+        "src/system/flow/FlowSwitch.cpp : fatal error C1094: '-Zm100' : command "
+        "line option is inconsistent with value used to build precompiled "
+        "header ('-Zm0')\n")
+    empty = {"classes": {}, "vtables": {}, "adjustors": {}}
+    st_f, dg_f = classify(C1094_TRANSCRIPT, empty, "FlowSwitch", exact=True)
+    # and the mirror: the SAME empty parse with a CLEAN transcript is the real
+    # "not here" answer.  Identical parsed content, different label -- which is
+    # the whole three-label contract in one assertion.
+    st_c, dg_c = classify("FlowSwitch.cpp\n", empty, "FlowSwitch", exact=True)
+    chk("D. REGRESSION PIN: diagnostic+empty => COMPILE_FAILED(3); "
+        "clean+empty => CLASS_ABSENT(1)",
+        (st_f == COMPILE_FAILED and EXIT_FOR[st_f] == 3
+         and any("C1094" in d for d in dg_f)
+         and st_c == CLASS_ABSENT and EXIT_FOR[st_c] == 1 and not dg_c),
+        f"C1094-transcript -> {st_f}/exit {EXIT_FOR[st_f]} diags={len(dg_f)}; "
+        f"clean-transcript -> {st_c}/exit {EXIT_FOR[st_c]} diags={len(dg_c)}; "
+        f"(want COMPILE_FAILED/3/>=1 and CLASS_ABSENT/1/0 -- SAME empty parse, "
+        f"different label)")
+
+    # -- E  INFORMATIONAL ONLY, NEVER GATES.  What does the live PCH path do
+    #       right now?  Both outcomes are legitimate (see leg D's note), so this
+    #       reports rather than judges -- a leg that cannot fail must not be
+    #       allowed to pass either.
+    st_e, dg_e, k_e, _p, _t = _probe(project_dir, "FlowSwitch", use_pch=True,
+                                     verbose=verbose)
+    live = ("reproduces the C1094 (PCH disagrees with the layout compile)"
+            if any("C1094" in d for d in dg_e)
+            else f"PCH currently CONSISTENT -- /Yu path succeeds (status={st_e}, "
+                 f"K={k_e if k_e is None else hex(k_e)})")
+    print(f"  [INFO] E. live PCH path: {live}")
+    print( "         Not a control: this flips with the on-disk PCH.  /Y- makes "
+           "the tool\n         immune to BOTH states, which is the point.")
+
+    nfail = 0
+    for name, ok, detail in rows:
+        print(f"  [{'PASS' if ok else 'FAIL'}] {name}\n         {detail}")
+        nfail += (not ok)
+    print(f"  {len(rows) - nfail}/{len(rows)} controls passed")
+    return 1 if nfail else 0
+
+
 def main():
     ap = argparse.ArgumentParser(
         description="Authoritative class layout from cl.exe "
                     "/d1reportSingleClassLayout (replaces stale // 0xHEX comments).")
-    ap.add_argument("cls", help="class name (matched as a PREFIX by the compiler)")
+    ap.add_argument("cls", nargs="?", default=None,
+                    help="class name (matched as a PREFIX by the compiler); "
+                         "optional with --selftest or --all-classes --tu")
     ap.add_argument("--tu", help="translation unit to compile (default: auto-resolve)")
     ap.add_argument("--project-dir", default=os.environ.get("RB3_PROJECT_DIR", REPO),
                     help="worktree to compile in (default: this repo)")
@@ -485,27 +769,61 @@ def main():
                     help="rewrite wrong // 0xHEX comments in place (comments only, "
                          "never code). Implies --check-header.")
     ap.add_argument("-v", "--verbose", action="store_true")
+    ap.add_argument("--all-classes", action="store_true",
+                    help="/d1reportAllClassLayout: EVERY class in the TU from ONE "
+                         "compile (13.8s / 700 classes measured, vs one compile "
+                         "per class)")
+    ap.add_argument("--selftest", action="store_true",
+                    help="run the three-label controls; non-zero exit on failure")
+    ap.add_argument("--sabotage", choices=["pch"], default=None,
+                    help="restore the PCH-carrying command line that produced the "
+                         "silent false zero (vacuity control: --selftest MUST fail)")
     args = ap.parse_args()
+
+    if args.selftest:
+        return run_selftest(args.project_dir, args.sabotage, args.verbose)
 
     off = int(args.offset, 16) if args.offset and args.offset.lower().startswith("0x") \
         else (int(args.offset) if args.offset else None)
 
-    src, text = run_report(args.project_dir, args.cls, args.tu, args.verbose)
+    src, text = run_report(args.project_dir, args.cls, args.tu, args.verbose,
+                           use_pch=(args.sabotage == "pch"),
+                           all_classes=args.all_classes)
     if args.raw:
         print(text)
         return 0
     parsed = parse(text)
+    # ★ THE THREE-LABEL GATE.  Computed once, reported in BOTH output modes, and
+    # carried in the exit code -- a consumer must never have to infer "did the
+    # compiler actually answer?" from an empty dict.
+    status, diags = classify(text, parsed,
+                             None if args.all_classes else args.cls, args.exact)
     if args.json:
         parsed["_tu"] = src
+        parsed["status"] = status
+        parsed["diagnostics"] = diags
+        parsed["_note"] = ("status=COMPILE_FAILED means the compiler could not "
+                           "answer; it is NOT 'no members / no adjustors'.")
         print(json.dumps(parsed, indent=2))
-        return 0
+        return EXIT_FOR[status]
 
-    print(f"# class layout for '{args.cls}' via TU {src}  "
-          f"(cl.exe /d1reportSingleClassLayout{args.cls})")
+    flag = ("/d1reportAllClassLayout" if args.all_classes
+            else "/d1reportSingleClassLayout" + args.cls)
+    print(f"# class layout for '{args.cls}' via TU {src}  (cl.exe {flag})")
+    print(f"# STATUS: {status}")
+    if status == COMPILE_FAILED:
+        print("!! REFUSING TO REPORT A LAYOUT -- the compiler emitted a diagnostic,")
+        print("!! so an empty report here would be a FALSE ZERO, not an answer.")
+        for d in diags:
+            print(f"!!   {d}")
+        print("# --- compiler said: ---")
+        print(text[:2000])
+        return EXIT_FOR[status]
     if not parsed["classes"] and text.strip():
         print("# --- compiler said: ---")
         print(text[:2000])
     rc = emit(parsed, args.cls, args.exact, off, text, not args.no_vtable)
+    rc = EXIT_FOR[status] if status != OK else rc
 
     if args.check_header or args.fix_header:
         hdrs = find_header(args.project_dir, args.cls)
