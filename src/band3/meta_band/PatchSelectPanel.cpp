@@ -169,6 +169,12 @@ inline RndMat *PatchProvider::Mat(int, int idx, UIListMesh *slot) const {
 }
 
 inline void PatchProvider::Text(int, int idx, UIListLabel *slot, UILabel *label) const {
+    // Retail X360 keeps these two Symbols as FUNCTION-LOCAL STATICS (two
+    // guard-word-protected `Symbol::Symbol(const char*)` calls at the top of
+    // the body, guard bits 0 and 1), not as the file-scope globals declared in
+    // utl/Symbols.h that the rb3-Wii dev source uses.
+    static Symbol shell_no_patch("shell_no_patch");
+    static Symbol shell_new_patch("shell_new_patch");
     if (idx == 0)
         label->SetTextToken(shell_no_patch);
     else if (slot->Matches("patch_name") && !GetPatchDir(idx)->HasLayers()) {
@@ -184,10 +190,12 @@ inline void PatchProvider::InitData(RndDir *dir) {
         RndMat *newMat = Hmx::Object::New<RndMat>();
         newMat->Copy(mEmptyMat, kCopyShallow);
         newMat->SetDiffuseTex(mPatches[i]->GetTex());
-        // Retail sets ONLY the alpha-cut bit here (`lwz 0x188 / ori 2 / stw`);
-        // it has no SetAlphaThreshold(false) arm -- the Wii dev source's extra
-        // call emits a `stb r11, 0x9b(r31)` that retail does not have.
-        newMat->SetAlphaCut(true);
+        // Retail X360 has NEITHER of the rb3-Wii dev source's two extra calls
+        // (`SetAlphaCut(true)` / `SetAlphaThreshold(false)`): the target body
+        // has no `stb` to mAlphaCut at all, and exactly ONE `lwz 0x188 / ori 2
+        // / stw 0x188` read-modify-write -- which is SetDiffuseTex's own
+        // `mDirty |= 2`.  The alpha-cut state comes from the patch.mat template
+        // via the Copy(kCopyShallow) above.
         unk24.push_back(newMat);
     }
 }
