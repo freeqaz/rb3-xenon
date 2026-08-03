@@ -347,7 +347,16 @@ plain uncached-but-correct compile). Cache lives at `~/.cache/rb3-objcache`
   validate an obj-byte comparator *confirms* it.
   ⇒ An obj-byte comparison is meaningful **only** with `OBJCACHE=off` on BOTH legs
   **and** the PCH-dir residue subtracted. Otherwise use `matched_functions` /
-  `fuzzy_match_percent` or a relocation-normalized body hash. (whole-binary `matched_functions` holds equal through all-hits
+  `fuzzy_match_percent` or a relocation-normalized body hash.
+  ★ **That construction now EXISTS as a tool — use it, don't rebuild it:**
+  `tools/gate_liveness.py` compiles a TU twice (flag on/off) with `OBJCACHE=off`
+  and **the same `/Fo` on both legs**, so every hazard above is neutralised *by
+  construction*, and reports **which owned symbols changed**. It answers "is this
+  `/D` gate live in this TU?" **non-metrically** (lane DK-3, `0d6933b5`;
+  `docs/decomp/patterns/gate-liveness-probe.md`). ⚠ Its own lesson: **raw `.text`
+  identity is TOO BLUNT** — it read LIVE for four TUs whose only change sat in a
+  *shared template COMDAT* the linker resolves arbitrarily. **The signal is
+  changed words in TU-OWNED symbols.** (whole-binary `matched_functions` holds equal through all-hits
   rebuilds). objcache also normalizes recorded deps to **repo-root-relative** (no
   absolute src paths in `ninja -t deps` → enables warm-worktree `.ninja_deps` seeding).
 - **Resolved gotcha (7956af7):** `<memory.h>` used to have no real match on the
