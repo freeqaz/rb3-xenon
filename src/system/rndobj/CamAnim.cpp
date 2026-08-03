@@ -122,3 +122,22 @@ void RndCamAnim::SetKey(float frame) {
 }
 
 #pragma endregion
+
+// See the specialization declaration + rationale comment in obj/ObjPtr_p.h
+// (lane DR-2 census).  Retail's ObjRefConcrete<RndCam, ObjectDir> dtor passes
+// mOwner, not `this`, as the ring-ref to Release -- a single-instruction
+// `replace` at 116 B / fuzzy 97.931.  Defined here because this is the TU whose
+// pinned .text range retail placed the COMDAT in, and because RndCam's complete
+// type (needed by mObject->Release) arrives via rndobj/CamAnim.h -> rndobj/Cam.h.
+//
+// X360 only: the body reads ObjRefConcrete::mOwner, which exists only in the
+// retail arm of ObjPtr_p.h -- and that header only DECLARES this specialization
+// in the same arm.  Compiling it natively would be an ODR hazard, not merely a
+// compile error.
+#ifndef HX_NATIVE
+template <>
+ObjRefConcrete<RndCam, ObjectDir>::~ObjRefConcrete() {
+    if (mObject)
+        mObject->Release(reinterpret_cast<ObjRefOwner *>(mOwner));
+}
+#endif

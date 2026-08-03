@@ -122,6 +122,43 @@ class RndParticleSys;
 template <>
 ObjRefConcrete<RndParticleSys, ObjectDir>::~ObjRefConcrete();
 
+// Lane DR-2: the same per-(T1,T2) mOwner divergence, found by censusing EVERY
+// sub-100 ObjRefConcrete dtor row in the binary for the exact RndParticleSys
+// signature -- target `lwz r4, 4(r3)` (mOwner) paired against base `mr r4, r3`
+// (`this`) as the row's SOLE mismatch.  Exactly four dtor rows are sub-100 and
+// exactly these three carry that signature (the fourth, ObjRefConcrete<LightHue,
+// ObjectDir> in default/Sequence, is a branch-distance diff_arg -- a different
+// class, deliberately left alone).  Each is 116 B at fuzzy 97.931 with one
+// mismatched instruction out of 29.
+//
+// ⚠ COLLATERAL, and the rule that follows from it: declaring the specialization
+// suppresses IMPLICIT INSTANTIATION of the dtor in every other TU, and MSVC ties
+// emission of the compiler-generated scalar deleting dtor `??_G` to that
+// instantiation.  So a TU that used to emit `??_G?$ObjRefConcrete@T...` stops
+// doing so.  That is free only when retail placed `??1` and `??_G` in the SAME
+// unit -- true for RndParticleSys (both in PartAnim) and RndGroup (both in
+// Spotlight), FALSE for RndCam, whose `??1` row is in default/CamAnim while its
+// `??_G` row is in default/Rnd_Xbox.  Measured: the RndCam arm is +116 B (??1
+// crosses) -76 B (??_G in Rnd_Xbox drops to 0) = net +40 B and 0 functions.
+// ⇒ Before adding another instantiation here, check which unit owns its `??_G`
+// row; if it differs from the `??1` unit, the arm buys bytes but no function.
+//
+// Still scoped per-instantiation rather than applied to the primary template,
+// for the reason recorded above: the global change was measured at -64
+// matched_functions, so most T1 genuinely pass `this`.  Definitions live in the
+// TU whose pinned .text range retail put the COMDAT in -- MeshAnim.cpp,
+// world/Spotlight.cpp, CamAnim.cpp respectively -- each guarded #ifndef
+// HX_NATIVE for the ODR reason given in PartAnim.cpp.
+class BandIKEffector;
+class RndGroup;
+class RndCam;
+template <>
+ObjRefConcrete<BandIKEffector, ObjectDir>::~ObjRefConcrete();
+template <>
+ObjRefConcrete<RndGroup, ObjectDir>::~ObjRefConcrete();
+template <>
+ObjRefConcrete<RndCam, ObjectDir>::~ObjRefConcrete();
+
 template <class T1, class T2>
 void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
     if (obj != mObject) {

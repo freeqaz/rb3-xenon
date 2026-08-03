@@ -349,3 +349,19 @@ void RndMeshAnim::ShrinkKeys(int num) {
 #undef gAltRev
 
 #endif // !HX_NATIVE (scatter tail)
+
+// See the specialization declaration + rationale comment in obj/ObjPtr_p.h
+// (lane DR-2 census).  Retail's ObjRefConcrete<BandIKEffector, ObjectDir> dtor
+// passes mOwner, not `this`, as the ring-ref to Release -- a single-instruction
+// `replace` at 116 B / fuzzy 97.931.  This unity TU is the one whose pinned
+// .text range retail placed the COMDAT in, and it already emits the primary
+// template's copy of this instantiation (verified in the compiled obj's symbol
+// table), so BandIKEffector's complete type is in reach here.  X360 only -- see
+// PartAnim.cpp for the ODR rationale.
+#ifndef HX_NATIVE
+template <>
+ObjRefConcrete<BandIKEffector, ObjectDir>::~ObjRefConcrete() {
+    if (mObject)
+        mObject->Release(reinterpret_cast<ObjRefOwner *>(mOwner));
+}
+#endif
