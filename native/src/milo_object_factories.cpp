@@ -172,6 +172,7 @@
 // BandConfiguration is `public Hmx::Object`), NOT ObjectDir subclasses, so
 // neither carries the nested-dir desync hazard the header note above warns
 // about for an unregistered *Dir.
+#include "bandobj/BandCharDesc.h"
 #include "bandobj/BandCharacter.h"
 #include "bandobj/BandConfiguration.h"
 #include "bandobj/BandWardrobe.h"
@@ -428,12 +429,46 @@ void RegisterMiloObjectFactories() {
     // until the conversion path is fixed, and the default stays off.
     //
     // Turn on with RB3_BAND_MEMBERS=1 to reproduce the desync and work it.
-    if (getenv("RB3_BAND_MEMBERS")) {
-        REGISTER_OBJ_FACTORY(BandWardrobe)
+    // ══ X8 UPDATE ══ The desync above is FIXED and its diagnosis is RETRACTED.
+    //
+    // char/main/main.milo does NOT declare its root as RndDir -- decompressing
+    // the asset shows rev 0x1C and root class symbol "BandCharacter". The
+    // `RndDir` in that message came from DirLoader::LoadHeader's mRev<=0xC arm
+    // after the loader read a garbage rev of 8 out of the four bytes following
+    // an 0xADDEADDE object terminator, because ObjectDir::InlineProxy's
+    // HX_NATIVE arm read the mInlineProxyType FIELD instead of dispatching
+    // through the VIRTUAL AllowsInlineProxy(), which BandCharacter overrides to
+    // false. Fixed in obj/Dir.cpp; SetupDir was never at fault. rc=139 -> rc=0
+    // and all four members instantiate.
+    //
+    // Still gated so the ON/OFF A/B stays available, but now DEFAULT-ON with an
+    // RB3_NO_BAND_MEMBERS opt-out (the house rule for a native fix once
+    // ON-vs-OFF evidence exists -- see the X8 doc's frame table).
+    if (getenv("RB3_NO_BAND_MEMBERS") == nullptr) {
+        // ⛔ X8: CALL THE ENGINE'S OWN Init(), NOT A BARE REGISTRATION.
+        //
+        // This is the FOURTH instance in this file of the drift its own header
+        // warns about, and the second that was a live crash (X7 found the
+        // third: Waypoint's registered-factory-with-a-segfaulting-ctor).
+        //
+        // BandCharDesc::Init() (bandobj/BandCharDesc.cpp:75-99) is what fills
+        // gInstNames[6] = {guitar,bass,drum,mic,keyboard,none}. Retail reaches
+        // it through BandInit() (bandobj/Band.cpp:98-113), which this
+        // hand-rolled list replaces. Without it every entry of gInstNames is
+        // the NULL symbol, so BandWardrobe::LoadMainCharacters assigns every
+        // member a null instrument, InstrumentOutfit::GetPiece returns 0 for
+        // anything outside {guitar,bass,drum,mic,keyboard}, and
+        // BandWardrobe.cpp:620 dereferences it: SIGSEGV in Symbol::Null().
+        // MEASURED as exactly that backtrace before this line existed.
+        //
+        // Init() additionally runs Register(), the two bandchardesc_* DataFuncs
+        // and ReloadPrefabs -- all of which the bare factory line dropped.
+        BandCharDesc::Init();
+        BandWardrobe::Init();
         // BandCharacter IS an ObjectDir subclass (-> Character -> RndDir ->
-        // ObjectDir), which is why its load failure is a desync rather than a
+        // ObjectDir), which is why its load failure was a desync rather than a
         // skipped leaf -- exactly the case this file's header describes.
-        REGISTER_OBJ_FACTORY(BandCharacter)
+        BandCharacter::Init();
     }
 
     // X4d MEASUREMENT HARNESS (RB3_BIND_BANDCAMSHOT=1), off by default.

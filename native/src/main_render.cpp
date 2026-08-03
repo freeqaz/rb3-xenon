@@ -121,6 +121,12 @@
 #include "rndobj/MultiMesh.h"
 #include "world/Crowd.h"
 #include "bandobj/BandConfiguration.h"  // X7: the band-slot placement census
+#include "bandobj/BandWardrobe.h"      // X8: the shipped enter_venue placement path
+
+// X8: defined in native/src/{milo_link_stubs,m6_symbols}.cpp -- intern the
+// hand-defined Symbol dispatch-key globals after Symbol::Init().
+void InternSymbolGlobals_MiloLinkStubs();
+void InternSymbolGlobals_M6Symbols();
 #include "utl/FilePath.h"
 #include "utl/Str.h"
 #include "utl/Symbol.h"
@@ -823,15 +829,28 @@ namespace {
             const Vector3 &w = c->WorldXfm().v;
             std::vector<RndMesh *> cm = CollectDeep<RndMesh>(c);
             int skinned = 0;
-            for (size_t j = 0; j < cm.size(); j++)
+            // X8: `meshes` alone cannot separate "resident" from "renderable" --
+            // exactly the aggregate trap X5/X6 kept hitting. A band member
+            // censuses 140 meshes and draws none, and the reason is per-mesh, so
+            // report the two per-mesh predicates the draw loop actually tests:
+            // RndMesh::DrawShowing() gates on Showing(), and the WebGPU backend
+            // drops a mesh with no vertices (Mesh_Wgpu "no vertices").
+            int showing = 0, withVerts = 0, drawable = 0;
+            for (size_t j = 0; j < cm.size(); j++) {
                 if (cm[j]->IsSkinned()) skinned++;
+                bool sh = cm[j]->Showing();
+                bool nv = cm[j]->NumVerts() > 0;
+                if (sh) showing++;
+                if (nv) withVerts++;
+                if (sh && nv) drawable++;
+            }
             char key[96];
             snprintf(key, sizeof(key), "%.2f,%.2f,%.2f", w.x, w.y, w.z);
             atPos[key]++;
             printf("    %-24s world=(%8.2f %8.2f %8.2f)  meshes=%-3d skinned=%-3d "
-                   "driver=%s\n",
+                   "showing=%-3d verts>0=%-3d DRAWABLE=%-3d driver=%s\n",
                    c->Name() ? c->Name() : "(unnamed)", w.x, w.y, w.z, (int)cm.size(),
-                   skinned, c->Driver() ? "yes" : "NO");
+                   skinned, showing, withVerts, drawable, c->Driver() ? "yes" : "NO");
         }
         int distinct = (int)atPos.size();
         printf("    => %d character(s) at %d DISTINCT world position(s)%s\n",
@@ -1912,6 +1931,211 @@ namespace {
              rndDir ? "loaded dir is an RndDir (SyncObjects run)"
                     : "loaded dir is NOT an RndDir — nothing here can draw");
 
+        // ★ X8: put the band members ON THE VENUE'S SHIPPED SLOTS.
+        //
+        // NOTHING HERE PLACES ANYTHING. Not one transform below is authored,
+        // interpolated or hand-picked by this driver. This calls the SHIPPED
+        // entry point and lets the venue's own BandConfiguration decide:
+        //
+        //   BandWardrobe::OnEnterVenue (bandobj/BandWardrobe.cpp:911-919) is
+        //     LoadCharacters(dir->Name(), false);
+        //     SetVenueDir(dir);
+        //
+        // — the `enter_venue` DTA handler, whose FIRST LINE is
+        // MILO_ASSERT(!TheBandDirector, 0x750): it is the retail path for
+        // exactly the situation rb3-render is in (no BandDirector). Reproducing
+        // those two calls is therefore not a bridge I invented; it is the
+        // shipped no-director path, called directly because no DTA dispatches
+        // `enter_venue` natively.
+        //
+        // What the two calls do, and why both are needed:
+        //   LoadCharacters -> LoadMainCharacters assigns each member's
+        //     mInstrumentType and builds mVenueNames = player_<inst>0. Without
+        //     it every slot targName resolves to nothing.
+        //   SetVenueDir -> SetDir (SetShowing(true) on all four -- THE reason
+        //     they loaded but never drew) then SyncPlayMode, which reaches the
+        //     venue's BandConfiguration through mModeSink and teleports each
+        //     member onto its authored slot Transform.
+        //
+        // ⚠ BandWardrobe::SetDir's first statement is an UNGUARDED
+        // mTargets[i]->SetShowing(true) followed by GetCharacter(0)->Find(...)
+        // (X7 flagged this). mTargets is bound at the end of BandWardrobe::Load
+        // by Find<BandCharacter>("player%d"), which yields null whenever the
+        // BandCharacter factory is absent -- i.e. in every default build before
+        // this lane. Check all four HERE, in the driver, rather than adding a
+        // null guard to a scored shared TU.
+        if (TheBandWardrobe) {
+            int bound = 0;
+            for (int i = 0; i < 4; i++)
+                if (TheBandWardrobe->GetCharacter(i)) bound++;
+
+            // ⛔ THE FULL enter_venue PATH IS OPT-IN (RB3_BAND_PLACE=1) BECAUSE
+            // IT STILL CRASHES, and the defect is named rather than papered over.
+            //
+            // With it on, LoadCharacters drives the FileMerger, which fires
+            // `on_post_merge` -> BandCharacter::OnPostMerge -> SyncObjects, and
+            // SyncObjects runs the shipped loop (BandCharacter.cpp:148-153,
+            // token-identical to rb3-Wii's :186-192):
+            //     while (!unk610.empty()) { RndMeshDeform *df = unk610.front();
+            //                               ... df->Mesh()->...; delete df; }
+            // which assumes a kObjListNoNull list really contains no nulls.
+            // Natively it can: obj/ObjPtr_p.h:777-789 (and the ObjPtrVec twin at
+            // :538-549) SUPPRESSES the erase whenever gInReplaceList is set --
+            // a guard an earlier lane added against real heap corruption -- and
+            // leaves a NULL entry in the list instead. A merge IS a ReplaceList,
+            // so front() hands back null and df->Mesh() dereferences it:
+            //     SIGSEGV in ObjRefConcrete<RndMesh,ObjectDir>::operator RndMesh*
+            //       <- RndMeshDeform::Mesh() <- BandCharacter::SyncObjects()
+            // Worse, the entry never leaves, so even a null-skip would spin
+            // forever on !empty(). Fixing it means reconciling the suppression
+            // with the no-null invariant in a header every target includes --
+            // its own lane, with an A/B on every prior frame. NOT attempted here.
+            //
+            // A crash is not a frame. Off by default, exactly as X7 left the
+            // registrations it could not make safe.
+            if (bound == 4 && getenv("RB3_BAND_PLACE")) {
+                // ⛔ `band.play_mode` is UNSET in this harness and both
+                // consumers hard-fail on that, which is why the first wiring
+                // attempt died in Symbol::Null() under LoadMainCharacters
+                // (GetInstrumentForTarget's final arm is
+                // MILO_ASSERT(mode == "coop_bg"), and
+                // BandConfiguration::ConfigIndex MILO_FAILs "invalid mode").
+                // It is unset because retail sets it from config/band_keep.dta,
+                // the SystemInit half this harness documents as unreadable from
+                // the shipped archive (it pulls ui/dev_only/selvenue.dta).
+                //
+                // ⚠ THE VALUE IS READ FROM SHIPPED DATA, NOT CHOSEN BY ME.
+                // config/macros.dta ships
+                //     #define BAND_PLAY_MODES (coop_bg coop_bk coop_gk)
+                // and that macro is what ConfigIndex itself indexes. Load the
+                // shipped macros file if the macro is not already defined, then
+                // take element 0. Which of the three modes a session is in is
+                // game state, not placement data; the venue ships an authored
+                // transform row for ALL THREE (X7 §2.3) and this selects the
+                // first. Disclosed as a selection, and RB3_BAND_PLAY_MODE
+                // overrides it so the other two rows are reachable.
+                if (!DataGetMacro("BAND_PLAY_MODES")) DataReadFile("config/macros.dta", true);
+                DataArray *modes = DataGetMacro("BAND_PLAY_MODES");
+                const char *want = getenv("RB3_BAND_PLAY_MODE");
+                if (modes && modes->Size() > 0) {
+                    Symbol mode = want ? Symbol(want) : modes->Sym(0);
+                    DataVariable("band.play_mode") = DataNode(mode);
+                    printf("  band: play_mode='%s' (from shipped BAND_PLAY_MODES, "
+                           "%d mode(s)%s)\n",
+                           mode.Str(), modes->Size(), want ? ", env override" : ", index 0");
+                } else {
+                    printf("  band: ⛔ BAND_PLAY_MODES macro NOT available — "
+                           "LoadMainCharacters would MILO_FAIL; skipping\n");
+                    goto band_done;
+                }
+                // ⛔ LOAD-ORDER DEFECT: the venue's BandConfiguration never
+                // registers itself as the wardrobe's mode sink.
+                //
+                // BandConfiguration::Load's last statement (bandobj/
+                // BandConfiguration.cpp:116-118) is
+                //     if (TheBandWardrobe) TheBandWardrobe->SetModeSink(this);
+                // but TheBandWardrobe is instanced from world/shared/world_chars.milo,
+                // which this venue pulls in as a SUBDIR -- so at the moment the
+                // venue root's own object list is deserialized, TheBandWardrobe
+                // is still null and the guard silently declines. mModeSink then
+                // stays null forever, and BandWardrobe::SyncPlayMode
+                // (BandWardrobe.cpp:326-331) is `if (mModeSink) ... Handle(...)`
+                // -- a no-op. MEASURED: with the enter_venue calls below running
+                // and rc=0, all four members stayed at char/main/main.milo's
+                // authored defaults (y=28.85, z=0) and not one slot-resolution
+                // warning was emitted, because SyncPlayMode never reached the
+                // BandConfiguration at all.
+                //
+                // This re-executes THAT EXACT SHIPPED STATEMENT, once, at a
+                // point where TheBandWardrobe is non-null. It is not a new
+                // policy: it is the line the asset's own Load tried to run.
+                {
+                    std::vector<BandConfiguration *> cfgs =
+                        CollectDeep<BandConfiguration>(dir);
+                    if (!cfgs.empty()) {
+                        TheBandWardrobe->SetModeSink(cfgs[0]);
+                        printf("  band: mode sink = venue BandConfiguration "
+                               "(%d found; BandConfiguration::Load's own "
+                               "SetModeSink ran before TheBandWardrobe existed)\n",
+                               (int)cfgs.size());
+                    } else {
+                        printf("  band: ⛔ no BandConfiguration in this venue — "
+                               "members will stay at their asset defaults\n");
+                    }
+                }
+                TheBandWardrobe->LoadCharacters(dir->Name(), false);
+                TheBandWardrobe->SetVenueDir(dir);
+                printf("  band: enter_venue path run (LoadCharacters + "
+                       "SetVenueDir) on '%s'\n",
+                       dir->Name() ? dir->Name() : "(unnamed)");
+            } else if (bound == 4 && getenv("RB3_NO_BAND_SHOW") == nullptr) {
+                // ★ DEFAULT PATH: make the four members VISIBLE, and nothing else.
+                //
+                // This is the ONE statement BandWardrobe::SetDir opens with
+                // (bandobj/BandWardrobe.cpp:~205, `mTargets[i]->SetShowing(true)`
+                // for i in 0..3) -- the reason the members loaded but never drew.
+                // It is reproduced here because the rest of SetDir/LoadCharacters
+                // is gated on the ObjPtrList defect above.
+                //
+                // ⚠ DISCLOSED PLAINLY, AND IT IS THE WHOLE CAVEAT ON EVERY FRAME
+                // BELOW: this does NOT place anybody. Without SyncPlayMode the
+                // members stand where char/main/main.milo itself put them -- four
+                // positions ~37 units apart on one line at y=28.85, z=0 -- NOT on
+                // the venue's authored slots (which for small_club_01 mode
+                // coop_bg are bass(-70.0,80.7,13.5) drum(14.4,146.1,13.2)
+                // guitar(68.8,51.4,13.2) vocals(-10.0,31.4,13.2); see the band
+                // placement census). Those defaults are the ASSET'S numbers, not
+                // mine -- I did not compute, interpolate or hand-pick a position
+                // anywhere in this lane -- but they are the character file's
+                // defaults, not the venue's layout, and a frame from this path
+                // must never be described as "the band on its marks".
+                int shown = 0;
+                for (int i = 0; i < 4; i++) {
+                    BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
+                    if (bc) { bc->SetShowing(true); shown++; }
+                }
+                // ⚠⚠ DIAGNOSTIC ONLY, OFF BY DEFAULT (RB3_BAND_FORCE_SHOW=1).
+                // NOT a port, NOT evidence that the band renders correctly.
+                //
+                // MEASURED: every one of a member's 140 meshes has Showing()
+                // false, and 34 of them carry real geometry (NumVerts>0). Which
+                // meshes a member shows is chosen by the outfit/LOD recompose
+                // inside the wardrobe path -- the path blocked by the ObjPtrList
+                // NULL-entry defect above -- so nothing in the default build can
+                // legitimately un-hide them. Forcing all of them visible answers
+                // exactly ONE question, "is this geometry renderable at all",
+                // and answers NOTHING about which meshes a real band member
+                // shows, what it wears, or where it stands. Any frame from this
+                // flag must be labelled as such. Same disclosure class as X6's
+                // crowd-draw substitution: a MECHANISM stand-in, never a
+                // placement one.
+                if (getenv("RB3_BAND_FORCE_SHOW")) {
+                    int forced = 0;
+                    for (int i = 0; i < 4; i++) {
+                        BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
+                        if (!bc) continue;
+                        std::vector<RndMesh *> bm = CollectDeep<RndMesh>(bc);
+                        for (size_t j = 0; j < bm.size(); j++) {
+                            if (bm[j]->NumVerts() > 0) { bm[j]->SetShowing(true); forced++; }
+                        }
+                    }
+                    printf("  band: ⚠ RB3_BAND_FORCE_SHOW — forced %d mesh(es) with "
+                           "geometry visible. DIAGNOSTIC ONLY: outfit/LOD selection "
+                           "is bypassed and positions are asset defaults.\n",
+                           forced);
+                }
+                printf("  band: SetShowing(true) on %d member(s) — VISIBILITY ONLY, "
+                       "positions are char/main/main.milo defaults, NOT the venue "
+                       "slots (RB3_BAND_PLACE=1 for the real path, which crashes)\n",
+                       shown);
+            } else if (bound != 4) {
+                printf("  band: SKIPPED — only %d/4 wardrobe targets bound; "
+                       "SetDir would null-deref\n",
+                       bound);
+            }
+        band_done:;
+        }
+
         if (gDumpTree) {
             ReportCharacterPlacement(dir);
             ReportCrowdPlacement(dir);
@@ -2486,6 +2710,20 @@ int main(int argc, char **argv) {
     // StandUpRenderer().
     InitMakeString();
     Symbol::Init();
+    // ⛔ X8: intern the 248 hand-defined Symbol globals that HANDLE_ACTION /
+    // SYNC_PROP dispatch on. They were default-constructed (the NULL symbol),
+    // so every handler keyed on one reported "unhandled msg" and did nothing --
+    // silently, with rc=0. Must run AFTER Symbol::Init(): the Symbol ctor
+    // dereferences gStringTable, which PreInit creates. See the block comment
+    // at the foot of native/src/milo_link_stubs.cpp.
+    InternSymbolGlobals_MiloLinkStubs();
+    // ⚠ InternSymbolGlobals_M6Symbols() is NOT called here: native/src/m6_symbols.cpp
+    // is not in rb3-render's source list (native/CMakeLists.txt:1235 gives this
+    // target milo_link_stubs.cpp instead; m6_symbols.cpp goes to seven OTHER
+    // targets at :451/:492/:535/:578/:632/:684/:730). Those seven carry the
+    // identical 109 dead dispatch keys and the fix is now DEFINED for them, but
+    // calling it is a behaviour change in seven targets this lane does not
+    // exercise, so it is left to a lane that can gate them. Filed as owed work.
     FileInit();
     NativeSetDataDir(dataDir);
     SetUsingCD(true);

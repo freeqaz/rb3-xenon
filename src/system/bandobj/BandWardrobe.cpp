@@ -652,6 +652,27 @@ void BandWardrobe::LoadMainCharacters(BandCamShot *shot) {
         Symbol inst = bchar->mInstrumentType;
         BandCharDesc::GetInstrumentFromSym(inst);
         if (inst == "none") inst = "vocals";
+#ifdef HX_NATIVE
+        // ⛔ X8 DEFECT FIX -- the singer's slot could never resolve.
+        //
+        // The vocalist's mInstrumentType is the `mic` symbol, so this builds
+        // "player_mic0"; but every venue names its vocal slot "player_vocals0",
+        // and BandConfiguration::SyncPlayMode resolves the slot by matching that
+        // name against mVenueNames. "player_mic0" never matches, so slot 3 is
+        // left unplaced.
+        //
+        // MEASURED ON RB3'S OWN X360 ASSETS (X8), not carried over from rb3-Wii's
+        // note about the Wii milo: decompressing all eleven shipped small_club
+        // venue roots gives 1322-1360 occurrences of `player_vocals0` EACH and
+        // ZERO occurrences of `player_mic0` in any of them. The name the code
+        // builds is not present anywhere in the venue.
+        //
+        // rb3-Wii's native port carries the identical remap at
+        // rb3/src/system/bandobj/BandWardrobe.cpp:695-703; the surrounding lines
+        // in the two trees are otherwise token-for-token identical. X360 arm
+        // untouched.
+        if (inst == "mic") inst = "vocals";
+#endif
         mVenueNames.names[i] = MakeString("player_%s0", inst);
     }
     StartClipLoads(false, shot);

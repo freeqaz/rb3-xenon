@@ -432,3 +432,180 @@ Symbol wrist;
 // engine does; it is never dispatched on the load path.
 Message get_customize_slot_msg(Symbol(), DataNode(0));
 
+
+// ══════════════════════════════════════════════════════════════════════════
+// ⛔ X8 DEFECT FIX -- THESE 139 GLOBALS WERE DEAD DISPATCH KEYS.
+//
+// Every `Symbol foo;` above is DEFAULT-CONSTRUCTED, i.e. the NULL symbol
+// (Symbol.h:16, mStr = gNullStr). The comment they were added under says they
+// are "dispatch keys only ... never reached on the load path". That is false,
+// and it cost this lane a whole debugging pass:
+//
+//   obj/ObjMacros.h:184  #define HANDLE_ACTION(symbol, action)
+//                            if (sym == symbol) { (action); return 0; }
+//
+// -- this arm of the macro compares the incoming message symbol against THE
+// GLOBAL ITSELF, not against a string literal. A null global therefore matches
+// NOTHING, and every BEGIN_HANDLERS entry keyed on one silently falls through
+// to HANDLE_CHECK and reports "unhandled msg".
+//
+// MEASURED: BandWardrobe::SetVenueDir -> SyncPlayMode() ->
+// mModeSink->Handle(sync_play_mode_msg) produced
+//   "BandConfiguration (...small_club_01_base.milo) unhandled msg: sync_play_mode"
+// so the venue's authored band-slot transforms were never applied and all four
+// members stayed at char/main/main.milo's defaults, with rc=0 and no warning.
+// A dead dispatch key fails SILENTLY -- it is indistinguishable from "the
+// message was never sent".
+//
+// retail defines these in src/system/utl/Symbols*.cpp as
+//     Symbol sync_play_mode("sync_play_mode");
+// (rb3-Wii oracle rb3/src/system/utl/Symbols.cpp:960). rb3-xenon ships the
+// Symbols*.h HEADERS but no corresponding .cpp, which is why they had to be
+// hand-defined here at all.
+//
+// Interned in a FUNCTION rather than at static-init, deliberately: the Symbol
+// ctor (utl/Symbol.cpp) dereferences gStringTable, which does not exist until
+// Symbol::Init() -> PreInit(). Static-init construction would be a null deref
+// or an ordering lottery. Call this AFTER Symbol::Init().
+// ══════════════════════════════════════════════════════════════════════════
+void InternSymbolGlobals_MiloLinkStubs() {
+    dir = Symbol("dir");
+    event = Symbol("event");
+    events = Symbol("events");
+    keys = Symbol("keys");
+    none = Symbol("none");
+    reset_on_end = Symbol("reset_on_end");
+    start = Symbol("start");
+    release_configuration = Symbol("release_configuration");
+    store_configuration = Symbol("store_configuration");
+    sync_play_mode = Symbol("sync_play_mode");
+    bass = Symbol("bass");
+    brow_height = Symbol("brow_height");
+    brow_separation = Symbol("brow_separation");
+    cam_teleport = Symbol("cam_teleport");
+    category = Symbol("category");
+    change_face_group = Symbol("change_face_group");
+    chars_dir = Symbol("chars_dir");
+    chin = Symbol("chin");
+    chin_height = Symbol("chin_height");
+    chin_num = Symbol("chin_num");
+    chin_width = Symbol("chin_width");
+    clear_group = Symbol("clear_group");
+    closet_teleport = Symbol("closet_teleport");
+    color0 = Symbol("color0");
+    color1 = Symbol("color1");
+    color2 = Symbol("color2");
+    coop_bk = Symbol("coop_bk");
+    coop_gk = Symbol("coop_gk");
+    copy_prefab = Symbol("copy_prefab");
+    drum = Symbol("drum");
+    drum_venue = Symbol("drum_venue");
+    earrings = Symbol("earrings");
+    enable_debug_interests = Symbol("enable_debug_interests");
+    enter_closet = Symbol("enter_closet");
+    enter_venue = Symbol("enter_venue");
+    enter_vignette = Symbol("enter_vignette");
+    extras = Symbol("extras");
+    eye = Symbol("eye");
+    eyebrows = Symbol("eyebrows");
+    eye_color = Symbol("eye_color");
+    eye_height = Symbol("eye_height");
+    eye_num = Symbol("eye_num");
+    eye_rotation = Symbol("eye_rotation");
+    eyes = Symbol("eyes");
+    eye_separation = Symbol("eye_separation");
+    facehair = Symbol("facehair");
+    feet = Symbol("feet");
+    find_target = Symbol("find_target");
+    flag_string = Symbol("flag_string");
+    force_vertical = Symbol("force_vertical");
+    game_over = Symbol("game_over");
+    gender = Symbol("gender");
+    genre = Symbol("genre");
+    get_character = Symbol("get_character");
+    get_matching_dude = Symbol("get_matching_dude");
+    get_play_flags = Symbol("get_play_flags");
+    glasses = Symbol("glasses");
+    group_override = Symbol("group_override");
+    guitar = Symbol("guitar");
+    hair = Symbol("hair");
+    hands = Symbol("hands");
+    head = Symbol("head");
+    head_lookat_weight = Symbol("head_lookat_weight");
+    heads = Symbol("heads");
+    height = Symbol("height");
+    hide = Symbol("hide");
+    hide_categories = Symbol("hide_categories");
+    in_closet = Symbol("in_closet");
+    install_filter = Symbol("install_filter");
+    instruments = Symbol("instruments");
+    instrument_type = Symbol("instrument_type");
+    in_tour_ending = Symbol("in_tour_ending");
+    is_loading = Symbol("is_loading");
+    jaw_height = Symbol("jaw_height");
+    jaw_width = Symbol("jaw_width");
+    keyboard = Symbol("keyboard");
+    legs = Symbol("legs");
+    list_dircuts = Symbol("list_dircuts");
+    list_drum_venues = Symbol("list_drum_venues");
+    list_interest_objects = Symbol("list_interest_objects");
+    list_outfits = Symbol("list_outfits");
+    list_venue_anim_groups = Symbol("list_venue_anim_groups");
+    load_dircut = Symbol("load_dircut");
+    load_prefab_prefs = Symbol("load_prefab_prefs");
+    mesh_name = Symbol("mesh_name");
+    mic = Symbol("mic");
+    milo_reload = Symbol("milo_reload");
+    mouth = Symbol("mouth");
+    mouth_height = Symbol("mouth_height");
+    mouth_num = Symbol("mouth_num");
+    mouth_width = Symbol("mouth_width");
+    muscle = Symbol("muscle");
+    name = Symbol("name");
+    nose = Symbol("nose");
+    nose_height = Symbol("nose_height");
+    nose_num = Symbol("nose_num");
+    nose_width = Symbol("nose_width");
+    on_extra_loaded = Symbol("on_extra_loaded");
+    on_post_merge = Symbol("on_post_merge");
+    outfit = Symbol("outfit");
+    patches = Symbol("patches");
+    piercings = Symbol("piercings");
+    play_group = Symbol("play_group");
+    portrait_begin = Symbol("portrait_begin");
+    portrait_end = Symbol("portrait_end");
+    pre_clear = Symbol("pre_clear");
+    prefab = Symbol("prefab");
+    prefabs_list = Symbol("prefabs_list");
+    proxies = Symbol("proxies");
+    restore_categories = Symbol("restore_categories");
+    rings = Symbol("rings");
+    rotation = Symbol("rotation");
+    save_from_closet = Symbol("save_from_closet");
+    save_prefab = Symbol("save_prefab");
+    scale = Symbol("scale");
+    select_extras = Symbol("select_extras");
+    set_context = Symbol("set_context");
+    set_file_merger = Symbol("set_file_merger");
+    set_play = Symbol("set_play");
+    set_singalong = Symbol("set_singalong");
+    shape = Symbol("shape");
+    shape_num = Symbol("shape_num");
+    skin = Symbol("skin");
+    skin_color = Symbol("skin_color");
+    sort_targets = Symbol("sort_targets");
+    start_load = Symbol("start_load");
+    start_venue_shot = Symbol("start_venue_shot");
+    sync_interests = Symbol("sync_interests");
+    tempo = Symbol("tempo");
+    test_prefab = Symbol("test_prefab");
+    test_tour_ending_venue = Symbol("test_tour_ending_venue");
+    texture = Symbol("texture");
+    toggle_interests_overlay = Symbol("toggle_interests_overlay");
+    torso = Symbol("torso");
+    unload_venue = Symbol("unload_venue");
+    use_mic_stand_clips = Symbol("use_mic_stand_clips");
+    uv = Symbol("uv");
+    weight = Symbol("weight");
+    wrist = Symbol("wrist");
+}
