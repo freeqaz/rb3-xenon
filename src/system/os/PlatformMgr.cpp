@@ -56,9 +56,18 @@ void UTF8FilterKeyboardString(char *c, int i, const char *cc) {
     UTF8FilterString(c, i, cc, allowed, '?');
 }
 
+// Retail X360 (fn_82514988, 44 B once its over-carved tail fn_82514998 is
+// merged back) guards the shift with an EARLY RETURN, not just a MILO_FAIL:
+//     cmpwi cr6,r4,0 / bge cr6,.L / li r3,0 / blr   <- if (padnum < 0) return false
+//     .L: li r11,1 / lwz r10,0x1c(r3) / slw / and / subic / subfe
+// MILO_FAIL is ((void)(__VA_ARGS__)) in the match build (Debug.h:188 — the whole
+// MILO_* family is #ifdef HX_NATIVE), so the bare MILO_FAIL compiled to NOTHING
+// and the guard vanished entirely. The explicit `return false` restores retail's
+// four instructions while leaving native behaviour (fail first, then return).
 bool PlatformMgr::IsSignedIn(int padnum) const {
     if (padnum < 0) {
         MILO_FAIL("PadNum = %d", padnum);
+        return false;
     }
     return 1 << padnum & mSigninMask;
 }
