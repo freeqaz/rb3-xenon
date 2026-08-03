@@ -18,8 +18,8 @@ StreakTracker::~StreakTracker() {}
 
 void StreakTracker::ConfigureTrackerSpecificData(const DataArray *arr) {
     static Symbol chain_multipliers("chain_multipliers");
-    static Symbol streak_length_multiplier("streak_length_multiplier");
     unk88.InitFromDataArray(arr->FindArray(chain_multipliers, false));
+    static Symbol streak_length_multiplier("streak_length_multiplier");
     arr->FindData(streak_length_multiplier, unk6c, true);
 }
 
@@ -38,8 +38,8 @@ void StreakTracker::TranslateRelativeTargets() {
             count = TrackerUtils::CountGemsInSong(trackNum, trackType);
         }
         int val = (float)count * unk6c;
-        MaxEq(val, 1);
-        PlayerStreakData &entry = mStreakDataMap[id];
+        val = std::max(val, 1);
+        PlayerStreakData entry;
         entry.unk0 = val;
         entry.unk4 = 0;
         entry.unk8 = 0;
@@ -48,6 +48,7 @@ void StreakTracker::TranslateRelativeTargets() {
         entry.unk14 = 0;
         entry.unk18 = 0;
         entry.unk1c = 0;
+        mStreakDataMap[id] = entry;
     }
 
     float invScale = 1.0f / unk6c;
@@ -83,7 +84,7 @@ void StreakTracker::FirstFrame_(float) {
 }
 
 void StreakTracker::Poll_(float f) {
-    if (mSource->IsFinished() || TheGame->unkdc != -1.0f) return;
+    if (mSource->IsFinished() || TheGame->InRollback()) return;
     for (TrackerPlayerID id = mSource->GetFirstPlayer(); id.NotNull();
          id = mSource->GetNextPlayer(id)) {
         if (mSource->IsPlayerLocal(id)) {
@@ -93,10 +94,10 @@ void StreakTracker::Poll_(float f) {
             const TrackerPlayerDisplay &disp = GetPlayerDisplay(id);
             int curStreak = pPlayer->mStats.GetCurrentStreak();
             int hitCount = pPlayer->mStats.mHitCount;
-            int streakActive = (unsigned int)(-curStreak & ~curStreak) >> 31;
+            bool streakActive = curStreak > 0;
             if (streakActive && !data.unk4) {
-                data.unk4 = 1;
                 data.unk8 = hitCount - 1;
+                data.unk4 = 1;
             } else if (!streakActive && data.unk4) {
                 data.unk4 = 0;
                 data.unk8 = hitCount;

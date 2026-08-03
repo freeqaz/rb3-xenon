@@ -1,3 +1,27 @@
+// ⛔ DO NOT try to "fix" ??0FlowDistance@@IAA@XZ from source -- lane DJ-2d,
+// 2026-08-03.  The row reads 46.47% mpn / 172 B but it is a MAP DEFECT:
+// scripts/target_symbol_map.json maps it to retail 0x82574938, which is
+// ??0NextSongPanel@@.  RTTI is decisive: the two vtables that function installs
+// (0x8209DC94 / 0x8209DC3C) decode via their ??_R4 Complete Object Locators to
+// .?AVNextSongPanel@@ at subobject offsets 0x0 and 0xb4.  NextSongPanel has no
+// ctor row anywhere in the map -- this address is the one it is missing.
+// ⚠ The map-neighbour heuristic does NOT catch this one: the ctor COMDAT sits
+// ~0xCF000 from the rest of NextSongPanel, so its neighbours are unrelated.
+// Only the RTTI decode fires.  (tools/map_class_neighbour_audit.py documents
+// this recall hole.)
+//
+// The unit's OTHER foreign block is a different defect: the pin
+// 0x823C1798..0x823C17DC sits exactly in the hole between CharIKHead.cpp's own
+// ...end:0x823C1794 and start:0x823C17E0 blocks, and CharIKHead's own map
+// symbols bracket it (0x823C12A8 before, 0x823C17E0 after).  So the row
+// ??_ECharIKHead@@UAAPAXI@Z is CORRECT and the SPLITS PIN is wrong -- a
+// boundary MOVE (donor FlowDistance -> receiver CharIKHead), not a map fix.
+//
+// ⚠ Do NOT remove _retailTrailingPad[16] in FlowDistance.h on the strength of
+// the ctor diff.  That pad rests on a separate and still-valid oracle:
+// ?NewObject@FlowDistance@@SAPAVObject@Hmx@@XZ matches retail at 100% and
+// allocates sizeof(FlowDistance)==0xdc.  Our layout is right; only the ctor row
+// is misattributed.
 #include "flow/FlowDistance.h"
 #include "flow/Flow.h"
 #include "flow/FlowManager.h"

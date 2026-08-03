@@ -23,6 +23,9 @@ int fft_recursive(float* data, unsigned long size, long sign, float* context);
 int fft_scalar(float* a, float* b, unsigned long size, long sign, float* twiddle);
 int fft_altivec(float* a, float* b, unsigned long size, long sign, float* twiddle);
 int fft_real_forward_altivec(float* data, long size, float* context);
+void SquareComplexTransposeVector(float* data, long n);
+int fft_matrix_forward_columnwise(float* data, long size, float* context);
+int fft_matrix_inverse_columnwise(float* data, long size, float* scratch);
 
 // Lazily-grown ping-pong scratch buffer shared by fft_pingpong / fft_recursive.
 struct FftScratch {
@@ -120,9 +123,6 @@ int CalculateSinCosTable(long n, float* table) {
     }
 
     long count = n / 4;
-    if (count <= 0) {
-        return 0;
-    }
     long half = n / 2;
     double twoPi = 6.2831854820251465;
     float* p = table - 1;
@@ -197,6 +197,47 @@ int FFTComplex(float* data, long size, long inverse, float* context) {
         return fft_square_matrix(data, size, inverse, context);
     }
     return fft_recursive(data, (unsigned long)size, inverse, context);
+}
+
+// Square-matrix decomposition of a power-of-two complex FFT. Requires size to
+// be an exact power of two with an EVEN log2 (so the data can be viewed as a
+// square 2^(power/2) x 2^(power/2) complex matrix); returns 22 otherwise.
+// Forward (inverse == -1) transforms columnwise then transposes; the inverse
+// direction transposes first and then transforms columnwise.
+int fft_square_matrix(float* data, long size, long inverse, float* context) {
+    long p = 1;
+    long power;
+    if (size == 1) {
+        power = 0;
+    } else {
+        long p2 = 2;
+        if (size > 2) {
+            do {
+                p2 *= 2;
+                p += 1;
+            } while (p2 < size);
+        }
+        power = p;
+    }
+
+    if ((1 << power) != size) {
+        return 22;
+    }
+    if ((power & 1) != 0) {
+        return 22;
+    }
+
+    int ret;
+    if (inverse == -1) {
+        ret = fft_matrix_forward_columnwise(data, size, context);
+        if (ret == 0) {
+            SquareComplexTransposeVector(data, 1 << (power / 2));
+        }
+    } else {
+        SquareComplexTransposeVector(data, 1 << (power / 2));
+        ret = fft_matrix_inverse_columnwise(data, size, context);
+    }
+    return ret;
 }
 
 int fft_scalar(float* a, float* b, unsigned long size, long sign, float* twiddle) {

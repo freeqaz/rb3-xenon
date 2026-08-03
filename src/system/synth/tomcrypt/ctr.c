@@ -54,32 +54,30 @@ int ctr_reinit(int cipher, unsigned char *r4, symmetric_CTR *ctr) {
 int ctr_encrypt_fast(
     const unsigned char *src, unsigned char *dst, unsigned long len, symmetric_CTR *ctr
 ) {
-    int *srcUI = (int *)src;
     int x0, x1, x2, x3;
-    for (; len != 0; len -= 0x10) {
-        int *dstUI = (int *)dst;
+    unsigned long n;
+    for (n = 0; n < len; n += 0x10) {
         int i;
         for (i = 0; i < ctr->blocklen; i++) {
             if (++ctr->ctr[i] != '\0')
                 break;
         }
-        if (ctr)
-            cipher_descriptor[ctr->cipher].ecb_encrypt(ctr->ctr, ctr->pad, &ctr->key);
+        cipher_descriptor[ctr->cipher].ecb_encrypt(ctr->ctr, ctr->pad, &ctr->key);
 
-        x0 = *srcUI++;
-        x1 = *srcUI++;
-        x2 = *srcUI++;
-        x3 = *srcUI++;
+        x0 = ((const int *)(src + n))[0];
+        x1 = ((const int *)(src + n))[1];
+        x2 = ((const int *)(src + n))[2];
+        x3 = ((const int *)(src + n))[3];
 
         x0 ^= ((int *)ctr->pad)[0];
         x1 ^= ((int *)ctr->pad)[1];
         x2 ^= ((int *)ctr->pad)[2];
         x3 ^= ((int *)ctr->pad)[3];
 
-        *dstUI++ = x0;
-        *dstUI++ = x1;
-        *dstUI++ = x2;
-        *dstUI++ = x3;
+        ((int *)(dst + n))[0] = x0;
+        ((int *)(dst + n))[1] = x1;
+        ((int *)(dst + n))[2] = x2;
+        ((int *)(dst + n))[3] = x3;
     }
     return 0;
 }

@@ -76,7 +76,16 @@ public:
     virtual void SetFXCore(int, FXCore) = 0;
     virtual FXCore GetFXCore(int) const = 0;
     virtual void SetFXSend(int, FxSend *) {}
-    virtual void SetADSR(int, const ADSR &) {}
+    // Retail takes ADSRImpl, NOT the Hmx::Object-derived ADSR. Verified on
+    // retail bytes: StandardStream::SetADSR is fn_82702C20 and it sits at the
+    // INHERITED Stream slot 0x74 (mChanParams[chan], addi r3,r11,0xc for
+    // &->mADSR, memcpy of 0x28 == sizeof(ADSRImpl), then
+    // mChannels[chan]->SetADSR). With `const ADSR&` here the derived
+    // ADSRImpl overload is a DIFFERENT signature, so MSVC gives it a NEW slot
+    // and StandardStream's vtable runs one slot long from 0xcc onward --
+    // pushing SetJumpSamples to 0xdc where retail has 0xd8 and GetSampleRate
+    // to 0xe0 where retail has 0xdc.
+    virtual void SetADSR(int, const ADSRImpl &) {}
     virtual void SetSpeed(float) = 0;
     virtual float GetSpeed() const = 0;
     virtual void LoadMarkerList(const char *) = 0;

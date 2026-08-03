@@ -771,7 +771,8 @@ static int mapping0_inverse_poll(vorbis_block *vb,vorbis_info_mapping *l){
   void **floormemo=alloca(sizeof(*floormemo)*vi->channels);
   int                   ret=-50;
 
-  if(vb->synthesis_state==vss_mdct){
+  switch(vb->synthesis_state){
+  case vss_mdct: {
     /* transform the PCM data; takes PCM vector, vb; modifies PCM vector */
     /* only MDCT right now.... */
     for(i=0;i<vi->channels;i++){
@@ -780,7 +781,8 @@ static int mapping0_inverse_poll(vorbis_block *vb,vorbis_info_mapping *l){
     }
 
     ret=0;
-  }else if(vb->synthesis_state==vss_decode){
+  } break;
+  case vss_decode: {
 
     /* recover the spectral envelope; store it in the PCM vector for now */
     for(i=0;i<vi->channels;i++){
@@ -859,8 +861,10 @@ static int mapping0_inverse_poll(vorbis_block *vb,vorbis_info_mapping *l){
     }
 
     vb->synthesis_state=vss_mdct;
-  }else{
+  } break;
+  default:
     ret=-1;
+    break;
   }
 
   return(ret);

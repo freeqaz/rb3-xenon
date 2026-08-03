@@ -1,3 +1,18 @@
+// ⛔ DO NOT try to "fix" ??0FlowSound@@IAA@XZ from source -- lane DJ-2d,
+// 2026-08-03.  The row reads 49.10% mpn / 244 B but it is a MAP DEFECT:
+// scripts/target_symbol_map.json maps it to retail 0x82612300, which is
+// ??0CharacterCreatorPanel@@.  Evidence, three independent channels:
+//   1. RTTI -- vtables 0x820C1C3C / 0x820C1BFC / 0x820C1BA4 decode via ??_R4
+//      to .?AVCharacterCreatorPanel@@ (subobj 0x0 / 0x3c / 0xac).
+//   2. Neighbours -- flanked by ?Handle@CharacterCreatorPanel@@ and
+//      ??_GCharacterCreatorPanel@@.
+//   3. Gap -- CharacterCreatorPanel has NO ctor row in the map.
+// Corroborating: the target calls ??0TexLoadPanel@@QAA@XZ for its base (correct
+// for CharacterCreatorPanel, nonsense for a FlowNode) and constructs a
+// hash_map<Symbol,int> member we do not have.
+// The splits pin 0x82612300..0x82612460 is byte-exactly the hole between
+// CharacterCreatorPanel.cpp's ...end:0x82612300 and start:0x82612460.
+// Remedy is a coupled map+splits move owned by the map lane, NOT source.
 #include "flow/FlowSound.h"
 #include "FlowNode.h"
 #include "flow/FlowLabel.h"

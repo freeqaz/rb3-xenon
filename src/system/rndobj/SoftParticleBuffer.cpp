@@ -62,8 +62,11 @@ void RndSoftParticleBuffer::BlurSurface() {
         workMat->SetDiffuseTex(srcTex);
         workMat->MarkDirty(2);
 
-        float texW = (float)(long long)srcTex->Width();
-        float texH = (float)(long long)srcTex->Height();
+        dstTex->MakeDrawTarget();
+
+        float texW = (float)(long long)dstTex->Width();
+        float texH = (float)(long long)dstTex->Height();
+        Hmx::Rect rect(0.0f, 0.0f, texW, texH);
         float invW = 1.0f / texW;
         float invH = 1.0f / texH;
 
@@ -71,10 +74,16 @@ void RndSoftParticleBuffer::BlurSurface() {
             float weight = kBlurOffsets[i * 2 + 0];
             float offset = kBlurOffsets[i * 2 + 1];
 
-            float scaleU = (pass & 1) ? 0.5f : offset;
-            float scaleV = (pass & 1) ? offset : 0.5f;
+            float scaleU, scaleV;
+            if (!(pass & 1)) {
+                scaleU = offset * invW;
+                scaleV = invH * 0.5f;
+            } else {
+                scaleU = invW * 0.5f;
+                scaleV = offset * invH;
+            }
 
-            Vector4 uvScale(scaleU * invW, scaleV * invH, 1.0f, 1.0f);
+            Vector4 uvScale(scaleU, scaleV, 1.0f, 1.0f);
             TheShaderMgr.SetPConstant((PShaderConstant)(0x8a + i), uvScale);
 
             Vector4 uvWeight(weight, weight, weight, weight);
@@ -82,8 +91,6 @@ void RndSoftParticleBuffer::BlurSurface() {
         }
 
         TheShaderMgr.SetNumTaps(5);
-        Hmx::Rect rect(0.0f, 0.0f, (float)dstTex->Width(), (float)dstTex->Height());
-        dstTex->MakeDrawTarget();
         TheNgRnd.DrawRect(rect, workMat, kBlurShader, Hmx::Color(1, 1, 1), nullptr, nullptr);
         TheShaderMgr.SetNumTaps(1);
         dstTex->FinishDrawTarget();
@@ -99,7 +106,7 @@ void RndSoftParticleBuffer::DoPost() {
             cam->SetTargetTex(mSurfaces[0]);
             cam->Select();
             Rnd::DrawMode savedMode = TheRnd.GetDrawMode();
-            TheRnd.mDrawMode = (Rnd::DrawMode)7;
+            TheRnd.mDrawMode = (Rnd::DrawMode)6;
             TheShaderMgr.SetPConstant((PShaderConstant)9, TheNgRnd.PreDepthTexture());
             TheRenderState.SetTextureFilter(9, (RndRenderState::FilterMode)0, false);
             TheRenderState.SetTextureClamp(9, (RndRenderState::ClampMode)2);
@@ -119,9 +126,7 @@ void RndSoftParticleBuffer::DoPost() {
             TheRenderState.SetTextureClamp(kPS_EnvironMap, (RndRenderState::ClampMode)2);
         }
     }
-    while (!mSoftParticleDrawList.empty()) {
-        mSoftParticleDrawList.pop_back();
-    }
+    mSoftParticleDrawList.clear();
 }
 
 void RndSoftParticleBuffer::Queue(RndDrawable *drawable, BaseMaterial::Blend blend) {
@@ -138,6 +143,6 @@ void RndSoftParticleBuffer::Queue(RndDrawable *drawable, BaseMaterial::Blend ble
     found = ObjPtrList<RndDrawable>::iterator(0);
 check:
     if (!found) {
-        mSoftParticleDrawList.insert(mSoftParticleDrawList.end(), drawable);
+        mSoftParticleDrawList.push_back(drawable);
     }
 }
