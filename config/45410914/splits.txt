@@ -7305,11 +7305,9 @@ OnlineID.cpp:
 
 MetaMusicScene.cpp:
 	.pdata      start:0x82241900 end:0x82241918
-	.pdata      start:0x82241918 end:0x82241968
-	.pdata      start:0x82241970 end:0x82241978
+	.pdata      start:0x82241918 end:0x82241978
 	.text       start:0x827B9DB8 end:0x827B9F10
-	.text       start:0x827B9F18 end:0x827BA378
-	.text       start:0x827BA3E8 end:0x827BA450
+	.text       start:0x827B9F18 end:0x827BA450
 
 ScreenMask.cpp:
 	.pdata      start:0x8220E060 end:0x8220E068
@@ -11295,7 +11293,6 @@ MetaPanel.cpp:
 	.pdata      start:0x8221E6B8 end:0x8221E708
 	.pdata      start:0x8221E728 end:0x8221E768
 	.pdata      start:0x822281A0 end:0x822281C8
-	.pdata      start:0x82241968 end:0x82241970
 	.text       start:0x82319948 end:0x82319950
 	.text       start:0x82319C20 end:0x82319C30
 	.text       start:0x82319DA4 end:0x82319FE8
@@ -11313,7 +11310,6 @@ MetaPanel.cpp:
 	.text       start:0x825744B8 end:0x825748A0
 	.text       start:0x82574A28 end:0x82574D90
 	.text       start:0x82606150 end:0x82606218
-	.text       start:0x827BA378 end:0x827BA3E8
 
 BaseGuitarTrackWatcherImpl.cpp:
 	.pdata      start:0x8223FFB0 end:0x82240008
