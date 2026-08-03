@@ -62,6 +62,23 @@ const Hmx::Color &ColorPalette::GetColor(int idx) const {
     return mColors[colorIdx];
 }
 
+// Retail RB3-360 CASTS a raw BinStream& here; it never constructs a
+// BinStreamRev (??_R0 count 0 for BinStreamRev, and Load emits no
+// ??0BinStream ctor / vptr store / ??1BinStream dtor).  The loaded revision
+// lives in ONE aligned(4) aggregate addressed off a SINGLE base:
+//     sth r10, 0x4, r25, lbl_82CC79C8   <- rev    @ +4
+//     sth r11, 0x0, r25, lbl_82CC79C8   <- altRev @ +0
+// and every reload is `lhz 0x4(base)` + `cmplwi` (unsigned short), never the
+// `lwz`+`cmpwi` of a 32-bit slot.  Read the emitted offsets per TU -- the
+// aggregate-vs-separate-statics choice does NOT generalise (CharHair needs the
+// separate form, Spotlight/Crowd/Part need the aggregate).
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Crowd;
+#define gCrowdAltRev gRevs_Crowd.altRev
+#define gCrowdRev gRevs_Crowd.rev
+
 #pragma region CharDef
 
 void WorldCrowd::CharDef::Save(BinStream &bs) const {
@@ -76,10 +93,10 @@ void WorldCrowd::CharDef::Load(BinStreamRev &d) {
     d >> mChar;
     d >> mHeight;
     d >> mDensity;
-    if (d.rev > 1) {
+    if (gCrowdRev > 1) {
         d >> mRadius;
     }
-    if (d.rev > 8) {
+    if (gCrowdRev > 8) {
         d >> mUseRandomColor;
     }
 }
@@ -293,38 +310,47 @@ END_COPYS
 INIT_REVS(0x10, 0)
 
 BEGIN_LOADS(WorldCrowd)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x10, 0)
-    LOAD_SUPERCLASS(RndDrawable)
+    int revs;
+    bs >> revs;
+    gCrowdRev = getHmxRev(revs);
+    gCrowdAltRev = getAltRev(revs);
+    BinStreamRev &d = (BinStreamRev &)bs;
+    RndDrawable::Load(bs);
+#ifdef HX_NATIVE
+    // DC3 added this reset; RB3-360 retail's Load has NO such call -- it does not
+    // even materialise the adjusted `this` (`subi rX,r26,0x98`) until CreateMeshes.
+    // Hoisting that subi to feed Reset3DCrowd is what drove the whole r22/r23/r24
+    // allocation rotation, so the call is native-only here.
     Reset3DCrowd();
-    d >> mPlacementMesh;
-    if (d.rev < 3) {
+#endif
+    bs >> mPlacementMesh;
+    if (gCrowdRev < 3) {
         int x;
-        d >> x;
+        bs >> x;
     }
-    d >> mNum;
-    if (d.rev < 8) {
+    bs >> mNum;
+    if (gCrowdRev < 8) {
         bool b;
-        d >> b;
+        bs >> b;
     }
     d >> mCharacters;
-    if (d.rev > 6) {
-        d >> mEnviron;
+    if (gCrowdRev > 6) {
+        bs >> mEnviron;
     }
-    if (d.rev > 9) {
-        d >> mEnviron3D;
+    if (gCrowdRev > 9) {
+        bs >> mEnviron3D;
     } else {
         mEnviron3D = mEnviron;
     }
-    if (d.rev > 1) {
+    if (gCrowdRev > 1) {
         CreateMeshes();
         FOREACH (it, mCharacters) {
-            if (d.rev < 0xE) {
+            if (gCrowdRev < 0xE) {
                 std::list<Transform> xfmList;
                 std::list<RndMultiMesh::Instance> instancesList;
                 std::list<OldMMInst> oldmmiList;
                 if (it->mMMesh) {
-                    if (d.rev < 9) {
+                    if (gCrowdRev < 9) {
                         d >> xfmList;
                         it->mMMesh->Instances().clear();
                         FOREACH (transIt, xfmList) {
@@ -332,7 +358,7 @@ BEGIN_LOADS(WorldCrowd)
                                 RndMultiMesh::Instance(*transIt)
                             );
                         }
-                    } else if (d.rev < 0xB) {
+                    } else if (gCrowdRev < 0xB) {
                         d >> oldmmiList;
                         FOREACH (mmiIt, oldmmiList) {
                             OldMMInst &old = *mmiIt;
@@ -343,16 +369,16 @@ BEGIN_LOADS(WorldCrowd)
                     } else {
                         InstanceList &instances = it->mMMesh->Instances();
                         unsigned int count;
-                        d >> count;
+                        bs >> count;
                         instances.resize(count);
                         FOREACH (instIt, instances) {
-                            instIt->LoadRev(d.stream, 3);
+                            instIt->LoadRev(bs, 3);
                         }
                     }
-                } else if (d.rev > 3) {
-                    if (d.rev < 9)
+                } else if (gCrowdRev > 3) {
+                    if (gCrowdRev < 9)
                         d >> xfmList;
-                    else if (d.rev < 0xB)
+                    else if (gCrowdRev < 0xB)
                         d >> oldmmiList;
                     else
                         d >> instancesList;
@@ -360,7 +386,13 @@ BEGIN_LOADS(WorldCrowd)
             } else {
                 std::list<Transform> xfms;
                 d >> xfms;
-                if (it->mMMesh) {
+                // Retail dereferences mMMesh UNCONDITIONALLY here -- it emits no
+                // `cmplwi r11,0x0` / `beq` between the `lwz r11,0x38(it)` and the
+                // `clear`. Keep the null guard on native only.
+#ifdef HX_NATIVE
+                if (it->mMMesh)
+#endif
+                {
                     it->mMMesh->Instances().clear();
                     FOREACH (xfmIt, xfms) {
                         it->mMMesh->Instances().push_back(RndMultiMesh::Instance(*xfmIt));
@@ -372,12 +404,12 @@ BEGIN_LOADS(WorldCrowd)
     } else {
         OnRebuild(nullptr);
     }
-    if (d.rev > 4) {
-        d >> mModifyStamp;
+    if (gCrowdRev > 4) {
+        bs >> mModifyStamp;
     }
-    if (d.rev > 0xC) {
+    if (gCrowdRev > 0xC) {
         bool force = false;
-        d >> force;
+        bs >> force;
 #ifdef HX_NATIVE
         // On native we only have billboard rendering (no 3D character RTT pipeline).
         // Force3DCrowd(true) moves all instances from MultiMesh to m3DChars,
@@ -387,22 +419,22 @@ BEGIN_LOADS(WorldCrowd)
         Force3DCrowd(force);
 #endif
     }
-    if (d.rev > 5) {
-        d >> mShow3DOnly;
+    if (gCrowdRev > 5) {
+        bs >> mShow3DOnly;
     }
-    if (d.rev > 0xB) {
-        d >> mFocus;
+    if (gCrowdRev > 0xB) {
+        bs >> mFocus;
     }
 #ifdef RB3_WORLDCROWD_DC3_REV
-    if (d.rev > 0xE) {
-        d >> (int &)mCharForceLod;
+    if (gCrowdRev > 0xE) {
+        bs >> (int &)mCharForceLod;
     }
-    if (d.rev > 0xF) {
-        d >> unkd0;
+    if (gCrowdRev > 0xF) {
+        bs >> unkd0;
     }
 #endif
-    if (d.rev > 0) {
-        LOAD_SUPERCLASS(RndPollable);
+    if (gCrowdRev > 0) {
+        RndPollable::Load(bs);
     }
 END_LOADS
 
