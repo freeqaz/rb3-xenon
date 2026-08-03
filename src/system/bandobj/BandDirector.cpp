@@ -1093,6 +1093,27 @@ DataNode BandDirector::OnLoadSong(DataArray *da) {
     return 0;
 }
 
+// NOTE (lane DP-2): the residual 22 "offset diffs" on this function are STACK
+// SLOT assignments, NOT a class-layout defect. Retail's prologue is
+// `subi r31, r1, 0x240` / `stwu r1, -0x240(r1)` (0x822914D8) => r31 is the
+// FRAME BASE, not `this`. A prior lane read `addi r3, r31, 0x174/0x184` as
+// past-the-end of BandDirector (sizeof == 0x16c, compiler-confirmed) and
+// inferred a base-subobject adjustment on another object; the real reason those
+// offsets exceed sizeof is simply that they are frame offsets. (Our own build
+// emits the same 0x174/0x184, which already rules out "retail has extra
+// members".)
+// What actually differs: retail funnels almost every DataArrayPtr temporary in
+// the AddKeys/SetInterpHandler run into ONE slot (0x50: 34 accesses, 0x54: 5),
+// while we split them (0x50: 21, 0x54: 17). Frame size, callee-saved GPR count
+// and 85 of 87 user slots are identical. Ruled out: a by-value/by-const-ref
+// signature divergence on AddKeys/SetInterpHandler (our decls are identical to
+// BOTH the dc3 and rb3-Wii oracles). What is left is MSVC temporary-slot
+// allocation shaping -- permuter class, and the permuter is off by directive.
+// Do not re-diagnose this as a layout bug. `tools/r31_role_census.py` measures
+// the base rate: among decidable retail functions >= 400 instructions, r31 is
+// the frame base 56.4% of the time and an object pointer only 43.6%, so
+// "r31-relative offset diff" carries almost no information about which it is --
+// read the prologue.
 DataNode BandDirector::OnFileLoaded(DataArray *da) {
     static Symbol song("song");
     Symbol sym = da->Sym(2);

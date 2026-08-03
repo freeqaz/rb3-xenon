@@ -53,6 +53,19 @@ void UIStats::DropScreen(UIScreen *screen) {
     mLastDroppedScreen++;
 }
 
+// NOTE (lane DP-2): the ~61 residual "offset diffs" here are STACK SLOT
+// assignments plus a register rotation -- NOT a class-layout defect. Retail's
+// prologue is `lis r12,1 / ori r12,r12,0x2f0 / subf r31, r12, r1` (0x8255F9E0)
+// => r31 is the FRAME BASE of a 0x102f0-byte (66,288 B) frame, not `this`.
+// Measured: 4 user slots DIFFER and 8 are SHIFTED (deltas +0x40/+0x44/+0xc/
+// +0x18/+0x20/-0xc) out of 32; on top of that objdiff reports a 6-register
+// rotation (r22->r20->r18->r22, r21->r19->r25->r21) and an r29<->r4 swap.
+// ==> permuter class, and the permuter is off by directive.
+// CAUTION on the instrument: `run_diff_inspect mode=stack-layout` prints
+// "Frame size TGT 0x0 BASE 0x0 -> Frame sizes match" for this function with
+// "Callee-saved GPRs: TGT 0 BASE 18". It FAILED TO PARSE the target prologue
+// (this `lis/ori/subf` form), so that "match" is vacuous 0==0. The slot table
+// below it is still meaningful; the frame-size line is not.
 void UIStats::MaybePublish(UIScreen *from) {
     if (!from) return;
     mLastPublishTime = SystemMs();
