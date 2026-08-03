@@ -1,5 +1,4 @@
 #include "os/PlatformMgr.h"
-#include "game/PartyModeMgr.h"
 #include <cstdlib>
 #include <cstring>
 #include <cwchar>
@@ -523,7 +522,6 @@ void PlatformMgr::SmartGlassSend(unsigned long clientID, const DataArray *arr) {
 
 #include "utl/JobMgr.h"
 #include "meta/StorePanel.h"
-#include "lazer/meta_ham/OptionsPanel.h"
 
 void MultipleItemsEnumJob::Cancel(Hmx::Object *) {
     MILO_FAIL("MultipleItemsEnumJob::Cancel called");
