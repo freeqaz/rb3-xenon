@@ -14,17 +14,14 @@
 #include "utl/BinStream.h"
 #include "utl/Std.h"
 
-// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
-// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
-// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
-// does not lay .bss out in declaration order, so two separate statics get other
-// globals interleaved between them and will not fold onto one base register.
-static struct {
-    __declspec(align(4)) unsigned short altRev;
-    __declspec(align(4)) unsigned short rev;
-} gRevs_Env;
-#define gAltRev gRevs_Env.altRev
-#define gRev gRevs_Env.rev
+// RB3-360 retail rev storage for THIS unit: there is none.  Adjudicated on retail
+// bytes -- RndEnviron::Load's target reloads the revision from a stack slot with
+// `lwz r11,0x50(r1)` and tests it with SIGNED `cmpwi cr6,r11,N`, with no `sth`
+// store, no `clrlwi`/`srwi` split of the packed word and no static base register
+// anywhere in the body.  So retail kept the raw 32-bit `int` local and compared
+// it signed.  Same dialect as rndobj/Gen.cpp; NOT the case in every unit --
+// rndobj/MeshDeform.cpp's target really does keep the aligned(4) aggregate at
+// +0/+4, so this is a per-TU reading, never a rule.
 
 BoxMapLighting RndEnviron::sGlobalLighting;
 RndEnviron *RndEnviron::sCurrent;
@@ -118,14 +115,12 @@ void RndEnviron::Replace(ObjRef *from, Hmx::Object *to) {
 BEGIN_LOADS(RndEnviron)
     int rev;
     bs >> rev;
-    gRev = getHmxRev(rev);
-    gAltRev = getAltRev(rev);
-    if (gRev > 1)
+    if (rev > 1)
         Hmx::Object::Load(bs);
-    if (gRev < 3) {
+    if (rev < 3) {
         RndDrawable::DumpLoad(bs);
     }
-    if (gRev < 0xF) {
+    if (rev < 0xF) {
         bs >> mLightsOld;
     } else {
         bs >> mLightsReal;
@@ -134,58 +129,58 @@ BEGIN_LOADS(RndEnviron)
     bs >> mAmbientColor;
     bs >> mFogStart;
     bs >> mFogEnd;
-    if (gRev < 1) {
+    if (rev < 1) {
         int dummy;
         bs >> dummy;
     }
     bs >> mFogColor;
-    if (gRev < 1) {
+    if (rev < 1) {
         int enabled;
         bs >> enabled;
         mFogEnable = enabled;
     } else {
         bs >> mFogEnable;
     }
-    if (gRev > 3)
+    if (rev > 3)
         bs >> mAnimateFromPreset;
-    if (gRev > 4) {
+    if (rev > 4) {
         bs >> mFadeOut;
         bs >> mFadeStart;
         bs >> mFadeEnd;
-        if (gRev > 5)
+        if (rev > 5)
             bs >> mFadeMax;
     }
-    if (gRev > 8) {
+    if (rev > 8) {
         bs >> mFadeRef;
         bs >> (Hmx::Color &)mLRFade;
     }
-    if (gRev > 6) {
+    if (rev > 6) {
         bs >> mAmbientFogOwner;
         if (!mAmbientFogOwner) {
             mAmbientFogOwner = this;
         }
     }
-    if (gRev > 7) {
+    if (rev > 7) {
         bs >> mUseColorAdjust;
         mColorXfm.Load(bs);
     }
-    if (gRev > 9) {
-        if (gRev < 0xD) {
+    if (rev > 9) {
+        if (rev < 0xD) {
             int dummy;
             bs >> dummy;
         }
         bs >> mAOStrength;
     }
-    if (gRev > 0xA) {
+    if (rev > 0xA) {
         bs >> mIntensityRate;
         bs >> mExposure;
         bs >> mWhitePoint;
         bs >> mUseToneMapping;
     }
-    if (gRev == 0xB) {
+    if (rev == 0xB) {
         int dummy;
         bs >> dummy;
-    } else if (gRev > 0xB && gRev < 0xE) {
+    } else if (rev > 0xB && rev < 0xE) {
         int dummy;
         bs >> dummy;
     }
