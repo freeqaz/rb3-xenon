@@ -388,7 +388,13 @@ void RegisterMiloObjectFactories() {
     // BandConfiguration is SAFE and ON BY DEFAULT: it is a leaf Hmx::Object,
     // it loads clean in all six venue roots, and it is what makes the band's
     // baked stage transforms readable at all (see ReportBandPlacement).
-    REGISTER_OBJ_FACTORY(BandConfiguration)
+    // RB3_NO_BANDCONFIG=1 is the single-variable A/B control for this lane:
+    // with it set, BandConfiguration is unregistered again and the venue is
+    // exactly the pre-X7 object graph. Used to root-cause the frame delta
+    // against X6's recorded SHAs (see the X7 plan doc, determinism section).
+    if (!getenv("RB3_NO_BANDCONFIG")) {
+        REGISTER_OBJ_FACTORY(BandConfiguration)
+    }
 
     // ⛔ X7: BandWardrobe + BandCharacter are OFF BY DEFAULT, and this is a
     // MEASURED decision, not caution.
