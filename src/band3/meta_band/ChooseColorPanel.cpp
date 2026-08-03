@@ -24,16 +24,28 @@
 // stops THIS function being inlined elsewhere, not callees being inlined into it;
 // measured byte-identical. See obj/Object.h:632.)
 //
-// TRADE-OFF, measured (lane DI-2/D) -- this pragma is NOT free. MSVC generates
-// the implicit dtor family for this class inside whatever inline_depth region
-// the ctor sits in (moving the ctor to end-of-TU does not escape it), so
-// ??_GChooseColorPanel stops inlining ??1/??_D and regresses 100 -> 38.5
-// (ours 20 insns vs retail's 17). Unit 27/29 -> 28/29, but:
-//     matched +1 / masked_equal +1 / honest +0 / matched_code +180 B
-// i.e. the extra matched FUNCTION is disclosure (anon byte-pairing); the 180
-// CODE bytes are real (exactly this ctor). Neither shape is a behavioural bug.
-// Drop this pragma if you would rather keep ??_G byte-exact.
-#pragma inline_depth(0)
+// ⚠ CORRECTION (lane DY-2a): the depth ARGUMENT matters, and the "TRADE-OFF"
+// this comment used to describe was an artifact of only ever trying depth 0.
+// Lane DI-2/D measured that inline_depth(0) buys the ctor but costs
+// ??_GChooseColorPanel (100 -> 38.5, ours 20 insns vs retail's 17) and
+// concluded the two were mutually exclusive. They are NOT.
+//
+// MSVC does generate this class's implicit dtor family inside whatever
+// inline_depth region the ctor sits in (that part of DI-2/D's finding stands --
+// the vftable, and hence ??_G, is required BY the ctor, so it inherits the
+// ctor's region and moving the ctor to end-of-TU does not escape it). But
+// retail's ??_G is not "uninlined": at 0x82612E80 it makes TWO out-of-line calls,
+// `bl ??1ChooseColorPanel` then `bl ??1Object@Hmx@@`, which is ??_D (the vbase
+// dtor) expanded into ??_G at exactly ONE level, with ??1 left out of line.
+// depth 0 forbids that one level; depth 1 permits it.
+//
+// depth 1 does NOT cost the ctor, which was the reason to fear it: the hash_map
+// default ctor is a direct callee and would nominally be depth-1 eligible, yet
+// MEASURED it still does not expand (MSVC declines it because its own body is
+// dominated by depth-2 callees it cannot expand). All three affected bodies are
+// verified 100% at depth 1: ??_G 17/17 insns, the ctor 45/45, NewObject 25/25.
+// ⇒ Do not "restore" depth 0, and do not remove the pragma; both regress.
+#pragma inline_depth(1)
 ChooseColorPanel::ChooseColorPanel()
     : mCurrentOutfitConfig(0), mCurrentOutfitPiece(0), mNumOptions(-1),
       mCurrentOption(-1) {

@@ -54,6 +54,17 @@ void BackdropPanel::Enter() {
 
 void BackdropPanel::Exit() {
     mOutroDone = false;
+    // STORAGE-CLASS divergence: retail builds the message as a FUNCTION-LOCAL
+    // STATIC here, not as the file-scope `vignette_outro_msg` global that
+    // utl/Messages4.h declares (which is what the rb3-Wii oracle uses, so a
+    // source diff shows nothing).  Read off the retail body at 0x8261FAC8:
+    // guard word lbl_82E01040 bit 0x1, the Message object at lbl_82E01038, the
+    // Symbol built as a STACK TEMP at r31+0x50 via ??0Symbol@@QAA@PBD@Z, and an
+    // atexit(??__F thunk @0x8261FB84).  One guard bit + a stack Symbol temp is
+    // the `static Message x("literal")` form, not the two-static
+    // `static Symbol s; static Message m(s)` form -- see the measured
+    // discrimination in bandtrack/TrackPanel.cpp:646.
+    static Message vignette_outro_msg("vignette_outro");
     mDir->Handle(vignette_outro_msg, true);
     UIPanel::Exit();
 }
