@@ -118,7 +118,14 @@ NonDestructiveTransitionEvent::NonDestructiveTransitionEvent(
     MILO_ASSERT(mDestState.size() <= 2, 0xAB);
 }
 
-Symbol NonDestructiveTransitionEvent::Type() const { return non_destructive_transition; }
+Symbol NonDestructiveTransitionEvent::Type() const {
+    // Retail uses a FUNCTION-LOCAL static here, not the Symbols4.h global:
+    // guard 0x82E01B60 bit 0x1, storage 0x82E01B5C, string
+    // "non_destructive_transition" @0x820D3E20, with the guard-clearing atexit
+    // thunk at 0x82658E08.  Our global form compiles to 16 B; retail's is 88 B.
+    static Symbol non_destructive_transition("non_destructive_transition");
+    return non_destructive_transition;
+}
 
 void NonDestructiveTransitionEvent::Poll() {
     if (TheUI->GetTransitionState() == UIManager::kTransitionNone)
