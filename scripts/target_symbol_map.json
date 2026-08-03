@@ -11920,7 +11920,7 @@
  "0x82b6c6a0": "??_GStreamReceiver360@@UAAPAXI@Z",
  "0x82b6d0e8": "?LockForProcess@?$CSampleXAPOBase@VEnvelopeGenerator@@UEnvelopeGeneratorParams@@@ATG@@UAAJIPBUXAPO_LOCKFORPROCESS_BUFFER_PARAMETERS@@I0@Z",
  "0x82b6d5c0": "?DoProcess@PitchShiftEffect@@UAAXABUPitchShiftEffectParams@@PIAMII@Z",
- "0x82b6e360": "?ptrBegin@FIFOProcessor@soundtouch@@MAAPAMXZ",
+ "0x82b6e360": "?ptrBegin@FIFOProcessor@soundtouch@@MBAPAMXZ",
  "0x82b6e3c0": "?isEmpty@FIFOProcessor@soundtouch@@UBAHXZ",
  "0x82b6ea00": "?setPitch@SoundTouch@soundtouch@@QAAXM@Z",
  "0x82b6ea68": "??1?$scoped_ptr@VBiquad@DSP@@@@QAA@XZ",
