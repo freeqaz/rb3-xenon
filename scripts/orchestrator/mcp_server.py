@@ -1595,10 +1595,31 @@ class DecompMCPServer:
                 text=f"Error: objdiff-cli not found at {objdiff_cli}"
             )]
 
-        # Common args for both runs
-        # Use functionRelocDiffs=none to ignore address relocation noise
-        # (lis/addi pairs with different link-time addresses for same symbol).
-        # This matches the behavior of objdiff's report command.
+        # Common args for both runs.
+        #
+        # ★ These four flags REPLICATE `objdiff-cli report generate`'s hardcoded
+        # config (objdiff-cli/src/cmd/report.rs:406-412) so that this tool's
+        # `normalized_match_percent` EQUALS report.json's `fuzzy_match_percent`
+        # exactly. `objdiff-cli diff` has its own, DIFFERENT hardcoded defaults
+        # (diff.rs:872 => FunctionRelocDiffs::DataValue) plus schema defaults for
+        # the other three, and objdiff.json sets no project options to reconcile
+        # them.
+        #
+        # Measured (lane EB-4, 2026-08-03, docs/decomp/OBJDIFF_DIFF_VS_REPORT_SETTLED_2026-08-03.md):
+        # with functionRelocDiffs=none ALONE, 118 of 1,639 named sub-100 rows
+        # disagreed with the graded report value by up to 14.75 pp, and 11 of
+        # 20,667 rows the grader scores at fuzzy==100 read 97.7-99.3 here -- i.e.
+        # lanes grinding rows that are already complete. Adding
+        # ppc.calculatePoolRelocations=false takes that to 0/1,639 (it is both
+        # necessary and sufficient; combineTextSections is inert and
+        # combineDataSections moves one row -- all three are set anyway, because
+        # the rule is "replicate the grader", not "add what fixed the sample").
+        #
+        # ⚠ Do NOT read this percent as report's `match_percent_normalized`
+        # (`mpn`) -- the ruler `matched_functions` counts on. `mpn` excludes
+        # arg-only penalties, is >= this value ALWAYS, and is not emitted by
+        # `objdiff-cli diff` at all. A sub-100 reading here NEVER proves a row is
+        # unmatched; confirm against report.json.
         base_args = [
             str(objdiff_cli),
             "diff",
@@ -1606,6 +1627,9 @@ class DecompMCPServer:
             symbol,
             "--verdict",
             "-c", "functionRelocDiffs=none",
+            "-c", "ppc.calculatePoolRelocations=false",
+            "-c", "combineDataSections=true",
+            "-c", "combineTextSections=true",
         ]
         if unit:
             base_args.extend(["-u", unit])
@@ -1652,7 +1676,10 @@ class DecompMCPServer:
                 if "Ambiguous symbol" in combined_output or "Multiple matches" in combined_output:
                     resolved = _resolve_ambiguous_symbol(combined_output, param_hint)
                     if resolved:
-                        # Update base_args with the resolved symbol
+                        # Update base_args with the resolved symbol.
+                        # ⚠ Keep this flag list IDENTICAL to the one above --
+                        # a retry on a different ruler silently reports a
+                        # different number for the same symbol.
                         base_args = [
                             str(objdiff_cli),
                             "diff",
@@ -1660,6 +1687,9 @@ class DecompMCPServer:
                             resolved,
                             "--verdict",
                             "-c", "functionRelocDiffs=none",
+                            "-c", "ppc.calculatePoolRelocations=false",
+                            "-c", "combineDataSections=true",
+                            "-c", "combineTextSections=true",
                         ]
                         if unit:
                             base_args.extend(["-u", unit])
@@ -2001,7 +2031,18 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
 
         # In "normalized" mode (default), ignore relocation address noise.
         # In "raw" mode, include relocation diffs so they can be inspected.
-        reloc_config = ["-c", "functionRelocDiffs=none"] if diff_mode != "raw" else []
+        # Non-raw mode replicates `report generate`'s config exactly (see the
+        # long note on run_objdiff's base_args, and lane EB-4's doc
+        # docs/decomp/OBJDIFF_DIFF_VS_REPORT_SETTLED_2026-08-03.md) so the
+        # percent shown here equals report.json's `fuzzy_match_percent`.
+        # `raw` mode is deliberately left fully raw -- the caller asked to SEE
+        # relocation differences, not to match the grader.
+        reloc_config = [
+            "-c", "functionRelocDiffs=none",
+            "-c", "ppc.calculatePoolRelocations=false",
+            "-c", "combineDataSections=true",
+            "-c", "combineTextSections=true",
+        ] if diff_mode != "raw" else []
 
         try:
             # ── save_baseline mode ──

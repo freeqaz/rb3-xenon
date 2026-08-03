@@ -608,9 +608,36 @@ run the gate before you land. Two traps, both real:
   not a diagnosis: 13-/24-instruction swaps and a full prologue delta all
   DISSOLVED once the real source defect was fixed (`5d8fc966`, `c14bba5c`,
   `d7a9775a`; 12 instances) — never defer a row as permuter-bound on that label.
-  ⚠ Note `run_objdiff` prints its own "normalized (raw)" pair that does **not**
-  equal these report keys (97.5/95.0 where report.json says mpn 100.0 / fuzzy
-  97.5). **Believe `report.json`.**
+  ★★★ **`run_objdiff`'s "normalized (raw)" pair vs the report keys — SETTLED
+  (lane EB-4, 2026-08-03). This note used to say the pair "does not equal these
+  report keys", which was MISLEADING: its own example proves one of them equals
+  a report key exactly.** In `97.5/95.0` vs `mpn 100.0 / fuzzy 97.5`, the
+  printed **normalized 97.5 IS report's `fuzzy_match_percent` 97.5** — measured
+  **EXACT on 2,669 rows / 0 disagreements** across every stratum, once `diff` is
+  given the report's config. **There is NO defect in either path.** The two real
+  differences:
+  1. **"normalized" names two orthogonal axes.** `objdiff-cli diff`'s
+     `normalized_match_percent` = **relocation**-normalized `match_percent`
+     (== report `fuzzy`); report's `match_percent_normalized` (**`mpn` — the
+     ruler `matched_functions` counts on**) = **arg-penalty-excluded**, and
+     `diff` **never emits it**. `mpn ≥ fuzzy` ALWAYS (`code.rs:285`), so
+     **a sub-100 `run_objdiff` reading NEVER proves a row is unmatched** — it is
+     a lower bound on BOTH report keys. 221 rows / 102,900 B sit at
+     `mpn == 100` with `fuzzy < 100`.
+  2. **`ppc.calculatePoolRelocations`** — report sets `false`, `objdiff-cli diff`
+     defaults `true`. This was worth **118 of 1,639** named sub-100 rows (max
+     **14.75 pp**) and made **11 of 20,667** rows the grader scores at `fuzzy==100`
+     read 97.7–99.3, i.e. lanes grinding already-complete rows. **Fixed in
+     `mcp_server.py`**; `run_objdiff`/`run_diff_inspect` now replicate the
+     grader's config and agree exactly.
+  ⛔ **`scripts/analysis/diff_inspect.py` + `stack_layout.py` pass NO `-c` at all**
+  → they run at `FunctionRelocDiffs::DataValue`, **89.08% disagreement, max
+  16.00 pp**. Deliberately left alone: at `DataValue` a wrong `bl` callee is
+  VISIBLE, which `functionRelocDiffs=none` masks. **Read their percent as a
+  defect-hunting number, never as the graded score.**
+  Full mechanism, counts, conversion rule and nulls:
+  `docs/decomp/OBJDIFF_DIFF_VS_REPORT_SETTLED_2026-08-03.md`.
+  **Still: believe `report.json` for the score.**
 - ★ **`total_code` is EXACTLY Σ(listed function sizes)** — verified whole-binary
   (10,688,672 == 10,688,672) and per-unit (CheatProvider 7,512 == 7,512). So
   bytes with no listed function row — notably the 8-byte EH prefixes — are **not
