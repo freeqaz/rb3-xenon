@@ -1,4 +1,9 @@
 {
+ "0x82487880": "?Deactivate@FlowQueueable@@UAAX_N@Z",
+ "0x826f5780": "?CheckKickGem@StatCollector@@QAAXABVGameGem@@H_N@Z",
+ "0x826f57e8": "?GemPassedNow@StatCollector@@QAAXMABVGameGem@@H_N@Z",
+ "0x827b4668": "?Load@PreloadPanel@@UAAXXZ",
+ "0x82b75240": "??0FIFOSampleBuffer@soundtouch@@QAA@H@Z",
  "0x82548f70": "?OnMsg@ProfileMgr@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z",
  "0x8257b5c8": "?GetBattleID@MetaPerformer@@QBAHXZ",
  "0x8257b5e8": "?HasBattle@MetaPerformer@@QBA_NXZ",
