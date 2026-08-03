@@ -32,9 +32,11 @@ CLAUDE.md "Whole-binary A/B measurement"):
      rm the renamer stamp, touch config.yml (a map edit is INERT without a
      forced re-split: lane CF-1 lost a leg to "[APPLIED] ... 0 files
      patched"); configgen => rerun configure.py.
-  7. LEG B build. The recompile count comes from THIS build's log, before
-     any report generation (run_objdiff-style flows hide the compile, so a
-     later count reads 0 and cannot prove application). Assertions:
+  7. LEG B build — SETTLED, exactly like leg A (lane DT-3). The recompile
+     count comes from THESE builds' logs, before any report generation
+     (run_objdiff-style flows hide the compile, so a later count reads 0 and
+     cannot prove application). Assertions run on the FIRST ITERATION's
+     counts, i.e. the same evidence the single-build version used:
        source patch  => MSVC recompiles >= 1, else REFUSE (absent-vs-absent)
        map patch     => SPLIT ran AND renamer patched > 0 files, else REFUSE
        splits patch  => SPLIT ran, else REFUSE
@@ -53,6 +55,23 @@ CLAUDE.md "Whole-binary A/B measurement"):
      Lane CG-1's listed regressions summed to -18 against a -19 delta (one
      unit fell off the end of a silent regs[:limit]), which silently breaks
      the house discipline of pairing losses to gains by (size, unit).
+ 11. UNIT COMPLETIONS are reported by SET-DIFF of AT_100 membership, never
+     by "which unit's matched count rose" (lane DT-3). The old breakdown was
+     STRUCTURALLY BLIND to a whole completion class: 3 of lane DS-4's 13 unit
+     completions had Delta matched == 0, because the fix removed a
+     WRONGLY-ATTRIBUTED ROW FROM THE DENOMINATOR (12/13 -> 12/12). Units and
+     bytes are printed as SEPARATE measures with the reminder that they are:
+     DS-4's 13 completions moved code% by +0.0123pp, so unit completion is
+     not a code% play and must never be sold as one.
+
+Two settle loops, one shape: BOTH legs build to zero work over BOTH the
+default target AND the report target before any measure is read. Leg B used
+to get exactly ONE build (lane DS-1): the settle builds the DEFAULT target
+while the leg READS build the REPORT target, and on a PCH-cascading header
+patch (obj/Object.h is a PCH input; 9 engine dirs / ~281 TUs compile through
+it) leg B's report build recompiled all 956 objs of its own build AGAIN plus
+145 more -- so the read's zero-work guard REFUSED a legitimate measurement.
+The guard is right and is UNCHANGED; the missing settle loop was the defect.
 
 Scoring ruler: the ninja report edge hard-codes functionRelocDiffs=None
 (objdiff-cli report.rs generate()), i.e. the DEFAULT ruler. --name-check
@@ -198,6 +217,73 @@ def count_lines(log_text):
     }
 
 
+def zero_counts():
+    return {"msvc": 0, "split": 0, "patch": 0, "other_work": 0, "work": 0,
+            "renamer_patched": None}
+
+
+def merge_counts(a, b):
+    """Sum two build-count dicts.
+
+    `renamer_patched` is NOT summed and NOT overwritten: it is the FIRST
+    non-None value seen. The renamer runs once, in the first build after a
+    forced re-split; a later build that does not re-run it reports None, and
+    None must never be allowed to erase a real figure — nor may a later
+    re-run's 0 mask the first run's number (that is lane CT-1's trap one
+    level up, at the level of BUILDS rather than of patcher STEPS).
+    """
+    out = {k: a[k] + b[k] for k in
+           ("msvc", "split", "patch", "other_work", "work")}
+    out["renamer_patched"] = (a["renamer_patched"] if a["renamer_patched"]
+                              is not None else b["renamer_patched"])
+    return out
+
+
+def settle_loop(build_iteration, max_attempts, stage, hint=""):
+    """Build until an ITERATION does ZERO work. The zero-work iteration IS
+    the proof the leg is settled; every pre-quiescent reading is discarded.
+
+    Pure w.r.t. the build: `build_iteration(attempt) -> counts` is injected,
+    so the selftest drives BOTH outcomes (converges / never converges) with
+    no toolchain at all. That matters because the failure this exists to fix
+    (lane DS-1) and the failure it must NOT stop catching (an unsettleable
+    tree) are the same code path with opposite verdicts.
+
+    Returns {"attempts", "aggregate", "per_iteration"}; raises Refusal if it
+    never reaches quiescence.
+    """
+    agg = zero_counts()
+    per = []
+    for attempt in range(1, max_attempts + 1):
+        counts = build_iteration(attempt)
+        per.append(counts)
+        agg = merge_counts(agg, counts)
+        if counts["work"] == 0:
+            return {"attempts": attempt, "aggregate": agg, "per_iteration": per}
+    raise Refusal(stage, hint)
+
+
+def check_read_zero_work(name, counts):
+    """The leg-read guard: regenerating the report must do NO build work.
+
+    ⚠ DO NOT WEAKEN THIS. It is what caught lane DS-1's unsettled leg B in
+    the first place. Once leg B settles like leg A it should pass by
+    construction — which is exactly why it must stay: it is the backstop
+    that catches a settle loop that converged on the WRONG target set.
+    Extracted from read_leg so the selftest can drive it directly, including
+    against the residual counts the OLD single-build leg B would have handed
+    it.
+    """
+    if counts["work"] != 0:
+        raise Refusal(
+            f"leg{name}-read",
+            f"report regeneration performed build work (msvc={counts['msvc']} "
+            f"split={counts['split']} patch={counts['patch']} "
+            f"other={counts['other_work']}) — the leg was not actually "
+            "settled when read; recompile counts are untrustworthy.",
+        )
+
+
 def read_measures_strict(report_path):
     """Parse whole-binary measures BY EXACT KEY. Missing key => Refusal,
     never a default. (footgun 7: .get('masked_equal', 0) read as data)."""
@@ -228,7 +314,83 @@ def read_measures_strict(report_path):
         u["name"]: u.get("measures", {}).get("matched_functions", 0)
         for u in r.get("units", [])
     }
+    out["_unit_rows"] = read_unit_rows(r, report_path)
     return out
+
+
+def read_unit_rows(r, report_path="<report>"):
+    """Per-unit AT_100 membership + the row counts that explain a completion.
+
+    WHY THIS EXISTS (lane DT-3). `_units` holds ONE number per unit —
+    matched_functions — so the only completion it can see is one where that
+    number ROSE. Lane DS-4 measured **3 of its 13 unit completions at
+    Δmatched == 0**: the fix removed a WRONGLY-ATTRIBUTED ROW FROM THE
+    DENOMINATOR (12/13 -> 12/12). Those three were invisible to every line
+    ab_measure printed. Membership must therefore be read from the ROWS.
+
+    A unit with no `functions` array is UNPAIRABLE and is excluded entirely —
+    it has no rows, so "every row is at 100" would be vacuously true and
+    would manufacture ~970 phantom complete units (1,995 units in the report,
+    1,022 with rows).
+
+    ⚠ CONSISTENCY CONTROL, two paths that share no arithmetic:
+      path A  every row's match_percent_normalized == 100
+      path B  measures.matched_functions == measures.total_functions
+    `matched_functions` is defined as the COUNT of rows at mpn == 100
+    (CLAUDE.md), so the two must name the SAME set. Verified equal on a real
+    report (208 == 208, identical sets, 0 units where len(functions) !=
+    total_functions). A disagreement means the report schema moved under us —
+    the "a landed fix silently emptied a pipeline" hazard — so it REFUSES
+    rather than silently reporting whichever path still parses.
+    """
+    rows, mpn_set, meas_set = {}, set(), set()
+    for u in r.get("units", []):
+        fns = u.get("functions")
+        if not fns:
+            continue
+        name = u["name"]
+        um = u.get("measures", {})
+        # Per-unit measures omit zero-valued keys by serde design, so .get is
+        # correct here (and only here) — unlike the whole-binary verdict.
+        matched = um.get("matched_functions", 0)
+        total = um.get("total_functions", len(fns))
+        at100_mpn = all(f["match_percent_normalized"] == 100.0 for f in fns)
+        rows[name] = {
+            "matched": matched,
+            "total": total,
+            "at100_mpn": at100_mpn,
+            # Bytes follow the FUZZY ruler (matched_code sums rows at
+            # fuzzy == 100), so the two rulers are reported separately —
+            # they disagree on ~19 units and conflating them is the
+            # "two headline numbers, two rulers" trap.
+            "at100_fuzzy": all(f.get("fuzzy_match_percent", 0.0) == 100.0
+                               for f in fns),
+        }
+        if at100_mpn:
+            mpn_set.add(name)
+        if total > 0 and matched == total:
+            meas_set.add(name)
+    check_at100_consistency(mpn_set, meas_set, report_path)
+    return rows
+
+
+def check_at100_consistency(mpn_set, meas_set, report_path="<report>"):
+    """REFUSE when the two independent AT_100 derivations disagree."""
+    if mpn_set != meas_set:
+        only_rows = sorted(mpn_set - meas_set)[:5]
+        only_meas = sorted(meas_set - mpn_set)[:5]
+        raise Refusal(
+            "at100-consistency",
+            f"the two independent AT_100 derivations DISAGREE on "
+            f"{report_path}: row-wise (every match_percent_normalized == 100) "
+            f"names {len(mpn_set)} units, measures-wise (matched_functions == "
+            f"total_functions) names {len(meas_set)}. Only-row-wise: "
+            f"{only_rows}; only-measures-wise: {only_meas}. matched_functions "
+            "is DEFINED as the count of rows at mpn == 100, so these must be "
+            "the same set — a disagreement means the report schema changed "
+            "under this tool. REFUSING rather than publishing whichever path "
+            "still parses.",
+        )
 
 
 def classify_patch(numstat_paths):
@@ -441,32 +603,54 @@ class ABMeasure:
             # symbols.txt was already restored just above, unconditionally.
             (self.wt / STAMP_REL).unlink(missing_ok=True)
             (self.wt / CONFIG_YML_REL).touch()
-        for attempt in range(1, self.max_settle + 1):
-            counts = self._ninja([], f"settle_{attempt}.log")
-            if counts["work"] == 0:
-                self.evidence["settle_builds"] = attempt
-                self.evidence["settle_symbols_drift"] = self.symbols_drift()
-                self.say(f"  [settle] quiescent after {attempt} build(s); the "
-                         "reading of every pre-quiescent build is DISCARDED")
-                if self.evidence["settle_symbols_drift"]:
-                    self.say("  [settle] symbols.txt is drifted at the settle "
-                             "point — EXPECTED (it is a split OUTPUT as well as "
-                             "a discovered dep). NOT restored: restoring here is "
-                             "what made this loop non-convergent for wave CJ.")
-                return
-            self.say(f"  [settle] build {attempt} did work "
+        # ⚠ NO restore_symbols() below this point — see the docstring: it is a
+        # discovered dep of the SPLIT edge AND a split output, so restoring
+        # inside the loop re-dirties the graph and the loop cannot converge.
+        res = settle_loop(lambda n: self._build_iteration("settle", n),
+                          self.max_settle, "settle", self._settle_hint())
+        self.evidence["settle_builds"] = res["attempts"]
+        self.evidence["settle_counts"] = res["aggregate"]
+        self.evidence["settle_symbols_drift"] = self.symbols_drift()
+        self.say(f"  [settle] quiescent after {res['attempts']} iteration(s); "
+                 "the reading of every pre-quiescent build is DISCARDED")
+        if self.evidence["settle_symbols_drift"]:
+            self.say("  [settle] symbols.txt is drifted at the settle "
+                     "point — EXPECTED (it is a split OUTPUT as well as "
+                     "a discovered dep). NOT restored: restoring here is "
+                     "what made this loop non-convergent for wave CJ.")
+
+    def _build_iteration(self, label, attempt):
+        """ONE settle iteration = the DEFAULT target, then the REPORT target.
+
+        Both, because the protocol consumes both and they are NOT the same
+        build state in practice. Lane DS-1: the old settle built only the
+        default target while the leg READS build the report target, and on a
+        PCH-cascading header patch the report build recompiled all 956 objs
+        the default build had just done, plus 145 the default build never
+        touched. Settling on the default target alone therefore proves
+        nothing about the state the measurement is actually read in.
+
+        ⚠ The report target is built WITHOUT wiping report.json: this is a
+        settle probe, not a read. read_leg() still wipes report.json AND
+        report.cache before every measured read (a stale cache inflates).
+        """
+        c1 = self._ninja([], f"{label}_{attempt}.log")
+        c2 = self._ninja([REPORT_REL], f"{label}_{attempt}_report.log")
+        counts = merge_counts(c1, c2)
+        if counts["work"]:
+            self.say(f"    [{label}] iteration {attempt} did work "
                      f"(msvc={counts['msvc']} split={counts['split']} "
-                     f"patch={counts['patch']} other={counts['other_work']}) — "
-                     "its reading is discarded; retrying")
-            # ⚠ DO NOT restore symbols.txt here. See the docstring: it is a
-            # discovered dep of the SPLIT edge AND a split output, so
-            # restoring re-dirties the graph and the loop cannot converge.
-        raise Refusal(
-            "settle",
+                     f"patch={counts['patch']} other={counts['other_work']}; "
+                     f"default-target build {c1['work']}, report-target build "
+                     f"{c2['work']}) — its reading is discarded; retrying")
+        return counts
+
+    def _settle_hint(self, leg="A", log_glob="settle_*.log"):
+        return (
             f"could not reach a zero-work build in {self.max_settle} attempts. "
             "Something keeps the graph dirty (future mtimes? concurrent writer? "
-            f"perpetually-dirty edge?). Logs: {self.rundir}/settle_*.log. "
-            "REFUSING to measure — a leg A with nonzero recompiles carries "
+            f"perpetually-dirty edge?). Logs: {self.rundir}/{log_glob}. "
+            f"REFUSING to measure — a leg {leg} with nonzero recompiles carries "
             "~+193 matched / +0.51pp settling noise. NOTE: if every retry "
             "shows exactly split=1 patch=1, suspect something restoring "
             "config/<title>/symbols.txt between builds — that is the wave-CJ "
@@ -483,14 +667,7 @@ class ABMeasure:
     def read_leg(self, name):
         self.wipe_report()
         counts = self._ninja([REPORT_REL], f"leg{name}_report.log")
-        if counts["work"] != 0:
-            raise Refusal(
-                f"leg{name}-read",
-                f"report regeneration performed build work (msvc={counts['msvc']} "
-                f"split={counts['split']} patch={counts['patch']} "
-                f"other={counts['other_work']}) — the leg was not actually "
-                "settled when read; recompile counts are untrustworthy.",
-            )
+        check_read_zero_work(name, counts)
         m = read_measures_strict(self.wt / REPORT_REL)
         # ARCHIVE the leg's report.json. Without this only the ninja LOGS
         # survive a run, so post-hoc attribution (which unit? which function?)
@@ -548,12 +725,43 @@ class ABMeasure:
                 log_path=self.rundir / "configure_B.log")
 
     def leg_b_build(self, kinds):
-        counts = self._ninja([], "legB_build.log")
-        # The recompile count for leg B is taken HERE, from this log,
-        # before any report read (footgun 3).
-        self.evidence["legB_counts"] = counts
-        check_legb_counts(kinds, counts)
-        return counts
+        """Build leg B to QUIESCENCE — the same discipline as leg A.
+
+        DEFECT FIXED (lane DS-1, 2026-08-03): this used to be ONE ninja
+        invocation over the DEFAULT target, with no retry, while the leg read
+        builds the REPORT target and REFUSES on any work there. On a
+        PCH-cascading header patch (`src/system/obj/Object.h` is a PCH input;
+        9 engine dirs / ~281 TUs compile through the PCH) the single build was
+        not enough: leg B's report build recompiled all 956 objs the default
+        build had just done, PLUS 145 more, and a legitimate measurement was
+        refused. DS-1 correctly reported it rather than bypassing it and
+        hand-ran the protocol.
+
+        ⚠ The guard that refused is CORRECT and is UNTOUCHED
+        (`check_read_zero_work`). What was missing was the loop.
+
+        ⚠ The application assertions still run on the FIRST ITERATION's counts
+        — NOT the aggregate. That preserves footgun 3 exactly: the proof the
+        patch was consumed must come from the build immediately after apply,
+        not from anything a later settle build happened to do. An aggregate
+        would let unrelated late work masquerade as "the patch compiled".
+        """
+        res = settle_loop(
+            lambda n: self._build_iteration("legB_build", n),
+            self.max_settle, "legB-settle",
+            self._settle_hint(leg="B", log_glob="legB_build_*.log"))
+        first = res["per_iteration"][0]
+        self.evidence["legB_counts"] = res["aggregate"]
+        self.evidence["legB_first_iteration_counts"] = first
+        self.evidence["legB_settle_builds"] = res["attempts"]
+        if res["attempts"] > 1:
+            self.say(f"  [leg B] settled after {res['attempts']} iterations "
+                     f"(aggregate msvc={res['aggregate']['msvc']}); the "
+                     "application assertions below read the FIRST iteration "
+                     f"(msvc={first['msvc']} split={first['split']} "
+                     f"renamer_patched={first['renamer_patched']})")
+        check_legb_counts(kinds, first)
+        return res
 
 
 def check_legb_counts(kinds, counts):
@@ -701,6 +909,77 @@ def unit_breakdown(a_units, b_units, limit=15):
         "full_improvements": imps,
     }
     return regs[:limit], imps[:limit], meta
+
+
+def unit_at100_diff(a_rows, b_rows, ruler="at100_mpn", limit=20):
+    """Units that reached (or fell off) 100%, by SET-DIFF of AT_100
+    membership — never by "whose matched count rose".
+
+    DEFECT FIXED (lane DS-4, 2026-08-03). `unit_breakdown` lists only units
+    whose `matched_functions` CHANGED, so it is structurally blind to a
+    completion achieved by SHRINKING THE DENOMINATOR: 3 of DS-4's 13 unit
+    completions had Δmatched == 0 because the fix removed a wrongly-attributed
+    row (12/13 -> 12/12). A set-diff sees all of them and needs no hypothesis
+    about the mechanism.
+
+    Every gained unit carries the mechanism it was CLASSIFIED by, from the two
+    row counts:
+      MATCHED_ROSE        Δmatched > 0, denominator unchanged
+      DENOMINATOR_SHRANK  Δmatched == 0, Δtotal < 0   <-- the invisible class
+      MIXED               both moved
+      NEW_UNIT            the unit had no rows in leg A (new/newly-pinned)
+      UNEXPLAINED         neither count moved (possible only off the mpn
+                          ruler, where membership is not a function of these
+                          two numbers) — labelled, never silently bucketed
+    """
+    a100 = {u for u, r in a_rows.items() if r[ruler]}
+    b100 = {u for u, r in b_rows.items() if r[ruler]}
+    gained, lost = [], []
+    for u in sorted(b100 - a100):
+        ar, br = a_rows.get(u), b_rows[u]
+        if ar is None:
+            row = {"unit": u, "class": "NEW_UNIT", "matched": [None, br["matched"]],
+                   "total": [None, br["total"]], "d_matched": None,
+                   "d_total": None}
+        else:
+            dm = br["matched"] - ar["matched"]
+            dt = br["total"] - ar["total"]
+            if dm > 0 and dt < 0:
+                cls = "MIXED"
+            elif dm > 0:
+                cls = "MATCHED_ROSE"
+            elif dt < 0:
+                cls = "DENOMINATOR_SHRANK"
+            else:
+                cls = "UNEXPLAINED"
+            row = {"unit": u, "class": cls,
+                   "matched": [ar["matched"], br["matched"]],
+                   "total": [ar["total"], br["total"]],
+                   "d_matched": dm, "d_total": dt}
+        gained.append(row)
+    for u in sorted(a100 - b100):
+        ar, br = a_rows[u], b_rows.get(u)
+        lost.append({"unit": u,
+                     "matched": [ar["matched"], br["matched"] if br else None],
+                     "total": [ar["total"], br["total"] if br else None]})
+    by_class = {}
+    for g in gained:
+        by_class[g["class"]] = by_class.get(g["class"], 0) + 1
+    return {
+        "ruler": ruler,
+        "legA_units_at_100": len(a100),
+        "legB_units_at_100": len(b100),
+        "pairable_units": [len(a_rows), len(b_rows)],
+        "delta_units_at_100": len(b100) - len(a100),
+        "n_gained": len(gained), "n_lost": len(lost),
+        "gained_by_class": by_class,
+        # FULL populations for result.json; the DISPLAY is what truncates.
+        "gained": gained, "lost": lost,
+        "gained_shown": gained[:limit], "lost_shown": lost[:limit],
+        "gained_hidden": max(0, len(gained) - limit),
+        "lost_hidden": max(0, len(lost) - limit),
+        "limit": limit,
+    }
 
 
 def compute_delta(a, b):
@@ -907,7 +1186,8 @@ def main():
 
         # --- apply + leg B ---
         ab.apply_patch(patch_path, kinds)
-        legb_counts = ab.leg_b_build(kinds)
+        legb_res = ab.leg_b_build(kinds)
+        legb_counts = legb_res["aggregate"]
         b = ab.read_leg("B")
         if args.name_check:
             ab.gen_name_check("B", objdiff_bin)
@@ -919,6 +1199,9 @@ def main():
         # --- verdict (only reachable if every stage above passed) ---
         regs, imps, ubmeta = unit_breakdown(a["_units"], b["_units"])
         delta = compute_delta(a, b)
+        at100 = unit_at100_diff(a["_unit_rows"], b["_unit_rows"], "at100_mpn")
+        at100_fz = unit_at100_diff(a["_unit_rows"], b["_unit_rows"],
+                                   "at100_fuzzy")
         status = {
             "status": "measured",
             "patch_sha256_16": sha,
@@ -933,7 +1216,14 @@ def main():
             # build work, and settle refuses if quiescence is unreachable.
             "legA_recompiles": 0,
             "legB_recompiles": legb_counts["msvc"],
+            "legB_settle_builds": legb_res["attempts"],
+            "legB_first_iteration_counts": legb_res["per_iteration"][0],
             "delta": delta,
+            # UNIT COMPLETIONS by set-diff of AT_100 membership, on BOTH
+            # rulers. Kept OUT of "delta" on purpose: units and bytes are
+            # different measures and must not be read as one number.
+            "units_at_100_mpn_ruler": at100,
+            "units_at_100_fuzzy_ruler": at100_fz,
             # FULL lists here — the display below is what gets truncated.
             "unit_regressions": ubmeta["full_regressions"],
             "unit_improvements": ubmeta["full_improvements"],
@@ -963,7 +1253,8 @@ def main():
               f"masked={b['masked_equal_functions']} honest={b['honest']} "
               f"code%={b['matched_code_percent']:.6f}  "
               f"(recompiles: {legb_counts['msvc']}, split={legb_counts['split']}, "
-              f"patch_steps={legb_counts['patch']})")
+              f"patch_steps={legb_counts['patch']}, "
+              f"settle iterations: {legb_res['attempts']})")
         print(f"  Δmatched={delta['matched_functions']:+d}  "
               f"Δmasked_equal={delta['masked_equal_functions']:+d}  "
               f"Δhonest={delta['honest']:+d}  "
@@ -998,6 +1289,56 @@ def main():
             print(f"  unit net (ALL units) = {ubmeta['net_unit_delta']:+d}"
                   f"   vs whole-binary Δmatched = "
                   f"{delta['matched_functions']:+d}{note}")
+
+        # ---- UNITS AT 100%: set-diff, NOT "whose matched count rose" ------
+        # ⚠ The list above CANNOT see a unit completed by shrinking its
+        # denominator (Δmatched == 0). 3 of lane DS-4's 13 completions were
+        # exactly that. This block is the honest accounting.
+        def _at100_block(t, label_ruler, extra=""):
+            print(f"  units at 100% [{label_ruler} ruler]: "
+                  f"legA {t['legA_units_at_100']} -> legB "
+                  f"{t['legB_units_at_100']}  "
+                  f"(Δ{t['delta_units_at_100']:+d}; "
+                  f"{t['n_gained']} reached 100, {t['n_lost']} fell off; "
+                  f"pairable units {t['pairable_units'][0]}->"
+                  f"{t['pairable_units'][1]}){extra}")
+            if t["gained_by_class"]:
+                print("    mechanism of the completions: " + ", ".join(
+                    f"{k}={v}" for k, v in sorted(t["gained_by_class"].items())))
+            for g in t["gained_shown"]:
+                dm = "  n/a" if g["d_matched"] is None else f"{g['d_matched']:+4d}"
+                dt = " n/a" if g["d_total"] is None else f"{g['d_total']:+3d}"
+                print(f"    +100%  {g['unit']}  matched "
+                      f"{g['matched'][0]}->{g['matched'][1]} (Δ{dm.strip()})  "
+                      f"rows {g['total'][0]}->{g['total'][1]} (Δ{dt.strip()})  "
+                      f"{g['class']}")
+            if t["gained_hidden"]:
+                print(f"    ⚠ TRUNCATED: {t['gained_hidden']} more completion(s) "
+                      f"NOT SHOWN (counts above are over ALL {t['n_gained']}); "
+                      "full list in result.json")
+            for l in t["lost_shown"]:
+                print(f"    -100%  {l['unit']}  matched "
+                      f"{l['matched'][0]}->{l['matched'][1]}  rows "
+                      f"{l['total'][0]}->{l['total'][1]}")
+            if t["lost_hidden"]:
+                print(f"    ⚠ TRUNCATED: {t['lost_hidden']} more loss(es) NOT "
+                      f"SHOWN (counts above are over ALL {t['n_lost']})")
+
+        _at100_block(at100, "mpn")
+        _at100_block(at100_fz, "all-rows-fuzzy",
+                     "   <- the ruler BYTES follow")
+        if at100["n_gained"] or at100["n_lost"]:
+            ds = at100["gained_by_class"].get("DENOMINATOR_SHRANK", 0)
+            print(f"  ⚠ UNITS AND BYTES ARE SEPARATE MEASURES — do not sell one "
+                  f"as the other: Δunits_at_100={at100['delta_units_at_100']:+d} "
+                  f"against Δcode%={delta['matched_code_percent']:+.6f}pp "
+                  f"/ Δcode_bytes={delta['matched_code_bytes']:+d}. "
+                  "(Lane DS-4: 13 completions moved code% by +0.0123pp.)")
+            if ds:
+                print(f"  ⚠ {ds} of the {at100['n_gained']} completion(s) are "
+                      "DENOMINATOR_SHRANK — Δmatched 0, the unit finished "
+                      "because a wrongly-attributed ROW LEFT THE DENOMINATOR. "
+                      "The 'unit improvements' list above is BLIND to these.")
         if args.name_check:
             nc = status["name_check"]
             print(f"  [opt-in name_check ruler] Δmatched={nc['delta_matched']:+d} "
@@ -1393,18 +1734,31 @@ def selftest():
     # re-dirties the graph and settling becomes impossible. Measured at
     # 23ad2f92: with the in-loop restore, builds 2/3/4 each did 2 work edges
     # forever; without it, the next build did 0.
+    # ⚠ WIDENED by lane DT-3: the loop now lives in settle_loop() and the
+    # per-iteration build in _build_iteration(), and leg B has a settle loop
+    # of its own. A restore in ANY of those has the wave-CJ effect, so all
+    # four bodies are checked, not just settle()'s.
     src_lines = inspect.getsource(ABMeasure.settle).splitlines()
     loop_at = next((i for i, l in enumerate(src_lines)
-                    if l.strip().startswith("for attempt in range(")), None)
+                    if "settle_loop(" in l and not l.strip().startswith("#")),
+                   None)
     pre = [l for l in src_lines[:loop_at or 0]
            if "self.restore_symbols()" in l and not l.strip().startswith("#")]
     post = [l for l in src_lines[loop_at:]
             if "self.restore_symbols()" in l and not l.strip().startswith("#")] \
-        if loop_at is not None else ["<no loop found>"]
-    ok = loop_at is not None and len(pre) == 1 and not post
+        if loop_at is not None else ["<no settle_loop call found>"]
+    others = {}
+    for fn in (ABMeasure._build_iteration, ABMeasure.leg_b_build, settle_loop):
+        others[fn.__name__] = [
+            l for l in inspect.getsource(fn).splitlines()
+            if "restore_symbols()" in l and not l.strip().startswith("#")]
+    ok = (loop_at is not None and len(pre) == 1 and not post
+          and not any(others.values()))
     print(("  PASS" if ok else "  FAIL") +
           f"  settle() restores symbols.txt EXACTLY ONCE pre-loop "
-          f"(pre={len(pre)}, in-loop={len(post)}) — an in-loop restore "
+          f"(pre={len(pre)}, post={len(post)}) and NEITHER the loop, the "
+          f"per-iteration build, nor leg B's settle restores it "
+          f"({ {k: len(v) for k, v in others.items()} }) — an in-loop restore "
           "re-dirties a discovered SPLIT dep and settling becomes impossible "
           "(wave CJ: 2 work edges forever)")
     if not ok:
@@ -1426,6 +1780,278 @@ def selftest():
           "limit)")
     if not ok:
         fails.append("unit_breakdown full export")
+
+    # ======================================================================
+    # LANE DT-3 — the two defects found in the field on 2026-08-03.
+    # Every case below asserts BOTH that the new code behaves and that the
+    # OLD behaviour FAILS on the SAME fixture. A selftest that only shows the
+    # new code passing cannot tell a fix from a no-op.
+    # ======================================================================
+
+    def _c(work, msvc=0, split=0, patch=0, other=0, renamer=None):
+        return {"msvc": msvc, "split": split, "patch": patch,
+                "other_work": other, "work": work, "renamer_patched": renamer}
+
+    # ---- DEFECT 1: leg B had NO settle loop (lane DS-1) --------------------
+    # Fixture reproduces the measured shape: iteration 1 does the 956-obj PCH
+    # cascade over the default target and 1101 more over the REPORT target
+    # (the report target pulled 145 objs the default build never touched AND
+    # re-fired the PCH); iteration 2 is quiescent.
+    DS1 = [_c(work=2064, msvc=2057, patch=6, other=1), _c(work=0)]
+
+    def _fake_builder(script):
+        seen = []
+
+        def build(attempt):
+            seen.append(attempt)
+            return script[min(attempt, len(script)) - 1]
+        build.seen = seen
+        return build
+
+    # NEW: converges, and the aggregate carries every recompile.
+    res = settle_loop(_fake_builder(DS1), 4, "legB-settle", "hint")
+    ok = (res["attempts"] == 2 and res["aggregate"]["msvc"] == 2057
+          and res["per_iteration"][0]["msvc"] == 2057
+          and res["aggregate"]["work"] == 2064)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-1] leg B settle loop converges on the PCH-cascade fixture: "
+          f"iterations={res['attempts']} aggregate msvc="
+          f"{res['aggregate']['msvc']} (the leg is quiescent when read)")
+    if not ok:
+        fails.append("DS-1 settle converges")
+
+    # OLD: exactly one build, no retry — hand the residual to the read guard.
+    # This is the case that REFUSED a legitimate PCH-cascading measurement.
+    old_residual = DS1[0]
+    try:
+        check_read_zero_work("B", old_residual)
+        old_refused = False
+    except Refusal:
+        old_refused = True
+    try:
+        check_read_zero_work("B", res["per_iteration"][-1])
+        new_refused = False
+    except Refusal:
+        new_refused = True
+    ok = old_refused and not new_refused
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-1] the OLD single-build leg B FAILS this same fixture: "
+          f"old hands work={old_residual['work']} to the read guard => "
+          f"REFUSED={old_refused}; the settled leg hands work=0 => "
+          f"REFUSED={new_refused}. (If both were False the fix would be "
+          "indistinguishable from deleting the guard.)")
+    if not ok:
+        fails.append("DS-1 old behaviour must fail")
+
+    # ...and the guard must STILL refuse a genuinely unsettleable tree. This
+    # is the property the fix must not trade away: a future-mtime sabotage or
+    # a perpetually-dirty edge has to keep costing a REFUSAL, not a number.
+    never = _fake_builder([_c(work=2, split=1, patch=1)])
+    check("[DS-1] a NEVER-quiescent leg still REFUSES after max attempts",
+          lambda: settle_loop(never, 4, "legB-settle", "unsettleable"),
+          expect_refusal=True)
+    ok = len(never.seen) == 4
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-1] the unsettleable loop is BOUNDED: {len(never.seen)} "
+          "attempts then refusal (never an unbounded wait)")
+    if not ok:
+        fails.append("DS-1 bounded retries")
+
+    # The application assertions must read the FIRST iteration, never the
+    # aggregate: otherwise unrelated work in a later settle build could
+    # masquerade as "the patch compiled" (footgun 3 at the level of builds).
+    absent = [_c(work=0), _c(work=0)]
+    r_absent = settle_loop(_fake_builder(absent), 4, "legB-settle", "h")
+    check("[DS-1] absent-vs-absent STILL refuses through the settle loop "
+          "(first iteration msvc=0)",
+          lambda: check_legb_counts({"source"}, r_absent["per_iteration"][0]),
+          expect_refusal=True)
+    # Iteration 1 does work but compiles NOTHING (a stray non-MSVC edge);
+    # iteration 2 compiles one TU for an unrelated reason; iteration 3 is
+    # quiescent. The aggregate says msvc=1 — which, read as proof of
+    # application, would turn an inert source patch into a "measured" A/B.
+    late = [_c(work=1, other=1), _c(work=1, msvc=1), _c(work=0)]
+    r_late = settle_loop(_fake_builder(late), 4, "legB-settle", "h")
+    ok_agg = (r_late["aggregate"]["msvc"] == 1
+              and r_late["per_iteration"][0]["msvc"] == 0
+              and r_late["attempts"] == 3)
+    check("[DS-1] a LATE unrelated recompile must NOT rescue an inert source "
+          "patch (assert on iteration 1, not the aggregate)",
+          lambda: check_legb_counts({"source"},
+                                    r_late["per_iteration"][0]),
+          expect_refusal=True)
+    print(("  PASS" if ok_agg else "  FAIL") +
+          f"  [DS-1] ...while the aggregate still DISCLOSES that late work: "
+          f"aggregate msvc={r_late['aggregate']['msvc']}")
+    if not ok_agg:
+        fails.append("DS-1 aggregate discloses")
+
+    # renamer_patched: first non-None wins, so a later build that does not
+    # re-run the renamer cannot erase its figure, and a real 0 still refuses.
+    m = merge_counts(_c(work=1, split=1, renamer=1045), _c(work=0))
+    m0 = merge_counts(_c(work=1, split=1, renamer=0), _c(work=1, renamer=51))
+    ok = m["renamer_patched"] == 1045 and m0["renamer_patched"] == 0
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-1] merge_counts keeps the FIRST renamer figure across "
+          f"builds: {m['renamer_patched']} (not erased by a later None) and "
+          f"{m0['renamer_patched']} (not masked by a later 51) — lane CT-1's "
+          "trap one level up")
+    if not ok:
+        fails.append("DS-1 renamer merge")
+    check("[DS-1] an INERT map edit still REFUSES after the settle loop",
+          lambda: check_legb_counts({"map"}, m0), expect_refusal=True)
+
+    # ---- DEFECT 2: unit accounting undercounts (lane DS-4) ----------------
+    # DS-4 measured 3 of 13 unit completions at Δmatched == 0: the fix removed
+    # a WRONGLY-ATTRIBUTED ROW FROM THE DENOMINATOR (12/13 -> 12/12).
+    def _u(matched, total, mpn=None, fz=None):
+        at = (matched == total and total > 0) if mpn is None else mpn
+        return {"matched": matched, "total": total, "at100_mpn": at,
+                "at100_fuzzy": at if fz is None else fz}
+
+    a_rows = {
+        "denom":   _u(12, 13),   # 12/13 -> 12/12  : DENOMINATOR SHRINK
+        "rose":    _u(7, 8),     # 7/8   -> 8/8    : matched rose
+        "mixed":   _u(5, 9),     # 5/9   -> 8/8    : both moved
+        "stays":   _u(4, 4),     # already 100, stays 100 : must NOT be listed
+        "falls":   _u(6, 6),     # 100 -> not 100  : must be listed as LOST
+        "nothing": _u(3, 9),     # untouched
+    }
+    b_rows = {
+        "denom":   _u(12, 12),
+        "rose":    _u(8, 8),
+        "mixed":   _u(8, 8),
+        "stays":   _u(4, 4),
+        "falls":   _u(6, 7),
+        "nothing": _u(3, 9),
+        "fresh":   _u(2, 2),     # unit had no rows in leg A
+    }
+    t = unit_at100_diff(a_rows, b_rows)
+    got = {g["unit"]: g["class"] for g in t["gained"]}
+    ok = (got == {"denom": "DENOMINATOR_SHRANK", "rose": "MATCHED_ROSE",
+                  "mixed": "MIXED", "fresh": "NEW_UNIT"}
+          and [l["unit"] for l in t["lost"]] == ["falls"]
+          and t["legA_units_at_100"] == 2 and t["legB_units_at_100"] == 5
+          and t["delta_units_at_100"] == 3)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-4] AT_100 set-diff sees ALL completion mechanisms: {got}; "
+          f"lost={[l['unit'] for l in t['lost']]}; "
+          f"{t['legA_units_at_100']}->{t['legB_units_at_100']} "
+          f"(Δ{t['delta_units_at_100']:+d})")
+    if not ok:
+        fails.append("DS-4 at100 diff")
+
+    # THE OLD BEHAVIOUR, ON THE SAME FIXTURE. `unit_breakdown` reads only
+    # matched_functions, so the denominator-shrink completion is INVISIBLE to
+    # it — it appears in neither the improvements nor the regressions list —
+    # and the unit that FELL OFF 100% is invisible too (its matched count did
+    # not move either). This is the assertion that makes the fix a fix.
+    old_a = {u: r["matched"] for u, r in a_rows.items()}
+    old_b = {u: r["matched"] for u, r in b_rows.items()}
+    o_regs, o_imps, o_meta = unit_breakdown(old_a, old_b)
+    old_listed = {r["unit"] for r in o_regs} | {i["unit"] for i in o_imps}
+    ok = ("denom" not in old_listed and "falls" not in old_listed
+          and "rose" in old_listed and "mixed" in old_listed)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-4] the OLD unit_breakdown is BLIND on this same fixture: it "
+          f"lists {sorted(old_listed)} — 'denom' (12/13->12/12) and 'falls' "
+          f"(100%->not) are ABSENT because their matched count never moved. "
+          "3 of DS-4's 13 real completions were exactly this class.")
+    if not ok:
+        fails.append("DS-4 old behaviour must be blind")
+
+    # Discrimination: a run with no membership change must produce an EMPTY
+    # diff, or the block degenerates into 'always reports something'.
+    t_null = unit_at100_diff(a_rows, dict(a_rows))
+    ok = (t_null["n_gained"] == 0 and t_null["n_lost"] == 0
+          and t_null["delta_units_at_100"] == 0)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-4] identical legs produce an EMPTY AT_100 diff "
+          f"(gained={t_null['n_gained']} lost={t_null['n_lost']}) — the "
+          "reporter discriminates, it does not always fire")
+    if not ok:
+        fails.append("DS-4 at100 null")
+
+    # The two rulers must be reported SEPARATELY and must be able to disagree
+    # (units are counted on mpn; BYTES are summed on fuzzy).
+    ra = {"x": _u(5, 5, mpn=True, fz=False)}
+    rb = {"x": _u(5, 5, mpn=True, fz=True)}
+    t_mpn = unit_at100_diff(ra, rb, "at100_mpn")
+    t_fz = unit_at100_diff(ra, rb, "at100_fuzzy")
+    ok = t_mpn["n_gained"] == 0 and t_fz["n_gained"] == 1
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-4] the two rulers are separable: mpn gained="
+          f"{t_mpn['n_gained']}, fuzzy gained={t_fz['n_gained']} — a row can "
+          "be counted as a matched FUNCTION while its BYTES are withheld "
+          "(0.954pp of the binary), so one ruler cannot stand for both")
+    if not ok:
+        fails.append("DS-4 ruler separation")
+
+    # Truncation discipline, same as unit_breakdown: counts over the FULL
+    # population, display flagged.
+    many_a = {f"u{i}": _u(1, 2) for i in range(30)}
+    many_b = {f"u{i}": _u(2, 2) for i in range(30)}
+    t_many = unit_at100_diff(many_a, many_b, limit=20)
+    ok = (t_many["n_gained"] == 30 and len(t_many["gained_shown"]) == 20
+          and t_many["gained_hidden"] == 10 and len(t_many["gained"]) == 30)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-4] AT_100 display truncates but COUNTS the full population: "
+          f"n_gained={t_many['n_gained']} shown={len(t_many['gained_shown'])} "
+          f"hidden={t_many['gained_hidden']} full={len(t_many['gained'])} "
+          "(lane CG-1's silent regs[:limit] defect, not repeated)")
+    if not ok:
+        fails.append("DS-4 at100 truncation")
+
+    # ---- the AT_100 two-path consistency control --------------------------
+    # Row-wise (every mpn == 100) and measures-wise (matched == total) must
+    # name the SAME set. Verified equal on a real report (208 == 208). A
+    # disagreement means the schema moved: REFUSE, do not publish the path
+    # that still parses.
+    check("[DS-4] AT_100 consistency control PASSES on agreeing derivations",
+          lambda: check_at100_consistency({"a", "b"}, {"a", "b"}),
+          expect_refusal=False)
+    check("[DS-4] AT_100 consistency control REFUSES on a desynced schema",
+          lambda: check_at100_consistency({"a", "b"}, {"a"}),
+          expect_refusal=True)
+
+    # ...driven end-to-end through read_unit_rows on a synthetic report, so
+    # the control is proven reachable from the real call path and not just as
+    # a standalone function.
+    def _fn(p, fz=None):
+        d = {"address": 1, "name": "f", "size": 4,
+             "match_percent_normalized": p}
+        if fz is not None:
+            d["fuzzy_match_percent"] = fz
+        return d
+
+    good_rep = {"units": [
+        {"name": "ok", "functions": [_fn(100.0, 100.0), _fn(100.0, 100.0)],
+         "measures": {"matched_functions": 2, "total_functions": 2}},
+        {"name": "partial", "functions": [_fn(100.0), _fn(50.0)],
+         "measures": {"matched_functions": 1, "total_functions": 2}},
+        {"name": "unpairable", "measures": {"total_functions": 0}},
+    ]}
+    try:
+        rows = read_unit_rows(good_rep, "<synthetic>")
+        ok = (set(rows) == {"ok", "partial"} and rows["ok"]["at100_mpn"]
+              and not rows["partial"]["at100_mpn"]
+              and rows["ok"]["at100_fuzzy"]
+              and not rows["partial"]["at100_fuzzy"])
+        detail = sorted(rows)
+    except Refusal as e:          # e.g. unpairable units leaking into the set
+        ok, detail = False, f"REFUSED: {e}"[:120]
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [DS-4] read_unit_rows EXCLUDES unpairable units (no functions "
+          f"array): {detail} — including them would make 'every row at "
+          "100' vacuously true for ~970 of the report's 1,995 units")
+    if not ok:
+        fails.append("DS-4 unpairable exclusion")
+
+    desync = json.loads(json.dumps(good_rep))
+    desync["units"][1]["measures"]["matched_functions"] = 2   # claims 2/2
+    check("[DS-4] read_unit_rows REFUSES when the report's own two "
+          "derivations desync",
+          lambda: read_unit_rows(desync, "<synthetic>"), expect_refusal=True)
 
     print(f"selftest: {'ALL PASS' if not fails else f'FAILURES: {fails}'}")
     return 0 if not fails else 1
