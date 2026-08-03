@@ -3437,6 +3437,36 @@ namespace {
                 printf("  band: ⛔ POLL SKIPPED — no TheBandWardrobe. NOT a pass: "
                        "polling zero members would print exactly like polling four.\n");
             } else {
+                // ⛔ X13's RETRACTION IS A WARNING TO THIS LANE, NOT A FOOTNOTE.
+                // X13 published "the recompose identity FAILS under animation —
+                // 3.473e+00 at bone_pelvis.mesh" and then retracted it: the
+                // deviation was its own loop polling CharDrivers that were never
+                // `Enter()`ed. Polling the band here polls exactly such drivers
+                // (`body_clips` holds zero clips), and the first Poll arm measured
+                // 3.565e+00 at bone_pelvis.mesh — the same bone, the same
+                // magnitude. That is a contamination signature, not a result.
+                //
+                // So `Enter()` is offered as an explicit CONTROL ARM
+                // (RB3_BAND_ENTER=1), and the two are compared. `CharDriver::Enter`
+                // (char/CharDriver.cpp:82) is the shipped entry point: Clear(),
+                // reset mOldBeat/mBeatScale, RndPollable::Enter(), then play the
+                // default clip if there is one. No clip is invented — if a driver
+                // has no `mDefaultClip`, Enter() plays nothing and says so.
+                int entered = 0;
+                if (getenv("RB3_BAND_ENTER")) {
+                    for (int i = 0; i < 4; i++) {
+                        BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
+                        if (!bc) continue;
+                        std::vector<CharDriver *> ds = CollectDeep<CharDriver>(bc);
+                        for (size_t k = 0; k < ds.size(); k++) { ds[k]->Enter(); entered++; }
+                    }
+                    printf("  band: CharDriver::Enter() on %d driver(s) — X13's "
+                           "control for the un-entered-driver artifact%s\n",
+                           entered,
+                           entered == 0 ? "  ⛔ ZERO drivers entered — this arm is "
+                                          "VACUOUS and must not be read as a control"
+                                        : "");
+                }
                 for (int p = 0; p < iters; p++) {
                     for (int i = 0; i < 4; i++) {
                         if (BandCharacter *bc = TheBandWardrobe->GetCharacter(i)) {
