@@ -195,6 +195,7 @@ namespace {
     bool gBoneAudit = false;
     // X4d framing/isolation overrides (driver-only; no shared src/ involvement).
     const char *gOnlyMesh = nullptr;
+    bool gDumpTree = false; // X5: per-dir object census of the loaded subdir tree
     float gDistScale = -1.0f;   // <0 = use the per-cell default
     float gAzimuth = -999.0f;
     float gElevation = -999.0f;
@@ -1338,6 +1339,56 @@ namespace {
         return true;
     }
 
+    // ---- X5: an ABSOLUTE census of the loaded dir TREE ----
+    // The venue's own graph chains venue -> world_chars -> chars, and
+    // world/shared/chars.milo ships eight plain `Character` crowd members
+    // (crowd_female01..crowd_male04) alongside BandCharacter player0..3. The
+    // render reports 0 skinned meshes, which is consistent with BOTH "those
+    // dirs never joined the tree" and "they joined it and are empty". An
+    // aggregate mesh count cannot tell those apart; a per-dir object count can.
+    // Empty PROXY dirs are called out explicitly because a proxy whose content
+    // load was queued and never completed is exactly the shape that yields a
+    // dir present in the tree with zero objects in it.
+    void DumpDirTree(ObjectDir *dir, int depth, int &dirs, int &emptyProxies,
+                     int &totalObjs) {
+        if (!dir || depth > 12) return;
+        dirs++;
+        int objs = 0, meshes = 0, chars = 0;
+        for (ObjectDir::Entry *e = dir->HashTable().Begin(); e;
+             e = dir->HashTable().Next(e)) {
+            if (!e->obj) continue;
+            objs++;
+            if (dynamic_cast<RndMesh *>(e->obj)) meshes++;
+            if (dynamic_cast<Character *>(e->obj)) chars++;
+        }
+        totalObjs += objs;
+        bool proxy = dir->IsProxy();
+        bool empty = proxy && objs == 0;
+        if (empty) emptyProxies++;
+        const char *nm = dir->Name();
+        if (!nm || !*nm) nm = PathName(dir);
+        printf("    %*s%-30s [%-14s] objs=%-4d mesh=%-4d char=%-3d sub=%-3d%s%s\n",
+               depth * 2, "", nm && *nm ? nm : "(unnamed)", dir->ClassName().Str(), objs,
+               meshes, chars, (int)dir->SubDirs().size(), proxy ? "  PROXY" : "",
+               empty ? "  <== EMPTY" : "");
+        for (int i = 0; i < (int)dir->SubDirs().size(); i++) {
+            ObjectDir *sd = dir->SubDirs()[i].Ptr();
+            if (sd && sd != dir) DumpDirTree(sd, depth + 1, dirs, emptyProxies, totalObjs);
+        }
+        // ★ X5: also descend into dir-typed OBJECTS in the hash table. A
+        // `Character` IS an ObjectDir (Character : RndDir : ObjectDir), so a
+        // loaded crowd member is a fully-populated dir sitting in its parent's
+        // hash table -- NOT in mSubDirs. Neither ObjDirItr's `recurse` flag nor
+        // NextSubDir() ever reaches it, which is why an entire crowd can be
+        // resident in the venue and still census as "0 skinned meshes".
+        for (ObjectDir::Entry *e = dir->HashTable().Begin(); e;
+             e = dir->HashTable().Next(e)) {
+            if (!e->obj) continue;
+            ObjectDir *od = dynamic_cast<ObjectDir *>(e->obj);
+            if (od && od != dir) DumpDirTree(od, depth + 1, dirs, emptyProxies, totalObjs);
+        }
+    }
+
     CellResult RenderCell(const char *arkPath, const char *outDir, int frames,
                           float azimuth, float elevation, float distScale,
                           bool dumpRnd) {
@@ -1362,6 +1413,14 @@ namespace {
         Gate("rnd-dir", rndDir != nullptr,
              rndDir ? "loaded dir is an RndDir (SyncObjects run)"
                     : "loaded dir is NOT an RndDir — nothing here can draw");
+
+        if (gDumpTree) {
+            int dirs = 0, emptyProxies = 0, totalObjs = 0;
+            printf("  --- dir tree census ---\n");
+            DumpDirTree(dir, 0, dirs, emptyProxies, totalObjs);
+            printf("  --- %d dir(s), %d object(s), %d EMPTY proxy dir(s) ---\n", dirs,
+                   totalObjs, emptyProxies);
+        }
 
         // Census the drawable surface. This is the bridge back to X2's numbers:
         // if the mesh count here disagrees with rb3-milo's census, the render
@@ -1702,6 +1761,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--bone-audit") == 0) gBoneAudit = true;
         else if (strcmp(argv[i], "--only-mesh") == 0 && i + 1 < argc)
             gOnlyMesh = argv[++i];
+        else if (strcmp(argv[i], "--dump-tree") == 0) gDumpTree = true;
         else if (strcmp(argv[i], "--dist-scale") == 0 && i + 1 < argc)
             gDistScale = (float)atof(argv[++i]);
         else if (strcmp(argv[i], "--azimuth") == 0 && i + 1 < argc)
