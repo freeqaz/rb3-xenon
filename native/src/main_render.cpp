@@ -836,6 +836,13 @@ namespace {
             // RndMesh::DrawShowing() gates on Showing(), and the WebGPU backend
             // drops a mesh with no vertices (Mesh_Wgpu "no vertices").
             int showing = 0, withVerts = 0, drawable = 0;
+            // ★ X9: the two per-mesh predicates disagree, and WHICH way they
+            // disagree is the whole remaining defect. With the band on its marks
+            // a member reports showing=19 / verts>0=44 / DRAWABLE=9 — so ~10
+            // meshes are SHOWN-BUT-EMPTY and ~35 are FULL-BUT-HIDDEN. An
+            // aggregate cannot tell those two populations apart (the charter's
+            // standing warning), so name them.
+            std::vector<const char *> shownEmpty, fullHidden;
             for (size_t j = 0; j < cm.size(); j++) {
                 if (cm[j]->IsSkinned()) skinned++;
                 bool sh = cm[j]->Showing();
@@ -843,6 +850,15 @@ namespace {
                 if (sh) showing++;
                 if (nv) withVerts++;
                 if (sh && nv) drawable++;
+                if (sh && !nv) shownEmpty.push_back(cm[j]->Name() ? cm[j]->Name() : "(unnamed)");
+                if (!sh && nv) fullHidden.push_back(cm[j]->Name() ? cm[j]->Name() : "(unnamed)");
+            }
+            if (gVerbose && (!shownEmpty.empty() || !fullHidden.empty())) {
+                printf("      SHOWN-BUT-EMPTY (%d):", (int)shownEmpty.size());
+                for (size_t j = 0; j < shownEmpty.size() && j < 24; j++) printf(" %s", shownEmpty[j]);
+                printf("\n      FULL-BUT-HIDDEN (%d):", (int)fullHidden.size());
+                for (size_t j = 0; j < fullHidden.size() && j < 24; j++) printf(" %s", fullHidden[j]);
+                printf("\n");
             }
             char key[96];
             snprintf(key, sizeof(key), "%.2f,%.2f,%.2f", w.x, w.y, w.z);
