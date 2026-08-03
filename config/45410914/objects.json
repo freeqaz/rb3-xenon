@@ -301,6 +301,7 @@
             "system/oggvorbis/floor1.c": "NonMatching",
             "system/oggvorbis/mapping0.c": "NonMatching",
             "system/oggvorbis/res0.c": "NonMatching",
+            "system/oggvorbis/envelope.c": "NonMatching",
             "system/utl/DeJitter.cpp": "NonMatching",
             "system/utl/LogFile.cpp": "NonMatching",
             "band3/game/HitTracker.cpp": "NonMatching",
