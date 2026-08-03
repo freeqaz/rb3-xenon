@@ -8748,8 +8748,12 @@ band3/game/TrainerGemTab.cpp:
 	.text       start:0x826EECA0 end:0x826F0708
 
 band3/game/TrainerProgressMeter.cpp:
-	.pdata      start:0x82236AD8 end:0x82236AF8
-	.text       start:0x826F0A20 end:0x826F0F18
+	.pdata      start:0x82236AD8 end:0x82236AF0
+	.text       start:0x826F0A20 end:0x826F0E88
+
+band3/game/RGTutor.cpp:
+	.pdata      start:0x82236AF0 end:0x82236AF8
+	.text       start:0x826F0E88 end:0x826F0F18
 
 band3/meta_band/PrefabMgr.cpp:
 	.pdata      start:0x82208E98 end:0x82208EB8

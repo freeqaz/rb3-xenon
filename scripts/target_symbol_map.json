@@ -29102,5 +29102,7 @@
  "0x8266f110": "??0FaceTypeProvider@@QAA@XZ",
  "0x8263ccf8": "??1StoreMenuPanel@@UAA@XZ",
  "0x825bc1d8": "?Dispatch@VerifyBuildVersionMsg@@UAAXXZ",
- "0x826ec000": "?Replace@MsgSource@@$4PPPPPPPM@BPM@AAXPAVObject@Hmx@@0@Z"
+ "0x826ec000": "?Replace@MsgSource@@$4PPPPPPPM@BPM@AAXPAVObject@Hmx@@0@Z",
+ "0x826f0e88": "?GetMapKey@RGTutor@@QBAHHABVGameGem@@@Z",
+ "0x826f0f08": "?Loop@RGTutor@@QAAXXZ"
 }
