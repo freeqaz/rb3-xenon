@@ -2745,7 +2745,7 @@ MeshAnim.cpp:
 	.text       start:0x822C7E08 end:0x822C8290
 	.text       start:0x823DCFB0 end:0x823DD010
 	.text       start:0x823E4630 end:0x823E4A98
-	.text       start:0x8241AAC8 end:0x8241AB38
+	.text       start:0x8241AAC8 end:0x8241AB94
 	.text       start:0x8241C8C8 end:0x8241C96C
 	.text       start:0x824423E8 end:0x8244243C
 	.text       start:0x82442C78 end:0x82442CCC
@@ -3600,7 +3600,7 @@ Mesh.cpp:
 	.text       start:0x823D4258 end:0x823D42F0
 	.text       start:0x82417728 end:0x82417898
 	.text       start:0x82417960 end:0x8241AAC8
-	.text       start:0x8241AB38 end:0x8241BAF8
+	.text       start:0x8241AB94 end:0x8241BAF8
 	.text       start:0x8241BB5C end:0x8241C560
 	.text       start:0x8241C590 end:0x8241C8C8
 	.text       start:0x8241C96C end:0x8241CED0
