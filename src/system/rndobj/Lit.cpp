@@ -1,3 +1,9 @@
+// Retail INLINES the `ObjPtr<RndDrawable> drawPtr(this)` owner-only ctor in
+// RndLight::Load (target: `lis r9,lbl_82049FAC` + three stores). Without this we
+// bind the out-of-line two-arg body (`li r5,0; bl ??0?$ObjPtr@VRndDrawable@@`).
+// Must precede every include -- the gate is read when ObjPtr is defined.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+
 #include "rndobj/Lit.h"
 #include "Lit.h"
 #include "obj/Object.h"
@@ -141,7 +147,12 @@ END_HANDLERS
 RndLight::RndLight()
     : mColor(1, 1, 1), mColorOwner(this, this), mRange(1000.0f), mFalloffStart(0),
       mType(kPoint), mAnimateColorFromPreset(1), mAnimatePositionFromPreset(1),
-      mAnimateRangeFromPreset(1), mShowing(1), mTexture(this), mCubeTexture(this),
+      // TWO-ARG spelling: retail leaves these two ObjPtr ctors OUT OF LINE.
+      // RB3_OBJPTR_INLINE_OWNER_CTOR (needed for the ObjPtr<RndDrawable> site in
+      // RndLight::Load) is TU-wide and would otherwise inline them here, taking
+      // this ctor 100% -> 70.6% and two 44 B funclets 100% -> 0%.
+      mAnimateRangeFromPreset(1), mShowing(1), mTexture(this, nullptr),
+      mCubeTexture(this, nullptr),
       mShadowOverride(nullptr), mShadowObjects(this, kObjListNoNull), mTopRadius(0),
       mBotRadius(30.0f), mProjectedBlend(0) {
     mTextureXfm.Reset();
@@ -238,15 +249,18 @@ BEGIN_LOADS(RndLight)
     if (gRevs_Lit.rev > 0xB) {
         bs >> mFalloffStart;
     }
-    if (gRevs_Lit.rev > 4) {
-        if (gRevs_Lit.rev < 5) {
-            bool tmp;
-            bs >> tmp;
-            mAnimateColorFromPreset = tmp;
-            mAnimatePositionFromPreset = tmp;
-        }
-    }
-    if (gRevs_Lit.rev > 5) {
+    // ELSE-IF, not two statements. The `rev > 4 && rev < 5` arm is dead code in
+    // RETAIL TOO (target: `cmplwi 4; ble` then `cmplwi 5; bge` around the body),
+    // so the transcription is faithful -- but retail CHAINS it to the `rev > 5`
+    // test, keeping the revision live in r11 and exiting the dead arm with
+    // `b 0x1c0` straight past the rev>5 block. As two separate `if`s we reload
+    // the revision at that point (`lhz r11,0x4,r27`) and mismatch.
+    if (gRevs_Lit.rev > 4 && gRevs_Lit.rev < 5) {
+        bool tmp;
+        bs >> tmp;
+        mAnimateColorFromPreset = tmp;
+        mAnimatePositionFromPreset = tmp;
+    } else if (gRevs_Lit.rev > 5) {
         bs >> mAnimateColorFromPreset;
         bs >> mAnimatePositionFromPreset;
     }
