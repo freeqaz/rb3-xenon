@@ -3863,9 +3863,6 @@ HamRibbon.cpp:
 	.text       start:0x82788390 end:0x82788408
 	.text       start:0x82788B00 end:0x82788B80
 
-FilterQueue.cpp:
-	.text       start:0x826F8F68 end:0x826F8F9C
-
 MoveAsyncDetector.cpp:
 	.pdata      start:0x821FBF88 end:0x821FBF90
 	.pdata      start:0x821FBF90 end:0x821FBF98
@@ -6834,9 +6831,6 @@ vec.cpp:
 	.pdata      start:0x8220A458 end:0x8220A460
 	.text       start:0x8240B190 end:0x8240B208
 
-HamDriver.cpp:
-	.text       start:0x824F6EB8 end:0x824F6EC4
-
 Graph.cpp:
 	.pdata      start:0x8220EC20 end:0x8220EC50
 	.pdata      start:0x8220EC50 end:0x8220EC70
@@ -7275,7 +7269,6 @@ system/synth_xbox/FxSendSynapse.cpp:
 PropertyEventProvider.cpp:
 	.pdata      start:0x8223D200 end:0x8223D208
 	.text       start:0x8268FC38 end:0x8268FC60
-	.text       start:0x826F0F18 end:0x826F0F20
 	.text       start:0x826F0F78 end:0x826F0F98
 	.text       start:0x82768F98 end:0x82768FF4
 
@@ -7971,9 +7964,7 @@ Set.cpp:
 	.text       start:0x82482DC0 end:0x82482F4C
 
 FlowQueueable.cpp:
-	.pdata      start:0x82210938 end:0x82210940
 	.text       start:0x82487824 end:0x82487838
-	.text       start:0x8248787C end:0x82487928
 
 Shockwave.cpp:
 	.pdata      start:0x822142F8 end:0x82214300
@@ -12877,9 +12868,6 @@ system/synth_xbox/FxSend.cpp:
 	.pdata      start:0x8225B410 end:0x8225B418
 	.text       start:0x82B69648 end:0x82B69830
 	.text       start:0x82B69830 end:0x82B6985C
-
-system/gesture/SkeletonDir.cpp:
-	.text       start:0x8258A190 end:0x8258A198
 
 Main.cpp:
 	.pdata      start:0x821F1878 end:0x821F1888
