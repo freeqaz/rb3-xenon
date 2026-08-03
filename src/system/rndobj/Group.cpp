@@ -188,7 +188,7 @@ float RndGroup::EndFrame() {
     float end = 0;
     for (std::vector<RndAnimatable *>::iterator it = mAnims.begin(); it != mAnims.end();
          ++it) {
-        end = Max(end, (*it)->EndFrame());
+        MaxEq(end, (*it)->EndFrame());
     }
     return end;
 }

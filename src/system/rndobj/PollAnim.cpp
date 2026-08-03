@@ -61,7 +61,7 @@ END_LOADS
 float RndPollAnim::EndFrame() {
     float frame = 0;
     FOREACH (it, mAnims) {
-        frame = Max(frame, (*it)->EndFrame());
+        MaxEq(frame, (*it)->EndFrame());
     }
     return frame;
 }
