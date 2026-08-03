@@ -2160,6 +2160,41 @@ namespace {
                        "%8.2f)  centroid (%8.2f %8.2f %8.2f)\n",
                        tag, nm, e.source, e.nverts, e.mn[0], e.mn[1], e.mn[2], e.mx[0],
                        e.mx[1], e.mx[2], e.cx, e.cy, e.cz);
+                // ★ TWO-INSTRUMENT RECONCILIATION — added after the framing
+                // bounds and this oracle DISAGREED about where a wrist is.
+                // SceneBounds frames via meshWorld*bindVert (AddWorldPoint,
+                // :498); this oracle skins via the bone palette. X4c's note at
+                // :545-560 says the two agree AT BIND POSE and only there,
+                // because that IS the palette invariant:
+                //     skin_b := mOffset_b * boneWorld_b == meshWorld,  for all b
+                // No clip is applied in this path, so we ARE at bind pose and
+                // they must agree. Printing both frames plus the elementwise
+                // deviation turns "the numbers look different" into a decided
+                // question. (AuditPalette already computes devFromMesh, but it
+                // walks ObjDirItr and reported 0 meshes — a vacuous PASS.)
+                const Transform &mw = m->WorldXfm();
+                float devFromMesh = 0.0f;
+                for (int bi = 0; bi < m->NumBones(); bi++) {
+                    RndTransformable *bt = m->BoneTransAt(bi);
+                    if (!bt) continue;
+                    Transform skin;
+                    Multiply(m->BoneOffsetAt(bi), bt->WorldXfm(), skin);
+                    const float *A = (const float *)&skin.m, *B = (const float *)&mw.m;
+                    for (int r = 0; r < 3; r++)
+                        for (int cc = 0; cc < 3; cc++) {
+                            float d = fabsf(A[r * 4 + cc] - B[r * 4 + cc]);
+                            if (d > devFromMesh) devFromMesh = d;
+                        }
+                    float dv[3] = { fabsf(skin.v.x - mw.v.x), fabsf(skin.v.y - mw.v.y),
+                                    fabsf(skin.v.z - mw.v.z) };
+                    for (int k = 0; k < 3; k++)
+                        if (dv[k] > devFromMesh) devFromMesh = dv[k];
+                }
+                printf("          meshWorld.v (%9.3f %9.3f %9.3f)   palette-vs-meshWorld "
+                       "dev %.4g%s\n",
+                       mw.v.x, mw.v.y, mw.v.z, devFromMesh,
+                       devFromMesh > 1.0f ? "   <<< BIND-POSE PALETTE INVARIANT VIOLATED"
+                                          : "");
                 if (isControl) continue; // controls need no bone-gap analysis
                 // The decisive number: how far is each hand bone from the
                 // geometry that is supposed to hang off it? 0 == inside.
