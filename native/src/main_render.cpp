@@ -2393,6 +2393,38 @@ namespace {
                  ? ""
                  : "Multiply(Transform,Transform,Transform) is NOT alias-safe — the "
                    "X4b snapshot fix in math/mtx.cpp:77 has regressed");
+
+        // X13: the SIBLING X12 found unsafe and left dormant --
+        // Multiply(const Vector3&, const Hmx::Quat&, Vector3&), math/Rot.cpp:299.
+        // X12 recommended this probe and did not write it. Same construction as
+        // above: reference and subject are the SAME function, so it cannot pass
+        // by construction. Rotate by 90 deg about z, which mixes x into y and is
+        // therefore sensitive to the store-then-reread order that was the bug.
+        printf("  --- X13 alias-safety probe: Multiply(Vector3, Quat, Vector3&) ---\n");
+        {
+            Hmx::Quat q;
+            const float h = 0.70710678f; // cos/sin of 45 deg -> 90 deg rotation
+            q.Set(0.0f, 0.0f, h, h);
+            Vector3 vin(1.0f, 2.0f, 3.0f);
+            Vector3 refv;
+            Multiply(vin, q, refv);
+            Vector3 aliased(1.0f, 2.0f, 3.0f);
+            Multiply(aliased, q, aliased); // &vout == &vin, as HamSkeletonConverter
+                                           // .cpp:564 calls it
+            float d = 0.0f;
+            float dv[3] = { fabsf(refv.x - aliased.x), fabsf(refv.y - aliased.y),
+                            fabsf(refv.z - aliased.z) };
+            for (int k = 0; k < 3; k++) if (dv[k] > d) d = dv[k];
+            printf("      reference     v = [%8.3f %8.3f %8.3f]\n", refv.x, refv.y,
+                   refv.z);
+            printf("      dest == vin   v = [%8.3f %8.3f %8.3f]   dev %.3e\n",
+                   aliased.x, aliased.y, aliased.z, d);
+            Gate("alias-safe-multiply-vector-quat", d < 1e-5f,
+                 d < 1e-5f ? ""
+                           : "Multiply(Vector3,Quat,Vector3&) is NOT alias-safe — the "
+                             "HX_NATIVE arm at math/Rot.cpp:299 stores vout.x before "
+                             "reading vin for rows 2 and 3");
+        }
     }
 
     void ReportPaletteAudit(const PaletteAuditResult &res) {

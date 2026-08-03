@@ -299,13 +299,29 @@ void MakeRotQuatUnitX(const Vector3 &vec, Hmx::Quat &q) {
 void Multiply(const Vector3 &vin, const Hmx::Quat &q, Vector3 &vout) {
 #ifdef HX_NATIVE
     // Standard quaternion rotation formula: v' = v * R(q)
+    //
+    // ⛔ ALIAS SAFETY. This arm previously stored vout.x and THEN read vin.x/.y
+    // /.z for rows 2 and 3. With &vout == &vin -- which is how
+    // hamobj/HamSkeletonConverter.cpp:564 calls it -- the store clobbered the
+    // input before rows 2 and 3 consumed it, and rows 2/3 silently used the
+    // already-rotated x. The #else X360 arm below never had the bug: it hoists
+    // every vin component to a local first. This arm now does the same, so the
+    // two arms agree, and the fix is the same shape as the one at math/mtx.cpp
+    // :77 that X4b landed for Multiply(Transform,Transform,Transform) -- the
+    // alias-unsafe-compose family that cost rb3-Wii ~15 waves on
+    // Multiply(Transform,Transform,Transform) and produced its "spindly
+    // tree-branch hands".
+    //
+    // ⚠ The whole body is inside #ifdef HX_NATIVE, so the X360 translation unit
+    // is untouched; verified by an objdiff A/B at symbol granularity.
+    const float vx = vin.x, vy = vin.y, vz = vin.z;
     float qx = q.x, qy = q.y, qz = q.z, qw = q.w;
     float xx = qx * qx, yy = qy * qy, zz = qz * qz;
     float xy = qx * qy, xz = qx * qz, xw = qx * qw;
     float yz = qy * qz, yw = qy * qw, zw = qz * qw;
-    vout.x = vin.x * (1 - 2*(yy+zz)) + vin.y * 2*(xy-zw)     + vin.z * 2*(yw+xz);
-    vout.y = vin.x * 2*(xy+zw)        + vin.y * (1 - 2*(xx+zz)) + vin.z * 2*(yz-xw);
-    vout.z = vin.x * 2*(xz-yw)        + vin.y * 2*(yz+xw)     + vin.z * (1 - 2*(xx+yy));
+    vout.x = vx * (1 - 2*(yy+zz)) + vy * 2*(xy-zw)     + vz * 2*(yw+xz);
+    vout.y = vx * 2*(xy+zw)       + vy * (1 - 2*(xx+zz)) + vz * 2*(yz-xw);
+    vout.z = vx * 2*(xz-yw)       + vy * 2*(yz+xw)     + vz * (1 - 2*(xx+yy));
 #else
     // Load quaternion components
     float qx = q.x;
