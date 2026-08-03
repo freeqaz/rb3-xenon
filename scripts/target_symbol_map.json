@@ -26911,6 +26911,7 @@
  "0x8270fef0": "??$MakeString@VFilePath@@@@YAPBDPBDVFilePath@@@Z",
  "0x827705c8": "??0?$TickedInfo@VString@@@@QAA@HVString@@@Z",
  "0x82792e10": "??1DrumMixDB@@QAA@XZ",
+ "0x82793aa8": "??1SubmixCollection@@QAA@XZ",
  "0x82793078": "?Clear@GameGemDB@@QAAXXZ",
  "0x827933a0": "??1GameGemDB@@QAA@XZ",
  "0x82793470": "?Clear@PhraseDB@@QAAXXZ",

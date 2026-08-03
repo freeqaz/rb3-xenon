@@ -914,6 +914,7 @@
             "system/beatmatch/GameGem.cpp": "NonMatching",
             "system/beatmatch/GameGemList.cpp": "NonMatching",
             "system/beatmatch/GameGemDB.cpp": "NonMatching",
+            "system/beatmatch/Submix.cpp": "NonMatching",
             "system/beatmatch/BeatMatchUtl.cpp": "NonMatching",
             "system/beatmatch/TrackType.cpp": "NonMatching",
             "system/beatmatch/DrumMap.cpp": "NonMatching",
