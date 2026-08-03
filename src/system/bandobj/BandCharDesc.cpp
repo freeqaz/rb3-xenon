@@ -1149,7 +1149,16 @@ END_PROPSYNCS
 // sw2 scatter-include (default/BandCharDesc <- band3/bandtrack/VocalTrack.cpp)
 #define gRev gRev_VocalTrack
 #define gAltRev gAltRev_VocalTrack
+// X7: native skips this edge. VocalTrack.cpp:2721 unconditionally
+// scatter-includes bandobj/BandWardrobe.cpp, and rb3-render ALREADY emits
+// BandWardrobe through rndobj/Console.cpp -> world/Crowd.cpp:1434. With
+// BandCharDesc.cpp added as a source, BandWardrobe is emitted twice (measured:
+// 83 duplicate definitions). Guarding the NEW emitter leaves the pre-existing
+// Console.cpp copy, which is the one every rb3-render binary since X3 has
+// linked. BandCharDesc needs nothing from VocalTrack or TrackConfig.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/bandtrack/VocalTrack.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 

@@ -172,6 +172,7 @@
 // BandConfiguration is `public Hmx::Object`), NOT ObjectDir subclasses, so
 // neither carries the nested-dir desync hazard the header note above warns
 // about for an unregistered *Dir.
+#include "bandobj/BandCharacter.h"
 #include "bandobj/BandConfiguration.h"
 #include "bandobj/BandWardrobe.h"
 
@@ -384,16 +385,50 @@ void RegisterMiloObjectFactories() {
     // BandConfiguration is a genuine (one-line) build add -- see the X7 note
     // in native/CMakeLists.txt. X6 ported the TU and wired objects.json but
     // not the native source list, so the class was unbuildable here.
-    // ⚠ STAGED. Registering BandWardrobe is a ONE-LINE change that LINKS the
-    // whole BandCharacter + BandCharDesc surface: --gc-sections stops dropping
-    // BandWardrobe's 91 bodies, and LoadMainCharacters / StartClipLoads /
-    // LoadPrefabPrefs / AddDircut then need BandCharacter::{SetInstrumentType,
-    // StartLoad, SetPrefab, SetTempoGenreVenue, AddDircut, ClearDircuts,
-    // SetContext} and BandCharDesc::{GetInstrumentSym, GetInstrumentFromSym,
-    // GetAnimInstrument, FindPrefab, InstrumentOutfit::GetPiece} plus
-    // `typeinfo for BandCharacter`. Measured: 28 undefined references.
-    // Enabled below once those two TUs compile.
+    // BandConfiguration is SAFE and ON BY DEFAULT: it is a leaf Hmx::Object,
+    // it loads clean in all six venue roots, and it is what makes the band's
+    // baked stage transforms readable at all (see ReportBandPlacement).
     REGISTER_OBJ_FACTORY(BandConfiguration)
+
+    // ⛔ X7: BandWardrobe + BandCharacter are OFF BY DEFAULT, and this is a
+    // MEASURED decision, not caution.
+    //
+    // Both TUs now compile and link (that was the milestone: 18 -> 0 errors in
+    // BandCharacter.cpp, 0 duplicate definitions, 0 undefined references), and
+    // registering them does construct real BandCharacters -- "Can't make
+    // BandCharacter" disappears. But it then DESYNCS THE STREAM AND CRASHES:
+    //
+    //   player0 (char/main/main.milo) couldn't find naked_girl in chars
+    //   chars (world/shared/chars.milo): Proxy char/main/main.milo class
+    //       BandCharacter not RndDir, converting          <- DirLoader.cpp:721
+    //   Can't copy type "main" ... different classes RndDir and BandCharacter
+    //   FAIL: String chars 290146 > 128                   <- rc=139
+    //
+    // chars.milo's player0 is a PROXY declared BandCharacter whose proxied file
+    // char/main/main.milo declares its own root class RndDir, so
+    // DirLoader::SetupDir takes its class-conversion arm (:712-748):
+    // NewObject(RndDir), TransferLoaderState, ReplaceObject -- replacing a
+    // partially-loaded ObjectDir mid-stream. The next CreateObjects then reads
+    // a string length of 290146.
+    //
+    // ★ THE CHARTER'S RULE GENERALISES, and this is the evidence for it.
+    // "Never bind a WRONG class to parse a payload; a miss is strictly better
+    // than a wrong parse" (X4d's BandCamShot->CamShot measurement). Here the
+    // class is RIGHT and the outcome is the same shape -- because the failure
+    // is not in the binding, it is in a load path (proxy class conversion) that
+    // no lane has exercised before. An unregistered BandCharacter is
+    // ReadDead-skipped cleanly and every prior lane's frame is rc=0; a
+    // registered one crashes the load. So the miss is STILL strictly better
+    // until the conversion path is fixed, and the default stays off.
+    //
+    // Turn on with RB3_BAND_MEMBERS=1 to reproduce the desync and work it.
+    if (getenv("RB3_BAND_MEMBERS")) {
+        REGISTER_OBJ_FACTORY(BandWardrobe)
+        // BandCharacter IS an ObjectDir subclass (-> Character -> RndDir ->
+        // ObjectDir), which is why its load failure is a desync rather than a
+        // skipped leaf -- exactly the case this file's header describes.
+        REGISTER_OBJ_FACTORY(BandCharacter)
+    }
 
     // X4d MEASUREMENT HARNESS (RB3_BIND_BANDCAMSHOT=1), off by default.
     //

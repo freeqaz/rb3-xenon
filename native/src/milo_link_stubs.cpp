@@ -57,6 +57,7 @@
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "utl/Symbol.h"
+#include "obj/Msg.h"  // X7: Message get_customize_slot_msg
 
 // ===========================================================================
 // (1) REAL IMPLEMENTATIONS
@@ -146,6 +147,13 @@ BinStream &operator<<(BinStream &bs, const ObjOwnerPtr<T1> &ptr) {
 template BinStream &operator<< <CharClip>(BinStream &, const ObjOwnerPtr<CharClip> &);
 template BinStream &operator<< <Waypoint>(BinStream &, const ObjOwnerPtr<Waypoint> &);
 template BinStream &operator<< <RndEnvAnim>(BinStream &, const ObjOwnerPtr<RndEnvAnim> &);
+// ★ X7: AND IT FIRED AGAIN, exactly as the note above predicts it would.
+// bandobj/BandCharacter.cpp saves an ObjOwnerPtr<BandCharDesc>; compiled clean
+// everywhere and failed only at native link. That is now FOUR Ts added
+// reactively (CharClip, Waypoint, RndEnvAnim, BandCharDesc) — the fifth should
+// be the header fix, not another line here.
+#include "bandobj/BandCharDesc.h"
+template BinStream &operator<< <BandCharDesc>(BinStream &, const ObjOwnerPtr<BandCharDesc> &);
 
 // ===========================================================================
 // (2) GPU / RENDER BACKEND — X360 src/system/rnddx9/, deleted by X3
@@ -281,3 +289,146 @@ Symbol start;
 Symbol release_configuration;
 Symbol store_configuration;
 Symbol sync_play_mode;
+
+// ---- X7: Symbol globals pulled in by the bandobj band-member TUs
+// (BandCharacter / BandCharDesc / OutfitConfig / BandHeadShaper and their
+// BEGIN_HANDLERS + SYNC_PROP blocks). Same convention as the block above:
+// declared in utl/Symbols*.h, interned at App boot, default-constructed here
+// so nothing depends on Symbol::Init ordering. All 129 verified present as
+// `extern Symbol X;' in utl/Symbols*.h -- none is invented.
+Symbol bass;
+Symbol brow_height;
+Symbol brow_separation;
+Symbol cam_teleport;
+Symbol category;
+Symbol change_face_group;
+Symbol chars_dir;
+Symbol chin;
+Symbol chin_height;
+Symbol chin_num;
+Symbol chin_width;
+Symbol clear_group;
+Symbol closet_teleport;
+Symbol color0;
+Symbol color1;
+Symbol color2;
+Symbol coop_bk;
+Symbol coop_gk;
+Symbol copy_prefab;
+Symbol drum;
+Symbol drum_venue;
+Symbol earrings;
+Symbol enable_debug_interests;
+Symbol enter_closet;
+Symbol enter_venue;
+Symbol enter_vignette;
+Symbol extras;
+Symbol eye;
+Symbol eyebrows;
+Symbol eye_color;
+Symbol eye_height;
+Symbol eye_num;
+Symbol eye_rotation;
+Symbol eyes;
+Symbol eye_separation;
+Symbol facehair;
+Symbol feet;
+Symbol find_target;
+Symbol flag_string;
+Symbol force_vertical;
+Symbol game_over;
+Symbol gender;
+Symbol genre;
+Symbol get_character;
+Symbol get_matching_dude;
+Symbol get_play_flags;
+Symbol glasses;
+Symbol group_override;
+Symbol guitar;
+Symbol hair;
+Symbol hands;
+Symbol head;
+Symbol head_lookat_weight;
+Symbol heads;
+Symbol height;
+Symbol hide;
+Symbol hide_categories;
+Symbol in_closet;
+Symbol install_filter;
+Symbol instruments;
+Symbol instrument_type;
+Symbol in_tour_ending;
+Symbol is_loading;
+Symbol jaw_height;
+Symbol jaw_width;
+Symbol keyboard;
+Symbol legs;
+Symbol list_dircuts;
+Symbol list_drum_venues;
+Symbol list_interest_objects;
+Symbol list_outfits;
+Symbol list_venue_anim_groups;
+Symbol load_dircut;
+Symbol load_prefab_prefs;
+Symbol mesh_name;
+Symbol mic;
+Symbol milo_reload;
+Symbol mouth;
+Symbol mouth_height;
+Symbol mouth_num;
+Symbol mouth_width;
+Symbol muscle;
+Symbol name;
+Symbol nose;
+Symbol nose_height;
+Symbol nose_num;
+Symbol nose_width;
+Symbol on_extra_loaded;
+Symbol on_post_merge;
+Symbol outfit;
+Symbol patches;
+Symbol piercings;
+Symbol play_group;
+Symbol portrait_begin;
+Symbol portrait_end;
+Symbol pre_clear;
+Symbol prefab;
+Symbol prefabs_list;
+Symbol proxies;
+Symbol restore_categories;
+Symbol rings;
+Symbol rotation;
+Symbol save_from_closet;
+Symbol save_prefab;
+Symbol scale;
+Symbol select_extras;
+Symbol set_context;
+Symbol set_file_merger;
+Symbol set_play;
+Symbol set_singalong;
+Symbol shape;
+Symbol shape_num;
+Symbol skin;
+Symbol skin_color;
+Symbol sort_targets;
+Symbol start_load;
+Symbol start_venue_shot;
+Symbol sync_interests;
+Symbol tempo;
+Symbol test_prefab;
+Symbol test_tour_ending_venue;
+Symbol texture;
+Symbol toggle_interests_overlay;
+Symbol torso;
+Symbol unload_venue;
+Symbol use_mic_stand_clips;
+Symbol uv;
+Symbol weight;
+Symbol wrist;
+
+// X7: utl/Messages.h:76 declares this as a Message (not a Symbol) and
+// BandWardrobe.cpp:1053 HandleType()s it. Message has no default ctor that is
+// safe pre-Symbol::Init, so it is constructed from a Symbol the same way the
+// engine does; it is never dispatched on the load path.
+Message get_customize_slot_msg(Symbol(), DataNode(0));
+
