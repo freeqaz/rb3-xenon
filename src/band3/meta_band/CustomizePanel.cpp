@@ -224,8 +224,40 @@ void CustomizePanel::UpdateAssetProvider() {
 // update_makeup_provider arm calls this outlined (bl fn_825F85A0) where ours
 // inlines it. Forcing __declspec(noinline) here DOES outline it but cascades
 // into a whole-function layout/regalloc reshuffle (99.0 -> 72.0) — reverted.
-// Remaining Handle diffs: this-spill vs remat at the customize-state arm and
-// an inverted has_license/has_patch bool-normalize cross-jump direction.
+// ⚠⚠ TOOLING TRAP THIS FUNCTION DEMONSTRATED (lane DQ-1) — READ BEFORE YOU
+// REVERT ANYTHING HERE ON A SCORE DROP.  objdiff has a fast path in
+// objdiff-core/src/diff/code.rs:647 `diff_instructions()`:
+//
+//     // Fast path: if same length, pair instructions 1:1 without running the
+//     // diff algorithm.  This is valid because same-length sequences have no
+//     // insertions/deletions ...
+//
+// That justification is FALSE: a sequence with N insertions AND N deletions is
+// the same length.  Mid-lane this function was exactly that — 5 inserts and 5
+// deletes, base 1259 == target 1259 — and objdiff scored it **72.2%** when the
+// true content was ~99%: identical instructions, merely shifted +2 then -3 and
+// back into sync.  Three consecutive measurements make the mechanism plain:
+//     base 1253 vs target 1259 (unequal) -> proper diff, 98.7%
+//     base 1259 vs target 1259 (EQUAL)   -> 1:1 fast path, 578 'replace', 72.2%
+//     base 1261 vs target 1259 (unequal) -> proper diff, 99.8%
+// So GETTING THE SIZE RIGHT CAN MAKE THE SCORE COLLAPSE, and the collapse looks
+// exactly like a catastrophic regression.  It nearly caused the (correct)
+// save_prefab fix below to be reverted.  The artifact is one-directional and
+// cannot fabricate a false 100% — a 1:1 pairing of differing instructions still
+// counts them as mismatched — so `matched_functions` is safe; only sub-100
+// scores are distorted.  Diagnose by dumping the row list and looking for a
+// constant shift, never by trusting the percentage.
+//
+// Handle residual status after lane DQ-1 (99.8% normalized, 3 of 1261
+// instructions):  the inverted has_license/has_patch cross-jump is FIXED (see
+// HasLicense below).  What is left is (a) the same this-spill-vs-remat, 2
+// base-only instructions `subi r10,r26,0xb8 / stw r10,0x94(r31)` emitted inside
+// the in_clothing_state arm, and (b) one target-only `clrlwi r11,r11,24` at
+// 0x82619818, the last instruction of the shared has_license/has_patch bool
+// tail.  For (b): making HasPatch return int (to force a DataNode(int) overload
+// and with it a bool->int mask) was TRIED and changed NOTHING -- do not re-fund
+// that idea.  For (a): the slot 0x94(r31) is the setup_asset_patch_data Symbol
+// temp, and in our build nothing ever reloads `this` from it.
 void CustomizePanel::UpdateMakeupProvider(Symbol type) {
     // retail fn_82614E60 is 0x80 bytes and is CALLED (not inlined) from the
     // update_makeup_provider arm. Its body is: two guarded function-local
@@ -612,7 +644,20 @@ bool CustomizePanel::HasPatch() {
 
 void CustomizePanel::EnableFaceHair() { Handle(enable_facehair_msg, true); }
 void CustomizePanel::DisableFaceHair() { Handle(disable_facehair_msg, true); }
-bool CustomizePanel::HasLicense(Symbol s) { return TheSongMgr.HasLicense(s); }
+// RB3-360 retail (lane DQ-1): the return type here is `int`, not `bool`, and the
+// has_license arm spells the test out as `... != 0`.  That is not cosmetic — it
+// is what produces retail's four-instruction bool chain at 0x82619808:
+//     clrlwi r11, r3, 24     <- bool (BandSongMgr::HasLicense) -> int
+//     subic  r10, r11, 0x1   <- int -> bool  (`!= 0`)
+//     subfe  r11, r10, r11
+//     clrlwi r11, r11, 24
+// and, crucially, it is what makes MSVC cross-jump has_patch BACKWARD into this
+// arm's tail (has_patch enters at the `subic`, its own `FindPatchIndex()+1`
+// already in r11).  With `bool` + no `!= 0` this arm emitted NO normalisation at
+// all, so there was nothing to merge into and MSVC merged the other direction —
+// has_license jumping forward into has_patch.  Restoring the int/`!= 0` form
+// removed 9 of the 12 remaining mismatches in CustomizePanel::Handle.
+int CustomizePanel::HasLicense(Symbol s) { return TheSongMgr.HasLicense(s); }
 
 Symbol CustomizePanel::GetAssetShot(Symbol s) {
     AssetMgr *pAssetMgr = AssetMgr::GetAssetMgr();
@@ -1094,14 +1139,19 @@ void CustomizePanel::FinishPatchEdit() {
 
 void CustomizePanel::RefreshPatchEdit() { mClosetMgr->RecomposePatches(mPatchCategory); }
 
-void CustomizePanel::SavePrefab() {
+// RB3-360 retail (lane DQ-1): the "not loaded" text is NOT a MILO_WARN, it is the
+// RETURN VALUE.  Retail fn_826169C8 is `DataNode CustomizePanel::SavePrefab(const
+// char*)`: r3 = hidden DataNode return, r4 = this, r5 = the char*.  The false leg
+// does `bl DataNode::DataNode(const char*)` on the literal at 0x820C3638 (which
+// carries NO trailing '\n' — MILO_WARN's would) and returns; the true leg tail-
+// calls BandCharacter::SavePrefabFromCloset, passing the char* straight through.
+DataNode CustomizePanel::SavePrefab(const char *name) {
     if (!IsLoaded()) {
-        MILO_WARN("Tried to save prefab, but customize_panel is not loaded.\n");
-    } else {
-        BandCharacter *pBandCharacter = TheCharCache->GetCharacter(mUser->GetSlot());
-        MILO_ASSERT(pBandCharacter, 0x6fb);
-        pBandCharacter->SavePrefabFromCloset();
+        return DataNode("Tried to save prefab, but customize_panel is not loaded.");
     }
+    BandCharacter *pBandCharacter = TheCharCache->GetCharacter(mUser->GetSlot());
+    MILO_ASSERT(pBandCharacter, 0x6fb);
+    return pBandCharacter->SavePrefabFromCloset(name);
 }
 
 #pragma push
@@ -1131,7 +1181,7 @@ BEGIN_HANDLERS(CustomizePanel)
     )
     HANDLE_EXPR(get_patch_menu_return_state, GetPatchMenuReturnState())
     HANDLE_EXPR(is_refreshing_content, mRefreshingContent)
-    HANDLE_EXPR(has_license, HasLicense(_msg->Sym(2)))
+    HANDLE_EXPR(has_license, HasLicense(_msg->Sym(2)) != 0)
     HANDLE_EXPR(new_asset_provider, mNewAssetProvider)
     HANDLE_EXPR(current_outfit_provider, mCurrentOutfitProvider)
     HANDLE_EXPR(asset_provider, mAssetProvider)
@@ -1160,7 +1210,7 @@ BEGIN_HANDLERS(CustomizePanel)
     HANDLE_ACTION(set_is_waiting_to_leave, SetIsWaitingToLeave(_msg->Int(2)))
     HANDLE_EXPR(is_waiting_to_leave, mWaitingToLeave)
     HANDLE_ACTION(take_portrait, mClosetMgr->TakePortrait())
-    HANDLE_ACTION(save_prefab, SavePrefab())
+    HANDLE_EXPR(save_prefab, SavePrefab(_msg->Str(2)))
     // RB3-360: the Wii-dev asset-token cheat arms (cheat_toggle_asset_tokens /
     // show_asset_tokens), their mShowAssetTokens member, and
     // CheatToggleAssetTokens() do not exist in retail — the retail Handle body
