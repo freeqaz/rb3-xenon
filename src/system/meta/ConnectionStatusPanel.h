@@ -13,6 +13,7 @@ END_MESSAGE
 class ConnectionStatusPanel : public UIPanel {
 public:
     ConnectionStatusPanel();
+    virtual ~ConnectionStatusPanel();
     // Hmx::Object
     OBJ_CLASSNAME(ConnectionStatusPanel)
     OBJ_SET_TYPE_ENGINE(ConnectionStatusPanel)

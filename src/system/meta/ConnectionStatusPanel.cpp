@@ -8,6 +8,8 @@
 
 ConnectionStatusPanel::ConnectionStatusPanel() {}
 
+ConnectionStatusPanel::~ConnectionStatusPanel() {}
+
 
 void ConnectionStatusPanel::Exit() {
     static Symbol connection_status_changed("connection_status_changed");
