@@ -37,8 +37,13 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(InstrumentDifficultyDisplay); }
     NEW_OBJ(InstrumentDifficultyDisplay);
     DECLARE_REVS;
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    // Retail's NewObject has the OBJ_MEM_OVERLOAD shape, not NEW_OVERLOAD's:
+    // `bl StaticClassName` into a discarded Symbol temp, then a 2-arg
+    // `MemAlloc(size, 0)` INLINE (`li r4,0; li r3,0x1b0; bl ...; stw r3,0x54(r31)`).
+    // NEW_OVERLOAD instead emits a noinline class `operator new` (one `bl`,
+    // `stw r3,0x50(r31)`) that retail has no function row for at all.
+    // See the measured note at utl/MemMgr.h:285.
+    OBJ_MEM_OVERLOAD(0x28);
 
     RndPropAnim *mDifficultyAnim;
     RndMesh *mVocalPartMesh;

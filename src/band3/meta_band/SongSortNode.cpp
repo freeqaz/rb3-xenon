@@ -363,6 +363,8 @@ bool OwnedSongSortNode::IsEnabled() const {
         return false;
     if (!TheMusicLibrary->GetDuplicatesAllowed() && TheMusicLibrary->SetlistHasSong(mSongRecord->mData->ID()))
         return false;
+    if (!TheMusicLibrary->GetAllowUGC() && mSongRecord->mData->IsUGC())
+        return false;
     return IsActive();
 }
 

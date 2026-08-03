@@ -5,6 +5,44 @@
 #include "obj/PropSync.h"
 #include "utl/BinStream.h"
 
+// ---------------------------------------------------------------------------
+// Retail RB3 stores the load revision in file-scope statics gRev/gAltRev written
+// at load time, i.e. the obj/ObjMacros.h rev dialect -- not obj/Object.h's local
+// BinStreamRev wrapper.  Proven from retail asm for ?Load@RndSet@@ (target 124 B):
+// after `bl BinStream::ReadEndian` it does
+//     mr r10,r11 ; srwi r11,r11,16 ; sth r11,gAltRev ; sth r10,gRev
+// and then `bl Hmx::Object::Load` with r4 = the ORIGINAL bs.  There is no
+// BinStream ctor/dtor pair and no ??_7BinStreamRev@@6B@ vtable store, which the
+// Object.h dialect emits unconditionally (it cost 8 surplus bytes and the whole
+// r28-r31 save set).  Same treatment, same reasoning, as ui/UILabel.cpp.
+//
+// Bracketed with push_macro/pop_macro so the dialect cannot leak into any TU that
+// whole-file-#includes this one via the COMDAT-scatter lever.
+// ---------------------------------------------------------------------------
+#pragma push_macro("INIT_REVS")
+#pragma push_macro("LOAD_REVS")
+#pragma push_macro("ASSERT_REVS")
+#pragma push_macro("LOAD_SUPERCLASS")
+#undef INIT_REVS
+#undef LOAD_REVS
+#undef ASSERT_REVS
+#undef LOAD_SUPERCLASS
+// Declaration order is codegen-load-bearing: retail's .bss puts gAltRev at the
+// base and gRev at +4 (`sth r11,gAltRev(r9)` then `sth r10,4(r8)`), and MSVC lays
+// these two out in declaration order, so gAltRev must be declared first.
+#define INIT_REVS(objType)                                                               \
+    static unsigned short gAltRev = 0;                                                   \
+    static unsigned short gRev = 0;
+#define LOAD_REVS(bs)                                                                    \
+    int rev;                                                                             \
+    bs >> rev;                                                                           \
+    gRev = getHmxRev(rev);                                                               \
+    gAltRev = getAltRev(rev);
+// retail has no version guard here, matching ObjMacros.h's non-VERSION_SZBE69_B8
+// expansion.
+#define ASSERT_REVS(rev1, rev2)
+#define LOAD_SUPERCLASS(parent) parent::Load(bs);
+
 RndSet::RndSet() : mObjects(this) {}
 
 BEGIN_HANDLERS(RndSet)
@@ -46,7 +84,7 @@ BEGIN_COPYS(RndSet)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(0, 0)
+INIT_REVS(RndSet)
 
 BEGIN_LOADS(RndSet)
     LOAD_REVS(bs)
@@ -108,3 +146,8 @@ DataNode RndSet::OnAllowedObjects(DataArray *) {
     }
     return ptr;
 }
+
+#pragma pop_macro("LOAD_SUPERCLASS")
+#pragma pop_macro("ASSERT_REVS")
+#pragma pop_macro("LOAD_REVS")
+#pragma pop_macro("INIT_REVS")

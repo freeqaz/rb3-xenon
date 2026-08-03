@@ -41,6 +41,13 @@ PitchDetector::~PitchDetector() {
 }
 
 void PitchDetector::Detect(unsigned int frame) {
+    // NOTE (lane DI-2/C): keep these UNSIGNED.  dc3-decomp's copy of this same
+    // reconstruction (src/system/synth_xbox/PitchDetector.cpp) declares
+    // size/span/pos/start as signed `int` with explicit casts; adopting that
+    // spelling here measures 79.6% -> 77.5% (worse), so retail's modulo/compare
+    // sequence is the unsigned one.  Do not "fix" this back to match dc3 --
+    // dc3's own PitchDetector unit is only 9.1% matched, i.e. it is NOT an
+    // oracle for this function, just a sibling reconstruction.
     unsigned int size = mInput->end() - mInput->begin();
     unsigned int span = mSpectral.mWindowSize;
 

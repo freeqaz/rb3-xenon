@@ -7,37 +7,42 @@
 #include "meta_band/AssetTypes.h"
 
 Asset::Asset(DataArray *pConfig, int index)
-    : mName(gNullStr), mGender((AssetGender)0), mType(kAssetType_None),
+    : mName(gNullStr), mType(kAssetType_None), mGender((AssetGender)0),
       mBoutique((AssetBoutique)0), mPatchable(false), mHidden(false), mIndex(index) {
     MILO_ASSERT(pConfig, 21);
+    // Retail emits all six static-Symbol guard blocks consecutively at the top of
+    // the function (guard bits 0x01..0x20 in this order) and keeps the six Symbol
+    // addresses live in r17-r26 across the whole body -- so the declarations sit
+    // here, not at their point of use.
+    static Symbol gender("gender");
+    static Symbol type("type");
+    static Symbol boutique("boutique");
+    static Symbol patchable("patchable");
+    static Symbol hidden("hidden");
+    static Symbol finishes("finishes");
+
     Symbol name = pConfig->Sym(0);
     mName = name;
 
     Symbol genderSymbol = gNullStr;
-    static Symbol gender("gender");
     pConfig->FindData(gender, genderSymbol, false);
     mGender = GetAssetGenderFromSymbol(genderSymbol);
 
     Symbol typeSymbol = gNullStr;
-    static Symbol type("type");
     pConfig->FindData(type, typeSymbol, true);
     AssetType assetType = GetAssetTypeFromSymbol(typeSymbol);
     mType = assetType;
 
     Symbol boutiqueSymbol = gNullStr;
-    static Symbol boutique("boutique");
     pConfig->FindData(boutique, boutiqueSymbol, false);
     mBoutique = GetAssetBoutiqueFromSymbol(boutiqueSymbol);
 
-    static Symbol patchable("patchable");
     pConfig->FindData(patchable, mPatchable, false);
-    static Symbol hidden("hidden");
     pConfig->FindData(hidden, mHidden, false);
 
-    static Symbol finishes("finishes");
     DataArray *finishesArray = pConfig->FindArray(finishes, false);
     if (finishesArray != NULL) {
-        if (assetType == 10 || (unsigned long)(assetType - 2) <= 1) {
+        if (assetType == 10 || assetType == 2 || assetType == 3) {
             for (int i = 1; i < finishesArray->Size(); i++) {
                 Symbol finish = finishesArray->Str(i);
                 mFinishes.push_back(finish);

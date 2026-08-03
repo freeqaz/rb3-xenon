@@ -12,7 +12,11 @@ public:
     OBJ_SET_TYPE(SongSelectPanel);
     NEW_OBJ(SongSelectPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~SongSelectPanel() {}
+    // No user-declared dtor: HeldButtonPanel's is already virtual. A
+    // user-declared `virtual ~SongSelectPanel() {}` makes MSVC emit a separate
+    // ??1SongSelectPanel COMDAT and CALL it from ??_G -- retail has no such
+    // function row and inlines the body (vptr store @0x44 + base dtor @+0x48)
+    // straight into the scalar deleting destructor.
     virtual bool Exiting() const;
     virtual void Poll();
     virtual void Load();

@@ -30,8 +30,15 @@ void DrumFillTrackWatcherImpl::FillSwing(int i1, int i2, int i3, bool b4) {
         mFillNotes++;
         int bucket = mParent->GetVelocityBucket(i2);
         int slot = b4 && i2 == 4 ? 4 : mParent->GetVirtualSlot(i2);
-        float db = VelocityBucketToDb(bucket);
-        mParent->PlayDrum(slot, true, db);
+        // NOT a `float db = ...;` temp (which is what the rb3-Wii DEV oracle has,
+        // verbatim).  Retail evaluates the CALLEE expression before the argument:
+        // 0x82xxxx loads mParent (0x20) and its vptr *before* `bl
+        // VelocityBucketToDb`, then reloads mParent for `this` -- i.e. mParent is
+        // read TWICE (that extra load is the target's +4 bytes over the temp
+        // spelling).  Only a single full-expression produces that order; hoisting
+        // the result into a temp sinks the whole vtable lookup past the call and
+        // cascades into an r28<->r30 swap that reads as a regalloc defect.
+        mParent->PlayDrum(slot, true, VelocityBucketToDb(bucket));
         FOREACH (it, mSinks) {
             (*it)->FillSwing(Track(), mFillNotes, i2, i1, false);
         }

@@ -4,12 +4,29 @@ void MemStream::Flush() {}
 
 bool MemStream::Fail() { return mFail; }
 
+// Retail RB3-360 guards a negative byte count before doing anything else --
+// `cmpwi cr6,r5,0 / bge / li r11,1 / stb r11,0xc(r3) / b <epilogue>` at the very
+// top of the retail body (target 148 B vs our 124 B).  NEITHER oracle has this:
+// rb3-Wii's MemStream.cpp and dc3's both start straight at the overflow test, so
+// this is a genuine RB3-360-only guard recovered from retail asm.
+//
+// The overflow arm calls mBuffer.size() TWICE (retail computes `subf r7,r9,r10`
+// for the compare and then re-computes `subf r10,r9,r10` inside the taken
+// branch); caching it in a local `size`, as we did, folds those into one.  Same
+// for mTell -- no `tell` local.  This is dc3's exact shape.
 void MemStream::ReadImpl(void *data, int bytes) {
-    unsigned int size = mBuffer.size();
-    int tell = mTell;
-    if (tell + bytes > size) {
+    if (bytes < 0) {
         mFail = true;
-        bytes = size - tell;
+        return;
+    }
+    // Statement order matters: the `mFail` store may alias the vector's
+    // begin/end pointers, so writing it BEFORE the second size() forces MSVC to
+    // reload both from memory (an extra `addi r11,r31,0x14` + two lwz).  Retail
+    // recomputes the size from the still-live registers and stores mFail after,
+    // which is also dc3's order.
+    if (mTell + bytes > mBuffer.size()) {
+        bytes = mBuffer.size() - mTell;
+        mFail = true;
     }
     memcpy(data, &mBuffer[mTell], bytes);
     mTell += bytes;
