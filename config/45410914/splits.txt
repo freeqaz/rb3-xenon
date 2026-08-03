@@ -12811,8 +12811,10 @@ band3/game/VocalGuidePitch.cpp:
 
 system/beatmatch/GameGemDB.cpp:
 	.pdata      start:0x8223F460 end:0x8223F4B0
-	.pdata      start:0x8223F508 end:0x8223F518
 	.text       start:0x82793078 end:0x82793470
+
+system/beatmatch/Submix.cpp:
+	.pdata      start:0x8223F508 end:0x8223F518
 	.text       start:0x82793AA8 end:0x82793B80
 
 system/obj/Utl.cpp:
