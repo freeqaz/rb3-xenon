@@ -161,7 +161,12 @@ void InterstitialMgr::CycleRandomOverride() {
 #pragma pop
 
 BEGIN_HANDLERS(InterstitialMgr)
-    HANDLE_EXPR(
+    // Retail constructs this Symbol as a FUNCTION-LOCAL STATIC inside Handle
+    // (guard bit + Symbol::Symbol(const char*) in the body), where the rb3-Wii
+    // oracle carries a file-scope global (Symbols4.cpp).  Storage-class
+    // divergence: invisible to a source diff, worth exactly 52 bytes here
+    // (our 220B body vs retail's 272B = the 13-instruction local-static seq).
+    HANDLE_EXPR_STATIC(
         pick_interstitial_between_screens,
         PickInterstitialBetweenScreens(_msg->Str(2), _msg->Str(3))
     )

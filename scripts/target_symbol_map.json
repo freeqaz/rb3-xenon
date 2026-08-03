@@ -1,4 +1,6 @@
 {
+ "0x826b8ef0": "?_M_insert_overflow_aux@?$vector@VVocalNote@@V?$StlNodeAlloc@VVocalNote@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVVocalNote@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x825b0158": "?Handle@InterstitialMgr@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8265d878": "?Compare@RankCmp@@UBAHPBVSongSortCmp@@W4SongNodeType@@@Z",
  "0x82658ed8": "??$?8PAVUIScreen@@V?$StlNodeAlloc@PAVUIScreen@@@stlpmtx_std@@@stlpmtx_std@@YA_NABV?$vector@PAVUIScreen@@V?$StlNodeAlloc@PAVUIScreen@@@stlpmtx_std@@@0@0@Z",
  "0x82658db0": "?Type@NonDestructiveTransitionEvent@@UBA?AVSymbol@@XZ",
