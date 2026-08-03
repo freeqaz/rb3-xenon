@@ -41,6 +41,73 @@ family has NO other mismatch, so fixing the shared cause crosses the whole
 family.  The tool reports shape-fanout too, but explicitly as blast radius, in a
 column that is NOT the ranking key.
 
+⛔ VERDICT (DS-3): THE REPEATED-SHAPE LEVER DOES **NOT** GENERALISE. DO NOT REFUND.
+====================================================================================
+DR-2 closed by naming this ranking as the thing that generalised.  Built and
+worked, it does not.  Measured on the settled tree at 9023b42d:
+
+  whole sub-100 named population, 1..8 mismatches   672 rows / 173,752 B
+  distinct signatures                               601
+  FAMILIES (>= 2 rows, identical signature)          32 fams / 83 rows / 11,880 B
+                                                     = 0.111 pp of total_code
+  enrichment over a permutation null (--null)        1.73x
+
+Three independent reasons the ceiling is that low and mostly unreachable:
+
+ 1. **62.3% of it is PROVEN INERT.**  7 of the 32 families / 7,396 B are
+    ARITH_COMMUTE (reversed commutative operands), which DQ-3 refuted by direct
+    experiment -- MSVC canonicalises, the source edit is byte-identical.  This is
+    not bad luck: a commutative reversal is the MOST STEREOTYPED single-instruction
+    shape that exists, so it collides across unrelated functions by chance more
+    readily than any real defect.  **A repeated-shape ranking is structurally
+    BIASED TOWARD the inert class.**  That bias is also most of the weak 1.73x.
+ 2. **Shape identity does not imply cause identity.**  The best-looking structural
+    family -- d74c083d9c, 5 rows / 532 B, five ObjPtr<T> ctor instantiations,
+    `replace`-only, i.e. shaped EXACTLY like DR-2's productive ObjRefConcrete
+    find -- is pure instruction SCHEDULING.  Retail emits
+    [spill, lis, stw mOwner, stw mPtr]; we emit [spill, stw mOwner, lis, stw mPtr].
+    The member stores are in the SAME order on both sides; only the compiler's
+    vtable-address materialisation slips one slot, and no source construct orders
+    that.  Banned permuter class.  DR-2's win and this one are indistinguishable
+    by shape and unrelated by cause.
+ 3. **Most "families" are coincidence, not one defect.**  The two CMP_REVERSAL
+    families are 4 unrelated functions in 4 subsystems that merely happen to share
+    register numbers.  They were worth fixing individually; they are not one lever.
+
+WHAT ACTUALLY PAID, AND IT IS SMALL: 6 rows, +2 matched / +1,240 B / +0.0116 pp.
+  4x CMP_REVERSAL (proven class, cmpw order is directional, not canonicalised)
+  2x EndFrame -- the ONE genuine repeated-shape find (below), and it is EXHAUSTED.
+
+The EndFrame family is the lever working as advertised and is worth understanding
+because it shows what a REAL one looks like: identical 4-shape signature, one
+source cause, both members cross.  Cause was the documented "dc3 is NEWER than
+RB3" divergence -- rb3-Wii writes MaxEq(end,x); we inherited dc3's Max(end,x),
+whose float specialization `(x-y<0)?y:x` exists to emit fsel, where retail
+branches.  ⛔ EXHAUSTED, MEASURED: sweeping all named sub-100 rows for `fsel` on
+exactly one side of a mismatch finds 6 rows, ALL in the OPPOSITE direction
+(retail=fsel, ours=branch) and all high-mismatch messes (373/497/192/82/81/31
+mismatches).  There is no third Max->MaxEq candidate.
+
+LEFT ON THE TABLE, DELIBERATELY (with reasons, so nobody re-hunts blind):
+ * The IMMEDIATE element-size families (`li r9,24` vs `li r9,20` etc. across
+   _M_fill_insert / _M_allocate_and_copy / __uninitialized_copy).  The inference
+   "differing element size => our sizeof is wrong" has been FUNDED AND REFUTED
+   TWICE (0/14); DR-2 reads them as map-pairing.  DS-3 found no cheap
+   discriminator and did NOT re-fund on a hunch.  ⚠ DS-3's own hypothesis that
+   these units (SkeletonClip/HamMove/MoveDir are Dance Central gesture/hamobj
+   classes) were bogus pins is REFUTED -- they carry real matches
+   (SkeletonClip 22 at 100, HamMove 30 at 100).
+ * The `stw rN, 0x50(r31)` EH-spill family.  Confirmed REAL and confirmed NOT
+   uniform: in NewObject@{MicInputArrow,ScrollbarDisplay} the prologue does
+   `addi r3,r31,80` and retail stores that pointer to frame[84] while we store it
+   to frame[80] (self-overlapping) => retail's frame has one EXTRA 4-byte temp,
+   which is DR-2's "missing stack temp" guess and DQ-1's precedent.  But
+   StoreMainPanel::FinishLoad has an EXTRA retail store at 80 and TrackDir::~TrackDir
+   has an EXTRA store at 80 on OUR side -- opposite directions, so it is NOT one
+   cause and cannot be fixed as a class.  r31 IS the frame base in these (verified
+   from the prologue `subi r31,r1,<framesize>`, not assumed -- it is only ~55%
+   in general).
+
 PRICING RULE: A `diff_arg`-ONLY FAMILY PAYS IN BYTES ONLY, NEVER IN FUNCTIONS
 -----------------------------------------------------------------------------
 Measured by this lane, and it falsified half of its own prediction, so it is
