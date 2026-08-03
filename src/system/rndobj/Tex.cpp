@@ -34,7 +34,7 @@ void CopyBottomMip(RndBitmap &dst, const RndBitmap &src) {
 
 RndTex::RndTex()
     : mMipMapK(-8.0f), mType(kRegular), mWidth(0), mHeight(0), mBpp(32), mFilepath(),
-      mNumMips(0), mOptimizeForPS3(0), mLoader(0) {}
+      mNumMips(0), mOptimizeForPS3(0), mIsPowerOf2(0), mLoader(0) {}
 
 RndTex::~RndTex() {
     delete mLoader;
