@@ -392,3 +392,90 @@ whose converse sweep hit 1-in-11 with 10× downside.
 - **No claim is made about which stride retail actually used** for
   `vector<map<int,float>>`. The probe answers "does this flag change codegen",
   never "is this flag correct".
+
+## The 7 NEEDED-TO-COMPILE gates: dissolved, not just settled (lane DM-3, 2026-08-03)
+
+DL-4 left this open: *should the 7 sources be rewritten to the `Object.h` dialect,
+making the gate unnecessary as it already is for the 12 dead ones?* **Yes — and it
+costs nothing, because the rewrite does not have to be invented.**
+
+`obj/ObjMacros.h` **already carries** the gate-independent spellings, 12 lines
+below the `#endif` that closes the gate:
+
+```c
+#define HANDLE_STATIC(sym, func)        { _NEW_STATIC_SYMBOL(sym)    HANDLE(_s, func); }
+#define HANDLE_EXPR_STATIC(symbol, expr) { _NEW_STATIC_SYMBOL(symbol) HANDLE_EXPR(_s, expr) }
+#define HANDLE_ACTION_STATIC(symbol, expr){ _NEW_STATIC_SYMBOL(symbol) HANDLE_ACTION(_s, expr) }
+```
+
+They expand through the **ungated** `HANDLE` family to
+`static Symbol _s(#sym); if (sym == _s)` — precisely `Object.h`'s local-static
+dialect. So the fix is a spelling change, and the gate falls out.
+
+⚠ These are correct **only when the gate is OFF**: with it on, `HANDLE(_s, func)`
+stringizes the token `_s`, comparing against `Symbol("_s")`. That is a live trap
+for the **160 amalgam TUs** that `#include` another `.cpp` — a rewritten file
+pulled into a still-gated TU compiles and is silently wrong. None of the six
+converted units is amalgamated (checked).
+
+### Proof, and the control that validates it
+
+Per TU, obj compiled *(gate on, old spelling)* vs *(gate off, new spelling)* is
+byte-identical in **every section body and every relocation**. The only
+symbol-table delta is the local static's own `.bss` name `?_hs@…` → `?_s@…`,
+**exactly one per COMPILED macro use**.
+
+★ That per-use count is what turned a plausible claim into a checked one.
+OvershellSlot showed **101 diffs against 129 macro uses**; chasing the discordance
+rather than waving it off found exactly **28 uses inside `#ifdef HX_NATIVE`**,
+which the match build never defines. 101 + 28 = 129.
+
+Whole-binary A/B — all six together **and each individually** (settled, real
+recompiles each leg):
+
+```
+leg A  43665 matched / 22707 masked_equal / 20958 honest / 39.154087 code%
+leg B  43665         / 22707              / 20958        / 39.154087
+Δmatched +0  Δmasked_equal +0  Δhonest +0  Δcode% +0.000000pp  Δfuzzy +0.000000
+units at 100% (matched_functions == total_functions): 206/1022 -> 206/1022
+```
+
+Controls re-run, never inherited: positive `TourProgress`/`MAP_0x1C` reproduced
+DK-3's **owned=101** and its exact symbol breakdown; the null
+`--flag RB3_NULL_CONTROL_XYZZY` read **INERT owned=0 on 4 of the actual target
+TUs**; the byte comparator demonstrably fires positive (PrefabMgr, below).
+
+### PrefabMgr is the one that does NOT convert
+
+It is an **amalgam TU** (`#include`s `BandSongMgr.cpp`, `AccomplishmentManager.cpp`,
+`MessageTimer.cpp`, `Text.cpp`), and three of those are *separately gated objects*.
+Dropping its gate changes the amalgamated code too — the probe reads **7731 vs
+7443 sections**. It needs a coupled 4-TU patch and cannot land independently.
+
+### Is the dialect a lever anywhere else? For the METRIC, no — and here is the null
+
+The rewrite was also run against **DL-4's six individually-A/B'd LIVE gates**,
+chosen because plain removal there measurably cost **−1…−7 matched**. A positive
+control that could fail. **6/6 IDENTICAL (all sections).**
+
+⇒ Holding gate *semantics* fixed, the dialect **spelling** has exactly zero metric
+content — 12 units, 0 differences. The only way the `HANDLE` dialect moves the
+metric is by genuinely flipping a TU between global-Symbol and local-static, which
+is the `/D` application lever already **measured exhausted** (14 TUs ⇒ −2; the
+`MAP_0x1C` converse hit 1-in-11 with a −172 worst case). **So: no new lever. Say
+it plainly.**
+
+What it *is* is a complete **hygiene** result: **121 of 146** remaining gated TUs
+use only `_STATIC`-able macros and are non-amalgam, so the gate could be retired
+almost entirely at proven-zero cost. **6 are blocked** — `HANDLE_ACTION_IF` and
+`HANDLE_ACTION_IF_ELSE` have no `_STATIC` form (adding two macros would unblock
+them); **22 are amalgam-coupled**. Recorded with numbers rather than executed:
+121 TUs of churn buys Δ0 and collides with other lanes.
+
+### Coverage correction to DL-4
+
+**`system/synth/Faders.cpp` is UNPROBEABLE today**, so DL-4's "158/158, zero
+unprobeable" no longer holds. Both legs fail with
+`C1094: '-Zm100' inconsistent with value used to build precompiled header ('-Zm0')`
+— the *on* leg too, so it is a probe artifact, not a verdict. Its gate's liveness
+is **unknown**.

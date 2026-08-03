@@ -183,7 +183,7 @@ DataNode CharSync::OnMsg(const ProfileChangedMsg &msg) {
 }
 
 BEGIN_HANDLERS(CharSync)
-    HANDLE_ACTION(update_char_cache, UpdateCharCache())
+    HANDLE_ACTION_STATIC(update_char_cache, UpdateCharCache())
     HANDLE_MESSAGE(PrimaryProfileChangedMsg)
     HANDLE_MESSAGE(ProfileChangedMsg)
     HANDLE_CHECK(0x15F)

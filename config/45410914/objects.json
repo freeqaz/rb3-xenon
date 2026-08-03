@@ -1531,15 +1531,11 @@
             "band3/meta_band/UIStats.cpp": "NonMatching",
             "band3/meta_band/CharSync.cpp": {
                 "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
-                ]
+                "extra_cflags": []
             },
             "band3/meta_band/TrainingMgr.cpp": {
                 "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
-                ]
+                "extra_cflags": []
             },
             "band3/meta_band/AppMiniLeaderboardDisplay.cpp": {
                 "status": "NonMatching",
@@ -1672,9 +1668,7 @@
             },
             "band3/meta_band/OvershellSlot.cpp": {
                 "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
-                ]
+                "extra_cflags": []
             },
             "band3/meta_band/PassiveMessenger.cpp": {
                 "status": "NonMatching",
@@ -1763,9 +1757,7 @@
             },
             "band3/meta_band/SongRecord.cpp": {
                 "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
-                ]
+                "extra_cflags": []
             },
             "band3/meta_band/SongSetlistProvider.cpp": "NonMatching",
             "band3/meta_band/SongSortByArtist.cpp": "NonMatching",
@@ -1806,9 +1798,7 @@
             },
             "band3/meta_band/StoreMenuProvider.cpp": {
                 "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
-                ]
+                "extra_cflags": []
             },
             "band3/meta_band/SongSortNode.cpp": {
                 "status": "NonMatching",
@@ -1964,9 +1954,7 @@
             },
             "band3/meta_band/ClosetMgr.cpp": {
                 "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
-                ]
+                "extra_cflags": []
             },
             "band3/meta_band/BandProfile.cpp": {
                 "status": "NonMatching",
