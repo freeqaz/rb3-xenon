@@ -504,13 +504,25 @@ crossing — and **buries the actual vein.**
 
 | band | rows | value if crossed | share of value | share of penalty |
 |---|---:|---:|---:|---:|
-| all source-addressable | — | 850,620 B / 7.96pp | 100% | 100% |
-| **mpn<100 at fuzzy ≥ 95** | **413** | **213,744 B / 2.00pp** | **46%** | **4%** |
+| all source-addressable | — | 843,012 B / 7.89pp | 100% | 100% |
+| **mpn<100 at fuzzy ≥ 95** | **412** | **206,240 B / 1.930pp** | **24.5%** | **1.9%** |
 
-★ **Rank by the row's SIZE, gated on it being close enough to cross.** The
-≥95-fuzzy band is the best ROI in the tree: 46% of the available value at 4% of
-the penalty. DN-4's single row from that band paid **+0.070205pp — ~5.9× the
-entire DG-3 wave.**
+⛔ **CORRECTED 2026-08-03 by lane DO-1 (`1457aa52`) — the first version of this
+table said "46% of the value at 4% of the penalty" and that DOES NOT FOLLOW FROM
+ITS OWN ADJACENT NUMBERS.** 213,744 / 850,620 = **25.1%**, not 46%; measured
+fresh at HEAD it is **24.5%**, and the penalty share is **1.9%**, not 4%. The
+figure came from a lane report and I propagated it into this file without
+checking it against the total in the very same row — **the fabricated-baseline
+hazard, committed in the document written to prevent it.** Rule 15 applies to the
+author too.
+
+★ **The conclusion is unchanged and still strong: ~13× value-per-penalty makes
+this the best ROI band in the tree.** Rank by the row's SIZE, gated on it being
+close enough to cross. Two rows drawn from it paid **+0.070205pp** and
+**+0.107776pp** — each larger than most entire waves.
+⚠ Band size itself is stable: 412 rows / 206,240 B measured against 413 /
+213,744 briefed, within 3.5%. It is the *derived share* that was wrong, not the
+band.
 ⚠ Corollary for a *unit*-completion lane: this is a **byte/function** ranking. A
 7.5 KB row crossing may move zero units (DN-4's did). Pick the ranking that
 matches what you are being scored on, and say which you used.
