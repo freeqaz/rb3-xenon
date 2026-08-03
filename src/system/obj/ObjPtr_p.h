@@ -462,13 +462,19 @@ BinStream &operator>>(BinStream &bs, ObjPtr<T> &ptr) {
 #ifdef HX_NATIVE
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(ObjRefOwner *owner, T *ptr)
-    : ObjRefConcrete<T>(ptr), mOwner(owner) {
+    : ObjRefConcrete<T>(ptr), mOwner(owner), mSelfSeed(ptr) {
     MILO_ASSERT(owner, 0xC8);
 }
 
 template <class T>
 ObjOwnerPtr<T>::ObjOwnerPtr(const ObjOwnerPtr &o)
-    : ObjRefConcrete<T>(o.mObject), mOwner(o.mOwner) {
+    : ObjRefConcrete<T>(o.mObject), mOwner(o.mOwner), mSelfSeed(nullptr) {
+    // NOT o.mSelfSeed: a copy belongs to a DIFFERENT owner, so inheriting the
+    // source's seed would restore this pointer to the *original* object rather
+    // than to its own owner -- a wrong value dressed as an invariant. Null is
+    // the conservative choice: a copied ObjOwnerPtr behaves exactly as it does
+    // today (bare null on teardown), so this repair can only improve the 14
+    // directly-seeded sites and can never regress a copy.
     MILO_ASSERT(mOwner, 0xCE);
 }
 

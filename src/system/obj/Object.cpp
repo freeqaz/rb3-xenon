@@ -521,6 +521,14 @@ void Hmx::Object::ReplaceRefs(Hmx::Object *obj) {
 }
 
 #ifdef HX_NATIVE
+/** X16. Default ON. `RB3_NO_OWNERPTR_SEED=1` restores pre-X16 behaviour (a bare
+ *  null on teardown) so the two arms can be compared in one binary. Defined
+ *  inside the HX_NATIVE guard so the X360 object is untouched. */
+bool ObjRefSeedRestoreEnabled() {
+    static const bool on = (getenv("RB3_NO_OWNERPTR_SEED") == nullptr);
+    return on;
+}
+
 #if defined(__SANITIZE_ADDRESS__) || (defined(__has_feature) && __has_feature(address_sanitizer))
 __attribute__((no_sanitize("address")))
 #endif

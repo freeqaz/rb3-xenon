@@ -693,6 +693,12 @@ BinStream &operator>>(BinStream &bs, ObjPtr<T1> &ptr);
 
 #ifdef HX_NATIVE
 // ObjOwnerPtr size (HX_NATIVE): 0x14 (adds mOwner@0x10)
+/** X16 kill-switch for the ObjOwnerPtr seed restore below. Default ON; set
+ *  `RB3_NO_OWNERPTR_SEED=1` to get the pre-X16 bare-null teardown in the SAME
+ *  binary. One binary means the A/B has no cross-tree confound (embedded debug
+ *  paths) and no `--revert` trap. Cached: NullifyObj is a teardown hot path. */
+bool ObjRefSeedRestoreEnabled();
+
 template <class T>
 class ObjOwnerPtr : public ObjRefConcrete<T> {
 public:
@@ -704,6 +710,48 @@ public:
     virtual void Replace(Hmx::Object *obj) { mOwner->Replace(this, obj); }
     void operator=(T *obj) { SetObjConcrete(obj); }
     T *Ptr() const { return mObject; }
+
+    /** X16. The ctor's seed pointer, retained so the native ring-teardown
+     *  shortcut can restore this pointer's "null means me" invariant.
+     *
+     *  THE DEFECT (X15 §3.4, enumerated by tools/x16_ownerptr_census.py):
+     *  14 members across src/ are seeded `mX(this, this)` and carry the
+     *  invariant "mX is NEVER null; a null owner means *me*". The ONLY place
+     *  that invariant is re-established is the consumer's `Replace()`. Native
+     *  `~ObjectDir` Phase 0 tears the ring down with `NullifyAllRefs()` ->
+     *  `NullifyObj()`, which deliberately does NOT fire `Replace()` -- so all
+     *  14 are left NULL and the class dereferences a pointer it was entitled
+     *  to assume non-null. Retail X360's teardown DOES fire Replace.
+     *
+     *  WHY NOT JUST FIRE Replace()? Because the skip is load-bearing, and the
+     *  reason is documented upstream (dc3-decomp `07bad0ab`, 2026-03-20):
+     *  MessageTask::mObj, ScriptTask::mThis, PropertyTask::mTarget and
+     *  DirLoader::mProxyDir all `delete this` from `Replace()`, which would
+     *  free entries out from under Phase 0's `todo` iteration. All four are
+     *  ObjOwnerPtrs, so a blanket "fire Replace" would reintroduce exactly the
+     *  hazard the shortcut exists to dodge.
+     *
+     *  WHY THE SEED IS SAFE. All four of those are seeded with the default
+     *  `ptr = nullptr`, so their seed is null and NullifyObj's behaviour is
+     *  BIT-IDENTICAL to today -- no Replace fires, nothing is deleted. And no
+     *  ObjOwnerPtr anywhere in src/ is seeded with a *foreign* object (checked:
+     *  every `(this, <non-null>)` hit in the tree is an ObjPtrList/ObjPtrVec
+     *  `(owner, mode)` ctor, not an ObjOwnerPtr), so the seed can only ever be
+     *  null or self. That makes this repair provably scoped to the 14 sites
+     *  and a no-op everywhere else -- upstream, but not blanket. */
+    T *mSelfSeed;
+
+    /** Restore the seeded invariant instead of leaving a bare null.
+     *  Reproduces retail's post-`Replace` state (`mX == this`, re-registered in
+     *  its own ring) WITHOUT invoking any consumer callback. */
+    void NullifyObj() override {
+        T *seed = ObjRefSeedRestoreEnabled() ? mSelfSeed : nullptr;
+        ObjRefConcrete<T>::NullifyObj(); // mObject = nullptr, ring self-loops
+        if (seed) {
+            mObject = seed;
+            seed->AddRef(this);
+        }
+    }
 };
 #else
 // ObjOwnerPtr size (Retail X360): 0xc {vtable@0, mOwner@4, mObject@8}. The
