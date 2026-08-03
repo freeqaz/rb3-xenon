@@ -2909,7 +2909,7 @@ LightPreset.cpp:
 	.pdata      start:0x82212448 end:0x82212488
 	.pdata      start:0x82212488 end:0x82212BC8
 	.pdata      start:0x82212BD0 end:0x82212CF0
-	.pdata      start:0x82212CF8 end:0x82212F18
+	.pdata      start:0x82212CF8 end:0x82212F20
 	.text       start:0x82360E48 end:0x82360E88
 	.text       start:0x82372F60 end:0x82372FC0
 	.text       start:0x823808B0 end:0x82380A44
@@ -2921,7 +2921,7 @@ LightPreset.cpp:
 	.text       start:0x824AAB10 end:0x824AAEA4
 	.text       start:0x824AAEA8 end:0x824B4390
 	.text       start:0x824B43F8 end:0x824B5570
-	.text       start:0x824B55A0 end:0x824B8818
+	.text       start:0x824B55A0 end:0x824B885C
 
 Timer.cpp:
 	.pdata      start:0x821F1610 end:0x821F1620
@@ -4620,7 +4620,6 @@ Morph.cpp:
 	.pdata      start:0x82210540 end:0x82210650
 	.pdata      start:0x82210650 end:0x82210658
 	.pdata      start:0x82210688 end:0x82210740
-	.pdata      start:0x82212F18 end:0x82212F20
 	.text       start:0x822A9BC8 end:0x822A9C28
 	.text       start:0x823493D0 end:0x823498F0
 	.text       start:0x8238AB44 end:0x8238ABA4
@@ -4642,7 +4641,6 @@ Morph.cpp:
 	.text       start:0x82484B40 end:0x82484B84
 	.text       start:0x82484DB8 end:0x8248583C
 	.text       start:0x82485870 end:0x8248587C
-	.text       start:0x824B8818 end:0x824B885C
 
 FileMerger.cpp:
 	.pdata      start:0x821FEF68 end:0x821FEF80
