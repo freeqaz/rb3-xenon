@@ -1328,6 +1328,7 @@
             },
             "band3/game/TrainerGemTab.cpp": "NonMatching",
             "band3/game/TrainerProgressMeter.cpp": "NonMatching",
+            "band3/game/RGTutor.cpp": "NonMatching",
             "band3/game/Stats.cpp": "NonMatching",
             "band3/game/StatCollector.cpp": "NonMatching",
             "band3/game/TambourineManager.cpp": "NonMatching",
