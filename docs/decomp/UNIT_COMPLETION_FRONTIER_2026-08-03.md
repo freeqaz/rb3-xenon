@@ -117,14 +117,42 @@ Every figure below is from `tools/ab_measure.py` on a settled worktree. In *ever
 run `unit net (ALL units)` equalled whole-binary `Δmatched` exactly — that
 equality is the cross-check that the unit attribution is not double-counting.
 
-| leg | kinds | Δmatched | Δhonest | Δcode% | units completed |
-|---|---|---|---|---|---|
-| C (DEFER_OWNER + ScaleAddEq) | source | **+4** | +4 | +0.005425pp | CharBonesBlender, CharWeightable, UIListLabel, vec |
-| A+D (implicit dtor + decl order) | source | **+2** | +2 | +0.005090pp | PatchSelectPanel, TourPerformerLocal (**both GAME**) |
-| D (re-carve + map rename) | map+splits | **+1** | +1 | +0.000038pp | ConnectionStatusPanel |
+| leg | kinds | Δmatched | Δhonest | Δcode% |
+|---|---|---|---|---|
+| C (DEFER_OWNER + ScaleAddEq) | source | **+4** | +4 | +0.005425pp |
+| A+D (implicit dtor + decl order) | source | **+2** | +2 | +0.005090pp |
+| D (re-carve + map rename) | map+splits | **+1** | +1 | +0.000038pp |
+| B+A (5 attribution fixes + DataUtl, −1 deliberate) | map+source+splits | **+3** | +3 | +0.001160pp |
+| A (??_E weak-external renames) | map+splits | **+1** | +1 | +0.000635pp |
 
-Note the economics playing out exactly as predicted above: seven completed units
-moved code% by **+0.0106pp combined**. **Unit completion is not a code% play.**
+### ★★★ THE UNIT RESULT — and why Δmatched CANNOT be used to count it
+
+Regenerated census, start vs end, verified by **set diff of the AT_100 membership**
+rather than by arithmetic:
+
+> **units at 100%: 208 / 1022 → 221 / 1023 — `+13`, with ZERO units lost.**
+
+**`Δmatched` structurally undercounts unit completions.** Three of the 13
+(`UIStats`, `TrainerProvider`, `ScoreDisplay`) completed with **Δmatched = 0**,
+because the fix removed a *wrongly attributed row from the denominator* rather
+than matching a new one — 12/13 → 12/12. Any wave that counts unit completions
+from `Δmatched`, or from `ab_measure`'s "unit improvements" line (which only lists
+units whose matched count **rose**), will miss this class entirely. **Diff the
+census.**
+
+The economics played out exactly as predicted: **13 completed units moved code% by
++0.0123pp total.** Whole-binary `matched_functions` 43,678 → **43,691**.
+⚠ That is `+13` absolute while the five measured legs sum to `+11`; the extra `+2`
+is the forced-re-split baseline correction described above, **not** an unmeasured
+gain. Deltas compose, absolutes do not.
+
+★ **The dominant finding is not a source finding.** Of the 13 units closed, only
+**four** were source defects (`DEFER_OWNER` ×3, `ScaleAddEq`, `DataPushVar`,
+`TourPerformerLocal` decl-order — 4 distinct causes). **The rest were
+IDENTIFICATION defects**: `.text` blocks carved into the wrong unit, map rows
+naming the wrong symbol, `??_E`/`??_G` thunk-kind mix-ups, and pins with no valid
+home at all. A source lane staring at those units would have found nothing wrong
+with the source, because nothing was.
 
 ⚠ **Do not sum the absolutes across these runs.** The map/splits run's leg A read
 `43686` where the previous run's leg B read `43684`; the difference is the
@@ -163,6 +191,40 @@ four flags first, so no target silently SKIPped).
    dtor is virtual, so the implicit one still is) shrinks `??_D` to 5
    instructions, `/Ob2` inlines it, and `??_G` goes byte-exact.
 
+### The frontier AFTER this lane (regenerated, same instrument)
+
+| bucket | before | after |
+|---|---|---|
+| `AT_100` | 208 | **221** |
+| `COMPLETABLE` | 48 | **32** |
+| `ANON_BLOCKED` | 186 | 191 |
+| `MIXED` | 570 | 569 |
+| `OD_REGION` | 10 | 10 |
+| total | 1022 | 1023 |
+| **source-only ceiling** | 256 (25.0%) | **253 (24.7%)** |
+
+**The ceiling barely moves, and that is the structural point:** completing a unit
+moves it from `COMPLETABLE` to `AT_100`, so the sum is ~conserved. **Closing units
+does not raise the ceiling — only map/identification work does.** Four bogus-pin
+units (`FreestyleMotionFilter`, `GestureMgr`, `HamSong`, `auto_03_827685E0`) were
+removed outright, and five `auto_03_*` units appeared from the orphaned ranges.
+
+### Next wave, sized on this tree
+
+- **`??_E<Class>@@UAAPAXI@Z` is a COFF WEAK EXTERNAL, not a body** — MSVC emits the
+  deleting dtor under `??_G` and `??_E` only as a zero-byte alias unless a real
+  `delete[]` exists. Retail is stripped, so both names denote one address and the
+  map picked the wrong one; objdiff then pairs the target against a **0-byte
+  alias**, which is why these read a flat **0.0%** rather than a low score.
+  **Measured: 46 such rows, 45 at mpn 0.0.**
+  ⚠ Sized honestly: only **5** have `Class == unit stem`; the other 40 sit in units
+  whose stem differs and need per-row adjudication. Unit-stem match is itself a
+  weak proxy (one TU defines several classes), so 5 is a **floor on the easy
+  subset**, not a ceiling on the lever. The clean fix is shared tooling: a
+  post-compile patcher materialising `??_E` as a real symbol aliasing `??_G`.
+- **The explicit-empty-`virtual ~X(){}` lever** should also close `QuestFilterPanel`
+  (90.5%), `NewAwardPanel` (90.5%), `SelectDifficultyPanel` (84%) — same family.
+
 ## Negatives worth not re-funding
 
 - **`EQEffect::Process`** (mine): the `off:-24` on the `addi` and `off:+24` on the
@@ -179,6 +241,22 @@ four flags first, so no target silently SKIPped).
   — rb3-Wii has no `hamobj/` at all, so there is no game-side oracle. This is
   identification work; "fixing" the body would corrupt a DC3-correct class to fit
   a wrong target.
+- **`main`** (lane B) — **proven** unclosable, not assumed. 18/19 instructions are
+  byte-exact; the residual `4280D1F1` is an op16 B-form `bcl` where we emit op18
+  `bl` — same unconditional call, same target, **encoding only**. Census over
+  retail `.text`: **178,015 op18/LK=1 vs exactly ONE op16/LK=1**, this
+  instruction. Binary-unique ⇒ post-link artifact, unreachable from any C++
+  spelling.
+- **`ChooseColorPanel`** (lane A) — a genuine either/or, **28/29 both ways**.
+  `#pragma inline_depth(0)` around the ctor (needed for an out-of-line `std::map`
+  ctor) also suppresses `??_D` inlining, because MSVC generates the implicit dtor
+  family inside whatever `inline_depth` region the ctor sits in. Three escapes all
+  failed. Keep the pragma (+180 code bytes vs +68).
+- **`StorePurchaser` / `auto_03_*`** (lane D) — an `auto_*` unit has **no compiled
+  base object at all**, so no source edit can move it; and `StorePurchaser`'s one
+  60-byte function is a `Job` subclass ctor belonging to `SessionJobs_Xbox.cpp`.
+  Fixing it **deletes** a unit rather than completing it (its last `.text` block),
+  which is an accounting call, so it was deliberately not landed.
 - **`Rnd_NG ??$MakeString@HH@@`** (lane C): wrong splits pin. Map-independent
   proof: all 114 `bl` sites to `??0FormatString@@` have frames `0x870-0x8b0`,
   while the pinned address's frame is `0x70`. ⚠ And the ICF fold class at
