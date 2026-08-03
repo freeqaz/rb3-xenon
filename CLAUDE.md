@@ -436,6 +436,19 @@ and passes" is worse than one that crashes. When a render or gate result looks
 right, confirm it rendered what you asked for — cell name in the log, not just
 `rc=0`.
 
+### ⚠ `ab_measure --revert` leaves the reverted patch in the worktree
+
+X11 hit this and nearly mis-reported a regression. After an A/B revert,
+**everything you build next silently lacks the fix** — and the resulting frame
+comes back byte-identical to the pre-fix baseline, which reads exactly like
+"my second change undid my first". It hadn't.
+
+Re-apply (or re-check `git status`) after every `--revert`, and when a frame
+matches a baseline you did not expect it to match, **`cmp` against every
+candidate artifact, not just the one you assume you're comparing to** — that is
+what caught it. Same family as the "compare artifacts, not transcribed hashes"
+rule below.
+
 ### ⚠ Run the native gate before landing shared-`src/` changes
 
 **`tools/native_build_gate.sh` (expect `PASS 18/18, rc=0`).** This has now
