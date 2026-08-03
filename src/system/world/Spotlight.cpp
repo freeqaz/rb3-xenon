@@ -1533,3 +1533,19 @@ void Spotlight::BuildNGQuad(BeamDef &def, RndTransformable::Constraint constrain
 #include "world/ColorPalette.cpp"
 #undef gRev
 #undef gAltRev
+
+// See the specialization declaration + rationale comment in obj/ObjPtr_p.h
+// (lane DR-2 census).  Retail's ObjRefConcrete<RndGroup, ObjectDir> dtor passes
+// mOwner, not `this`, as the ring-ref to Release -- a single-instruction
+// `replace` at 116 B / fuzzy 97.931.  This TU is the one whose pinned .text
+// range retail placed the COMDAT in; RndGroup's complete type comes from the
+// rndobj/Group.h include above, and the TU already instantiates
+// ObjPtr<RndGroup> (Spotlight.cpp:372).  X360 only -- see PartAnim.cpp for the
+// ODR rationale.
+#ifndef HX_NATIVE
+template <>
+ObjRefConcrete<RndGroup, ObjectDir>::~ObjRefConcrete() {
+    if (mObject)
+        mObject->Release(reinterpret_cast<ObjRefOwner *>(mOwner));
+}
+#endif
