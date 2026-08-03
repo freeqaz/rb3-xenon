@@ -343,7 +343,7 @@ BandDirector.cpp:
 	.text       start:0x8228C9B8 end:0x8228CA90
 	.text       start:0x8228CB10 end:0x8228D310
 	.text       start:0x8228D354 end:0x822907F0
-	.text       start:0x822907F8 end:0x82295FB8
+	.text       start:0x822908A8 end:0x82295FB8
 	.text       start:0x82296018 end:0x822963E0
 	.text       start:0x822963E0 end:0x82299540
 	.text       start:0x822995B4 end:0x8229CA70
@@ -3591,7 +3591,7 @@ Mesh.cpp:
 	.pdata      start:0x8225E9C0 end:0x8225E9C8
 	.pdata      start:0x8225E9C8 end:0x8225E9F0
 	.text       start:0x822DC7B0 end:0x822DC808
-	.text       start:0x822DF9A0 end:0x822DF9D8
+	.text       start:0x822DF9A0 end:0x822DF9F8
 	.text       start:0x8231EA20 end:0x8231EAA8
 	.text       start:0x82362688 end:0x82362698
 	.text       start:0x8239C6D8 end:0x8239C830
@@ -4266,7 +4266,7 @@ CharLipSync.cpp:
 	.text       start:0x822DEA4C end:0x822DEB3C
 	.text       start:0x822DEB40 end:0x822DEDEC
 	.text       start:0x822DF8B0 end:0x822DF99C
-	.text       start:0x822DF9D8 end:0x822DFA20
+	.text       start:0x822DF9F8 end:0x822DFA20
 	.text       start:0x822DFAC0 end:0x822DFCAC
 	.text       start:0x822DFCAC end:0x822DFCD8
 	.text       start:0x822E1238 end:0x822E12B0
@@ -5071,7 +5071,7 @@ FileCache.cpp:
 	.pdata      start:0x82218490 end:0x82218498
 	.pdata      start:0x82218498 end:0x82218618
 	.text       start:0x82276828 end:0x82276888
-	.text       start:0x82346360 end:0x823463B8
+	.text       start:0x82346360 end:0x8234642C
 	.text       start:0x82347030 end:0x82347214
 	.text       start:0x82347770 end:0x82347930
 	.text       start:0x82347C48 end:0x82347DB0
@@ -5940,7 +5940,7 @@ PropKeys.cpp:
 	.text       start:0x82270438 end:0x82270580
 	.text       start:0x82271B08 end:0x82271B68
 	.text       start:0x82271B68 end:0x82271C50
-	.text       start:0x822907F0 end:0x822907F8
+	.text       start:0x822907F0 end:0x822908A8
 	.text       start:0x822A9B70 end:0x822A9BC0
 	.text       start:0x8239C640 end:0x8239C6AC
 	.text       start:0x8239C6AC end:0x8239C6D8
@@ -12218,7 +12218,7 @@ MessageTimer.cpp:
 	.text       start:0x82272CF8 end:0x82272DB4
 	.text       start:0x82346160 end:0x823461C4
 	.text       start:0x823462A4 end:0x82346360
-	.text       start:0x823463B8 end:0x823464F8
+	.text       start:0x8234642C end:0x823464F8
 	.text       start:0x82346560 end:0x82346DE0
 	.text       start:0x82346F68 end:0x82347030
 	.text       start:0x823476D0 end:0x82347720
