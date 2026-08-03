@@ -507,25 +507,74 @@ crossing — and **buries the actual vein.**
 | all source-addressable | — | 843,012 B / 7.89pp | 100% | 100% |
 | **mpn<100 at fuzzy ≥ 95** | **412** | **206,240 B / 1.930pp** | **24.5%** | **1.9%** |
 
-⛔ **CORRECTED 2026-08-03 by lane DO-1 (`1457aa52`) — the first version of this
-table said "46% of the value at 4% of the penalty" and that DOES NOT FOLLOW FROM
-ITS OWN ADJACENT NUMBERS.** 213,744 / 850,620 = **25.1%**, not 46%; measured
-fresh at HEAD it is **24.5%**, and the penalty share is **1.9%**, not 4%. The
-figure came from a lane report and I propagated it into this file without
-checking it against the total in the very same row — **the fabricated-baseline
-hazard, committed in the document written to prevent it.** Rule 15 applies to the
-author too.
+⛔⛔ **THIS SECTION HAS BEEN WRONG TWICE. Read both corrections before using it.**
 
-★ **The conclusion is unchanged and still strong: ~13× value-per-penalty makes
-this the best ROI band in the tree.** Rank by the row's SIZE, gated on it being
-close enough to cross. Two rows drawn from it paid **+0.070205pp** and
-**+0.107776pp** — each larger than most entire waves.
-⚠ Band size itself is stable: 412 rows / 206,240 B measured against 413 /
-213,744 briefed, within 3.5%. It is the *derived share* that was wrong, not the
-band.
+**Correction 1 (DO-1, `1457aa52`)** — the original table said "46% of value at 4%
+of penalty", which **does not follow from its own adjacent numbers**
+(213,744 / 850,620 = 25.1%). Propagated from a lane report without checking it
+against the total in the same row: the fabricated-baseline hazard, in the
+document written to prevent it.
+
+⛔⛔ **Correction 2 (DQ-3, `bf7b1dc5`) — THE VALUE-PER-PENALTY RATIO IS
+ARITHMETIC, NOT EVIDENCE.** It rises **monotonically with the threshold** (52× at
+fuzzy ≥99) **because penalty → 0 as fuzzy → 100.** *You can manufacture any ratio
+you like by moving the cut.* A number that cannot fail is not a measurement.
+The penalty leg also did not reproduce: **2.55%, not 1.9%**, so the headline is
+**9.63×**, not ~13×. (Rows and %value did reproduce: 409 rows / 190,600 B /
+24.53%.)
+
+★★★ **AND THE OBVIOUS RATIONALE IS ALSO FALSE: crossing probability does NOT
+rise with fuzzy.** Per-function best outcome from `decomp.db`, post-compiler-flip:
+**≥99 → 49.2% · 95–99 → 57.3% · 90–95 → 63.4%.** If anything it *falls*.
+⚠ The all-time raw figure appeared to show ≥99 crossing 6.6% — **contaminated by
+pre-flip attempts**; controlling for the flip reversed the direction.
+
+⇒ **The band's real virtue is LESS WORK PER ROW AT EQUAL ODDS, not better odds.**
+That survives on a **non-metric** axis — real mismatched-instruction counts,
+size-stratified — and it survives the size confound decisively: within *every*
+stratum, band rows need far less work (129–256 B: **median 3 vs 24** mismatches;
+513–1 k: **7 vs 80**). Justify the band that way; do not quote a v/p ratio.
+
+★ **The band still pays**: rows drawn from it produced **+0.070205pp**,
+**+0.107776pp** and **+0.024063pp** — each larger than most entire waves.
+
+⛔ **BUT THE TOP OF A SIZE-RANKED WORKLIST IS A PROVEN-INERT VEIN — see §9.0.1.**
 ⚠ Corollary for a *unit*-completion lane: this is a **byte/function** ranking. A
 7.5 KB row crossing may move zero units (DN-4's did). Pick the ranking that
 matches what you are being scored on, and say which you used.
+
+### ⛔ 9.0.1 `COMMUTATIVE_OP_ORDER` is INERT — and it is what a size-ranked list points at FIRST
+
+**76 pure rows / 54,972 B / 0.514 pp, and 13 of the top 20 size-ranked rows.**
+objdiff labels it `likely_fixable`. **It is not.** DO NOT FUND (DQ-3,
+`bf7b1dc5`). Three independent lines, any one of which would be enough:
+
+1. **Experiment.** Swapping the source operands of the mismatched `fmuls` in
+   `Player::PollEnabledState` compiled **byte-identical** (76/76 instructions).
+   **MSVC canonicalizes commutative operand order** — there is nothing to fix.
+2. **Mechanism.** The largest opcode sub-class (`add`, 31/105 sites) is
+   compiler-synthesized array addressing: `mulli`+`lwz`+`add` = `&mGems[i]`.
+   **There is no source-level operand order to swap at all.**
+3. **No force multiplier.** Context-window clustering gives **93% distinct
+   windows against a 75% random-site null** — ~90 independent sites, *more*
+   scattered than chance.
+
+⇒ **`COMMUTATIVE_OP_ORDER` is a SYMPTOM, not a diagnosis** — the same lesson
+already recorded for `REGISTER_SWAP`. One inspected site has a **masked differing
+callee** (target `DataNode::Int`, ours `DataNode::Array`) sitting one instruction
+below the "commutative" arm. **The label is pointing at the wrong instruction.**
+
+★ **What IS live, adjudicated over all 461 `mm≤3` rows (103,640 B):** REGALLOC —
+the banned permuter class — is only **4.4% of bytes**, so the worklist is **96%
+not-banned**. De-risked: **344 rows / 47,444 B / 0.444 pp**.
+Regenerate with `tools/crossing_worklist.py --adjudicate`; **there is deliberately
+no static list** (a checked-in census goes stale and then lies).
+
+★ **`cmpw`/`cmplw` reversal is real but small** — 14 pure rows / 3,412 B.
+Comparison order is directional and **not** canonicalized. Proven end-to-end on
+`OvershellPanel::GetSlot`: `slot == pSlot->GetSlotNum()` → `pSlot->GetSlotNum() ==
+slot` took it **99.524 → 100.0**, +84 B / +0.000786pp / **Δmatched 0**.
+⚠ Note Δmatched 0 while bytes moved — **this class pays bytes, never functions.**
 
 ### 9.1 The reachable-ceiling partition
 
