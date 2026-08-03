@@ -392,11 +392,11 @@ band3/meta_band/ModifierMgr.cpp:
 	.pdata      start:0x821FFB08 end:0x821FFB18
 	.pdata      start:0x8221FA30 end:0x8221FA38
 	.pdata      start:0x8221FA38 end:0x8221FAF8
-	.pdata      start:0x8221FAF8 end:0x8221FBB8
+	.pdata      start:0x8221FAF8 end:0x8221FBC0
 	.text       start:0x8235735C end:0x823573AC
 	.text       start:0x82588D0C end:0x82588D68
 	.text       start:0x82588D7C end:0x825895A0
-	.text       start:0x825895A0 end:0x82589FC0
+	.text       start:0x825895A0 end:0x8258A014
 
 VocalTrack.cpp:
 	.pdata      start:0x82244230 end:0x82244238
@@ -956,7 +956,7 @@ StarDisplay.cpp:
 	.text       start:0x8231D2B8 end:0x8231D310
 	.text       start:0x8231D310 end:0x8231D4E8
 	.text       start:0x8231D4E8 end:0x8231D670
-	.text       start:0x8231D670 end:0x8231D930
+	.text       start:0x8231D670 end:0x8231D940
 	.text       start:0x8231D940 end:0x8231E588
 	.text       start:0x8231E660 end:0x8231E6A8
 	.text       start:0x8231E6EC end:0x8231E8F8
@@ -3907,10 +3907,6 @@ HamListRibbon.cpp:
 	.text       start:0x82773AB8 end:0x82773AE4
 	.text       start:0x827742B0 end:0x82774498
 
-GestureMgr.cpp:
-	.text       start:0x8231D930 end:0x8231D940
-	.text       start:0x824F6EA8 end:0x824F6EB4
-
 Text.cpp:
 	.pdata      start:0x821F4808 end:0x821F4810
 	.pdata      start:0x821FC4F8 end:0x821FC508
@@ -6603,10 +6599,9 @@ NetLoader.cpp:
 	.pdata      start:0x82242DE0 end:0x82242DF0
 	.pdata      start:0x82242DF0 end:0x82242E08
 	.pdata      start:0x82242E08 end:0x82242E10
-	.text       start:0x827A4FB0 end:0x827A4FBC
 	.text       start:0x827CFB80 end:0x827CFC10
 	.text       start:0x827CFC10 end:0x827CFC38
-	.text       start:0x827CFC38 end:0x827CFC90
+	.text       start:0x827CFC38 end:0x827CFC9C
 	.text       start:0x827D00F8 end:0x827D0158
 	.text       start:0x827D0158 end:0x827D02A0
 	.text       start:0x827D02A0 end:0x827D0388
@@ -7540,9 +7535,6 @@ CharIKSliderMidi.cpp:
 FlowSwitchCase.cpp:
 	.pdata      start:0x82204EC0 end:0x82204EE0
 	.text       start:0x823B08D0 end:0x823B0B00
-
-FreestyleMotionFilter.cpp:
-	.text       start:0x827CFC90 end:0x827CFCB0
 
 system/synth_xbox/FxSendReverb.cpp:
 	.pdata      start:0x8225B358 end:0x8225B370
@@ -8743,7 +8735,6 @@ band3/meta_band/NewAssetProvider.cpp:
 
 band3/meta_band/TrainerProvider.cpp:
 	.pdata      start:0x8222F938 end:0x8222F988
-	.text       start:0x822750A8 end:0x822750BC
 	.text       start:0x82674D08 end:0x82675094
 
 band3/meta_band/StoreSongSortNode.cpp:
@@ -11168,14 +11159,12 @@ Tour.cpp:
 	.text       start:0x8258BAB8 end:0x8258BF60
 
 TourBand.cpp:
-	.pdata      start:0x8221FBB8 end:0x8221FBC0
 	.pdata      start:0x8225BE90 end:0x8225BEA0
 	.pdata      start:0x8225BEA8 end:0x8225BEB0
 	.pdata      start:0x8225BEB0 end:0x8225BEB8
 	.pdata      start:0x8225BEB8 end:0x8225BEE0
 	.pdata      start:0x8225BEE0 end:0x8225BEF8
 	.pdata      start:0x8225BEF8 end:0x8225BF50
-	.text       start:0x82589FC0 end:0x8258A014
 	.text       start:0x82B79000 end:0x82B790B8
 	.text       start:0x82B790E8 end:0x82B79150
 	.text       start:0x82B79150 end:0x82B791A0
@@ -13047,10 +13036,6 @@ ScoreDisplay.cpp:
 	.text       start:0x8231F6F8 end:0x8231F78C
 	.text       start:0x8231F790 end:0x823203AC
 	.text       start:0x82320848 end:0x823208F8
-
-system/hamobj/HamSong.cpp:
-	.pdata      start:0x8223D630 end:0x8223D638
-	.text       start:0x8276D248 end:0x8276D29C
 
 system/hamobj/MiniLeaderboardDisplay.cpp:
 	.pdata      start:0x821FC178 end:0x821FC1A8
