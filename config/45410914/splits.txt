@@ -1308,7 +1308,7 @@ TourSavable.cpp:
 	.text       start:0x82369768 end:0x823697C8
 	.text       start:0x823697C8 end:0x823697F8
 	.text       start:0x823697F8 end:0x82369888
-	.text       start:0x82369888 end:0x823699B4
+	.text       start:0x82369888 end:0x823699C8
 
 FreeCamera.cpp:
 	.pdata      start:0x82215C08 end:0x82215C10
@@ -13104,7 +13104,7 @@ band3/tour/TourQuestGameRules.cpp:
 
 band3/tour/TourGameModifier.cpp:
 	.pdata      start:0x82200F58 end:0x82200F68
-	.text       start:0x823699B4 end:0x82369B28
+	.text       start:0x823699C8 end:0x82369B28
 
 band3/tour/TourPerformerRemote.cpp:
 	.pdata      start:0x82200BD8 end:0x82200C10
