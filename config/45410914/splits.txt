@@ -4001,10 +4001,12 @@ LiveCameraInput.cpp:
 
 CharacterTest.cpp:
 	.pdata      start:0x821FC8A0 end:0x821FC8E8
+	.pdata      start:0x821FC8F0 end:0x821FC8F8
 	.pdata      start:0x82207690 end:0x82207720
 	.pdata      start:0x82207720 end:0x82207768
 	.pdata      start:0x82207768 end:0x82207770
 	.text       start:0x823203AC end:0x82320848
+	.text       start:0x823208A0 end:0x823208F8
 	.text       start:0x823DD550 end:0x823DDDC0
 	.text       start:0x823DDDC0 end:0x823DE208
 	.text       start:0x823DE208 end:0x823DE254
@@ -6230,7 +6232,7 @@ Msg.cpp:
 	.pdata      start:0x8223D0D0 end:0x8223D0E0
 	.pdata      start:0x8223D0E0 end:0x8223D0E8
 	.pdata      start:0x8223D0E8 end:0x8223D100
-	.pdata      start:0x8223D100 end:0x8223D138
+	.pdata      start:0x8223D100 end:0x8223D140
 	.pdata      start:0x8225D860 end:0x8225D870
 	.text       start:0x822756A0 end:0x82275750
 	.text       start:0x82275750 end:0x82275808
@@ -6263,7 +6265,7 @@ Msg.cpp:
 	.text       start:0x82767DB0 end:0x82767FB0
 	.text       start:0x82767FB0 end:0x827680D0
 	.text       start:0x827680D0 end:0x82768250
-	.text       start:0x82768250 end:0x827685E0
+	.text       start:0x82768250 end:0x82768624
 	.text       start:0x82B99250 end:0x82B99358
 
 FlowEventListener.cpp:
@@ -13030,12 +13032,12 @@ ScoreDisplay.cpp:
 	.pdata      start:0x821FC7B8 end:0x821FC7C8
 	.pdata      start:0x821FC7C8 end:0x821FC7D8
 	.pdata      start:0x821FC7D8 end:0x821FC8A0
-	.pdata      start:0x821FC8E8 end:0x821FC8F8
+	.pdata      start:0x821FC8E8 end:0x821FC8F0
 	.text       start:0x82319C30 end:0x82319C40
 	.text       start:0x8231F680 end:0x8231F6F8
 	.text       start:0x8231F6F8 end:0x8231F78C
 	.text       start:0x8231F790 end:0x823203AC
-	.text       start:0x82320848 end:0x823208F8
+	.text       start:0x82320848 end:0x823208A0
 
 system/hamobj/MiniLeaderboardDisplay.cpp:
 	.pdata      start:0x821FC178 end:0x821FC1A8
