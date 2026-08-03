@@ -1115,7 +1115,51 @@ void BandCharacter::SyncObjects() {
             RndMeshDeform *df = unk610.front();
             if (!df->Mesh())
                 MILO_FAIL("BandCharacter::SyncObjects() - character missing mesh data.");
+#ifdef HX_NATIVE
+            // X11 diagnostic (env-gated, no behaviour change): name every mesh
+            // whose CPU geometry this release drops, WITH its vertex count, so
+            // the claim "this line is what empties head.mesh" is measured
+            // rather than argued. The comparative control is what does NOT
+            // appear here (male_neck_ao.mesh, eyes.mesh, ...).
+            if (getenv("RB3_TRACE_KEEPMESH")) {
+                RndMesh *dm = df->Mesh();
+                fprintf(stderr,
+                        "[KEEPMESH] release '%s' verts=%d cverts=%u faces=%d bones=%d\n",
+                        dm->Name() ? dm->Name() : "(unnamed)", dm->NumVerts(),
+                        dm->NumCompressedVerts(), dm->NumFaces(), dm->NumBones());
+            }
+#endif
+#ifndef HX_NATIVE
             df->Mesh()->SetKeepMeshData(false);
+#else
+            // ★ X11, NATIVE ONLY — a LIFETIME mismatch, not a decomp defect.
+            //
+            // SetKeepMeshData(false) clears mVerts AND frees mFaces/mPatches
+            // (rndobj/Mesh.cpp:954-965). On the console that is correct and
+            // deliberate: by the time SyncObjects reaches this release the
+            // platform vertex buffer for the deformed mesh already exists, so
+            // the CPU copy is dead weight. The dc3 WebGPU backend this port
+            // renders through builds its vertex buffer LAZILY AT FIRST DRAW
+            // from mVerts/mCompressedVerts -- which has not happened yet -- so
+            // performing the console's release natively destroys the geometry
+            // before it is ever uploaded, and the mesh draws nothing forever.
+            //
+            // MEASURED, comparatively: with RB3_TRACE_KEEPMESH=1 this loop
+            // names hands_naked.mesh (1876 verts), eyebrows*_resource.mesh
+            // (302/308/328/116) and malewrist_*_right.mesh (405/386) -- and
+            // NOTHING ELSE. eyes/tongue/teeth/hair/fingernails/male_neck_ao
+            // never reach it, and they are exactly the meshes that were
+            // rendering fine. The released set IS the shown-but-empty set.
+            //
+            // ⚠ head.mesh reaches this line ALREADY at verts=0 on all four
+            // members, so this is NOT head's cause -- head is emptied earlier,
+            // by something else. Documented rather than assumed.
+            //
+            // Cost of retaining: a few thousand verts per band member.
+            // The X360 arm is untouched.
+            if (getenv("RB3_RELEASE_MESHDATA")) // opt-in to the console behaviour
+                df->Mesh()->SetKeepMeshData(false);
+#endif
             delete df;
         }
         while (!unk600.empty()) {

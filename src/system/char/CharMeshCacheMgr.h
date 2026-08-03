@@ -10,6 +10,35 @@ public:
     ~MeshCacher() {
         if (mMesh->GetKeepMeshData()) {
             SyncMesh();
+#ifdef HX_NATIVE
+            // ★ X11, NATIVE ONLY — the SAME lifetime mismatch as the
+            // RndMeshDeform release in BandCharacter::SyncObjects, in a second
+            // place, and this one is what empties head.mesh.
+            //
+            // BandCharacter::SetDeformation does `mgr->Disable(!mInCloset)`, so
+            // OUTSIDE the closet every MeshCacher is created disabled. The
+            // disabled arm below then calls SetKeepMeshData(false), which clears
+            // mVerts and frees mFaces (rndobj/Mesh.cpp:954-965), and skips
+            // PopulateMesh. On the console that is right: the deformation has
+            // already been pushed to the platform vertex buffer, so the CPU copy
+            // is dead weight outside the interactive closet. The dc3 WebGPU
+            // backend uploads LAZILY AT FIRST DRAW, which has not happened yet,
+            // so the release destroys head.mesh's 2592/2999 verts (4726/5338
+            // faces) before they are ever seen.
+            //
+            // MEASURED: with RB3_TRACE_KEEPMESH=1, head.mesh -- and ONLY
+            // head.mesh -- reaches SetKeepMeshData(false) from this dtor.
+            //
+            // Only the DISABLED arm is changed. The closet arm keeps the shipped
+            // restore-from-cache behaviour verbatim. Returning here (rather than
+            // falling through to PopulateMesh) deliberately RETAINS THE DEFORMED
+            // geometry -- PopulateMesh would write back the pre-deform snapshot
+            // and quietly undo the head shaping.
+            //
+            // The X360 arm is textually unchanged.
+            if (mDisabled && !getenv("RB3_RELEASE_MESHDATA"))
+                return;
+#endif
             mMesh->SetKeepMeshData(!mDisabled);
             if (!mDisabled)
                 PopulateMesh();
