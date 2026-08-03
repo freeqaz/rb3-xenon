@@ -2362,6 +2362,42 @@ namespace {
         return nullptr;
     }
 
+    // ---- X19: the SAME lookup, restricted to THIS figure's OWN skeleton ------
+    //
+    // ★★★ WHY THIS EXISTS. FindBoneNamed returns the FIRST match in a
+    // CollectDeep order, and a band member's collection spans TWO skeletons:
+    // the root-loaded char/main/skeleton.milo instance that ALL FOUR members
+    // and their four outfit sub-Characters share (chain root unnamed, Dir()
+    // NULL), and the member's OWN placed skeleton (chain root == the member,
+    // e.g. 'player0'). The shared one is emitted first, so every per-figure
+    // hand number on this ladder was read off ONE unplaced object eight times.
+    // Measured, not argued: x19-m1-candidates.log prints both candidates per
+    // member, the shared one at (-21.749, 0.197, 44.274) for all eight entries
+    // and four DISTINCT own bones tracking the four authored slots.
+    //
+    // ⚠ THIS IS AN INSTRUMENT FIX, NOT A POSE FIX. It changes which bone is
+    // MEASURED. It does not move a single transform, and nothing here is
+    // written back into the scene.
+    //
+    // The rule is structural rather than name-based: walk to the chain root and
+    // require it to be the Character we are measuring. Crowd figures already
+    // satisfy this (their chain root IS crowd_maleNN), so their numbers are
+    // unchanged -- which is the built-in negative control: if this predicate
+    // moved a crowd number, it would be doing something other than advertised.
+    // Returns NULL when the figure has no own-rooted bone of that name (the
+    // outfit sub-Characters, which own no skeleton), so callers can tell
+    // "absent" from "shared" instead of silently falling back.
+    RndTransformable *FindBoneNamedOwn(const std::vector<RndTransformable *> &bones,
+                                       const char *name, Hmx::Object *owner) {
+        for (size_t i = 0; i < bones.size(); i++) {
+            if (!bones[i]->Name() || strcmp(bones[i]->Name(), name) != 0) continue;
+            RndTransformable *r = bones[i];
+            while (r->TransParent()) r = r->TransParent();
+            if ((Hmx::Object *)r == owner) return bones[i];
+        }
+        return nullptr;
+    }
+
     // Skinned world-space extent of a mesh, from whichever vertex array it has.
     struct SkinExtent {
         bool valid = false;
@@ -2530,6 +2566,11 @@ namespace {
             RndTransformable *lh = FindBoneNamed(bones, "bone_L-hand.mesh");
             RndTransformable *rh = FindBoneNamed(bones, "bone_R-hand.mesh");
             if (!lh && !rh) continue;
+            // X19: the own-skeleton twin of the two lookups above (see
+            // FindBoneNamedOwn). Deliberately NOT used to replace lh/rh -- the
+            // legacy values stay live so the two can be compared in one log.
+            RndTransformable *lhOwn = FindBoneNamedOwn(bones, "bone_L-hand.mesh", c);
+            RndTransformable *rhOwn = FindBoneNamedOwn(bones, "bone_R-hand.mesh", c);
             st.anyHandBone = true;
 
             if (gHandPerturb != 0.0f && lh) {
@@ -2594,6 +2635,45 @@ namespace {
                        (void *)lh, lh->WorldXfm().v.x, lh->WorldXfm().v.y,
                        lh->WorldXfm().v.z, nNamed,
                        root->Name() ? root->Name() : "?");
+
+                // ---- X19: ENUMERATE **EVERY** CANDIDATE, NOT JUST THE FIRST --
+                //
+                // ★ X18 left this undecided and named it the cheapest next
+                // probe: is the shared pointer GENUINE OBJECT SHARING, or is
+                // FindBoneNamed returning the first of several matches? The
+                // nNamed count above already shows player figures carry TWO
+                // bones of this name while crowd figures carry ONE -- but a
+                // count cannot say WHICH object the lookup skipped. So print
+                // all of them, each with its chain root and world.
+                //
+                // The two hypotheses make OPPOSITE predictions here, which is
+                // the point of enumerating rather than counting:
+                //   - pure sharing  => the extra entries are the SAME pointer
+                //                      (one object reached by two paths)
+                //   - lookup artifact => the extra entries are DIFFERENT
+                //                      pointers with the MEMBER'S OWN chain
+                //                      root, i.e. a placed bone that exists and
+                //                      was passed over.
+                // X14 §1.2 measured 492 same-named bones under each member's
+                // own placed root, so the second prediction is testable and
+                // named in advance rather than fitted afterwards.
+                if (nNamed > 1) {
+                    int seen = 0;
+                    for (size_t i = 0; i < bones.size(); i++) {
+                        if (!bones[i]->Name()
+                            || strcmp(bones[i]->Name(), "bone_L-hand.mesh") != 0)
+                            continue;
+                        RndTransformable *r2 = bones[i];
+                        while (r2->TransParent()) r2 = r2->TransParent();
+                        const Vector3 &w2 = bones[i]->WorldXfm().v;
+                        printf("          cand[%d] %p  world (%9.3f %9.3f %9.3f)  "
+                               "chain root '%s'  %s\n",
+                               seen++, (void *)bones[i], w2.x, w2.y, w2.z,
+                               r2->Name() && r2->Name()[0] ? r2->Name() : "(unnamed)",
+                               bones[i] == lh ? "<== RETURNED BY FindBoneNamed"
+                                              : "    (passed over)");
+                    }
+                }
             }
 
             // (1) recompose identity over every bone of this figure, SPLIT by
@@ -2942,11 +3022,39 @@ namespace {
                 // The decisive number: how far is each hand bone from the
                 // geometry that is supposed to hang off it? 0 == inside.
                 RndTransformable *cand[2] = { lh, rh };
+                // ---- X19: the SAME gap against this figure's OWN hand bone ---
+                // Printed on the same line as the legacy number rather than
+                // replacing it, so the two are comparable and the legacy value
+                // stays readable against five lanes of prior logs. `lhOwn`/
+                // `rhOwn` are NULL for outfit sub-Characters and for any figure
+                // whose own skeleton lacks the bone; that prints as "n/a", which
+                // is a distinguishable state and not a silent 0.
+                RndTransformable *candOwn[2] = { lhOwn, rhOwn };
                 for (int k = 0; k < 2; k++) {
                     if (!cand[k]) continue;
                     float g = DistToExtentBox(e, cand[k]->WorldXfm().v);
-                    printf("          gap %-18s -> geometry box : %8.3f%s\n",
-                           cand[k]->Name(), g, g == 0.0f ? "   (INSIDE)" : "");
+                    if (candOwn[k] && candOwn[k] != cand[k]) {
+                        float gOwn = DistToExtentBox(e, candOwn[k]->WorldXfm().v);
+                        printf("          gap %-18s -> geometry box : %8.3f%s"
+                               "   | OWN-bone gap %8.3f%s\n",
+                               cand[k]->Name(), g, g == 0.0f ? "   (INSIDE)" : "",
+                               gOwn, gOwn == 0.0f ? "   (INSIDE)" : "");
+                    } else {
+                        // ⚠ TWO DIFFERENT STATES, KEPT DISTINGUISHABLE. Folding
+                        // them into one "n/a" would hide the negative control:
+                        //   SAME  = this figure's own-rooted bone IS the bone the
+                        //           legacy lookup already returned (every crowd
+                        //           figure) -> the X19 predicate is a provable
+                        //           no-op there, which is the control.
+                        //   NO-OWN= the figure owns no skeleton at all (the four
+                        //           outfit sub-Characters) -> nothing to compare.
+                        printf("          gap %-18s -> geometry box : %8.3f%s"
+                               "   | OWN-bone gap   %s\n",
+                               cand[k]->Name(), g, g == 0.0f ? "   (INSIDE)" : "",
+                               candOwn[k] ? "SAME (own==legacy; X19 predicate is a "
+                                            "no-op here -- the control)"
+                                          : "NO-OWN (figure owns no skeleton)");
+                    }
                     if (st.worstGapMesh == nullptr || g < st.worstBoneToGeomGap ||
                         st.worstBoneToGeomGap < 0.0f) {
                         // track the BEST (min) gap per mesh -- a hand mesh only
