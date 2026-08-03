@@ -231,6 +231,13 @@ void MoggClip::ApplyLoop(bool b1, int i2, int i3) {
     }
 }
 
+// AT_LIMIT -- 75%, and NOT source-fixable.  Our 20-byte body (4 insns + a tail
+// `b Fader::DoFade`) is CORRECT.  Retail's fn_8270D7E8 is only 16 bytes because it
+// FALLS THROUGH into fn_8270D7F8, a separate 8-byte .pdata entry holding just
+// `b fn_8270C4B0` (+ a padding word).  The missing 5th instruction is a target
+// EXTENT artifact, not a codegen difference -- no C++ source can emit a function
+// that falls off its own end.  => the MoggClip unit can never reach 100% (ceiling
+// 55/56); do not fund a unit-completion attempt here.
 void MoggClip::FadeOut(float f1) { mFader->DoFade(-96.0f, f1); }
 
 void MoggClip::UnloadWhenFinishedPlaying(bool unload) { mUnloadWhenFinished = unload; }
@@ -410,10 +417,27 @@ void MoggClip::SetPan(int i1, float f2) {
     }
 }
 
+// Retail fn @ SetupPanInfo loads TWO DISTINCT constants: -0.5f (lbl_820392FC) for
+// channel 0 and +0.5f (lbl_82075090) for channel 1 -- read straight out of
+// band.exe .rdata, not inferred.  Our port had the two channels SWAPPED (and used
+// a `2.0` double literal on the second), i.e. left/right pan reversed.
+//
+// objdiff scored the swapped version HIGHER (92.9% vs 78.7%) and marked the
+// constant loads `equal`, because the constant is a RELOCATION ARGUMENT and those
+// are masked -- the documented "a wrong constant reads 100%" hazard, live.  Do not
+// trust the score here; adjudicate on the retail bytes.
+//
+// 78.7% is a CEILING, not a defect: retail recomputes with a second constant, but
+// MSVC /fp:fast canonicalises `x * -0.5f` to `-(x * 0.5f)` and CSEs the multiply
+// into callee-saved f30 across the intervening SetPan call.  THREE distinct source
+// forms were tried -- `-f2/2.0f`, `f2/-2.0f`, and explicit `f2 * -0.5f` -- and all
+// three produced BYTE-IDENTICAL output.  Codegen wall, permuter-class; do not
+// re-dig from source.  Costs nothing: the row pays 0 bytes at both 92.9% and 78.7%
+// (matched_code is all-or-nothing per row), so correctness is free here.
 void MoggClip::SetupPanInfo(float f1, float f2, bool stereo) {
     if (stereo) {
-        SetPan(0, f2 / 2.0f + f1);
-        SetPan(1, -f2 / 2.0 + f1);
+        SetPan(0, -f2 / 2.0f + f1);
+        SetPan(1, f2 / 2.0f + f1);
     } else {
         SetPan(0, f1);
     }
