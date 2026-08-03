@@ -773,6 +773,15 @@ public:
     // Ring-ref is mOwner (not this), so manage the ring directly here.
     void SetOwnerObj(T *obj);
     void operator=(T *obj) { SetOwnerObj(obj); }
+    // Copy-assign MUST be user-declared and MUST route through SetOwnerObj.
+    // Without it the implicit copy-assignment is used, which memberwise-assigns
+    // the base and therefore calls ObjRefConcrete::operator=(const
+    // ObjRefConcrete&) -> SetObjConcrete -- managing the ring on `this` instead
+    // of on mOwner. Retail calls SetOwnerObj at every such site (lane DS-1:
+    // 20 charged bl slots across vector/ObjVector<ObjOwnerPtr<T>> internals in
+    // CharBonesMeshes, CharClipGroup, CharEyes, Waypoint, plus the member
+    // copy-assigns in the Copy() bodies of the RndXxxAnim family).
+    void operator=(const ObjOwnerPtr &o) { SetOwnerObj(o.mObject); }
     T *Ptr() const { return mObject; }
 };
 #endif

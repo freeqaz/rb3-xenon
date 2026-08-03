@@ -6,10 +6,19 @@
 #include "ui/UIPanel.h"
 #include "utl/Symbols.h"
 
-// Retail constructs mColorOptions with an out-of-line `bl` to the map default
-// ctor (target 180 B); /Ob2 inlines it for us into ~10 stores plus a 16-byte
+// ⚠ CORRECTION (lane DS-1): this block used to call the callee "the map default
+// ctor". It is a HASH_MAP ctor -- mColorOptions is now declared std::hash_map
+// (see ChooseColorPanel.h for the retail-body-size adjudication: 76 B ctor and
+// 120 B operator[], vs 84 B / 160 B for map). The container kind was invisible
+// to the metric because callee names are relocation args, so the wrong
+// identification survived at a clean 100%. Correcting it took
+// ChooseColorPanel::NewObject 99.96 -> 100.0 (+100 B).
+//
+// Retail constructs mColorOptions with an out-of-line `bl` to that container's
+// default ctor; /Ob2 inlines it for us into ~10 stores plus a 16-byte
 // stack temp (base 252 B, +0x10 of frame). The class layout is compiler-verified
-// identical to retail (mColorOptions @0x48, 28 B, ints @0x64/0x68), so this is
+// identical to retail (mColorOptions @0x48, 28 B, ints @0x64/0x68) and is
+// UNCHANGED by the map->hash_map swap (both containers are 0x1c), so this is
 // purely an inline-policy divergence -- the same lever used in VocalPlayer.cpp,
 // EQEffect.cpp and mtx.cpp (auto_inline(off) is the WRONG lever here -- it only
 // stops THIS function being inlined elsewhere, not callees being inlined into it;
