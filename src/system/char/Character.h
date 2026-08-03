@@ -167,6 +167,23 @@ public:
     static void SetCurrent(Character *c) { sCurrent = c; }
     void SetDrawMode(DrawMode m) { mDrawMode = m; }
 
+#ifdef HX_NATIVE
+    /** X7, native-only read accessor for the protected LOD vector.
+     *
+     *  BandCharacter::RebindOutfitBonesToOwnSkeleton (a native-only routine)
+     *  has to reach each LOD's draw group and trans group: the band member's
+     *  BODY CLOTHING meshes live under curLod->Group() and are NOT in mDraws,
+     *  so a walk that skips them never sees the torso. It was reaching in at
+     *  `dc->mLods[li]`, which does not compile -- mLods is protected.
+     *
+     *  An accessor rather than a friend declaration or a visibility change:
+     *  this is inline, const-correct, HX_NATIVE-gated and adds no member, so
+     *  the X360 arm's Character is byte-identical and its objdiff position
+     *  cannot move. NumDraws()/GetDraw() above it are the same pattern already
+     *  present on RndDir (rndobj/Dir.h:77-78). */
+    const ObjVector<Lod> &Lods() const { return mLods; }
+#endif
+
 protected:
     virtual void AddedObject(Hmx::Object *);
     virtual void RemovingObject(Hmx::Object *);

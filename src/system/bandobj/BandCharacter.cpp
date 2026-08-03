@@ -802,17 +802,20 @@ void BandCharacter::RebindOutfitBonesToOwnSkeleton() {
                 std::find(targets.begin(), targets.end(), m) == targets.end())
                 targets.push_back(m);
         }
-        // (2) seed the draw-tree walk from the dir's own draw list
-        for (std::vector<RndDrawable *>::iterator it = dd->mDraws.begin();
-             it != dd->mDraws.end(); ++it)
-            work.push_back(*it);
+        // (2) seed the draw-tree walk from the dir's own draw list.
+        // X7: RndDir::mDraws is protected here; NumDraws()/GetDraw() (the
+        // public accessors, rndobj/Dir.h:77-78) read the same vector.
+        for (int di = 0; di < dd->NumDraws(); di++)
+            work.push_back(dd->GetDraw(di));
         // (3) seed from every LOD's draw group + trans group — this is where the
         // BODY CLOTHING (trackjacket / vestdenim / plaidshirt / shred + _skin.N)
         // actually lives (Character::DrawLodOrShadow draws curLod->Group()). It is
         // NOT in mDraws, so without this the female torso mesh is never reached.
-        for (int li = 0; li < dc->mLods.size(); li++) {
-            if (dc->mLods[li].Group()) work.push_back(dc->mLods[li].Group());
-            if (dc->mLods[li].TransGroup()) work.push_back(dc->mLods[li].TransGroup());
+        // X7: via Lods(), the HX_NATIVE-only accessor added to Character for
+        // this walk (char/Character.h) -- mLods is protected.
+        for (int li = 0; li < dc->Lods().size(); li++) {
+            if (dc->Lods()[li].Group()) work.push_back(dc->Lods()[li].Group());
+            if (dc->Lods()[li].TransGroup()) work.push_back(dc->Lods()[li].TransGroup());
         }
     }
     // (3) recurse the draw tree (groups -> nested clothing meshes). Bounded by a
@@ -1076,8 +1079,10 @@ void BandCharacter::SyncObjects() {
                 if (!dup && ns < 16) { seen[ns++] = (void *)t; distinct++;
                     ObjectDir *d = t->Dir();
                     fprintf(stderr,
+                        // X7: mStoredFile is protected on ObjectDir; StoredFile()
+                        // (obj/Dir.h:563) is the public accessor for it.
                         "[SKEL_REBIND]   upperArm instance=%p dirFile='%s'\n", (void *)t,
-                        (d && !d->mStoredFile.empty()) ? d->mStoredFile.c_str() : "-");
+                        (d && !d->StoredFile().empty()) ? d->StoredFile().c_str() : "-");
                 }
             }
             fprintf(stderr,
@@ -2241,38 +2246,49 @@ DataNode BandCharacter::OnChangeFaceGroup(DataArray *da) {
 void ReplaceRefs(Hmx::Object *theirs, Hmx::Object *mine) {
     MILO_ASSERT(mine, 0xA72);
 #ifdef HX_NATIVE
-    // V23 (salvage V33 re-apply): reallocation-safe index-based rewrite.
-    // The matched fork caches raw std::vector<ObjRef*> iterators into
-    // theirs->Refs(), walks them in reverse (it[-1]), and after each
-    // ref->Replace() resets it = end(). ref->Replace() ERASES the replaced
-    // ObjRef from theirs->mRefs, which under libstdc++ can REALLOCATE the
-    // vector and invalidate both cached iterators → the next --it; it[-1]
-    // dereferences a dangling iterator → SIGSEGV (fault @ +0x30). MWCC/PPC
-    // tolerated the stale iterator; clang-LP64 does not. Semantics identical
-    // (reverse walk over current refs; replace any whose owner.Dir() is in
-    // {sOutfitDir, sResourceDir, sToDir}).
-    while (true) {
-        const std::vector<ObjRef *> &refs = theirs->Refs();
-        int sz = (int)refs.size();
-        bool replaced = false;
-        for (int i = sz - 1; i >= 0; --i) {
-            // Re-read size each iter — outer Replace() may have shortened it.
-            if (i >= (int)theirs->Refs().size()) continue;
-            ObjRef *ref = theirs->Refs()[i];
-            if (!ref) continue;
-            ref->RefOwner();
-            if (ref->RefOwner() != NULL) {
-                ObjectDir *dir = ref->RefOwner()->Dir();
-                bool match =
-                    (dir == sOutfitDir) || (dir == sResourceDir) || (dir == sToDir);
-                if (match && theirs != mine) {
-                    ref->Replace(theirs, mine);
-                    replaced = true;
-                    break;  // refs may have reallocated; restart from new end
-                }
+    // ⛔ X7 DEFECT FIX -- this arm was written against the WRONG ObjRef SHAPE.
+    //
+    // It came over from rb3-Wii, where Hmx::Object::mRefs is a
+    // `std::vector<ObjRef *>` and Refs() returns it. In THIS tree mRefs is an
+    // INTRUSIVE DOUBLY-LINKED RING and `Refs()` returns `const ObjRef &` --
+    // the ring HEAD SENTINEL, not a container (obj/Object.h:1973, :92-215).
+    // Hence `refs.size()`, `refs[i]` and the two-argument `ref->Replace(from,
+    // to)` (the ring's 1-arg ObjRef::Replace(Hmx::Object*) is the native
+    // dispatch; the 2-arg form is ObjRefOwner's) -- 4 of the 18 errors.
+    //
+    // ⚠ The whole reallocation story the old comment tells is therefore about
+    // a container this tree does not have. Ring Replace does not realloc; it
+    // SPLICES, which is a different hazard with the same remedy: restart the
+    // walk after every mutation.
+    //
+    // ★ And note what shape the mis-transcription had: binding the ring head
+    // to a container is exactly the X4a hazard (`auto x = obj->Refs()` copies
+    // an intrusive ring head, so `it != end()` never becomes true and
+    // iteration hangs). Here it happened to fail to COMPILE rather than hang,
+    // because the annotation was `const std::vector<ObjRef *> &` instead of
+    // `auto`. A loud error instead of a silent hang, by luck of the spelling.
+    //
+    // The #else arm below already walks this tree's ring correctly. This is
+    // the same walk with the native 1-arg Replace, and a bounded outer loop so
+    // a pathological ring cannot spin forever.
+    const int kMaxPasses = 100000;
+    bool changed = true;
+    for (int pass = 0; changed && pass < kMaxPasses; pass++) {
+        changed = false;
+        for (ObjRef::iterator it = theirs->Refs().begin();
+             it != theirs->Refs().end();
+             ++it) {
+            ObjRef *ref = it;
+            if (!ref || ref->RefOwner() == NULL) continue;
+            ObjectDir *dir = ref->RefOwner()->Dir();
+            bool match = (dir == sOutfitDir) || (dir == sResourceDir) || (dir == sToDir);
+            if (match && theirs != mine) {
+                // 1-arg ring dispatch: the ref already points at `theirs`.
+                ref->Replace(mine);
+                changed = true;
+                break; // the ring mutated under us -- restart from the new head
             }
         }
-        if (!replaced) break;
     }
 #else
     // dc3 lineage stores object refs as an ObjRef ring (begin()/end()) rather
@@ -2434,10 +2450,23 @@ MergeFilter::SubdirAction BandCharacter::FilterSubdir(ObjectDir *o1, ObjectDir *
     // is itself male-bind; the gender pose comes from the outfit/clip). The renderer
     // fling clamp (RB3_NO_SKIN_CLAMP) is the shipped fix. See
     // docs/native/CHAR_SKINNING_DEFORM_INVESTIGATION.md.
-    MergeFilter::Action act =
+    // ⛔ X7 DEFECT FIX -- wrong enum, and it was the SIBLING enum.
+    //
+    // FilterSubdir returns MergeFilter::SubdirAction {kMergeMerge,
+    // kMergeReplace, kMergeKeep, kMergeIgnore} (obj/Utl.h:147-152), NOT
+    // MergeFilter::Action {kMerge, kReplace, kKeep, kIgnore} (:141-146).
+    // The two are parallel four-value enums in the same class with the same
+    // ordering, so the values coincide numerically and the mistake is
+    // invisible at runtime -- it only fails at the type boundary. Rewritten
+    // to the enum the signature actually declares; kMerge -> kMergeMerge and
+    // kReplace -> kMergeReplace preserves the exact behaviour.
+    //
+    // mStoredFile is protected on ObjectDir; StoredFile() (obj/Dir.h:563) is
+    // the public accessor and returns the same FilePath&.
+    MergeFilter::SubdirAction act =
         DefaultSubdirAction(o1, (Subdirs)mFileMerger->mFilesPending.front()->mSubdirs);
-    if (act == MergeFilter::kMerge && o1 && !o1->mStoredFile.empty()) {
-        act = MergeFilter::kReplace;
+    if (act == MergeFilter::kMergeMerge && o1 && !o1->StoredFile().empty()) {
+        act = MergeFilter::kMergeReplace;
     }
     return act;
 #else
