@@ -472,10 +472,81 @@ almost entirely at proven-zero cost. **6 are blocked** — `HANDLE_ACTION_IF` an
 them); **22 are amalgam-coupled**. Recorded with numbers rather than executed:
 121 TUs of churn buys Δ0 and collides with other lanes.
 
-### Coverage correction to DL-4
+### ⛔ Coverage correction to DL-4 — RAISED BY DM-3, **WITHDRAWN** BY DN-3/DN-2
 
-**`system/synth/Faders.cpp` is UNPROBEABLE today**, so DL-4's "158/158, zero
-unprobeable" no longer holds. Both legs fail with
-`C1094: '-Zm100' inconsistent with value used to build precompiled header ('-Zm0')`
-— the *on* leg too, so it is a probe artifact, not a verdict. Its gate's liveness
-is **unknown**.
+DM-3 reported **`system/synth/Faders.cpp` UNPROBEABLE**, both legs dying with
+`C1094: '-Zm100' inconsistent with value used to build precompiled header ('-Zm0')`,
+and concluded DL-4's "158/158, zero unprobeable" no longer held.
+
+**That conclusion is withdrawn. DL-4's 158/158 STANDS.** The C1094 is neither a
+tool bug nor a property of the TU — it is an **environment precondition**, and
+DM-3's own report contained the tell: *the `on` leg failed too*, which makes it a
+probe artifact rather than a verdict.
+
+## ★★ THE TRUNCATED-PCH TRAP (lane DN-3 root cause, DN-2 corroboration, 2026-08-03)
+
+**`scripts/setup_worktree.sh:323` deliberately truncates the reflinked PCH to
+zero bytes:**
+
+```sh
+rm -f "$WT_BUILD/pch/decomp_pch.obj"
+: > "$WT_BUILD/pch/system.pch"      # <-- 0-byte placeholder, ON PURPOSE
+```
+
+It is a placeholder so `cl.exe` **overwrites** `system.pch` rather than creating
+it (WIBO_FS_CACHE cannot create a new file under the case-insensitive VERSION
+dir). Ninja rebuilds it on first need — but **an out-of-band compile never
+triggers that edge**, meets the 0-byte PCH, and dies `C1094`.
+
+**Remedy — one command, no code change:**
+
+```sh
+ninja build/45410914/pch/system.pch
+```
+
+With the PCH built, `Faders.cpp` probes **LIVE, `owned=376`** (DN-3; reproduced
+exactly by DN-2 with the shipped tool). `MessageTimer`, `FlowMultiSetProperty`
+and `MetaMusic` unblock the same way.
+
+⚠ **This affects ANY lane compiling a PCH-eligible TU outside ninja in a fresh
+worktree** — the nine dirs `hamobj synth flow gesture meta obj os utl movie`.
+Not just this probe: `scripts/harvest/class_layout_report.py` hits it too.
+
+★ It also **renames a mystery that had been recorded as intermittency**. DL-2
+observed that the C1094 "fires only in a fresh reflinked worktree and disappears
+after a full `ninja`". That was never warm-PCH luck — it was ninja **rebuilding
+the truncated PCH**. Same root cause, now named.
+
+### DN-2 side-findings (measured, recorded rather than acted on)
+
+- **Exposure is 379 of 380.** 380 TUs sit on the `msvc_pch` rule; exactly **one**
+  is immune, `system/meta/MoviePanel.cpp`, because it carries `/Y-` in its own
+  `objects.json` `extra_cflags`. That single per-TU workaround is why the failure
+  looked *non-uniform* across TUs in a fresh worktree (Faders, NetLoader_Xbox and
+  obj/Object.cpp all died while MoviePanel probed cleanly).
+  ⇒ ⚠ **MoviePanel is therefore a VACUOUS choice of PCH-path control** — it cannot
+  exhibit the defect under any PCH state, so a PASS from it certifies nothing
+  (INSTRUMENT_DESIGN shape 1). Use `Faders.cpp` and assert the control TU does not
+  already carry `/Y-`.
+- ⛔ **Do NOT "fix" this inside the probe.** A `/Y-` change to `gate_liveness.py`
+  was written, controlled and then **reverted**: the tool's whole method is
+  *compile the same TU twice and compare bytes*, so perturbing PCH handling risks
+  the comparison in order to avoid one `ninja` invocation, and it would **mask an
+  environment problem inside the instrument**. Measured cost of that reverted
+  change, for the record: over **30 `msvc_pch` TUs** probed `/Y-` vs `/Yu`,
+  **LABEL agreement 100%**, but `owned`/`template` MAGNITUDES differed on 4
+  (Faders `376/211` under `/Yu` vs `176/22` under `/Y-`), because `/FI` vs PCH
+  perturbs untracked helper/template inlining. So the revert also preserves
+  comparability with every published `owned` figure.
+- ⚠ **STILL UNFIXED, and it is a real instrument defect:** `compare_objs` pairs
+  the two legs' sections with `zip(A, B)`. That misaligns after any **inserted**
+  section *and* — because `zip` truncates to the shorter list — **never compares
+  sections past the shorter object's count**. Gates that add a function-local
+  static change the section SET, so this fires in the wild (measured on
+  `Faders.cpp` + `/DRB3_HANDLE_LOCAL_STATIC`). A symbol-keyed prototype
+  reproduced DK-3's per-symbol figures (Handle 33w / ctor 21w / ResetTourData 6w),
+  DK-3's 119-word template floor **4/4**, and DL-4's six DEAD gates **6/6**, while
+  changing `owned` TOTALS (TourProgress 101 → 108). **No label flipped.** Recorded
+  with numbers so a future lane can decide rather than re-derive — landing it
+  would re-base every published `owned` total, which is not free while other
+  lanes are quoting them.

@@ -252,9 +252,15 @@ HEADER_CAVEATS = [
     "A unit flagged unit_vanishes_if_drained CANNOT be completed by a boundary "
     "move: the move drains its only function and the unit must be DELETED.",
     "THE ATTRIBUTION FLAG IS A SUSPICION, NOT A VERDICT, AND ITS UNIT-LEVEL "
-    "SIBLING IS REFUTED.  'blocker class absent from band.exe' is ~3.3x enriched "
-    "over an untreated population that already trips it at ~7.6%, so ~1 flag in 3 "
-    "is a false positive and flagged units are deliberately LEFT IN COMPLETABLE. "
+    "SIBLING IS REFUTED.  'blocker class absent from band.exe' now POOLS to "
+    "~5.3x, but THAT POOLED FIGURE IS CONFOUNDED (Simpson's paradox): it EXCEEDS "
+    "the enrichment in EITHER stratum -- 2.02x plain / 1.45x namespaced -- because "
+    "the v2 anchor admits ~3,047 extra vendor-middleware rows.  On the comparable "
+    "stratum (rows BOTH anchors can judge) v1 and v2 BOTH measure 2.03x, so the "
+    "anchor swap itself moves NOTHING.  QUOTE THE STRATIFIED RATES, NEVER THE "
+    "POOLED ONE -- and note 1.45x sits in the band already refuted for classifier "
+    "use (pin-tail 1.25x, fold-alias 1.95x).  ~1 flag in 3 is a false positive and "
+    "flagged units are deliberately LEFT IN COMPLETABLE. "
     "The unit-STEM form measured 0.84x (ANTI-enriched: 35.3% of AT_100 units trip "
     "it) and must not be re-funded.  Adjudicate on retail bytes, never on a flag.",
 ]
@@ -673,13 +679,101 @@ def run_consistency_control(records, join, report_path, report_doc, strict=True)
 # ---------------------------------------------------------------------------
 # SUB-CLASSIFICATION of one-away ANON_BLOCKED units  (DG-1's partition)
 # ---------------------------------------------------------------------------
+#
+# ---------------------------------------------------------------------------
+# CLASS ANCHORING  (lane DN-2, 2026-08-03 -- the cls_of migration)
+# ---------------------------------------------------------------------------
+# The shipped anchor was two anchored regexes.  Lane DM-4 diagnosed three
+# distinct defects in them, all of which produce a WRONG-OR-MISSING class name
+# rather than an error:
+#
+#   1. GREEDY INITIAL.  In `\?\?[0-9_][A-Z]?([A-Za-z_]\w*)@@` the optional
+#      `[A-Z]?` is greedy and EATS THE CLASS'S OWN FIRST LETTER:
+#          ??0RndText@@   -> 'ndText'      (1,702 rows tree-wide)
+#          ??1ObjectDir@@ -> 'bjectDir'
+#   2. A NAMESPACE RETURNED AS A CLASS.  `?fn@ns@@YAXXZ` is a free function in
+#      namespace `ns`; the shipped regex hands back 'ns' as if it were a class
+#      (998 rows).
+#   3. NESTED SCOPES UNPARSEABLE.  Both regexes demand `@@` immediately after
+#      the first scope identifier, so `?Meth@Object@Hmx@@` matches neither and
+#      returns None => EVERY Hmx::Object method in the tree -- 3,593 rows -- was
+#      filed NO_CLASS_ANCHOR and never judged.
+#
+# ⚠ THIS IS A COVERAGE DEFECT, NOT A CORRECTNESS DEFECT, and the distinction is
+# what makes the swap safe.  DM-4 proved defect 1 is SELF-MASKING for the
+# attribution flag: `RetailNames.count()` is a SUBSTRING search over band.exe and
+# the truncated name is a substring of the full one, so 'ndText' and 'RndText'
+# score present/absent alike.  Measured tree-wide label churn is TEN ROWS.  So do
+# NOT expect the published ~3.3x enrichment to move; if it moves a lot, something
+# ELSE is wrong and the run should be investigated, not accepted.
+#
+# `cls_of_v2` is ported verbatim from tools/no_anchor_partition.py (DM-4,
+# f5016a76), which is also where its own validation lives.  The v1 implementation
+# is retained ONLY so `--sabotage cls-truncate` can restore the defect and prove
+# the regression pin can fail.
 _CLS_CTOR = re.compile(r"\?\?[0-9_][A-Z]?([A-Za-z_]\w*)@@")
 _CLS_METH = re.compile(r"\?[A-Za-z_]\w*@([A-Za-z_]\w*)@@")
 
+_SPECIAL = re.compile(r"^\?\?(__[0-9A-Za-z]|_[0-9A-Za-z]|[0-9A-Za-z])")
+_PLAIN = re.compile(r"^\?([?$@]?[A-Za-z_0-9]*)@")
+_ENC = re.compile(r"@@([A-Z_$])")
 
-def cls_of(name):
+
+def cls_of_v1(name):
+    """THE SHIPPED (DEFECTIVE) ANCHOR.  Kept only as the sabotage leg."""
     m = _CLS_CTOR.match(name) or _CLS_METH.match(name)
     return m.group(1) if m else None
+
+
+def basic_name_extent(name: str):
+    """Index just past an MSVC decorated name's basic name, or None."""
+    if not name.startswith("?") or name.startswith("??$"):
+        return None
+    m = _SPECIAL.match(name) or _PLAIN.match(name)
+    return m.end() if m else None
+
+
+def cls_of_v2(name: str):
+    """`cls_of` with the forms v1 cannot parse repaired.  -> (class|None, why).
+
+    An MSVC decorated name is `?` <basic-name> <scope...> `@@` <encoding>, so the
+    basic name's extent is decidable without parsing the type grammar; the
+    immediate scope is then the first identifier after it.  The encoding letter
+    after `@@` separates a CLASS scope from a NAMESPACE scope: `Y` == free
+    function (so the scope is a namespace, NOT a class), anything else == member.
+    """
+    e = basic_name_extent(name)
+    if e is None:
+        return None, "no_basic_name"
+    rest = name[e:]
+    m = re.match(r"([A-Za-z_]\w*)@", rest)
+    if not m:
+        if rest.startswith("?$"):
+            return None, "template_scope"
+        if rest.startswith("@"):
+            return None, "global_scope"
+        if rest.startswith("?A"):
+            return None, "anonymous_namespace"
+        return None, "unparsed_scope"
+    enc = _ENC.search(name)
+    if enc and enc.group(1) == "Y":
+        return None, "namespace_scope_free_function"
+    return m.group(1), "ok"
+
+
+#: "v2" (default) or "v1" (restored defect, via --sabotage cls-truncate).
+_CLS_IMPL = "v2"
+
+
+def set_cls_impl(which):
+    global _CLS_IMPL
+    _CLS_IMPL = which
+
+
+def cls_of(name):
+    if _CLS_IMPL == "v1":
+        return cls_of_v1(name)
+    return cls_of_v2(name)[0]
 
 
 # ---------------------------------------------------------------------------
@@ -768,6 +862,82 @@ def attribution_controls(RN: RetailNames):
     return rows
 
 
+
+# ---------------------------------------------------------------------------
+# ★★ THE POOLED ENRICHMENT IS CONFOUNDED BY SCOPE DEPTH (lane DN-2, 2026-08-03)
+# ---------------------------------------------------------------------------
+# Swapping the class anchor v1 -> v2 moved the headline enrichment 3.31x -> 5.33x.
+# That is NOT the anchor disagreeing with itself.  On the INTERSECTION -- the rows
+# BOTH anchors can judge -- v1 and v2 measure 2.03x and 2.03x, IDENTICAL to two
+# decimals, exactly as DM-4's self-masking argument predicted (RetailNames.count
+# is a substring search, so a truncated class name scores like the full one).
+#
+# The whole movement is a POPULATION change: v2 can parse nested scopes, which
+# admits 3,047 additional CHARGED rows (1,276 -> 4,323), almost all namespaced
+# vendor/middleware classes (DSP::, Synapse::, soundtouch::, D3DX::, TrueColor::).
+# Those genuinely do not appear as strings in band.exe -- they are precisely the
+# non-polymorphic-helper FALSE POSITIVE the flag's own legend warns about.
+#
+# ⇒ AND THE POOLED FIGURE IS LARGER THAN THE ENRICHMENT IN *EITHER* STRATUM:
+#       depth 1  (plain global class)   null  7.57%  charged 15.27%  = 2.02x
+#       depth >=2 (namespaced/nested)   null 40.73%  charged 59.19%  = 1.45x
+#       POOLED                          null  8.67%  charged 46.22%  = 5.33x
+#   (measured by this tool at HEAD 2026-08-03; regenerate rather than quote.)
+#   That is Simpson's paradox: pooling strata with very different BASE RATES
+#   manufactures enrichment out of composition.  So the published 3.32x was
+#   ALREADY a confounded statistic (2.03x on its own comparable stratum), and
+#   the corrected anchor makes the confounding bigger, not the suspicion stronger.
+#   1.45x sits in the same band as the predicates this project has already
+#   REFUTED for being used as classifiers (pin-tail 1.25x, fold-alias 1.95x).
+#
+# The tool therefore reports the STRATIFIED numbers next to the pooled one and
+# flags `pooled_is_confounded` whenever pooling exceeds every stratum.  A number
+# that cannot be quoted bare is the point.
+def _scope_depth(name):
+    """How many scope identifiers precede the `@@` (1 == plain global class)."""
+    e = basic_name_extent(name)
+    if e is None:
+        return 0
+    m = re.match(r"((?:[A-Za-z_]\w*@)+)@", name[e:])
+    return m.group(1).count("@") if m else 0
+
+
+def _enrichment_by_scope_depth(report_doc, RN):
+    acc = collections.defaultdict(lambda: [0, 0, 0, 0])   # na, nn, ca, cn
+    for u in report_doc.get("units", []):
+        for f in u.get("functions") or []:
+            nm = f["name"]
+            if ANON_RX.match(nm):
+                continue
+            lab, _c, _n = RN.label(nm)
+            if lab in (NO_ANCHOR, NO_BINARY):
+                continue
+            k = "depth_1_plain_class" if _scope_depth(nm) == 1 else "depth_2plus_nested_or_namespaced"
+            v = acc[k]
+            if f["match_percent_normalized"] == 100.0:
+                v[1] += 1
+                v[0] += (lab == CLASS_ABSENT)
+            else:
+                v[3] += 1
+                v[2] += (lab == CLASS_ABSENT)
+    out = {}
+    for k, (na, nn, ca, cn) in acc.items():
+        nr = na / nn if nn else 0.0
+        cr = ca / cn if cn else 0.0
+        out[k] = {"null_absent": na, "null_anchored": nn, "null_rate_pct": 100 * nr,
+                  "charged_absent": ca, "charged_anchored": cn,
+                  "charged_rate_pct": 100 * cr,
+                  "enrichment": (cr / nr) if nr else None}
+    return out
+
+
+def _pooled_exceeds_all_strata(strata, pooled):
+    es = [v["enrichment"] for v in strata.values() if v["enrichment"] is not None]
+    if pooled is None or not es:
+        return None
+    return bool(pooled > max(es) + 1e-9)
+
+
 def annotate_attribution(records, report_doc, RN: RetailNames):
     """Label every NAMED blocker, and RECOMPUTE the null + enrichment so the
     calibration always travels with the flag (rule 3, rule 15)."""
@@ -799,7 +969,10 @@ def annotate_attribution(records, report_doc, RN: RetailNames):
                 chg_abs += (lab == CLASS_ABSENT)
     nr = (null_abs / null_anch) if null_anch else 0.0
     cr = (chg_abs / chg_anch) if chg_anch else 0.0
+    strata = _enrichment_by_scope_depth(report_doc, RN)
     return {
+        "strata_by_scope_depth": strata,
+        "pooled_is_confounded": _pooled_exceeds_all_strata(strata, (cr / nr) if nr else None),
         "available": RN.available,
         "retail_exe": str(RN.path),
         "sabotage": RN.sabotage,
@@ -1038,8 +1211,21 @@ def emit_text(payload, out=sys.stdout):
         w(f"    CHARGED(named rows sub-100)        {c['absent']:6d}/{c['class_anchored']:6d}"
           f" = {c['rate_pct']:5.2f}%\n")
         e = at["enrichment"]
-        w(f"    ENRICHMENT                         {'n/a' if e is None else f'{e:.2f}x'}"
+        w(f"    ENRICHMENT (POOLED)                {'n/a' if e is None else f'{e:.2f}x'}"
           f"   discriminating={at['discriminating']}\n")
+        st = at.get("strata_by_scope_depth") or {}
+        if st:
+            w("  ** STRATIFIED BY SCOPE DEPTH -- quote THESE, never the pooled figure:\n")
+            for k, v in sorted(st.items()):
+                ee = v["enrichment"]
+                w(f"    {k:34s} null {v['null_rate_pct']:5.2f}%  "
+                  f"charged {v['charged_rate_pct']:5.2f}%  "
+                  f"= {'n/a' if ee is None else f'{ee:.2f}x'}\n")
+            if at.get("pooled_is_confounded"):
+                w("  ** POOLED > EVERY STRATUM (Simpson's paradox): the headline\n"
+                  "     enrichment is manufactured by COMPOSITION, not by the flag\n"
+                  "     discriminating.  The strata differ hugely in BASE RATE, so the\n"
+                  "     pooled number is not interpretable.  DO NOT QUOTE IT.\n")
         w(f"  ** {at['verdict']}\n")
         w(f"  ** {at['refuted_sibling_test']}\n")
         cnt = collections.Counter(
@@ -1105,6 +1291,82 @@ def build_summary(records, sub_stats):
 
 
 # ---------------------------------------------------------------------------
+# REGRESSION PIN for the class anchor (INSTRUMENT_DESIGN rules 1, 2, 4, 6)
+# ---------------------------------------------------------------------------
+#: Each row: (mangled, v2-expected-class, v1-defective-answer, what it pins).
+#: The third column is what makes this table DISCRIMINATING rather than
+#: decorative -- a pin both implementations satisfy proves nothing (rule 2:
+#: "a differ hardcoded to return nothing passes an empty-check").
+CLS_PINS = [
+    ("??0RndText@@QAA@XZ", "RndText", "ndText",
+     "greedy [A-Z]? eats the class initial (1,702 rows)"),
+    ("??1ObjectDir@@UAA@XZ", "ObjectDir", "bjectDir",
+     "same defect on a dtor"),
+    ("??_GBandCharacter@@UAAPAXI@Z", "BandCharacter", "andCharacter",
+     "same defect on a deleting dtor (??_G)"),
+    ("?Poll@Object@Hmx@@UAAXXZ", "Object", None,
+     "NESTED SCOPE: every Hmx::Object method -- 3,593 rows -- was unparseable"),
+    ("?Save@FaderGroup@@QAAXAAVBinStream@@@Z", "FaderGroup", "FaderGroup",
+     "the plain form v1 got right: v2 must not regress it"),
+    ("?PropSync@@YA_NAAVFaderGroup@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     None, None, "global free function: no class, and v1 agrees"),
+]
+
+#: A namespace-scope free function must NOT be reported as a class.  Held apart
+#: from CLS_PINS because v1's wrong answer here is a *fabricated* class, which is
+#: a different failure from a truncated one.
+NS_PIN = ("?fn@ns@@YAXXZ", None, "ns",
+          "namespace returned AS A CLASS (998 rows)")
+
+
+def run_cls_selftest(sabotaged=False):
+    """`--selftest` must PASS on v2 and FAIL under `--sabotage cls-truncate`."""
+    print("reachable_ceiling class-anchor selftest  impl=" + _CLS_IMPL
+          + ("   SABOTAGE=cls-truncate" if sabotaged else ""))
+    if sabotaged:
+        print("  (sabotage leg: this run is EXPECTED to FAIL -- it proves the "
+              "pin is not vacuous)")
+    rows = []
+    bad = []
+    for mangled, want, _v1, why in CLS_PINS + [NS_PIN]:
+        got = cls_of(mangled)
+        if got != want:
+            bad.append(f"{mangled[:46]}: got {got!r} want {want!r}  [{why}]")
+    rows.append(("PIN. every anchor row resolves to its true class",
+                 not bad, "; ".join(bad[:3]) if bad
+                 else f"{len(CLS_PINS)+1}/{len(CLS_PINS)+1} rows correct"))
+
+    # ★ RULE 2 / RULE 4: show the table DISCRIMINATES.  If v1 and v2 agreed on
+    #   every pinned row the table would pass under the sabotage too, and the
+    #   whole control would be decorative.  Note row 5 and 6 are deliberately
+    #   rows where they AGREE -- a pin set of only-disagreements would not catch
+    #   a v2 that broke the cases v1 handled.
+    disagree = [m for m, w, v1a, _ in CLS_PINS + [NS_PIN]
+                if cls_of_v1(m) != w]
+    agree = [m for m, w, v1a, _ in CLS_PINS + [NS_PIN] if cls_of_v1(m) == w]
+    rows.append(("DISCRIMINATION. the defective v1 anchor FAILS a majority of "
+                 "these rows (so the pin can fail) while some rows are ones v1 "
+                 "got right (so v2 cannot regress them unnoticed)",
+                 len(disagree) >= 4 and len(agree) >= 2,
+                 f"v1 wrong on {len(disagree)}/{len(CLS_PINS)+1}, v1 right on "
+                 f"{len(agree)} (want >=4 wrong and >=2 right)"))
+
+    # RULE 4, the second label: v2 must return None for the two scope kinds that
+    # are NOT classes, and a name for the ones that are.  A one-label anchor
+    # ("everything has a class" or "nothing does") is not believed.
+    labels = {cls_of_v2(m)[1] for m, *_ in CLS_PINS + [NS_PIN]}
+    rows.append(("SECOND LABEL. v2 emits >1 distinct reason code across the pins",
+                 len(labels) >= 3, f"reasons={sorted(labels)}"))
+
+    nfail = 0
+    for name, ok, detail in rows:
+        print(f"  [{'PASS' if ok else 'FAIL'}] {name}\n         {detail}")
+        nfail += (not ok)
+    print(f"  {len(rows) - nfail}/{len(rows)} controls passed")
+    return 6 if nfail else 0
+
+
+# ---------------------------------------------------------------------------
 def main(argv=None):
     ap = argparse.ArgumentParser(
         description="Regenerate the reachable-ceiling census (never cache it).")
@@ -1125,11 +1387,25 @@ def main(argv=None):
                     help="retail PE for the attribution flag (default orig/45410914/band.exe)")
     ap.add_argument("--no-attribution", action="store_true",
                     help="skip the blocker-attribution labelling entirely")
-    ap.add_argument("--sabotage", choices=["retail-blind"], default=None,
-                    help="make the retail scanner always read 0 -- models the "
-                         "binary-blind grep shim.  VACUITY CONTROL: the run MUST "
-                         "then REFUSE with exit 5.")
+    ap.add_argument("--selftest", action="store_true",
+                    help="run the class-anchor regression pin (offline, no build); "
+                         "exit 6 on failure")
+    ap.add_argument("--sabotage", choices=["retail-blind", "cls-truncate"],
+                    default=None,
+                    help="retail-blind: make the retail scanner always read 0 "
+                         "(models the binary-blind grep shim) -- the run MUST then "
+                         "REFUSE with exit 5.  cls-truncate: restore the shipped "
+                         "greedy-regex cls_of defect -- --selftest MUST then FAIL "
+                         "with exit 6.")
     args = ap.parse_args(argv)
+
+    # The class anchor is process-global (cls_of is called from the attribution
+    # labeller AND the sub-classifier), so the sabotage is set once, here, and
+    # stamped into provenance so a sabotaged census can never be mistaken for a
+    # real one.
+    set_cls_impl("v1" if args.sabotage == "cls-truncate" else "v2")
+    if args.selftest:
+        return run_cls_selftest(args.sabotage == "cls-truncate")
 
     root = Path(args.root).resolve() if args.root else Path(__file__).resolve().parents[1]
     report = Path(args.report) if args.report else root / "build/45410914/report.json"
@@ -1167,7 +1443,9 @@ def main(argv=None):
         if not args.no_attribution:
             rexe = Path(args.retail_exe) if args.retail_exe \
                 else root / "orig/45410914/band.exe"
-            RN = RetailNames(rexe, sabotage=args.sabotage)
+            RN = RetailNames(rexe, sabotage=(args.sabotage
+                                             if args.sabotage == "retail-blind"
+                                             else None))
             ctl = attribution_controls(RN)
             if any(not ok for _n, ok, _d in ctl):
                 raise Refusal(5, "REFUSING: ATTRIBUTION SCANNER IS VACUOUS", [
@@ -1245,6 +1523,10 @@ def main(argv=None):
                 "map_address_rows": len(addr2name), "map_raw_keys": map_rawkeys,
                 "splits_path": str(splitsf), "splits_sha256": sha256_of(splitsf),
                 "staleness": stale,
+                # DN-2: which class anchor produced every class-scoped field in
+                # this artifact.  "v1" means --sabotage cls-truncate was used and
+                # the census is DELIBERATELY DEFECTIVE -- never quote it.
+                "cls_anchor_impl": _CLS_IMPL,
             },
             "baseline_measures": doc["measures"],
             "bucket_legend": LEGEND,
