@@ -199,77 +199,95 @@ BEGIN_COPYS(UIFontImporter)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(10, 4)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
+// base, and the RAW incoming BinStream is forwarded to every read and to the
+// superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
+// emits ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
+// destructor that retail has none of, and dispatches each read on `&d`.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// The pair MUST share one aggregate -- two separate file statics are laid out
+// independently and will not fold onto a single base register.  No `#define
+// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
+// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
+// the alias would silently shadow for the rest of the amalgamated TU.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_UIFontImporter;
 BEGIN_LOADS(UIFontImporter)
-    LOAD_REVS(bs)
-    ASSERT_REVS(10, 4)
-    d >> mLowerCaseAthroughZ;
-    d >> mUpperCaseAthroughZ;
-    d >> mNumbers0through9;
-    d >> mPunctuation;
-    d >> mUpperEuro;
-    d >> mLowerEuro;
-    d >> mPlus;
-    d >> mMinus;
-    d >> mFontName;
-    if (d.rev <= 4) {
+    int rev;
+    bs >> rev;
+    gRevs_UIFontImporter.rev = getHmxRev(rev);
+    gRevs_UIFontImporter.altRev = getAltRev(rev);
+    bs >> mLowerCaseAthroughZ;
+    bs >> mUpperCaseAthroughZ;
+    bs >> mNumbers0through9;
+    bs >> mPunctuation;
+    bs >> mUpperEuro;
+    bs >> mLowerEuro;
+    bs >> mPlus;
+    bs >> mMinus;
+    bs >> mFontName;
+    if (gRevs_UIFontImporter.rev <= 4) {
         int height;
-        d >> height;
+        bs >> height;
         mFontPctSize = ConvertHeightNGToPctHeight(height);
     } else {
-        d >> mFontPctSize;
+        bs >> mFontPctSize;
     }
-    d >> mFontWeight;
-    d >> mItalics;
-    d >> mPitchAndFamily;
-    d >> mFontQuality;
-    d >> mFontCharset;
-    if (d.rev > 1) {
-        d >> mFontSupersample;
+    bs >> mFontWeight;
+    bs >> mItalics;
+    bs >> mPitchAndFamily;
+    bs >> mFontQuality;
+    bs >> mFontCharset;
+    if (gRevs_UIFontImporter.rev > 1) {
+        bs >> mFontSupersample;
     }
-    d >> mBitmapSavePath;
-    d >> mBitMapSaveName;
-    d >> mLeft;
-    d >> mRight;
-    d >> mTop;
-    d >> mBottom;
-    d >> mFillWithSafeWhite;
-    if (d.rev < 8) {
-        d >> mFontToImportFrom;
+    bs >> mBitmapSavePath;
+    bs >> mBitMapSaveName;
+    bs >> mLeft;
+    bs >> mRight;
+    bs >> mTop;
+    bs >> mBottom;
+    bs >> mFillWithSafeWhite;
+    if (gRevs_UIFontImporter.rev < 8) {
+        bs >> mFontToImportFrom;
     }
-    if (d.rev > 2) {
-        d >> mGennedFonts;
-        d >> mReferenceKerning;
+    if (gRevs_UIFontImporter.rev > 2) {
+        bs >> mGennedFonts;
+        bs >> mReferenceKerning;
     }
-    if (d.rev == 3) {
+    if (gRevs_UIFontImporter.rev == 3) {
         ObjPtr<RndMat> mat(this);
-        d >> mat;
+        bs >> mat;
     }
-    if (d.rev > 3) {
-        d >> mMatVariations;
+    if (gRevs_UIFontImporter.rev > 3) {
+        bs >> mMatVariations;
     }
-    // Was `if (d.rev > 5 && d.rev < 10) { ObjPtr<RndMat> mat(this); d >> mat; }` --
+    // Was `if (gRevs_UIFontImporter.rev > 5 && gRevs_UIFontImporter.rev < 10) { ObjPtr<RndMat> mat(this); bs >> mat; }` --
     // a DC3-era guard that read mDefaultMat into a DISCARDED temporary and skipped it
     // entirely at rev 10.  Retail's Save provably WRITES mDefaultMat (adding
     // `bs << mDefaultMat` is what took Save from 95.8% to 100%), and the rb3-Wii
     // oracle reads it unconditionally at `rev > 5`, so the `< 10` cutoff is a DC3
     // artifact and the discard left Save/Load asymmetric.
-    if (d.rev > 5) {
-        d >> mDefaultMat;
+    if (gRevs_UIFontImporter.rev > 5) {
+        bs >> mDefaultMat;
     }
-    if (d.rev > 6) {
-        d >> mHandmadeFont;
+    if (gRevs_UIFontImporter.rev > 6) {
+        bs >> mHandmadeFont;
     }
-    if (d.rev > 7) {
-        d >> mSyncResource;
+    if (gRevs_UIFontImporter.rev > 7) {
+        bs >> mSyncResource;
     }
-    if (d.rev > 8) {
-        d >> mLastGenWasNG;
+    if (gRevs_UIFontImporter.rev > 8) {
+        bs >> mLastGenWasNG;
     }
-    if (d.altRev == 1) {
+    if (gRevs_UIFontImporter.altRev == 1) {
         int x;
-        d >> x;
+        bs >> x;
     }
 END_LOADS
 

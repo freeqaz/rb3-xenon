@@ -105,26 +105,44 @@ BEGIN_SAVES(TexMovie)
     mMovie.Save(&bs);
 END_SAVES
 
-INIT_REVS(8, 0)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
+// base, and the RAW incoming BinStream is forwarded to every read and to the
+// superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
+// emits ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
+// destructor that retail has none of, and dispatches each read on `&d`.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// The pair MUST share one aggregate -- two separate file statics are laid out
+// independently and will not fold onto a single base register.  No `#define
+// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
+// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
+// the alias would silently shadow for the rest of the amalgamated TU.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_TexMovie;
 BEGIN_LOADS(TexMovie)
-    LOAD_REVS(bs)
-    ASSERT_REVS(8, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndDrawable)
-    LOAD_SUPERCLASS(RndPollable)
+    int rev;
+    bs >> rev;
+    gRevs_TexMovie.rev = getHmxRev(rev);
+    gRevs_TexMovie.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    RndDrawable::Load(bs);
+    RndPollable::Load(bs);
     bs >> mTex >> mLoop;
-    if (d.rev < 4) {
+    if (gRevs_TexMovie.rev < 4) {
         bool dummy;
-        d >> dummy;
+        bs >> dummy;
     }
     bs >> sRoot;
-    if (d.rev > 5) {
-        d >> mIsLocalized;
+    if (gRevs_TexMovie.rev > 5) {
+        bs >> mIsLocalized;
     }
-    if (d.rev == 7) {
+    if (gRevs_TexMovie.rev == 7) {
         bool dummy;
-        d >> dummy;
+        bs >> dummy;
     }
     static Message msg("change_file");
     DataNode handled = HandleType(msg);
@@ -132,12 +150,12 @@ BEGIN_LOADS(TexMovie)
         const char *str = handled.Str(nullptr);
         sRoot.Set(FilePath::Root().c_str(), str);
     }
-    if (d.rev > 1 && d.rev < 3) {
+    if (gRevs_TexMovie.rev > 1 && gRevs_TexMovie.rev < 3) {
         bool dummy;
-        d >> dummy;
+        bs >> dummy;
     }
     FilePathTracker tracker(".");
-    DoBeginMovieFromFile(d.rev > 4 ? &bs : nullptr);
+    DoBeginMovieFromFile(gRevs_TexMovie.rev > 4 ? &bs : nullptr);
 END_LOADS
 
 void TexMovie::DrawPreClear() {

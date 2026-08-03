@@ -94,33 +94,51 @@ BEGIN_COPYS(Waypoint)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(5, 0)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
+// base, and the RAW incoming BinStream is forwarded to every read and to the
+// superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
+// emits ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
+// destructor that retail has none of, and dispatches each read on `&d`.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// The pair MUST share one aggregate -- two separate file statics are laid out
+// independently and will not fold onto a single base register.  No `#define
+// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
+// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
+// the alias would silently shadow for the rest of the amalgamated TU.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Waypoint;
 BEGIN_LOADS(Waypoint)
-    LOAD_REVS(bs)
-    ASSERT_REVS(5, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (5 > d.rev) {
+    int rev;
+    bs >> rev;
+    gRevs_Waypoint.rev = getHmxRev(rev);
+    gRevs_Waypoint.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    if (5 > gRevs_Waypoint.rev) {
         RndMesh *mesh = Hmx::Object::New<RndMesh>();
         mesh->RndDrawable::Load(bs);
         if (mesh) {
             delete mesh;
         }
     }
-    LOAD_SUPERCLASS(RndTransformable)
-    d >> mFlags;
-    d >> mConnections;
-    if (1 < d.rev) {
-        d >> mRadius;
+    RndTransformable::Load(bs);
+    bs >> mFlags;
+    bs >> mConnections;
+    if (1 < gRevs_Waypoint.rev) {
+        bs >> mRadius;
     } else
         mRadius = 12;
-    if (2 < d.rev) {
-        d >> mYRadius;
-        d >> mAngRadius;
+    if (2 < gRevs_Waypoint.rev) {
+        bs >> mYRadius;
+        bs >> mAngRadius;
     }
-    if (3 < d.rev) {
-        d >> mStrictRadiusDelta;
-        d >> mStrictAngDelta;
+    if (3 < gRevs_Waypoint.rev) {
+        bs >> mStrictRadiusDelta;
+        bs >> mStrictAngDelta;
     }
 END_LOADS
 

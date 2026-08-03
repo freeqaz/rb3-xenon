@@ -169,59 +169,77 @@ void RndTexRenderer::ListPollChildren(std::list<RndPollable *> &list) const {
     }
 }
 
-INIT_REVS(11, 0)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
+// into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
+// base, and the RAW incoming BinStream is forwarded to every read and to the
+// superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
+// emits ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
+// destructor that retail has none of, and dispatches each read on `&d`.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// The pair MUST share one aggregate -- two separate file statics are laid out
+// independently and will not fold onto a single base register.  No `#define
+// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
+// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
+// the alias would silently shadow for the rest of the amalgamated TU.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_TexRenderer;
 BEGIN_LOADS(RndTexRenderer)
-    LOAD_REVS(bs)
-    ASSERT_REVS(11, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (2 < d.rev) {
-        LOAD_SUPERCLASS(RndAnimatable)
-        LOAD_SUPERCLASS(RndDrawable)
-        if (d.rev > 10)
-            LOAD_SUPERCLASS(RndPollable)
+    int rev;
+    bs >> rev;
+    gRevs_TexRenderer.rev = getHmxRev(rev);
+    gRevs_TexRenderer.altRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
+    if (2 < gRevs_TexRenderer.rev) {
+        RndAnimatable::Load(bs);
+        RndDrawable::Load(bs);
+        if (gRevs_TexRenderer.rev > 10)
+            RndPollable::Load(bs);
     }
-    if (d.rev < 1) {
+    if (gRevs_TexRenderer.rev < 1) {
         FilePath fp;
         bs >> fp;
     } else {
         mDrawable.Load(bs, false, nullptr);
     }
-    if (d.rev > 3) {
+    if (gRevs_TexRenderer.rev > 3) {
         bs >> mCamera;
     } else {
         mCamera = nullptr;
     }
     bs >> mOutputTexture;
     InitTexture();
-    if (d.rev > 1) {
-        d >> mForce;
+    if (gRevs_TexRenderer.rev > 1) {
+        bs >> mForce;
         bs >> mImpostorHeight;
     }
-    if (d.rev > 4) {
-        d >> mDrawResponsible;
+    if (gRevs_TexRenderer.rev > 4) {
+        bs >> mDrawResponsible;
     } else {
         mDrawResponsible = true;
     }
-    if (d.rev > 5) {
-        d >> mDrawPreClear;
+    if (gRevs_TexRenderer.rev > 5) {
+        bs >> mDrawPreClear;
     } else {
         mDrawPreClear = false;
     }
-    if (d.rev > 6) {
-        d >> mDrawWorldOnly;
+    if (gRevs_TexRenderer.rev > 6) {
+        bs >> mDrawWorldOnly;
     }
-    if (d.rev > 7) {
-        d >> mPrimeDraw;
+    if (gRevs_TexRenderer.rev > 7) {
+        bs >> mPrimeDraw;
     }
-    if (d.rev > 8) {
-        d >> mForceMips;
+    if (gRevs_TexRenderer.rev > 8) {
+        bs >> mForceMips;
     }
-    if (d.rev > 9) {
+    if (gRevs_TexRenderer.rev > 9) {
         bs >> mMirrorCam;
     }
-    if (d.rev > 10) {
-        d >> mNoPoll;
+    if (gRevs_TexRenderer.rev > 10) {
+        bs >> mNoPoll;
     }
     mDirty = true;
 END_LOADS
