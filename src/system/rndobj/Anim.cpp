@@ -426,7 +426,13 @@ AnimTask::AnimTask(
     mAnim->StartAnim();
 }
 
-AnimTask::~AnimTask() { TheTaskMgr.QueueTaskDelete(mBlendTask); }
+// RB3-era (rb3-Wii oracle, Anim.cpp:334) deletes mBlendTask directly rather
+// than routing through TaskMgr::QueueTaskDelete (a dc3-newer-engine
+// indirection - see Task.cpp). Retail's actual bytes (Ghidra @0x82401588)
+// show a null check + a vtable-slot-0 call with arg 1, i.e. exactly the
+// scalar deleting destructor pattern that `delete mBlendTask;` compiles to,
+// not an out-of-line call to QueueTaskDelete.
+AnimTask::~AnimTask() { delete mBlendTask; }
 
 void AnimTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mAnim)) {

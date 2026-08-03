@@ -171,13 +171,15 @@ void BandList::UpdateRevealState(int i, Transform &tf) {
     if (rstate != kRevealed) {
         if (!SupportsRevealConcealAnim()) {
             mRevealStates[i] = kRevealed;
-        } else if (RevealTimedOut()) {
-            mRevealStates[i] = kRevealed;
-        } else {
-            if (rstate != kRevealing)
-                StartRevealAnim(i, tf);
-            RevealAnimPoll(i, tf);
+            return;
         }
+        if (RevealTimedOut()) {
+            mRevealStates[i] = kRevealed;
+            return;
+        }
+        if (rstate != kRevealing)
+            StartRevealAnim(i, tf);
+        RevealAnimPoll(i, tf);
     }
 }
 
@@ -637,9 +639,9 @@ void BandList::DrawShowing() {
             float z = it->mZOffset;
             if (mListDir) {
                 float space = mListDir->ElementSpacing();
-                z = -(space * (float)mListState.SelectedDisplay() - z);
+                z = -(space * (float)SelectedPos() - z);
             }
-            obj->SetLocalPos(it->mXOffset, it->mYOffset, z);
+            obj->SetLocalPos(Vector3(it->mXOffset, it->mYOffset, z));
         }
     }
 }

@@ -169,11 +169,11 @@ void RndVelocityBuffer::DrawMesh(RndMesh *mesh) const {
         if (numBones <= 0) numBones = 1;
 
         unsigned int prevKey = mesh->mMotionCache.mCacheKey[cacheIdx ^ 1];
-        unsigned int currKey = mesh->mMotionCache.mCacheKey[cacheIdx];
 
         const float *prevFloats = nullptr;
         unsigned char prevOk = (unsigned char)(_val0[cacheIdx ^ 1].GetXfms(mesh, prevKey, numBones, prevFloats));
         if (prevOk) {
+            unsigned int currKey = mesh->mMotionCache.mCacheKey[cacheIdx];
             int numBonesActual = mesh->NumBones();
             const float *currFloats = nullptr;
             unsigned char currOk = (unsigned char)(_val0[cacheIdx].GetXfms(mesh, currKey, numBones, currFloats));

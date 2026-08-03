@@ -166,8 +166,8 @@ GemPlayer *ChordbookPanel::GetChordbookPlayer() const {
 }
 
 void ChordbookPanel::ExitChordbook() {
-    static Message end_chordbook_msg("end_chordbook");
     unk4c->SetRunning(true);
+    static Message end_chordbook_msg("end_chordbook");
     ObjectDir::Main()->Find<UIPanel>("rg_trainer_panel", true)
         ->HandleType(end_chordbook_msg);
     mChordPreview->Start(0);

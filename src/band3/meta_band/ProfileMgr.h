@@ -212,9 +212,22 @@ public:
     std::vector<BandProfile *> mProfiles; // 0xa0
     BandProfile *mPrimaryProfile; // 0xac
     bool mAllUnlocked; // 0xb0
+    // mHasLoaded has zero verified callers/writers anywhere else in the tree
+    // (only its own accessor + the LoadGlobalOptions write site), so its exact
+    // retail offset is unconstrained by any measured evidence -- parked in the
+    // existing tail-padding gap after mAllUnlocked rather than at 0xc0. Compiler-
+    // verified (class_layout_report.py): sizeof(ProfileMgr) is 0xf0, not 0xc8;
+    // 0xc8 is the Object-vbase {vfptr}, not total size.
+    bool mHasLoaded; // was 0xc0; relocated (see above)
     std::vector<float> mForcedMicGains; // 0xb4
-    // Retail sizeof(ProfileMgr) = 0xc8 (verified: Handle anchors at this+0xc8).
-    bool mHasLoaded; // 0xc0
+    // ProfileMgr::Init() does a pointer-sized stw/lwz through this+0xc0 to a
+    // MemAlloc'd buffer immediately handed to TheMemcardMgr.SetProfileSaveBuffer
+    // (Ghidra oracle @0x82548418). CONFIRMED by objdiff: repointing this slot
+    // as a member instead of a local collapsed the entire register-swap/reload
+    // residue in ProfileMgr::Init (81.9%->96.6% normalized over this change +
+    // the two extraneous-call removals). DC3's ProfileMgr has the equivalent
+    // `void *mProfileSaveBuffer` member in the same relative slot.
+    void *mProfileSaveBuffer; // 0xc0
 };
 
 extern ProfileMgr TheProfileMgr;

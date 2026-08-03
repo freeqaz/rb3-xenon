@@ -454,11 +454,34 @@ ObjPtr<T>::ObjPtr(Hmx::Object *owner, T *ptr) : ObjRefConcrete<T>(owner, ptr) {
 #endif // RB3_TU_OBJPTR_DEFER_OWNER
 #endif
 
+#ifdef RB3_TU_OBJPTR_DEFER_OWNER
+// PER-TU (lane NCCC f264): defer BOTH members to the derived ctor body, same
+// mechanism -- and reusing the SAME gate + the SAME already-declared empty
+// ObjRefConcrete() base ctor -- as RB3_TU_OBJPTR_DEFER_OWNER uses for the
+// two-arg ctor above (see obj/Object.h; no new declaration needed there).
+// Our unfixed compile of the copy ctor emits ObjRefConcrete's OWN vtable
+// materialization (lis/addi + store) from the base copy-ctor's inlined
+// mem-init, immediately followed by the derived ObjPtr vtable materialization
+// overwriting the same word -- a double vtable store retail does not have
+// (retail shows exactly one vtable write, per the out-of-line two-arg ctor
+// evidence in Object.h). Routing through the EMPTY base ctor (no mem-init at
+// all) and assigning mOwner/mObject explicitly in the derived body -- after
+// the point where the derived vptr store would land -- removes the base's
+// provably-dead stores.
+template <class T>
+ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>() {
+    this->mOwner = p.mOwner;
+    this->mObject = p.mObject;
+    if (this->mObject)
+        this->mObject->AddRef(this);
+}
+#else
 template <class T>
 ObjPtr<T>::ObjPtr(const ObjPtr &p) : ObjRefConcrete<T>(p) {
     if (this->mObject)
         this->mObject->AddRef(this);
 }
+#endif
 
 // ~ObjPtr: intentionally NOT user-declared on the retail path — retail's dtor
 // is implicit, which elides the ??_7ObjPtr vtable store at inlined dtor entry

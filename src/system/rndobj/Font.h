@@ -129,7 +129,12 @@ public:
     // RB3 retail API used by ui/UILabel.cpp (rb3-Wii oracle rndobj/Font.h).
     // DECLARATION-ONLY, non-virtual -> layout- and vtable-neutral.
     RndFont *TextureOwner() const;
-    float CellDiff() const;
+    // Inline (rb3-Wii Font.h's non-HX_NATIVE branch: `return mCellSize.y /
+    // mCellSize.x;`). Retail's UILabel::FitText (0x827f5550) inlines this
+    // ratio directly -- two float loads at mCellSize's offsets (0x60/0x64)
+    // and a single fdivs, no `bl` -- so leaving this out-of-line forces an
+    // extra call retail never makes.
+    float CellDiff() const { return mCellSize.y / mCellSize.x; }
 
 protected:
     RndFont();

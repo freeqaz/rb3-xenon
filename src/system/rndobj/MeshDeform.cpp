@@ -98,9 +98,9 @@ BEGIN_LOADS(RndMeshDeform)
                 float f74;
                 bs >> f74;
                 if (f74 != 0) {
+                    i150[weightIdx] = j;
+                    f250[weightIdx] = f74;
                     weightIdx++;
-                    i150[j] = j;
-                    f250[j] = f74;
                 }
             }
             mVerts.AppendWeights(weightIdx, i150, f250);
@@ -114,13 +114,14 @@ BEGIN_LOADS(RndMeshDeform)
         mVerts.Load(bs);
     }
     bs >> mMeshInverse;
-    // how NOT to check against the identity matrix
+    // Identity check, row by row. Each Vector3::operator== is an inlined bool-returning
+    // call, so retail materializes one bool per row and short-circuits between rows
+    // (li 1 / li 0 / clrlwi. / beq). Writing the 12 field compares as a flat && chain
+    // instead makes MSVC fold them into a pure branch tree with no materialization,
+    // which does NOT match -- see the NCCC-0803 lane notes.
     mSkipInverse =
-        (0 == mMeshInverse.v.x && 0 == mMeshInverse.v.y && 0 == mMeshInverse.v.z
-         && 1 == mMeshInverse.m.x.x && 0 == mMeshInverse.m.x.y && 0 == mMeshInverse.m.x.z
-         && 0 == mMeshInverse.m.y.x && 1 == mMeshInverse.m.y.y && 0 == mMeshInverse.m.y.z
-         & 0 == mMeshInverse.m.z.x && 0 == mMeshInverse.m.z.y
-         & 1 == mMeshInverse.m.z.z);
+        mMeshInverse.v == Vector3(0, 0, 0) && mMeshInverse.m.x == Vector3(1, 0, 0)
+        && mMeshInverse.m.y == Vector3(0, 1, 0) && mMeshInverse.m.z == Vector3(0, 0, 1);
 END_LOADS
 #undef gRev
 #undef gAltRev

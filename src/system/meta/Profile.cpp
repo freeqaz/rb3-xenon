@@ -1,5 +1,6 @@
 #include "meta/Profile.h"
 #include "os/PlatformMgr.h"
+#include "os/UserMgr.h"
 
 Profile::Profile(int pnum) : mDirty(0), mPadNum(pnum), mState(kMetaProfileUnloaded) {}
 Profile::~Profile() { mDirty = true; }
@@ -33,11 +34,13 @@ bool Profile::HasValidSaveData() const {
 
 ProfileSaveState Profile::GetSaveState() const { return mState; }
 
-// Retail keeps this out of line: Profile::Handle's `get_name` arm is a real
-// `bl Profile::GetName` on the adjusted `this`, not an inlined
-// ThePlatformMgr.GetName(mPadNum).  /Ob2 inlines it for us, so pin it.
+// Retail's actual body (per Ghidra: a bare tail call, no vcall/UserName()
+// chain, no ThePlatformMgr reference at all) is a straight forward of
+// TheUserMgr->GetLocalUserFromPadNum(mPadNum) reinterpreted as const char*.
 #pragma auto_inline(off)
-const char *Profile::GetName() const { return ThePlatformMgr.GetName(mPadNum); }
+const char *Profile::GetName() const {
+    return (const char *)TheUserMgr->GetLocalUserFromPadNum(mPadNum);
+}
 #pragma auto_inline(on)
 
 void Profile::SetSaveState(ProfileSaveState state) {

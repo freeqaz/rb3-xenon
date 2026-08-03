@@ -36,7 +36,7 @@ int FileDelete(const char *iFilename) {
     if (FileIsLocal(str.c_str())) {
         return !DeleteFileA(str.c_str());
     } else {
-        return HolmesClientDelete(str.c_str());
+        return -1;
     }
 }
 

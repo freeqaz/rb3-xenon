@@ -18,8 +18,18 @@ MemTracker *gMemTracker;
 bool gMemTrackerTracking;
 bool gMemoryUsageTest;
 // HeapTracker* gHeapTracker;
-int gNumDiffs;
-TextFileStream *gLog;
+// Struct packing: retail addresses these two through a SINGLE materialized base
+// register (addi rN, r11, sym; then 0x0(rN) for the diff counter and 0x4(rN) for
+// the log stream). A compile-time +4 displacement is only possible if the two are
+// one aggregate -- two independent globals would each need their own relocation.
+// Same technique as MemTrackStack below.
+struct MemTrackLogState {
+    int numDiffs;       // at +0x0
+    TextFileStream *log; // at +0x4
+};
+MemTrackLogState gMemTrackLogState;
+#define gNumDiffs gMemTrackLogState.numDiffs
+#define gLog gMemTrackLogState.log
 String gMemTrackSourceFile;
 String gMemTrackSourceObject;
 // Struct packing: array of 65 pointer-sized entries (260 = 0x104 bytes) followed immediately
@@ -137,13 +147,9 @@ void MemDeltaFullReport() {
 
 void StartLog(const char *base) {
     char buffer[64];
-    if (gLog) {
-        StopLog();
-    }
     MILO_ASSERT(!gLog, 0x5B);
     int num = gNumDiffs;
-    bool _cond = strstr(base, "diff");
-    if (_cond) {
+    if (strstr(base, "diff")) {
         gNumDiffs++;
     }
     while (true) {
@@ -190,7 +196,7 @@ void MemTrackHeapDump(bool freeOnly) {
         }
     }
     *gLog << ")\n";
-    StopLog();
+    RELEASE(gLog);
 }
 
 DataNode MemTrackReportDF(DataArray *) {

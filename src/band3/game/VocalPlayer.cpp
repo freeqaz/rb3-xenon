@@ -332,8 +332,13 @@ void VocalPlayer::Jump(float f1, bool b2) {
         mPhrasePercentageCount = 0;
         mTambourineManager.Jump(f1);
         mTambourineManager.SetTambourine(mVocalParts.front()->InTambourinePhrase());
-        if (mTrack)
+        BandTrack *track = GetBandTrack();
+        if (track)
+            track->StopDeploy();
+        if (mTrack) {
             mTrack->RebuildHUD();
+            mTrack->JumpReset();
+        }
     }
 }
 
@@ -488,12 +493,9 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     // Determine section scoring state
     float fSectionBeginMs = 0.0f;
     float fSectionEndMs = 0.0f;
-    bool bInSection = false;
     if (SongSectionOnly(fSectionBeginMs, fSectionEndMs)) {
-        if (fCompMS > (100.0f + fSectionBeginMs) && fCompMS < (100.0f + fSectionEndMs)) {
-            bInSection = true;
-        }
-        mScoringEnabled = bInSection;
+        mScoringEnabled =
+            fCompMS > (100.0f + fSectionBeginMs) && fCompMS < (100.0f + fSectionEndMs);
     } else {
         mScoringEnabled = true;
     }
@@ -526,10 +528,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
             pUnpitchedPart = pPart;
         }
 
-        bool bCanScore = false;
-        if (mScoringEnabled && !InRollback()) {
-            bCanScore = true;
-        }
+        bool bCanScore = mScoringEnabled && !InRollback();
 
         if (bCanScore && pPart->NearNote(fCompMS) && pPart->ScoringEnabled()) {
             float fPitchAtTime = pPart->mVocalNoteList->PitchAt(fCompMS);
@@ -549,7 +548,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     // Get pitch offset from song DB and update tuning
     float pitchOffset = TheSongDB->GetPitchOffsetForTick((int)MsToTick(ms));
     if ((-50.0f <= pitchOffset) && (pitchOffset <= 50.0f)) {
-        mTuningOffset = 0.00109659603f * pitchOffset;
+        mTuningOffset = pitchOffset / 100.0f;
     }
 
     // Build singer pitch tracker
@@ -590,13 +589,10 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         }
 
         // Score singer against each part
-        float var_f22 = 1000.0f;
+        float var_f22 = -1000.0f;
         FOREACH (pIt, mVocalParts) {
             VocalPart *pPart = *pIt;
-            bool bScoringAllowed = false;
-            if (mScoringEnabled && !InRollback()) {
-                bScoringAllowed = true;
-            }
+            bool bScoringAllowed = mScoringEnabled && !InRollback();
 
             if (bScoringAllowed && pPart->ScoringEnabled()) {
                 VocalScoreCache &cache = pSinger->AccessScoreCache(pPart->mPartIndex);
@@ -614,7 +610,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     iRating,
                     fDev
                 );
-                if (1000.0f != fDev && fabs(fDev) < fabsf(var_f22)) {
+                if (-1000.0f != fDev && fabs(fDev) < fabsf(var_f22)) {
                     var_f22 = fDev;
                 }
 
@@ -625,7 +621,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 pSinger->AppendToScoreHistory(fCompMS, pPart->mPartIndex, fScore, iRating);
             }
         }
-        if (1000.0f != var_f22) {
+        if (-1000.0f != var_f22) {
             pSinger->UpdatePitchDeviation(var_f22);
         }
 
@@ -734,7 +730,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 ),
                 singersArray.end()
             );
-        } while (!partsArray.empty() && !singersArray.empty());
+        } while (partsArray.size() != 0 && singersArray.size() != 0);
     }
 
 #ifdef HX_NATIVE
@@ -754,14 +750,15 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         pSinger->AllScoresAreIn(scoredPartIndices);
         pSinger->ResolveAmbiguity();
         int iOctaveOffset = 0;
+        bool bHasBestTarget = (0.0f != pSinger->mBestTargetPitch);
         float fFramePitch = pSinger->mFrameMicPitch;
 
-        if (0.0f != pSinger->mBestTargetPitch) {
+        if (bHasBestTarget) {
             pSinger->ClearFreestyleDeployment();
         }
 
-        if (pSinger->mFrameAssignedPart != -1) {
-            VocalPart *pPart = mVocalParts[pSinger->mFrameAssignedPart];
+        if (pSinger->GetFrameAssignedPart() != -1) {
+            VocalPart *pPart = mVocalParts[pSinger->GetFrameAssignedPart()];
             VocalScoreCache &cache = pSinger->AccessScoreCache(pPart->mPartIndex);
             pPart->AddScore(cache);
             pSinger->mFrameBestHitScore = cache.unk0;
@@ -773,31 +770,28 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
             }
 #endif
 
-            if (0.0f != pSinger->mFrameMicPitch) {
+            if (pSinger->GetFrameMicPitch() > 0.0f) {
                 iOctaveOffset =
                     pSinger->AccessScoreHistory(pPart->mPartIndex).GetOctaveOffset();
             }
         } else {
-            float fOld = pSinger->mFrameMicPitch;
+            float fOld = pSinger->GetFrameMicPitch();
             iOctaveOffset = pSinger->mOctaveOffset;
             if (0.0f != fOld) {
                 float fPrev = pSinger->mBestTargetPitch;
-                if (0.0f != fPrev) {
+                bool bHasPrev = (0.0f != fPrev);
+                if (bHasPrev) {
                     float diff = fPrev - fOld;
                     float absDiff = fabsf(diff);
                     float mod = (float)fmod(absDiff, 12.0);
                     float alt = kSemitone - mod;
-                    if (mod >= alt) {
-                        mod = alt;
-                    }
+                    mod = ((alt - mod) >= 0.0f) ? mod : alt;
                     if (mod <= kMaxOctaveDistance) {
-                        int octaveAdjust = (int)(kHalfSemitone + absDiff / kSemitone);
-                        int sign;
-                        if (diff > 0.0f) {
-                            sign = 1;
-                        } else {
+                        int sign = 1;
+                        if (diff <= 0.0f) {
                             sign = -1;
                         }
+                        int octaveAdjust = (int)(kHalfSemitone + absDiff / kSemitone);
                         iOctaveOffset = octaveAdjust * sign;
                     }
                 }
@@ -805,8 +799,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
             pSinger->mFrameBestHitScore = 0.0f;
             pSinger->mFrameTargetPitch = 0.0f;
 
-            bool bNotNet = !IsNet();
-            if (bNotNet && InFreestyleSection()) {
+            if (!IsNet() && InFreestyleSection()) {
                 float fDeployAmt = pSinger->AddToFreestyleDeployment(fCompMS);
                 if (fDeployAmt > var_f24) {
                     var_f24 = fDeployAmt;
@@ -815,8 +808,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
             }
         }
 
-        if (0.0f != pSinger->mFrameMicPitch) {
-            float fAdjusted = (kSemitone * (float)iOctaveOffset) + pSinger->mFrameMicPitch;
+        if (0.0f != pSinger->GetFrameMicPitch()) {
+            float fAdjusted = (kSemitone * (float)iOctaveOffset) + pSinger->GetFrameMicPitch();
 #ifdef HX_NATIVE
             // Headless: mTrack is a non-null sentinel (no VocalTrackDir render
             // object). Retail clamps the octave to the on-screen display range;
@@ -842,9 +835,9 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
             }
         }
 
-        if (0.0f != pSinger->mFrameMicPitch) {
+        if (0.0f != pSinger->GetFrameMicPitch()) {
             pSinger->SetFrameMicPitch(
-                (kSemitone * (float)iOctaveOffset) + pSinger->mFrameMicPitch
+                (kSemitone * (float)iOctaveOffset) + pSinger->GetFrameMicPitch()
             );
         }
         pSinger->SetOctaveOffset(iOctaveOffset);
@@ -896,8 +889,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 #endif
     }
 
-    bool bNotNet = !IsNet();
-    if (bNotNet) {
+    if (!IsNet()) {
         SendVocalState(fCompMS);
     }
 
@@ -924,10 +916,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 #endif
 
     // Chat handling
-    bool bCanChat = false;
-    if (!TheNetSession->IsLocal() && PressingToTalk()) {
-        bCanChat = true;
-    }
+    bool bCanChat = PressingToTalk();
     if (mCouldChat != bCanChat) {
         SendCanChat(bCanChat);
         mCouldChat = bCanChat;
@@ -949,16 +938,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         if (0.0f == fHitPct) {
             fAdjusted = 0.0f;
         }
-        bool bEnable = true;
-        bool bAdjustedNonzero = true;
-        if (0.0f == fAdjusted) {
-            bAdjustedNonzero = false;
-        }
-        if (!bAdjustedNonzero) {
-            bEnable = false;
-        }
         TheGameMicManager->SetPitchCorrectionTarget(
-            bEnable, false,
+            (0.0f != fAdjusted), false,
             mSynapseProximitySolo, mSynapseFocusSolo,
             fAdjusted, 0.0f, 0.0f
         );

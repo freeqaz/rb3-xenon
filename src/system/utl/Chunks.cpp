@@ -14,8 +14,8 @@ void ChunkHeader::Read(BinStream &bs) {
 }
 
 IListChunk::IListChunk(BinStream &bs, bool b)
-    : mParent(0), mBaseBinStream(bs), mHeader(0), mStartMarker(-1), mEndMarker(-1),
-      mLocked(0), mSubHeader(), mRecentlyReset(1) {
+    : mParent(0), mBaseBinStream(bs), mHeader(0), mLocked(0), mSubHeader(),
+      mRecentlyReset(1) {
     if (b) {
         mHeader = new ChunkHeader(mBaseBinStream);
     } else {

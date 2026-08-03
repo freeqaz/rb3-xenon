@@ -89,6 +89,19 @@ public:
     virtual void PreSave(BinStream &) { UnhookShadow(); }
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
+    // ObjMacros.h-dialect rev statics (see rb3-Wii Character.cpp's DECLARE_REVS):
+    // retail's PreLoad reads a rev directly into these class statics rather than
+    // constructing a full virtual BinStreamRev wrapper (verified from asm — no
+    // ??0BinStream@@QAA@_N@Z / ??_7BinStreamRev@@6B@ in retail's PreLoad body).
+    // Declared as one aggregate (not two loose statics) so the compiler is
+    // permitted (by the standard's guaranteed member layout) to CSE the base
+    // address across both fields into a single addi+sth/sth pair, matching
+    // retail's measured .data layout (base+0 = altRev, base+4 = rev).
+    struct RevState {
+        __declspec(align(4)) unsigned short altRev;
+        __declspec(align(4)) unsigned short rev;
+    };
+    static RevState gRevs;
     // RndDrawable
     virtual void UpdateSphere();
     virtual void DrawShowing();

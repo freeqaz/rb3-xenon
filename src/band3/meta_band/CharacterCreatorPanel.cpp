@@ -125,9 +125,7 @@ DECOMP_FORCEACTIVE(CharacterCreatorPanel, "mClosetMgr", "pUser", "pPreviousChara
 void CharacterCreatorPanel::Unload() {
     TexLoadPanel::Unload();
     LocalBandUser *pUser = mClosetMgr->mUser;
-    if (pUser && pUser->IsLocal()
-        && TheWiiProfileMgr.GetIndexForUser(pUser->GetLocalUser()) >= 0
-        && mCharacter) {
+    if (mCharacter) {
         MILO_ASSERT(mClosetMgr, 0xFD);
         MILO_ASSERT(pUser, 0xFE);
         if (!mCharacter->IsFinalized()) {

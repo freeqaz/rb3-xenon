@@ -298,18 +298,11 @@ END_UNPOOL_DATA
 
 void NetSession::Poll() {
     mJobMgr.Poll();
-    bool b2 = false;
-    if (mGameState == (GameState)1) {
-        bool b1 = true;
-        Quazal::Time *startTime = mGameStartTime;
-        if (startTime) {
-            if (Quazal::SessionClock::GetTime().m_ui64Value < startTime->m_ui64Value) {
-                b1 = false;
-            }
-        }
-        if (b1)
-            b2 = true;
-    }
+    bool b1;
+    Quazal::Time *startTime;
+    bool b2 = mGameState == (GameState)1 &&
+        ((startTime = mGameStartTime) == NULL ||
+            (b1 = Quazal::SessionClock::GetTime().m_ui64Value >= startTime->m_ui64Value));
     if (b2)
         EnterInGameState();
     if (mQNet) {
@@ -330,7 +323,6 @@ void NetSession::Poll() {
         }
     }
     QuazalSession::Poll();
-    gLocalUsersRemovedThisFrame.clear();
 }
 
 bool NetSession::IsLocal() const {

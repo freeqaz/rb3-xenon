@@ -875,15 +875,35 @@ void SongData::AddPhrase(
     }
 }
 
+static Symbol DrumFillTrackName(const SongData *song, int track, int diff) {
+    SongData::TrackInfo *info = song->mTrackInfos[track];
+    if (info->mType == kTrackRealKeys) {
+        if (diff == -1) {
+            if (track < (int)song->mTrackDifficulties.size()) {
+                diff = song->mTrackDifficulties[track];
+            }
+        }
+        if (diff == 0)
+            return "PART REAL_KEYS_E";
+        else if (diff == 1)
+            return "PART REAL_KEYS_M";
+        else if (diff < 3)
+            return "PART REAL_KEYS_H";
+        else
+            return "PART REAL_KEYS_X";
+    }
+    return info->mName;
+}
+
 void SongData::AddDrumFill(int track, int lanes, int startTick, int endTick, bool bre) {
     std::vector<DrumFillInfo *> &_ref0 = mFills;
-    unsigned char fillBool = (unsigned char)(_ref0[track]->AddFill(startTick, endTick - startTick, bre));
-    bool laneBool = _ref0[track]->AddLanes(startTick, lanes);
-    if (!(fillBool & 1 & laneBool)) {
+    bool fillBool = _ref0[track]->AddFill(startTick, endTick - startTick, bre) & 1;
+    unsigned char laneBool = (unsigned char)(_ref0[track]->AddLanes(startTick, lanes));
+    if (!(fillBool & laneBool)) {
         MILO_WARN(
             "%s (%s): Error adding %s at %s",
             SongFullPath(),
-            mTrackInfos[track]->mName,
+            DrumFillTrackName(this, track, -1),
             bre ? "Big Rock Ending lanes" : "drum fill",
             TickFormat(startTick, *mMeasureMap)
         );

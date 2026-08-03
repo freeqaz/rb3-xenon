@@ -126,25 +126,62 @@ ChunkStream::ChunkStream(
     Platform plat,
     bool cached
 )
-    : BinStream(false), mFile(nullptr), mFilename(file), mFail(false), mType(type),
-      mChunkInfo(compress), mIsCached(cached), mBufSize(-1), mCurReadBuffer(nullptr),
-      mRecommendedChunkSize(chunkSize), mLastWriteMarker(0), mCurBufferIdx(-1),
-      mCurBufOffset(0), mChunkInfoPending(false), mCurChunk(nullptr), mChunkEnd(nullptr),
-      mTell(0) {
+    // Retail's ChunkStream member-init list only sets the fields below --
+    // mFile, mFail, mBufSize, mCurReadBuffer, mChunkInfoPending, mCurChunk,
+    // mChunkEnd are NOT defaulted here (verified against retail's
+    // instruction stream, ../rb3's ChunkStream.cpp agrees). mFile/mFail are
+    // assigned unconditionally as body statements right after NewFile(), so
+    // there's no read-before-write window even without a default. The other
+    // four are only ever meaningfully set inside the branches below, and
+    // retail genuinely leaves them uninitialized on the paths that skip
+    // those branches -- matched via an HX_NATIVE-only safety default below
+    // so the match build's instruction stream stays retail-exact while the
+    // native port keeps deterministic zero-init.
+    : BinStream(false), mFilename(file), mType(type), mChunkInfo(compress),
+      mIsCached(cached), mRecommendedChunkSize(chunkSize), mLastWriteMarker(0),
+      mCurBufferIdx(-1), mCurBufOffset(0), mTell(0) {
     SetPlatform(plat);
     for (int bufCnt = 0; bufCnt < 3; bufCnt++) {
         mBuffersState[bufCnt] = kInvalid;
         mBuffersOffset[bufCnt] = 0;
         mBuffers[bufCnt] = 0;
     }
+    mCurReadBuffer = nullptr;
+#ifdef HX_NATIVE
+    mBufSize = -1;
+    mChunkInfoPending = false;
+    mCurChunk = nullptr;
+    mChunkEnd = nullptr;
+#endif
     mFile = NewFile(file, type == kRead ? 2 : 0x301);
     mFail = !mFile;
     if (!mFail) {
         if (type == kWrite) {
             mFile->Write(&mChunkInfo, 0x810);
             mBufSize = mRecommendedChunkSize * 2;
+            // Retail keeps the buffer size in a MEMORY-HOMED local: its frame is
+            // 0x10 bytes larger than ours and it emits `stw r3, 0x50(r31)` right
+            // after `stw r3, 0x83c(r30)` (mBufSize) -- a store that NOTHING ever
+            // reads, in the body or in either of the ctor's two unwind funclets
+            // (fn_827CA604 / fn_827CA62C read only this$ at 0xc4). Evidence for
+            // "memory-homed" rather than "spilled": a plain local live across the
+            // first _MemAllocTemp gets parked in callee-saved r28 instead (r28 is
+            // dead after `mr r4,r28` feeds Write/ReadAsync) -- measured, it moves
+            // the score DOWN to 98.6%. Only a local whose address escapes is
+            // forced to a stack home at /O1, and then MSVC forward-substitutes the
+            // post-call reload to the mBufSize member load (0x83c) that the second
+            // allocation already needs, orphaning the store. Taking the address
+            // here reproduces retail's frame size and that dead store exactly
+            // (98.9% -> 100.0% normalized, 95/95 instructions equal).
+            // NOTE: this is a codegen-shaping device standing in for whatever made
+            // the size address-escape in Harmonix's source (rb3-Wii's dev-build
+            // ChunkStream.cpp has no local here, so the escaping construct did not
+            // survive into that tree). It is a side-effect-free no-op, so the
+            // native build is unaffected -- do not "clean it up".
+            int bufSize = mBufSize;
+            (void)&bufSize;
             mBuffers[0] =
-                (char *)_MemAllocTemp(mBufSize, __FILE__, 0x144, "ChunkStreamBuf", 0);
+                (char *)_MemAllocTemp(bufSize, __FILE__, 0x144, "ChunkStreamBuf", 0);
             mBuffers[1] =
                 (char *)_MemAllocTemp(mBufSize, __FILE__, 0x145, "ChunkStreamBuf", 0);
             mCurBufferIdx = 0;
@@ -334,7 +371,11 @@ EofType ChunkStream::Eof() {
         mBufSize = mChunkInfo.mMaxChunkSize;
         if (mChunkInfo.mID != 0xCABEDEAF)
             mBufSize += 0x800;
+#ifdef HX_NATIVE
         int cap = Min(2, mChunkInfo.mNumChunks);
+#else
+        int cap = Min(3, mChunkInfo.mNumChunks);
+#endif
         for (int i = 0; i < cap; i++) {
             mBuffers[i] = (char *)_MemAllocTemp(mBufSize, __FILE__, 0x104, "ChunkStreamBuf", 0);
         }
@@ -342,8 +383,18 @@ EofType ChunkStream::Eof() {
         mChunkEnd = chunks + mChunkInfo.mNumChunks;
         mCurChunk = chunks - 1;
         mCurBufOffset = mChunkInfo.mMaxChunkSize & kChunkSizeMask;
+#ifdef HX_NATIVE
         mCurBufferIdx = 1;
+#else
+        mCurBufferIdx = 2;
+#endif
         mFile->Seek(mChunkInfo.mChunkInfoSize, 0);
+        ReadChunkAsync();
+    }
+
+    int x;
+    if (mFile->ReadDone(x)) {
+        DecompressChunkAsync();
         ReadChunkAsync();
     }
 
@@ -357,13 +408,11 @@ EofType ChunkStream::Eof() {
         if (mCurChunk + 1 == mChunkEnd)
             return RealEof;
         else {
-            int x;
-            if (mFile->ReadDone(x)) {
-                DecompressChunkAsync();
-                ReadChunkAsync();
-                PollDecompressionWorker();
-            }
+#ifdef HX_NATIVE
             int idx = (mCurBufferIdx + 1) % 2;
+#else
+            int idx = (mCurBufferIdx + 1) % 3;
+#endif
             if (mBuffersState[idx] != kReady)
                 return TempEof;
             else {

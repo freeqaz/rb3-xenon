@@ -89,9 +89,7 @@ public:
     float FadeStart() const { return mFadeStart; }
     float FadeEnd() const { return mFadeEnd; }
     const Hmx::Color& FogColor() const { return mAmbientFogOwner->mFogColor; }
-    void SetFogColor(const Hmx::Color &col) {
-        mAmbientFogOwner->mFogColor.Set(col.red, col.green, col.blue);
-    }
+    void SetFogColor(const Hmx::Color &col) { mAmbientFogOwner->mFogColor = col; }
     void SetFogEnable(bool b) { mAmbientFogOwner->mFogEnable = b; }
     ObjPtrList<RndLight>& LightsReal() { return mLightsReal; }
     ObjPtrList<RndLight>& LightsApprox() { return mLightsApprox; }

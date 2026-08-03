@@ -33,7 +33,7 @@ public:
     unsigned int GetLowestString() const;
     unsigned int GetHighestString() const;
     int GetRGStrumType() const;
-    Symbol GetChordNameOverride() const;
+    const char *GetChordNameOverride() const;
     void SetFret(unsigned int, signed char);
     bool PlayableBy(int) const;
     static int CountBitsInSlotType(unsigned int);

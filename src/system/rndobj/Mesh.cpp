@@ -1850,7 +1850,6 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
 void RndMesh::SaveVertices(BinStream &bs) {
     VertVector *verts = &mVerts;
     unsigned int value;
-    bool doCompress;
     bool cached;
     if (bs.Cached() && (bs.GetPlatform() == kPlatformPS3 || bs.GetPlatform() == kPlatformXBox)) {
         cached = true;
@@ -1863,11 +1862,12 @@ void RndMesh::SaveVertices(BinStream &bs) {
         hasMeshData = true;
     }
 
-    if (TheLoadMgr.GetPlatform() == kPlatformXBox
-        || (doCompress = false, TheLoadMgr.GetPlatform() == kPlatformPS3)) {
-        doCompress = true;
-    }
-    if ((!doCompress) || (!cached) || (doCompress = true, hasMeshData)) {
+    // retail: this Xbox-only SKU folds the TheLoadMgr.GetPlatform()==kPlatformXBox
+    // (or PS3) gate away at compile time -- the shipped asm has no runtime check
+    // here at all, just doCompress = cached && !hasMeshData. See dc3's newer,
+    // multi-platform-runtime-checked version of this same body for comparison.
+    bool doCompress;
+    if (!cached || (doCompress = true, hasMeshData)) {
         doCompress = false;
     }
 
@@ -1876,18 +1876,10 @@ void RndMesh::SaveVertices(BinStream &bs) {
     bool compress = doCompress;
     bs.Write(&compress, 1);
     if (compress) {
-        unsigned int compressedSize = 0;
-        bool isXBox;
-        if (TheLoadMgr.GetPlatform() != kPlatformXBox) {
-            isXBox = false;
-            MILO_FAIL("Unsupported platform for vertex compression");
-            // retail: MILO_ASSERT(compressedSize > 0, 0x339);
-            //         MILO_ASSERT(compressedVersion > 0, 0x33A);
-            // both compile to ((void)(cond)) and emit no code.
-        } else {
-            compressedSize = 0x24;
-            isXBox = true;
-        }
+        // retail: same fold -- compressedSize/isXBox are unconditional constants,
+        // no TheLoadMgr.GetPlatform() != kPlatformXBox branch in the shipped asm.
+        unsigned int compressedSize = 0x24;
+        bool isXBox = true;
         value = compressedSize;
         bs.WriteEndian(&value, 4);
         value = isXBox;
@@ -1905,13 +1897,11 @@ void RndMesh::SaveVertices(BinStream &bs) {
         do {
 #endif
             if (cached && compress) {
-                if (TheLoadMgr.GetPlatform() != kPlatformXBox) {
-                    MILO_FAIL("Unsupported platform for vertex compression");
-                } else {
-                    static CompressedVertex_Xbox compressed;
-                    FillCompressedVertex(compressed, *it, true);
-                    SaveCompressedVertex(compressed, bs);
-                }
+                // retail: same fold as above -- no TheLoadMgr.GetPlatform() check
+                // in the shipped asm inside this loop either.
+                static CompressedVertex_Xbox compressed;
+                FillCompressedVertex(compressed, *it, true);
+                SaveCompressedVertex(compressed, bs);
             } else {
                 bs << *it;
             }

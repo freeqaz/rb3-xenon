@@ -29,18 +29,37 @@
 #undef st_mtime
 #endif
 
+// DECLARATION ORDER HERE IS CODEGEN-LOAD-BEARING -- do not "tidy" it.
+// MSVC lays out non-COMDAT .bss in REVERSE declaration order (dynamically
+// initialized objects like gFiles/gDirList are appended last, separately), so
+// the scalars below must be declared BEFORE the four path globals in order for
+// gSystemRoot to land at .bss offset 0x000, giving:
+//     gSystemRoot 0x000 / gExecRoot 0x100 / gRoot 0x200 / gOpenCaptureFile 0x300
+// which is retail's exact layout (gSystemRoot = 0x82CC9D90).
+//
+// It matters beyond layout: when several same-section statics are referenced in
+// one function, MSVC hoists ONE of them into a callee-saved register and
+// addresses the rest as displacements off it. It anchors on the static at
+// section offset 0x000. With the scalars declared first, gSystemRoot is that
+// symbol -- matching retail, which keeps &gSystemRoot in r31 (it is needed as a
+// VALUE across the FileMakePath call by the inlined strcpy) and reaches
+// gOpenCaptureFile for free as 0x300(r31). Declared the other way round the
+// anchor becomes gOpenCaptureFile, every offset goes negative, and FileInit
+// pays an extra `subi r11,r31,0x300` -- 8 mismatched instructions, 99.0% not
+// 100%. Measured, lane NCCC-0803-b2bb/f33: size/position/refcount/scalar-vs-
+// array/CFG-shape all fail to move the anchor; only the offset-0x000 slot does.
+bool gFakeFileErrors;
+bool gNullFiles;
+void *kNoHandle;
+DataArray *gFrameRateArray;
+int gCaptureFileMode;
+
 static File *gOpenCaptureFile;
 static char gRoot[256];
 static char gExecRoot[256];
 static char gSystemRoot[256];
 
-bool gFakeFileErrors;
-bool gNullFiles;
-void *kNoHandle;
-DataArray *gFrameRateArray;
-
 std::vector<File *> gFiles(0x80); // 0x10...?
-int gCaptureFileMode;
 std::vector<String> gDirList;
 const int File::MaxFileNameLen = 0x100;
 
@@ -411,16 +430,26 @@ void FileInit() {
     // Neither "toggle_fake_file_errors" nor "enumerate_frame_rate_results" occurs in
     // retail band.exe -- dev-only DataRegisterFunc entries, exactly the
     // loadmgr_debug/loadmgr_print class this lane already gated in LoadMgr::Init.
+    // rb3-Wii's FileInit has HolmesClientInit() inside this same ifdef block
+    // (not called unconditionally like dc3-decomp's newer version), and retail
+    // bytes confirm it: objdiff showed the HolmesClientInit call as base-only
+    // insert residue at 88.98% match (idx 33, lane NCCC-0803-b2bb/f33/sonnet).
     DataRegisterFunc("toggle_fake_file_errors", OnToggleFakeFileErrors);
     DataRegisterFunc("enumerate_frame_rate_results", OnEnumerateFrameRateResults);
-#endif
     HolmesClientInit();
+#endif
     const char *str = OptionStr("file_order", nullptr);
     if (str && *str) {
         gOpenCaptureFile = NewFile(str, 0x301);
         MILO_ASSERT(gOpenCaptureFile, 0x18F);
     }
+#ifdef HX_NATIVE
+    // rb3-Wii's FileInit has no AddExitCallback(FileTerminate) call at all --
+    // this is a dc3-decomp-only addition (dc3 is a newer engine snapshot; see
+    // CLAUDE.md source-provenance caveat). Retail bytes lack it too (base-only
+    // insert residue), so gate it native-only rather than dropping it outright.
     TheDebug.AddExitCallback(FileTerminate);
+#endif
 }
 
 const char *FileRelativePathBuf(const char *iRoot, const char *iFilepath, char *oBuf) {
@@ -740,7 +769,7 @@ void RecursePatternInternal(
         } else {
             // Path separator found: we need to recurse into subdirectories
             String subPattern = pttn.substr((unsigned int)forwardPos);
-            pttn = pttn.substr(0);
+            pttn = pttn.substr(0, (unsigned int)forwardPos);
 
             // Enumerate subdirectories at this level
             RecursePatternInternal(pttn.c_str(), DirListCB, false, true);
@@ -766,19 +795,15 @@ void RecursePatternInternal(
     }
 
     // Walk backward from splitPos to find last path separator
+    int pos = splitPos;
+    while (pos > 0 && pttn[pos] != '/' && pttn[pos] != '\\') {
+        pos--;
+    }
     String dirStr;
-    if (splitPos > 0) {
-        int pos = splitPos;
-        while (pos >= 0 && pttn[pos] != '/' && pttn[pos] != '\\') {
-            pos--;
-        }
-        if (pos > 0) {
-            dirStr = pttn.substr(0, (unsigned int)pos);
-        } else {
-            dirStr = ".";
-        }
-    } else {
+    if (pos <= 0) {
         dirStr = ".";
+    } else {
+        dirStr = pttn.substr(0, (unsigned int)pos);
     }
     FileEnumerate(dirStr.c_str(), cb, recurse, pttn.c_str(), recurse_dirs);
 }

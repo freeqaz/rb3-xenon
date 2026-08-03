@@ -122,7 +122,7 @@ BEGIN_HANDLERS(OverdriveMeter)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(OverdriveMeter)
-    SYNC_PROP_MODIFY(
+    SYNC_PROP_MODIFY_ALT(
         test_energy, mTestEnergy, SetEnergy(mTestEnergy, mState, "guitar", 0.0f, true)
     )
     SYNC_SUPERCLASS(RndDir)

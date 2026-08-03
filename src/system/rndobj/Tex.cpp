@@ -53,12 +53,36 @@ BEGIN_HANDLERS(RndTex)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(RndTex)
+#ifdef HX_NATIVE
     SYNC_PROP_SET(width, mWidth, OnSetSize(_val.Int(), mHeight))
     SYNC_PROP_SET(height, mHeight, OnSetSize(mWidth, _val.Int())) {
         static Symbol _s("bpp");
         if (sym == _s && _op & kPropGet)
             return PropSync(mBpp, _val, _prop, _i + 1, _op);
     }
+#else
+    // RB3-360 retail's width/height/bpp are GET-only -- SET performs no
+    // OnSetSize side effect (dc3's SYNC_PROP_SET form is newer-codebase
+    // behavior not present in RB3 retail). Verified against retail's Ghidra
+    // decompile at 0x823ff878 (lane NCCC-0803-b2bb/f369): each arm gates on
+    // (_op & kPropGet) and calls the generic recursive PropSync(int&, ...)
+    // directly -- OnSetSize never appears in retail's call set for this fn.
+    {
+        static Symbol _s("width");
+        if (sym == _s && _op & kPropGet)
+            return PropSync(mWidth, _val, _prop, _i + 1, _op);
+    }
+    {
+        static Symbol _s("height");
+        if (sym == _s && _op & kPropGet)
+            return PropSync(mHeight, _val, _prop, _i + 1, _op);
+    }
+    {
+        static Symbol _s("bpp");
+        if (sym == _s && _op & kPropGet)
+            return PropSync(mBpp, _val, _prop, _i + 1, _op);
+    }
+#endif
     SYNC_PROP(mip_map_k, mMipMapK)
     SYNC_PROP(optimize_for_ps3, mOptimizeForPS3)
     SYNC_PROP_MODIFY(file_path, mFilepath, SetBitmap(mFilepath))

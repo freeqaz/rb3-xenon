@@ -100,7 +100,11 @@ public:
     virtual SongInfo *SongAudioData(int songID) const = 0;
     // retail RB3-360 has NO AlternateSongDir vtable slot (DC3-only virtual); kept
     // non-virtual so SongPath() can still call it, gated like DRAW_DC3_VIRTUAL.
-    SONGMGR_DC3_VIRTUAL char const *AlternateSongDir() const { return "songs/updates/"; }
+    // Retail's compiled body loads a pointer through a global (lis/lwz), not a
+    // literal address (addi) -- matches SONG_CACHE_CONTAINER_NAME's storage
+    // shape (same global SaveMount()/SaveWrite() already match 100% against),
+    // so define out-of-line in the .cpp rather than returning a literal here.
+    SONGMGR_DC3_VIRTUAL char const *AlternateSongDir() const;
     /** Add a song's content name to the given vector of names.
      * @param [in] shortname The song's shortname.
      * @param [out] names The collection of song content names.

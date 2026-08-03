@@ -84,9 +84,6 @@ Band::Band(bool bbb, int i2, BandUser *user, BeatMaster *bm)
 }
 
 Band::~Band() {
-    if (unk60 == 1)
-        TheBandDirector->SetCharacterHideHackEnabled(false);
-    unk60 = 0;
     for (int i = 0; i < mActivePlayers.size(); i++) {
         BandUser *u = mActivePlayers[i]->GetUser();
         if (u)
@@ -108,15 +105,11 @@ void Band::Restart(bool b1) {
         mActivePlayers[i]->Restart(b1);
     }
     mBandPerformer->Restart();
+    unk40 = false;
+    unk44 = 0;
     mMaxMultiplier = 1;
     mMsWithMultiplier = 0;
     mMsWhenMultiplierStarted = 0;
-    unk40 = false;
-    unk44 = 0;
-    if (unk60 == 1) {
-        TheBandDirector->SetCharacterHideHackEnabled(false);
-    }
-    unk60 = 0;
     if (mCommonPhraseCapturer)
         mCommonPhraseCapturer->Reset();
     UpdateBonusLevel(0);

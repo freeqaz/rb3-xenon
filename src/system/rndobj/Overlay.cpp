@@ -72,14 +72,10 @@ float RndOverlay::Draw(float topY) {
     TheRnd.DrawRectScreen(rect, mBackColor, TheRnd.OverlayMat(), nullptr, nullptr);
     Vector2 pos(sDrawFloats[0], sDrawFloats[1] + topY);
     if (mCursorChar > -1 && !mLines.empty()) {
-        String str4c;
-        for (int i = 0; i < mCursorChar; i++) {
-            str4c += " ";
-        }
+        String str4c(mLines.front());
+        str4c.erase(mCursorChar);
         str4c += String("_");
-        TheRnd.DrawStringScreen(
-            str4c.c_str(), Vector2(pos.x, pos.y + 0.005f), mTextColor, true
-        );
+        TheRnd.DrawStringScreen(str4c.c_str(), pos, mTextColor, true);
     }
     FOREACH (it, mLines) {
         pos.y = TheRnd.DrawStringScreen(it->c_str(), pos, mTextColor, true).y;

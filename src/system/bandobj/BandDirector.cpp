@@ -106,7 +106,7 @@ BandDirector::BandDirector()
       mSongPref(0) {
     static DataNode &banddirector = DataVariable("banddirector");
     banddirector = this;
-    mAsyncLoad = !TheLoadMgr.EditMode();
+    mAsyncLoad = !LOADMGR_EDITMODE;
     if (TheBandDirector) {
         MILO_WARN("Trying to make > 1 BandDirector, which should be single");
     } else
@@ -125,8 +125,7 @@ BandDirector::~BandDirector() {
 
 void AddStageKitKeys(RndPropAnim *anim, BandDirector *dir) {
     DataNode fognode(Symbol("stagekit_fog"));
-    DataArrayPtr ptr(fognode);
-    anim->AddKeys(dir, ptr, PropKeys::kSymbol);
+    anim->AddKeys(dir, DataArrayPtr(fognode), PropKeys::kSymbol);
 }
 
 Symbol HiddenInstrument(Symbol s) {
@@ -1583,6 +1582,7 @@ static inline float FindFrameWithLeadIn() {
 }
 
 void BandDirector::FindNextPstKeyframe(float f1, float f2, Symbol s) {
+    static Symbol none("none");
     unk108 = kHugeFloat;
     float stb = SecondsToBeat(f2 / 30.0f);
     float beat = TheTaskMgr.Beat();
@@ -1594,6 +1594,7 @@ void BandDirector::FindNextPstKeyframe(float f1, float f2, Symbol s) {
         if (skeys) {
             int idx = skeys->KeyGreaterEq(f1);
             Keys<Symbol, Symbol> &keys = *skeys->AsSymbolKeys();
+            static Symbol none("none");
             for (; idx < keys.size(); idx++) {
                 unk108 = keys[idx].frame;
                 if (keys[idx].value != none) {

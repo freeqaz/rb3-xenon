@@ -1,3 +1,14 @@
+// Retail's ??0ChordShapeGenerator@@ inlines EVERY ObjPtr(this, 0) member
+// construction (11 sites: mFingerSrcMesh, mChordSrcMesh, mBaseXSection,
+// mContourXSection, mBaseHeight, mString0..mString5) to three stores each
+// (vtable, mOwner, mObject=0), with zero `bl ??0?$ObjPtr@...` calls anywhere
+// in the ctor -- verified via Ghidra decompile of retail 0x822e0340. Our
+// default two-arg ObjPtr ctor is out-of-line (too big for /Ob2), so every
+// site round-tripped through a real call instead. This is the documented
+// per-TU lever for the TWO-arg spelling (obj/Object.h, RB3_TU_OBJPTR_FORCEINLINE_CTOR)
+// -- only usage site in this TU is the ctor's mem-init list, all two-arg, so
+// this is scoped and safe.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "bandobj/ChordShapeGenerator.h"
 #include "beatmatch/RGUtl.h"
 #include "math/Rot.h"

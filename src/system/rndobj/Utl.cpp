@@ -45,15 +45,20 @@
 
 #include "math/Rand.h"
 
-// Retail evaluated MILO_{NOTIFY,WARN,NOTIFY_ONCE} args (side-effecting calls
+// Retail evaluated MILO_{NOTIFY,NOTIFY_ONCE} args (side-effecting calls
 // like PathName() survive, pure accessors are DCE'd) rather than dropping them
 // entirely via the global sizeof (unevaluated) no-op.
+// MILO_WARN is intentionally NOT overridden here: Debug.h's global definition
+// already routes WARN through MiloStripEval (by-value params force the copy
+// ctor + destructible temp retail's stripped WARN residue shows), verified
+// +33 strict whole-binary (see Debug.h comment). TestTexturePaths's two
+// "%s: %s is outside project path" MILO_WARN(...) sites copy-construct the
+// `relative` String temp in retail (0x8243e988) -- overriding WARN to the
+// comma form here dropped that copy + reordered the PathName() call.
 #undef MILO_NOTIFY_ONCE
 #define MILO_NOTIFY_ONCE(...) ((void)(__VA_ARGS__))
 #undef MILO_NOTIFY
 #define MILO_NOTIFY(...) ((void)(__VA_ARGS__))
-#undef MILO_WARN
-#define MILO_WARN(...) ((void)(__VA_ARGS__))
 
 typedef void (*SplashFunc)(void);
 
@@ -288,6 +293,43 @@ int GenerationCount(RndTransformable *t1, RndTransformable *t2) {
         }
     }
     return 0;
+}
+
+RndAnimatable *AnimController(Hmx::Object *o) {
+    // rb3-Wii oracle uses FOREACH_OBJREF (reverse walk of a std::vector<ObjRef*>).
+    // This tree's Hmx::Object::Refs() is a DC3-era intrusive next/prev ring with
+    // only a forward iterator (see UIFontImporter::FindFontForMat for the same
+    // adaptation), so this walks forward via RefPtrOf() instead.
+    FOREACH (it, o->Refs()) {
+#ifdef HX_NATIVE
+        Hmx::Object *owner = it->RefOwner();
+#else
+        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+#endif
+        RndAnimatable *a = dynamic_cast<RndAnimatable *>(owner);
+        if (a && a->AnimTarget() == o)
+            return a;
+    }
+    return nullptr;
+}
+
+void AddMotionSphere(RndTransformable *t, Sphere &s) {
+    RndTransAnim *anim = dynamic_cast<RndTransAnim *>(AnimController(t));
+    if (anim) {
+        Sphere s_loc;
+        CalcSphere(anim, s_loc);
+        if (s_loc.GetRadius()) {
+            if (s.GetRadius()) {
+                s.radius += s_loc.GetRadius();
+                Subtract(s.center, t->WorldXfm().v, s.center);
+                Add(s_loc.center, s.center, s.center);
+            } else
+                s = s_loc;
+        }
+    }
+    RndTransformable *parent = t->TransParent();
+    if (parent)
+        AddMotionSphere(parent, s);
 }
 
 void CreateAndSetMetaMat(RndMat *mat) {
@@ -1403,10 +1445,10 @@ void TestTexturePaths(ObjectDir *dir) {
     }
     if (dir->Loader()) {
         const char *fpstr = dir->Loader()->LoaderFile().c_str();
-        const char *ng = strstr(fpstr, "/ng/");
-        for (ObjDirItr<RndTex> it(dir, true); it != 0; ++it) {
+        bool ng = strstr(fpstr, "/ng/") != 0;
+        for (ObjDirItr<RndTex> it(dir, false); it != 0; ++it) {
             const char *texStr = it->File().c_str();
-            if (ng == 0 && strstr(texStr, "/ng/") != 0) {
+            if (!ng && strstr(texStr, "/ng/") != 0) {
                 MILO_WARN("og %s has ng texture %s", fpstr, texStr);
             } else if (ng && strstr(texStr, "/og/") != 0) {
                 MILO_WARN("ng %s has og texture %s", fpstr, texStr);
@@ -2428,10 +2470,9 @@ void BuildVisit(BSPNode *node) {
         return;
 
     BuildPoly newPoly;
-    gParentPolys.push_back(newPoly);
+    gParentPolys.push_front(newPoly);
 
-    std::list<BuildPoly>::iterator lastIt = gParentPolys.end();
-    --lastIt;
+    std::list<BuildPoly>::iterator lastIt = gParentPolys.begin();
 
     Plane &plane = node->plane;
     float lenSq = plane.a * plane.a + plane.b * plane.b + plane.c * plane.c;
@@ -2457,22 +2498,12 @@ void BuildVisit(BSPNode *node) {
     }
 
     // x = y cross z
-    lastIt->mTransform.m.x.x = lastIt->mTransform.m.y.y * lastIt->mTransform.m.z.z
-        - lastIt->mTransform.m.y.z * lastIt->mTransform.m.z.y;
-    lastIt->mTransform.m.x.y = lastIt->mTransform.m.z.x * lastIt->mTransform.m.y.z
-        - lastIt->mTransform.m.z.z * lastIt->mTransform.m.y.x;
-    lastIt->mTransform.m.x.z = lastIt->mTransform.m.y.x * lastIt->mTransform.m.z.y
-        - lastIt->mTransform.m.y.y * lastIt->mTransform.m.z.x;
+    Cross(lastIt->mTransform.m.y, lastIt->mTransform.m.z, lastIt->mTransform.m.x);
 
     Normalize(lastIt->mTransform.m.x, lastIt->mTransform.m.x);
 
     // y = z cross x
-    lastIt->mTransform.m.y.x = lastIt->mTransform.m.z.y * lastIt->mTransform.m.x.z
-        - lastIt->mTransform.m.z.z * lastIt->mTransform.m.x.y;
-    lastIt->mTransform.m.y.y = lastIt->mTransform.m.x.x * lastIt->mTransform.m.z.z
-        - lastIt->mTransform.m.x.z * lastIt->mTransform.m.z.x;
-    lastIt->mTransform.m.y.z = lastIt->mTransform.m.z.x * lastIt->mTransform.m.x.y
-        - lastIt->mTransform.m.z.y * lastIt->mTransform.m.x.x;
+    Cross(lastIt->mTransform.m.z, lastIt->mTransform.m.x, lastIt->mTransform.m.y);
 
     // Add large quad. Retail materialises each corner immediately before its
     // push_back, so +/-10000.0f stay live in callee-saved f30/f31 across the
@@ -2539,11 +2570,8 @@ void BuildVisit(BSPNode *node) {
         }
 
         // Splice saved lists back
-        gParentPolys.splice(gParentPolys.end(), savedParents);
-        gChildPolys.splice(gChildPolys.end(), tempChildren);
-
-        tempChildren.clear();
-        savedParents.clear();
+        gParentPolys.splice(gParentPolys.begin(), savedParents);
+        gChildPolys.splice(gChildPolys.begin(), tempChildren);
     }
 
     // Move polys whose normal matches this node's plane from parents to children

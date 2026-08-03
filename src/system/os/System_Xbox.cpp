@@ -281,7 +281,6 @@ void GetMapFileName(String &filename) {
 
 void SystemPreInit(int, char **const, const char *c3) {
     SystemPreInit(GetCommandLineA(), c3);
-    XDKCheck();
     ForceLinkXMemFuncs();
 }
 

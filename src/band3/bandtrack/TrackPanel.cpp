@@ -148,15 +148,13 @@ void TrackPanel::Enter() {
 }
 
 void TrackPanel::Exit() {
-    if (GetState() == kUp) {
-        CleanUpTracks();
-        for (int i = 0; i < mTrackSlots.size(); i++) {
-            TrackSlot &curslot = mTrackSlots[i];
-            curslot.mTrack = 0;
-            curslot.mInstrument = kInstNone;
-        }
-        UIPanel::Exit();
+    CleanUpTracks();
+    for (int i = 0; i < mTrackSlots.size(); i++) {
+        TrackSlot &curslot = mTrackSlots[i];
+        curslot.mTrack = 0;
+        curslot.mInstrument = kInstNone;
     }
+    UIPanel::Exit();
 }
 
 #define kTrackNumSlots 5
@@ -573,9 +571,9 @@ void TrackPanel::Unload() {
     mDir->SetProperty("gem_tracks", 0);
     CleanUpTracks();
     DeleteAll(mTracks);
-    if (mTrackPanelDir)
-        mTrackPanelDir->CleanUpChordMeshes();
-    mTrackPanelDir = nullptr;
+    if (UIPanel::IsLoaded()) {
+        mTrackPanelDir = nullptr;
+    }
     UIPanel::Unload();
 }
 

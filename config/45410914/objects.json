@@ -510,7 +510,12 @@
             "system/os/AsyncTask.cpp": "NonMatching",
             "system/rndobj/EventTrigger.cpp": "NonMatching",
             "system/rndobj/MeshAnim.cpp": "NonMatching",
-            "system/rndobj/Part.cpp": "NonMatching",
+            "system/rndobj/Part.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_NOTIFY_ONCE_EVAL"
+                ]
+            },
             "system/rndobj/Rnd.cpp": "NonMatching",
             "system/synth_xbox/FxSendMeterEffect.cpp": "NonMatching",
             "system/synth_xbox/MeterEffect.cpp": "NonMatching",
@@ -835,7 +840,12 @@
             "system/world/PhysicsManager.cpp": "NonMatching",
             "system/char/CharServoBone.cpp": "NonMatching",
             "system/rndobj/Mat.cpp": "NonMatching",
-            "system/rndobj/Cam.cpp": "NonMatching",
+            "system/rndobj/Cam.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            },
             "system/meta/CreditsPanel.cpp": "NonMatching",
             "system/meta/HeldButtonPanel.cpp": "NonMatching",
             "system/synth_xbox/soundtouch/source/SoundTouch/SoundTouch.cpp": "NonMatching",
@@ -1978,7 +1988,12 @@
             "band3/meta_band/OutfitProvider.cpp": "NonMatching",
             "band3/meta_band/InstrumentFinishProvider.cpp": "NonMatching",
             "band3/meta_band/CurrentOutfitProvider.cpp": "NonMatching",
-            "band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp": "NonMatching",
+            "band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
             "band3/meta_band/MultiSelectListPanel.cpp": "NonMatching",
             "band3/meta_band/RetryAudioPanel.cpp": "NonMatching",
             "band3/meta_band/SaveLoadStatusPanel.cpp": "NonMatching",

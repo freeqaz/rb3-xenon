@@ -2,6 +2,7 @@
 #include "macros.h"
 #include "meta/Profile.h"
 #include "meta_band/BandSongMgr.h"
+#include "meta/StoreOffer.h"
 #include "meta_band/UIEventMgr.h"
 #include "net_band/DataResults.h"
 #include "net_band/RockCentral.h"
@@ -64,16 +65,47 @@ void UGCPurchasePanel::Poll() {
         break;
     case 2:
         break;
-    case 3:
-        mPurchaseState = 5;
+    case 3: {
+        // Retail (target fn 0x8263edf0, case 3) does substantially more than the
+        // Wii-dev source (which is just `mPurchaseState = 5; break;` -- ../rb3
+        // checked, confirms case 3 is a retail-360-only addition): it optionally
+        // derives a flags/index value from a global singleton (DAT_82cbfaec in the
+        // Ghidra decompile), then constructs an XboxPurchaser via placement new,
+        // mirroring the StorePanel::CheckOut idiom (StorePanel.cpp).
+        unsigned int flags = 0;
+        // TODO(unresolved): retail guards this block on a global singleton
+        // (Ghidra DAT_82cbfaec) -- `if (singleton && singleton->vtbl[0x14]())
+        // flags = singleton->vtbl[0x1c](mUser->GetPadNum());`. Singleton's class
+        // could not be identified within budget, so this defaults to flags=0
+        // (matching StorePanel::CheckOut's non-guarded call site). This leaves the
+        // guarded ~9-instruction prefix of case 3 unmatched but should recover the
+        // bulk of the body (OfferStringToID/GetPadNum/alloc/ctor/Initiate).
+        mPurchaseState = 4;
+        void *mem = operator new(sizeof(XboxPurchaser));
+        StorePurchaser *purchaser;
+        if (mem) {
+            purchaser = new (mem) XboxPurchaser(
+                mUser->GetPadNum(),
+                StorePurchaseable::OfferStringToID(mOfferID),
+                0,
+                0,
+                demo_upgrade,
+                flags
+            );
+        } else {
+            purchaser = 0;
+        }
+        mPurchaser = purchaser;
+        mPurchaser->Initiate();
         break;
+    }
     case 4:
         MILO_ASSERT(mPurchaser, 0x71);
         mPurchaser->Poll();
         if (!mPurchaser->IsPurchasing()) {
-            if (mPurchaser->IsSuccess()) {
+            if (mPurchaser->PurchaseMade()) {
                 mPurchaseState = 6;
-                unk4c = mPurchaser->PurchaseMade();
+                unk4c = mPurchaser->IsSuccess();
                 if (unk4c) {
                     TheSongMgr.ClearFromCache(TheSongMgr.ContentName(mSong, true));
                 }

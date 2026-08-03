@@ -356,13 +356,6 @@ BEGIN_HANDLERS(UIPanel)
 END_HANDLERS
 
 void UIPanel::Unload() {
-    if (mState == kUnloaded && mLoader && mLoader->IsLoaded()) {
-        MILO_NOTIFY("Unload occurred before FinishedLoad");
-        mLoadRefs++;
-        TheLoadMgr.PollUntilLoaded(mLoader, nullptr);
-        MILO_ASSERT(CheckIsLoaded(), 0xB9);
-        mLoadRefs--;
-    }
     static Message msg("unload");
     HandleType(msg);
     if (UIPanel::IsLoaded()) {

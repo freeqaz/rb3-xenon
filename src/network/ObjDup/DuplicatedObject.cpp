@@ -36,10 +36,13 @@ namespace Quazal {
     void DuplicatedObject::ReleaseReferenceToMaster() { m_refMasterStation.Release(); }
 
     void DuplicatedObject::AcquireReferenceToMaster() {
-        DORef *ref = &m_refMasterStation;
+        DORef *ref;
+        DuplicatedObject *referencedDO;
+        ref = &m_refMasterStation;
         if (!ref->m_poReferencedDO) {
             ref->Acquire();
         }
+        referencedDO = ref->m_poReferencedDO;
     }
 
     bool DuplicatedObject::IsInDuplicationSet(DOHandle h) const {

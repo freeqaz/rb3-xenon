@@ -91,7 +91,11 @@ public:
 
     DataNode DataForEachConfigObj(DataArray *);
 
-    DECLARE_REVS;
+    // gRev/gAltRev are NOT DECLARE_REVS class statics here -- retail folds both
+    // rev words onto ONE base register with 0/4 offsets (verified against
+    // TrackPanelDirBase::PostLoad/PreLoad's real disassembly), the same pattern
+    // already proven+landed for BandWardrobe.cpp's file-scope statics. See the
+    // gRevs struct + gRev/gAltRev macros in TrackPanelDirBase.cpp.
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 

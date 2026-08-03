@@ -690,6 +690,18 @@ void VocalTrack::UpdateVocalStyle() {
     }
 }
 
+// Retail 0x82B9FBB8. Not present in the rb3-Wii dev oracle -- an RB3-retail-only
+// addition, like the GetBandTrack()->StopDeploy() block in VocalPlayer::Jump that
+// calls it. Body is recovered from retail bytes: three BandTrack calls on mDir
+// (upcast +0x1dc to the BandTrack base of VocalTrackDir), the middle one virtual
+// through BandTrack vtable slot 2. The retail *name* is not recoverable (the
+// symbol is anonymous in the target map); the body is.
+void VocalTrack::JumpReset() {
+    mDir->ResetStreakMeter();
+    mDir->ResetSmashers(true);
+    mDir->ResetPlayerFeedback();
+}
+
 void VocalTrack::RebuildHUD() {
     static bool sDump;
     for (int i = 0; i < 3; i++) {

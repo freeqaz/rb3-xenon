@@ -230,45 +230,41 @@ __declspec(noinline) LocalBandUser * _outline_GetAssociatedLocalBandUser(BandPro
 
 
 void AccomplishmentProgress::NotifyPlayerOfAccomplishment(Symbol s, const char *iconArt) {
-    const int &_ref0 = mMetaScore;
-    if (!MetaPanel::sLaunchedGoalMsgsOnly
-        || s == TheCampaign->GetCurrentGoal()) {
-        LocalBandUser *pUser = _outline_GetAssociatedLocalBandUser(mParentProfile);
-        MILO_ASSERT(pUser, 0x34D);
-        Accomplishment *pAccomplishment = TheAccomplishmentMgr->GetAccomplishment(s);
-        MILO_ASSERT(pAccomplishment, 0x350);
-        int metaScoreValue =
-            TheAccomplishmentMgr->GetMetaScoreValue(pAccomplishment->GetMetaScoreValue());
-        int currentPoints =
-            TheCampaign->GetCurrentPointsForNextMajorCampaignLevelForUser(pUser);
-        int totalPoints =
-            TheCampaign->GetTotalPointsForNextMajorCampaignLevelForUser(pUser);
-        Symbol channel = pAccomplishment->GetPassiveMsgChannel();
-        int priority = pAccomplishment->GetPassiveMsgPriority();
-        String currentIcon = TheCampaign->GetCurrentMajorLevelIcon(pUser);
-        String nextIcon("");
-        if (!TheCampaign->IsUserOnLastCampaignLevel(pUser)) {
-            nextIcon = TheCampaign->GetNextMajorLevelIcon(pUser);
-        }
-        int newMetaScore = _ref0 + metaScoreValue;
-        int oldFanCount = TheAccomplishmentMgr->GetScaledFanValue(_ref0);
-        int newFanCount = TheAccomplishmentMgr->GetScaledFanValue(newMetaScore);
-        MILO_ASSERT(newFanCount >= oldFanCount, 0x365);
-        ThePassiveMessenger->TriggerEarnedAccomplishmentMsg(
-            pUser,
-            s,
-            channel,
-            priority,
-            newFanCount - oldFanCount,
-            currentPoints,
-            totalPoints,
-            metaScoreValue,
-            iconArt,
-            currentIcon.c_str(),
-            nextIcon.c_str(),
-            newMetaScore
-        );
+    LocalBandUser *pUser = _outline_GetAssociatedLocalBandUser(mParentProfile);
+    MILO_ASSERT(pUser, 0x34D);
+    Accomplishment *pAccomplishment = TheAccomplishmentMgr->GetAccomplishment(s);
+    MILO_ASSERT(pAccomplishment, 0x350);
+    Symbol metaScoreSym = pAccomplishment->GetMetaScoreValue();
+    int metaScoreValue = TheAccomplishmentMgr->GetMetaScoreValue(metaScoreSym);
+    int currentPoints =
+        TheCampaign->GetCurrentPointsForNextMajorCampaignLevelForUser(pUser);
+    int totalPoints =
+        TheCampaign->GetTotalPointsForNextMajorCampaignLevelForUser(pUser);
+    Symbol channel = pAccomplishment->GetPassiveMsgChannel();
+    int priority = pAccomplishment->GetPassiveMsgPriority();
+    String currentIcon = TheCampaign->GetCurrentMajorLevelIcon(pUser);
+    String nextIcon("");
+    if (!TheCampaign->IsUserOnLastCampaignLevel(pUser)) {
+        nextIcon = TheCampaign->GetNextMajorLevelIcon(pUser);
     }
+    int newMetaScore = mMetaScore + metaScoreValue;
+    int oldFanCount = TheAccomplishmentMgr->GetScaledFanValue(mMetaScore);
+    int newFanCount = TheAccomplishmentMgr->GetScaledFanValue(newMetaScore);
+    MILO_ASSERT(newFanCount >= oldFanCount, 0x365);
+    ThePassiveMessenger->TriggerEarnedAccomplishmentMsg(
+        pUser,
+        s,
+        channel,
+        priority,
+        newFanCount - oldFanCount,
+        currentPoints,
+        totalPoints,
+        metaScoreValue,
+        iconArt,
+        currentIcon.c_str(),
+        nextIcon.c_str(),
+        newMetaScore
+    );
 }
 
 bool AccomplishmentProgress::IsAccomplished(Symbol s) const {

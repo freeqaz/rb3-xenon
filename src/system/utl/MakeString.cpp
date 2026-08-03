@@ -112,8 +112,7 @@ char *NextBuf() {
     return buf;
 }
 
-FormatString::FormatString()
-    : mBuf(NextBuf()), mBufSize(MAX_BUF_SIZE), mFmtEnd(nullptr), mType(kNone) {}
+FormatString::FormatString() : mBuf(NextBuf()), mBufSize(MAX_BUF_SIZE), mFmtEnd(nullptr) {}
 
 FormatString &FormatString::operator<<(int i) {
     if (mType != kInt) {

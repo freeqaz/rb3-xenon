@@ -96,12 +96,23 @@ BEGIN_PROPSYNCS(TexMovie)
     SYNC_SUPERCLASS(RndPollable)
 END_PROPSYNCS
 
+// Retail writes the save revision by LOADING A GLOBAL, not a folded immediate
+// (same pattern as ui/UIFontImporter.cpp's gSaveRev): target emits lis/lwz
+// from a data address instead of the constant-folded `li r11, 8` that
+// SAVE_REVS(8, 0)'s inline packRevs() produces.
+static int gSaveRev = (0 << 16) | 8; // packRevs(alt=0, rev=8)
+
 BEGIN_SAVES(TexMovie)
-    SAVE_REVS(8, 0)
+    bs << gSaveRev;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndDrawable)
     SAVE_SUPERCLASS(RndPollable)
-    bs << mTex << mLoop << sRoot << mIsLocalized;
+    bs << mTex << mLoop << sRoot;
+#ifdef HX_NATIVE
+    // DC3-era addition (see the is_localized/is_empty gate above);
+    // RB3-360 retail's Save doesn't write this field.
+    bs << mIsLocalized;
+#endif
     mMovie.Save(&bs);
 END_SAVES
 

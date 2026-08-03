@@ -457,29 +457,34 @@ bool Splash::Show() {
         params = *mPreparedScreens.begin();
     }
     mCurrentDir = params.dir;
-    mCurrentDir->Enter();
-    mCurrentCam = mCurrentDir->Find<RndCam>(kSplashCam, false);
+    params.dir->Enter();
+    mCurrentCam = mCurrentDir->Find<RndCam>(kSplashCam);
     mCurrentMovie = mCurrentDir->Find<TexMovie>(kSplashMovie, false);
+#ifdef HX_NATIVE
     if (!mCurrentCam && !mCurrentMovie) {
         // .milo lacks both camera and movie — skip this splash screen
         return ShowNext();
     }
-    auto& _ref3 = mSplashDurationMs;
+#endif
     if (mCurrentMovie) {
-        Movie &movie = mCurrentMovie->GetMovie();
-        mCurrentMovie->SetShowing(true);
-        movie.SetPaused(false);
         if (mThreaded) {
+            Movie &movie = mCurrentMovie->GetMovie();
+            mCurrentMovie->SetShowing(true);
+            movie.SetPaused(false);
             float duration = movie.MsPerFrame() * (float)movie.NumFrames();
-            _ref3 = (int)ceilf(duration);
+            mSplashDurationMs = (int)ceilf(duration) * 2;
         } else {
+#ifdef HX_NATIVE
             // Non-threaded (native/web): set a generous splash duration.
             // Poll() drives UpdateThreadLoop() which calls Draw(), and Draw()
             // polls the movie and renders via BeginDrawing/EndDrawing.
-            _ref3 = 15000; // 15s max — movie will end earlier via Poll()
+            mSplashDurationMs = 15000; // 15s max — movie will end earlier via Poll()
+#else
+            return ShowNext();
+#endif
         }
     } else {
-        _ref3 = params.durationMs;
+        mSplashDurationMs = params.durationMs;
     }
     mCurrentTrigger = mCurrentDir->Find<EventTrigger>("splash.trig", false);
     if (mCurrentTrigger) {

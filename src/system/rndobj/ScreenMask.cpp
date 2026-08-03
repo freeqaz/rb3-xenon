@@ -8,7 +8,11 @@
 #include "utl/BinStream.h"
 
 void RndScreenMask::Save(BinStream &bs) {
-    bs << 2;
+    // RB3-360 retail: rev written from a constant-initialized static (.data
+    // lwz), not an immediate — bare literal folds to li (see MatAnim.cpp /
+    // PartAnim.cpp for the same pattern).
+    static int REV = 2;
+    bs << REV;
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndDrawable)
     bs << mMat << mColor << mRect << mUseCamRect;

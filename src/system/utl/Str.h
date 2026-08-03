@@ -96,7 +96,21 @@ public:
     String &operator+=(const char *);
     String &operator+=(Symbol);
     String &operator+=(const FixedString &);
+#ifdef HX_NATIVE
     String &operator+=(const String &s) { return *this += s.mStr; }
+#else
+    // Retail keeps `str += <String>` OUT OF LINE. The call site passes the
+    // String's own address in r4 and branches to the body at 0x827be070, whose
+    // decompilation is `operator+=(const char*)(this, *(arg + 8))` -- it reads
+    // mStr@8 (String layout), NOT FixedString::mStr@0, so that callee genuinely
+    // takes a String and the FixedString mangling is just the ICF tie winner
+    // (same story as operator=(const FixedString&) in Str.cpp). Forwarding here
+    // reproduces retail's call shape instead of inlining the mStr@8 load into
+    // every caller. Verified on RndOverlay::Draw (99.3 -> 100).
+    String &operator+=(const String &s) {
+        return *this += reinterpret_cast<const FixedString &>(s);
+    }
+#endif
     String &operator+=(char);
     String &operator=(const char *);
     String &operator=(Symbol);
@@ -145,7 +159,11 @@ public:
     String &erase(unsigned int, unsigned int);
     String &insert(unsigned int, unsigned int, char);
     String &insert(unsigned int, const char *);
-    // String &insert(unsigned int, const String &);
+    // Retail fn_827BE4A0: `lwz r6,8(r5); li r5,0; b replace` -- an out-of-line
+    // overload taking the String by reference (reads its mStr@8), distinct from
+    // insert(unsigned int, const char *). Purely additive: no existing call site
+    // can resolve here, since String does not convert to const char *.
+    String &insert(unsigned int, const String &);
 };
 
 bool SearchReplace(const char *, const char *, const char *, char *);

@@ -119,49 +119,49 @@ void SetVHBlurWeights(bool vertical, int width, int height) {
     if (vertical) {
         taps = sVertBlurTaps;
         if ((sBlurTapInitFlags & 1) == 0) {
-            sVertBlurTaps[0][0] = -0.9420162439f;
-            sVertBlurTaps[0][1] = -0.3990621567f;
-            sVertBlurTaps[1][0] = 0.9455860853f;
-            sVertBlurTaps[1][1] = -0.768907249f;
-            sVertBlurTaps[2][0] = -0.09418410063f;
-            sVertBlurTaps[2][1] = -0.9293887019f;
-            sVertBlurTaps[3][0] = 0.3449593782f;
-            sVertBlurTaps[3][1] = 0.2938776016f;
-            sVertBlurTaps[4][0] = -0.9158858061f;
-            sVertBlurTaps[4][1] = 0.4577143192f;
-            sVertBlurTaps[5][0] = -0.8154423237f;
-            sVertBlurTaps[5][1] = -0.8791246414f;
-            sVertBlurTaps[6][0] = -0.3827754259f;
-            sVertBlurTaps[6][1] = 0.276768446f;
-            sVertBlurTaps[7][0] = 0.9748439789f;
-            sVertBlurTaps[7][1] = 0.7564837933f;
+            taps[0][0] = -0.9420162439f;
+            taps[0][1] = -0.3990621567f;
+            taps[1][0] = 0.9455860853f;
+            taps[1][1] = -0.768907249f;
+            taps[2][0] = -0.09418410063f;
+            taps[2][1] = -0.9293887019f;
+            taps[3][0] = 0.3449593782f;
+            taps[3][1] = 0.2938776016f;
+            taps[4][0] = -0.9158858061f;
+            taps[4][1] = 0.4577143192f;
+            taps[5][0] = -0.8154423237f;
+            taps[5][1] = -0.8791246414f;
+            taps[6][0] = -0.3827754259f;
+            taps[6][1] = 0.276768446f;
+            taps[7][0] = 0.9748439789f;
+            taps[7][1] = 0.7564837933f;
             sBlurTapInitFlags = sBlurTapInitFlags | 1;
         }
     } else {
         taps = sHorzBlurTaps;
         if ((sBlurTapInitFlags & 2) == 0) {
-            sHorzBlurTaps[0][0] = 0.4432332516f;
-            sHorzBlurTaps[0][1] = -0.9751155376f;
-            sHorzBlurTaps[1][0] = 0.5374298096f;
-            sHorzBlurTaps[1][1] = -0.4737342f;
-            sHorzBlurTaps[2][0] = -0.2649691105f;
-            sHorzBlurTaps[2][1] = -0.4189302325f;
-            sHorzBlurTaps[3][0] = 0.7919751406f;
-            sHorzBlurTaps[3][1] = 0.1909018755f;
-            sHorzBlurTaps[4][0] = -0.2418884039f;
-            sHorzBlurTaps[4][1] = 0.9970650673f;
-            sHorzBlurTaps[5][0] = -0.8140995502f;
-            sHorzBlurTaps[5][1] = 0.9143759012f;
-            sHorzBlurTaps[6][0] = 0.1998412609f;
-            sHorzBlurTaps[6][1] = 0.7864136696f;
-            sHorzBlurTaps[7][0] = 0.1438316107f;
-            sHorzBlurTaps[7][1] = -0.1410079002f;
+            taps[0][0] = 0.4432332516f;
+            taps[0][1] = -0.9751155376f;
+            taps[1][0] = 0.5374298096f;
+            taps[1][1] = -0.4737342f;
+            taps[2][0] = -0.2649691105f;
+            taps[2][1] = -0.4189302325f;
+            taps[3][0] = 0.7919751406f;
+            taps[3][1] = 0.1909018755f;
+            taps[4][0] = -0.2418884039f;
+            taps[4][1] = 0.9970650673f;
+            taps[5][0] = -0.8140995502f;
+            taps[5][1] = 0.9143759012f;
+            taps[6][0] = 0.1998412609f;
+            taps[6][1] = 0.7864136696f;
+            taps[7][0] = 0.1438316107f;
+            taps[7][1] = -0.1410079002f;
             sBlurTapInitFlags = sBlurTapInitFlags | 2;
         }
     }
 
-    TheShaderMgr.SetNumTaps(8);
     float fVar = RndPostProc::DOFOverrides().mBlurWidthScale * sDOFWidthFactor;
+    TheShaderMgr.SetNumTaps(8);
     float xScale = (float)(long long)width * fVar * 4.8828124e-06f;
     float yScale = (float)(long long)height * fVar * 1.5432099e-05f;
 

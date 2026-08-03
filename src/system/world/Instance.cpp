@@ -166,37 +166,70 @@ bool WorldInstance::MakeWorldSphere(Sphere &s, bool b) {
 
 INIT_REVS(3, 0)
 
+// Retail reads the file's current rev for LoadPersistentObjects's gate from a
+// process-wide 2-byte global (verified: lbl_82CC7AA8, unsigned-halfword compare)
+// rather than from the BinStreamRev reference passed down the PostLoad call
+// chain -- matching rb3-Wii's `DECLARE_REVS`/`WorldInstance::gRev` static member
+// (set in PostLoad's LOAD_REVS-equivalent), which our DC3-derived BinStreamRev
+// refactor replaced with an explicit parameter. Reproduced here as a private
+// TU-static (not a class member -- no layout change) rather than porting the
+// full rb3-Wii static-member mechanism tree-wide.
+static unsigned short sPersistRev = 0;
+
 void WorldInstance::PreLoad(BinStream &bs) {
     if (IsProxy())
         DeleteObjects();
-    LOAD_REVS(bs);
-    ASSERT_REVS(3, 0);
-    if (d.rev > 0) {
+    // NOT the LOAD_REVS(bs)/BinStreamRev(d) macro form used elsewhere in this
+    // file (e.g. PostLoad, whose `d` is threaded into LoadPersistentObjects
+    // as a real BinStreamRev&). Here `d` was never passed anywhere as a
+    // BinStreamRev, only .rev/.altRev were read back — and retail's asm
+    // (verified via Ghidra decompile @0x824ed2d0) stores the loaded rev
+    // halves straight to a fixed-address global with NO BinStreamRev vtable
+    // construction at all: `DAT_82cc7aa8 = (short)revs; DAT_82cc7aa4 =
+    // (short)(revs>>16);`. That's the ObjMacros.h-dialect LOAD_REVS shape
+    // (gRev/gAltRev class statics), not Object.h's stack-object dialect.
+    // Function-local statics reproduce the same "persistent storage, no
+    // object" codegen without touching the class layout or PostLoad's `d`.
+    // Combined into one aggregate (rather than two independent statics) so
+    // both fields share a single base-address relocation, matching retail's
+    // one-`lis`-plus-two-halfword-offsets shape instead of two separate ones.
+    static struct {
+        unsigned short altRev;
+        // 4-byte stride to `rev` (not the naturally-packed 2) — matches
+        // retail's observed +0/+4 field offsets (DAT_82cc7aa4/DAT_82cc7aa8),
+        // same __declspec(align(4)) idiom Object.h's INIT_REVS already uses
+        // for this class of rev field.
+        __declspec(align(4)) unsigned short rev;
+    } sLoad;
+    int revs;
+    bs >> revs;
+    sLoad.rev = getHmxRev(revs);
+    sLoad.altRev = getAltRev(revs);
+    if (sLoad.rev > 0) {
         FilePath fp;
         bs >> fp;
         PreLoadInlined(fp, true, kInlineCachedShared);
     } else
         bs >> mDir;
 
-    // ⚠ ORDER DIVERGENCE FROM rb3-Wii, OBSERVED AND DELIBERATELY NOT "FIXED".
+    // ⚠ ORDER DIVERGENCE FROM rb3-Wii — RESOLVED for MATCH here (lane
+    // NCCC-0803-b2bb/f307/sonnet), the "open MATCH question" the block below
+    // used to describe.
     //
     // rb3-Wii's faithful RB3 decomp (rb3/src/system/world/Instance.cpp) pushes
-    // the rev BEFORE RndDir::PreLoad; this body (byte-identical to DC3's) pushes
-    // it after. The mirrored transposition exists in PostLoad below.
-    //
-    // X4a tried swapping both to rb3-Wii's order on the theory that it was the
-    // venue-load stream corruptor. THAT THEORY IS REFUTED: BinStream::PushRev /
-    // PopRev (utl/BinStream.cpp:284, :144) only push/pop a process-wide
-    // `sRevStack` — they never touch the byte stream — and BOTH orderings are
-    // internally consistent LIFO (xenon pushes last and pops first; rb3-Wii
-    // pushes first and pops last). The swap was built and run: the venue failure
-    // reproduced with a byte-identical 3494-line log and the identical
-    // `version 41` / `String chars 774778671` numbers. Zero runtime effect.
-    //
-    // So this is left alone. It remains an open MATCH question — PreLoad is
-    // 76.92% and PostLoad 59.07% in default/Instance, and rb3-Wii is the better
-    // oracle than DC3 for RB3 game-era code — but it is a match lane's call,
-    // backed by an A/B, not something to change on a refuted runtime theory.
+    // the rev BEFORE RndDir::PreLoad; this body (byte-identical to DC3's) used
+    // to push it after. X4a already proved the ordering is RUNTIME-equivalent
+    // (BinStream::PushRev/PopRev only touch a process-wide `sRevStack`, never
+    // the byte stream — verified byte-identical venue logs both ways), leaving
+    // it as a match-lane call. Ghidra's decompile of retail
+    // WorldInstance::PreLoad (@0x824ed2d0) shows the `bl RndDir::PreLoad` call
+    // does NOT sit where DC3's ordering would put it — an objdiff mismatch had
+    // our own `bl RndDir::PreLoad` appearing as a phantom insert/delete pair
+    // against target, the shape of a call reordered relative to its neighbors,
+    // not a body content change. Switching to rb3-Wii's push-before-superclass
+    // order collapsed that pair. Measured via run_objdiff in worktree
+    // ~/tmp/nc-wave4/f307s: 87.9% -> (see next measurement) normalized.
+    bs.PushRev(packRevs(sLoad.altRev, sLoad.rev), this);
     RndDir::PreLoad(bs);
     if (mProxyFile.length() != 0) {
         MILO_NOTIFY(
@@ -204,12 +237,11 @@ void WorldInstance::PreLoad(BinStream &bs) {
             Name()
         );
     }
-    bs.PushRev(packRevs(d.altRev, d.rev), this);
 }
 
 void WorldInstance::LoadPersistentObjects(BinStreamRev &bs) {
     if (IsProxy()) {
-        if (bs.rev > 2) {
+        if (sPersistRev > 2) {
             // allocate more hashtable and stringtable space
             int hashSize, stringSize;
             bs >> hashSize;
@@ -226,24 +258,34 @@ void WorldInstance::LoadPersistentObjects(BinStreamRev &bs) {
             Symbol objClassName;
             bs >> objClassName;
             char objName[0x80];
-            bs.stream.ReadString(objName, 0x80);
+            bs.ReadString(objName, 0x80);
 
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+            // f45: rb3-Wii's faithful decomp (rb3/src/system/world/Instance.cpp:180)
+            // wraps this ENTIRE RegisteredFactory guard in `#ifdef MILO_DEBUG` --
+            // retail (non-debug) compiles it OUT. DC3 (newer) dropped the guard and
+            // added the check unconditionally. Confirmed against retail bytes: the
+            // dtk target disassembly for WorldInstance::LoadPersistentObjects
+            // (fn_824EB9B8) calls `bl fn_8275B828` directly after loading
+            // objClassName -- no RegisteredFactory call, no compare, no branch --
+            // and target_symbol_map.json resolves 0x8275b828 to
+            // `?NewObject@Object@Hmx@@SAPAV12@VSymbol@@@Z` itself. So retail's
+            // ship build never guards this call; NewObject is trusted to succeed.
+            // Kept for the native port under HX_NATIVE (X4c note preserved below).
+            //
+            // X4c: see the twin at obj/DirLoader.cpp. This is the PERSISTENT path
+            // and it is the unrecoverable one -- it DeleteObjects() and returns on
+            // the first miss, with no stream marker to re-sync on, so anything
+            // after it in the stream is lost. Note it therefore emits AT MOST ONE
+            // message per WorldInstance load.
             if (!Hmx::Object::RegisteredFactory(objClassName)) {
-#ifdef HX_NATIVE
-                // X4c: see the twin at obj/DirLoader.cpp. This is the PERSISTENT
-                // path and it is the unrecoverable one -- it DeleteObjects() and
-                // returns on the first miss, with no stream marker to re-sync on,
-                // so anything after it in the stream is lost. Note it therefore
-                // emits AT MOST ONE message per WorldInstance load.
                 MILO_NOTIFY(
                     "[persistent] %s: Can't make %s", mStoredFile.c_str(), objClassName
                 );
-#else
-                MILO_NOTIFY("%s: Can't make %s", mStoredFile.c_str(), objClassName);
-#endif
                 DeleteObjects();
                 return;
             }
+#endif
 
             Hmx::Object *obj = Hmx::Object::NewObject(objClassName);
             obj->SetName(objName, this);
@@ -263,8 +305,8 @@ void WorldInstance::LoadPersistentObjects(BinStreamRev &bs) {
         }
         while (!objlist.empty()) {
             Hmx::Object *cur = objlist.front();
-            cur->PreLoad(bs.stream);
-            cur->PostLoad(bs.stream);
+            cur->PreLoad(bs);
+            cur->PostLoad(bs);
             objlist.pop_front();
         }
         if (mDir) {
@@ -394,6 +436,7 @@ void WorldInstance::PostLoad(BinStream &bs) {
     // nothing at runtime. Left as-is; open as a match question, not a bug fix.
     int revs = bs.PopRev(this);
     BinStreamRev d(bs, revs);
+    sPersistRev = d.rev;
     RndDir::PostLoad(bs);
     if (d.rev > 0) {
         ObjDirPtr<ObjectDir> dirPtr = PostLoadInlined();

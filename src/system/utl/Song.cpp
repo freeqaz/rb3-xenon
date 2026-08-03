@@ -85,8 +85,18 @@ BEGIN_PROPSYNCS(Song)
 #endif
 END_PROPSYNCS
 
+// Retail RB3-360 does NOT constant-fold SAVE_REVS(0, 0) here: the compiled
+// Save reads the packed rev word from a real memory location (`lis r11,
+// lbl_82E06F0C` / `lwz r11, lbl_82E06F0C, r11`, a single 32-bit load, no
+// shift/or packing math) instead of embedding `li r11, 0x0` -- proof the
+// source references a non-const file-static rather than calling packRevs()
+// on two literal args (target 128 B vs our prior 124 B, exactly the missing
+// address-compute + load). Use a non-const static so MSVC can't fold it away
+// (same technique as ui/UILabel.cpp's gRev, rndobj/Set.cpp's gRev/gAltRev).
+static int gSaveRev;
+
 BEGIN_SAVES(Song)
-    SAVE_REVS(0, 0)
+    bs << gSaveRev;
     SAVE_SUPERCLASS(RndAnimatable)
     bs << mSongName;
     bs << mDirty;

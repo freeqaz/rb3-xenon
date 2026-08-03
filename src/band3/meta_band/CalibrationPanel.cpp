@@ -220,6 +220,7 @@ void CalibrationPanel::UpdateLabel() {
                 progbargrp->SetShowing(false);
                 if (unk5c > f14) {
                     if (4 - GetTestRep() == 0) {
+                        static Symbol lag_go("lag_go");
                         countdownlabel->SetTextToken(lag_go);
                     } else {
                         countdownlabel->SetInt(4 - GetTestRep(), false);
@@ -295,6 +296,12 @@ void CalibrationPanel::UpdateStream() {
 }
 
 DataNode CalibrationPanel::OnInitializeContent(DataArray *arr) {
+    memset(unka4, 0, 0x14);
+    memset(unkb8, 0, 0x14);
+    RndTransAnim *tabanim = mDir->Find<RndTransAnim>("prog_bar_tab.tnm", true);
+    RndTransAnim *boneanim = mDir->Find<RndTransAnim>("bone_prog_bar.tnm", true);
+    tabanim->SetFrame(0, 1);
+    boneanim->SetFrame(0, 1);
     static Symbol cal_video_desc_guitar("cal_video_desc_guitar");
     static Symbol cal_video_desc_drum("cal_video_desc_drum");
     static Symbol cal_video_desc_pad("cal_video_desc_pad");
@@ -307,12 +314,6 @@ DataNode CalibrationPanel::OnInitializeContent(DataArray *arr) {
     static Symbol cal_hw_video_title("cal_hw_video_title");
     static Symbol cal_audio_title("cal_audio_title");
     static Symbol cal_video_title("cal_video_title");
-    memset(unka4, 0, 0x14);
-    memset(unkb8, 0, 0x14);
-    RndTransAnim *tabanim = mDir->Find<RndTransAnim>("prog_bar_tab.tnm", true);
-    RndTransAnim *boneanim = mDir->Find<RndTransAnim>("bone_prog_bar.tnm", true);
-    tabanim->SetFrame(0, 1);
-    boneanim->SetFrame(0, 1);
     ControllerType ty = GetControllerType();
     switch (ty) {
     case kControllerGuitar:
@@ -369,9 +370,10 @@ DataNode CalibrationPanel::OnInitializeContent(DataArray *arr) {
     if (mHardwareMode)
         sound = "sfx/streams/sync_beep";
     mFader = Hmx::Object::New<Fader>();
-    mStream = TheSynth->NewStream(sound, 0, 2.0f, false);
+    mStream = TheSynth->NewStream(sound, mCycleTimeMs * 0.5f, 2.0f, true);
     MILO_ASSERT(mStream, 0x205);
     if (mStream) {
+        mStream->SetJump(mCycleTimeMs, 1.0f, NULL);
         mStream->SetVolume(mVolDb);
         mFader->SetVal(-96.0f);
         mStream->Faders()->Add(mFader);

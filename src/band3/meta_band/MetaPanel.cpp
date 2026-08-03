@@ -367,7 +367,6 @@ void MetaPanel::Poll() {
     UIPanel::Poll();
     mMusic->Poll();
     mSongPreview.Poll();
-    TheWiiFriendsProvider.Poll();
     SyncGameTimer();
     UpdatePostProc();
 }
@@ -380,11 +379,6 @@ void MetaPanel::Enter() {
 void MetaPanel::Exit() {
     UIPanel::Exit();
     mMusic->Stop();
-
-    extern void fn_8250916C(const void*);
-    extern const void* lbl_82C926B8;
-
-    fn_8250916C(&lbl_82C926B8);
 }
 
 bool MetaPanel::Exiting() const {

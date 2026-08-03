@@ -53,7 +53,6 @@ BEGIN_COPYS(MeterDisplay)
     COPY_MEMBER_FROM(p, mMaxValue)
     COPY_MEMBER_FROM(p, mAnimPeriod)
     COPY_SUPERCLASS_FROM(UIComponent, p)
-    Update();
 END_COPYS
 
 BEGIN_LOADS(MeterDisplay)

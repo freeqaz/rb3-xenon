@@ -288,7 +288,12 @@ void CharBoneDir::SyncFilter() {
 void CharBoneDir::MergeCharacter(const FilePath &fp) {
     ObjectDir *dir = DirLoader::LoadObjects(fp.c_str(), 0, 0);
     if (!dir)
-        MILO_NOTIFY("Could not load %s", fp);
+        // Retail's residue here copy-constructs a String temp from `fp`
+        // (FilePath is class-typed / non-POD) -- this is a COPYING site, not
+        // an ORDERING site (only one non-format arg), so it needs
+        // MiloStripEval directly rather than the file-wide comma-form
+        // MILO_NOTIFY. See os/Debug.h:241-259 for the COPYING/ORDERING split.
+        MiloStripEval("Could not load %s", fp);
     else {
         std::list<RndTransformable *> tlist;
         for (ObjDirItr<RndTransformable> it(dir, false); it != nullptr; ++it) {
@@ -309,7 +314,36 @@ void CharBoneDir::MergeCharacter(const FilePath &fp) {
                 charTrans = backTrans;
             } else {
                 charTrans->Copy(backTrans, Hmx::Object::kCopyDeep);
-                backTrans->ReplaceRefs(charTrans);
+                // Retail inlines the ref-rewiring here rather than calling
+                // Hmx::Object::ReplaceRefs: the loop tail redoes backTrans's
+                // *virtual-base* adjustment (lwz vptr / lwz vbaseoff / add)
+                // on every iteration, which ReplaceRefs -- where `this` is
+                // already the Hmx::Object* -- would never emit.
+                //
+                // Three details are load-bearing, each worth ~1-5pp:
+                //  1. No live iterator. Re-read Refs() each pass (Replace
+                //     unlinks the node it acts on, so begin() advances by
+                //     itself). Caching `it` + `++it` pins one extra
+                //     callee-saved reg and shifts EVERY register in the
+                //     function down by one (r27->r26->r25->r24->r23).
+                //  2. empty(), not begin() != end(). Both compile to the
+                //     same `next == this` compare, but ObjRef::iterator is
+                //     non-POD, so each begin()/end() materializes a stack
+                //     temp -- the != form grew the frame 0x200 -> 0x210 and
+                //     shifted every stack offset in the function.
+                //  3. static_cast<Hmx::Object*> before the ObjRef* cast.
+                //     Replace's `from` is the vbase-adjusted object pointer
+                //     (addi r4,r10,0x4); reinterpret_cast'ing backTrans
+                //     directly passes the unadjusted RndTransformable*.
+                while (!backTrans->Refs().empty()) {
+                    RefPtrOf(backTrans->Refs().begin())
+                        ->Replace(
+                            reinterpret_cast<ObjRef *>(
+                                static_cast<Hmx::Object *>(backTrans)
+                            ),
+                            charTrans
+                        );
+                }
             }
             tlist60.push_back(charTrans);
             char buf[256];

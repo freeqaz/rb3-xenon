@@ -455,13 +455,13 @@ BEGIN_PROPSYNCS(CharClip)
 END_PROPSYNCS
 
 BEGIN_SAVES(CharClip)
-    SAVE_REVS(22, 0)
+    SAVE_REVS(19, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     bs << mFramesPerSec;
     bs << mFlags;
     bs << mPlayFlags;
     bs << mRange;
-    bs << (mRelative ? mRelative->Name() : "");
+    bs << mRelative;
     bs << mOldVer;
     bs << mDoNotCompress;
     mTransitions.Save(bs);

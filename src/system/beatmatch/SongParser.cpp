@@ -840,6 +840,7 @@ SongParser::ComputeSlots(int slot, int t1, int t2, std::vector<GemInProgress> &g
 void SongParser::OnMidiMessageVocals(
     int tick, unsigned char status, unsigned char data1, unsigned char data2
 ) {
+    int pitch = data1;
     switch (MidiGetType(status)) {
     case 0xB0: {
         if (data1 == 8 && data2 <= 100)
@@ -847,12 +848,12 @@ void SongParser::OnMidiMessageVocals(
         break;
     }
     case 0x90: {
-        int num = data1 - (mPlayerSlot + (mNumDifficulties - 1) * 12 + 60);
+        int num = pitch - (mPlayerSlot + (mNumDifficulties - 1) * 12 + 60);
         if (0 <= num && num <= 1) {
             mSink->StartVocalPlayerPhrase(tick, num);
             mVocalPhraseStartTick = tick;
         } else {
-            if (mLowVocalPitch <= data1 && data1 <= mHighVocalPitch)
+            if (mLowVocalPitch <= pitch && pitch <= mHighVocalPitch)
                 StartVocalNote(tick, data1, 0);
             else {
                 if (data1 == 116)
@@ -919,7 +920,7 @@ void SongParser::OnMidiMessageVocals(
         break;
     }
     case 0x80: {
-        int num80 = data1 - (mPlayerSlot + (mNumDifficulties - 1) * 12 + 60);
+        int num80 = pitch - (mPlayerSlot + (mNumDifficulties - 1) * 12 + 60);
         if (0 <= num80 && num80 <= 1) {
             if (mCodaStartTick != -1 && tick >= mCodaStartTick) {
                 MILO_WARN(
@@ -934,17 +935,17 @@ void SongParser::OnMidiMessageVocals(
             mSink->EndVocalPlayerPhrase(tick, num80);
             mVocalPhraseStartTick = -1;
         } else {
-            if (mLowVocalPitch <= data1 && data1 <= mHighVocalPitch)
+            if (mLowVocalPitch <= pitch && pitch <= mHighVocalPitch)
                 EndVocalNote(tick);
             else {
                 if (data1 == 116)
                     OnCommonPhraseEnd(tick);
                 else if (data1 == 0) {
                     MILO_ASSERT(mVocalRangeShiftStartTick != -1, 0x55C);
+                    float rangeShiftStartTime = GetTempoMap()->TickToTime(mVocalRangeShiftStartTick);
+                    float rangeShiftEndTime = GetTempoMap()->TickToTime(tick);
                     mSink->AddRangeShift(
-                        mVocalRangeShiftStartTick,
-                        GetTempoMap()->TickToTime(tick)
-                            - GetTempoMap()->TickToTime(mVocalRangeShiftStartTick)
+                        mVocalRangeShiftStartTick, rangeShiftEndTime - rangeShiftStartTime
                     );
                     mVocalRangeShiftStartTick = -1;
                 }
@@ -1674,6 +1675,11 @@ bool SongParser::CheckDrumMapMarker(int i, int j, bool b) {
         return false;
 }
 
+__declspec(noinline) static bool IsWhiteKey(int pitch) {
+    int mod = pitch % 12;
+    return mod != 1 && mod != 3 && mod != 6 && mod != 8 && mod != 10;
+}
+
 bool SongParser::CheckKeyboardRangeMarker(int tick, int pitch, bool b) {
     // Same shape as PitchToSlot: retail (0x82783E90) has a function-local
     // static Symbol keys (guard 0x82E06410 bit 0x1, storage 0x82E0640C) that
@@ -1681,8 +1687,11 @@ bool SongParser::CheckKeyboardRangeMarker(int tick, int pitch, bool b) {
     static Symbol keys("keys");
     if (mTrackType != kTrackRealKeys)
         return false;
-    if (pitch > 24U)
+    if (pitch < 0 || pitch > 24)
         return false;
+    if (!IsWhiteKey(pitch)) {
+        MILO_WARN("%s: keyboard range marker on non-white note %s", mFilename, PrintTick(tick));
+    }
     if (b) {
         if (mKeyboardRangeFirstPitch == -1) {
             MILO_ASSERT(mKeyboardRangeSecondPitch == -1, 0x934);

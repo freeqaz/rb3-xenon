@@ -893,20 +893,21 @@ void CharBones::RotateBy(CharBones &dst) const {
         Vector3 *ddata = (Vector3 *)dst.mStart;
         Bone *db = dst.mBones.begin() + dst.mCounts[TYPE_POS];
         const Bone *src_end = src + _ref1[TYPE_QUAT];
-        if (db != nullptr && mCompression >= kCompressVects) {
+        if (mCompression >= kCompressVects) {
             short *sdata = (short *)mStart;
             while (true) {
-                long long sz = (long long)sdata[2];
-                short sy = sdata[1];
+                float fx = (float)(long long)sdata[0] * 0.039674062f;
+                float fy = (float)(long long)sdata[1] * 0.039674062f;
+                float fz = (float)(long long)sdata[2] * 0.039674062f;
                 while (db->name != src->name) {
                     db++;
                     if (db >= db_end) goto complain;
                     ddata++;
                 }
                 src++;
-                ddata->x += (float)(long long)sdata[0] * 0.039674062f;
-                ddata->y += (float)(long long)sy * 0.039674062f;
-                ddata->z += (float)sz * 0.039674062f;
+                ddata->x += fx;
+                ddata->y += fy;
+                ddata->z += fz;
                 if (src_end == src) goto rotate_quat;
                 db++;
                 if (db >= db_end) goto complain;
@@ -962,7 +963,7 @@ rotate_quat:
                 float nz = sq.w*dz + sq.x*dy - sq.y*dx + sq.z*dw;
                 dquat->x = nx; dquat->y = ny; dquat->z = nz; dquat->w = nw;
 #else
-                dquat->w = -(-(dy * sq.y - (dw * sq.w - dx * sq.x)) - dz * sq.z);
+                dquat->w = -(dz * sq.z - -(dy * sq.y - (dw * sq.w - dx * sq.x)));
                 dquat->z = -(dx * sq.y - ((dy * sq.x + (dz * sq.w + dw * sq.z))));
                 dquat->y = -(dz * sq.x - (dw * sq.y + dy * sq.w + dx * sq.z));
                 dquat->x = -(dy * sq.z - (dw * sq.x + dz * sq.y + dx * sq.w));
@@ -995,7 +996,7 @@ rotate_quat:
                 float nz = sq.w*dz + sq.x*dy - sq.y*dx + sq.z*dw;
                 dquat->x = nx; dquat->y = ny; dquat->z = nz; dquat->w = nw;
 #else
-                dquat->w = -(-(dy * sq.y - (dw * sq.w - dx * sq.x)) - dz * sq.z);
+                dquat->w = -(dz * sq.z - -(dy * sq.y - (dw * sq.w - dx * sq.x)));
                 dquat->z = -(dx * sq.y - (dy * sq.x + dz * sq.w + dw * sq.z));
                 dquat->y = -(dz * sq.x - (dw * sq.y + dy * sq.w + dx * sq.z));
                 dquat->x = -(dy * sq.z - (dw * sq.x + dz * sq.y + dx * sq.w));
@@ -1024,11 +1025,10 @@ rotate_quat:
                 float dz = dquat->z;
                 float dy = dquat->y;
                 // dst = src * dst (quaternion multiply)
-                dquat->y = -(sx * dz - (dy * sw + dx * sz + sy * dw));
-                dquat->z = (sy * dx - (dy * sx + sw * dz + dw * sz));
-                dquat->z = -dquat->z;
+                dquat->y = -(dz * sx - (dy * sw + sz * dx - sy * dw));
+                dquat->z = -(sy * dx - (dz * sw + dy * sx + sz * dw));
                 dquat->w = -(dz * sz - -(dy * sy - (dw * sw - sx * dx)));
-                dquat->x = -(dy * sz - (sy * dz + sx * dw + dx * sw));
+                dquat->x = -(sz * dy - (dx * sw + dz * sy + sx * dw));
                 if (src == src_end) goto rotate_rot;
                 db++;
                 if (db >= db_end) goto complain;

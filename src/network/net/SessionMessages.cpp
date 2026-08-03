@@ -37,6 +37,8 @@ void JoinRequestMsg::GetAuthenticationData(BinStream &bs) const {
 }
 
 void JoinRequestMsg::Save(BinStream &bs) const {
+    XNADDR xnAddr = mXnAddr;
+    bs.Write(&xnAddr, sizeof(xnAddr));
     unsigned char numusers = NumUsers();
     bs << numusers;
     for (int i = 0; i < numusers; i++) {

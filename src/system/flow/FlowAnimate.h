@@ -29,7 +29,14 @@ public:
     virtual void Execute(QueueState);
     virtual bool IsRunning();
 
-    OBJ_MEM_OVERLOAD(0x1C)
+    // retail keeps FlowAnimate::operator new OUT OF LINE and ICF-folded (its
+    // `new` site is a single `bl ??2<folded>@@SAPAXI@Z` with NO StaticClassName
+    // call), unlike the OBJ_MEM_OVERLOAD majority which retail inlined.
+    // Classified from the CTOR relocation, not the symbol name -- confirmed by
+    // direct COFF/relocation read of NewObject: target is
+    // `li r3,0x104 ; bl ??2CriticalSection@@SAPAXI@Z ; stw r3,0x50(r31)`, no
+    // StaticClassName call, matching the FlowSound/FlowDistance/FlowRun pattern.
+    MEM_OVERLOAD(FlowAnimate, 0x1C)
     NEW_OBJ(FlowAnimate)
 
 protected:

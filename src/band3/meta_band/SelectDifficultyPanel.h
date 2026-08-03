@@ -10,7 +10,12 @@ public:
     OBJ_SET_TYPE(SelectDifficultyPanel);
     NEW_OBJ(SelectDifficultyPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~SelectDifficultyPanel() {}
+    // No user-declared dtor: UIPanel's is already virtual. A user-declared
+    // `virtual ~SelectDifficultyPanel() {}` makes MSVC emit a separate
+    // ??1SelectDifficultyPanel COMDAT and CALL it from ??_G -- retail has no
+    // such function row and inlines the body (Callback vptr store @0x3c +
+    // base dtor call) straight into the scalar deleting destructor. Same
+    // pattern documented in SongSelectPanel.h.
     virtual void Enter();
     virtual void Exit();
     virtual void Poll();

@@ -38,6 +38,27 @@ static std::map<std::pair<Symbol, Symbol>, bool> sSuperClassMap;
 // read with `lhz` + unsigned compare) rather than re-reading `d.rev` off the
 // BinStreamRev — same shape as sEventTriggerRev in rndobj/EventTrigger.cpp.
 static unsigned short sObjectDirRev;
+// ObjectDir::PostLoad reuses the same TU-static pattern for BOTH halves of the
+// packed rev (not just rev): retail's PostLoad reads/writes a fixed pair of
+// globals repeatedly across the whole function body (confirmed via objdiff --
+// `lhz`/`sth` at a fixed symbol address recurring at every d.rev check site,
+// plus an unconditional store of the unused altRev half that only makes sense
+// for a global -- a true stack local's dead altRev store would be eliminated).
+// The explicit `int tempRev = d.rev; ...; d.rev = tempRev;` save/restore
+// around the recursive `iDir.dir.PostLoad(mLoader)` call already present in
+// this ported source only makes sense if the storage is SHARED across
+// recursive re-entry -- i.e. it was already anticipating this.
+static unsigned short sObjectDirAltRev;
+
+// Retail RB3 keeps the object-version stack as FREE functions (the rb3-Wii
+// obj/ObjVersion.h pair `inline int PopRev(Hmx::Object *o)`): the target calls
+// PopRev(this) with NO BinStream receiver at all. dc3's newer engine moved them
+// onto BinStream, which is what our in-tree utl/BinStream.h declares, and that
+// extra `this` is what forces an `mr r3, <bs>` before every call site.
+// Same TU-local redeclaration OvershellDir.cpp already uses for this exact
+// reason -- kept file-local rather than changing utl/BinStream.h, which would
+// cascade to every Load/PostLoad in the tree.
+int PopRev(Hmx::Object *);
 
 #ifdef HX_NATIVE
 namespace {
@@ -1470,13 +1491,15 @@ void ObjectDir::PreLoad(BinStream &bs) {
 }
 
 void ObjectDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    int revs = PopRev(this);
+    sObjectDirRev = getHmxRev(revs);
+    sObjectDirAltRev = getAltRev(revs);
 
     for (int i = mInlinedDirs.size() - 1; i >= 0; i--) {
         InlinedDir &iDir = mInlinedDirs[i];
-        int tempRev = d.rev;
+        int tempRev = sObjectDirRev;
         iDir.dir.PostLoad(mLoader);
-        d.rev = tempRev;
+        sObjectDirRev = tempRev;
         if (iDir.mType == kInlineCachedShared) {
             iDir.shared = true;
         }
@@ -1487,7 +1510,20 @@ void ObjectDir::PostLoad(BinStream &bs) {
                 if (last->IsLoaded()) {
                     iDir.dir = last->GetDir();
                 } else {
+#ifdef HX_NATIVE
                     MILO_NOTIFY("Can't share unloaded dir %s", fp);
+#else
+                    // Retail (0x827516a8) evaluates THIS one NOTIFY site via
+                    // MiloStripEval's copy-ctor+dtor shape (??0String@@QAA@ABV0@@Z
+                    // / ??1String@@UAA@XZ with no formatting/emission call between),
+                    // not the usual (void)(args) comma form MILO_NOTIFY expands to
+                    // elsewhere. Debug.h documents switching the whole NOTIFY macro
+                    // to MiloStripEval as a whole-binary regression (-20, from
+                    // ~20 multi-arg SetType sites hitting the eval-order hazard);
+                    // this call has exactly one non-literal arg, so that hazard
+                    // doesn't apply — kept local instead of touching the macro.
+                    MiloStripEval("Can't share unloaded dir %s", fp);
+#endif
                 }
             }
         } else {
@@ -1498,15 +1534,15 @@ void ObjectDir::PostLoad(BinStream &bs) {
         }
     }
 
-    if (d.rev > 0x17) {
-        int revs2 = d.stream.Cached() ? 0 : bs.PopRev(this);
-        int offset = bs.PopRev(this);
+    if (sObjectDirRev > 0x17) {
+        int revs2 = bs.Cached() ? 0 : PopRev(this);
+        int offset = PopRev(this);
         MILO_ASSERT_RANGE_EQ(offset, 0, mSubDirs.size(), 0x466);
         if (revs2 != 2) {
             for (int i = mSubDirs.size() - offset - 1; i >= 0; i--) {
                 bool bbb = false;
                 if (revs2 == 1) {
-                    bbb = bs.PopRev(this) != 0;
+                    bbb = PopRev(this) != 0;
                 }
                 ObjDirPtr<ObjectDir> inlinedDirPtr = PostLoadInlined();
                 ObjDirPtr<ObjectDir> &curDirPtr = mSubDirs[i + offset];
@@ -1535,7 +1571,7 @@ void ObjectDir::PostLoad(BinStream &bs) {
         }
     }
 
-    if (d.rev > 10) {
+    if (sObjectDirRev > 10) {
         char buf[0x80];
         bs.ReadString(buf, 0x80);
         unk8c = FindObject(buf, false);
@@ -1546,9 +1582,9 @@ void ObjectDir::PostLoad(BinStream &bs) {
         }
     }
 
-    if (d.rev > 0x15) {
+    if (sObjectDirRev > 0x15) {
         LoadRest(bs);
-    } else if (d.rev > 0x10) {
+    } else if (sObjectDirRev > 0x10) {
         Hmx::Object::Load(bs);
     }
 
@@ -1557,7 +1593,11 @@ void ObjectDir::PostLoad(BinStream &bs) {
 
     if (mProxyOverride) {
         mProxyOverride = false;
-        if (!TheLoadMgr.EditMode()
+        // Retail's build resolves this to the constant `false` arm of
+        // LOADMGR_EDITMODE (Loader.h) since it lacked MILO_DEBUG; using
+        // TheLoadMgr.EditMode() directly here forces a real call our tree's
+        // force-defined MILO_DEBUG makes live but retail never emitted.
+        if (!LOADMGR_EDITMODE
             && (!IsProxy() || AllowsInlineProxy())) {
             MILO_FAIL("You cannot override an inlined proxy!");
         }
@@ -1594,11 +1634,7 @@ void ObjectDir::PostLoad(BinStream &bs) {
 // and the X360 arm below is left TOKEN-FOR-TOKEN UNCHANGED, so `default/Dir`
 // keeps whatever it currently scores. A match lane should A/B the retail guard
 // against the X360 object -- rb3-Wii `main/system/obj/Dir` is the oracle.
-#ifdef HX_NATIVE
     else if (IsProxy() && !mProxyFile.empty()) {
-#else
-    else if (ShouldSaveProxy(bs)) {
-#endif
         DeleteObjects();
         DeleteSubDirs();
 #ifdef HX_NATIVE

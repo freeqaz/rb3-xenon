@@ -1,3 +1,21 @@
+// PropSync<Hide> instantiates Hide::Hide(Hmx::Object*), whose mem-init list
+// calls ObjPtr<RndDrawable>'s owner-only ctor (mDraw(o)). Retail inlines it to
+// three stores (vtable/mOwner/mObject=0); by default this is an out-of-line
+// `bl` here. Force the two-arg ctor (default ptr=nullptr) inline per-TU -- see
+// the RB3_TU_OBJPTR_FORCEINLINE_CTOR doc block in obj/Object.h (measured best
+// of the three inline policies on a sibling owner-only site, CharServoBone).
+// This is the only owner-only ObjPtr<T> ctor call site in this TU (grepped),
+// so no other function in the unit is exposed to the policy change. Must be
+// defined BEFORE the first (transitive, via CharMeshHide.h) include of
+// obj/Object.h, which is `#pragma once`-guarded.
+// Residual after RB3_TU_OBJPTR_FORCEINLINE_CTOR alone: retail materializes the
+// ObjPtr vtable ONE SLOT BEFORE the mOwner store; every base-mem-init spelling
+// puts mOwner first (it's free to float above the vptr materialization). This
+// is the mOwner analogue of the mObject scheduling question DEFER_OBJECT
+// documents -- see obj/Object.h (lane DS-4/C) and the identical residual +
+// fix on char/CharBonesBlender.cpp.
+#define RB3_TU_OBJPTR_DEFER_OWNER
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "char/CharMeshHide.h"
 #include "obj/Object.h"
 // Retail folds both rev words onto ONE base register at +0/+4, which only

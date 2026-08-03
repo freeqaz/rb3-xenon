@@ -1,3 +1,14 @@
+// Retail inlines the owner-only ObjPtr ctor in this TU (three stores, no
+// AddRef). BINARY EVIDENCE (lane NCCC-0803-b2bb/f371, retail ??0CharIKSliderMidi@@
+// = fn_823CB698, va 0x823cb698): the ctor contains exactly FOUR `bl` and not one
+// of them is an ObjPtr ctor -- ??0Object@Hmx@@ (fn_8275CB88), ??0CharWeightable@@
+// (fn_823AEB30), ??0CharPollable@@ (fn_822C10B8), Enter (fn_824215E0) -- while
+// the member-init list constructs FOUR owner-only ObjPtrs (mTarget, mFirstSpot,
+// mSecondSpot, mMe). Four constructions, zero calls => all inlined. Same
+// signature as char/CharEyes.cpp's documented precedent (identical callee
+// addresses for the Object/CharWeightable/CharPollable base ctors).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT 1
 #include "char/CharIKSliderMidi.h"
 #include "char/CharWeightable.h"
 #include "char/Character.h"
@@ -8,11 +19,8 @@
 #include "rndobj/Utl.h"
 
 CharIKSliderMidi::CharIKSliderMidi()
-    : mTarget(this), mFirstSpot(this), mSecondSpot(this), mMe(this) {
-    mTargetPercentage = 1.0f;
-    mTolerance = 0.0f;
-    mPercentageChanged = false;
-    mResetAll = true;
+    : mTarget(this), mFirstSpot(this), mSecondSpot(this), mTargetPercentage(1.0f),
+      mPercentageChanged(false), mResetAll(true), mMe(this), mTolerance(0.0f) {
     Enter();
 }
 

@@ -223,7 +223,8 @@ void NextSongPanel::IncrementSongReview(int i) {
     MILO_ASSERT(profile, 0x10B);
     MetaPerformer *performer = MetaPerformer::Current();
     MILO_ASSERT(performer, 0x10F);
-    int songID = TheSongMgr.GetSongIDFromShortName(performer->GetCompletedSong(), true);
+    Symbol completedSong = performer->GetCompletedSong();
+    int songID = TheSongMgr.GetSongIDFromShortName(completedSong, true);
     int review = profile->GetSongReview(songID);
     review++;
     if (review > 5)

@@ -451,14 +451,14 @@ BEGIN_SAVES(RndParticleSys)
 END_SAVES
 
 BEGIN_COPYS(RndParticleSys)
+    CREATE_COPY(RndParticleSys)
+    MILO_ASSERT(c, 0xD6);
     COPY_SUPERCLASS(Hmx::Object)
     COPY_SUPERCLASS(RndPollable)
     COPY_SUPERCLASS(RndAnimatable)
     COPY_SUPERCLASS(RndTransformable)
     COPY_SUPERCLASS(RndDrawable)
-    CREATE_COPY(RndParticleSys)
-    BEGIN_COPYING_MEMBERS
-        COPY_MEMBER(mPreserveParticles)
+    COPY_MEMBER(mPreserveParticles)
         if (mPreserveParticles) {
             SetPool(c->mMaxParticles, c->mType);
             for (RndParticle *p = c->mActiveParticles; p != nullptr; p = p->next) {
@@ -545,12 +545,14 @@ BEGIN_COPYS(RndParticleSys)
             if (!mPreserveParticles) {
                 SetPool(c->mMaxParticles, c->mType);
             }
-            RndTransformable *parent =
-                c->mMotionParent.Ptr() ? c->mMotionParent.Ptr() : this;
+            RndTransformable *parent;
+            if (c->mMotionParent.Ptr() != (Hmx::Object *)c)
+                parent = c->mMotionParent.Ptr();
+            else
+                parent = this;
             SetRelativeMotion(c->mRelativeMotion, parent);
             SetSubSamples(c->mSubSamples);
         }
-    END_COPYING_MEMBERS
 END_COPYS
 
 void RndParticleSys::SetFrame(float frame, float blend) {
@@ -1057,7 +1059,6 @@ RndParticle *RndParticleSys::AllocParticle() {
             return nullptr;
         }
     }
-    p->prev = p;
     if (mActiveParticles) {
         mActiveParticles->prev = p;
     }
@@ -1145,12 +1146,12 @@ void RndParticleSys::UpdateRelativeXfm() {
         Normalize(mRelativeXfm.m, mRelativeXfm.m);
         Interp(mLastWorldXfm.v, worldXfm.v, mRelativeMotion, mLastWorldXfm.v);
         Add(mRelativeXfm.v, mLastWorldXfm.v, mRelativeXfm.v);
+        mLastWorldXfm = worldXfm;
     }
 #ifdef HX_NATIVE
     // DC3 birth-momentum cache. Retail RB3 has no mMotionParentDelta.
     Subtract(mMotionParent->WorldXfm().v, mLastWorldXfm.v, mMotionParentDelta);
 #endif
-    mLastWorldXfm = mMotionParent->WorldXfm();
 }
 
 // TODO: 69.3% match (AT_LIMIT). 2340-byte function, implemented from 0.1% stub.

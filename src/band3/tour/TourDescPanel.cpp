@@ -156,6 +156,8 @@ inline void TourDescProvider::UpdateList() {
          ++it) {
         mTours.push_back(it->first);
     }
+    TourDescCmp cmp(TheTour);
+    std::stable_sort(mTours.begin(), mTours.end(), cmp);
 }
 
 void TourDescPanel::Refresh() {
@@ -163,12 +165,6 @@ void TourDescPanel::Refresh() {
     MILO_ASSERT(pProgress, 0x2C7);
     MILO_ASSERT(m_pTourDescProvider, 0x2C9);
     m_pTourDescProvider->UpdateList();
-    TourDescCmp cmp(TheTour);
-    std::stable_sort(
-        m_pTourDescProvider->mTours.begin(),
-        m_pTourDescProvider->mTours.end(),
-        cmp
-    );
     static Message cUpdateFilterProviderMsg("update_tourdesc_provider", 0);
     cUpdateFilterProviderMsg[0] = m_pTourDescProvider;
     Handle(cUpdateFilterProviderMsg, true);

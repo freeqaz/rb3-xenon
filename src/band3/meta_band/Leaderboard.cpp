@@ -242,6 +242,17 @@ void Leaderboard::ShowData() {
         if (datares->GetDataResultValue("inst_mask", node)) {
             row.mInstMask = node.Int();
         }
+        if (datares->GetDataResultValue("pguid", node)) {
+            const char *pguid = node.Str();
+            static const char *sZeroPguid = "0";
+            if (strcmp(pguid, sZeroPguid) != 0) {
+                unsigned long long xuid = 0;
+                for (const char *p = pguid; *p != '\0'; p++) {
+                    xuid = xuid * 10 + (*p - '0');
+                }
+                row.mLBOnlineID.SetXUID(xuid);
+            }
+        }
         mLeaderboardRows.push_back(row);
     }
 

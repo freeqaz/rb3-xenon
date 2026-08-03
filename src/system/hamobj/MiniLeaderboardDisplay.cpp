@@ -31,7 +31,6 @@ BEGIN_COPYS(MiniLeaderboardDisplay)
     MILO_ASSERT(p, 0x21);
     COPY_SUPERCLASS_FROM(UIComponent, p)
     COPY_MEMBER_FROM(p, mAllowSoloScores)
-    Update();
 END_COPYS
 
 BEGIN_LOADS(MiniLeaderboardDisplay)

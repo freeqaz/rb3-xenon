@@ -118,23 +118,36 @@ void CharClipSet::PreLoad(BinStream &bs) {
     bs.PushRev(packRevs(d.altRev, d.rev), this);
 }
 
+// Retail stores the PostLoad-side rev/altRev in fixed global storage (proven
+// via an absolute lis+addi load of lbl_82CBF924/928 in the target
+// disassembly, build/45410914/asm/CharClipSet.s) rather than in a
+// stack-resident BinStreamRev, unlike the dc3-ported source this TU started
+// from. CharClipSet.h uses the Object.h macro dialect (no DECLARE_REVS), so
+// adding class statics is the risky route -- these file-statics are
+// TU-local and get the same addressing-mode codegen (lis+addi to a fixed
+// address) without touching the shared header's macro dialect.
+static unsigned short sPostLoadRev;
+static unsigned short sPostLoadAltRev;
+
 void CharClipSet::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
     ObjectDir::PostLoad(bs);
+    int revs = bs.PopRev(this);
+    sPostLoadRev = getHmxRev(revs);
+    sPostLoadAltRev = getAltRev(revs);
     if (IsProxy())
         return;
-    if (d.rev < 0x11) {
+    if (sPostLoadRev < 0x11) {
         int x, y;
-        d >> x;
-        d >> y;
+        bs >> x;
+        bs >> y;
     }
-    if (d.rev >= 0xF && d.rev < 0x11) {
+    if (sPostLoadRev >= 0xF && sPostLoadRev < 0x11) {
         int x;
-        d >> x;
+        bs >> x;
     }
-    if (d.rev < 9) {
+    if (sPostLoadRev < 9) {
         FilePath fp;
-        d >> fp;
+        bs >> fp;
         if (!fp.empty())
             MILO_NOTIFY(
                 "Set the type and resave %s, graph_path was \"%s\"",
@@ -142,88 +155,88 @@ void CharClipSet::PostLoad(BinStream &bs) {
                 fp.c_str()
             );
     }
-    if (d.rev < 6) {
+    if (sPostLoadRev < 6) {
         String str;
-        d >> str;
+        bs >> str;
         MILO_NOTIFY("You'll need to reexport some clips into this clipset");
     }
-    if (d.rev < 7) {
+    if (sPostLoadRev < 7) {
         int x;
-        d >> x;
+        bs >> x;
     }
-    if (d.rev < 0x18) {
+    if (sPostLoadRev < 0x18) {
         int count = 0;
         for (ObjDirItr<CharClip> it(this, true); it != 0; ++it) {
             count++;
         }
         for (int i = 0; i < count; i++) {
-            ObjPtr<CharClip> clipPtr(this);
-            d >> clipPtr;
+            ObjPtr<CharClip> clipPtr(this, nullptr);
+            bs >> clipPtr;
             int x, y;
-            d >> x;
-            d >> y;
+            bs >> x;
+            bs >> y;
         }
     }
-    if (d.rev > 0xD) {
-        if (d.rev < 0x18) {
+    if (sPostLoadRev > 0xD) {
+        if (sPostLoadRev < 0x18) {
             bool b1, b2;
-            d >> b1;
-            if (d.rev > 0x12)
-                d >> b2;
+            bs >> b1;
+            if (sPostLoadRev > 0x12)
+                bs >> b2;
         }
     } else {
         int count;
-        d >> count;
+        bs >> count;
         for (int i = 0; i < count; i++) {
             Symbol s;
-            d >> s;
+            bs >> s;
         }
     }
-    if (d.rev > 4 && d.rev < 0x18) {
+    if (sPostLoadRev > 4 && sPostLoadRev < 0x18) {
         int count;
-        d >> count;
+        bs >> count;
         char buf[0x100];
         for (int i = 0; i < count; i++) {
             bs.ReadString(buf, 0x100);
         }
-        d >> count;
+        bs >> count;
         for (int i = 0; i < count; i++) {
             bs.ReadString(buf, 0x100);
         }
         bool b;
-        d >> b;
+        bs >> b;
     }
-    if (d.rev > 9 && d.rev < 24) {
+    if (sPostLoadRev > 9 && sPostLoadRev < 24) {
         Symbol s;
-        d >> s;
+        bs >> s;
         int x;
-        d >> x;
+        bs >> x;
     }
-    if (d.rev == 0xB) {
+    if (sPostLoadRev == 0xB) {
         bool b;
-        d >> b;
+        bs >> b;
     }
-    if (d.rev < 0xC && !Type().Null())
+    if (sPostLoadRev < 0xC && !Type().Null())
         MILO_NOTIFY(
             "%s may have a bug in the transition graph, need to resave from milo",
             PathName(this)
         );
-    if (d.rev < 0xD) {
+    if (sPostLoadRev < 0xD) {
         static Message filter_clips_msg("filter_clips");
         Handle(filter_clips_msg, false);
     }
-    if (d.rev > 0x11) {
-        d >> mCharFilePath;
-        d >> mPreviewClip;
+    if (sPostLoadRev > 0x11) {
+        bs >> mCharFilePath;
+        bs >> mPreviewClip;
     }
-    if (d.rev > 0x13)
-        d >> mFilterFlags;
-    if (d.rev > 0x14)
-        d >> mBpm;
-    if (d.rev > 0x15)
-        d >> mPreviewWalk;
-    if (d.rev > 0x16)
-        d >> mStillClip;
+    if (sPostLoadRev > 0x13)
+        bs >> mFilterFlags;
+    if (sPostLoadRev > 0x14)
+        bs >> mBpm;
+    if (sPostLoadRev > 0x15)
+        bs >> mPreviewWalk;
+    if (sPostLoadRev > 0x16)
+        bs >> mStillClip;
 }
 
 void CharClipSet::SetFrame(float frame, float blend) {

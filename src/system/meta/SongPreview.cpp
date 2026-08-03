@@ -162,54 +162,58 @@ void SongPreview::Start(Symbol song, TexMovie *texMovie) {
 #ifdef HX_NATIVE
         mTexMovie = texMovie;
 #endif
+        // Retail returns immediately on a repeat request for the same song --
+        // it does NOT set mSameSongRequested here (verified: fn_827A5790's
+        // beq on song==mSong jumps straight to the epilogue, no store to
+        // 0x6d anywhere in the function). mSameSongRequested is set/consumed
+        // elsewhere (Poll()); this early-out path never touches it.
         if (song == mSong) {
-            mSameSongRequested = true;
-        } else {
-            if (!song.Null()) {
-                if (!mSongMgr.HasSong(song, false)) {
-                    return;
-                }
-                int songID = mSongMgr.GetSongIDFromShortName(song, true);
-                const SongMetadata *data = mSongMgr.Data(songID);
-                if (data && !data->IsVersionOK()) {
-                    song = gNullStr;
-                }
-                if (!mRegisteredWithCM) {
-                    TheContentMgr.RegisterCallback(this, false);
-                    mRegisteredWithCM = true;
-                }
+            return;
+        }
+        if (!song.Null()) {
+            if (!mSongMgr.HasSong(song)) {
+                return;
             }
-            mSong = song;
-            mRestart = true;
-            // Retail RB3-360 has no preview_db member (see SongPreview.h);
-            // the rb3-Wii oracle plays the music fader at 0 dB here.
+            int songID = mSongMgr.GetSongIDFromShortName(song, true);
+            const SongMetadata *data = mSongMgr.Data(songID);
+            if (data && !data->IsVersionOK()) {
+                song = gNullStr;
+            }
+            if (!mRegisteredWithCM) {
+                TheContentMgr.RegisterCallback(this, false);
+                mRegisteredWithCM = true;
+            }
+        }
+        mSong = song;
+        mRestart = true;
+        // Retail RB3-360 has no preview_db member (see SongPreview.h);
+        // the rb3-Wii oracle plays the music fader at 0 dB here.
 #ifdef HX_NATIVE
-            mMusicFader->SetVal(mPreviewDb);
+        mMusicFader->SetVal(mPreviewDb);
 #else
-            mMusicFader->SetVal(0.0f);
+        mMusicFader->SetVal(0.0f);
 #endif
-            mCrowdSingFader->SetVal(kDbSilence);
-            switch (mState) {
-            case kIdle:
-            case kMountingSong:
-                RELEASE(mStream);
-                mState = kIdle;
-                break;
-            case kPreparingSong:
-                mState = kDeletingSong;
-                break;
-            case kPlayingSong:
-                if (!song.Null()) {
-                    mFader->DoFade(kSilenceVal, mFadeTime);
-                    mState = kFadingOutSong;
-                } else {
-                    mFader->DoFade(kSilenceVal, 0);
-                    mState = kIdle;
-                }
-                break;
-            default:
-                break;
-            }
+        mCrowdSingFader->SetVal(kDbSilence);
+        switch (mState) {
+        case kIdle:
+        case kMountingSong:
+            RELEASE(mStream);
+            mState = kIdle;
+            break;
+        case kPreparingSong:
+            mState = kDeletingSong;
+            break;
+        case kPlayingSong:
+            // Retail (fn_827A5790) is unconditional here -- no song.Null()
+            // branch, no DoFade(kSilenceVal, 0)/kIdle alternative. Confirmed
+            // against the rb3-Wii oracle's parallel single-arg Start, which
+            // has the same unconditional DoFade(-48.0f, mFadeTime) +
+            // kFadingOutSong in its kPlayingSong case.
+            mFader->DoFade(kSilenceVal, mFadeTime);
+            mState = kFadingOutSong;
+            break;
+        default:
+            break;
         }
     }
 }
@@ -275,8 +279,8 @@ void SongPreview::PrepareFaders(const SongInfo *info) {
 void SongPreview::PrepareSong(Symbol song) {
     mState = kPreparingSong;
     RELEASE(mStream);
-    DataArraySongInfo songInfo(mSongMgr.SongAudioData(song));
-    const char *filename = songInfo.GetBaseFileName();
+    SongInfo *songInfo = mSongMgr.SongAudioData(song);
+    const char *filename = songInfo->GetBaseFileName();
 #ifdef HX_NATIVE
     if (mTexMovie) {
         String str(mSongMgr.SongFilePath(song, "_prev.bik", 10));
@@ -300,15 +304,15 @@ void SongPreview::PrepareSong(Symbol song) {
 #endif
     }
 #endif // HX_NATIVE
-    mStream = TheSynth->NewStream(filename, mStartMs, 0, mSecurePreview);
-    const std::vector<float> &pans = songInfo.GetPans();
-    const std::vector<float> &vols = songInfo.GetVols();
+    mStream = TheSynth->NewStream(filename, mStartMs, 0, mSameSongRequested);
+    const std::vector<float> &pans = songInfo->GetPans();
+    const std::vector<float> &vols = songInfo->GetVols();
     mNumChannels = pans.size();
     for (int i = 0; i < mNumChannels; i++) {
         mStream->SetVolume(i, vols[i]);
         mStream->SetPan(i, pans[i]);
     }
-    const TrackChannels *trackChannels = songInfo.FindTrackChannel(kAudioTypeMulti);
+    const TrackChannels *trackChannels = songInfo->FindTrackChannel(kAudioTypeMulti);
     if (trackChannels) {
         for (int i = 0; i < trackChannels->mChannels.size(); i++) {
             mStream->SetVolume(trackChannels->mChannels[i], kDbSilence);
@@ -316,7 +320,7 @@ void SongPreview::PrepareSong(Symbol song) {
     }
     DetachFader(mMusicFader);
     DetachFader(mCrowdSingFader);
-    PrepareFaders(&songInfo);
+    PrepareFaders(songInfo);
     mStream->SetVolume(-mAttenuation);
     mStream->Faders()->Add(mFader);
 }

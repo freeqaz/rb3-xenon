@@ -32,6 +32,8 @@ CameraManager::CameraManager(WorldDir *parent)
 
 CameraManager::~CameraManager() {
     StartShot_(nullptr);
+    if (TheDOFProc)
+        TheDOFProc->UnSet();
     RELEASE(mFreeCam);
     FOREACH (it, mCameraShotCategories) {
         delete it->mShots;
@@ -107,10 +109,6 @@ void CameraManager::FirstShotOk(Symbol s) {
 void CameraManager::StartShot_(CamShot *shot) {
     if (mCurrentShot)
         mCurrentShot->EndAnim();
-
-    if (TheDOFProc && !shot && mCurrentShot) {
-        TheDOFProc->UnSet();
-    }
 
     mCurrentShot = shot;
     if (mCurrentShot) {
@@ -307,8 +305,7 @@ void CameraManager::Randomize() {
     }
 }
 
-void CameraManager::SyncObjects(WorldDir *parent) {
-    mParent = parent;
+void CameraManager::SyncObjects() {
     mCameraShotCategories.clear();
     mCameraShotCategories.reserve(100);
     for (ObjDirItr<CamShot> it(mParent, true); it != nullptr; ++it) {

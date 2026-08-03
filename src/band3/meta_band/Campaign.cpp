@@ -43,14 +43,13 @@ Campaign *TheCampaign;
 
 Campaign::Campaign(DataArray *arr)
     : m_pAccomplishmentMgr(new AccomplishmentManager()), m_symCurrentAccomplishment(""),
-      m_bWasLaunchedIntoMusicLibrary(0), unk25(0), unk28(gNullStr), unk84(0), unk88(-1) {
+      m_bWasLaunchedIntoMusicLibrary(0), unk25(0), unk28(gNullStr), unk84(0) {
     MILO_ASSERT(!TheCampaign, 0x34);
     TheCampaign = this;
     SetName("campaign", ObjectDir::Main());
     DataArray *accArr = arr->FindArray("accomplishment_info");
     m_pAccomplishmentMgr->Init(accArr);
     Init(arr);
-    m_pAccomplishmentMgr->SanityCheckAwards();
     TheProfileMgr.AddSink(this, PrimaryProfileChangedMsg::Type());
     ThePlatformMgr.AddSink(this, ProfileSwappedMsg::Type());
 }
@@ -209,10 +208,7 @@ DECOMP_FORCEACTIVE(Campaign, "profile")
 
 int Campaign::GetCampaignMetaScoreForProfile(BandProfile *i_pProfile) const {
     MILO_ASSERT(i_pProfile, 0x14B);
-    int meta = i_pProfile->GetAccomplishmentProgress().GetMetaScore();
-    if (unk88 != -1)
-        meta = unk88;
-    return meta;
+    return i_pProfile->GetAccomplishmentProgress().GetMetaScore();
 }
 
 Symbol Campaign::GetCampaignLevelForMetaScore(int val) const {
@@ -248,7 +244,7 @@ int Campaign::GetCampaignMetaScoreForUser(LocalBandUser *i_pUser) const {
     int score = 0;
     BandProfile *profile = TheProfileMgr.GetProfileForUser(i_pUser);
     if (profile)
-        score = GetCampaignMetaScoreForProfile(profile);
+        score = profile->GetAccomplishmentProgress().GetMetaScore();
     return score;
 }
 
@@ -619,7 +615,7 @@ BandProfile *Campaign::GetProfile() const { return unk84; }
 
 Symbol Campaign::GetMajorLevelForMetaScore(int score) {
     Symbol key = GetCampaignLevelForMetaScore(score);
-    std::map<Symbol, Symbol>::iterator it = unk4c.find(key);
+    std::hash_map<Symbol, Symbol>::iterator it = unk4c.find(key);
     if (it != unk4c.end())
         return it->second;
     else

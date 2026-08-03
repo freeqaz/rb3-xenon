@@ -232,12 +232,6 @@ DataNode RockCentral::OnMsg(const ServerStatusChangedMsg &msg) {
         if (!client->RegisterExtraProtocol(mRBBinaryData, 'v')) {
             MILO_WARN("Couldn't register RB binary data protocol\n");
         }
-        unsigned long long uid = -1;
-#ifndef HX_NATIVE
-        if (NWC24GetMyUserId(uid) == 0) {
-            snprintf(g_szMachineIdString, 0x18, "%llu", uid);
-        }
-#endif
         DP_KEYS1(locale)
         INIT_DATAPOINT("config/get");
         ADD_DATA_PAIR(locale, SystemLanguage());
@@ -250,10 +244,6 @@ DataNode RockCentral::OnMsg(const ServerStatusChangedMsg &msg) {
         } else {
             mState = 4;
             mRetryTime = mTime.Ms() + 40000.0f;
-            if (IsLoginMandatory()) {
-                static Message init("init", 1);
-                TheUIEventMgr->TriggerEvent(lost_connection, init);
-            }
         }
         RELEASE(mRBTest);
         RELEASE(mRBBinaryData);
@@ -413,10 +403,12 @@ void RockCentral::GetTickerInfo(
 void RockCentral::GetSongFullOffer(int i1, DataResultList &results, Hmx::Object *o) {
     Server *server = IsConnected(o, -1, false);
     if (server) {
-        DP_KEYS3(song_id, locale, region)
+        DP_KEYS1(song_id)
         INIT_DATAPOINT("entities/song_offer/get");
         ADD_DATA_PAIR(song_id, i1);
-        ADD_DATA_PAIR(locale, SystemLanguage());
+        DP_KEY(locale);
+        ADD_DATA_PAIR(locale, SystemLocale());
+        DP_KEY(region);
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
         if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
             ADD_DATA_PAIR(region, PlatformRegionToSymbol(regionEnum));

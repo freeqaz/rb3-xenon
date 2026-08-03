@@ -12,7 +12,27 @@
 #include "utl/FilePath.h"
 #include "utl/Symbols.h"
 
-INIT_REVS(BandCharDesc)
+// The revs must be TWO internal-linkage file-scope statics, gAltRev FIRST, each
+// explicitly `= 0`. Retail constrains this from both sides and INIT_REVS's class
+// statics satisfy neither:
+//   * Load (0x8233AB28) touches BOTH revs, so it materializes one base
+//     (lis+addi -> lbl_82CBE1B0) and reaches them by LITERAL displacement
+//     0x0/0x4. That needs compile-time-known adjacency, which external class
+//     statics never give -- they force a separate @ha base per symbol (that cost
+//     Load ~9% plus a whole r10/r11 regalloc cascade downstream).
+//   * operator>>(BinStream&, Head/Outfit/OutfitPiece&) touch ONLY gRev and use
+//     the 2-instruction `lis rX,gRev@ha; lhz r11,gRev@l(rX)` form, so gRev must
+//     still be its OWN relocatable symbol. Wrapping the pair in one struct (the
+//     BandDirector.cpp / BandWardrobe.cpp `gRevs` idiom) satisfies Load but
+//     costs each of those three an extra `addi` to materialize the aggregate
+//     base -- measured -3 matched functions, a NET LOSS.
+// The `= 0` is load-bearing, not decoration: without the initializers MSVC files
+// the two in a different .bss pool and scatter-included TUs land between them
+// (measured 16 bytes apart, not 4), which breaks Load's literal +0x4.
+static unsigned short gAltRev_BandCharDesc = 0;
+static unsigned short gRev_BandCharDesc = 0;
+#define gAltRev gAltRev_BandCharDesc
+#define gRev gRev_BandCharDesc
 ObjectDir *gPrefabs;
 ObjectDir *gDeforms;
 Symbol gInstNames[6] = { Symbol(), Symbol(), Symbol(), Symbol(), Symbol(), Symbol() };
@@ -37,7 +57,10 @@ void BandCharDesc::ReloadPrefabs() {
     if (cfg->FindData("prefabs_path", prefabpath, false) && prefabpath[0] != 0) {
         static int _x = MemFindHeap("char");
         MemPushHeap(_x);
-        gPrefabs = DirLoader::LoadObjects(FilePath(prefabpath), 0, 0);
+        {
+            FilePath fp(prefabpath);
+            gPrefabs = DirLoader::LoadObjects(fp, 0, 0);
+        }
         MemPopHeap();
     }
     if (gPrefabs && old) {
@@ -48,7 +71,9 @@ void BandCharDesc::ReloadPrefabs() {
                                                                    // be FindPrefab but
                                                                    // inlined
             MILO_ASSERT(from != to, 0x4E);
-            from->ReplaceRefs(to);
+            while (!from->Refs().empty()) {
+                RefPtrOf(from->Refs().begin())->Replace(reinterpret_cast<ObjRef *>((Hmx::Object *)from), to);
+            }
         }
     }
     delete old;
@@ -157,7 +182,8 @@ int BandCharDesc::SaveSize(int i) {
 }
 
 void BandCharDesc::LoadFixed(FixedSizeSaveableStream &stream, int i) {
-    mPrefab = Symbol("");
+    Symbol emptyPrefab("");
+    mPrefab = emptyPrefab;
     FixedSizeSaveable::LoadSymbolFromID(stream, mGender);
     stream >> mSkinColor;
     stream >> mHead;
@@ -633,7 +659,7 @@ BinStream &operator>>(BinStream &bs, BandCharDesc::OutfitPiece &piece) {
     bs >> col;
     piece.mColors[0] = col;
     bs >> col;
-    unsigned short rev = BandCharDesc::gRev;
+    unsigned short rev = gRev;
     piece.mColors[1] = col;
     if (rev > 0xB) {
         bs >> col;
@@ -659,20 +685,20 @@ BinStream &operator<<(BinStream &bs, BandCharDesc::Outfit &outfit) {
 }
 
 BinStream &operator>>(BinStream &bs, BandCharDesc::Outfit &outfit) {
-    if (BandCharDesc::gRev < 5) {
+    if (gRev < 5) {
         BandCharDesc::OutfitPiece piece;
         bs >> piece;
     } else
         bs >> outfit.mEyebrows;
     bs >> outfit.mEarrings;
-    if (BandCharDesc::gRev < 5) {
+    if (gRev < 5) {
         BandCharDesc::OutfitPiece piece;
         bs >> piece;
     }
     bs >> outfit.mFaceHair;
     bs >> outfit.mGlasses;
     bs >> outfit.mHair;
-    if (BandCharDesc::gRev < 5) {
+    if (gRev < 5) {
         BandCharDesc::OutfitPiece piece;
         bs >> piece;
     }
@@ -729,30 +755,30 @@ BinStream &operator<<(BinStream &bs, BandCharDesc::Head &head) {
 }
 
 BinStream &operator>>(BinStream &bs, BandCharDesc::Head &head) {
-    if (BandCharDesc::gRev > 7)
+    if (gRev > 7)
         bs >> head.mHide;
     bs >> head.mEyeColor;
     bs >> head.mShape;
     bs >> head.mChin;
-    if (BandCharDesc::gRev > 6) {
+    if (gRev > 6) {
         bs >> head.mChinWidth;
         bs >> head.mChinHeight;
     }
     bs >> head.mJawWidth;
     bs >> head.mJawHeight;
     bs >> head.mNose;
-    if (BandCharDesc::gRev > 5)
+    if (gRev > 5)
         bs >> head.mNoseWidth;
     bs >> head.mNoseHeight;
     bs >> head.mEye;
     bs >> head.mEyeSeparation;
     bs >> head.mEyeHeight;
-    if (BandCharDesc::gRev > 10)
+    if (gRev > 10)
         bs >> head.mEyeRotation;
     bs >> head.mMouth;
     bs >> head.mMouthWidth;
     bs >> head.mMouthHeight;
-    if (BandCharDesc::gRev > 8)
+    if (gRev > 8)
         bs >> head.mBrowSeparation;
     bs >> head.mBrowHeight;
     return bs;
@@ -797,7 +823,7 @@ BEGIN_LOADS(BandCharDesc)
         bs >> o;
     }
     if (gRev > 1) {
-        int i88 = 0;
+        int i88;
         if (gRev < 0xF)
             bs >> i88;
         if (gRev > 0xD)
@@ -1134,6 +1160,9 @@ BEGIN_PROPSYNCS(BandCharDesc)
     SYNC_PROP(outfit, mOutfit)
     SYNC_PROP(patches, mPatches)
 END_PROPSYNCS
+
+#undef gRev
+#undef gAltRev
 
 // sw2 scatter-include (default/BandCharDesc <- bandobj/BandCamShot.cpp)
 // sw3: SW_SCATTER_OWNER_INCLUDE suppresses BandCamShot's own nested HamCamShot

@@ -78,7 +78,7 @@ void RndShaderMgr::PreInit() {
 
 void RndShaderMgr::Init() {
     PreInit();
-    LoadShaders("%s_shaders");
+    RndShaderMgr::LoadShaders("%s_shaders");
 }
 
 void RndShaderMgr::Terminate() {
@@ -150,23 +150,17 @@ unsigned long RndShaderMgr::InitShaders() {
 }
 
 void RndShaderMgr::LoadShaders(const char *cc) {
-    unsigned long shaders = InitShaders();
-    if (TheLoadMgr.GetPlatform() != kPlatformNone) {
-        String str(MakeString(cc, PlatformSymbol(TheLoadMgr.GetPlatform())));
-        FileStat stat;
-        if (!mCacheShaders || !FileGetStat(str.c_str(), &stat) && stat.st_mtime > shaders || strstr(cc, "preinit")) {
-                FileStream stream(str.c_str(), FileStream::kRead, true);
-                if (!stream.Fail()) {
-                    // this check is made somewhere in here according to the asm
-                    // TheLoadMgr.GetPlatform() == kPlatformXBox;
-                    LoadShaderFile(stream);
-                } else {
-                    if (UsingCD() && GetGfxMode() == kNewGfx) {
-                        MILO_NOTIFY("Can't load shader file %s!!", str.c_str());
-                    }
-                }
+    mCacheShaders = false;
+    RndShader::Init();
+    unsigned long shaders = RndShaderProgram::InitModTime();
+    String str(MakeString(cc, PlatformSymbol(kPlatformXBox)));
+    FileStat stat;
+    if (!mCacheShaders || !FileGetStat(str.c_str(), &stat) && stat.st_mtime > shaders || strstr(cc, "preinit")) {
+            FileStream stream(str.c_str(), FileStream::kRead, true);
+            if (!stream.Fail()) {
+                LoadShaderFile(stream);
             }
-    }
+        }
 }
 
 void RndShaderMgr::SetTransform(const Transform &xfm) {
@@ -189,15 +183,13 @@ void RndShaderMgr::Invalidate(ShaderType t) {
 }
 
 void RndShaderMgr::LoadShaderFile(FileStream &fs) {
-    if (TheLoadMgr.GetPlatform() == kPlatformPS3) {
-        RndSplasherResume();
-        unsigned int fileType, fileVersion;
-        fs >> fileType;
-        fs >> fileVersion;
-        MILO_ASSERT(fileType == PS3_SHADERS_TYPE, 0xBF);
-        MILO_ASSERT(fileVersion == PS3_SHADERS_VERSION, 0xC0);
-        RndSplasherSuspend();
-    }
+    // retail Xbox 360 build has no PS3-platform branch here at all (verified
+    // against dtk target asm at fn_8246BD70 -- no TheLoadMgr/GetPlatform
+    // check, no RndSplasherResume/Suspend, no fileType/fileVersion reads).
+    // dc3-decomp (also Xbox-only) carries the same dead PS3 block and shows
+    // the identical ~81% mismatch shape there, so this isn't RB3-specific
+    // drift -- it's inherited dead code that never applied to either title's
+    // shipped platform.
     int num;
     fs >> num;
     while (num--) {

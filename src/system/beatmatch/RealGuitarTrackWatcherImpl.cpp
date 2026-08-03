@@ -250,10 +250,10 @@ bool RealGuitarTrackWatcherImpl::GetNextRoll(int i1, unsigned int &uiRef, int &e
 
 void RealGuitarTrackWatcherImpl::CheckForTrills(float fff, int iii, unsigned int ui) {
     RGTrill trill;
+    TempoMap *tm = mSongData->GetTempoMap();
     int track = Track();
-    int tick = mSongData->GetTempoMap()->GetLoopTick(iii);
     int x, y;
-    if (mSongData->GetRGTrillAtTick(track, tick, trill)) {
+    if (mSongData->GetRGTrillAtTick(track, tm->GetLoopTick(iii), trill)) {
         UnpackRGData(ui, x, y);
         if (fff - mTrillLastFretMs < mTrillIntervalMs) {
             if (y == mTrillNextSlot) {

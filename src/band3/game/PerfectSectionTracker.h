@@ -57,7 +57,7 @@ public:
     void CheckForCompletedSections();
     void HandleEnterExtent(float, int, bool);
     void HandleInExtent(float, int);
-    void HandleExitExtent(float, int, bool);
+    bool HandleExitExtent(float, int, bool);
 
     const char *unk58; // 0x58
     std::map<TrackType, PlayerStreakData> unk5c; // 0x5c

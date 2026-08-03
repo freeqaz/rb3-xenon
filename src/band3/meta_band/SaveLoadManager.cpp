@@ -167,41 +167,38 @@ void SaveLoadManager::Poll() {
     if (!mActivated) return;
     State &_ref0 = mState;
     if (_ref0 == kS_Idle) {
-        int flags = mRequestFlags;
-        if (flags & 8) {
-            mMode = kMode_ManualLoad;
-            Start();
-            mRequestFlags &= ~8;
-            return;
-        }
-        if (flags & 1) {
-            mMode = kMode_ManualDelete;
-            Start();
-            mRequestFlags &= ~1;
-            return;
-        }
-        if (flags & 4) {
+        // Retail (Ghidra fn_82553490, verified against the compiled Start()
+        // call count -- target 2 vs our old 5, and IsReasonToAutosave absent
+        // from target's Poll() entirely) does NOT dispatch on individual
+        // mRequestFlags bits here. rb3-Wii's dev-build source has the 4-bit
+        // (8/1/4/2) dispatch below in comments -- this is a genuine 360
+        // retail simplification, not a decomp bug: any nonzero mRequestFlags
+        // byte triggers a single AutoSave-mode Start(), and unk75 nonzero
+        // triggers a single AutoLoad-mode Start(). The kMode_ManualLoad /
+        // kMode_ManualDelete branches below are unreachable in retail's Poll().
+        if (mRequestFlags) {
             mMode = kMode_AutoSave;
             Start();
-            mRequestFlags &= ~4;
+            mRequestFlags = 0;
             return;
         }
-        if (flags & 2) {
-            if (IsReasonToAutosave()) {
-                mMode = kMode_AutoSave;
-                Start();
-                return;
-            }
+        if (unk75) {
             mMode = kMode_AutoLoad;
             Start();
-            mRequestFlags &= ~2;
+            unk75 = false;
             return;
         }
+        if (TheUIEventMgr->HasActiveDestructiveEvent()) return;
         TheProfileMgr.PurgeOldData();
         AutoLoad();
         return;
     }
-    if ((unsigned int)_ref0 > 0x6b) return;
+    // Retail (Ghidra fn_82553490) has NO separate range guard here -- the
+    // switch's own generated jump-table bounds check (subi/cmplwi/bgt) already
+    // routes out-of-range mState values to the switch's `default: break;` arm,
+    // which falls off the end of the function (implicit return, no SetState
+    // call). A redundant manual guard duplicates that check as a second
+    // cmplwi/bgt pair before the jump-table dispatch.
     switch (_ref0) {
     case kS_Start:
         switch (mMode) {
@@ -215,12 +212,10 @@ void SaveLoadManager::Poll() {
             mUser = NULL;
             SetState((State)0x42);
             break;
-        case kMode_ManualDelete:
-            SetState((State)0x4b);
-            break;
-        case kMode_ManualLoad:
-            SetState((State)0x51);
-            break;
+        // Retail (Ghidra fn_82553490) collapses kMode_ManualDelete/kMode_ManualLoad
+        // into the default arm here -- consistent with the kS_Idle rewrite above,
+        // which never sets mMode to either value. rb3-Wii's dev source still has
+        // both cases; this is a genuine retail-360 simplification, not an omission.
         default:
             MILO_NOTIFY("SaveLoadManager startup bad mode: %d\n", (SaveLoadMode)mMode);
             SetState((State)0x6a);
@@ -268,18 +263,23 @@ void SaveLoadManager::Poll() {
         if (!TheCacheMgr->IsDone()) return;
         {
             CacheResult result = TheCacheMgr->GetLastResult();
-            if (TheCacheMgr && result == kCache_NoError) {
+                        switch (result) {
+                case kCache_NoError: {
                 unk7c = 2;
                 int sz = mCacheID->GetDeviceID();
                 unk78 = sz;
                 TheCacheMgr->AddCacheID(mCacheID, Symbol(unk4c.c_str()));
                 SetState((State)0x20);
-            } else if (result == kCache_ErrorUserCancel) {
+                break;
+                }
+                case kCache_ErrorUserCancel:
                 unk7c = 1;
                 SetState((State)0x17);
-            } else {
+                break;
+                default:
                 MILO_FAIL("SaveLoadManager - CacheMgr choose returned error %d\n", (int)result);
                 SetState((State)0x25);
+                break;
             }
         }
         break;
@@ -368,8 +368,16 @@ void SaveLoadManager::Poll() {
     case (State)0x33:
     case (State)0x3E:
         if (!mCache->IsDone()) return;
-        unk70 = (int)mCache->GetLastResult();
-                switch (_ref0) {
+        {
+        // Retail (Ghidra fn_82553490 case 0x21/0x33/0x3E) reads mState into a
+        // register BEFORE storing the result into unk70:
+        //   uVar5 = NewFrame(mCache); iVar4 = *(this+0x20); *(this+0x70) = uVar5;
+        // Writing it as two locals in that order reproduces the ordering;
+        // assigning unk70 directly emits the store first.
+        int lastResult = (int)mCache->GetLastResult();
+        State cur = _ref0;
+        unk70 = lastResult;
+                switch (cur) {
             case (State)0x21:
             SetState((State)0x23);
             break;
@@ -382,6 +390,7 @@ void SaveLoadManager::Poll() {
             default:
             MILO_FAIL("Impossible state.\n");
             break;
+        }
         }
         break;
     case (State)0x22:
@@ -411,6 +420,7 @@ void SaveLoadManager::Poll() {
             unk70 = (int)result;
                         switch (result) {
                 case kCache_NoError:
+                TheCacheMgr->AddCacheID(mCacheID, Symbol(kStrGlobalCacheName.Str()));
                 SetState((State)0x2e);
                 break;
                 case kCache_ErrorCacheNotFound:
@@ -515,7 +525,8 @@ void SaveLoadManager::Poll() {
     case (State)0x32:
         if (!mCache->IsDone()) return;
         if (mCache->GetLastResult() == kCache_NoError) {
-            FixedSizeSaveableStream stream(mData, TheProfileMgr.GetGlobalOptionsSize(), true);
+            int optSize = TheProfileMgr.GetGlobalOptionsSize();
+            FixedSizeSaveableStream stream(mData, optSize, true);
             TheProfileMgr.LoadGlobalOptions(stream);
             TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileLoaded);
         } else {
@@ -532,7 +543,7 @@ void SaveLoadManager::Poll() {
                 unk7c = 2;
                 int sz = mCacheID->GetDeviceID();
                 unk78 = sz;
-                TheCacheMgr->AddCacheID(mCacheID, Symbol(unk4c.c_str()));
+                TheCacheMgr->AddCacheID(mCacheID, Symbol(kStrGlobalCacheName.Str()));
                 SetState((State)0x3d);
                 break;
                 }
@@ -573,11 +584,24 @@ void SaveLoadManager::Poll() {
         break;
     case (State)0x34:
         if (!TheCacheMgr->IsDone()) return;
+        // Condition written INVERTED on purpose: MSVC /O1 places the `if` body
+        // at the branch target and lets the `else` body fall through, so
+        // `if (!= 0) Error else Loaded` is what produces retail's
+        // `bne <error>` + fall-through-to-Loaded layout (Ghidra fn_82553490
+        // case 0x34). A ternary here is WRONG -- MSVC makes it branchless
+        // (cntlzw/extrwi/xori), which retail is not.
+        // Duplicated tail, NOT if/else: retail emits `li r4,1; bl; li r4,0x38;
+        // b <tail>` inline and sinks the error arm to `li r4,2; b <the bl>`,
+        // which is what MSVC produces when it cross-jumps two FULL duplicated
+        // tails. An if/else with a shared tail instead makes MSVC hoist
+        // `li r4,2` above the branch and conditionally overwrite it (1 insn
+        // shorter, but not retail's layout).
         if (TheCacheMgr->GetLastResult() == kCache_NoError) {
             TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileLoaded);
-        } else {
-            TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileError);
+            SetState((State)0x38);
+            break;
         }
+        TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileError);
         SetState((State)0x38);
         break;
     case (State)0x35:
@@ -586,11 +610,13 @@ void SaveLoadManager::Poll() {
         if (unk70 == 0) {
             unk70 = (int)TheCacheMgr->GetLastResult();
         }
+        // Duplicated tail -- see case 0x34 above.
         if (unk70 == 0) {
             TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileLoaded);
-        } else {
-            TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileError);
+            SetState((State)0x38);
+            break;
         }
+        TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileError);
         SetState((State)0x38);
         break;
     case (State)0x3F:
@@ -599,11 +625,13 @@ void SaveLoadManager::Poll() {
         if (unk70 == 0) {
             unk70 = (int)TheCacheMgr->GetLastResult();
         }
+        // Duplicated tail -- see case 0x34 above.
         if (unk70 == 0) {
             TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileLoaded);
-        } else {
-            TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileError);
+            SetState((State)0x41);
+            break;
         }
+        TheProfileMgr.SetGlobalOptionsSaveState(kMetaProfileError);
         SetState((State)0x41);
         break;
     case (State)0x46:
@@ -632,7 +660,16 @@ void SaveLoadManager::Poll() {
         }
         break;
     case (State)0x52:
-        if (TheSongMgr.IsSongCacheWriteDone()) {
+        // Retail (Ghidra fn_82553490 case 0x52) early-returns when the song
+        // cache write is not done, then branches on ProfileMgr::
+        // GlobalOptionsNeedsSave(): needs-save => 0x53 (write global options
+        // first), otherwise => 0x54. Our source dropped the second test
+        // entirely, which is the 8-instruction target-only cluster at the
+        // lis/addi/bl GlobalOptionsNeedsSave site.
+        if (!TheSongMgr.IsSongCacheWriteDone()) return;
+        if (TheProfileMgr.GlobalOptionsNeedsSave()) {
+            SetState((State)0x53);
+        } else {
             SetState((State)0x54);
         }
         break;

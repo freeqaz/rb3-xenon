@@ -30,7 +30,12 @@ public:
     void SetWiiProfileListMode(WiiProfileListMode, bool);
     WiiProfileListMode GetWiiProfileListMode();
     int GetWiiProfileCount(LocalBandUser *) const;
-    void Reload(LocalBandUser *);
+    // Retail X360's call site (OvershellSlot::UpdateProfilesList) does a direct
+    // `bl` with only `this` in r3 -- no GetUser()/IsLocal()/GetLocalBandUser()
+    // chain feeding a second arg. Confirmed by full retail disassembly of both
+    // the caller and callee (0x825deec8 / 0x826681a0): zero-arg on X360, unlike
+    // rb3-Wii's `Reload(LocalBandUser*)`.
+    void Reload();
     const char *GetWiiProfileSelectedName() const;
 
     int unk20;

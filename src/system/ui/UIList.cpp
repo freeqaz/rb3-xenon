@@ -573,60 +573,68 @@ void UIList::PreLoad(BinStream &bs) {
 }
 
 void UIList::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
-    UIComponent::PostLoad(d.stream);
+    UIComponent::PostLoad(bs);
     // RB3 retail (rb3-Wii oracle): mListDir (raw UIListDir*) is recovered from
     // mResource->Dir() during resource load, not via a ResourceDirPtr PostLoad.
+    //
+    // RB3 retail does NOT construct a BinStreamRev/call BinStream::PopRev here
+    // (confirmed via objdiff: PopRev, the BinStream base ctor/dtor, and the
+    // BinStreamRev vtable are all absent from retail's target code — bs itself
+    // stays live in one register across the whole function). It instead reads
+    // the revision back out of mUIListRev, the persistent member PreLoadWithRev
+    // already populates via LOAD_REVS/PushRev — matching the rb3-Wii oracle,
+    // which has no BinStreamRev at all and reads `bs >>` directly gated on the
+    // mUIListRev member.
+    int local_numdisplay;
+    int local_gridspan = 1;
+    float local_speed;
+    bool local_circular;
     bool local_scrollpastmin = false;
     bool local_scrollpastmax = true;
-    bool local_circular;
-    int local_gridspan = 1;
-    int local_numdisplay;
     int local_mindisplay = 0;
     int local_maxdisplay = -1;
-    float local_speed;
-    if (d.rev < 0xF) {
+    if (mUIListRev < 0xF) {
         int i, j, k;
         bool ba, b9, b8;
-        d >> i >> j;
-        if (d.rev > 4) {
-            if (d.rev > 6)
-                d >> k;
+        bs >> i >> j;
+        if (mUIListRev > 4) {
+            if (mUIListRev > 6)
+                bs >> k;
             else
                 bs >> b8;
         }
-        if (d.rev > 6) {
+        if (mUIListRev > 6) {
             bs >> b9;
         }
-        if (d.rev > 8) {
+        if (mUIListRev > 8) {
             bs >> ba;
         }
         int b;
-        if (d.rev > 10) {
-            d >> b;
+        if (mUIListRev > 10) {
+            bs >> b;
         }
         int x;
-        d >> x;
+        bs >> x;
     }
-    d >> local_numdisplay;
-    if (d.rev > 0x11)
-        d >> local_gridspan;
+    bs >> local_numdisplay;
+    if (mUIListRev > 0x11)
+        bs >> local_gridspan;
     bs >> local_circular;
-    d >> local_speed;
-    if (d.rev > 0xC) {
+    bs >> local_speed;
+    if (mUIListRev > 0xC) {
         bs >> local_scrollpastmin;
     }
-    if (d.rev > 7) {
+    if (mUIListRev > 7) {
         bs >> local_scrollpastmax;
     }
-    if (d.rev > 2)
+    if (mUIListRev > 2)
         bs >> mPaginate;
-    if (d.rev > 3)
+    if (mUIListRev > 3)
         bs >> mSelectToScroll;
-    if (d.rev >= 10)
-        d >> local_mindisplay;
-    if (d.rev >= 6)
-        d >> local_maxdisplay;
+    if (mUIListRev >= 10)
+        bs >> local_mindisplay;
+    if (mUIListRev >= 6)
+        bs >> local_maxdisplay;
     gLoading = true;
 #ifdef HX_NATIVE
     mListState.SetNumDisplay(local_numdisplay, false);
@@ -646,30 +654,32 @@ void UIList::PostLoad(BinStream &bs) {
     mListState.SetScrollPastMaxDisplay(local_scrollpastmax);
     mListState.SetMinDisplay(local_mindisplay);
     mListState.SetMaxDisplay(local_maxdisplay);
-    if (d.rev == 1) {
+    if (mUIListRev == 1) {
         int x, y;
-        d >> x >> y;
+        bs >> x >> y;
     }
-    if (d.rev >= 0xC)
-        d >> mNumData;
-    if (d.rev >= 0xE)
-        d >> mAutoScrollPause;
-    if (d.rev < 0x13)
+    if (mUIListRev >= 0xC)
+        bs >> mNumData;
+    if (mUIListRev >= 0xE)
+        bs >> mAutoScrollPause;
+    if (mUIListRev < 0x13)
         mAutoScrollSendMsgs = true;
     else
         bs >> mAutoScrollSendMsgs;
-    if (d.rev >= 0x10) {
-        d >> mExtendedLabelEntries;
-        d >> mExtendedMeshEntries;
-        d >> mExtendedCustomEntries;
+    if (mUIListRev >= 0x10) {
+        bs >> mExtendedLabelEntries;
+        bs >> mExtendedMeshEntries;
+        bs >> mExtendedCustomEntries;
     }
-    if (d.rev >= 0x11)
-        LoadHandlerData(d.stream);
-    if (d.rev >= 0x15) {
-        bs >> mLimitCircularDisplayNumToDataNum;
-    } else {
-        mLimitCircularDisplayNumToDataNum = false;
-    }
+    if (mUIListRev >= 0x11)
+        LoadHandlerData(bs);
+    // RB3 retail's target has zero instructions here for
+    // mLimitCircularDisplayNumToDataNum (confirmed via objdiff full listing
+    // and the retail Ghidra decompile of PostLoad: the function goes
+    // directly from the LoadHandlerData gate to gLoading=false). This field
+    // is a dc3-only addition postdating RB3 retail; leave it untouched here
+    // (its ctor default and the other accessors elsewhere in this TU are
+    // unaffected).
     gLoading = false;
     Update();
 }
@@ -964,6 +974,7 @@ float UIList::GetDistanceToPlane(const Plane &p, Vector3 &v) {
 }
 
 void UIList::Init() {
+    TheUI->InitResources("UIList");
     Register();
     REGISTER_OBJ_FACTORY(UIListArrow)
     REGISTER_OBJ_FACTORY(UIListCustom)

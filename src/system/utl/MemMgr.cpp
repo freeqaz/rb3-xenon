@@ -551,7 +551,7 @@ MemRealloc(void *mem, int size, const char *file, int line, const char *name, in
     CritSecTracker tracker(gMemLock);
     if (gNumHeaps != 0) {
         int memSize = MemAllocSize(mem);
-        void *dst = (MemAlloc)(size, file, line, name, align);
+        void *dst = (MemAlloc)(size, (int)file);
         memcpy(dst, mem, size < memSize ? size : memSize);
         MemFree(mem);
         return dst;

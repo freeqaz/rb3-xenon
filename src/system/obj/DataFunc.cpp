@@ -1120,7 +1120,7 @@ DEF_DATA_FUNC(DataContains) {
         return 1;
 }
 
-DataNode DataFindExists(DataArray *array, bool fail) {
+DEF_DATA_FUNC(DataFindExists) {
     DataArray *arr = array->Array(1);
     for (int i = 2; i < array->Size(); i++) {
         const DataNode &n = array->Evaluate(i);
@@ -1137,16 +1137,6 @@ DataNode DataFindExists(DataArray *array, bool fail) {
             arr = arr->FindArray(n.UncheckedInt(), false);
 #endif
             if (!arr) {
-                if (fail) {
-                    String str;
-                    n.Print(str, true);
-                    MILO_FAIL(
-                        "Failed to find %s (file %s, line %d)",
-                        str.c_str(),
-                        array->File(),
-                        array->Line()
-                    );
-                }
                 return DATA_UNHANDLED;
             }
         } else {
@@ -1160,9 +1150,13 @@ DataNode DataFindExists(DataArray *array, bool fail) {
     return arr;
 }
 
-DEF_DATA_FUNC(DataFindExists) { return DataFindExists(array, false); }
-
-DEF_DATA_FUNC(DataFind) { return DataFindExists(array, true); }
+DEF_DATA_FUNC(DataFind) {
+    DataNode ret = DataFindExists(array);
+    if (ret == DATA_UNHANDLED) {
+        MILO_FAIL("Couldn't find key (file %s, line %d)", array->File(), array->Line());
+    }
+    return ret;
+}
 
 DEF_DATA_FUNC(DataFindObj) {
     class ObjectDir *d = ObjectDir::Main();

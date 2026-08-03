@@ -1,3 +1,15 @@
+// PER-TU: retail's ??0WorldCrowd@@IAA@XZ inlines the owner-only ObjPtr ctor
+// for mPlacementMesh(this)/mFocus(this) to a 3-store form (confirmed via
+// objdiff: target idx 81/129 are plain `stw`, base is `bl` -- and the
+// vtable label target uses, lbl_82011184, is Ghidra's
+// __G__ObjPtrList<RndMesh,ObjectDir> ICF-alias for the very same site), but
+// keeps mEnviron(this)/mEnviron3D(this) out-of-line (target still calls
+// fn_822B0F08 there) -- so those two opt back OUT via the 2-arg spelling.
+// The inlined stores also need retail's SHAPE: objdiff shows target idx
+// 82-86 = {mOwner-store, vptr-lis, mObject-store, vptr-addi, vptr-store},
+// which is exactly RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT's documented order.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "char/CharCollide.h"
 #include "char/Character.h"
 #include "math/Mtx.h"
@@ -121,28 +133,21 @@ BinStreamRev &operator>>(BinStreamRev &d, WorldCrowd::CharData &cd) {
 
 WorldCrowd::WorldCrowd()
     : mPlacementMesh(this), mCharacters(this), mNum(0), mCrowdRotate((CrowdRotate)0), mForce3DCrowd(0),
-      mShow3DOnly(0), mCharFullness(1), mFlatFullness(1), mLod(0), mEnviron(this),
-      mEnviron3D(this), mFocus(this),
+      mShow3DOnly(0), mCharFullness(1), mFlatFullness(1), mLod(0), mEnviron(this, nullptr),
+      mEnviron3D(this, nullptr), mFocus(this),
 #ifdef RB3_WORLDCROWD_DC3_REV
       mCharForceLod(kLODPerFrame), unkd0(0),
 #endif
       mModifyStamp(0) {
     if (gNumCrowd++ == 0) {
-        int w, h, bpp;
-        if (GetGfxMode() == kNewGfx) {
-            w = 256;
-            h = 512;
-            bpp = 32;
-        } else {
-            w = 128;
-            h = 256;
-            bpp = 16;
-        }
+        int w = 256, h = 512, bpp = 32;
         for (int i = 0; i < kNumLods; i++) {
-            gImpostorTex[i] = Hmx::Object::New<RndTex>();
-            gImpostorTex[i]->SetBitmap(w, h, bpp, RndTex::kRendered, true, nullptr);
+            RndTex *tex = Hmx::Object::New<RndTex>();
+            tex->SetBitmap(w, h, bpp, RndTex::kRendered, true, nullptr);
+            gImpostorTex[i] = tex;
+            w >>= 1;
+            h >>= 1;
         }
-        RELEASE(gImpostorMat);
         RndMat *mat = Hmx::Object::New<RndMat>();
         gImpostorMat = mat;
         mat->SetUseEnv(true);
@@ -154,7 +159,6 @@ WorldCrowd::WorldCrowd()
         mat->SetTexWrap(kTexWrapClamp);
         mat->SetPerPixelLit(false);
         mat->SetPointLights(true);
-        CreateAndSetMetaMat(mat);
         gImpostorCamera = Hmx::Object::New<RndCam>();
         SetMatAndCameraLod();
     }
@@ -540,15 +544,19 @@ void WorldCrowd::Poll() {
 void WorldCrowd::Enter() {
     RndPollable::Enter();
     FOREACH (it, mCharacters) {
-        it->mDef.mMats.clear();
         Character *curChar = it->mDef.mChar;
         if (curChar) {
             if (curChar->GetPollState() != 2)
                 curChar->Enter();
-            ColorPalette *randPal = curChar->Find<ColorPalette>("random1.pal", false);
-            if (randPal && randPal->NumColors() != 0) {
-                for (ObjDirItr<RndMat> objIt(curChar, true); objIt; ++objIt) {
-                    it->mDef.mMats.push_back(objIt);
+            for (int i = 0; i < 3; i++) {
+                const char *name = MakeString("random%d.pal", i + 1);
+                ColorPalette *randPal = curChar->Find<ColorPalette>(name, false);
+                if (!randPal || randPal->NumColors() == 0)
+                    break;
+                if (i == 0) {
+                    for (ObjDirItr<RndMat> objIt(curChar, true); objIt; ++objIt) {
+                        it->mDef.mMats.push_back(objIt);
+                    }
                 }
             }
         }
@@ -751,19 +759,20 @@ void WorldCrowd::Draw3DChars() {
 
 void WorldCrowd::AssignRandomColors() {
     FOREACH (it, mCharacters) {
-        if (it->mDef.mChar && it->mMMesh && it->m3DChars.size() > 0) {
-            it->mDef.mUseRandomColor = false;
+        if (it->mDef.mChar && it->mMMesh && !it->m3DChars.empty()) {
+            bool b1 = false;
             std::vector<ColorPalette *> colorPaletteList;
+            it->mDef.mUseRandomColor = false;
             for (int i = 0; i < 3; ++i) {
-                ColorPalette *randPal = it->mDef.mChar->Find<ColorPalette>(
-                    MakeString("random%d.pal", i + 1), false
-                );
+                const char *fmtStr = MakeString("random%d.pal", i + 1);
+                ColorPalette *randPal = it->mDef.mChar->Find<ColorPalette>(fmtStr, false);
                 if (randPal) {
                     colorPaletteList.push_back(randPal);
+                    b1 = true;
                 }
             }
-            if (colorPaletteList.size() > 0) {
-                for (unsigned int i = 0; i < it->m3DChars.size(); ++i) {
+            if (b1) {
+                for (unsigned int i = 0; i != it->m3DChars.size(); ++i) {
                     CharData::Char3D &char3D = it->m3DChars[i];
                     char3D.mColors.clear();
                     it->mDef.mUseRandomColor = true;
@@ -1095,15 +1104,18 @@ void WorldCrowd::DrawShowing() {
     START_AUTO_TIMER("crowd_draw");
     if (!mPlacementMesh) return;
     Draw3DChars();
-    if (Rnd::kDrawOcclusionDepth == TheRnd.GetDrawMode()) return;
-    MILO_ASSERT(!dynamic_cast<RndMat*>(gImpostorMat->NextPass()), 0x3A0);
+    // Retail RB3 X360 gates on raw Rnd::DrawMode value 4 here (dc3's newer enum
+    // shifted kDrawOcclusionDepth to 5); same -1 divergence as Shader.cpp's
+    // CalcShaderOpts/CheckForceCull raw-DrawMode casts.
+    if ((Rnd::DrawMode)4 == TheRnd.GetDrawMode()) return;
+    MILO_ASSERT(!gImpostorMat->NextPass(), 0x3A0);
     std::vector<Hmx::Rect> rects;
     rects.reserve(12);
     FOREACH (charIt, mCharacters) {
         Character *curChar = charIt->mDef.mChar;
         RndMultiMesh *mmesh = charIt->mMMesh;
         if (curChar && mmesh && !mShow3DOnly
-            && TheRnd.GetDrawMode() != Rnd::kDrawOcclusionDepth) {
+            && TheRnd.GetDrawMode() != (Rnd::DrawMode)4) {
             int numInstances = 0;
             for (InstanceList::iterator instIt = mmesh->Instances().begin();
                  instIt != mmesh->Instances().end(); ++instIt) {
@@ -1267,45 +1279,52 @@ void WorldCrowd::DrawShowing() {
                 Transform charXfm;
                 if (mCrowdRotate == kCrowdRotateNone) {
                     const Transform &meshXfm = mPlacementMesh->WorldXfm();
-                    memcpy(&charXfm, &meshXfm, 0x30);
+                    charXfm.m = meshXfm.m;
                 } else {
                     const Transform &meshXfm2 = mPlacementMesh->WorldXfm();
-                    float upX = meshXfm2.m.z.x;
-                    float upY = meshXfm2.m.z.y;
-                    float upZ = meshXfm2.m.z.z;
+                    charXfm.m.z.x = meshXfm2.m.z.x;
+                    charXfm.m.z.y = meshXfm2.m.z.y;
+                    charXfm.m.z.z = meshXfm2.m.z.z;
 
-                    // Cross product of camera Y-axis with mesh up vector,
-                    // component swaps determine Face vs Away rotation
-                    float fwdY, fwdZ;
-                    float tempA, tempB;
                     if (mCrowdRotate == kCrowdRotateFace) {
                         const Transform &camWXfm = curCam->WorldXfm();
-                        fwdZ = camWXfm.m.y.y * upX - camWXfm.m.y.x * upY;
-                        fwdY = camWXfm.m.y.x * upZ - camWXfm.m.y.z * upX;
-                        tempA = upZ;
-                        tempB = upY;
+                        float cyx = camWXfm.m.y.x;
+                        float xT7 = charXfm.m.z.y * cyx;
+                        float xT6 = charXfm.m.z.z * cyx;
+                        float cyy = camWXfm.m.y.y;
+                        float xT0 = charXfm.m.z.z * cyy;
+                        float xT2 = charXfm.m.z.x * cyy;
+                        float xT1 = charXfm.m.z.x * camWXfm.m.y.z;
+                        charXfm.m.x.x = charXfm.m.z.y * camWXfm.m.y.z - xT0;
+                        charXfm.m.x.y = xT6 - xT1;
+                        charXfm.m.x.z = xT2 - xT7;
                     } else {
                         const Transform &camWXfm = curCam->WorldXfm();
-                        fwdY = camWXfm.m.y.z * upX - camWXfm.m.y.x * upZ;
-                        fwdZ = camWXfm.m.y.x * upY - camWXfm.m.y.y * upX;
-                        tempA = upY;
-                        tempB = upZ;
+                        float czx_b = charXfm.m.z.x;
+                        float xT7 = camWXfm.m.y.y * czx_b;
+                        float xT6 = camWXfm.m.y.z * czx_b;
+                        float cyx_b = camWXfm.m.y.x;
+                        float xT0 = camWXfm.m.y.z * charXfm.m.z.y;
+                        float xT2 = cyx_b * charXfm.m.z.y;
+                        float xT1 = cyx_b * charXfm.m.z.z;
+                        charXfm.m.x.x = camWXfm.m.y.y * charXfm.m.z.z - xT0;
+                        charXfm.m.x.y = xT6 - xT1;
+                        charXfm.m.x.z = xT2 - xT7;
                     }
 
-                    // Forward (x-row): normalize cross product result
-                    const Transform &camWXfm3 = curCam->WorldXfm();
-                    charXfm.m.x.x = camWXfm3.m.y.y * tempB - camWXfm3.m.y.z * tempA;
-                    charXfm.m.x.y = fwdY;
-                    charXfm.m.x.z = fwdZ;
                     Normalize(charXfm.m.x, charXfm.m.x);
 
-                    // Right (y-row): forward × up using normalized forward values
-                    charXfm.m.y.x = charXfm.m.x.y * upX - upY * charXfm.m.x.x;
-                    charXfm.m.y.y = upZ * charXfm.m.x.x - charXfm.m.x.z * upX;
-                    charXfm.m.y.z = charXfm.m.x.z * upY - charXfm.m.x.y * upZ;
-                    charXfm.m.z.x = upX;
-                    charXfm.m.z.y = upY;
-                    charXfm.m.z.z = upZ;
+                    float cxx = charXfm.m.x.x;
+                    float yT7 = charXfm.m.z.y * cxx;
+                    float yT6 = charXfm.m.z.z * cxx;
+                    float cxy = charXfm.m.x.y;
+                    float czx = charXfm.m.z.x;
+                    float yT0 = charXfm.m.z.z * cxy;
+                    float yT2 = czx * cxy;
+                    float yT1 = czx * charXfm.m.x.z;
+                    charXfm.m.y.x = charXfm.m.z.y * charXfm.m.x.z - yT0;
+                    charXfm.m.y.y = yT6 - yT1;
+                    charXfm.m.y.z = yT2 - yT7;
                 }
                 charXfm.v.x = 0;
                 charXfm.v.y = 0;

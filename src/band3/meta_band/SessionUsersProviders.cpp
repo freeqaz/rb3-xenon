@@ -125,7 +125,7 @@ int SessionUsersProvider::NumData() const { return mUsers.size(); }
 
 BEGIN_HANDLERS(SessionUsersProvider)
     HANDLE_ACTION(kick_player, KickPlayer(_msg->Int(2)))
-    HANDLE_ACTION(toggle_mute_status, ToggleMuteStatus(_msg->Int(2)))
+    HANDLE_ACTION(toggle_mute_status, _msg->Int(2))
     HANDLE_EXPR(get_size, NumData())
     HANDLE_CHECK(0xDB)
 END_HANDLERS

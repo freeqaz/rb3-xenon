@@ -39,7 +39,7 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual bool IsSongInLibrary(const int &) const;
     virtual void ExitStore(StoreError) const;
-    virtual int StoreUser() const;
+    virtual LocalUser *StoreUser() const;
     virtual StoreOffer *MakeNewOffer(const StorePackedOfferBase *, bool);
     virtual StoreOffer *FindOffer(Symbol) const;
     virtual bool EnumerateSubsetOfOfferIDs() const { return true; }

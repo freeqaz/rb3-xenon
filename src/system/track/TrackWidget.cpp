@@ -111,6 +111,13 @@ BEGIN_SAVES(TrackWidget)
     bs << mAllowLineRotation;
 END_SAVES
 
+// The packed-rev aggregate + gRev/gAltRev macros are declared once at the top of
+// this file (an equivalent lever landed there independently); reusing that single
+// definition here.  A second `static struct { ... } gRevs_TrackWidget;` at this
+// point is a C2371 redefinition, and the `__declspec(align(4))` spelling is a
+// no-op anyway -- altRev already sits at offset +0, so both spellings yield the
+// same {altRev@0, pad@2, rev@4} layout retail addresses as 0(r29)/4(r29).
+
 BEGIN_LOADS(TrackWidget)
     LOAD_REVS(bs)
     ASSERT_REVS(15, 0)
@@ -119,7 +126,7 @@ BEGIN_LOADS(TrackWidget)
         LOAD_SUPERCLASS(RndDrawable)
     bs >> mMeshes;
     if (gRev > 4) {
-        LOAD_BITFIELD(bool, mWideWidget)
+        bs >> mWideWidget;
         bs >> mMeshesLeft;
         bs >> mMeshesSpan;
         bs >> mMeshesRight;
@@ -129,14 +136,14 @@ BEGIN_LOADS(TrackWidget)
         bs >> mBaseLength;
     if (gRev > 8)
         bs >> mBaseWidth;
-    if (gRev >= 2 && gRev <= 7) {
+    if (gRev > 1 && gRev < 8) {
         bool bbb = 0;
         bs >> bbb;
         if (bbb)
             mWidgetType = kMultiMeshWidget;
     }
     if (gRev > 3) {
-        LOAD_BITFIELD(bool, mAllowRotation)
+        bs >> mAllowRotation;
     }
     if (gRev > 5) {
         bs >> mFont;
@@ -149,24 +156,11 @@ BEGIN_LOADS(TrackWidget)
     }
     if (gRev > 6) {
         bs >> mTextObj;
-        {
-            int u____;
-            bs >> u____;
-            MILO_ASSERT(u____ >= 0 && u____ <= ((1<<( 10 - 1)) - 1), 0xAF);
-            mCharsPerInst = u____;
-        }
-        {
-            int u____;
-            bs >> u____;
-            MILO_ASSERT(u____ >= 0 && u____ <= ((1<<( 10 - 1)) - 1), 0xB0);
-            mMaxTextInstances = u____;
-        }
+        bs >> mCharsPerInst;
+        bs >> mMaxTextInstances;
     }
     if (gRev > 7) {
-        int u____;
-        bs >> u____;
-        MILO_ASSERT(u____ >= 0 && u____ <= ((1<<( 3 - 1)) - 1), 0xB4);
-        mWidgetType = u____;
+        bs >> mWidgetType;
         bs >> mMat;
     }
     if (gRev > 9)
@@ -182,13 +176,15 @@ BEGIN_LOADS(TrackWidget)
         bs >> mZOffset;
     }
     if (gRev > 0xD) {
-        LOAD_BITFIELD(bool, mAllowShift)
+        bs >> mAllowShift;
     }
     if (gRev > 0xE) {
-        LOAD_BITFIELD(bool, mAllowLineRotation)
+        bs >> mAllowLineRotation;
     }
     SyncImp();
 END_LOADS
+#undef gAltRev
+#undef gRev
 
 // Retail X360 (MILO_DEBUG off) has no TrackWidgetImpBase::CheckValid virtual
 // (see TrackWidgetImp.h), so this reduces to an empty no-op that /Ob2 inlines
@@ -419,111 +415,29 @@ END_HANDLERS
 #pragma pool_data off
 BEGIN_PROPSYNCS(TrackWidget)
     SYNC_PROP_MODIFY_ALT(meshes, mMeshes, CheckScales())
-    {
-        static Symbol _s("wide_widget");
-        if (sym == _s) {
-            if (_op == kPropSet) {
-                mWideWidget = _val.Int();
-            } else
-                _val = DataNode(mWideWidget);
-            return true;
-        }
-    }
+    SYNC_PROP(wide_widget, mWideWidget)
     SYNC_PROP(meshes_left, mMeshesLeft)
     SYNC_PROP(meshes_span, mMeshesSpan)
     SYNC_PROP(meshes_right, mMeshesRight)
     SYNC_PROP(environ, mEnviron)
-    {
-        static Symbol _s("allow_rotation");
-        int bit = mAllowRotation;
-        if (sym == _s) {
-            bool ret = PropSync(bit, _val, _prop, _i + 1, _op);
-            mAllowRotation = bit;
-            if (!(_op & (kPropSize | kPropGet))) {
-                SyncImp();
-            }
-            return ret;
-        }
-    }
+    SYNC_PROP_MODIFY_ALT(allow_rotation, mAllowRotation, SyncImp())
     SYNC_PROP(base_length, mBaseLength)
     SYNC_PROP(base_width, mBaseWidth)
-    {
-        static Symbol _s("max_meshes");
-        if (sym == _s) {
-            if (_op == kPropSet) {
-                mMaxMeshes = _val.Int();
-            } else
-                _val = DataNode(mMaxMeshes);
-            return true;
-        }
-    }
+    SYNC_PROP(max_meshes, mMaxMeshes)
     SYNC_PROP_MODIFY_ALT(font, mFont, SyncImp())
     SYNC_PROP_MODIFY_ALT(text_obj, mTextObj, SyncImp())
-    SYNC_PROP_MODIFY(text_alignment, (int &)mTextAlignment, SyncImp())
-    {
-        static Symbol _s("chars_per_inst");
-        int bit = mCharsPerInst;
-        if (sym == _s) {
-            bool ret = PropSync(bit, _val, _prop, _i + 1, _op);
-            mCharsPerInst = bit;
-            if (!(_op & (kPropSize | kPropGet))) {
-                SyncImp();
-            }
-            return ret;
-        }
-    }
-    {
-        static Symbol _s("max_text_instances");
-        int bit = mMaxTextInstances;
-        if (sym == _s) {
-            bool ret = PropSync(bit, _val, _prop, _i + 1, _op);
-            mMaxTextInstances = bit;
-            if (!(_op & (kPropSize | kPropGet))) {
-                SyncImp();
-            }
-            return ret;
-        }
-    }
+    SYNC_PROP_MODIFY_ALT(text_alignment, (int &)mTextAlignment, SyncImp())
+    SYNC_PROP_MODIFY_ALT(chars_per_inst, mCharsPerInst, SyncImp())
+    SYNC_PROP_MODIFY_ALT(max_text_instances, mMaxTextInstances, SyncImp())
     SYNC_PROP_MODIFY_ALT(text_color, mTextColor, SyncImp())
     SYNC_PROP_MODIFY_ALT(alt_text_color, mAltTextColor, SyncImp())
     SYNC_PROP_MODIFY_ALT(mat, mMat, SyncImp())
-    {
-        static Symbol _s("widget_type");
-        int bit = mWidgetType;
-        if (sym == _s) {
-            bool ret = PropSync(bit, _val, _prop, _i + 1, _op);
-            mWidgetType = bit;
-            if (!(_op & (kPropSize | kPropGet))) {
-                SyncImp();
-            }
-            return ret;
-        }
-    }
+    SYNC_PROP_MODIFY_ALT(widget_type, mWidgetType, SyncImp())
     SYNC_PROP(x_offset, mXOffset)
     SYNC_PROP(y_offset, mYOffset)
     SYNC_PROP(z_offset, mZOffset)
-    {
-        static Symbol _s("allow_shift");
-        if (sym == _s) {
-            if (_op == kPropSet) {
-                mAllowShift = _val.Int();
-            } else
-                _val = DataNode(mAllowShift);
-            return true;
-        }
-    }
-    {
-        static Symbol _s("allow_line_rotation");
-        bool bit = mAllowLineRotation;
-        if (sym == _s) {
-            bool ret = PropSync(bit, _val, _prop, _i + 1, _op);
-            mAllowLineRotation = bit;
-            if (!(_op & (kPropSize | kPropGet))) {
-                SyncImp();
-            }
-            return ret;
-        }
-    }
+    SYNC_PROP(allow_shift, mAllowShift)
+    SYNC_PROP_MODIFY_ALT(allow_line_rotation, mAllowLineRotation, SyncImp())
     SYNC_SUPERCLASS(RndDrawable)
 END_PROPSYNCS
 #pragma pop

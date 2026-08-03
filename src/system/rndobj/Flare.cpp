@@ -14,17 +14,13 @@
 #include "rndobj/Utl.h"
 #include <string.h>
 
-// RB3-360 retail rev storage. Retail's LOAD_REVS keeps NO BinStreamRev: it splits
-// the packed rev into two mutable file-scope shorts, and ASSERT_REVS emits nothing.
-// The two words must live in ONE aligned(4) aggregate (altRev +0, rev +4) -- MSVC
-// does not lay .bss out in declaration order, so two separate statics get other
-// globals interleaved between them and will not fold onto one base register.
-static struct {
-    __declspec(align(4)) unsigned short altRev;
-    __declspec(align(4)) unsigned short rev;
-} gRevs_Flare;
-#define gAltRev gRevs_Flare.altRev
-#define gRev gRevs_Flare.rev
+// RB3-360 retail rev storage for RndFlare::Load: verified via objdiff against
+// the retail disassembly (idx 9-18 of the function) -- retail reads the raw
+// stream int directly into ONE file-scope `int` via ReadEndian(&gRev, 4) and
+// compares it with plain 32-bit signed `cmpwi`. There is no packed altRev
+// half here (unlike BandSwatch/FxSendWah, which do use both halves) -- Flare
+// never references an alt revision anywhere in this file.
+static int gRev;
 
 RndFlare::RndFlare()
     : mPointTest(true), mAreaTest(true), mVisible(false), mSizes(0.1, 0.1), mMat(this),
@@ -88,10 +84,7 @@ BEGIN_COPYS(RndFlare)
 END_COPYS
 
 BEGIN_LOADS(RndFlare)
-    int rev;
-    bs >> rev;
-    gRev = getHmxRev(rev);
-    gAltRev = getAltRev(rev);
+    bs >> gRev;
     if (gRev > 3) {
         Hmx::Object::Load(bs);
     }
@@ -139,8 +132,7 @@ void RndFlare::DrawShowing() {
     float depth = cam->WorldToScreen(worldXfm.v, screenPos);
 
     float scale;
-    Hmx::Rect &rect = CalcRect(screenPos, scale);
-    Hmx::Rect localRect = rect;
+    Hmx::Rect localRect = CalcRect(screenPos, scale);
 
     float visibility = 0.0f;
     if (RectOffscreen(localRect) || depth <= 0.0f) {
@@ -150,10 +142,7 @@ void RndFlare::DrawShowing() {
         mOcclusionPending = false;
     } else {
         bool useOccResult = false;
-        if (!mPointTest || TheHiResScreen.IsActive()) {
-            mOcclusionResult = scale;
-            mVisible = true;
-        } else {
+        if (mPointTest) {
             if (mOcclusionPending || (useOccResult = true, !mOcclusionReady)) {
                 useOccResult = false;
             }
@@ -164,9 +153,7 @@ void RndFlare::DrawShowing() {
             const Transform &flareXfm = WorldXfm();
             const Transform &camXfm = cam->WorldXfm();
             Vector3 dir;
-            dir.z = camXfm.v.z - flareXfm.v.z;
-            dir.y = camXfm.v.y - flareXfm.v.y;
-            dir.x = camXfm.v.x - flareXfm.v.x;
+            Subtract(camXfm.v, flareXfm.v, dir);
             Normalize(dir, dir);
 
             const Transform &flareXfm2 = WorldXfm();
@@ -175,6 +162,9 @@ void RndFlare::DrawShowing() {
             dir.y = dir.y * offset + flareXfm2.v.y;
             dir.z = dir.z * offset + flareXfm2.v.z;
             TheRnd.TestPoint(dir, this);
+        } else {
+            mOcclusionResult = scale;
+            mVisible = true;
         }
 
         if (useOccResult) {
@@ -197,9 +187,11 @@ void RndFlare::DrawShowing() {
             float alpha = 1.0f;
             if (mMat) {
                 float rangeX = mRange.x;
-                float t = 1.0f;
+                float t;
                 if (rangeX != mRange.y) {
                     t = (depth - mRange.y) / (rangeX - mRange.y);
+                } else {
+                    t = 1.0f;
                 }
                 alpha = Clamp(0.0f, 1.0f, t * ratio);
 
@@ -217,8 +209,9 @@ void RndFlare::DrawShowing() {
                 Hmx::Matrix3 texMat;
                 memcpy(&texMat, &mMat->TexXfm(), 0x40);
                 MakeRotMatrixZ(screenPos.x - 0.5f, texMat);
-                memcpy(&mMat->TexXfm(), &texMat, 0x40);
-                mMat->MarkDirty(2);
+                RndMat *mat = mMat;
+                memcpy(&mat->TexXfm(), &texMat, 0x40);
+                mat->MarkDirty(2);
             }
 
             Hmx::Rect *drawRect;
@@ -227,10 +220,9 @@ void RndFlare::DrawShowing() {
             } else {
                 drawRect = &CalcRect(screenPos, scale);
             }
-            localRect = *drawRect;
-
+            Hmx::Rect drawRectCopy = *drawRect;
             Hmx::Color white(1.0f, 1.0f, 1.0f, 1.0f);
-            TheRnd.DrawRect(localRect, white, mMat, nullptr, nullptr);
+            TheRnd.DrawRect(drawRectCopy, white, mMat, nullptr, nullptr);
         }
     }
 }

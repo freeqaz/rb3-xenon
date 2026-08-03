@@ -129,7 +129,7 @@ public:
     Symbol unk28; // 0x28
     std::vector<Symbol> m_vCampaignLevels; // 0x2c
     std::hash_map<Symbol, CampaignLevel *> m_mapCampaignLevels; // 0x34
-    std::map<Symbol, Symbol> unk4c; // 0x4c
+    std::hash_map<Symbol, Symbol> unk4c; // 0x60 (verified via class_layout_report; was mis-typed as std::map)
     std::vector<Symbol> unk64; // 0x64
     std::hash_map<Symbol, CampaignKey *> m_mapCampaignKeys; // 0x6c
     BandProfile *unk84; // 0x84

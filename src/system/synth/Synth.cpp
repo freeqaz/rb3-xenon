@@ -148,7 +148,6 @@ BEGIN_HANDLERS(Synth)
 END_HANDLERS
 
 void Synth::Init() {
-    SynthUtlInit();
     REGISTER_OBJ_FACTORY(Fader);
     Sfx::Init();
     REGISTER_OBJ_FACTORY(MidiInstrument)
@@ -157,7 +156,6 @@ void Synth::Init() {
     SynthEmitter::Init();
     REGISTER_OBJ_FACTORY(FxSendReverb)
     REGISTER_OBJ_FACTORY(FxSendDelay)
-    REGISTER_OBJ_FACTORY(FxSendBitCrush)
     REGISTER_OBJ_FACTORY(FxSendDistortion)
     REGISTER_OBJ_FACTORY(FxSendCompress)
     REGISTER_OBJ_FACTORY(FxSendEQ)
@@ -168,11 +166,6 @@ void Synth::Init() {
     REGISTER_OBJ_FACTORY(FxSendSynapse)
     REGISTER_OBJ_FACTORY(FxSendWah)
     REGISTER_OBJ_FACTORY(MoggClip)
-    REGISTER_OBJ_FACTORY(MeterEffectMonitor)
-    REGISTER_OBJ_FACTORY(Sound)
-    REGISTER_OBJ_FACTORY(ADSR)
-    REGISTER_OBJ_FACTORY(ThreeDSound)
-    REGISTER_OBJ_FACTORY(AudioDuckerTrigger)
     mMasterFader = Hmx::Object::New<Fader>();
     mSfxFader = Hmx::Object::New<Fader>();
     mMidiInstrumentFader = Hmx::Object::New<Fader>();
@@ -186,6 +179,7 @@ void Synth::Init() {
     mHud = RndOverlay::Find("synth_hud", true);
     mHud->SetCallback(this);
     InitSecurity();
+    mMidiInstrumentMgr->Init();
 }
 
 void Synth::InitSecurity() {
@@ -228,16 +222,15 @@ void Synth::Poll() {
             data.mPeakAge = 0;
         }
     }
+    FaderTask::PollAll();
     if (mMuted)
         mMasterFader->SetVal(-96.0f);
     SynthPollable::PollAll();
+    mMidiInstrumentMgr->Poll();
     if (DidMicsChange()) {
         MILO_ASSERT(mMicClientMapper, 0x14E);
         mMicClientMapper->HandleMicsChanged();
         ResetMicsChanged();
-    }
-    if (!mZombieInsts.empty()) {
-        CullZombies();
     }
 }
 

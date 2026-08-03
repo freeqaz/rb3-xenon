@@ -17,10 +17,17 @@
 
 #pragma region CharIKHand
 
+// mPullShoulder (0x5a) is deliberately NOT in this init list: retail's ctor
+// asm stores mAlwaysIKElbow(0x58) then jumps straight to mConstraintWrist
+// (0x78) with no store to 0x5a at all -- matching rb3-Wii's dev decomp
+// (../rb3/src/system/char/CharIKHand.cpp), which has no mPullShoulder
+// initializer either (rb3-Wii predates the `pull_shoulder` property; see the
+// SYNC_PROP comment above). The member is left uninitialized on retail, same
+// as here.
 CharIKHand::CharIKHand()
     : mHand(this), mFinger(this), mTargets(this), mOrientation(true), mStretch(true),
       mScalable(false), mMoveElbow(true), mElbowSwing(0), mAlwaysIKElbow(false),
-      mPullShoulder(true), mAAPlusBB(0), mConstraintWrist(false), mWristRadians(0),
+      mAAPlusBB(0), mConstraintWrist(false), mWristRadians(0),
       mElbowCollide(this), mClockwise(false) {}
 
 CharIKHand::~CharIKHand() {}

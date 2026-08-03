@@ -34,7 +34,7 @@ MoggClip::~MoggClip() {
 
 BEGIN_HANDLERS(MoggClip)
     HANDLE_ACTION(play, Play(0))
-    HANDLE_ACTION(stop, Stop(0))
+    HANDLE_ACTION(stop, Stop())
     HANDLE_ACTION(set_pan, SetPan(_msg->Int(2), _msg->Float(3)))
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
@@ -127,7 +127,7 @@ void MoggClip::SynthPoll() {
             mStream->Play();
         } else {
             if (mStream->IsFinished() || mFader->mVal == -96.0f) {
-                MoggClip::Stop(0);
+                MoggClip::Stop();
             }
         }
     }
@@ -182,7 +182,7 @@ void MoggClip::Play(float f1) {
         MILO_WARN("Mogg file not loaded: '%s'", mMoggFile.c_str());
 }
 
-void MoggClip::Stop(bool b1) {
+void MoggClip::Stop() {
     KillStream();
     if (mUnloadWhenFinished) {
         UnloadData();
@@ -334,7 +334,7 @@ void MoggClip::LoadNumChannels() {
         retries++;
     }
     mNumChannels = numChannels;
-    Stop(false);
+    Stop();
     if (mNumChannels < 0) {
         mNumChannels = -1;
     }

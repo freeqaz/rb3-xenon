@@ -111,7 +111,10 @@ BEGIN_COPYS(RndGroup)
     COPY_SUPERCLASS(RndTransformable)
     CREATE_COPY(RndGroup)
     BEGIN_COPYING_MEMBERS
+        COPY_MEMBER(mEnv)
         COPY_MEMBER(mDrawOnly)
+        COPY_MEMBER(mLod)
+        COPY_MEMBER(mLodScreenSize)
         COPY_MEMBER(mSortInWorld)
         if (ty == kCopyDeep)
             COPY_MEMBER(mObjects)
@@ -233,25 +236,27 @@ bool RndGroup::MakeWorldSphere(Sphere &s, bool b) {
 }
 
 void RndGroup::DrawShowing() {
-    RndEnvironTracker tracker(nullptr, nullptr);
-    if (!mSortInWorld) {
+    if (mDraws.empty())
+        return;
+    RndEnvironTracker tracker(mEnv, &WorldXfm().v);
+    if (mDrawOnly) {
+        mDrawOnly->Draw();
+    } else if (!mSortInWorld) {
         for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != mDraws.end();
              ++it) {
             (*it)->Draw();
         }
-    } else if (mDrawOnly) {
-        mDrawOnly->Draw();
     } else {
         std::vector<GroupDrawDist> sorted;
         sorted.reserve(mDraws.size());
         const Transform &camXfm = RndCam::Current()->WorldXfm();
+        const Vector3 &camXfmV = camXfm.v;
         for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != mDraws.end();
              ++it) {
             RndTransformable *trans = dynamic_cast<RndTransformable *>(*it);
-            Vector3 zero(0.0f, 0.0f, 0.0f);
-            Vector3 pos = trans ? trans->WorldXfm().v : zero;
+            Vector3 pos = trans ? trans->WorldXfm().v : Vector3(0.0f, 0.0f, 0.0f);
             Vector3 delta;
-            Subtract(camXfm.v, pos, delta);
+            Subtract(camXfmV, pos, delta);
             GroupDrawDist gdd;
             gdd.draw = *it;
             gdd.dist = LengthSquared(delta);

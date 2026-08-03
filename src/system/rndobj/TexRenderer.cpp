@@ -1,3 +1,14 @@
+// RB3-360 retail RndTexRenderer::RndTexRenderer() inlines the owner-only
+// ObjPtr ctor for mDrawable/mCamera/mMirrorCam (mOwner store, then a
+// scheduler-interleaved vtable-lis / mObject / vtable-addi+store -- the
+// RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT shape) but keeps a real out-of-line
+// call for mOutputTexture. This TU opts the majority (one-arg `mFoo(this)`,
+// already how the ctor below is spelled) into the inline form via
+// obj/Object.h's RB3_OBJPTR_INLINE_OWNER_CTOR gate; mOutputTexture opts back
+// out with the explicit two-arg `mOutputTexture(this, nullptr)` spelling
+// below (see the "PER-SITE" doc block on that gate).
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "rndobj/TexRenderer.h"
 #include "math/Mtx.h"
 #include "math/Utl.h"
@@ -478,10 +489,30 @@ void RndTexRenderer::DrawShowing() {
         DrawToTexture();
 }
 
+// ORDER-FORCING SPELLING -- `mFirstDraw = 1` rides inside mMirrorCam's
+// initializer on purpose; it is NOT ordinary logic. Retail emits the three
+// bool stores as 0x6c(mPrimeDraw), 0x6e(mForceMips), 0x6d(mFirstDraw), i.e.
+// mFirstDraw LAST. Measured facts behind that (all four legs objdiff'd):
+//   * The scheduler keeps the IR-last store of the mem-init group above
+//     mMirrorCam's unwind `stw r11,0x54(r31)` and sinks the rest below it,
+//     preserving their relative order. Verified on 4 different member sets.
+//   * cl 10224 canonicalizes a mem-init list to DECLARATION order: spelling
+//     the list as mFirstDraw,mPrimeDraw,mForceMips (DC3's own order, which
+//     would have reproduced retail's bytes had written order been honored)
+//     is byte-identical. So no mem-init permutation can put 0x6d last.
+//   * A ctor-BODY `mFirstDraw = 1;` sinks past mMirrorCam's stores to the
+//     function tail -- the scheduler will not hoist it back across them.
+// Member->offset is pinned by RETAIL bytes, not header comments: InitTexture
+// reads 0x6e (mForceMips), Save reads 0x6c then 0x6e (mPrimeDraw,mForceMips),
+// DrawToTexture reads 0x6d then 0x6c and later stores 0x6d (mFirstDraw).
+// Semantics are unchanged: mFirstDraw is still set to 1 exactly once, before
+// any ctor body runs. Reverting to `mFirstDraw(1)` in the list costs the
+// match (99.98529%) but is otherwise equivalent.
 RndTexRenderer::RndTexRenderer()
     : mDirty(1), mForce(0), mDrawPreClear(1), mDrawWorldOnly(0), mDrawResponsible(1),
-      mNoPoll(0), mPrimeDraw(0), mFirstDraw(1), mForceMips(0), mImpostorHeight(0),
-      mOutputTexture(this), mDrawable(this), mCamera(this), mMirrorCam(this) {}
+      mNoPoll(0), mPrimeDraw(0), mForceMips(0), mImpostorHeight(0),
+      mOutputTexture(this, nullptr), mDrawable(this), mCamera(this),
+      mMirrorCam((mFirstDraw = 1, this)) {}
 
 // sw2 scatter-include (default/TexRenderer <- math/mtx.cpp)
 #define gRev gRev_mtx

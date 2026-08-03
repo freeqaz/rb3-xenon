@@ -373,16 +373,16 @@ void BandHeadShaper::Reskin() {
     }
     for (int i = 0; i < unk18.size(); i++) {
         RndTransformable *bone = unk18[i];
-        const ObjRef &refs = bone->Refs();
-        for (ObjRef::iterator rit = refs.end(); rit != refs.begin();) {
-            --rit;
+        for (ObjRef::iterator rit = bone->Refs().begin(); rit != bone->Refs().end();
+             ++rit) {
             RndMesh *mesh = dynamic_cast<RndMesh *>(RefPtrOf(rit)->RefOwner());
             if (!mesh)
                 continue;
-            bool isHead = strcmp(mesh->Name(), "head.mesh") == 0;
-            if (!isHead)
+            if (strcmp(mesh->Name(), "head.mesh") != 0)
                 continue;
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
             TestMesh(mesh, topTrans);
+#endif
             for (int j = 0; j < mesh->NumBones(); j++) {
                 if (mesh->BoneTransAt(j) == bone) {
                     mesh->SetBone(j, bone, true);

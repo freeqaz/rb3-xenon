@@ -357,7 +357,8 @@ void JoypadController::ReconcileFretState() {
         int mask = 0;
         for (int i = 0; i < 5; i++) {
             bool curMask = mFretMask & 1 << i;
-            bool btnInMask = GetJoypadData()->IsButtonInMask(SlotToButton(i));
+            int btn = SlotToButton(i);
+            bool btnInMask = GetJoypadData()->IsButtonInMask(btn);
             if (btnInMask)
                 mask |= 1 << i;
             if (curMask != btnInMask) {

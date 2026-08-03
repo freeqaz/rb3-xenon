@@ -251,8 +251,25 @@ public:
         if (d) {
             if (!async || mLoader->IsLoaded())
                 PostLoad(nullptr);
-        } else if (!p.empty())
+        } else if (!p.empty()) {
+#ifdef HX_NATIVE
             MILO_NOTIFY("Couldn't load %s", p);
+#else
+            // Site-local override of MILO_NOTIFY's global comma-form (see
+            // Debug.h: NOTIFY is deliberately comma-form because most NOTIFY
+            // sites are ordering-sensitive multi-arg calls). This site has a
+            // single class-typed arg (FilePath p, no ordering hazard), and
+            // retail's stripped residue here COPY-CONSTRUCTS p (implicit
+            // FilePath copy ctor -> String::String(String const&) + vtable
+            // fixup -> ~String) rather than merely referencing it -- verified
+            // against both ObjDirPtr<WorldInstance>::LoadFile and
+            // ObjDirPtr<UIListDir>::LoadFile (0x824eac38), which share this
+            // template body and diverged identically (84.73864 fuzzy) before
+            // this fix. MiloStripEval's by-value T1 param reproduces exactly
+            // that copy+destroy shape.
+            MiloStripEval("Couldn't load %s", p);
+#endif
+        }
     }
 
     FilePath &GetFile() const {

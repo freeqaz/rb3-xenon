@@ -678,15 +678,11 @@ DataNode EventTrigger::Cleanup(DataArray *arr) {
              iter2 != iter->mAnims.end(); ++iter2) {
             RndAnimFilter *filter = dynamic_cast<RndAnimFilter *>(iter2->mAnim.Ptr());
             if (filter) {
-                const ObjRef &refs = filter->Refs();
-                ObjRef::iterator rit = refs.begin();
-                ObjRef::iterator ritEnd = refs.end();
-                for (; rit != ritEnd; ++rit) {
+                ObjRef::iterator rit = filter->Refs().begin();
+                for (; rit != filter->Refs().end(); ++rit) {
                     if (RefPtrOf(rit)->RefOwner() && RefPtrOf(rit)->RefOwner() != (EventTrigger *)iter) break;
                 }
-                if (rit == ritEnd && filter->GetType() != RndAnimFilter::kShuttle) {
-                    static Symbol range("range");
-                    static Symbol loop("loop");
+                if (rit == filter->Refs().end() && filter->GetType() != RndAnimFilter::kShuttle) {
                     iter2->mAnim = filter->Anim();
                     iter2->mEnable = true;
                     iter2->mRate = filter->GetRate();
@@ -694,7 +690,9 @@ DataNode EventTrigger::Cleanup(DataArray *arr) {
                     iter2->mEnd = filter->End();
                     iter2->mPeriod = filter->Period();
                     iter2->mScale = filter->Property("scale", true)->Float();
-                                        if ((filter->GetType() == RndAnimFilter::kLoop)) {
+                    static Symbol range("range");
+                    static Symbol loop("loop");
+                    if ((filter->GetType() == RndAnimFilter::kLoop)) {
                         iter2->mType = loop;
                     } else {
                         iter2->mType = range;
@@ -735,7 +733,23 @@ DataNode EventTrigger::Cleanup(DataArray *arr) {
                     curTrig->mProxyCalls.push_back(curTrig2->mProxyCalls.back());
                     curTrig2->mProxyCalls.pop_back();
                 }
+#ifdef HX_NATIVE
+                // Native ObjRef model needs the snapshot-based helper: a naive
+                // ring walk is unsafe when a Replace callback cascades and frees
+                // other ring entries (see Hmx::Object::ReplaceRefs).
                 curTrig2->ReplaceRefs(curTrig);
+#else
+                // RB3 retail writes the ring walk at the call site (rb3-Wii
+                // oracle); DC3 later refactored it into Object::ReplaceRefs.
+                // Replace() unlinks the node via SetObj -> Release, so the
+                // empty() test is what terminates the loop.
+                while (!curTrig2->Refs().empty()) {
+                    RefPtrOf(curTrig2->Refs().begin())
+                        ->Replace(
+                            (ObjRef *)(Hmx::Object *)curTrig2, curTrig
+                        );
+                }
+#endif
                 delete curTrig2;
                 iter2 = trigList.erase(iter2);
             } else {

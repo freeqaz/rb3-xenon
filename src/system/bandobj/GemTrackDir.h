@@ -127,7 +127,6 @@ public:
 
     DataNode OnDrawSampleChord(DataArray *);
 
-    DECLARE_REVS;
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
     NEW_OBJ(GemTrackDir)

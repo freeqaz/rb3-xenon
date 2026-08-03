@@ -199,11 +199,9 @@ void Voice::InitSourceBuffer(XAUDIO2_BUFFER &audio_buffer) {
 }
 
 void StartSynchronizedVoices() {
-    if (gShutdownVoiceThread)
-        return;
     gLockPendingLists.Enter();
-    gCommitTag = 1;
     gCommitSyncVoices = true;
+    gCommitTag = 1;
     if (gEvent != (HANDLE)-1) {
         SetEvent(gEvent);
     }
@@ -211,7 +209,7 @@ void StartSynchronizedVoices() {
 }
 
 void StopSynchronizedVoices() {
-    if (gShutdownVoiceThread || !gHasPendingStopCommits)
+    if (!gHasPendingStopCommits)
         return;
     gLockPendingLists.Enter();
     gHasPendingStopCommits = false;

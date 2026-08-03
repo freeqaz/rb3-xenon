@@ -39,6 +39,14 @@ void BandMachine::SyncSave(BinStream &bs, unsigned char mask) const {
             bs << *it;
         }
     }
+    if (mask & 8) {
+        bs << mProGuitarOrBassSongs.size();
+        for (std::set<int>::const_iterator it = mProGuitarOrBassSongs.begin();
+             it != mProGuitarOrBassSongs.end();
+             ++it) {
+            bs << *it;
+        }
+    }
     if (mask & 4) {
         bs << mPrimaryBandName;
         bs << mPrimaryProfileName;

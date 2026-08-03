@@ -516,6 +516,11 @@ bool BandProfile::HasSomethingToUpload() {
     }
 }
 
+void ProfilePicture::Clear() {
+    mState = kIdle;
+    RELEASE(mUserPicture);
+}
+
 void BandProfile::DeleteAll() {
     FOREACH (it, mCharacters) {
         RELEASE(*it);
@@ -529,20 +534,19 @@ void BandProfile::DeleteAll() {
     mLessonCompletions.clear();
     if (mScores)
         mScores->Clear();
-    mScores->SetLocalUser(GetAssociatedLocalBandUser());
     FOREACH (it, mSavedSetlists) {
         delete *it;
     }
     mSavedSetlists.clear();
-    mAccomplishmentDataUploadContextID = -1;
-    mPerformanceDataUploadContextID = -1;
-    unk74c = -1;
-    unk750 = -1;
     unk6fb8 = 0;
     unk740 = 0;
+    mAccomplishmentDataUploadContextID = -1;
+    mPerformanceDataUploadContextID = -1;
     unk6f70 = 0;
     unk6f74 = 0;
-    mProfilePicture->mState = ProfilePicture::kIdle;
+    unk74c = -1;
+    unk750 = -1;
+    mProfilePicture->Clear();
     mTourBand->SetBandName("");
     if (mTourBand->GetLogo()) {
         mTourBand->GetLogo()->patchIndex = 0;

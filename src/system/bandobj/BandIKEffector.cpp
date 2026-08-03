@@ -1,3 +1,11 @@
+// [NCCC f381] Retail inlines the owner-only ObjPtr ctor at all five sites in
+// ??0BandIKEffector@@'s member-init list (mEffector, mGround, mMore, mElbow,
+// unk64): no `bl ??0?$ObjPtr@...` calls, just three stores (mOwner/mObject/
+// vtable) per member, each followed by a live `stw &mFoo, 0x50(r31)` EH state
+// store -- the signature of the _EH variant's preserved cleanup region (see
+// Object.h's RB3_OBJPTR_INLINE_OWNER_CTOR_EH comment; same pattern as
+// rndobj/MultiMeshProxy.cpp). Must precede the first #include of obj/Object.h.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH 1
 #ifndef HX_NATIVE
 // Suppresses Mtx.h's global Matrix3 Multiply for the MWCC paired-singles local
 // version; on native there's no asm local, so use the global Multiply (Rot.cpp).
@@ -372,15 +380,16 @@ void BandIKEffector::ComputeHandPullAndQuat(
     float aaPlusbb,
     float aPlusb
 ) {
+    const ObjPtr<RndTransformable> &_ref0 = mEffector;
     float dy = handTarget.y - shoulderXfm.v.y;
     float dx = handTarget.x - shoulderXfm.v.x;
     float maxReach = aPlusb * 0.99f;
     float dz = handTarget.z - shoulderXfm.v.z;
-    float distSq = dz * dz + (dx * dx + dy * dy);
-    float maxReachSq = maxReach * maxReach;
     outQuat.v.x = dx;
     outQuat.v.y = dy;
     outQuat.v.z = dz;
+    float distSq = dz * dz + (dx * dx + dy * dy);
+    float maxReachSq = maxReach * maxReach;
 
     if (distSq > maxReachSq && GetType() == 3) {
         float factor = 1.0f - maxReach / (float)sqrt(distSq);
@@ -397,12 +406,11 @@ void BandIKEffector::ComputeHandPullAndQuat(
     float cosAngle = inv2ab * (distSq - aaPlusbb);
     if (cosAngle < -1.0f)
         cosAngle = -1.0f;
-    if (cosAngle > 1.0f)
+    else if (cosAngle > 1.0f)
         cosAngle = 1.0f;
     float cosSq = cosAngle * cosAngle;
     float sinAngle = -(float)sqrt(1.0f - cosSq);
 
-    const ObjPtr<RndTransformable> &_ref0 = mEffector;
     RndTransformable *parent = _ref0->TransParent();
     outElbowXfm.v = parent->mLocalXfm.v;
     outElbowXfm.m.x.y = sinAngle;
@@ -415,10 +423,10 @@ void BandIKEffector::ComputeHandPullAndQuat(
     outElbowXfm.m.z.y = 0.0f;
     outElbowXfm.m.z.z = 1.0f;
 
-    Vector3 localTarget;
-    MultiplyTranspose(shoulderXfm, handTarget, localTarget);
     Vector3 localDir;
     Multiply(_ref0->mLocalXfm.v, outElbowXfm, localDir);
+    Vector3 localTarget;
+    MultiplyTranspose(shoulderXfm, handTarget, localTarget);
     MakeRotQuat(localDir, localTarget, outQuat.q);
 }
 
@@ -677,16 +685,14 @@ void BandIKEffector::Poll() {
         return;
     float weight = Weight();
     RndTransformable *effector = mEffector;
-    if (!effector)
+    if (!(int)effector)
         return;
     if (weight != 0.0f) {
         Transform neutral;
         NeutralWorldXfm(effector, neutral);
         Normalize(neutral.m, neutral.m);
 
-        QuatXfm neutralQ;
-        neutralQ.v = neutral.v;
-        neutralQ.q.Set(neutral.m);
+        QuatXfm neutralQ(neutral);
 
         QuatXfm q;
         q.v.x = 0.0f;
@@ -712,11 +718,9 @@ void BandIKEffector::Poll() {
             if (!(totalWeight != 0.0f || type != 0)) {
                 return;
             } else {
-                QuatXfm effQ;
                 const Transform &effWorld = mEffector->WorldXfm();
-                effQ.v = effWorld.v;
-                effQ.q.Set(effWorld.m);
-                if (type - 1U <= 1) {
+                QuatXfm effQ(effWorld);
+                if (type == 2 || type == 1) {
                     RndTransformable *ground = unk64;
                     float groundHeight = GetGroundHeight(ground);
                     if (type == 1) {
@@ -735,14 +739,14 @@ void BandIKEffector::Poll() {
                             float worldHeight =
                                 ankle->mLocalXfm.v.x + knee->mLocalXfm.v.x;
                             float heightDelta = effQ.v.z - groundHeight;
+                            float ratio =
+                                worldHeight / (kneeLen + ankleLen);
                             float blend = (heightDelta - lowerBound)
                                 / ((kneeLen * 0.8f + ankleLen) - lowerBound);
                             if (blend < 0.0f)
                                 blend = 0.0f;
                             else if (blend > 1.0f)
                                 blend = 1.0f;
-                            float ratio =
-                                worldHeight / (kneeLen + ankleLen);
                             effQ.v.z = heightDelta
                                     * (blend * (ratio - 1.0f) + 1.0f)
                                 + groundHeight;
@@ -754,17 +758,7 @@ void BandIKEffector::Poll() {
                             blend = 0.0f;
                         else if (blend > 1.0f)
                             blend = 1.0f;
-                        if (blend == 0.0f) {
-                            effQ.v = neutralQ.v;
-                        } else if (blend == 1.0f) {
-                        } else {
-                            effQ.v.z =
-                                blend * (effQ.v.z - neutralQ.v.z) + neutralQ.v.z;
-                            effQ.v.y =
-                                blend * (effQ.v.y - neutralQ.v.y) + neutralQ.v.y;
-                            effQ.v.x =
-                                blend * (effQ.v.x - neutralQ.v.x) + neutralQ.v.x;
-                        }
+                        Interp(neutralQ.v, effQ.v, blend, effQ.v);
                         Interp(neutralQ.q, effQ.q, blend, effQ.q);
                     }
                 }
@@ -783,7 +777,7 @@ void BandIKEffector::Poll() {
         q.v.z *= invWeight;
         Normalize(q.q, q.q);
 
-        if (type - 2U <= 1) {
+        if (type == 2 || type == 3) {
             IKElbow(q.v);
         }
 

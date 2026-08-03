@@ -65,12 +65,24 @@ private:
     int mCurStatTable; // 0x1817c
     AllocInfoVec mFreedInfos; // 0x18180
     TextStream *mLog; // 0x1818c
-    TextFileStream *mReport; // 0x18190
-    signed char mHeap; // 0x18194
-    bool mHeapOnly; // 0x18195
-    int mFreeSysMem; // 0x18198
-    int mFreePhysMem; // 0x1819c
-    bool mSpew; // 0x181a0
+    signed char mHeap; // 0x18190
+    bool mHeapOnly; // 0x18191
+    bool mSpew; // 0x18192
+    // ---- Members below do NOT exist in RB3 retail's MemTracker. -------------
+    // Retail evidence (MemTracker.s / MemTrack.s target asm):
+    //   * MemTracker::operator new is called with r3 = 0x18194, so retail
+    //     sizeof(MemTracker) == 0x18194 -- 116 bytes smaller than ours.
+    //   * the retail ctor writes mFreedInfos at 0x18180/84/88, a word (mLog)
+    //     at 0x1818c and a BYTE (mHeap) at 0x18190, and nothing beyond.
+    //   * MemTrackHeapDump reads mHeap with lbzx at 0x18190.
+    // They are kept (RB3 code here still references them) but parked AFTER
+    // mSpew so they cannot perturb any offset retail actually uses. Deleting
+    // them outright -- the fully correct fix -- also needs mReport /
+    // mFreeSysMem / mFreePhysMem / the Strings / mAllocInfoName turned into
+    // MemTracker.cpp file statics, across 7 including TUs.
+    TextFileStream *mReport; // 0x18194 (retail: absent)
+    int mFreeSysMem; // 0x18198 (retail: absent)
+    int mFreePhysMem; // 0x1819c (retail: absent)
 public:
     String unk181a4; // current file name
     String unk181ac; // previous file name (stack push/pop)

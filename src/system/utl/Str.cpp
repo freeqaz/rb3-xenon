@@ -543,6 +543,10 @@ String &String::insert(unsigned int pos, unsigned int count, char c) {
 
 String &String::insert(unsigned int pos, const char *str) { return replace(pos, 0, str); }
 
+String &String::insert(unsigned int pos, const String &str) {
+    return replace(pos, 0, str.mStr);
+}
+
 bool String::operator<(const String &str) const {
     return strcmp(mStr, str.mStr) < 0;
 }

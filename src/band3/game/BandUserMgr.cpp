@@ -37,8 +37,8 @@ void BandUserMgrInit() {
 }
 
 BandUserMgr::BandUserMgr(int num_local, int num_remote) : mNullUser(0), mSessionMgr(0) {
-    mUsers.reserve(num_local + num_remote);
-    mLocalUsers.reserve(num_local);
+    mUsers.reserve(num_local + num_remote + kGameNumSlots);
+    mLocalUsers.reserve(num_local + kGameNumSlots);
     mRemoteUsers.reserve(num_remote);
     for (int i = 0; i < num_local; i++) {
         LocalBandUser *u = BandUser::NewLocalBandUser();
@@ -55,8 +55,8 @@ BandUserMgr::BandUserMgr(int num_local, int num_remote) : mNullUser(0), mSession
         mSlotMap[i].Clear();
 
     static Symbol profile_pre_delete_msg("profile_pre_delete_msg");
-    static Symbol signin_changed("signin_changed");
     TheProfileMgr.AddSink(this, profile_pre_delete_msg);
+    static Symbol signin_changed("signin_changed");
     ThePlatformMgr.AddSink(this, signin_changed);
 }
 
@@ -488,13 +488,14 @@ DataNode BandUserMgr::OnMsg(const SigninChangedMsg &msg) {
     GetLocalParticipants(users);
     FOREACH (it, users) {
         LocalBandUser *cur = *it;
-        if (ThePlatformMgr.HasUserSigninChanged(cur)) {
-            if (ThePlatformMgr.IsUserSignedIn(cur)) {
-                TourCharLocal *tChar = dynamic_cast<TourCharLocal *>(cur->GetChar());
-                if (tChar) {
-                    int slot = cur->GetSlot();
-                    if (slot != -1) {
-                        cur->SetLoadedPrefabChar(slot);
+        if (!cur->IsNullUser()) {
+            if (ThePlatformMgr.HasUserSigninChanged(cur)) {
+                if (ThePlatformMgr.IsUserSignedIn(cur)) {
+                    if (dynamic_cast<TourCharLocal *>(cur->GetChar())) {
+                        int slot = cur->GetSlot();
+                        if (slot != -1) {
+                            cur->SetLoadedPrefabChar(slot);
+                        }
                     }
                 }
             }

@@ -122,13 +122,15 @@ void RndCubeTex::Load(BinStream &bs) {
     PostLoad(bs);
 }
 
-INIT_REVS(2, 0)
+int RndCubeTex::gRev;
 
 void RndCubeTex::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs);
-    ASSERT_REVS(2, 0);
-    LOAD_SUPERCLASS(Hmx::Object)
-    if (d.rev > 1) {
+    bs >> gRev;
+    // ASSERT_REVS(2, 0) compiles to nothing in retail (see obj/Object.h) --
+    // omitted rather than routed through the BinStreamRev-based macro, which
+    // does not apply to this class's rev dialect.
+    Hmx::Object::Load(bs);
+    if (gRev > 1) {
         if (bs.Cached()) {
             props.Load(bs);
             for (int i = 0; i < kNumCubeFaces; i++) {
@@ -155,14 +157,12 @@ void RndCubeTex::PreLoad(BinStream &bs) {
             TheLoadMgr.AddLoader(mFile[i], kLoadFront);
         }
     }
-    d.PushRev(this);
 }
 
 void RndCubeTex::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
-    if (d.rev < 2) {
+    if (gRev < 2) {
         bool b = false;
-        d >> b;
+        bs >> b;
     }
     for (int i = 0; i < kNumCubeFaces; i++) {
         if (bs.Cached()) {
@@ -170,7 +170,7 @@ void RndCubeTex::PostLoad(BinStream &bs) {
         } else if (!mFile[i].empty()) {
             SetBitmap((CubeFace)i, mFile[i], false);
         }
-        if (d.rev < 2) {
+        if (gRev < 2) {
             props = moreprops[i];
         }
     }

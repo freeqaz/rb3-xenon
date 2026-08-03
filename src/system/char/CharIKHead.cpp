@@ -1,3 +1,24 @@
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
+// Lane NCCC-0803 f215. FORCEINLINE alone reaches 98.65% on the ctor; the residue
+// is 6 instructions in two clusters that look unrelated but share ONE cause:
+//   (a) the mSpine ObjPtr emits {mOwner, vptr, mObject} where retail has
+//       {vptr, mOwner, mObject}, and
+//   (b) the mTargetRadius/mHeadMat float pair serializes through f0
+//       (lfs/stfs/lfs/stfs) where retail keeps both live (lfs/lfs/stfs/stfs, f0+f13).
+// Deferring the mOwner store into the DERIVED ctor body pins it after the vptr
+// store, which re-shapes the whole scheduling region and fixes BOTH clusters at
+// once -> 100.0% normalized.
+//
+// Do NOT re-derive "scheduler wall" here from the fact that the six ObjPtr
+// members end up with THREE different store orders in retail (mHead and mMe
+// {mOwner,mObject,vptr}; mSpine {vptr,mOwner,mObject}; mMouth/mTarget/mOffset
+// {mOwner,vptr,mObject}). That non-uniformity is the scheduler's output, not a
+// source inconsistency, so "no uniform source policy can produce it" is invalid
+// -- one uniform policy produces all three. Prior work here tested three
+// inline-policy spellings and got byte-identical residue, but all three left
+// mOwner in the BASE mem-init list, so they were the SAME experiment for this
+// store rather than three independent ones.
+#define RB3_TU_OBJPTR_DEFER_OWNER
 #include "char/CharIKHead.h"
 #include "char/Character.h"
 #include "char/CharWeightable.h"

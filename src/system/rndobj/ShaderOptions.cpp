@@ -86,7 +86,6 @@ const char *ShaderSourcePath(const char *file) {
 }
 
 const char *ShaderCachedPath(const char *file, u64 i2, bool b3) {
-    Platform plat = TheLoadMgr.GetPlatform();
     return MakeString(
         "%s/gen/%s_%llx_%s.%s_%s",
         FileGetPath(file),
@@ -94,7 +93,7 @@ const char *ShaderCachedPath(const char *file, u64 i2, bool b3) {
         i2,
         b3 ? "ps" : "vs",
         FileGetExt(file),
-        PlatformSymbol(plat)
+        PlatformSymbol(kPlatformXBox)
     );
 }
 
@@ -153,11 +152,14 @@ bool IsPostProcShaderType(ShaderType s) {
 void ShaderOptions::GenerateMacros(ShaderType t, std::vector<ShaderMacro> &macros) const {
     static const char *sNumbers[] = { "0", "1",  "2",  "3",  "4",  "5",  "6",  "7", "8",
                                       "9", "10", "11", "12", "13", "14", "15", "16" };
+#ifdef HX_NATIVE
     Platform plat = TheLoadMgr.GetPlatform();
+#endif
     IsPostProcShaderType(t);
     macros.clear();
     macros.reserve(64);
     macros.push_back(ShaderMacro("PIXEL_SHADER", nullptr));
+#ifdef HX_NATIVE
     if (plat == kPlatformXBox) {
         macros.push_back(ShaderMacro("HX_XBOX", "1"));
         macros.push_back(ShaderMacro("HX_WIN32", "1"));
@@ -169,10 +171,14 @@ void ShaderOptions::GenerateMacros(ShaderType t, std::vector<ShaderMacro> &macro
         macros.push_back(ShaderMacro("HX_PC", "1"));
         macros.push_back(ShaderMacro("HX_WIN32", "1"));
     }
+#else
+    macros.push_back(ShaderMacro("HX_XBOX", "1"));
+    macros.push_back(ShaderMacro("HX_WIN32", "1"));
+    macros.push_back(ShaderMacro("SHOW_SHADER_COST", sNumbers[(flags >> 50) & 1]));
+#endif
     macros.push_back(ShaderMacro("ENABLE_DIFFUSE_MAP", sNumbers[(flags >> 4) & 1]));
     macros.push_back(ShaderMacro("ENABLE_NORMAL_MAP", sNumbers[(flags >> 5) & 1]));
     macros.push_back(ShaderMacro("NORM_DETAIL", sNumbers[(flags >> 24) & 1]));
-    macros.push_back(ShaderMacro("FLIP_NORMAL", sNumbers[(flags >> 54) & 1]));
     macros.push_back(ShaderMacro("ENABLE_SPECULAR", sNumbers[(flags >> 2) & 1]));
     macros.push_back(ShaderMacro("ENABLE_SPECULAR_MAP", sNumbers[(flags >> 1) & 1]));
     macros.push_back(ShaderMacro("ENABLE_RIMLIGHT", sNumbers[(flags >> 37) & 1]));
@@ -186,8 +192,6 @@ void ShaderOptions::GenerateMacros(ShaderType t, std::vector<ShaderMacro> &macro
         ShaderMacro("ENABLE_ENVIRON_MAP_SPECMASK", sNumbers[(flags >> 49) & 1])
     );
     macros.push_back(ShaderMacro("ENABLE_GLOW_MAP", sNumbers[(flags >> 7) & 1]));
-    macros.push_back(ShaderMacro("ENABLE_MOVIE_GRAYSCALE", sNumbers[(flags >> 1) & 1]));
-    macros.push_back(ShaderMacro("ENABLE_MOVIE_ALPHA", sNumbers[(flags >> 5) & 1]));
     macros.push_back(ShaderMacro("PER_PIXEL_LIGHTING", sNumbers[flags & 1]));
     macros.push_back(ShaderMacro("PRELIT", sNumbers[(flags >> 8) & 1]));
     macros.push_back(ShaderMacro("TEX_GEN", sNumbers[(flags >> 10) & 3]));
@@ -207,10 +211,10 @@ void ShaderOptions::GenerateMacros(ShaderType t, std::vector<ShaderMacro> &macro
     macros.push_back(ShaderMacro("POSTERIZE", sNumbers[(flags >> 1) & 1]));
     macros.push_back(ShaderMacro("BILLBOARD", sNumbers[(flags >> 25) & 1]));
     macros.push_back(ShaderMacro("NUM_TAPS", sNumbers[(flags >> 14) & 15]));
+    macros.push_back(ShaderMacro("LUMMAP", sNumbers[(flags >> 20) & 1]));
     macros.push_back(ShaderMacro("PARTICLES", t == kParticlesShader ? "1" : "0"));
     macros.push_back(ShaderMacro("SCREEN_ALIGNED", sNumbers[(flags >> 13) & 1]));
     macros.push_back(ShaderMacro("COLORXFM", sNumbers[(flags >> 21) & 1]));
-    macros.push_back(ShaderMacro("HUECONVERGE", sNumbers[(flags >> 62) & 1]));
     macros.push_back(ShaderMacro("NOISE", sNumbers[(flags >> 2) & 1]));
     macros.push_back(ShaderMacro("NOISE_MIDTONE", sNumbers[(flags >> 47) & 1]));
     macros.push_back(ShaderMacro("DOF", sNumbers[(flags >> 3) & 1]));
@@ -242,13 +246,6 @@ void ShaderOptions::GenerateMacros(ShaderType t, std::vector<ShaderMacro> &macro
     ));
     macros.push_back(ShaderMacro("HI_RES_SCREEN", sNumbers[(flags >> 52) & 1]));
     macros.push_back(ShaderMacro("INTENSIFY", sNumbers[(flags >> 53) & 1]));
-    macros.push_back(ShaderMacro("FIT_TO_SPLINE", sNumbers[(flags >> 55) & 1]));
-    macros.push_back(
-        ShaderMacro("SPLINE_PULSE", sNumbers[*(const unsigned char *)&flags & 1])
-    );
-    macros.push_back(ShaderMacro("SYNC_TRACK_CHARGE_EFFECT", sNumbers[(flags >> 59) & 1]));
-    macros.push_back(ShaderMacro("SHOCKWAVE", sNumbers[(flags >> 60) & 1]));
-    macros.push_back(ShaderMacro("FAST_CHEAP_LIGHTING", sNumbers[(flags >> 61) & 1]));
     macros.push_back(ShaderMacro(nullptr, nullptr));
 }
 

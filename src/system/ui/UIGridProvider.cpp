@@ -56,7 +56,8 @@ void UIGridProvider::UpdateExtendedCustom(int, int, Hmx::Object *) const {}
 
 void UIGridProvider::SetListToData(UIList *uilist, int idx) {
     uilist->SetSelectedSimulateScroll(idx / mWidth);
-    uilist->ChildList()->SetSelectedSimulateScroll(idx % mWidth);
+    UIList *child = uilist->ChildList();
+    child->SetSelectedSimulateScroll(idx % mWidth);
 }
 
 void UIGridProvider::SetListToSymbol(UIList *uilist, Symbol s) {

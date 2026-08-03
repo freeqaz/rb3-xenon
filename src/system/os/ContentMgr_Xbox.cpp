@@ -168,7 +168,6 @@ void XboxContent::Delete() {
 
 BEGIN_HANDLERS(XboxContentMgr)
     HANDLE_MESSAGE(SigninChangedMsg)
-    HANDLE_MESSAGE(ConnectionStatusChangedMsg)
     HANDLE_MESSAGE(StorageChangedMsg)
     HANDLE_MESSAGE(ContentInstalledMsg)
     HANDLE_SUPERCLASS(ContentMgr)

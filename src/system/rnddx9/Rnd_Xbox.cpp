@@ -642,7 +642,10 @@ void DxRnd::ModalDraw(Debug::ModalType t, const char *cc) {
     D3DDevice_SetRenderTarget_External(mD3DDevice, 0, mBackBuffer);
     D3DDevice_SetDepthStencilSurface(mD3DDevice, 0);
     Hmx::Color color(0, 0.1f, 0.5f, 0);
-    if (t == Debug::kModalFail) {
+    // Retail tests t as a byte (clrlwi. r10,r25,24), same truthiness idiom as
+    // DxRnd::CanModal above -- true for kModalNotify(1) and kModalFail(2), not
+    // an equality check against kModalFail specifically.
+    if ((unsigned char)t) {
         color.alpha = 0.25f;
         color.green = 0;
         color.blue = 0;

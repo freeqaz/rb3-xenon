@@ -45,8 +45,9 @@ void TrainerPanel::Enter() {
     InitSections();
     mCurrSection = -1;
     TheTrainerPanel = this;
+    int numSections = mSections.size();
     RndDir *progressMeter = DataDir()->Find<RndDir>("progress_meter", true);
-    mProgressMeter->Init(progressMeter, mSections.size());
+    mProgressMeter->Init(progressMeter, numSections);
     UpdateProgressMeter();
     unk4c.clear();
     unk4c.resize(mSections.size());

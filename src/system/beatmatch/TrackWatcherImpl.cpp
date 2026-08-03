@@ -277,7 +277,9 @@ bool TrackWatcherImpl::InTrill(int tick) const {
 
 bool TrackWatcherImpl::ShouldAutoplayGem(float ms, int gemID) {
     GameGem &gem = mGemList->GetGem(gemID);
-    return !InTrill(gem.GetTick()) ? false : mTrillSucceeding;
+    if (!InTrill(gem.GetTick()))
+        return false;
+    return !!mTrillSucceeding;
 }
 
 int TrackWatcherImpl::NextGemAfter(int gemID, bool timeout) {

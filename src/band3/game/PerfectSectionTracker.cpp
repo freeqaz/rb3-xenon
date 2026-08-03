@@ -270,7 +270,8 @@ void PerfectSectionTracker::HandleInExtent(float f, int i) {
     }
 }
 
-void PerfectSectionTracker::HandleExitExtent(float f, int i, bool b) {
+bool PerfectSectionTracker::HandleExitExtent(float f, int i, bool b) {
+    bool ret = false;
     for (TrackerPlayerID id = mSource->GetFirstPlayer(); id.NotNull();
          id = mSource->GetNextPlayer(id)) {
         if (mSource->IsPlayerLocal(id)) {
@@ -283,34 +284,34 @@ void PerfectSectionTracker::HandleExitExtent(float f, int i, bool b) {
                 int i11c = 0;
                 int tick = unk104.GetSectionEndTick(unkc4);
                 unk104.GetGemStatsInRange(pPlayer, tick, MsToTick(f), i118, i11c);
+                PlayerStreakData &data = it->second;
                 float f17 = 0;
                 int i15 = 0;
                 bool b1 = false;
                 bool b14 = false;
-                if (it->second.unkc != 0) {
+                if (data.unkc != 0) {
                     i15 |= 2;
                     b1 = true;
-                    int i6 = it->second.unkc - (pPlayer->mStats.m0x0c - it->second.unk8)
-                        - i11c;
-                    int i12 = it->second.unk8
-                        - (pPlayer->mStats.mHitCount - it->second.unk4) - i118;
+                    int i6 = data.unkc - (pPlayer->mStats.m0x0c - data.unk8 - i11c);
+                    int i12 = pPlayer->mStats.mHitCount - data.unk4 - i118;
                     if ((float)i12 / (float)i6 >= unkb0) {
                         i15 |= 3;
                         b14 = true;
+                        ret = true;
                         unk8c[key]++;
-                        f17 = unke8.GetMultiplier(it->second.unk1c++);
+                        f17 = unke8.GetMultiplier(++data.unk1c);
                     } else {
-                        it->second.unk1c = 0;
+                        data.unk1c = 0;
                     }
                 }
                 if (b) {
-                    it->second.unk0 = pPlayer->mStats.mMissCount;
-                    it->second.unk4 = pPlayer->mStats.mHitCount - i118;
-                    it->second.unk8 = pPlayer->mStats.m0x0c - i11c;
-                    it->second.unkc = unk104.CountGemsInSection(pPlayer, unkc4 + 1);
-                    it->second.unk10 = -1.0f;
-                    it->second.unk14 = -1;
-                    it->second.unk18 = false;
+                    data.unk0 = pPlayer->mStats.mMissCount;
+                    data.unk4 = pPlayer->mStats.mHitCount - i118;
+                    data.unk8 = pPlayer->mStats.m0x0c - i11c;
+                    data.unkc = unk104.CountGemsInSection(pPlayer, unkc4 + 1);
+                    data.unk10 = -1.0f;
+                    data.unk14 = -1;
+                    data.unk18 = false;
                 }
                 LocalSectionComplete(id, unkc4, (SectionFlags)i15, f17);
                 static Message sectionMsg("send_tracker_section_complete", 0, 0, 0);
@@ -319,16 +320,17 @@ void PerfectSectionTracker::HandleExitExtent(float f, int i, bool b) {
                 sectionMsg[2] = (int)(f17 * 10000.0f);
                 pPlayer->HandleType(sectionMsg);
                 if (b1) {
-                    if (b && it->second.unkc > 0) {
+                    if (b && data.unkc > 0) {
                         GetPlayerDisplay(id).Pulse(b14);
                     } else {
                         GetPlayerDisplay(id).LoseFocus(b14);
-                        it->second.unk19 = false;
+                        data.unk19 = false;
                     }
                 }
             }
         }
     }
+    return ret;
 }
 
 void PerfectSectionTracker::TranslateRelativeTargets() {

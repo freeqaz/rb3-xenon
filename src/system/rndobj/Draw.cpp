@@ -1,3 +1,14 @@
+// Retail inlines the owner-only ObjPtr<RndDrawable> ctor at
+// RndDrawable::DumpLoad's `ObjPtr<RndDrawable> ptr(nullptr);` site (3 raw
+// stores -- vtable/mOwner/mObject -- no `bl`, where we emitted
+// `bl ??0?$ObjPtr@VRndDrawable@@@@QAA@PAVObject@Hmx@@PAVRndDrawable@@@Z`).
+// The plain empty-body owner-only ctor (the #else branch in obj/Object.h,
+// base ctor takes owner+nullptr) reproduces retail's exact instruction order
+// here -- measured 100.0% (was 96.6% with the DEFER_OBJECT variant, whose
+// mOwner-then-vtable-then-mObject store order did NOT match this site).
+// rndobj/ is PCH-excluded so this #define ordering, before any include, is
+// safe.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
 #include "rndobj/Draw.h"
 #include "math/Color.h"
 #include "math/Mtx.h"
@@ -195,10 +206,10 @@ void RndDrawable::DumpLoad(BinStream &bs) {
     int rev;
     bs >> rev;
     MILO_ASSERT(rev < 4, 0xD6);
+    unsigned int count;
     bool bec;
     bs >> bec;
     if (rev < 2) {
-        unsigned int count;
         bs >> count;
         while (count != 0) {
             char buf[128];

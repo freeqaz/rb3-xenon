@@ -1,3 +1,14 @@
+// Retail inlines the owner-only ObjPtr ctor for all four member ObjPtrs in
+// this TU's ctor (mBone, mCurSpot, mNewSpot: RndTransformable; mAnimBlender:
+// CharWeightable) -- twelve raw stores, zero `bl ??0?$ObjPtr@...`. Same shape
+// documented at char/CharClipSet.cpp: opt in with the pair below (owner-only
+// inline + DEFER_OBJECT so the mObject store lands after the derived vptr
+// store, matching retail's instruction order). Must precede the FIRST
+// transitive include of obj/Object.h -- CharIKMidi.h pulls it in via
+// char/CharPollable.h / char/CharWeightable.h, so the defines sit above even
+// that include.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "char/CharIKMidi.h"
 #include "char/Char.h"
 #include "math/Easing.h"

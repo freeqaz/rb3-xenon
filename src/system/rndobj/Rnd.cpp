@@ -308,14 +308,19 @@ void Rnd::PreInit() {
     RndSet::Init();
     RndAnimFilter::Init();
     RndFlare::Init();
-    RndCam::Init();
+    REGISTER_OBJ_FACTORY(RndCam)
     RndMesh::Init();
     RndMeshDeform::Init();
+    // ⚠ RndFontBase::Init()/RndFont3d::Init() intentionally NOT called here:
+    // both classes are DC3-only (see the provenance comment on class
+    // RndFontBase in Font.h -- retail RB3-360 has no ".?AVRndFontBase@@" type
+    // descriptor and no "FontBase" string anywhere in the binary). Retail's
+    // Rnd::PreInit() goes straight from RndMeshDeform to RndText to RndFont,
+    // matching rb3-Wii's order (../rb3/src/system/rndobj/Rnd.cpp) exactly.
     RndText::Init();
-    RndFontBase::Init();
     RndFont::Init();
-    RndFont3d::Init();
     RndEnviron::Init();
+    Hmx::Object::RegisterFactory(RndMat::StaticClassName(), BaseMaterial::NewObject);
     RndTex::Init();
     RndCubeTex::Init();
     RndMovie::Init();
@@ -345,23 +350,30 @@ void Rnd::PreInit() {
     RndScreenMask::Init();
     RndSoftParticles::Init();
     REGISTER_OBJ_FACTORY(RndPostProc)
-    RndPostProcMgr::Init();
+    // ⚠ Retail does NOT call RndPostProcMgr::Init() here -- verified by
+    // objdiff: right after REGISTER_OBJ_FACTORY(RndPostProc), target's next
+    // factory registration is RndAmbientOcclusion's, with no RndPostProcMgr
+    // entry anywhere in this function.
     RndAmbientOcclusion::Init();
     RndOverlay::Init();
     RndPropAnim::Init();
     EventTrigger::Init();
     RndWind::Init();
     RndPollAnim::Init();
-    BaseMaterial::Init();
-    REGISTER_OBJ_FACTORY(MetaMaterial)
-    RndEnterable::Init();
-    RndMat::Init();
-    RndSpline::Init();
-    RndShockwave::Init();
-    DOFProc::Init();
-    TexProc::Init();
-    // this is likely some other rndobj without a NewObject overload
-    REGISTER_OBJ_FACTORY(Hmx::Object)
+    // ⚠ RB3-360 retail's Rnd::PreInit() does NOT call BaseMaterial::Init(),
+    // REGISTER_OBJ_FACTORY(MetaMaterial), RndEnterable::Init(),
+    // RndMat::Init(), RndSpline::Init(), RndShockwave::Init(), DOFProc::Init(),
+    // TexProc::Init(), or the catch-all REGISTER_OBJ_FACTORY(Hmx::Object) at
+    // this position -- verified by objdiff: right after RndPollAnim's factory
+    // registration, retail jumps straight to InitShaderOptions() (idx 375 ->
+    // 415 in the target listing, with a clean 39-instruction insert-only gap
+    // in between and zero residue afterward). The only material-related
+    // registration retail performs anywhere in this function is the single
+    // legacy alias above (RndMat's class-name Symbol "Mat" mapped to
+    // BaseMaterial::NewObject), consistent with the RB3-ships-no-metamaterial-
+    // content finding already documented at Mat.cpp's RndMat::Init(). The full
+    // RndMat::Init() (SetDefaultMat/LoadMetaMaterials/CreateAndSetMetaMat) is
+    // never invoked by target PreInit at all.
     InitShaderOptions();
     mRateOverlay = RndOverlay::Find("rate", true);
     mHeapOverlay = RndOverlay::Find("heap", true);
@@ -522,23 +534,20 @@ void Rnd::BeginDrawing() {
     mDrawing = true;
     mWorldEnded = false;
     mDrawTimer.Restart();
-    AutoTimer::ResetTimers();
     mLastProcCmds = mProcCmds;
     mProcCmds = mProcCounter.ProcCommands();
     mDefaultCam->Select();
     mDefaultEnv->Select(nullptr);
-    if (!TheHiResScreen.IsActive()) {
-        mPointTests.clear();
-    }
+    mPointTests.clear();
     mDrawCount++;
 #ifdef HX_NATIVE
     if (mPostProcBlackLightOverride) {
         mPostProcBlackLightOverride->SetBloomColor();
+    } else if (mPostProcOverride) {
+        static_cast<RndPostProc *>(mPostProcOverride)->SetBloomColor();
     } else
 #endif
-        if (mPostProcOverride) {
-        static_cast<RndPostProc *>(mPostProcOverride)->SetBloomColor();
-    } else if (RndPostProc::Current()) {
+        if (RndPostProc::Current()) {
         RndPostProc::Current()->SetBloomColor();
     }
 }

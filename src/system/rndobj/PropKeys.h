@@ -90,6 +90,24 @@ public:
         kMacro
     };
 
+    // Retail PropKeys::Load reads a class-static "current load revision"
+    // (rb3-Wii idiom: PropKeys::gRev, set via SetPropKeysRev before the
+    // nested Load() calls) instead of the BinStreamRev& parameter's own
+    // `rev` member — verified from retail disasm: every rev comparison in
+    // ?Load@PropKeys@@ reads a single fixed .data address (lis/lwz to a
+    // literal label), never `lwz off(r4)` off the parameter. RndPropAnim::Load
+    // sets this before calling PropKeys::Load. Type is `int`, not
+    // `unsigned short` as rb3-Wii's source has it — retail disasm shows a
+    // 4-byte `stw`/`lwz` (not `sth`/`lhz`) at the backing address, and a
+    // SIGNED `cmpwi` for the `< 7` check (not `cmplwi`).
+    // NOTE: named sPropKeysLoadRev, NOT gRev — this TU's "sw2 scatter-include"
+    // wrapping (`#define gRev gRev_PropKeys` around `#include
+    // "rndobj/PropKeys.cpp"` in AmbientOcclusion.cpp, itself re-scattered into
+    // TexBlender.cpp/math/Rot.cpp) macro-mangles any bare `gRev` token in this
+    // file's text, so a member literally named `gRev` breaks those TUs
+    // (`gRev_PropKeys' is not a member of 'PropKeys'`).
+    static int sPropKeysLoadRev;
+
     PropKeys(Hmx::Object *targetOwner, Hmx::Object *target);
     virtual ~PropKeys();
     virtual Hmx::Object *RefOwner() const { return nullptr; }

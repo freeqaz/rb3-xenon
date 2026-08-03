@@ -25,7 +25,20 @@ class StoreOfferProvider;
 
 class AppLabel : public BandLabel {
 public:
-    AppLabel() {}
+    // ⚠ DO NOT add an explicit `AppLabel() {}` here — it costs the 288-byte
+    // ??0AppLabel@@QAA@XZ match (86.9% -> 100%, measured +1 matched / +288 B).
+    // For a class with vtordisp'd virtual bases, MSVC X360 emits a DIFFERENT
+    // default ctor body depending on how the ctor was declared:
+    //   * user-declared (even `{}`): the general vtordisp form, recomputing
+    //     `runtime_vboff - static_vboff` per vbase (`subi rN, r11, 0x258` /
+    //     `0x284`) — this is what BandLabel::BandLabel (100%) emits.
+    //   * implicitly declared: the most-derived form, folding both vtordisp
+    //     values to a constant 0 kept in a callee-save reg (hence
+    //     `bl __savegprlr_29`, a 0x80 frame, and a different vfptr store
+    //     order). Retail's body at 0x825704A8 is this second form.
+    // Retail uses the constant form in only 20 of 708 vtordisp-init sites, so
+    // it is a genuine discriminator, not scheduling noise.
+    //
     // Base-name registration: retail band.exe has no "AppLabel" C string.  The
     // producer 0x82570428 -- bl'd by SetType@AppLabel, and co-registered with
     // AppInlineHelp by the meta_band factory at 0x82574e20 -- builds "BandLabel",

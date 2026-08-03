@@ -54,7 +54,7 @@ public:
     void Enter();
     int NumCameraShots(Symbol s, const std::vector<PropertyFilter> &);
     void SetNextShot(CamShot *);
-    void SyncObjects(WorldDir *);
+    void SyncObjects();
     CamShot *PickCameraShot(Symbol, const std::vector<PropertyFilter> &);
     void Poll();
 

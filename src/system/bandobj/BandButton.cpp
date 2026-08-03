@@ -53,17 +53,17 @@ void BandButton::PostLoad(BinStream &bs) {
     }
 }
 
-// NOTE: reduced -- mText->GetFont(), UpdateAndDrawHighlightMesh() and
-// mLabelDir are not present in this tree's UILabel/UIComponent reconstruction.
 void BandButton::DrawShowing() {
-    bool focusanimating = false;
-    if (mFocusAnim && mFocusAnim->IsAnimating())
-        focusanimating = true;
+    bool focusanimating = mFocusAnim && mFocusAnim->IsAnimating();
     if (mState == kFocused && (focusanimating || mPulseAnim)) {
         if (!focusanimating && !mPulseAnim->IsAnimating())
             StartPulseAnim();
         if (focusanimating) {
+            if (!mText->GetFont())
+                Update();
             mAnimTask->Poll(TheTaskMgr.UISeconds() - mStartTime);
+            UpdateAndDrawHighlightMesh();
+            mText->DrawShowing();
             if (UILabel::sDebugHighlight)
                 Highlight();
         } else

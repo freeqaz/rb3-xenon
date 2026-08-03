@@ -168,13 +168,12 @@ Synapse::Synapse(float sampleRate) : mTargetPitch(sampleRate) {
     float prod1 = sampleRate * 0.4f;
     float prod2 = sampleRate * 0.0015384615f;
     float prod3 = sampleRate * 0.016666668f;
-    mDefaultPitch = (int)(long long)(prod1 + (prod1 >= 0.0f ? 0.5f : -0.5f));
-    mField_0x20 = (int)(long long)(prod2 + (prod2 >= 0.0f ? 0.5f : -0.5f));
-    mDetectionInterval = (int)(long long)(prod3 + (prod3 >= 0.0f ? 0.5f : -0.5f));
+    mDefaultPitch = (int)(long long)(prod2 + (prod2 >= 0.0f ? 0.5f : -0.5f));
+    mField_0x20 = (int)(long long)(prod3 + (prod3 >= 0.0f ? 0.5f : -0.5f));
 
     float zero = 0.0f;
-    mInputBuffer.insert(mInputBuffer.end(), mDefaultPitch, zero);
-    mDownsampledBuffer.insert(mDownsampledBuffer.end(), (unsigned int)mInputBuffer.size() >> 2, zero);
+    mInputBuffer.resize((int)(long long)(prod1 + (prod1 >= 0.0f ? 0.5f : -0.5f)) & ~3, zero);
+    mDownsampledBuffer.resize((unsigned int)mInputBuffer.size() >> 2, zero);
 
     mBufferIndex = 0;
     mGain = 1.0f;
@@ -206,7 +205,7 @@ Synapse::Synapse(float sampleRate) : mTargetPitch(sampleRate) {
 
     // Output buffers
     float *nullPtr = 0;
-    mOutputBuffers.insert(mOutputBuffers.end(), (int)mVoices.size(), nullPtr);
+    mOutputBuffers.resize((int)mVoices.size(), nullPtr);
 
     // Resize each channel buffer to 0x2000 floats and set output buffer pointers
     unsigned int i = 0;
@@ -214,7 +213,7 @@ Synapse::Synapse(float sampleRate) : mTargetPitch(sampleRate) {
         int chanOffset = 0;
         int outOffset = 0;
         do {
-            mChannelBuffers[i].insert(mChannelBuffers[i].end(), (size_t)0x2000, zero);
+            mChannelBuffers[i].resize(0x2000, zero);
             i++;
             mOutputBuffers[outOffset / 4] = mChannelBuffers[(chanOffset) / 12].begin();
             chanOffset += 0xC;

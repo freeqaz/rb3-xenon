@@ -227,8 +227,9 @@ void NgPostProc::DoBloom() {
 }
 
 NgPostProc::BloomTextureSet::BloomTextureSet() {
-    mBloomTexture[0] = (RndTex*)0;
-    mBloomTexture[1] = (RndTex*)0;
+    for (int i = 0; i < DIM(mBloomTexture); i++) {
+        mBloomTexture[i] = 0;
+    }
 }
 
 NgPostProc::BloomTextureSet::~BloomTextureSet() { FreeTextures(); }
@@ -282,21 +283,21 @@ void NgPostProc::DoVelocity() {
 void NgPostProc::DoVelocity() {
     typedef void (*ShaderFunc)(void*, int, float*);
     *(s8*)((u8*)&TheShaderMgr + 0x39) = 0;
-    if ((mMotionBlurVelocity) && (*(u8*)((u8*)&TheHiResScreen + 0x4) == 0) &&
-        (RndVelocityBuffer::Singleton().Draw(*(RndCam**)((u8*)&TheRnd + 0xE4), mMotionBlurDrawList) != 0)) {
+    if ((mMotionBlurVelocity) &&
+        (RndVelocityBuffer::Singleton().Draw(*(RndCam**)((u8*)&TheRnd + 0xA4), mMotionBlurDrawList) != 0)) {
         *(s8*)((u8*)&TheShaderMgr + 0x39) = 1;
-        float sp50 = *(float*)((u8*)&RndVelocityBuffer::Singleton() + 0x36BE8);
+        float velocity = *(float*)((u8*)&RndVelocityBuffer::Singleton() + 0x36BE8);
+        float sp50[4];
+        sp50[0] = velocity;
+        sp50[1] = velocity;
+        sp50[2] = velocity;
+        sp50[3] = velocity;
         void* shaderMgrVTable = *(void**)&TheShaderMgr;
         ShaderFunc func = *(ShaderFunc*)((u8*)shaderMgrVTable + 0x40);
-        func(&TheShaderMgr, 0x7A, &sp50);
+        func(&TheShaderMgr, 0x7A, sp50);
     }
-    int head = *(int*)((u8*)this + 0x240);
-    if (head != 0) {
-        void* pList = (u8*)this + 0x23C;
-        do {
-            merged_ObjPtrListPopBack(pList);
-            head = *(int*)((u8*)pList + 4);
-        } while (head != 0);
+    if (*(int*)((u8*)this + 0x220) != 0) {
+        merged_ObjPtrListPopBack((u8*)this + 0x21C);
     }
 }
 #endif
@@ -313,7 +314,7 @@ void NgPostProc::SetBloomColor() {
 
 void NgPostProc::QueueMotionBlurObject(RndDrawable *draw) {
     if (!mMotionBlurDrawList.find(draw)) {
-        mMotionBlurDrawList.insert(mMotionBlurDrawList.end(), draw);
+        mMotionBlurDrawList.push_back(draw);
     }
 }
 

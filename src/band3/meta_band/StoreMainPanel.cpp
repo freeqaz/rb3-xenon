@@ -87,11 +87,11 @@ time_check:
         int n = mNewReleaseList.size();
         mCurrentEntry = (mCurrentEntry + 1) % n;
         for (int i = 0; i < 6; i++) {
-            int idx = (mCurrentEntry + i - 2);
+            int idx;
             if (n == 0) {
                 idx = 0;
             } else {
-                idx = idx % n;
+                idx = (mCurrentEntry + i - 2) % n;
                 if (idx < 0)
                     idx += n;
             }
@@ -118,7 +118,7 @@ time_check:
         mLabel1->SetNewReleaseEntryText1(this);
         mLabel2->SetNewReleaseEntryText2(this);
         mLabel3->SetNewReleaseEntryText3(this);
-        mTimeNextEvent = mDisplayRate + (mCrossfadeDuration + TheTaskMgr.UISeconds());
+        mTimeNextEvent = TheTaskMgr.UISeconds() + mDisplayRate + mCrossfadeDuration;
     }
 }
 
@@ -201,18 +201,18 @@ END_HANDLERS
 
 #pragma pool_data off
 void StoreMainPanel::SetType(Symbol type) {
-    static DataArray *types = SystemConfig(StaticClassName(), "types", "objects");
+    static DataArray *types = SystemConfig("objects", StaticClassName(), "types");
     if (type.Null()) {
-        SetTypeDef(0);
+        SetTypeDef(nullptr);
     } else {
         DataArray *found = types->FindArray(type, false);
-        if (found != 0) {
+        if (found) {
             SetTypeDef(found);
         } else {
             MILO_NOTIFY(
-                "%s:%s couldn't find type %s", ClassName(), PathName(this), type
+                "%s:%s couldn't find type %s", PathName(this), ClassName(), type
             );
-            SetTypeDef(0);
+            SetTypeDef(nullptr);
         }
     }
 }

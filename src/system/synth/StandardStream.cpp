@@ -514,10 +514,13 @@ void StandardStream::UpdateTime() {
     }
 #endif
 
-    float quantized = floorf(rawTime * 0.1875f + 0.5f) * 5.3333335f;
+    float floorResult = floorf(rawTime * 0.1875f + 0.5f);
+    float diff = rawTime - floorResult * 5.3333335f;
+    float quantized = rawTime - diff;
+    quantized = floorf(quantized * 0.1875f + 0.5f) * 5.3333335f;
 
     float timerMs = mTimer.Ms();
-    float adjusted = timerMs - (rawTime - quantized);
+    float adjusted = timerMs - diff;
     float adjustedQuantized = floorf(adjusted * 0.1875f);
 
     if (quantized != adjustedQuantized * 5.3333335f) {

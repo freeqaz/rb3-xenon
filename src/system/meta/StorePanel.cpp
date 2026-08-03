@@ -228,6 +228,7 @@ StorePanel *StorePanel::Instance() {
 }
 
 void StorePanel::ExitStore(StoreError) const {}
+LocalUser *StorePanel::StoreUser() const { return nullptr; }
 Profile *StorePanel::StoreProfile() const { return nullptr; }
 
 bool StorePanel::IsLoaded() const {
@@ -237,9 +238,7 @@ bool StorePanel::IsLoaded() const {
 void StorePanel::Unload() {
     RELEASE(mPurchaser);
     RELEASE(mEnum);
-    if (mStorePreviewMgr) {
-        RemoveSink(mStorePreviewMgr, gNullStr);
-    }
+    mStorePreviewMgr->RemoveSink(this);
     RELEASE(mStorePreviewMgr);
     FOREACH (it, mNetCacheLoaders) {
         TheNetCacheMgr->DeleteNetCacheLoader(*it);

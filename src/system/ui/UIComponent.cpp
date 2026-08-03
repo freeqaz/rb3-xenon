@@ -112,10 +112,8 @@ void UIComponent::SetTypeDef(DataArray *da) {
             }
         }
     }
-    if (TypeDef() != da) {
-        Hmx::Object::SetTypeDef(da);
-        UpdateResource();
-    }
+    Hmx::Object::SetTypeDef(da);
+    UpdateResource();
 }
 
 void UIComponent::ResourceCopy(const UIComponent *c) {
@@ -234,6 +232,14 @@ void UIComponent::Update() {
                     UIComponent::Update();
                 }
             }
+        }
+    }
+}
+
+void UIComponent::UpdateMeshes(State s) {
+    for (std::vector<UIMesh>::iterator it = mMeshes.begin(); it != mMeshes.end(); ++it) {
+        if (it->mMesh->Mat() != it->mMats[s]) {
+            it->mMesh->SetMat(it->mMats[s]);
         }
     }
 }

@@ -271,10 +271,9 @@ void LoadMgr::Print() {
     }
 }
 
-void LoadMgr::SetEditMode(bool flag) {
-    mEditMode = flag;
+void LoadMgr::SetEditMode(bool) {
     static DataNode &edit_mode = DataVariable("edit_mode");
-    edit_mode = mEditMode;
+    edit_mode = 0;
 }
 
 Loader *LoadMgr::ForceGetLoader(const FilePath &fp) {
@@ -425,8 +424,26 @@ Loader *LoadMgr::AddLoader(const FilePath &file, LoaderPos pos) {
 }
 
 void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {
+#ifdef HX_NATIVE
     AutoGlitchReport hang(50.0f, __FUNCTION__);
     float saved_period = mCurrentPeriod;
+#else
+// Retail RB3-360 does NOT wrap this call in AutoGlitchReport -- dc3 is a
+// NEWER build and added the hang-report wrapper (+ctor/dtor pair, +f30 saved
+// reg, +0x50-byte frame, +period save/restore) to this function later.
+// fn_827BF608's full instruction listing has none of that; in its place
+// retail stamps a re-entrance guard using the mLoadCount field the header
+// already declares ("snapshot of gLoadCount for re-entrance detection") but
+// which was otherwise dead code -- written only by the ctor, never read/set
+// here. Verified against the target listing: idx 6/14/18-20 are
+// `lis/lwz/addi/stw` doing exactly `ldr1->mLoadCount = ++gLoadCount;`, and
+// idx 41-43 (`beq/lwz/cmpw`, present in target, absent from base pre-fix) is
+// `if (ldr1->mLoadCount != loadCount) break;` re-checked after each
+// PollFrontLoader() -- guards against a nested PollUntilLoaded (invoked from
+// inside PollFrontLoader) racing this one's wait.
+    int loadCount = ++gLoadCount;
+    ldr1->mLoadCount = loadCount;
+#endif
 #ifdef HX_WEB
     int maxIter = 10000; // Safety valve: don't block browser event loop forever
 #endif
@@ -457,11 +474,17 @@ void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {
         PollFrontLoader();
         if (!ListFind(mLoading, ldr1))
             break;
+#ifndef HX_NATIVE
+        if (ldr1->mLoadCount != loadCount)
+            break;
+#endif
         if (mLoading.front()->IsLoaded()) {
             mLoading.pop_front();
         }
     }
+#ifdef HX_NATIVE
     mCurrentPeriod = saved_period;
+#endif
 }
 
 #pragma endregion

@@ -1,3 +1,4 @@
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "ui/LabelNumberTicker.h"
 #include "UIComponent.h"
 #include "obj/Object.h"

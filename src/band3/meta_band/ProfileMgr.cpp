@@ -9,6 +9,9 @@
 #include "game/GameMicManager.h"
 #include "game/GameMode.h"
 #include "math/Decibels.h"
+#include "meta/Achievements.h"
+#include "meta/FixedSizeSaveableStream.h"
+#include "meta/MemcardMgr.h"
 #include "meta/Profile.h"
 #include "meta/WiiProfileMgr.h"
 #include "meta_band/AccomplishmentProgress.h"
@@ -72,8 +75,8 @@ ProfileMgr::ProfileMgr()
       // is itself a second, non-metric instrument for this layout: under the old
       // 4-bools+int layout 0x6b would be mSecondPedalHiHat, which is 0 here, but retail
       // stores 1 there -- only the 5-bool layout is consistent.
-      unk58b(1), mSecondPedalHiHat(0), mHasLoaded(0), mCymbalConfiguration(0),
-      mPrimaryProfile(0), mAllUnlocked(0) {
+      unk58b(1), mSecondPedalHiHat(0), mCymbalConfiguration(0),
+      mPrimaryProfile(0), mAllUnlocked(0), mHasLoaded(0), mProfileSaveBuffer(0) {
     mSyncOffset = -mPlatformVideoLatency;
     mSongToTaskMgrMs = mPlatformVideoLatency - mPlatformAudioLatency;
     for (int i = 0; i < 3; i++) {
@@ -109,9 +112,12 @@ void ProfileMgr::Init() {
     TheGameMicManager->AddSink(this, GameMicsChangedMsg::Type());
     TheSaveLoadMgr->AddSink(this, SaveLoadMgrStatusUpdateMsg::Type());
 #endif
-    ThePlatformMgr.AddSink(this, SigninChangedMsg::Type());
     InitSliders();
-    SetExcessVideoLag(0);
+    int size = FixedSizeSaveableStream::GetSymbolTableSize(0x98) + 8;
+    size += BandProfile::SaveSize(0x98);
+    mProfileSaveBuffer = MemAlloc(size, __FILE__, __LINE__, "ProfileSaveBuffer");
+    TheAchievements->SetProfileSaveSize(size);
+    TheMemcardMgr.SetProfileSaveBuffer(mProfileSaveBuffer, size);
 }
 
 DECOMP_FORCEACTIVE(ProfileMgr, "signin_changed")
@@ -438,7 +444,7 @@ bool ProfileMgr::GlobalOptionsNeedsSave() {
 int ProfileMgr::GetGlobalOptionsSize() { return TheModifierMgr->SaveSize(gRev) + 0x52; }
 
 void ProfileMgr::SaveGlobalOptions(FixedSizeSaveableStream &bs) {
-    bs << packRevs(2, 7);
+    bs << packRevs(0, 8);
     bs << mSyncOffset;
     bs << mSongToTaskMgrMs;
     bs << mBackgroundVolume;
@@ -456,11 +462,9 @@ void ProfileMgr::SaveGlobalOptions(FixedSizeSaveableStream &bs) {
     bs << mHasConnectedProGuitar;
     bs << mCymbalConfiguration;
     bs << unk58a;
+    bs << unk58b;
     bs << mSecondPedalHiHat;
     TheModifierMgr->Save(bs);
-    bs << String("");
-    bs << false;
-    bs << 0ll;
     mGlobalOptionsDirty = false;
 }
 

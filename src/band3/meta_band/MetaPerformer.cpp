@@ -1229,21 +1229,18 @@ void MetaPerformer::CompleteSong(
 ) {
     MILO_ASSERT(stats, 0x72A);
     MILO_ASSERT(NumCompleted() < NumSongs(), 0x72B);
-    SendDataPoint(
-        "debug/rc/context/highwatermark",
-        "high",
-        TheRockCentral.GetActiveContextHighWatermark()
-    );
+    TheRockCentral.GetActiveContextHighWatermark();
     CurrentImpl()->CompleteSong(users, stats, b3);
     Symbol songSym = Song();
     TheAccomplishmentMgr->HandlePreSongCompleted(songSym);
     PotentiallyUpdateLeaderboards(users, b3, songSym, *stats);
     IncrementSongPlayCount(users, songSym);
-    TheAccomplishmentMgr->HandleSongCompleted(songSym, stats->GetBandStats().mDifficulty);
+    const PerformerStatsInfo &perfStats = stats->GetBandStats();
+    TheAccomplishmentMgr->HandleSongCompleted(songSym, perfStats.mDifficulty);
     if (IsLastSong() && !mSetlist.Null() && !mSkippedSong) {
-        int totalStars = stats->GetBandStats().mStars + TotalStars(true);
+        int totalStars = perfStats.mStars + TotalStars(true);
         TheAccomplishmentMgr->HandleSetlistCompleted(
-            mSetlist, mSetlistIsHmx, stats->GetBandStats().mDifficulty, totalStars
+            mSetlist, mSetlistIsHmx, perfStats.mDifficulty, totalStars
         );
     }
 }
@@ -1346,7 +1343,7 @@ void MetaPerformer::SyncSave(BinStream &bs, unsigned int ui) const {
     bs << mVenue;
     bs << mFestivalReward;
     bs << mSetlist;
-    bs << (mSetlistIsLocal ? String(gNullStr) : mSetlistTitle);
+    bs << (mSetlistIsLocal ? (const String &)String(gNullStr) : (const String &)mSetlistTitle);
     bs << mSetlistIsHmx;
     bs << mSongs;
     bs << mStars;

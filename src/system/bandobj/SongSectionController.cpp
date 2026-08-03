@@ -1,3 +1,4 @@
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "bandobj/SongSectionController.h"
 #include "math/Rand.h"
 #include "obj/Msg.h"

@@ -280,12 +280,8 @@ void MoviePanel::HideHint() {
         mPauseHintAnim->GetFrame(),
         mPauseHintAnim->StartFrame(),
         mPauseHintAnim->Units(),
-        0,
         0.0f,
-        0,
-        kEaseLinear,
-        0.0f,
-        0
+        0.0f
     );
 }
 
@@ -298,11 +294,7 @@ void MoviePanel::ShowHint() {
             mPauseHintAnim->EndFrame(),
             mPauseHintAnim->Units(),
             0.0f,
-            0.0f,
-            0,
-            kEaseLinear,
-            0.0f,
-            false
+            0.0f
         );
     }
 }

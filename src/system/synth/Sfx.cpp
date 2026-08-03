@@ -45,7 +45,7 @@ void SfxInst::Stop() {
     FOREACH (it, mMoggClips) {
         MoggClip *clip = (*it)->GetMoggClip();
         if (clip) {
-            clip->Stop(false);
+            clip->MoggClip::Stop();
         }
     }
 }

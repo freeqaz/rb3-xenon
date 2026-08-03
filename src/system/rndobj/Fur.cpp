@@ -66,16 +66,35 @@ BEGIN_COPYS(RndFur)
     COPY_MEMBER_FROM(m, mWind)
 END_COPYS
 
-INIT_REVS(3, 0)
+// RB3-360 retail rev storage (same pattern as rndobj/Env.cpp): retail's
+// RndFur::Load asm never constructs a BinStreamRev temp (no
+// ??_7BinStreamRev@@6B vtable store, no BinStream::BinStream(bool) ctor call)
+// -- it inline-splits the packed rev int via getHmxRev/getAltRev straight
+// into two mutable file-scope shorts and passes the raw `bs` on to
+// Hmx::Object::Load. That's the obj/ObjMacros.h LOAD_REVS/LOAD_SUPERCLASS
+// dialect (same shape as rb3-Wii's Fur.cpp), not the obj/Object.h
+// BinStreamRev-object dialect this TU otherwise gets from its
+// `#include "obj/Object.h"`. The two words must live in ONE aligned(4)
+// aggregate (altRev +0, rev +4) -- MSVC does not lay .bss out in declaration
+// order, so two separate statics get other globals interleaved between them
+// and will not fold onto one base register.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Fur;
+#define gAltRev gRevs_Fur.altRev
+#define gRev gRevs_Fur.rev
 
-BEGIN_LOADS(RndFur)
-    LOAD_REVS(bs)
-    ASSERT_REVS(3, 0)
-    LOAD_SUPERCLASS(Hmx::Object)
+void RndFur::Load(BinStream &bs) {
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    Hmx::Object::Load(bs);
     bs >> mLayers;
     bs >> mThickness;
     bs >> mCurvature;
-    if (d.rev > 1) {
+    if (gRev > 1) {
         bs >> mShellOut;
         bs >> mAlphaFalloff;
     }
@@ -86,10 +105,10 @@ BEGIN_LOADS(RndFur)
     bs >> mRootsTint >> mEndsTint;
     bs >> mFurDetail;
     bs >> mFurTiling;
-    if (d.rev > 2) {
+    if (gRev > 2) {
         bs >> mWind;
     }
-END_LOADS
+}
 
 bool RndFur::LoadOld(BinStreamRev &d) {
     bool ret;

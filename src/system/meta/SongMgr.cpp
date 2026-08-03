@@ -231,6 +231,8 @@ bool SongMgr::IsSongCacheWriteDone() const {
 
 char const *SongMgr::GetCachedSongInfoName() const { return SONG_CACHE_CONTAINER_NAME; }
 
+char const *SongMgr::AlternateSongDir() const { return SONG_CACHE_CONTAINER_NAME; }
+
 char const *SongMgr::SongPath(Symbol shortname, int version) const {
     const char *filename = SongAudioData(shortname)->GetBaseFileName();
     if (version != 0) {
