@@ -347,8 +347,8 @@ void MsgSinks::Replace(ObjRef *ref, Hmx::Object *obj) {
 // -----------------------------------------------------------------------------
 // MsgSource — the retail RB3-360 (Wii-lineage) messaging class. Ported from the
 // rb3-Wii dev decomp (../rb3/src/system/obj/Msg.cpp), adapted to our Msg.h
-// declarations (std::list<Sink>/<EventSink>, member SinkMode enum, non-virtual
-// Replace(Hmx::Object*,Hmx::Object*)). Coexists in this TU with MsgSinks (the
+// declarations (std::list<Sink>/<EventSink>, member SinkMode enum, and Replace
+// re-signed to the inherited slot-2 form). Coexists in this TU with MsgSinks (the
 // DC3-flattened form above). MILO_ASSERT file string stays "Msg.cpp".
 // -----------------------------------------------------------------------------
 
@@ -466,7 +466,31 @@ void MsgSource::EventSink::Remove(Hmx::Object *o, MsgSource *src, bool exporting
     }
 }
 
-void MsgSource::Replace(Hmx::Object *o1, Hmx::Object *o2) { RemoveSink(o1, Symbol()); }
+// Overrides ObjRefOwner vtable slot 2 (see the note in Msg.h). `o1` is declared
+// ObjRef* only to match the inherited slot signature — the ring hands us the
+// DYING Hmx::Object*, the same reinterpret_cast convention used at the other
+// ring boundaries (ObjPtr_p.h:892, BandCharacter.cpp:2446). Retail body is
+// fn_82766EE0: `subi r3,r3,0x1c; r5 = Symbol(); b RemoveSink`.
+void MsgSource::Replace(ObjRef *o1, Hmx::Object *o2) {
+#ifdef HX_NATIVE
+    // Native-only divergence, deliberate and match-neutral (HX_NATIVE is never
+    // defined by the match build -- its cflags carry no /D at all).
+    //
+    // On X360 this override costs nothing, because Hmx::Object::Replace has an
+    // EMPTY body there (Object.cpp:202 -- its entire body is #ifdef HX_NATIVE).
+    // Under HX_NATIVE that base DOES do work (mSinks->Replace), and it is what
+    // MsgSource-derived objects have always run. Two reasons not to swap it for
+    // RemoveSink here: it would silently drop the mSinks->Replace fixup, and
+    // RemoveSink ERASES from a list while the ring is being walked -- precisely
+    // the structural mutation gInReplaceList exists to suppress (see Msg.h).
+    // So native keeps its prior behaviour verbatim; handing the retail-vs-native
+    // semantics question to the native lane rather than deciding it from a
+    // matching lane.
+    Hmx::Object::Replace(o1, o2);
+#else
+    RemoveSink(reinterpret_cast<Hmx::Object *>(o1), Symbol());
+#endif
+}
 
 void MsgSource::RemoveSink(Hmx::Object *s, Symbol ev) {
     MILO_ASSERT(s, 0xA9);

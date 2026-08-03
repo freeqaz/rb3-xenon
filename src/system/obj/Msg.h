@@ -242,17 +242,33 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual ~MsgSource();
     // Retail RB3-360 MsgSource is laid out with a single vbptr at offset 0 and
-    // mSinks at 0x4 (proven by ctor fn_827432A0: param_1[1]/[2]=mSinks list,
-    // param_1[3]/[4]=mEventSinks, param_1[5]=mExporting, Hmx::Object vbase at
-    // 0x1c). That single-pointer layout means MSVC did NOT emit a separate
-    // MsgSource vfptr — i.e. MsgSource introduced no new vtable slot. Declaring
-    // Replace(Hmx::Object*,Hmx::Object*) virtual (its signature differs from the
-    // inherited ObjRefOwner::Replace(ObjRef*,Hmx::Object*), so it's a NEW slot)
-    // forces a separate vfptr@0 + vbptr@4, pushing every member +4 and breaking
-    // all MsgSource-derived layouts (MidiParser etc.). Non-virtual here matches
-    // the retail object layout; there are no polymorphic call sites of this
-    // 2-arg Replace in the source (it's invoked through the obj-ref ring).
-    void Replace(Hmx::Object *, Hmx::Object *);
+    // mSinks at 0x4 (proven by ctor fn_827432A0 and confirmed by
+    // /d1reportSingleClassLayoutMsgSource: vbptr@0, mSinks@0x4, vtordisp@0x18,
+    // Hmx::Object vbase@0x1c, sizeof 0x44). That single-pointer layout means
+    // MSVC emitted NO separate MsgSource vfptr — MsgSource introduces no new
+    // vtable slot.
+    //
+    // MsgSource DOES override ObjRefOwner's vtable slot 2 (Replace). Verified
+    // map-independently from retail bytes (lane DU-2): the slot-2 entry of every
+    // MsgSource-derived vftable points at a `$4` vbase adjustor thunk
+    // (lwz r11,-4(r3); subf r3,r11,r3; [subi r3,r3,N]; b fn_82766EE0) and
+    // fn_82766EE0 is `subi r3,r3,0x1c; r5=Symbol(); b RemoveSink` — i.e. exactly
+    // rb3-Wii's `MsgSource::Replace(o1,o2) { RemoveSink(o1, Symbol()); }`.
+    // Slot index proved by the RTTI COL sitting 3 words before the vftable, so
+    // the observed entry is index 2 = ObjRefOwner{dtor,RefOwner,Replace,IsDirPtr}.
+    //
+    // ⚠ It MUST be declared with the INHERITED signature. Declaring the rb3-Wii
+    // form `virtual void Replace(Hmx::Object*, Hmx::Object*)` does not override
+    // ObjRefOwner::Replace(ObjRef*, Hmx::Object*) — the parameter types differ,
+    // so it is a NEW virtual, and because MsgSource's only base is VIRTUAL, MSVC
+    // cannot append it to the vbase's vftable and instead introduces a fresh
+    // vfptr@0, pushing vbptr to 4, every member +4 and sizeof 0x44 -> 0x48
+    // (measured; this is why the naive `virtual` probe failed and was reverted).
+    // Overriding the inherited signature keeps sizeof at 0x44 and emits the
+    // adjustor thunks retail has. `from` really is the dying Hmx::Object*, which
+    // the tree already models as a reinterpret_cast at the ring boundary — see
+    // ObjPtr_p.h:892 and BandCharacter.cpp:2446 for the same idiom.
+    virtual void Replace(ObjRef *from, Hmx::Object *to);
     virtual void Export(DataArray *, bool);
 
     void ChainSource(MsgSource *, MsgSource *);
