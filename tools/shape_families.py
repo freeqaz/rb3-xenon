@@ -41,6 +41,28 @@ family has NO other mismatch, so fixing the shared cause crosses the whole
 family.  The tool reports shape-fanout too, but explicitly as blast radius, in a
 column that is NOT the ranking key.
 
+PRICING RULE: A `diff_arg`-ONLY FAMILY PAYS IN BYTES ONLY, NEVER IN FUNCTIONS
+-----------------------------------------------------------------------------
+Measured by this lane, and it falsified half of its own prediction, so it is
+recorded here rather than left to be rediscovered.  The two headline numbers ride
+DIFFERENT RULERS (CLAUDE.md): `matched_functions` counts rows with
+`match_percent_normalized == 100`, while `matched_code` sums rows with
+`fuzzy_match_percent == 100` -- and **mpn EXCLUDES arg-only penalties**.
+
+A `diff_arg` mismatch (reversed cmpw operands, a different register, a different
+immediate) is exactly an arg-only penalty.  Such a row is therefore ALREADY
+counted in `matched_functions` while its bytes are withheld from `matched_code`.
+Fixing it releases the bytes at Δfunctions = 0.
+
+DS-3 predicted +6 functions / +1,240 B for six crossings and measured
+**+2 functions / +1,240 B**: the BYTES were exact, the FUNCTION count was 3x
+over, because 4 of the 6 rows were `diff_arg`-only (cmpw reversals) and were
+already mpn=100.  The 2 that paid in functions were the `insert/delete/replace`
+EndFrame rows.  So when quoting a family's expected yield:
+    match_types == {diff_arg}          -> Δbytes only, Δfunctions = 0
+    match_types include insert/delete/replace -> both move
+`--families` prints each family's match_types for exactly this reason.
+
 SYMBOL ARGS ARE EXCLUDED FROM THE SHAPE, DELIBERATELY
 ------------------------------------------------------
 Under `functionRelocDiffs=none` a relocation argument is masked: a wrong callee
@@ -193,8 +215,12 @@ def cmd_families(a):
     order = sorted(fams.items(), key=lambda kv: -sum(r['size'] for r in kv[1]))
     for sig, v in order[:a.top]:
         b = sum(r['size'] for r in v)
-        mts = '+'.join(sorted({sh[0] for sh in v[0]['shapes']}))
-        print(f"\n{sighash(sig):<11} {len(v):>4} {b:>8,} {len(sig):>3}  {mts:<22}")
+        mtset = {sh[0] for sh in v[0]['shapes']}
+        mts = '+'.join(sorted(mtset))
+        # See "PRICING RULE" in the header: mpn ignores arg-only penalties, so a
+        # diff_arg-only family is ALREADY counted in matched_functions.
+        pays = ('bytes only (Dfns=0)' if mtset <= {'diff_arg'} else 'bytes + functions')
+        print(f"\n{sighash(sig):<11} {len(v):>4} {b:>8,} {len(sig):>3}  {mts:<22} pays: {pays}")
         for sh in v[0]['shapes']:
             print(f"    shape  {fmt_shape(sh)}   [in {fan[repr(sh)]} rows total]")
         for r in sorted(v, key=lambda r: -r['size']):
