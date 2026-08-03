@@ -765,10 +765,23 @@ def ruler_identity(wt):
 
 
 def check_ruler_stable(a, b):
-    """REFUSE if the objdiff binary changed between the two legs."""
+    """REFUSE if the objdiff binary changed between the two legs.
+
+    ⚠ Compare CONTENT (sha256+size), never the whole dict. `path` is not part of
+    the ruler's identity: `setup_worktree.sh` bakes an absolute objdiff path into
+    build.ninja, and a `configure.py` re-run -- which any configgen-class patch
+    forces -- re-resolves it through the `~/tmp` symlink to THE SAME FILE. A
+    whole-dict comparison therefore refused with "binary CHANGED" printed beside
+    two IDENTICAL hashes, on every configgen patch in a `~/tmp` worktree, i.e.
+    the location CLAUDE.md mandates. Fail-safe in direction, but it withheld
+    valid verdicts and cost lane DJ-2 a re-run to work around (2026-08-03).
+
+    A differing path with identical content is the SAME RULER reached by another
+    route -- reported, not refused. Only a content change is a swap.
+    """
     if not a.get("resolved") or not b.get("resolved"):
         return "UNVERIFIED (%s)" % (a.get("reason") or b.get("reason") or "unknown")
-    if a != b:
+    if (a["sha256_16"], a["size"]) != (b["sha256_16"], b["size"]):
         raise Refusal(
             "ruler",
             "the objdiff-cli binary CHANGED between leg A and leg B "
@@ -776,6 +789,11 @@ def check_ruler_stable(a, b):
             f"B sha256:{b['sha256_16']} size={b['size']}). The two legs were "
             "scored on DIFFERENT rulers, so the delta is meaningless. Re-run "
             "the whole A/B on one binary.")
+    if a.get("path") != b.get("path"):
+        return ("stable (sha256:%s) -- NOTE: resolved via a different path in "
+                "leg B (%s -> %s); content identical, so this is the same ruler "
+                "reached by another route, not a swap."
+                % (a["sha256_16"], a.get("path"), b.get("path")))
     return "stable (sha256:%s)" % a["sha256_16"]
 
 
@@ -1119,6 +1137,21 @@ def selftest():
               lambda: check_ruler_stable(r_a, r_same), expect_refusal=False)
         check("ruler guard REFUSES a mid-run objdiff binary swap",
               lambda: check_ruler_stable(r_a, r_swapped), expect_refusal=True)
+        # REGRESSION (lane DJ-2, 2026-08-03): the guard used to compare the whole
+        # dict, so an IDENTICAL binary resolved through the ~/tmp symlink -- which
+        # every configgen-class patch causes -- refused with "binary CHANGED"
+        # printed next to two identical hashes. Same content via another path is
+        # the SAME RULER and must pass, or the guard withholds valid verdicts in
+        # the worktree location CLAUDE.md mandates.
+        r_otherpath = dict(r_a, path="/home/free/tmp/objdiff/objdiff-cli")
+        check("ruler guard PASSES on identical content reached by a different path",
+              lambda: check_ruler_stable(r_a, r_otherpath), expect_refusal=False)
+        if "different path" not in check_ruler_stable(r_a, r_otherpath):
+            fails.append("ruler guard does not disclose the path change")
+            print("  FAIL  ruler guard does not disclose the path change")
+        else:
+            print("  PASS  ruler guard discloses the path change while passing "
+                  "(same ruler, another route -- reported, not refused)")
         # An unresolvable path must not masquerade as a pass: it reports
         # UNVERIFIED, a state distinguishable from "stable" in the log.
         check("ruler guard does not refuse when unresolvable (reports UNVERIFIED)",
