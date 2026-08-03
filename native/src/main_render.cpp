@@ -118,6 +118,8 @@
 #include "rndobj/Tex.h"
 #include "rndobj/Trans.h"
 #include "rndobj/TransProxy.h"
+#include "rndobj/MultiMesh.h"
+#include "world/Crowd.h"
 #include "utl/FilePath.h"
 #include "utl/Str.h"
 #include "utl/Symbol.h"
@@ -201,6 +203,18 @@ namespace {
     bool gDumpTree = false; // X5: per-dir object census of the loaded subdir tree
     const char *gFocus = nullptr; // X5: frame the camera on meshes matching this
     const char *gSceneClip = nullptr; // X5: drive ALL scene characters with this clip
+    // X6: draw the venue's WorldCrowd objects. Default ON with an
+    // RB3_NO_CROWD_DRAW opt-out, per the project's ack rule for native render
+    // fixes -- the opt-out makes X5's venue frame an exact single-variable A/B.
+    // X6: --crowd-all overrides the asset's mShowing flags to draw all six
+    // WorldCrowds. Measured safe (zero position overlap); not the default
+    // because overriding shipped flags is a judgement call. See the block in
+    // the crowd-collection site.
+    bool gCrowdShowAll = false;
+    // X6: crowd archetype Characters -> their meshes. These are drawn once per
+    // baked instance transform, and suppressed in the flat mesh loop.
+    std::map<Character *, std::vector<RndMesh *> > gArchetypeMeshes;
+    std::set<RndMesh *> gArchetypeMeshSet;
     float gDistScale = -1.0f;   // <0 = use the per-cell default
     float gAzimuth = -999.0f;
     float gElevation = -999.0f;
@@ -826,6 +840,130 @@ namespace {
                    : "");
     }
 
+    // ★ X6: ABSOLUTE census of the crowd's SHIPPED placement data.
+    //
+    // X5 handed off "WorldCrowd scatter" as procedural work: 6 WorldCrowd
+    // objects load, none runs, so nothing places the crowd. Before writing a
+    // scatter, measure whether a scatter is even the mechanism -- the charter's
+    // rule is that an inherited cost estimate gets re-derived from the
+    // mechanism, not from the handoff.
+    //
+    // WorldCrowd::Load (world/Crowd.cpp:361-368, rev >= 0xE) reads a
+    // `std::list<Transform>` per CharData directly into mMMesh->Instances().
+    // If those lists are non-empty, crowd placement is BAKED SHIPPED DATA that
+    // is already resident, and no scatter needs to run at all.
+    //
+    // Printing distinct positions + an absolute bbox, not a count: X5's lesson
+    // is that a count of N instances looks identical whether they are scattered
+    // across the audience area or stacked on one spot.
+    void ReportCrowdPlacement(ObjectDir *dir) {
+        std::vector<WorldCrowd *> crowds = CollectDeep<WorldCrowd>(dir);
+        printf("  --- crowd placement (%d WorldCrowd object(s)) ---\n",
+               (int)crowds.size());
+        int totalInst = 0;
+        std::map<std::string, int> allPos;
+        for (size_t i = 0; i < crowds.size(); i++) {
+            WorldCrowd *wc = crowds[i];
+            RndMesh *pm = wc->GetPlacementMesh();
+            const std::list<WorldCrowd::CharData> &cds = wc->GetCharacters();
+            int crowdInst = 0;
+            printf("    %-22s placementMesh=%-22s charDefs=%d showing=%s dir=%s\n",
+                   wc->Name() ? wc->Name() : "(unnamed)",
+                   pm ? (pm->Name() ? pm->Name() : "(unnamed)") : "<NULL>",
+                   (int)cds.size(), wc->Showing() ? "yes" : "NO",
+                   wc->Dir() ? (wc->Dir()->Name() ? wc->Dir()->Name() : "(unnamed)")
+                             : "<NULL>");
+            for (std::list<WorldCrowd::CharData>::const_iterator it = cds.begin();
+                 it != cds.end(); ++it) {
+                RndMultiMesh *mm = it->mMMesh;
+                Character *arch = it->mDef.mChar;
+                int n = 0;
+                float mnx = 0, mny = 0, mnz = 0, mxx = 0, mxy = 0, mxz = 0;
+                if (mm) {
+                    InstanceList &insts = mm->Instances();
+                    for (InstanceList::iterator ii = insts.begin(); ii != insts.end();
+                         ++ii) {
+                        const Vector3 &p = ii->mXfm.v;
+                        if (n == 0) {
+                            mnx = mxx = p.x;
+                            mny = mxy = p.y;
+                            mnz = mxz = p.z;
+                        } else {
+                            if (p.x < mnx) mnx = p.x;
+                            if (p.x > mxx) mxx = p.x;
+                            if (p.y < mny) mny = p.y;
+                            if (p.y > mxy) mxy = p.y;
+                            if (p.z < mnz) mnz = p.z;
+                            if (p.z > mxz) mxz = p.z;
+                        }
+                        char key[96];
+                        snprintf(key, sizeof(key), "%.2f,%.2f,%.2f", p.x, p.y, p.z);
+                        allPos[key]++;
+                        n++;
+                    }
+                }
+                crowdInst += n;
+                printf("      archetype=%-20s mmesh=%-3s instances=%-5d "
+                       "3d=%-4d bbox=(%.1f %.1f %.1f)..(%.1f %.1f %.1f)\n",
+                       arch ? (arch->Name() ? arch->Name() : "(unnamed)") : "<NULL>",
+                       mm ? "yes" : "NO", n, (int)it->m3DChars.size(), mnx, mny, mnz,
+                       mxx, mxy, mxz);
+            }
+            printf("      -> %s total instances = %d\n",
+                   wc->Name() ? wc->Name() : "(unnamed)", crowdInst);
+            totalInst += crowdInst;
+        }
+        printf("    => %d crowd instance(s) at %d DISTINCT world position(s)%s\n",
+               totalInst, (int)allPos.size(),
+               (totalInst > 1 && (int)allPos.size() <= 1)
+                   ? "  <== ALL STACKED"
+                   : (totalInst == 0 ? "  <== NO SHIPPED PLACEMENT DATA" : ""));
+
+        // ★ X6: position-set overlap between WorldCrowds.
+        //
+        // small_club_01 ships SIX WorldCrowds whose names look like two
+        // families of three (`WorldCrowd[_frontrow]` + `_2_ps3` + `_4_ps3`,
+        // with 8 / 2 / 4 archetypes). "Looks like a family" is a naming
+        // inference, and the charter's rule is to measure rather than infer.
+        // If two crowds' baked position SETS are identical they are the same
+        // crowd authored at different archetype variety (a platform/LOD
+        // variant), and drawing both puts two characters on every seat.
+        std::vector<std::set<std::string> > posSets(crowds.size());
+        for (size_t i = 0; i < crowds.size(); i++) {
+            const std::list<WorldCrowd::CharData> &cds = crowds[i]->GetCharacters();
+            for (std::list<WorldCrowd::CharData>::const_iterator it = cds.begin();
+                 it != cds.end(); ++it) {
+                if (!it->mMMesh) continue;
+                InstanceList &insts = it->mMMesh->Instances();
+                for (InstanceList::iterator ii = insts.begin(); ii != insts.end();
+                     ++ii) {
+                    char key[96];
+                    snprintf(key, sizeof(key), "%.2f,%.2f,%.2f", ii->mXfm.v.x,
+                             ii->mXfm.v.y, ii->mXfm.v.z);
+                    posSets[i].insert(key);
+                }
+            }
+        }
+        printf("    --- position-set overlap (shared positions / smaller set) ---\n");
+        for (size_t i = 0; i < crowds.size(); i++) {
+            for (size_t j = i + 1; j < crowds.size(); j++) {
+                int shared = 0;
+                for (std::set<std::string>::iterator k = posSets[i].begin();
+                     k != posSets[i].end(); ++k)
+                    if (posSets[j].count(*k)) shared++;
+                size_t smaller = posSets[i].size() < posSets[j].size() ? posSets[i].size()
+                                                                      : posSets[j].size();
+                if (shared == 0) continue;
+                printf("      %-30s ^ %-30s %d/%d%s\n",
+                       crowds[i]->Name() ? crowds[i]->Name() : "?",
+                       crowds[j]->Name() ? crowds[j]->Name() : "?", shared,
+                       (int)smaller,
+                       (smaller && (size_t)shared == smaller) ? "  <== IDENTICAL SET"
+                                                              : "");
+            }
+        }
+    }
+
     // X5: gFocus restricts the CAMERA-FRAMING bounds to meshes whose name
     // contains the substring. Everything still DRAWS -- this only changes what
     // the camera is asked to frame, so the crowd can be inspected inside the
@@ -1136,6 +1274,7 @@ namespace {
         ImageStats stats;
         int meshes = 0;
         int drawn = 0;
+        int crowdDrawn = 0; // X6: WorldCrowd::Draw() calls issued
         int skinned = 0;
         int withMat = 0;
         int withTex = 0;
@@ -1716,6 +1855,7 @@ namespace {
 
         if (gDumpTree) {
             ReportCharacterPlacement(dir);
+            ReportCrowdPlacement(dir);
             ReportClassHistogram(dir);
             ReportTransProxyBinding(dir);
             int dirs = 0, emptyProxies = 0, totalObjs = 0;
@@ -1742,6 +1882,96 @@ namespace {
         printf("  mesh walk: %s -> %d mesh(es)\n",
                deep ? "DEEP (hash-table dirs + mSubDirs)" : "mSubDirs only (legacy)",
                (int)meshes.size());
+
+        // ★ X6: collect the venue's WorldCrowd objects so the draw loop can
+        // issue them.
+        //
+        // WHY THE CROWD WAS INVISIBLE, and why this is a DRIVER defect and not
+        // a decomp one: rb3-render draws a flat std::vector<RndMesh*> and calls
+        // DrawShowing() on each element. WorldCrowd is an RndDrawable but NOT
+        // an RndMesh, so its DrawShowing() -- which is fully ported, 355 lines
+        // at world/Crowd.cpp:1062 -- was never reached by any code path in this
+        // driver. Retail never has this problem: a venue draws through the
+        // RndDrawable tree, where WorldDir issues its drawables directly.
+        // This is the same shape as X5's ObjDirItr finding: faithful engine
+        // code, unfaithful driver.
+        //
+        // Nothing here places anything. The transforms come from
+        // WorldCrowd::Load (world/Crowd.cpp:361-368), which deserializes a
+        // std::list<Transform> per CharData straight into mMMesh->Instances().
+        std::vector<WorldCrowd *> crowds;
+        bool drawCrowd = getenv("RB3_NO_CROWD_DRAW") == nullptr;
+        if (drawCrowd && deep) {
+            crowds = CollectDeep<WorldCrowd>(dir);
+            // ⛔ RETRACTED HYPOTHESIS, kept because the refutation is the
+            // useful part. I first wrote this flag as a pure diagnostic on the
+            // theory that small_club_01's six WorldCrowds are two families of
+            // three (`WorldCrowd[_frontrow]` / `_2_ps3` / `_4_ps3`, 8/2/4
+            // archetypes) holding the SAME baked positions at different
+            // archetype variety -- so showing more than one per family would
+            // put two characters on every seat. The naming is suggestive and
+            // the theory was wrong.
+            //
+            // MEASURED (ReportCrowdPlacement's overlap matrix): all 15 pairs
+            // share ZERO positions, and the six crowds hold 300 instances at
+            // 300 DISTINCT positions. They PARTITION the audience area; they
+            // do not duplicate it. So --crowd-all draws every shipped seat
+            // exactly once and is legitimate, not a double-draw.
+            //
+            // It is still not the DEFAULT, for a different and narrower
+            // reason: the asset's own mShowing flags mark 1 of the 6 live, and
+            // honouring shipped flags is strictly more faithful than
+            // overriding them. Retail very likely toggles these at runtime
+            // (the `_ps3` names imply a platform/quality selector), but that
+            // selector is not ported, so choosing which to show would be MY
+            // judgement rather than the asset's. Both frames are in evidence.
+            if (gCrowdShowAll) {
+                for (size_t ci = 0; ci < crowds.size(); ci++)
+                    crowds[ci]->SetShowing(true);
+            }
+            int showing = 0;
+            for (size_t ci = 0; ci < crowds.size(); ci++)
+                if (crowds[ci]->Showing()) showing++;
+            printf("  crowd walk: %d WorldCrowd(s), %d showing%s\n", (int)crowds.size(),
+                   showing, gCrowdShowAll ? "  [--crowd-all: DIAGNOSTIC]" : "");
+
+            // ★ X6: build the placed-crowd draw list.
+            //
+            // ⚠ WHAT IS AND IS NOT SYNTHESIZED HERE. Every position below is
+            // read from mMMesh->Instances()[i].mXfm -- asset data deserialized
+            // by real engine code (world/Crowd.cpp:361-368). NO transform is
+            // computed, guessed, or hand-picked by this driver.
+            //
+            // What IS substituted is the RASTERIZATION MECHANISM: retail draws
+            // each crowd member as a camera-facing impostor billboard textured
+            // from a render-to-texture snapshot of the archetype. That RTT
+            // emits nothing on this native backend (measured: 300 instances
+            // produce a byte-identical frame, §defects), so this driver draws
+            // the archetype's REAL skinned geometry at each baked transform
+            // instead. Retail has this concept as the "3D crowd" subset
+            // (Draw3DChars / m3DChars); this applies it to every instance.
+            //
+            // The archetype meshes are also REMOVED from the flat mesh loop:
+            // an archetype is a template, and drawing it at its own default
+            // transform is what put eight coincident characters at the venue
+            // origin in X4d/X5.
+            for (size_t ci = 0; ci < crowds.size(); ci++) {
+                const std::list<WorldCrowd::CharData> &cds =
+                    crowds[ci]->GetCharacters();
+                for (std::list<WorldCrowd::CharData>::const_iterator it = cds.begin();
+                     it != cds.end(); ++it) {
+                    Character *arch = it->mDef.mChar;
+                    if (!arch || gArchetypeMeshes.count(arch)) continue;
+                    std::vector<RndMesh *> am = CollectDeep<RndMesh>(arch);
+                    gArchetypeMeshes[arch] = am;
+                    for (size_t mi = 0; mi < am.size(); mi++)
+                        gArchetypeMeshSet.insert(am[mi]);
+                }
+            }
+            printf("  crowd archetypes: %d character(s), %d mesh(es) moved out of "
+                   "the flat loop\n",
+                   (int)gArchetypeMeshes.size(), (int)gArchetypeMeshSet.size());
+        }
         for (size_t mi = 0; mi < meshes.size(); mi++) {
             RndMesh *m = meshes[mi];
             r.meshes++;
@@ -2005,15 +2235,51 @@ namespace {
                 // stray skinning artifact has to be attributed per-mesh before
                 // it is called a defect.
                 if (gOnlyMesh && !strstr(m->Name(), gOnlyMesh)) continue;
+                // X6: an archetype is a template, not a crowd member. Drawing
+                // it at its own default transform is exactly what stacked
+                // eight characters on the venue origin. It is drawn below,
+                // once per baked instance transform, instead.
+                if (gArchetypeMeshSet.count(m)) continue;
                 m->DrawShowing();
                 r.drawn++;
+            }
+            // ★ X6: the placed crowd. Positions come from the asset's baked
+            // instance list; only the rasterization mechanism is ours.
+            for (size_t ci = 0; ci < crowds.size(); ci++) {
+                WorldCrowd *wc = crowds[ci];
+                if (!wc->Showing()) continue;
+                const std::list<WorldCrowd::CharData> &cds = wc->GetCharacters();
+                for (std::list<WorldCrowd::CharData>::const_iterator it = cds.begin();
+                     it != cds.end(); ++it) {
+                    Character *arch = it->mDef.mChar;
+                    RndMultiMesh *mm = it->mMMesh;
+                    if (!arch || !mm) continue;
+                    std::map<Character *, std::vector<RndMesh *> >::iterator ami =
+                        gArchetypeMeshes.find(arch);
+                    if (ami == gArchetypeMeshes.end()) continue;
+                    const std::vector<RndMesh *> &am = ami->second;
+                    InstanceList &insts = mm->Instances();
+                    for (InstanceList::iterator ii = insts.begin(); ii != insts.end();
+                         ++ii) {
+                        arch->SetWorldXfm(ii->mXfm);
+                        for (size_t mi = 0; mi < am.size(); mi++) {
+                            RndMesh *cm = am[mi];
+                            if (!cm->Showing()) continue;
+                            if (gOnlyMesh && !strstr(cm->Name(), gOnlyMesh)) continue;
+                            cm->DrawShowing();
+                            r.crowdDrawn++;
+                        }
+                    }
+                }
             }
             TheRnd.EndDrawing();
         }
         {
             char d[128];
-            snprintf(d, sizeof(d), "%d of %d meshes issued a draw, %d frame(s)", r.drawn,
-                     r.meshes, frames);
+            snprintf(d, sizeof(d),
+                     "%d of %d meshes issued a draw, %d frame(s); crowd: %d placed "
+                     "draw(s)",
+                     r.drawn, r.meshes, frames, r.crowdDrawn / (frames ? frames : 1));
             Gate("draws-issued", r.drawn > 0, d);
         }
 
@@ -2089,6 +2355,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--only-mesh") == 0 && i + 1 < argc)
             gOnlyMesh = argv[++i];
         else if (strcmp(argv[i], "--dump-tree") == 0) gDumpTree = true;
+        else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
             gSceneClip = argv[++i];
