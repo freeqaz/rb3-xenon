@@ -29185,5 +29185,6 @@
  "0x827ab850": "?SaveLoadAllComplete@MemcardMgr@@QAAXXZ",
  "0x8262f5e8": "?SetVoiceoverFile@VoiceoverPanel@@QAAXPBDVSymbol@@@Z",
  "0x8262f700": "??$New@VMoggClip@@@Object@Hmx@@SAPAVMoggClip@@XZ",
- "0x8270de60": "?Play@MoggClip@@QAAXXZ"
+ "0x8270de60": "?Play@MoggClip@@QAAXXZ",
+ "0x826a97e0": "?OnMsg@SyncGameStartPanel@@QAA?AVDataNode@@ABVSessionDisconnectedMsg@@@Z"
 }
