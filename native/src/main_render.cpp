@@ -199,6 +199,7 @@ namespace {
     // X4d framing/isolation overrides (driver-only; no shared src/ involvement).
     const char *gOnlyMesh = nullptr;
     bool gDumpTree = false; // X5: per-dir object census of the loaded subdir tree
+    const char *gFocus = nullptr; // X5: frame the camera on meshes matching this
     const char *gSceneClip = nullptr; // X5: drive ALL scene characters with this clip
     float gDistScale = -1.0f;   // <0 = use the per-cell default
     float gAzimuth = -999.0f;
@@ -581,11 +582,264 @@ namespace {
         return true;
     }
 
+    // ★ X5: collect every T in the dir tree, INCLUDING dir-typed OBJECTS.
+    //
+    // ObjDirItr(dir, recurse=true) descends only through mSubDirs (see
+    // ObjectDir::NextSubDir, obj/Dir.h:536). That is FAITHFUL to retail and is
+    // not a decomp defect -- retail never needs a flat mesh list because it
+    // draws through the RndDrawable tree, where a Character draws its own
+    // contents when its parent draws it.
+    //
+    // This driver does not have that tree; it draws a FLAT vector of RndMesh.
+    // So for this driver -- and only for this driver -- the mSubDirs-only walk
+    // silently omits every mesh that lives inside a dir-typed object, which is
+    // exactly where a loaded Character's meshes live. Hence a fully resident
+    // eight-member crowd censusing as "0 skinned meshes".
+    //
+    // `seen` is load-bearing, not defensive: char/crowd/anim/shared_clips.milo
+    // is reachable under all eight crowd members, and several proxies are
+    // reachable by more than one path. Without it this walk revisits shared
+    // dirs and double-counts (and, with a cyclic proxy, would not terminate).
+    template <class T>
+    void CollectDeep(ObjectDir *dir, std::vector<T *> &out,
+                     std::set<ObjectDir *> &seen, int depth) {
+        if (!dir || depth > 16) return;
+        if (!seen.insert(dir).second) return;
+        for (ObjectDir::Entry *e = dir->HashTable().Begin(); e;
+             e = dir->HashTable().Next(e)) {
+            if (!e->obj) continue;
+            T *t = dynamic_cast<T *>(e->obj);
+            if (t) out.push_back(t);
+            ObjectDir *od = dynamic_cast<ObjectDir *>(e->obj);
+            if (od) CollectDeep<T>(od, out, seen, depth + 1);
+        }
+        for (int i = 0; i < (int)dir->SubDirs().size(); i++) {
+            CollectDeep<T>(dir->SubDirs()[i].Ptr(), out, seen, depth + 1);
+        }
+    }
+
+    template <class T> std::vector<T *> CollectDeep(ObjectDir *dir) {
+        std::vector<T *> out;
+        std::set<ObjectDir *> seen;
+        CollectDeep<T>(dir, out, seen, 0);
+        return out;
+    }
+
+    // ★ X5: POSITIVE evidence that the player-anchor chain actually bound.
+    //
+    // "the warning stopped printing" is an absence, and the charter's rule is
+    // that silence is not success. RndTransProxy::Sync() (rndobj/TransProxy.cpp
+    // :73-90) calls SetTransParent(target) ONLY when it resolved mProxy and
+    // found mPart inside it; on failure it explicitly SetTransParent(nullptr).
+    // So a non-null TransParent() is a direct, per-object assertion that the
+    // proxy is bound AND that the named part was found inside the target.
+    void ReportTransProxyBinding(ObjectDir *dir) {
+        std::vector<RndTransProxy *> tps = CollectDeep<RndTransProxy>(dir);
+        int bound = 0, unbound = 0, boundPlayer = 0;
+        for (size_t i = 0; i < tps.size(); i++) {
+            bool b = tps[i]->TransParent() != nullptr;
+            if (b) {
+                bound++;
+                if (strstr(tps[i]->Name(), "player")) boundPlayer++;
+            } else {
+                unbound++;
+            }
+        }
+        printf("  --- TransProxy binding: %d bound / %d unbound of %d "
+               "(%d bound proxies are player anchors) ---\n",
+               bound, unbound, (int)tps.size(), boundPlayer);
+    }
+
+    // ★ X5: object counts BY CLASS over the whole tree. The charter's preferred
+    // scene oracle -- an absolute census that a coverage% or a mesh total
+    // cannot substitute for.
+    void ReportClassHistogram(ObjectDir *dir) {
+        std::vector<Hmx::Object *> all = CollectDeep<Hmx::Object>(dir);
+        std::map<std::string, int> hist;
+        for (size_t i = 0; i < all.size(); i++)
+            hist[all[i]->ClassName().Str()]++;
+        printf("  --- class histogram (%d object(s), %d class(es)) ---\n",
+               (int)all.size(), (int)hist.size());
+        for (std::map<std::string, int>::const_iterator it = hist.begin();
+             it != hist.end(); ++it)
+            printf("    %-28s %d\n", it->first.c_str(), it->second);
+    }
+
+    // ★ X5: drive EVERY Character in the scene from the clip set the scene
+    // itself ships.
+    //
+    // X4b/X4c drove one character from an externally supplied --clips file.
+    // That is not needed in a venue: world/shared/chars.milo's crowd members
+    // each carry char/crowd/anim/shared_clips.milo, whose male_base (52 clips)
+    // and female_base (56 clips) CharClipSets are already resident and already
+    // bound to the right skeleton. Driving from those is both cheaper and more
+    // faithful than injecting a foreign clip file.
+    //
+    // Everything load-bearing from X4b is preserved deliberately:
+    //   - StuffBones is NOT optional. Without it the driver plays into an empty
+    //     bone set and the figure stays in BIND POSE while reporting success --
+    //     the silent-success failure X4b called out.
+    //   - the clock is STEPPED, not jumped: CharDriver blends between poll
+    //     instants, so one huge jump evaluates a blend over the whole clip.
+    //   - --beat is relative to clip->StartBeat().
+    int DriveSceneCharacters(ObjectDir *dir, const char *clipName, float beat,
+                             float bpm) {
+        std::vector<Character *> chars = CollectDeep<Character>(dir);
+        int driven = 0, noDriver = 0, noClip = 0, noServo = 0;
+        printf("  --- scene clip drive: '%s' @ beat %.2f over %d character(s) ---\n",
+               clipName, beat, (int)chars.size());
+        for (size_t i = 0; i < chars.size(); i++) {
+            Character *c = chars[i];
+            CharDriver *drv = c->Driver();
+            if (!drv) { noDriver++; continue; }
+
+            // ★ Prefer the clip set the DRIVER IS ALREADY BOUND TO. Each crowd
+            // member carries char/crowd/anim/shared_clips.milo, which holds
+            // BOTH male_base and female_base, and `crowd_reaching_01` exists in
+            // both. Picking the first set that happens to contain the name is
+            // hash-order-dependent and gave crowd_male01 a female_base clip.
+            // CharDriver::mClips is bound at load; honouring it is the faithful
+            // choice and is stable.
+            ObjectDir *bound = drv->ClipDir();
+            CharClipSet *useSet = nullptr;
+            CharClip *useClip = nullptr;
+            const char *src = "driver-bound";
+            int nClips = 0;
+            if (bound) {
+                std::vector<CharClip *> cl = CollectDeep<CharClip>(bound);
+                nClips += (int)cl.size();
+                for (size_t k = 0; k < cl.size(); k++) {
+                    if (strcmp(cl[k]->Name(), clipName) == 0) {
+                        useClip = cl[k];
+                        useSet = dynamic_cast<CharClipSet *>(bound);
+                        break;
+                    }
+                }
+            }
+            // ⛔ DELIBERATELY NO cross-set fallback. shared_clips.milo holds
+            // BOTH male_base and female_base, and crowd_reaching_01 exists only
+            // in female_base -- so a "first set that has the name" search hands
+            // crowd_male01 a female clip. That renders, reports success, and is
+            // wrong. A character whose OWN bound set lacks the clip is skipped
+            // and says so.
+            std::vector<CharClipSet *> sets = CollectDeep<CharClipSet>(c);
+            if (!useClip) {
+                std::string avail;
+                for (size_t s = 0; s < sets.size(); s++) {
+                    std::vector<CharClip *> cl = CollectDeep<CharClip>(sets[s]);
+                    nClips += (int)cl.size();
+                    for (size_t k = 0; k < cl.size() && k < 4; k++) {
+                        avail += (avail.empty() ? "" : ", ");
+                        avail += cl[k]->Name();
+                    }
+                }
+                printf("    %-22s bound set '%s' has no clip '%s' (%d clip(s) in %d "
+                       "set(s); e.g. %s) — SKIPPED\n",
+                       c->Name(), bound ? bound->Name() : "(none)", clipName, nClips,
+                       (int)sets.size(), avail.c_str());
+                noClip++;
+                continue;
+            }
+
+            if (useSet) drv->SetClips(useSet);
+            CharServoBone *servo = c->Find<CharServoBone>("bone.servo", false);
+            if (servo) {
+                    std::vector<CharClip *> all =
+                    CollectDeep<CharClip>(useSet ? (ObjectDir *)useSet : bound);
+                for (size_t k = 0; k < all.size(); k++) all[k]->StuffBones(*servo);
+            } else {
+                noServo++;
+            }
+            drv->Enter();
+            drv->Play(useClip, CharClip::kPlayNow | CharClip::kPlayLoop, -1.0f, 1e30f,
+                      0.0f);
+            printf("    %-22s clip '%s' from set '%s' [%s] (beats %.2f..%.2f)%s\n",
+                   c->Name(), useClip->Name(),
+                   useSet ? useSet->Name() : (bound ? bound->Name() : "?"), src,
+                   useClip->StartBeat(), useClip->EndBeat(),
+                   servo ? "" : "  ⚠ NO bone.servo — will not move");
+            driven++;
+        }
+        if (driven == 0) {
+            printf("    => drove NOTHING (%d without a CharDriver, %d without the clip)\n",
+                   noDriver, noClip);
+            return 0;
+        }
+
+        // Step the shared clock once for the whole scene, then Poll() every
+        // driven character at each instant.
+        float step = 0.1f;
+        float stepSeconds = step * 60.0f / bpm;
+        float b = 0.0f, seconds = 0.0f;
+        TheTaskMgr.SetSecondsAndBeat(seconds, b, true);
+        int polls = 0;
+        while (b + step < beat) {
+            b += step;
+            seconds += stepSeconds;
+            TheTaskMgr.SetSecondsAndBeat(seconds, b, false);
+            for (size_t i = 0; i < chars.size(); i++)
+                if (chars[i]->Driver()) chars[i]->Poll();
+            polls++;
+        }
+        seconds = beat * 60.0f / bpm;
+        TheTaskMgr.SetSecondsAndBeat(seconds, beat, false);
+        for (size_t i = 0; i < chars.size(); i++)
+            if (chars[i]->Driver()) chars[i]->Poll();
+        polls++;
+        printf("    => drove %d character(s), polled %d time(s) to beat %.2f "
+               "(%d no-driver, %d no-clip, %d no-servo)\n",
+               driven, polls, beat, noDriver, noClip, noServo);
+        return driven;
+    }
+
+    // ★ X5: ABSOLUTE world placement of every Character in the scene.
+    //
+    // The charter's oracle rule: for a scene, prefer absolute checks (named
+    // presence, counts by class, absolute world positions) over invariants.
+    // Eight crowd members that all render at the SAME world position look, in
+    // any aggregate count or coverage %, exactly like eight correctly placed
+    // ones. Only printing the positions separates them.
+    void ReportCharacterPlacement(ObjectDir *dir) {
+        std::vector<Character *> chars = CollectDeep<Character>(dir);
+        printf("  --- character placement (%d Character(s)) ---\n", (int)chars.size());
+        std::map<std::string, int> atPos;
+        for (size_t i = 0; i < chars.size(); i++) {
+            Character *c = chars[i];
+            const Vector3 &w = c->WorldXfm().v;
+            std::vector<RndMesh *> cm = CollectDeep<RndMesh>(c);
+            int skinned = 0;
+            for (size_t j = 0; j < cm.size(); j++)
+                if (cm[j]->IsSkinned()) skinned++;
+            char key[96];
+            snprintf(key, sizeof(key), "%.2f,%.2f,%.2f", w.x, w.y, w.z);
+            atPos[key]++;
+            printf("    %-24s world=(%8.2f %8.2f %8.2f)  meshes=%-3d skinned=%-3d "
+                   "driver=%s\n",
+                   c->Name() ? c->Name() : "(unnamed)", w.x, w.y, w.z, (int)cm.size(),
+                   skinned, c->Driver() ? "yes" : "NO");
+        }
+        int distinct = (int)atPos.size();
+        printf("    => %d character(s) at %d DISTINCT world position(s)%s\n",
+               (int)chars.size(), distinct,
+               (distinct <= 1 && chars.size() > 1)
+                   ? "  <== ALL STACKED (nothing placed them)"
+                   : "");
+    }
+
+    // X5: gFocus restricts the CAMERA-FRAMING bounds to meshes whose name
+    // contains the substring. Everything still DRAWS -- this only changes what
+    // the camera is asked to frame, so the crowd can be inspected inside the
+    // venue without hiding the venue. With gFocus unset the walk is the legacy
+    // ObjDirItr one, so every X3/X4 bbox number reproduces byte-for-byte.
     Bounds SceneBounds(ObjectDir *dir) {
         Bounds b;
-        for (ObjDirItr<RndMesh> it(dir, true); it; ++it) {
-            RndMesh *m = it;
+        std::vector<RndMesh *> src;
+        if (gFocus) src = CollectDeep<RndMesh>(dir);
+        else for (ObjDirItr<RndMesh> it(dir, true); it; ++it) src.push_back(it);
+        for (size_t si = 0; si < src.size(); si++) {
+            RndMesh *m = src[si];
             if (!m || !m->Showing()) continue;
+            if (gFocus && !strstr(m->Name(), gFocus)) continue;
             const Transform &xfm = m->WorldXfm();
             RndMesh *owner = m->GetGeomOwner();
             if (!owner) owner = m;
@@ -1345,250 +1599,6 @@ namespace {
         return true;
     }
 
-    // ★ X5: collect every T in the dir tree, INCLUDING dir-typed OBJECTS.
-    //
-    // ObjDirItr(dir, recurse=true) descends only through mSubDirs (see
-    // ObjectDir::NextSubDir, obj/Dir.h:536). That is FAITHFUL to retail and is
-    // not a decomp defect -- retail never needs a flat mesh list because it
-    // draws through the RndDrawable tree, where a Character draws its own
-    // contents when its parent draws it.
-    //
-    // This driver does not have that tree; it draws a FLAT vector of RndMesh.
-    // So for this driver -- and only for this driver -- the mSubDirs-only walk
-    // silently omits every mesh that lives inside a dir-typed object, which is
-    // exactly where a loaded Character's meshes live. Hence a fully resident
-    // eight-member crowd censusing as "0 skinned meshes".
-    //
-    // `seen` is load-bearing, not defensive: char/crowd/anim/shared_clips.milo
-    // is reachable under all eight crowd members, and several proxies are
-    // reachable by more than one path. Without it this walk revisits shared
-    // dirs and double-counts (and, with a cyclic proxy, would not terminate).
-    template <class T>
-    void CollectDeep(ObjectDir *dir, std::vector<T *> &out,
-                     std::set<ObjectDir *> &seen, int depth) {
-        if (!dir || depth > 16) return;
-        if (!seen.insert(dir).second) return;
-        for (ObjectDir::Entry *e = dir->HashTable().Begin(); e;
-             e = dir->HashTable().Next(e)) {
-            if (!e->obj) continue;
-            T *t = dynamic_cast<T *>(e->obj);
-            if (t) out.push_back(t);
-            ObjectDir *od = dynamic_cast<ObjectDir *>(e->obj);
-            if (od) CollectDeep<T>(od, out, seen, depth + 1);
-        }
-        for (int i = 0; i < (int)dir->SubDirs().size(); i++) {
-            CollectDeep<T>(dir->SubDirs()[i].Ptr(), out, seen, depth + 1);
-        }
-    }
-
-    template <class T> std::vector<T *> CollectDeep(ObjectDir *dir) {
-        std::vector<T *> out;
-        std::set<ObjectDir *> seen;
-        CollectDeep<T>(dir, out, seen, 0);
-        return out;
-    }
-
-    // ★ X5: POSITIVE evidence that the player-anchor chain actually bound.
-    //
-    // "the warning stopped printing" is an absence, and the charter's rule is
-    // that silence is not success. RndTransProxy::Sync() (rndobj/TransProxy.cpp
-    // :73-90) calls SetTransParent(target) ONLY when it resolved mProxy and
-    // found mPart inside it; on failure it explicitly SetTransParent(nullptr).
-    // So a non-null TransParent() is a direct, per-object assertion that the
-    // proxy is bound AND that the named part was found inside the target.
-    void ReportTransProxyBinding(ObjectDir *dir) {
-        std::vector<RndTransProxy *> tps = CollectDeep<RndTransProxy>(dir);
-        int bound = 0, unbound = 0, boundPlayer = 0;
-        for (size_t i = 0; i < tps.size(); i++) {
-            bool b = tps[i]->TransParent() != nullptr;
-            if (b) {
-                bound++;
-                if (strstr(tps[i]->Name(), "player")) boundPlayer++;
-            } else {
-                unbound++;
-            }
-        }
-        printf("  --- TransProxy binding: %d bound / %d unbound of %d "
-               "(%d bound proxies are player anchors) ---\n",
-               bound, unbound, (int)tps.size(), boundPlayer);
-    }
-
-    // ★ X5: object counts BY CLASS over the whole tree. The charter's preferred
-    // scene oracle -- an absolute census that a coverage% or a mesh total
-    // cannot substitute for.
-    void ReportClassHistogram(ObjectDir *dir) {
-        std::vector<Hmx::Object *> all = CollectDeep<Hmx::Object>(dir);
-        std::map<std::string, int> hist;
-        for (size_t i = 0; i < all.size(); i++)
-            hist[all[i]->ClassName().Str()]++;
-        printf("  --- class histogram (%d object(s), %d class(es)) ---\n",
-               (int)all.size(), (int)hist.size());
-        for (std::map<std::string, int>::const_iterator it = hist.begin();
-             it != hist.end(); ++it)
-            printf("    %-28s %d\n", it->first.c_str(), it->second);
-    }
-
-    // ★ X5: drive EVERY Character in the scene from the clip set the scene
-    // itself ships.
-    //
-    // X4b/X4c drove one character from an externally supplied --clips file.
-    // That is not needed in a venue: world/shared/chars.milo's crowd members
-    // each carry char/crowd/anim/shared_clips.milo, whose male_base (52 clips)
-    // and female_base (56 clips) CharClipSets are already resident and already
-    // bound to the right skeleton. Driving from those is both cheaper and more
-    // faithful than injecting a foreign clip file.
-    //
-    // Everything load-bearing from X4b is preserved deliberately:
-    //   - StuffBones is NOT optional. Without it the driver plays into an empty
-    //     bone set and the figure stays in BIND POSE while reporting success --
-    //     the silent-success failure X4b called out.
-    //   - the clock is STEPPED, not jumped: CharDriver blends between poll
-    //     instants, so one huge jump evaluates a blend over the whole clip.
-    //   - --beat is relative to clip->StartBeat().
-    int DriveSceneCharacters(ObjectDir *dir, const char *clipName, float beat,
-                             float bpm) {
-        std::vector<Character *> chars = CollectDeep<Character>(dir);
-        int driven = 0, noDriver = 0, noClip = 0, noServo = 0;
-        printf("  --- scene clip drive: '%s' @ beat %.2f over %d character(s) ---\n",
-               clipName, beat, (int)chars.size());
-        for (size_t i = 0; i < chars.size(); i++) {
-            Character *c = chars[i];
-            CharDriver *drv = c->Driver();
-            if (!drv) { noDriver++; continue; }
-
-            // ★ Prefer the clip set the DRIVER IS ALREADY BOUND TO. Each crowd
-            // member carries char/crowd/anim/shared_clips.milo, which holds
-            // BOTH male_base and female_base, and `crowd_reaching_01` exists in
-            // both. Picking the first set that happens to contain the name is
-            // hash-order-dependent and gave crowd_male01 a female_base clip.
-            // CharDriver::mClips is bound at load; honouring it is the faithful
-            // choice and is stable.
-            ObjectDir *bound = drv->ClipDir();
-            CharClipSet *useSet = nullptr;
-            CharClip *useClip = nullptr;
-            const char *src = "driver-bound";
-            int nClips = 0;
-            if (bound) {
-                std::vector<CharClip *> cl = CollectDeep<CharClip>(bound);
-                nClips += (int)cl.size();
-                for (size_t k = 0; k < cl.size(); k++) {
-                    if (strcmp(cl[k]->Name(), clipName) == 0) {
-                        useClip = cl[k];
-                        useSet = dynamic_cast<CharClipSet *>(bound);
-                        break;
-                    }
-                }
-            }
-            // ⛔ DELIBERATELY NO cross-set fallback. shared_clips.milo holds
-            // BOTH male_base and female_base, and crowd_reaching_01 exists only
-            // in female_base -- so a "first set that has the name" search hands
-            // crowd_male01 a female clip. That renders, reports success, and is
-            // wrong. A character whose OWN bound set lacks the clip is skipped
-            // and says so.
-            std::vector<CharClipSet *> sets = CollectDeep<CharClipSet>(c);
-            if (!useClip) {
-                std::string avail;
-                for (size_t s = 0; s < sets.size(); s++) {
-                    std::vector<CharClip *> cl = CollectDeep<CharClip>(sets[s]);
-                    nClips += (int)cl.size();
-                    for (size_t k = 0; k < cl.size() && k < 4; k++) {
-                        avail += (avail.empty() ? "" : ", ");
-                        avail += cl[k]->Name();
-                    }
-                }
-                printf("    %-22s bound set '%s' has no clip '%s' (%d clip(s) in %d "
-                       "set(s); e.g. %s) — SKIPPED\n",
-                       c->Name(), bound ? bound->Name() : "(none)", clipName, nClips,
-                       (int)sets.size(), avail.c_str());
-                noClip++;
-                continue;
-            }
-
-            if (useSet) drv->SetClips(useSet);
-            CharServoBone *servo = c->Find<CharServoBone>("bone.servo", false);
-            if (servo) {
-                    std::vector<CharClip *> all =
-                    CollectDeep<CharClip>(useSet ? (ObjectDir *)useSet : bound);
-                for (size_t k = 0; k < all.size(); k++) all[k]->StuffBones(*servo);
-            } else {
-                noServo++;
-            }
-            drv->Enter();
-            drv->Play(useClip, CharClip::kPlayNow | CharClip::kPlayLoop, -1.0f, 1e30f,
-                      0.0f);
-            printf("    %-22s clip '%s' from set '%s' [%s] (beats %.2f..%.2f)%s\n",
-                   c->Name(), useClip->Name(),
-                   useSet ? useSet->Name() : (bound ? bound->Name() : "?"), src,
-                   useClip->StartBeat(), useClip->EndBeat(),
-                   servo ? "" : "  ⚠ NO bone.servo — will not move");
-            driven++;
-        }
-        if (driven == 0) {
-            printf("    => drove NOTHING (%d without a CharDriver, %d without the clip)\n",
-                   noDriver, noClip);
-            return 0;
-        }
-
-        // Step the shared clock once for the whole scene, then Poll() every
-        // driven character at each instant.
-        float step = 0.1f;
-        float stepSeconds = step * 60.0f / bpm;
-        float b = 0.0f, seconds = 0.0f;
-        TheTaskMgr.SetSecondsAndBeat(seconds, b, true);
-        int polls = 0;
-        while (b + step < beat) {
-            b += step;
-            seconds += stepSeconds;
-            TheTaskMgr.SetSecondsAndBeat(seconds, b, false);
-            for (size_t i = 0; i < chars.size(); i++)
-                if (chars[i]->Driver()) chars[i]->Poll();
-            polls++;
-        }
-        seconds = beat * 60.0f / bpm;
-        TheTaskMgr.SetSecondsAndBeat(seconds, beat, false);
-        for (size_t i = 0; i < chars.size(); i++)
-            if (chars[i]->Driver()) chars[i]->Poll();
-        polls++;
-        printf("    => drove %d character(s), polled %d time(s) to beat %.2f "
-               "(%d no-driver, %d no-clip, %d no-servo)\n",
-               driven, polls, beat, noDriver, noClip, noServo);
-        return driven;
-    }
-
-    // ★ X5: ABSOLUTE world placement of every Character in the scene.
-    //
-    // The charter's oracle rule: for a scene, prefer absolute checks (named
-    // presence, counts by class, absolute world positions) over invariants.
-    // Eight crowd members that all render at the SAME world position look, in
-    // any aggregate count or coverage %, exactly like eight correctly placed
-    // ones. Only printing the positions separates them.
-    void ReportCharacterPlacement(ObjectDir *dir) {
-        std::vector<Character *> chars = CollectDeep<Character>(dir);
-        printf("  --- character placement (%d Character(s)) ---\n", (int)chars.size());
-        std::map<std::string, int> atPos;
-        for (size_t i = 0; i < chars.size(); i++) {
-            Character *c = chars[i];
-            const Vector3 &w = c->WorldXfm().v;
-            std::vector<RndMesh *> cm = CollectDeep<RndMesh>(c);
-            int skinned = 0;
-            for (size_t j = 0; j < cm.size(); j++)
-                if (cm[j]->IsSkinned()) skinned++;
-            char key[96];
-            snprintf(key, sizeof(key), "%.2f,%.2f,%.2f", w.x, w.y, w.z);
-            atPos[key]++;
-            printf("    %-24s world=(%8.2f %8.2f %8.2f)  meshes=%-3d skinned=%-3d "
-                   "driver=%s\n",
-                   c->Name() ? c->Name() : "(unnamed)", w.x, w.y, w.z, (int)cm.size(),
-                   skinned, c->Driver() ? "yes" : "NO");
-        }
-        int distinct = (int)atPos.size();
-        printf("    => %d character(s) at %d DISTINCT world position(s)%s\n",
-               (int)chars.size(), distinct,
-               (distinct <= 1 && chars.size() > 1)
-                   ? "  <== ALL STACKED (nothing placed them)"
-                   : "");
-    }
-
     // ---- X5: an ABSOLUTE census of the loaded dir TREE ----
     // The venue's own graph chains venue -> world_chars -> chars, and
     // world/shared/chars.milo ships eight plain `Character` crowd members
@@ -2079,6 +2089,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--only-mesh") == 0 && i + 1 < argc)
             gOnlyMesh = argv[++i];
         else if (strcmp(argv[i], "--dump-tree") == 0) gDumpTree = true;
+        else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
             gSceneClip = argv[++i];
         else if (strcmp(argv[i], "--player-standin") == 0 && i + 1 < argc)
