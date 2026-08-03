@@ -65,6 +65,45 @@ def incoming_args(side, instrs):
     return incoming
 
 
+def this_offsets(side, instrs):
+    """Displacements used off the register chain rooted at r3 on entry (`this`).
+
+    Tracks `this`-carrying registers through `mr`/`or rX,rY,rY` copies and drops
+    a register the moment anything else defines it.  Returns the set of
+    displacements of loads/stores whose BASE register still carries `this`.
+    Offsets far beyond the class size are a layout-level witness that the body
+    belongs to a different class -- ICF-immune, since a folded alias touches the
+    same offsets."""
+    carriers = {"r3"}
+    offs = set()
+    first = True
+    for i in instrs:
+        sd = i.get(side)
+        if not sd:
+            continue
+        op = (sd.get("opcode") or "").lower()
+        args = sd.get("typed_args") or []
+        vals = [a.get("value") for a in args]
+        typs = [a.get("type") for a in args]
+        # memory ops: <op> reg, disp, base   (objdiff order)
+        if (op.startswith(("lwz", "lhz", "lha", "lbz", "lfs", "lfd", "ld", "lwa"))
+                or op.startswith(("stw", "sth", "stb", "stfs", "stfd", "std"))) and len(args) >= 3:
+            if typs[1] in ("Signed", "Unsigned") and typs[2] == "Register" and vals[2] in carriers:
+                offs.add(int(vals[1]))
+        if op in ("addi", "addis") and len(args) >= 3 and typs[2] in ("Signed", "Unsigned") \
+                and typs[1] == "Register" and vals[1] in carriers:
+            offs.add(int(vals[2]))
+        d = dest_regs(op, args)
+        # propagate `this` through register copies
+        if op in ("mr", "or") and len(args) >= 2 and vals[1] in carriers:
+            carriers.add(vals[0])
+        for r in d:
+            if r in carriers and not (op in ("mr", "or") and len(args) >= 2 and vals[1] in carriers):
+                carriers.discard(r)
+        first = False
+    return offs
+
+
 def has_op(side, instrs, prefixes):
     for i in instrs:
         sd = i.get(side)
@@ -100,14 +139,26 @@ def classify(d):
         t_float=has_op("target", ins, ("lfs", "lfd", "fmr", "fadd", "fmul", "fsub", "fdiv", "frsp", "fctiw")),
         b_float=has_op("base", ins, ("lfs", "lfd", "fmr", "fadd", "fmul", "fsub", "fdiv", "frsp", "fctiw")),
     )
-    # ASYMMETRIC verdict
+    t_off, b_off = this_offsets("target", ins), this_offsets("base", ins)
+    rec["t_this_max"] = max(t_off) if t_off else 0
+    rec["b_this_max"] = max(b_off) if b_off else 0
+
+    # ASYMMETRIC verdict.  Every flag requires a REAL body on BOTH sides:
+    # bsz==0 means our obj defines no such symbol at all, which is a MISSING
+    # IMPLEMENTATION, not a misattribution, and would fire every flag vacuously.
     flags = []
+    both = (d.get("target_size") or 0) > 0 and (d.get("base_size") or 0) > 0
+    if not both:
+        rec["flags"] = ["MISSING_BASE_BODY"] if (d.get("base_size") or 0) == 0 else ["MISSING_TARGET_BODY"]
+        return rec
     if t_fpr and not b_fpr:
         flags.append("FPR_ARG_TARGET_ONLY")
     if len(t_gpr) > len(b_gpr) + 1:
         flags.append("GPR_ARITY_TARGET_HIGHER")
     if rec["t_float"] and not rec["b_float"]:
         flags.append("FLOAT_TARGET_ONLY")
+    if rec["t_this_max"] > 0x400 and rec["t_this_max"] > 4 * max(rec["b_this_max"], 1):
+        flags.append("THIS_OFFSET_FAR_BEYOND_BASE")
     rec["flags"] = flags
     return rec
 
@@ -117,9 +168,12 @@ def main():
     ap.add_argument("--root", default=".")
     ap.add_argument("--census", required=True)
     ap.add_argument("--buckets", default="COMPLETABLE")
-    ap.add_argument("--control", action="store_true",
-                    help="also scan up-to-N mpn==100 rows per unit as the untreated control")
-    ap.add_argument("--control-n", type=int, default=3)
+    ap.add_argument("--control-sample", type=int, default=0,
+                    help="UNTREATED CONTROL: N sub-100 rows (real body both sides) drawn "
+                         "from units OUTSIDE --buckets.  A control of mpn==100 rows is "
+                         "VACUOUS -- their instruction streams are identical, so no "
+                         "asymmetric flag can ever fire on them.")
+    ap.add_argument("--seed", type=int, default=20260803)
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
 
@@ -146,13 +200,31 @@ def main():
             r = classify(d); r.update(unit=un, sym=f["name"], stratum="CHARGED")
             charged.append(r)
             print(f"  charged {un[:38]:38s} {f['name'][:44]}", file=sys.stderr)
-        if a.control:
-            for f in ok[: a.control_n]:
-                d = probe(root, un, f["name"])
-                if d is None:
-                    continue
-                r = classify(d); r.update(unit=un, sym=f["name"], stratum="CONTROL")
-                control.append(r)
+    if a.control_sample:
+        import random
+        rng = random.Random(a.seed)
+        pool = []
+        treated = {u["unit"] for u in units}
+        for c in cen["units"]:
+            if c["unit"] in treated:
+                continue
+            ru = runits.get(c["unit"])
+            if not ru:
+                continue
+            for f in (ru.get("functions") or []):
+                if f["match_percent_normalized"] < 100.0 and not f["name"].startswith("fn_"):
+                    pool.append((c["unit"], f["name"]))
+        rng.shuffle(pool)
+        taken = 0
+        for un, sym in pool:
+            if taken >= a.control_sample:
+                break
+            d = probe(root, un, sym)
+            if d is None:
+                continue
+            r = classify(d); r.update(unit=un, sym=sym, stratum="CONTROL")
+            control.append(r); taken += 1
+            print(f"  control {un[:38]:38s} {sym[:44]}", file=sys.stderr)
 
     allrows = charged + control
     pathlib.Path(a.out).write_text(json.dumps(allrows, indent=1))
@@ -163,7 +235,8 @@ def main():
         return n, len(ok), (100.0 * n / len(ok) if ok else 0.0)
 
     print()
-    for flag in ("FPR_ARG_TARGET_ONLY", "GPR_ARITY_TARGET_HIGHER", "FLOAT_TARGET_ONLY"):
+    for flag in ("FPR_ARG_TARGET_ONLY", "GPR_ARITY_TARGET_HIGHER", "FLOAT_TARGET_ONLY",
+                 "THIS_OFFSET_FAR_BEYOND_BASE", "MISSING_BASE_BODY"):
         cn, ct, cp = rate(charged, flag)
         if control:
             nn, nt, np_ = rate(control, flag)
