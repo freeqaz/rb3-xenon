@@ -29179,5 +29179,7 @@
  "0x8266f110": "??0FaceTypeProvider@@QAA@XZ",
  "0x8263ccf8": "??1StoreMenuPanel@@UAA@XZ",
  "0x825bc1d8": "?Dispatch@VerifyBuildVersionMsg@@UAAXXZ",
- "0x826ec000": "?Replace@MsgSource@@$4PPPPPPPM@BPM@AAXPAVObjRef@@PAVObject@Hmx@@@Z"
+ "0x826ec000": "?Replace@MsgSource@@$4PPPPPPPM@BPM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x82bb5270": "?Process@DelayEffect@@QAAXPAMHH@Z",
+ "0x82746150": "?PlatformInit@BinkMovieSys@@QAAXXZ"
 }
