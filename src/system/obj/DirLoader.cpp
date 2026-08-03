@@ -21,6 +21,42 @@
 
 #ifdef HX_NATIVE
 bool (*DirLoader::sPathEval)(const char *);
+
+// ---------------------------------------------------------------------------
+// X4d stream audit (RB3_STREAM_AUDIT=1) — an ABSOLUTE per-object oracle.
+//
+// After a top-level object's PostLoad, the stream MUST be sitting exactly on
+// the 4-byte 0xADDEADDE marker, so ReadDead consumes exactly 4 bytes. Any other
+// distance is a byte-exact measurement of how far THAT object's Load() got the
+// stream wrong:
+//   dist > 4  -> the object UNDER-read by (dist - 4) bytes (ReadDead recovers)
+//   dist < 4  -> impossible (ReadDead always consumes >= 4)
+// A large dist means ReadDead skated through the *next* object's payload
+// hunting for a marker, i.e. the previous object OVER-read past its own marker.
+//
+// This is deliberately an absolute check, not a self-consistency one: X4c's
+// parting lesson is that invariants are blind to the group they are invariant
+// under, and a stream desync is invisible to every "does the result look sane"
+// oracle downstream of it.
+// ---------------------------------------------------------------------------
+namespace {
+    struct StreamAuditState {
+        bool enabled;
+        bool verbose;
+        int anomalies;
+        int objects;
+        bool reportedFirst;
+        StreamAuditState()
+            : enabled(getenv("RB3_STREAM_AUDIT") != nullptr),
+              verbose(getenv("RB3_STREAM_AUDIT") != nullptr
+                      && atoi(getenv("RB3_STREAM_AUDIT")) >= 2),
+              anomalies(0), objects(0), reportedFirst(false) {}
+    };
+    StreamAuditState &Audit() {
+        static StreamAuditState s;
+        return s;
+    }
+}
 #endif
 bool DirLoader::sPrintTimes;
 bool DirLoader::sCacheMode;
@@ -766,7 +802,22 @@ void DirLoader::LoadObjs() {
                     if (mDir) {
                         BeginMemTrackFileName(mDir->GetPathName());
                     }
+#ifdef HX_NATIVE
+                    if (Audit().verbose) {
+                        MILO_LOG("STREAM_AUDIT: >PRELOAD  off=%d '%s' class=%s "
+                                 "file='%s' proxy='%s'\n",
+                                 mStream->Tell(), obj->Name(),
+                                 obj->ClassName().Str(), mFile.c_str(),
+                                 mProxyName ? mProxyName : "(none)");
+                    }
+#endif
                     obj->PreLoad(*mStream);
+#ifdef HX_NATIVE
+                    if (Audit().verbose) {
+                        MILO_LOG("STREAM_AUDIT: <PRELOAD  off=%d '%s'\n",
+                                 mStream->Tell(), obj->Name());
+                    }
+#endif
                     mPostLoad = true;
                     if (sObjectMemDumpFile) {
                         MemPoint end(MemPoint::kInitType1);
@@ -795,7 +846,20 @@ void DirLoader::LoadObjs() {
                 if (mDir) {
                     BeginMemTrackFileName(mDir->GetPathName());
                 }
+#ifdef HX_NATIVE
+                if (Audit().verbose) {
+                    MILO_LOG("STREAM_AUDIT: >POSTLOAD off=%d '%s' class=%s\n",
+                             mStream->Tell(), obj->Name(),
+                             obj->ClassName().Str());
+                }
+#endif
                 obj->PostLoad(*mStream);
+#ifdef HX_NATIVE
+                if (Audit().verbose) {
+                    MILO_LOG("STREAM_AUDIT: <POSTLOAD off=%d '%s'\n",
+                             mStream->Tell(), obj->Name());
+                }
+#endif
                 mPostLoad = false;
                 if (sObjectMemDumpFile) {
                     MemPoint end(MemPoint::kInitType1);
@@ -808,11 +872,53 @@ void DirLoader::LoadObjs() {
                 EndMemTrackFileName();
                 EndMemTrackObjectName();
                 if (mRev > 1) {
+#ifdef HX_NATIVE
+                    StreamAuditState &au = Audit();
+                    if (au.enabled) {
+                        int before = mStream->Tell();
+                        ReadDead(*mStream);
+                        int dist = mStream->Tell() - before;
+                        au.objects++;
+                        if (dist != 4) {
+                            au.anomalies++;
+                            if (au.anomalies <= 40) {
+                                MILO_LOG("STREAM_AUDIT: %s '%s' class=%s "
+                                         "readdead_dist=%d (want 4, delta=%+d) "
+                                         "at off=%d file='%s' proxy='%s'\n",
+                                         au.reportedFirst ? "obj" : "FIRST-ANOMALY",
+                                         obj->Name(), obj->ClassName().Str(), dist,
+                                         dist - 4, before, mFile.c_str(),
+                                         mProxyName ? mProxyName : "(none)");
+                            }
+                            au.reportedFirst = true;
+                        }
+                    } else
+#endif
                     ReadDead(*mStream);
                 }
             } else {
                 MILO_ASSERT(mRev > 1, 0x507);
+#ifdef HX_NATIVE
+                // A factory-miss slot. ReadDead here legitimately scans the
+                // whole un-consumed payload of the object we could not make, so
+                // a large distance is EXPECTED and is not an anomaly -- it is
+                // the miss's serialized size. Logged separately so the two are
+                // never conflated.
+                {
+                    StreamAuditState &au = Audit();
+                    if (au.enabled) {
+                        int before = mStream->Tell();
+                        ReadDead(*mStream);
+                        MILO_LOG("STREAM_AUDIT: MISS-SKIP bytes=%d at off=%d "
+                                 "file='%s' proxy='%s'\n",
+                                 mStream->Tell() - before, before, mFile.c_str(),
+                                 mProxyName ? mProxyName : "(none)");
+                    } else
+                        ReadDead(*mStream);
+                }
+#else
                 ReadDead(*mStream);
+#endif
             }
             mObjects.pop_front();
         }
