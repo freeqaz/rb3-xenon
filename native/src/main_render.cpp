@@ -4224,6 +4224,35 @@ namespace {
                                "guard, so its SyncOutfitConfig loop (BandCharacter."
                                "cpp:1735-1739) CANNOT run. That is call site 1 of 2.\n");
                 }
+
+                // ---- X20: what SetSkinTextures would actually bind ----
+                //
+                // OutfitConfig::SetSkinTextures (OutfitConfig.cpp:473-575) does
+                // NOT bind the authored `<gender>_<part>_diff.tex` onto the skin
+                // material whenever a `skin.cfg` config exists.  In that branch
+                // (:503-506) it binds `<part>_skin_diffuse_output.tex` -- the
+                // COMPOSE PASS'S RENDER TARGET -- and falls back to the authored
+                // diffuse only when cfg is null (:509).  The census above says
+                // all four skin.cfg DO exist, so the RT branch is the live one.
+                //
+                // So "are those render targets in the graph?" decides whether the
+                // remaining work is a call-path gap or a missing render feature.
+                {
+                    std::vector<RndTex *> texes = CollectDeep<RndTex>(dir);
+                    int nOut = 0, nDiff = 0, nDummy = 0;
+                    for (size_t ti = 0; ti < texes.size(); ti++) {
+                        const char *nm = texes[ti]->Name();
+                        if (!nm) continue;
+                        if (strstr(nm, "_diffuse_output")) {
+                            if (nOut < 8) printf("    rt   '%s'\n", nm);
+                            nOut++;
+                        } else if (strstr(nm, "_diff.tex")) nDiff++;
+                        else if (!strncmp(nm, "dummy_", 6)) nDummy++;
+                    }
+                    printf("  === X20 SKIN-TEXTURE SUPPLY: %d *_diffuse_output RT(s), "
+                           "%d authored *_diff.tex, %d dummy_* (of %d RndTex) ===\n",
+                           nOut, nDiff, nDummy, (int)texes.size());
+                }
             }
         }
         if (r.meshes == 0) return r;
