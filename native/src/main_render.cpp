@@ -3733,7 +3733,72 @@ namespace {
         // RB3_NO_BAND_REBIND opts the whole thing out for the A/B.
         const char *pollMode = getenv("RB3_BAND_POLL");
         bool pollOnly = pollMode && strcmp(pollMode, "only") == 0;
-        if (TheBandWardrobe && !getenv("RB3_NO_BAND_REBIND") && !pollOnly) {
+
+        // ★★★ X19: THE SCOPE DECISION IS HOISTED OUT OF THE CALL BLOCK.
+        //
+        // ⛔ THIS IS THE ACTUAL RETIREMENT BLOCKER, AND IT IS NOT A SHARED-src
+        // DEFAULT. X18 established that removing X14's driver-side call
+        // collapses the band's head/eyebrows/fingernails to the origin, while
+        // `only + RB3_SKEL_REBIND_FULL=1` is byte-identical to keeping it, and
+        // concluded that `Poll()`'s rebind must be made to run at FULL scope --
+        // i.e. that a shared-`src/` behavioural default had to be flipped.
+        //
+        // It does not. The `quiescent -> FULL` setenv below USED TO SIT INSIDE
+        // the `!pollOnly` block, alongside the direct call. So the `only` arm
+        // never skipped "the rebind": it skipped the SCOPE DECISION as a side
+        // effect of skipping the call block, and then Poll()'s own rebind ran at
+        // the torso whitelist. The collapse was a coupling defect in THIS
+        // driver, not evidence about BandCharacter.cpp's default.
+        //
+        // Hoisting it makes the scope a property of the SCENE (is anything being
+        // animated?) rather than of which code path happens to invoke the
+        // rebind -- which is what it was always documented to mean. Poll()'s
+        // rebind and the direct call now see the same scope, so the two arms are
+        // comparable, and X14's call can retire without touching shared `src/`.
+        //
+        // ⚠ THE ANIMATED CASE IS DELIBERATELY UNCHANGED. `quiescent` still
+        // gates this: the moment a clip is driven, the shipped torso scope is
+        // restored. X14 §5 refuted the rotation-basis shard mechanism explicitly
+        // "in the un-animated case" ONLY, so the in-tree shard warning for the
+        // animated case stands un-refuted and this lane must not look as though
+        // it has been retired. See the doc's §3 for why the shared-`src/`
+        // default was NOT flipped.
+        bool quiescent = (gSceneClip == nullptr && gClipsFile == nullptr);
+        if (TheBandWardrobe && !getenv("RB3_NO_BAND_REBIND") && quiescent &&
+            !getenv("RB3_SKEL_REBIND_FULL") && !getenv("RB3_NO_BAND_REBIND_FULL"))
+            setenv("RB3_SKEL_REBIND_FULL", "1", 0);
+        // ⚠ REPORT THE SCOPE IN **EVERY** ARM. This line used to live inside the
+        // direct-call block, so retiring that call for the poll arms silently
+        // took the diagnostic with it -- and the scope is precisely the variable
+        // this milestone turns on. Caught by running the animated control and
+        // finding nothing to read. Printed here, where the decision is made.
+        if (TheBandWardrobe && !getenv("RB3_NO_BAND_REBIND"))
+            printf("  band: rebind scope = %s  (%s; decided here, applies to BOTH "
+                   "Poll()'s rebind and any direct call)\n",
+                   getenv("RB3_SKEL_REBIND_FULL") ? "FULL figure" : "torso only",
+                   quiescent ? "no clip is being driven"
+                             : "a clip IS being driven — shipped torso scope kept, "
+                               "the animated shard warning stands");
+
+        // ★★★ X19: X14's DIRECT CALL IS RETIRED WHEREVER Poll() RUNS.
+        //
+        // Was `!pollOnly`, which retired the direct call only in the `only` arm.
+        // In the `RB3_BAND_POLL=1` arm BOTH ran -- the direct call AND the
+        // rebind inside Poll() (BandCharacter.cpp:533) -- so the arm that was
+        // supposed to demonstrate Poll() doing the work was actually being
+        // carried by the direct call, and could not have detected Poll()
+        // failing to rebind. `!pollMode` retires it from every arm where Poll()
+        // runs at all, which is the condition the retirement argument is
+        // actually about.
+        //
+        // The no-poll arm KEEPS the direct call deliberately: with RB3_BAND_POLL
+        // unset, Poll() never runs and nothing else performs the rebind. That
+        // arm is the bind-pose baseline four lanes have compared artifacts
+        // against, and it stays byte-identical (gate f).
+        //
+        // MEASURED after the scope hoist above: base (call kept, poll on) vs
+        // only (call skipped) are BYTE-IDENTICAL PNGs, determinism x2.
+        if (TheBandWardrobe && !getenv("RB3_NO_BAND_REBIND") && !pollMode) {
             int want = getenv("RB3_BAND_REBIND_ITERS")
                            ? atoi(getenv("RB3_BAND_REBIND_ITERS")) : 8;
             int members = 0;
@@ -3759,22 +3824,16 @@ namespace {
             // is driven the shipped torso scope is restored, because this lane
             // has NOT refuted the in-tree shard warning for the animated case and
             // must not look as though it has.
-            bool quiescent = (gSceneClip == nullptr && gClipsFile == nullptr);
-            if (quiescent && !getenv("RB3_SKEL_REBIND_FULL") &&
-                !getenv("RB3_NO_BAND_REBIND_FULL"))
-                setenv("RB3_SKEL_REBIND_FULL", "1", 0);
+            // X19: the `quiescent` decision and its setenv were hoisted above
+            // this block -- see the note at the `pollOnly` declaration. Nothing
+            // about WHAT is decided changed; only WHERE, so that the `only` arm
+            // sees the same scope this arm does.
             if (members == 0) {
                 printf("  band: ⛔ REBIND SKIPPED — 0/4 wardrobe targets bound. NOT "
                        "reported as a pass: a rebind over an empty member set would "
                        "print identically to a successful one.\n");
             } else {
-                printf("  band: rebind scope = %s (%s)\n",
-                       getenv("RB3_SKEL_REBIND_FULL") ? "FULL figure" : "torso only",
-                       quiescent ? "no clip is being driven — both skeletons are at "
-                                   "bind, so the rebind is a rigid re-parent; shard "
-                                   "extent checked, not assumed"
-                                 : "a clip IS being driven — shipped torso scope "
-                                   "kept, the animated shard warning stands");
+                // (scope is reported once, at the hoisted decision site above)
                 for (int p = 0; p < want; p++)
                     for (int i = 0; i < 4; i++)
                         if (BandCharacter *bc = TheBandWardrobe->GetCharacter(i))
