@@ -1199,6 +1199,22 @@ set(MILO_TARGET_COMMON_SOURCES
     # -- and it does NOT open synth/ generally (no tomcrypt, no audio device).
     ${REPO_ROOT}/src/system/synth/Pollable.cpp
     ${REPO_ROOT}/src/system/synth/FxSend.cpp
+    # ---- X7: the band-slot placement TU ---------------------------------
+    # X6 ported bandobj/BandConfiguration.cpp and wired it into objects.json
+    # (the X360 objdiff build) but NOT into this list, so the native driver
+    # still answered "Can't make BandConfiguration" and the venue's four
+    # band-slot transforms were still never read. Adding it here is what
+    # actually closes that.
+    #
+    # It is a clean STANDALONE add and is NOT gated on the ScatterIncludes
+    # dedupe: measured with `grep -rn 'include "bandobj/BandConfiguration.cpp"'
+    # src/` (no includer) and by reading the TU (it scatter-includes nothing).
+    # It therefore participates in ZERO scatter edges in either direction and
+    # cannot collide. The 807-duplicate figure in the X4b note above is the
+    # cost of adding all TEN bandobj TUs at once; it is not the cost of this
+    # one, and re-deriving that per-TU is what let this land without the
+    # dedupe lane.
+    ${REPO_ROOT}/src/system/bandobj/BandConfiguration.cpp
     ${DTA_LEXER}
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/milo_link_stubs.cpp
