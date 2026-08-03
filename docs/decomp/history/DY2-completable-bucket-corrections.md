@@ -159,3 +159,69 @@ is drained — it corrects what "COMPLETABLE" licenses you to expect.
   regressed identically to 63.0%** (the prologue switches from `__savegprlr_29`
   to individual `std`s). Reverted; residual is scheduling and the permuter is
   banned.
+
+---
+
+## MEASURED OUTCOME OF THIS LANE (added after the work landed)
+
+Whole-binary A/B (`tools/ab_measure.py`, both legs settled to a zero-work build
+in the same worktree, same-ruler guard passed, leg B 1,073 recompiles + a forced
+re-split with `renamer_patched=1046`). Leg A is main at `40abb376` — lane DY-1
+landed 4 commits mid-run, which is why leg A reads 43,814 and not the 43,795
+this lane was briefed with. **Deltas compose; absolutes do not.**
+
+```
+Δmatched  +11   Δhonest +11   Δmasked_equal +0
+Δcode%    +0.011113pp   Δcode_bytes +1188   Δfuzzy +0.003047pp
+units at 100%: 246 -> 253  (Δ+7; 7 reached, 0 fell off)  -- BOTH rulers agree
+unit net (ALL units) = +11 == whole-binary Δmatched   => no hidden regressions
+```
+
+Seven units closed, confirmed independently by a regenerated-census SET-DIFF
+(all seven were `COMPLETABLE -> AT_100`, none fell off):
+`ChooseColorPanel`, `InterstitialPanel`, `VoiceoverPanel` (game/meta_band),
+`FIFOSampleBuffer`, `json_object`, `linkhash`, `printbuf`.
+Plus two non-closing gains: `PreloadPanel` 51->52 and `arraylist` 3->4.
+
+★ **These closures CONSUMED ceiling, they did not CONVERT it.** The source-only
+ceiling (AT_100 + COMPLETABLE) is **292 before and 292 after** — COMPLETABLE fell
+46 -> 39 by exactly the seven closed. That is the opposite of DX-2, whose closures
+were `ANON_BLOCKED -> AT_100` and therefore *raised* the ceiling. Do not report a
+unit closure as a ceiling gain without checking which bucket it came from.
+(3 units also moved `MIXED -> ANON_BLOCKED`: their named sub-100 rows were
+resolved, leaving only anon residue. Not a regression.)
+
+**The corrected ceiling, restated on the final tree:** of the 39 remaining
+COMPLETABLE units, **9 are structurally unreachable** — the 7 proven here plus
+`SkeletonDir` and `FilterQueue`, declined on evidence by earlier lanes. All 9
+still carry the `COMPLETABLE` label. So ~**30** are genuinely source-workable and
+the defensible ceiling is **<= 283**, not 292.
+
+## ⚠ Two coupled-lever lessons, both paid for in this lane's own measurements
+
+1. **A source half and a map half each measure +0; only together do they pay.**
+   `FIFOSampleBuffer::ptrBegin` needed `const` in the headers *and* the map row
+   `?ptrBegin@FIFOProcessor@soundtouch@@MAAPAMXZ -> MBAPAMXZ`. The coordinator's
+   first combined A/B was generated as `git diff -- src/`, which silently dropped
+   the map row: the result was **+9 with `default/SoundTouch` FALLING OFF 100%**
+   (22->21). Including the one-line map row turned that into **+10 with 0 units
+   falling off.** The map half is provable from C++ rules alone — both symbols
+   override the same pure virtual, so they must share cv-qualification — with no
+   binary evidence needed.
+2. **A standing DO-NOT can rest on a structurally invalid witness.**
+   `obj/Object.h` carried an explicit DO-NOT against removing `New<T>`'s
+   `MILO_FAIL` guard, justified by `JoypadInitCommon` matching 100% *with* the
+   guard. That inference is void: `JoypadInitCommon` calls `New<T>` **out of
+   line**, and a callee is a masked relocation argument, so the row scores 100
+   regardless of what the callee contains — it cannot witness the guard either
+   way. The real defect underneath was `Joypad.cpp` creating a bare `Hmx::Object`
+   where retail creates a `MsgSource` (for a bare `Hmx::Object`, `dynamic_cast`
+   is an identity conversion, so MSVC inlined a 3-instruction body where retail
+   keeps the `bl`). **The wrong class scored a clean 100% before and after the
+   fix** — the metric-hidden-bug class. Measured here: removing the guard
+   *together with* the class fix is **+1 matched / +72 B / +1 unit with 0 units
+   falling off**, against the DO-NOT's claimed -600 B.
+
+Native gate: **PASS 18/18, rc=0, 0 errors, 0 warnings, 0 SKIPs**, run twice —
+once after the source/map work and again after the `obj/Object.h` change (stale
+binaries deleted first, all 18 targets relinked both times).
