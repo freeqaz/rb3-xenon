@@ -208,20 +208,14 @@ END_COPYS
 //
 // Written longhand rather than by including obj/ObjMacros.h: that header also
 // swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
-// The pair MUST share one aggregate -- two separate file statics are laid out
-// independently and will not fold onto a single base register.  No `#define
-// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
-// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
-// the alias would silently shadow for the rest of the amalgamated TU.
-static struct {
-    __declspec(align(4)) unsigned short altRev;
-    __declspec(align(4)) unsigned short rev;
-} gRevs_UIFontImporter;
+// Retail stores NO revision for this unit.  Adjudicated on retail bytes: the
+// target reloads the revision from a stack slot with `lwz r11,0x50(r31)` and
+// tests it with SIGNED `cmpwi`, and the body contains no `sth`, no packed-word
+// split and no static base register.  (rndobj/MeshDeform.cpp's target really
+// does keep the aligned(4) aggregate, so this is a per-TU reading, not a rule.)
 BEGIN_LOADS(UIFontImporter)
     int rev;
     bs >> rev;
-    gRevs_UIFontImporter.rev = getHmxRev(rev);
-    gRevs_UIFontImporter.altRev = getAltRev(rev);
     bs >> mLowerCaseAthroughZ;
     bs >> mUpperCaseAthroughZ;
     bs >> mNumbers0through9;
@@ -231,7 +225,7 @@ BEGIN_LOADS(UIFontImporter)
     bs >> mPlus;
     bs >> mMinus;
     bs >> mFontName;
-    if (gRevs_UIFontImporter.rev <= 4) {
+    if (rev <= 4) {
         int height;
         bs >> height;
         mFontPctSize = ConvertHeightNGToPctHeight(height);
@@ -243,7 +237,7 @@ BEGIN_LOADS(UIFontImporter)
     bs >> mPitchAndFamily;
     bs >> mFontQuality;
     bs >> mFontCharset;
-    if (gRevs_UIFontImporter.rev > 1) {
+    if (rev > 1) {
         bs >> mFontSupersample;
     }
     bs >> mBitmapSavePath;
@@ -253,42 +247,44 @@ BEGIN_LOADS(UIFontImporter)
     bs >> mTop;
     bs >> mBottom;
     bs >> mFillWithSafeWhite;
-    if (gRevs_UIFontImporter.rev < 8) {
+    if (rev < 8) {
         bs >> mFontToImportFrom;
     }
-    if (gRevs_UIFontImporter.rev > 2) {
+    if (rev > 2) {
         bs >> mGennedFonts;
         bs >> mReferenceKerning;
     }
-    if (gRevs_UIFontImporter.rev == 3) {
+    if (rev == 3) {
         ObjPtr<RndMat> mat(this);
         bs >> mat;
     }
-    if (gRevs_UIFontImporter.rev > 3) {
+    if (rev > 3) {
         bs >> mMatVariations;
     }
-    // Was `if (gRevs_UIFontImporter.rev > 5 && gRevs_UIFontImporter.rev < 10) { ObjPtr<RndMat> mat(this); bs >> mat; }` --
+    // Was `if (rev > 5 && rev < 10) { ObjPtr<RndMat> mat(this); bs >> mat; }` --
     // a DC3-era guard that read mDefaultMat into a DISCARDED temporary and skipped it
     // entirely at rev 10.  Retail's Save provably WRITES mDefaultMat (adding
     // `bs << mDefaultMat` is what took Save from 95.8% to 100%), and the rb3-Wii
     // oracle reads it unconditionally at `rev > 5`, so the `< 10` cutoff is a DC3
     // artifact and the discard left Save/Load asymmetric.
-    if (gRevs_UIFontImporter.rev > 5) {
+    if (rev > 5) {
         bs >> mDefaultMat;
     }
-    if (gRevs_UIFontImporter.rev > 6) {
+    if (rev > 6) {
         bs >> mHandmadeFont;
     }
-    if (gRevs_UIFontImporter.rev > 7) {
+    if (rev > 7) {
         bs >> mSyncResource;
     }
-    if (gRevs_UIFontImporter.rev > 8) {
+    if (rev > 8) {
         bs >> mLastGenWasNG;
     }
-    if (gRevs_UIFontImporter.altRev == 1) {
-        int x;
-        bs >> x;
-    }
+    // NO alt-rev branch here.  DC3 reads a discarded int when altRev == 1; retail
+    // does not -- the eight instructions that block compiles to (lwz/srwi/cmplwi/
+    // bne + the four-byte ReadEndian) appear in our obj as a pure INSERT with no
+    // target counterpart, and its discarded `int x` local is what made our frame
+    // 0x10 larger than retail's.  This is also why retail stores no alt-rev word
+    // for this unit: nothing in the body ever reads one.
 END_LOADS
 
 // rb3-Wii oracle body.  The DC3-era version set "weight", "drop_shadow" and
