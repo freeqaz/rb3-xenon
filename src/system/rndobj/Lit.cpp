@@ -183,85 +183,106 @@ BEGIN_PROPSYNCS(RndLight)
 #endif
 END_PROPSYNCS
 
-INIT_REVS(0x10, 0)
-
+// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape), not DC3's Object.h
+// BinStreamRev stack decorator.  DC3's form emits a ??0BinStream, a
+// ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream destructor that retail
+// has none of, and dispatches each read on `&d` instead of the raw `bs`.
+//
+// Adjudicated for THIS unit on retail bytes: the target obj carries NO symbol
+// mangled with AAVBinStreamRev@@, i.e. retail instantiated no rev-decorated
+// operator>> here, so forwarding the raw stream deletes nothing.
+//
+// Written longhand rather than by including obj/ObjMacros.h: that header also
+// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
+// No `#define gRev` alias -- several of these TUs are scatter-INCLUDED into
+// another unit whose own gRev macro such an alias would silently shadow.
+// The pair MUST share ONE internal-linkage aggregate (two file statics get two
+// `lis` pairs), altRev FIRST (MSVC lays .bss out in REVERSE), and the padding
+// MUST be an explicit member -- __declspec(align(4)) is unreliable here.
+static struct {
+    unsigned short altRev;
+    unsigned short pad;
+    unsigned short rev;
+} gRevs_Lit;
 BEGIN_LOADS(RndLight)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x10, 0)
-    if (d.rev > 3)
-        LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndTransformable)
+    int rev;
+    bs >> rev;
+    gRevs_Lit.rev = getHmxRev(rev);
+    gRevs_Lit.altRev = getAltRev(rev);
+    if (gRevs_Lit.rev > 3)
+        Hmx::Object::Load(bs);
+    RndTransformable::Load(bs);
     bs >> mColor;
-    if (d.rev < 2) {
+    if (gRevs_Lit.rev < 2) {
         Hmx::Color col1, col2;
         bs >> col1 >> col2;
     }
-    if (d.rev < 3) {
+    if (gRevs_Lit.rev < 3) {
         int i, j;
         bs >> i >> j;
     }
     bs >> mRange;
-    if (d.rev < 3) {
+    if (gRevs_Lit.rev < 3) {
         int i, j, k;
         bs >> i >> j >> k;
     }
-    if (d.rev > 0) {
+    if (gRevs_Lit.rev > 0) {
         int count;
         bs >> count;
-        if (d.rev < 0xE) {
+        if (gRevs_Lit.rev < 0xE) {
             if (count > 1)
                 count--;
         }
         mType = (Type)count;
     }
-    if (d.rev > 0xB) {
+    if (gRevs_Lit.rev > 0xB) {
         bs >> mFalloffStart;
     }
-    if (d.rev > 4) {
-        if (d.rev < 5) {
+    if (gRevs_Lit.rev > 4) {
+        if (gRevs_Lit.rev < 5) {
             bool tmp;
-            d >> tmp;
+            bs >> tmp;
             mAnimateColorFromPreset = tmp;
             mAnimatePositionFromPreset = tmp;
         }
     }
-    if (d.rev > 5) {
-        d >> mAnimateColorFromPreset;
-        d >> mAnimatePositionFromPreset;
+    if (gRevs_Lit.rev > 5) {
+        bs >> mAnimateColorFromPreset;
+        bs >> mAnimatePositionFromPreset;
     }
-    if (d.rev > 6) {
+    if (gRevs_Lit.rev > 6) {
         bs >> mTopRadius >> mBotRadius;
-        if (d.rev < 0xE) {
+        if (gRevs_Lit.rev < 0xE) {
             int i, j;
             bs >> i >> j;
         }
     }
-    if (d.rev > 7) {
+    if (gRevs_Lit.rev > 7) {
         bs >> mTexture;
-        if (d.rev == 9) {
+        if (gRevs_Lit.rev == 9) {
             ObjPtrList<RndDrawable> drawList(this);
             bs >> drawList;
-        } else if (d.rev == 8) {
+        } else if (gRevs_Lit.rev == 8) {
             ObjPtr<RndDrawable> drawPtr(this);
             bs >> drawPtr;
         }
     }
-    if (d.rev > 10) {
+    if (gRevs_Lit.rev > 10) {
         bs >> mColorOwner;
         if (!mColorOwner)
             mColorOwner = this;
     }
-    if (d.rev > 0xC)
+    if (gRevs_Lit.rev > 0xC)
         bs >> mTextureXfm;
-    if (d.rev > 0xD) {
+    if (gRevs_Lit.rev > 0xD) {
         bs >> mCubeTexture;
     }
-    if (d.rev > 0xE) {
+    if (gRevs_Lit.rev > 0xE) {
         bs >> mShadowObjects;
         bs >> mProjectedBlend;
     }
-    if (d.rev > 0xF)
-        d >> mAnimateRangeFromPreset;
+    if (gRevs_Lit.rev > 0xF)
+        bs >> mAnimateRangeFromPreset;
     else
         mAnimateRangeFromPreset = mAnimateColorFromPreset;
 END_LOADS
