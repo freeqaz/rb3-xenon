@@ -133,9 +133,20 @@ void MoggClip::SynthPoll() {
     }
 }
 
-// Retail 0x8270DE60.  Reconstructed from the target body: EnsureLoaded ->
-// KillStream -> NewBufStream("mogg", 0.0f) -> mFader->SetVal(0) -> SetLoop(mLoop)
-// -> inline volume update -> UpdateFaders -> UpdatePanInfo -> mPlaying = true.
+// Retail 0x8270DE60, 100% (all 63 instructions equal).  EnsureLoaded ->
+// KillStream -> NewBufStream("mogg", 0.0f, false, true) -> mFader->SetVal(0) ->
+// SetLoop(mLoop) -> SetControllerVolume(mControllerVolume) -> UpdateFaders ->
+// UpdatePanInfo -> mPlaying = true.
+//
+// The volume step is an INLINED SetControllerVolume(mControllerVolume), not an
+// ad-hoc `if (mStream) SetVolume(mVolume + mControllerVolume)`.  Both forms
+// compute the same value, but only the inlined-call form reproduces retail's
+// scheduling: the argument (mControllerVolume, 0x40) is loaded EARLY, in the
+// load-use stall slot between `lwz r3,0x4c` and `cmplwi`, and lands in f0 --
+// which is what fixes the f0<->f13 pairing.  Confirmed by shape: retail's
+// out-of-line SetControllerVolume (fn_8270D720) emits `fadds f1, f0(other), f1(arg)`,
+// and the Play tail emits `fadds f1, f13(0x48=other), f0(0x40=arg)` -- the same
+// (other, arg) order.  Play(float) below already uses this same idiom.
 void MoggClip::Play() {
     if (EnsureLoaded()) {
         KillStream();
@@ -144,9 +155,7 @@ void MoggClip::Play() {
         );
         mFader->SetVal(0);
         SetLoop(mLoop);
-        if (mStream) {
-            mStream->Stream::SetVolume(mVolume + mControllerVolume);
-        }
+        SetControllerVolume(mControllerVolume);
         UpdateFaders();
         UpdatePanInfo();
         mPlaying = true;
