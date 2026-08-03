@@ -1371,6 +1371,7 @@ mtx.cpp:
 	.text       start:0x822C1650 end:0x822C1714
 	.text       start:0x822C1718 end:0x822C18F8
 	.text       start:0x822C18F8 end:0x822C1950
+	.text       start:0x8240B0F0 end:0x8240B190
 	.text       start:0x824EE390 end:0x824EE3F8
 	.text       start:0x824EF508 end:0x824EF828
 	.text       start:0x82C437B8 end:0x82C438BC
@@ -4617,6 +4618,7 @@ Morph.cpp:
 	.pdata      start:0x82210510 end:0x82210530
 	.pdata      start:0x82210530 end:0x82210540
 	.pdata      start:0x82210540 end:0x82210650
+	.pdata      start:0x82210650 end:0x82210658
 	.pdata      start:0x82210688 end:0x82210740
 	.pdata      start:0x82212F18 end:0x82212F20
 	.text       start:0x822A9BC8 end:0x822A9C28
@@ -4637,6 +4639,7 @@ Morph.cpp:
 	.text       start:0x82483920 end:0x82483A20
 	.text       start:0x82483A20 end:0x82483A88
 	.text       start:0x82483A88 end:0x82484B3C
+	.text       start:0x82484B40 end:0x82484B84
 	.text       start:0x82484DB8 end:0x8248583C
 	.text       start:0x82485870 end:0x8248587C
 	.text       start:0x824B8818 end:0x824B885C
@@ -4736,12 +4739,14 @@ CharWeightSetter.cpp:
 	.pdata      start:0x822055B8 end:0x822055E8
 	.pdata      start:0x82205618 end:0x82205620
 	.pdata      start:0x82205620 end:0x82205670
+	.pdata      start:0x82205670 end:0x82205678
 	.text       start:0x823B8608 end:0x823B8760
 	.text       start:0x823B8760 end:0x823B89E0
 	.text       start:0x823B89E0 end:0x823B9560
 	.text       start:0x823B9560 end:0x823B9744
 	.text       start:0x823B9B28 end:0x823B9D30
 	.text       start:0x823B9D38 end:0x823BA1E0
+	.text       start:0x823BA1F0 end:0x823BA234
 
 HamIKEffector.cpp:
 	.pdata      start:0x821F69B8 end:0x821F69C0
@@ -5137,7 +5142,6 @@ system/rndobj/Movie.cpp:
 	.pdata      start:0x8220FCB0 end:0x8220FCB8
 	.pdata      start:0x8220FCB8 end:0x8220FCD0
 	.pdata      start:0x8220FCD0 end:0x8220FD20
-	.pdata      start:0x82210650 end:0x82210658
 	.pdata      start:0x82213AE8 end:0x82213AF0
 	.text       start:0x82478038 end:0x824781A0
 	.text       start:0x824781A0 end:0x82478420
@@ -5147,7 +5151,6 @@ system/rndobj/Movie.cpp:
 	.text       start:0x82478980 end:0x82478A28
 	.text       start:0x82478A28 end:0x82478B90
 	.text       start:0x82478B90 end:0x82479100
-	.text       start:0x82484B40 end:0x82484B84
 	.text       start:0x824C5E90 end:0x824C5EC0
 
 MultiMesh.cpp:
@@ -6836,7 +6839,7 @@ MeshDeform.cpp:
 
 vec.cpp:
 	.pdata      start:0x8220A458 end:0x8220A460
-	.text       start:0x8240B0F0 end:0x8240B208
+	.text       start:0x8240B190 end:0x8240B208
 
 HamDriver.cpp:
 	.text       start:0x824F6EB8 end:0x824F6EC4
@@ -7802,13 +7805,14 @@ FlowValueCase.cpp:
 	.pdata      start:0x82204D20 end:0x82204D28
 	.pdata      start:0x82204D30 end:0x82204D38
 	.pdata      start:0x822055E8 end:0x82205618
-	.pdata      start:0x82205670 end:0x82205680
+	.pdata      start:0x82205678 end:0x82205680
 	.pdata      start:0x8222ADD0 end:0x8222ADE0
 	.text       start:0x823AEE20 end:0x823AEE98
 	.text       start:0x823AEF64 end:0x823AEF98
 	.text       start:0x823B9744 end:0x823B9B28
 	.text       start:0x823B9D30 end:0x823B9D38
-	.text       start:0x823BA1E0 end:0x823BA5AC
+	.text       start:0x823BA1E0 end:0x823BA1F0
+	.text       start:0x823BA234 end:0x823BA5AC
 	.text       start:0x82630690 end:0x82630778
 
 CharIKFoot.cpp:

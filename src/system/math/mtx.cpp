@@ -302,6 +302,17 @@ void Invert(const Hmx::Matrix4 &m, Hmx::Matrix4 &out) {
 
 // Transpose(Matrix4) moved to Mtx.h as inline
 
+// Moved here from vec.cpp: retail compiled this overload in a different TU from
+// ScaleAddEq(Transform&, const Transform&, float). Keeping both in vec.cpp lets
+// MSVC's whole-TU callee register-usage propagation see this callee's register
+// footprint, so the Transform overload keeps its arguments in the volatile
+// r3/r4/f1 across the call instead of spilling them to r31/r30/f31 as retail does.
+void ScaleAddEq(Hmx::Matrix3 &m1, const Hmx::Matrix3 &m2, float f) {
+    ScaleAdd(m1.x, m2.x, f, m1.x);
+    ScaleAddEq(m1.y, m2.y, f);
+    ScaleAddEq(m1.z, m2.z, f);
+}
+
 // sw2 scatter-include (default/mtx <- bandobj/BandIKEffector.cpp)
 #define gRev gRev_BandIKEffector
 #define gAltRev gAltRev_BandIKEffector
