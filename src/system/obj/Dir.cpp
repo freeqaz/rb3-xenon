@@ -1223,12 +1223,19 @@ void ObjectDir::PreLoad(BinStream &bs) {
         if (d.rev > 0x13) {
 #ifdef HX_NATIVE
             InlineDirType proxyType;
+            int offBefore = bs.Tell();
             if (d.rev > 0x1B) {
                 d >> proxyType;
             } else {
                 bool b;
                 d >> b;
                 proxyType = (InlineDirType)(b != 0);
+            }
+            if (getenv("RB3_STREAM_AUDIT")) {
+                MILO_LOG("PROXY_AUDIT: PreLoad '%s' d.rev=%d read=%d bytes "
+                         "proxyType=%d fromDisk=%d off=%d\n",
+                         Name(), d.rev, bs.Tell() - offBefore, (int)proxyType,
+                         (int)gLoadingProxyFromDisk, offBefore);
             }
             if (!gLoadingProxyFromDisk) {
                 mInlineProxyType = proxyType;
@@ -1527,10 +1534,57 @@ void ObjectDir::PostLoad(BinStream &bs) {
             && (!IsProxy() || AllowsInlineProxy())) {
             MILO_FAIL("You cannot override an inlined proxy!");
         }
-    } else if (ShouldSaveProxy(bs)) {
+    }
+// ⛔ X4d — THE VENUE-ROOT SIGSEGV. The guard below is STRICTLY WEAKER than
+// retail's, and the difference eats 4 bytes off a live stream.
+//
+//   rb3-Wii (RB3 retail oracle, rb3/src/system/obj/Dir.cpp:475):
+//       if (IsProxy() && !mProxyFile.empty())
+//   here:
+//       ShouldSaveProxy(bs) == IsProxy() && (!mProxyFile.empty() || InlineProxy(bs))
+//
+// The extra `|| InlineProxy(bs)` disjunct fires for a proxy dir whose
+// mProxyFile is EMPTY. That constructs a DirLoader on an empty FilePath and
+// hands it the PARENT'S stream (`InlineProxy(bs) ? &bs : nullptr`), so its
+// LoadHeader runs a milo-header read at whatever offset the parent had
+// reached and consumes 4 bytes that belong to the NEXT object.
+//
+// Measured on world/venue/small_club/small_club_01: of 12 proxy dirs, 11 have
+// a non-empty mProxyFile (both guards agree). The 12th, 'amp_fnr_bassman', has
+// mProxyFile == "" and InlineProxy(bs) == 1 -- only the weak guard fires. It
+// read `3` at offset 906607, which is not a dir rev at all: it is the
+// WorldInstance rev of the NEXT object, 'amp_fnr_bassman01' (ASSERT_REVS(3,0)
+// in world/Instance.cpp:173). Everything after is desync fallout -- the
+// bogus "rev 3 < 7", `version 41 > 3`, and the garbage
+// `String chars 774778671` that walks ReadString off a stack buffer.
+//
+// ShouldSaveProxy is not wrong in itself -- it is the correct guard on the
+// SAVE path (used that way at :680, `ShouldSaveProxy(bs) && InlineProxy(bs)`).
+// Reusing it on the LOAD path is the defect. rb3-Wii's ObjectDir::PostLoad
+// does not call ShouldSaveProxy at all.
+//
+// ⚠ MATCH DEBT, DELIBERATELY NOT PAID HERE: this is a real decomp divergence
+// and the X360 arm below is left TOKEN-FOR-TOKEN UNCHANGED, so `default/Dir`
+// keeps whatever it currently scores. A match lane should A/B the retail guard
+// against the X360 object -- rb3-Wii `main/system/obj/Dir` is the oracle.
+#ifdef HX_NATIVE
+    else if (IsProxy() && !mProxyFile.empty()) {
+#else
+    else if (ShouldSaveProxy(bs)) {
+#endif
         DeleteObjects();
         DeleteSubDirs();
 #ifdef HX_NATIVE
+        if (getenv("RB3_STREAM_AUDIT")) {
+            MILO_LOG("PROXY_AUDIT: ShouldSaveProxy '%s' isProxy=%d proxyFileEmpty=%d "
+                     "proxyFile='%s' InlineProxy=%d cached=%d AllowsInlineProxy=%d "
+                     "mInlineProxyType=%d -> stream=%s off=%d\n",
+                     Name(), (int)IsProxy(), (int)mProxyFile.empty(),
+                     mProxyFile.c_str(), (int)InlineProxy(bs), (int)bs.Cached(),
+                     (int)AllowsInlineProxy(), (int)mInlineProxyType,
+                     InlineProxy(bs) ? "SHARED" : "null",
+                     bs.Tell());
+        }
         DirLoader *dl = new DirLoader(
             mProxyFile,
             kLoadFront,
