@@ -348,8 +348,8 @@ void HamAudio::FinishLoad() {
         delete mFileLoader;
         mFileLoader = NULL;
         const char *mogg = "mogg";
-        stream0 = TheSynth->NewBufStream(mRawBuffer, mRawBufferSize, mogg, 0.25f, true);
-        mStreams[1] = TheSynth->NewBufStream(mRawBuffer, mRawBufferSize, mogg, 0.25f, false);
+        stream0 = TheSynth->NewBufStream(mRawBuffer, mRawBufferSize, mogg, 0.25f, true, true);
+        mStreams[1] = TheSynth->NewBufStream(mRawBuffer, mRawBufferSize, mogg, 0.25f, false, true);
         mSongStream = stream0;
 #ifdef HX_WEB
         const char *baseName = mSongInfo ? mSongInfo->GetBaseFileName() : "<no-song>";

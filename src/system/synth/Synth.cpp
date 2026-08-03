@@ -252,10 +252,12 @@ Stream *Synth::NewStream(const char *filename, float f1, float f2, bool) {
 #endif
 }
 
-Stream *Synth::NewBufStream(const void *buf, int size, Symbol ext, float f1, bool b1) {
+Stream *Synth::NewBufStream(
+    const void *buf, int size, Symbol ext, float f1, bool floatSamples, bool pollingEnabled
+) {
 #ifdef HX_NATIVE
     File *file = new BufFile(buf, size);
-    return new StandardStream(file, 0, f1, ext, b1, true);
+    return new StandardStream(file, 0, f1, ext, floatSamples, pollingEnabled);
 #else
     return new StreamNull(f1);
 #endif

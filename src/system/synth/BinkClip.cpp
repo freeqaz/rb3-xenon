@@ -86,7 +86,7 @@ void BinkClip::Play() {
         if (EnsureLoaded()) {
             KillStream();
             mStream = dynamic_cast<StandardStream *>(
-                TheSynth->NewBufStream(mData, mSize, "bik", 0, true)
+                TheSynth->NewBufStream(mData, mSize, "bik", 0, true, true)
             );
             mFadeOutFader->SetVal(0);
             SetLoop(mLoop);

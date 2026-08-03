@@ -83,7 +83,12 @@ public:
     virtual bool DidMicsChange() const { return false; }
     virtual void ResetMicsChanged() {}
     virtual Stream *NewStream(const char *, float, float, bool);
-    virtual Stream *NewBufStream(const void *, int, Symbol, float, bool);
+    // Retail takes SIX args: (buf, size, ext, startMs, floatSamples, pollingEnabled).
+    // Proven at 0x82B5B608 (Synth360::NewBufStream), whose prologue preserves exactly
+    // {r4,r5,r6,r8,r9,f1} -- params 1..6 with the float consuming the r7 slot -- and
+    // then FORWARDS r9 into the StandardStream ctor.  DC3 is newer and collapsed this
+    // to one bool (hardcoding floatSamples=false), which is why our port had 5.
+    virtual Stream *NewBufStream(const void *, int, Symbol, float, bool, bool);
     virtual StreamReader *NewStreamDecoder(File *, StandardStream *, Symbol, bool);
     virtual void NewStreamFile(const char *, File *&, Symbol &);
     virtual void EnableLevels(bool) {}
