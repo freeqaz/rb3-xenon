@@ -203,6 +203,28 @@ public:
     MESH_DC3_VIRTUAL int NumVerts() const { return mVerts.size(); }
 #ifdef HX_NATIVE
     virtual void DrawShowing();
+
+    /** X7, native-only. Latch: this mesh's bone slots have already been
+     *  repointed from the shared char/main/skeleton magnet onto a band
+     *  member's OWN animated skeleton by
+     *  BandCharacter::RebindOutfitBonesToOwnSkeleton.
+     *
+     *  It has to live ON THE MESH and not in the caller. Outfit meshes are
+     *  MERGED SHARED RESOURCES: one mesh is reachable from more than one
+     *  BandCharacter, so a per-character latch would let the second member
+     *  rebind bones the first already moved. A file-static set<RndMesh*> would
+     *  have the right scope but the wrong lifetime -- it is never pruned when
+     *  a mesh is freed, so a later allocation at the same address would be
+     *  skipped silently.
+     *
+     *  ⚠ DISCLOSED: rb3-Wii's renderer also READS this flag (to skip its
+     *  rebake + fling clamp). NO CONSUMER EXISTS IN THIS TREE -- the pinned
+     *  milo-native-engine (138e1606) compiles against these same xenon headers
+     *  and knows nothing about it. Here it is purely the idempotency latch.
+     *  Left as a documented seam rather than an engine change request.
+     *
+     *  HX_NATIVE-gated, so the X360 RndMesh layout is untouched. */
+    bool mNativeBonesRebound = false;
 #endif
 
     OBJ_MEM_OVERLOAD(0x2E);
