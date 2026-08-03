@@ -519,7 +519,7 @@ INIT_REVS(11, 0)
 // Retail holds the loaded revision in TWO separate file statics 4 bytes apart
 // (altRev @0x82CBF3F4, rev @0x82CBF3F8). They must stay SEPARATE symbols:
 // Strand::Load addresses `rev` directly (`lis`+`lhz`); an aggregate turns that
-// into `lis`+`addi`+`lhz 0x4` (measured regression 100%% -> 96.6%%).
+// into `lis`+`addi`+`lhz 0x4` (measured regression 100% -> 96.6%).
 static __declspec(align(4)) unsigned short sHairAltRev;
 static __declspec(align(4)) unsigned short sHairRev;
 
@@ -533,7 +533,10 @@ void CharHair::Load(BinStream &bs) {
     sHairRev = getHmxRev(revs);
     sHairAltRev = getAltRev(revs);
     BinStreamRev &d = (BinStreamRev &)bs;
-    LOAD_SUPERCLASS(Hmx::Object)
+    // NOT LOAD_SUPERCLASS: Object.h defines it as `parent::Load(d.stream)`, but
+    // under the cast model there is no real `stream` member -- retail passes the
+    // raw stream (`mr r4,r30`), matching the ObjMacros.h dialect's `parent::Load(bs)`.
+    Hmx::Object::Load(bs);
     bs >> mStiffness >> mTorsion >> mInertia >> mGravity >> mWeight >> mFriction;
     if (sHairRev < 8) {
         mMinSlack = 0.0f;
