@@ -1237,6 +1237,10 @@ set(MILO_TARGET_COMMON_SOURCES
     ${DTA_LEXER}
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/milo_link_stubs.cpp
+    # X20: the residual link surface that registering OutfitConfig makes live --
+    # nine faithful BandPatchMesh members the 191-line partial port omitted,
+    # gRB3OutfitComposeActive, and two COUNTED stubs. Native-only. See the file.
+    ${CMAKE_SOURCE_DIR}/src/x20_bandpatchmesh_link.cpp
     # X7: band-member undecomp stubs. NOT in NATIVE_SHIMS -- see the file header;
     # putting them there broke 8 of 18 targets that compile no char/ or bandobj.
     ${CMAKE_SOURCE_DIR}/src/x7_band_stubs.cpp
@@ -1287,6 +1291,32 @@ if(RB3X_BUILD_ENGINE)
     target_compile_definitions(rb3-render PRIVATE RB3_ENGINE_RENDER=1)
     target_link_libraries(rb3-render PRIVATE milo-engine)
 endif()
+
+# ---- X20: OutfitConfig's property table needs the LOCAL_STATIC Symbol arm ----
+# ObjMacros.h's SYNC_PROP family has two spellings, selected by
+# RB3_SYNCPROP_LOCAL_STATIC (ObjMacros.h:372/529). The default (`#else`) arm
+# compares `sym == primary_color`, i.e. against a NAMESPACE-SCOPE
+# `extern Symbol` global. Those globals are DECLARED ~7083 times across
+# src/system/utl/Symbols{,2,3,4}.h and DEFINED NOWHERE IN THE TREE -- the X360
+# match build never links, so nothing there can notice.
+#
+# Natively they are undefined references that survive only because
+# --gc-sections drops the referencing section. The moment a TU's property table
+# becomes LIVE (here: registering OutfitConfig makes its vtable, hence its
+# virtual SyncProperty, reachable) they all come due at once. MEASURED for
+# OutfitConfig.cpp: 36 of the 48 undefined symbols were exactly these.
+#
+# The LOCAL_STATIC arm spells the same comparison as a function-local
+# `static Symbol _ps("primary_color")`, which is semantically identical and
+# self-contained. Native-only: this is a compile definition in native/, so the
+# X360 build's codegen is untouched BY CONSTRUCTION.
+#
+# Scoped to the one TU this lane needed. Every other TU carrying a property
+# table is one GC decision away from the same failure -- see
+# docs/plans/x20-textures-2026-08-03.md for why that was not widened here.
+set_source_files_properties(
+    ${REPO_ROOT}/src/system/bandobj/OutfitConfig.cpp
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
 foreach(_t IN LISTS MILO_TARGETS)
 target_compile_options(${_t} PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
