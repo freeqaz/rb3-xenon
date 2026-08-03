@@ -428,11 +428,12 @@ Hmx::Rect HiResScreen::ScreenRect(const RndCam *cam, const Hmx::Rect &r) const {
     return ret;
 }
 
-Hmx::Rect HiResScreen::ScreenRect() const {
-    const RndCam *cam = RndCam::Current();
-    Hmx::Rect r = cam->GetScreenRect();
-    return ScreenRect(cam, r);
-}
+// RB3 retail's no-arg ScreenRect() does NOT route through the 2-arg tiling
+// overload: adjudicated on retail bytes at 0x823F7150 (48 B, 12 instructions,
+// leaf, `this` in r4 unread). It is a straight copy of the current camera's
+// screen rect. DC3 (newer) and the rb3-Wii DEV build both added the
+// `ScreenRect(cam, r)` call; retail has neither the call nor a stack frame.
+Hmx::Rect HiResScreen::ScreenRect() const { return RndCam::Current()->GetScreenRect(); }
 
 Hmx::Rect HiResScreen::InvScreenRect() const {
     Hmx::Rect r = ScreenRect();
