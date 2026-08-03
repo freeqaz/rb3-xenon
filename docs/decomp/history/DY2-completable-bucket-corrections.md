@@ -88,7 +88,7 @@ existed it would not be unique in 197k calls. **Declined on evidence.** The
 census cannot see this: `Main` sits at the top of its "cheapest completable
 units" list at 96.84%.
 
-## Correction 3 — two COMPLETABLE blockers are MAP MISPAIRS
+## Correction 3 — three COMPLETABLE blockers are MAP MISPAIRS
 
 Adjudicated individually on retail bytes:
 
@@ -100,6 +100,13 @@ Adjudicated individually on retail bytes:
   `this` in r3; the 3-instruction body instead *loads* r3 from a global
   (`lwz r3, lbl_82CC8F4C(r11)`) and tail-calls
   `ContextWrapperPool::FailAllContexts`.
+* **`??$MakeString@HH@@YAPBDPBDHH@Z`** (`default/Rnd_NG`, `0x82399348`) — the
+  body compares two pointers, computes `(end − begin) >> 4` (a `vector<T>` size
+  with `sizeof(T) == 16`) and tail-calls
+  `vector<HamIKEffector::Constraint>::operator=`. That is a self-assignment-
+  guarded vector assign, not `MakeString<int,int>(const char*, int, int)`. The
+  frame delta corroborates: ours is +0x810 larger because `FormatString` carries
+  a ~2 KB stack buffer the target never allocates.
 
 ## ⛔ Two instruments built, controlled, and REFUTED — do not re-fund
 
@@ -124,13 +131,14 @@ Adjudicated individually on retail bytes:
 
 ## Net effect on the ceiling
 
-At least **6 of the 46 COMPLETABLE units cannot be closed by source**:
+At least **7 of the 46 COMPLETABLE units cannot be closed by source**:
 `Main` (unique encoding), `MoggClip` / `arraylist` / `StorePreviewMgr`
-(truncated extents), `FlowQueueable` / `HamDriver` (map mispairs) — plus
-`SkeletonDir` and `FilterQueue`, already declined on evidence by earlier lanes.
+(truncated extents), `FlowQueueable` / `HamDriver` / `Rnd_NG` (map mispairs) —
+plus `SkeletonDir` and `FilterQueue`, already declined on evidence by earlier
+lanes.
 
-So the briefed **source-only ceiling of 292 is optimistic by at least 6**; the
-defensible figure is **≤ 286**. This does not contradict DX-2 — the map really
+So the briefed **source-only ceiling of 292 is optimistic by at least 7**; the
+defensible figure is **≤ 285**. This does not contradict DX-2 — the map really
 is drained — it corrects what "COMPLETABLE" licenses you to expect.
 
 ## Also declined here, with reasons
