@@ -464,12 +464,17 @@ this. The matching build is structurally incapable of catching that class.
 So: if your change touches `src/system/**`, `src/band3/**` or any shared header,
 run the gate before you land. Two traps, both real:
 
-- **Seed the cache explicitly first, with all four flags.** The gate's own
+- **Seed the cache explicitly first, and PIN the compilers.** The gate's own
   `cmake` line omits `-DMILO_ENGINE_PATH=` and `-DDawn_DIR=`, and without them
   three targets silently **SKIP** while the gate still reports `PASS`. It
   *also* sets the compiler (`native_build_gate.sh:228`) — so a seed configure
   supplying only those two picks up system `g++` and fails with ~104 errors
-  that look exactly like a broken `main`. Pass the compiler flags too.
+  that look exactly like a broken `main`. **Passing the compiler flags is not
+  enough: the compilers must be pinned to the same absolute paths the gate
+  uses, or it wipes the cache and SKIPs the three engine targets anyway.**
+  X21 hit this after X18 documented the four-flag recipe — its first baseline
+  read 15/18 with 3 SKIPs, and **the 0-SKIP rule is what caught it**. Always
+  require `0 SKIPs`, never just `PASS`.
 - **Delete stale binaries first.** The gate counts binaries on disk and
   `ninja -k1` masks failures, so a stale tree can report green over a broken
   build.
