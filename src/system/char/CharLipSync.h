@@ -52,8 +52,16 @@ public:
         MEM_OVERLOAD(PlayBack, 0x3F)
 
         std::vector<Weight> mWeights; // 0x0
-        ObjPtr<CharLipSync> mLipSync; // 0xc
-        ObjPtr<ObjectDir> mClips; // 0x20
+        // RAW pointer, not ObjPtr. Retail CharLipSyncDriver::Poll loads the
+        // CharLipSync through `lwz r11, 12(r11)` = PlayBack+0xc directly; our
+        // ObjPtr<CharLipSync> occupies [0xc,0x18) and stores its raw pointer at
+        // +8, so we emitted `lwz r11, 20(r11)`. ObjPtr itself is proven correct
+        // (ObjPtr<CharLipSync>::Replace and ??_G both match retail at 100%), so
+        // the field at 0xc cannot be an ObjPtr interior. rb3-Wii declares it raw
+        // too; DC3 (newer) upgraded it. Sibling Generator::mLipSync above is
+        // still raw in DC3, which is the same asymmetry.
+        CharLipSync *mLipSync; // 0xc
+        ObjPtr<ObjectDir> mClips; // 0x10
         int mIndex; // 0x34
         int mOldIndex; // 0x38
         int mFrame; // 0x3c
