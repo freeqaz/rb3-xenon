@@ -106,6 +106,7 @@ BandCharacter::BandCharacter()
     mNativeReboundOnce = 0;
     mNativeReboundQuiet = 0;
     mNativeReboundBody = 0;
+    mNativeSkinMatQuiet = 0; // X22
 #endif
 }
 
@@ -531,6 +532,15 @@ void BandCharacter::Poll() {
             // each Poll until the moving instance is reachable. Must come AFTER
             // Character::Poll() (skeleton posed) and BEFORE the outfit meshes draw.
             RebindOutfitBonesToOwnSkeleton();
+
+            // X22: and repoint those same outfit skin meshes off the SHARED
+            // char_shared.milo material onto this member's own. Ordered AFTER the
+            // bone rebind for the same reason that one runs here (the member's own
+            // objects must be reachable first) and because the two are independent:
+            // the bone rebind fixes WHERE the vertices go, this fixes WHAT they are
+            // painted with. Idempotent -- a mesh already on the member's own
+            // material is skipped, and the scan latches after a quiet period.
+            RebindSharedSkinMatsToOwn();
 #endif
 
             // Poll child characters
@@ -1048,6 +1058,171 @@ void BandCharacter::RebindOutfitBonesToOwnSkeleton() {
             fprintf(stderr, "[SKEL_REBIND]     target '%s' numBones=%d\n",
                     (*ti)->Name() ? (*ti)->Name() : "?", (*ti)->NumBones());
     }
+}
+
+// ============================================================================
+// X22 — repoint this member's outfit skin meshes off the SHARED char_shared.milo
+// material and onto the member's OWN same-named one.
+//
+// THE DEFECT. `BandCharacter::Filter` (:2519-2523) carries retail's answer for
+// any object belonging to `char/main/shared/char_shared.milo`:
+//
+//     if (o1->Dir() == sCharSharedDir) {
+//         Hmx::Object *mine = Find<Hmx::Object>(o1->Name(), true);
+//         MILO_ASSERT(mine->Dir() == this, 0xAB8);
+//         ::ReplaceRefs(o1, mine);            // -> the member's OWN copy
+//         return kIgnore;
+//     }
+//
+// i.e. retail explicitly UN-SHARES char_shared per member during the merge. That
+// arm only runs if char_shared's objects are WALKED by the merge, and the native
+// `FilterSubdir` shim (:2586-2635, added to fix "char textures rendering white")
+// converts kMergeMerge -> kMergeReplace for every subdir that is its own on-disk
+// milo, deliberately keeping char_shared as a shared REFERENCE instead of
+// draining it. So the objects are never walked, `Filter` never sees them, and
+// `ReplaceRefs` never runs. Every visible body mesh keeps drawing char_shared's
+// `torso_naked.mat` / `legs_skin.mat` / `feet_socks_skin.mat` / `head_naked.mat`
+// -- whose diffuse is the placeholder `dummy_*.tex` (and NULL for head_naked) --
+// while `OutfitConfig::SetSkinTextures` correctly rebinds the member's own,
+// which only the two tattoo meshes ever use.
+//
+// ⚠ THE SHARING ITSELF IS AUTHORED; THE PERSISTENCE OF IT IS THE DEFECT.
+// char_shared.milo really does ship one material per skin slot -- that is what
+// the file is for. Retail's design is "author once, un-share per member at
+// merge". We keep the authoring and lost the un-sharing.
+//
+// ⛔ WHY NOT JUST TURN THE SHIM OFF, OR CALL THE GLOBAL ::ReplaceRefs.
+//   * Full shim-OFF is a PROVEN DEAD END, built and measured, twice: it
+//     re-introduces the white-texture drain AND does not fix the skeleton
+//     share (docs/CHAR_SKINNING_DEFORM_INVESTIGATION.md, "PROVEN dead-ends").
+//     Not retried here, blind or otherwise.
+//   * The file-local `::ReplaceRefs` (:2408) walks `theirs->Refs()`, the GLOBAL
+//     intrusive ring of every reference to the shared material -- from all four
+//     members. Calling it here would repoint the whole band onto whichever
+//     member ran last. Retail gets away with it only because each member's merge
+//     is atomic and ordered; the native loader interleaves, which is the very
+//     reason the shim exists. So this does a per-mesh SetMat instead, which is
+//     the same consequence with per-member scope.
+//
+// ★ THE OPERATION IS NOT INVENTED -- IT IS SHIPPED CODE, ONE SCOPE WIDER.
+// `OutfitConfig::SetSkinTextures`' own tail (bandobj/OutfitConfig.cpp:608-621)
+// already does exactly this for three meshes:
+//     torsomesh->SetMat(dir1->Find<RndMat>("torso_naked.mat", false));
+// That is why the tattoo meshes are the ONLY ones correctly bound today. This
+// applies the identical operation to the member's remaining skin meshes.
+//
+// ⚠ SCOPE, AND THE TRAP IT AVOIDS. Collected from `this` + mOutfitDir only, the
+// same two scopes the bone rebind uses. A mesh living in a SHARED dir is reached
+// by all four members, so repointing it per member would cross-wire the band
+// (last writer wins) -- the same shared-object trap this fix exists to close,
+// re-entered from the other side. MEASURED before writing this (X22 probe,
+// reach-count by POINTER across all four members): the 18 SHOWING body meshes
+// are ALL reach==1, and ZERO shared-dir meshes are showing. The
+// `mine->Dir() != this` guard below is retail's own MILO_ASSERT turned into a
+// skip, and it independently refuses any mesh whose material this member does
+// not own a copy of.
+//
+// Opt-out: RB3_NO_SKINMAT_REBIND=1. Probe: SKINMAT_REBIND_PROBE=1.
+// HX_NATIVE only -- the Wii/X360 arm is untouched and byte-identical.
+void BandCharacter::RebindSharedSkinMatsToOwn() {
+    static int sDisabled = -1;
+    if (sDisabled < 0) sDisabled = getenv("RB3_NO_SKINMAT_REBIND") ? 1 : 0;
+    if (sDisabled) return;
+    // Latched: a sustained run of scans that repointed nothing. Bounded so the
+    // per-Poll walk does not run for the life of the session, but long enough
+    // that late-streaming LOD pieces (shoes / pants / accessories arrive a second
+    // or more after the torso) are still caught -- the same streaming tail the
+    // bone rebind's 90-Poll window exists for.
+    if (mNativeSkinMatQuiet >= 120) return;
+
+    bool probe = getenv("SKINMAT_REBIND_PROBE") != 0;
+
+    // Same collector as RebindOutfitBonesToOwnSkeleton: the body clothing meshes
+    // are merged resources with an EMPTY dir name -- not in any hashtable -- and
+    // are only reachable by walking the LOD draw tree.
+    std::vector<RndMesh *> targets;
+    Character *drawChars[2] = { this, (Character *)mOutfitDir };
+    std::vector<RndDrawable *> work;
+    for (int d = 0; d < 2; d++) {
+        Character *dc = drawChars[d];
+        if (!dc) continue;
+        RndDir *dd = dc;
+        for (ObjDirItr<RndMesh> mit(dd, true); mit != 0; ++mit) {
+            RndMesh *m = mit;
+            if (m && std::find(targets.begin(), targets.end(), m) == targets.end())
+                targets.push_back(m);
+        }
+        for (int di = 0; di < dd->NumDraws(); di++)
+            work.push_back(dd->GetDraw(di));
+        for (int li = 0; li < dc->Lods().size(); li++) {
+            if (dc->Lods()[li].Group()) work.push_back(dc->Lods()[li].Group());
+            if (dc->Lods()[li].TransGroup()) work.push_back(dc->Lods()[li].TransGroup());
+        }
+    }
+    std::vector<RndDrawable *> visited;
+    while (!work.empty()) {
+        RndDrawable *dr = work.back();
+        work.pop_back();
+        if (!dr) continue;
+        if (std::find(visited.begin(), visited.end(), dr) != visited.end()) continue;
+        visited.push_back(dr);
+        RndMesh *m = dynamic_cast<RndMesh *>(dr);
+        if (m && std::find(targets.begin(), targets.end(), m) == targets.end())
+            targets.push_back(m);
+        std::list<RndDrawable *> kids;
+        dr->ListDrawChildren(kids);
+        for (std::list<RndDrawable *>::iterator k = kids.begin(); k != kids.end(); ++k)
+            if (*k && std::find(visited.begin(), visited.end(), *k) == visited.end())
+                work.push_back(*k);
+    }
+
+    int repointed = 0, alreadyMine = 0, noOwnCopy = 0, noMat = 0;
+    for (std::vector<RndMesh *>::iterator ti = targets.begin();
+         ti != targets.end(); ++ti) {
+        RndMesh *mesh = *ti;
+        RndMat *mat = mesh->Mat();
+        if (!mat || !mat->Name() || !mat->Name()[0]) { noMat++; continue; }
+        if (mat->Dir() == static_cast<ObjectDir *>(this)) { alreadyMine++; continue; }
+        // Retail's `mine = Find<Hmx::Object>(o1->Name(), true)` + its
+        // MILO_ASSERT(mine->Dir() == this). Find<T> hits THIS dir's own entry
+        // table before descending into subdirs (obj/Dir.cpp:1008-1017), so the
+        // Dir() test is exactly "the member owns this replacement".
+        RndMat *mine = Find<RndMat>(mat->Name(), false);
+        if (!mine || mine == mat || mine->Dir() != static_cast<ObjectDir *>(this)) {
+            noOwnCopy++;
+            if (probe)
+                fprintf(stderr,
+                        "[SKINMAT_REBIND]   SKIP member='%s' mesh='%s' mat='%s' "
+                        "(no own copy: mine=%p mineDir='%s')\n",
+                        Name() ? Name() : "?", mesh->Name() ? mesh->Name() : "?",
+                        mat->Name(), (void *)mine,
+                        (mine && mine->Dir()) ? PathName(mine->Dir()) : "(none)");
+            continue;
+        }
+        if (probe)
+            fprintf(stderr,
+                    "[SKINMAT_REBIND]   REPOINT member='%s' mesh='%s' showing=%d "
+                    "'%s' %p ('%s') -> %p ('%s')\n",
+                    Name() ? Name() : "?", mesh->Name() ? mesh->Name() : "?",
+                    (int)mesh->Showing(), mat->Name(), (void *)mat,
+                    mat->Dir() ? PathName(mat->Dir()) : "(none)", (void *)mine,
+                    mine->Dir() ? PathName(mine->Dir()) : "(none)");
+        mesh->SetMat(mine);
+        repointed++;
+    }
+    if (repointed > 0) mNativeSkinMatQuiet = 0; else mNativeSkinMatQuiet++;
+
+    // ⛔ REPORT THE ZERO LOUDLY, AND PRINT THE DENOMINATOR NEXT TO THE VERDICT.
+    // "repointed 0 because everything was already correct" and "repointed 0
+    // because the collector reached nothing" are different findings with
+    // different owners, and conflating them has cost this ladder four lanes.
+    if (probe)
+        fprintf(stderr,
+                "[SKINMAT_REBIND] member='%s' targets=%d repointed=%d "
+                "alreadyMine=%d noOwnCopy=%d noMat=%d%s\n",
+                Name() ? Name() : "?", (int)targets.size(), repointed, alreadyMine,
+                noOwnCopy, noMat,
+                targets.empty() ? "  <- COLLECTOR REACHED NOTHING: VACUOUS" : "");
 }
 #endif
 
