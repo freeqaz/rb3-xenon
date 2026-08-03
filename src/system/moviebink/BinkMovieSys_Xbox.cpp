@@ -5,10 +5,12 @@
 extern "C" void BinkSetSoundSystem(void *, unsigned long);
 extern "C" void BinkOpenXAudio2();
 
+// Retail is 6 instructions with NO guard on TheXboxSynth -- it loads
+// TheXboxSynth, then (TheXboxSynth+0xc8), and TAIL-CALLs BinkSetSoundSystem.
+// DC3's copy wraps this in `if (TheXboxSynth)`; that guard is newer than RB3
+// and cost 12 bytes here.  (lane DW-3)
 void BinkMovieSys::PlatformInit() {
-    if (TheXboxSynth) {
-        BinkSetSoundSystem(BinkOpenXAudio2, TheXboxSynth->unkc8);
-    }
+    BinkSetSoundSystem(BinkOpenXAudio2, TheXboxSynth->unkc8);
 }
 
 void BinkMovieSys::PlatformStoreCache(void *ptr, unsigned int size) {
