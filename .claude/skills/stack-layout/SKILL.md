@@ -37,10 +37,37 @@ with verdicts that point to specific source fixes.
    |---|---|---|
    | **SWAPPED** | Two slots' fingerprints exchanged | Reorder the two declarations |
    | **DIFFER** | Same offset, different fingerprint | Different variable lives there — decl-reorder |
+   | **PERMUTED** | Same offset, same fingerprint, but the two sides touch it at **different program points** | Same slot *set*, variables assigned differently — MSVC slot-allocation shaping. Read the `↔ base 0x..` note for the mapping. **Not** a missing/extra local. |
    | **SHIFTED** | Same fingerprint, offset differs by the dominant Δ | One side has an extra local pushing the rest |
    | **TGT_ONLY** | Slot exists only on target | Target spills a temp we keep in a register (or vice versa) |
    | **BASE_ONLY** | Slot exists only on our build | Extra spill; usually a register-pressure symptom |
-   | **MATCH** | Hidden by default; pass `--show-equal` to see |
+   | **MATCH** | Same offset, same fingerprint, **and** same aligned access rows | Hidden by default; pass `--show-equal` to see |
+
+   ⚠ **`MATCH` did not always mean this.** Before 2026-08-03 (lane DQ-2) a row was
+   MATCH whenever the offset and the `(kind,size,loads,stores)` fingerprint agreed.
+   For a run of same-typed locals that fingerprint is **constant**, so a pure
+   permutation of variables across identical-shaped slots read as MATCH. Measured
+   over 519 diffed functions: **161 (31%)** had at least one such false MATCH, and
+   **1,328** rows moved MATCH → PERMUTED. `BandCharacter::Handle` went from
+   "44 MATCH" to "40 PERMUTED / 4 MATCH". Any pre-DQ-2 stack-layout reading of
+   "slots all match" should be re-run before being trusted.
+
+   Read the **signature discriminating power** line under the summary: it says how
+   many target slots share a fingerprint with another. Where that number is high,
+   any *fingerprint-based* pairing (SWAPPED, SHIFTED) is arbitrary within the
+   group and is flagged `⚠ ambiguous`.
+
+4b. **Frame size can now REFUSE.** If the prologue cannot be decoded the tool
+   prints `UNKNOWN` (never `0x0`) and exits **2** with no frame verdict, because
+   the callee-save slot filter is derived from the frame size. Pass
+   `--allow-unknown-frame` to force exit 0. Previously an unparsed prologue
+   defaulted to 0 on both sides and printed "→ Frame sizes match" — a vacuous
+   `0 == 0`.
+
+   Self-check with no toolchain, objdiff or filesystem needed:
+   ```bash
+   python3 scripts/analysis/stack_layout.py --selftest   # expect PASS, 28 checks
+   ```
 
 4. **Fingerprint columns** (`kind sz=N L=loads S=stores A=accesses [first..last]`):
    - `float sz=4` → `float`
