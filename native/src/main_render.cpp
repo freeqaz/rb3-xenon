@@ -855,6 +855,145 @@ namespace {
             printf(" %s", st.setterNames[i].c_str());
         printf("\n");
     }
+    // ---- X22: is the shared `char_shared.milo` material AUTHORED or a defect? --
+    //
+    // X21 established that every VISIBLE band body mesh points at ONE RndMat
+    // owned by `char/main/shared/char_shared.milo`, while SetSkinTextures
+    // correctly rebinds a DIFFERENT, per-member RndMat that only the two tattoo
+    // meshes use.  That is a statement about pointers; it is NOT yet a statement
+    // about whether a fix is even possible.
+    //
+    // ★ THE DECIDING QUESTION IS NOT "are they shared" (they are, visibly) BUT
+    // "does the member OWN a same-named replacement".  Retail's
+    // BandCharacter::Filter (bandobj/BandCharacter.cpp:2519-2523) answers the
+    // shared-object case with
+    //     mine = Find<Hmx::Object>(o1->Name(), true); ReplaceRefs(o1, mine);
+    // and MILO_ASSERTs `mine->Dir() == this`.  So retail REQUIRES the member to
+    // already own a same-named object.  If it does not own one here, a repoint
+    // has no target and the only remaining move would be to CLONE a material --
+    // i.e. to invent one, which this ladder does not do.  So this probe reports
+    // the TARGET'S EXISTENCE first and the mismatch second.
+    //
+    // ★ POSITIVE INDICATOR, not a failure predicate.  It prints a line for every
+    // (member, skin-material) pair whether the lookup succeeds or fails, and
+    // prints its own denominators, so "0 mismatches" and "0 members examined"
+    // cannot be confused -- the confusion that cost X20 a lane.
+    //
+    // ★ IDENTITIES, NOT NAMES -- sixth-time rule.  Every row prints the RndMat
+    // POINTER and its owning dir.  `torso_naked.mat` is several distinct
+    // objects; a name-keyed reading of this data is what produced the retired
+    // "58 skin material instances" figure.
+    void ReportX22SharedMaterials() {
+        static const char *kSkinMats[] = { "torso_naked.mat", "legs_skin.mat",
+                                           "feet_skin.mat", "feet_socks_skin.mat",
+                                           "head_naked.mat" };
+        printf("  --- X22 shared-material identity probe (per member) ---\n");
+        if (!TheBandWardrobe) {
+            printf("    ⛔ NO TheBandWardrobe — this probe is VACUOUS for this run; "
+                   "do not read a verdict from it.\n");
+            return;
+        }
+        int members = 0, ownedTargets = 0, missingTargets = 0;
+        int meshesOnShared = 0, meshesOnOwn = 0, meshesOther = 0, meshesNoMat = 0;
+        // ⚠ FIRST PASS: REACHABILITY BY IDENTITY, not by dir name.
+        // "Is this mesh the member's own?" cannot be answered by
+        // `mesh->Dir() == bc` -- an outfit mesh legitimately lives in the OUTFIT
+        // milo's dir, which is a per-member subdir, and that test calls it
+        // foreign.  Nor by the dir's NAME.  The only test that means what we
+        // need is: HOW MANY MEMBERS REACH THIS EXACT POINTER.  Reached by one
+        // member => repointing it to that member's material is per-member and
+        // safe.  Reached by two or more => it is a genuinely shared object and a
+        // per-member repoint would cross-wire the band, last writer winning.
+        std::map<RndMesh *, int> reachCount;
+        for (int i = 0; i < 4; i++) {
+            BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
+            if (!bc) continue;
+            std::vector<RndMesh *> bm = CollectDeep<RndMesh>(bc);
+            std::set<RndMesh *> uniq(bm.begin(), bm.end());
+            for (std::set<RndMesh *>::iterator it = uniq.begin(); it != uniq.end(); ++it)
+                reachCount[*it]++;
+        }
+        for (int i = 0; i < 4; i++) {
+            BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
+            if (!bc) continue;
+            members++;
+            printf("    member[%d] '%s' dir=%p\n", i,
+                   bc->Name() ? bc->Name() : "(unnamed)", (void *)bc);
+            // (a) THE REPOINT TARGET. Find<T> hits this dir's own entry table
+            // FIRST and only then descends into subdirs (obj/Dir.cpp:1008-1017),
+            // so `mat->Dir() == bc` is exactly "the member owns its own copy" --
+            // which is precisely retail's MILO_ASSERT(mine->Dir() == this).
+            for (int k = 0; k < 5; k++) {
+                RndMat *m = bc->Find<RndMat>(kSkinMats[k], false);
+                bool owned = (m && m->Dir() == static_cast<ObjectDir *>(bc));
+                if (m && owned) ownedTargets++; else missingTargets++;
+                printf("      target '%-20s %s mat=%p dir='%s'\n", kSkinMats[k],
+                       !m ? "NOT-FOUND      " : (owned ? "OWNED-BY-MEMBER" : "FOREIGN-DIR    "),
+                       (void *)m,
+                       (m && m->Dir()) ? PathName(m->Dir()) : "(none)");
+            }
+            // (b) WHAT THE MEMBER'S OWN MESHES ACTUALLY POINT AT.
+            // ⚠⚠ CollectDeep DESCENDS INTO bc's SUBDIRS, and the shared
+            // char_shared/colorpalettes dirs ARE subdirs of every member (that is
+            // the whole FilterSubdir shim).  So this vector is NOT "the member's
+            // meshes" -- it contains meshes the OTHER THREE MEMBERS ALSO SEE,
+            // via the same shared dir.  Repointing one of those per member would
+            // cross-wire the band (last member wins), which is the SAME
+            // shared-object trap this lane exists to fix, re-entered from the
+            // other side.  Split by the MESH's OWN dir before any verdict.
+            int onShared = 0, onOwn = 0, other = 0, noMat = 0;
+            int sharedMeshForeignMat = 0, ownMeshForeignMat = 0, ownMeshShowing = 0;
+            std::vector<RndMesh *> bm = CollectDeep<RndMesh>(bc);
+            for (size_t j = 0; j < bm.size(); j++) {
+                RndMat *mat = bm[j]->Mat();
+                if (!mat) { noMat++; continue; }
+                bool isSkin = false;
+                for (int k = 0; k < 5; k++)
+                    if (mat->Name() && strcmp(mat->Name(), kSkinMats[k]) == 0)
+                        { isSkin = true; break; }
+                if (!isSkin) { other++; continue; }
+                bool matOwn = (mat->Dir() == static_cast<ObjectDir *>(bc));
+                bool meshPrivate = (reachCount[bm[j]] == 1);
+                if (matOwn) onOwn++; else onShared++;
+                if (!matOwn) {
+                    if (meshPrivate) {
+                        ownMeshForeignMat++;
+                        if (bm[j]->Showing()) ownMeshShowing++;
+                        if (bm[j]->Showing())
+                            printf("        REPOINTABLE mesh '%-34s reach=1 "
+                                   "meshdir='%s' mat=%p matdir='%s'\n",
+                                   (std::string(bm[j]->Name()) + "'").c_str(),
+                                   bm[j]->Dir() ? PathName(bm[j]->Dir()) : "(none)",
+                                   (void *)mat,
+                                   mat->Dir() ? PathName(mat->Dir()) : "(none)");
+                    } else {
+                        sharedMeshForeignMat++;
+                        if (bm[j]->Showing())
+                            printf("        ⚠ SHARED-SHOWING mesh '%-30s reach=%d "
+                                   "meshdir='%s'\n",
+                                   (std::string(bm[j]->Name()) + "'").c_str(),
+                                   reachCount[bm[j]],
+                                   bm[j]->Dir() ? PathName(bm[j]->Dir()) : "(none)");
+                    }
+                }
+            }
+            printf("      split: skin meshes w/ FOREIGN mat = %d  ->  mesh OWNED by "
+                   "this member = %d (%d showing, REPOINTABLE), mesh in a SHARED dir "
+                   "= %d (NOT repointable per-member)\n",
+                   onShared, ownMeshForeignMat, ownMeshShowing, sharedMeshForeignMat);
+            meshesOnShared += onShared; meshesOnOwn += onOwn;
+            meshesOther += other; meshesNoMat += noMat;
+            printf("      meshes: %d total | skin-mat on MEMBER'S OWN=%d, on a "
+                   "FOREIGN dir=%d | non-skin=%d, no mat=%d\n",
+                   (int)bm.size(), onOwn, onShared, other, noMat);
+        }
+        printf("  === X22 SUMMARY: %d member(s) examined; repoint targets "
+               "OWNED=%d MISSING=%d; skin meshes on own=%d on foreign=%d ===\n",
+               members, ownedTargets, missingTargets, meshesOnOwn, meshesOnShared);
+        if (members == 0)
+            printf("      ⚠ ZERO members — VACUOUS, not a pass.\n");
+    }
+
     void ReportWeightOwners(ObjectDir *dir) {
         printf("  --- X15 weight-owner census (band vs crowd, differential) ---\n");
         int scopes = 0;
@@ -4174,6 +4313,10 @@ namespace {
             // counts print HERE, next to the verdict they qualify, rather than
             // in a comment claiming they are never reached.
             Rb3X20ReportBandPatchMeshStubs();
+
+            // X22: the census above says WHICH object draws; this says whether a
+            // per-member replacement for it EXISTS. See ReportX22SharedMaterials.
+            ReportX22SharedMaterials();
 
             // ---- X20: does an OutfitConfig NAMED `skin.*` actually exist? ----
             //
