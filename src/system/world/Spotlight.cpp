@@ -1,3 +1,12 @@
+// Two ObjPtr sites in Spotlight::Load pull OPPOSITE ways, and they are different
+// ctors: `ObjPtr<RndGroup> group(this)` is the 1-arg OWNER-ONLY ctor, which retail
+// inlines with the vptr lis/addi HOISTED ABOVE the member store; the ObjPtr<RndMat>
+// temp is the 2-arg ctor, which retail leaves OUT OF LINE (`bl fn_8229D9C8`).
+// RB3_OBJPTR_FORCEINLINE_CTOR is TU-wide and gets the second one wrong (it inlines
+// both, and pins the vptr AFTER the stores). The owner-only lever hits exactly the
+// 1-arg ctor and leaves the 2-arg one alone.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+
 #include "world/Spotlight.h"
 #include "Spotlight.h"
 #include "SpotlightDrawer.h"
@@ -40,7 +49,12 @@ Spotlight::BeamDef::BeamDef(Hmx::Object *owner)
     : mBeam(nullptr), mIsCone(false), mLength(100), mTopRadius(4), mBottomRadius(30),
       mTopSideBorder(0.1), mBottomSideBorder(0.3), mBottomBorder(0.5), mOffset(0),
       mTargetOffset(0, 0), mBrighten(1), mExpand(1), mShape(), mNumSections(0),
-      mNumSegments(0), mXSection(owner), mCutouts(owner), mMat(owner) {}
+      // TWO-ARG spelling: retail leaves these two ObjPtr ctors OUT OF LINE here.
+      // RB3_OBJPTR_INLINE_OWNER_CTOR (needed for the ObjPtr<RndGroup> site in
+      // Spotlight::Load) is TU-wide and would otherwise inline them, which took
+      // this ctor 100% -> 51.4% and two 44 B funclets off 100% as well.
+      mNumSegments(0), mXSection(owner, nullptr), mCutouts(owner),
+      mMat(owner, nullptr) {}
 
 Spotlight::BeamDef::BeamDef(const Spotlight::BeamDef &def)
     : mBeam(0), mIsCone(def.mIsCone), mLength(def.mLength), mTopRadius(def.mTopRadius),
@@ -85,6 +99,22 @@ void Spotlight::BeamDef::Save(BinStream &bs) const {
     bs << mNumSegments;
 }
 
+// RB3-360 retail rev storage (cast model, lane EB-2): retail never constructs a
+// BinStreamRev -- `.?AVBinStreamRev@@` is absent from the retail RTTI pool while
+// BinStream/MemStream/FileStream are all present, and Load has no ctor/vptr/dtor.
+// The loaded revision lives in ONE aligned(4) aggregate -- retail addresses both
+// words off a SINGLE base (altRev @+0, rev @+4: `sth r11,0x4,rX,lbl_82CC7860`).
+// Two separate statics do NOT reproduce that: MSVC scattered them here, resolving
+// altRev off ?sEnviron@Spotlight@@ +8 while rev became its own base (14 `lhz`
+// offset mismatches). CharHair needs the separate form; this TU needs the
+// aggregate -- check the emitted offsets per TU, the rule does not generalise.
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs_Spotlight;
+#define gSpotlightAltRev gRevs_Spotlight.altRev
+#define gSpotlightRev gRevs_Spotlight.rev
+
 void Spotlight::BeamDef::Load(BinStreamRev &d) {
     d >> mIsCone;
     d >> mLength;
@@ -94,30 +124,30 @@ void Spotlight::BeamDef::Load(BinStreamRev &d) {
     d >> mBottomSideBorder;
     d >> mBottomBorder;
     d >> mMat;
-    if (d.rev > 0x11 && d.rev < 0x13) {
+    if (gSpotlightRev > 0x11 && gSpotlightRev < 0x13) {
         char name[0x80];
-        d.stream.ReadString(name, 0x80);
+        d.ReadString(name, 0x80);
     }
     d >> mOffset;
-    if (d.rev < 10) {
+    if (gSpotlightRev < 10) {
         Vector4 v;
         d >> v;
     }
     d >> mTargetOffset;
-    if (d.rev > 0x14) {
+    if (gSpotlightRev > 0x14) {
         d >> mBrighten;
         d >> mXSection;
     }
-    if (d.rev > 0x17) {
+    if (gSpotlightRev > 0x17) {
         d >> mExpand;
     }
-    if (d.rev > 0x1A) {
+    if (gSpotlightRev > 0x1A) {
         d >> (int &)mShape;
     }
-    if (d.rev > 0x18) {
+    if (gSpotlightRev > 0x18) {
         d >> mCutouts;
     }
-    if (d.rev > 0x1F) {
+    if (gSpotlightRev > 0x1F) {
         d >> mNumSections;
         d >> mNumSegments;
     }
@@ -344,9 +374,12 @@ BinStreamRev &operator>>(BinStreamRev &d, Spotlight::BeamDef &bd) {
 INIT_REVS(0x21, 0)
 
 BEGIN_LOADS(Spotlight)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x21, 0)
-    if (d.rev < 9) {
+    int revs;
+    bs >> revs;
+    gSpotlightRev = getHmxRev(revs);
+    gSpotlightAltRev = getAltRev(revs);
+    BinStreamRev &d = (BinStreamRev &)bs;
+    if (gSpotlightRev < 9) {
         MILO_FAIL("Unsupported spotlight version");
     } else {
         RndPollable::Load(bs);
@@ -354,7 +387,7 @@ BEGIN_LOADS(Spotlight)
         RndTransformable::Load(bs);
         bs >> mSpotScale;
         bs >> mSpotHeight;
-        if (d.rev > 0x16) {
+        if (gSpotlightRev > 0x16) {
             mBeam.Load(d);
         } else {
             ObjVector<BeamDef> beams(this);
@@ -366,7 +399,7 @@ BEGIN_LOADS(Spotlight)
                 mBeam.mLength = 0;
             }
         }
-        if (d.rev > 0x15) {
+        if (gSpotlightRev > 0x15) {
             d >> mLightCanMesh;
         } else {
             ObjPtr<RndGroup> group(this);
@@ -376,20 +409,20 @@ BEGIN_LOADS(Spotlight)
         if (!mTarget.Load(bs, false, 0)) {
             mTargetLoaded = false;
         }
-        if (d.rev > 0x1C) {
+        if (gSpotlightRev > 0x1C) {
             d >> mSpotTarget;
         }
         d >> mLightCanOffset;
-        if (d.rev > 0x1E) {
+        if (gSpotlightRev > 0x1E) {
             d >> mLightCanSort;
         }
         d >> mColor;
         mColor.alpha = 1;
-        if (d.rev > 9) {
+        if (gSpotlightRev > 9) {
             d >> mIntensity;
         }
         d >> mSpotMaterial;
-        if (d.rev > 0x11 && d.rev < 0x13) {
+        if (gSpotlightRev > 0x11 && gSpotlightRev < 0x13) {
             char buf[0x80];
             bs.ReadString(buf, 0x80);
             if (!mSpotMaterial && buf[0] != '\0') {
@@ -397,15 +430,20 @@ BEGIN_LOADS(Spotlight)
             }
         }
         d >> mDampingConstant;
-        if (d.rev < 0x21) {
+        if (gSpotlightRev < 0x21) {
             Symbol s;
             d >> s;
         }
-        if (d.rev > 10) {
-            ObjPtr<RndMat> mat(this);
+        if (gSpotlightRev > 10) {
+            // TWO-ARG spelling on purpose: retail leaves this ctor OUT OF LINE
+            // (`li r5,0; addi r3,r31,0x50; bl fn_8229D9C8`). The one-arg owner-only
+            // form is inlined by RB3_OBJPTR_INLINE_OWNER_CTOR above, which is right
+            // for the ObjPtr<RndGroup> site but wrong here -- same per-site split
+            // documented for Part.cpp's mMat.
+            ObjPtr<RndMat> mat(this, nullptr);
             d >> mat;
             mFlare->SetMat(mat);
-            if (d.rev > 0x11 && d.rev < 0x13) {
+            if (gSpotlightRev > 0x11 && gSpotlightRev < 0x13) {
                 char buf[0x80];
                 bs.ReadString(buf, 0x80);
                 if (!mat && buf[0] != '\0') {
@@ -420,42 +458,42 @@ BEGIN_LOADS(Spotlight)
             mFlare->SetSteps(steps);
             d >> mFlareOffset;
         }
-        if (d.rev > 0xD) {
+        if (gSpotlightRev > 0xD) {
             d >> mFlareEnabled;
         }
-        if (d.rev > 0xE) {
+        if (gSpotlightRev > 0xE) {
             d >> mFlareVisibilityTest;
         }
         UpdateFlare();
-        if (d.rev > 0xB) {
+        if (gSpotlightRev > 0xB) {
             d >> mLensSize;
             d >> mLensOffset;
             d >> mLensMaterial;
         }
-        if (d.rev > 0x11 && d.rev < 0x13) {
+        if (gSpotlightRev > 0x11 && gSpotlightRev < 0x13) {
             char buf[0x80];
             bs.ReadString(buf, 0x80);
             if (!mLensMaterial && buf[0] != '\0') {
                 mLensMaterial = LookupOrCreateMat(buf, Dir());
             }
         }
-        if (d.rev > 0xC) {
+        if (gSpotlightRev > 0xC) {
             d >> mAdditionalObjects;
         }
-        if (d.rev > 0x1B) {
+        if (gSpotlightRev > 0x1B) {
             d >> mSlaves;
         }
-        if (d.rev > 0xF) {
+        if (gSpotlightRev > 0xF) {
             d >> mTargetShadow;
         }
-        if (d.rev > 0x19) {
+        if (gSpotlightRev > 0x19) {
             d >> mAnimateColorFromPreset;
             d >> mAnimateOrientationFromPreset;
-        } else if (d.rev > 0x10) {
+        } else if (gSpotlightRev > 0x10) {
             d >> mAnimateColorFromPreset;
             mAnimateOrientationFromPreset = mAnimateColorFromPreset;
         }
-        if (d.rev > 0x1D) {
+        if (gSpotlightRev > 0x1D) {
             d >> mColorOwner;
             if (!mColorOwner) {
                 mColorOwner = this;

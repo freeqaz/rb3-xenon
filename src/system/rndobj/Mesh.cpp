@@ -309,50 +309,65 @@ BEGIN_COPYS(RndMesh)
     Sync(0xBF);
 END_COPYS
 
+// RB3-360 retail rev storage (cast model, lane EB-2): retail never constructs a
+// BinStreamRev -- `.?AVBinStreamRev@@` is absent from the retail RTTI pool while
+// BinStream/MemStream/FileStream are all present, and Load has no ctor/vptr/dtor.
+// The loaded revision lives in ONE aggregate addressed off a SINGLE base. NOTE the
+// storage TYPE differs per TU and the target tells you which: Spotlight/CharHair
+// read the rev with `lhz`+`cmplwi` (unsigned short), but this TU's target reads it
+// with `lwz`+`cmpwi` -- a SIGNED 32-bit int, at offset 0 of the base
+// (`lwz r11, lbl_82CC2638, r29`). So: int, rev FIRST.
+static struct {
+    int rev;
+    int altRev;
+} gRevs_Mesh;
+#define gMeshAltRev gRevs_Mesh.altRev
+#define gMeshRev gRevs_Mesh.rev
+
 BinStreamRev &operator>>(BinStreamRev &d, RndMesh::Vert &vert) {
-    d.stream >> vert.pos;
+    d >> vert.pos;
     float y, z;
-    if (d.rev != 10 && d.rev < 0x17) {
-        d.stream >> y;
-        d.stream >> z;
+    if (gMeshRev != 10 && gMeshRev < 0x17) {
+        d >> y;
+        d >> z;
     }
-    d.stream >> vert.norm;
-    if (d.rev < MESH_REV_SEP_COLOR)
-        d.stream >> vert.color;
+    d >> vert.norm;
+    if (gMeshRev < MESH_REV_SEP_COLOR)
+        d >> vert.color;
     else
-        d.stream >> vert.color;
-    d.stream >> vert.tex;
-    if (d.rev >= MESH_REV_SEP_COLOR) {
-        d.stream >> vert.boneWeights;
+        d >> vert.color;
+    d >> vert.tex;
+    if (gMeshRev >= MESH_REV_SEP_COLOR) {
+        d >> vert.boneWeights;
     }
-    if (d.rev != 10 && d.rev < 23) {
+    if (gMeshRev != 10 && gMeshRev < 23) {
         vert.boneWeights.Set((1.0f - y) - z, y, z, 0);
     }
-    if (d.rev < 0xB) {
+    if (gMeshRev < 0xB) {
         Vector2 v;
-        d.stream >> v;
+        d >> v;
     }
-    if (d.rev > 0x1C) {
-        d.stream >> vert.boneIndices[0];
-        d.stream >> vert.boneIndices[1];
-        d.stream >> vert.boneIndices[2];
-        d.stream >> vert.boneIndices[3];
+    if (gMeshRev > 0x1C) {
+        d >> vert.boneIndices[0];
+        d >> vert.boneIndices[1];
+        d >> vert.boneIndices[2];
+        d >> vert.boneIndices[3];
     }
-    if (d.rev > 0x1D) {
-        d.stream >> vert.tangent;
+    if (gMeshRev > 0x1D) {
+        d >> vert.tangent;
     }
     return d;
 }
 
 BinStream &operator>>(BinStreamRev &d, RndMesh::Face &face) {
-    d.stream >> face.v1;
-    d.stream >> face.v2;
-    d.stream >> face.v3;
-    if (d.rev < 1) {
+    d >> face.v1;
+    d >> face.v2;
+    d >> face.v3;
+    if (gMeshRev < 1) {
         Vector3 v;
-        d.stream >> v;
+        d >> v;
     }
-    return d.stream;
+    return d;
 }
 
 BinStream &operator>>(BinStream &bs, RndBone &bone) {
@@ -424,24 +439,27 @@ BinStream &CachedRead(BinStream &bs, std::vector<T1, T2> &vec) {
 INIT_REVS(0x26, 0)
 
 BEGIN_LOADS(RndMesh)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x26, 0)
-    if (d.rev > 0x19) {
-        Hmx::Object::Load(d.stream);
+    int revs;
+    bs >> revs;
+    gMeshRev = getHmxRev(revs);
+    gMeshAltRev = getAltRev(revs);
+    BinStreamRev &d = (BinStreamRev &)bs;
+    if (gMeshRev > 0x19) {
+        Hmx::Object::Load(d);
     }
-    RndTransformable::Load(d.stream);
-    RndDrawable::Load(d.stream);
-    if (d.rev < 15) {
+    RndTransformable::Load(d);
+    RndDrawable::Load(d);
+    if (gMeshRev < 15) {
         ObjPtrList<Hmx::Object> oList(this);
         int dummy;
-        d.stream >> dummy;
-        d.stream >> oList;
+        d >> dummy;
+        d >> oList;
     }
     int i22 = 0;
-    if (d.rev < 0x14) {
+    if (gMeshRev < 0x14) {
         int ib8, ie8;
-        d.stream >> ib8;
-        d.stream >> ie8;
+        d >> ib8;
+        d >> ie8;
         if (ib8 == 0 || ie8 == 0) {
             i22 = 0;
         } else if (ib8 == 1) {
@@ -452,106 +470,106 @@ BEGIN_LOADS(RndMesh)
             i22 = 1;
         }
     }
-    if (d.rev < 3) {
+    if (gMeshRev < 3) {
         int dummy;
-        d.stream >> dummy;
+        d >> dummy;
     }
-    d.stream >> mMat;
-    if (d.rev > 0x1A && d.rev < 0x1C) {
+    d >> mMat;
+    if (gMeshRev > 0x1A && gMeshRev < 0x1C) {
         char buf[0x80];
-        d.stream.ReadString(buf, 0x80);
+        d.ReadString(buf, 0x80);
         if (!mMat && buf[0] != '\0') {
             mMat = LookupOrCreateMat(buf, Dir());
         }
     }
-    d.stream >> mGeomOwner;
+    d >> mGeomOwner;
     if (!mGeomOwner) {
         mGeomOwner = this;
     }
-    if (d.rev < 0x14 && mMat && (i22 == 0 || mMat->GetZMode() != kZModeDisable)) {
+    if (gMeshRev < 0x14 && mMat && (i22 == 0 || mMat->GetZMode() != kZModeDisable)) {
         mMat->SetZMode((ZMode)i22);
     }
-    if (d.rev < 0xD) {
+    if (gMeshRev < 0xD) {
         ObjOwnerPtr<RndMesh> mesh(this);
-        d.stream >> mesh;
+        d >> mesh;
         if (mesh != mGeomOwner) {
             MILO_NOTIFY("Combining face and vert owner of %s", Name());
         }
     }
-    if (d.rev < 0xF) {
+    if (gMeshRev < 0xF) {
         ObjPtr<RndTransformable> trans(this);
-        d.stream >> trans;
+        d >> trans;
         SetTransParent(trans, false);
         SetTransConstraint((Constraint)2, nullptr, false);
     }
-    if (d.rev < 0xE) {
+    if (gMeshRev < 0xE) {
         ObjPtr<RndTransformable> trans1(this);
         ObjPtr<RndTransformable> trans2(this);
-        d.stream >> trans1 >> trans2;
+        d >> trans1 >> trans2;
     }
-    if (d.rev < 3) {
+    if (gMeshRev < 3) {
         Vector3 v;
-        d.stream >> v;
+        d >> v;
     }
-    if (d.rev < 0xF) {
+    if (gMeshRev < 0xF) {
         Sphere s;
-        d.stream >> s;
+        d >> s;
         SetSphere(s);
     }
-    if (d.rev > 4 && d.rev < 8) {
+    if (gMeshRev > 4 && gMeshRev < 8) {
         bool b;
         d >> b;
     }
-    if (d.rev > 5 && d.rev < 0x15) {
+    if (gMeshRev > 5 && gMeshRev < 0x15) {
         String str;
         int x;
-        d.stream >> str;
-        d.stream >> x;
+        d >> str;
+        d >> x;
     }
-    if (d.rev > 0xF) {
-        d.stream >> mMutable;
-    } else if (d.rev > 0xB) {
+    if (gMeshRev > 0xF) {
+        d >> mMutable;
+    } else if (gMeshRev > 0xB) {
         bool b;
         d >> b;
         mMutable = b ? 31 : 0;
     }
-    if (d.rev > 0x11) {
-        d.stream >> (int &)mVolume;
+    if (gMeshRev > 0x11) {
+        d >> (int &)mVolume;
     }
-    if (d.rev > 0x12) {
+    if (gMeshRev > 0x12) {
         RELEASE(mBSPTree);
-        d.stream >> mBSPTree;
+        d >> mBSPTree;
     }
-    if (d.rev > 6 && d.rev < 8) {
+    if (gMeshRev > 6 && gMeshRev < 8) {
         bool b;
         d >> b;
     }
-    if (d.rev > 8 && d.rev < 0xB) {
+    if (gMeshRev > 8 && gMeshRev < 0xB) {
         int x;
-        d.stream >> x;
+        d >> x;
     }
     LoadVertices(d);
-    if (d.stream.Cached()) {
-        CachedRead(d.stream, mFaces);
+    if (d.Cached()) {
+        CachedRead(d, mFaces);
     } else {
         d >> mFaces;
     }
-    if (d.rev > 4 && d.rev < 0x18) {
+    if (gMeshRev > 4 && gMeshRev < 0x18) {
         int count;
         unsigned short s1, s2;
-        d.stream >> count;
+        d >> count;
         for (; count != 0; count--) {
-            d.stream >> s1;
-            d.stream >> s2;
+            d >> s1;
+            d >> s2;
         }
     }
-    if (d.rev > 0x17) {
-        if (d.stream.Cached()) {
-            CachedRead(d.stream, mPatches);
+    if (gMeshRev > 0x17) {
+        if (d.Cached()) {
+            CachedRead(d, mPatches);
         } else {
             d >> mPatches;
         }
-    } else if (d.rev > 0x15) {
+    } else if (gMeshRev > 0x15) {
         mPatches.clear();
         int count;
         unsigned int ui;
@@ -562,9 +580,9 @@ BEGIN_LOADS(RndMesh)
             d >> ui >> usvec >> uivec;
             mPatches.push_back(ui);
         }
-    } else if (d.rev > 0x10)
+    } else if (gMeshRev > 0x10)
         d >> mPatches;
-    if (d.rev > 0x1C) {
+    if (gMeshRev > 0x1C) {
         d >> mBones;
         int max = MaxBones();
         if (mBones.size() > max) {
@@ -576,17 +594,17 @@ BEGIN_LOADS(RndMesh)
             );
             mBones.resize(MaxBones());
         }
-    } else if (d.rev > 0xD) {
+    } else if (gMeshRev > 0xD) {
         ObjPtr<RndTransformable> trans(this);
-        d.stream >> trans;
+        d >> trans;
         if (trans) {
             mBones.resize(4);
-            if (d.rev > 0x16) {
+            if (gMeshRev > 0x16) {
                 mBones[0].mBone = trans;
                 bs >> mBones[1].mBone >> mBones[2].mBone >> mBones[3].mBone;
                 bs >> mBones[0].mOffset >> mBones[1].mOffset >> mBones[2].mOffset
                     >> mBones[3].mOffset;
-                if (d.rev < 0x19) {
+                if (gMeshRev < 0x19) {
                     for (auto it = mVerts.begin(); it != mVerts.end(); ++it) {
                         it->boneWeights.Set(
                             ((1.0f - it->boneWeights.x) - it->boneWeights.y)
@@ -619,37 +637,37 @@ BEGIN_LOADS(RndMesh)
             mBones.clear();
     }
     RemoveInvalidBones();
-    if (d.rev > 0 && d.rev < 4) {
+    if (gMeshRev > 0 && gMeshRev < 4) {
         std::vector<std::vector<unsigned short> > usvec;
         d >> usvec;
     }
-    if (d.rev == 0) {
+    if (gMeshRev == 0) {
         bool bd4;
         int ic0, ic4, ic8, icc;
         d >> bd4 >> ic0 >> ic4 >> ic8;
         d >> icc;
     }
-    if (d.rev == 0x12) {
+    if (gMeshRev == 0x12) {
         if (mGeomOwner == this) {
             SetVolume(mVolume);
             goto yes;
         }
     } else {
     yes:
-        if (d.rev >= 0x1E)
+        if (gMeshRev >= 0x1E)
             goto next;
     }
     if (mMat && mMat->NormalMap()) {
         MakeTangentsLate(this);
     }
 next:
-    if (d.rev < 0x1F) {
+    if (gMeshRev < 0x1F) {
         SetZeroWeightBones();
     }
-    if (d.rev > 0x23) {
+    if (gMeshRev > 0x23) {
         d >> mKeepMeshData;
     }
-    if (d.rev < MESH_REV_SEP_COLOR && IsSkinned()) {
+    if (gMeshRev < MESH_REV_SEP_COLOR && IsSkinned()) {
         for (auto it = mVerts.begin(); it != mVerts.end(); ++it) {
             it->boneWeights.Set(
                 it->color.red, it->color.green, it->color.blue, it->color.alpha
@@ -657,7 +675,7 @@ next:
             it->color.Zero();
         }
     }
-    if (d.rev > 0x25) {
+    if (gMeshRev > 0x25) {
         d >> mHasAOCalc;
     }
     Sync(0xBF);
@@ -1702,9 +1720,9 @@ void FillCompressedVertex(CompressedVertex_Xbox &compressed, const RndMesh::Vert
 
 void RndMesh::LoadVertices(BinStreamRev &d) {
     int count;
-    d.stream.ReadEndian(&count, 4);
+    d.ReadEndian(&count, 4);
     bool b58;
-    if (d.rev > 0x22) {
+    if (gMeshRev > 0x22) {
         d >> b58;
     } else {
         b58 = false;
@@ -1716,8 +1734,8 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
     if (b58) {
         unsigned int loadedCompressedSize = 0;
         unsigned int loadedVersion = 0;
-        d.stream.ReadEndian(&loadedCompressedSize, 4);
-        d.stream.ReadEndian(&loadedVersion, 4);
+        d.ReadEndian(&loadedCompressedSize, 4);
+        d.ReadEndian(&loadedVersion, 4);
 
         if (loadedCompressedSize == sizeof(CompressedVertex_Xbox) && loadedVersion == 1) {
             mNumCompressedVerts = count;
@@ -1728,7 +1746,7 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
                 MemPushTemp();
                 mCompressedVerts = new unsigned char[totalSize];
                 MemPopTemp();
-                ReadChunks(d.stream, mCompressedVerts, totalSize, loadedCompressedSize << 9);
+                ReadChunks(d, mCompressedVerts, totalSize, loadedCompressedSize << 9);
             }
         } else if (count > 0 && loadedCompressedSize > 0) {
             unsigned int totalSize = loadedCompressedSize * count;
@@ -1739,7 +1757,7 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
                 loadedVersion
             );
             MILO_ASSERT(totalSize > 0, 0x2E7);
-            d.stream.Seek(totalSize, BinStream::kSeekCur);
+            d.Seek(totalSize, BinStream::kSeekCur);
         } else if (count > 0) {
             // loadedCompressedSize == 0 but count > 0: skip (shouldn't happen)
             mVerts.resize(0);
@@ -1752,9 +1770,9 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
             i++;
             if (!(i & 0x1FF)) {
 #ifdef HX_NATIVE
-                d.stream.WaitUntilReady();
+                d.WaitUntilReady();
 #else
-                while (d.stream.Eof() == TempEof)
+                while (d.Eof() == TempEof)
                     Timer::Sleep(0);
 #endif
             }
@@ -1766,8 +1784,8 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
     unsigned int compressedSize = 0;
     bool b4 = false;
     if (b58) {
-        d.stream.ReadEndian(&loadedCompressedSize, 4);
-        d.stream.ReadEndian(&loadedVersion, 4);
+        d.ReadEndian(&loadedCompressedSize, 4);
+        d.ReadEndian(&loadedVersion, 4);
         MILO_ASSERT(IsVertexCompressionSupported(TheLoadMgr.GetPlatform()), 0x29C);
         if (TheLoadMgr.GetPlatform() != kPlatformXBox) {
             TheDebug.Fail(FormatString("Unsupported platform for vertex compression").Str(), 0);
@@ -1789,7 +1807,7 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
             MILO_NOTIFY(
                 "Loaded stale compressed vertex data, resave mesh file \"%s\""
                 "(loaded size = %d, current = %d; loaded ver = %d, current = %d",
-                d.stream.Name(), loadedCompressedSize, compressedSize,
+                d.Name(), loadedCompressedSize, compressedSize,
                 loadedVersion, (unsigned int)b4
             );
         }
@@ -1803,12 +1821,12 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
                 MemPushTemp();
                 mCompressedVerts = new unsigned char[totalSize];
                 MemPopTemp();
-                ReadChunks(d.stream, mCompressedVerts, totalSize, compressedSize << 9);
+                ReadChunks(d, mCompressedVerts, totalSize, compressedSize << 9);
             }
         } else {
             loadedCompressedSize *= count;
             MILO_ASSERT(loadedCompressedSize > 0, 0x2E7);
-            d.stream.Seek(loadedCompressedSize, BinStream::kSeekCur);
+            d.Seek(loadedCompressedSize, BinStream::kSeekCur);
         }
     } else {
         mVerts.resize(count);
@@ -1818,9 +1836,9 @@ void RndMesh::LoadVertices(BinStreamRev &d) {
             i++;
             if (!(i & 0x1FF)) {
 #ifdef HX_NATIVE
-                d.stream.WaitUntilReady();
+                d.WaitUntilReady();
 #else
-                while (d.stream.Eof() != 0)
+                while (d.Eof() != 0)
                     Timer::Sleep(0);
 #endif
             }
