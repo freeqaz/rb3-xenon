@@ -62,8 +62,6 @@ public:
     NEW_OBJ(TrackWidget)
     NEW_OVERLOAD
     DELETE_OVERLOAD
-    DECLARE_REVS
-
     static void Register() { REGISTER_OBJ_FACTORY(TrackWidget); }
 
     bool mActive; // 0x24
