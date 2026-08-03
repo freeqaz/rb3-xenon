@@ -1,6 +1,6 @@
 #pragma once
 #include "os/ContentMgr.h"
-#include "synth/BinkClip.h"
+#include "synth/MoggClip.h"
 #include "synth/Faders.h"
 #include "ui/UIPanel.h"
 
@@ -26,7 +26,7 @@ public:
     bool DoneLoading() const {
         return !LoadingFailed() && (mWaitingForLoad || mWaitingForMount);
     }
-    BinkClip *GetVoiceover() const { return mVoiceOver; }
+    MoggClip *GetVoiceover() const { return mVoiceOver; }
 
     void FadeOutVoiceover();
     void UpdateVoiceoverState();
@@ -36,12 +36,16 @@ public:
     void SetVolumeOffsetSymbol(Symbol);
     void UpdateVolumeOffset();
 
-    BinkClip *mVoiceOver; // 0x3c
-    Fader *mFader; // 0x40
-    Symbol mVolumeOffsetSymbol; // 0x44
-    bool mWaitingForLoad; // 0x48
-    bool mWaitingForMount; // 0x49
-    bool mLoadingFailed; // 0x4a
-    Symbol mDLCName; // 0x4c
-    String mDLCVoiceoverPath; // 0x50
+    // Offsets below are read off the RETAIL bodies (PlayVoiceover 0x8262F6B0,
+    // SetVoiceoverFile 0x8262F5E8, UpdateVolumeOffset 0x8262FC20), not inherited
+    // from the rb3-Wii header -- those comments said 0x3c..0x50 and were uniformly
+    // 4 bytes stale.
+    MoggClip *mVoiceOver; // 0x40
+    Fader *mFader; // 0x44
+    Symbol mVolumeOffsetSymbol; // 0x48
+    bool mWaitingForLoad; // 0x4c
+    bool mWaitingForMount; // 0x4d
+    bool mLoadingFailed; // 0x4e
+    Symbol mDLCName; // 0x50
+    String mDLCVoiceoverPath; // 0x54
 };

@@ -133,6 +133,26 @@ void MoggClip::SynthPoll() {
     }
 }
 
+// Retail 0x8270DE60.  Reconstructed from the target body: EnsureLoaded ->
+// KillStream -> NewBufStream("mogg", 0.0f) -> mFader->SetVal(0) -> SetLoop(mLoop)
+// -> inline volume update -> UpdateFaders -> UpdatePanInfo -> mPlaying = true.
+void MoggClip::Play() {
+    if (EnsureLoaded()) {
+        KillStream();
+        mStream = dynamic_cast<StandardStream *>(
+            TheSynth->NewBufStream(mData, mDataSize, "mogg", 0, false)
+        );
+        mFader->SetVal(0);
+        SetLoop(mLoop);
+        if (mStream) {
+            mStream->Stream::SetVolume(mVolume + mControllerVolume);
+        }
+        UpdateFaders();
+        UpdatePanInfo();
+        mPlaying = true;
+    }
+}
+
 void MoggClip::Play(float f1) {
     if (EnsureLoaded()) {
         KillStream();

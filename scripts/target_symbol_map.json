@@ -29183,5 +29183,8 @@
  "0x82bb5270": "?Process@DelayEffect@@QAAXPAMHH@Z",
  "0x82746150": "?PlatformInit@BinkMovieSys@@QAAXXZ",
  "0x82481038": "?DrawShowing@RndMultiMeshProxy@@UAAXXZ",
- "0x827ab850": "?SaveLoadAllComplete@MemcardMgr@@QAAXXZ"
+ "0x827ab850": "?SaveLoadAllComplete@MemcardMgr@@QAAXXZ",
+ "0x8262f5e8": "?SetVoiceoverFile@VoiceoverPanel@@QAAXPBDVSymbol@@@Z",
+ "0x8262f700": "??$New@VMoggClip@@@Object@Hmx@@SAPAVMoggClip@@XZ",
+ "0x8270de60": "?Play@MoggClip@@QAAXXZ"
 }
