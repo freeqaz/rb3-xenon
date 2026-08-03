@@ -103,7 +103,10 @@ void ScoreDisplay::Enter() {
     UpdateDisplay();
 }
 
-void ScoreDisplay::SetAlphaColor(float f, UIColor *col) { SetColorOverride(col); }
+void ScoreDisplay::SetAlphaColor(float f, UIColor *col) {
+    mCombinedLabel->SetAlpha(f);
+    SetColorOverride(col);
+}
 
 void ScoreDisplay::GrowBoundingBox(Box &) const {}
 

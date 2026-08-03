@@ -471,12 +471,7 @@
             "system/char/CharIKRod.cpp": "NonMatching",
             "system/char/CharSleeve.cpp": "NonMatching",
             "system/char/CharTaskMgr.cpp": "NonMatching",
-            "system/char/CharUpperTwist.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
-                ]
-            },
+            "system/char/CharUpperTwist.cpp": "NonMatching",
             "system/flow/FlowIf.cpp": "NonMatching",
             "system/oggvorbis/bitrate.c": "NonMatching",
             "system/oggvorbis/lsp.c": "NonMatching",
@@ -673,8 +668,7 @@
             "system/rndobj/Group.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC",
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
             "system/char/CharNeckTwist.cpp": "NonMatching",
@@ -733,12 +727,7 @@
             "system/synth/SampleInst.cpp": "NonMatching",
             "system/os/User.cpp": "NonMatching",
             "system/flow/Flow.cpp": "NonMatching",
-            "system/char/CharInterest.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
-                ]
-            },
+            "system/char/CharInterest.cpp": "NonMatching",
             "system/synth/VorbisReader.cpp": "NonMatching",
             "system/movie/TexMovie.cpp": "NonMatching",
             "system/char/CharCuff.cpp": "NonMatching",
@@ -774,12 +763,7 @@
             "system/obj/TypeProps.cpp": "NonMatching",
             "system/char/CharBlendBone.cpp": "NonMatching",
             "system/char/CharForeTwist.cpp": "NonMatching",
-            "system/char/CharSignalApplier.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
-                ]
-            },
+            "system/char/CharSignalApplier.cpp": "NonMatching",
             "system/rndobj/Morph.cpp": "NonMatching",
             "system/char/FileMerger.cpp": "NonMatching",
             "system/flow/FlowAnimate.cpp": "NonMatching",
@@ -821,12 +805,7 @@
             "system/rndobj/PartLauncher.cpp": "NonMatching",
             "system/obj/DataNode.cpp": "NonMatching",
             "system/os/FileCache.cpp": "NonMatching",
-            "system/rndobj/Wind.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
-                ]
-            },
+            "system/rndobj/Wind.cpp": "NonMatching",
             "system/rndobj/Line.cpp": "NonMatching",
             "system/rndobj/Font3d.cpp": "NonMatching",
             "system/rndobj/Movie.cpp": "NonMatching",
@@ -835,8 +814,7 @@
             "system/char/CharClipGroup.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC",
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
             "system/char/CharPollGroup.cpp": "NonMatching",
@@ -1931,7 +1909,8 @@
                 "status": "NonMatching",
                 "extra_cflags": [
                     "/DRB3_HANDLE_LOCAL_STATIC",
-                    "/DRB3_STRIP_CHEAT_HANDLERS"
+                    "/DRB3_STRIP_CHEAT_HANDLERS",
+                    "/DRB3_MAP_0x1C"
                 ]
             },
             "band3/net_band/RockCentralJobs.cpp": "NonMatching",
