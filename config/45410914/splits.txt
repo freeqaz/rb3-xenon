@@ -2936,7 +2936,7 @@ Timer.cpp:
 Str.cpp:
 	.pdata      start:0x82207868 end:0x82207878
 	.pdata      start:0x82241BF8 end:0x82241D08
-	.text       start:0x823E0420 end:0x823E05EC
+	.text       start:0x823E0430 end:0x823E05EC
 	.text       start:0x82566978 end:0x82566998
 	.text       start:0x827BD990 end:0x827BE9A0
 
@@ -3982,7 +3982,6 @@ band3/meta_band/InterstitialMgr.cpp:
 
 HamScrollSpeedIndicator.cpp:
 	.pdata      start:0x821FC748 end:0x821FC758
-	.text       start:0x822E36B8 end:0x822E36C8
 	.text       start:0x8231F00C end:0x8231F0E0
 
 LiveCameraInput.cpp:
@@ -7603,9 +7602,7 @@ HamIKSkeleton.cpp:
 
 DefaultPhysicsManager.cpp:
 	.pdata      start:0x82213EA0 end:0x82213EB8
-	.pdata      start:0x8225E3F8 end:0x8225E400
 	.text       start:0x824CA1F0 end:0x824CA2E0
-	.text       start:0x82BAC148 end:0x82BAC284
 
 WavMgr.cpp:
 	.pdata      start:0x822084E8 end:0x82208530
@@ -12323,12 +12320,10 @@ system/synth/SynthSample.cpp:
 SpeechMgr.cpp:
 	.pdata      start:0x821FCA18 end:0x821FCA20
 	.pdata      start:0x82207A88 end:0x82207AA0
-	.pdata      start:0x8220E318 end:0x8220E320
 	.pdata      start:0x82214250 end:0x82214260
 	.pdata      start:0x82214260 end:0x82214278
 	.text       start:0x82321A58 end:0x82321AA4
 	.text       start:0x823E1B40 end:0x823E1C20
-	.text       start:0x82459FC8 end:0x8245A02C
 	.text       start:0x824CD818 end:0x824CD8B8
 	.text       start:0x824CD8B8 end:0x824CDA48
 
