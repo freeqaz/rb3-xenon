@@ -494,6 +494,44 @@ document's numbers are refuted. X6 caught and corrected **one** fabricated hash
 in its §7 and flagged the class of error; the remaining rows have it too. **Cite
 `cmp` against the artifact, not a transcribed hash.**
 
+> ### ⛔⛔ COORDINATOR CORRECTION (2026-08-03) — this retraction is ITSELF WRONG
+>
+> **X6's recorded SHAs are correct. All four of them.** Verified directly
+> against the artifacts in `/home/free/tmp/laneX6/evidence/`:
+>
+> | artifact | measured `sha256` | X6 recorded | |
+> |---|---|---|---|
+> | `x6-CONTROL-crowd-draw-off.png` | `d7963b8c1e6d5711` | `d7963b8c1e6d5711` | ✅ |
+> | `x6-E1-small_club_01-crowd-PLACED.png` | `5282bd275159f10b` | `5282bd275159f10b` | ✅ |
+> | `x6-E2-small_club_01-all-300.png` | `2f36c1e369314e11` | `2f36c1e369314e11` | ✅ |
+> | `x6-E3-arena_01-4700-crowd.png` | `218cf68dd5a019a7` | `218cf68dd5a019a7` | ✅ |
+>
+> Two distinct errors produced this false retraction:
+>
+> 1. **Self-contradiction that should have caught it in-lane.** The table above
+>    asserts `cmp` **IDENTICAL** against X6's artifact *and* a different
+>    `sha256` than that artifact has. Both cannot be true. A `cmp`-identical
+>    file has an identical hash by definition — so the hash was taken from
+>    something other than the file that was compared.
+> 2. **X6 §3's identical hashes are the FINDING, not a transcription error.**
+>    §3 ("Wiring the real draw path in was necessary and NOT sufficient")
+>    deliberately reports the *same* SHA across 0 / 30 / 300 instances — that is
+>    the evidence for "300 instances and not one pixel changed". §4.1, *after*
+>    the real-geometry substitution, reports three *different* SHAs, and those
+>    are the ones matching the artifacts. Reading §3's control rows as claims
+>    about the final frames is what generated the "four-way regression".
+>
+> X7's stated lesson — *cite `cmp` against the artifact, not a transcribed hash*
+> — is good advice that X7 did not follow: it reported a transcribed hash that
+> contradicted its own `cmp`. The durable rule is narrower and stricter:
+> **before retracting another lane's numbers, re-measure the artifact and check
+> that your own two instruments agree with each other.** An accusation of
+> fabrication against a correct record is more corrosive than the error it
+> alleges, because the next lane inherits distrust of a document that was right.
+>
+> Nothing else in X7 is affected: the non-regression conclusion (`cmp`
+> identical, frames unchanged) is **correct** and independently supported.
+
 Also measured: `RB3_NO_BANDCONFIG=1` (a single-variable control added this lane)
 produces **the same SHAs as the default** — so registering `BandConfiguration`,
 loading it, and constructing its four `Waypoint`s is **frame-neutral**. The
@@ -591,6 +629,15 @@ bandobj surface as the band. Ruled out and documented: DTA scripts (no venue
    recorded SHAs disagree with the PNGs in `/home/free/tmp/laneX6/evidence/`,
    which this lane reproduces **byte-identically** via `cmp`. X6 caught one
    fabricated hash and flagged the class; the rest of the table has it too. §6.
+   > **⛔⛔ WITHDRAWN BY THE COORDINATOR (2026-08-03). This retraction is wrong;
+   > X6's four recorded SHAs are all correct** — re-measured against the
+   > artifacts (`d7963b8c1e6d5711` / `5282bd275159f10b` / `2f36c1e369314e11` /
+   > `218cf68dd5a019a7`, all ✅). X6 §3's *identical* hashes are its finding
+   > ("300 instances and not one pixel changed"), not a transcription error;
+   > §4.1 carries the post-substitution hashes that match the artifacts. See the
+   > full correction in §6. **Retraction 5 below is therefore also mis-framed:
+   > the numbers it calls "never measured" were measured and correct — the
+   > mismatch was on this lane's side.**
 5. ⛔ **My own working hypothesis: "the frames changed, so X7 regressed X6."**
    **Retracted by `cmp`.** All four control SHAs differed from X6's *document*,
    which read as a four-way regression; I built a `main` control worktree to
