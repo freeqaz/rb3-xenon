@@ -67,6 +67,9 @@
                     "/DRB3_SYNCPROP_LOCAL_STATIC"
                 ]
             },
+            "system/bandobj/BandConfiguration.cpp": {
+                "status": "NonMatching"
+            },
             "system/bandobj/BandCharDesc.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

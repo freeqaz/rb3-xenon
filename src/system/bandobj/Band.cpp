@@ -5,6 +5,7 @@
 #include "bandobj/BandCamShot.h"
 #include "bandobj/BandCharDesc.h"
 #include "bandobj/BandCharacter.h"
+#include "bandobj/BandConfiguration.h"
 #include "bandobj/BandCrowdMeter.h"
 #include "bandobj/BandDirector.h"
 #include "bandobj/BandFaceDeform.h"
@@ -55,23 +56,18 @@
 // the BandInit call sequence (and therefore its relocation layout) identical to
 // retail; the Init symbols stay undefined externals, which objdiff pairs fine.
 //
-// BandConfiguration is an exception: retail's BandConfiguration::Init() is a
-// trivial `{ Register(); }` one-liner *defined in its own header*, so it is
-// visible to this TU (via Band.cpp's scatter-include into BandCharacter.cpp)
-// and /Ob2 inlines the whole StaticClassName+RegisterFactory pattern directly
-// into BandInit() -- exactly like BandCamShot/BandCrowdMeter alongside it. An
-// external-call stub therefore desyncs BandInit's instruction sequence. This
-// is a factory-only shim (not the full ~0x29c-byte class with its real
-// members/virtuals) that reproduces just the inlined registration shape.
-class BandConfiguration : public Hmx::Object {
-public:
-    OBJ_CLASSNAME(BandConfiguration);
-    OBJ_SET_TYPE(BandConfiguration);
-    NEW_OBJ(BandConfiguration)
-    static void Register() { REGISTER_OBJ_FACTORY(BandConfiguration); }
-    static void Init() { Register(); }
-};
-// BandSong is the same case as BandConfiguration above: retail's Init() is a
+// X6: BandConfiguration's factory-only shim is GONE -- the real TU is ported
+// (bandobj/BandConfiguration.{h,cpp}), and its header is included above. The
+// shim existed because retail's BandConfiguration::Init() is a trivial
+// `{ Register(); }` one-liner *defined in its own header*, so it is visible to
+// this TU (via Band.cpp's scatter-include into BandCharacter.cpp) and /Ob2
+// inlines the whole StaticClassName+RegisterFactory pattern directly into
+// BandInit() -- exactly like BandCamShot/BandCrowdMeter alongside it. An
+// external-call stub would desync BandInit's instruction sequence. The real
+// header keeps Init() inline for precisely that reason, so BandInit's shape is
+// preserved; verified by rebuild at symbol granularity, not by whole-file cmp.
+//
+// BandSong is still a shim, and is the same case: retail's Init() is a
 // header-inline `{ Register(); }` one-liner, so it inlines into BandInit()
 // here too. Factory-only shim over the real base (Song, already ported).
 class BandSong : public Song {
