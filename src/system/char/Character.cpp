@@ -331,7 +331,20 @@ void Character::UpdateSphere() {
     Transform tf38;
     FastInvert(WorldXfm(), tf38);
     Transform tf68;
+#ifdef HX_NATIVE
+    // X15: same invariant, same cause as char/CharWeightable.h's Weight() — see
+    // the long note there. `mSphereBase` is "never null; null means me": the ctor
+    // seeds `mSphereBase(this, this)` (:62), `Load` coerces a null loaded pointer
+    // to `this` TWICE and explicitly (:257-262), and `Replace` restores
+    // `mSphereBase = this` when the referent goes away (:73-77). The native
+    // `~ObjectDir` cascade's `NullifyAllRefs` shortcut (obj/Dir.cpp:119-135,
+    // HX_NATIVE-only) clears the ring WITHOUT firing `Replace`, so the one
+    // restore path never runs. Spelling the null case out yields exactly what
+    // retail's `Replace` would have left. X360 arm below is unchanged.
+    Multiply((mSphereBase ? mSphereBase.Ptr() : this)->WorldXfm(), tf38, tf68);
+#else
     Multiply(mSphereBase->WorldXfm(), tf38, tf68);
+#endif
     FastInvert(tf68, tf68);
     Multiply(s78, tf68, s78);
     SetSphere(s78);
@@ -554,7 +567,18 @@ bool Character::MakeWorldSphere(Sphere &s, bool b) {
         return true;
     }
     if (mSphere.GetRadius()) {
+#ifdef HX_NATIVE
+        // X15: see UpdateSphere() above and char/CharWeightable.h — the same
+        // "null means me" invariant, broken by the same native-only cascade
+        // shortcut. This is the site `BandCharacter::Poll()` faults at:
+        //   Character::MakeWorldSphere <- BandCharacter::CalcBoundingSphere
+        //   <- BandCharacter::Poll
+        // with the base pointer measured NULL in gdb (%rax=0 at the +0xd0
+        // dirty-flag test inside WorldXfm()).
+        Multiply(mSphere, (mSphereBase ? mSphereBase.Ptr() : this)->WorldXfm(), s);
+#else
         Multiply(mSphere, mSphereBase->WorldXfm(), s);
+#endif
         return true;
     } else
         return false;

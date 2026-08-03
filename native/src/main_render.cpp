@@ -91,6 +91,7 @@
 #include "char/CharClipSet.h"
 #include "char/CharDriver.h"
 #include "char/CharServoBone.h"
+#include "char/CharWeightSetter.h"
 #include "char/Character.h"
 #include "obj/Task.h"
 #include "math/Color.h"
@@ -758,6 +759,133 @@ namespace {
     // ⚠ ANTI-VACUITY: refuses to report for a member whose deep transformable
     // count is zero, because a census over an empty set would print "1 root,
     // all consistent" and read as a pass.
+    // ★★★ X15: the weight-owner census — and it is DIFFERENTIAL by construction.
+    //
+    // X14 named `CharWeightable::mWeightOwner resolves NULL after Load` as the
+    // thing that SIGSEGVs `BandCharacter::Poll()`, from a gdb backtrace whose
+    // deepest frame is `CharWeightable::Weight()` — `return mWeightOwner->mWeight`
+    // (char/CharWeightable.h:18), no null guard. That is a symptom report, not a
+    // cause: it does not say WHICH weightables are null, whether the null is
+    // band-specific, or whether Load is even the thing that nulled them.
+    //
+    // ⚠ WHY THIS IS DIFFERENTIAL AND NOT A BAND-ONLY TALLY. X13 drove eight
+    // CROWD characters through the very same `Character::Poll()` -> `RndDir::Poll()`
+    // -> `CharDriver::Poll()` path under a real shipped clip and did NOT crash.
+    // So the crowd is a working control that exercises the identical code. A
+    // census that reported "the band has N null weight owners" would be
+    // uninterpretable — N could be the normal state of every character in the
+    // game. Reporting BOTH populations makes the number mean something: if the
+    // crowd is clean and the band is not, the defect is in what distinguishes
+    // them; if BOTH are dirty, then the null is normal and the real difference
+    // is whether `Weight()` is ever REACHED (it sits behind `if (mFirst)` at
+    // CharDriver.cpp:674), and X14's cause is misattributed.
+    //
+    // ⚠ ANTI-VACUITY: refuses to report a population whose weightable count is
+    // zero. "0 null of 0" is not a pass, and this is the fourth consecutive lane
+    // to have to say so.
+    struct WOStats {
+        int total = 0, nullOwner = 0, selfOwner = 0, otherOwner = 0;
+        int drivers = 0, driversNull = 0, driversWithFirst = 0, driversWouldCrash = 0;
+        int setters = 0;
+        std::vector<std::string> nullNames;
+        std::vector<std::string> setterNames;
+    };
+    void TallyWeightOwners(ObjectDir *scope, WOStats &st) {
+        std::vector<CharWeightable *> ws = CollectDeep<CharWeightable>(scope);
+        for (size_t i = 0; i < ws.size(); i++) {
+            CharWeightable *w = ws[i];
+            st.total++;
+            CharWeightable *o = w->WeightOwner();
+            if (!o) {
+                st.nullOwner++;
+                if (st.nullNames.size() < 12) {
+                    Hmx::Object *ho = dynamic_cast<Hmx::Object *>(w);
+                    const char *nm = ho && ho->Name() && ho->Name()[0] ? ho->Name() : "(unnamed)";
+                    const char *cl = ho ? ho->ClassName().Str() : "?";
+                    char b[256];
+                    snprintf(b, sizeof b, "%s:%s @%p", cl, nm, (void *)w);
+                    st.nullNames.push_back(b);
+                }
+            } else if (o == w) {
+                st.selfOwner++;
+            } else {
+                st.otherOwner++;
+            }
+            if (dynamic_cast<CharWeightSetter *>(w)) {
+                Hmx::Object *ho = dynamic_cast<Hmx::Object *>(w);
+                st.setters++;
+                if (st.setterNames.size() < 40 && ho && ho->Name())
+                    st.setterNames.push_back(ho->Name());
+            }
+            if (CharDriver *cd = dynamic_cast<CharDriver *>(w)) {
+                st.drivers++;
+                if (!o) st.driversNull++;
+                // `Weight()` is only reached under `if (mFirst)` (CharDriver.cpp:674).
+                // A null owner on a driver with no queued clip is INERT — it cannot
+                // fault. Separating these two is the whole point: conflating them is
+                // how "N nulls" turns into a cause it has not earned.
+                bool hasFirst = cd->First() != nullptr;
+                if (hasFirst) st.driversWithFirst++;
+                if (hasFirst && !o) st.driversWouldCrash++;
+            }
+        }
+    }
+    void PrintWOStats(const char *label, WOStats &st) {
+        if (st.total == 0) {
+            printf("    %-22s ⛔ ZERO weightables reached — census REFUSED "
+                   "(0 null of 0 would read as a pass)\n", label);
+            return;
+        }
+        printf("    %-22s %4d weightable(s): %4d NULL owner, %4d self, %4d other"
+               "  |  drivers %3d (%3d null, %3d with a queued clip, "
+               "%3d WOULD FAULT in Weight())\n",
+               label, st.total, st.nullOwner, st.selfOwner, st.otherOwner,
+               st.drivers, st.driversNull, st.driversWithFirst, st.driversWouldCrash);
+        for (size_t i = 0; i < st.nullNames.size(); i++)
+            printf("        null-owner: %s\n", st.nullNames[i].c_str());
+        printf("        weight-setters alive in this scope: %d", st.setters);
+        for (size_t i = 0; i < st.setterNames.size(); i++)
+            printf(" %s", st.setterNames[i].c_str());
+        printf("\n");
+    }
+    void ReportWeightOwners(ObjectDir *dir) {
+        printf("  --- X15 weight-owner census (band vs crowd, differential) ---\n");
+        int scopes = 0;
+        if (TheBandWardrobe) {
+            for (int i = 0; i < 4; i++) {
+                BandCharacter *bc = TheBandWardrobe->GetCharacter(i);
+                if (!bc) continue;
+                scopes++;
+                WOStats st;
+                TallyWeightOwners(bc, st);
+                char lbl[64];
+                snprintf(lbl, sizeof lbl, "band[%d] %s", i,
+                         bc->Name() && bc->Name()[0] ? bc->Name() : "(unnamed)");
+                PrintWOStats(lbl, st);
+            }
+        }
+        if (scopes == 0)
+            printf("    ⛔ NO band member scopes — the band half of this "
+                   "differential is ABSENT, so any crowd number below stands alone "
+                   "and proves nothing about the band.\n");
+        int crowdScopes = 0;
+        std::vector<Character *> chars = CollectDeep<Character>(dir);
+        for (size_t i = 0; i < chars.size() && crowdScopes < 4; i++) {
+            Character *c = chars[i];
+            if (dynamic_cast<BandCharacter *>(c)) continue;
+            const char *cn = c->Name() && c->Name()[0] ? c->Name() : "(unnamed)";
+            crowdScopes++;
+            WOStats st;
+            TallyWeightOwners(c, st);
+            char lbl[64];
+            snprintf(lbl, sizeof lbl, "nonband %s", cn);
+            PrintWOStats(lbl, st);
+        }
+        if (crowdScopes == 0)
+            printf("    ⛔ NO non-band character scopes — the CONTROL half is "
+                   "ABSENT. Any band number above is uninterpretable.\n");
+    }
+
     void ReportChainRoots(ObjectDir *dir) {
         std::vector<Character *> chars = CollectDeep<Character>(dir);
         printf("  --- X14 per-character chain-root census ---\n");
@@ -3224,7 +3352,9 @@ namespace {
         // It re-scans until the outfit meshes become reachable, so it is called
         // repeatedly rather than once. RB3_BAND_REBIND_ITERS overrides the count;
         // RB3_NO_BAND_REBIND opts the whole thing out for the A/B.
-        if (TheBandWardrobe && !getenv("RB3_NO_BAND_REBIND")) {
+        const char *pollMode = getenv("RB3_BAND_POLL");
+        bool pollOnly = pollMode && strcmp(pollMode, "only") == 0;
+        if (TheBandWardrobe && !getenv("RB3_NO_BAND_REBIND") && !pollOnly) {
             int want = getenv("RB3_BAND_REBIND_ITERS")
                            ? atoi(getenv("RB3_BAND_REBIND_ITERS")) : 8;
             int members = 0;
@@ -3281,7 +3411,56 @@ namespace {
             }
         }
 
+        // ★★★ X15 MILESTONE 1 — call the SHIPPED `BandCharacter::Poll()`.
+        //
+        // X14 could not: `bc->Poll()` SIGSEGVd in `CharWeightable::Weight()`
+        // through `CharDriver::Poll()`. That is fixed at its root
+        // (char/CharWeightable.h — see the long note there; the cause X14
+        // recorded is refuted and the real one is the native `~ObjectDir`
+        // cascade's `NullifyAllRefs` shortcut skipping `Replace()`).
+        //
+        // ⚠ THE ACCEPTANCE CRITERION, STATED BEFORE IT IS MEASURED. `Poll()` is
+        // the shipped home of the rebind (`BandCharacter.cpp:533`). If it now
+        // runs, the direct `RebindOutfitBonesToOwnSkeleton()` call above is
+        // REDUNDANT and removing it must leave the frame byte-identical. If it
+        // does NOT, that discrepancy is a finding, not a tuning knob — so this
+        // is a THREE-arm control, not two:
+        //   RB3_BAND_POLL unset  -> X14's direct call only          (baseline)
+        //   RB3_BAND_POLL=1      -> direct call AND Poll()          (does Poll crash?)
+        //   RB3_BAND_POLL=only   -> Poll() ONLY, direct call skipped (can X14's be retired?)
+        // The `only` arm is the one that decides retirement, and it is compared
+        // against the baseline PNG with `cmp`, not by eye.
+        if (const char *bp = pollMode) {
+            int polled = 0, iters = getenv("RB3_BAND_POLL_ITERS")
+                                        ? atoi(getenv("RB3_BAND_POLL_ITERS")) : 8;
+            if (!TheBandWardrobe) {
+                printf("  band: ⛔ POLL SKIPPED — no TheBandWardrobe. NOT a pass: "
+                       "polling zero members would print exactly like polling four.\n");
+            } else {
+                for (int p = 0; p < iters; p++) {
+                    for (int i = 0; i < 4; i++) {
+                        if (BandCharacter *bc = TheBandWardrobe->GetCharacter(i)) {
+                            bc->Poll();
+                            if (p == 0) polled++;
+                        }
+                    }
+                }
+                if (polled == 0)
+                    printf("  band: ⛔ POLL REACHED 0 MEMBERS — census REFUSED. An "
+                           "empty poll cannot crash and must not read as a pass.\n");
+                else
+                    printf("  band: BandCharacter::Poll() x%d on %d member(s) — the "
+                           "SHIPPED per-frame entry point, reached for the first "
+                           "time in this ladder. mode='%s'\n",
+                           iters, polled, bp);
+            }
+        }
+
         if (gCharTopo) { ReportCharacterTopology(dir); ReportChainRoots(dir); ReportRebindFeasibility(dir); }
+
+        // X15 milestone 1: is the band's weight-owner null a band property or a
+        // universal one? Free, read-only, and gated so it cannot perturb a frame.
+        if (getenv("RB3_WEIGHT_CENSUS")) ReportWeightOwners(dir);
 
         if (gDumpTree) {
             ReportCharacterPlacement(dir);
