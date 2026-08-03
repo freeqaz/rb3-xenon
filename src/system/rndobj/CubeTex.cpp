@@ -279,8 +279,28 @@ void RndCubeTex::UpdateFace(CubeFace face) {
 #pragma endregion
 
 // sw2 scatter-include (default/system/rndobj/CubeTex <- rnddx9/CubeTex.cpp)
+//
+// ★ X11 / X10 Direction B: guarded natively. This ONE edge is why rb3-milo and
+// rb3-render -- which render through the dc3 WebGPU backend -- compile FIVE
+// Direct3D9 renderer TUs (rnddx9/{Cam,CubeTex,Lit,MultiMesh,Part}) plus
+// band3/meta_band/AppLabel.cpp. Neither target compiles a single rnddx9 TU
+// standalone; the code arrives purely as a passenger of an X360 COMDAT-packing
+// decision, and rnddx9/CubeTex.cpp #includes xdk/D3D9.h.
+//
+// It was LATENT, not active: the object carried 105 `Dx*::` symbols and the
+// linked binary zero, because these targets build -ffunction-sections
+// -fdata-sections and link --gc-sections. That made --gc-sections load-bearing
+// in a way nothing documented, and left `U DxMultiMesh::DrawShowing()` and
+// `U DxMultiMesh::sVertexDecl` in the object as hard link errors waiting for
+// anything to retain that code.
+//
+// Same mechanism and same wording as the guard at world/LightPreset.cpp:1484.
+// X360 keeps the edge (it never links, so a scatter edge is structurally
+// invisible there) -- verified by a settled whole-binary A/B at Δcode% 0.
+#ifndef HX_NATIVE
 #define gRev gRev_CubeTex
 #define gAltRev gAltRev_CubeTex
 #include "rnddx9/CubeTex.cpp"
 #undef gRev
 #undef gAltRev
+#endif

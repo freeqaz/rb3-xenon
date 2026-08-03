@@ -155,6 +155,32 @@ template BinStream &operator<< <RndEnvAnim>(BinStream &, const ObjOwnerPtr<RndEn
 #include "bandobj/BandCharDesc.h"
 template BinStream &operator<< <BandCharDesc>(BinStream &, const ObjOwnerPtr<BandCharDesc> &);
 
+// ★ X11: Hmx::Matrix4::Col3 — the ONE symbol that made X10's Direction-B
+// D3D9 row load-bearing, and the reason closing it is not a free tidy-up.
+//
+// It is declared in math/Mtx.h:128 (a MATH header) but DEFINED at
+// src/system/rnddx9/Cam.cpp:13 — parked at the top of the Direct3D9 camera TU,
+// above DxCam::DxCam(). rndobj/Lit_NG.cpp, which IS a native target source,
+// calls it from Hmx::operator*(const Transform &, const Hmx::Matrix4 &). So
+// guarding the rnddx9 scatter edge in rndobj/CubeTex.cpp — which is otherwise
+// dead weight, 105 `Dx*::` symbols that --gc-sections already strips — took
+// this one math accessor out with it and broke the link with EXACTLY ONE
+// undefined reference. Measured, not predicted: the guard was applied, the
+// link failed, and `undefined reference to` yielded a set of size 1.
+//
+// This body is COPIED VERBATIM from rnddx9/Cam.cpp:13-15, not reconstructed.
+// There is no ODR conflict: natively that TU is now excluded, and this file is
+// never compiled for X360.
+//
+// ⚠ The right long-term home is math/Mtx.cpp beside its declaration, but MOVING
+// it is a shared-`src/` change that relocates a symbol out of rnddx9/Cam.cpp's
+// COMDAT and is therefore match-relevant — it needs its own A/B and it is NOT
+// done here. Filed in the handoff table.
+#include "math/Mtx.h"
+Vector3 Hmx::Matrix4::Col3(int col) const {
+    return Vector3(x[col], y[col], z[col]);
+}
+
 // ===========================================================================
 // (2) GPU / RENDER BACKEND — X360 src/system/rnddx9/, deleted by X3
 // ===========================================================================
