@@ -164,7 +164,7 @@ OvershellSlotStateMgr::~OvershellSlotStateMgr() { DeleteAll(mStates); }
 
 OvershellSlotState *OvershellSlotStateMgr::GetSlotState(OvershellSlotStateID id) {
     for (int i = 0; i < mStates.size(); i++) {
-        if (id == mStates[i]->mStateID)
+        if (mStates[i]->mStateID == id)
             return mStates[i];
     }
     MILO_FAIL("OvershellSlotState %d does not exist", id);

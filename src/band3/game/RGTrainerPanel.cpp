@@ -551,7 +551,7 @@ bool RGTrainerPanel::TestFingers(const GameGem &gem) {
             i4 = step.mLowString;
         for (int i = step.mLowString; i <= i4 && step.unk10; i++) {
             int rgfret = mMatcher.GetState()->GetFret(i);
-            if (step.mFret == gem.GetFret(i) && rgfret != step.mFret) {
+            if (gem.GetFret(i) == step.mFret && rgfret != step.mFret) {
                 step.unk10 = false;
             }
         }
