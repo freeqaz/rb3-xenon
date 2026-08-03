@@ -1054,6 +1054,16 @@ void BandCharacter::RebindOutfitBonesToOwnSkeleton() {
 #pragma push
 #pragma pool_data off
 void BandCharacter::SyncObjects() {
+#ifdef HX_NATIVE
+    // X21 POSITIVE INDICATOR (env-gated, no behaviour change). X20 proved a
+    // failure-only predicate (`grep -c "could not find" == 0`) cannot separate
+    // "never ran" from "ran and succeeded", so every link of the
+    // SyncObjects -> SetDeformation -> SyncOutfitConfig -> SetSkinTextures
+    // chain gets a trace that fires ON SUCCESS. Silence here is now meaningful.
+    if (getenv("RB3_X21_TRACE"))
+        fprintf(stderr, "[X21] BandCharacter::SyncObjects ENTER name='%s'\n",
+                Name() ? Name() : "(unnamed)");
+#endif
     unk6b0 = Find<CharWeightable>("lod0.weight", false);
     static const char *bones[8] = { "bone_pelvis.mesh", "bone_prop0.mesh",
                                     "bone_prop1.mesh",  "bone_prop2.mesh",
@@ -1659,6 +1669,14 @@ void BandCharacter::SyncOutfitConfig(OutfitConfig *cfg) {
                 cfg->Recompose();
         }
     }
+#ifdef HX_NATIVE
+    if (getenv("RB3_X21_TRACE"))
+        fprintf(stderr,
+                "[X21] BandCharacter::SyncOutfitConfig cfg='%s' sym='%s' isSkin=%d "
+                "mOutfitDir=%s\n",
+                cfg->Name() ? cfg->Name() : "(unnamed)", sym.Str(), (int)(sym == skin),
+                mOutfitDir ? "yes" : "NULL");
+#endif
     if (sym == skin) {
         OutfitConfig::SetSkinTextures(this, mOutfitDir, this);
         if (unk738) {
@@ -1673,6 +1691,17 @@ void BandCharacter::SetDeformation() {
     { static int g=-1; if(g<0)g=getenv("RB3_NO_DEFORM")?1:0; if(g)return; }
 #endif
     CharClip *clip = BandCharDesc::GetDeformClip(mGender);
+#ifdef HX_NATIVE
+    // X21: prints the clip AND the unk620 denominator, so a zero cannot be read
+    // as a pass. X20 measured `male=male female=female` here; this re-measures
+    // it on the live path rather than from a separate probe.
+    if (getenv("RB3_X21_TRACE"))
+        fprintf(stderr,
+                "[X21] BandCharacter::SetDeformation name='%s' gender='%s' clip=%s "
+                "unk620=%d\n",
+                Name() ? Name() : "(unnamed)", mGender.Str(),
+                clip ? clip->Name() : "(NULL)", (int)unk620.size());
+#endif
     if (clip) {
         CharBonesMeshes meshes;
         meshes.SetName("tmp_bones", this);
@@ -2862,6 +2891,18 @@ DataNode BandCharacter::OnPostMerge(DataArray *da) {
     Symbol category = da->Sym(2);
     ObjectDir *dir = da->Obj<ObjectDir>(3);
     bool noTextures = da->Int(4) != 0;
+#ifdef HX_NATIVE
+    // X21: SyncOutfitConfig's SECOND caller. Prints its denominator (unk630) and
+    // the guard operands of the SyncObjects() call at the tail of this function,
+    // so "OnPostMerge ran but did nothing" is distinguishable from "never ran".
+    if (getenv("RB3_X21_TRACE"))
+        fprintf(stderr,
+                "[X21] BandCharacter::OnPostMerge ENTER name='%s' unk630=%d "
+                "noTextures=%d mLoadingLoad=%d mAsyncLoad=%d unk6bd=%d\n",
+                Name() ? Name() : "(unnamed)", (int)unk630.size(), (int)noTextures,
+                mFileMerger ? (int)mFileMerger->mLoadingLoad : -1,
+                mFileMerger ? (int)mFileMerger->mAsyncLoad : -1, (int)unk6bd);
+#endif
     while (unk630.size() != 0) {
         OutfitConfig *cfg = unk630.front();
         unk630.pop_front();

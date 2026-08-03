@@ -133,6 +133,19 @@ void OutfitConfig::MatSwap::Compose(
         ComposeScope() { gRB3OutfitComposeActive = true; }
         ~ComposeScope() { gRB3OutfitComposeActive = false; }
     } composeScope;
+    // X21 M2: fires when a compose actually paints. `rttDiff` is the condition
+    // the very next line branches on — an RT-typed diffuse is what makes this a
+    // render-to-texture composite rather than a plain palette swap.
+    if (getenv("RB3_X21_TRACE"))
+        fprintf(stderr,
+                "[X21] OutfitConfig::MatSwap::Compose mat='%s' diffTex='%s' rttDiff=%d "
+                "twoColor=%d\n",
+                mMat ? (mMat->Name() ? mMat->Name() : "(unnamed)") : "(NULL)",
+                diffTex ? (diffTex->Name() ? diffTex->Name() : "(unnamed)") : "(NULL)",
+                (int)(diffTex
+                      && (diffTex->GetType() & RndTex::kRenderedNoZ)
+                          == RndTex::kRenderedNoZ),
+                (int)mTwoColor);
 #endif
     if (!diffTex || (diffTex->GetType() & RndTex::kRenderedNoZ) != RndTex::kRenderedNoZ) {
         if (mTwoColor)
@@ -477,9 +490,41 @@ void OutfitConfig::SetSkinTextures(ObjectDir *dir1, ObjectDir *dir2, BandCharDes
         "feet_socks_skin.mat", "legs",  "head_naked.mat", "head"
     };
     Symbol gender = desc->mGender;
+#ifdef HX_NATIVE
+    // X21 POSITIVE INDICATOR. This function's only pre-existing instruments are
+    // MILO_WARNs that fire on FAILURE, which X20 showed read 0 both before and
+    // after registration — vacuous. These lines fire when the bind SUCCEEDS.
+    const bool x21 = getenv("RB3_X21_TRACE") != nullptr;
+    if (x21)
+        fprintf(stderr,
+                "[X21] OutfitConfig::SetSkinTextures ENTER dir1='%s' dir2='%s' "
+                "skin.cfg=%s gender='%s'\n",
+                PathName(dir1), PathName(dir2), cfg ? "FOUND" : "NULL", gender.Str());
+#endif
     for (int i = 0; 5 > i; i++) {
         const char *partname = skinMats[i * 2 + 1];
         RndMat *curmat = dir1->Find<RndMat>(skinMats[i * 2], false);
+#ifdef HX_NATIVE
+        if (x21) {
+            RndTex *x21diff =
+                cfg ? dir2->Find<RndTex>(
+                          MakeString("%s_skin_diffuse_output.tex", partname), false
+                      )
+                    : nullptr;
+            RndTex *x21auth =
+                dir1->Find<RndTex>(MakeString("%s_%s_diff.tex", gender, partname), false);
+            // Print the material POINTER: the census reads by name, and several
+            // distinct objects share each of these five names. Only a pointer
+            // can say whether the object we bind is the object that draws.
+            fprintf(stderr,
+                    "[X21]   part='%s' mat='%s' mat=%p matdir='%s' authored_diff=%s "
+                    "rt=%s\n",
+                    partname, skinMats[i * 2], (void *)curmat,
+                    (curmat && curmat->Dir()) ? PathName(curmat->Dir()) : "(none)",
+                    x21auth ? x21auth->Name() : "MISSING",
+                    x21diff ? x21diff->Name() : (cfg ? "MISSING" : "n/a (no cfg)"));
+        }
+#endif
         if (curmat) {
             RndTex *curtex = dir1->Find<RndTex>(
                 MakeString("%s_%s_diff.tex", gender, partname), false
@@ -947,6 +992,18 @@ void OutfitConfig::ApplyAO(SyncMeshCB *mesh) {
 }
 
 void OutfitConfig::DrawPreClear() {
+#ifdef HX_NATIVE
+    // X21 M2 POSITIVE INDICATOR. DrawPreClear is the ONLY dispatcher that can
+    // reach MatSwap::Compose, which is the only writer of the *_diffuse_output
+    // render targets. If this never fires, those RTs are UNPAINTED — a stronger
+    // statement than "composed wrongly", and one the flavor audit alone cannot
+    // make. Denominator (mPatches) printed so a zero is not read as a pass.
+    if (getenv("RB3_X21_TRACE"))
+        fprintf(stderr,
+                "[X21] OutfitConfig::DrawPreClear ENTER name='%s' unk38=%d unk3c=%d "
+                "patches=%d\n",
+                Name() ? Name() : "(unnamed)", unk38, unk3c, (int)mPatches.size());
+#endif
     if (mTexBlender && mTexBlender->Unkc0()) {
         mTexBlender->DrawShowing();
     }

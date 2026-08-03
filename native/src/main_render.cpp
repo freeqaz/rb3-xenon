@@ -4126,6 +4126,7 @@ namespace {
                                                "feet_skin",   "feet_socks_skin",
                                                "head_naked" };
             int hits = 0, nullDiffuse = 0, haveDiffuse = 0;
+            std::set<RndMat *> x21MatSeen;   // X21: DISTINCT material OBJECTS
             for (size_t mi = 0; mi < meshes.size(); mi++) {
                 RndMat *mat = meshes[mi]->Mat();
                 if (!mat || !mat->Name()) continue;
@@ -4136,14 +4137,30 @@ namespace {
                 hits++;
                 RndTex *tx = mat->GetDiffuseTex();
                 if (tx) haveDiffuse++; else nullDiffuse++;
-                printf("    skinmat '%-22s mesh '%-30s diffuse=%s\n",
+                // X21: NAMES ARE NOT IDENTITIES. X20 read this census by name
+                // and concluded "unchanged" while RT-bound instances of the SAME
+                // NAME were sitting further down the same list. There are several
+                // distinct `torso_naked.mat` OBJECTS in this graph; only the one
+                // SetSkinTextures' dir1 resolves gets rebound. Print the pointer
+                // and the owning dir so an instance can be matched, not guessed.
+                printf("    skinmat '%-22s mesh '%-30s diffuse=%-34s "
+                       "mat=%p matdir='%s'\n",
                        (std::string(mat->Name()) + "'").c_str(),
                        (std::string(meshes[mi]->Name()) + "'").c_str(),
-                       tx ? (tx->Name() ? tx->Name() : "(unnamed tex)") : "NULL");
+                       tx ? (tx->Name() ? tx->Name() : "(unnamed tex)") : "NULL",
+                       (void *)mat,
+                       mat->Dir() ? PathName(mat->Dir()) : "(no dir)");
+                x21MatSeen.insert(mat);
             }
             printf("  === X19 SKIN-MATERIAL DIFFUSE CENSUS: %d skin material "
                    "instance(s), %d with a diffuse, %d NULL ===\n",
                    hits, haveDiffuse, nullDiffuse);
+            // X21: the line above counts (mesh, mat) PAIRS, not objects — which
+            // is how "58 skin material instances" was read for two lanes as if it
+            // were 58 materials. State both denominators explicitly.
+            printf("  === X21 CORRECTION: those %d rows are (mesh,mat) PAIRS over "
+                   "%d DISTINCT RndMat object(s) ===\n",
+                   hits, (int)x21MatSeen.size());
             // ⚠ Denominator printed BEFORE any verdict is read off it: "0 NULL"
             // and "there were no skin materials at all" are different findings,
             // and four vacuous passes on this ladder came from conflating them.
