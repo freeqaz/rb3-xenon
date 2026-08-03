@@ -8081,13 +8081,11 @@ StorePanel.cpp:
 	.text       start:0x827B74D0 end:0x827B78F8
 
 ConnectionStatusPanel.cpp:
-	.pdata      start:0x82233400 end:0x82233408
 	.pdata      start:0x82241978 end:0x822419C0
 	.pdata      start:0x82241A10 end:0x82241A20
 	.pdata      start:0x82241A68 end:0x82241A80
 	.pdata      start:0x82241A80 end:0x82241A88
 	.pdata      start:0x82241A88 end:0x82241A90
-	.text       start:0x826B1BC0 end:0x826B1C30
 	.text       start:0x827BA450 end:0x827BA804
 	.text       start:0x827BACA4 end:0x827BADB0
 	.text       start:0x827BB1E0 end:0x827BB310
@@ -8398,12 +8396,12 @@ band3/game/RGTrainerPanel.cpp:
 	.pdata      start:0x822330A0 end:0x822330B0
 	.pdata      start:0x822330B0 end:0x822332B8
 	.pdata      start:0x822332C0 end:0x82233358
-	.pdata      start:0x82233358 end:0x82233400
+	.pdata      start:0x82233358 end:0x82233408
 	.pdata      start:0x82249DC8 end:0x82249DD0
 	.text       start:0x826ADC68 end:0x826ADD68
 	.text       start:0x826ADD68 end:0x826B03D8
 	.text       start:0x826B04B8 end:0x826B1350
-	.text       start:0x826B1350 end:0x826B1BBC
+	.text       start:0x826B1350 end:0x826B1C30
 	.text       start:0x82874718 end:0x82874744
 
 band3/game/TrainerPanel.cpp:
@@ -8817,7 +8815,6 @@ band3/meta_band/UIStats.cpp:
 	.pdata      start:0x8221CDC0 end:0x8221CE18
 	.text       start:0x825605F4 end:0x82560660
 	.text       start:0x82560660 end:0x82560B08
-	.text       start:0x82566228 end:0x82566238
 
 band3/meta_band/NewAwardPanel.cpp:
 	.pdata      start:0x8222A458 end:0x8222A460
@@ -9112,7 +9109,7 @@ band3/meta_band/ClosetMgr.cpp:
 	.pdata      start:0x8221D640 end:0x8221D700
 	.pdata      start:0x8221D728 end:0x8221D740
 	.text       start:0x82566000 end:0x825661C8
-	.text       start:0x825661C8 end:0x82566228
+	.text       start:0x825661C8 end:0x82566238
 	.text       start:0x82566238 end:0x825662C4
 	.text       start:0x825662C8 end:0x825663E8
 	.text       start:0x825663E8 end:0x82566558
