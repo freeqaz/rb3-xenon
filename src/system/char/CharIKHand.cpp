@@ -1,3 +1,8 @@
+// Retail INLINES the owner-only ObjPtr<RndTransformable> ctor in CharIKHand::Load
+// (target: `lis r10,lbl_82017A34` + three stores); without this we bind the
+// out-of-line two-arg body. Must precede every include.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+
 #include "char/CharBlendBone.h"
 #include "char/CharIKHand.h"
 #include "char/CharWeightable.h"
@@ -148,7 +153,11 @@ BEGIN_LOADS(CharIKHand)
     else
         mFinger = 0;
     if (gRevs_CharIKHand.rev < 3) {
-        ObjPtr<RndTransformable> tPtr(this, 0);
+        // ONE-ARG spelling: retail INLINES this ctor (three stores + the vtable
+        // materialization `lis r10,lbl_82017A34`). The two-arg spelling binds the
+        // out-of-line body and RB3_OBJPTR_INLINE_OWNER_CTOR cannot reach it --
+        // that lever only splits the OWNER-ONLY ctor.
+        ObjPtr<RndTransformable> tPtr(this);
         bs >> tPtr;
         mTargets.clear();
         mTargets.push_back(IKTarget(ObjPtr<RndTransformable>(tPtr), 0));
@@ -188,6 +197,11 @@ BEGIN_LOADS(CharIKHand)
         bs >> mWristRadians;
     }
     if (gRevs_CharIKHand.rev == 9) {
+        // NOTE: tPtr and this String share a stack slot pair that is PERMUTED vs
+        // retail (target r31+0x68, ours r31+0x78) -- 4 `addi` diff_args that hold
+        // fuzzy at 99.4 while mpn reads 100 (function counted, bytes withheld).
+        // Declaring `b` before `s` was tried and changed nothing; this is MSVC
+        // slot shaping, i.e. permuter territory.
         String s;
         bs >> s;
         bool b;
