@@ -29094,5 +29094,6 @@
  "0x82524a08": "?JoypadSubscribe@@YAXPAVObject@Hmx@@@Z",
  "0x82524a38": "?JoypadUnsubscribe@@YAXPAVObject@Hmx@@@Z",
  "0x82346500": "??0PatchPair@MeshPair@BandPatchMesh@@QAA@PAVObject@Hmx@@@Z",
- "0x82347328": "?PropSync@@YA_NAAVPatchPair@MeshPair@BandPatchMesh@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+ "0x82347328": "?PropSync@@YA_NAAVPatchPair@MeshPair@BandPatchMesh@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x82575f68": "?IsDemo@BandSongMgr@@QBA_NH@Z"
 }

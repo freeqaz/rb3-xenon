@@ -2,6 +2,7 @@
 #include "beatmatch/TrackType.h"
 #include "game/BandUserMgr.h"
 #include "system/meta/SongMgr.h"
+#include "meta/Jukebox.h"
 #include "meta_band/SongUpgradeMgr.h"
 #include "meta_band/LicenseMgr.h"
 #include <hash_map>
@@ -117,22 +118,33 @@ public:
     std::list<int> unk114; // 0x130
     std::vector<Symbol> unk11c; // 0x138
     bool unk124; // 0x144
-    // Retail-only pair of members that rb3-Wii's dev decomp lacks. Evidence is
-    // the retail destructor (fn_8257A7E0): after tearing down mContentAltDirs at
-    // +0x160 it deallocates a THIRD vector at +0x148, reading _M_start from
-    // +0x148 and _M_end_of_storage from +0x150 and scaling the byte count with
-    // `srawi 3 / slwi 3` -- i.e. a plain 3-pointer STLport vector whose element
-    // type is 8 bytes wide and trivially destructible (no per-element destroy
-    // loop is emitted). Nothing else in the TU touches +0x148..+0x154, so the
-    // element type cannot be pinned any further from this binary; pair<float,
-    // float> is used because SongRanking::mTierRanges already instantiates that
-    // exact specialization, so no extra COMDAT is introduced. The 4 bytes at
-    // +0x154 are likewise never referenced in-TU but must exist: mUpgradeMgr is
-    // provably at +0x158 (ClearCachedContent, a 100% match).
-    std::vector<std::pair<float, float> > unk148; // 0x148
-    // "num valid songs" -- AddSongData stores GetValidSongCount() here and
-    // GetCurSongCount() adds it to mCachedSongMetadata.size(). It lives at
-    // +0x154, NOT at the tail where rb3-Wii's dev layout puts it.
+    // +0x148 is a `Jukebox` (lane DP-1). This slot was previously TWO invented
+    // members -- a `vector<pair<float,float>>` placeholder plus an `int unk140`
+    // "num valid songs" at +0x154 -- and the header itself recorded that neither
+    // could be pinned. Both are now resolved by one real type, and every piece
+    // of evidence the old comment listed as unexplained is explained by it:
+    //   * the destructor (fn_8257A7E0) tears down a 3-pointer STLport vector at
+    //     +0x148/+0x150 whose element type is 8 bytes and TRIVIALLY DESTRUCTIBLE
+    //       -> `std::vector<JukeboxItem>`, and JukeboxItem is exactly {int,int}.
+    //   * the "4 bytes at +0x154 never referenced in-TU but must exist"
+    //       -> `Jukebox::mPlayCounter`, which needs no teardown.
+    //   * `sizeof(Jukebox) == 0x10` puts mUpgradeMgr at +0x158, where
+    //     ClearCachedContent (a 100% match) already proved it is.
+    //   * the constructor (retail 0x8257AA00) does `li r4,0x7d0 / addi r3,r30,0x148
+    //     / bl ??0Jukebox@@QAA@H@Z`, and 0x827B1838 has EXACTLY ONE caller in the
+    //     whole binary -- this one.
+    //   * BandSongMgr::Handle's `add_recent_song` arm calls ?Play@Jukebox@@QAAXH@Z
+    //     with `this + 0x148`, likewise the only Jukebox::Play call in the binary.
+    // ADJUDICATED ON RETAIL BYTES, and note the refutation: `0x154` occurs ZERO
+    // times in the entire pinned retail TU, so the old "AddSongData stores
+    // GetValidSongCount() at +0x154" claim had no byte support at all --
+    // GetCurSongCount now recomputes instead of reading an invented cache.
+    // Jukebox lives in DC3 (src/system/meta/Jukebox.h, already 4/4 at 100%) and
+    // NOT in the rb3-Wii oracle, which is why a source diff never showed it.
+    Jukebox mJukebox; // 0x148 (mJukeboxItems 0x148..0x154, mPlayCounter 0x154)
+    //
+    // The RTTI argument below still stands and still fixes the tail; only the
+    // identity of +0x148..+0x158 changed.
     //
     // Ground truth is retail's own RTTI: ??_R4BandSongMgr (COL at 0x821E0074,
     // type descriptor 0x82C72C00 -> ".?AVBandSongMgr@@") records the Object
@@ -145,7 +157,6 @@ public:
     // unk13c is provably a byte at +0x170 (lbz/stb 0x170). Folding the former
     // `unk154` placeholder and `unk140` into one member is the only arrangement
     // consistent with all four instruments.
-    int unk140; // 0x154 - num valid songs
     SongUpgradeMgr *mUpgradeMgr; // 0x158
     LicenseMgr *mLicenseMgr; // 0x15c
     // mContentAltDirs FOLLOWS the two manager pointers in retail: Terminate,
