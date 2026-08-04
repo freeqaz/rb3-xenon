@@ -69,7 +69,7 @@ namespace Hmx {
         void RotateAboutZ(float angle) {
             float c = Cosine(angle);
             float s = Sine(angle);
-            Set(c, -s, 0.0f, s, c, 0.0f, 0.0f, 0.0f, 1.0f);
+            Set(c, s, 0.0f, -s, c, 0.0f, 0.0f, 0.0f, 1.0f);
         }
         void RotateAboutY(float angle) {
             float c = Cosine(angle);
