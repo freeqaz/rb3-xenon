@@ -42,6 +42,40 @@ static bool NativeOverlayExists(const char *file) {
     return stat(buf, &st) == 0;
 }
 
+// Is `file` a LOOSE file -- present on the filesystem but absent from the
+// mounted archive index? That is how real DLC ships (loose files inside an
+// STFS container, never in the .ark), and how mods and hand-authored assets
+// arrive too.
+//
+// ★ ORDER IS LOAD-BEARING AND IS THE WHOLE SAFETY ARGUMENT: the archive is
+// consulted FIRST and WINS. So every path the ark contains keeps resolving
+// through ArkFile and reading exactly the bytes it read before -- this
+// function can only ever return true for a path the ark does NOT have, and
+// for such a path the pre-existing behaviour is a GUARANTEED HARD FAILURE
+// (NewFile -> ArkFile -> Fail() -> delete -> null). There is no case where
+// this converts a working load into a different working load.
+//
+// The stat therefore lands only on what is otherwise an error path, so the
+// cost is not paid by ordinary disc content.
+static bool NativeLooseFileExists(const char *file) {
+    if (!TheArchive) return false;
+    // Normalize the way the archive index is keyed (drops "./", collapses
+    // "..", etc). FileMakePathBuf, not FileMakePath: the latter returns a
+    // shared static buffer and asserts MainThread().
+    char norm[256];
+    FileMakePathBuf(".", file, norm);
+    int arkNum = 0, fileSize = 0, ucSize = 0;
+    unsigned long long byteOff = 0;
+    if (TheArchive->GetFileInfo(norm, arkNum, byteOff, fileSize, ucSize))
+        return false; // the archive owns it -- not loose, and the ark wins
+    // Qualify exactly as every other read here does, so NativeSetDataDir()
+    // and the overlay directory are both honoured.
+    char qualified[256];
+    FileQualifiedFilename(qualified, 0x100, file);
+    struct stat st;
+    return stat(qualified, &st) == 0 && S_ISREG(st.st_mode);
+}
+
 // On Xbox, FileIsLocal checks for drive letters (d: = disc = not local).
 // On native, files without absolute paths are "not local" when UsingCD,
 // so they get routed through the archive system (ArkFile).
@@ -53,6 +87,10 @@ bool FileIsLocal(const char *file) {
     if (file[0] == '/') return true;
     // Files in overlay directory are local (bypass archive)
     if (NativeOverlayExists(file)) return true;
+    // Loose files (DLC/mods) are local too -- see NativeLooseFileExists.
+    // Gated on UsingCD() because that is the only mode in which the caller
+    // (os/File.cpp NewFile) would otherwise build an ArkFile.
+    if (UsingCD() && NativeLooseFileExists(file)) return true;
     // When using CD (archive), relative paths are archive files, not local
     return false;
 }
