@@ -55,11 +55,16 @@ public:
         // (-2 whole-binary) because both walk these slots in sequence, and it
         // buys Compose only +0.009pp. The rotation is NOT the explanation.
         //
-        // Retail's Compose DOES read them rotated -- it composites slot 0x2c
-        // (interp), then 0x38 (mask), then 0x20 (diffuse). That is real, and it
-        // is FIXED at the three Compose CALL SITES (lane X23, S4), not here:
-        // the members stay in DWARF order and the guards were rotated instead.
-        // Confirmed the same way on the Wii DOL, so both decomps carried it.
+        // These members are NOT mis-named and Compose's call sites are NOT
+        // referencing the wrong ones. What differs is the ORDER OF THE COMPOSE
+        // PASSES: retail runs interp (0x2c) -> mask (0x38) -> diffuse (0x20),
+        // where this source used to run diffuse -> interp -> mask. Fixed by
+        // reordering the passes in Compose (lane X23, S4); the declarations
+        // here are untouched and correct. rb3-Wii's
+        // PropSync__FRQ212OutfitConfig7MatSwap... is 100.000% and pairs
+        // two_color_diffuse->0x18 / two_color_interp->0x24 /
+        // two_color_mask->0x30 against the Symbol relocations, which settles
+        // the naming independently of Compose.
         //
         // NOTE, and do not re-derive the wrong version: the four per-layer
         // stores to sMat+0x28 are mBlend, NOT mColorModFlags. There is NO
