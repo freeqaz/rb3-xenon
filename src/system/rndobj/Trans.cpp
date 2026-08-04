@@ -221,11 +221,14 @@ BEGIN_LOADS(RndTransformable)
     case 3:
     case 4:
     case 5:
-        int unkb0;
-        bs >> unkb0;
-        mPreserveScale = unkb0;
+        // Rev 3-5 packed the constraint mode and the preserve-scale flag into one
+        // int: bit 0x80 is preserve-scale, the low bits select the billboard mode
+        // (hence the 0x04/0x84, 0x08/0x88, ... case pairs below).
+        int packedConstraint;
+        bs >> packedConstraint;
+        mPreserveScale = (packedConstraint & 0x80) != 0;
 
-        switch (unkb0) {
+        switch (packedConstraint) {
         case 0x4:
         case 0x84:
             mConstraint = kConstraintBillboardZ;
