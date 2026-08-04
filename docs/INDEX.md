@@ -624,6 +624,24 @@ one-line descriptions are catalogued in the 2026-07-06 audit
 
 Per-TU / per-wave landing records from the port campaigns (mostly 2026-07-01/02). Grep by TU:
 
+- **[CURRENT] Cross-repo port of dc3's 2026-08-04 regswap/AT_LIMIT sweep:**
+  [handoff/dc3-regswap-sweep-port-2026-08-04.md](decomp/handoff/dc3-regswap-sweep-port-2026-08-04.md)
+  — 4 live bugs ported (OSC parser ×3, Locale MemPopTemp + altCfg, Trans
+  preserve-scale bit); `Locale::Init` identified as `fn_827C9AF8` and the
+  DC3-era devkit-override block gated behind `HX_NATIVE` (**67.9% → 87.2%**).
+  Three trap-references worth reading before any cross-repo port:
+  (a) the **dc3 orchestrator MCP silently measures dc3** when handed an
+  rb3-xenon `project_dir` — it returned dc3's 93.3% for a function whose RB3
+  value is 92.2%; (b) **`MILO_LOG` and `MILO_NOTIFY` expand identically** in the
+  match build, so dc3's diagnostic-macro lever is byte-neutral and unfalsifiable
+  here; (c) the **parameter-home-area inline-counting lever DOES survive retail
+  `/O1`** (measured: 8,711/82,230 fns = 10.59%, 23,378 dead home stores, vs
+  10.34% in dc3's debug build) — the prediction that `/O1` would elide them is
+  wrong. Also: `NgMat::RefreshState`'s reciprocal-multiply numeric divergence is
+  **reproduced on RB3 retail** (4 target `fdivs` vs our 2 reciprocals + 4
+  `fmuls`) and is **not `/fp:`-gated** (`/fp:precise` *and* `/fp:strict` both
+  byte-identical, control run).
+
 - CharClipGroup: [handoff/charclipgroup-flip-RESULT-2026-07-02.md](decomp/handoff/charclipgroup-flip-RESULT-2026-07-02.md) · [handoff/charclipgroup-objvector-flip-READY.md](decomp/handoff/charclipgroup-objvector-flip-READY.md) (banner: superseded by RESULT).
 - Member-delta / MetaPanel / span waves: [handoff/exec-r1-member-delta-run-2026-07-02.md](decomp/handoff/exec-r1-member-delta-run-2026-07-02.md) · [handoff/exec-r2-metapanel-run-2026-07-02.md](decomp/handoff/exec-r2-metapanel-run-2026-07-02.md) · [handoff/exec-r3-span-confirm-run-2026-07-02.md](decomp/handoff/exec-r3-span-confirm-run-2026-07-02.md).
 - ws1/ws3/ws4 exec: [handoff/exec-ws1-waveA-run-2026-07-02.md](decomp/handoff/exec-ws1-waveA-run-2026-07-02.md) · [handoff/exec-ws1-waveA-p1-verdicts.md](decomp/handoff/exec-ws1-waveA-p1-verdicts.md) · [handoff/exec-ws3-optionc-run-2026-07-02.md](decomp/handoff/exec-ws3-optionc-run-2026-07-02.md) · [handoff/exec-ws4-round3-run-2026-07-02.md](decomp/handoff/exec-ws4-round3-run-2026-07-02.md) · [handoff/round3-shared-header-followups-2026-07-02.md](decomp/handoff/round3-shared-header-followups-2026-07-02.md).
