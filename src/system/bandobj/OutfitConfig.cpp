@@ -230,6 +230,15 @@ void OutfitConfig::MatSwap::Compose(
             sMat->SetColor(baseColor.red, baseColor.green, baseColor.blue);
             TheRnd.DrawRect(rect, baseColor, sMat, nullptr, nullptr);
         }
+        // ONE SetUseEnv call on xenon, not two. rb3-Wii's target writes its
+        // mUseEnviron bit TWICE (two rlwinm on the packed word 0xac), but the
+        // 360 target does not: the entire retail Compose contains exactly two
+        // byte stores, `stb 0x99` (mUseEnviron) and `stb 0x11c`, and both
+        // already pair with this source. Adding a second call was measured and
+        // REGRESSES xenon -- Compose 86.76854 -> 86.27865 -- because it emits a
+        // third byte store with no counterpart in the target. Platform
+        // divergence, same class as the diffTex-vs-TheRnd rect above; do not
+        // port the Wii's count across.
         sMat->SetUseEnv(false);
         sMat->SetCull(kCullNone);
         for (int i = 0; i < patches.size(); i++) {
