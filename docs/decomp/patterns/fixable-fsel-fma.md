@@ -349,3 +349,105 @@ float val2 = val - 1.0f >= 0.0f ? 1.0f : val;
 | Function | Before | After | Delta | Fix |
 |----------|--------|-------|-------|-----|
 | GameEndedDataPointJob ctor | ~77% | 85.8% | ~8% | Used `-streamMs >= 0.0f ? 0.0f : streamMs` instead of if-statements for float clamping |
+
+---
+
+## Reciprocal CSE: two `fdivs` + four `fmuls` where the target has four `fdivs`
+
+**Impact:** +3-4% on the affected function
+**Success Rate:** HIGH (deterministic; it is a source-shape rule, not a heuristic)
+**Time:** 10 minutes
+
+### Symptom
+
+The target divides a constant by a variable several times and emits one real
+`fdivs` per division. We instead emit a synthesized `1.0f` constant
+(`__real@3f800000`), one `fdivs` computing `1.0f/x`, and an `fmuls` per use:
+
+```
+TGT  fdivs f13, f29, f13      ; 0.5f / h
+SRC  fmuls f13, f13, f28      ; (1.0f/h) * -0.5f
+```
+
+The giveaway is a `lfs fN, __real@3f800000` in our output that has no `1.0f`
+anywhere in the source.
+
+### Why It Happens
+
+**The Xbox 360 (Xenon) MSVC front end defaults to `/fp:fast`, not
+`/fp:precise`.** Under `/fp:fast` it strength-reduces `a/x` and `b/x` into
+`t = 1.0f/x; a*t; b*t` whenever two or more divisions name the **same
+source-level divisor variable**. Measured on a standalone probe:
+
+| flags | output |
+|-------|--------|
+| *(none — project default)* | 2 `fdivs` + 4 `fmuls` |
+| `/fp:fast` | 2 `fdivs` + 4 `fmuls` (identical to default) |
+| `/fp:precise` | 4 `fdivs` |
+| `/fp:strict` | 4 `fdivs` |
+| `/Op` | 4 `fdivs` |
+
+Reproduced identically on `X360/16.00.10224.00` (RB3) and
+`X360/16.00.11886.00` (DC3), so it is the Xenon default rather than a
+compiler-build artifact.
+
+### Fix
+
+Do **not** add `/fp:precise` to the project cflags — see the negative result
+below. The trigger keys on *source-level variable identity of the divisor*,
+not on the value, so give each division its own temp:
+
+```cpp
+// BEFORE - `w` and `h` are each named twice as a divisor -> reciprocal CSE
+int w = mDiffuseTex->Width();
+int h = mDiffuseTex->Height();
+mTexHalfPixelY    =  0.5f / h;
+mTexHalfPixelX    =  0.5f / w;
+mTexHalfPixelNegY = -0.5f / h;
+mTexHalfPixelNegX = -0.5f / w;
+
+// AFTER - four distinct divisor variables -> four real fdivs
+float fw1 = mDiffuseTex->Width();
+float fh1 = mDiffuseTex->Height();
+float fw2 = mDiffuseTex->Width();
+float fh2 = mDiffuseTex->Height();
+mTexHalfPixelX    =  0.5f / fw1;
+mTexHalfPixelY    =  0.5f / fh1;
+mTexHalfPixelNegX = -0.5f / fw2;
+mTexHalfPixelNegY = -0.5f / fh2;
+```
+
+A later CSE still merges the identical `int`->`float` conversions, so the temps
+cost nothing. Two secondary levers:
+
+- Reading the accessor directly into each temp is what produces the extra
+  conversion; routing through `int w`/`int h` locals first collapses them to two.
+- **Use order, not declaration order, decides which operand's conversion is
+  duplicated.** Reordering the four `float` declarations changes nothing at all.
+  The pair used *first* is CSE'd into one conversion; the pair used second is
+  emitted twice and scheduled first.
+
+### Not a behavioural difference
+
+`1.0f/x` then `* 0.5f` is bit-identical to `0.5f/x` for all normal `x`: scaling
+by a power of two is exact, and exact power-of-two scaling commutes with
+round-to-nearest. The two forms can only differ at denormal or overflow
+boundaries. Treat this as a match fix and check the constants involved before
+claiming a runtime bug.
+
+### NEGATIVE RESULT — do not add `/fp:precise` project-wide
+
+Tested with a full rebuild and `measure_progress.sh`: overall fuzzy
+**53.85% -> 53.36%, -624 matched functions**; 311 units regress against 6 that
+improve (`system/math` -10.4%, `DoubleExponentialSmoother` -56.6%). It is a net
+loss even inside the one TU that motivated it — `Mat_NG.cpp`: `RefreshState`
+93.25 -> 95.29 but `MakeTex3` 100 -> 84.6 and `SetRegularShaderConst`
+99.7 -> 94.6. The codebase really was built at the `/fp:fast` default; any fix
+has to be source-level.
+
+### Real Examples
+
+| Function | Before | After | Delta | Fix |
+|----------|--------|-------|-------|-----|
+| `NgMat::RefreshState` (DC3) | 93.25% | 96.8% | +3.5% | Four distinct float temps; assign in X, Y, NegX, NegY order |
+| `NgMat::RefreshState` (RB3) | 92.2% | 96.4% | +4.2% | Same fix, same file |
