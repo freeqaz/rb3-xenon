@@ -344,12 +344,14 @@ void NgMat::RefreshState() {
         mTexHalfPixelNegX = 0.0f;
         mTexHalfPixelNegY = 0.0f;
     } else {
-        int w = mDiffuseTex->Width();
-        int h = mDiffuseTex->Height();
-        mTexHalfPixelY = 0.5f / h;
-        mTexHalfPixelX = 0.5f / w;
-        mTexHalfPixelNegY = -0.5f / h;
-        mTexHalfPixelNegX = -0.5f / w;
+        float fw1 = mDiffuseTex->Width();
+        float fh1 = mDiffuseTex->Height();
+        float fw2 = mDiffuseTex->Width();
+        float fh2 = mDiffuseTex->Height();
+        mTexHalfPixelX = 0.5f / fw1;
+        mTexHalfPixelY = 0.5f / fh1;
+        mTexHalfPixelNegX = -0.5f / fw2;
+        mTexHalfPixelNegY = -0.5f / fh2;
     }
 
     // Blend mode switch
