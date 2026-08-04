@@ -185,7 +185,8 @@ namespace {
     };
 
     bool LoadAndCensus(const char *arkPath, bool verbose, Census &out) {
-        printf("\n=== %s ===\n", arkPath);
+        // The "=== <path> ===" banner is printed by the caller, which must
+        // emit it on the resolve-failure path too (before it `continue`s).
 
         // ---- (A) the file's own table ------------------------------------
         HeaderTable hdr = ReadHeaderTable(arkPath);
@@ -462,14 +463,37 @@ int main(int argc, char **argv) {
     int loaded = 0;
     const int requested = (int)pos.size() - 1;
     for (size_t i = 1; i < pos.size(); i++) {
+        // A requested milo may live in the ARK (disc content) or as a LOOSE
+        // file on disk. Real DLC is the second case ALWAYS: it ships as loose
+        // files inside an STFS container and is never in the .ark index, so an
+        // archive-index lookup can NEVER succeed for it. Mods and
+        // hand-authored assets arrive the same way. Requiring the archive here
+        // was therefore a precondition no DLC could ever satisfy.
+        //
+        // The gate stays DISCRIMINATING rather than being deleted: a path
+        // present in NEITHER the archive nor the filesystem still fails, which
+        // is what catches a typo'd ark path -- the reason the check existed.
+        //
+        // Existence is tested with the engine's own FileGetStat, not a raw
+        // stat() here, because FileGetStat qualifies through
+        // FileQualifiedFilename -- the SAME qualification the loose-file
+        // fallback in File_Native.cpp's FileIsLocal() uses. So this gate and
+        // the loader NewFile() will run agree by construction, and the gate
+        // cannot pass on a file the loader would then refuse.
         int arkNum = 0, fileSize = 0, ucSize = 0;
         unsigned long long byteOff = 0;
-        if (!TheArchive->GetFileInfo(FileMakePath(".", pos[i]), arkNum, byteOff, fileSize,
-                                     ucSize)) {
+        const bool inArk = TheArchive->GetFileInfo(FileMakePath(".", pos[i]), arkNum,
+                                                   byteOff, fileSize, ucSize);
+        FileStat st;
+        const bool onDisk = !inArk && FileGetStat(pos[i], &st) == 0;
+        if (!inArk && !onDisk) {
             printf("\n=== %s ===\n", pos[i]);
-            Gate("archive-lookup", false, "not present in the archive index");
+            Gate("path-resolved", false,
+                 "in neither the archive index nor the filesystem");
             continue;
         }
+        printf("\n=== %s ===\n", pos[i]);
+        Gate("path-resolved", true, inArk ? "archive" : "loose file");
         Census c;
         if (LoadAndCensus(pos[i], verbose, c)) loaded++;
         for (std::map<std::string, int>::const_iterator it = c.byClass.begin();
