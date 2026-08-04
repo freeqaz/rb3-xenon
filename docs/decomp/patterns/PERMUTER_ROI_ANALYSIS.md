@@ -154,7 +154,7 @@ measured to **under-fire**, structurally rather than as a tuning problem.
 |---|---|---|
 | `ObjectDir::Iterate` (DC3) | 99.4% → **100%** from a one-line liveness change | 6 reorder variants **byte-identical**, 2 regressed to ~95.8%, 65-candidate beam search **0 improvements** |
 | `RndText::FitTextScroll` (DC3) | 92.7% → 98.2% via call-through-the-local + block scoping | reorder variants: no movement |
-| `RndText::SizeCheck` (DC3) | 96.5% → 99.1% via scheduling then comparison polarity | not the declaration axis |
+| `RndText::SizeCheck` (DC3) | 96.5% → 98.6% via scheduling then comparison polarity | not the declaration axis |
 | `LabelShrinkWrapper::UpdateAndDrawWrapper` (DC3) | 68.1% → **99.9%** from naming four unnamed temps | 6 commutative/reorder variants **byte-identical**; 56-candidate beam search 0 improvements |
 
 **Why the mapping fails.** MSVC's colouring assigns colours from the interference graph and
@@ -202,7 +202,9 @@ callee-saved ones — a volatile register cannot be live across a call, so a swa
 of them is a scheduling or operand-order question, never a live-across-call question. That
 exclusion is an ABI consequence, not a statistical claim.
 
-Worked example, DC3's `RndText::SizeCheck` 96.5% → 99.1%: the target computes a product
+Worked example, **dc3-decomp**'s `RndText::SizeCheck` 96.5% → 98.6% (previously cited here
+as 99.1%, which was never a direct measurement — see that repo's
+`docs/decomp/patterns/fixable-liveness.md` Lever 3): the target computes a product
 *before* the `fcmpu` that consumes it,
 
 ```
