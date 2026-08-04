@@ -32,7 +32,8 @@ void OSCMessenger::Poll() {
         char str[0x80];
         strncpy(str, data, 0x80);
         str[0x7f] = 0;
-        int pos = strlen(str) / 4 + 1;
+        int len = strlen(str);
+        int pos = len - len % 4 + 4;
         OSCValue value;
         value.mAddress = str;
         value.mHasNewValue = 1;
@@ -47,21 +48,18 @@ void OSCMessenger::Poll() {
             MILO_ASSERT(data[pos+2] == 0, 0x51);
             MILO_ASSERT(data[pos+3] == 0, 0x52);
             value.mType = 'i';
-            value.buffer[0] = data[pos + 4];
+            *(int *)value.buffer = *(int *)&data[pos + 4];
+        } else if (c4 == 'f' && data[pos + 2] == 'f' && data[pos + 3] == 'f') {
+            value.mType = 'v';
+            int *valueBuffer = (int *)value.buffer;
+            valueBuffer[0] = *(int *)&data[pos + 8];
+            valueBuffer[1] = *(int *)&data[pos + 12];
+            valueBuffer[2] = *(int *)&data[pos + 16];
         } else if (c4 == 'f') {
-            if (data[pos + 2] == 'f' && data[pos + 3] == 'f') {
-                value.mType = 'v';
-                int *valueBuffer = (int *)value.buffer;
-                int *dataIn = (int *)data;
-                valueBuffer[1] = dataIn[2];
-                valueBuffer[0] = dataIn[1];
-                valueBuffer[2] = dataIn[3];
-            } else {
-                MILO_ASSERT(data[pos+2] == 0, 0x67);
-                MILO_ASSERT(data[pos+3] == 0, 0x68);
-                value.mType = 'f';
-                value.buffer[0] = data[pos + 4];
-            }
+            MILO_ASSERT(data[pos+2] == 0, 0x67);
+            MILO_ASSERT(data[pos+3] == 0, 0x68);
+            value.mType = 'f';
+            *(int *)value.buffer = *(int *)&data[pos + 4];
         }
         bool found = false;
         FOREACH (it, mValues) {
