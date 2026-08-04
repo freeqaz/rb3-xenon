@@ -114,8 +114,27 @@ void CharClipSet::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(0x18, 0);
     MILO_ASSERT(d.rev > 3, 0x4E);
-    ObjectDir::PreLoad(bs);
+    // ★ PUSH BEFORE THE BASE CALL. PushRev/PopRev is a LIFO stack keyed by
+    // `this`, so this must mirror PostLoad -- and PostLoad's order is FIXED BY
+    // RETAIL BYTES: the target calls ObjectDir::PostLoad first and only then
+    // consumes the popped rev (build/45410914/asm/CharClipSet.s; objdiff shows
+    // `bl ?PostLoad@ObjectDir@@` at target index 7, ahead of the
+    // `srwi r11, r3, 16` / `sth` that store into sPostLoadRev/sPostLoadAltRev).
+    // Popping last therefore requires pushing FIRST, and pushing after the
+    // base call left CharClipSet's value on top of ObjectDir's: the base
+    // PostLoad then consumed OUR rev as its own, read ObjectDir's packRevs as
+    // `revs2` and the inlined-dir count `i20` as `offset`, and tripped
+    // MILO_ASSERT_RANGE_EQ(offset, 0, mSubDirs.size()) at Dir.cpp 0x466.
+    // MEASURED: every rb3-milo run aborted (rc=134) in BandCharDesc::Init ->
+    // DirLoader::LoadObjects -> CharClipSet::PostLoad.
+    //
+    // This side is the right seam BECAUSE IT IS FREE: CharClipSet::PreLoad has
+    // no pairing in the target ("Symbol not found in target"), so it carries no
+    // match signal, while PostLoad does. Fixing the symmetry on the PostLoad
+    // side instead was tried first and MEASURED -2.3pp on PostLoad -- see the
+    // preceding commit, which this one corrects.
     bs.PushRev(packRevs(d.altRev, d.rev), this);
+    ObjectDir::PreLoad(bs);
 }
 
 // Retail stores the PostLoad-side rev/altRev in fixed global storage (proven
@@ -130,22 +149,12 @@ static unsigned short sPostLoadRev;
 static unsigned short sPostLoadAltRev;
 
 void CharClipSet::PostLoad(BinStream &bs) {
-    // ★ THE POP MUST PRECEDE ObjectDir::PostLoad. PushRev/PopRev is a LIFO
-    // stack keyed by `this`, and PreLoad above pushes ObjectDir's entries
-    // first and CharClipSet's packRevs LAST -- so CharClipSet's value is on
-    // top and has to come off first. Popping after the base call makes
-    // ObjectDir::PostLoad consume OUR rev as its own, then read ObjectDir's
-    // packRevs as `revs2` and the inlined-dir count `i20` as `offset`,
-    // tripping MILO_ASSERT_RANGE_EQ(offset, 0, mSubDirs.size()) (Dir.cpp
-    // 0x466) on the first real CharClipSet load. Measured: every rb3-milo run
-    // aborted in BandCharDesc::Init() -> DirLoader::LoadObjects ->
-    // CharClipSet::PostLoad. This ordering is what the TU had before
-    // f278d4d7; that commit's actual match lever is the file-scope statics
-    // below, which are untouched here.
+    // Order verified against retail bytes -- base call first, pop after. See
+    // the note in PreLoad above for why the LIFO symmetry is repaired there.
+    ObjectDir::PostLoad(bs);
     int revs = bs.PopRev(this);
     sPostLoadRev = getHmxRev(revs);
     sPostLoadAltRev = getAltRev(revs);
-    ObjectDir::PostLoad(bs);
     if (IsProxy())
         return;
     if (sPostLoadRev < 0x11) {
