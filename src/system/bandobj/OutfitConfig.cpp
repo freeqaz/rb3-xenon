@@ -188,8 +188,8 @@ void OutfitConfig::MatSwap::Compose(
         sCam->SetFrustum(0.01f, 5.0f, 0.0f, 1.0f);
         sCam->Select();
         Hmx::Color baseColor(1.0f, 1.0f, 1.0f, 1.0f);
-        sMat->SetColorModFlags(RndMat::kColorModNone);
         sMat->SetBlend(RndMat::kBlendSrc);
+        sMat->SetZMode(kZModeDisable);
         sMat->SetTexWrap(kTexWrapClamp);
         sMat->SetDiffuseTex(nullptr);
         sMat->SetAlpha(1.0f);
@@ -201,12 +201,16 @@ void OutfitConfig::MatSwap::Compose(
             sMat->SetColor(col->red, col->green, col->blue);
         }
         mMat->SetColor(baseColor.red, baseColor.green, baseColor.blue);
-        Hmx::Rect rect(0.0f, 0.0f, (float)TheRnd.Width(), (float)TheRnd.Height());
-        sMat->SetAlphaCut(false);
+        // Retail sizes the composite rect from the RENDER TARGET, not the
+        // backbuffer: the XEX reads diffTex+0x4c/+0x50 (RndTex::mWidth/mHeight,
+        // confirmed by /d1reportSingleClassLayoutRndTex). This is a genuine
+        // xenon/Wii platform difference -- the Wii DOL really does read TheRnd --
+        // so do NOT "fix" it back by copying the Wii expression across.
+        Hmx::Rect rect(0.0f, 0.0f, (float)diffTex->Width(), (float)diffTex->Height());
         TheRnd.DrawRect(rect, baseColor, sMat, nullptr, nullptr);
-        if (mTwoColorDiffuse) {
-            sMat->SetColorModFlags(RndMat::kColorModModulate);
-            sMat->SetDiffuseTex(mTwoColorDiffuse);
+        if (mTwoColorInterp) {
+            sMat->SetBlend(RndMat::kBlendSrcAlpha);
+            sMat->SetDiffuseTex(mTwoColorInterp);
             const Hmx::Color *col = &baseColor;
             if (mColor2Palette) {
                 col = &mColor2Palette->GetColor(colors[mColor2Option]);
@@ -214,19 +218,19 @@ void OutfitConfig::MatSwap::Compose(
             sMat->SetColor(col->red, col->green, col->blue);
             TheRnd.DrawRect(rect, baseColor, sMat, nullptr, nullptr);
         }
-        if (mTwoColorInterp) {
-            sMat->SetColorModFlags(RndMat::kColorModModulate);
-            sMat->SetDiffuseTex(mTwoColorInterp);
-            sMat->SetColor(baseColor.red, baseColor.green, baseColor.blue);
-            TheRnd.DrawRect(rect, baseColor, sMat, nullptr, nullptr);
-        }
         if (mTwoColorMask) {
-            sMat->SetColorModFlags(RndMat::kColorModAlphaUnpackModulate);
+            sMat->SetBlend(RndMat::kBlendSrcAlpha);
             sMat->SetDiffuseTex(mTwoColorMask);
             sMat->SetColor(baseColor.red, baseColor.green, baseColor.blue);
             TheRnd.DrawRect(rect, baseColor, sMat, nullptr, nullptr);
         }
-        sMat->SetAlphaCut(false);
+        if (mTwoColorDiffuse) {
+            sMat->SetBlend(RndMat::kBlendMultiply);
+            sMat->SetDiffuseTex(mTwoColorDiffuse);
+            sMat->SetColor(baseColor.red, baseColor.green, baseColor.blue);
+            TheRnd.DrawRect(rect, baseColor, sMat, nullptr, nullptr);
+        }
+        sMat->SetUseEnv(false);
         sMat->SetCull(kCullNone);
         for (int i = 0; i < patches.size(); i++) {
             patches[i].Render(diffTex, sMat);

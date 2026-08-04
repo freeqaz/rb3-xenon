@@ -35,11 +35,25 @@ public:
     NEW_OBJ(ColorPalette)
 
     int NumColors() const { return mColors.size(); }
-    const Hmx::Color &GetColor(int idx) const;
+    // Defined inline (not out-of-line in Crowd.cpp) because retail INLINES this
+    // into its callers: OutfitConfig::MatSwap::Compose emits the whole body --
+    // `lwz 0x28/0x2c` (mColors begin/end), `srawi 4` for size(), then the
+    // twllei/divwu/mullw/subf modulo -- with no `bl` to GetColor at all. With
+    // /O1 (/Ob2, no LTCG) that is only reachable if the definition is visible in
+    // the header, so the out-of-line placement was a porting artifact.
+    const Hmx::Color &GetColor(int idx) const {
+        MILO_ASSERT(mColors.size(), 0x18);
+        int colorIdx = idx % mColors.size();
+        return mColors[colorIdx];
+    }
 
 protected:
     ColorPalette();
 
     /** "Color for materials" */
-    std::vector<Hmx::Color> mColors; // 0x2c
+    // 0x28, NOT 0x2c: cl.exe /d1reportSingleClassLayoutColorPalette puts mColors
+    // at 0x28 (sizeof(ColorPalette) == 0x34), and retail agrees -- Compose reads
+    // the vector's begin/end as `lwz 0x28(r11)` / `lwz 0x2c(r11)`. The old 0x2c
+    // comment was the vector's _M_finish, off by one field.
+    std::vector<Hmx::Color> mColors; // 0x28
 };
