@@ -43,6 +43,27 @@ public:
 
         ObjPtr<RndMat> mMat; // 0x0
         ObjPtr<RndMat> mResourceMat; // 0xc
+        // DO NOT REORDER THESE THREE. Order confirmed twice over: the rb3-Wii
+        // Bank 5 debug DWARF gives MatSwap byte_size 0x70 with mTwoColorDiffuse
+        // @0x18 / mTwoColorInterp @0x24 / mTwoColorMask @0x30, and operator>>
+        // gates the FIRST TWO slots behind `gRev < 5` while reading the third
+        // ungated -- and it matches retail at 100%, which it could not if the
+        // 360 had permuted these members.
+        // Tried and REVERTED (lane X23): rotating the declarations to
+        // Mask/Diffuse/Interp to explain Compose's reads. It knocks
+        // MatSwap::Compress and operator>>(BinStream&, MatSwap&) off 100%
+        // (-2 whole-binary) because both walk these slots in sequence, and it
+        // buys Compose only +0.009pp. The rotation is NOT the explanation.
+        //
+        // Retail's Compose really does read them rotated -- it composites
+        // slot 0x2c (interp), then 0x38 (mask), then 0x20 (diffuse), applying
+        // mColor2Palette to INTERP and the distinct SetColorModFlags value to
+        // DIFFUSE, where this source applies them to diffuse and mask
+        // respectively. That is a live behavioural divergence in the composite
+        // order, NOT a layout problem; it is left unfixed deliberately because
+        // it is entangled with the BaseMaterial mColorModFlags divergence
+        // (retail stores the flag at +0x28 with values 1/3/6; we store at
+        // +0x154 with 0/3/2), which is engine-wide. See the lane X23 report.
         ObjPtr<RndTex> mTwoColorDiffuse; // 0x18
         ObjPtr<RndTex> mTwoColorInterp; // 0x24
         ObjPtr<RndTex> mTwoColorMask; // 0x30
