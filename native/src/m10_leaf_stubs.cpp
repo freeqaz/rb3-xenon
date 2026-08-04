@@ -153,6 +153,13 @@ GameplayOptions *BandUser::GetGameplayOptions() { return 0; }
 
 // VocalTrack / VocalTrackDir render leaves (mTrack is a sentinel; never called).
 void VocalTrack::RebuildHUD() {}
+// wave4 (f278d4d7) added `mTrack->JumpReset()` next to the existing
+// `mTrack->RebuildHUD()` in VocalPlayer::Jump. Its real body
+// (bandtrack/VocalTrack.cpp:699) is three HUD resets on mDir -- ResetStreakMeter
+// / ResetSmashers / ResetPlayerFeedback -- i.e. the same render-leaf category as
+// the rest of this block, and VocalTrack.cpp is not a source of rb3-vocal2 /
+// rb3-harmony.
+void VocalTrack::JumpReset() {}
 void VocalTrack::HideCoda() {}
 void VocalTrack::HitTambourineGem(int) {}
 void VocalTrack::MissTambourineGem(int, bool) {}

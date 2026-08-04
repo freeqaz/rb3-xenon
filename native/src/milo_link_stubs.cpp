@@ -37,8 +37,14 @@
 //                    WebGPU backend carries its own pipeline state and never
 //                    reads a D3D9 device state. X2's table listed this row as
 //                    engine-supplied; it was wrong.
-//         ⛔ KEPT    SpotlightDrawer::DeSelect, RndFont::CellDiff -- no engine
-//                    counterpart exists; still leaves.
+//         ⛔ KEPT    SpotlightDrawer::DeSelect -- no engine counterpart exists;
+//                    still a leaf.
+//         ✅ DROPPED RndFont::CellDiff -- wave4 (f278d4d7) gave rndobj/Font.h:137
+//                    a real, UNGUARDED in-class definition
+//                    (`mCellSize.y / mCellSize.x`), so this stub became a
+//                    redefinition (C++ error, not just dead code). The real
+//                    inline is visible in every TU that includes Font.h, in
+//                    every build, so the stub is redundant as well as illegal.
 //
 //   (3) OFF-PATH SINGLETONS AND HANDLER-ONLY SYMBOLS. Reached only from
 //       BEGIN_HANDLERS blocks, editor paths, or subsystems X2 does not stand up
@@ -263,10 +269,13 @@ void FlushTransparentDraws() {}
 // --- misc render leaves
 void SpotlightDrawer::DeSelect() {}
 
-// rndobj/Font.h:92 -- inter-cell metric for the DX9 glyph-cell layout, used by
-// FontBase's text measurement. 0 is the identity ("no gap") for a layout that
-// is never rasterised here.
-float RndFont::CellDiff() const { return 0.0f; }
+// RndFont::CellDiff was stubbed here returning 0.0f. wave4 (f278d4d7) landed a
+// real in-class definition at rndobj/Font.h:137 (`mCellSize.y / mCellSize.x`),
+// unguarded, so this stub is now a redefinition. Deleted; the header's inline
+// serves every build. NOTE for the native lane: text layout that previously saw
+// a constant 0 now sees the real cell-aspect ratio (UILabel::FitText,
+// rndobj/Text.cpp x6) -- that is the correct value, but it IS a behaviour
+// change in native text metrics, and it divides by mCellSize.x.
 
 // ===========================================================================
 // (3) OFF-PATH SINGLETONS AND HANDLER-ONLY SYMBOLS
