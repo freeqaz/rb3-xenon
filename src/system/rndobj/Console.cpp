@@ -434,7 +434,22 @@ void RndConsole::ExecuteLine() {
     // non-format arg). The global MILO_LOG comma form doesn't reproduce
     // that copy (see os/Debug.h's MiloStripEval comment: switching LOG
     // globally to MiloStripEval measured -5, so it's per-site here instead).
+    //
+    // MiloStripEval is declared ONLY when HX_NATIVE is undefined (os/Debug.h:89)
+    // -- it is a retail-codegen device, not a logger. Guard it exactly as
+    // CharBoneDir.cpp:283 / ChunkStream.cpp:210 / Archive.cpp:270 already do,
+    // and keep the real log natively.
+    //
+    // NB: do NOT spell an "if"-directive token inside a comment in THIS file.
+    // cmake/ScatterIncludes.cmake:88 scans with an UNANCHORED regex, so such a
+    // token in a comment pushes its conditional-nesting stack and silently
+    // reclassifies the scatter-includes at the bottom of this TU (MultiMesh.cpp,
+    // Crowd.cpp) as conditional -- which un-prunes them and breaks the build.
+#ifndef HX_NATIVE
     MiloStripEval("> %s\n", line_txt);
+#else
+    MILO_LOG("> %s\n", line_txt);
+#endif
     n40 = DataReadString(line_txt.c_str());
     n40.Array()->Release();
     mInput->CurrentLine().erase();
@@ -447,8 +462,13 @@ void RndConsole::ExecuteLine() {
     String output;
     output << "Evaluates to " << n48 << "\n";
     mInput->Print(output.c_str());
-    // Same per-site MiloStripEval reasoning as above.
+    // Same per-site MiloStripEval reasoning as above, and the same
+    // HX_NATIVE visibility guard -- see os/Debug.h:89.
+#ifndef HX_NATIVE
     MiloStripEval("%s", output);
+#else
+    MILO_LOG("%s", output);
+#endif
 }
 
 bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {

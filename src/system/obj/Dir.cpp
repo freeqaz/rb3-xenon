@@ -61,6 +61,20 @@ static unsigned short sObjectDirAltRev;
 int PopRev(Hmx::Object *);
 
 #ifdef HX_NATIVE
+// ...but the free function was only ever DECLARED. The X360 decomp build never
+// links, so an undefined-but-referenced symbol is invisible there; natively it
+// is an undefined reference in all 17 linking targets (wave4 f278d4d7 added the
+// declaration + four call sites below, and OvershellDir.cpp / GemTrackDir.cpp
+// carry the same TU-local redeclaration). Supply the one definition here, in
+// the TU whose call sites need it, forwarding to the static member that
+// utl/BinStream.cpp:144 actually defines. Semantically identical -- the rev
+// stack is process-wide, so the member takes no receiver either. Native-only:
+// the X360 object is untouched, and the free-function call sites (the point of
+// the redeclaration, no `mr r3, <bs>`) are unchanged in both arms.
+int PopRev(Hmx::Object *o) { return BinStream::PopRev(o); }
+#endif
+
+#ifdef HX_NATIVE
 namespace {
     void CollectCascadeDirs(ObjectDir *dir, std::vector<ObjectDir *> &out) {
         if (!dir || std::find(out.begin(), out.end(), dir) != out.end())

@@ -551,7 +551,16 @@ MemRealloc(void *mem, int size, const char *file, int line, const char *name, in
     CritSecTracker tracker(gMemLock);
     if (gNumHeaps != 0) {
         int memSize = MemAllocSize(mem);
+        // The 2-arg retail allocator `MemAlloc(int size, int align)` is declared
+        // ONLY `#ifndef HX_NATIVE` (utl/MemMgr.h:154-157), so the X360 spelling
+        // below does not compile natively ("too few arguments to function call,
+        // expected at least 4"). Natively, route to the 5-arg debug allocator --
+        // the same call this line carried before wave4 f278d4d7.
+#ifdef HX_NATIVE
+        void *dst = (MemAlloc)(size, file, line, name, align);
+#else
         void *dst = (MemAlloc)(size, (int)file);
+#endif
         memcpy(dst, mem, size < memSize ? size : memSize);
         MemFree(mem);
         return dst;

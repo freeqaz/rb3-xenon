@@ -71,9 +71,19 @@ void BandCharDesc::ReloadPrefabs() {
                                                                    // be FindPrefab but
                                                                    // inlined
             MILO_ASSERT(from != to, 0x4E);
+            // On HX_NATIVE the ring entry IS the ref: RefPtrOf is identity and
+            // returns `const ObjRef *` (obj/Object.h:277), and ObjRef::Replace
+            // takes ONE argument -- the two-argument form below is
+            // ObjRefOwner's, which only exists on the X360 ObjRefNode model.
+            // Natively use the snapshot-based helper (safe against cascading
+            // Replace callbacks), exactly as EventTrigger.cpp:735-751 does.
+#ifdef HX_NATIVE
+            from->ReplaceRefs(to);
+#else
             while (!from->Refs().empty()) {
                 RefPtrOf(from->Refs().begin())->Replace(reinterpret_cast<ObjRef *>((Hmx::Object *)from), to);
             }
+#endif
         }
     }
     delete old;

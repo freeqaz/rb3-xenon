@@ -576,7 +576,20 @@ void SpotlightDrawer::DrawWorld() {
                     if (sHaveFlares) {
                         DrawFlares(it, e2);
                     }
+                    // X360's std::vector<T>::iterator IS a raw T*, so `it = e2`
+                    // is a plain pointer assignment. The native STL's
+                    // __normal_iterator has an implicit conversion TO the
+                    // pointer (which is why `e1 = it` / `it + 1` above compile)
+                    // but its constructor from a pointer is `explicit` and it
+                    // has no operator= from one -- hence "no viable overloaded
+                    // '='". Rebuild the iterator from the offset instead; this
+                    // is the exact spelling this line carried before wave4
+                    // f278d4d7.
+#ifdef HX_NATIVE
+                    it = sLights.begin() + (e2 - &(*sLights.begin()));
+#else
                     it = e2;
+#endif
                 } while (it != itEnd);
             }
             if (cur) {

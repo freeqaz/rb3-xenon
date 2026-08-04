@@ -293,7 +293,19 @@ void CharBoneDir::MergeCharacter(const FilePath &fp) {
         // an ORDERING site (only one non-format arg), so it needs
         // MiloStripEval directly rather than the file-wide comma-form
         // MILO_NOTIFY. See os/Debug.h:241-259 for the COPYING/ORDERING split.
+        //
+        // MiloStripEval is declared ONLY when HX_NATIVE is undefined
+        // (os/Debug.h:89) -- same guard as the ListFilterNames site 40 lines
+        // above. (Spelling an "if"-directive token in a comment here would
+        // disturb cmake/ScatterIncludes.cmake's unanchored scan of this TU's
+        // CharBoneTwist.cpp scatter-include; see Console.cpp.) Natively the
+        // site keeps a real notify (FilePath derives from String, which
+        // FormatString::operator<< handles).
+#ifndef HX_NATIVE
         MiloStripEval("Could not load %s", fp);
+#else
+        MILO_NOTIFY("Could not load %s", fp);
+#endif
     else {
         std::list<RndTransformable *> tlist;
         for (ObjDirItr<RndTransformable> it(dir, false); it != nullptr; ++it) {
@@ -335,6 +347,17 @@ void CharBoneDir::MergeCharacter(const FilePath &fp) {
                 //     Replace's `from` is the vbase-adjusted object pointer
                 //     (addi r4,r10,0x4); reinterpret_cast'ing backTrans
                 //     directly passes the unadjusted RndTransformable*.
+                //
+                // The three details above are X360-only by construction: on
+                // HX_NATIVE the ring entry IS the ref, RefPtrOf is identity and
+                // returns `const ObjRef *` (obj/Object.h:277), and ObjRef's
+                // Replace takes ONE argument. Use the snapshot-based helper
+                // natively, exactly as EventTrigger.cpp:735-751 does for this
+                // same idiom -- a naive ring walk is unsafe there when a
+                // Replace callback cascades and frees other ring entries.
+#ifdef HX_NATIVE
+                backTrans->ReplaceRefs(charTrans);
+#else
                 while (!backTrans->Refs().empty()) {
                     RefPtrOf(backTrans->Refs().begin())
                         ->Replace(
@@ -344,6 +367,7 @@ void CharBoneDir::MergeCharacter(const FilePath &fp) {
                             charTrans
                         );
                 }
+#endif
             }
             tlist60.push_back(charTrans);
             char buf[256];
