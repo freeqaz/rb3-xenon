@@ -56,7 +56,11 @@ These patterns can often be fixed with source changes. Sorted by ROI (impact x s
 | Function Definition Order ($S#) | +3-5% | 100% | [fixable-declarations.md](fixable-declarations.md#function-definition-order-tu-wide-static-guard-counters) |
 | Hoist Loop Variable for sret | +6% | HIGH | [fixable-declarations.md](fixable-declarations.md#hoist-loop-variable-for-sret-register-matching) |
 | Goto-Based Loop (Deferred Assignment) | +2-3% | MEDIUM | [fixable-control-flow.md](fixable-control-flow.md#goto-based-loop-for-deferred-assignment) |
-| Variable Declaration Order | +1-88% | 30% | [fixable-declarations.md](fixable-declarations.md#variable-declaration-order) |
+| Variable Declaration Order (**stack slots only** — see [fixable-liveness.md](fixable-liveness.md)) | +1-88% | 30% | [fixable-declarations.md](fixable-declarations.md#variable-declaration-order) |
+| Live-Range Shortening (read args out of the aggregate) | +0.6% | 1 of 2 measured | [fixable-liveness.md](fixable-liveness.md#lever-1--live-range-shortening-read-the-args-back-out-of-the-aggregate-you-just-built) |
+| Call Through the Cached Local (don't re-load the member) | +4% | 1 for 1 | [fixable-liveness.md](fixable-liveness.md#lever-2--call-through-the-cached-local-dont-re-load-the-member-at-the-call-site) |
+| Schedule-Then-Polarity (hoist the producer before the compare) | +2.6% | 1 for 1 | [fixable-liveness.md](fixable-liveness.md#lever-3--fix-the-schedule-first-then-the-comparison-polarity) |
+| Name the Call-Argument Temporaries (frame packing) | +19.4% | 1 for 1 | [fixable-liveness.md](fixable-liveness.md#lever-5--name-the-temporaries-so-they-are-built-up-front-and-frame-packed) |
 | Bodyless Copy Constructor | +100% (0→100) | 100% | [fixable-copy-ctor.md](fixable-copy-ctor.md) |
 | Inline Constructor Location | +5-10% | 100% | [fixable-inline-boundary.md](fixable-inline-boundary.md#inline-constructor-in-header-vs-out-of-line-in-cpp) |
 | Sort Comparator Inline Location | +30-50% | 100% | [fixable-inline-boundary.md](fixable-inline-boundary.md#sort-comparator-inline-location-stdsort--std__median) |
@@ -149,6 +153,9 @@ Patterns that *look* fixable but are traps. Rule these out first.
 | Pattern | Effect | File |
 |---------|--------|------|
 | False Layout Drift (anchor-bias, vbase mirage, diagonal pairing, red-zone) | wasted header edit + cascade regression | [false-layout-drift.md](false-layout-drift.md) |
+| **MI base adjustment read as base *declaration order*** | header edit that cannot help — MSVC hoists the polymorphic base to offset 0 regardless of order | [false-layout-drift.md](false-layout-drift.md#5-mi-base-adjustment-read-as-declaration-order) |
+| **Register swaps read as a declaration-order problem** | 12+ byte-identical variants, two zero-gain sweeps, a false floor call | [fixable-liveness.md](fixable-liveness.md) |
+| **EH funclet drops 100 → 99.9 after a parent fix** | a correct parent fix gets reverted as a "regression" | [../EH_FUNCLET_CASCADE.md](../EH_FUNCLET_CASCADE.md#a-funclet-wobble-is-not-a-veto-on-the-parents-fix) |
 | `MILO_DEBUG` force-define (rb3-Wii **dev**-build guards compiled into retail) | dev-only code silently compiled in; but blanket removal is **−21** | [milo-debug-force-define.md](milo-debug-force-define.md) |
 
 ## Harmful Patterns
@@ -184,14 +191,19 @@ Match% 80-95%?
   → High diff_arg with low diff_op? Likely address relocation noise — may be AT_LIMIT.
 
 Match% 95-99%?
-  → Check for hard patterns first (register swap, merged symbols, address noise).
-  → If no hard patterns: try variable reorder, inline assignment.
+  → Check for hard patterns first (merged symbols, address noise).
+  → REGISTER_SWAP? Do NOT start with variable reorder — read the register class
+    and the __savegprlr_NN delta, then work liveness/scheduling.
+    See fixable-liveness.md. Reorder is the lever for OFFSET_SWAP.
   → run_diff_inspect mode=diagnose to separate fixable from unfixable diffs.
 
 Match% 99%+ but not 100%?
   → Often hard patterns (linker-merged, register allocation), but verify first.
   → Use run_recon to check for LINKER_MERGED calls.
   → Only mark "at limit" after verification; otherwise keep investigating.
+  → Floor claims need all three of: hand variants byte-identical, permuter sweep
+    zero-gain, and a Ghidra decompile OF THE TARGET naming the construct as an
+    allocator artifact. See fixable-liveness.md#floor-evidence-the-three-part-standard.
 ```
 
 ### Prologue Hints
@@ -315,6 +327,7 @@ From 143 successful fine-tuning attempts (90%+ start, 100% end):
 - [fixable-casting.md](fixable-casting.md) — Float cast, noreturn, float/double, sizeof
 - [fixable-control-flow.md](fixable-control-flow.md) — Max/Min explicit, ternary vs if/else, loop structure
 - [fixable-declarations.md](fixable-declarations.md) — Variable extraction, declaration order, destructor
+- [fixable-liveness.md](fixable-liveness.md) — **Register swaps are symptoms.** Live-range shortening, call-through-the-local, schedule-then-polarity, scope-into-block, name-the-temporaries; the negative-results table; the three-part floor standard
 - [fixable-fsel-fma.md](fixable-fsel-fma.md) — fsel intrinsic, Clamp templates, #pragma fp_contract
 - [fixable-operators.md](fixable-operators.md) — FMA order, operator overload, inline assignment
 - [fixable-bool-mask.md](fixable-bool-mask.md) — Bool mask (`clrlwi`) fixes

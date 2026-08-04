@@ -20,6 +20,58 @@ Two consequences that govern how you work this pool:
    funclets flipped while the parent's own percentage went *down* (73.3 → 70.3).
    That is a win, not a regression.
 
+## A funclet wobble is not a veto on the parent's fix
+
+The rule above has a mirror image that is easier to get wrong, because it arrives
+as a *regression* on the scoreboard rather than as a gain.
+
+**A 40-byte funclet dropping 100.0% → 99.9% right after you edit its parent is
+almost always the parent's frame growing by 16 bytes, counted a second time.** The
+funclet body is ~10 instructions, so one changed `subi` immediate is ~10% of it —
+a visible drop on a tiny symbol, and a matched-function count going down by one,
+for an edit that was net positive.
+
+Worked case, `ObjectDir::Iterate` and its own unwind funclet `fn_8274FEC8`
+(2026-08-04). `fn_8274FEC8` is not unrelated pairing noise: its base-side body
+sits at base offset `0x250`, immediately after `Iterate`'s 596 bytes, and is
+exactly `addi r3, r31, 0x60; bl ??1DataNode@@QAA@XZ` — destroying `Iterate`'s one
+destructible local, the saved `DataNode varNode`. Its **sole** mismatch is the
+prologue `subi`: target `0xe0` vs base `0xf0`.
+
+The A/B only became readable once `Iterate` itself was pinned (`8da739ef`); before
+that the parent carried no match signal at all:
+
+| source state | `Iterate` | `fn_8274FEC8` | `Iterate` frame |
+|---|---|---|---|
+| pre-fix (gated on the class symbol — the bug) | 58.8% | 100.0% | matches target |
+| post-fix (gated on the type symbol — correct) | **60.7%** | 99.9% | **+0x10 structural** |
+
+Re-measured 2026-08-04 on the landed tree: `Iterate` 60.7% normalized / 60.1% raw,
+`fn_8274FEC8` 99.9% with its single diff reported as `subi [off:+16]` — i.e. the
+same 16 bytes, seen from the funclet side.
+
+So: **+1.9 points on a 440-byte parent, −0.1 on a 40-byte funclet, one cause.**
+Reverting the parent to recover the funclet would have restored a semantic bug
+that made every `{$dir iterate ...}` body run zero times.
+
+Three rules fall out:
+
+1. **Score the parent and its funclets together, or score the parent alone and
+   expect the funclets to follow.** Never score a funclet in isolation after a
+   parent edit.
+2. **Never let a funclet wobble veto a semantic fix.** The byte-signature pairing
+   is doing its job; the immediate genuinely differs. This is the opposite failure
+   from the `CharEyes` mispairings below — there the funclets were paired *wrong*;
+   here they are paired right and are reporting real information.
+3. **A liveness lever that does not move the frame leaves the funclet at exactly
+   100.0.** That is the control, and it was run: the DC3 live-range-shortening
+   rewrite applied to this same function produced byte-identical output and did not
+   move `fn_8274FEC8`. If your funclets moved, your edit changed the frame — whether
+   or not you meant it to.
+
+See [patterns/fixable-liveness.md](patterns/fixable-liveness.md) for the lever set
+that distinguishes frame-moving edits from register-only ones.
+
 Census tool: `scripts/harvest/funclet_cascade_rank.py` (EH-derived parent→funclet
 association read out of the retail PE's `_s_FuncInfo` unwind maps, cross-checked
 by a prologue screen — no spatial guessing).
