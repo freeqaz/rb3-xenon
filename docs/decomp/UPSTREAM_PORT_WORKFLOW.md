@@ -151,6 +151,32 @@ the next wave on whatever's still gappy.
   re-add HX_NATIVE conditional code (poll guards in ShellInput,
   TheNetCacheMgr null-checks in MainMenuPanel). Always preserve
   ours where they exist.
+- **⚠ A high upstream match% is not a correctness certificate.** Upstream
+  (`../og-dc3-decomp` = `rjkiv/dc3-decomp`) carries at least one silent
+  **semantic** bug that a port would import wholesale:
+  `ObjectDir::Iterate` (`src/system/obj/Dir.cpp`) gates its per-object body
+  on the **class** symbol instead of the optional **type** symbol —
+  `if (bbb && (s2.Null() || it->Type() == s2))`, where `s2` is assigned in
+  both branches and therefore never null, so the guard degenerates to
+  `it->Type() == <class name>`. `Object::Type()` returns a null `Symbol`
+  whenever `mTypeDef` is null (the common case), so **every**
+  `{$dir iterate ...}` body executed zero times. No error, no warning, no
+  match-percentage signal. The dead-local tell is right there in the source:
+  `s8`, the optional type symbol read from `a2->Sym(1)`, is assigned and then
+  never read.
+
+  We had the same defect and fixed it in `dd144927` / `5260e280`; DC3 fixed
+  it in `4e4cf851`. **`../rb3` — an independent decomp of this same game —
+  had the correct form all along**, in both its `MILO_DEBUG` and release
+  branches (`sym2.Null() || it->Type() == sym2`, `src/system/obj/Dir.cpp:767`),
+  and that independent reconstruction is what settled the semantics for the
+  other two repos.
+
+  Operational rule: when a shared-engine function's *logic* is at stake rather
+  than its expression shape, **check `../rb3` as well as upstream, and treat
+  agreement between two independent trees as the evidence** — not the higher
+  match%. Upstream's number tells you it matches *its* target's expression
+  shape; it says nothing about whether the predicate is right.
 
 ---
 
