@@ -295,16 +295,37 @@ float result = a + b;
 float result = b + a;
 ```
 
-For operations with more than 2 operands:
+### Sub-case: a FLAT sum is canonicalised; an explicitly NESTED one is not
 
-```cpp
-// Before
-float result = x + y + z;
+The refutation banner above applies to **flat** sums. This sub-case is the exception
+worth knowing, and it is the difference between a dead end and a recoverable answer.
 
-// After - try different groupings
-float result = (y + x) + z;
-float result = x + (z + y);
-```
+**Flat sums are canonicalised.** MSVC rewrites `a + b + c` into its own associativity
+however you spell it (measured: `A + (C + B)` regardless of source order), so flat-sum
+term reorder is inert — it is one of the six byte-identical variants in
+[fixable-liveness.md's negative-results table](fixable-liveness.md#negative-results--do-not-re-run-these).
+
+**Explicit parenthesization is NOT inert.** A source-level nested chain
+`a + (b + (c + …))` keeps its shape through codegen, which means its term order is a
+real property of the source — and therefore **recoverable from the target asm**:
+
+1. The target and our build share a schedule, so the mapping from *emission position*
+   (the order the `addi`/`lfs` operand loads appear) to *slot in the nested sum* is a
+   fixed permutation.
+2. Read that permutation off our own build, where we know the source order.
+3. Invert it and apply it to the target's operand offsets to get the target's term
+   order.
+
+Measured in dc3-decomp (`e41758d2`): `RndDrawable::EstimateDraw`, a 12-term nested sum
+over stat fields with per-field coefficients, 99.6% → **100.0% normalized**. The
+residual had been a permutation of the (field, coefficient) pairing across the `fmadds`
+chain plus three FPR swaps at the tail; recovering the order collapsed all of it. The
+last two diffs were an offset swap in the **innermost** pair — flipping *that* pair is
+byte-identical, i.e. the innermost two terms are back in flat-sum territory.
+
+**Routing rule:** if the sum in your source is flat, stop — this is the refuted class.
+If it is (or should be) explicitly parenthesized, the term order is not a guess; go and
+read it out of the target.
 
 ### Detection
 
