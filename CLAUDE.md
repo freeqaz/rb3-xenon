@@ -223,6 +223,41 @@ that injects DC3 rndobj + only RB3 game code) are in
 
 ## Git & worktrees (concurrent agents) **important**
 
+### ★ Landing a worktree branch: ALWAYS `git merge --no-ff`
+
+**Effective 2026-08-04, this SUPERSEDES the previous cherry-pick / `git apply` /
+`format-patch` / `--ff-only` landing strategies wherever they appear in older
+docs.** Those older `docs/plans/*.md` are dated records — do not rewrite them,
+but do not follow them either.
+
+```bash
+# in the main repo, after the lane's branch is rebased onto main and verified
+git merge --no-ff lane-branch-name          # NOT --ff-only, NOT cherry-pick
+```
+
+**Why:** the lane's intermediate commits are the point. The failed attempt, the
+revert with its reasoning, the "tried X, regressed N units" — that history is
+what makes the log worth reading, and it feeds the training-data pipelines. A
+cherry-pick or squash throws away everything except the final diff, and
+`--ff-only` loses the branch boundary so you can no longer tell where a lane
+began and ended. A merge commit preserves both the individual commits **and**
+the shape of the work.
+
+This also fixes a real bookkeeping problem noted in
+`docs/plans/branch-audit-2026-07-29.md`: landing by patch leaves branches
+**permanently "unmerged"** to git, so `git branch --merged` is useless and dead
+branches accumulate undetectably.
+
+- **Rebase onto `main` first**, then merge. Merge commits are for preserving
+  lane history, not for recording that the lane was stale.
+- **Write a real merge-commit message** — what the lane set out to do, what it
+  found, and what it deliberately did *not* do. Do not accept the default
+  `Merge branch 'x'`.
+- The old rules still apply on top of this: stage only your own paths, no
+  `Co-Authored-By`, committing is standing-authorized but **pushing is not**.
+- Cherry-pick remains legitimate for exactly one case: **salvaging one commit
+  out of a lane whose remainder is being abandoned.** Say so in the message.
+
 **Assume other agents are working in the main repo right now.** The main
 working tree is shared, so any command that mutates tracked files or the index
 out from under them will *deeply break* concurrent work. Hard rules:
