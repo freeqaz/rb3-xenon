@@ -432,6 +432,28 @@ plain uncached-but-correct compile). Cache lives at `~/.cache/rb3-objcache`
 > manually** — ninja no longer builds or tracks the tools:
 > `cargo build --release` in `../jeff`, `../objdiff`, or `../objcache`;
 > **`cmake --preset release64 && cmake --build --preset release64`** in `../wibo`.
+>
+> ⛔⛔ **`cargo build --release` in `../jeff` OVERWRITES THE LIVE FLEET BINARY.**
+> Cargo's output path *is* the deployed path (`jeff/target/release/dtk`), which
+> `build.ninja` resolves in rb3-xenon **and** dc3-decomp. So the rebuild command
+> written directly above is also an unannounced fleet deployment — it swaps the
+> splitter out from under every concurrently-running lane, silently changing
+> split output mid-A/B. This is the same hazard the **wibo** section documents
+> staging discipline for; jeff had none, and a lane hit it on 2026-08-04.
+> **Build somewhere else and swap deliberately:**
+> ```bash
+> CARGO_TARGET_DIR=~/tmp/jeff-build cargo build --release   # never touches live
+> cp jeff/target/release/dtk ~/tmp/dtk-backup/dtk.<version>-<sha8>   # back up FIRST
+> cp ~/tmp/jeff-build/release/dtk jeff/target/release/dtk           # then swap
+> ```
+> ★ **Verify a restore by BYTES, not by behaviour.** The same lane "restored"
+> the live binary by rebuilding the same commit and checking split output was
+> unchanged — but a rebuild is functionally identical and **byte-different**, so
+> the deployed binary silently stopped matching the published release asset.
+> `sha256sum` it against `~/tmp/dtk-backup/` or the GitHub asset.
+> ⚠ And bump `Cargo.toml`'s version whenever split output changes: a version
+> constant across materially different binaries is not a weak identifier, it is
+> **no identifier**, which is what v1.9.3 existed to fix.
 > None of these binaries is an implicit ninja input, so a tool rebuild
 > does not retrigger compiles (wibo is byte-neutral to objs — verified fork
 > vs stock objs = 0 differing bytes; objcache serves timestamp-only-different objs).
