@@ -166,7 +166,7 @@ void Locale::Init() {
     FileQualifiedFilename(devkitPath, devkitPath.c_str());
 
     static Symbol locale("locale");
-    DataArrayPtr altCfg((DataNode(devkitPath)), DataNode(locale));
+    DataArrayPtr altCfg((DataNode(locale)), DataNode(devkitPath));
 
     DataArray *cfg = SystemConfig();
     if (!cfg) {
