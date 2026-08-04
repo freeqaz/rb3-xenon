@@ -152,9 +152,8 @@ void Locale::Init() {
     MILO_ASSERT(!mSymTable, 0x59);
     MILO_ASSERT(!mSize, 0x5A);
     MILO_ASSERT(!mStringData, 0x5B);
-    mSize = 0;
-
     MILO_ASSERT(!mNumFilesLoaded, 0x5C);
+    mSize = 0;
     int totalStrLen = 0;  // Total length of all unique localized strings
     int numChunks = 0;     // Number of locale entries loaded from files
     LocaleChunkSort::OrderedLocaleChunk *chunks = 0;
@@ -240,6 +239,7 @@ void Locale::Init() {
             }
         }
     }
+    MemPopTemp();
 
     mSymTable = new Symbol[mSize];
     mStringData = new StringTable(totalStrLen);
@@ -264,7 +264,6 @@ void Locale::Init() {
     }
 
     delete[] chunks;
-    MemPopTemp();
 
 done:
     if (cfg && cfg->Size() > 1) {
