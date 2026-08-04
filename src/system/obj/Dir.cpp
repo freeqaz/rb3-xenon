@@ -1001,7 +1001,7 @@ void ObjectDir::Iterate(DataArray *arr, bool b) {
             sSuperClassMap[key] = bbb;
         } else
             bbb = superclassIt->second;
-        if (bbb && (s2.Null() || it->Type() == s2)) {
+        if (bbb && (s8.Null() || it->Type() == s8)) {
             *var = &*it;
             for (int i = 4; i < arr->Size(); i++) {
                 arr->Command(i)->Execute();
