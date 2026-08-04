@@ -16,6 +16,24 @@
 > target is a dev/debug build, ours is retail with ICF. Treat the mechanism as established
 > and each per-function number as DC3's, not ours.
 >
+> ### Standing note: percentages here are point-in-time
+>
+> **Every per-function percentage on this page is a reading taken on one repo at one
+> commit. Re-measure before citing one** — for **dc3-decomp** figures with
+> `mcp__orchestrator__run_objdiff`; for anything in *this* tree with rb3-xenon's own
+> orchestrator (`scripts/orchestrator/mcp_server.py::_run_objdiff`), which is the only
+> one bound to our `decomp.db`. Two ways these numbers rot:
+>
+> 1. **Neighbours drift.** A match% can move when a *different* function in the same
+>    translation unit changes; inlining, ICF and `.text` layout are all TU-wide.
+> 2. **The number in a commit message is not a measurement.** `RndText::SizeCheck`
+>    carried a fabricated **99.1%** on this page for two days, sourced from a DC3 commit
+>    subject line rather than a diff. See the correction box in Lever 3.
+>
+> **Always name the repo next to a number.** dc3-decomp, rb3-xenon and rb3 share the
+> Milo engine, so the *same symbol name* exists in all three with different code and
+> different match%. An unattributed figure will be refuted against the wrong tree.
+>
 > **One lever has been measured here and came back negative** — see
 > [Local control: Lever 1 on our `ObjectDir::Iterate`](#local-control-lever-1-on-our-objectdiriterate).
 >
@@ -111,9 +129,13 @@ that the lever is broken.**
 
 ## Lever 2 — Call through the cached local; don't re-load the member at the call site
 
-**Impact:** +4.0% (92.7% → 96.7%) in DC3
+**Impact:** +4.0% (92.7% → 96.7%) in **dc3-decomp**
 **Success Rate:** unknown (1 for 1)
 **Time:** 5 minutes
+
+> **96.7% is an intermediate, not `FitTextScroll`'s final figure.** Lever 4 below takes
+> the same **dc3-decomp** function 96.7% → **98.2%**, which is where it stands on that
+> repo's `main` (re-measured 2026-08-04). Cite 98.2% for "where `FitTextScroll` is".
 
 ### Symptom
 
@@ -163,9 +185,20 @@ the initialiser is load-bearing and removing it is a real bug, not a match win �
 
 ## Lever 3 — Fix the schedule first, then the comparison polarity
 
-**Impact:** +2.6% (96.5% → 99.1%) in DC3
+**Impact:** +2.1% (96.5% → **98.6%**) in **dc3-decomp**
 **Success Rate:** unknown (1 for 1)
 **Time:** 15 minutes
+
+> **Corrected 2026-08-04: this was documented as 99.1%; it is 98.6%.** The 99.1% was
+> never a direct measurement — it originated in **dc3-decomp** commit `0c2b0c38`'s own
+> subject line and was copied outward, into this file among others. Direct
+> `run_objdiff` on `?SizeCheck@RndText@@IAAXXZ` in **dc3-decomp**: 96.5% at the parent
+> `f0275669`, **98.6%** at `0c2b0c38` itself, **98.6%** on `main` today. The hypothesis
+> that it hit 99.1% in isolation and was later perturbed by a sibling lane's change to
+> the same `Text.cpp` was tested at `0c2b0c38` with a from-scratch rebuild and
+> **refuted**. See dc3-decomp `docs/decomp/patterns/fixable-liveness.md` Lever 3 for the
+> full table. **None of these figures are rb3-xenon measurements** — this function has
+> not been measured in this tree.
 
 ### Symptom
 
@@ -211,7 +244,8 @@ for the polarity half in isolation.
 
 ## Lever 4 — Scope a Declaration Into the Block That Uses It (stack lever, not a register lever)
 
-**Impact:** +1.5% (96.7% → 98.2%) in DC3; killed 14 offset diffs at once
+**Impact:** +1.5% (96.7% → **98.2%**) in **dc3-decomp**; killed 14 offset diffs at once.
+Second of `FitTextScroll`'s two levers, so 98.2% is that function's final figure.
 **Success Rate:** unknown (1 for 1)
 **Time:** 5 minutes
 
@@ -242,9 +276,16 @@ residual is offsets and not registers first — scoping will not move a register
 
 ## Lever 5 — Name the temporaries so they are built up front and frame-packed
 
-**Impact:** +19.4% (80.4% → **99.9%**) in DC3 — 68.1% for the honest starting point
+**Impact:** +31.8% (68.1% → **99.9%**) in **dc3-decomp**
 **Success Rate:** unknown (1 for 1)
 **Time:** 30 minutes
+
+> **The baseline is 68.1%, not 80.4%.** 80.4% was itself a match-hack state (see
+> [Match-hack smell](#match-hack-smell) below), so measuring against it reported +19.4%
+> for what is really **+31.8%**. Ladder in **dc3-decomp**: 68.1% → 90.6% → **99.9%**.
+> **Not an rb3-xenon measurement.** This tree has its *own* `LabelShrinkWrapper::UpdateAndDrawWrapper`
+> — same symbol name, different binary — sitting at 0.00% (a stub) per
+> `docs/plans/lane-bo3-uilabel-layout-2026-07-29.md`. Do not conflate the two.
 
 The inverse of Lever 4. Lever 4 *narrows* a scope so locals pack. This one *widens* the live
 range of unnamed temporaries — by naming them — so the frame packer sees them at all.
