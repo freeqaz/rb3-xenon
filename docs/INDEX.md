@@ -395,7 +395,8 @@ Read the verdict before re-opening any of these.
 
 ### Compiler / codegen references (MSVC X360, same flags as us)
 
-- [decomp/MSVC_X360_REGALLOC.md](decomp/MSVC_X360_REGALLOC.md) — reverse-engineered register allocator; declaration order controls assignment.
+- [decomp/MSVC_X360_REGALLOC.md](decomp/MSVC_X360_REGALLOC.md) — reverse-engineered register allocator. ⚠ Its "declaration order controls assignment" framing is **corrected**: order controls *stack slots*, and is measured inert for register-only swaps. Registers follow liveness/scheduling — see [decomp/patterns/fixable-liveness.md](decomp/patterns/fixable-liveness.md).
+- ★ [decomp/patterns/fixable-liveness.md](decomp/patterns/fixable-liveness.md) — **register swaps are symptoms, not causes.** The five levers that actually move them, the negative-results table (12+ byte-identical variants; two zero-gain sweeps), the **Triage Split** that decides which functions are worth opening at all, and the three-part floor-evidence standard. Read before any `REGISTER_SWAP` residual.
 - [decomp/TECHNICAL_NOTES.md](decomp/TECHNICAL_NOTES.md) — compiler patterns & session lessons: regalloc, static init, control flow, merged fns.
 - [decomp/XBOX360_FLOATING_POINT_CODEGEN.md](decomp/XBOX360_FLOATING_POINT_CODEGEN.md) — FP codegen: `/fp:` flags, contraction pragmas, FPU patterns.
 - [decomp/PRAGMA_INDEX.md](decomp/PRAGMA_INDEX.md) — navigation index for the pragma doc suite.
@@ -423,6 +424,10 @@ Read the verdict before re-opening any of these.
   (2) **comma form vs function call is an ARGUMENT-ORDER decision, not only a copying decision**
   (MSVC evaluates function args right-to-left, the comma operator left-to-right). Read alongside the
   corrected comment block in `src/system/os/Debug.h`.
+  ★ Also carries the **mirror rule**: a funclet dropping 100.0 → 99.9 right after a *correct* parent
+  edit is the parent's frame growing 16 bytes, counted twice — **it must not veto the parent fix**.
+  Worked A/B on `ObjectDir::Iterate` / `fn_8274FEC8`, plus the free control (an edit that leaves the
+  funclet at exactly 100.0 did not move the frame).
 - [plans/funclet-cascade-lever-2026-07-25.md](plans/funclet-cascade-lever-2026-07-25.md) — [HIST]
   the 9-worktree funclet-lever campaign (map `__unwind$N` purge +124, COMDAT-scatter splits,
   scatter-include inlining collapse). ⚠ **§14 and §22 carry correction banners**: they predate
@@ -431,7 +436,8 @@ Read the verdict before re-opening any of these.
 - [decomp/patterns/at-limit-systemic.md](decomp/patterns/at-limit-systemic.md) — systemic at-limit
   classes, incl. §8 the **MSVC temp-slot ASSIGNMENT permutation** wall with a cheap prefilter
   (`set(target slots) == set(base slots)`) so you can classify BEFORE investing.
-- [decomp/UPSTREAM_PORT_WORKFLOW.md](decomp/UPSTREAM_PORT_WORKFLOW.md) — porting matching impls from DC3 / rb3-Wii when theirs is closer.
+- [decomp/UPSTREAM_PORT_WORKFLOW.md](decomp/UPSTREAM_PORT_WORKFLOW.md) — porting matching impls from DC3 / rb3-Wii when theirs is closer. ⚠ Now carries the **upstream-is-not-a-correctness-certificate** anti-pattern: `../og-dc3-decomp` (= `rjkiv/dc3-decomp`) still has the `ObjectDir::Iterate` type-filter bug we fixed in `dd144927`/`5260e280`. When a shared-engine function's *logic* is at stake, check `../rb3` too and trust agreement between two independent trees over the higher match%.
+- [decomp/callgraph-triangulation.md](decomp/callgraph-triangulation.md) — the batch rb3↔dc3 identification oracle, **plus** (2026-08-04) the manual intra-binary variant: pin an unnamed target function by reading its `bl` out of a **100%-matched caller**'s aligned instruction table, cross-check by callee-set signature, and the refuted-candidate discipline (`fn_82752668` was NOT `Iterate`; pinning it would have manufactured a permanently unfixable diff).
 - [decomp/identity-transfer.md](decomp/identity-transfer.md) — per-function identity transfer for ICF-scattered TUs (case-A vs case-B).
 - [decomp/pin-candidates.md](decomp/pin-candidates.md) — unified oracle→pin ranker: 5 oracle sources → consensus tiers + ranked splits wave.
 - [decomp/callgraph-triangulation.md](decomp/callgraph-triangulation.md) — vote rb3 anonymous fns via anchor callsites vs dc3 named fns.

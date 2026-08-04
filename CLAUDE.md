@@ -938,7 +938,43 @@ comments against the compiler; `--offset 0x118` answers "which member is here".
 **MSVC pattern docs** (`docs/decomp/patterns/`, `docs/decomp/MSVC_X360_REGALLOC.md`,
 `docs/decomp/TECHNICAL_NOTES.md`, `docs/decomp/PRAGMA_*.md`,
 `docs/decomp/XBOX360_FLOATING_POINT_CODEGEN.md`): ported verbatim from DC3.
-Same compiler, same flags → applies directly.
+Same compiler, same flags → applies directly. (Verified 2026-08-04: our `base`
+cflags and dc3-decomp's are byte-identical — `/nologo /wd4355 /wd4164 /c /GR /O1
+/Oi /EHsc`, `config/45410914/config.json` vs `config/373307D9/config.json`. The
+*targets* still differ: ours is retail with ICF, DC3's is a dev/debug build. So
+the codegen **mechanism** transfers verbatim; a per-function **number** does not.)
+
+★ **`MSVC_X360_REGALLOC.md`'s "declaration order controls assignment" is
+corrected.** Declaration order controls **stack slots**; it is measured *inert*
+for register-only swaps (12+ byte-identical hand variants across 4 functions, two
+zero-gain beam sweeps). Registers follow **liveness** and **scheduling** — read
+[`docs/decomp/patterns/fixable-liveness.md`](docs/decomp/patterns/fixable-liveness.md)
+before opening a `REGISTER_SWAP` residual, and its Triage Split before choosing
+*which* function to open at all.
+
+### objdiff pattern-doc links resolve against THIS repo
+
+objdiff-cli emits pattern-doc URLs relative to the **consuming** repo, detected by
+marker filename in `docs/decomp/patterns/`. Because we carry DC3's filenames
+(`PERMUTER_ROI_ANALYSIS.md`, `at-limit-systemic.md`), **we resolve as
+`DocProject::Dc3`** — which is correct, we are the MSVC repo. `../rb3` carries
+`permuter-roi.md` / `at-limit-mwcc.md` and resolves as `Rb3`. Override with
+`OBJDIFF_DOC_PROJECT={dc3,rb3,unknown}` if you ever need to.
+
+Two operational consequences:
+
+- **Anchor stability is a contract.** objdiff renders only the **first** URL per
+  pattern, so renaming a heading those links point at silently degrades tool
+  output — no error, just a link that no longer lands. Verify any doc rename with
+  `python3 ../objdiff/scripts/check_doc_links.py --dc3 . --allow-missing`
+  (currently **30/30**; it was 27/30 before 2026-08-04, failing on
+  `fixable-liveness.md` ×2 and `PERMUTER_ROI_ANALYSIS.md#instruction-scheduling`).
+- **One binary, three repos.** `bin/objdiff-cli` here, in `../rb3` and in
+  `../dc3-decomp` are all symlinks to the *same*
+  `../objdiff/target/release/objdiff-cli`. A single
+  `cargo build --release -p objdiff-cli` propagates to all three — and,
+  conversely, **nothing propagates until someone rebuilds**. A doc/link fix
+  committed in `../objdiff` is inert in every repo until that build runs.
 
 ## Phase tracking
 

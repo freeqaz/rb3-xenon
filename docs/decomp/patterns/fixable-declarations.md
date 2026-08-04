@@ -408,15 +408,34 @@ if (!mesh->GetKeepMeshData()) {
 **Success Rate:** 30%
 **Time:** 10 minutes
 
-The order of variable declarations affects register allocation.
+> ⚠ **Corrected 2026-08-04 — this is a STACK-SLOT lever, not a register lever.**
+> Reach for it when the residual is `OFFSET_SWAP` / `[off:-N]` shifts on `r1`, or
+> `mode=stack-layout` SHIFTED/SWAPPED rows. For a **register-only** residual it is
+> measured *inert*: 12+ hand variants across four functions produced **byte-identical**
+> `.obj` output, and two beam-search sweeps (65 and 56 candidates) returned zero
+> improvements. Register swaps are downstream of liveness and scheduling — start at
+> [fixable-liveness.md](fixable-liveness.md).
+>
+> The `ShortQuat::ToQuat` example below is genuine and stays: its 11.5% → 99.88% came from
+> reordering *stores into an aggregate* (which moves both the schedule and the slots), not
+> from permuting a declaration list against a fixed interference graph. That distinction is
+> what the correction is about.
+
+The order of variable declarations affects stack-slot assignment, and — where the
+interference graph leaves slack — register allocation.
 
 ### Symptom
 
-objdiff shows consistent register swaps (r30/r31, f30/f31) throughout function.
+objdiff shows consistent register swaps (r30/r31, f30/f31) throughout function, **together
+with** stack-offset differences. Register swaps with no offset differences are a
+[liveness/scheduling](fixable-liveness.md) residual, not this one.
 
 ### Why It Works
 
-The compiler assigns registers based on declaration order. Changing declaration order changes the entire register allocation scheme.
+The compiler assigns stack homes per lexical scope, in declaration order. Where the
+allocator's constraints leave slack, changing declaration order also permutes the
+colour→register mapping; where they do not, the output is byte-identical and the mutation
+is provably a no-op (see [unfixable-compiler.md](unfixable-compiler.md#register-allocation)).
 
 ### Fix
 
