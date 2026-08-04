@@ -18,6 +18,12 @@
 >
 > **One lever has been measured here and came back negative** — see
 > [Local control: Lever 1 on our `ObjectDir::Iterate`](#local-control-lever-1-on-our-objectdiriterate).
+>
+> **⚠ Read [Triage Split](#triage-split-statement-level-vs-within-one-expression) first if you
+> are picking functions to open.** A 31-function AT_LIMIT sweep found register swaps were
+> symptoms in **100% of cases** — but that the *cause* is frequently **not** liveness. It is
+> just as often control flow, an inline-level count, or a signed/unsigned compare. The robust
+> claim on this page is **"do not chase the register"**, not "the cause is always liveness".
 
 ---
 
@@ -322,6 +328,45 @@ slack*. With no slack it is provably inert, not a lottery ticket.
 
 **Read a byte-identical result as a routing rule:** it is positive evidence that you are on
 the wrong axis and must change the live set or the schedule.
+
+---
+
+## Triage Split: statement-level vs within-one-expression
+
+*From a seven-lane, 31-function sweep of the AT_LIMIT + `REGISTER_SWAP` bucket in
+dc3-decomp, 2026-08-04.* **This decides which functions to open.** Register swaps do not
+classify a function; this does.
+
+| Residual implicates… | Verdict | Tells |
+|---|---|---|
+| **A statement** — control flow, which field is read, which call is made, what stays live across a call, the shape of an *explicitly nested* expression | **Investigate.** Every win came from here. | insert/delete clusters, function-call diff rows, `addi`/`lwz` field-offset diffs, `__savegprlr_NN` deltas, branch polarity, signed-vs-unsigned compares, bool materialisation |
+| **One arithmetic expression** — commutative operand order, flat-sum term order, which of two independent loads issues first | **Floor. Skip.** | a lone `fadds` / `fmuls` / `add` operand swap with no surrounding structural difference |
+
+The exception is explicit parenthesization — a nested chain preserves its shape and its
+term order is recoverable. See
+[fixable-operators.md: a FLAT sum is canonicalised; an explicitly NESTED one is not](fixable-operators.md#sub-case-a-flat-sum-is-canonicalised-an-explicitly-nested-one-is-not).
+**Confirm the nesting survived before spending builds on it** — one lane tested the
+exception on a dot product and both groupings were byte-identical, because MSVC had
+already flattened it.
+
+### A third bucket: stack-slot allocation (looks statement-level, is not)
+
+Insert/delete clusters that contain the **same instructions placed differently**, plus
+`mode=stack-layout` showing many DIFFER / PERMUTED rows, is *slot allocation* — MSVC
+reusing a slot across disjoint nested scopes where the target does not. Renaming the
+locals apart does nothing; the packing is lifetime-based. **Drop these.**
+
+### How well the rule performs
+
+It is a **filter for what to open, not a predictor of what will close.**
+
+- It never misfired in the costly direction — every expression-level residual dropped
+  stayed a floor under test.
+- Statement-level does **not** reliably convert. At ≥98% it is necessary but not
+  sufficient; one lane went 2-for-5 with three *correct* diagnoses that measured worse.
+- Budget an unfiltered sweep of the AT_LIMIT + `REGISTER_SWAP` bucket at roughly **1 win
+  per 3 functions**. The post-filter rate was much better (~1 per 1.3) but that number is
+  post-filter and must not be used to budget an unfiltered pass.
 
 ---
 
