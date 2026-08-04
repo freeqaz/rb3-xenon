@@ -235,7 +235,8 @@
             "system/bandobj/OutfitConfig.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
+                    "/DRB3_HANDLE_LOCAL_STATIC",
+                    "/DRB3_NOTIFY_ONCE_EVAL"
                 ]
             },
             "system/bandobj/LayerDir.cpp": {
