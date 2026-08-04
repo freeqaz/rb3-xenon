@@ -478,7 +478,23 @@ void RegisterMiloObjectFactories() {
         // SUFFICIENT; the chain has further links (see
         // docs/plans/x20-textures-2026-08-03.md §3). Do not read this call as
         // having closed the texture question.
+        //
+        // ⚠ RENDERER-ONLY. OutfitConfig::Init() does `Hmx::Object::New<RndCam>()`,
+        // and RndCam's ctor calls UpdateLocal() -> TheRnd.YRatio(), a VIRTUAL
+        // call. In every target that does not link the engine's Rnd_Wgpu.cpp,
+        // `TheRnd` resolves to the weak 128-byte ZERO-FILLED object in
+        // native/src/dta_link_stubs.s:404 -- so the vtable pointer is null and
+        // the call segfaults inside the constructor. MEASURED as exactly that
+        // backtrace in rb3-milo (RegisterMiloObjectFactories -> OutfitConfig::Init
+        // -> New<RndCam> -> RndCam::RndCam -> RndCam::UpdateLocal, SIGSEGV).
+        // X20 added this call while testing rb3-render, which defines
+        // RB3_ENGINE_RENDER and has a real Rnd; rb3-milo has neither and had
+        // been broken since. Gating restores rb3-milo to its pre-X20 behaviour
+        // (OutfitConfig unregistered -> "Can't make OutfitConfig" -> ReadDead
+        // skip, a bounded LEAF gap) while leaving rb3-render untouched.
+#ifdef RB3_ENGINE_RENDER
         OutfitConfig::Init();
+#endif
         //
         // ⛔ X9's blocker note that stood here is RETRACTED, and the retraction
         // is the useful part. It read: "BandPatchMesh.cpp is NOT compiled
