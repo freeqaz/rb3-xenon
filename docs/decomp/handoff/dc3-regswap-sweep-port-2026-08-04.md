@@ -31,6 +31,26 @@ individual commits, not the merges).
 
 ---
 
+## Final measured result
+
+Full `./tools/ninja-locked` build, rc=0, 0 error lines; `report.json` regenerated.
+
+| unit | matched fns | fuzzy % |
+|---|---|---|
+| **Locale** | **4 → 10** | **45.191597 → 93.833610** |
+| Trans | 118 → 118 | 79.726295 (unchanged) |
+| OSCMessenger | — | 7.5279503 (unchanged) |
+| Mat_NG | 14 → 14 | 97.615845 (unchanged) |
+| Mesh / DataNode / PostProc | unchanged | unchanged |
+
+**Whole binary: 44,226 → 44,232 matched functions (+6); fuzzy 46.43 → 46.44689;
+matched_code_percent 40.59328.** No unit regressed.
+
+The Locale jump is larger than `Locale::Init` alone: pairing `fn_827C9AF8` also
+resolved a cascade of mis-paired 40-byte sibling bodies in the same unit that had
+been sitting at 99.8–99.9%. Worth remembering — **one correct map entry can pay
+well beyond the function it names.**
+
 ## Measurement — read this before trusting any number in a port like this
 
 `mcp__orchestrator__run_objdiff(symbol=..., project_dir=<rb3-xenon worktree>)`
@@ -338,6 +358,41 @@ findings, restated:
    label on a sub-100 row is a symptom, not a diagnosis.)
 
 ---
+
+## Native gate: NOT meaningfully run — do this before landing
+
+`tools/native_build_gate.sh` was run in the worktree and came back
+**uninformative, not failing**:
+
+```
+build: rc=0, 0 error line(s) / 0 distinct, 0 failed edge(s), 0 warning(s)
+  SKIPPED  rb3-frame  -- no DawnConfig.cmake at <wt>/native/../../dc3-decomp-deps/dawn/...
+  SKIPPED  rb3-milo   -- no milo-native-engine checkout at <wt>/native/../../milo-native-engine
+  SKIPPED  rb3-render -- same
+  STALE    rb3-dta, rb3-song, ... (15 targets)
+NATIVE GATE: FAIL (0/18 good, 3 skipped)
+```
+
+Both symptoms are **worktree-path artifacts**, not defects in this branch. The
+gate resolves its dependencies *relative to the tree* (`native/../../…`), and a
+worktree under `~/tmp` cannot see the sibling repos under
+`/home/free/code/milohax/`. The 15 STALE targets are main's binaries carried in
+by the reflinked build dir, which ninja considers up to date — so **the gate
+never linked this branch's code at all.** This is precisely the "always require
+0 SKIPs, never just PASS" trap already documented in CLAUDE.md, arriving here in
+its other form (a meaningless FAIL rather than a meaningless PASS).
+
+Static argument that the risk class is not reachable — but it is an argument,
+not a measurement, and the gate should still be run from the main tree before
+landing:
+
+- `Trans.cpp` and `OSCMessenger.cpp` are logic-only: no new symbols, no new
+  templates, no new overloads, no size-typed constructs.
+- `Locale.cpp`'s guard commit adds **only** `#ifdef`/`#endif`/comment lines
+  (verified: the code-line diff is a single removed comment), and `#ifdef`
+  nesting balances to depth 0. Under `HX_NATIVE` the file is functionally what
+  it was.
+- The `altCfg` swap exchanges two arguments of the **same type** (`DataNode`).
 
 ## Open leads for whoever picks this up
 
