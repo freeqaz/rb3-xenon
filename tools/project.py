@@ -1677,7 +1677,18 @@ def generate_build_ninja(
         # byte-identical everywhere (warm-worktree command-hash parity). The
         # pass fails safe (empty protect set -> over-fires by the 2 explained
         # losses) if the file is unreadable, so the path must be correct.
-        command=f"JEFF_MERGE_PROTECT=scripts/target_symbol_map.json {dtk} xex split $in $out_dir",
+        # The `&& $python tools/prune_split_outputs.py` tail deletes split
+        # outputs the CURRENT split no longer emits. dtk rewrites the whole live
+        # set every run but never removes a unit's previous generation, so every
+        # re-pathed / renamed / deleted splits.txt heading orphans a `.s`+`.obj`
+        # on disk forever -- and an orphan `auto_<addr>` keeps claiming bytes
+        # that a real unit has since been pinned to. Relative script path (like
+        # JEFF_MERGE_PROTECT above) keeps the command string byte-identical in
+        # main and every worktree, preserving warm-worktree command-hash reuse.
+        command=(
+            f"JEFF_MERGE_PROTECT=scripts/target_symbol_map.json {dtk} xex split $in $out_dir"
+            f" && $python tools/prune_split_outputs.py $out_dir"
+        ),
         description="SPLIT $in",
         depfile="$out_dir/dep",
         # restat: dtk split is deterministic, so re-running it with an
