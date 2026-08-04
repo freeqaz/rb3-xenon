@@ -577,7 +577,24 @@ run the gate before you land. Two traps, both real:
 - dtk SPLIT prints `WARN` lines about UTF-16 strings, `PpcRel`/`PpcAddr16`
   relocations, and unaligned symbols. These are **tolerated** — jeff was patched
   to downgrade asm-write failures to warnings (see jeff `src/cmd/xex.rs`), so
-  `config.json` is still emitted and the build proceeds.
+  `config.json` is still emitted and the build proceeds. **~30 such lines
+  survive; that is the expected steady state.**
+- ★ **A fresh `ninja` prints ~114 lines, NOT ~62,000 — as of dtk `v1.9.3`
+  (`a88009b`, 2026-08-04).** If you see tens of thousands of
+  `Skipping tail block merge` / `Not a function @` / `Control flow … hit known
+  function` / `Warning! Illegal inst`, **you are running an old dtk** — check
+  `dtk --version`, don't go hunting a split bug. Those five classes were 99% of
+  the old log and **every one of them described expected behaviour**, measured
+  against the retail `.pdata`: `Illegal inst` is inter-function **alignment
+  padding** (all 265 sites are `0x00000000`, all in gaps between function
+  extents — *not* VMX128), and ~17,200 lines were one cause, the **8-byte EH
+  prefix** (a `.text` pointer + an `.rdata` pointer before a function; 97.0%
+  have `addr+8` a real function start). Full census + the traps:
+  Claude memory `project_split_log_noise_audit_2026-08-04.md`.
+  ⚠ **`symbols.txt` no longer drifts** (fixed point committed) — if it does
+  again, that is a real change, not the old cosmetic churn.
+  ⛔ **rb3 (Wii) must keep stock dtk `1.3.0`** — the jeff fork exposes only 6
+  subcommands and has **no `dol`**, which rb3's split invokes.
 - Denominator is the **whole binary**, so this is the honest dc3-comparable
   metric — there's no denominator gaming. Matches register only when a unit has
   both (a) pinned section ranges in `splits.txt` and (b) a compiled `.obj` that
