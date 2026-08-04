@@ -106,9 +106,34 @@ register pressure, i.e. it confirms whatever you point it at.
 ⚠ Side-findings for a map lane, **flagged but unverified**: nine named engine units
 each claim exactly one function inside the Quazal block, and `CameraManager.s`
 claims 13 at `0x82B02748`–`0x82B031A0` — almost certainly bad `.text` pins reading
-as false 0%. Also **4,364 addresses (3.58%) where two `.s` files disagree** (stale
-TU0-era generations under `build/45410914/asm/`) — **any asm-wide scan must filter
-to files newer than 2026-07-15** or the address axis is garbage.
+as false 0%.
+
+★★★ **The old "4,364 addresses (3.58%) disagree ⇒ filter `.s` to files newer than
+2026-07-15" note is REPLACED — it was wrong three ways, and the filter it
+prescribed is NOT SAFE.** Measured 2026-08-04:
+
+- **`4,364` was a FILE count mislabelled as an ADDRESS count.** The real
+  disagreement is **1,747,064 of 1,965,755 doubly-covered addresses (88.87%)**,
+  plus 32,305 addresses that exist *only* in stale files.
+- **The mtime filter catches 39% of the problem.** 4,388 stale files predate the
+  cutoff; **6,763 (61%) are NEWER and slip straight through** (3,857 from 07-26,
+  1,947 from 08-01, more on 08-02/03). It is insufficient, not merely a
+  workaround.
+- **Staleness was 82.2% of the tree**: 111 named orphans + 11,040 stale `auto_*`
+  = **11,151 stale `.s`** and **11,173 stale `.obj`**, because split rewrites the
+  live set every run and never removes what it stopped emitting. Now fixed —
+  `tools/prune_split_outputs.py` runs on every successful split, pruning against
+  dtk's own `config.json` (and refusing on a 0-unit config).
+
+⛔⛔ **AND NO MTIME FILTER COULD EVER HAVE FIXED IT, because the `.s` ADDRESS AND
+FILE-OFFSET COLUMNS ARE SYNTHETIC for multi-block units** — dtk computes them as
+`first_block_start + cumulative section offset`, so they name addresses the
+function does not live at (`Timer.s` renders `fn_82511430`'s body as `82270294`;
+retail has `00 00 00 00` there and the real body at `0x82511430`). **Key every
+asm-wide scan on the `.fn fn_<addr>` symbol, NEVER the address column.**
+⚠ "live-vs-live disagreement is 0" is **VACUOUS** — 0 addresses are covered by
+≥2 live files. The honest statement is structural: the live split set is a clean
+partition, one opinion per address.
 
 **Crucially, no whole-program optimization** — TU spatial grouping in `.text` is
 preserved (empirically: the MasterAudio.cpp cluster of 46 functions packs into
