@@ -17178,6 +17178,7 @@
  "0x8274f8f8": "??0InlinedDir@ObjectDir@@QAA@XZ",
  "0x8274f990": "??1InlinedDir@ObjectDir@@QAA@XZ",
  "0x8274fc58": "?FindEntry@ObjectDir@@IAAPAUEntry@1@PBD_N@Z",
+ "0x8274fce8": "?Iterate@ObjectDir@@IAAXPAVDataArray@@_N@Z",
  "0x8248f1c0": "?_M_erase@?$vector@VTriangle@@V?$StlNodeAlloc@VTriangle@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTriangle@@PAV3@0ABU__false_type@2@@Z",
  "0x827de638": "??$_M_allocate_and_copy@PBVCtrlPoint@RndSpline@@@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCtrlPoint@RndSpline@@IPBV23@0@Z",
  "0x827502f0": "?FindContainingDir@ObjectDir@@QAAPAV1@PBD@Z",
