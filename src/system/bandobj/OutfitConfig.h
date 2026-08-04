@@ -57,13 +57,26 @@ public:
         //
         // Retail's Compose really does read them rotated -- it composites
         // slot 0x2c (interp), then 0x38 (mask), then 0x20 (diffuse), applying
-        // mColor2Palette to INTERP and the distinct SetColorModFlags value to
-        // DIFFUSE, where this source applies them to diffuse and mask
-        // respectively. That is a live behavioural divergence in the composite
-        // order, NOT a layout problem; it is left unfixed deliberately because
-        // it is entangled with the BaseMaterial mColorModFlags divergence
-        // (retail stores the flag at +0x28 with values 1/3/6; we store at
-        // +0x154 with 0/3/2), which is engine-wide. See the lane X23 report.
+        // mColor2Palette to INTERP where this source applies it to diffuse.
+        // Confirmed independently on the Wii DOL, which is rotated the same
+        // way, so this is a defect shared by both decomps, not a 360 quirk.
+        // Left unfixed here deliberately: it is one of several co-located
+        // semantic defects in Compose (see below) that want fixing together as
+        // a deliberate re-derivation, not piecemeal for a percentage.
+        //
+        // NOTE, and do not re-derive the wrong version: the four per-layer
+        // stores to sMat+0x28 are mBlend, NOT mColorModFlags. There is NO
+        // BaseMaterial layout divergence -- mBlend@0x28, mZMode@0x3c and
+        // mTexWrap@0x48 all agree between retail and our build. Retail
+        // composites the layers by BLEND MODE, writing 1/3/3/6 =
+        // kBlendSrc / kBlendSrcAlpha / kBlendSrcAlpha / kBlendMultiply before
+        // the four DrawRects, i.e. it calls SetBlend where this source calls
+        // SetColorModFlags (which is why our RT collapses to the last layer --
+        // the near-white-eyeballs symptom the HX_NATIVE comment in Compose
+        // describes). 6 is not even a legal ColorModFlags value; it is
+        // kBlendMultiply. Lane X23 first mis-read +0x28 as mColorModFlags with
+        // shifted enum values; that attribution is WRONG. Full evidence:
+        // /home/free/tmp/laneX23-ghidra/COMPOSE_CHAIN_GHIDRA_AUDIT.md S2-S5.
         ObjPtr<RndTex> mTwoColorDiffuse; // 0x18
         ObjPtr<RndTex> mTwoColorInterp; // 0x24
         ObjPtr<RndTex> mTwoColorMask; // 0x30
