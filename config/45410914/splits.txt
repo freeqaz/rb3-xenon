@@ -13363,3 +13363,179 @@ system/world/World.cpp:
 system/hamobj/PhotoSpotlightPositioner.cpp:
 	.pdata      start:0x821F2138 end:0x821F2148
 	.text       start:0x8227B408 end:0x8227B4A8
+
+xdk/xgraphics/ucode/driver/r500assembler.cpp:
+	.pdata      start:0x8224C720 end:0x8224C7A8
+	.text       start:0x8293E470 end:0x8293F864
+
+xdk/xgraphics/ucode/compiler/asm/disasm.cpp:
+	.pdata      start:0x8224CC98 end:0x8224CCA0
+	.text       start:0x82951308 end:0x82951510
+
+xdk/xgraphics/ucode/ssm/interface/ssmcallbacks.cpp:
+	.pdata      start:0x8224CCA8 end:0x8224CCD8
+	.text       start:0x82951F80 end:0x829524A0
+
+xdk/xgraphics/ucode/ssm/util/linkedlist.cpp:
+	.pdata      start:0x8224CCD8 end:0x8224CE28
+	.text       start:0x829524A0 end:0x82954478
+
+xdk/xgraphics/ucode/ssm/statecompiler/compiledshader.cpp:
+	.pdata      start:0x8224CE28 end:0x8224CF18
+	.text       start:0x82954478 end:0x82955B3C
+
+xdk/xgraphics/ucode/ssm/statecompiler/internalconstallocator.cpp:
+	.pdata      start:0x8224CF18 end:0x8224CF30
+	.text       start:0x82955B40 end:0x82955FE0
+
+xdk/xgraphics/ucode/ssm/interface/ssmdevice.cpp:
+	.pdata      start:0x8224CF30 end:0x8224CF58
+	.text       start:0x82956090 end:0x82956A38
+
+xdk/xgraphics/ucode/ssm/interface/ssmobject.cpp:
+	.pdata      start:0x8224CF58 end:0x8224CF78
+	.text       start:0x82956A38 end:0x82956E20
+
+xdk/xgraphics/ucode/ssm/statecache/shaderstore.cpp:
+	.pdata      start:0x8224CF78 end:0x8224CFC8
+	.text       start:0x82956E20 end:0x829577E8
+
+xdk/xgraphics/ucode/ssm/statecompiler/ssmstatecompiler.cpp:
+	.pdata      start:0x8224CFC8 end:0x8224CFF8
+	.text       start:0x829577E8 end:0x82958234
+
+xdk/xgraphics/ucode/ssm/statecache/statepreprocessor.cpp:
+	.pdata      start:0x8224ECA8 end:0x8224ECB0
+	.text       start:0x82A0A870 end:0x82A0A984
+
+xdk/xgraphics/ucode/ssm/interface/ssmregistry.cpp:
+	.pdata      start:0x8224ECD8 end:0x8224ECF0
+	.text       start:0x82A0AD00 end:0x82A0AF40
+
+xdk/xgraphics/ucode/ssm/abstractstate/as_object.cpp:
+	.pdata      start:0x8224ED08 end:0x8224ED10
+	.text       start:0x82A0B380 end:0x82A0B848
+
+xdk/xgraphics/ucode/ssm/statecache/statepostprocessor.cpp:
+	.pdata      start:0x8224ED10 end:0x8224ED30
+	.text       start:0x82A0B8A8 end:0x82A0C104
+
+xdk/xgraphics/ucode/ssm/statecache/hashstatecache.cpp:
+	.pdata      start:0x8224ED30 end:0x8224ED58
+	.text       start:0x82A0C108 end:0x82A0C4C4
+
+xdk/xgraphics/ucode/ssm/util/linkedlistfactories.cpp:
+	.pdata      start:0x8224ED70 end:0x8224EDD0
+	.text       start:0x82A0C758 end:0x82A0D2F0
+
+xdk/xgraphics/ucode/ssm/statecompiler/fetchconstallocator.cpp:
+	.pdata      start:0x8224EDD0 end:0x8224EE08
+	.text       start:0x82A0D2F0 end:0x82A0DC74
+
+xdk/xgraphics/ucode/ssm/statecompiler/compilewithqueries.cpp:
+	.pdata      start:0x8224EE08 end:0x8224EE10
+	.text       start:0x82A0DC78 end:0x82A0DD1C
+
+xdk/xgraphics/ucode/ssm/statecompiler/shaderrecycler.cpp:
+	.pdata      start:0x8224EE10 end:0x8224EE40
+	.text       start:0x82A0DD20 end:0x82A0E8B8
+
+xdk/xgraphics/ucode/ssm/statecache/programstore.cpp:
+	.pdata      start:0x8224EE48 end:0x8224EE70
+	.text       start:0x82A0E900 end:0x82A0F33C
+
+xdk/xgraphics/ucode/ssm/statecompiler/txserver.cpp:
+	.pdata      start:0x8224EE70 end:0x8224EE80
+	.text       start:0x82A0F340 end:0x82A0F5D4
+
+xdk/xgraphics/ucode/ssm/util/hashtable.cpp:
+	.pdata      start:0x8224EE90 end:0x8224EEE8
+	.text       start:0x82A0F6B0 end:0x82A0FF08
+
+xdk/xgraphics/ucode/ssm/translator/xltconvert.cpp:
+	.pdata      start:0x8224EEE8 end:0x8224F080
+	.text       start:0x82A0FF08 end:0x82A1D080
+
+xdk/xgraphics/ucode/compiler/compiler.cpp:
+	.pdata      start:0x8224F0C0 end:0x8224F188
+	.text       start:0x82A1D488 end:0x82A1F2A4
+
+xdk/xgraphics/ucode/ssm/statecompiler/cp_compiler.cpp:
+	.pdata      start:0x8224F188 end:0x8224F1B0
+	.text       start:0x82A1F2A8 end:0x82A20614
+
+xdk/xgraphics/ucode/ssm/statecompiler/compiledprogram.cpp:
+	.pdata      start:0x8224F1B0 end:0x8224F258
+	.text       start:0x82A20618 end:0x82A216A8
+
+xdk/xgraphics/ucode/ssm/statecompiler/compilertossm.cpp:
+	.pdata      start:0x8224F660 end:0x8224F8C0
+	.text       start:0x82A32B98 end:0x82A37928
+
+xdk/xgraphics/ucode/ssm/util/ternary.cpp:
+	.pdata      start:0x8224F8C0 end:0x8224F8F0
+	.text       start:0x82A37928 end:0x82A37E6C
+
+xdk/xgraphics/ucode/ssm/statecompiler/cp_common.cpp:
+	.pdata      start:0x8224F8F0 end:0x8224F910
+	.text       start:0x82A38008 end:0x82A38894
+
+xdk/xgraphics/ucode/compiler/ir/cfg.cpp:
+	.pdata      start:0x8224F910 end:0x8224FAD0
+	.text       start:0x82A38898 end:0x82A3F690
+
+xdk/xgraphics/ucode/compiler/il/ilinstiterator.cpp:
+	.pdata      start:0x8224FB08 end:0x8224FB20
+	.text       start:0x82A3FE50 end:0x82A41040
+
+xdk/xgraphics/ucode/compiler/asm/asm.cpp:
+	.pdata      start:0x8224FB48 end:0x8224FCF0
+	.text       start:0x82A41470 end:0x82A47340
+
+xdk/xgraphics/ucode/compiler/ir/vregtable.cpp:
+	.pdata      start:0x8224FD18 end:0x8224FD60
+	.text       start:0x82A47C18 end:0x82A48880
+
+xdk/xgraphics/ucode/compiler/opt/globalregs.cpp:
+	.pdata      start:0x8224FD88 end:0x8224FD98
+	.text       start:0x82A4A3F0 end:0x82A4A500
+
+xdk/xgraphics/ucode/compiler/ir/ssa.cpp:
+	.pdata      start:0x8224FDB0 end:0x8224FE08
+	.text       start:0x82A4B3B0 end:0x82A4D458
+
+xdk/xgraphics/ucode/compiler/opt/sched.cpp:
+	.pdata      start:0x8224FE18 end:0x8224FF40
+	.text       start:0x82A4D600 end:0x82A524F8
+
+xdk/xgraphics/ucode/compiler/opt/opt.cpp:
+	.pdata      start:0x8224FF48 end:0x8224FF80
+	.text       start:0x82A52A10 end:0x82A541C0
+
+xdk/xgraphics/ucode/compiler/ir/linkageinfo.cpp:
+	.pdata      start:0x8224FF90 end:0x8224FFF0
+	.text       start:0x82A544B0 end:0x82A55798
+
+xdk/xgraphics/ucode/compiler/ir/irinst.cpp:
+	.pdata      start:0x82250188 end:0x822501F8
+	.text       start:0x82A58BE0 end:0x82A59B38
+
+xdk/xgraphics/ucode/compiler/ir/block.cpp:
+	.pdata      start:0x82250400 end:0x82250458
+	.text       start:0x82A5BC28 end:0x82A5C5C0
+
+xdk/xgraphics/ucode/compiler/ir/expansion.cpp:
+	.pdata      start:0x822504C8 end:0x82250580
+	.text       start:0x82A5CDE0 end:0x82A65F94
+
+xdk/xgraphics/ucode/compiler/opt/interference.cpp:
+	.pdata      start:0x82250620 end:0x82250630
+	.text       start:0x82A66CD8 end:0x82A66DF4
+
+xdk/xgraphics/ucode/compiler/opt/schedmodel.cpp:
+	.pdata      start:0x82250700 end:0x82250720
+	.text       start:0x82A690F0 end:0x82A696D0
+
+xdk/xgraphics/ucode/compiler/il/ilformatdecode.cpp:
+	.pdata      start:0x82250728 end:0x82250730
+	.text       start:0x82A69B70 end:0x82A69C38
