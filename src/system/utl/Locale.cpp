@@ -159,7 +159,12 @@ void Locale::Init() {
     LocaleChunkSort::OrderedLocaleChunk *chunks = 0;
     Symbol prevSym;        // Tracks previous symbol to deduplicate
 
-    // Check for alternate devkit locale file
+#ifdef HX_NATIVE
+    // Devkit locale override. This block is DC3-era engine code and is ABSENT
+    // from RB3 retail -- verified against the target body of Locale::Init
+    // (fn_827C9AF8), which contains no DmMapDevkitDrive / FileExists /
+    // DataArrayPtr calls at all. Guarded so the native port keeps the
+    // capability while the match build reproduces retail.
     String devkitPath(FileMakePath(
         "devkit:\\locale", MakeString("%s\\locale_keep.dta", SystemLanguage())
     ));
@@ -167,6 +172,7 @@ void Locale::Init() {
 
     static Symbol locale("locale");
     DataArrayPtr altCfg((DataNode(locale)), DataNode(devkitPath));
+#endif
 
     DataArray *cfg = SystemConfig();
     if (!cfg) {
@@ -175,12 +181,14 @@ void Locale::Init() {
 
     cfg = SystemConfig("locale");
 
+#ifdef HX_NATIVE
     if (DmMapDevkitDrive() >= 0) {
         if (FileExists(devkitPath.c_str(), 0, 0)) {
             MILO_NOTIFY("Using alternate locale file from%s", devkitPath);
             cfg = (DataArray *)altCfg;
         }
     }
+#endif
 
     MemPushTemp();
     {
