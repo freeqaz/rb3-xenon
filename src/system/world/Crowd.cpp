@@ -68,11 +68,8 @@ namespace {
     }
 }
 
-const Hmx::Color &ColorPalette::GetColor(int idx) const {
-    MILO_ASSERT(mColors.size(), 0x18);
-    int colorIdx = idx % mColors.size();
-    return mColors[colorIdx];
-}
+// ColorPalette::GetColor moved to world/ColorPalette.h as an inline definition --
+// retail inlines it into its callers, which /O1 can only do from the header.
 
 // Retail RB3-360 CASTS a raw BinStream& here; it never constructs a
 // BinStreamRev (??_R0 count 0 for BinStreamRev, and Load emits no
