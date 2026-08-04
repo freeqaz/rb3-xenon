@@ -135,6 +135,89 @@ gated below auto-merge.
   `fn_82263E30 ⟶ NgRnd::{dtor}` (single, `rndobj/Rnd_NG.cpp`): plausible
   sizes and call patterns.
 
+## Manual variant: pin from a 100%-matched caller (intra-binary, no dc3 side)
+
+*Added 2026-08-04, worked on `ObjectDir::Iterate` (`8da739ef`).*
+
+The batch oracle above triangulates **rb3 against dc3**. There is a stronger,
+single-function variant that never leaves our own binary, and it is the one to
+reach for when a function has no oracle hit at all (objdiff reports
+`base_size 0` / "Symbol not found in target", i.e. **no match signal whatsoever** —
+you cannot even tell whether a source fix helped).
+
+**The method.** Find a caller of the unknown function that is **already 100%
+matched**, and read the callee out of objdiff's aligned instruction table.
+
+If the caller matches byte-for-byte, then base instruction *i* and target
+instruction *i* are the same instruction. So when base *i* is
+`bl ?Callee@@…` and target *i* is `bl fn_8XXXXXXX`, the two symbols are the same
+function — not "similar", the same. This is the most direct evidence available,
+and unlike the batch oracle it makes no assumption about dc3 and rb3 sharing a
+call sequence.
+
+Worked case:
+
+- `?Handle@ObjectDir@@UAA?AVDataNode@@PAVDataArray@@_N@Z` is 100% matched
+  (1660 / 1660 bytes).
+- `BEGIN_HANDLERS` / `HANDLE_ACTION(iterate, …)` inlines the `Iterate` call
+  **into** `Handle`, so the call is inside the matched body.
+- The aligned table pairs base `bl ?Iterate@ObjectDir@@IAAXPAVDataArray@@_N@Z`
+  at base+0x90 with target `bl fn_8274FCE8` at target+0x88.
+
+⇒ `?Iterate@ObjectDir@@` **is** `fn_8274FCE8` (`0x8274FCE8`, `0x1B8` = 440 bytes).
+
+**Always confirm with a second, independent method before writing the map entry.**
+The cheapest one is a **callee-set signature**: take the set of functions the
+source body calls, and check which target function in the same unit calls that
+set. `fn_8274FCE8` is the only function in the whole `system/obj/Dir` unit that
+references `IsASubclass`; it also calls `ObjDirItr::operator++` (ICF-merged to the
+`CharBone` instantiation), `DataArray::Execute()`, `DataNode::operator=`,
+`DataNode::Evaluate`, `DataArray::Release` and `DataArrayPtr::operator DataArray*`
+— i.e. exactly the loop body in `Dir.cpp`. A single distinctive callee that appears
+**once** in the unit is worth more than five common ones.
+
+### ⚠ The refuted candidate is the point of this section
+
+The first proposal for `Iterate` was the unmatched **804-byte `fn_82752668`** — same
+unit, plausible size, unclaimed. It is **not** `Iterate`. It dispatches on `PropOp`
+values 1/2/4/8/0x10 over `vector<ObjDirPtr<ObjectDir>>` via
+`RemovingSubDir`/`AddedSubDir`, `_M_erase`/`_M_fill_insert`, `FilePath`,
+`LoadMgr::GetLoader`/`ForceGetLoader` and a dyncast to `DirLoader::GetDir`: it is the
+`PropSync` helper sitting beside the already-pinned `?SyncProperty@ObjectDir@@` at
+`0x82752A60`. It contains **none** of `Iterate`'s callees.
+
+Pinning it would have manufactured a permanently unfixable diff — a function scored
+against a body it can never become, indistinguishable from a hard at-limit. This is
+the same failure mode as the map-mispair rule in `docs/INDEX.md`
+("*if retail's diverging operands coherently describe a **different** function, the
+defect is in `scripts/target_symbol_map.json`, not in the source*"), reached from the
+other direction: here the mispair would have been **created by us**, not inherited.
+
+**Rule: same-unit + right-size + unclaimed is a candidate, never a proof.** Require
+either a 100%-caller alignment or a distinctive callee, and prefer both.
+
+### What a fresh pin buys, and what it does not
+
+`Iterate` went from unmeasurable to **60.7% normalized / 60.1% raw** the moment the
+map entry landed. Re-verified 2026-08-04 on the landed tree via the orchestrator's
+`run_objdiff` against a worktree.
+
+A first reading like that is a **starting** number, not a verdict — read the
+structural diffs before filing it anywhere. `Iterate`'s residual 39.3% is tractable
+work, not floor:
+
+- the target has **no function-local-static block** — no `SystemConfig` / `FindArray` /
+  `"objects"` literal; it reads an already-initialised global. That is ~100 B of the
+  596 → 440 size delta on its own.
+- the target dispatches `Object::Type` **virtually, through vtable slot 4**, where we
+  call the non-virtual `?Type@Object@Hmx@@QBA`.
+- the target saves one **more** callee-saved register than we do (`__savegprlr_24` vs
+  our `__savegprlr_23`) — a live-set difference, see
+  [patterns/fixable-liveness.md](patterns/fixable-liveness.md).
+
+Expect the parent's EH funclets to move when a pin makes a frame comparison possible
+for the first time; see [EH_FUNCLET_CASCADE.md](EH_FUNCLET_CASCADE.md#a-funclet-wobble-is-not-a-veto-on-the-parents-fix).
+
 ## Known limitations
 
 - **Single-evidence (`single`, 1,141 of 1,555) is the bulk and lowest-precision

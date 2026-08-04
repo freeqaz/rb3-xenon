@@ -125,7 +125,7 @@ These 3 patterns should be reviewed:
 | Objdiff Signal | Current Permuter | Gap Pattern |
 |---------------|-----------------|-------------|
 | `CONTROL_FLOW` | `branch_polarity`, `and_split`, `bool_return_expr`, `early_return_merge` | ✓ well covered |
-| `REGISTER_SWAP` | `declaration_reorder`, `declaration_movement` | FPR support (added) |
+| `REGISTER_SWAP` | `declaration_reorder`, `declaration_movement` | **wrong axis — see [correction](#register_swap--declaration_reorder-is-the-wrong-axis-correction) below**; missing class is liveness/scheduling |
 | `OFFSET_SWAP` | (none) | Could trigger `variable_extraction` or field reorder |
 | `COMPARISON_STYLE` | `comparison_equivalence` | ✓ covered |
 | `COMMUTATIVE_OP_ORDER` | `commutative_swap` | ✓ covered (0 wins though) |
@@ -140,6 +140,99 @@ These 3 patterns should be reviewed:
 | `SCOPE_COUNTER_MISMATCH` | (skip — unfixable) | — |
 | `LINKER_MERGED` | (skip — unfixable) | — |
 | `ADDRESS_RELOCATION_NOISE` | (skip — unfixable) | — |
+
+## `REGISTER_SWAP` → `declaration_reorder` is the wrong axis (correction)
+
+*Added 2026-08-04. Evidence measured in **dc3-decomp** (identical `base` cflags —
+`/nologo /wd4355 /wd4164 /c /GR /O1 /Oi /EHsc`), n = 4 functions; one control leg measured
+here. Full writeup: [fixable-liveness.md](fixable-liveness.md).*
+
+The `REGISTER_SWAP → declaration_reorder` row above is the historical mapping and it is
+measured to **under-fire**, structurally rather than as a tuning problem.
+
+| Function | Result | Declaration-axis evidence |
+|---|---|---|
+| `ObjectDir::Iterate` (DC3) | 99.4% → **100%** from a one-line liveness change | 6 reorder variants **byte-identical**, 2 regressed to ~95.8%, 65-candidate beam search **0 improvements** |
+| `RndText::FitTextScroll` (DC3) | 92.7% → 98.2% via call-through-the-local + block scoping | reorder variants: no movement |
+| `RndText::SizeCheck` (DC3) | 96.5% → 99.1% via scheduling then comparison polarity | not the declaration axis |
+| `LabelShrinkWrapper::UpdateAndDrawWrapper` (DC3) | 68.1% → **99.9%** from naming four unnamed temps | 6 commutative/reorder variants **byte-identical**; 56-candidate beam search 0 improvements |
+
+**Why the mapping fails.** MSVC's colouring assigns colours from the interference graph and
+those colours are **invariant to declaration order**; order only permutes the
+colour→register mapping, and only where the constraints leave slack. A byte-identical
+`.obj` from a reorder is the *expected* outcome whenever the constraints are tight — the
+mutation cannot change the program the allocator sees. To move a register swap you must
+change the **interference graph**: what is live across a call, or where a value is
+materialised.
+
+**Tooling implication.** `declaration_reorder` / `declaration_movement` are
+*stack-and-packing* mutations that occasionally hit registers as a side effect. The missing
+class is liveness/scheduling mutations. Candidates (all unimplemented, n=1 evidence each —
+hypotheses, not roadmap):
+
+| Proposed pattern | Transform |
+|---|---|
+| `aggregate_projection` | `f(a, b)` ↔ `f(agg.first, agg.second)` where `agg` was just built from `a`,`b` and is unmodified |
+| `member_call_through_local` | `obj->mField->Method(...)` ↔ `local->Method(...)` where `local` already caches `obj->mField` |
+| `out_param_init_strip` | drop `= 0` / `= 0.0f` on a local whose first use is as an out-param the callee writes unconditionally |
+| `product_hoist` | collapse `a = f(); b = g(); … use(a*b)` ↔ `p = f()*g(); … use(p)` to move the multiply's schedule slot |
+| `decl_scope_into_block` | move a declaration into the inner block that uses it (stack packing, not registers) |
+| `name_call_arg_temporary` | `f(T(x,y,z))` ↔ `T t(x,y,z); f(t);` — lengthens a temporary's live range so the frame packer sees it |
+
+`out_param_init_strip` and `member_call_through_local` need safety gates (the callee must
+write the out-param on every reachable path; the local must provably still alias the member
+at the call site), so they belong in the guarded-transform tier alongside
+`variable_extraction`, not the free-mutation tier.
+
+**Sweep-budgeting note.** A zero-gain sweep over declaration-axis mutations is **not**
+evidence that a function is at a register floor. `ObjectDir::Iterate` produced exactly that
+result and then went to 100% from one line.
+
+**`PROLOGUE_MISMATCH` is mis-listed as unfixable above** for the save-count sub-case: a
+`__savegprlr_NN` delta is the fingerprint of a live-set difference, which is the most
+tractable signal in this whole class. The "skip" verdict holds for the
+`_RtlCheckStack12` / `alloca` sub-case only.
+
+## Instruction Scheduling
+
+**Coverage: none.** No permuter pattern mutates where a value is *materialised* relative to
+its consumer. This is the second half of the `REGISTER_SWAP` gap above, and it is the half
+that shows up as **volatile**-register swaps (`r0`, `r3`-`r12`, `f0`-`f13`) rather than
+callee-saved ones — a volatile register cannot be live across a call, so a swap between two
+of them is a scheduling or operand-order question, never a live-across-call question. That
+exclusion is an ABI consequence, not a statistical claim.
+
+Worked example, DC3's `RndText::SizeCheck` 96.5% → 99.1%: the target computes a product
+*before* the `fcmpu` that consumes it,
+
+```
+fmuls  f12, f30, f1
+...
+fcmpu  cr6, f13, f0
+bge    ...
+```
+
+while our build computed it inside a later `if` condition, putting the `fmuls` in a
+different slot and leaving the compare reading a different register (`fcmpu cr6, f0, f12` /
+`ble`). Collapsing the two operand locals into one product local fixed the schedule and all
+nine FPR swaps resolved on their own. Only *then* did flipping the compares to the target's
+operand order become productive.
+
+**Ordering constraint for any implementation: schedule first, polarity second.** Flipping a
+comparison before the producing arithmetic is in the right slot just moves the swap to the
+other side of the compare, which scores as a neutral wash and teaches a beam search that the
+polarity mutation is useless. A scheduling pattern must be sequenced *ahead* of
+`comparison_equivalence` / `branch_polarity`, not composed freely with them.
+
+Full pattern writeup:
+[fixable-liveness.md: Lever 3](fixable-liveness.md#lever-3--fix-the-schedule-first-then-the-comparison-polarity).
+
+> **Anchor contract.** objdiff-cli emits
+> `docs/decomp/patterns/PERMUTER_ROI_ANALYSIS.md#instruction-scheduling` as one of its
+> `REGISTER_SWAP` hint URLs, and this repo resolves as `DocProject::Dc3` (marker file:
+> `PERMUTER_ROI_ANALYSIS.md`). **Do not rename this heading** — objdiff renders only the
+> first URL per pattern, so a renamed anchor silently degrades tool output. Verify with
+> `python3 ../objdiff/scripts/check_doc_links.py --dc3 . --allow-missing`.
 
 ## Implementation Plan
 

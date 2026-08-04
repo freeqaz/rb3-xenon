@@ -111,6 +111,56 @@ param is ignored by both sides; the −16 is a red-zone splat).
 
 ---
 
+## 5. MI base adjustment read as declaration order
+
+**Symptom:** the target contains a multiple-inheritance `this`-adjustment — a
+`p ? p + <delta> : 0` sequence, or a sub-object pointer materialised at a fixed
+offset from the complete object — and it is read as proof that the base classes
+must be *declared* in some particular order.
+
+**Why it is false:** **MSVC hoists the polymorphic base to offset 0 regardless of
+base declaration order.** Verified on the project toolchain
+(X360 `cl.exe` 16.00.11886.00) with `/d1reportAllClassLayout`: for
+`class String : public FixedString, public TextStream` and for the swapped
+`public TextStream, public FixedString`, the dumped layout is **byte-identical** —
+
+```
+class String size(8):
+  +0x0  (base class TextStream)  {vfptr}
+  +0x4  (base class FixedString) mStr
+```
+
+So an MI base-adjustment tell in the target proves a base's **offset**. It cannot
+discriminate declaration order, because both orders produce the same offsets.
+
+**What the target CAN tell you: base construction order.** Declaration order *does*
+control the order base sub-objects are constructed, and that is directly visible in
+the constructor's asm. In dc3-decomp's `String::String(const String &)` the target
+inlines `FixedString`'s setup **first**, then calls the empty `TextStream` ctor, then
+stores the vtable — which pins `FixedString`-then-`TextStream`, matching what is
+shipped. Use the ctor, not the adjustment.
+
+**Corollary you cannot work around:** you cannot repair a base-order regression by
+rewriting the mem-init list. **MSVC reorders the mem-init list back to declaration
+order** (and warns about it). The declaration list is the only control.
+
+**Measured cost of getting this wrong** (dc3-decomp `ed7ddd9e` / `9065a8f6`, whole-build
+A/B): swapping `String`'s bases on the strength of an MI adjustment tell moved overall
+fuzzy match 53.83% → 53.83% (−0.00%) with **4 regressions and 0 improvements** — the
+four `String` constructors falling 100% → 34-64%, and *nothing else in the binary
+touched*. Zero movement outside the constructors is the signature of a layout-neutral,
+construction-order-only edit: exactly what the layout dump predicts.
+
+**Verdict:** refuted before you edit the header. Also treat a stale offset comment in
+the header as a *cause* of this misread rather than as evidence — the `String` comment
+had the two base offsets stated backwards, which is most of why it kept looking like an
+open bug.
+
+**Check it yourself in one command:** compile the TU with `/d1reportAllClassLayout` and
+read the class's dumped layout, both ways round, before touching anything.
+
+---
+
 ## When it IS real — the promotion checklist
 
 Promote to a header edit only when ALL hold:
@@ -133,4 +183,5 @@ rb3-Wii convention. Register the *refuted* candidates in
 - [`../playbooks/offset-drift-sweep.md`](../playbooks/offset-drift-sweep.md) — the sweep + recon loop that produces these candidates
 - [`fixable-struct-layout.md`](fixable-struct-layout.md) — real struct/member layout bugs and the `.bss` emission-order lever
 - [`fixable-inline-boundary.md`](fixable-inline-boundary.md) — de-inline-to-match, the fix when a caller's "drift" is an inlined helper
+- [`fixable-liveness.md`](fixable-liveness.md) — the register-side equivalent of this page: swaps that look like a declaration-order bug and are not
 - [`unfixable-compiler.md`](unfixable-compiler.md) / [`at-limit-systemic.md`](at-limit-systemic.md) — where the permuter-class residues land
