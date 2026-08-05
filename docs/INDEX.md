@@ -264,6 +264,12 @@ Each of these is a **pricing or refutation** — read the verdict before re-open
   `build/45410914/asm/<Unit>.s`, grep its `addi r4, r11, lbl_…` sequence, and resolve each
   label in `auto_00_82000400_rdata.s`.
 
+- ★★ [decomp/NEXT_WAVE_BRIEF_2026-08-05.md](decomp/NEXT_WAVE_BRIEF_2026-08-05.md) —
+  **START HERE to pick up the campaign cold.** How to establish a real baseline (and why
+  the numbers in it must not be trusted as current), the primary target with its ready
+  queue, the drained/refuted ledger, the settled rev model, and the 13 instrument hazards
+  — every one of which produced a *clean wrong answer* rather than an obvious failure.
+
 ### 2026-08-03 results (waves EB→EE, 43,848 → ~43,872 matched · 254 → 255 units)
 
 Ten lanes. The metric moved modestly; **six lanes returned a correction to an instrument
