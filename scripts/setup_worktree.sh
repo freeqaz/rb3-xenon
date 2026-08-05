@@ -378,9 +378,22 @@ if [ "$WARM_CACHE" -eq 1 ]; then
     # non-zero exit propagates through the command substitution and (under
     # `set -e`) aborts the whole script whenever main has no dirty src/config
     # files (e.g. only docs/tooling changed). The `|| true` keeps the count (0).
+    # The reflinked objects were produced by MAIN at MAIN's HEAD, so the cache
+    # is only current for a worktree whose base is that same commit. Comparing
+    # the worktree against its OWN base ref is trivially zero and proves
+    # nothing — it is the same tree by construction. Basing a worktree on an
+    # older ref (a pinned eval substrate, a bisect point) and marking main's
+    # newer objects "current" makes ninja skip every stale unit SILENTLY: a
+    # scoring run then grades against wrong-warm baselines and prints "no work
+    # to do", which is exactly what a correct warm cache prints. Measured on
+    # dc3-decomp 2026-08-05 at 286 commits behind main — 7 of the 123 source
+    # files a 225-function eval roster spans had changed, and the tree reported
+    # no work to do (dc3-decomp `154c365b`). Include main's HEAD-vs-base delta
+    # in the same count. No-op when BASE_REF is HEAD, which is the default.
     _changed="$( { git -C "$MAIN_REPO" diff --name-only 2>/dev/null;
                    git -C "$MAIN_REPO" diff --name-only --cached 2>/dev/null;
-                   git -C "$WORKTREE_PATH" diff --name-only "$BASE_REF" 2>/dev/null; } \
+                   git -C "$WORKTREE_PATH" diff --name-only "$BASE_REF" 2>/dev/null;
+                   git -C "$MAIN_REPO" diff --name-only "$BASE_REF" HEAD 2>/dev/null; } \
                  | grep -cE '^(src/|config/)' || true )"
     if [ "$_changed" -eq 0 ]; then
         echo "==> Validating warm object cache (worktree == $BASE_REF; marking outputs current)"
