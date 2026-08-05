@@ -370,6 +370,24 @@ swap (`mv release/wibo <backup>; mv staging/wibo release/wibo`). The binary is n
 a ninja input, so the swap triggers no recompiles — which is exactly why a bad one
 goes unnoticed until objs are wrong. Rollback = `mv <backup> release/wibo`.
 
+**Live binary as of 2026-08-05: `wibo 1.2.0-c2rs.1`** (freeqaz/wibo tag
+`1.2.0-c2rs.1`, built from wibo's `build/release64-clang/` — CI's
+`release64-clang` preset, LTO on). Rollback binary is
+`build/release/wibo.bak-20260805-pre-c2rs.1` (`1.2.0-27-geab90f0`). The byte gate
+was run at **60 TUs, not the minimum 3**, lifted straight out of this tree's own
+`build.ninja` with the objcache prefix stripped so both sides really compiled:
+60/60 byte-identical with the COFF timestamp zeroed. Two traps if you re-run it:
+both loaders must write to the **same** `/Fo` path (the obj embeds its own `/Fo`
+spelling, so two scratch dirs differ for that reason alone), and a `/Fo(\S+)`
+substitution will also match inside source paths like `rndobj/Font3d.cpp`.
+
+⚠️ **objcache does not key on the wibo binary** (its key is compiler-DLL identity
++ cflags + source + dep hashes). A wibo swap therefore invalidates *nothing* and
+the cache will keep serving objs produced by the previous loader. That is safe
+only because the byte gate above says the two loaders agree — it is not something
+the cache checks for you. If a future swap ever fails the byte gate, the cache
+must be dropped as well as the binary rolled back.
+
 **objcache — shared content-addressed MSVC object cache.** Sibling Rust repo at
 `/home/free/code/milohax/objcache` (rebuilt manually like jeff/objdiff:
 `cargo build --release`). Every `msvc`/`msvc_pch`/`msvc_pch_create` rule is
