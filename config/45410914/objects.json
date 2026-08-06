@@ -2209,6 +2209,9 @@
         "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
+            "xdk/xgraphics/optimize.cpp": "NonMatching",
+            "xdk/xgraphics/xenosem.cpp": "NonMatching",
+            "xdk/xgraphics/buildssa.cpp": "NonMatching",
             "xdk/xgraphics/ucode/driver/r500assembler.cpp": "NonMatching",
             "xdk/xgraphics/ucode/compiler/asm/disasm.cpp": "NonMatching",
             "xdk/xgraphics/ucode/ssm/interface/ssmcallbacks.cpp": "NonMatching",
