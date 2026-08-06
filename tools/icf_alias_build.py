@@ -24,6 +24,30 @@ Hard gates preserved from the existing file:
   * exactly ONE map-resident symbol per group (the survivor)
   * every folded spelling is referenced by >=1 of our compiled objs
   * only spellings OBSERVED as census noise against that survivor are emitted
+
+★ ``--xfold`` -- AN EXTERNAL CANDIDATE SOURCE, NOT A FOURTH TIER (lane WS-4).
+    decomp-synth's ``tools/revcomp/probes/probe_icf_foldtest.py`` classified the
+    12,679 (T,B) relocation-name disagreements this tree produces at the
+    ``name_check`` ruler, reading RETAIL BYTES OUT OF THE PE IMAGE at addr(T)
+    rather than out of the dtk split objs, and chasing one level of tail-call
+    thunk.  Its 7,882 FOLD / FOLD-via-thunk records are supply this generator
+    could not previously see: the census enumerator only proposes folds it
+    happened to OBSERVE at an icf_site_census site, and the T1 adjudicator can
+    only read a survivor that lands in a live pinned target obj.
+
+    ⚠ THE EXTERNAL VERDICT IS *NOT* T1-SHAPED EVIDENCE AND IS NOT TREATED AS
+    SUCH.  That probe's comparator (``foldtest2.shape``) masks EVERY D-form
+    displacement and EVERY branch displacement unconditionally -- not merely the
+    relocated ones -- and never compares relocation TARGET NAMES.  Both
+    departures run in the benign-manufacturing direction that this project's
+    standing directive calls worse than a lower metric, and the second is
+    precisely the template-twin hole ``relocs_agree`` exists to close
+    (``vector<Foo>::erase`` and ``vector<Bar>::erase`` have identical machine
+    bytes and differ ONLY in the destructor they call).  It also carries no
+    anti-vacuity guard.  So ``--xfold`` injects those pairs as CANDIDATES and
+    lets the unchanged T1/T2/T3 adjudicators and every hard gate above decide
+    them.  The accept rate is the measurement of how much the two comparators
+    actually agree; see ``--why`` for the per-pair decision.
 """
 
 import argparse
@@ -183,6 +207,12 @@ def main() -> int:
     ap.add_argument("--enumerate", choices=("census", "hash", "both"), default="census",
                     help="candidate source: observed diff sites (census), retail-vs-ours "
                          "body-hash collisions (hash), or the union (both)")
+    ap.add_argument("--xfold", default="",
+                    help="EXTERNAL cross-binary fold verdicts (pairs_folded2.json schema: "
+                         "target_symbol / base_symbol / is_call / fold / unit / sym). Adds "
+                         "the FOLD-verdict pairs as CANDIDATES -- they are adjudicated by "
+                         "the unchanged T1/T2/T3 tiers and every hard gate. See the module "
+                         "docstring for why the external verdict is not itself a tier.")
     ap.add_argument("--observed-only", action="store_true",
                     help="emit only aliases that actually fire at an observed site "
                          "(precision-first: an alias that fires nowhere today can still "
@@ -273,6 +303,60 @@ def main() -> int:
             pairs[(t, b)] += 1
             pair_fns[(t, b)].add((unit, fn))
     observed = set(pairs)
+    xfold_pairs = set()
+    if args.xfold:
+        # ★ WS-4. External FOLD verdicts enter as CANDIDATES only (see the module
+        # docstring). Every exclusion the census ingestion applies above is applied
+        # here too, so the two supplies are gated identically and the accept census
+        # below compares like with like.
+        xr = json.loads(Path(args.xfold).read_text())
+        xstats = collections.Counter()
+        for r in xr:
+            xstats["records"] += 1
+            v = str(r.get("fold", ""))
+            if not v.startswith("FOLD"):
+                xstats["skip_not_fold"] += 1
+                continue
+            if not r.get("is_call"):
+                xstats["skip_not_call"] += 1
+                continue
+            t, b = r.get("target_symbol"), r.get("base_symbol")
+            if not isinstance(t, str) or not isinstance(b, str) or not t or not b:
+                xstats["skip_no_names"] += 1
+                continue
+            if b in mapped or b.startswith("__") or t.startswith("__"):
+                xstats["skip_census_exclusion"] += 1
+                continue
+            if t.startswith("except_data_") or "unwind" in b or "chain" in b:
+                xstats["skip_census_exclusion"] += 1
+                continue
+            xstats["kept_sites"] += 1
+            xstats["kept_thunk_sites"] += int("thunk" in v)
+            xfold_pairs.add((t, b))
+            pairs[(t, b)] += 1
+            pair_fns[(t, b)].add((r.get("unit", "?"), r.get("sym", "?")))
+        print("xfold: %d records -> %d kept sites (%d via-thunk) / %d distinct pairs, "
+              "%d already proposed by the census"
+              % (xstats["records"], xstats["kept_sites"], xstats["kept_thunk_sites"],
+                 len(xfold_pairs), len(xfold_pairs & observed)), file=sys.stderr)
+        for k in ("skip_not_fold", "skip_not_call", "skip_no_names",
+                  "skip_census_exclusion"):
+            print("       %-24s %6d" % (k, xstats[k]), file=sys.stderr)
+        # Same failure SHAPE as the DC-4 join guard: a schema drift on either side
+        # silently yields zero candidates, which reads exactly like "the external
+        # audit found nothing to feed". Refuse instead of reporting a clean zero.
+        if not xfold_pairs:
+            sys.exit("REFUSING: --xfold %s contributed 0 candidate pairs out of %d "
+                     "records. Do not read the census below as 'the external audit "
+                     "supplies nothing'." % (args.xfold, xstats["records"]))
+        _xn = {t for t, _b in xfold_pairs} | {b for _t, b in xfold_pairs}
+        _xhit = len(_xn & (set(ours) | set(retail)))
+        print("xfold join check: %d names, INTERSECTION %d (%.1f%%)"
+              % (len(_xn), _xhit, 100.0 * _xhit / len(_xn)), file=sys.stderr)
+        if _xhit < 0.20 * len(_xn):
+            sys.exit("REFUSING: --xfold names do not join against the COFF symbol "
+                     "tables (%d/%d)." % (_xhit, len(_xn)))
+
     # ★ DC-4: JOIN GUARD. Every (t, b) here comes from the sites census; the
     # adjudicators then look t up in `retail`/`mapped` and b up in `ours`. Those
     # are NAME-keyed joins against tables built from a completely different
@@ -298,7 +382,8 @@ def main() -> int:
                      "symbol tables (%d/%d names). Do not read the decision "
                      "census below as a result." % (_hit, len(_sn)))
     if args.enumerate == "hash":
-        pairs = collections.Counter({p: pairs.get(p, 0) for p in hash_cand})
+        keep = hash_cand | xfold_pairs
+        pairs = collections.Counter({p: pairs.get(p, 0) for p in keep})
     elif args.enumerate == "both":
         for p in hash_cand:
             pairs.setdefault(p, 0)
@@ -361,6 +446,7 @@ def main() -> int:
                                   "folded": [], "_meta": []})
         g["folded"].append(b)
         g["_meta"].append({"folded": b, "tier": tier, "sites": n,
+                           "xfold": (t, b) in xfold_pairs,
                            "fns": len(pair_fns[(t, b)]),
                            "class_size": cls_size.get(t),
                            "dc3": "CONFIRM" if (t in dc3 and b in dc3 and dc3[t] == dc3[b])
@@ -388,7 +474,12 @@ def main() -> int:
             % (top.get("class_size"), args.max_class)
             + "%d folded spelling(s), %d census sites over %d functions."
             % (len(g["folded"]), sum(m["sites"] for m in g["_meta"]),
-               len({m["fns"] for m in g["_meta"]})))
+               len({m["fns"] for m in g["_meta"]}))
+            + ("" if not any(m.get("xfold") for m in g["_meta"]) else
+               " Candidate(s) %s proposed by the decomp-synth relocation-name audit "
+               "(2026-08-06) and adjudicated here by the tier above -- the external "
+               "FOLD verdict is a candidate source, never the evidence."
+               % ", ".join(sorted(m["folded"] for m in g["_meta"] if m.get("xfold")))))
 
     n_sites = sum(m["sites"] for g in gl for m in g["_meta"])
     fset = set()
@@ -399,6 +490,21 @@ def main() -> int:
     print("\n=== decision census ===")
     for k in sorted(stats, key=lambda k: -ssites[k]):
         print("  %-32s %5d pairs %6d sites" % (k, stats[k], ssites[k]))
+    if xfold_pairs:
+        # ★ WS-4. Split the SAME census by candidate source. Without this the
+        # external supply's accept rate is invisible -- and that rate IS the
+        # measurement of how far the two comparators agree, which is the whole
+        # reason the external verdict is not trusted as a tier.
+        xs = collections.Counter(why.get(p, "unclassified") for p in xfold_pairs)
+        xacc = sum(v for k, v in xs.items() if k.startswith("ACCEPT"))
+        print("  -- of which XFOLD-sourced (%d pairs, %d also census-observed) --"
+              % (len(xfold_pairs), len(xfold_pairs & observed)))
+        for k, v in sorted(xs.items(), key=lambda kv: -kv[1]):
+            print("     %-38s %5d pairs" % (k, v))
+        print("     XFOLD ACCEPT RATE %d/%d = %.1f%% -- the external comparator "
+              "called all %d of these FOLD"
+              % (xacc, len(xfold_pairs), 100.0 * xacc / len(xfold_pairs),
+                 len(xfold_pairs)))
     print("  -- reloc-slot adjudication (placeholders %s) --"
           % ("STRICT" if strict else "LOOSE/unsound"))
     for k, v in reltally.most_common():
@@ -424,10 +530,41 @@ def main() -> int:
         keep = json.loads(Path(args.merge).read_text())["groups"]
         have_s = {g["survivor"] for g in emitted}
         have_f = {f for g in emitted for f in g["folded"]}
-        merged = kept = 0
+        by_surv = {g["survivor"]: g for g in emitted}
+        merged = kept = kept_m = drop_m = 0
         for g in keep:
             if g["survivor"] in have_s:
                 merged += 1
+                # ★ WS-4 MEMBER-LEVEL CARRY-FORWARD. Carrying only whole groups
+                # is not enough: a landed group whose survivor IS re-derived
+                # silently loses any folded spelling this run did not re-derive,
+                # and the CANDIDATE ENUMERATOR is a census snapshot, so a
+                # spelling can vanish because the census aged -- not because the
+                # evidence turned. That is precisely the distinction --why exists
+                # to expose ("this pair was REFUTED" vs "never proposed"), and
+                # conflating them is the defect-manufacturing direction.
+                # So: carry a member back ONLY when it was NEVER ADJUDICATED, and
+                # let a REFUSAL stand and be reported.
+                cur = by_surv[g["survivor"]]
+                for f in g["folded"]:
+                    if f in cur["folded"]:
+                        continue
+                    if f in have_s or f in have_f:
+                        # would break the one-survivor-per-group invariant
+                        print("  !! landed alias NOT carried, %s already appears in "
+                              "another generated group" % f, file=sys.stderr)
+                        drop_m += 1
+                        continue
+                    w = why.get((g["survivor"], f))
+                    if w is None:
+                        cur["folded"].append(f)
+                        cur["folded"].sort()
+                        kept_m += 1
+                    else:
+                        drop_m += 1
+                        print("  !! landed alias DROPPED, this run REFUTES it (%s):"
+                              "\n       survivor %s\n       folded   %s"
+                              % (w, g["survivor"], f), file=sys.stderr)
                 continue
             if g["survivor"] in have_f or (set(g["folded"]) & (have_s | have_f)):
                 print("  !! CONFLICT, hand group %s overlaps a generated group -- "
@@ -435,8 +572,9 @@ def main() -> int:
                 continue
             emitted.append(g)
             kept += 1
-        print("\nmerge: carried %d pre-existing group(s), %d already re-derived"
-              % (kept, merged))
+        print("\nmerge: carried %d pre-existing group(s), %d already re-derived; "
+              "member carry-forward: %d never-adjudicated kept, %d REFUTED and dropped"
+              % (kept, merged, kept_m, drop_m))
 
     if args.worklist:
         # ★ CD-9 DELIVERABLE. What is left after aliasing is NOT "noise" -- lane CD-7
@@ -461,6 +599,7 @@ def main() -> int:
             ex = sorted(pair_fns.get((t, b), ()))[:3]
             wl.append({"sites": n, "verdict": r, "target_names": t, "our_name": b,
                        "n_functions": len(pair_fns.get((t, b), ())),
+                       "xfold_candidate": (t, b) in xfold_pairs,
                        "examples": ["%s::%s" % (u, f) for u, f in ex]})
         wl.sort(key=lambda r: -r["sites"])
         tot = sum(r["sites"] for r in wl)
@@ -476,6 +615,14 @@ def main() -> int:
               % (len(wl), tot, head, 100.0 * head / tot if tot else 0, args.worklist))
 
     out = {"groups": emitted}
+    if args.merge:
+        # ★ WS-4: the landed file's `_comment` block is its documentation (how to
+        # regenerate, what the gates are, why CB-11/A was not reproducible). The
+        # generator used to emit `groups` only, so every regeneration silently
+        # deleted it and somebody had to paste it back. Carry it.
+        _c = json.loads(Path(args.merge).read_text()).get("_comment")
+        if _c is not None:
+            out = {"_comment": _c, "groups": emitted}
     Path(args.out).write_text(json.dumps(out, indent=2))
     if args.stats:
         Path(args.stats).write_text(json.dumps(
