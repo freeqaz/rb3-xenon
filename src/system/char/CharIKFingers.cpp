@@ -247,21 +247,15 @@ void CharIKFingers::CalculateHandDest(int engagedCount, int firstEngaged) {
             {
                 const Hmx::Matrix3 &m = mKeyboardRefBone->WorldXfm().m;
                 Vector3 tmp;
-                tmp.Set(
-                    m.z.x * sideOffsetBase.z,
-                    m.z.y * sideOffsetBase.z,
-                    m.z.z * sideOffsetBase.z
-                );
-                tmp.Set(
-                    tmp.x + m.x.x * sideOffsetBase.x,
-                    tmp.y + m.x.y * sideOffsetBase.x,
-                    tmp.z + m.x.z * sideOffsetBase.x
-                );
-                tmp.Set(
-                    tmp.x + m.y.x * sideOffsetBase.y,
-                    tmp.y + m.y.y * sideOffsetBase.y,
-                    tmp.z + m.y.z * sideOffsetBase.y
-                );
+                tmp.z = m.z.z * sideOffsetBase.z;
+                tmp.y = m.z.y * sideOffsetBase.z;
+                tmp.x = m.z.x * sideOffsetBase.z;
+                tmp.z += m.x.z * sideOffsetBase.x;
+                tmp.y += m.x.y * sideOffsetBase.x;
+                tmp.x += m.x.x * sideOffsetBase.x;
+                tmp.z += m.y.z * sideOffsetBase.y;
+                tmp.y += m.y.y * sideOffsetBase.y;
+                tmp.x += m.y.x * sideOffsetBase.y;
                 sideOffsetBase = tmp;
             }
             Hmx::Matrix3 refRotMat;
