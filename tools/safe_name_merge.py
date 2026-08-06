@@ -112,9 +112,30 @@ NON_REAL_PREFIXES = (
     "lbl_",          # dtk address-label placeholder
     "jumptable_",    # dtk jump-table data placeholder
     "$LN",           # MSVC local code label leaked as a symbol
-    "__real@",       # FP literal pool symbol (build-env addr, not a fn)
     "__xmm@",        # SIMD literal pool symbol
 )
+
+# RATIFIED 2026-08-06 (owner ruling, doc 62 §3): `__real@<hex>` was REMOVED from
+# NON_REAL_PREFIXES. It never belonged there. The list's rationale is
+# "per-TU sequence counter or address-derived placeholder with no stable
+# cross-compile identity"; `__real@<hex>` is CONTENT-derived — MSVC spells it
+# deterministically from the constant's bytes, our own base objects emit exactly
+# that symbol at exactly that relocation slot, and every instance proposed so far
+# was content-VERIFIED against retail `band.exe` (doc 55 §4, doc 58 §3, doc 60
+# §3/§4). It was swept in by analogy with `$LN`/`fn_`/`__unwind$`, which are
+# genuinely address-derived, and the analogy was wrong.
+#
+# SCOPE OF THE RULING — read before touching this list again:
+#   * ONLY `__real@` was ratified. `$LN`, `fn_`, `lbl_`, `jumptable_`,
+#     `__unwind$` and the rest stay refused; nothing else in the gate weakens.
+#   * `__xmm@` (SIMD literal pool) is content-derived by the SAME argument and
+#     is the obvious next candidate — it was deliberately NOT relaxed here
+#     because the ruling names `__real@` and nothing else. It needs its own
+#     ruling (reported, not acted on).
+#   * The ruling does NOT touch ICF routing: an address proposing more than one
+#     tree-wide name still goes to the alias mechanism and never to the name
+#     map, `__real@` or not. That is where `0x82000d78` (`__real@00000000`,
+#     1,070 witnesses + 2 singletons) still sits.
 
 
 def is_non_real_symbol(name):
