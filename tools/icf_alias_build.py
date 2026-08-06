@@ -532,7 +532,52 @@ def main() -> int:
         have_f = {f for g in emitted for f in g["folded"]}
         by_surv = {g["survivor"]: g for g in emitted}
         merged = kept = kept_m = drop_m = 0
+        drop_g = drop_gm = 0
+
+        # ★ ICF-GATE-CALIB FIX (2026-08-06): the carry-forward must enforce the
+        # SAME hard gates the main adjudication path and
+        # `icf_alias_finder.py --validate` enforce, or a landed group that a
+        # LATER map correction refuted is re-landed forever. That is not
+        # hypothetical: three landed groups (`_M_erase@vector<RCJob*>` @
+        # 0x822a1520, `clear@_Rb_tree<..CharInfo@RndFont..>` @ 0x826ddd78,
+        # `ClassName@CharCuff` @ 0x82397f08) had been refuted by map-layer
+        # corrections (a0d03243 RB3-IMPOSSIBLE pin deletions, eda76311 lane
+        # DC-1 proven-false deletions, 3b347d97 ClassName-trio rotation) and
+        # this very block carried them straight back into the 2026-08-06
+        # regeneration (a3e89f08). Retail-byte adjudication confirms all three
+        # FALSE: the ClassName pair exists UNFOLDED at two addresses
+        # (0x82397f08 bl->helper->"CharIKHand", 0x8239dc40 bl->helper->
+        # "CharCuff"), and the other two survivors name bodies retail's bytes
+        # refute (0x826ddd78 is 220 B == our _M_insert@..OverdriveTracker, not
+        # the 80 B clear@..RndFont; RCJob has no RB3 RTTI so its vector can
+        # never be attested). Gates applied to every carried group/member:
+        #   (a) survivor still map-resident AND named in the target objs;
+        #   (c) no folded spelling named in the target objs (retail keeping
+        #       BOTH spellings is a refutation of the fold);
+        #   (b) folded spelling still referenced by >=1 compiled obj (an
+        #       unreferenced alias can never fire -- inert, and --validate
+        #       fails it; e.g. the 7 stale-anon-namespace-hash Joypad
+        #       ?A0x1be4aed2 groups and CheckContextSongLastSong).
+        # Never-adjudicated members that PASS the gates are still carried --
+        # the census-aging rationale above stands; only validator-refutable
+        # carries are dropped, loudly.
+        def _carry_group_veto(g):
+            s = g["survivor"]
+            if s not in mapped:
+                return "survivor no longer in target_symbol_map.json (gate a)"
+            if s not in target_named:
+                return "survivor not named in any live target obj (gate c)"
+            return None
+
+        def _carry_member_veto(f):
+            if f in target_named:
+                return "folded spelling named in target objs -- retail kept BOTH (gate c)"
+            if f not in referenced:
+                return "folded spelling referenced by 0 compiled objs -- inert (gate b)"
+            return None
+
         for g in keep:
+            gveto = _carry_group_veto(g)
             if g["survivor"] in have_s:
                 merged += 1
                 # ★ WS-4 MEMBER-LEVEL CARRY-FORWARD. Carrying only whole groups
@@ -555,6 +600,13 @@ def main() -> int:
                               "another generated group" % f, file=sys.stderr)
                         drop_m += 1
                         continue
+                    mveto = _carry_member_veto(f)
+                    if mveto is not None:
+                        drop_gm += 1
+                        print("  !! landed alias NOT carried, validator gate: %s\n"
+                              "       survivor %s\n       folded   %s"
+                              % (mveto, g["survivor"], f), file=sys.stderr)
+                        continue
                     w = why.get((g["survivor"], f))
                     if w is None:
                         cur["folded"].append(f)
@@ -566,15 +618,58 @@ def main() -> int:
                               "\n       survivor %s\n       folded   %s"
                               % (w, g["survivor"], f), file=sys.stderr)
                 continue
-            if g["survivor"] in have_f or (set(g["folded"]) & (have_s | have_f)):
-                print("  !! CONFLICT, hand group %s overlaps a generated group -- "
-                      "NOT merged; adjudicate by hand" % g["name"], file=sys.stderr)
+            # ★ ICF-GATE-CALIB FIX (2026-08-06): only a SURVIVOR collision is a
+            # real conflict. A folded spelling appearing under TWO survivors is
+            # legitimate when retail kept two identical copies of the body --
+            # measured witness: our ??1?$ObjRefConcrete@VWorldCrowd@... (116 B)
+            # is masked-byte-identical to retail at BOTH 0x824be710 (map:
+            # Spotlight dtor) and 0x824be7b8 (map: RndTransAnim dtor), and
+            # dropping the 0x824be710 group costs a real row
+            # (CameraShot ??1CamShotCrowd@@QAA@XZ, 100 -> 99.8 under
+            # name_check). The old blanket check silently dropped that landed
+            # group on every regeneration.
+            if g["survivor"] in have_f or (set(g["folded"]) & have_s):
+                print("  !! CONFLICT, hand group %s overlaps a generated group's "
+                      "SURVIVOR -- NOT merged; adjudicate by hand" % g["name"],
+                      file=sys.stderr)
                 continue
-            emitted.append(g)
+            dup_f = set(g["folded"]) & have_f
+            if dup_f:
+                print("  .. note: carried group %s @ %s shares folded spelling(s) "
+                      "with another group (retail kept >=2 identical copies): %s"
+                      % (g.get("name"), g.get("address"),
+                         sorted(x[:60] for x in dup_f)), file=sys.stderr)
+            if gveto is not None:
+                drop_g += 1
+                print("  !! landed group DROPPED, validator gate: %s\n"
+                      "       group    %s @ %s\n       survivor %s"
+                      % (gveto, g.get("name"), g.get("address"), g["survivor"]),
+                      file=sys.stderr)
+                continue
+            kept_f = []
+            for f in g["folded"]:
+                mveto = _carry_member_veto(f)
+                if mveto is not None:
+                    drop_gm += 1
+                    print("  !! landed alias NOT carried, validator gate: %s\n"
+                          "       survivor %s\n       folded   %s"
+                          % (mveto, g["survivor"], f), file=sys.stderr)
+                else:
+                    kept_f.append(f)
+            if not kept_f:
+                drop_g += 1
+                print("  !! landed group DROPPED, every folded member failed a "
+                      "validator gate:\n       group    %s @ %s"
+                      % (g.get("name"), g.get("address")), file=sys.stderr)
+                continue
+            gg = {k: v for k, v in g.items()}
+            gg["folded"] = sorted(kept_f)
+            emitted.append(gg)
             kept += 1
         print("\nmerge: carried %d pre-existing group(s), %d already re-derived; "
-              "member carry-forward: %d never-adjudicated kept, %d REFUTED and dropped"
-              % (kept, merged, kept_m, drop_m))
+              "member carry-forward: %d never-adjudicated kept, %d REFUTED and "
+              "dropped; validator-gate drops: %d group(s), %d member(s)"
+              % (kept, merged, kept_m, drop_m, drop_g, drop_gm))
 
     if args.worklist:
         # ★ CD-9 DELIVERABLE. What is left after aliasing is NOT "noise" -- lane CD-7
