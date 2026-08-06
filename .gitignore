@@ -75,6 +75,12 @@ core.*
 /unified_id_rtti_low.json
 /unified_id_vtable.json
 /unified_id_rb3wii.json
+# TU5 re-key of the above + its provenance/rejection sidecars. Regenerable:
+#   git checkout tu5-map-archive-72254ce0 -- _tu5probe
+#   python3 tools/tu5_rekey_oracle.py
+/unified_id_rb3wii.tu5.json
+/unified_id_rb3wii.tu5.meta.json
+/unified_id_rb3wii.tu5.rejected.json
 /proposed_splits_bindiff.txt
 # dc3_content_match.py output (regenerable: dtk xex split DC3 + content hash)
 /dc3_content_match.json
