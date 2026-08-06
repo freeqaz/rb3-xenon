@@ -87,7 +87,10 @@ Usage:
   tools/ab_measure.py --selftest                      # no-build sanity of refusal logic
 
 Exit codes: 0 = measured, 2 = REFUSED (no verdict), 3 = usage/internal.
-Run artifacts (logs, patch copy, result.json) go to ~/tmp/ab_measure/<run>/.
+Run artifacts (logs, patch copy, result.json) go to
+<repo_root>/.ab_measure_runs/<run>/ by default (durable, in-repo, gitignored;
+override with --run-root). Never ~/tmp: a killed/timed-out run's only output
+must not land in a non-durable place.
 """
 
 import argparse
@@ -108,6 +111,13 @@ REPORT_REL = f"build/{TITLE}/report.json"
 CACHE_REL = f"build/{TITLE}/report.cache"
 STAMP_REL = f"build/{TITLE}/target_symbol_renames.stamp"
 SYMBOLS_REL = f"config/{TITLE}/symbols.txt"
+
+# Repo root of THIS checkout (not --worktree, which may be a disposable
+# measurement worktree torn down after the run) -- same pattern as
+# tools/dead_index_guard.py and tools/oracle_contiguity_scan.py. Used only to
+# anchor the --run-root default so ab_measure's own logs/result.json survive
+# worktree teardown without landing in ~/tmp (see module docstring).
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_YML_REL = f"config/{TITLE}/config.yml"
 
 TOOL_REL = "tools/ab_measure.py"
@@ -1102,7 +1112,8 @@ def main():
     ap.add_argument("--jobs", type=int,
                     default=int(os.environ.get("AB_NINJA_JOBS", "12")),
                     help="ninja -j (default 12; 0 = ninja default)")
-    ap.add_argument("--run-root", default=os.path.expanduser("~/tmp/ab_measure"))
+    ap.add_argument("--run-root",
+                     default=os.path.join(REPO_ROOT, ".ab_measure_runs"))
     ap.add_argument("--label", default=None)
     ap.add_argument("--selftest", action="store_true",
                     help="run no-build sanity checks of the refusal logic and exit")
