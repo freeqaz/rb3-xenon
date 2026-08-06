@@ -102,9 +102,42 @@ SIM_HIGH = 0.5          # oracle similarity at/above this is a real attribution
 # is the fraction of the matched set that must be stub-folds for the headline to
 # flip to inflation; FOREIGN_RUN_FLAG is the contiguous-run length that does the
 # same on its own.
-STUB_DOMINANCE = 0.60
-# A long contiguous foreign/stub run is itself a red flag (the manual heuristic).
-FOREIGN_RUN_FLAG = 8
+#
+# ★★ CALIBRATED 2026-08-06 (branch icf-gate-calib; harness:
+# tools/icf_gate_calibrate.py, which re-derives everything below from the
+# current report.json and REFUSES if the labelled classes stop separating).
+# Labelled set: 29 KNOWN-GOOD TUs (laneBD's +69/-0 ports UIProxy/CharSync/
+# TrainingMgr; ws3 Option-C's five recorded-HONEST landings; laneBL
+# tu-pin-wave's 21 verified +N/-0 ledger rows) vs 5 KNOWN-BAD TUs
+# (waves 14/15/16 ICF-inflation: OvershellSlot, MusicLibrary, RockCentral
+# [whole-TU mode], MainHubPanel, CharacterCreatorPanel).  Findings:
+#
+# 1. STUB_DOMINANCE AT 0.60 IS NOT A CALIBRATION ERROR -- THE FEATURE CANNOT
+#    SEPARATE THE CLASSES AT ANY THRESHOLD.  Known-good TrainingMgr sits at
+#    stub_frac 0.750 (its span legitimately owns 20 contiguous ??__F funclets
+#    -- doc laneBD §7.2) and known-good SndAnalysis at 1.000, while known-bad
+#    MusicLibrary sits at 0.685: every threshold that catches the bad TU flags
+#    the good ones.  The rule is retained ONLY as a >=0.95 backstop for the
+#    near-pure-stub shape with a token anchor (wave-15's 56-of-57 landing,
+#    which rule 1 misses because anchors == 1); at 0.95 the margin to the
+#    highest anchored known-good (ChordShapeGenerator, 0.797) is wide.
+# 2. THE RUN RULE SEPARATES CLEANLY.  Known-good max contiguous stub run = 29
+#    (ChordShapeGenerator, laneBL +13/+42 verified -0); known-bad min = 46
+#    (MainHubPanel).  Any threshold in [30, 46] gives FP 0 / FN 0 on the run
+#    rule alone; 38 is the margin midpoint (9 below, 8 above).  The old value
+#    8 -- never calibrated, it was dead code -- flags 7 of 29 known-good TUs.
+# 3. Operating point (rule1 | stub_frac >= 0.95 | run >= 38), whole-TU mode:
+#    FP 1/29 = 3.4% (SndAnalysis: a +4/-0 verified pure-ADD whose matches are
+#    ALL <=44B content-folds -- structurally indistinguishable from a fake
+#    all-stub landing by these features; rule 1 fires and a human must
+#    adjudicate ownership by other means), FN 0/5.  Tree-wide firing:
+#    68/920 units = 7.4% (was 438/920 = 48% at the uncalibrated values), and
+#    the run-rule flag list is face-valid (NextSongPanel run 288,
+#    SaveLoadManager 169 -- both called mis-pinned by lanes DC-1/wave-14).
+STUB_DOMINANCE = 0.95
+# A long contiguous foreign/stub run is itself a red flag (the manual heuristic;
+# threshold calibrated, see above -- the labelled gap is [30, 46]).
+FOREIGN_RUN_FLAG = 38
 # True when this run had no oracle (default since lane BX-4 killed the only one).
 # See ORACLE MONOTONICITY below: this is the CONSERVATIVE mode, not a degraded one.
 NO_ORACLE = True
@@ -437,14 +470,19 @@ def print_verdict(label, verdicts, claimed_tu, show_list=False):
         nothing must not report a pass; that is the vacuity failure this repo
         documents repeatedly.  It is now VACUOUS / exit 2.
 
-    ⚠ CALIBRATION CAVEAT, stated because the numbers above demand it: with the
-    rules live and classification size-only, the dominance rule fires on ~48% of
-    whole TUs.  That is NOT a claim that half the tree is inflated -- it is a
-    statement that STUB_DOMINANCE=0.60 was never calibrated against a whole-TU
-    population, because it was unreachable.  A wired TU legitimately owns many
-    <= 44B getters.  This tool's GATE use is `--worktree` (the NEWLY-matched set
-    of one change), where the dominance question is well-posed; `--tu` is a
-    diagnostic.  Read the distribution, not just the headline.
+    ★ CALIBRATED 2026-08-06 (see the Tunables section for the labelled set and
+    the full trade-off): STUB_DOMINANCE 0.60 -> 0.95 (at 0.60 the feature
+    cannot separate the classes AT ANY THRESHOLD -- known-good TrainingMgr
+    0.750 / SndAnalysis 1.000 vs known-bad MusicLibrary 0.685; it survives only
+    as the near-pure-stub backstop), FOREIGN_RUN_FLAG 8 -> 38 (labelled gap
+    [30, 46], FP 0 / FN 0 on the run rule alone).  Operating point on the
+    34-TU labelled set: FP 1/29 (SndAnalysis, the structural all-content-fold
+    pure-ADD shape rule 1 cannot see past), FN 0/5; tree-wide firing 7.4%.
+    Known blind spot, stated: a small all-stub honest ADD and a small all-stub
+    fake ADD are IDENTICAL in these features -- rule 1 flags both, and a
+    reviewer must adjudicate ownership by other evidence (pairing route,
+    span provenance).  That is the conservative direction.
+    Rerun the calibration any time with tools/icf_gate_calibrate.py.
     """
     matched = [v for v in verdicts if v.matched]
     total = len(matched)
