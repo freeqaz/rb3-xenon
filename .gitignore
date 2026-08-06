@@ -154,6 +154,8 @@ core.*
 # Local analysis + run artifacts (regenerable; never commit)
 # objdiff per-unit report cache
 /.objdiff_report_cache
+# ab_measure.py run logs/patch copies/result.json (default --run-root)
+/.ab_measure_runs/
 # orchestrator learned/strategy DB (under scripts/orchestrator; never commit)
 /scripts/orchestrator/decomp.db
 /scripts/orchestrator/decomp.db-journal

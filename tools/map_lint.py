@@ -356,41 +356,59 @@ def parse_asm_spans(path: Path) -> Dict[int, Tuple[str, int]]:
 
     A real ``.fn`` at a VA always wins over an ``.obj``/``.sym`` reported at the
     same VA (except_data precedes its fn).
+
+    The header's own ``0xVA`` is where dtk measured this span in *this* asm
+    file's own layout -- a position, extracted directly from the target
+    bytes -- and its ``size`` is that measurement's byte count. The
+    ``fn_<hex>``/``except_data_<hex>``/``lbl_<hex>`` LABEL on the following
+    definition line, by contrast, encodes an assigned *identity* (via
+    autoid/symbols.txt), which legitimately differs from that measured
+    position once a span has been auto-id'd, target-named, or is an
+    ICF-folded duplicate placed here under another function's canonical
+    address. An earlier version of this function required the header VA to
+    equal the label's embedded hex before trusting the header's size, on the
+    (false) assumption the two numbers share one address space; in practice
+    they routinely don't -- confirmed empirically across units (Splash.s
+    78/79 fn spans mismatch, CharBones.s 41/43, vs Tex.s 4/57) with the
+    mismatch growing with a TU's accumulated drift from the target layout.
+    That gate silently zeroed real, measured, non-zero sizes for the bulk of
+    auto-id'd/named spans -- exactly the population this linter exists to
+    check -- manufacturing thousands of false "zero-stub" SIZE_KIND findings
+    tree-wide (measured 2026-08-06: 3125 of 3322 size_kind findings, vs a
+    small few genuinely 0-byte spans). Per dtk's own emission contract (a
+    header immediately precedes its span's definition line, always), the
+    header's size belongs to whatever span follows regardless of the label's
+    identity number, so it is now trusted unconditionally.
     """
     spans: Dict[int, Tuple[str, int]] = {}
-    pending_va: Optional[int] = None
     pending_size: Optional[int] = None
     with open(path) as f:
         for raw in f:
             line = raw.rstrip("\n")
             mh = _FN_HDR.match(line)
             if mh:
-                pending_va = int(mh.group(1), 16)
                 pending_size = int(mh.group(2), 16)
                 continue
             mf = _FN_DEF.match(line)
             if mf:
                 va = _va_from_label(mf.group(1))
                 if va is not None:
-                    size = pending_size if (pending_va == va) else 0
-                    spans[va] = ("fn", size or 0)
-                pending_va = pending_size = None
+                    spans[va] = ("fn", pending_size or 0)
+                pending_size = None
                 continue
             mo = _OBJ_DEF.match(line)
             if mo:
                 va = _va_from_label(mo.group(1))
                 if va is not None and spans.get(va, (None,))[0] != "fn":
-                    size = pending_size if (pending_va == va) else 0
-                    spans[va] = ("obj", size or 0)
-                pending_va = pending_size = None
+                    spans[va] = ("obj", pending_size or 0)
+                pending_size = None
                 continue
             ms = _SYM_DEF.match(line)
             if ms:
                 va = _va_from_label(ms.group(1))
                 if va is not None and va not in spans:
-                    size = pending_size if (pending_va == va) else 0
-                    spans[va] = ("stub", size or 0)
-                pending_va = pending_size = None
+                    spans[va] = ("stub", pending_size or 0)
+                pending_size = None
                 continue
     return spans
 
