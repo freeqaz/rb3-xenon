@@ -59,7 +59,39 @@ Hazards handled deliberately (all from CLAUDE.md)
   the next cluster. Inner-span vs gap-extended is a judgement call.
 - A class name is not a file name. Confirm against an oracle tree before
   writing splits.
-- It cannot see functions that are neither pinned nor named.
+- It cannot see functions that are neither pinned nor named — so `n_fns` is a
+  **LOWER BOUND** (lane PIN-A: dtk found 29 functions in a span the queue
+  advertised as 27; the 2 extras were unnamed).
+
+⛔ Defects measured by the manual-pin validation lanes (2026-08-06, PIN-A/PIN-B)
+-------------------------------------------------------------------------------
+A v2 must fix these before the queue drives a pin wave:
+
+1. **`cls` is a PLURALITY VOTE and can be outright FALSE.** Unmangled C symbols
+   vote None and are silently uncounted, so one bogus mangled entry can label a
+   whole run (the `MetaPerformer` row was 26/27 XDK voice-chat code labelled by
+   a single wrong map entry, since denylisted). Queue-wide at --min-fns 3:
+   18.2% of rows unlabeled, 26.9% minority-labelled, 11 rows labelled by ONE
+   member. Emit label_votes/label_conf; NEVER derive a splits unit name from
+   `cls` (it would have created a duplicate unit heading here).
+2. **One-unit-per-row is wrong granularity for most of the mass.** DC3's leaked
+   linker map (../dc3-decomp/orig/373307D9/ham_xbox_r.map) resolves the owning
+   .obj for members in 270/308 rows, and 88 rows (58.9% of queue bytes) span
+   >=2 objects. Sub-split runs by DC3-map obj and use its unit names (PIN-B
+   landed xdk/xgraphics/{optimize,xenosem,buildssa}.cpp this way, 40d568ce).
+3. **The ?$-template skip breaks run CONTINUITY** — a skipped template opens a
+   >gap hole that cuts a run mid-object (~24% of rows have a template-artifact
+   boundary). Keep templates in runs for adjacency; exclude from labeling only.
+4. **A splits heading with no objects.json entry is HARD-REFUSED by
+   configure.py.** Rows are pin *candidates*, not applyable pins: each pin
+   needs an objects.json `NonMatching` entry (no source file required —
+   PIN-B's landed pins prove that path).
+
+✅ Also settled by those lanes: **pinning is METRIC-NEUTRAL** (Δ exactly 0 on
+matched/masked/honest/code%/total_code, both lanes, settled ab_measure legs).
+`auto_*` units are already in the denominator — report keys are
+`default/auto_…`, so a `startswith('auto_')` filter is a false negative. A pin
+only reattributes bytes; a pin wave needs no A/B.
 """
 from __future__ import annotations
 
