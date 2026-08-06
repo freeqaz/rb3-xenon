@@ -41,10 +41,24 @@ GATES
 PRE (refuse, exit 4 — file untouched):
   P1 target exists, parses, root is an object
   P2 no PRE-EXISTING duplicate root keys (file already compromised)
-  P3 batch is internally consistent (no repeated key or value within the batch)
-  P4 every new key is absent from the root pair list
+  P2b no PRE-EXISTING root keys equal UP TO CASE (one address, two rows)
+  P3 batch is internally consistent (no repeated key up to case, no repeated value)
+  P4 every new key is absent from the root pair list, COMPARED CASE-FOLDED
   P5 every new value is absent from the root values (NAME INJECTIVITY)
   P6 key is lowercase `0x` + 8 hex digits; value is a plain one-line string
+
+★ WHY P4 FOLDS CASE
+-------------------
+`obj_target_symbol_renamer.py` reads a key as `int(k.lower().removeprefix("0x"),
+16)` — so `0x82357DD0` and `0x82357dd0` denote the SAME address, while JSON (and
+an exact-string P4) treats them as different keys.  The live map shipped 7
+uppercase keys; with P6 forcing every NEW key lowercase, an exact-string P4 was
+structurally incapable of seeing them, and the same address could be inserted a
+second time in the other case — two live rows for one address, no duplicate-key
+gate firing, and the renamer honouring whichever `json.load` kept last.  Folding
+case in P4 (plus P2b/P3/Q3b) closes that; the 7 keys were also normalized in the
+file itself (`tools/normalize_map_key_case.py`), so the two fixes are
+independent and either alone would have shut the hole.
 POST (exit 5).  These run on the spliced text BEFORE anything is written, so a
 post-gate refusal leaves the target byte-for-byte untouched — there is no
 window in which a bad file exists on disk, and the final write is an atomic
@@ -118,13 +132,25 @@ def audit(text: str) -> Dict[str, object]:
     root, total = parse_root(text)
     keys = [k for k, _ in root]
     vals = [v for k, v in root if k.startswith("0x") and isinstance(v, str)]
+    # ★ CASE.  `0x82357DD0` and `0x82357dd0` are the SAME ADDRESS but different
+    # JSON keys.  `obj_target_symbol_renamer.py` lowercases and `int(...,16)`s
+    # the key, so the map's meaning is case-insensitive while the file's key
+    # identity is not.  P6 forces every NEW key lowercase, so an exact-string
+    # P4 was blind to the 7 uppercase keys the file already carried and would
+    # have let the same address be inserted a second time in the other case —
+    # two live rows for one address, with the renamer honouring whichever it
+    # read last.  Every membership test below therefore folds case; the literal
+    # key set is kept only for the byte-level duplicate-key gate.
+    keys_ci = [k.lower() for k in keys]
     return dict(
         root=root,
         n_root=len(root),
         n_total=total,
         dup_keys=[k for k, c in Counter(keys).items() if c > 1],
+        dup_keys_ci=[k for k, c in Counter(keys_ci).items() if c > 1],
         dup_vals=[v for v, c in Counter(vals).items() if c > 1],
         key_set=set(keys),
+        key_set_ci=set(keys_ci),
         val_set=set(vals),
         effective={k: v for k, v in root},
     )
@@ -141,10 +167,15 @@ def _pre_gates(a: Dict[str, object], rows: List[Tuple[str, str]]) -> None:
                       f"P2 target ALREADY has {len(a['dup_keys'])} duplicate root "
                       f"key(s), e.g. {a['dup_keys'][:3]} — refusing to build on a "
                       f"compromised file")
-    bk = [k for k, c in Counter(k for k, _ in rows).items() if c > 1]
+    if a["dup_keys_ci"]:
+        raise Refused(EXIT_REFUSED_PRE,
+                      f"P2b target ALREADY has {len(a['dup_keys_ci'])} root key(s) "
+                      f"repeated UP TO CASE, e.g. {a['dup_keys_ci'][:3]} — two rows "
+                      f"for one address; normalize the file before adding to it")
+    bk = [k for k, c in Counter(k.lower() for k, _ in rows).items() if c > 1]
     bv = [v for v, c in Counter(v for _, v in rows).items() if c > 1]
     if bk:
-        raise Refused(EXIT_REFUSED_PRE, f"P3 batch repeats key(s) {bk}")
+        raise Refused(EXIT_REFUSED_PRE, f"P3 batch repeats key(s) {bk} (case-folded)")
     if bv:
         raise Refused(EXIT_REFUSED_PRE, f"P3 batch repeats value(s) {bv}")
     for k, v in rows:
@@ -154,10 +185,11 @@ def _pre_gates(a: Dict[str, object], rows: List[Tuple[str, str]]) -> None:
         if not isinstance(v, str) or not v or any(c in v for c in '"\\\n\r\t'):
             raise Refused(EXIT_REFUSED_PRE,
                           f"P6 value for {k} must be a plain one-line string: {v!r}")
-        if k in a["key_set"]:
+        if k.lower() in a["key_set_ci"]:
+            existing = next((kk for kk in a["key_set"] if kk.lower() == k.lower()), k)
             raise Refused(EXIT_REFUSED_PRE,
-                          f"P4 key {k} is ALREADY present (current value "
-                          f"{a['effective'].get(k)!r}) — inserting it would be a "
+                          f"P4 key {k} is ALREADY present as {existing!r} (current value "
+                          f"{a['effective'].get(existing)!r}) — inserting it would be a "
                           f"PHANTOM EDIT: json.load keeps the LAST duplicate, so the "
                           f"file would change and the meaning would not")
         if v in a["val_set"]:
@@ -177,6 +209,10 @@ def _post_gates(before_text: str, after_text: str, a0: Dict[str, object],
                       f"Q2 root rows {a0['n_root']} -> {a1['n_root']}, expected +{n}")
     if a1["dup_keys"]:
         raise Refused(EXIT_REFUSED_POST, f"Q3 duplicate keys introduced: {a1['dup_keys'][:3]}")
+    if len(a1["dup_keys_ci"]) != len(a0["dup_keys_ci"]):
+        raise Refused(EXIT_REFUSED_POST,
+                      f"Q3b case-folded duplicate keys {len(a0['dup_keys_ci'])} -> "
+                      f"{len(a1['dup_keys_ci'])}: {a1['dup_keys_ci'][:3]}")
     if len(a1["dup_vals"]) != len(a0["dup_vals"]):
         raise Refused(EXIT_REFUSED_POST,
                       f"Q4 duplicate-value count {len(a0['dup_vals'])} -> {len(a1['dup_vals'])}")
@@ -375,7 +411,14 @@ def _selftest() -> int:
         snapshot = t.read_text()
 
         def _reformat(after_text: str) -> str:
-            return json.dumps(json.loads(after_text), indent=1)   # the defect
+            # ⚠ indent=2, NOT indent=1.  The live map's house format IS
+            # `json.dumps(..., indent=1)` byte-for-byte, so sabotaging with
+            # indent=1 is a NO-OP: the "reformatted" text equals the spliced
+            # text, Q7 legitimately passes, and the control reports FAIL while
+            # the gate it is testing is perfectly healthy (the 6/7 recorded in
+            # doc 55 §6).  Any indent != 1 reproduces the real defect Q7 exists
+            # to catch — a whole-file reformat that no reviewer can diff.
+            return json.dumps(json.loads(after_text), indent=2)   # the defect
 
         _SABOTAGE_SPLICE = _reformat
         try:
@@ -393,6 +436,58 @@ def _selftest() -> int:
     except Exception as e:
         _SABOTAGE_SPLICE = None
         rows.append(("POST-GATE sabotage (json.dump reformat) REFUSES", False, f"EXC {e!r}"))
+
+    # ---- (7) UPPERCASE-KEY COLLISION HOLE --------------------------------
+    #      P6 forces new keys lowercase, so an exact-string P4 CANNOT see an
+    #      address the file already holds in uppercase (7 such keys shipped in
+    #      the live map).  Rebuild that exact shape on a copy and prove P4 now
+    #      refuses -- and, separately, that P2b refuses to build on a file that
+    #      already holds one address twice in two cases.
+    try:
+        base = json.loads(orig)
+        victim = next(k for k in base if KEY_RX.match(k))
+        val = base[victim]
+
+        t = fresh("upper.json")
+        txt = t.read_text()
+        old_line = f' "{victim}": {json.dumps(val)},\n'
+        assert old_line in txt, "house-format line not found"
+        t.write_text(txt.replace(old_line, f' "{victim.upper()}": {json.dumps(val)},\n', 1))
+        snapshot = t.read_text()
+        assert victim not in json.loads(snapshot), "fixture did not uppercase the key"
+        try:
+            apply_rows(t, [(victim, "?CaseHoleProbe@Selftest@@QAAXXZ")], verbose=False)
+            rows.append(("uppercase-key COLLISION refuses (P4 folds case)", False,
+                         f"tool ACCEPTED {victim} while {victim.upper()} is present "
+                         f"-- one address would have TWO live rows"))
+        except Refused as r:
+            ok = (r.code == EXIT_REFUSED_PRE and t.read_text() == snapshot
+                  and "P4" in str(r))
+            rows.append(("uppercase-key COLLISION refuses (P4 folds case)", ok,
+                         f"code={r.code} untouched={t.read_text() == snapshot} "
+                         f"msg={str(r)[:110]}"))
+
+        # and a file that ALREADY holds both cases is refused up front (P2b)
+        t2 = fresh("bothcases.json")
+        txt2 = t2.read_text()
+        i = txt2.index("{\n") + 2
+        t2.write_text(txt2[:i] + f' "{victim.upper()}": "?TwoRowsOneAddr@@QAAXXZ",\n'
+                      + txt2[i:])
+        snap2 = t2.read_text()
+        try:
+            apply_rows(t2, [("0xdeadbe05", "?AfterCaseDup@Selftest@@QAAXXZ")],
+                       verbose=False)
+            rows.append(("case-duplicated file refuses (P2b)", False,
+                         "tool built on a file holding one address in two cases"))
+        except Refused as r:
+            ok = (r.code == EXIT_REFUSED_PRE and t2.read_text() == snap2
+                  and "P2b" in str(r))
+            rows.append(("case-duplicated file refuses (P2b)", ok,
+                         f"code={r.code} untouched={t2.read_text() == snap2} "
+                         f"msg={str(r)[:110]}"))
+    except Exception as e:
+        rows.append(("uppercase-key COLLISION refuses (P4 folds case)", False,
+                     f"EXC {e!r}"))
 
     nfail = 0
     for name, ok, detail in rows:
