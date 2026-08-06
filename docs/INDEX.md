@@ -191,7 +191,20 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   42,358 → 20,814, no score key moved). **Read this before quoting or comparing any
   "honest" figure**, and before trusting a pre-2026-08-02 Δhonest. Includes the
   11-key no-change verification, the mid-run-swap hazard, the `ab_measure.py`
-  same-ruler guard, and the rollback.
+  same-ruler guard, and the rollback. **Amended 2026-08-06** with `@none` /
+  `@name_check` tags on every absolute and the honest band below.
+- ★ [decomp/RELOCNAME_AUDIT_ALIGNMENT_2026-08-06.md](decomp/RELOCNAME_AUDIT_ALIGNMENT_2026-08-06.md) —
+  **how much the `name_check` ruler actually withdraws: `matched_code` is
+  overstated by [0.23, 4.00] pp `@none`, not the 11.89 pp a raw flip implies**
+  (62.2% of the 12,679 charged pairs are proven ICF folds). Alignment with
+  decomp-synth's independent audit; the CV-4 class-(b) residual chain kept
+  current (**717 fns / 115,568 B** still UNKNOWN, not CV-4's 1,223); why the
+  instrument CV-4 "named and did not build" was in fact built **twice** and
+  neither supersedes the other; and the alias-map A/B (`symbol_aliases.json`
+  272 → 521 groups, **+0.813114 pp @name_check at EXACTLY 0 on every default
+  key**). Its GENUINE residue ships as
+  [decomp/relocname-genuine-worklist-WS4.tsv](decomp/relocname-genuine-worklist-WS4.tsv)
+  — a worklist, never applied.
 - [decomp/TOOLING.md](decomp/TOOLING.md) — ★ **the audited tooling inventory (2026-07-29)**:
   every tool in `tools/`, `scripts/`, `scripts/harvest/` run and status-graded
   (WORKING/BROKEN/SUPERSEDED/ONE-SHOT), a "start here for task X" routing table, the

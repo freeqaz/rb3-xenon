@@ -46,6 +46,65 @@ called benign.
 UNKNOWN is explicit at every step and NEVER a fallthrough into a charged class
 -- that exact defect made CV-4's first classifier manufacture 436 fake
 wrong-callee sites out of retail bodies it simply could not read.
+
+================================================================================
+CV-4 CLASS (b) -- THE RESIDUAL, KEPT CURRENT (lane WS-4, 2026-08-06)
+================================================================================
+The 1,223 fns / 159,276 B in the header above is CV-4's ORIGINAL sizing and is
+now three revisions stale. The chain, each step a landed commit:
+
+  CV-4  34b44dd6  1,223 fns / 159,276 B   "unadjudicable backlog"
+  CW-2  cc653da0  class (b) re-sized to 1,174 fns / 151,896 B after the
+        34017f74  coff_bodies_ext reader fix (it alone shrank (b) 870 -> 817
+                  pairs). Adjudicated: BENIGN 67 / WRONG_2ch 81 / WRONG_1ch 8 /
+                  *** UNKNOWN 1,018 fns / 129,544 B (86.7%) ***
+  CY-4  57550c2b  weak-external resolution (undefined ??_E<C> -> ??_G<C>,
+                  10,119/10,119 aux TagIndex, zero exceptions) decided 284
+                  BENIGN + 19 WRONG out of CW-2's UNKNOWN block.
+                  *** STILL UNKNOWN: 717 fns / 115,568 B ***
+                  = 60.9% of (b)'s functions but 76.1% of its BYTES -- the
+                  decided rows are tiny adjustor thunks (179 alias functions
+                  averaging 11.4 B), so the byte-weighted residue barely moved.
+                  Quote the byte figure, not the function figure.
+
+★ *** THE INSTRUMENT CV-4 "NAMED AND DID NOT BUILD" WAS BUILT TWICE. *** This
+file (CW-2, 2026-08-02) is the first. decomp-synth built a second independently
+on 2026-08-06 -- `tools/revcomp/probes/probe_icf_foldtest.py` (+ `coff_x360.py`,
+`pe_va_read.py`), written up in `decomp-synth/docs/reloc-name-blindness.md`,
+classification archived at `decomp-bench/archive/harvest/relocname-audit-
+2026-08-06/pairs_folded2.json` (decomp-bench 6cc3caa6), which still describes the
+test as "not built" because it was reading CV-4's commit and not CW-2's. It is
+NOT a duplicate of this file and neither supersedes the other:
+
+  | | tools/xbin_adjudicate.py (CW-2)  | probe_icf_foldtest.py (decomp-synth) |
+  |-|----------------------------------|--------------------------------------|
+  |retail side | dtk split objs + all 57,733 .pdata bodies by CONTENT (ch2) | PE image bytes at addr(T) |
+  |masking | EXACTLY the relocated field, from OUR OWN reloc table; REL24 keeps opcode\|AA\|LK; unknown reloc type REFUSED | EVERY D-form displacement and EVERY branch displacement, unconditionally |
+  |reloc target names | compared | never read |
+  |thunks | not chased | one level chased, either side |
+  |anti-vacuity | >=4 words AND relocated < 50% of body | none |
+  |UNKNOWN | explicit, never a fallthrough | only "not in map" / "not compiled" |
+
+⇒ The decomp-synth probe is a SUPPLY instrument, not an adjudicator. On the
+class-(b) SHAPE (B not map-resident) it reaches a FOLD/GENUINE verdict on
+*** 7,172 of 8,353 records = 85.9% *** where CW-2+CY-4 reach one on 29.7% of
+class (b) -- but that gap is the masker, not better evidence: its comparator
+discards immediates this file deliberately preserves because discarding them
+MANUFACTURES BENIGN verdicts. Measured corroboration, lane WS-4: of its FOLD
+verdicts that clear icf_alias_build's hard gates, this tree's strict T1/T2/T3
+adjudicators accept *** 473 of 2,043 = 23.2% ***; 525 of the rejects are
+`reject_RELOC_TARGETS_DIFFER` -- identical masked bytes, DIFFERENT CALLEE NAMES,
+i.e. exactly the template twins its masker cannot see.
+⚠ 8,353 is the class-(b) SHAPE re-derived from the audit's own population by
+"B absent from target_symbol_map.json". It is NOT a join against CV-4's actual
+class-(b) row set, which is not a committed artifact. Doing that join is the
+cheap next step and would let CY-4's 717-fn UNKNOWN block be attacked directly.
+
+WHAT LANDED FROM IT (lane WS-4): the 7,882 FOLD records became CANDIDATES for
+tools/icf_alias_build.py --xfold; 473 pairs survived adjudication and grew
+scripts/symbol_aliases.json 272 -> 521 groups, worth +0.813114 pp @name_check
+at EXACTLY 0 on every default-ruler key. The 3,356 GENUINE records became
+docs/decomp/relocname-genuine-worklist-WS4.tsv -- a worklist, never applied.
 """
 
 import collections, glob, importlib.util, json, os, random, re, struct, sys

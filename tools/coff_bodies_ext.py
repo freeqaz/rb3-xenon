@@ -34,6 +34,26 @@ Validation, stated so it can fail: retail's .pdata entry VA is the function
 ENTRY (not the prefix), so recovered bodies must show the same length-delta-0
 dominance against retail .pdata as the already-working offset-0 population. If
 the layout story is wrong, deltas scatter.
+
+CROSS-REFERENCE, not a duplicate (lane WS-4, 2026-08-06)
+--------------------------------------------------------
+decomp-synth ships `tools/revcomp/probes/coff_x360.py`, another X360 PPC COFF
+reader (machine 0x01F2, which llvm-nm and objdump both reject). It is NOT a
+duplicate of this file and neither should be collapsed into the other:
+
+  * this file slices a section by CONSECUTIVE DEFINING-SYMBOL VALUES because
+    MSVC lays an EH-bearing COMDAT out as [+0 8-byte EH prefix][+8 entry]
+    [+N __unwind$NNNNN] -- several defining symbols per section, entry not at
+    offset 0. That is the grain of OUR objs and of the dtk split objs.
+  * `coff_x360.py` reads the whole-section-per-function grain and is paired with
+    `pe_va_read.py`, which reads the RETAIL PE IMAGE by virtual address. Its job
+    is the cross-BINARY comparison, not the cross-OBJ one.
+  * decomp-synth's `tools/il_witness/coff_ppc.py` is a THIRD reader and assumes a
+    `/Gy` COMDAT-per-function grain that rb3-xenon's objects do not have. Do not
+    reach for it here.
+
+The consumer that matters is `tools/xbin_adjudicate.py`, whose docstring carries
+the full instrument comparison and the CV-4 class-(b) residual chain.
 """
 import collections, os, sys
 from pathlib import Path
