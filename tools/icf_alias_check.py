@@ -24,7 +24,17 @@ by foreign stub-folds.  It is ICF-ALIAS INFLATION when the matched set is
 dominated by foreign stub-folds with no own-bodied anchors and/or a long
 contiguous run of foreign/stub functions.
 
-Exit code 0 = HONEST, 1 = ICF-ALIAS INFLATION (so a wave audit can gate on it).
+Exit code 0 = HONEST, 1 = ICF-ALIAS INFLATION, 2 = VACUOUS (the selected set held
+no 100%-matched function, so the gate checked NOTHING -- never treat 2 as a pass).
+
+★ 2026-08-06 REPAIR.  This tool was reported INOPERABLE because its oracle
+(``unified_id_rb3wii.json``) is a dead index.  That diagnosis was half right: the
+oracle IS dead, but it was never load-bearing.  Two real defects were found and
+fixed -- a dead-code verdict rule that made the gate nearly unfailable, and a
+vacuous empty-set pass.  The oracle was removed from the verdict path rather than
+resurrected, because it is a pure LENIENCY channel (see ORACLE MONOTONICITY in the
+Tunables section).  The gate now runs with no oracle at all, and its no-oracle
+HONEST verdict is a LOWER BOUND, not a degraded reading.
 
 DATA SOURCES (read, never written)
 ----------------------------------
@@ -38,9 +48,13 @@ DATA SOURCES (read, never written)
   // type:function size:0x<HEX>`` — sizes for every anonymous function.
 * ``scripts/target_symbol_map.json``     ``"0x<VA>" -> "<mangled name>"``.
   Inverted, it recovers the VA of a renamed matched function.
-* ``unified_id_rb3wii.json``             rb3-Wii BinDiff oracle, a list of
-  ``{rb3_addr, wii_name, bindiff_src, similarity, ...}`` keyed by VA.  Gives the
-  oracle attribution (source TU) + similarity for each VA.
+* ``report.json`` ``functions[].masked_equal``  objdiff's OWN disclosure that a
+  pairing came from the masked byte-signature fallback rather than from a name
+  match.  This is the live, exact form of the question the Wii oracle was being
+  asked to guess at, and it is what the tool now uses.
+* ``unified_id_rb3wii.json``             rb3-Wii BinDiff oracle (DEAD since the
+  2026-07-15 TU0->TU5 flip; ``dead_index_guard`` refuses it).  OPTIONAL and
+  ANNOTATION-ONLY now (``--oracle-annotate``); it cannot change the verdict.
 
 STUB threshold = 44 bytes (the recurring ``<= 44B`` figure from the lesson).
 Oracle "high confidence" threshold = similarity >= 0.5 (the oracle's own median
@@ -84,15 +98,61 @@ ORACLE = os.path.join(ROOT, "unified_id_rb3wii.json")
 # ---------------------------------------------------------------------------
 STUB_MAX = 44           # functions <= this many bytes are stub-fold candidates
 SIM_HIGH = 0.5          # oracle similarity at/above this is a real attribution
-# Verdict gate: a set is "inflated" when stub-folds dominate AND there is no
-# own-bodied anchor support.  STUB_DOMINANCE is the fraction of the matched set
-# that must be stub-folds for the headline to flip to inflation.
+# Verdict gate: the three rules the module docstring describes.  STUB_DOMINANCE
+# is the fraction of the matched set that must be stub-folds for the headline to
+# flip to inflation; FOREIGN_RUN_FLAG is the contiguous-run length that does the
+# same on its own.
 STUB_DOMINANCE = 0.60
-# Set by main() when --no-oracle is used: the FOREIGN-attribution signal is
-# unavailable, so no "HONEST" verdict from this run may be treated as a pass.
-DEGRADED_NO_ORACLE = False
 # A long contiguous foreign/stub run is itself a red flag (the manual heuristic).
 FOREIGN_RUN_FLAG = 8
+# True when this run had no oracle (default since lane BX-4 killed the only one).
+# See ORACLE MONOTONICITY below: this is the CONSERVATIVE mode, not a degraded one.
+NO_ORACLE = True
+# Never flipped on by any CLI flag. Present so the leniency channel is explicit
+# and greppable rather than deleted -- if a future lane argues the oracle should
+# be allowed to promote again, it has to set this and own the argument.
+ORACLE_PROMOTES = False
+
+# ---------------------------------------------------------------------------
+# ★★ ORACLE MONOTONICITY — why this gate no longer needs `unified_id_rb3wii.json`
+# ---------------------------------------------------------------------------
+# Repaired 2026-08-06.  Three findings, each measured, are why the oracle left
+# the verdict path rather than being resurrected:
+#
+# 1. THE ORACLE IS A PURE LENIENCY CHANNEL.  It enters the verdict at exactly one
+#    place -- `own_oracle` in `FnVerdict.classify` -- and there it can only turn
+#    a STUB into a REAL.  It can never turn a REAL into a STUB.  Every one of the
+#    three verdict rules below fires on "too many STUBs" / "too few REALs", so
+#    adding an oracle can only ever move a set from INFLATION toward HONEST.
+#    => Running WITHOUT the oracle is STRICTLY MORE CONSERVATIVE.  A HONEST
+#    verdict reached with no oracle is a LOWER BOUND: it would still be HONEST
+#    under any oracle whatsoever.  The old `--no-oracle` banner asserted the
+#    opposite ("can only ever FIND inflation, never RULE IT OUT"); that was
+#    backwards with respect to the verdict this tool actually computes, and it
+#    is why the gate was believed inoperable rather than merely oracle-free.
+#
+# 2. RESURRECTING IT WOULD BUY ALMOST NOTHING.  Measured on the oracle file
+#    itself: of its 9,301 rows only 708 (7.6%) clear SIM_HIGH, and only 505 are
+#    BOTH <= STUB_MAX bytes AND >= SIM_HIGH -- i.e. only 505 rows, against a
+#    universe of 69,075 `.text` function starts (0.73%), could ever promote a
+#    stub at all.  BinDiff similarity on an 8-byte body is near-zero by
+#    construction: there is no flowgraph to MD-index.
+#
+# 3. THE SIGNAL IT WAS PROXYING IS ALREADY IN `report.json`, LIVE.  A fake match
+#    is produced by objdiff's `pair_funclets_by_bytes`
+#    (objdiff-core/src/diff/mod.rs:1409), which pairs `is_funclet_like` symbols
+#    -- every anonymous `fn_<8hex>` -- by MASKED BYTE SIGNATURE rather than by
+#    name.  objdiff discloses every such pairing as `"masked_equal": true` on the
+#    function row (the 2026-08-02 ruler change, docs/decomp/RULER_CHANGE...).
+#    Measured on the current tree: all 22,864 anonymous 100% matches carry it and
+#    all 21,370 mangled ones do not -- a clean partition of the 44,234 matches
+#    into 51.7% content-folded and 48.3% name-paired.  That is the pairing-route
+#    fact the Wii oracle was being asked to guess at, available exactly, for free,
+#    and recomputed from the current build every run.
+#
+# The oracle therefore survives ONLY as an optional annotation (`--oracle-annotate`)
+# and is still refused by `dead_index_guard` unless it is genuinely live.
+# ---------------------------------------------------------------------------
 
 
 # ---------------------------------------------------------------------------
@@ -190,9 +250,10 @@ def iter_units_report(report):
 # ---------------------------------------------------------------------------
 class FnVerdict:
     __slots__ = ("name", "va", "size", "matched", "sim", "src", "claimed_tu",
-                 "klass", "reason")
+                 "klass", "reason", "folded")
 
-    def __init__(self, name, va, size, matched, sim, src, claimed_tu):
+    def __init__(self, name, va, size, matched, sim, src, claimed_tu,
+                 folded=False):
         self.name = name
         self.va = va
         self.size = size
@@ -200,6 +261,12 @@ class FnVerdict:
         self.sim = sim                # oracle similarity or None
         self.src = src                # oracle bindiff_src basename or None
         self.claimed_tu = claimed_tu  # basename of the TU we're judging for
+        # folded: objdiff's own `masked_equal` disclosure -- this pairing came
+        # from the masked BYTE-SIGNATURE fallback (pair_funclets_by_bytes), not
+        # from a name match.  Content-folds are the population at risk; a
+        # name-paired match asserts identity through target_symbol_map.json and
+        # is gated elsewhere (gated_map_write.py / content_check.py).
+        self.folded = folded
         self.klass = None             # "REAL" | "STUB"
         self.reason = ""
 
@@ -210,6 +277,11 @@ class FnVerdict:
             self.src is not None and self.claimed_tu is not None and
             self.src.lower() == self.claimed_tu.lower()
         )
+        # ORACLE MONOTONICITY (see header): `own_oracle` is the ONLY place the
+        # oracle touches the verdict, and it only ever promotes STUB -> REAL.
+        # It is therefore disabled -- an annotation-only oracle must not be able
+        # to make the gate more permissive than a run without one.
+        own_oracle = own_oracle and ORACLE_PROMOTES
         if big:
             self.klass = "REAL"
             self.reason = f"size {self.size} > {STUB_MAX}"
@@ -246,7 +318,8 @@ def build_fn_verdict(fn, claimed_tu, sym_sizes, name_to_va, oracle):
     src = os.path.basename(oe.get("bindiff_src") or "") if oe else None
     if src == "":
         src = None
-    fv = FnVerdict(fn["name"], va, size, is_matched(fn), sim, src, claimed_tu)
+    fv = FnVerdict(fn["name"], va, size, is_matched(fn), sim, src, claimed_tu,
+                   folded=bool(fn.get("masked_equal")))
     return fv.classify()
 
 
@@ -341,72 +414,112 @@ def longest_foreign_run(verdicts):
 # Report / verdict printing
 # ---------------------------------------------------------------------------
 def print_verdict(label, verdicts, claimed_tu, show_list=False):
+    """Judge a matched set.  Returns 0 = HONEST, 1 = INFLATION, 2 = VACUOUS.
+
+    ★ REPAIRED 2026-08-06.  Two defects were fixed here; both were STRENGTHENING
+    changes, and neither lowered the bar:
+
+    (a) THE DOMINANCE AND FOREIGN-RUN RULES WERE DEAD CODE.  All three branches
+        were guarded by `anchors == 0`, but `anchors == 0 and n_stub > 0` is the
+        FIRST branch and (given `total > 0`) is implied whenever `anchors == 0`.
+        So branches 2 and 3 were unreachable, and the shipped verdict reduced to
+        the single rule "INFLATION iff NOT ONE matched function exceeds 44 bytes".
+        Measured on the current tree over the 920 non-auto units with >= 1 match:
+        the shipped rule called 892 HONEST / 28 INFLATED, while the DOCUMENTED
+        rule calls 482 HONEST / 438 INFLATED.  410 units passed a gate the
+        module's own docstring says should fail them, covering 21,927 stub-fold
+        matches.  Among them, by name, are `OvershellSlot.cpp` (407 matched, 337
+        stub-folds, contiguous run 119) and `MusicLibrary.cpp` (343 / 235 / 76)
+        -- THE TWO WAVE-14/15 CASES THIS TOOL WAS WRITTEN TO CATCH.  A gate that
+        passes its own founding counter-examples is not a gate.
+
+    (b) AN EMPTY SET RETURNED "HONEST" AND EXIT 0.  A landing gate that checks
+        nothing must not report a pass; that is the vacuity failure this repo
+        documents repeatedly.  It is now VACUOUS / exit 2.
+
+    ⚠ CALIBRATION CAVEAT, stated because the numbers above demand it: with the
+    rules live and classification size-only, the dominance rule fires on ~48% of
+    whole TUs.  That is NOT a claim that half the tree is inflated -- it is a
+    statement that STUB_DOMINANCE=0.60 was never calibrated against a whole-TU
+    population, because it was unreachable.  A wired TU legitimately owns many
+    <= 44B getters.  This tool's GATE use is `--worktree` (the NEWLY-matched set
+    of one change), where the dominance question is well-posed; `--tu` is a
+    diagnostic.  Read the distribution, not just the headline.
+    """
     matched = [v for v in verdicts if v.matched]
     total = len(matched)
+    print(f"=== {label} ===")
+    print(f"claimed TU: {claimed_tu}")
     if total == 0:
-        print(f"=== {label} ===")
-        print(f"claimed TU: {claimed_tu}")
         print("no 100%-matched functions in the selected set — nothing to judge.")
-        print("VERDICT: HONEST (empty set)"
-              + (" [DEGRADED size-only -- NOT A PASS]" if DEGRADED_NO_ORACLE else ""))
-        return 0
+        print("VERDICT: VACUOUS (empty set) -- the gate examined ZERO functions, "
+              "so it can neither find nor rule out inflation. THIS IS NOT A PASS.")
+        return 2
 
     real = [v for v in matched if v.klass == "REAL"]
     stub = [v for v in matched if v.klass == "STUB"]
-    # foreign = stub whose oracle attributes to a different TU (the strongest tell)
+    # foreign = stub whose oracle attributes to a different TU. Annotation only:
+    # with no oracle this is empty, and the verdict never consulted it anyway.
     foreign = [v for v in stub
                if v.src and claimed_tu and v.src.lower() != claimed_tu.lower()]
     n_real, n_stub = len(real), len(stub)
     stub_frac = n_stub / total
-    run_len, run = longest_foreign_run(matched)
+    run_len, _run = longest_foreign_run(matched)
+    anchors = n_real
 
-    # own-bodied anchors: REAL fns that are real because of size/own-oracle.
-    anchors = len(real)
+    # Pairing route, straight from objdiff's own `masked_equal` disclosure.
+    folded = [v for v in matched if v.folded]
+    named = [v for v in matched if not v.folded]
+    folded_stub = [v for v in folded if v.klass == "STUB"]
 
-    print(f"=== {label} ===")
-    print(f"claimed TU: {claimed_tu}")
     print(f"matched (100%): {total}")
     print(f"  REAL-BODIED : {n_real:4d}  ({100*n_real/total:.1f}%)")
     print(f"  STUB-FOLD   : {n_stub:4d}  ({100*stub_frac:.1f}%)"
-          f"   of which {len(foreign)} oracle-attribute to a FOREIGN TU")
+          f"   of which {len(foreign)} oracle-attribute to a FOREIGN TU"
+          f"{' (no oracle: annotation unavailable)' if NO_ORACLE else ''}")
+    print(f"pairing route (objdiff `masked_equal`):")
+    print(f"  CONTENT-FOLD: {len(folded):4d}  ({100*len(folded)/total:.1f}%)"
+          f"   <- paired by masked BYTE SIGNATURE; the at-risk population"
+          f"   [{len(folded_stub)} of them <= {STUB_MAX}B]")
+    print(f"  NAME-PAIRED : {len(named):4d}  ({100*len(named)/total:.1f}%)"
+          f"   <- identity asserted by target_symbol_map.json")
     print(f"longest contiguous stub/foreign run: {run_len}"
           f"{' (>= flag threshold)' if run_len >= FOREIGN_RUN_FLAG else ''}")
 
-    # ---- verdict logic -------------------------------------------------
-    # Inflation when stub-folds DOMINATE the set AND there are no real-bodied
-    # anchors to vouch for the pin (the wave-14/15 shape: a span whose every
-    # match is a tiny foreign-folding stub).  A long foreign run with zero
-    # anchors is also inflation even below the dominance fraction.
-    inflated = False
+    # ---- verdict logic (the three DOCUMENTED rules, now all reachable) ----
+    reasons = []
     if anchors == 0 and n_stub > 0:
-        inflated = True
-        why = f"zero real-bodied anchors; all {n_stub} matches are stub-folds"
-    elif stub_frac >= STUB_DOMINANCE and anchors == 0:
-        inflated = True
-        why = f"stub-folds dominate ({n_stub}/{total}) with no anchors"
-    elif run_len >= FOREIGN_RUN_FLAG and anchors == 0:
-        inflated = True
-        why = f"contiguous foreign/stub run of {run_len} with no anchors"
-    else:
-        why = (f"{anchors} real-bodied anchor(s) present"
-               + (f"; {n_stub} interspersed stub-folds are plausibly own getters"
-                  if n_stub else ""))
+        reasons.append(f"zero real-bodied anchors; all {n_stub} matches are stub-folds")
+    if stub_frac >= STUB_DOMINANCE:
+        reasons.append(f"stub-folds dominate ({n_stub}/{total} = {100*stub_frac:.1f}% "
+                       f">= {100*STUB_DOMINANCE:.0f}%)")
+    if run_len >= FOREIGN_RUN_FLAG:
+        reasons.append(f"contiguous stub/foreign run of {run_len} "
+                       f"(>= {FOREIGN_RUN_FLAG})")
+    inflated = bool(reasons)
 
     if inflated:
-        print(f"VERDICT: ICF-ALIAS INFLATION (stub-fold-dominated: {n_stub} of {total}) "
-              f"-- {why}")
+        print(f"VERDICT: ICF-ALIAS INFLATION ({n_stub} stub-folds of {total}) -- "
+              + "; ".join(reasons))
     else:
-        print(f"VERDICT: HONEST (real-bodied-dominated) -- {why}"
-              + (" [DEGRADED size-only: FOREIGN-attribution signal UNAVAILABLE,"
-                 " this does NOT rule out inflation -- NOT A PASS]"
-                 if DEGRADED_NO_ORACLE else ""))
+        comp = ("real-bodied-dominated" if n_real > n_stub
+                else "stub-folds present but below every flag threshold")
+        print(f"VERDICT: HONEST ({comp}) -- {anchors} real-bodied anchor(s), "
+              f"stub fraction {100*stub_frac:.1f}% < {100*STUB_DOMINANCE:.0f}%, "
+              f"longest stub run {run_len} < {FOREIGN_RUN_FLAG}")
+        if NO_ORACLE:
+            print("       [no oracle: this is the CONSERVATIVE mode. An oracle can "
+                  "only promote STUB->REAL,\n"
+                  "        so this HONEST verdict is a LOWER BOUND -- it would "
+                  "still be HONEST with one.]")
 
     if show_list:
         print("\n  fn (sorted by VA):")
         for v in sorted(matched, key=lambda v: (v.va is None, v.va or 0)):
             va = f"0x{v.va:08X}" if v.va is not None else "   ??     "
             sz = f"{v.size:>5}" if v.size is not None else "    ?"
-            print(f"    {va}  {sz}B  {v.klass:4s}  {v.name[:46]:46s}  {v.reason}")
+            route = "fold" if v.folded else "name"
+            print(f"    {va}  {sz}B  {v.klass:4s} {route}  {v.name[:46]:46s}  {v.reason}")
 
     return 1 if inflated else 0
 
@@ -478,11 +591,14 @@ def main(argv=None):
     p.add_argument("--symbols", metavar="PATH", default=SYMBOLS)
     p.add_argument("--oracle", metavar="PATH", default=ORACLE)
     p.add_argument("--no-oracle", action="store_true",
-                   help="run DEGRADED (size-only): skip the rb3-Wii oracle "
-                        "entirely. The FOREIGN-attribution signal -- the "
-                        "strongest inflation tell -- is UNAVAILABLE in this "
-                        "mode, so a 'clean' result is NOT a pass. Use this "
-                        "while the oracle is dead (see tools/dead_index_guard.py).")
+                   help="(DEFAULT, and now a no-op) run without the rb3-Wii "
+                        "oracle. Kept so existing call sites keep working.")
+    p.add_argument("--oracle-annotate", action="store_true",
+                   help="ALSO load the rb3-Wii oracle, for ANNOTATION ONLY (the "
+                        "FOREIGN-attribution column). It cannot change the "
+                        "verdict. Still refused by dead_index_guard unless the "
+                        "index is genuinely live, so this only works after "
+                        "somebody re-keys or regenerates it.")
     p.add_argument("--tsm", metavar="PATH", default=TSM)
     p.add_argument("--list", action="store_true",
                    help="list every judged function with its classification")
@@ -497,20 +613,16 @@ def main(argv=None):
     # empties the FOREIGN set and biases this LANDING GATE toward "clean" --
     # i.e. it would silently pass inflated pins. So: hard-fail by default,
     # and make the degraded size-only mode explicit and loudly labelled.
-    if args.no_oracle:
-        globals()["DEGRADED_NO_ORACLE"] = True
-        oracle = {}
-        sys.stderr.write(
-            "\n" + "!" * 78 +
-            "\n!! icf_alias_check: DEGRADED MODE (--no-oracle) -- size-only.\n"
-            "!! The FOREIGN-attribution signal is UNAVAILABLE. Stub-folds that\n"
-            "!! belong to another TU are indistinguishable from unattributed\n"
-            "!! ones here, so this run can only ever FIND inflation, never\n"
-            "!! RULE IT OUT. A 'HONEST'/clean verdict below is NOT a pass.\n" +
-            "!" * 78 + "\n\n")
-        sys.stderr.flush()
-    else:
+    if args.oracle_annotate:
+        # Still guarded: a dead index is refused here exactly as before. The
+        # difference is that it can no longer change the verdict either way.
         oracle = load_oracle(args.oracle)
+        globals()["NO_ORACLE"] = False
+        sys.stderr.write(
+            "[icf_alias_check] oracle loaded for ANNOTATION ONLY "
+            "(ORACLE_PROMOTES=False) -- it cannot change the verdict.\n")
+    else:
+        oracle = {}
 
     if args.worktree:
         wt_report_path = os.path.join(args.worktree, "build", "45410914",
