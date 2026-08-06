@@ -137,31 +137,44 @@ def cmd_validate() -> int:
     compiled = compiled_obj_symbol_index()
     target_objs = target_obj_symbol_index()
     ok = True
+    n_ok = n_bad = 0
     for g in groups:
         name = g.get("name", g.get("survivor"))
         survivor = g["survivor"]
         folded = g.get("folded", [])
+        # ★ WS-4 INSTRUMENT FIX. `g_ok` used to be the RUN-WIDE `ok`, so the
+        # first failing group silenced the OK line of every group after it: a
+        # 272-group file printed 9 OK + 12 FAIL and 251 groups reported NOTHING.
+        # The verdict was right and the coverage was invisible, which is exactly
+        # the shape that makes a PASS/FAIL comparison across two files unreadable
+        # (house rule: report coverage with every verdict).
+        g_ok = True
         # (a) survivor is in target_symbol_map.json
         if survivor not in tmap:
             print(f"FAIL [{name}]: survivor {survivor} NOT in target_symbol_map.json")
-            ok = False
+            g_ok = False
         # (b) every folded spelling referenced by >=1 compiled obj
         for f in folded:
             if f not in compiled:
                 print(f"FAIL [{name}]: folded {f} referenced by 0 compiled objs")
-                ok = False
+                g_ok = False
         # (c) survivor is the ONLY group member named in the target objs
         named_in_target = [s for s in (survivor, *folded) if target_objs.get(s, 0) > 0]
         if named_in_target != [survivor]:
             print(f"FAIL [{name}]: target objs name {named_in_target}, "
                   f"expected only [{survivor}] (a real ICF fold keeps one spelling)")
-            ok = False
-        if ok:
+            g_ok = False
+        if g_ok:
+            n_ok += 1
             n_compiled = len(set(c for f in folded for c in compiled.get(f, [])))
             print(f"OK   [{name}]: survivor in target_map; "
                   f"{len(folded)} folded spelling(s) over {n_compiled} compiled objs; "
                   f"target objs ref survivor {target_objs.get(survivor,0)}x")
-    print("VALIDATE: PASS" if ok else "VALIDATE: FAIL")
+        else:
+            n_bad += 1
+            ok = False
+    print(f"VALIDATE: {'PASS' if ok else 'FAIL'} -- {n_ok} group(s) OK, "
+          f"{n_bad} group(s) failing, {len(groups)} total")
     return 0 if ok else 1
 
 
