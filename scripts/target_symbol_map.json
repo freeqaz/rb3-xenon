@@ -27664,7 +27664,6 @@
  "0x82c16998": "LoopbackDestroy",
  "0x82c169f8": "LoopbackCreate",
  "0x82c16a80": "LoopbackCreateWrapper",
- "0x82c16aa0": "?Clear@MetaPerformer@@UAAXXZ",
  "0x82c16b20": "?LockForProcess@CAPOXHV@@UAAJIPBUXAPO_LOCKFORPROCESS_BUFFER_PARAMETERS@@I0@Z",
  "0x82c16e10": "CreateAPOXHV",
  "0x82c16e88": "??_GCAPOXHV@@UAAPAXI@Z",
@@ -29134,7 +29133,8 @@
  "_denylist": [
   "0x82553fc8",
   "0x82685750",
-  "0x82759310"
+  "0x82759310",
+  "0x82c16aa0"
  ],
  "_denylist_comment": "Addresses that gen_target_map must never auto-emit (hand-flagged bad bindiff guesses / fingerprint collisions). 0x82759310 was a known DrawBounds collision (similarity 0.91). 0x82553fc8 was ?Terminate@RndMat@@SAXXZ: the argreg proof-test shows the target reads a POINTER IN r3, which a static void() signature cannot have. Evicting it is score-neutral (measured 0/0), and denylisting stops the byte-identity re-insertion that made it a permanent oscillator.",
  "_icf_arbitrary": [
