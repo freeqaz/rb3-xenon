@@ -35,6 +35,19 @@ Output JSON (durable, unlike a pickle):
 
 Read-only. Mutates no build input.
 
+★ ITS RECALL IS BOUNDED BY THE ALIGNMENT GATE -- and there is now a second supply
+(lane WS-4, 2026-08-06). The gate above is deliberately conservative, so this
+census proposes an alias candidate only where the two bodies ALREADY agree on
+size and full (offset, reloc_type) sequence. decomp-synth's relocation-name audit
+enumerates the complementary population: it takes objdiff's own name_check
+charge list and adjudicates each (T,B) by comparing our compiled body for B
+against RETAIL BYTES AT addr(T) IN THE PE IMAGE, so it reaches pairs whose
+enclosing functions never aligned here. `tools/icf_alias_build.py --xfold`
+consumes it as CANDIDATES ONLY (its comparator is far coarser than this repo's --
+see `tools/xbin_adjudicate.py`'s docstring for the instrument comparison), and
+the two supplies overlap on only 401 of 2,043 gated pairs. Neither replaces the
+other; do not fork a third census.
+
 ★ CY-1 (2026-08-02) -- TWO PAIRING/READER DEFECTS FIXED. ⚠ DEPENDENT CENSUSES MOVE.
 ------------------------------------------------------------------------------
 Measured on one build state, all three legs against the same root:
