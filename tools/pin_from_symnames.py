@@ -24,6 +24,12 @@ candidate `.text` span each.
     python3 tools/pin_from_symnames.py -o docs/decomp/queue.tsv
     python3 tools/pin_from_symnames.py --clean-only --min-fns 3
 
+⚠ Provenance: `docs/decomp/pin-queue-symmap-2026-08-06.tsv` was cut with
+`--min-fns 3` (307 clean regions / 1,800,480 B) — NOT the default `--min-fns 2`,
+which yields 399 / 1,873,812 B. Verified byte-identical reproduction 2026-08-06.
+The stderr summary now prints the effective params so a queue's provenance is
+always in its generation log.
+
 Provenance flags carried through from the map (do not ignore these)
 -------------------------------------------------------------------
 - `_denylist` — hand-flagged bad guesses. **Always excluded.**
@@ -162,6 +168,9 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
 
     log = sys.stderr
+    print(f"params: min_fns={args.min_fns} gap=0x{args.gap:x} "
+          f"clean_only={args.clean_only} include_templates={args.include_templates}",
+          file=log)
     raw = json.loads(Path(args.target_map).read_text())
     deny = set(raw.get("_denylist") or [])
     arb = set(raw.get("_bijection_arbitrary") or []) | set(raw.get("_icf_arbitrary") or [])
@@ -237,6 +246,11 @@ def main(argv=None) -> int:
             "ov_pin": span_overlap(lo, hi, pins),
         })
 
+    # ⚠ With run grouping, runs are DISJOINT BY CONSTRUCTION (built from sorted
+    # non-overlapping members), so ov_sib is structurally ~0 — it survives from
+    # the class-grouping era and is kept only so a future grouping change that
+    # reintroduces overlap becomes visible. "CLEAN" therefore effectively means
+    # "no overlap with EXISTING PINS", not "passed a sibling test".
     ranges = [(c["lo"], c["hi"], c["cls"]) for c in cands]
     for c in cands:
         c["ov_sib"] = span_overlap(c["lo"], c["hi"],
