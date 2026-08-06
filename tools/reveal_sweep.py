@@ -113,9 +113,14 @@ REPORT = os.path.join(ROOT, "build", "45410914", "report.json")
 
 ADDR_RE = re.compile(r"^(?:fn|lbl)_([0-9A-Fa-f]{6,8})$")
 
-# Base symbols whose name has no stable cross-compile identity. Mirrors
+# Base symbols whose name has no stable cross-compile identity. Was a mirror of
 # safe_name_merge.NON_REAL_PREFIXES so we never propose one (naming a funclet
 # un-pairs objdiff's address-matched funclets -- the BandDirector -16 footgun).
+# NO LONGER A MIRROR, and deliberately so: this list was already a superset
+# (`??_C@`), and as of the 2026-08-06 owner ruling safe_name_merge admits
+# `__real@` while this sweep still skips it. Do not "re-sync" the two by
+# deleting `__real@` below without measuring this sweep's own acceptance —
+# the ruling was made and measured against safe_name_merge's gate only.
 NON_REAL = (
     "__unwind$", "__catch$", "__ehhandler$", "__sep$", "__GSHandler",
     "__safe_se", "__tls", "fn_", "lbl_", "jumptable_", "$LN", "__real@",
