@@ -74,8 +74,17 @@ import sys
 LIVE_THRESHOLD_PCT = 90.0
 
 # Fields that hold an RB3 retail VA across the various index schemas.
+#
+# ``fn`` is autoid.json's address field (``{"fn": "fn_82763A00", ...}``); its
+# absence here is why the audit reported autoid.json as ``NO ADDRESSES`` and the
+# guard had only ONE working positive control instead of two.  Adding a key is
+# safe: ``extract_addresses`` calls ``as_addr`` on the value and falls through to
+# a normal ``walk`` when it does not parse as a VA, so a key of the same name
+# holding a non-address (e.g. a function NAME) contributes nothing rather than
+# corrupting the measurement.
 ADDR_KEYS = frozenset({
     "rb3_addr", "rb3_va", "rb3_address", "va", "addr", "address", "target_va",
+    "fn",
 })
 
 ENV_BYPASS = "RB3_ALLOW_DEAD_INDEX"
@@ -317,6 +326,10 @@ def skip_if_dead(path: str, *, what: str | None = None, keys=ADDR_KEYS,
 
 KNOWN = [
     "unified_id_rb3wii.json",
+    # The TU5 re-key of the above (tools/tu5_rekey_oracle.py). Present only if
+    # generated; the audit reports MISSING otherwise, which is accurate -- it is
+    # gitignored and regenerable, exactly like its TU0 parent.
+    "unified_id_rb3wii.tu5.json",
     "dc3_oracle.json",
     "unified_id.json",
     "tools/scope_data/uid_merge.json",
