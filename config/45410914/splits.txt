@@ -13364,6 +13364,18 @@ system/hamobj/PhotoSpotlightPositioner.cpp:
 	.pdata      start:0x821F2138 end:0x821F2148
 	.text       start:0x8227B408 end:0x8227B4A8
 
+xdk/xgraphics/optimize.cpp:
+	.pdata      start:0x8224E208 end:0x8224E298
+	.text       start:0x829C6C50 end:0x829DCE00
+
+xdk/xgraphics/xenosem.cpp:
+	.pdata      start:0x8224E298 end:0x8224E2C8
+	.text       start:0x829DCE00 end:0x829DE450
+
+xdk/xgraphics/buildssa.cpp:
+	.pdata      start:0x8224E2C8 end:0x8224E2D0
+	.text       start:0x829DE450 end:0x829DE538
+
 xdk/xgraphics/ucode/driver/r500assembler.cpp:
 	.pdata      start:0x8224C720 end:0x8224C7A8
 	.text       start:0x8293E470 end:0x8293F864
