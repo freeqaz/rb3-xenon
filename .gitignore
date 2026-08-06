@@ -227,3 +227,8 @@ tools/oss-xbox-build/rb3e_alive_listen.py
 scripts/unicorn_runner/**/__pycache__/
 scripts/unicorn_runner/*.so
 /archive/
+
+# ML/training docs live in ../decomp-synth (rb3-xenon is PUBLIC; the grind
+# pipeline was deliberately stripped 2026-07-30). This symlink is a convenience
+# handle only -- never track it or anything under it here.
+docs-synth
