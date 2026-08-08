@@ -487,7 +487,29 @@ if not config.non_matching:
 # Tool versions
 config.binutils_tag = "2.42-1"
 config.compilers_tag = "20250812"
-config.dtk_tag = "v0.3.0"
+# Nothing DOWNLOADS this tag, and it does not select the binary -- dtk is resolved
+# by absolute path (see the _fork_dir docstring ~line 233): the walk and the
+# fallback both land on /home/free/code/milohax/jeff/target/release/dtk. But this
+# string is NOT inert. tools/project.py:400-401 compares it against the "version"
+# recorded in build/<version>/config.json and DELETES that file -- forcing a
+# re-split -- when the recorded version is older. A stale pin therefore disarms
+# the staleness gate: at "v0.3.0" this project would never have auto-re-split for
+# any fork release, which is how it sat on 1.9.4 output silently. Keep it current.
+# It also records WHICH jeff build the checked-in split output corresponds to.
+# Was "v0.3.0", which was fiction (upstream decomp-toolkit numbering, never our
+# fork's). Measured 2026-08-08 on 45410914: re-split 1.9.4 -> 1.10.0 (cdfe173)
+# is a STRICT NO-OP. All 2420 split objects content-identical, 782,103
+# relocations before and after (delta exactly 0), 72,948 sections, 426,091
+# symbol-table entries. 1.9.5's xam.xex ordinal-table fix touches nothing here
+# (609 __imp_/Unused* thunk symbols across 7 units, unchanged); 1.10.0's PDB
+# function-size harvest is gated on `pdb:`, which config/45410914/config.yml
+# does not set. Verified by re-running 1.10.0 with the Aug-6-era
+# scripts/target_symbol_map.json (JEFF_MERGE_PROTECT): it reproduces the
+# previous on-disk objects exactly. The 4 objects that DID move in the live
+# tree (CharBonesSamples, DataNode, VocalPart, meta_band/BandProfile) moved
+# because that map grew by ~1000 addresses on Aug 6, which unblocked four
+# merge_branch_reached_overcarve_tails runs -- project state, not dtk.
+config.dtk_tag = "v1.10.0"  # jeff cdfe173 (fork of decomp-toolkit)
 config.objdiff_tag = "v4.2.2"  # freeqaz/objdiff fork release (linux-x86_64 asset)
 config.sjiswrap_tag = "v1.2.1"
 config.wibo_tag = "1.0.1"
