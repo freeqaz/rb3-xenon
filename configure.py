@@ -487,10 +487,15 @@ if not config.non_matching:
 # Tool versions
 config.binutils_tag = "2.42-1"
 config.compilers_tag = "20250812"
-# DOCUMENTATION ONLY -- nothing downloads this tag. The dtk binary is resolved
+# Nothing DOWNLOADS this tag, and it does not select the binary -- dtk is resolved
 # by absolute path (see the _fork_dir docstring ~line 233): the walk and the
-# fallback both land on /home/free/code/milohax/jeff/target/release/dtk, so this
-# string records WHICH jeff build the checked-in split output corresponds to.
+# fallback both land on /home/free/code/milohax/jeff/target/release/dtk. But this
+# string is NOT inert. tools/project.py:400-401 compares it against the "version"
+# recorded in build/<version>/config.json and DELETES that file -- forcing a
+# re-split -- when the recorded version is older. A stale pin therefore disarms
+# the staleness gate: at "v0.3.0" this project would never have auto-re-split for
+# any fork release, which is how it sat on 1.9.4 output silently. Keep it current.
+# It also records WHICH jeff build the checked-in split output corresponds to.
 # Was "v0.3.0", which was fiction (upstream decomp-toolkit numbering, never our
 # fork's). Measured 2026-08-08 on 45410914: re-split 1.9.4 -> 1.10.0 (cdfe173)
 # is a STRICT NO-OP. All 2420 split objects content-identical, 782,103
