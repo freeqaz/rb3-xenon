@@ -509,7 +509,16 @@ config.compilers_tag = "20250812"
 # tree (CharBonesSamples, DataNode, VocalPart, meta_band/BandProfile) moved
 # because that map grew by ~1000 addresses on Aug 6, which unblocked four
 # merge_branch_reached_overcarve_tails runs -- project state, not dtk.
-config.dtk_tag = "v1.10.0"  # jeff cdfe173 (fork of decomp-toolkit)
+#
+# 1.10.0 -> 1.11.0: XDK CRT register save/restore sleds are now named from their
+# bodies (__savegprlr_25) instead of split as lbl_<addr>. NOT `pdb:`-gated, so unlike
+# the 1.10.0 PDB harvest (measured a strict no-op here, 2420/2420 objects identical)
+# this one does reach RB3. build/45410914/config.json already records 1.11.0 -- the
+# shared jeff binary was rebuilt and this tree re-split against it -- so this bump is
+# documentation catching up, and it cannot force a re-split: load_build_config() drops
+# config.json only when the RECORDED version is older than the pin, and
+# 1.11.0 < 1.11.0 is false. It re-arms the gate for the next release.
+config.dtk_tag = "v1.11.0"  # jeff 30f7511 (fork of decomp-toolkit)
 config.objdiff_tag = "v4.2.2"  # freeqaz/objdiff fork release (linux-x86_64 asset)
 config.sjiswrap_tag = "v1.2.1"
 config.wibo_tag = "1.0.1"
