@@ -315,6 +315,28 @@ out from under them will *deeply break* concurrent work. Hard rules:
   `--cold-cache` for a guaranteed-clean A/B baseline — seeding is disabled on
   that path, so cold baselines stay honestly cold. Remove with
   `git worktree remove --force <path>`.
+- ⛔⛔ **A KILLED `--agent-tools` GRIND RUN LEAVES THE WORKTREE WITHOUT A `.git`,
+  AND GIT WILL EVENTUALLY PRUNE IT PERMANENTLY** (measured 2026-08-09, three
+  worktrees hit, one lost). decomp-synth's agent-tools mode deliberately MOVES
+  `<wt>/.git` to a sidecar `~/tmp/.<name>.gitmeta/gitfile` so the model cannot
+  read git history, and restores it on clean exit. Kill the run — Ctrl-C,
+  `pkill`, a harness crash — and the move is never undone. The worktree then
+  looks like a plain directory: `git -C <wt> status` says *"not a git
+  repository"*, and `git worktree list` marks it **`prunable`**. Once anything
+  prunes it, `.git/worktrees/<name>` is gone and **`git worktree repair` cannot
+  bring it back** — the tree becomes an orphan you can build in but never
+  update.
+  **Recovery, in this order:**
+  ```bash
+  cp ~/tmp/.<name>.gitmeta/gitfile <wt>/.git       # restore the pointer
+  git -C <mainrepo> worktree repair <wt>           # re-link the admin entry
+  git -C <mainrepo> worktree list | grep <name>    # verify: NOT "prunable"
+  ```
+  If `.git/worktrees/<name>` is already gone, the tree is unrecoverable as a
+  worktree — treat it as a scratch build dir or recreate it.
+  ⚠ Also: **never run two campaigns against one worktree** — they patch source
+  in place and corrupt each other, and the second one's `.git` move races the
+  first one's restore.
 - **Put worktrees + all scratch under `~/tmp` (= `/home/free/tmp`), NEVER `/tmp`.**
   `/tmp` is a RAM-backed **tmpfs** (47 GB, shared across everything, fills fast —
   we hit "Disk quota exceeded" mid-build this way), *and* tmpfs has no btrfs
