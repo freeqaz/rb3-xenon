@@ -33,7 +33,6 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(MicInputArrow); }
     NEW_OBJ(MicInputArrow);
 
-    DECLARE_REVS;
     // Retail's class operator new is INLINED into NewObject and still evaluates
     // StaticClassName(): the target is `addi r3, r31, 0x50; bl
     // ?StaticClassName@MicInputArrow@; li r4, 0; li r3, 0x1f4; bl <MemAlloc>`.

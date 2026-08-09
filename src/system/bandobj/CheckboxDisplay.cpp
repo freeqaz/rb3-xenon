@@ -10,7 +10,14 @@
 #include "utl/Symbols.h"
 #include "utl/Symbols2.h"
 
-INIT_REVS(CheckboxDisplay)
+// Retail addresses both rev statics off ONE base: `addi r8,r9,lbl` then
+// `sth <hi16>, 0(r9)` / `sth <lo16>, 4(r8)`. That requires an internal-linkage
+// adjacent pair, gAltRev FIRST, with explicit `= 0` (uninitialised statics land
+// in .bss where MSVC picks the order). INIT_REVS(CheckboxDisplay) instead
+// defined the DECLARE_REVS class statics, which are external symbols and cost a
+// second `lis`.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 void CheckboxDisplay::Init() {
     Register();

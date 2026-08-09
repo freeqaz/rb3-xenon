@@ -9,7 +9,13 @@
 #include "utl/Symbols.h"
 #include <string.h>
 
-INIT_REVS(LayerDir)
+// Retail addresses both rev statics off ONE base register with a +0/+4
+// displacement, which requires an INTERNAL-linkage adjacent pair. DECLARE_REVS
+// makes them CLASS statics (external symbols) and costs a second `lis`.
+// gAltRev FIRST (retail stores hi16 at +0, lo16 at +4 and reads gRev from +4);
+// explicit `= 0` is required or they land in .bss where MSVC picks the order.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 DECOMP_FORCEACTIVE(
     LayerDir,
@@ -55,7 +61,7 @@ BinStream &operator>>(BinStream &bs, LayerDir::Layer &layer) {
     layer.mMat.Load(bs, false, 0);
     bs >> layer.mActive;
     bs >> layer.mColor;
-    if (LayerDir::gRev > 3)
+    if (gRev > 3)
         bs >> layer.mColorPalette;
     bs >> layer.mAlpha;
     bs >> layer.mBitmap;
@@ -74,13 +80,13 @@ BinStream &operator>>(BinStream &bs, LayerDir::Layer &layer) {
             bs >> *it;
         }
     }
-    if (LayerDir::gRev == 1) {
+    if (gRev == 1) {
         bool b;
         bs >> b;
     }
-    if (LayerDir::gRev > 1)
+    if (gRev > 1)
         layer.mProxy.Load(bs, false, 0);
-    if (LayerDir::gRev > 6)
+    if (gRev > 6)
         bs >> layer.mColorIdx;
     return bs;
 }
