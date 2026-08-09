@@ -135,7 +135,7 @@ void BandStorePanel::Unload() {
 void BandStorePanel::Enter() {
     StorePanel::Enter();
     LocalBandUser *u = dynamic_cast<LocalBandUser *>(StoreUser());
-    if (u && !u->IsJoypadConnected()) {
+    if (u && !u->IsParticipating()) {
         ExitError(kStoreErrorStoreServer);
     }
     TheSessionMgr->AddSink(this, LocalUserLeftMsg::Type());
