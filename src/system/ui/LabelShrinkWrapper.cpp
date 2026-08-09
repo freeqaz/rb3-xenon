@@ -30,7 +30,7 @@ BEGIN_PROPSYNCS(LabelShrinkWrapper)
 END_PROPSYNCS
 
 BEGIN_SAVES(LabelShrinkWrapper)
-    SAVE_REVS(2, 0)
+    SAVE_REVS(0, 0)
     bs << m_pLabel << m_pShow;
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
@@ -55,11 +55,11 @@ void LabelShrinkWrapper::SetTypeDef(DataArray *d) {
     Update();
 }
 
-INIT_REVS(2, 0)
+INIT_REVS(0, 0)
 
 void LabelShrinkWrapper::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
-    ASSERT_REVS(2, 0)
+    ASSERT_REVS(0, 0)
     bs >> m_pLabel;
     bs >> m_pShow;
     UIComponent::PreLoad(d.stream);
