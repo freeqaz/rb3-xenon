@@ -13,6 +13,7 @@
 #include "os/JoypadMsgs.h"
 #include "ui/UIComponent.h"
 #include "ui/UIPanel.h"
+#include <hash_map>
 
 class CustomizePanel : public UIPanel, public ContentMgr::Callback {
 public:
@@ -144,16 +145,23 @@ public:
     CustomizeState mCustomizeState; // 0x40
     CustomizeState mPendingState; // 0x44
     CustomizeState mPatchMenuReturnState; // 0x48
-    std::map<int, UIComponent *> mFocusComponents; // 0x4c
-    // Retail places mClosetMgr at 0x68 and mProfile at 0x70, i.e. 4 bytes past
-    // where an 0x18-sized std::map would leave them.  This TU used to buy that
-    // +4 with /DRB3_MAP_0x1C, but that flag fattens *every* map in the TU --
-    // including BandProfile::mLessonCompletions, which pushed
-    // BandProfile::mProfileAssets to 0x7c3c when retail has it at 0x7c38
-    // (HasNewAssets' addi).  Carrying the word here instead is TU-honest: it
-    // moves only CustomizePanel's own members and leaves BandProfile at its
-    // retail layout.
-    int unk64; // 0x64
+    // Retail keys this with an STLport hash_map, not the Wii build's std::map.
+    // ??0CustomizePanel@@QAA@XZ does `addi r3, r30, 0x4c` and then
+    // `bl ??0?$hash_map@...@stlpmtx_std@@QAA@XZ` (retail 0x8255D480, whose body
+    // is `li r4, 0x64` -> _M_initialize_buckets(100) -- a hashtable ctor, not an
+    // _Rb_tree one).  A std::map ctor has no call at all here: STLport inlines
+    // the rb-tree header init, which is why our side emitted the
+    // `std r29,0x0(r11) / std r29,0x8(r11)` pair the target lacks.
+    //
+    // hash_map is 0x1c, map is 0x18, so this reaches mClosetMgr@0x68 on its own.
+    // The `int unk64; // 0x64` that used to sit here was a fabricated pad -- an
+    // earlier pass measured retail's +4 correctly but attributed it to the
+    // members rather than to the container, and bought it with a spare word
+    // (before that, with a /DRB3_MAP_0x1C flag that fattened every map in the
+    // TU).  Nothing in the tree ever referenced unk64.  It MUST be deleted in
+    // the same edit as this swap: keeping it would push mClosetMgr to 0x6c and
+    // the +4 fix would read as a regression on its own.
+    std::hash_map<int, UIComponent *> mFocusComponents; // 0x4c
     ClosetMgr *mClosetMgr; // 0x68
     LocalBandUser *mUser; // 0x6c
     BandProfile *mProfile; // 0x70
