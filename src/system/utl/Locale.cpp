@@ -279,7 +279,19 @@ done:
     }
 
     DataRegisterFunc("set_locale_verbose_notify", DataSetLocaleVerboseNotify);
+    // Retail does NOT register this cheat. Two instruments agree (lane MATCH-F):
+    // (1) binary absence -- "toggle_show_tokens_cheat" occurs 0 times in retail
+    //     band.exe while the line-adjacent, same-idiom control
+    //     "set_locale_verbose_notify" occurs once (a DataRegisterFunc name must
+    //     be materialised in .rdata for the call to exist, so this is decisive
+    //     and map-independent); (2) ?Init@Locale@@ inserts exactly the
+    //     Symbol("toggle_show_tokens_cheat") ctor + DataRegisterFunc call that
+    //     the target lacks. Dev-only code inherited from the rb3-Wii dev decomp
+    //     with NO guard of its own -- the class the pattern doc warns is larger
+    //     than the #ifdef MILO_DEBUG census. Native keeps the cheat.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     DataRegisterFunc("toggle_show_tokens_cheat", DataToggleShowTokensCheat);
+#endif
 }
 
 // Static buffers and index
