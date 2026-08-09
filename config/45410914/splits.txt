@@ -14072,3 +14072,226 @@ xdk/xgraphics/vectorize.cpp:
 	.text       start:0x829911E0 end:0x82991B40
 	.text       start:0x82991BC8 end:0x82994F98
 	.text       start:0x82995058 end:0x829AC468
+
+xdk/xaudio2/adpcm.cpp:
+	.pdata      start:0x8225F060 end:0x8225F078
+	.text       start:0x82BC6F60 end:0x82BC70A4
+
+xdk/xaudio2/buffer.cpp:
+	.pdata      start:0x82260150 end:0x82260168
+	.text       start:0x82C07A58 end:0x82C07C20
+
+xdk/xaudio2/clipper.cpp:
+	.pdata      start:0x8225EF58 end:0x8225EF70
+	.text       start:0x82BC44C8 end:0x82BC46B8
+
+xdk/xaudio2/config.cpp:
+	.pdata      start:0x8225FA40 end:0x8225FA88
+	.text       start:0x82BEE410 end:0x82BEF664
+
+xdk/xaudio2/configcommon.cpp:
+	.text       start:0x82C068D0 end:0x82C06AE8
+
+xdk/xaudio2/drccommonpro.cpp:
+	.pdata      start:0x82260038 end:0x82260080
+	.text       start:0x82C01F80 end:0x82C04044
+
+xdk/xaudio2/entropydecpro.cpp:
+	.pdata      start:0x822600A8 end:0x82260118
+	.text       start:0x82C04808 end:0x82C068D0
+
+xdk/xaudio2/entropydecprolsl.cpp:
+	.pdata      start:0x8225FFC0 end:0x8225FFD0
+	.text       start:0x82BFD1C0 end:0x82BFD84C
+
+xdk/xaudio2/entropydecstd.cpp:
+	.pdata      start:0x82260080 end:0x82260098
+	.text       start:0x82C04048 end:0x82C04674
+
+xdk/xaudio2/graphmgr.cpp:
+	.pdata      start:0x8225FB68 end:0x8225FB80
+	.pdata      start:0x8225FBE0 end:0x8225FBF8
+	.text       start:0x82BF3C60 end:0x82BF4020
+	.text       start:0x82BF4768 end:0x82BF49F4
+
+xdk/xaudio2/leapfxlib.cpp:
+	.pdata      start:0x8225ECA8 end:0x8225ED18
+	.text       start:0x82BBE810 end:0x82BBF2B0
+
+xdk/xaudio2/losslessdecpro.cpp:
+	.pdata      start:0x82260018 end:0x82260038
+	.text       start:0x82C016F0 end:0x82C01F20
+
+xdk/xaudio2/lowrate_commonstd.cpp:
+	.pdata      start:0x822602B0 end:0x822602C8
+	.text       start:0x82C0A220 end:0x82C0BA30
+
+xdk/xaudio2/msaudio.cpp:
+	.pdata      start:0x8225FE50 end:0x8225FEB8
+	.pdata      start:0x8225FEC8 end:0x8225FED0
+	.pdata      start:0x8225FEE0 end:0x8225FF00
+	.text       start:0x82BF7A98 end:0x82BF931C
+	.text       start:0x82BF9518 end:0x82BF95CC
+	.text       start:0x82BF9F88 end:0x82BFA658
+
+xdk/xaudio2/msaudiodec.cpp:
+	.pdata      start:0x8225F900 end:0x8225F990
+	.pdata      start:0x8225F998 end:0x8225FA40
+	.text       start:0x82BE6B50 end:0x82BE9AC0
+	.text       start:0x82BEA210 end:0x82BEE40C
+
+xdk/xaudio2/msaudiopro.cpp:
+	.pdata      start:0x8225FF20 end:0x8225FF90
+	.text       start:0x82BFB078 end:0x82BFC49C
+
+xdk/xaudio2/msaudiostdpro.cpp:
+	.pdata      start:0x8225FFD0 end:0x82260000
+	.text       start:0x82BFD850 end:0x82BFF4F4
+
+xdk/xaudio2/oapclip.cpp:
+	.pdata      start:0x8225F590 end:0x8225F598
+	.text       start:0x82BD8868 end:0x82BD8C98
+
+xdk/xaudio2/oapmatrixmix.cpp:
+	.pdata      start:0x8225F0D8 end:0x8225F0F8
+	.pdata      start:0x8225F118 end:0x8225F138
+	.text       start:0x82BC8260 end:0x82BC92AC
+	.text       start:0x82BCA3F8 end:0x82BCB964
+
+xdk/xaudio2/oapreverb.cpp:
+	.pdata      start:0x8225F5B8 end:0x8225F5C8
+	.pdata      start:0x8225F5C8 end:0x8225F618
+	.pdata      start:0x8225F618 end:0x8225F648
+	.pdata      start:0x8225F668 end:0x8225F688
+	.text       start:0x82BD9928 end:0x82BD9EB8
+	.text       start:0x82BD9F00 end:0x82BDC380
+	.text       start:0x82BDC3D8 end:0x82BDCD94
+	.text       start:0x82BE1A30 end:0x82BE28C4
+
+xdk/xaudio2/reverb.cpp:
+	.pdata      start:0x8225F078 end:0x8225F090
+	.text       start:0x82BC71F0 end:0x82BC7518
+
+xdk/xaudio2/src_fast.cpp:
+	.pdata      start:0x8225EF18 end:0x8225EF20
+	.text       start:0x82BC3D10 end:0x82BC3E80
+
+xdk/xaudio2/strmdec_wma.cpp:
+	.pdata      start:0x8225FF90 end:0x8225FFC0
+	.text       start:0x82BFC4A0 end:0x82BFD1C0
+
+xdk/xaudio2/strmdec_wma_xenon.cpp:
+	.pdata      start:0x82260118 end:0x82260138
+	.text       start:0x82C06AE8 end:0x82C07874
+
+xdk/xaudio2/swfilter.cpp:
+	.pdata      start:0x822601C0 end:0x822601E0
+	.text       start:0x82C081F8 end:0x82C0855C
+
+xdk/xaudio2/swoutput.cpp:
+	.pdata      start:0x82260168 end:0x82260190
+	.text       start:0x82C07C20 end:0x82C07E8C
+
+xdk/xaudio2/swvoice.cpp:
+	.pdata      start:0x822601E8 end:0x82260208
+	.pdata      start:0x82260210 end:0x82260258
+	.pdata      start:0x82260260 end:0x82260298
+	.text       start:0x82C08880 end:0x82C08E34
+	.text       start:0x82C08F48 end:0x82C098BC
+	.text       start:0x82C09950 end:0x82C09EFC
+
+xdk/xaudio2/system.cpp:
+	.pdata      start:0x8225F688 end:0x8225F698
+	.pdata      start:0x8225F6A0 end:0x8225F6E0
+	.pdata      start:0x8225F708 end:0x8225F740
+	.text       start:0x82BE28C8 end:0x82BE2A00
+	.text       start:0x82BE2A68 end:0x82BE2EA8
+	.text       start:0x82BE34C0 end:0x82BE39F0
+
+xdk/xaudio2/voiceskin.cpp:
+	.pdata      start:0x8225FCA8 end:0x8225FCC8
+	.text       start:0x82BF5718 end:0x82BF5A74
+
+xdk/xaudio2/waveutils.cpp:
+	.pdata      start:0x8225F4A8 end:0x8225F4B0
+	.pdata      start:0x8225F4B0 end:0x8225F4C0
+	.text       start:0x82BD36F0 end:0x82BD3820
+	.text       start:0x82BD3A08 end:0x82BD3D28
+
+xdk/xaudio2/wmabuffilt.cpp:
+	.pdata      start:0x82260308 end:0x82260338
+	.text       start:0x82C0EAD8 end:0x82C0F25C
+
+xdk/xaudio2/wmaltrt.cpp:
+	.pdata      start:0x8225FF00 end:0x8225FF20
+	.text       start:0x82BFA658 end:0x82BFB078
+
+xdk/xaudio2/x2effectchain.cpp:
+	.pdata      start:0x8225F7B8 end:0x8225F7D8
+	.text       start:0x82BE4518 end:0x82BE48B0
+
+xdk/xaudio2/x2engine.cpp:
+	.pdata      start:0x8225EDA0 end:0x8225EDD0
+	.pdata      start:0x8225EDF8 end:0x8225EE20
+	.pdata      start:0x8225EE28 end:0x8225EE40
+	.pdata      start:0x8225EE70 end:0x8225EE90
+	.text       start:0x82BC11B8 end:0x82BC1408
+	.text       start:0x82BC17E8 end:0x82BC1AC8
+	.text       start:0x82BC1BA8 end:0x82BC1E0C
+	.text       start:0x82BC23C0 end:0x82BC25E4
+
+xdk/xaudio2/x2mixmatrix.cpp:
+	.pdata      start:0x8225FE38 end:0x8225FE48
+	.text       start:0x82BF7748 end:0x82BF799C
+
+xdk/xaudio2/x2voicebase.cpp:
+	.pdata      start:0x8225F7E0 end:0x8225F800
+	.pdata      start:0x8225F858 end:0x8225F870
+	.pdata      start:0x8225F8A8 end:0x8225F8B8
+	.pdata      start:0x8225F8C0 end:0x8225F8F0
+	.text       start:0x82BE4B88 end:0x82BE4DB8
+	.text       start:0x82BE5490 end:0x82BE56D0
+	.text       start:0x82BE5C28 end:0x82BE5D9C
+	.text       start:0x82BE6130 end:0x82BE6744
+
+xdk/xaudio2/x2voiceoutput.cpp:
+	.pdata      start:0x8225F4E8 end:0x8225F500
+	.text       start:0x82BD44B0 end:0x82BD4B94
+
+xdk/xaudio2/x2voicesource.cpp:
+	.pdata      start:0x8225F1A0 end:0x8225F1A8
+	.pdata      start:0x8225F1F0 end:0x8225F210
+	.text       start:0x82BCD158 end:0x82BCD2AC
+	.text       start:0x82BCD820 end:0x82BCDAEC
+
+xdk/xaudio2/x2voicewma.cpp:
+	.pdata      start:0x8225F318 end:0x8225F330
+	.text       start:0x82BD0A28 end:0x82BD0BDC
+
+xdk/xaudio2/x2voicexma.cpp:
+	.pdata      start:0x8225F360 end:0x8225F370
+	.pdata      start:0x8225F3B8 end:0x8225F3F0
+	.pdata      start:0x8225F3F8 end:0x8225F418
+	.pdata      start:0x8225F420 end:0x8225F458
+	.pdata      start:0x8225F488 end:0x8225F4A8
+	.text       start:0x82BD1298 end:0x82BD1528
+	.text       start:0x82BD1C20 end:0x82BD225C
+	.text       start:0x82BD22E0 end:0x82BD261C
+	.text       start:0x82BD2810 end:0x82BD2DEC
+	.text       start:0x82BD3178 end:0x82BD36EC
+
+xdk/xaudio2/x2xmahal.cpp:
+	.pdata      start:0x8225F2A0 end:0x8225F2C0
+	.pdata      start:0x8225F2C8 end:0x8225F2E0
+	.text       start:0x82BCEEA8 end:0x82BCF89C
+	.text       start:0x82BCF9C8 end:0x82BCFEB0
+
+xdk/xaudio2/xapobase.cpp:
+	.pdata      start:0x8225ED30 end:0x8225ED60
+	.pdata      start:0x8225ED88 end:0x8225EDA0
+	.text       start:0x82BBF540 end:0x82BBF9B4
+	.text       start:0x82BC0C58 end:0x82BC11B8
+
+xdk/xaudio2/xwmamalloc.cpp:
+	.pdata      start:0x8225FE48 end:0x8225FE50
+	.text       start:0x82BF79A0 end:0x82BF7A98
