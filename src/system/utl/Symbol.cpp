@@ -16,7 +16,6 @@ void Symbol::Terminate() {
 void Symbol::PreInit(int stringSize, int hashSize) {
     gStringTable = new StringTable(stringSize);
     gHashTable.Resize(hashSize, nullptr);
-    TheDebug.AddExitCallback(Symbol::Terminate);
 }
 
 Symbol::Symbol(const char *str) {
