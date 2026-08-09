@@ -14745,3 +14745,244 @@ xdk/xgraphics/xenoncompress.cpp:
 	.pdata      start:0x8224C9F0 end:0x8224CA08
 	.text       start:0x82945D78 end:0x82945F38
 	.text       start:0x829461C8 end:0x82946A34
+
+xdk/d3dx9/c30program.cpp:
+	.pdata      start:0x8224B680 end:0x8224B6C0
+	.pdata      start:0x8224B6E8 end:0x8224B710
+	.text       start:0x828E1F00 end:0x828E2BE0
+	.text       start:0x828E2FE0 end:0x828E4B48
+
+xdk/d3dx9/c30swprogram.cpp:
+	.pdata      start:0x8224AD78 end:0x8224AD98
+	.pdata      start:0x8224ADA0 end:0x8224ADB0
+	.pdata      start:0x8224ADC8 end:0x8224AEA8
+	.pdata      start:0x8224AF10 end:0x8224AF38
+	.pdata      start:0x8224AF88 end:0x8224AFC8
+	.pdata      start:0x8224B0C0 end:0x8224B160
+	.text       start:0x828C15D8 end:0x828C2054
+	.text       start:0x828C2240 end:0x828C2610
+	.text       start:0x828C2AF8 end:0x828C58E4
+	.text       start:0x828C5B90 end:0x828C5E34
+	.text       start:0x828C6230 end:0x828C7614
+	.text       start:0x828C7E58 end:0x828CB7EC
+
+xdk/d3dx9/calloc.cpp:
+	.pdata      start:0x8224A980 end:0x8224A990
+	.text       start:0x828B1C98 end:0x828B1DF4
+
+xdk/d3dx9/cargument.cpp:
+	.pdata      start:0x8224B740 end:0x8224B758
+	.text       start:0x828E5948 end:0x828E5A68
+
+xdk/d3dx9/cassembler.cpp:
+	.pdata      start:0x8224A458 end:0x8224A4A8
+	.pdata      start:0x8224A4B0 end:0x8224A528
+	.pdata      start:0x8224A538 end:0x8224A558
+	.text       start:0x8288F148 end:0x82890040
+	.text       start:0x828900A0 end:0x82892D40
+	.text       start:0x82892DD8 end:0x828950E0
+
+xdk/d3dx9/cbaseprogram.cpp:
+	.pdata      start:0x8224B758 end:0x8224B7C0
+	.text       start:0x828E5AA0 end:0x828E6558
+
+xdk/d3dx9/cblt.cpp:
+	.pdata      start:0x82249EF0 end:0x82249F30
+	.text       start:0x828785C8 end:0x82879E44
+
+xdk/d3dx9/cbuffer.cpp:
+	.pdata      start:0x82249E10 end:0x82249E38
+	.text       start:0x82876998 end:0x82876C3C
+
+xdk/d3dx9/ccodec.cpp:
+	.pdata      start:0x82249F80 end:0x82249FA0
+	.pdata      start:0x8224A070 end:0x8224A098
+	.pdata      start:0x8224A0D0 end:0x8224A0E8
+	.pdata      start:0x8224A140 end:0x8224A160
+	.pdata      start:0x8224A178 end:0x8224A1A0
+	.pdata      start:0x8224A1A8 end:0x8224A1D8
+	.pdata      start:0x8224A1E0 end:0x8224A208
+	.pdata      start:0x8224A210 end:0x8224A228
+	.text       start:0x8287C440 end:0x8287C93C
+	.text       start:0x82882710 end:0x82882D94
+	.text       start:0x828838F8 end:0x82883C64
+	.text       start:0x82884800 end:0x82884D5C
+	.text       start:0x82885158 end:0x828854FC
+	.text       start:0x82885590 end:0x828860BC
+	.text       start:0x82886170 end:0x82886DB4
+	.text       start:0x82886E08 end:0x82887930
+
+xdk/d3dx9/ccommentblock.cpp:
+	.pdata      start:0x8224AB80 end:0x8224AB98
+	.text       start:0x828B6D80 end:0x828B7120
+
+xdk/d3dx9/ccompiler.cpp:
+	.pdata      start:0x8224A568 end:0x8224A5C8
+	.pdata      start:0x8224A5D8 end:0x8224A710
+	.text       start:0x82895160 end:0x82896FF4
+	.text       start:0x828970B8 end:0x828AAB10
+
+xdk/d3dx9/cconstanttable.cpp:
+	.pdata      start:0x8224A710 end:0x8224A738
+	.pdata      start:0x8224A738 end:0x8224A760
+	.pdata      start:0x8224A7E0 end:0x8224A858
+	.pdata      start:0x8224A870 end:0x8224A888
+	.pdata      start:0x8224A8C8 end:0x8224A918
+	.text       start:0x828AAB10 end:0x828AAFA0
+	.text       start:0x828AAFB8 end:0x828AB364
+	.text       start:0x828AB928 end:0x828AE3AC
+	.text       start:0x828AE4F0 end:0x828AE61C
+	.text       start:0x828AE908 end:0x828AFA0C
+
+xdk/d3dx9/cfile.cpp:
+	.pdata      start:0x82249E98 end:0x82249EA8
+	.text       start:0x82877C20 end:0x82877DAC
+
+xdk/d3dx9/cfxlprogram.cpp:
+	.pdata      start:0x8224C110 end:0x8224C138
+	.pdata      start:0x8224C140 end:0x8224C158
+	.text       start:0x8292B5A0 end:0x8292B880
+	.text       start:0x8292B8E0 end:0x8292CB68
+
+xdk/d3dx9/cinstruction.cpp:
+	.pdata      start:0x8224B710 end:0x8224B740
+	.text       start:0x828E4B48 end:0x828E57C8
+
+xdk/d3dx9/clock.cpp:
+	.pdata      start:0x82249F58 end:0x82249F80
+	.text       start:0x8287B2A0 end:0x8287BD90
+
+xdk/d3dx9/cnode.cpp:
+	.pdata      start:0x8224A990 end:0x8224A9A8
+	.pdata      start:0x8224A9A8 end:0x8224A9C8
+	.pdata      start:0x8224A9D8 end:0x8224AA10
+	.pdata      start:0x8224AA18 end:0x8224AAA8
+	.pdata      start:0x8224AAE8 end:0x8224AB00
+	.text       start:0x828B1DF8 end:0x828B1ED8
+	.text       start:0x828B1F20 end:0x828B235C
+	.text       start:0x828B25D8 end:0x828B2EC4
+	.text       start:0x828B2FF8 end:0x828B4B8C
+	.text       start:0x828B5668 end:0x828B59D4
+
+xdk/d3dx9/cnodeasm.cpp:
+	.pdata      start:0x8224AB68 end:0x8224AB80
+	.text       start:0x828B6BE8 end:0x828B6D7C
+
+xdk/d3dx9/cparse.cpp:
+	.pdata      start:0x8224BA98 end:0x8224BB08
+	.pdata      start:0x8224BB10 end:0x8224BBB8
+	.pdata      start:0x8224BBC8 end:0x8224BBE0
+	.pdata      start:0x8224BBE8 end:0x8224BC00
+	.pdata      start:0x8224BC08 end:0x8224BCF8
+	.pdata      start:0x8224BD00 end:0x8224BD38
+	.text       start:0x82900B08 end:0x829022B0
+	.text       start:0x829024C0 end:0x82904F28
+	.text       start:0x82904FC0 end:0x82905D64
+	.text       start:0x82905F58 end:0x82906978
+	.text       start:0x82906B30 end:0x8290BB00
+	.text       start:0x8290E1D0 end:0x829107C8
+
+xdk/d3dx9/cpreprocessor.cpp:
+	.pdata      start:0x8224A240 end:0x8224A280
+	.pdata      start:0x8224A288 end:0x8224A2A8
+	.pdata      start:0x8224A2B8 end:0x8224A2D0
+	.pdata      start:0x8224A2E8 end:0x8224A300
+	.pdata      start:0x8224A308 end:0x8224A340
+	.text       start:0x82887F18 end:0x82888B74
+	.text       start:0x82888E20 end:0x82889158
+	.text       start:0x82889238 end:0x828893AC
+	.text       start:0x82889CD0 end:0x82889EB8
+	.text       start:0x82889FB8 end:0x8288AB34
+
+xdk/d3dx9/cprogram.cpp:
+	.pdata      start:0x8224B7C8 end:0x8224B940
+	.pdata      start:0x8224B950 end:0x8224BA98
+	.text       start:0x828E6B28 end:0x828EF234
+	.text       start:0x828EF2D0 end:0x82900B04
+
+xdk/d3dx9/cpslegacyprogram.cpp:
+	.pdata      start:0x8224BE10 end:0x8224BFE0
+	.pdata      start:0x8224BFE0 end:0x8224C070
+	.text       start:0x82918338 end:0x82923114
+	.text       start:0x829231E0 end:0x82927C60
+
+xdk/d3dx9/cpsprogram.cpp:
+	.pdata      start:0x8224BD58 end:0x8224BDA8
+	.pdata      start:0x8224BDB0 end:0x8224BDE8
+	.pdata      start:0x8224BDF0 end:0x8224BE10
+	.text       start:0x82914480 end:0x8291590C
+	.text       start:0x82915A30 end:0x8291742C
+	.text       start:0x82917490 end:0x82918334
+
+xdk/d3dx9/cshaderprogram.cpp:
+	.pdata      start:0x8224B288 end:0x8224B4E0
+	.pdata      start:0x8224B4E8 end:0x8224B548
+	.pdata      start:0x8224B550 end:0x8224B680
+	.text       start:0x828CC378 end:0x828DA8D4
+	.text       start:0x828DA928 end:0x828DD4D0
+	.text       start:0x828DD700 end:0x828E1EFC
+
+xdk/d3dx9/ctokenize.cpp:
+	.pdata      start:0x8224A3C0 end:0x8224A3E0
+	.pdata      start:0x8224A418 end:0x8224A438
+	.text       start:0x8288D798 end:0x8288DAE0
+	.text       start:0x8288E4B8 end:0x8288E9D4
+
+xdk/d3dx9/ctransform.cpp:
+	.pdata      start:0x8224C1C8 end:0x8224C1F0
+	.text       start:0x8292E1E8 end:0x8292F454
+
+xdk/d3dx9/cuassembler.cpp:
+	.pdata      start:0x8224AB98 end:0x8224ABE0
+	.pdata      start:0x8224ABE0 end:0x8224AC00
+	.pdata      start:0x8224AC28 end:0x8224AC48
+	.pdata      start:0x8224AC60 end:0x8224ACD8
+	.pdata      start:0x8224ACE8 end:0x8224AD78
+	.text       start:0x828B7138 end:0x828B7E08
+	.text       start:0x828B7ED0 end:0x828B8688
+	.text       start:0x828B8EA8 end:0x828B951C
+	.text       start:0x828B9620 end:0x828BD834
+	.text       start:0x828BDF80 end:0x828C15D8
+
+xdk/d3dx9/cvsprogram.cpp:
+	.pdata      start:0x8224C070 end:0x8224C0A8
+	.pdata      start:0x8224C0B0 end:0x8224C0D0
+	.pdata      start:0x8224C0D8 end:0x8224C0F0
+	.text       start:0x82927C60 end:0x82928EE8
+	.text       start:0x82928F50 end:0x82929B20
+	.text       start:0x82929B80 end:0x8292AA70
+
+xdk/d3dx9/d3dx9fragment.cpp:
+	.pdata      start:0x8224AB38 end:0x8224AB50
+	.text       start:0x828B6280 end:0x828B6998
+
+xdk/d3dx9/d3dx9shader.cpp:
+	.pdata      start:0x82249E40 end:0x82249E60
+	.pdata      start:0x82249E68 end:0x82249E88
+	.text       start:0x82876C88 end:0x828772B4
+	.text       start:0x82877780 end:0x82877ACC
+
+xdk/d3dx9/d3dx9tex.cpp:
+	.pdata      start:0x82249DE8 end:0x82249E10
+	.text       start:0x82875460 end:0x82876994
+
+xdk/d3dx9/d3dxmath.cpp:
+	.text       start:0x82887A78 end:0x82887BD4
+
+xdk/d3dx9/dxtn.cpp:
+	.pdata      start:0x8224A920 end:0x8224A948
+	.pdata      start:0x8224A950 end:0x8224A968
+	.text       start:0x828AFDC8 end:0x828B1234
+	.text       start:0x828B1380 end:0x828B1B24
+
+xdk/d3dx9/effecthll.cpp:
+	.pdata      start:0x8224C1F0 end:0x8224C210
+	.text       start:0x8292F458 end:0x8292F97C
+
+xdk/d3dx9/threadlocaldata.cpp:
+	.pdata      start:0x8224AB18 end:0x8224AB28
+	.text       start:0x828B5CC0 end:0x828B5F64
+
+xdk/d3dx9/trees.cpp:
+	.pdata      start:0x8224C220 end:0x8224C238
+	.text       start:0x8292FE70 end:0x829308E8
