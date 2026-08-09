@@ -191,8 +191,41 @@ SYMBOLS = REPO / "config" / "45410914" / "symbols.txt"
 SPLITS = REPO / "config" / "45410914" / "splits.txt"
 OBJECTS = REPO / "config" / "45410914" / "objects.json"
 TARGET_MAP = REPO / "scripts" / "target_symbol_map.json"
-DC3_MAP = REPO.parent / "dc3-decomp" / "orig" / "373307D9" / "ham_xbox_r.map"
-DC3_SPLITS = REPO.parent / "dc3-decomp" / "config" / "373307D9" / "splits.txt"
+
+
+
+def _find_dc3(*rel: str) -> Path:
+    """Locate a dc3-decomp path from main OR from a ~/tmp worktree.
+
+    ⚠ `REPO.parent / "dc3-decomp"` alone is WRONG in a worktree: lanes work in
+    `~/tmp/wt-*`, whose parent is `~/tmp`, so the DC3 object oracle silently
+    vanishes and every row reads `obj=-` — a false negative shaped exactly like
+    "DC3 doesn't know this code" (lane PIN-D hit this and had to hand-symlink
+    `~/tmp/dc3-decomp` to work around it). Try the sibling of the *real* repo
+    (via the worktree's gitdir), then the sibling of cwd, then the usual
+    checkout root. Returns the first that exists, else the sibling guess so the
+    error message still names a sensible path.
+    """
+    cands = [REPO.parent / "dc3-decomp"]
+    gitf = REPO / ".git"
+    if gitf.is_file():                      # worktree: .git is a gitdir pointer
+        try:
+            gd = gitf.read_text().split("gitdir:", 1)[1].strip()
+            # …/<mainrepo>/.git/worktrees/<name>  ->  …/<mainrepo>
+            main_repo = Path(gd).resolve().parent.parent.parent
+            cands.insert(0, main_repo.parent / "dc3-decomp")
+        except (IndexError, OSError):
+            pass
+    cands.append(Path.home() / "code" / "milohax" / "dc3-decomp")
+    for base in cands:
+        p = base.joinpath(*rel)
+        if p.exists():
+            return p
+    return cands[0].joinpath(*rel)
+
+
+DC3_MAP = _find_dc3("orig", "373307D9", "ham_xbox_r.map")
+DC3_SPLITS = _find_dc3("config", "373307D9", "splits.txt")
 
 SYM_RE = re.compile(r"^(?P<name>\S+)\s*=\s*\.text:0x(?P<addr>[0-9A-Fa-f]+);(?P<rest>.*)$")
 SIZE_RE = re.compile(r"size:0x([0-9A-Fa-f]+)")
