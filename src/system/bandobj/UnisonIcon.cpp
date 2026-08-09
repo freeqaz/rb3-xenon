@@ -71,20 +71,23 @@ void UnisonIcon::SetIcon(const char *cc) { mIconLabel->SetIcon(*cc); }
 // same divergence RB3_HANDLE_LOCAL_STATIC fixes for the HANDLE_* family. SYNC_PROP*
 // is not covered by that gate, so override it TU-locally (no other TU's codegen
 // moves).  Lane CT-4: measured +6 matched on DialogDisplay with the same lever.
+// The BRANCH POLARITY below is load-bearing: retail tests `synced` positively and
+// parks the `return false` tail AFTER the func block. Writing it as
+// `if (!synced) return false; else {...}` emits that tail inline instead and
+// costs a beq/bne inversion plus a moved 2-instruction block. Do not "simplify".
 #undef SYNC_PROP_MODIFY
 #define SYNC_PROP_MODIFY(symbol, member, func)                                           \
     {                                                                                    \
         static Symbol _ps(#symbol);                                                      \
         if (sym == _ps) {                                                                \
             bool synced = PropSync(member, _val, _prop, _i + 1, _op);                    \
-            if (!synced)                                                                 \
-                return false;                                                            \
-            else {                                                                       \
+            if (synced) {                                                                \
                 if (!(_op & (kPropSize | kPropGet))) {                                   \
                     func;                                                                \
                 }                                                                        \
                 return true;                                                             \
-            }                                                                            \
+            } else                                                                       \
+                return false;                                                            \
         }                                                                                \
     }
 
