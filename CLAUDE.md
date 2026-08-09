@@ -575,6 +575,25 @@ run the gate before you land. Two traps, both real:
   X21 hit this after X18 documented the four-flag recipe — its first baseline
   read 15/18 with 3 SKIPs, and **the 0-SKIP rule is what caught it**. Always
   require `0 SKIPs`, never just `PASS`.
+  ★ **WHY it always fires in a `~/tmp` worktree (measured 2026-08-09, lane
+  MATCH-A):** the gate resolves its siblings **relative to the project dir** —
+  `native/../../milo-native-engine` and
+  `native/../../dc3-decomp-deps/dawn/lib/cmake/Dawn`. From `~/tmp/wt-foo` those
+  resolve to `/home/free/tmp/…`, which does not exist, so `rb3-milo`,
+  `rb3-render` and `rb3-frame` SKIP and the gate **still prints `PASS`**. Since
+  every lane works in `~/tmp` (house rule), *the default gate run in a worktree
+  is structurally incapable of testing the three engine targets.* Seed with all
+  four absolute flags first:
+  ```bash
+  cd <worktree>/native && rm -rf build && cmake -S . -B build -G Ninja \
+    -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+    -DMILO_ENGINE_PATH=/home/free/code/milohax/milo-native-engine \
+    -DDawn_DIR=/home/free/code/milohax/dc3-decomp-deps/dawn/lib/cmake/Dawn
+  ```
+  ⚠ Same bug class as `tools/pin_from_symnames.py`'s DC3-map path (fixed in
+  `60837907`): **a sibling-relative path silently vanishes in a worktree, and
+  the failure is shaped like a legitimate "not applicable" rather than an
+  error.**
 - **Delete stale binaries first.** The gate counts binaries on disk and
   `ninja -k1` masks failures, so a stale tree can report green over a broken
   build.
