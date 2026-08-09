@@ -1,3 +1,17 @@
+// Retail INLINES the owner-only ObjPtr<RndTransformable> ctor in Character::Save
+// (target [42..47]: lis vtable, stw mOwner@0x5c, li 0, addi vtable,
+// stw mObject@0x60, stw vtable@0x58).  Without this define the one-arg spelling
+// `ObjPtr<RndTransformable> ptr(this)` still binds the two-arg OUT-OF-LINE body,
+// because the second parameter is merely DEFAULTED -- that cost 3 deletes + 1
+// replace (95.11% raw).  This define alone takes Save to 99.63%.
+// Tried and REJECTED (lane MATCH-G): additionally defining
+// RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT, on the strength of the
+// {mOwner, vptr-lis, ...} stream described at obj/Object.h:496.  That is NOT
+// retail's order in this function: it hoists `stw mOwner` ABOVE the `lis` and
+// scores 96.89% (1 insert + 1 delete + reg renames).  The plain empty-body form
+// is the right one here.  Must precede every include.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+
 #include "char/Character.h"
 #include "CharInterest.h"
 #include "obj/ObjPtrVec_impl.h"
@@ -147,7 +161,11 @@ BinStream &operator<<(BinStream &bs, const Character::Lod &lod) {
 }
 
 BEGIN_SAVES(Character)
-    SAVE_REVS(0x15, 0)
+    // Retail writes 0x11 here, NOT the 0x15 the rb3-Wii dev oracle carries:
+    // target [4] is `li r11, 0x11` feeding WriteEndian(4).  Adjudicated on
+    // retail bytes, per the rule that an oracle rev disagreement is a
+    // hypothesis and never a verdict.
+    SAVE_REVS(0x11, 0)
     SAVE_SUPERCLASS(RndDir)
     if (!IsProxy()) {
         bs << mLods;
@@ -238,6 +256,33 @@ BinStreamRev &operator>>(BinStreamRev &d, Character::Lod &lod) {
 }
 
 void Character::PostLoad(BinStream &bs) {
+    // ---- REVERTED EXPERIMENT (lane MATCH-G) -- READ BEFORE RETRYING --------
+    // Retail does NOT construct a BinStreamRev here.  Target has no
+    // ??_7BinStreamRev@@6B@ store, no ??0BinStream call and no dtor; it writes
+    // the popped revision into a file-scope AGGREGATE (retail lbl_82CBED90,
+    // `sth rev,0x4(r21)` / `sth altRev,0x0(r21)` off ONE base register) -- which
+    // is the aggregate `gRevs` that PreLoad already matches against.  The cast
+    // model is the house idiom (char/CharHair.cpp:535, rndobj/Mesh.cpp:446,
+    // rndobj/Part.cpp:669); note CharHair needs SEPARATE symbols where Character
+    // needs the aggregate, so the dialect must be read off target bytes per TU.
+    //
+    // Converting just this function (statics + `BinStreamRev &d = (BinStreamRev
+    // &)bs;` + gRevs.rev for d.rev) measured 59.99% -> 68.73% raw.  REVERTED for
+    // two reasons, neither of which is "it didn't help":
+    //   1. ZERO metric value.  matched_code is all-or-nothing per row, so 68.7%
+    //      pays exactly what 60% pays.  It does not cross and will not without
+    //      the two items below.
+    //   2. It BREAKS the native build's semantics.  operator>>(BinStreamRev &,
+    //      Character::Lod &) below reads `d.rev`; under the cast model `d` is a
+    //      reinterpreted BinStream, so that read is garbage.  A correct
+    //      conversion must ALSO move that operator onto gRevs (CharHair did the
+    //      equivalent for Strand::Load).
+    // What the remaining ~244 mismatches actually are, so the next lane starts
+    // ahead: retail caches the rev in a CALLEE-SAVED register and RE-STORES it
+    // after the nested super call (`mr r30,r11` ... `bl RndDir::PostLoad` ...
+    // `sth r30,0x4(r21)`), i.e. it guards the shared file-scope statics against
+    // being clobbered by the nested PostLoad.  There is also a `li r18,0x1c`
+    // held live across the body.  Reproducing that save/restore is the next step.
     BinStreamRev d(bs, bs.PopRev(this));
     if (d.rev > 1) {
         RndDir::PostLoad(bs);
