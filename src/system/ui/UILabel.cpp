@@ -59,9 +59,22 @@
 // COMDAT-scatter include renames them via `#define gRev gRev_UILabel` to avoid
 // colliding with the other scattered owners, and that rename only works on a
 // file-scope name.
+// ⚠ gAltRev is declared FIRST: retail puts it at base+0 and gRev at base+4.
+// Adjudicated on retail bytes, not on the comment above (lane MATCH-E2): retail
+// UILabel::PreLoad (fn_827F4EC8) forms ONE base
+// `lis r11, lbl_82E0756C@ha ; addi r28, r11, lbl_82E0756C@l`, stores
+// `sth r10,0x4(r28)` / `sth r11,0x0(r28)`, and then performs TWENTY-ONE `lhz`
+// reads -- every one of them at `0x4(r28)`, none at `0x0(r28)`. This function
+// reads gRev ~30 times and gAltRev never, so the read offset identifies gRev as
+// the +4 member. Declaration order is what fixes .bss placement, so gAltRev must
+// come first. (This file previously declared gRev first, which put gRev at +0.)
+// ⚠ NOT metric-visible: retail 0x827F4EC8 has NO entry in
+// scripts/target_symbol_map.json, so the row is unpaired-anon and cannot score.
+// The neighbouring comment's claim that it is "mislabeled as ?Copy@UILabel@@..."
+// is stale -- ?Copy@UILabel@@UAAX... maps to 0x827f2240, a different function.
 #define INIT_REVS(objType)                                                               \
-    static unsigned short gRev = 0;                                                      \
-    static unsigned short gAltRev = 0;
+    static unsigned short gAltRev = 0;                                                   \
+    static unsigned short gRev = 0;
 #define LOAD_REVS(bs)                                                                    \
     int rev;                                                                             \
     bs >> rev;                                                                           \
@@ -329,6 +342,18 @@ void UILabel::PostLoad(BinStream &bs) {
         mLabelText = mEditText;
     else
         SetTextToken(mTextToken);
+    // Retail compiled this diagnostics block OUT. Proven from retail bytes for
+    // ?PostLoad@UILabel@@ (lane MATCH-E2): target 324 B vs our 468 B, and the
+    // diff is 36 pure INSERTS with ZERO deletes (36 * 4 = 144 = 468 - 324),
+    // beginning `lbz r11, ?sRequireFixedLength@UILabel@@2_NA` -- i.e. exactly
+    // this `if`. The block is live in our build even though MILO_WARN prints
+    // nothing here, because the non-HX_NATIVE MILO_WARN is
+    // `MiloStripEval(__VA_ARGS__)`: it strips the OUTPUT but still EVALUATES the
+    // arguments, so PathName(Dir()) and Name() are still called (both appear
+    // under "Base only" in the call diff). House per-site guard, not a blanket
+    // removal -- the measured whole-binary control for blanket-stripping
+    // MILO_DEBUG is -21. See docs/decomp/patterns/milo-debug-force-define.md.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (sRequireFixedLength) {
         if (mFixedLength == 0) {
             MILO_WARN(
@@ -345,6 +370,7 @@ void UILabel::PostLoad(BinStream &bs) {
             );
         }
     }
+#endif
     sDeferUpdate = false;
     if (!mTextToken.Null() || !mIcon.empty() || !ResourceDir() || mFixedLength != 0
         || mReservedLine != 0)

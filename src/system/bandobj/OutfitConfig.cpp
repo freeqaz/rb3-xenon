@@ -24,7 +24,32 @@
 #include <cstring> // strstr
 #endif
 
-INIT_REVS(OutfitConfig);
+// ---------------------------------------------------------------------------
+// Rev statics: retail addresses the pair off ONE base register, so they must be
+// internal-linkage file-scope storage rather than ObjMacros' DECLARE_REVS /
+// INIT_REVS class statics (two external symbols => two `lis`).
+//
+// Proven from retail bytes for ?Load@OutfitConfig@@ (lane MATCH-E2): the target
+// forms the base once with `addi r24, r11, lbl_82CBCC20` and then does
+// `sth ...,0x0(r24)` / `sth ...,0x4(r24)` plus five `lhz r11,0x4(r24)` reads.
+// Those five reads are the `gRev < 5` / `gRev > 4` tests, so gRev is at +4 and
+// gAltRev at +0 => gAltRev is declared FIRST. Both need an explicit `= 0`.
+//
+// ⚠ The class declarations in bandobj/OutfitConfig.h were removed in the same
+// edit and that is the load-bearing half, not bookkeeping: inside a member
+// function class scope is searched before namespace scope, so leaving them
+// would keep OutfitConfig::Load bound to the class static and make this inert.
+//
+// Scatter-safe: Gem.cpp and ExternalMic.cpp scatter-include this TU under
+// `#define gRev gRev_OutfitConfig`, which renames a file-scope name correctly
+// (that is what the rename mechanism is for); and the owner-region guard at the
+// bottom of this file tests macro-ness (`#ifndef gRev`), which a variable of
+// either storage class leaves untouched.
+//
+// Same treatment, push_macro spelling: rndobj/SoftParticles.cpp, ui/UILabel.cpp.
+// ---------------------------------------------------------------------------
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 RndMat *OutfitConfig::sMat;
 RndCam *OutfitConfig::sCam;
@@ -674,7 +699,7 @@ DECOMP_FORCEACTIVE(OutfitConfig, "ObjPtr_p.h", "f.Owner()", "")
 BinStream &operator>>(BinStream &bs, OutfitConfig::MatSwap &swap) {
     bs >> swap.mMat;
     bs >> swap.mResourceMat;
-    if (OutfitConfig::gRev < 5) {
+    if (gRev < 5) {
         bool b;
         bs >> b;
     } else {
@@ -682,7 +707,7 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::MatSwap &swap) {
         bs >> swap.mTwoColorInterp;
     }
     bs >> swap.mTwoColorMask;
-    if (OutfitConfig::gRev > 4) {
+    if (gRev > 4) {
         bs >> swap.mColor1Palette;
         bs >> swap.mColor1Option;
         bs >> swap.mColor2Palette;
@@ -694,7 +719,7 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::MatSwap &swap) {
 }
 
 BinStream &operator>>(BinStream &bs, OutfitConfig::Piercing::Piece &piece) {
-    if (OutfitConfig::gRev > 0xF)
+    if (gRev > 0xF)
         bs >> piece.mVert;
     else {
         piece.mVert = -1;
@@ -702,11 +727,11 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::Piercing::Piece &piece) {
         bs >> i;
         bs >> j;
     }
-    if (OutfitConfig::gRev < 0xF) {
+    if (gRev < 0xF) {
         bool b;
         bs >> b;
     }
-    if (OutfitConfig::gRev < 0xE) {
+    if (gRev < 0xE) {
         Transform tf;
         bs >> tf;
         std::vector<unsigned short> vec;
@@ -714,7 +739,7 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::Piercing::Piece &piece) {
     } else
         bs >> piece.mAttachment;
     bs >> piece.unk14;
-    if (OutfitConfig::gRev < 0x1A && !piece.mAttachment) {
+    if (gRev < 0x1A && !piece.mAttachment) {
         piece.mVert = -1;
         piece.unk14.clear();
     }
@@ -723,29 +748,29 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::Piercing::Piece &piece) {
 
 BinStream &operator>>(BinStream &bs, OutfitConfig::Piercing &piercing) {
     bs >> piercing.mPiercing;
-    if (OutfitConfig::gRev < 0xD) {
+    if (gRev < 0xD) {
         piercing.mPieces.resize(1);
         OutfitConfig::Piercing::Piece &curPiece = piercing.mPieces[0];
         int i, j;
         bs >> i;
         bs >> j;
         curPiece.mVert = -1;
-        if (OutfitConfig::gRev < 0xE) {
+        if (gRev < 0xE) {
             Transform tf;
             bs >> tf;
         }
     } else {
         bs >> piercing.unkc;
-        if (OutfitConfig::gRev < 0xE) {
+        if (gRev < 0xE) {
             bool b;
             bs >> b;
         }
-        if (OutfitConfig::gRev == 0x10) {
+        if (gRev == 0x10) {
             bool b;
             bs >> b;
         }
         bs >> piercing.mPieces;
-        if (OutfitConfig::gRev > 0x1A)
+        if (gRev > 0x1A)
             bs >> piercing.mReskin;
     }
     return bs;
@@ -765,19 +790,19 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::MeshAO::Seam &seam) {
 
 BinStream &operator>>(BinStream &bs, OutfitConfig::MeshAO &ao) {
     bs >> ao.mMeshName;
-    if (OutfitConfig::gRev == 9 || OutfitConfig::gRev == 10 || OutfitConfig::gRev == 11
-        || OutfitConfig::gRev == 12 || OutfitConfig::gRev == 13
-        || OutfitConfig::gRev == 14 || OutfitConfig::gRev == 15
-        || OutfitConfig::gRev == 16 || OutfitConfig::gRev == 17
-        || OutfitConfig::gRev == 18 || OutfitConfig::gRev == 19
-        || OutfitConfig::gRev == 20 || OutfitConfig::gRev == 21
-        || OutfitConfig::gRev == 22) {
+    if (gRev == 9 || gRev == 10 || gRev == 11
+        || gRev == 12 || gRev == 13
+        || gRev == 14 || gRev == 15
+        || gRev == 16 || gRev == 17
+        || gRev == 18 || gRev == 19
+        || gRev == 20 || gRev == 21
+        || gRev == 22) {
         CSHA1::Digest d;
         bs >> d;
     }
     bs >> ao.mCoeffs;
     bs >> ao.mSeams;
-    if (OutfitConfig::gRev > 0x18)
+    if (gRev > 0x18)
         bs >> ao.unkc;
     return bs;
 }
@@ -785,7 +810,7 @@ BinStream &operator>>(BinStream &bs, OutfitConfig::MeshAO &ao) {
 BinStream &operator>>(BinStream &bs, OldMatOption &o) {
     bs >> o.mMat;
     bs >> o.mPrimaryPalette;
-    if (OutfitConfig::gRev != 0)
+    if (gRev != 0)
         bs >> o.mSecondaryPalette;
     bs >> o.mTexs;
     return bs;
@@ -1387,8 +1412,20 @@ END_PROPSYNCS
 #ifndef gRev
 #define SW_SCATTER_OWNER_INCLUDE
 
-// plain ObjMacros owner
+// plain ObjMacros owner.
+// ⚠ The gRev/gAltRev rename is REQUIRED here as of the rev-statics fix at the
+// top of this file: BandCamShot.cpp has its own file-scope `static unsigned
+// short gRev/gAltRev`, which collided (C2370) the moment OutfitConfig's own pair
+// stopped being class statics and became file-scope too. Identical idiom to
+// bandobj/BandCharDesc.cpp:1181-1182, which owner-includes BandCamShot the same
+// way; both names are internal-linkage, so renaming them changes no emitted
+// code, only a local symbol-table entry. (PatchDir.cpp needs no rename -- it has
+// no file-scope pair, using the GetCurrentRev() header-inline spelling instead.)
+#define gRev gRev_BandCamShot
+#define gAltRev gAltRev_BandCamShot
 #include "bandobj/BandCamShot.cpp"
+#undef gRev
+#undef gAltRev
 
 // CROSS ObjMacros<-Object dialect shims
 #define gRev gRev_FontBase
