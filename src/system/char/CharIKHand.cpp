@@ -205,10 +205,23 @@ BEGIN_LOADS(CharIKHand)
     }
     if (gRevs_CharIKHand.rev == 9) {
         // NOTE: tPtr and this String share a stack slot pair that is PERMUTED vs
-        // retail (target r31+0x68, ours r31+0x78) -- 4 `addi` diff_args that hold
-        // fuzzy at 99.4 while mpn reads 100 (function counted, bytes withheld).
-        // Declaring `b` before `s` was tried and changed nothing; this is MSVC
-        // slot shaping, i.e. permuter territory.
+        // retail (target r31+0x68, ours r31+0x78) -- 4 `addi` diff_args.
+        // CORRECTION (lane MATCH-G): the older note here said "mpn reads 100
+        // (function counted, bytes withheld)".  That is WRONG -- report.json has
+        // fuzzy 99.9837 AND mpn 99.9837, so the row is NOT counted on either
+        // ruler and is worth +1 function AND +980 B, not bytes alone.  These are
+        // plain immediates, not relocation args, so mpn cannot mask them.
+        //
+        // Slot picture: retail A.copytemp=0x68, B.tPtr=0x68, B.copytemp=0x78,
+        // s=0x68; ours moves A.copytemp and s to 0x78.  Both frames are 0x120.
+        // Tried and REFUTED (MATCH-G): making branch B's ObjPtr an unnamed
+        // temporary -- `IKTarget(ObjPtr<RndTransformable>(this, *it), 0)` -- on
+        // the theory that a named local was reserving 0x68 and pushing the temp
+        // pool up.  MSVC instead ELIDES the copy ctor (3 deletes) and shrinks the
+        // frame to 0x110: 99.41 -> 97.35 raw.  So retail really does construct
+        // twice, and the named local is load-bearing.  Declaring `b` before `s`
+        // was tried earlier and changed nothing.  This is MSVC slot coloring,
+        // i.e. permuter territory, and the permuter is OFF by directive.
         String s;
         bs >> s;
         bool b;
