@@ -614,24 +614,25 @@ bool NetSession::OnMsg(const NewUserMsg &msg) {
 
 void NetSession::RemoveLocalUser(LocalUser *user) {
     MILO_ASSERT(user, 0x36E);
-    if (HasUser(user)) {
-        RemoveLocalFromSession(user);
-        if ((IsOnlineEnabled() && !IsJoining()) || mState == kRequestingJoin) {
-            UserLeftMsg msg(user);
-            if (IsHost()) {
-                SendToAllClientsExcept(msg, kReliable, -1);
-            } else {
-                TheNetMessenger.DeliverMsg(
-                    Quazal::Session::GetInstance()->GetMasterID(), msg, kReliable
-                );
-            }
+    // Retail-360 has NO `if (HasUser(user))` guard -- RemoveLocalFromSession is
+    // the first call in the extent -- and it Exports the LocalUserLeftMsg BEFORE
+    // resetting the user. The rb3-Wii dev build differs on both counts.
+    RemoveLocalFromSession(user);
+    if ((IsOnlineEnabled() && !IsJoining()) || mState == kRequestingJoin) {
+        UserLeftMsg msg(user);
+        if (IsHost()) {
+            SendToAllClientsExcept(msg, kReliable, -1);
+        } else {
+            TheNetMessenger.DeliverMsg(
+                Quazal::Session::GetInstance()->GetMasterID(), msg, kReliable
+            );
         }
-        user->Reset();
-        LocalUserLeftMsg msg(user);
-        Export(msg, true);
-        if (user == mLocalHost)
-            Disconnect();
     }
+    LocalUserLeftMsg msg(user);
+    Export(msg, true);
+    user->Reset();
+    if (user == mLocalHost)
+        Disconnect();
 }
 
 bool NetSession::OnMsg(const UserLeftMsg &msg) {
