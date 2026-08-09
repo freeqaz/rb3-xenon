@@ -34,8 +34,6 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(PlayerDiffIcon); }
     NEW_OBJ(PlayerDiffIcon);
 
-    DECLARE_REVS;
-
     // Retail INLINES this class's operator new into NewObject and still
     // EVALUATES the allocation-name argument before calling the debug-stripped
     // 2-arg allocator (target: `bl StaticClassName` then `li r4,0; li r3,0x1b8;

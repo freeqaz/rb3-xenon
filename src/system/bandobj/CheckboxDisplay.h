@@ -26,7 +26,11 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(CheckboxDisplay); }
     NEW_OBJ(CheckboxDisplay);
 
-    DECLARE_REVS;
+    // DECLARE_REVS removed: it makes gRev/gAltRev CLASS statics, which have
+    // EXTERNAL linkage and so cannot be addressed off a shared base register.
+    // Retail loads one base (`lis`/`addi` on a single .data label) and stores
+    // gAltRev at +0 / gRev at +4, i.e. one internal-linkage adjacent pair.
+    // Definitions are now file-scope statics in CheckboxDisplay.cpp.
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 

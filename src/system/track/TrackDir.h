@@ -94,7 +94,6 @@ public:
         return IsActiveInSession() || mShowingWhenEnabled->Showing();
     }
 
-    DECLARE_REVS;
     NEW_OBJ(TrackDir)
 
     static void Register() { REGISTER_OBJ_FACTORY(TrackDir); }
