@@ -19,8 +19,11 @@
 // compiler lays out itself, i.e. TU-local file statics -- class statics are
 // external symbols each needing its own @ha/@l pair, which is what
 // DECLARE_REVS/INIT_REVS produce.
-static unsigned short gRev;
-static unsigned short gAltRev;
+// Order matters: retail's shared base pointer (r29) points at gAltRev, storing
+// the low half (gRev) at +0x4 and the high half (gAltRev) at +0x0, and reading
+// gRev back from +0x4. So gAltRev must be laid out FIRST.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 void ScrollbarDisplay::Init() {
     Register();
