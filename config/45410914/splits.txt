@@ -14295,3 +14295,198 @@ xdk/xaudio2/xapobase.cpp:
 xdk/xaudio2/xwmamalloc.cpp:
 	.pdata      start:0x8225FE48 end:0x8225FE50
 	.text       start:0x82BF79A0 end:0x82BF7A98
+
+xdk/LIBCMT/_ctype.cpp:
+	.text       start:0x8282F7B0 end:0x8282F84C
+
+xdk/LIBCMT/_file.cpp:
+	.pdata      start:0x822486E0 end:0x82248700
+	.text       start:0x8282F420 end:0x8282F6BC
+
+xdk/LIBCMT/asincos.cpp:
+	.text       start:0x8282BA18 end:0x8282BBE0
+
+xdk/LIBCMT/crt0dat.cpp:
+	.pdata      start:0x822486A8 end:0x822486C0
+	.pdata      start:0x822486C8 end:0x822486D0
+	.text       start:0x8282EF78 end:0x8282F194
+	.text       start:0x8282F1F8 end:0x8282F254
+
+xdk/LIBCMT/crt0msg.cpp:
+	.pdata      start:0x82248840 end:0x82248850
+	.text       start:0x82831E48 end:0x82831F04
+
+xdk/LIBCMT/crtfpr.cpp:
+	.pdata      start:0x822484C8 end:0x822484D8
+	.text       start:0x8282A7A0 end:0x8282A838
+
+xdk/LIBCMT/cvt.cpp:
+	.pdata      start:0x82248728 end:0x82248760
+	.text       start:0x8282FBF8 end:0x82830770
+
+xdk/LIBCMT/dosmap.cpp:
+	.pdata      start:0x82248640 end:0x82248658
+	.text       start:0x8282E380 end:0x8282E4D0
+
+xdk/LIBCMT/ehstate.cpp:
+	.pdata      start:0x82248790 end:0x82248798
+	.text       start:0x82830BC0 end:0x82830CD8
+
+xdk/LIBCMT/fflush.cpp:
+	.pdata      start:0x822488F0 end:0x82248908
+	.text       start:0x82834E48 end:0x82835084
+
+xdk/LIBCMT/float.cpp:
+	.pdata      start:0x82248AC8 end:0x82248AD8
+	.text       start:0x82838FC0 end:0x828391D8
+
+xdk/LIBCMT/fpexcept.cpp:
+	.pdata      start:0x82248878 end:0x822488B8
+	.text       start:0x82832388 end:0x82832E44
+
+xdk/LIBCMT/frame.cpp:
+	.pdata      start:0x82248798 end:0x822487A8
+	.pdata      start:0x822487B8 end:0x82248810
+	.text       start:0x82830CD8 end:0x82830F94
+	.text       start:0x82830FF8 end:0x82831CF8
+
+xdk/LIBCMT/hooks.cpp:
+	.pdata      start:0x82248818 end:0x82248838
+	.text       start:0x82831D10 end:0x82831DD4
+
+xdk/LIBCMT/ieeemisc.cpp:
+	.pdata      start:0x822488B8 end:0x822488C0
+	.text       start:0x82832E48 end:0x82832FEC
+
+xdk/LIBCMT/invarg.cpp:
+	.pdata      start:0x82248860 end:0x82248870
+	.text       start:0x828321E0 end:0x828322E0
+
+xdk/LIBCMT/mlock.cpp:
+	.pdata      start:0x82248A28 end:0x82248A50
+	.text       start:0x82838128 end:0x828383CC
+
+xdk/LIBCMT/onexit.cpp:
+	.pdata      start:0x82248478 end:0x82248498
+	.text       start:0x8282A2B0 end:0x8282A440
+
+xdk/LIBCMT/strtol.cpp:
+	.pdata      start:0x82248688 end:0x82248690
+	.text       start:0x8282E9F8 end:0x8282ECE0
+
+xdk/LIBCMT/threadex.cpp:
+	.pdata      start:0x822485D0 end:0x822485F0
+	.text       start:0x8282D9D0 end:0x8282DBB8
+
+xdk/LIBCMT/tidtable.cpp:
+	.pdata      start:0x82248760 end:0x82248790
+	.text       start:0x82830820 end:0x82830BC0
+
+xdk/LIBCMT/unwind.cpp:
+	.pdata      start:0x82248A98 end:0x82248AB0
+	.text       start:0x82838AF0 end:0x82838BE8
+
+xdk/LIBCMT/util.cpp:
+	.text       start:0x82831FD8 end:0x828321A0
+
+xdk/d3d9i/lazy.cpp:
+	.pdata      start:0x82249A70 end:0x82249AB0
+	.text       start:0x82868EB8 end:0x8286A00C
+
+xdk/d3d9i/shader.cpp:
+	.pdata      start:0x82249678 end:0x82249698
+	.pdata      start:0x822496A8 end:0x822496C0
+	.pdata      start:0x82249700 end:0x82249718
+	.pdata      start:0x822497B0 end:0x822497D0
+	.pdata      start:0x82249800 end:0x82249818
+	.text       start:0x8285C5A0 end:0x8285CCEC
+	.text       start:0x8285D440 end:0x8285D8D4
+	.text       start:0x8285E870 end:0x8285EC2C
+	.text       start:0x82860EF8 end:0x82861144
+	.text       start:0x82861BB8 end:0x82861D84
+
+xdk/d3d9i/state.cpp:
+	.pdata      start:0x822493D8 end:0x822493F0
+	.pdata      start:0x82249400 end:0x82249420
+	.text       start:0x82852580 end:0x82852828
+	.text       start:0x828528B0 end:0x82852DA0
+
+xdk/d3d9i/texture.cpp:
+	.pdata      start:0x82249438 end:0x82249450
+	.text       start:0x82853798 end:0x82853D80
+
+xdk/xapilibi/memfunctions.cpp:
+	.pdata      start:0x82248E08 end:0x82248E20
+	.text       start:0x828408C8 end:0x82840D6C
+
+xdk/xapilibi/rtlheap.cpp:
+	.pdata      start:0x82248E60 end:0x82248EC8
+	.text       start:0x82841220 end:0x82843870
+
+xdk/xapilibi/xcontentcrosstitle.cpp:
+	.pdata      start:0x82248CE0 end:0x82248D00
+	.pdata      start:0x82248D08 end:0x82248D20
+	.text       start:0x8283EB88 end:0x8283EE58
+	.text       start:0x8283EF70 end:0x8283F238
+
+xdk/xapilibi/xthread.cpp:
+	.pdata      start:0x82248B50 end:0x82248B70
+	.text       start:0x8283C4C8 end:0x8283C6AC
+
+xdk/xinput2/tables.cpp:
+	.pdata      start:0x82249398 end:0x822493A8
+	.text       start:0x8284FC00 end:0x8284FFC4
+
+xdk/xinput2/xinput2.cpp:
+	.pdata      start:0x82249328 end:0x82249390
+	.text       start:0x8284E2F0 end:0x8284EE64
+
+xdk/xmcore/lf.cpp:
+	.pdata      start:0x82260358 end:0x822603D8
+	.text       start:0x82C0F828 end:0x82C11564
+
+xdk/xmcore/winhelper.cpp:
+	.pdata      start:0x822603D8 end:0x822603E8
+	.text       start:0x82C11568 end:0x82C1162C
+
+xdk/xmic/ciiasac60.cpp:
+	.pdata      start:0x82260BF8 end:0x82260C10
+	.text       start:0x82C28320 end:0x82C28488
+
+xdk/xmic/decasac.cpp:
+	.pdata      start:0x82260C10 end:0x82260C28
+	.text       start:0x82C28488 end:0x82C28838
+
+xdk/xmic/xmicapi.cpp:
+	.pdata      start:0x82260B20 end:0x82260B58
+	.pdata      start:0x82260B60 end:0x82260BD0
+	.text       start:0x82C26678 end:0x82C26B28
+	.text       start:0x82C26BD8 end:0x82C27CCC
+
+xdk/xnet/sockapi.cpp:
+	.pdata      start:0x822492E0 end:0x822492E8
+	.text       start:0x8284D980 end:0x8284DAE4
+
+xdk/xonline/endian.cpp:
+	.pdata      start:0x82250878 end:0x822508A0
+	.text       start:0x82A6C6A0 end:0x82A6CB54
+
+xdk/xonline/marshal.cpp:
+	.pdata      start:0x82250858 end:0x82250878
+	.text       start:0x82A6BD40 end:0x82A6C6A0
+
+xdk/xonline/marshsup.cpp:
+	.pdata      start:0x822508A0 end:0x822508B0
+	.text       start:0x82A6CB58 end:0x82A6CE88
+
+xdk/xonline/schema.cpp:
+	.pdata      start:0x82250810 end:0x82250850
+	.text       start:0x82A6B640 end:0x82A6BC60
+
+xdk/xonline/xbosfall06.cpp:
+	.pdata      start:0x822507E8 end:0x82250808
+	.text       start:0x82A6AF80 end:0x82A6B4DC
+
+xdk/xonline/xoncore.cpp:
+	.pdata      start:0x822507B8 end:0x822507E8
+	.text       start:0x82A6AB80 end:0x82A6AF7C
