@@ -11,6 +11,7 @@
 #include "tour/TourCharLocal.h"
 #include "ui/UIComponent.h"
 #include "ui/UIGridProvider.h"
+#include <hash_map>
 
 class CharacterCreatorPanel : public TexLoadPanel {
 public:
@@ -106,7 +107,27 @@ public:
     static void Init() { REGISTER_OBJ_FACTORY(CharacterCreatorPanel); }
 
     CharCreatorState mCharCreatorState; // 0x4C
-    std::map<int, UIComponent *> mFocusComponents; // 0x50
+    // Retail keys this with an STLport hash_map, not the Wii build's std::map:
+    // ??0CharacterCreatorPanel@@QAA@XZ does `addi r3, r30, 0x58` then
+    // `bl ??0?$hash_map@...@stlpmtx_std@@QAA@XZ` (retail 0x8255D480, body
+    // `li r4, 0x64` -> _M_initialize_buckets(100)).  A std::map ctor makes no
+    // call here at all -- STLport inlines the rb-tree header init.
+    //
+    // This swap is SIZE-NEUTRAL in this TU: CharacterCreatorPanel.cpp carries
+    // /DRB3_MAP_0x1C, which already pads std::map to 0x1c.  It fixes the
+    // ALGORITHM (hashtable vs rb-tree), not the layout -- and that alone takes
+    // the ctor 61.82% -> 100.0%.
+    //
+    // ONE TRAP, RECORDED BECAUSE IT NEARLY DEFERRED THIS FIX: the `// 0x4C` and
+    // `// 0x50` comments that used to be on mCharCreatorState and this member
+    // are WRONG.  Reading them suggested our container landed at 0x50 while
+    // retail builds it at 0x58, i.e. that TexLoadPanel was 8 bytes short and
+    // this class could not be fixed without a shared-base change.  That is
+    // false: with the flag applied the members really are at 0x54 and 0x58,
+    // exactly where retail puts them, and the ctor matches byte-for-byte.
+    // Adjudicate layout with /d1reportSingleClassLayout, never with the
+    // comments -- five of them were measurably wrong in this class alone.
+    std::hash_map<int, UIComponent *> mFocusComponents; // retail 0x58
     ClosetMgr *mClosetMgr; // 0x68
     TourCharLocal *mCharacter; // 0x6c
     BandCharDesc *mPreviewDesc; // 0x70
