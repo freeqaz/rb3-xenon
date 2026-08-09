@@ -249,10 +249,12 @@ PassiveMessenger::PassiveMessenger() : unk1c(0) {
 PassiveMessenger::~PassiveMessenger() {
     MILO_ASSERT(ThePassiveMessenger, 0x169);
     ThePassiveMessenger = nullptr;
+    // Retail-360 un-sinks only these TWO of the five the ctor registers; the
+    // VoiceChatMgr and InviteReceivedMsg RemoveSinks the rb3-Wii dev build has
+    // are absent from the retail extent (which never unsinks
+    // SessionDisconnectedMsg either -- this dtor is partial by design).
     ThePlatformMgr.RemoveSink(this, InviteSentMsg::Type());
-    ((MsgSource *)TheVoiceChatMgr)->RemoveSink(this);
     TheSessionMgr->RemoveSink(this, RemoteUserLeftMsg::Type());
-    ThePlatformMgr.RemoveSink(this, InviteReceivedMsg::Type());
 }
 
 void PassiveMessenger::Poll() {

@@ -865,12 +865,16 @@ void SongData::AddPhrase(
     float dur_ms,
     int dur_ticks
 ) {
-    int i1 = diff;
+    // Two independent locals, both seeded from `diff`; the parameter itself is
+    // never mutated. Retail emits `mr r31,r5` AND `mr r30,r5` before the -0x1
+    // test -- mutating `diff` instead costs an extra preheader move.
+    int lo = diff;
+    int hi = diff;
     if (diff == -1) {
-        diff = 0;
-        i1 = 3;
+        lo = 0;
+        hi = 3;
     }
-    for (int d = diff; d <= i1; d++) {
+    for (int d = lo; d <= hi; d++) {
         mPhraseDBs[i3]->AddPhrase(ty, d, ms, ticks, dur_ms, dur_ticks);
     }
 }

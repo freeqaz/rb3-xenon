@@ -149,7 +149,14 @@ void RGTrainerPanel::SetupIsBass() {
 void RGTrainerPanel::Enter() {
     TheRGTrainerPanel = this;
     ProTrainerPanel::Enter();
-    SetupIsBass();
+    // Retail-360 does NOT call SetupIsBass() here: it inlines only the mTrack
+    // arm, against a FUNCTION-LOCAL static Symbol (guard-bit lazy init at
+    // 0x82E02B54 bit 0), not the global `real_bass` SetupIsBass() uses. The
+    // mGemPlayer fallback is absent from the retail extent entirely.
+    if (mTrack) {
+        static Symbol real_bass("real_bass");
+        mIsBass = mTrack->GetType() == real_bass;
+    }
     unkec = -1.0f;
     mTutor.Clear();
     mChordLegend = mDir->Find<RndDir>("chord_legend", true);
