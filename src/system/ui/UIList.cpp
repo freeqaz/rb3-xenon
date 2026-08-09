@@ -636,6 +636,28 @@ void UIList::PostLoad(BinStream &bs) {
     if (mUIListRev >= 6)
         bs >> local_maxdisplay;
     gLoading = true;
+    // ---- MISSING RETAIL BLOCK (lane MATCH-G, NOT yet implemented) ----------
+    // Retail has 9 instructions here that we do not emit at all -- the only
+    // insert/delete cluster in this row (everything else is stack-slot
+    // rotation).  Verbatim from the target at [117..125]:
+    //     lwz   r11, 0x54(r1)          ; == local_numdisplay (target's first
+    //                                  ;    `bs >>` int temp; ours sits at 0x60)
+    //     cmpwi cr6, r11, 0x1e         ; SIGNED compare against 30
+    //     ble   cr6, <skip>
+    //     lis   r11, ?TheNgRnd@@3AAVNgRnd@@A
+    //     lwz   r3,  ?TheNgRnd@@3AAVNgRnd@@A(r11)
+    //     lwz   r11, 0x0(r3)           ; vtable
+    //     lwz   r11, 0x114(r11)        ; slot 0x114 / 4 == index 69
+    //     mtctr r11
+    //     bctrl                        ; no-argument virtual call
+    // i.e. `if (local_numdisplay > 30) TheNgRnd.<vslot 0x114>();`, placed
+    // between `gLoading = true` and the SetNumDisplay/SetGridSpan setters.
+    // NOT implemented because the vtable slot was not resolved to a method
+    // name -- resolve it with /resolve-vcall or scripts/dump_vtable.py on NgRnd
+    // before writing the call.  Worth 872 B if the row then crosses, though the
+    // four rotated stack temps (target 0x54/0x58/0x5c/0x60 vs our
+    // 0x60/0x54/0x58/0x5c) must also resolve; they plausibly follow from the
+    // added live range, since the block is what keeps numdisplay live longer.
 #ifdef HX_NATIVE
     mListState.SetNumDisplay(local_numdisplay, false);
     mUncappedNumDisplay = local_numdisplay;
