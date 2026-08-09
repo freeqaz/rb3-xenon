@@ -359,7 +359,14 @@ inline BinStream &operator<<(BinStream &bs, const ObjectDir::Viewport &v) {
 }
 
 void ObjectDir::Save(BinStream &bs) {
-    SAVE_REVS(0x1C, 0)
+    // Read straight off retail: the target's 4th instruction is `li r11, 0x1b`
+    // (then `stw r11, 0x54(r31)`), and OUR build emitted `li r11, 0x1c` at the
+    // same index -- equal to the 0x1C that used to be written here. Our own
+    // constant reproducing our own instruction is what proves this `li` IS the
+    // save rev and not some unrelated immediate, so 0x1B is retail's value.
+    // Per CLAUDE.md, do NOT "correct" this against the load side for internal
+    // consistency: retail legitimately saves a lower rev than it can load.
+    SAVE_REVS(0x1B, 0)
     SaveType(bs);
     bs << mAlwaysInlined;
     if (mAlwaysInlineHash && !bs.Cached()) {
