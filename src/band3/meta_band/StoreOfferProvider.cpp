@@ -603,15 +603,18 @@ void StoreOfferProvider::BuildList(DataArray *grouping) {
 // source uses begin()/end(); `&mElements[0]` + `start + size()` forces an extra
 // subf/srawi/slwi round-trip to recompute end.
 void StoreOfferProvider::ClearList() {
-    // 97.3%: remaining 12 mismatches are ALL register swaps (r29/r30/r31
-    // permutation) at identical size and instruction order -- permuter-class.
-    // Combining the two declarations into the for-init scores identically.
-    Element **start = mElements.begin();
-    Element **end = mElements.end();
+    // The r29/r30/r31 permutation here was a SYMPTOM, not a permuter wall: the
+    // vector's address was being rematerialized off `this` at each use, so the
+    // allocator had a different set of live values to colour than retail did.
+    // Binding it to a local reference once pins it in a register for the whole
+    // body and the swaps resolve on their own.
+    std::vector<Element *> &elems = mElements;
+    Element **start = elems.begin();
+    Element **end = elems.end();
     for (Element **it = start; it != end; ++it) {
         delete *it;
     }
-    mElements.clear();
+    elems.clear();
     if (mShortcuts) {
         mShortcuts->Release();
         mShortcuts = NULL;
