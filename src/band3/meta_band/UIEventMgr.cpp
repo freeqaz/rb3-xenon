@@ -94,7 +94,17 @@ void UIEventMgr::DismissDialogEvent() { mDialogEventQueue.DismissEvent(); }
 
 void UIEventMgr::DismissTransitionEvent() { mTransitionEventQueue.DismissEvent(); }
 
+// Retail builds these three as FUNCTION-LOCAL statics, not the centralized
+// globals in utl/Symbols*.h: the target guards them with bits 0x1/0x2/0x4 of a
+// single guard word (lbl_82DFED5C) and constructs each with ??0Symbol@@QAA@PBD@Z.
+// The third one is genuinely UNUSED in retail too -- it is constructed into
+// lbl_82DFED50 and never read. Confirmed on retail bytes: the string literal at
+// 0x820A3530 is "non_destructive_transition_events". Declaration order here is
+// fixed by the guard-bit order, so do not reorder these.
 void UIEventMgr::TriggerEvent(Symbol s, DataArray *arr) {
+    static Symbol dialog_events("dialog_events");
+    static Symbol destructive_transition_events("destructive_transition_events");
+    static Symbol non_destructive_transition_events("non_destructive_transition_events");
     DataArray *dialogArr = TypeDef()->FindArray(dialog_events);
     DataArray *sArr = dialogArr->FindArray(s, false);
     UIEvent *event;
