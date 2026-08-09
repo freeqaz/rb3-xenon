@@ -106,6 +106,42 @@ this; if your numbers are shaped differently, suspect the run, not the finding.
 Note the shape: the auto side loses MORE than the named side gains, and the
 difference is exactly the evicted phantom. A wave with no phantom in its span
 reads Δtotal_code == 0 (that is what lane PIN-B measured).
+
+★ WAVE 2 (lane PIN-E) FOUND THE BIGGER MECHANISM, AND A CONTROL
+---------------------------------------------------------------
+Wave 2 pinned 292 rows / 168 units / 1,332,288 B in four batches. The matching
+keys were Δ0 throughout; `total_code` moved −320,684 across just 9 changed
+rows. Six of those were RESIZED, and every one collapsed to the size
+`config/45410914/symbols.txt` already declared:
+
+    fn_828B23A8  210,136 -> 204 B   (symbols.txt size:0xCC)
+    fn_82BF9F48   51,292 ->  64 B   (size:0x40)
+    fn_8287C430   46,816 ->  12 B   (size:0xC)
+    fn_82BE4E70   14,148 ->  76 B   (size:0x4C)
+    fn_82BCC8C0    6,972 ->   8 B   (size:0x8)
+    ?ParseBooleanCastNode@…  128 -> 124 B   (size:0x7C)
+
+⇒ In an UNPINNED region dtk cannot bound a symbol, so it runs the extent to the
+next known boundary and bills a 204-byte function as 210,136 bytes — that one
+row alone was ~2% of the binary's reported code. Pinning supplies the boundary
+and the row collapses to the truth. So wave 1's "phantom label evicted" and
+wave 2's "function extent corrected" are the SAME cause with different surface
+presentations, and wave 1's second row (ComputeDotProductPrecision 96 -> 92,
+filed as "a 4-byte alignment pad") is really this convergence too.
+
+★ THE CONTROL THAT MAKES THAT CLAIM SAFE: wave 2's batch 2 pinned 70,840 B
+across 45 units in 8 different families and produced **ZERO changed rows** —
+the row population came back byte-for-byte identical, with 70,840 B simply
+migrating auto -> named. So pinning is inherently denominator-neutral;
+`total_code` moves ONLY when the span happens to contain a symbol dtk was
+mis-sizing. Do not read a Δtotal_code as "pinning perturbs the denominator".
+
+⚠ ADJUDICATE ADDED LABELS, AND DO IT AT THE symbols.txt ADDRESS. Wave 2 added
+three label rows. For `lbl_82858E94` the containment probe was first run at the
+name-derived address and found 1 real function inside the extent — a confident,
+cheap, WRONG "double-counting" verdict. symbols.txt puts that label at
+0x82887AE4, where the extent contains 0 functions. Second independent instance
+of trap (1) above; it is systematic.
 """
 
 from __future__ import annotations
