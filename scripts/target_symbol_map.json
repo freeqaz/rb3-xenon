@@ -21360,6 +21360,7 @@
  "0x827f4c80": "?AltFontResourceFileUpdated@UILabel@@QAAX_N@Z",
  "0x827f4dc0": "?NewObject@UILabel@@SAPAVObject@Hmx@@XZ",
  "0x827f4e58": "??_DUILabel@@QAAXXZ",
+ "0x827f4ec8": "?PreLoad@UILabel@@UAAXAAVBinStream@@@Z",
  "0x827f5338": "?Copy@UILabel@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x827f5348": "??_GUILabel@@UAAPAXI@Z",
  "0x827f5398": "?Init@UILabel@@SAXXZ",

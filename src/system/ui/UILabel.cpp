@@ -68,10 +68,12 @@
 // reads gRev ~30 times and gAltRev never, so the read offset identifies gRev as
 // the +4 member. Declaration order is what fixes .bss placement, so gAltRev must
 // come first. (This file previously declared gRev first, which put gRev at +0.)
-// ⚠ NOT metric-visible: retail 0x827F4EC8 has NO entry in
-// scripts/target_symbol_map.json, so the row is unpaired-anon and cannot score.
-// The neighbouring comment's claim that it is "mislabeled as ?Copy@UILabel@@..."
-// is stale -- ?Copy@UILabel@@UAAX... maps to 0x827f2240, a different function.
+// ✅ NOW METRIC-VISIBLE (lane MAP-A): 0x827f4ec8 was unpaired-anon and could not
+// score; it is now mapped to ?PreLoad@UILabel@@UAAXAAVBinStream@@@Z, which
+// exposed the row at mpn 99.957596 (4 of 283 instructions differing) and, with
+// the gate fix at the gRev>8&&<16 site below, took it to 100.0 / 1,132 B.
+// The old claim that this address is "mislabeled as ?Copy@UILabel@@..." was
+// stale -- ?Copy@UILabel@@UAAX... maps to 0x827f2240, a different function.
 #define INIT_REVS(objType)                                                               \
     static unsigned short gAltRev = 0;                                                   \
     static unsigned short gRev = 0;
@@ -241,8 +243,12 @@ void UILabel::Load(BinStream &bs) {
     PostLoad(bs);
 }
 
-// retail 0x827F4EC8 (mislabeled `?Copy@UILabel@@...` in
-// scripts/target_symbol_map.json -- reported to the lane lead, map NOT edited).
+// retail 0x827F4EC8, mapped to ?PreLoad@UILabel@@UAAXAAVBinStream@@@Z by lane
+// MAP-A. Identification evidence (independent of the map): the function sits in
+// UILabel.cpp's pinned .text block 0x827F4B68-0x827F5550, calls
+// ?PreLoad@UIComponent@@ on the base subobject (this-0xd4), calls
+// ?AltFontResourceFileUpdated@UILabel@@ with `true` at the gRev>0x15 gate, and
+// its 24 revision gates run in exactly this function's constant order.
 // Retail-vs-Wii-dev divergences encoded here:
 //   * mAlignment / mCapsMode / mFitType / mFixedLength / mReservedLine are read
 //     as 4 raw bytes straight into the member (no int temporary + MILO_ASSERT
@@ -292,7 +298,12 @@ void UILabel::PreLoad(BinStream &bs) {
         bs >> mFixedLength;
     if (gRev > 6)
         bs >> mReservedLine;
-    if (gRev >= 9 && gRev <= 15) {
+    // Adjudicated on retail bytes (lane MAP-A): retail emits
+    //   cmplwi cr6,r11,0x8 / ble  and  cmplwi cr6,r11,0x10 / bge
+    // i.e. the > 8 && < 16 spelling, NOT >= 9 && <= 15 (which compiles to
+    // cmplwi 9/blt + cmplwi 15/bgt). Per-site reading -- UILabel uses the
+    // >=/<= form correctly at its OTHER sites; there is no file-wide rule.
+    if (gRev > 8 && gRev < 16) {
         bool b;
         int a, c, d;
         bs >> b >> a >> c >> d;
@@ -329,7 +340,9 @@ void UILabel::PreLoad(BinStream &bs) {
     }
 }
 
-// retail 0x827F76B0 (mislabeled `?Load@UILabel@@...` in target_symbol_map.json).
+// retail 0x827F76B0. (An older comment here called this "mislabeled
+// ?Load@UILabel@@..."; that is stale -- the map has carried the correct
+// ?PostLoad@UILabel@@UAAXAAVBinStream@@@Z at this address since a9c3240d.)
 // Retail adds the middle `mEditText && AllowEditText()` arm that the Wii dev
 // build lacks.
 void UILabel::PostLoad(BinStream &bs) {
