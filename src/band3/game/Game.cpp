@@ -405,7 +405,7 @@ void Game::Reset() {
     mRealtime = false;
     mTimeOffset = 0;
     mPauseTime = 0;
-    mSongPos = SongPos(0, 0, 0, 0, 0);
+    mSongPos = SongPos();
     mResult = kRestart;
     unk124 = 0;
     mTime.Restart();
