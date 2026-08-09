@@ -14072,3 +14072,917 @@ xdk/xgraphics/vectorize.cpp:
 	.text       start:0x829911E0 end:0x82991B40
 	.text       start:0x82991BC8 end:0x82994F98
 	.text       start:0x82995058 end:0x829AC468
+
+xdk/xaudio2/adpcm.cpp:
+	.pdata      start:0x8225F060 end:0x8225F078
+	.text       start:0x82BC6F60 end:0x82BC70A4
+
+xdk/xaudio2/buffer.cpp:
+	.pdata      start:0x82260150 end:0x82260168
+	.text       start:0x82C07A58 end:0x82C07C20
+
+xdk/xaudio2/clipper.cpp:
+	.pdata      start:0x8225EF58 end:0x8225EF70
+	.text       start:0x82BC44C8 end:0x82BC46B8
+
+xdk/xaudio2/config.cpp:
+	.pdata      start:0x8225FA40 end:0x8225FA88
+	.text       start:0x82BEE410 end:0x82BEF664
+
+xdk/xaudio2/configcommon.cpp:
+	.text       start:0x82C068D0 end:0x82C06AE8
+
+xdk/xaudio2/drccommonpro.cpp:
+	.pdata      start:0x82260038 end:0x82260080
+	.text       start:0x82C01F80 end:0x82C04044
+
+xdk/xaudio2/entropydecpro.cpp:
+	.pdata      start:0x822600A8 end:0x82260118
+	.text       start:0x82C04808 end:0x82C068D0
+
+xdk/xaudio2/entropydecprolsl.cpp:
+	.pdata      start:0x8225FFC0 end:0x8225FFD0
+	.text       start:0x82BFD1C0 end:0x82BFD84C
+
+xdk/xaudio2/entropydecstd.cpp:
+	.pdata      start:0x82260080 end:0x82260098
+	.text       start:0x82C04048 end:0x82C04674
+
+xdk/xaudio2/graphmgr.cpp:
+	.pdata      start:0x8225FB68 end:0x8225FB80
+	.pdata      start:0x8225FBE0 end:0x8225FBF8
+	.text       start:0x82BF3C60 end:0x82BF4020
+	.text       start:0x82BF4768 end:0x82BF49F4
+
+xdk/xaudio2/leapfxlib.cpp:
+	.pdata      start:0x8225ECA8 end:0x8225ED18
+	.text       start:0x82BBE810 end:0x82BBF2B0
+
+xdk/xaudio2/losslessdecpro.cpp:
+	.pdata      start:0x82260018 end:0x82260038
+	.text       start:0x82C016F0 end:0x82C01F20
+
+xdk/xaudio2/lowrate_commonstd.cpp:
+	.pdata      start:0x822602B0 end:0x822602C8
+	.text       start:0x82C0A220 end:0x82C0BA30
+
+xdk/xaudio2/msaudio.cpp:
+	.pdata      start:0x8225FE50 end:0x8225FEB8
+	.pdata      start:0x8225FEC8 end:0x8225FED0
+	.pdata      start:0x8225FEE0 end:0x8225FF00
+	.text       start:0x82BF7A98 end:0x82BF931C
+	.text       start:0x82BF9518 end:0x82BF95CC
+	.text       start:0x82BF9F88 end:0x82BFA658
+
+xdk/xaudio2/msaudiodec.cpp:
+	.pdata      start:0x8225F900 end:0x8225F990
+	.pdata      start:0x8225F998 end:0x8225FA40
+	.text       start:0x82BE6B50 end:0x82BE9AC0
+	.text       start:0x82BEA210 end:0x82BEE40C
+
+xdk/xaudio2/msaudiopro.cpp:
+	.pdata      start:0x8225FF20 end:0x8225FF90
+	.text       start:0x82BFB078 end:0x82BFC49C
+
+xdk/xaudio2/msaudiostdpro.cpp:
+	.pdata      start:0x8225FFD0 end:0x82260000
+	.text       start:0x82BFD850 end:0x82BFF4F4
+
+xdk/xaudio2/oapclip.cpp:
+	.pdata      start:0x8225F590 end:0x8225F598
+	.text       start:0x82BD8868 end:0x82BD8C98
+
+xdk/xaudio2/oapmatrixmix.cpp:
+	.pdata      start:0x8225F0D8 end:0x8225F0F8
+	.pdata      start:0x8225F118 end:0x8225F138
+	.text       start:0x82BC8260 end:0x82BC92AC
+	.text       start:0x82BCA3F8 end:0x82BCB964
+
+xdk/xaudio2/oapreverb.cpp:
+	.pdata      start:0x8225F5B8 end:0x8225F5C8
+	.pdata      start:0x8225F5C8 end:0x8225F618
+	.pdata      start:0x8225F618 end:0x8225F648
+	.pdata      start:0x8225F668 end:0x8225F688
+	.text       start:0x82BD9928 end:0x82BD9EB8
+	.text       start:0x82BD9F00 end:0x82BDC380
+	.text       start:0x82BDC3D8 end:0x82BDCD94
+	.text       start:0x82BE1A30 end:0x82BE28C4
+
+xdk/xaudio2/reverb.cpp:
+	.pdata      start:0x8225F078 end:0x8225F090
+	.text       start:0x82BC71F0 end:0x82BC7518
+
+xdk/xaudio2/src_fast.cpp:
+	.pdata      start:0x8225EF18 end:0x8225EF20
+	.text       start:0x82BC3D10 end:0x82BC3E80
+
+xdk/xaudio2/strmdec_wma.cpp:
+	.pdata      start:0x8225FF90 end:0x8225FFC0
+	.text       start:0x82BFC4A0 end:0x82BFD1C0
+
+xdk/xaudio2/strmdec_wma_xenon.cpp:
+	.pdata      start:0x82260118 end:0x82260138
+	.text       start:0x82C06AE8 end:0x82C07874
+
+xdk/xaudio2/swfilter.cpp:
+	.pdata      start:0x822601C0 end:0x822601E0
+	.text       start:0x82C081F8 end:0x82C0855C
+
+xdk/xaudio2/swoutput.cpp:
+	.pdata      start:0x82260168 end:0x82260190
+	.text       start:0x82C07C20 end:0x82C07E8C
+
+xdk/xaudio2/swvoice.cpp:
+	.pdata      start:0x822601E8 end:0x82260208
+	.pdata      start:0x82260210 end:0x82260258
+	.pdata      start:0x82260260 end:0x82260298
+	.text       start:0x82C08880 end:0x82C08E34
+	.text       start:0x82C08F48 end:0x82C098BC
+	.text       start:0x82C09950 end:0x82C09EFC
+
+xdk/xaudio2/system.cpp:
+	.pdata      start:0x8225F688 end:0x8225F698
+	.pdata      start:0x8225F6A0 end:0x8225F6E0
+	.pdata      start:0x8225F708 end:0x8225F740
+	.text       start:0x82BE28C8 end:0x82BE2A00
+	.text       start:0x82BE2A68 end:0x82BE2EA8
+	.text       start:0x82BE34C0 end:0x82BE39F0
+
+xdk/xaudio2/voiceskin.cpp:
+	.pdata      start:0x8225FCA8 end:0x8225FCC8
+	.text       start:0x82BF5718 end:0x82BF5A74
+
+xdk/xaudio2/waveutils.cpp:
+	.pdata      start:0x8225F4A8 end:0x8225F4B0
+	.pdata      start:0x8225F4B0 end:0x8225F4C0
+	.text       start:0x82BD36F0 end:0x82BD3820
+	.text       start:0x82BD3A08 end:0x82BD3D28
+
+xdk/xaudio2/wmabuffilt.cpp:
+	.pdata      start:0x82260308 end:0x82260338
+	.text       start:0x82C0EAD8 end:0x82C0F25C
+
+xdk/xaudio2/wmaltrt.cpp:
+	.pdata      start:0x8225FF00 end:0x8225FF20
+	.text       start:0x82BFA658 end:0x82BFB078
+
+xdk/xaudio2/x2effectchain.cpp:
+	.pdata      start:0x8225F7B8 end:0x8225F7D8
+	.text       start:0x82BE4518 end:0x82BE48B0
+
+xdk/xaudio2/x2engine.cpp:
+	.pdata      start:0x8225EDA0 end:0x8225EDD0
+	.pdata      start:0x8225EDF8 end:0x8225EE20
+	.pdata      start:0x8225EE28 end:0x8225EE40
+	.pdata      start:0x8225EE70 end:0x8225EE90
+	.text       start:0x82BC11B8 end:0x82BC1408
+	.text       start:0x82BC17E8 end:0x82BC1AC8
+	.text       start:0x82BC1BA8 end:0x82BC1E0C
+	.text       start:0x82BC23C0 end:0x82BC25E4
+
+xdk/xaudio2/x2mixmatrix.cpp:
+	.pdata      start:0x8225FE38 end:0x8225FE48
+	.text       start:0x82BF7748 end:0x82BF799C
+
+xdk/xaudio2/x2voicebase.cpp:
+	.pdata      start:0x8225F7E0 end:0x8225F800
+	.pdata      start:0x8225F858 end:0x8225F870
+	.pdata      start:0x8225F8A8 end:0x8225F8B8
+	.pdata      start:0x8225F8C0 end:0x8225F8F0
+	.text       start:0x82BE4B88 end:0x82BE4DB8
+	.text       start:0x82BE5490 end:0x82BE56D0
+	.text       start:0x82BE5C28 end:0x82BE5D9C
+	.text       start:0x82BE6130 end:0x82BE6744
+
+xdk/xaudio2/x2voiceoutput.cpp:
+	.pdata      start:0x8225F4E8 end:0x8225F500
+	.text       start:0x82BD44B0 end:0x82BD4B94
+
+xdk/xaudio2/x2voicesource.cpp:
+	.pdata      start:0x8225F1A0 end:0x8225F1A8
+	.pdata      start:0x8225F1F0 end:0x8225F210
+	.text       start:0x82BCD158 end:0x82BCD2AC
+	.text       start:0x82BCD820 end:0x82BCDAEC
+
+xdk/xaudio2/x2voicewma.cpp:
+	.pdata      start:0x8225F318 end:0x8225F330
+	.text       start:0x82BD0A28 end:0x82BD0BDC
+
+xdk/xaudio2/x2voicexma.cpp:
+	.pdata      start:0x8225F360 end:0x8225F370
+	.pdata      start:0x8225F3B8 end:0x8225F3F0
+	.pdata      start:0x8225F3F8 end:0x8225F418
+	.pdata      start:0x8225F420 end:0x8225F458
+	.pdata      start:0x8225F488 end:0x8225F4A8
+	.text       start:0x82BD1298 end:0x82BD1528
+	.text       start:0x82BD1C20 end:0x82BD225C
+	.text       start:0x82BD22E0 end:0x82BD261C
+	.text       start:0x82BD2810 end:0x82BD2DEC
+	.text       start:0x82BD3178 end:0x82BD36EC
+
+xdk/xaudio2/x2xmahal.cpp:
+	.pdata      start:0x8225F2A0 end:0x8225F2C0
+	.pdata      start:0x8225F2C8 end:0x8225F2E0
+	.text       start:0x82BCEEA8 end:0x82BCF89C
+	.text       start:0x82BCF9C8 end:0x82BCFEB0
+
+xdk/xaudio2/xapobase.cpp:
+	.pdata      start:0x8225ED30 end:0x8225ED60
+	.pdata      start:0x8225ED88 end:0x8225EDA0
+	.text       start:0x82BBF540 end:0x82BBF9B4
+	.text       start:0x82BC0C58 end:0x82BC11B8
+
+xdk/xaudio2/xwmamalloc.cpp:
+	.pdata      start:0x8225FE48 end:0x8225FE50
+	.text       start:0x82BF79A0 end:0x82BF7A98
+
+xdk/LIBCMT/_ctype.cpp:
+	.text       start:0x8282F7B0 end:0x8282F84C
+
+xdk/LIBCMT/_file.cpp:
+	.pdata      start:0x822486E0 end:0x82248700
+	.text       start:0x8282F420 end:0x8282F6BC
+
+xdk/LIBCMT/asincos.cpp:
+	.text       start:0x8282BA18 end:0x8282BBE0
+
+xdk/LIBCMT/crt0dat.cpp:
+	.pdata      start:0x822486A8 end:0x822486C0
+	.pdata      start:0x822486C8 end:0x822486D0
+	.text       start:0x8282EF78 end:0x8282F194
+	.text       start:0x8282F1F8 end:0x8282F254
+
+xdk/LIBCMT/crt0msg.cpp:
+	.pdata      start:0x82248840 end:0x82248850
+	.text       start:0x82831E48 end:0x82831F04
+
+xdk/LIBCMT/crtfpr.cpp:
+	.pdata      start:0x822484C8 end:0x822484D8
+	.text       start:0x8282A7A0 end:0x8282A838
+
+xdk/LIBCMT/cvt.cpp:
+	.pdata      start:0x82248728 end:0x82248760
+	.text       start:0x8282FBF8 end:0x82830770
+
+xdk/LIBCMT/dosmap.cpp:
+	.pdata      start:0x82248640 end:0x82248658
+	.text       start:0x8282E380 end:0x8282E4D0
+
+xdk/LIBCMT/ehstate.cpp:
+	.pdata      start:0x82248790 end:0x82248798
+	.text       start:0x82830BC0 end:0x82830CD8
+
+xdk/LIBCMT/fflush.cpp:
+	.pdata      start:0x822488F0 end:0x82248908
+	.text       start:0x82834E48 end:0x82835084
+
+xdk/LIBCMT/float.cpp:
+	.pdata      start:0x82248AC8 end:0x82248AD8
+	.text       start:0x82838FC0 end:0x828391D8
+
+xdk/LIBCMT/fpexcept.cpp:
+	.pdata      start:0x82248878 end:0x822488B8
+	.text       start:0x82832388 end:0x82832E44
+
+xdk/LIBCMT/frame.cpp:
+	.pdata      start:0x82248798 end:0x822487A8
+	.pdata      start:0x822487B8 end:0x82248810
+	.text       start:0x82830CD8 end:0x82830F94
+	.text       start:0x82830FF8 end:0x82831CF8
+
+xdk/LIBCMT/hooks.cpp:
+	.pdata      start:0x82248818 end:0x82248838
+	.text       start:0x82831D10 end:0x82831DD4
+
+xdk/LIBCMT/ieeemisc.cpp:
+	.pdata      start:0x822488B8 end:0x822488C0
+	.text       start:0x82832E48 end:0x82832FEC
+
+xdk/LIBCMT/invarg.cpp:
+	.pdata      start:0x82248860 end:0x82248870
+	.text       start:0x828321E0 end:0x828322E0
+
+xdk/LIBCMT/mlock.cpp:
+	.pdata      start:0x82248A28 end:0x82248A50
+	.text       start:0x82838128 end:0x828383CC
+
+xdk/LIBCMT/onexit.cpp:
+	.pdata      start:0x82248478 end:0x82248498
+	.text       start:0x8282A2B0 end:0x8282A440
+
+xdk/LIBCMT/strtol.cpp:
+	.pdata      start:0x82248688 end:0x82248690
+	.text       start:0x8282E9F8 end:0x8282ECE0
+
+xdk/LIBCMT/threadex.cpp:
+	.pdata      start:0x822485D0 end:0x822485F0
+	.text       start:0x8282D9D0 end:0x8282DBB8
+
+xdk/LIBCMT/tidtable.cpp:
+	.pdata      start:0x82248760 end:0x82248790
+	.text       start:0x82830820 end:0x82830BC0
+
+xdk/LIBCMT/unwind.cpp:
+	.pdata      start:0x82248A98 end:0x82248AB0
+	.text       start:0x82838AF0 end:0x82838BE8
+
+xdk/LIBCMT/util.cpp:
+	.text       start:0x82831FD8 end:0x828321A0
+
+xdk/d3d9i/lazy.cpp:
+	.pdata      start:0x82249A70 end:0x82249AB0
+	.text       start:0x82868EB8 end:0x8286A00C
+
+xdk/d3d9i/shader.cpp:
+	.pdata      start:0x82249678 end:0x82249698
+	.pdata      start:0x822496A8 end:0x822496C0
+	.pdata      start:0x82249700 end:0x82249718
+	.pdata      start:0x822497B0 end:0x822497D0
+	.pdata      start:0x82249800 end:0x82249818
+	.text       start:0x8285C5A0 end:0x8285CCEC
+	.text       start:0x8285D440 end:0x8285D8D4
+	.text       start:0x8285E870 end:0x8285EC2C
+	.text       start:0x82860EF8 end:0x82861144
+	.text       start:0x82861BB8 end:0x82861D84
+
+xdk/d3d9i/state.cpp:
+	.pdata      start:0x822493D8 end:0x822493F0
+	.pdata      start:0x82249400 end:0x82249420
+	.text       start:0x82852580 end:0x82852828
+	.text       start:0x828528B0 end:0x82852DA0
+
+xdk/d3d9i/texture.cpp:
+	.pdata      start:0x82249438 end:0x82249450
+	.text       start:0x82853798 end:0x82853D80
+
+xdk/xapilibi/memfunctions.cpp:
+	.pdata      start:0x82248E08 end:0x82248E20
+	.text       start:0x828408C8 end:0x82840D6C
+
+xdk/xapilibi/rtlheap.cpp:
+	.pdata      start:0x82248E60 end:0x82248EC8
+	.text       start:0x82841220 end:0x82843870
+
+xdk/xapilibi/xcontentcrosstitle.cpp:
+	.pdata      start:0x82248CE0 end:0x82248D00
+	.pdata      start:0x82248D08 end:0x82248D20
+	.text       start:0x8283EB88 end:0x8283EE58
+	.text       start:0x8283EF70 end:0x8283F238
+
+xdk/xapilibi/xthread.cpp:
+	.pdata      start:0x82248B50 end:0x82248B70
+	.text       start:0x8283C4C8 end:0x8283C6AC
+
+xdk/xinput2/tables.cpp:
+	.pdata      start:0x82249398 end:0x822493A8
+	.text       start:0x8284FC00 end:0x8284FFC4
+
+xdk/xinput2/xinput2.cpp:
+	.pdata      start:0x82249328 end:0x82249390
+	.text       start:0x8284E2F0 end:0x8284EE64
+
+xdk/xmcore/lf.cpp:
+	.pdata      start:0x82260358 end:0x822603D8
+	.text       start:0x82C0F828 end:0x82C11564
+
+xdk/xmcore/winhelper.cpp:
+	.pdata      start:0x822603D8 end:0x822603E8
+	.text       start:0x82C11568 end:0x82C1162C
+
+xdk/xmic/ciiasac60.cpp:
+	.pdata      start:0x82260BF8 end:0x82260C10
+	.text       start:0x82C28320 end:0x82C28488
+
+xdk/xmic/decasac.cpp:
+	.pdata      start:0x82260C10 end:0x82260C28
+	.text       start:0x82C28488 end:0x82C28838
+
+xdk/xmic/xmicapi.cpp:
+	.pdata      start:0x82260B20 end:0x82260B58
+	.pdata      start:0x82260B60 end:0x82260BD0
+	.text       start:0x82C26678 end:0x82C26B28
+	.text       start:0x82C26BD8 end:0x82C27CCC
+
+xdk/xnet/sockapi.cpp:
+	.pdata      start:0x822492E0 end:0x822492E8
+	.text       start:0x8284D980 end:0x8284DAE4
+
+xdk/xonline/endian.cpp:
+	.pdata      start:0x82250878 end:0x822508A0
+	.text       start:0x82A6C6A0 end:0x82A6CB54
+
+xdk/xonline/marshal.cpp:
+	.pdata      start:0x82250858 end:0x82250878
+	.text       start:0x82A6BD40 end:0x82A6C6A0
+
+xdk/xonline/marshsup.cpp:
+	.pdata      start:0x822508A0 end:0x822508B0
+	.text       start:0x82A6CB58 end:0x82A6CE88
+
+xdk/xonline/schema.cpp:
+	.pdata      start:0x82250810 end:0x82250850
+	.text       start:0x82A6B640 end:0x82A6BC60
+
+xdk/xonline/xbosfall06.cpp:
+	.pdata      start:0x822507E8 end:0x82250808
+	.text       start:0x82A6AF80 end:0x82A6B4DC
+
+xdk/xonline/xoncore.cpp:
+	.pdata      start:0x822507B8 end:0x822507E8
+	.text       start:0x82A6AB80 end:0x82A6AF7C
+
+xdk/xgraphics/arena.cpp:
+	.pdata      start:0x8224FAD0 end:0x8224FAE0
+	.text       start:0x82A3F690 end:0x82A3F7BC
+
+xdk/xgraphics/buildcfg.cpp:
+	.pdata      start:0x8224E308 end:0x8224E330
+	.text       start:0x829DFFF0 end:0x829E19D4
+
+xdk/xgraphics/cblt.cpp:
+	.pdata      start:0x8224CA58 end:0x8224CA98
+	.text       start:0x82947328 end:0x82948CFC
+
+xdk/xgraphics/ccodec.cpp:
+	.pdata      start:0x8224EA20 end:0x8224EA50
+	.pdata      start:0x8224EB20 end:0x8224EB38
+	.pdata      start:0x8224EB68 end:0x8224EB80
+	.pdata      start:0x8224EBD8 end:0x8224EBF8
+	.pdata      start:0x8224EC10 end:0x8224EC28
+	.pdata      start:0x8224EC40 end:0x8224EC58
+	.pdata      start:0x8224EC68 end:0x8224EC80
+	.pdata      start:0x8224EC90 end:0x8224ECA8
+	.text       start:0x829FFAF8 end:0x82A00194
+	.text       start:0x82A06300 end:0x82A0649C
+	.text       start:0x82A06968 end:0x82A06CD4
+	.text       start:0x82A07870 end:0x82A07DCC
+	.text       start:0x82A081C8 end:0x82A08404
+	.text       start:0x82A08620 end:0x82A08E94
+	.text       start:0x82A09008 end:0x82A09BE0
+	.text       start:0x82A09C80 end:0x82A0A86C
+
+xdk/xgraphics/cfgimpl.cpp:
+	.pdata      start:0x8224F5C8 end:0x8224F5E0
+	.text       start:0x82A30578 end:0x82A30B48
+
+xdk/xgraphics/clean.cpp:
+	.pdata      start:0x8224DCF0 end:0x8224DD90
+	.text       start:0x829AC468 end:0x829B2EC4
+
+xdk/xgraphics/compilerinc.cpp:
+	.pdata      start:0x8224F080 end:0x8224F0C0
+	.text       start:0x82A1D080 end:0x82A1D440
+
+xdk/xgraphics/compress.cpp:
+	.pdata      start:0x822506A8 end:0x822506F0
+	.text       start:0x82A68050 end:0x82A68F38
+
+xdk/xgraphics/constreg.cpp:
+	.pdata      start:0x8224D738 end:0x8224D758
+	.pdata      start:0x8224D778 end:0x8224D7A8
+	.pdata      start:0x8224D7B0 end:0x8224D848
+	.text       start:0x829816C0 end:0x82982034
+	.text       start:0x829823A8 end:0x829827B8
+	.text       start:0x82982818 end:0x82985A5C
+
+xdk/xgraphics/convert.cpp:
+	.pdata      start:0x8224C338 end:0x8224C358
+	.pdata      start:0x8224C360 end:0x8224C380
+	.pdata      start:0x8224C380 end:0x8224C398
+	.pdata      start:0x8224C398 end:0x8224C400
+	.text       start:0x82935BA8 end:0x82935EDC
+	.text       start:0x82935F80 end:0x82936588
+	.text       start:0x82936660 end:0x82936740
+	.text       start:0x829368A8 end:0x82938470
+
+xdk/xgraphics/desc.cpp:
+	.pdata      start:0x8224C238 end:0x8224C280
+	.text       start:0x829308E8 end:0x8293210C
+
+xdk/xgraphics/dlist.cpp:
+	.pdata      start:0x82250010 end:0x82250018
+	.text       start:0x82A563C0 end:0x82A56564
+
+xdk/xgraphics/dominator.cpp:
+	.pdata      start:0x822503B0 end:0x822503F0
+	.text       start:0x82A5B220 end:0x82A5BB94
+
+xdk/xgraphics/dxtn.cpp:
+	.pdata      start:0x8224F5E0 end:0x8224F600
+	.pdata      start:0x8224F608 end:0x8224F630
+	.pdata      start:0x8224F638 end:0x8224F658
+	.text       start:0x82A30BF0 end:0x82A31EC4
+	.text       start:0x82A32010 end:0x82A32824
+	.text       start:0x82A328A8 end:0x82A32A98
+
+xdk/xgraphics/emit.cpp:
+	.pdata      start:0x8224D038 end:0x8224D0A0
+	.pdata      start:0x8224D0A0 end:0x8224D108
+	.text       start:0x8295A300 end:0x8295A680
+	.text       start:0x8295A748 end:0x8295B15C
+	.text       start:0x8295B1B8 end:0x8295FD24
+
+xdk/xgraphics/endian.cpp:
+	.pdata      start:0x8224C8D8 end:0x8224C908
+	.text       start:0x82943DF0 end:0x829448CC
+
+xdk/xgraphics/execopts.cpp:
+	.pdata      start:0x8224D1C8 end:0x8224D230
+	.text       start:0x82962C78 end:0x82964F9C
+
+xdk/xgraphics/finalopts.cpp:
+	.pdata      start:0x8224D230 end:0x8224D258
+	.pdata      start:0x8224D270 end:0x8224D2A0
+	.text       start:0x82964FA0 end:0x82965628
+	.text       start:0x82965820 end:0x82966990
+
+xdk/xgraphics/globreg.cpp:
+	.pdata      start:0x8224D640 end:0x8224D648
+	.pdata      start:0x8224D648 end:0x8224D6D0
+	.pdata      start:0x8224D6D8 end:0x8224D738
+	.text       start:0x829799D0 end:0x82979C48
+	.text       start:0x82979D68 end:0x8297B7EC
+	.text       start:0x8297B888 end:0x829816C0
+
+xdk/xgraphics/header.cpp:
+	.pdata      start:0x8224C2B0 end:0x8224C2D8
+	.text       start:0x829339D8 end:0x82933E04
+
+xdk/xgraphics/ilprogram.cpp:
+	.pdata      start:0x8224FAE0 end:0x8224FAF0
+	.text       start:0x82A3F7C0 end:0x82A3F8F4
+
+xdk/xgraphics/import.cpp:
+	.pdata      start:0x8224E330 end:0x8224E340
+	.pdata      start:0x8224E340 end:0x8224E350
+	.pdata      start:0x8224E350 end:0x8224E450
+	.pdata      start:0x8224E458 end:0x8224E560
+	.pdata      start:0x8224E568 end:0x8224E588
+	.pdata      start:0x8224E590 end:0x8224E5B0
+	.pdata      start:0x8224E5B8 end:0x8224E660
+	.pdata      start:0x8224E668 end:0x8224E670
+	.pdata      start:0x8224E688 end:0x8224E700
+	.pdata      start:0x8224E700 end:0x8224E750
+	.pdata      start:0x8224E760 end:0x8224E870
+	.pdata      start:0x8224E870 end:0x8224EA20
+	.text       start:0x829E19D8 end:0x829E1D7C
+	.text       start:0x829E1E28 end:0x829E21B4
+	.text       start:0x829E21F8 end:0x829E3DB4
+	.text       start:0x829E3E18 end:0x829E590C
+	.text       start:0x829E59F0 end:0x829E5CEC
+	.text       start:0x829E5D88 end:0x829E602C
+	.text       start:0x829E6110 end:0x829E79A4
+	.text       start:0x829E7A48 end:0x829E7B84
+	.text       start:0x829E7D20 end:0x829E8B3C
+	.text       start:0x829E8B80 end:0x829E9264
+	.text       start:0x829E9398 end:0x829EC2B8
+	.text       start:0x829EC320 end:0x829FFAF8
+
+xdk/xgraphics/litevalr500.cpp:
+	.pdata      start:0x8224D108 end:0x8224D1C8
+	.text       start:0x8295FD28 end:0x82962C78
+
+xdk/xgraphics/liveness.cpp:
+	.pdata      start:0x82250580 end:0x822505A0
+	.text       start:0x82A65F98 end:0x82A666E8
+
+xdk/xgraphics/localreg.cpp:
+	.pdata      start:0x8224D430 end:0x8224D448
+	.text       start:0x8296C9B0 end:0x8296CD04
+
+xdk/xgraphics/main.cpp:
+	.pdata      start:0x8224C908 end:0x8224C930
+	.pdata      start:0x8224C948 end:0x8224C9D8
+	.text       start:0x829448D0 end:0x82944D6C
+	.text       start:0x82944F00 end:0x82945D68
+
+xdk/xgraphics/mem.cpp:
+	.pdata      start:0x8224ED58 end:0x8224ED70
+	.text       start:0x82A0C4C8 end:0x82A0C758
+
+xdk/xgraphics/optautoz.cpp:
+	.pdata      start:0x8224D2A0 end:0x8224D2C8
+	.text       start:0x82966990 end:0x82966F9C
+
+xdk/xgraphics/peeps.cpp:
+	.pdata      start:0x8224D970 end:0x8224D9C0
+	.text       start:0x8298C2F8 end:0x829911DC
+
+xdk/xgraphics/r400_addrenum.cpp:
+	.pdata      start:0x8224FFF0 end:0x82250010
+	.text       start:0x82A55BD0 end:0x82A563C0
+
+xdk/xgraphics/r400psil.cpp:
+	.pdata      start:0x8224CBB0 end:0x8224CC18
+	.text       start:0x8294DC10 end:0x8294EEFC
+
+xdk/xgraphics/r400psilutil.cpp:
+	.pdata      start:0x8224CAC0 end:0x8224CBB0
+	.text       start:0x8294A190 end:0x8294DC10
+
+xdk/xgraphics/r400vs.cpp:
+	.pdata      start:0x8224CFF8 end:0x8224D038
+	.text       start:0x82958238 end:0x8295A300
+
+xdk/xgraphics/regopt.cpp:
+	.pdata      start:0x8224D2C8 end:0x8224D310
+	.pdata      start:0x8224D310 end:0x8224D348
+	.pdata      start:0x8224D360 end:0x8224D430
+	.text       start:0x82966FA0 end:0x82967C2C
+	.text       start:0x82967C88 end:0x82968364
+	.text       start:0x829686B8 end:0x8296C9AC
+
+xdk/xgraphics/scheduler.cpp:
+	.pdata      start:0x8224D848 end:0x8224D970
+	.text       start:0x82985A60 end:0x8298C2F4
+
+xdk/xgraphics/shadercost.cpp:
+	.pdata      start:0x8224C2D8 end:0x8224C308
+	.text       start:0x82933E08 end:0x82934FDC
+
+xdk/xgraphics/shaderpdbbuilder.cpp:
+	.pdata      start:0x8224C400 end:0x8224C428
+	.pdata      start:0x8224C430 end:0x8224C478
+	.pdata      start:0x8224C490 end:0x8224C530
+	.pdata      start:0x8224C538 end:0x8224C6F0
+	.pdata      start:0x8224C6F8 end:0x8224C708
+	.text       start:0x82938470 end:0x82938728
+	.text       start:0x829388D8 end:0x82938E8C
+	.text       start:0x82939040 end:0x8293AB64
+	.text       start:0x8293AE58 end:0x8293DFB0
+	.text       start:0x8293E090 end:0x8293E234
+
+xdk/xgraphics/ssmdebug.cpp:
+	.pdata      start:0x8224CC20 end:0x8224CC30
+	.text       start:0x8294EFF0 end:0x8294F308
+
+xdk/xgraphics/surface.cpp:
+	.pdata      start:0x8224C280 end:0x8224C2A8
+	.text       start:0x829321B0 end:0x82933154
+
+xdk/xgraphics/vector.cpp:
+	.pdata      start:0x82250018 end:0x82250068
+	.text       start:0x82A56568 end:0x82A56D60
+
+xdk/xgraphics/volume.cpp:
+	.pdata      start:0x8224C308 end:0x8224C338
+	.text       start:0x82934FE0 end:0x82935BA8
+
+xdk/xgraphics/vreginfo.cpp:
+	.pdata      start:0x82250068 end:0x822500B8
+	.pdata      start:0x822500C8 end:0x82250120
+	.pdata      start:0x82250130 end:0x82250148
+	.text       start:0x82A56D60 end:0x82A57574
+	.text       start:0x82A578A0 end:0x82A5852C
+	.text       start:0x82A585C0 end:0x82A5873C
+
+xdk/xgraphics/vregprops.cpp:
+	.pdata      start:0x822505A0 end:0x82250620
+	.text       start:0x82A666E8 end:0x82A66C68
+
+xdk/xgraphics/xenoncompress.cpp:
+	.pdata      start:0x8224C9E0 end:0x8224C9E8
+	.pdata      start:0x8224C9F0 end:0x8224CA08
+	.text       start:0x82945D78 end:0x82945F38
+	.text       start:0x829461C8 end:0x82946A34
+
+xdk/d3dx9/c30program.cpp:
+	.pdata      start:0x8224B680 end:0x8224B6C0
+	.pdata      start:0x8224B6E8 end:0x8224B710
+	.text       start:0x828E1F00 end:0x828E2BE0
+	.text       start:0x828E2FE0 end:0x828E4B48
+
+xdk/d3dx9/c30swprogram.cpp:
+	.pdata      start:0x8224AD78 end:0x8224AD98
+	.pdata      start:0x8224ADA0 end:0x8224ADB0
+	.pdata      start:0x8224ADC8 end:0x8224AEA8
+	.pdata      start:0x8224AF10 end:0x8224AF38
+	.pdata      start:0x8224AF88 end:0x8224AFC8
+	.pdata      start:0x8224B0C0 end:0x8224B160
+	.text       start:0x828C15D8 end:0x828C2054
+	.text       start:0x828C2240 end:0x828C2610
+	.text       start:0x828C2AF8 end:0x828C58E4
+	.text       start:0x828C5B90 end:0x828C5E34
+	.text       start:0x828C6230 end:0x828C7614
+	.text       start:0x828C7E58 end:0x828CB7EC
+
+xdk/d3dx9/calloc.cpp:
+	.pdata      start:0x8224A980 end:0x8224A990
+	.text       start:0x828B1C98 end:0x828B1DF4
+
+xdk/d3dx9/cargument.cpp:
+	.pdata      start:0x8224B740 end:0x8224B758
+	.text       start:0x828E5948 end:0x828E5A68
+
+xdk/d3dx9/cassembler.cpp:
+	.pdata      start:0x8224A458 end:0x8224A4A8
+	.pdata      start:0x8224A4B0 end:0x8224A528
+	.pdata      start:0x8224A538 end:0x8224A558
+	.text       start:0x8288F148 end:0x82890040
+	.text       start:0x828900A0 end:0x82892D40
+	.text       start:0x82892DD8 end:0x828950E0
+
+xdk/d3dx9/cbaseprogram.cpp:
+	.pdata      start:0x8224B758 end:0x8224B7C0
+	.text       start:0x828E5AA0 end:0x828E6558
+
+xdk/d3dx9/cblt.cpp:
+	.pdata      start:0x82249EF0 end:0x82249F30
+	.text       start:0x828785C8 end:0x82879E44
+
+xdk/d3dx9/cbuffer.cpp:
+	.pdata      start:0x82249E10 end:0x82249E38
+	.text       start:0x82876998 end:0x82876C3C
+
+xdk/d3dx9/ccodec.cpp:
+	.pdata      start:0x82249F80 end:0x82249FA0
+	.pdata      start:0x8224A070 end:0x8224A098
+	.pdata      start:0x8224A0D0 end:0x8224A0E8
+	.pdata      start:0x8224A140 end:0x8224A160
+	.pdata      start:0x8224A178 end:0x8224A1A0
+	.pdata      start:0x8224A1A8 end:0x8224A1D8
+	.pdata      start:0x8224A1E0 end:0x8224A208
+	.pdata      start:0x8224A210 end:0x8224A228
+	.text       start:0x8287C440 end:0x8287C93C
+	.text       start:0x82882710 end:0x82882D94
+	.text       start:0x828838F8 end:0x82883C64
+	.text       start:0x82884800 end:0x82884D5C
+	.text       start:0x82885158 end:0x828854FC
+	.text       start:0x82885590 end:0x828860BC
+	.text       start:0x82886170 end:0x82886DB4
+	.text       start:0x82886E08 end:0x82887930
+
+xdk/d3dx9/ccommentblock.cpp:
+	.pdata      start:0x8224AB80 end:0x8224AB98
+	.text       start:0x828B6D80 end:0x828B7120
+
+xdk/d3dx9/ccompiler.cpp:
+	.pdata      start:0x8224A568 end:0x8224A5C8
+	.pdata      start:0x8224A5D8 end:0x8224A710
+	.text       start:0x82895160 end:0x82896FF4
+	.text       start:0x828970B8 end:0x828AAB10
+
+xdk/d3dx9/cconstanttable.cpp:
+	.pdata      start:0x8224A710 end:0x8224A738
+	.pdata      start:0x8224A738 end:0x8224A760
+	.pdata      start:0x8224A7E0 end:0x8224A858
+	.pdata      start:0x8224A870 end:0x8224A888
+	.pdata      start:0x8224A8C8 end:0x8224A918
+	.text       start:0x828AAB10 end:0x828AAFA0
+	.text       start:0x828AAFB8 end:0x828AB364
+	.text       start:0x828AB928 end:0x828AE3AC
+	.text       start:0x828AE4F0 end:0x828AE61C
+	.text       start:0x828AE908 end:0x828AFA0C
+
+xdk/d3dx9/cfile.cpp:
+	.pdata      start:0x82249E98 end:0x82249EA8
+	.text       start:0x82877C20 end:0x82877DAC
+
+xdk/d3dx9/cfxlprogram.cpp:
+	.pdata      start:0x8224C110 end:0x8224C138
+	.pdata      start:0x8224C140 end:0x8224C158
+	.text       start:0x8292B5A0 end:0x8292B880
+	.text       start:0x8292B8E0 end:0x8292CB68
+
+xdk/d3dx9/cinstruction.cpp:
+	.pdata      start:0x8224B710 end:0x8224B740
+	.text       start:0x828E4B48 end:0x828E57C8
+
+xdk/d3dx9/clock.cpp:
+	.pdata      start:0x82249F58 end:0x82249F80
+	.text       start:0x8287B2A0 end:0x8287BD90
+
+xdk/d3dx9/cnode.cpp:
+	.pdata      start:0x8224A990 end:0x8224A9A8
+	.pdata      start:0x8224A9A8 end:0x8224A9C8
+	.pdata      start:0x8224A9D8 end:0x8224AA10
+	.pdata      start:0x8224AA18 end:0x8224AAA8
+	.pdata      start:0x8224AAE8 end:0x8224AB00
+	.text       start:0x828B1DF8 end:0x828B1ED8
+	.text       start:0x828B1F20 end:0x828B235C
+	.text       start:0x828B25D8 end:0x828B2EC4
+	.text       start:0x828B2FF8 end:0x828B4B8C
+	.text       start:0x828B5668 end:0x828B59D4
+
+xdk/d3dx9/cnodeasm.cpp:
+	.pdata      start:0x8224AB68 end:0x8224AB80
+	.text       start:0x828B6BE8 end:0x828B6D7C
+
+xdk/d3dx9/cparse.cpp:
+	.pdata      start:0x8224BA98 end:0x8224BB08
+	.pdata      start:0x8224BB10 end:0x8224BBB8
+	.pdata      start:0x8224BBC8 end:0x8224BBE0
+	.pdata      start:0x8224BBE8 end:0x8224BC00
+	.pdata      start:0x8224BC08 end:0x8224BCF8
+	.pdata      start:0x8224BD00 end:0x8224BD38
+	.text       start:0x82900B08 end:0x829022B0
+	.text       start:0x829024C0 end:0x82904F28
+	.text       start:0x82904FC0 end:0x82905D64
+	.text       start:0x82905F58 end:0x82906978
+	.text       start:0x82906B30 end:0x8290BB00
+	.text       start:0x8290E1D0 end:0x829107C8
+
+xdk/d3dx9/cpreprocessor.cpp:
+	.pdata      start:0x8224A240 end:0x8224A280
+	.pdata      start:0x8224A288 end:0x8224A2A8
+	.pdata      start:0x8224A2B8 end:0x8224A2D0
+	.pdata      start:0x8224A2E8 end:0x8224A300
+	.pdata      start:0x8224A308 end:0x8224A340
+	.text       start:0x82887F18 end:0x82888B74
+	.text       start:0x82888E20 end:0x82889158
+	.text       start:0x82889238 end:0x828893AC
+	.text       start:0x82889CD0 end:0x82889EB8
+	.text       start:0x82889FB8 end:0x8288AB34
+
+xdk/d3dx9/cprogram.cpp:
+	.pdata      start:0x8224B7C8 end:0x8224B940
+	.pdata      start:0x8224B950 end:0x8224BA98
+	.text       start:0x828E6B28 end:0x828EF234
+	.text       start:0x828EF2D0 end:0x82900B04
+
+xdk/d3dx9/cpslegacyprogram.cpp:
+	.pdata      start:0x8224BE10 end:0x8224BFE0
+	.pdata      start:0x8224BFE0 end:0x8224C070
+	.text       start:0x82918338 end:0x82923114
+	.text       start:0x829231E0 end:0x82927C60
+
+xdk/d3dx9/cpsprogram.cpp:
+	.pdata      start:0x8224BD58 end:0x8224BDA8
+	.pdata      start:0x8224BDB0 end:0x8224BDE8
+	.pdata      start:0x8224BDF0 end:0x8224BE10
+	.text       start:0x82914480 end:0x8291590C
+	.text       start:0x82915A30 end:0x8291742C
+	.text       start:0x82917490 end:0x82918334
+
+xdk/d3dx9/cshaderprogram.cpp:
+	.pdata      start:0x8224B288 end:0x8224B4E0
+	.pdata      start:0x8224B4E8 end:0x8224B548
+	.pdata      start:0x8224B550 end:0x8224B680
+	.text       start:0x828CC378 end:0x828DA8D4
+	.text       start:0x828DA928 end:0x828DD4D0
+	.text       start:0x828DD700 end:0x828E1EFC
+
+xdk/d3dx9/ctokenize.cpp:
+	.pdata      start:0x8224A3C0 end:0x8224A3E0
+	.pdata      start:0x8224A418 end:0x8224A438
+	.text       start:0x8288D798 end:0x8288DAE0
+	.text       start:0x8288E4B8 end:0x8288E9D4
+
+xdk/d3dx9/ctransform.cpp:
+	.pdata      start:0x8224C1C8 end:0x8224C1F0
+	.text       start:0x8292E1E8 end:0x8292F454
+
+xdk/d3dx9/cuassembler.cpp:
+	.pdata      start:0x8224AB98 end:0x8224ABE0
+	.pdata      start:0x8224ABE0 end:0x8224AC00
+	.pdata      start:0x8224AC28 end:0x8224AC48
+	.pdata      start:0x8224AC60 end:0x8224ACD8
+	.pdata      start:0x8224ACE8 end:0x8224AD78
+	.text       start:0x828B7138 end:0x828B7E08
+	.text       start:0x828B7ED0 end:0x828B8688
+	.text       start:0x828B8EA8 end:0x828B951C
+	.text       start:0x828B9620 end:0x828BD834
+	.text       start:0x828BDF80 end:0x828C15D8
+
+xdk/d3dx9/cvsprogram.cpp:
+	.pdata      start:0x8224C070 end:0x8224C0A8
+	.pdata      start:0x8224C0B0 end:0x8224C0D0
+	.pdata      start:0x8224C0D8 end:0x8224C0F0
+	.text       start:0x82927C60 end:0x82928EE8
+	.text       start:0x82928F50 end:0x82929B20
+	.text       start:0x82929B80 end:0x8292AA70
+
+xdk/d3dx9/d3dx9fragment.cpp:
+	.pdata      start:0x8224AB38 end:0x8224AB50
+	.text       start:0x828B6280 end:0x828B6998
+
+xdk/d3dx9/d3dx9shader.cpp:
+	.pdata      start:0x82249E40 end:0x82249E60
+	.pdata      start:0x82249E68 end:0x82249E88
+	.text       start:0x82876C88 end:0x828772B4
+	.text       start:0x82877780 end:0x82877ACC
+
+xdk/d3dx9/d3dx9tex.cpp:
+	.pdata      start:0x82249DE8 end:0x82249E10
+	.text       start:0x82875460 end:0x82876994
+
+xdk/d3dx9/d3dxmath.cpp:
+	.text       start:0x82887A78 end:0x82887BD4
+
+xdk/d3dx9/dxtn.cpp:
+	.pdata      start:0x8224A920 end:0x8224A948
+	.pdata      start:0x8224A950 end:0x8224A968
+	.text       start:0x828AFDC8 end:0x828B1234
+	.text       start:0x828B1380 end:0x828B1B24
+
+xdk/d3dx9/effecthll.cpp:
+	.pdata      start:0x8224C1F0 end:0x8224C210
+	.text       start:0x8292F458 end:0x8292F97C
+
+xdk/d3dx9/threadlocaldata.cpp:
+	.pdata      start:0x8224AB18 end:0x8224AB28
+	.text       start:0x828B5CC0 end:0x828B5F64
+
+xdk/d3dx9/trees.cpp:
+	.pdata      start:0x8224C220 end:0x8224C238
+	.text       start:0x8292FE70 end:0x829308E8
