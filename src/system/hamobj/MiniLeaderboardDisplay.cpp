@@ -21,7 +21,7 @@ BEGIN_PROPSYNCS(MiniLeaderboardDisplay)
 END_PROPSYNCS
 
 BEGIN_SAVES(MiniLeaderboardDisplay)
-    SAVE_REVS(0, 0)
+    SAVE_REVS(1, 0)
     bs << mAllowSoloScores;
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
@@ -38,11 +38,11 @@ BEGIN_LOADS(MiniLeaderboardDisplay)
     PostLoad(bs);
 END_LOADS
 
-INIT_REVS(0, 0)
+INIT_REVS(1, 0)
 
 void MiniLeaderboardDisplay::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
-    ASSERT_REVS(0, 0)
+    ASSERT_REVS(1, 0)
     bs >> mAllowSoloScores;
     UIComponent::PreLoad(bs);
 }

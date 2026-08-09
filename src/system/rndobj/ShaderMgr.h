@@ -144,7 +144,15 @@ public:
     friend class RndSoftParticleBuffer;
 
 protected:
-    virtual void LoadShaders(const char *);
+    // NOT virtual in RB3 retail. Verified on retail bytes: ??_7RndShaderMgr@@6B@
+    // (band.exe file off 0x6c054) is 25 slots and contains no entry for
+    // LoadShaders -- 0x58 is LoadShaderFile and 0x5c is _purecall
+    // (NewShaderProgram). The 14 consecutive _purecall slots at 0x18..0x4c
+    // (= the 7 SetVConstant + 7 SetPConstant pure virtuals) pin the alignment.
+    // Its address 0x8246b800 occurs exactly once in the whole image, in .pdata.
+    // DC3 (newer engine) made it virtual; that drift shifted LoadShaderFile to
+    // 0x5c and broke the virtual dispatch in RndShaderMgr::LoadShaders.
+    void LoadShaders(const char *);
     virtual void LoadShaderFile(FileStream &);
     virtual RndShaderProgram *NewShaderProgram() = 0;
 
