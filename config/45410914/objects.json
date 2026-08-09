@@ -2209,6 +2209,9 @@
         "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
+            "xdk/xgraphics/instr.cpp": "NonMatching",
+            "xdk/xgraphics/predication.cpp": "NonMatching",
+            "xdk/xgraphics/vectorize.cpp": "NonMatching",
             "xdk/xgraphics/optimize.cpp": "NonMatching",
             "xdk/xgraphics/xenosem.cpp": "NonMatching",
             "xdk/xgraphics/buildssa.cpp": "NonMatching",
@@ -2256,6 +2259,24 @@
             "xdk/xgraphics/ucode/compiler/opt/interference.cpp": "NonMatching",
             "xdk/xgraphics/ucode/compiler/opt/schedmodel.cpp": "NonMatching",
             "xdk/xgraphics/ucode/compiler/il/ilformatdecode.cpp": "NonMatching"
+        }
+    },
+    "xdk_vendor": {
+        "progress_category": "sdk",
+        "mw_version": "X360/16.00.10224.00",
+        "cflags": "base",
+        "objects": {
+            "xdk/xhv2/codec.cpp": "NonMatching",
+            "xdk/xhv2/engine.cpp": "NonMatching",
+            "xdk/xhv2/jitter.cpp": "NonMatching",
+            "xdk/xhv2/localtalker.cpp": "NonMatching",
+            "xdk/xhv2/loopback.cpp": "NonMatching",
+            "xdk/xhv2/micproxy.cpp": "NonMatching",
+            "xdk/xhv2/packets.cpp": "NonMatching",
+            "xdk/xhv2/procmode.cpp": "NonMatching",
+            "xdk/xhv2/remotetalker.cpp": "NonMatching",
+            "xdk/xhv2/voicechat.cpp": "NonMatching",
+            "xdk/xhv2/xhv.cpp": "NonMatching"
         }
     }
 }
