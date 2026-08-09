@@ -801,6 +801,19 @@ SongUpgradeData *BandSongMgr::GetUpgradeData(int i) const {
 bool BandSongMgr::HasLicense(Symbol s) const { return mLicenseMgr->HasLicense(s); }
 
 void BandSongMgr::AddSongIDMapping(int i, Symbol s) {
+    // Retail compiled these two duplicate-detection probes OUT. Proven from
+    // retail bytes for ?AddSongIDMapping@BandSongMgr@@ (lane MATCH-F): the
+    // target is 72 B / 30 instructions and performs ONLY the two operator[]
+    // insertions below -- it contains ZERO calls to hash_map::_M_find, while
+    // ours inserts exactly two (`_M_find@H@...` and `_M_find@VSymbol@@...`),
+    // i.e. the `.find()` in each `if` condition. Each `if` body is nothing but
+    // a MILO_WARN, so the whole probe is diagnostics-only and the conditions
+    // must be guarded along with the warning: the non-HX_NATIVE MILO_WARN is
+    // `MiloStripEval(__VA_ARGS__)`, which strips the OUTPUT but still
+    // EVALUATES its arguments. House per-site guard, not a blanket removal --
+    // the measured whole-binary control for blanket-stripping MILO_DEBUG is
+    // -21. See docs/decomp/patterns/milo-debug-force-define.md.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     std::hash_map<int, Symbol>::const_iterator nameIt = mSongNameLookup.find(i);
     if (nameIt != mSongNameLookup.end() && i != 0 && nameIt->second != s) {
         Symbol val = nameIt->second;
@@ -812,6 +825,7 @@ void BandSongMgr::AddSongIDMapping(int i, Symbol s) {
             "SongID %d and SongID %d have duplicate short name %s!", i, idIt->second, s
         );
     }
+#endif
     mSongNameLookup[i] = s;
     mSongIDLookup[s] = i;
 }
