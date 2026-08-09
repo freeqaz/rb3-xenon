@@ -186,6 +186,18 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 - [../CLAUDE.md](../CLAUDE.md) — project framing, build tracks, decomp priority, worktree/git
   rules, toolchain wiring. Authoritative current state.
+- ★★★ [decomp/PIN_WAVES_AND_DENOMINATOR_2026-08-09.md](decomp/PIN_WAVES_AND_DENOMINATOR_2026-08-09.md) —
+  **`total_code` was INFLATED and pinning corrects it.** dtk bills an unbounded
+  symbol in an unpinned region out to the next boundary — **one 204-byte function
+  was billed 210,136 B, ~2% of the binary, in a single row.** Waves 1–2 pinned
+  1,710,652 B / 199 units with matching keys at exactly Δ0, and `total_code` fell
+  325,804 B ⇒ code% 40.77 → **42.06 as a CORRECTION, not progress**. ⇒ **every
+  historical code% over an unpinned-heavy tree was UNDERSTATED.** Includes the
+  byte-for-byte-identical control proving pins are otherwise denominator-neutral,
+  and three measured vacuous instruments — ⛔ **`lbl_` symbol NAMES LIE about
+  their own address** (2 independent instances), `fn_<addr>` names are rewritten
+  by the renamer, and auto-unit names are unstable across splits (a name-keyed
+  diff read "937 new units" when the truth was 31).
 - ★ [decomp/RULER_CHANGE_2026-08-02.md](decomp/RULER_CHANGE_2026-08-02.md) — **the
   authoritative record of the `masked_equal_functions` disclosure flip** (honest
   42,358 → 20,814, no score key moved). **Read this before quoting or comparing any
