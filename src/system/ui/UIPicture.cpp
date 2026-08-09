@@ -177,7 +177,13 @@ void UIPicture::UpdateTexture(FilePath const &p) {
     CancelLoading();
     if (mTexFile != "") {
         if (!strstr(mTexFile.c_str(), "_keep"))
-            MILO_NOTIFY("%s will not be included on a disc build", p);
+            // MILO_WARN, not MILO_NOTIFY: retail materialises a by-value copy of
+            // `p` here (String copy ctor + vptr reset + String dtor on a stack
+            // temp) with the format literal DCE'd. NOTIFY's comma form yields
+            // `p` as an lvalue and copies nothing; WARN's MiloStripEval takes
+            // its params BY VALUE, which is what forces the temp. Matches the
+            // rb3-Wii oracle verbatim.
+            MILO_WARN("%s will not be included on a disc build", p);
         mLoader = dynamic_cast<FileLoader *>(TheLoadMgr.AddLoader(mTexFile, kLoadFront));
         MILO_ASSERT(mLoader, 0xda);
     }
