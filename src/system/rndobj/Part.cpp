@@ -953,25 +953,34 @@ void RndParticleSys::SetPersistentPool(int max, Type ty) {
     mMaxParticles = max;
     mType = ty;
 
-    // Allocate particle pool based on type
+    // Allocate particle pool based on type.
+    // NOTE: the terminating null goes on the LAST element, via a trailing
+    // pointer -- NOT through the walking pointer, which is one-past-the-end
+    // after the loop. Retail keeps &last->next live in r11 and stores through
+    // it at .L_824475BC; writing through the walking pointer instead would
+    // scribble 0x5c bytes past the end of the allocation.
     if (max != 0) {
+        RndParticle *last = nullptr;
         if (ty == kFancy) {
             mPersistentParticles = new RndFancyParticle[max];
             RndFancyParticle *fp = (RndFancyParticle *)mPersistentParticles;
             // Build linked list: each particle points to the next
             for (int i = 0; i != max; i++) {
-                (fp++)->next = fp;
+                last = fp;
+                fp++;
+                last->next = fp;
             }
-            fp->next = nullptr;
         } else {
             mPersistentParticles = new RndParticle[max];
             RndParticle *p = (RndParticle *)mPersistentParticles;
             // Build linked list: each particle points to the next
             for (int i = 0; i != max; i++) {
-                (p++)->next = p;
+                last = p;
+                p++;
+                last->next = p;
             }
-            p->next = nullptr;
         }
+        last->next = nullptr;
     } else {
         mPersistentParticles = nullptr;
     }
