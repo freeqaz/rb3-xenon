@@ -8036,7 +8036,7 @@
  "0x8246b670": "?SetShaderErrorDisplay@RndShaderMgr@@QAAX_N@Z",
  "0x8246b678": "?GetShaderErrorDisplay@RndShaderMgr@@QAA_NXZ",
  "0x8246b770": "??0Matrix4@Hmx@@QAA@ABVTransform@@@Z",
- "0x8246b800": "?LoadShaders@RndShaderMgr@@MAAXPBD@Z",
+ "0x8246b800": "?LoadShaders@RndShaderMgr@@IAAXPBD@Z",
  "0x8246b940": "?SetTransform@RndShaderMgr@@QAAXABVTransform@@@Z",
  "0x8246b9a0": "?insert@?$list@UBreakpoint@RndConsole@@V?$StlNodeAlloc@UBreakpoint@RndConsole@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UBreakpoint@RndConsole@@U?$_Nonconst_traits@UBreakpoint@RndConsole@@@stlpmtx_std@@@2@U32@ABUBreakpoint@RndConsole@@@Z",
  "0x8246baa0": "?Init@RndShaderMgr@@UAAXXZ",
