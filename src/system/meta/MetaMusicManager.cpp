@@ -8,7 +8,7 @@ BEGIN_HANDLERS(MetaMusicManager)
 END_HANDLERS
 
 void MetaMusicManager::Cleanup() {
-    for (std::map<Symbol, MetaMusicScene *>::iterator it = m_mapScenes.begin();
+    for (std::hash_map<Symbol, MetaMusicScene *>::iterator it = m_mapScenes.begin();
          it != m_mapScenes.end();
          it++) {
         delete it->second;
@@ -79,7 +79,7 @@ bool MetaMusicManager::IsScreenInSceneMap(Symbol sym) const {
 }
 
 MetaMusicScene *MetaMusicManager::GetScene(Symbol s) const {
-    std::map<Symbol, MetaMusicScene *>::const_iterator it = m_mapScenes.find(s);
+    std::hash_map<Symbol, MetaMusicScene *>::const_iterator it = m_mapScenes.find(s);
     if (it != m_mapScenes.end())
         return it->second;
     return 0;
