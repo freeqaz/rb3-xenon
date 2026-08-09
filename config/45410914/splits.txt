@@ -13365,7 +13365,15 @@ system/hamobj/PhotoSpotlightPositioner.cpp:
 	.text       start:0x8227B408 end:0x8227B4A8
 
 xdk/xgraphics/optimize.cpp:
+	.pdata      start:0x8224DD90 end:0x8224DDC0
+	.pdata      start:0x8224DDC8 end:0x8224E0A8
+	.pdata      start:0x8224E0B0 end:0x8224E0E0
+	.pdata      start:0x8224E0E0 end:0x8224E208
 	.pdata      start:0x8224E208 end:0x8224E298
+	.text       start:0x829B2EC8 end:0x829B338C
+	.text       start:0x829B3418 end:0x829BCFB8
+	.text       start:0x829BD058 end:0x829BF7FC
+	.text       start:0x829BF848 end:0x829C6C50
 	.text       start:0x829C6C50 end:0x829DCE00
 
 xdk/xgraphics/xenosem.cpp:
@@ -13374,14 +13382,22 @@ xdk/xgraphics/xenosem.cpp:
 
 xdk/xgraphics/buildssa.cpp:
 	.pdata      start:0x8224E2C8 end:0x8224E2D0
+	.pdata      start:0x8224E2D0 end:0x8224E308
 	.text       start:0x829DE450 end:0x829DE538
+	.text       start:0x829DE538 end:0x829DFFEC
 
 xdk/xgraphics/ucode/driver/r500assembler.cpp:
 	.pdata      start:0x8224C720 end:0x8224C7A8
+	.pdata      start:0x8224C7A8 end:0x8224C7F0
+	.pdata      start:0x8224C7F8 end:0x8224C8D8
 	.text       start:0x8293E470 end:0x8293F864
+	.text       start:0x8293F868 end:0x829404BC
+	.text       start:0x82940538 end:0x82943DF0
 
 xdk/xgraphics/ucode/compiler/asm/disasm.cpp:
+	.pdata      start:0x8224CC40 end:0x8224CC98
 	.pdata      start:0x8224CC98 end:0x8224CCA0
+	.text       start:0x8294F3C0 end:0x82951304
 	.text       start:0x82951308 end:0x82951510
 
 xdk/xgraphics/ucode/ssm/interface/ssmcallbacks.cpp:
@@ -13402,6 +13418,7 @@ xdk/xgraphics/ucode/ssm/statecompiler/internalconstallocator.cpp:
 
 xdk/xgraphics/ucode/ssm/interface/ssmdevice.cpp:
 	.pdata      start:0x8224CF30 end:0x8224CF58
+	.text       start:0x82956030 end:0x8295608C
 	.text       start:0x82956090 end:0x82956A38
 
 xdk/xgraphics/ucode/ssm/interface/ssmobject.cpp:
@@ -13418,7 +13435,9 @@ xdk/xgraphics/ucode/ssm/statecompiler/ssmstatecompiler.cpp:
 
 xdk/xgraphics/ucode/ssm/statecache/statepreprocessor.cpp:
 	.pdata      start:0x8224ECA8 end:0x8224ECB0
+	.pdata      start:0x8224ECB0 end:0x8224ECD8
 	.text       start:0x82A0A870 end:0x82A0A984
+	.text       start:0x82A0A988 end:0x82A0AD00
 
 xdk/xgraphics/ucode/ssm/interface/ssmregistry.cpp:
 	.pdata      start:0x8224ECD8 end:0x8224ECF0
@@ -13497,23 +13516,35 @@ xdk/xgraphics/ucode/compiler/ir/cfg.cpp:
 	.text       start:0x82A38898 end:0x82A3F690
 
 xdk/xgraphics/ucode/compiler/il/ilinstiterator.cpp:
+	.pdata      start:0x8224FAF0 end:0x8224FB08
 	.pdata      start:0x8224FB08 end:0x8224FB20
+	.text       start:0x82A3F8F8 end:0x82A3FE4C
 	.text       start:0x82A3FE50 end:0x82A41040
 
 xdk/xgraphics/ucode/compiler/asm/asm.cpp:
+	.pdata      start:0x8224FB20 end:0x8224FB48
 	.pdata      start:0x8224FB48 end:0x8224FCF0
+	.text       start:0x82A41040 end:0x82A41470
 	.text       start:0x82A41470 end:0x82A47340
 
 xdk/xgraphics/ucode/compiler/ir/vregtable.cpp:
+	.pdata      start:0x8224FCF8 end:0x8224FD08
+	.pdata      start:0x8224FD08 end:0x8224FD18
 	.pdata      start:0x8224FD18 end:0x8224FD60
+	.text       start:0x82A47900 end:0x82A47A54
+	.text       start:0x82A47A98 end:0x82A47C18
 	.text       start:0x82A47C18 end:0x82A48880
 
 xdk/xgraphics/ucode/compiler/opt/globalregs.cpp:
+	.pdata      start:0x8224FD78 end:0x8224FD88
 	.pdata      start:0x8224FD88 end:0x8224FD98
+	.text       start:0x82A4A1D8 end:0x82A4A3F0
 	.text       start:0x82A4A3F0 end:0x82A4A500
 
 xdk/xgraphics/ucode/compiler/ir/ssa.cpp:
+	.pdata      start:0x8224FDA8 end:0x8224FDB0
 	.pdata      start:0x8224FDB0 end:0x8224FE08
+	.text       start:0x82A4B238 end:0x82A4B3B0
 	.text       start:0x82A4B3B0 end:0x82A4D458
 
 xdk/xgraphics/ucode/compiler/opt/sched.cpp:
@@ -13522,6 +13553,7 @@ xdk/xgraphics/ucode/compiler/opt/sched.cpp:
 
 xdk/xgraphics/ucode/compiler/opt/opt.cpp:
 	.pdata      start:0x8224FF48 end:0x8224FF80
+	.text       start:0x82A524F8 end:0x82A526AC
 	.text       start:0x82A52A10 end:0x82A541C0
 
 xdk/xgraphics/ucode/compiler/ir/linkageinfo.cpp:
@@ -13529,12 +13561,28 @@ xdk/xgraphics/ucode/compiler/ir/linkageinfo.cpp:
 	.text       start:0x82A544B0 end:0x82A55798
 
 xdk/xgraphics/ucode/compiler/ir/irinst.cpp:
+	.pdata      start:0x82250160 end:0x82250188
 	.pdata      start:0x82250188 end:0x822501F8
+	.pdata      start:0x822501F8 end:0x82250250
+	.pdata      start:0x82250258 end:0x822502A0
+	.pdata      start:0x822502A0 end:0x82250318
+	.pdata      start:0x82250320 end:0x82250340
+	.pdata      start:0x82250350 end:0x822503B0
+	.text       start:0x82A58918 end:0x82A58BE0
 	.text       start:0x82A58BE0 end:0x82A59B38
+	.text       start:0x82A59B38 end:0x82A59F94
+	.text       start:0x82A59FF8 end:0x82A5A38C
+	.text       start:0x82A5A3E0 end:0x82A5AAD8
+	.text       start:0x82A5AB48 end:0x82A5ACA8
+	.text       start:0x82A5AD48 end:0x82A5B220
 
 xdk/xgraphics/ucode/compiler/ir/block.cpp:
 	.pdata      start:0x82250400 end:0x82250458
+	.pdata      start:0x82250458 end:0x82250480
+	.pdata      start:0x822504A0 end:0x822504C0
 	.text       start:0x82A5BC28 end:0x82A5C5C0
+	.text       start:0x82A5C5C0 end:0x82A5C864
+	.text       start:0x82A5CA68 end:0x82A5CD74
 
 xdk/xgraphics/ucode/compiler/ir/expansion.cpp:
 	.pdata      start:0x822504C8 end:0x82250580
@@ -13542,14 +13590,19 @@ xdk/xgraphics/ucode/compiler/ir/expansion.cpp:
 
 xdk/xgraphics/ucode/compiler/opt/interference.cpp:
 	.pdata      start:0x82250620 end:0x82250630
+	.pdata      start:0x82250630 end:0x822506A8
 	.text       start:0x82A66CD8 end:0x82A66DF4
+	.text       start:0x82A66DF8 end:0x82A6804C
 
 xdk/xgraphics/ucode/compiler/opt/schedmodel.cpp:
 	.pdata      start:0x82250700 end:0x82250720
+	.pdata      start:0x82250720 end:0x82250728
 	.text       start:0x82A690F0 end:0x82A696D0
+	.text       start:0x82A696D0 end:0x82A699E8
 
 xdk/xgraphics/ucode/compiler/il/ilformatdecode.cpp:
 	.pdata      start:0x82250728 end:0x82250730
+	.text       start:0x82A69A58 end:0x82A69B70
 	.text       start:0x82A69B70 end:0x82A69C38
 
 network/quazal/Session.cpp:
@@ -13955,3 +14008,67 @@ network/quazal/Authentication/Client/JobTicketManagerLogin.cpp:
 network/quazal/Authentication/Client/JobTicketManagerAcquireTicket.cpp:
 	.pdata      start:0x8225A450 end:0x8225A458
 	.text       start:0x82B53BA0 end:0x82B53D74
+
+xdk/xhv2/codec.cpp:
+	.pdata      start:0x82260620 end:0x82260640
+	.text       start:0x82C176B0 end:0x82C17ABC
+
+xdk/xhv2/engine.cpp:
+	.pdata      start:0x822606A0 end:0x822606B0
+	.pdata      start:0x82260728 end:0x82260740
+	.text       start:0x82C18B98 end:0x82C18DEC
+	.text       start:0x82C19D28 end:0x82C19F4C
+
+xdk/xhv2/jitter.cpp:
+	.pdata      start:0x82260668 end:0x822606A0
+	.text       start:0x82C17E98 end:0x82C18B78
+
+xdk/xhv2/localtalker.cpp:
+	.pdata      start:0x82260798 end:0x822607F8
+	.text       start:0x82C1AA48 end:0x82C1B8FC
+
+xdk/xhv2/loopback.cpp:
+	.pdata      start:0x82260570 end:0x822605A8
+	.text       start:0x82C16538 end:0x82C16A9C
+
+xdk/xhv2/micproxy.cpp:
+	.pdata      start:0x822608C0 end:0x82260908
+	.text       start:0x82C1E9A8 end:0x82C1F6C4
+
+xdk/xhv2/packets.cpp:
+	.pdata      start:0x82260640 end:0x82260668
+	.text       start:0x82C17AC0 end:0x82C17E94
+
+xdk/xhv2/procmode.cpp:
+	.pdata      start:0x822605D0 end:0x822605D8
+	.text       start:0x82C16EF8 end:0x82C16FD4
+
+xdk/xhv2/remotetalker.cpp:
+	.pdata      start:0x822607F8 end:0x82260808
+	.pdata      start:0x82260818 end:0x82260868
+	.text       start:0x82C1B900 end:0x82C1BAE4
+	.text       start:0x82C1C0C0 end:0x82C1CA18
+
+xdk/xhv2/voicechat.cpp:
+	.pdata      start:0x82260500 end:0x82260558
+	.text       start:0x82C15708 end:0x82C16330
+
+xdk/xhv2/xhv.cpp:
+	.pdata      start:0x82260558 end:0x82260570
+	.text       start:0x82C16358 end:0x82C16534
+
+xdk/xgraphics/instr.cpp:
+	.pdata      start:0x8224F258 end:0x8224F5C8
+	.text       start:0x82A216A8 end:0x82A30578
+
+xdk/xgraphics/predication.cpp:
+	.pdata      start:0x8224D458 end:0x8224D640
+	.text       start:0x8296DC90 end:0x829799CC
+
+xdk/xgraphics/vectorize.cpp:
+	.pdata      start:0x8224D9C0 end:0x8224DA10
+	.pdata      start:0x8224DA10 end:0x8224DB40
+	.pdata      start:0x8224DB40 end:0x8224DCF0
+	.text       start:0x829911E0 end:0x82991B40
+	.text       start:0x82991BC8 end:0x82994F98
+	.text       start:0x82995058 end:0x829AC468
