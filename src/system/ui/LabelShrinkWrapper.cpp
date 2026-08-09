@@ -55,7 +55,7 @@ void LabelShrinkWrapper::SetTypeDef(DataArray *d) {
     Update();
 }
 
-INIT_REVS(2, 0)
+INIT_REVS(0, 0)
 
 void LabelShrinkWrapper::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)

@@ -38,7 +38,7 @@ BEGIN_LOADS(MiniLeaderboardDisplay)
     PostLoad(bs);
 END_LOADS
 
-INIT_REVS(0, 0)
+INIT_REVS(1, 0)
 
 void MiniLeaderboardDisplay::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
