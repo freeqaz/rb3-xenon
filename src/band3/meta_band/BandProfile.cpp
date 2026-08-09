@@ -49,7 +49,7 @@
 #include "utl/Symbols2.h"
 
 BandProfile::BandProfile(int i)
-    : Profile(i), unk18(0), mAccomplishmentProgress(this), unk740(0),
+    : Profile(i), mAccomplishmentProgress(this), unk740(0),
       mAccomplishmentDataUploadContextID(-1), unk74c(-1), unk750(-1),
       mPerformanceDataUploadContextID(-1), unk6f70(0), unk6f74(0), mProfileAssets(this),
       unk6fb4(0), unk6fb8(0) {
@@ -628,14 +628,14 @@ bool BandProfile::IsLessonComplete(const Symbol &symbol, float speed) const {
 
 float BandProfile::GetLessonCompleteSpeed(const Symbol &sym) const {
     float ret = 0;
-    std::map<Symbol, float>::const_iterator it = mLessonCompletions.find(sym);
+    std::hash_map<Symbol, float>::const_iterator it = mLessonCompletions.find(sym);
     if (it != mLessonCompletions.end())
         ret = it->second;
     return ret;
 }
 
 void BandProfile::SetLessonComplete(const Symbol &s, float f2) {
-    std::map<Symbol, float>::iterator it = mLessonCompletions.find(s);
+    std::hash_map<Symbol, float>::iterator it = mLessonCompletions.find(s);
     if (it == mLessonCompletions.end() || it->second < f2) {
         mLessonCompletions[s] = f2;
         CheckForFinishedTrainerAccomplishments();
@@ -1019,4 +1019,8 @@ RndTex *BandProfile::GetPictureTex() { return nullptr; }
 #else
 RndTex *BandProfile::GetPictureTex() { return mProfilePicture->mUserPicture; }
 #endif
-void BandProfile::AutoFakeFill(int n) { unk18 = n; }
+// The unk18 field was deleted along with the map->hash_map layout fix:
+// it was WRITE-ONLY (initialised in the ctor, assigned here, read
+// nowhere in the tree) and existed only to pad the gap the smaller
+// std::map left ahead of mScores. Dropping it is behaviour-preserving.
+void BandProfile::AutoFakeFill(int) {}
