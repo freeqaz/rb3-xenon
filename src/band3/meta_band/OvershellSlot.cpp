@@ -1967,10 +1967,7 @@ void OvershellSlot::ShowEnterFlowPrompt(OvershellSlotStateID id) {
         MILO_FAIL("slot state %i is not an Enter Flow Prompt\n", id);
         break;
     }
-    if (mSessionMgr->IsLocal()) {
-        outputID = id;
-    }
-    ShowState(outputID);
+    ShowState(mSessionMgr->IsLocal() ? id : outputID);
 }
 
 DataNode OvershellSlot::OnMsg(const UserLoginMsg &msg) {
