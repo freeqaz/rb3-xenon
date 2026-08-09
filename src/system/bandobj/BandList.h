@@ -96,7 +96,9 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandList); }
     NEW_OBJ(BandList);
-    DECLARE_REVS;
+    // DECLARE_REVS removed: gRev/gAltRev are file-scope statics in BandList.cpp
+    // so retail's single-base addressing reproduces. Re-adding it here would
+    // silently make that inert (class scope beats namespace scope in PreLoad).
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 

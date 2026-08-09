@@ -153,8 +153,12 @@ public:
     NEW_OBJ(OutfitConfig);
     static void Terminate();
 
-    static unsigned short gRev;
-    static unsigned short gAltRev;
+    // gRev / gAltRev are NOT class statics: retail addresses the pair off ONE
+    // base register, which requires internal-linkage file-scope storage. They
+    // live at the top of OutfitConfig.cpp -- see the comment there for the
+    // retail-byte evidence. Re-adding them here would silently make that fix
+    // inert (class scope is searched before namespace scope inside a member
+    // function, so OutfitConfig::Load would rebind to the class static).
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 

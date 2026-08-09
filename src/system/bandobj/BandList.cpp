@@ -12,7 +12,14 @@
 #include "math/Utl.h"
 #include "utl/BinStream.h"
 
-INIT_REVS(BandList)
+// File-scope pair, gAltRev FIRST (retail puts gAltRev at base+0, gRev at +4 and
+// addresses both off ONE base register; class statics would be two external
+// symbols => two `lis`). The DECLARE_REVS in bandobj/BandList.h was removed in
+// the same edit -- that half is load-bearing, since class scope is searched
+// before namespace scope inside PreLoad. Scatter-safe: hamobj/HamNavList.cpp
+// already renames via `#define gRev gRev_BandList`.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 int HighlightObject::sRev;
 
 HighlightObject::HighlightObject(Hmx::Object *o)
