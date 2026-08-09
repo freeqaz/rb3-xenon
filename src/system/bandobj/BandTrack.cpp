@@ -375,13 +375,15 @@ void BandTrack::RefreshStreakMeter(int i1, int i2, int i3) {
 
 void BandTrack::RefreshOverdrive(float energy, bool b) {
     if (mStarPowerMeter && !unk1b) {
-        OverdriveMeter::State state = OverdriveMeter::kFilling;
-        if (b)
-            state = OverdriveMeter::kReady;
+        // Retail computes the state branchlessly (cntlzw/extrwi/xori/addi), which
+        // is what a ternary yields here -- an if/else on a separate declaration
+        // gets a real branch instead. And it calls MyTrackPanelDir() out of line
+        // rather than open-coding the dynamic_cast (MyTrackPanelDir is exactly
+        // that cast, so this is the same operation, not a weaker one).
+        OverdriveMeter::State state = b ? OverdriveMeter::kReady : OverdriveMeter::kFilling;
         float delay = 0.0f;
         if (state == OverdriveMeter::kReady) {
-            delay = dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())
-                        ->GetPulseAnimStartDelay(true);
+            delay = MyTrackPanelDir()->GetPulseAnimStartDelay(true);
         }
         mStarPowerMeter->SetEnergy(energy, state, mInstrument, delay, true);
         if (mParent)
