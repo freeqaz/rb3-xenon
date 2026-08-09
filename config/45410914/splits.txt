@@ -14490,3 +14490,258 @@ xdk/xonline/xbosfall06.cpp:
 xdk/xonline/xoncore.cpp:
 	.pdata      start:0x822507B8 end:0x822507E8
 	.text       start:0x82A6AB80 end:0x82A6AF7C
+
+xdk/xgraphics/arena.cpp:
+	.pdata      start:0x8224FAD0 end:0x8224FAE0
+	.text       start:0x82A3F690 end:0x82A3F7BC
+
+xdk/xgraphics/buildcfg.cpp:
+	.pdata      start:0x8224E308 end:0x8224E330
+	.text       start:0x829DFFF0 end:0x829E19D4
+
+xdk/xgraphics/cblt.cpp:
+	.pdata      start:0x8224CA58 end:0x8224CA98
+	.text       start:0x82947328 end:0x82948CFC
+
+xdk/xgraphics/ccodec.cpp:
+	.pdata      start:0x8224EA20 end:0x8224EA50
+	.pdata      start:0x8224EB20 end:0x8224EB38
+	.pdata      start:0x8224EB68 end:0x8224EB80
+	.pdata      start:0x8224EBD8 end:0x8224EBF8
+	.pdata      start:0x8224EC10 end:0x8224EC28
+	.pdata      start:0x8224EC40 end:0x8224EC58
+	.pdata      start:0x8224EC68 end:0x8224EC80
+	.pdata      start:0x8224EC90 end:0x8224ECA8
+	.text       start:0x829FFAF8 end:0x82A00194
+	.text       start:0x82A06300 end:0x82A0649C
+	.text       start:0x82A06968 end:0x82A06CD4
+	.text       start:0x82A07870 end:0x82A07DCC
+	.text       start:0x82A081C8 end:0x82A08404
+	.text       start:0x82A08620 end:0x82A08E94
+	.text       start:0x82A09008 end:0x82A09BE0
+	.text       start:0x82A09C80 end:0x82A0A86C
+
+xdk/xgraphics/cfgimpl.cpp:
+	.pdata      start:0x8224F5C8 end:0x8224F5E0
+	.text       start:0x82A30578 end:0x82A30B48
+
+xdk/xgraphics/clean.cpp:
+	.pdata      start:0x8224DCF0 end:0x8224DD90
+	.text       start:0x829AC468 end:0x829B2EC4
+
+xdk/xgraphics/compilerinc.cpp:
+	.pdata      start:0x8224F080 end:0x8224F0C0
+	.text       start:0x82A1D080 end:0x82A1D440
+
+xdk/xgraphics/compress.cpp:
+	.pdata      start:0x822506A8 end:0x822506F0
+	.text       start:0x82A68050 end:0x82A68F38
+
+xdk/xgraphics/constreg.cpp:
+	.pdata      start:0x8224D738 end:0x8224D758
+	.pdata      start:0x8224D778 end:0x8224D7A8
+	.pdata      start:0x8224D7B0 end:0x8224D848
+	.text       start:0x829816C0 end:0x82982034
+	.text       start:0x829823A8 end:0x829827B8
+	.text       start:0x82982818 end:0x82985A5C
+
+xdk/xgraphics/convert.cpp:
+	.pdata      start:0x8224C338 end:0x8224C358
+	.pdata      start:0x8224C360 end:0x8224C380
+	.pdata      start:0x8224C380 end:0x8224C398
+	.pdata      start:0x8224C398 end:0x8224C400
+	.text       start:0x82935BA8 end:0x82935EDC
+	.text       start:0x82935F80 end:0x82936588
+	.text       start:0x82936660 end:0x82936740
+	.text       start:0x829368A8 end:0x82938470
+
+xdk/xgraphics/desc.cpp:
+	.pdata      start:0x8224C238 end:0x8224C280
+	.text       start:0x829308E8 end:0x8293210C
+
+xdk/xgraphics/dlist.cpp:
+	.pdata      start:0x82250010 end:0x82250018
+	.text       start:0x82A563C0 end:0x82A56564
+
+xdk/xgraphics/dominator.cpp:
+	.pdata      start:0x822503B0 end:0x822503F0
+	.text       start:0x82A5B220 end:0x82A5BB94
+
+xdk/xgraphics/dxtn.cpp:
+	.pdata      start:0x8224F5E0 end:0x8224F600
+	.pdata      start:0x8224F608 end:0x8224F630
+	.pdata      start:0x8224F638 end:0x8224F658
+	.text       start:0x82A30BF0 end:0x82A31EC4
+	.text       start:0x82A32010 end:0x82A32824
+	.text       start:0x82A328A8 end:0x82A32A98
+
+xdk/xgraphics/emit.cpp:
+	.pdata      start:0x8224D038 end:0x8224D0A0
+	.pdata      start:0x8224D0A0 end:0x8224D108
+	.text       start:0x8295A300 end:0x8295A680
+	.text       start:0x8295A748 end:0x8295B15C
+	.text       start:0x8295B1B8 end:0x8295FD24
+
+xdk/xgraphics/endian.cpp:
+	.pdata      start:0x8224C8D8 end:0x8224C908
+	.text       start:0x82943DF0 end:0x829448CC
+
+xdk/xgraphics/execopts.cpp:
+	.pdata      start:0x8224D1C8 end:0x8224D230
+	.text       start:0x82962C78 end:0x82964F9C
+
+xdk/xgraphics/finalopts.cpp:
+	.pdata      start:0x8224D230 end:0x8224D258
+	.pdata      start:0x8224D270 end:0x8224D2A0
+	.text       start:0x82964FA0 end:0x82965628
+	.text       start:0x82965820 end:0x82966990
+
+xdk/xgraphics/globreg.cpp:
+	.pdata      start:0x8224D640 end:0x8224D648
+	.pdata      start:0x8224D648 end:0x8224D6D0
+	.pdata      start:0x8224D6D8 end:0x8224D738
+	.text       start:0x829799D0 end:0x82979C48
+	.text       start:0x82979D68 end:0x8297B7EC
+	.text       start:0x8297B888 end:0x829816C0
+
+xdk/xgraphics/header.cpp:
+	.pdata      start:0x8224C2B0 end:0x8224C2D8
+	.text       start:0x829339D8 end:0x82933E04
+
+xdk/xgraphics/ilprogram.cpp:
+	.pdata      start:0x8224FAE0 end:0x8224FAF0
+	.text       start:0x82A3F7C0 end:0x82A3F8F4
+
+xdk/xgraphics/import.cpp:
+	.pdata      start:0x8224E330 end:0x8224E340
+	.pdata      start:0x8224E340 end:0x8224E350
+	.pdata      start:0x8224E350 end:0x8224E450
+	.pdata      start:0x8224E458 end:0x8224E560
+	.pdata      start:0x8224E568 end:0x8224E588
+	.pdata      start:0x8224E590 end:0x8224E5B0
+	.pdata      start:0x8224E5B8 end:0x8224E660
+	.pdata      start:0x8224E668 end:0x8224E670
+	.pdata      start:0x8224E688 end:0x8224E700
+	.pdata      start:0x8224E700 end:0x8224E750
+	.pdata      start:0x8224E760 end:0x8224E870
+	.pdata      start:0x8224E870 end:0x8224EA20
+	.text       start:0x829E19D8 end:0x829E1D7C
+	.text       start:0x829E1E28 end:0x829E21B4
+	.text       start:0x829E21F8 end:0x829E3DB4
+	.text       start:0x829E3E18 end:0x829E590C
+	.text       start:0x829E59F0 end:0x829E5CEC
+	.text       start:0x829E5D88 end:0x829E602C
+	.text       start:0x829E6110 end:0x829E79A4
+	.text       start:0x829E7A48 end:0x829E7B84
+	.text       start:0x829E7D20 end:0x829E8B3C
+	.text       start:0x829E8B80 end:0x829E9264
+	.text       start:0x829E9398 end:0x829EC2B8
+	.text       start:0x829EC320 end:0x829FFAF8
+
+xdk/xgraphics/litevalr500.cpp:
+	.pdata      start:0x8224D108 end:0x8224D1C8
+	.text       start:0x8295FD28 end:0x82962C78
+
+xdk/xgraphics/liveness.cpp:
+	.pdata      start:0x82250580 end:0x822505A0
+	.text       start:0x82A65F98 end:0x82A666E8
+
+xdk/xgraphics/localreg.cpp:
+	.pdata      start:0x8224D430 end:0x8224D448
+	.text       start:0x8296C9B0 end:0x8296CD04
+
+xdk/xgraphics/main.cpp:
+	.pdata      start:0x8224C908 end:0x8224C930
+	.pdata      start:0x8224C948 end:0x8224C9D8
+	.text       start:0x829448D0 end:0x82944D6C
+	.text       start:0x82944F00 end:0x82945D68
+
+xdk/xgraphics/mem.cpp:
+	.pdata      start:0x8224ED58 end:0x8224ED70
+	.text       start:0x82A0C4C8 end:0x82A0C758
+
+xdk/xgraphics/optautoz.cpp:
+	.pdata      start:0x8224D2A0 end:0x8224D2C8
+	.text       start:0x82966990 end:0x82966F9C
+
+xdk/xgraphics/peeps.cpp:
+	.pdata      start:0x8224D970 end:0x8224D9C0
+	.text       start:0x8298C2F8 end:0x829911DC
+
+xdk/xgraphics/r400_addrenum.cpp:
+	.pdata      start:0x8224FFF0 end:0x82250010
+	.text       start:0x82A55BD0 end:0x82A563C0
+
+xdk/xgraphics/r400psil.cpp:
+	.pdata      start:0x8224CBB0 end:0x8224CC18
+	.text       start:0x8294DC10 end:0x8294EEFC
+
+xdk/xgraphics/r400psilutil.cpp:
+	.pdata      start:0x8224CAC0 end:0x8224CBB0
+	.text       start:0x8294A190 end:0x8294DC10
+
+xdk/xgraphics/r400vs.cpp:
+	.pdata      start:0x8224CFF8 end:0x8224D038
+	.text       start:0x82958238 end:0x8295A300
+
+xdk/xgraphics/regopt.cpp:
+	.pdata      start:0x8224D2C8 end:0x8224D310
+	.pdata      start:0x8224D310 end:0x8224D348
+	.pdata      start:0x8224D360 end:0x8224D430
+	.text       start:0x82966FA0 end:0x82967C2C
+	.text       start:0x82967C88 end:0x82968364
+	.text       start:0x829686B8 end:0x8296C9AC
+
+xdk/xgraphics/scheduler.cpp:
+	.pdata      start:0x8224D848 end:0x8224D970
+	.text       start:0x82985A60 end:0x8298C2F4
+
+xdk/xgraphics/shadercost.cpp:
+	.pdata      start:0x8224C2D8 end:0x8224C308
+	.text       start:0x82933E08 end:0x82934FDC
+
+xdk/xgraphics/shaderpdbbuilder.cpp:
+	.pdata      start:0x8224C400 end:0x8224C428
+	.pdata      start:0x8224C430 end:0x8224C478
+	.pdata      start:0x8224C490 end:0x8224C530
+	.pdata      start:0x8224C538 end:0x8224C6F0
+	.pdata      start:0x8224C6F8 end:0x8224C708
+	.text       start:0x82938470 end:0x82938728
+	.text       start:0x829388D8 end:0x82938E8C
+	.text       start:0x82939040 end:0x8293AB64
+	.text       start:0x8293AE58 end:0x8293DFB0
+	.text       start:0x8293E090 end:0x8293E234
+
+xdk/xgraphics/ssmdebug.cpp:
+	.pdata      start:0x8224CC20 end:0x8224CC30
+	.text       start:0x8294EFF0 end:0x8294F308
+
+xdk/xgraphics/surface.cpp:
+	.pdata      start:0x8224C280 end:0x8224C2A8
+	.text       start:0x829321B0 end:0x82933154
+
+xdk/xgraphics/vector.cpp:
+	.pdata      start:0x82250018 end:0x82250068
+	.text       start:0x82A56568 end:0x82A56D60
+
+xdk/xgraphics/volume.cpp:
+	.pdata      start:0x8224C308 end:0x8224C338
+	.text       start:0x82934FE0 end:0x82935BA8
+
+xdk/xgraphics/vreginfo.cpp:
+	.pdata      start:0x82250068 end:0x822500B8
+	.pdata      start:0x822500C8 end:0x82250120
+	.pdata      start:0x82250130 end:0x82250148
+	.text       start:0x82A56D60 end:0x82A57574
+	.text       start:0x82A578A0 end:0x82A5852C
+	.text       start:0x82A585C0 end:0x82A5873C
+
+xdk/xgraphics/vregprops.cpp:
+	.pdata      start:0x822505A0 end:0x82250620
+	.text       start:0x82A666E8 end:0x82A66C68
+
+xdk/xgraphics/xenoncompress.cpp:
+	.pdata      start:0x8224C9E0 end:0x8224C9E8
+	.pdata      start:0x8224C9F0 end:0x8224CA08
+	.text       start:0x82945D78 end:0x82945F38
+	.text       start:0x829461C8 end:0x82946A34
