@@ -12,6 +12,15 @@
 // makes them CLASS statics (external symbols) and costs a second `lis`.
 // gAltRev FIRST (retail stores hi16 at +0, lo16 at +4 and reads gRev from +4);
 // explicit `= 0` is required or they land in .bss where MSVC picks the order.
+// Tried and REJECTED (lane MATCH-G): folding this pair into a single
+// `static struct { align(4) altRev; align(4) rev; }` aggregate, to mirror
+// retail addressing ONE symbol at +0x0/+0x4.  It is EXACTLY metric-neutral --
+// same 10 mismatches, same 97.5056% -- because these two statics already land
+// adjacent and MSVC already folds them onto one base register, and the symbol
+// NAME difference is masked under functionRelocDiffs=none.  It also forces
+// LOAD_REVS (which names gRev/gAltRev literally) to be hand-expanded.  Not
+// worth the churn; the aggregate is NOT the lever here that it was in
+// char/CharIKHand.cpp.
 static unsigned short gAltRev = 0;
 static unsigned short gRev = 0;
 
@@ -134,10 +143,19 @@ void BandLeadMeter::PreLoad(BinStream &bs) {
 
 void BandLeadMeter::PostLoad(BinStream &bs) {
     int revs = bs.PopRev(this);
-    unsigned short therev = getHmxRev(revs);
+    // INT, not unsigned short: retail keeps the popped rev UNMASKED in a
+    // callee-saved register across RndDir::PostLoad and re-applies `clrlwi
+    // r11,r28,16` before both the restore-store and the `>= 8` compare.  That
+    // re-mask only exists if the variable is wider than the `unsigned short`
+    // static it is stored into -- with `unsigned short therev` MSVC knows the
+    // value is already 16-bit and drops both masks.
+    int therev = getHmxRev(revs);
     gRev = therev;
     gAltRev = getAltRev(revs);
-    if (therev >= 6) {
+    // Compare through gRev (unsigned short), NOT therev (int): retail's test is
+    // `cmplwi` (UNSIGNED), which an `int` comparison cannot produce -- MSVC
+    // forwards the just-stored 16-bit value instead of re-reading memory.
+    if (gRev >= 6) {
         RndDir::PostLoad(bs);
         gRev = therev;
         if (gRev < 8) {
