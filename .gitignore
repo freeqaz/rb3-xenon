@@ -179,6 +179,12 @@ tools/oss-xbox-build/**/*.exp
 tools/oss-xbox-build/**/out-*/
 tools/oss-xbox-build/**/.rb3e_src
 tools/xex2pack/work/
+# Repo-root lane triage scratch: .obj.before snapshots, candidate .patch files, run
+# result JSON. Same category as the two tools/**/work/ entries here and as
+# dc3-decomp's scratch/ -- never tracked, always re-derivable. Ignored because it
+# otherwise left the tree permanently dirty, and this repo is PUBLIC, so an
+# accidental `git add -A` publishes somebody's scratch.
+/work/
 *.xex
 tools/oss-xbox-build/**/*.log
 tools/oss-xbox-build/**/*.bak.laneI
