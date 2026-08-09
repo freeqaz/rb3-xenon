@@ -9,7 +9,13 @@
 #include "ui/UIResource.h"
 #include "utl/Symbols.h"
 
-INIT_REVS(MicInputArrow)
+// Retail addresses both rev statics off ONE base register with a +0/+4
+// displacement, which requires an INTERNAL-linkage adjacent pair. DECLARE_REVS
+// makes them CLASS statics (external symbols) and costs a second `lis`.
+// gAltRev FIRST (retail stores hi16 at +0, lo16 at +4 and reads gRev from +4);
+// explicit `= 0` is required or they land in .bss where MSVC picks the order.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 MicClientID sNullMicClientID(-1, -1);
 

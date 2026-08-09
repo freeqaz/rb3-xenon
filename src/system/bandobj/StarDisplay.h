@@ -42,7 +42,6 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(StarDisplay); }
 
-    DECLARE_REVS
     NEW_OBJ(StarDisplay)
 
     BandLabel *mRsrcStarsLabel; // 0x10C

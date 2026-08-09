@@ -25,7 +25,6 @@ public:
     int GetColor(int);
     void SyncScores();
 
-    DECLARE_REVS;
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
     NEW_OBJ(BandLeadMeter)

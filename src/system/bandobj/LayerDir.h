@@ -54,7 +54,6 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(LayerDir); }
     NEW_OBJ(LayerDir);
 
-    DECLARE_REVS;
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
