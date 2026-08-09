@@ -687,9 +687,12 @@ BEGIN_LOADS(RndParticleSys)
     bs >> (Key<float> &)mEmitRate;
     if (gPartRev > 0x20) {
         bs >> mMaxBurst;
-        bs >> (Key<float> &)mBurstInterval;
-        bs >> (Key<float> &)mBurstPeak;
-        bs >> (Key<float> &)mBurstLength;
+        // Retail CHAINS these three: one `mr r3,r29` then three `bl` reusing
+        // operator>>'s returned stream, with the two later addresses hoisted
+        // into r26/r27 ahead of the first call.  Separate statements force a
+        // fresh `mr r3,r29` per read.
+        bs >> (Key<float> &)mBurstInterval >> (Key<float> &)mBurstPeak
+            >> (Key<float> &)mBurstLength;
     }
     bs >> (Key<float> &)mStartSize;
     if (gPartRev > 0xF)
@@ -707,11 +710,14 @@ BEGIN_LOADS(RndParticleSys)
         if (gPartRev > 0xB) {
             bs >> (Hmx::Color &)p150;
         } else {
+            // Retail reads the three floats DIRECTLY into the Plane's a/b/c
+            // (they land at p150+0x0/+0x4/+0x8 and the computed d at +0xc,
+            // contiguous in retail's frame) -- there are no separate f1/f2/f3
+            // locals and no Set() copy-in.  Going through Set() costs three
+            // extra `stfs` and 16 bytes of frame.
             Vector3 v1;
-            float f1, f2, f3;
-            bs >> v1;
-            bs >> f1 >> f2 >> f3;
-            p150.Set(f1, f2, f3, -(v1.x * f1 + v1.y * f2 + v1.z * f3));
+            bs >> v1 >> p150.a >> p150.b >> p150.c;
+            p150.d = -(v1.x * p150.a + v1.y * p150.b + v1.z * p150.c);
         }
         if (ba7) {
             // Retail does NOT save/restore the edit mode: there is no
@@ -721,28 +727,38 @@ BEGIN_LOADS(RndParticleSys)
             // bound MakeString<char*> (??$MakeString@PAD@@).
             TheLoadMgr.SetEditMode(true);
             const char *base = FileGetBase(Name());
-            mBounce = Dir()->New<RndTransformable>(
-                MakeString("%s_bounce.trans", base)
-            );
+            // Retail evaluates MakeString BEFORE the Dir() vbase chain.  With
+            // the call written as the argument expression MSVC hoists Dir()
+            // ahead of it instead; a named temporary forces retail's order.
+            const char *nm = MakeString("%s_bounce.trans", base);
+            mBounce = Dir()->New<RndTransformable>(nm);
             TheLoadMgr.SetEditMode(false);
+            // Retail builds the basis with two real Cross() calls, not the
+            // hand-folded component writes this used to have:
+            //   m.x = (0,1,0) x n     -- `1.0f*c` folds away but `0.0f*b` does
+            //                            NOT (invalid for inf/NaN), which is
+            //                            why retail multiplies by the shared
+            //                            0.0f in f31 instead of storing 0.
+            //   m.y = n x m.x         -- the old `c*c` was a hand-substitution
+            //                            of m.x.x; retail reads m.x.x itself.
+            //   m.z = n               -- a whole-Vector3 assignment: Vector3 is
+            //                            16 B (4 B pad, compiler-confirmed), so
+            //                            retail copies FOUR words, dragging
+            //                            p150.d into m.z's pad. Component
+            //                            writes would only emit three.
             Transform tf140;
             float a = p150.a;
             float b = p150.b;
             float c = p150.c;
-            float d = p150.d;
-            tf140.m.x.x = c;
-            tf140.m.x.y = 0.0f;
-            tf140.m.x.z = -a;
-            tf140.m.z.x = a;
-            tf140.m.z.y = b;
-            tf140.m.z.z = c;
-            tf140.m.y.x = b * tf140.m.x.z - c * tf140.m.x.y;
-            tf140.m.y.y = c * c - tf140.m.x.z * a;
-            tf140.m.y.z = a * tf140.m.x.y - b * c;
-            float inv = -(d / (a * a + (b * b + c * c)));
-            tf140.v.x = a * inv;
-            tf140.v.y = b * inv;
-            tf140.v.z = c * inv;
+            Vector3 up(0.0f, 1.0f, 0.0f);
+            Cross(up, (Vector3 &)p150, tf140.m.x);
+            Cross((Vector3 &)p150, tf140.m.x, tf140.m.y);
+            tf140.m.z = (Vector3 &)p150;
+            float inv = -(p150.d / (a * a + b * b + c * c));
+            // Assigned as a whole temporary: retail materialises the vector in
+            // a scratch slot (ctor args stored z,y,x -- right-to-left) and then
+            // 16-byte-copies it into tf140.v.
+            tf140.v = Vector3(a * inv, b * inv, c * inv);
             Normalize(tf140.m.x, tf140.m.x);
             Normalize(tf140.m.y, tf140.m.y);
             mBounce->SetWorldXfm(tf140);
@@ -778,12 +794,10 @@ BEGIN_LOADS(RndParticleSys)
         }
     }
     if (gPartRev > 3) {
-        bs >> (Key<float> &)mBubblePeriod >> (Key<float> &)mBubbleSize;
-        bs >> mBubble;
+        bs >> (Key<float> &)mBubblePeriod >> (Key<float> &)mBubbleSize >> mBubble;
     }
     if (gPartRev > 0x1D) {
-        bs >> mRotate;
-        bs >> (Key<float> &)mRPM >> mRPMDrag;
+        bs >> mRotate >> (Key<float> &)mRPM >> mRPMDrag;
         if (gPartRev > 0x24) {
             bs >> mRandomDirection;
         }
@@ -791,10 +805,8 @@ BEGIN_LOADS(RndParticleSys)
     }
     if (gPartRev > 0x1F) {
         bs >> (Key<float> &)mStartOffset >> (Key<float> &)mEndOffset;
-        bs >> mAlignWithVelocity;
-        bs >> mStretchWithVelocity;
-        bs >> mConstantArea;
-        bs >> mStretchScale;
+        bs >> mAlignWithVelocity >> mStretchWithVelocity >> mConstantArea
+            >> mStretchScale;
     }
     if (gPartRev > 0x21) {
         bs >> mPerspectiveStretch;
@@ -802,9 +814,9 @@ BEGIN_LOADS(RndParticleSys)
     if (gPartRev > 4 && gPartRev < 15) {
         bool baf;
         bs >> baf;
-        int u1 = 0;
-        if (baf)
-            u1 = 2;
+        // Retail selects branchlessly (subfic/subfe/and = `cond ? K : 0`);
+        // `if (baf) u1 = 2;` compiles to a branch instead.
+        int u1 = baf ? 2 : 0;
         if (mMat)
             mMat->SetZMode((ZMode)u1);
     }
