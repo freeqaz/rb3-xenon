@@ -378,24 +378,81 @@ void UIComponent::Poll() {
     FinishSelecting();
 }
 
-INIT_REVS(3, 0)
+// RB3 retail uses the rb3-Wii rev dialect here, NOT DC3's `BinStreamRev d`.
+// Read off retail PreLoad (target 252 B): the frame is 0x80 with no BinStream
+// temp and no ??_7BinStreamRev@@6B@ vtable store; instead the packed rev int is
+// split with `srwi r11,r11,16` and written to a file-scope pair with
+// `sth <lo16>, 0x4(r29)` / `sth <hi16>, 0x0(r29)`, then read back from +0x4.
+// Since getHmxRev(packed)==lo16 and getAltRev(packed)==hi16 (utl/BinStream.h),
+// +0x4 is gRev and +0x0 is gAltRev ⇒ gAltRev must be declared FIRST.
+// The explicit `= 0` is REQUIRED, not cosmetic: uninitialised statics land in
+// .bss where MSVC picks the order, making the reorder inert (lane MATCH-A).
+// Hand-expanded rather than switching the TU to obj/ObjMacros.h, because that
+// header also redefines the SYNC_PROP and HANDLE families and would perturb
+// this TU's already-matching SyncProperty/Handle.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
+
+// ASSERT_REVS is deliberately absent: it is codegen-free in the match build in
+// BOTH dialects, and Object.h's form dereferences the `d` BinStreamRev that
+// retail does not construct — spelling it here would break the native build.
+// Retail is rev 2 (see the SAVE_REVS(2,0) note above); rb3-Wii agrees.
 
 void UIComponent::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs);
-    ASSERT_REVS(3, 0);
-    LOAD_SUPERCLASS(Hmx::Object)
-    LOAD_SUPERCLASS(RndTransformable)
-    LOAD_SUPERCLASS(RndDrawable)
-    if (d.rev > 0) {
-        d >> mNavRight;
-        d >> mNavDown;
+    int rev;
+    bs >> rev;
+    gRev = getHmxRev(rev);
+    gAltRev = getAltRev(rev);
+    mResourcePath = GetResourcesPath();
+    mLoading = true;
+    Hmx::Object::Load(bs);
+    mLoading = false;
+    RndTransformable::Load(bs);
+    RndDrawable::Load(bs);
+    if (gRev > 0) {
+        bs >> mNavRight >> mNavDown;
     }
-    if (d.rev > 1 && d.rev < 3) {
-        OldResourcePreload(bs);
+    // No `< 3` upper bound and no OldResourcePreload: retail reads straight into
+    // mResourceName (`subi r4,r31,0x2c` == this+0x118) and calls
+    // ResourceFileUpdated(true). OldResourcePreload is a DC3 rev-3 addition and
+    // is kept in the class only because ~10 derived TUs still override it.
+    if (gRev > 1) {
+        bs >> mResourceName;
+        ResourceFileUpdated(true);
     }
 }
 
-void UIComponent::PostLoad(BinStream &) {}
+// Retail PostLoad is a real 432 B body; DC3 dropped it to `{}` and our source
+// inherited the empty one. Ported from the rb3-Wii oracle, which the retail
+// instruction stream corroborates one-for-one.
+void UIComponent::PostLoad(BinStream &bs) {
+    if (mResource)
+        mResource->PostLoad();
+    // rb3-Wii stages this through two `bool`s (typeOk/needsUpgrade); retail does
+    // NOT materialise them — it is one short-circuit chain of branches, and the
+    // staged form costs three extra register initialisations (li r27,0 / mr r28
+    // / mr r29). Note retail re-walks mResourceName in the tail `if` rather than
+    // reusing the strlen from here, which is consistent with two separate `if`s
+    // (ResourceFileUpdated may have changed the string).
+    if (!Type().Null() && mResourcePath.length() != 0 && mResourceName.length() == 0) {
+        // rb3-Wii spells this `Type().mStr`; mStr is private in our Symbol and
+        // Str() is the inline accessor for the same field (identical `lwz 0(r3)`).
+        mResourceName = Type().Str();
+        MILO_WARN(
+            "upgrading UIComponent %s to new resource loading system (Old type: %s). Please resave this file and checkin (%s).\n",
+            Name(),
+            mResourceName.c_str(),
+            PathName(this)
+        );
+        ResourceFileUpdated(false);
+        SetType("");
+        mResource = 0;
+        DataVariable("uicomponent.resource_upgrade") = 1;
+    }
+    if (mResourceName.length() != 0) {
+        mResourceDir.PostLoad(0);
+    }
+}
 
 void UIComponent::SendSelect(LocalUser *user) {
     if (mState == kFocused) {
