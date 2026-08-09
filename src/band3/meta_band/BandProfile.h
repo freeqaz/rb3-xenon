@@ -155,8 +155,19 @@ public:
     // mTourProgress, no gap) and mScores lands at 0x50 either way, so the
     // 4-byte unk18 slot must be *inside* the mTourProgress..mScores span but
     // past the 24-byte map, i.e. at 0x4c.
-    std::map<Symbol, float> mLessonCompletions; // 0x34
-    int unk18; // 0x4c (flag, dev-only; retail never reads it)
+    // RETAIL X360 USES hash_map, NOT map (rb3-Wii dev build used map).
+    // Evidence from retail bytes in SetLessonComplete: _M_find takes an sret
+    // out-param (returns a _Slist_iterator BY VALUE) where _Rb_tree::_M_find
+    // returns a bare node pointer; the end() test is `node == NULL` rather
+    // than a compare against the tree header; and the mapped float sits at
+    // node+0x8 (slist node: next@0, Symbol@4, float@8) rather than +0x14
+    // (rb-tree node: links 0x0-0xc, Symbol@0x10, float@0x14).
+    // ...and hash_map is 0x1c, not map's 0x18, so it reaches exactly to
+    // mScores@0x50 on its own. The old 4-byte `int unk18; // 0x4c` existed
+    // only to pad out the gap the smaller map left, was never referenced
+    // anywhere in the tree, and is deleted here: keeping it would push every
+    // member from mScores on by +4.
+    std::hash_map<Symbol, float> mLessonCompletions; // 0x34
     SongStatusMgr *mScores; // 0x50
     std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x54
     std::vector<StandIn> mStandIns; // 0x54
