@@ -68,8 +68,12 @@ bool CharEyes::sDisableEyeClamping;
 // diff_arg mismatches on every gRev read even though the values were
 // correct. Declaring gRev first (matching ObjMacros.h's DECLARE_REVS order)
 // flips our layout to match.
-static unsigned short gRev;
-static unsigned short gAltRev;
+// gAltRev FIRST and both explicitly initialized: retail lays the pair out as
+// [gAltRev, gRev]. Declaration order alone is inert for uninitialized file
+// statics (they land in .bss, where MSVC picks the order); the '= 0' is what
+// makes declaration order control the layout. See ScrollbarDisplay.cpp.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 #if !defined(__EMSCRIPTEN__) && !defined(__APPLE__)
 float pow(float base, float exp) { return std::pow(base, exp); }
