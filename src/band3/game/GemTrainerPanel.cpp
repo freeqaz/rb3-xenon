@@ -112,10 +112,9 @@ void GemTrainerPanel::Exit() {
     mGemPlayer = 0;
     TheGemTrainerPanel = 0;
     mMetronome->Exit();
-    std::vector<GameGem> *gems = mSongGems;
     for (int i = 0; i < 4; i++) {
         std::vector<GameGem> temp;
-        temp.swap(gems[i]);
+        temp.swap(mSongGems[i]);
     }
     {
         std::vector<GameGem> temp;
