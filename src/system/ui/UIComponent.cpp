@@ -317,12 +317,22 @@ void UIComponent::MockSelect() {
 }
 
 BEGIN_SAVES(UIComponent)
-    SAVE_REVS(3, 0)
+    // RB3 retail is rev 2 and saves mResourceName as a third field. DC3 (newer)
+    // is rev 3 and dropped it. Adjudicated on retail bytes: 'li r11,0x2' for the
+    // rev word, and a trailing 'subi r4,r31,0x2c; bl operator<<(BinStream&,
+    // const String&)'. r31 == this+0x144 here, so -0x60/-0x54/-0x2c are
+    // mNavRight (0xe4) / mNavDown (0xf0) / mResourceName (0x118).
+    // rb3-Wii is NOT an oracle for this body -- its dev build uses
+    // SAVE_OBJ(UIComponent, 182), the "can't save" stub.
+    SAVE_REVS(2, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     SAVE_SUPERCLASS(RndTransformable)
     SAVE_SUPERCLASS(RndDrawable)
-    bs << mNavRight;
-    bs << mNavDown;
+    // Chained: retail threads operator<<'s returned BinStream& from the first
+    // call into the second (r3 is not reloaded between them, and &mNavDown is
+    // precomputed into r29), then reloads r3 from the bs copy for the String.
+    bs << mNavRight << mNavDown;
+    bs << mResourceName;
 END_SAVES
 
 BEGIN_LOADS(UIComponent)
