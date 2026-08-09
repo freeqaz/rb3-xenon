@@ -313,6 +313,13 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
             bs >> objectPtr;
             bs >> objectPtr;
             bs >> objectPtr;
+            // STORAGE CLASS: retail does NOT use the utl/Symbols.h global here.
+            // The target emits a lazy-init guard (`lwz` / `clrlwi.` / `bne` /
+            // `ori` / `stw`) around `bl ??0Symbol@@QAA@PBD@Z` with the literal
+            // at .rdata 0x8202BF18 -- read out of retail as the exact string
+            // "vocal_harmony_prototype" -- which is a FUNCTION-LOCAL STATIC.
+            // Deliberately shadows the global; that is what retail compiled.
+            static Symbol vocal_harmony_prototype("vocal_harmony_prototype");
             if (Type() == vocal_harmony_prototype) {
                 MILO_LOG("** Converting prototype to C (%d props)\n", mTypeProps.Size());
                 for (int i = 0; i < mTypeProps.Size(); i++) {
@@ -366,7 +373,14 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
             bs >> mLyricColorMap;
             bs >> mLyricAlphaMap;
             if (gRev < 5) {
-                ObjPtr<StreakMeter> streakPtr(this, 0);
+                // Retail's temp is ObjPtr<OverdriveMeter>, not <StreakMeter>:
+                // the target destructs ??1?$ObjRefConcrete@VOverdriveMeter@@
+                // VObjectDir@@ where we emitted the StreakMeter instantiation.
+                // Both sides are NAMED, so this is adjudicated, not a pairing
+                // artifact. It is SCORE-INVISIBLE (functionRelocDiffs=none masks
+                // the callee), so expect no match% movement -- landed as a
+                // correctness fix per CLAUDE.md's arg-blindness rule.
+                ObjPtr<OverdriveMeter> streakPtr(this, 0);
                 bs >> streakPtr;
                 bs >> streakPtr;
             }
