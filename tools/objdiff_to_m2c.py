@@ -159,6 +159,41 @@ def quote_symbol(sym: str) -> str:
     return sym
 
 
+def _is_numeric_operand(s: str) -> bool:
+    """True if an objdiff operand is a plain integer literal rather than a symbol.
+
+    Handles negative AND hexadecimal forms together, which is the whole point. The
+    check this replaced was
+
+        not offset.startswith('0x') and not offset.lstrip('-').isdigit()
+
+    and that misclassifies every NEGATIVE HEX displacement as a symbol, because
+    '-0x10' neither starts with '0x' nor is '0x10'.isdigit(). The rewriters then
+    appended a relocation suffix to it and emitted
+
+        std r5, -0x10@l(r1)
+
+    instead of `std r5, -0x10(r1)`. That matters a lot on MSVC/Xenon: negative
+    r1 displacements are everywhere -- `stwu r1, -0x70(r1)` opens essentially
+    every non-leaf prologue, and MSVC also parks scratch below SP -- so the bug
+    fired on most real functions. m2c does not reject the malformed operand; it
+    silently reinterprets the stack slot as an incoming stack argument, so a leaf
+    function acquires a phantom `s64 arg_sp0` parameter. Wrong output, no error.
+    """
+    t = s.strip()
+    if not t:
+        return False
+    if t[0] in '+-':
+        t = t[1:]
+    if t[:2].lower() == '0x':
+        try:
+            int(t, 16)
+            return True
+        except ValueError:
+            return False
+    return t.isdigit()
+
+
 def _is_reloc_symbol(s: str) -> bool:
     """Check if a string looks like a relocation symbol appended by objdiff."""
     # MSVC mangled names, labels, merged symbols
@@ -447,8 +482,11 @@ def format_instruction(instr: dict) -> str:
         parts = args.split(', ', 1)
         if len(parts) == 2:
             reg, operand = parts
-            # If operand is a symbol (starts with ? or letter, not 0x number)
-            if operand and not operand.startswith('0x') and not operand.lstrip('-').isdigit():
+            # If operand is a symbol (starts with ? or letter, not a numeric literal).
+            # _is_numeric_operand, not a startswith('0x')/isdigit() pair: lis takes a
+            # signed 16-bit immediate, so a negative hex form is legal here and the
+            # pair would misread it as a symbol and emit `lis r11, -0x1@ha`.
+            if operand and not _is_numeric_operand(operand):
                 # Quote and add @ha suffix for high-adjusted address
                 return f"{opcode} {reg}, {quote_symbol(operand)}@ha"
 
@@ -464,9 +502,13 @@ def format_instruction(instr: dict) -> str:
                 # Format: "addi r7, r28, 0x4, lbl_82017228"
                 # Strip the relocation info, keep: "addi r7, r28, 0x4"
                 return f"{opcode} {parts[0]}, {parts[1]}, {parts[2]}"
-            # Check if third part is a symbol
+            # Check if third part is a symbol. _is_numeric_operand, not a
+            # startswith('0x')/isdigit() pair: negative hex immediates are ordinary
+            # here -- `addi r3, r1, -0x10` takes the address of a stack slot below SP,
+            # which MSVC/Xenon emits constantly -- and the pair misread every one of
+            # them as a symbol, producing `addi r3, r1, -0x10@l`.
             last = parts[-1]
-            if last and not last.startswith('0x') and not last.lstrip('-').isdigit():
+            if last and not _is_numeric_operand(last):
                 # Reconstruct with @l suffix and quote
                 prefix = ', '.join(parts[:-1])
                 return f"{opcode} {prefix}, {quote_symbol(last)}@l"
@@ -505,7 +547,9 @@ def format_instruction(instr: dict) -> str:
             reg_dest, offset, reg_base = parts
             # Check if offset is a symbol reference (not numeric)
             # e.g. "lwz r4, ?gNullStr@@3PBDB, r11" -> "lwz r4, "?gNullStr..."@l(r11)"
-            if offset and not offset.startswith('0x') and not offset.lstrip('-').isdigit():
+            # NB: _is_numeric_operand, not a startswith('0x')/isdigit() pair --
+            # see its docstring for the negative-hex misclassification it fixes.
+            if offset and not _is_numeric_operand(offset):
                 return f"{opcode} {reg_dest}, {quote_symbol(offset)}@l({reg_base})"
             # Format: "lwz r11, 0x4c, r3" -> "lwz r11, 0x4c(r3)"
             return f"{opcode} {reg_dest}, {offset}({reg_base})"
