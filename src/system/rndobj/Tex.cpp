@@ -434,7 +434,16 @@ void RndTex::SetBitmap(FileLoader *fl) {
         buffer = fl->GetBuffer(nullptr);
         if (!TheLoadMgr.EditMode() && fl != mLoader) {
             if (!strstr(mFilepath.c_str(), "_keep")) {
-                MILO_NOTIFY("%s will not be included on a disc build", mFilepath);
+                // MILO_WARN, not MILO_NOTIFY: retail materialises a by-value copy
+                // of `mFilepath` here -- the target emits, inside this same _keep
+                // guard, `addi r3,r1,0x50` / `bl ??0String@@QAA@ABV0@@Z` / a vptr
+                // store into 0x50(r1) / `bl ??1String@@UAA@XZ` on a stack temp,
+                // with the format literal DCE'd. NOTIFY's comma form yields
+                // `mFilepath` as an lvalue and copies nothing; WARN's MiloStripEval
+                // takes its params BY VALUE, which forces exactly that copy ctor +
+                // destructible temp. Same one-token defect as UIPicture::UpdateTexture
+                // (e0af20f3), and the same `_keep` idiom.
+                MILO_WARN("%s will not be included on a disc build", mFilepath);
             }
         }
         delete fl;
