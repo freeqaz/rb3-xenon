@@ -980,7 +980,22 @@ float UIList::GetDistanceToPlane(const Plane &p, Vector3 &v) {
                            Vector3(box.mMax.x, box.mMax.y, box.mMax.z),
                            Vector3(box.mMin.x, box.mMax.y, box.mMax.z) };
     for (int i = 0; 8 > i; i++) {
-        float dot = p.Dot(boxVecs[i]);
+        // Hand-expanded rather than p.Dot(boxVecs[i]), and NOT gratuitously:
+        // retail evaluates the products in the order b*y, c*z, a*x and adds d
+        // as a SEPARATE step. Three things here are each load-bearing and were
+        // each measured -- do not "simplify" any of them away:
+        //   1. the inner parentheses (a /fp:fast reassociation barrier; without
+        //      them every term order collapses to the same wrong product order),
+        //   2. this term order,
+        //   3. `dot += p.d` as its OWN statement -- folding it into the
+        //      expression as `... + p.d` scores 10 instead of 0.
+        // ⛔ Do NOT instead change Plane::Dot: math/Mtx.h records its current
+        // form as load-bearing for RndDrawable::CollidePlane (100% vs 82%).
+        // Measured INERT here, so nobody re-runs them: all 6 term orders of the
+        // bare fused sum (all 14), all 6 with named temporaries (all 4), and all
+        // 6 declaration orders against a fixed sum order (all 20).
+        float dot = ((p.b * boxVecs[i].y + p.c * boxVecs[i].z) + p.a * boxVecs[i].x);
+        dot += p.d;
         if (first || (std::fabs(dot) < std::fabs(ret))) {
             ret = dot;
             v = boxVecs[i];
