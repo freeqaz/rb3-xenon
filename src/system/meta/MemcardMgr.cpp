@@ -49,6 +49,17 @@ void MemcardMgr::SaveLoadProfileComplete(Profile *pProfile, int state) {
 // so deleting it would gain nothing while risking the loss of a real pairing.
 // Anyone re-homing it should look for a class with a NON-virtual Hmx::Object
 // base at +0x20.
+//
+// ⛔ 2026-08-10 (lane GLM-LAND-4): an automated candidate proposed exactly the
+// change this block forbids --
+//     ((Hmx::Object *)((char *)this + 0x20))->Hmx::Object::Handle(msg, false);
+// -- and it does reach 100% on this row. REFUSED, and it must stay refused: by
+// the SetProfileSaveBuffer evidence above, this+0x20 is mSaveDataBuffer, a
+// void* DATA member. The cast would call a virtual-class method on a raw data
+// pointer -- type confusion, not a match. It scores only because the row is
+// mispaired, so the "+1 matched / +120 bytes" would be credit for another
+// class's function bought with a real memory bug. If the generator re-proposes
+// it, this is the answer.
 // =====================================================================
 void MemcardMgr::SaveLoadAllComplete() {
     static SaveLoadAllCompleteMsg msg;

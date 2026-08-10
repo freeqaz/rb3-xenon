@@ -1,6 +1,6 @@
 #include "hamobj/MeterDisplay.h"
 #include "MeterDisplay.h"
-#include "hamobj/HamLabel.h"
+#include "bandobj/BandLabel.h"
 #include "math/Utl.h"
 #include "obj/Object.h"
 #include "obj/Task.h"
@@ -110,21 +110,24 @@ void MeterDisplay::OldResourcePreload(BinStream &bs) {
 }
 
 void MeterDisplay::Update() {
+    UIComponent::Update();
+    const DataArray *typeDef = TypeDef();
+    MILO_ASSERT(typeDef, 0x129);
     RndDir *dir = mResource->Dir();
-    if (dir) {
-        static Symbol meter_label("meter_label");
-        HamLabel *label = dir->Find<HamLabel>("meter.lbl", false);
-        if (label) {
-            if (!unk54) {
-                unk54 = Hmx::Object::New<HamLabel>();
-            }
-            unk54->Copy(label, kCopyShallow);
-            unk54->SetTransParent(label->TransParent(), false);
-            label->SetShowing(false);
-        }
-        static Symbol meter_anim("meter_anim");
-        mMeterAnim = dir->Find<RndAnimatable>("meter.anim");
-    }
+    MILO_ASSERT(dir, 300);
+    static Symbol meter_label("meter_label");
+    const char *label = 0;
+    if (typeDef->FindData(meter_label, label, false)) {
+        BandLabel *thelabel = dir->Find<BandLabel>(label, true);
+        if (!unk54)
+            unk54 = Hmx::Object::New<BandLabel>();
+        unk54->ResourceCopy(thelabel);
+        unk54->SetTransParent(thelabel->TransParent(), false);
+        thelabel->SetShowing(false);
+    } else
+        RELEASE(unk54);
+    static Symbol meter_anim("meter_anim");
+    mMeterAnim = dir->Find<RndAnimatable>(typeDef->FindStr(meter_anim), true);
 }
 
 void MeterDisplay::Init() { REGISTER_OBJ_FACTORY(MeterDisplay); }

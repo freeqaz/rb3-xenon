@@ -1,5 +1,5 @@
 #pragma once
-#include "hamobj/HamLabel.h"
+#include "bandobj/BandLabel.h"
 #include "rndobj/Anim.h"
 #include "rndobj/Dir.h"
 #include "ui/ResourceDirPtr.h"
@@ -45,7 +45,7 @@ protected:
     float mAnimPeriod; // 0x48
     float unk4c; // 0x4c
     int unk50; // 0x50
-    HamLabel *unk54; // 0x54
+    BandLabel *unk54; // 0x54
     /** "whether or not to show text" */
     bool mShowText; // 0x58
     /** "whether or not to show text in percentage form" */
