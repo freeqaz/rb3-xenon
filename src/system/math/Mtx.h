@@ -330,20 +330,47 @@ public:
     // form, 82% fused). Geo's Intersect preferred the fused single-expression
     // form (its last 7 diff_args) — adjudicated at wave NCCC-0731-5f08 landing:
     // CollidePlane's full match wins; do not fuse without measuring both TUs.
+    // (That Intersect tension is now MOOT: lane MATCH-M hand-expanded Intersect
+    // at its own call site, so it no longer calls Dot. The CollidePlane
+    // constraint above is unaffected and still binding.)
     float Dot(const Vector3 &vec) const {
         float ax = a * vec.x;
         float cz = c * vec.z;
         float by = b * vec.y;
-        // lane DR-3 NEGATIVE RESULT -- do not retry.  Retail emits the c*z term
-        // before b*y at every inlined site (RndMesh/UIList::GetDistanceToPlane,
-        // Geo Intersect/OnSide), and the obvious lever is to sum in declaration
-        // order (`ax + cz + by + d`) so the grouping stops forcing `by` first.
-        // MEASURED INERT: 974 TUs recompiled and all four rows returned
-        // byte-identical percentages (99.958 / 99.818 / 99.915 / 99.898).
-        // MSVC reassociates the sum chain under /fp:fast, so term order in a sum
-        // is not source-controllable -- the same inertness DQ-3 proved for the
-        // operands of a single commutative fmuls.  ~1.2 KB sits behind this and
-        // is NOT reachable this way.
+        // ★ lane DR-3's NEGATIVE RESULT USED TO BE WRITTEN HERE AS "do not
+        // retry ... ~1.2 KB is NOT reachable this way".  ALL FOUR of the sites
+        // it named have since been taken to 100% (RndMesh lane GLM-LAND-3;
+        // UIList::GetDistanceToPlane + Geo Intersect/OnSide lane MATCH-M), so
+        // that instruction is REMOVED.  Its MEASUREMENT was correct and is kept
+        // below; only the conclusion drawn from it was wrong.
+        //
+        // WHAT DR-3 ACTUALLY MEASURED (still true): changing the sum order HERE,
+        // at the DEFINITION, to `ax + cz + by + d` recompiled 974 TUs and left
+        // all four rows byte-identical (99.958 / 99.818 / 99.915 / 99.898).
+        //
+        // WHY THAT DID NOT MEAN WHAT IT LOOKED LIKE.  Three separate reasons,
+        // each measured per-call-site in lane MATCH-M:
+        //   1. TERM ORDER IS A WEAK LEVER ON A BARE SUM.  Sweeping all 6 orders
+        //      of `t1 + t2 + t3 + d` yields only TWO distinct compiled product
+        //      orders, not six -- so most targets are simply unreachable, and
+        //      four of the six source orders are indistinguishable.
+        //   2. AN EXPLICIT PARENTHESISATION IS A REASSOCIATION BARRIER THAT
+        //      /fp:fast RESPECTS.  `cz + by + ax + d` and `((cz + by) + ax) + d`
+        //      are the same tree by C's associativity rules and compile
+        //      DIFFERENTLY (Geo's Intersect: score 9 vs byte-exact 0).  With the
+        //      barrier all six product orders become reachable.  So "MSVC
+        //      reassociates the chain, term order is not source-controllable" is
+        //      the wrong mechanism: it reassociates only what you did not group.
+        //   3. THE FIX HAS TO BE PER-CALL-SITE ANYWAY.  Each inlined site wants
+        //      a DIFFERENT product order, and this shared definition can only
+        //      supply one -- which is also why editing it here measured inert
+        //      across all four rows at once.
+        // Genuinely inert, confirmed and not worth retrying: the operand order
+        // within one commutative fmuls (`c * z` vs `z * c`), 8/8 identical --
+        // DQ-3's result, which stands.
+        // ⛔ AND DO NOT "FIX" THE FOUR SITES BY EDITING THIS FUNCTION: the note
+        // above about CollidePlane still holds, and the four call sites now each
+        // carry their own hand-expansion with their own comment.
         return ax + by + cz + d;
     }
 
