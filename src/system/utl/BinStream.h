@@ -232,6 +232,39 @@ public:
 
     void PushRev(Hmx::Object *obj) { stream.PushRev(packRevs(altRev, rev), obj); }
 
+    // ⛔ DO NOT REMOVE OR "NEUTER" THIS TEMPLATE. Lane MATCH-L, 2026-08-10 —
+    // settled with a whole-binary A/B; three formulations measured, all cost, none pay.
+    //
+    // WHAT IT ACTUALLY DOES: it is a NAME-HIDING WORKAROUND, not an overload
+    // hijacker. Declaring any `operator>>` in this derived class hides BinStream's
+    // whole member overload set, so without this catch-all `d >> anInt` does not
+    // compile. Deleting it = **191 errors / 13+ TUs**, and the failing types are
+    // exactly the ones read by BinStream *members* (int, float, unsigned char,
+    // String, Symbol, unsigned int). Free operators are NOT hidden and never needed it.
+    //
+    // ⛔ REFUTED (MATCH-J's c4442656 premise): "it outranks the free operators and
+    // destroys retail's chaining." It does NOT outrank them. Binding `BinStream&`
+    // to a BinStreamRev lvalue is a derived-to-base reference bind, which ranks as
+    // EXACT MATCH — so a free NON-template `operator>>(BinStream&,T&)` beats this
+    // template specialization. Measured: Key<Weight> (Morph, 94.4%) calls the free
+    // operator DIRECTLY at index 7; changing this template's return-value flow left
+    // that row BIT-IDENTICAL. Its 1-instruction residual (`mr r3,r30`) is a liveness
+    // artifact, NOT this template. The call-site cast in math/Key.h does not fix it
+    // either, and costs Key<ObjectStage> 100 -> 71.1 (MATCH-J's result, reproduced).
+    //
+    // MEASURED PRICE of returning the callee's ref instead of `*this` (the only
+    // formulation that compiles tree-wide with no collateral edits):
+    //   Δmatched -14 · Δhonest -14 · Δcode% -0.008217pp · Δcode_bytes -848 ·
+    //   units at 100%: +0 (0 reached, 0 fell off, BOTH rulers). Pays exactly zero.
+    //
+    // ⚠ AND THE -848 B IT COSTS IS SPURIOUS CREDIT: the 14 out-of-line COMDATs of
+    // this template pair against MISIDENTIFIED retail rows. Retail's function at
+    // each of those 14 addresses is `?ClassName@<Class>@@UBA?AVSymbol@@XZ` — it
+    // `bl`s ?StaticClassName@<Class>@@ (14 DIFFERENT classes), and every real
+    // ClassName() body is 11/12 words identical to this forwarder. They score 100
+    // only because functionRelocDiffs=none masks the one differing word (the bl
+    // target). A map lane should reclaim those addresses; a matching lane should
+    // not read those 14 rows as evidence about this template.
     template <class T>
     BinStreamRev &operator>>(T &t) {
         // base@0 => `mr r3,&d` (upcast is identity-address, and safe because
