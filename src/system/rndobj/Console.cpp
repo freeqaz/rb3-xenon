@@ -372,24 +372,36 @@ void RndConsole::SetBreak(DataArray *arr) {
     MILO_FAIL("Can't insert break");
 }
 
-static __declspec(noinline) const char *_MakeString(const char *c) {
-    FormatString fs(c);
-    return fs.Str();
-}
-
+// NOTE(laneGLM3): retail's Break is 444 B and starts by loading arr->Node(0) --
+// there is no mDebugging load at entry at all, so the guard below must emit no
+// code. It already need not: MILO_FAIL is (void)(args) in the match build (see
+// os/Debug.h:174-184), so writing the guard the way the rb3-Wii RB3 oracle
+// writes it (../rb3/src/system/rndobj/Console.cpp:209) is both the faithful
+// source and the matching one. The previous hand-rolled
+// `TheDebugFailer << _MakeString(...)` deliberately bypassed MILO_FAIL and so
+// emitted a real Debug::Fail call retail does not have.
 void RndConsole::Break(DataArray *arr) {
     if (mDebugging)
-        TheDebugFailer << _MakeString("Can't break while debugging, did you mean set_break?");
+        MILO_FAIL("Can't break while debugging, did you mean set_break?");
     if (arr->UncheckedFunc(0) != DataNop) {
         bool drawing = TheRnd.Drawing();
+#ifdef HX_NATIVE
+        // The rb3-Wii RB3 DEV build force-shows the console around a break;
+        // RB3-360 RETAIL does not -- its Break contains no SetShowing call and
+        // no mShowing load (both SetShowing sites and the mShowing lbz are
+        // base-only in the aligned diff). Kept for the native build, where the
+        // console is still a usable debug surface.
         bool showing = mShowing;
+#endif
         Hmx::Color oldClear = TheRnd.GetClearColor();
         if (drawing) {
             TheRnd.EndDrawing();
         }
+#ifdef HX_NATIVE
         if (!showing) {
             SetShowing(true);
         }
+#endif
         TheRnd.SetClearColor(Hmx::Color(0, 0, 0));
         mDebugging = arr;
         mLevel = 0;
@@ -408,8 +420,10 @@ void RndConsole::Break(DataArray *arr) {
         }
         mOutput->Clear();
         TheRnd.SetClearColor(oldClear);
+#ifdef HX_NATIVE
         if (!showing)
             SetShowing(false);
+#endif
         if (drawing)
             TheRnd.BeginDrawing();
     }
