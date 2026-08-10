@@ -65,7 +65,12 @@ BEGIN_PROPSYNCS(SpotlightDrawer)
 END_PROPSYNCS
 
 BEGIN_COPYS(SpotlightDrawer)
+#ifdef HX_NATIVE
+    // Same divergence as SyncProperty above: RB3-360 retail's Copy chain stops at
+    // the immediate superclass. rb3-Wii (the RB3-era oracle) copies RndDrawable
+    // only; DC3's extra direct Hmx::Object chain is a later addition, native-only.
     COPY_SUPERCLASS(Hmx::Object)
+#endif
     COPY_SUPERCLASS(RndDrawable)
     CREATE_COPY_AS(SpotlightDrawer, c)
     BEGIN_COPYING_MEMBERS
