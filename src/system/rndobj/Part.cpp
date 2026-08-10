@@ -1045,10 +1045,17 @@ void RndParticleSys::SetAnimatedUV(bool b) {
 
 void RndParticleSys::SetMesh(RndMesh *mesh) {
     if (mesh) {
-        SetTransConstraint(RndTransformable::kConstraintParentWorld, 0, false);
+        // Retail sets the parent BEFORE the constraint (reversed here).
         SetTransParent(mesh, false);
+        SetTransConstraint(RndTransformable::kConstraintParentWorld, 0, false);
         if (!mesh->GetKeepMeshData()) {
-            MILO_NOTIFY(
+            // MILO_WARN, not MILO_NOTIFY: in the match build MILO_NOTIFY is
+            // ((void)(__VA_ARGS__)), a comma expression, which sequences the
+            // arguments LEFT-TO-RIGHT; MILO_WARN is MiloStripEval(...), a real
+            // call, so MSVC evaluates them RIGHT-TO-LEFT. Retail computes
+            // PathName(this) first and PathName(mesh) second, which only the
+            // call form produces.
+            MILO_WARN(
                 "keep_mesh_data should be checked for %s.  It's the mesh emitter for %s.\n",
                 PathName(mesh),
                 PathName(this)
