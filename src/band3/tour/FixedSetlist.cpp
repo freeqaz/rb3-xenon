@@ -9,15 +9,18 @@ FixedSetlist::FixedSetlist() : mWeight(1), m_pSongEntries(NULL), mName("") {}
 FixedSetlist::~FixedSetlist() {}
 
 void FixedSetlist::Init(const DataArray *i_pConfig) {
-    static Symbol group("group");
-    static Symbol weight("weight");
-    static Symbol songs("songs");
     MILO_ASSERT(i_pConfig, 0x1e);
 
+    // Each static is declared at its point of use, not hoisted: retail runs
+    // Sym(0) FIRST and then interleaves guard-bit 0x1/group, 0x2/weight,
+    // 0x4/songs with their respective lookups.
     mName = i_pConfig->Sym(0);
 
+    static Symbol group("group");
     i_pConfig->FindData(group, mGroup, true);
+    static Symbol weight("weight");
     i_pConfig->FindData(weight, mWeight, false);
+    static Symbol songs("songs");
     DataArray *pSongsArray = i_pConfig->FindArray(songs);
 
     MILO_ASSERT(pSongsArray, 0x2A);

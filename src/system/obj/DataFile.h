@@ -69,4 +69,4 @@ DataArray *LoadDtz(const char *, int);
 
 void BeginDataRead();
 void FinishDataRead();
-const char *CachedDataFile(const char *, bool &);
+// CachedDataFile is file-local to DataFile.cpp (retail inlines it; no symbol).

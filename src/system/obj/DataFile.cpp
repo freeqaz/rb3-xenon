@@ -510,6 +510,30 @@ DataArray *ReadCacheStream(BinStream &bs, const char *cc) {
     return arr;
 }
 
+// Retail has NO standalone CachedDataFile symbol: it is inlined into BOTH call
+// sites (DataReadFile and DataLoader's ctor), so it is file-local here and
+// defined ahead of both -- MSVC's inliner is single-pass and will not inline a
+// function defined later in the TU.
+// The `UsingCD() &&` gate the DC3/Wii source has on the !isLocal arm is absent
+// from retail's inlined copies (no bl ?UsingCD@@YA_NXZ in either extent), the
+// same elimination ArchiveInit documents.
+static const char *CachedDataFile(const char *file, bool &b) {
+    bool isLocal = FileIsLocal(file);
+    if (strstr(file, ".dtb")) {
+        b = true;
+        return file;
+    }
+    if (!isLocal) {
+        b = true;
+        const char *filebase = FileGetBase(file);
+        const char *filepath = FileGetPath(file);
+        const char *result = MakeString("%s/gen/%s.dtb", filepath, filebase);
+        return result;
+    }
+    b = false;
+    return file;
+}
+
 DataArray *DataReadFile(const char *file, bool warn) {
     char buf[256];
     strcpy(buf, file);
@@ -600,23 +624,6 @@ DataArray *LoadDtz(const char *c, int i) {
         MemFree(pDecompBuf, __FILE__, 0x46a, "unknown");
     }
     return da;
-}
-
-const char *CachedDataFile(const char *file, bool &b) {
-    bool isLocal = FileIsLocal(file);
-    if (strstr(file, ".dtb")) {
-        b = true;
-        return file;
-    }
-    if (UsingCD() && !isLocal) {
-        b = true;
-        const char *filebase = FileGetBase(file);
-        const char *filepath = FileGetPath(file);
-        const char *result = MakeString("%s/gen/%s.dtb", filepath, filebase);
-        return result;
-    }
-    b = false;
-    return file;
 }
 
 void DataFail(const char *msg) {

@@ -160,12 +160,15 @@ int FileCacheFile::Seek(int offset, int whence) {
 #pragma region FileCache
 
 // NOTE(NCCC-0731-ab7e/f268/opus): the DC3 4th param `bool b2` is dropped (see
-// FileCache.h). `unk19` is retained as a member, initialized 0, so that the
-// MakeString/TheDebug.Notify instantiation it guards in DumpOverSize stays
-// referenced -- deleting the member would drop that template COMDAT from this
-// obj, which is how an earlier wave lost matches.
+// FileCache.h). `unk19` is retained as a MEMBER for layout, but is NOT
+// initialized: retail's ctor has no store to +0x19.
+// (The older rationale here -- "initialized 0 so the MakeString/TheDebug.Notify
+// instantiation it guards in DumpOverSize stays referenced" -- was overtaken by
+// the NCCC-0803 note in DumpOverSize below, which deleted that debug block as
+// DC3-only and recorded it as the TU's only MakeString call site. Nothing reads
+// unk19 any more, so there is no COMDAT left to keep alive.)
 FileCache::FileCache(int size, LoaderPos lp, bool b1)
-    : mMaxSize(size), mTryClear(0), mLoaderPos(lp), unk18(b1), unk19(0) {
+    : mMaxSize(size), mTryClear(0), mLoaderPos(lp), unk18(b1) {
     gCaches.push_back(this);
     mEntries.reserve(0x200);
 }

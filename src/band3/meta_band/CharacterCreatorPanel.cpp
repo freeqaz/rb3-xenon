@@ -528,19 +528,21 @@ int CharacterCreatorPanel::GetFeatureIndex(Symbol s) {
 }
 
 void CharacterCreatorPanel::ModifyFeature(Symbol s, float f) {
-    if (mPreviewDesc) {
-        static Symbol head("head");
-        DataArrayPtr ptr(head, s);
-        float prop = mPreviewDesc->Property(ptr, true)->Float();
-        float newfloat = prop + f;
-        if (newfloat < 0.0f)
-            newfloat = 0.0f;
-        else if (newfloat > 1.0f)
-            newfloat = 1.0f;
-        if (newfloat != prop) {
-            mPreviewDesc->SetProperty(ptr, newfloat);
-            mClosetMgr->PreviewCharacter(true, false);
-        }
+    // Retail-360 does NOT null-check mPreviewDesc here: there is no
+    // lwz 0x7c(this) / cmplwi / beq anywhere in the extent -- it loads
+    // mPreviewDesc only at the point of use. The rb3-Wii dev build wraps the
+    // whole body in `if (mPreviewDesc)`; retail dropped it.
+    static Symbol head("head");
+    DataArrayPtr ptr(head, s);
+    float prop = mPreviewDesc->Property(ptr, true)->Float();
+    float newfloat = prop + f;
+    if (newfloat < 0.0f)
+        newfloat = 0.0f;
+    else if (newfloat > 1.0f)
+        newfloat = 1.0f;
+    if (newfloat != prop) {
+        mPreviewDesc->SetProperty(ptr, newfloat);
+        mClosetMgr->PreviewCharacter(true, false);
     }
 }
 
