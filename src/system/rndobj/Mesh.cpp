@@ -725,7 +725,26 @@ float RndMesh::GetDistanceToPlane(const Plane &p, Vector3 &v) {
         float dot = p.Dot(v);
         for (auto it = Verts().begin(); it != Verts().end(); ++it) {
             Multiply(it->pos, world, v58);
-            float dotted = p.Dot(v58);
+            // Hand-expanded rather than p.Dot(v58), and NOT gratuitously: the
+            // inlined Dot loads b*y before c*z, retail loads c*z before b*y,
+            // and that pair of lfs was this function's entire residual.
+            // ⚠ Do NOT "simplify" this back to p.Dot(v58), and do NOT instead
+            // change Plane::Dot -- math/Mtx.h:333 records that Dot's current
+            // form is load-bearing for RndDrawable::CollidePlane (100% with it,
+            // 82% fused), so the fix has to be per-call-site.
+            // ★ This also REFUTES THE GENERALIZATION in that same note. Lane
+            // DR-3 measured `ax + cz + by + d` at the DEFINITION as inert over
+            // 974 TUs and concluded "term order in a sum is not
+            // source-controllable". The narrow result stands; the conclusion
+            // does not. Measured here: the SUM-TREE order IS live
+            // (`cz + by + ax + d` matches, `ax + by + cz + d` does not) while
+            // the NAMED TEMPORARIES are inert (this form and the equivalent
+            // one-line fused expression are byte-identical, which is the same
+            // inertness DR-3 saw and over-generalized from).
+            float cz = p.c * v58.z;
+            float by = p.b * v58.y;
+            float ax = p.a * v58.x;
+            float dotted = cz + by + ax + p.d;
             if (std::fabs(dotted) < std::fabs(dot)) {
                 dot = dotted;
                 v = v58;

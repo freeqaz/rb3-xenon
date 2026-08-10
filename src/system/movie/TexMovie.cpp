@@ -116,57 +116,66 @@ BEGIN_SAVES(TexMovie)
     mMovie.Save(&bs);
 END_SAVES
 
-// RB3-360 retail rev dialect (rb3-Wii/ObjMacros shape): the packed rev is split
-// into two HALFWORDS stored four bytes apart onto ONE internal-linkage align(4)
-// base, and the RAW incoming BinStream is forwarded to every read and to the
-// superclass Load.  DC3's Object.h BinStreamRev stack decorator additionally
-// emits ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
+// The RAW incoming BinStream is forwarded to every read and to each superclass
+// Load: DC3's Object.h BinStreamRev stack decorator additionally emits
+// ??0BinStream, a ??_7BinStreamRev@@6B@ vtable store and a ??1BinStream
 // destructor that retail has none of, and dispatches each read on `&d`.
 //
-// Written longhand rather than by including obj/ObjMacros.h: that header also
-// swaps the SYNC_PROP and HANDLE families, which are already byte-exact here.
-// The pair MUST share one aggregate -- two separate file statics are laid out
-// independently and will not fold onto a single base register.  No `#define
-// gRev` alias: several of these TUs are scatter-INCLUDED into another unit
-// (e.g. rndobj/Anim.cpp includes rndobj/MotionBlur.cpp) whose own gRev macro
-// the alias would silently shadow for the rest of the amalgamated TU.
-static struct {
-    __declspec(align(4)) unsigned short altRev;
-    __declspec(align(4)) unsigned short rev;
-} gRevs_TexMovie;
+// NOTE(laneGLM3): this TU used to also carry the two-halfword `gRevs_TexMovie`
+// aggregate (packed rev split into altRev/rev stored four bytes apart on one
+// internal-linkage align(4) base).  RETAIL DOES NOT DO THAT HERE -- it keeps
+// the packed value in a plain local `int` and compares it whole.  This is a
+// third rev dialect, which is exactly why the dialect has to be read off the
+// target bytes per TU rather than applied as a rule.  Four witnesses, any one
+// of which is sufficient:
+//   * retail contains no store to any such global -- the lis/addi of the base
+//     and both `sth` are base-only in the aligned diff;
+//   * every rev test re-loads `lwz r11, 0x54(r31)`, and 0x54(r31) is precisely
+//     the stack slot that `ReadEndian(&slot, 4)` filled at function entry;
+//   * retail compares with `cmpwi` (SIGNED, full word); a zero-extended
+//     halfword load produced our `cmplwi`;
+//   * the `rev > 4` argument to DoBeginMovieFromFile is built with the SIGNED
+//     compare-to-mask idiom, extracting both sign bits
+//     (srwi r9,r10,31 / srwi r11,r11,31 / subfc / subfe r11,r11,r9), where the
+//     halfword form collapsed to the unsigned subfic / subfe r11,r11,r11.
+//     A value known non-negative cannot generate the signed sequence.
 BEGIN_LOADS(TexMovie)
     int rev;
     bs >> rev;
-    gRevs_TexMovie.rev = getHmxRev(rev);
-    gRevs_TexMovie.altRev = getAltRev(rev);
     Hmx::Object::Load(bs);
     RndDrawable::Load(bs);
     RndPollable::Load(bs);
     bs >> mTex >> mLoop;
-    if (gRevs_TexMovie.rev < 4) {
+    if (rev < 4) {
         bool dummy;
         bs >> dummy;
     }
     bs >> sRoot;
-    if (gRevs_TexMovie.rev > 5) {
+#ifdef HX_NATIVE
+    // DC3-era additions, consistent with the is_localized/is_empty and Save
+    // gates above: RB3-360 retail's Load reads neither.  Both blocks are
+    // base-only in the aligned diff (13 consecutive base-only instructions
+    // between `bs >> sRoot` and the change_file static).
+    if (rev > 5) {
         bs >> mIsLocalized;
     }
-    if (gRevs_TexMovie.rev == 7) {
+    if (rev == 7) {
         bool dummy;
         bs >> dummy;
     }
+#endif
     static Message msg("change_file");
     DataNode handled = HandleType(msg);
     if (handled.Type() == kDataString) {
         const char *str = handled.Str(nullptr);
         sRoot.Set(FilePath::Root().c_str(), str);
     }
-    if (gRevs_TexMovie.rev > 1 && gRevs_TexMovie.rev < 3) {
+    if (rev > 1 && rev < 3) {
         bool dummy;
         bs >> dummy;
     }
     FilePathTracker tracker(".");
-    DoBeginMovieFromFile(gRevs_TexMovie.rev > 4 ? &bs : nullptr);
+    DoBeginMovieFromFile(rev > 4 ? &bs : nullptr);
 END_LOADS
 
 void TexMovie::DrawPreClear() {
