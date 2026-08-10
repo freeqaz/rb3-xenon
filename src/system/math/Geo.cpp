@@ -397,7 +397,31 @@ bool Intersect(const Plane &plane, const Box &box) {
         }
     }
 
-    if (0.0f < plane.Dot(pMin) || plane.Dot(pMax) < 0.0f) {
+    // Hand-expanded rather than plane.Dot(pMin)/plane.Dot(pMax), and NOT
+    // gratuitously: retail evaluates the products in the order c*z, b*y, a*x,
+    // and the inlined Dot cannot be made to produce that here.
+    // ⚠ Do NOT "simplify" this back to plane.Dot(), do NOT drop the inner
+    // parentheses, and do NOT reorder the terms -- each of those was measured
+    // and each one breaks the match. And do NOT instead change Plane::Dot:
+    // math/Mtx.h records its current form as load-bearing for
+    // RndDrawable::CollidePlane (100% with it, 82% fused), so the fix has to be
+    // per-call-site.
+    // ★ THE PARENTHESES ARE THE LEVER, not the term order. Lane DR-3 concluded
+    // "MSVC reassociates the sum chain under /fp:fast, so term order in a sum is
+    // not source-controllable". Measured here: bare `cz + by + ax + d` scores 9
+    // and DOES get reassociated -- but `((cz + by) + ax) + d` is byte-exact,
+    // because an EXPLICIT parenthesisation is a reassociation BARRIER that
+    // /fp:fast respects. Term order alone reaches only 2 of the 6 possible
+    // product orders; the barrier makes all 6 reachable.
+    float cz0 = plane.c * pMin.z;
+    float by0 = plane.b * pMin.y;
+    float ax0 = plane.a * pMin.x;
+    float cz1 = plane.c * pMax.z;
+    float by1 = plane.b * pMax.y;
+    float ax1 = plane.a * pMax.x;
+    float dMin = ((cz0 + by0) + ax0) + plane.d;
+    float dMax = ((cz1 + by1) + ax1) + plane.d;
+    if (0.0f < dMin || dMax < 0.0f) {
         return false;
     }
     return true;
