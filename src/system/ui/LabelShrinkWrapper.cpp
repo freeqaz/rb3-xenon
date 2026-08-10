@@ -35,15 +35,26 @@ BEGIN_SAVES(LabelShrinkWrapper)
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
 
-void LabelShrinkWrapper::Copy(const Hmx::Object *o, Hmx::Object::CopyType ty) {
-    UIComponent::Copy(o, ty);
-    const LabelShrinkWrapper *c = dynamic_cast<const LabelShrinkWrapper *>(o);
-    if (c) {
-        m_pLabel = c->m_pLabel;
-        m_pShow = c->m_pShow;
-    }
-    Update();
-}
+// NOTE(laneGLM3): retail's Copy is the rb3-Wii RB3 oracle's shape
+// (../rb3/src/system/ui/LabelShrinkWrapper.cpp:19), NOT the dc3-derived one.
+// Three things are settled by the 112-byte retail body, whose 28 instructions
+// are exhaustively accounted for by what is written below:
+//   (1) UIComponent::Copy runs LAST, not first;
+//   (2) it is passed the DERIVED pointer `c`, not the incoming `o` -- retail
+//       emits a vbtable lookup (lwz 0x4(c) / lwz 0x4(r11) / add / addi 4) to
+//       reach the virtual base Hmx::Object, which converting an already-adjusted
+//       `o` would not need;
+//   (3) there is NO null test on the cast (retail's `mr r31,r3` has no record
+//       bit and no following `beq`) and NO Update() call -- the assert below is
+//       codegen-free in the match build, and Update() is still driven from
+//       PostLoad and SetTypeDef, so nothing is lost.
+BEGIN_COPYS(LabelShrinkWrapper)
+    CREATE_COPY_AS(LabelShrinkWrapper, c)
+    MILO_ASSERT(c, 0x2F);
+    COPY_MEMBER_FROM(c, m_pLabel)
+    COPY_MEMBER_FROM(c, m_pShow)
+    UIComponent::Copy(c, ty);
+END_COPYS
 
 BEGIN_LOADS(LabelShrinkWrapper)
     PreLoad(bs);
