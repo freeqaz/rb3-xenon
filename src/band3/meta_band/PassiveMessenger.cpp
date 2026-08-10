@@ -18,12 +18,6 @@
 #include "utl/Symbol.h"
 #include "utl/Symbols.h"
 
-// net/VoiceChatMgr.h would re-declare VoiceChatDisabledMsg (our PassiveMessenger.h
-// forward-declares it to dodge speex). VoiceChatMgr : public MsgSource at offset 0,
-// so reach TheVoiceChatMgr's AddSink/RemoveSink (MsgSource methods) via a no-op cast.
-class VoiceChatMgr;
-extern VoiceChatMgr *TheVoiceChatMgr;
-
 PassiveMessenger *ThePassiveMessenger;
 
 void PassiveMessageQueue::Poll() {
@@ -239,20 +233,24 @@ PassiveMessenger::PassiveMessenger() : unk1c(0) {
     MILO_ASSERT(!ThePassiveMessenger, 0x159);
     ThePassiveMessenger = this;
     SetName("passive_messenger", ObjectDir::Main());
-    ((MsgSource *)TheVoiceChatMgr)->AddSink(this, VoiceChatDisabledMsg::Type());
+    // Retail-360 registers exactly THESE THREE. The rb3-Wii dev build's other two
+    // -- VoiceChatDisabledMsg on TheVoiceChatMgr and InviteReceivedMsg on
+    // ThePlatformMgr -- are absent from the retail extent. InviteReceivedMsg is
+    // corroborated independently by BEGIN_HANDLERS below, which retail likewise
+    // omits: retail neither sinks nor dispatches it.
     ThePlatformMgr.AddSink(this, InviteSentMsg::Type());
     TheSessionMgr->AddSink(this, RemoteUserLeftMsg::Type());
-    ThePlatformMgr.AddSink(this, InviteReceivedMsg::Type());
     TheSessionMgr->AddSink(this, SessionDisconnectedMsg::Type());
 }
 
 PassiveMessenger::~PassiveMessenger() {
     MILO_ASSERT(ThePassiveMessenger, 0x169);
     ThePassiveMessenger = nullptr;
-    // Retail-360 un-sinks only these TWO of the five the ctor registers; the
-    // VoiceChatMgr and InviteReceivedMsg RemoveSinks the rb3-Wii dev build has
-    // are absent from the retail extent (which never unsinks
-    // SessionDisconnectedMsg either -- this dtor is partial by design).
+    // Un-sinks two of the THREE the ctor registers -- a strict subset, so nothing
+    // is removed that was never added. (This comment previously said "two of the
+    // five", counting the rb3-Wii dev build's sinks; retail's ctor registers three.
+    // SessionDisconnectedMsg is the single sink retail leaves permanently
+    // registered, matching the dev build's own asymmetry.)
     ThePlatformMgr.RemoveSink(this, InviteSentMsg::Type());
     TheSessionMgr->RemoveSink(this, RemoteUserLeftMsg::Type());
 }
