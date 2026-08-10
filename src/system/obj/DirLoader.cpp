@@ -1262,19 +1262,30 @@ void DirLoader::OpenFile() {
     mState = &DirLoader::LoadHeader;
 }
 
+// NOTE(laneGLM3): the sTypeMemDumpFile bracketing is a DC3-era addition that
+// RB3 retail's LoadObjects does not have. The 124-byte retail body is just the
+// ctor / PollUntilLoaded / GetDir / dtor -- matching the rb3-Wii RB3 oracle
+// (../rb3/src/system/obj/DirLoader.cpp:171) exactly -- and every base-only
+// instruction in the aligned diff belonged to this instrumentation: the
+// sTypeMemDumpFile load + test, the sMemPointMap _Rb_tree::clear, the
+// WriteTypeMemDump call, and the three extra callee-saves (r27/r28/r29) it
+// forced, which is also why our prologue reached for __savegprlr_27 where
+// retail inlines std r30/r31 and why our frame was 0x20 larger.
+// Kept for the native build, which does use the type mem dump.
 ObjectDir *DirLoader::LoadObjects(const FilePath &fp, Callback *cb, BinStream *bs) {
+#ifdef HX_NATIVE
     if (sTypeMemDumpFile) {
         sMemPointMap.clear();
     }
-#ifdef HX_NATIVE
     DirLoader dirLoader(fp, kLoadFront, cb, bs, nullptr, false, nullptr);
-#else
-    DirLoader dirLoader(fp, kLoadFront, cb, bs, nullptr, false);
-#endif
     TheLoadMgr.PollUntilLoaded(&dirLoader, nullptr);
     if (sTypeMemDumpFile) {
         WriteTypeMemDump(sTypeMemDumpFile);
     }
+#else
+    DirLoader dirLoader(fp, kLoadFront, cb, bs, nullptr, false);
+    TheLoadMgr.PollUntilLoaded(&dirLoader, nullptr);
+#endif
     return dirLoader.GetDir();
 }
 
