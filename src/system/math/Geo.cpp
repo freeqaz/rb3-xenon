@@ -343,7 +343,17 @@ void BSPFace::OnSide(const Plane &plane, bool &front, bool &back) {
         do {
             Vector3 pt(it->x, it->y, 0.0f);
             Multiply(pt, t, pt);
-            float dot = plane.a * pt.x + plane.b * pt.y + plane.c * pt.z + plane.d;
+            // ⚠ Do NOT fuse these back into one expression, do NOT drop the
+            // inner parentheses, and do NOT reorder the terms. All three were
+            // measured: the bare fused sum scores 6, fused-with-parens scores
+            // 10, named-without-parens scores 14, and only named-WITH-parens in
+            // this exact order is byte-exact. See the block comment in
+            // Intersect(Plane, Box) below for the mechanism (an explicit
+            // parenthesisation is a /fp:fast reassociation barrier).
+            float ax = plane.a * pt.x;
+            float by = plane.b * pt.y;
+            float cz = plane.c * pt.z;
+            float dot = ((ax + by) + cz) + plane.d;
             if (dot > posTol) {
                 front = true;
             }
