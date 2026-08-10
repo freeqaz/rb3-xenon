@@ -613,7 +613,12 @@ void RGTrainerPanel::SetSongSectionComplete(
 bool RGTrainerPanel::IsSongSectionComplete(
     BandProfile *profile, int i1, Difficulty diff, int i2
 ) {
-    SetupIsBass();
+    // Same divergence Enter() carries: retail-360 does not call SetupIsBass(), it
+    // inlines only the mTrack arm against a FUNCTION-LOCAL static Symbol (its own
+    // guard, distinct from Enter's). Unlike Enter there is no `if (mTrack)` here --
+    // retail loads mTrack and calls GetType() unconditionally.
+    static Symbol real_bass("real_bass");
+    mIsBass = mTrack->GetType() == real_bass;
     if (mIsBass) {
         return profile->IsProBassSongLessonSectionComplete(i1, diff, i2);
     } else {
