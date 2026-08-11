@@ -1,7 +1,7 @@
 #!/bin/sh
 # ninja-locked: serialized ninja wrapper for rb3-xenon.
 #
-# Running multiple `ninja` instances concurrently in one build directory
+# Running multiple `ninja` instances concurrently in ONE build directory
 # corrupts .ninja_log/.ninja_deps and can trigger an infinite
 # SPLIT->configure manifest-regeneration loop. Symptoms include:
 #   - "ninja: manifest 'build.ninja' still dirty after N tries"
@@ -13,26 +13,105 @@
 # This wrapper takes an exclusive flock so concurrent builds queue up
 # instead of colliding.
 #
-# Used as objdiff.json's `custom_make` (so every orchestrator / objdiff-cli
-# build is serialized) and by build scripts. For manual builds, run this
-# instead of bare `ninja`.
+# Used as objdiff.json's `custom_make` (so every orchestrator build is
+# serialized) and by build scripts. For manual builds, run this instead of
+# bare `ninja`.
 #
-# Ported from rb3-Wii (tools/ninja-locked), adapted for title-ID 45410914.
-REPO="$(cd "$(dirname "$0")/.." && pwd)"
+# KNOWN GAP: `objdiff-cli --build` hardcodes `Command::new("ninja")` and
+# ignores `custom_make`, so it does NOT come through here. Measured 2026-08-10;
+# see decomp-synth docs/objdiff-custom-make-bypass-2026-08-10.md. No change to
+# this wrapper can close that path — it needs the CLI patch. In practice the
+# exposure is bounded by one-worktree-per-worker, not by this lock.
+#
+# The two structural hazards named above are ALSO why this repo needs the lock
+# more than rb3-Wii does: the rb3 commit that introduced this wrapper shipped
+# three safeguards and rb3-xenon received only the flock. rb3 removed `deps=`
+# from all its rules (no shared binary .ninja_deps to corrupt) and put
+# `restat=1` on `split` (kills the SPLIT->configure loop). Here, 3 rules still
+# carry `deps = msvc` over a live multi-MB .ninja_deps — and that is correct
+# and must stay, because MSVC emits no depfile and that log IS this repo's
+# only header tracking. So the flock is load-bearing here in a way it is not
+# there.
+#
+# SCOPE: the lock is PER BUILD DIRECTORY, deliberately. It is not a global
+# mutex across worktrees/repos — separate worktrees have separate build dirs
+# and must keep building in parallel at full speed.
+#
+# The lock is keyed off the directory ninja will ACTUALLY build in, not off
+# this script's own location (ported from rb3 2026-08-11; rb3 changed it
+# 2026-08-04). The old `dirname $0/..` form was wrong in two ways that both
+# yield a silently MIS-SCOPED lock:
+#   * It assumed `tools/` is a real directory in the tree being built. It is
+#     today, but any future setup change that symlinks `tools/` at the main
+#     repo would collapse every worktree onto MAIN's lock (a global mutex)
+#     AND read report.json from the wrong tree.
+#   * `ninja` is invoked with no `-C`, so it builds in the CALLER's cwd.
+#     Running <main>/tools/ninja-locked from inside a worktree therefore built
+#     the worktree while locking main — and vice versa. Two agents in two
+#     trees could take two DIFFERENT locks and race on ONE build dir.
+# Resolving the build dir from the cwd (honouring -C) and canonicalising it
+# with `pwd -P` makes one build dir map to exactly one lock file, which is the
+# isolation property we actually need.
+
+# Determine the directory ninja will build in: honour `-C dir` / `-Cdir`,
+# otherwise the current working directory.
+build_cwd="$PWD"
+prev=""
+for arg in "$@"; do
+    case "$prev" in
+        -C) build_cwd="$arg" ;;
+    esac
+    case "$arg" in
+        -C?*) build_cwd="${arg#-C}" ;;
+    esac
+    prev="$arg"
+done
+
+# Canonicalise (resolve symlinks) so two spellings of one build dir cannot end
+# up with two different lock files.
+REPO="$(cd "$build_cwd" 2>/dev/null && pwd -P)" || REPO="$PWD"
+
+# Walk up to the tree that owns build.ninja — that is the real build root even
+# when invoked from a subdirectory.
+d="$REPO"
+while [ "$d" != "/" ] && [ ! -f "$d/build.ninja" ]; do
+    d=$(dirname "$d")
+done
+if [ -f "$d/build.ninja" ]; then
+    REPO="$d"
+fi
+
 exec 9>"$REPO/.ninja-build.lock"
 if ! flock -n 9; then
-    echo "ninja-locked: another build is running; waiting for the lock..." >&2
+    echo "ninja-locked: another build is running in $REPO; waiting for the lock..." >&2
     flock 9
 fi
 
 # Skip the post-build progress print for ninja subtools / help / version
-# queries -- those aren't builds and the report file may be stale or absent.
+# queries — those aren't builds and the report file may be stale or absent.
+#
+# `-n` / `--dry-run` is in this list for a sharper reason: a dry run's ENTIRE
+# value is its output, and a stale manifest truncates that output to two or
+# three lines. Bolting a 40-line progress dashboard onto the end buries the one
+# thing the caller needed to read. Dry runs also build nothing, so there is no
+# progress to report.
+#
+# NINJA_LOCKED_SKIP_PROGRESS=1 suppresses the tail outright. That tail is
+# `python3 configure.py progress`, measured standalone at 534 ms here (154 ms
+# on rb3) — and a single-object build never satisfies the "ninja already ran
+# PROGRESS" condition below, because PROGRESS depends on the objects rather
+# than the reverse. So an automated per-object build pays it EVERY time, for a
+# dashboard no one reads: 3.4%-32% of wall clock depending on how long the TU
+# takes. Interactive builds are unaffected; the default is unchanged.
 skip_progress=0
 for arg in "$@"; do
     case "$arg" in
-        -t|--help|-h|--version) skip_progress=1 ;;
+        -t|--help|-h|--version|-n|--dry-run) skip_progress=1 ;;
     esac
 done
+if [ -n "$NINJA_LOCKED_SKIP_PROGRESS" ] && [ "$NINJA_LOCKED_SKIP_PROGRESS" != "0" ]; then
+    skip_progress=1
+fi
 
 report_json="$REPO/build/45410914/report.json"
 before=""
@@ -49,7 +128,7 @@ status=$?
 if [ "$status" -eq 0 ] && [ "$skip_progress" -eq 0 ] && [ -f "$report_json" ]; then
     after=$(stat -c %Y "$report_json" 2>/dev/null)
     if [ "$before" = "$after" ]; then
-        (cd "$REPO" && python3 configure.py progress) 2>/dev/null || true
+        (cd "$REPO" && python3 configure.py progress) || true
     fi
 fi
 
