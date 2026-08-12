@@ -51,7 +51,8 @@
     "Cross-validated against an independent retail-vs-ours body-hash enumerator:",
     "the two derivations agree EXACTLY on all 394 retail-adjudicated (T1) pairs.",
     "Negative decoy control: the relocation gate kills 96.8% of the pairs a naive",
-    "masked-byte comparator would accept (554,705 of 573,290)."
+    "masked-byte comparator would accept (554,705 of 573,290).",
+    "FOLD-THUNK TIER (FT, lane H, 2026-08-12) -- the groups whose evidence string names tools/fold_thunk_gate.py depart from the 'exactly ONE map-resident symbol per group' gate above, DELIBERATELY. In this class BOTH spellings are map-resident, which is the whole reason the earlier residency triage misread them as wrong callees: target_symbol_map.json is a VA->name FUNCTION over an ICF-folded link, so it parks the loser of a fold on whatever address is left -- padding, a mid-function word, an unrelated thunk, or ANOTHER MODULE'S FUNCTION OF THE SAME NAME. Each FT group therefore carries, per folded spelling, either proof that the map's other address holds the same body or a measured reason it is not retail's copy of our symbol. Do NOT re-add a score-based discredit: a low `none` score says two bodies differ, never which of them is misnamed. See docs/plans/fold-thunk-alias-gate-2026-08-12.md."
   ],
   "groups": [
     {
@@ -25537,6 +25538,39 @@
         "?MemOrPoolAllocSTL@@YAPAXH@Z"
       ],
       "evidence": "1-arg MemOrPoolAlloc/MemOrPoolAllocSTL (utl/MemMgr.h, debug-stripped) fold onto the 4-arg debug MemOrPoolAlloc; target obj refs only the 4-arg name (244 objs). Paired-bl diff_arg signature confirmed in DataArray (??0DataArray, LoadGlob, _M_create_node \u2014 including the cross-variant STL fold)."
+    },
+    {
+      "name": "$?0H",
+      "address": "0x826c3888",
+      "survivor": "??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z",
+      "folded": [
+        "??3@YAXPAX0@Z"
+      ],
+      "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT-EMPTY. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x826c3888 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 1116 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (zero .text fan-in, or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so the fold is real but the byte comparison is vacuous. 1 folded spelling(s), 154 charged name_check sites. Per spelling: [??3@YAXPAX0@Z FT-EMPTY, 154 sites: map parks ??3@YAXPAX0@Z at 0x82333e14 with no symbols.txt extent | body carries no relocation: the fold is real but the byte comparison is vacuous]"
+    },
+    {
+      "name": "1LoaderGlitchContext",
+      "address": "0x827bea28",
+      "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+      "folded": [
+        "??1FilePath@@UAA@XZ"
+      ],
+      "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT2. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x827bea28 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 235 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (zero .text fan-in, or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so the fold is real but the byte comparison is vacuous. 1 folded spelling(s), 164 charged name_check sites. Per spelling: [??1FilePath@@UAA@XZ FT2, 164 sites: map parks ??1FilePath@@UAA@XZ at 0x82812508, which has ZERO .text fan-in]"
+    },
+    {
+      "name": "3BinStream",
+      "address": "0x8240ddb0",
+      "survivor": "??3BinStream@@SAXPAX@Z",
+      "folded": [
+        "??3@YAXPAX@Z",
+        "??3CharEyeDartRuleset@@SAXPAX@Z",
+        "??3PlayerDiffIcon@@SAXPAX@Z",
+        "??3RndLight@@SAXPAX@Z",
+        "??3RndMat@@SAXPAX@Z",
+        "??3UIComponent@@SAXPAX@Z",
+        "OggFree"
+      ],
+      "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT2,FT3. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x8240ddb0 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 2308 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (zero .text fan-in, or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so the fold is real but the byte comparison is vacuous. 7 folded spelling(s), 1281 charged name_check sites. Per spelling: [??3@YAXPAX@Z FT3, 1180 sites: HOMONYM: dc3's leaked ham_xbox_r.map names ??3@YAXPAX@Z at 3 distinct addresses, and the body at 0x82eb0c70 (xaudio2:baseswfilter.obj) is byte-identical to retail's body at 0x82bc6b70 over 148 bytes once relocated fields are masked. That address is another module's own file-scope ??3@YAXPAX@Z, not retail's copy of ours.] [OggFree FT2, 91 sites: map parks OggFree at 0x8249b200, which has ZERO .text fan-in] [??3RndLight@@SAXPAX@Z FT2, 4 sites: map parks ??3RndLight@@SAXPAX@Z at 0x8270d7f8 with no symbols.txt extent] [??3UIComponent@@SAXPAX@Z FT2, 3 sites: map parks ??3UIComponent@@SAXPAX@Z at 0x8282779c, which has ZERO .text fan-in] [??3CharEyeDartRuleset@@SAXPAX@Z FT2, 1 sites: map parks ??3CharEyeDartRuleset@@SAXPAX@Z at 0x823beea8, which has ZERO .text fan-in] [??3RndMat@@SAXPAX@Z FT2, 1 sites: map parks ??3RndMat@@SAXPAX@Z at 0x824a8f74, which has ZERO .text fan-in] [??3PlayerDiffIcon@@SAXPAX@Z FT2, 1 sites: map parks ??3PlayerDiffIcon@@SAXPAX@Z at 0x823258d4, which has ZERO .text fan-in]"
     }
   ]
 }
