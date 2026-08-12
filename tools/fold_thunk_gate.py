@@ -49,12 +49,25 @@ our F is compiled wrong -- and aliasing would paper over the second case.  So:
 
   FT1      addr(F) is absent from the map, or retail's body at addr(F) is
            itself identical to the body at addr(S).  Nothing contradicts.
-  FT2      retail's body at addr(F) differs, AND that map entry is independently
-           discredited -- addr(F) has ZERO `.text` fan-in and no `symbols.txt`
-           extent (padding / mid-function parking), or our own definition of F
-           scores <20% at the `none` ruler against it.
+  FT2      retail's body at addr(F) differs, AND that map entry is discredited by
+           the image itself -- addr(F) has ZERO `.text` fan-in, or no
+           `symbols.txt` extent at all (padding / mid-function parking).
+  FT3      retail's body at addr(F) differs and is a HOMONYM: dc3's LEAKED
+           ham_xbox_r.map names F at more than one address, and the dc3 body at
+           one of them is byte-identical (masked) to retail's body at addr(F),
+           under a different module.  Two distinct functions in the image
+           legitimately carry the same mangled name, so retail's addr(F) is not
+           retail's copy of OUR F and cannot refute the fold.
   REFUSE   anything else, including every body comparison that fails, every
            unresolvable relocation, and every F our objects do not define.
+
+⚠ There USED to be a fourth discredit: "our own definition of F scores <20% at
+the `none` ruler against addr(F)".  It fired once, on ??3@YAXPAX@Z / 2.70%, and
+it was WRONG -- that 2.70% measures objdiff pairing our 4-byte Milo
+`::operator delete` against XAudio2's 148-byte one, which is a splits/pairing
+defect, not evidence about the map.  A low score says the two bodies differ; it
+cannot say WHICH of them is misnamed.  Removed, and replaced by FT3, which
+answers that question with an oracle instead of a threshold.
 
 Usage
 -----
@@ -113,6 +126,20 @@ def branch_target(w, va):
     else:
         return None
     return d if (w & 2) else va + d
+
+
+def parse_leaked_map(path):
+    """{name: [(va, module)]} from dc3's leaked MSVC linker map."""
+    import re
+    rx = re.compile(r"^\s*\d{4}:[0-9a-fA-F]+\s+(\S+)\s+([0-9a-fA-F]{8})\s+(.*)$")
+    out = collections.defaultdict(set)
+    with open(path, errors="replace") as fh:
+        for line in fh:
+            m = rx.match(line)
+            if m:
+                mod = m.group(3).split()[-1] if m.group(3).split() else "?"
+                out[m.group(1)].add((int(m.group(2), 16), mod))
+    return {k: sorted(v) for k, v in out.items()}
 
 
 class Retail:
@@ -174,6 +201,38 @@ def our_canon(cd):
     return words, targets, None
 
 
+def homonym(dc3, dc3img, retail, F, fa, nbytes):
+    """Is retail's addr(F) a DIFFERENT function that merely shares F's mangled name?
+
+    dc3 is the Rosetta Stone: same engine family, same middleware, and a LEAKED
+    linker map that names every function AND its owning .obj. If that map lists F
+    at more than one address -- one per module that defines its own file-scope
+    copy -- then F is not a unique symbol in this codebase, and a VA->name map for
+    RB3 can only record one of them. Confirm by BODY, not by the name alone.
+    """
+    if not dc3 or dc3img is None or nbytes <= 0:
+        return None
+    sites = dc3.get(F, [])
+    if len(sites) < 2:
+        return None
+    want = retail.canon(fa)[0]
+    if want is None:
+        return None
+    for va, mod in sites:
+        o = dc3img.off(va)
+        if o is None or o + nbytes > len(dc3img.data):
+            continue
+        got = [mask_word(w) for w in
+               struct.unpack_from(">%dI" % (nbytes // 4), dc3img.data, o)]
+        if got == want:
+            return ("HOMONYM: dc3's leaked ham_xbox_r.map names %s at %d distinct addresses, "
+                    "and the body at 0x%08x (%s) is byte-identical to retail's body at "
+                    "0x%08x over %d bytes once relocated fields are masked. That address is "
+                    "another module's own file-scope %s, not retail's copy of ours."
+                    % (F, len(sites), va, mod, fa, nbytes, F))
+    return None
+
+
 def compare(rw, rt, ow, ot):
     if len(rw) != len(ow):
         return False, "body length %d words (retail) vs %d (ours)" % (len(rw), len(ow))
@@ -201,11 +260,31 @@ def main():
     ap.add_argument("--install", action="store_true",
                     help="merge the admitted groups into scripts/symbol_aliases.json")
     ap.add_argument("--aliases", default="scripts/symbol_aliases.json")
+    ap.add_argument("--dc3-map", default="../dc3-decomp/orig/373307D9/ham_xbox_r.map",
+                    help="dc3's LEAKED ham_xbox_r.map, relative to this repo's PARENT "
+                         "directory or absolute. Enables the FT3 homonym tier; without it "
+                         "an FT3 pair is REFUSED, not assumed (default: %(default)s)")
     args = ap.parse_args()
 
     wl = json.loads((ROOT / args.worklist).read_text())
     pairs = [r for r in wl["pairs"] if r["subclass"] == args.subclass]
     retail = Retail()
+    dc3p = Path(args.dc3_map)
+    if not dc3p.is_absolute():
+        # ROOT may be a linked worktree several levels below the checkout, so a
+        # sibling-repo path does not resolve from ROOT.parent. Walk up until it does.
+        for anc in [ROOT] + list(ROOT.parents):
+            cand = anc / args.dc3_map
+            if cand.is_file():
+                dc3p = cand
+                break
+        else:
+            dc3p = ROOT.parent / args.dc3_map
+    dc3 = parse_leaked_map(dc3p) if dc3p.is_file() else {}
+    print("dc3 leaked map: %s (%d names)"
+          % (dc3p if dc3p.is_file() else "ABSENT -- FT3 unavailable, those pairs REFUSE",
+             len(dc3)))
+    dc3img = Image(dc3p.parent / "ham_xbox_r.exe") if (dc3 and (dc3p.parent / "ham_xbox_r.exe").is_file()) else None
     idx = our_index({r["base"] for r in pairs})
 
     rows = []
@@ -265,18 +344,18 @@ def main():
         else:
             row["retail_F"] = ("retail body at %s differs (%d words, fan-in %d)"
                                % (r["base_addr"], len(fw), f_fanin))
+            hom = homonym(dc3, dc3img, retail, F, fa, len(fw) * 4)
             if f_fanin == 0:
                 tier, disc = "FT2", ("map parks %s at %s, which has ZERO .text fan-in"
                                      % (F, r["base_addr"]))
-            elif 0 <= r["base_none_pct"] < 20:
-                tier, disc = "FT2", ("our own %s scores %.2f%% at `none` against %s, so that "
-                                     "map entry is wrong" % (F, r["base_none_pct"], r["base_addr"]))
+            elif hom:
+                tier, disc = "FT3", hom
             else:
                 rows.append({**row, "verdict": "REFUSE", "tier": None,
-                             "reason": ("retail has a DIFFERENT body named %s at %s (fan-in %d, "
-                                        "our score %.2f%% at `none`); the map entry is not "
-                                        "discredited, so aliasing would hide a source defect"
-                                        % (F, r["base_addr"], f_fanin, r["base_none_pct"]))})
+                             "reason": ("retail has a DIFFERENT body named %s at %s (fan-in %d); "
+                                        "no zero-fan-in parking and no dc3 homonym witness, so "
+                                        "the map entry stands and aliasing would hide a source "
+                                        "defect" % (F, r["base_addr"], f_fanin))})
                 continue
         if not rt:
             tier = "FT-EMPTY"
@@ -321,6 +400,9 @@ def main():
         install(groups, Path(ROOT / args.aliases))
 
 
+OWNED = "Fold-thunk alias group derived by tools/fold_thunk_gate.py."
+
+
 def install(groups, path):
     doc = json.loads(path.read_text())
     existing = {g["survivor"]: g for g in doc["groups"]}
@@ -328,24 +410,38 @@ def install(groups, path):
     for (S, addr), rs in sorted(groups.items()):
         folded = sorted({r["folded"] for r in rs})
         tiers = sorted({r["tier"] for r in rs})
-        ev = ("Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) %s. "
-              "FT=our compiled COMDAT for each folded spelling is byte-identical to the RETAIL "
-              "body at the survivor address %s once relocation-carrying fields are masked, with "
-              "every relocated branch destination RESOLVED and name-equal (not masked away); the "
-              "survivor has %d direct callers across .text. FT1=retail's map places the folded "
-              "spelling on the same body or nowhere; FT2=retail's map places it on a different "
-              "body that is independently discredited (zero fan-in, or our own definition scores "
-              "<20%% at `none` against it); FT-EMPTY=the body carries no relocation, so the fold "
-              "is real but the byte comparison is vacuous. %d folded spelling(s), %d charged "
-              "name_check sites."
+        ev = (OWNED + " Evidence tier(s) %s. Our compiled COMDAT for each folded "
+              "spelling below is byte-identical to the RETAIL body at the survivor address "
+              "%s once relocation-carrying fields are masked, with every relocated branch "
+              "destination RESOLVED through the map and NAME-equal rather than masked away; "
+              "the survivor takes %d direct branches across .text. FT1=retail's map places "
+              "the folded spelling on the same body or nowhere. FT2=it places it on a "
+              "different body the image itself discredits (zero .text fan-in, or no "
+              "symbols.txt extent -- padding or a mid-function word). FT3=it places it on a "
+              "HOMONYM, a distinct function under another module that legitimately carries "
+              "the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. "
+              "FT-EMPTY=the body carries no relocation at all, so the fold is real but the "
+              "byte comparison is vacuous. %d folded spelling(s), %d charged name_check "
+              "sites. Per spelling: %s"
               % (",".join(tiers), addr, rs[0]["survivor_fanin"], len(folded),
-                 sum(r["sites"] for r in rs)))
+                 sum(r["sites"] for r in rs),
+                 " ".join("[%s %s, %d sites: %s]"
+                          % (x["folded"], x["tier"], x["sites"],
+                             (x.get("discredit") or "nothing in the map contradicts it").strip(" |"))
+                          for x in sorted(rs, key=lambda y: -y["sites"]))))
         if S in existing:
             g = existing[S]
-            before = set(g.get("folded", []))
-            g["folded"] = sorted(before | set(folded))
-            if set(g["folded"]) != before:
-                g["evidence"] = g.get("evidence", "") + " || " + ev
+            before = (sorted(g.get("folded", [])), g.get("evidence", ""))
+            if g.get("evidence", "").startswith(OWNED):
+                # a group this tool owns: regenerate it wholesale so a change in the
+                # evidence rules shows up in the file instead of silently not applying
+                g["folded"] = sorted(folded)
+                g["evidence"] = ev
+            else:
+                g["folded"] = sorted(set(g.get("folded", [])) | set(folded))
+                if sorted(g["folded"]) != before[0]:
+                    g["evidence"] = g.get("evidence", "") + " || " + ev
+            if (sorted(g["folded"]), g["evidence"]) != before:
                 updated += 1
         else:
             doc["groups"].append({
@@ -356,16 +452,19 @@ def install(groups, path):
     # NEVER re-sort: the file is 1,347 hand-audited groups and a reorder makes the
     # diff unreviewable. New groups append; re-running is a no-op.
     note = ("FOLD-THUNK TIER (FT, lane H, 2026-08-12) -- the groups whose evidence "
-            "string names tools/fold_thunk_gate.py depart from the 'exactly ONE "
-            "map-resident symbol per group' gate above, DELIBERATELY. In this class BOTH "
-            "spellings are map-resident, which is the whole reason the earlier residency "
-            "triage misread them as wrong callees: target_symbol_map.json is a VA->name "
-            "FUNCTION over an ICF-folded link, so it parks the loser of a fold on whatever "
-            "address is left -- padding, a mid-function word, or an unrelated thunk. Each "
-            "FT group therefore carries, per folded spelling, either proof that the map's "
-            "other address holds the SAME body or a measured reason that entry is wrong "
-            "(zero .text fan-in, no symbols.txt extent, or our own definition scoring "
-            "<20% at `none` against it). See docs/plans/fold-thunk-alias-gate-2026-08-12.md.")
+            "string names tools/fold_thunk_gate.py depart from the 'exactly ONE map-resident "
+            "symbol per group' gate above, DELIBERATELY. In this class BOTH spellings are "
+            "map-resident, which is the whole reason the earlier residency triage misread "
+            "them as wrong callees: target_symbol_map.json is a VA->name FUNCTION over an "
+            "ICF-folded link, so it parks the loser of a fold on whatever address is left -- "
+            "padding, a mid-function word, an unrelated thunk, or ANOTHER MODULE'S FUNCTION "
+            "OF THE SAME NAME. Each FT group therefore carries, per folded spelling, either "
+            "proof that the map's other address holds the same body or a measured reason it "
+            "is not retail's copy of our symbol. Do NOT re-add a score-based discredit: a low "
+            "`none` score says two bodies differ, never which of them is misnamed. See "
+            "docs/plans/fold-thunk-alias-gate-2026-08-12.md.")
+    doc["_comment"] = [c for c in doc["_comment"]
+                       if not (isinstance(c, str) and c.startswith("FOLD-THUNK TIER"))]
     if note not in doc["_comment"]:
         doc["_comment"].append(note)
     path.write_text(json.dumps(doc, indent=2))
