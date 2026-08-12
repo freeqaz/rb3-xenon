@@ -571,6 +571,38 @@ int MemFindAddrHeap(void *addr) {
     }
     return -2;
 }
+
+// The heap/temp stack push-pop quartet also lives in retail's MemHeap TU, in
+// this order and contiguously: MemPushHeap 0x827BC1F8 (72 B), MemPopHeap
+// 0x827BC240 (48 B), MemPushTemp 0x827BC270 (48 B), MemPopTemp 0x827BC2A0
+// (48 B). Disassembled out of orig/45410914/band.exe, NONE of the four tests
+// gInitted or gNumHeaps: each one is prologue, `ThreadMemStack(true)`, one
+// load/add/store on mSize (0x40) or mTempRefs (0x44), epilogue. MemMgr.cpp's
+// copies wrap the same bodies in a `gInitted && gNumHeaps > 0` guard, which is
+// eight extra instructions (32 B) of prologue -- a real source divergence, not
+// a codegen one. Those copies are kept as-is for the native (HX_NATIVE) link,
+// where the guard is load-bearing before MemInit; the matching build takes
+// these unguarded retail bodies.
+void MemPushHeap(int iHeap) {
+    MemHeapStack &s = ThreadMemStack(true);
+    s.mStack[s.mSize] = iHeap;
+    s.mSize++;
+}
+
+void MemPopHeap() {
+    MemHeapStack &s = ThreadMemStack(true);
+    s.mSize--;
+}
+
+void MemPushTemp() {
+    MemHeapStack &s = ThreadMemStack(true);
+    s.mTempRefs++;
+}
+
+void MemPopTemp() {
+    MemHeapStack &s = ThreadMemStack(true);
+    s.mTempRefs--;
+}
 #endif
 
 
