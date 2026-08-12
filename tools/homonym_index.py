@@ -77,6 +77,19 @@ LABELS = ("__unwind$", "__catch$", "__ehhandler$", "__tryblocktable$")
 ROW = re.compile(r"^\s*(\d{4}):([0-9a-fA-F]+)\s+(\S+)\s+([0-9a-fA-F]{8})\s+(.*)$")
 
 
+def portable(p):
+    """Contract $HOME to `~` for anything that lands in a committed artifact.
+
+    The map lives outside this repo, so its provenance is an absolute path at
+    runtime -- and writing that verbatim into the JSON bakes one machine's
+    layout into git history.
+    """
+    try:
+        return "~/" + str(Path(p).relative_to(Path.home()))
+    except ValueError:
+        return str(p)
+
+
 def sweep(path):
     """({name: {(va, obj)}} per table, rows_parsed)."""
     lines = Path(path).read_text(errors="replace").splitlines()
@@ -176,7 +189,7 @@ def main():
 
     if args.json:
         Path(args.json).write_text(json.dumps(
-            {"map": str(p), "rows": rows,
+            {"map": portable(p), "rows": rows,
              "counts": {"code_names": len(comb), "public": len(pub), "static": len(st),
                         "multi_address": len(mc), "multi_address_public": len(mp),
                         "multi_address_static": len(ms), "homonyms": len(real)},
