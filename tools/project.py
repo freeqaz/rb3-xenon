@@ -503,6 +503,15 @@ def generate_build_ninja(
 
     build_path = config.out_path()
     report_path = build_path / "report.json"
+    # The synthetic ICF-alias map objdiff.json's `map_file` points at, its
+    # generator, and its source of truth. Rendered both at configure time (so a
+    # fresh tree's first objdiff.json can reference it) and by the
+    # `icf_alias_map` ninja edge; see the design comment on that edge.
+    icf_gen_script = Path("tools") / "gen_symbol_alias_map.py"
+    icf_aliases_json = Path("scripts") / "symbol_aliases.json"
+    icf_map_path = build_path / "icf_aliases.map"
+    icf_map_checked = build_path / "icf_aliases_checked.stamp"
+    icf_map_purged = build_path / "icf_aliases_cache_purged.stamp"
     build_tools_path = config.build_dir / "tools"
     download_tool = config.tools_dir / "download_tool.py"
     n.rule(
@@ -1488,31 +1497,135 @@ def generate_build_ninja(
                 configure_script,
                 python_lib,
                 report_path,
+                str(icf_map_checked),
             ],
             order_only="post-build",
         )
 
         ###
-        # Generate the synthetic ICF-alias map (PROVEN allocator folds) that
-        # objdiff's symbol_equivalences mechanism consumes via objdiff.json's
-        # `map_file`. Regenerated whenever scripts/symbol_aliases.json or the
-        # generator changes; the report depends on it so the alias map is always
-        # fresh before report.json is computed. See tools/gen_symbol_alias_map.py.
+        # *** THE RENDERED ICF-ALIAS MAP IS AN INPUT OF THE REPORT. ***
+        # objdiff.json names `map_file` -> build/<version>/icf_aliases.map, and
+        # that map -- not scripts/symbol_aliases.json -- is the file objdiff reads
+        # when it decides whether two relocation names denote one address. It is a
+        # RENDERED artifact, so it needs an edge; without one, editing the alias
+        # JSON and running `ninja` re-renders nothing and the change measures as
+        # zero. dc3 was still in that state until 2026-08-12, where a
+        # +198-complete-function fold tier landed, `ninja` reported success, and
+        # the tree measured +0 of it. A landed change that measures as nothing is
+        # indistinguishable from a lane that overstated its result. The two repos
+        # are deliberately identical in shape here; dc3's copy of this comment is
+        # in its own tools/project.py.
+        #
+        # THREE edges, because one of them cannot see everything:
+        #
+        #   icf_alias_map          renders the map when the JSON or the generator
+        #                          is newer. This is the edge that makes "edit the
+        #                          JSON, run ninja" sufficient.
+        #   icf_alias_map_purge    invalidates the report caches when the map's
+        #                          CONTENT moved -- see its own comment below,
+        #                          which is the same defect one layer down.
+        #   icf_alias_map_checked  re-derives the map content and FAILS THE BUILD
+        #                          if the file on disk disagrees. It runs on every
+        #                          build (`always`) because the three ways this map
+        #                          goes wrong here are all mtime-INVISIBLE to the
+        #                          render edge: a hand-edited map (the file's own
+        #                          header says DO NOT EDIT BY HAND, which is said
+        #                          because people do), a map rendered from a
+        #                          different --aliases by a lane measuring a
+        #                          variant, and a JSON restored with an OLDER mtime
+        #                          than the map (`cp -a`, `tar -x`, `rsync -a`).
+        #                          The last one was reproduced HERE on 2026-08-12:
+        #                          a byte-exact `cp -a` restore of
+        #                          symbol_aliases.json left a content-stale map and
+        #                          `ninja` said "no work to do". In each case the
+        #                          map is NEWER than its input, so no mtime rule
+        #                          can fire.
+        # The check is a read-only assertion costing one interpreter start (~0.03s)
+        # placed beside PROGRESS, which is already an always-dirty step -- it does
+        # not break convergence, because "converged" here means no render, no purge
+        # and no report, and none of those run twice.
+        #
+        # The check deliberately does NOT self-heal. Silently re-rendering over a
+        # hand-edited map would erase somebody's deliberate experiment and hide
+        # that it ever existed; the failure names the one command that fixes it.
+        #
+        # What this still does NOT protect: `objdiff-cli report generate -p <repo>`
+        # invoked directly, which is how most measurement here actually happens and
+        # which never touches ninja. Nothing in the build can reach that path. The
+        # cheap assertion for it is the same one this edge runs --
+        # `python3 tools/gen_symbol_alias_map.py --check` (exit 1 = stale) -- and a
+        # measuring script should call it before it believes a number.
         ###
-        icf_map_path = build_path / "icf_aliases.map"
-        n.comment("Generate synthetic ICF-alias map")
+        n.comment("Render the synthetic ICF-alias map objdiff.json's map_file names")
         n.rule(
             name="icf_alias_map",
-            command=f"{sys.executable} tools/gen_symbol_alias_map.py --out $out",
+            command=f"$python {icf_gen_script} --out $out",
             description="GEN ICF-ALIAS MAP",
+            # The generator writes only when the rendered content changes, so an
+            # untouched map keeps its mtime; restat lets ninja mark the edge clean
+            # instead of re-running it forever and dragging the report behind it.
+            restat=True,
         )
         n.build(
             outputs=str(icf_map_path),
             rule="icf_alias_map",
+            implicit=[str(icf_gen_script), str(icf_aliases_json)],
+        )
+        n.comment("Assert the rendered map still agrees with the alias JSON")
+        n.rule(
+            name="icf_alias_map_check",
+            command=f"$python {icf_gen_script} --check --out {icf_map_path} && touch $out",
+            description="CHECK ICF-ALIAS MAP",
+        )
+        n.build(
+            outputs=str(icf_map_checked),
+            rule="icf_alias_map_check",
             implicit=[
-                "tools/gen_symbol_alias_map.py",
-                "scripts/symbol_aliases.json",
+                str(icf_gen_script), str(icf_aliases_json), str(icf_map_path),
+                "always",
             ],
+        )
+
+        ###
+        # *** AND THE REPORT CACHE IS NOT KEYED ON THE MAP. ***
+        # `report generate -o X.json` writes a sidecar `X.cache` and seeds the next
+        # run from it. Its key is `ReportCache::hash_unit`
+        # (objdiff-cli/src/cmd/report.rs): the target obj bytes, the base obj
+        # bytes, the `-c` args, and the project/unit `options` blocks. `map_file`
+        # -- and the CONTENT of the map it names -- is in none of them. So making
+        # the map an input of the report edge is necessary and NOT sufficient:
+        # measured on dc3 2026-08-12, with that input wired, editing the alias JSON
+        # re-rendered the map, re-ran REPORT, and report.json still served the
+        # pre-change answer out of cache -- the original defect one layer down.
+        #
+        # So a map whose content actually moved invalidates the sidecars. This edge
+        # hangs off the map rather than off the JSON, and the generator writes only
+        # when the rendered bytes change (with `restat` above), so a
+        # touched-but-identical JSON does NOT cost anyone a full re-diff; only a
+        # real alias change does, which is the run whose number would otherwise be
+        # a lie.
+        #
+        # The durable fix belongs upstream -- hash the map file's content into
+        # `hash_unit` -- but that lives in the shared ../objdiff checkout, and it
+        # would invalidate every project's cache at once. Until then this is the
+        # local, declarative version of it.
+        ###
+        n.comment("Invalidate report caches, which are not keyed on the alias map")
+        icf_purge_targets = " ".join(
+            str(p.with_suffix(".cache"))
+            # `baseline.json` by literal name: it is defined further down, and its
+            # cache is as blind to the map as the report's.
+            for p in (report_path, build_path / "baseline.json")
+        )
+        n.rule(
+            name="icf_alias_map_purge",
+            command=f"rm -f {icf_purge_targets} && touch $out",
+            description="PURGE REPORT CACHE (alias map changed)",
+        )
+        n.build(
+            outputs=str(icf_map_purged),
+            rule="icf_alias_map_purge",
+            implicit=[str(icf_map_path)],
         )
         n.newline()
 
@@ -1533,7 +1646,8 @@ def generate_build_ninja(
         # only the patchers ran (e.g. after editing a patcher script) leaves
         # report.json STALE and the change measures as inert.
         report_implicit: List[str | Path] = [
-            objdiff, "objdiff.json", "all_source", str(icf_map_path)
+            objdiff, "objdiff.json", "all_source",
+            str(icf_map_path), str(icf_map_purged),
         ]
         if config.custom_build_steps and "post-compile" in config.custom_build_steps:
             report_implicit.append("post-compile")
@@ -1811,17 +1925,28 @@ def generate_objdiff_config(
         # name, COFF weak-external alias, template array sizes, data-section
         # placement), and it honours the ICF equivalence classes below.
         #
-        # This costs more here than on dc3 or rb3 -- 42.2200% -> 31.1425%
-        # matched_code, exposing 9,087 of 44,055 complete functions -- and the
-        # reason is the alias map, not the source. 5,544 of those functions are
+        # This costs more here than on dc3 or rb3 -- 42.2200% -> 32.4623%
+        # matched_code, exposing 7,462 of 44,055 complete functions -- and the
+        # reason is the alias map, not the source. Some of those functions are
         # blocked only by trivial destructors and allocator overloads, the two
         # canonical /OPT:ICF fold shapes: retail kept one spelling and we
         # reference another. Those are not defects, but neither are they proven
         # folds, and an unproven fold is exactly what symbol_aliases.json exists
-        # to adjudicate. 511 groups are admitted today against dc3's 1,950, so
-        # the honest reading of the drop is "the alias evidence lane has 9,087
+        # to adjudicate. 1,440 groups are admitted today, so the honest reading
+        # of the drop is "the alias evidence lane still has thousands of
         # functions of headroom", and it is recovered by
         # tools/icf_alias_build.py, not by editing source.
+        #
+        # CORRECTED 2026-08-12 (lane P). This read "-> 31.1425%, exposing 9,087"
+        # against 511 admitted groups. That came from a report.json served out of
+        # the `.cache` sidecar, which had units in it diffed under an older
+        # configuration -- the key covers neither `map_file` nor the binary (see
+        # the icf_alias_map_purge edge above), and the alias set is 1,440 groups
+        # today. Re-measured on this tree with the caches purged, on pinned
+        # objdiff main 745b7e3, and independently reproduced by the build's own
+        # objdiff after the purge edge fired: none 42.220000% (4,357,396 B,
+        # 44,055 complete), name_check 32.462280% (3,350,332 B, 36,593 complete).
+        # The stale figure was 136,212 matched bytes low.
         "options": {
             "functionRelocDiffs": "name_check",
         },
@@ -1838,8 +1963,14 @@ def generate_objdiff_config(
     # it so `report generate` neutralizes the alias noise. Conditional: a fresh
     # tree without the generated map still builds (no map -> no equivalences).
     # Generate it here (best-effort) so objdiff.json references it even on the
-    # FIRST configure of a fresh tree; the ninja `icf_alias_map` rule keeps it
-    # fresh thereafter (and the report depends on it).
+    # FIRST configure of a fresh tree.
+    #
+    # This render is the BOOTSTRAP ONLY. It is NOT what keeps the map fresh:
+    # configure runs only when configure.py, this file, or a config/ input
+    # changes, and scripts/symbol_aliases.json is none of those. The
+    # `icf_alias_map` / `icf_alias_map_purge` / `icf_alias_map_checked` edges
+    # above own freshness; the design comment there is the one place per repo
+    # this rule is written down.
     icf_map = config.build_dir / config.version / "icf_aliases.map"
     gen_icf = Path("tools") / "gen_symbol_alias_map.py"
     if gen_icf.is_file():
