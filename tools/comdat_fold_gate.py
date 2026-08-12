@@ -470,7 +470,9 @@ def install(groups, path):
     doc["_comment"] = [c for c in doc["_comment"]
                        if not (isinstance(c, str) and c.startswith("COMDAT-IDENTITY TIER"))]
     doc["_comment"].append(note)
-    path.write_text(json.dumps(doc, indent=2))
+    # indent=1 matches how the file is stored. Writing indent=2 reformats all
+    # 1,440 pre-existing groups and makes the diff unreviewable.
+    path.write_text(json.dumps(doc, indent=1) + "\n")
     print("installed: %d new group(s), %d updated; %d total" % (added, updated, len(doc["groups"])))
 
 
