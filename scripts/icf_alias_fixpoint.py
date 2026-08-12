@@ -412,17 +412,25 @@ def main() -> int:
             va = int(m.group(2), 16)
             rec = our_data.get(b)
             if not rec:
+                reasons["vftable: our COMDAT unreadable"] += 1
                 continue
-            slots = [n for _o, n in rec[1]]
-            good = True
-            for i, name in enumerate(slots):
+            hits = miss = unk = 0
+            for o, name in rec[1]:
                 want = addr_of.get(name)
-                got = img.word(va + 4 * i)
-                if want is None or got is None or int(want, 16) != got:
-                    good = False
-                    break
-            if good and len(slots) >= 2:
-                vft.setdefault(t, []).append(b)
+                got = img.word(va + o)
+                if want is None:
+                    unk += 1            # absence of information, not a slot vote
+                elif got is not None and int(want, 16) == got:
+                    hits += 1
+                else:
+                    miss += 1
+            if miss:
+                reasons["vftable: REFUTED, a slot points elsewhere"] += 1
+                continue
+            if hits < 3:
+                reasons["vftable: too few mapped slots to be worth anything"] += 1
+                continue
+            vft.setdefault(t, []).append(b)
         print("vftable: %d survivors, %d folded names" % (len(vft), sum(map(len, vft.values()))),
               file=sys.stderr)
 
@@ -618,12 +626,13 @@ def _obj_data_relocs(path):
             nm = d[strt + off:d.index(b"\0", strt + off)].decode("latin1")
         else:
             nm = rec[:8].rstrip(b"\0").decode("latin1")
+        val, = struct.unpack_from("<I", rec, 8)
         secnum, = struct.unpack_from("<h", rec, 12)
         names[i] = nm
-        recs.append((nm, secnum, rec[16], rec[17]))
+        recs.append((nm, val, secnum, rec[16], rec[17]))
         i += 1 + rec[17]
     out = {}
-    for nm, secnum, sclass, _naux in recs:
+    for nm, val, secnum, sclass, _naux in recs:
         if secnum <= 0 or sclass != 2:
             continue
         size, praw, prel, nrel, chars = sec[secnum - 1]
@@ -633,8 +642,17 @@ def _obj_data_relocs(path):
         for r in range(nrel):
             va, si = struct.unpack_from("<II", d, prel + r * 10)
             rel.append((va, names.get(si, "?")))
-        raw = d[praw:praw + size] if praw else bytes(size)
-        out[nm] = (raw, sorted(rel), size)
+        # ★ THE SYMBOL IS NOT ALWAYS AT SECTION OFFSET 0.  MSVC lays a vftable
+        # COMDAT out as [RTTI CompleteObjectLocator*][slot 0][slot 1]... and puts
+        # `??_7X@@6B@` at value 4.  Reading the section from 0 shifts every
+        # comparison by one pointer and turns a perfect match into a total
+        # mismatch: measured on the 43 charged vftable pairs, offset 0 agreed on
+        # 1 of 247 mapped slots and offset `value` on 246.  A uniform negative
+        # from a byte comparator is nearly always the wrong instrument, not a
+        # refutation.
+        raw = (d[praw:praw + size] if praw else bytes(size))[val:]
+        out[nm] = (raw, sorted((o - val, n) for o, n in rel if o >= val),
+                   max(size - val, 0))
     return out
 
 
