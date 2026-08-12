@@ -122,7 +122,58 @@ class Retail:
         smap = json.loads((ROOT / "scripts" / "target_symbol_map.json").read_text())
         self.byva = {int(a, 16): n for a, n in smap.items()
                      if a.startswith("0x") and isinstance(n, str)}
+        # name -> {VA}. The gate needs the REVERSE direction too: "where does the
+        # target map place this spelling", which is the question the alias-file
+        # `placed` check was standing in for and could not answer.
+        self.byname = collections.defaultdict(set)
+        for va, n in self.byva.items():
+            self.byname[n].add(va)
+        self.arbitrary = {}
+        for va in smap.get("_bijection_arbitrary", []):
+            self.arbitrary[int(va, 16)] = "_bijection_arbitrary"
+        for va in smap.get("_icf_arbitrary", []):
+            self.arbitrary.setdefault(int(va, 16), "_icf_arbitrary")
         self.fanin = self.img.fanin()
+
+    def first_dest(self, va):
+        w, err = self.words(va)
+        if err:
+            return None
+        for i, x in enumerate(w):
+            if (x >> 26) in (16, 18):
+                d = branch_dest(x, va + 4 * i)
+                return self.byva.get(d) or "0x%08x" % (d or 0)
+        return None
+
+    def same_function(self, a, b):
+        """Retail's bodies at `a` and `b` are the SAME FUNCTION.
+
+        NOT "equal once branch displacements are masked" -- that is satisfied by
+        any two 4-byte thunks and is how the old CF1 admitted `b MemFree` against
+        `b _Rb_tree::clear`. Same size, every non-branch word equal as a full
+        32-bit value (absolute immediates included: one function duplicated at two
+        addresses carries identical absolute operands), and every branch
+        destination RESOLVED through the map to the same NAME.
+        """
+        wa, ea = self.words(a)
+        wb, eb = self.words(b)
+        if ea or eb or len(wa) != len(wb):
+            return False
+        for i, (x, y) in enumerate(zip(wa, wb)):
+            op = x >> 26
+            if op != (y >> 26):
+                return False
+            if op in (16, 18):
+                m = 0xFC000003 if op == 18 else 0xFFFF0003
+                if (x & m) != (y & m):
+                    return False
+                da = self.byva.get(branch_dest(x, a + 4 * i))
+                db = self.byva.get(branch_dest(y, b + 4 * i))
+                if da is None or db is None or da != db:
+                    return False
+            elif x != y:
+                return False
+        return True
 
     def words(self, va):
         """Raw big-endian words of the retail body at `va`, or (None, why)."""
@@ -325,26 +376,48 @@ def main():
             refuse("our COMDAT is not the retail body at the survivor address -- " + why)
             continue
 
-        # second gate: retail's own definition of F must not contradict the fold
-        fw, ferr = retail.masked(fa)
+        # Second gate: retail's own definition of F must not contradict the fold.
+        #
+        # target_symbol_map.json places F at addr(F) != addr(S) for EVERY pair in
+        # this worklist -- that is the definition of the charged set -- so the
+        # gate has to say, per pair, why that entry does not refute the fold.  It
+        # must ADJUDICATE, and the earlier version did not: it compared retail's
+        # body at addr(F) to the survivor with branch displacements MASKED, so
+        # every 4-byte `b X` compared equal to every `b Y` and the tier fired as
+        # "nothing contradicts" on unrelated thunks.  ??3Task@@SAXPAX@Z is the
+        # witness: the map's 0x822EAB90 is a live `b _Rb_tree<Symbol,CatData>
+        # ::clear` with fan-in 4, and the survivor is `b MemFree` with fan-in
+        # 2,308.  Different functions, admitted as CF1.
+        #
+        # Tiers now, in evaluation order, discredits FIRST so none is shadowed:
+        f_fanin = retail.fanin[fa]
+        fw, ferr = retail.words(fa)
         if ferr:
-            tier, disc = "CF2", "map parks %s at %s with no symbols.txt extent" % (F, r["base_addr"])
-        elif fw == [mask_word(x) for x in rw]:
-            tier, disc = "CF1", None
+            tier, disc = "CF2", ("map parks %s at %s with no symbols.txt extent"
+                                 % (F, r["base_addr"]))
+        elif f_fanin == 0:
+            tier, disc = "CF2", ("map parks %s at %s, which has ZERO .text fan-in -- nothing in "
+                                 "the image branches there, so the entry is unsupported by the "
+                                 "image" % (F, r["base_addr"]))
+        elif retail.same_function(fa, sa):
+            tier, disc = "CF1", ("retail's body at %s is the SAME FUNCTION as the survivor: same "
+                                 "size, every unrelocated word equal, and every branch destination "
+                                 "resolving to the same NAME" % r["base_addr"])
+        elif homonym(dc3, dc3img, retail, F, fa):
+            tier, disc = "CF3", homonym(dc3, dc3img, retail, F, fa)
+        elif fa in retail.arbitrary:
+            tier, disc = "CF4", ("the map itself lists %s in %s: its own comment says WHICH name "
+                                 "belongs on WHICH VA is not established there, so the entry is "
+                                 "not a claim this alias contradicts"
+                                 % (r["base_addr"], retail.arbitrary[fa]))
         else:
-            f_fanin = retail.fanin[fa]
-            hom = homonym(dc3, dc3img, retail, F, fa)
-            if f_fanin == 0:
-                tier, disc = "CF2", ("map parks %s at %s, which has ZERO .text fan-in"
-                                     % (F, r["base_addr"]))
-            elif hom:
-                tier, disc = "CF3", hom
-            else:
-                refuse("retail has a DIFFERENT body named %s at %s (fan-in %d, %d bytes); no "
-                       "zero-fan-in parking and no dc3 homonym witness, so that map entry stands "
-                       "and an alias would hide a source defect"
-                       % (F, r["base_addr"], f_fanin, len(fw) * 4))
-                continue
+            refuse("retail has a DIFFERENT LIVE body named %s at %s (fan-in %d, %d bytes, "
+                   "branches to %s); the map does not flag that address arbitrary, the image does "
+                   "not discredit it, and there is no dc3 homonym witness, so the entry stands "
+                   "and an alias would assert a false equality between two live addresses"
+                   % (F, r["base_addr"], f_fanin, len(fw) * 4,
+                      retail.first_dest(fa) or "no resolvable destination"))
+            continue
         row.update(tier=tier, discredit=disc, verdict="ADMIT")
         rows.append(row)
 
@@ -372,6 +445,27 @@ def main():
                          reason=("%s already sits in an existing alias group at %s; adding it at "
                                  "%s would give one name two addresses"
                                  % (nm, ",".join("0x%08x" % a for a in sorted(placed[nm])),
+                                    r["survivor_addr"])))
+                break
+            # The predicate above reads the ALIAS FILE ONLY. That is a narrower
+            # question than the one that matters: a spelling can be absent from
+            # every alias group and still be placed by target_symbol_map.json at
+            # its own distinct live address, and aliasing THAT onto another group
+            # tells objdiff's reloc_eq a `bl` to it equals a `bl` to a different
+            # callee -- a scorer false positive, and one `none` cannot see,
+            # because `none` ignores relocation names by construction. So ask the
+            # map directly. A tier that already adjudicated addr(F) (CF1 same
+            # function / CF2 image-discredited / CF3 homonym / CF4 map says its
+            # own pick is arbitrary) has answered for that address; any OTHER
+            # address the map gives the spelling has not been answered for.
+            answered = {sa} | ({int(r["folded_map_addr"], 16)} if r["tier"] else set())
+            elsewhere = sorted(retail.byname.get(nm, set()) - answered)
+            if elsewhere:
+                r.update(verdict="REFUSE", tier=None,
+                         reason=("target_symbol_map.json places %s at %s, which this gate has not "
+                                 "adjudicated; aliasing it at %s would assert a `bl` to it equals "
+                                 "a `bl` to the survivor"
+                                 % (nm, ",".join("0x%08x" % a for a in elsewhere),
                                     r["survivor_addr"])))
                 break
 

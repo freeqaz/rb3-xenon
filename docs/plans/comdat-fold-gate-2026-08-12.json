@@ -13,18 +13,18 @@
  ],
  "totals": {
   "pairs": 1048,
-  "admitted_pairs": 33,
-  "admitted_sites": 1693,
-  "refused_pairs": 1015,
-  "refused_sites": 2495,
-  "groups": 23
+  "admitted_pairs": 23,
+  "admitted_sites": 1629,
+  "refused_pairs": 1025,
+  "refused_sites": 2559,
+  "groups": 16
  },
  "by_subclass": {
   "fold_thunk_naming": {
-   "ADMIT": 13,
-   "ADMIT_sites": 1635,
-   "REFUSE": 23,
-   "REFUSE_sites": 162
+   "ADMIT": 11,
+   "ADMIT_sites": 1603,
+   "REFUSE": 25,
+   "REFUSE_sites": 194
   },
   "residual": {
    "REFUSE": 529,
@@ -33,16 +33,16 @@
    "ADMIT_sites": 7
   },
   "bijection_class": {
-   "REFUSE": 231,
-   "REFUSE_sites": 463,
-   "ADMIT": 8,
-   "ADMIT_sites": 40
+   "REFUSE": 238,
+   "REFUSE_sites": 493,
+   "ADMIT": 1,
+   "ADMIT_sites": 10
   },
   "map_name_unresolved": {
-   "REFUSE": 131,
-   "REFUSE_sites": 438,
-   "ADMIT": 6,
-   "ADMIT_sites": 11
+   "REFUSE": 132,
+   "REFUSE_sites": 440,
+   "ADMIT": 5,
+   "ADMIT_sites": 9
   },
   "wrapper_not_inlined": {
    "REFUSE": 1,
@@ -63,8 +63,8 @@
  },
  "by_tier": {
   "CF3": 1,
-  "CF1": 20,
-  "CF2": 12
+  "CF2": 18,
+  "CF4": 4
  },
  "pairs": [
   {
@@ -93,8 +93,8 @@
    "our_def": "build/45410914/src/system/beatmatch/SongParser.obj (+180 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
+   "tier": "CF2",
+   "discredit": "map parks ??1FilePath@@UAA@XZ at 0x82812508, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -139,7 +139,7 @@
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks OggFree at 0x8249b200, which has ZERO .text fan-in",
+   "discredit": "map parks OggFree at 0x8249b200, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -390,9 +390,9 @@
    "our_def": "build/45410914/src/system/obj/DirLoader.obj (+12 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??1?$list@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ at 0x827b2350 (fan-in 1, 4 bytes, branches to ?AddToDownloadQueue@StorePreviewMgr@@IAAXABVString@@@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "fold_thunk_naming",
@@ -405,9 +405,9 @@
    "our_def": "build/45410914/src/system/beatmatch/BeatMaster.obj (+32 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??3Loader@@SAXPAX@Z at 0x823f4698 (fan-in 1, 4 bytes, branches to 0x82a808d8); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "map_misassignment",
@@ -615,10 +615,9 @@
    "our_def": "build/45410914/src/band3/game/SongDB.obj",
    "our_bytes": 8,
    "body_evidence": "identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)",
-   "tier": null,
-   "discredit": null,
    "verdict": "REFUSE",
-   "reason": "?GetGemList@SongDB@@QBAPBVGameGemList@@H@Z is admitted against 2 different survivor addresses (0x82684f68,0x82684f70); aliasing it at more than one would assert those addresses are one fold class, which this gate did not test"
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ?GetGemList@SongDB@@QBAPBVGameGemList@@H@Z at 0x82684f70 (fan-in 2, 8 bytes, branches to ?GetGemListByDiff@SongData@@QAAPAVGameGemList@@HH@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -661,8 +660,8 @@
    "our_def": "build/45410914/src/system/rndobj/Console.obj (+12 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
+   "tier": "CF2",
+   "discredit": "map parks ??1?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ at 0x8273e038, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -676,9 +675,9 @@
    "our_def": "build/45410914/src/system/obj/Task.obj (+10 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??3Task@@SAXPAX@Z at 0x822eab90 (fan-in 4, 4 bytes, branches to ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "map_name_unresolved",
@@ -707,7 +706,7 @@
    "our_bytes": 84,
    "body_evidence": "identical: 19/21 words compared as FULL 32-bit values, 2 relocated branch destination(s) resolved through the map and name-equal",
    "tier": null,
-   "discredit": null,
+   "discredit": "the map itself lists 0x824afa78 in _bijection_arbitrary: its own comment says WHICH name belongs on WHICH VA is not established there, so the entry is not a claim this alias contradicts",
    "verdict": "REFUSE",
    "reason": "??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ already sits in an existing alias group at 0x824afa78; adding it at 0x823587b0 would give one name two addresses"
   },
@@ -1082,10 +1081,9 @@
    "our_def": "build/45410914/src/system/beatmatch/SongParser.obj (+2 identical)",
    "our_bytes": 196,
    "body_evidence": "identical: 48/49 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": null,
-   "discredit": null,
    "verdict": "REFUSE",
-   "reason": "??4VocalNote@@QAAAAV0@ABV0@@Z is admitted against 2 different survivor addresses (0x82685278,0x826b8448); aliasing it at more than one would assert those addresses are one fold class, which this gate did not test"
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??4VocalNote@@QAAAAV0@ABV0@@Z at 0x82685278 (fan-in 4, 196 bytes, branches to ??0String@@QAA@ABV0@@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -1800,8 +1798,8 @@
    "our_def": "build/45410914/src/band3/meta_band/SessionMgr.obj",
    "our_bytes": 8,
    "body_evidence": "identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
+   "tier": "CF2",
+   "discredit": "map parks ?SendMsgToAll@SessionMgr@@QAAXAAVNetMessage@@W4PacketType@@@Z at 0x82585920, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -1832,7 +1830,7 @@
    "body_evidence": "identical: 20/21 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "verdict": "REFUSE",
    "tier": null,
-   "reason": "retail has a DIFFERENT body named ??$__destroy_range@PAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@0@00@Z at 0x82bb3578 (fan-in 1, 320 bytes); no zero-fan-in parking and no dc3 homonym witness, so that map entry stands and an alias would hide a source defect"
+   "reason": "retail has a DIFFERENT LIVE body named ??$__destroy_range@PAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@0@00@Z at 0x82bb3578 (fan-in 1, 320 bytes, branches to 0x82829254); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "residual",
@@ -1905,10 +1903,9 @@
    "our_def": "build/45410914/src/band3/meta_band/Leaderboard.obj",
    "our_bytes": 80,
    "body_evidence": "identical: 19/20 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": null,
-   "discredit": null,
    "verdict": "REFUSE",
-   "reason": "??$_Destroy_Range@PAVLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@0@Z already sits in an existing alias group at 0x825a36b8; adding it at 0x8266d2e0 would give one name two addresses"
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??$_Destroy_Range@PAVLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@0@Z at 0x825a36b8 (fan-in 4, 80 bytes, branches to 0x825a36f0); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "residual",
@@ -1936,8 +1933,8 @@
    "our_def": "build/45410914/src/band3/meta_band/SongSortMgr.obj (+13 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)",
-   "tier": "CF1",
-   "discredit": null,
+   "tier": "CF2",
+   "discredit": "map parks ??1?$list@PAVSortNode@@V?$StlNodeAlloc@PAVSortNode@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ at 0x82659a30, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -2072,7 +2069,7 @@
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks ??3UIComponent@@SAXPAX@Z at 0x8282779c, which has ZERO .text fan-in",
+   "discredit": "map parks ??3UIComponent@@SAXPAX@Z at 0x8282779c, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -2551,8 +2548,8 @@
    "our_def": "build/45410914/src/system/rndobj/ShaderOptions.obj (+5 identical)",
    "our_bytes": 120,
    "body_evidence": "identical: 28/30 words compared as FULL 32-bit values, 2 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
+   "tier": "CF4",
+   "discredit": "the map itself lists 0x82404298 in _bijection_arbitrary: its own comment says WHICH name belongs on WHICH VA is not established there, so the entry is not a claim this alias contradicts",
    "verdict": "ADMIT"
   },
   {
@@ -2566,8 +2563,8 @@
    "our_def": "build/45410914/src/system/rndobj/ShaderOptions.obj (+5 identical)",
    "our_bytes": 84,
    "body_evidence": "identical: 19/21 words compared as FULL 32-bit values, 2 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
+   "tier": "CF4",
+   "discredit": "the map itself lists 0x82404310 in _bijection_arbitrary: its own comment says WHICH name belongs on WHICH VA is not established there, so the entry is not a claim this alias contradicts",
    "verdict": "ADMIT"
   },
   {
@@ -2613,7 +2610,7 @@
    "body_evidence": "identical: 26/28 words compared as FULL 32-bit values, 2 relocated branch destination(s) resolved through the map and name-equal",
    "verdict": "REFUSE",
    "tier": null,
-   "reason": "retail has a DIFFERENT body named ?_M_fill_insert@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVString@@IABV3@@Z at 0x822c83d0 (fan-in 2, 108 bytes); no zero-fan-in parking and no dc3 homonym witness, so that map entry stands and an alias would hide a source defect"
+   "reason": "retail has a DIFFERENT LIVE body named ?_M_fill_insert@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVString@@IABV3@@Z at 0x822c83d0 (fan-in 2, 108 bytes, branches to 0x822c842c); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -2866,9 +2863,9 @@
    "our_def": "build/45410914/src/system/utl/DataPointMgr.obj (+1 identical)",
    "our_bytes": 88,
    "body_evidence": "identical: 21/22 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ at 0x827e1708 (fan-in 6, 88 bytes, branches to 0x827e1738); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -2927,7 +2924,7 @@
    "our_bytes": 100,
    "body_evidence": "identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks ?insert@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@ABVPlane@@@Z at 0x825a48d8, which has ZERO .text fan-in",
+   "discredit": "map parks ?insert@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@ABVPlane@@@Z at 0x825a48d8, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -3016,10 +3013,9 @@
    "our_def": "build/45410914/src/system/char/CharIKHand.obj (+2 identical)",
    "our_bytes": 80,
    "body_evidence": "identical: 19/20 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": null,
-   "discredit": null,
    "verdict": "REFUSE",
-   "reason": "??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z already sits in an existing alias group at 0x82371148; adding it at 0x823977b0 would give one name two addresses"
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z at 0x82371148 (fan-in 5, 80 bytes, branches to 0x82371180); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -3344,10 +3340,9 @@
    "our_def": "build/45410914/src/system/bandobj/BandCamShot.obj (+2 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": null,
-   "discredit": null,
    "verdict": "REFUSE",
-   "reason": "??1?$ObjList@UAnim@EventTrigger@@@@QAA@XZ is admitted against 2 different survivor addresses (0x824a0608,0x824a0af0); aliasing it at more than one would assert those addresses are one fold class, which this gate did not test"
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??1?$ObjList@UAnim@EventTrigger@@@@QAA@XZ at 0x824a0608 (fan-in 3, 4 bytes, branches to ?clear@?$_List_base@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -3360,10 +3355,9 @@
    "our_def": "build/45410914/src/system/bandobj/BandCamShot.obj (+2 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": null,
-   "discredit": null,
    "verdict": "REFUSE",
-   "reason": "??1?$ObjList@UAnim@EventTrigger@@@@QAA@XZ is admitted against 2 different survivor addresses (0x824a0608,0x824a0af0); aliasing it at more than one would assert those addresses are one fold class, which this gate did not test"
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??1?$ObjList@UProxyCall@EventTrigger@@@@QAA@XZ at 0x822b6530 (fan-in 4, 4 bytes, branches to ?clear@?$_List_base@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "map_name_unresolved",
@@ -3481,9 +3475,9 @@
    "our_def": "build/45410914/src/system/synth/Sfx.obj (+2 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??1?$ObjVector@VSfxMap@@@@QAA@XZ at 0x822d4088 (fan-in 1, 4 bytes, branches to ??1?$ObjRefConcrete@VUnisonIcon@@VObjectDir@@@@UAA@XZ); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "transposition",
@@ -3601,9 +3595,9 @@
    "our_def": "build/45410914/src/system/obj/DirLoader.obj (+12 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??1?$_List_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ at 0x8252a8a0 (fan-in 2, 4 bytes, branches to ??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "transposition",
@@ -4543,9 +4537,9 @@
    "our_def": "build/45410914/src/system/ui/UIFontImporter.obj",
    "our_bytes": 80,
    "body_evidence": "identical: 19/20 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ?OnImportSettings@UIFontImporter@@IAA?AVDataNode@@PAVDataArray@@@Z at 0x8281b018 (fan-in 1, 80 bytes, branches to 0x8281a798); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -4813,9 +4807,9 @@
    "our_def": "build/45410914/src/system/ui/UIList.obj (+1 identical)",
    "our_bytes": 8,
    "body_evidence": "identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ?IsScrolling@UIList@@QBA_NXZ at 0x826662e0 (fan-in 1, 8 bytes, branches to ??$DeleteAll@V?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -4858,8 +4852,8 @@
    "our_def": "build/45410914/src/system/rndobj/TexBlender.obj (+6 identical)",
    "our_bytes": 120,
    "body_evidence": "identical: 28/30 words compared as FULL 32-bit values, 2 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
+   "tier": "CF4",
+   "discredit": "the map itself lists 0x8243dfc0 in _bijection_arbitrary: its own comment says WHICH name belongs on WHICH VA is not established there, so the entry is not a claim this alias contradicts",
    "verdict": "ADMIT"
   },
   {
@@ -4963,10 +4957,9 @@
    "our_def": "build/45410914/src/system/beatmatch/SongParser.obj (+3 identical)",
    "our_bytes": 196,
    "body_evidence": "identical: 48/49 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": null,
-   "discredit": null,
    "verdict": "REFUSE",
-   "reason": "??0VocalNote@@QAA@ABV0@@Z is admitted against 2 different survivor addresses (0x82685278,0x826b8448); aliasing it at more than one would assert those addresses are one fold class, which this gate did not test"
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ??0VocalNote@@QAA@ABV0@@Z at 0x826b8448 (fan-in 6, 196 bytes, branches to ??4String@@QAAAAV0@ABV0@@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "residual",
@@ -4980,7 +4973,7 @@
    "our_bytes": 20,
    "body_evidence": "identical: 5/5 words compared as FULL 32-bit values, 0 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks ?GetSongSpecificEntriesForCategory@@YA?AV?$vector@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@VSymbol@@_N@Z at 0x8256d770, which has ZERO .text fan-in",
+   "discredit": "map parks ?GetSongSpecificEntriesForCategory@@YA?AV?$vector@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@VSymbol@@_N@Z at 0x8256d770, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -5024,9 +5017,9 @@
    "our_def": "build/45410914/src/system/synth/Sfx.obj (+2 identical)",
    "our_bytes": 112,
    "body_evidence": "identical: 26/28 words compared as FULL 32-bit values, 2 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ?_M_fill_insert@?$vector@VMoggClipMap@@V?$StlNodeAlloc@VMoggClipMap@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMoggClipMap@@IABV3@@Z at 0x827009e8 (fan-in 2, 112 bytes, branches to 0x82700a48); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "map_name_unresolved",
@@ -5039,10 +5032,9 @@
    "our_def": "build/45410914/src/band3/game/SongDB.obj",
    "our_bytes": 8,
    "body_evidence": "identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": null,
-   "discredit": null,
-   "verdict": "REFUSE",
-   "reason": "?GetGemList@SongDB@@QBAPBVGameGemList@@H@Z is admitted against 2 different survivor addresses (0x82684f68,0x82684f70); aliasing it at more than one would assert those addresses are one fold class, which this gate did not test"
+   "tier": "CF4",
+   "discredit": "the map itself lists 0x826851a8 in _bijection_arbitrary: its own comment says WHICH name belongs on WHICH VA is not established there, so the entry is not a claim this alias contradicts",
+   "verdict": "ADMIT"
   },
   {
    "subclass": "residual",
@@ -5205,9 +5197,9 @@
    "our_def": "build/45410914/src/system/synth_xbox/Synapse_dsp.obj",
    "our_bytes": 16,
    "body_evidence": "identical: 3/4 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ?SetVoiceAmount@Synapse@1DSP@@QAAXIM@Z at 0x82b6eb88 (fan-in 1, 16 bytes, branches to ?Detune@Singer@@QAAXM@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -5398,7 +5390,7 @@
    "our_bytes": 84,
    "body_evidence": "identical: 20/21 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks ?erase@?$list@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PBDU?$_Nonconst_traits@PBD@stlpmtx_std@@@2@U32@@Z at 0x827b0110, which has ZERO .text fan-in",
+   "discredit": "map parks ?erase@?$list@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PBDU?$_Nonconst_traits@PBD@stlpmtx_std@@@2@U32@@Z at 0x827b0110, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -5414,7 +5406,7 @@
    "body_evidence": "identical: 44/44 words compared as FULL 32-bit values, 0 relocated branch destination(s) resolved through the map and name-equal",
    "verdict": "REFUSE",
    "tier": null,
-   "reason": "retail has a DIFFERENT body named ?KeyLessEq@?$Keys@VColor@Hmx@@V12@@@QBAHM@Z at 0x82422c38 (fan-in 4, 176 bytes); no zero-fan-in parking and no dc3 homonym witness, so that map entry stands and an alias would hide a source defect"
+   "reason": "retail has a DIFFERENT LIVE body named ?KeyLessEq@?$Keys@VColor@Hmx@@V12@@@QBAHM@Z at 0x82422c38 (fan-in 4, 176 bytes, branches to ?AsBoolKeys@PropKeys@@UAAPAV?$Keys@_N_N@@XZ); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -5982,9 +5974,9 @@
    "our_def": "build/45410914/src/band3/meta_band/BandProfile.obj",
    "our_bytes": 8,
    "body_evidence": "identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
-   "verdict": "ADMIT"
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ?IsProGuitarSongLessonSectionComplete@BandProfile@@QBA_NHW4Difficulty@@H@Z at 0x8258a380 (fan-in 1, 8 bytes, branches to ?IsProKeyboardSongLessonSectionComplete@SongStatusMgr@@QBA_NHW4Difficulty@@H@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -6239,7 +6231,7 @@
    "body_evidence": "identical: 29/31 words compared as FULL 32-bit values, 2 relocated branch destination(s) resolved through the map and name-equal",
    "verdict": "REFUSE",
    "tier": null,
-   "reason": "retail has a DIFFERENT body named ?resize@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@Z at 0x826c83e8 (fan-in 1, 128 bytes); no zero-fan-in parking and no dc3 homonym witness, so that map entry stands and an alias would hide a source defect"
+   "reason": "retail has a DIFFERENT LIVE body named ?resize@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@Z at 0x826c83e8 (fan-in 1, 128 bytes, branches to 0x826c8444); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "bijection_class",
@@ -6613,7 +6605,7 @@
    "our_bytes": 100,
    "body_evidence": "identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks ?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z at 0x82743bc8, which has ZERO .text fan-in",
+   "discredit": "map parks ?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z at 0x82743bc8, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -6968,7 +6960,7 @@
    "body_evidence": "identical: 21/22 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "verdict": "REFUSE",
    "tier": null,
-   "reason": "retail has a DIFFERENT body named ?clear@?$_List_base@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ at 0x825df840 (fan-in 5, 88 bytes); no zero-fan-in parking and no dc3 homonym witness, so that map entry stands and an alias would hide a source defect"
+   "reason": "retail has a DIFFERENT LIVE body named ?clear@?$_List_base@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ at 0x825df840 (fan-in 5, 88 bytes, branches to ?GetUserFromSlot@BandUserMgr@@QBAPAVBandUser@@H@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "fold_thunk_naming",
@@ -7193,7 +7185,7 @@
    "body_evidence": "identical: 22/22 words compared as FULL 32-bit values, 0 relocated branch destination(s) resolved through the map and name-equal",
    "verdict": "REFUSE",
    "tier": null,
-   "reason": "retail has a DIFFERENT body named ??H?$_Bit_iter@_NPB_N@stlpmtx_std@@QBA?AU01@H@Z at 0x822dcf58 (fan-in 1, 96 bytes); no zero-fan-in parking and no dc3 homonym witness, so that map entry stands and an alias would hide a source defect"
+   "reason": "retail has a DIFFERENT LIVE body named ??H?$_Bit_iter@_NPB_N@stlpmtx_std@@QBA?AU01@H@Z at 0x822dcf58 (fan-in 1, 96 bytes, branches to ?MemOrPoolAlloc@@YAPAXHPBDH0@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "map_name_unresolved",
@@ -8704,7 +8696,7 @@
    "our_bytes": 84,
    "body_evidence": "identical: 20/21 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks ?erase@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@@Z at 0x825cf890, which has ZERO .text fan-in",
+   "discredit": "map parks ?erase@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@@Z at 0x825cf890, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -10209,8 +10201,8 @@
    "our_def": "build/45410914/src/system/utl/Song.obj (+1 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)",
-   "tier": "CF1",
-   "discredit": null,
+   "tier": "CF2",
+   "discredit": "map parks ??1?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ at 0x827e5d78, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -10614,8 +10606,8 @@
    "our_def": "build/45410914/src/system/bandobj/OutfitConfig.obj (+3 identical)",
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": "CF1",
-   "discredit": null,
+   "tier": "CF2",
+   "discredit": "map parks ??3CharEyeDartRuleset@@SAXPAX@Z at 0x823beea8, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -11290,7 +11282,7 @@
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks ??3RndMat@@SAXPAX@Z at 0x824a8f74, which has ZERO .text fan-in",
+   "discredit": "map parks ??3RndMat@@SAXPAX@Z at 0x824a8f74, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -11680,7 +11672,7 @@
    "our_bytes": 8,
    "body_evidence": "identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks ??1?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@QAA@XZ at 0x82597350, which has ZERO .text fan-in",
+   "discredit": "map parks ??1?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@QAA@XZ at 0x82597350, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -13012,7 +13004,7 @@
    "our_bytes": 4,
    "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
    "tier": "CF2",
-   "discredit": "map parks ??3PlayerDiffIcon@@SAXPAX@Z at 0x823258d4, which has ZERO .text fan-in",
+   "discredit": "map parks ??3PlayerDiffIcon@@SAXPAX@Z at 0x823258d4, which has ZERO .text fan-in -- nothing in the image branches there, so the entry is unsupported by the image",
    "verdict": "ADMIT"
   },
   {
@@ -14844,10 +14836,9 @@
    "our_def": "build/45410914/src/band3/game/TrackerManager.obj",
    "our_bytes": 20,
    "body_evidence": "identical: 4/5 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
-   "tier": null,
-   "discredit": null,
    "verdict": "REFUSE",
-   "reason": "?OnPlayerQuarantined@TrackerManager@@QAAXPAVPlayer@@@Z already sits in an existing alias group at 0x826936f8; adding it at 0x82693158 would give one name two addresses"
+   "tier": null,
+   "reason": "retail has a DIFFERENT LIVE body named ?OnPlayerQuarantined@TrackerManager@@QAAXPAVPlayer@@@Z at 0x826936f8 (fan-in 1, 20 bytes, branches to ?RemoteEndStreak@Tracker@@QAAXPAVPlayer@@HH@Z); the map does not flag that address arbitrary, the image does not discredit it, and there is no dc3 homonym witness, so the entry stands and an alias would assert a false equality between two live addresses"
   },
   {
    "subclass": "residual",
