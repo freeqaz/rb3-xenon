@@ -1803,6 +1803,28 @@ def generate_objdiff_config(
         ],
         "units": [],
         "progress_categories": [],
+        # Relocation ruler. objdiff's default, `none`, compares a relocation's
+        # POSITION and TYPE but never the NAME of the symbol it points at, so a
+        # `bl` to the wrong function and a load of the wrong global both score a
+        # COMPLETE match. `name_check` checks the name, with the tolerances a
+        # split target needs (unverifiable left relocation, placeholder left
+        # name, COFF weak-external alias, template array sizes, data-section
+        # placement), and it honours the ICF equivalence classes below.
+        #
+        # This costs more here than on dc3 or rb3 -- 42.2200% -> 31.1425%
+        # matched_code, exposing 9,087 of 44,055 complete functions -- and the
+        # reason is the alias map, not the source. 5,544 of those functions are
+        # blocked only by trivial destructors and allocator overloads, the two
+        # canonical /OPT:ICF fold shapes: retail kept one spelling and we
+        # reference another. Those are not defects, but neither are they proven
+        # folds, and an unproven fold is exactly what symbol_aliases.json exists
+        # to adjudicate. 511 groups are admitted today against dc3's 1,950, so
+        # the honest reading of the drop is "the alias evidence lane has 9,087
+        # functions of headroom", and it is recovered by
+        # tools/icf_alias_build.py, not by editing source.
+        "options": {
+            "functionRelocDiffs": "name_check",
+        },
     }
 
     # ICF-merged-symbol alias map. Retail /O1 ICF-folds debug-stripped allocator
