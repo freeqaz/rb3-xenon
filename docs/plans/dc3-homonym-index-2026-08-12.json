@@ -1,0 +1,305 @@
+{
+ "map": "~/code/milohax/dc3-decomp/orig/373307D9/ham_xbox_r.map",
+ "rows": 119504,
+ "counts": {
+  "code_names": 77927,
+  "public": 53906,
+  "static": 24023,
+  "multi_address": 1393,
+  "multi_address_public": 0,
+  "multi_address_static": 1392,
+  "homonyms": 25
+ },
+ "homonyms": {
+  "??3@YAXPAX@Z": [
+   [
+    "0x82abc2a8",
+    "nuispeech:ctransducer.obj"
+   ],
+   [
+    "0x82e21268",
+    "utl:MemMgr.obj"
+   ],
+   [
+    "0x82eb0c70",
+    "xaudio2:baseswfilter.obj"
+   ]
+  ],
+  "??_V@YAXPAX@Z": [
+   [
+    "0x82abc2a8",
+    "nuispeech:ctransducer.obj"
+   ],
+   [
+    "0x82e21268",
+    "utl:MemMgr.obj"
+   ]
+  ],
+  "??__EgConditional@@YAXXZ": [
+   [
+    "0x82edb6c8",
+    "obj:DataArray.obj"
+   ],
+   [
+    "0x82edbe50",
+    "obj:DataFile.obj"
+   ]
+  ],
+  "??__EgFile@@YAXXZ": [
+   [
+    "0x82edb6b0",
+    "obj:DataArray.obj"
+   ],
+   [
+    "0x82edbe38",
+    "obj:DataFile.obj"
+   ]
+  ],
+  "??__EsLicense@@YAXXZ": [
+   [
+    "0x82edb268",
+    "math:SHA1.obj"
+   ],
+   [
+    "0x82edb280",
+    "math:Easing.obj"
+   ],
+   [
+    "0x82edc020",
+    "os:System.obj"
+   ],
+   [
+    "0x82edd3c8",
+    "synth:TomCryptLicense.obj"
+   ],
+   [
+    "0x82edda80",
+    "zlib:ZlibLicense.obj"
+   ],
+   [
+    "0x82edf4b8",
+    "jpeg:jcmaster.obj"
+   ],
+   [
+    "0x82ee0b00",
+    "oggvorbis:VorbisMem.obj"
+   ]
+  ],
+  "??__EsRand@@YAXXZ": [
+   [
+    "0x82edd378",
+    "synth:MicNull.obj"
+   ],
+   [
+    "0x82edd978",
+    "world:CameraManager.obj"
+   ]
+  ],
+  "??__EvecHigh32Mask@FrontalDetector@FaceCore@@YAXXZ": [
+   [
+    "0x82eddf88",
+    "nuiapi:frontalfacedetection.obj"
+   ],
+   [
+    "0x82ede0d0",
+    "nuiapi:frontaldetector.obj"
+   ]
+  ],
+  "??__EvecHigh32Mask@Identity@@YAXXZ": [
+   [
+    "0x82ede038",
+    "nuiapi:facepipelinedetect.obj"
+   ],
+   [
+    "0x82ede508",
+    "nuiapi:facedetectionsoftcascade.obj"
+   ],
+   [
+    "0x82ede690",
+    "nuiapi:facedetector_image.obj"
+   ],
+   [
+    "0x82ede750",
+    "nuiapi:facedetector_detector.obj"
+   ]
+  ],
+  "??__EvecHigh32Mask@MultiPoseDetector@FaceCore@@YAXXZ": [
+   [
+    "0x82eddfc8",
+    "nuiapi:multiposefacedetection.obj"
+   ],
+   [
+    "0x82ede2c8",
+    "nuiapi:multiposedetector.obj"
+   ]
+  ],
+  "??__EvecNegate0@FrontalDetector@FaceCore@@YAXXZ": [
+   [
+    "0x82eddfa8",
+    "nuiapi:frontalfacedetection.obj"
+   ],
+   [
+    "0x82ede0f0",
+    "nuiapi:frontaldetector.obj"
+   ]
+  ],
+  "??__EvecNegate0@Identity@@YAXXZ": [
+   [
+    "0x82ede058",
+    "nuiapi:facepipelinedetect.obj"
+   ],
+   [
+    "0x82ede528",
+    "nuiapi:facedetectionsoftcascade.obj"
+   ],
+   [
+    "0x82ede6b0",
+    "nuiapi:facedetector_image.obj"
+   ],
+   [
+    "0x82ede770",
+    "nuiapi:facedetector_detector.obj"
+   ]
+  ],
+  "??__EvecNegate0@MultiPoseDetector@FaceCore@@YAXXZ": [
+   [
+    "0x82eddfe8",
+    "nuiapi:multiposefacedetection.obj"
+   ],
+   [
+    "0x82ede2e8",
+    "nuiapi:multiposedetector.obj"
+   ]
+  ],
+  "??__FgConditional@@YAXXZ": [
+   [
+    "0x82ee1f78",
+    "obj:DataArray.obj"
+   ],
+   [
+    "0x82ee2178",
+    "obj:DataFile.obj"
+   ]
+  ],
+  "?DebugModal@@YAXAAW4ModalType@Debug@@AAVFixedString@@_N@Z": [
+   [
+    "0x82331fa8",
+    "App.obj"
+   ],
+   [
+    "0x825ccf20",
+    "os:Debug.obj"
+   ]
+  ],
+  "?FillCompressedVertex@@YAXAAUCompressedVertex_Xbox@@ABVVert@RndMesh@@_N@Z": [
+   [
+    "0x826204d8",
+    "rnddx9:Mesh.obj"
+   ],
+   [
+    "0x8263a360",
+    "rndobj:Mesh.obj"
+   ]
+  ],
+  "?PackVector@@YAXAAIABVVector4@@EEEE_N@Z": [
+   [
+    "0x826202e0",
+    "rnddx9:Mesh.obj"
+   ],
+   [
+    "0x8263a168",
+    "rndobj:Mesh.obj"
+   ]
+  ],
+  "?SampleAlloc@@YAPAXHPBDH0H@Z": [
+   [
+    "0x8273b818",
+    "synth:SynthSample.obj"
+   ],
+   [
+    "0x82e42d48",
+    "synth_xbox:SynthSample.obj"
+   ]
+  ],
+  "?SetMixFromAngles@@YAJHHPAM00@Z": [
+   [
+    "0x82e62c90",
+    "xaudio2:xapobase.obj"
+   ],
+   [
+    "0x82e688a8",
+    "xaudio2:apofiltermatrixmix.obj"
+   ]
+  ],
+  "?SetMixFromChannelMask@@YAJHHIIPAM@Z": [
+   [
+    "0x82e631a8",
+    "xaudio2:xapobase.obj"
+   ],
+   [
+    "0x82e68e48",
+    "xaudio2:apofiltermatrixmix.obj"
+   ]
+  ],
+  "?TerminateCallback@@YAXXZ": [
+   [
+    "0x8265ea60",
+    "rndobj:Rnd.obj"
+   ],
+   [
+    "0x8277afc0",
+    "ui:UI.obj"
+   ]
+  ],
+  "__check_float_string": [
+   [
+    "0x829b5858",
+    "LIBCMT:inputs.obj"
+   ],
+   [
+    "0x829babf8",
+    "LIBCMT:winput.obj"
+   ]
+  ],
+  "_tsopen_nolock": [
+   [
+    "0x829a76f0",
+    "LIBCMT:open.obj"
+   ],
+   [
+    "0x829ba3a8",
+    "LIBCMT:wopen.obj"
+   ]
+  ],
+  "vscan_fn": [
+   [
+    "0x829a32f0",
+    "LIBCMT:sscanf.obj"
+   ],
+   [
+    "0x829a7248",
+    "LIBCMT:swscanf.obj"
+   ]
+  ],
+  "write_char": [
+   [
+    "0x829b25f8",
+    "LIBCMT:output.obj"
+   ],
+   [
+    "0x829b8e78",
+    "LIBCMT:woutputs.obj"
+   ]
+  ],
+  "write_string": [
+   [
+    "0x829b31c0",
+    "LIBCMT:outputs.obj"
+   ],
+   [
+    "0x829b8ee0",
+    "LIBCMT:woutputs.obj"
+   ]
+  ]
+ }
+}
