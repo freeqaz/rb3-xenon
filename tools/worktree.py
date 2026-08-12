@@ -29,6 +29,15 @@ repo is not enough to build or measure anything:
     why `new` builds and then VERIFIES: a worktree whose numbers do not match
     the parent's is a silently wrong measurement, which is worse than a slow one.
 
+  * Regenerating build.ninja means the worktree's graph is what configure.py
+    produces TODAY, which is not necessarily what the parent's graph contains.
+    Measured 2026-08-12 on dc3: the parent carries 967 `build/<ver>/data/*.obj`
+    link inputs that a fresh configure emits none of.  Per-unit measurement is
+    unaffected -- objdiff compares `build/<ver>/src/**` against
+    `build/<ver>/obj/**` and never consults the link, which is why the verify
+    step passes -- but do not do LINK-side work in a worktree without checking
+    that edge against the parent first.
+
 Usage:
     tools/worktree.py new <name> [--branch B] [--base REF] [--no-build]
     tools/worktree.py ls [--json]
