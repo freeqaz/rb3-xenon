@@ -149,11 +149,21 @@ lane's re-derivation, and 34 sha256 pins ride on the eval roster.
 * **952 sites of `bijection_class` + `map_name_unresolved`** — the map's own
   arbitrary assignments; needs the same call-site oracle applied at scale.
 * **203 sites of `transposition`** — map edits, evidence gathered above.
-* **1,108 sites of `residual`** — genuinely unclassified. The biggest entries are
-  `~ObjPtr<T>` vs `~ObjRefConcrete<T>` (270 sites over four instantiations), which
-  is a per-call-site inlining difference on a trivial wrapper rather than a wrong
+* **1,108 sites of `residual`** — genuinely unclassified, and *still* mostly
+  naming on inspection. The biggest entries are `~ObjPtr<T>` vs
+  `~ObjRefConcrete<T>` (270 sites over four instantiations), which is a
+  per-call-site inlining difference on a trivial wrapper rather than a wrong
   callee, and a long tail of destructor pairs whose callers are still `fn_<addr>`
   in our tree. Neither is mechanical.
+
+  The 114-site `list<CharClip*>::insert` vs `list<Hmx::Object*>::insert` pair
+  shows how far the naming reaches. Every one of its call sites is inside a
+  `PollDeps(list<Hmx::Object*>&, list<Hmx::Object*>&)` override — 45 units,
+  `CharIKFingers`, `CharIKHand`, `CharEyes`, `CharWeightSetter`, … — whose
+  signature is fixed by the vtable. The C++ type system *forbids* those bodies
+  from calling any other instantiation, so the charge cannot be a source defect
+  under any spelling; the map simply hung the `CharClip` name on the surviving
+  COMDAT. Both spellings are 100 bytes and both score 100% at `none` here.
 
 **No source fix was landed from this lane, because none of the candidates
 survived its own evidence.** The instrument, the worklist and the measured
