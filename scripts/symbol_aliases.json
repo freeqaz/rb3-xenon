@@ -51,7 +51,8 @@
     "Cross-validated against an independent retail-vs-ours body-hash enumerator:",
     "the two derivations agree EXACTLY on all 394 retail-adjudicated (T1) pairs.",
     "Negative decoy control: the relocation gate kills 96.8% of the pairs a naive",
-    "masked-byte comparator would accept (554,705 of 573,290)."
+    "masked-byte comparator would accept (554,705 of 573,290).",
+    "FOLD-THUNK TIER (FT, lane H, 2026-08-12) -- the groups whose evidence string names tools/fold_thunk_gate.py depart from the 'exactly ONE map-resident symbol per group' gate above, DELIBERATELY. In this class BOTH spellings are map-resident, which is the whole reason the earlier residency triage misread them as wrong callees: target_symbol_map.json is a VA->name FUNCTION over an ICF-folded link, so it parks the loser of a fold on whatever address is left -- padding, a mid-function word, or an unrelated thunk. Each FT group therefore carries, per folded spelling, either proof that the map's other address holds the SAME body or a measured reason that entry is wrong (zero .text fan-in, no symbols.txt extent, or our own definition scoring <20% at `none` against it). See docs/plans/fold-thunk-alias-gate-2026-08-12.md."
   ],
   "groups": [
     {
@@ -25537,6 +25538,39 @@
         "?MemOrPoolAllocSTL@@YAPAXH@Z"
       ],
       "evidence": "1-arg MemOrPoolAlloc/MemOrPoolAllocSTL (utl/MemMgr.h, debug-stripped) fold onto the 4-arg debug MemOrPoolAlloc; target obj refs only the 4-arg name (244 objs). Paired-bl diff_arg signature confirmed in DataArray (??0DataArray, LoadGlob, _M_create_node \u2014 including the cross-variant STL fold)."
+    },
+    {
+      "name": "$?0H",
+      "address": "0x826c3888",
+      "survivor": "??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z",
+      "folded": [
+        "??3@YAXPAX0@Z"
+      ],
+      "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT-EMPTY. FT=our compiled COMDAT for each folded spelling is byte-identical to the RETAIL body at the survivor address 0x826c3888 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED and name-equal (not masked away); the survivor has 1116 direct callers across .text. FT1=retail's map places the folded spelling on the same body or nowhere; FT2=retail's map places it on a different body that is independently discredited (zero fan-in, or our own definition scores <20% at `none` against it); FT-EMPTY=the body carries no relocation, so the fold is real but the byte comparison is vacuous. 1 folded spelling(s), 154 charged name_check sites."
+    },
+    {
+      "name": "1LoaderGlitchContext",
+      "address": "0x827bea28",
+      "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+      "folded": [
+        "??1FilePath@@UAA@XZ"
+      ],
+      "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT2. FT=our compiled COMDAT for each folded spelling is byte-identical to the RETAIL body at the survivor address 0x827bea28 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED and name-equal (not masked away); the survivor has 235 direct callers across .text. FT1=retail's map places the folded spelling on the same body or nowhere; FT2=retail's map places it on a different body that is independently discredited (zero fan-in, or our own definition scores <20% at `none` against it); FT-EMPTY=the body carries no relocation, so the fold is real but the byte comparison is vacuous. 1 folded spelling(s), 164 charged name_check sites."
+    },
+    {
+      "name": "3BinStream",
+      "address": "0x8240ddb0",
+      "survivor": "??3BinStream@@SAXPAX@Z",
+      "folded": [
+        "??3@YAXPAX@Z",
+        "??3CharEyeDartRuleset@@SAXPAX@Z",
+        "??3PlayerDiffIcon@@SAXPAX@Z",
+        "??3RndLight@@SAXPAX@Z",
+        "??3RndMat@@SAXPAX@Z",
+        "??3UIComponent@@SAXPAX@Z",
+        "OggFree"
+      ],
+      "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT2. FT=our compiled COMDAT for each folded spelling is byte-identical to the RETAIL body at the survivor address 0x8240ddb0 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED and name-equal (not masked away); the survivor has 2308 direct callers across .text. FT1=retail's map places the folded spelling on the same body or nowhere; FT2=retail's map places it on a different body that is independently discredited (zero fan-in, or our own definition scores <20% at `none` against it); FT-EMPTY=the body carries no relocation, so the fold is real but the byte comparison is vacuous. 7 folded spelling(s), 1281 charged name_check sites."
     }
   ]
 }
