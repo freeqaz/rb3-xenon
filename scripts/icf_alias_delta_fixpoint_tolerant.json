@@ -1,6 +1,6 @@
 {
  "_comment": [
-  "The same set plus 16 pairs that still carry 22 information-free placeholder slots -- the tolerance the SHIPPED adjudicator applies, so this variant is exactly as strict as scripts/symbol_aliases.json already is, no stricter. Measured 2026-08-12: name_check 31.278600% -> 31.575983% (+30,692 B, +105 complete functions, -0 lost); none byte-identical at 42.220000%.",
+  "The same set plus 16 pairs that still carry 22 information-free placeholder slots -- the tolerance the SHIPPED adjudicator applies, so this variant is exactly as strict as scripts/symbol_aliases.json already is, no stricter. Measured 2026-08-12: name_check 31.278600% -> 31.638264% (+37,120 B, +145 complete functions, -0 lost); none byte-identical at 42.220000%.",
   "DELTA over scripts/symbol_aliases.json -- generated, NOT installed.",
   "Produced by scripts/icf_alias_fixpoint.py; see that file for the argument.",
   "Install: python3 scripts/icf_alias_merge.py --into scripts/symbol_aliases.json --delta <this file> && python3 tools/gen_symbol_alias_map.py"
@@ -41,16 +41,6 @@
    ],
    "_meta": [
     {
-     "folded": "??0?$_Vector_base@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@H@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 3,
-     "fns": 3
-    },
-    {
      "folded": "??0?$_Vector_base@PAVShortcutNode@@V?$StlNodeAlloc@PAVShortcutNode@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAVShortcutNode@@@1@@Z",
      "tier": 1,
      "round": 1,
@@ -59,26 +49,6 @@
      "fully_grounded": true,
      "sites": 1,
      "fns": 1
-    },
-    {
-     "folded": "??0?$_Vector_base@PAVFile@@V?$StlNodeAlloc@PAVFile@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAVFile@@@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "??0?$_Vector_base@PAU_Slist_node_base@priv@stlpmtx_std@@V?$StlNodeAlloc@PAU_Slist_node_base@priv@stlpmtx_std@@@3@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAU_Slist_node_base@priv@stlpmtx_std@@@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 4,
-     "fns": 4
     },
     {
      "folded": "??0?$_Vector_base@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@M@1@@Z",
@@ -99,6 +69,36 @@
      "fully_grounded": true,
      "sites": 2,
      "fns": 2
+    },
+    {
+     "folded": "??0?$_Vector_base@PAU_Slist_node_base@priv@stlpmtx_std@@V?$StlNodeAlloc@PAU_Slist_node_base@priv@stlpmtx_std@@@3@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAU_Slist_node_base@priv@stlpmtx_std@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 4,
+     "fns": 4
+    },
+    {
+     "folded": "??0?$_Vector_base@PAVFile@@V?$StlNodeAlloc@PAVFile@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAVFile@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "??0?$_Vector_base@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@H@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 3,
+     "fns": 3
     }
    ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
@@ -115,16 +115,6 @@
    ],
    "_meta": [
     {
-     "folded": "??1?$_Deque_base@PAVTambourineGem@@V?$StlNodeAlloc@PAVTambourineGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 3,
-     "fns": 2
-    },
-    {
      "folded": "??1?$_Deque_base@PAVLyricPlate@@V?$StlNodeAlloc@PAVLyricPlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "tier": 1,
      "round": 1,
@@ -133,6 +123,16 @@
      "fully_grounded": true,
      "sites": 2,
      "fns": 1
+    },
+    {
+     "folded": "??1?$_Deque_base@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 4,
+     "fns": 3
     },
     {
      "folded": "??1?$_Deque_base@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
@@ -145,14 +145,14 @@
      "fns": 1
     },
     {
-     "folded": "??1?$_Deque_base@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "folded": "??1?$_Deque_base@PAVTambourineGem@@V?$StlNodeAlloc@PAVTambourineGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
      "tolerated_slots": 0,
      "fully_grounded": true,
-     "sites": 4,
-     "fns": 3
+     "sites": 3,
+     "fns": 2
     }
    ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
@@ -173,14 +173,14 @@
    ],
    "_meta": [
     {
-     "folded": "?_M_erase@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VBandTrack@@@@PAV3@0ABU__false_type@2@@Z",
+     "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPropAnim@@@@PAV3@0ABU__false_type@2@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 2,
      "tolerated_slots": 0,
      "fully_grounded": true,
-     "sites": 2,
-     "fns": 2
+     "sites": 1,
+     "fns": 1
     },
     {
      "folded": "?_M_erase@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VEventTrigger@@@@PAV3@0ABU__false_type@2@@Z",
@@ -193,27 +193,17 @@
      "fns": 1
     },
     {
-     "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndAnimatable@@@@PAV3@0ABU__false_type@2@@Z",
+     "folded": "?_M_erase@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VBandTrack@@@@PAV3@0ABU__false_type@2@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 2,
      "tolerated_slots": 0,
      "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
+     "sites": 2,
+     "fns": 2
     },
     {
      "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndDir@@@@PAV3@0ABU__false_type@2@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 2,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPropAnim@@@@PAV3@0ABU__false_type@2@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 2,
@@ -233,7 +223,7 @@
      "fns": 1
     },
     {
-     "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndMesh@@@@PAV3@0ABU__false_type@2@@Z",
+     "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndAnimatable@@@@PAV3@0ABU__false_type@2@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 2,
@@ -244,6 +234,16 @@
     },
     {
      "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPartLauncher@@@@PAV3@0ABU__false_type@2@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 2,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndMesh@@@@PAV3@0ABU__false_type@2@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 2,
@@ -268,36 +268,6 @@
    ],
    "_meta": [
     {
-     "folded": "?remove@?$list@PAVPostProcessor@@V?$StlNodeAlloc@PAVPostProcessor@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVPostProcessor@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "?remove@?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVMidiParser@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "?remove@?$list@PAVLoader@@V?$StlNodeAlloc@PAVLoader@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVLoader@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 2,
-     "fns": 1
-    },
-    {
      "folded": "?remove@?$list@PAVCallback@ContentMgr@@V?$StlNodeAlloc@PAVCallback@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVCallback@ContentMgr@@@Z",
      "tier": 1,
      "round": 1,
@@ -316,6 +286,101 @@
      "fully_grounded": true,
      "sites": 2,
      "fns": 2
+    },
+    {
+     "folded": "?remove@?$list@PAVLoader@@V?$StlNodeAlloc@PAVLoader@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVLoader@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 2,
+     "fns": 1
+    },
+    {
+     "folded": "?remove@?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVMidiParser@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "?remove@?$list@PAVPostProcessor@@V?$StlNodeAlloc@PAVPostProcessor@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVPostProcessor@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "A?$map",
+   "address": "0x82359f28",
+   "survivor": "??A?$map@VSymbol@@P6APAVObject@Hmx@@XZU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAP6APAVObject@Hmx@@XZABVSymbol@@@Z",
+   "folded": [
+    "??A?$map@VSymbol@@P6A?AVDataNode@@PAVDataArray@@@ZU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAP6A?AVDataNode@@PAVDataArray@@@ZABVSymbol@@@Z",
+    "??A?$map@VSymbol@@PAVDataArray@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVDataArray@@ABVSymbol@@@Z",
+    "??A?$map@VSymbol@@PAVGigFilter@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVGigFilter@@ABVSymbol@@@Z",
+    "??A?$map@VSymbol@@PAVQuest@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVQuest@@ABVSymbol@@@Z",
+    "??A?$map@VSymbol@@PAVTrackWidget@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVTrackWidget@@ABVSymbol@@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??A?$map@VSymbol@@PAVGigFilter@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVGigFilter@@ABVSymbol@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "??A?$map@VSymbol@@PAVQuest@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVQuest@@ABVSymbol@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "??A?$map@VSymbol@@PAVDataArray@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVDataArray@@ABVSymbol@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "??A?$map@VSymbol@@PAVTrackWidget@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVTrackWidget@@ABVSymbol@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 2,
+     "fns": 1
+    },
+    {
+     "folded": "??A?$map@VSymbol@@P6A?AVDataNode@@PAVDataArray@@@ZU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAP6A?AVDataNode@@PAVDataArray@@@ZABVSymbol@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
     }
    ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
@@ -342,66 +407,56 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "A?$map",
-   "address": "0x82359f28",
-   "survivor": "??A?$map@VSymbol@@P6APAVObject@Hmx@@XZU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAP6APAVObject@Hmx@@XZABVSymbol@@@Z",
+   "name": "vftable_8208D4CC",
+   "address": "0x8208D4CC",
+   "survivor": "vftable_8208D4CC",
    "folded": [
-    "??A?$map@VSymbol@@P6A?AVDataNode@@PAVDataArray@@@ZU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAP6A?AVDataNode@@PAVDataArray@@@ZABVSymbol@@@Z",
-    "??A?$map@VSymbol@@PAVDataArray@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVDataArray@@ABVSymbol@@@Z",
-    "??A?$map@VSymbol@@PAVGigFilter@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVGigFilter@@ABVSymbol@@@Z",
-    "??A?$map@VSymbol@@PAVQuest@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVQuest@@ABVSymbol@@@Z",
-    "??A?$map@VSymbol@@PAVTrackWidget@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVTrackWidget@@ABVSymbol@@@Z"
+    "??_7WinSockSocket@@6B@"
    ],
    "_meta": [
     {
-     "folded": "??A?$map@VSymbol@@PAVDataArray@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVDataArray@@ABVSymbol@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
+     "folded": "??_7WinSockSocket@@6B@",
+     "tier": "vftable-contents",
+     "sites": 6,
+     "fns": 3
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_820AA02C",
+   "address": "0x820AA02C",
+   "survivor": "vftable_820AA02C",
+   "folded": [
+    "??_7BasicStartLockMsg@@6B@"
+   ],
+   "_meta": [
     {
-     "folded": "??A?$map@VSymbol@@P6A?AVDataNode@@PAVDataArray@@@ZU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@5@@stlpmtx_std@@QAAAAP6A?AVDataNode@@PAVDataArray@@@ZABVSymbol@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
+     "folded": "??_7BasicStartLockMsg@@6B@",
+     "tier": "vftable-contents",
+     "sites": 6,
+     "fns": 3
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "$?6V?$Key",
+   "address": "0x8242b470",
+   "survivor": "??$?6V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [
+    "??$?6V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "_meta": [
     {
-     "folded": "??A?$map@VSymbol@@PAVQuest@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVQuest@@ABVSymbol@@@Z",
+     "folded": "??$?6V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
      "tolerated_slots": 0,
      "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "??A?$map@VSymbol@@PAVTrackWidget@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVTrackWidget@@ABVSymbol@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 2,
-     "fns": 1
-    },
-    {
-     "folded": "??A?$map@VSymbol@@PAVGigFilter@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAVGigFilter@@ABVSymbol@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
+     "sites": 5,
+     "fns": 3
     }
    ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
@@ -427,7 +482,7 @@
      "fns": 3
     },
     {
-     "folded": "?AtFrame@?$Keys@VTexPtr@RndMatAnim@@PAVRndTex@@@@QBAHMAAPBV?$Key@VTexPtr@RndMatAnim@@@@0AAM@Z",
+     "folded": "?AtFrame@?$Keys@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@V?$vector@VVert@RndMesh@@V?$StlNodeAlloc@VVert@RndMesh@@@stlpmtx_std@@@2@@@QBAHMAAPBV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@0AAM@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 7,
@@ -437,7 +492,7 @@
      "fns": 1
     },
     {
-     "folded": "?AtFrame@?$Keys@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@V?$vector@VVert@RndMesh@@V?$StlNodeAlloc@VVert@RndMesh@@@stlpmtx_std@@@2@@@QBAHMAAPBV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@0AAM@Z",
+     "folded": "?AtFrame@?$Keys@VTexPtr@RndMatAnim@@PAVRndTex@@@@QBAHMAAPBV?$Key@VTexPtr@RndMatAnim@@@@0AAM@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 7,
@@ -492,70 +547,6 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$?6V?$Key",
-   "address": "0x8242b470",
-   "survivor": "??$?6V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-   "folded": [
-    "??$?6V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$?6V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 5,
-     "fns": 3
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "$DeleteAll",
-   "address": "0x82645288",
-   "survivor": "??$DeleteAll@V?$vector@PAVUILabel@@V?$StlNodeAlloc@PAVUILabel@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVUILabel@@V?$StlNodeAlloc@PAVUILabel@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-   "folded": [
-    "??$DeleteAll@V?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-    "??$DeleteAll@V?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-    "??$DeleteAll@V?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$DeleteAll@V?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 2,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 2,
-     "fns": 2
-    },
-    {
-     "folded": "??$DeleteAll@V?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 2,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "??$DeleteAll@V?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 2,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
    "name": "reserve",
    "address": "0x82453970",
    "survivor": "?reserve@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
@@ -568,16 +559,6 @@
    "_meta": [
     {
      "folded": "?reserve@?$vector@UJukeboxItem@@V?$StlNodeAlloc@UJukeboxItem@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 3,
-     "tolerated_slots": 1,
-     "fully_grounded": false,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "?reserve@?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 3,
@@ -605,58 +586,14 @@
      "fully_grounded": false,
      "sites": 1,
      "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "0?$_Vector_base",
-   "address": "0x82516fc0",
-   "survivor": "??0?$_Vector_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VString@@@1@@Z",
-   "folded": [
-    "??0?$_Vector_base@UCompEv@DataEventList@@V?$StlNodeAlloc@UCompEv@DataEventList@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UCompEv@DataEventList@@@1@@Z",
-    "??0?$_Vector_base@UTempoInfoPoint@MultiTempoTempoMap@@V?$StlNodeAlloc@UTempoInfoPoint@MultiTempoTempoMap@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UTempoInfoPoint@MultiTempoTempoMap@@@1@@Z",
-    "??0?$_Vector_base@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@1@@Z",
-    "??0?$_Vector_base@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@1@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??0?$_Vector_base@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
     },
     {
-     "folded": "??0?$_Vector_base@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@1@@Z",
+     "folded": "?reserve@?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "??0?$_Vector_base@UCompEv@DataEventList@@V?$StlNodeAlloc@UCompEv@DataEventList@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UCompEv@DataEventList@@@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "??0?$_Vector_base@UTempoInfoPoint@MultiTempoTempoMap@@V?$StlNodeAlloc@UTempoInfoPoint@MultiTempoTempoMap@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UTempoInfoPoint@MultiTempoTempoMap@@@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
+     "relaxed_slots": 3,
+     "tolerated_slots": 1,
+     "fully_grounded": false,
      "sites": 1,
      "fns": 1
     }
@@ -696,6 +633,49 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
+   "name": "$DeleteAll",
+   "address": "0x82645288",
+   "survivor": "??$DeleteAll@V?$vector@PAVUILabel@@V?$StlNodeAlloc@PAVUILabel@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVUILabel@@V?$StlNodeAlloc@PAVUILabel@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [
+    "??$DeleteAll@V?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "??$DeleteAll@V?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "??$DeleteAll@V?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$DeleteAll@V?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVPrefabChar@@V?$StlNodeAlloc@PAVPrefabChar@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 2,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "??$DeleteAll@V?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVRndMesh@@V?$StlNodeAlloc@PAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 2,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 2,
+     "fns": 2
+    },
+    {
+     "folded": "??$DeleteAll@V?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 2,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
    "name": "0?$_Vector_base",
    "address": "0x82685778",
    "survivor": "??0?$_Vector_base@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VExtent@@@1@@Z",
@@ -706,16 +686,6 @@
     "??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VVector2@@@1@@Z"
    ],
    "_meta": [
-    {
-     "folded": "??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VVector2@@@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
     {
      "folded": "??0?$_Vector_base@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VStreakInfo@Stats@@@1@@Z",
      "tier": 1,
@@ -745,9 +715,352 @@
      "fully_grounded": true,
      "sites": 1,
      "fns": 1
+    },
+    {
+     "folded": "??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VVector2@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
     }
    ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "0?$_Vector_base",
+   "address": "0x82516fc0",
+   "survivor": "??0?$_Vector_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VString@@@1@@Z",
+   "folded": [
+    "??0?$_Vector_base@UCompEv@DataEventList@@V?$StlNodeAlloc@UCompEv@DataEventList@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UCompEv@DataEventList@@@1@@Z",
+    "??0?$_Vector_base@UTempoInfoPoint@MultiTempoTempoMap@@V?$StlNodeAlloc@UTempoInfoPoint@MultiTempoTempoMap@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UTempoInfoPoint@MultiTempoTempoMap@@@1@@Z",
+    "??0?$_Vector_base@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@1@@Z",
+    "??0?$_Vector_base@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@1@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??0?$_Vector_base@UTempoInfoPoint@MultiTempoTempoMap@@V?$StlNodeAlloc@UTempoInfoPoint@MultiTempoTempoMap@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UTempoInfoPoint@MultiTempoTempoMap@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "??0?$_Vector_base@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "??0?$_Vector_base@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "??0?$_Vector_base@UCompEv@DataEventList@@V?$StlNodeAlloc@UCompEv@DataEventList@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UCompEv@DataEventList@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "vftable_820EF754",
+   "address": "0x820EF754",
+   "survivor": "vftable_820EF754",
+   "folded": [
+    "??_7AccuracyFocusTracker@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7AccuracyFocusTracker@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8208BC6C",
+   "address": "0x8208BC6C",
+   "survivor": "vftable_8208BC6C",
+   "folded": [
+    "??_7AsyncFile@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7AsyncFile@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_820556FC",
+   "address": "0x820556FC",
+   "survivor": "vftable_820556FC",
+   "folded": [
+    "??_7DataArrayMsg@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7DataArrayMsg@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8207DE94",
+   "address": "0x8207DE94",
+   "survivor": "vftable_8207DE94",
+   "folded": [
+    "??_7WorldCrowd@@6BRndPollable@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7WorldCrowd@@6BRndPollable@@@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8208806C",
+   "address": "0x8208806C",
+   "survivor": "vftable_8208806C",
+   "folded": [
+    "??_7FileCacheFile@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7FileCacheFile@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_820DE744",
+   "address": "0x820DE744",
+   "survivor": "vftable_820DE744",
+   "folded": [
+    "??_7GameMicManager@@6BMicManagerInterface@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7GameMicManager@@6BMicManagerInterface@@@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_82101754",
+   "address": "0x82101754",
+   "survivor": "vftable_82101754",
+   "folded": [
+    "??_7DxShader@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7DxShader@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8208DFDC",
+   "address": "0x8208DFDC",
+   "survivor": "vftable_8208DFDC",
+   "folded": [
+    "??_7StartLockMsg@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7StartLockMsg@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8208DE24",
+   "address": "0x8208DE24",
+   "survivor": "vftable_8208DE24",
+   "folded": [
+    "??_7AsyncFileHolmes@@6B@",
+    "??_7AsyncFileWin@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7AsyncFileWin@@6B@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    },
+    {
+     "folded": "??_7AsyncFileHolmes@@6B@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8211B7DC",
+   "address": "0x8211B7DC",
+   "survivor": "vftable_8211B7DC",
+   "folded": [
+    "??_7CacheMgrXbox@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7CacheMgrXbox@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_82123B0C",
+   "address": "0x82123B0C",
+   "survivor": "vftable_82123B0C",
+   "folded": [
+    "??_7UIManager@@6B0@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7UIManager@@6B0@@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8208B60C",
+   "address": "0x8208B60C",
+   "survivor": "vftable_8208B60C",
+   "folded": [
+    "??_7MCFileXbox@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7MCFileXbox@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_82056E74",
+   "address": "0x82056E74",
+   "survivor": "vftable_82056E74",
+   "folded": [
+    "??_7SyncObjMsg@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7SyncObjMsg@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_820A9EA4",
+   "address": "0x820A9EA4",
+   "survivor": "vftable_820A9EA4",
+   "folded": [
+    "??_7LockResponseMsg@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7LockResponseMsg@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_82198C98",
+   "address": "0x82198C98",
+   "survivor": "vftable_82198C98",
+   "folded": [
+    "??_7FIRFilter@soundtouch@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7FIRFilter@soundtouch@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_820EF5E4",
+   "address": "0x820EF5E4",
+   "survivor": "vftable_820EF5E4",
+   "folded": [
+    "??_7StreakFocusTracker@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7StreakFocusTracker@@6B@",
+     "tier": "vftable-contents",
+     "sites": 4,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
   },
   {
    "name": "0?$_Vector_base",
@@ -760,7 +1073,7 @@
    ],
    "_meta": [
     {
-     "folded": "??0?$_Vector_base@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@1@@Z",
+     "folded": "??0?$_Vector_base@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VVector3@@@1@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -770,7 +1083,7 @@
      "fns": 1
     },
     {
-     "folded": "??0?$_Vector_base@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VVector3@@@1@@Z",
+     "folded": "??0?$_Vector_base@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@1@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -794,14 +1107,14 @@
   },
   {
    "name": "_M_create_node",
-   "address": "0x8235c328",
-   "survivor": "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z",
+   "address": "0x823d9628",
+   "survivor": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V1@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@V1@@2@@Z",
    "folded": [
-    "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z"
+    "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z"
    ],
    "_meta": [
     {
-     "folded": "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z",
+     "folded": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -815,14 +1128,14 @@
   },
   {
    "name": "_M_create_node",
-   "address": "0x823d9628",
-   "survivor": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V1@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@V1@@2@@Z",
+   "address": "0x8235c328",
+   "survivor": "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z",
    "folded": [
-    "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z"
+    "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z"
    ],
    "_meta": [
     {
-     "folded": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z",
+     "folded": "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -851,101 +1164,6 @@
      "fully_grounded": true,
      "sites": 3,
      "fns": 3
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "$_S_unique",
-   "address": "0x8232ccb0",
-   "survivor": "??$_S_unique@IV?$StlNodeAlloc@I@stlpmtx_std@@U?$equal_to@I@2@@stlpmtx_std@@YAXAAV?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@0@U?$equal_to@I@0@@Z",
-   "folded": [
-    "??$_S_unique@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@@stlpmtx_std@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@0@U?$equal_to@VSymbol@@@0@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$_S_unique@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@@stlpmtx_std@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@0@U?$equal_to@VSymbol@@@0@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 2,
-     "fns": 2
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "IsContextUsed",
-   "address": "0x8275b868",
-   "survivor": "?IsContextUsed@?A0x1e5d0754@@YA_NVSymbol@@@Z",
-   "folded": [
-    "?RegisteredFactory@Object@Hmx@@SA_NVSymbol@@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "?RegisteredFactory@Object@Hmx@@SA_NVSymbol@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 2,
-     "fully_grounded": false,
-     "sites": 2,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "0?$_Vector_base",
-   "address": "0x827b8768",
-   "survivor": "??0?$_Vector_base@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UPressRec@@@1@@Z",
-   "folded": [
-    "??0?$_Vector_base@VActionRec@@V?$StlNodeAlloc@VActionRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VActionRec@@@1@@Z",
-    "??0?$_Vector_base@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VSingerStats@@@1@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??0?$_Vector_base@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VSingerStats@@@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    },
-    {
-     "folded": "??0?$_Vector_base@VActionRec@@V?$StlNodeAlloc@VActionRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VActionRec@@@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "1MeshPair",
-   "address": "0x8229e1d8",
-   "survivor": "??1MeshPair@BandPatchMesh@@QAA@XZ",
-   "folded": [
-    "??1PatchPair@MeshPair@BandPatchMesh@@QAA@XZ"
-   ],
-   "_meta": [
-    {
-     "folded": "??1PatchPair@MeshPair@BandPatchMesh@@QAA@XZ",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 2,
-     "fns": 1
     }
    ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
@@ -983,22 +1201,22 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "erase",
-   "address": "0x82576108",
-   "survivor": "?erase@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@2@U32@0@Z",
+   "name": "$__uninitialized_copy",
+   "address": "0x8237f158",
+   "survivor": "??$__uninitialized_copy@PBUBone@CharBones@@PAU12@@stlpmtx_std@@YAPAUBone@CharBones@@PBU12@0PAU12@ABU__false_type@0@@Z",
    "folded": [
-    "?erase@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@0@Z"
+    "??$__uninitialized_copy@PAUBone@CharBones@@PAU12@@stlpmtx_std@@YAPAUBone@CharBones@@PAU12@00ABU__false_type@0@@Z"
    ],
    "_meta": [
     {
-     "folded": "?erase@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@0@Z",
+     "folded": "??$__uninitialized_copy@PAUBone@CharBones@@PAU12@@stlpmtx_std@@YAPAUBone@CharBones@@PAU12@00ABU__false_type@0@@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 1,
+     "relaxed_slots": 0,
      "tolerated_slots": 0,
      "fully_grounded": true,
      "sites": 2,
-     "fns": 2
+     "fns": 1
     }
    ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
@@ -1025,20 +1243,20 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$__uninitialized_copy",
-   "address": "0x8237f158",
-   "survivor": "??$__uninitialized_copy@PBUBone@CharBones@@PAU12@@stlpmtx_std@@YAPAUBone@CharBones@@PBU12@0PAU12@ABU__false_type@0@@Z",
+   "name": "IsContextUsed",
+   "address": "0x8275b868",
+   "survivor": "?IsContextUsed@?A0x1e5d0754@@YA_NVSymbol@@@Z",
    "folded": [
-    "??$__uninitialized_copy@PAUBone@CharBones@@PAU12@@stlpmtx_std@@YAPAUBone@CharBones@@PAU12@00ABU__false_type@0@@Z"
+    "?RegisteredFactory@Object@Hmx@@SA_NVSymbol@@@Z"
    ],
    "_meta": [
     {
-     "folded": "??$__uninitialized_copy@PAUBone@CharBones@@PAU12@@stlpmtx_std@@YAPAUBone@CharBones@@PAU12@00ABU__false_type@0@@Z",
+     "folded": "?RegisteredFactory@Object@Hmx@@SA_NVSymbol@@@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 0,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
+     "relaxed_slots": 1,
+     "tolerated_slots": 2,
+     "fully_grounded": false,
      "sites": 2,
      "fns": 1
     }
@@ -1046,20 +1264,94 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$?5V?$ObjOwnerPtr",
-   "address": "0x822a79a8",
-   "survivor": "??$?5V?$ObjOwnerPtr@VCharClip@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjOwnerPtr@VCharClip@@@@@@@Z",
+   "name": "erase",
+   "address": "0x82576108",
+   "survivor": "?erase@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@2@U32@0@Z",
    "folded": [
-    "??$?5V?$ObjPtr@VRndDir@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjPtr@VRndDir@@@@@@@Z"
+    "?erase@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@0@Z"
    ],
    "_meta": [
     {
-     "folded": "??$?5V?$ObjPtr@VRndDir@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjPtr@VRndDir@@@@@@@Z",
+     "folded": "?erase@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@0@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 0,
-     "tolerated_slots": 2,
-     "fully_grounded": false,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 2,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "0?$_Vector_base",
+   "address": "0x827b8768",
+   "survivor": "??0?$_Vector_base@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UPressRec@@@1@@Z",
+   "folded": [
+    "??0?$_Vector_base@VActionRec@@V?$StlNodeAlloc@VActionRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VActionRec@@@1@@Z",
+    "??0?$_Vector_base@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VSingerStats@@@1@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??0?$_Vector_base@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VSingerStats@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    },
+    {
+     "folded": "??0?$_Vector_base@VActionRec@@V?$StlNodeAlloc@VActionRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VActionRec@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$__adjust_heap",
+   "address": "0x827d31a0",
+   "survivor": "??$__adjust_heap@PAUCuePoint@?A0x81ddebd1@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@HHU12@P6A_NABU12@2@Z@Z",
+   "folded": [
+    "??$__adjust_heap@PAUCuePoint@?A0xe9afadec@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0xe9afadec@@HHU12@P6A_NABU12@2@Z@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$__adjust_heap@PAUCuePoint@?A0xe9afadec@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0xe9afadec@@HHU12@P6A_NABU12@2@Z@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 2,
+     "fns": 2
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "1MeshPair",
+   "address": "0x8229e1d8",
+   "survivor": "??1MeshPair@BandPatchMesh@@QAA@XZ",
+   "folded": [
+    "??1PatchPair@MeshPair@BandPatchMesh@@QAA@XZ"
+   ],
+   "_meta": [
+    {
+     "folded": "??1PatchPair@MeshPair@BandPatchMesh@@QAA@XZ",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
      "sites": 2,
      "fns": 1
     }
@@ -1099,15 +1391,57 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$__adjust_heap",
-   "address": "0x827d31a0",
-   "survivor": "??$__adjust_heap@PAUCuePoint@?A0x81ddebd1@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@HHU12@P6A_NABU12@2@Z@Z",
+   "name": "$?5GV?$StlNodeAlloc",
+   "address": "0x822a3eb0",
+   "survivor": "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z",
    "folded": [
-    "??$__adjust_heap@PAUCuePoint@?A0xe9afadec@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0xe9afadec@@HHU12@P6A_NABU12@2@Z@Z"
+    "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z"
    ],
    "_meta": [
     {
-     "folded": "??$__adjust_heap@PAUCuePoint@?A0xe9afadec@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0xe9afadec@@HHU12@P6A_NABU12@2@Z@Z",
+     "folded": "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$?5V?$ObjOwnerPtr",
+   "address": "0x822a79a8",
+   "survivor": "??$?5V?$ObjOwnerPtr@VCharClip@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjOwnerPtr@VCharClip@@@@@@@Z",
+   "folded": [
+    "??$?5V?$ObjPtr@VRndDir@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjPtr@VRndDir@@@@@@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$?5V?$ObjPtr@VRndDir@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjPtr@VRndDir@@@@@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 0,
+     "tolerated_slots": 2,
+     "fully_grounded": false,
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$_S_unique",
+   "address": "0x8232ccb0",
+   "survivor": "??$_S_unique@IV?$StlNodeAlloc@I@stlpmtx_std@@U?$equal_to@I@2@@stlpmtx_std@@YAXAAV?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@0@U?$equal_to@I@0@@Z",
+   "folded": [
+    "??$_S_unique@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@@stlpmtx_std@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@0@U?$equal_to@VSymbol@@@0@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$_S_unique@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@@stlpmtx_std@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@0@U?$equal_to@VSymbol@@@0@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -1141,27 +1475,6 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$?5GV?$StlNodeAlloc",
-   "address": "0x822a3eb0",
-   "survivor": "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z",
-   "folded": [
-    "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$?5GV?$StlNodeAlloc@G@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 2,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
    "name": "_M_fill_insert",
    "address": "0x823ea1c8",
    "survivor": "?_M_fill_insert@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVColor@Hmx@@IABV34@@Z",
@@ -1183,19 +1496,375 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [2]. "
   },
   {
-   "name": "$PropSync",
-   "address": "0x823aae58",
-   "survivor": "??$PropSync@UDynamicPropertyEntry@Flow@@@@YA_NAAV?$ObjVector@UDynamicPropertyEntry@Flow@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "name": "vftable_8202101C",
+   "address": "0x8202101C",
+   "survivor": "vftable_8202101C",
    "folded": [
-    "??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+    "??_7BandStarDisplay@@6BRndPollable@@@"
    ],
    "_meta": [
     {
-     "folded": "??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "folded": "??_7BandStarDisplay@@6BRndPollable@@@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8202A66C",
+   "address": "0x8202A66C",
+   "survivor": "vftable_8202A66C",
+   "folded": [
+    "??_7VocalTrackDir@@6BRndPollable@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7VocalTrackDir@@6BRndPollable@@@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8202390C",
+   "address": "0x8202390C",
+   "survivor": "vftable_8202390C",
+   "folded": [
+    "??_7StreakMeter@@6BRndPollable@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7StreakMeter@@6BRndPollable@@@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_820EDAE4",
+   "address": "0x820EDAE4",
+   "survivor": "vftable_820EDAE4",
+   "folded": [
+    "??_7TrackerBroadcastDisplay@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7TrackerBroadcastDisplay@@6B@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_821A60EC",
+   "address": "0x821A60EC",
+   "survivor": "vftable_821A60EC",
+   "folded": [
+    "??_7MultiTempoTempoMap@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7MultiTempoTempoMap@@6B@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_820344C4",
+   "address": "0x820344C4",
+   "survivor": "vftable_820344C4",
+   "folded": [
+    "??_7LayerDir@@6BRndPollable@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7LayerDir@@6BRndPollable@@@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_82021894",
+   "address": "0x82021894",
+   "survivor": "vftable_82021894",
+   "folded": [
+    "??_7BandScoreboard@@6BRndPollable@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7BandScoreboard@@6BRndPollable@@@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8202241C",
+   "address": "0x8202241C",
+   "survivor": "vftable_8202241C",
+   "folded": [
+    "??_7UnisonIcon@@6BRndPollable@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7UnisonIcon@@6BRndPollable@@@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_82101FEC",
+   "address": "0x82101FEC",
+   "survivor": "vftable_82101FEC",
+   "folded": [
+    "??_7DxRndOcclusionQueryMgr@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7DxRndOcclusionQueryMgr@@6B@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_820EDAD0",
+   "address": "0x820EDAD0",
+   "survivor": "vftable_820EDAD0",
+   "folded": [
+    "??_7TrackerBandDisplay@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7TrackerBandDisplay@@6B@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8209FC84",
+   "address": "0x8209FC84",
+   "survivor": "vftable_8209FC84",
+   "folded": [
+    "??_7MetaPerformer@@6BSynchronizable@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7MetaPerformer@@6BSynchronizable@@@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8205BE8C",
+   "address": "0x8205BE8C",
+   "survivor": "vftable_8205BE8C",
+   "folded": [
+    "??_7RndDir@@6BRndPollable@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7RndDir@@6BRndPollable@@@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_820A9F4C",
+   "address": "0x820A9F4C",
+   "survivor": "vftable_820A9F4C",
+   "folded": [
+    "??_7EndLockMsg@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7EndLockMsg@@6B@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8206C054",
+   "address": "0x8206C054",
+   "survivor": "vftable_8206C054",
+   "folded": [
+    "??_7RndShaderMgr@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7RndShaderMgr@@6B@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_8208BDA4",
+   "address": "0x8208BDA4",
+   "survivor": "vftable_8208BDA4",
+   "folded": [
+    "??_7ArkFile@@6B@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7ArkFile@@6B@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "vftable_82016268",
+   "address": "0x82016268",
+   "survivor": "vftable_82016268",
+   "folded": [
+    "??_7BandDirector@@6BRndPollable@@@"
+   ],
+   "_meta": [
+    {
+     "folded": "??_7BandDirector@@6BRndPollable@@@",
+     "tier": "vftable-contents",
+     "sites": 2,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) ['vftable-contents']. Survivor is a dtk vftable placeholder whose address is in the name; adjudicated by vtable CONTENTS, slot for slot."
+  },
+  {
+   "name": "push_back",
+   "address": "0x822ccd08",
+   "survivor": "?push_back@?$ObjVector@V?$ObjPtr@VRndPropAnim@@@@@@QAAXABV?$ObjPtr@VRndPropAnim@@@@@Z",
+   "folded": [
+    "?push_back@?$ObjVector@V?$ObjPtr@VRndAnimatable@@@@@@QAAXABV?$ObjPtr@VRndAnimatable@@@@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "?push_back@?$ObjVector@V?$ObjPtr@VRndAnimatable@@@@@@QAAXABV?$ObjPtr@VRndAnimatable@@@@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
      "tolerated_slots": 1,
+     "fully_grounded": false,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "0?$_Vector_base",
+   "address": "0x8229eda0",
+   "survivor": "??0?$_Vector_base@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@1@@Z",
+   "folded": [
+    "??0?$_Vector_base@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@1@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??0?$_Vector_base@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@1@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$__final_insertion_sort",
+   "address": "0x8248ff20",
+   "survivor": "??$__final_insertion_sort@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@@Z",
+   "folded": [
+    "??$__final_insertion_sort@PAV?$Key@M@@U?$less@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@M@@0U?$less@V?$Key@M@@@0@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$__final_insertion_sort@PAV?$Key@M@@U?$less@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@M@@0U?$less@V?$Key@M@@@0@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 3,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "push_back",
+   "address": "0x826f94c8",
+   "survivor": "?push_back@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPropertyFilter@CameraManager@@@Z",
+   "folded": [
+    "?push_back@?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalScoreHistory@@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "?push_back@?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalScoreHistory@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "0OpenWaitingGateMsg",
+   "address": "0x825ae8e8",
+   "survivor": "??0OpenWaitingGateMsg@?A0xb0de99ba@@QAA@XZ",
+   "folded": [
+    "??0OpenWaitingGateMsg@?A0x64cce081@@QAA@XZ"
+   ],
+   "_meta": [
+    {
+     "folded": "??0OpenWaitingGateMsg@?A0x64cce081@@QAA@XZ",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 2,
      "fully_grounded": false,
      "sites": 1,
      "fns": 1
@@ -1225,27 +1894,6 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "0?$ObjDirItr",
-   "address": "0x824af930",
-   "survivor": "??0?$ObjDirItr@VObject@Hmx@@@@QAA@PAVObjectDir@@_N@Z",
-   "folded": [
-    "??0?$ObjDirItr@VRndEnviron@@@@QAA@PAVObjectDir@@_N@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??0?$ObjDirItr@VRndEnviron@@@@QAA@PAVObjectDir@@_N@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 0,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
    "name": "0?$_Vector_base",
    "address": "0x823f14c0",
    "survivor": "??0?$_Vector_base@EV?$StlNodeAlloc@E@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@E@1@@Z",
@@ -1255,258 +1903,6 @@
    "_meta": [
     {
      "folded": "??0?$_Vector_base@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@D@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "_M_insert_overflow",
-   "address": "0x823d3ca0",
-   "survivor": "?_M_insert_overflow@?$vector@EV?$StlNodeAlloc@E@stlpmtx_std@@@stlpmtx_std@@IAAXPAEABEABU__true_type@2@I_N@Z",
-   "folded": [
-    "?_M_insert_overflow@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@IAAXPADABDABU__true_type@2@I_N@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "?_M_insert_overflow@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@IAAXPADABDABU__true_type@2@I_N@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "$__final_insertion_sort",
-   "address": "0x827d3900",
-   "survivor": "??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9ea89d7a@@0P6A_NABU12@1@Z@Z",
-   "folded": [
-    "??$__final_insertion_sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@0P6A_NABU12@1@Z@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$__final_insertion_sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@0P6A_NABU12@1@Z@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "$sort_heap",
-   "address": "0x827d3488",
-   "survivor": "??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9335ac2a@@0P6A_NABU12@1@Z@Z",
-   "folded": [
-    "??$sort_heap@PAUGroupDrawDist@@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$sort_heap@PAUGroupDrawDist@@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "resize",
-   "address": "0x822b6538",
-   "survivor": "?resize@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUBitmapOverride@WorldDir@@@Z",
-   "folded": [
-    "?resize@?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUTarget@HamCamShot@@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "?resize@?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUTarget@HamCamShot@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "$_S_remove_if",
-   "address": "0x82807180",
-   "survivor": "??$_S_remove_if@PAVUIComponent@@V?$StlNodeAlloc@PAVUIComponent@@@stlpmtx_std@@UObjMatchPr@@@stlpmtx_std@@YAXAAV?$list@PAVUIComponent@@V?$StlNodeAlloc@PAVUIComponent@@@stlpmtx_std@@@0@UObjMatchPr@@@Z",
-   "folded": [
-    "??$_S_remove_if@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@UObjMatchPr@@@stlpmtx_std@@YAXAAV?$list@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@@0@UObjMatchPr@@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$_S_remove_if@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@UObjMatchPr@@@stlpmtx_std@@YAXAAV?$list@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@@0@UObjMatchPr@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "_M_create_node",
-   "address": "0x82520150",
-   "survivor": "?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAUDep@CharPollableSorter@@@Z",
-   "folded": [
-    "?_M_create_node@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVCharClip@@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "?_M_create_node@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVCharClip@@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "_M_erase",
-   "address": "0x82708290",
-   "survivor": "?_M_erase@?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VSeqInst@@@@PAV3@ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndTex@@@@PAV3@ABU__false_type@2@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndTex@@@@PAV3@ABU__false_type@2@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "$__linear_insert",
-   "address": "0x8248f410",
-   "survivor": "??$__linear_insert@PAV?$Key@M@@V1@U?$less@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@M@@0V1@U?$less@V?$Key@M@@@0@@Z",
-   "folded": [
-    "??$__linear_insert@PAV?$Key@_N@@V1@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0V1@U?$less@V?$Key@_N@@@0@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$__linear_insert@PAV?$Key@_N@@V1@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0V1@U?$less@V?$Key@_N@@@0@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "insert_unique",
-   "address": "0x822defa0",
-   "survivor": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBGUCharInfo@RndFont@@@2@@Z",
-   "folded": [
-    "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBGG@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBGG@2@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBGG@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBGG@2@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "$_M_allocate_and_copy",
-   "address": "0x82b670a0",
-   "survivor": "??$_M_allocate_and_copy@PBH@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@IAAPAHIPBH0@Z",
-   "folded": [
-    "??$_M_allocate_and_copy@PAPAUDep@CharPollableSorter@@@?$vector@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAUDep@CharPollableSorter@@IPAPAU23@0@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$_M_allocate_and_copy@PAPAUDep@CharPollableSorter@@@?$vector@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAUDep@CharPollableSorter@@IPAPAU23@0@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "_M_reallocate_map",
-   "address": "0x82ba25c0",
-   "survivor": "?_M_reallocate_map@?$deque@PAVLyricPlate@@V?$StlNodeAlloc@PAVLyricPlate@@@stlpmtx_std@@@stlpmtx_std@@IAAXI_N@Z",
-   "folded": [
-    "?_M_reallocate_map@?$deque@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@IAAXI_N@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "?_M_reallocate_map@?$deque@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@IAAXI_N@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "0?$_Vector_base",
-   "address": "0x8229eda0",
-   "survivor": "??0?$_Vector_base@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@1@@Z",
-   "folded": [
-    "??0?$_Vector_base@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@1@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??0?$_Vector_base@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@1@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -1540,15 +1936,15 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "1?$_Deque_base",
-   "address": "0x82ba0770",
-   "survivor": "??1?$_Deque_base@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "name": "resize",
+   "address": "0x822b6538",
+   "survivor": "?resize@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUBitmapOverride@WorldDir@@@Z",
    "folded": [
-    "??1?$_Deque_base@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+    "?resize@?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUTarget@HamCamShot@@@Z"
    ],
    "_meta": [
     {
-     "folded": "??1?$_Deque_base@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "folded": "?resize@?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUTarget@HamCamShot@@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -1561,18 +1957,39 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$?5UWeightContext",
-   "address": "0x823d80e8",
-   "survivor": "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "name": "0?$ObjDirItr",
+   "address": "0x824af930",
+   "survivor": "??0?$ObjDirItr@VObject@Hmx@@@@QAA@PAVObjectDir@@_N@Z",
    "folded": [
-    "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+    "??0?$ObjDirItr@VRndEnviron@@@@QAA@PAVObjectDir@@_N@Z"
    ],
    "_meta": [
     {
-     "folded": "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "folded": "??0?$ObjDirItr@VRndEnviron@@@@QAA@PAVObjectDir@@_N@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 3,
+     "relaxed_slots": 0,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "erase",
+   "address": "0x823d9570",
+   "survivor": "?erase@?$list@USink@MsgSource@@V?$StlNodeAlloc@USink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSource@@U?$_Nonconst_traits@USink@MsgSource@@@stlpmtx_std@@@2@U32@@Z",
+   "folded": [
+    "?erase@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "?erase@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 0,
      "tolerated_slots": 0,
      "fully_grounded": true,
      "sites": 1,
@@ -1603,15 +2020,15 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$__make_heap",
-   "address": "0x8248d6b0",
-   "survivor": "??$__make_heap@PAV?$Key@M@@U?$less@V?$Key@M@@@stlpmtx_std@@V1@H@stlpmtx_std@@YAXPAV?$Key@M@@0U?$less@V?$Key@M@@@0@0PAH@Z",
+   "name": "GetNumShots",
+   "address": "0x822b4df0",
+   "survivor": "?GetNumShots@HamCamShot@@QAAHXZ",
    "folded": [
-    "??$__make_heap@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@V1@H@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@0PAH@Z"
+    "?GetNumShots@BandCamShot@@QAAHXZ"
    ],
    "_meta": [
     {
-     "folded": "??$__make_heap@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@V1@H@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@0PAH@Z",
+     "folded": "?GetNumShots@BandCamShot@@QAAHXZ",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -1624,39 +2041,18 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "push_back",
-   "address": "0x826f94c8",
-   "survivor": "?push_back@?$vector@UPropertyFilter@CameraManager@@V?$StlNodeAlloc@UPropertyFilter@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPropertyFilter@CameraManager@@@Z",
+   "name": "$_M_range_insert_aux",
+   "address": "0x82424a38",
+   "survivor": "??$_M_range_insert_aux@PAV?$Key@VVector3@@@@@?$vector@V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector3@@@@00IABU__false_type@1@@Z",
    "folded": [
-    "?push_back@?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalScoreHistory@@@Z"
+    "??$_M_range_insert_aux@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VColor@Hmx@@@@PBV2@1IABU__false_type@1@@Z"
    ],
    "_meta": [
     {
-     "folded": "?push_back@?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVocalScoreHistory@@@Z",
+     "folded": "??$_M_range_insert_aux@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VColor@Hmx@@@@PBV2@1IABU__false_type@1@@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "_M_reallocate_map",
-   "address": "0x82ba2728",
-   "survivor": "?_M_reallocate_map@?$deque@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXI_N@Z",
-   "folded": [
-    "?_M_reallocate_map@?$deque@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXI_N@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "?_M_reallocate_map@?$deque@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXI_N@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
+     "relaxed_slots": 3,
      "tolerated_slots": 0,
      "fully_grounded": true,
      "sites": 1,
@@ -1675,6 +2071,27 @@
    "_meta": [
     {
      "folded": "??$__adjust_heap@PAV?$Key@VSymbol@@@@HV1@U?$less@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@VSymbol@@@@HHV1@U?$less@V?$Key@VSymbol@@@@@0@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "insert_unique",
+   "address": "0x822defa0",
+   "survivor": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBGUCharInfo@RndFont@@@2@@Z",
+   "folded": [
+    "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBGG@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBGG@2@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBGG@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBGG@2@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -1708,15 +2125,15 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$__make_heap",
-   "address": "0x827d3270",
-   "survivor": "??$__make_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@ZU12@H@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z0PAH@Z",
+   "name": "_M_reallocate_map",
+   "address": "0x82ba2728",
+   "survivor": "?_M_reallocate_map@?$deque@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXI_N@Z",
    "folded": [
-    "??$__make_heap@PAUGroupDrawDist@@P6A_NABU1@0@ZU1@H@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z0PAH@Z"
+    "?_M_reallocate_map@?$deque@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXI_N@Z"
    ],
    "_meta": [
     {
-     "folded": "??$__make_heap@PAUGroupDrawDist@@P6A_NABU1@0@ZU1@H@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z0PAH@Z",
+     "folded": "?_M_reallocate_map@?$deque@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@IAAXI_N@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -1729,15 +2146,57 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "_M_erase",
-   "address": "0x823d3d80",
-   "survivor": "?_M_erase@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@PAV3@0ABU__false_type@2@@Z",
+   "name": "$sort_heap",
+   "address": "0x827d3488",
+   "survivor": "??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9335ac2a@@0P6A_NABU12@1@Z@Z",
    "folded": [
-    "?_M_erase@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFilePath@@PAV3@0ABU__false_type@2@@Z"
+    "??$sort_heap@PAUGroupDrawDist@@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z@Z"
    ],
    "_meta": [
     {
-     "folded": "?_M_erase@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFilePath@@PAV3@0ABU__false_type@2@@Z",
+     "folded": "??$sort_heap@PAUGroupDrawDist@@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$PropSync",
+   "address": "0x823aae58",
+   "survivor": "??$PropSync@UDynamicPropertyEntry@Flow@@@@YA_NAAV?$ObjVector@UDynamicPropertyEntry@Flow@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "folded": [
+    "??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 1,
+     "fully_grounded": false,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "_M_create_node",
+   "address": "0x82520150",
+   "survivor": "?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAUDep@CharPollableSorter@@@Z",
+   "folded": [
+    "?_M_create_node@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVCharClip@@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "?_M_create_node@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVCharClip@@@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -1771,39 +2230,18 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "push_back",
-   "address": "0x822ccd08",
-   "survivor": "?push_back@?$ObjVector@V?$ObjPtr@VRndPropAnim@@@@@@QAAXABV?$ObjPtr@VRndPropAnim@@@@@Z",
+   "name": "AtFrame",
+   "address": "0x82341618",
+   "survivor": "?AtFrame@?$Keys@VSymbol@@V1@@@QBAHMAAPBV?$Key@VSymbol@@@@0AAM@Z",
    "folded": [
-    "?push_back@?$ObjVector@V?$ObjPtr@VRndAnimatable@@@@@@QAAXABV?$ObjPtr@VRndAnimatable@@@@@Z"
+    "?AtFrame@?$Keys@_N_N@@QBAHMAAPBV?$Key@_N@@0AAM@Z"
    ],
    "_meta": [
     {
-     "folded": "?push_back@?$ObjVector@V?$ObjPtr@VRndAnimatable@@@@@@QAAXABV?$ObjPtr@VRndAnimatable@@@@@Z",
+     "folded": "?AtFrame@?$Keys@_N_N@@QBAHMAAPBV?$Key@_N@@0AAM@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 1,
-     "fully_grounded": false,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "$__final_insertion_sort",
-   "address": "0x8248ff20",
-   "survivor": "??$__final_insertion_sort@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@@Z",
-   "folded": [
-    "??$__final_insertion_sort@PAV?$Key@M@@U?$less@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@M@@0U?$less@V?$Key@M@@@0@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$__final_insertion_sort@PAV?$Key@M@@U?$less@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@M@@0U?$less@V?$Key@M@@@0@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 3,
+     "relaxed_slots": 7,
      "tolerated_slots": 0,
      "fully_grounded": true,
      "sites": 1,
@@ -1855,15 +2293,36 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "H?$_Bit_iter",
-   "address": "0x822dcf58",
-   "survivor": "??H?$_Bit_iter@_NPB_N@stlpmtx_std@@QBA?AU01@H@Z",
+   "name": "erase_unique",
+   "address": "0x8268c998",
+   "survivor": "?erase_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAIABH@Z",
    "folded": [
-    "??0?$_Vector_base@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VFace@RndMesh@@@1@@Z"
+    "?erase_unique@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAAIABW4TrackType@@@Z"
    ],
    "_meta": [
     {
-     "folded": "??0?$_Vector_base@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VFace@RndMesh@@@1@@Z",
+     "folded": "?erase_unique@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAAIABW4TrackType@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 2,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$__make_heap",
+   "address": "0x8248d6b0",
+   "survivor": "??$__make_heap@PAV?$Key@M@@U?$less@V?$Key@M@@@stlpmtx_std@@V1@H@stlpmtx_std@@YAXPAV?$Key@M@@0U?$less@V?$Key@M@@@0@0PAH@Z",
+   "folded": [
+    "??$__make_heap@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@V1@H@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@0PAH@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$__make_heap@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@V1@H@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@0PAH@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -1876,18 +2335,18 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "erase",
-   "address": "0x823d9570",
-   "survivor": "?erase@?$list@USink@MsgSource@@V?$StlNodeAlloc@USink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@USink@MsgSource@@U?$_Nonconst_traits@USink@MsgSource@@@stlpmtx_std@@@2@U32@@Z",
+   "name": "_M_erase",
+   "address": "0x823d3d80",
+   "survivor": "?_M_erase@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@PAV3@0ABU__false_type@2@@Z",
    "folded": [
-    "?erase@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@@Z"
+    "?_M_erase@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFilePath@@PAV3@0ABU__false_type@2@@Z"
    ],
    "_meta": [
     {
-     "folded": "?erase@?$list@U?$pair@VSymbol@@V1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_List_iterator@U?$pair@VSymbol@@V1@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@VSymbol@@V1@@stlpmtx_std@@@2@@2@U32@@Z",
+     "folded": "?_M_erase@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFilePath@@PAV3@0ABU__false_type@2@@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 0,
+     "relaxed_slots": 1,
      "tolerated_slots": 0,
      "fully_grounded": true,
      "sites": 1,
@@ -1897,15 +2356,36 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$sort_heap",
-   "address": "0x8248f490",
-   "survivor": "??$sort_heap@PAV?$Key@VSymbol@@@@U?$less@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@VSymbol@@@@0U?$less@V?$Key@VSymbol@@@@@0@@Z",
+   "name": "$__linear_insert",
+   "address": "0x8248f410",
+   "survivor": "??$__linear_insert@PAV?$Key@M@@V1@U?$less@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@M@@0V1@U?$less@V?$Key@M@@@0@@Z",
    "folded": [
-    "??$sort_heap@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@@Z"
+    "??$__linear_insert@PAV?$Key@_N@@V1@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0V1@U?$less@V?$Key@_N@@@0@@Z"
    ],
    "_meta": [
     {
-     "folded": "??$sort_heap@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@@Z",
+     "folded": "??$__linear_insert@PAV?$Key@_N@@V1@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0V1@U?$less@V?$Key@_N@@@0@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$__make_heap",
+   "address": "0x827d3270",
+   "survivor": "??$__make_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@ZU12@H@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z0PAH@Z",
+   "folded": [
+    "??$__make_heap@PAUGroupDrawDist@@P6A_NABU1@0@ZU1@H@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z0PAH@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$__make_heap@PAUGroupDrawDist@@P6A_NABU1@0@ZU1@H@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z0PAH@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -1939,27 +2419,6 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "$_M_range_insert_aux",
-   "address": "0x82424a38",
-   "survivor": "??$_M_range_insert_aux@PAV?$Key@VVector3@@@@@?$vector@V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector3@@@@00IABU__false_type@1@@Z",
-   "folded": [
-    "??$_M_range_insert_aux@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VColor@Hmx@@@@PBV2@1IABU__false_type@1@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$_M_range_insert_aux@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VColor@Hmx@@@@PBV2@1IABU__false_type@1@@Z",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 3,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
    "name": "_M_create_node",
    "address": "0x8266ac78",
    "survivor": "?_M_create_node@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABVPlane@@@Z",
@@ -1981,36 +2440,15 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "0OpenWaitingGateMsg",
-   "address": "0x825ae8e8",
-   "survivor": "??0OpenWaitingGateMsg@?A0xb0de99ba@@QAA@XZ",
+   "name": "$__final_insertion_sort",
+   "address": "0x827d3900",
+   "survivor": "??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9ea89d7a@@0P6A_NABU12@1@Z@Z",
    "folded": [
-    "??0OpenWaitingGateMsg@?A0x64cce081@@QAA@XZ"
+    "??$__final_insertion_sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@0P6A_NABU12@1@Z@Z"
    ],
    "_meta": [
     {
-     "folded": "??0OpenWaitingGateMsg@?A0x64cce081@@QAA@XZ",
-     "tier": 1,
-     "round": 1,
-     "relaxed_slots": 1,
-     "tolerated_slots": 2,
-     "fully_grounded": false,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "GetNumShots",
-   "address": "0x822b4df0",
-   "survivor": "?GetNumShots@HamCamShot@@QAAHXZ",
-   "folded": [
-    "?GetNumShots@BandCamShot@@QAAHXZ"
-   ],
-   "_meta": [
-    {
-     "folded": "?GetNumShots@BandCamShot@@QAAHXZ",
+     "folded": "??$__final_insertion_sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@0P6A_NABU12@1@Z@Z",
      "tier": 1,
      "round": 1,
      "relaxed_slots": 1,
@@ -2023,18 +2461,18 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "erase_unique",
-   "address": "0x8268c998",
-   "survivor": "?erase_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAIABH@Z",
+   "name": "$?5UWeightContext",
+   "address": "0x823d80e8",
+   "survivor": "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z",
    "folded": [
-    "?erase_unique@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAAIABW4TrackType@@@Z"
+    "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z"
    ],
    "_meta": [
     {
-     "folded": "?erase_unique@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAAIABW4TrackType@@@Z",
+     "folded": "??$?5UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 2,
+     "relaxed_slots": 3,
      "tolerated_slots": 0,
      "fully_grounded": true,
      "sites": 1,
@@ -2044,38 +2482,17 @@
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
-   "name": "AtFrame",
-   "address": "0x82341618",
-   "survivor": "?AtFrame@?$Keys@VSymbol@@V1@@@QBAHMAAPBV?$Key@VSymbol@@@@0AAM@Z",
+   "name": "H?$_Bit_iter",
+   "address": "0x822dcf58",
+   "survivor": "??H?$_Bit_iter@_NPB_N@stlpmtx_std@@QBA?AU01@H@Z",
    "folded": [
-    "?AtFrame@?$Keys@_N_N@@QBAHMAAPBV?$Key@_N@@0AAM@Z"
+    "??0?$_Vector_base@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VFace@RndMesh@@@1@@Z"
    ],
    "_meta": [
     {
-     "folded": "?AtFrame@?$Keys@_N_N@@QBAHMAAPBV?$Key@_N@@0AAM@Z",
+     "folded": "??0?$_Vector_base@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VFace@RndMesh@@@1@@Z",
      "tier": 1,
      "round": 1,
-     "relaxed_slots": 7,
-     "tolerated_slots": 0,
-     "fully_grounded": true,
-     "sites": 1,
-     "fns": 1
-    }
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
-  },
-  {
-   "name": "$__destroy_range_aux",
-   "address": "0x82ba3300",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$vector@PAUUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$vector@PAUUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z"
-   ],
-   "_meta": [
-    {
-     "folded": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
-     "tier": 1,
-     "round": 2,
      "relaxed_slots": 1,
      "tolerated_slots": 0,
      "fully_grounded": true,
@@ -2083,7 +2500,154 @@
      "fns": 1
     }
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [2]. "
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$_M_allocate_and_copy",
+   "address": "0x82b670a0",
+   "survivor": "??$_M_allocate_and_copy@PBH@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@IAAPAHIPBH0@Z",
+   "folded": [
+    "??$_M_allocate_and_copy@PAPAUDep@CharPollableSorter@@@?$vector@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAUDep@CharPollableSorter@@IPAPAU23@0@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$_M_allocate_and_copy@PAPAUDep@CharPollableSorter@@@?$vector@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAUDep@CharPollableSorter@@IPAPAU23@0@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$sort_heap",
+   "address": "0x8248f490",
+   "survivor": "??$sort_heap@PAV?$Key@VSymbol@@@@U?$less@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@VSymbol@@@@0U?$less@V?$Key@VSymbol@@@@@0@@Z",
+   "folded": [
+    "??$sort_heap@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$sort_heap@PAV?$Key@_N@@U?$less@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$Key@_N@@0U?$less@V?$Key@_N@@@0@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "1?$_Deque_base",
+   "address": "0x82ba0770",
+   "survivor": "??1?$_Deque_base@VLyricShift@VocalTrack@@V?$StlNodeAlloc@VLyricShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$_Deque_base@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "_meta": [
+    {
+     "folded": "??1?$_Deque_base@VRangeShift@VocalTrack@@V?$StlNodeAlloc@VRangeShift@VocalTrack@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "_M_reallocate_map",
+   "address": "0x82ba25c0",
+   "survivor": "?_M_reallocate_map@?$deque@PAVLyricPlate@@V?$StlNodeAlloc@PAVLyricPlate@@@stlpmtx_std@@@stlpmtx_std@@IAAXI_N@Z",
+   "folded": [
+    "?_M_reallocate_map@?$deque@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@IAAXI_N@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "?_M_reallocate_map@?$deque@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@IAAXI_N@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "_M_erase",
+   "address": "0x82708290",
+   "survivor": "?_M_erase@?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VSeqInst@@@@PAV3@ABU__false_type@2@@Z",
+   "folded": [
+    "?_M_erase@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndTex@@@@PAV3@ABU__false_type@2@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "?_M_erase@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndTex@@@@PAV3@ABU__false_type@2@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "$_S_remove_if",
+   "address": "0x82807180",
+   "survivor": "??$_S_remove_if@PAVUIComponent@@V?$StlNodeAlloc@PAVUIComponent@@@stlpmtx_std@@UObjMatchPr@@@stlpmtx_std@@YAXAAV?$list@PAVUIComponent@@V?$StlNodeAlloc@PAVUIComponent@@@stlpmtx_std@@@0@UObjMatchPr@@@Z",
+   "folded": [
+    "??$_S_remove_if@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@UObjMatchPr@@@stlpmtx_std@@YAXAAV?$list@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@@0@UObjMatchPr@@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$_S_remove_if@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@UObjMatchPr@@@stlpmtx_std@@YAXAAV?$list@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@@0@UObjMatchPr@@@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+  },
+  {
+   "name": "_M_insert_overflow",
+   "address": "0x823d3ca0",
+   "survivor": "?_M_insert_overflow@?$vector@EV?$StlNodeAlloc@E@stlpmtx_std@@@stlpmtx_std@@IAAXPAEABEABU__true_type@2@I_N@Z",
+   "folded": [
+    "?_M_insert_overflow@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@IAAXPADABDABU__true_type@2@I_N@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "?_M_insert_overflow@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@IAAXPADABDABU__true_type@2@I_N@Z",
+     "tier": 1,
+     "round": 1,
+     "relaxed_slots": 1,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
    "name": "insert_unique",
@@ -2098,6 +2662,27 @@
      "tier": 1,
      "round": 2,
      "relaxed_slots": 2,
+     "tolerated_slots": 0,
+     "fully_grounded": true,
+     "sites": 1,
+     "fns": 1
+    }
+   ],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [2]. "
+  },
+  {
+   "name": "$__destroy_range_aux",
+   "address": "0x82ba3300",
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$vector@PAUUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$vector@PAUUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+   "folded": [
+    "??$__destroy_range_aux@V?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z"
+   ],
+   "_meta": [
+    {
+     "folded": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
+     "tier": 1,
+     "round": 2,
+     "relaxed_slots": 1,
      "tolerated_slots": 0,
      "fully_grounded": true,
      "sites": 1,
