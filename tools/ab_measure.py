@@ -73,11 +73,23 @@ it) leg B's report build recompiled all 956 objs of its own build AGAIN plus
 145 more -- so the read's zero-work guard REFUSED a legitimate measurement.
 The guard is right and is UNCHANGED; the missing settle loop was the defect.
 
-Scoring ruler: the ninja report edge hard-codes functionRelocDiffs=None
-(objdiff-cli report.rs generate()), i.e. the DEFAULT ruler. --name-check
-adds a second, opt-in name_check reading per leg with the required warning
-(its aggregate code% is build-unstable ~0.05pp; small nc deltas mean
-nothing).
+Scoring ruler: the ninja report edge passes NO -c, so it scores on whatever
+`objdiff.json` sets -- which since the name_check flip is functionRelocDiffs=
+name_check, NOT none. This docstring claimed the opposite until 2026-08-12,
+and on the strength of it the default leg was described as the control while
+--name-check was described as a second ruler; both legs were in fact
+name_check and the tool printed the same delta twice.
+
+So: the effective mode is now RESOLVED (configured_reloc_mode), PRINTED at
+the top of the run, and folded into ruler_identity, so a configgen patch that
+rewrites objdiff.json mid-run refuses instead of repricing the delta. An
+explicit functionRelocDiffs=none CONTROL leg is taken by default whenever the
+report edge is not already none (--no-control opts out): `none` ignores
+relocation names entirely, so it is the ruler an alias or a rename must leave
+unmoved, and without it the tool cannot distinguish a name-only change from a
+code change. --name-check still adds the opt-in name_check reading per leg
+with the required warning (its aggregate code% is build-unstable ~0.05pp; small
+nc deltas mean nothing).
 
 Usage:
   tools/ab_measure.py --worktree WT --patch FILE      # measure a diff file
@@ -695,16 +707,38 @@ class ABMeasure:
                  f"code%={m['matched_code_percent']:.6f}")
         return m
 
-    def gen_name_check(self, name, objdiff_bin):
-        out = self.rundir / f"leg{name}_name_check.json"
+    def gen_ruler(self, name, objdiff_bin, mode):
+        """Score one leg on an EXPLICIT reloc ruler, whatever the build default.
+
+        Never `-o -`: `report generate` writing to stdout returns a stale
+        report. Measured 2026-08-12 -- an A/B over three projects came back
+        identical in all six cells through stdout while the same invocation
+        writing a file showed +71 complete functions.
+        """
+        tag = {"none": "none", "name_check": "nc"}.get(mode, mode)
+        out = self.rundir / f"leg{name}_{mode}.json"
         cmd = [objdiff_bin, "report", "generate",
-               "-c", "functionRelocDiffs=name_check", "-o", str(out)]
-        run(cmd, cwd=self.wt, log_path=self.rundir / f"leg{name}_nc.log")
+               "-c", f"functionRelocDiffs={mode}", "-o", str(out)]
+        run(cmd, cwd=self.wt, log_path=self.rundir / f"leg{name}_{tag}.log")
         m = read_measures_strict(out)
-        self.legs[f"{name}_nc"] = m
-        self.say(f"  [leg {name} name_check ruler] matched={m['matched_functions']} "
+        self.legs[f"{name}_{tag}"] = m
+        self.say(f"  [leg {name} {mode} ruler] matched={m['matched_functions']} "
                  f"code%={m['matched_code_percent']:.6f}")
         return m
+
+    def gen_name_check(self, name, objdiff_bin):
+        return self.gen_ruler(name, objdiff_bin, "name_check")
+
+    def gen_none(self, name, objdiff_bin):
+        """The CONTROL leg.
+
+        `none` ignores relocation names entirely, so it is the ruler a
+        name-only change must leave unmoved -- the whole point of measuring an
+        alias or a rename against something. It is taken explicitly here
+        because the build's default report edge is not it and has not been
+        since the name_check flip.
+        """
+        return self.gen_ruler(name, objdiff_bin, "none")
 
     def apply_patch(self, patch_path, kinds):
         rc, out = git(self.wt, "apply", "--check", str(patch_path), check=False)
@@ -1050,7 +1084,43 @@ def ruler_identity(wt):
         h = hashlib.sha256(Path(path).read_bytes()).hexdigest()[:16]
     except OSError as e:
         return {"resolved": False, "reason": f"stat/read failed: {e}"}
-    return {"resolved": True, "path": path, "size": st.st_size, "sha256_16": h}
+    mode, src = configured_reloc_mode(wt)
+    return {"resolved": True, "path": path, "size": st.st_size, "sha256_16": h,
+            "reloc_mode": mode, "reloc_mode_source": src}
+
+
+def configured_reloc_mode(wt):
+    """The functionRelocDiffs the ninja report edge will ACTUALLY use.
+
+    The binary is only half the ruler; the reloc mode is the other half, and
+    this tool used to assume it. The docstring at the top of this file said the
+    report edge hard-codes `None`, so the default leg was described as the
+    control. It is not, and has not been since the name_check flip: the report
+    rule in tools/project.py passes `$objdiff_report_args` with no `-c`, and
+    `objdiff.json` sets `"functionRelocDiffs": "name_check"` as the project
+    default, so BOTH the default leg and the opt-in --name-check leg came back
+    on name_check and the tool printed the same delta twice (2026-08-12).
+
+    Resolved the way objdiff itself resolves it: an explicit `-c` on the report
+    rule in build.ninja wins, otherwise objdiff.json's options, otherwise
+    objdiff's own built-in default. Returns (mode, where-it-came-from) so the
+    run can PRINT which ruler it scored on instead of asserting one.
+    """
+    try:
+        bn = (wt / "build.ninja").read_text()
+    except OSError:
+        bn = ""
+    m = re.search(r"report\s+generate[^\n]*?-c\s+functionRelocDiffs=(\w+)", bn)
+    if m:
+        return m.group(1), "build.ninja report rule -c"
+    try:
+        cfg = json.loads((wt / "objdiff.json").read_text())
+        mode = (cfg.get("options") or {}).get("functionRelocDiffs")
+        if mode:
+            return mode, "objdiff.json options"
+    except (OSError, ValueError):
+        pass
+    return "name_address", "objdiff-cli built-in default"
 
 
 def check_ruler_stable(a, b):
@@ -1078,6 +1148,16 @@ def check_ruler_stable(a, b):
             f"B sha256:{b['sha256_16']} size={b['size']}). The two legs were "
             "scored on DIFFERENT rulers, so the delta is meaningless. Re-run "
             "the whole A/B on one binary.")
+    # The reloc mode is the other half of the ruler. A configgen-class patch
+    # re-runs configure.py, which rewrites objdiff.json -- so this can move
+    # mid-run without the binary changing at all.
+    if a.get("reloc_mode") != b.get("reloc_mode"):
+        raise Refusal(
+            "ruler",
+            f"functionRelocDiffs CHANGED between the legs "
+            f"(A {a.get('reloc_mode')} via {a.get('reloc_mode_source')}, "
+            f"B {b.get('reloc_mode')} via {b.get('reloc_mode_source')}). Same "
+            "binary, different ruler; the delta is meaningless.")
     if a.get("path") != b.get("path"):
         return ("stable (sha256:%s) -- NOTE: resolved via a different path in "
                 "leg B (%s -> %s); content identical, so this is the same ruler "
@@ -1097,6 +1177,11 @@ def main():
     src.add_argument("--from-dirty", action="store_true",
                      help="snapshot the worktree's uncommitted tracked diff as "
                           "the patch, reset to HEAD for leg A, re-apply for leg B")
+    ap.add_argument("--no-control", action="store_true",
+                    help="skip the explicit functionRelocDiffs=none control "
+                         "leg (taken by default whenever the build's report "
+                         "edge scores on something else). Only for a run where "
+                         "you have a control from elsewhere.")
     ap.add_argument("--name-check", action="store_true",
                     help="ALSO score both legs on the opt-in name_check ruler "
                          "(aggregate code%% is build-unstable ~0.05pp; small nc "
@@ -1189,10 +1274,20 @@ def main():
         ab.settle(presplit=bool(kinds & {"map", "splits"}))
         # Pin the RULER before leg A is read, re-check after leg B (below).
         ruler_a = ruler_identity(ab.wt)
+        print(f"  [ruler] default report edge scores on "
+              f"functionRelocDiffs={ruler_a.get('reloc_mode')} "
+              f"(from {ruler_a.get('reloc_mode_source')})")
         a = ab.read_leg("A")
         objdiff_bin = None
-        if args.name_check:
+        # The `none` CONTROL, always, unless the default leg already IS it.
+        # Without this the tool has no ruler that ignores relocation names, so
+        # it cannot tell a name-only change from a code change at all.
+        want_none = ruler_a.get("reloc_mode") != "none" and not args.no_control
+        if want_none or args.name_check:
             objdiff_bin = find_objdiff(ab.wt)
+        if want_none:
+            ab.gen_none("A", objdiff_bin)
+        if args.name_check:
             ab.gen_name_check("A", objdiff_bin)
 
         # --- apply + leg B ---
@@ -1200,12 +1295,20 @@ def main():
         legb_res = ab.leg_b_build(kinds)
         legb_counts = legb_res["aggregate"]
         b = ab.read_leg("B")
+        if want_none:
+            ab.gen_none("B", objdiff_bin)
         if args.name_check:
             ab.gen_name_check("B", objdiff_bin)
 
         # Same ruler for both legs, or the delta is not a delta.
         ruler_state = check_ruler_stable(ruler_a, ruler_identity(ab.wt))
         print(f"  [ruler] objdiff-cli {ruler_state}")
+        if want_none:
+            ca, cb = ab.legs["A_none"], ab.legs["B_none"]
+            d = cb["matched_code"] - ca["matched_code"]
+            print(f"  [control none] Δmatched_code={d:+d} B "
+                  f"Δcode%={cb['matched_code_percent'] - ca['matched_code_percent']:+.6f} "
+                  f"({'UNMOVED' if d == 0 else 'MOVED -- a name-only change should not do this'})")
 
         # --- verdict (only reachable if every stage above passed) ---
         regs, imps, ubmeta = unit_breakdown(a["_units"], b["_units"])
@@ -2080,6 +2183,56 @@ def selftest():
     check("[DS-4] read_unit_rows REFUSES when the report's own two "
           "derivations desync",
           lambda: read_unit_rows(desync, "<synthetic>"), expect_refusal=True)
+
+    # --- the RULER IS TWO THINGS: binary and reloc mode -------------------
+    # This tool asserted the mode instead of resolving it, and its docstring
+    # asserted it wrong: both the "default" leg and the --name-check leg came
+    # back on name_check, so it printed one delta twice and had no control.
+    import tempfile as _tf
+    with _tf.TemporaryDirectory() as rd:
+        r = Path(rd)
+        (r / "objdiff.json").write_text(
+            json.dumps({"options": {"functionRelocDiffs": "name_check"}}))
+        mode, src = configured_reloc_mode(r)
+        ok = (mode, src) == ("name_check", "objdiff.json options")
+        print(f"  {'PASS' if ok else 'FAIL'}  [ruler] objdiff.json options are "
+              f"read, not assumed: {mode} via {src}")
+        if not ok:
+            fails.append("ruler mode from objdiff.json")
+
+        # An explicit -c on the report rule beats the project default.
+        (r / "build.ninja").write_text(
+            "  command = objdiff-cli report generate "
+            "-c functionRelocDiffs=none -o $out\n")
+        mode, src = configured_reloc_mode(r)
+        ok = mode == "none" and "build.ninja" in src
+        print(f"  {'PASS' if ok else 'FAIL'}  [ruler] an explicit -c on the "
+              f"report rule WINS over objdiff.json: {mode} via {src}")
+        if not ok:
+            fails.append("ruler mode precedence")
+
+        # No config at all falls back to objdiff's own default, which is
+        # name_address -- NOT none. Getting this wrong is how "the default
+        # ruler is the control" became folklore.
+        for f in ("objdiff.json", "build.ninja"):
+            (r / f).unlink()
+        mode, src = configured_reloc_mode(r)
+        ok = mode == "name_address"
+        print(f"  {'PASS' if ok else 'FAIL'}  [ruler] with no config the "
+              f"fallback is objdiff's own default, which is not none: {mode}")
+        if not ok:
+            fails.append("ruler mode fallback")
+
+    # Same binary, different mode, is still a ruler swap.
+    base = {"resolved": True, "path": "/x/objdiff-cli", "size": 1, "sha256_16": "deadbeef",
+            "reloc_mode": "none", "reloc_mode_source": "test"}
+    same_mode = dict(base)
+    other_mode = dict(base, reloc_mode="name_check")
+    check("[ruler] a reloc-mode change between the legs REFUSES even though "
+          "the binary is byte-identical",
+          lambda: check_ruler_stable(base, other_mode), expect_refusal=True)
+    check("[ruler] ...and an unchanged mode on the same binary does not",
+          lambda: check_ruler_stable(base, same_mode), expect_refusal=False)
 
     print(f"selftest: {'ALL PASS' if not fails else f'FAILURES: {fails}'}")
     return 0 if not fails else 1
