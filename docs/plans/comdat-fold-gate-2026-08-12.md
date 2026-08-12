@@ -16,7 +16,15 @@ rendered alias map regenerated before every read, one `-o` path per arm:
 | ruler | before | after | complete fns |
 |---|---|---|---|
 | `none` (control) | 42.220000% (4,357,396 B) | **42.220000%** (4,357,396 B) | **+0 / −0** |
-| `name_check` | 32.462280% (3,350,332 B) | **32.544292%** (3,358,796 B) | **+78 / −0** |
+| `name_check` | 32.462280% (3,350,332 B) | **32.484760%** | **+17 / −0** |
+
+> **Corrected 2026-08-12 after coordinator review.** This first read **+78**, and
+> 61 of those rested on an unsound tier that has been withdrawn — see §2a. The
+> `none` control could never have caught it: a *fabricated* alias also lifts
+> `name_check` and leaves `none` flat, because `none` ignores relocation names by
+> construction. **An alias tier cannot be validated by the `none` control.** The
+> falsifier that works is `target_symbol_map.json` placement, and it is now a
+> gate predicate rather than a review step.
 
 Nothing lost on either ruler. The control does not move by a byte, which is what
 a name-only change owes you. The `none`↔`name_check` gap narrows 9.757720 pp →
@@ -95,21 +103,23 @@ is refused. **The count of names sitting at more than one address in
 
 ### Result
 
-    ADMIT   33 pairs / 1,693 sites in 23 groups     REFUSE 1,015 pairs / 2,495 sites
+    ADMIT   23 pairs / 1,629 sites in 16 groups     REFUSE 1,025 pairs / 2,559 sites
 
 | sub-class | ADMIT pairs/sites | REFUSE pairs/sites |
 |---|--:|--:|
-| `bijection_class` | 8 / 40 | 231 / 463 |
-| `map_name_unresolved` | 6 / 11 | 131 / 438 |
+| `bijection_class` | 1 / 10 | 238 / 493 |
+| `map_name_unresolved` | 5 / 9 | 132 / 440 |
 | `residual` | 6 / 7 | 529 / 1,101 |
-| `fold_thunk_naming` | 13 / 1,635 | 23 / 162 |
+| `fold_thunk_naming` | 11 / 1,603 | 25 / 194 |
 | `transposition` | 0 | 70 / 203 |
 | `map_misassignment` | 0 | 27 / 84 |
 | `wrapper_not_inlined` / `wrapper_inlined_by_us` | 0 | 4 / 44 |
 
-Tiers: CF1 (retail's map places the folded spelling on the same body or nowhere)
-20, CF2 (on a different body the image discredits — zero `.text` fan-in or no
-`symbols.txt` extent) 12, CF3 (homonym) 1.
+Tiers after the §2a correction: **CF2** (the map's address for the folded
+spelling is discredited by the image — zero `.text` fan-in, or no `symbols.txt`
+extent) **18**, **CF4** (the map lists that address in `_bijection_arbitrary` /
+`_icf_arbitrary`, so by its own comment the name pick there is not established)
+**4**, **CF3** (homonym) **1**, **CF1 zero**.
 
 **All nine of `fold_thunk_gate.py`'s admitted pairs re-derive as ADMIT under the
 stronger comparator — not one is refused.** The +1,358 that landed earlier today
@@ -119,6 +129,85 @@ on the offset-set artifact are admitted here (`??3Loader` 22 sites and `??3Task`
 `__destroy_aux<Entry@LocalePanel>`), and they carry far more weight per site
 because each is the whole charge on a 40-byte scalar-deleting body: 36 sites
 bought 36 complete functions, where the earlier 58 sites bought 42.
+
+### 2a. The CF1 tier was withdrawn — the same vacuous compare, one gate down
+
+The first gate stopped masking relocation-capable fields because masking makes
+the comparison vacuous. **The second gate kept doing exactly that**, and nobody
+noticed because the `none` control cannot see it.
+
+The second gate has to adjudicate `target_symbol_map.json`'s entry for the folded
+spelling — the map places it at `addr(F) != addr(S)` for *every* pair in this
+worklist, that being the definition of the charged set. It did so by comparing
+retail's body at `addr(F)` to the survivor **with branch displacements masked**.
+Every 4-byte `b X` then compares equal to every `b Y`, and the tier reported
+"nothing contradicts":
+
+| | address | size | `.text` fan-in | body |
+|---|---|--:|--:|---|
+| map's `??3Task@@SAXPAX@Z` | `0x822EAB90` | 4 B | **4** | `b _Rb_tree<Symbol,CatData>::clear` |
+| survivor `??3BinStream@@SAXPAX@Z` | `0x8240DDB0` | 4 B | **2,308** | `b MemFree` |
+
+Two different live functions, admitted as CF1. Aliasing them tells objdiff's
+`reloc_eq` that a `bl` to one equals a `bl` to the other — a **scorer false
+positive**, and one that would also let a genuinely wrong callee pass.
+
+Fixed by `Retail.same_function()`: same size, every non-branch word equal as a
+full 32-bit value (a function duplicated at two addresses carries identical
+absolute operands), every branch destination resolved through the map to the same
+**name**. **CF1 now fires zero times, which is the correct answer** — two
+identical *resolved* bodies at two addresses would mean `/OPT:ICF` had not folded
+them, which is evidence against the fold, not for it. Discredit tiers are now
+evaluated first so none is shadowed (four pairs were labelled CF1 when their real
+evidence was CF2), and the "already placed elsewhere" predicate — which read the
+**alias file only** and never the target map, which is why 18 got through — now
+asks the target map directly.
+
+    33 admits -> 23      name_check +78 -> +17      none unmoved either way
+
+**Is the map wrong, or is the alias wrong?** For the 11 withdrawn pairs the map
+is right and the alias was wrong; they are refused. For the **7** surviving
+admits whose map address is unflagged, the map entry is **positively discredited
+by the image**: every one has **zero `.text` fan-in** — nothing in 14 MB of code
+branches there — and five of the seven sit on the repeated word `0x82829530`,
+which is a data pointer, not a function prologue.
+
+| map address for the folded spelling | size | `.text` fan-in |
+|---|--:|--:|
+| `0x82659A30` `~list<SortNode*>` | 4 | 0 |
+| `0x8273E038` `~list<RndMultiMesh::Instance>` | 4 | 0 |
+| `0x82597350` `~pair<const Symbol,SongRecord>` | 8 | 0 |
+| `0x8256D770` `GetSongSpecificEntriesForCategory` | 8 | 0 |
+| `0x827B0110` `list<const char*>::erase` | 8 | 0 |
+| `0x82743BC8` `list<CharPollableSorter::Dep*>::insert` | 8 | 0 |
+| `0x825A48D8` `list<Plane>::insert` | 8 | 0 |
+
+An alias there cannot assert a false `bl` equality, because there is no `bl` to
+that address at all. This is consistent with the homonym result rather than in
+tension with it: zero multi-address *publics* means the spelling is at one
+address, and the image says that address is not this one. **These remain a
+`target_symbol_map.json` repair in the proper sense** — the map is parking a
+fold-loser on dead space — but unlike the live cases they are safe to alias
+meanwhile, and the repair is the same owner-territory re-split the transposition
+evidence already waits on.
+
+### 2b. The same falsifier on the pre-existing 1,440-group tier
+
+Not this lane's to change, recorded because the instrument now exists. Of 16,296
+pre-existing `(name, address)` lines, 14 name a spelling the target map places
+elsewhere. **Eleven are the benign zero-fan-in shape above** and one is
+`_bijection_arbitrary`. **Three point at live, unflagged addresses:**
+
+    ??3@YAXPAX@Z                    alias 0x8240DDB0   map 0x82BC6B70  fan-in 178
+    ?MemOrPoolAlloc@@YAPAXHPBDH0@Z  alias 0x82798250   map 0x827BD208  fan-in 403
+    ?PoolAlloc@@YAPAXHHPBDH0@Z      alias 0x827960D8   map 0x827BB0E8  fan-in 268
+
+The first **is** adjudicated — it is the FT3 homonym, and dc3's leaked map
+witnesses `0x82BC6B70` as XAudio2's own `operator delete`. The other two are the
+founding `PoolAlloc` / `MemOrPoolAlloc` groups this whole mechanism was built
+for (`tools/gen_symbol_alias_map.py`'s docstring). This gate would refuse both
+today. That is a question for whoever owns that tier, not a claim that they are
+wrong.
 
 ### What did not work
 
