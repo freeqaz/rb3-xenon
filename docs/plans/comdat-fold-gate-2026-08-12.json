@@ -3,18 +3,29 @@
  "build": "45410914",
  "subclasses": [
   "bijection_class",
+  "fold_thunk_naming",
+  "map_misassignment",
   "map_name_unresolved",
-  "residual"
+  "residual",
+  "transposition",
+  "wrapper_inlined_by_us",
+  "wrapper_not_inlined"
  ],
  "totals": {
-  "pairs": 911,
-  "admitted_pairs": 20,
-  "admitted_sites": 58,
-  "refused_pairs": 891,
-  "refused_sites": 2002,
-  "groups": 19
+  "pairs": 1048,
+  "admitted_pairs": 33,
+  "admitted_sites": 1693,
+  "refused_pairs": 1015,
+  "refused_sites": 2495,
+  "groups": 23
  },
  "by_subclass": {
+  "fold_thunk_naming": {
+   "ADMIT": 13,
+   "ADMIT_sites": 1635,
+   "REFUSE": 23,
+   "REFUSE_sites": 162
+  },
   "residual": {
    "REFUSE": 529,
    "REFUSE_sites": 1101,
@@ -32,13 +43,75 @@
    "REFUSE_sites": 438,
    "ADMIT": 6,
    "ADMIT_sites": 11
+  },
+  "wrapper_not_inlined": {
+   "REFUSE": 1,
+   "REFUSE_sites": 37
+  },
+  "transposition": {
+   "REFUSE": 70,
+   "REFUSE_sites": 203
+  },
+  "map_misassignment": {
+   "REFUSE": 27,
+   "REFUSE_sites": 84
+  },
+  "wrapper_inlined_by_us": {
+   "REFUSE": 3,
+   "REFUSE_sites": 7
   }
  },
  "by_tier": {
-  "CF1": 14,
-  "CF2": 6
+  "CF3": 1,
+  "CF1": 20,
+  "CF2": 12
  },
  "pairs": [
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3@YAXPAX@Z",
+   "sites": 1180,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x82bc6b70",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/utl/MemMgr.obj",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF3",
+   "discredit": "HOMONYM: dc3's leaked ham_xbox_r.map names ??3@YAXPAX@Z at 3 distinct addresses, and the body at 0x82eb0c70 (xaudio2:baseswfilter.obj) is byte-identical to retail's body at 0x82bc6b70 over 148 bytes once relocated fields are masked. That address is another module's own ??3@YAXPAX@Z, not retail's copy of ours.",
+   "verdict": "ADMIT"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "folded": "??1FilePath@@UAA@XZ",
+   "sites": 164,
+   "survivor_addr": "0x827bea28",
+   "folded_map_addr": "0x82812508",
+   "survivor_fanin": 235,
+   "our_def": "build/45410914/src/system/beatmatch/SongParser.obj (+180 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF1",
+   "discredit": null,
+   "verdict": "ADMIT"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z",
+   "folded": "??3@YAXPAX0@Z",
+   "sites": 154,
+   "survivor_addr": "0x826c3888",
+   "folded_map_addr": "0x82333e14",
+   "survivor_fanin": 1116,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+533 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 1/1 words compared as FULL 32-bit values, 0 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF2",
+   "discredit": "map parks ??3@YAXPAX0@Z at 0x82333e14 with no symbols.txt extent",
+   "verdict": "ADMIT"
+  },
   {
    "subclass": "residual",
    "survivor": "??1?$ObjRefConcrete@VRndTransformable@@VObjectDir@@@@UAA@XZ",
@@ -53,6 +126,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 116 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "OggFree",
+   "sites": 91,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x8249b200",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/oggvorbis/VorbisMem.obj",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF2",
+   "discredit": "map parks OggFree at 0x8249b200, which has ZERO .text fan-in",
+   "verdict": "ADMIT"
   },
   {
    "subclass": "bijection_class",
@@ -85,6 +173,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 116 bytes (retail extent) vs 4 (our COMDAT)"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3DataArray@@SAXPAX@Z",
+   "sites": 60,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x82270288",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/obj/Object.obj (+331 identical)",
+   "our_bytes": 12,
+   "body_evidence": "body size 4 bytes (retail extent) vs 12 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 12 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1ObjRef@@QAA@XZ",
    "folded": "??3DataArray@@SAXPAX@Z",
@@ -98,6 +201,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 12 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BandHighlight@@SAXPAX@Z",
+   "folded": "??1MemDoTempAllocations@@QAA@XZ",
+   "sites": 44,
+   "survivor_addr": "0x82345030",
+   "folded_map_addr": "0x82774068",
+   "survivor_fanin": 67,
+   "our_def": "build/45410914/src/system/beatmatch/SongData.obj (+27 identical)",
+   "our_bytes": 4,
+   "body_evidence": "retail branch at 0x0 goes to 0x827bc2a0, which the map does not name -- destination unresolvable",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x0 goes to 0x827bc2a0, which the map does not name -- destination unresolvable"
   },
   {
    "subclass": "map_name_unresolved",
@@ -115,6 +233,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 116 bytes (retail extent) vs 156 (our COMDAT)"
   },
   {
+   "subclass": "wrapper_not_inlined",
+   "survivor": "??1?$ObjRefConcrete@VRndTex@@VObjectDir@@@@UAA@XZ",
+   "folded": "??1?$ObjPtr@VRndTex@@@@UAA@XZ",
+   "sites": 37,
+   "survivor_addr": "0x8229d930",
+   "folded_map_addr": "0x8243dd20",
+   "survivor_fanin": 118,
+   "our_def": "build/45410914/src/system/obj/PropSync.obj (+63 identical)",
+   "our_bytes": 4,
+   "body_evidence": "body size 100 bytes (retail extent) vs 4 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 100 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1ObjRef@@QAA@XZ",
    "folded": "??1?$ObjRefConcrete@VRndTransformable@@VObjectDir@@@@UAA@XZ",
@@ -128,6 +261,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 156 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1String@@UAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 34,
+   "survivor_addr": "0x827bdf38",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 1819,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 104 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 24 (our COMDAT)"
   },
   {
    "subclass": "map_name_unresolved",
@@ -155,6 +303,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our objs disagree on ??1?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ: 2 distinct COMDATs across 28 objs"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataNode@@QAA@XZ",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 29,
+   "survivor_addr": "0x82270560",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 4316,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 24 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -232,6 +395,36 @@
    "verdict": "ADMIT"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3Loader@@SAXPAX@Z",
+   "sites": 22,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x823f4698",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/beatmatch/BeatMaster.obj (+32 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF1",
+   "discredit": null,
+   "verdict": "ADMIT"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "?_M_fill_insert@?$vector@PAMV?$StlNodeAlloc@PAM@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAMIABQAM@Z",
+   "folded": "?_M_fill_insert@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@AAAXPAMIABM@Z",
+   "sites": 19,
+   "survivor_addr": "0x822df4d8",
+   "folded_map_addr": "0x826dbc68",
+   "survivor_fanin": 29,
+   "our_def": "build/45410914/src/system/beatmatch/TrackWatcherImpl.obj (+47 identical)",
+   "our_bytes": 108,
+   "body_evidence": "branch destination at 0x40: retail calls ?_M_fill_insert_aux@?$vector@MV?$XboxAllocator@M@@@stlpmtx_std@@AAAXPAMIABMABU__false_type@2@@Z, we call ?_M_fill_insert_aux@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@AAAXPAMIABMABU__false_type@2@@Z",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x40: retail calls ?_M_fill_insert_aux@?$vector@MV?$XboxAllocator@M@@@stlpmtx_std@@AAAXPAMIABMABU__false_type@2@@Z, we call ?_M_fill_insert_aux@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@AAAXPAMIABMABU__false_type@2@@Z"
+  },
+  {
    "subclass": "map_name_unresolved",
    "survivor": "??1?$ObjPtrList@VCharBoneOffset@@VObjectDir@@@@UAA@XZ",
    "folded": "??1?$ObjPtrList@VRndMesh@@VObjectDir@@@@UAA@XZ",
@@ -245,6 +438,66 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 84 bytes (retail extent) vs 124 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$__destroy_aux@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU__false_type@0@@Z",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 18,
+   "survivor_addr": "0x828043a8",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 150,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 4 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 18,
+   "survivor_addr": "0x827bea28",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 235,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 4 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "?MemFree@@YAXPAX@Z",
+   "folded": "??3@YAXPAX@Z",
+   "sites": 17,
+   "survivor_addr": "0x827bc430",
+   "folded_map_addr": "0x82bc6b70",
+   "survivor_fanin": 353,
+   "our_def": "build/45410914/src/system/utl/MemMgr.obj",
+   "our_bytes": 4,
+   "body_evidence": "body size 188 bytes (retail extent) vs 4 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 188 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1Message@@UAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 16,
+   "survivor_addr": "0x823426f8",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 475,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "unrelocated word at 0x0 differs: retail 7c6b1b78 vs ours 81630004",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- unrelocated word at 0x0 differs: retail 7c6b1b78 vs ours 81630004"
   },
   {
    "subclass": "residual",
@@ -413,6 +666,21 @@
    "verdict": "ADMIT"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3Task@@SAXPAX@Z",
+   "sites": 10,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x822eab90",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/obj/Task.obj (+10 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF1",
+   "discredit": null,
+   "verdict": "ADMIT"
+  },
+  {
    "subclass": "map_name_unresolved",
    "survivor": "??1ObjRef@@QAA@XZ",
    "folded": "??1?$ObjRefConcrete@VRndPropAnim@@VObjectDir@@@@UAA@XZ",
@@ -519,6 +787,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x70: retail calls ?_M_fill_insert@?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@M@@IABV3@@Z, we call ?_M_fill_insert@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVVector2@@IABV3@@Z"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "??2CriticalSection@@SAPAXI@Z",
+   "folded": "??2Task@@SAPAXI@Z",
+   "sites": 8,
+   "survivor_addr": "0x827bd2f0",
+   "folded_map_addr": "0x822d4278",
+   "survivor_fanin": 1048,
+   "our_def": "build/45410914/src/system/obj/Task.obj (+10 identical)",
+   "our_bytes": 8,
+   "body_evidence": "retail branch at 0x4 goes to 0x827bcd38, which the map does not name -- destination unresolvable",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x4 goes to 0x827bcd38, which the map does not name -- destination unresolvable"
+  },
+  {
    "subclass": "map_name_unresolved",
    "survivor": "??1?$ObjRefConcrete@VCharDriver@@VObjectDir@@@@UAA@XZ",
    "folded": "??1?$ObjRefConcrete@VCharacter@@VObjectDir@@@@UAA@XZ",
@@ -532,6 +815,36 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 116 bytes (retail extent) vs 156 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataNode@@QAA@XZ",
+   "folded": "??1DataArrayPtr@@QAA@XZ",
+   "sites": 8,
+   "survivor_addr": "0x82270560",
+   "folded_map_addr": "0x82280280",
+   "survivor_fanin": 4316,
+   "our_def": "build/45410914/src/system/obj/Object.obj (+158 identical)",
+   "our_bytes": 8,
+   "body_evidence": "body size 24 bytes (retail extent) vs 8 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 8 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataArrayPtr@@QAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 8,
+   "survivor_addr": "0x82280280",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 311,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 8 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 8 bytes (retail extent) vs 24 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -562,6 +875,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 36 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z",
+   "folded": "??RAccomplishmentCategoryCmp@@QBA_NVSymbol@@0@Z",
+   "sites": 7,
+   "survivor_addr": "0x825f7000",
+   "folded_map_addr": "0x825f6f20",
+   "survivor_fanin": 7,
+   "our_def": "build/45410914/src/band3/meta_band/AccomplishmentPanel.obj",
+   "our_bytes": 112,
+   "body_evidence": "body size 104 bytes (retail extent) vs 112 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 112 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -637,6 +965,36 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 100 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1NetMessage@@UAA@XZ",
+   "folded": "??1Message@@UAA@XZ",
+   "sites": 6,
+   "survivor_addr": "0x826908c8",
+   "folded_map_addr": "0x823426f8",
+   "survivor_fanin": 94,
+   "our_def": "build/45410914/src/system/beatmatch/GuitarController.obj (+297 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 16 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "??1ObjRef@@QAA@XZ",
+   "folded": "??3@YAXPAX@Z",
+   "sites": 6,
+   "survivor_addr": "0x82270298",
+   "folded_map_addr": "0x82bc6b70",
+   "survivor_fanin": 843,
+   "our_def": "build/45410914/src/system/utl/MemMgr.obj",
+   "our_bytes": 4,
+   "body_evidence": "body size 16 bytes (retail extent) vs 4 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 4 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -745,6 +1103,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x24: retail calls ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAUDep@CharPollableSorter@@@Z, we call ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVRndAnimatable@@@Z"
   },
   {
+   "subclass": "wrapper_inlined_by_us",
+   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 5,
+   "survivor_addr": "0x827bea28",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 235,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 4 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 144 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1String@@UAA@XZ",
+   "folded": "??1DataArrayPtr@@QAA@XZ",
+   "sites": 5,
+   "survivor_addr": "0x827bdf38",
+   "folded_map_addr": "0x82280280",
+   "survivor_fanin": 1819,
+   "our_def": "build/45410914/src/system/obj/Object.obj (+158 identical)",
+   "our_bytes": 8,
+   "body_evidence": "body size 104 bytes (retail extent) vs 8 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 8 (our COMDAT)"
+  },
+  {
    "subclass": "map_name_unresolved",
    "survivor": "??1ObjRef@@QAA@XZ",
    "folded": "??1?$ObjRefConcrete@VRndAnimatable@@VObjectDir@@@@UAA@XZ",
@@ -850,6 +1238,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x44: retail calls ?resize@?$ObjVector@UEyeDesc@CharEyes@@@@QAAXI@Z, we call ?resize@?$ObjList@VOldMatOption@@@@QAAXI@Z"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "??4MatSwap@OutfitConfig@@QAAAAV01@ABV01@@Z",
+   "folded": "??4TransformArea@@QAAAAV0@ABV0@@Z",
+   "sites": 4,
+   "survivor_addr": "0x822a7d10",
+   "folded_map_addr": "0x822a96a8",
+   "survivor_fanin": 7,
+   "our_def": "build/45410914/src/system/hamobj/HamCamTransform.obj",
+   "our_bytes": 148,
+   "body_evidence": "body size 172 bytes (retail extent) vs 148 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 172 bytes (retail extent) vs 148 (our COMDAT)"
+  },
+  {
    "subclass": "bijection_class",
    "survivor": "??$_Destroy_Moved_Range@PAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@0@Z",
    "folded": "??$_Destroy_Range@PAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@0@Z",
@@ -875,6 +1278,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x28 goes to 0x8236df48, which the map does not name -- destination unresolvable"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??RAccomplishmentCategoryCmp@@QBA_NVSymbol@@0@Z",
+   "folded": "??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z",
+   "sites": 4,
+   "survivor_addr": "0x825f6f20",
+   "folded_map_addr": "0x825f7000",
+   "survivor_fanin": 7,
+   "our_def": "build/45410914/src/band3/meta_band/AccomplishmentPanel.obj",
+   "our_bytes": 104,
+   "body_evidence": "body size 112 bytes (retail extent) vs 104 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 112 bytes (retail extent) vs 104 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -905,6 +1323,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 188 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1Loader@@UAA@XZ",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 4,
+   "survivor_addr": "0x827bf7d0",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 22,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 92 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 92 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
    "subclass": "map_name_unresolved",
@@ -952,6 +1385,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 24 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1Object@Hmx@@UAA@XZ",
+   "folded": "??1Message@@UAA@XZ",
+   "sites": 4,
+   "survivor_addr": "0x8275cbf0",
+   "folded_map_addr": "0x823426f8",
+   "survivor_fanin": 1079,
+   "our_def": "build/45410914/src/system/beatmatch/GuitarController.obj (+297 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 272 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 272 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
    "subclass": "bijection_class",
    "survivor": "??3DirLoader@@SAXPAX@Z",
    "folded": "??3DataArray@@SAXPAX@Z",
@@ -965,6 +1413,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- unrelocated word at 0x4 differs: retail 386000a8 vs ours 38600010"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataNode@@QAA@XZ",
+   "folded": "??1Message@@UAA@XZ",
+   "sites": 4,
+   "survivor_addr": "0x82270560",
+   "folded_map_addr": "0x823426f8",
+   "survivor_fanin": 4316,
+   "our_def": "build/45410914/src/system/beatmatch/GuitarController.obj (+297 identical)",
+   "our_bytes": 24,
+   "body_evidence": "unrelocated word at 0x0 differs: retail 81630004 vs ours 7c6b1b78",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- unrelocated word at 0x0 differs: retail 81630004 vs ours 7c6b1b78"
   },
   {
    "subclass": "residual",
@@ -995,6 +1458,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 140 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1?$ObjRefConcrete@VObject@Hmx@@VObjectDir@@@@UAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 4,
+   "survivor_addr": "0x8228d498",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 75,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 100 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 100 bytes (retail extent) vs 24 (our COMDAT)"
   },
   {
    "subclass": "map_name_unresolved",
@@ -1132,6 +1610,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 292 (our COMDAT)"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3RndLight@@SAXPAX@Z",
+   "sites": 4,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x8270d7f8",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/rndobj/TexBlender.obj (+11 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF2",
+   "discredit": "map parks ??3RndLight@@SAXPAX@Z at 0x8270d7f8 with no symbols.txt extent",
+   "verdict": "ADMIT"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1NetMessage@@UAA@XZ",
    "folded": "??1BinStream@@UAA@XZ",
@@ -1145,6 +1638,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "?Link@?$ObjPtrList@VRndMesh@@VObjectDir@@@@AAAXViterator@1@PAUNode@1@@Z",
+   "folded": "?Link@?$ObjPtrList@VCharCollide@@VObjectDir@@@@AAAXViterator@1@PAUNode@1@@Z",
+   "sites": 3,
+   "survivor_addr": "0x8227d020",
+   "folded_map_addr": "0x823a4fa8",
+   "survivor_fanin": 91,
+   "our_def": "build/45410914/src/system/bandobj/BandCharacter.obj (+1 identical)",
+   "our_bytes": 196,
+   "body_evidence": "retail branch at 0x4 goes to 0x8282925c, which the map does not name -- destination unresolvable",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x4 goes to 0x8282925c, which the map does not name -- destination unresolvable"
   },
   {
    "subclass": "residual",
@@ -1312,6 +1820,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x68: retail calls ?_M_fill_insert@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@@Z, we call ?_M_fill_insert@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@@Z"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "??$__destroy_mv_srcs@PAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@0@00@Z",
+   "folded": "??$__destroy_range@PAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@0@00@Z",
+   "sites": 3,
+   "survivor_addr": "0x8241bc78",
+   "folded_map_addr": "0x82bb3578",
+   "survivor_fanin": 4,
+   "our_def": "build/45410914/src/system/rndobj/Mesh.obj",
+   "our_bytes": 84,
+   "body_evidence": "identical: 20/21 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "retail has a DIFFERENT body named ??$__destroy_range@PAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@0@00@Z at 0x82bb3578 (fan-in 1, 320 bytes); no zero-fan-in parking and no dc3 homonym witness, so that map entry stands and an alias would hide a source defect"
+  },
+  {
    "subclass": "residual",
    "survivor": "?_M_create_node@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@2@@Z",
    "folded": "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@@Z",
@@ -1403,6 +1926,51 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 188 bytes (retail extent) vs 4 (our COMDAT)"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$__destroy_aux@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU__false_type@0@@Z",
+   "folded": "??1?$list@PAVSortNode@@V?$StlNodeAlloc@PAVSortNode@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "sites": 3,
+   "survivor_addr": "0x828043a8",
+   "folded_map_addr": "0x82659a30",
+   "survivor_fanin": 150,
+   "our_def": "build/45410914/src/band3/meta_band/SongSortMgr.obj (+13 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)",
+   "tier": "CF1",
+   "discredit": null,
+   "verdict": "ADMIT"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "??1String@@UAA@XZ",
+   "folded": "??3@YAXPAX@Z",
+   "sites": 3,
+   "survivor_addr": "0x827bdf38",
+   "folded_map_addr": "0x82bc6b70",
+   "survivor_fanin": 1819,
+   "our_def": "build/45410914/src/system/utl/MemMgr.obj",
+   "our_bytes": 4,
+   "body_evidence": "body size 104 bytes (retail extent) vs 4 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1String@@UAA@XZ",
+   "folded": "??1Message@@UAA@XZ",
+   "sites": 3,
+   "survivor_addr": "0x827bdf38",
+   "folded_map_addr": "0x823426f8",
+   "survivor_fanin": 1819,
+   "our_def": "build/45410914/src/system/beatmatch/GuitarController.obj (+297 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 104 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1UIListProvider@@UAA@XZ",
    "folded": "??1Message@@UAA@XZ",
@@ -1491,6 +2059,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 272 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3UIComponent@@SAXPAX@Z",
+   "sites": 3,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x8282779c",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/bandobj/StarDisplay.obj (+3 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF2",
+   "discredit": "map parks ??3UIComponent@@SAXPAX@Z at 0x8282779c, which has ZERO .text fan-in",
+   "verdict": "ADMIT"
   },
   {
    "subclass": "residual",
@@ -1883,6 +2466,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 132 bytes (retail extent) vs 172 (our COMDAT)"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "?push_back@?$vector@VGemInProgress@SongParser@@V?$StlNodeAlloc@VGemInProgress@SongParser@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVGemInProgress@SongParser@@@Z",
+   "folded": "?push_back@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVColor@Hmx@@@Z",
+   "sites": 2,
+   "survivor_addr": "0x82788308",
+   "folded_map_addr": "0x826ab108",
+   "survivor_fanin": 44,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+9 identical)",
+   "our_bytes": 136,
+   "body_evidence": "branch destination at 0x74: retail calls ?_M_insert_overflow_aux@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVVector3@@ABV3@ABU__false_type@2@I_N@Z, we call ?_M_insert_overflow_aux@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVColor@Hmx@@ABV34@ABU__false_type@2@I_N@Z",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x74: retail calls ?_M_insert_overflow_aux@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVVector3@@ABV3@ABU__false_type@2@I_N@Z, we call ?_M_insert_overflow_aux@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVColor@Hmx@@ABV34@ABU__false_type@2@I_N@Z"
+  },
+  {
    "subclass": "map_name_unresolved",
    "survivor": "??1?$ObjRefConcrete@VWaypoint@@VObjectDir@@@@UAA@XZ",
    "folded": "??1?$ObjRefConcrete@VCharLookAt@@VObjectDir@@@@UAA@XZ",
@@ -1926,6 +2524,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- relocation type 0x12 at 0x10 is not one this gate models"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "?Link@?$ObjPtrList@VTask@@VObjectDir@@@@AAAXViterator@1@PAUNode@1@@Z",
+   "folded": "?Link@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@AAAXViterator@1@PAUNode@1@@Z",
+   "sites": 2,
+   "survivor_addr": "0x8227cf68",
+   "folded_map_addr": "0x82400930",
+   "survivor_fanin": 46,
+   "our_def": "build/45410914/src/system/obj/Dir.obj (+50 identical)",
+   "our_bytes": 180,
+   "body_evidence": "retail branch at 0x4 goes to 0x8282925c, which the map does not name -- destination unresolvable",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x4 goes to 0x8282925c, which the map does not name -- destination unresolvable"
   },
   {
    "subclass": "map_name_unresolved",
@@ -2031,6 +2644,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 116 bytes (retail extent) vs 156 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??$__uninitialized_fill_n@PAUMoveReplacer@@IU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@IABU1@ABU__false_type@0@@Z",
+   "folded": "??$__uninitialized_copy@PAUMoveReplacer@@PAU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@00ABU__false_type@0@@Z",
+   "sites": 2,
+   "survivor_addr": "0x823d4458",
+   "folded_map_addr": "0x823d43c0",
+   "survivor_fanin": 4,
+   "our_def": "build/45410914/src/system/hamobj/SongLayout.obj",
+   "our_bytes": 148,
+   "body_evidence": "body size 96 bytes (retail extent) vs 148 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 96 bytes (retail extent) vs 148 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -2559,6 +3187,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 60 bytes (retail extent) vs 104 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "?Save@PropKeys@@UAAXAAVBinStream@@@Z",
+   "folded": "?Load@PropKeys@@UAAXAAVBinStreamRev@@@Z",
+   "sites": 2,
+   "survivor_addr": "0x82423320",
+   "folded_map_addr": "0x82423af8",
+   "survivor_fanin": 6,
+   "our_def": "build/45410914/src/system/rndobj/TexBlender.obj (+3 identical)",
+   "our_bytes": 336,
+   "body_evidence": "body size 184 bytes (retail extent) vs 336 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 184 bytes (retail extent) vs 336 (our COMDAT)"
+  },
+  {
    "subclass": "bijection_class",
    "survivor": "??1?$ObjRefConcrete@VFxSend@@VObjectDir@@@@UAA@XZ",
    "folded": "??1?$ObjRefConcrete@VLightHue@@VObjectDir@@@@UAA@XZ",
@@ -2843,6 +3486,21 @@
    "verdict": "ADMIT"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1MemStream@@UAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x823e2a58",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 74,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 104 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1RockCentralOpCompleteMsg@@UAA@XZ",
    "folded": "??1DataResult@@UAA@XZ",
@@ -2856,6 +3514,36 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 84 bytes (retail extent) vs 128 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataArrayPtr@@QAA@XZ",
+   "folded": "??1MemHeapTracker@@QAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x82280280",
+   "folded_map_addr": "0x8249ba68",
+   "survivor_fanin": 311,
+   "our_def": "build/45410914/src/system/bandobj/BandDirector.obj (+20 identical)",
+   "our_bytes": 4,
+   "body_evidence": "body size 8 bytes (retail extent) vs 4 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 8 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataNode@@QAA@XZ",
+   "folded": "??1PropertyFilter@CameraManager@@QAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x82270560",
+   "folded_map_addr": "0x8228f530",
+   "survivor_fanin": 4316,
+   "our_def": "build/45410914/src/system/bandobj/BandDirector.obj (+17 identical)",
+   "our_bytes": 136,
+   "body_evidence": "body size 24 bytes (retail extent) vs 136 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 136 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -2916,6 +3604,21 @@
    "tier": "CF1",
    "discredit": null,
    "verdict": "ADMIT"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1?$ObjDirPtr@VObjectDir@@@@UAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x822709d8",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 77,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 88 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 88 bytes (retail extent) vs 24 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -3008,6 +3711,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 36 bytes (retail extent) vs 292 (our COMDAT)"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BandHighlight@@SAXPAX@Z",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x82345030",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 67,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 4 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$__destroy_aux@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU__false_type@0@@Z",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x828043a8",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 150,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 4 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 144 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1DataNode@@QAA@XZ",
    "folded": "??1FilePathTracker@@QAA@XZ",
@@ -3098,6 +3831,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 144 bytes (retail extent) vs 24 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1LabelStyle@UILabel@@QAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x822a4a20",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 10,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 72 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 72 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
    "subclass": "bijection_class",
    "survivor": "??$__destroy_range@PAUDynamicPropertyEntry@Flow@@U12@@stlpmtx_std@@YAXPAUDynamicPropertyEntry@Flow@@00@Z",
    "folded": "??$_Destroy_Range@PAUNavItem@HamNavProvider@@@stlpmtx_std@@YAXPAUNavItem@HamNavProvider@@0@Z",
@@ -3126,6 +3874,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- relocation type 0x12 at 0x0 is not one this gate models"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$__destroy_aux@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU__false_type@0@@Z",
+   "folded": "??1FilePath@@UAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x828043a8",
+   "folded_map_addr": "0x82812508",
+   "survivor_fanin": 150,
+   "our_def": "build/45410914/src/system/beatmatch/SongParser.obj (+180 identical)",
+   "our_bytes": 4,
+   "body_evidence": "branch destination at 0x0: retail calls ?clear@?$_List_base@PAVSynthPollable@@V?$StlNodeAlloc@PAVSynthPollable@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ, we call ??1String@@UAA@XZ",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x0: retail calls ?clear@?$_List_base@PAVSynthPollable@@V?$StlNodeAlloc@PAVSynthPollable@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ, we call ??1String@@UAA@XZ"
   },
   {
    "subclass": "residual",
@@ -3186,6 +3949,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 156 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1Message@@UAA@XZ",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x823426f8",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 475,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 24 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -3323,6 +4101,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 12 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1NetMessage@@UAA@XZ",
+   "folded": "??1StartLockMsg@@UAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x826908c8",
+   "folded_map_addr": "0x82535e10",
+   "survivor_fanin": 94,
+   "our_def": "build/45410914/src/system/rndobj/MeshDeform.obj (+6 identical)",
+   "our_bytes": 128,
+   "body_evidence": "body size 16 bytes (retail extent) vs 128 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 128 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1ObjRef@@QAA@XZ",
    "folded": "??1?$ObjRefConcrete@VBandIKEffector@@VObjectDir@@@@UAA@XZ",
@@ -3363,6 +4156,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our objs disagree on ??$_Destroy_Range@PAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@0@Z: 2 distinct COMDATs across 402 objs"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1StartLockMsg@@UAA@XZ",
+   "folded": "??1NetMessage@@UAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x82535e10",
+   "folded_map_addr": "0x826908c8",
+   "survivor_fanin": 11,
+   "our_def": "build/45410914/src/system/bandobj/BandSwatch.obj (+34 identical)",
+   "our_bytes": 16,
+   "body_evidence": "body size 88 bytes (retail extent) vs 16 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 88 bytes (retail extent) vs 16 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -3498,6 +4306,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 156 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataArrayPtr@@QAA@XZ",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 2,
+   "survivor_addr": "0x82280280",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 311,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 8 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 8 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
    "subclass": "map_name_unresolved",
@@ -4100,6 +4923,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 116 bytes (retail extent) vs 156 (our COMDAT)"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "??0MatSwap@OutfitConfig@@QAA@ABV01@@Z",
+   "folded": "??0TransformArea@@QAA@ABV0@@Z",
+   "sites": 1,
+   "survivor_addr": "0x822a43e8",
+   "folded_map_addr": "0x8234c410",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/system/hamobj/HamCamTransform.obj",
+   "our_bytes": 288,
+   "body_evidence": "body size 160 bytes (retail extent) vs 288 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 160 bytes (retail extent) vs 288 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??0Patch@BandCharDesc@@QAA@ABV01@@Z",
    "folded": "??0MeshAO@OutfitConfig@@QAA@ABV01@@Z",
@@ -4280,6 +5118,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 60 bytes (retail extent) vs 104 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??$__uninitialized_copy@PAUMoveReplacer@@PAU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@00ABU__false_type@0@@Z",
+   "folded": "??$__uninitialized_fill_n@PAUMoveReplacer@@IU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@IABU1@ABU__false_type@0@@Z",
+   "sites": 1,
+   "survivor_addr": "0x823d43c0",
+   "folded_map_addr": "0x823d4458",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/system/hamobj/SongLayout.obj",
+   "our_bytes": 148,
+   "body_evidence": "body size 96 bytes (retail extent) vs 148 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 96 bytes (retail extent) vs 148 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -4474,6 +5327,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 88 bytes (retail extent) vs 120 (our COMDAT)"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "?insert@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UWeightContext@CharBone@@U?$_Nonconst_traits@UWeightContext@CharBone@@@stlpmtx_std@@@2@U32@ABUWeightContext@CharBone@@@Z",
+   "folded": "?insert@?$list@UBreakpoint@RndConsole@@V?$StlNodeAlloc@UBreakpoint@RndConsole@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UBreakpoint@RndConsole@@U?$_Nonconst_traits@UBreakpoint@RndConsole@@@stlpmtx_std@@@2@U32@ABUBreakpoint@RndConsole@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x823d6fa8",
+   "folded_map_addr": "0x8246b9a0",
+   "survivor_fanin": 18,
+   "our_def": "build/45410914/src/system/rndobj/Console.obj",
+   "our_bytes": 100,
+   "body_evidence": "branch destination at 0x24: retail calls ?_M_create_node@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUWeightContext@CharBone@@@Z, we call ?_M_create_node@?$list@UBreakpoint@RndConsole@@V?$StlNodeAlloc@UBreakpoint@RndConsole@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUBreakpoint@RndConsole@@@Z",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x24: retail calls ?_M_create_node@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUWeightContext@CharBone@@@Z, we call ?_M_create_node@?$list@UBreakpoint@RndConsole@@V?$StlNodeAlloc@UBreakpoint@RndConsole@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUBreakpoint@RndConsole@@@Z"
+  },
+  {
    "subclass": "residual",
    "survivor": "?RefreshHeader@AccomplishmentPanel@@QAAXXZ",
    "folded": "?GetWearing@CustomizePanel@@QAA?AVSymbol@@XZ",
@@ -4564,6 +5432,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x24: retail calls ?_M_create_node@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUWeightContext@CharBone@@@Z, we call ?_M_create_node@?$list@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABVSetlistArtRecord@MusicLibraryNetSetlists@@@Z"
   },
   {
+   "subclass": "transposition",
+   "survivor": "?Size@StringTable@@QBAHXZ",
+   "folded": "?UsedSize@StringTable@@QBAHXZ",
+   "sites": 1,
+   "survivor_addr": "0x827c8cf0",
+   "folded_map_addr": "0x827c8c88",
+   "survivor_fanin": 4,
+   "our_def": "build/45410914/src/system/utl/StringTable.obj",
+   "our_bytes": 100,
+   "body_evidence": "body size 64 bytes (retail extent) vs 100 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 64 bytes (retail extent) vs 100 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "?UsedSize@StringTable@@QBAHXZ",
+   "folded": "?Size@StringTable@@QBAHXZ",
+   "sites": 1,
+   "survivor_addr": "0x827c8c88",
+   "folded_map_addr": "0x827c8cf0",
+   "survivor_fanin": 8,
+   "our_def": "build/45410914/src/system/utl/StringTable.obj",
+   "our_bytes": 64,
+   "body_evidence": "body size 104 bytes (retail extent) vs 64 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 64 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??4?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
    "folded": "??4?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
@@ -4577,6 +5475,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x4 goes to 0x82829250, which the map does not name -- destination unresolvable"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "?erase@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@2@U32@0@Z",
+   "folded": "?erase@?$list@PAVFileCache@@V?$StlNodeAlloc@PAVFileCache@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVFileCache@@U?$_Nonconst_traits@PAVFileCache@@@stlpmtx_std@@@2@U32@0@Z",
+   "sites": 1,
+   "survivor_addr": "0x82576108",
+   "folded_map_addr": "0x82276828",
+   "survivor_fanin": 3,
+   "our_def": "build/45410914/src/system/os/FileCache.obj",
+   "our_bytes": 96,
+   "body_evidence": "retail branch at 0x4 goes to 0x82829258, which the map does not name -- destination unresolvable",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x4 goes to 0x82829258, which the map does not name -- destination unresolvable"
   },
   {
    "subclass": "map_name_unresolved",
@@ -4652,6 +5565,36 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x4 goes to 0x8282924c, which the map does not name -- destination unresolvable"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??0String@@QAA@ABV0@@Z",
+   "folded": "??4String@@QAAAAV0@ABV0@@Z",
+   "sites": 1,
+   "survivor_addr": "0x827be608",
+   "folded_map_addr": "0x827be0e0",
+   "survivor_fanin": 297,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 96,
+   "body_evidence": "body size 88 bytes (retail extent) vs 96 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 88 bytes (retail extent) vs 96 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??4String@@QAAAAV0@ABV0@@Z",
+   "folded": "??0String@@QAA@ABV0@@Z",
+   "sites": 1,
+   "survivor_addr": "0x827be0e0",
+   "folded_map_addr": "0x827be608",
+   "survivor_fanin": 166,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 128,
+   "body_evidence": "body size 96 bytes (retail extent) vs 128 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 96 bytes (retail extent) vs 128 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -4742,6 +5685,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 88 bytes (retail extent) vs 248 (our COMDAT)"
+  },
+  {
+   "subclass": "wrapper_inlined_by_us",
+   "survivor": "?Terminate@NgPostProc@@SAXXZ",
+   "folded": "?ReleaseTex@NgPostProc@@KAXXZ",
+   "sites": 1,
+   "survivor_addr": "0x82b88fa8",
+   "folded_map_addr": "0x82b88f48",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/system/rndobj/PostProc_NG.obj (+2 identical)",
+   "our_bytes": 92,
+   "body_evidence": "body size 4 bytes (retail extent) vs 92 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 92 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -5806,6 +6764,51 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 88 bytes (retail extent) vs 200 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@ABU__false_type@2@@Z",
+   "folded": "?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@ABU__false_type@2@@Z",
+   "sites": 1,
+   "survivor_addr": "0x8246f370",
+   "folded_map_addr": "0x8246f560",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/system/rndobj/MeshAnim.obj",
+   "our_bytes": 484,
+   "body_evidence": "body size 444 bytes (retail extent) vs 484 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 444 bytes (retail extent) vs 484 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@ABU__false_type@2@@Z",
+   "folded": "?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@ABU__false_type@2@@Z",
+   "sites": 1,
+   "survivor_addr": "0x8246f560",
+   "folded_map_addr": "0x8246f370",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/system/rndobj/MeshAnim.obj",
+   "our_bytes": 484,
+   "body_evidence": "body size 444 bytes (retail extent) vs 484 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 444 bytes (retail extent) vs 484 (our COMDAT)"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "?_M_insert_overflow_aux@?$vector@VMicClientID@@V?$StlNodeAlloc@VMicClientID@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVMicClientID@@ABV3@ABU__false_type@2@I_N@Z",
+   "folded": "?_M_insert_overflow_aux@?$vector@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@PBVMoveVariant@@PBV1@@2@ABU32@ABU__false_type@2@I_N@Z",
+   "sites": 1,
+   "survivor_addr": "0x826e6fb0",
+   "folded_map_addr": "0x825bd1f8",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/system/rndobj/TexBlender.obj (+13 identical)",
+   "our_bytes": 448,
+   "body_evidence": "body size 396 bytes (retail extent) vs 448 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 396 bytes (retail extent) vs 448 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "?_M_fill_insert_aux@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOverlay@OutfitConfig@@IABV34@ABU__false_type@2@@Z",
    "folded": "?_M_fill_insert_aux@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSampleMarker@@IABV3@ABU__false_type@2@@Z",
@@ -5893,6 +6896,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 88 bytes (retail extent) vs 84 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??4?$vector@VSfxMap@@V?$StlNodeAlloc@VSfxMap@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": "??4?$vector@VMoggClipMap@@V?$StlNodeAlloc@VMoggClipMap@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "sites": 1,
+   "survivor_addr": "0x8271bf98",
+   "folded_map_addr": "0x8271cde8",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/synth/Sfx.obj (+2 identical)",
+   "our_bytes": 340,
+   "body_evidence": "body size 324 bytes (retail extent) vs 340 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 324 bytes (retail extent) vs 340 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??4?$vector@VMoggClipMap@@V?$StlNodeAlloc@VMoggClipMap@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": "??4?$vector@VSfxMap@@V?$StlNodeAlloc@VSfxMap@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "sites": 1,
+   "survivor_addr": "0x8271cde8",
+   "folded_map_addr": "0x8271bf98",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/synth/Sfx.obj (+2 identical)",
+   "our_bytes": 324,
+   "body_evidence": "body size 340 bytes (retail extent) vs 324 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 340 bytes (retail extent) vs 324 (our COMDAT)"
+  },
+  {
    "subclass": "bijection_class",
    "survivor": "?Load@?$ObjRefConcrete@VLightHue@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
    "folded": "?Load@?$ObjRefConcrete@VRndMat@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
@@ -5936,6 +6969,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "retail has a DIFFERENT body named ?clear@?$_List_base@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ at 0x825df840 (fan-in 5, 88 bytes); no zero-fan-in parking and no dc3 homonym witness, so that map entry stands and an alias would hide a source defect"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3AllocInfo@@SAXPAX@Z",
+   "sites": 1,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x827d7140",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/utl/AllocInfo.obj",
+   "our_bytes": 52,
+   "body_evidence": "body size 4 bytes (retail extent) vs 52 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 52 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -6103,6 +7151,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 68 bytes (retail extent) vs 108 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??5@YAAAVBinStreamRev@@AAV0@AAUAnim@EventTrigger@@@Z",
+   "folded": "??5@YAAAVBinStreamRev@@AAV0@AAUProxyCall@EventTrigger@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x8249dc80",
+   "folded_map_addr": "0x8249dd60",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/bandobj/BandCamShot.obj (+1 identical)",
+   "our_bytes": 124,
+   "body_evidence": "body size 224 bytes (retail extent) vs 124 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 224 bytes (retail extent) vs 124 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??5@YAAAVBinStreamRev@@AAV0@AAUProxyCall@EventTrigger@@@Z",
+   "folded": "??5@YAAAVBinStreamRev@@AAV0@AAUAnim@EventTrigger@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x8249dd60",
+   "folded_map_addr": "0x8249dc80",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/bandobj/BandCamShot.obj (+1 identical)",
+   "our_bytes": 224,
+   "body_evidence": "body size 124 bytes (retail extent) vs 224 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 124 bytes (retail extent) vs 224 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??H?$_Bit_iter@U_Bit_reference@stlpmtx_std@@PAU12@@stlpmtx_std@@QBA?AU01@H@Z",
    "folded": "??H?$_Bit_iter@_NPB_N@stlpmtx_std@@QBA?AU01@H@Z",
@@ -6238,6 +7316,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 180 bytes (retail extent) vs 212 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1CreditsPanel@@EAA@XZ",
+   "folded": "??1ContentLoadingPanel@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827aea68",
+   "folded_map_addr": "0x82613a20",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/band3/meta_band/ContentLoadingPanel.obj",
+   "our_bytes": 248,
+   "body_evidence": "body size 144 bytes (retail extent) vs 248 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 144 bytes (retail extent) vs 248 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1ContentLoadingPanel@@UAA@XZ",
+   "folded": "??1CreditsPanel@@EAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82613a20",
+   "folded_map_addr": "0x827aea68",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/meta/CreditsPanel.obj",
+   "our_bytes": 184,
+   "body_evidence": "body size 160 bytes (retail extent) vs 184 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 160 bytes (retail extent) vs 184 (our COMDAT)"
+  },
+  {
    "subclass": "map_name_unresolved",
    "survivor": "?Advance@?$ObjDirItr@VRndGroup@@@@AAAXXZ",
    "folded": "?Advance@?$ObjDirItr@VSynthSample@@@@AAAXXZ",
@@ -6251,6 +7359,18 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x4 goes to 0x8282925c, which the map does not name -- destination unresolvable"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "XMemCpy",
+   "folded": "memcpy",
+   "sites": 1,
+   "survivor_addr": "0x82840a78",
+   "folded_map_addr": "0x8282a900",
+   "survivor_fanin": 19,
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "no COMDAT for memcpy in any of our compiled objs"
   },
   {
    "subclass": "residual",
@@ -6313,6 +7433,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 96 bytes (retail extent) vs 168 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "?Load@PropKeys@@UAAXAAVBinStreamRev@@@Z",
+   "folded": "?Save@PropKeys@@UAAXAAVBinStream@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x82423af8",
+   "folded_map_addr": "0x82423320",
+   "survivor_fanin": 6,
+   "our_def": "build/45410914/src/system/rndobj/TexBlender.obj (+3 identical)",
+   "our_bytes": 184,
+   "body_evidence": "body size 340 bytes (retail extent) vs 184 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 340 bytes (retail extent) vs 184 (our COMDAT)"
+  },
+  {
    "subclass": "map_name_unresolved",
    "survivor": "?MemFree@@YAXPAX@Z",
    "folded": "??3BandHighlight@@SAXPAX@Z",
@@ -6358,6 +7493,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 188 bytes (retail extent) vs 4 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1Object@Hmx@@UAA@XZ",
+   "folded": "??1RockCentralOpCompleteMsg@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x8275cbf0",
+   "folded_map_addr": "0x824f7770",
+   "survivor_fanin": 1079,
+   "our_def": "build/45410914/src/system/bandobj/VocalTrackDir.obj (+20 identical)",
+   "our_bytes": 124,
+   "body_evidence": "body size 272 bytes (retail extent) vs 124 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 272 bytes (retail extent) vs 124 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1BinStream@@UAA@XZ",
    "folded": "??1DataResult@@UAA@XZ",
@@ -6371,6 +7521,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 128 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1RockCentralOpCompleteMsg@@UAA@XZ",
+   "folded": "??1Object@Hmx@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x824f7770",
+   "folded_map_addr": "0x8275cbf0",
+   "survivor_fanin": 77,
+   "our_def": "build/45410914/src/system/obj/Object.obj",
+   "our_bytes": 292,
+   "body_evidence": "body size 84 bytes (retail extent) vs 292 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 84 bytes (retail extent) vs 292 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -6611,6 +7776,36 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 284 bytes (retail extent) vs 156 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1?$ObjRefConcrete@VWorldInstance@@VObjectDir@@@@UAA@XZ",
+   "folded": "??1?$ObjDirPtr@VWorldInstance@@@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x824ea550",
+   "folded_map_addr": "0x824eab38",
+   "survivor_fanin": 4,
+   "our_def": "build/45410914/src/system/world/Instance.obj",
+   "our_bytes": 128,
+   "body_evidence": "body size 116 bytes (retail extent) vs 128 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 116 bytes (retail extent) vs 128 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1?$ObjDirPtr@VWorldInstance@@@@UAA@XZ",
+   "folded": "??1?$ObjRefConcrete@VWorldInstance@@VObjectDir@@@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x824eab38",
+   "folded_map_addr": "0x824ea550",
+   "survivor_fanin": 3,
+   "our_def": "build/45410914/src/system/world/Instance.obj",
+   "our_bytes": 156,
+   "body_evidence": "body size 88 bytes (retail extent) vs 156 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 88 bytes (retail extent) vs 156 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -7558,6 +8753,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x54: retail calls ?_M_erase@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDynamicPropertyEntry@Flow@@PAU34@0ABU__false_type@2@@Z, we call ?_M_erase@?$vector@VStrand@CharHair@@V?$StlNodeAlloc@VStrand@CharHair@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVStrand@CharHair@@PAV34@0ABU__false_type@2@@Z"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??0SfxMap@@QAA@PAVObject@Hmx@@@Z",
+   "folded": "??0MoggClipMap@@QAA@PAVObject@Hmx@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x82729980",
+   "folded_map_addr": "0x8272afb8",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/system/synth/MoggClipMap.obj",
+   "our_bytes": 140,
+   "body_evidence": "body size 104 bytes (retail extent) vs 140 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 140 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??0MoggClipMap@@QAA@PAVObject@Hmx@@@Z",
+   "folded": "??0SfxMap@@QAA@PAVObject@Hmx@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x8272afb8",
+   "folded_map_addr": "0x82729980",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/system/synth/SfxMap.obj",
+   "our_bytes": 144,
+   "body_evidence": "body size 100 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 100 bytes (retail extent) vs 144 (our COMDAT)"
+  },
+  {
    "subclass": "bijection_class",
    "survivor": "?resize@?$list@USink@MsgSinks@@V?$StlNodeAlloc@USink@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUSink@MsgSinks@@@Z",
    "folded": "?resize@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUBitmapOverride@WorldDir@@@Z",
@@ -7571,6 +8796,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- retail branch at 0x4 goes to 0x8282925c, which the map does not name -- destination unresolvable"
+  },
+  {
+   "subclass": "wrapper_inlined_by_us",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "?MemFree@@YAXPAX@Z",
+   "sites": 1,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x827bc430",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/utl/MemMgr.obj",
+   "our_bytes": 304,
+   "body_evidence": "body size 4 bytes (retail extent) vs 304 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 304 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -7960,6 +9200,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 120 bytes (retail extent) vs 248 (our COMDAT)"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "??0Entry@LocalePanel@@QAA@ABU01@@Z",
+   "folded": "??0Char3D@CharData@WorldCrowd@@QAA@ABU012@@Z",
+   "sites": 1,
+   "survivor_addr": "0x82b9b3f8",
+   "folded_map_addr": "0x824e2038",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/rndobj/Console.obj (+4 identical)",
+   "our_bytes": 140,
+   "body_evidence": "body size 308 bytes (retail extent) vs 140 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 308 bytes (retail extent) vs 140 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??4VocalNote@@QAAAAV0@ABV0@@Z",
    "folded": "??0TrackData@SongDB@@QAA@ABV01@@Z",
@@ -8125,6 +9380,18 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 248 bytes (retail extent) vs 60 (our COMDAT)"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "?MemFree@@YAXPAX@Z",
+   "folded": "free",
+   "sites": 1,
+   "survivor_addr": "0x827bc430",
+   "folded_map_addr": "0x8282aed0",
+   "survivor_fanin": 353,
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "no COMDAT for free in any of our compiled objs"
+  },
+  {
    "subclass": "bijection_class",
    "survivor": "?Finalize@GameGemDB@@QAAXXZ",
    "folded": "?MergeChordGems@GameGemDB@@QAAXXZ",
@@ -8200,6 +9467,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 100 bytes (retail extent) vs 4 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "?GetMaxPoints@MultiplayerAnalyzer@@QBAMABVUserGuid@@@Z",
+   "folded": "?GetBonusPoints@MultiplayerAnalyzer@@QBAMABVUserGuid@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x826cda68",
+   "folded_map_addr": "0x826cdad8",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/band3/game/MultiplayerAnalyzer.obj",
+   "our_bytes": 64,
+   "body_evidence": "body size 56 bytes (retail extent) vs 64 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 56 bytes (retail extent) vs 64 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "?GetBonusPoints@MultiplayerAnalyzer@@QBAMABVUserGuid@@@Z",
+   "folded": "?GetMaxPoints@MultiplayerAnalyzer@@QBAMABVUserGuid@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x826cdad8",
+   "folded_map_addr": "0x826cda68",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/band3/game/MultiplayerAnalyzer.obj",
+   "our_bytes": 56,
+   "body_evidence": "body size 64 bytes (retail extent) vs 56 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 64 bytes (retail extent) vs 56 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1?$ObjRefConcrete@VRndTex@@VObjectDir@@@@UAA@XZ",
    "folded": "??1CharWeightable@@UAA@XZ",
@@ -8213,6 +9510,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 100 bytes (retail extent) vs 8 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1?$map@HPAVUIComponent@@U?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+   "folded": "??1CharBonesSamples@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x826101b8",
+   "folded_map_addr": "0x823dfaf8",
+   "survivor_fanin": 102,
+   "our_def": "build/45410914/src/system/synth/Sequence.obj (+3 identical)",
+   "our_bytes": 240,
+   "body_evidence": "body size 4 bytes (retail extent) vs 240 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 240 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -8380,6 +9692,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 1056 bytes (retail extent) vs 168 (our COMDAT)"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "?ByteCode@RemoveLastSongFromSetlistMsg@@UBAEXZ",
+   "folded": "?RemoveLastSongFromSetlist@MusicLibrary@@QAAXXZ",
+   "sites": 1,
+   "survivor_addr": "0x8253dd58",
+   "folded_map_addr": "0x8253d820",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/band3/meta_band/MusicLibrary.obj",
+   "our_bytes": 208,
+   "body_evidence": "body size 172 bytes (retail extent) vs 208 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 172 bytes (retail extent) vs 208 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1ObjRef@@QAA@XZ",
    "folded": "??1BinStream@@UAA@XZ",
@@ -8455,6 +9782,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 40 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1DataNode@@QAA@XZ",
+   "folded": "??1?$ObjRefConcrete@VObject@Hmx@@VObjectDir@@@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82270560",
+   "folded_map_addr": "0x8228d498",
+   "survivor_fanin": 4316,
+   "our_def": "build/45410914/src/system/obj/DataFunc.obj (+72 identical)",
+   "our_bytes": 140,
+   "body_evidence": "body size 24 bytes (retail extent) vs 140 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 140 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1DataNode@@QAA@XZ",
    "folded": "??3DataArray@@SAXPAX@Z",
@@ -8468,6 +9810,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 12 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "folded": "??1MemHeapTracker@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bea28",
+   "folded_map_addr": "0x8249ba68",
+   "survivor_fanin": 235,
+   "our_def": "build/45410914/src/system/bandobj/BandDirector.obj (+20 identical)",
+   "our_bytes": 4,
+   "body_evidence": "branch destination at 0x0: retail calls ??1String@@UAA@XZ, we call ?MemPopHeap@@YAXXZ",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x0: retail calls ??1String@@UAA@XZ, we call ?MemPopHeap@@YAXXZ"
   },
   {
    "subclass": "residual",
@@ -8498,6 +9855,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 8 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1PropertyFilter@CameraManager@@QAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x8228f530",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 8,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 96 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 96 bytes (retail extent) vs 24 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -8557,6 +9929,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x0: retail calls ??1?$_Deque_base@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ, we call ??1String@@UAA@XZ"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1DataPoint@@QAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x824f9fd0",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 10,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 8 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 8 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
    "subclass": "bijection_class",
    "survivor": "??1UIListProvider@@UAA@XZ",
    "folded": "??1NetMessage@@UAA@XZ",
@@ -8570,6 +9957,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- relocation type 0x12 at 0x0 is not one this gate models"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "folded": "??1?$ObjRefConcrete@VBandCharDesc@@VObjectDir@@@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bea28",
+   "folded_map_addr": "0x8227fad8",
+   "survivor_fanin": 235,
+   "our_def": "build/45410914/src/system/bandobj/BandCharacter.obj",
+   "our_bytes": 156,
+   "body_evidence": "body size 4 bytes (retail extent) vs 156 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 156 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -8600,6 +10002,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 40 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataNode@@QAA@XZ",
+   "folded": "??1DataPoint@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82270560",
+   "folded_map_addr": "0x824f9fd0",
+   "survivor_fanin": 4316,
+   "our_def": "build/45410914/src/system/bandobj/BandCamShot.obj (+16 identical)",
+   "our_bytes": 8,
+   "body_evidence": "body size 24 bytes (retail extent) vs 8 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 8 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -8645,6 +10062,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 116 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1CritSecTracker@@QAA@XZ",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x8250bf98",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 60,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 20 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 20 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -8722,6 +10154,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 272 bytes (retail extent) vs 228 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1String@@UAA@XZ",
+   "folded": "??1CritSecTracker@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bdf38",
+   "folded_map_addr": "0x8250bf98",
+   "survivor_fanin": 1819,
+   "our_def": "build/45410914/src/system/obj/DataFile.obj (+19 identical)",
+   "our_bytes": 20,
+   "body_evidence": "body size 104 bytes (retail extent) vs 20 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 20 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1DataNode@@QAA@XZ",
    "folded": "??1MemHeapTracker@@QAA@XZ",
@@ -8750,6 +10197,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 36 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$__destroy_aux@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU__false_type@0@@Z",
+   "folded": "??1?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x828043a8",
+   "folded_map_addr": "0x827e5d78",
+   "survivor_fanin": 150,
+   "our_def": "build/45410914/src/system/utl/Song.obj (+1 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)",
+   "tier": "CF1",
+   "discredit": null,
+   "verdict": "ADMIT"
   },
   {
    "subclass": "residual",
@@ -8810,6 +10272,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 72 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1MemHeapTracker@@QAA@XZ",
+   "folded": "??1DataArrayPtr@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x8249ba68",
+   "folded_map_addr": "0x82280280",
+   "survivor_fanin": 2,
+   "our_def": "build/45410914/src/system/obj/Object.obj (+158 identical)",
+   "our_bytes": 8,
+   "body_evidence": "body size 4 bytes (retail extent) vs 8 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 8 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -8885,6 +10362,51 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1Message@@UAA@XZ",
+   "folded": "??1Object@Hmx@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x823426f8",
+   "folded_map_addr": "0x8275cbf0",
+   "survivor_fanin": 475,
+   "our_def": "build/45410914/src/system/obj/Object.obj",
+   "our_bytes": 292,
+   "body_evidence": "body size 24 bytes (retail extent) vs 292 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 292 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "folded": "??1Message@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bea28",
+   "folded_map_addr": "0x823426f8",
+   "survivor_fanin": 235,
+   "our_def": "build/45410914/src/system/beatmatch/GuitarController.obj (+297 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 4 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "folded": "??1FilePathTracker@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bea28",
+   "folded_map_addr": "0x82280208",
+   "survivor_fanin": 235,
+   "our_def": "build/45410914/src/system/obj/Dir.obj (+37 identical)",
+   "our_bytes": 120,
+   "body_evidence": "body size 4 bytes (retail extent) vs 120 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 120 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -9037,6 +10559,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 36 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1DataNode@@QAA@XZ",
+   "folded": "??1?$ObjDirPtr@VObjectDir@@@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82270560",
+   "folded_map_addr": "0x822709d8",
+   "survivor_fanin": 4316,
+   "our_def": "build/45410914/src/system/beatmatch/DrumPlayer.obj (+49 identical)",
+   "our_bytes": 128,
+   "body_evidence": "body size 24 bytes (retail extent) vs 128 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 128 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1InlinedDir@ObjectDir@@QAA@XZ",
    "folded": "??1FilePath@@UAA@XZ",
@@ -9065,6 +10602,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 292 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3CharEyeDartRuleset@@SAXPAX@Z",
+   "sites": 1,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x823beea8",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/bandobj/OutfitConfig.obj (+3 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF1",
+   "discredit": null,
+   "verdict": "ADMIT"
   },
   {
    "subclass": "residual",
@@ -9155,6 +10707,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 88 bytes (retail extent) vs 124 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1?$ObjVector@ULabelStyle@UILabel@@@@QAA@XZ",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x822a8bc0",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 3,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 4 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -9472,6 +11039,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x28: retail calls ??1MeshPair@BandPatchMesh@@QAA@XZ, we call ??1PropertyFilter@CameraManager@@QAA@XZ"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1String@@UAA@XZ",
+   "folded": "??1?$ObjVector@ULabelStyle@UILabel@@@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bdf38",
+   "folded_map_addr": "0x822a8bc0",
+   "survivor_fanin": 1819,
+   "our_def": "build/45410914/src/system/ui/UILabel.obj (+1 identical)",
+   "our_bytes": 4,
+   "body_evidence": "body size 104 bytes (retail extent) vs 4 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataNode@@QAA@XZ",
+   "folded": "??1LabelStyle@UILabel@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82270560",
+   "folded_map_addr": "0x822a4a20",
+   "survivor_fanin": 4316,
+   "our_def": "build/45410914/src/system/ui/UILabel.obj (+1 identical)",
+   "our_bytes": 112,
+   "body_evidence": "body size 24 bytes (retail extent) vs 112 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 112 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1ObjRef@@QAA@XZ",
    "folded": "??3AnimTask@@SAXPAX@Z",
@@ -9515,6 +11112,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 100 bytes (retail extent) vs 24 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$__destroy_aux@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU__false_type@0@@Z",
+   "folded": "??1?$ObjPtr@VRndTransformable@@@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x828043a8",
+   "folded_map_addr": "0x8271eef0",
+   "survivor_fanin": 150,
+   "our_def": "build/45410914/src/system/beatmatch/RealGuitarTrackWatcherImpl.obj (+93 identical)",
+   "our_bytes": 4,
+   "body_evidence": "branch destination at 0x0: retail calls ?clear@?$_List_base@PAVSynthPollable@@V?$StlNodeAlloc@PAVSynthPollable@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ, we call ??1?$ObjRefConcrete@VRndTransformable@@VObjectDir@@@@UAA@XZ",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x0: retail calls ?clear@?$_List_base@PAVSynthPollable@@V?$StlNodeAlloc@PAVSynthPollable@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ, we call ??1?$ObjRefConcrete@VRndTransformable@@VObjectDir@@@@UAA@XZ"
   },
   {
    "subclass": "residual",
@@ -9577,6 +11189,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 40 bytes (retail extent) vs 36 (our COMDAT)"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$__destroy_aux@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU__false_type@0@@Z",
+   "folded": "??1Object@Hmx@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x828043a8",
+   "folded_map_addr": "0x8275cbf0",
+   "survivor_fanin": 150,
+   "our_def": "build/45410914/src/system/obj/Object.obj",
+   "our_bytes": 292,
+   "body_evidence": "body size 4 bytes (retail extent) vs 292 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 292 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1?$_String_base@DV?$allocator@D@stlpmtx_std@@@stlpmtx_std@@IAA@XZ",
    "folded": "??1String@@UAA@XZ",
@@ -9590,6 +11217,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 36 bytes (retail extent) vs 144 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BandHighlight@@SAXPAX@Z",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82345030",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 67,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 4 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
    "subclass": "map_name_unresolved",
@@ -9635,6 +11277,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 84 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3RndMat@@SAXPAX@Z",
+   "sites": 1,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x824a8f74",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/rndobj/BaseMaterial.obj (+3 identical)",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF2",
+   "discredit": "map parks ??3RndMat@@SAXPAX@Z at 0x824a8f74, which has ZERO .text fan-in",
+   "verdict": "ADMIT"
   },
   {
    "subclass": "residual",
@@ -9877,6 +11534,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 272 bytes (retail extent) vs 156 (our COMDAT)"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3WaitSeqInst@@SAXPAX@Z",
+   "sites": 1,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x82705930",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/synth/Sequence.obj (+1 identical)",
+   "our_bytes": 12,
+   "body_evidence": "body size 4 bytes (retail extent) vs 12 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 12 (our COMDAT)"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "??3AnimTask@@SAXPAX@Z",
+   "folded": "??3@YAXPAX@Z",
+   "sites": 1,
+   "survivor_addr": "0x82400608",
+   "folded_map_addr": "0x82bc6b70",
+   "survivor_fanin": 5,
+   "our_def": "build/45410914/src/system/utl/MemMgr.obj",
+   "our_bytes": 4,
+   "body_evidence": "body size 12 bytes (retail extent) vs 4 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 12 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1UIListProvider@@UAA@XZ",
    "folded": "??1DataNode@@QAA@XZ",
@@ -9950,6 +11637,36 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 36 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1Object@Hmx@@UAA@XZ",
+   "folded": "??1SongSort@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x8275cbf0",
+   "folded_map_addr": "0x82597820",
+   "survivor_fanin": 1079,
+   "our_def": "build/45410914/src/band3/meta_band/SongSortMgr.obj (+1 identical)",
+   "our_bytes": 4,
+   "body_evidence": "body size 272 bytes (retail extent) vs 4 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 272 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1SongSort@@UAA@XZ",
+   "folded": "??1Object@Hmx@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82597820",
+   "folded_map_addr": "0x8275cbf0",
+   "survivor_fanin": 10,
+   "our_def": "build/45410914/src/system/obj/Object.obj",
+   "our_bytes": 292,
+   "body_evidence": "body size 4 bytes (retail extent) vs 292 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 292 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -10265,6 +11982,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 144 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1String@@UAA@XZ",
+   "folded": "??1Loader@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bdf38",
+   "folded_map_addr": "0x827bf7d0",
+   "survivor_fanin": 1819,
+   "our_def": "build/45410914/src/system/utl/Loader.obj",
+   "our_bytes": 136,
+   "body_evidence": "body size 104 bytes (retail extent) vs 136 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 136 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -10597,6 +12329,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 8 bytes (retail extent) vs 4 (our COMDAT)"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "folded": "??1DataPoint@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bea28",
+   "folded_map_addr": "0x824f9fd0",
+   "survivor_fanin": 235,
+   "our_def": "build/45410914/src/system/bandobj/BandCamShot.obj (+16 identical)",
+   "our_bytes": 8,
+   "body_evidence": "body size 4 bytes (retail extent) vs 8 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 8 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1ObjRef@@QAA@XZ",
    "folded": "??1?$ObjRefConcrete@VBandScoreboard@@VObjectDir@@@@UAA@XZ",
@@ -10717,6 +12464,51 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
+   "subclass": "transposition",
+   "survivor": "??1DataNode@@QAA@XZ",
+   "folded": "??1MemStream@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82270560",
+   "folded_map_addr": "0x823e2a58",
+   "survivor_fanin": 4316,
+   "our_def": "build/45410914/src/system/utl/MemStream.obj (+8 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 24 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 144 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1DataPoint@@QAA@XZ",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x824f9fd0",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 10,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 8 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 8 bytes (retail extent) vs 144 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1String@@UAA@XZ",
+   "folded": "??1DataPoint@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bdf38",
+   "folded_map_addr": "0x824f9fd0",
+   "survivor_fanin": 1819,
+   "our_def": "build/45410914/src/system/bandobj/BandCamShot.obj (+16 identical)",
+   "our_bytes": 8,
+   "body_evidence": "body size 104 bytes (retail extent) vs 8 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 104 bytes (retail extent) vs 8 (our COMDAT)"
+  },
+  {
    "subclass": "bijection_class",
    "survivor": "??$_Destroy_Moved_Range@PAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@0@Z",
    "folded": "??$_Destroy_Range@PAVLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@0@Z",
@@ -10757,6 +12549,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 36 bytes (retail extent) vs 16 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1?$map@HPAVUIComponent@@U?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+   "folded": "??1DataNode@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x826101b8",
+   "folded_map_addr": "0x82270560",
+   "survivor_fanin": 102,
+   "our_def": "build/45410914/src/Memory_Xbox.obj (+674 identical)",
+   "our_bytes": 24,
+   "body_evidence": "body size 4 bytes (retail extent) vs 24 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 24 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -10817,6 +12624,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 144 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??1String@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x827bdf38",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/utl/MemHeap.obj (+1 identical)",
+   "our_bytes": 144,
+   "body_evidence": "body size 4 bytes (retail extent) vs 144 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 144 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -11074,6 +12896,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 40 bytes (retail extent) vs 16 (our COMDAT)"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "??3DataArray@@SAXPAX@Z",
+   "folded": "??3@YAXPAX@Z",
+   "sites": 1,
+   "survivor_addr": "0x82270288",
+   "folded_map_addr": "0x82bc6b70",
+   "survivor_fanin": 87,
+   "our_def": "build/45410914/src/system/utl/MemMgr.obj",
+   "our_bytes": 4,
+   "body_evidence": "body size 12 bytes (retail extent) vs 4 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 12 bytes (retail extent) vs 4 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??1LoaderGlitchContext@@QAA@XZ",
+   "folded": "??1DataArrayPtr@@QAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x827bea28",
+   "folded_map_addr": "0x82280280",
+   "survivor_fanin": 235,
+   "our_def": "build/45410914/src/system/obj/Object.obj (+158 identical)",
+   "our_bytes": 8,
+   "body_evidence": "body size 4 bytes (retail extent) vs 8 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 8 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1NetMessage@@UAA@XZ",
    "folded": "??1String@@UAA@XZ",
@@ -11149,6 +13001,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 100 bytes (retail extent) vs 24 (our COMDAT)"
   },
   {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??3BinStream@@SAXPAX@Z",
+   "folded": "??3PlayerDiffIcon@@SAXPAX@Z",
+   "sites": 1,
+   "survivor_addr": "0x8240ddb0",
+   "folded_map_addr": "0x823258d4",
+   "survivor_fanin": 2308,
+   "our_def": "build/45410914/src/system/bandobj/PlayerDiffIcon.obj",
+   "our_bytes": 4,
+   "body_evidence": "identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal",
+   "tier": "CF2",
+   "discredit": "map parks ??3PlayerDiffIcon@@SAXPAX@Z at 0x823258d4, which has ZERO .text fan-in",
+   "verdict": "ADMIT"
+  },
+  {
    "subclass": "residual",
    "survivor": "??1ObjRef@@QAA@XZ",
    "folded": "??1?$ObjRefConcrete@VBandList@@VObjectDir@@@@UAA@XZ",
@@ -11177,6 +13044,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 16 bytes (retail extent) vs 36 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "??1Message@@UAA@XZ",
+   "folded": "??1NetMessage@@UAA@XZ",
+   "sites": 1,
+   "survivor_addr": "0x823426f8",
+   "folded_map_addr": "0x826908c8",
+   "survivor_fanin": 475,
+   "our_def": "build/45410914/src/system/bandobj/BandSwatch.obj (+34 identical)",
+   "our_bytes": 16,
+   "body_evidence": "body size 24 bytes (retail extent) vs 16 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 24 bytes (retail extent) vs 16 (our COMDAT)"
   },
   {
    "subclass": "bijection_class",
@@ -11641,6 +13523,36 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x14: retail calls ?StaticClassName@DialogDisplay@@SA?AVSymbol@@XZ, we call ?StaticClassName@CharUpperTwist@@SA?AVSymbol@@XZ"
   },
   {
+   "subclass": "transposition",
+   "survivor": "?ClassName@RndMeshAnim@@UBA?AVSymbol@@XZ",
+   "folded": "?Handle@RndMeshAnim@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+   "sites": 1,
+   "survivor_addr": "0x82470130",
+   "folded_map_addr": "0x82470d50",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/rndobj/MeshAnim.obj",
+   "our_bytes": 720,
+   "body_evidence": "body size 48 bytes (retail extent) vs 720 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 48 bytes (retail extent) vs 720 (our COMDAT)"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "?Handle@RndMeshAnim@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+   "folded": "?ClassName@RndMeshAnim@@UBA?AVSymbol@@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82470d50",
+   "folded_map_addr": "0x82470130",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/rndobj/MeshAnim.obj",
+   "our_bytes": 48,
+   "body_evidence": "body size 544 bytes (retail extent) vs 48 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 544 bytes (retail extent) vs 48 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "??_GRndParticleSys@@UAAPAXI@Z",
    "folded": "?SetType@RndParticleSys@@UAAXVSymbol@@@Z",
@@ -11683,6 +13595,33 @@
    "reason": "our objs disagree on ?SyncProperty@RndParticleSys@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z: 2 distinct COMDATs across 2 objs"
   },
   {
+   "subclass": "transposition",
+   "survivor": "?ClassName@ObjectDir@@UBA?AVSymbol@@XZ",
+   "folded": "?Handle@ObjectDir@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+   "sites": 1,
+   "survivor_addr": "0x827520b0",
+   "folded_map_addr": "0x82750570",
+   "survivor_fanin": 1,
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our objs disagree on ?Handle@ObjectDir@@UAA?AVDataNode@@PAVDataArray@@_N@Z: 3 distinct COMDATs across 4 objs"
+  },
+  {
+   "subclass": "transposition",
+   "survivor": "?Handle@ObjectDir@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+   "folded": "?ClassName@ObjectDir@@UBA?AVSymbol@@XZ",
+   "sites": 1,
+   "survivor_addr": "0x82750570",
+   "folded_map_addr": "0x827520b0",
+   "survivor_fanin": 4,
+   "our_def": "build/45410914/src/system/obj/Dir.obj (+3 identical)",
+   "our_bytes": 48,
+   "body_evidence": "body size 1660 bytes (retail extent) vs 48 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 1660 bytes (retail extent) vs 48 (our COMDAT)"
+  },
+  {
    "subclass": "residual",
    "survivor": "?PreLoad@ObjectDir@@UAAXAAVBinStream@@@Z",
    "folded": "?PostLoad@ObjectDir@@UAAXAAVBinStream@@@Z",
@@ -11708,6 +13647,18 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x14: retail calls ?StaticClassName@CharSleeve@@SA?AVSymbol@@XZ, we call ?StaticClassName@CharDriver@@SA?AVSymbol@@XZ"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "?PreSave@OutfitConfig@@UAAXAAVBinStream@@@Z",
+   "folded": "??_ECharBlendBone@@UAAPAXI@Z",
+   "sites": 1,
+   "survivor_addr": "0x822a01e8",
+   "folded_map_addr": "0x82429be8",
+   "survivor_fanin": 1,
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "no COMDAT for ??_ECharBlendBone@@UAAPAXI@Z in any of our compiled objs"
   },
   {
    "subclass": "bijection_class",
@@ -11830,6 +13781,21 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 1132 bytes (retail extent) vs 100 (our COMDAT)"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "?Highlight@RndDir@@UAAXXZ",
+   "folded": "?Replace@RndDir@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x82279708",
+   "folded_map_addr": "0x82402f68",
+   "survivor_fanin": 26,
+   "our_def": "build/45410914/src/system/rndobj/ShaderOptions.obj (+4 identical)",
+   "our_bytes": 8,
+   "body_evidence": "unrelocated word at 0x0 differs: retail 3863fee8 vs ours 3863ffac",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- unrelocated word at 0x0 differs: retail 3863fee8 vs ours 3863ffac"
+  },
+  {
    "subclass": "residual",
    "survivor": "?Save@RndDir@@UAAXAAVBinStream@@@Z",
    "folded": "?Save@RndLine@@UAAXAAVBinStream@@@Z",
@@ -11905,6 +13871,18 @@
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x14: retail calls ?StaticClassName@BandCharacter@@SA?AVSymbol@@XZ, we call ?StaticClassName@RndLine@@SA?AVSymbol@@XZ"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "??_GRndLine@@UAAPAXI@Z",
+   "folded": "?SyncProperty@RndLine@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x8247b930",
+   "folded_map_addr": "0x8247a6c0",
+   "survivor_fanin": 1,
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our objs disagree on ?SyncProperty@RndLine@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z: 3 distinct COMDATs across 6 objs"
+  },
+  {
    "subclass": "residual",
    "survivor": "?SetType@RndLine@@UAAXVSymbol@@@Z",
    "folded": "?SetType@RndSpline@@UAAXVSymbol@@@Z",
@@ -11962,6 +13940,18 @@
    "reason": "our objs disagree on ?SyncProperty@CamShot@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z: 8 distinct COMDATs across 12 objs"
   },
   {
+   "subclass": "map_misassignment",
+   "survivor": "?SpinUp@BlockMgr@@QAA_NXZ",
+   "folded": "atexit",
+   "sites": 1,
+   "survivor_addr": "0x8252ccf0",
+   "folded_map_addr": "0x8282a418",
+   "survivor_fanin": 2,
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "no COMDAT for atexit in any of our compiled objs"
+  },
+  {
    "subclass": "residual",
    "survivor": "?Load@StarDisplay@@UAAXAAVBinStream@@@Z",
    "folded": "?Copy@LabelShrinkWrapper@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
@@ -11975,6 +13965,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 120 bytes (retail extent) vs 112 (our COMDAT)"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "?Copy@LabelShrinkWrapper@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+   "folded": "?PreLoad@LabelShrinkWrapper@@UAAXAAVBinStream@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x828270c0",
+   "folded_map_addr": "0x828278d0",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/ui/LabelShrinkWrapper.obj",
+   "our_bytes": 236,
+   "body_evidence": "body size 112 bytes (retail extent) vs 236 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 112 bytes (retail extent) vs 236 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -12005,6 +14010,18 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x14: retail calls ?StaticClassName@CharNeckTwist@@SA?AVSymbol@@XZ, we call ?StaticClassName@CharServoBone@@SA?AVSymbol@@XZ"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "??0BoxMapLighting@@QAA@XZ",
+   "folded": "atexit",
+   "sites": 1,
+   "survivor_addr": "0x82465fe0",
+   "folded_map_addr": "0x8282a418",
+   "survivor_fanin": 2,
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "no COMDAT for atexit in any of our compiled objs"
   },
   {
    "subclass": "residual",
@@ -12155,6 +14172,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x14: retail calls ?StaticClassName@DxCam@@SA?AVSymbol@@XZ, we call ?StaticClassName@DxParticleSys@@SA?AVSymbol@@XZ"
+  },
+  {
+   "subclass": "map_misassignment",
+   "survivor": "?SetType@DxCam@@UAAXVSymbol@@@Z",
+   "folded": "?PreLoad@BandLabel@@UAAXAAVBinStream@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x8273da40",
+   "folded_map_addr": "0x82340ab0",
+   "survivor_fanin": 1,
+   "our_def": "build/45410914/src/system/bandobj/BandLabel.obj",
+   "our_bytes": 176,
+   "body_evidence": "body size 316 bytes (retail extent) vs 176 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 316 bytes (retail extent) vs 176 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -12425,6 +14457,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- branch destination at 0x14: retail calls ?StaticClassName@CampaignCareerLeaderboardPanel@@SA?AVSymbol@@XZ, we call ?StaticClassName@CampaignGoalsLeaderboardPanel@@SA?AVSymbol@@XZ"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z",
+   "folded": "?SyncProperty@BandTrack@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "sites": 1,
+   "survivor_addr": "0x826c3888",
+   "folded_map_addr": "0x82351fc0",
+   "survivor_fanin": 1116,
+   "our_def": "build/45410914/src/system/bandobj/BandTrack.obj",
+   "our_bytes": 2124,
+   "body_evidence": "body size 4 bytes (retail extent) vs 2124 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 2124 (our COMDAT)"
   },
   {
    "subclass": "residual",
@@ -13326,6 +15373,21 @@
    "verdict": "REFUSE",
    "tier": null,
    "reason": "our COMDAT is not the retail body at the survivor address -- body size 136 bytes (retail extent) vs 168 (our COMDAT)"
+  },
+  {
+   "subclass": "fold_thunk_naming",
+   "survivor": "??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z",
+   "folded": "?clear@?$_List_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+   "sites": 1,
+   "survivor_addr": "0x826c3888",
+   "folded_map_addr": "0x82283ad0",
+   "survivor_fanin": 1116,
+   "our_def": "build/45410914/src/system/obj/DirLoader.obj (+12 identical)",
+   "our_bytes": 92,
+   "body_evidence": "body size 4 bytes (retail extent) vs 92 (our COMDAT)",
+   "verdict": "REFUSE",
+   "tier": null,
+   "reason": "our COMDAT is not the retail body at the survivor address -- body size 4 bytes (retail extent) vs 92 (our COMDAT)"
   },
   {
    "subclass": "residual",
