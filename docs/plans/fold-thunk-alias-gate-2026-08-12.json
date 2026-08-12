@@ -10,7 +10,8 @@
   "groups": 3
  },
  "by_tier": {
-  "FT2": 8,
+  "FT3": 1,
+  "FT2": 7,
   "FT-EMPTY": 1
  },
  "pairs": [
@@ -25,8 +26,8 @@
    "our_words": 1,
    "body_evidence": "identical: 1 word(s), 1 resolved relocation target(s)",
    "retail_F": "retail body at 0x82bc6b70 differs (37 words, fan-in 178)",
-   "tier": "FT2",
-   "discredit": "our own ??3@YAXPAX@Z scores 2.70% at `none` against 0x82bc6b70, so that map entry is wrong",
+   "tier": "FT3",
+   "discredit": "HOMONYM: dc3's leaked ham_xbox_r.map names ??3@YAXPAX@Z at 3 distinct addresses, and the body at 0x82eb0c70 (xaudio2:baseswfilter.obj) is byte-identical to retail's body at 0x82bc6b70 over 148 bytes once relocated fields are masked. That address is another module's own file-scope ??3@YAXPAX@Z, not retail's copy of ours.",
    "verdict": "ADMIT"
   },
   {
@@ -115,7 +116,7 @@
    "retail_F": "retail body at 0x823f4698 differs (1 words, fan-in 1)",
    "verdict": "REFUSE",
    "tier": null,
-   "reason": "retail has a DIFFERENT body named ??3Loader@@SAXPAX@Z at 0x823f4698 (fan-in 1, our score 100.00% at `none`); the map entry is not discredited, so aliasing would hide a source defect"
+   "reason": "retail has a DIFFERENT body named ??3Loader@@SAXPAX@Z at 0x823f4698 (fan-in 1); no zero-fan-in parking and no dc3 homonym witness, so the map entry stands and aliasing would hide a source defect"
   },
   {
    "survivor": "??$__destroy_aux@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU__false_type@0@@Z",
@@ -158,7 +159,7 @@
    "retail_F": "retail body at 0x822eab90 differs (1 words, fan-in 4)",
    "verdict": "REFUSE",
    "tier": null,
-   "reason": "retail has a DIFFERENT body named ??3Task@@SAXPAX@Z at 0x822eab90 (fan-in 4, our score 100.00% at `none`); the map entry is not discredited, so aliasing would hide a source defect"
+   "reason": "retail has a DIFFERENT body named ??3Task@@SAXPAX@Z at 0x822eab90 (fan-in 4); no zero-fan-in parking and no dc3 homonym witness, so the map entry stands and aliasing would hide a source defect"
   },
   {
    "survivor": "??3BinStream@@SAXPAX@Z",
