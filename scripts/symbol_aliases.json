@@ -52,7 +52,8 @@
   "the two derivations agree EXACTLY on all 394 retail-adjudicated (T1) pairs.",
   "Negative decoy control: the relocation gate kills 96.8% of the pairs a naive",
   "masked-byte comparator would accept (554,705 of 573,290).",
-  "FOLD-THUNK TIER (FT, lane H, 2026-08-12) -- the groups whose evidence string names tools/fold_thunk_gate.py depart from the 'exactly ONE map-resident symbol per group' gate above, DELIBERATELY. In this class BOTH spellings are map-resident, which is the whole reason the earlier residency triage misread them as wrong callees: target_symbol_map.json is a VA->name FUNCTION over an ICF-folded link, so it parks the loser of a fold on whatever address is left -- padding, a mid-function word, an unrelated thunk, or ANOTHER MODULE'S FUNCTION OF THE SAME NAME. Each FT group therefore carries, per folded spelling, either proof that the map's other address holds the same body or a measured reason it is not retail's copy of our symbol. Do NOT re-add a score-based discredit: a low `none` score says two bodies differ, never which of them is misnamed. See docs/plans/fold-thunk-alias-gate-2026-08-12.md."
+  "FOLD-THUNK TIER (FT, lane H, 2026-08-12) -- the groups whose evidence string names tools/fold_thunk_gate.py depart from the 'exactly ONE map-resident symbol per group' gate above, DELIBERATELY. In this class BOTH spellings are map-resident, which is the whole reason the earlier residency triage misread them as wrong callees: target_symbol_map.json is a VA->name FUNCTION over an ICF-folded link, so it parks the loser of a fold on whatever address is left -- padding, a mid-function word, an unrelated thunk, or ANOTHER MODULE'S FUNCTION OF THE SAME NAME. Each FT group therefore carries, per folded spelling, either proof that the map's other address holds the same body or a measured reason it is not retail's copy of our symbol. Do NOT re-add a score-based discredit: a low `none` score says two bodies differ, never which of them is misnamed. See docs/plans/fold-thunk-alias-gate-2026-08-12.md.",
+  "COMDAT-IDENTITY TIER (CF, lane R, 2026-08-12) -- like the FOLD-THUNK tier below, these groups have BOTH spellings map-resident, deliberately: target_symbol_map.json is a VA->name FUNCTION over an ICF-folded link and can name a fold class only once. The difference from FT is the comparator, not the claim: CF compares the words our COFF relocation table does not relocate as FULL 32-bit values instead of masking every relocation-CAPABLE field, and REFUSES rather than accepts a 16-bit-immediate relocation, whose target a linked image cannot name. Every CF group is one survivor address; a spelling admitted against two addresses was refused at both. See docs/plans/comdat-fold-gate-2026-08-12.md."
  ],
  "groups": [
   {
@@ -483,10 +484,11 @@
     "?erase@?$list@PAVUITrigger@@V?$StlNodeAlloc@PAVUITrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVUITrigger@@U?$_Nonconst_traits@PAVUITrigger@@@stlpmtx_std@@@2@U32@@Z",
     "?erase@?$list@PAVWaypoint@@V?$StlNodeAlloc@PAVWaypoint@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWaypoint@@U?$_Nonconst_traits@PAVWaypoint@@@stlpmtx_std@@@2@U32@@Z",
     "?erase@?$list@PAVWebSvcRequest@@V?$StlNodeAlloc@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@2@U32@@Z",
+    "?erase@?$list@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PBDU?$_Nonconst_traits@PBD@stlpmtx_std@@@2@U32@@Z",
     "?erase@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@@Z",
     "?erase@?$list@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@_NU?$_Nonconst_traits@_N@stlpmtx_std@@@2@U32@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 41, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 39 folded spelling(s), 46 census sites over 5 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 41, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 39 folded spelling(s), 46 census sites over 5 functions. || COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x82bb33d8 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?erase@?$list@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PBDU?$_Nonconst_traits@PBD@stlpmtx_std@@@2@U32@@Z residual CF2, 1 sites: identical: 20/21 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]"
   },
   {
    "name": "swap",
@@ -2103,9 +2105,10 @@
     "??_F?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
     "??_F?$vector@VVocalNote@@V?$StlNodeAlloc@VVocalNote@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
     "??_F?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
-    "??_FPointInfo@@QAAXXZ"
+    "??_FPointInfo@@QAAXXZ",
+    "?GetSongSpecificEntriesForCategory@@YA?AV?$vector@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@VSymbol@@_N@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 1031, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1029 folded spelling(s), 12 census sites over 3 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 1031, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1029 folded spelling(s), 12 census sites over 3 functions. || COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x826b8b28 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?GetSongSpecificEntriesForCategory@@YA?AV?$vector@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@VSymbol@@_N@Z residual CF2, 1 sites: identical: 5/5 words compared as FULL 32-bit values, 0 relocated branch destination(s) resolved through the map and name-equal]"
   },
   {
    "name": "GetDiffGemList",
@@ -26430,6 +26433,88 @@
     "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBGG@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBGG@2@@Z"
    ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [2]. "
+  },
+  {
+   "name": "$__destroy_aux",
+   "address": "0x828043a8",
+   "survivor": "??$__destroy_aux@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU__false_type@0@@Z",
+   "folded": [
+    "??1?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$list@PAVSortNode@@V?$StlNodeAlloc@PAVSortNode@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x828043a8 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 2 folded spelling(s), 4 charged name_check sites. Per spelling: [??1?$list@PAVSortNode@@V?$StlNodeAlloc@PAVSortNode@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ fold_thunk_naming CF2, 3 sites: identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] [??1?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ fold_thunk_naming CF2, 1 sites: identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)]"
+  },
+  {
+   "name": "0?$ObjDirItr",
+   "address": "0x824041c8",
+   "survivor": "??0?$ObjDirItr@VRndPollable@@@@QAA@PAVObjectDir@@_N@Z",
+   "folded": [
+    "??0?$ObjDirItr@VRndAnimatable@@@@QAA@PAVObjectDir@@_N@Z"
+   ],
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF4. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x824041c8 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 2 charged name_check sites. Per spelling: [??0?$ObjDirItr@VRndAnimatable@@@@QAA@PAVObjectDir@@_N@Z map_name_unresolved CF4, 2 sites: identical: 28/30 words compared as FULL 32-bit values, 2 relocated branch destination(s) resolved through the map and name-equal]"
+  },
+  {
+   "name": "1?$_List_base",
+   "address": "0x8243e160",
+   "survivor": "??1?$_List_base@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x8243e160 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 10 charged name_check sites. Per spelling: [??1?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ bijection_class CF2, 10 sites: identical: 0/1 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]"
+  },
+  {
+   "name": "1?$pair",
+   "address": "0x82597ff0",
+   "survivor": "??1?$pair@VSymbol@@VSongRecord@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x82597ff0 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [??1?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@QAA@XZ residual CF2, 1 sites: identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]"
+  },
+  {
+   "name": "E?$ObjDirItr",
+   "address": "0x82404240",
+   "survivor": "??E?$ObjDirItr@VRndPollable@@@@QAAAAV0@XZ",
+   "folded": [
+    "??E?$ObjDirItr@VRndAnimatable@@@@QAAAAV0@XZ"
+   ],
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF4. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x82404240 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 2 charged name_check sites. Per spelling: [??E?$ObjDirItr@VRndAnimatable@@@@QAAAAV0@XZ map_name_unresolved CF4, 2 sites: identical: 19/21 words compared as FULL 32-bit values, 2 relocated branch destination(s) resolved through the map and name-equal]"
+  },
+  {
+   "name": "GetGemList",
+   "address": "0x82684f70",
+   "survivor": "?GetGemList@SongDB@@QBAPBVGameGemList@@H@Z",
+   "folded": [
+    "?GetGemListByDiff@SongDB@@QBAPAVGameGemList@@HH@Z"
+   ],
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF4. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x82684f70 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?GetGemListByDiff@SongDB@@QBAPAVGameGemList@@HH@Z map_name_unresolved CF4, 1 sites: identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]"
+  },
+  {
+   "name": "IsBusy",
+   "address": "0x825857a0",
+   "survivor": "?IsBusy@SessionMgr@@UBA_NXZ",
+   "folded": [
+    "?SendMsgToAll@SessionMgr@@QAAXAAVNetMessage@@W4PacketType@@@Z"
+   ],
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x825857a0 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 3 charged name_check sites. Per spelling: [?SendMsgToAll@SessionMgr@@QAAXAAVNetMessage@@W4PacketType@@@Z map_name_unresolved CF2, 3 sites: identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]"
+  },
+  {
+   "name": "insert",
+   "address": "0x823d14c0",
+   "survivor": "?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z",
+   "folded": [
+    "?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z"
+   ],
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x823d14c0 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z residual CF2, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]"
+  },
+  {
+   "name": "insert",
+   "address": "0x8266ad18",
+   "survivor": "?insert@?$list@UAccomplishmentCondition@@V?$StlNodeAlloc@UAccomplishmentCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAccomplishmentCondition@@U?$_Nonconst_traits@UAccomplishmentCondition@@@stlpmtx_std@@@2@U32@ABUAccomplishmentCondition@@@Z",
+   "folded": [
+    "?insert@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@ABVPlane@@@Z"
+   ],
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x8266ad18 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 2 charged name_check sites. Per spelling: [?insert@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@ABVPlane@@@Z residual CF2, 2 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]"
   }
  ]
 }
