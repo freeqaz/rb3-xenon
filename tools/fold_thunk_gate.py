@@ -353,8 +353,22 @@ def install(groups, path):
                 "address": addr, "survivor": S, "folded": folded, "evidence": ev,
             })
             added += 1
-    doc["groups"].sort(key=lambda g: (g["address"], g["survivor"]))
-    path.write_text(json.dumps(doc, indent=1) + "\n")
+    # NEVER re-sort: the file is 1,347 hand-audited groups and a reorder makes the
+    # diff unreviewable. New groups append; re-running is a no-op.
+    note = ("FOLD-THUNK TIER (FT, lane H, 2026-08-12) -- the groups whose evidence "
+            "string names tools/fold_thunk_gate.py depart from the 'exactly ONE "
+            "map-resident symbol per group' gate above, DELIBERATELY. In this class BOTH "
+            "spellings are map-resident, which is the whole reason the earlier residency "
+            "triage misread them as wrong callees: target_symbol_map.json is a VA->name "
+            "FUNCTION over an ICF-folded link, so it parks the loser of a fold on whatever "
+            "address is left -- padding, a mid-function word, or an unrelated thunk. Each "
+            "FT group therefore carries, per folded spelling, either proof that the map's "
+            "other address holds the SAME body or a measured reason that entry is wrong "
+            "(zero .text fan-in, no symbols.txt extent, or our own definition scoring "
+            "<20% at `none` against it). See docs/plans/fold-thunk-alias-gate-2026-08-12.md.")
+    if note not in doc["_comment"]:
+        doc["_comment"].append(note)
+    path.write_text(json.dumps(doc, indent=2))
     print("installed: %d new group(s), %d updated; %d total" % (added, updated, len(doc["groups"])))
 
 
