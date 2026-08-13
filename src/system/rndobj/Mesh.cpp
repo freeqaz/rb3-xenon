@@ -967,18 +967,23 @@ void RndMesh::ClearCompressedVerts() {
     mNumCompressedVerts = 0;
 }
 
+// Retail 0x82419978 (136 B). Same virtual-base compare as the *Anim family
+// (see RndCamAnim::Replace), but two shape differences read off the asm:
+// RndTransformable::Replace is called FIRST, at the top (bl fn_823F94E8
+// before the test), and the dynamic_cast result IS null-checked here
+// (mr. r11,r3; beq), which folds the member load to a single lwz 0x110(r11)
+// rather than the addi+lwz pair the *Anim family needs.
 void RndMesh::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (RefIs(ref, mGeomOwner)) {
-        RndMesh *meshObj;
-        if (mGeomOwner == this
-            || (meshObj = dynamic_cast<RndMesh *>(obj)) == nullptr) {
-            mGeomOwner = this;
-        } else {
-            mGeomOwner = meshObj->mGeomOwner;
-        }
-        return;
-    }
     RndTransformable::Replace(ref, obj);
+    if (static_cast<Hmx::Object *>(mGeomOwner.Ptr())
+        == reinterpret_cast<Hmx::Object *>(ref)) {
+        RndMesh *meshObj = dynamic_cast<RndMesh *>(obj);
+        if (meshObj) {
+            mGeomOwner.SetObjConcrete(meshObj->mGeomOwner.Ptr());
+        } else {
+            mGeomOwner.SetObjConcrete(this);
+        }
+    }
 }
 
 void RndMesh::SetMat(RndMat *mat) { mMat = mat; }
