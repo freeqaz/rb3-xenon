@@ -8,10 +8,24 @@ the whole `.pdata` set and re-derives one range per `.text` block, then rewrites
 the file.  Hand-editing or hand-carrying `.pdata` is therefore both useless and a
 way to manufacture a conflict; those lines are passed through verbatim.
 
-Blocks are carved at [A, A+size) with size taken from the row's OWN report.json
-entry -- never "up to the next named symbol", which measured 304 B against a
-true 88 B on one MISPIN-1 row.  Rows with no report row are NOT moved: their
-size would be a guess, and a pin one row off can EVICT a verified neighbour.
+SIZING: report.json's row size IS THE WRONG RULER FOR A SPLIT BOUNDARY, and the
+split refuses rather than silently mis-carving.  Measured here:
+
+    Failed: Split system/bandobj/ReviewDisplay.cpp .text (0x8231E778..0x8231E784)
+            ends within symbol 'fn_8231E778' (0x8231E778..0x8231E788)
+
+report.json scores that adjustor thunk at 12 B; dtk's own symbol extent is 16 B
+(the thunk body plus its 4 bytes of trailing padding, which carry no function
+row and so are not in the scored size).  Only 3 of 76 rows disagree -- but a
+single one aborts the whole split, so the carve is sized from
+`config/45410914/symbols.txt`, which is the ruler the split validates against.
+Note the two rulers move in BOTH directions (0x827D0A10 is 96 B by report and
+84 B by symbols), so this is not a uniform "+4 for padding" fudge.
+symbols.txt is READ ONLY -- ab_measure refuses any patch that touches it.
+
+Never "up to the next named symbol", which measured 304 B against a true 88 B on
+one MISPIN-1 row.  Rows with no report row are NOT moved: their size would be a
+guess, and a pin one row off can EVICT a verified neighbour.
 
 Existing blocks in this file are per-function and NOT merged even when
 contiguous (PatchDir has 39 adjacent .text blocks), so inserted blocks follow
@@ -34,7 +48,23 @@ import re
 import sys
 
 SPLITS = 'config/45410914/splits.txt'
+SYMBOLS = 'config/45410914/symbols.txt'
 FMT = '\t.text       start:0x%08X end:0x%08X'
+
+
+def symbol_sizes(path=SYMBOLS):
+    """-> {va: size} for .text symbols, from dtk's OWN extents.
+
+    This is the ruler the split enforces: a block whose end falls inside a
+    symbol aborts the split outright.
+    """
+    out = {}
+    pat = re.compile(r'=\s*\.text:0x([0-9A-Fa-f]+);.*?size:0x([0-9A-Fa-f]+)')
+    for ln in open(path):
+        m = pat.search(ln)
+        if m:
+            out[int(m.group(1), 16)] = int(m.group(2), 16)
+    return out
 
 
 def parse(path=SPLITS):
@@ -101,10 +131,19 @@ def main():
     print('[before] %d units, %d .text blocks, %d covered bytes'
           % (len(units), sum(len(u['text']) for u in units.values()), before))
 
+    sizes = symbol_sizes()
+    nfix = sum(1 for r in moves
+               if sizes.get(int(r['addr'], 16), int(r['size'])) != int(r['size']))
+    print('[sizing] %d of %d rows take a size from symbols.txt that differs from '
+          'report.json' % (nfix, len(moves)))
+
     applied, skipped = [], []
     for r in moves:
         A = int(r['addr'], 16)
-        sz = int(r['size'])
+        sz = sizes.get(A)
+        if sz is None:
+            skipped.append((r['addr'], 'no .text symbol extent in symbols.txt'))
+            continue
         su, du = r['pinned_unit'], r['defining_units'][0]
         if su not in units or du not in units:
             skipped.append((r['addr'], 'unit missing from splits'))
