@@ -1587,34 +1587,44 @@ def generate_build_ninja(
         )
 
         ###
-        # *** AND THE REPORT CACHE IS NOT KEYED ON THE MAP. ***
-        # `report generate -o X.json` writes a sidecar `X.cache` and seeds the next
-        # run from it. Its key is `ReportCache::hash_unit`
-        # (objdiff-cli/src/cmd/report.rs): the target obj bytes, the base obj
-        # bytes, the `-c` args, and the project/unit `options` blocks. `map_file`
-        # -- and the CONTENT of the map it names -- is in none of them. So making
-        # the map an input of the report edge is necessary and NOT sufficient:
-        # measured on dc3 2026-08-12, with that input wired, editing the alias JSON
-        # re-rendered the map, re-ran REPORT, and report.json still served the
-        # pre-change answer out of cache -- the original defect one layer down.
+        # BELT AND BRACES: purge the report-cache sidecars when the alias map
+        # moves. As of 2026-08-13 this edge is REDUNDANT, and it stays anyway.
         #
-        # So a map whose content actually moved invalidates the sidecars. This edge
-        # hangs off the map rather than off the JSON, and the generator writes only
-        # when the rendered bytes change (with `restat` above), so a
-        # touched-but-identical JSON does NOT cost anyone a full re-diff; only a
-        # real alias change does, which is the run whose number would otherwise be
-        # a lie.
+        # The history it was built for: `report generate -o X.json` writes a
+        # sidecar `X.cache` and seeds the next run from it, and its key used to be
+        # `ReportCache::hash_unit` (objdiff-cli/src/cmd/report.rs) over the target
+        # obj bytes, the base obj bytes, the `-c` args, and the project/unit
+        # `options` blocks -- with `map_file`, and the CONTENT of the map it names,
+        # in none of them. So making the map an input of the report edge was
+        # necessary and NOT sufficient: measured on dc3 2026-08-12, with that input
+        # wired, editing the alias JSON re-rendered the map, re-ran REPORT, and
+        # report.json still served the pre-change answer out of cache -- the
+        # original defect one layer down. This repo paid for it too: see the
+        # CORRECTED note on the `name_check` figures below, whose stale read came
+        # out of exactly this sidecar.
         #
-        # The durable fix belongs upstream -- hash the map file's content into
-        # `hash_unit` -- but that lives in the shared ../objdiff checkout, and it
-        # would invalidate every project's cache at once. Until then this is the
-        # local, declarative version of it.
+        # THE UPSTREAM FIX LANDED. The objdiff fork now folds the map file's
+        # content hash -- and the resolved diff config, and the objdiff-cli
+        # binary's own xxh3 -- into the cache key, and every generated report
+        # carries a `provenance` block naming all three plus `cache_hits`. A stale
+        # entry can no longer be served under a changed map. So the purge below can
+        # no longer be the thing that saves a measurement.
+        #
+        # Kept regardless, for two reasons: it costs one `rm -f` on a rebuild that
+        # only fires when the RENDERED map bytes actually changed (the generator
+        # writes only on change, with `restat` above), so a touched-but-identical
+        # JSON still costs nobody a re-diff; and it keeps the build correct against
+        # an older objdiff-cli, which this repo does not pin -- `build/tools/
+        # objdiff-cli` is a 4.2.1 copy that predates all of this. Measurement code
+        # stays; a redundant guard is cheap, and removing it is only safe once the
+        # binary is pinned.
         ###
-        n.comment("Invalidate report caches, which are not keyed on the alias map")
+        n.comment("Purge report caches on an alias-map change "
+                  "(redundant since the upstream map-keyed cache landed)")
         icf_purge_targets = " ".join(
             str(p.with_suffix(".cache"))
-            # `baseline.json` by literal name: it is defined further down, and its
-            # cache is as blind to the map as the report's.
+            # `baseline.json` by literal name: it is defined further down, and it
+            # gets the same treatment as the report's.
             for p in (report_path, build_path / "baseline.json")
         )
         n.rule(
@@ -1940,7 +1950,8 @@ def generate_objdiff_config(
         # CORRECTED 2026-08-12 (lane P). This read "-> 31.1425%, exposing 9,087"
         # against 511 admitted groups. That came from a report.json served out of
         # the `.cache` sidecar, which had units in it diffed under an older
-        # configuration -- the key covers neither `map_file` nor the binary (see
+        # configuration -- at the time the key covered neither `map_file` nor the
+        # binary (as of 2026-08-13 it covers both, plus the resolved config; see
         # the icf_alias_map_purge edge above), and the alias set is 1,440 groups
         # today. Re-measured on this tree with the caches purged, on pinned
         # objdiff main 745b7e3, and independently reproduced by the build's own
