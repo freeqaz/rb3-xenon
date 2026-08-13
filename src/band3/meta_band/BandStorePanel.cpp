@@ -247,6 +247,21 @@ void BandStorePanel::ExitStore(StoreError err) const {
     }
 }
 
+// Residual status after lane BODYPORT-3 (2026-08-13): Handle is 1928 B at
+// 93.12%, and ~all of its 41 charged mismatches are ONE repeated shape across
+// the three Request() arms below -- how the String temporary reaches argument 2:
+//     retail:  bl String::String ; li r5,1 ; addi r4,r31,0x58 ; bl Request
+//              (rematerialises &temp from its known stack slot)
+//     ours:    bl String::String ; mr r4,r3 ; li r5,1        ; bl Request
+//              (carries the ctor's return, and in the `request` arm spills it to
+//               r30 across the intervening _msg->Int(3) call)
+// Semantically identical -- the ctor returns `this` -- so this is an argument
+// materialisation choice, not a behavioural divergence.  NOT attempted here: the
+// obvious lever (construct the String as a named local, which would give MSVC a
+// fixed addressable slot) does not fit inside HANDLE_ACTION's single-expression
+// form, and inventing a different macro for the arm would be metric-fitting
+// rather than reconstructing retail.  Left open deliberately, with the shape
+// recorded so the next lane starts from the diagnosis and not the symptom.
 BEGIN_HANDLERS(BandStorePanel)
     HANDLE_EXPR(get_request_prefix, GetRequestPrefix())
     HANDLE_ACTION(request, Request(String(_msg->Str(2)), _msg->Int(3)))
