@@ -1086,9 +1086,11 @@ static inline void DrawMultiMeshWithEnviron(RndMultiMesh *mmesh) {
     {
         RndEnvironTracker tracker(curEnv, nullptr);
         mmesh->DrawShowing();
-    }
-    if (curEnv) {
-        curEnv->SetUseApproxGlobal(savedApprox);
+        // Retail restores inside the tracker scope: the SetUseApproxGlobal
+        // store precedes ~RndEnvironTracker in the retail bytes.
+        if (curEnv) {
+            curEnv->SetUseApproxGlobal(savedApprox);
+        }
     }
 }
 
@@ -1097,6 +1099,16 @@ static const char *sCollideNames[] = {
     "pelvis.coll", "r_arm.coll", "r_foot.coll", "r_hand.coll", "r_knee.coll", ""
 };
 
+// House per-TU pattern (cf. src/system/rndobj/Utl.cpp:59,
+// src/system/utl/BinStream.cpp:18): retail EVALUATES the notify's
+// arguments even though the message itself is compiled out -- the
+// PathName(curChar) call survives in the retail bytes as a
+// vbase-adjusted `bl ?PathName@@YAPBDPBVObject@Hmx@@@Z` in the
+// collide-not-found else branch.  Scoped with push_macro/pop_macro so
+// it cannot leak into the BandWardrobe.cpp scatter-include below.
+#pragma push_macro("MILO_NOTIFY_ONCE")
+#undef MILO_NOTIFY_ONCE
+#define MILO_NOTIFY_ONCE(...) ((void)(__VA_ARGS__))
 void WorldCrowd::DrawShowing() {
     START_AUTO_TIMER("crowd_draw");
     if (!mPlacementMesh) return;
@@ -1279,49 +1291,49 @@ void WorldCrowd::DrawShowing() {
                     charXfm.m = meshXfm.m;
                 } else {
                     const Transform &meshXfm2 = mPlacementMesh->WorldXfm();
-                    charXfm.m.z.x = meshXfm2.m.z.x;
-                    charXfm.m.z.y = meshXfm2.m.z.y;
-                    charXfm.m.z.z = meshXfm2.m.z.z;
+                    // Retail copies the whole (16-byte, padded) Vector3 as four
+                    // integer words -- a struct assignment, not three float
+                    // member copies. Adjudicated on retail bytes (lwz/stw x4
+                    // from m.z at +0x20, vs our lfs/stfs x3).
+                    charXfm.m.z = meshXfm2.m.z;
 
                     if (mCrowdRotate == kCrowdRotateFace) {
                         const Transform &camWXfm = curCam->WorldXfm();
+                        // /fp:fast contracts the MINUEND product into fmsubs
+                        // only when it is spelled inline; a named temporary
+                        // forces a separate fmuls. Retail fuses the minuend and
+                        // pre-computes the subtrahend, so xT6/xT2 stay inline.
                         float cyx = camWXfm.m.y.x;
                         float xT7 = charXfm.m.z.y * cyx;
-                        float xT6 = charXfm.m.z.z * cyx;
                         float cyy = camWXfm.m.y.y;
                         float xT0 = charXfm.m.z.z * cyy;
-                        float xT2 = charXfm.m.z.x * cyy;
                         float xT1 = charXfm.m.z.x * camWXfm.m.y.z;
                         charXfm.m.x.x = charXfm.m.z.y * camWXfm.m.y.z - xT0;
-                        charXfm.m.x.y = xT6 - xT1;
-                        charXfm.m.x.z = xT2 - xT7;
+                        charXfm.m.x.y = charXfm.m.z.z * cyx - xT1;
+                        charXfm.m.x.z = charXfm.m.z.x * cyy - xT7;
                     } else {
                         const Transform &camWXfm = curCam->WorldXfm();
                         float czx_b = charXfm.m.z.x;
                         float xT7 = camWXfm.m.y.y * czx_b;
-                        float xT6 = camWXfm.m.y.z * czx_b;
                         float cyx_b = camWXfm.m.y.x;
                         float xT0 = camWXfm.m.y.z * charXfm.m.z.y;
-                        float xT2 = cyx_b * charXfm.m.z.y;
                         float xT1 = cyx_b * charXfm.m.z.z;
                         charXfm.m.x.x = camWXfm.m.y.y * charXfm.m.z.z - xT0;
-                        charXfm.m.x.y = xT6 - xT1;
-                        charXfm.m.x.z = xT2 - xT7;
+                        charXfm.m.x.y = camWXfm.m.y.z * czx_b - xT1;
+                        charXfm.m.x.z = cyx_b * charXfm.m.z.y - xT7;
                     }
 
                     Normalize(charXfm.m.x, charXfm.m.x);
 
                     float cxx = charXfm.m.x.x;
                     float yT7 = charXfm.m.z.y * cxx;
-                    float yT6 = charXfm.m.z.z * cxx;
                     float cxy = charXfm.m.x.y;
                     float czx = charXfm.m.z.x;
                     float yT0 = charXfm.m.z.z * cxy;
-                    float yT2 = czx * cxy;
                     float yT1 = czx * charXfm.m.x.z;
                     charXfm.m.y.x = charXfm.m.z.y * charXfm.m.x.z - yT0;
-                    charXfm.m.y.y = yT6 - yT1;
-                    charXfm.m.y.z = yT2 - yT7;
+                    charXfm.m.y.y = charXfm.m.z.z * cxx - yT1;
+                    charXfm.m.y.z = czx * cxy - yT7;
                 }
                 charXfm.v.x = 0;
                 charXfm.v.y = 0;
@@ -1391,9 +1403,13 @@ void WorldCrowd::DrawShowing() {
                 // --- Render character to impostor texture ---
                 if (TheRnd.GetDrawMode() == Rnd::kDrawNormal) {
                     if (!mEnviron) {
+                        // Retail's DrawShowing contains EXACTLY ONE PathName
+                        // call (the collide-not-found site below).  The "%s: "
+                        // + PathName(this) prefix here is a DC3-era addition;
+                        // with argument evaluation live it would emit a second
+                        // PathName call that retail does not have.
                         MILO_NOTIFY_ONCE(
-                            "%s: Rendering 2D crowd character texture without an environment, set the environ property on the WorldCrowd object.",
-                            PathName(this)
+                            "Rendering 2D crowd character texture without an environment, set the environ property on the WorldCrowd object."
                         );
                     }
                     RndEnviron *env = mEnviron;
@@ -1404,7 +1420,9 @@ void WorldCrowd::DrawShowing() {
                     }
                     {
                         const Transform &charWorldXfm = curChar->WorldXfm();
-                        RndEnvironTracker tracker(env, &charWorldXfm.v);
+                        // retail re-loads the member here (lwz r4, 0x74, r25);
+                        // it does not pass the cached 'env' local
+                        RndEnvironTracker tracker(mEnviron, &charWorldXfm.v);
                         gImpostorCamera->Select();
                         curChar->SetShowing(true);
 #ifdef RB3_WORLDCROWD_DC3_REV
@@ -1418,11 +1436,16 @@ void WorldCrowd::DrawShowing() {
                             curChar->SetLodType(kLODPerFrame);
                         }
 #endif
+                        // Retail restores the environ and re-selects the camera
+                        // INSIDE the tracker scope (~RndEnvironTracker runs
+                        // last), and re-reads the mEnviron member for the test
+                        // rather than the cached local. Both adjudicated on
+                        // retail bytes; matches the rb3-Wii oracle's scoping.
+                        if (mEnviron) {
+                            env->SetUseApproxGlobal(savedApprox);
+                        }
+                        curCam->Select();
                     }
-                    if (env) {
-                        env->SetUseApproxGlobal(savedApprox);
-                    }
-                    curCam->Select();
                 }
 
                 // --- Update billboard quad vertices ---
@@ -1453,6 +1476,12 @@ void WorldCrowd::DrawShowing() {
                 verts[2].tex.y = clampedMinX;
                 verts[3].tex.x = clampedMaxY;
                 verts[3].tex.y = clampedMaxX;
+                // NOTE: retail re-derives the mesh here (lwz 0x38 -> lwz 0x2c)
+                // rather than reusing the cached pointer. Spelling it as
+                // mmesh->Mesh()->Sync(0x1F) is INERT -- MSVC CSEs it straight
+                // back to the cached value, idx 495/496 stay deleted. The
+                // re-derivation is a rematerialization under register
+                // pressure, not a source-level construct. Do not re-try.
                 billboardMesh->Sync(0x1F);
 
                 // --- Draw billboarded multimesh instances ---
@@ -1461,6 +1490,8 @@ void WorldCrowd::DrawShowing() {
         }
     }
 }
+
+#pragma pop_macro("MILO_NOTIFY_ONCE")
 
 void SetMatColorFlags(ObjPtrList<RndMat, ObjectDir> &matList, BaseMaterial::ColorModFlags flags,
                       std::vector<Hmx::Color> *modulate) {

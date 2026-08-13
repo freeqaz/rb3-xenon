@@ -16,6 +16,32 @@ public:
     bool UpdatePerformanceData();
     bool UpdateReview();
     bool UpdateRestricted();
+    /** Retail 0x825BAE40 -- the sixth member of the Update* family, absent from
+        BOTH oracles (rb3-Wii and DC3 declare only the five above). Decoded off
+        retail bytes; the body is unambiguous:
+
+            bool old = mDemo;                                // lbz r30,0x2d(r3)
+            mDemo = TheSongMgr.IsDemo(mData->ID());          // 0x108 -> ID(), IsDemo
+            if (mDemo == old) return false;                  // cmplw / beq
+            UpdatePerformanceData();                         // bl 0x825BA6C8
+            return true;
+
+        Every callee is map-named: 0x82575F68 = ?IsDemo@BandSongMgr@@QBA_NH@Z,
+        0x825BA6C8 = ?UpdatePerformanceData@SongRecord@@QAA_NXZ, and the global it
+        loads (0x82C72BA8) is ?TheSongMgrPtr@@3PAVBandSongMgr@@A. The store is to
+        +0x2d, which /d1reportSingleClassLayoutSongRecord puts at mDemo -- so this
+        is the mDemo analogue of UpdateSharedStatus (0x2c) / UpdateRestricted
+        (0x2e).
+
+        ⚠ THE NAME IS INFERRED, NOT RECOVERED. 0x825BAE40 is absent from
+        target_symbol_map.json and neither oracle has the method, so no oracle can
+        supply the real spelling; `UpdateDemo` is chosen to parallel the family.
+        The name is score-invisible either way (a `bl` target is a relocation
+        argument, which the default ruler masks), so this costs nothing if wrong.
+
+        DECLARED, NOT DEFINED -- the MusicLibraryUnkOp / Unk825BC900 house pattern.
+        Only the call shape into it is reproduced here, not its body. */
+    bool UpdateDemo(); // retail 0x825BAE40
     int GetTier(Symbol) const;
     short GetInstrumentMask(ScoreType) const;
     Symbol GetShortDifficultySym(ScoreType) const;

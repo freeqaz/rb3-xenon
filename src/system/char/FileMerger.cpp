@@ -543,9 +543,23 @@ bool FileMerger::StartLoadInternal(bool async, bool loading) {
 }
 
 FileMerger::Merger *FileMerger::NotifyFileLoaded(Loader *l, DirLoader *dl) {
-    auto _tmp1 = l->LoaderFile();
+    // ⚠ MAP DEFECT (proven on retail bytes, lane B6-FM): retail's second
+    // parameter is an `ObjectDir *`, NOT a `DirLoader *` -- i.e. the rb3-Wii
+    // signature `NotifyFileLoaded(Loader *, ObjectDir *)`, not DC3's.
+    // Evidence: retail `FileMerger::FinishLoading` computes
+    // `d ? d->GetDir() : nullptr` into r5 and passes THAT (idx 16-26 of its
+    // target listing), and both `msg[1] = <param>` sites here apply the
+    // ObjectDir->Hmx::Object virtual-base adjust (`lwz r11,4(p); lwz r11,4(r11);
+    // add; addi r11,r11,4`) directly to the raw parameter -- a conversion
+    // `DirLoader` does not have (DirLoader : Loader, ObjRefOwner; no vbtable).
+    // We cannot act on it here: scripts/target_symbol_map.json encodes
+    // `PAVDirLoader@@`, and objdiff pairs target<->base by MANGLED NAME, so
+    // changing the parameter type un-pairs the row into a false 0%. Fixing the
+    // map (here, PostMerge and FinishLoading together) is a separate lane.
+    // Consequence: `dir` below costs a `GetDir()` call retail does not make.
+    ObjectDir *dir = dl ? dl->GetDir() : nullptr;
     MILO_ASSERT_FMT(
-        _tmp1 == mFilesPending.front()->loading,
+        l->LoaderFile() == mFilesPending.front()->loading,
         "%s != %s",
         l->LoaderFile(),
         mFilesPending.front()->loading
@@ -556,10 +570,35 @@ FileMerger::Merger *FileMerger::NotifyFileLoaded(Loader *l, DirLoader *dl) {
     if (!sDisableAll) {
         static Message msg("on_pre_merge", 0, 0, 0);
         msg[0] = m->mName;
-        ObjectDir *dir = dl ? dl->GetDir() : nullptr;
         msg[1] = dir;
         msg[2] = m->MergerDir();
         HandleType(msg);
+        // RB3-360-retail-exclusive game hacks -- present in NO oracle (absent
+        // from both rb3-Wii and DC3), recovered from the retail disassembly.
+        // The five literals decode straight out of band.exe .rdata:
+        // 0x8200100C "main", 0x8201232C "body_realtime_clips",
+        // 0x82012318 "body_tempo_clips", 0x820137FC "hack_fix_clips_pre_merge",
+        // 0x82047D90 "crowd_anim".  `hack_fix_clips_pre_merge` is the handler
+        // slot BandCharacter.cpp already flags as misnamed (see its comment at
+        // the `toggle_interests_overlay` arm) -- this is its sender.
+        if (Dir()) {
+            if (Type() == "main") {
+                if (m->mName == "body_realtime_clips"
+                    || m->mName == "body_tempo_clips") {
+                    static Message hackMsg("hack_fix_clips_pre_merge", 0, 0);
+                    hackMsg[0] = dir;
+                    hackMsg[1] = m->mName;
+                    Dir()->Handle(hackMsg, true);
+                }
+            } else if (Type() == "crowd_anim") {
+                // Crowd animations must play in real time, never beat-aligned.
+                if (m->MergerDir()) {
+                    for (ObjDirItr<CharClip> it(m->MergerDir(), true); it; ++it) {
+                        it->SetBeatAlignMode(CharClip::kPlayRealTime);
+                    }
+                }
+            }
+        }
         m->mLoaded = m->loading;
         m->loading.SetRoot("");
     }

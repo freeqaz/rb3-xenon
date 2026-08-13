@@ -1750,10 +1750,8 @@ void ResetNormals(RndMesh *m) {
     }
 
     for (int i = 0; i < m->Verts().size(); i++) {
-        RndMesh::Vert &v = m->Verts()[i];
-        Vector3 *pNorm = &v.norm;
-        Vector4 *pTangent = &v.tangent;
-        pNorm->Zero();
+        Vector4 *pTangent = &m->Verts()[i].tangent;
+        m->Verts()[i].norm.Zero();
         ((Vector3 *)pTangent)->Zero();
 
         int rep = repVerts[i];
@@ -1795,9 +1793,7 @@ void ResetNormals(RndMesh *m) {
                 crossProd.x *= angle;
                 crossProd.y *= angle;
                 crossProd.z *= angle;
-                pNorm->x = pNorm->x + crossProd.x;
-                pNorm->y = pNorm->y + crossProd.y;
-                pNorm->z = pNorm->z + crossProd.z;
+                Add(m->Verts()[i].norm, crossProd, m->Verts()[i].norm);
 
                 Vector4 ft = faceTangents[f];
                 ft.x *= angle;
@@ -1808,25 +1804,21 @@ void ResetNormals(RndMesh *m) {
                 pTangent->z = pTangent->z + ft.z;
             }
         }
-        Normalize(*pNorm, *pNorm);
+        Normalize(m->Verts()[i].norm, m->Verts()[i].norm);
         Normalize(*(Vector3 *)pTangent, *(Vector3 *)pTangent);
 
         if (leftHanded) {
-            pNorm->x = -pNorm->x;
-            pNorm->y = -pNorm->y;
-            pNorm->z = -pNorm->z;
-            pTangent->x = -pTangent->x;
-            pTangent->y = -pTangent->y;
-            pTangent->z = -pTangent->z;
+            Negate(m->Verts()[i].norm, m->Verts()[i].norm);
+            Negate(*(Vector3 *)pTangent, *(Vector3 *)pTangent);
         }
 
         Vector4 tangCopy = *pTangent;
-        float tDotN = pNorm->x * tangCopy.x + pNorm->z * tangCopy.z + pNorm->y * tangCopy.y;
-        Vector3 ortho(
-            tangCopy.x - pNorm->x * tDotN,
-            tangCopy.y - pNorm->y * tDotN,
-            tangCopy.z - pNorm->z * tDotN
-        );
+        Vector3 &n = m->Verts()[i].norm;
+        float tDotN = n.x * tangCopy.x + n.z * tangCopy.z + n.y * tangCopy.y;
+        Vector3 scaledNorm;
+        Scale(n, tDotN, scaledNorm);
+        Vector3 ortho;
+        Subtract(*(Vector3 *)&tangCopy, scaledNorm, ortho);
         Normalize(ortho, *(Vector3 *)pTangent);
     }
     m->Sync(0x1F);
@@ -2025,6 +2017,8 @@ bool RndAmbientOcclusion::Edge::operator<(const Edge &e) const {
 #endif
 
 #include "rndobj/CamAnim.h"
+#include "rndobj/EnvAnim.h"
+#include "rndobj/Text.h"
 
 void RndScaleObject(Hmx::Object *obj, float scale, float fovScale) {
     RndDrawable *draw = dynamic_cast<RndDrawable *>(obj);
@@ -2057,6 +2051,19 @@ void RndScaleObject(Hmx::Object *obj, float scale, float fovScale) {
     RndEnviron *env = dynamic_cast<RndEnviron *>(obj);
     if (env) {
         env->SetFogRange(env->FogStart() * scale, env->FogEnd() * scale);
+        return;
+    }
+    RndEnvAnim *envanim = dynamic_cast<RndEnvAnim *>(obj);
+    if (envanim) {
+        if (envanim->KeysOwner() == envanim) {
+            ScaleFrame(envanim->FogColorKeys(), fovScale);
+            ScaleFrame(envanim->AmbientColorKeys(), fovScale);
+        }
+        return;
+    }
+    RndText *text = dynamic_cast<RndText *>(obj);
+    if (text) {
+        text->SetSize(text->Size() * scale);
         return;
     }
     RndGenerator *gen = dynamic_cast<RndGenerator *>(obj);
