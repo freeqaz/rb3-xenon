@@ -1109,25 +1109,31 @@ float VocalTrackDir::PitchToZ(float pitch, bool clamp) const {
 }
 
 void VocalTrackDir::UpdateTubeStyle() {
-    static Symbol lead_back("lead_back");
-    static Symbol lead_front("lead_front");
-    static Symbol lead_glow("lead_glow");
-    static Symbol lead_phoneme("lead_phoneme");
-    static Symbol harmony_1_back("harmony_1_back");
-    static Symbol harmony_1_front("harmony_1_front");
-    static Symbol harmony_1_glow("harmony_1_glow");
-    static Symbol harmony_1_phoneme("harmony_1_phoneme");
-    static Symbol harmony_2_back("harmony_2_back");
-    static Symbol harmony_2_front("harmony_2_front");
-    static Symbol harmony_2_glow("harmony_2_glow");
-    static Symbol harmony_2_phoneme("harmony_2_phoneme");
-    static Symbol same_as_harmony_1("same_as_harmony_1");
-    static Symbol fix_glow_size("fix_glow_size");
-    static Symbol glow_size("glow_size");
-    static Symbol glow_alpha("glow_alpha");
     if (mTubeStyle) {
         if (!mSpotlightMat)
             mSpotlightMat = Find<RndMat>("spotlight.mat", true);
+        // RB3-360 retail (lane BODYPORT-3): these 17 function-local statics are
+        // declared HERE, inside the `if (mTubeStyle)` block and after the
+        // spotlight lazy-init -- not hoisted to the top of the function. MSVC
+        // emits a local static's guarded initializer at its DECLARATION point,
+        // so hoisting them moved the whole guard+Find<RndMat> block ~190
+        // instructions later than retail and cost 29 insert/delete rows.
+        static Symbol lead_back("lead_back");
+        static Symbol lead_front("lead_front");
+        static Symbol lead_glow("lead_glow");
+        static Symbol lead_phoneme("lead_phoneme");
+        static Symbol harmony_1_back("harmony_1_back");
+        static Symbol harmony_1_front("harmony_1_front");
+        static Symbol harmony_1_glow("harmony_1_glow");
+        static Symbol harmony_1_phoneme("harmony_1_phoneme");
+        static Symbol harmony_2_back("harmony_2_back");
+        static Symbol harmony_2_front("harmony_2_front");
+        static Symbol harmony_2_glow("harmony_2_glow");
+        static Symbol harmony_2_phoneme("harmony_2_phoneme");
+        static Symbol same_as_harmony_1("same_as_harmony_1");
+        static Symbol fix_glow_size("fix_glow_size");
+        static Symbol glow_size("glow_size");
+        static Symbol glow_alpha("glow_alpha");
         if (!mLeadBackMat && mTubeStyle->Property(lead_back, true)->NotNull()) {
             mLeadBackMat = mTubeStyle->Property(lead_back, true)->Obj<RndMat>();
         }
