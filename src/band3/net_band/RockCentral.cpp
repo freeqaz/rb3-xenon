@@ -1941,19 +1941,19 @@ void RockCentral::ExecuteConfig(const char *cc) {
 #pragma push
 #pragma dont_inline on
 BEGIN_HANDLERS(RockCentral)
+    // Six HANDLE_MESSAGE entries removed: their message-type strings occur
+    // ZERO times anywhere in orig/45410914/band.exe, so no retail TU ever
+    // instantiates those Msg::Type() statics -- delete_queue_update,
+    // delete_user_complete, wii_friend_mgr_op_complete, wii_friends_list_changed,
+    // enumerate_messages_complete, invite_received. The two wii_* ones are the
+    // Wii-oracle-correct / Xbox-wrong class. Kept: the seven whose type strings
+    // ARE in the image.
     HANDLE_MESSAGE(ServerStatusChangedMsg)
     HANDLE_MESSAGE(UserLoginMsg)
     HANDLE_MESSAGE(FriendsListChangedMsg)
     HANDLE_MESSAGE(ConnectionStatusChangedMsg)
     HANDLE_MESSAGE(ProfileChangedMsg)
     HANDLE_MESSAGE(RockCentralOpCompleteMsg)
-    HANDLE_MESSAGE(DeleteQueueUpdatedMsg)
-    HANDLE_MESSAGE(DeleteUserCompleteMsg)
-    HANDLE_MESSAGE(WiiFriendMgrOpCompleteMsg)
-    HANDLE_MESSAGE(WiiFriendsListChangedMsg)
-    HANDLE_MESSAGE(EnumerateMessagesCompleteMsg)
-    HANDLE_MESSAGE(SigninChangedMsg)
-    HANDLE_MESSAGE(InviteReceivedMsg)
 #ifndef RB3_STRIP_CHEAT_HANDLERS
     // Retail X360 stripped this dev handler. Verified against the decompressed
     // retail PE (orig/45410914/band.exe): the ordered ??0Symbol@@QAA@PBD@Z string
