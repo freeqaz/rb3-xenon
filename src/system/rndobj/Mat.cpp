@@ -50,17 +50,11 @@ namespace {
     }
 }
 
-RndMat::RndMat()
-    : mMetaMaterial(this), mToggleDisplayAllProps(0), mOwnsMetaMat(0),
-      mUpdatingFromMetaMat(0) {}
+// RndMat adds no instance members in RB3-360 retail (sizeof == sizeof(BaseMaterial)
+// == 396); the DC3 MetaMaterial ownership block is gone. See rndobj/Mat.h.
+RndMat::RndMat() {}
 
-RndMat::~RndMat() {
-    if (mOwnsMetaMat && mMetaMaterial) {
-        if (mMetaMaterial->RefCount() == 1) {
-            RELEASE(mMetaMaterial);
-        }
-    }
-}
+RndMat::~RndMat() {}
 
 // RB3-360 retail carries the allowed_next_pass / allowed_normal_map handlers on
 // RndMat itself and chains straight to Hmx::Object -- it does NOT go through
@@ -117,11 +111,8 @@ END_HANDLERS
     }
 
 BEGIN_PROPSYNCS(RndMat)
-    SYNC_PROP_SET(
-        metamaterial, mMetaMaterial.Ptr(), mMetaMaterial = _val.Obj<MetaMaterial>();
-        UpdatePropertiesFromMetaMat();
-        mOwnsMetaMat = false;
-    )
+    // No `metamaterial` property in RB3-360 retail -- the string "metamaterial"
+    // occurs 0 times in orig/45410914/band.exe. See rndobj/Mat.h.
     SYNC_MAT_PROP(intensify, mIntensify, 2)
     SYNC_MAT_PROP(blend, (int &)mBlend, 2)
     SYNC_MAT_PROP(color, mColor, 1)
@@ -251,7 +242,6 @@ END_PROPSYNCS
 BEGIN_SAVES(RndMat)
     SAVE_REVS(0x46, 0)
     SAVE_SUPERCLASS(BaseMaterial)
-    bs << mMetaMaterial;
 END_SAVES
 
 BEGIN_COPYS(RndMat)
@@ -262,10 +252,8 @@ BEGIN_COPYS(RndMat)
             COPY_MEMBER(mShaderOptions)
             COPY_MEMBER(mColorModFlags)
             COPY_MEMBER(mColorMod)
-            COPY_MEMBER(mMetaMaterial)
         }
         mDirty = 3;
-        UpdatePropertiesFromMetaMat();
     END_COPYING_MEMBERS
 END_COPYS
 
@@ -290,10 +278,6 @@ BEGIN_LOADS(RndMat)
     } else {
         BaseMaterial::Load(d.stream);
     }
-    if (d.rev > 0x45) {
-        mMetaMaterial.Load(d.stream, true, sMetaMaterials);
-    }
-    UpdatePropertiesFromMetaMat();
 END_LOADS
 
 void RndMat::Init() {
@@ -372,25 +356,12 @@ bool RndMat::GetRefractEnabled(bool b) {
         && (b || TheRnd.GetCurrentFrameTex(false));
 }
 
-MatPropEditAction RndMat::GetMetaMatPropAction(Symbol s) {
-    String str(s);
-    str += "_edit_action";
-    const DataNode *node = mMetaMaterial->Property(str.c_str(), true);
-    MILO_ASSERT(node, 0x2BE);
-    return (MatPropEditAction)node->Int();
-}
+// GetMetaMatPropAction is gone with the per-instance MetaMaterial block: it existed
+// only to read "<prop>_edit_action" off mMetaMaterial, and "_edit_action" occurs
+// 0 times in orig/45410914/band.exe. See rndobj/Mat.h.
 
 bool RndMat::OnGetPropertyDisplay(PropDisplay display, Symbol s) {
     MILO_ASSERT(display == kPropDisplayHidden || display == kPropDisplayReadOnly, 0x357);
-    if (mMetaMaterial) {
-        MatPropEditAction action = GetMetaMatPropAction(s);
-        // Check if action is kPropDefault or kPropForce (not kPropOverride)
-        if (action != 2 && (action == 0 || action == 1)) {
-            if (mToggleDisplayAllProps)
-                return display == kPropDisplayReadOnly;
-            return true;
-        }
-    }
     return false;
 }
 
@@ -429,11 +400,9 @@ void RndMat::SetSpecularMap(RndTex *tex) {
     mDirty |= 2;
 }
 
-void RndMat::SetMetaMat(MetaMaterial *mat, bool b) {
-    mMetaMaterial = mat;
-    UpdatePropertiesFromMetaMat();
-    mOwnsMetaMat = b;
-}
+// No per-instance MetaMaterial in RB3-360 retail; kept as a symbol so the 10
+// CreateAndSetMetaMat call sites and the native engine still link.
+void RndMat::SetMetaMat(MetaMaterial *, bool) {}
 
 void RndMat::UpdateAllMatPropertiesFromMetaMat(ObjectDir *dir) {
     for (ObjDirItr<RndMat> it(dir, true); it != nullptr; ++it) {
@@ -554,58 +523,11 @@ MetaMaterial *RndMat::CreateMetaMaterial(bool notify) {
     return mat;
 }
 
-bool RndMat::IsEditable(Symbol s) {
-    if (mMetaMaterial && !mUpdatingFromMetaMat) {
-        bool isEditable = mMetaMaterial->Property(s, true)->Int() == 2;
-        if (!isEditable) {
-            String propName(s);
-            int len = propName.length();
-            if (len > 12) {
-                propName = propName.substr(0, len - 12);
-            }
-            MILO_NOTIFY_ONCE(
-                "Unable to set property %s in Mat %s.  Not allowed by MetaMaterial %s.\n",
-                propName.c_str(),
-                PathName(this),
-                PathName(mMetaMaterial)
-            );
-        }
-        return isEditable;
-    }
-    return true;
-}
+// With no per-instance MetaMaterial there is nothing to gate on: every property is
+// editable. (Retail agrees -- "_edit_action" occurs 0 times in band.exe.)
+bool RndMat::IsEditable(Symbol) { return true; }
 
-void RndMat::UpdatePropertiesFromMetaMat() {
-    if (mMetaMaterial) {
-        mUpdatingFromMetaMat = true;
-        String overriddenProps;
-        std::list<Symbol> properties;
-        ListProperties(properties, "Mat", 0, nullptr);
-        for (std::list<Symbol>::iterator it = properties.begin(); it != properties.end(); ++it) {
-            static Symbol metamaterial("metamaterial");
-            Symbol cur = *it;
-            if (cur != metamaterial) {
-                MatPropEditAction action = GetMetaMatPropAction(
-                    (cur == "alpha_threshold") ? Symbol("alpha_cut") : cur
-                );
-                if ((action == kPropDefault || action == kPropForce)
-                    && PropValDifferent(cur, mMetaMaterial)) {
-                    if (cur == "tex_xfm") {
-                        mTexXfm = mMetaMaterial->TexXfm();
-                        mDirty |= 2;
-                    } else {
-                        SetProperty(cur, *mMetaMaterial->Property(cur, true));
-                    }
-                    AddOverridePropName(overriddenProps, cur);
-                }
-            }
-        }
-        if (!overriddenProps.empty())
-            overriddenProps += ".";
-        mUpdatingFromMetaMat = false;
-    }
-    mDirty |= 2;
-}
+void RndMat::UpdatePropertiesFromMetaMat() { mDirty |= 2; }
 
 void RndMat::LoadOld(BinStreamRev &d) {
     Hmx::Object::Load(d.stream);
