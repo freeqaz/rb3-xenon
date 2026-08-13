@@ -104,5 +104,11 @@ public:
     virtual RemoteUser *GetRemoteUser() { return this; }
     virtual const RemoteUser *GetRemoteUser() const { return this; }
     virtual const char *UserName() const { return mUserName.c_str(); }
-    virtual void SyncLoad(BinStream &, unsigned int) {}
+    // Retail 0x82523E28 (emitted into BandUser.obj, so it stays a header COMDAT):
+    // ReadEndian(&mMachineID, 4) via the virtual base, then BinStream::operator>>
+    // for mUserName, then the free operator>> for *mOnlineID.
+    virtual void SyncLoad(BinStream &bs, unsigned int) {
+        bs >> mMachineID >> mUserName;
+        bs >> *mOnlineID;
+    }
 };

@@ -43,6 +43,15 @@ BinStream &operator<<(BinStream &bs, const OnlineID &ssm) {
     return bs;
 }
 
+// Retail 0x825245E8: ReadEndian(&oid, 8) -- XUID is u64 at offset 0 -- then a
+// `stb 1` into offset 0x8 (mValid), returning bs. Matches the rb3-Wii oracle
+// modulo the platform ID member (Wii reads mPrincipalID, X360 reads mXUID).
+BinStream &operator>>(BinStream &bs, OnlineID &oid) {
+    bs >> oid.mXUID;
+    oid.mValid = true;
+    return bs;
+}
+
 // sw2 scatter-include (default/OnlineID <- os/Keyboard.cpp)  [lane CY-3]
 // Retail 0x82524630/0x82524660 sit inside the OnlineID .text pin
 // [0x82524510, 0x82524A28) and are Keyboard{,Un}Subscribe, NOT the Joypad
