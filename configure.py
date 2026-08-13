@@ -534,7 +534,25 @@ config.compilers_tag = "20250812"
 # 2026-08-13) and this tree re-split against it, so this line is documentation
 # catching up and cannot itself force a re-split. It re-arms the gate for the
 # next release.
-config.dtk_tag = "v1.12.0"  # jeff c0cc506 (fork of decomp-toolkit)
+#
+# 1.12.0 -> 1.13.0: two splitter correctness fixes, co-measured before deploy
+# (decomp-bench archive/runs/2026-08-13-jeff-combined-deploy-gate/).
+#   * DS-form decode, both sides: the analysis side read a DS-form load/store
+#     displacement as the full low halfword, when bits [1:0] are an opcode
+#     extension -- so it anchored two bytes inside the real datum -- and the
+#     writer zeroed those same two bits, rewriting the opcode. Both fixed
+#     together; fixing either alone regresses.
+#   * The relocation tracker walked past function_end into the NEXT function and
+#     judged its branches against the PREVIOUS function's bounds, minting
+#     spurious PpcRel14 records. Fixed at the cause, plus an
+#     instruction-derived COMDAT keep-back and a COMDAT-NESTING fix in two
+#     containment lookups (nested regions were resolved by a nearest-region
+#     query, which both held functions back spuriously and dropped needed
+#     relocations).
+# Measured object movement, exact -- the split is deterministic, six control
+# runs 3084/3084 identical: dc3 3 of 2223, rb3-xenon 64 of 3084, cea 2 of 3675.
+# Zero interaction between the two fixes on all three projects.
+config.dtk_tag = "v1.13.0"  # jeff b4b25bc (fork of decomp-toolkit)
 config.objdiff_tag = "v4.2.2"  # freeqaz/objdiff fork release (linux-x86_64 asset)
 config.sjiswrap_tag = "v1.2.1"
 config.wibo_tag = "1.0.1"
