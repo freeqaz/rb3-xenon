@@ -203,6 +203,16 @@ void PerfectOverdriveTracker::Poll_(float ms) {
                 if (endStreak) {
                     float mult = unk8c.GetMultiplier(progress);
                     float scale = contribData.unk0;
+                    // NOTE (lane EE2-B): the residual 4 mismatches in Poll_ include
+                    // two COMMUTATIVE_OP_ORDER swaps -- this `+=` (target
+                    // `add r11, r26, r11` vs our `add r11, r11, r26`) and the
+                    // `GetHitCount() + m0x08` on the totalNotes line above (idx 136).
+                    // Rewriting BOTH in retail's operand order -- `unk1c =
+                    // hitsSinceStart + unk1c` and `m0x08 + GetHitCount()` -- is
+                    // MEASURED INERT: byte-identical output, still 99.599 with the
+                    // same 4 mismatches in the same operand order. MSVC canonicalises
+                    // commutative integer operand order before regalloc, so source
+                    // spelling cannot steer it here. Do not re-try this.
                     streakData.unk1c += hitsSinceStart;
                     float points = mult * ((float)hitsSinceStart * scale);
                     LocalEndStreak(id, points, hitsSinceStart);
