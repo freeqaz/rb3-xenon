@@ -963,9 +963,33 @@ What it enforces — the manual steps survive here only as the explanation of
   `--baseline` flag: deltas compose, absolutes do not, and a baseline file is
   an absolute somebody else measured (the coordinator once briefed 41955 by
   summing deltas; the measured value was 41956).
-- Default ruler = the ninja report edge (hard-coded `functionRelocDiffs=none`);
-  `--name-check` adds the opt-in name_check ruler with its noise-floor warning
-  (nc aggregate code% is build-unstable ~0.05pp).
+- ⛔⛔ **CORRECTED 2026-08-13 (lane FORK-DIAG). This bullet used to say the ninja
+  report edge is "hard-coded `functionRelocDiffs=none`" — FALSE since `d04c83df`
+  (2026-08-12 00:47) "Ship functionRelocDiffs=name_check".** `objdiff.json` now
+  carries `options = {"functionRelocDiffs": "name_check"}` and
+  `objdiff_report_args` is empty ⇒ **name_check is the SHIPPED DEFAULT; `none` is
+  now the OPT-IN one.** `--name-check` keeps its noise-floor warning (nc
+  aggregate code% is build-unstable ~0.05pp).
+  ★★★ **THE RULER ALONE MOVES BYTES ~817 kB / 7.9 pp WITH ZERO SOURCE CHANGE.**
+  Measured on ONE binary (`9f6c6c32ae11`), one tree, cache wiped between legs:
+  `none` = **4,366,752 B / 42.31%** vs `name_check` = **3,549,568 B / 34.39%** —
+  while `matched_functions` (44,252) and `masked_equal` (22,886) are
+  **bit-identical**, because `mpn` excludes arg-only penalties and
+  `none`→`name_check` changes *only* relocation-name arg comparison.
+  ⇒ **ANY byte absolute recorded before 2026-08-12 00:47 is incomparable to one
+  after it unless the ruler is stated.** ⚠ A swing of exactly this shape was
+  mis-attributed to an objdiff **rebuild** on 2026-08-13 — it was the **ruler**,
+  not the binary. ★ **`report.json` self-declares `diff_config`, `tool_commit`
+  and `tool_binary_hash` in a `provenance` block — READ IT, don't infer.**
+  ⚠ **`report.json` is protobuf-JSON: DEFAULTS ARE OMITTED.** Absent
+  `fuzzy_match_percent` = 0, absent `masked_equal` = false, absent unit
+  `matched_code` = 0; **zero** rows carry an explicit `0.0`/`false`, and a naive
+  `d['matched_code']` **raises `KeyError`**. With the JSON-strings trap, read
+  every numeric as `int(x.get(k, 0))`.
+  ⚠ **The `masked_equal` ROW-FLAG is a SUPERSET of the MEASURE** — 24,386 flagged
+  rows vs `masked_equal_functions` = 22,886. Not a defect: the counter increments
+  only inside `match_percent_normalized == 100.0`, since it exists to discount
+  *credit*. **Do not count flagged rows and expect the measure.**
 - ★ **The worktree is handed back exactly as it was found, on EVERY exit path**
   (`--keep-applied` opts out, loudly). **ONE change per run** — a repeated
   `--patch`/`--pick`/`--revert` is refused instead of silently measuring the
