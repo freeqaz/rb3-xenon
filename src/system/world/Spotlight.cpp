@@ -193,14 +193,21 @@ Spotlight::~Spotlight() {
     RELEASE(mFlare);
 }
 
+// Retail 0x824D81C0 (144 B). Same virtual-base compare as the rest of the
+// Replace family (see RndCamAnim::Replace), but the body is TWO INDEPENDENT
+// ifs, not an if/else: retail sets the owner from the cast (unguarded -- no
+// null test on the cast result), then RE-READS the member from memory
+// (lwz r11,-0x180(r31)) and, if it is now null, falls back to `this`.
+// The old `if (!SetObj(to)) mColorOwner = this;` collapsed both into one
+// test against SetObj's return value, which retail does not have.
 void Spotlight::Replace(ObjRef *from, Hmx::Object *to) {
-    if (RefIs(from, mColorOwner)) {
-        if (!mColorOwner.SetObj(to)) {
-            mColorOwner = this;
-        }
-        return;
-    } else {
-        RndTransformable::Replace(from, to);
+    RndTransformable::Replace(from, to);
+    if (static_cast<Hmx::Object *>(mColorOwner.Ptr())
+        == reinterpret_cast<Hmx::Object *>(from)) {
+        mColorOwner.SetObjConcrete(dynamic_cast<Spotlight *>(to));
+    }
+    if (!mColorOwner.Ptr()) {
+        mColorOwner.SetObjConcrete(this);
     }
 }
 
