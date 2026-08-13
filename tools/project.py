@@ -512,6 +512,12 @@ def generate_build_ninja(
     icf_map_path = build_path / "icf_aliases.map"
     icf_map_checked = build_path / "icf_aliases_checked.stamp"
     icf_map_purged = build_path / "icf_aliases_cache_purged.stamp"
+    # Global NAME-injectivity assertion over scripts/target_symbol_map.json.
+    # Same shape and same neighbourhood as icf_alias_map_checked because it is
+    # the same class of defect one file over; see its edge below.
+    mapinj_script = Path("tools") / "map_name_injectivity.py"
+    mapinj_json = Path("scripts") / "target_symbol_map.json"
+    mapinj_checked = build_path / "map_name_injectivity_checked.stamp"
     build_tools_path = config.build_dir / "tools"
     download_tool = config.tools_dir / "download_tool.py"
     n.rule(
@@ -1498,6 +1504,7 @@ def generate_build_ninja(
                 python_lib,
                 report_path,
                 str(icf_map_checked),
+                str(mapinj_checked),
             ],
             order_only="post-build",
         )
@@ -1584,6 +1591,56 @@ def generate_build_ninja(
                 str(icf_gen_script), str(icf_aliases_json), str(icf_map_path),
                 "always",
             ],
+        )
+
+        ###
+        # *** THE TARGET SYMBOL MAP MUST BE INJECTIVE ON NAME. ***
+        # scripts/target_symbol_map.json is address-keyed, so its shape offers
+        # no defence at all against stamping one mangled name onto several VAs
+        # -- which a linked image can never do, because it resolves every
+        # COMDAT/extern symbol to exactly ONE definition. The duplicate still
+        # SCORES at every VA, because objdiff pairs by name inside a unit and
+        # is blind to the relocation targets that separate byte-twin thunks,
+        # deleting dtors and template bodies. So a duplicate name is a live
+        # path to minting a BYTE-EXACT witness against the wrong target body,
+        # and byte-exact is the ADMISSION gate for a crack and for a training
+        # label -- not a metric we can revise later.
+        #
+        # `always`, like the CHECK edge above and for the same reason: the map
+        # is edited by hand and by fragment appliers, and neither the renamer
+        # stamp nor any output mtime can express "the file gained a duplicate".
+        # Cost is one interpreter start on a read-only pass over one JSON.
+        #
+        # WHY THIS EDGE EXISTS WHEN TWO PER-UNIT CHECKS ALREADY DO:
+        # scripts/harvest/icf_class_bijection.py and
+        # scripts/harvest/tu5_map_apply_fragment.py enforce injectivity WITHIN
+        # one unit / one fragment. Cross-unit duplicates pass both. That gap is
+        # how the debt returned twice (738 surplus VAs before e7b8ba85, 533
+        # again two days later from new fragments): a fragment applier being
+        # locally correct is not evidence that the map is globally correct.
+        #
+        # The check is SET-based and prints the offending set, never a count --
+        # 2eb6307a records a map plan that left the collision COUNT unchanged
+        # (8 -> 8) while retiring one duplicate and INTRODUCING another, which
+        # a count comparison passes clean. It reads the MAP rather than the
+        # objs, because a two-VA collision inside ONE unit
+        # (?DataDir@UIPanel@@$4...) never reaches a differ at all. And it scores
+        # the APPLIED map via the renamer's own load_address_map, so the gate
+        # and the renamer cannot disagree about which rows count -- `_denylist`
+        # was declared in that JSON and IGNORED by the loader until f3fe9ab1,
+        # and a gate carrying a private copy of that filter would be the second
+        # safeguard here that silently did nothing.
+        ###
+        n.comment("Assert the target symbol map is globally injective on NAME")
+        n.rule(
+            name="map_name_injectivity_check",
+            command=f"$python {mapinj_script} --quiet && touch $out",
+            description="CHECK MAP NAME-INJECTIVITY",
+        )
+        n.build(
+            outputs=str(mapinj_checked),
+            rule="map_name_injectivity_check",
+            implicit=[str(mapinj_script), str(mapinj_json), "always"],
         )
 
         ###
