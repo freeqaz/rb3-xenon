@@ -630,7 +630,35 @@ void MusicLibrary::CheckSongPreview() {
 }
 
 void MusicLibrary::ContentStarted() { ClearSongPreview(); }
-void MusicLibrary::ContentMounted(const char *, const char *) {}
+void MusicLibrary::ContentMounted(const char *contentName, const char *) {
+    if (!TheContentMgr.RefreshInProgress()) {
+        SortNode *node = GetHighlightedNode();
+        if (node->GetType() == kNodeSubheader) {
+            node = dynamic_cast<SubheaderSortNode *>(node)->GetFirstChildSong();
+        }
+        OwnedSongSortNode *owned = dynamic_cast<OwnedSongSortNode *>(node);
+        if (owned) {
+            int songID = owned->GetSongRecord()->Data()->ID();
+            if (TheSongMgr.IsContentUsedForSong(contentName, songID)) {
+                if (static_cast<BandSongMetadata *>(TheSongMgr.Data(songID))->IsUGC()) {
+                    if (TheSongSortMgr->GetRecord(songID)->UpdateDemo()) {
+                        PushSonglistToScreen();
+                    }
+                    PushHighlightToScreen(false);
+                } else {
+                    static Symbol song_data_mounted("song_data_mounted");
+                    static Message msg(song_data_mounted);
+                    // NOT HandleType(msg): Object::HandleType is defined
+                    // out-of-line (Object.h declares it, Object.cpp defines it),
+                    // so it emits a `bl` -- retail instead dispatches the virtual
+                    // Handle directly through the Hmx::Object virtual base
+                    // (vbptr @+8, vtable slot 0x18).
+                    TheUI->Handle(msg, false);
+                }
+            }
+        }
+    }
+}
 
 void MusicLibrary::ContentDone() {
     mViewSettingsProvider->BuildFilters(PartForFilter());
