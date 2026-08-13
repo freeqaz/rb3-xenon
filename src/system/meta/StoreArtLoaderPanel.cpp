@@ -2,6 +2,8 @@
 #include "obj/ObjMacros.h"
 #include "utl/BufStream.h"
 #include "utl/NetCacheMgr.h"
+#include "meta/StorePanel.h"
+#include "utl/NetCacheLoader.h"
 
 StoreArtLoaderPanel::StoreArtLoaderPanel() {}
 
@@ -18,18 +20,30 @@ void StoreArtLoaderPanel::Poll() {
                 MILO_ASSERT(pBuffer, 0x31);
                 it->unk10 = new RndBitmap();
                 BufStream bs(pBuffer, size, true);
-                if (it->unk10->LoadSafely(bs, 256, 256)) {
-                    it->unk10->SetMip(0);
-                }
+                // Retail calls the void Load(BinStream &) and calls SetMip
+                // UNCONDITIONALLY -- there is no LoadSafely(bs, 256, 256) and no
+                // bool test on it.  LoadSafely comes from the rb3-Wii dev oracle.
+                it->unk10->Load(bs);
+                it->unk10->SetMip(0);
                 TheNetCacheMgr->DeleteNetCacheLoader(it->unkc);
                 it->unkc = 0;
             } else {
                 if (it->unkc->HasFailed()) {
-                    MILO_WARN(
-                        "StoreArtLoaderPanel: Failed to load %s\n", it->unk0.c_str()
-                    );
+                    // Retail's failure path does MORE than the oracle's: it reads
+                    // the loader's fail type BEFORE deleting the loader, then
+                    // reports it to the store panel.  The retail callee resolves to
+                    // ?UncompressedSize@AsyncFile@@UAAHXZ, but NetCacheLoader does
+                    // not derive from AsyncFile -- that is an ICF fold-alias, since
+                    // AsyncFile::UncompressedSize is `return mUCSize;` and folds
+                    // with any trivial int getter at the same offset.  The real
+                    // callee is GetFailType() (mFailType @ 0x20), which is also the
+                    // only reading that makes sense of the argument: the receiver is
+                    // StorePanel::HandleNetCacheLoaderFailure(int), and a FAILED
+                    // download reports a fail type, not an uncompressed size.
+                    NetCacheMgrFailType failType = it->unkc->GetFailType();
                     TheNetCacheMgr->DeleteNetCacheLoader(it->unkc);
                     it->unkc = 0;
+                    StorePanel::Instance()->HandleNetCacheLoaderFailure(failType);
                 }
             }
         }
@@ -57,14 +71,16 @@ void StoreArtLoaderPanel::EnsureArtLoader(const String &str) {
 }
 
 RndBitmap *StoreArtLoaderPanel::GetBmp(const String &str) {
-    if (str.empty())
-        return nullptr;
-    else {
-        for (std::vector<ArtEntry>::iterator it = mArtList.begin(); it != mArtList.end();
-             ++it) {
-            if (it->unk0 == str)
-                return it->unk10;
-        }
+    // Retail has NO str.empty() early-out -- it loads mArtList.begin() and branches
+    // straight to the loop condition.  The guard comes from the rb3-Wii DEV oracle;
+    // it emitted 4 instructions (lwz 0x8(str) / lbz / cmplwi / beq) that retail
+    // does not have.  Dropping it is behaviour-neutral unless an ArtEntry is itself
+    // named "", in which case retail returns that entry -- and retail is the
+    // reference.
+    for (std::vector<ArtEntry>::iterator it = mArtList.begin(); it != mArtList.end();
+         ++it) {
+        if (it->unk0 == str)
+            return it->unk10;
     }
     MILO_WARN("%s isn't in mArtList\n", str.c_str());
     return nullptr;
