@@ -77,12 +77,21 @@ void ObjRef::ReplaceList(Hmx::Object *obj) {
 bool gLoadingProxyFromDisk = false;
 bool gMiloTool = false;
 std::map<Symbol, ObjectFunc *> Hmx::Object::sFactories;
+#ifdef HX_NATIVE
+// The 8-slot recursion-safe property-path pool is a DC3-ERA ADDITION that RB3
+// retail does NOT have (dc3-decomp/src/system/obj/Object.cpp has it; rb3-Wii has
+// no such symbol, and retail's SetProperty(Symbol,...) body contains no pool scan
+// -- see the comment on SetProperty(Symbol, const DataNode &) below).  Retail
+// shares ONE static scratch array, which is a latent re-entrancy bug DC3 later
+// fixed.  We reproduce retail's bug in the match build and keep the safe pool
+// natively, where this code actually executes.
 DataArrayPtr gPropPaths[8] = {
     DataArrayPtr(new DataArray(1)), DataArrayPtr(new DataArray(1)),
     DataArrayPtr(new DataArray(1)), DataArrayPtr(new DataArray(1)),
     DataArrayPtr(new DataArray(1)), DataArrayPtr(new DataArray(1)),
     DataArrayPtr(new DataArray(1)), DataArrayPtr(new DataArray(1))
 };
+#endif
 MsgSinks gSinks(nullptr);
 
 #ifndef HX_NATIVE
@@ -698,6 +707,7 @@ void Hmx::Object::BroadcastPropertyChange(DataArray *a) {
 #pragma endregion
 #pragma region Property Methods
 
+#ifdef HX_NATIVE
 DataArray *GetNextPropPath() {
     for (int i = 0; i < DIM(gPropPaths); i++) {
         if (gPropPaths[i]->RefCount() == 1) {
@@ -707,6 +717,7 @@ DataArray *GetNextPropPath() {
     MILO_FAIL("Recursive SetProperty call count greater than %d!", 8);
     return nullptr;
 }
+#endif
 
 const DataNode *Hmx::Object::Property(DataArray *prop, bool fail) const {
     static DataNode n(0);
@@ -739,13 +750,42 @@ const DataNode *Hmx::Object::Property(DataArray *prop, bool fail) const {
     }
 
     if (fail) {
+#ifdef HX_NATIVE
+        // Native keeps the DTA-warn path verbatim (MILO_FAIL_DTA warns on native,
+        // MILO_FAIL is fatal) -- do not "unify" these, it turns a recoverable
+        // missing-property warning into a native abort.
         MILO_FAIL_DTA("%s: property %s not found", PathName(this), PrintPropertyPath(prop));
+#else
+        // Retail streams the path into a local String (String derives from
+        // TextStream) rather than calling PrintPropertyPath.  Retail bytes here:
+        // ??0String@@QAA@XZ, operator<<(TextStream &, const DataArray *), a String
+        // COPY ctor, PathName(this), two ~String -- and NO MakeString and NO
+        // Debug::Fail.  MILO_FAIL_DTA's non-native branch (TheDebugFailer <<
+        // MakeString) emits both, which is why this read as a total body mismatch.
+        //
+        // RESIDUAL, deliberately not chased (87.0 -> 91.5%, still 0 bytes because
+        // matched_code is all-or-nothing): retail's surviving argument setup is
+        // RIGHT-TO-LEFT (copy of str, then PathName, then the format literal) --
+        // the signature of a stripped VARARGS call, MakeString(fmt, PathName(this),
+        // str), where str went through `...` by value.  MILO_FAIL's ((void)(args))
+        // comma form evaluates LEFT-TO-RIGHT and makes no copy.  Forcing the copy
+        // with an explicit String(str) reaches 93.4% but emits it in the wrong
+        // order and is source-level metric-fitting, so it is not done here; the
+        // real fix is to model MILO_FAIL_DTA's stripped varargs call in Debug.h,
+        // which is PCH-wide (36 sites) and needs its own measured lane.
+        String str;
+        str << prop;
+        MILO_FAIL("%s: property %s not found", PathName(this), str);
+#endif
     }
     return nullptr;
 }
 
 const DataNode *Hmx::Object::Property(Symbol prop, bool fail) const {
-    static DataArrayPtr d(new DataArray(1));
+    // Retail builds the static via DataArrayPtr(const DataNode &) -- it stores a
+    // temp DataNode{1, kDataInt} on the frame and passes its address -- NOT via
+    // DataArrayPtr(new DataArray(1)), which would inline PoolAlloc + DataArray(int).
+    static DataArrayPtr d(1);
     d->Node(0) = prop;
     return Property(d, fail);
 }
@@ -888,11 +928,21 @@ void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
 }
 
 void Hmx::Object::SetProperty(Symbol prop, const DataNode &val) {
+#ifdef HX_NATIVE
     DataArray *path = GetNextPropPath();
     path->AddRef();
     path->Node(0) = prop;
     SetProperty(path, val);
     path->Release();
+#else
+    // Retail is byte-for-byte the same shape as Property(Symbol, bool) above: one
+    // shared function-local static, no pool, no AddRef/Release.  Adjudicated on
+    // retail bytes -- the body has no call to any pool accessor, and carries the
+    // same static guard + DataArrayPtr(const DataNode &) + atexit sequence.
+    static DataArrayPtr d(1);
+    d->Node(0) = prop;
+    SetProperty(d, val);
+#endif
 }
 
 void Hmx::Object::InsertProperty(DataArray *prop, const DataNode &val) {

@@ -198,7 +198,14 @@ bool MultiTempoTempoMap::AddTempoInfoPoint(int tick, int tempo) {
         return false;
     }
 
-    MemTemp tmp;
+    // Retail uses the EMPTY MemDoTempAllocations guard here, not MemTemp: its call
+    // sites are bare `bl <helper>` pairs with no this-setup and no frame slot, and
+    // the exit helper here is fn_827BC2A0 -- the exact dtor helper MemMgr.h names
+    // for MemDoTempAllocations.  MemTemp is the OTHER retail guard (out-of-line,
+    // homes an `int mOld`), which added a spurious `addi r3, r31, 0x50` at entry
+    // and exit and shifted every following local by +8.  The rb3-Wii oracle agrees
+    // -- it spells this MemDoTempAllocations tmp(true, false).
+    MemDoTempAllocations tmp;
     mTempoPoints.push_back(TempoInfoPoint(TickToTime(tick), tick, tempo));
     return true;
 }
