@@ -1750,10 +1750,8 @@ void ResetNormals(RndMesh *m) {
     }
 
     for (int i = 0; i < m->Verts().size(); i++) {
-        RndMesh::Vert &v = m->Verts()[i];
-        Vector3 *pNorm = &v.norm;
-        Vector4 *pTangent = &v.tangent;
-        pNorm->Zero();
+        Vector4 *pTangent = &m->Verts()[i].tangent;
+        m->Verts()[i].norm.Zero();
         ((Vector3 *)pTangent)->Zero();
 
         int rep = repVerts[i];
@@ -1795,9 +1793,7 @@ void ResetNormals(RndMesh *m) {
                 crossProd.x *= angle;
                 crossProd.y *= angle;
                 crossProd.z *= angle;
-                pNorm->x = pNorm->x + crossProd.x;
-                pNorm->y = pNorm->y + crossProd.y;
-                pNorm->z = pNorm->z + crossProd.z;
+                Add(m->Verts()[i].norm, crossProd, m->Verts()[i].norm);
 
                 Vector4 ft = faceTangents[f];
                 ft.x *= angle;
@@ -1808,24 +1804,19 @@ void ResetNormals(RndMesh *m) {
                 pTangent->z = pTangent->z + ft.z;
             }
         }
-        Normalize(*pNorm, *pNorm);
+        Normalize(m->Verts()[i].norm, m->Verts()[i].norm);
         Normalize(*(Vector3 *)pTangent, *(Vector3 *)pTangent);
 
         if (leftHanded) {
-            pNorm->x = -pNorm->x;
-            pNorm->y = -pNorm->y;
-            pNorm->z = -pNorm->z;
-            pTangent->x = -pTangent->x;
-            pTangent->y = -pTangent->y;
-            pTangent->z = -pTangent->z;
+            Negate(m->Verts()[i].norm, m->Verts()[i].norm);
+            Negate(*(Vector3 *)pTangent, *(Vector3 *)pTangent);
         }
 
         Vector4 tangCopy = *pTangent;
-        float tDotN = pNorm->x * tangCopy.x + pNorm->z * tangCopy.z + pNorm->y * tangCopy.y;
+        Vector3 &n = m->Verts()[i].norm;
+        float tDotN = n.x * tangCopy.x + n.z * tangCopy.z + n.y * tangCopy.y;
         Vector3 ortho(
-            tangCopy.x - pNorm->x * tDotN,
-            tangCopy.y - pNorm->y * tDotN,
-            tangCopy.z - pNorm->z * tDotN
+            tangCopy.x - n.x * tDotN, tangCopy.y - n.y * tDotN, tangCopy.z - n.z * tDotN
         );
         Normalize(ortho, *(Vector3 *)pTangent);
     }
