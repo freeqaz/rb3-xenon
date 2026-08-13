@@ -452,3 +452,158 @@ for the remaining re-homings.
 - **No native gate** — `config/45410914/splits.txt`, `scripts/target_symbol_map.json`
   and this doc only, **zero `src/**` edits**, so it has nothing to test. Said
   rather than skipped silently.
+
+---
+
+# Lane SPLITS-2 — the rest of `0x82456260`–`0x82457F70`: mostly a refutation, with a real defect underneath
+
+2026-08-13. SPLITS-1 left "the other `Text.cpp`/`SkeletonClip.cpp`
+interleavings" unadjudicated and handed them here.
+
+## ★★★ The headline is that the interleaving is CORRECTLY OWNED
+
+The blocks pinned to `SkeletonClip` in this region are **not class member
+functions at all** — they are **STL template COMDATs over `RecordedFrame`**:
+
+```
+vector<RecordedFrame>::{push_back, resize, reserve, _M_erase, _M_fill_insert,
+                        _M_fill_insert_aux}
+__uninitialized_copy<RecordedFrame*>   __uninitialized_fill_n<RecordedFrame*>
+_Vector_base<RecordedFrame>::~_Vector_base
+```
+
+`Faders`' two blocks are `_Rb_tree<FaderGroup*>`; `CharUtl`'s is
+`vector<Transform>`. **A template COMDAT is emitted by every TU that instantiates
+it and placed by the linker independently of TU grouping**, so interleaving into
+the `Text` run is the *expected* shape here — not evidence of a mis-pin. This is
+a different phenomenon from SPLITS-1's five spans, which were class member
+functions wearing a Dance Central unit's name.
+
+Measured by COFF definition census over all **1,204** compiled objs: **22 of 24**
+named rows in the region read `PIN-DEFINES` — the pinned unit's own `.obj`
+defines the symbol.
+
+## ⛔ MY PREDICTION WAS REFUTED, AND IT CORRECTED THE INSTRUMENT
+
+I predicted `vector<RecordedFrame>::reserve` at `0x82456be8` was mis-pinned,
+because it sits in a **BandCamShot** block while `RecordedFrame` is defined only
+in `SkeletonClip.cpp`. **`BandCamShot.obj` defines it.** The defining set of
+these COMDATs is **five TUs** — `BandCamShot`, `EventTrigger`, `ByteGrinder`,
+`SkeletonClip`, `CharLipSync`.
+
+⇒ **"DEFINED in X" is NOT EXCLUSIVE.** SPLITS-1's single-obj `DEF`/`ABSENT`
+probe discriminates only when the defining set is a **singleton**; on a template
+COMDAT it confirms whatever unit you point it at. The fix is to measure the
+**whole defining set** (`tools`-free scratch census over `build/45410914/src/**`)
+and treat `ndef > 1` as *non-decisive* rather than as confirmation. A
+single-candidate probe cannot fail — the same disease SPLITS-1 caught twice in
+itself.
+
+## The real defect: 2,044 B of RndText code wearing SkeletonClip/TourProgress pins
+
+Adjudicated on retail bytes (a `bl`-target decoder) plus a **whole-`.text`
+caller scan**, with both controls passing *before* the unknowns were touched: a
+known `RndText` function and a known `SkeletonClip` template COMDAT each decode
+as expected, and `_M_fill_insert_aux` is seen calling the two adjacent
+`SkeletonClip`-pinned `RecordedFrame` helpers.
+
+| span | from | evidence |
+|---|---|---|
+| `0x824568C0–0x824569F0` | SkeletonClip | `?GetMeshes@RndText@@` is `DEF` in `Text.obj`, **ABSENT** from `SkeletonClip.obj` (`ndef=2`, singleton among candidates), and **our COMDAT is 88 B == retail's `.pdata` extent 88 B exactly**. `fn_82456918` calls `Object::New<RndMesh>`, `RndTransformable::SetTransParent/SetTransConstraint`, and Text-pinned `fn_824553d0` |
+| `0x824575D0–0x82457680` | TourProgress | **six callers, three inside `Text.cpp`'s own pins** (`UpdateMesh@RndText`, `Copy@RndText` ×2), **zero** from TourProgress |
+| `0x82457800–0x82457D18` | SkeletonClip | three functions calling `?ParseMarkup@RndText@@`, `?SyncMeshes@RndText@@`, `fn_824553d0`/`fn_82455138`/`fn_824555b0` |
+| `0x82457D98–0x82457EA0` | SkeletonClip | **`RndText::Init`** — calls `?StaticClassName@RndText@@` + `RegisterFactory`, loads `"text_superscript_scale"`, `"text_guitar_scale"`, `"text_guitar_z_offset"`; its **only** caller is `Rnd::PreInit` |
+
+★ Fourth-party corroboration for the whole run: `fn_82457BA0` is called twice by
+`Lyric::UpdateColor`, matching the unclaimed `?UpdateLineColor@RndText@@`. And
+the `nearest named symbol` for every caller inside `0x82457800–0x82457D18` is
+`??1RndText@@` — the run is RndText code with SkeletonClip *pins* laid over it.
+
+## Deliberately LEFT — refutations and inert rows
+
+- **`0x824575C8–0x824575D0`, 8 B, stays TourProgress.** It is a **tail-call
+  thunk** (`addi r3, r3, 0xd8; b 0x82456be8`) at **mpn 100**, defined
+  exclusively by `TourProgress.obj`. It is *not* a `.pdata` BeginAddress — the
+  documented sub-`.pdata` stub stratum (an 8-byte leaf touches neither stack nor
+  LR, so it gets no unwind record). Splitting `0x824575c8` from `0x824575d0` is
+  the whole repair there.
+- **`?insert_unique@_Rb_tree<Symbol,Award*>` `0x824566E8` (472 B) — inert.**
+  Defined in **no** obj we compile: **retail uses a `_Rb_tree` where we use a
+  `hashtable`** (a genuine source divergence, not this lane's). It cannot pair in
+  any unit, and there is no evidence for a destination, so it stays.
+- `fn_82456650` (calls `__uninitialized_copy<RecordedFrame*>`), `fn_824566bc`
+  and `fn_82456bbc` (generic `MemOrPoolFreeSTL` deallocators), `fn_82456308`
+  (generic list insert) — no positive evidence for a different home.
+
+## ⚠ The `.pdata` decode, and the extent that would have been wrong
+
+The X360 packed `RUNTIME_FUNCTION` flag word is **`PrologLen` = low 8 bits,
+`FuncLen` = bits 8..29 in WORDS**. My first decode (`PrologLen` from the MSB)
+produced 25 KB functions and was discarded; the corrected one then validated all
+**44** extents in the region against the *existing* splits edges. Every new
+boundary lands on a function start with a preceding gap of **0 or 4 B of
+padding** — never an orphaned 8-byte EH prefix.
+
+★ **`GetMeshes` is 88 B, not the 304 B** that reading "up to the next named
+symbol" would have given: `fn_82456918` sits between it and the next named row.
+Sizing a span off the map's naming rather than off `.pdata` would have moved 216
+extra bytes on no evidence.
+
+## Measured (`ab_measure --from-dirty`, forced re-split both legs)
+
+Ruler **`name_check`** (shipped default), objdiff `4.2.3`, from provenance.
+`renamer_patched=1821`.
+
+| | leg A | leg B | Δ |
+|---|---|---|---|
+| `matched_functions` | 44,268 | 44,269 | **+1** |
+| `masked_equal_functions` | 22,887 | 22,887 | 0 |
+| honest | 21,381 | 21,382 | **+1** |
+| `matched_code_percent` | 34.449010 | 34.449010 | **+0.000000pp (+0 B)** |
+| `fuzzy_match_percent` | 48.333980 | 48.334835 | +0.000855pp |
+| `none`-ruler control | | | **+88 B** |
+| units at 100% (mpn) | 252 | 252 | **0 fell off, 0 vanished** |
+
+`total_code` **10,320,692** and `total_functions` **69,231** are *equal on both
+legs* — the build independently confirming the pre-write invariant (covered
+`.text` address set byte-identical, 2,182,154 words, 0 lost / 0 gained /
+0 overlaps).
+
+### ★★★ The two rulers disagree here BY CONSTRUCTION, and both are right
+
+**+1 function but +0 bytes on `name_check`, +88 B on `none`.** `GetMeshes`
+reaches **`mpn` 100** (arg-penalty-excluded) but **not `fuzzy` 100**, i.e. it
+matches **modulo relocation names** — its callees are ICF fold-aliases whose
+retail map names (`erase@vector<unsigned>`, `push_back@vector<ChatReceiver*>`)
+differ from our `vector<RndMesh*>` spellings. This is a textbook instance of
+CLAUDE.md's "a change can move functions with Δbytes = 0".
+
+⚠ `ab_measure` warned `[control none] MOVED -- a name-only change should not do
+this`. That guard is calibrated for **renames**; a **splits re-attribution**
+genuinely moves `none` bytes when a row that previously could not pair starts
+pairing, and **+88 B is `GetMeshes`' size exactly**. Same shape as MAPDEF-2's
+`none` warning, opposite sign, same conclusion: read the guard, don't obey it
+blindly.
+
+## ★ SPLITS-1's caller-side null REPRODUCES
+
+`unit net over ALL units = +1` vs whole-binary `Δmatched = +1` ⇒ **zero rows
+changed in any untouched unit.** The only unit that moved is `default/Text`
+(113 → 114). `SkeletonClip`'s matched count is **unchanged** — it shed ~1.7 kB of
+dead denominator it could never match. Second independent confirmation that
+re-homing collects only the row's own credit; **do not budget caller-side yield**.
+
+## Deliberately NOT done
+
+- **No map edit at all.** The 5-entry `_denylist` was checked and contains none
+  of these addresses, so the existing `GetMeshes` name was free to be emitted in
+  its new unit. The other moved code is unnamed `fn_*` and therefore metrically
+  inert — pure re-attribution.
+- **The 36 unclaimed `RndText` members are left unnamed.** `RndText::Init`,
+  `UpdateLineColor`, `GetDefiningFont` and friends now sit in the right unit and
+  are named nowhere; naming is a separate lever (+1 honest / +0.000000pp) and a
+  separate lane.
+- **The material region `0x82435520`–`0x82439000`** — lane BASEMAT-2 owns it.
+  Untouched, not adjudicated.
+- **No native gate** — `config/45410914/splits.txt` and this doc only, **zero
+  `src/**` edits**, so it has nothing to test. Said rather than skipped silently.
