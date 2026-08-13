@@ -1848,7 +1848,6 @@ HxGuid.cpp:
 	.text       start:0x827CB778 end:0x827CB7FC
 
 StringTable.cpp:
-	.pdata      start:0x8220CD48 end:0x8220CD60
 	.pdata      start:0x822420D8 end:0x822420E0
 	.pdata      start:0x82242748 end:0x82242790
 	.pdata      start:0x82242790 end:0x82242808
@@ -5011,6 +5010,7 @@ Env.cpp:
 BaseMaterial.cpp:
 	.pdata      start:0x821F7C60 end:0x821F7C68
 	.pdata      start:0x8220CA60 end:0x8220CB00
+	.pdata      start:0x8220CD48 end:0x8220CD60
 	.pdata      start:0x8223D668 end:0x8223D670
 	.pdata      start:0x8223D678 end:0x8223D680
 	.pdata      start:0x8223D688 end:0x8223D698
@@ -5023,7 +5023,6 @@ BaseMaterial.cpp:
 	.text       start:0x8276D808 end:0x8276D858
 
 MetaMaterial.cpp:
-	.pdata      start:0x8220CB30 end:0x8220CD28
 	.pdata      start:0x8220CD30 end:0x8220CD48
 	.pdata      start:0x8221EA58 end:0x8221EA60
 	.text       start:0x824382D4 end:0x8243833C
@@ -5746,6 +5745,7 @@ CharServoBone.cpp:
 
 Mat.cpp:
 	.pdata      start:0x8220CB00 end:0x8220CB08
+	.pdata      start:0x8220CB30 end:0x8220CD28
 	.pdata      start:0x8220CD28 end:0x8220CD30
 	.pdata      start:0x8220ED28 end:0x8220ED50
 	.pdata      start:0x8221C160 end:0x8221C168
@@ -7135,7 +7135,8 @@ system/rnddx9/CubeTex.cpp:
 	.pdata      start:0x8223AB88 end:0x8223AB98
 	.pdata      start:0x8223AB98 end:0x8223ABA8
 	.pdata      start:0x8223ABB8 end:0x8223ABC0
-	.pdata      start:0x8223ABE0 end:0x8223AC30
+	.pdata      start:0x8223ABE0 end:0x8223ABF8
+	.pdata      start:0x8223ABF8 end:0x8223AC30
 	.pdata      start:0x8223AC38 end:0x8223AC48
 	.pdata      start:0x8223AC50 end:0x8223AC68
 	.pdata      start:0x8223AC68 end:0x8223ACF8
