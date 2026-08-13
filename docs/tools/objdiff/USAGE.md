@@ -8,6 +8,42 @@ Quick reference for the extended objdiff-cli commands.
 
 **Important:** The extended commands (`report analyze`, `report query`, `report trending`, etc.) are only available in the custom build, not the system `objdiff-cli`.
 
+> ⚠ **"unknown field ..." is a STALE BINARY, not a missing command
+> (2026-08-13).** Since the fork landing, every generated `report.json` carries a
+> `provenance` block (`tool_version`, `tool_commit`, `tool_binary_hash`,
+> `diff_config`, `map_file`, `map_file_hash`, `cache_hits`, `cache_misses`) so a
+> report self-identifies the ruler it was measured with. The report parser is
+> **strict about unknown fields**, so a **pre-2026-08-13 objdiff-cli reading such
+> a report fails loudly**:
+>
+> ```
+> Failed: Failed to load report build/45410914/report.json
+> Caused by:
+>     unknown field `provenance`, expected one of `measures`, `units`, `version`, `categories`
+> ```
+>
+> That is the report being NEWER than the reader. Do **not** read it as "this
+> build lacks the extended commands", and do not go hunting for a different
+> report — the report is fine. **Use the current fork build.** Check with
+> `objdiff-cli --version`: a current binary prints
+> `objdiff-cli 4.2.3 (<commit12>, xxh3 <hash16>)`, and a bare `objdiff-cli 4.2.x`
+> with no parenthesised commit + xxh3 predates the landing.
+>
+> ⚠ **`./build/tools/objdiff-cli` is a stale 4.2.1 copy** (verified 2026-08-13)
+> and is one binary that produces this. It is *older* than the provenance
+> landing by more than one change, so what it actually prints first is
+> ``unknown field `masked_equal_functions` `` — it also predates the 2026-08-02
+> `masked_equal` disclosure change (see
+> [`../../decomp/RULER_CHANGE_2026-08-02.md`](../../decomp/RULER_CHANGE_2026-08-02.md)).
+> Same diagnosis either way: **any** `unknown field` out of `report` means the
+> reader is behind the report. (Measured: strip every `masked_equal*` key from a
+> current report and that same 4.2.1 binary then trips on `provenance`.)
+>
+> The stale copy is not the repo's ruler and never was — `./bin/objdiff-cli`
+> (a symlink into the shared `../objdiff` build) is. It is deliberately **kept,
+> not deleted**: it is the only way to reproduce what a tool that reached for it
+> actually saw. Point at `./bin/objdiff-cli`.
+
 ```bash
 # Use the repo wrapper (recommended for agents):
 ./bin/objdiff-cli report analyze ...

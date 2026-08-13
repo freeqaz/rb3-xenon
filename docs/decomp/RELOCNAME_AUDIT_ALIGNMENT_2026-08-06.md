@@ -27,6 +27,19 @@ rebuilt in between. Every *relational* claim held exactly.
 fork build both report `objdiff-cli 4.2.3`; only the fork supports `name_check`.
 Pin by sha256.
 
+> **Update 2026-08-13 — this paragraph's advice is overtaken; the figures are
+> not.** This is a dated result doc: everything measured below stands as
+> written, at the ruler and tree state named in the table. What changed is the
+> *identification* problem. Since the objdiff fork landing, **`--version` prints
+> `objdiff-cli 4.2.3 (<commit12>, xxh3 <hash16>)`**, so two builds that both said
+> `4.2.3` no longer look alike, and **every generated report self-identifies**
+> via a `provenance` block (`tool_version`, `tool_commit`, `tool_binary_hash`,
+> `diff_config`, `map_file_hash`, `cache_hits`, `cache_misses`) — so a report can
+> be attributed to its ruler after the fact, without having kept the binary.
+> sha256 pinning still works and `ab_measure.py`'s same-ruler guard is unchanged;
+> it is no longer the only way. §0's other half — **quote a tree state too** — is
+> untouched by any of this and still binds.
+
 | | value |
 |---|---|
 | ruler | `bin/objdiff-cli` → `../objdiff/target/release/objdiff-cli`, sha256 `ca2be75232767f53…` |

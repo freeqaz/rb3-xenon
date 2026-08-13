@@ -13,6 +13,18 @@ refusing hundreds of pairs on an artifact of its own construction.
 Measured at the lane's HEAD on pinned `objdiff-cli-B` (objdiff main `745b7e3`),
 rendered alias map regenerated before every read, one `-o` path per arm:
 
+> **Correction 2026-08-13 — the cache-wipe in §4's repro was a no-op, and is now
+> also unnecessary.** Two independent things, neither of which moves a figure in
+> this doc (the one-`-o`-path-per-arm discipline is what actually kept the arms
+> apart, and it held): (1) **the sidecar for `A.json` is `A.cache`, not
+> `A.json.cache`** — the suffix is *replaced*, not appended — so every
+> `rm -f A.json.cache` written here deleted nothing; (2) post-landing the wipe is
+> not needed at all, because the cache key now covers the resolved config, the
+> map file's content hash and the objdiff-cli binary's xxh3. Verify a cold read
+> off the report instead: `report["provenance"].get("cache_hits", 0)` — with the
+> default, because proto3 omits zero-valued scalars and a fully cold run carries
+> no `cache_hits` key at all.
+
 | ruler | before | after | complete fns |
 |---|---|---|---|
 | `none` (control) | 42.220000% (4,357,396 B) | **42.220000%** (4,357,396 B) | **+0 / −0** |
@@ -279,3 +291,20 @@ python3 tools/gen_symbol_alias_map.py            # NOT a ninja edge; regenerate 
 <pinned-objdiff> report generate -p . -c functionRelocDiffs=none      -o A.json && rm -f A.json.cache
 <pinned-objdiff> report generate -p . -c functionRelocDiffs=name_check -o B.json && rm -f B.json.cache
 ```
+
+> **Correction 2026-08-13 — as run, those two `rm -f` deleted nothing.** The
+> sidecar for `A.json` is **`A.cache`** (the suffix is replaced, not appended),
+> so `A.json.cache` never existed. What kept these arms honest was the separate
+> `-o` path per arm, which is still required. Post-landing the wipe is also no
+> longer necessary — the cache key covers the resolved config, the map file's
+> content hash and the objdiff-cli binary's xxh3. Corrected form, if you want the
+> wipe as belt and braces, plus the check that actually proves a cold read:
+>
+> ```sh
+> <pinned-objdiff> report generate -p . -c functionRelocDiffs=none      -o A.json && rm -f A.cache
+> <pinned-objdiff> report generate -p . -c functionRelocDiffs=name_check -o B.json && rm -f B.cache
+> python3 -c 'import json,sys; [print(f, json.load(open(f))["provenance"].get("cache_hits", 0)) for f in sys.argv[1:]]' A.json B.json
+> ```
+>
+> `.get("cache_hits", 0)`, never `["cache_hits"]`: proto3 omits zero-valued
+> scalars, so the clean run is the one with no such key.
