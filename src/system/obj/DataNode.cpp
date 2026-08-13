@@ -321,6 +321,16 @@ void DataNode::Save(BinStream &d) const {
 
 int DataNode::Int(const DataArray *source) const {
     const DataNode &n = Evaluate();
+// Retail has NO type check here.  0x8274b0f8 is 36 B, fan-in 2385:
+// mflr/stw/stwu / bl Evaluate / lwz r3,0(r3) / addi/lwz/mtlr/blr, and nothing
+// else -- it is the ONLY accessor in the DataNode cluster without a test.  The
+// ones that DO test in retail are testing for real dispatch, not asserting
+// (Float tests kDataInt to convert, GetObj tests kDataObject/kDataSymbol to
+// look up).  So this block is dev-build-only and retail took the false branch;
+// the rb3-Wii source it was ported from spells it `#ifdef MILO_DEBUG`, which
+// src/macros.h force-defines here -- hence the HX_NATIVE conjunct.  See
+// docs/decomp/patterns/milo-debug-force-define.md for the house pattern.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (n.mType != kDataInt) {
         String s;
         n.Print(s, true);
@@ -334,6 +344,7 @@ int DataNode::Int(const DataArray *source) const {
         else
             MILO_FAIL_DTA("Data %s is not Int", s);
     }
+#endif
     return n.mValue.integer;
 }
 
@@ -562,6 +573,11 @@ Hmx::Object *DataNode::GetObj(const DataArray *source) const {
 
 DataArray *DataNode::Array(const DataArray *source) const {
     const DataNode &n = Evaluate();
+// Same as Int above: no retail type check.  Data.h gives kDataArray = 16, and
+// NO retail function in band.exe tests r11 against 0x10 -- so retail's Array
+// carries no runtime test and reduces to the identical nine words as Int, which
+// is why /OPT:ICF folded the two spellings onto 0x8274b0f8.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (n.mType != kDataArray) {
         String s;
         n.Print(s, true);
@@ -574,10 +590,9 @@ DataArray *DataNode::Array(const DataArray *source) const {
             );
         else
             MILO_FAIL_DTA("Data %s is not Array", s);
-#ifdef HX_NATIVE
         return nullptr;
-#endif
     }
+#endif
     return n.mValue.array;
 }
 
