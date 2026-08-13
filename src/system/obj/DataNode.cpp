@@ -349,6 +349,7 @@ int DataNode::Int(const DataArray *source) const {
 }
 
 int DataNode::LiteralInt(const DataArray *source) const {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (mType != kDataInt) {
         String s;
         Print(s, true);
@@ -362,6 +363,7 @@ int DataNode::LiteralInt(const DataArray *source) const {
         else
             MILO_FAIL_DTA("Data %s is not Int", s);
     }
+#endif
     return mValue.integer;
 }
 
@@ -393,6 +395,7 @@ Symbol DataNode::Sym(const DataArray *source) const {
 }
 
 Symbol DataNode::LiteralSym(const DataArray *source) const {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (mType != kDataSymbol) {
         String s;
         Print(s, true);
@@ -409,6 +412,7 @@ Symbol DataNode::LiteralSym(const DataArray *source) const {
         return Symbol("");
 #endif
     }
+#endif
     return STR_TO_SYM(mValue.symbol);
 }
 
@@ -417,6 +421,7 @@ Symbol DataNode::ForceSym(const DataArray *source) const {
     if (n.mType == kDataSymbol) {
         return STR_TO_SYM(n.mValue.symbol);
     } else {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         if (n.mType != kDataString) {
             String s;
             n.Print(s, true);
@@ -433,6 +438,7 @@ Symbol DataNode::ForceSym(const DataArray *source) const {
             return Symbol("");
 #endif
         }
+#endif
         return Symbol(n.mValue.var->mValue.symbol);
     }
 }
@@ -442,6 +448,7 @@ const char *DataNode::Str(const DataArray *source) const {
     if (n.mType == kDataSymbol) {
         return n.mValue.symbol;
     } else {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         if (n.mType != kDataString) {
             String s;
             n.Print(s, true);
@@ -458,6 +465,7 @@ const char *DataNode::Str(const DataArray *source) const {
             return "";
 #endif
         }
+#endif
         return n.mValue.var->mValue.symbol;
     }
 }
@@ -466,6 +474,7 @@ const char *DataNode::LiteralStr(const DataArray *source) const {
     if (mType == kDataSymbol) {
         return mValue.symbol;
     } else {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         if (mType != kDataString) {
             String s;
             Print(s, true);
@@ -482,6 +491,7 @@ const char *DataNode::LiteralStr(const DataArray *source) const {
             return "";
 #endif
         }
+#endif
         return mValue.var->mValue.symbol;
     }
 }
@@ -514,6 +524,7 @@ float DataNode::LiteralFloat(const DataArray *source) const {
     if (mType == kDataInt) {
         return mValue.integer;
     } else {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         if (mType != kDataFloat) {
             String s;
             Print(s, true);
@@ -527,11 +538,13 @@ float DataNode::LiteralFloat(const DataArray *source) const {
             else
                 MILO_FAIL_DTA("Data %s is not Float", s);
         }
+#endif
         return mValue.real;
     }
 }
 
 DataFunc *DataNode::Func(const DataArray *source) const {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (mType != kDataFunc) {
         String s;
         Print(s, true);
@@ -548,6 +561,7 @@ DataFunc *DataNode::Func(const DataArray *source) const {
         return nullptr;
 #endif
     }
+#endif
     return mValue.func;
 }
 
@@ -560,20 +574,24 @@ Hmx::Object *DataNode::GetObj(const DataArray *source) const {
         Hmx::Object *ret = 0;
         if (*str != '\0') {
             ret = gDataDir->FindObject(str, true);
+// Retail (0x8274bf4c, 108 B) has NO not-found path here at all: after
+// FindObject it goes straight to the epilogue -- no PathName, no MakeString,
+// no Debug::Fail, and not even a `bl LiteralStr` (retail INLINES LiteralStr's
+// dispatch: cmpwi 5 -> lwz r4,0(r3), else lwz r11,0(r3) / lwz r4,0(r11)).
+// The rb3-Wii source wraps this whole block in `#ifdef MILO_DEBUG`, which
+// src/macros.h force-defines here -- hence the HX_NATIVE conjunct.  Gating it
+// also shrinks LiteralStr enough for /Ob2 to inline it, which is what makes
+// the dispatch above match.  See docs/decomp/patterns/milo-debug-force-define.md.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
             if (!ret) {
-#ifdef HX_NATIVE
                 // Native flow lacks many game objects (HUD, score, etc.) that
                 // song animations reference. Warn instead of crashing so the
                 // LightPreset animation can still drive venue visibility.
                 const char *msg =
                     PathName(gDataDir) != nullptr ? PathName(gDataDir) : "**no file**";
                 MILO_WARN("GetObj: %s not found in %s\n", str, msg);
-#else
-                const char *msg =
-                    PathName(gDataDir) != nullptr ? PathName(gDataDir) : "**no file**";
-                MILO_FAIL_DTA(kNotObjectMsg, str, msg);
-#endif
             }
+#endif
         }
         return ret;
     }
@@ -605,6 +623,7 @@ DataArray *DataNode::Array(const DataArray *source) const {
 }
 
 DataArray *DataNode::LiteralArray(const DataArray *source) const {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (mType != kDataArray) {
         String s;
         Print(s, true);
@@ -621,10 +640,12 @@ DataArray *DataNode::LiteralArray(const DataArray *source) const {
         return nullptr;
 #endif
     }
+#endif
     return mValue.array;
 }
 
 DataArray *DataNode::Command(const DataArray *source) const {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (mType != kDataCommand) {
         String s;
         Print(s, true);
@@ -641,10 +662,12 @@ DataArray *DataNode::Command(const DataArray *source) const {
         return nullptr;
 #endif
     }
+#endif
     return mValue.array;
 }
 
 DataNode *DataNode::Var(const DataArray *source) const {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (mType != kDataVar) {
         String s;
         Print(s, true);
@@ -661,6 +684,7 @@ DataNode *DataNode::Var(const DataArray *source) const {
         return nullptr;
 #endif
     }
+#endif
     return mValue.var;
 }
 
