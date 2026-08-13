@@ -491,6 +491,7 @@ float DataNode::Float(const DataArray *source) const {
     if (n.mType == kDataInt) {
         return n.mValue.integer;
     } else {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         if (n.mType != kDataFloat) {
             String s;
             n.Print(s, true);
@@ -504,6 +505,7 @@ float DataNode::Float(const DataArray *source) const {
             else
                 MILO_FAIL_DTA("Data %s is not Float", s);
         }
+#endif
         return n.mValue.real;
     }
 }
