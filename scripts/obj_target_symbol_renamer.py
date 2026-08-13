@@ -120,9 +120,29 @@ def load_address_map(path: Path) -> Dict[str, str]:
     it here makes a null mean exactly what a delete wants it to mean: no
     rename, this address stays anonymous."""
     raw = json.loads(path.read_text())
+
+    # `_denylist` = addresses gen_target_map must never auto-emit (hand-flagged
+    # bad bindiff guesses / fingerprint collisions). It used to be declared and
+    # then IGNORED here: the only key filter skipped non-`0x` metadata, so a
+    # denied address carrying a string value was renamed anyway and the
+    # denylist silently meant nothing. Parsed strictly -- a malformed entry
+    # raises rather than quietly emptying the filter, because a silently-empty
+    # denylist is exactly the failure this fixes.
+    denied: set = set()
+    raw_deny = raw.get("_denylist", [])
+    if not isinstance(raw_deny, list):
+        raise ValueError(f"_denylist in {path} must be a list, got "
+                         f"{type(raw_deny).__name__}")
+    for entry in raw_deny:
+        if not isinstance(entry, str) or not entry.lower().startswith("0x"):
+            raise ValueError(f"_denylist entry {entry!r} in {path} is not a "
+                             f"'0x...' address string")
+        denied.add(int(entry.lower().removeprefix("0x"), 16))
+
     out: Dict[str, str] = {}
     n_null = 0
     n_bad = 0
+    n_denied = 0
     for k, v in raw.items():
         # Skip metadata / comment entries (keys not starting with 0x).
         if not k.lower().startswith("0x"):
@@ -132,6 +152,10 @@ def load_address_map(path: Path) -> Dict[str, str]:
             addr = int(k_clean, 16)
         except ValueError:
             print(f"WARN: invalid address key {k!r} in {path}", file=sys.stderr)
+            continue
+        if addr in denied:
+            # Denied rows are unclaimed regardless of the value they carry.
+            n_denied += 1
             continue
         if v is None:
             # Explicit "unclaimed" row -- not an error, just no rename.
@@ -145,9 +169,9 @@ def load_address_map(path: Path) -> Dict[str, str]:
             continue
         out[f"fn_{addr:08X}"] = v
         out[f"lbl_{addr:08X}"] = v
-    if n_null or n_bad:
-        print(f"[map] skipped {n_null} null (deliberately unclaimed) and "
-              f"{n_bad} non-string row(s) in {path}")
+    if n_null or n_bad or n_denied:
+        print(f"[map] skipped {n_null} null (deliberately unclaimed), "
+              f"{n_denied} denylisted and {n_bad} non-string row(s) in {path}")
     return out
 
 
