@@ -85,9 +85,11 @@ the top of the run, and folded into ruler_identity, so a configgen patch that
 rewrites objdiff.json mid-run refuses instead of repricing the delta. An
 explicit functionRelocDiffs=none CONTROL leg is taken by default whenever the
 report edge is not already none (--no-control opts out): `none` ignores
-relocation names entirely, so it is the ruler an alias or a rename must leave
-unmoved, and without it the tool cannot distinguish a name-only change from a
-code change. --name-check still adds the opt-in name_check reading per leg
+relocation names entirely, so it is the ruler on which a fabricated alias can
+lift NOTHING. It is read as a SHAPE over both rulers, never as "none moved
+therefore bad" -- see control_none_shape(), whose old caption was wrong and
+mis-fired on three lanes in one session (a first-naming, a nulling and a
+signature+map change all move `none` for real reasons). --name-check still adds the opt-in name_check reading per leg
 with the required warning (its aggregate code% is build-unstable ~0.05pp; small
 nc deltas mean nothing).
 
@@ -778,11 +780,14 @@ class ABMeasure:
     def gen_none(self, name, objdiff_bin):
         """The CONTROL leg.
 
-        `none` ignores relocation names entirely, so it is the ruler a
-        name-only change must leave unmoved -- the whole point of measuring an
-        alias or a rename against something. It is taken explicitly here
-        because the build's default report edge is not it and has not been
-        since the name_check flip.
+        `none` ignores relocation names entirely, so a FABRICATED ALIAS cannot
+        lift it -- that is the whole point of measuring a naming change against
+        something. ⚠ It does NOT follow that a naming change must leave it
+        unmoved: a FIRST-naming pairs a body that never paired, and a nulling
+        removes false credit; both move `none` legitimately. The reading is
+        adjudicated by control_none_shape(), not by "moved / unmoved". Taken
+        explicitly here because the build's default report edge is not `none`
+        and has not been since the name_check flip.
         """
         return self.gen_ruler(name, objdiff_bin, "none")
 
@@ -1337,6 +1342,74 @@ def compute_delta(a, b):
     }
 
 
+def control_none_shape(kinds, d_none, d_default):
+    """Adjudicate the `none`-ruler control as a SHAPE TEST over both rulers.
+
+    ⚠ This used to print "MOVED -- a name-only change should not do this" for
+    ANY nonzero Δ on the `none` ruler, whatever the patch was. That caption was
+    simply WRONG, and it mis-fired on three separate lanes in one session --
+    each time forcing a correct result to be defended instead of reported:
+
+      * a signature+map change where BOTH rulers moved together with
+        masked_equal +1 -- i.e. real matching;
+      * a FIRST-naming of anonymous addresses -- the control is calibrated for
+        RE-naming (where reloc_eq makes a rename free on both rulers), but a
+        first name creates a pairing that did not exist before, so `none`
+        moves for a real reason;
+      * a NULLING, where `none` moved -448 B = exactly 4 x 112 B -- which IS
+        the measure of false byte credit removed, the thing you wanted.
+
+    Movement on `none` is not the hazard. The hazard is the OPPOSITE shape:
+
+        default (name_check) ruler UP  while  `none` stays FLAT
+
+    on a patch that changed only NAMES. `none` ignores relocation names
+    entirely, so a fabricated alias -- a name asserted to pair with an address
+    it does not really implement -- lifts name_check BY CONSTRUCTION while
+    creating zero real byte agreement. That guard is load-bearing and is NOT
+    weakened here; it is narrowed to the population where it can discriminate.
+
+    ⛔ Why the narrowing is REQUIRED and is not a convenience: with `source` in
+    the patch, "default UP / none FLAT" is ALSO the signature of a genuine
+    WRONG-CALLEE FIX. Relocation args are invisible to `none` (a wrong callee
+    already reads 100 there), so correcting one moves name_check alone. Firing
+    the alias alarm on a source patch would therefore accuse the single most
+    valuable class of real fix we have. The two shapes are indistinguishable by
+    the rulers and separable only by patch kind.
+
+    Pure (no I/O) so --selftest can drive every branch with no build.
+    Returns (verdict, caption).
+    """
+    kinds = set(kinds or ())
+    # `map` is the only kind that changes NAMES without changing CODE.
+    naming_only = bool(kinds) and kinds <= {"map"}
+    if not naming_only:
+        why = ("no build-relevant kind" if not kinds
+               else "kinds=" + ",".join(sorted(kinds)))
+        return ("NOT_APPLICABLE",
+                f"reading only ({why}) — this patch can move real code, so "
+                f"movement on `none` is EXPECTED and means nothing is wrong. "
+                f"The alias shape is only adjudicable on a map-only patch "
+                f"(with source present, default-UP/none-FLAT is also the "
+                f"WRONG-CALLEE-FIX signature).")
+    if d_none == 0 and d_default > 0:
+        return ("ALIAS_SUSPECT",
+                f"⚠ SHAPE ALERT: default ruler UP ({d_default:+d} B) while "
+                f"`none` is FLAT on a map-only patch — the FABRICATED-ALIAS "
+                f"shape. A name that pairs by construction lifts name_check "
+                f"without creating any real byte agreement. Adjudicate on "
+                f"retail bytes before landing.")
+    if d_none == 0:
+        return ("FLAT",
+                "`none` UNMOVED and default not up — consistent with a pure "
+                "RE-name (reloc_eq makes renaming free on both rulers).")
+    return ("REAL_PAIRING",
+            f"`none` MOVED ({d_none:+d} B) — a REAL pairing change, not a "
+            f"naming artifact: a first-naming of an anon address pairs a body "
+            f"that never paired, and a nulling removes false byte credit. "
+            f"Expected; this is the measure, not a violation.")
+
+
 def leg_public(m):
     """The publishable slice of a measured leg (drops _units)."""
     return {k: v for k, v in m.items() if not k.startswith("_")}
@@ -1655,12 +1728,20 @@ def main():
         # Same ruler for both legs, or the delta is not a delta.
         ruler_state = check_ruler_stable(ruler_a, ruler_identity(ab.wt))
         print(f"  [ruler] objdiff-cli {ruler_state}")
+        control = None
         if want_none:
             ca, cb = ab.legs["A_none"], ab.legs["B_none"]
             d = cb["matched_code"] - ca["matched_code"]
+            d_default = b["matched_code"] - a["matched_code"]
+            verdict, caption = control_none_shape(kinds, d, d_default)
+            control = {"delta_matched_code_none": d,
+                       "delta_matched_code_default": d_default,
+                       "kinds": sorted(kinds),
+                       "verdict": verdict}
             print(f"  [control none] Δmatched_code={d:+d} B "
                   f"Δcode%={cb['matched_code_percent'] - ca['matched_code_percent']:+.6f} "
-                  f"({'UNMOVED' if d == 0 else 'MOVED -- a name-only change should not do this'})")
+                  f"(default ruler {d_default:+d} B)")
+            print(f"  [control none] {verdict}: {caption}")
 
         # --- verdict (only reachable if every stage above passed) ---
         regs, imps, ubmeta = unit_breakdown(a["_units"], b["_units"])
@@ -1675,6 +1756,11 @@ def main():
             # Which ruler produced these numbers. Archived so a later reader can
             # tell whether two runs are comparable at all.
             "ruler": {"objdiff": ruler_a, "state": ruler_state},
+            # The `none`-ruler control as a SHAPE over BOTH rulers. Archived so
+            # a later reader can see WHICH shape was measured rather than only
+            # that a control was taken. verdict=ALIAS_SUSPECT is the one that
+            # blocks; the rest are readings.
+            "control_none": control,
             "evidence": ab.evidence,
             "legA": leg_public(a),
             "legB": leg_public(b),
@@ -2647,6 +2733,83 @@ def selftest():
           f"revert={r!r} err={err}")
     if not ok:
         fails.append("EE2-C single revert")
+
+    # ---- the `none` CONTROL is a SHAPE TEST (lane TOOLFIX-1) --------------
+    # The old caption fired "MOVED -- a name-only change should not do this"
+    # on ANY nonzero Δnone, whatever the patch was. Each fixture below is a
+    # REAL shape from the field, and each asserts BOTH the new verdict AND
+    # what the OLD caption did on the same numbers.
+    def _old_caption(d_none):
+        return "UNMOVED" if d_none == 0 else \
+            "MOVED -- a name-only change should not do this"
+
+    def _shape(name, kinds, d_none, d_default, want, old_fired):
+        """old_fired = did the OLD caption print its accusation on these same
+        numbers. Asserting it pins what the fix actually changed, so a later
+        reader can tell a fix from a no-op."""
+        verdict, caption = control_none_shape(kinds, d_none, d_default)
+        old = _old_caption(d_none)
+        ok = verdict == want and old.startswith("MOVED") == old_fired
+        print(("  PASS" if ok else "  FAIL") +
+              f"  [TOOLFIX-1] {name}: verdict={verdict} (want {want}); "
+              f"OLD said {old!r}")
+        if not ok:
+            fails.append(f"TOOLFIX-1 {name}")
+        return verdict, caption
+
+    # THE HAZARD THE CONTROL EXISTS FOR. Note what the old caption did here:
+    # it printed "UNMOVED" -- i.e. it read the fabricated-alias shape as CLEAN.
+    _, cap = _shape("the FABRICATED-ALIAS shape still FIRES (map-only, "
+                    "default UP while none FLAT)",
+                    {"map"}, 0, +112, "ALIAS_SUSPECT", False)
+    ok = "FABRICATED-ALIAS" in cap and "retail bytes" in cap
+    print(("  PASS" if ok else "  FAIL") +
+          "  [TOOLFIX-1] ...and it names the shape + the adjudication "
+          "(retail bytes), so the alarm is actionable")
+    if not ok:
+        fails.append("TOOLFIX-1 alias caption")
+
+    # The three field mis-fires, verbatim shapes.
+    _shape("FIRST-naming of anon addresses (both rulers move together)",
+           {"map"}, +488, +488, "REAL_PAIRING", True)
+    _shape("a NULLING: none moved -448 B = 4 x 112 B of false credit removed",
+           {"map"}, -448, -448, "REAL_PAIRING", True)
+    _shape("signature+map change, kinds={map,source} -- movement EXPECTED",
+           {"map", "source"}, +2048, +2048, "NOT_APPLICABLE", True)
+
+    # ⛔ The narrowing is not cosmetic: with source present, default-UP /
+    # none-FLAT is the WRONG-CALLEE-FIX signature. Firing here would accuse a
+    # real fix.
+    _shape("a WRONG-CALLEE FIX (kinds={source}) is NOT accused of aliasing",
+           {"source"}, 0, +96, "NOT_APPLICABLE", False)
+
+    # The guard must be able to PASS, or it is worse than the defect.
+    _shape("a pure RE-name leaves both rulers flat", {"map"}, 0, 0, "FLAT",
+           False)
+
+    # DISCRIMINATION: a control returning one verdict for every input tests
+    # nothing (this session already had a self-break pass by throwing).
+    seen = {control_none_shape(k, dn, dd)[0] for k, dn, dd in
+            (({"map"}, 0, +112), ({"map"}, +488, +488), ({"map"}, 0, 0),
+             ({"map", "source"}, +2048, +2048), ({"source"}, 0, +96))}
+    ok = len(seen) == 4 and "ALIAS_SUSPECT" in seen
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [TOOLFIX-1] the control DISCRIMINATES: {len(seen)} distinct "
+          f"verdicts over 5 field shapes {sorted(seen)} (a verdict that is "
+          f"always the same cannot fail and cannot pass)")
+    if not ok:
+        fails.append("TOOLFIX-1 discrimination")
+
+    # And the wrong claim must be gone from every non-suspect caption.
+    bad = [k for k, dn, dd in (({"map"}, +488, +488), ({"map"}, -448, -448),
+                               ({"map", "source"}, +2048, +2048))
+           if "should not do this" in control_none_shape(k, dn, dd)[1]]
+    ok = not bad
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [TOOLFIX-1] the wrong claim ('a name-only change should not do "
+          f"this') appears in NO caption: offenders={bad}")
+    if not ok:
+        fails.append("TOOLFIX-1 stale claim")
 
     print(f"selftest: {'ALL PASS' if not fails else f'FAILURES: {fails}'}")
     return 0 if not fails else 1
