@@ -10,19 +10,29 @@ RndCamAnim::RndCamAnim() : mCam(this, 0), mKeysOwner(this, this) {}
 
 RndCamAnim::~RndCamAnim() {}
 
+// Retail body verified against 0x82485C80 (140 B).  Two corrections to the
+// RefIs()-based shape that was here:
+//
+//  1. The ring compares the *virtual base* of the held pointer, not its raw
+//     address.  mKeysOwner.Ptr() is an RndCamAnim*, and Hmx::Object is a
+//     VIRTUAL base of it, so static_cast<> emits MSVC's vbtable adjust --
+//     null-check, lwz vbptr@4, lwz vbtable[1], add, addi +4 -- which is
+//     exactly what retail emits.  Object.h's RefIs() reinterpret_casts to
+//     void* instead and so drops the adjustment entirely; its own comment
+//     admits "MI/vbase cases can false-negative here".
+//  2. There is NO Hmx::Object::Replace fallback.  Retail branches straight to
+//     the epilogue when the ref is not ours (bne -> .L_82485CEC).
 void RndCamAnim::Replace(ObjRef *from, Hmx::Object *to) {
-    if (RefIs(from, mKeysOwner)) {
-        if (mKeysOwner == this) {
-            RndCamAnim *camTo = dynamic_cast<RndCamAnim *>(to);
-            if (camTo) {
-                mKeysOwner = camTo->KeysOwner();
-            }
+    if (static_cast<Hmx::Object *>(mKeysOwner.Ptr())
+        == reinterpret_cast<Hmx::Object *>(from)) {
+        if (!to) {
+            mKeysOwner.SetObjConcrete(this);
         } else {
-            mKeysOwner = this;
+            const ObjOwnerPtr<RndCamAnim> &ko =
+                dynamic_cast<RndCamAnim *>(to)->mKeysOwner;
+            mKeysOwner.SetObjConcrete(ko.Ptr());
         }
-        return;
-    } else
-        Hmx::Object::Replace(from, to);
+    }
 }
 
 BEGIN_HANDLERS(RndCamAnim)
