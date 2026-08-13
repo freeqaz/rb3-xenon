@@ -230,15 +230,10 @@ void RndShader::SelectConfig(RndMat *mat, ShaderType shader_type, bool b3) {
     if (!b3 && (TheLoadMgr.EditMode() || !UsingCD())) {
 #endif
         if (!DisplayMatShaderFlagsError(mat, shader_type)) {
-            bool doError = true;
-            void *metaMat;
-            if (mat && TheShaderMgr.ShowMetaMatErrors()) {
-                metaMat = mat->GetMetaMaterial();
-                doError = doError && (metaMat == nullptr);
-            }
-            if (!doError) {
-                goto done;
-            }
+            // The metamaterial escape hatch is gone: RB3-360 retail has no
+            // MetaMaterial class, so mat->GetMetaMaterial() was a hard-coded
+            // nullptr and this branch could never suppress the error shader.
+            // See lane METAMAT-1.
         }
         shader_type = shader_type == kPostprocessShader
             ? kPostprocessErrorShader

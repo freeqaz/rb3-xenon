@@ -61,7 +61,6 @@ RndMat *CreateCameraBufferMat(int width, int height, RndTex::Type type) {
     newMat->SetBlend(RndMat::kBlendSrc);
     newMat->SetZMode(kZModeDisable);
     newMat->SetDiffuseTex(tex);
-    CreateAndSetMetaMat(newMat);
     return newMat;
 }
 

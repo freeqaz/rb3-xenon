@@ -47,7 +47,16 @@ void SortXfms(RndMultiMesh *, const Vector3 &);
 bool XfmSort(RndMultiMesh::Instance &, RndMultiMesh::Instance &);
 void RandomXfms(RndMultiMesh *);
 
+#ifdef HX_NATIVE
+// RB3-360 retail has no MetaMaterial and no CreateAndSetMetaMat: the function needs
+// RndMat::CreateMetaMaterial, which needs the string "MetaMaterial" -- 0 occurrences
+// in orig/45410914/band.exe (lane METAMAT-1). It is DELETED from the X360 match build
+// (whose cflags define no HX_NATIVE) and survives ONLY as a no-op so that
+// milo-native-engine's src/platform/Rnd_Wgpu.cpp, which calls it four times, keeps
+// compiling. Removing those four calls is an ENGINE change request, not ours to land.
 void CreateAndSetMetaMat(RndMat *);
+#endif
+
 void FixVertOrder(const RndMesh *, RndMesh *);
 
 void UtilDrawSphere(const Vector3 &, float, const Hmx::Color &);
