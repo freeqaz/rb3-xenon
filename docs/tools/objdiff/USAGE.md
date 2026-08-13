@@ -29,20 +29,26 @@ Quick reference for the extended objdiff-cli commands.
 > `objdiff-cli 4.2.3 (<commit12>, xxh3 <hash16>)`, and a bare `objdiff-cli 4.2.x`
 > with no parenthesised commit + xxh3 predates the landing.
 >
-> ⚠ **`./build/tools/objdiff-cli` is a stale 4.2.1 copy** (verified 2026-08-13)
-> and is one binary that produces this. It is *older* than the provenance
-> landing by more than one change, so what it actually prints first is
-> ``unknown field `masked_equal_functions` `` — it also predates the 2026-08-02
-> `masked_equal` disclosure change (see
+> ⚠ **`./build/tools/objdiff-cli` used to be a stale 4.2.1 copy** and was the
+> binary that produced this here (verified 2026-08-13). It was *older* than the
+> provenance landing by more than one change, so what it actually printed first
+> was ``unknown field `masked_equal_functions` `` — it also predated the
+> 2026-08-02 `masked_equal` disclosure change (see
 > [`../../decomp/RULER_CHANGE_2026-08-02.md`](../../decomp/RULER_CHANGE_2026-08-02.md)).
 > Same diagnosis either way: **any** `unknown field` out of `report` means the
 > reader is behind the report. (Measured: strip every `masked_equal*` key from a
 > current report and that same 4.2.1 binary then trips on `provenance`.)
 >
-> The stale copy is not the repo's ruler and never was — `./bin/objdiff-cli`
-> (a symlink into the shared `../objdiff` build) is. It is deliberately **kept,
-> not deleted**: it is the only way to reproduce what a tool that reached for it
-> actually saw. Point at `./bin/objdiff-cli`.
+> **Fixed 2026-08-13:** `build/tools/objdiff-cli` and
+> `build/tools/release/objdiff-cli` are now symlinks to `./bin/objdiff-cli`,
+> which is what rb3 has always done — so every spelling in this repo resolves to
+> the one shared ruler and this failure cannot recur from a path choice. Neither
+> was ever a build product of the current `build.ninja` (it depends on the shared
+> `../objdiff/target/release` path directly); they were leftovers from an older
+> configure, which is why they went stale unnoticed. The old copies are kept, not
+> deleted — reproducing what a tool that reached for one actually saw is the only
+> way to audit a past number — filed with a manifest at
+> `~/code/milohax/objdiff-rulers/`.
 
 ```bash
 # Use the repo wrapper (recommended for agents):

@@ -1614,10 +1614,12 @@ def generate_build_ninja(
         # only fires when the RENDERED map bytes actually changed (the generator
         # writes only on change, with `restat` above), so a touched-but-identical
         # JSON still costs nobody a re-diff; and it keeps the build correct against
-        # an older objdiff-cli, which this repo does not pin -- `build/tools/
-        # objdiff-cli` is a 4.2.1 copy that predates all of this. Measurement code
-        # stays; a redundant guard is cheap, and removing it is only safe once the
-        # binary is pinned.
+        # an older objdiff-cli, which this repo does not pin. That second reason is
+        # weaker than it was: as of 2026-08-13 every objdiff-cli path in this repo
+        # (`bin/`, `build/tools/`, `build/tools/release/`) is a symlink onto the one
+        # shared build, so reaching an older binary now takes a deliberate act
+        # rather than a path choice. Measurement code stays; a redundant guard is
+        # cheap.
         ###
         n.comment("Purge report caches on an alias-map change "
                   "(redundant since the upstream map-keyed cache landed)")
