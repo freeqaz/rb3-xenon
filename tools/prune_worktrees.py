@@ -414,6 +414,7 @@ def main(argv=None):
                 line = line.split("#", 1)[0].strip()
                 if line:
                     protect_set.add(os.path.abspath(os.path.expanduser(line)).rstrip("/"))
+    user_protect = set(protect_set)  # before the implicit additions below
     protect_set.add(repo)
 
     stamp = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -424,6 +425,25 @@ def main(argv=None):
     # The first entry is the main worktree; protect it unconditionally.
     if entries:
         protect_set.add(os.path.abspath(entries[0]["worktree"]).rstrip("/"))
+
+    # A --protect path that names no registered worktree protects NOTHING, and
+    # says so nowhere: the run prints a plausible "protected=N" and proceeds to
+    # consider the tree the operator meant to save.  Measured 2026-08-13 --- a
+    # live lane's tree was `wt-pinfix1` while the flag said `wt-pinfix-1`, and
+    # it survived only because it happened to have been written to inside the
+    # activity window.  A guard that cannot fire is worse than no guard, so a
+    # typo is a hard refusal rather than a warning.
+    registered = {os.path.abspath(e["worktree"]).rstrip("/") for e in entries}
+    unmatched = sorted(user_protect - registered)
+    if unmatched:
+        sys.stderr.write(
+            "REFUSING: %d --protect path(s) match no registered worktree.\n"
+            "A protect flag that names nothing is silently vacuous.\n" % len(unmatched))
+        for p in unmatched:
+            near = [r for r in sorted(registered)
+                    if os.path.basename(r).replace("-", "") == os.path.basename(p).replace("-", "")]
+            sys.stderr.write("  %s%s\n" % (p, ("   (did you mean %s ?)" % near[0]) if near else ""))
+        return 2
 
     print("repo=%s  worktrees=%d  mode=%s" % (repo, len(entries), "EXECUTE" if args.execute else "DRY-RUN"))
     print("archive=%s" % run_dir)
