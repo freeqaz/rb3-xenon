@@ -394,6 +394,17 @@ void UILabel::PostLoad(BinStream &bs) {
         mObjDirPtr.PostLoad(nullptr);
 }
 
+// retail 0x827F22A8 (112 B). We carried a header inline `{ UIComponent::Poll(); }`
+// which compiles to a 4-byte tail call; retail polls the label dir first when the
+// highlight mesh is live. Same guard idiom as UpdateAndDrawHighlightMesh below.
+void UILabel::Poll() {
+    RndGroup *grp = mLabelDir->HighlighMeshGroup();
+    if (mUseHighlightMesh && grp && GetState() == UIComponent::kFocused) {
+        mLabelDir->Poll();
+    }
+    UIComponent::Poll();
+}
+
 // retail UILabel own-virtual @ vtable slot 0x50. mAlpha is 0x1bc.
 void UILabel::Draw() {
     if (!(mAlpha <= 0))
