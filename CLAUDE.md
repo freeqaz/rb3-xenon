@@ -895,7 +895,13 @@ run the gate before you land. Two traps, both real:
   ⚠ The `none` control **CANNOT catch a fabricated alias**: `none` ignores
   relocation names, so it reads +0 there by construction. **That flatness is the
   SIGNATURE of the hazard, not a clearance** — pair it with retail-byte evidence
-  that the fold is real. `scripts/icf_alias_groups.json` holds **1,407** ungated
+  that the fold is real. ★ **But name_check-UP / `none`-FLAT is ALSO the
+  WRONG-CALLEE-FIX signature** — correcting a genuinely wrong callee moves
+  `name_check` alone for the same reason. **The two shapes are separable only by
+  PATCH KIND**: map-only ⇒ alias-suspect, `source` in the patch ⇒ the most
+  valuable class of real fix we have. `ab_measure`'s `control_none_shape()`
+  encodes exactly this (`5247b811`) and fires ALIAS_SUSPECT only on map-only
+  patches — do not re-derive the guard by hand. `scripts/icf_alias_groups.json` holds **1,407** ungated
   groups and advertised itself as free to merge until 2026-08-13; do not.
   ⛔ And the 219-row population above should be **re-derived on `name_check`**
   before anyone calls it empty again — "SIZED AND EMPTY" was measured on `none`.
