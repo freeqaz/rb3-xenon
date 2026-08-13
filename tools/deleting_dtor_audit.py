@@ -439,14 +439,26 @@ def main():
         touched = {'0x%08x' % a for a, *_ in plan}
         intro = {k: v for k, v in dup.items() if k not in before}
         # TRAP 2: a collision means the name we are writing already sits
-        # somewhere.  Strip it from whichever address has NO vtable evidence.
+        # somewhere else.  Strip the incumbent ONLY when retail does not support
+        # its name -- either it is in NO vtable at all (referenced only from
+        # .pdata), or its own vtable names a DIFFERENT class.  This never
+        # *names* the incumbent (several are TRAP-1 refusals whose identity we
+        # still decline to assert); it only removes a name retail contradicts.
+        # ANONYMOUS BEATS WRONG.
         stripped = 0
         for k, vs in intro.items():
             for va in vs:
-                if va not in touched:
-                    kk = next((x for x in new if x.lower() == va), None)
-                    if kk and not au.owners(int(va, 16)):
-                        new.pop(kk); stripped += 1
+                if va in touched:
+                    continue
+                kk = next((x for x in new if x.lower() == va), None)
+                if not kk:
+                    continue
+                oc = {canon(td2cls(x[0])) for x in au.owners(int(va, 16))
+                      if td2cls(x[0])}
+                mm = DG.match(new[kk] or '')
+                supported = bool(oc) and mm and canon(mm.group(1)) in oc
+                if not supported:
+                    new.pop(kk); stripped += 1
         dup2 = injectivity(new, allow)
         print(f'\nplan: {collections.Counter(k for *_x, k in plan)}')
         print(f'INJECTIVITY: baseline dups {len(before)}, after plan {len(dup)} '

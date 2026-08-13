@@ -146,7 +146,16 @@ CONFIGGEN_PATHS = {
 BUILD_RELEVANT_DIRS = ("src/", "config/", "scripts/", "tools/")
 
 # Ninja edge descriptions that are NOT work (expected on every/no-op build).
-NON_WORK_DESCS = {"REPORT", "PROGRESS", "CHANGESFMT", "CHANGES"}
+# ★ "CHECK" is the `icf_alias_map_check` edge (description "CHECK ICF-ALIAS
+# MAP").  Like PROGRESS it declares `always` as an input, so ninja reports it
+# dirty on EVERY build -- `ninja -d explain` says "always is dirty".  It only
+# runs `gen_symbol_alias_map.py --check && touch $out`, i.e. it ASSERTS the
+# rendered map still agrees with the JSON and produces nothing the report reads
+# (the map itself is built by the separate, properly-keyed `icf_alias_map`
+# edge).  Counting it as work made settle-to-zero UNREACHABLE, so this tool
+# refused EVERY run in a tree carrying that edge -- a refusal that looks exactly
+# like a dirty graph but is a gap in this list.  Found by lane DTOR-A.
+NON_WORK_DESCS = {"REPORT", "PROGRESS", "CHANGESFMT", "CHANGES", "CHECK"}
 
 WORKLINE_RE = re.compile(r"^\[\d+/\d+\]\s+(\S+)")
 RENAMER_RE = re.compile(
