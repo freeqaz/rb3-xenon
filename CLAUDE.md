@@ -244,7 +244,10 @@ not assume dc3's version is correct for RB3.
 
 ⚠ **`MILO_DEBUG` is force-defined tree-wide (`src/macros.h:3`) and it does NOT
 gate `MILO_ASSERT`** — the whole `MILO_*` family is `#ifdef HX_NATIVE`, which the
-match build never defines (cflags carry **no `/D` at all**), so
+match build never defines (⚠ corrected 2026-08-13, lane METAMAT-1: cflags carry
+**exactly two `/D`s — `/DCURL_STATICLIB` and `/D_XBOX360` — NOT "no `/D` at all"**
+as this doc claimed for months; the load-bearing point is unchanged, since
+neither is `HX_NATIVE`), so
 `MILO_ASSERT(cond,line)` is just `((void)(cond))`. The force-define's only effect
 is to switch ON rb3-Wii **dev-build** code that retail compiled out, so every
 inherited `#ifdef MILO_DEBUG` is a suspect. **Fix per-site with the house
@@ -913,6 +916,15 @@ run the gate before you land. Two traps, both real:
   not a diagnosis: 13-/24-instruction swaps and a full prologue delta all
   DISSOLVED once the real source defect was fixed (`5d8fc966`, `c14bba5c`,
   `d7a9775a`; 12 instances) — never defer a row as permuter-bound on that label.
+  ⛔⛔ **EB-4's EQUIVALENCE BELOW IS STALE — IT PREDATES THE 2026-08-12
+  `name_check` FLIP** (measured by lane RECOVER-95K, 2026-08-13). `report.json`
+  now scores on **`name_check`**, while `run_objdiff`'s "normalized" is still the
+  **`none`** ruler ⇒ **the two no longer agree, and "normalized" is STRUCTURALLY
+  BLIND to the wrong-callee / relocation-NAME defect class.** Measured live:
+  `run_objdiff` reported a row *"Complete (High confidence), 100.0% normalized,
+  0 mismatches"* while `report.json` **on the same tree** had it **below
+  `fuzzy == 100`**. ⇒ **Drive `objdiff-cli` at `name_check` explicitly, or read
+  `report.json`.** Everything below is correct ONLY on the pre-flip ruler:
   ★★★ **`run_objdiff`'s "normalized (raw)" pair vs the report keys — SETTLED
   (lane EB-4, 2026-08-03). This note used to say the pair "does not equal these
   report keys", which was MISLEADING: its own example proves one of them equals
