@@ -35,16 +35,42 @@ set(ATOMIC_COMPAT_FLAGS
     -D__GCC_ATOMIC_POINTER_LOCK_FREE=2
 )
 
-# --- TEMPORARY: BaseMaterial -> RndMat compatibility for the shared engine ------
+# --- BaseMaterial -> RndMat bridge for the shared engine (KEEP -- see below) ----
 # RB3-360 retail has ONE material class, RndMat, deriving directly from Hmx::Object;
 # the BaseMaterial/RndMat split was a DC3-era refactor. Lane BASEMAT-1 settled that
 # on retail bytes and BASEMAT-2 merged the two classes in src/system/rndobj.
 #
-# ../milo-native-engine still spells the class BaseMaterial in 4 files
-# (platform/MaterialSetup.{h,cpp}, platform/UiRenderHeuristics.h, gfx/ShadowPass.cpp,
-# platform/Rnd_Wgpu.cpp). Per CLAUDE.md ONLY THE COORDINATOR changes that repo and
-# bumps MILO_ENGINE_PIN, so this lane files the rename as an engine change request
-# and bridges it here instead.
+# ⛔⛔ DO NOT "finish the job" by renaming BaseMaterial -> RndMat in
+# ../milo-native-engine. Lane ENGINE-1 measured that and it BREAKS dc3-decomp.
+# `BaseMaterial` in the engine is NOT a stale spelling of RndMat -- it is DC3's real
+# base class, and DC3 has TWO subclasses of it:
+#     DC3 : BaseMaterial : Hmx::Object ; RndMat : BaseMaterial ;
+#           MetaMaterial : BaseMaterial      <- RndMat and MetaMaterial are SIBLINGS
+#     RB3 : RndMat : Hmx::Object       ; MetaMaterial : RndMat
+# DC3's RndMat::NextPass() returns BaseMaterial*, ours returns RndMat*, so a rename
+# retypes the receiver and the assignment stops compiling. Measured by running DC3's
+# OWN compile command over the engine TUs (baseline 5/5 OK; naive rename):
+#     Mesh_Wgpu.cpp:297: cannot initialize a variable of type 'RndMat *' with an
+#                        rvalue of type 'BaseMaterial *'
+#     Mesh_Wgpu.cpp:329: incompatible pointer types assigning to 'RndMat *' from
+#                        'BaseMaterial *'
+# ⚠ dc3-decomp add_subdirectory()s the engine WORKING TREE and its MILO_ENGINE_PIN is
+# only a message(WARNING), never a fetch -- so an engine edit reaches DC3 on its next
+# configure, stale pin or not. rb3 (Wii) is unaffected either way: it builds
+# MILO_ENGINE_GPU_BACKEND=rb3, which drops every one of these files.
+#
+# The engine's spelling is DELIBERATE, not sloppy: it already writes RndMat* for
+# concrete materials (mesh->Mat() -- Mesh_Wgpu.cpp:31/154/173) and BaseMaterial* only
+# where DC3's value really is the base type. Real scope is 8 engine sources + 2 test
+# files, NOT the 4 this comment used to claim (it missed platform/TransparentQueue.cpp,
+# platform/Mesh_Wgpu.cpp and gfx/PipelineManager.h).
+#
+# The proper fix is a per-consumer typedef IN THE ENGINE, filed as a change request in
+# docs/decomp/basematerial-is-a-dc3-refactor-2026-08-13.md: a small
+# platform/MaterialBase.h aliasing MiloMatBase -> BaseMaterial (default, DC3) or
+# RndMat (flagged, RB3), with the engine's material sites spelling MiloMatBase. That
+# needs the coordinator and a 3-consumer verification, so it is deliberately NOT done
+# here -- and it would replace this define, not simply delete it.
 #
 # ⚠ This is a compile definition, NOT a header typedef, on purpose:
 # MaterialSetup.h forward-declares `class BaseMaterial;` and is included BEFORE
@@ -55,7 +81,8 @@ set(ATOMIC_COMPAT_FLAGS
 # (BuildMaterialParams vs BuildPassMaterialParams), so no overload collapses.
 #
 # ⚠ ZERO effect on the X360 match build, which never sees this file and carries no
-# /D at all. DELETE THIS once the engine rename lands and the pin is bumped.
+# /D at all. MILO_ENGINE_PIN is ALREADY at engine HEAD (40dd2a12), so there is no pin
+# bump pending and nothing here is waiting on one.
 add_compile_definitions(BaseMaterial=RndMat)
 # --- Diagnostics policy ------------------------------------------------------
 # This build used to pass a blanket `-w`. The native build is the ONLY instrument
