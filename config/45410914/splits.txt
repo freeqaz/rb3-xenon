@@ -964,7 +964,8 @@ StarDisplay.cpp:
 	.text       start:0x8231D670 end:0x8231D940
 	.text       start:0x8231D940 end:0x8231E588
 	.text       start:0x8231E660 end:0x8231E6A8
-	.text       start:0x8231E6EC end:0x8231E8F8
+	.text       start:0x8231E6EC end:0x8231E748
+	.text       start:0x8231E758 end:0x8231E8F8
 
 BandStarDisplay.cpp:
 	.pdata      start:0x821F1FA8 end:0x821F1FB8
@@ -4739,6 +4740,7 @@ CharWeightSetter.cpp:
 	.text       start:0x823B9560 end:0x823B9744
 	.text       start:0x823B9B28 end:0x823B9D30
 	.text       start:0x823B9D38 end:0x823BA1E0
+	.text       start:0x823BA1E0 end:0x823BA1F0
 	.text       start:0x823BA1F0 end:0x823BA234
 
 HamIKEffector.cpp:
@@ -7152,7 +7154,8 @@ system/rnddx9/CubeTex.cpp:
 	.text       start:0x8273E118 end:0x8273E1F0
 	.text       start:0x8273E2D4 end:0x8273E2D8
 	.text       start:0x8273E368 end:0x8273E370
-	.text       start:0x8273E414 end:0x8273EAA8
+	.text       start:0x8273E414 end:0x8273E4D0
+	.text       start:0x8273E4E0 end:0x8273EAA8
 	.text       start:0x8273EB4C end:0x8273EBC0
 	.text       start:0x8273EC04 end:0x8273EE50
 	.text       start:0x8273EE50 end:0x8273F8F0
@@ -7317,6 +7320,7 @@ ScreenMask.cpp:
 	.text       start:0x82481A70 end:0x82481F38
 	.text       start:0x82481F98 end:0x82482050
 	.text       start:0x82482058 end:0x82482330
+	.text       start:0x82482340 end:0x82482350
 
 AsyncFileHolmes.cpp:
 	.pdata      start:0x8221A198 end:0x8221A1B0
@@ -7792,7 +7796,6 @@ FlowValueCase.cpp:
 	.text       start:0x823AEF64 end:0x823AEF98
 	.text       start:0x823B9744 end:0x823B9B28
 	.text       start:0x823B9D30 end:0x823B9D38
-	.text       start:0x823BA1E0 end:0x823BA1F0
 	.text       start:0x823BA234 end:0x823BA5AC
 	.text       start:0x82630690 end:0x82630778
 
@@ -7942,7 +7945,8 @@ Ribbon.cpp:
 	.pdata      start:0x82210FD8 end:0x82210FE0
 	.text       start:0x82481F38 end:0x82481F98
 	.text       start:0x82482050 end:0x82482058
-	.text       start:0x82482330 end:0x824823A0
+	.text       start:0x82482330 end:0x82482340
+	.text       start:0x82482350 end:0x824823A0
 	.text       start:0x8248FD58 end:0x8248FEE8
 
 Set.cpp:
@@ -12921,6 +12925,7 @@ system/rnddx9/Movie.cpp:
 	.text       start:0x8273E250 end:0x8273E2D4
 	.text       start:0x8273E2D8 end:0x8273E368
 	.text       start:0x8273E370 end:0x8273E414
+	.text       start:0x8273E4D0 end:0x8273E4E0
 	.text       start:0x8273EAA8 end:0x8273EB4C
 	.text       start:0x8273EBC0 end:0x8273EC04
 	.text       start:0x8273F8F0 end:0x8273FA4C
@@ -13018,7 +13023,6 @@ ScoreDisplay.cpp:
 	.pdata      start:0x821FC7C8 end:0x821FC7D8
 	.pdata      start:0x821FC7D8 end:0x821FC8A0
 	.pdata      start:0x821FC8E8 end:0x821FC8F0
-	.text       start:0x82319C30 end:0x82319C40
 	.text       start:0x8231F680 end:0x8231F6F8
 	.text       start:0x8231F6F8 end:0x8231F78C
 	.text       start:0x8231F790 end:0x823203AC
@@ -13033,6 +13037,7 @@ system/hamobj/MiniLeaderboardDisplay.cpp:
 	.pdata      start:0x821FC228 end:0x821FC230
 	.text       start:0x82319950 end:0x82319BC0
 	.text       start:0x82319BD0 end:0x82319C10
+	.text       start:0x82319C30 end:0x82319C40
 	.text       start:0x82319C40 end:0x82319DA4
 	.text       start:0x82319FE8 end:0x8231A0D8
 	.text       start:0x8231A138 end:0x8231A260
@@ -13299,6 +13304,7 @@ system/bandobj/ReviewDisplay.cpp:
 	.text       start:0x8231E588 end:0x8231E5E8
 	.text       start:0x8231E5E8 end:0x8231E660
 	.text       start:0x8231E6A8 end:0x8231E6EC
+	.text       start:0x8231E748 end:0x8231E758
 	.text       start:0x8231E8F8 end:0x8231EA20
 	.text       start:0x8231EAA8 end:0x8231EFA8
 	.text       start:0x8231EFA8 end:0x8231F00C
