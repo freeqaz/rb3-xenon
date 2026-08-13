@@ -13,17 +13,22 @@ RndMeshAnim::RndMeshAnim() : mMesh(this, nullptr), mKeysOwner(this, this) {}
 // Replace and SetFrame are declared in the header but never decomped.
 // On GCC, Replace is the key function — without it, the vtable ends up in .bss as zeros,
 // which crashes at construction time due to null VTT entries.
+// Retail 0x8246DF00 (140 B). See RndCamAnim::Replace for the full derivation:
+// the ring compares the VIRTUAL BASE of the held pointer (Hmx::Object is a
+// virtual base of RndMeshAnim, vbtable[1]=88, vbptr@+4), there is no
+// Hmx::Object::Replace fallback, and the cast arm must bind a reference so
+// &q->mKeysOwner stays materialized (addi r11,r3,0x4c; lwz r4,0x8(r11)).
 void RndMeshAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (RefIs(ref, mKeysOwner)) {
-        RndMeshAnim *ma;
-        if (mKeysOwner == this || !(ma = dynamic_cast<RndMeshAnim *>(obj))) {
+    if (static_cast<Hmx::Object *>(mKeysOwner.Ptr())
+        == reinterpret_cast<Hmx::Object *>(ref)) {
+        if (!obj) {
             mKeysOwner.SetObjConcrete(this);
         } else {
-            mKeysOwner.SetObjConcrete(ma->mKeysOwner.Ptr());
+            const ObjOwnerPtr<RndMeshAnim> &ko =
+                dynamic_cast<RndMeshAnim *>(obj)->mKeysOwner;
+            mKeysOwner.SetObjConcrete(ko.Ptr());
         }
-        return;
     }
-    Hmx::Object::Replace(ref, obj);
 }
 
 struct GetVertPoint {

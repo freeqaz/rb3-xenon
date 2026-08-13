@@ -72,20 +72,19 @@ BEGIN_COPYS(RndLight)
     }
 END_COPYS
 
+// Retail 0x82498380 (136 B) -- byte-for-byte the RndMesh::Replace shape with
+// mColorOwner in place of mGeomOwner. See RndMesh::Replace above.
 void RndLight::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (RefIs(ref, mColorOwner)) {
-        RndLight *lit = NULL;
-        if (mColorOwner != this) {
-            lit = dynamic_cast<RndLight *>(obj);
-        }
-        if (lit) {
-            mColorOwner = lit->mColorOwner;
-        } else {
-            mColorOwner = this;
-        }
-        return;
-    }
     RndTransformable::Replace(ref, obj);
+    if (static_cast<Hmx::Object *>(mColorOwner.Ptr())
+        == reinterpret_cast<Hmx::Object *>(ref)) {
+        RndLight *lit = dynamic_cast<RndLight *>(obj);
+        if (lit) {
+            mColorOwner.SetObjConcrete(lit->mColorOwner.Ptr());
+        } else {
+            mColorOwner.SetObjConcrete(this);
+        }
+    }
 }
 
 Transform RndLight::Projection() {
