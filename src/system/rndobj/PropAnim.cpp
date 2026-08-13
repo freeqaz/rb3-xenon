@@ -90,10 +90,26 @@ BEGIN_HANDLERS(RndPropAnim)
         set_interp_handler,
         SetInterpHandler(_msg->Obj<Hmx::Object>(2), _msg->Array(3), _msg->Sym(4))
     )
+    // Retail dispatches "replace_target" through the ObjRefOwner vtable slot
+    // @+8 on `this` (vbase-adjusted), with no null check -- the same shape
+    // Hmx::Object::Handle's "replace" arm uses, which matches at 100%. The
+    // (ObjRef *) cast only fits the declared parameter type; retail carries an
+    // Hmx::Object* through this slot (see TypeProps::Replace, also 100%).
+    // rb3-Wii's dev tree writes this as Replace(_msg->Obj(2), _msg->Obj(3))
+    // against a differently-shaped Replace(Hmx::Object*, Hmx::Object*).
+#ifdef HX_NATIVE
+    // Native ObjRef is a real polymorphic ring node, so the X360 pointer pun
+    // below would be a genuine type error here. Keep DC3's explicit form.
     HANDLE_ACTION(
         replace_target,
         _msg->Obj<Hmx::Object>(2)->ReplaceRefsFrom(this, _msg->Obj<Hmx::Object>(3))
     )
+#else
+    HANDLE_ACTION(
+        replace_target,
+        Replace((ObjRef *)_msg->Obj<Hmx::Object>(2), _msg->Obj<Hmx::Object>(3))
+    )
+#endif
     HANDLE_EXPR(foreach_target, ForEachTarget(_msg))
     HANDLE(forall_keyframes, ForAllKeyframes)
     HANDLE(foreach_keyframe, ForeachKeyframe)
