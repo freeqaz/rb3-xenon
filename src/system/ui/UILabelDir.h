@@ -38,6 +38,12 @@ public:
     // shape. Bodies land when UILabelDir itself is ported.
     // ------------------------------------------------------------------
     RndText *TextObj(Symbol) const;
+    // Retail keeps both of these OUT-OF-LINE: BandButton::Update calls them
+    // through `bl` (retail 0x8280FD68 / 0x8280FD70), both inside this unit's
+    // pinned .text span, rather than folding the member load into the caller.
+    // So they must NOT be given inline bodies here.
+    RndAnimatable *FocusAnim() const;
+    RndAnimatable *PulseAnim() const;
     void GetStateColor(UIComponent::State, Hmx::Color &) const;
     RndGroup *HighlighMeshGroup() const;
     RndMesh *TopLeftHighlightBone() const;

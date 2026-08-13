@@ -154,8 +154,39 @@ void BandButton::StartPulseAnim() {
     }
 }
 
-// NOTE: reduced -- mLabelDir / mFontMatVariation are not reconstructed here.
-void BandButton::Update() { UILabel::Update(); }
+// Retail 0x82343E10, 524 B. Read off retail bytes; the rb3-Wii oracle body is
+// faithful for X360 here (both label-dir anims, same order).
+//
+// The one place the oracle cannot be transcribed literally is the Replace()
+// argument. Retail converts BOTH arguments *and* `this` with the identical
+// four-instruction virtual-base adjust (lwz +4 / lwz +4 / add / addi +4), i.e.
+// retail's Hmx::Object::Replace takes (Hmx::Object *, Hmx::Object *). This tree
+// carries DC3's (ObjRef *, Hmx::Object *) instead. That difference is invisible
+// inside the callee -- which is why the ported Replace bodies still match 100% --
+// but it is visible here, at the call site, as the missing conversion.
+// Changing the signature would cascade through ~27 consumers (lane REFIS-1
+// measured that the header must not move), so the conversion is spelled out
+// locally: the (Hmx::Object *) cast emits retail's null-guarded vbase adjust and
+// the outer cast is a no-op reinterpret that satisfies the declared parameter.
+void BandButton::Update() {
+    UILabel::Update();
+    if (mLabelDir->FocusAnim()) {
+        if (!mFocusAnim)
+            mFocusAnim = Hmx::Object::New<RndPropAnim>();
+        mFocusAnim->Copy(mLabelDir->FocusAnim(), Hmx::Object::kCopyShallow);
+        mFocusAnim->Replace(
+            (ObjRef *)(Hmx::Object *)mLabelDir->TextObj(mFontMatVariation), mText
+        );
+    }
+    if (mLabelDir->PulseAnim()) {
+        if (!mPulseAnim)
+            mPulseAnim = Hmx::Object::New<RndPropAnim>();
+        mPulseAnim->Copy(mLabelDir->PulseAnim(), Hmx::Object::kCopyShallow);
+        mPulseAnim->Replace(
+            (ObjRef *)(Hmx::Object *)mLabelDir->TextObj(mFontMatVariation), mText
+        );
+    }
+}
 
 BEGIN_HANDLERS(BandButton)
     HANDLE_ACTION(skip_to_focused, SkipToFocused())

@@ -217,9 +217,22 @@ void RndDir::OldLoadProxies(BinStream &bs, int rev) {
     }
 }
 
+// Retail 0x824037c8, 184 B. The `dir && dir->Sinks()` guard + Hmx::Object::
+// ChainSource shape was DC3 provenance; retail (and the rb3-Wii oracle) gate on
+// a dynamic_cast<MsgSource *> of the subdir instead, and chain through the
+// MsgSource base -- retail's ChainSource call has `this` = RndDir + 0x190, which
+// is exactly this class's MsgSource subobject.
+//
+// Retail's first parameter is really a MsgSource *, not an Hmx::Object *: it is
+// forwarded to ChainSource(MsgSource *, MsgSource *) with a bare `mr r4, r27`,
+// no adjustment. The mangled name this row pairs on encodes Hmx::Object *
+// (scripts/target_symbol_map.json is lane MAP-R's file), so the signature stays
+// put and the cast is spelled locally -- MsgSource is unrelated to Hmx::Object,
+// so it compiles to the same no-op register move retail emits.
 void RndDir::ChainSourceSubdir(Hmx::Object *obj, ObjectDir *dir) {
-    if (dir && dir->Sinks()) {
-        Hmx::Object::ChainSource(obj, dir);
+    MsgSource *src = dynamic_cast<MsgSource *>(dir);
+    if (src) {
+        MsgSource::ChainSource(reinterpret_cast<MsgSource *>(obj), src);
         for (int i = 0; i < dir->SubDirs().size(); i++) {
             ChainSourceSubdir(obj, dir->SubDirs()[i]);
         }
