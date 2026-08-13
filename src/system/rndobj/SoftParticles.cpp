@@ -36,7 +36,7 @@
 #define LOAD_SUPERCLASS(parent) parent::Load(bs);
 
 RndSoftParticles::RndSoftParticles()
-    : mParticles(this), mBlend(BaseMaterial::kBlendSrcAlphaAdd) {}
+    : mParticles(this), mBlend(RndMat::kBlendSrcAlphaAdd) {}
 
 BEGIN_HANDLERS(RndSoftParticles)
     HANDLE_SUPERCLASS(RndDrawable)

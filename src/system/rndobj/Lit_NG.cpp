@@ -325,7 +325,7 @@ void NgLight::BlurShadowRT() {
 
         RndMat *workMat = TheShaderMgr.GetWork();
         workMat->SetDiffuseTex(srcTex);
-        workMat->mBlend = BaseMaterial::kBlendSrc;
+        workMat->mBlend = RndMat::kBlendSrc;
         workMat->mTexWrap = kTexWrapClamp;
         workMat->mZMode = kZModeDisable;
         workMat->MarkDirty(2);

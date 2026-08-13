@@ -110,7 +110,8 @@ void ObjRefConcrete<RndAnimatable>::CopyRef(const ObjRefConcrete<RndAnimatable> 
 
 // Two-param versions (explicit ObjectDir)
 OBJREFCONCRETE_COPYREF(ADSR)
-OBJREFCONCRETE_COPYREF(BaseMaterial)
+// (BaseMaterial's entry was here; it merged into RndMat, whose entry is below in
+// alphabetical position -- keeping both is a redefinition.)
 OBJREFCONCRETE_COPYREF(CamShot)
 OBJREFCONCRETE_COPYREF(CharBone)
 OBJREFCONCRETE_COPYREF(CharBonesObject)

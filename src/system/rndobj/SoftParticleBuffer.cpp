@@ -43,7 +43,7 @@ void RndSoftParticleBuffer::AllocateData(
 void RndSoftParticleBuffer::BlurSurface() {
     RndMat *workMat = TheShaderMgr.GetWork();
     workMat->MarkDirty(2);
-    workMat->SetBlend(BaseMaterial::kBlendSrc);
+    workMat->SetBlend(RndMat::kBlendSrc);
     workMat->SetZMode(kZModeDisable);
     workMat->SetTexWrap(kTexWrapClamp);
 
@@ -129,8 +129,8 @@ void RndSoftParticleBuffer::DoPost() {
     mSoftParticleDrawList.clear();
 }
 
-void RndSoftParticleBuffer::Queue(RndDrawable *drawable, BaseMaterial::Blend blend) {
-    if (blend != (BaseMaterial::Blend)unk38) return;
+void RndSoftParticleBuffer::Queue(RndDrawable *drawable, RndMat::Blend blend) {
+    if (blend != (RndMat::Blend)unk38) return;
     Hmx::Object *target = static_cast<Hmx::Object *>(drawable);
     ObjPtrList<RndDrawable>::iterator found;
     ObjPtrList<RndDrawable>::iterator it;

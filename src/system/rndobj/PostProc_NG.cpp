@@ -40,7 +40,7 @@ void Bloom_Downsample(ShaderType shader, RndTex *texSrc, RndTex *texDst) {
     MILO_ASSERT(texDst->Height() < texSrc->Height(), 0x17f);
 
     RndMat *workMat = TheShaderMgr.GetWork();
-    workMat->SetBlend(BaseMaterial::kBlendSrc);
+    workMat->SetBlend(RndMat::kBlendSrc);
     workMat->SetZMode(kZModeDisable);
     workMat->SetTexWrap(kTexWrapClamp);
     workMat->MarkDirty(2);
@@ -66,7 +66,7 @@ void Bloom_Blur(RndTex *texDst, RndTex *texSrc, BloomBlurStyle style, BloomBlurD
     RndMat *workMat = TheShaderMgr.GetWork();
     workMat->SetZMode(kZModeDisable);
     workMat->SetTexWrap(kTexWrapClamp);
-    workMat->SetBlend(BaseMaterial::kBlendSrc);
+    workMat->SetBlend(RndMat::kBlendSrc);
     workMat->MarkDirty(2);
 
     texDst->MakeDrawTarget();

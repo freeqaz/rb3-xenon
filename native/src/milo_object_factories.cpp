@@ -188,7 +188,7 @@ void RegisterMiloObjectFactories() {
     REGISTER_OBJ_FACTORY(RndAmbientOcclusion)
     REGISTER_OBJ_FACTORY(RndAnimatable)
     REGISTER_OBJ_FACTORY(RndAnimFilter)
-    REGISTER_OBJ_FACTORY(BaseMaterial)
+    REGISTER_OBJ_FACTORY(RndMat)
     REGISTER_OBJ_FACTORY(RndCam)
     REGISTER_OBJ_FACTORY(RndCamAnim)
     REGISTER_OBJ_FACTORY(DOFProc)

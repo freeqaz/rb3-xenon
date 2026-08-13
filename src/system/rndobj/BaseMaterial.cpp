@@ -7,10 +7,10 @@
 #include "os/Debug.h"
 #include "utl/BinStream.h"
 
-BaseMaterial *gDefaultMat;
+RndMat *gDefaultMat;
 
 namespace {
-    bool IsMat(BaseMaterial *mat) { return mat && mat->ClassName() == "Mat"; }
+    bool IsMat(RndMat *mat) { return mat && mat->ClassName() == "Mat"; }
 }
 
 #pragma region MatPerfSettings
@@ -35,9 +35,9 @@ void MatPerfSettings::Load(BinStream &bs) {
 }
 
 #pragma endregion
-#pragma region BaseMaterial
+#pragma region RndMat
 
-BaseMaterial::BaseMaterial()
+RndMat::RndMat()
     : mBlend(kBlendSrc), mColor(1, 1, 1), mZMode(kZModeNormal),
       mStencilMode(kStencilIgnore), mTexGen(kTexGenNone), mTexWrap(kTexWrapRepeat),
       mDiffuseTex(this), mIntensify(false), mUseEnviron(true), mPrelit(false),
@@ -63,18 +63,15 @@ BaseMaterial::BaseMaterial()
     mColorMod.resize(3);
 }
 
-BEGIN_HANDLERS(BaseMaterial)
-    HANDLE(allowed_next_pass, OnAllowedNextPass)
-    HANDLE(allowed_normal_map, OnAllowedNormalMap)
-    HANDLE(is_default, OnIsDefaultPropVal)
-    HANDLE_SUPERCLASS(Hmx::Object)
-END_HANDLERS
+// BEGIN_HANDLERS / BEGIN_PROPSYNCS for the merged class live in rndobj/Mat.cpp
+// (scatter-included below), because retail's single material Handle is pinned at
+// 0x82438138 inside Mat.cpp's .text span. Lane MAT-1 adjudicated that body on
+// retail bytes: exactly two Symbols, allowed_next_pass and allowed_normal_map,
+// chaining straight to Hmx::Object. DC3's extra `is_default` handler (and its
+// OnIsDefaultPropVal body) are dropped -- the string "is_default" occurs ZERO
+// times in orig/45410914/band.exe.
 
-BEGIN_PROPSYNCS(BaseMaterial)
-    SYNC_SUPERCLASS(Hmx::Object)
-END_PROPSYNCS
-
-BEGIN_SAVES(BaseMaterial)
+BEGIN_SAVES(RndMat)
     SAVE_REVS(0x44, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     bs << mBlend << (const Vector4 &)mColor << mUseEnviron << mPrelit;
@@ -104,9 +101,9 @@ BEGIN_SAVES(BaseMaterial)
 #endif
 END_SAVES
 
-BEGIN_COPYS(BaseMaterial)
+BEGIN_COPYS(RndMat)
     COPY_SUPERCLASS(Hmx::Object)
-    CREATE_COPY(BaseMaterial)
+    CREATE_COPY(RndMat)
     BEGIN_COPYING_MEMBERS
         if (ty == kCopyFromMax) {
             if (!mDiffuseTex != !c->mDiffuseTex) {
@@ -178,16 +175,35 @@ BEGIN_COPYS(BaseMaterial)
             COPY_MEMBER(mWorldProjectionStartBlend)
             COPY_MEMBER(mWorldProjectionEndBlend)
 #endif
+            // folded in from the DC3 RndMat::Copy layer (mShaderOptions /
+            // mColorModFlags / mColorMod are members of the ONE retail material
+            // class, so they belong in its ONE Copy)
+            COPY_MEMBER(mShaderOptions)
+            COPY_MEMBER(mColorModFlags)
+            COPY_MEMBER(mColorMod)
         }
+        mDirty = 3;
     END_COPYING_MEMBERS
 END_COPYS
 
 INIT_REVS(0x44, 0)
 
-BEGIN_LOADS(BaseMaterial)
+// Retail's material Load is fn_82438F40 (pinned, unnamed, inside rndobj/Utl.cpp's
+// span). Read directly, it settles the serialization shape that the two-class split
+// obscured: it reads the rev EXACTLY ONCE, then loads members inline at the
+// BaseMaterial offsets in this order (r30+0x28 mBlend, +0x2c mColor, +0x99
+// mUseEnviron, +0x9a mPrelit), stores mDirty at +0x188 and takes &mColorMod at
+// +0x158. There is NO second rev read, no minVer assert and no out-of-line LoadOld
+// call -- retail inlined its old-version path (its tail is the mRefractEnabled
+// *= 0.15f code). So the DC3 rev-0x46 outer layer in Mat.cpp is scaffolding, exactly
+// like RndMat::Save was, and dropping BOTH keeps save/load symmetric on rev 0x44 --
+// the rev retail's byte-exact 988 B Save at 0x82435dc0 actually writes.
+BEGIN_LOADS(RndMat)
     LOAD_REVS(bs)
     ASSERT_REVS(0x44, 0)
     LOAD_SUPERCLASS(Hmx::Object)
+    mDirty = 3;
+    ResetColors(mColorMod, 3);
     d >> (int &)mBlend;
     mBlend = CheckBlendMode(mBlend, this);
     d.stream >> mColor >> mUseEnviron >> mPrelit;
@@ -246,18 +262,18 @@ BEGIN_LOADS(BaseMaterial)
 #endif
 END_LOADS
 
-void BaseMaterial::SetDefaultMat(BaseMaterial *mat) {
+void RndMat::SetDefaultMat(RndMat *mat) {
     MILO_ASSERT(!gDefaultMat, 0x55);
     gDefaultMat = mat;
 }
 
-const DataNode *BaseMaterial::GetDefaultPropVal(Symbol s) {
+const DataNode *RndMat::GetDefaultPropVal(Symbol s) {
     const DataNode *node = gDefaultMat->Property(s, true);
     MILO_ASSERT(node, 0x129);
     return node;
 }
 
-bool BaseMaterial::PropValDifferent(Symbol s, BaseMaterial *base) {
+bool RndMat::PropValDifferent(Symbol s, RndMat *base) {
     if (!base) {
         base = gDefaultMat;
     }
@@ -277,32 +293,16 @@ bool BaseMaterial::PropValDifferent(Symbol s, BaseMaterial *base) {
     }
 }
 
-DataNode BaseMaterial::OnIsDefaultPropVal(const DataArray *a) {
-    static Symbol tex_xfm("tex_xfm");
-    Symbol sym = a->Sym(2);
-    bool ret;
-    if (sym == tex_xfm) {
-        Transform tf;
-        tf.Reset();
-        ret = tf == mTexXfm;
-    } else {
-        const DataNode *val = GetDefaultPropVal(sym);
-        MILO_ASSERT(val, 0x1AA);
-        DataNode var(*val);
-        val = Property(sym, true);
-        MILO_ASSERT(val, 0x1AF);
-        ret = val->Equal(var, nullptr, true);
-    }
-    return ret;
-}
+// DC3's BaseMaterial::OnIsDefaultPropVal and its `is_default` handler are deleted
+// with the merge: retail's material Handle builds exactly two Symbols (lane MAT-1),
+// and the string "is_default" occurs ZERO times in orig/45410914/band.exe.
 
-__declspec(noinline) BaseMaterial::Blend
-CheckBlendMode(BaseMaterial::Blend b, BaseMaterial *) {
+__declspec(noinline) RndMat::Blend CheckBlendMode(RndMat::Blend b, RndMat *) {
     return b;
 }
 
-bool BaseMaterial::IsNextPass(BaseMaterial *m) {
-    for (BaseMaterial *it = this; it != nullptr; it = it->NextPass()) {
+bool RndMat::IsNextPass(RndMat *m) {
+    for (RndMat *it = this; it != nullptr; it = it->NextPass()) {
         if (it == m) {
             return true;
         }
@@ -310,9 +310,9 @@ bool BaseMaterial::IsNextPass(BaseMaterial *m) {
     return false;
 }
 
-DataNode BaseMaterial::OnAllowedNextPass(const DataArray *a) {
+DataNode RndMat::OnAllowedNextPass(const DataArray *a) {
     int matCount = 0;
-    for (ObjDirItr<BaseMaterial> it(Dir(), true); it != nullptr; ++it) {
+    for (ObjDirItr<RndMat> it(Dir(), true); it != nullptr; ++it) {
         if (IsMat(it)) {
             matCount++;
         }
@@ -326,7 +326,7 @@ DataNode BaseMaterial::OnAllowedNextPass(const DataArray *a) {
         ptr->Node(idx++) = mNextPass.Ptr();
     }
 
-    for (ObjDirItr<BaseMaterial> it(Dir(), true); it != nullptr; ++it) {
+    for (ObjDirItr<RndMat> it(Dir(), true); it != nullptr; ++it) {
         if (IsMat(it) && !IsNextPass(it)) {
             ptr->Node(idx++) = &*it;
         }
@@ -335,7 +335,7 @@ DataNode BaseMaterial::OnAllowedNextPass(const DataArray *a) {
     return ptr;
 }
 
-DataNode BaseMaterial::OnAllowedNormalMap(const DataArray *a) {
+DataNode RndMat::OnAllowedNormalMap(const DataArray *a) {
     return GetNormalMapTextures(Dir());
 }
 

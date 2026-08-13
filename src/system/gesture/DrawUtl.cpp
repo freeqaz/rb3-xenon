@@ -58,7 +58,7 @@ RndMat *CreateCameraBufferMat(int width, int height, RndTex::Type type) {
     auto newMat = Hmx::Object::New<RndMat>();
     newMat->SetUseEnv(false);
     newMat->SetPreLit(true);
-    newMat->SetBlend(BaseMaterial::kBlendSrc);
+    newMat->SetBlend(RndMat::kBlendSrc);
     newMat->SetZMode(kZModeDisable);
     newMat->SetDiffuseTex(tex);
     CreateAndSetMetaMat(newMat);
