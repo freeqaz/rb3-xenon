@@ -73,7 +73,14 @@ void *PoolAlloc(int classSize, int reqSize) {
     }
     MILO_ASSERT(reqSize == classSize, 0x15F);
     void *alloced = gChunkAlloc->Alloc(classSize);
-    MemTrackAlloc(classSize, classSize, nullptr, alloced, true, 0, nullptr, 0);
+    // NO MemTrackAlloc here. This overload previously carried one, which made it
+    // 272 bytes against the 156-byte retail body -- and contradicted this file's
+    // own header comment claiming the two PoolAlloc forms ICF-fold. The retail
+    // bytes are unambiguous and asymmetric: ?PoolAlloc@@YAPAXHHPBDH0@Z (156 B)
+    // matches 100% with NO `bl ?MemTrackAlloc@@...` anywhere in it, while
+    // ?PoolFree@@YAXHPAX@Z (132 B) matches 100% and DOES call MemTrackFree at
+    // instruction 14. Retail really does track pool frees but not pool allocs;
+    // that asymmetry is what the bytes say, not an oversight in the port.
     return alloced;
 #endif
 }

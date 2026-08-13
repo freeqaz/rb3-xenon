@@ -25,6 +25,24 @@
 #include "utl/Symbols.h"
 #include "utl/Symbols4.h"
 
+// Retail (and the rb3-Wii oracle, TambourineManager.cpp:270 et al) call DoFade
+// UNCONDITIONALLY -- there is no null test on mTambourineFader anywhere in the
+// target. The `if (mTambourineFader)` guards that used to sit at each of these
+// seven call sites were a NATIVE-PORT accommodation: the HX_NATIVE ctor above
+// builds a headless TambourineManager with mTambourineFader(0), so an unguarded
+// call would fault there and only there. Keeping the guard cost us real bytes
+// (TambourineSucceed emitted a `cmplwi cr6, r3, 0x0` / `beq` pair the target
+// does not have), so it is now scoped to the build that needs it.
+#ifdef HX_NATIVE
+#define TAMBOURINE_FADE(a, b)                                                            \
+    do {                                                                                 \
+        if (mTambourineFader)                                                            \
+            mTambourineFader->DoFade(a, b);                                              \
+    } while (0)
+#else
+#define TAMBOURINE_FADE(a, b) mTambourineFader->DoFade(a, b)
+#endif
+
 TambourineManager::TambourineManager(VocalPlayer &p)
     : mPlayerRef(p), mIsLocal(p.IsLocal()), mTambourineSequence(0),
 #ifdef HX_NATIVE
@@ -69,7 +87,7 @@ void TambourineManager::PostLoad() {
     mTambourineParser->AddSink(this);
 #endif
     ComputeTambourinePoints();
-    if (mTambourineFader) mTambourineFader->DoFade(-96.0f, 0);
+    TAMBOURINE_FADE(-96.0f, 0);
 }
 
 void TambourineManager::PostDynamicAdd() { Restart(); }
@@ -145,12 +163,12 @@ void TambourineManager::Poll(float ms) {
     } else if (delta > 0) {
         VocalTrack *track = mPlayerRef.mTrack;
         if (unk48) {
-            if (mTambourineFader) mTambourineFader->DoFade(0.0f, 0.0f);
+            TAMBOURINE_FADE(0.0f, 0.0f);
             if (track) {
                 track->HitTambourineGem(mTambourineIdx);
             }
         } else {
-            if (mTambourineFader) mTambourineFader->DoFade(-96.0f, 0.0f);
+            TAMBOURINE_FADE(-96.0f, 0.0f);
             if (track) {
                 track->MissTambourineGem(mTambourineIdx, false);
             }
@@ -225,7 +243,12 @@ bool TambourineManager::GemHit(int index) const {
 bool TambourineManager::GemProcessed(int index) const {
     if ((unsigned int)index >= mGemStates.size())
         return false;
-    return (mGemStates[index] >> 2) & 1;
+    // Unsigned shift: retail folds this whole test into a single
+    // `extrwi r11, r11, 1, 29`. A signed `>>` makes MSVC emit an arithmetic
+    // `srawi r11, r11, 2` plus a separate `clrlwi r11, r11, 31` instead --
+    // same value, two instructions. (rb3-Wii has the signed spelling, but it
+    // is MWCC and does not have to agree.)
+    return ((unsigned int)mGemStates[index] >> 2) & 1;
 }
 
 void TambourineManager::LocalTambourineSoloEnd(int pct, int numGems) {
@@ -299,7 +322,7 @@ void TambourineManager::TambourineSucceed(int index) {
     if (GemProcessed(index))
         return;
     MILO_ASSERT(mIsLocal, 0x244);
-    if (mTambourineFader) mTambourineFader->DoFade(0.0f, 0.0f);
+    TAMBOURINE_FADE(0.0f, 0.0f);
     if (mPlayerRef.mTrack) {
         mPlayerRef.mTrack->HitTambourineGem(index);
     }
@@ -331,7 +354,7 @@ void TambourineManager::TambourineFail(int index, bool swing) {
     if (GemProcessed(index))
         return;
     MILO_ASSERT(mIsLocal, 0x27b);
-    if (mTambourineFader) mTambourineFader->DoFade(-96.0f, 0.0f);
+    TAMBOURINE_FADE(-96.0f, 0.0f);
     if (index != -1) {
         if (mPlayerRef.mTrack) {
             mPlayerRef.mTrack->MissTambourineGem(index, swing);
@@ -391,7 +414,7 @@ void TambourineManager::SetPaused(bool paused) { mTambourineActive = !paused; }
 
 void TambourineManager::GameOver() {
     mTambourineActive = false;
-    if (mTambourineFader) mTambourineFader->DoFade(-96.0f, 0.0f);
+    TAMBOURINE_FADE(-96.0f, 0.0f);
 }
 
 void TambourineManager::Rollback(float, float toMs) {
@@ -406,7 +429,7 @@ void TambourineManager::Rollback(float, float toMs) {
             mGemStates[i] |= 4;
         }
     }
-    if (mTambourineFader) mTambourineFader->DoFade(0.0f, 0.0f);
+    TAMBOURINE_FADE(0.0f, 0.0f);
     unk48 = true;
 }
 
