@@ -457,7 +457,15 @@ def main():
         # Both tags known and EQUAL => the tag cannot discriminate (it is the
         # inherited base for both), so fall through and judge on SIZE alone.
         if tt and ot and tt != ot:
-            rec["verdict"] = "FALSE_PAIRING_TAG"
+            # *** A TAG MISMATCH IS NOT AUTOMATICALLY A FALSE PAIRING. ***
+            # If retail's tag names THE ROW'S OWN CLASS, retail is agreeing with
+            # the map about what this row is -- the pairing is CORROBORATED, and
+            # the divergence is that OUR class inherits StaticClassName where
+            # retail's declares its own.  Reporting StarDisplay (retail tag
+            # 'StarDisplay', ours 'UIComponent') as a false pairing would have
+            # been exactly backwards: the tag CONFIRMS the row.
+            rec["verdict"] = ("OUR_TAG_TOO_GENERIC" if tt == rec["cls"]
+                              else "FALSE_PAIRING_TAG")
             rec["delta"] = None if (ts is None or os_ is None) else os_ - ts
         elif ts is not None and os_ is not None:
             rec["delta"] = os_ - ts
