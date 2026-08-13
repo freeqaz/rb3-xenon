@@ -83,15 +83,29 @@ Character::~Character() {
     delete mTest;
 }
 
+// Same two defects as RndParticleSys::Replace (base call FIRST + the dropped
+// virtual-base adjust on the held pointer), plus a third: retail does the
+// dynamic_cast ITSELF and assigns through ObjOwnerPtr::operator= (SetOwnerObj),
+// then RELOADS the member to test for null.  The old SetObj() spelling folded
+// the cast into ObjRefConcrete::SetObj and returned the result in a register,
+// so there was no reload.
+// NOTE: retail's callee here renders as SetOwnerObj@ObjOwnerPtr<CharInterest>,
+// which is an ICF FOLD-ALIAS, not evidence about the member type -- the RTTI
+// descriptors actually loaded are ??_R0?AVRndTransformable@@ / ??_R0?AVObject@Hmx@@,
+// and mSphereBase is already ObjOwnerPtr<RndTransformable>.  A callee name never
+// witnesses a member type.
 void Character::Replace(ObjRef *from, Hmx::Object *to) {
-    if (RefIs(from, mSphereBase)) {
-        Hmx::Object *obj = mSphereBase.SetObj(to);
-        if (!obj) {
-            mSphereBase = this;
+    RndDir::Replace(from, to);
+    if (reinterpret_cast<void *>(from)
+        == reinterpret_cast<void *>(static_cast<Hmx::Object *>(mSphereBase.Ptr()))) {
+        // The binding is load-bearing: retail materializes &mSphereBase
+        // (subi r30,r31,0x58) BEFORE the __RTDynamicCast call.  Assigning to
+        // mSphereBase directly schedules that addi after the call instead.
+        ObjOwnerPtr<RndTransformable> &sphere = mSphereBase;
+        sphere = dynamic_cast<RndTransformable *>(to);
+        if (!sphere.Ptr()) {
+            sphere = this;
         }
-        return;
-    } else {
-        RndDir::Replace(from, to);
     }
 }
 
