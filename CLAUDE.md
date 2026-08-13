@@ -199,6 +199,25 @@ as it charges a genuinely wrong callee. **It conflates "folded" with "wrong"
 rather than masking both** — same verdict, new mechanism. Do not cite the masking
 reason anywhere; it is stale.
 
+⛔⛔ **AND THAT CONFLATION IS SHIPPED AS A CONFIDENT `AT_LIMIT` VERDICT — DO NOT
+BELIEVE IT ON THE `diff_arg`-ONLY STRATUM** (lane MPNGAP-1, 2026-08-13,
+`2f5a3cd3`). objdiff's `LINKER_MERGED` detector emits
+`ICF: X (cross-function merge)` and the human-readable claim **"no source
+mutation can close them"** whenever *target calls A, we call B, A≠B, and both
+look like function names* — which is **bit-for-bit the definition of a wrong
+callee**. On the 2,890 named rows of the mpn==100/fuzzy<100 stratum it labels
+**2,648 `AT_LIMIT`**, and it was measured **wrong on the rows the lane then fixed
+by editing source** (+6,304 B, predicted exactly). ⇒ **An `AT_LIMIT` label on a
+row whose only penalties are relocation-name args carries no information** — it
+is the detector restating its own input. Adjudicate on retail bytes instead
+(**does the named callee's signature match the call site?** — MPNGAP-1 killed
+`Handle@GemPlayer`, 5,612 B, by observing retail's callee returns `void` where
+the site dereferences `r3` and takes no args where the site passes `r4`: our
+source was right and the **map** was wrong). This is the same disease as the
+`REGISTER_SWAP` label being a symptom rather than a diagnosis — **a tool's
+confident "unfixable" is the claim most worth auditing, because it CLOSES veins
+and nobody re-opens them.**
+
 ⛔ **The "71.5% of `name_check` sites are ICF fold-aliases ⇒ NOISE" model does NOT
 survive** — and for a reason *independent* of ICF being real. "Callee absent from
 map ⇒ fold-alias" never measured folding; it measured **identification coverage**.
@@ -908,6 +927,26 @@ run the gate before you land. Two traps, both real:
   groups and advertised itself as free to merge until 2026-08-13; do not.
   ⛔ And the 219-row population above should be **re-derived on `name_check`**
   before anyone calls it empty again — "SIZED AND EMPTY" was measured on `none`.
+  ✅ **DONE 2026-08-13 (lane MPNGAP-1, `2f5a3cd3`) — DC-4's verdict SURVIVES IN
+  SUBSTANCE at 9× the nominal size.** On `name_check` the population is
+  **6,384 rows / 930,204 B** (8.7% of `total_code`) vs DC-4's 219 / 101,996 B.
+  The expansion is *by construction* the relocation-NAME class: report `fuzzy`
+  **is** `match_percent`, and `arg_diff_score` (what `mpn` excludes) counts only
+  **non-immediate** arg diffs, so this stratum is exactly "rows whose every
+  penalty is reloc / register / branch-dest" — under `none` those were free.
+  ★★★ **But it is DEPLETED, not enriched, against a control that could fail**
+  (400 rows at `mpn < 100`, same units, size-matched): real-defect class
+  **10.7% vs 12.1% control = 0.88×**; charged name-sites per row 1.43 vs 1.34
+  = **1.07×**. ⇒ **Conditional on a charged relocation-name site existing, the
+  fold-vs-defect mix is the same as in ordinary broken rows.** The stratum's
+  special property is **composition, not density** — name-sites are 75.7% of
+  charged instructions here vs 3.1% in control, and rows carry 1.89 charged
+  instructions vs 43.4 — so what it buys is **realisability** (all-or-nothing
+  `matched_code` means fixing the one name site suffices to cross). Budget:
+  15.8% anonymous rows (**zero** byte upside — placeholder targets are already
+  forgiven), 13.1% ceiling, 5.3% class A, **0.9% provably fixable**, of which
+  **+6,304 B realised, predicted exactly**. ⇒ **~91% is irreducible fold/map
+  noise. Do not re-fund this as a byte lever.**
 
   Continuing DC-4's second correction: the 14 shift/mask rows (twice sold as a
   "struct-size oracle") adjudicate on retail bytes to **0 real defects** (DD-1
