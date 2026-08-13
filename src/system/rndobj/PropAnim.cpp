@@ -32,7 +32,21 @@ RndPropAnim::RndPropAnim()
 
 RndPropAnim::~RndPropAnim() { DeleteAll(mPropKeys); }
 
+// Retail scans EVERY key -- it does not stop at the first match -- and calls no
+// base Replace at all. Our previous shape (return after the first hit, then a
+// trailing Hmx::Object::Replace fallback) is DC3's, and DC3 postdates RB3: DC3
+// rewrote this to the bool-returning "I handled it" protocol, which is what the
+// early return and the fallback are for. rb3-Wii carries the RB3-era shape and
+// agrees with the retail bytes on the loop; it disagrees on the base call
+// (rb3-Wii calls Hmx::Object::Replace first) and the retail bytes win -- the
+// non-native Hmx::Object::Replace body is EMPTY but lives in Object.cpp, and
+// with no LTCG an empty out-of-line callee still costs a real `bl`. There is no
+// `bl` in the retail body, so the call is genuinely absent from RB3's source.
+// Kept under HX_NATIVE only, where the base really does forward to mSinks.
 void RndPropAnim::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
+    Hmx::Object::Replace(from, to);
+#endif
     for (auto it = mPropKeys.begin(); it != mPropKeys.end();) {
         PropKeys *cur = *it;
 #ifdef HX_NATIVE
@@ -45,12 +59,11 @@ void RndPropAnim::Replace(ObjRef *from, Hmx::Object *to) {
                 delete cur;
             } else {
                 cur->SetTarget(to);
+                ++it;
             }
-            return;
         } else
             ++it;
     }
-    Hmx::Object::Replace(from, to);
 }
 
 BEGIN_HANDLERS(RndPropAnim)
