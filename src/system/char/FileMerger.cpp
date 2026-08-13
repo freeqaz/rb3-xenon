@@ -578,12 +578,19 @@ FileMerger::Merger *FileMerger::NotifyFileLoaded(Loader *l, ObjectDir *dir) {
     // by MANGLED NAME, so row 0x823927c8 was re-spelled in the same change.
     // Census first: this spelling occupied exactly ONE map row, not at 100%, so
     // the re-mangle risked no already-matching bytes.
-    MILO_ASSERT_FMT(
-        l->LoaderFile() == mFilesPending.front()->loading,
-        "%s != %s",
-        l->LoaderFile(),
-        mFilesPending.front()->loading
-    );
+    // Retail EVALUATES this comparison: the function opens with
+    // `addi r3,r4,0xc` (l->LoaderFile(), i.e. l->mFile) / `lwz r11,0x8(r11)`
+    // (mFilesPending.front()) / `addi r4,r11,0x10` (&front->loading) /
+    // `bl fn_827BD798`. MILO_ASSERT_FMT is ((void)sizeof(!(cond))) -- sizeof is
+    // UNEVALUATED, so it emits NOTHING; plain MILO_ASSERT is ((void)(cond)) and
+    // does emit. FailedLoading carries the identical comparison under plain
+    // MILO_ASSERT and matches 100%.
+    // ⚠ Lane B6-FM measured this fix as a REGRESSION (96.2->94.7 / ->95.2) and
+    // correctly diagnosed it as COUPLED: it was paying for 4 wanted instructions
+    // with ~7 unwanted ones, all from the GetDir() call this function used to
+    // make. That call has now MOVED TO THE CALLER with the signature fix, so the
+    // coupling is released and the assert can be evaluated on its own.
+    MILO_ASSERT(l->LoaderFile() == mFilesPending.front()->loading, 0x216);
     MILO_ASSERT(l == mCurLoader, 0x217);
     Merger *m = mFilesPending.front();
     m->Clear();
