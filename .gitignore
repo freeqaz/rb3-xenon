@@ -148,7 +148,10 @@ core.*
 /ghidra_projects/
 
 # Generated decomp scope-map (~8 MB; rebuild via tools/scope_map.py build)
+# .bak is the previous cache, kept by `build` so a reclassification is auditable
+# after the fact -- same size, equally never committed.
 /config/45410914/scope_map.json
+/config/45410914/scope_map.json.bak
 /game_content_match.json
 
 # Local analysis + run artifacts (regenerable; never commit)
