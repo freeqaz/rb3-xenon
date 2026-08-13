@@ -14,7 +14,7 @@ verification, the number that should be landed is ZERO.**
 | …survive the blob-in-main-history test | **74** |
 | **classified LAND** | **0** |
 | classified NEEDS-LANE | **0** |
-| could not classify confidently | **1** (`laneDY1-ab`) |
+| could not classify confidently | **0** (`laneDY1-ab` resolved 2026-08-13 — §7.1) |
 
 **The gap between 440 and 0 is the finding.** Patch-id equivalence is a candidate
 generator, not a verdict; every retirement below is backed by a content check
@@ -153,14 +153,14 @@ evidence strength.
 
 | classification | count | meaning |
 |---|---|---|
-| LANDED-REWRITTEN | **307** | content on main in a different form (content-verified) |
+| LANDED-REWRITTEN | **308** | content on main in a different form (content-verified) |
 | LANDED | **216** | ancestor of main, or every own patch-id on main |
 | NO-CONTENT | **90** | touches only regenerated / deliberately-excluded files |
 | SUPERSEDED | **24** | a later, better solution won on main |
 | EXPERIMENT | **18** | deliberately abandoned; **history, must NOT be landed** |
 | REFUTED | **6** | premise since disproven |
 | SCRATCH | **1** | regenerable pipeline output (`laneCK3`, 221,744 lines) |
-| UNRESOLVED | **1** | `laneDY1-ab` — see §7 |
+| UNRESOLVED | **0** | `laneDY1-ab` resolved 2026-08-13 → LANDED-REWRITTEN (§7.1) |
 | **LAND** | **0** | — |
 
 ★ **The orphan problem is bounded to before 2026-08-04.** The newest branch
@@ -274,13 +274,67 @@ a lane that landed by patch leaves its worktree dirty forever.
 - **Did not re-adjudicate** the 29 branches already covered individually by the
   two prior audits, nor re-derive ORPHAN-SAVE's 940-file adjudication.
 - **Did not verify the 18 weak-evidence retirements** beyond line containment.
-- **`laneDY1-ab` is UNRESOLVED** — 20 rev-dialect files; delegated verification
-  did not return a measured verdict. There is a *prior* that its files match the
-  rev-dialect override family `laneDI1` carried (which is on main rewritten), but
-  **that is a prior, not a measurement.** It must be re-run, not assumed. This is
-  the only branch in the repo I cannot classify.
+- ✅ **`laneDY1-ab` was UNRESOLVED — now RESOLVED, see §7.1.** As written, this
+  lane could not classify it: 20 rev-dialect files, delegated verification never
+  returned a measured verdict, and there was only a *prior* that its files match
+  the rev-dialect family `laneDI1` carried. Refusing to classify on that prior
+  was the right call — **the prior named the wrong family.** Measured verdict:
+  **LANDED-REWRITTEN**, and it must not be landed.
 - **Did not chase the moving target past one delta pass.** Tips will keep moving;
   the census is pinned to the recorded shas.
+
+---
+
+## 7.1 `laneDY1-ab` — RESOLVED 2026-08-13 (lane TOOLFIX-1)
+
+**Verdict: LANDED-REWRITTEN. ⛔ DO NOT LAND — merging it would REVERT main.**
+
+The branch's whole committed history is an **ancestor of main**
+(`git merge-base --is-ancestor 725bb9ed7539 main` ⇒ true; `plus_commits` 0). The
+only object off main is a single ORPHAN-SAVE WIP commit **`2547c060`** banking 20
+uncommitted rev-dialect files (607 insertions / 268 deletions).
+
+### The measurement
+
+| check | result |
+|---|---|
+| WIP blobs **identical to main's TIP** | **9 / 20** |
+| WIP blobs **elsewhere in main's history** (landed-then-refactored) | **11 / 20** |
+| WIP blobs **never in main's history** | **0 / 20** |
+| reverse-direction control | branch-only **181** lines vs main-only **305** |
+
+Every one of the 20 blobs attributes to a commit **on main** — and all three are
+named `fix(DY-1)`, i.e. **this lane's own landed work**:
+
+- `8d5927c3` *fix(DY-1): rev dialect batch 1 — 4 more Load bodies to 100%*
+- `009f7490` *fix(DY-1): rev dialect batch 2 — 6 more Loads to 100%, 2 TUs REVERTED as lossy*
+- `40abb376` *fix(DY-1): rev STORAGE CLASS — TrackWidget 87.7% → 92.1%*
+
+⇒ **The census's prior named the wrong family.** It guessed `laneDI1`'s
+rev-dialect override family; the content is DY-1's own. Declining to classify on
+that prior was correct — the prior was wrong, and only the content test found it.
+
+### ⛔ Why it must not be landed
+
+The WIP is a **stale snapshot**, not new work. Its files predate later main
+commits, so a merge would revert them:
+
+- `f278d4d7` *wave4(NCCC-0803-b2bb): crack the [70,90) band — +350 matched, +0.900pp code*
+- `044ffc1a` *rev(Env, UIFontImporter): same no-static dialect — UIFontImporter::Load → 100%*
+- `7f54a1e6` *match(UIFontImporter): SyncProperty 92.02 → 100%*
+
+### ⚠ Two files read "branch ahead" on line counts and are NOT
+
+`rndobj/AmbientOcclusion.cpp` (52 branch-only vs 47 main-only) and
+`track/TrackWidget.cpp` (50 vs 23) invert the aggregate control. Both are **false
+signals**, and the reason generalises: the differing hunks are **not rev-dialect
+at all** — they are `IsValid_AOReceive` and `kdTree<Triangle>::Intersect` bodies
+that **main gained later** in `f278d4d7`. A per-file line-count aggregate cannot
+tell "branch has content main lacks" from "branch predates main's improvement";
+only **blob-in-history plus per-blob attribution** separates them, and both files'
+blobs sit verbatim in main's history. This is §2's lesson firing on a live case:
+had the count been read as a verdict, the recommendation would have been to land
+a patch that reverts `+350 matched`.
 
 ---
 
