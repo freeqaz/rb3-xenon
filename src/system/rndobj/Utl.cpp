@@ -2025,6 +2025,8 @@ bool RndAmbientOcclusion::Edge::operator<(const Edge &e) const {
 #endif
 
 #include "rndobj/CamAnim.h"
+#include "rndobj/EnvAnim.h"
+#include "rndobj/Text.h"
 
 void RndScaleObject(Hmx::Object *obj, float scale, float fovScale) {
     RndDrawable *draw = dynamic_cast<RndDrawable *>(obj);
@@ -2057,6 +2059,19 @@ void RndScaleObject(Hmx::Object *obj, float scale, float fovScale) {
     RndEnviron *env = dynamic_cast<RndEnviron *>(obj);
     if (env) {
         env->SetFogRange(env->FogStart() * scale, env->FogEnd() * scale);
+        return;
+    }
+    RndEnvAnim *envanim = dynamic_cast<RndEnvAnim *>(obj);
+    if (envanim) {
+        if (envanim->KeysOwner() == envanim) {
+            ScaleFrame(envanim->FogColorKeys(), fovScale);
+            ScaleFrame(envanim->AmbientColorKeys(), fovScale);
+        }
+        return;
+    }
+    RndText *text = dynamic_cast<RndText *>(obj);
+    if (text) {
+        text->SetSize(text->Size() * scale);
         return;
     }
     RndGenerator *gen = dynamic_cast<RndGenerator *>(obj);
