@@ -182,3 +182,114 @@ Unit figures above are read from a `report.json` dated **Aug 13 06:46**, i.e.
 *before* MAT-1 landed at 18:50 (it still shows `BaseMaterial` 23, MAT-1's A/B
 ended at 22). Ruler `name_check`, read from `provenance`. Treat them as
 indicative magnitudes, not current absolutes.
+
+## ⛔⛔ The rename must NOT be propagated into `milo-native-engine` (lane ENGINE-1, 2026-08-13)
+
+ENGINE-1 was commissioned to finish this rename in the shared engine
+(`../milo-native-engine`), bump `MILO_ENGINE_PIN`, and delete the
+`add_compile_definitions(BaseMaterial=RndMat)` bridge in `native/CMakeLists.txt`.
+**It measured the rename and it BREAKS `dc3-decomp`. Do not do it.** The bridge
+stays; the lane's own footprint was the corrected comment on that define.
+
+**The premise was false.** `BaseMaterial` in the engine is not a leftover spelling
+of `RndMat` — it is DC3's *real base class*, and DC3 has **two** subclasses of it,
+so `RndMat` and `MetaMaterial` are **siblings** there and parent/child here:
+
+| | dc3-decomp | rb3-xenon (post-BASEMAT-2) |
+|---|---|---|
+| base | `BaseMaterial : Hmx::Object` | — (merged away) |
+| | `RndMat : BaseMaterial` | `RndMat : Hmx::Object` |
+| | `MetaMaterial : BaseMaterial` | `MetaMaterial : RndMat` |
+| `NextPass()` | returns `BaseMaterial *` | returns `RndMat *` |
+| `mNextPass` | `ObjPtr<BaseMaterial>` | `ObjPtr<RndMat>` |
+
+Because DC3's `NextPass()` returns the *base*, renaming the receiver to `RndMat*`
+is a base→derived narrowing with no implicit conversion.
+
+**Measured, not inferred.** DC3's own compile command for each engine TU was
+extracted from its `build.ninja` and re-run `-fsyntax-only` (non-mutating — never
+writes into dc3-decomp's build dir). Baseline **5/5 OK**; with a naive rename
+applied to a scratch copy of one TU:
+
+```
+Mesh_Wgpu.cpp:297:13: error: cannot initialize a variable of type 'RndMat *'
+                             with an rvalue of type 'BaseMaterial *'
+Mesh_Wgpu.cpp:329:30: error: incompatible pointer types assigning to 'RndMat *'
+                             from 'BaseMaterial *'
+```
+
+⚠ The instrument was validated in **both** directions before being trusted: its
+first two revisions returned 0/5 for reasons that had nothing to do with the
+change (a stale `cmake_pch.hxx.pch`, then a 4-token `-Xclang -include-pch -Xclang
+<path>` group that a 2-token strip left dangling as a *source input*). A gate that
+fails on everything blocks exactly as convincingly as one that passes on
+everything.
+
+⚠ **`site 329` was invisible to text search** — the variable is bare `nextPass`
+there. Any future census of this class must be compiler-driven, not `grep`-driven.
+
+### Why the other two consumers land differently
+
+- **rb3 (Wii): unaffected.** It builds `MILO_ENGINE_GPU_BACKEND=rb3`, which drops
+  all 8 affected sources (they are in `MILO_ENGINE_GPU_PLATFORM_SOURCES` /
+  `MILO_ENGINE_GFX_RNDOBJ_SOURCES`, both `dc3`-only) and substitutes
+  `Rnd_Wgpu_RB3.cpp` + `RB3MaterialBinder.cpp`. Its `src/` contains **zero**
+  occurrences of `BaseMaterial`.
+- **dc3-decomp: immediately exposed.** It does
+  `add_subdirectory(${MILO_ENGINE_PATH})` against the engine **working tree**, and
+  its `MILO_ENGINE_PIN` is only a `message(WARNING)` — never a fetch. So an engine
+  edit reaches DC3 on its next configure regardless of its (stale, `77eb428b`) pin.
+  The soft pin is a notification, **not** an isolation mechanism.
+
+### Scope correction
+
+The bridge comment claimed 4 engine files. The real scope is **8 sources + 2 test
+files**: `platform/{MaterialSetup.h,MaterialSetup.cpp,UiRenderHeuristics.h,`
+`Rnd_Wgpu.cpp,TransparentQueue.cpp,Mesh_Wgpu.cpp}`, `gfx/{ShadowPass.cpp,`
+`PipelineManager.h}`, plus `tests/test_rndcam_projection.cpp` and
+`tests/dc3_runtime_sources.cmake`. Of these:
+
+- `gfx/PipelineManager.h` is a **comment** only.
+- `tests/dc3_runtime_sources.cmake` is a **file path** (`BaseMaterial.cpp`), which
+  exists under that name in *both* trees — nothing to change.
+- the `#include "rndobj/BaseMaterial.h"` lines need **no** change either: BASEMAT-2
+  deliberately kept the filenames (they are decomp unit-boundary artifacts, and
+  renaming them would churn `config/45410914/splits.txt`).
+- the engine already spells concrete materials `RndMat*` (`mesh->Mat()` —
+  `Mesh_Wgpu.cpp:31/154/173`) and reserves `BaseMaterial*` for genuine base-typed
+  values. **The distinction is load-bearing, not sloppy.**
+
+### CHANGE REQUEST (for the coordinator — not executed by this lane)
+
+Replace the global token rewrite with a scoped per-consumer typedef. New
+`milo-native-engine/src/platform/MaterialBase.h`:
+
+```cpp
+#pragma once
+#include "rndobj/BaseMaterial.h"   // this FILENAME exists in both consumers
+#ifdef MILO_ENGINE_MATERIAL_BASE_IS_RNDMAT
+using MiloMatBase = RndMat;        // RB3 retail: one material class
+#else
+using MiloMatBase = BaseMaterial;  // DC3 (default): BaseMaterial is the shared base
+#endif
+```
+
+Then spell the engine's material-base sites `MiloMatBase` — the two
+`BuildPassMaterialParams` declarations and `Mesh_Wgpu.cpp:297`/`:329` — and the
+`Blend` enum qualifiers `MiloMatBase::kBlend*`. Defaulting to DC3's spelling means
+**dc3-decomp and rb3 (Wii) need no change at all**; rb3-xenon swaps
+`BaseMaterial=RndMat` for `MILO_ENGINE_MATERIAL_BASE_IS_RNDMAT`.
+
+The win is real but narrow: it trades a **global identifier rewrite applied to
+every TU in the native build** for a scoped, type-safe alias. It does *not* make
+the define disappear.
+
+⚠ Two verification requirements, and they are why ENGINE-1 did not execute it:
+
+1. `RndMat::kBlend*` is **not** a drop-in for the enum sites. In DC3
+   `rndobj/BaseMaterial.h` declares only `BaseMaterial`; `RndMat` lives in
+   `rndobj/Mat.h`. `MiloMatBase::kBlend*` avoids this; a bare `RndMat::` does not.
+2. `tests/` only builds when `MILO_ENGINE_BUILD_TESTS=ON` (standalone default;
+   rb3-xenon forces it OFF, DC3 and rb3-Wii never set it). Touching
+   `test_rndcam_projection.cpp` therefore needs the engine's **own standalone test
+   build** verified — a third build beyond DC3's and rb3-xenon's.
