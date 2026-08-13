@@ -164,6 +164,23 @@ deallocators). Folding is near-total in HMX code (**6** surplus / 32,580) and
 instance of the per-TU flag heterogeneity flagged as unexplored above, likely
 `/Gy`-off monolithic non-COMDAT `.text`.
 
+⛔ **SCOPE BOUND on every number above: the population is `.pdata`-sized
+functions, which is NOT a function census — the whole sub-`.pdata` stub stratum
+is excluded BY CONSTRUCTION** (lane AUDIT-NC, 2026-08-13, `9143ac89`). **0 of
+31** candidate tiny alias stubs are `.pdata` BeginAddresses — *including* an
+allocator survivor with fan-in **1,048** — because an **8-byte leaf stub touches
+neither the stack nor LR, so it gets no unwind record.** ⇒ the HMX `6 / 32,580`
+and vendor `25 / 8,029` figures **license no claim about tiny stubs in either
+direction**; do not brief either one as an attack line on the stub stratum (one
+lane was briefed off the vendor-band figure and it was inapplicable).
+⚠ Corroboration, measured independently (lane MAP-FIX, 2026-08-13): **7,472 of
+28,956 named `target_symbol_map.json` rows (25.8%) are not `.pdata`
+BeginAddresses** at all.
+⇒ **CD-7 is CORRECT WITHIN ITS POPULATION and its methodology stands** —
+relocation-normalized body hashing against a random-offset null remains the only
+instrument that settles ICF. What is corrected is the *reach* of its numbers,
+never their validity.
+
 ⚠ **Instruments structurally INCAPABLE of settling ICF** (same trap as `/GR`):
 match-%/objdiff (`report.rs` masks reloc args — a folded callee and a wrong callee
 score identically), and raw `memcmp` for duplicate bodies (**silently vacuous**:
