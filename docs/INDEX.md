@@ -186,6 +186,20 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   per-lane gate.** A single `--symbol` invocation timed out at **10 minutes** —
   it runs three whole-binary oracle passes before the filter applies. Use
   `--census`. See `decomp/TOOLING.md` §4.
+- ★ **A near-100 row may be scoring against the WRONG target body.**
+  `scripts/target_symbol_map.json` is address-keyed and had one mangled name
+  stamped onto several VAs — which a linked image can never do. objdiff pairs by
+  name and is blind to the relocation targets that separate byte-twin thunks,
+  deleting dtors and template bodies, so the wrong copy still scores, and at 99.5%
+  it is **one edit from minting a byte-exact witness against a function that is
+  not the target**. Byte-exact is the *admission* gate, so that witness is
+  unrecoverable after the fact. Enforced since 2026-08-13 by
+  `tools/map_name_injectivity.py` (ninja edge `map_name_injectivity_check`, runs on
+  every build) — the per-unit checks `icf_class_bijection.py` and
+  `tu5_map_apply_fragment.py` are unit-scoped and never caught it.
+  **`??$__destroy_aux@ULevelData@@...` at `0x82b5b1d0` / `0x82b63ec8` is still
+  unadjudicated and denylisted — do not close it.** Full record:
+  [decomp/MAP_NAME_INJECTIVITY.md](decomp/MAP_NAME_INJECTIVITY.md).
 
 ---
 
@@ -524,6 +538,14 @@ Read the verdict before re-opening any of these.
   TOOLING.md pointer, skills enumeration, local-static lever + early-return anti-lever,
   `land.sh` deletion hole), each with evidence. Also lists what was re-verified as
   already correct.
+- [decomp/MAP_NAME_INJECTIVITY.md](decomp/MAP_NAME_INJECTIVITY.md) — ★ **the map's NAME-injectivity
+  invariant and the ninja gate that enforces it** (`tools/map_name_injectivity.py`,
+  `map_name_injectivity_check`, 2026-08-13). Why one mangled name at two VAs is a live path to
+  a byte-exact witness against the WRONG target body; why the per-unit checks
+  (`icf_class_bijection.py`, `tu5_map_apply_fragment.py`) never caught it; the eight disproved
+  name claims nulled and the two `__destroy_aux@ULevelData` addresses that are **still
+  unadjudicated** — read that section before touching either. Companion:
+  [decomp/handoff/laneJ2-at-limit-clearance-2026-08-13.md](decomp/handoff/laneJ2-at-limit-clearance-2026-08-13.md).
 - [tools/INDEX.md](tools/INDEX.md) — **tool-selection index** (MCP orchestrator tools, Ghidra CLI, analysis utilities).
 - [tools/REFERENCE.md](tools/REFERENCE.md) — command reference for symbol lookup (banner: no RB3 map; corrected pointers).
 - [tools/WORKFLOW.md](tools/WORKFLOW.md) — decomp tool workflow narratives (new fns, near-matches, pattern analysis).
