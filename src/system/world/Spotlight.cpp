@@ -361,7 +361,12 @@ BEGIN_COPYS(Spotlight)
                 mBeam.mBeam = Hmx::Object::New<RndMesh>();
                 mBeam.mBeam->Copy(c->mBeam.mBeam, kCopyDeep);
             }
-            Generate();
+            // NO Generate() here. DC3 (newer engine) added a trailing
+            // `Generate();` at this point; rb3-Wii's RB3-era Spotlight.cpp does
+            // not have it, and retail RB3-360 agrees with rb3-Wii -- the target
+            // has no `bl ?Generate@Spotlight@@IAAXXZ` anywhere in Copy, while
+            // our DC3-derived copy emitted `mr r3, r29` / `bl Generate` as the
+            // last two instructions. Two oracles disagreed; retail broke the tie.
         }
     END_COPYING_MEMBERS
 END_COPYS
