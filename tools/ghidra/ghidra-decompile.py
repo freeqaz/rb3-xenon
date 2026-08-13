@@ -19,27 +19,59 @@ sys.path.insert(0, str(Path(__file__).parent))
 from mcp_client import MCPClient, MCPError, DEFAULT_BINARY
 
 
-def format_decompiled(result: dict) -> str:
-    """Format decompiled function output for display."""
-    lines = []
+class EmptyDecompilation(Exception):
+    """The service answered, but there is no function body to show.
 
-    # Function info
-    func_name = result.get("function_name", "unknown")
-    address = result.get("address", "unknown")
+    Distinct from MCPError: the service is HEALTHY and simply has nothing at
+    this target (an address that is not the start of a function, an undefined
+    region). Callers must be able to tell "Ghidra is down" from "Ghidra says no",
+    because only the first invalidates a run.
+    """
+
+
+def split_name(result: dict) -> tuple:
+    """Split pyghidra-mcp's ``name`` ("mmioOpenW-82aa3928") into (func, addr).
+
+    There are no ``function_name``/``address`` keys in the response — reading
+    them printed "// Function: unknown" on every SUCCESSFUL decompile, which
+    made a healthy result indistinguishable from a failed lookup by eye.
+    """
+    raw = result.get("name")
+    if not isinstance(raw, str) or not raw:
+        return "unknown", "unknown"
+    head, sep, tail = raw.rpartition("-")
+    if sep and head and all(c in "0123456789abcdefABCDEF" for c in tail):
+        return head, "0x" + tail.lower()
+    return raw, "unknown"
+
+
+def format_decompiled(result: dict) -> str:
+    """Format decompiled function output for display.
+
+    Raises ``EmptyDecompilation`` when the service reports an error or returns
+    no body. Printing a "// No decompiled code available" placeholder on stdout
+    and exiting 0 (the old behaviour) is indistinguishable from success to every
+    programmatic caller — the agent tool belt cached that placeholder and fed it
+    to the model as a real decompilation.
+    """
+    err = result.get("error")
+    if err:
+        raise EmptyDecompilation(f"service reported an error: {err}")
+
+    code = result.get("decompiled_code", result.get("code", ""))
+    if not code or not code.strip():
+        raise EmptyDecompilation(
+            "no function body at this target — the service is up but has "
+            "nothing here (not a function start, or an undefined region)")
+
+    func_name, address = split_name(result)
     signature = result.get("signature", "")
 
-    lines.append(f"// Function: {func_name}")
-    lines.append(f"// Address: {address}")
+    lines = [f"// Function: {func_name}", f"// Address: {address}"]
     if signature:
         lines.append(f"// Signature: {signature}")
     lines.append("")
-
-    # Decompiled code
-    code = result.get("decompiled_code", result.get("code", ""))
-    if code:
-        lines.append(code)
-    else:
-        lines.append("// No decompiled code available")
+    lines.append(code)
 
     return "\n".join(lines)
 
@@ -97,13 +129,27 @@ Examples:
                 raise
 
         if args.json:
+            # --json is a programmatic surface too: apply the same emptiness
+            # contract, so a caller cannot mistake {"error": ...} for a hit.
+            if result.get("error"):
+                raise EmptyDecompilation(
+                    "service reported an error: %s" % result["error"])
+            if not (result.get("decompiled_code") or result.get("code") or "").strip():
+                raise EmptyDecompilation("no function body at this target")
             print(json.dumps(result, indent=2))
         else:
             print(format_decompiled(result))
 
     except MCPError as e:
+        # EXIT 1 = INFRASTRUCTURE. The service is unreachable/broken; any run
+        # depending on Ghidra must abort rather than continue without it.
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
+    except EmptyDecompilation as e:
+        # EXIT 2 = ANSWERED, EMPTY. The service is healthy; this target has no
+        # body. Recoverable — the caller should pick a different target.
+        print(f"Empty: {e}", file=sys.stderr)
+        sys.exit(2)
     except KeyboardInterrupt:
         sys.exit(130)
 
