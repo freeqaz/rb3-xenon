@@ -88,6 +88,29 @@ vtables of its MEMBERS, not of itself.  The witness is not lying; it is
 answering a different question.  It is therefore reported as W_C and used for
 nothing.
 
+MEASURED (lane MASK-3, 2026-08-13, at 966dfc2d)
+-----------------------------------------------
+112 members / 99 named / 13 anonymous.  Judged 48; **19 MISIDENTIFIED = 39.6%**,
+which is TWICE the rate of the two classes audited before it (MAP-B 20.6%,
+DTOR-A 19.8% on its dialect-immune stratum).  Stratified: non-template T
+17/44 = 38.6%, template T 2/4 = 50.0%.
+
+POSITIVE CONTROL -- the independent caller witness agrees with the primary on
+**22/22 (100%) of the rows the map gets RIGHT and 7/7 (100%) of the rows it
+calls WRONG**.  Equal performance on both populations is the argument for
+trusting the MISIDENTIFIED verdicts; a rate measured only on flagged rows would
+prove nothing.  At the stricter PINNED admission it is 8/8 and 2/2.
+
+Applied: 6 addresses re-assigned, 17 emptied.  All 17 vanished names were
+scoring mpn==100 on a function that is not theirs -- **pure false credit**.
+Whole-binary A/B (both rulers agree on the count):
+    matched 44,232 -> 44,215   (-17, none AND name_check)
+    honest  21,356 -> 21,339   (-17);  masked_equal unchanged
+    code%   42.179924 -> 42.170040  (-0.009884pp, -1,020 B) [none ruler]
+    units at 100%: 253 -> 253 (0 reached, 0 fell off)
+17 names x 60 B = 1,020 B: the accounting closes to the byte.
+Re-running against the fixed map gives 35 CONSISTENT / 0 MISIDENTIFIED.
+
 ★ TRAP 1 -- SHAPE IS NECESSARY, NOT SUFFICIENT.  MAP-B had 9 shape-matches whose
 callee was not a StaticClassName and judging on shape would have "corrected" 5
 CORRECT entries; DTOR-A refused 30 on the same ground.  Here the callee must
@@ -533,10 +556,20 @@ def main():
         for k in freed:
             m.pop(k, None)
         m.update(asg)
-        coll = assert_injective(m)
-        if coll:
-            print('  ⛔ REFUSING TO WRITE -- injectivity collision (TRAP 2):')
-            for n, ks in coll.items():
+        # TRAP 2.  ⚠ The map is NOT globally injective today -- ALIAS-X2 (11116052)
+        # adjudicated deliberate multi-address names (`?Null@Symbol@@` sits at 3).
+        # Asserting global injectivity therefore refuses on somebody else's
+        # pre-existing rows and says nothing about THIS change.  The invariant
+        # that is actually ours: introduce no NEW collision.
+        before = assert_injective(au.map)
+        after = assert_injective(m)
+        new = {n: ks for n, ks in after.items()
+               if n not in before or set(ks) != set(before[n])}
+        print(f'  injectivity: {len(before)} pre-existing multi-address names '
+              f'(ALIAS-X2, not ours)')
+        if new:
+            print('  ⛔ REFUSING TO WRITE -- this change would ADD a collision:')
+            for n, ks in new.items():
                 print(f'      {n[:90]} -> {ks}')
             return 2
         path = os.path.join(os.path.abspath(args.project_dir) if args.project_dir
