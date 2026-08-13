@@ -76,6 +76,9 @@ import json
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import stamp_if_changed  # noqa: E402
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_ALIASES = PROJECT_ROOT / "scripts" / "symbol_aliases.json"
 DEFAULT_OUT = PROJECT_ROOT / "build" / "45410914" / "icf_aliases.map"
@@ -140,6 +143,7 @@ def main() -> int:
                     help="output .map path (default: %(default)s)")
     ap.add_argument("--check", action="store_true",
                     help="verify the output is up to date; exit 1 if stale")
+    stamp_if_changed.add_arguments(ap)
     args = ap.parse_args()
 
     aliases_path = Path(args.aliases)
@@ -167,6 +171,8 @@ def main() -> int:
                   f"{fix}", file=sys.stderr)
             return 1
         print(f"OK: {out_path} up to date ({len(groups)} ICF groups)")
+        # Green path only -- see the same note in tools/map_name_injectivity.py.
+        stamp_if_changed.apply(args)
         return 0
 
     out_path.parent.mkdir(parents=True, exist_ok=True)

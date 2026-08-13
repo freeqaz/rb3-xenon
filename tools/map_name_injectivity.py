@@ -126,6 +126,9 @@ SPLITS_PATH = ROOT / "config" / "45410914" / "splits.txt"
 sys.path.insert(0, str(ROOT / "scripts"))
 from obj_target_symbol_renamer import load_address_map  # noqa: E402
 
+sys.path.insert(0, str(ROOT / "tools"))
+import stamp_if_changed  # noqa: E402
+
 
 # --------------------------------------------------------------------------
 # verdict function -- pure, so --selftest can exercise it on the null vector
@@ -286,6 +289,7 @@ def main(argv=None):
                     help="exercise the verdict function in memory and exit")
     ap.add_argument("--quiet", action="store_true",
                     help="print nothing when green")
+    stamp_if_changed.add_arguments(ap)
     args = ap.parse_args(argv)
 
     if args.selftest:
@@ -347,6 +351,10 @@ def main(argv=None):
             print(f"[map-injectivity] OK: {sum(len(v) for v in applied.values())} "
                   f"applied rows, {len(applied)} distinct names, injective "
                   f"(+{len(allowed)} enumerated internal-linkage exception(s))")
+        # Only on the green path: a stamp is an assertion that the gate PASSED
+        # over this content, and the build edge that consumes it must not be
+        # cleaned by a run that found violations.
+        stamp_if_changed.apply(args)
         return 0
 
     total = sum(len(a) for _, a in violations)
