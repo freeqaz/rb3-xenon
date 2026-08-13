@@ -38,7 +38,7 @@ void CharProvider::Reload(LocalBandUser *user) {
         AddCharactersFromProfile(userprofile);
     else {
         std::vector<BandProfile *> profiles = TheProfileMgr.GetSignedInProfiles();
-        for (std::vector<BandProfile *>::iterator it = profiles.begin(); it != profiles.end();
+        for (std::vector<BandProfile *>::iterator it = profiles.begin(); it < profiles.end();
              ++it)
             AddCharactersFromProfile(*it);
     }
@@ -54,7 +54,7 @@ void CharProvider::Reload(LocalBandUser *user) {
             kCharacterEntryPrefab, pPrefab->GetPrefabName(), pPrefab, 0, true
         ));
     }
-    unsigned short numchars = mCharacters.size();
+    int numchars = mCharacters.size();
     std::vector<PrefabChar *> prefabs;
 
     if (unk2d) {
