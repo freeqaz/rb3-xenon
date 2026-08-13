@@ -86,7 +86,6 @@ void Screenshot::Sync() {
         mMat = Hmx::Object::New<RndMat>();
         mMat->SetZMode(kZModeDisable);
         mMat->SetDiffuseTex(mTex);
-        CreateAndSetMetaMat(mMat);
     }
 }
 

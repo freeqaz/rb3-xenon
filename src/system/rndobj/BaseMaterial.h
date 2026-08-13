@@ -132,8 +132,6 @@ struct MatPerfSettings {
     bool mPS3ForceTrilinear;
 };
 
-class MetaMaterial;
-
 // RB3-360 retail has ONE material class, RndMat, deriving directly from
 // Hmx::Object -- the BaseMaterial/RndMat split is a DC3-era refactor we inherited
 // with src/system. Settled on retail bytes by lane BASEMAT-1 and merged by
@@ -209,12 +207,6 @@ public:
 
     static void Init();
     static void Terminate();
-    static void ReloadMetaMaterials();
-    static void UpdateAllMatPropertiesFromMetaMat(ObjectDir *);
-    static void ReloadAndUpdateMat(ObjectDir *dir) {
-        ReloadMetaMaterials();
-        UpdateAllMatPropertiesFromMetaMat(dir);
-    }
 
     const DataNode *GetDefaultPropVal(Symbol);
     RndMat *NextPass() const { return mNextPass; }
@@ -342,11 +334,6 @@ public:
 
     void SetColorMod(const Hmx::Color &, int);
     void SetSpecularMap(RndTex *);
-    void SetMetaMat(MetaMaterial *, bool);
-    MetaMaterial *CreateMetaMaterial(bool);
-    // RB3-360 retail has no per-instance MetaMaterial (lane MAT-1); kept as a symbol
-    // so rndobj/Utl.cpp and rndobj/Shader.cpp compile and the native engine links.
-    MetaMaterial *GetMetaMaterial() const { return nullptr; }
     int GetColorModFlags() const { return mColorModFlags; }
     void SetColorModFlags(ColorModFlags flags) {
         mColorModFlags = flags;
@@ -360,19 +347,11 @@ protected:
     DataNode OnAllowedNextPass(const DataArray *);
     DataNode OnAllowedNormalMap(const DataArray *);
 
-    bool IsEditable(Symbol);
     bool OnGetPropertyDisplay(PropDisplay, Symbol);
-    void UpdatePropertiesFromMetaMat();
     // Unreferenced since the DC3 rev-0x46 Load layer was removed (retail's Load
     // reads ONE rev and inlines its own old-version path). Kept, not deleted --
     // reconstructing retail's inlined old path is a separate lane's job.
     void LoadOld(BinStreamRev &);
-
-    DataNode OnGetMetaMaterials(const DataArray *);
-    DataNode OnGetMetaMaterialsDir(const DataArray *);
-
-    static ObjectDir *sMetaMaterials;
-    static ObjectDir *LoadMetaMaterials();
 
     static void SetDefaultMat(RndMat *);
 

@@ -213,7 +213,6 @@ void RegisterMiloObjectFactories() {
     REGISTER_OBJ_FACTORY(RndMat)
     REGISTER_OBJ_FACTORY(RndMatAnim)
     REGISTER_OBJ_FACTORY(RndMesh)
-    REGISTER_OBJ_FACTORY(MetaMaterial)
     REGISTER_OBJ_FACTORY(RndMorph)
     REGISTER_OBJ_FACTORY(RndMotionBlur)
     REGISTER_OBJ_FACTORY(RndMovie)

@@ -12,36 +12,15 @@
 #include "os/System.h"
 #include "rndobj/BaseMaterial.h"
 #include "rndobj/Fur.h"
-#include "rndobj/MetaMaterial.h"
 #include "rndobj/Tex.h"
 #include "utl/BinStream.h"
 #include "utl/FilePath.h"
 #include "utl/Loader.h"
 #include "utl/Symbol.h"
 
-#ifdef HX_NATIVE
-ObjectDir *RndMat::sMetaMaterials;
-#endif
-
-const char *kAnonMetaMatPrefix = "{anon}";
-const char *kMiloMetaMatPrefix = "{milo}";
-
 MatShaderOptions::MatShaderOptions() : pack(0x12), mTempMat(0) {}
 
 namespace {
-    void MergeMetaMaterials(ObjectDir *o1, ObjectDir *o2) {
-        if (o2 && o1) {
-            for (ObjDirItr<MetaMaterial> it(o2, true); it != nullptr; ++it) {
-                MetaMaterial *mat = o1->Find<MetaMaterial>(it->Name(), false);
-                if (!mat) {
-                    mat = Hmx::Object::New<MetaMaterial>();
-                    mat->SetName(it->Name(), o1);
-                }
-                CopyObject(it, mat, Hmx::Object::kCopyDeep, true);
-            }
-        }
-    }
-
     void AddOverridePropName(String &str, Symbol &sym) {
         if (!str.empty()) {
             str += ", ";
@@ -73,14 +52,26 @@ BEGIN_HANDLERS(RndMat)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
+// THE ONE material SyncProperty. RB3-360 retail has exactly one; our tree used to
+// emit two -- this one, and a MetaMaterial override that (post-BASEMAT-2) chained
+// SYNC_SUPERCLASS(RndMat) and so re-ran this entire list a SECOND time per instance.
+// The MetaMaterial copy is deleted with its class; see
+// docs/decomp/metamaterial-does-not-exist-in-rb3-retail-2026-08-13.md.
+//
+// It stays HERE, not in MetaMaterial.cpp: lane SPLITS-3 (7782ed48) re-homed the
+// 0x82436488-0x82438138 span onto Mat.cpp on a whole-tree defining-set census
+// (?SyncProperty@RndMat@@ is defined by {BaseMaterial.obj, Mat.obj}; MetaMaterial.obj
+// is ABSENT) plus vtable-slot arithmetic controlled on two already-matched slots.
+//
+// Every `<prop>_edit_action` Symbol and the `IsEditable` gate around it are GONE:
+// "_edit_action" occurs 0 times in orig/45410914/band.exe, with 15/15 positive
+// controls from this same list firing at 1-occurrence resolution (allowed_next_pass,
+// shader_variation, rim_light_under, environ_map_specmask...). rb3-Wii -- the RB3-era
+// oracle -- agrees structurally: its BEGIN_PROPSYNCS(RndMat) has no IsEditable at all.
 #define SYNC_MAT_PROP(s, member, dirty_flag)                                             \
     {                                                                                    \
         _NEW_STATIC_SYMBOL(s)                                                            \
         if (sym == _s) {                                                                 \
-            Symbol action(#s "_edit_action");                                            \
-            if (!(_op & (kPropSize | kPropGet)) && !IsEditable(action)) {                \
-                return true;                                                             \
-            }                                                                            \
             if (PropSync(member, _val, _prop, _i + 1, _op)) {                            \
                 if (!(_op & (kPropSize | kPropGet))) {                                   \
                     mDirty |= dirty_flag;                                                \
@@ -96,10 +87,7 @@ END_HANDLERS
         _NEW_STATIC_SYMBOL(s)                                                            \
         if (sym == _s) {                                                                 \
             if (_op == kPropSet) {                                                       \
-                Symbol action(#s "_edit_action");                                        \
-                if (IsEditable(action)) {                                                \
-                    member = _val.Int() > 0;                                             \
-                }                                                                        \
+                member = _val.Int() > 0;                                            \
             } else {                                                                     \
                 if (_op == (PropOp)0x40)                                                 \
                     return false;                                                        \
@@ -146,9 +134,7 @@ BEGIN_PROPSYNCS(RndMat)
         static Symbol _s("specular_map");
         if (sym == _s) {
             if (_op == kPropSet) {
-                Symbol action("specular_map_edit_action");
-                if (IsEditable(action))
-                    SetSpecularMap(_val.Obj<RndTex>());
+                SetSpecularMap(_val.Obj<RndTex>());
             } else {
                 if (_op == (PropOp)0x40)
                     return false;
@@ -176,50 +162,30 @@ BEGIN_PROPSYNCS(RndMat)
     SYNC_MAT_PROP(shader_variation, (int &)mShaderVariation, 2) {
         static Symbol _s("point_lights");
         if (sym == _s) {
-            Symbol action("point_lights_edit_action");
-            if (!(_op & (kPropSize | kPropGet)) && !IsEditable(action)) {
-                return true;
-            }
             return PropSync(mPointLights, _val, _prop, _i + 1, _op);
         }
     }
     {
         static Symbol _s("fog");
         if (sym == _s) {
-            Symbol action("fog_edit_action");
-            if (!(_op & (kPropSize | kPropGet)) && !IsEditable(action)) {
-                return true;
-            }
             return PropSync(mFog, _val, _prop, _i + 1, _op);
         }
     }
     {
         static Symbol _s("fade_out");
         if (sym == _s) {
-            Symbol action("fade_out_edit_action");
-            if (!(_op & (kPropSize | kPropGet)) && !IsEditable(action)) {
-                return true;
-            }
             return PropSync(mFadeout, _val, _prop, _i + 1, _op);
         }
     }
     {
         static Symbol _s("color_adjust");
         if (sym == _s) {
-            Symbol action("color_adjust_edit_action");
-            if (!(_op & (kPropSize | kPropGet)) && !IsEditable(action)) {
-                return true;
-            }
             return PropSync(mColorAdjust, _val, _prop, _i + 1, _op);
         }
     }
     {
         static Symbol _s("fur");
         if (sym == _s) {
-            Symbol action("fur_edit_action");
-            if (!(_op & (kPropSize | kPropGet)) && !IsEditable(action)) {
-                return true;
-            }
             return PropSync(mFur, _val, _prop, _i + 1, _op);
         }
     }
@@ -263,66 +229,11 @@ void RndMat::Init() {
     REGISTER_OBJ_FACTORY(RndMat);
     RndMat *mat = Hmx::Object::New<RndMat>();
     SetDefaultMat(mat);
-    RELEASE(sMetaMaterials);
-    sMetaMaterials = LoadMetaMaterials();
-#ifdef HX_NATIVE
-    // ⛔ THE METAMATERIAL BLOCK IS DC3 CONTENT, AND RB3 HAS NONE OF IT.
-    //
-    // LoadMetaMaterials (:393) returns NULL unless
-    // SystemConfig("objects", "Mat", "metamaterial_path") is present and
-    // non-empty. MEASURED against the shipped RB3-360 disc, 2026-08-01:
-    //
-    //   * `metamaterial_path` appears in NO RB3 config DTA -- not objects.dta,
-    //     not rnd_objects.dta, not band_preinit_keep.dta, not band_keep.dta.
-    //   * there is no metamaterials.milo anywhere in RB3's archive.
-    //   * DC3 has BOTH (dc3-decomp/orig-assets/extracted/config/gen/
-    //     metamaterials.milo_xbox), which is where this code path comes from.
-    //
-    // So on RB3 data the next two lines are `NULL->HashTableUsedSize()`, a hard
-    // segfault three calls into Rnd::PreInit. And this body is NOT
-    // target-verified: build/45410914/report.json's `default/Mat` unit carries
-    // 5 functions and RndMat::Init is not one of them, while the body here is
-    // BYTE-IDENTICAL to dc3-decomp/src/system/rndobj/Mat.cpp:291-300. It is a
-    // DC3 port wearing a matched TU's name, and the null deref is the tell.
-    //
-    // Guarded rather than deleted, because "RB3 retail does not do this" is an
-    // inference from the data and not yet from the disassembly -- confirming it
-    // is an objdiff job on the real fn, which is X4's to schedule. Until then
-    // the X360 side keeps the exact statements it has today (this build passes
-    // no /D, so HX_NATIVE is never defined there and its token stream is
-    // unchanged) and the native side stops dying on data RB3 never shipped.
-    if (sMetaMaterials) {
-        int hashsize = (sMetaMaterials->HashTableUsedSize() + 200) * 2;
-        sMetaMaterials->Reserve(hashsize, sMetaMaterials->StrTableUsedSize() + 4400);
-    } else {
-        MILO_NOTIFY(
-            "RndMat::Init: no metamaterials (objects/Mat/metamaterial_path unset) -- "
-            "expected on RB3, which ships no metamaterial content"
-        );
-    }
-#else
-    int hashsize = (sMetaMaterials->HashTableUsedSize() + 200) * 2;
-    sMetaMaterials->Reserve(hashsize, sMetaMaterials->StrTableUsedSize() + 4400);
-#endif
-    CreateAndSetMetaMat(mat);
 }
 
-void RndMat::Terminate() { RELEASE(sMetaMaterials); }
-
-void RndMat::ReloadMetaMaterials() {
-    ObjectDir *metaDir = LoadMetaMaterials();
-    if (metaDir != nullptr && sMetaMaterials != nullptr) {
-        MergeMetaMaterials(sMetaMaterials, metaDir);
-        for (ObjDirItr<MetaMaterial> it(sMetaMaterials, true); it != nullptr; ++it) {
-            MetaMaterial *mat = metaDir->Find<MetaMaterial>(it->Name(), false);
-            if (mat == nullptr) {
-                delete &*it;
-                ObjDirItr<MetaMaterial> tmp(nullptr, true);
-                it = tmp;
-            }
-        }
-    }
-}
+// Retail's material Terminate has no sMetaMaterials to release -- there is no
+// metamaterial ObjectDir in RB3-360 (lane METAMAT-1).
+void RndMat::Terminate() {}
 
 float RndMat::GetRefractStrength() { return mRefractStrength; }
 RndTex *RndMat::GetRefractNormalMap() {
@@ -335,10 +246,6 @@ bool RndMat::GetRefractEnabled(bool b) {
         && (b || TheRnd.GetCurrentFrameTex(false));
 }
 
-// GetMetaMatPropAction is gone with the per-instance MetaMaterial block: it existed
-// only to read "<prop>_edit_action" off mMetaMaterial, and "_edit_action" occurs
-// 0 times in orig/45410914/band.exe. See rndobj/Mat.h.
-
 bool RndMat::OnGetPropertyDisplay(PropDisplay display, Symbol s) {
     MILO_ASSERT(display == kPropDisplayHidden || display == kPropDisplayReadOnly, 0x357);
     return false;
@@ -349,8 +256,6 @@ void RndMat::SetColorMod(const Hmx::Color &color, int index) {
     mColorMod[index] = color;
     mDirty |= 2;
 }
-
-DataNode RndMat::OnGetMetaMaterialsDir(const DataArray *) { return sMetaMaterials; }
 
 RndMat *LookupOrCreateMat(const char *shader, ObjectDir *dir) {
     const char *fileStr = MakeString("%s.mat", FileGetBase(shader));
@@ -378,135 +283,6 @@ void RndMat::SetSpecularMap(RndTex *tex) {
     mSpecularMap = tex;
     mDirty |= 2;
 }
-
-// No per-instance MetaMaterial in RB3-360 retail; kept as a symbol so the 10
-// CreateAndSetMetaMat call sites and the native engine still link.
-void RndMat::SetMetaMat(MetaMaterial *, bool) {}
-
-void RndMat::UpdateAllMatPropertiesFromMetaMat(ObjectDir *dir) {
-    for (ObjDirItr<RndMat> it(dir, true); it != nullptr; ++it) {
-        it->UpdatePropertiesFromMetaMat();
-    }
-}
-
-ObjectDir *RndMat::LoadMetaMaterials() {
-    const char *path = "";
-    ObjectDir *dir = nullptr;
-    DataArray *cfg = SystemConfig("objects", "Mat");
-    if (cfg->FindData("metamaterial_path", path, false) && *path != '\0') {
-        {
-            FilePathTracker tracker(path);
-            dir = DirLoader::LoadObjects("metamaterials.milo", nullptr, nullptr);
-            MILO_ASSERT(dir, 0x99);
-        }
-        if (!strstr("system/run", FilePath::Root().c_str()) && TheLoadMgr.EditMode()) {
-            ObjectDir *loadedDir = DirLoader::LoadObjects(
-                "../../system/run/config/metamaterials.milo", nullptr, nullptr
-            );
-            MergeMetaMaterials(dir, loadedDir);
-            delete loadedDir;
-        }
-    }
-    return dir;
-}
-
-DataNode RndMat::OnGetMetaMaterials(const DataArray *a) {
-    bool i2 = a->Int(2);
-    int numMetaMats = 0;
-    if (sMetaMaterials) {
-        for (ObjDirItr<MetaMaterial> it(sMetaMaterials, true); it != nullptr; ++it) {
-            numMetaMats++;
-        }
-    }
-    DataArrayPtr ptr;
-    ptr->Resize(numMetaMats + 1);
-    ptr->Node(0) = NULL_OBJ;
-    if (sMetaMaterials) {
-        int idx = 1;
-        for (ObjDirItr<MetaMaterial> it(sMetaMaterials, true); it != nullptr; ++it) {
-            const char *name = it->Name();
-            if (!strstr(name, kAnonMetaMatPrefix)
-                && (i2 || !strstr(name, kMiloMetaMatPrefix))) {
-                ptr->Node(idx++) = &*it;
-            }
-        }
-        ptr->Resize(idx);
-        ptr->SortNodes();
-    }
-    return ptr;
-}
-
-MetaMaterial *RndMat::CreateMetaMaterial(bool notify) {
-#ifdef HX_NATIVE
-    if (!sMetaMaterials) return nullptr;
-#endif
-    bool isAnonymous = false;
-    String str(Name());
-    if (str.empty()) {
-        isAnonymous = true;
-        str = kAnonMetaMatPrefix;
-        str += ".";
-        str += ClassExt("Mat");
-    }
-    int extlen = strlen(ClassExt("Mat"));
-    if (strlen(str.c_str()) > extlen) {
-        str.erase(str.length() - extlen);
-    }
-    str += ClassExt("MetaMaterial");
-    MILO_ASSERT(sMetaMaterials, 0x30A);
-
-    const char *nextname = NextName(str.c_str(), sMetaMaterials);
-    MetaMaterial *mat = Hmx::Object::New<MetaMaterial>();
-    mat->SetName(nextname, sMetaMaterials);
-    mat->Copy(this, kCopyDeep);
-    String notCopiedProps;
-    std::list<Symbol> symList;
-    ListProperties(symList, "Mat", 0, nullptr);
-    for (std::list<Symbol>::iterator it = symList.begin(); it != symList.end(); ++it) {
-        Symbol cur = *it;
-        static Symbol metamaterial("metamaterial");
-        if (cur != metamaterial) {
-            bool isObjectProp = false;
-            const DataNode *node = Property(cur, true);
-            if (node && node->Type() == kDataObject && node->GetObj()) {
-                if (!notCopiedProps.empty()) {
-                    notCopiedProps += ", ";
-                }
-                notCopiedProps += cur.Str();
-                mat->SetProperty(cur, NULL_OBJ);
-                isObjectProp = true;
-            }
-            bool propDiffers = PropValDifferent(cur, nullptr);
-            String actionPropName(cur);
-            actionPropName += "_edit_action";
-            mat->SetProperty(actionPropName.c_str(), isObjectProp ? 2 : propDiffers != 0);
-        }
-    }
-    if (isAnonymous) {
-        for (ObjDirItr<MetaMaterial> it(sMetaMaterials, true); it != nullptr; ++it) {
-            if (mat != it && mat->IsEquivalent(it)) {
-                delete mat;
-                mat = it;
-                break;
-            }
-        }
-    }
-    if (notify) {
-        if (!notCopiedProps.empty()) {
-            MILO_NOTIFY(
-                "Some object properties were not copied to the MetaMaterial:%s",
-                notCopiedProps.c_str()
-            );
-        }
-    }
-    return mat;
-}
-
-// With no per-instance MetaMaterial there is nothing to gate on: every property is
-// editable. (Retail agrees -- "_edit_action" occurs 0 times in band.exe.)
-bool RndMat::IsEditable(Symbol) { return true; }
-
-void RndMat::UpdatePropertiesFromMetaMat() { mDirty |= 2; }
 
 void RndMat::LoadOld(BinStreamRev &d) {
     Hmx::Object::Load(d.stream);
