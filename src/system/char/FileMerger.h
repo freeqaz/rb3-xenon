@@ -151,8 +151,8 @@ protected:
     void AddSubdir(ObjectDir *);
     void DeleteCurLoader();
     bool StartLoadInternal(bool, bool);
-    Merger *NotifyFileLoaded(Loader *, DirLoader *);
-    void PostMerge(Merger *, DirLoader *, bool);
+    Merger *NotifyFileLoaded(Loader *, ObjectDir *);
+    void PostMerge(Merger *, bool);
     bool NeedsLoading(Merger &);
     void LaunchNextLoader();
     void AppendLoader(Merger &);
