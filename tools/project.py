@@ -509,6 +509,13 @@ def generate_build_ninja(
     # `icf_alias_map` ninja edge; see the design comment on that edge.
     icf_gen_script = Path("tools") / "gen_symbol_alias_map.py"
     icf_aliases_json = Path("scripts") / "symbol_aliases.json"
+    # Both always-dirty gate edges below take `--stamp`/`--stamp-input` instead
+    # of ending in `touch $out`, so their stamps move only when the thing they
+    # attest to moved. Implementation and rationale: tools/stamp_if_changed.py;
+    # the cost of the churn is the CHURN note on the map-injectivity edge.
+    # The input list is spelled on the ninja command line, not inferred inside
+    # each gate, so build.ninja states what the stamp attests to and it cannot
+    # drift out of step with the edge's declared implicit inputs.
     icf_map_path = build_path / "icf_aliases.map"
     icf_map_checked = build_path / "icf_aliases_checked.stamp"
     icf_map_purged = build_path / "icf_aliases_cache_purged.stamp"
@@ -1581,8 +1588,18 @@ def generate_build_ninja(
         n.comment("Assert the rendered map still agrees with the alias JSON")
         n.rule(
             name="icf_alias_map_check",
-            command=f"$python {icf_gen_script} --check --out {icf_map_path} && touch $out",
+            # `stamp_if_changed` rather than `touch`: see the CHURN note on the
+            # NAME-injectivity edge below, which is the same defect and where the
+            # cost was actually paid. This stamp feeds only `progress` (itself
+            # always-dirty), so it was never the expensive one -- it is fixed
+            # here so the two gates cannot drift apart, and so that "ninja did no
+            # work" stays a usable signal on this edge too.
+            command=(f"$python {icf_gen_script} --check --out {icf_map_path}"
+                     f" --stamp $out --stamp-input {icf_gen_script}"
+                     f" --stamp-input {icf_aliases_json}"
+                     f" --stamp-input {icf_map_path}"),
             description="CHECK ICF-ALIAS MAP",
+            restat=True,
         )
         n.build(
             outputs=str(icf_map_checked),
@@ -1631,11 +1648,39 @@ def generate_build_ninja(
         # and a gate carrying a private copy of that filter would be the second
         # safeguard here that silently did nothing.
         ###
+        #
+        # ⛔ CHURN, and the reason this edge does NOT end in `touch` (2026-08-13).
+        # It used to, and because this stamp is a declared implicit input of the
+        # REPORT edge (the ★ lane J3 paragraph below), a `touch` on an
+        # always-dirty edge made REPORT unconditionally dirty. rb3-xenon
+        # therefore regenerated its 14 MB `report.json` on EVERY ninja
+        # invocation, forever, with nothing changed. dc3 never showed this only
+        # because its report edge consumes no gate stamp.
+        #
+        # The wall clock was never the problem -- measured 0.97 s for a whole
+        # no-op build, and the regenerated report was byte-identical (sha
+        # 5b331399… before and after, three runs). What the churn destroyed is a
+        # SIGNAL: on a completely no-op build `report.json`'s mtime advanced 14 s
+        # while every object it describes stayed put. So `report.json` is
+        # unconditionally newer than its inputs, and the obvious freshness
+        # assertion -- "refuse to score against a report older than the objects"
+        # -- is a gate that CANNOT FAIL here. That is the silent-success family,
+        # and it is worth more than the second of build time.
+        #
+        # The gate is unchanged in every way that matters: still `always`, still
+        # runs on every build, still fails the build. Only the stamp became
+        # content-addressed, so `restat` lets ninja clean REPORT when the map and
+        # the gate script did not move. A failing gate never reaches the stamp
+        # (`&&`), so a red build cannot leave a stamp claiming it passed.
+        ###
         n.comment("Assert the target symbol map is globally injective on NAME")
         n.rule(
             name="map_name_injectivity_check",
-            command=f"$python {mapinj_script} --quiet && touch $out",
+            command=(f"$python {mapinj_script} --quiet"
+                     f" --stamp $out --stamp-input {mapinj_script}"
+                     f" --stamp-input {mapinj_json}"),
             description="CHECK MAP NAME-INJECTIVITY",
+            restat=True,
         )
         n.build(
             outputs=str(mapinj_checked),
