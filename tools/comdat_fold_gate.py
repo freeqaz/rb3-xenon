@@ -77,6 +77,45 @@ legitimately carries the same mangled name.  The tier is kept here.  It cannot
 fire again -- see `tools/homonym_index.py`, which sweeps all 117,960 symbols in
 that map and finds the class is 25 names game-wide, bounded by the linker's own
 rules to internal-linkage definitions.
+
+!! `Retail.same_function` IS VACUOUSLY FALSE ON MOST REAL BODIES !!
+------------------------------------------------------------------
+Read this before quoting any number that predicate produced.
+
+`same_function` resolves EVERY branch destination through
+`target_symbol_map.json` and returns False when either side is unnamed.  An
+intra-body loop, an `if`/`else` join, an error-path jump -- none of those is a
+map-resident symbol, so the predicate is `False` on ANY body containing one,
+including when compared against ITSELF.  Lane ALIAS-X3 measured the null vector
+on the nine FLAGGED-9 bodies and **7 of 9 failed their own identity**:
+
+    0x8252e068  same_function(A, A) = True     8 B, no branches
+    0x8274b0f8  same_function(A, A) = True     36 B, one mapped `bl`
+    0x82387d90  same_function(A, A) = False    <-- vacuous, EH + intra-body branch
+    0x823a88a8 / 0x827d1380 / 0x824e2ac8 / 0x82393c60 / 0x827148b0 / 0x8239c640
+                same_function(A, A) = False    <-- same
+
+=> **A "0 image-wide rivals" figure from this predicate on a branchy body is an
+ARTEFACT, not a measurement.**  It is `b606f610`'s error mirrored: that
+comparator was too loose, this one is too tight, and both fail silently.
+
+The predicate is VALID ONLY for bodies all of whose branch destinations resolve
+through the map -- in practice, straight-line bodies and single-`bl` bodies.
+For anything else use a comparator that compares own-body branches by
+SELF-RELATIVE destination (lane ALIAS-X3's `probe9d.dup`), which passes the null
+vector on all nine.
+
+This is DELIBERATELY NOT FIXED here.  The predicate is fail-closed on purpose:
+it is a gate, and refusing to certify on a map that does not name a callee is
+the correct behaviour for a gate.  What was wrong was that the refusal was
+INVISIBLE.  `--selftest` makes it visible:
+
+    python3 tools/comdat_fold_gate.py --selftest
+
+reports, over a deterministic sample of `symbols.txt` extents plus the nine
+FLAGGED-9 sentinels, how many bodies fail their own identity and why, and exits
+non-zero if a body whose branches ARE all map-resolvable fails the null vector
+(that would be a real defect, not the documented vacuum).
 """
 
 import argparse
@@ -154,6 +193,18 @@ class Retail:
         32-bit value (absolute immediates included: one function duplicated at two
         addresses carries identical absolute operands), and every branch
         destination RESOLVED through the map to the same NAME.
+
+        !! ONLY VALID FOR BODIES WHOSE BRANCHES ALL RESOLVE THROUGH THE MAP !!
+
+        Every branch destination goes through `target_symbol_map.json` and an
+        unnamed one refuses. Intra-body branches -- loops, if/else joins, error
+        paths -- are never map-resident, so this returns False on any body that
+        has one, INCLUDING against itself. Measured null vector: 7 of the 9
+        FLAGGED-9 bodies have `same_function(A, A) == False` (lane ALIAS-X3,
+        2026-08-13). A "0 rivals" count from this predicate on a branchy body is
+        vacuous and must be DISCARDED, not quoted. Run `--selftest` to see the
+        rate on this tree; use a self-relative branch comparator for uniqueness
+        work. Kept fail-closed on purpose: see the module docstring.
         """
         wa, ea = self.words(a)
         wb, eb = self.words(b)
@@ -300,16 +351,139 @@ def resolve_dc3_map(arg):
     return ROOT.parent / arg
 
 
+# The nine bodies lane ALIAS-X3 adjudicated (FLAGGED9_ADJUDICATION_2026-08-13.md
+# in decomp-synth). Two are straight-line/single-`bl` and pass the null vector;
+# seven are EH-bearing STLport helpers with intra-body branches and fail it. They
+# are pinned here as SENTINELS so the selftest samples both classes on purpose
+# rather than by luck -- a screen that only ever sees passing bodies is vacuous.
+SELFTEST_SENTINELS = [
+    0x8252E068,   # ArkFile::Size          8 B, no branch          -> expect True
+    0x8274B0F8,   # DataNode::Int         36 B, one mapped `bl`    -> expect True
+    0x82387D90,   # __uninitialized_copy<CharEyes::CharInterestState>
+    0x823A88A8,   # __uninitialized_copy<CharHair::Point>
+    0x827D1380,   # _M_allocate_and_copy<vector<String>>
+    0x824E2AC8,   # __uninitialized_copy<WorldCrowd::CharData::Char3D>
+    0x82393C60,   # __uninitialized_copy<FileMerger::Merger>
+    0x827148B0,   # __uninitialized_copy<HamMove::LocalizedName>
+    0x8239C640,   # _M_allocate_and_copy<vector<RndMesh::Face>>
+]
+
+
+def selftest(retail, sample, verbose=False):
+    """NULL VECTOR: is `same_function(a, a)` True? For most bodies it is not.
+
+    This does NOT change or relax the comparator -- it measures it, and it
+    separates the two ways it can say False:
+
+      VACUOUS  the body has at least one branch whose destination
+               target_symbol_map.json does not name. The predicate refuses by
+               design; the False carries no information about the bytes.
+      DEFECT   every branch destination IS map-resolvable and it STILL fails its
+               own identity. That is a real bug in the comparator and is the only
+               thing this selftest fails on.
+
+    Exit codes: 0 clean, 2 either a DEFECT or a VACUOUS-screen result (a sample in
+    which nothing was ever observed to fail cannot distinguish "the predicate is
+    sound" from "the sample could not see the failure mode" -- so it is not green).
+    """
+    addrs = sorted(retail.size)
+    if not addrs:
+        print("SELFTEST: config/45410914/symbols.txt yielded no extents -- cannot run")
+        return 2
+    stride = max(1, len(addrs) // max(1, sample))
+    picked = sorted(set(addrs[::stride]) | {a for a in SELFTEST_SENTINELS if a in retail.size})
+    missing = [a for a in SELFTEST_SENTINELS if a not in retail.size]
+
+    unreadable = resolvable = unresolvable = 0
+    defects, vacuous = [], []
+    for a in picked:
+        w, err = retail.words(a)
+        if err:
+            unreadable += 1
+            continue
+        unnamed = 0
+        for i, x in enumerate(w):
+            if (x >> 26) in (16, 18) and retail.byva.get(branch_dest(x, a + 4 * i)) is None:
+                unnamed += 1
+        ok = retail.same_function(a, a)
+        if unnamed:
+            unresolvable += 1
+            if not ok:
+                vacuous.append((a, len(w) * 4, unnamed))
+            else:
+                # An unnamed destination MUST have refused. If it did not, the
+                # model of the failure mode in the docstring is wrong.
+                defects.append((a, len(w) * 4, unnamed,
+                                "has %d map-unresolvable branch(es) yet compared TRUE -- the "
+                                "documented refusal did not happen" % unnamed))
+        else:
+            resolvable += 1
+            if not ok:
+                defects.append((a, len(w) * 4, 0,
+                                "every branch destination resolves through the map, yet the body "
+                                "does not compare equal to ITSELF -- a real comparator bug"))
+
+    n = len(picked)
+    print("SELFTEST same_function(a, a) over %d extents "
+          "(stride %d of %d in symbols.txt, plus %d/%d pinned sentinels)"
+          % (n, stride, len(addrs), len(SELFTEST_SENTINELS) - len(missing),
+             len(SELFTEST_SENTINELS)))
+    if missing:
+        print("  note: %d sentinel(s) carry no symbols.txt extent at this rev: %s"
+              % (len(missing), ", ".join("0x%08x" % a for a in missing)))
+    print("  unreadable (no extent / outside image) : %d" % unreadable)
+    print("  all branches map-resolvable            : %d  -> null vector MUST pass" % resolvable)
+    print("  >=1 branch the map does not name       : %d  -> null vector vacuously FAILS by design"
+          % unresolvable)
+    print("  VACUOUS FALSE observed                 : %d (%.1f%% of readable bodies)"
+          % (len(vacuous), 100.0 * len(vacuous) / max(1, n - unreadable)))
+    print("  DEFECTS                                : %d" % len(defects))
+    if verbose:
+        for a, sz, u, *_ in vacuous[:40]:
+            print("    vacuous 0x%08x %4d B  %d unnamed branch destination(s)  %s"
+                  % (a, sz, u, retail.byva.get(a, "<unnamed>")[:60]))
+    for a, sz, u, why in defects:
+        print("  !! DEFECT 0x%08x %d B: %s" % (a, sz, why))
+
+    for a in SELFTEST_SENTINELS:
+        if a in retail.size:
+            print("  sentinel 0x%08x  same_function(A, A) = %s" % (a, retail.same_function(a, a)))
+
+    if defects:
+        print("\nSELFTEST FAIL: %d body/bodies contradict the documented failure mode." % len(defects))
+        return 2
+    if not vacuous:
+        print("\nSELFTEST VACUOUS: not one sampled body failed its own identity, so this run "
+              "cannot tell a sound predicate from a sample that could not see the failure mode. "
+              "Widen --sample or check that the sentinels have extents. NOT a pass.")
+        return 2
+    print("\nSELFTEST PASS: every null-vector failure is the documented map-unresolvable-branch "
+          "vacuum (%d of %d readable bodies), and every body whose branches DO resolve compares "
+          "equal to itself. The vacuum is REAL and is why a `0 rivals` count from this predicate "
+          "on a branchy body must be discarded rather than quoted." % (len(vacuous), n - unreadable))
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--worklist", default="docs/plans/wrong-callee-triage-2026-08-12.json")
     ap.add_argument("--subclass", default=DEFAULT_SUBCLASSES,
                     help="comma-separated, or 'all' (default: %(default)s)")
-    ap.add_argument("-o", "--out", required=True)
+    ap.add_argument("-o", "--out")
     ap.add_argument("--aliases", default="scripts/symbol_aliases.json")
     ap.add_argument("--install", action="store_true")
     ap.add_argument("--dc3-map", default="dc3-decomp/orig/373307D9/ham_xbox_r.map")
+    ap.add_argument("--selftest", action="store_true",
+                    help="run the same_function null vector and exit (no gate run, no --out)")
+    ap.add_argument("--sample", type=int, default=400,
+                    help="--selftest: how many symbols.txt extents to sample (default: %(default)s)")
+    ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
+
+    if args.selftest:
+        sys.exit(selftest(Retail(), args.sample, args.verbose))
+    if not args.out:
+        ap.error("-o/--out is required unless --selftest")
 
     wl = json.loads((ROOT / args.worklist).read_text())
     subs = None if args.subclass == "all" else set(args.subclass.split(","))
