@@ -243,29 +243,43 @@ void FileMerger::PreLoad(BinStream &bs) {
 }
 
 void FileMerger::FinishLoading(Loader *ldr) {
+    // Retail computes the ObjectDir HERE and passes it to NotifyFileLoaded --
+    // `bl DirLoader::GetDir` (fn_82754A00, returns ObjectDir*) lands in r5, the
+    // 2nd-parameter register, guarded by the dynamic_cast result. See the
+    // NotifyFileLoaded signature note below.
     DirLoader *dl = dynamic_cast<DirLoader *>(ldr);
-    Merger *merger = NotifyFileLoaded(ldr, dl);
-    if (dl && !sDisableAll) {
-        if (merger->mProxy) {
-            MILO_ASSERT(dl->GetDir(), 0x236);
-            ObjectDir *dir = Dir()->Find<ObjectDir>(dl->GetDir()->Name(), false);
-            if (dir) {
-                ReserveToFit(dl->GetDir(), dir, 0);
-                MergeDirs(dl->GetDir(), dir, *this);
-                dir->SyncObjects();
+    ObjectDir *dlDir = dl ? dl->GetDir() : nullptr;
+    Merger *merger = NotifyFileLoaded(ldr, dlDir);
+    if (dl) {
+        if (!sDisableAll) {
+            if (merger->mProxy) {
+                ObjectDir *dir = Dir()->Find<ObjectDir>(dl->GetDir()->Name(), false);
+                if (dir) {
+                    ReserveToFit(dl->GetDir(), dir, 0);
+                    MergeDirs(dl->GetDir(), dir, *this);
+                    dir->SyncObjects();
+                } else {
+                    ObjectDir *loaderDir = dl->GetDir();
+                    ReserveToFit(nullptr, Dir(), 2);
+                    loaderDir->SetName(loaderDir->Name(), Dir());
+                    merger->mLoadedObjects.push_back(loaderDir);
+                }
             } else {
-                ObjectDir *dlDir = dl->GetDir();
-                ReserveToFit(nullptr, Dir(), 2);
-                dlDir->SetName(dlDir->Name(), Dir());
-                merger->mLoadedObjects.push_back(dlDir);
+                ObjectDir *mergerDir = merger->MergerDir();
+                ReserveToFit(dl->GetDir(), mergerDir, 0);
+                MergeDirs(dl->GetDir(), mergerDir, *this);
             }
-        } else {
-            ObjectDir *mergerDir = merger->MergerDir();
-            ReserveToFit(dl->GetDir(), mergerDir, 0);
-            MergeDirs(dl->GetDir(), mergerDir, *this);
         }
+        // Retail deletes the loader (or its dir) HERE, not in PostMerge, and
+        // OUTSIDE the sDisableAll guard: the target reaches this block from the
+        // sDisableAll-true edge too (`bne .L_8234DEC8`), while the whole thing
+        // sits under `if (dl)`.
+        if (!merger->mProxy) {
+            delete dl->GetDir();
+        } else
+            delete dl;
     }
-    PostMerge(merger, dl, true);
+    PostMerge(merger, true);
 }
 
 void FileMerger::FailedLoading(Loader *l) {
@@ -274,7 +288,15 @@ void FileMerger::FailedLoading(Loader *l) {
     static Message msg("on_load_failed", 0);
     msg[0] = mFilesPending.front()->mName;
     HandleType(msg);
-    PostMerge(mFilesPending.front(), dynamic_cast<DirLoader *>(l), false);
+    PostMerge(mFilesPending.front(), false);
+    // Retail does the dynamic_cast AFTER the PostMerge call, not as an argument
+    // to it: the `bl __RTDynamicCast` at 0x8234D5F4 follows `bl PostMerge` at
+    // 0x8234D5D4. The `!b3 &&` guard DC3 needs disappears because this arm only
+    // ever runs on the failure path.
+    DirLoader *dl = dynamic_cast<DirLoader *>(l);
+    if (dl && !dl->IsLoaded()) {
+        dl->SetDeleteSelf(true);
+    }
 }
 
 MergeFilter::Action FileMerger::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
@@ -542,22 +564,20 @@ bool FileMerger::StartLoadInternal(bool async, bool loading) {
     }
 }
 
-FileMerger::Merger *FileMerger::NotifyFileLoaded(Loader *l, DirLoader *dl) {
-    // ⚠ MAP DEFECT (proven on retail bytes, lane B6-FM): retail's second
-    // parameter is an `ObjectDir *`, NOT a `DirLoader *` -- i.e. the rb3-Wii
-    // signature `NotifyFileLoaded(Loader *, ObjectDir *)`, not DC3's.
-    // Evidence: retail `FileMerger::FinishLoading` computes
-    // `d ? d->GetDir() : nullptr` into r5 and passes THAT (idx 16-26 of its
-    // target listing), and both `msg[1] = <param>` sites here apply the
-    // ObjectDir->Hmx::Object virtual-base adjust (`lwz r11,4(p); lwz r11,4(r11);
-    // add; addi r11,r11,4`) directly to the raw parameter -- a conversion
-    // `DirLoader` does not have (DirLoader : Loader, ObjRefOwner; no vbtable).
-    // We cannot act on it here: scripts/target_symbol_map.json encodes
-    // `PAVDirLoader@@`, and objdiff pairs target<->base by MANGLED NAME, so
-    // changing the parameter type un-pairs the row into a false 0%. Fixing the
-    // map (here, PostMerge and FinishLoading together) is a separate lane.
-    // Consequence: `dir` below costs a `GetDir()` call retail does not make.
-    ObjectDir *dir = dl ? dl->GetDir() : nullptr;
+FileMerger::Merger *FileMerger::NotifyFileLoaded(Loader *l, ObjectDir *dir) {
+    // Signature RESTORED to the RB3-era (rb3-Wii) shape by lane FILEMERGER-1;
+    // we had carried DC3's newer `(Loader *, DirLoader *)`. Adjudicated on
+    // retail bytes, not on the oracle: retail's FinishLoading computes
+    // `d ? d->GetDir() : nullptr` into r5 -- and fn_82754A00 is mapped
+    // `?GetDir@DirLoader@@QAAPAVObjectDir@@XZ`, i.e. it RETURNS ObjectDir* --
+    // and both `msg[1] = <param>` sites below apply the ObjectDir->Hmx::Object
+    // virtual-base adjust (`lwz r11,4(p); lwz r11,4(r11); add; addi r11,r11,4`)
+    // directly to the raw parameter, a conversion DirLoader does not have
+    // (DirLoader : Loader, ObjRefOwner; no vbtable).
+    // ⚠ COUPLED TO scripts/target_symbol_map.json: objdiff pairs target<->base
+    // by MANGLED NAME, so row 0x823927c8 was re-spelled in the same change.
+    // Census first: this spelling occupied exactly ONE map row, not at 100%, so
+    // the re-mangle risked no already-matching bytes.
     MILO_ASSERT_FMT(
         l->LoaderFile() == mFilesPending.front()->loading,
         "%s != %s",
@@ -631,45 +651,38 @@ void FileMerger::AppendLoader(FileMerger::Merger &merger) {
     }
 }
 
-void FileMerger::PostMerge(FileMerger::Merger *merger, DirLoader *dl, bool b3) {
+// Retail arity is THREE args, not four -- `PostMerge(Merger *, bool)`, the
+// rb3-Wii shape; we had carried DC3's `(Merger *, DirLoader *, bool)`. Proven
+// independently at BOTH call sites on retail bytes: FinishLoading loads only
+// r3/r4/r5 (`mr r3,r26; mr r4,r27; li r5,1`) and FailedLoading likewise
+// (`mr r3,r29; lwz r4,0x8(r11); li r5,0`) -- r6 is never written before either
+// `bl`, and the callee tests its 3rd argument with `clrlwi. r25,r29,24`, an
+// 8-bit bool. Map row 0x82391a60 re-spelled in the same change (1 row, 1.63%).
+//
+// The body is correspondingly SMALLER than DC3's: retail sends ONE message and
+// deletes nothing. The `delete dl` block moved to FinishLoading and the
+// SetDeleteSelf tail to FailedLoading (see both). DC3's second message,
+// "on_post_delete", DOES NOT EXIST IN RETAIL -- a binary-safe scan of band.exe
+// finds 0 occurrences ascii+utf16, against exactly 1 each for on_post_merge /
+// on_pre_merge / on_load_failed / change_files, so the screen is controlled.
+// Retail's surviving "on_post_merge" carries DC3's on_post_delete ARGUMENTS
+// (name, MergerDir, empty) -- read off the target, not inferred from the name.
+void FileMerger::PostMerge(FileMerger::Merger *merger, bool b3) {
     mCurLoader = nullptr;
     mFilesPending.pop_front();
     mFilter = nullptr;
     if (b3) {
-        {
-            static Message msg("on_post_merge", 0, 0, 0);
-            msg[0] = merger->mName;
-            ObjectDir *dir = dl ? dl->GetDir() : nullptr;
-            msg[1] = dir;
-            msg[2] = merger->MergerDir();
-            HandleType(msg);
-        }
-        if (dl) {
-            if (!merger->mProxy) {
-                ObjectDir *dir = dl->GetDir();
-                if (dir) {
-                    delete dir;
-                }
-            } else {
-                delete dl;
-            }
-        }
-        {
-            static Message msg("on_post_delete", 0, 0, 0);
-            msg[0] = merger->mName;
-            msg[1] = merger->MergerDir();
-            msg[2] = mFilesPending.empty();
-            HandleType(msg);
-        }
+        static Message msg("on_post_merge", 0, 0, 0);
+        msg[0] = merger->mName;
+        msg[1] = merger->MergerDir();
+        msg[2] = mFilesPending.empty();
+        HandleType(msg);
     }
     if (b3 || mOrganizer == this) {
         if (mFilesPending.empty()) {
             MILO_ASSERT(!mCurLoader, 0x290);
         } else if (!mCurLoader)
             LaunchNextLoader();
-    }
-    if (!b3 && dl && !dl->IsLoaded()) {
-        dl->SetDeleteSelf(true);
     }
 }
 
