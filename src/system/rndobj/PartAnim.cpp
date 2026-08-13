@@ -43,25 +43,22 @@ static unsigned short sPartAnimRev;
 
 RndParticleSysAnim::RndParticleSysAnim() : mParticleSys(this), mKeysOwner(this, this) {}
 
+// Retail 0x8247F168 (140 B). See RndCamAnim::Replace for the full derivation:
+// the ring compares the VIRTUAL BASE of the held pointer (Hmx::Object is a
+// virtual base of RndParticleSysAnim), there is no Hmx::Object::Replace
+// fallback, and the cast arm must bind a reference so &q->mKeysOwner stays
+// materialized (addi r11,r3,0x64; lwz r4,0x8(r11)).
 void RndParticleSysAnim::Replace(ObjRef *from, Hmx::Object *to) {
-    if (RefIs(from, mKeysOwner)) {
-        // When our keys owner reference is being replaced:
-        if (mKeysOwner == this) {
-            // We own our keys - keep owning them
+    if (static_cast<Hmx::Object *>(mKeysOwner.Ptr())
+        == reinterpret_cast<Hmx::Object *>(from)) {
+        if (!to) {
             mKeysOwner.SetObjConcrete(this);
         } else {
-            // Try to delegate to replacement's keys owner
-            RndParticleSysAnim *sysTo = dynamic_cast<RndParticleSysAnim *>(to);
-            if (sysTo) {
-                mKeysOwner.SetObjConcrete(sysTo->mKeysOwner);
-            } else {
-                // Replacement isn't a ParticleSysAnim, take ownership
-                mKeysOwner.SetObjConcrete(this);
-            }
+            const ObjOwnerPtr<RndParticleSysAnim> &ko =
+                dynamic_cast<RndParticleSysAnim *>(to)->mKeysOwner;
+            mKeysOwner.SetObjConcrete(ko.Ptr());
         }
-        return;
     }
-    Hmx::Object::Replace(from, to);
 }
 
 BEGIN_HANDLERS(RndParticleSysAnim)
