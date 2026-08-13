@@ -218,7 +218,7 @@ void NgDOFProc::DoPost() {
             workMat->SetDiffuseTex(TheNgRnd.PreProcessTexture());
             workMat->SetZMode(kZModeDisable);
             workMat->SetTexWrap(kTexWrapClamp);
-            workMat->SetBlend(BaseMaterial::kBlendSrc);
+            workMat->SetBlend(RndMat::kBlendSrc);
             workMat->MarkDirty(2);
             TheNgRnd.DrawRect(
                 rect, workMat, kDownsample4xShader, colorPass1, nullptr, nullptr
@@ -228,7 +228,7 @@ void NgDOFProc::DoPost() {
             // Pass 2: Horizontal blur
             mBlurTex[1]->MakeDrawTarget();
             workMat->SetDiffuseTex(mBlurTex[0]);
-            workMat->SetBlend(BaseMaterial::kBlendSrc);
+            workMat->SetBlend(RndMat::kBlendSrc);
             workMat->SetZMode(kZModeDisable);
             workMat->SetTexWrap(kTexWrapClamp);
             workMat->MarkDirty(2);

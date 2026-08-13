@@ -68,7 +68,7 @@ public:
         //
         // NOTE, and do not re-derive the wrong version: the four per-layer
         // stores to sMat+0x28 are mBlend, NOT mColorModFlags. There is NO
-        // BaseMaterial layout divergence -- mBlend@0x28, mZMode@0x3c and
+        // RndMat layout divergence -- mBlend@0x28, mZMode@0x3c and
         // mTexWrap@0x48 all agree between retail and our build. Retail
         // composites the layers by BLEND MODE (1/3/3/6 = kBlendSrc /
         // kBlendSrcAlpha / kBlendSrcAlpha / kBlendMultiply), i.e. it calls

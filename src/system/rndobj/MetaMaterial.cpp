@@ -104,7 +104,7 @@ namespace {
 MetaMaterial::MetaMaterial() { Init(); }
 
 BEGIN_HANDLERS(MetaMaterial)
-    HANDLE_SUPERCLASS(BaseMaterial)
+    HANDLE_SUPERCLASS(RndMat)
 END_HANDLERS
 
 #define SYNC_MAT_PROP_EDIT_ACTION(s, idx)                                                \
@@ -218,17 +218,17 @@ BEGIN_PROPSYNCS(MetaMaterial)
         kMatPropWorldProjectionEndBlend
     )
 #endif
-    SYNC_SUPERCLASS(BaseMaterial)
+    SYNC_SUPERCLASS(RndMat)
 END_PROPSYNCS
 
 BEGIN_SAVES(MetaMaterial)
     SAVE_REVS(2, 0)
-    SAVE_SUPERCLASS(BaseMaterial)
+    SAVE_SUPERCLASS(RndMat)
     bs << mMatPropEditActions;
 END_SAVES
 
 BEGIN_COPYS(MetaMaterial)
-    COPY_SUPERCLASS(BaseMaterial)
+    COPY_SUPERCLASS(RndMat)
     CREATE_COPY(MetaMaterial)
     BEGIN_COPYING_MEMBERS
         COPY_MEMBER(mMatPropEditActions)
@@ -245,7 +245,7 @@ INIT_REVS(2, 0)
 BEGIN_LOADS(MetaMaterial)
     LOAD_REVS(bs)
     ASSERT_REVS(2, 0)
-    LOAD_SUPERCLASS(BaseMaterial)
+    LOAD_SUPERCLASS(RndMat)
     if (d.rev > 1) {
         d >> mMatPropEditActions;
     }

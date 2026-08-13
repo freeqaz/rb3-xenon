@@ -76,7 +76,7 @@ enum MatPropEditAction {
 
 // size 0x204
 /** "MetaMaterials serve as Material templates" */
-class MetaMaterial : public BaseMaterial {
+class MetaMaterial : public RndMat {
 public:
     OBJ_CLASSNAME(MetaMaterial);
     OBJ_SET_TYPE(MetaMaterial);

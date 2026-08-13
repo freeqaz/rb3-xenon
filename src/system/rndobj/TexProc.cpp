@@ -114,7 +114,7 @@ void TexProc::Init() {
 RndMat *TexProc::SetUpWorkingMat() {
     RndMat *mat = TheShaderMgr.GetWork();
     mat->SetZMode(kZModeDisable);
-    mat->SetBlend(BaseMaterial::kBlendSrc);
+    mat->SetBlend(RndMat::kBlendSrc);
     mat->SetTexWrap(kTexWrapClamp);
     mat->SetAlphaWrite(true);
     mat->SetAlphaCut(false);

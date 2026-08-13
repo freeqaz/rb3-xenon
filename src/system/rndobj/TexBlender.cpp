@@ -220,7 +220,7 @@ void RndTexBlender::DrawShowing() {
         TheShaderMgr.SetVConstant(kVS_ViewProjMatrix, viewProjMtx);
         TheShaderMgr.SetTransform(xfm);
         SetupMaterial(mat, nearTex);
-        mat->SetBlend(BaseMaterial::kBlendSrcAlpha);
+        mat->SetBlend(RndMat::kBlendSrcAlpha);
 
         float lastAlpha = -1.0f;
         for (std::vector<std::pair<RndTexBlendController *, float> >::iterator it =
@@ -262,7 +262,7 @@ void RndTexBlender::DrawShowing() {
         TheShaderMgr.SetVConstant(kVS_ViewProjMatrix, viewProjMtx);
         TheShaderMgr.SetTransform(xfm);
         SetupMaterial(mat, farTex);
-        mat->SetBlend(BaseMaterial::kBlendSrcAlpha);
+        mat->SetBlend(RndMat::kBlendSrcAlpha);
 
         float lastAlpha = -1.0f;
         for (std::vector<std::pair<RndTexBlendController *, float> >::iterator it =
@@ -332,7 +332,7 @@ void RndTexBlender::DrawBlendList(
         TheShaderMgr.SetTransform(xfm);
         SetupMaterial(mat, texmap);
 
-        mat->SetBlend(BaseMaterial::kBlendSrcAlpha);
+        mat->SetBlend(RndMat::kBlendSrcAlpha);
 
         for (std::vector<std::pair<RndTexBlendController *, float> >::const_iterator it =
                  list.begin();

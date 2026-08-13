@@ -320,7 +320,7 @@ void Rnd::PreInit() {
     RndText::Init();
     RndFont::Init();
     RndEnviron::Init();
-    Hmx::Object::RegisterFactory(RndMat::StaticClassName(), BaseMaterial::NewObject);
+    Hmx::Object::RegisterFactory(RndMat::StaticClassName(), RndMat::NewObject);
     RndTex::Init();
     RndCubeTex::Init();
     RndMovie::Init();
@@ -360,7 +360,7 @@ void Rnd::PreInit() {
     EventTrigger::Init();
     RndWind::Init();
     RndPollAnim::Init();
-    // ⚠ RB3-360 retail's Rnd::PreInit() does NOT call BaseMaterial::Init(),
+    // ⚠ RB3-360 retail's Rnd::PreInit() does NOT call
     // REGISTER_OBJ_FACTORY(MetaMaterial), RndEnterable::Init(),
     // RndMat::Init(), RndSpline::Init(), RndShockwave::Init(), DOFProc::Init(),
     // TexProc::Init(), or the catch-all REGISTER_OBJ_FACTORY(Hmx::Object) at
@@ -370,7 +370,7 @@ void Rnd::PreInit() {
     // in between and zero residue afterward). The only material-related
     // registration retail performs anywhere in this function is the single
     // legacy alias above (RndMat's class-name Symbol "Mat" mapped to
-    // BaseMaterial::NewObject), consistent with the RB3-ships-no-metamaterial-
+    // RndMat::NewObject), consistent with the RB3-ships-no-metamaterial-
     // content finding already documented at Mat.cpp's RndMat::Init(). The full
     // RndMat::Init() (SetDefaultMat/LoadMetaMaterials/CreateAndSetMetaMat) is
     // never invoked by target PreInit at all.

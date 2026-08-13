@@ -2108,7 +2108,7 @@ namespace {
         m->SetPreLit(true);
         m->SetUseEnv(false);
         m->SetZMode(kZModeNormal);
-        m->SetBlend(BaseMaterial::kBlendSrc);
+        m->SetBlend(RndMat::kBlendSrc);
         m->SetAlphaCut(false);
         return m;
     }
