@@ -313,3 +313,142 @@ removed; 268 B of honest credit gained.**
 The five nulled addresses are added to `_denylist` so `gen_target_map` cannot
 re-emit them — the map's own comment records a prior null becoming a
 "permanent oscillator" for exactly this reason.
+
+---
+
+# Lane SPLITS-1 — the ROOT CAUSE: re-homing the mis-pinned spans
+
+2026-08-13. MAPDEF-2 called nulling a **partial** repair and handed off the
+mis-pinned `.text` spans. This section completes them: the five addresses are
+re-homed to the units that own them and re-named to their **true** classes.
+
+## The oracle was re-derived a THIRD time, and it gained a strand
+
+An independent PE decoder + PPC `bl`/`lis`/`addi`/`li` decoder, written from the
+bytes up. It reproduces both prior censuses — and adds a strand neither used:
+**the `StaticClassName` callee's own map name gives the C++ class directly**,
+where the string literal gives only the *registered Symbol*. That distinction is
+load-bearing exactly once, and it is the row that would otherwise have been
+mis-named:
+
+| row VA | `li` alloc | `bl` → StaticClassName | tag STRING | ctor callee | compiler `sizeof` |
+|---|---|---|---|---|---|
+| `0x8227b408` | 80 | `?StaticClassName@BandRetargetVignette@@` | `"BandRetargetVignette"` | — | **80 ✓** |
+| `0x8227b9b8` | 564 | `?StaticClassName@UnisonIcon@@` | `"UnisonIcon"` | `??0UnisonIcon@@QAA@XZ` | **564 ✓** |
+| `0x8227bb98` | 648 | `?StaticClassName@OverdriveMeter@@` | **`"OverdriveMeterDir"`** | — | **648 ✓** |
+| `0x82329778` | 548 | `?StaticClassName@LayerDir@@` | `"LayerDir"` | `??0LayerDir@@QAA@XZ` | — |
+| `0x824576f8` | 456 | `?StaticClassName@RndText@@` | **`"Text"`** | `??0RndText@@IAA@XZ` | — |
+
+⇒ `0x8227bb98`'s correct symbol is `?NewObject@OverdriveMeter@@…`, **not**
+`OverdriveMeterDir` — `src/system/bandobj/OverdriveMeter.h:16` declares
+`OBJ_CLASSNAME(OverdriveMeterDir)`, so the C++ class registers under a different
+Symbol. **A tag string is the REGISTERED name, not the class name.** All five
+also call the same tagged allocator `0x827bcd38`.
+
+## ⛔ THE DENYLIST WOULD HAVE MADE THE WHOLE MAP HALF INERT
+
+`obj_target_symbol_renamer.py:156` — *"Denied rows are unclaimed regardless of
+the value they carry."* MAPDEF-2 put all five addresses on `_denylist`, so
+writing the true names **while leaving them denylisted renames nothing**: a
+textbook absent-vs-absent leg that would have measured the splits half alone
+while reporting on both. Proven by executing the loader, not by reading it —
+denylisted ⇒ `<SKIPPED>`, removed ⇒ name emitted, with a never-denied control
+row unaffected throughout. The five are removed from `_denylist`; manual entries
+still beat `gen_target_map`'s auto guesses, so the names are durable.
+
+⚠ My *first* probe of this was **vacuous** — it called `load_symbol_map`, which
+does not exist (`load_address_map` does), and the `hasattr` guard returned a
+clean `N/A` on **both** legs. It would have "confirmed" any hypothesis.
+
+## Structural corroboration independent of the tag: the three holes
+
+`BandCharacter.cpp` runs `0x8227AFC0`–`0x8227C6D0` with **exactly three holes** —
+and those holes *are* the three stray blocks (PhotoSpotlightPositioner,
+HamPhotoDisplay, Gesture). Independently, all three true classes'
+`NewObject` are **defined in our `BandCharacter.obj`** (COFF symbol table,
+`SectionNumber > 0`, negative control ABSENT). Likewise `0x82329778` is the
+*exact* 152-byte gap between `LayerDir.cpp`'s two blocks. Two strands, no map.
+
+`_M_fill_insert<vector<RecordedFrame>>` at `0x82457680` is **DEFINED in
+`SkeletonClip.obj` and ABSENT from `Text.obj`**, so it genuinely stays with
+SkeletonClip — the block is split at `0x824576F8`, not moved wholesale.
+
+## Boundary convention — measured, not guessed
+
+Our `NewObject` COMDATs are `[8 B EH prefix][112 B body][28–40 B funclet]`
+(`symval=8`), so prefix attribution is a real choice. Census of all 6,486 `.text`
+blocks: **762 start at the body (prefix billed to the previous block) vs 198
+that include it — ~4:1 prefix-exclusive.** Boundaries therefore stay on function
+starts, which also leaves 4 of the 5 moves address-identical.
+
+## The moves
+
+| span | from | to |
+|---|---|---|
+| `0x8227B408–0x8227B4A8` | `system/hamobj/PhotoSpotlightPositioner.cpp` | `BandCharacter.cpp` |
+| `0x8227B9B8–0x8227BA58` | `HamPhotoDisplay.cpp` | `BandCharacter.cpp` |
+| `0x8227BB98–0x8227BC38` | `Gesture.cpp` | `BandCharacter.cpp` |
+| `0x82329778–0x82329810` | `Gesture.cpp` | `LayerDir.cpp` |
+| `0x824576F8–0x82457790` | `SkeletonClip.cpp` (split) | `Text.cpp` |
+
+`system/hamobj/PhotoSpotlightPositioner.cpp` had that as its **only** `.text`
+block, so its whole splits entry is deleted in the same edit — the documented
+"a single-function unit VANISHES rather than reaching 100%" case. It did
+vanish; `report.json` did **not** hard-fail.
+
+Invariant asserted before building: the covered address set is **byte-identical**
+before and after (2,182,154 words, 0 lost / 0 gained, 0 overlaps) — every move is
+pure re-attribution. `.pdata` re-derived itself onto the new owners, including
+moving PhotoSpotlightPositioner's `0x821F2138–0x821F2148` to BandCharacter
+unprompted — dtk independently agreeing with the re-homing.
+
+## Measured (`ab_measure --from-dirty`, forced re-split both legs)
+
+Ruler **`name_check`** (shipped default), objdiff `4.2.3`, read from provenance.
+
+| | leg A | leg B | Δ |
+|---|---|---|---|
+| `matched_functions` | 44,268 | 44,268 | **0** |
+| `masked_equal_functions` | 22,888 | 22,887 | **−1** |
+| honest | 21,380 | 21,381 | **+1** |
+| `matched_code_percent` | 34.447920 | 34.449010 | **+0.001090pp (+112 B)** |
+| `none`-ruler control | 42.398396 | 42.399094 | **+72 B** |
+| units at 100% (mpn) | 252 | 252 | **0 fell off** |
+
+Per-unit: `BandCharacter` 513→516, `Text` 111→113; `Gesture` 7→5,
+`HamPhotoDisplay` 2→1, `SkeletonClip` 22→21, `PhotoSpotlightPositioner` 1→0
+(vanished). Net 0 — the rows **moved units**, they were not lost.
+
+## ★ THE PREDICTED CALLER-SIDE GAIN DID NOT HAPPEN — a negative result
+
+MAPDEF-2's headline was that a false name taxes every caller, and the brief for
+this lane said to expect caller-side gains. **Per-row set-diff over both reports:
+ZERO rows changed in any untouched unit.** The entire +112 B / +1 honest is a
+single row — `?NewObject@RndText@@SAPAVObject@Hmx@@XZ`, 112 B, fuzzy 100,
+`masked_equal=false`.
+
+The mechanism is asymmetric and that is the lesson: MAPDEF-2 gained by
+**removing** a wrong name that was taxing callers under `name_check`. Once the
+name is gone the callers are already un-taxed, so **restoring the correct name
+pays nothing further caller-side.** The caller-tax lever is spent by the null;
+re-homing collects only the row's own credit. Do not budget caller-side yield
+for the remaining re-homings.
+
+## Deliberately NOT done
+
+- **The material region.** A peer lane flagged `BaseMaterial`/`Mat`/
+  `MetaMaterial` as one retail TU carved into three units. A read-only span dump
+  over `0x82435520–0x82439000` shows it is **worse than reported: 7 distinct
+  units across 9 alternations** — `BaseMaterial → RockCentral → Mat → PostProc →
+  MetaMaterial → Mat → MetaMaterial → StringTable → Utl`, i.e. `RockCentral`
+  (60 B), `PostProc` (528 B) and `StringTable` (740 B) are interleaved into the
+  material run too. ⚠ **The tag oracle was NOT run over this region, so no true
+  ownership is established for any block here** — interleaving alone is
+  suggestive, not decisive. Hypothesis for a follow-up lane, no edit attached.
+- **`0x8240f5d0` / `BaseMaterial`** — still lane MAT-1's row, still untouched.
+- **The other `.text` interleavings** between `Text.cpp` and `SkeletonClip.cpp`
+  (they alternate across `0x82456260`–`0x82457F70`); only the one block carrying
+  a tag-adjudicated address was split.
+- **No native gate** — `config/45410914/splits.txt`, `scripts/target_symbol_map.json`
+  and this doc only, **zero `src/**` edits**, so it has nothing to test. Said
+  rather than skipped silently.
