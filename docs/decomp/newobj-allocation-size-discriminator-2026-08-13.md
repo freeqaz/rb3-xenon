@@ -157,3 +157,159 @@ subsystems with no RB3 counterpart**, i.e. the same class of DC3-only pin that
 **mpn 100.00 — counted in `matched_functions`** — while the tag proves the row is
 wrong. Another instance of the at-100% defect class, found from the metric's own
 input rather than external evidence.
+
+---
+
+# Lane MAPDEF-2 — adjudication and repair of the 8 reported false pairings
+
+2026-08-13. The section above reported 8 false pairings and deliberately left
+`scripts/target_symbol_map.json` untouched. This section adjudicates each one on
+retail bytes and repairs the map. The oracle was **re-derived from scratch**
+(an independent PE decoder + an index-aligned COFF reloc reader) rather than by
+importing `newobj_size_screen.py`, so a decoder bug there could not be
+reproduced and mistaken for confirmation. It reproduces this doc's census
+exactly: **112 AGREE / 9 survivors / 1 corroborated** over 209 rows.
+
+## ⛔ CORRECTION TO THIS DOC: `StarDisplay` is NOT wrong
+
+The "Rows at mpn 100 that are demonstrably wrong" section above lists
+**`StarDisplay`** — contradicting this doc's *own* preceding table, which
+correctly exonerates it. The preceding table is right and that list
+over-collected. Settled on three strands:
+
+- retail's tag string is `"StarDisplay"` — the row's **own** class
+- retail's ctor callee is `??0StarDisplay@@QAA@XZ`
+- `cl /d1reportSingleClassLayoutStarDisplay` ⇒ **`sizeof = 408`**, which is
+  **exactly** the row's retail allocation (`li r3, 0x198`)
+
+`AppMiniLeaderboardDisplay` is corroborated the same way: `sizeof = 432` ==
+retail's allocation, retail's ctor names the class **exactly**, and the layout
+prints `[MiniLeaderboardDisplay > UIComponent > …]`, so retail's
+`MiniLeaderboardDisplay` tag is an inherited static naming a genuine base.
+
+⇒ **A row can be at mpn 100 *and* correct.** Two of the four rows this doc
+flagged as "at mpn 100 and demonstrably wrong" were the corroborated class.
+
+## ★ A SECOND INDEPENDENT STRAND THIS DOC DID NOT USE: the ctor callee
+
+The tagged-allocator body calls `bl <T::T()>` after the allocation. That callee
+is a *second* witness to the row's true class, and it is the one that settles
+the `FxSend` pair beyond argument. Combined with our own obj's reloc (which
+states which tag *our* compiler expects), each verdict rests on up to four
+strands.
+
+## Verdicts
+
+| row VA | map name | retail tag (string, map-independent) | retail ctor callee | verdict |
+|---|---|---|---|---|
+| `0x82b5a2e0` | FxSendReverb360 | `"FxSendChorus"` | `??0FxSendChorus360` | **VERIFIED — swapped** |
+| `0x82b5adc0` | FxSendChorus360 | `"FxSendReverb"` | `??0FxSendReverb360` | **VERIFIED — swapped** |
+| `0x824576f8` | SkeletonClip | (`RndText::StaticClassName`) | `??0RndText` | **VERIFIED false** |
+| `0x8227b408` | PhotoSpotlightPositioner | (`BandRetargetVignette::StaticClassName`) | — | **VERIFIED false** |
+| `0x8227b9b8` | HamPhotoDisplay | `"UnisonIcon"` | `??0UnisonIcon` | **VERIFIED false** |
+| `0x8227bb98` | NavigationSkeletonDir | `"OverdriveMeterDir"` | — | **VERIFIED false** |
+| `0x82329778` | SkeletonViz | `"LayerDir"` | `??0LayerDir` | **VERIFIED false** |
+| `0x8240f5d0` | BaseMaterial | `"Mat"` | — | **OUT OF SCOPE** (lane MAT-1 owns `RndMat`/`rndobj`) |
+
+### ★ A fifth strand for the swap, purely structural — no bytes decoded
+
+Every `FxSend*360` class in this TU emits `StaticClassName` and then its
+`NewObject` at exactly **+0x80**, in a regular `+0x88 / +0x80` stride —
+`FxSendDistortion360`, `FxSendDelay360`, `FxSendCompress360`, `FxSendEQ360`,
+`FxSendFlanger360`, `FxSendMeterEffect360`, `FxSendWah360`: **8 of 8**.
+`0x82b5a260` is `?StaticClassName@FxSendChorus360@@`, so `0x82b5a2e0` is
+`FxSendChorus360::NewObject` by adjacency alone. Under the **old** map that
+address was `FxSendReverb360::NewObject` — the one class in the whole TU whose
+`NewObject` failed to follow its own `StaticClassName`. The swap restores the
+regularity.
+
+All 10 rows are genuine `.pdata` BeginAddresses whose extents (112/84 B) equal
+our row sizes exactly — which is *why* they scored ~100 and why size alone could
+never discriminate them. `sizeof(FxSendChorus360) == sizeof(FxSendReverb360) ==
+180`: **only the tag can separate that pair.**
+
+## ⛔ The "DC3-only pin, delete it like `a0d03243`" framing is the wrong reading
+
+The five `gesture`/`hamobj` rows are DC3-only **in the map name only**. The
+*retail* classes their tags name — `RndText`, `BandRetargetVignette`,
+`UnisonIcon`, `OverdriveMeter`, `LayerDir` — are all **real RB3 classes**, and
+none of them is named at any address in the map. So these are not stray pins
+over dead space: they are **live RB3 bodies wearing a Dance Central name**.
+
+⚠ **Re-homing them was rejected, not overlooked.** Each address is pinned to its
+DC3-only unit (`Gesture.cpp`, `HamPhotoDisplay.cpp`, …) while its true owner
+lives elsewhere, so re-homing the name requires *moving splits pins across
+units* — a splits change, not a map change. Nulling is the in-scope repair;
+the mis-pinned spans are flagged below for a splits lane.
+
+## ★★ A FALSE MAP NAME TAXES EVERY CALLER OF THAT ADDRESS
+
+The single most useful finding here, and it was **not predicted**. Nulling
+`0x82329778` (falsely `SkeletonViz`, truly `LayerDir::NewObject`) moved a row in
+a *different unit*:
+
+```
++100 B   default/LayerDir   ?Init@LayerDir@@SAXXZ   fuzzy 99.6 -> 100.0
+```
+
+`LayerDir::Init` calls that address. Under `functionRelocDiffs=name_check` the
+target's reloc carried the **wrong name** while ours carried the right one, so
+the caller was penalised for its callee's bad label. Removing the wrong name
+un-taxed it.
+
+⇒ **A false pairing costs more than its own row — it leaks into every caller.**
+And this is *fourth-party corroboration* of the tag oracle: an unrelated row
+reaching 100% exactly when we stop calling `0x82329778` "SkeletonViz" is what
+must happen if the address really is `LayerDir::NewObject`.
+
+## Measured (whole-binary A/B, `ab_measure --from-dirty`, forced re-split both legs)
+
+Ruler: **`functionRelocDiffs=name_check`** (the shipped default), objdiff
+`4.2.3` / `6bf7ba700ce5`.
+
+| | leg A | leg B | Δ |
+|---|---|---|---|
+| `matched_functions` | 44,271 | 44,267 | **−4** |
+| `masked_equal_functions` | 22,888 | 22,888 | 0 |
+| honest (`matched − masked_equal`) | 21,383 | 21,379 | **−4** |
+| `matched_code_percent` | 34.440598 | 34.443195 | **+0.002597pp** |
+| `matched_code` bytes | | | **+268 B** |
+| units at 100% (mpn) | 253 | 252 | −1 |
+
+`−4` = the four DC3-only rows losing false mpn-100 credit. **`SkeletonClip`
+moved nothing** — it sat at mpn 99.9643, i.e. it was drawing *no* credit to
+remove; nulling it is pure accuracy. `+268 B` = `+84 +84` (the FxSend swap
+reaching fuzzy 100, because the reloc *names* now agree) `+100` (the LayerDir
+caller above). One unit fell off 100%:
+`default/system/hamobj/PhotoSpotlightPositioner` (2 rows → 1 matched), which was
+at 100% **on false credit**.
+
+### ⚠ The `none`-ruler control MOVED, and that is CORRECT here
+
+`ab_measure` warned `[control none] Δmatched_code=-448 B … (MOVED -- a name-only
+change should not do this)`. That guard is calibrated for **renames**; a null is
+a **removal**. −448 B is exactly **4 × 112 B**, the four rows that stopped
+pairing. Under `none`, relocation names are masked entirely, so those four
+demonstrably-wrong pairings were scoring **fuzzy 100 and drawing 448 B of false
+byte credit**. Removing it is the point of the lane, not a defect in it.
+
+⇒ Net accuracy: **4 false function matches and 448 B of false byte credit
+removed; 268 B of honest credit gained.**
+
+## Deliberately NOT done
+
+- **`BaseMaterial` / `0x8240f5d0`** — lane MAT-1 owns `sizeof(RndMat)` and
+  `src/system/rndobj/**`. Untouched, not adjudicated further.
+- **Re-homing the five nulled addresses** to `RndText` / `BandRetargetVignette` /
+  `UnisonIcon` / `OverdriveMeter` / `LayerDir` — needs splits moves (above).
+- **The mis-pinned spans themselves.** `SkeletonClip.cpp` is pinned over
+  `RndText` code, `Gesture.cpp` over `OverdriveMeter`/`ChordShapeGenerator`,
+  `HamPhotoDisplay.cpp` over `UnisonIcon`/`EndingBonus`/`StreakMeter`. Nulling
+  the `NewObject` row is a partial repair; **the pins are the root cause** and
+  are a splits lane's work.
+- **No native gate** — this lane changed `scripts/target_symbol_map.json` and
+  this doc only, **zero `src/**` edits**, so the gate has nothing to test.
+
+The five nulled addresses are added to `_denylist` so `gen_target_map` cannot
+re-emit them — the map's own comment records a prior null becoming a
+"permanent oscillator" for exactly this reason.
