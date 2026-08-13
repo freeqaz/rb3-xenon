@@ -129,7 +129,6 @@ void RndVelocityBuffer::AllocateData(
     mMat->SetPerPixelLit(false);
     mMat->SetBlend(RndMat::kBlendSrc);
     mMat->SetZMode(kZModeDisable);
-    CreateAndSetMetaMat(mMat);
 }
 
 void RndVelocityBuffer::FreeData() {

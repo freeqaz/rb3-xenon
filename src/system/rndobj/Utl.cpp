@@ -332,13 +332,10 @@ void AddMotionSphere(RndTransformable *t, Sphere &s) {
         AddMotionSphere(parent, s);
 }
 
-void CreateAndSetMetaMat(RndMat *mat) {
-    MILO_ASSERT(mat, 0x124A);
-    if (!mat->GetMetaMaterial()) {
-        MetaMaterial *metaMat = mat->CreateMetaMaterial(false);
-        mat->SetMetaMat(metaMat, true);
-    }
-}
+#ifdef HX_NATIVE
+// No-op shim -- see rndobj/Utl.h. Retail has no such function.
+void CreateAndSetMetaMat(RndMat *) {}
+#endif
 
 bool ShouldStrip(RndTransformable *trans) {
     if (!trans)
