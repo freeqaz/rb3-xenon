@@ -3915,11 +3915,13 @@ Text.cpp:
 	.pdata      start:0x8220E090 end:0x8220E0D8
 	.pdata      start:0x8220E0D8 end:0x8220E108
 	.pdata      start:0x8220E108 end:0x8220E130
+	.pdata      start:0x8220E180 end:0x8220E190
 	.pdata      start:0x8220E1A8 end:0x8220E1D8
 	.pdata      start:0x8220E1D8 end:0x8220E228
+	.pdata      start:0x8220E228 end:0x8220E230
 	.pdata      start:0x8220E238 end:0x8220E248
-	.pdata      start:0x8220E248 end:0x8220E250
-	.pdata      start:0x8220E278 end:0x8220E280
+	.pdata      start:0x8220E248 end:0x8220E268
+	.pdata      start:0x8220E270 end:0x8220E280
 	.pdata      start:0x8220E288 end:0x8220E2D0
 	.pdata      start:0x8220E2D0 end:0x8220E2D8
 	.pdata      start:0x8220E2D8 end:0x8220E2E8
@@ -4205,10 +4207,9 @@ SkeletonClip.cpp:
 	.pdata      start:0x8220E138 end:0x8220E140
 	.pdata      start:0x8220E140 end:0x8220E150
 	.pdata      start:0x8220E150 end:0x8220E158
-	.pdata      start:0x8220E160 end:0x8220E190
+	.pdata      start:0x8220E160 end:0x8220E180
 	.pdata      start:0x8220E230 end:0x8220E238
-	.pdata      start:0x8220E250 end:0x8220E268
-	.pdata      start:0x8220E268 end:0x8220E278
+	.pdata      start:0x8220E268 end:0x8220E270
 	.pdata      start:0x8220E280 end:0x8220E288
 	.pdata      start:0x82237AC8 end:0x82237AE0
 	.pdata      start:0x82237B68 end:0x82237B70
@@ -10217,7 +10218,6 @@ TourProgress.cpp:
 	.pdata      start:0x82200978 end:0x822009C0
 	.pdata      start:0x822009C0 end:0x822009C8
 	.pdata      start:0x822009C8 end:0x822009D0
-	.pdata      start:0x8220E228 end:0x8220E230
 	.text       start:0x82361F68 end:0x8236238C
 	.text       start:0x82362390 end:0x823625C8
 	.text       start:0x823625C8 end:0x823625E0
