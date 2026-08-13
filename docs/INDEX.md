@@ -430,6 +430,7 @@ Read the verdict before re-opening any of these.
 - ★ [decomp/patterns/fixable-liveness.md](decomp/patterns/fixable-liveness.md) — **register swaps are symptoms, not causes.** The five levers that actually move them, the negative-results table (12+ byte-identical variants; two zero-gain sweeps), the **Triage Split** that decides which functions are worth opening at all, and the three-part floor-evidence standard. Read before any `REGISTER_SWAP` residual.
 - [decomp/TECHNICAL_NOTES.md](decomp/TECHNICAL_NOTES.md) — compiler patterns & session lessons: regalloc, static init, control flow, merged fns.
 - [decomp/XBOX360_FLOATING_POINT_CODEGEN.md](decomp/XBOX360_FLOATING_POINT_CODEGEN.md) — FP codegen: `/fp:` flags, contraction pragmas, FPU patterns.
+- ★ [decomp/patterns/fixable-fp-reassociation.md](decomp/patterns/fixable-fp-reassociation.md) — **under `/fp:fast`, MSVC reassociates only what you did NOT group: explicit parentheses are the barrier, not term order.** A bare sum reaches 2 of 6 product orders, parenthesised reaches all 6. Refutes DR-3's "term order is not source-controllable" (its *measurement* was right, its conclusion wrong — and as written into `math/Mtx.h` it turned away two lanes) and "named temporaries are inert" (site-specific in **both** directions). Carries the verified retail-chain decode for all three sites, the measured-inert list, and the `Plane::Dot`/`CollidePlane` constraint that makes per-call-site the only zero-blast-radius lever. ⚠ Records three claims in its own source commit that did **not** reproduce.
 - [decomp/PRAGMA_INDEX.md](decomp/PRAGMA_INDEX.md) — navigation index for the pragma doc suite.
 - [decomp/PRAGMA_CODEGEN_SUMMARY.md](decomp/PRAGMA_CODEGEN_SUMMARY.md) — quick reference for pragmas affecting instruction selection.
 - [decomp/PRAGMA_MATCHING_CHECKLIST.md](decomp/PRAGMA_MATCHING_CHECKLIST.md) — step-by-step guide to applying pragmas.
@@ -944,6 +945,7 @@ Indexed as data (not audited): `decomp/dc3-residual/ranked.json`,
 
 ### decomp/patterns + decomp/research + decomp/handoff additions
 
+- [decomp/patterns/fixable-fp-reassociation.md](decomp/patterns/fixable-fp-reassociation.md) — Fixable Patterns: `/fp:fast` Reassociation — the Parentheses Are the Barrier — `2026-08-13`
 - [decomp/handoff/countorcreate-expandeddetails-bodyport-DEFER.md](decomp/handoff/countorcreate-expandeddetails-bodyport-DEFER.md) — DEFER handoff — NextSongPanel::CountOrCreateExpandedDetails (fn_82645320) body-port — `2026-07-21`
 - [decomp/handoff/platformmgr-msgsource-rebase-LANDABLE.md](decomp/handoff/platformmgr-msgsource-rebase-LANDABLE.md) — LANDABLE — PlatformMgr MsgSource re-base (+4 strict, 0 lost) — batch-6 lever #2 — `2026-07-21`
 - [decomp/handoff/profile-getpadnum-virtual-DEFER.md](decomp/handoff/profile-getpadnum-virtual-DEFER.md) — DEFER handoff — Profile::GetPadNum "missing-virtual" (batch-6 lever #1) — `2026-07-21`
