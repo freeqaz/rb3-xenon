@@ -26515,6 +26515,833 @@
     "?insert@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@ABVPlane@@@Z"
    ],
    "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x8266ad18 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 2 charged name_check sites. Per spelling: [?insert@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@ABVPlane@@@Z residual CF2, 2 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]"
+  },
+  {
+   "name": "operator_new_alloc_thunk",
+   "address": "0x827bd2f0",
+   "survivor": "??2CriticalSection@@SAPAXI@Z",
+   "folded": [
+    "??2@YAPAXI@Z",
+    "??2Accomplishment@@SAPAXI@Z",
+    "??2AppChild@@SAPAXI@Z",
+    "??2Archive@@SAPAXI@Z",
+    "??2AsyncFileHolmes@@SAPAXI@Z",
+    "??2AsyncFileWin@@SAPAXI@Z",
+    "??2BandButton@@SAPAXI@Z",
+    "??2BandCamShot@@SAPAXI@Z",
+    "??2BandCharDesc@@SAPAXI@Z",
+    "??2BandCharacter@@SAPAXI@Z",
+    "??2BandConfiguration@@SAPAXI@Z",
+    "??2BandCrowdMeter@@SAPAXI@Z",
+    "??2BandDirector@@SAPAXI@Z",
+    "??2BandFaceDeform@@SAPAXI@Z",
+    "??2BandHighlight@@SAPAXI@Z",
+    "??2BandLabel@@SAPAXI@Z",
+    "??2BandLeadMeter@@SAPAXI@Z",
+    "??2BandList@@SAPAXI@Z",
+    "??2BandRetargetVignette@@SAPAXI@Z",
+    "??2BandScoreboard@@SAPAXI@Z",
+    "??2BandScreen@@SAPAXI@Z",
+    "??2BandSongPref@@SAPAXI@Z",
+    "??2BandStarDisplay@@SAPAXI@Z",
+    "??2BandSwatch@@SAPAXI@Z",
+    "??2BandWardrobe@@SAPAXI@Z",
+    "??2BinStream@@SAPAXI@Z",
+    "??2Block@@SAPAXI@Z",
+    "??2BmpCache@HiResScreen@@SAPAXI@Z",
+    "??2Cache@@SAPAXI@Z",
+    "??2CacheID@@SAPAXI@Z",
+    "??2CacheMgr@@SAPAXI@Z",
+    "??2CharBoneTwist@@SAPAXI@Z",
+    "??2CharBonesAlloc@@SAPAXI@Z",
+    "??2CharGuitarString@@SAPAXI@Z",
+    "??2CharIKRod@@SAPAXI@Z",
+    "??2CharInfo@RndFont3d@@SAPAXI@Z",
+    "??2CharKeyHandMidi@@SAPAXI@Z",
+    "??2CharLipSyncDriver@@SAPAXI@Z",
+    "??2CharPollGroup@@SAPAXI@Z",
+    "??2CharPosConstraint@@SAPAXI@Z",
+    "??2CharWidgetImp@@SAPAXI@Z",
+    "??2CheckboxDisplay@@SAPAXI@Z",
+    "??2ChordShapeGenerator@@SAPAXI@Z",
+    "??2ChunkAllocator@@SAPAXI@Z",
+    "??2ChunkHeader@@SAPAXI@Z",
+    "??2ClipDistMap@@SAPAXI@Z",
+    "??2CompressTexDesc@Rnd@@SAPAXI@Z",
+    "??2Content@@SAPAXI@Z",
+    "??2CrowdMeterIcon@@SAPAXI@Z",
+    "??2DataEventList@@SAPAXI@Z",
+    "??2DialogDisplay@@SAPAXI@Z",
+    "??2EndingBonus@@SAPAXI@Z",
+    "??2ErrorNode@@SAPAXI@Z",
+    "??2EventEntry@@SAPAXI@Z",
+    "??2Fader@@SAPAXI@Z",
+    "??2FileCache@@SAPAXI@Z",
+    "??2FileStream@@SAPAXI@Z",
+    "??2FilterVersion@@SAPAXI@Z",
+    "??2FixedSizeAlloc@@SAPAXI@Z",
+    "??2FlowAnimate@@SAPAXI@Z",
+    "??2FlowDistance@@SAPAXI@Z",
+    "??2FlowRun@@SAPAXI@Z",
+    "??2FlowSound@@SAPAXI@Z",
+    "??2FreestyleMoveRecorder@@SAPAXI@Z",
+    "??2GemTrackDir@@SAPAXI@Z",
+    "??2HamSongData@@SAPAXI@Z",
+    "??2HttpGet@@SAPAXI@Z",
+    "??2ImmediateWidgetImp@@SAPAXI@Z",
+    "??2Interpolator@@SAPAXI@Z",
+    "??2Job@@SAPAXI@Z",
+    "??2KerningTable@@SAPAXI@Z",
+    "??2Layer@HamDriver@@SAPAXI@Z",
+    "??2LayerDir@@SAPAXI@Z",
+    "??2Loader@@SAPAXI@Z",
+    "??2MCContainer@@SAPAXI@Z",
+    "??2MCFile@@SAPAXI@Z",
+    "??2MatWidgetImp@@SAPAXI@Z",
+    "??2MeasureMap@@SAPAXI@Z",
+    "??2MoggClip@@SAPAXI@Z",
+    "??2MovieImpl@@SAPAXI@Z",
+    "??2MultiMeshWidgetImp@@SAPAXI@Z",
+    "??2NetCacheLoader@@SAPAXI@Z",
+    "??2NetLoader@@SAPAXI@Z",
+    "??2ObjEntry@@SAPAXI@Z",
+    "??2OnlineID@@SAPAXI@Z",
+    "??2OverdriveMeter@@SAPAXI@Z",
+    "??2OvershellDir@@SAPAXI@Z",
+    "??2ParticleCommonPool@@SAPAXI@Z",
+    "??2PitchArrow@@SAPAXI@Z",
+    "??2PlayBack@CharLipSync@@SAPAXI@Z",
+    "??2Rand2@@SAPAXI@Z",
+    "??2Rand@@SAPAXI@Z",
+    "??2RayCastContainer@@SAPAXI@Z",
+    "??2RndBitmap@@SAPAXI@Z",
+    "??2RndGraph@@KAPAXI@Z",
+    "??2RndOverlay@@SAPAXI@Z",
+    "??2RndShaderBuffer@@SAPAXI@Z",
+    "??2ScoreDisplay@@SAPAXI@Z",
+    "??2ShadowBone@@SAPAXI@Z",
+    "??2SongSectionController@@SAPAXI@Z",
+    "??2SpotlightResources@NgSpotlightDrawer@@SAPAXI@Z",
+    "??2StreakMeter@@SAPAXI@Z",
+    "??2StreamChecksumValidator@@SAPAXI@Z",
+    "??2StreamReceiver@@SAPAXI@Z",
+    "??2StreamRecorder@@SAPAXI@Z",
+    "??2StringTable@@SAPAXI@Z",
+    "??2TempoMap@@SAPAXI@Z",
+    "??2TexMovie@@SAPAXI@Z",
+    "??2TrackPanelDir@@SAPAXI@Z",
+    "??2UIListCustomElement@@SAPAXI@Z",
+    "??2UIListLabelElement@@SAPAXI@Z",
+    "??2UIListSlotElement@@SAPAXI@Z",
+    "??2UIListSubListElement@@SAPAXI@Z",
+    "??2UnisonIcon@@SAPAXI@Z",
+    "??2VocalTrackDir@@SAPAXI@Z",
+    "??_U@YAPAXI@Z",
+    "??_UMidiMessage@@SAPAXI@Z",
+    "??_UOrderedLocaleChunk@LocaleChunkSort@@SAPAXI@Z",
+    "??_URndParticle@@SAPAXI@Z",
+    "??_UkdTreeNode@?$kdTree@VTriangle@@@@SAPAXI@Z",
+    "??_UkdTriList@?$kdTree@VTriangle@@@@SAPAXI@Z",
+    "?BinkAlloc@@YAPAXI@Z",
+    "JsonMalloc"
+   ],
+   "evidence": "tools/alloc_fold_gate.py -- 8-byte allocator-thunk fold class. Every folded spelling's COMDAT is byte- AND relocation-identical to the map-resident survivor's, which is the /OPT:ICF condition itself applied to two of our own COMDATs: both carry the same relocation to the same symbol, so the fold does not depend on naming retail's branch target (0x827bcd38 is unnamed in the map, which is where tools/comdat_fold_gate.py fail-closes). The survivor is corroborated on retail bytes -- 8 B, word0 equal as a FULL 32-bit value, matching branch opcode/AA/LK -- and the pair (word0, resolved dest) is UNIQUE image-wide: 712 retail 8-byte <word>+<branch> bodies carry 707 distinct combos and the 12 sharing `li r4,0` have 12 DISTINCT destinations, so shape does none of the work. REFUSED, each on a different mechanism and each a real finding: ??2Task (map address 0x822d4278 is `blr`+pad with ZERO fan-in -- a map defect, not a function), ??2OutfitConfig (0x82b66c48 is a real thunk to a DIFFERENT allocator -- our identical COMDAT is a source defect), ?SampleAlloc (our objs define two distinct COMDAT variants)."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x8235cbf0",
+   "survivor": "??$_Destroy@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@@Z",
+   "folded": [
+    "??1?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8235cbf0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 47 against 22 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82556e58",
+   "survivor": "??$__destroy_aux@UGoalAcquisitionInfo@@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU__false_type@0@@Z",
+   "folded": [
+    "??1?$TickedInfo@VString@@@@QAA@XZ",
+    "??1?$pair@$$CBHVString@@@stlpmtx_std@@QAA@XZ",
+    "??1?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@QAA@XZ",
+    "??1?$pair@PBDVString@@@stlpmtx_std@@QAA@XZ",
+    "??1?$pair@VSymbol@@VString@@@stlpmtx_std@@QAA@XZ",
+    "??1GoalAcquisitionInfo@@QAA@XZ",
+    "??1GoalProgressionInfo@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82556e58 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 13 against 12 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82b5c7d8",
+   "survivor": "??$__destroy_range@PAULevelData@@U1@@stlpmtx_std@@YAXPAULevelData@@00@Z",
+   "folded": [
+    "??$_Destroy_Range@PAULevelData@@@stlpmtx_std@@YAXPAULevelData@@0@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82b5c7d8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 4 against 4 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827d45d0",
+   "survivor": "??0?$KeylessHash@PAXPAVAllocInfo@@@@QAA@HABQAVAllocInfo@@0PAPAV1@@Z",
+   "folded": [
+    "??0?$KeylessHash@PBDPBD@@QAA@HABQBD0PAPBD@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827d45d0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 2 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x825efbc8",
+   "survivor": "??0Callback@Leaderboard@@QAA@XZ",
+   "folded": [
+    "??1Callback@Leaderboard@@UAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x825efbc8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 4 against 3 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82556e08",
+   "survivor": "??0GoalAcquisitionInfo@@QAA@XZ",
+   "folded": [
+    "??0GoalProgressionInfo@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82556e08 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 3 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x826e34d0",
+   "survivor": "??0HitSink@@QAA@XZ",
+   "folded": [
+    "??1HitSink@@UAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826e34d0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 2 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82735798",
+   "survivor": "??0RndShaderBuffer@@QAA@XZ",
+   "folded": [
+    "??1RndShaderBuffer@@UAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82735798 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 1 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82793fb8",
+   "survivor": "??0SlotChannelMapping@@QAA@XZ",
+   "folded": [
+    "??1SlotChannelMapping@@UAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82793fb8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 4 against 4 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x8243dd20",
+   "survivor": "??1?$ObjPtr@VRndTex@@@@UAA@XZ",
+   "folded": [
+    "??1?$Key@VTexPtr@RndMatAnim@@@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8243dd20 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 5 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82442f80",
+   "survivor": "??1?$_List_base@UBuildPoly@@V?$StlNodeAlloc@UBuildPoly@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$list@UBuildPoly@@V?$StlNodeAlloc@UBuildPoly@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82442f80 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 3 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x824e1698",
+   "survivor": "??1?$_List_base@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x824e1698 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 1 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82278490",
+   "survivor": "??1?$_Slist_base@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$slist@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82278490 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 3 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x826a0ce8",
+   "survivor": "??1?$_Vector_base@VStreakList@Scoring@@V?$StlNodeAlloc@VStreakList@Scoring@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@QAA@XZ",
+    "??1?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAA@XZ",
+    "??1?$Keys@UWeight@@U1@@@QAA@XZ",
+    "??1?$_Vector_base@UIKTarget@CharIKHand@@V?$StlNodeAlloc@UIKTarget@CharIKHand@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$_Vector_base@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$_Vector_base@VMiniIconData@EndingBonus@@V?$StlNodeAlloc@VMiniIconData@EndingBonus@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$_Vector_base@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UMicMappingData@MicClientMapper@@V?$StlNodeAlloc@UMicMappingData@MicClientMapper@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VGemInProgress@SongParser@@V?$StlNodeAlloc@VGemInProgress@SongParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VGigData@@V?$StlNodeAlloc@VGigData@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VSectionData@PerfectSectionTracker@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VVector4@@V?$StlNodeAlloc@VVector4@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1DifficultyInfo@SongParser@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826a0ce8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 79 against 42 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x826d0da0",
+   "survivor": "??1?$_Vector_base@VTrackerPlayerDisplay@@V?$StlNodeAlloc@VTrackerPlayerDisplay@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@QAA@XZ",
+    "??1?$Keys@MM@@QAA@XZ",
+    "??1?$Keys@UDircutEntry@BandDirector@@U12@@@QAA@XZ",
+    "??1?$Keys@VSymbol@@V1@@@QAA@XZ",
+    "??1?$Keys@_N_N@@QAA@XZ",
+    "??1?$TickedInfoCollection@H@@QAA@XZ",
+    "??1?$_Vector_base@U?$pair@HM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "??1?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@U?$pair@HPBD@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPBD@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UBuf@StringTable@@V?$StlNodeAlloc@UBuf@StringTable@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UOverlappedIO@MusicLibraryStore@@V?$StlNodeAlloc@UOverlappedIO@MusicLibraryStore@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UPanInfo@MoggClip@@V?$StlNodeAlloc@UPanInfo@MoggClip@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UPlayerMappingData@MicClientMapper@@V?$StlNodeAlloc@UPlayerMappingData@MicClientMapper@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UQuickJoyCheat@@V?$StlNodeAlloc@UQuickJoyCheat@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UWaitInfo@@V?$StlNodeAlloc@UWaitInfo@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@UXAUDIO2_SEND_DESCRIPTOR@@V?$StlNodeAlloc@UXAUDIO2_SEND_DESCRIPTOR@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VBeatEvent@CharClip@@V?$StlNodeAlloc@VBeatEvent@CharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VCategory@CameraManager@@V?$StlNodeAlloc@VCategory@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VMicClientID@@V?$StlNodeAlloc@VMicClientID@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VPhraseData@PhraseAnalyzer@@V?$StlNodeAlloc@VPhraseData@PhraseAnalyzer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VPotentialUserEntry@@V?$StlNodeAlloc@VPotentialUserEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VTrackSlot@TrackPanel@@V?$StlNodeAlloc@VTrackSlot@TrackPanel@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@_KV?$StlNodeAlloc@_K@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1BuildPoly@@QAA@XZ",
+    "??1Jukebox@@QAA@XZ",
+    "??1Polygon@Hmx@@QAA@XZ",
+    "??1SingerStats@@QAA@XZ",
+    "??1WaitList@LockStepMgr@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826d0da0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 121 against 89 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x823d7c28",
+   "survivor": "??1?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$_List_base@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823d7c28 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 23 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x825bf2a8",
+   "survivor": "??1LeafSortNode@@UAA@XZ",
+   "folded": [
+    "??1SongSortNode@@UAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x825bf2a8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 3 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x823426f8",
+   "survivor": "??1Message@@UAA@XZ",
+   "folded": [
+    "??1AddLocalUserResultMsg@@UAA@XZ",
+    "??1AddUserResultMsg@@UAA@XZ",
+    "??1ButtonDownMsg@@UAA@XZ",
+    "??1ButtonUpMsg@@UAA@XZ",
+    "??1ConnectionStatusChangedMsg@@UAA@XZ",
+    "??1ContentReadFailureMsg@@UAA@XZ",
+    "??1CurrentScreenChangedMsg@@UAA@XZ",
+    "??1DeviceChosenMsg@@UAA@XZ",
+    "??1DiskErrorMsg@@UAA@XZ",
+    "??1EventDialogDismissMsg@@UAA@XZ",
+    "??1EventDialogStartMsg@@UAA@XZ",
+    "??1GameEndedMsg@@UAA@XZ",
+    "??1GameMicsChangedMsg@@UAA@XZ",
+    "??1InputStatusChangedMsg@@UAA@XZ",
+    "??1InviteSentMsg@@UAA@XZ",
+    "??1JoinResultMsg@@UAA@XZ",
+    "??1JoypadBreedDataReadMsg@@UAA@XZ",
+    "??1JoypadBreedDataWriteMsg@@UAA@XZ",
+    "??1JoypadConnectionMsg@@UAA@XZ",
+    "??1KeyboardConnectedAccessoriesMsg@@UAA@XZ",
+    "??1KeyboardExpressionPedalMsg@@UAA@XZ",
+    "??1KeyboardHighHandPlacementMsg@@UAA@XZ",
+    "??1KeyboardKeyMsg@@UAA@XZ",
+    "??1KeyboardKeyPressedMsg@@UAA@XZ",
+    "??1KeyboardKeyReleasedMsg@@UAA@XZ",
+    "??1KeyboardLowHandPlacementMsg@@UAA@XZ",
+    "??1KeyboardModMsg@@UAA@XZ",
+    "??1KeyboardStompBoxMsg@@UAA@XZ",
+    "??1KeyboardSustainMsg@@UAA@XZ",
+    "??1KeysAccelerometerMsg@@UAA@XZ",
+    "??1LocalUserLeftMsg@@UAA@XZ",
+    "??1LockStepCompleteMsg@@UAA@XZ",
+    "??1LockStepStartMsg@@UAA@XZ",
+    "??1MCResultMsg@@UAA@XZ",
+    "??1MatchmakerChangedMsg@@UAA@XZ",
+    "??1MetadataLoadedMsg@@UAA@XZ",
+    "??1ModeChangedMsg@@UAA@XZ",
+    "??1MultipleItemsEnumCompleteMsg@@UAA@XZ",
+    "??1NetComponentScrollMsg@@UAA@XZ",
+    "??1NetComponentSelectMsg@@UAA@XZ",
+    "??1NetStartUtilityFinishedMsg@@UAA@XZ",
+    "??1NewOvershellLocalUserMsg@@UAA@XZ",
+    "??1NewRemoteMachineMsg@@UAA@XZ",
+    "??1NewRemoteUserMsg@@UAA@XZ",
+    "??1NoDeviceChosenMsg@@UAA@XZ",
+    "??1OvershellActiveStatusChangedMsg@@UAA@XZ",
+    "??1OvershellAllowingInputChangedMsg@@UAA@XZ",
+    "??1OvershellOverrideEndedMsg@@UAA@XZ",
+    "??1PartyMembersChangedMsg@@UAA@XZ",
+    "??1PlatformMgrOpCompleteMsg@@UAA@XZ",
+    "??1PrimaryProfileChangedMsg@@UAA@XZ",
+    "??1ProcessedButtonDownMsg@@UAA@XZ",
+    "??1ProcessedJoinRequestMsg@@UAA@XZ",
+    "??1ProfileChangedMsg@@UAA@XZ",
+    "??1ProfilePreDeleteMsg@@UAA@XZ",
+    "??1ProfileSwappedMsg@@UAA@XZ",
+    "??1RGAccelerometerMsg@@UAA@XZ",
+    "??1RGConnectedAccessoriesMsg@@UAA@XZ",
+    "??1RGFretButtonDownMsg@@UAA@XZ",
+    "??1RGFretButtonUpMsg@@UAA@XZ",
+    "??1RGMutingMsg@@UAA@XZ",
+    "??1RGPitchBendMsg@@UAA@XZ",
+    "??1RGProgramChangeMsg@@UAA@XZ",
+    "??1RGStompBoxMsg@@UAA@XZ",
+    "??1RGSwingMsg@@UAA@XZ",
+    "??1ReleasingLockStepMsg@@UAA@XZ",
+    "??1RemoteLeaderLeftMsg@@UAA@XZ",
+    "??1RemoteMachineLeftMsg@@UAA@XZ",
+    "??1RemoteMachineUpdatedMsg@@UAA@XZ",
+    "??1RemoteUserLeftMsg@@UAA@XZ",
+    "??1RemoteUserUpdatedMsg@@UAA@XZ",
+    "??1SaveLoadMgrStatusUpdateMsg@@UAA@XZ",
+    "??1ServerStatusChangedMsg@@UAA@XZ",
+    "??1SessionBusyMsg@@UAA@XZ",
+    "??1SessionDisconnectedMsg@@UAA@XZ",
+    "??1SessionMgrUpdatedMsg@@UAA@XZ",
+    "??1SessionReadyMsg@@UAA@XZ",
+    "??1SigninChangedMsg@@UAA@XZ",
+    "??1StorageChangedMsg@@UAA@XZ",
+    "??1StringStrummedMsg@@UAA@XZ",
+    "??1SyncStartGameMsg@@UAA@XZ",
+    "??1UIChangedMsg@@UAA@XZ",
+    "??1UIComponentFocusChangeMsg@@UAA@XZ",
+    "??1UIComponentScrollMsg@@UAA@XZ",
+    "??1UIComponentSelectDoneMsg@@UAA@XZ",
+    "??1UIComponentSelectMsg@@UAA@XZ",
+    "??1UIScreenChangeMsg@@UAA@XZ",
+    "??1UITransitionCompleteMsg@@UAA@XZ",
+    "??1UITriggerCompleteMsg@@UAA@XZ",
+    "??1UserLoginMsg@@UAA@XZ",
+    "??1VirtualKeyboardResultMsg@@UAA@XZ",
+    "??1VoiceChatDisabledMsg@@UAA@XZ",
+    "??1XMPStateChangedMsg@@UAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823426f8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 475 against 282 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x826908c8",
+   "survivor": "??1NetMessage@@UAA@XZ",
+   "folded": [
+    "??1AccomplishmentMsg@@UAA@XZ",
+    "??1AddUserResponseMsg@@UAA@XZ",
+    "??1EndGameMsg@@UAA@XZ",
+    "??1EnterFlowMsg@@UAA@XZ",
+    "??1JoinResponseMsg@@UAA@XZ",
+    "??1PlayerGameplayMsg@@UAA@XZ",
+    "??1SessionMsg@@UAA@XZ",
+    "??1SetPartyShuffleModeMsg@@UAA@XZ",
+    "??1StartGameOnTimeMsg@@UAA@XZ",
+    "??1SyncAllMsg@@UAA@XZ",
+    "??1SyncUserMsg@@UAA@XZ",
+    "??1TourMostStarsMsg@@UAA@XZ",
+    "??1TourPlayedMsg@@UAA@XZ",
+    "??1TriggerBackSoundMsg@@UAA@XZ",
+    "??1UserLeftMsg@@UAA@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826908c8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 94 against 33 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x8274a9a8",
+   "survivor": "??BDataArrayPtr@@QBAPAVDataArray@@XZ",
+   "folded": [
+    "?GetBandUser@TrackConfig@@QBAPBVBandUser@@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8274a9a8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 228 against 39 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827a3598",
+   "survivor": "??_G?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@QAAPAXI@Z",
+   "folded": [
+    "??_G?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@QAAPAXI@Z",
+    "??_G?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@QAAPAXI@Z",
+    "??_GSlipTrack@@QAAPAXI@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827a3598 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 6 against 4 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x824f8270",
+   "survivor": "??_G?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@QAAPAXI@Z",
+   "folded": [
+    "??_GVar@ScriptTask@@QAAPAXI@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x824f8270 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 2 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x825bd3e8",
+   "survivor": "??_G?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAAPAXI@Z",
+   "folded": [
+    "??_G?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAAPAXI@Z",
+    "??_GDebugGraph@?A0xb39b74bf@@QAAPAXI@Z",
+    "??_GLongJoyCheat@@QAAPAXI@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x825bd3e8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 16 against 4 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82578e68",
+   "survivor": "??_GSongRanking@BandSongMgr@@QAAPAXI@Z",
+   "folded": [
+    "??_GStreakList@Scoring@@QAAPAXI@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82578e68 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 3 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82801bc0",
+   "survivor": "?AnimTarget@RndMatAnim@@UAAPAVObject@Hmx@@XZ",
+   "folded": [
+    "?GetCodaStartTick@SongDB@@QBAHXZ",
+    "?GetOutAnim@UITransitionHandler@@QBAPAVRndAnimatable@@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82801bc0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 28 against 10 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827ca3a8",
+   "survivor": "?Fail@ChunkStream@@UAA_NXZ",
+   "folded": [
+    "?Fail@FileStream@@UAA_NXZ",
+    "?ScrollPastMaxDisplay@UIListState@@QBA_NXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827ca3a8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 13 against 6 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827ab2c0",
+   "survivor": "?GetBaseURL@WebSvcRequest@@QBAPBDXZ",
+   "folded": [
+    "?GetGameCymbalLanes@PlayerTrackConfigList@@QBAIXZ",
+    "?GetSampleRate@SynthSample@@QBAHXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827ab2c0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 6 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827da5e0",
+   "survivor": "?GetCacheName@CacheXbox@@UAAPBDXZ",
+   "folded": [
+    "?GetPreferredScoreType@BandUser@@QBA?AW4ScoreType@@XZ",
+    "?GetSize@NetLoader@@QAAHXZ",
+    "?GetUniqueTag@Synchronizable@@QBAPBDXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827da5e0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 18 against 9 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82801f78",
+   "survivor": "?GetContainerName@MemcardXbox@@UAAPBDXZ",
+   "folded": [
+    "?GetColor@UIColor@@QBAABVColor@Hmx@@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82801f78 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 9 against 5 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x823591e8",
+   "survivor": "?GetCrowdMeter@TrackPanelDirBase@@UAAPAVBandCrowdMeter@@XZ",
+   "folded": [
+    "?CDGetError@@YAHXZ",
+    "?GetSizeNeeded@MemcardMgr@@QAAHXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823591e8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 38 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x8279d308",
+   "survivor": "?GetFretButtons@GuitarController@@UBAHXZ",
+   "folded": [
+    "?GetCurrSection@TrainerPanel@@QBAHXZ",
+    "?GetNullUser@BandUserMgr@@QBAPAVNullLocalBandUser@@XZ",
+    "?ParentList@UIListWidget@@QAAPAVUIList@@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8279d308 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 57 against 19 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x822e4460",
+   "survivor": "?GetRate@RndAnimatable@@QAA?AW4Rate@1@XZ",
+   "folded": [
+    "?GetInAnim@UITransitionHandler@@QBAPAVRndAnimatable@@XZ",
+    "?GetMaxSlots@TrackConfig@@QBAHXZ",
+    "?GetRemotePath@NetLoader@@QBAPBDXZ",
+    "?GetValue@CampaignLevel@@QBAHXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x822e4460 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 51 against 20 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82365100",
+   "survivor": "?GetReleaseRate@ADSRImpl@@QBAMXZ",
+   "folded": [
+    "?GetDefaultValue@TourProperty@@QBAMXZ",
+    "?GetWeight@FixedSetlist@@QBAMXZ",
+    "?Speed@UIListState@@QBAMXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82365100 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 11 against 8 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827cd678",
+   "survivor": "?GetServiceId@NetCacheMgr@@QBAIXZ",
+   "folded": [
+    "?GetRequiredDifficulty@Accomplishment@@UBA?AW4Difficulty@@XZ",
+    "?GetSlotNum@OvershellSlot@@QAAHXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827cd678 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 7 against 4 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827bea30",
+   "survivor": "?GetSize@FileLoader@@QAAHXZ",
+   "folded": [
+    "?GetBand@Band@@QBAPAVPerformer@@XZ",
+    "?GetNetUIState@BandMachine@@QBA?AW4NetUIState@@XZ",
+    "?GetStateID@OvershellSlotState@@QBA?AW4OvershellSlotStateID@@XZ",
+    "?MainPerformer@Band@@QBAPAVPerformer@@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827bea30 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 83 against 59 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827cd728",
+   "survivor": "?GetType@NetSavedSetlist@@UBA?AW4SetlistType@SavedSetlist@@XZ",
+   "folded": [
+    "?GetChar@BandUser@@QAAPAVCharData@@XZ",
+    "?GetRegion@PlatformMgr@@QBA?AW4PlatformRegion@@XZ",
+    "?GetTourProgress@BandProfile@@QAAPAVTourProgress@@XZ",
+    "?ID@SongMetadata@@QBAHXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827cd728 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 62 against 38 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827cd910",
+   "survivor": "?GetXLSPFilter@NetCacheMgr@@QBAPBDXZ",
+   "folded": [
+    "?GetNumMics@Synth@@QBAHXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827cd910 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 9 against 4 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82533618",
+   "survivor": "?IsDirPtr@?$ObjDirPtr@VObjectDir@@@@UAA_NXZ",
+   "folded": [
+    "?FileReadOnly@@YA_NPBD@Z",
+    "?InPlayablePhrase@VocalPart@@QBA_NXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82533618 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 15 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x8252d3f0",
+   "survivor": "?IsDirtySave@TourSavable@@UBA_NXZ",
+   "folded": [
+    "?Enabled@Metronome@@QBA_NXZ",
+    "?IsInternal@GigFilter@@QBA_NXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8252d3f0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 4 against 3 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x822740c8",
+   "survivor": "?NewFrame@CameraInput@@QBAPBUSkeletonFrame@@XZ",
+   "folded": [
+    "?GetDifficulty@BandUser@@QBA?AW4Difficulty@@XZ",
+    "?GetEndTick@TrainerSection@@QBAHXZ",
+    "?GetIconArt@Award@@QBAPBDXZ",
+    "?GetIndex@TourDesc@@QBAHXZ",
+    "?GetLastResult@Cache@@QAA?AW4CacheResult@@XZ",
+    "?TrackNum@TrackConfig@@QBAHXZ",
+    "?getAAFilter@RateTransposer@soundtouch@@QAAPAVAAFilter@2@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x822740c8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 91 against 50 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82bf6b78",
+   "survivor": "?NumData@ScoreTypeViewSetting@@UBAHXZ",
+   "folded": [
+    "?ConsolePlatform@@YA?AW4Platform@@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82bf6b78 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 1 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827f81f0",
+   "survivor": "?NumData@UIList@@UBAHXZ",
+   "folded": [
+    "?GetMetaScore@AccomplishmentProgress@@QBAHXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827f81f0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 6 against 3 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82797a88",
+   "survivor": "?OnMsg@JoypadMidiController@@QAAHABVKeyboardSustainMsg@@@Z",
+   "folded": [
+    "?OnMsg@JoypadMidiController@@QAAHABVKeyboardStompBoxMsg@@@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82797a88 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 2 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82798828",
+   "survivor": "?OnMsg@KeyboardController@@QAAHABVKeyboardSustainMsg@@@Z",
+   "folded": [
+    "?OnMsg@ButtonGuitarController@@QAAHABVRGStompBoxMsg@@@Z",
+    "?OnMsg@KeyboardController@@QAAHABVKeyboardStompBoxMsg@@@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82798828 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 3 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82586248",
+   "survivor": "?OnMsg@SessionMgr@@QAA?AVDataNode@@ABVProcessedJoinRequestMsg@@@Z",
+   "folded": [
+    "?OnMsg@SessionMgr@@QAA?AVDataNode@@ABVSessionBusyMsg@@@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82586248 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 2 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x826a9880",
+   "survivor": "?OnMsg@SyncGameStartPanel@@QAA?AVDataNode@@ABVLockStepStartMsg@@@Z",
+   "folded": [
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z",
+    "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVLockStepCompleteMsg@@@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826a9880 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 4 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x8252e038",
+   "survivor": "?Tell@ArkFile@@UAAHXZ",
+   "folded": [
+    "?GetLocalMachine@BandMachineMgr@@QBAPAVLocalBandMachine@@XZ",
+    "?GetOctaveOffset@VocalScoreHistory@@QBAHXZ",
+    "?Provider@UIListState@@QAAPAVUIListProvider@@XZ",
+    "?Provider@UIListState@@QBAPAVUIListProvider@@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8252e038 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 64 against 38 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x8252e070",
+   "survivor": "?UncompressedSize@ArkFile@@UAAHXZ",
+   "folded": [
+    "?GetChallengeSpecificData@TourGameRules@@QBAPBVDataArray@@XZ",
+    "?GetControllerType@BandUser@@QBA?AW4ControllerType@@XZ",
+    "?GetLastResult@CacheMgr@@QAA?AW4CacheResult@@XZ",
+    "?GetSaveState@Profile@@QBA?AW4ProfileSaveState@@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8252e070 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 79 against 54 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x8265df00",
+   "survivor": "?_M_before_begin@?$hashtable@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@AAI@Z",
+   "folded": [
+    "?_M_before_begin@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@23@@priv@2@AAI@Z",
+    "?_M_before_begin@?$hashtable@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@23@@priv@2@AAI@Z",
+    "?_M_before_begin@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@23@@priv@2@AAI@Z",
+    "?_M_before_begin@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@23@@priv@2@AAI@Z",
+    "?_M_before_begin@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@LightPresetManager@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@AAI@Z",
+    "?_M_before_begin@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@AAI@Z",
+    "?_M_before_begin@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QBA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@23@@priv@2@AAI@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8265df00 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 11 against 9 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x827ebb90",
+   "survivor": "?_M_clear@?$vector@UVocalEvent@MidiParser@@V?$StlNodeAlloc@UVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "folded": [
+    "?_M_clear_after_move@?$vector@UVocalEvent@MidiParser@@V?$StlNodeAlloc@UVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x827ebb90 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 2 against 1 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x8256ad18",
+   "survivor": "?_M_initialize_buckets@?$hashtable@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z",
+   "folded": [
+    "?_M_initialize_buckets@?$hashtable@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHU?$pair@H_N@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z",
+    "?_M_initialize_buckets@?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z",
+    "?_M_initialize_buckets@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@PatchDir@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8256ad18 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 5 against 3 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x82365108",
+   "survivor": "?begin@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@VSymbol@@U?$_SetTraitsT@VSymbol@@@priv@stlpmtx_std@@@2@XZ",
+   "folded": [
+    "?GetGroup@FixedSetlist@@QBA?AVSymbol@@XZ",
+    "?GetName@AccomplishmentCategory@@QBA?AVSymbol@@XZ"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82365108 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 6 against 6 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+  },
+  {
+   "name": "ourside_comdat_identity",
+   "address": "0x822e4500",
+   "survivor": "?size@?$ObjPtrList@VFader@@VObjectDir@@@@QBAHXZ",
+   "folded": [
+    "?GetGameType@TourGameRules@@QBA?AW4TourGameType@@XZ",
+    "?GetGuideTrack@VocalGuidePitch@@QBAHXZ",
+    "?GetStartTick@TrainerSection@@QBAHXZ",
+    "array_list_length"
+   ],
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x822e4500 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 42 against 25 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
   }
  ]
 }
