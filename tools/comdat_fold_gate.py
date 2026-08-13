@@ -78,6 +78,82 @@ fire again -- see `tools/homonym_index.py`, which sweeps all 117,960 symbols in
 that map and finds the class is 25 names game-wide, bounded by the linker's own
 rules to internal-linkage definitions.
 
+REMOVED TIER CF4 -- "the map says its own pick there is arbitrary" (lane CF4-FIX)
+---------------------------------------------------------------------------------
+CF4 admitted a pair when addr(F) appeared in target_symbol_map.json's
+`_bijection_arbitrary` / `_icf_arbitrary`, quoting that list's own comment as its
+warrant.  It is deleted, for a reason that is not merely "the comment went stale".
+
+The comment it quoted promised the assignment could be refined later "WITHOUT
+CHANGING ANY SCORE".  That was a property of the `functionRelocDiffs=none` ruler
+and became FALSE when `name_check` shipped (d04c83df, 2026-08-12): a relocation's
+target NAME is compared now, and objdiff FORGIVES an alias unconditionally.  So
+an alias only ever ADDS credit -- an unproven one raises the score BY
+CONSTRUCTION, with no byte evidence.  That is the `ForceEmit_*` metric-fitting
+hazard arriving through a gate that believes it is being rigorous.
+
+But the deeper defect is that CF4 drew the WRONG CONCLUSION FROM A GOOD
+MEASUREMENT, and drew it backwards:
+
+    gate (a) does NOT prove a fold.  It proves an IDENTIFICATION.
+
+When our COMDAT for F is byte-identical to retail's body at addr(S), the sound
+inference is "addr(S) IS F, and the map row naming it S is WRONG".  CF4 instead
+concluded "F and S are the same function" -- the opposite claim -- and installed
+permanent forgiveness that HIDES the very map defect the evidence had just
+located.  An arbitrary NAME does not make the BODY at that address stop existing.
+
+All three CF4 pairs ever installed were adjudicated on retail bytes and all three
+were REFUTED; every one turned out to be a pair of adjacent addresses whose two
+names are SWAPPED:
+
+    0x824041c8 / 0x82404298  ObjDirItr<RndPollable|RndAnimatable>::ctor
+    0x82404240 / 0x82404310  ObjDirItr<RndPollable|RndAnimatable>::operator++
+    0x82684f70 / 0x826851a8  SongDB::GetGemList / SongDB::GetGemListByDiff
+
+The anchor is map-INDEPENDENT, which is what makes it non-circular: each
+`ObjDirItr<T>::Advance` body loads the RTTI type descriptor `??_R0?AV<T>@@8`,
+whose class-name string is ground truth in the image, and each ctor/operator++
+tail-calls its own instantiation's Advance.  0x824041c8 calls the Advance that
+references `.?AVRndAnimatable@@`, so it is the Animatable ctor -- while the map
+names it Pollable.  Likewise 0x82684f70 branches to the (non-arbitrary, solidly
+named) `SongData::GetGemListByDiff`, so it is SongDB::GetGemListByDiff.
+
+⇒ THE ADMISSION RULE.  An alias may be admitted only on evidence that retail has
+ONE body for the two spellings.  A name being "arbitrary" is a statement about
+OUR confidence, never about retail's bytes, and is not such evidence.  Where the
+map places F on a different LIVE address, the pair now REFUSES and the remedy is
+a map ROW REPAIR (positive-yield -- cf. lane MAPDEF-3, db9eb318, +108 B from 9
+such rows), which an alias would have foreclosed forever.
+
+MEASURED COST OF THE REMOVAL (whole-binary A/B, tools/ab_measure.py, same ruler
+both legs, objdiff-cli sha256 pinned):
+
+    Δmatched_functions  +0        <- RULER-INVARIANT: it CANNOT see an alias defect
+    Δmasked_equal       +0
+    Δcode%          -0.007789pp   name_check (the SHIPPED default)
+    Δcode_bytes         -804 B
+    `none` ruler        +0 B / +0.000000pp   <- UNMOVED, as an alias must be
+
+That signature IS the proof of fabrication: an alias is invisible to `none` and
+pure forgiveness under `name_check`, so credit that vanishes on one ruler while
+the other does not twitch was never backed by bytes.  The 804 B is exactly two
+rows falling off fuzzy==100 -- `RndAnimFilter::OnSafeAnims` (464 B, calls the
+ObjDirItr<RndAnimatable> ctor/operator++) and `PracticePanel::MarkGemsAsProcessed`
+(340 B, calls SongDB::GetGemListByDiff).  ⇒ A LOSS HERE IS THE WIN.  And because
+our SOURCE spells both callees correctly and it is the MAP ROW that is wrong, the
+same 804 B is recoverable HONESTLY by repairing the swapped rows.
+
+⚠ LATENT (not live) HAZARD IN CF2, recorded so it is not discovered the hard way.
+CF2 discredits addr(F) on "ZERO .text fan-in -- nothing in the image branches
+there".  That reasoning is VACUOUS for virtual functions: `??_E`/`??_G` deleting
+destructors and any other vtable-dispatched method are reached through a vtable
+SLOT, not a direct `bl`, so zero `.text` fan-in is their NORMAL state and is no
+evidence at all.  Audited 2026-08-13: 0 of the 9 installed CF2 spellings and 0 of
+the 16 currently-admitted ones are such a form -- every one is a non-virtual STL
+or free function, where zero fan-in genuinely is evidence.  So this is a bound to
+respect if CF2 is ever pointed at a virtual population, NOT a live defect.
+
 !! `Retail.same_function` IS VACUOUSLY FALSE ON MOST REAL BODIES !!
 ------------------------------------------------------------------
 Read this before quoting any number that predicate produced.
@@ -579,18 +655,20 @@ def main():
                                  "resolving to the same NAME" % r["base_addr"])
         elif homonym(dc3, dc3img, retail, F, fa):
             tier, disc = "CF3", homonym(dc3, dc3img, retail, F, fa)
-        elif fa in retail.arbitrary:
-            tier, disc = "CF4", ("the map itself lists %s in %s: its own comment says WHICH name "
-                                 "belongs on WHICH VA is not established there, so the entry is "
-                                 "not a claim this alias contradicts"
-                                 % (r["base_addr"], retail.arbitrary[fa]))
         else:
-            refuse("retail has a DIFFERENT LIVE body named %s at %s (fan-in %d, %d bytes, "
-                   "branches to %s); the map does not flag that address arbitrary, the image does "
-                   "not discredit it, and there is no dc3 homonym witness, so the entry stands "
-                   "and an alias would assert a false equality between two live addresses"
+            why = ("retail has a DIFFERENT LIVE body named %s at %s (fan-in %d, %d bytes, "
+                   "branches to %s); the image does not discredit it and there is no dc3 homonym "
+                   "witness, so the entry stands and an alias would assert a false equality "
+                   "between two live addresses"
                    % (F, r["base_addr"], f_fanin, len(fw) * 4,
                       retail.first_dest(fa) or "no resolvable destination"))
+            if fa in retail.arbitrary:
+                why += (" -- AND %s IS listed in %s, which is exactly the (removed) CF4 warrant: "
+                        "see REMOVED TIER CF4 in the module docstring. An arbitrary NAME does not "
+                        "make the BODY at that address stop existing. The remedy this pair needs "
+                        "is a target_symbol_map.json ROW REPAIR, not an alias."
+                        % (r["base_addr"], retail.arbitrary[fa]))
+            refuse(why)
             continue
         row.update(tier=tier, discredit=disc, verdict="ADMIT")
         rows.append(row)
