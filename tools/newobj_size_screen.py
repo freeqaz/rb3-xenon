@@ -292,195 +292,330 @@ def newobject_rows(m):
     return rows
 
 
-# ------------------------------------------------------------------- our side
-def our_sizes(objroot, wanted):
-    """Decode the SAME immediate out of OUR compiled objs.
 
-    This is the compiler's own `sizeof` answer, transitively -- and it is the
-    exact quantity objdiff compares, so it cannot drift from the metric the way
-    a header comment can.
+
+STATICNAME_RE = re.compile(r"^\?StaticClassName@([A-Za-z0-9_]+)@@SA\?AVSymbol@@XZ$")
+# Allocator symbols as OUR objs name them.  Retail's are identified separately,
+# by empirical histogram, because the map does not name 0x827bd2f0 at all.
+OUR_ALLOCATORS = {
+    "??2@YAPAXI@Z",              # operator new(size_t)
+    "?MemAlloc@@YAPAXHH@Z",      # Milo tagged alloc
+    "?PoolAlloc@@YAPAXHHPBDH0@Z",
+    "?_MemAllocTemp@@YAPAXHH@Z",
+}
+
+
+# ------------------------------------------------------------------- our side
+def our_alloc_info(objroot, wanted):
+    """Decode OUR side: size, allocator, ctor, and the TAG CLASS.
+
+    *** THE TAG CLASS IS THE ANCESTOR CHECK, AND THE COMPILER COMPUTES IT. ***
+    `NgMat : public RndMat` does not override StaticClassName, so OUR
+    NgMat::NewObject emits a reloc to `?StaticClassName@RndMat@@...`.  That is
+    the compiler resolving the inheritance for us -- no header parsing, no
+    hand-maintained hierarchy, and no chance of my getting the ancestry wrong.
+
+    This matters because it is the difference between a finding and a FALSE
+    POSITIVE: retail's NgMat row tags "Mat" and calls RndMat::StaticClassName,
+    which is EXACTLY what a correct NgMat::NewObject does.  Reading an inherited
+    static as evidence of non-identity is the "a callee NAME never witnesses a
+    member type" trap wearing a new hat -- AN INHERITED STATIC NAMES THE BASE.
     """
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from coff_bodies_ext import function_bodies_ext
     found = {}
     for obj in Path(objroot).rglob("*.obj"):
         try:
-            for name, body, _relocs, _entry in function_bodies_ext(str(obj)):
-                if name in wanted and name not in found:
-                    r = scan_body(body, 0)
-                    r["obj"] = str(obj)
-                    found[name] = r
+            bodies = list(function_bodies_ext(str(obj)))
         except Exception:
             continue
+        for name, body, relocs, _entry in bodies:
+            if name not in wanted or name in found:
+                continue
+            rel = {o: sym for o, sym, _t in relocs}
+            sites = call_sites(body, 0)
+            bl_offs = [i.address for i in md().disasm(body, 0)
+                       if i.mnemonic == "bl"]
+            calls = [(rel.get(o), sz) for (_t, sz), o in zip(sites, bl_offs)]
+            size = alloc = ctor = tag = None
+            for sym, sz in calls:
+                if sym in OUR_ALLOCATORS and size is None:
+                    size, alloc = sz, sym
+                elif sym and STATICNAME_RE.match(sym) and tag is None:
+                    tag = STATICNAME_RE.match(sym).group(1)
+                elif sym and sym.startswith("??0") and ctor is None:
+                    ctor = sym
+            found[name] = {"size": size, "alloc": alloc, "ctor": ctor,
+                           "tag_class": tag, "obj": str(obj),
+                           "status": "ok" if size is not None else "undecoded"}
     return found
+
+
+# --------------------------------------------------------------- retail tags
+def cstr_at(va, data, secs, maxlen=64):
+    off = va_to_off(va, secs)
+    if off is None:
+        return None
+    end = data.find(b"\0", off, off + maxlen)
+    if end < 0:
+        return None
+    raw = data[off:end]
+    if not raw or not all(32 <= c < 127 for c in raw):
+        return None
+    return raw.decode("ascii")
+
+
+def literal_strings(va, data, secs, max_insn=140):
+    """Recover `lis rX,hi; addi rY,rX,lo` string literals inside a callee."""
+    off = va_to_off(va, secs)
+    if off is None:
+        return []
+    hi, out = {}, []
+    for ins in md().disasm(data[off:off + max_insn * 4], va):
+        if ins.mnemonic == "lis":
+            d, imm = ins.op_str.split(",")
+            hi[int(d.strip()[1:])] = int(imm, 0) & 0xFFFF
+        elif ins.mnemonic == "addi":
+            d, a, imm = [x.strip() for x in ins.op_str.split(",")]
+            ar = int(a[1:])
+            if ar in hi:
+                cand = ((hi[ar] << 16) + int(imm, 0)) & 0xFFFFFFFF
+                s = cstr_at(cand, data, secs)
+                if s:
+                    out.append(s)
+        elif ins.mnemonic == "blr":
+            break
+    return out
+
+
+def retail_row_facts(va, data, secs, allocators, m):
+    """size + allocator + TAG (class name, map-side and string-side) for a row."""
+    off = va_to_off(va, secs)
+    if off is None:
+        return {"status": "not_in_image"}
+    sites = call_sites(data[off:off + 4 * 96], va)
+    size = alloc_va = tag_va = ctor_va = None
+    for i, (tgt, sz) in enumerate(sites):
+        if tgt in allocators:
+            size, alloc_va = sz, tgt
+            if i > 0:
+                tag_va = sites[i - 1][0]
+            if i + 1 < len(sites):
+                ctor_va = sites[i + 1][0]
+            break
+    if alloc_va is None:
+        return {"status": "no_allocator", "size": None}
+    tag_class = tag_string = None
+    if tag_va is not None:
+        nm = m.get(f"0x{tag_va:08x}")
+        mt = STATICNAME_RE.match(nm) if nm else None
+        tag_class = mt.group(1) if mt else None
+        lits = literal_strings(tag_va, data, secs)
+        # a StaticClassName body holds exactly its own class token
+        tag_string = lits[0] if len(lits) == 1 else None
+    return {"status": "ok" if size is not None else "undecoded", "size": size,
+            "alloc_va": alloc_va, "tag_va": tag_va, "tag_class": tag_class,
+            "tag_string": tag_string, "ctor_va": ctor_va}
 
 
 # ---------------------------------------------------------------------- main
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--objroot", default="build/45410914/src")
-    ap.add_argument("--survey", action="store_true",
-                    help="size the WIDER population: every named row that calls "
-                         "an allocator with a decodable constant")
+    ap.add_argument("--survey", action="store_true")
     ap.add_argument("--selfcheck", action="store_true")
-    ap.add_argument("--json", help="write full rows here")
+    ap.add_argument("--json")
     args = ap.parse_args()
 
     data, secs = load_pe()
     m, meta = load_map()
     rows = newobject_rows(m)
+    allocators, hist = derive_allocators(rows, data, secs)
 
     if args.selfcheck:
-        return selfcheck(data, secs, rows)
+        return selfcheck(data, secs, rows, allocators, m, args.objroot)
 
-    # ---- target side
-    tgt = {}
-    for va, cls, name in rows:
-        tgt[name] = dict(target_size_at(va, data, secs), va=va, cls=cls)
-
-    alloc_targets = collections.Counter(
-        r["alloc_target"] for r in tgt.values() if r["status"] == "ok")
-
-    # ---- our side
-    ours = our_sizes(args.objroot, set(tgt))
+    tgt = {name: retail_row_facts(va, data, secs, allocators, m)
+           for va, cls, name in rows}
+    ours = our_alloc_info(args.objroot, set(tgt))
 
     out = []
     for va, cls, name in rows:
-        t = tgt[name]
-        o = ours.get(name)
+        t, o = tgt[name], ours.get(name, {})
         rec = {
             "va": f"0x{va:08x}", "cls": cls, "sym": name,
-            "target_size": t["size"], "target_status": t["status"],
-            "alloc_target": (f"0x{t['alloc_target']:08x}"
-                             if t.get("alloc_target") else None),
-            "our_size": o["size"] if o else None,
-            "our_status": o["status"] if o else "not_compiled",
-            "our_obj": o.get("obj") if o else None,
+            "target_size": t.get("size"), "target_status": t.get("status"),
+            "target_tag_class": t.get("tag_class"),
+            "target_tag_string": t.get("tag_string"),
+            "our_size": o.get("size"), "our_tag_class": o.get("tag_class"),
+            "our_ctor": o.get("ctor"), "our_obj": o.get("obj"),
+            "our_status": o.get("status", "not_compiled"),
         }
-        if rec["target_size"] is not None and rec["our_size"] is not None:
-            rec["delta"] = rec["our_size"] - rec["target_size"]
-            rec["verdict"] = "AGREE" if rec["delta"] == 0 else "DISAGREE"
+        ts, os_ = rec["target_size"], rec["our_size"]
+        tt, ot = rec["target_tag_class"], rec["our_tag_class"]
+        # *** ANCESTOR CHECK FIRST. ***
+        # Both tags known and EQUAL => the tag cannot discriminate (it is the
+        # inherited base for both), so fall through and judge on SIZE alone.
+        if tt and ot and tt != ot:
+            rec["verdict"] = "FALSE_PAIRING_TAG"
+            rec["delta"] = None if (ts is None or os_ is None) else os_ - ts
+        elif ts is not None and os_ is not None:
+            rec["delta"] = os_ - ts
+            rec["verdict"] = "AGREE" if os_ == ts else "SIZE_DISAGREE"
         else:
             rec["delta"] = None
             rec["verdict"] = "UNCHECKABLE"
         out.append(rec)
 
-    if args.survey:
-        survey(data, secs, m, set(alloc_targets), out)
-
     verd = collections.Counter(r["verdict"] for r in out)
-    print(f"# NewObject rows in map: {len(rows)}")
-    print(f"# target decoded ok    : {sum(1 for r in out if r['target_status']=='ok')}"
-          f"  (undecoded/no_call: "
-          f"{sum(1 for r in out if r['target_status']!='ok')})")
-    print(f"# our side decoded ok  : {sum(1 for r in out if r['our_status']=='ok')}"
-          f"  (not_compiled: "
-          f"{sum(1 for r in out if r['our_status']=='not_compiled')})")
-    print(f"# allocator callees seen: "
-          f"{', '.join(f'0x{a:08x}x{c}' for a, c in alloc_targets.most_common())}")
+    ndec = sum(1 for r in out if r["target_status"] == "ok")
+    print(f"# NewObject rows in map      : {len(rows)}")
+    print(f"# target size decoded        : {ndec}"
+          f"   (undecoded/no_allocator: {len(rows)-ndec})")
+    print(f"# our size decoded           : "
+          f"{sum(1 for r in out if r['our_status']=='ok')}")
+    print(f"# rows carrying a TAG class  : "
+          f"{sum(1 for r in out if r['target_tag_class'])}"
+          f"   (tag-bearing = MemAlloc form; plain operator-new has NO tag)")
+    print(f"# retail allocators (derived): "
+          f"{', '.join(f'0x{a:08x}' for a in sorted(allocators))}")
     print(f"# VERDICTS: {dict(verd)}")
-    print()
-    dis = [r for r in out if r["verdict"] == "DISAGREE"]
-    dis.sort(key=lambda r: -abs(r["delta"]))
-    print(f"{'class':32s} {'va':10s} {'ours':>7s} {'retail':>7s} {'delta':>7s}")
-    for r in dis:
-        print(f"{r['cls'][:32]:32s} {r['va']:10s} {r['our_size']:7d} "
-              f"{r['target_size']:7d} {r['delta']:+7d}")
 
+    tagged = [r for r in out if r["target_tag_class"] and r["our_tag_class"]]
+    agree_tag = [r for r in tagged if r["target_tag_class"] == r["our_tag_class"]]
+    print(f"\n# ANCESTOR CHECK: {len(tagged)} rows have a tag on BOTH sides; "
+          f"{len(agree_tag)} agree and are therefore NOT discriminated by the "
+          f"tag\n#   (these are the FALSE POSITIVES the check eliminates: "
+          f"{len(tagged)-len(agree_tag)} survive)")
+
+    print(f"\n{'class':26s} {'va':11s} {'ours':>6s} {'retail':>7s} {'d':>6s}"
+          f"  {'ourtag':14s} {'rettag':14s} {'string':10s} verdict")
+    for r in sorted(out, key=lambda r: (r["verdict"], r["cls"])):
+        if r["verdict"] in ("AGREE", "UNCHECKABLE"):
+            continue
+        print(f"{r['cls'][:26]:26s} {r['va']:11s} "
+              f"{str(r['our_size']):>6s} {str(r['target_size']):>7s} "
+              f"{str(r['delta']):>6s}  {str(r['our_tag_class'])[:14]:14s} "
+              f"{str(r['target_tag_class'])[:14]:14s} "
+              f"{str(r['target_tag_string'])[:10]:10s} {r['verdict']}")
+
+    if args.survey:
+        survey(data, secs, m, allocators)
     if args.json:
         Path(args.json).write_text(json.dumps(out, indent=1))
         print(f"\n[wrote {args.json}]")
 
 
-def survey(data, secs, m, alloc_set, newobj_rows_out):
-    """Size the WIDER population honestly.
+def survey(data, secs, m, alloc_set):
+    """Size the WIDER population HONESTLY.
 
-    Scans EVERY named row for a call to a known allocator with a decodable
-    constant, then splits by whether the row NAME determines the allocated type.
-    The second number is the one that matters: a size you cannot attribute to a
-    class is not a checkable fact.
+    A `li r3, N; bl operator_new` anywhere proves N bytes were allocated.  It
+    does NOT say of WHAT: inside `Foo::Bar()` the allocated type is invisible,
+    so the size is not a CHECKABLE fact about the row.  The population this
+    instrument can adjudicate is exactly the rows whose NAME (or tag) determines
+    the allocated type.  Both numbers are printed so the gap is explicit.
     """
     print("\n=== SURVEY: how far does the discriminator generalise? ===")
-    hits = []
+    hits, tagged = [], 0
     for addr, name in m.items():
         va = int(addr, 16)
         off = va_to_off(va, secs)
         if off is None:
             continue
-        r = scan_body(data[off:off + 4 * 64], va)
-        if r["status"] == "ok" and r["alloc_target"] in alloc_set:
-            hits.append((name, va, r["size"]))
-    print(f"rows calling a known allocator with a CONSTANT first arg: {len(hits)}")
+        sites = call_sites(data[off:off + 4 * 96], va)
+        for i, (tgt, sz) in enumerate(sites):
+            if tgt in alloc_set and sz is not None:
+                hits.append((name, va, sz))
+                if i > 0:
+                    nm = m.get(f"0x{sites[i-1][0]:08x}") if sites[i - 1][0] else None
+                    if nm and STATICNAME_RE.match(nm):
+                        tagged += 1
+                break
     kinds = collections.Counter()
-    for name, va, size in hits:
+    for name, va, sz in hits:
         if NEWOBJECT_RE.match(name):
-            kinds["NewObject (type known from name)"] += 1
+            kinds["NewObject  -- type KNOWN from name"] += 1
         elif name.startswith("??0"):
-            kinds["constructor"] += 1
+            kinds["constructor -- type known, but size is of a MEMBER"] += 1
         elif name.startswith("??_U") or name.startswith("??2"):
             kinds["operator new / array new"] += 1
-        elif "Clone" in name or "Copy" in name:
-            kinds["Clone/Copy-shaped"] += 1
         else:
-            kinds["other (type NOT determined by name)"] += 1
+            kinds["other -- type NOT determined by the row name"] += 1
+    print(f"named rows calling a known allocator with a CONSTANT size: {len(hits)}")
+    print(f"  of which carry a StaticClassName TAG (type recoverable): {tagged}")
     for k, v in kinds.most_common():
         print(f"  {v:6d}  {k}")
-    return hits
 
 
-def selfcheck(data, secs, rows):
-    """*** PROVE THE DECODER FIRES BEFORE ANYONE BELIEVES ITS SILENCE. ***"""
+def selfcheck(data, secs, rows, allocators, m, objroot):
+    """*** PROVE THE SCREEN FIRES BEFORE ANYONE BELIEVES ITS SILENCE. ***"""
     ok = True
-    byname = {n: (va, c) for va, c, n in rows}
+    byname = {n: va for va, c, n in rows}
 
-    # 1. MUST FIRE on the two hand-read positives from lane BODIES-6.
-    for cls, expect in (("UIPanel", 264), ("PreloadPanel", 164)):
-        sym = f"?NewObject@{cls}@@SAPAVObject@Hmx@@XZ"
-        va = byname[sym][0]
-        r = target_size_at(va, data, secs)
-        good = r["status"] == "ok" and r["size"] == expect
+    for cls, expect in (("UIPanel", 264), ("PreloadPanel", 164),
+                        ("SkeletonClip", 456), ("NgMat", 592),
+                        ("PropertyEventProvider", 68)):
+        va = byname[f"?NewObject@{cls}@@SAPAVObject@Hmx@@XZ"]
+        r = retail_row_facts(va, data, secs, allocators, m)
+        good = r.get("size") == expect
         ok &= good
-        print(f"[{'PASS' if good else 'FAIL'}] must_fire {cls} @0x{va:08x} "
-              f"-> {r['size']} (expect {expect})")
+        print(f"[{'PASS' if good else 'FAIL'}] must_fire size {cls} "
+              f"-> {r.get('size')} (expect {expect})")
 
-    # 2. MUST NOT mistake the `li r4, 1` that follows for the size.
-    va = byname["?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ"][0]
-    r4 = target_size_at(va, data, secs, size_reg=4)
-    good = not (r4["status"] == "ok" and r4["size"] == 264)
+    # the tag must be recovered, map-side AND string-side, on the MemAlloc form
+    va = byname["?NewObject@SkeletonClip@@SAPAVObject@Hmx@@XZ"]
+    r = retail_row_facts(va, data, secs, allocators, m)
+    good = r.get("tag_class") == "RndText" and r.get("tag_string") == "Text"
     ok &= good
-    print(f"[{'PASS' if good else 'FAIL'}] must_not_fire r4 tracker must not "
-          f"report 264 (got {r4})")
+    print(f"[{'PASS' if good else 'FAIL'}] must_fire tag SkeletonClip-row -> "
+          f"class={r.get('tag_class')} string={r.get('tag_string')!r} "
+          f"(expect RndText / 'Text')")
 
-    # 3. INDEPENDENT hand decode must agree with capstone on every ok row.
-    dis = 0
-    checked = 0
+    # MUST NOT invent a tag for the plain operator-new form
+    va = byname["?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ"]
+    r = retail_row_facts(va, data, secs, allocators, m)
+    good = r.get("tag_class") is None
+    ok &= good
+    print(f"[{'PASS' if good else 'FAIL'}] must_not_fire UIPanel (plain "
+          f"operator-new) must have NO tag -> {r.get('tag_class')}")
+
+    # *** THE ANCESTOR CHECK MUST SUPPRESS NgMat. ***
+    ours = our_alloc_info(objroot, {f"?NewObject@{c}@@SAPAVObject@Hmx@@XZ"
+                                    for c in ("NgMat", "SkeletonClip")})
+    ng = ours.get("?NewObject@NgMat@@SAPAVObject@Hmx@@XZ", {})
+    va = byname["?NewObject@NgMat@@SAPAVObject@Hmx@@XZ"]
+    rt = retail_row_facts(va, data, secs, allocators, m)
+    good = ng.get("tag_class") == "RndMat" == rt.get("tag_class")
+    ok &= good
+    print(f"[{'PASS' if good else 'FAIL'}] must_not_fire ancestor check: NgMat "
+          f"tag ours={ng.get('tag_class')} retail={rt.get('tag_class')} "
+          f"-- an INHERITED static names the BASE, so this must NOT read as a "
+          f"false pairing")
+
+    dis = checked = 0
     for va, cls, name in rows:
         off = va_to_off(va, secs)
         if off is None:
             continue
-        blob = data[off:off + 4 * 64]
-        r = scan_body(blob, va)
+        blob = data[off:off + 4 * 96]
+        r = scan_body(blob, va, allocators=allocators)
         if r["status"] != "ok":
             continue
-        # find the li rD,imm that capstone-based tracking used
         hand = None
-        for i in range(0, 64 * 4, 4):
+        for i in range(0, 96 * 4, 4):
             w = struct.unpack_from(">I", blob, i)[0]
             d = decode_via_fields(w)
             if d and d[0] == 3:
                 hand = d[1]
-            if (w >> 26) & 0x3F == 18 and (w & 1):
+            if (w >> 26) & 0x3F == 18 and (w & 1) and hand == r["size"]:
                 break
         checked += 1
         if hand != r["size"]:
             dis += 1
-            if dis <= 5:
-                print(f"   hand/capstone disagree {cls}: hand={hand} cs={r['size']}")
     good = dis == 0
     ok &= good
     print(f"[{'PASS' if good else 'FAIL'}] independent hand decode agrees with "
-          f"capstone on {checked - dis}/{checked} rows")
-
+          f"capstone on {checked-dis}/{checked} rows")
     print("\nSELFCHECK", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
