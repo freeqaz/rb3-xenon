@@ -367,6 +367,44 @@ out from under them will *deeply break* concurrent work. Hard rules:
   (`scripts/orchestrator/worktree_pool.py`) for its agents; `setup_worktree.sh`
   is the same machinery you can drive by hand.
 
+### ★ Clean up your worktree after you land — `tools/prune_worktrees.py`
+
+Nothing used to remove lane worktrees, so they accumulated to **202 registered
+trees / ~272 GB** (lane WT-PRUNE, 2026-08-13). **Remove your worktree once your
+branch is landed**, or run the sweeper — dry-run by default, `--execute` to act,
+`--protect <path>` for every live lane:
+
+```bash
+python3 tools/prune_worktrees.py                       # inventory, removes nothing
+python3 tools/prune_worktrees.py --protect ~/tmp/wt-live --execute
+```
+
+It keeps any tree with **uncommitted** content, touched in the last 2 h, or
+missing its `.git`; re-probes each candidate immediately before removing it; and
+archives a manifest (+ `git diff` and untracked tar for anything it removes that
+had a diff) under `~/tmp/worktree-prune-archive/`. It **never deletes a branch.**
+
+Two counter-intuitive facts it is built on — both verified, not assumed:
+
+- ⛔ **`git worktree remove` does NOT delete the branch.** The branch ref, the
+  tip commit and its file contents all still resolve afterwards. So **unlanded
+  commits are not a reason to keep a directory** — the only irrecoverable loss
+  is *uncommitted* work: dirty tracked files, and untracked-non-ignored files.
+  ⚠ Untracked files are frequently a lane's **entire** deliverable, and
+  `remove --force` deletes them without a word — "no tracked modifications" is
+  NOT "clean". 28 trees were kept for exactly this.
+- ⛔ **`git branch --merged` is a useless signal here** and is deliberately not
+  a criterion: lanes land by patch, so a fully-landed branch still reads as
+  unmerged. Patch-id equivalence (`git cherry main <branch>`) is reported as
+  information only.
+
+⚠ **Two liveness traps, both measured — do not reinvent this check.** The mtime
+of git's admin **directory** (`.git/worktrees/<name>/`) is bumped for *every*
+worktree at once by ordinary git housekeeping, and the admin **`index`** file is
+refreshed by anyone who merely *looks* at the tree. Reading either made all 209
+trees report "modified 0.1 h ago" — a liveness gate that **cannot fail**, which
+is worse than no gate. Only tree content, `HEAD` and `logs/HEAD` are honest.
+
 ## Two build tracks
 
 **1. X360 decomp-matching build** — compile-to-match the retail XEX (MSVC X360).
