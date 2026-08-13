@@ -50,9 +50,18 @@ int gNumHeaps;
 // because some code paths still went through custom MemHeap logic.
 #else
 void *operator new(unsigned int size) {
-    // Retail/match: 2-arg (size, align). gNewOperatorAlign is non-zero, so it
-    // can't go through the align-0-forcing macro — use the parenthesized form.
-    return (MemAlloc)(size, gNewOperatorAlign);
+    // Retail/match: 2-arg (size, align) with a LITERAL 0 align.
+    //
+    // This used to pass `gNewOperatorAlign`, inherited from dc3-decomp — which
+    // is NEWER than RB3 and knows an align global RB3 does not.  Both oracles
+    // refute it: rb3-Wii's MemMgr.cpp reads `operator new(size) { return
+    // _MemAlloc(size, 0); }`, and retail's own body at 0x827bd2f0 is
+    // `li r4,0 ; b <alloc>` -- an immediate 0, not a load of a global.  The
+    // global-load form compiled to 12 bytes (lis/lwz/b) instead of retail's 8,
+    // so it could not participate in the /OPT:ICF fold that puts every
+    // `MemAlloc(size, 0)` operator-new spelling at ONE address, and 510 call
+    // sites across 367 functions named a callee retail does not have.
+    return (MemAlloc)(size, 0);
 }
 
 void *operator new[](unsigned int size) { return (MemAlloc)(size, 0); }
