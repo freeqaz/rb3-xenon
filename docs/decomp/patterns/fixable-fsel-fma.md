@@ -174,6 +174,13 @@ levelEase = (float)__fsel(levelEase - 1.0f, 1.0f, levelEase);   // clamp > 1 to 
 
 Control whether the compiler generates fused multiply-add instructions (`fmadds`, `fmsubs`) or separate operations (`fmuls` + `fadds`).
 
+> **See also — contraction is not reassociation.** This section controls *whether* a
+> multiply fuses into an add. A separate axis controls **in what order the products are
+> accumulated**: under `/fp:fast` MSVC reassociates a sum chain, and the lever is explicit
+> **parentheses as a reassociation barrier**, not term order. If the instruction shape is
+> already right but the operands sit in the wrong slots, see
+> [fixable-fp-reassociation.md](fixable-fp-reassociation.md).
+
 ### Symptom
 
 objdiff shows FMA fusion mismatch:

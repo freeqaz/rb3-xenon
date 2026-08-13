@@ -55,6 +55,15 @@ float v1x = v1y + (1.0f - targetAspect * realAspect) * 0.5f;
 
 Check which instruction the original uses and restructure accordingly.
 
+> **See also — a different axis with a similar smell.** This section is about which FMA
+> *variant* is selected. If the variant is already right but the **products are accumulated
+> in the wrong order** (shape `fmuls`, `fmadds`, `fmadds`, `fadds`, correct operands in the
+> wrong slots), that is `/fp:fast` **reassociation**, and the lever is explicit
+> **parentheses** rather than term order — see
+> [fixable-fp-reassociation.md](fixable-fp-reassociation.md). It also refines the
+> `RndLine::GetDistanceToPlane` row above: splitting a dot product into temporaries is
+> *sometimes* the lever, but it was measured **site-specific in both directions**.
+
 ---
 
 ## Operator Overload Selection

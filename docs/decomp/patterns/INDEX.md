@@ -28,6 +28,7 @@ These patterns can often be fixed with source changes. Sorted by ROI (impact x s
 | __fsel Intrinsic | +1-10% | MEDIUM | [fixable-fsel-fma.md](fixable-fsel-fma.md#fsel-via-__fsel-intrinsic) |
 | #pragma fp_contract (FMA) | +1-12% | HIGH | [fixable-fsel-fma.md](fixable-fsel-fma.md#fma-control-via-pragma-fp_contract) |
 | FMA Expression Order | +1-75% | 98% | [fixable-operators.md](fixable-operators.md#fma-expression-order) |
+| `/fp:fast` Reassociation (**parens are the barrier**, not term order) | +0.05-0.1% (crosses ≥99.9% rows) | 3 of 3 sites, each a *different* shape | [fixable-fp-reassociation.md](fixable-fp-reassociation.md#the-mechanism) |
 | Signed/Unsigned Cast | +1-50% | 100% | [fixable-comparison.md](fixable-comparison.md#signedunsigned-cast) |
 | MILO_NOTIFY vs MILO_NOTIFY_ONCE | +10-35% | HIGH | [fixable-declarations.md](fixable-declarations.md#milo_notify-vs-milo_notify_once) |
 | alloca vs _alloca | +10-15% | 100% | [fixable-declarations.md](fixable-declarations.md#alloca-vs-_alloca-intrinsic-stack-allocation) |
