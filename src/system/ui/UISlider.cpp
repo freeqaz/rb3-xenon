@@ -8,6 +8,7 @@
 #include "rndobj/Draw.h"
 #include "ui/UI.h"
 #include "ui/UIPanel.h"
+#include "ui/UIResource.h"
 #include "ui/Utl.h"
 #include "utl/BinStream.h"
 #include "utl/Symbol.h"
@@ -94,9 +95,14 @@ RndDrawable *UISlider::CollideShowing(const Segment &s, float &fl, Plane &pl) {
     return nullptr;
 }
 
+// retail 0x8280A320 (88 B). We returned a bare 0; retail forwards to the
+// resource dir. Note the neighbouring DrawShowing/CollideShowing already match
+// at 100% with our simpler bodies even though the Wii oracle has richer ones --
+// so this was ported per-row off the retail size, not by trusting the oracle.
 int UISlider::CollidePlane(const Plane &pl) {
     SyncSlider();
-    return 0;
+    RndDir *dir = mResource->Dir();
+    return dir->CollidePlane(pl);
 }
 
 void UISlider::Enter() {
@@ -120,7 +126,17 @@ void UISlider::OldResourcePreload(BinStream &bs) {
     bs.ReadString(buf, 256);
 }
 
-void UISlider::SyncSlider() {}
+// retail fn_8280A000 (132 B). This was an empty stub, so MSVC inlined it to
+// NOTHING at all three call sites -- which is why CollidePlane above emitted a
+// bare tail-call with no `bl` at all. Retail's body, read off the bytes:
+//   lwz 0x108 -> mResource, lwz 0x14 -> Dir(), addi 0xc4 = the RndAnimatable
+//   sub-object (vtable slot 0xc = SetFrame), with lbl_820009FC = 1.0f;
+//   then addi 0xd4 = the RndTransformable sub-object for SetWorldXfm, whose
+//   argument is WorldXfm() (the mCached test at 0xc0 + fn_823F7A80).
+void UISlider::SyncSlider() {
+    mResource->Dir()->SetFrame(Frame(), 1.0f);
+    mResource->Dir()->SetWorldXfm(WorldXfm());
+}
 
 float UISlider::Frame() const {
     if (mNumSteps == 1)
