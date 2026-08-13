@@ -120,6 +120,11 @@ void FaceCenter(RndMesh *mesh, RndMesh::Face *face, Vector3 &center) {
 
 bool RndMesh::sRawCollide;
 int RndMesh::sLastCollide;
+// Retail's .data carries this as a byte with value 0x01, between sLastCollide and
+// the `static int REV = 0x26` below -- so it is initialized TRUE, not false. (The
+// rb3-Wii oracle's `= false` is inside #ifdef HX_NATIVE and never reaches its own
+// match build, so it is not evidence about the initializer.)
+bool RndMesh::sUpdateApproxLight = true;
 
 RndMesh::RndMesh()
     : mMat(this), mGeomOwner(this, this), mBones(this), mMutable(0),
