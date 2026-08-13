@@ -12,6 +12,7 @@
 class OnlineID {
 private:
     friend BinStream &operator<<(BinStream &, const OnlineID &);
+    friend BinStream &operator>>(BinStream &, OnlineID &);
 
     XUID mXUID; // 0x0
 #ifdef RB3_ONLINEID_PLAYERNAME
@@ -38,4 +39,4 @@ public:
     MEM_OVERLOAD(OnlineID, 0x1E)
 };
 
-// BinStream &operator>>(BinStream &, OnlineID &);
+BinStream &operator>>(BinStream &, OnlineID &);
