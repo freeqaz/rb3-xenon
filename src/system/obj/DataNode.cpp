@@ -367,6 +367,13 @@ int DataNode::LiteralInt(const DataArray *source) const {
 
 Symbol DataNode::Sym(const DataArray *source) const {
     const DataNode &n = Evaluate();
+// Same dev-build-only assert as Int/Array below.  Retail 0x8274af68 is 60 B,
+// `bl Evaluate / lwz r11,0(r3) / mr r3,r31 / stw r11,0(r31)` around the sret
+// slot -- it evaluates and stores mValue.symbol with NO cmpwi against
+// kDataSymbol (= 5) anywhere in the body.  The 88-byte body two slots down
+// (0x8274afa8) DOES test 5, but that is ForceSym's symbol-or-string dispatch,
+// not an assert.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (n.mType != kDataSymbol) {
         String s;
         n.Print(s, true);
@@ -379,10 +386,9 @@ Symbol DataNode::Sym(const DataArray *source) const {
             );
         else
             MILO_FAIL_DTA("Data %s is not Symbol", s);
-#ifdef HX_NATIVE
         return Symbol("");
-#endif
     }
+#endif
     return STR_TO_SYM(n.mValue.symbol);
 }
 
