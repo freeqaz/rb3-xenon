@@ -39,12 +39,18 @@ BEGIN_COPYS(TexMovie)
     END_COPYING_MEMBERS
 END_COPYS
 
+// Retail 0x827461A0 (116 B). NOTE: unlike the rndobj Replace family this one
+// compares the held pointer DIRECTLY (lwz r11,-0x1c(r3); cmplw r11,r4) with
+// no vbtable adjust, so RefIs() is already correct here -- do not "fix" it to
+// a static_cast. The two real defects were SetObj (which resolves the type
+// itself) where retail emits an explicit dynamic_cast + SetObjConcrete, and
+// the Hmx::Object::Replace fallback, which retail does not have.
 void TexMovie::Replace(ObjRef *a, Hmx::Object *b) {
-    if (RefIs(a, mTex)) {
+    // Operand order matters: retail is cmplw (held, ref); RefIs() spells it
+    // (ref, held), which costs exactly one instruction here.
+    if (reinterpret_cast<void *>(mTex.Ptr()) == reinterpret_cast<void *>(a)) {
         mMovie.End();
-        mTex.SetObj(b);
-    } else {
-        Hmx::Object::Replace(a, b);
+        mTex.SetObjConcrete(dynamic_cast<RndTex *>(b));
     }
 }
 
