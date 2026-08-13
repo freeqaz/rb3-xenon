@@ -34,7 +34,7 @@ DynamicTex::DynamicTex(const char *c1, const char *c2, bool b1, bool b2)
             mMat->SetZMode(kZModeNormal);
         else
             mMat->SetZMode(kZModeDisable);
-        mMat->SetBlend(BaseMaterial::kBlendSrcAlpha);
+        mMat->SetBlend(RndMat::kBlendSrcAlpha);
     }
 }
 

@@ -192,7 +192,7 @@ void BandPatchMesh::Render(RndTex *tex, RndMat *mat) {
                     RndMat *patchmat = patch->Mat();
                     if (patchmat) {
                         // Wii oracle reads `patchmat->mColor` directly; that
-                        // member is protected on X360's BaseMaterial, and
+                        // member is protected on X360's RndMat, and
                         // GetColor() (BaseMaterial.h:203) returns exactly it.
                         mat->SetColor(patchmat->GetColor());
                         mat->SetTexWrap(patchmat->GetTexWrap());

@@ -6478,13 +6478,12 @@
   {
    "name": "1?$ObjRefConcrete",
    "address": "0x82435858",
-   "survivor": "??1?$ObjRefConcrete@VBaseMaterial@@VObjectDir@@@@UAA@XZ",
+   "survivor": "??1?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAA@XZ",
    "folded": [
     "??1?$ObjRefConcrete@VDetectionVolume@@VObjectDir@@@@UAA@XZ",
     "??1?$ObjRefConcrete@VFxSendMeterEffect@@VObjectDir@@@@UAA@XZ",
     "??1?$ObjRefConcrete@VHamNavProvider@@VObjectDir@@@@UAA@XZ",
     "??1?$ObjRefConcrete@VPropertyTask@@VObjectDir@@@@UAA@XZ",
-    "??1?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAA@XZ",
     "??1?$ObjRefConcrete@VRndFont3d@@VObjectDir@@@@UAA@XZ",
     "??1?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAA@XZ",
     "??1?$ObjRefConcrete@VSeqInst@@VObjectDir@@@@UAA@XZ",
@@ -15055,7 +15054,6 @@
    "address": "0x82325608",
    "survivor": "??E?$ObjDirItr@VRndMat@@@@QAAAAV0@XZ",
    "folded": [
-    "??E?$ObjDirItr@VBaseMaterial@@@@QAAAAV0@XZ",
     "??E?$ObjDirItr@VDepthBuffer3D@@@@QAAAAV0@XZ",
     "??E?$ObjDirItr@VHamCamShot@@@@QAAAAV0@XZ",
     "??E?$ObjDirItr@VHamMove@@@@QAAAAV0@XZ",
@@ -17116,7 +17114,6 @@
    "address": "0x823d1a78",
    "survivor": "??0?$ObjDirItr@VCharClipGroup@@@@QAA@PAVObjectDir@@_N@Z",
    "folded": [
-    "??0?$ObjDirItr@VBaseMaterial@@@@QAA@PAVObjectDir@@_N@Z",
     "??0?$ObjDirItr@VDepthBuffer3D@@@@QAA@PAVObjectDir@@_N@Z",
     "??0?$ObjDirItr@VHamCamShot@@@@QAA@PAVObjectDir@@_N@Z",
     "??0?$ObjDirItr@VHamMove@@@@QAA@PAVObjectDir@@_N@Z",
@@ -17281,7 +17278,6 @@
    "address": "0x822873d0",
    "survivor": "??$__uninitialized_copy@PAVRangeShift@GemTrack@@PAV12@@stlpmtx_std@@YAPAVRangeShift@GemTrack@@PAV12@00ABU__false_type@0@@Z",
    "folded": [
-    "??E?$ObjDirItr@VBaseMaterial@@@@QAAAAV0@XZ",
     "??E?$ObjDirItr@VDepthBuffer3D@@@@QAAAAV0@XZ",
     "??E?$ObjDirItr@VHamCamShot@@@@QAAAAV0@XZ",
     "??E?$ObjDirItr@VHamMove@@@@QAAAAV0@XZ",
@@ -18084,7 +18080,7 @@
     "??_GAsyncFileWin@@UAAPAXI@Z",
     "??_GBandConfiguration@@UAAPAXI@Z",
     "??_GBandScreen@@UAAPAXI@Z",
-    "??_GBaseMaterial@@UAAPAXI@Z",
+    "??_GRndMat@@UAAPAXI@Z",
     "??_GBinkClip@@UAAPAXI@Z",
     "??_GBinkMovieImpl@@UAAPAXI@Z",
     "??_GBmpCache@HiResScreen@@UAAPAXI@Z",
@@ -19711,7 +19707,6 @@
    "address": "0x823d1af0",
    "survivor": "??E?$ObjDirItr@VCharClip@@@@QAAAAV0@XZ",
    "folded": [
-    "??E?$ObjDirItr@VBaseMaterial@@@@QAAAAV0@XZ",
     "??E?$ObjDirItr@VDepthBuffer3D@@@@QAAAAV0@XZ",
     "??E?$ObjDirItr@VHamCamShot@@@@QAAAAV0@XZ",
     "??E?$ObjDirItr@VHamMove@@@@QAAAAV0@XZ",
@@ -24977,7 +24972,7 @@
    "address": "0x82436278",
    "survivor": "?OnAllowedNormalMap@RndPostProc@@IAA?AVDataNode@@PBVDataArray@@@Z",
    "folded": [
-    "?OnAllowedNormalMap@BaseMaterial@@IAA?AVDataNode@@PBVDataArray@@@Z"
+    "?OnAllowedNormalMap@RndMat@@IAA?AVDataNode@@PBVDataArray@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },

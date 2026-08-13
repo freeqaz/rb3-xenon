@@ -127,7 +127,7 @@ void RndVelocityBuffer::AllocateData(
     MILO_ASSERT(mMat == NULL, 0x4A);
     mMat = Hmx::Object::New<RndMat>();
     mMat->SetPerPixelLit(false);
-    mMat->SetBlend(BaseMaterial::kBlendSrc);
+    mMat->SetBlend(RndMat::kBlendSrc);
     mMat->SetZMode(kZModeDisable);
     CreateAndSetMetaMat(mMat);
 }
@@ -210,7 +210,7 @@ bool RndVelocityBuffer::Draw(RndCam *cam, ObjPtrList<RndDrawable> &drawList) {
         unk36be8 = scale = Min(2.0f, scale);
 
     if (cam != nullptr & cam == mCam) {
-        mMat->SetBlend(BaseMaterial::kBlendSrc);
+        mMat->SetBlend(RndMat::kBlendSrc);
         mMat->SetZMode(kZModeDisable);
 
         int cacheIdx = mActiveXfmCacheIndex;
@@ -239,7 +239,7 @@ bool RndVelocityBuffer::Draw(RndCam *cam, ObjPtrList<RndDrawable> &drawList) {
             if (_tmp0 != 0) {
                 Rnd::DrawMode savedDrawMode = TheRnd.GetDrawMode();
                 TheRnd.SetDrawMode(Rnd::kDrawVelocity);
-                mMat->SetBlend((BaseMaterial::Blend)3);
+                mMat->SetBlend((RndMat::Blend)3);
                 mMat->SetZMode(kZModeNormal);
                 auto _tmp1 = drawList.end();
                 for (ObjPtrList<RndDrawable>::iterator it = drawList.begin();
