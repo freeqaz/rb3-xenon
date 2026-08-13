@@ -753,6 +753,21 @@ run the gate before you land. Two traps, both real:
   `.text`** for a new cluster; on next `ninja` (after `touch config.yml`) dtk
   auto-derives and back-fills the matching `.pdata` range. Other sections
   (`.rdata`, `.data`) need manual pinning if the TU has them.
+  ⛔⛔ **BARE vs NESTED headings (707 bare / 569 nested) have now broken FOUR
+  consecutive lanes' scans — key on FULL PATH, never `basename()`, and replicate
+  `tools/project.py`'s own `objects()` + basename-alias step rather than
+  reconstructing paths yourself.** The failures were not subtle in size and were
+  invisible without a control: MISPIN-1's scan silently failed nested lookups and
+  reported **10,563** mis-pins (true: **149**); PINFIX-1's fix made the
+  mirror-image error and **misfiled 4,940 rows**, then the same `basename()` slip
+  corrupted its own result attribution; NOOBJ-1's first classifier read
+  **703 of 1,045 healthy units as "no source"**. ⚠ `Movie.obj` genuinely
+  **collides** between `rnddx9/` and `rndobj/`, and a basename match will also
+  produce false "pinned but unwired" hits for files like `rnddx9/Cam.cpp` that
+  are `#include`d rather than headings. ★ **Self-validate any such census by
+  reproducing the known figures — 22,384 healthy / 4,515 no-obj / 93 wrong-unit /
+  149 mis-pin, and `total_functions` / `total_code` as exact row and byte sums.**
+  Three lanes did this and each caught a defect the raw run reported cleanly.
   ★`.pdata` lines are **derived output, not input**: every split run clears the
   entire `.pdata` split set and re-derives one range per `.text` block (jeff
   `split.rs:1035` `split_pdata`), then rewrites splits.txt. Measured: 54
@@ -827,6 +842,34 @@ run the gate before you land. Two traps, both real:
   metric — there's no denominator gaming. Matches register only when a unit has
   both (a) pinned section ranges in `splits.txt` and (b) a compiled `.obj` that
   objdiff equates byte-for-byte with the dtk target `.obj`.
+  ★★★ **BUT THE REACHABLE CEILING IS 63.10%, NOT 100% — price headroom against
+  that** (lane NOOBJ-1, 2026-08-13, `13de1453`; `tools/noobj_census.py`).
+  **3,808,140 B / 36.90% of `total_code` CANNOT PAIR at current pinning**, so a
+  measured `matched_code_percent` of 34.60% is **54.83% of the reachable
+  surface**, not 34.60% of it. The census self-validates — rows sum to
+  `total_functions` (69,228) and bytes to `total_code` (10,320,664), zero rows
+  dropped:
+
+  | class | units | rows | bytes | % total_code |
+  |---|---|---|---|---|
+  | PAIRABLE (has base obj) | 1,045 | 54,691 | 6,512,524 | **63.10%** |
+  | UNPAIRABLE — no source | 230 | 4,454 | 2,106,356 | 20.41% |
+  | UNPAIRABLE — `auto_*` (unattributed) | 1,809 | 10,083 | 1,701,784 | 16.49% |
+
+  ⛔ **The 230 no-source units are NOT missing scaffolding — they are already
+  declared in `objects.json` with a `src_path` that does not exist**, and
+  `tools/project.py` drops the compile edge **SILENTLY**
+  (`warn_missing_source=False`). Triangulated exactly: 1,434 declared − 1,204
+  compiled = **230**. **229 of 230 are `xdk/*`** (D3DX9 shader compiler 637 kB,
+  xgraphics ucode compiler 1.21 MB, xaudio2 167 kB) ⇒ closing them means
+  **writing Microsoft vendor source**, which is out of scope per the standing
+  user directive — and they are **already 100% MAPPED**, so the mapping goal is
+  satisfied. ⚠ **Do NOT stub them into compiling**: that buys "pairable" rows at
+  0% with no content, i.e. `ForceEmit_*`-class metric fitting.
+  ⇒ **The `auto_*` class (1.70 MB, 16.49%) is the only one of the two unpairable
+  classes that is reachable, and it needs IDENTIFICATION, not source.** The
+  in-reach slice of the no-source class is just `xdk/LIBCMT` (160 rows /
+  18,200 B — `__savefpr`/`onexit`/CRT stubs).
   ⚠ **Do NOT hardcode the denominator — read `total_code` / `total_functions`
   from `report.json`.** This doc said **11,790,708 code bytes** for months; lane
   CJ-3 measured **10,688,812** (2026-08-02, confirmed independently on the landed
