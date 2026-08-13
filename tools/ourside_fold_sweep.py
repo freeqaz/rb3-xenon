@@ -34,6 +34,30 @@ injectivity clause refuses any F the map places elsewhere.  It does not eliminat
 it.  Rows are therefore graded, and a row whose only evidence is our-side
 identity on a SHORT body (where coincidental identity is cheap) is reported, not
 installed.
+
+⛔ DO NOT DROP GROUPS ON icf_alias_finder.py --validate CHECK (c).  MEASURED.
+------------------------------------------------------------------------------
+Check (c) -- "the survivor must be the ONLY group member named in the live dtk
+target objs (a real ICF fold keeps one spelling)" -- fails on 11 of this lane's
+54 groups with `target objs name []`, i.e. it finds NEITHER spelling.  That
+reads like an unwitnessed, therefore inert, group.
+
+It is not.  The prediction "unwitnessed in live target objs => the alias can
+never fire => dropping them is inert" was stated first and then MEASURED, and it
+is FALSE: dropping those 11 groups cost
+
+    name_check  34.266037% -> 34.201584%   -0.064453pp / -6,652 B
+    units at 100% (fuzzy)  119 -> 117      2 FELL OFF
+
+So the aliases do fire and check (c) is returning a FALSE NEGATIVE -- its index
+(`target_obj_symbol_index`, live-filtered `coff_referenced_symbols`) misses
+references that objdiff's reloc_eq plainly sees.  Note the same check fails on
+391 of the 1,671 PRE-EXISTING groups (23%), a rate this lane's 20% matches, so
+the defect is in the instrument and long-standing, not in these groups.
+
+The substantive gates (1-5 above) are what adjudicate a group.  Check (c) is a
+COVERAGE property of our own pinning -- whether a split obj happens to name the
+symbol -- and says nothing about whether retail's linker folded anything.
 """
 
 import argparse
