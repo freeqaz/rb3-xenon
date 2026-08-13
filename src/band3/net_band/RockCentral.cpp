@@ -1193,40 +1193,45 @@ void RockCentral::RecordOptionData() {
     Server *server = IsConnected(0, -1, false);
     if (server) {
         INIT_DATAPOINT("misc/option_data");
-        ADD_DATA_PAIR_STR("cymbal_config", (int)TheProfileMgr.GetCymbalConfiguration());
-        ADD_DATA_PAIR_STR("overscan", (int)TheProfileMgr.GetOverscan());
-        ADD_DATA_PAIR_STR("secondpedal_hihat", (int)TheProfileMgr.GetSecondPedalHiHat());
-        ADD_DATA_PAIR_STR("izotope", (int)TheProfileMgr.GetSynapseEnabled());
-        ADD_DATA_PAIR_STR("bg_vol", (int)TheProfileMgr.GetBackgroundVolume());
-        ADD_DATA_PAIR_STR("fg_vol", (int)TheProfileMgr.GetForegroundVolume());
-        ADD_DATA_PAIR_STR("fx_vol", (int)TheProfileMgr.GetFxVolume());
-        ADD_DATA_PAIR_STR("crowd_vol", (int)TheProfileMgr.GetCrowdVolume());
-        ADD_DATA_PAIR_STR("vocalcue_vol", (int)TheProfileMgr.GetVocalCueVolume());
-        ADD_DATA_PAIR_STR("voicechat_vol", (int)TheProfileMgr.GetVoiceChatVolume());
-        ADD_DATA_PAIR_STR("bass_boost", (int)TheProfileMgr.GetBassBoost());
-        ADD_DATA_PAIR_STR("dolby", (int)TheProfileMgr.GetDolby());
+        ADD_DATA_PAIR("cymbal_config", (int)TheProfileMgr.GetCymbalConfiguration());
+        ADD_DATA_PAIR("overscan", (int)TheProfileMgr.GetOverscan());
+        ADD_DATA_PAIR("secondpedal_hihat", (int)TheProfileMgr.GetSecondPedalHiHat());
+        ADD_DATA_PAIR("izotope", (int)TheProfileMgr.GetSynapseEnabled());
+        ADD_DATA_PAIR("bg_vol", (int)TheProfileMgr.GetBackgroundVolume());
+        ADD_DATA_PAIR("fg_vol", (int)TheProfileMgr.GetForegroundVolume());
+        ADD_DATA_PAIR("fx_vol", (int)TheProfileMgr.GetFxVolume());
+        ADD_DATA_PAIR("crowd_vol", (int)TheProfileMgr.GetCrowdVolume());
+        ADD_DATA_PAIR("vocalcue_vol", (int)TheProfileMgr.GetVocalCueVolume());
+        ADD_DATA_PAIR("voicechat_vol", (int)TheProfileMgr.GetVoiceChatVolume());
+        ADD_DATA_PAIR("bass_boost", (int)TheProfileMgr.GetBassBoost());
+        ADD_DATA_PAIR("dolby", (int)TheProfileMgr.GetDolby());
         //
         auto _tmp0 = TheProfileMgr.GetSyncOffsetRaw();
-        ADD_DATA_PAIR_STR("video_cal", _tmp0);
+        ADD_DATA_PAIR("video_cal", _tmp0);
         auto _tmp1 = TheProfileMgr.GetSongToTaskMgrMsRaw();
-        ADD_DATA_PAIR_STR("audio_cal", _tmp1);
+        ADD_DATA_PAIR("audio_cal", _tmp1);
         //
         ADD_DATA_PAIR(
             "pro_guitar_connected", (int)TheProfileMgr.GetHasConnectedProGuitar()
         );
+        DP_KEY(mod_auto_vocals);
         ADD_DATA_PAIR(
             mod_auto_vocals, (int)TheModifierMgr->IsModifierActive(mod_auto_vocals)
         );
+        DP_KEY(mod_no_fail_band);
         ADD_DATA_PAIR(
             mod_no_fail_band, (int)TheModifierMgr->IsModifierActive(mod_no_fail_band)
         );
+        DP_KEY(mod_drum_surface_navigation);
         ADD_DATA_PAIR(
             mod_drum_surface_navigation,
             (int)TheModifierMgr->IsModifierActive(mod_drum_surface_navigation)
         );
+        DP_KEY(mod_miss_sounds);
         ADD_DATA_PAIR(
             mod_miss_sounds, (int)TheModifierMgr->IsModifierActive(mod_miss_sounds)
         );
+        DP_KEY(mod_drum_fills);
         ADD_DATA_PAIR(
             mod_drum_fills, (int)TheModifierMgr->IsModifierActive(mod_drum_fills)
         );
