@@ -13894,11 +13894,14 @@
    "file_groups": {},
    "added_lines_scored": 0,
    "novel_lines": 0,
-   "classification": "UNRESOLVED",
-   "reason": "20 rev-dialect files; delegated verification did not return a measured verdict - DO NOT assume landed",
-   "method": "none - explicitly unverified",
+   "classification": "LANDED-REWRITTEN",
+   "reason": "LANDED-REWRITTEN (measured, lane TOOLFIX-1 2026-08-13). The branch's committed history is an ancestor of main; the only off-main object is one ORPHAN-SAVE WIP commit (2547c060) holding 20 rev-dialect files. All 20 blobs are in main's history: 9 == main's TIP, 11 landed then further refactored, 0 never on main. Every one traces to a commit ON MAIN named fix(DY-1) -- 8d5927c3 (batch 1), 009f7490 (batch 2), 40abb376 (rev STORAGE CLASS). The census's prior (matches laneDI1's family) named the wrong family: this is lane DY-1's OWN landed work. DO NOT LAND: the snapshot predates f278d4d7 wave4 (+350 matched/+0.900pp), 044ffc1a and 7f54a1e6 (UIFontImporter Load and SyncProperty to 100%), so merging it would REVERT them.",
+   "method": "blob-in-main-history over all 20 WIP blobs + per-file attribution to the main commit holding each blob + reverse-direction control (branch-only 181 lines vs main-only 305)",
    "orphan_save_wip": true,
-   "wip_novel_lines": 47
+   "wip_novel_lines": 181,
+   "wip_main_only_lines": 305,
+   "wip_blobs_never_in_main_history": 0,
+   "do_not_land": true
   }
  ]
 }
