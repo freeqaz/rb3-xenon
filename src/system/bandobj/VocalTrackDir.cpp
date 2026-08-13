@@ -624,7 +624,11 @@ void VocalTrackDir::SetStreakPct(float f) {
         mStreakMeter->SetWipe(f);
 }
 
-void VocalTrackDir::SetEnableVocalsOptions(bool) {}
+void VocalTrackDir::SetEnableVocalsOptions(bool b) {
+    mEnableVocalsOptions = b;
+    if (!b)
+        mVocalistVolume->SetShowing(false);
+}
 
 void VocalTrackDir::ShowPhraseFeedback(int i1, int i2, int i3, bool b) {
     int n = mStreakMeter->NumActiveParts();
