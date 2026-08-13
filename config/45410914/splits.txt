@@ -207,7 +207,6 @@ RockCentral.cpp:
 	.text       start:0x823F0FC0 end:0x823F1010
 	.text       start:0x823F1028 end:0x823F1064
 	.text       start:0x823F2688 end:0x823F2898
-	.text       start:0x824361A0 end:0x824361DC
 	.text       start:0x8249B700 end:0x8249B980
 	.text       start:0x824F64D0 end:0x824F6528
 	.text       start:0x824F6550 end:0x824F6628
@@ -1852,7 +1851,6 @@ StringTable.cpp:
 	.pdata      start:0x822420D8 end:0x822420E0
 	.pdata      start:0x82242748 end:0x82242790
 	.pdata      start:0x82242790 end:0x82242808
-	.text       start:0x8243833C end:0x82438620
 	.text       start:0x827C2780 end:0x827C28D4
 	.text       start:0x827C8C88 end:0x827C9180
 	.text       start:0x827C918C end:0x827C97C8
@@ -5016,6 +5014,7 @@ BaseMaterial.cpp:
 	.text       start:0x822D57F8 end:0x822D5828
 	.text       start:0x82435520 end:0x82435528
 	.text       start:0x82435528 end:0x8243619C
+	.text       start:0x8243833C end:0x82438620
 	.text       start:0x8276D778 end:0x8276D7A0
 	.text       start:0x8276D7C0 end:0x8276D7E8
 	.text       start:0x8276D808 end:0x8276D858
@@ -5749,6 +5748,7 @@ Mat.cpp:
 	.pdata      start:0x8220ED28 end:0x8220ED50
 	.pdata      start:0x8221C160 end:0x8221C168
 	.pdata      start:0x82228218 end:0x82228228
+	.text       start:0x824361A0 end:0x824361DC
 	.text       start:0x824361E0 end:0x82436278
 	.text       start:0x82438138 end:0x824382D4
 	.text       start:0x82466080 end:0x82466298
