@@ -431,6 +431,15 @@ void StorePanel::EnumerateOffers(bool b) {
     TheUI->Handle(msg, false);
 }
 
+// Retail fn_827B4AE0: `ld r11,0x10(r3); ld r10,0x30(r4); cmpld` -- a 64-bit
+// compare of EnumProduct's offer id against StorePurchaseable::songID (0x30).
+// NOTE 0x10, not the `// 0x08` StoreEnumeration.h annotates mOfferID with: a
+// String is 0xc bytes, so the u64 aligns up to 0x10. The declaration order
+// already produces that; only the comment is stale.
+bool operator==(const EnumProduct &product, const StorePurchaseable &purchaseable) {
+    return product.mOfferID == purchaseable.songID;
+}
+
 int StorePanel::UpdateOffers(std::list<EnumProduct> const &enumList, bool arg) {
     std::vector<StoreOffer *> *offers = arg ? &mPendingOffers : &mOffers;
 
