@@ -533,7 +533,13 @@ BEGIN_HANDLERS(LocalBandUser)
     HANDLE_EXPR(connected_controller_type, ConnectedControllerType())
     HANDLE_EXPR(connected_controller_sym, ControllerTypeToSym(ConnectedControllerType()))
     HANDLE_ACTION(set_contributes_song_progress, unkc = _msg->Int(2))
-    HANDLE_EXPR(has_as_friend, (_msg->Obj<BandUser>(2), 1))
+    // RB3-360 divergence from the rb3-Wii oracle: the Wii build stubs this to a
+    // constant 1 (`(_msg->Obj<BandUser>(2), 1)`) because it has no Xbox friends
+    // API. Retail calls the real thing -- target emits `subi r11, r27, 0x28` /
+    // `mr r4, r3` / `mr r3, r11` / `bl HasAsFriend` where the stub emits a bare
+    // `li r11, 0x1`. LocalBandUser::HasAsFriend (XUserAreUsersFriends) was
+    // already ported here but had NO callers, which is the corroborating tell.
+    HANDLE_EXPR(has_as_friend, HasAsFriend(_msg->Obj<BandUser>(2)))
     HANDLE_SUPERCLASS(LocalUser)
     HANDLE_SUPERCLASS(BandUser)
     HANDLE_CHECK(0x3CC)
