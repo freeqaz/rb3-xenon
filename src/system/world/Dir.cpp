@@ -45,7 +45,7 @@ WorldDir::WorldDir()
     // Retail ctor 0x824BC930 tail: per-instance glow mat (New<RndMat> +
     // SetBlend/SetZMode/SetPreLit inlined), then zero deltas.
     mGlowMat = Hmx::Object::New<RndMat>();
-    mGlowMat->SetBlend(BaseMaterial::kBlendSrcAlpha);
+    mGlowMat->SetBlend(RndMat::kBlendSrcAlpha);
     mGlowMat->SetZMode(kZModeDisable);
     mGlowMat->SetPreLit(true);
     ClearDeltas();

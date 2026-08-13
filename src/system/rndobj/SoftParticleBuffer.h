@@ -17,7 +17,7 @@ public:
     virtual const char *GetProcType() { return "SoftParticleBuffer"; }
 
     NEW_OBJ(RndSoftParticleBuffer)
-    void Queue(RndDrawable *, BaseMaterial::Blend);
+    void Queue(RndDrawable *, RndMat::Blend);
 
 private:
     void AllocateData(unsigned int, unsigned int, unsigned int);

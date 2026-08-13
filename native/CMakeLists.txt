@@ -34,6 +34,29 @@ set(ATOMIC_COMPAT_FLAGS
     -D__GCC_ATOMIC_LLONG_LOCK_FREE=2
     -D__GCC_ATOMIC_POINTER_LOCK_FREE=2
 )
+
+# --- TEMPORARY: BaseMaterial -> RndMat compatibility for the shared engine ------
+# RB3-360 retail has ONE material class, RndMat, deriving directly from Hmx::Object;
+# the BaseMaterial/RndMat split was a DC3-era refactor. Lane BASEMAT-1 settled that
+# on retail bytes and BASEMAT-2 merged the two classes in src/system/rndobj.
+#
+# ../milo-native-engine still spells the class BaseMaterial in 4 files
+# (platform/MaterialSetup.{h,cpp}, platform/UiRenderHeuristics.h, gfx/ShadowPass.cpp,
+# platform/Rnd_Wgpu.cpp). Per CLAUDE.md ONLY THE COORDINATOR changes that repo and
+# bumps MILO_ENGINE_PIN, so this lane files the rename as an engine change request
+# and bridges it here instead.
+#
+# ⚠ This is a compile definition, NOT a header typedef, on purpose:
+# MaterialSetup.h forward-declares `class BaseMaterial;` and is included BEFORE
+# rndobj/BaseMaterial.h, so a typedef would collide and a header #define would be
+# include-order dependent. A token rename is order-independent. Verified safe: every
+# occurrence of `BaseMaterial` in the engine is the class (zero non-class tokens),
+# and the only two functions taking RndMat*/BaseMaterial* have DIFFERENT names
+# (BuildMaterialParams vs BuildPassMaterialParams), so no overload collapses.
+#
+# ⚠ ZERO effect on the X360 match build, which never sees this file and carries no
+# /D at all. DELETE THIS once the engine rename lands and the pin is bumped.
+add_compile_definitions(BaseMaterial=RndMat)
 # --- Diagnostics policy ------------------------------------------------------
 # This build used to pass a blanket `-w`. The native build is the ONLY instrument
 # in this project that LINKS AND RUNS the engine (the X360 match build compiles

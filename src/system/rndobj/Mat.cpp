@@ -50,24 +50,23 @@ namespace {
     }
 }
 
-// RndMat adds no instance members in RB3-360 retail (sizeof == sizeof(BaseMaterial)
-// == 396); the DC3 MetaMaterial ownership block is gone. See rndobj/Mat.h.
-RndMat::RndMat() {}
-
+// RndMat's ctor now lives in rndobj/BaseMaterial.cpp with the rest of the merged
+// class (retail has ONE material class; see rndobj/BaseMaterial.h).
 RndMat::~RndMat() {}
 
-// RB3-360 retail carries the allowed_next_pass / allowed_normal_map handlers on
-// RndMat itself and chains straight to Hmx::Object -- it does NOT go through
-// BaseMaterial::Handle. DC3 (newer engine) hoisted them into BaseMaterial and
-// added an is_default handler; our src/system is a verbatim DC3 copy, so we
-// inherited that refactor. Adjudicated on retail bytes, not on either oracle:
-// fn_824B27C8 (RndMat::Handle, 412 B) builds exactly two Symbols, at
-// 0x82065658 = "allowed_next_pass" and 0x82063C20 = "allowed_normal_map", then
-// tail-calls ?Handle@Object@Hmx@@. "is_default", "get_metamats" and
-// "prop_is_hidden" appear ZERO times anywhere in orig/45410914/band.exe, so
-// DC3's other four handlers postdate RB3. rb3-Wii agrees exactly.
-// The bodies stay on BaseMaterial (MetaMaterial also derives from it and does
-// need BaseMaterial::Handle); RndMat inherits them.
+// RB3-360 retail carries the allowed_next_pass / allowed_normal_map handlers on the
+// material class itself and chains straight to Hmx::Object. DC3 (newer engine)
+// hoisted them into a BaseMaterial base and added an is_default handler; our
+// src/system is a verbatim DC3 copy, so we inherited that refactor. Adjudicated on
+// retail bytes, not on either oracle: fn_824B27C8 (Handle, 412 B) builds exactly two
+// Symbols, at 0x82065658 = "allowed_next_pass" and 0x82063C20 = "allowed_normal_map",
+// then tail-calls ?Handle@Object@Hmx@@. "is_default", "get_metamats" and
+// "prop_is_hidden" appear ZERO times anywhere in orig/45410914/band.exe, so DC3's
+// other four handlers postdate RB3. rb3-Wii agrees exactly.
+// This is the ONE Handle of the merged class, and it is deliberately here rather
+// than in BaseMaterial.cpp: retail's Handle is pinned at 0x82438138, inside Mat.cpp's
+// .text span. The OnAllowedNextPass / OnAllowedNormalMap bodies stay in
+// BaseMaterial.cpp, which this file is scatter-included into.
 BEGIN_HANDLERS(RndMat)
     HANDLE(allowed_next_pass, OnAllowedNextPass)
     HANDLE(allowed_normal_map, OnAllowedNormalMap)
@@ -236,54 +235,34 @@ BEGIN_PROPSYNCS(RndMat)
     SYNC_MAT_PROP(world_projection_start_blend, mWorldProjectionStartBlend, 2)
     SYNC_MAT_PROP(world_projection_end_blend, mWorldProjectionEndBlend, 2)
 #endif
-    SYNC_SUPERCLASS(BaseMaterial)
+    SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 
-BEGIN_SAVES(RndMat)
-    SAVE_REVS(0x46, 0)
-    SAVE_SUPERCLASS(BaseMaterial)
-END_SAVES
-
-BEGIN_COPYS(RndMat)
-    COPY_SUPERCLASS(BaseMaterial)
-    CREATE_COPY(RndMat)
-    BEGIN_COPYING_MEMBERS
-        if (ty != kCopyFromMax) {
-            COPY_MEMBER(mShaderOptions)
-            COPY_MEMBER(mColorModFlags)
-            COPY_MEMBER(mColorMod)
-        }
-        mDirty = 3;
-    END_COPYING_MEMBERS
-END_COPYS
-
-INIT_REVS(0x46, 0)
-
-BEGIN_LOADS(RndMat)
-    LOAD_REVS(bs)
-    ASSERT_REVS(0x46, 0)
-    int minVer = 0x19;
-    MILO_ASSERT_FMT(
-        d.rev >= minVer,
-        "%s can't load old %s version %d < %d.  Use RB2 Milo to load.",
-        PathName(this),
-        ClassName(),
-        d.rev,
-        minVer
-    );
-    mDirty = 3;
-    ResetColors(mColorMod, 3);
-    if (d.rev < 0x45) {
-        LoadOld(d);
-    } else {
-        BaseMaterial::Load(d.stream);
-    }
-END_LOADS
+// ⛔ The DC3 rev-0x46 Save/Copy/Load layer that used to sit here is DELETED with the
+// BaseMaterial merge. It was the derived half of a two-class split retail does not
+// have, and each of its three members had a retail counterpart proving it surplus:
+//
+//   Save  -- retail's ONE material Save is fn_82435DC0 (vtable slot 8), 988 B,
+//            byte-exact at mpn/fuzzy 100 against the rev-0x44 body now in
+//            BaseMaterial.cpp. A rev-0x46 wrapper writing a second rev word has no
+//            retail counterpart.
+//   Load  -- retail's ONE material Load is fn_82438F40. It reads the rev EXACTLY
+//            ONCE and then loads members inline; there is no second rev read, no
+//            minVer assert and no out-of-line LoadOld call. Deleting this layer with
+//            Save keeps the pair symmetric on rev 0x44.
+//   Copy  -- its three COPY_MEMBERs (mShaderOptions / mColorModFlags / mColorMod)
+//            moved into the merged Copy in BaseMaterial.cpp, along with mDirty = 3.
+//
+// ⚠ NOT reconstructed: retail's Load INLINES an old-version path (its tail is the
+// mRefractEnabled ? *= 0.15f : = 0 code that our RndMat::LoadOld still ends with).
+// RndMat::LoadOld is therefore kept but unreferenced. fn_82438F40 is unnamed in
+// scripts/target_symbol_map.json, so NO instrument scores a reconstruction of it --
+// that needs its own lane, adjudicating all 578 instructions on retail bytes.
 
 void RndMat::Init() {
     REGISTER_OBJ_FACTORY(RndMat);
     RndMat *mat = Hmx::Object::New<RndMat>();
-    BaseMaterial::SetDefaultMat(mat);
+    SetDefaultMat(mat);
     RELEASE(sMetaMaterials);
     sMetaMaterials = LoadMetaMaterials();
 #ifdef HX_NATIVE

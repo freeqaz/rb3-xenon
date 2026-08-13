@@ -1317,8 +1317,8 @@ void OutfitConfig::Mats(std::list<RndMat *> &list, bool allocTempMats) {
                 // pointer and emits 2x lwz/stw instead. A named local gives
                 // it a stack slot whose 8-byte alignment it knows, so the
                 // copy folds to ld/std. This is NOT a struct-alignment issue:
-                // retail's sizeof(BaseMaterial) is 0x18c (proven by
-                // BaseMaterial::NewObject's `li r3,0x18c`), so MatShaderOptions
+                // retail's sizeof(RndMat) is 0x18c (proven by
+                // RndMat::NewObject's `li r3,0x18c`), so MatShaderOptions
                 // is align-4 in retail exactly as it is here. Every other
                 // GetDefaultMatShaderOpts caller already uses a named local.
                 MatShaderOptions opts = GetDefaultMatShaderOpts(mesh, it->mMat);

@@ -132,12 +132,27 @@ struct MatPerfSettings {
     bool mPS3ForceTrilinear;
 };
 
-// size 0x1f8
-class BaseMaterial : public Hmx::Object {
+class MetaMaterial;
+
+// RB3-360 retail has ONE material class, RndMat, deriving directly from
+// Hmx::Object -- the BaseMaterial/RndMat split is a DC3-era refactor we inherited
+// with src/system. Settled on retail bytes by lane BASEMAT-1 and merged by
+// BASEMAT-2; see docs/decomp/basematerial-is-a-dc3-refactor-2026-08-13.md.
+//
+// The class lives in BaseMaterial.h (rather than Mat.h) purely because
+// BaseMaterial.cpp is the root of the decomp unit that scatter-includes Mat.cpp
+// and carries retail's material Save; the FILE names are unit-boundary artifacts
+// and no longer name a class. Moving them would churn splits.txt, which another
+// lane owns.
+class RndMat : public Hmx::Object {
     friend class NgLight;
     friend class NgSpotlightDrawer;
 
 public:
+    enum PropDisplay {
+        kPropDisplayHidden = 0,
+        kPropDisplayReadOnly = 1
+    };
     enum ColorModFlags {
         kColorModNone = 0,
         kColorModAlphaPack = 1,
@@ -174,29 +189,39 @@ public:
         kDarken = 10
     };
 
-    friend void SetColorWriteMask(const struct ShaderOptions &, class RndMat *);
-    friend void CheckDistortion(class RndMat *);
-    friend void CheckDistortionOpts(class RndMat *, struct ShaderOptions &);
+    friend void SetColorWriteMask(const struct ShaderOptions &, RndMat *);
+    friend void CheckDistortion(RndMat *);
+    friend void CheckDistortionOpts(RndMat *, struct ShaderOptions &);
 
-    virtual ~BaseMaterial() {}
-    OBJ_CLASSNAME(BaseMaterial);
-    OBJ_SET_TYPE(BaseMaterial);
+    virtual ~RndMat();
+    OBJ_CLASSNAME(Mat);
+    OBJ_SET_TYPE(Mat);
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
 
+    // Tag 0x3C (BaseMaterial's), NOT the DC3 RndMat's 69: retail's material factory
+    // ?NewObject@...@0x8240f5d0 pairs at mpn 100 with the 0x3C-tagged allocation.
     OBJ_MEM_OVERLOAD(0x3C);
-    NEW_OBJ(BaseMaterial)
-    static void Init() { REGISTER_OBJ_FACTORY(BaseMaterial) }
+    NEW_OBJ(RndMat)
+
+    static void Init();
+    static void Terminate();
+    static void ReloadMetaMaterials();
+    static void UpdateAllMatPropertiesFromMetaMat(ObjectDir *);
+    static void ReloadAndUpdateMat(ObjectDir *dir) {
+        ReloadMetaMaterials();
+        UpdateAllMatPropertiesFromMetaMat(dir);
+    }
 
     const DataNode *GetDefaultPropVal(Symbol);
-    BaseMaterial *NextPass() const { return mNextPass; }
+    RndMat *NextPass() const { return mNextPass; }
     RndTex *GetDiffuseTex() const { return mDiffuseTex; }
     RndTex *NormalMap() const { return mNormalMap; }
     ZMode GetZMode() const { return mZMode; }
-    bool IsNextPass(BaseMaterial *m);
+    bool IsNextPass(RndMat *m);
     const Transform &TexXfm() const { return mTexXfm; }
     Transform &TexXfm() { return mTexXfm; }
     TexGen GetTexGen() const { return mTexGen; }
@@ -210,9 +235,6 @@ public:
     bool Prelit() const { return mPrelit; }
     Blend GetBlend() const { return mBlend; }
     Cull GetCull() const { return (Cull)mCull; }
-#ifdef HX_NATIVE
-    void SetCull(Cull c) { mCull = (unsigned char)c; }
-#endif
     StencilMode GetStencil() const { return mStencilMode; }
     bool GetAlphaCut() const { return mAlphaCut; }
     bool GetAlphaWrite() const { return mAlphaWrite; }
@@ -245,15 +267,114 @@ public:
     bool GetRecvPointCubeTex() const { return mPerfSettings.mRecvPointCubeTex; }
     RndFur* GetFur() const { return mFur; }
 
-protected:
-    BaseMaterial();
-    bool PropValDifferent(Symbol, BaseMaterial *);
+    bool GetRefractEnabled(bool bypass_frame_check);
+    float GetRefractStrength();
+    RndTex *GetRefractNormalMap();
+    void SetZMode(ZMode mode) {
+        mZMode = mode;
+        mDirty |= 2;
+    }
+    void SetTexWrap(TexWrap wrap) {
+        mTexWrap = wrap;
+        mDirty |= 2;
+    }
+    void SetBlend(Blend blend) {
+        mBlend = blend;
+        mDirty |= 2;
+    }
+    void SetTexGen(TexGen gen) {
+        mTexGen = gen;
+        mDirty |= 2;
+    }
+    void SetAlphaWrite(bool write) {
+        mAlphaWrite = write;
+        mDirty |= 2;
+    }
+    void SetAlphaCut(bool cut) {
+        mAlphaCut = cut;
+        mDirty |= 2;
+    }
+    void SetUseEnv(bool use_env) {
+        mUseEnviron = use_env;
+        mDirty |= 2;
+    }
+    void SetPreLit(bool lit) {
+        mPrelit = lit;
+        mDirty |= 2;
+    }
+    void SetAlphaThreshold(int thresh) { mAlphaThreshold = thresh; }
+    void SetPerPixelLit(bool lit) {
+        mPerPixelLit = lit;
+        mDirty |= 2;
+    }
+    void SetPointLights(bool lit) { mPointLights = lit; }
+    void SetColor(const Hmx::Color &col) {
+        mColor.Set(col.red, col.green, col.blue);
+        mDirty |= 1;
+    }
+    void SetColor(float r, float g, float b) {
+        mColor.Set(r, g, b);
+        mDirty |= 1;
+    }
+    void SetAlpha(float a) {
+        mColor.alpha = a;
+        mDirty |= 1;
+    }
+    void SetShaderOpts(const MatShaderOptions &opts) { mShaderOptions = opts; }
+    void SetTexXfm(const Transform &xfm) {
+        mTexXfm = xfm;
+        mDirty |= 2;
+    }
+    void SetDiffuseTex(RndTex *tex) {
+        mDiffuseTex = tex;
+        mDirty |= 2;
+    }
+    void SetNormalMap(RndTex *tex) {
+        mNormalMap = tex;
+        mDirty |= 2;
+    }
+    void SetCull(Cull cull) {
+        mCull = cull;
+        mDirty |= 2;
+    }
+    bool Dirty() const { return mDirty; }
+    void MarkDirty(int flags) { mDirty |= flags; }
 
-    DataNode OnIsDefaultPropVal(const DataArray *);
+    void SetColorMod(const Hmx::Color &, int);
+    void SetSpecularMap(RndTex *);
+    void SetMetaMat(MetaMaterial *, bool);
+    MetaMaterial *CreateMetaMaterial(bool);
+    // RB3-360 retail has no per-instance MetaMaterial (lane MAT-1); kept as a symbol
+    // so rndobj/Utl.cpp and rndobj/Shader.cpp compile and the native engine links.
+    MetaMaterial *GetMetaMaterial() const { return nullptr; }
+    int GetColorModFlags() const { return mColorModFlags; }
+    void SetColorModFlags(ColorModFlags flags) {
+        mColorModFlags = flags;
+        mDirty |= 2;
+    }
+
+protected:
+    RndMat();
+    bool PropValDifferent(Symbol, RndMat *);
+
     DataNode OnAllowedNextPass(const DataArray *);
     DataNode OnAllowedNormalMap(const DataArray *);
 
-    static void SetDefaultMat(BaseMaterial *);
+    bool IsEditable(Symbol);
+    bool OnGetPropertyDisplay(PropDisplay, Symbol);
+    void UpdatePropertiesFromMetaMat();
+    // Unreferenced since the DC3 rev-0x46 Load layer was removed (retail's Load
+    // reads ONE rev and inlines its own old-version path). Kept, not deleted --
+    // reconstructing retail's inlined old path is a separate lane's job.
+    void LoadOld(BinStreamRev &);
+
+    DataNode OnGetMetaMaterials(const DataArray *);
+    DataNode OnGetMetaMaterialsDir(const DataArray *);
+
+    static ObjectDir *sMetaMaterials;
+    static ObjectDir *LoadMetaMaterials();
+
+    static void SetDefaultMat(RndMat *);
 
     // ==== Retail RB3-360 layout, 0x28..0x18c (BaseMaterial size 0x18c). ====
     // Derived byte-exact from ctor fn_82425998 + Save@BaseMaterial (0x824233C0).
@@ -287,7 +408,7 @@ protected:
     /** "Alpha level below which gets cut". Ranges from 0 to 255. */
     int mAlphaThreshold; // 0xa0
     /** "Next material for object" */
-    ObjPtr<BaseMaterial> mNextPass; // 0xa4
+    ObjPtr<RndMat> mNextPass; // 0xa4
     /** "Multiplier to apply to emission" */
     float mEmissiveMultiplier; // 0xb0
     /** "Specular color." */
@@ -352,7 +473,8 @@ protected:
     MatPerfSettings mPerfSettings; // 0x17c
     MatShaderOptions mShaderOptions; // 0x180
     int mDirty; // 0x188
-    // BaseMaterial ends at 0x18c in retail RB3-360.
+    // RndMat ends at 0x18c (396) in retail RB3-360 -- and adds NO members beyond
+    // this point, which is why the BaseMaterial merge is layout-neutral.
 
 #ifdef RB3_DC3_MAT
     // DC3-only members — absent from retail RB3-360 (verified: no ctor init slot,
@@ -369,4 +491,5 @@ protected:
 #endif
 };
 
-BaseMaterial::Blend CheckBlendMode(BaseMaterial::Blend b, BaseMaterial *);
+RndMat::Blend CheckBlendMode(RndMat::Blend b, RndMat *);
+RndMat *LookupOrCreateMat(const char *, ObjectDir *);

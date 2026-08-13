@@ -599,7 +599,7 @@ void StreamRenderer::DrawToTexture() {
 
         RndMat *blurMat = TheShaderMgr.GetWork();
         blurMat->SetDiffuseTex(nullptr);
-        blurMat->SetBlend(BaseMaterial::kBlendSrc);
+        blurMat->SetBlend(RndMat::kBlendSrc);
         blurMat->SetZMode(kZModeDisable);
         blurMat->MarkDirty(2);
 

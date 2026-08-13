@@ -691,7 +691,7 @@ RndMesh *WorldCrowd::BuildBillboard(Character *c, float height) {
     return mesh;
 }
 
-void SetMatColorFlags(ObjPtrList<RndMat, ObjectDir> &, BaseMaterial::ColorModFlags, std::vector<Hmx::Color> *);
+void SetMatColorFlags(ObjPtrList<RndMat, ObjectDir> &, RndMat::ColorModFlags, std::vector<Hmx::Color> *);
 
 void WorldCrowd::Draw3DChars() {
     if (!Crowd3DExists()) return;
@@ -998,7 +998,7 @@ void WorldCrowd::Mats(std::list<RndMat *> &mats, bool additive) {
             for (std::list<CharData>::iterator charIt = mCharacters.begin();
                  charIt != mCharacters.end(); ++charIt) {
                 if (charIt->mDef.mUseRandomColor) {
-                    SetMatColorFlags(charIt->mDef.mMats, (BaseMaterial::ColorModFlags)colorIdx, &colors);
+                    SetMatColorFlags(charIt->mDef.mMats, (RndMat::ColorModFlags)colorIdx, &colors);
 
                     for (ObjPtrList<RndMat>::iterator matIt = charIt->mDef.mMats.begin();
                          matIt != charIt->mDef.mMats.end(); ++matIt) {
@@ -1493,12 +1493,12 @@ void WorldCrowd::DrawShowing() {
 
 #pragma pop_macro("MILO_NOTIFY_ONCE")
 
-void SetMatColorFlags(ObjPtrList<RndMat, ObjectDir> &matList, BaseMaterial::ColorModFlags flags,
+void SetMatColorFlags(ObjPtrList<RndMat, ObjectDir> &matList, RndMat::ColorModFlags flags,
                       std::vector<Hmx::Color> *modulate) {
     FOREACH (it, matList) {
         (*it)->SetColorModFlags(flags);
         if (modulate) {
-            MILO_ASSERT(BaseMaterial::kColorModNum == modulate->size(), 0x33b);
+            MILO_ASSERT(RndMat::kColorModNum == modulate->size(), 0x33b);
             for (int i = 0; i < modulate->size(); i++) {
                 (*it)->SetColorMod(modulate->at(i), i);
             }

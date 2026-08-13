@@ -555,7 +555,7 @@ void NgSpotlightDrawer::BlurRT(float amountX, float amountY) {
     RndTex *srTex = SR().unk8;
     workMat->SetDiffuseTex(srTex);
     workMat->SetZMode(kZModeDisable);
-    workMat->SetBlend(BaseMaterial::kBlendSrc);
+    workMat->SetBlend(RndMat::kBlendSrc);
     workMat->SetTexWrap(kTexWrapClamp);
 
     TheNgRnd.DrawRect(rect, workMat, (ShaderType)1, Hmx::Color(), 0, 0);
