@@ -641,9 +641,15 @@ Symbol Campaign::GetNextMajorLevelForMetaScore(int score) {
 void Campaign::UpdateProgressMeter(MeterDisplay *i_pMeter, LocalBandUser *i_pUser) {
     MILO_ASSERT(i_pUser, 0x42C);
     MILO_ASSERT(i_pMeter, 0x42D);
-    int current = GetCurrentPointsForNextMajorCampaignLevelForUser(i_pUser);
+    // Retail calls Total FIRST and passes it as SetValues' first argument:
+    // the two bl targets in Campaign::Handle (this fn is inlined there) are
+    // exactly transposed against ours, and the surrounding register flow
+    // (bl A / mr r27,r3 / bl B / mr r4,r27 / mr r5,r3) is byte-identical, so
+    // r4 == the FIRST call's result. MeterDisplay::SetValues(int,int) has
+    // unnamed params and no body in-tree, so retail's order is the authority.
     int total = GetTotalPointsForNextMajorCampaignLevelForUser(i_pUser);
-    i_pMeter->SetValues(current, total);
+    int current = GetCurrentPointsForNextMajorCampaignLevelForUser(i_pUser);
+    i_pMeter->SetValues(total, current);
 }
 
 void Campaign::UpdatePrimaryProgressMeter(MeterDisplay *i_pMeter) {
