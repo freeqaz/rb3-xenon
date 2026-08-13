@@ -575,18 +575,54 @@ and passes" is worse than one that crashes. When a render or gate result looks
 right, confirm it rendered what you asked for — cell name in the log, not just
 `rc=0`.
 
-### ⚠ `ab_measure --revert` leaves the reverted patch in the worktree
+### ✅ `ab_measure` now hands the worktree back exactly as it found it — FIXED 2026-08-13
 
-X11 hit this and nearly mis-reported a regression. After an A/B revert,
-**everything you build next silently lacks the fix** — and the resulting frame
-comes back byte-identical to the pre-fix baseline, which reads exactly like
-"my second change undid my first". It hadn't.
+**This section used to say "`--revert` leaves the reverted patch in the
+worktree" and framed it as a `--revert` quirk. It was ONE CELL of a much
+broader defect, and the fix (lane TOOL-AB) covers all of them.** Measured by
+executing the real tool over 12 mode × exit-path cells: **8 left the tree
+different from how the run found it**, and three of those **silently deleted
+the lane's own uncommitted work**:
 
-Re-apply (or re-check `git status`) after every `--revert`, and when a frame
+| mode | success | success `--restore` | refusal before apply | refusal after apply | Ctrl-C |
+|---|---|---|---|---|---|
+| `--patch` | left **PATCHED** | restored | clean | left patched | left patched |
+| `--pick` | left **PICKED** | restored | clean | left applied | left applied |
+| `--revert` | left **REVERTED** (X11, EE2-A) | restored | clean | left reverted | left reverted |
+| `--from-dirty` | preserved | ⛔ **WORK DELETED** (EE2-B) | ⛔ **WORK DELETED** (DTOR-A) | preserved | ⛔ **WORK DELETED** |
+
+⚠ Note the correction to the folklore: plain **`--patch` left the tree PATCHED,
+not unpatched**. The "green run, worktree held main's code with every fix
+stripped" report is the **`--from-dirty --restore`** cell — `--restore` was
+defined against the PATCH, and under `--from-dirty` the patch *is* your work.
+
+**Now:** the tree is restored on **every** exit path (success, refusal, Ctrl-C,
+unhandled exception), verified by re-reading the diff rather than by assuming
+the git commands worked, and the pre-run state is snapshotted to the run dir
+*before the first mutation* (the only recovery a SIGKILL can have). `--restore`
+is a deprecated no-op; **`--keep-applied`** opts out and prints a banner naming
+every file left modified. A restore *failure* is a loud banner, never a
+refusal — cleanup must not void a verdict already measured (lane CK-2's rule).
+
+Two adjacent defects fixed with it, both of the same disease — *the tool
+misrepresenting what it measured, silently*:
+
+- **Repeating `--patch`/`--pick`/`--revert` is now REFUSED.** argparse's
+  mutually-exclusive group fires only across *different* options, so repeating
+  the *same* one silently kept the **LAST** value: lane EE2-C passed three
+  `--revert` flags and got a confident number for **one** of them. Combine
+  them into a single patch and measure that.
+- **A staged index is now REFUSED under `--from-dirty`.** `git diff` does not
+  see staged hunks but `git checkout --` restores *from the index*, so a
+  half-staged file measured only the unstaged hunks **against a leg A silently
+  carrying the staged ones** — absent-vs-absent for half the change, rc=0,
+  clean verdict.
+
+The general lesson stands and generalises past this tool: when an artifact
 matches a baseline you did not expect it to match, **`cmp` against every
-candidate artifact, not just the one you assume you're comparing to** — that is
-what caught it. Same family as the "compare artifacts, not transcribed hashes"
-rule below.
+candidate, not just the one you assume you're comparing to** — that is what
+caught it. Same family as the "compare artifacts, not transcribed hashes" rule
+below.
 
 ### ⚠ Run the native gate before landing shared-`src/` changes
 
@@ -930,6 +966,12 @@ What it enforces — the manual steps survive here only as the explanation of
 - Default ruler = the ninja report edge (hard-coded `functionRelocDiffs=none`);
   `--name-check` adds the opt-in name_check ruler with its noise-floor warning
   (nc aggregate code% is build-unstable ~0.05pp).
+- ★ **The worktree is handed back exactly as it was found, on EVERY exit path**
+  (`--keep-applied` opts out, loudly). **ONE change per run** — a repeated
+  `--patch`/`--pick`/`--revert` is refused instead of silently measuring the
+  last one, and a **staged index** is refused under `--from-dirty`. See
+  "✅ `ab_measure` now hands the worktree back exactly as it found it" above
+  for the measured 12-cell matrix these replaced.
 
 Controls re-executed 2026-08-03 (lane DT-3), all on the live tree at
 `matched 43,694 / code% 39.466717 / 221 units at 100% of 1,023`: neutral 1-TU
