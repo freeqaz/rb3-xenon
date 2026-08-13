@@ -189,3 +189,30 @@ BEGIN_CUSTOM_PROPSYNC(BandPatchMesh::MeshPair)
     SYNC_PROP(mesh, o.mesh)
     SYNC_PROP(patches, o.patches)
 END_CUSTOM_PROPSYNC
+
+// Writers for the ObjVector<BandPatchMesh> that OutfitConfig::Save streams
+// (`bs << mPatches`). Retail HAS these -- OutfitConfig::Save's mPatches call
+// reaches a vector writer which must reach a BandPatchMesh element writer --
+// but neither is named in the map, so unlike the rest of this lane's work these
+// two bodies are NOT read off retail bytes.
+//
+// They mirror the operator>> family at the newest revision (BandPatchMesh's rev
+// ceiling is 4, per the reader's `can't load new version %d > %d` guard), which
+// is the same construction used for the OutfitConfig element writers. They are
+// unconstrained by the X360 metric -- objdiff masks the bl target -- and exist
+// because OutfitConfig::Save does not otherwise LINK in the native build. A
+// declaration alone was tried first and failed the native gate with exactly
+// this undefined reference.
+BinStream &operator<<(BinStream &bs, const BandPatchMesh::MeshPair &mp) {
+    bs << mp.mesh;
+    return bs;
+}
+
+BinStream &operator<<(BinStream &bs, const BandPatchMesh &mesh) {
+    bs << packRevs(0, 4);
+    bs << mesh.mSrc;
+    bs << mesh.mMeshes;
+    bs << mesh.mRenderTo;
+    bs << mesh.mCategory;
+    return bs;
+}

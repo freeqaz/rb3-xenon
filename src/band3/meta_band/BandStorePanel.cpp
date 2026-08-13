@@ -363,6 +363,46 @@ void BandStorePanel::Poll() {
     }
 }
 
+// Retail implements this on top of the base call; rb3-Wii has it as the bare
+// `return StorePanel::UpdateOffers(list, b);` we used to carry, character for
+// character, so the oracle could only ever confirm the stub. Read off retail
+// bytes at fn_82607438. Every structural claim below is checked against the
+// compiler's own layout, not against header comments:
+//   * this+0x3c = mOffers, this+0x48 = mPendingOffers, both vector<StoreOffer*>,
+//     selected by `b` with the same polarity StorePanel::UpdateOffers uses;
+//   * BandStoreOffer::mDemo @0xe0 and ::mUpgrade @0x120 -- retail's two
+//     `addi rN, r29, 0xe0 / 0x120`;
+//   * fn_827A6430 = StorePurchaseable::Exists() const;
+//   * fn_8282A0C8 = __RTDynamicCast, with the two RTTI type descriptors read
+//     out of .data as ".?AVStoreOffer@@" -> ".?AVBandStoreOffer@@";
+//   * the `bctrl` through vtable byte offset 0x68 is slot 26, which the layout
+//     report names StorePanel::UpdateFromEnumProduct -- whose (StorePurchaseable*,
+//     const EnumProduct*) signature is exactly the argument pair retail sets up.
+// The dynamic_cast result is deliberately NOT null-checked: retail does
+// `addi r31, r29, 0xe0` straight off the return value.
 int BandStorePanel::UpdateOffers(const std::list<EnumProduct> &list, bool b) {
-    return StorePanel::UpdateOffers(list, b);
+    int result = StorePanel::UpdateOffers(list, b);
+    if (result == kStoreErrorCacheNoSpace)
+        return result;
+    std::vector<StoreOffer *> &offers = b ? mPendingOffers : mOffers;
+    for (std::vector<StoreOffer *>::iterator it = offers.begin(); it != offers.end();
+         ++it) {
+        BandStoreOffer *offer = dynamic_cast<BandStoreOffer *>(*it);
+        std::list<EnumProduct>::const_iterator e;
+        if (offer->mDemo.Exists()) {
+            e = std::find(list.begin(), list.end(), offer->mDemo);
+            if (e != list.end()) {
+                result = kStoreErrorSuccess;
+                UpdateFromEnumProduct(&offer->mDemo, &*e);
+            }
+        }
+        if (offer->mUpgrade.Exists()) {
+            e = std::find(list.begin(), list.end(), offer->mUpgrade);
+            if (e != list.end()) {
+                result = kStoreErrorSuccess;
+                UpdateFromEnumProduct(&offer->mUpgrade, &*e);
+            }
+        }
+    }
+    return result;
 }

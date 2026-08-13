@@ -29,7 +29,14 @@ void UGCPurchasePanel::Enter() {
     mPurchaseState = 1;
 }
 
-void UGCPurchasePanel::Exit() { UIPanel::Exit(); }
+void UGCPurchasePanel::Exit() {
+    // The Wii oracle has this as a bare `UIPanel::Exit();` -- character-identical
+    // to what we had -- and structurally CANNOT contain this line: it is a 360-only
+    // XAM call. Retail's `li r3,2; bl __imp_XamBackgroundDownloadSetMode` says
+    // Exit restores AUTO, undoing the ALWAYS_ALLOW that Enter above sets.
+    XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_AUTO);
+    UIPanel::Exit();
+}
 
 void UGCPurchasePanel::Unload() {
     mUser = NULL;

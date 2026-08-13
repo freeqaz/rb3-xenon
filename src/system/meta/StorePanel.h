@@ -16,6 +16,15 @@
 #include "utl/Symbol.h"
 #include <list>
 
+// Retail fn_827B4AE0, inside StorePanel.s's pinned range -- so it belongs to
+// StorePanel.cpp, not to its caller. It exists because retail's
+// BandStorePanel::UpdateOffers reaches the enum list through
+// std::find(list.begin(), list.end(), <a StorePurchaseable>), which needs this
+// heterogeneous comparison. Declared here because this header is the only one
+// that already sees BOTH EnumProduct (StoreEnumeration.h) and StorePurchaseable
+// (StoreOffer.h).
+bool operator==(const EnumProduct &, const StorePurchaseable &);
+
 DECLARE_MESSAGE(MultipleItemsEnumCompleteMsg, "multiple_items_enum_complete")
 MultipleItemsEnumCompleteMsg(bool success, bool purchaseMade, int numOfferIDs, const String &offerID)
     : Message(Type(), success, purchaseMade, numOfferIDs, DataArrayPtr(), DataArrayPtr()) {}

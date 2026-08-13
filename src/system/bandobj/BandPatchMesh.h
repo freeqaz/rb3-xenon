@@ -118,3 +118,8 @@ public:
 bool PropSync(BandPatchMesh &, DataNode &, DataArray *, int, PropOp);
 
 BinStream &operator>>(BinStream &bs, BandPatchMesh &mesh);
+// Needed by OutfitConfig::Save (`bs << mPatches`). DEFINED in the .cpp, unlike
+// the operator>> above it: a declaration alone compiles for the X360 match
+// build but fails the NATIVE link, which actually resolves the symbol.
+BinStream &operator<<(BinStream &bs, const BandPatchMesh::MeshPair &mp);
+BinStream &operator<<(BinStream &bs, const BandPatchMesh &mesh);
