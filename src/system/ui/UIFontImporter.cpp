@@ -71,19 +71,34 @@ BEGIN_PROPSYNCS(UIFontImporter)
     SYNC_PROP(minus, mMinus)
     SYNC_PROP(font_name, mFontName)
     SYNC_PROP_MODIFY(font_pct_size, mFontPctSize, GenerateBitmapFilename())
+    // Retail writes the conversion OUT IN FULL here rather than calling the
+    // ConvertPctHeightToHeight{NG,OG} helpers above: the target open-codes
+    // `mFontPctSize * HEIGHT`, Round()'s `fcmpu` vs 0.0 + `fadds`/`fsubs` 0.5
+    // pair, `fctiwz`, and the `neg` for the unary minus. Our helper calls
+    // emitted a bare `bl ?ConvertPctHeightToHeightNG@@YAHM@Z` instead.
+    // (Marking the helpers `inline` was tried and measured INERT -- at /O1
+    // MSVC declines to inline a .cpp-level helper whose body has a branch.)
     SYNC_PROP_SET(
         font_point_size,
-        mLastGenWasNG ? ConvertPctHeightToHeightNG(mFontPctSize)
-                      : ConvertPctHeightToHeightOG(mFontPctSize),
+        mLastGenWasNG ? -Round(mFontPctSize * HEIGHT_HD)
+                      : -Round(mFontPctSize * HEIGHT_SD),
         mFontPctSize = mLastGenWasNG ? ConvertHeightNGToPctHeight(_val.Int())
                                      : ConvertHeightOGToPctHeight(_val.Int())
     )
     SYNC_PROP_SET(
         font_pixel_size,
-        mLastGenWasNG ? std::abs(ConvertPctHeightToHeightNG(mFontPctSize))
-                      : std::abs(ConvertPctHeightToHeightOG(mFontPctSize)),
-        mFontPctSize = mLastGenWasNG ? ConvertHeightNGToPctHeight(_val.Int())
-                                     : ConvertHeightOGToPctHeight(_val.Int())
+        mLastGenWasNG ? std::abs(-Round(mFontPctSize * HEIGHT_HD))
+                      : std::abs(-Round(mFontPctSize * HEIGHT_SD)),
+        // NOT ConvertHeight*ToPctHeight here. font_point_size's getter returns a
+        // NEGATIVE value (`-Round(...)`), so its setter negates on the way back
+        // and does use the helpers. font_pixel_size's getter is abs()'d, i.e.
+        // already positive, and retail's setter correspondingly has NO negation:
+        // the target sign-extends DataNode::Int() straight into the int->float
+        // conversion here, while the helper form emits a `neg r11, r3` first.
+        // The two setters are genuinely different expressions -- spelling both
+        // the same way leaves a stray `neg` on whichever one you got wrong.
+        mFontPctSize = mLastGenWasNG ? std::fabs(_val.Int() / HEIGHT_HD)
+                                     : std::fabs(_val.Int() / HEIGHT_SD)
     )
     // rb3-Wii oracle: RB3 has NO `weight` prop here -- it goes straight from
     // font_pixel_size to `bold`, whose getter is (mFontWeight > 400).
