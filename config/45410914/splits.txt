@@ -3943,11 +3943,13 @@ Text.cpp:
 	.text       start:0x82455508 end:0x82455928
 	.text       start:0x82455928 end:0x82455E90
 	.text       start:0x82455E90 end:0x82456190
+	.text       start:0x824568C0 end:0x824569F0
 	.text       start:0x82456CA4 end:0x82457060
 	.text       start:0x82457060 end:0x824575C8
+	.text       start:0x824575D0 end:0x82457680
 	.text       start:0x824576F8 end:0x82457790
-	.text       start:0x82457790 end:0x82457800
-	.text       start:0x82457EA0 end:0x82457EF0
+	.text       start:0x82457790 end:0x82457D18
+	.text       start:0x82457D98 end:0x82457EF0
 	.text       start:0x82457F70 end:0x82459820
 	.text       start:0x82459820 end:0x82459958
 	.text       start:0x82459958 end:0x82459B80
@@ -4223,10 +4225,10 @@ SkeletonClip.cpp:
 	.text       start:0x82456260 end:0x824562B0
 	.text       start:0x824562B0 end:0x82456378
 	.text       start:0x82456378 end:0x824563D8
-	.text       start:0x824564B8 end:0x82456A20
+	.text       start:0x824564B8 end:0x824568C0
+	.text       start:0x824569F0 end:0x82456A20
 	.text       start:0x82457680 end:0x824576F8
-	.text       start:0x82457800 end:0x82457D18
-	.text       start:0x82457D18 end:0x82457EA0
+	.text       start:0x82457D18 end:0x82457D98
 	.text       start:0x82457EF0 end:0x82457F70
 	.text       start:0x82703890 end:0x82703998
 	.text       start:0x82704058 end:0x827041A8
@@ -10239,7 +10241,7 @@ TourProgress.cpp:
 	.text       start:0x823641EC end:0x823643A4
 	.text       start:0x823643A8 end:0x823643E4
 	.text       start:0x823643E8 end:0x82364424
-	.text       start:0x824575C8 end:0x82457680
+	.text       start:0x824575C8 end:0x824575D0
 
 AccomplishmentPanel.cpp:
 	.pdata      start:0x821FB208 end:0x821FB220
