@@ -823,6 +823,144 @@ def _screen_thunk_this_reg():
     return s
 
 
+# ---------------------------------------------------------------------------
+# lane NEWOBJ-1: the ALLOCATION-SIZE IMMEDIATE discriminator.
+#
+# objdiff masks the constructor relocation, so NewObject-shaped rows pair almost
+# arbitrarily.  The `li r3, <sizeof>` allocation immediate is a PLAIN IMMEDIATE
+# and is NOT masked -- the first discriminator for the masked class that uses
+# the metric's OWN input rather than external RTTI/vtable evidence.
+#
+# Fixtures are inline retail bytes so this screen needs no band.exe and no
+# build artifacts: it can never SKIP.
+# ---------------------------------------------------------------------------
+
+# retail 0x8268b9a0 -- the row mapped UIPanel::NewObject.  PLAIN operator-new
+# form: `li r3, 0x108` is the FIRST call's argument.
+NEWOBJ_UIPANEL = bytes.fromhex(
+    "7d8802a69181fff8" "fbe1fff03be1ff90" "9421ff9038600108"
+    "48131939907f0050" "2803000041820010" "388000014bfffb1d" "48000008")
+
+# retail 0x824576f8 -- the row mapped SkeletonClip::NewObject.  TAGGED MemAlloc
+# form: a StaticClassName call comes FIRST and the size is re-materialised
+# AFTER it.  *** THIS FIXTURE IS THE POINT. ***  A decoder that stops at the
+# first bl reads this row as UNDECODED, which is how the first version of this
+# screen fell silent on 124 of 209 rows (59%) and looked like a thin population.
+NEWOBJ_SKELCLIP = bytes.fromhex(
+    "7d8802a69181fff8" "fbe1fff03be1ff90" "9421ff90387f0050"
+    "4befe05138800000" "386001c84836561d" "907f005428030000" "41820010")
+
+# retail 0x82355760 -- RndText::StaticClassName.  Allocates nothing.
+NEWOBJ_NOALLOC = bytes.fromhex(
+    "7d8802a6484d3af9" "3be1ff909421ff90" "3d4082cc3d6082cc" "7c7d1b783bcbe768")
+
+
+def _screen_newobj_size():
+    """Decoder power: can it read the allocation immediate out of BOTH forms?"""
+    import importlib.util
+    import pathlib
+    spec = importlib.util.spec_from_file_location(
+        "newobj_size_screen",
+        str(pathlib.Path(__file__).resolve().parent / "newobj_size_screen.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+
+    def detect(blob):
+        """-> the allocated size, or None.  Fires when a size is readable."""
+        for _tgt, size in mod.call_sites(blob, 0x82000000):
+            if size is not None:
+                return size
+        return None
+
+    s = Screen(
+        "newobj allocation-size immediate",
+        detect,
+        "the `li r3, <sizeof>` fed to operator new is UNMASKED, so it can "
+        "adjudicate a relocation-masked row against the compiler's sizeof",
+        source="tools/newobj_size_screen.py (call_sites)")
+    s.must_fire("plain operator-new form (UIPanel row)", NEWOBJ_UIPANEL,
+                expect=264,
+                note="0x108 -- the size is the FIRST call's argument here")
+    s.must_fire("TAGGED MemAlloc form (SkeletonClip row)", NEWOBJ_SKELCLIP,
+                expect=456,
+                note="0x1c8 -- the size is live only at the SECOND bl. A "
+                     "first-bl decoder returns None and reads 59% of the "
+                     "population as an empty vein.")
+    s.must_not_fire("a body that allocates nothing", NEWOBJ_NOALLOC,
+                    note="StaticClassName -- inventing a size here would "
+                         "manufacture findings")
+    def first_bl_only(blob):
+        """THE REAL DEFECT, not an exception: read only the FIRST call.
+
+        Note it still fires correctly on the plain operator-new fixture -- the
+        defect is INVISIBLE there.  It is the TAGGED fixture that exposes it,
+        which is exactly why both forms are registered.
+        """
+        sites = mod.call_sites(blob, 0x82000000)
+        return sites[0][1] if sites else None
+
+    s.defect("first-bl", "stop at the first bl -- the exact defect that read "
+                         "124 of 209 rows (59%) as undecoded",
+             first_bl_only)
+    return s
+
+
+def _screen_newobj_ancestor():
+    """*** SPECIFICITY: an INHERITED static names the BASE, not the derived
+    class. ***
+
+    This is the 'fires too MUCH' class (historical defect #4).  A naive reading
+    of 'retail's tag names a different class than the row' flags 32 rows, and
+    23 of them (71.9%) are inherited statics -- DxCam:RndCam tagging 'Cam',
+    NgSpotlightDrawer:SpotlightDrawer, NgMat:RndMat.  The check that makes it
+    sound is comparing retail's tag against OUR OWN COMPILER'S tag for the same
+    row, not against the row's class name.
+    """
+    def detect(row):
+        _row_class, our_tag, retail_tag = row
+        if not our_tag or not retail_tag:
+            return False
+        return our_tag != retail_tag
+
+    s = Screen(
+        "newobj tag-class ancestor check",
+        detect,
+        "a tag mismatch is a finding only when OUR compiler's expected tag "
+        "differs from retail's -- never merely because the tag is not the "
+        "row's own class name",
+        source="tools/newobj_size_screen.py (verdict FALSE_PAIRING_TAG)")
+    s.must_fire("genuine mismatch (AppMiniLeaderboardDisplay row)",
+                ("AppMiniLeaderboardDisplay", "UIComponent",
+                 "MiniLeaderboardDisplay"), expect=True)
+    s.must_fire("genuine mismatch (SkeletonClip row tags RndText)",
+                ("SkeletonClip", "SkeletonClip", "RndText"), expect=True)
+    s.must_not_fire("NgMat: RndMat == RndMat -- INHERITED, not a defect",
+                    ("NgMat", "RndMat", "RndMat"),
+                    note="the false positive I nearly reported; NgMat:public "
+                         "RndMat does not override StaticClassName")
+    s.must_not_fire("DxCam: RndCam == RndCam -- inherited",
+                    ("DxCam", "RndCam", "RndCam"))
+    s.must_not_fire("tag missing on one side proves nothing",
+                    ("Foo", None, "RndMat"))
+
+    def compare_to_row_name(row):
+        """THE REAL DEFECT: judge retail's tag against the ROW'S OWN class name.
+
+        This is the 'fires too MUCH' class. It flags NgMat (RndMat != NgMat)
+        even though an inherited static naming the base is CORRECT -- 23 of 32
+        flags (71.9%) are this. It is caught by the must_not_fire fixtures,
+        which is precisely why specificity fixtures exist.
+        """
+        row_class, _our_tag, retail_tag = row
+        return retail_tag is not None and retail_tag != row_class
+
+    s.defect("name-compare", "compare retail's tag against the ROW'S OWN class "
+                             "name instead of our compiler's expected tag -- "
+                             "71.9% false positives",
+             compare_to_row_name)
+    return s
+
+
 REGISTRY = [
     ("false_pairing", _screen_false_pairing, True),
     ("handler_parser", _screen_handler_parser, True),
@@ -830,6 +968,8 @@ REGISTRY = [
     ("vbase_lwz", _screen_vbase_lwz, False),
     ("thunk_this_reg", _screen_thunk_this_reg, False),
     ("bl_reachability", _screen_bl_reachability, True),
+    ("newobj_size", _screen_newobj_size, False),
+    ("newobj_ancestor", _screen_newobj_ancestor, False),
 ]
 
 
