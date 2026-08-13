@@ -518,7 +518,23 @@ config.compilers_tag = "20250812"
 # documentation catching up, and it cannot force a re-split: load_build_config() drops
 # config.json only when the RECORDED version is older than the pin, and
 # 1.11.0 < 1.11.0 is false. It re-arms the gate for the next release.
-config.dtk_tag = "v1.11.0"  # jeff 30f7511 (fork of decomp-toolkit)
+#
+# 1.11.0 -> 1.12.0: the intra-function relocation-addend fix. Before it, a
+# relocation whose anchor symbol was the ENCLOSING function lost its addend, so
+# every self-referential site inside a function pointed at the function's first
+# byte instead of its real target; and the splitter minted spurious PpcRel14
+# records for branches that never left their own function. Both change SECTION
+# CONTENTS. Census on this tree's TARGET objects (jeff
+# docs/sessions/2026-08-12-splitter-reloc-addend/findings/T6-selfref-census.md):
+# 262 self-referential relocation sites across 110 functions, of which **226
+# sites / 101 functions are the defect** and 36 / 9 are legitimate zero-addend
+# references. So RB3-XENON IS AFFECTED -- an earlier claim that it was not is
+# retracted. Same shape as the 1.11.0 bump above: build/45410914/config.json
+# already records 1.12.0, because the shared jeff binary was rebuilt (c0cc506,
+# 2026-08-13) and this tree re-split against it, so this line is documentation
+# catching up and cannot itself force a re-split. It re-arms the gate for the
+# next release.
+config.dtk_tag = "v1.12.0"  # jeff c0cc506 (fork of decomp-toolkit)
 config.objdiff_tag = "v4.2.2"  # freeqaz/objdiff fork release (linux-x86_64 asset)
 config.sjiswrap_tag = "v1.2.1"
 config.wibo_tag = "1.0.1"
