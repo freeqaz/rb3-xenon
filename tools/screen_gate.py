@@ -857,31 +857,43 @@ def build_registry(only=None, skip_heavy=False):
 # ---------------------------------------------------------------------------
 
 def check_provenance(out=sys.stdout):
+    """Have the inline fixtures drifted away from the artifacts they came from?
+
+    ⚠ The first version of THIS function truncated the .s glob to files[:400]
+    and concatenated them, which reported DRIFT for a line that occurs 13,866
+    times in the tree.  That is the exact defect class this whole file exists to
+    police -- a scan that cannot reach its evidence, returning a false negative
+    shaped like a decisive one.  So: iterate EVERY file, stop at the first hit,
+    never truncate.  Absence is only reported after the whole population has
+    actually been read.
+    """
     import glob
     print("\nFIXTURE PROVENANCE (do the literals still occur in the tree?)",
           file=out)
     for path, kind, needles in PROVENANCE:
         full = os.path.join(ROOT, path)
-        if kind == "glob":
-            files = glob.glob(full)
-            if not files:
-                print(f"  SKIP {path}: not present (gitignored artifact)",
-                      file=out)
-                continue
-            blob = ""
-            for f in files[:400]:
+        files = sorted(glob.glob(full)) if kind == "glob" else (
+            [full] if os.path.exists(full) else [])
+        if not files:
+            print(f"  SKIP {path}: not present (gitignored artifact) -- this is "
+                  f"NOT a pass", file=out)
+            continue
+        for n in needles:
+            where, scanned = None, 0
+            for f in files:
+                scanned += 1
                 try:
-                    blob += open(f, errors="replace").read()
+                    if n in open(f, errors="replace").read():
+                        where = f
+                        break
                 except OSError:
                     pass
-        else:
-            if not os.path.exists(full):
-                print(f"  SKIP {path}: not present", file=out)
-                continue
-            blob = open(full, errors="replace").read()
-        for n in needles:
-            mark = "OK  " if n in blob else "DRIFT"
-            print(f"  {mark} {path}: {n[:70]!r}", file=out)
+            if where:
+                print(f"  OK    {path}: found in {os.path.basename(where)} "
+                      f"(after {scanned}/{len(files)} file(s))", file=out)
+            else:
+                print(f"  DRIFT {path}: NOT found in any of {len(files)} "
+                      f"file(s): {n[:60]!r}", file=out)
 
 
 # ---------------------------------------------------------------------------
