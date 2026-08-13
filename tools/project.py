@@ -1714,9 +1714,23 @@ def generate_build_ninja(
         # `all_source` no longer changes either. Without this, a build in which
         # only the patchers ran (e.g. after editing a patcher script) leaves
         # report.json STALE and the change measures as inert.
+        #
+        # ★ lane J3: the NAME-injectivity stamp is an input HERE, not only on
+        # `progress`. laneJ2 wired the gate to `progress` (the default target)
+        # and its docs claimed it therefore "runs on every build". It did not:
+        # `ninja build/45410914/report.json` names a target that does not reach
+        # `progress`, so the gate never ran and ninja exited 0 with a live
+        # collision in the map -- and that is exactly the target
+        # `scripts/sync_match_percent.py --build` invokes, i.e. the one path
+        # that takes objdiff's numbers into decomp.db. A map collision is a
+        # false NAME pairing, so the report generated over it is the artifact
+        # the collision corrupts; gating `progress` but not the report gated
+        # the summary and not the measurement. Cost is one interpreter start on
+        # a read-only pass over one JSON.
         report_implicit: List[str | Path] = [
             objdiff, "objdiff.json", "all_source",
             str(icf_map_path), str(icf_map_purged),
+            str(mapinj_checked),
         ]
         if config.custom_build_steps and "post-compile" in config.custom_build_steps:
             report_implicit.append("post-compile")

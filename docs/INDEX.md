@@ -194,8 +194,11 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   it is **one edit from minting a byte-exact witness against a function that is
   not the target**. Byte-exact is the *admission* gate, so that witness is
   unrecoverable after the fact. Enforced since 2026-08-13 by
-  `tools/map_name_injectivity.py` (ninja edge `map_name_injectivity_check`, runs on
-  every build) — the per-unit checks `icf_class_bijection.py` and
+  `tools/map_name_injectivity.py` (ninja edge `map_name_injectivity_check`, an
+  input of both the default `progress` target and `build/45410914/report.json`;
+  it was wired to `progress` **only** until 2026-08-13, so `ninja
+  build/45410914/report.json` — what `sync_match_percent.py --build` runs —
+  exited 0 without it) — the per-unit checks `icf_class_bijection.py` and
   `tu5_map_apply_fragment.py` are unit-scoped and never caught it.
   **`??$__destroy_aux@ULevelData@@...` at `0x82b5b1d0` / `0x82b63ec8` is still
   unadjudicated and denylisted — do not close it.** Full record:
@@ -544,7 +547,9 @@ Read the verdict before re-opening any of these.
   a byte-exact witness against the WRONG target body; why the per-unit checks
   (`icf_class_bijection.py`, `tu5_map_apply_fragment.py`) never caught it; the eight disproved
   name claims nulled and the two `__destroy_aux@ULevelData` addresses that are **still
-  unadjudicated** — read that section before touching either. Companion:
+  unadjudicated** — read that section before touching either. Carries a lane-J3 correction
+  banner (gate reach, the 11th row at `name_check`, three cleared floor certifications) plus
+  the `gated_map_write.py` P5/P7/Q4 cross-reference and a forward worklist. Companion:
   [decomp/handoff/laneJ2-at-limit-clearance-2026-08-13.md](decomp/handoff/laneJ2-at-limit-clearance-2026-08-13.md).
 - [tools/INDEX.md](tools/INDEX.md) — **tool-selection index** (MCP orchestrator tools, Ghidra CLI, analysis utilities).
 - [tools/REFERENCE.md](tools/REFERENCE.md) — command reference for symbol lookup (banner: no RB3 map; corrected pointers).
