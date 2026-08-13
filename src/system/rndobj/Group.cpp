@@ -51,7 +51,24 @@ void RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
     }
 }
 
+// Same class of defect as RndMat::Handle: our block had been stripped to the
+// four HANDLE_SUPERCLASS lines while both oracles carry real handlers.
+// Adjudicated on retail bytes: the six literals below sit in ONE contiguous
+// .rdata cluster at 0x82068AB0..0x82068AF4 (has_object, get_draws,
+// clear_objects, remove_object, add_object, sort_draws) -- the signature of a
+// single function's static Symbols. DC3's three extra handlers
+// ("insert_object", "num_objects", "get_group_children") occur ZERO times in
+// orig/45410914/band.exe, and DC3 also swapped get_draws out for
+// get_group_children. So retail == rb3-Wii here, and DC3's version postdates
+// RB3. ("move_object" appears to be present only because it is the tail of
+// "remove_object" -- the linker tail-merges string literals.)
 BEGIN_HANDLERS(RndGroup)
+    HANDLE_ACTION(sort_draws, SortDraws())
+    HANDLE_ACTION(add_object, AddObject(_msg->Obj<Hmx::Object>(2)))
+    HANDLE_ACTION(remove_object, RemoveObject(_msg->Obj<Hmx::Object>(2)))
+    HANDLE_ACTION(clear_objects, ClearObjects())
+    HANDLE(get_draws, OnGetDraws)
+    HANDLE_EXPR(has_object, mObjects.find(_msg->Obj<Hmx::Object>(2)) != mObjects.end())
     HANDLE_SUPERCLASS(RndAnimatable)
     HANDLE_SUPERCLASS(RndDrawable)
     HANDLE_SUPERCLASS(RndTransformable)
