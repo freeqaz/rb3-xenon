@@ -961,7 +961,178 @@ def _screen_newobj_ancestor():
     return s
 
 
+# ---------------------------------------------------------------------------
+# lane MAPBOGUS-1: "is this map address even a FUNCTION?"
+#
+# Three screens from tools/map_bogus_screen.py.  All fixtures are real retail
+# words / real map names / the real PE section table, inlined so the gate can
+# never SKIP for want of band.exe.
+#
+# The two injected defects are ones this lane ACTUALLY MADE and caught:
+#   D-SEC   section extents read from SizeOfRawData instead of
+#           max(VirtualSize, SizeOfRawData) -- .data's VirtualSize is 3.5x its
+#           raw size, so 286 real .data variables read as "outside every
+#           section".  A "fires too much" defect: only must_not_fire catches it.
+#   D-NAME  the name-kind classifier reading the storage class after the FIRST
+#           `@@` -- which, for a function-local static, lands inside the
+#           ENCLOSING FUNCTION's mangling, so 241 .data variables classify as
+#           FUNC and get judged as though they should be function heads.
+# ---------------------------------------------------------------------------
+
+# First words lifted verbatim from retail band.exe .text:
+W_PADDING = 0x00000000        # @0x82318E54 -- dtk emits this 4-byte gap as a
+                              # "function"; the map pins ??3MicInputArrow onto it
+W_STWU = 0x9421FFA0           # @0x82318E34 -- a real function start
+W_MFLR = 0x7D8802A6           # @0x824AF930 -- a real function start (mfspr r12)
+W_TAILJUMP = 0x4BFFECB8       # @0x8270D7F8 -- a bare `b`.  *** MUST NOT FIRE ***
+                              # BARE_B is the legitimate tail-jump stub stratum;
+                              # ??3BandHighlight@@ @0x82345030 has fan-in 67.
+W_BLR = 0x4E800020            # @0x8253B8C8 -- a lone blr
+
+# Real rows out of scripts/target_symbol_map.json.
+NAME_FUNC_1 = "??3MicInputArrow@@SAXPAX@Z"
+NAME_FUNC_2 = "?RefreshData@MainHubPanel@@QAAXXZ"
+NAME_FUNC_VCALL = "??_9StreamReceiver@@$BBI@AA"      # vcall thunk: CODE
+# Function-LOCAL STATICS -- data, living in .data.  Their first `@@` closes the
+# ENCLOSING function's class qualifier, which is the whole of defect D-NAME.
+NAME_LOCALSTATIC_1 = "?msg@?BD@??StartAnim@BandCamShot@@UAAXXZ@4VMessage@@A"
+NAME_LOCALSTATIC_2 = ("?inline_help_fmt@?1??UpdateLabelText@InlineHelp@@IAAXXZ"
+                      "@4VSymbol@@A")
+NAME_STRING = "??_C@_0BA@KOFHHHDN@some_string@"      # .rdata string constant
+
+# The real PE section table (name, VA, VirtualSize, SizeOfRawData).
+SECTION_TABLE = [
+    (".rdata",   0x82000400, 0x001F1184, 0x001F1200),
+    (".pdata",   0x821F1600, 0x00070C28, 0x00070E00),
+    ("BINKCONS", 0x82262400, 0x00002920, 0x00002A00),
+    (".text",    0x82270000, 0x009DCE3C, 0x009DD000),
+    ("BINK",     0x82C4D000, 0x00010010, 0x00010200),
+    ("BINKBSS",  0x82C60000, 0x000043A0, 0x00000000),
+    (".data",    0x82C64400, 0x001F5EAC, 0x00058200),   # <-- 3.5x raw size
+    ("BINKDATA", 0x82E5A400, 0x00003D54, 0x00003E00),
+]
+# A real .data local static (?msg@?BD@??StartAnim@BandCamShot@@...) that lies
+# PAST .data's SizeOfRawData (raw ends 0x82CBC600) but inside its VirtualSize
+# (ends 0x82E5A2AC).  The first fixture tried here was 0x82C75AA0, which is
+# still inside the RAW extent -- so D-SEC ESCAPED the gate.  --self-break
+# caught that, which is the whole reason it exists.
+ADDR_IN_DATA_TAIL = 0x82CBCE98
+ADDR_IN_TEXT = 0x82318E54
+ADDR_NO_SECTION = 0x82266FC0      # really outside every section (BINKCONS->.text gap)
+
+
+def _screen_padding_word():
+    """PAD: the claimed function's first word is alignment padding."""
+    import map_bogus_screen as mb
+
+    s = Screen(
+        "map row first-word is PADDING",
+        mb.is_padding_word,
+        "the map pins a function name onto inter-function alignment fill, so "
+        "any body comparison against it can only ever say DIFFERENT",
+        source="tools/map_bogus_screen.py (is_padding_word)")
+    s.must_fire("retail 0x00000000 @0x82318E54", W_PADDING,
+                note="0 of 62,696 known-good function starts begin with this")
+    s.must_not_fire("real prologue stwu r1,-0x60(r1)", W_STWU)
+    s.must_not_fire("real prologue mfspr r12 (mflr)", W_MFLR)
+    s.must_not_fire("bare `b` tail-jump stub -- LEGITIMATE, fan-in up to 67",
+                    W_TAILJUMP,
+                    note="BARE_B was refuted as a defect signal; a screen that "
+                         "fires here condemns the whole alias-stub stratum")
+    s.must_not_fire("lone blr", W_BLR)
+
+    def also_flag_bare_b(w):
+        """THE REFUTED SIGNAL: treat a leading unconditional `b` as bogus too.
+
+        Its 0/36,244 rate on .pdata starts looks like perfect specificity, but
+        that is by-construction bias: a pure `b target` stub is a leaf and gets
+        no unwind record, so the control EXCLUDES the entire population it
+        would fire on.
+        """
+        return w == 0 or ((w >> 26) == 18 and (w & 1) == 0)
+
+    s.defect("BARE-B", "also flag a leading unconditional `b` -- condemns 155 "
+                       "legitimate tail-jump alias stubs (fan-in up to 67)",
+             also_flag_bare_b)
+    return s
+
+
+def _screen_name_kind():
+    """Does this mangled name denote a FUNCTION (so it may be judged at all)?"""
+    import map_bogus_screen as mb
+
+    def detect(n):
+        return mb.name_kind(n) == "FUNC"
+
+    def broken_first_at(n):
+        """DEFECT D-NAME, verbatim: read the storage class after the FIRST @@."""
+        if not n.startswith("?"):
+            return False
+        if n.startswith(("??_C", "??_R", "??_7", "??_8")):
+            return False
+        i = n.find("@@")
+        if i < 0 or i + 2 >= len(n):
+            return False
+        c = n[i + 2]
+        if c in "012345678":
+            return False
+        return c.isalpha()
+
+    s = Screen(
+        "map row name denotes a FUNCTION",
+        detect,
+        "the row is a function, so 'is this address a function head' is a "
+        "meaningful question to ask about it at all",
+        source="tools/map_bogus_screen.py (name_kind)")
+    s.must_fire("ordinary member function", NAME_FUNC_1)
+    s.must_fire("ordinary member function (2)", NAME_FUNC_2)
+    s.must_fire("??_9 vcall thunk is CODE", NAME_FUNC_VCALL,
+                note="ends in AA, not Z -- the Z-rule alone would miss it")
+    s.must_not_fire("function-LOCAL STATIC is data", NAME_LOCALSTATIC_1,
+                    note="lives in .data; its first @@ closes BandCamShot")
+    s.must_not_fire("function-local static (2)", NAME_LOCALSTATIC_2)
+    s.must_not_fire("??_C string constant", NAME_STRING)
+    s.defect("D-NAME", "read the storage class after the FIRST @@ -- for a "
+                       "local static that lands inside the ENCLOSING "
+                       "function's mangling; 241 .data vars classify as FUNC",
+             broken_first_at)
+    return s
+
+
+def _screen_section_extent():
+    """Is this address outside every section?  (the max(VirtSize,RawSize) rule)"""
+    def make(use_max):
+        def detect(a):
+            for _nm, va, vs, srd in SECTION_TABLE:
+                if va <= a < va + (max(vs, srd) if use_max else srd):
+                    return False
+            return True                    # fires == "outside every section"
+        return detect
+
+    s = Screen(
+        "map address outside every PE section",
+        make(True),
+        "a function-named row whose address is in no section at all cannot be "
+        "a function",
+        source="tools/map_bogus_screen.py (Image.section_of)")
+    s.must_fire("0x82266FC0 -- really in the BINKCONS->.text gap",
+                ADDR_NO_SECTION)
+    s.must_not_fire("an address inside .text", ADDR_IN_TEXT)
+    s.must_not_fire("a real .data address PAST SizeOfRawData",
+                    ADDR_IN_DATA_TAIL,
+                    note=".data VirtualSize 0x1F5EAC vs raw 0x058200 -- this is "
+                         "the address D-SEC misreads as sectionless")
+    s.defect("D-SEC", "size sections by SizeOfRawData instead of "
+                      "max(VirtualSize, SizeOfRawData) -- manufactures 286 "
+                      "phantom 'outside every section' rows",
+             make(False))
+    return s
+
+
 REGISTRY = [
+    ("padding_word", _screen_padding_word, False),
+    ("name_kind", _screen_name_kind, False),
+    ("section_extent", _screen_section_extent, False),
     ("false_pairing", _screen_false_pairing, True),
     ("handler_parser", _screen_handler_parser, True),
     ("splits_parser", _screen_splits_parser, False),
