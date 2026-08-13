@@ -17,9 +17,12 @@
 > sha256 pinning is not wrong and `tools/ab_measure.py`'s same-ruler guard is
 > unchanged — it is simply no longer the *only* way to tell two rulers apart.
 > Also folded into the cache key at that landing: the resolved config, the map
-> file's content, and the binary hash — so the `CACHE_LOGIC_VERSION` bump
-> described under §"The hazard this created" is now the *floor* of what
-> invalidates a stale entry, not the whole of it.
+> file's content, and the binary hash — which **removed** the
+> `CACHE_LOGIC_VERSION` counter described under §"The hazard this created"
+> rather than adding to it. It is not a floor and it is not still there: the
+> constant is gone from the source, and hashing the binary does automatically
+> what the counter needed a human to remember. See the §"The hazard this
+> created" note.
 
 ## What changed
 
@@ -82,12 +85,15 @@ Also bumped: `CACHE_LOGIC_VERSION` 2 → 3. Without it, `report.cache` re-serves
 units diffed by the *old* binary — which would have made the whole validation
 vacuous by producing a convincing "no change".
 
-*(Update 2026-08-13: that manual bump is no longer the only thing standing
-between you and a stale entry. The cache key now folds in the objdiff-cli
-binary's own xxh3, the resolved diff config, and the map file's content hash, so
-a binary swap invalidates the cache by construction. Check
-`provenance.cache_hits` on the report — with `.get("cache_hits", 0)`, because
-proto3 omits zero-valued scalars and a fully cold run has no such key.)*
+*(Update 2026-08-13: `CACHE_LOGIC_VERSION` no longer exists — the fork
+**removed** the counter, it was not merely supplemented. The cache key now folds
+in the objdiff-cli binary's own xxh3, the resolved diff config, and the map
+file's content hash, so a binary swap invalidates the cache by construction and
+there is nothing left for a human to remember to bump; that is precisely why the
+counter went. Do not go looking for the constant, and do not treat a bump as a
+step you still owe. Check `provenance.cache_hits` on the report instead — with
+`.get("cache_hits", 0)`, because proto3 omits zero-valued scalars and a fully
+cold run has no such key.)*
 
 ## Rollback
 
