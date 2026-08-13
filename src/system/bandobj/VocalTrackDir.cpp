@@ -332,6 +332,18 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
                         );
                         SetProperty(mTypeProps.Key(i), mTypeProps.Value(i));
                     } else {
+                        // ⚠ SUSPECT (lane BODYPORT-3, 2026-08-13, NOT resolved):
+                        // retail does not call TypeToString here.  At the
+                        // corresponding site it loads BOTH DataTypes -- `lwz
+                        // r27,0x4(r10)` and `lwz r26,0x4(r10)`, i.e. ->Type() on
+                        // each side -- because the `==` above needs them, and then
+                        // simply keeps them; our build emits `bl TypeToString` on
+                        // each instead.  So retail's else-arm log either did not
+                        // exist or did not format the two types.  Not changed:
+                        // PostLoad is 3656 B at 96.4% with 53 charged mismatches
+                        // that are mostly local scheduling, so reconstructing this
+                        // one log line would be a guess that could not be
+                        // adjudicated on retail bytes on its own.
                         MILO_LOG(
                             "\tMismatched types for property %s: %s v. %s\n",
                             mTypeProps.Key(i).Str(),

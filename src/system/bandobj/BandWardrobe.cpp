@@ -1245,6 +1245,27 @@ DataNode BandWardrobe::OnEnterVignette(DataArray *da) {
     return DataNode(0);
 }
 
+// Residual status after lane BODYPORT-3 (2026-08-13).  The map used to name
+// 0x8232b038 SyncEnableBlinks; it is actually SyncVignetteInterest, and the real
+// SyncEnableBlinks is 0x8232b088 (was anonymous).  That is fixed in
+// scripts/target_symbol_map.json -- adjudicated on retail bytes, see that commit.
+//
+// What remains in all three helpers below is ONE shared shape, 6 sites (2 here +
+// 4 inlined ForceBlink copies in SyncProperty).  Retail loads mCurNames straight
+// into the argument register and indexes through it; we load it into a scratch
+// register and copy:
+//     retail:  lwz r5, 0x60(r3)  ...  lwzx r4, r11, r5
+//     ours:    lwz r11,0x60(r3)  ...  mr r5, r11 ; lwzx r4, r10, r11
+// It costs SyncVignetteInterest and SyncEnableBlinks ~93.5% each and is the only
+// thing keeping BandWardrobe::SyncProperty (2416 B) off 100%.
+//
+// ⛔ DRAINED: binding the reference once --
+//     const TargetNames &names = *mCurNames;
+//     FindTarget(names.names[playerIdx], names);
+// -- was tried in all three helpers and is COMPLETELY INERT: byte-identical
+// codegen, 93.5%/93.2% unchanged, same mismatch shape.  MSVC canonicalises both
+// spellings, so source has no purchase on this CSE/regalloc choice.  Do not
+// re-fund it; this residual is permuter-class and the permuter is off.
 void BandWardrobe::SyncVignetteInterest(int playerIdx) {
     MILO_ASSERT(playerIdx < kNumTargets, 0x876);
     BandCharacter *bc = FindTarget(mCurNames->names[playerIdx], *mCurNames);
