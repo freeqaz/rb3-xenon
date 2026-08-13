@@ -121,8 +121,27 @@ BEGIN_PROPSYNCS(RndMat)
 #ifdef RB3_DC3_MAT
     SYNC_PROP(force_alpha_write, mForceAlphaWrite)
 #endif
-    SYNC_MAT_PROP(next_pass, mNextPass, 2)
-    SYNC_MAT_PROP(cull, (int &)mCull, 2)
+    // `next_pass` does NOT dirty the material -- it returns PropSync's result straight
+    // out. Retail: after `bl ??$PropSync@VRndMat@@`, fn_82436488+0x5ec branches to
+    // 0x12c0, which is the EPILOGUE (`addi r1, r31, 0xc0`), not to the shared
+    // `clrlwi./beq/andi./mDirty |= 2` tail at 0x0ac that every SYNC_MAT_PROP uses.
+    // rb3-Wii agrees literally: `SYNC_PROP(next_pass, mNextPass)`, no dirty flag.
+    // (Written out rather than as SYNC_PROP because Mat.cpp does not compile with
+    // /DRB3_SYNCPROP_LOCAL_STATIC, so the live SYNC_PROP takes a Symbol *variable*.)
+    {
+        static Symbol _s("next_pass");
+        if (sym == _s) {
+            return PropSync(mNextPass, _val, _prop, _i + 1, _op);
+        }
+    }
+    // `cull` syncs as a BOOL, not an int. Retail passes `&this->mCull` directly
+    // (`addi r3, r26, 0x11c`) into `?PropSync@@YA_NAA_NAAVDataNode@@...` -- the
+    // bool& overload -- where the int& overload lives at a different call site.
+    // ⚠ The old `(int &)mCull` was a REAL MEMORY BUG, not just a codegen mismatch:
+    // mCull is ONE byte at 0x11c, so an int& write covered 0x11c-0x11f and clobbered
+    // mPerPixelLit (0x11d), mScreenAligned (0x11e) and mEnvironMapFalloff (0x11f)
+    // on every `cull` set. rb3-Wii declares `bool mCull : 1`.
+    SYNC_MAT_PROP(cull, (bool &)mCull, 2)
     SYNC_MAT_PROP(per_pixel_lit, mPerPixelLit, 2)
     SYNC_MAT_PROP(emissive_multiplier, mEmissiveMultiplier, 2)
     SYNC_MAT_PROP(specular_rgb, mSpecularRGB, 1)
@@ -201,7 +220,30 @@ BEGIN_PROPSYNCS(RndMat)
     SYNC_MAT_PROP(world_projection_start_blend, mWorldProjectionStartBlend, 2)
     SYNC_MAT_PROP(world_projection_end_blend, mWorldProjectionEndBlend, 2)
 #endif
-    SYNC_SUPERCLASS(Hmx::Object)
+// ⛔ NO SYNC_SUPERCLASS HERE. Retail's material SyncProperty does NOT chain to
+// Hmx::Object::SyncProperty -- it falls off the end of the property list and returns
+// false. Adjudicated on retail bytes, not on either oracle: the last four instructions
+// of fn_82436488 (0x82436488 + 4808 = 0x82437750) are
+//
+//   82437740  4b ff f6 e0   b     <common false exit>
+//   82437744  38 60 00 00   li    r3, 0            <- return false
+//   82437748  38 3f 00 c0   addi  r1, r31, 0xc0    <- epilogue
+//   8243774c  48 3f 1b 4c   b     __restgprlr_*
+//
+// There is no `bl ?SyncProperty@Object@Hmx@@` anywhere in the body, and objdiff
+// reports 0 delete / 0 diff_op against retail, so nothing is hiding elsewhere.
+//
+// Where the surplus line came from: DC3 (newer) has `RndMat : BaseMaterial` and ends
+// this list with SYNC_SUPERCLASS(BaseMaterial). When BASEMAT-2 (9ea37046) merged
+// BaseMaterial INTO RndMat, that line was mechanically rewritten to name the new base
+// -- Hmx::Object -- rather than re-adjudicated. rb3-Wii, the RB3-*era* oracle, ends
+// its BEGIN_PROPSYNCS(RndMat) with a bare END_PROPSYNCS and no SYNC_SUPERCLASS at all.
+//
+// SYNC_SUPERCLASS expands to `if (parent::SyncProperty(...)) return true;`, which cost
+// exactly 10 surplus instructions (4808 -> 4848 bytes): 4x `mr` arg setup + `bl` +
+// clrlwi/subic/subfe bool-normalize at the tail, plus a `li r3,0; b` that could not
+// fold because the superclass call gave the list a SECOND exit path.
+// See docs/decomp/rndmat-syncproperty-no-superclass-chain-2026-08-13.md.
 END_PROPSYNCS
 
 // ⛔ The DC3 rev-0x46 Save/Copy/Load layer that used to sit here is DELETED with the
