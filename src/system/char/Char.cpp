@@ -247,7 +247,6 @@ void CharDebug::DisplayObject(Hmx::Object *obj) {
             }
             if (mat)
                 mat->SetDiffuseTex(tex);
-            CreateAndSetMetaMat(mat);
             mesh->DrawShowing();
         }
     }

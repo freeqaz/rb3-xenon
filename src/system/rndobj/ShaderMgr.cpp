@@ -62,10 +62,6 @@ void RndShaderMgr::PreInit() {
         mPostProcMat = Hmx::Object::New<RndMat>();
         mDrawHighlightMat = Hmx::Object::New<RndMat>();
         mDrawRectMat = Hmx::Object::New<RndMat>();
-        CreateAndSetMetaMat(mWorkMat);
-        CreateAndSetMetaMat(mPostProcMat);
-        CreateAndSetMetaMat(mDrawHighlightMat);
-        CreateAndSetMetaMat(mDrawRectMat);
         MILO_ASSERT(mConstantCache == NULL, 104);
         mConstantCacheSize = 516;
         {
