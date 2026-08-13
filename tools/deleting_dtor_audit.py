@@ -363,6 +363,27 @@ def injectivity(mapping, allow):
     return {k: v for k, v in d.items() if len(v) > 1 and k not in allow}
 
 
+def new_collisions(before, after):
+    """Names this change made collide, or made collide DIFFERENTLY.
+
+    ⚠ The map is NOT globally injective and has not been since ALIAS-X2
+    (11116052) adjudicated 8 deliberate multi-address names -- `?Null@Symbol@@`
+    sits at THREE addresses. So a GLOBAL injectivity assertion refuses on
+    somebody else's pre-existing rows and says nothing about THIS change; lane
+    MASK-3 hit exactly that and rescoped its own check to "introduce no NEW
+    collision" (tools/copy_construct_audit.py:559). This is that form.
+
+    ⚠ It is also strictly stronger than the count comparison it replaces
+    (`len(after) > len(before)`), which this tool used until 2026-08-13. A
+    count gate PASSES a plan that resolves one pre-existing collision and
+    introduces a different one (7 -> 7), and PASSES a name that stays a
+    collision while moving to a DIFFERENT pair of addresses ({A,B} -> {A,C}) --
+    a brand-new wrong pairing, invisible to a count. Compare the SETS.
+    """
+    return {n: ks for n, ks in after.items()
+            if n not in before or set(ks) != set(before[n])}
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -460,12 +481,18 @@ def main():
                 if not supported:
                     new.pop(kk); stripped += 1
         dup2 = injectivity(new, allow)
+        newly = new_collisions(before, dup2)
         print(f'\nplan: {collections.Counter(k for *_x, k in plan)}')
         print(f'INJECTIVITY: baseline dups {len(before)}, after plan {len(dup)} '
               f'(introduced {len(intro)}), stripped {stripped} unevidenced '
               f'incumbents -> final {len(dup2)}')
-        if len(dup2) > len(before):
-            print('REFUSING to write: the plan would leave NEW duplicate names.')
+        print(f'  {len(before)} of those are PRE-EXISTING multi-address names '
+              f'(ALIAS-X2, not ours) and are NOT ours to refuse on; the '
+              f'invariant asserted here is "introduce no NEW collision".')
+        if newly:
+            print('⛔ REFUSING to write -- this change would ADD a collision:')
+            for n, ks in newly.items():
+                print(f'      {n[:90]} -> {ks}')
             return 3
         bij = [x for x in new.get('_bijection_arbitrary', [])
                if x.lower() not in touched]
