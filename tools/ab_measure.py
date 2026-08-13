@@ -91,6 +91,22 @@ code change. --name-check still adds the opt-in name_check reading per leg
 with the required warning (its aggregate code% is build-unstable ~0.05pp; small
 nc deltas mean nothing).
 
+THE WORKTREE IS HANDED BACK EXACTLY AS IT WAS FOUND, on every exit path --
+success, refusal, Ctrl-C, unhandled exception (lane TOOL-AB, 2026-08-13; see
+TreeGuard for the 12-cell measurement that motivated it). Before that, the
+state the last step happened to leave was simply the state you got back: a
+green --patch/--pick/--revert run left the tree carrying LEG B, and
+--from-dirty could DELETE YOUR UNCOMMITTED WORK on a refusal, on a Ctrl-C, or
+on a clean green run with --restore. The pre-run state is also snapshotted to
+the run dir before the first mutation, which is the only recovery a SIGKILL
+can have. --keep-applied opts out and prints a banner naming every file left
+modified; --restore is now a deprecated no-op.
+
+ONE change per run. Repeating --patch/--pick/--revert is REFUSED: argparse's
+mutually-exclusive group fires only across DIFFERENT options, so repeating the
+SAME one silently keeps the LAST value and the tool would price it alone and
+print a confident verdict (lane EE2-C, three --revert flags).
+
 Usage:
   tools/ab_measure.py --worktree WT --patch FILE      # measure a diff file
   tools/ab_measure.py --worktree WT --pick REF        # measure applying commit REF
@@ -570,6 +586,27 @@ class ABMeasure:
                 "preflight",
                 f"untracked files in build-relevant dirs: {untracked[:10]} — "
                 "commit or remove them; they can change build output invisibly.")
+        # STAGED changes, measured 2026-08-13 (lane TOOL-AB). --from-dirty
+        # snapshots `git diff` (worktree vs INDEX) and then resets with
+        # `git checkout --`, which restores FROM THE INDEX. So a half-staged
+        # file measures ONLY THE UNSTAGED HUNKS against a leg A that silently
+        # CARRIES THE STAGED ONES — absent-vs-absent for half the change, and
+        # the run completes with a clean verdict (executed: staged+unstaged
+        # CDReader.cpp, rc=0, Δ0). It also makes the tree unrestorable by
+        # content. Refuse instead; the other modes already refuse this as
+        # ordinary dirt.
+        _, staged = git(self.wt, "diff", "--cached", "--name-only", "--",
+                        ".", f":(exclude){SYMBOLS_REL}")
+        staged = [p for p in staged.split() if p]
+        if staged:
+            raise Refusal(
+                "preflight",
+                f"the INDEX has staged changes: {staged[:10]} — a staged hunk "
+                "is invisible to `git diff` (so it is NOT in the measured "
+                "patch) but IS restored by `git checkout --` (so leg A "
+                "silently carries it): the run would price half a change "
+                "against a contaminated baseline and still print a verdict. "
+                "Commit them, or `git reset` to unstage and re-run.")
         if dirty and not allow_dirty:
             raise Refusal(
                 "preflight",
@@ -814,6 +851,253 @@ class ABMeasure:
                      f"(msvc={first['msvc']} split={first['split']} "
                      f"renamer_patched={first['renamer_patched']})")
         check_legb_counts(kinds, first)
+        return res
+
+
+DIFF_PATH_RE = re.compile(r"^diff --git a/(.+?) b/(.+)$", re.M)
+
+
+def diff_paths(diff_text):
+    """Every path named by a unified diff (both sides — a rename names two)."""
+    out = set()
+    for a, b in DIFF_PATH_RE.findall(diff_text or ""):
+        out.add(a)
+        out.add(b)
+    return out
+
+
+def plan_restore(pre_diff, cur_diff, pre_untracked, cur_untracked,
+                 patch_diff=""):
+    """PURE decision: how to put the worktree back exactly as the run found it.
+
+    Extracted (like check_legb_counts and check_tool_freshness) so --selftest
+    can drive every branch with no git and no build.
+
+    Returns {"action", "checkout_paths", "remove_paths", "reapply"}.
+
+      * action "none"     — the tree already IS the pre-run state.
+      * action "restore"  — check out the union of every path either state
+        names (never a bare `.`: a pathspec-limited checkout cannot touch a
+        file neither the run nor the caller had any business in), delete the
+        untracked files the run introduced, then re-apply the caller's own
+        pre-run diff verbatim.
+
+    `patch_diff` (the measured patch) only WIDENS the checkout set; a path the
+    patch touched must be reverted even if it ended the run byte-identical to
+    HEAD, because the split/patcher steps rewrite files in place.
+    """
+    pre_untracked = set(pre_untracked or ())
+    cur_untracked = set(cur_untracked or ())
+    added = sorted(cur_untracked - pre_untracked)
+    if (pre_diff or "") == (cur_diff or "") and not added:
+        return {"action": "none", "checkout_paths": [], "remove_paths": [],
+                "reapply": False}
+    paths = diff_paths(pre_diff) | diff_paths(cur_diff) | diff_paths(patch_diff)
+    return {"action": "restore",
+            "checkout_paths": sorted(paths),
+            "remove_paths": added,
+            "reapply": bool((pre_diff or "").strip())}
+
+
+def check_source_arity(patch, pick, revert):
+    """PURE: collapse the --patch/--pick/--revert append-lists to scalars and
+    report any flag given more than once. Pure so --selftest can drive it.
+
+    Returns ((patch, pick, revert), arity_error|None).
+    """
+    vals = {"patch": patch, "pick": pick, "revert": revert}
+    err = None
+    out = {}
+    for flag in ("patch", "pick", "revert"):
+        v = vals[flag]
+        if isinstance(v, str):            # already a scalar: nothing to check
+            out[flag] = v
+            continue
+        if v and len(v) > 1 and err is None:
+            err = (flag, list(v))
+        out[flag] = v[-1] if v else None
+    return (out["patch"], out["pick"], out["revert"]), err
+
+
+class TreeGuard:
+    """Put the worktree back EXACTLY as the run found it, on EVERY exit path.
+
+    WHY THIS EXISTS (lane TOOL-AB, 2026-08-13). ab_measure mutates the tree as
+    part of measuring — it applies a patch, and under --from-dirty it first
+    RESETS the caller's uncommitted work to get a clean leg A. Before this
+    class, whatever state the last step happened to leave was simply the state
+    the caller got back, on success AND on refusal AND on Ctrl-C. Measured, on
+    the real tool, 12 cells (mode x exit path): 8 left the tree different from
+    how the run found it, and THREE SILENTLY DELETED THE LANE'S OWN
+    UNCOMMITTED WORK:
+
+      * --from-dirty + any refusal after the leg-A reset (e.g. the classify
+        refusal, which fires ~200ms in) -> tree CLEAN, work gone. Lane DTOR-A
+        recovered its map edit out of the run directory.
+      * --from-dirty --restore, CLEAN GREEN RUN, rc=0 -> tree CLEAN, work
+        gone. `--restore` was defined against the PATCH ("revert the patch
+        after measuring"), and under --from-dirty the patch IS the caller's
+        work. Lane EE2-B found its worktree holding main's code with every fix
+        stripped after a green run.
+      * --from-dirty + Ctrl-C after the reset -> tree CLEAN, bare traceback,
+        no mention that a snapshot exists.
+
+    And the mirror, on the success path: --patch / --pick / --revert left the
+    tree carrying leg B (patched / picked / REVERTED) with no statement that
+    they had. Anything built afterwards silently lacks-or-retains the change
+    and comes back byte-identical to the WRONG baseline — which reads exactly
+    like "my second change undid my first" (lane EE2-A, which caught it only
+    by running git diff on a hunch).
+
+    That is a measurement tool corrupting the thing it measures. The rule now:
+    ab_measure OWNS the tree for the duration of the run and hands it back
+    unchanged, and if it ever cannot, it says so in a banner it is impossible
+    to miss. Opt out with --keep-applied (which still prints the banner).
+
+    symbols.txt is DELIBERATELY EXCLUDED: it is derived split-state drift the
+    tool already owns and auto-restores, never caller content.
+    """
+
+    def __init__(self, ab):
+        self.ab = ab
+        self.wt = ab.wt
+        self.rundir = ab.rundir
+        self.armed = False
+        self.pre_diff = ""
+        self.pre_untracked = []
+        self.pre_path = self.rundir / "pre_run_state.diff"
+        self.patch_diff = ""
+        self.outcome = None
+
+    # ---- the pathspec that excludes the tool-owned symbols.txt ----
+    _EXCL = f":(exclude){SYMBOLS_REL}"
+
+    def _diff(self):
+        _, d = git(self.wt, "diff", "--", ".", self._EXCL)
+        return d
+
+    def _untracked(self):
+        _, st = git(self.wt, "status", "--porcelain")
+        return sorted(l[3:] for l in st.splitlines() if l.startswith("??"))
+
+    def capture(self):
+        """Snapshot the caller's pre-run state. MUST run before any mutation.
+
+        The snapshot is written to the run directory FIRST and unconditionally
+        — it is the recovery path for a SIGKILL, which no finally: block can
+        cover.
+        """
+        self.pre_diff = self._diff()
+        self.pre_untracked = self._untracked()
+        self.pre_path.write_text(self.pre_diff)
+        self.armed = True
+        if self.pre_diff.strip():
+            n = len(diff_paths(self.pre_diff))
+            self.ab.say(f"  [tree] pre-run state captured ({n} modified "
+                        f"file(s)) -> {self.pre_path}")
+            self.ab.say("  [tree] ⚠ that file IS your work — if this run is "
+                        "killed with SIGKILL (no cleanup possible), "
+                        f"`git -C {self.wt} apply {self.pre_path}` restores it.")
+
+    def restore(self):
+        """Idempotent; never raises. Returns the outcome dict."""
+        if not self.armed:
+            return {"ok": True, "action": "not_armed"}
+        try:
+            plan = plan_restore(self.pre_diff, self._diff(),
+                                self.pre_untracked, self._untracked(),
+                                self.patch_diff)
+            if plan["action"] == "none":
+                self.outcome = {"ok": True, "action": "none",
+                                "note": "tree already in its pre-run state"}
+                return self.outcome
+            if plan["checkout_paths"]:
+                # -- 'checkout --' is safe here ONLY because staged changes are
+                # refused in preflight: with index == HEAD for these paths it
+                # restores HEAD content, not a half-staged blend (the exact
+                # trap that made --from-dirty measure a partially-staged tree
+                # against a leg A silently carrying the staged half).
+                git(self.wt, "checkout", "--", *plan["checkout_paths"],
+                    check=False)
+            for rel in plan["remove_paths"]:
+                p = self.wt / rel
+                try:
+                    if p.is_file():
+                        p.unlink()
+                except OSError:
+                    pass
+            if plan["reapply"]:
+                rc, out = git(self.wt, "apply", str(self.pre_path), check=False)
+                if rc != 0:
+                    self.outcome = {
+                        "ok": False, "action": "reapply_failed",
+                        "snapshot": str(self.pre_path), "git_output": out[-2000:]}
+                    return self.outcome
+            # verify by re-reading, never by assuming the commands worked
+            now = self._diff()
+            ok = (now == self.pre_diff)
+            self.outcome = {"ok": ok, "action": "restored",
+                            "verified": ok,
+                            "snapshot": str(self.pre_path),
+                            "checked_out": plan["checkout_paths"],
+                            "removed": plan["remove_paths"]}
+            if not ok:
+                self.outcome["note"] = ("post-restore diff still differs from "
+                                        "the captured pre-run diff")
+            return self.outcome
+        except Exception as e:                      # never let cleanup escape
+            self.outcome = {"ok": False, "action": "error", "error": repr(e),
+                            "snapshot": str(self.pre_path)}
+            return self.outcome
+
+    def finish(self, keep_applied, exit_note=""):
+        """Terminal step: restore (or deliberately don't), and ALWAYS say which.
+
+        Silence about the tree state is the actual bug this class fixes, so
+        there is no quiet path out of here.
+        """
+        if not self.armed:
+            return {"ok": True, "action": "not_armed"}
+        if keep_applied:
+            cur = self._diff()
+            changed = sorted(diff_paths(cur))
+            self.outcome = {"ok": True, "action": "kept_applied",
+                            "modified_files": changed,
+                            "snapshot": str(self.pre_path)}
+            print("\n  ┏━━ TREE LEFT MODIFIED (--keep-applied) "
+                  "━━━━━━━━━━━━━━━━━━━━━━━━")
+            for c in changed or ["(none)"]:
+                print(f"  ┃  M {c}")
+            print("  ┃  Anything you build in this worktree now carries the "
+                  "leg-B state.")
+            print(f"  ┃  Pre-run state: {self.pre_path}")
+            print("  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            return self.outcome
+        res = self.restore()
+        if res.get("ok") and res.get("action") == "none":
+            print("  [tree] restored: already in its pre-run state")
+        elif res.get("ok"):
+            n = len(res.get("checked_out", []))
+            print(f"  [tree] restored to the pre-run state ({n} path(s), "
+                  "verified by re-reading the diff)")
+        else:
+            print("\n  ┏━━ ⚠⚠ COULD NOT RESTORE THE WORKTREE ⚠⚠ "
+                  "━━━━━━━━━━━━━━━━━━━", file=sys.stderr)
+            print(f"  ┃  action: {res.get('action')}", file=sys.stderr)
+            print(f"  ┃  Your pre-run state IS SAVED at:\n"
+                  f"  ┃      {self.pre_path}", file=sys.stderr)
+            print(f"  ┃  Recover with:\n"
+                  f"  ┃      git -C {self.wt} checkout -- <paths>\n"
+                  f"  ┃      git -C {self.wt} apply {self.pre_path}",
+                  file=sys.stderr)
+            if res.get("git_output"):
+                print(f"  ┃  git said: {res['git_output'].strip()[:400]}",
+                      file=sys.stderr)
+            print("  ┃  (Expected for splits.txt: it is a split OUTPUT as well "
+                  "as an input,\n  ┃   so the file the run ends on is not the "
+                  "file the patch produced.)", file=sys.stderr)
+            print("  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+                  file=sys.stderr)
         return res
 
 
@@ -1179,10 +1463,20 @@ def main():
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--worktree", help="linked worktree to measure in (NEVER main)")
+    # ⚠ action="append" is NOT support for repeats — it is how repeats become
+    # VISIBLE so they can be REFUSED. argparse's mutually-exclusive group only
+    # fires across DIFFERENT options; repeating the SAME one silently keeps
+    # the LAST value (verified 2026-08-13: `--revert A --revert B` -> 'B',
+    # `--pick A --pick B --pick C` -> 'C', `--patch p1 --patch p2` -> 'p2').
+    # Lane EE2-C passed three --revert flags to price three commits together
+    # and got a confident number for ONE of them, with no error and no
+    # warning — the exact failure mode this tool exists to make impossible.
     src = ap.add_mutually_exclusive_group()
-    src.add_argument("--patch", help="diff file to measure")
-    src.add_argument("--pick", metavar="REF", help="measure applying commit REF")
-    src.add_argument("--revert", metavar="REF", help="measure reverting commit REF")
+    src.add_argument("--patch", action="append", help="diff file to measure")
+    src.add_argument("--pick", metavar="REF", action="append",
+                     help="measure applying commit REF")
+    src.add_argument("--revert", metavar="REF", action="append",
+                     help="measure reverting commit REF")
     src.add_argument("--from-dirty", action="store_true",
                      help="snapshot the worktree's uncommitted tracked diff as "
                           "the patch, reset to HEAD for leg A, re-apply for leg B")
@@ -1198,7 +1492,17 @@ def main():
     ap.add_argument("--allow-inert", action="store_true",
                     help="proceed even if the patch touches no build-relevant path")
     ap.add_argument("--restore", action="store_true",
-                    help="revert the patch from the worktree after measuring")
+                    help="DEPRECATED NO-OP: restoring the worktree to its "
+                         "pre-run state is now the DEFAULT on every exit path. "
+                         "Accepted so existing call sites keep working. ⚠ It "
+                         "used to mean 'revert the PATCH', which under "
+                         "--from-dirty DELETED THE CALLER'S OWN WORK on a "
+                         "green run (lane EE2-B).")
+    ap.add_argument("--keep-applied", action="store_true",
+                    help="do NOT restore: leave the worktree in its leg-B "
+                         "state (patch applied / commit picked / commit "
+                         "reverted). Prints a banner naming every file left "
+                         "modified — the tree state is never silent.")
     ap.add_argument("--allow-stale-tool", action="store_true",
                     help="run even if this script is a superseded committed "
                          "version of itself (lane CK-3's silent failure mode)")
@@ -1216,6 +1520,14 @@ def main():
     if args.selftest:
         sys.exit(selftest())
 
+    # Collapse the append-lists to the scalars the rest of the tool expects,
+    # remembering any repeat so it can be REFUSED below with the full banner
+    # (raised inside the try: so it writes result.json and rc=2 like every
+    # other refusal — and it is raised BEFORE preflight, so nothing has been
+    # mutated when it fires).
+    (args.patch, args.pick, args.revert), arity_error = check_source_arity(
+        args.patch, args.pick, args.revert)
+
     if not args.worktree or not (args.patch or args.pick or args.revert
                                  or args.from_dirty):
         ap.error("--worktree and one of --patch/--pick/--revert/--from-dirty "
@@ -1231,9 +1543,36 @@ def main():
 
     ab = ABMeasure(args.worktree, rundir, args.jobs, args.max_settle)
     status = {"status": "refused", "stage": None, "reason": None}
+    guard = TreeGuard(ab)
+    if args.restore:
+        print("  [args] --restore is a DEPRECATED NO-OP: the worktree is now "
+              "restored to its pre-run state by default, on every exit path.")
     try:
+        if arity_error:
+            flag, vals = arity_error
+            raise Refusal(
+                "args",
+                f"--{flag} was given {len(vals)} times ({vals}) but this tool "
+                f"measures ONE change per run: argparse keeps only the LAST "
+                f"value ({vals[-1]!r}), so the run would price that one alone "
+                "and print a confident verdict for it (lane EE2-C hit exactly "
+                "this with three --revert flags). Combine them into a single "
+                "change first, then measure that:\n"
+                "      # contiguous commits, newest..oldest:\n"
+                f"      git -C <wt> diff {vals[0]} {vals[-1]}^ > combined.diff  "
+                "# for --revert\n"
+                f"      git -C <wt> diff {vals[-1]}^ {vals[0]} > combined.diff  "
+                "# for --pick\n"
+                "      tools/ab_measure.py --worktree <wt> --patch combined.diff\n"
+                "    Or apply/revert them by hand in the worktree and measure "
+                "the result with --from-dirty (which now restores your "
+                "worktree on every exit path).")
         dirty = ab.preflight(allow_dirty=args.from_dirty,
                              allow_stale_tool=args.allow_stale_tool)
+        # ARM THE GUARD BEFORE THE FIRST MUTATION. Everything below this line
+        # (the --from-dirty reset, apply_patch, the split/patcher rewrites) is
+        # reversible from here; nothing above it has touched caller content.
+        guard.capture()
 
         # --- obtain the patch ---
         patch_path = rundir / "patch.diff"
@@ -1258,6 +1597,10 @@ def main():
             raise Refusal("patch", "empty patch — nothing to measure")
         sha = hashlib.sha256(patch_path.read_bytes()).hexdigest()[:16]
         print(f"  [patch] {patch_path} sha256/16={sha}")
+        # Widen the guard's checkout set to every path the patch names: a path
+        # can end the run byte-identical to HEAD and still need reverting,
+        # because the split and patcher steps rewrite files in place.
+        guard.patch_diff = patch_path.read_text()
 
         # --- classify ---
         _, numstat = git(ab.wt, "apply", "--numstat", str(patch_path))
@@ -1468,7 +1811,7 @@ def main():
                   f"Δcode%={nc['delta_code_percent']:+.6f}pp — {nc['warning']}")
         print("========================================================")
 
-        # ⚠ Write the verdict BEFORE the optional restore. --restore is
+        # ⚠ Write the verdict BEFORE the tree restore. The restore is
         # post-verdict CLEANUP and must never be able to void a verdict that
         # was already measured and printed. Measured by lane CK-2: a real
         # config/<title>/splits.txt patch measured cleanly end-to-end
@@ -1481,34 +1824,6 @@ def main():
         # status "refused" — a fully valid measurement, on disk, labelled as
         # having no verdict, and rc=2.
         result_path.write_text(json.dumps(status, indent=1))
-        if args.restore:
-            rc_r, out_r = git(ab.wt, "apply", "-R", str(patch_path),
-                              check=False)
-            if rc_r == 0:
-                ab.restore_symbols()
-                print("  [restore] patch reverted from worktree (build state "
-                      "is now leg-B-built with leg-A source; the next run's "
-                      "settle phase handles it)")
-            else:
-                # NOT a refusal: the verdict above stands on its own.
-                status["restore"] = {
-                    "ok": False,
-                    "note": "git apply -R failed; the worktree still carries "
-                            "the patch (or a split-rewritten form of it). The "
-                            "MEASUREMENT IS UNAFFECTED — it completed before "
-                            "this step. Expected for splits.txt patches: "
-                            "splits.txt is a split OUTPUT as well as an input.",
-                    "git_output": out_r[-2000:],
-                }
-                result_path.write_text(json.dumps(status, indent=1))
-                print("  [restore] ⚠ FAILED to revert the patch — the verdict "
-                      "above STANDS (it was measured before this step). Clean "
-                      "the worktree by hand before the next run:\n"
-                      f"      git -C {ab.wt} checkout -- <paths>\n"
-                      "    Expected for splits.txt patches: jeff rewrites "
-                      "splits.txt during the split, so the file is no longer "
-                      "what the patch produced and `git apply -R` cannot "
-                      "reverse it.")
         print(f"ab_measure: result written to {result_path}")
         return 0
 
@@ -1532,6 +1847,24 @@ def main():
         print("=======================================================",
               file=sys.stderr)
         return 2
+
+    finally:
+        # EVERY exit path: success, refusal, KeyboardInterrupt, unhandled
+        # exception. The tree the caller handed us is the tree they get back.
+        # ⚠ finish() never raises and never changes the return code — a
+        # cleanup step must not be able to void a verdict (lane CK-2's rule),
+        # so a failed restore is a LOUD BANNER, not a refusal.
+        try:
+            tr = guard.finish(keep_applied=args.keep_applied)
+            if tr and guard.armed:
+                status["tree_restore"] = tr
+                try:
+                    result_path.write_text(json.dumps(status, indent=1))
+                except OSError:
+                    pass
+        except Exception as e:                      # belt and braces
+            print(f"  [tree] ⚠ restore step itself failed: {e!r} — pre-run "
+                  f"state is at {guard.pre_path}", file=sys.stderr)
 
 
 # ---------------- selftest (no builds) ----------------
@@ -2242,6 +2575,78 @@ def selftest():
           lambda: check_ruler_stable(base, other_mode), expect_refusal=True)
     check("[ruler] ...and an unchanged mode on the same binary does not",
           lambda: check_ruler_stable(base, same_mode), expect_refusal=False)
+
+    # ---- TREE RESTORE planner (lane TOOL-AB) -----------------------------
+    # PURE-LOGIC coverage only, and labelled as such: the behavioural proof is
+    # 16 real runs of the real tool against a real worktree (mode x exit path),
+    # with a negative control in which restore() was sabotaged to CLAIM a
+    # verified restore and do nothing — all three sabotaged cells came back
+    # MUTATED, i.e. the harness reads the TREE, not the tool's own claim.
+    def _pr(pre, cur, preu=(), curu=(), patch=""):
+        return plan_restore(pre, cur, preu, curu, patch)
+
+    D_A = "diff --git a/src/a.cpp b/src/a.cpp\n@@ -1 +1 @@\n-x\n+y\n"
+    D_B = "diff --git a/src/b.cpp b/src/b.cpp\n@@ -1 +1 @@\n-x\n+y\n"
+
+    def _t(name, got, want_action, want_paths=None, want_reapply=None,
+           want_remove=None):
+        ok = got["action"] == want_action
+        if want_paths is not None:
+            ok = ok and got["checkout_paths"] == want_paths
+        if want_reapply is not None:
+            ok = ok and got["reapply"] == want_reapply
+        if want_remove is not None:
+            ok = ok and got["remove_paths"] == want_remove
+        print(("  PASS" if ok else "  FAIL") + f"  [TOOL-AB] {name}: {got}")
+        if not ok:
+            fails.append(name)
+
+    _t("a tree already in its pre-run state needs NO restore (the planner "
+       "DISCRIMINATES — it does not always fire)",
+       _pr(D_A, D_A), "none", [], False)
+    _t("clean pre-run + patched now (plain --patch/--pick/--revert success) "
+       "-> revert the path, nothing to re-apply",
+       _pr("", D_A), "restore", ["src/a.cpp"], False)
+    _t("THE --from-dirty CASE: caller's work present pre-run, tree now clean "
+       "(EE2-B / DTOR-A / Ctrl-C) -> RE-APPLY the caller's diff",
+       _pr(D_A, ""), "restore", ["src/a.cpp"], True)
+    _t("a file the run created is deleted, one it did not is left alone",
+       _pr("", "", ("keep.txt",), ("keep.txt", "made.txt")), "restore",
+       None, False, ["made.txt"]),
+    _t("the measured patch WIDENS the checkout set: a path can end the run "
+       "byte-identical to HEAD and still need reverting (split rewrites)",
+       _pr("", D_A, patch=D_B), "restore", ["src/a.cpp", "src/b.cpp"], False)
+
+    # ---- source-flag ARITY (lane EE2-C) ----------------------------------
+    # argparse's mutually-exclusive group fires only across DIFFERENT options;
+    # repeating the SAME one silently keeps the LAST value. EE2-C passed three
+    # --revert flags and got a confident number for ONE of them.
+    (p, k, r), err = check_source_arity(None, None, ["A", "B", "C"])
+    ok = err == ("revert", ["A", "B", "C"]) and r == "C"
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [EE2-C] three --revert flags are DETECTED, not silently "
+          f"collapsed: err={err} (argparse would have measured {r!r} alone)")
+    if not ok:
+        fails.append("EE2-C revert arity")
+    for flag, kw in (("patch", {"patch": ["p1", "p2"]}),
+                     ("pick", {"pick": ["A", "B"]})):
+        kw = dict({"patch": None, "pick": None, "revert": None}, **kw)
+        _, e = check_source_arity(**kw)
+        ok = e is not None and e[0] == flag
+        print(("  PASS" if ok else "  FAIL") +
+              f"  [EE2-C] the hole is in --{flag} too, not only --revert: "
+              f"err={e}")
+        if not ok:
+            fails.append(f"EE2-C {flag} arity")
+    # ...and it must NOT fire on the normal single-flag call, or every run
+    # refuses and the guard is worse than the defect.
+    (p, k, r), err = check_source_arity(None, None, ["A"])
+    ok = err is None and r == "A"
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [EE2-C] a single --revert is UNAFFECTED (the guard can pass): "
+          f"revert={r!r} err={err}")
+    if not ok:
+        fails.append("EE2-C single revert")
 
     print(f"selftest: {'ALL PASS' if not fails else f'FAILURES: {fails}'}")
     return 0 if not fails else 1
