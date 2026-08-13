@@ -468,8 +468,11 @@ BandCharacter.cpp:
 	.pdata      start:0x821F20A0 end:0x821F20A8
 	.pdata      start:0x821F20A8 end:0x821F20C0
 	.pdata      start:0x821F20D0 end:0x821F2138
+	.pdata      start:0x821F2138 end:0x821F2148
 	.pdata      start:0x821F2148 end:0x821F21B8
+	.pdata      start:0x821F21B8 end:0x821F21C8
 	.pdata      start:0x821F21C8 end:0x821F21E8
+	.pdata      start:0x821F21E8 end:0x821F21F8
 	.pdata      start:0x821F21F8 end:0x821F22A8
 	.pdata      start:0x821F22A8 end:0x821F22E8
 	.pdata      start:0x821F22E8 end:0x821F22F0
@@ -497,8 +500,11 @@ BandCharacter.cpp:
 	.text       start:0x8227AE48 end:0x8227AEA0
 	.text       start:0x8227AEA0 end:0x8227AF48
 	.text       start:0x8227AFC0 end:0x8227B408
+	.text       start:0x8227B408 end:0x8227B4A8
 	.text       start:0x8227B4A8 end:0x8227B9B8
+	.text       start:0x8227B9B8 end:0x8227BA58
 	.text       start:0x8227BA58 end:0x8227BB98
+	.text       start:0x8227BB98 end:0x8227BC38
 	.text       start:0x8227BC38 end:0x8227C6D0
 	.text       start:0x8227C6D0 end:0x8227C968
 	.text       start:0x8227C968 end:0x8227C9F8
@@ -3843,10 +3849,8 @@ CharIKFingers.cpp:
 	.text       start:0x823BC8E8 end:0x823BC918
 
 HamPhotoDisplay.cpp:
-	.pdata      start:0x821F21B8 end:0x821F21C8
 	.pdata      start:0x821F74C8 end:0x821F74D0
 	.pdata      start:0x821F79E0 end:0x821F79E8
-	.text       start:0x8227B9B8 end:0x8227BA58
 	.text       start:0x822CDC80 end:0x822CDD00
 	.text       start:0x822D38B0 end:0x822D3900
 
@@ -3913,6 +3917,7 @@ Text.cpp:
 	.pdata      start:0x8220E108 end:0x8220E130
 	.pdata      start:0x8220E1A8 end:0x8220E1D8
 	.pdata      start:0x8220E1D8 end:0x8220E228
+	.pdata      start:0x8220E238 end:0x8220E248
 	.pdata      start:0x8220E248 end:0x8220E250
 	.pdata      start:0x8220E278 end:0x8220E280
 	.pdata      start:0x8220E288 end:0x8220E2D0
@@ -3940,6 +3945,7 @@ Text.cpp:
 	.text       start:0x82455E90 end:0x82456190
 	.text       start:0x82456CA4 end:0x82457060
 	.text       start:0x82457060 end:0x824575C8
+	.text       start:0x824576F8 end:0x82457790
 	.text       start:0x82457790 end:0x82457800
 	.text       start:0x82457EA0 end:0x82457EF0
 	.text       start:0x82457F70 end:0x82459820
@@ -4198,7 +4204,7 @@ SkeletonClip.cpp:
 	.pdata      start:0x8220E140 end:0x8220E150
 	.pdata      start:0x8220E150 end:0x8220E158
 	.pdata      start:0x8220E160 end:0x8220E190
-	.pdata      start:0x8220E230 end:0x8220E248
+	.pdata      start:0x8220E230 end:0x8220E238
 	.pdata      start:0x8220E250 end:0x8220E268
 	.pdata      start:0x8220E268 end:0x8220E278
 	.pdata      start:0x8220E280 end:0x8220E288
@@ -4218,7 +4224,7 @@ SkeletonClip.cpp:
 	.text       start:0x824562B0 end:0x82456378
 	.text       start:0x82456378 end:0x824563D8
 	.text       start:0x824564B8 end:0x82456A20
-	.text       start:0x82457680 end:0x82457790
+	.text       start:0x82457680 end:0x824576F8
 	.text       start:0x82457800 end:0x82457D18
 	.text       start:0x82457D18 end:0x82457EA0
 	.text       start:0x82457EF0 end:0x82457F70
@@ -7618,16 +7624,12 @@ ClipGraphGen.cpp:
 	.text       start:0x82684E88 end:0x82684EC8
 
 Gesture.cpp:
-	.pdata      start:0x821F21E8 end:0x821F21F8
 	.pdata      start:0x821FB898 end:0x821FB8A8
 	.pdata      start:0x821FBB08 end:0x821FBB10
-	.pdata      start:0x821FD1E8 end:0x821FD1F8
 	.pdata      start:0x8223D1A8 end:0x8223D1B8
-	.text       start:0x8227BB98 end:0x8227BC38
 	.text       start:0x82310C40 end:0x82310D60
 	.text       start:0x82310E38 end:0x82310E50
 	.text       start:0x823134F8 end:0x8231355C
-	.text       start:0x82329778 end:0x82329810
 	.text       start:0x82768A98 end:0x82768B08
 
 CharGuitarString.cpp:
@@ -11662,6 +11664,7 @@ LayerDir.cpp:
 	.pdata      start:0x821FCE80 end:0x821FCEE8
 	.pdata      start:0x821FCF78 end:0x821FCFA8
 	.pdata      start:0x821FCFB0 end:0x821FD1E8
+	.pdata      start:0x821FD1E8 end:0x821FD1F8
 	.pdata      start:0x821FD1F8 end:0x821FD230
 	.text       start:0x82326300 end:0x82326378
 	.text       start:0x82326378 end:0x823263F0
@@ -11669,6 +11672,7 @@ LayerDir.cpp:
 	.text       start:0x82326500 end:0x82326D1C
 	.text       start:0x82327608 end:0x82327878
 	.text       start:0x823278F0 end:0x82329778
+	.text       start:0x82329778 end:0x82329810
 	.text       start:0x82329810 end:0x82329B20
 
 PitchArrow.cpp:
@@ -13359,10 +13363,6 @@ system/world/World.cpp:
 	.pdata      start:0x82212438 end:0x82212448
 	.text       start:0x824AA8A8 end:0x824AA930
 	.text       start:0x824AAA70 end:0x824AAB10
-
-system/hamobj/PhotoSpotlightPositioner.cpp:
-	.pdata      start:0x821F2138 end:0x821F2148
-	.text       start:0x8227B408 end:0x8227B4A8
 
 xdk/xgraphics/optimize.cpp:
 	.pdata      start:0x8224DD90 end:0x8224DDC0
