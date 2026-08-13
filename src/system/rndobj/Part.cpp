@@ -181,13 +181,23 @@ RndParticleSys::RndParticleSys()
     SetSubSamples(0);
 }
 
+// Retail 0x8244xxxx (124 B). Two defects vs the old RefIs() shape, both read
+// off retail bytes (the oracles cannot see either -- both spellings are
+// identical C++):
+//   1. The base Replace is called FIRST and UNCONDITIONALLY, not as the else
+//      branch.  That is what forces __savegprlr_29 (ref/obj must stay live
+//      across the call) instead of a single-register frame.
+//   2. Hmx::Object is a VIRTUAL BASE of RndTransformable, so retail converts
+//      the held pointer with the vbtable adjust before comparing:
+//        lwz r11,-0xfc(r31) / cmplwi r11,0 / lwz r10,4(r11) / lwz r10,4(r10)
+//        / add r11,r10,r11 / addi r11,r11,4
+//      RefIs() reinterpret_casts instead, dropping the whole chain.
 void RndParticleSys::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (RefIs(ref, mMotionParent)) {
-        RndTransformable *trans = dynamic_cast<RndTransformable *>(obj);
-        SetRelativeMotion(mRelativeMotion, trans);
-        return;
-    }
     RndTransformable::Replace(ref, obj);
+    if (reinterpret_cast<void *>(ref)
+        == reinterpret_cast<void *>(static_cast<Hmx::Object *>(mMotionParent.Ptr()))) {
+        SetRelativeMotion(mRelativeMotion, dynamic_cast<RndTransformable *>(obj));
+    }
 }
 
 RndParticleSys::~RndParticleSys() {
