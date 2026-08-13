@@ -118,3 +118,7 @@ public:
 bool PropSync(BandPatchMesh &, DataNode &, DataArray *, int, PropOp);
 
 BinStream &operator>>(BinStream &bs, BandPatchMesh &mesh);
+// Needed by OutfitConfig::Save (`bs << mPatches`). Declared-not-defined,
+// exactly like the operator>> above it, which OutfitConfig::Load has already
+// been relying on in the same way.
+BinStream &operator<<(BinStream &bs, const BandPatchMesh &mesh);

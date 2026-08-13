@@ -822,7 +822,96 @@ BinStream &operator>>(BinStream &bs, OldColorOption &o) {
     return bs;
 }
 
-SAVE_OBJ(OutfitConfig, 0x5C7)
+// Element writers for the ObjVector/vector members OutfitConfig::Save streams.
+// The vector operator<< template (BinStream.h:322) calls `bs << *it`, so the
+// Save below cannot compile without these -- the stub spanned more than one
+// function, as it has in every lane of this series.
+//
+// Each one MIRRORS the operator>> directly above it along the NEWEST-revision
+// path only: Save always writes rev 0x1b, so every `gRev < N` legacy branch in
+// the reader is unreachable on the writing side and is deliberately absent here.
+// Their bodies are NOT constrained by the Save row itself -- objdiff runs at
+// functionRelocDiffs=none, which masks the `bl` target -- so they are written
+// for correctness, not for the metric.
+BinStream &operator<<(BinStream &bs, const OutfitConfig::MatSwap &swap) {
+    bs << swap.mMat;
+    bs << swap.mResourceMat;
+    bs << swap.mTwoColorDiffuse;
+    bs << swap.mTwoColorInterp;
+    bs << swap.mTwoColorMask;
+    bs << swap.mColor1Palette;
+    bs << swap.mColor1Option;
+    bs << swap.mColor2Palette;
+    bs << swap.mColor2Option;
+    bs << swap.mTextures;
+    return bs;
+}
+
+BinStream &operator<<(BinStream &bs, const OutfitConfig::Piercing::Piece &piece) {
+    bs << piece.mVert;
+    bs << piece.mAttachment;
+    bs << piece.unk14;
+    return bs;
+}
+
+BinStream &operator<<(BinStream &bs, const OutfitConfig::Piercing &piercing) {
+    bs << piercing.mPiercing;
+    bs << piercing.unkc;
+    bs << piercing.mPieces;
+    bs << piercing.mReskin;
+    return bs;
+}
+
+BinStream &operator<<(BinStream &bs, const OutfitConfig::Overlay &o) {
+    bs << o.mCategory;
+    bs << o.mTexture;
+    return bs;
+}
+
+BinStream &operator<<(BinStream &bs, const OutfitConfig::MeshAO::Seam &seam) {
+    bs << seam.mIndex;
+    bs << seam.mCoeff;
+    return bs;
+}
+
+BinStream &operator<<(BinStream &bs, const OutfitConfig::MeshAO &ao) {
+    bs << ao.mMeshName;
+    bs << ao.mCoeffs;
+    bs << ao.mSeams;
+    bs << ao.unkc;
+    return bs;
+}
+
+// Retail IMPLEMENTS this -- SAVE_OBJ() is a MILO_ASSERT stub that compiles to a
+// bare `blr` (4 B) against retail's 248 B. Body read off retail bytes at
+// ?Save@OutfitConfig@@ (0x822a26a8), corroborated three ways:
+//   * the member order is EXACTLY BEGIN_LOADS' order at the newest rev (0x1b),
+//     including mWrinkleBlender LAST even though it sits at 0x88, before
+//     mOverlays/mBandLogo/mDigest in memory;
+//   * mTexBlender and mWrinkleBlender share one callee (both ObjPtr<RndTexBlender>),
+//     while every other member gets a distinct one;
+//   * all 11 member offsets land on the compiler's own layout
+//     (/d1reportSingleClassLayoutOutfitConfig), with Save's `this` adjustor -0xc8
+//     putting retail's `lwz r11,-0xc4(r31)` exactly on {vbptr} at 0x4.
+// NOTE the header's `// 0x..` comments here are STALE (pre-vtordisp) and
+// disagree with both retail and the compiler from mMeshAO onward -- do not use
+// them to adjudicate this function.
+BEGIN_SAVES(OutfitConfig)
+    SAVE_REVS(0x1B, 0)
+    SAVE_SUPERCLASS(Hmx::Object)
+    for (int i = 0; i < 3; i++)
+        bs << mColors[i];
+    bs << mMats;
+    bs << mMeshAO;
+    bs << mComputeAO;
+    bs << mPatches;
+    bs << mPiercings;
+    bs << mTexBlender;
+    bs << mOverlays;
+    bs << mBandLogo;
+    bs << mDigest;
+    bs << mWrinkleBlender;
+END_SAVES
 
 #pragma push
 #pragma dont_inline on
