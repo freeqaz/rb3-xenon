@@ -1815,9 +1815,10 @@ void ResetNormals(RndMesh *m) {
         Vector4 tangCopy = *pTangent;
         Vector3 &n = m->Verts()[i].norm;
         float tDotN = n.x * tangCopy.x + n.z * tangCopy.z + n.y * tangCopy.y;
-        Vector3 ortho(
-            tangCopy.x - n.x * tDotN, tangCopy.y - n.y * tDotN, tangCopy.z - n.z * tDotN
-        );
+        Vector3 scaledNorm;
+        Scale(n, tDotN, scaledNorm);
+        Vector3 ortho;
+        Subtract(*(Vector3 *)&tangCopy, scaledNorm, ortho);
         Normalize(ortho, *(Vector3 *)pTangent);
     }
     m->Sync(0x1F);
