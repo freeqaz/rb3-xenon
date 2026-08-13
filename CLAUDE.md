@@ -182,13 +182,22 @@ instrument that settles ICF. What is corrected is the *reach* of its numbers,
 never their validity.
 
 ⚠ **Instruments structurally INCAPABLE of settling ICF** (same trap as `/GR`):
-match-%/objdiff (`report.rs` masks reloc args — a folded callee and a wrong callee
-score identically), and raw `memcmp` for duplicate bodies (**silently vacuous**:
+match-%/objdiff — a folded callee and a wrong callee score identically — and raw
+`memcmp` for duplicate bodies (**silently vacuous**:
 PC-relative `bl` displacements differ at different addresses, so identical
 functions are *not* identical bytes — this would "prove" ICF by finding nothing).
 The instrument that works is relocation-normalized body hashing over
 `.pdata`-authoritative extents, split reloc-identical vs shape-identical, against
 a random-offset null.
+⚠ **The CONCLUSION survives the 2026-08-12 ruler flip but its old REASON does
+not** (lane RULER-SWEEP, 2026-08-13). This used to read "`report.rs` masks reloc
+args"; the report path has shipped `functionRelocDiffs=name_check` since
+`d04c83df`, so relocation **names** are compared now. objdiff still cannot settle
+ICF, for a *different* reason: a folded callee resolves to the survivor's single
+arbitrary name, so if our source spells the twin, `name_check` charges it exactly
+as it charges a genuinely wrong callee. **It conflates "folded" with "wrong"
+rather than masking both** — same verdict, new mechanism. Do not cite the masking
+reason anywhere; it is stale.
 
 ⛔ **The "71.5% of `name_check` sites are ICF fold-aliases ⇒ NOISE" model does NOT
 survive** — and for a reason *independent* of ICF being real. "Callee absent from
@@ -864,7 +873,34 @@ run the gate before you land. Two traps, both real:
   this doc's own earlier reading: the boundary/**naming** sub-class is not "real
   but unsized", it is **ZERO and structurally impossible** — objdiff's `reloc_eq`
   returns true *regardless of target name* under `functionRelocDiffs=none`, so
-  naming costs zero on BOTH rulers; and the 14 shift/mask rows (twice sold as a
+  naming costs zero on BOTH rulers
+  ⛔⛔ **THAT "STRUCTURALLY IMPOSSIBLE" IS NOW FALSE — it was a property of the
+  `none` ruler, which stopped shipping on 2026-08-12** (`d04c83df`; lane
+  RULER-SWEEP, 2026-08-13). Under the shipped `name_check`, `reloc_eq` **does**
+  compare the target name, so naming does **not** cost zero. Read the economics
+  exactly, because they are asymmetric and counter-intuitive:
+  **(a) repairing a WRONG existing map name PAYS** — MAPDEF-3 (`db9eb318`)
+  measured **+108 B** from 9 such rows with the `none` control **unmoved at +0**.
+  **(b) adding a NEW name to a previously-anonymous address has ZERO call-site
+  upside and REAL downside** — `name_check` *forgives* a placeholder target name
+  (`fn_`/`lbl_`/`jumptable_`/`data_`/`bss_`/`rdata_`; see
+  `is_placeholder_symbol_name` in objdiff-core `diff/code.rs`), so an unnamed
+  callee is already uncharged. Naming it converts a **forgiven** site into a
+  **checked** one: right name = still 0, wrong name = a new charge. ⇒ **naming is
+  now a bet, not a freebie** — though it still pays via the separate *pairing*
+  channel (+1 honest), which is unchanged.
+  **(c) adding an ALIAS is forgiveness and therefore always "pays"** — objdiff
+  consults `SymbolEquivalences` and drops the charge — so an *unproven* alias
+  lifts the score **by construction** and is an integrity hazard, not a win.
+  ⚠ The `none` control **CANNOT catch a fabricated alias**: `none` ignores
+  relocation names, so it reads +0 there by construction. **That flatness is the
+  SIGNATURE of the hazard, not a clearance** — pair it with retail-byte evidence
+  that the fold is real. `scripts/icf_alias_groups.json` holds **1,407** ungated
+  groups and advertised itself as free to merge until 2026-08-13; do not.
+  ⛔ And the 219-row population above should be **re-derived on `name_check`**
+  before anyone calls it empty again — "SIZED AND EMPTY" was measured on `none`.
+
+  Continuing DC-4's second correction: the 14 shift/mask rows (twice sold as a
   "struct-size oracle") adjudicate on retail bytes to **0 real defects** (DD-1
   `78e19b99`, refuted before as BZ-3) — do not re-fund. 176 of the 219 sit at
   fuzzy ≥ 99. ⚠ And a `REGISTER_SWAP` label on a **sub-100** row is a SYMPTOM,
