@@ -5023,7 +5023,6 @@ MetaMaterial.cpp:
 	.pdata      start:0x8220CB30 end:0x8220CD28
 	.pdata      start:0x8220CD30 end:0x8220CD48
 	.pdata      start:0x8221EA58 end:0x8221EA60
-	.text       start:0x82436488 end:0x82438138
 	.text       start:0x824382D4 end:0x8243833C
 	.text       start:0x82578A90 end:0x82578C1C
 
@@ -5750,6 +5749,7 @@ Mat.cpp:
 	.pdata      start:0x82228218 end:0x82228228
 	.text       start:0x824361A0 end:0x824361DC
 	.text       start:0x824361E0 end:0x82436278
+	.text       start:0x82436488 end:0x82438138
 	.text       start:0x82438138 end:0x824382D4
 	.text       start:0x82466080 end:0x82466298
 	.text       start:0x82553FC8 end:0x82554028
