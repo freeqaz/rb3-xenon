@@ -859,9 +859,43 @@ def cmd_build(args):
             "matched": matched,
         }
     os.makedirs(os.path.dirname(SCOPE_MAP), exist_ok=True)
+
+    # Back up the outgoing cache BEFORE clobbering it, and report what moved.
+    # `build` silently replaced the only copy of the classification, so a tier %
+    # could shift by ~15 points with nothing on screen saying why -- on
+    # 2026-08-13 the game tier moved 20,688 -> 24,985 fns (denominator +24%,
+    # reading 75% -> 59%) and the change was only reconstructable because
+    # unrelated worktrees happened to hold reflinked copies from 07-31.
+    prev = None
+    if os.path.exists(SCOPE_MAP):
+        try:
+            with open(SCOPE_MAP) as f:
+                prev = json.load(f)
+            bak = SCOPE_MAP + ".bak"
+            os.replace(SCOPE_MAP, bak)
+            print("backed up previous cache -> %s" % bak)
+        except (OSError, ValueError) as e:
+            print("(could not back up previous cache: %s)" % e)
+            prev = None
+
     with open(SCOPE_MAP, "w") as f:
         json.dump(out, f, indent=0, sort_keys=True)
     print("wrote %s (%d functions)" % (SCOPE_MAP, len(out)))
+
+    if prev:
+        import collections as _c
+        oldc, newc = _c.Counter(), _c.Counter()
+        for v in prev.values():
+            oldc[v.get("scope", "?")] += 1
+        for v in out.values():
+            newc[v.get("scope", "?")] += 1
+        moves = [(s, newc[s] - oldc[s]) for s in sorted(set(oldc) | set(newc))
+                 if newc[s] != oldc[s]]
+        if moves:
+            print("RECLASSIFIED vs previous cache (tier denominators moved — "
+                  "a tier % can shift with NO change in matched code):")
+            for s, d in sorted(moves, key=lambda x: -abs(x[1])):
+                print("    %-12s %+6d fns   (%d -> %d)" % (s, d, oldc[s], newc[s]))
     # quick summary
     _print_report(out)
 
@@ -988,10 +1022,45 @@ def _delta_str(cur, base):
     cur_mp = 100.0 * cur["mc"] / cur["tc"] if cur["tc"] else 0.0
     base_mp = 100.0 * base.get("mc", 0) / base["tc"] if base.get("tc") else 0.0
     d_fz = cur["fz"] - base.get("fz", cur["fz"])
+
+    # ---- cross-ruler guard -------------------------------------------------
+    # matched_code is RULER-DEPENDENT: the 2026-08-12 functionRelocDiffs
+    # none -> name_check flip (d04c83df) moved matched_code by -1,144,956 B
+    # (-11.09 pp) with ZERO source change, while matched_functions moved +0.
+    # Subtracting a `none` absolute from a `name_check` one therefore fabricates
+    # a large regression that never happened -- this dashboard reported
+    # "-6.14% matched · 7d" on a tree whose matched_functions had risen +104.
+    # matched_functions is ruler-INVARIANT and fuzzy% was measured unchanged
+    # across the flip, so those two stay comparable; only matched% is withheld.
+    # (ab_measure.py already refuses cross-ruler comparisons; this is the same
+    # guard for the history path, which had none.)
+    a, b = cur.get("rk"), base.get("rk")
+    if a and b and a != b:
+        return ("%+d fns · matched%% n/a (ruler %s→%s) · %+.2f%% fuzzy"
+                % (d_fns, b, a, d_fz))
+    if not b and a:
+        # Pre-guard history carries no ruler tag. It may or may not straddle the
+        # flip, and we cannot tell -- so say so rather than assert a number.
+        return "%+d fns · matched%% n/a (untagged) · %+.2f%% fuzzy" % (d_fns, d_fz)
     return "%+d fns · %+.2f%% matched · %+.2f%% fuzzy" % (d_fns, cur_mp - base_mp, d_fz)
 
 
-def _progress_delta(off_mc, off_tc, off_mf, fuzzy_pct):
+def _ruler_key(rep):
+    """Short tag for the diff ruler a report.json was scored on.
+
+    report.json SELF-DECLARES this in its provenance block -- read it, never
+    infer it from a date. Absolutes are only comparable within one ruler."""
+    try:
+        cfg = rep.get("provenance", {}).get("diff_config") or []
+        for item in cfg:
+            if str(item).startswith("functionRelocDiffs="):
+                return str(item).split("=", 1)[1]
+    except Exception:
+        pass
+    return None
+
+
+def _progress_delta(off_mc, off_tc, off_mf, fuzzy_pct, ruler=None):
     """Append-only rolling progress history; return (moved_line, window_line).
 
     Replaces the old per-calendar-day baseline, which reset at midnight and so
@@ -1010,6 +1079,8 @@ def _progress_delta(off_mc, off_tc, off_mf, fuzzy_pct):
         now = datetime.datetime.now()
         cur = {"t": now.isoformat(timespec="seconds"), "mc": off_mc, "tc": off_tc,
                "mf": off_mf, "fz": fuzzy_pct}
+        if ruler:
+            cur["rk"] = ruler          # tag every entry; see _delta_str's guard
     except Exception:
         return "", ""
 
@@ -1028,7 +1099,10 @@ def _progress_delta(off_mc, off_tc, off_mf, fuzzy_pct):
         pass
 
     def totals(r):
-        return (r.get("mc"), r.get("tc"), r.get("mf"))
+        # rk is part of the identity: a ruler change with unchanged totals is
+        # still a new measurement basis and must be recorded, or the next delta
+        # silently compares across it.
+        return (r.get("mc"), r.get("tc"), r.get("mf"), r.get("rk"))
 
     changed = (not hist) or totals(hist[-1]) != totals(cur)
     if changed:
@@ -1146,7 +1220,8 @@ def print_progress(by, measures, cache=None, compact=False):
     noora_fzb = sum(by[b][4] for b in NO_ORACLE)
     unk_b = by["unknown"][1]
     mapped_b = (tot_b - unk_b)
-    delta, window = _progress_delta(off_mc, off_tc, off_mf, fuzzy_pct)
+    delta, window = _progress_delta(off_mc, off_tc, off_mf, fuzzy_pct,
+                                    ruler=(cache or {}).get("ruler"))
 
     cache = cache or {"state": "ok"}
     cstate = cache.get("state", "ok")
@@ -1173,13 +1248,30 @@ def print_progress(by, measures, cache=None, compact=False):
             seg = "── " + label + " "
             return "├" + seg + "─" * max(0, IW - len(seg)) + "┤"
         def line(content=""):
+            # Clamp, don't just pad. Any over-long content (a delta string with
+            # a wide age suffix, a long ruler name) used to push the right border
+            # out and visibly break the box -- silently, and only for some
+            # values, which is the worst kind of layout bug to chase.
+            if len(content) > IW:
+                content = content[:IW - 1] + "…"
             return "│" + content.ljust(IW) + "│"
 
-        cols = "   %-11s%8s%8s%14s%15s"          # tier · match% · fuzzy% · fns m/t · MB m/t
+        # tier · match% · fuzzy% · fns m/t · MB m/t · guessed share of denominator
+        cols = "   %-11s%8s%8s%14s%15s%7s"
+        _inf = (cache or {}).get("inferred") or {}
+
         def tier_line(b):
             fns, byt, mf, mbr, fzb = by[b]
+            # "inf" = % of this tier's DENOMINATOR assigned by address-adjacency
+            # guess (spatial:*), whose measured FP rate is 33.76% at best. A tier
+            # whose inf is high can move many points with no change in matched
+            # code -- which is exactly how `build` appeared to "break matches"
+            # on 2026-08-13 (game denominator +24%, 75% -> 59%, numerator flat).
+            g, t = _inf.get(b, (0, 0))
+            inf = ("%.0f%%" % (100.0 * g / t)) if t else "-"
             return line(cols % (b, "%.2f%%" % pct(mbr, byt), "%.2f%%" % pct(fzb, byt),
-                                "%d / %d" % (mf, fns), "%.2f / %.2f" % (mb(mbr), mb(byt))))
+                                "%d / %d" % (mf, fns), "%.2f / %.2f" % (mb(mbr), mb(byt)),
+                                inf))
 
         out.append(edge("╭", "╮"))
         out.append(line("  RB3-XENON · decomp dashboard"))
@@ -1221,7 +1313,7 @@ def print_progress(by, measures, cache=None, compact=False):
         out.append(line("   %-8s%s  %6.2f%%" % ("matched", _bar(pct(orac_mb, orac_b)), pct(orac_mb, orac_b))))
         out.append(line("   %-8s%s  %6.2f%%" % ("fuzzy", _bar(pct(orac_fzb, orac_b)), pct(orac_fzb, orac_b))))
         out.append(line())
-        out.append(line(cols % ("", "match", "fuzzy", "fns m/t", "MB m/t")))
+        out.append(line(cols % ("", "match", "fuzzy", "fns m/t", "MB m/t", "inf")))
         for b in TIER_ROWS:
             out.append(tier_line(b))
         out.append(line())
@@ -1297,6 +1389,29 @@ def _cache_status(scope_by_addr, funcs, state):
     return st
 
 
+def _inferred_share(sm):
+    """Per-tier share of the DENOMINATOR that is an address-adjacency GUESS.
+
+    `spatial:*` provenance means the function was assigned a tier by inheriting
+    it from its neighbours in .text, not from any evidence about the function
+    itself. That inference is measurable and it is weak: lane AUTOID-1
+    (2026-08-13) controlled the two-sided form -- 'enclosed by the same heading
+    on both sides' -- at 66.24% precision, i.e. a 33.76% FALSE-POSITIVE rate,
+    and the one-sided 'after/before' form is weaker still.
+
+    It belongs in the denominator (those bytes are real and must be matched by
+    someone) but a tier % built partly from a 34%-FP guess must not be printed
+    as a single confident number -- so we surface the share and let the reader
+    discount it. Returns {scope: (guess_fns, tier_fns)}."""
+    agg = {}
+    for e in sm.values():
+        sc = e.get("scope", "?")
+        g, t = agg.get(sc, (0, 0))
+        prov = e.get("provenance") or ""
+        agg[sc] = (g + (1 if prov.startswith("spatial:") else 0), t + 1)
+    return agg
+
+
 def _progress_by_live():
     """Fresh per-bucket aggregate (every fn, no dedup) over the cached map, plus
     report.json's official `measures` for the authoritative headline, plus a
@@ -1306,11 +1421,14 @@ def _progress_by_live():
     try:
         sm = _load_scope_map()
         scope_by_addr = {a: e["scope"] for a, e in sm.items()}
+        inferred = _inferred_share(sm)
     except FileNotFoundError:
-        scope_by_addr, state = {}, "missing"
+        scope_by_addr, state, inferred = {}, "missing", {}
     except (json.JSONDecodeError, OSError, KeyError, TypeError):
-        scope_by_addr, state = {}, "unreadable"
+        scope_by_addr, state, inferred = {}, "unreadable", {}
     cache = _cache_status(scope_by_addr, funcs, state)
+    cache["ruler"] = _ruler_key(rep)      # carried through to the delta guard
+    cache["inferred"] = inferred          # -> the per-tier "inf" column
     return _by_live(scope_by_addr, funcs), rep.get("measures", {}), cache
 
 
