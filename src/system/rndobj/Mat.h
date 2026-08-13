@@ -109,7 +109,10 @@ public:
     void SetSpecularMap(RndTex *);
     void SetMetaMat(MetaMaterial *, bool);
     MetaMaterial *CreateMetaMaterial(bool);
-    MetaMaterial *GetMetaMaterial() const { return mMetaMaterial; }
+    // RB3-360 retail has no per-instance MetaMaterial (see the note at the end of
+    // this class); kept as a symbol so rndobj/Utl.cpp and rndobj/Shader.cpp
+    // compile and the native engine still links.
+    MetaMaterial *GetMetaMaterial() const { return nullptr; }
     int GetColorModFlags() const { return mColorModFlags; }
     void SetColorModFlags(ColorModFlags flags) {
         mColorModFlags = flags;
@@ -129,7 +132,6 @@ protected:
     RndMat();
 
     bool IsEditable(Symbol);
-    MatPropEditAction GetMetaMatPropAction(Symbol);
     bool OnGetPropertyDisplay(PropDisplay, Symbol);
     void UpdatePropertiesFromMetaMat();
     void LoadOld(BinStreamRev &);
@@ -142,10 +144,36 @@ protected:
 
     // mColorModFlags / mColorMod / mShaderOptions / mDirty are BaseMaterial members
     // in retail RB3-360 (they fall inside the 0x28..0x18c BaseMaterial range).
-    ObjPtr<MetaMaterial> mMetaMaterial; // 0x18c
-    bool mToggleDisplayAllProps; // 0x198
-    bool mOwnsMetaMat; // 0x199 - whether this mat retains ownership of its MetaMaterial
-    bool mUpdatingFromMetaMat; // 0x19a - guard against re-entrant UpdatePropertiesFromMetaMat
+    //
+    // ⛔ RndMat ADDS NO INSTANCE MEMBERS IN RB3-360 RETAIL: sizeof(RndMat) ==
+    // sizeof(BaseMaterial) == 396 (0x18c). DC3 (a NEWER engine) added a 16-byte
+    // MetaMaterial ownership block here --
+    //     ObjPtr<MetaMaterial> mMetaMaterial;   // 12 B
+    //     bool mToggleDisplayAllProps, mOwnsMetaMat, mUpdatingFromMetaMat; // +pad
+    // -- and our src/system is a verbatim DC3 copy, so we inherited it. Removed
+    // (lane MAT-1), adjudicated on retail bytes, not on either oracle:
+    //
+    //   * retail's tagged allocation for the class named "Mat" is 396, and
+    //     NgMat::NewObject allocates 0x250 = 592 = 396 + sizeof(NgMat's own).
+    //   * NgMat::RefreshState showed a UNIFORM +16 `this`-relative offset delta
+    //     on ~74 of 86 offset-bearing instructions (r31 == this here: the
+    //     BaseMaterial-range `addi r3, r31, 0x4c` is byte-identical on both
+    //     sides, and this function's stack refs are r1-relative).
+    //   * binary-absence, with controls: `MetaMaterial`, `metamaterial`,
+    //     `meta_material`, `owns_meta_mat`, `toggle_display_all_props`,
+    //     `updating_from_meta` and `_edit_action` occur ZERO times in
+    //     orig/45410914/band.exe, while 9 of 10 BaseMaterial DTA property names
+    //     (next_pass, emissive_map, normal_map, ...) ARE present -- so the
+    //     screen can fire.
+    //   * retail carries an RTTI type descriptor for `.?AVRndMat@@` and
+    //     `.?AVNgMat@@` but NONE for `.?AVMetaMaterial@@`.
+    //   * target_symbol_map.json pins ZERO rows for any of the 14 MetaMaterial
+    //     methods.
+    //
+    // The STATIC machinery (sMetaMaterials / LoadMetaMaterials /
+    // CreateMetaMaterial / OnGetMetaMaterials) costs no object bytes and is left
+    // in place so the native engine and the 10 CreateAndSetMetaMat call sites
+    // keep compiling; only the per-instance state is gone.
 };
 
 RndMat *LookupOrCreateMat(const char *, ObjectDir *);
