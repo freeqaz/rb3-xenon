@@ -1,0 +1,432 @@
+unit_sub100_rows	kind	file	line	declaration
+20	OUT	src/system/ui/UILabel.cpp	155	void UILabel::Terminate() {}
+18	OUT	src/system/char/Character.cpp	697	void Character::Terminate() {}
+16	OUT	src/system/rnddx9/Mesh.cpp	173	void DxMesh::OnSync(int) {}
+16	INL	src/system/rndobj/Mesh.h	177	virtual void DrawFacesInRange(int, int) {}
+14	OUT	src/band3/net_band/RockCentral.cpp	302	void RockCentral::UpdateOnlineStatus() {}
+14	OUT	src/band3/net_band/RockCentral.cpp	1534	void RockCentral::DeleteNextUser() {}
+14	OUT	src/system/meta/StorePanel.cpp	230	void StorePanel::ExitStore(StoreError) const {}
+14	OUT	src/system/meta/StorePanel.cpp	652	void StorePanel::StoreUserProfileSwappedToUser(LocalUser *) {}
+14	INL	src/system/meta/StorePanel.h	80	virtual void GetOfferIDsToEnumerate(std::vector<u64> &, bool) const {}
+14	INL	src/system/rndobj/Rnd.h	113	virtual void ReInit() {}
+14	INL	src/system/rndobj/Rnd.h	122	virtual void ForceColorClear() {}
+14	INL	src/system/rndobj/Rnd.h	146	virtual void MakeDrawTarget() {}
+14	INL	src/system/rndobj/Rnd.h	150	RND_DC3_VIRTUAL void BeginDrawPass() {}
+14	INL	src/system/rndobj/Rnd.h	151	RND_DC3_VIRTUAL void EndDrawPass() {}
+14	INL	src/system/rndobj/Rnd.h	155	virtual void ReleaseOwnership() {}
+14	INL	src/system/rndobj/Rnd.h	156	virtual void AcquireOwnership() {}
+14	INL	src/system/rndobj/Rnd.h	157	virtual void SetShadowMap(RndTex *, RndCam *, const Hmx::Color *) {}
+14	INL	src/system/rndobj/Rnd.h	159	virtual void CaptureNextGpuFrame() {}
+14	INL	src/system/rndobj/Rnd.h	252	RND_DC3_VIRTUAL void PushClipPlanesInternal(ObjPtrVec<RndTransformable> &) {}
+14	INL	src/system/rndobj/Rnd.h	253	RND_DC3_VIRTUAL void PopClipPlanesInternal(ObjPtrVec<RndTransformable> &) {}
+14	INL	src/system/rndobj/Rnd.h	259	virtual void ModalDraw(Debug::ModalType, const char *) {}
+13	INL	src/system/rndobj/EventTrigger.h	110	virtual void CheckAnims() {}
+12	OUT	src/system/rnddx9/ShaderMgr.cpp	260	void DxShaderMgr::SetVConstant(VShaderConstant, const float *, unsigned int) {}
+12	INL	src/system/synth/Synth.h	48	virtual void PreInit() {}
+12	INL	src/system/synth/Synth.h	57	virtual void SetFXMode(int, FXMode) {}
+12	INL	src/system/synth/Synth.h	59	virtual void SetFXVolume(int, float) {}
+12	INL	src/system/synth/Synth.h	61	virtual void SetFXDelay(int, float) {}
+12	INL	src/system/synth/Synth.h	63	virtual void SetFXFeedback(int, float) {}
+12	INL	src/system/synth/Synth.h	65	virtual void SetFXChain(bool) {}
+12	INL	src/system/synth/Synth.h	67	virtual void SetChatVoiceGain(int, float) {}
+12	INL	src/system/synth/Synth.h	70	virtual void SetMicFX(bool) {}
+12	INL	src/system/synth/Synth.h	72	virtual void SetMicVolume(float) {}
+12	INL	src/system/synth/Synth.h	74	virtual void SuspendMics() {}
+12	INL	src/system/synth/Synth.h	75	virtual void ResumeMics() {}
+12	INL	src/system/synth/Synth.h	79	virtual void CaptureMic(int) {}
+12	INL	src/system/synth/Synth.h	80	virtual void ReleaseMic(int) {}
+12	INL	src/system/synth/Synth.h	81	virtual void ReleaseAllMics() {}
+12	INL	src/system/synth/Synth.h	84	virtual void ResetMicsChanged() {}
+12	INL	src/system/synth/Synth.h	94	virtual void EnableLevels(bool) {}
+12	INL	src/system/synth/Synth.h	95	virtual void RequirePushToTalk(bool, int) {}
+12	INL	src/system/synth/Synth.h	96	virtual void SetIncomingVoiceChatVolume(float) {}
+12	INL	src/system/world/CameraShot.h	167	virtual void SetPreFrame(float, float) {}
+12	INL	src/system/world/CameraShot.h	203	virtual void ApplyDynamicOffsetPreLookAt(Transform &, bool) {}
+12	INL	src/system/world/CameraShot.h	204	virtual void ApplyDynamicOffsetPostLookAt(Transform &) {}
+12	INL	src/system/world/CameraShot.h	205	virtual void ApplyFinalCamTransform(Transform &) {}
+10	INL	src/system/rndobj/PropKeys.h	147	virtual void CloneKey(int idx) {}
+10	INL	src/system/rndobj/PropKeys.h	160	virtual void SetToCurrentVal(int idx) {}
+9	INL	src/system/char/FileMerger.h	115	virtual void PostLoad(BinStream &) {}
+9	OUT	src/system/gesture/DepthBuffer3D.cpp	188	void DepthBuffer3D::Save(BinStream &) {}
+9	OUT	src/system/gesture/DepthBuffer3D.cpp	189	void DepthBuffer3D::Copy(const Hmx::Object *, Hmx::Object::CopyType) {}
+9	OUT	src/system/gesture/DepthBuffer3D.cpp	190	void DepthBuffer3D::Load(BinStream &) {}
+9	INL	src/system/obj/DirLoader.h	96	void DoneLoading() {}
+9	INL	src/system/ui/UIList.h	51	virtual void AdjustTrans(Transform &, const UIListElementDrawState &) {}
+9	INL	src/system/ui/UIList.h	52	virtual void AdjustTransSelected(Transform &) {}
+8	INL	src/band3/game/VocalPlayer.h	135	virtual void PollTrack() {}
+8	INL	src/band3/game/VocalPlayer.h	136	virtual void PollAudio() {}
+8	INL	src/band3/game/VocalPlayer.h	138	virtual void SetRealtime(bool) {}
+8	INL	src/band3/game/VocalPlayer.h	145	virtual void EnableFills(float, bool) {}
+8	INL	src/band3/game/VocalPlayer.h	146	virtual void DisableFills() {}
+8	OUT	src/system/bandobj/OutfitConfig.cpp	933	void OutfitConfig::PostSave(BinStream &) {}
+8	OUT	src/system/char/CharClip.cpp	1004	void CharClip::ApplyBlendedSkeletons(CharClip **, CharBones &, float, float) {}
+8	INL	src/system/char/CharClip.h	149	virtual void PostSave(BinStream &) {}
+8	OUT	src/system/char/Waypoint.cpp	207	void Waypoint::Highlight() {}
+8	INL	src/system/rndobj/Anim.h	59	virtual void StartAnim() {}
+8	INL	src/system/rndobj/Anim.h	61	virtual void EndAnim() {}
+8	INL	src/system/rndobj/Anim.h	71	virtual void SetKey(float frame) {}
+8	INL	src/system/rndobj/Anim.h	73	virtual void ListAnimChildren(std::list<RndAnimatable *> &) const {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	116	void NgSpotlightDrawer::SetupFogDensityMap() {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	117	void NgSpotlightDrawer::RenderFogProxy() {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	118	void NgSpotlightDrawer::RenderSphere(Spotlight *) {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	119	void NgSpotlightDrawer::RenderSheet(Spotlight *) {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	121	void NgSpotlightDrawer::SetupXSection(Spotlight *, const Spotlight::BeamDef &) {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	122	void NgSpotlightDrawer::RenderConeDefs(Spotlight *, const Hmx::Color &) {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	123	void NgSpotlightDrawer::RenderCone(Spotlight *) {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	124	void NgSpotlightDrawer::RenderBeams(const Hmx::Matrix4 &) {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	126	void NgSpotlightDrawer::BlurRT(float, float) {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	127	void NgSpotlightDrawer::SetupForPostProcess() {}
+8	OUT	src/system/world/SpotlightDrawer_NG.cpp	128	void NgSpotlightDrawer::RenderScene() {}
+8	INL	src/system/world/SpotlightDrawer_NG.h	67	virtual void DrawBeams(SpotlightEntry *, SpotlightEntry *const &) {}
+7	INL	src/band3/game/Game.h	126	virtual void Beat(int, int) {}
+7	INL	src/band3/game/Game.h	127	virtual void UpdateSongPos(const SongPos &) {}
+7	INL	src/band3/game/Game.h	128	virtual void HandleSubmix(int, const char *) {}
+7	INL	src/band3/meta_band/BandStorePanel.h	48	virtual void StoreUserProfileSwappedToUser(LocalUser *) {}
+7	OUT	src/band3/meta_band/MetaPerformer.cpp	1680	void MetaPerformer::UploadDebugStats() {}
+7	OUT	src/band3/meta_band/MetaPerformer.cpp	1692	void MetaPerformer::SetWiiPending(WiiPendingFlags) {}
+7	OUT	src/band3/meta_band/MetaPerformer.cpp	1693	void MetaPerformer::ClearWiiPending(WiiPendingFlags) {}
+7	INL	src/band3/meta_band/MetaPerformer.h	62	virtual void CompleteSong(std::vector<BandUser *> &, const BandStatsInfo *, bool) {}
+7	INL	src/band3/meta_band/MetaPerformer.h	65	virtual void RestartLastSong() {}
+7	INL	src/band3/meta_band/MetaPerformer.h	67	virtual void OnSynchronized(unsigned int) {}
+7	INL	src/band3/meta_band/MetaPerformer.h	68	virtual void SyncSave(BinStream &, unsigned int) const {}
+7	INL	src/band3/meta_band/MetaPerformer.h	69	virtual void SyncLoad(BinStream &, unsigned int) {}
+7	OUT	src/band3/meta_band/MusicLibrary.cpp	176	void MusicLibrary::OnLoad() {}
+7	OUT	src/band3/meta_band/MusicLibrary.cpp	633	void MusicLibrary::ContentMounted(const char *, const char *) {}
+7	INL	src/meta_ham/MetaPerformer.h	50	virtual void OnLoadSong() {}
+7	OUT	src/system/obj/Dir.cpp	598	void ObjectDir::AddedObject(Hmx::Object *) {}
+7	INL	src/system/synth/StandardStream.h	44	virtual void Fill() {}
+7	INL	src/system/synth/StandardStream.h	60	virtual void SetFX(int, bool) {}
+7	INL	src/system/synth/StandardStream.h	62	virtual void SetFXCore(int, FXCore) {}
+7	INL	src/system/synth/StandardStream.h	85	virtual void SetStereoPair(int, int) {}
+6	OUT	src/band3/bandtrack/GemManager.cpp	856	void TrackDir::ClearChordMeshRefCounts() {}
+6	OUT	src/band3/bandtrack/GemManager.cpp	858	void TrackDir::DeleteUnusedChordMeshes() {}
+6	OUT	src/band3/bandtrack/GemManager.cpp	859	void TrackDir::SyncFingerFeedback() {}
+6	OUT	src/band3/bandtrack/GemManager.cpp	1245	void GemManager::Ignore(int) {}
+6	OUT	src/system/obj/DataFile.cpp	690	void DataLoader::DoneLoading() {}
+6	OUT	src/system/rndobj/Bitmap.cpp	45	void RndBitmap::SetName(const Hmx::CRC &crc) {}
+6	OUT	src/system/synth/MetaMusic.cpp	11	void MetaMusicLoader::DoneLoading() {}
+6	INL	src/system/world/SpotlightDrawer.h	106	virtual void ClearPostProc() {}
+5	OUT	src/band3/game/GemPlayer.cpp	1364	void GemPlayer::PollAudio() {}
+5	OUT	src/band3/game/GemPlayer.cpp	1390	void GemPlayer::SetRealtime(bool) {}
+5	OUT	src/band3/game/GemPlayer.cpp	1864	void GemPlayer::OnRemoteFill(bool) {}
+5	INL	src/band3/game/GemPlayer.h	328	virtual void SetTrack(const UserGuid &, int) {}
+5	INL	src/band3/game/GemPlayer.h	336	virtual void SetCurrentPhrase(int, const PhraseInfo &) {}
+5	INL	src/band3/game/GemPlayer.h	337	virtual void NoCurrentPhrase(int) {}
+5	INL	src/band3/game/GemPlayer.h	352	virtual void SwingHook(int, int, float, bool, bool) {}
+5	INL	src/band3/game/GemPlayer.h	353	virtual void HitHook(int, float, int, unsigned int, GemHitFlags) {}
+5	INL	src/band3/game/GemPlayer.h	354	virtual void MissHook(int, int, float, int, int) {}
+5	INL	src/band3/game/GemPlayer.h	355	virtual void PassHook(int, float, int, bool) {}
+5	INL	src/band3/game/GemPlayer.h	356	virtual void SeeGemHook(int, float, int) {}
+5	OUT	src/band3/game/VocalPart.cpp	55	void VocalPart::Start() {}
+5	OUT	src/band3/game/VocalPart.cpp	56	void VocalPart::StartIntro() {}
+5	OUT	src/band3/game/VocalPart.cpp	102	void VocalPart::SetPaused(bool) {}
+5	OUT	src/band3/game/VocalPart.cpp	323	void VocalPart::OnGameOver() {}
+5	OUT	src/system/bandobj/BandIKEffector.cpp	273	void BandIKEffector::Highlight() {}
+5	OUT	src/system/beatmatch/MasterAudio.cpp	613	void MasterAudio::ImplicitGem(int, float, int, const UserGuid &) {}
+5	INL	src/system/beatmatch/MasterAudio.h	131	virtual void Beat(int, int) {}
+5	INL	src/system/beatmatch/MasterAudio.h	132	virtual void UpdateSongPos(const SongPos &) {}
+5	INL	src/system/beatmatch/MasterAudio.h	146	virtual void SpuriousMiss(int, int, float, int) {}
+5	INL	src/system/beatmatch/MasterAudio.h	153	virtual void Swing(int, int, float, bool, bool) {}
+5	INL	src/system/beatmatch/MasterAudio.h	154	virtual void FretButtonDown(int, float) {}
+5	INL	src/system/beatmatch/MasterAudio.h	155	virtual void FretButtonUp(int, float) {}
+5	INL	src/system/beatmatch/MasterAudio.h	156	virtual void MercurySwitch(bool, float) {}
+5	INL	src/system/beatmatch/MasterAudio.h	157	virtual void WhammyBar(float) {}
+5	INL	src/system/beatmatch/MasterAudio.h	158	virtual void FilteredWhammyBar(float) {}
+5	INL	src/system/beatmatch/MasterAudio.h	159	virtual void SwingAtHopo(int, float, int) {}
+5	INL	src/system/beatmatch/MasterAudio.h	160	virtual void Hopo(int, float, int) {}
+5	INL	src/system/beatmatch/MasterAudio.h	162	virtual void NoCurrentPhrase(int) {}
+5	INL	src/system/beatmatch/MasterAudio.h	163	virtual void FillReset() {}
+5	INL	src/system/beatmatch/MasterAudio.h	164	virtual void FillComplete(int, int) {}
+5	OUT	src/system/beatmatch/TrackWatcherImpl.cpp	154	void TrackWatcherImpl::PollHook(float ms) {}
+5	OUT	src/system/beatmatch/TrackWatcherImpl.cpp	177	void TrackWatcherImpl::JumpHook(float) {}
+5	OUT	src/system/beatmatch/TrackWatcherImpl.cpp	178	void TrackWatcherImpl::Restart() {}
+5	INL	src/system/beatmatch/TrackWatcherImpl.h	74	virtual void RGFretButtonDown(int) {}
+5	INL	src/system/beatmatch/TrackWatcherImpl.h	76	virtual void OutOfRangeSwing() {}
+5	INL	src/system/beatmatch/TrackWatcherImpl.h	89	virtual void RegisterFill(int) {}
+5	INL	src/system/beatmatch/TrackWatcherImpl.h	90	virtual void ResetFill() {}
+5	INL	src/system/beatmatch/TrackWatcherImpl.h	91	virtual void FillSwing(int tick, int slot, int gemID, bool at_end) {}
+5	INL	src/system/beatmatch/TrackWatcherImpl.h	93	virtual void FillStop() {}
+5	INL	src/system/char/CharHair.h	89	virtual void Highlight() {}
+5	INL	src/system/obj/Object.h	797	virtual void Replace(ObjRef *, Hmx::Object *) {}
+5	INL	src/system/obj/Object.h	2020	virtual void PreSave(BinStream &) {}
+5	INL	src/system/obj/Object.h	2023	virtual void PostSave(BinStream &) {}
+5	INL	src/system/obj/Object.h	2025	virtual void Print() {}
+5	INL	src/system/obj/Object.h	2044	virtual void PostLoad(BinStream &) {}
+5	INL	src/system/rnddx9/Object.h	5	virtual void PreDeviceReset() {}
+5	INL	src/system/rnddx9/Object.h	6	virtual void PostDeviceReset() {}
+5	INL	src/system/rndobj/Tex.h	47	virtual void UnlockBitmap() {}
+5	INL	src/system/rndobj/Tex.h	52	virtual void MakeDrawTarget() {}
+5	INL	src/system/rndobj/Tex.h	53	virtual void FinishDrawTarget() {}
+5	INL	src/system/rndobj/Tex.h	55	virtual void Compress(AlphaCompress) {}
+5	INL	src/system/rndobj/Tex.h	57	virtual void TexelsUnlock() {}
+5	INL	src/system/rndobj/Tex.h	59	virtual void Select(int) {}
+5	INL	src/system/rndobj/Tex.h	129	virtual void PresyncBitmap() {}
+5	INL	src/system/rndobj/Tex.h	130	virtual void SyncBitmap() {}
+4	OUT	src/band3/game/SongDB.cpp	393	void SongDB::SpewAllVocalNotes() const {}
+4	OUT	src/band3/game/SongDB.cpp	394	void SongDB::SpewTrackSizes() const {}
+4	INL	src/band3/game/SongDB.h	38	virtual void AddMultiGem(int, const GameGem &) {}
+4	INL	src/band3/game/TrainerPanel.h	56	virtual void HandlePlayerDeleted(Player *) {}
+4	OUT	src/band3/meta_band/MetaPanel.cpp	364	void MetaPanel::Draw() {}
+4	OUT	src/band3/meta_band/ViewSetting.cpp	75	void ViewSetting::Refresh() {}
+4	INL	src/band3/meta_band/ViewSetting.h	71	virtual void Reset() {}
+4	INL	src/network/ObjDup/DuplicatedObject.h	33	virtual void UpdateCellStats(int, int, int) {}
+4	OUT	src/system/bandobj/BandTrack.cpp	40	void BandTrack::Save(BinStream &) {}
+4	INL	src/system/bandobj/BandTrack.h	34	virtual void TrackReset() {}
+4	INL	src/system/bandobj/BandTrack.h	35	virtual void ResetSmashers(bool) {}
+4	INL	src/system/bandobj/BandTrack.h	37	virtual void Extend(bool) {}
+4	INL	src/system/bandobj/BandTrack.h	49	virtual void SetPlayerLocal(float) {}
+4	INL	src/system/bandobj/BandTrack.h	64	virtual void RefreshCrowdRating(float, CrowdMeterState) {}
+4	INL	src/system/bandobj/BandTrack.h	66	virtual void SetupInstrument() {}
+4	INL	src/system/bandobj/BandTrack.h	70	virtual void ResetEffectSelector() {}
+4	INL	src/system/bandobj/BandTrack.h	71	virtual void SetupSmasherPlate() {}
+4	INL	src/system/bandobj/BandTrack.h	72	virtual void ReleaseSmasherPlate() {}
+4	INL	src/system/bandobj/BandTrack.h	73	virtual void TutorialReset() {}
+4	INL	src/system/char/CharBones.h	115	virtual void ReallocateInternal() {}
+4	INL	src/system/char/CharServoBone.h	29	virtual void Highlight() {}
+4	INL	src/system/movie/TexMovie.h	53	void AddFader(Fader *f) {}
+4	INL	src/system/rndobj/PropAnim.h	29	virtual void EndAnim() {}
+4	INL	src/system/rndobj/Trans.h	181	virtual void UpdatedWorldXfm() {}
+4	OUT	src/system/world/Crowd.cpp	580	void WorldCrowd::Delete3DCrowdHandles() {}
+3	OUT	src/band3/bandtrack/Gem.cpp	505	void Gem::Miss() {}
+3	OUT	src/band3/game/FocusTracker.cpp	53	void FocusTracker::HandleGameOver_(float) {}
+3	OUT	src/band3/game/FocusTracker.cpp	154	void FocusTracker::TargetSuccess(int) const {}
+3	OUT	src/band3/game/FocusTracker.cpp	460	void StreakFocusTracker::BroadcastSuccess(int) const {}
+3	INL	src/band3/game/FocusTracker.h	28	virtual void PlayerAddEnergy(Player *, float) {}
+3	INL	src/band3/game/FocusTracker.h	33	virtual void FocusLeaving(FocusFlags) {}
+3	INL	src/band3/game/FocusTracker.h	34	virtual void HandleFocusSwitch(float) {}
+3	INL	src/band3/game/FocusTracker.h	35	virtual void BroadcastFocusSuccess() const {}
+3	INL	src/band3/game/FocusTracker.h	36	virtual void BroadcastSuccess(int) const {}
+3	INL	src/band3/meta_band/Leaderboard.h	106	virtual void EnumerationStarted() {}
+3	INL	src/band3/meta_band/Leaderboard.h	107	virtual void ResultSuccess(bool, bool, bool) {}
+3	INL	src/band3/meta_band/Leaderboard.h	108	virtual void ResultFailure() {}
+3	OUT	src/band3/meta_band/OvershellSlot.cpp	2169	void OvershellProfileProvider::Text(int, int, UIListLabel *, UILabel *) const {}
+3	OUT	src/band3/meta_band/OvershellSlot.cpp	2180	void OvershellProfileProvider::SetWiiProfileListMode(WiiProfileListMode, bool) {}
+3	OUT	src/band3/meta_band/OvershellSlot.cpp	2186	void OvershellProfileProvider::Reload() {}
+3	INL	src/network/net/NetSession.h	108	virtual void InviteFriend(Friend *, const char *, const char *) {}
+3	INL	src/network/net/NetSession.h	121	virtual void OnSetPublic(bool) {}
+3	INL	src/system/bandobj/BandCharDesc.h	190	virtual void AddOverlays(BandPatchMesh &) {}
+3	INL	src/system/bandobj/BandCharDesc.h	191	virtual void MiloReload() {}
+3	INL	src/system/beatmatch/BeatMatchController.h	23	virtual void Poll() {}
+3	INL	src/system/beatmatch/BeatMatchController.h	29	virtual void EnableShift(bool) {}
+3	INL	src/system/beatmatch/BeatMatchController.h	33	virtual void UseAlternateMapping(bool) {}
+3	INL	src/system/beatmatch/BeatMatchController.h	35	virtual void SetSecondPedalHiHat(bool) {}
+3	INL	src/system/beatmatch/BeatMatchController.h	36	virtual void SetCymbalConfiguration(int) {}
+3	INL	src/system/beatmatch/BeatMatchController.h	37	virtual void SetAutoSoloButtons(bool) {}
+3	INL	src/system/beatmatch/SongParser.h	348	virtual void OnNewTrack(int) {}
+3	INL	src/system/beatmatch/SongParser.h	349	virtual void OnEndOfTrack() {}
+3	INL	src/system/beatmatch/SongParser.h	350	virtual void OnAllTracksRead() {}
+3	INL	src/system/beatmatch/SongParser.h	351	virtual void OnMidiMessage(int, unsigned char, unsigned char, unsigned char) {}
+3	INL	src/system/flow/FlowNode.h	69	virtual void Execute(QueueState) {}
+3	INL	src/system/hamobj/RhythmDetector.h	72	virtual void Clear() {}
+3	INL	src/system/hamobj/RhythmDetector.h	73	virtual void Update(const struct SkeletonUpdateData &) {}
+3	INL	src/system/hamobj/RhythmDetector.h	75	virtual void Draw(const BaseSkeleton &, class SkeletonViz &) {}
+3	INL	src/system/os/Debug.h	107	inline void MiloStripEval(const char *) {}
+3	INL	src/system/os/Debug.h	108	template <class T1> inline void MiloStripEval(const char *, T1) {}
+3	INL	src/system/os/Debug.h	109	template <class T1, class T2> inline void MiloStripEval(const char *, T1, T2) {}
+3	INL	src/system/os/Debug.h	111	inline void MiloStripEval(const char *, T1, T2, T3) {}
+3	INL	src/system/os/Debug.h	113	inline void MiloStripEval(const char *, T1, T2, T3, T4) {}
+3	INL	src/system/os/Debug.h	115	inline void MiloStripEval(const char *, T1, T2, T3, T4, T5) {}
+3	INL	src/system/os/Debug.h	117	inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6) {}
+3	INL	src/system/os/Debug.h	119	inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7) {}
+3	INL	src/system/os/Debug.h	121	inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8) {}
+3	INL	src/system/os/Debug.h	132	inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9) {}
+3	INL	src/system/os/Debug.h	144	inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) {}
+3	INL	src/system/os/Debug.h	417	inline void _MiloNotifyOnceEval(const char *) {}
+3	INL	src/system/os/Debug.h	418	template <class A> inline void _MiloNotifyOnceEval(const char *, A) {}
+3	INL	src/system/os/Debug.h	420	inline void _MiloNotifyOnceEval(const char *, A, B) {}
+3	INL	src/system/os/Debug.h	422	inline void _MiloNotifyOnceEval(const char *, A, B, C) {}
+3	INL	src/system/os/Debug.h	424	inline void _MiloNotifyOnceEval(const char *, A, B, C, D) {}
+3	INL	src/system/os/File.h	72	virtual void Flush() {}
+3	OUT	src/system/rnddx9/Lit.cpp	12	void DxLight::Terminate() {}
+3	INL	src/system/rndobj/CubeTex.h	49	virtual void Select(int) {}
+3	INL	src/system/rndobj/CubeTex.h	50	virtual void Reset() {}
+3	INL	src/system/rndobj/CubeTex.h	51	virtual void Sync() {}
+3	OUT	src/system/rndobj/Env.cpp	380	void RndEnviron::UpdateApproxLighting(const Vector3 *) {}
+3	INL	src/system/synth/Mic.h	27	virtual void SetMute(bool) {}
+3	INL	src/system/synth/Mic.h	33	virtual void SetVolume(float) {}
+3	INL	src/system/synth/Mic.h	34	virtual void SetFxSend(FxSend *) {}
+3	INL	src/system/synth/Mic.h	36	virtual void SetChangeNotify(bool) {}
+3	INL	src/system/synth/Mic.h	37	virtual void StartPlayback() {}
+3	INL	src/system/synth/Mic.h	38	virtual void StopPlayback() {}
+3	INL	src/system/synth/Sequence.h	232	virtual void Poll() {}
+3	OUT	src/system/synth_xbox/Mic.cpp	232	void MicXbox::SetDMA(bool b) {}
+3	OUT	src/system/synth_xbox/Mic.cpp	234	void MicXbox::SetEarpieceVolume(float f) {}
+3	OUT	src/system/synth_xbox/Mic.cpp	236	void MicXbox::SetCompressor(bool b) {}
+3	OUT	src/system/synth_xbox/Mic.cpp	238	void MicXbox::SetCompressorParam(float f) {}
+3	OUT	src/system/synth_xbox/SynapseAPO.cpp	67	void SynapseAPO::DoProcess(const SynapseAPOParams& params, unsigned int* arg1, float& arg2, unsi
+3	INL	src/system/track/TrackDir.h	38	virtual void SetDisplayRange(float) {}
+3	INL	src/system/track/TrackDir.h	39	virtual void SetDisplayOffset(float, bool) {}
+3	INL	src/system/track/TrackDir.h	46	virtual void SetUnisonProgress(float) {}
+3	INL	src/system/track/TrackDir.h	62	virtual void KeyMissLeft() {}
+3	INL	src/system/track/TrackDir.h	63	virtual void KeyMissRight() {}
+3	INL	src/system/track/TrackDir.h	65	virtual void PreDraw() {}
+3	INL	src/system/track/TrackDir.h	66	virtual void PostDraw() {}
+3	INL	src/system/utl/NetCacheMgr.h	115	virtual void LoadInit() {}
+3	INL	src/system/utl/NetCacheMgr.h	117	virtual void ReadyInit() {}
+3	INL	src/system/utl/NetCacheMgr.h	118	virtual void UnloadInit() {}
+3	INL	src/system/utl/Song.h	35	virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType) {}
+3	INL	src/system/utl/Song.h	42	virtual void OnNewTrack(int) {}
+3	INL	src/system/utl/Song.h	43	virtual void OnEndOfTrack() {}
+3	INL	src/system/utl/Song.h	44	virtual void OnAllTracksRead() {}
+3	INL	src/system/utl/Song.h	45	virtual void OnMidiMessage(int, unsigned char, unsigned char, unsigned char) {}
+3	OUT	src/system/world/Instance.cpp	104	void WorldInstance::PreSave(BinStream &) {}
+2	OUT	src/band3/game/NetGameMsgs.cpp	258	void SetPartyShuffleModeMsg::Save(BinStream &) const {}
+2	OUT	src/band3/game/NetGameMsgs.cpp	259	void SetPartyShuffleModeMsg::Load(BinStream &) {}
+2	INL	src/band3/game/Performer.h	44	virtual void Hit() {}
+2	INL	src/band3/game/Performer.h	47	virtual void Miss() {}
+2	INL	src/band3/game/Performer.h	61	virtual void FinalizeStats() {}
+2	OUT	src/band3/game/Player.cpp	794	void Player::IgnoreUntilRollback(float) {}
+2	INL	src/band3/game/Player.h	114	virtual void PostLoad(bool) {}
+2	INL	src/band3/game/Player.h	128	virtual void SetAutoOn(bool) {}
+2	INL	src/band3/game/Player.h	133	virtual void EnableDrumFills(bool) {}
+2	INL	src/band3/game/Player.h	137	virtual void ResetCodaPoints() {}
+2	INL	src/band3/game/Player.h	138	virtual void AddCodaPoints() {}
+2	INL	src/band3/game/Player.h	141	virtual void SetFillLogic(FillLogic) {}
+2	INL	src/band3/game/Player.h	146	virtual void EnableController() {}
+2	INL	src/band3/game/Player.h	147	virtual void DisableController() {}
+2	INL	src/band3/game/Player.h	148	virtual void ConfigureBehavior() {}
+2	INL	src/band3/game/Player.h	157	virtual void SetSyncOffset(float) {}
+2	INL	src/band3/game/Player.h	165	virtual void SetCodaEndMs(float) {}
+2	INL	src/band3/game/Player.h	168	virtual void EnterAnnoyingMode() {}
+2	INL	src/band3/game/Player.h	169	virtual void ClearScoreHistories() {}
+2	INL	src/band3/game/Player.h	175	virtual void EnableSwings(bool) {}
+2	INL	src/band3/game/Player.h	180	virtual void UpdateLeftyFlip() {}
+2	INL	src/band3/game/Player.h	181	virtual void UpdateVocalStyle() {}
+2	INL	src/band3/game/Player.h	182	virtual void ResetController(bool) {}
+2	OUT	src/band3/game/Tracker.cpp	195	void Tracker::UpdateGoalValueLabel(UILabel &) const {}
+2	OUT	src/band3/game/Tracker.cpp	196	void Tracker::UpdateCurrentValueLabel(UILabel &) const {}
+2	INL	src/band3/game/Tracker.h	60	virtual void TranslateRelativeTargets() {}
+2	INL	src/band3/game/Tracker.h	64	virtual void RemoteEndStreak_(Player *, float, int) {}
+2	INL	src/band3/game/Tracker.h	65	virtual void ConfigureTrackerSpecificData(const DataArray *) {}
+2	INL	src/band3/game/Tracker.h	66	virtual void HandleAddPlayer_(Player *) {}
+2	INL	src/band3/game/Tracker.h	67	virtual void HandleRemovePlayer_(Player *) {}
+2	INL	src/band3/game/Tracker.h	68	virtual void HandlePlayerSaved_(const TrackerPlayerID &) {}
+2	INL	src/band3/game/Tracker.h	69	virtual void HandleGameOver_(float) {}
+2	INL	src/band3/game/Tracker.h	70	virtual void Restart_() {}
+2	INL	src/band3/game/Tracker.h	71	virtual void FirstFrame_(float) {}
+2	INL	src/band3/game/Tracker.h	72	virtual void Poll_(float) {}
+2	INL	src/band3/game/Tracker.h	73	virtual void TargetSuccess(int) const {}
+2	OUT	src/band3/meta_band/BandProfile.cpp	1026	void BandProfile::AutoFakeFill(int) {}
+2	OUT	src/band3/meta_band/LicenseMgr.cpp	60	void LicenseMgr::ContentMounted(const char *, const char *) {}
+2	INL	src/band3/meta_band/SongSort.h	18	virtual void Init() {}
+2	INL	src/band3/meta_band/SongSort.h	22	virtual void ConfirmSubheaders(HeaderSortNode *) {}
+2	INL	src/band3/meta_band/SongSort.h	23	virtual void Clear() {}
+2	INL	src/band3/meta_band/SongSort.h	31	virtual void PollReady() {}
+2	INL	src/band3/meta_band/SongSort.h	32	virtual void MakeReady() {}
+2	INL	src/band3/meta_band/SongSort.h	33	virtual void CancelMakeReady() {}
+2	INL	src/system/bandobj/BandLeadMeter.h	21	virtual void SetFrame(float, float) {}
+2	OUT	src/system/bandobj/TrackPanelDirBase.cpp	348	void TrackPanelDirBase::PlayIntro() {}
+2	OUT	src/system/bandobj/TrackPanelDirBase.cpp	349	void TrackPanelDirBase::HideScore() {}
+2	OUT	src/system/bandobj/TrackPanelDirBase.cpp	350	void TrackPanelDirBase::GameOver() {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	37	virtual void ResetAll() {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	44	virtual void SetCodaScore(int) {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	47	virtual void ResetPlayers() {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	48	virtual void StartFinale() {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	49	virtual void SetMultiplier(int, bool) {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	50	virtual void SetCrowdRating(float) {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	52	virtual void UnisonStart(int) {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	53	virtual void UnisonEnd() {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	54	virtual void UnisonSucceed() {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	60	virtual void DisablePlayer(int, bool) {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	61	virtual void EnablePlayer(int) {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	62	virtual void FadeBotbBandNames(bool) {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	63	virtual void CleanUpChordMeshes() {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	64	virtual void SetApplauseMeterScale(int, int) {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	65	virtual void StartPulseAnims(float) {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	73	virtual void Unkd4() {}
+2	INL	src/system/bandobj/TrackPanelDirBase.h	74	virtual void Unkd8() {}
+2	OUT	src/system/char/CharLipSyncDriver.cpp	219	void CharLipSyncDriver::BlendInOverrides(float) {}
+2	OUT	src/system/hamobj/MiniLeaderboardDisplay.cpp	86	void MiniLeaderboardDisplay::Update() {}
+2	INL	src/system/os/User.h	107	virtual void SyncLoad(BinStream &, unsigned int) {}
+2	INL	src/system/rndobj/Font.h	233	virtual void Print() const {}
+2	INL	src/system/rndobj/Rnd_NG.h	49	virtual void Clear(unsigned int, const Hmx::Color &) {}
+2	INL	src/system/rndobj/Rnd_NG.h	60	virtual void Suspend() {}
+2	INL	src/system/rndobj/Rnd_NG.h	61	virtual void Resume() {}
+2	INL	src/system/ui/UIListWidget.h	71	virtual void CreateElements(UIList *, int) {}
+2	INL	src/system/ui/UIListWidget.h	80	virtual void Fill(const UIListProvider &, int, int, int) {}
+2	INL	src/system/ui/UIListWidget.h	81	virtual void StartScroll(int, bool) {}
+2	INL	src/system/ui/UIListWidget.h	82	virtual void CompleteScroll(const UIListState &, int) {}
+2	INL	src/system/ui/UIListWidget.h	83	virtual void Poll() {}
+2	INL	src/system/ui/UIPanel.h	43	virtual void FocusIn() {}
+2	INL	src/system/ui/UIPanel.h	44	virtual void FocusOut() {}
+2	INL	src/system/world/CameraManager.h	43	void SetBlendTime(float) {}
+1	INL	src/band3/bandtrack/Track.h	50	virtual void Load() {}
+1	INL	src/band3/bandtrack/Track.h	51	virtual void Unload() {}
+1	INL	src/band3/bandtrack/Track.h	53	virtual void FinishLoad() {}
+1	INL	src/band3/bandtrack/Track.h	54	virtual void Draw() {}
+1	INL	src/band3/bandtrack/Track.h	56	virtual void Jump(float) {}
+1	INL	src/band3/bandtrack/Track.h	57	virtual void SetShowing(bool) {}
+1	INL	src/band3/bandtrack/Track.h	59	virtual void SetDir(RndDir *) {}
+1	INL	src/band3/bandtrack/Track.h	63	virtual void SetSmasherGlowing(int, bool) {}
+1	INL	src/band3/bandtrack/Track.h	64	virtual void PopSmasher(int) {}
+1	INL	src/band3/bandtrack/Track.h	65	virtual void OnMissPhrase(int) {}
+1	INL	src/band3/bandtrack/Track.h	66	virtual void RemovePlayer() {}
+1	OUT	src/band3/game/DeployCountTracker.cpp	46	void DeployCountTracker::UpdateGoalValueLabel(UILabel &) const {}
+1	OUT	src/band3/game/DeployCountTracker.cpp	47	void DeployCountTracker::UpdateCurrentValueLabel(UILabel &) const {}
+1	INL	src/band3/game/GemTrainerPanel.h	33	virtual void HitNotify(int) {}
+1	INL	src/band3/game/GemTrainerPanel.h	35	virtual void Looped() {}
+1	INL	src/band3/game/GemTrainerPanel.h	37	virtual void PostCopyGems() {}
+1	OUT	src/band3/game/OverdriveTracker.cpp	197	void OverdriveTracker::TargetSuccess(int) const {}
+1	OUT	src/band3/game/PerfectOverdriveTracker.cpp	267	void PerfectOverdriveTracker::UpdateGoalValueLabel(UILabel &) const {}
+1	OUT	src/band3/game/PerfectOverdriveTracker.cpp	268	void PerfectOverdriveTracker::UpdateCurrentValueLabel(UILabel &) const {}
+1	OUT	src/band3/game/Singer.cpp	214	void Singer::Start() {}
+1	OUT	src/band3/game/Singer.cpp	215	void Singer::StartIntro() {}
+1	OUT	src/band3/game/Singer.cpp	235	void Singer::SetPaused(bool) {}
+1	OUT	src/band3/game/Singer.cpp	308	void Singer::EnableController() {}
+1	OUT	src/band3/game/Singer.cpp	309	void Singer::DisableController() {}
+1	INL	src/band3/meta_band/Matchmaker.h	91	virtual void Poll() {}
+1	INL	src/band3/meta_band/Matchmaker.h	93	virtual void UpdateMatchmakingSettings() {}
+1	OUT	src/band3/meta_band/UIStats.cpp	48	void UIStats::Poll() {}
+1	OUT	src/band3/meta_band/WaitingUserGate.cpp	190	void WaitingUserGate::Poll() {}
+1	INL	src/band3/net_band/EntityUploader.h	34	virtual void Terminate() {}
+1	OUT	src/band3/tour/TourPerformer.cpp	87	void TourPerformerImpl::CompleteQuest() {}
+1	INL	src/network/Core/Scheduler.h	21	virtual void Initialize() {}
+1	OUT	src/system/bandobj/BandRetargetVignette.cpp	42	void BandRetargetVignette::Exit() {}
+1	OUT	src/system/bandobj/PlayerDiffIcon.cpp	120	void PlayerDiffIcon::GrowBoundingBox(Box &) const {}
+1	INL	src/system/char/CharBoneOffset.h	22	virtual void Highlight() {}
+1	OUT	src/system/char/CharBonesMeshes.cpp	206	void CharBonesMeshes::Init() {}
+1	OUT	src/system/char/CharBonesMeshes.cpp	208	void CharBonesMeshes::Terminate() {}
+1	INL	src/system/char/CharForeTwist.h	34	virtual void Highlight() {}
+1	INL	src/system/char/CharIKFoot.h	21	virtual void Highlight() {}
+1	INL	src/system/hamobj/HamIKEffector.h	51	virtual void Highlight() {}
+1	INL	src/system/hamobj/MoveDir.h	100	void SimulateSong(int, int) {}
+1	INL	src/system/meta/StorePurchaser.h	50	virtual void Poll() {}
+1	INL	src/system/meta/StorePurchaser.h	82	virtual void Poll() {}
+1	INL	src/system/net/HttpGet.h	54	void SetContent(const char *content) {}
+1	INL	src/system/net/HttpGet.h	55	void SetContentLength(unsigned int len) {}
+1	OUT	src/system/os/FileCache.cpp	183	void FileCache::Init() {}
+1	OUT	src/system/os/FileCache.cpp	184	void FileCache::Terminate() {}
+1	INL	src/system/os/FileCache.h	73	virtual void Flush() {}
+1	INL	src/system/rndobj/PostProc.h	47	virtual void BeginWorld() {}
+1	INL	src/system/rndobj/PostProc.h	48	virtual void EndWorld() {}
+1	INL	src/system/rndobj/PostProc.h	49	virtual void DoPost() {}
+1	INL	src/system/rndobj/PostProc.h	69	virtual void QueueMotionBlurObject(class RndDrawable *) {}
+1	INL	src/system/rndobj/PostProc.h	70	virtual void SetBloomColor() {}
+1	INL	src/system/rndobj/TexRenderer.h	43	virtual void DrawBefore() {}
+1	INL	src/system/rndobj/TexRenderer.h	44	virtual void DrawAfter() {}
+1	INL	src/system/synth/FxSend.h	38	virtual void Recreate(std::vector<FxSend *> &) {}
+1	INL	src/system/synth/FxSend.h	60	virtual void UpdateMix() {}
+1	INL	src/system/synth/FxSend.h	61	virtual void OnParametersChanged() {}
+1	INL	src/system/synth/MicNull.h	10	virtual void Start() {}
+1	INL	src/system/synth/MicNull.h	11	virtual void Stop() {}
+1	INL	src/system/synth/MicNull.h	14	virtual void SetDMA(bool) {}
+1	INL	src/system/synth/MicNull.h	16	virtual void SetGain(float) {}
+1	INL	src/system/synth/MicNull.h	18	virtual void SetEarpieceVolume(float) {}
+1	INL	src/system/synth/MicNull.h	21	virtual void SetOutputGain(float) {}
+1	INL	src/system/synth/MicNull.h	23	virtual void SetSensitivity(float) {}
+1	INL	src/system/synth/MicNull.h	25	virtual void SetCompressor(bool) {}
+1	INL	src/system/synth/MicNull.h	27	virtual void SetCompressorParam(float) {}
+1	INL	src/system/synth/MicNull.h	29	void ClearBuffers() {}
+1	INL	src/system/synth/MicNull.h	35	virtual void SetEarpiece(bool) {}
+1	INL	src/system/synth/VorbisReader.h	37	virtual void EndData() {}
+1	INL	src/system/synth_xbox/FxSend.h	62	virtual void InitParams(IXAudio2SubmixVoice *, int) {}
+1	OUT	src/system/ui/UIGridProvider.cpp	53	void UIGridProvider::UpdateExtendedText(int, int, UILabel *) const {}
+1	OUT	src/system/ui/UIGridProvider.cpp	54	void UIGridProvider::UpdateExtendedMesh(int, int, RndMesh *) const {}
+1	OUT	src/system/ui/UIGridProvider.cpp	55	void UIGridProvider::UpdateExtendedCustom(int, int, Hmx::Object *) const {}
+1	INL	src/system/utl/BufStream.h	9	virtual void Flush() {}
+1	INL	src/system/utl/ChunkStream.h	61	virtual void Flush() {}
+1	OUT	src/system/utl/Loader.cpp	121	void FileLoader::DoneLoading() {}
+1	INL	src/system/utl/Loader.h	21	virtual void FinishLoading(Loader *) {}
+1	INL	src/system/utl/Loader.h	22	virtual void FailedLoading(Loader *) {}
+1	INL	src/system/world/DefaultPhysicsManager.h	50	virtual void Reset(const Transform &) {}
+1	INL	src/system/world/DefaultPhysicsManager.h	51	virtual void ApplyRadialForce(float) {}

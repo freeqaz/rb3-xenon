@@ -60,7 +60,10 @@ public:
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     // UIComponent
-    virtual void Poll() { UIComponent::Poll(); }
+    // Retail emits this OUT OF LINE at 0x827F22A8 (112 B) with a real body; the
+    // header inline `{ UIComponent::Poll(); }` it used to carry was a 4-byte
+    // tail-call. Definition lives in UILabel.cpp.
+    virtual void Poll();
     virtual void Highlight();
     virtual void DrawShowing();
     virtual bool CanHaveFocus();
