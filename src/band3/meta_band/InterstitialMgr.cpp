@@ -100,10 +100,20 @@ UIScreen *InterstitialMgr::CurrentInterstitialToScreen(UIScreen *screen) const {
 
 void InterstitialMgr::RefreshRandomSelection() {
     if (HasSyncPermission()) {
+#ifdef HX_NATIVE
+        // Retail does NOT consult sRandomOverride here -- its body goes straight to
+        // RandomInt().  The override read cost 6 instructions (lis/lwz of
+        // sRandomOverride, cmpwi, blt, the store, and the skip branch) that are
+        // absent from the retail bytes.  Kept natively so CycleRandomOverride's
+        // vignette cheat still works, per the same HX_NATIVE convention this file
+        // already uses for the stripped vignette-overlay debug display above.
         if (sRandomOverride >= 0) {
             mRandomSelection = sRandomOverride;
         } else
             mRandomSelection = RandomInt();
+#else
+        mRandomSelection = RandomInt();
+#endif
         SetSyncDirty(-1, false);
     }
 }

@@ -266,7 +266,14 @@ void TambourineManager::LocalTambourineSoloEnd(int pct, int numGems) {
 }
 
 void TambourineManager::SetTambourine(bool iIsActive) {
-    if ((unk60 > 0) == iIsActive)
+    // STORAGE CLASS: retail builds a FUNCTION-LOCAL static Symbol here (guard +
+    // Symbol::Symbol(const char *) on the "tambourine" literal, emitted before the
+    // early-return compare, so the declaration is first in the body).  Our source
+    // reached for the shared utl/Symbols.h global ?tambourine@@3VSymbol@@A, which
+    // is a decomp convenience, not what shipped -- a source diff against the
+    // oracle shows nothing, only the codegen does.
+    static Symbol tambourine("tambourine");
+    if (iIsActive == (unk60 > 0))
         return;
 
     if (iIsActive) {
