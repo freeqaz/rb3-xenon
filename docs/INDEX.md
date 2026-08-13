@@ -55,6 +55,13 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   masked_equal / 20,814 honest / 38.810524 code% / fuzzy 45.912785 / `total_code`
   10,688,688 / `total_functions` 69,357**. Authoritative record:
   **[decomp/RULER_CHANGE_2026-08-02.md](decomp/RULER_CHANGE_2026-08-02.md)**.
+  ⚠ **Those are the values AT `f48bcad7` — point-in-time, not current.** In particular
+  **`total_code` is not a constant and must never be memorised or hardcoded**: it moves
+  whenever splits pins change, and pin waves have moved it by hundreds of KB (see the
+  `PIN_WAVES_AND_DENOMINATOR` entry in §1). **Read `total_code` / `total_functions` from
+  `build/45410914/report.json`** at the commit you are measuring. For scale only: it read
+  **10,320,692** at `HEAD` on **2026-08-13** — quoted as a dated observation, not a
+  constant to reuse.
   Three consequences for reading this index:
   1. **A dated doc's honest figure is CORRECT AS HISTORY.** `[HIST]` records and lane
      logs recording "honest N at the time" have not been rewritten and must not be —
@@ -588,20 +595,20 @@ a refutation you would otherwise re-derive. Newest first.
 - [permuter/evolution/OVERVIEW.md](permuter/evolution/OVERVIEW.md) — permuter architecture upgrade (SourceEditor, ast_queries); phases 1-3.
 - [decomp/patterns/PERMUTER_ROI_ANALYSIS.md](decomp/patterns/PERMUTER_ROI_ANALYSIS.md) — permuter coverage vs documented patterns; ROI rankings.
 
-### LLM grind loop / OSS-model eval / training data (2026-07-07..19)
+### LLM grind loop / OSS-model eval / training data — REMOVED FROM THIS REPO
 
-- [decomp/eval-ledger.md](decomp/eval-ledger.md) — **THE standing scoreboard** for the frozen 50-fn eval bench + SIGNAL/NOISE noise threshold; appended by `scripts/grind/bench.sh`.
-- [plans/grind-r3-trace-review-2026-07-19.md](plans/grind-r3-trace-review-2026-07-19.md) — trace review verdict: harness bugs (stdout-swallow, 8 unspliceable fns) dominate compile-fails; ranked prompt levers + ceiling estimate. Full findings JSON in `decomp/research/`.
-- [plans/grind-tooling-effectiveness-review-2026-07-19.md](plans/grind-tooling-effectiveness-review-2026-07-19.md) — Fable Q1-Q7 tooling audit: sync-drift, tool ROI, metric honesty; do-now vs re-baseline action list.
-- [plans/grind-data-leverage-execution-2026-07-18.md](plans/grind-data-leverage-execution-2026-07-18.md) — **current state of record**: 7-thread options catalog, dispatch results, verdicts (token fix, gold-clone finding, replay verdict).
-- [plans/grind-oreval-data-leverage-review-2026-07-16.md](plans/grind-oreval-data-leverage-review-2026-07-16.md) — the underlying review: two-piles diagnosis, token-length constraint, ranked opportunities.
-- [decomp/training-corpus-annotations.md](decomp/training-corpus-annotations.md) — per-run corpus verdicts (sft+/partial/hard-neg/junk lanes) + normalizer provenance rules.
-- [plans/grind-loop-calibration-2026-07-07.md](plans/grind-loop-calibration-2026-07-07.md) — the grind loop itself (decomp-synth bootstrap_loop port + live calibration).
-- [plans/grind-agentic-tools.md](plans/grind-agentic-tools.md) — `--agent-tools` mode (model requests read/struct/asm/ghidra mid-attempt); landed 2026-07-10.
-- [plans/grind-training-data-capture.md](plans/grind-training-data-capture.md) — lossless attempt capture (RFC-21 T4) → B2 → corpus.py sync design.
-- [plans/grind-openrouter-tiered-eval.md](plans/grind-openrouter-tiered-eval.md) — OSS-model tiered eval campaign design (metrics defs used by eval_report.py §5).
-- [plans/grind-teacher-critique-rlhf.md](plans/grind-teacher-critique-rlhf.md) — teacher-critique / reasoning-rewrite design (v0 critique-only shipped 0bc326bc).
-- [plans/grind-followups-batch2-2026-07-18.md](plans/grind-followups-batch2-2026-07-18.md) — execution design for replay-refine + roster sweep + standing bench follow-ups.
+> **STATUS (2026-08-13):** this section listed 12 docs covering the LLM grind loop, the
+> OSS-model eval bench, and the training/reasoning corpus. **None of them exist on `main`'s
+> history** — the training-data/reasoning-corpus effort docs were deliberately removed from
+> this public repo, and the entries were left behind as dead links. They are **not** being
+> resurrected here. The 12 dead entries were deleted on 2026-08-13 (lane RECOVER); recover the
+> text from git history on an unmerged branch if you need it, or look in `decomp-synth`, which
+> owns the grind loop itself.
+>
+> ⚠ One caveat for anyone re-adding: `--agent-tools` mode (documented by the removed
+> `grind-agentic-tools.md`) is the mode that **moves a worktree's `.git` to a sidecar** and
+> loses it if the run is killed — see the worktree-recovery box in `../CLAUDE.md`. That
+> operational hazard is documented there, not here.
 
 ### VMX128 (Ghidra SLEIGH support)
 
@@ -650,7 +657,6 @@ cascades, pin audits, and the structural-levers-exhausted capstone. Notable caps
 - [decomp/research/2026-06-23-dc3-drain-and-sonnet-opus-pipeline.md](decomp/research/2026-06-23-dc3-drain-and-sonnet-opus-pipeline.md) — DC3-oracle drain exhausted at +46 strict; Sonnet/Opus pipeline.
 - [decomp/research/2026-06-30-nearmiss-codegen-inventory.md](decomp/research/2026-06-30-nearmiss-codegen-inventory.md) — near-miss codegen inventory (feeds post-codegen kill streams).
 - [decomp/research/2026-06-21-dc3-engine-oracle-feasibility.md](decomp/research/2026-06-21-dc3-engine-oracle-feasibility.md) — DC3 engine body-oracle feasibility GO; game-layer Wii wall.
-- [decomp/research/2026-07-18-anthropic-adaptive-thinking-capture.md](decomp/research/2026-07-18-anthropic-adaptive-thinking-capture.md) — REFERENCE: Sonnet-5/Opus-4.8 thinking capture — legacy `budget_tokens` shape returns EMPTY thinking text (display defaults "omitted"); must use `{"type":"adaptive","display":"summarized"}` + `output_config.effort`.
 
 The remaining `decomp/research/*` files are per-lever / per-TU scout logs — grep the folder by
 TU name (SongMgr, SongStatusMgr, BandSongMgr, UIComponent, Waypoint, Campaign, SavedSetlist,
@@ -754,7 +760,7 @@ Indexed as data (not audited): `decomp/dc3-residual/ranked.json`,
 
 ---
 
-## 5. Lane + campaign records, 2026-07-07 → 2026-07-29 (all [HIST] unless noted)
+## 5. Lane + campaign records, 2026-07-07 → 2026-08-12 (all [HIST] unless noted)
 
 > Added by the **2026-07-29 tooling/docs audit (lane BM)**. The 2026-07-06 audit
 > predates ~3 weeks of daily lane records, and some older docs were never linked:
@@ -765,6 +771,46 @@ Indexed as data (not audited): `decomp/dc3-residual/ranked.json`,
 > file date**. Per-lane `.json` worklists (72 files) and `.log`/`.obj`/`.png`
 > artifacts are deliberately not listed individually — grep `docs/plans/*.json`
 > by lane letter or symbol name.
+
+### 2026-08-12 — `name_check` / COMDAT-fold / anon-namespace lane records
+
+> Indexed 2026-08-13 (lane RECOVER); these were written but never linked.
+
+- [plans/namecheck-alias-fixpoint-2026-08-12.md](plans/namecheck-alias-fixpoint-2026-08-12.md) — the `name_check` alias fixpoint, and what the map-coverage lever is actually worth — `2026-08-12`
+- [plans/wrong-callee-triage-2026-08-12.md](plans/wrong-callee-triage-2026-08-12.md) — the `name_check` "wrong callee" lane is symbol NAMING, not source — `2026-08-12`
+- [plans/comdat-fold-gate-2026-08-12.md](plans/comdat-fold-gate-2026-08-12.md) — the homonym oracle does not generalise; the comparator was the bottleneck — `2026-08-12`
+- [plans/fold-thunk-alias-gate-2026-08-12.md](plans/fold-thunk-alias-gate-2026-08-12.md) — the fold-thunk class is 9 alias groups and 27 refusals, not one finding — `2026-08-12`
+- [plans/laneT-anon-ns-per-symbol-2026-08-12.md](plans/laneT-anon-ns-per-symbol-2026-08-12.md) — per-symbol anon-namespace hashes: +23 / −1, and dc3's evidence does not transfer — `2026-08-12`
+- [plans/laneT-mempoptemp-and-anon-ns-2026-08-12.md](plans/laneT-mempoptemp-and-anon-ns-2026-08-12.md) — MemPopTemp was a real divergence AND a wrong diagnosis — `2026-08-12`
+
+### 2026-07-29..30 — laneBO / BP / BQ / BS map-attribution + carve records
+
+> Indexed 2026-08-13 (lane RECOVER); written during the 07-29/07-30 map-attribution
+> campaign but never linked. Descriptions are the files' own H1 titles — no claim
+> below has been re-verified, and every match-count is frozen at the file date.
+
+- [plans/lane-bo2-collapse-rows-2026-07-29.md](plans/lane-bo2-collapse-rows-2026-07-29.md) — laneBO2 — draining laneBL's §6.1 "rows that DO collapse" — `2026-07-29`
+- [plans/lane-bo3-uilabel-layout-2026-07-29.md](plans/lane-bo3-uilabel-layout-2026-07-29.md) — lane BO-3 — reconstructing `UILabel`'s retail-360 member layout — `2026-07-29`
+- [plans/lane-bo4-byte-search-locator-2026-07-29.md](plans/lane-bo4-byte-search-locator-2026-07-29.md) — laneBO4 — the compile-and-byte-search TU locator — `2026-07-29`
+- [plans/lane-bo8-icf-funclet-audit-2026-07-29.md](plans/lane-bo8-icf-funclet-audit-2026-07-29.md) — lane BO-8 — the 21,314 funclets at 100%: benign fold or over-count? — `2026-07-29`
+- [plans/two-instrument-reconciliation-2026-07-29.md](plans/two-instrument-reconciliation-2026-07-29.md) — the two-instrument reconciliation: when the string anchor and the RTTI span disagree — `2026-07-29`
+- [plans/lane-bp4-map-contradiction-adjudication-2026-07-29.md](plans/lane-bp4-map-contradiction-adjudication-2026-07-29.md) — lane BP-4 — ICF map-contradiction adjudication, and what the worklist was actually measuring — `2026-07-29`
+- [plans/lane-bp5-uisyncnetmsgs-map-fragment-2026-07-29.md](plans/lane-bp5-uisyncnetmsgs-map-fragment-2026-07-29.md) — lane BP-5 — map fragment justification — `2026-07-29`
+- [plans/lane-bp6-multi-content-justification-2026-07-29.md](plans/lane-bp6-multi-content-justification-2026-07-29.md) — lane BP-6 — map fragment justification (24 entries) — `2026-07-29`
+- [plans/lane-bp6-multi-content-refill-2026-07-29.md](plans/lane-bp6-multi-content-refill-2026-07-29.md) — lane BP-6 — MULTI / UNIQUE-ICF content-join refill — `2026-07-29`
+- [plans/lane-bp7-map-ownership-2026-07-29.md](plans/lane-bp7-map-ownership-2026-07-29.md) — lane BP-7 — map ownership: stream-direction, phantom drain, and a new decisive channel — `2026-07-29`
+- [plans/lane-bq1-jobA-minileaderboard-carve-2026-07-30.md](plans/lane-bq1-jobA-minileaderboard-carve-2026-07-30.md) — lane BQ-1 job A — carving MiniLeaderboardDisplay out of MetaPanel's 44-span mega-unit — `2026-07-30`
+- [plans/lane-bq1-jobB-rndtext-carve-2026-07-30.md](plans/lane-bq1-jobB-rndtext-carve-2026-07-30.md) — lane BQ-1 job B — carving RndText's three out-of-TU bodies home — `2026-07-30`
+- [plans/lane-bq1-jobC-staticclassname-chains-2026-07-30.md](plans/lane-bq1-jobC-staticclassname-chains-2026-07-30.md) — lane BQ-1 job C — BP-7's 19 open StaticClassName chains, adjudicated — `2026-07-30`
+- [plans/lane-bs2-scoredisplay-carve-2026-07-30.md](plans/lane-bs2-scoredisplay-carve-2026-07-30.md) — lane BS-2 — the ScoreDisplay 3-cycle, and what the attribution-carve channel actually pays — `2026-07-30`
+- [plans/map-defect-channels-plan-2026-07-30.md](plans/map-defect-channels-plan-2026-07-30.md) — map-defect channels: execution plan — `2026-07-30`
+- [plans/homing-op-evidence-plan-2026-07-30.md](plans/homing-op-evidence-plan-2026-07-30.md) — homing-pool `op` (opcode) evidence-class: implementation plan — `2026-07-30`
+- [plans/message-timer-retail-absence-and-staticclassname-pool-2026-07-30.md](plans/message-timer-retail-absence-and-staticclassname-pool-2026-07-30.md) — MESSAGE_TIMER: the lever was already pulled in June — the residual was six wrong per-TU restores — `2026-07-30`
+- [plans/start-auto-timer-retail-absence-2026-07-30.md](plans/start-auto-timer-retail-absence-2026-07-30.md) — START_AUTO_TIMER is absent from retail — proven, gated, metric-neutral — `2026-07-30`
+- [plans/branch-audit-slice3-2026-07-30.md](plans/branch-audit-slice3-2026-07-30.md) — branch audit slice 3 (the 47 oldest branches, 2026-05/06) — laneBT-4 — `2026-07-30`
+- [plans/jeff-round3-review/class1.md](plans/jeff-round3-review/class1.md) — jeff round-3 review, DOC CLASS 1 — `.pdata` boundary (read-only confirm+plan) — `2026-07-30`
+- [plans/jeff-round3-review/class2.md](plans/jeff-round3-review/class2.md) — jeff round-3 review, DOC CLASS 2 — "AddRoll-class `.pdata` over-splits" — `2026-07-30`
+- [plans/jeff-round3-review/class3.md](plans/jeff-round3-review/class3.md) — jeff round-3 review, DOC CLASS 3 — `except_data` / EH COMDAT seed-time suppression — `2026-07-30`
 
 ### 2026-07-29 — today's landed records
 
@@ -857,7 +903,6 @@ Indexed as data (not audited): `decomp/dc3-residual/ranked.json`,
 
 ### paths-to-100 RFC set (2026-07-08)
 
-- [plans/paths-to-100/21-crack-farm-cpu-training-capture.md](plans/paths-to-100/21-crack-farm-cpu-training-capture.md) — Paths to 100: an LLM-free massive-CPU crack-farm for byte-exact decomp matching — `2026-07-10`
 - [plans/paths-to-100/04-pinning-at-scale.md](plans/paths-to-100/04-pinning-at-scale.md) — Pinning at scale — automating splits.txt backfill for the unpinned majority — `2026-07-08`
 - [plans/paths-to-100/14-systematic-symbol-sweeps.md](plans/paths-to-100/14-systematic-symbol-sweeps.md) — Systematic sweeps — local-static-Symbol, guard thunks, and other one-pattern-many-functions fixes — `2026-07-08`
 - [plans/paths-to-100/11-permuter-farm.md](plans/paths-to-100/11-permuter-farm.md) — MSVC permuter farm — automated source-permutation search at scale — `2026-07-08`
@@ -870,14 +915,18 @@ Indexed as data (not audited): `decomp/dc3-residual/ranked.json`,
 - [plans/paths-to-100/06-oracle-refresh-loops.md](plans/paths-to-100/06-oracle-refresh-loops.md) — Oracle refresh loops — iterative re-diffing as matches accumulate — `2026-07-08`
 - [plans/paths-to-100/13-codegen-idiom-library.md](plans/paths-to-100/13-codegen-idiom-library.md) — MWCC-to-MSVC codegen idiom library — systematic source-idiom translation — `2026-07-08`
 - [plans/paths-to-100/02-gap-composition-atlas.md](plans/paths-to-100/02-gap-composition-atlas.md) — Gap composition atlas — what exactly is the unmatched 91% — `2026-07-08`
-- [plans/paths-to-100/12-grind-fleet-v2.md](plans/paths-to-100/12-grind-fleet-v2.md) — Autonomous grind fleet v2 — cron-driven LLM drafting on the near-miss band — `2026-07-08`
 - [plans/paths-to-100/03-master-sequencing-roadmap.md](plans/paths-to-100/03-master-sequencing-roadmap.md) — Master sequencing — dependency-ordered roadmap to maximum match — `2026-07-08`
 - [plans/paths-to-100/01-endgame-definitions.md](plans/paths-to-100/01-endgame-definitions.md) — What does 100% mean — endgame taxonomy and recommended target — `2026-07-08`
 - [plans/paths-to-100/05-data-xref-anchoring.md](plans/paths-to-100/05-data-xref-anchoring.md) — Data-xref anchoring — vtables, RTTI, and .rdata/.data pins as an identification signal — `2026-07-08`
 - [plans/paths-to-100/07-icf-constraint-solver.md](plans/paths-to-100/07-icf-constraint-solver.md) — ICF-aware global assignment — constraint-solving identification — `2026-07-08`
 - [plans/paths-to-100/16-auto-landing-pipeline.md](plans/paths-to-100/16-auto-landing-pipeline.md) — Auto-landing pipeline — verification lanes, regression locks, and policy-gated merges — `2026-07-08`
-- [plans/paths-to-100/15-ghidra-guided-synthesis.md](plans/paths-to-100/15-ghidra-guided-synthesis.md) — Ghidra-decompile-guided source synthesis for oracle-poor functions — `2026-07-08`
-- [plans/paths-to-100/08-ml-embedding-triage.md](plans/paths-to-100/08-ml-embedding-triage.md) — Learned function similarity — ML embeddings as a triage amplifier — `2026-07-08`
+
+> **STATUS (2026-08-13):** four RFCs of this 21-RFC set are **absent from `main`'s history**
+> and their entries were removed on 2026-08-13 (lane RECOVER) rather than left dangling:
+> `08-ml-embedding-triage`, `12-grind-fleet-v2`, `15-ghidra-guided-synthesis`,
+> `21-crack-farm-cpu-training-capture`. The first, second and fourth are training-corpus /
+> LLM-fleet work deliberately kept out of this public repo. The RFC **numbering is therefore
+> sparse — that is expected, not a missing file.**
 
 ### SI hardware campaign / strategy-b OSS build / RB3Enhanced
 
@@ -924,6 +973,43 @@ Indexed as data (not audited): `decomp/dc3-residual/ranked.json`,
 - [plans/binary-patch-path.md](plans/binary-patch-path.md) — Binary-Patch / No-Full-Build Path — same-instrument on retail RB3 (Xbox 360 TU5) — `2026-07-07`
 - [plans/xdk-dependency-audit.md](plans/xdk-dependency-audit.md) — XDK Dependency Audit — LANE A — `2026-07-07`
 
+### Native port — the X ladder (X0 → X22, 2026-08-01 → 2026-08-03)
+
+> Indexed 2026-08-13 (lane RECOVER); the whole 27-doc ladder was written but never linked.
+> This is the per-milestone record of the native engine bring-up referenced by `../CLAUDE.md`
+> ("as of X4d the native build loads and renders real venue roots … and drives characters
+> from real `CharClip`s"). Read them in order — **each milestone routinely REFUTES the
+> previous one's stated cause**, so a mid-ladder doc read alone will hand you a cause that a
+> later doc overturned. Numbers are frozen at each file's date.
+
+- [plans/spike-x0-engine-dc3-flavor-2026-08-01.md](plans/spike-x0-engine-dc3-flavor-2026-08-01.md) — SPIKE-X0 — does milo-native-engine's `dc3` GPU backend flavor compile against rb3-xenon's headers? — `2026-08-01`
+- [plans/x1-engine-link-2026-08-01.md](plans/x1-engine-link-2026-08-01.md) — X1 — link milo-native-engine into rb3-xenon, and prove it with a frame — `2026-08-01`
+- [plans/x2-object-graph-load-2026-08-01.md](plans/x2-object-graph-load-2026-08-01.md) — X2 — a real `.milo_xbox` loads as a live object graph from the mounted ark — `2026-08-01`
+- [plans/x3-first-render-2026-08-01.md](plans/x3-first-render-2026-08-01.md) — X3 — the first rendered frame, through the engine's dc3 WebGPU backend — `2026-08-01`
+- [plans/x4a-venue-render-2026-08-02.md](plans/x4a-venue-render-2026-08-02.md) — X4a — venue render: what reached the GPU, and the wall that stopped the venue root — `2026-08-02`
+- [plans/x4b-animation-2026-08-02.md](plans/x4b-animation-2026-08-02.md) — X4b — animation: a posed character, and the two SILENT defects in the way — `2026-08-02`
+- [plans/x4c-init-audit-2026-08-02.md](plans/x4c-init-audit-2026-08-02.md) — X4c — the init audit, and why `kNewGfx` was never what emptied the frame — `2026-08-02`
+- [plans/band3-native-unblock-priority-2026-08-02.md](plans/band3-native-unblock-priority-2026-08-02.md) — venue-unblock priority: the 14 factory-miss classes, and why they are NOT `band3` — `2026-08-02`
+- [plans/x4d-venue-root-2026-08-03.md](plans/x4d-venue-root-2026-08-03.md) — X4d — the venue root loads, and the wall was four bytes — `2026-08-03`
+- [plans/x5-scene-2026-08-03.md](plans/x5-scene-2026-08-03.md) — X5 — a character renders inside the venue, and the crowd was there the whole time — `2026-08-03`
+- [plans/x6-placement-2026-08-03.md](plans/x6-placement-2026-08-03.md) — X6 — the crowd is placed, and the placement shipped in the file all along — `2026-08-03`
+- [plans/x7-band-on-stage-2026-08-03.md](plans/x7-band-on-stage-2026-08-03.md) — X7 — stage positions were baked in the venue; the "ScatterIncludes lane" was three one-line guards — `2026-08-03`
+- [plans/x8-band-render-2026-08-03.md](plans/x8-band-render-2026-08-03.md) — X8 — the wall was never `SetupDir`: it was `InlineProxy` bypassing a virtual — `2026-08-03`
+- [plans/x9-band-marks-2026-08-03.md](plans/x9-band-marks-2026-08-03.md) — X9 — the band renders on its shipped marks; the wall was a guard copied from the wrong container — `2026-08-03`
+- [plans/x10-band-geometry-2026-08-03.md](plans/x10-band-geometry-2026-08-03.md) — X10 — the geometry was already there; the probe was reading the wrong array — `2026-08-03`
+- [plans/x11-mesh-geometry-2026-08-03.md](plans/x11-mesh-geometry-2026-08-03.md) — X11 — the empty meshes were never missing; they were LOADED, then RELEASED — `2026-08-03`
+- [plans/x12-hand-pose-2026-08-03.md](plans/x12-hand-pose-2026-08-03.md) — X12 — the hands are correctly posed; the instrument was measuring light targets — `2026-08-03`
+- [plans/x13-animated-pose-2026-08-03.md](plans/x13-animated-pose-2026-08-03.md) — X13 — the hands survive animation; the band does not survive *placement* — `2026-08-03`
+- [plans/x14-band-placement-2026-08-03.md](plans/x14-band-placement-2026-08-03.md) — X14 — the band lands on its marks; the repair was in the tree and was never called — `2026-08-03`
+- [plans/x15-poll-unblock-2026-08-03.md](plans/x15-poll-unblock-2026-08-03.md) — X15 — `Poll()` runs, and X14's cause for why it could not is REFUTED — `2026-08-03`
+- [plans/x16-ownerptr-class-2026-08-03.md](plans/x16-ownerptr-class-2026-08-03.md) — X16 — the null is a class of 14, repaired upstream; X15's cause is REFUTED — `2026-08-03`
+- [plans/x17-pose-residual-2026-08-03.md](plans/x17-pose-residual-2026-08-03.md) — X17 — pose residual and rebind skip share a SET, not a CAUSE; X16's one-defect hypothesis refuted causally, confirmed set-wise — `2026-08-03`
+- [plans/x18-gate-and-roots-2026-08-03.md](plans/x18-gate-and-roots-2026-08-03.md) — X18 — the gate was OVER-REPORTING: 123/123 residual bones are engine publications — `2026-08-03`
+- [plans/x19-sharing-and-scope-2026-08-03.md](plans/x19-sharing-and-scope-2026-08-03.md) — X19 — the sharing is BOTH real and a lookup artifact; the blocker was a driver coupling defect, not a shared-`src/` default — `2026-08-03`
+- [plans/x20-textures-2026-08-03.md](plans/x20-textures-2026-08-03.md) — X20 — OutfitConfig is registered, the bill is derived, and registration was NOT the texture fix — `2026-08-03`
+- [plans/x21-compose-path-2026-08-03.md](plans/x21-compose-path-2026-08-03.md) — X21 — `SyncOutfitConfig` IS reached; the compose pass is never dispatched; the dc3 backend cannot host it — `2026-08-03`
+- [plans/x22-shared-material-2026-08-03.md](plans/x22-shared-material-2026-08-03.md) — X22 — the shared `char_shared.milo` material is real, is fixed, and is NOT why the band is pink — `2026-08-03`
+
 ### Native port cycles
 
 - [plans/native-cycle14.md](plans/native-cycle14.md) — Batch-14 map-recovery foreman — results (2026-07-24) — `2026-07-24`
@@ -933,15 +1019,15 @@ Indexed as data (not audited): `decomp/dc3-residual/ranked.json`,
 ### Grind / eval / training-corpus (2026-07-16..20)
 
 - [plans/router-measured-priors.md](plans/router-measured-priors.md) — Router measured priors — `2026-07-24`
-- [decomp/research/2026-07-20-prompt-v4-implementation.md](decomp/research/2026-07-20-prompt-v4-implementation.md) — --prompt-v4 implementation note (2026-07-20) — `2026-07-20`
-- [decomp/research/2026-07-20-frontier-selection-hy3val.md](decomp/research/2026-07-20-frontier-selection-hy3val.md) — Frontier target selection — `tencent/hy3` $2 validation run (2026-07-20) — `2026-07-20`
 - [decomp/research/2026-07-20-hy3-log-analysis.md](decomp/research/2026-07-20-hy3-log-analysis.md) — hy3 champion-run log analysis (2026-07-20) — `2026-07-20`
-- [plans/terse-cot-distillation-kickoff-2026-07-20.md](plans/terse-cot-distillation-kickoff-2026-07-20.md) — Terse-CoT distillation — phase-1 kickoff (2026-07-20) — `2026-07-20`
-- [plans/runaway-model-fix-2026-07-20.md](plans/runaway-model-fix-2026-07-20.md) — Runaway-model harness fix (2026-07-20) — `2026-07-20`
-- [plans/eval-harness-speed-2026-07-20.md](plans/eval-harness-speed-2026-07-20.md) — Eval-harness speed profile + speedup path (2026-07-20) — `2026-07-20`
-- [plans/c2rs-eval-speedup-assessment-2026-07-20.md](plans/c2rs-eval-speedup-assessment-2026-07-20.md) — c2-rs as an eval-bench compile accelerator — assessment (2026-07-20) — `2026-07-20`
-- [plans/reasoning-compaction-review-2026-07-20.md](plans/reasoning-compaction-review-2026-07-20.md) — Reasoning-compaction review for the rb3-xenon eval bench (2026-07-20) — `2026-07-20`
 - [plans/triage-buckets-2026-07-19.md](plans/triage-buckets-2026-07-19.md) — Divergence triage — priced buckets — `2026-07-19`
+
+> **STATUS (2026-08-13):** seven further entries in this section (prompt-v4, frontier-selection-hy3val,
+> terse-CoT distillation, runaway-model fix, eval-harness speed, c2rs eval speedup,
+> reasoning-compaction review) pointed at docs **absent from `main`'s history** and were removed
+> on 2026-08-13 (lane RECOVER). Same reason as the grind/eval section above: training-corpus and
+> eval-harness effort docs are deliberately not carried in this public repo. The three entries
+> that remain above are the ones that still resolve.
 
 ### decomp/patterns + decomp/research + decomp/handoff additions
 
