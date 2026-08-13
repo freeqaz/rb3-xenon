@@ -3,15 +3,33 @@
 
 Why this exists (the ICF-merged-symbol aliasing gap)
 ----------------------------------------------------
-Retail RB3's ``/O1`` build ICF-folds the debug-stripped 2-arg ``POOL_OVERLOAD``
-operator-new path onto the named 5-arg debug allocator. Both spellings occupy a
-SINGLE address in the XEX, so only the 5-arg mangled name
-(``?PoolAlloc@@YAPAXHHPBDH0@Z`` @ 0x827960D8) survives into
-``scripts/target_symbol_map.json``. Our compiled objs emit the byte-IDENTICAL
-call site (``li r3,N`` / ``li r4,N`` / ``bl``) but reference the 2-arg name
+Retail RB3 has exactly ONE ``PoolAlloc``, at **0x827bb0e8**, and
+``scripts/target_symbol_map.json`` names it with the 5-arg DEBUG mangling
+``?PoolAlloc@@YAPAXHHPBDH0@Z``. Our compiled objs emit the byte-IDENTICAL call
+site (``li r3,N`` / ``li r4,N`` / ``bl``) but reference the 2-arg name
 (``?PoolAlloc@@YAPAXHH@Z``), so objdiff -- which compares ``bl`` relocations BY
 NAME (objdiff-core ``reloc_eq``) -- flags a ``[sym]`` mismatch though the machine
 code matches exactly. Same story for the 1-arg ``MemOrPoolAlloc`` family.
+
+⚠ CORRECTION (lane ALIAS-X2, 2026-08-13). This docstring said ``@ 0x827960D8``
+for months; that is a stale pre-TU5 address which names NOTHING in the current
+map, and the two founding alias groups carried it in their ``address`` field --
+2 of 1449 groups, the only two whose address disagreed with the map's placement
+of their own survivor. Corrected to the real addresses (PoolAlloc 0x827bb0e8,
+MemOrPoolAlloc 0x827bd208); measured Δ0 on BOTH rulers, as predicted, because
+the address is only a bucket key (see ``render_map`` below and the note on
+``g["address"]`` in scripts/symbol_aliases.json's header).
+
+⚠ And the framing "ICF-folds the 2-arg path onto the 5-arg allocator" is
+IMPRECISE, which matters when auditing this file. There are not two bodies here
+for the linker to fold: retail's body at 0x827bb0e8 reads r3 only and never
+touches r5/r6/r7, so it cannot be a 5-arg function at all. What these two
+founding groups actually repair is a MAP NAMING defect -- a debug-build spelling
+parked on a retail address -- not a fold. The alias is still a true statement
+about which callee a ``bl`` denotes (retail has exactly one PoolAlloc and one
+MemOrPoolAlloc; zero other retail bodies are masked-identical to either), which
+is why it is KEPT. Do not let the word "fold" here be read as evidence that two
+distinct functions were proven identical.
 
 The seam
 --------
