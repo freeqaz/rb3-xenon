@@ -158,6 +158,8 @@ Patterns that *look* fixable but are traps. Rule these out first.
 | **Register swaps read as a declaration-order problem** | 12+ byte-identical variants, two zero-gain sweeps, a false floor call | [fixable-liveness.md](fixable-liveness.md) |
 | **EH funclet drops 100 → 99.9 after a parent fix** | a correct parent fix gets reverted as a "regression" | [../EH_FUNCLET_CASCADE.md](../EH_FUNCLET_CASCADE.md#a-funclet-wobble-is-not-a-veto-on-the-parents-fix) |
 | `MILO_DEBUG` force-define (rb3-Wii **dev**-build guards compiled into retail) | dev-only code silently compiled in; but blanket removal is **−21** | [milo-debug-force-define.md](milo-debug-force-define.md) |
+| **A screen that CANNOT FIRE, read as a clean population** | a false negative shaped like a decisive result — closes the vein; **6 in one session** | [screen-power-gate.md](screen-power-gate.md#the-rule) |
+| **A raw candidate COUNT quoted without an untreated control** | "confirms whatever you point it at"; a measured **0.76×** vein reads as 314 candidates | [screen-power-gate.md](screen-power-gate.md#three-assertion-classes-and-why-one-is-not-enough) |
 
 ## Harmful Patterns
 
@@ -342,3 +344,4 @@ From 143 successful fine-tuning attempts (90%+ start, 100% end):
 - [harmful-avoid.md](harmful-avoid.md) — Member aliasing, child pointer in loop
 - [../playbooks/offset-drift-sweep.md](../playbooks/offset-drift-sweep.md) — Mechanical sweep that surfaces layout/header-drift candidates across the whole near-miss band
 - [PERMUTER_ROI_ANALYSIS.md](PERMUTER_ROI_ANALYSIS.md) — Pattern automation ROI rankings, permuter coverage gaps
+- [screen-power-gate.md](screen-power-gate.md) — **Verify a screen fires on a known positive before trusting its negative.** Six vacuous screens in one session; the three assertion classes (power / specificity / enrichment); `tools/screen_gate.py` and its `--self-break` proof
