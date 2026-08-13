@@ -211,13 +211,41 @@ BEGIN_LOADS(RndMat)
     d >> mAlphaCut >> mAlphaThreshold >> mAlphaWrite;
     d >> (int &)mTexGen >> (int &)mTexWrap >> mTexXfm >> mDiffuseTex >> mNextPass;
     d >> mIntensify;
-    if (d.rev < 3) {
-        bool cull;
-        d >> cull;
-        mCull = (Cull)(cull != 0);
-    } else {
-        d >> (int &)mCull;
-    }
+    // `cull` loads as a BOOL, unconditionally. Was `if (d.rev < 3) {...} else
+    // { d >> (int &)mCull; }` -- the else branch was a REAL MEMORY BUG, and the
+    // branch itself does not exist in retail.
+    //
+    // Adjudicated on RETAIL BYTES (not on the header comment, and not on an oracle):
+    // retail's material Load is fn_82438F40, and at 0x8243909C it does
+    //     addi r4, r30, 0x11c   <- &mCull
+    //     bl   fn_8227DB80      <- NO `li r5, N` size argument
+    // fn_8227DB80 is `BinStream::operator>>(bool &)`: `li r5,1` (read ONE byte),
+    // `lbz`, `subic`/`subfe` (the b = uc != 0 normalization), `stb` (store ONE byte).
+    // The sized helper fn_827C5058 (= ReadEndian(void*, int)) is what retail uses for
+    // the 4-byte members, always preceded by `li r5, 0x4` (+0x110 mDeNormal,
+    // +0x114 mAnisotropy, +0x118 mShaderVariation). mCull is read with the SAME
+    // sizeless 1-byte helper as its four 1-byte neighbours at +0x11d/+0x11e/+0x11f/
+    // +0x120 -- so the field is one byte and the overload is `bool &`.
+    //
+    // Why the old form was a memory bug: mCull is ONE byte at 0x11c (compiler-
+    // verified via /d1reportSingleClassLayout -- mPerPixelLit sits at 0x11d), so an
+    // `int &` read wrote 0x11c-0x11f, clobbering mPerPixelLit (0x11d), mScreenAligned
+    // (0x11e) and mEnvironMapFalloff (0x11f) on every rev>=3 load, and consumed 3
+    // bytes too many from the stream. It also broke save/load symmetry: the matching
+    // half of the pair, `?Save@BaseMaterial@@UAAXAAVBinStream@@@Z` (988 B, fuzzy/mpn
+    // 100.0 -- its bytes ARE retail), writes `bs << mCull` = one byte.
+    //
+    // The rev<3 branch is dropped because retail has NO rev guard here (contrast the
+    // genuinely guarded later reads, which all carry `lhz r11,0x4(r24); cmplwi; ble`).
+    // It is also semantically redundant: the old path read a bool and normalized it,
+    // which is exactly what the bool& overload does. It was almost certainly
+    // inherited from DC3, which is NEWER than RB3 and renumbers these revs.
+    //
+    // ⚠ `Cull` has three values (kCullNone/kCullRegular/kCullBackwards), so this read
+    // clamps kCullBackwards to 1 -- but retail's own subic/subfe does exactly that.
+    // Member type left `unsigned char` deliberately: retyping ripples into
+    // Save/Copy/propsync with no retail evidence for those bodies (SYNCPROP-1's call).
+    d >> (bool &)mCull;
     d >> mEmissiveMultiplier;
     d.stream >> mSpecularRGB >> mNormalMap;
     d.stream >> mEmissiveMap >> mSpecularMap;
