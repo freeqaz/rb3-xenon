@@ -516,35 +516,61 @@ def survey(data, secs, m, alloc_set):
     the allocated type.  Both numbers are printed so the gap is explicit.
     """
     print("\n=== SURVEY: how far does the discriminator generalise? ===")
-    hits, tagged = [], 0
+
+    # *** EXTENT BOUND -- WITHOUT THIS THE SURVEY OVERCOUNTS. ***
+    # An unbounded 96-instruction window walks straight out of a small function
+    # into its neighbour and credits the neighbour's allocation to it.  The
+    # symptom that exposed it: 0x82b5ada8 and 0x82b5adb0 are EIGHT BYTES APART
+    # (adjustor thunks) and both "found" the same 180-byte FxSendReverb alloc.
+    # Bounding each row at the next known symbol address drops 26 such rows.
+    addrs = sorted(int(a, 16) for a in m)
+    nxt = {a: (addrs[i + 1] if i + 1 < len(addrs) else a + 4096)
+           for i, a in enumerate(addrs)}
+
+    kinds = collections.Counter()
+    tot = overcount = 0
     for addr, name in m.items():
         va = int(addr, 16)
         off = va_to_off(va, secs)
         if off is None:
             continue
-        sites = call_sites(data[off:off + 4 * 96], va)
-        for i, (tgt, sz) in enumerate(sites):
-            if tgt in alloc_set and sz is not None:
-                hits.append((name, va, sz))
-                if i > 0:
-                    nm = m.get(f"0x{sites[i-1][0]:08x}") if sites[i - 1][0] else None
-                    if nm and STATICNAME_RE.match(nm):
-                        tagged += 1
-                break
-    kinds = collections.Counter()
-    for name, va, sz in hits:
-        if NEWOBJECT_RE.match(name):
-            kinds["NewObject  -- type KNOWN from name"] += 1
-        elif name.startswith("??0"):
-            kinds["constructor -- type known, but size is of a MEMBER"] += 1
-        elif name.startswith("??_U") or name.startswith("??2"):
-            kinds["operator new / array new"] += 1
+        limit = min(nxt[va] - va, 96 * 4)
+        sites = call_sites(data[off:off + limit], va)
+        loose = call_sites(data[off:off + 96 * 4], va)
+
+        def first_alloc(ss):
+            return next(((i, t, s) for i, (t, s) in enumerate(ss)
+                         if t in alloc_set and s is not None), None)
+
+        hit, hit_loose = first_alloc(sites), first_alloc(loose)
+        if hit_loose and not hit:
+            overcount += 1
+        if not hit:
+            continue
+        tot += 1
+        i = hit[0]
+        tagged = False
+        if i > 0 and sites[i - 1][0]:
+            nm = m.get(f"0x{sites[i-1][0]:08x}")
+            tagged = bool(nm and STATICNAME_RE.match(nm))
+        isnew = bool(NEWOBJECT_RE.match(name))
+        if isnew and tagged:
+            kinds["NewObject + tag (type known BOTH ways)"] += 1
+        elif isnew:
+            kinds["NewObject only (name determines type)"] += 1
+        elif tagged:
+            kinds["tag only (the TRUE generalisation)"] += 1
         else:
-            kinds["other -- type NOT determined by the row name"] += 1
-    print(f"named rows calling a known allocator with a CONSTANT size: {len(hits)}")
-    print(f"  of which carry a StaticClassName TAG (type recoverable): {tagged}")
+            kinds["NEITHER -- type UNRECOVERABLE from the row"] += 1
+
+    print(f"named rows allocating a compile-time-CONSTANT size: {tot}")
     for k, v in kinds.most_common():
         print(f"  {v:6d}  {k}")
+    chk = sum(v for k, v in kinds.items() if "NEITHER" not in k)
+    print(f"\nCHECKABLE (type recoverable): {chk} / {tot} = {chk/tot*100:.1f}%")
+    print(f"beyond the NewObject seed case: "
+          f"{kinds['tag only (the TRUE generalisation)']}")
+    print(f"rows an UNBOUNDED window would have falsely credited: {overcount}")
 
 
 def selfcheck(data, secs, rows, allocators, m, objroot):
