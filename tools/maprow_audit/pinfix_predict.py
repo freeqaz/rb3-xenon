@@ -38,7 +38,35 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from truncated_pins import Obj, Retail, masked, unmasked_count  # noqa: E402
+import truncated_pins as _T                                    # noqa: E402
+
+# ⛔⛔ THE REUSED RELOCATION-MASK TABLE UNDER-MASKS `bl`, AND THAT DEFECT IS
+# INVISIBLE IN ITS ORIGINAL USE.  truncated_pins.REL_MASK is a straight lift of
+# winnt.h's PC-PowerPC IMAGE_REL_PPC_* numbering, which is NOT the numbering
+# this binary's objs use.  Measured on CharSleeve.obj: type 0x0006 occurs 643
+# times (the commonest in code, i.e. `bl`) and the table gives it REL14's
+# 14-bit mask 0x0000FFFC.  A 24-bit branch therefore keeps 10 displacement bits
+# UNMASKED, so an unlinked `4BFFFFED` never equals a resolved `4BF9B3FD`:
+#
+#     +0x14 ours=4BFFFFED retail=4BF9B3FD mask=FFFF0003  DIFF
+#
+# (Type 0x0012, 585 sites, is not in the table at all and falls to the
+# mask-everything default.)
+#
+# WHY IT SURVIVED: an under-wide mask yields FALSE NEGATIVES, which is the SAFE
+# direction for truncated_pins' own job (proposing candidate windows).  Reusing
+# it as a MATCH PREDICTOR inherits exactly that pessimism -- measured here as
+# 17 predicted against 62 actual, a 3.6x under-call, every error a miss and
+# never a false alarm.  Widening 0x0006 to the 24-bit field takes the predictor
+# from recall 17/62 to a measured 62/62 recall AND 62/62 precision on the same
+# 76 rows.
+#
+# The override is applied HERE and truncated_pins is deliberately NOT mutated:
+# widening the mask makes that tool MORE permissive for its own purpose, which
+# this lane did not measure and must not change blind.
+_T.REL_MASK[0x0006] = 0x03FFFFFC
+
+from truncated_pins import Obj, Retail, masked, unmasked_count  # noqa: E402,E501
 
 MIN_UNMASKED_WORDS = 3
 
