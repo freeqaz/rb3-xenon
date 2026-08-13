@@ -62,8 +62,22 @@ RndMat::~RndMat() {
     }
 }
 
+// RB3-360 retail carries the allowed_next_pass / allowed_normal_map handlers on
+// RndMat itself and chains straight to Hmx::Object -- it does NOT go through
+// BaseMaterial::Handle. DC3 (newer engine) hoisted them into BaseMaterial and
+// added an is_default handler; our src/system is a verbatim DC3 copy, so we
+// inherited that refactor. Adjudicated on retail bytes, not on either oracle:
+// fn_824B27C8 (RndMat::Handle, 412 B) builds exactly two Symbols, at
+// 0x82065658 = "allowed_next_pass" and 0x82063C20 = "allowed_normal_map", then
+// tail-calls ?Handle@Object@Hmx@@. "is_default", "get_metamats" and
+// "prop_is_hidden" appear ZERO times anywhere in orig/45410914/band.exe, so
+// DC3's other four handlers postdate RB3. rb3-Wii agrees exactly.
+// The bodies stay on BaseMaterial (MetaMaterial also derives from it and does
+// need BaseMaterial::Handle); RndMat inherits them.
 BEGIN_HANDLERS(RndMat)
-    HANDLE_SUPERCLASS(BaseMaterial)
+    HANDLE(allowed_next_pass, OnAllowedNextPass)
+    HANDLE(allowed_normal_map, OnAllowedNormalMap)
+    HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
 
 #define SYNC_MAT_PROP(s, member, dirty_flag)                                             \
