@@ -870,6 +870,25 @@ run the gate before you land. Two traps, both real:
   classes that is reachable, and it needs IDENTIFICATION, not source.** The
   in-reach slice of the no-source class is just `xdk/LIBCMT` (160 rows /
   18,200 B — `__savefpr`/`onexit`/CRT stubs).
+  ⚠ **CORRECTED SAME DAY (lane AUTOID-1, `eb7fd2b1`): 63.10% is itself ~1.75pp
+  OPTIMISTIC — the true reachable ceiling is ≈ 61.35%.** **105 units counted
+  PAIRABLE have base objs defining only 1–2 symbols** (**914 rows / 180,196 B /
+  1.75% of `total_code`**) — the same map-scaffold mechanism as the no-source
+  class, but counted on the *favourable* side.
+  ⛔⛔ **AND THE `auto_*` CLASS IS MOSTLY UNREACHABLE TOO — DO NOT FUND
+  ATTRIBUTION THERE.** Only **8.9% (1,766 rows / 151,024 B = 1.46% of
+  `total_code`)** is attributable-**and-portable**, at a measured 0.64% FP;
+  **two-thirds is flanked by XDK source we lack or by 7-LINE QUAZAL MAP
+  SCAFFOLDS** (`src/network/quazal/*.cpp` are `namespace Quazal {}`; 103 of 117
+  `network/` sources are <20 lines, median **7**), so attributing them buys a
+  pairable row **at 0% with no content**. Extreme upper bound **5.51%**.
+  ⚠ Two instrument traps from that lane, both worth reusing: **"enclosed by the
+  same heading on both sides ⇒ membership" FAILS at 66.24% precision (33.76%
+  FP)** — it is also exactly the `spatial:*` provenance `tools/scope_map.py`
+  puts in its tier denominators (now surfaced per-tier by `36b844c4`) — and
+  **XDK is INTERLEAVED throughout `.text`, NOT confined above `0x82A00000`**: an
+  address-band pass read **42.7% of rows as GAME and all 3,941 were Quazal
+  middleware**.
   ⚠ **Do NOT hardcode the denominator — read `total_code` / `total_functions`
   from `report.json`.** This doc said **11,790,708 code bytes** for months; lane
   CJ-3 measured **10,688,812** (2026-08-02, confirmed independently on the landed
