@@ -312,6 +312,17 @@ protected:
     static bool sRawCollide;
     static int sLastCollide;
 
+public:
+    // Public to mirror the rb3-Wii oracle, where sUpdateApproxLight and its setter
+    // are public (Mesh.h:345-347) -- Character::DrawLodOrShadow and
+    // NgSpotlightDrawer::DoPost both suppress it from outside RndMesh. Statics have
+    // no layout impact and the non-static member run below is left in its original
+    // access section, so sizeof(RndMesh) is unchanged.
+    static bool sUpdateApproxLight;
+    static void SetUpdateApproxLight(bool b) { sUpdateApproxLight = b; }
+
+protected:
+
     /** This mesh's vertices. */
     VertVector mVerts; // 0x100
     /** This mesh's faces. */

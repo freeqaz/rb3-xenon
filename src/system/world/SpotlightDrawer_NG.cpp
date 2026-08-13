@@ -11,6 +11,7 @@
 #include "rnddx9/Tex.h"
 #include "rndobj/Cam.h"
 #include "rndobj/HiResScreen.h"
+#include "rndobj/Mesh.h"
 #include "rndobj/Rnd.h"
 #include "rndobj/Rnd_NG.h"
 #include "rndobj/ShaderMgr.h"
@@ -52,7 +53,12 @@ void NgSpotlightDrawer::EndWorld() {
     SpotlightDrawer::EndWorld();
 }
 
-void NgSpotlightDrawer::DoPost() { RenderScene(); }
+void NgSpotlightDrawer::DoPost() {
+    const bool oldUpdate = RndMesh::sUpdateApproxLight;
+    RndMesh::SetUpdateApproxLight(false);
+    RenderScene();
+    RndMesh::SetUpdateApproxLight(oldUpdate);
+}
 
 void NgSpotlightDrawer::SetAmbientColor(const Hmx::Color &color) {
     Hmx::Color c = color;
