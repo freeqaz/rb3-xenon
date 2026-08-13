@@ -32,22 +32,27 @@ RndGroup::RndGroup()
     : mObjects(this, kObjListOwnerControl), mEnv(this), mDrawOnly(this), mLod(this),
       mLodScreenSize(0), mDrawLod(false), mSortInWorld(false) {}
 
+// Retail calls the base FIRST and UNCONDITIONALLY, then tests membership by
+// VALUE (an inlined mObjects.find(from) != end() walk over Node{mObject@0,
+// next@4}), and has no !obj branch at all. The ref->Parent() == &mObjects
+// identity test, the !obj arm and the base call as a trailing else are all DC3's
+// -- DC3 postdates RB3 and rewrote this alongside the bool-returning Replace
+// protocol. rb3-Wii's RB3-era body is character-for-character what the retail
+// bytes decode to, which is what settled it.
 void RndGroup::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (ref->Parent() == &mObjects) {
-        if (!obj) {
-            Hmx::Object *theObj = ref->GetObj();
-            mObjects.remove(theObj);
-            VectorRemove(mAnims, theObj);
-            VectorRemove(mDraws, theObj);
-        } else {
-            AddObject(obj, ref->GetObj());
-            gInReplace = true;
-            RemoveObject(ref->GetObj());
-            gInReplace = false;
-        }
-        return;
-    } else {
-        RndTransformable::Replace(ref, obj);
+    RndTransformable::Replace(ref, obj);
+#ifdef HX_NATIVE
+    Hmx::Object *from = ref->GetObj();
+#else
+    // Retail's first parameter is a Hmx::Object* ("from"); this tree types the
+    // slot as ObjRef* project-wide, so the compare is against the raw argument.
+    Hmx::Object *from = reinterpret_cast<Hmx::Object *>(ref);
+#endif
+    if (mObjects.find(from) != mObjects.end()) {
+        AddObject(obj, from);
+        gInReplace = true;
+        RemoveObject(from);
+        gInReplace = false;
     }
 }
 
