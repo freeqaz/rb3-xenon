@@ -1086,9 +1086,11 @@ static inline void DrawMultiMeshWithEnviron(RndMultiMesh *mmesh) {
     {
         RndEnvironTracker tracker(curEnv, nullptr);
         mmesh->DrawShowing();
-    }
-    if (curEnv) {
-        curEnv->SetUseApproxGlobal(savedApprox);
+        // Retail restores inside the tracker scope: the SetUseApproxGlobal
+        // store precedes ~RndEnvironTracker in the retail bytes.
+        if (curEnv) {
+            curEnv->SetUseApproxGlobal(savedApprox);
+        }
     }
 }
 
@@ -1279,9 +1281,11 @@ void WorldCrowd::DrawShowing() {
                     charXfm.m = meshXfm.m;
                 } else {
                     const Transform &meshXfm2 = mPlacementMesh->WorldXfm();
-                    charXfm.m.z.x = meshXfm2.m.z.x;
-                    charXfm.m.z.y = meshXfm2.m.z.y;
-                    charXfm.m.z.z = meshXfm2.m.z.z;
+                    // Retail copies the whole (16-byte, padded) Vector3 as four
+                    // integer words -- a struct assignment, not three float
+                    // member copies. Adjudicated on retail bytes (lwz/stw x4
+                    // from m.z at +0x20, vs our lfs/stfs x3).
+                    charXfm.m.z = meshXfm2.m.z;
 
                     if (mCrowdRotate == kCrowdRotateFace) {
                         const Transform &camWXfm = curCam->WorldXfm();
@@ -1418,11 +1422,16 @@ void WorldCrowd::DrawShowing() {
                             curChar->SetLodType(kLODPerFrame);
                         }
 #endif
+                        // Retail restores the environ and re-selects the camera
+                        // INSIDE the tracker scope (~RndEnvironTracker runs
+                        // last), and re-reads the mEnviron member for the test
+                        // rather than the cached local. Both adjudicated on
+                        // retail bytes; matches the rb3-Wii oracle's scoping.
+                        if (mEnviron) {
+                            env->SetUseApproxGlobal(savedApprox);
+                        }
+                        curCam->Select();
                     }
-                    if (env) {
-                        env->SetUseApproxGlobal(savedApprox);
-                    }
-                    curCam->Select();
                 }
 
                 // --- Update billboard quad vertices ---
