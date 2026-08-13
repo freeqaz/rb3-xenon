@@ -2,6 +2,25 @@
 
 **If you are reading an "honest" figure from before 2026-08-02, it is stale by ~21,500.**
 
+> **Update 2026-08-13 — ruler identification, only.** This is a dated result doc
+> and its body is frozen provenance; every figure and every verdict below stands
+> as written. One piece of *advice* in it has been overtaken: §"What changed"
+> says version strings cannot identify the ruler and to pin by sha256. Since the
+> objdiff fork landing, **`--version` prints `objdiff-cli 4.2.3 (<commit12>,
+> xxh3 <hash16>)`** — the fork commit and a hash of the executable — and **every
+> generated report self-identifies** via a `provenance` block carrying
+> `tool_version` / `tool_commit` / `tool_binary_hash` / `diff_config` /
+> `map_file_hash` / `cache_hits`. Two builds that both said `4.2.3` no longer
+> look alike, and a *report* can be attributed to its ruler after the fact
+> without having kept the binary.
+>
+> sha256 pinning is not wrong and `tools/ab_measure.py`'s same-ruler guard is
+> unchanged — it is simply no longer the *only* way to tell two rulers apart.
+> Also folded into the cache key at that landing: the resolved config, the map
+> file's content, and the binary hash — so the `CACHE_LOGIC_VERSION` bump
+> described under §"The hazard this created" is now the *floor* of what
+> invalidates a stale entry, not the whole of it.
+
 ## What changed
 
 The local `../objdiff` fork was flipped (source `f74dce1` + `6ee1098` on top of
@@ -26,6 +45,9 @@ drift caused by a single object being rebuilt in between, while every
 any absolute, and pin the ruler by **sha256** — `~/.local/bin/objdiff-cli` and
 the fork build both report `objdiff-cli 4.2.3` and only the fork supports
 `name_check`. The fork build in use is sha256 `ca2be75232767f53…`.
+*(Update 2026-08-13: "both report `objdiff-cli 4.2.3`" was true when written and
+is not any more — `--version` now carries the commit + executable xxh3, and
+reports self-identify. See the banner at the top of this file.)*
 
 ## What did NOT change — verified, 11/11 keys identical @none
 
@@ -59,6 +81,13 @@ UNVERIFIED rather than passing quietly if it cannot resolve the binary.
 Also bumped: `CACHE_LOGIC_VERSION` 2 → 3. Without it, `report.cache` re-serves
 units diffed by the *old* binary — which would have made the whole validation
 vacuous by producing a convincing "no change".
+
+*(Update 2026-08-13: that manual bump is no longer the only thing standing
+between you and a stale entry. The cache key now folds in the objdiff-cli
+binary's own xxh3, the resolved diff config, and the map file's content hash, so
+a binary swap invalidates the cache by construction. Check
+`provenance.cache_hits` on the report — with `.get("cache_hits", 0)`, because
+proto3 omits zero-valued scalars and a fully cold run has no such key.)*
 
 ## Rollback
 
