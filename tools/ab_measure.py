@@ -91,6 +91,22 @@ code change. --name-check still adds the opt-in name_check reading per leg
 with the required warning (its aggregate code% is build-unstable ~0.05pp; small
 nc deltas mean nothing).
 
+THE WORKTREE IS HANDED BACK EXACTLY AS IT WAS FOUND, on every exit path --
+success, refusal, Ctrl-C, unhandled exception (lane TOOL-AB, 2026-08-13; see
+TreeGuard for the 12-cell measurement that motivated it). Before that, the
+state the last step happened to leave was simply the state you got back: a
+green --patch/--pick/--revert run left the tree carrying LEG B, and
+--from-dirty could DELETE YOUR UNCOMMITTED WORK on a refusal, on a Ctrl-C, or
+on a clean green run with --restore. The pre-run state is also snapshotted to
+the run dir before the first mutation, which is the only recovery a SIGKILL
+can have. --keep-applied opts out and prints a banner naming every file left
+modified; --restore is now a deprecated no-op.
+
+ONE change per run. Repeating --patch/--pick/--revert is REFUSED: argparse's
+mutually-exclusive group fires only across DIFFERENT options, so repeating the
+SAME one silently keeps the LAST value and the tool would price it alone and
+print a confident verdict (lane EE2-C, three --revert flags).
+
 Usage:
   tools/ab_measure.py --worktree WT --patch FILE      # measure a diff file
   tools/ab_measure.py --worktree WT --pick REF        # measure applying commit REF
@@ -883,6 +899,26 @@ def plan_restore(pre_diff, cur_diff, pre_untracked, cur_untracked,
             "reapply": bool((pre_diff or "").strip())}
 
 
+def check_source_arity(patch, pick, revert):
+    """PURE: collapse the --patch/--pick/--revert append-lists to scalars and
+    report any flag given more than once. Pure so --selftest can drive it.
+
+    Returns ((patch, pick, revert), arity_error|None).
+    """
+    vals = {"patch": patch, "pick": pick, "revert": revert}
+    err = None
+    out = {}
+    for flag in ("patch", "pick", "revert"):
+        v = vals[flag]
+        if isinstance(v, str):            # already a scalar: nothing to check
+            out[flag] = v
+            continue
+        if v and len(v) > 1 and err is None:
+            err = (flag, list(v))
+        out[flag] = v[-1] if v else None
+    return (out["patch"], out["pick"], out["revert"]), err
+
+
 class TreeGuard:
     """Put the worktree back EXACTLY as the run found it, on EVERY exit path.
 
@@ -1489,12 +1525,8 @@ def main():
     # (raised inside the try: so it writes result.json and rc=2 like every
     # other refusal — and it is raised BEFORE preflight, so nothing has been
     # mutated when it fires).
-    arity_error = None
-    for flag in ("patch", "pick", "revert"):
-        vals = getattr(args, flag)
-        if vals and len(vals) > 1 and arity_error is None:
-            arity_error = (flag, list(vals))
-        setattr(args, flag, vals[-1] if vals else None)
+    (args.patch, args.pick, args.revert), arity_error = check_source_arity(
+        args.patch, args.pick, args.revert)
 
     if not args.worktree or not (args.patch or args.pick or args.revert
                                  or args.from_dirty):
@@ -2543,6 +2575,78 @@ def selftest():
           lambda: check_ruler_stable(base, other_mode), expect_refusal=True)
     check("[ruler] ...and an unchanged mode on the same binary does not",
           lambda: check_ruler_stable(base, same_mode), expect_refusal=False)
+
+    # ---- TREE RESTORE planner (lane TOOL-AB) -----------------------------
+    # PURE-LOGIC coverage only, and labelled as such: the behavioural proof is
+    # 16 real runs of the real tool against a real worktree (mode x exit path),
+    # with a negative control in which restore() was sabotaged to CLAIM a
+    # verified restore and do nothing — all three sabotaged cells came back
+    # MUTATED, i.e. the harness reads the TREE, not the tool's own claim.
+    def _pr(pre, cur, preu=(), curu=(), patch=""):
+        return plan_restore(pre, cur, preu, curu, patch)
+
+    D_A = "diff --git a/src/a.cpp b/src/a.cpp\n@@ -1 +1 @@\n-x\n+y\n"
+    D_B = "diff --git a/src/b.cpp b/src/b.cpp\n@@ -1 +1 @@\n-x\n+y\n"
+
+    def _t(name, got, want_action, want_paths=None, want_reapply=None,
+           want_remove=None):
+        ok = got["action"] == want_action
+        if want_paths is not None:
+            ok = ok and got["checkout_paths"] == want_paths
+        if want_reapply is not None:
+            ok = ok and got["reapply"] == want_reapply
+        if want_remove is not None:
+            ok = ok and got["remove_paths"] == want_remove
+        print(("  PASS" if ok else "  FAIL") + f"  [TOOL-AB] {name}: {got}")
+        if not ok:
+            fails.append(name)
+
+    _t("a tree already in its pre-run state needs NO restore (the planner "
+       "DISCRIMINATES — it does not always fire)",
+       _pr(D_A, D_A), "none", [], False)
+    _t("clean pre-run + patched now (plain --patch/--pick/--revert success) "
+       "-> revert the path, nothing to re-apply",
+       _pr("", D_A), "restore", ["src/a.cpp"], False)
+    _t("THE --from-dirty CASE: caller's work present pre-run, tree now clean "
+       "(EE2-B / DTOR-A / Ctrl-C) -> RE-APPLY the caller's diff",
+       _pr(D_A, ""), "restore", ["src/a.cpp"], True)
+    _t("a file the run created is deleted, one it did not is left alone",
+       _pr("", "", ("keep.txt",), ("keep.txt", "made.txt")), "restore",
+       None, False, ["made.txt"]),
+    _t("the measured patch WIDENS the checkout set: a path can end the run "
+       "byte-identical to HEAD and still need reverting (split rewrites)",
+       _pr("", D_A, patch=D_B), "restore", ["src/a.cpp", "src/b.cpp"], False)
+
+    # ---- source-flag ARITY (lane EE2-C) ----------------------------------
+    # argparse's mutually-exclusive group fires only across DIFFERENT options;
+    # repeating the SAME one silently keeps the LAST value. EE2-C passed three
+    # --revert flags and got a confident number for ONE of them.
+    (p, k, r), err = check_source_arity(None, None, ["A", "B", "C"])
+    ok = err == ("revert", ["A", "B", "C"]) and r == "C"
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [EE2-C] three --revert flags are DETECTED, not silently "
+          f"collapsed: err={err} (argparse would have measured {r!r} alone)")
+    if not ok:
+        fails.append("EE2-C revert arity")
+    for flag, kw in (("patch", {"patch": ["p1", "p2"]}),
+                     ("pick", {"pick": ["A", "B"]})):
+        kw = dict({"patch": None, "pick": None, "revert": None}, **kw)
+        _, e = check_source_arity(**kw)
+        ok = e is not None and e[0] == flag
+        print(("  PASS" if ok else "  FAIL") +
+              f"  [EE2-C] the hole is in --{flag} too, not only --revert: "
+              f"err={e}")
+        if not ok:
+            fails.append(f"EE2-C {flag} arity")
+    # ...and it must NOT fire on the normal single-flag call, or every run
+    # refuses and the guard is worse than the defect.
+    (p, k, r), err = check_source_arity(None, None, ["A"])
+    ok = err is None and r == "A"
+    print(("  PASS" if ok else "  FAIL") +
+          f"  [EE2-C] a single --revert is UNAFFECTED (the guard can pass): "
+          f"revert={r!r} err={err}")
+    if not ok:
+        fails.append("EE2-C single revert")
 
     print(f"selftest: {'ALL PASS' if not fails else f'FAILURES: {fails}'}")
     return 0 if not fails else 1
