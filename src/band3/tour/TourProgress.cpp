@@ -227,13 +227,11 @@ bool TourProgress::AreAllTourGigsComplete() const {
 
 Symbol TourProgress::GetTourLeaderboardGoal() const {
     MILO_ASSERT(m_symTourDesc != "", 0x18E);
+    // RB3-360 retail has no null guard here either. Retail is smaller by
+    // exactly 20 B = the 5 guard instructions (bne / lis+lwz gNullStr /
+    // bl Symbol ctor / b) -- smaller, so ABSENT rather than inlined.
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return gNullStr;
-    else {
-        MILO_ASSERT(pTourDesc, 0x196);
-        return pTourDesc->GetLeaderboardGoal();
-    }
+    return pTourDesc->GetLeaderboardGoal();
 }
 
 bool TourProgress::DoesTourHaveLeaderboard() const {
@@ -356,33 +354,21 @@ void TourProgress::ClearNewStars() {
 }
 
 Symbol TourProgress::GetNextCity() const {
+    // RB3-360 retail has no null guard here either.
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return gNullStr;
-    else {
-        MILO_ASSERT(pTourDesc, 0x270);
-        return pTourDesc->GetCityForGigNum(mNumCompletedGigs);
-    }
+    return pTourDesc->GetCityForGigNum(mNumCompletedGigs);
 }
 
 Symbol TourProgress::GetTourName() const {
+    // RB3-360 retail has no null guard here either.
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return gNullStr;
-    else {
-        MILO_ASSERT(pTourDesc, 0x27E);
-        return pTourDesc->GetName();
-    }
+    return pTourDesc->GetName();
 }
 
 Symbol TourProgress::GetTourWelcome() const {
+    // RB3-360 retail has no null guard here either.
     TourDesc *pTourDesc = TheTour->GetTourDesc(m_symTourDesc);
-    if (!pTourDesc)
-        return gNullStr;
-    else {
-        MILO_ASSERT(pTourDesc, 0x28C);
-        return pTourDesc->GetWelcome();
-    }
+    return pTourDesc->GetWelcome();
 }
 
 bool TourProgress::AreQuestFiltersEmpty() const {
