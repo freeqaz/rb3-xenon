@@ -744,46 +744,70 @@ const char *PathName(const class Hmx::Object *obj);
 // BEGIN OBJ INITIALIZER MACROS
 // ------------------------------------------------------------------------
 
-// ⚠ LANE ACTIONABLE-1 (2026-08-14) — NEW_OBJ IS WRONG FOR RETAIL, AND IT IS A
-// SIZED FORCE-MULTIPLIER, NOT A ONE-ROW FIX. Left unchanged deliberately: the
-// blast radius is every class that uses NEW_OBJ/NEW_OVERLOAD, so it needs its
-// own lane with a whole-binary A/B, not a tail-lane edit.
+// ⛔ LANE NEWOBJ-1 (2026-08-14) — SETTLED, AND IT CORRECTS THE LANE ACTIONABLE-1
+// NOTE THAT USED TO SIT HERE. `NEW_OBJ` ITSELF IS **CORRECT** AND MUST NOT BE
+// TOUCHED. There is no tree-wide macro edit here and no 53-site blast radius:
+// the defect is a PER-CLASS MACRO MISASSIGNMENT in the class headers, and the
+// direction differs per class. Do not re-open this as a macro lever.
 //
-// Evidence, from ?NewObject@LayerDir@@SAPAVObject@Hmx@@XZ (112 B, fuzzy 86.929).
-// Retail:
-//     addi r3, r31, 0x50
-//     bl   ?StaticClassName@LayerDir@@SA?AVSymbol@@XZ   ; Symbol -> temp @0x50
-//     li   r4, 0x0
-//     li   r3, 0x224
-//     bl   fn_827BCD38                                  ; INLINE 2-arg allocator
-//     stw  r3, 0x54, r31
-// Ours:
-//     li   r3, 0x224
-//     bl   ??2LayerDir@@SAPAXI@Z                        ; out-of-line, 5-arg
-//     stw  r3, 0x50, r31
+// ACTIONABLE-1 read `?NewObject@LayerDir@@` correctly but generalised it wrongly
+// ("true scope is every REGISTER_OBJ_FACTORY class"). Retail is HETEROGENEOUS —
+// BOTH allocation shapes are real, and utl/MemMgr.h already documents both:
 //
-// Two independent defects:
-//  1. NEW_OBJ must evaluate `objType::StaticClassName()` and pass it BY VALUE to
-//     an operator new overload. The resulting Symbol temp is written to 0x50 and
-//     NEVER READ, which is what an inlined `operator new(size_t, Symbol)` that
-//     ignores its name argument looks like. (It is NOT a MemTemp guard — see the
-//     note in utl/MemMgr.h: retail's MemTemp call sites pass NO argument regs.)
-//  2. NEW_OVERLOAD (utl/MemMgr.h) is `__declspec(noinline)` and calls the 5-arg
-//     `MemAlloc(s, __FILE__, 0, "unknown", 0)`. Retail INLINES it and calls the
-//     2-arg form `MemAlloc(size, 0)` — the same "no __FILE__/__LINE__/name"
-//     retail X360 shape that MemMgr.h already documents for POOL_OVERLOAD.
-//     fn_827BCD38 is 0x284 B with 300 call sites incl. MemHeap/Memory_Xbox, i.e.
-//     the global allocator.
+//   (a) OUT-OF-LINE + ICF-FOLDED  <= NEW_OVERLOAD / MEM_OVERLOAD.
+//       Retail keeps class `operator new` out of line and folds every identical
+//       `{ return MemAlloc(size, 0); }` into ONE thunk, so the site is just
+//       `li r3, size ; bl <thunk>`. Confirmed live on ?NewObject@BandScreen@@
+//       (72 B, matches at 100%): retail's callee carries the ICF survivor name
+//       `??2CriticalSection@@SAPAXI@Z` where we spell `??2BandScreen@@SAPAXI@Z`.
+//       That is a SECOND, independent confirmation of MemMgr.h's CacheMgr note.
 //
-// The `stw` offset delta (0x54 vs 0x50) is a CONSEQUENCE of the Symbol temp
-// occupying 0x50 — not a third defect.
+//   (b) INLINED + DISCARDED Symbol  <= OBJ_MEM_OVERLOAD (MemMgr.h's documented
+//       EXCEPTION to (a)). The `StaticClassName()` name argument is still
+//       EVALUATED and thrown away, so the body is class-specific, does NOT fold,
+//       and /Ob2 inlines it:
+//           addi r3, r31, 0x50
+//           bl   ?StaticClassName@LayerDir@@SA?AVSymbol@@XZ   ; Symbol temp @0x50
+//           li   r4, 0x0
+//           li   r3, 0x224
+//           bl   <2-arg MemAlloc>
+//           stw  r3, 0x54, r31
+//       The 0x54 (vs 0x50) is a CONSEQUENCE of the discarded Symbol temp taking
+//       0x50 — not a separate defect. MemMgr.h predicted this slot shift in
+//       advance, and the EH unwind funclets confirm it: they load the raw pointer
+//       from 0x54.
 //
-// Immediate prize: 4 rows at exactly 112 B and exactly fuzzy 86.929
-// (BandRetargetVignette, OverdriveMeter, UnisonIcon, LayerDir) plus
-// PropertyEventProvider at 96 B = 544 B. True scope is larger: every
-// REGISTER_OBJ_FACTORY class routes through here. Neither oracle can adjudicate
-// it — DC3 and rb3-Wii BOTH spell plain `new objType`, and rb3-Wii is the dev
-// build; only retail's bytes disagree.
+// MEASURED per-class assignment (whole-binary A/B, +5 matched / +328 B /
+// +0.003176pp, 0 units off 100% on either ruler):
+//   * bandobj/{LayerDir,UnisonIcon,OverdriveMeter,BandRetargetVignette} were on
+//     NEW_OVERLOAD and retail wants (b) -> switched to OBJ_MEM_OVERLOAD. All four
+//     now match 28/28 instructions, all equal.
+//   * flow/PropertyEventProvider was the MIRROR IMAGE: on OBJ_MEM_OVERLOAD while
+//     retail wants (a) -> switched to NEW_OVERLOAD/DELETE_OVERLOAD. 5 charged
+//     sites -> 1 (fuzzy 84.542 -> 99.542). Its lone residual is `li r3, 0x48` vs
+//     retail `li r3, 0x44`: the OBJECT IS 4 B TOO BIG. That is an independent
+//     layout defect, not a `new` defect, and it is a clean +4 witness for whoever
+//     works the coupled-base/_Rb_tree size question (mProperties is the class's
+//     ONLY data member, over a virtual Hmx::Object base).
+//
+// PROVENANCE, which is what actually predicts the direction: the macro spelling
+// was inherited from whichever oracle the header was ported from, NOT from
+// retail. 36 of the 43 NEW_OVERLOAD-only classes live in src/system/bandobj
+// (ported from rb3-Wii, which spells `NEW_OVERLOAD; DELETE_OVERLOAD;` — verified
+// verbatim for all four classes above), while the engine dirs came from DC3 and
+// spell OBJ_MEM_OVERLOAD (rndobj 53, hamobj 49, char 47, ui 26, flow 25).
+// So ACTIONABLE-1's "neither oracle can adjudicate it" is too weak: rb3-Wii DOES
+// have an opinion and retail contradicts it 4 times out of 4. The remaining ~32
+// bandobj NEW_OVERLOAD classes are the named follow-on lever — but they are
+// METRIC-INVISIBLE today (no paired NewObject row), so they need retail-byte
+// evidence per class, not a bulk flip.
+//
+// ⚠ COST THAT IS NOT A REGRESSION: three 40 B EH funclets in default/BandCharacter
+// went fuzzy 100 -> 99.5 (-120 B). Their ONLY charged site is the ICF-folded
+// `operator delete` name (retail's survivor is `??3BinStream@@SAXPAX@Z`, we spell
+// the per-class twin); 9 of 10 instructions are equal INCLUDING the `lwz r3, 0x54`
+// that only matches because the fix moved the temp to retail's slot. mpn stays
+// 100. Do NOT install an alias or bend source to recover those bytes.
 #define NEW_OBJ(objType)                                                                 \
     static Hmx::Object *NewObject() { return new objType; }
 

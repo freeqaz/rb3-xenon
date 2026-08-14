@@ -54,8 +54,7 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(LayerDir); }
     NEW_OBJ(LayerDir);
 
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    OBJ_MEM_OVERLOAD(0x39);
 
     ObjList<Layer> mLayers; // 0x18c
     bool mUseFreeCam; // 0x198
