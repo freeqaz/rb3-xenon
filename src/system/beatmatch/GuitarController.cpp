@@ -152,13 +152,10 @@ int GuitarController::OnMsg(const ButtonDownMsg &msg) {
         std::find(strum.begin(), strum.end(), btn);
     if (btnIter != strum.end()) {
         int slot = GetCurrentSlot();
-        unsigned char b8 = (unsigned char)(btnIter != strum.begin());
-        bool b1 = b8;
-        if (mLefty)
-            b1 = !b8;
-        mSink->Swing(
-            slot, true, b8, false, true, IsShifted() ? kGemHitFlagSolo : kGemHitFlagNone
-        );
+        bool b8 = (btnIter - strum.begin()) != 0;
+        bool b1 = mLefty ? !b8 : b8;
+        GemHitFlags flags = IsShifted() ? kGemHitFlagSolo : kGemHitFlagNone;
+        mSink->Swing(slot, true, b8, false, true, flags);
         RegisterHit(b1 ? kHitDownstrum : kHitUpstrum);
     } else {
         if (btn == mForceMercuryBut) {
