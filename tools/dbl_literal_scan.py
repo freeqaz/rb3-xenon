@@ -40,7 +40,7 @@ ASM_ENDFN = re.compile(r"^\.endfn")
 
 # The mnemonics that discriminate double from single intermediate math.
 DOUBLE_OPS = {"lfd", "stfd", "fmul", "fadd", "fsub", "fdiv", "fmadd", "fmsub",
-              "fnmadd", "fnmsub", "fsqrt", "frsp"}
+              "fnmadd", "fnmsub", "fsqrt", "frsp", "fcfid"}
 SINGLE_OPS = {"lfs", "stfs", "fmuls", "fadds", "fsubs", "fdivs", "fmadds",
               "fmsubs", "fnmadds", "fnmsubs", "fsqrts"}
 FP_OPS = DOUBLE_OPS | SINGLE_OPS
@@ -95,6 +95,8 @@ def decode(word):
         xo = (word & X_XO) >> 1
         if xo == 12:
             return "frsp"
+        if xo == 846:
+            return "fcfid"   # int->float on 64-bit PPC; NOT a double literal
         return A63.get((word & A_XO) >> 1)
     return None
 
@@ -126,6 +128,96 @@ def coff_text_counts(path):
             if mn:
                 counts[mn] += 1
     return counts, words
+
+
+# MSVC PowerPC int->float / uint->float conversion magics.  These produce
+# lfd + fsub + frsp with NO double literal anywhere in the source, and they are
+# the dominant confound for a naive "extra lfd" screen.
+CONV_MAGICS = {"4330000000000000", "4530000000000000", "4330000080000000"}
+
+
+def coff_double_const_refs(path):
+    """-> {symbol_name: (n_real_double_loads, n_conv_magic_loads)}
+
+    Reads .text relocations to find WHICH constant each lfd targets, so a
+    genuine `double` literal is separated from MSVC's int->float magic.
+    """
+    data = open(path, "rb").read()
+    if len(data) < 20:
+        return {}
+    nsec, = struct.unpack_from("<H", data, 2)
+    symptr, nsym = struct.unpack_from("<II", data, 8)
+    optsz, = struct.unpack_from("<H", data, 16)
+    stroff = symptr + nsym * 18
+    secoff = 20 + optsz
+
+    def symname(idx):
+        off = symptr + idx * 18
+        if off + 18 > len(data):
+            return ""
+        raw = data[off:off + 8]
+        if raw[:4] == b"\0\0\0\0":
+            so, = struct.unpack_from("<I", raw, 4)
+            end = data.find(b"\0", stroff + so)
+            return data[stroff + so:end].decode("latin1")
+        return raw.rstrip(b"\0").decode("latin1")
+
+    # function symbols per section, as in coff_symbol_counts
+    fnsyms = collections.defaultdict(list)
+    i = 0
+    while i < nsym:
+        off = symptr + i * 18
+        if off + 18 > len(data):
+            break
+        value, secno, typ, sclass, naux = struct.unpack_from("<IhHBB", data, off + 8)
+        if secno > 0 and typ == 0x20 and sclass in (2, 3):
+            fnsyms[secno].append((value, symname(i)))
+        i += 1 + naux
+
+    out = {}
+    for si in range(nsec):
+        base = secoff + si * 40
+        if base + 40 > len(data):
+            break
+        name = data[base:base + 8].rstrip(b"\0").decode("latin1")
+        size, = struct.unpack_from("<I", data, base + 16)
+        ptr, = struct.unpack_from("<I", data, base + 20)
+        relptr, = struct.unpack_from("<I", data, base + 24)
+        nrel, = struct.unpack_from("<H", data, base + 32)
+        if not name.startswith(".text") or ptr == 0:
+            continue
+        relmap = {}
+        for r in range(nrel):
+            ro = relptr + r * 10
+            if ro + 10 > len(data):
+                break
+            va, sidx = struct.unpack_from("<II", data, ro)
+            nm2 = symname(sidx)
+            # PPC relocs come in pairs sharing a VA: the real target plus an
+            # IMAGE_REL_PPC_PAIR record naming @comp.id.  Letting the PAIR
+            # overwrite the target silently emptied this whole classifier.
+            if nm2 == "@comp.id" or va in relmap:
+                continue
+            relmap[va] = nm2
+        ents = sorted(fnsyms.get(si + 1, []))
+        blob = data[ptr:ptr + size]
+        for idx, (value, fname) in enumerate(ents):
+            end = ents[idx + 1][0] if idx + 1 < len(ents) else size
+            real = conv = 0
+            for j in range(value, min(end, len(blob)) - 3, 4):
+                w, = struct.unpack_from(">I", blob, j)
+                if decode(w) != "lfd":
+                    continue
+                tgt = relmap.get(j, "")
+                m = re.match(r"__real@([0-9a-fA-F]{16})$", tgt)
+                if m:
+                    if m.group(1).lower() in CONV_MAGICS:
+                        conv += 1
+                    else:
+                        real += 1
+            a, b = out.get(fname, (0, 0))
+            out[fname] = (a + real, b + conv)
+    return out
 
 
 def coff_symbol_counts(path):
@@ -401,10 +493,64 @@ def cmd_pairs():
     return 0
 
 
+def cmd_lit():
+    """The literal-class sizing: functions that load a GENUINE double constant."""
+    import json
+    smap = load_map()
+    objs = find_objs()
+    rep = json.load(open(os.path.join(ROOT, "build/45410914/report.json")))
+    info = {}
+    for u in rep["units"]:
+        for f in u.get("functions", []):
+            info[f["name"]] = (float(f.get("fuzzy_match_percent", 0) or 0),
+                               int(f.get("size", 0) or 0), u["name"])
+
+    pop = []          # paired fns whose code loads >=1 genuine double constant
+    for stem, opath in sorted(objs.items()):
+        apath = os.path.join(ASM, stem + ".s")
+        if not os.path.exists(apath):
+            continue
+        rfns = parse_asm(apath)
+        if not rfns:
+            continue
+        ours = coff_symbol_counts(opath)
+        dconst = coff_double_const_refs(opath)
+        for fnsym, rc in rfns.items():
+            m = re.match(r"fn_([0-9A-Fa-f]{8})$", fnsym)
+            if not m:
+                continue
+            name = smap.get("0x" + m.group(1).lower())
+            if not name or name not in ours:
+                continue
+            real, _conv = dconst.get(name, (0, 0))
+            if real > 0:
+                pop.append((stem, name, real, rc, ours[name]))
+
+    proven = [p for p in pop if info.get(p[1], (0,))[0] == 100.0]
+    cands = [p for p in pop if p[4]["lfd"] > p[3]["lfd"]]
+    print(f"paired fns loading a GENUINE double constant : {len(pop)}   <-- population")
+    print(f"  at fuzzy==100 => retail loads one too      : {len(proven)}   <-- PROVEN AGREE")
+    print(f"  retail has FEWER lfd than us               : {len(cands)}   <-- candidates")
+    print(f"  candidates that are also at fuzzy==100     : "
+          f"{sum(1 for c in cands if info.get(c[1],(0,))[0]==100.0)}   <-- must be 0")
+    print()
+    rows = []
+    for stem, name, real, rc, oc in cands:
+        fz, sz, un = info.get(name, (0, 0, "?"))
+        rows.append((fz, sz, stem, name, real, rc["lfd"], oc["lfd"]))
+    rows.sort(key=lambda x: (-x[0], -x[1]))
+    print(f"{'fuzzy':>9} {'size':>6} {'dbl':>4} {'lfd R/O':>9}  unit  symbol")
+    for fz, sz, stem, name, real, rl, ol in rows:
+        print(f"{fz:9.4f} {sz:6d} {real:4d} {rl:4d}/{ol:<4d}  {stem}  {name[:66]}")
+    return 0
+
+
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "selftest"
     if cmd == "pairs":
         return cmd_pairs()
+    if cmd == "lit":
+        return cmd_lit()
     if cmd == "selftest":
         return cmd_selftest()
     if cmd == "units":
