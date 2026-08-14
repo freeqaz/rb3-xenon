@@ -7,6 +7,7 @@
 #include "obj/Task.h"
 #include "os/Joypad.h"
 #include "rndobj/Dir.h"
+#include "ui/UI.h"
 #include "ui/UIComponent.h"
 #include "ui/UILabel.h"
 #include "utl/BinStream.h"
@@ -291,7 +292,17 @@ void InlineHelp::UpdateLabelText() {
             );
     }
 }
-void InlineHelp::Init() { REGISTER_OBJ_FACTORY(InlineHelp) }
+void InlineHelp::Init() {
+    REGISTER_OBJ_FACTORY(InlineHelp)
+    // Retail's InlineHelp::Init is 88 B and ours was 52 B: it also calls
+    // TheUI->InitResources(Symbol("InlineHelp")).  Read out of retail bytes, not
+    // the symbol map -- 0x82316C18 constructs a Symbol from the .rdata literal at
+    // 0x8202F880, which reads "InlineHelp", then loads the UIManager global at
+    // 0x82C721F0 (a POINTER load, `lwz r3,0x21f0(r11)`, matching `extern
+    // UIManager *TheUI`) and calls InitResources on it.  Without this line the
+    // inline-help resource set is never initialised at runtime.
+    TheUI->InitResources("InlineHelp");
+}
 
 String InlineHelp::GetIconStringFromAction(int idx) {
     static Symbol action_chars("action_chars");
