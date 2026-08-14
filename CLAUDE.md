@@ -1173,6 +1173,21 @@ run the gate before you land. Two traps, both real:
   uncollectable by source work in principle.** Price a candidate from
   `report.json`'s charged-site list, not from a mismatch count, **before** it is
   briefed as a target.
+  ✅ **THE `none`-RULER HALF OF THAT IS FIXED (lane MCPRULER-1, 2026-08-14,
+  `7286bfd1`)** — `mcp_server.py` had been passing `-c functionRelocDiffs=none`,
+  and since `objdiff-cli` applies `-c` **LAST** it was **actively OVERRIDING** the
+  shipped `name_check` (7,157 rows disagreed; 5,555 rows / 674,936 B read
+  `fuzzy == 100` under `none` but below 100 graded). It now resolves the ruler
+  from `report.json`'s `provenance` and **self-labels**; `none`/`data_value` are
+  explicit opt-ins.
+  ⛔⛔ **BUT THE READING ERROR SURVIVES THE FIX, AND HAS NOW BITTEN THREE LANES:
+  "N/N instructions equal" is INSTRUCTION-level and does NOT include
+  relocation-name charges, which are ARGUMENT-level (`diff_arg`).** They coexist
+  with *all instructions equal* — one row reads **"205 instructions | all
+  equal"** while scoring **98.4% graded**, and a lane pre-registered **+96 B**
+  off a "24/24 equal" reading and measured **−92 B**. ⇒ **An equality count and a
+  mismatch count are both the wrong instrument. Price from `report.json`'s
+  charged-site list — always.**
   ★★★ **`run_objdiff`'s "normalized (raw)" pair vs the report keys — SETTLED
   (lane EB-4, 2026-08-03). This note used to say the pair "does not equal these
   report keys", which was MISLEADING: its own example proves one of them equals
