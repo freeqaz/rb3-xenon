@@ -61,7 +61,8 @@ SCOPEDEN-1, 2026-08-14, measured at b574f653). Two independent axes multiply:
 
   ... times the fact that "game" itself has more than one extension:
 
-    band3 only, pinned          2,107,200 B   aon 59.85%   mean 82.07%
+    band3 only, pinned          2,107,200 B   aon 59.85%   mean 82.07%  <- ⚠ SEE
+                                                                            BELOW
     band3+network, pinned       2,376,840 B   aon 54.36%   mean 74.68%   <- the
                                               remembered "we were at 75%"
     scope tier, pinned          2,387,580 B   aon 54.60%   mean 74.82%   <- printed
@@ -71,14 +72,43 @@ SCOPEDEN-1, 2026-08-14, measured at b574f653). Two independent axes multiply:
 before any inferred mass is folded in at all. Nothing regressed to produce any of
 these; they are four denominators and two fields.
 
-⚠ The dtk `progress_categories` join and this tool's `bucket_for_source` disagree
-on 8 units: FOUR `src/band3/` units are tagged `['engine']` in the category config
-(HitTracker, Asset, LockStepMgr, UGCPurchasePanel = 13,692 B of game code counted
-as engine), while the category side additionally sweeps in `src/Main.cpp`,
-`src/Memory_Xbox.cpp`, `src/keygen_xbox.cpp` and a zlib unit (6,520 B). That
-disagreement IS the 74.68 vs 74.82 gap -- it is not noise, and the category tags
-are the side that is wrong. Fixing them belongs to objects.json/configure.py, NOT
-here: this tool is reporting-only and must stay metric-neutral by construction.
+✅ FIXED 2026-08-14 (lane CATTAG-1). The paragraph here used to say the dtk
+`progress_categories` join and `bucket_for_source` disagree on 8 units and that
+"the category tags are the side that is wrong". A census over ALL 1,434 declared
+objects -- not the 8 that fell out of one reconciliation -- corrects that three
+ways:
+
+  * It is 10, not 8. The extra class is the WHOLE `xdk` library group (nuidetroit,
+    osfinfo, rtti) tagged `engine` while xdk_ucode/xdk_vendor already used `sdk`.
+    A game-tier-only reconciliation cannot see it.
+  * ⛔ ONE OF THE 8 WAS NOT A MIS-TAG -- THIS TOOL WAS WRONG.
+    `src/network/quazal/Compression/ZLib/ZLibCompression.cpp` (316 B, of the
+    6,520 B "swept in") read `thirdparty` only because the "/zlib/" marker matched
+    the DIRECTORY NAME `ZLib/`. It is a 7-line `namespace Quazal {}` map scaffold
+    whose oracle is ../rb3/src/network/Plugins/ZLibCompression.cpp -- Quazal NetZ
+    middleware, not zlib. Its `network` tag was right. `bucket_for_source` now
+    tests the in-scope game layer ABOVE the marker substring.
+  * ⚠ The `band3 only, pinned` row in the table above is NOT band3-only: 2,107,200 B
+    is numerically the `game` CATEGORY block, which then held 254 band3 units PLUS
+    the three root-level files and was MISSING four band3 units. The two errors
+    partly cancel in the byte total, which is why it looked plausible. True
+    band3-only, same ruler, after the fix: 258 units / 2,114,688 B / aon 60.240%.
+
+The cause was mechanism, not bookkeeping: the tag was library-group membership in
+objects.json with nothing tying it to the path. It is now DERIVED from the source
+path (tools/source_category.py, wired in configure.py), so drift is impossible.
+`source_category.py audit` fails on any category<->tier pair outside the
+documented `CATEGORY_ALLOWED_TIERS` granularity table -- and it FAILED on
+ZLibCompression before the fix above, so the guard is known able to fail.
+
+⚠ STILL a granularity difference BY DESIGN, do not "fix" it: the 114 `src/network/`
+units read tier `game` here (one priority tier) and category `network` there. And
+31 units / 105,752 B of vendored third-party source under `src/system/` read
+`thirdparty` here but `engine` there -- sized, documented and deliberately not
+closed by CATTAG-1, because it moves the widely-quoted engine denominator.
+
+This tool remains reporting-only and metric-neutral by construction; the fix landed
+in objects.json/configure.py and measured Δmatched=0 / Δcode%=0.000000pp.
 
 CACHE HYGIENE -- scope_map.json is gitignored and addr-keyed to ONE target build.
 If it is absent (fresh checkout / worktree) or keyed to a different revision of

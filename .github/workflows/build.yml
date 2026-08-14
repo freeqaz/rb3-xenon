@@ -40,6 +40,20 @@ jobs:
     - name: Grep binary guard
       run: python3 tools/grep_binary_guard.py -v
 
+    # Guard: a unit's progress_category must agree with its source PATH. The tag
+    # used to be objects.json library-group membership with nothing tying it to
+    # the tree, so it drifted silently for 10 objects -- 13,692 B of src/band3/
+    # game code counted as engine, and the whole `xdk` group counted as engine
+    # rather than sdk. It is derived now (tools/source_category.py), and this
+    # step fails on any category<->scope_map tier pair outside the documented
+    # CATEGORY_ALLOWED_TIERS granularity table. `selftest` first: it pins 14
+    # known-answer cases including five negatives, so a classifier that has
+    # stopped discriminating fails here rather than silently passing `audit`.
+    - name: Progress-category derivation guard
+      run: |
+        python3 tools/source_category.py selftest
+        python3 tools/source_category.py audit
+
     # Build the project
     - name: Build
       run: |
