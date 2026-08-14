@@ -1087,13 +1087,30 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
     }
 
     float eyeRot = (1.0f - blinkWeight) * source->LocalXfm().m.y.x;
-    float negEyeRot = -eyeRot;
 
+    // ★ RB3 retail has NO NaN guard at any of the three RotateAboutZ sites in
+    // this function, and no hoisted `negEyeRot` temp -- it negates at the use
+    // site, inside the guarded block.  Adjudicated on retail bytes: the target
+    // instruction stream contains ZERO self-compare `fcmpu fN,fN`, while ours
+    // had THREE (0x1b0, 0x218, 0x5e4).  rb3-Wii (the RB3-era dev source) has no
+    // guard either and spells the product `-eyeRot * mUpperLidTrackUp` inline;
+    // dc3-decomp DOES have the guard.  So `isNaN` is a post-RB3 Harmonix
+    // robustness fix we inherited from the newer engine, exactly the class
+    // BODYPORT-2 found (a fix that postdates the shipped binary).
+    //
+    // Reproduce retail for the match build; KEEP the guard for the native
+    // runtime, where correct behaviour beats byte-fidelity.
     if (upperLid) {
-        float angle =
-            (0.0f <= eyeRot ? mUpperLidTrackUp : mUpperLidTrackDown) * negEyeRot;
-        bool isNaN = (angle != angle);
-        if (!isNaN) {
+        // The negation must be its own value, not folded into the product:
+        // `sel * -eyeRot` lets /fp:fast reassociate to `-(sel * eyeRot)` and
+        // retail negates FIRST (`fneg f0,f31` then `fmuls f30,f13,f0`).
+        float negEyeRot = -eyeRot;
+        float angle = (0.0f <= eyeRot ? mUpperLidTrackUp : mUpperLidTrackDown) * negEyeRot;
+#ifdef HX_NATIVE
+        if (angle != angle) {
+        } else
+#endif
+        {
             Transform &xfm = upperLid->DirtyLocalXfm();
             RotateAboutZ(xfm.m, angle, xfm.m);
         }
@@ -1101,10 +1118,14 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
 
     if (lowerLid) {
         if (mLowerLidTrackRotate) {
+            float negEyeRot = -eyeRot;
             float angle =
                 (eyeRot >= 0.0f ? mLowerLidTrackUp : mLowerLidTrackDown) * negEyeRot;
-            bool isNaN = (angle != angle);
-            if (!isNaN) {
+#ifdef HX_NATIVE
+            if (angle != angle) {
+            } else
+#endif
+            {
                 Transform &xfm = lowerLid->DirtyLocalXfm();
                 RotateAboutZ(xfm.m, angle, xfm.m);
             }
@@ -1140,16 +1161,28 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
         Cross(lowerDir, upperDir, cross);
 
         const Transform &srcXfm = source->WorldXfm();
-        bool lidsOK =
+        // Retail holds this flag in the POSITIVE polarity -- `> 0.0f`, which
+        // rb3-Wii names `notLidsOK` -- not `<= 0.0f` negated at the test.  The
+        // negated spelling emits `ble`/`bne` where retail emits `bgt`/`beq`.
+        bool notLidsOK =
             cross.x * srcXfm.m.x.x + cross.y * srcXfm.m.x.y + cross.z * srcXfm.m.x.z
-            <= 0.0f;
+            > 0.0f;
 
-        if (!sDisableEyeClamping) {
+        // ⚠ Retail does NOT read sDisableEyeClamping here: the four-instruction
+        // `lis`/`lbz`/`cmplwi`/`bne` on ?sDisableEyeClamping@CharEyes@@1_NA is
+        // base-only in the diff.  rb3-Wii's DEV source guards with
+        // `!sDisableEyeClamping && !DataVariable("disable_clamping").Int(0) &&
+        // notLidsOK`; the shipped retail binary tests only `notLidsOK`.  Keep
+        // the author-facing switch alive for the native runtime.
+#if defined(HX_NATIVE)
+        if (!sDisableEyeClamping)
+#endif
+        {
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
             DataNode &clampCheat = DataVariable("disable_clamping");
-            if (!clampCheat.Int(0) && !lidsOK) {
+            if (!clampCheat.Int(0) && notLidsOK) {
 #else
-            if (!lidsOK) {
+            if (notLidsOK) {
 #endif
                 float midX =
                     (upperBlinkPos.x - lowerBlinkPos.x) * 0.5f + lowerBlinkPos.x;
@@ -1189,8 +1222,13 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
                 float clamped = maxDot - 1.0f >= 0.0f ? 1.0f : maxDot;
                 float angle = std::acos(clamped);
 
-                bool isNaN = (angle != angle);
-                if (!isNaN) {
+                // Third of the three post-RB3 NaN guards -- see the note at the
+                // top of this function.  Retail has no `fcmpu fN,fN` here.
+#ifdef HX_NATIVE
+                if (angle != angle) {
+                } else
+#endif
+                {
                     Transform &xfm = upperLid->DirtyLocalXfm();
                     RotateAboutZ(xfm.m, -angle, xfm.m);
                 }
@@ -1202,7 +1240,7 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
         if (drawCheat.Int(0)) {
             RndGraph *graph = RndGraph::GetOneFrame();
 
-            if (!(lidsOK)) {
+            if (notLidsOK) {
                 graph->AddSphere(
                     upperBlinkPos, 0.05f, Hmx::Color(1.0f, 0.0f, 0.0f, 1.0f)
                 );
@@ -1211,7 +1249,7 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
                     upperBlinkPos, 0.05f, Hmx::Color(0.0f, 0.0f, 1.0f, 1.0f)
                 );
             }
-            if (!(lidsOK)) {
+            if (notLidsOK) {
                 graph->AddSphere(
                     lowerBlinkPos, 0.05f, Hmx::Color(1.0f, 0.0f, 0.0f, 1.0f)
                 );
@@ -1230,7 +1268,7 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
             Vector3 normalEnd(
                 cross.x + sourcePos.x, cross.y + sourcePos.y, cross.z + sourcePos.z
             );
-            if (!(lidsOK)) {
+            if (notLidsOK) {
                 graph->AddLine(
                     sourcePos, normalEnd, Hmx::Color(1.0f, 0.0f, 0.0f, 1.0f), false
                 );
@@ -1250,7 +1288,7 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
                 sourcePos, facingEnd, Hmx::Color(1.0f, 1.0f, 0.0f, 1.0f), false
             );
 
-            if (!lidsOK) {
+            if (notLidsOK) {
                 Vector3 mid2(
                     (upperBlinkPos.x - lowerBlinkPos.x) * 0.5f + lowerBlinkPos.x,
                     (upperBlinkPos.y - lowerBlinkPos.y) * 0.5f + lowerBlinkPos.y,
