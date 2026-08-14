@@ -334,13 +334,36 @@ fi
 errs=$(G -c "error:" "$LOG");            errs=${errs:-0}
 warns=$(G -c "warning:" "$LOG");         warns=${warns:-0}
 failed_edges=$(G -c "^FAILED: " "$LOG"); failed_edges=${failed_edges:-0}
-distinct_of() { G "error:" "$LOG" | sed 's#^.*/\([^/]*:[0-9]*:[0-9]*: error:\)#\1#' | sort -u; }
+
+# !! A LINK diagnostic does NOT contain the token `error:`. Measured on the
+# 2026-08-14 TexRenderer<-mtx.cpp duplicate-definition breakage: 34 real
+# `multiple definition of ...` lines, of which ZERO matched "error:", so
+# `errs` read 2 -- both of them the generic driver line
+# `clang++: error: linker command failed with exit code 1`. The gate still
+# FAILED (via build_rc and the NOBINARY adjudication, which is why this is a
+# REPORTING defect and not a PASS hole), but its "distinct diagnostics" block
+# printed that one useless line and hid every message naming the actual cause.
+# Count and surface linker diagnostics in their own right.
+LINKPAT='multiple definition|undefined reference|duplicate symbol|cannot find -l|undefined symbol'
+link_errs=$(G -cE "$LINKPAT" "$LOG"); link_errs=${link_errs:-0}
+distinct_of() {
+    { G "error:" "$LOG" | sed 's#^.*/\([^/]*:[0-9]*:[0-9]*: error:\)#\1#'
+      # Keep the symbol, drop the object paths that differ per worktree.
+      G -E "$LINKPAT" "$LOG" | sed 's#^.*/##; s#;.*##'
+    } | sort -u
+}
 distinct_errs=$(distinct_of | wc -l)
 
-# Attribute failed ninja edges to targets: CMakeFiles/<target>.dir/... for
-# compiles, the bare output name for links.
-failed_targets=$(G "^FAILED: " "$LOG" \
-    | sed -n 's#.*CMakeFiles/\([^/]*\)\.dir/.*#\1#p' | sort -u)
+# Attribute failed ninja edges to targets. TWO forms, and the old code handled
+# only the first, so a pure LINK failure produced an EMPTY target list -- the
+# report literally read "across target(s): " with nothing after it, in exactly
+# the case where naming the target matters most:
+#   compile: FAILED: [code=1] CMakeFiles/<target>.dir/<path>.o
+#   link:    FAILED: [code=1] <target>
+failed_targets=$( { G "^FAILED: " "$LOG" | sed -n 's#.*CMakeFiles/\([^/]*\)\.dir/.*#\1#p'
+                    G "^FAILED: " "$LOG" | sed -n 's#^FAILED: \(\[[^]]*\] \)\?\([^ ]*\).*#\2#p' \
+                        | sed 's#.*/##' | G -v '\.o$'
+                  } | sort -u)
 
 # ------------------------------------------------- per-target adjudication --
 ok=(); relinked=(); skipped_lines=(); fail_lines=()
@@ -383,7 +406,7 @@ echo "tree:      $DIR"
 echo "manifest:  ${#KNOWN_TARGETS[@]} known target(s)"
 echo "declared:  ${#declared[@]} parsed from native/$CML"
 echo "expected:  ${#expected[@]} (manifest u declared)$( [ $partial -eq 1 ] && echo "  [SUBSET REQUESTED]")"
-echo "build:     rc=$build_rc, $errs error line(s) / $distinct_errs distinct, $failed_edges failed edge(s), $warns warning(s)"
+echo "build:     rc=$build_rc, $errs error line(s) + $link_errs linker diagnostic(s) / $distinct_errs distinct, $failed_edges failed edge(s), $warns warning(s)"
 [ ${#new_targets[@]} -gt 0 ] && echo "note:      target(s) declared but absent from this script's manifest, held to the same standard anyway: ${new_targets[*]} (add them to KNOWN_TARGETS)"
 echo
 echo "targets:"
@@ -402,11 +425,16 @@ if [ $STRICT -eq 1 ] && [ $n_skip -gt 0 ]; then
     n_bad=$(( n_bad + n_skip ))
 fi
 
-if [ $build_rc -ne 0 ] || [ "$errs" -ne 0 ] || [ $n_bad -ne 0 ]; then
-    verdict="NATIVE GATE: FAIL  (build rc=$build_rc, $errs error line(s), $n_bad target defect(s), $n_ok/${#expected[@]} target(s) good"
+# `link_errs` is an INDEPENDENT trigger, deliberately. build_rc already catches
+# every case seen so far, but a gate should not rest on a single signal for the
+# one defect class it uniquely exists to see -- a duplicate/missing symbol is
+# invisible to the X360 build BY CONSTRUCTION. Verified not to fire on a healthy
+# tree (PASS 18/18, link_errs=0), so it costs no false FAIL.
+if [ $build_rc -ne 0 ] || [ "$errs" -ne 0 ] || [ "$link_errs" -ne 0 ] || [ $n_bad -ne 0 ]; then
+    verdict="NATIVE GATE: FAIL  (build rc=$build_rc, $errs error line(s), $link_errs linker diagnostic(s), $n_bad target defect(s), $n_ok/${#expected[@]} target(s) good"
     [ $n_skip -gt 0 ] && verdict="$verdict, $n_skip skipped"
     echo "$verdict)"
-    if [ "$errs" -ne 0 ]; then
+    if [ "$errs" -ne 0 ] || [ "$link_errs" -ne 0 ]; then
         echo "--- distinct diagnostics ($distinct_errs) ---"
         distinct_of | head -20
         echo "--- $failed_edges failed edge(s) across target(s): $(echo $failed_targets | tr '\n' ' ')---"
@@ -420,8 +448,29 @@ fi
 # have been an error, or a new -W was added without -Werror=. Report, don't fail.
 if [ $partial -eq 1 ]; then
     echo "NATIVE GATE: PASS (PARTIAL: $n_ok of ${#KNOWN_TARGETS[@]} known target(s) requested) -- NOT full coverage"
+elif [ $n_skip -gt 0 ]; then
+    # SELF-LABEL an incomplete run. The house rule is "always require 0 SKIPs,
+    # never just PASS", but that used to be a rule a HUMAN had to remember while
+    # reading a verdict whose first word was "PASS": the old line read
+    # `PASS (..., 15/18 target(s) verified, 3 skipped)`, which is trivially
+    # relayed upstream as "PASS". Lane X21's first baseline was exactly this,
+    # and only the operator applying the 0-SKIP rule by hand caught it.
+    #
+    # This matters most in a ~/tmp worktree, which is where EVERY lane works:
+    # MILO_ENGINE_PATH / Dawn_DIR default RELATIVE to the source tree, so
+    # rb3-frame, rb3-milo and rb3-render legitimately vanish and the gate is
+    # then STRUCTURALLY INCAPABLE of testing the three targets most likely to
+    # break. Seed the cache with all four absolute flags to get real coverage.
+    echo "NATIVE GATE: PASS (INCOMPLETE: $n_ok/${#expected[@]} verified, $n_skip SKIPPED) -- NOT full coverage"
+    echo "  the skipped target(s) were NOT built and NOT tested by this run:"
+    for l in "${skipped_lines[@]}"; do echo "  ${l#  SKIPPED   }" | sed 's/^/    /'; done
+    echo "  If you are in a worktree, seed the cache and re-run for full coverage:"
+    echo "    cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \\"
+    echo "      -DMILO_ENGINE_PATH=/home/free/code/milohax/milo-native-engine \\"
+    echo "      -DDawn_DIR=/home/free/code/milohax/dc3-decomp-deps/dawn/lib/cmake/Dawn"
+    echo "  (or run with --strict to make a SKIP a FAIL)"
 else
-    echo "NATIVE GATE: PASS  (rc=0, $errs errors, $warns warnings, $n_ok/${#expected[@]} target(s) verified$( [ $n_skip -gt 0 ] && echo ", $n_skip skipped"))"
+    echo "NATIVE GATE: PASS  (rc=0, $errs errors, $warns warnings, $n_ok/${#expected[@]} target(s) verified)"
 fi
 [ "$warns" -ne 0 ] && echo "  note: $warns warning(s) -- policy expects 0; check the opt-in list in native/CMakeLists.txt"
 echo "log: $LOG"
