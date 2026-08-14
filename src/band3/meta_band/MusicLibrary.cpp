@@ -540,11 +540,14 @@ void MusicLibrary::SetupTaskForTrainer(ControllerType ty) {
     mTask.filterLocked = true;
     mTask.setlistMode = kSetlistForbidden;
     switch (ty) {
+    // Byte-neutral rename: the constants stay 3 and 2, only the names change.
+    // These two sites are what proved the enum renumber semantically -- a real
+    // guitar controller filtering on 3 and a keys controller on 2.
     case kControllerRealGuitar:
-        mTask.filter.AddFilter(kFilterSource, has_part_yes);
+        mTask.filter.AddFilter(kFilterProGuitar, has_part_yes);
         break;
     case kControllerKeys:
-        mTask.filter.AddFilter(kFilterLength, has_part_yes);
+        mTask.filter.AddFilter(kFilterKeys, has_part_yes);
         break;
     default:
         MILO_FAIL("Bad ControllerType %i in MusicLibrary::SetupTaskForTrainer!", ty);
