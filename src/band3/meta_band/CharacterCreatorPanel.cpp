@@ -269,11 +269,21 @@ void CharacterCreatorPanel::SetEyeColor(int color) {
     }
 }
 
+// RB3-360 retail dereferences mPreviewDesc UNCONDITIONALLY in all five of these
+// int accessors: inlined into Handle(), the shipped code goes straight from
+// `lwz r11,-0x30(r25)` to `lwz r11,0x24(r11)` with no cmplwi/beq between them.
+// The `if (mPreviewDesc)` guard is present in the rb3-Wii oracle, so we did not
+// invent it -- we INHERITED it -- but retail did not ship it.  The guard is also
+// what forces the float accessors' `stfd`/`lwz` round-trip: the null path makes
+// the result a phi, so it must land in a GPR, whereas retail's straight-line
+// form lets `fctiwz` feed `stfiwx` directly into the DataNode.
+// Kept under HX_NATIVE so the native runtime keeps the safe behaviour.
 int CharacterCreatorPanel::GetEyeColor() {
-    if (mPreviewDesc)
-        return mPreviewDesc->mHead.mEyeColor;
-    else
+#ifdef HX_NATIVE
+    if (!mPreviewDesc)
         return 0;
+#endif
+    return mPreviewDesc->mHead.mEyeColor;
 }
 
 void CharacterCreatorPanel::SetGlasses(Symbol s) {
@@ -351,13 +361,13 @@ void CharacterCreatorPanel::SetHeight(int height) {
 }
 
 int CharacterCreatorPanel::GetHeight() {
+#ifdef HX_NATIVE
     if (!mPreviewDesc)
         return 0;
-    else {
-        float fHeight = mPreviewDesc->mHeight;
-        MILO_ASSERT_RANGE_EQ(fHeight, 0.0f, 1.0f, 0x276);
-        return fHeight * 10.0f;
-    }
+#endif
+    float fHeight = mPreviewDesc->mHeight;
+    MILO_ASSERT_RANGE_EQ(fHeight, 0.0f, 1.0f, 0x276);
+    return fHeight * 10.0f;
 }
 
 void CharacterCreatorPanel::SetWeight(int weight) {
@@ -369,13 +379,13 @@ void CharacterCreatorPanel::SetWeight(int weight) {
 }
 
 int CharacterCreatorPanel::GetWeight() {
+#ifdef HX_NATIVE
     if (!mPreviewDesc)
         return 0;
-    else {
-        float fWeight = mPreviewDesc->mWeight;
-        MILO_ASSERT_RANGE_EQ(fWeight, 0.0f, 1.0f, 0x290);
-        return fWeight * 10.0f;
-    }
+#endif
+    float fWeight = mPreviewDesc->mWeight;
+    MILO_ASSERT_RANGE_EQ(fWeight, 0.0f, 1.0f, 0x290);
+    return fWeight * 10.0f;
 }
 
 void CharacterCreatorPanel::SetBuild(int build) {
@@ -387,13 +397,13 @@ void CharacterCreatorPanel::SetBuild(int build) {
 }
 
 int CharacterCreatorPanel::GetBuild() {
+#ifdef HX_NATIVE
     if (!mPreviewDesc)
         return 0;
-    else {
-        float fBuild = mPreviewDesc->mMuscle;
-        MILO_ASSERT_RANGE_EQ(fBuild, 0.0f, 1.0f, 0x2AA);
-        return fBuild * 10.0f;
-    }
+#endif
+    float fBuild = mPreviewDesc->mMuscle;
+    MILO_ASSERT_RANGE_EQ(fBuild, 0.0f, 1.0f, 0x2AA);
+    return fBuild * 10.0f;
 }
 
 void CharacterCreatorPanel::SetSkinTone(int tone) {
@@ -404,10 +414,11 @@ void CharacterCreatorPanel::SetSkinTone(int tone) {
 }
 
 int CharacterCreatorPanel::GetSkinTone() {
-    if (mPreviewDesc)
-        return mPreviewDesc->mSkinColor;
-    else
+#ifdef HX_NATIVE
+    if (!mPreviewDesc)
         return 0;
+#endif
+    return mPreviewDesc->mSkinColor;
 }
 
 void CharacterCreatorPanel::RandomizeFace() {
