@@ -394,6 +394,21 @@ out from under them will *deeply break* concurrent work. Hard rules:
   `scripts/setup_worktree.sh ~/tmp/wt-foo foo`, build logs to
   `~/tmp/rb3_build_{task}.log`, etc. (The harness's own task/transcript files
   already live under `~/tmp` — follow suit for worktrees and logs.)
+- ⛔⛔ **A FRESH WORKTREE'S REFLINKED TARGET OBJS ARE *PRE-RENAMER*, SO EVERY
+  RETAIL MANGLED NAME READS "ABSENT" UNTIL YOU BUILD** (lane FOLDPROVE-2,
+  2026-08-14). `obj_target_symbol_renamer` is a **pre-compile custom build step**
+  that rewrites the dtk-split target obj's anonymous `fn_<addr>` symbols to MSVC
+  mangled names; a reflinked tree carries the objs but **not the effect of that
+  step** until its first build runs.
+  ⚠ **The failure is silent and agrees with your prior.** FOLDPROVE-2's first
+  cheap-kill run reported a **unanimous 100/100 refuted — exactly the answer it
+  was primed to expect** — because every name it looked up was missing. It was
+  caught **only** because the symbol count disagreed with main's (**69,438 vs
+  69,415**).
+  ⇒ **ANY analysis keyed on retail symbol NAMES must build the worktree first**,
+  and should assert a symbol-count/known-name sanity check before trusting a
+  negative. *A vacuity that confirms your hypothesis is the hardest kind to
+  catch* — cf. the `grep`-binary and `all([])` traps elsewhere in this doc.
 - The orchestrator MCP manages a pool of these worktrees
   (`scripts/orchestrator/worktree_pool.py`) for its agents; `setup_worktree.sh`
   is the same machinery you can drive by hand.
