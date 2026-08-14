@@ -532,8 +532,25 @@ RndTexRenderer::RndTexRenderer()
       mMirrorCam((mFirstDraw = 1, this)) {}
 
 // sw2 scatter-include (default/TexRenderer <- math/mtx.cpp)
+//
+// NATIVE GUARD (lane MILOKEEP-1): the native build compiles math/mtx.cpp
+// standalone AS WELL, so leaving this edge active natively defines every
+// mtx.cpp symbol twice and fails the link of rb3-milo / rb3-render with 17
+// `multiple definition` errors (Multiply/Invert/Det/FastInvert/LookAt,
+// Matrix2::sID, Matrix3::sID, Matrix4::sID, Transform::sID, QuatXfm, ...).
+// cmake/ScatterIncludes.cmake normally prunes such an includee per target, but
+// it did not detect THIS edge -- it warned only about BandCamShot.cpp -- so the
+// documented fallback applies, which is the remedy that module's own warning
+// text prescribes: guard the include with #if !HX_NATIVE.  Natively the symbols
+// then come from standalone mtx.cpp, which is exactly what the module assumes.
+//
+// INERT FOR THE MATCH BUILD: the X360 match build never defines HX_NATIVE (its
+// cflags carry only /DCURL_STATICLIB and /D_XBOX360), so the include stays
+// active there and the scatter placement retail depends on is unchanged.
+#ifndef HX_NATIVE
 #define gRev gRev_mtx
 #define gAltRev gAltRev_mtx
 #include "math/mtx.cpp"
 #undef gRev
 #undef gAltRev
+#endif
