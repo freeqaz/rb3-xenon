@@ -212,6 +212,30 @@ const char *Archive::GetArkfileName(int filenum) const {
     return mArkfileNames[filenum].c_str();
 }
 
+// LANE ACTIONABLE-1 (2026-08-14): GetFileInfo sits at fuzzy 97.917 / 4 charges,
+// 432 B. The residual is NOT a source defect — it is MSVC cross-jump SUFFIX
+// SELECTION, and three source forms were measured against retail:
+//
+//   form                                    charges   what changed
+//   ---------------------------------------------------------------------
+//   early `return false` (THIS, current)       4      best known
+//   inner block falls through to the                 the r29 phi disappears,
+//     trailing `return false`                  5      but base then over-merges
+//                                                     (3 target-only instrs)
+//   inner condition inverted, false block             r29 phi returns AND
+//     emitted first                            8      block order degrades
+//
+// Retail and base agree everywhere except WHICH sibling tail the inner
+// `return false` cross-jumps into. Both the true path and the inner-false path
+// end in "destroy `name`, then return"; retail merges inner-false into the
+// OUTER `return false` suffix (so it can emit `li r3,0x1` for the true path),
+// while we merge it into the TRUE path suffix and therefore need a phi
+// (`li r29,0x1` ... `mr r3,r29`). Retail keeps a DUPLICATED `~String(path)` in
+// the inner-false block and jumps into the outer block's `~String(name)` —
+// which is why the plain fall-through form is also wrong.
+//
+// No source form reaches retail's merge. Do not re-try these three; this is
+// permuter/scheduling territory and the permuter is off by directive.
 bool Archive::GetFileInfo(
     const char *file,
     int &arkfileNum,

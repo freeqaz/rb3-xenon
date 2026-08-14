@@ -70,6 +70,27 @@ void BandRetargetVignette::ListPollChildren(std::list<RndPollable *> &polls) con
     }
 }
 
+// LANE ACTIONABLE-1 (2026-08-14): 772 B, fuzzy 99.425, 2 charges — the largest
+// register-clean SOURCE_INSDEL row outside the do-not-reopen list, and it does
+// NOT close. Residual: base emits one extra `stw r28, 0x58, r31` and pushes the
+// second insert()'s hidden return slot from 0x58 to 0x5c.
+//
+// Mechanism: `push_back` is `insert(end(), x)`, and for an STLport list `end()`
+// IS the list address (r28). In the FIRST loop below both sides materialize that
+// iterator temp exactly once (0x54 arg, 0x58 return). In the SECOND loop retail
+// still does it once, but we build it TWICE (0x54 and 0x58) and so need a third
+// slot at 0x5c. Confirmed by /Z7 stack-layout: one BASE_ONLY 4-byte slot.
+//
+// MEASURED AND REJECTED — the oracle's unnamed-temporary form
+// `push_back(String(it->Name()))`: it makes things strictly worse (frame shrinks
+// 0x10, 24 charges instead of 2) because the named `String s` local IS retail's
+// shape — retail's `addi r6, r31, 0x80` is exactly this named temp's slot. So
+// the named local is CORRECT here even though rb3-Wii spells it unnamed, and the
+// duplicated end() temp is independent of the temporary's form.
+//
+// This is the same class as the surplus `stw rN, 0x5x, r31` in TrackDir::~TrackDir
+// and FaderGroup::~FaderGroup (and the mirror-image dead spill in
+// StoreMainPanel::FinishLoad): spill-slot liveness, i.e. permuter territory.
 void BandRetargetVignette::EnterDir() const {
     for (int i = 0; i < 4; i++) {
         BandCharacter *bchar = TheBandWardrobe->GetCharacter(i);

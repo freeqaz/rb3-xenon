@@ -1524,6 +1524,16 @@ AccomplishmentProvider::Custom(int, int data, UIListCustom *slot, Hmx::Object *o
     }
 }
 
+// LANE ACTIONABLE-1 (2026-08-14): 360 B, fuzzy 97.111, 3 charges — NOT a source
+// defect, do not re-open. Control flow matches retail EXACTLY; the only
+// divergence is float-constant ADDRESS FORMATION for the SetAlpha pair below.
+// Retail's 1.0f and 0.25f are ADJACENT inside one .rdata object, so it shares a
+// single `lis`+`addi` of lbl_820BC0E0 across both branches. Our build emits them
+// as two separate `__real@3f800000` / `__real@3e800000` COMDATs, which the linker
+// places independently, so the high half cannot be shared and we emit two `lis`.
+// That is a constant-pool adjacency/layout artifact with no source lever — the
+// `lfs` displacements themselves are already forgiven (lbl_ is a placeholder
+// name under functionRelocDiffs=name_check).
 inline RndMat *AccomplishmentProvider::Mat(int, int i_iData, UIListMesh *slot) const {
     MILO_ASSERT(i_iData < NumData(), 0x2B2);
     Accomplishment *pAccomplishment = GetAccomplishment(i_iData);
