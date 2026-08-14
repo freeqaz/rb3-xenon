@@ -109,7 +109,16 @@ void CharInit() {
     REGISTER_OBJ_FACTORY(CharPollGroup);
     REGISTER_OBJ_FACTORY(CharPosConstraint);
     REGISTER_OBJ_FACTORY(CharServoBone);
+    // ⚠ Retail registers CharSleeve straight after CharServoBone -- and a
+    // CharTransCopy between CharTransDraw and CharUpperTwist, a class this tree
+    // does not have at all.  Read from retail bytes, not the symbol map:
+    // fn_8236CE30, 43/43 slots resolved to their .rdata literals.
+    // CharSignalApplier and ClipCollide are registered NOWHERE in retail (whole
+    // binary scan of every RegisterFactory call site), so they are our inherited
+    // newer-DC3 engine, not a retail omission.  Kept under HX_NATIVE.
+#ifdef HX_NATIVE
     REGISTER_OBJ_FACTORY(CharSignalApplier);
+#endif
     REGISTER_OBJ_FACTORY(CharSleeve);
     CharTaskMgr::Init();
     REGISTER_OBJ_FACTORY(CharTransDraw);
@@ -120,7 +129,9 @@ void CharInit() {
     REGISTER_OBJ_FACTORY(CharGuitarString);
     REGISTER_OBJ_FACTORY(FileMerger);
     REGISTER_OBJ_FACTORY(CharBoneDir);
+#ifdef HX_NATIVE
     REGISTER_OBJ_FACTORY(ClipCollide);
+#endif
     FileMergerOrganizer::Init();
     PreloadSharedSubdirs("char");
     CharBoneDir::Init();

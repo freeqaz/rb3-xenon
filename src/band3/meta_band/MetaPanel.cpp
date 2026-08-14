@@ -220,7 +220,9 @@ void MetaPanel::Init() {
     REGISTER_OBJ_FACTORY(BandPreloadPanel);
     REGISTER_OBJ_FACTORY(BandScreen);
     REGISTER_OBJ_FACTORY(BandStorePanel);
+#ifdef HX_NATIVE
     REGISTER_OBJ_FACTORY(BandStoreUIPanel);
+#endif
     REGISTER_OBJ_FACTORY(CalibrationPanel);
     REGISTER_OBJ_FACTORY(CalibrationWelcomePanel);
     REGISTER_OBJ_FACTORY(CharacterCreatorPanel);
@@ -260,19 +262,36 @@ void MetaPanel::Init() {
     REGISTER_OBJ_FACTORY(StoreInfoPanel);
     REGISTER_OBJ_FACTORY(StoreMainPanel);
     REGISTER_OBJ_FACTORY(StoreMenuPanel);
+#ifdef HX_NATIVE
     REGISTER_OBJ_FACTORY(StoreRootPanel);
+#endif
     REGISTER_OBJ_FACTORY(TexLoadPanel);
     REGISTER_OBJ_FACTORY(TokenRedemptionPanel);
     REGISTER_OBJ_FACTORY(TrainingPanel);
     REGISTER_OBJ_FACTORY(UGCPurchasePanel);
     REGISTER_OBJ_FACTORY(VoiceoverPanel);
     OvershellPanel::Init();
+    // ⚠ Retail's MetaPanel::Init registers 58 classes; ours registered 62.  The
+    // three Wii screens below are registered NOWHERE in the Xbox retail binary
+    // -- unsurprising, they are rb3-Wii oracle code -- and neither is
+    // BandStoreUIPanel or StoreRootPanel.  Read from retail bytes, no symbol map:
+    // fn_82574E20, 58/58 slots resolved to their .rdata literals
+    // (tools/reglist_rdata_adjudicate.py), cross-checked against a whole-binary
+    // scan of every RegisterFactory call site.
+    // ⚠ SCOPE: this evidence covers REGISTRATIONS ONLY.  The neighbouring
+    // TheWiiFriendsProvider/TheWiiInvitationsProvider Init() calls are not
+    // factory registrations, so the instrument says NOTHING about them and they
+    // are deliberately left as they are.
+#ifdef HX_NATIVE
     WiiFriendsScreen::Init();
     REGISTER_OBJ_FACTORY(WiiFriendsScreen);
+#endif
     TheWiiFriendsProvider.Init();
     TheWiiInvitationsProvider.Init();
+#ifdef HX_NATIVE
     REGISTER_OBJ_FACTORY(WiiProfilePanel);
     REGISTER_OBJ_FACTORY(WiiFriendsDetailsProvider);
+#endif
     GameModeInit();
     ModifierMgr::Init();
     SongSortMgr::Init();
