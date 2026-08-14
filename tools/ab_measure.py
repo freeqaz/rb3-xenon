@@ -154,11 +154,32 @@ TOOL_REL = "tools/ab_measure.py"
 
 MAP_PATHS = {"scripts/target_symbol_map.json", "scripts/symbol_aliases.json"}
 SPLIT_PATHS = {f"config/{TITLE}/splits.txt", CONFIG_YML_REL}
+# ⚠ THIS SET IS HAND-MAINTAINED AND HAS DRIFTED FROM THE ACTUAL BUILD INPUTS
+# ONCE ALREADY. A configgen path that is missing here does NOT merely mislabel
+# the run -- classify() returns kinds=[] and the run is REFUSED as "touches no
+# build-relevant path", and if the refusal is waved through with --allow-inert
+# then step 6 never re-runs configure.py, so leg B silently measures leg A's
+# generated output. That is a VACUOUS A/B wearing a green verdict, which is the
+# exact failure class this tool exists to make impossible.
+#
+# Added by lane VENDTIER-1 (2026-08-14), which hit the refusal:
+#   * config/<TITLE>/config.json -- configure.py's `config.reconfig_deps` is
+#     literally [config_json_path, objects_path]. objects.json was listed and
+#     its PAIR was not, so the file holding EVERY cflag in the build classified
+#     as not-build-relevant.
+#   * tools/source_category.py, tools/scope_map.py -- imported by configure.py
+#     at module scope (the former derives every object's progress_category, the
+#     latter is imported by the former).
+# Cross-check against `config.reconfig_deps` and configure.py's imports before
+# trusting a NONE classification on a config/ or tools/ path.
 CONFIGGEN_PATHS = {
     "configure.py",
     "tools/project.py",
     "tools/defines_common.py",
+    "tools/source_category.py",
+    "tools/scope_map.py",
     f"config/{TITLE}/objects.json",
+    f"config/{TITLE}/config.json",
 }
 # Directories whose untracked/modified state can change build output.
 BUILD_RELEVANT_DIRS = ("src/", "config/", "scripts/", "tools/")

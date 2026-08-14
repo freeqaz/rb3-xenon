@@ -2,6 +2,7 @@
   "progress_categories": {
     "game": "Game Code",
     "engine": "Milo Engine Code",
+    "thirdparty": "Third-Party Libraries",
     "sdk": "XDK Code",
     "network": "Quazal Network Code"
   },
