@@ -83,6 +83,14 @@ def main():
                     help="only report shared bodies of at least this many bytes")
     ap.add_argument("--json")
     ap.add_argument("--install", action="store_true")
+    ap.add_argument("--install-min-relocs", type=int, default=1,
+                    help="withhold from --install any ADMITted pair whose shared "
+                         "body carries fewer than this many relocations. Default 1: "
+                         "a zero-relocation body (a bare `blr`, or a 2-3 instruction "
+                         "accessor) is what an UNIMPLEMENTED STUB in our tree also "
+                         "compiles to, so the defect the gate cannot rule out is "
+                         "exactly what would admit it. NARROWING ONLY -- never "
+                         "widens the gate. 0 restores the old blanket behaviour.")
     args = ap.parse_args()
 
     img = Image(ROOT / "orig" / BUILD_ID / "band.exe")
@@ -222,20 +230,109 @@ def main():
         print(f"\nwrote {args.json}")
 
     if args.install:
+        # ---- INSTALL-SIDE CLASS FILTER.  NARROWING ONLY -- it can remove an
+        # ADMIT from the install set, never add one, and it never runs before or
+        # inside the gate above.  It implements the policy this file's own
+        # docstring already states ("a row whose only evidence is our-side
+        # identity on a SHORT body, where coincidental identity is cheap, is
+        # reported, not installed") which --min-size defaulting to 0 did not.
+        #
+        # WHY RELOCATION COUNT IS THE RIGHT AXIS, measured (lane INSTALL-1):
+        # the failure mode this gate cannot rule out is "our body for F is
+        # WRONG in a way that coincidentally equals the survivor's".  The
+        # overwhelmingly common instance of that is an UNIMPLEMENTED STUB, and a
+        # stub compiles to exactly `blr` -- 4 bytes, ZERO relocations.  So the
+        # zero-reloc class is precisely where the defect MANUFACTURES the
+        # identity that admits it.  Measured pool sizes in our own build: 7,535
+        # distinct code COMDATs are byte-identical to a bare `blr`, versus 384
+        # for `b ?MemFree@@YAXPAX@Z` and 40 for `b ??1String@@UAA@XZ`.  A stub
+        # cannot compile to a tail-call thunk carrying a relocation to a NAMED
+        # symbol, so that class is structurally out of the stub's reach.
+        # Concrete case withheld by this filter: survivor
+        # ??0?$reverse_iterator@PAPAVSynchronizable@@@stlpmtx_std@@QAA@ABV01@@Z
+        # folded with ?LiteralSym@DataNode@@QBA?AVSymbol@@PBVDataArray@@@Z --
+        # unrelated functions that coincide only as a trivial 12-byte copy.
+        # `--install-min-relocs 0` restores the blanket behaviour.
+        def _nrelocs(name):
+            (_raw, rel), _objs = next(iter(ours[name].items()))
+            return len(rel)
+
+        withheld = [o for o in adm if _nrelocs(o["folded"]) < args.install_min_relocs]
+        adm_i = [o for o in adm if _nrelocs(o["folded"]) >= args.install_min_relocs]
+        if withheld:
+            wc = collections.Counter(
+                "%dB/%drel" % (o["size"], _nrelocs(o["folded"])) for o in withheld)
+            print(f"\nWITHHELD by --install-min-relocs {args.install_min_relocs}: "
+                  f"{len(withheld)} ADMITted pairs / "
+                  f"{sum(o['sites'] for o in withheld)} sites -- {dict(wc)}")
+            print("  (gate-ADMITted and DELIBERATELY not installed; see the note "
+                  "above. These are reported, not aliased away.)")
+
         groups = collections.defaultdict(list)
-        for o in adm:
+        for o in adm_i:
             groups[(o["survivor"], o["addr"])].append(o["folded"])
-        existing = {g["address"].lower() for g in ali["groups"]}
-        n = 0
+        # One group per ADDRESS is this file's invariant (1,493 groups /
+        # 1,493 distinct addresses at b574f653) and it is also the RENDERED
+        # semantics: tools/gen_symbol_alias_map.py emits one map line per symbol
+        # at the group's address, and objdiff's parse_msvc_map groups every
+        # symbol sharing an address.  So a second group at A would be
+        # semantically identical to merging -- merging is what keeps the file's
+        # invariant true.
+        by_addr = {g["address"].lower(): g for g in ali["groups"]}
+        n = added = merged = skipped = 0
         for (S, A), folded in sorted(groups.items()):
             folded = sorted(set(folded))
             for f in folded:                       # injectivity, asserted
                 assert not (byname.get(f, set()) - {int(A, 16)}), f
                 assert not (in_group.get(f, set()) - {A}), f
                 assert f != S
-            if A in existing:                      # never silently reshape a
-                continue                           # group another tier owns
-            ali["groups"].append({
+            g = by_addr.get(A)
+            if g is not None:
+                # ---- THE BUG THIS REPLACES: `if A in existing: continue`.
+                # It refused to merge a newly-admitted spelling into a group that
+                # already existed at that address, stranding 289 ADMITted pairs /
+                # 721 sites tree-wide (lane INSTALL-1; 288-289 of them from this
+                # one clause).  The original concern -- "never silently reshape a
+                # group another tier owns" -- is REAL and is preserved exactly,
+                # by the membership guard below rather than by dropping the pair.
+                #
+                # Every name in a rendered group is MUTUALLY equivalent, so
+                # adding F to the group at A asserts F == (every member).  The
+                # gate proved F == S and nothing else, so the merge is only
+                # sound when S is ALREADY a member of that group -- then F == S
+                # is exactly what the group already says.  Measured at
+                # b574f653: S is a member in 638 of 638 stranded pairs (100%),
+                # so this guard withholds nothing today; it is here so the tool
+                # cannot invent an equivalence a future group's survivor would
+                # not support.
+                members = set([g["survivor"]] + list(g.get("folded", [])))
+                if S not in members:
+                    print(f"  SKIP merge at {A}: survivor {S[:48]} is not a member "
+                          f"of the group already there (owner {g.get('name')}); "
+                          f"the gate proved F == S, not F == that group")
+                    skipped += len(folded)
+                    continue
+                fresh = [f for f in folded if f not in members]
+                if not fresh:
+                    continue
+                g["folded"] = sorted(set(g.get("folded", [])) | set(fresh))
+                g.setdefault("merged_in", []).append({
+                    "name": "ourside_comdat_identity",
+                    "survivor": S, "folded": fresh,
+                    "evidence": ("tools/ourside_fold_sweep.py --install: our "
+                                 "COMDAT for each of these is byte- AND "
+                                 "relocation-identical to our COMDAT for %s, "
+                                 "which the map places at %s -- a member of this "
+                                 "group. Retail fan-in there is %d against %d "
+                                 "sites. Merged into the pre-existing group at "
+                                 "this address rather than dropped (the tool "
+                                 "previously dropped these outright)."
+                                 % (S, A, fanin.get(int(A, 16), 0), demand[A])),
+                })
+                merged += 1
+                added += len(fresh)
+                continue
+            newg = {
                 "name": "ourside_comdat_identity",
                 "address": A, "survivor": S, "folded": folded,
                 "evidence": (
@@ -255,12 +352,17 @@ def main():
                     "way that coincidentally equals the survivor's, the alias "
                     "hides it -- cheapest for the smallest bodies."
                     % (A, fanin.get(int(A, 16), 0), demand[A])),
-            })
+            }
+            ali["groups"].append(newg)
+            by_addr[A] = newg
             n += 1
+            added += len(folded)
         p = ROOT / "scripts" / "symbol_aliases.json"
         p.write_text(json.dumps(ali, indent=1) + "\n")
-        print(f"\ninstalled {n} new groups ({sum(len(v) for v in groups.values())} "
-              f"folded spellings) into {p}")
+        print(f"\ninstalled {added} folded spellings into {p}"
+              f"  ({n} new group(s), {merged} merged into an existing group"
+              + (f", {skipped} skipped on the membership guard" if skipped else "")
+              + ")")
 
 
 if __name__ == "__main__":
