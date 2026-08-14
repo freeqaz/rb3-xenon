@@ -150,6 +150,17 @@ def bucket_for_source(sp):
     if not sp:
         return None
     low = sp.lower()
+    # ⚠ Our own game/network trees vendor NOTHING, but they do contain
+    # DIRECTORIES NAMED AFTER the library they bind, so a substring marker
+    # false-positives there. Measured (lane CATTAG-1): exactly one row,
+    # src/network/quazal/Compression/ZLib/ZLibCompression.cpp (316 B) -- a
+    # 7-line `namespace Quazal {}` map scaffold whose oracle is
+    # ../rb3/src/network/Plugins/ZLibCompression.cpp, i.e. Quazal NetZ
+    # middleware and not zlib at all. It read `thirdparty` and was briefed as
+    # a mis-tagged unit when the TAG was right and this function was wrong.
+    # So: the in-scope game layer wins over a marker substring.
+    if low.startswith("src/band3/") or low.startswith("src/network/"):
+        return "game"
     # third-party libs (some live UNDER src/system/, so test before engine)
     for m in THIRDPARTY_MARKERS:
         if m in low:
@@ -160,9 +171,7 @@ def bucket_for_source(sp):
     # XDK middleware glue we ship (nuiapi etc.) -- out of scope
     if low.startswith("src/xdk/") or "/xdk/nuiapi/" in low:
         return "xdk"
-    # game layer
-    if low.startswith("src/band3/") or low.startswith("src/network/"):
-        return "game"
+    # (game layer is tested ABOVE the thirdparty markers -- see the note there)
     # Milo engine
     if low.startswith("src/system/"):
         return "engine"

@@ -878,6 +878,12 @@ def get_object_completed(status: str) -> bool:
     assert False, f"Invalid object status {status}"
 
 libs: list[dict] = []
+# progress_category is DERIVED from the source path (tools/source_category.py),
+# never inherited from the objects.json library group -- see the note at the
+# per-object call site below.
+sys.path.insert(0, str(Path(__file__).parent / "tools"))
+from source_category import category_for_source  # noqa: E402
+_category_retagged: list[tuple[str, Optional[str], str]] = []
 objects: dict[str, dict] = json.load(open(objects_path, "r", encoding="utf-8"))
 for (lib, lib_config) in objects.items():
     # config_cflags: str | list[str]
@@ -893,7 +899,7 @@ for (lib, lib_config) in objects.items():
     for (path, obj_config) in config_objects.items():
         if isinstance(obj_config, str):
             completed = get_object_completed(obj_config)
-            lib_objects.append(Object(completed, path))
+            obj_config = {}
         else:
             completed = get_object_completed(obj_config["status"])
 
@@ -902,7 +908,30 @@ for (lib, lib_config) in objects.items():
                 if isinstance(object_cflags, str):
                     obj_config["cflags"] = get_cflags(object_cflags)
 
-            lib_objects.append(Object(completed, path, **obj_config))
+        # Derive progress_category from the SOURCE PATH, not from which
+        # library group somebody listed the object in (lane CATTAG-1). The
+        # group tag is a hand-maintained value with no tie to the path, so it
+        # drifted: 10 objects were tagged on the wrong side, including 13,692 B
+        # of src/band3/ game code counted as engine and the whole `xdk` group
+        # counted as engine rather than sdk. Deriving makes drift impossible --
+        # to change a file's tier you move the file. Resolution mirrors
+        # tools/project.py exactly: src_dir / (source or <object key>), with
+        # src_dir defaulting object -> library -> "src". NEVER basename().
+        _src_dir = obj_config.get("src_dir") or lib_config.get("src_dir") or "src"
+        _derived_category = category_for_source(
+            f"{_src_dir}/{obj_config.get('source') or path}"
+        )
+        if _derived_category is not None:
+            # An explicit per-object progress_category still wins, so a genuine
+            # exception stays expressible -- there are currently zero.
+            obj_config.setdefault("progress_category", _derived_category)
+            if _derived_category != lib_config.get("progress_category"):
+                _category_retagged.append(
+                    (f"{_src_dir}/{obj_config.get('source') or path}",
+                     lib_config.get("progress_category"), _derived_category)
+                )
+
+        lib_objects.append(Object(completed, path, **obj_config))
 
     libs.append({
         "lib": lib,
@@ -944,6 +973,19 @@ if _x360_version != DEFAULT_X360_COMPILER_VERSION:
 # tools/scope_map.py (printed below in the progress step). dtk's "All" line stays.
 config.progress_categories = [ProgressCategory(name, desc) for (name, desc) in progress_categories.items()]
 config.print_progress_categories = False
+
+# Announce every object whose path-derived category disagrees with the library
+# group it is listed under. Silence here is the healthy state; a line is not an
+# error, it is a group tag that has drifted from the tree and should be fixed in
+# objects.json (or the file moved). Audit in full: tools/source_category.py audit
+if _category_retagged:
+    print(
+        f"NOTE: progress_category derived from source path overrides the "
+        f"library group tag for {len(_category_retagged)} object(s):",
+        file=sys.stderr,
+    )
+    for _sp, _was, _now in sorted(_category_retagged):
+        print(f"        {_sp}: {_was} -> {_now}", file=sys.stderr)
 config.progress_each_module = args.verbose
 
 if args.mode == "configure":
