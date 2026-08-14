@@ -275,17 +275,27 @@ void Synth360::Init() {
     Synth::Init();
     SynthSample360::Init();
     StreamReceiver360::Init();
+    // ⚠ REGISTRATION ORDER IS RETAIL'S, NOT DC3's -- do not "tidy" it.
+    // RB3-360 retail registers these eleven factories in the order below.
+    // Verified WITHOUT going through the symbol map: each registration's
+    // Symbol argument reaches X::StaticClassName(), whose body references a
+    // .rdata string literal, and those literals were read straight out of
+    // orig/45410914/band.exe -- 11/11 spell the class this line names
+    // ("FxSendChorus" @0x820F4F08, "FxSendDelay" @0x820F4F50, ...).  Our
+    // inherited (DC3) order was a strict PERMUTATION of the same eleven, so
+    // every one of the 30 relocation-name charges in Synth360::Init was a
+    // source-ORDER defect, not a wrong callee and not an ICF fold.
     REGISTER_OBJ_FACTORY(FxSendReverb360)
-    REGISTER_OBJ_FACTORY(FxSendDistortion360)
     REGISTER_OBJ_FACTORY(FxSendDelay360)
-    REGISTER_OBJ_FACTORY(FxSendChorus360)
     REGISTER_OBJ_FACTORY(FxSendCompress360)
     REGISTER_OBJ_FACTORY(FxSendEQ360)
     REGISTER_OBJ_FACTORY(FxSendFlanger360)
     REGISTER_OBJ_FACTORY(FxSendMeterEffect360)
+    REGISTER_OBJ_FACTORY(FxSendWah360)
+    REGISTER_OBJ_FACTORY(FxSendDistortion360)
+    REGISTER_OBJ_FACTORY(FxSendChorus360)
     REGISTER_OBJ_FACTORY(FxSendPitchShift360)
     REGISTER_OBJ_FACTORY(FxSendSynapse360)
-    REGISTER_OBJ_FACTORY(FxSendWah360)
 
     unkc4 = SystemConfig(Symbol("synth"))->FindInt(Symbol("use_xma")) != 0;
 
