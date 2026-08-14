@@ -4,7 +4,12 @@
 #include "utl/TempoMap.h"
 #include "utl/BeatMap.h"
 
-float MsToTick(float ms) { return !TheTempoMap ? 0 : TheTempoMap->TimeToTick(ms); }
+// Retail X360 0x827C90B8 is 24 B / 6 instructions -- lis/lwz TheTempoMap, lwz
+// vtable, lwz +0x8 (TimeToTick), mtctr, bctr -- i.e. an unguarded TAIL CALL with
+// fp1 passed straight through.  There is no room for a null test.  rb3-Wii agrees
+// (`inline float MsToTick(float f) { return TheTempoMap->TimeToTick(f); }`); the
+// `!TheTempoMap ? 0 :` guard came from DC3, which is the NEWER engine.
+float MsToTick(float ms) { return TheTempoMap->TimeToTick(ms); }
 
 float MsToBeat(float ms) {
     if (TheBeatMap && TheTempoMap) {
