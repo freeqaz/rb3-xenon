@@ -272,6 +272,12 @@ int WinSockSocket::BroadcastTo(const void *data, unsigned int len, unsigned shor
     return SendTo(data, len, -1, port);
 }
 
+// DEFERRED as codegen, lane INSDEL-3 (2026-08-14). 96.912%, 2 charges on the
+// error path: retail REUSES the already-live 0 in r3 (materialized as the `li
+// r3,0` return value) for the `stw r3,0(r31)` out-param store, while we
+// materialize a separate `li r10,0` and store that. BOTH STORE 0 -- it is
+// register reuse, with no source token corresponding to the charge. Per the
+// NAMES-vs-IMPLIES rule this is not source-addressable; do not re-open.
 int WinSockSocket::RecvFrom(
     void *data, unsigned int maxLen, unsigned int &ip, unsigned short &port
 ) {
