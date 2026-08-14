@@ -90,11 +90,18 @@ public:
     /** Deserializes this ADSRImpl.
      *
      * @param [in] bs The BinStream to load from.
-     * @param [in] adsr The ADSR owning this implementation.
      * @milofail When trying to load where rev > 1 or altRev > 0
+     *
+     * ★ ONE parameter, not two. DC3 refactored this to `Load(BinStream &,
+     * ADSR *)` so the impl could notify its owner; RB3 retail shipped the
+     * older form. Proven on retail bytes at 0x8272a110 (lane SIGSCAN-1): the
+     * prologue captures only `mr r30, r4` / `mr r31, r3` and WRITES r5
+     * (`li r5, 4`) before ever reading it, and the function's single caller in
+     * the whole binary -- operator>> at 0x8272a208 -- stages r3 and r4 only.
+     * Without LTCG MSVC cannot drop a parameter from the ABI, so a
+     * two-parameter form would have to emit `li r5, 0` at that call site.
      */
-    void Load(BinStream &, ADSR *);
-    __declspec(noinline) void Load(BinStream &);
+    void Load(BinStream &);
     /** Lazily bakes the float/mode envelope into the PS2-packed register pair. */
     void SyncPacked();
 
