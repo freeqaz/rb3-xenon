@@ -381,6 +381,13 @@ TrackerPlayerID StreakFocusTracker::GetNextFocusPlayer(
         }
         if (ret.NotNull() && ret.mGuid == iterid.mGuid)
             break;
+        // NOTE(INSDEL-1): the residual 3 charges here (retail `cntlzw`+`extrwi.`
+        // materialising the inlined PlayerCanHaveFocus bool, vs our folded
+        // `cmpwi`/`bne`) are the SAME MSVC bool-materialization lane CN-3e
+        // characterised at line ~230 for FocusTracker::GetNextFocusPlayer.
+        // Re-tested here rather than inherited: hoisting to `bool canfocus = ...;`
+        // is BYTE-IDENTICAL to this form (98.728325 both, same 3 charges at the
+        // same indices).  Permuter class, and the permuter is OFF by directive.
         if (PlayerCanHaveFocus(iterid)) {
             Player *pPlayer = mSource->GetPlayer(iterid);
             MILO_ASSERT(pPlayer, 0x2F5);

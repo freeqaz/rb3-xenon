@@ -29,6 +29,17 @@ void CharBone::ClearContext(int mask) {
     mRotationContext &= ~mask;
 }
 
+// NOTE(INSDEL-1): StuffBones' 20 charges are the stack-slot class in the
+// NON-addressable direction -- RETAIL SHARES a slot across the three disjoint
+// arms (`stw r29,0x54(r1)` in every arm) and WE over-allocate (0x54 then 0x50),
+// which shifts the Bone/Symbol temps a uniform +8/+4.  Hoisting `Symbol name` /
+// `CharBones::Bone bone` to function scope (retail's order, assignments left in
+// the arms) measured 99.70 -> **76.16**, frame 268 -> 304, charges 20 -> 45:
+// `Bone()` is a user-provided ctor (`weight(1.0f)`), so hoisting runs it
+// unconditionally at the top -- the same hazard lane SRCARG-1 measured at
+// -5.3 pp on FloatKeys, worse here because the object is bigger.
+// ⇒ third consecutive failure of the "make retail-shared slots share" direction
+// (after SampleData::Load and CharIKHand::Load): that direction is now 0-for-3.
 void CharBone::StuffBones(std::list<CharBones::Bone> &bones, int mask) const {
     if (mPositionContext & mask) {
         Symbol name = CharBones::ChannelName(Name(), CharBones::TYPE_POS);

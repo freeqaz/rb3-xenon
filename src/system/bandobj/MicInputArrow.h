@@ -32,6 +32,20 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(MicInputArrow); }
     NEW_OBJ(MicInputArrow);
+    // NOTE(INSDEL-1): the residual charge in NewObject (`stw r3,0x54(r31)` retail
+    // vs our 0x50) is the FloatKeys stack-slot-merge class in its ADDRESSABLE
+    // direction -- retail keeps the discarded StaticClassName() Symbol temp at
+    // 0x50 and homes the new-expression pointer at 0x54; we reuse the dead
+    // Symbol's slot.  It is NOT source-addressable here, and the reason is
+    // structural: the pair straddles an INLINING BOUNDARY (the Symbol temp is
+    // created inside the inlined `operator new`, the pointer in NewObject), so
+    // the "declare both at one function scope" lever has no handle on it.
+    // Measured, both BYTE-IDENTICAL to this form (99.96429, same single charge):
+    //   naming the pointer   -- `T *o = new T; return o;`
+    //   naming BOTH          -- + `Symbol cn = StaticClassName();`
+    // Decisive against a liveness reading: retail's Symbol temp is dead too and
+    // still gets its own slot ⇒ compiler slot-colouring, not source liveness.
+    // Same shape and same verdict for ScrollbarDisplay::NewObject (112 B).
 
     // Retail's class operator new is INLINED into NewObject and still evaluates
     // StaticClassName(): the target is `addi r3, r31, 0x50; bl

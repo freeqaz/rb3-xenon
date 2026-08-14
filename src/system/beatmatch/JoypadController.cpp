@@ -28,9 +28,8 @@ JoypadController::JoypadController(
     static Symbol secondary_button("secondary_button");
     if (user->IsLocal()) {
         mLocalUser = user->GetLocalUser();
-        DataArray *sysConfig = SystemConfig(
-            joypad, controllers, JoypadControllerTypePadNum(mLocalUser->GetPadNum())
-        );
+        Symbol padType = JoypadControllerTypePadNum(mLocalUser->GetPadNum());
+        DataArray *sysConfig = SystemConfig(joypad, controllers, padType);
         mPadShiftButton = (JoypadButton)sysConfig->FindInt(pad_shift_button);
         mCymbalShiftButton = (JoypadButton)sysConfig->FindInt(cymbal_shift_button);
         mSecondaryPedalButton = (JoypadButton)sysConfig->FindInt(secondary_button);
