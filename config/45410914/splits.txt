@@ -1780,7 +1780,6 @@ DepthBuffer3D.cpp:
 	.text       start:0x82709BF8 end:0x82709C20
 	.text       start:0x82710D10 end:0x82710DBC
 	.text       start:0x82741040 end:0x82741098
-	.text       start:0x8278EB78 end:0x8278EBA8
 
 MicClientMapper.cpp:
 	.pdata      start:0x82238738 end:0x82238740
@@ -12690,8 +12689,7 @@ system/beatmatch/GameGem.cpp:
 	.pdata      start:0x8223F130 end:0x8223F138
 	.pdata      start:0x8223F138 end:0x8223F140
 	.text       start:0x8278E8F0 end:0x8278E95C
-	.text       start:0x8278E9A8 end:0x8278EB78
-	.text       start:0x8278EBA8 end:0x8278EBB4
+	.text       start:0x8278E9A8 end:0x8278EBB4
 	.text       start:0x8278EBB8 end:0x8278F068
 	.text       start:0x8278F068 end:0x8278F208
 
