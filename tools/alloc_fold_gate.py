@@ -50,16 +50,35 @@ FAIL-CLOSED
   (injectivity: one mangled name must not end up at two addresses)
 * F already sits in an alias group at a different address        -> REFUSE
 
-THE DISCRIMINATING CONTROL IS BUILT IN, AND IT REFUSES THE BIGGEST PAIR
-----------------------------------------------------------------------
+THE DISCRIMINATING CONTROL IS BUILT IN, AND IT ONCE REFUSED THE BIGGEST PAIR
+---------------------------------------------------------------------------
+⚠ DATED RECORD -- DO NOT ACT ON THIS PARAGRAPH AS A CURRENT VERDICT.  It
+describes the state BEFORE the source fix in this file's own introducing commit
+(e92a6c80), which is why it was already stale the day it was written.
+
 ``??2@YAPAXI@Z`` -- global ``operator new``, the single largest open charge at
-510 sites / 367 functions -- is REFUSED on body.  Ours is 12 bytes
+510 sites / 367 functions -- WAS REFUSED on body.  Ours was 12 bytes
 (``lis``/``lwz`` of ``?gNewOperatorAlign@@3HA`` then the branch); retail's is 8
-(``li r4,0``).  That is a real SOURCE divergence inherited from dc3, which is
+(``li r4,0``).  That was a real SOURCE divergence inherited from dc3, which is
 NEWER than RB3: the rb3-Wii oracle says ``operator new(size){return
 _MemAlloc(size,0);}`` and knows no ``gNewOperatorAlign`` at all.  An alias there
-would have hidden a genuine defect, which is precisely the failure mode this lane
-exists to avoid.  ``??2Task@@SAPAXI@Z`` is REFUSED separately, on injectivity.
+would have hidden a genuine defect, which is precisely the failure mode this
+gate exists to avoid.  That control WORKED, and the lane fixed source instead of
+asserting an alias -- which is the durable lesson here.
+
+★ TODAY IT ADMITS.  ``src/system/utl/MemMgr.cpp`` passes a literal 0, so our
+``??2@YAPAXI@Z`` is 8 B / ``38800000 4bfffffc`` / one reloc to
+``?MemAlloc@@YAPAXHH@Z`` -- byte- and relocation-identical to the survivor.  The
+admission was installed in b288c232 (the very next commit) and MEASURED at
++67,884 B / +339 complete fns.  Re-verified from a freshly compiled obj by lane
+ALLOCGATE-1 (2026-08-14), which also confirmed the group carries it.
+
+⚠ NOTHING IN THIS GATE IS HARDCODED.  Every verdict is recomputed from the
+compiled COMDAT bytes on each run, so a refusal recorded in prose here can never
+be an operative refusal -- fix the source and the gate re-adjudicates itself.
+Re-run it rather than reading this docstring for a verdict.
+
+``??2Task@@SAPAXI@Z`` is REFUSED separately, on injectivity.
 """
 
 import argparse
