@@ -461,20 +461,55 @@ void *(_MemAllocTemp)(int size, int align) {
 }
 #endif
 
+#ifdef HX_NATIVE
 void *MemOrPoolAllocSTL(int size, const char *file, int line, const char *name) {
     if (size == 0)
         return nullptr;
-#ifdef HX_NATIVE
     return malloc(size);
-#else
-    else if (size > 0x80) {
-        MemTemp tmp;
-        return (MemAlloc)(size, file, line, name, 0);
-    } else {
-        return PoolAlloc(size, size, file, line, name);
-    }
-#endif
 }
+#else
+// Retail/match STL pool dispatcher. ADJUDICATED ON RETAIL BYTES, lane STLALLOC-1
+// (2026-08-14). Retail RB3-360 has exactly ONE pool/heap alloc dispatcher, the
+// 36-byte leaf at 0x827bd208, and every STL container `allocate()` reaches it:
+// 159 of 176 map-named `_M_create_node`/`_M_insert_overflow*` functions call it
+// directly and 2 more via an outlined helper; of the remainder, 2 use different
+// allocator templates entirely (TransformListAlloc -> ReclaimableAlloc::CustAlloc,
+// XboxAllocator -> MemAlloc/MemFree direct) and the rest are scan-window
+// artifacts. NO rival dispatcher exists anywhere in .text.
+//
+// ⚠ TWO ORACLE FORMS ARE WRONG FOR RB3-360 — do not "fix" this back to either:
+//
+//   * dc3-decomp spells `{ MemTemp tmp; MemAlloc(...); }` — a temp guard. Retail
+//     has NO guard here; 0x827bd208 is a frameless leaf that tail-branches
+//     (`b`, not `bl`) to both callees, which a guard's dtor makes impossible.
+//     DC3 is the NEWER engine; this is a DC3-side divergence.
+//   * rb3-Wii spells the STL variant with threshold 0x100 vs 0x80 for the plain
+//     variant. RB3-360 does NOT carry that split: a whole-.text scan finds ZERO
+//     0x100-vs-r3 compares near any allocator branch (the same probe finds the
+//     0x80 one, so it discriminates), and retail's surviving
+//     ?MemOrPoolFreeSTL@@YAXHPAX@Z at 0x827bca50 compares against 0x80 too.
+//
+// ⇒ the STL and plain variants are byte- and relocation-identical here, so
+// /OPT:ICF folds them. That is confirmed by retail's own internal inconsistency,
+// needing no fold model: the FREE pair collapsed the same way and kept the *STL*
+// survivor name (0x827bca50, the only MemOrPoolFree-family body in the image),
+// while the ALLOC pair kept the *non-STL* name (0x827bd208). That survivor-name
+// asymmetry is arbitrary ICF selection — two genuinely distinct functions could
+// not produce it.
+//
+// Keeping this body identical to MemOrPoolAlloc(int) above is load-bearing: it
+// is what lets tools/alloc_fold_gate.py prove the alias membership on our own
+// two COMDATs (L4_OURSIDE) instead of asserting it.
+void *MemOrPoolAllocSTL(int size) {
+    if (size == 0) {
+        return nullptr;
+    } else if (size > 0x80) {
+        return MemAlloc(size, 0);
+    } else {
+        return PoolAlloc(size, size);
+    }
+}
+#endif
 
 void MemInit() {
     gMemLock = new CriticalSection();
