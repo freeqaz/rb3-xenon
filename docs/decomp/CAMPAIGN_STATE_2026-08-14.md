@@ -56,7 +56,20 @@ symbols (914 rows / 180,196 B). **True reachable ceiling ≈ 61.35%.**
 | body-port, structural half | **not reachable** | **0 of 47,820 B**, predicted; residue is pure-`reg` permuter-class |
 | `MILO_*` emissions retail kept | **drained** | **4** in the whole binary; 4 now correct |
 | unsuffixed double literals | real but nearly empty | **3 of 73** witnessed; **0 crossable** |
-| REFUTED relocation-name pairs | **map/fold queue, not source** | 1 map · **0 source**; **29 of 49 are BODY_EQUAL** |
+| REFUTED relocation-name pairs — **BYTES** | **71% ICF-fold-gated** | 1,573 rows / 464,564 B of 654,564 B; trustworthy worklist **~2% / ~13,000 B** |
+| factory-registration lists | **seam, now worked out** | **17** retail multi-lists (base bounded by the *binary* — two independent enumerations both return 17); 5 differed, **all membership, 0 pure order**; **12 identical** after repair; remainder = 4 unported classes + 1 missing function |
+
+⛔ **CORRECTION to this file's own first edition (2026-08-14).** It recorded the
+REFUTED queue as *"map/fold queue, not source — 1 map · 0 source defects."*
+**That is REFUTED.** It was measured on a hand-adjudicated handful; a full census
+of all 2,294 real-name pairs (lane WRONGCALL-2, `abdbfd6b`) found **448
+SOURCE_CAND, of which 202 have BOTH names retail-verified AND bodies genuinely
+different — the one combination that can only be a wrong callee** — and landed
+**three** source defects (`Synth360::Init`, `Rnd::PreInit`, and a third recorded
+at `InlineHelp::Init`). ★ **What survives is the BYTE claim, not the defect
+claim**: the queue's *bytes* really are 71% fold-gated, so it is not worth
+funding **for bytes** — but it is **not source-clean**, and the 202 remain
+unworked. The original row above has been replaced accordingly.
 | `json_tokener` version skew | refuted | our 12 error strings incl. the `"nesting to deep"` typo ⇒ json-c 0.9, correct for 2010 |
 
 **Retired rows** (documented negatives, do not re-open without new evidence):
@@ -120,6 +133,31 @@ caught only by a control that could fire:
 - a scanner fooled by a **prose comment containing `#if`**
 - a retail reader anchored `^\s+` against dtk lines that begin with `/* addr */`
 - a **non-recursive `obj/*.obj` glob** missing 569 of 3,084 live objs
+- a `collect()` that is **last-wins across duplicate COMDATs** (`?PreInit@Rnd@@`
+  is defined in **nine** objs), reporting a **real source edit as inert** on a
+  partially-built tree — **an obj newer than its source was still stale**
+
+⛔⛔ **AND A WORSE DIRECTION, found 2026-08-14: instruments that fail toward
+*MANUFACTURING* work.** Everything above fails toward *finding nothing*, which
+wastes a lane. Lane REGORDER-1 had **four** fail the other way, and acting on
+any of them would have **damaged correct code**:
+
+- a **mis-transcribed `RegisterFactory` VA** (`2188758400` read as `0x82756B40`
+  instead of `0x8275CD80`) made the scanner answer **"NOT REGISTERED ANYWHERE IN
+  RETAIL" for ALL 19 queries — including FOUR PROVEN POSITIVE CONTROLS.** That
+  is precisely what a lane about to delete registrations wants to hear, and
+  **only the controls caught it.**
+- **keying retail slots on SYMBOL NAMES** dropped every unnamed slot and
+  reported surplus registrations that do not exist ⇒ **would have deleted
+  correct code**.
+- comparing retail literals to **class names** invented ~20 phantom defects in
+  one function (retail spells `RndFur` as **"Fur"**).
+- **best-overlap matching** paired retail's `Synth360::Init` against our
+  `Synth::Init`, inventing a 5-registration defect.
+
+⇒ **Run positive controls BEFORE acting on an absence, not after.** And note the
+inverse failure in the same lane: treating an unnamed slot as a **wildcard**
+*hid* a real defect a predecessor therefore could not see.
 - a census that **inflated itself by construction** by not subtracting shipped
   aliases (80/20/50 → 64/49/37)
 
