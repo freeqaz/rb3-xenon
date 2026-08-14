@@ -31,23 +31,29 @@ is right and the ≤3 cell is the odd one out — most likely a post-closure rem
 mislabelled as the band total. It does not affect any conclusion here, but the
 ≤3 comparison below should be treated as approximate.
 
-### 2. Control availability: **9 of 13 rows triaged (69%)** — it went UP, sharply
+### 2. Control availability: **10 of 15 rows triaged (67%)** — it went UP, sharply
 
 | lane | band | control existed for | rate |
 |---|---|---|---|
 | INSDEL-3 | ≤3 | 4 of 4 opened | 100% |
 | INSDEL-4 | 4–6 | 3 of 19 triaged | **16%** |
-| **INSDEL-5** | **7–15** | **9 of 13 triaged** | **69%** |
+| **INSDEL-5** | **7–15** | **10 of 15 triaged** | **67%** |
 
 **This reverses INSDEL-4's projection.** It expected "well under 16%" at this
 width, reasoning that more charges ⇒ more ways to draw an unclosable one. That
 reasoning is sound *per row* and is exactly why the number moved the other way:
 
 ★★★ **At 7–15 charges the wins are SHARED-CAUSE FAMILIES, not individual rows —
-and a family supplies its own control.** Both closures here were families, and in
-each the control was *internal to the population*: a sibling that already matches
-at 100% while carrying the rival source shape. Triage cost collapses because one
-reading adjudicates 4–7 rows at once.
+and a family supplies its own control.** Two of the three closures were families,
+and in each the control was *internal to the population*: a sibling that already
+matches at 100% while carrying the rival source shape. Triage cost collapses
+because one reading adjudicates 4–7 rows at once.
+
+⚠ The third closure (`FilterTypeToSym`, a singleton) had the **same control
+form** — a 100%-matching sibling in its own TU (`BuildFilters`) carrying the
+rival numbering via raw integer literals. So the operative condition is not
+"family" as such but **"does a 100%-matching neighbour encode the rival shape?"**
+Families merely make that far more likely, and let one reading pay for many rows.
 
 ⇒ **The right unit of work at this width is the UNIT, not the ROW.** Measured on
 the band: **75 rows / 18,848 B (41% of band bytes) live in 29 units holding more
@@ -79,23 +85,28 @@ source), every `MeshAnim` row carries them. Applying both conditions:
 **Only 5 units in the whole 160-row band have ≥2 register-clean rows, totalling
 3,436 B — and this lane drained both of the genuine families (1,492 B).**
 
-★★★ **Therefore this lane's favourable economics DO NOT GENERALISE to the band's
-remainder.** The 69% control-availability and 1.2-rows-per-closure figures are
-family figures; the ~155 rows left are overwhelmingly singletons and a follow-up
-lane would face 4–6's economics or worse. **This is a bounded vein, and it is now
-bounded: the family surface in 7–15 was ~1,492 B and it is gone.**
+★★★ **Therefore the FAMILY half of this lane's economics does NOT GENERALISE to
+the band's remainder.** The 67% control-availability and 1.25-rows-per-closure
+figures are dominated by the two families; the ~154 rows left are overwhelmingly
+singletons. **The family surface in 7–15 was ~1,492 B and it is gone.**
 
-## Result — +11 functions / +1,804 B, both predictions pre-registered
+⚠ But do not over-bound it either: `FilterTypeToSym` was a **singleton worth
+580 B on its own** — more than either family's per-row yield — and it was found
+by exactly the same screen. **Singletons here are not worthless; they are merely
+priced like 4–6 (≈6 rows triaged per closure), against rows averaging 282 B
+instead of 202 B.**
+
+## Result — +12 functions / +2,384 B, all three predictions pre-registered and EXACT
 
 | measure | leg A | leg B | Δ |
 |---|---:|---:|---:|
-| `matched_functions` | 44,422 | 44,433 | **+11** |
+| `matched_functions` | 44,422 | 44,434 | **+12** |
 | `masked_equal` | 22,897 | 22,897 | +0 |
-| honest | 21,525 | 21,536 | **+11** |
-| `matched_code` | 3,730,660 | 3,732,464 | **+1,804 B** |
-| `matched_code_percent` | 36.147480 | 36.164960 | **+0.017480 pp** |
+| honest | 21,525 | 21,537 | **+12** |
+| `matched_code` | 3,730,660 | 3,733,044 | **+2,384 B** |
+| `matched_code_percent` | 36.147480 | 36.170580 | **+0.023100 pp** |
 
-**0 regressions. 0 units fell off 100% on EITHER ruler, in both A/Bs.** Native
+**0 regressions. 0 units fell off 100% on EITHER ruler, in all three A/Bs.** Native
 gate **PASS 18/18, 0 SKIPs, rc=0**.
 
 ## Closure 1 — `MemDiffEntry::operator<`: one line, +7 functions / +1,804 B
@@ -214,6 +225,77 @@ hashing, and deliberately **not** bundled here.
 ⇒ **A row's charge count does not predict its byte collectability.** Budget the
 16+ tail knowing that some structurally-perfect closures pay 0 bytes.
 
+## Closure 3 — `FilterType` was MISNUMBERED: +1 function / +580 B
+
+`FilterTypeToSym` sat at fuzzy 96.310 with all 9 charges in one contiguous
+cluster — the switch dispatch chain. Both sides emit the **same** lowering
+(`mtctr` + CTR-countdown chain), identical case bodies, identical static-Symbol
+guard blocks, identical relocation names. Only the value→case mapping differed:
+**a data defect, not a codegen-shape one.** (The obvious hypotheses — jump table
+vs branch chain, Symbol construction, comparison strength — were all wrong.)
+
+| | mapping |
+|---|---|
+| **retail** | 0 genres · 1 decades · 2 keys · 3 pro_guitar · 4 vocal_parts · 5 sources · 6 difficulties · 7 lengths · 8 ratings |
+| **ours** | 0 difficulties · 1 vocal_parts · 2 lengths · 3 sources · 4 ratings · 5 decades · 6 genres · 7 pro_guitar · 8 keys |
+
+★ **Control 1 — a 100%-matching sibling in the same TU carrying the rival shape.**
+`ViewSettingsProvider::BuildFilters` (924 B, **mpn 100.0000**) indexes
+`filterSyms[]` with **raw integer literals**, so it is wholly independent of this
+enum — and it encodes retail's mapping exactly.
+
+★ **Control 2 — semantic corroboration at the only other call sites in the tree.**
+`MusicLibrary::SetupTaskForTrainer`: a `kControllerRealGuitar` case passed
+`kFilterSource` (**3**) and a `kControllerKeys` case passed `kFilterLength` (**2**).
+Under the corrected numbering 3 *is* pro_guitar and 2 *is* keys — **the numbers
+were right all along; only the names were nonsense.**
+
+★ **Control 3 — size inequality.** Retail 580 B vs our 584: we were larger by
+exactly the one surplus branch the scrambled mapping forces. Retail's case 0
+(genres) is also its physically first body, so the compiler folds the existing
+`cmpwi cr6,r19,0` into every step (`bdzf cr6eq`) and lets `ft == 0` fall through —
+8 branches. Ours put case 0 third, forcing a leading `beq` **and** a trailing `b`.
+
+★ **Control 4 — the header's own in-source note** asked *"should 2 actually be
+has keys? should 3 actually be has pro strings?"* Answered **yes** by all three
+of the above. ⇒ **An in-source note is not always a veto — this one was an open
+question that INVITED the chase, and the lane's other note (`CamShot`) was a
+veto. Read what the note actually claims.**
+
+All 9 charges accounted for. Measured **+1 / +580 B / +0.005620 pp**, exactly as
+pre-registered, with **0 units off 100% despite 88 TUs recompiling** from the
+header change.
+
+⚠ Case-label **text order** in the switch is deliberately unchanged — it fixes
+both the static-Symbol init order and the physical case-body layout, and both
+already matched retail byte-for-byte. Only the two bare `case 7:`/`case 8:`
+literals became named.
+
+★ Independently of the metric this fixes a **live user-visible bug**: a filter
+row's label comes from `FilterTypeToSym(ft)` while its data comes from
+`BuildFilters`' raw indices, so every row in the filter view-settings menu was
+mislabelled (the row holding *keys* data was titled *lengths*).
+
+## Declined — `GetBlendState` (408 B), 5 of 7 charges have no derivable cause
+
+Two independent clusters. Cluster 2 (2 charges) is understood and one line from
+correct — our source keeps the value 64-bit typed (`(long long)(blend*255.0f) &
+0xFF`) so MSVC emits `ld` + `rldicl` where retail extracts the spilled low byte
+with a single `lbz` at +7. Cluster 1 (5 charges) is **not**: retail materializes
+the bool branchily and additionally executes a **dead `fmr f0,f31`** whose
+else-value is a `0.0f` our source has no definition for.
+
+⛔ **The one candidate control REFUTED the obvious lever rather than supporting
+it.** `RndTexBlendController::IsValid` (136 B, fuzzy 100) carries both an explicit
+two-arm `bool` if/else *and* a `refDist > 0` test — and MSVC deleted its `= false`
+arm entirely. So "write it as an explicit two-arm if/else" demonstrably does not
+determine the emitted shape in this TU.
+
+Since the row is sub-100 on both rulers, landing cluster 2 alone buys **0 bytes
+and 0 functions** while perturbing scheduling right next to the cluster-1 charges.
+Declined. DC3 adjudicates nothing here — its `TexBlendController.cpp` is
+near-verbatim ours, exactly as the standing warning predicts.
+
 ## Declined — `CamShot::Copy` (676 B), and the in-source note is why
 
 The charges decode cleanly: retail makes **four** member-assign calls in the
@@ -257,14 +339,14 @@ its own. **Do not "fix" it cheaply.**
 
 | | ≤3 | 4–6 | **7–15** |
 |---|---:|---:|---:|
-| rows closed | 4 | 3 | **11** |
-| bytes | +316 | +576 | **+1,804** |
-| bytes per closed row | 79 | 192 | **164** (258 counting only byte-paying rows) |
-| rows triaged per closure | ~1.0 | 6.3 | **1.2** |
-| control availability | 100% | 16% | **69%** |
+| rows closed | 4 | 3 | **12** |
+| bytes | +316 | +576 | **+2,384** |
+| bytes per closed row | 79 | 192 | **199** (298 counting only byte-paying rows) |
+| rows triaged per closure | ~1.0 | 6.3 | **1.25** |
+| control availability | 100% | 16% | **67%** |
 | band total | 12,436 B | 10,912 B | **45,192 B** |
 
-**7–15 pays 3.1× the 4–6 band's bytes at roughly one-fifth the triage cost per
+**7–15 pays 4.1× the 4–6 band's bytes at roughly one-fifth the triage cost per
 closure.** The mechanism is not that the rows are easier — individually they are
 harder — it is that **at this width rows cluster into families, and a family is
 adjudicated once and closed wholesale.**
