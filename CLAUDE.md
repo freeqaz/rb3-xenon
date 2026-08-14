@@ -1033,13 +1033,54 @@ run the gate before you land. Two traps, both real:
   **exactly +0**, the `none` ruler **exactly flat**, and units at all-rows-`fuzzy`
   **124 → 51 (−73)** — the arg-blind shape exactly. ⇒ **~7 pp of `matched_code`
   is alias forgiveness.**
-  ⛔⛔ **AND `OK (grounded)` MEANS MAP-CONSISTENCY, NOT PROOF OF FOLDING** — the
-  survivor is map-resident and every spelling is referenced, nothing more.
-  **1,287 groups carry essentially all 720,992 B on that basis, so the label
-  oversells its evidence.** The gate is real (a *fabricated* alias between
-  symbols our map places at distinct addresses ⇒ **exit 2 fatal**, demonstrated
-  by mutation — a PASS is worthless until the gate is shown to fail), and the
-  audit found **0 CONTRADICTED**. But "not contradicted" is not "proven".
+  ⛔⛔ **`OK (grounded)` MEANT MAP-CONSISTENCY, NOT PROOF OF FOLDING** — the
+  survivor is map-resident and every spelling is referenced, nothing more. The
+  gate is real (a *fabricated* alias between symbols our map places at distinct
+  addresses ⇒ **exit 2 fatal**, demonstrated by mutation — a PASS is worthless
+  until the gate is shown to fail), and the audit found **0 CONTRADICTED**. But
+  "not contradicted" is not "proven". **Renamed `OK (MAP-CONSISTENT)`**, and the
+  rename is *proved* mechanically: eight groups emptied of **every** folded
+  spelling — declaring no fold whatsoever — **still land in that bucket and the
+  count does not move.**
+  ✅ **CORRECTED SAME DAY (lane GROUNDED-1, `f4e26fcc`) — THIS DOC FIRST SAID
+  "1,287 groups carry essentially all 720,992 B on map-consistency". THAT
+  OVERSTATED THE EXPOSURE: 82.51% of the forgiven bytes ARE proven on retail
+  bytes.** The error was **conflating the validator's re-check LABEL with the
+  INSTALLATION evidence**, which is recorded per group in `symbol_aliases.json`
+  as tiers **T1/T2/T3** (T1 = retail-byte identity with relocation **target
+  names** compared, plus anti-vacuity guards). **Most bytes were never resting
+  on map-consistency — the LABEL was.**
+
+  | class | rows | bytes | share |
+  |---|---:|---:|---:|
+  | **PROVEN on retail bytes** | 2,718 | **594,904 B** | **82.51%** |
+  | unattributable by this method | 1,889 | 79,288 B | 11.00% |
+  | UNPROVABLE — needs absent source | 218 | 44,140 B | 6.12% |
+  | UNPROVABLE — needs one map identification | 5 | 740 B | 0.10% |
+  | **CONTRADICTED → withdrawn** | 10 | **1,920 B** | 0.27% |
+
+  ★ **Only 448 of 1,493 groups forgive any bytes at all**; top 10 = **55.6%**,
+  top 50 = 85.0%, top 100 = **96.4%** — price any alias work against that
+  concentration, not against the group count.
+  ⚠ **Flat T1 alone UNDERSTATES provability by 27 pp** (55.5% → 82.51%): its
+  vacuity guard is right as a *guard* and wrong as a *verdict* — when relocation
+  target names **agree**, the destination is not masked at all, and for a thunk
+  **the destination is the whole information content.**
+  ★★★ **129,360 pair-bytes are IRREDUCIBLE, not a backlog** — relocation-free
+  thunks where the fold is proven but **which name the call site meant was
+  destroyed by ICF itself.** That is the honest floor. And **one address is
+  worth 73,496 B**, proven only by our-side COMDAT identity because retail's
+  branch destination `0x827bcd38` is **unnamed** (no `?MemAlloc@@YAPAXHH@Z` in
+  the map at all).
+  ⛔ **THE 10 WITHDRAWN WERE A REAL DEFECT THE ALIAS WAS HIDING** — eight
+  memberships where **retail's instantiation is 8 bytes SMALLER than ours**
+  (different-size COMDATs **cannot** fold; the alias was forgiving **our use of
+  the wrong overload**), plus one where retail calls `KeyLessEq` and we call
+  `KeyGreaterEq`. Predicted **−1,920 B**, measured **−1,920 B exactly.** Groups
+  kept with `folded: []` + a `withdrawn` record; **nothing pruned.**
+  ⚠ `tools/alloc_fold_gate.py`'s docstring still refuses `??2@YAPAXI@Z` over a
+  `gNewOperatorAlign` divergence that **no longer exists** — ours is
+  byte-identical to retail's today.
   ⚠ **Do NOT prune the classes that currently forgive 0** (`STALE_SPELLING` 143,
   `UNWITNESSED` 11): they **become live as porting advances**, and a prior prune
   (`a745039e`) cost **+94,616 B to reverse**. **A Δ0 today would license a change
