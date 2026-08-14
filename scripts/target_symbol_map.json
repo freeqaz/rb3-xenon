@@ -11386,7 +11386,7 @@
  "0x82566558": "?ForceClosetPoll@ClosetMgr@@QAAXXZ",
  "0x825665b0": "?UpdateCharacterPatch@ClosetMgr@@QAAXW4Category@Patch@BandCharDesc@@PBD@Z",
  "0x825667b8": "?GetCurrentShot@ClosetMgr@@QAAPAVCamShot@@XZ",
- "0x82566970": "?RemoveCPPT@CCFGLM@NUISPEECH@@AAAXPAVCPPT@2@G@Z",
+ "0x82566970": "?TakePortrait@ClosetMgr@@QAAXXZ",
  "0x82566998": "?IsAlreadyLoaded@ClosetMgr@@QAA_NXZ",
  "0x82566a00": "?UpdatePreviousCharacter@ClosetMgr@@QAAXXZ",
  "0x82566a68": "?Export@MsgSource@@$4PPPPPPPM@JE@AAXPAVDataArray@@_N@Z",
