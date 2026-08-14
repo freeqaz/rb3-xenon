@@ -147,7 +147,7 @@ void PracticePanel::Poll() {
                 GetTrackPanel()->Handle(setShowingMsg, true);
             } else {
                 players[0]->SetCrowdMeterActive(false);
-                float ms = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0;
+                float ms = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f;
                 VocalPlayer *vp = dynamic_cast<VocalPlayer *>(players[0]);
                 if (vp && vp->ScoringEnabled()) {
                     mGuidePitch->Poll(ms);
