@@ -5,7 +5,10 @@
 #include "utl/BinStream.h"
 
 NetStream::NetStream()
-    : BinStream(true), mSocket(nullptr), mFail(false), mReadTimeoutMs(0), mBytesRead(0),
+    // mSocket is NOT in retail's initializer list — the body assigns it
+    // immediately, and retail emits no `stw r11, 12(this)` before the
+    // `stb r11, 16(this)` that inits mFail.
+    : BinStream(true), mFail(false), mReadTimeoutMs(0), mBytesRead(0),
       mBytesWritten(0) {
     mSocket = NetworkSocket::Create(true);
 }
