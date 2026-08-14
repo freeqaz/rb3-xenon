@@ -4,12 +4,7 @@
 #include "os/System.h"
 
 const char *LocalizeOrdinal(
-    int num,
-    LocaleGender gender,
-    LocaleNumber number,
-    bool superscriptMarkup,
-    Symbol unusedLang,
-    Locale &locale
+    int num, LocaleGender gender, LocaleNumber number, bool superscriptMarkup
 ) {
     char buf[255];
     strcpy(buf, LocalizeSeparatedInt(num));
@@ -84,16 +79,10 @@ const char *LocalizeOrdinal(
     return MakeString(buf);
 }
 
-#ifdef HX_NATIVE
-// 4-arg overload: not yet decompiled in the retail xenon TU (its out-of-line
-// body lives outside this object here), but DateTime.cpp references it, so the
-// native rb3-dta build needs a real definition. Delegate to the 6-arg form with
-// an empty lang (which makes it fall back to SystemLanguage — the exact behavior
-// the 4-arg form must have) and TheLocale. Guarded so retail bytes are
-// byte-identical (HX_NATIVE is native-only).
-const char *LocalizeOrdinal(
-    int num, LocaleGender gender, LocaleNumber number, bool superscriptMarkup
-) {
-    return LocalizeOrdinal(num, gender, number, superscriptMarkup, Symbol(), TheLocale);
-}
-#endif
+// The HX_NATIVE 4-arg forwarder that used to live here is GONE, and so is the
+// 6-arg form it forwarded to. Its comment claimed the 4-arg body "lives outside
+// this object" — that was a phantom created by the map: the map named
+// fn_827CF0D0 with DC3's 6-arg mangling, so the real 4-arg retail function
+// looked missing and a delegating stub was invented to fill the hole. The body
+// above IS the 4-arg retail function; the two dropped parameters were never
+// read (the `locale` parameter appeared nowhere but its own declaration).
