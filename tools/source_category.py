@@ -31,28 +31,54 @@ this function returns None, which it currently does for zero declared objects).
 ⚠ THIS IS NOT `scope_map.bucket_for_source`, AND THEY ARE NOT SUPPOSED TO BE
 EQUAL. Two different granularities, deliberately:
 
-  category (here, 4 values)      scope tier (`tools/scope_map.py`, 7 values)
+  category (here, 5 values)      scope tier (`tools/scope_map.py`, 7 values)
   ---------------------------    ------------------------------------------
-  game     src/band3/            game        band3 + network (one priority tier)
-  network  src/network/          engine      src/system/ Milo
-  engine   src/system/ + root    thirdparty  vendored libs (some under src/system/)
-  sdk      src/xdk/              crt, xdk, vendor, unknown
+  game       src/band3/          game        band3 + network (one priority tier)
+  network    src/network/        engine      src/system/ Milo
+  engine     src/system/ + root  thirdparty  vendored libs (some under src/system/)
+  thirdparty vendored upstream   crt, xdk, vendor, unknown
+  sdk        src/xdk/
 
 `CATEGORY_ALLOWED_TIERS` below records the mapping, and `--audit` asserts every
 declared object satisfies it. A disagreement OUTSIDE that table is real drift
 and fails the audit; a disagreement INSIDE it is granularity and is expected.
 
-⛔ Known granularity gap, SIZED AND DELIBERATELY NOT CLOSED by CATTAG-1:
-31 pinned units / 105,752 B of vendored third-party source live under
-`src/system/` (oggvorbis 18, zlib 4, net/json-c 5, synth/tomcrypt 3, net/curl 2,
-jpeg 1) and are therefore tagged `engine` -- i.e. counted as "Milo Engine Code".
-`scope_map` already separates them as `thirdparty` (public-source oracle,
-mechanical) and that separation is the truer one. Closing it needs a
-`"thirdparty"` entry in config.json's `progress_categories` plus the one commented
-line in `category_for_source` below; it is a one-line change. CATTAG-1 did not
-make it unilaterally because it moves the widely-quoted `engine` tier denominator
-by ~105 kB, which is a coordinator-level call, not a side effect of a game-tier
-correction.
+✅ CLOSED 2026-08-14 (lane VENDTIER-1) -- the gap CATTAG-1 sized and escalated.
+`thirdparty` is now a fifth category: vendored upstream under `src/system/` no
+longer counts as "Milo Engine Code". ⚠⚠ ANY `engine` TIER % QUOTED ACROSS THIS
+CHANGE MUST SAY WHICH SIDE IT IS ON -- the engine denominator moved by 105,740 B
+and the tier's own percentages moved with it.
+
+The claim was ADJUDICATED PER FILE against actual upstream, not accepted from the
+directory name, because the directory name is precisely what went wrong last
+time (ZLibCompression.cpp, above). Of 34 declared objects that `bucket_for_source`
+called `thirdparty`:
+
+  30 GENUINELY VENDORED -- 28 still carry their upstream copyright banner
+     (Xiph, Mark Adler/Jean-loup Gailly, Metaparadigm, Tom St Denis, Daniel
+     Stenberg); tomcrypt crypt.c + ctr.c lost the banner in reconstruction but
+     are unmistakable LibTomCrypt 1.x by API (`mycrypt.h`,
+     `_cipher_descriptor[32]`, `ctr_start`/`symmetric_CTR`/`CRYPT_OK`).
+     None includes a Milo header. -> `thirdparty`.
+
+  4  FALSE MEMBERS, Harmonix code that merely LIVES in a vendored directory ->
+     stay `engine`: oggvorbis/VorbisMem.cpp (OggMalloc/OggFree over
+     utl/MemMgr.h), jpeg/Jpeg.cpp (LoadBitmapIntoJpeg, MILO_ASSERT),
+     zlib/ZlibLicense.cpp and synth/tomcrypt/TomCryptLicense.cpp (utl/Licenses.h
+     registration objects). The rule that catches them lives in
+     `scope_map.bucket_for_source`: these six vendored libs are pure C upstream,
+     so a C++ TU inside one is Harmonix glue by construction. Tree-wide there are
+     exactly five .cpp files under a vendor-marker directory and the fifth is
+     ZLibCompression.cpp, already handled -- so the rule is 4/4 with no false
+     positives. `/stlport/` is excluded from it because STLport is C++.
+
+⚠ CATTAG-1's own breakdown of this set ("oggvorbis 18, zlib 4, net/json-c 5,
+synth/tomcrypt 3, net/curl 2, jpeg 1") sums to 33 against its own headline of 31
+-- it interleaved DECLARED and PINNED counts. Measured: 34 declared, of which 31
+appear in report.json (Jpeg.cpp, ZlibLicense.cpp and TomCryptLicense.cpp are
+declared but unpinned, 0 B). Pinned, after the false-member fix: 30 thirdparty /
+105,740 B, and VorbisMem.cpp's 12 B stays engine. The headline 31 / 105,752 B was
+right; the per-library row was not.
 """
 
 import argparse
@@ -61,6 +87,16 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# scope_map owns the single copy of the vendored-library markers (and the
+# Harmonix-glue exception to them); `category_for_source` delegates to it rather
+# than keeping a second list that could drift. Imported at module scope, and
+# deliberately NOT wrapped in try/except: configure.py calls this for all 1,434
+# declared objects, and a silent fallback would mis-tag 31 units exactly as
+# quietly as the library-group tags this module replaced. Fail loudly instead.
+# (Import is ~18 ms and pulls in no build state.)
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+from scope_map import bucket_for_source as _bucket_for_source  # noqa: E402
 
 # category id -> scope_map buckets a file in that category may legitimately be.
 # A pair outside this table is DRIFT, not granularity. Keep it minimal: every
@@ -72,9 +108,16 @@ CATEGORY_ALLOWED_TIERS = {
     # oracle, RB3-specific); the category keeps it separate because Quazal
     # NetZ behaves nothing like band3 (269,640 B at mean 16.96%).
     "network": {"game"},
-    # vendored libs under src/system/ read as `thirdparty` -- see the sized gap
-    # in the module docstring.
-    "engine": {"engine", "thirdparty"},
+    # ★ TIGHTENED by lane VENDTIER-1: this used to allow {"engine",
+    # "thirdparty"}, which is what let 31 units / 105,752 B of vendored source
+    # sit in the engine tier without the audit saying a word. Now that the
+    # category derives the split, an engine-category file reading `thirdparty`
+    # is real drift again -- and the audit can fail on it, which is the whole
+    # point of the table. Do NOT re-widen this to silence a failure.
+    "engine": {"engine"},
+    # Vendored upstream (zlib, libvorbis/libogg, libtomcrypt, json-c, curl,
+    # libjpeg). One tier, one category -- the public tarball is the oracle.
+    "thirdparty": {"thirdparty"},
     # src/xdk/LIBCMT is Microsoft's CRT shipped with the XDK; scope_map splits
     # it out as `crt` because its oracle differs, but at category granularity
     # "XDK Code" describes it exactly.
@@ -102,13 +145,21 @@ def category_for_source(src_path):
     # Quazal NetZ middleware.
     if low.startswith("src/network/"):
         return "network"
-    # Milo engine, DC3 oracle.
+    # Vendored third-party libraries physically live under src/system/ but their
+    # oracle is the PUBLIC UPSTREAM TARBALL, not DC3 -- so the work is mechanical
+    # (diff against real zlib/libvorbis/libtomcrypt/json-c/curl) rather than
+    # DC3 label-transfer. Since the tier means "which oracle exists", that is a
+    # different tier. Tested BEFORE the engine rule because these paths start
+    # with src/system/ too. (lane VENDTIER-1)
+    #
+    # ⚠ Delegated to scope_map rather than re-listing the markers here: a second
+    # copy of the list is exactly the hand-maintained drift this module exists to
+    # abolish. bucket_for_source is also where the "C++ TU inside a C library is
+    # Harmonix glue" exception lives, so VorbisMem.cpp / Jpeg.cpp / *License.cpp
+    # correctly stay `engine` through this call.
     if low.startswith("src/system/"):
-        # To split vendored libs out of the engine tier, add "thirdparty" to
-        # config.json's progress_categories and uncomment:
-        #   from scope_map import bucket_for_source
-        #   if bucket_for_source(low) == "thirdparty":
-        #       return "thirdparty"
+        if _bucket_for_source(low) == "thirdparty":
+            return "thirdparty"
         return "engine"
     # Root-level platform glue: src/Main.cpp, src/Memory_Xbox.cpp,
     # src/keygen_xbox.cpp. ADJUDICATED as engine, not game (lane CATTAG-1):
@@ -197,8 +248,25 @@ def cmd_selftest(args):
         ("src/Main.cpp", "engine"),
         ("src/Memory_Xbox.cpp", "engine"),
         ("src/keygen_xbox.cpp", "engine"),
-        # documented granularity: vendored lib under src/system stays engine
-        ("src/system/zlib/inflate.c", "engine"),
+        # vendored upstream under src/system -> thirdparty (lane VENDTIER-1).
+        # Public-tarball oracle, mechanical work, NOT DC3 label-transfer.
+        ("src/system/zlib/inflate.c", "thirdparty"),
+        ("src/system/oggvorbis/floor1.c", "thirdparty"),
+        ("src/system/synth/tomcrypt/aes.c", "thirdparty"),
+        ("src/system/net/json-c/json_tokener.c", "thirdparty"),
+        ("src/system/net/curl/lib/sslgen.c", "thirdparty"),
+        # ⛔ NEGATIVES -- the four C++ TUs filed INSIDE those C libraries are
+        # Harmonix glue, not upstream, and must stay `engine`. Adjudicated
+        # per-file: OggMalloc/OggFree over utl/MemMgr.h; LoadBitmapIntoJpeg with
+        # MILO_ASSERT; two utl/Licenses.h registration objects. Without these
+        # five cases the rule below them is indistinguishable from "everything
+        # under a vendor dir is thirdparty", which is the bug it fixes.
+        ("src/system/oggvorbis/VorbisMem.cpp", "engine"),
+        ("src/system/jpeg/Jpeg.cpp", "engine"),
+        ("src/system/zlib/ZlibLicense.cpp", "engine"),
+        ("src/system/synth/tomcrypt/TomCryptLicense.cpp", "engine"),
+        # must still be `engine` -- ordinary Milo with no vendor dir in sight
+        ("src/system/utl/Str.cpp", "engine"),
         # outside the source tree
         ("native/src/dta_link_stubs.s", None),
         ("", None),
