@@ -105,6 +105,20 @@ one address (e.g. one `__adjust_heap` address called by both
 rest on the map-naming inconsistency alone. Each group records `retail_fanin`,
 `retail_callers` and `witness` so the split is auditable.
 
+⛔ **Disclosure, and it is the uncomfortable part: for all 38 groups our compiled
+body for the folded spelling is NOT byte-identical to our body for the survivor
+spelling — that is true BY CONSTRUCTION, since `fold == DIFFERENT` is what put
+them in class (C).** The fold claim therefore rests entirely on retail-side
+evidence; our build does not reproduce it. That is defensible here because the
+divergence is demonstrably in OUR instantiation (TrainerGemTab: an inline
+decision, with retail's own stride and fan-in proving the fold), and because the
+alias forgives only the **call-site name** — the folded spelling has no retail
+address, so its body is not a scored row and no scored defect is being hidden.
+But it does mean each group is one retail-side witness away from being wrong, and
+a reviewer should read `retail_fanin` / `witness` before trusting one.
+⇒ The 17 single-witness groups are the ones to re-audit first if any of this is
+ever questioned.
+
 ⚠ **`ab_measure` fired `ALIAS_SUSPECT` and that is EXPECTED, not a clearance
 failure**: this is a map-only patch, so `none` is flat (+0 B) while `name_check`
 moves (+3,220 B) — the documented signature. The `none` control is
@@ -124,3 +138,29 @@ from the delta.
   *distinct* retail addresses fold — that needs the group-merge question settled
   by the map owner, not a unilateral merge by this lane.
 * No source was edited, so `src/` is untouched and the native gate does not apply.
+
+## Instrument note for whoever works InterstitialMgr next
+
+The `hashtable<Symbol,DataArray*>` family handed over by ONMSG-1 was examined and
+**not harvested**. Every uncrossed row in the unit sits at `mpn == 100`, i.e. the
+whole ~3.1 kB residual is relocation-name charges — but the biggest apparent
+lever is a mirage:
+
+⛔ **A naive target-vs-ours relocation-name diff OVERCOUNTS the charged set,
+because it applies neither forgiveness rule.** Such a diff reports 41 pairs / 70
+sites for this unit. Its top two entries are both already free:
+`lbl_*`/`fn_*` targets are **placeholders**, which `name_check` forgives
+(`is_placeholder_symbol_name`), and its largest real-looking entry —
+`DataNode::Int` (retail) vs `DataNode::Array` (ours), 6 sites — is **already an
+installed alias** (`DataNodeAssertOnlyAccessor`, `0x8274B0F8`).
+
+That pair is worth keeping as a worked example of the fold criterion even so: our
+compiler emits the two spellings **byte-identical (36 B) AND
+relocation-identical** (both bodies are just a call to `DataNode::Evaluate`,
+because `MILO_ASSERT` compiles out), and only `Int` has a retail address. That is
+CD-7's ICF criterion met exactly — and note it is **not** a template-argument
+case, so `tmplscan` structurally cannot see it.
+
+⇒ **Take the charged-site list from `report.json`, never from a hand-rolled
+reloc diff.** The hand-rolled version is shaped like a large fresh vein and is
+mostly already-forgiven sites.
