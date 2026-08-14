@@ -302,8 +302,12 @@ void RndFlare::CalcScale() {
         mMatrix = WorldXfm().m;
         float len = Length(mMatrix.z);
         Cross(mMatrix.x, mMatrix.y, v28);
-        auto _tmp2 = Dot(v28, mMatrix.z);
-        mScaleFactors.Set(Length(mMatrix.x), 0.0 < _tmp2 ? len : -len);
+        // Retail loads this 0 with `lfs` (a 4-byte __real@00000000), so the literal
+        // is single-precision.  Spelling it `0.0` (a double) emits an `lfd` of an
+        // 8-byte constant and scores HIGHER (99.08 vs 95.3) -- but only because the
+        // double incidentally suppresses a CSE of mMatrix.z.y that retail does not
+        // do either.  The higher number is the wrong code; do not "fix" it back.
+        mScaleFactors.Set(Length(mMatrix.x), Dot(v28, mMatrix.z) > 0.0f ? len : -len);
     }
 }
 

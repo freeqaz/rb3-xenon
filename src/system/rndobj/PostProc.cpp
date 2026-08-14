@@ -69,7 +69,7 @@ unsigned int ProcCounter::SetEmulateFPS(int fps) {
     // Calculate frame timing: 120 / fps gives us the frame interval
     // Example: 24fps -> 120/24=5 -> alternate between 2 and 3 frame intervals
     mFPS = fps;
-    int round = Round(120.0 / (f32)fps);
+    int round = Round(120.0f / (f32)fps);
     mOdd = round & 1;        // Remainder: 0 for even intervals, 1 for odd
     mSwitch = round >> 1;    // Base interval (divide by 2)
 
