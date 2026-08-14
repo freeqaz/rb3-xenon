@@ -109,15 +109,26 @@ units read tier `game` here (one priority tier) and category `network` there.
 `src/system/` no longer counts as "Milo Engine Code". ⚠⚠ THE ENGINE TIER MOVED --
 any `engine` % quoted across this change must say which side it is on:
 
-    engine   BEFORE  670 units / 4,125,408 B / aon 55.569%
-             AFTER   640 units / 4,019,668 B / aon 54.683%   (-30 units,
+    engine   BEFORE  670 units / 4,125,408 B / aon 55.522%
+             AFTER   640 units / 4,019,668 B / aon 54.635%   (-30 units,
                                                               -105,740 B,
-                                                              -0.885 pp)
+                                                              -0.887 pp)
     thirdparty (new)  30 units /   105,740 B / aon 89.230%
 
   Conservation checked exactly: engine+thirdparty after == engine before, +0
-  units and +0 bytes. game / network / sdk are bit-identical. Nothing left the
-  total -- this is reattribution, not a shrunken denominator.
+  units, +0 bytes, +0 matched bytes and +0 functions. game / network / sdk are
+  bit-identical. Nothing left the total -- this is reattribution, not a
+  shrunken denominator.
+
+  ⚠ MEASURED AT ae7b8b9d. An earlier run of this same A/B at e629a7f8 read
+  engine 55.569% -> 54.683% (-0.885 pp): the SPLIT is stable, the ABSOLUTES are
+  not. Between the two runs lane GROUNDED-1 withdrew 8 alias memberships, and
+  engine's matched bytes fell 2,292,428 -> 2,290,508 = -1,920 B, which is
+  GROUNDED-1's reported figure to the byte. So a tier absolute here is only true
+  at the commit it was measured on -- read `total_code`/`matched_code` out of
+  report.json rather than quoting these, exactly as CLAUDE.md says for
+  `total_code`. The -30 units / -105,740 B reattribution is the part that does
+  not move.
 
 ★ THE SIGN WAS NOT PREDICTABLE FROM THE BYTE DIRECTION, and the intuition
 "removing 105 kB from a tier" says nothing about which way its % goes. It is set
