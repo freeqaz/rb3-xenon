@@ -220,7 +220,12 @@ SuperFormatString::SuperFormatString(
                                     tempFmtPos,
                                     tempFmtEnd - tempFmtPos,
                                     "%s",
-                                    LocalizeOrdinal(x, gender, num, false, lang, locale)
+                                    // 4-arg: RB3-360 retail has no 6-arg
+                                    // LocalizeOrdinal, and the dropped `lang`
+                                    // / `locale` arguments were never read by
+                                    // the body. (This TU is unpinned, so this
+                                    // is a compile fix, not a match change.)
+                                    LocalizeOrdinal(x, gender, num, false)
                                 );
                                 break;
                             }
