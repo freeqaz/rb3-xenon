@@ -19903,7 +19903,7 @@
  "0x827a5500": "??_ESongPreview@@W3AAPAXI@Z",
  "0x827a5508": "?Init@SongPreview@@QAAXXZ",
  "0x827a5668": "?Terminate@SongPreview@@QAAXXZ",
- "0x827a5790": "?Start@SongPreview@@QAAXVSymbol@@PAVTexMovie@@@Z",
+ "0x827a5790": "?Start@SongPreview@@QAAXVSymbol@@@Z",
  "0x827a5900": "?ContentMounted@SongPreview@@UAAXPBD0@Z",
  "0x827a5958": "?ContentFailed@SongPreview@@UAAXPBD@Z",
  "0x827a59d0": "??1SongPreview@@UAA@XZ",
