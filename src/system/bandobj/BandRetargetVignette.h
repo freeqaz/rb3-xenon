@@ -23,8 +23,7 @@ public:
     static const char *sIkfs[];
     static unsigned short gRev;
     static unsigned short gAltRev;
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    OBJ_MEM_OVERLOAD(0x1a);
     NEW_OBJ(BandRetargetVignette)
     static void Init() { Register(); }
     static void Register() { REGISTER_OBJ_FACTORY(BandRetargetVignette); }
