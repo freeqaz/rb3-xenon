@@ -3229,10 +3229,16 @@
    "name": "Remove",
    "address": "0x82440118",
    "survivor": "?Remove@?$Keys@VQuat@Hmx@@V12@@@QAAHMM@Z",
-   "folded": [
-    "?Remove@?$Keys@VVector3@@V1@@@QAAHMM@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?Remove@?$Keys@VVector3@@V1@@@QAAHMM@Z",
+     "why": "DIFFERENT METHOD called: ?KeyLessEq@?$Keys@VColor@Hmx@@V12@@@QBAHM@Z vs ?KeyGreaterEq@?$Keys@VVector3@@V1@@@QBAHM@Z",
+     "lane": "GROUNDED-1 2026-08-14",
+     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+    }
+   ]
   },
   {
    "name": "Size",
@@ -6838,10 +6844,16 @@
    "name": "0?$_Rb_tree_base",
    "address": "0x8235c608",
    "survivor": "??0?$_Rb_tree_base@U?$pair@$$CBHM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@U?$pair@$$CBHM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@1@@Z",
-   "folded": [
-    "??0?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??0?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+     "why": "different body SIZE (8 vs 104) -- cannot be one COMDAT",
+     "lane": "GROUNDED-1 2026-08-14",
+     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+    }
+   ]
   },
   {
    "name": "4?$ObjVector",
@@ -25170,46 +25182,76 @@
    "name": "$__uninitialized_copy",
    "address": "0x82387d90",
    "survivor": "??$__uninitialized_copy@PAUCharInterestState@CharEyes@@PAU12@@stlpmtx_std@@YAPAUCharInterestState@CharEyes@@PAU12@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PBUCharInterestState@CharEyes@@PAU12@@stlpmtx_std@@YAPAUCharInterestState@CharEyes@@PBU12@0PAU12@ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PBUCharInterestState@CharEyes@@PAU12@@stlpmtx_std@@YAPAUCharInterestState@CharEyes@@PBU12@0PAU12@ABU__false_type@0@@Z",
+     "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
+     "lane": "GROUNDED-1 2026-08-14",
+     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+    }
+   ]
   },
   {
    "name": "$__uninitialized_copy",
    "address": "0x823a88a8",
    "survivor": "??$__uninitialized_copy@PAUPoint@CharHair@@PAU12@@stlpmtx_std@@YAPAUPoint@CharHair@@PAU12@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PBUPoint@CharHair@@PAU12@@stlpmtx_std@@YAPAUPoint@CharHair@@PBU12@0PAU12@ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PBUPoint@CharHair@@PAU12@@stlpmtx_std@@YAPAUPoint@CharHair@@PBU12@0PAU12@ABU__false_type@0@@Z",
+     "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
+     "lane": "GROUNDED-1 2026-08-14",
+     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+    }
+   ]
   },
   {
    "name": "$_M_allocate_and_copy",
    "address": "0x827d1380",
    "survivor": "??$_M_allocate_and_copy@PAVString@@@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@IPAV2@0@Z",
-   "folded": [
-    "??$_M_allocate_and_copy@PBVString@@@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@IPBV2@0@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_M_allocate_and_copy@PBVString@@@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@IPBV2@0@Z",
+     "why": "different body SIZE (100 vs 108) -- cannot be one COMDAT",
+     "lane": "GROUNDED-1 2026-08-14",
+     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+    }
+   ]
   },
   {
    "name": "$__uninitialized_copy",
    "address": "0x824e2ac8",
    "survivor": "??$__uninitialized_copy@PAUChar3D@CharData@WorldCrowd@@PAU123@@stlpmtx_std@@YAPAUChar3D@CharData@WorldCrowd@@PAU123@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PBUChar3D@CharData@WorldCrowd@@PAU123@@stlpmtx_std@@YAPAUChar3D@CharData@WorldCrowd@@PBU123@0PAU123@ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PBUChar3D@CharData@WorldCrowd@@PAU123@@stlpmtx_std@@YAPAUChar3D@CharData@WorldCrowd@@PBU123@0PAU123@ABU__false_type@0@@Z",
+     "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
+     "lane": "GROUNDED-1 2026-08-14",
+     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+    }
+   ]
   },
   {
    "name": "$__uninitialized_copy",
    "address": "0x82393c60",
    "survivor": "??$__uninitialized_copy@PAUMerger@FileMerger@@PAU12@@stlpmtx_std@@YAPAUMerger@FileMerger@@PAU12@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PBUMerger@FileMerger@@PAU12@@stlpmtx_std@@YAPAUMerger@FileMerger@@PBU12@0PAU12@ABU__false_type@0@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PBUMerger@FileMerger@@PAU12@@stlpmtx_std@@YAPAUMerger@FileMerger@@PBU12@0PAU12@ABU__false_type@0@@Z",
+     "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
+     "lane": "GROUNDED-1 2026-08-14",
+     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+    }
+   ]
   },
   {
    "name": "$__uninitialized_copy",
@@ -25224,10 +25266,16 @@
    "name": "$_M_allocate_and_copy",
    "address": "0x8239c640",
    "survivor": "??$_M_allocate_and_copy@PAVFace@RndMesh@@@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFace@RndMesh@@IPAV23@0@Z",
-   "folded": [
-    "??$_M_allocate_and_copy@PBVFace@RndMesh@@@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFace@RndMesh@@IPBV23@0@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_M_allocate_and_copy@PBVFace@RndMesh@@@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFace@RndMesh@@IPBV23@0@Z",
+     "why": "different body SIZE (100 vs 108) -- cannot be one COMDAT",
+     "lane": "GROUNDED-1 2026-08-14",
+     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+    }
+   ]
   },
   {
    "name": "DataNodeAssertOnlyAccessor",
