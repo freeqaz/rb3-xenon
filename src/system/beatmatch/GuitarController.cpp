@@ -213,9 +213,10 @@ int GuitarController::OnMsg(const ButtonUpMsg &msg) {
     if (msg.GetUser() != lUser)
         return 0;
     int btn = msg.GetButton();
-    std::vector<int>::iterator btnIter =
-        std::find(mStrumBarButtons.begin(), mStrumBarButtons.end(), btn);
-    if (btnIter != mStrumBarButtons.end()) {
+    const std::vector<int> &strum = mStrumBarButtons;
+    std::vector<int>::const_iterator btnIter =
+        std::find(strum.begin(), strum.end(), btn);
+    if (btnIter != strum.end()) {
         mSink->ReleaseSwing();
     } else if (mControllerStyle != kRoXbox && btn == mMercuryButton) {
         mSink->MercurySwitch(0);

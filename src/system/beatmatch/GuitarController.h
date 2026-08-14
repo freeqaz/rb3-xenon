@@ -37,7 +37,7 @@ public:
 
     bool mDisabled; // 0x3c
     bool mAutoSoloButtons; // 0x3d
-    int mFretMask; // 0x40
+    unsigned int mFretMask; // 0x40
     int mShiftButtonMask; // 0x44
     BeatMatchControllerSink *mSink; // 0x48
     ControllerStyle mControllerStyle; // 0x4c
