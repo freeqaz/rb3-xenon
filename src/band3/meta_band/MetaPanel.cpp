@@ -365,7 +365,9 @@ void MetaPanel::PollForLoading() {
 }
 
 bool MetaPanel::IsLoaded() const {
-    return UIPanel::IsLoaded() && mMusic && mMusic->Loaded();
+    // No `&& mMusic` guard: retail loads mMusic and calls Loaded() straight
+    // through — the body contains no `cmplwi` of mMusic before the call.
+    return UIPanel::IsLoaded() && mMusic->Loaded();
 }
 
 void MetaPanel::FinishLoad() {
