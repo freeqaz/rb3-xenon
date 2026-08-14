@@ -33,8 +33,15 @@ public:
     virtual DataNode Handle(DataArray *, bool);
     virtual ~CameraManager();
 
+    // NO DELETE_POOL_OVERLOAD: retail's scalar deleting dtor calls a ONE-ARG
+    // static `operator delete(void*)` (`mr r3,r31; bl ??3...@SAXPAX@Z`), not the
+    // pool form, which inlines as the two-arg `li r3,52; mr r4,r31; bl PoolFree`.
+    // The plain/global `??3@YAXPAX@Z` is a known ICF fold-mate of retail's callee
+    // (QuestFilterPanel's ??_G pairs the two as EQUAL).  The destructor is
+    // virtual, so every `delete` routes through ??_G and the blast radius is this
+    // one function; NEW_POOL_OVERLOAD is deliberately left in place so allocation
+    // sites are untouched.  (lane INSDEL-3)
     NEW_POOL_OVERLOAD(CameraManager)
-    DELETE_POOL_OVERLOAD(CameraManager)
     static Rand sRand;
     static int sSeed;
 
