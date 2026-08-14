@@ -31,7 +31,13 @@ CLAUDE.md "Whole-binary A/B measurement"):
   6. FORCE what the change kind needs: map/splits => restore symbols.txt,
      rm the renamer stamp, touch config.yml (a map edit is INERT without a
      forced re-split: lane CF-1 lost a leg to "[APPLIED] ... 0 files
-     patched"); configgen => rerun configure.py.
+     patched"); configgen => rerun configure.py. The forced re-split is then
+     ITERATED TO A symbols.txt FIXED POINT, on BOTH legs (lane ABSPLIT-1;
+     see resplit_fixed_point). ONE split is not enough for any patch that
+     trips a jeff merge pass, and the shortfall is SILENT and lands in the
+     BYTES: the landed +1 fn / +120 B fixture read +1 fn / +0 B under one
+     split per leg, with `matched_functions` moving either way. A leg that
+     does not converge is REFUSED, never priced.
   7. LEG B build — SETTLED, exactly like leg A (lane DT-3). The recompile
      count comes from THESE builds' logs, before any report generation
      (run_objdiff-style flows hide the compile, so a later count reads 0 and
@@ -345,6 +351,88 @@ def settle_loop(build_iteration, max_attempts, stage, hint=""):
     raise Refusal(stage, hint)
 
 
+def resplit_fixed_point(build_iteration, read_sha, force_split, input_sha,
+                        max_resplits, stage, leg):
+    """Force re-splits until the split's OUTPUT symbols.txt equals its INPUT.
+
+    WHY THIS EXISTS (lane ABSPLIT-1, 2026-08-14). ONE forced re-split per leg
+    is NOT enough for a whole class of splits patch, and the shortfall is
+    SILENT — it lands in the bytes, not in a refusal.
+
+    `config/<title>/symbols.txt` is simultaneously a discovered INPUT of the
+    SPLIT edge and an OUTPUT of it (see settle()'s docstring). jeff's Class-4
+    over-carve merge (`merge_branch_reached_overcarve_tails`) therefore
+    converges ACROSS re-splits: split #1 consumes the pre-merge symbols.txt,
+    performs the merge, and WRITES the merged symbol back — but the target
+    obj it emitted on that pass was carved before the merge was recorded.
+    Split #2 consumes the merged file and emits the merged obj. Only then is
+    the row's `fuzzy_match_percent` 100 and only then do its bytes count
+    toward `matched_code`.
+
+    MEASURED on the landed known-answer fixture (commit ab5ebed3, worth
+    +1 fn / +120 B at its own converged fixed point), splits-only patch,
+    one worktree, warm cache:
+
+        one forced split per leg (old)   Δmatched +1   Δcode_bytes    +0
+        iterate to the fixed point (new) Δmatched +1   Δcode_bytes  +120
+
+    i.e. the old reading was short by the ENTIRE byte amount while printing a
+    confident "A/B RESULT (MEASURED)". `matched_functions` moved either way,
+    because `mpn` excludes the arg-only penalty that the un-converged carve
+    leaves behind — so the two rulers disagreed and nothing flagged it. Leg B
+    read fuzzy 99.833336 un-converged vs 100.0 converged.
+
+    ⚠ BOTH LEGS ITERATE, or the comparison is not a comparison. On this very
+    fixture leg A is ALREADY at a fixed point (its committed symbols.txt is
+    the split's own output: `settle_symbols_drift` is null) and costs zero
+    extra builds, while leg B needs one — so the iteration count is itself
+    leg-dependent DATA, and hard-coding "one split each" silently measures the
+    two legs in structurally different states.
+
+    ⚠ NOTHING HERE RESTORES symbols.txt. The drifted file IS the input whose
+    feedback we are converging; restoring it would re-dirty a discovered SPLIT
+    dep and make the enclosing settle loop non-convergent (lane CK-2, wave CJ:
+    2 work edges forever). Convergence is reached by FEEDING the drift BACK,
+    which is the exact opposite operation.
+
+    Pure w.r.t. the build and the filesystem: `build_iteration(n) -> counts`,
+    `read_sha() -> str` and `force_split()` are injected, so the selftest
+    drives converged / needs-N / never-converges / OSCILLATING with no
+    toolchain. Returns {"resplits", "shas", "per_iteration"}; raises Refusal
+    if no fixed point is reached — a non-converged split is not a measurable
+    state and must never be priced.
+    """
+    shas = [input_sha, read_sha()]
+    per = []
+    while shas[-1] != shas[-2]:
+        if len(per) >= max_resplits:
+            raise Refusal(
+                stage,
+                f"leg {leg}: symbols.txt never reached a SPLIT FIXED POINT in "
+                f"{max_resplits} forced re-split(s) — it is still changing "
+                f"({' -> '.join(s[:12] for s in shas)}). A non-converged split "
+                "is not a measurable state: the target objs were carved from a "
+                "symbols.txt the split has already superseded, so any byte "
+                "figure read here is short by an unknown amount (measured: the "
+                "FULL amount on lane ABSPLIT-1's fixture). REFUSING rather "
+                "than under-reporting. Raise --max-resplit if a legitimately "
+                "deeper merge chain exists; investigate the splitter if it "
+                "never settles.")
+        force_split()
+        per.append(build_iteration(len(per) + 1))
+        shas.append(read_sha())
+        if shas[-1] != shas[-2] and shas[-1] in shas[:-2]:
+            raise Refusal(
+                stage,
+                f"leg {leg}: symbols.txt is OSCILLATING between split states, "
+                f"not converging ({' -> '.join(s[:12] for s in shas)}) — a "
+                "state already seen has recurred. More re-splits cannot help; "
+                "this is a splitter-level non-determinism or a genuine "
+                "two-cycle, and either way there is no fixed point to measure "
+                "at. REFUSING.")
+    return {"resplits": len(per), "shas": shas, "per_iteration": per}
+
+
 def check_read_zero_work(name, counts):
     """The leg-read guard: regenerating the report must do NO build work.
 
@@ -497,11 +585,16 @@ def classify_patch(numstat_paths):
 
 
 class ABMeasure:
-    def __init__(self, wt, rundir, jobs, max_settle, verbose_print=print):
+    def __init__(self, wt, rundir, jobs, max_settle, verbose_print=print,
+                 max_resplit=4):
         self.wt = Path(wt).resolve()
         self.rundir = Path(rundir)
         self.jobs = jobs
         self.max_settle = max_settle
+        self.max_resplit = max_resplit
+        # symbols.txt content the most recent forced split CONSUMED; the input
+        # half of the fixed-point test. Set by force_split(), never elsewhere.
+        self._split_input_sha = None
         self.say = verbose_print
         self.ninja = self.wt / "tools" / "ninja-locked"
         self.evidence = {}   # verification evidence, goes into result.json
@@ -534,6 +627,72 @@ class ABMeasure:
         dep of the SPLIT edge, so restoring it after a split re-dirties the
         graph and settling becomes impossible)."""
         git(self.wt, "checkout", "--", SYMBOLS_REL)
+
+    def symbols_sha(self):
+        """sha256 of the CURRENT symbols.txt — the split's fixed-point probe.
+
+        Content, never mtime: `git checkout --` skips the write when the file
+        already matches the index, and a forced re-split rewrites the file
+        whether or not it changed it, so neither mtime nor "is it dirty?"
+        distinguishes converged from not (lane CK-2 recorded the mtime half of
+        that trap from the other direction)."""
+        return hashlib.sha256((self.wt / SYMBOLS_REL).read_bytes()).hexdigest()
+
+    def force_split(self):
+        """Force the SPLIT edge to re-run, recording the symbols.txt content
+        it is about to CONSUME.
+
+        The recorded sha is the input half of the fixed-point test: a split is
+        at its fixed point exactly when the file it writes equals the file it
+        read. ⚠ This deliberately does NOT restore symbols.txt — callers that
+        need a restore (the first forced split of a leg, which must start from
+        the COMMITTED file so both legs start identically) do it themselves,
+        immediately before calling this."""
+        self._split_input_sha = self.symbols_sha()
+        (self.wt / STAMP_REL).unlink(missing_ok=True)
+        (self.wt / CONFIG_YML_REL).touch()
+
+    def converge_split(self, leg, label):
+        """Iterate forced re-splits until symbols.txt is a SPLIT FIXED POINT.
+
+        Wraps the pure resplit_fixed_point() with this tool's real build: each
+        forced re-split is itself SETTLED to zero work, so the fixed-point
+        iteration never weakens the quiescence guarantee — it strengthens it
+        (the leg is quiescent AND at a split fixed point when it is read).
+        """
+        hint = self._settle_hint(leg=leg, log_glob=f"{label}_resplit*.log")
+        res = resplit_fixed_point(
+            build_iteration=lambda n: settle_loop(
+                lambda a: self._build_iteration(f"{label}_resplit{n}", a),
+                self.max_settle, f"leg{leg}-resplit{n}-settle", hint)["aggregate"],
+            read_sha=self.symbols_sha,
+            force_split=self.force_split,
+            input_sha=self._split_input_sha,
+            max_resplits=self.max_resplit,
+            stage=f"leg{leg}-resplit",
+            leg=leg)
+        self.evidence[f"leg{leg}_split_resplits_to_fixed_point"] = res["resplits"]
+        self.evidence[f"leg{leg}_split_shas"] = [s[:12] for s in res["shas"]]
+        if res["resplits"]:
+            agg = zero_counts()
+            for c in res["per_iteration"]:
+                agg = merge_counts(agg, c)
+            self.evidence[f"leg{leg}_resplit_counts"] = agg
+        self.say(f"  [leg {leg}] symbols.txt at SPLIT FIXED POINT after "
+                 f"{res['resplits']} extra forced re-split(s) "
+                 f"(sha chain {' -> '.join(s[:8] for s in res['shas'])}); "
+                 + ("the first split was already its own fixed point"
+                    if not res["resplits"] else
+                    "the FIRST split's objs were carved from a symbols.txt it "
+                    "then superseded — reading there under-reports bytes"))
+        # splits.txt is ALSO rewritten by the split (.pdata is re-derived every
+        # run). It is byte-stable in every case measured, so it is NOT part of
+        # the convergence condition — but a SECOND feedback channel that is
+        # silently still moving is exactly the shape of the defect this method
+        # exists to fix, so it is surfaced rather than assumed.
+        self.evidence[f"leg{leg}_splits_sha"] = hashlib.sha256(
+            (self.wt / f"config/{TITLE}/splits.txt").read_bytes()).hexdigest()[:12]
+        return res
 
     def symbols_drift(self):
         """Line-delta of post-split symbols.txt drift vs the committed file.
@@ -690,12 +849,23 @@ class ABMeasure:
 
         ⇒ Post-split drift is EXPECTED STATE, not dirt. The guarantee the
         restore protects is real but POSITIONAL: symbols.txt drift breaks a
-        split ("ends within symbol"), so every *split-forcing* build must be
-        preceded by a restore. Those restores still happen, in both the
-        places that force a split — here (pre-loop, incl. the presplit
-        branch) and in apply_patch() for leg B — so BOTH LEGS STILL SEE
-        IDENTICAL symbols.txt HANDLING: each leg starts from the committed
+        split ("ends within symbol"), so every leg's FIRST split-forcing build
+        must be preceded by a restore. Those restores still happen, in both
+        the places that begin a leg's split — here (pre-loop, incl. the
+        presplit branch) and in apply_patch() for leg B — so BOTH LEGS STILL
+        SEE IDENTICAL symbols.txt HANDLING: each leg starts from the committed
         file, forces its split, and is measured at the resulting fixed point.
+
+        ⚠ THAT LAST CLAUSE WAS ASPIRATIONAL UNTIL lane ABSPLIT-1 (2026-08-14):
+        the leg was measured at the state ONE forced split happened to leave,
+        which is the fixed point only when the split converges in one pass.
+        When it does not, the reading is short by an unbounded number of bytes
+        and NOTHING flagged it. converge_split() now makes the sentence true
+        by ITERATING to the fixed point — feeding the drift BACK IN, never
+        restoring it, which is the opposite of the wave-CJ defect above and is
+        why the two coexist. Leg A converges in settle() (presplit branch) and
+        leg B in leg_b_build(); the two call the SAME method, because "both
+        legs treated identically" is the entire validity of the comparison.
         """
         self.restore_symbols()
         if presplit:
@@ -703,9 +873,10 @@ class ABMeasure:
             # so both legs share build state (footgun 8).
             self.say("  [settle] forcing re-split for leg A (splits/map patch "
                      "=> both legs must be measured in freshly-split state)")
-            # symbols.txt was already restored just above, unconditionally.
-            (self.wt / STAMP_REL).unlink(missing_ok=True)
-            (self.wt / CONFIG_YML_REL).touch()
+            # symbols.txt was already restored just above, unconditionally, so
+            # the sha force_split() records is the COMMITTED file — the same
+            # starting point leg B gets in apply_patch().
+            self.force_split()
         # ⚠ NO restore_symbols() below this point — see the docstring: it is a
         # discovered dep of the SPLIT edge AND a split output, so restoring
         # inside the loop re-dirties the graph and the loop cannot converge.
@@ -721,6 +892,11 @@ class ABMeasure:
                      "point — EXPECTED (it is a split OUTPUT as well as "
                      "a discovered dep). NOT restored: restoring here is "
                      "what made this loop non-convergent for wave CJ.")
+        if presplit:
+            # Quiescent is NOT the same as converged: the split can be done
+            # doing WORK while its own input file has moved under it. Leg A
+            # iterates here exactly as leg B does in leg_b_build().
+            self.converge_split("A", "settle")
 
     def _build_iteration(self, label, attempt):
         """ONE settle iteration = the DEFAULT target, then the REPORT target.
@@ -845,8 +1021,7 @@ class ABMeasure:
                      "renamer stamp, touch config.yml (forces re-split; without "
                      "it the leg is INERT: '[APPLIED] ... 0 files patched')")
             self.restore_symbols()
-            (self.wt / STAMP_REL).unlink(missing_ok=True)
-            (self.wt / CONFIG_YML_REL).touch()
+            self.force_split()
         if "configgen" in kinds:
             self.say("  [force] configgen change: re-running configure.py")
             run([sys.executable, "configure.py"], cwd=self.wt,
@@ -889,6 +1064,13 @@ class ABMeasure:
                      f"(msvc={first['msvc']} split={first['split']} "
                      f"renamer_patched={first['renamer_patched']})")
         check_legb_counts(kinds, first)
+        # Only NOW, after the application assertions have read the first
+        # iteration, iterate to the split fixed point (lane ABSPLIT-1). Order
+        # matters twice over: the assertions must see the build immediately
+        # after apply (footgun 3), and a patch that fails them must refuse
+        # CHEAPLY rather than after N more re-splits.
+        if kinds & {"map", "splits"}:
+            self.converge_split("B", "legB_build")
         return res
 
 
@@ -1613,6 +1795,12 @@ def main():
                     help="run even if this script is a superseded committed "
                          "version of itself (lane CK-3's silent failure mode)")
     ap.add_argument("--max-settle", type=int, default=4)
+    ap.add_argument("--max-resplit", type=int, default=4,
+                    help="max EXTRA forced re-splits per leg while driving "
+                         "symbols.txt to a split FIXED POINT (map/splits "
+                         "patches only; default 4). The measured Class-4 "
+                         "merge case needs 1. Not reaching a fixed point is a "
+                         "REFUSAL, never a reported number.")
     ap.add_argument("--jobs", type=int,
                     default=int(os.environ.get("AB_NINJA_JOBS", "12")),
                     help="ninja -j (default 12; 0 = ninja default)")
@@ -1660,7 +1848,8 @@ def main():
     result_path = rundir / "result.json"
     print(f"ab_measure: run dir {rundir}")
 
-    ab = ABMeasure(args.worktree, rundir, args.jobs, args.max_settle)
+    ab = ABMeasure(args.worktree, rundir, args.jobs, args.max_settle,
+                   max_resplit=args.max_resplit)
     status = {"status": "refused", "stage": None, "reason": None}
     guard = TreeGuard(ab)
     if args.restore:
@@ -1853,6 +2042,18 @@ def main():
               f"(recompiles: {legb_counts['msvc']}, split={legb_counts['split']}, "
               f"patch_steps={legb_counts['patch']}, "
               f"settle iterations: {legb_res['attempts']})")
+        if kinds & {"map", "splits"}:
+            # Leg-DEPENDENT data, so it is printed per leg, not as one number:
+            # a leg whose committed symbols.txt is already the split's own
+            # output converges in 0, while the other needs N (lane ABSPLIT-1's
+            # fixture is exactly 0 and 1). Both legs are read AT their fixed
+            # point; a leg that never reached one refused above.
+            print(f"  split fixed point: leg A converged after "
+                  f"{ab.evidence.get('legA_split_resplits_to_fixed_point')} "
+                  f"extra re-split(s), leg B after "
+                  f"{ab.evidence.get('legB_split_resplits_to_fixed_point')} "
+                  "— BOTH read at a fixed point (one split per leg under-"
+                  "reports bytes: measured +0 vs +120 B on ab5ebed3)")
         print(f"  Δmatched={delta['matched_functions']:+d}  "
               f"Δmasked_equal={delta['masked_equal_functions']:+d}  "
               f"Δhonest={delta['honest']:+d}  "
@@ -2336,7 +2537,15 @@ def selftest():
             if "self.restore_symbols()" in l and not l.strip().startswith("#")] \
         if loop_at is not None else ["<no settle_loop call found>"]
     others = {}
-    for fn in (ABMeasure._build_iteration, ABMeasure.leg_b_build, settle_loop):
+    # ⚠ WIDENED AGAIN by lane ABSPLIT-1: the fixed-point iteration forces MORE
+    # splits, which is precisely the operation whose naive spelling ("restore
+    # the file, then re-split") is the wave-CJ defect. converge_split(),
+    # force_split() and resplit_fixed_point() must therefore be under this
+    # guard too — the fix would otherwise be one plausible-looking line away
+    # from reinstating the exact regression it was built next to.
+    for fn in (ABMeasure._build_iteration, ABMeasure.leg_b_build, settle_loop,
+               ABMeasure.converge_split, ABMeasure.force_split,
+               resplit_fixed_point):
         others[fn.__name__] = [
             l for l in inspect.getsource(fn).splitlines()
             if "restore_symbols()" in l and not l.strip().startswith("#")]
@@ -2345,12 +2554,145 @@ def selftest():
     print(("  PASS" if ok else "  FAIL") +
           f"  settle() restores symbols.txt EXACTLY ONCE pre-loop "
           f"(pre={len(pre)}, post={len(post)}) and NEITHER the loop, the "
-          f"per-iteration build, nor leg B's settle restores it "
+          f"per-iteration build, leg B's settle, NOR the fixed-point "
+          f"iteration restores it "
           f"({ {k: len(v) for k, v in others.items()} }) — an in-loop restore "
           "re-dirties a discovered SPLIT dep and settling becomes impossible "
           "(wave CJ: 2 work edges forever)")
     if not ok:
         fails.append("settle in-loop restore")
+
+    # ======================================================================
+    # LANE ABSPLIT-1 — one forced split per leg SILENTLY UNDER-REPORTS BYTES.
+    # Fixtures are sha CHAINS: each entry is what the split WROTE given the
+    # previous entry as input. Every case asserts the new behaviour AND that
+    # the old "stop after one split" rule reads a DIFFERENT (non-fixed-point)
+    # state on the same chain — a selftest that only shows the new code
+    # passing cannot tell a fix from a no-op.
+    # ======================================================================
+    def _drive(chain, max_resplits=4):
+        """Replay a split chain with no build and no filesystem.
+
+        chain[0] is the committed file; chain[i] is what split i wrote.
+        Returns (result, n_builds, n_forces)."""
+        state = {"i": 0, "builds": 0, "forces": 0}
+
+        def read_sha():
+            return chain[state["i"]]
+
+        def force_split():
+            state["forces"] += 1
+            state["i"] = min(state["i"] + 1, len(chain) - 1)
+
+        def build_iteration(n):
+            state["builds"] += 1
+            return zero_counts()
+
+        # The leg's FIRST split has already happened when converge_split is
+        # called, exactly as in the real flow: input chain[0], output chain[1].
+        state["i"] = 1
+        res = resplit_fixed_point(build_iteration, read_sha, force_split,
+                                  chain[0], max_resplits, "legB-resplit", "B")
+        return res, state["builds"], state["forces"]
+
+    # (a) already at a fixed point => ZERO extra work. This is leg A on the
+    #     real fixture (settle_symbols_drift null), so the cost of the fix on
+    #     an already-converged leg must be exactly nothing.
+    def _c_converged():
+        res, builds, forces = _drive(["aa", "aa"])
+        assert res["resplits"] == 0 and builds == 0 and forces == 0, res
+    check("resplit: split already at its fixed point costs 0 extra builds",
+          _c_converged, expect_refusal=False)
+
+    # (b) THE MEASURED FIXTURE (ab5ebed3): split 1 consumes the pre-merge
+    #     symbols.txt and writes the merged one; split 2 consumes that and
+    #     reproduces it. Exactly ONE extra re-split, and the old rule would
+    #     have stopped at "bb" — a state the split itself has superseded.
+    def _c_one():
+        res, builds, forces = _drive(["aa", "bb", "bb"])
+        assert res["resplits"] == 1 and builds == 1 and forces == 1, res
+        assert res["shas"] == ["aa", "bb", "bb"], res
+        # the old behaviour, stated as a fact about the SAME fixture
+        assert res["shas"][0] != res["shas"][1], "fixture must not be trivial"
+    check("resplit: Class-4 merge fixture converges in exactly 1 re-split "
+          "(old rule stopped at a superseded symbols.txt)", _c_one,
+          expect_refusal=False)
+
+    # (c) a deeper chain still converges, and needs its own count
+    def _c_two():
+        res, _, _ = _drive(["aa", "bb", "cc", "cc"])
+        assert res["resplits"] == 2, res
+    check("resplit: a 2-deep merge chain converges in 2", _c_two,
+          expect_refusal=False)
+
+    # (d) NEVER converges => REFUSAL, not a number. The bound must bite.
+    check("resplit: never-converging split is REFUSED (not priced)",
+          lambda: _drive(["a", "b", "c", "d", "e", "f", "g", "h"]),
+          expect_refusal=True)
+
+    # (e) the bound is real at max_resplits=1 on the 2-deep chain: this is the
+    #     control proving (d) is not passing for some unrelated reason.
+    check("resplit: bound bites — 2-deep chain REFUSED at --max-resplit 1",
+          lambda: _drive(["aa", "bb", "cc", "cc"], max_resplits=1),
+          expect_refusal=True)
+
+    # (f) OSCILLATION is diagnosed as such rather than burning the budget
+    def _c_osc():
+        _drive(["aa", "bb", "aa", "bb", "aa", "bb"], max_resplits=9)
+    check("resplit: oscillating split states are REFUSED as OSCILLATING",
+          _c_osc, expect_refusal=True)
+    try:
+        _c_osc()
+        fails.append("resplit oscillation message")
+        print("  FAIL  oscillation case did not refuse at all")
+    except Refusal as e:
+        ok = "OSCILLATING" in str(e)
+        print(("  PASS" if ok else "  FAIL") +
+              "  oscillation refusal NAMES the cause (a bound-exhausted "
+              "message would send the reader to raise --max-resplit, which "
+              "cannot help a two-cycle)")
+        if not ok:
+            fails.append("resplit oscillation message")
+
+    # ---- BOTH LEGS must iterate, or the comparison is not a comparison ----
+    # Shape test (behaviour needs two ~10-min builds). The failure it guards
+    # is not a crash: converging only leg B would compare a converged leg
+    # against an un-converged one and print a confident, wrong delta.
+    a_src = inspect.getsource(ABMeasure.settle)
+    b_src = inspect.getsource(ABMeasure.leg_b_build)
+    # ⚠ match the CALL (`self.converge_split(`), not the NAME: this guard's
+    # first version matched "converge_split(" anywhere and fired on settle()'s
+    # own DOCSTRING, i.e. it counted prose as a call site.
+    a_calls = [l for l in a_src.splitlines()
+               if "self.converge_split(" in l and not l.strip().startswith("#")]
+    b_calls = [l for l in b_src.splitlines()
+               if "self.converge_split(" in l and not l.strip().startswith("#")]
+    ok = (len(a_calls) == 1 and len(b_calls) == 1
+          and '"A"' in a_calls[0] and '"B"' in b_calls[0])
+    print(("  PASS" if ok else "  FAIL") +
+          f"  BOTH legs drive the split to a fixed point via the SAME method "
+          f"(settle->{len(a_calls)} call, leg_b_build->{len(b_calls)} call) — "
+          "converging one leg only would compare a converged leg against an "
+          "un-converged one and print a confident wrong delta")
+    if not ok:
+        fails.append("both legs converge")
+
+    # The application assertions must still read the FIRST iteration, i.e.
+    # check_legb_counts must run BEFORE the extra re-splits (footgun 3: the
+    # proof the patch was consumed comes from the build right after apply).
+    lines = [l.strip() for l in b_src.splitlines() if not l.strip().startswith("#")]
+    i_check = next((i for i, l in enumerate(lines)
+                    if l.startswith("check_legb_counts(")), None)
+    i_conv = next((i for i, l in enumerate(lines)
+                   if "self.converge_split(" in l), None)
+    ok = i_check is not None and i_conv is not None and i_check < i_conv
+    print(("  PASS" if ok else "  FAIL") +
+          f"  leg B asserts APPLICATION (idx {i_check}) BEFORE iterating the "
+          f"split (idx {i_conv}) — the proof the patch was consumed must come "
+          "from the build immediately after apply, and a patch that fails it "
+          "must refuse cheaply")
+    if not ok:
+        fails.append("legB assertion ordering")
 
     # ---- result.json must carry the FULL unit populations (lane CK-2) -----
     a_u = {f"u{i}": 5 for i in range(20)}
