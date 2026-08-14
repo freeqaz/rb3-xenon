@@ -102,13 +102,47 @@ documented `CATEGORY_ALLOWED_TIERS` granularity table -- and it FAILED on
 ZLibCompression before the fix above, so the guard is known able to fail.
 
 ⚠ STILL a granularity difference BY DESIGN, do not "fix" it: the 114 `src/network/`
-units read tier `game` here (one priority tier) and category `network` there. And
-31 units / 105,752 B of vendored third-party source under `src/system/` read
-`thirdparty` here but `engine` there -- sized, documented and deliberately not
-closed by CATTAG-1, because it moves the widely-quoted engine denominator.
+units read tier `game` here (one priority tier) and category `network` there.
 
-This tool remains reporting-only and metric-neutral by construction; the fix landed
-in objects.json/configure.py and measured Δmatched=0 / Δcode%=0.000000pp.
+✅ THE VENDORED-SOURCE HALF OF THAT PARAGRAPH IS CLOSED (lane VENDTIER-1,
+2026-08-14). `thirdparty` is a progress category now, so vendored upstream under
+`src/system/` no longer counts as "Milo Engine Code". ⚠⚠ THE ENGINE TIER MOVED --
+any `engine` % quoted across this change must say which side it is on:
+
+    engine   BEFORE  670 units / 4,125,408 B / aon 55.569%
+             AFTER   640 units / 4,019,668 B / aon 54.683%   (-30 units,
+                                                              -105,740 B,
+                                                              -0.885 pp)
+    thirdparty (new)  30 units /   105,740 B / aon 89.230%
+
+  Conservation checked exactly: engine+thirdparty after == engine before, +0
+  units and +0 bytes. game / network / sdk are bit-identical. Nothing left the
+  total -- this is reattribution, not a shrunken denominator.
+
+★ THE SIGN WAS NOT PREDICTABLE FROM THE BYTE DIRECTION, and the intuition
+"removing 105 kB from a tier" says nothing about which way its % goes. It is set
+by the MATCH RATE OF WHAT MOVES: the departing units are 89.230% matched against
+an engine tier averaging 55.569%, so exporting them LOWERS the remainder. The
+engine number had been flattered by 0.885 pp of vendored code. (CATTAG-1 made
+the mirror-image observation with the opposite sign -- game% ROSE when it gained
+units matched 76.48% and shed units matched 12.06%.)
+
+⇒ Third-party is comfortably our best-matched tier (89.2% vs game 60.2%, engine
+54.7%), which is what a public-source oracle and mechanical work should look
+like, and is an argument for the split rather than against it.
+
+⚠ 30, not 31: the set is 34 declared / 31 pinned, and 4 of the 34 are Harmonix
+code that merely LIVES in a vendored directory (VorbisMem.cpp, Jpeg.cpp, and two
+*License.cpp) -- adjudicated per file against actual upstream and kept in
+`engine`. Only VorbisMem.cpp of those is pinned, at 12 B. See the module
+docstring of tools/source_category.py for the full per-file adjudication and
+`bucket_for_source` below for the rule that catches them.
+
+This tool remains reporting-only and metric-neutral by construction; the CATTAG-1
+fix landed in objects.json/configure.py and the VENDTIER-1 fix in
+config.json/source_category.py/scope_map.py, each measured Δmatched=0 /
+Δcode%=0.000000pp (VENDTIER-1: Δfuzzy=0.000000pp too, 0 recompiles, and
+`build.ninja` byte-identical).
 
 CACHE HYGIENE -- scope_map.json is gitignored and addr-keyed to ONE target build.
 If it is absent (fresh checkout / worktree) or keyed to a different revision of
@@ -174,6 +208,22 @@ THIRDPARTY_MARKERS = (
     "/speex/", "/expat/", "/stlport/", "/libpng/", "/jpeg/",
 )
 
+# Vendored libraries that are pure C upstream. Every one of these ships C only,
+# so a C++ TU sitting inside one is NOT upstream -- it is Harmonix glue that was
+# filed next to the library it wraps (an allocator shim, a Milo-side API wrapper,
+# a `Licenses` registration object). Its oracle is DC3/rb3-Wii, not the public
+# tarball, so it belongs in `engine`.
+#
+# ⚠ `/stlport/` is deliberately ABSENT: STLport is a C++ library, so ".cpp inside
+# it" would be upstream and the rule must not fire. (Moot today -- 0 stlport
+# objects are declared and the tree carries 34 .c / 0 .cpp under it -- but the
+# rule has to stay true if that changes.)
+_C_ONLY_VENDOR_MARKERS = (
+    "/zlib/", "/oggvorbis/", "/json-c/", "/curl/", "/tomcrypt/",
+    "/speex/", "/expat/", "/libpng/", "/jpeg/",
+)
+_CXX_SUFFIXES = (".cpp", ".cxx", ".cc")
+
 
 def bucket_for_source(sp):
     """Map a pinned unit source_path to a scope bucket. Returns None if unknown."""
@@ -192,8 +242,23 @@ def bucket_for_source(sp):
     if low.startswith("src/band3/") or low.startswith("src/network/"):
         return "game"
     # third-party libs (some live UNDER src/system/, so test before engine)
+    #
+    # ⚠ SECOND INSTANCE OF THE SAME DISEASE AS ZLibCompression.cpp ABOVE (lane
+    # VENDTIER-1): a marker says "this path is near library X", which is not the
+    # same claim as "this FILE came from X". Adjudicated per-file against actual
+    # upstream, the four C++ TUs inside our C vendor dirs are all Harmonix:
+    #   src/system/oggvorbis/VorbisMem.cpp     OggMalloc/OggFree over utl/MemMgr.h
+    #   src/system/jpeg/Jpeg.cpp               LoadBitmapIntoJpeg, MILO_ASSERT
+    #   src/system/zlib/ZlibLicense.cpp        utl/Licenses.h registration object
+    #   src/system/synth/tomcrypt/TomCryptLicense.cpp    ditto
+    # while all 30 .c files carry their upstream banner or unmistakable upstream
+    # API (LibTomCrypt's mycrypt.h / cipher_descriptor / symmetric_CTR). Only
+    # VorbisMem.cpp is pinned (12 B); the other three contribute 0 B today, so
+    # this rule is about being RIGHT, not about the bytes.
     for m in THIRDPARTY_MARKERS:
         if m in low:
+            if m in _C_ONLY_VENDOR_MARKERS and low.endswith(_CXX_SUFFIXES):
+                break  # Harmonix glue in a C library -- fall through to engine
             return "thirdparty"
     # CRT we compile ourselves
     if "/xdk/libcmt/" in low:

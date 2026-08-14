@@ -46,9 +46,16 @@ jobs:
     # game code counted as engine, and the whole `xdk` group counted as engine
     # rather than sdk. It is derived now (tools/source_category.py), and this
     # step fails on any category<->scope_map tier pair outside the documented
-    # CATEGORY_ALLOWED_TIERS granularity table. `selftest` first: it pins 14
-    # known-answer cases including five negatives, so a classifier that has
+    # CATEGORY_ALLOWED_TIERS granularity table. `selftest` first: it pins 23
+    # known-answer cases including nine negatives, so a classifier that has
     # stopped discriminating fails here rather than silently passing `audit`.
+    # (VENDTIER-1 added the `thirdparty` tier and, with it, the four .cpp files
+    # that live INSIDE vendored C libraries but are Harmonix glue -- those are
+    # the negatives that stop the rule collapsing into "anything under a vendor
+    # directory is third-party", which is the bug the tier split could have
+    # introduced. It also TIGHTENED engine's allowed tiers to {"engine"}: the
+    # old {"engine","thirdparty"} entry was a blanket exemption that let 30
+    # rows sit mis-tiered without the audit saying a word.)
     - name: Progress-category derivation guard
       run: |
         python3 tools/source_category.py selftest
