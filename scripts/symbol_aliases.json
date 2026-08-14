@@ -27971,6 +27971,65 @@
    "nrel": 0,
    "body_bytes": 60,
    "retail_addrs_for_body": 1
+  },
+  {
+   "name": "FOLDPROVE1_ParticlePoolSize_anon_ns",
+   "address": "0x82446440",
+   "survivor": "?ParticlePoolSize@?A0x1a651105@@YAHXZ",
+   "folded": [
+    "?ParticlePoolSize@?A0xb0344ebf@@YAHXZ"
+   ],
+   "body_bytes": 132,
+   "nrel": 17,
+   "retail_addrs_for_body": 1,
+   "retail_fanin": 3,
+   "retail_callers": [
+    "?AllocParticle@RndParticleSys@@QAAPAVRndParticle@@XZ",
+    "?PrintParticlePoolSize@?A0x1a651105@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "?InitPool@ParticleCommonPool@@QAAXXZ"
+   ],
+   "witness": "RESOLVED (not tolerated) literal relocations: retail .rdata 0x82066A6C='global_limit', 0x82066A60='particlesys', identical to our decoded ??_C@ literals; plus the two spellings are the SAME source function emitted from two TUs, so no wrong-callee hazard exists by construction",
+   "evidence": "Lane FOLDPROVE-1. THE SAME SOURCE FUNCTION EMITTED FROM TWO TUs, folded by /OPT:ICF. The two spellings differ only in the anonymous-namespace hash MSVC derives from the source path: ?A0x1a651105 is emitted by system/rndobj/Part.obj and ?A0xb0344ebf by system/char/CharLipSync.obj (verified by scanning both objs). 132-B body; masked bytes identical to retail at 0x82446440 for BOTH spellings. ALL 17 relocation slots RESOLVED AND AGREEING: 13 agree literally (including the real callees ??0Symbol@@QAA@PBD@Z, ?SystemConfig@@ and ?Int@DataNode@@), and the 4 that relocs_agree merely TOLERATED (retail lbl_ vs our ??_C@, both in _PLACEHOLDER) were resolved on BOTH sides and compared -- retail's bytes read 'global_limit' and 'particlesys', identical to our literals. That closes the exact hole NOGROUP-1 documented, where two Type() statics interning DIFFERENT literals compared EQUAL through the tolerance. Retail keeps EXACTLY ONE address for this body and the folded spelling is NOT map-resident. Fan-in includes ?PrintParticlePoolSize@?A0x1a651105@@ -- a caller from the SURVIVOR's own anonymous namespace. NO WRONG-CALLEE HAZARD BY CONSTRUCTION. Prices at 0 B (default/Part's InitPool row is already fuzzy==100); installed for correctness."
+  },
+  {
+   "name": "FOLDPROVE1_Song_EndFrame_float_getter",
+   "address": "0x82545c88",
+   "survivor": "?EndFrame@Song@@UAAMXZ",
+   "folded": [
+    "?GetSyncOffsetRaw@ProfileMgr@@QBAMXZ"
+   ],
+   "body_bytes": 8,
+   "nrel": 0,
+   "retail_addrs_for_body": 1,
+   "retail_fanin": 1,
+   "retail_callers": [
+    "?RecordOptionData@RockCentral@@QAAXXZ"
+   ],
+   "witness": "nrel==0 (nothing masked => byte identity is ICF's COMPLETE criterion) + heterogeneous fan-in: the address is a Song-family VTABLE SLOT (.rdata 0x82010124, 0x82118fc8) AND the direct bl target of RockCentral::RecordOptionData; rb3-Wii oracle confirms RecordOptionData calls TheProfileMgr.GetSyncOffsetRaw()",
+   "evidence": "Lane FOLDPROVE-1. Retail body at 0x82545c88 is 8 B / nrel=0: `lfs f1,0x58(r3); blr` -- a float getter at offset 0x58. nrel==0 SCOPES OUT the raw-compare hazard entirely (FATAL-1): nothing is masked, so byte identity is /OPT:ICF's COMPLETE criterion, and our compiled ?GetSyncOffsetRaw@ProfileMgr@@ is byte-identical. Retail keeps EXACTLY ONE address for this body and the folded spelling is not map-resident, so addr(folded)==0x82545c88 necessarily. HETEROGENEOUS FAN-IN: the address is simultaneously a Song-family VTABLE SLOT -- a pointer word at .rdata 0x82010124 and 0x82118fc8, both inside vtables carrying ?SetFrame@Song@@, ?OnMBTFromSeconds@Song@@ and ?CreateSong@Song@@ -- AND the direct `bl` target of ?RecordOptionData@RockCentral@@, a non-Song context. The ADJACENT vtable slot is ?GetFileLength@StandardStream@@UBAMXZ, another float getter from an unrelated class sitting in a Song vtable, independently showing these slot names are fold-survivor names. INDEPENDENT SOURCE ORACLE: rb3-Wii RockCentral.cpp:1150 defines RockCentral::RecordOptionData() and line 1167 calls TheProfileMgr.GetSyncOffsetRaw(); ProfileMgr.cpp:1179 defines it as `float ProfileMgr::GetSyncOffsetRaw() const { return mSyncOffset; }`, a one-line float getter matching the two observed instructions. Our source is right; ?EndFrame@Song@@ is the arbitrary survivor name the linker kept."
+  },
+  {
+   "name": "FOLDPROVE1_DataNode_LiteralSym",
+   "address": "0x823ea598",
+   "survivor": "??0?$reverse_iterator@PAPAVSynchronizable@@@stlpmtx_std@@QAA@ABV01@@Z",
+   "folded": [
+    "?LiteralSym@DataNode@@QBA?AVSymbol@@PBVDataArray@@@Z"
+   ],
+   "body_bytes": 12,
+   "nrel": 0,
+   "retail_addrs_for_body": 1,
+   "retail_fanin": 92,
+   "retail_callers": [
+    "Curl_gethostname",
+    "?transform@MD5@Quazal@@QAAXPBE@Z",
+    "?_S_right@?$_Rb_tree@VDOHandle@Quazal@@...",
+    "??1ScopedCS@Quazal@@QAA@XZ",
+    "?Init@Locale@@QAAXXZ",
+    "XShowSocialNetworkImagePostUI",
+    "?OnAddSink@MsgSource@@QAA?AVDataNode@@PAVDataArray@@@Z"
+   ],
+   "witness": "nrel==0 (COMPLETE criterion) + 92-caller heterogeneous fan-in on ONE address (Curl_gethostname / MD5::transform / Quazal _Rb_tree cannot all call a reverse_iterator<Synchronizable**> copy-ctor) + DC3 oracle COUNT MATCH 3==3 on OnAddSink",
+   "evidence": "Lane FOLDPROVE-1. Retail body at 0x823ea598 is 12 B / nrel=0: `lwz r11,0(r4); stw r11,0(r3); blr` -- copy one word into the sret buffer. nrel==0 means NOTHING is masked, so byte identity is /OPT:ICF's COMPLETE criterion (FATAL-1 scoping), and our compiled ?LiteralSym@DataNode@@ is byte-identical. Retail keeps EXACTLY ONE address for this body and the folded spelling is not map-resident, so addr(folded)==0x823ea598 necessarily. HETEROGENEOUS FAN-IN, decisive: 92 retail call sites reach this ONE address from mutually impossible contexts -- Curl_gethostname, ?transform@MD5@Quazal@@, ?_S_right@?$_Rb_tree@VDOHandle@Quazal@@, ??1ScopedCS@Quazal@@, ?Init@Locale@@, XShowSocialNetworkImagePostUI and ?OnAddSink@MsgSource@@. No single source function is called by all 92, so the linker folded a large class onto this address; internal inconsistency needs no fold model. 92 heterogeneous callers WITH retail_addrs_for_body==1 is precisely what ICF predicts, so the fan-in CORROBORATES the fold rather than refuting it. INDEPENDENT SOURCE ORACLE + COUNT MATCH: DC3 Object.cpp OnAddSink calls LiteralSym exactly THREE times -- LiteralArray()->LiteralSym(1), LiteralSym(0) and eval.LiteralSym() -- all routing through DataNode::LiteralSym(const DataArray*) via the Data.h:403 inline, and the census counts EXACTLY 3 charged sites (3==3). With MILO_FAIL_DTA compiled out (the MILO_* family is #ifdef HX_NATIVE, never defined in the match build) DataNode::LiteralSym reduces to `return mValue.symbol`, exactly the three observed instructions. The 3==3 count match is what rules out our source having picked a DIFFERENT member of the same fold class."
   }
  ]
 }
