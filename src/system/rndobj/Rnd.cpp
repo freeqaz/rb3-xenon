@@ -303,7 +303,22 @@ void Rnd::PreInit() {
     SetupFont();
     RndGraph::Init();
     RndUtlPreInit();
+    // ⚠ Retail's FIRST registration here is DOFProc, not RndDrawable.  Lane
+    // WRONGCALL-2 fixed the RndRibbon/RndEnvAnim defects in this list but could
+    // not see this one: its comparison treated a retail slot whose callee the
+    // symbol map has not named as a WILDCARD, and slot 0 is exactly such a slot,
+    // so it scored EQUAL against whatever we had.  Resolved here from retail
+    // bytes -- fn_8240E940 decodes to the .rdata literal "DOFProc"
+    // (tools/reglist_rdata_adjudicate.py), and a whole-binary scan of every
+    // RegisterFactory call finds "Draw"/"Drawable" registered NOWHERE in retail.
+#ifdef HX_NATIVE
     RndDrawable::Init();
+#endif
+    // NB the macro, not DOFProc::Init() -- that is defined out-of-line in
+    // DOFProc.cpp, so /O1 cannot inline it here and NO registration is emitted
+    // into PreInit at all (measured: the list went 43 -> 42, not 43 -> 43).
+    // Retail's slot is inlined, so the macro is what reproduces it.
+    REGISTER_OBJ_FACTORY(DOFProc)
     RndFur::Init();
     RndTransformable::Init();
     RndSet::Init();

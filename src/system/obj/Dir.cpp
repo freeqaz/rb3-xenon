@@ -1123,6 +1123,12 @@ DataNode ObjectDir::OnFind(DataArray *da) {
 void ObjectDir::PreInit(int hashSize, int stringSize) {
     REGISTER_OBJ_FACTORY(Hmx::Object);
     REGISTER_OBJ_FACTORY(ObjectDir);
+    // Retail registers a THIRD factory here -- MsgSource -- before allocating
+    // sMainDir.  fn_82753128, 3/3 slots resolved to their .rdata literals out of
+    // orig/45410914/band.exe ("Object", "ObjectDir", "MsgSource"); no symbol map
+    // involved.  MsgSource is registered nowhere else in the binary, so without
+    // this line a retail-shipped DTA naming a MsgSource cannot be created.
+    MsgSource::Init();
     sMainDir = new ObjectDir();
     sMainDir->Reserve(hashSize, stringSize);
     sMainDir->SetName("main", sMainDir);
