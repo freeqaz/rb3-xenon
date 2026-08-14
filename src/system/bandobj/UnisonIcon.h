@@ -28,8 +28,7 @@ public:
     void SetIcon(const char *);
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    OBJ_MEM_OVERLOAD(0x1f);
     NEW_OBJ(UnisonIcon)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(UnisonIcon)
