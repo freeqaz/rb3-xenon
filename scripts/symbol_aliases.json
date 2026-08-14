@@ -2386,12 +2386,14 @@
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVInviteReceivedMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVJoypadConnectionMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVMatchmakerChangedMsg@@@Z",
+    "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVNetStartUtilityFinishedMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVPartyMembersChangedMsg@@@Z",
+    "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVSessionBusyMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVSessionDisconnectedMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 10, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 9 folded spelling(s), 7 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 10, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 9 folded spelling(s), 7 census sites over 2 functions. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident."
   },
   {
    "name": "RWidgetDrawSort",
@@ -5321,9 +5323,12 @@
    "address": "0x825390e0",
    "survivor": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectMsg@@@Z",
    "folded": [
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z",
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
     "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectDoneMsg@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident."
   },
   {
    "name": "_M_clear",
@@ -23528,15 +23533,6 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
   },
   {
-   "name": "OnMsg",
-   "address": "0x82622ca8",
-   "survivor": "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVPrimaryProfileChangedMsg@@@Z",
-   "folded": [
-    "?OnMsg@ManageBandPanel@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
-  },
-  {
    "name": "$MakeString",
    "address": "0x8260de38",
    "survivor": "??$MakeString@PBDVString@@H@@YAPBDPBD0VString@@H@Z",
@@ -27477,6 +27473,15 @@
     "JsonMalloc"
    ],
    "evidence": "tools/alloc_fold_gate.py -- 8-byte allocator-thunk fold class. Every folded spelling's COMDAT is byte- AND relocation-identical to the map-resident survivor's, which is the /OPT:ICF condition itself applied to two of our own COMDATs: both carry the same relocation to the same symbol, so the fold does not depend on naming retail's branch target (0x827bcd38 is unnamed in the map, which is where tools/comdat_fold_gate.py fail-closes). The survivor is corroborated on retail bytes -- 8 B, word0 equal as a FULL 32-bit value, matching branch opcode/AA/LK -- and the pair (word0, resolved dest) is UNIQUE image-wide: 712 retail 8-byte <word>+<branch> bodies carry 707 distinct combos and the 12 sharing `li r4,0` have 12 DISTINCT destinations, so shape does none of the work. REFUSED, each on a different mechanism and each a real finding: ??2Task (map address 0x822d4278 is `blr`+pad with ZERO fan-in -- a map defect, not a function), ??2OutfitConfig (0x82b66c48 is a real thunk to a DIFFERENT allocator -- our identical COMDAT is a source defect), ?SampleAlloc (our objs define two distinct COMDAT variants)."
+  },
+  {
+   "name": "OnMsg",
+   "address": "0x82625128",
+   "survivor": "?OnMsg@ManageBandPanel@@QAA?AVDataNode@@ABVProfileChangedMsg@@@Z",
+   "folded": [
+    "?OnMsg@ManageBandPanel@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z"
+   ],
+   "evidence": "RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident. Here: ManageBandPanel::Handle @0x82625ef8 calls 0x82625128 from BOTH its .?AVProfileChangedMsg@@ and .?AVSigninChangedMsg@@ arms."
   }
  ]
 }
