@@ -778,6 +778,27 @@ bool DataNode::operator==(const DataNode &other) const {
     return Equal(other, nullptr, true);
 }
 #else
+// LANE ACTIONABLE-1 (2026-08-14): this row (464 B, fuzzy 98.233, 3 charges) is
+// UNREACHABLE BY ANY SOURCE CHANGE. It is a SPLIT/PIN defect, not a code defect.
+//
+// Our body is 472 B; the pinned target is 464 B. The missing 8 B are the
+// function's own tail — `extrwi r3, r11, 1, 26 ; blr` — which dtk has split off
+// into a separate symbol `fn_8274AD70` (symbols.txt: `type:function size:0x8`).
+// The target therefore ENDS on `cntlzw r11, r9` with no return at all, and its
+// one `b` at instruction 24 goes to `fn_8274AD70` instead of a local label.
+//
+// `fn_8274AD70` is provably NOT a function:
+//   - it reads r11 as an INPUT and has no prologue, so it is not ABI-callable;
+//   - the ONLY reference to it in the whole asm tree is the branch from inside
+//     DataNode.s itself (DataNode.s:1181), with its own `.fn` at DataNode.s:1296.
+// It is this function's shared tail, reached both by that branch and by
+// fall-through, which is ordinary MSVC tail sharing.
+//
+// So the 464 B stay withheld from matched_code until the pin is corrected
+// (extend the extent to 0x1D8 and drop the spurious fn_8274AD70 symbol). That is
+// a splits/symbols change, NOT source work — and note ab_measure REFUSES patches
+// that touch symbols.txt, so it needs a deliberate pinning lane.
+// Do not attempt to "fix" this in C++; the body is already correct.
 bool DataNode::operator==(const DataNode &other) const {
     if (mType == other.mType) {
         if (mType == kDataString) {
