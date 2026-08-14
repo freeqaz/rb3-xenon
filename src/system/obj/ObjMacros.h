@@ -744,6 +744,46 @@ const char *PathName(const class Hmx::Object *obj);
 // BEGIN OBJ INITIALIZER MACROS
 // ------------------------------------------------------------------------
 
+// ⚠ LANE ACTIONABLE-1 (2026-08-14) — NEW_OBJ IS WRONG FOR RETAIL, AND IT IS A
+// SIZED FORCE-MULTIPLIER, NOT A ONE-ROW FIX. Left unchanged deliberately: the
+// blast radius is every class that uses NEW_OBJ/NEW_OVERLOAD, so it needs its
+// own lane with a whole-binary A/B, not a tail-lane edit.
+//
+// Evidence, from ?NewObject@LayerDir@@SAPAVObject@Hmx@@XZ (112 B, fuzzy 86.929).
+// Retail:
+//     addi r3, r31, 0x50
+//     bl   ?StaticClassName@LayerDir@@SA?AVSymbol@@XZ   ; Symbol -> temp @0x50
+//     li   r4, 0x0
+//     li   r3, 0x224
+//     bl   fn_827BCD38                                  ; INLINE 2-arg allocator
+//     stw  r3, 0x54, r31
+// Ours:
+//     li   r3, 0x224
+//     bl   ??2LayerDir@@SAPAXI@Z                        ; out-of-line, 5-arg
+//     stw  r3, 0x50, r31
+//
+// Two independent defects:
+//  1. NEW_OBJ must evaluate `objType::StaticClassName()` and pass it BY VALUE to
+//     an operator new overload. The resulting Symbol temp is written to 0x50 and
+//     NEVER READ, which is what an inlined `operator new(size_t, Symbol)` that
+//     ignores its name argument looks like. (It is NOT a MemTemp guard — see the
+//     note in utl/MemMgr.h: retail's MemTemp call sites pass NO argument regs.)
+//  2. NEW_OVERLOAD (utl/MemMgr.h) is `__declspec(noinline)` and calls the 5-arg
+//     `MemAlloc(s, __FILE__, 0, "unknown", 0)`. Retail INLINES it and calls the
+//     2-arg form `MemAlloc(size, 0)` — the same "no __FILE__/__LINE__/name"
+//     retail X360 shape that MemMgr.h already documents for POOL_OVERLOAD.
+//     fn_827BCD38 is 0x284 B with 300 call sites incl. MemHeap/Memory_Xbox, i.e.
+//     the global allocator.
+//
+// The `stw` offset delta (0x54 vs 0x50) is a CONSEQUENCE of the Symbol temp
+// occupying 0x50 — not a third defect.
+//
+// Immediate prize: 4 rows at exactly 112 B and exactly fuzzy 86.929
+// (BandRetargetVignette, OverdriveMeter, UnisonIcon, LayerDir) plus
+// PropertyEventProvider at 96 B = 544 B. True scope is larger: every
+// REGISTER_OBJ_FACTORY class routes through here. Neither oracle can adjudicate
+// it — DC3 and rb3-Wii BOTH spell plain `new objType`, and rb3-Wii is the dev
+// build; only retail's bytes disagree.
 #define NEW_OBJ(objType)                                                                 \
     static Hmx::Object *NewObject() { return new objType; }
 
