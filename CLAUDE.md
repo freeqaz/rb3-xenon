@@ -1065,7 +1065,21 @@ run the gate before you land. Two traps, both real:
   `run_objdiff` reported a row *"Complete (High confidence), 100.0% normalized,
   0 mismatches"* while `report.json` **on the same tree** had it **below
   `fuzzy == 100`**. ⇒ **Drive `objdiff-cli` at `name_check` explicitly, or read
-  `report.json`.** Everything below is correct ONLY on the pre-flip ruler:
+  `report.json`.**
+  ⛔⛔ **AND THE MISMATCH *COUNT* IS `none`-RULER TOO — IT UNDERCOUNTS, WHICH
+  MANUFACTURES PHANTOM PRIZES.** (lane RESIDUAL-1, 2026-08-14, `348e3c7b`.)
+  `?Handle@CustomizePanel@@` was briefed to **three** consecutive lanes as
+  *"5,036 B behind exactly 3 mismatches"* — the best size-if-it-crosses in the
+  tree. On the graded ruler it has **FIVE** charged sites: the 3 insert/delete
+  **plus 2 `diff_arg` ICF fold-aliases** (`hash_map<int,SongUpgradeData*>` vs our
+  `<int,UIComponent*>`; `NUISPEECH::CCFGLM::RemoveCPPT` vs our
+  `ClosetMgr::TakePortrait`). Because `matched_code` keys on `fuzzy == 100`,
+  **closing all three instructions buys `mpn` 100 (+1 function) and EXACTLY ZERO
+  BYTES** — the 5,036 B additionally requires **both aliases proven on retail
+  bytes**. ⇒ **A row's headline prize computed from `run_objdiff` can be
+  uncollectable by source work in principle.** Price a candidate from
+  `report.json`'s charged-site list, not from a mismatch count, **before** it is
+  briefed as a target.
   ★★★ **`run_objdiff`'s "normalized (raw)" pair vs the report keys — SETTLED
   (lane EB-4, 2026-08-03). This note used to say the pair "does not equal these
   report keys", which was MISLEADING: its own example proves one of them equals
