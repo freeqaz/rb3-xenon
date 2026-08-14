@@ -69,7 +69,6 @@ public:
     void AssignAndInitTracks();
     void SetMainGoalConfiguration(TourGoalConfig);
     void MainGoalReset();
-    void TrackerDisplayReset();
     void SetSuppressTambourineDisplay(bool);
     void AssignTrack(int);
     void HandleAddUser(BandUser *);

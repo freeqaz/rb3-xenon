@@ -247,7 +247,7 @@ void ADSRImpl::Save(BinStream &bs) const {
 
 INIT_REVS(1, 0)
 
-void ADSRImpl::Load(BinStream &bs, ADSR *adsr) {
+void ADSRImpl::Load(BinStream &bs) {
     int version;
     bs >> version;
     if (version > 1) {
@@ -298,15 +298,13 @@ BinStream &operator<<(BinStream &bs, const ADSRImpl &adsr) {
     return bs;
 }
 
-void ADSRImpl::Load(BinStream &bs) { Load(bs, nullptr); }
-
 BinStream &operator>>(BinStream &bs, ADSRImpl &adsr) {
     adsr.Load(bs);
     return bs;
 }
 
 void ADSR::Save(BinStream &bs) { mADSR.Save(bs); }
-void ADSR::Load(BinStream &bs) { mADSR.Load(bs, this); }
+void ADSR::Load(BinStream &bs) { mADSR.Load(bs); }
 
 BEGIN_PROPSYNCS(ADSR)
     SYNC_SUPERCLASS(Hmx::Object)
