@@ -197,10 +197,23 @@ bool CustomizePanel::InPreviewState() const {
     }
 }
 
-bool CustomizePanel::InClothingState() const {
-    return mCustomizeState >= kCustomizeState_BrowseTorso
-        && mCustomizeState <= kCustomizeState_BrowseFeet;
+// RB3-360 retail (lane RESIDUAL-2, 2026-08-14): the `in_clothing_state` arm of
+// Handle() calls a NON-MEMBER, not the `InClothingState()` const member that
+// rb3-Wii spells there.  Evidence is retail bytes via the dead-`this`-home
+// oracle: MSVC /O1 homes the vbase-adjusted `this` of an INLINED MEMBER call
+// into a dead stack slot, and retail has that home at 3 of the 4 inlined member
+// calls in Handle -- every one except this arm.  With the member form our build
+// emitted two extra instructions there (`subi r10,r26,0xb8` / `stw r10,0x94(r31)`,
+// the dead home); routing the arm through this file-static helper drops both and
+// keeps retail's trailing bool mask and store order, closing the site exactly.
+// (`const` and an in-class definition were both tried by lane RESIDUAL-1 and
+// changed nothing -- only removing the `this` parameter works.)
+static bool IsClothingState(CustomizePanel::CustomizeState s) {
+    return s >= CustomizePanel::kCustomizeState_BrowseTorso
+        && s <= CustomizePanel::kCustomizeState_BrowseFeet;
 }
+
+bool CustomizePanel::InClothingState() const { return IsClothingState(mCustomizeState); }
 
 void CustomizePanel::UpdateNewAssetProvider() {
     mNewAssetProvider->Update();
@@ -305,6 +318,55 @@ void CustomizePanel::UpdateAssetProvider() {
 // value came from a comparison.  A scan of the entire TU's /FAs listing finds
 // ZERO occurrences of `subfe` followed by `clrlwi ,24` anywhere, i.e. no
 // construct in this file reproduces retail's shape.
+//
+// ── lane RESIDUAL-2 (2026-08-14): (a) is CLOSED; only (b) remains.  Re-priced
+//    first: FOLDPROVE-1/2 landed both ICF aliases, so on the graded ruler this
+//    row is now 5,036 B / fuzzy == mpn == 99.76172 with THREE charged sites and
+//    ZERO diff_arg -- i.e. RESIDUAL-1's "buys zero bytes" is stale (it was true
+//    only while the aliases still charged the row).  ⇒ a retirement is valid
+//    only on the tree it was measured on.
+//
+// (a) CLOSED by the oracle below: routing the arm through the file-static
+//     IsClothingState() drops both dead-home instructions with nothing else
+//     moving (1258 equal / 2 insert -> 1258 equal / 0 insert).  The MECHANISM is
+//     retail-byte evidence; the SPELLING (a file-static delegate) is a choice --
+//     any callee without a `this` parameter would do.
+//
+// (b) STILL OPEN, and now characterised rather than merely undiagnosed.  The
+//     old note "no construct in this file reproduces it" was a TU-LOCAL scan and
+//     is too weak a claim: a binary-wide scan of every target .s (keyed on the
+//     `.fn` symbol, NOT the synthetic address column) finds `subfe` followed by
+//     `clrlwi rX,rX,24` at exactly **12 sites**, and we already match FOUR of
+//     them 100% -- BandUI::OnMsg(ContentReadFailureMsg), DataExists,
+//     MetaPerformer::Handle, ModifierMgr::Handle.  So the construct IS
+//     reproducible under our compiler; it is this ARM that resists.
+//     ★ THE RULE, read off those controls: the mask is emitted ONLY AT A PHI.
+//     In TourProgress, DataFunc and MetaPerformer the `clrlwi` is literally a
+//     BRANCH TARGET (a `.L_` label sits immediately before it), merging an
+//     early-out `false` path with the computed path; in ModifierMgr it is an
+//     if/else-if/else that MSVC collapsed; at our own in_clothing_state arm it
+//     is the `&&` short-circuit.  RETAIL'S CustomizePanel SITE HAS NO LABEL
+//     THERE (the only label, .L_82619778, is on the `subic` -- that is the
+//     has_patch cross-jump, which is BEFORE the subfe), so the mask sits on a
+//     straight-line subfe, which is the one shape no source form reproduces.
+//     ⛔ AND NO CAST CAN REINTRODUCE IT: MSVC range-analyses the `subfe` result
+//     as 0/1 and elides every narrowing -- even an explicit `(unsigned char)`
+//     cast measured INERT.  That is why arm-expression work is hopeless here.
+//     Measured inert this lane (all leave 1258 equal / 1 delete): arm `!= 0`
+//     (baseline), `? true : false`, `!!`, `DataNode(...)`, `(unsigned char)`,
+//     an extra `bool`-parameter boundary, `bool HasLicense` + arm `!= 0`,
+//     `bool HasLicense{ return X != 0; }` + bare arm (RESIDUAL-1's, reproduced
+//     independently), `bool HasLicense{ int r = X; return r; }`.
+//     Measured WORSE (MSVC emits branches instead of collapsing): an if/else
+//     body on HasPatch (+5 insert), an if/else int->bool helper (+4 insert),
+//     `return (int)TheSongMgr.HasLicense(s)` (+3 insert / +5 delete).
+//     DIAGNOSTIC (do not redo): breaking the has_license/has_patch cross-jump
+//     shows the STANDALONE has_patch arm also emits no mask -- so neither arm
+//     owns it in our source, and it is not a merge artefact of ours.
+//     ⇒ Until someone finds a source shape that puts a phi on the far side of
+//     that subfe, the row cannot cross, and closing (a) alone buys EXACTLY ZERO
+//     bytes (whole-binary A/B this lane: Dmatched +0, Dcode_bytes +0,
+//     Dcode% +0.000000pp, Dfuzzy +0.000080pp, 0 units off 100%).
 //
 // ★ REUSABLE INSTRUMENT FOUND HERE (the dead store is a source-shape oracle):
 // MSVC /O1 creates a dead stack home for the vbase-adjusted `this` of an
@@ -1229,7 +1291,7 @@ BEGIN_HANDLERS(CustomizePanel)
     HANDLE_ACTION(set_state, SetCustomizeState((CustomizeState)_msg->Int(2)))
     HANDLE_EXPR(get_state, GetCustomizeState())
     HANDLE_EXPR(leave_state, LeaveState(_msg->Int(2)))
-    HANDLE_EXPR(in_clothing_state, InClothingState())
+    HANDLE_EXPR(in_clothing_state, IsClothingState(mCustomizeState))
     HANDLE_ACTION(
         set_patch_menu_return_state, SetPatchMenuReturnState((CustomizeState)_msg->Int(2))
     )
