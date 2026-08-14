@@ -293,8 +293,9 @@ void FloatKeys::SetFrame(float frame, float f2
 ) {
     if (mProp && mTarget && size()) {
         int idx;
+        float ref;
+        float val;
         if (mPropExceptionID != kHandleInterp) {
-            float val;
             idx = FloatAt(frame, val);
 #ifdef HX_NATIVE
             mTarget->SetProperty(mProp, val * f3);
@@ -304,7 +305,7 @@ void FloatKeys::SetFrame(float frame, float f2
         } else {
             const Key<float> *prev;
             const Key<float> *next;
-            float ref = 0;
+            ref = 0;
             idx = AtFrame(frame, prev, next, ref);
             sInterpMessage.SetType(mInterpHandler);
 #ifdef HX_NATIVE
