@@ -51,16 +51,39 @@ reading adjudicates 4–7 rows at once.
 
 ⇒ **The right unit of work at this width is the UNIT, not the ROW.** Measured on
 the band: **75 rows / 18,848 B (41% of band bytes) live in 29 units holding more
-than one row.** Rank candidates by multi-row unit, not by row size.
+than one row.**
 
-| top multi-row units | bytes | rows |
-|---|---:|---:|
-| `default/CameraShot` | 3,104 | 4 |
-| `default/BandCharacter` | 2,336 | 3 |
-| `default/Text` | 1,264 | 2 |
-| `default/MemTracker` | **1,188** | **5** ← drained by this lane |
-| `default/MoveMgr` | 956 | 3 |
-| `default/MeshAnim` | 836 | 6 |
+### ⛔⛔ BUT "MULTI-ROW UNIT" IS NOT "SHARED CAUSE" — I tested my own rule and it FAILED
+
+The obvious targeting rule — *rank by multi-row unit* — is **necessary but nowhere
+near sufficient**, and I nearly briefed it before checking. `default/MeshAnim` has
+the highest row count in the band (**6 rows / 836 B**) and is **not a family at
+all**: `vector<Key<vector<Vector2>>>::_M_insert_overflow_aux`, `resize` and
+`_M_fill_insert` over *different* element types, `RndShaderMgr::SetTransform`, an
+`AccomplishmentConditional` dtor, and a `??_G` deleting thunk (already on the
+do-not-reopen list as a fold-alias). Six unrelated causes that happen to share a
+TU.
+
+The discriminator that actually separates them is **register-cleanliness**: every
+`MemTracker` family row had **zero** register charges (one cause, fully in the
+source), every `MeshAnim` row carries them. Applying both conditions:
+
+| unit | bytes | rows | genuine family? |
+|---|---:|---:|---|
+| `default/MemTracker` | 1,188 | 5 | **YES** — one template family, one type, one comparator ← drained |
+| `default/MoveMgr` | 876 | 2 | no — `_Rb_tree<Symbol>` vs `vector<SpotlightEntry>` |
+| `default/band3/meta_band/ViewSetting` | 616 | 2 | no — `FilterTypeToSym` vs `RndGroup::Draw` |
+| `default/StorePanel` | 452 | 2 | **plausible** — `Load` + `IsLoaded`, same panel |
+| `default/TourProgress` | 304 | 4 | **YES** — four sibling accessors, one guard ← drained |
+
+**Only 5 units in the whole 160-row band have ≥2 register-clean rows, totalling
+3,436 B — and this lane drained both of the genuine families (1,492 B).**
+
+★★★ **Therefore this lane's favourable economics DO NOT GENERALISE to the band's
+remainder.** The 69% control-availability and 1.2-rows-per-closure figures are
+family figures; the ~155 rows left are overwhelmingly singletons and a follow-up
+lane would face 4–6's economics or worse. **This is a bounded vein, and it is now
+bounded: the family surface in 7–15 was ~1,492 B and it is gone.**
 
 ## Result — +11 functions / +1,804 B, both predictions pre-registered
 
@@ -250,20 +273,32 @@ adjudicated once and closed wholesale.**
 close in bulk. A lane that picks singleton rows here will see 4–6's economics or
 worse. **The targeting rule is: multi-row units first.**
 
+### ⚠ …but do NOT fund a general 7–15 sweep on these numbers
+
+Read the two paragraphs above together: the band paid 3.1× because it contained
+**two genuine shared-cause families**, and this lane took both. What remains is
+~155 largely-singleton rows whose economics should be assumed to match 4–6's
+(6.3 rows triaged per closure, 16% control availability) until measured otherwise.
+
 ### Recommended next, in order
 
-1. **The rest of the multi-row units in this band** — 70 rows / 17,660 B still
-   live across 28 units, led by `BandCharacter` (2,336 B / 3), `Text`
-   (1,264 B / 2), `MoveMgr` (956 B / 3), `MeshAnim` (836 B / 6).
-2. **The 16+ tail is now worth funding, but re-scope it as family work, not row
-   work.** It is 545 rows / 378,184 B, and this lane proved the band boundary cuts
-   through families — `__median` and `__unguarded_partition` sat outside 7–15 and
-   fell to the same one-line edit. **Census by unit across ALL bands before
-   opening anything.**
-3. `CamShot::Copy` + the `CameraShot` layout question above — as a dedicated
+1. **`default/StorePanel` (452 B, `Load` + `IsLoaded`)** — the only plausible
+   untouched family left in this band by the register-clean test. Small, but it is
+   the one candidate with a real prior.
+2. **★ Re-census the ENTIRE `SOURCE_INSDEL` stratum BY UNIT AND TYPE, ignoring
+   charge bands altogether.** This is the highest-value follow-up and this lane is
+   the evidence for it: the band boundary cut straight through the `MemDiffEntry`
+   family (`__median` at 55.6% fuzzy and `__unguarded_partition` at 69.2% sat
+   *outside* 7–15 and fell to the same one-line edit, 616 B = 34% of the yield).
+   **A family-first census over all 804 rows would find the 16+ tail's families
+   without anyone having to "work the 16+ band" at all.** Screen with:
+   *≥2 rows sharing a unit* **AND** *register-clean* **AND** *sharing a type or
+   code path* — that conjunction found both of this lane's wins and correctly
+   rejected `MeshAnim`.
+3. `CamShot::Copy` + the `CameraShot` layout contradiction above — as a dedicated
    layout lane with a whole-class AT_100 set-diff.
-4. **Not** the fold-alias lever until the folds are proven by relocation-normalized
-   body hashing.
+4. **Not** a general 16+ row-by-row sweep, and **not** the fold-alias lever until
+   the folds are proven by relocation-normalized body hashing.
 
 ## Tooling
 
