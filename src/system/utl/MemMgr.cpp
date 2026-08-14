@@ -354,9 +354,74 @@ __declspec(noinline) void *
 
 #ifndef HX_NATIVE
 // Retail/match 2-arg heap allocator: MemAlloc(size, align). The retail XEX's
-// heap fast path (verified in Ghidra: Function_827977D0(size, align)) takes no
-// __FILE__/line/name — MemTrack is compiled out. Mirrors rb3-Wii _MemAlloc(int,
-// int). Routes through the existing stub for now (MemHeap::Alloc TBD).
+// heap fast path takes no __FILE__/line/name — MemTrack is compiled out.
+// Mirrors rb3-Wii _MemAlloc(int, int). STILL A STUB (MemHeap::Alloc TBD).
+//
+// ─── HANDOFF (lane SRCPORT-1): the retail body is fn_827BCD38, 644 B, and its
+// semantics are FULLY reconstructed below from retail bytes. Everything it
+// needs already exists in-tree; what is left is writing it and matching it.
+//
+// Layouts, all verified against the retail encoding (do not re-derive):
+//   MemHeapStack  mStack[16]@0x0, mSize@0x40, mTempRefs@0x44  (0x48 stride —
+//                 matches ThreadMemStack's `mulli r10,r29,0x48`)
+//   MemHeap       mStrategy@0x1c, mAllowTemp@0x20, stride 0x24 (`mulli *,0x24`;
+//                 DC3's extra member widens this to 0x28 and is already
+//                 correctly excluded from the match build — see MemHeap.h)
+//   MemHeap::Alloc(sizeWords, alignShift, int&out) is fn_827BCA78 — 4 args,
+//                 r6 = &local. It is NOT a rival allocator: fan-in 1, sole
+//                 caller fn_827BCD38 (lane ALLOCGATE-1).
+//
+// Reconstruction:
+//   CritSecTracker tracker(gMemLock);            // gMemLock @ lbl_82E06E08
+//   MemHeapStack &s = ThreadMemStack(false);     // ONE call; see note below
+//   int heapNum = s.mSize ? s.mStack[s.mSize-1] : MemHeapStack::sDefaultHeap;
+//   MemHeap *heap = heapNum > -1 ? &gHeaps[heapNum] : NULL;
+//   bool temp = s.mTempRefs != 0
+//            || (heap != NULL && heap->mStrategy == MemHeap::kLastFit);
+//   if (temp && heap != NULL && !heap->mAllowTemp) {
+//       MemHeapStack &s2 = ThreadMemStack(true);
+//       int savedSize = s2.mSize;
+//       while (s2.mSize > 0) {                   // pop heaps until one allows temp
+//           s2.mSize--;
+//           int h = s2.mSize ? s2.mStack[s2.mSize-1] : MemHeapStack::sDefaultHeap;
+//           MemHeap *hp = h > -1 ? &gHeaps[h] : NULL;
+//           if (hp->mAllowTemp) break;           // retail derefs without a null check
+//       }
+//       s2.mTempRefs++;
+//       void *r = MemAlloc(size, align);         // recurses into itself
+//       s2.mSize = savedSize;                    // restore INSIDE the guard
+//       s2.mTempRefs--;
+//       return r;                                // (crit-sec exit is common tail)
+//   }
+//   if (heap == NULL)
+//       return heapNum == -2 ? <fn_82273420>(size) : malloc(size);
+//   // GetSizeWords/GetAlignWords are INLINED by retail. They live in
+//   // MemHeap.cpp so they cannot inline into this TU — write the expressions
+//   // out here rather than moving them to the header (that would perturb
+//   // MemHeap.cpp's own emitted copies). Bodies are already correct there:
+//   int sizeWords  = ((size + 3) >> 2) + 1; if ((unsigned)sizeWords < 3) sizeWords = 3;
+//   int alignShift = MemHeap::GetAlignWords(align);   // align==0 => 1
+//   MemHeap::Strategy saved = heap->mStrategy;
+//   if (temp) heap->mStrategy = MemHeap::kLastFit;
+//   int out; void *r = heap->Alloc(sizeWords, alignShift, out);
+//   heap->mStrategy = saved;
+//   return r;
+//
+// ⚠ ONE ThreadMemStack(false) call, not two. Retail calls it once and
+// RE-MATERIALISES the heap-num select at the null-heap branch off the still-live
+// r3/r9/r8. Writing `GetCurrentHeapNum()` (which calls ThreadMemStack itself)
+// plus a separate `ThreadMemStack(false)` for mTempRefs emits TWO calls, and
+// MSVC cannot CSE a call away.
+//
+// ⚠ IT CANNOT SCORE UNTIL 0x827bcd38 IS NAMED. The address is unnamed in
+// target_symbol_map.json, so the row is unpaired and worth 0 B no matter how
+// good the body is. ALLOCGATE-1 declined the name for a sound reason: naming it
+// converts ~104 objs' worth of currently-FORGIVEN placeholder call sites into
+// checked ones. The right order is therefore: port the body, verify it offline
+// by relocation-normalized byte identity (the L3_EXACT comparator in
+// tools/alias_forgiveness_audit.py already does exactly this), and only then add
+// the map name — at which point ab_measure prices the +644 B against the
+// newly-checked sites as a single net number. Do NOT name it first.
 __declspec(noinline) void *(MemAlloc)(int size, int align) {
     if (size <= 0)
         return nullptr;
@@ -375,10 +440,23 @@ void *(_MemAllocTemp)(int size, const char *file, int line, const char *name, in
 
 #ifndef HX_NATIVE
 // Retail/match 2-arg temp allocator the X360 XEX actually calls (fn_827979D8):
-// MemTemp RAII push/pop around a 2-arg heap MemAlloc(size, align), no debug
-// strings. Parenthesized name so the call-site macro doesn't recurse.
+// a temp-REFCOUNT scope guard around a 2-arg heap MemAlloc(size, align), no
+// debug strings. Parenthesized name so the call-site macro doesn't recurse.
+//
+// ⚠ The guard is MemDoTempAllocations, NOT MemTemp — these are two DISTINCT
+// retail constructs (see MemMgr.h) and this function had the wrong one. Retail
+// inlines the refcount bump here rather than calling the out-of-line guard:
+//
+//     li r3,1 ; bl <ThreadMemStack> ; lwz r11,0x44(r3) ; addi r11,r11,1 ; stw ...
+//     ... bl <MemAlloc> ...
+//     li r3,1 ; bl <ThreadMemStack> ; lwz r11,0x44(r3) ; subi r11,r11,1 ; stw ...
+//
+// i.e. ThreadMemStack(true).mTempRefs++/-- with NO gNumHeaps guard and no frame
+// slot. MemTemp is the OTHER guard (out-of-line ctor/dtor, homes an `int mOld`,
+// swaps the heap's Strategy to kLastFit); using it here emitted an `addi r3,
+// <frame>` this-pointer and two out-of-line calls, and cost the whole body.
 void *(_MemAllocTemp)(int size, int align) {
-    MemTemp tmp;
+    MemDoTempAllocations tmp;
     return (MemAlloc)(size, align);
 }
 #endif
@@ -618,19 +696,43 @@ void MemPopHeap() {
     }
 }
 
+// Retail/match: UNGUARDED. The retail out-of-line copies (fn_827BC270 push /
+// fn_827BC2A0 pop, both in the MemHeap unit) are each exactly twelve
+// instructions with no gNumHeaps load and no branch:
+//
+//     mflr r12 ; stw r12,-8(r1) ; stwu r1,-0x60(r1)
+//     li r3,1 ; bl <ThreadMemStack> ; lwz r11,0x44(r3)
+//     addi/subi r11,r11,1 ; stw r11,0x44(r3)
+//     addi r1,r1,0x60 ; lwz r12,-8(r1) ; mtlr r12 ; blr
+//
+// The `gNumHeaps` guard was a Wii/DC3-side divergence; retail has no such test
+// (and no MILO_ASSERT — that family is a no-op in this build anyway). Dropping
+// it matters because these inline into same-TU callers such as _MemAllocTemp,
+// where the guard's load+branch is exactly what kept the body from matching.
+// ⚠ Keep the NAMED reference. `ThreadMemStack(true).mTempRefs++` as a single
+// expression makes MSVC materialise the member address (`addi rN,r3,0x44` then
+// `lwz r11,0(rN)`); binding the object to a reference first keeps it in a
+// register and addresses the member by displacement, `lwz r11,0x44(r3)`, which
+// is what retail emits. Same semantics, different addressing mode.
+// The gNumHeaps guard is kept for HX_NATIVE only: natively these can be reached
+// before any heap exists, and the guard is the pre-existing behaviour this lane
+// has no evidence to change. The match build follows retail's bytes.
 void MemPushTemp() {
-    bool proceed = gNumHeaps != 0 && gNumHeaps > 0;
-    if (proceed) {
+#ifdef HX_NATIVE
+    if (gNumHeaps > 0)
+#endif
+    {
         MemHeapStack &s = ThreadMemStack(true);
         s.mTempRefs++;
     }
 }
 
 void MemPopTemp() {
-    bool proceed = gNumHeaps != 0 && gNumHeaps > 0;
-    if (proceed) {
+#ifdef HX_NATIVE
+    if (gNumHeaps > 0)
+#endif
+    {
         MemHeapStack &s = ThreadMemStack(true);
-        MILO_ASSERT(s.mTempRefs > 0, 0x209);
         s.mTempRefs--;
     }
 }
