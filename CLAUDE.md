@@ -1027,6 +1027,23 @@ run the gate before you land. Two traps, both real:
   encodes exactly this (`5247b811`) and fires ALIAS_SUSPECT only on map-only
   patches — do not re-derive the guard by hand. `scripts/icf_alias_groups.json` holds **1,407** ungated
   groups and advertised itself as free to merge until 2026-08-13; do not.
+  ★★★★ **AND THE WHOLE MECHANISM IS WORTH 720,992 B / 6.985907 pp — MEASURED
+  2026-08-14 (lane ALIASAUDIT-1, `df90b49f`), never sized before.** Emptying all
+  **1,493** groups moves `matched_code` by **−720,992 B**, `matched_functions` by
+  **exactly +0**, the `none` ruler **exactly flat**, and units at all-rows-`fuzzy`
+  **124 → 51 (−73)** — the arg-blind shape exactly. ⇒ **~7 pp of `matched_code`
+  is alias forgiveness.**
+  ⛔⛔ **AND `OK (grounded)` MEANS MAP-CONSISTENCY, NOT PROOF OF FOLDING** — the
+  survivor is map-resident and every spelling is referenced, nothing more.
+  **1,287 groups carry essentially all 720,992 B on that basis, so the label
+  oversells its evidence.** The gate is real (a *fabricated* alias between
+  symbols our map places at distinct addresses ⇒ **exit 2 fatal**, demonstrated
+  by mutation — a PASS is worthless until the gate is shown to fail), and the
+  audit found **0 CONTRADICTED**. But "not contradicted" is not "proven".
+  ⚠ **Do NOT prune the classes that currently forgive 0** (`STALE_SPELLING` 143,
+  `UNWITNESSED` 11): they **become live as porting advances**, and a prior prune
+  (`a745039e`) cost **+94,616 B to reverse**. **A Δ0 today would license a change
+  that degrades later.**
   ⛔ And the 219-row population above should be **re-derived on `name_check`**
   before anyone calls it empty again — "SIZED AND EMPTY" was measured on `none`.
   ✅ **DONE 2026-08-13 (lane MPNGAP-1, `2f5a3cd3`) — DC-4's verdict SURVIVES IN
