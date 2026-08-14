@@ -18011,7 +18011,7 @@
  "0x82729e70": "?FindNearestInTable@@YAHPBMHM@Z",
  "0x82729fa0": "?Set@Ps2ADSR@@QAAXABVADSRImpl@@@Z",
  "0x8272a0c8": "?SyncPacked@ADSRImpl@@QAAXXZ",
- "0x8272a110": "?Load@ADSRImpl@@QAAXAAVBinStream@@PAVADSR@@@Z",
+ "0x8272a110": "?Load@ADSRImpl@@QAAXAAVBinStream@@@Z",
  "0x8272a208": "??5@YAAAVBinStream@@AAV0@AAVADSRImpl@@@Z",
  "0x8272a240": "?New@StreamReceiver@@SAPAV1@HH_NH@Z",
  "0x8272a250": "??0StreamReceiver@@QAA@H_N@Z",
