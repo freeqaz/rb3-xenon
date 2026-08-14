@@ -210,6 +210,21 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 - [../CLAUDE.md](../CLAUDE.md) — project framing, build tracks, decomp priority, worktree/git
   rules, toolchain wiring. Authoritative current state.
+- ★★★ [decomp/CAMPAIGN_STATE_2026-08-14.md](decomp/CAMPAIGN_STATE_2026-08-14.md) —
+  **the campaign consolidation: what is drained, what is open, and what will lie to you.**
+  Rewritten end-of-session at `3eb85dfd` after **47 lanes** landed in one day.
+  ★★★ **Every large lever was sized this session and they all deflate** — alias
+  forgiveness (720,992 B but **82.51% already proven**), the ruler gap (**a strict
+  subset** of an already-drained stratum, `|B \ A| = 0`), `TEMPLATE_ARGS` (**51%
+  fold**), "313 wrong-callee defects" (**54% fold-shaped**), identification
+  (**~0.2% of `total_code`**), the body-write surface (**~5 kB, not 52 kB**),
+  epilogue over-carve (**2 live rows of 246 blocks**). **⇒ there is no big lever
+  left.** Carries the measured pairable decomposition (the 2.76 MB of headroom by
+  stratum — ⚠ its largest block is *absence of identification*, not divergence),
+  the re-measured **62.87%** ceiling, the whole session's measured movement
+  (**+150,180 B / +49 fns**, ~53% of it alias bookkeeping), a catalogue of
+  **~35 instrument failures grouped by failure mode**, and the adjudication rules
+  that survived. Read §0 first — it is a one-minute router.
 - ★★★ [decomp/PIN_WAVES_AND_DENOMINATOR_2026-08-09.md](decomp/PIN_WAVES_AND_DENOMINATOR_2026-08-09.md) —
   **`total_code` was INFLATED and pinning corrects it.** dtk bills an unbounded
   symbol in an unpinned region out to the next boundary — **one 204-byte function
