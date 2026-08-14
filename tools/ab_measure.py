@@ -118,9 +118,21 @@ Usage:
 
 Exit codes: 0 = measured, 2 = REFUSED (no verdict), 3 = usage/internal.
 Run artifacts (logs, patch copy, result.json) go to
-<repo_root>/.ab_measure_runs/<run>/ by default (durable, in-repo, gitignored;
+<WORKTREE>/.ab_measure_runs/<run>/ by default -- keyed on the worktree being
+MEASURED, not on where this script lives (durable, in-repo, gitignored;
 override with --run-root). Never ~/tmp: a killed/timed-out run's only output
 must not land in a non-durable place.
+
+  WHY THE WORKTREE AND NOT THE SCRIPT'S REPO (lane SIGSCAN-1, 2026-08-14):
+  the default used to be <repo_root>, derived from THIS FILE's location, so two
+  lanes that both invoked main's copy shared one run root and COLLIDED. The
+  observed failure was not a crash -- it applied ANOTHER lane's patch into this
+  lane's worktree, DESTROYED that lane's three edits, and printed a confident
+  "A/B RESULT (MEASURED)" delta of 0 for a patch that was not the one its own
+  [classify] line had named seconds earlier. Destructive AND silently wrong.
+  Keying on --worktree makes concurrent lanes isolated even when they all run
+  main's copy, and the leaf dir now carries the pid and REFUSES on collision
+  rather than sharing.
 """
 
 import argparse
@@ -1604,8 +1616,11 @@ def main():
     ap.add_argument("--jobs", type=int,
                     default=int(os.environ.get("AB_NINJA_JOBS", "12")),
                     help="ninja -j (default 12; 0 = ninja default)")
-    ap.add_argument("--run-root",
-                     default=os.path.join(REPO_ROOT, ".ab_measure_runs"))
+    ap.add_argument("--run-root", default=None,
+                    help="where run artifacts go (default: "
+                         "<worktree>/.ab_measure_runs -- keyed on the worktree "
+                         "MEASURED, not on this script's repo, so concurrent "
+                         "lanes cannot collide)")
     ap.add_argument("--label", default=None)
     ap.add_argument("--selftest", action="store_true",
                     help="run no-build sanity checks of the refusal logic and exit")
@@ -1630,8 +1645,18 @@ def main():
     label = args.label or (Path(args.patch).stem if args.patch else
                            (args.pick or args.revert or "from-dirty")
                            .replace("/", "_")[:24])
-    rundir = Path(args.run_root) / f"{time.strftime('%Y%m%d-%H%M%S')}-{label}"
-    rundir.mkdir(parents=True, exist_ok=True)
+    # Key the run root on the worktree being MEASURED, never on this script's
+    # own repo -- see the module docstring for the collision this prevents.
+    run_root = args.run_root or os.path.join(
+        os.path.abspath(args.worktree), ".ab_measure_runs")
+    rundir = (Path(run_root) /
+              f"{time.strftime('%Y%m%d-%H%M%S')}-{label}-{os.getpid()}")
+    try:
+        rundir.mkdir(parents=True, exist_ok=False)
+    except FileExistsError:
+        # Refuse rather than share: a shared run dir is how one lane's patch
+        # ends up measured under another lane's label.
+        ap.error(f"run dir already exists, refusing to share it: {rundir}")
     result_path = rundir / "result.json"
     print(f"ab_measure: run dir {rundir}")
 
