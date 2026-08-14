@@ -761,12 +761,69 @@ bool DataNode::Equal(const DataNode &n, DataArray *a, bool warn) const {
     return false;
 }
 
+// RB3 retail has NO `DataNode::Equal` — the whole comparison is written inline in
+// `operator==` (0x8274ABA0, 464 bytes). `Equal(n, a, warn)` is a LATER Harmonix
+// refactor that we inherited from dc3-decomp, and its shape is materially
+// different: `Equal` orders the two nodes by type (`first`/`second`) and then
+// tests one direction, where retail is symmetric and tests `this`/`other`
+// directly. That is not a codegen difference, it is a different function.
+//
+// House rule for a dc3-newer divergence: reproduce retail in the match build and
+// keep the newer/safer behaviour under HX_NATIVE. Retail's version is genuinely
+// looser — e.g. object-vs-int falls into the object branch and reinterprets the
+// int as a `String*` — which is survivable on ILP32 Xbox but a wild read on LP64,
+// so the native port keeps `Equal`.
+#ifdef HX_NATIVE
 bool DataNode::operator==(const DataNode &other) const {
     return Equal(other, nullptr, true);
 }
+#else
+bool DataNode::operator==(const DataNode &other) const {
+    if (mType == other.mType) {
+        if (mType == kDataString) {
+            // Both types are known to be kDataString here, so retail derefs both
+            // String pointers unconditionally. Routing either side through
+            // LiteralStr() re-emits a kDataSymbol test: MSVC folds it away for
+            // `this` (whose mType it compared directly) but NOT for `other`.
+            return streq(mValue.var->mValue.symbol, other.mValue.var->mValue.symbol);
+        } else {
+            return mValue.integer == other.mValue.integer;
+        }
+    } else if (mType == kDataObject || other.mType == kDataObject) {
+        // Both names are resolved inside ONE if/else rather than two sequential
+        // diamonds. The types are known to differ, so exactly one side is the
+        // object -- retail emits two fully specialised paths with no second test,
+        // and this is the shape that reproduces it. Two sequential
+        // `if (mType==obj)` / `if (other.mType==obj)` selections instead emit a
+        // redundant test for the second name and let MSVC hoist the shared "".
+        const char *name1;
+        const char *name2;
+        if (mType == kDataObject) {
+            Hmx::Object *obj = mValue.object;
+            name1 = obj ? obj->Name() : "";
+            name2 = other.LiteralStr();
+        } else {
+            name1 = LiteralStr();
+            Hmx::Object *obj = other.mValue.object;
+            name2 = obj ? obj->Name() : "";
+        }
+        return streq(name1, name2);
+    } else if (mType == kDataString || other.mType == kDataString) {
+        return streq(LiteralStr(), other.LiteralStr());
+    } else if (mType == kDataFloat || other.mType == kDataFloat) {
+        return LiteralFloat() == other.LiteralFloat();
+    } else {
+        return false;
+    }
+}
+#endif
 
+// Retail's operator!= is a real out-of-line `bl` to operator== plus a negate
+// (0x8274AD78). It only emits that way because operator== is now too big to
+// inline — while operator== was a 12-byte forwarder, MSVC inlined it straight
+// back and this function was unfixable on its own (lane NEARMISS-1).
 bool DataNode::operator!=(const DataNode &other) const {
-    return !Equal(other, nullptr, true);
+    return !operator==(other);
 }
 
 DataNode &DataVariable(Symbol s) { return gDataVars[s]; }
