@@ -117,8 +117,20 @@ def main():
         unit, size, fuzzy, mpn = meta
         if size < args.min_size:
             continue
+        # FOLD GATING.  A charged pair (rn, on) has the /OPT:ICF fold shape when the
+        # RETAIL body under rn is byte-equal (modulo relocated fields) to OUR body
+        # under on -- identical code reachable under two names.  Such a slot is NOT
+        # repairable by map or source work: the only thing that clears it is a
+        # PROVEN alias, and an unproven one is pure forgiveness that lifts the score
+        # by construction.  A row carrying even one of them therefore cannot cross
+        # 100 however many order/name defects are fixed around it.
+        folds = 0
+        for rn, on in charged:
+            a, b = tgt.get(rn), ours.get(on)
+            if a is not None and b is not None and a[0] == b[0]:
+                folds += 1
         rows.append({"name": name, "unit": unit, "size": size, "fuzzy": fuzzy, "mpn": mpn,
-                     "charged": len(charged), "forgiven": forgiven,
+                     "charged": len(charged), "forgiven": forgiven, "fold_charges": folds,
                      "distinct": sorted({c for c in charged})})
     rows.sort(key=lambda r: -r["size"])
 
@@ -145,6 +157,39 @@ def main():
 
     print("ROWS BLOCKED FROM 100 BY RELOCATION NAMES ONLY: %d rows, %d bytes at stake"
           % (len(rows), sum(r["size"] for r in rows)))
+
+    gated = [r for r in rows if r["fold_charges"]]
+    free = [r for r in rows if not r["fold_charges"]]
+    tot = sum(r["size"] for r in rows) or 1
+    print("  ICF-FOLD GATED (>=1 charge is a fold shape; UNREACHABLE without a PROVEN alias):")
+    print("      %5d rows  %8d B  %.1f%% of the bytes at stake" %
+          (len(gated), sum(r["size"] for r in gated), 100.0 * sum(r["size"] for r in gated) / tot))
+    print("  FOLD-FREE (every charge is a real name disagreement => map/source REPAIRABLE):")
+    print("      %5d rows  %8d B  %.1f%% of the bytes at stake" %
+          (len(free), sum(r["size"] for r in free), 100.0 * sum(r["size"] for r in free) / tot))
+    # >> AND "FOLD-FREE" IS NOT HEADROOM.  The fold test above asks whether the
+    # RETAIL body under rn equals OUR body under on, so it silently FAILS whenever
+    # our own callee is simply not matched yet -- a row then reads "fold-free"
+    # purely because we have not finished the callee.  Measured by hand on
+    # ?Handle@BandUI@@: THREE of our OnMsg overloads charged against ONE retail
+    # name (the classic fold-survivor shape) still scored fold-free.
+    # So split once more on whether every charged callee is ITSELF verified
+    # (its retail body equals ours under the same name).  Only that subset
+    # supports any claim at all.
+    def verified(n):
+        a, b = tgt.get(n), ours.get(n)
+        return (a is not None and b is not None and a[0] == b[0])
+
+    trust = [r for r in free if all(verified(on) for _rn, on in r["distinct"])]
+    undec = [r for r in free if not all(verified(on) for _rn, on in r["distinct"])]
+    print("  ...of which fold-vs-real is UNDECIDABLE (>=1 of our callees unverified):")
+    print("      %5d rows  %8d B  %.1f%%" %
+          (len(undec), sum(r["size"] for r in undec), 100.0 * sum(r["size"] for r in undec) / tot))
+    print("  ...and TRUSTWORTHY (every charged callee verified against retail):")
+    print("      %5d rows  %8d B  %.1f%%   <- the ONLY defensible worklist" %
+          (len(trust), sum(r["size"] for r in trust), 100.0 * sum(r["size"] for r in trust) / tot))
+    for r in trust[:15]:
+        print("      %-7d %-9.4f chg=%-3d %s" % (r["size"], r["fuzzy"], r["charged"], r["name"][:66]))
     print("%-7s %-9s %-4s %s" % ("size", "fuzzy", "chg", "symbol"))
     for r in rows[:40]:
         print("%-7d %-9.4f %-4d %s" % (r["size"], r["fuzzy"], r["charged"], r["name"][:78]))
