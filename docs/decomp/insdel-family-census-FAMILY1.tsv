@@ -1,0 +1,778 @@
+cluster_id	unit	shared_type	rows	bytes	regclean_rows	bands	sym	billed	fuzzy	n_charged	nreg	src
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?UpdateScrolling@VocalTrack@@QAAXM@Z	8948	72.253	1383	732	src/band3/bandtrack/VocalTrack.cpp
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?RebuildHUD@VocalTrack@@QAAXXZ	2188	90.450	141	118	src/band3/bandtrack/VocalTrack.cpp
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?PrepareNoteTubes@VocalTrack@@QAAXMHAAHH@Z	1160	73.386	189	138	src/band3/bandtrack/VocalTrack.cpp
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?UpdatePitchArrow@VocalTrack@@QAAXMH@Z	928	98.254	29	29	src/band3/bandtrack/VocalTrack.cpp
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?UpdateTubePlates@VocalTrack@@QAAXAAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@MM_N@Z	772	90.668	64	44	src/band3/bandtrack/VocalTrack.cpp
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?PollLyricAnimations@VocalTrack@@QAAXAAV?$deque@PAVLyricPlate@@V?$StlNodeAlloc@PAVLyricPlate@@@stlpmtx_std@@@stlpmtx_std@@M_N@Z	744	84.263	88	61	src/band3/bandtrack/VocalTrack.cpp
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?GetNextLyricPlate@VocalTrack@@QAAPAVLyricPlate@@AAV?$deque@PAVLyricPlate@@V?$StlNodeAlloc@PAVLyricPlate@@@stlpmtx_std@@@stlpmtx_std@@_N@Z	516	54.558	89	39	src/band3/bandtrack/VocalTrack.cpp
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?Poll@VocalTrack@@UAAXM@Z	512	97.617	4	1	src/band3/bandtrack/VocalTrack.cpp
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?ProcessStaticLyrics@VocalTrack@@QAAX_NPAVLyric@@AAM2AAPAV2@320PAVLyricPlate@@@Z	312	97.692	15	16	src/band3/bandtrack/VocalTrack.cpp
+0	default/VocalTrack	VocalTrack	10	16200	0	16+,4-6,7-15	?OnPhraseComplete@VocalTrack@@QAAXMMH@Z	120	65.867	16	4	src/band3/bandtrack/VocalTrack.cpp
+1	default/VocalPlayer	VocalPlayer	8	11632	0	16+,7-15	?Handle@VocalPlayer@@UAA?AVDataNode@@PAVDataArray@@_N@Z	4936	97.973	247	222	src/band3/game/VocalPlayer.cpp
+1	default/VocalPlayer	VocalPlayer	8	11632	0	16+,7-15	?Poll@VocalPlayer@@UAAXMABVSongPos@@@Z	3388	93.826	175	126	src/band3/game/VocalPlayer.cpp
+1	default/VocalPlayer	VocalPlayer	8	11632	0	16+,7-15	?HandlePhraseEnd@VocalPlayer@@QAAXM@Z	2332	97.937	71	74	src/band3/game/VocalPlayer.cpp
+1	default/VocalPlayer	VocalPlayer	8	11632	0	16+,7-15	?LocalSetEnabledState@VocalPlayer@@UAAXW4EnabledState@@HPAVBandUser@@_N@Z	292	85.315	18	5	src/band3/game/VocalPlayer.cpp
+1	default/VocalPlayer	VocalPlayer	8	11632	0	16+,7-15	?LocalEndgameEnergy@VocalPlayer@@QAAXH@Z	284	92.746	7	2	src/band3/game/VocalPlayer.cpp
+1	default/VocalPlayer	VocalPlayer	8	11632	0	16+,7-15	?UnpackFloats@VocalPlayer@@QBAXHMMAAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@@Z	228	36.667	46	13	src/band3/game/VocalPlayer.cpp
+1	default/VocalPlayer	VocalPlayer	8	11632	0	16+,7-15	?SongSectionOnly@VocalPlayer@@QBA_NAAM0@Z	136	10.118	45	17	src/band3/game/VocalPlayer.cpp
+1	default/VocalPlayer	VocalPlayer	8	11632	0	16+,7-15	?PastFinalNote@VocalPlayer@@UBA_NXZ	36	17.333	12	8	src/band3/game/VocalPlayer.cpp
+2	default/Spotlight	Spotlight	8	11592	0	16+	?SyncProperty@Spotlight@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z	4728	99.392	103	103	src/system/world/Spotlight.cpp
+2	default/Spotlight	Spotlight	8	11592	0	16+	?BuildNGCone@Spotlight@@IAAXAAUBeamDef@1@H@Z	1692	66.728	371	355	src/system/world/Spotlight.cpp
+2	default/Spotlight	Spotlight	8	11592	0	16+	?UpdateTransforms@Spotlight@@IAAXXZ	1340	93.110	80	56	src/system/world/Spotlight.cpp
+2	default/Spotlight	Spotlight	8	11592	0	16+	?BuildNGSheet@Spotlight@@IAAXAAUBeamDef@1@@Z	1232	94.458	90	123	src/system/world/Spotlight.cpp
+2	default/Spotlight	Spotlight	8	11592	0	16+	?BuildNGQuad@Spotlight@@IAAXAAUBeamDef@1@W4Constraint@RndTransformable@@@Z	964	84.174	147	172	src/system/world/Spotlight.cpp
+2	default/Spotlight	Spotlight	8	11592	0	16+	?DrawShowing@Spotlight@@UAAXXZ	904	79.341	67	6	src/system/world/Spotlight.cpp
+2	default/Spotlight	Spotlight	8	11592	0	16+	?Poll@Spotlight@@UAAXXZ	556	96.489	20	9	src/system/world/Spotlight.cpp
+2	default/Spotlight	Spotlight	8	11592	0	16+	?SetColor@Spotlight@@IAAXH@Z	176	91.250	22	24	src/system/world/Spotlight.cpp
+3	default/DataFunc		1	8068	0	16+	?DataInitFuncs@@YAXXZ	8068	70.527	1111	502	src/system/obj/DataFunc.cpp
+4	default/BandDirector	BandDirector	4	6440	0	16+	?OnFileLoaded@BandDirector@@QAA?AVDataNode@@PAVDataArray@@@Z	3816	99.589	27	1	src/system/bandobj/BandDirector.cpp
+4	default/BandDirector	BandDirector	4	6440	0	16+	?Enter@BandDirector@@UAAXXZ	1688	98.102	44	1	src/system/bandobj/BandDirector.cpp
+4	default/BandDirector	BandDirector	4	6440	0	16+	?EnterVenue@BandDirector@@QAAXXZ	604	61.430	102	46	src/system/bandobj/BandDirector.cpp
+4	default/BandDirector	BandDirector	4	6440	0	16+	?GetModeInst@BandDirector@@QAA?AVSymbol@@V2@@Z	332	53.301	70	32	src/system/bandobj/BandDirector.cpp
+5	default/BandCharacter	BandCharacter	9	6268	1	16+,4-6,7-15	?OnSetFileMerger@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z	2156	99.193	8	1	src/system/bandobj/BandCharacter.cpp
+5	default/BandCharacter	BandCharacter	9	6268	1	16+,4-6,7-15	?Filter@BandCharacter@@UAA?AW4Action@MergeFilter@@PAVObject@Hmx@@0PAVObjectDir@@@Z	1220	71.544	151	61	src/system/bandobj/BandCharacter.cpp
+5	default/BandCharacter	BandCharacter	9	6268	1	16+,4-6,7-15	?OnInstallFilter@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z	904	85.102	103	76	src/system/bandobj/BandCharacter.cpp
+5	default/BandCharacter	BandCharacter	9	6268	1	16+,4-6,7-15	?PlayMainClip@BandCharacter@@QAAPAVCharClipDriver@@H_N@Z	896	47.183	179	47	src/system/bandobj/BandCharacter.cpp
+5	default/BandCharacter	BandCharacter	9	6268	1	16+,4-6,7-15	?OnPostMerge@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z	656	83.323	33	5	src/system/bandobj/BandCharacter.cpp
+5	default/BandCharacter	BandCharacter	9	6268	1	16+,4-6,7-15	?Compress@BandCharacter@@UAAXPAVRndTex@@_N@Z	144	16.639	35	7	src/system/bandobj/BandCharacter.cpp
+5	default/BandCharacter	BandCharacter	9	6268	1	16+,4-6,7-15	?PreLoad@BandCharacter@@UAAXAAVBinStream@@@Z	140	84.286	10	6	src/system/bandobj/BandCharacter.cpp
+5	default/BandCharacter	BandCharacter	9	6268	1	16+,4-6,7-15	?AddOverlays@BandCharacter@@UAAXAAVBandPatchMesh@@@Z	112	92.464	4	1	src/system/bandobj/BandCharacter.cpp
+5	default/BandCharacter	BandCharacter	9	6268	1	16+,4-6,7-15	?ComputeScreenSize@BandCharacter@@UAAMPAVRndCam@@@Z	40	19.000	9	0	src/system/bandobj/BandCharacter.cpp
+6	default/Mesh	RndMesh	5	6236	0	16+	?Load@RndMesh@@UAAXAAVBinStream@@@Z	3452	88.191	285	125	src/system/rndobj/Mesh.cpp
+6	default/Mesh	RndMesh	5	6236	0	16+	?OnSync@RndMesh@@MAAXH@Z	1192	94.671	125	129	src/system/rndobj/Mesh.cpp
+6	default/Mesh	RndMesh	5	6236	0	16+	?CollideShowing@RndMesh@@UAAPAVRndDrawable@@ABVSegment@@AAMAAVPlane@@@Z	696	91.052	62	33	src/system/rndobj/Mesh.cpp
+6	default/Mesh	RndMesh	5	6236	0	16+	?SaveVertices@RndMesh@@UAAXAAVBinStream@@@Z	460	92.374	18	6	src/system/rndobj/Mesh.cpp
+6	default/Mesh	RndMesh	5	6236	0	16+	?SkinVertex@RndMesh@@QAA?AVVector3@@ABVVert@1@PAV2@@Z	436	97.505	29	33	src/system/rndobj/Mesh.cpp
+7	default/VocalTrackDir	VocalTrackDir	5	6196	0	16+	?PostLoad@VocalTrackDir@@UAAXAAVBinStream@@@Z	3656	96.397	55	10	src/system/bandobj/VocalTrackDir.cpp
+7	default/VocalTrackDir	VocalTrackDir	5	6196	0	16+	?ApplyFontStyle@VocalTrackDir@@QAAXPAVObject@Hmx@@@Z	1164	6.725	371	108	src/system/bandobj/VocalTrackDir.cpp
+7	default/VocalTrackDir	VocalTrackDir	5	6196	0	16+	?SetRange@VocalTrackDir@@QAAXMMH_N@Z	700	93.537	17	9	src/system/bandobj/VocalTrackDir.cpp
+7	default/VocalTrackDir	VocalTrackDir	5	6196	0	16+	?SetConfiguration@VocalTrackDir@@QAAXPAVObject@Hmx@@W4HarmonyShowingState@1@@Z	528	82.402	29	2	src/system/bandobj/VocalTrackDir.cpp
+7	default/VocalTrackDir	VocalTrackDir	5	6196	0	16+	?RecalculateLyricZ@VocalTrackDir@@QAAXPA_N0@Z	148	89.189	19	20	src/system/bandobj/VocalTrackDir.cpp
+8	default/network/Plugins/Checksum/MD5/MD5		1	6068	0	16+	?transform@MD5@Quazal@@QAAXPBE@Z	6068	82.185	1409	2214	src/network/Plugins/Checksum/MD5/MD5.cpp
+9	default/SHA1		1	5856	0	16+	?Transform@CSHA1@@AAAXPAIPBE@Z	5856	55.691	1511	1771	src/system/math/SHA1.cpp
+10	default/system/obj/Dir	ObjectDir	3	5640	0	16+	?PreLoad@ObjectDir@@UAAXAAVBinStream@@@Z	3092	84.713	412	256	src/system/obj/Dir.cpp
+10	default/system/obj/Dir	ObjectDir	3	5640	0	16+	?Save@ObjectDir@@UAAXAAVBinStream@@@Z	2108	90.748	168	138	src/system/obj/Dir.cpp
+10	default/system/obj/Dir	ObjectDir	3	5640	0	16+	?Iterate@ObjectDir@@IAAXPAVDataArray@@_N@Z	440	60.491	91	41	src/system/obj/Dir.cpp
+11	default/BandWardrobe	BandWardrobe	6	5464	0	16+,4-6,7-15	?SyncProperty@BandWardrobe@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z	2416	99.743	12	8	src/system/bandobj/BandWardrobe.cpp
+11	default/BandWardrobe	BandWardrobe	6	5464	0	16+,4-6,7-15	?OnEnterVignette@BandWardrobe@@QAA?AVDataNode@@PAVDataArray@@@Z	1692	89.012	140	84	src/system/bandobj/BandWardrobe.cpp
+11	default/BandWardrobe	BandWardrobe	6	5464	0	16+,4-6,7-15	?FindBestScoringHint@BandWardrobe@@QAAHPAVSymbol@@PAVSlotInfo@1@AAH@Z	828	55.961	164	77	src/system/bandobj/BandWardrobe.cpp
+11	default/BandWardrobe	BandWardrobe	6	5464	0	16+,4-6,7-15	?ValidGenreGender@BandWardrobe@@QAA_NPAVCamShot@@@Z	372	50.280	67	20	src/system/bandobj/BandWardrobe.cpp
+11	default/BandWardrobe	BandWardrobe	6	5464	0	16+,4-6,7-15	?SyncVignetteInterest@BandWardrobe@@QAAXH@Z	80	93.500	5	6	src/system/bandobj/BandWardrobe.cpp
+11	default/BandWardrobe	BandWardrobe	6	5464	0	16+,4-6,7-15	?SyncEnableBlinks@BandWardrobe@@QAAXH@Z	76	93.158	5	6	src/system/bandobj/BandWardrobe.cpp
+12	default/FileMerger	CharIKHand	2	5244	0	16+	?IKElbow@CharIKHand@@IAAXPAVRndTransformable@@0@Z	2880	94.026	130	190	src/system/char/FileMerger.cpp
+12	default/FileMerger	CharIKHand	2	5244	0	16+	?Poll@CharIKHand@@UAAXXZ	2364	98.261	40	49	src/system/char/FileMerger.cpp
+13	default/CharacterCreatorPanel		1	5164	0	16+	?Handle@CharacterCreatorPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z	5164	98.244	224	206	src/band3/meta_band/CharacterCreatorPanel.cpp
+14	default/CustomizePanel		1	5036	1	<=3	?Handle@CustomizePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z	5036	99.921	1	0	src/band3/meta_band/CustomizePanel.cpp
+15	default/Part	RndParticleSys	2	4928	0	16+	?InitParticle@RndParticleSys@@IAAXMPAVRndParticle@@PBVTransform@@AAVPartOverride@@@Z	2492	57.958	529	368	src/system/rndobj/Part.cpp
+15	default/Part	RndParticleSys	2	4928	0	16+	?Load@RndParticleSys@@UAAXAAVBinStream@@@Z	2436	95.585	93	52	src/system/rndobj/Part.cpp
+16	default/json_tokener		1	4872	0	16+	json_tokener_parse_ex	4872	93.200	169	65	src/system/net/json-c/json_tokener.c
+17	default/CharBones	CharBones	3	4820	0	16+	?ScaleAdd@CharBones@@QBAXAAV1@M@Z	1756	73.007	356	382	src/system/char/CharBones.cpp
+17	default/CharBones	CharBones	3	4820	0	16+	?RotateTo@CharBones@@QBAXAAV1@M@Z	1644	73.861	350	499	src/system/char/CharBones.cpp
+17	default/CharBones	CharBones	3	4820	0	16+	?RotateBy@CharBones@@QBAXAAV1@@Z	1420	86.065	253	413	src/system/char/CharBones.cpp
+18	default/band3/meta_band/SaveLoadManager	SaveLoadManager	2	4228	1	16+,7-15	?SetState@SaveLoadManager@@IAAXW4State@1@@Z	4096	96.740	140	105	src/band3/meta_band/SaveLoadManager.cpp
+18	default/band3/meta_band/SaveLoadManager	SaveLoadManager	2	4228	1	16+,7-15	?Start@SaveLoadManager@@IAAXXZ	132	61.818	13	0	src/band3/meta_band/SaveLoadManager.cpp
+19	default/CameraShot	CamShot	5	4168	1	16+,7-15	?Handle@CamShot@@UAA?AVDataNode@@PAVDataArray@@_N@Z	1596	93.637	42	14	src/system/world/CameraShot.cpp
+19	default/CameraShot	CamShot	5	4168	1	16+,7-15	?Shake@CamShot@@IAAXMMABVVector2@@AAVVector3@@1@Z	1148	95.564	77	16	src/system/world/CameraShot.cpp
+19	default/CameraShot	CamShot	5	4168	1	16+,7-15	?Copy@CamShot@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z	676	95.817	10	0	src/system/world/CameraShot.cpp
+19	default/CameraShot	CamShot	5	4168	1	16+,7-15	?StartAnim@CamShot@@UAAXXZ	552	8.413	141	12	src/system/world/CameraShot.cpp
+19	default/CameraShot	CamShot	5	4168	1	16+,7-15	?EndAnim@CamShot@@UAAXXZ	196	57.286	27	6	src/system/world/CameraShot.cpp
+20	default/SpotlightDrawer_NG	NgSpotlightDrawer	4	4160	0	16+,7-15	?SetupXSection@NgSpotlightDrawer@@IAAXPAVSpotlight@@ABUBeamDef@2@@Z	2104	32.730	501	260	src/system/world/SpotlightDrawer_NG.cpp
+20	default/SpotlightDrawer_NG	NgSpotlightDrawer	4	4160	0	16+,7-15	?RenderConeDefs@NgSpotlightDrawer@@IAAXPAVSpotlight@@ABVColor@Hmx@@@Z	1324	66.320	229	133	src/system/world/SpotlightDrawer_NG.cpp
+20	default/SpotlightDrawer_NG	NgSpotlightDrawer	4	4160	0	16+,7-15	?RenderBeams@NgSpotlightDrawer@@IAAXABVMatrix4@Hmx@@@Z	416	88.250	26	7	src/system/world/SpotlightDrawer_NG.cpp
+20	default/SpotlightDrawer_NG	NgSpotlightDrawer	4	4160	0	16+,7-15	?RenderSphere@NgSpotlightDrawer@@IAAXPAVSpotlight@@@Z	316	97.911	12	13	src/system/world/SpotlightDrawer_NG.cpp
+21	default/CharBonesSamples	CharBonesSamples	4	3792	0	16+	?Relativize@CharBonesSamples@@QAAXPAVCharClip@@@Z	1448	96.472	25	14	src/system/char/CharBonesSamples.cpp
+21	default/CharBonesSamples	CharBonesSamples	4	3792	0	16+	?Save@CharBonesSamples@@QAAXAAVBinStream@@@Z	1088	91.577	68	18	src/system/char/CharBonesSamples.cpp
+21	default/CharBonesSamples	CharBonesSamples	4	3792	0	16+	?EvaluateChannel@CharBonesSamples@@QAAXPAXHHM@Z	944	83.754	99	63	src/system/char/CharBonesSamples.cpp
+21	default/CharBonesSamples	CharBonesSamples	4	3792	0	16+	?FracToSample@CharBonesSamples@@QBAHPAM@Z	312	58.756	76	55	src/system/char/CharBonesSamples.cpp
+22	default/ChordbookPanel	ChordbookPanel	2	3740	0	16+	?DisplayChord@ChordbookPanel@@QAAXI@Z	3436	97.179	90	57	src/band3/game/ChordbookPanel.cpp
+22	default/ChordbookPanel	ChordbookPanel	2	3740	0	16+	?Enter@ChordbookPanel@@UAAXXZ	304	50.447	48	9	src/band3/game/ChordbookPanel.cpp
+23	default/CharEyes	CharEyes	3	3656	0	16+	?NextLook@CharEyes@@IAAXXZ	1684	66.829	335	257	src/system/char/CharEyes.cpp
+23	default/CharEyes	CharEyes	3	3656	0	16+	?Poll@CharEyes@@UAAXXZ	1616	96.619	108	120	src/system/char/CharEyes.cpp
+23	default/CharEyes	CharEyes	3	3656	0	16+	??$PropSync@UEyeDesc@CharEyes@@@@YA_NAAV?$ObjVector@UEyeDesc@CharEyes@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z	356	96.404	21	22	src/system/char/CharEyes.cpp
+24	default/Rnd_Xbox	DxRnd	7	3576	1	16+,7-15,<=3	?InitBuffers@DxRnd@@AAAXXZ	1312	32.659	314	92	src/system/rnddx9/Rnd_Xbox.cpp
+24	default/Rnd_Xbox	DxRnd	7	3576	1	16+,7-15,<=3	?FinishPostProcess@DxRnd@@AAAXXZ	652	49.399	117	31	src/system/rnddx9/Rnd_Xbox.cpp
+24	default/Rnd_Xbox	DxRnd	7	3576	1	16+,7-15,<=3	?ModalDraw@DxRnd@@MAAXW4ModalType@Debug@@PBD@Z	480	77.692	54	32	src/system/rnddx9/Rnd_Xbox.cpp
+24	default/Rnd_Xbox	DxRnd	7	3576	1	16+,7-15,<=3	?PreInit@DxRnd@@QAAXPAUHWND__@@@Z	412	66.680	45	1	src/system/rnddx9/Rnd_Xbox.cpp
+24	default/Rnd_Xbox	DxRnd	7	3576	1	16+,7-15,<=3	?SetDefaultRenderStates@DxRnd@@QAAXXZ	292	92.767	15	3	src/system/rnddx9/Rnd_Xbox.cpp
+24	default/Rnd_Xbox	DxRnd	7	3576	1	16+,7-15,<=3	?Present@DxRnd@@QAAXXZ	224	95.357	3	0	src/system/rnddx9/Rnd_Xbox.cpp
+24	default/Rnd_Xbox	DxRnd	7	3576	1	16+,7-15,<=3	?SavePreBuffer@DxRnd@@AAAXXZ	204	66.490	39	23	src/system/rnddx9/Rnd_Xbox.cpp
+25	default/Mat_NG	NgMat	2	3352	0	16+	?SetRegularShaderConst@NgMat@@IAAX_N@Z	1896	98.264	60	49	src/system/rndobj/Mat_NG.cpp
+25	default/Mat_NG	NgMat	2	3352	0	16+	?RefreshState@NgMat@@IAAXXZ	1456	96.591	45	20	src/system/rndobj/Mat_NG.cpp
+26	default/TexRenderer		1	3320	0	16+	?DrawToTexture@RndTexRenderer@@QAAXXZ	3320	94.176	213	144	src/system/rndobj/TexRenderer.cpp
+27	default/Crowd	WorldCrowd	3	3168	0	16+	?DrawShowing@WorldCrowd@@UAAXXZ	2072	86.981	217	144	src/system/world/Crowd.cpp
+27	default/Crowd	WorldCrowd	3	3168	0	16+	?Draw3DChars@WorldCrowd@@IAAXXZ	1012	29.877	232	80	src/system/world/Crowd.cpp
+27	default/Crowd	WorldCrowd	3	3168	0	16+	??0Char3D@CharData@WorldCrowd@@QAA@ABU012@@Z	84	15.333	27	6	src/system/world/Crowd.cpp
+28	default/PropAnim		1	3136	0	16+	?Handle@RndPropAnim@@UAA?AVDataNode@@PAVDataArray@@_N@Z	3136	98.865	158	158	src/system/rndobj/PropAnim.cpp
+29	default/StorePanel	StorePanel	6	3016	3	16+,7-15	?Handle@StorePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z	1192	79.587	80	0	src/system/meta/StorePanel.cpp
+29	default/StorePanel	StorePanel	6	3016	3	16+,7-15	?EnumerateOffers@StorePanel@@MAAX_N@Z	692	62.717	89	18	src/system/meta/StorePanel.cpp
+29	default/StorePanel	StorePanel	6	3016	3	16+,7-15	?UpdateOffers@StorePanel@@MAAHABV?$list@UEnumProduct@@V?$StlNodeAlloc@UEnumProduct@@@stlpmtx_std@@@stlpmtx_std@@_N@Z	512	84.023	59	47	src/system/meta/StorePanel.cpp
+29	default/StorePanel	StorePanel	6	3016	3	16+,7-15	?Load@StorePanel@@UAAXXZ	340	91.047	9	0	src/system/meta/StorePanel.cpp
+29	default/StorePanel	StorePanel	6	3016	3	16+,7-15	?Enter@StorePanel@@UAAXXZ	168	63.738	24	5	src/system/meta/StorePanel.cpp
+29	default/StorePanel	StorePanel	6	3016	3	16+,7-15	?IsLoaded@StorePanel@@UBA_NXZ	112	61.964	12	0	src/system/meta/StorePanel.cpp
+30	default/band3/meta_band/BandStorePanel	BandStorePanel	3	3004	0	16+,7-15	?Handle@BandStorePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z	1928	93.122	45	8	src/band3/meta_band/BandStorePanel.cpp
+30	default/band3/meta_band/BandStorePanel	BandStorePanel	3	3004	0	16+,7-15	?Poll@BandStorePanel@@UAAXXZ	980	45.045	215	44	src/band3/meta_band/BandStorePanel.cpp
+30	default/band3/meta_band/BandStorePanel	BandStorePanel	3	3004	0	16+,7-15	?MakeNewOffer@BandStorePanel@@UAAPAVStoreOffer@@PBVStorePackedOfferBase@@_N@Z	96	60.917	15	2	src/band3/meta_band/BandStorePanel.cpp
+31	default/OutfitConfig	OutfitConfig	2	2972	0	16+	?Compose@MatSwap@OutfitConfig@@QAAXPAHAAV?$ObjVector@VBandPatchMesh@@@@H@Z	1780	86.769	133	80	src/system/bandobj/OutfitConfig.cpp
+31	default/OutfitConfig	OutfitConfig	2	2972	0	16+	?SetSkinTextures@OutfitConfig@@SAXPAVObjectDir@@0PAVBandCharDesc@@@Z	1192	95.074	41	23	src/system/bandobj/OutfitConfig.cpp
+32	default/AmbientOcclusion	RndAmbientOcclusion	3	2824	0	16+	?SmoothResults@RndAmbientOcclusion@@IBAXPAVRndMesh@@@Z	1672	68.017	281	207	src/system/rndobj/AmbientOcclusion.cpp
+32	default/AmbientOcclusion	RndAmbientOcclusion	3	2824	0	16+	?CalculateAOAtPoint@RndAmbientOcclusion@@IBAXABVVector3@@0PAM@Z	608	74.197	86	54	src/system/rndobj/AmbientOcclusion.cpp
+32	default/AmbientOcclusion	RndAmbientOcclusion	3	2824	0	16+	?BlendVert@RndAmbientOcclusion@@SAXABVVert@RndMesh@@0AAV23@@Z	544	55.956	127	92	src/system/rndobj/AmbientOcclusion.cpp
+33	default/Text	RndText	4	2808	0	16+,7-15	?ApplyLineText@RndText@@QAAXABVString@@ABVStyle@1@AAMAAVLine@1@HHPA_N@Z	1180	86.485	55	15	src/system/rndobj/Text.cpp
+33	default/Text	RndText	4	2808	0	16+,7-15	?ParseMarkup@RndText@@QBAPBDPBDPAVStyle@1@MM@Z	924	97.896	7	2	src/system/rndobj/Text.cpp
+33	default/Text	RndText	4	2808	0	16+,7-15	?UpdateText@RndText@@QAAX_N@Z	364	77.044	36	13	src/system/rndobj/Text.cpp
+33	default/Text	RndText	4	2808	0	16+,7-15	?UpdateMesh@RndText@@QAAXPAVRndFont@@@Z	340	98.176	7	7	src/system/rndobj/Text.cpp
+34	default/CharHair	CharHair	2	2800	0	16+	?SimulateInternal@CharHair@@IAAXM@Z	2472	96.173	64	49	src/system/char/CharHair.cpp
+34	default/CharHair	CharHair	2	2800	0	16+	?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoint@CharHair@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPoint@CharHair@@ABU34@ABU__false_type@2@I_N@Z	328	93.256	18	9	src/system/char/CharHair.cpp
+35	default/CameraShot	CamShotFrame	2	2796	0	16+,7-15	?Interp@CamShotFrame@@QAAXABV1@MMPAVRndCam@@@Z	1772	99.063	9	2	src/system/world/CameraShot.cpp
+35	default/CameraShot	CamShotFrame	2	2796	0	16+,7-15	?BuildTransform@CamShotFrame@@QBAXPAVRndCam@@AAVTransform@@_N@Z	1024	96.258	37	28	src/system/world/CameraShot.cpp
+36	default/AmbientOcclusion	VTriangle	6	2712	1	16+,7-15,<=3	?Pack@kdTreeNode@?$kdTree@VTriangle@@@@QAAXW4SplitPlaneType@2@ABVBox@@AAV?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@PAV12@E@Z	972	85.300	60	32	src/system/rndobj/AmbientOcclusion.cpp
+36	default/AmbientOcclusion	VTriangle	6	2712	1	16+,7-15,<=3	?FindSplit_Mean@kdTreeNode@?$kdTree@VTriangle@@@@QAA_NABVBox@@ABV?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@@Z	500	18.920	139	45	src/system/rndobj/AmbientOcclusion.cpp
+36	default/AmbientOcclusion	VTriangle	6	2712	1	16+,7-15,<=3	?Intersect@?$kdTree@VTriangle@@@@QBA_NABVVector3@@0MAAM@Z	496	89.427	28	10	src/system/rndobj/AmbientOcclusion.cpp
+36	default/AmbientOcclusion	VTriangle	6	2712	1	16+,7-15,<=3	?FindSplit_SAH@kdTreeNode@?$kdTree@VTriangle@@@@QAA_NABVBox@@ABV?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@@Z	388	95.361	13	10	src/system/rndobj/AmbientOcclusion.cpp
+36	default/AmbientOcclusion	VTriangle	6	2712	1	16+,7-15,<=3	??0?$kdTree@VTriangle@@@@QAA@ABVBox@@@Z	264	87.955	12	7	src/system/rndobj/AmbientOcclusion.cpp
+36	default/AmbientOcclusion	VTriangle	6	2712	1	16+,7-15,<=3	?_M_erase@?$vector@VTriangle@@V?$StlNodeAlloc@VTriangle@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTriangle@@PAV3@0ABU__false_type@2@@Z	92	95.435	2	0	src/system/rndobj/AmbientOcclusion.cpp
+37	default/UIStats		1	2604	0	16+	?MaybePublish@UIStats@@QAAXPAVUIScreen@@@Z	2604	99.579	65	10	src/band3/meta_band/UIStats.cpp
+38	default/band3/meta_band/StoreOfferProvider	StoreOfferProvider	2	2588	0	16+,4-6	?BuildList@StoreOfferProvider@@QAAXPAVDataArray@@@Z	2536	96.043	110	45	src/band3/meta_band/StoreOfferProvider.cpp
+38	default/band3/meta_band/StoreOfferProvider	StoreOfferProvider	2	2588	0	16+,4-6	?IsActive@StoreOfferProvider@@UBA_NH@Z	52	71.923	5	1	src/band3/meta_band/StoreOfferProvider.cpp
+39	default/Accomplishment		1	2584	0	16+	?Configure@Accomplishment@@QAAXPAVDataArray@@@Z	2584	35.361	567	145	src/band3/meta_band/Accomplishment.cpp
+40	default/GemTrack	GemTrack	4	2580	2	16+,7-15,<=3	?DrawTrackElements@GemTrack@@QAAXHH@Z	1432	97.718	30	12	src/band3/bandtrack/GemTrack.cpp
+40	default/GemTrack	GemTrack	4	2580	2	16+,7-15,<=3	?DrawBeatLine@GemTrack@@QAAXVSymbol@@HH_N@Z	684	95.731	13	0	src/band3/bandtrack/GemTrack.cpp
+40	default/GemTrack	GemTrack	4	2580	2	16+,7-15,<=3	?DrawBeatLines@GemTrack@@QAAXHH@Z	448	93.527	36	37	src/band3/bandtrack/GemTrack.cpp
+40	default/GemTrack	GemTrack	4	2580	2	16+,7-15,<=3	?SetInCoda@GemTrack@@QAAX_N@Z	16	75.000	1	0	src/band3/bandtrack/GemTrack.cpp
+41	default/TourDescPanel	TourDescProvider	2	2560	0	16+	?UpdateExtendedCustom@TourDescProvider@@UBAXHHPAVObject@Hmx@@@Z	1944	88.660	185	183	src/band3/tour/TourDescPanel.cpp
+41	default/TourDescPanel	TourDescProvider	2	2560	0	16+	?Mat@TourDescProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z	616	65.955	72	7	src/band3/tour/TourDescPanel.cpp
+42	default/CalibrationPanel	CalibrationPanel	2	2472	0	16+,7-15	?OnInitializeContent@CalibrationPanel@@QAA?AVDataNode@@PAVDataArray@@@Z	1668	98.945	8	4	src/band3/meta_band/CalibrationPanel.cpp
+42	default/CalibrationPanel	CalibrationPanel	2	2472	0	16+,7-15	?UpdateLabel@CalibrationPanel@@QAAXXZ	804	86.965	44	20	src/band3/meta_band/CalibrationPanel.cpp
+43	default/SongSortMgr	SongSortMgr	3	2444	0	16+,7-15	?DoesOfferMatchFilter@SongSortMgr@@QBA_NPAVStoreOffer@@PBVSongFilter@1@VSymbol@@@Z	1416	88.653	125	98	src/band3/meta_band/SongSortMgr.cpp
+43	default/SongSortMgr	SongSortMgr	3	2444	0	16+,7-15	?DoesSongMatchFilter@SongSortMgr@@QBA_NHPBVSongFilter@1@VSymbol@@@Z	568	97.028	10	1	src/band3/meta_band/SongSortMgr.cpp
+43	default/SongSortMgr	SongSortMgr	3	2444	0	16+,7-15	?IntersectFilter@SongFilter@SongSortMgr@@QAAXPAV12@@Z	460	96.200	19	5	src/band3/meta_band/SongSortMgr.cpp
+44	default/system/bandobj/BandTrack	BandTrack	2	2356	0	16+	?DisablePlayer@BandTrack@@UAAXH@Z	1240	67.235	167	66	src/system/bandobj/BandTrack.cpp
+44	default/system/bandobj/BandTrack	BandTrack	2	2356	0	16+	?Reset@BandTrack@@UAAXXZ	1116	78.136	81	16	src/system/bandobj/BandTrack.cpp
+45	default/PracticePanel	PracticePanel	3	2280	0	16+	?Poll@PracticePanel@@UAAXXZ	1656	98.630	20	12	src/band3/game/PracticePanel.cpp
+45	default/PracticePanel	PracticePanel	3	2280	0	16+	?Enter@PracticePanel@@UAAXXZ	432	57.731	64	15	src/band3/game/PracticePanel.cpp
+45	default/PracticePanel	PracticePanel	3	2280	0	16+	?Exit@PracticePanel@@UAAXXZ	192	67.667	24	5	src/band3/game/PracticePanel.cpp
+46	default/VocalNoteList	VocalNoteList	3	2204	0	16+	?NotesDone@VocalNoteList@@QAAXABVTempoMap@@_N@Z	1836	83.675	217	145	src/system/beatmatch/VocalNoteList.cpp
+46	default/VocalNoteList	VocalNoteList	3	2204	0	16+	?GenerateLegalFreestyleSections@VocalNoteList@@QBAXAAV?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@@Z	200	57.540	44	16	src/system/beatmatch/VocalNoteList.cpp
+46	default/VocalNoteList	VocalNoteList	3	2204	0	16+	?NextNote@VocalNoteList@@QBAPAVVocalNote@@M@Z	168	76.357	19	11	src/system/beatmatch/VocalNoteList.cpp
+47	default/BandCharacter		1	2180	0	16+	??0BandCharacter@@QAA@XZ	2180	77.965	208	75	src/system/bandobj/BandCharacter.cpp
+48	default/Character	Character	5	2120	0	16+,7-15	?PostLoad@Character@@UAAXAAVBinStream@@@Z	1440	60.383	280	130	src/system/char/Character.cpp
+48	default/Character	Character	5	2120	0	16+,7-15	?SyncObjects@Character@@UAAXXZ	340	64.271	40	9	src/system/char/Character.cpp
+48	default/Character	Character	5	2120	0	16+,7-15	?UnhookShadow@Character@@IAAXXZ	196	71.837	37	32	src/system/char/Character.cpp
+48	default/Character	Character	5	2120	0	16+,7-15	??$__destroy_mv_srcs@V?$reverse_iterator@PAV?$ObjVector@ULod@Character@@@@@stlpmtx_std@@V?$ObjVector@ULod@Character@@@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$ObjVector@ULod@Character@@@@@0@0PAV?$ObjVector@ULod@Character@@@@@Z	72	22.222	18	3	src/system/char/Character.cpp
+48	default/Character	Character	5	2120	0	16+,7-15	?resize@?$ObjVector@ULod@Character@@@@QAAXI@Z	72	70.944	11	3	src/system/char/Character.cpp
+49	default/StandardStream	StandardStream	4	2092	1	16+,7-15	?InitInfo@StandardStream@@QAAXHH_NH@Z	872	66.858	180	127	src/system/synth/StandardStream.cpp
+49	default/StandardStream	StandardStream	4	2092	1	16+,7-15	?ConsumeData@StandardStream@@QAAHPAPAXHH@Z	616	96.279	25	11	src/system/synth/StandardStream.cpp
+49	default/StandardStream	StandardStream	4	2092	1	16+,7-15	?PollStream@StandardStream@@QAAXXZ	408	98.069	9	0	src/system/synth/StandardStream.cpp
+49	default/StandardStream	StandardStream	4	2092	1	16+,7-15	?SetJump@StandardStream@@UAAXMMPBD@Z	196	23.735	53	11	src/system/synth/StandardStream.cpp
+50	default/system/rndobj/Utl		1	1980	0	16+	?ResetNormals@@YAXPAVRndMesh@@@Z	1980	86.804	228	201	src/system/rndobj/Utl.cpp
+51	default/Shader		1	1936	0	16+	?CalcShaderOpts@RndShaderMultimesh@@MAA_KPAVNgMat@@W4ShaderType@@_N@Z	1936	15.579	561	143	src/system/rndobj/Shader.cpp
+52	default/Bitmap	RndBitmap	5	1920	0	16+,7-15	?PixelOffset@RndBitmap@@ABAHHHAA_N@Z	820	74.410	135	130	src/system/rndobj/Bitmap.cpp
+52	default/Bitmap	RndBitmap	5	1920	0	16+,7-15	?ConvertColor@RndBitmap@@ABAXPBEAAE111@Z	344	94.767	11	6	src/system/rndobj/Bitmap.cpp
+52	default/Bitmap	RndBitmap	5	1920	0	16+,7-15	?NearestColor@RndBitmap@@ABAEEEEE@Z	284	94.197	33	28	src/system/rndobj/Bitmap.cpp
+52	default/Bitmap	RndBitmap	5	1920	0	16+,7-15	?DxtColor@RndBitmap@@ABAXHHAAE000@Z	256	92.109	12	8	src/system/rndobj/Bitmap.cpp
+52	default/Bitmap	RndBitmap	5	1920	0	16+,7-15	?LoadHeader@RndBitmap@@AAAAAVBinStream@@AAV2@AAE@Z	216	49.981	32	7	src/system/rndobj/Bitmap.cpp
+53	default/TexBlender		1	1880	0	16+	?DrawShowing@RndTexBlender@@UAAXXZ	1880	77.013	243	126	src/system/rndobj/TexBlender.cpp
+54	default/UIComponent	UIComponent	3	1860	0	16+	?Update@UIComponent@@UAAXXZ	1192	95.372	26	13	src/system/ui/UIComponent.cpp
+54	default/UIComponent	UIComponent	3	1860	0	16+	?SetTypeDef@UIComponent@@UAAXPAVDataArray@@@Z	500	82.296	32	11	src/system/ui/UIComponent.cpp
+54	default/UIComponent	UIComponent	3	1860	0	16+	?Copy@UIComponent@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z	168	31.548	43	9	src/system/ui/UIComponent.cpp
+55	default/BandSongMgr	BandSongMgr	8	1796	0	16+,4-6,7-15	?SongAudioData@BandSongMgr@@UBAPAVSongInfo@@H@Z	444	58.811	71	30	src/band3/meta_band/BandSongMgr.cpp
+55	default/BandSongMgr	BandSongMgr	8	1796	0	16+,4-6,7-15	?ReadCachedMetadataFromStream@BandSongMgr@@UAAXAAVBinStream@@H@Z	400	53.540	80	27	src/band3/meta_band/BandSongMgr.cpp
+55	default/BandSongMgr	BandSongMgr	8	1796	0	16+,4-6,7-15	?AllowContentToBeAdded@BandSongMgr@@UAA_NPAVDataArray@@W4ContentLocT@@@Z	332	55.627	42	4	src/band3/meta_band/BandSongMgr.cpp
+55	default/BandSongMgr	BandSongMgr	8	1796	0	16+,4-6,7-15	?RankTierToken@BandSongMgr@@QBA?AVSymbol@@H@Z	224	24.964	58	19	src/band3/meta_band/BandSongMgr.cpp
+55	default/BandSongMgr	BandSongMgr	8	1796	0	16+,4-6,7-15	?AddSongData@BandSongMgr@@UAAXPAVDataArray@@PAVDataLoader@@W4ContentLocT@@@Z	152	66.079	25	11	src/band3/meta_band/BandSongMgr.cpp
+55	default/BandSongMgr	BandSongMgr	8	1796	0	16+,4-6,7-15	?SongCacheNeedsWrite@BandSongMgr@@UBA_NXZ	96	88.750	5	1	src/band3/meta_band/BandSongMgr.cpp
+55	default/BandSongMgr	BandSongMgr	8	1796	0	16+,4-6,7-15	?GetNumVocalParts@BandSongMgr@@QBAHVSymbol@@@Z	88	85.000	10	5	src/band3/meta_band/BandSongMgr.cpp
+55	default/BandSongMgr	BandSongMgr	8	1796	0	16+,4-6,7-15	?ClearSongCacheNeedsWrite@BandSongMgr@@UAAXXZ	60	20.600	15	2	src/band3/meta_band/BandSongMgr.cpp
+56	default/Console	RndConsole	2	1756	0	16+	?OnMsg@RndConsole@@AAA_NABVKeyboardKeyMsg@@@Z	1500	33.859	394	140	src/system/rndobj/Console.cpp
+56	default/Console	RndConsole	2	1756	0	16+	?insert@?$list@UBreakpoint@RndConsole@@V?$StlNodeAlloc@UBreakpoint@RndConsole@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UBreakpoint@RndConsole@@U?$_Nonconst_traits@UBreakpoint@RndConsole@@@stlpmtx_std@@@2@U32@ABUBreakpoint@RndConsole@@@Z	256	18.766	62	10	src/system/rndobj/Console.cpp
+57	default/LayerDir	LayerDir	2	1700	1	16+,4-6	?RefreshLayer@LayerDir@@QAAXAAVLayer@1@_N@Z	1588	96.033	76	23	src/system/bandobj/LayerDir.cpp
+57	default/LayerDir	LayerDir	2	1700	1	16+,4-6	?NewObject@LayerDir@@SAPAVObject@Hmx@@XZ	112	86.929	6	0	src/system/bandobj/LayerDir.cpp
+58	default/Lit_NG	NgLight	2	1696	0	16+,7-15	?SphereConeTest@NgLight@@IAA_NABVVector3@@M@Z	1236	50.032	314	259	src/system/rndobj/Lit_NG.cpp
+58	default/Lit_NG	NgLight	2	1696	0	16+,7-15	?SetShadowTransforms@NgLight@@IAAXXZ	460	97.513	8	5	src/system/rndobj/Lit_NG.cpp
+59	default/BoxMap	BoxMapLighting	5	1696	0	16+	?ApplyQueuedLights@BoxMapLighting@@QBAXPIAVColor@Hmx@@PBVVector3@@@Z	520	49.777	138	153	src/system/rndobj/BoxMap.cpp
+59	default/BoxMap	BoxMapLighting	5	1696	0	16+	?ApplyLight@BoxMapLighting@@ABAXABV?$BoxLightArray@ULightParams_Spot@BoxMapLighting@@$0DC@@@ABVVector3@@@Z	360	61.056	85	76	src/system/rndobj/BoxMap.cpp
+59	default/BoxMap	BoxMapLighting	5	1696	0	16+	?ApplyLight@BoxMapLighting@@ABAXABV?$BoxLightArray@ULightParams_Point@BoxMapLighting@@$0DC@@@ABVVector3@@@Z	332	68.783	73	82	src/system/rndobj/BoxMap.cpp
+59	default/BoxMap	BoxMapLighting	5	1696	0	16+	?CacheData@BoxMapLighting@@QAA_NAAULightParams_Spot@1@@Z	316	80.000	48	50	src/system/rndobj/BoxMap.cpp
+59	default/BoxMap	BoxMapLighting	5	1696	0	16+	?ApplyLight@BoxMapLighting@@ABAXABV?$BoxLightArray@ULightParams_Directional@BoxMapLighting@@$0DC@@@@Z	168	81.524	30	30	src/system/rndobj/BoxMap.cpp
+60	default/LightPreset	LightPreset	4	1676	2	16+,<=3	?SetFrameEx@LightPreset@@QAAXMM_N@Z	816	83.574	54	17	src/system/world/LightPreset.cpp
+60	default/LightPreset	LightPreset	4	1676	2	16+,<=3	?_M_insert_overflow_aux@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSpotlightDrawerEntry@LightPreset@@ABU34@ABU__false_type@2@I_N@Z	396	94.323	16	0	src/system/world/LightPreset.cpp
+60	default/LightPreset	LightPreset	4	1676	2	16+,<=3	??$PropSync@USpotlightEntry@LightPreset@@@@YA_NAAV?$ObjVector@USpotlightEntry@LightPreset@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z	356	96.371	24	22	src/system/world/LightPreset.cpp
+60	default/LightPreset	LightPreset	4	1676	2	16+,<=3	?ApplyState@LightPreset@@IAAXABUKeyframe@1@@Z	108	92.407	3	0	src/system/world/LightPreset.cpp
+61	default/system/bandobj/BandHeadShaper	BandHeadShaper	2	1624	0	16+	?Init@BandHeadShaper@@SAXXZ	1144	98.881	41	44	src/system/bandobj/BandHeadShaper.cpp
+61	default/system/bandobj/BandHeadShaper	BandHeadShaper	2	1624	0	16+	?AddFrame@BandHeadShaper@@QAAXPBDHM@Z	480	60.633	84	40	src/system/bandobj/BandHeadShaper.cpp
+62	default/Synapse_dsp		1	1620	0	16+	??0Synapse@0DSP@@QAA@M@Z	1620	85.694	162	77	src/system/synth_xbox/Synapse_dsp.cpp
+63	default/RockCentral	RockCentral	3	1612	0	16+	?OnMsg@RockCentral@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z	1024	94.016	61	45	src/band3/net_band/RockCentral.cpp
+63	default/RockCentral	RockCentral	3	1612	0	16+	?DataPointToQString@RockCentral@@SAXABVDataPoint@@AAVString@Quazal@@@Z	460	89.557	43	24	src/band3/net_band/RockCentral.cpp
+63	default/RockCentral	RockCentral	3	1612	0	16+	?CancelOutstandingCalls@RockCentral@@QAAXPAVObject@Hmx@@@Z	128	7.031	32	2	src/band3/net_band/RockCentral.cpp
+64	default/Geo		1	1580	0	16+	?MakeBSPTree@@YA_NAAPAVBSPNode@@AAV?$list@VBSPFace@@V?$StlNodeAlloc@VBSPFace@@@stlpmtx_std@@@stlpmtx_std@@H@Z	1580	84.678	192	155	src/system/math/Geo.cpp
+65	default/Character		3	1568	0	16+,4-6	?Sort@CharPollableSorter@@QAAXAAV?$vector@PAVRndPollable@@V?$StlNodeAlloc@PAVRndPollable@@@stlpmtx_std@@@stlpmtx_std@@@Z	1136	93.680	50	40	src/system/char/Character.cpp
+65	default/Character		3	1568	0	16+,4-6	??A?$map@PAVObject@Hmx@@UDep@CharPollableSorter@@U?$less@PAVObject@Hmx@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@QAVObject@Hmx@@UDep@CharPollableSorter@@@stlpmtx_std@@@6@@stlpmtx_std@@QAAAAUDep@CharPollableSorter@@ABQAVObject@Hmx@@@Z	232	96.207	5	4	src/system/char/Character.cpp
+65	default/Character		3	1568	0	16+,4-6	?AddDeps@CharPollableSorter@@IAAXPAUDep@1@ABV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAV?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@4@_N@Z	200	80.460	22	14	src/system/char/Character.cpp
+66	default/Trans	RndTransformable	2	1544	0	16+	?ApplyDynamicConstraint@RndTransformable@@AAAXXZ	1224	65.144	181	97	src/system/rndobj/Trans.cpp
+66	default/Trans	RndTransformable	2	1544	0	16+	?WorldXfm_Force@RndTransformable@@AAAABVTransform@@XZ	320	71.100	25	2	src/system/rndobj/Trans.cpp
+67	default/MusicLibrary	MusicLibrary	2	1508	0	16+	?Text@MusicLibrary@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z	1292	68.248	191	81	src/band3/meta_band/MusicLibrary.cpp
+67	default/MusicLibrary	MusicLibrary	2	1508	0	16+	?RemoveLastSongFromSetlist@MusicLibrary@@QAAXXZ	216	1.056	70	11	src/band3/meta_band/MusicLibrary.cpp
+68	default/GemPlayer	GemPlayer	3	1504	0	16+,7-15	?UpdateCrowdMeter@GemPlayer@@QAAXMH@Z	748	97.262	9	4	src/band3/game/GemPlayer.cpp
+68	default/GemPlayer	GemPlayer	3	1504	0	16+,7-15	?_M_insert_overflow_aux@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVUpcomingFretRelease@GemPlayer@@ABV34@ABU__false_type@2@I_N@Z	404	85.208	48	25	src/band3/game/GemPlayer.cpp
+68	default/GemPlayer	GemPlayer	3	1504	0	16+,7-15	?ChangeDifficulty@GemPlayer@@UAAXW4Difficulty@@@Z	352	86.705	27	17	src/band3/game/GemPlayer.cpp
+69	default/Archive	Archive	3	1432	1	16+,4-6	?Merge@Archive@@QAAXAAV1@@Z	516	92.349	58	49	src/system/os/Archive.cpp
+69	default/Archive	Archive	3	1432	1	16+,4-6	?Enumerate@Archive@@QAAXPBDP6AX00@Z_N0@Z	484	77.992	72	44	src/system/os/Archive.cpp
+69	default/Archive	Archive	3	1432	1	16+,4-6	?GetFileInfo@Archive@@QAA_NPBDAAHAA_K11@Z	432	97.917	4	0	src/system/os/Archive.cpp
+70	default/OvershellPanel		1	1416	0	16+	?ResolveSlotStates@OvershellPanel@@QAAXXZ	1416	93.223	40	17	src/band3/meta_band/OvershellPanel.cpp
+71	default/BandIKEffector	BandIKEffector	3	1396	1	16+,7-15	?PollDeps@BandIKEffector@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z	856	98.668	16	0	src/system/bandobj/BandIKEffector.cpp
+71	default/BandIKEffector	BandIKEffector	3	1396	1	16+,7-15	?ComputeHandPullAndQuat@BandIKEffector@@IAAXAAVQuatXfm@@AAVTransform@@ABV3@ABVVector3@@MMM@Z	444	89.198	26	18	src/system/bandobj/BandIKEffector.cpp
+71	default/BandIKEffector	BandIKEffector	3	1396	1	16+,7-15	??$__uninitialized_copy@PBVConstraint@BandIKEffector@@PAV12@@stlpmtx_std@@YAPAVConstraint@BandIKEffector@@PBV12@0PAV12@ABU__false_type@0@@Z	96	86.167	13	11	src/system/bandobj/BandIKEffector.cpp
+72	default/CharDriver		1	1372	1	7-15	?Poll@CharDriver@@UAAXXZ	1372	97.580	14	0	src/system/char/CharDriver.cpp
+73	default/band3/meta_band/StoreMainPanel	StoreMainPanel	3	1352	2	16+,7-15,<=3	?Poll@StoreMainPanel@@UAAXXZ	664	92.982	13	0	src/band3/meta_band/StoreMainPanel.cpp
+73	default/band3/meta_band/StoreMainPanel	StoreMainPanel	3	1352	2	16+,7-15,<=3	?FinishLoad@StoreMainPanel@@UAAXXZ	592	99.324	1	0	src/band3/meta_band/StoreMainPanel.cpp
+73	default/band3/meta_band/StoreMainPanel	StoreMainPanel	3	1352	2	16+,7-15,<=3	??$__destroy_range_aux@V?$reverse_iterator@PAVNewReleaseEntry@StoreMainPanel@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVNewReleaseEntry@StoreMainPanel@@@0@0ABU__false_type@0@@Z	96	17.333	30	6	src/band3/meta_band/StoreMainPanel.cpp
+74	default/Leaderboard		1	1348	0	16+	?ShowData@Leaderboard@@QAAXXZ	1348	89.306	99	32	src/band3/meta_band/Leaderboard.cpp
+75	default/FlowNode		1	1348	0	16+	??$__uninitialized_fill_n@PAVDrivenPropertyEntry@@IV1@@stlpmtx_std@@YAPAVDrivenPropertyEntry@@PAV1@IABV1@ABU__false_type@0@@Z	1348	4.786	338	17	src/system/flow/FlowNode.cpp
+76	default/system/rndobj/Utl		1	1344	0	16+	?BuildVisit@@YAXPAVBSPNode@@@Z	1344	93.262	121	112	src/system/rndobj/Utl.cpp
+77	default/system/rndobj/Utl		1	1332	0	16+	?MakeNormals@@YAXPAVRndMesh@@@Z	1332	89.790	109	98	src/system/rndobj/Utl.cpp
+78	default/Locale		1	1304	0	16+	?Init@Locale@@QAAXXZ	1304	89.580	116	96	src/system/utl/Locale.cpp
+79	default/BandLabel	BandLabel	2	1284	1	16+,<=3	?PreLoad@BandLabel@@UAAXAAVBinStream@@@Z	1168	8.908	286	10	src/system/bandobj/BandLabel.cpp
+79	default/BandLabel	BandLabel	2	1284	1	16+,<=3	?Copy@BandLabel@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z	116	94.138	3	0	src/system/bandobj/BandLabel.cpp
+80	default/VelocityBuffer	RndVelocityBuffer	2	1284	0	16+	?Draw@RndVelocityBuffer@@QAA_NPAVRndCam@@AAV?$ObjPtrList@VRndDrawable@@VObjectDir@@@@@Z	792	36.247	172	57	src/system/rndobj/VelocityBuffer.cpp
+80	default/VelocityBuffer	RndVelocityBuffer	2	1284	0	16+	?DrawMesh@RndVelocityBuffer@@QBAXPAVRndMesh@@@Z	492	72.789	70	38	src/system/rndobj/VelocityBuffer.cpp
+81	default/Part		1	1280	0	16+	??0RndParticleSys@@IAA@XZ	1280	84.963	151	64	src/system/rndobj/Part.cpp
+82	default/FreeCamera		1	1268	0	16+	?Poll@FreeCamera@@QAAXXZ	1268	91.385	77	63	src/system/world/FreeCamera.cpp
+83	default/band3/game/PerfectSectionTracker		1	1256	0	16+	?HandleExitExtent@PerfectSectionTracker@@QAA_NMH_N@Z	1256	92.089	90	78	src/band3/game/PerfectSectionTracker.cpp
+84	default/band3/game/PerfectOverdriveTracker		1	1248	0	4-6	?Poll_@PerfectOverdriveTracker@@UAAXM@Z	1248	99.599	4	5	src/band3/game/PerfectOverdriveTracker.cpp
+85	default/system/os/UsbMidiGuitar		1	1244	0	16+	?Poll@UsbMidiGuitar@@SAXXZ	1244	98.563	34	26	src/system/os/UsbMidiGuitar.cpp
+86	default/Spotlight		1	1200	0	16+	??0Spotlight@@IAA@XZ	1200	78.437	134	63	src/system/world/Spotlight.cpp
+87	default/FFT		1	1200	0	16+	?fft_matrix_forward_columnwise@@YAHPAMJ0@Z	1200	55.080	248	126	src/system/synth_xbox/FFT.cpp
+88	default/Song		1	1192	0	16+	?SyncState@Song@@QAAXXZ	1192	95.443	69	42	src/system/utl/Song.cpp
+89	default/system/rndobj/Utl		1	1176	0	16+	?TessellateMesh@@YAXPAVRndMesh@@@Z	1176	68.544	183	98	src/system/rndobj/Utl.cpp
+90	default/UsbMidiKeyboard		1	1164	0	16+	?Poll@UsbMidiKeyboard@@SAXXZ	1164	85.742	95	24	src/system/os/UsbMidiKeyboard.cpp
+91	default/FFT		1	1160	0	16+	?fft_matrix_inverse_columnwise@@YAHPAMJ0@Z	1160	84.131	102	53	src/system/synth_xbox/FFT.cpp
+92	default/MatAnim		1	1160	0	16+	??$_M_allocate_and_copy@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VColor@Hmx@@@@IPBV2@0@Z	1160	5.593	291	18	src/system/rndobj/MatAnim.cpp
+93	default/MeshAnim	V?$vector	7	1160	2	16+,4-6,7-15	?_M_insert_overflow_aux@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@ABV3@ABU__false_type@2@I_N@Z	328	93.561	13	9	src/system/rndobj/MeshAnim.cpp
+93	default/MeshAnim	V?$vector	7	1160	2	16+,4-6,7-15	??4?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z	324	79.840	38	12	src/system/rndobj/MeshAnim.cpp
+93	default/MeshAnim	V?$vector	7	1160	2	16+,4-6,7-15	?resize@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@Z	128	88.438	10	4	src/system/rndobj/MeshAnim.cpp
+93	default/MeshAnim	V?$vector	7	1160	2	16+,4-6,7-15	?_M_fill_insert@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@@Z	112	88.500	7	3	src/system/rndobj/MeshAnim.cpp
+93	default/MeshAnim	V?$vector	7	1160	2	16+,4-6,7-15	??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z	96	93.083	4	0	src/system/rndobj/MeshAnim.cpp
+93	default/MeshAnim	V?$vector	7	1160	2	16+,4-6,7-15	??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z	92	72.304	10	2	src/system/rndobj/MeshAnim.cpp
+93	default/MeshAnim	V?$vector	7	1160	2	16+,4-6,7-15	??$__destroy_range@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V1@@stlpmtx_std@@YAXPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@00@Z	80	91.700	4	0	src/system/rndobj/MeshAnim.cpp
+94	default/PropSync		1	1156	0	16+	?PropSync@@YA_NAAVMatrix3@Hmx@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z	1156	32.073	333	182	src/system/obj/PropSync.cpp
+95	default/BandHighlight		1	1140	1	16+	?Save@BandHighlight@@UAAXAAVBinStream@@@Z	1140	0.140	285	0	src/system/bandobj/BandHighlight.cpp
+96	default/Flare		1	1124	0	16+	?DrawShowing@RndFlare@@UAAXXZ	1124	98.527	26	22	src/system/rndobj/Flare.cpp
+97	default/GameConfig	GameConfig	2	1120	0	16+	?AssignTracks@GameConfig@@QAAXXZ	716	95.587	17	8	src/band3/game/GameConfig.cpp
+97	default/GameConfig	GameConfig	2	1120	0	16+	?GetController@GameConfig@@QBA?AVSymbol@@PAVBandUser@@@Z	404	70.624	57	31	src/band3/game/GameConfig.cpp
+98	default/UI	UIManager	2	1108	0	16+	?Poll@UIManager@@UAAXXZ	792	56.106	104	13	src/system/ui/UI.cpp
+98	default/UI	UIManager	2	1108	0	16+	?Terminate@UIManager@@UAAXXZ	316	59.747	44	8	src/system/ui/UI.cpp
+99	default/band3/meta_band/UGCPurchasePanel		1	1104	0	16+	?Poll@UGCPurchasePanel@@UAAXXZ	1104	87.692	63	11	src/band3/meta_band/UGCPurchasePanel.cpp
+100	default/system/rndobj/Utl		1	1096	0	7-15	?SpliceKeys@@YAXPAVRndTransAnim@@0MM@Z	1096	98.741	12	2	src/system/rndobj/Utl.cpp
+101	default/BandDirector		1	1088	0	16+	??0BandDirector@@QAA@XZ	1088	83.140	74	19	src/system/bandobj/BandDirector.cpp
+102	default/system/rndobj/Rnd		1	1080	0	16+	?DrawTimers@Rnd@@IAAMM@Z	1080	95.648	38	20	src/system/rndobj/Rnd.cpp
+103	default/Tail		1	1064	0	16+	?UpdateVerts@Tail@@QAAXM_N@Z	1064	65.673	199	122	src/band3/bandtrack/Tail.cpp
+104	default/Shader		1	1056	0	16+	?CalcShaderOpts@RndShaderFur@@MAA_KPAVNgMat@@W4ShaderType@@_N@Z	1056	39.633	261	88	src/system/rndobj/Shader.cpp
+105	default/Env		1	1056	0	16+	?Save@RndEnviron@@UAAXAAVBinStream@@@Z	1056	43.951	204	13	src/system/rndobj/Env.cpp
+106	default/PatchDir	PatchLayer	2	1056	0	16+,4-6	?Draw@PatchLayer@@QAAXXZ	1020	76.408	141	80	src/system/bandobj/PatchDir.cpp
+106	default/PatchDir	PatchLayer	2	1056	0	16+,4-6	?Rotation@PatchLayer@@QBAMXZ	36	65.000	5	3	src/system/bandobj/PatchDir.cpp
+107	default/band3/meta_band/ViewSetting		1	1036	0	16+	?Handle@ViewSettingsProvider@@UAA?AVDataNode@@PAVDataArray@@_N@Z	1036	96.208	22	10	src/band3/meta_band/ViewSetting.cpp
+108	default/Mic		1	1024	0	16+	?Poll@MicXbox@@QAAXXZ	1024	92.723	70	86	src/system/synth_xbox/Mic.cpp
+109	default/Memcard_Xbox	MCContainerXbox	2	1016	0	16+	?PrintDir@MCContainerXbox@@UAA?AW4MCResult@@PBD_N@Z	684	98.947	16	16	src/system/os/Memcard_Xbox.cpp
+109	default/Memcard_Xbox	MCContainerXbox	2	1016	0	16+	?Mount@MCContainerXbox@@UAA?AW4MCResult@@W4CreateType@@@Z	332	87.952	19	2	src/system/os/Memcard_Xbox.cpp
+110	default/PatchDir	PatchDir	3	1008	0	16+,7-15	?LoadStickerData@PatchDir@@QAAXXZ	732	96.743	28	13	src/system/bandobj/PatchDir.cpp
+110	default/PatchDir	PatchDir	3	1008	0	16+,7-15	?DrawShowing@PatchDir@@UAAXXZ	148	43.432	31	10	src/system/bandobj/PatchDir.cpp
+110	default/PatchDir	PatchDir	3	1008	0	16+,7-15	?Load@PatchDir@@UAAXAAVBinStream@@@Z	128	87.031	7	3	src/system/bandobj/PatchDir.cpp
+111	default/band3/meta_band/PatchPanel		1	980	0	16+	?Poll@PatchPanel@@UAAXXZ	980	91.457	47	23	src/band3/meta_band/PatchPanel.cpp
+112	default/Line		1	976	0	7-15	?SetNumPoints@RndLine@@QAAXH@Z	976	99.012	15	5	src/system/rndobj/Line.cpp
+113	default/MetaPerformer	MetaPerformer	3	972	0	16+	?GetHighestDifficultyForPart@MetaPerformer@@QBAHVSymbol@@@Z	364	62.670	63	37	src/band3/meta_band/MetaPerformer.cpp
+113	default/MetaPerformer	MetaPerformer	3	972	0	16+	?PartPlaysInSet@MetaPerformer@@QBA_NVSymbol@@@Z	316	57.696	52	26	src/band3/meta_band/MetaPerformer.cpp
+113	default/MetaPerformer	MetaPerformer	3	972	0	16+	?GetSetlistMaxVocalParts@MetaPerformer@@QBAHXZ	292	53.260	55	28	src/band3/meta_band/MetaPerformer.cpp
+114	default/system/rndobj/Utl		1	952	0	16+	?MakeTangentsLate@@YAXPAVRndMesh@@@Z	952	56.336	194	107	src/system/rndobj/Utl.cpp
+115	default/Scheduler		1	948	0	16+	??0Scheduler@Quazal@@QAA@EPAVSchedulerWorkerThread@01@@Z	948	35.384	230	115	src/network/Core/Scheduler.cpp
+116	default/ContentMgr_Xbox		1	932	0	16+	?StartRefresh@XboxContentMgr@@UAAXXZ	932	69.382	104	17	src/system/os/ContentMgr_Xbox.cpp
+117	default/system/dsp/SndAnalysis		1	920	0	16+	?FindCCPeak@@YAHPBM0HH@Z	920	95.661	31	32	src/system/dsp/SndAnalysis.cpp
+118	default/Campaign	Campaign	4	896	1	16+,4-6,7-15	?ConfigureCampaignLevelData@Campaign@@QAAXPAVDataArray@@@Z	420	75.000	30	1	src/band3/meta_band/Campaign.cpp
+118	default/Campaign	Campaign	4	896	1	16+,4-6,7-15	?HasReachedCampaignLevel@Campaign@@QBA_NVSymbol@@@Z	280	95.629	5	0	src/band3/meta_band/Campaign.cpp
+118	default/Campaign	Campaign	4	896	1	16+,4-6,7-15	?GetCurrentPointsForNextMajorCampaignLevelForMetaScore@Campaign@@QAAHH@Z	128	85.531	14	10	src/band3/meta_band/Campaign.cpp
+118	default/Campaign	Campaign	4	896	1	16+,4-6,7-15	?GetLaunchUser@Campaign@@QBAPAVLocalBandUser@@XZ	68	82.059	4	1	src/band3/meta_band/Campaign.cpp
+119	default/File		1	892	0	16+	?RecursePatternInternal@@YAXPBDP6AX00@Z_N2@Z	892	85.942	78	39	src/system/os/File.cpp
+120	default/CharIKFoot		1	892	0	16+	?DoFSM@CharIKFoot@@IAAXAAVTransform@@@Z	892	97.704	28	31	src/system/char/CharIKFoot.cpp
+121	default/band3/game/TrainerGemTab		1	888	0	16+	?DrawTails@TrainerGemTab@@QAAXABVGameGem@@HHMM@Z	888	98.581	19	31	src/band3/game/TrainerGemTab.cpp
+122	default/DirLoader	DirLoader	2	884	0	16+	?OpenFile@DirLoader@@AAAXXZ	632	2.095	182	24	src/system/obj/DirLoader.cpp
+122	default/DirLoader	DirLoader	2	884	0	16+	?SaveObjects@DirLoader@@SA_NPBDPAVObjectDir@@@Z	252	78.238	16	1	src/system/obj/DirLoader.cpp
+123	default/system/rndobj/Utl		1	872	0	16+	?UtilDrawCigar@@YAXABVTransform@@QBM1ABVColor@Hmx@@H@Z	872	81.307	99	58	src/system/rndobj/Utl.cpp
+124	default/VocalTrack		1	868	0	16+	??0VocalTrack@@QAA@PAVBandUser@@@Z	868	84.724	70	32	src/band3/bandtrack/VocalTrack.cpp
+125	default/system/bandobj/BandHeadShaper		1	852	0	7-15	?SetMeshAnim@@YAXPAVObjectDir@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z	852	96.033	14	1	src/system/bandobj/BandHeadShaper.cpp
+126	default/Geo		1	848	0	16+	?Intersect@@YA_NABVTriangle@@ABVBox@@@Z	848	76.193	141	161	src/system/math/Geo.cpp
+127	default/band3/game/TrainerPanel	TrainerPanel	2	848	0	16+	?StartSection@TrainerPanel@@QAAXH@Z	708	97.090	21	23	src/band3/game/TrainerPanel.cpp
+127	default/band3/game/TrainerPanel	TrainerPanel	2	848	0	16+	?GetSectionLoopEnd@TrainerPanel@@QBAHH@Z	140	76.286	18	13	src/band3/game/TrainerPanel.cpp
+128	default/SongLayout	VSongPattern	3	828	1	16+,7-15	?_M_fill_insert_aux@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongPattern@@IABV3@ABU__false_type@2@@Z	392	87.745	44	22	src/system/hamobj/SongLayout.cpp
+128	default/SongLayout	VSongPattern	3	828	1	16+,7-15	??1?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ	324	19.136	83	10	src/system/hamobj/SongLayout.cpp
+128	default/SongLayout	VSongPattern	3	828	1	16+,7-15	??$?5VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@@Z	112	75.929	13	0	src/system/hamobj/SongLayout.cpp
+129	default/Group	RndGroup	4	824	0	16+	?Load@RndGroup@@UAAXAAVBinStream@@@Z	356	10.506	115	24	src/system/rndobj/Group.cpp
+129	default/Group	RndGroup	4	824	0	16+	?Save@RndGroup@@UAAXAAVBinStream@@@Z	212	56.434	30	2	src/system/rndobj/Group.cpp
+129	default/Group	RndGroup	4	824	0	16+	?ListDrawChildren@RndGroup@@UAAXAAV?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@@Z	132	47.515	24	5	src/system/rndobj/Group.cpp
+129	default/Group	RndGroup	4	824	0	16+	?CollidePlane@RndGroup@@UAAHABVPlane@@@Z	124	19.065	39	11	src/system/rndobj/Group.cpp
+130	default/system/rndobj/Utl		1	812	0	16+	?ComputeFaceTangentBasis@@YAXPAVRndMesh@@HAAVMatrix3@Hmx@@@Z	812	74.512	123	98	src/system/rndobj/Utl.cpp
+131	default/Joypad_Xinput		1	812	0	16+	?ReadSingleXinputJoypad@@YA?AW4JoypadType@@HHPAIPAD11111QAM2QAE@Z	812	81.833	86	34	src/system/os/Joypad_Xinput.cpp
+132	default/network/net/NetSession	NetSession	2	808	1	16+,7-15	?Poll@NetSession@@UAAXXZ	428	98.944	14	0	src/network/net/NetSession.cpp
+132	default/network/net/NetSession	NetSession	2	808	1	16+,7-15	?AddLocalUser@NetSession@@QAAXPAVLocalUser@@@Z	380	89.621	16	6	src/network/net/NetSession.cpp
+133	default/File		1	792	0	16+	FileMakePath	792	5.667	197	13	src/system/os/File.cpp
+134	default/Game		1	792	0	7-15	??1Game@@UAA@XZ	792	99.283	8	7	src/band3/game/Game.cpp
+135	default/PropSync		1	780	0	16+	?DrawShowing@WorldDir@@UAAXXZ	780	95.682	17	5	src/system/obj/PropSync.cpp
+136	default/DeployCountTracker		1	780	0	16+	?Poll_@DeployCountTracker@@UAAXM@Z	780	96.718	30	28	src/band3/game/DeployCountTracker.cpp
+137	default/VocalPart	VocalPart	4	780	0	16+	?GetNoteSliceWeight@VocalPart@@QBAMMMH@Z	484	88.124	60	51	src/band3/game/VocalPart.cpp
+137	default/VocalPart	VocalPart	4	780	0	16+	?FramePhraseMeterFrac@VocalPart@@QBAMXZ	136	57.647	20	7	src/band3/game/VocalPart.cpp
+137	default/VocalPart	VocalPart	4	780	0	16+	?IsEmptyPhrase@VocalPart@@QBA_NABQBVVocalPhrase@@@Z	116	65.241	17	9	src/band3/game/VocalPart.cpp
+137	default/VocalPart	VocalPart	4	780	0	16+	?InTambourinePhrase@VocalPart@@QBA_NXZ	44	18.000	16	7	src/band3/game/VocalPart.cpp
+138	default/SpotlightDrawer	SpotlightDrawer	5	780	0	16+,7-15,<=3	?DrawShadow@SpotlightDrawer@@MAAXXZ	328	38.183	69	17	src/system/world/SpotlightDrawer.cpp
+138	default/SpotlightDrawer	SpotlightDrawer	5	780	0	16+,7-15,<=3	?Load@SpotlightDrawer@@UAAXAAVBinStream@@@Z	152	26.105	44	13	src/system/world/SpotlightDrawer.cpp
+138	default/SpotlightDrawer	SpotlightDrawer	5	780	0	16+,7-15,<=3	?Init@SpotlightDrawer@@SAXXZ	112	94.107	3	1	src/system/world/SpotlightDrawer.cpp
+138	default/SpotlightDrawer	SpotlightDrawer	5	780	0	16+,7-15,<=3	?resize@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSpotlightEntry@SpotlightDrawer@@@Z	100	80.120	14	2	src/system/world/SpotlightDrawer.cpp
+138	default/SpotlightDrawer	SpotlightDrawer	5	780	0	16+,7-15,<=3	?DrawAdditional@SpotlightDrawer@@MAAXPAVSpotlightEntry@1@ABQAV21@@Z	88	61.409	22	15	src/system/world/SpotlightDrawer.cpp
+139	default/CharMeshHide		1	776	0	16+	?UpdateOverlay@Synth@@UAAMPAVRndOverlay@@M@Z	776	90.856	94	63	src/system/char/CharMeshHide.cpp
+140	default/CharIKFingers		1	776	0	16+	??0CharIKFingers@@IAA@XZ	776	64.608	124	53	src/system/char/CharIKFingers.cpp
+141	default/FFT		1	772	0	16+	?fft_scalar@@YAHPAM0KJ0@Z	772	76.238	150	156	src/system/synth_xbox/FFT.cpp
+142	default/BandRetargetVignette		1	772	1	4-6	?EnterDir@BandRetargetVignette@@QBAXXZ	772	99.425	4	0	src/system/bandobj/BandRetargetVignette.cpp
+143	default/FlangerEffect		1	768	0	16+	?Process@FlangerEffect@@QAAXPAMHH@Z	768	77.927	124	123	src/system/synth/FlangerEffect.cpp
+144	default/Lit		1	764	0	16+	?Projection@RndLight@@QAA?AVTransform@@XZ	764	64.387	147	108	src/system/rndobj/Lit.cpp
+145	default/WahEffect		1	760	0	16+	?Process@WahEffect@@QAAXPAMHH@Z	760	89.284	53	42	src/system/synth/WahEffect.cpp
+146	default/MoviePanel		1	752	0	16+	?Load@MoviePanel@@UAAXXZ	752	78.532	70	22	src/system/meta/MoviePanel.cpp
+147	default/band3/bandtrack/TrackPanel		1	752	0	16+	?Poll@TrackPanel@@UAAXXZ	752	96.878	43	41	src/band3/bandtrack/TrackPanel.cpp
+148	default/LightPreset		1	744	0	16+	?Copy@RhythmDetector@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z	744	13.306	188	26	src/system/world/LightPreset.cpp
+149	default/DOFProc_NG		1	740	0	16+	?SetVHBlurWeights@@YAX_NHH@Z	740	76.908	101	42	src/system/rndobj/DOFProc_NG.cpp
+150	default/BandUser		1	740	0	16+	?SyncLoad@RemoteBandUser@@UAAXAAVBinStream@@I@Z	740	84.032	70	2	src/band3/game/BandUser.cpp
+151	default/system/rnddx9/ShaderMgr		1	728	0	16+	?Compile@DxShader@@MAA_NW4ShaderType@@ABUShaderOptions@@AAPAVRndShaderBuffer@@2@Z	728	50.918	148	44	src/system/rnddx9/ShaderMgr.cpp
+152	default/MoveMgr	CBVSymbol;VSymbol	2	720	1	4-6,7-15	?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBVSymbol@@H@2@@Z	488	93.279	11	0	src/system/hamobj/MoveMgr.cpp
+152	default/MoveMgr	CBVSymbol;VSymbol	2	720	1	4-6,7-15	?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@H@2@@Z	232	94.397	5	1	src/system/hamobj/MoveMgr.cpp
+153	default/Env_NG		1	712	0	16+	?SetPointLightRegisters@?A0x8e417309@@YA_NHAAVRndLight@@AA_N@Z	712	86.511	42	25	src/system/rndobj/Env_NG.cpp
+154	default/MicInputArrow		1	712	0	16+	?Handle@MicInputArrow@@UAA?AVDataNode@@PAVDataArray@@_N@Z	712	67.955	93	38	src/system/bandobj/MicInputArrow.cpp
+155	default/ProfileMgr	ProfileMgr	3	708	1	16+	?LoadGlobalOptions@ProfileMgr@@QAAXAAVFixedSizeSaveableStream@@@Z	480	67.250	100	52	src/band3/meta_band/ProfileMgr.cpp
+155	default/ProfileMgr	ProfileMgr	3	708	1	16+	?FakeProfileFill@ProfileMgr@@QAAXXZ	136	27.882	36	8	src/band3/meta_band/ProfileMgr.cpp
+155	default/ProfileMgr	ProfileMgr	3	708	1	16+	?GetSongToTaskMgrMs@ProfileMgr@@QBAMW4LagContext@@@Z	92	9.565	22	0	src/band3/meta_band/ProfileMgr.cpp
+156	default/StorePreviewMgr		1	704	1	16+	?Handle@StorePreviewMgr@@UAA?AVDataNode@@PAVDataArray@@_N@Z	704	90.267	30	0	src/system/meta/StorePreviewMgr.cpp
+157	default/NetCacheMgr		1	696	0	16+	?AddLoaderRef@NetCacheMgr@@IAAPAUNetLoaderRef@@PBDW4RefType@1@W4NetLoaderPos@@@Z	696	96.437	54	13	src/system/utl/NetCacheMgr.cpp
+158	default/FocusTracker		1	692	1	<=3	?GetNextFocusPlayer@StreakFocusTracker@@UBA?AUTrackerPlayerID@@ABU2@MAA_N@Z	692	98.728	3	0	src/band3/game/FocusTracker.cpp
+159	default/mtx		1	680	0	16+	?Multiply@@YAXABVMatrix3@Hmx@@0AAV12@@Z	680	28.794	168	118	src/system/math/mtx.cpp
+160	default/BandPatchMesh	BandPatchMesh	3	680	0	16+	?AddUV@MeshVert@BandPatchMesh@@QAAHPBV12@ABVVector2@@PBV3@@Z	492	95.537	18	13	src/system/bandobj/BandPatchMesh.cpp
+160	default/BandPatchMesh	BandPatchMesh	3	680	0	16+	??0PatchPair@MeshPair@BandPatchMesh@@QAA@PAVObject@Hmx@@@Z	96	33.292	20	4	src/system/bandobj/BandPatchMesh.cpp
+160	default/BandPatchMesh	BandPatchMesh	3	680	0	16+	?resize@?$vector@VMeshFace@BandPatchMesh@@V?$StlNodeAlloc@VMeshFace@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVMeshFace@BandPatchMesh@@@Z	92	12.522	28	5	src/system/bandobj/BandPatchMesh.cpp
+161	default/PitchDetector		1	676	0	16+	?Detect@PitchDetector@Synapse@DSP@@QAAXI@Z	676	79.544	81	63	src/system/synth_xbox/PitchDetector.cpp
+162	default/band3/game/RGTrainerPanel	RGTrainerPanel	2	668	1	7-15	?Handle@RGTrainerPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z	588	95.238	11	8	src/band3/game/RGTrainerPanel.cpp
+162	default/band3/game/RGTrainerPanel	RGTrainerPanel	2	668	1	7-15	?Poll@RGTrainerPanel@@UAAXXZ	80	59.700	10	0	src/band3/game/RGTrainerPanel.cpp
+163	default/SoftParticleBuffer		1	660	0	16+	?BlurSurface@RndSoftParticleBuffer@@AAAXXZ	660	66.109	116	83	src/system/rndobj/SoftParticleBuffer.cpp
+164	default/SongData		1	656	0	16+	?UnflipGems@SongData@@QAAXHHH@Z	656	95.701	43	36	src/system/beatmatch/SongData.cpp
+165	default/BandCrowdMeter		1	652	0	16+	?Poll@BandCrowdMeter@@UAAXXZ	652	95.718	44	31	src/system/bandobj/BandCrowdMeter.cpp
+166	default/UIListState		1	652	0	16+	?Scroll@UIListState@@QAAXH_N@Z	652	84.190	43	10	src/system/ui/UIListState.cpp
+167	default/BaseMaterial		1	648	0	16+	??0RndMat@@IAA@XZ	648	84.981	41	11	src/system/rndobj/BaseMaterial.cpp
+168	default/SongInfoCopy		1	648	0	16+	??0SongInfoCopy@@QAA@XZ	648	44.253	147	63	src/system/utl/SongInfoCopy.cpp
+169	default/system/rndobj/Rnd		1	640	0	16+	?DrawPreClear@Rnd@@MAAXXZ	640	79.806	73	39	src/system/rndobj/Rnd.cpp
+170	default/Mic		1	636	0	16+	?ProcessChatData@ChatReceiver@@AAAXPAXIPAH@Z	636	91.931	59	56	src/system/synth_xbox/Mic.cpp
+171	default/BandCharDesc		1	636	0	16+	?CopyCharDesc@BandCharDesc@@QAAXPBV1@@Z	636	96.302	31	35	src/system/bandobj/BandCharDesc.cpp
+172	default/SpectralAnalysis	MV?$XboxAllocator;XboxAllocator	3	636	0	16+,4-6,7-15	?_M_fill_assign@?$vector@MV?$XboxAllocator@M@@@stlpmtx_std@@QAAXIABM@Z	272	94.044	5	1	src/system/synth_xbox/SpectralAnalysis.cpp
+172	default/SpectralAnalysis	MV?$XboxAllocator;XboxAllocator	3	636	0	16+,4-6,7-15	?_M_insert_overflow@?$vector@MV?$XboxAllocator@M@@@stlpmtx_std@@IAAXPAMABMABU__true_type@2@I_N@Z	248	85.468	14	6	src/system/synth_xbox/SpectralAnalysis.cpp
+172	default/SpectralAnalysis	MV?$XboxAllocator;XboxAllocator	3	636	0	16+,4-6,7-15	??0?$_Vector_base@MV?$XboxAllocator@M@@@stlpmtx_std@@QAA@IABV?$XboxAllocator@M@@@Z	116	41.448	22	7	src/system/synth_xbox/SpectralAnalysis.cpp
+173	default/AsyncFile		1	632	0	7-15	?PrintDiscFile@@YAXPBD@Z	632	96.582	9	2	src/system/os/AsyncFile.cpp
+174	default/Tex	RndTex	2	624	0	16+	?SetBitmap@RndTex@@QAAXPAVFileLoader@@@Z	356	33.292	103	50	src/system/rndobj/Tex.cpp
+174	default/Tex	RndTex	2	624	0	16+	?SetBitmap@RndTex@@QAAXABVRndBitmap@@PBD_NW4Type@1@@Z	268	91.910	20	13	src/system/rndobj/Tex.cpp
+175	default/CameraShot		1	616	1	4-6	?AddCrowdChars@CamShotCrowd@@QAAXPBV?$list@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@@Z	616	97.955	6	0	src/system/world/CameraShot.cpp
+176	default/StreakMeter		1	616	0	16+	?PreLoad@StreakMeter@@UAAXAAVBinStream@@@Z	616	59.396	87	9	src/system/bandobj/StreakMeter.cpp
+177	default/Geo		1	612	0	16+	?Update@BSPFace@@QAAXXZ	612	97.791	37	43	src/system/math/Geo.cpp
+178	default/CrowdAudio		1	608	0	16+	??0CrowdAudio@@QAA@XZ	608	86.645	29	8	src/system/bandobj/CrowdAudio.cpp
+179	default/PanelDir	PanelDir	2	608	1	16+,4-6	?PanelNav@PanelDir@@AAA_NW4JoypadAction@@W4JoypadButton@@VSymbol@@@Z	384	96.771	5	0	src/system/ui/PanelDir.cpp
+179	default/PanelDir	PanelDir	2	608	1	16+,4-6	?DisableComponent@PanelDir@@QAAXPAVUIComponent@@W4JoypadAction@@@Z	224	81.250	20	10	src/system/ui/PanelDir.cpp
+180	default/Gen		1	596	0	16+	??0RndGenerator@@IAA@XZ	596	81.322	49	11	src/system/rndobj/Gen.cpp
+181	default/FileMerger	FileMerger	2	592	0	16+,7-15	?Clear@Merger@FileMerger@@QAAXXZ	480	85.375	40	27	src/system/char/FileMerger.cpp
+181	default/FileMerger	FileMerger	2	592	0	16+,7-15	?Filter@FileMerger@@MAA?AW4Action@MergeFilter@@PAVObject@Hmx@@0PAVObjectDir@@@Z	112	61.786	12	2	src/system/char/FileMerger.cpp
+182	default/UIList	UIList	3	592	0	16+	?Copy@UIList@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z	360	64.867	59	24	src/system/ui/UIList.cpp
+182	default/UIList	UIList	3	592	0	16+	?PreLoad@UIList@@UAAXAAVBinStream@@@Z	116	38.345	33	11	src/system/ui/UIList.cpp
+182	default/UIList	UIList	3	592	0	16+	?Update@UIList@@EAAXXZ	116	54.759	20	7	src/system/ui/UIList.cpp
+183	default/BlockMgr	BlockMgr	2	588	0	16+,7-15	?SpinUp@BlockMgr@@QAA_NXZ	304	78.303	30	17	src/system/os/BlockMgr.cpp
+183	default/BlockMgr	BlockMgr	2	588	0	16+,7-15	?AddTask@BlockMgr@@QAAXABVAsyncTask@@@Z	284	98.000	8	8	src/system/os/BlockMgr.cpp
+184	default/PropKeys		1	584	0	4-6	?SetFrame@Vector3Keys@@UAAXMM@Z	584	98.418	4	2	src/system/rndobj/PropKeys.cpp
+185	default/HAQManager	HAQManager	2	584	0	16+	?GetButtonText@HAQManager@@ABA?AVString@@XZ	460	20.930	114	17	src/system/meta/HAQManager.cpp
+185	default/HAQManager	HAQManager	2	584	0	16+	?PrintComponentInfo@HAQManager@@AAAXPAVUIComponent@@@Z	124	35.258	34	10	src/system/meta/HAQManager.cpp
+186	default/UISlider	PanelDir	2	576	0	16+	?PostLoad@PanelDir@@UAAXAAVBinStream@@@Z	428	51.056	91	28	src/system/ui/UISlider.cpp
+186	default/UISlider	PanelDir	2	576	0	16+	?PreLoad@PanelDir@@UAAXAAVBinStream@@@Z	148	17.189	46	17	src/system/ui/UISlider.cpp
+187	default/BandSongMetadata	BandSongMetadata	2	576	0	16+	?HasPart@BandSongMetadata@@QBA_NVSymbol@@@Z	340	72.471	41	11	src/band3/meta_band/BandSongMetadata.cpp
+187	default/BandSongMetadata	BandSongMetadata	2	576	0	16+	?Rank@BandSongMetadata@@QBAMVSymbol@@@Z	236	48.153	47	15	src/band3/meta_band/BandSongMetadata.cpp
+188	default/system/rndobj/Utl		1	572	0	16+	?BuildFromBSP@@YAXPAVRndMesh@@@Z	572	72.392	87	66	src/system/rndobj/Utl.cpp
+189	default/Shader		1	572	0	16+	?CalcShaderOpts@RndShaderPostProc@@MAA_KPAVNgMat@@W4ShaderType@@_N@Z	572	12.881	198	84	src/system/rndobj/Shader.cpp
+190	default/Anim		1	564	0	16+	?SyncObjects@RndDir@@UAAXXZ	564	32.965	165	62	src/system/rndobj/Anim.cpp
+191	default/Group	UGroupDrawDist	2	564	0	16+,7-15	?_M_insert_overflow_aux@?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUGroupDrawDist@@ABU3@ABU__false_type@2@I_N@Z	428	91.636	30	11	src/system/rndobj/Group.cpp
+191	default/Group	UGroupDrawDist	2	564	0	16+,7-15	?push_back@?$vector@UGroupDrawDist@@V?$StlNodeAlloc@UGroupDrawDist@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUGroupDrawDist@@@Z	136	87.735	7	2	src/system/rndobj/Group.cpp
+192	default/BandCamShot	BandCamShot	2	564	0	16+,7-15	?SetFrame@BandCamShot@@UAAXMM@Z	364	91.802	13	5	src/system/bandobj/BandCamShot.cpp
+192	default/BandCamShot	BandCamShot	2	564	0	16+,7-15	?View@BandCamShot@@QAAXXZ	200	63.440	44	26	src/system/bandobj/BandCamShot.cpp
+193	default/CameraShot		1	560	0	7-15	?LoadSubPart@@YAPAVRndTransformable@@AAVBinStreamRev@@PAVCamShot@@@Z	560	93.493	12	1	src/system/world/CameraShot.cpp
+194	default/AccomplishmentPanel		1	556	0	7-15	?GetCareerLevel@AccomplishmentGroupProvider@@QBA?AVSymbol@@M@Z	556	94.748	13	6	src/band3/meta_band/AccomplishmentPanel.cpp
+195	default/DuplicatedObject	Quazal	4	556	0	16+,7-15	?ValidState@DuplicatedObject@Quazal@@QAAP8StateMachine@2@AAP832@AAXABVQEvent@32@@Z0@Z0@Z	272	59.603	50	27	src/network/ObjDup/DuplicatedObject.cpp
+195	default/DuplicatedObject	Quazal	4	556	0	16+,7-15	?GetInstanceFromVector@InstanceTable@Quazal@@QAAIII@Z	172	31.442	47	12	src/network/ObjDup/DuplicatedObject.cpp
+195	default/DuplicatedObject	Quazal	4	556	0	16+,7-15	?IsInDuplicationSet@DuplicatedObject@Quazal@@QBA_NVDOHandle@2@@Z	84	1.238	34	20	src/network/ObjDup/DuplicatedObject.cpp
+195	default/DuplicatedObject	Quazal	4	556	0	16+,7-15	?SetInitialState@DuplicatedObject@Quazal@@QAAXABVQEvent@StateMachine@2@@Z	28	10.571	9	5	src/network/ObjDup/DuplicatedObject.cpp
+196	default/Shader		1	544	0	16+	?CalcShaderOpts@RndShaderParticles@@MAA_KPAVNgMat@@W4ShaderType@@_N@Z	544	38.559	131	40	src/system/rndobj/Shader.cpp
+197	default/NetworkEmulator		1	544	0	16+	??0NetworkEmulator@@QAA@XZ	544	48.169	97	15	src/network/net/NetworkEmulator.cpp
+198	default/system/rndobj/Utl		1	540	0	16+	?SetBloomBlurWeightsStreak@@YAX_NMMMHM@Z	540	84.496	36	12	src/system/rndobj/Utl.cpp
+199	default/Group		1	540	0	7-15	??0RndGroup@@IAA@XZ	540	95.556	15	3	src/system/rndobj/Group.cpp
+200	default/system/rndobj/Rnd		1	532	1	7-15	??0Rnd@@QAA@XZ	532	94.684	14	0	src/system/rndobj/Rnd.cpp
+201	default/GemTrackDir	GemTrackDir	2	532	0	16+	?SetPitch@GemTrackDir@@QAAXM@Z	380	67.989	39	3	src/system/bandobj/GemTrackDir.cpp
+201	default/GemTrackDir	GemTrackDir	2	532	0	16+	?SetPlayerLocal@GemTrackDir@@UAAXM@Z	152	65.211	20	1	src/system/bandobj/GemTrackDir.cpp
+202	default/PitchCorrectedVoice		1	528	0	16+	?GetCorrection@PitchCorrectedVoice@Synapse@DSP@@QAAMXZ	528	96.667	26	28	src/system/synth_xbox/PitchCorrectedVoice.cpp
+203	default/CharLookAt		1	528	0	16+	??0CharLookAt@@IAA@XZ	528	73.303	62	28	src/system/char/CharLookAt.cpp
+204	default/system/synth_xbox/Synth	UXAUDIO2_SEND_DESCRIPTOR	2	528	0	16+	?_M_insert_overflow_aux@?$vector@UXAUDIO2_SEND_DESCRIPTOR@@V?$StlNodeAlloc@UXAUDIO2_SEND_DESCRIPTOR@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUXAUDIO2_SEND_DESCRIPTOR@@ABU3@ABU__false_type@2@I_N@Z	400	93.750	37	26	src/system/synth_xbox/Synth.cpp
+204	default/system/synth_xbox/Synth	UXAUDIO2_SEND_DESCRIPTOR	2	528	0	16+	?push_back@?$vector@UXAUDIO2_SEND_DESCRIPTOR@@V?$StlNodeAlloc@UXAUDIO2_SEND_DESCRIPTOR@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUXAUDIO2_SEND_DESCRIPTOR@@@Z	128	53.812	27	14	src/system/synth_xbox/Synth.cpp
+205	default/CharLipSync	RndParticleSys;VBurst	2	516	1	7-15	?_M_insert_overflow_aux@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVBurst@RndParticleSys@@ABV34@ABU__false_type@2@I_N@Z	396	93.263	15	0	src/system/char/CharLipSync.cpp
+205	default/CharLipSync	RndParticleSys;VBurst	2	516	1	7-15	?push_back@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVBurst@RndParticleSys@@@Z	120	59.433	15	2	src/system/char/CharLipSync.cpp
+206	default/EventTrigger	EventTrigger	3	516	0	16+,7-15	??0Anim@EventTrigger@@QAA@PAVObject@Hmx@@@Z	188	62.915	30	12	src/system/rndobj/EventTrigger.cpp
+206	default/EventTrigger	EventTrigger	3	516	0	16+,7-15	??4?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z	188	89.596	27	21	src/system/rndobj/EventTrigger.cpp
+206	default/EventTrigger	EventTrigger	3	516	0	16+,7-15	?CleanupEventCase@EventTrigger@@IAAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z	140	88.429	12	8	src/system/rndobj/EventTrigger.cpp
+207	default/Geo		1	512	0	16+	?Clip@@YAXABVPolygon@Hmx@@ABVRay@2@AAV12@@Z	512	97.609	20	20	src/system/math/Geo.cpp
+208	default/MemcardMgr_Xbox		1	508	1	16+	?ThreadCall_SaveGame@MemcardMgr@@AAA?AW4MCResult@@XZ	508	87.480	19	0	src/system/meta/MemcardMgr_Xbox.cpp
+209	default/TrackWatcherImpl		1	508	0	16+	?Load@RndParticleSysAnim@@UAAXAAVBinStream@@@Z	508	68.126	83	11	src/system/beatmatch/TrackWatcherImpl.cpp
+210	default/Bitmap		1	504	0	16+	?DecodeDxt5Alpha@@YAXPAEHHAAE@Z	504	75.603	97	67	src/system/rndobj/Bitmap.cpp
+211	default/FocusTracker		1	504	1	4-6	?GetNextFocusPlayer@FocusTracker@@UBA?AUTrackerPlayerID@@ABU2@MAA_N@Z	504	98.198	6	0	src/band3/game/FocusTracker.cpp
+212	default/Trans		1	496	0	16+	??0RndTransformable@@IAA@XZ	496	36.524	118	36	src/system/rndobj/Trans.cpp
+213	default/SpectralAnalysis		1	496	0	16+	?Analyze@SpectralAnalysis@DSP@@QAAXPBMPAM@Z	496	70.403	77	62	src/system/synth_xbox/SpectralAnalysis.cpp
+214	default/SpotlightDrawer_NG	SpotlightDrawer;VSpotMeshEntry	2	492	0	16+,7-15	?_M_fill_insert_aux@?$vector@VSpotMeshEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotMeshEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSpotMeshEntry@SpotlightDrawer@@IABV34@ABU__false_type@2@@Z	396	97.121	14	15	src/system/world/SpotlightDrawer_NG.cpp
+214	default/SpotlightDrawer_NG	SpotlightDrawer;VSpotMeshEntry	2	492	0	16+,7-15	?_M_erase@?$vector@VSpotMeshEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotMeshEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVSpotMeshEntry@SpotlightDrawer@@PAV34@0ABU__false_type@2@@Z	96	87.292	16	21	src/system/world/SpotlightDrawer_NG.cpp
+215	default/Anim		1	492	0	16+	??0AnimTask@@QAA@PAVRndAnimatable@@MMM_NM@Z	492	80.561	65	53	src/system/rndobj/Anim.cpp
+216	default/CharDriver		1	488	0	16+	??0CharDriver@@IAA@XZ	488	85.836	37	16	src/system/char/CharDriver.cpp
+217	default/MidiParser		1	484	0	7-15	?PushIdle@MidiParser@@AAAXMMHVSymbol@@@Z	484	98.017	14	6	src/system/midi/MidiParser.cpp
+218	default/CharFaceServo		1	476	0	7-15	??0CharFaceServo@@IAA@XZ	476	93.319	12	3	src/system/char/CharFaceServo.cpp
+219	default/band3/meta_band/SongSort		1	472	0	16+	?GetUserFontChar@@YAPBDPAVBandUser@@PAVMetaPerformer@@H@Z	472	54.381	82	32	src/band3/meta_band/SongSort.cpp
+220	default/TrackDir		1	468	1	<=3	??1TrackDir@@UAA@XZ	468	99.145	1	0	src/system/track/TrackDir.cpp
+221	default/DirLoader		1	464	0	16+	??0DirLoader@@QAA@ABVFilePath@@W4LoaderPos@@PAVCallback@Loader@@PAVBinStream@@PAVObjectDir@@_N@Z	464	38.638	101	27	src/system/obj/DirLoader.cpp
+222	default/DataNode		1	464	1	<=3	??8DataNode@@QBA_NABV0@@Z	464	98.233	3	0	src/system/obj/DataNode.cpp
+223	default/system/rndobj/Utl		1	448	0	16+	?TransformKeys@@YAXPAVRndTransAnim@@ABVTransform@@@Z	448	84.652	45	69	src/system/rndobj/Utl.cpp
+224	default/band3/game/BandUserMgr		1	448	0	16+	??1BandUserMgr@@UAA@XZ	448	84.241	47	31	src/band3/game/BandUserMgr.cpp
+225	default/Faders		1	444	0	16+	?DoFade@Fader@@QAAXMM@Z	444	93.090	45	34	src/system/synth/Faders.cpp
+226	default/Shader		1	436	0	16+	?CheckShadow@@YAXXZ	436	64.982	68	42	src/system/rndobj/Shader.cpp
+227	default/PlayerLeaderboards		1	436	0	16+	?OnSelectRow@PlayerLeaderboard@@UAA?AVSymbol@@HPAVBandUser@@@Z	436	23.073	98	17	src/band3/meta_band/PlayerLeaderboards.cpp
+228	default/LightPresetManager		1	428	0	16+	?Poll@LightPresetManager@@QAAXXZ	428	92.009	32	29	src/system/world/LightPresetManager.cpp
+229	default/OSCMessenger		1	428	0	16+	?MakeOSCAddress@OSCMessenger@@AAAHVString@@PAD@Z	428	10.486	112	11	src/system/utl/OSCMessenger.cpp
+230	default/CameraShot		1	424	0	16+	??0CamShotFrame@@QAA@PAVObject@Hmx@@@Z	424	68.387	86	43	src/system/world/CameraShot.cpp
+231	default/system/rndobj/Rnd		1	424	0	16+	?UpdateRate@Rnd@@IAAXXZ	424	85.425	29	6	src/system/rndobj/Rnd.cpp
+232	default/MasterAudio		1	424	0	7-15	?FillChannelListWithInactiveSlots@TrackData@@QBAXAAV?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@M_N@Z	424	92.764	15	12	src/system/beatmatch/MasterAudio.cpp
+233	default/FFT		1	420	0	16+	?fft_real_forward_scalar@@YAHPAMK0@Z	420	83.257	47	39	src/system/synth_xbox/FFT.cpp
+234	default/MapFile_Xbox		1	420	0	16+	?GetFunction@XboxMapFile@@QAAPBDI_N@Z	420	66.314	68	26	src/system/os/MapFile_Xbox.cpp
+235	default/EntityUploader		1	412	0	16+	?BeginRockCentralOps@EntityUploader@@QAAHH@Z	412	84.000	53	49	src/band3/net_band/EntityUploader.cpp
+236	default/FileChecksum		1	412	1	7-15	?_M_insert_overflow_aux@?$vector@UChecksumData@@V?$StlNodeAlloc@UChecksumData@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUChecksumData@@ABU3@ABU__false_type@2@I_N@Z	412	93.641	11	0	src/system/math/FileChecksum.cpp
+237	default/band3/meta_band/PrefabMgr		1	412	0	16+	?AssignPrefabsToSlots@PrefabMgr@@QAAXXZ	412	89.204	38	39	src/band3/meta_band/PrefabMgr.cpp
+238	default/CamAnim	RndCamAnim	2	412	1	16+,4-6	?Load@RndCamAnim@@UAAXAAVBinStream@@@Z	260	81.754	18	8	src/system/rndobj/CamAnim.cpp
+238	default/CamAnim	RndCamAnim	2	412	1	16+,4-6	?Save@RndCamAnim@@UAAXAAVBinStream@@@Z	152	90.526	4	0	src/system/rndobj/CamAnim.cpp
+239	default/Game		1	408	0	16+	?LoadSong@Game@@QAAXXZ	408	54.490	60	14	src/band3/game/Game.cpp
+240	default/TexBlendController		1	408	1	7-15	?GetBlendState@RndTexBlendController@@QBA?AW4BlendState@1@AAMM@Z	408	94.412	7	0	src/system/rndobj/TexBlendController.cpp
+241	default/CharClip	CBHM	2	408	1	7-15,<=3	?_M_insert_overflow_aux@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@ABV32@ABU__false_type@2@I_N@Z	332	93.506	15	10	src/system/char/CharClip.cpp
+241	default/CharClip	CBHM	2	408	1	7-15,<=3	?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z	76	89.421	3	0	src/system/char/CharClip.cpp
+242	default/SongStatusMgr	SongStatusMgr	2	408	0	16+	?LoadFixed@SongStatusMgr@@UAAXAAVFixedSizeSaveableStream@@H@Z	232	29.586	60	19	src/band3/meta_band/SongStatusMgr.cpp
+242	default/SongStatusMgr	SongStatusMgr	2	408	0	16+	?CreateOrAccessSongStatus@SongStatusMgr@@QBAPAVSongStatus@@H@Z	176	85.295	19	7	src/band3/meta_band/SongStatusMgr.cpp
+243	default/CharUtl		1	404	0	16+	?_M_insert_overflow_aux@?$vector@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTransform@@ABV3@ABU__false_type@2@I_N@Z	404	89.465	24	7	src/system/char/CharUtl.cpp
+244	default/SongCollision		1	404	0	16+	?_M_insert_overflow_aux@?$vector@USongCollisionOutput@@V?$StlNodeAlloc@USongCollisionOutput@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSongCollisionOutput@@ABU3@ABU__false_type@2@I_N@Z	404	81.812	52	25	src/system/hamobj/SongCollision.cpp
+245	default/SongParser		1	404	0	16+	?_M_insert_overflow_aux@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@HH@2@ABU32@ABU__false_type@2@I_N@Z	404	85.158	49	25	src/system/beatmatch/SongParser.cpp
+246	default/Campaign		1	400	0	7-15	??0Campaign@@QAA@PAVDataArray@@@Z	400	94.750	9	2	src/band3/meta_band/Campaign.cpp
+247	default/Ribbon		1	400	0	16+	?_M_insert_overflow_aux@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$Key@VTransform@@@@ABV3@ABU__false_type@2@I_N@Z	400	89.470	22	6	src/system/rndobj/Ribbon.cpp
+248	default/HamCamTransform		1	392	0	16+	?_M_fill_insert_aux@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjOwnerPtr@VCharClip@@@@IABV3@ABU__false_type@2@@Z	392	94.367	40	22	src/system/hamobj/HamCamTransform.cpp
+249	default/UILabel	UILabel;ULabelStyle	2	392	1	16+,4-6	??4?$vector@ULabelStyle@UILabel@@V?$StlNodeAlloc@ULabelStyle@UILabel@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z	280	82.757	26	14	src/system/ui/UILabel.cpp
+249	default/UILabel	UILabel;ULabelStyle	2	392	1	16+,4-6	?_M_erase@?$vector@ULabelStyle@UILabel@@V?$StlNodeAlloc@ULabelStyle@UILabel@@@stlpmtx_std@@@stlpmtx_std@@IAAPAULabelStyle@UILabel@@PAU34@ABU__false_type@2@@Z	112	88.571	4	0	src/system/ui/UILabel.cpp
+250	default/MoveMgr		1	388	1	7-15	?_M_insert_overflow_aux@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVSpotlightEntry@SpotlightDrawer@@ABV34@ABU__false_type@2@I_N@Z	388	97.505	12	0	src/system/hamobj/MoveMgr.cpp
+251	default/Object		1	388	0	16+	?Property@Object@Hmx@@QBAPBVDataNode@@PAVDataArray@@_N@Z	388	91.412	16	5	src/system/obj/Object.cpp
+252	default/HamIKEffector		1	388	0	16+	?ApplyPosConstraints@HamIKEffector@@IAAMAAVVector3@@ABV2@PAV1@@Z	388	79.773	60	60	src/system/hamobj/HamIKEffector.cpp
+253	default/TrackDir		1	384	0	16+	?SetupKeyShifting@TrackDir@@QAAXPAVRndDir@@@Z	384	68.927	51	18	src/system/track/TrackDir.cpp
+254	default/UIScreen		1	384	0	16+	?Enter@UIScreen@@UAAXPAV1@@Z	384	46.010	79	24	src/system/ui/UIScreen.cpp
+255	default/PreloadPanel		1	384	0	16+	?Load@PreloadPanel@@UAAXXZ	384	14.365	126	31	src/system/meta/PreloadPanel.cpp
+256	default/TypeProps	TypeProps	3	380	0	16+,7-15	?GetArray@TypeProps@@QAAPAVDataArray@@VSymbol@@@Z	176	95.682	8	6	src/system/obj/TypeProps.cpp
+256	default/TypeProps	TypeProps	3	380	0	16+,7-15	?ReplaceObject@TypeProps@@AAAXAAVDataNode@@PAVObject@Hmx@@1@Z	120	48.400	23	5	src/system/obj/TypeProps.cpp
+256	default/TypeProps	TypeProps	3	380	0	16+,7-15	?InsertArrayValue@TypeProps@@QAAXVSymbol@@HABVDataNode@@@Z	84	16.667	22	6	src/system/obj/TypeProps.cpp
+257	default/Mesh		1	372	0	16+	??$PropSync@VRndBone@@@@YA_NAAV?$ObjVector@VRndBone@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z	372	90.323	29	25	src/system/rndobj/Mesh.cpp
+258	default/Geo		1	372	0	4-6	??O@YA_NABVSphere@@ABVFrustum@@@Z	372	97.957	6	6	src/system/math/Geo.cpp
+259	default/CharLipSync		1	372	0	16+	?_M_insert_overflow_aux@?$vector@UWeight@Generator@CharLipSync@@V?$StlNodeAlloc@UWeight@Generator@CharLipSync@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUWeight@Generator@CharLipSync@@ABU345@ABU__false_type@2@I_N@Z	372	90.495	16	3	src/system/char/CharLipSync.cpp
+260	default/FreestylePanel		1	372	0	7-15	?Poll@FreestylePanel@@UAAXXZ	372	96.559	7	4	src/band3/game/FreestylePanel.cpp
+261	default/SongLayout		4	368	1	16+,7-15,<=3	??$__destroy_range_aux@V?$reverse_iterator@PAUMoveReplacer@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUMoveReplacer@@@0@0ABU__false_type@0@@Z	96	93.125	3	0	src/system/hamobj/SongLayout.cpp
+261	default/SongLayout		4	368	1	16+,7-15,<=3	??$__uninitialized_copy@PAUMoveReplacer@@PAU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@00ABU__false_type@0@@Z	96	86.167	13	11	src/system/hamobj/SongLayout.cpp
+261	default/SongLayout		4	368	1	16+,7-15,<=3	??$__uninitialized_fill_n@PAUMoveReplacer@@IU1@@stlpmtx_std@@YAPAUMoveReplacer@@PAU1@IABU1@ABU__false_type@0@@Z	96	86.000	13	12	src/system/hamobj/SongLayout.cpp
+261	default/SongLayout		4	368	1	16+,7-15,<=3	??$__destroy_range_aux@V?$reverse_iterator@PAVSongPattern@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSongPattern@@@0@0ABU__false_type@0@@Z	80	39.450	17	4	src/system/hamobj/SongLayout.cpp
+262	default/Object	bject	2	368	0	16+	??1Object@Hmx@@UAA@XZ	272	63.074	40	15	src/system/obj/Object.cpp
+262	default/Object	bject	2	368	0	16+	??0Object@Hmx@@QAA@XZ	96	72.083	18	11	src/system/obj/Object.cpp
+263	default/Mesh		1	364	0	16+	??5@YAAAVBinStreamRev@@AAV0@AAVVert@RndMesh@@@Z	364	97.143	33	32	src/system/rndobj/Mesh.cpp
+264	default/MakeString		1	364	0	16+	?NextBuf@@YAPADXZ	364	97.615	24	20	src/system/utl/MakeString.cpp
+265	default/TourDescPanel		1	360	0	16+	?LoadIcons@TourDescPanel@@QAAXXZ	360	92.967	27	13	src/band3/tour/TourDescPanel.cpp
+266	default/OutfitConfig		1	360	0	16+	?PropSync@@YA_NAAVMeshAO@OutfitConfig@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z	360	59.922	70	38	src/system/bandobj/OutfitConfig.cpp
+267	default/AccomplishmentPanel		1	360	1	<=3	?Mat@AccomplishmentProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z	360	97.111	3	0	src/band3/meta_band/AccomplishmentPanel.cpp
+268	default/system/dsp/SndAnalysis		1	356	0	16+	?ShiftedDotProduct@@YAXPBMHPAM_N@Z	356	25.011	87	18	src/system/dsp/SndAnalysis.cpp
+269	default/BandLeadMeter		1	356	0	7-15	?PostLoad@BandLeadMeter@@UAAXAAVBinStream@@@Z	356	98.180	10	9	src/system/bandobj/BandLeadMeter.cpp
+270	default/Overlay		1	356	0	16+	?erase@?$list@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VString@@U?$_Nonconst_traits@VString@@@stlpmtx_std@@@2@U32@0@Z	356	23.326	88	22	src/system/rndobj/Overlay.cpp
+271	default/MeshAnim	RndShaderMgr	2	348	0	16+,7-15	?FindShader@RndShaderMgr@@QAAAAVRndShaderProgram@@W4ShaderType@@ABUShaderOptions@@@Z	256	80.391	22	6	src/system/rndobj/MeshAnim.cpp
+271	default/MeshAnim	RndShaderMgr	2	348	0	16+,7-15	?SetTransform@RndShaderMgr@@QAAXABVTransform@@@Z	92	81.652	10	4	src/system/rndobj/MeshAnim.cpp
+272	default/system/rndobj/Utl	RndAmbientOcclusion;UEdge	2	344	0	16+,4-6	?_M_insert@?$_Rb_tree@UEdge@RndAmbientOcclusion@@U?$less@UEdge@RndAmbientOcclusion@@@stlpmtx_std@@U12@U?$_Identity@UEdge@RndAmbientOcclusion@@@4@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@4@V?$StlNodeAlloc@UEdge@RndAmbientOcclusion@@@4@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@UEdge@RndAmbientOcclusion@@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@stlpmtx_std@@@2@PAU_Rb_tree_node_base@2@ABUEdge@RndAmbientOcclusion@@00@Z	220	97.909	4	3	src/system/rndobj/Utl.cpp
+272	default/system/rndobj/Utl	RndAmbientOcclusion;UEdge	2	344	0	16+,4-6	??$_M_find@UEdge@RndAmbientOcclusion@@@?$_Rb_tree@UEdge@RndAmbientOcclusion@@U?$less@UEdge@RndAmbientOcclusion@@@stlpmtx_std@@U12@U?$_Identity@UEdge@RndAmbientOcclusion@@@4@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@4@V?$StlNodeAlloc@UEdge@RndAmbientOcclusion@@@4@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABUEdge@RndAmbientOcclusion@@@Z	124	86.226	22	21	src/system/rndobj/Utl.cpp
+273	default/Character		1	344	0	16+	??5@YAAAVBinStreamRev@@AAV0@AAULod@Character@@@Z	344	90.698	20	12	src/system/char/Character.cpp
+274	default/CharClip		1	344	0	16+	??0CharClip@@IAA@XZ	344	83.081	29	9	src/system/char/CharClip.cpp
+275	default/system/obj/Dir	PAVFilePath	2	340	1	16+,4-6	??$__find_if@PAVFilePath@@P6A_NABV1@@Z@stlpmtx_std@@YAPAVFilePath@@PAV1@0P6A_NABV1@@ZABUrandom_access_iterator_tag@0@@Z	252	83.921	22	3	src/system/obj/Dir.cpp
+275	default/system/obj/Dir	PAVFilePath	2	340	1	16+,4-6	??$remove_copy_if@PAVFilePath@@PAV1@P6A_NABV1@@Z@stlpmtx_std@@YAPAVFilePath@@PAV1@00P6A_NABV1@@Z@Z	88	87.182	6	0	src/system/obj/Dir.cpp
+276	default/PropKeys		1	340	0	16+	?Load@PropKeys@@UAAXAAVBinStreamRev@@@Z	340	94.941	17	10	src/system/rndobj/PropKeys.cpp
+277	default/UIListWidget		1	340	0	16+	??4?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z	340	90.706	19	11	src/system/ui/UIListWidget.cpp
+278	default/LiveCameraInput		1	340	0	7-15	?_M_insert_overflow_aux@?$vector@VTextureStore@LiveCameraInput@@V?$StlNodeAlloc@VTextureStore@LiveCameraInput@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVTextureStore@LiveCameraInput@@ABV34@ABU__false_type@2@I_N@Z	340	95.000	9	2	src/system/gesture/LiveCameraInput.cpp
+279	default/InlineHelp		1	340	0	7-15	??1InlineHelp@@UAA@XZ	340	94.976	7	1	src/system/ui/InlineHelp.cpp
+280	default/BandMachine		1	340	1	16+	?SyncLoad@BandMachine@@QAAXAAVBinStream@@E@Z	340	69.553	33	0	src/band3/meta_band/BandMachine.cpp
+281	default/Morph	RndMorph	2	340	0	16+	?InterpWeight@RndMorph@@QAAMABV?$Keys@MM@@M@Z	216	92.093	17	25	src/system/rndobj/Morph.cpp
+281	default/Morph	RndMorph	2	340	0	16+	?resize@?$vector@UPose@RndMorph@@V?$StlNodeAlloc@UPose@RndMorph@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUPose@RndMorph@@@Z	124	31.935	26	2	src/system/rndobj/Morph.cpp
+282	default/CharBoneDir	CharBoneDir	2	340	0	16+	?PostLoad@CharBoneDir@@UAAXAAVBinStream@@@Z	192	54.750	37	6	src/system/char/CharBoneDir.cpp
+282	default/CharBoneDir	CharBoneDir	2	340	0	16+	?PreLoad@CharBoneDir@@UAAXAAVBinStream@@@Z	148	17.189	46	17	src/system/char/CharBoneDir.cpp
+283	default/CharIKFingers		1	332	0	16+	?MeasureLengths@CharIKFingers@@QAAXXZ	332	97.169	21	27	src/system/char/CharIKFingers.cpp
+284	default/MeshAnim		1	328	0	16+	?Load@RndMultiMesh@@UAAXAAVBinStream@@@Z	328	77.805	43	14	src/system/rndobj/MeshAnim.cpp
+285	default/XLSPConnection		1	328	0	16+	?SetState@XLSPConnection@@AAAXW4State@1@@Z	328	64.561	44	5	src/system/net/XLSPConnection.cpp
+286	default/PartLauncher		1	328	0	16+	??0RndPartLauncher@@IAA@XZ	328	74.866	29	4	src/system/rndobj/PartLauncher.cpp
+287	default/Splash		1	328	0	16+	??0Splash@@QAA@XZ	328	6.890	106	27	src/system/movie/Splash.cpp
+288	default/MetaMusic		1	328	0	16+	?_M_insert_overflow_aux@?$vector@VDataArrayPtr@@V?$StlNodeAlloc@VDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVDataArrayPtr@@ABV3@ABU__false_type@2@I_N@Z	328	84.220	47	27	src/system/synth/MetaMusic.cpp
+289	default/FileMerger		1	324	0	16+	?_M_insert_overflow_aux@?$vector@UPose@RndMorph@@V?$StlNodeAlloc@UPose@RndMorph@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPose@RndMorph@@ABU34@ABU__false_type@2@I_N@Z	324	93.160	18	10	src/system/char/FileMerger.cpp
+290	default/BandLabel		1	324	0	16+	??4?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z	324	8.259	109	36	src/system/bandobj/BandLabel.cpp
+291	default/AsyncFile_Win		1	324	0	16+	?_OpenAsync@AsyncFileWin@@MAAXXZ	324	67.630	35	3	src/system/os/AsyncFile_Win.cpp
+292	default/Mesh		1	320	0	16+	??$__destroy_range@PAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@0@00@Z	320	14.275	81	10	src/system/rndobj/Mesh.cpp
+293	default/HDCache		1	312	0	16+	?WriteDone@HDCache@@QAA_NXZ	312	68.218	36	10	src/system/os/HDCache.cpp
+294	default/CharClipDriver		1	312	0	16+	?ExecuteEvent@CharClipDriver@@IAAXVSymbol@@@Z	312	20.846	95	26	src/system/char/CharClipDriver.cpp
+295	default/MemTrack		1	312	0	7-15	?MemTrackHeapDump@@YAX_N@Z	312	98.077	11	4	src/system/utl/MemTrack.cpp
+296	default/LabelNumberTicker	LabelNumberTicker	2	312	0	16+	?PreLoad@LabelNumberTicker@@UAAXAAVBinStream@@@Z	244	43.000	52	12	src/system/ui/LabelNumberTicker.cpp
+296	default/LabelNumberTicker	LabelNumberTicker	2	312	0	16+	?PostLoad@LabelNumberTicker@@UAAXAAVBinStream@@@Z	68	29.059	20	2	src/system/ui/LabelNumberTicker.cpp
+297	default/GemManager		1	308	0	16+	??0Entry@LocalePanel@@QAA@ABU01@@Z	308	24.208	68	4	src/band3/bandtrack/GemManager.cpp
+298	default/OvershellSlot		1	300	0	16+	?AttemptRemoveUser@OvershellSlot@@QAAXXZ	300	14.840	81	10	src/band3/meta_band/OvershellSlot.cpp
+299	default/KeyboardTrackWatcherImpl		1	300	0	16+	?CheckForFatFinger@KeyboardTrackWatcherImpl@@QAA_NMHIW4GemHitFlags@@@Z	300	84.600	17	6	src/system/beatmatch/KeyboardTrackWatcherImpl.cpp
+300	default/band3/game/Singer		1	300	0	16+	?ResolveAmbiguity@Singer@@QAAXXZ	300	91.600	39	44	src/band3/game/Singer.cpp
+301	default/MessageTimer	PAPAUObjEntry	2	300	0	16+,7-15	??$__linear_insert@PAPAUObjEntry@@PAU1@UObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@0PAU1@UObjSort@@@Z	200	85.060	16	7	src/system/obj/MessageTimer.cpp
+301	default/MessageTimer	PAPAUObjEntry	2	300	0	16+,7-15	??$__unguarded_insertion_sort_aux@PAPAUObjEntry@@PAU1@UObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@00UObjSort@@@Z	100	88.560	7	3	src/system/obj/MessageTimer.cpp
+302	default/CharBonesMeshes		1	292	0	16+	?ReallocateInternal@CharBonesMeshes@@MAAXXZ	292	50.068	86	67	src/system/char/CharBonesMeshes.cpp
+303	default/CharPollGroup		1	288	0	16+	??0CharPollGroup@@IAA@XZ	288	3.875	100	24	src/system/char/CharPollGroup.cpp
+304	default/band3/meta_band/SessionMgr		1	288	0	16+	?AreInvitesAllowed@SessionMgr@@UBA_NXZ	288	64.208	50	17	src/band3/meta_band/SessionMgr.cpp
+305	default/MemMgr		1	284	0	16+	?MemTruncate@@YAPAXPAXHPBDH1@Z	284	86.338	28	26	src/system/utl/MemMgr.cpp
+306	default/CharBoneOffset		1	284	0	16+	??0CharBoneOffset@@IAA@XZ	284	81.254	26	5	src/system/char/CharBoneOffset.cpp
+307	default/UIListWidget		1	280	0	16+	?ScrollDirection@@YAHABVButtonDownMsg@@VSymbol@@_NH@Z	280	93.186	21	12	src/system/ui/UIListWidget.cpp
+308	default/keygen_xbox		1	280	0	16+	?getMasher@KeyChain@@YAXPAE@Z	280	81.471	59	54	src/keygen_xbox.cpp
+309	default/ChecksumAlgorithm		1	280	0	16+	?DeriveKey@ChecksumAlgorithm@Quazal@@QAA?AVKey@2@ABVBuffer@2@I@Z	280	51.300	63	14	src/network/Plugins/ChecksumAlgorithm.cpp
+310	default/TrackerUtils		1	272	1	4-6	?CountGemsInSection@TrackerSectionManager@@QBAHPBVPlayer@@H@Z	272	93.897	6	0	src/band3/game/TrackerUtils.cpp
+311	default/MusicLibraryStore		1	268	1	4-6	??0MusicLibraryStore@@QAA@XZ	268	94.552	5	0	src/band3/meta_band/MusicLibraryStore.cpp
+312	default/EventTrigger		1	268	0	16+	??4?$vector@VSingerStats@@V?$StlNodeAlloc@VSingerStats@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z	268	4.881	87	28	src/system/rndobj/EventTrigger.cpp
+313	default/MeshAnim		1	264	0	16+	??6@YAAAVTextStream@@AAV0@PBVObject@Hmx@@@Z	264	18.818	63	7	src/system/rndobj/MeshAnim.cpp
+314	default/TrackPanelDirBase		1	264	0	16+	??4?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXABV0@@Z	264	20.621	83	25	src/system/bandobj/TrackPanelDirBase.cpp
+315	default/Debug		1	264	0	16+	?Fail@Debug@@QAAXPBDPAX@Z	264	34.015	60	8	src/system/os/Debug.cpp
+316	default/FFT		1	260	0	16+	?CalculateSinCosTable@@YAHJPAM@Z	260	74.062	33	10	src/system/synth_xbox/FFT.cpp
+317	default/BandSongMgr		1	260	0	16+	??0SongMgr@@QAA@XZ	260	82.277	29	21	src/band3/meta_band/BandSongMgr.cpp
+318	default/Memcard_Xbox		1	252	0	7-15	?ShowDeviceSelector@MemcardXbox@@UAAXABUContainerId@@_NPAVObject@Hmx@@H@Z	252	93.063	8	3	src/system/os/Memcard_Xbox.cpp
+319	default/MidiSynth		1	252	0	16+	?Write@RingBuffer@@QAAHPAXH@Z	252	91.365	17	8	src/system/synth/MidiSynth.cpp
+320	default/JoypadMsgs		1	252	0	16+	?ClientConnect@NetStream@@QAAXABVNetAddress@@@Z	252	56.429	32	4	src/system/os/JoypadMsgs.cpp
+321	default/system/rndobj/Utl		1	248	0	16+	?SetBloomBlurWeights@@YAX_NMM@Z	248	88.097	16	5	src/system/rndobj/Utl.cpp
+322	default/mtx		1	248	0	16+	?Multiply@@YAXABVTransform@@0AAV1@@Z	248	61.726	63	74	src/system/math/mtx.cpp
+323	default/Spotlight		1	244	0	16+	?Load@ColorPalette@@UAAXAAVBinStream@@@Z	244	61.787	44	13	src/system/world/Spotlight.cpp
+324	default/MasterAudio	MasterAudio	2	244	1	4-6	?SeeGem@MasterAudio@@UAAXHMH@Z	204	95.588	4	1	src/system/beatmatch/MasterAudio.cpp
+324	default/MasterAudio	MasterAudio	2	244	1	4-6	?Fail@MasterAudio@@QAA_NXZ	40	53.000	6	0	src/system/beatmatch/MasterAudio.cpp
+325	default/Instance		1	244	0	7-15	??0SharedGroup@@QAA@PAVRndGroup@@@Z	244	90.410	8	1	src/system/world/Instance.cpp
+326	default/Emitter		1	244	0	7-15	?Save@SynthEmitter@@UAAXAAVBinStream@@@Z	244	84.164	11	1	src/system/synth/Emitter.cpp
+327	default/MainHubPanel		1	244	0	16+	?Poll@MainHubPanel@@UAAXXZ	244	51.803	32	4	src/band3/meta_band/MainHubPanel.cpp
+328	default/DirLoader		1	240	0	7-15	?HandleProperty@Object@Hmx@@QAA?AVDataNode@@PAVDataArray@@0_N@Z	240	93.250	13	9	src/system/obj/DirLoader.cpp
+329	default/MeshAnim		1	240	0	16+	?Load@RndMeshAnim@@UAAXAAVBinStream@@@Z	240	16.883	78	14	src/system/rndobj/MeshAnim.cpp
+330	default/system/synth/FxSend		1	240	0	16+	?BuildChainVector@FxSend@@UAAXAAV?$vector@PAVFxSend@@V?$StlNodeAlloc@PAVFxSend@@@stlpmtx_std@@@stlpmtx_std@@@Z	240	92.550	25	26	src/system/synth/FxSend.cpp
+331	default/CharIKHand	CharIKHand;UIKTarget	2	240	0	7-15	?resize@?$vector@UIKTarget@CharIKHand@@V?$StlNodeAlloc@UIKTarget@CharIKHand@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUIKTarget@CharIKHand@@@Z	128	88.594	9	4	src/system/char/CharIKHand.cpp
+331	default/CharIKHand	CharIKHand;UIKTarget	2	240	0	7-15	?_M_fill_insert@?$vector@UIKTarget@CharIKHand@@V?$StlNodeAlloc@UIKTarget@CharIKHand@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUIKTarget@CharIKHand@@IABU34@@Z	112	88.500	7	3	src/system/char/CharIKHand.cpp
+332	default/Archive	VString	2	236	1	16+,7-15	?deallocate@?$StlNodeAlloc@VString@@@stlpmtx_std@@QBAXPAVString@@I@Z	128	4.219	32	0	src/system/os/Archive.cpp
+332	default/Archive	VString	2	236	1	16+,7-15	?_M_fill_insert@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVString@@IABV3@@Z	108	88.074	7	3	src/system/os/Archive.cpp
+333	default/Object		1	236	0	16+	?Copy@Object@Hmx@@UAAXPBV12@W4CopyType@12@@Z	236	45.475	45	11	src/system/obj/Object.cpp
+334	default/ExternalMic		1	236	0	7-15	?dataReady@ExternalMic@@QAAXKKPAU_XOVERLAPPED@@@Z	236	92.458	15	13	src/system/synth_xbox/ExternalMic.cpp
+335	default/CharNeckTwist		1	236	0	7-15	?Poll@CharNeckTwist@@UAAXXZ	236	79.492	14	2	src/system/char/CharNeckTwist.cpp
+336	default/AppLabel		1	236	0	16+	?SetFromSongSelectNode@AppLabel@@QAAXPBVNode@@@Z	236	66.746	36	16	src/band3/meta_band/AppLabel.cpp
+337	default/SpeechMgr		1	236	0	16+	??$__uninitialized_copy@PAUGrammar@SpeechMgr@@PAU12@@stlpmtx_std@@YAPAUGrammar@SpeechMgr@@PAU12@00ABU__false_type@0@@Z	236	21.949	62	13	src/system/gesture/SpeechMgr.cpp
+338	default/MatAnim		1	232	0	16+	??4?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAAXABV0@@Z	232	12.810	79	23	src/system/rndobj/MatAnim.cpp
+339	default/BandLeadMeter		1	232	0	16+	?Load@?$ObjRefConcrete@VRndAnimatable@@VObjectDir@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z	232	80.241	28	14	src/system/bandobj/BandLeadMeter.cpp
+340	default/MemTrack		1	232	0	16+	?MemTrackReport@@YAXH_N@Z	232	60.172	40	14	src/system/utl/MemTrack.cpp
+341	default/LightHue		1	228	0	16+	?Load@WorldReflection@@UAAXAAVBinStream@@@Z	228	57.930	50	23	src/system/world/LightHue.cpp
+342	default/UI		1	224	0	16+	??1Automator@@UAA@XZ	224	33.768	47	5	src/system/ui/UI.cpp
+343	default/CharNeckTwist		1	224	0	16+	??0CharNeckTwist@@IAA@XZ	224	69.571	28	4	src/system/char/CharNeckTwist.cpp
+344	default/DataNode		1	220	0	16+	??A?$map@VSymbol@@VDataNode@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAVDataNode@@ABVSymbol@@@Z	220	63.727	30	11	src/system/obj/DataNode.cpp
+345	default/ContextWrapper		1	220	0	7-15	?FailAllContexts@ContextWrapperPool@@QAAXXZ	220	93.691	7	6	src/band3/net_band/ContextWrapper.cpp
+346	default/Sequence		1	220	0	16+	?Load@Sequence@@UAAXAAVBinStream@@@Z	220	74.055	20	1	src/system/synth/Sequence.cpp
+347	default/EnvAnim		1	220	0	16+	?Load@RndEnvAnim@@UAAXAAVBinStream@@@Z	220	62.309	47	19	src/system/rndobj/EnvAnim.cpp
+348	default/BandWardrobe		1	216	0	16+	??0Merger@FileMerger@@QAA@PAVObject@Hmx@@@Z	216	76.093	38	28	src/system/bandobj/BandWardrobe.cpp
+349	default/VelocityBuffer		1	216	0	16+	?CacheXfms@RndXfmCache@@AAA_NPIBVRndMesh@@PIBMIAAI@Z	216	79.519	31	29	src/system/rndobj/VelocityBuffer.cpp
+350	default/HamCamTransform	VTransformCrowd	2	216	0	4-6,7-15	??0?$vector@VTransformCrowd@@V?$StlNodeAlloc@VTransformCrowd@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z	120	91.500	10	5	src/system/hamobj/HamCamTransform.cpp
+350	default/HamCamTransform	VTransformCrowd	2	216	0	4-6,7-15	??4?$ObjVector@VTransformCrowd@@@@QAAXABV0@@Z	96	92.500	6	2	src/system/hamobj/HamCamTransform.cpp
+351	default/Instance		1	216	0	16+	?PostLoad@WorldInstance@@UAAXAAVBinStream@@@Z	216	58.333	42	12	src/system/world/Instance.cpp
+352	default/band3/meta_band/AccomplishmentManager		1	216	0	7-15	?GetScaledFanValue@AccomplishmentManager@@QAAHH@Z	216	95.000	13	13	src/band3/meta_band/AccomplishmentManager.cpp
+353	default/band3/meta_band/BandProfile		1	216	0	16+	?GetBandName@BandProfile@@QBA?AVString@@XZ	216	67.204	34	27	src/band3/meta_band/BandProfile.cpp
+354	default/Faders		1	212	0	16+	?Load@FaderGroup@@QAAXAAVBinStream@@@Z	212	74.151	24	13	src/system/synth/Faders.cpp
+355	default/Font3d		1	208	0	16+	??A?$map@GPAUCharInfo@RndFont3d@@U?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAUCharInfo@RndFont3d@@ABG@Z	208	68.538	24	6	src/system/rndobj/Font3d.cpp
+356	default/PlatformMgr		1	208	0	16+	?SetDiskError@PlatformMgr@@QAAXW4DiskError@@@Z	208	85.154	18	3	src/system/os/PlatformMgr.cpp
+357	default/UIEventMgr	UIEventMgr	2	208	1	7-15	?CurrentTransitionEvent@UIEventMgr@@QBA?AVSymbol@@XZ	128	84.156	8	0	src/band3/meta_band/UIEventMgr.cpp
+357	default/UIEventMgr	UIEventMgr	2	208	1	7-15	?Terminate@UIEventMgr@@SAXXZ	80	83.450	7	6	src/band3/meta_band/UIEventMgr.cpp
+358	default/MetaMusic		1	204	0	7-15	??$__introsort_loop@PAPAUObjEntry@@PAU1@HUObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@00HUObjSort@@@Z	204	91.490	14	1	src/system/synth/MetaMusic.cpp
+359	default/MusicLibraryStore		1	204	1	4-6	?ClearPreview@MusicLibraryStore@@QAAXXZ	204	92.843	5	0	src/band3/meta_band/MusicLibraryStore.cpp
+360	default/PracticeSection	VPracticeStep	2	204	0	7-15	?_M_fill_insert@?$vector@VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPracticeStep@@IABV3@@Z	108	87.889	8	3	src/system/hamobj/PracticeSection.cpp
+360	default/PracticeSection	VPracticeStep	2	204	0	7-15	??$_M_range_insert@PBVPracticeStep@@@?$vector@VPracticeStep@@V?$StlNodeAlloc@VPracticeStep@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPracticeStep@@PBV2@1ABUforward_iterator_tag@1@@Z	96	81.458	8	4	src/system/hamobj/PracticeSection.cpp
+361	default/Shader		1	200	0	16+	?CalcShaderOpts@RndShaderDrawRect@@MAA_KPAVNgMat@@W4ShaderType@@_N@Z	200	33.320	50	13	src/system/rndobj/Shader.cpp
+362	default/MidiInstrument		1	200	0	16+	?Load@MidiInstrument@@UAAXAAVBinStream@@@Z	200	37.800	46	15	src/system/synth/MidiInstrument.cpp
+363	default/FftIpp		1	196	1	<=3	??1FftIpp@@QAA@XZ	196	97.959	1	0	src/system/synth_xbox/FftIpp.cpp
+364	default/system/bandobj/DialogDisplay		1	196	0	16+	?Poll@DialogDisplay@@UAAXXZ	196	40.327	39	8	src/system/bandobj/DialogDisplay.cpp
+365	default/File		1	192	0	16+	FileGetBase	192	29.917	43	9	src/system/os/File.cpp
+366	default/band3/meta_band/TokenRedemptionPanel		1	192	0	16+	?Unload@TokenRedemptionPanel@@UAAXXZ	192	65.583	21	4	src/band3/meta_band/TokenRedemptionPanel.cpp
+367	default/NetGameMsgs		1	192	0	16+	?Dispatch@TourMostStarsMsg@@UAAXXZ	192	61.854	21	2	src/band3/game/NetGameMsgs.cpp
+368	default/HamCamTransform	ransformArea	2	188	0	16+	??4TransformArea@@QAAAAV0@ABV0@@Z	108	12.889	30	8	src/system/hamobj/HamCamTransform.cpp
+368	default/HamCamTransform	ransformArea	2	188	0	16+	??0TransformArea@@QAA@ABV0@@Z	80	13.550	22	4	src/system/hamobj/HamCamTransform.cpp
+369	default/CharClip		1	188	1	7-15	?FindNode@CharClip@@QBAPBUCharGraphNode@@PAV1@MHM@Z	188	82.766	10	0	src/system/char/CharClip.cpp
+370	default/MemMgr		1	188	0	16+	?MemFree@@YAXPAX@Z	188	48.553	50	20	src/system/utl/MemMgr.cpp
+371	default/MemMgr		1	188	0	16+	?MemResizeElem@@YAPAXAAPAXAAHPAXHHPBDH3@Z	188	87.447	19	18	src/system/utl/MemMgr.cpp
+372	default/FftIpp		1	188	0	7-15	?FftReal@FftIpp@@QAAXPIBMPIAM1@Z	188	92.638	8	4	src/system/synth_xbox/FftIpp.cpp
+373	default/DataFile		1	188	0	7-15	?LoadDtz@@YAPAVDataArray@@PBDH@Z	188	88.723	11	6	src/system/obj/DataFile.cpp
+374	default/AccomplishmentCategory		1	188	0	16+	?Configure@AccomplishmentCategory@@QAAXPBVDataArray@@@Z	188	38.574	44	13	src/band3/meta_band/AccomplishmentCategory.cpp
+375	default/network/Platform/MemoryManager		1	188	0	16+	?GetDefaultMemoryManager@MemoryManager@Quazal@@SAPAV12@XZ	188	81.957	21	4	src/network/Platform/MemoryManager.cpp
+376	default/MemMgr		1	184	0	16+	?MemFindHeap@@YAHPBD@Z	184	44.109	55	49	src/system/utl/MemMgr.cpp
+377	default/ScreenMask		1	184	0	16+	?Load@RndScreenMask@@UAAXAAVBinStream@@@Z	184	59.935	26	4	src/system/rndobj/ScreenMask.cpp
+378	default/system/os/UsbMidiGuitar		1	180	0	16+	??1Queue@@QAA@XZ	180	34.267	40	7	src/system/os/UsbMidiGuitar.cpp
+379	default/Anim		1	180	0	16+	?Link@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@AAAXViterator@1@PAUNode@1@@Z	180	13.778	55	12	src/system/rndobj/Anim.cpp
+380	default/InlineHelp		1	180	0	16+	?Update@InlineHelp@@MAAXXZ	180	56.378	31	8	src/system/ui/InlineHelp.cpp
+381	default/MemHeap		1	180	0	16+	?PrintAlloc@?A0xb5f23974@@YAXAAVTextStream@@PAHHHPBVAllocInfo@@@Z	180	60.400	29	7	src/system/utl/MemHeap.cpp
+382	default/PropKeys		1	176	0	16+	?KeyLessEq@?$Keys@VColor@Hmx@@V12@@@QBAHM@Z	176	62.773	37	16	src/system/rndobj/PropKeys.cpp
+383	default/EventTrigger		1	176	0	16+	??4?$list@UPropTriggerDefn@FlowTrigger@@V?$StlNodeAlloc@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z	176	76.318	34	24	src/system/rndobj/EventTrigger.cpp
+384	default/Joypad_Xbox		1	176	0	16+	?GetXinputSinceLastFrame@@YAXHPAU_XINPUT_STATE@@PAI@Z	176	79.523	36	39	src/system/os/Joypad_Xbox.cpp
+385	default/system/ui/UIProxy		1	176	0	16+	?PostLoad@UIProxy@@UAAXAAVBinStream@@@Z	176	69.386	23	6	src/system/ui/UIProxy.cpp
+386	default/MusicLibrary		1	172	0	16+	?ByteCode@RemoveLastSongFromSetlistMsg@@UBAEXZ	172	6.209	47	8	src/band3/meta_band/MusicLibrary.cpp
+387	default/MeshAnim		1	172	0	16+	??1RndMultiMesh@@UAA@XZ	172	66.488	22	7	src/system/rndobj/MeshAnim.cpp
+388	default/NetGameMsgs		1	172	0	16+	?Dispatch@RestartGameMsg@@UAAXXZ	172	7.512	58	10	src/band3/game/NetGameMsgs.cpp
+389	default/ArkFile		1	172	0	16+	??0ArkFile@@QAA@PBDH@Z	172	58.605	41	19	src/system/os/ArkFile.cpp
+390	default/Tour		1	172	0	16+	?CombinePartSymbols@Tour@@QAA?AVSymbol@@V2@0@Z	172	62.674	34	24	src/band3/tour/Tour.cpp
+391	default/MetaPanel		1	172	0	<=3	??0NextSongPanel@@QAA@XZ	172	97.558	2	1	src/band3/meta_band/MetaPanel.cpp
+392	default/ClipDistMap		1	168	0	16+	??$__partial_sort@PAUNode@ClipDistMap@@U12@UDistMapNodeSort@@@stlpmtx_std@@YAXPAUNode@ClipDistMap@@000UDistMapNodeSort@@@Z	168	53.571	41	21	src/system/char/ClipDistMap.cpp
+393	default/system/synth_xbox/Synth	PAUXAUDIO2_SEND_DESCRIPTOR	2	164	0	16+	??$__uninitialized_copy@PAUXAUDIO2_SEND_DESCRIPTOR@@PAU1@@stlpmtx_std@@YAPAUXAUDIO2_SEND_DESCRIPTOR@@PAU1@00ABU__false_type@0@@Z	84	47.143	19	8	src/system/synth_xbox/Synth.cpp
+393	default/system/synth_xbox/Synth	PAUXAUDIO2_SEND_DESCRIPTOR	2	164	0	16+	??$__uninitialized_fill_n@PAUXAUDIO2_SEND_DESCRIPTOR@@IU1@@stlpmtx_std@@YAPAUXAUDIO2_SEND_DESCRIPTOR@@PAU1@IABU1@ABU__false_type@0@@Z	80	40.750	17	5	src/system/synth_xbox/Synth.cpp
+394	default/CharLipSync		1	164	0	16+	??$__uninitialized_copy@PAVString@@PAV1@@stlpmtx_std@@YAPAVString@@PAV1@00ABU__false_type@0@@Z	164	34.756	42	10	src/system/char/CharLipSync.cpp
+395	default/Object		1	164	0	16+	?SetProperty@Object@Hmx@@QAAXPAVDataArray@@ABVDataNode@@@Z	164	57.683	42	26	src/system/obj/Object.cpp
+396	default/Joypad_Xbox		1	164	1	16+	?ReceiveUpstreamEEPROMWriteResponse@@YAXHPAE@Z	164	6.707	40	0	src/system/os/Joypad_Xbox.cpp
+397	default/CharData		1	164	0	4-6	?LoadPortrait@PrefabChar@@QAAXXZ	164	93.415	4	2	src/band3/meta_band/CharData.cpp
+398	default/BufStream		1	164	0	16+	?ReadImpl@BufStream@@EAAXPAXH@Z	164	72.317	17	6	src/system/utl/BufStream.cpp
+399	default/Faders		1	160	1	<=3	??1FaderGroup@@QAA@XZ	160	97.500	1	0	src/system/synth/Faders.cpp
+400	default/CharClipSet		1	160	0	16+	?SetBpm@CharClipSet@@UAAXH@Z	160	47.300	32	5	src/system/char/CharClipSet.cpp
+401	default/CameraShot		1	152	0	16+	??0CamShotCrowd@@QAA@PAVObject@Hmx@@@Z	152	56.868	28	7	src/system/world/CameraShot.cpp
+402	default/UIListMesh		1	152	0	16+	?Draw@UIListMesh@@UAAXABUUIListWidgetDrawState@@ABVUIListState@@ABVTransform@@W4State@UIComponent@@PAVBox@@W4DrawCommand@@@Z	152	30.605	35	5	src/system/ui/UIListMesh.cpp
+403	default/NextSongPanel		1	152	0	16+	?Exiting@NextSongPanel@@UBA_NXZ	152	20.763	41	7	src/band3/meta_band/NextSongPanel.cpp
+404	default/MemMgr		1	148	1	16+	??3@YAXPAX@Z	148	2.568	37	0	src/system/utl/MemMgr.cpp
+405	default/system/beatmatch/SlotChannelMapping		1	148	1	4-6	??0MassChannelMapping@@QAA@ABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z	148	91.216	5	0	src/system/beatmatch/SlotChannelMapping.cpp
+406	default/UIListArrow		1	144	0	16+	??0UIListArrow@@IAA@XZ	144	61.222	20	9	src/system/ui/UIListArrow.cpp
+407	default/File_Win		1	144	0	16+	?FileQualifiedFilename@@YAXPADHPBD@Z	144	60.361	24	7	src/system/os/File_Win.cpp
+408	default/LabelShrinkWrapper		1	140	0	16+	?PreLoad@LabelShrinkWrapper@@UAAXAAVBinStream@@@Z	140	17.029	46	14	src/system/ui/LabelShrinkWrapper.cpp
+409	default/UITransitionHandler		1	140	0	16+	??$?5VTexPtr@RndMatAnim@@@@YAAAVBinStreamRev@@AAV0@AAV?$Key@VTexPtr@RndMatAnim@@@@@Z	140	32.914	36	8	src/system/ui/UITransitionHandler.cpp
+410	default/band3/game/Game		1	140	0	16+	??0GemTrainerLoopPanel@@QAA@XZ	140	76.029	16	3	src/band3/game/Game.cpp
+411	default/BandList		1	136	0	16+	?PreLoad@BandList@@UAAXAAVBinStream@@@Z	136	28.588	35	7	src/system/bandobj/BandList.cpp
+412	default/NetworkSocket_Win		1	136	0	<=3	?RecvFrom@WinSockSocket@@UAAHPAXIAAIAAG@Z	136	96.912	2	1	src/system/os/NetworkSocket_Win.cpp
+413	default/Flow		1	136	1	4-6	??1?$vector@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ	136	93.382	4	0	src/system/flow/Flow.cpp
+414	default/MidiReader		1	136	1	16+	?ReadNextEventImpl@MidiReader@@AAAXXZ	136	47.059	18	0	src/system/midi/MidiReader.cpp
+415	default/GranularSynth		1	136	0	16+	??1?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ	136	46.206	29	2	src/system/synth_xbox/GranularSynth.cpp
+416	default/ColorPalette		1	136	0	16+	?push_back@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVColor@Hmx@@@Z	136	2.912	43	11	src/system/world/ColorPalette.cpp
+417	default/LabelShrinkWrapper		1	132	0	16+	?SetObjConcrete@?$ObjRefConcrete@VUILabel@@VObjectDir@@@@QAAXPAVUILabel@@@Z	132	58.212	23	8	src/system/ui/LabelShrinkWrapper.cpp
+418	default/OriginalChoreoRemixer		1	132	1	<=3	??1?$vector@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ	132	93.333	3	0	src/system/hamobj/OriginalChoreoRemixer.cpp
+419	default/DirLoader		1	128	0	16+	?HandleType@Object@Hmx@@QAA?AVDataNode@@PAVDataArray@@@Z	128	41.969	36	16	src/system/obj/DirLoader.cpp
+420	default/AccomplishmentPanel		1	128	0	16+	?GetAccomplishmentName@AccomplishmentPanel@@QAA?AVSymbol@@XZ	128	47.094	25	2	src/band3/meta_band/AccomplishmentPanel.cpp
+421	default/UISlider	UISlider	2	128	1	16+,<=3	?Copy@UISlider@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z	112	37.464	24	4	src/system/ui/UISlider.cpp
+421	default/UISlider	UISlider	2	128	1	16+,<=3	?SetTypeDef@UISlider@@$4PPPPPPPM@A@AAXPAVDataArray@@@Z	16	73.750	2	0	src/system/ui/UISlider.cpp
+422	default/Debug		1	128	0	16+	?DevHostname@@YAPBDVSymbol@@@Z	128	24.688	37	11	src/system/os/Debug.cpp
+423	default/HamPhotoDisplay		1	128	0	7-15	?Save@HamPhotoDisplay@@UAAXAAVBinStream@@@Z	128	82.875	15	6	src/system/hamobj/HamPhotoDisplay.cpp
+424	default/system/hamobj/MiniLeaderboardDisplay		1	128	0	16+	?PreLoad@MiniLeaderboardDisplay@@UAAXAAVBinStream@@@Z	128	26.000	37	13	src/system/hamobj/MiniLeaderboardDisplay.cpp
+425	default/HamCamTransform		1	124	0	16+	??6@YAAAVBinStream@@AAV0@ABUDynamicPropertyEntry@Flow@@@Z	124	61.258	32	16	src/system/hamobj/HamCamTransform.cpp
+426	default/BandSongMetadata		1	124	0	7-15	??$?5VSymbol@@M@@YAAAVBinStream@@AAV0@AAV?$hash_map@VSymbol@@MU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@@Z	124	79.161	10	2	src/band3/meta_band/BandSongMetadata.cpp
+427	default/ColorPalette		1	124	0	7-15	?resize@?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUColorSet@@@Z	124	84.032	9	2	src/system/world/ColorPalette.cpp
+428	default/SynapseAPO		1	124	0	16+	??0?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@IAA@XZ	124	78.710	20	14	src/system/synth_xbox/SynapseAPO.cpp
+429	default/system/synth/MoggClip		1	124	1	7-15	?SetupPanInfo@MoggClip@@QAAXMM_N@Z	124	78.710	7	0	src/system/synth/MoggClip.cpp
+430	default/OutfitConfig		1	120	0	7-15	??0?$ObjPtr@VRndMat@@@@QAA@ABV0@@Z	120	85.833	8	5	src/system/bandobj/OutfitConfig.cpp
+431	default/Morph		1	120	0	7-15	??0?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z	120	91.500	10	5	src/system/rndobj/Morph.cpp
+432	default/StreamReceiver360		1	120	0	7-15	?Tag@StreamReceiver360@@UAAXXZ	120	80.333	15	10	src/system/synth_xbox/StreamReceiver360.cpp
+433	default/Waypoint		1	120	0	16+	??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z	120	61.500	19	6	src/system/char/Waypoint.cpp
+434	default/PartAnim		1	120	0	16+	??$?6VColor@Hmx@@@@YAAAVTextStream@@AAV0@ABV?$Key@VColor@Hmx@@@@@Z	120	0.933	40	8	src/system/rndobj/PartAnim.cpp
+435	default/WavMgr		1	120	0	16+	?Get@?$ResMgr@X@@QAAPAXVCRC@Hmx@@@Z	120	60.000	20	7	src/system/synth/WavMgr.cpp
+436	default/band3/meta_band/LicenseMgr		1	120	0	16+	??$?5VSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$hash_map@VSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@U?$hash@VSymbol@@@3@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@3@@stlpmtx_std@@@Z	120	86.633	22	8	src/band3/meta_band/LicenseMgr.cpp
+437	default/system/meta/MemcardMgr		1	120	0	7-15	?SaveLoadAllComplete@MemcardMgr@@QAAXXZ	120	82.600	7	4	src/system/meta/MemcardMgr.cpp
+438	default/Splash		1	116	1	<=3	?WaitForState@Splash@@IAAXW4SplashState@1@@Z	116	96.552	1	0	src/system/movie/Splash.cpp
+439	default/Rot		1	116	0	16+	??$_M_allocate_and_copy@PBVVector3@@@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector3@@IPBV2@0@Z	116	34.241	32	11	src/system/math/Rot.cpp
+440	default/JoypadClient		1	116	0	7-15	?Poll@JoypadClient@@AAAXXZ	116	93.586	7	3	src/system/os/JoypadClient.cpp
+441	default/SessionMessages		1	116	1	<=3	?push_back@?$vector@VMemStream@@V?$StlNodeAlloc@VMemStream@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVMemStream@@@Z	116	93.103	2	0	src/network/net/SessionMessages.cpp
+442	default/band3/game/PracticeSectionProvider		1	116	0	16+	??1PracticeSectionProvider@@UAA@XZ	116	48.483	20	2	src/band3/game/PracticeSectionProvider.cpp
+443	default/BandCharacter		1	112	1	4-6	?NewObject@BandRetargetVignette@@SAPAVObject@Hmx@@XZ	112	86.929	6	0	src/system/bandobj/BandCharacter.cpp
+444	default/BandCharacter		1	112	1	4-6	?NewObject@UnisonIcon@@SAPAVObject@Hmx@@XZ	112	86.929	6	0	src/system/bandobj/BandCharacter.cpp
+445	default/BandCharacter		1	112	1	4-6	?NewObject@OverdriveMeter@@SAPAVObject@Hmx@@XZ	112	86.929	6	0	src/system/bandobj/BandCharacter.cpp
+446	default/MoveMgr		1	112	0	16+	??_GSpotlightDrawer@@UAAPAXI@Z	112	41.714	23	3	src/system/hamobj/MoveMgr.cpp
+447	default/SessionUsersProviders		1	112	0	16+	?Mat@SessionUsersProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z	112	5.321	31	6	src/band3/meta_band/SessionUsersProviders.cpp
+448	default/TexLoadPanel		1	112	0	16+	??1TexLoadPanel@@UAA@XZ	112	42.250	18	3	src/band3/meta_band/TexLoadPanel.cpp
+449	default/SongDB	SongDB	2	112	0	4-6,7-15	?PostLoad@SongDB@@QAAXPAVDataEventList@@@Z	88	84.364	12	8	src/band3/game/SongDB.cpp
+449	default/SongDB	SongDB	2	112	0	4-6,7-15	?GetVocalNoteList@SongDB@@QBAPAVVocalNoteList@@H@Z	24	31.500	6	1	src/band3/game/SongDB.cpp
+450	default/Mesh		1	108	0	7-15	?HasVert@PatchVerts@@QBA_NH@Z	108	80.667	11	4	src/system/rndobj/Mesh.cpp
+451	default/Defines		1	108	1	16+	?SymToControllerType@@YA?AW4ControllerType@@VSymbol@@@Z	108	23.481	23	0	src/band3/game/Defines.cpp
+452	default/BandUser		1	104	1	16+	?GetLocalBandUser@LocalBandUser@@UAAPAV1@XZ	104	5.385	25	0	src/band3/game/BandUser.cpp
+453	default/BandCrowdMeter		1	104	1	<=3	?_M_fill_insert@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVColor@Hmx@@IABV34@@Z	104	95.769	3	0	src/system/bandobj/BandCrowdMeter.cpp
+454	default/HamCamTransform		1	104	1	7-15	?_M_erase@?$vector@UNavItem@HamNavProvider@@V?$StlNodeAlloc@UNavItem@HamNavProvider@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUNavItem@HamNavProvider@@PAU34@ABU__false_type@2@@Z	104	93.346	7	0	src/system/hamobj/HamCamTransform.cpp
+455	default/CDReader		1	104	0	7-15	?CDReadExternal@@YA_NAAPAXH_K@Z	104	87.692	7	4	src/system/os/CDReader.cpp
+456	default/system/rndobj/Rnd		1	100	0	16+	?CompressThread@@YAKPAX@Z	100	34.680	26	5	src/system/rndobj/Rnd.cpp
+457	default/RockCentral		1	100	0	7-15	?OfferType@StoreOffer@@QBA?AVSymbol@@XZ	100	63.400	12	2	src/band3/net_band/RockCentral.cpp
+458	default/CharBoneDir		1	100	0	16+	?insert@?$list@PAVRndTransformable@@V?$StlNodeAlloc@PAVRndTransformable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndTransformable@@U?$_Nonconst_traits@PAVRndTransformable@@@stlpmtx_std@@@2@U32@ABQAVRndTransformable@@@Z	100	64.600	16	9	src/system/char/CharBoneDir.cpp
+459	default/Spline		1	100	0	7-15	??$?6VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@stlpmtx_std@@@Z	100	87.520	7	1	src/system/rndobj/Spline.cpp
+460	default/StringTable	heLocale	2	100	1	4-6,7-15	??__FTheLocale@@YAXXZ	64	49.375	11	1	src/system/utl/StringTable.cpp
+460	default/StringTable	heLocale	2	100	1	4-6,7-15	??__ETheLocale@@YAXXZ	36	55.556	6	0	src/system/utl/StringTable.cpp
+461	default/CameraShot		1	96	0	7-15	??$__uninitialized_copy@PAVCamShotFrame@@PAV1@@stlpmtx_std@@YAPAVCamShotFrame@@PAV1@00ABU__false_type@0@@Z	96	85.917	14	11	src/system/world/CameraShot.cpp
+462	default/Synapse_dsp		1	96	0	16+	??$_Destroy_Range@PAVPitchCorrectedVoice@Synapse@DSP@@@stlpmtx_std@@YAXPAVPitchCorrectedVoice@Synapse@DSP@@0@Z	96	53.750	16	4	src/system/synth_xbox/Synapse_dsp.cpp
+463	default/LightPreset		1	96	0	7-15	??$__uninitialized_fill_n@PAVCamShotFrame@@IV1@@stlpmtx_std@@YAPAVCamShotFrame@@PAV1@IABV1@ABU__false_type@0@@Z	96	85.958	13	12	src/system/world/LightPreset.cpp
+464	default/SongCollision		1	96	0	16+	??$__uninitialized_fill_n@PAUSongCollisionOutput@@IU1@@stlpmtx_std@@YAPAUSongCollisionOutput@@PAU1@IABU1@ABU__false_type@0@@Z	96	56.292	23	11	src/system/hamobj/SongCollision.cpp
+465	default/UIList		1	96	0	16+	??$_M_allocate_and_copy@PBVFlowMathOp@@@?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFlowMathOp@@IPBV2@0@Z	96	50.583	17	5	src/system/ui/UIList.cpp
+466	default/MemMgr		1	96	0	16+	?_MemAllocTemp@@YAPAXHH@Z	96	49.292	21	7	src/system/utl/MemMgr.cpp
+467	default/keygen_xbox		1	96	0	16+	?random@@YAJJ@Z	96	78.333	19	24	src/keygen_xbox.cpp
+468	default/EventTrigger		1	96	1	7-15	?NewObject@PropertyEventProvider@@SAPAVObject@Hmx@@XZ	96	84.542	7	0	src/system/rndobj/EventTrigger.cpp
+469	default/MidiInstrument		1	96	0	16+	?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ	96	54.458	16	6	src/system/synth/MidiInstrument.cpp
+470	default/HamMove		1	96	0	16+	??H?$_Bit_iter@_NPB_N@stlpmtx_std@@QBA?AU01@H@Z	96	22.708	28	10	src/system/hamobj/HamMove.cpp
+471	default/WaveFile		1	96	0	16+	??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0x81ddebd1@@0@Z	96	34.625	27	11	src/system/utl/WaveFile.cpp
+472	default/MeshDeform		1	96	0	7-15	??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z	96	86.000	13	12	src/system/rndobj/MeshDeform.cpp
+473	default/MeasureMap		1	96	0	16+	??$__uninitialized_copy@PAVTimeSigChange@MeasureMap@@PAV12@@stlpmtx_std@@YAPAVTimeSigChange@MeasureMap@@PAV12@00ABU__false_type@0@@Z	96	16.917	30	12	src/system/utl/MeasureMap.cpp
+474	default/Spotlight		1	92	1	4-6	??$?5UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@@Z	92	86.826	6	0	src/system/world/Spotlight.cpp
+475	default/StandardStream		1	92	0	16+	?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAPAUJumpInstance@@PAU3@0@Z	92	21.478	24	3	src/system/synth/StandardStream.cpp
+476	default/Rnd_NG		1	92	0	16+	??$MakeString@HH@@YAPBDPBDHH@Z	92	58.391	16	6	src/system/rndobj/Rnd_NG.cpp
+477	default/band3/meta_band/SongSort		1	88	0	16+	?AllowedToAccessContent@@YA_NH@Z	88	11.591	23	5	src/band3/meta_band/SongSort.cpp
+478	default/OvershellSlot		1	88	0	16+	?clear@?$_List_base@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ	88	40.409	23	6	src/band3/meta_band/OvershellSlot.cpp
+479	default/TypeProps		1	88	0	7-15	??E?$ObjDirItr@VObjectDir@@@@QAAAAV0@XZ	88	78.318	14	7	src/system/obj/TypeProps.cpp
+480	default/MidiReader		1	88	0	7-15	?DefaultMidiLess@?A0x7d41cf68@@YA_NABUMidi@MidiReader@@0@Z	88	76.273	11	4	src/system/midi/MidiReader.cpp
+481	default/RenderState		1	88	0	7-15	?SetBorderColor@RndRenderState@@QAAXI_N@Z	88	77.045	11	5	src/system/rnddx9/RenderState.cpp
+482	default/BustAMoveData		1	88	1	7-15	??$?5VBAMPhrase@@V?$StlNodeAlloc@VBAMPhrase@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@VBAMPhrase@@V?$StlNodeAlloc@VBAMPhrase@@@stlpmtx_std@@@stlpmtx_std@@@Z	88	74.273	8	0	src/system/hamobj/BustAMoveData.cpp
+483	default/CharDriverMidi		1	88	0	16+	??_GCharDriverMidi@@UAAPAXI@Z	88	57.909	18	7	src/system/char/CharDriverMidi.cpp
+484	default/BandCharacter		1	84	0	16+	??$__uninitialized_copy@PAVRangeShift@GemTrack@@PAV12@@stlpmtx_std@@YAPAVRangeShift@GemTrack@@PAV12@00ABU__false_type@0@@Z	84	4.190	28	5	src/system/bandobj/BandCharacter.cpp
+485	default/NetCacheMgr		1	84	0	7-15	??0NetLoaderRef@@QAA@ABU0@@Z	84	46.143	14	1	src/system/utl/NetCacheMgr.cpp
+486	default/MeshAnim		1	84	0	7-15	??1AccomplishmentConditional@@UAA@XZ	84	84.667	7	2	src/system/rndobj/MeshAnim.cpp
+487	default/Morph		1	84	0	16+	??$__uninitialized_copy@PAVMoveFrame@@PAV1@@stlpmtx_std@@YAPAVMoveFrame@@PAV1@00ABU__false_type@0@@Z	84	3.952	29	5	src/system/rndobj/Morph.cpp
+488	default/NetCacheMgr_Xbox		1	84	0	4-6	??1NetCacheMgrXbox@@UAA@XZ	84	84.905	6	2	src/system/utl/NetCacheMgr_Xbox.cpp
+489	default/MoveMgr		1	80	0	7-15	?OnRandomSeed@CameraManager@@AAA?AVDataNode@@PAVDataArray@@@Z	80	82.150	13	6	src/system/hamobj/MoveMgr.cpp
+490	default/MidiInstrument		1	80	0	16+	?Start@NoteVoiceInst@@UAAXXZ	80	43.000	19	7	src/system/synth/MidiInstrument.cpp
+491	default/MidiReader		1	80	0	7-15	?pow@@YAMMH@Z	80	83.250	8	7	src/system/midi/MidiReader.cpp
+492	default/WaveFile		1	80	0	16+	??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z	80	12.400	29	11	src/system/utl/WaveFile.cpp
+493	default/Rand		1	80	0	7-15	?Seed@Rand@@QAAXH@Z	80	82.250	9	7	src/system/math/Rand.cpp
+494	default/Watcher		1	80	1	4-6	??$__destroy_range@PAU?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@PAVDataArray@@VDataNode@@@0@00@Z	80	94.450	4	0	src/system/rndobj/Watcher.cpp
+495	default/band3/game/Stats		1	80	1	4-6	??$__destroy_range@PAUFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@00@Z	80	91.700	4	0	src/band3/game/Stats.cpp
+496	default/MusicLibrary		1	76	0	7-15	??_GSetUserDifficultyMsg@@UAAPAXI@Z	76	65.526	11	2	src/band3/meta_band/MusicLibrary.cpp
+497	default/UI		1	76	1	7-15	?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ	76	68.368	7	0	src/system/ui/UI.cpp
+498	default/HamCamTransform		1	76	0	7-15	?Load@TransformCrowd@@QAAXAAVBinStream@@@Z	76	77.579	9	3	src/system/hamobj/HamCamTransform.cpp
+499	default/Morph		1	72	1	<=3	??$?5UWeight@@@@YAAAVBinStreamRev@@AAV0@AAV?$Key@UWeight@@@@@Z	72	94.444	1	0	src/system/rndobj/Morph.cpp
+500	default/system/synth_xbox/FxSendCompress		1	72	0	16+	??0FxSendCompress360@@QAA@XZ	72	19.556	20	2	src/system/synth_xbox/FxSendCompress.cpp
+501	default/Tour		1	68	0	7-15	??$__copy_ptrs@PBHPAH@stlpmtx_std@@YAPAHPBH0PAHABU__true_type@0@@Z	68	43.235	13	1	src/band3/tour/Tour.cpp
+502	default/band3/game/Stats		1	68	0	7-15	?FindFrameWithLeadIn@@YAMXZ	68	61.765	10	1	src/band3/game/Stats.cpp
+503	default/ADSR		1	68	1	7-15	??0ADSRImpl@@QAA@XZ	68	58.824	7	0	src/system/synth/ADSR.cpp
+504	default/Game		1	64	0	4-6	?NewNetMessage@RestartGameMsg@@SAPAVNetMessage@@XZ	64	86.812	5	2	src/band3/game/Game.cpp
+505	default/PoolAlloc		1	64	0	4-6	??0CritSecTracker@@QAA@PAVCriticalSection@@@Z	64	82.812	6	2	src/system/utl/PoolAlloc.cpp
+506	default/SampleData		1	64	1	7-15	??0SampleMarker@@QAA@XZ	64	67.188	7	0	src/system/synth/SampleData.cpp
+507	default/FilterVersion		1	64	0	16+	?Sym@DataArray@@QBA?AVSymbol@@H@Z	64	20.750	19	5	src/system/hamobj/FilterVersion.cpp
+508	default/UploadErrorMgr		1	64	0	7-15	??0?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@QAA@ABU01@@Z	64	61.562	8	1	src/band3/meta_band/UploadErrorMgr.cpp
+509	default/Console		1	60	0	7-15	??6@YAAAVTextStream@@AAV0@ABUInstance@RndMultiMesh@@@Z	60	65.000	7	1	src/system/rndobj/Console.cpp
+510	default/RockCentral		1	60	0	7-15	??0RBDataClient@Quazal@@QAA@XZ	60	57.200	12	3	src/band3/net_band/RockCentral.cpp
+511	default/ContentMgr_Xbox		1	60	0	7-15	??$Obj@VCharPollable@@@DataNode@@QBAPAVCharPollable@@PBVDataArray@@@Z	60	31.800	15	4	src/system/os/ContentMgr_Xbox.cpp
+512	default/StorePurchaser		1	60	0	7-15	??$_M_allocate_and_copy@PB_K@?$vector@_KV?$StlNodeAlloc@_K@stlpmtx_std@@@stlpmtx_std@@IAAPA_KIPB_K0@Z	60	31.000	15	6	src/system/meta/StorePurchaser.cpp
+513	default/band3/game/GemTrainerPanel		1	60	0	<=3	?GetFretboardView@GemTrainerPanel@@QBA_NABVGameGem@@@Z	60	93.000	2	1	src/band3/game/GemTrainerPanel.cpp
+514	default/band3/meta_band/ModifierMgr	UIListProvider	2	56	2	4-6	?IsHidden@UIListProvider@@UBA_NH@Z	28	28.571	5	0	src/band3/meta_band/ModifierMgr.cpp
+514	default/band3/meta_band/ModifierMgr	UIListProvider	2	56	2	4-6	?IsActive@UIListProvider@@UBA_NH@Z	28	28.571	5	0	src/band3/meta_band/ModifierMgr.cpp
+515	default/DirLoader		1	48	0	7-15	?_M_insert_overflow@?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVSymbol@@ABV3@ABU__false_type@2@I_N@Z	48	10.667	15	4	src/system/obj/DirLoader.cpp
+516	default/DepthBuffer3D		1	48	1	7-15	?_M_insert_overflow@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@ABV32@ABU__false_type@2@I_N@Z	48	23.333	10	0	src/system/gesture/DepthBuffer3D.cpp
+517	default/TourProgress		1	48	0	7-15	?GetNumStarsForGig@TourProgress@@QBAHH@Z	48	10.667	15	5	src/band3/tour/TourProgress.cpp
+518	default/band3/game/Player		1	44	0	4-6	?InRollback@Player@@QBA_NXZ	44	66.818	5	1	src/band3/game/Player.cpp
+519	default/BandCharDesc		1	40	0	7-15	??$swap@V?$_STLP_alloc_proxy@U_List_node_base@stlpmtx_std@@V?$_List_node@VSymbol@@@2@V?$StlNodeAlloc@V?$_List_node@VSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXAAV?$_STLP_alloc_proxy@U_List_node_base@stlpmtx_std@@V?$_List_node@VSymbol@@@2@V?$StlNodeAlloc@V?$_List_node@VSymbol@@@stlpmtx_std@@@2@@0@0@Z	40	11.000	11	1	src/system/bandobj/BandCharDesc.cpp
+520	default/band3/meta_band/ViewSetting		1	36	1	7-15	?Draw@RndGroup@@QAAXXZ	36	33.333	8	0	src/band3/meta_band/ViewSetting.cpp
+521	default/BandSongMgr		1	32	0	7-15	?HasContentAltDirs@Callback@ContentMgr@@UAA_NXZ	32	24.250	7	1	src/band3/meta_band/BandSongMgr.cpp
+522	default/Accomplishment		1	24	0	7-15	?_M_Start@?$_String_base@DV?$allocator@D@stlpmtx_std@@@stlpmtx_std@@IBAPBDXZ	24	22.167	7	1	src/band3/meta_band/Accomplishment.cpp
+523	default/Font		1	24	0	4-6	?clear@?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ	24	38.167	6	1	src/system/rndobj/Font.cpp
+524	default/MatAnim		1	16	1	<=3	??1ObjRef@@QAA@XZ	16	25.000	3	0	src/system/rndobj/MatAnim.cpp
+525	default/ArkFile		1	16	1	<=3	?Fail@ArkFile@@UAA_NXZ	16	35.000	3	0	src/system/os/ArkFile.cpp
+526	default/TexLoadPanel		1	16	1	<=3	?PostSave@Object@Hmx@@UAAXAAVBinStream@@@Z	16	25.000	3	0	src/band3/meta_band/TexLoadPanel.cpp
+527	default/BandCharacter		1	12	1	<=3	??_EBandCharDescTest@@$4PPPPPPPM@CDI@AAPAXI@Z	12	66.667	1	0	src/system/bandobj/BandCharacter.cpp
+528	default/TrackPanelDirBase		1	12	1	<=3	?SetName@ObjectDir@@$4PPPPPPPM@CBE@AAXPBDPAV1@@Z	12	65.000	2	0	src/system/bandobj/TrackPanelDirBase.cpp
+529	default/LightHue		1	12	1	<=3	?Print@RndTransformable@@$4PPPPPPPM@IM@AAXXZ	12	66.667	1	0	src/system/world/LightHue.cpp
+530	default/Waypoint		1	12	1	<=3	?ClassName@RndTransformable@@$4PPPPPPPM@M@BA?AVSymbol@@XZ	12	65.000	2	0	src/system/char/Waypoint.cpp
+531	default/MatAnim		1	8	1	<=3	?Save@RndDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z	8	20.000	2	0	src/system/rndobj/MatAnim.cpp
