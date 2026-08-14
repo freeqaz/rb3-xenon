@@ -27,10 +27,19 @@ struct MemDiffEntry {
     int mHeap; // 0x44
     // total: 0x48 = 72 bytes
 
+    // Retail's second comparison is NON-STRICT and REVERSED (`>=`), not `<`.
+    // Read off retail bytes, not the oracle: within these same functions MSVC
+    // lowers the mHeap `<` to the eqv idiom (subfc/eqv/srwi/addze/clrlwi) and
+    // that half matches us at 100% -- so `<` provably cannot produce retail's
+    // second idiom (srwi/srawi/subfc/adde), which decodes to `X <= Y`.
+    // Derived twice with OPPOSITE operand placement (__push_heap has `this` in
+    // memory, __unguarded_linear_insert has it in registers); both give `>=`.
+    // Sorting descending by size within a heap -- `>=` rather than `>` is
+    // retail's own sloppiness, and it is what the bytes say.
     bool operator<(const MemDiffEntry &other) const {
         if (mHeap != other.mHeap)
             return mHeap < other.mHeap;
-        return mSizeDiff < other.mSizeDiff;
+        return mSizeDiff >= other.mSizeDiff;
     }
 };
 
