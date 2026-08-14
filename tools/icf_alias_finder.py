@@ -222,6 +222,14 @@ def classify_group(g, tmap, compiled, target_objs):
     # difference BY CONSTRUCTION. Which file is wrong is a question for retail
     # bytes; that it is unproven is not.
     if len(named) > 1:
+        # An exemption is the ONLY way a contradiction stops being fatal, and it
+        # must carry its evidence in the data file where the group lives -- not in
+        # a side list, and never by silence. Each one here is licensed by a retail
+        # bl-caller census (an address with 0 call sites in the whole image cannot
+        # be the callee our relocation denotes -- a745039e's junk-map-row class) or
+        # by a prior MEASURED adjudication. The gate still prints them.
+        if g.get("contradiction_exempt"):
+            return "CONTRADICTION_EXEMPT", g["contradiction_exempt"]
         return "CONTRADICTED", f"target objs name {len(named)} members: {named}"
 
     if not named:
@@ -275,6 +283,8 @@ def cmd_validate(args=None) -> int:
 
     for name, addr, detail in buckets.get("CONTRADICTED", []):
         print(f"FAIL [{name} @ {addr}]: {detail}")
+    for name, addr, detail in buckets.get("CONTRADICTION_EXEMPT", []):
+        print(f"EXEMPT [{name} @ {addr}]: {detail}")
 
     print()
     print(f"COVERAGE: {len(groups)} groups over {len(live_target_obj_paths())} live "
@@ -284,6 +294,12 @@ def cmd_validate(args=None) -> int:
         rows = buckets.get(k, [])
         if rows:
             print(f"  TOLERATED {k:<20} {len(rows):5d}  -- {TOLERATED[k]}")
+    n_ex = len(buckets.get("CONTRADICTION_EXEMPT", []))
+    if n_ex:
+        print(f"  CONTRADICTION_EXEMPT   {n_ex:5d}  -- contradicted BUT carrying a "
+              f"per-group `contradiction_exempt` reason in scripts/symbol_aliases.json "
+              f"(printed above); each is licensed by a retail bl-caller census or a "
+              f"prior measured adjudication, never by silence")
     print(f"  CONTRADICTED (FATAL)   {n_bad:5d}")
     if args is not None and getattr(args, "json", None):
         Path(args.json).write_text(json.dumps(
