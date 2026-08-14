@@ -1555,7 +1555,12 @@ void RndParticleSys::RunFastForward() {
 }
 
 void RndParticleSys::UpdateParticles() {
-    if (mPreserveParticles == 0) {
+    // Retail returns early when the flag is SET: preserving particles means
+    // this update (which creates and frees them) must not run.  Corroborated by
+    // every other use in this file -- SetPool and the reaping loop are both
+    // guarded by !mPreserveParticles.  DC3 has the inverted test; it is newer
+    // and cannot adjudicate here, so this is read off retail bytes (bne, not beq).
+    if (mPreserveParticles != 0) {
         return;
     }
 

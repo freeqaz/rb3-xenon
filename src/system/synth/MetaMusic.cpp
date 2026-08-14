@@ -154,8 +154,11 @@ void MetaMusic::Start() {
                     TheSynth->NewBufStream(mBuf, mBufSize, mExt, ChooseStartMs(), true, true);
             } else {
                 MILO_ASSERT(!mFilename.empty(), 0x12D);
+                // Retail passes floatSamples=TRUE here (li r7,0x1 at the call
+                // site); the rb3-Wii dev build passes false.  Consistent with the
+                // mPlayFromBuffer branch above, which also requests float samples.
                 mStream =
-                    TheSynth->NewStream(mFilename.c_str(), ChooseStartMs(), 0, false);
+                    TheSynth->NewStream(mFilename.c_str(), ChooseStartMs(), 0, true);
             }
             mStream->Faders()->Add(mFaderMute);
             mStream->Faders()->Add(mFader);
