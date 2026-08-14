@@ -1483,8 +1483,12 @@ Pool.cpp:
 	.text       start:0x827D95B8 end:0x827D9648
 
 VarTimer.cpp:
-	.pdata      start:0x822431D0 end:0x82243228
-	.text       start:0x827D3FB0 end:0x827D44C4
+	.pdata      start:0x822431D0 end:0x822431F0
+	.text       start:0x827D3FB0 end:0x827D4260
+
+system/utl/SongInfoAudioType.cpp:
+	.pdata      start:0x822431F0 end:0x82243228
+	.text       start:0x827D4260 end:0x827D44C4
 
 DataFlex.c:
 	.pdata      start:0x8223D698 end:0x8223D6D0
@@ -1776,7 +1780,6 @@ DepthBuffer3D.cpp:
 	.text       start:0x82709BF8 end:0x82709C20
 	.text       start:0x82710D10 end:0x82710DBC
 	.text       start:0x82741040 end:0x82741098
-	.text       start:0x8278EB78 end:0x8278EBA8
 
 MicClientMapper.cpp:
 	.pdata      start:0x82238738 end:0x82238740
@@ -12613,7 +12616,7 @@ AccomplishmentDiscSongConditional.cpp:
 	.pdata      start:0x82225E30 end:0x82225E38
 	.pdata      start:0x82225E38 end:0x82225E40
 	.pdata      start:0x82225E40 end:0x82225EC0
-	.pdata      start:0x82226390 end:0x822263D8
+	.pdata      start:0x82226390 end:0x822263B0
 	.pdata      start:0x82226408 end:0x82226420
 	.pdata      start:0x82226428 end:0x82226440
 	.text       start:0x824F9288 end:0x824F9358
@@ -12622,9 +12625,13 @@ AccomplishmentDiscSongConditional.cpp:
 	.text       start:0x825E4EF0 end:0x825E4F50
 	.text       start:0x825E4F50 end:0x825E4F90
 	.text       start:0x825E4F90 end:0x825E5658
-	.text       start:0x825E9500 end:0x825E9880
+	.text       start:0x825E9500 end:0x825E9668
 	.text       start:0x825E9ABC end:0x825E9C08
 	.text       start:0x825E9CB8 end:0x825E9D38
+
+band3/meta_band/AccomplishmentLessonSongListConditional.cpp:
+	.pdata      start:0x822263B0 end:0x822263D8
+	.text       start:0x825E9668 end:0x825E9880
 
 TexLoadPanel.cpp:
 	.pdata      start:0x82226DA8 end:0x82226ED0
@@ -12682,8 +12689,7 @@ system/beatmatch/GameGem.cpp:
 	.pdata      start:0x8223F130 end:0x8223F138
 	.pdata      start:0x8223F138 end:0x8223F140
 	.text       start:0x8278E8F0 end:0x8278E95C
-	.text       start:0x8278E9A8 end:0x8278EB78
-	.text       start:0x8278EBA8 end:0x8278EBB4
+	.text       start:0x8278E9A8 end:0x8278EBB4
 	.text       start:0x8278EBB8 end:0x8278F068
 	.text       start:0x8278F068 end:0x8278F208
 
