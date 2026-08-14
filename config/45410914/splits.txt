@@ -7043,7 +7043,7 @@ Archive.cpp:
 	.text       start:0x82512288 end:0x82514858
 
 system/rnddx9/Rnd.cpp:
-	.pdata      start:0x8223A2F0 end:0x8223A488
+	.pdata      start:0x8223A378 end:0x8223A488
 	.text       start:0x827319CC end:0x82733C70
 
 Rnd_Xbox.cpp:
