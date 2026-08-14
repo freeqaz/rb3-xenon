@@ -22025,7 +22025,7 @@
  "0x82822e78": "?SetType@UIListWidget@@UAAXVSymbol@@@Z",
  "0x82822fe8": "?PageDirection@@YAHW4JoypadAction@@@Z",
  "0x82823008": "?IsNavAction@@YA_NW4JoypadAction@@@Z",
- "0x82823038": "?ScrollDirection@@YAHABVButtonDownMsg@@_N1H@Z",
+ "0x82823038": "?ScrollDirection@@YAHABVButtonDownMsg@@VSymbol@@_NH@Z",
  "0x828232c8": "?Load@UIPicture@@UAAXAAVBinStream@@@Z",
  "0x82823340": "?IsLoaded@?$ObjDirPtr@VUILabelDir@@@@QBA_NXZ",
  "0x828233a0": "?DrawShowing@UIProxy@@UAAXXZ",
