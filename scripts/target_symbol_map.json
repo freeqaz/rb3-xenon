@@ -20551,7 +20551,7 @@
  "0x827c8cf0": "?Size@StringTable@@QBAHXZ",
  "0x827c8d38": "??1StringTable@@QAA@XZ",
  "0x827c9020": "??0StringTable@@QAA@H@Z",
- "0x827c90b8": "?Terminate@Movie@@SAXXZ",
+ "0x827c90b8": "?MsToTick@@YAMM@Z",
  "0x827c9110": "?Init@Movie@@SAXXZ",
  "0x827c9190": "?TickToBeat@@YAMH@Z",
  "0x827c91a0": "??__ETheLocale@@YAXXZ",
