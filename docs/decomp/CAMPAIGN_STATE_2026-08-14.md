@@ -76,7 +76,19 @@ unworked. The original row above has been replaced accordingly.
 `?Handle@CustomizePanel@@` — with both its ICF folds settled its **fuzzy
 converged exactly to its mpn (99.76172)** and objdiff reports **zero `diff_arg`
 rows**, so **no relocation-name work can move it by one byte**; three lanes
-circled it. Also `?Handle@BandStorePanel@@` (diagnosed; only lever is
+circled it.
+⚠ **CORRECTED (lane GAMEROW-2, 2026-08-14): that sentence is true and its
+COROLLARY — RESIDUAL-1's "closing all three instructions buys ZERO bytes" — is
+now FALSE.** It was priced when two ICF fold-aliases still charged the row;
+FOLDPROVE-1/2 (`ec8481d5`, `7b57c6a7`) proved and landed both. Re-measured at
+`name_check` on a settled tree the row is **5,036 B / fuzzy 99.762 == mpn
+99.762 / 3 charged sites, all insert+delete, zero `diff_arg`** ⇒ closing the
+three body instructions now buys **the full 5,036 B and +1 function**. The
+DIAGNOSIS of both defects stands and must not be re-run (see
+`gamerow2-map-defect-class-2026-08-14.md` §6); the PRICE does not. ★ A
+retirement is only valid on the tree it was measured on — this one went stale
+because a different lane closed the aliases underneath it.
+Also `?Handle@BandStorePanel@@` (diagnosed; only lever is
 metric-fitting), `?Interp@CameraShot@@` (association lives in shared math-header
 inlines ⇒ engine-wide fan-out), `?SyncProperty@BandWardrobe@@` (tried, inert).
 
