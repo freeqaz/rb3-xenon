@@ -14,12 +14,33 @@ objdiff's ``map_file``/``symbol_equivalences`` mechanism, neutralizing the noise
 
 This tool is the EVIDENCE engine behind that data file:
 
-  --validate   Confirm scripts/symbol_aliases.json is well-formed and grounded:
-               (a) each group's survivor is in target_symbol_map.json,
-               (b) every folded spelling is referenced by >=1 compiled obj,
-               (c) the survivor is the ONLY group member named in the target objs
-                   (a real ICF fold keeps exactly one spelling).
-               Exit 1 on any failure. Use in CI / before landing edits.
+  --validate   Classify every group in scripts/symbol_aliases.json against the
+               objs, and FAIL only on the one class that is a genuine
+               contradiction. Exit 0 = pass, 1 = contradicted group(s), 2 =
+               precondition refused (unrenamed target objs).
+
+               ⚠ REWRITTEN 2026-08-14 (lane ALIASVAL-1) because the previous
+               shape was a gate nobody read. It applied three checks and failed
+               the group on any of them, which produced **221 standing failures
+               out of 1,499** -- and 211 of those 221 were the instrument, not
+               the data:
+
+                 * a NON-RECURSIVE glob over `build/45410914/obj/*.obj` hid 569
+                   of the 3,084 live target objs (see live_target_obj_paths),
+                   manufacturing "target objs name []" for symbols defined only
+                   in a subdirectory unit;
+                 * check (a) demanded the survivor be in target_symbol_map.json,
+                   which a `vftable_<addr>` placeholder can never be -- 34/34 of
+                   that class failed;
+                 * check (c) demanded the SURVIVOR specifically be the named
+                   member, which tests a labelling convention, not ICF;
+                 * check (b)'s "remedy" (pruning unreferenced spellings) is
+                   MEASURED HARMFUL -- a745039e restored 14 such, worth +94,616 B.
+
+               A blanket failure list of that composition cannot be actioned, so
+               it was ignored -- which is worse than no gate, because it also
+               hid the 10 groups that ARE contradicted. Now: OK / four named and
+               counted TOLERATED classes / CONTRADICTED (fatal).
 
   --scan       Discover NEW fold candidates from objdiff diffs: scan the non-100
                function pool for paired ``bl <A>`` / ``bl <B>`` rows where the
@@ -111,18 +132,47 @@ def compiled_obj_symbol_index() -> dict:
     return idx
 
 
-def target_obj_symbol_index() -> dict:
-    """name -> count of dtk-split target objs referencing it (post-renamer).
-    The flat obj/ dir accumulates stale orphans from earlier split layouts
-    (ninja never deletes them); filter to objdiff.json's LIVE units so counts
-    aren't corrupted by dead .obj files (see scripts/harvest/live_units.py)."""
-    idx = defaultdict(int)
-    globbed = glob.glob(str(PROJECT_ROOT / "build/45410914/obj/*.obj"))
+def live_target_obj_paths() -> list:
+    """The dtk-split target objs objdiff ACTUALLY diffs, taken from objdiff.json.
+
+    ⛔ THIS USED TO BE `glob("build/45410914/obj/*.obj")` -- A NON-RECURSIVE GLOB
+    -- AND THAT WAS A MEASURED FALSE-NEGATIVE SOURCE, not a style nit.  569 of the
+    3,084 live target objs live in SUBDIRECTORIES (`obj/band3/meta_band`,
+    `obj/xdk/xgraphics`, `obj/network/quazal/...`), so every symbol defined only in
+    one of those units was invisible to check (c), which then reported
+    ``target objs name []`` -- "unwitnessed, therefore inert".
+
+    That false negative has already cost this repo real confusion.
+    `tools/ourside_fold_sweep.py` OBSERVED it (its 11 `target objs name []` groups
+    were dropped as inert and the drop cost -6,652 B / 2 units off 100%) and wrote
+    a standing "DO NOT DROP GROUPS ON CHECK (c)" prohibition, but never found the
+    cause.  The cause is this glob.  Restoring the recursive/authoritative set
+    resolves exactly 11 of the 22 `NOTHING` groups (lane ALIASVAL-1).
+
+    objdiff.json's `target_path` list is the authoritative set -- it is by
+    definition what the report diffs -- so it needs no live-filtering.
+    """
     try:
-        live = filter_live(globbed, str(PROJECT_ROOT))
+        cfg = json.loads(OBJDIFF_JSON.read_text())
     except (OSError, ValueError):
-        live = globbed
-    for p in live:
+        cfg = {}
+    paths = [u["target_path"] for u in cfg.get("units", [])
+             if u.get("target_path") and os.path.exists(u["target_path"])]
+    if paths:
+        return paths
+    # Fallback only if objdiff.json is absent/unreadable: RECURSIVE glob, then the
+    # live filter.  Never the flat glob again.
+    globbed = glob.glob(str(PROJECT_ROOT / "build/45410914/obj/**/*.obj"), recursive=True)
+    try:
+        return filter_live(globbed, str(PROJECT_ROOT))
+    except (OSError, ValueError):
+        return globbed
+
+
+def target_obj_symbol_index() -> dict:
+    """name -> count of live dtk-split target objs referencing it (post-renamer)."""
+    idx = defaultdict(int)
+    for p in live_target_obj_paths():
         for s in coff_referenced_symbols(Path(p).read_bytes()):
             idx[s] += 1
     return idx
@@ -131,51 +181,119 @@ def target_obj_symbol_index() -> dict:
 # ---------------------------------------------------------------------------
 # --validate
 # ---------------------------------------------------------------------------
-def cmd_validate() -> int:
+# The TOLERATED classes, each with the reason it is NOT a failure. A gate that
+# emits 221 undifferentiated failures is a gate nobody reads -- and this one was
+# read by nobody for exactly that reason. Every class below is either a property
+# of OUR pinning/labelling (not of retail's linker) or a condition whose
+# "remedy" has been MEASURED HARMFUL. They are reported, counted and named; only
+# CONTRADICTED is fatal.
+TOLERATED = {
+    "PLACEHOLDER_SURVIVOR":
+        "survivor is a dtk placeholder data symbol (vftable_/fn_/lbl_), which is "
+        "never in target_symbol_map.json (a FUNCTION map) -- check (a) is "
+        "structurally inapplicable, and 34/34 such groups fail it",
+    "SURVIVOR_MISLABELED":
+        "exactly one member is named in the target objs, but it is a `folded` "
+        "entry rather than the `survivor` field -- a LABELLING convention, not a "
+        "claim: the co-location assertion is intact and the named member sits AT "
+        "the group address",
+    "UNWITNESSED":
+        "no member is named in the live target objs. This is COVERAGE of our own "
+        "pinning, NOT evidence about retail's linker -- and dropping such groups "
+        "was MEASURED to cost -6,652 B / 2 units off 100% (ourside_fold_sweep.py)",
+    "STALE_SPELLING":
+        "a folded spelling is referenced by 0 compiled objs, so it can appear on "
+        "neither side of a charge. Pruning on this screen is MEASURED HARMFUL: "
+        "commit a745039e restored 14 spellings pruned this way, worth +94,616 B",
+}
+
+
+def classify_group(g, tmap, compiled, target_objs):
+    """-> (verdict, detail). verdict is 'OK', a TOLERATED key, or 'CONTRADICTED'."""
+    survivor = g["survivor"]
+    folded = g.get("folded", [])
+    named = [s for s in (survivor, *folded) if target_objs.get(s, 0) > 0]
+
+    # *** THE ONLY FATAL CLASS ***
+    # A group asserts "all these spellings denote ONE body at ONE address". If two
+    # members are named in the target objs, our own renamer placed them at two
+    # DISTINCT retail addresses -- symbol_aliases.json and target_symbol_map.json
+    # contradict each other, and under name_check the alias forgives that
+    # difference BY CONSTRUCTION. Which file is wrong is a question for retail
+    # bytes; that it is unproven is not.
+    if len(named) > 1:
+        return "CONTRADICTED", f"target objs name {len(named)} members: {named}"
+
+    if not named:
+        return "UNWITNESSED", "no member named in live target objs"
+    if survivor.startswith(("vftable_", "fn_", "lbl_")) and survivor not in tmap:
+        return "PLACEHOLDER_SURVIVOR", f"survivor {survivor} is a dtk placeholder"
+    if named != [survivor]:
+        return "SURVIVOR_MISLABELED", f"target objs name {named[0]}, not the survivor"
+    if survivor not in tmap:
+        return "CONTRADICTED", f"survivor {survivor} NOT in target_symbol_map.json"
+    stale = [f for f in folded if f not in compiled]
+    if stale:
+        return "STALE_SPELLING", f"{len(stale)}/{len(folded)} folded spelling(s) unreferenced"
+    return "OK", ""
+
+
+def cmd_validate(args=None) -> int:
     groups = load_aliases()
     tmap = target_map_names()
     compiled = compiled_obj_symbol_index()
     target_objs = target_obj_symbol_index()
-    ok = True
-    n_ok = n_bad = 0
+
+    # ── PRECONDITION: the target objs must be RENAMED. ──────────────────────────
+    # Without this the whole gate is vacuous in the one place lanes actually run
+    # it. A fresh worktree's target objs still carry dtk's anonymous `fn_<addr>`
+    # symbols until the pre-compile obj_target_symbol_renamer has run, so NO
+    # mangled name is present, every group reports `target objs name []`, and the
+    # gate prints "0 group(s) OK, 1499 group(s) failing" -- a 100% failure that
+    # says nothing about the data. (Measured, lane ALIASVAL-1: that is exactly
+    # what a fresh `scripts/setup_worktree.sh` tree reports before its first
+    # build.) Refuse loudly instead of reporting a number that cannot be right.
+    mangled = sum(1 for s in target_objs if s.startswith("?"))
+    if mangled < 1000:
+        print(f"REFUSING: target objs carry only {mangled} mangled symbol(s) -- they "
+              f"look UNRENAMED (dtk `fn_<addr>` form).", file=sys.stderr)
+        print("  Every group would report `target objs name []` and the run would "
+              "claim 100% failure that reflects the BUILD STATE, not the data.",
+              file=sys.stderr)
+        print("  fix: run `./tools/ninja-locked` first (the pre-compile "
+              "obj_target_symbol_renamer populates the mangled names).", file=sys.stderr)
+        return 2
+
+    buckets = defaultdict(list)
     for g in groups:
-        name = g.get("name", g.get("survivor"))
-        survivor = g["survivor"]
-        folded = g.get("folded", [])
-        # ★ WS-4 INSTRUMENT FIX. `g_ok` used to be the RUN-WIDE `ok`, so the
-        # first failing group silenced the OK line of every group after it: a
-        # 272-group file printed 9 OK + 12 FAIL and 251 groups reported NOTHING.
-        # The verdict was right and the coverage was invisible, which is exactly
-        # the shape that makes a PASS/FAIL comparison across two files unreadable
-        # (house rule: report coverage with every verdict).
-        g_ok = True
-        # (a) survivor is in target_symbol_map.json
-        if survivor not in tmap:
-            print(f"FAIL [{name}]: survivor {survivor} NOT in target_symbol_map.json")
-            g_ok = False
-        # (b) every folded spelling referenced by >=1 compiled obj
-        for f in folded:
-            if f not in compiled:
-                print(f"FAIL [{name}]: folded {f} referenced by 0 compiled objs")
-                g_ok = False
-        # (c) survivor is the ONLY group member named in the target objs
-        named_in_target = [s for s in (survivor, *folded) if target_objs.get(s, 0) > 0]
-        if named_in_target != [survivor]:
-            print(f"FAIL [{name}]: target objs name {named_in_target}, "
-                  f"expected only [{survivor}] (a real ICF fold keeps one spelling)")
-            g_ok = False
-        if g_ok:
-            n_ok += 1
-            n_compiled = len(set(c for f in folded for c in compiled.get(f, [])))
-            print(f"OK   [{name}]: survivor in target_map; "
-                  f"{len(folded)} folded spelling(s) over {n_compiled} compiled objs; "
-                  f"target objs ref survivor {target_objs.get(survivor,0)}x")
-        else:
-            n_bad += 1
-            ok = False
-    print(f"VALIDATE: {'PASS' if ok else 'FAIL'} -- {n_ok} group(s) OK, "
-          f"{n_bad} group(s) failing, {len(groups)} total")
-    return 0 if ok else 1
+        verdict, detail = classify_group(g, tmap, compiled, target_objs)
+        buckets[verdict].append((g.get("name", g["survivor"]), g["address"], detail))
+
+    n_bad = len(buckets.get("CONTRADICTED", []))
+    n_ok = len(buckets.get("OK", []))
+    n_tol = sum(len(v) for k, v in buckets.items() if k in TOLERATED)
+
+    for name, addr, detail in buckets.get("CONTRADICTED", []):
+        print(f"FAIL [{name} @ {addr}]: {detail}")
+
+    print()
+    print(f"COVERAGE: {len(groups)} groups over {len(live_target_obj_paths())} live "
+          f"target objs ({mangled} mangled names indexed)")
+    print(f"  OK (grounded)          {n_ok:5d}")
+    for k in sorted(TOLERATED):
+        rows = buckets.get(k, [])
+        if rows:
+            print(f"  TOLERATED {k:<20} {len(rows):5d}  -- {TOLERATED[k]}")
+    print(f"  CONTRADICTED (FATAL)   {n_bad:5d}")
+    if args is not None and getattr(args, "json", None):
+        Path(args.json).write_text(json.dumps(
+            {k: [{"name": n, "address": a, "detail": d} for n, a, d in v]
+             for k, v in buckets.items()}, indent=1))
+        print(f"wrote {args.json}")
+    print(f"VALIDATE: {'PASS' if n_bad == 0 else 'FAIL'} -- {n_ok} grounded, "
+          f"{n_tol} tolerated (enumerated above), {n_bad} contradicted, "
+          f"{len(groups)} total")
+    return 0 if n_bad == 0 else 1
 
 
 # ---------------------------------------------------------------------------
@@ -356,9 +474,10 @@ def main() -> int:
                     help="realized-lever per-fn delta with/without the alias map")
     ap.add_argument("--out", default=None, help="write scan/report JSON to PATH")
     ap.add_argument("--map", default=None, help="synthetic map path (for --report)")
+    ap.add_argument("--json", default=None, help="write the --validate classification to PATH")
     args = ap.parse_args()
     if args.validate:
-        return cmd_validate()
+        return cmd_validate(args)
     if args.scan:
         return cmd_scan(args)
     if args.report:
