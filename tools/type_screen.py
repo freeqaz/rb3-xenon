@@ -720,11 +720,21 @@ class TypeScreen:
         return rows
 
 
-def load_map():
+def load_map(honour_denylist=True):
+    """Read the map as the RENAMER sees it.
+
+    Two filters that are easy to forget and both produce wrong output:
+      * a value may be null or a list, not a name.  arity_screen omitted this
+        check and died outright on the 27 nulled rows.
+      * _denylist rows are NOT emitted by scripts/obj_target_symbol_renamer.py,
+        so screening them re-reports names that are already retired -- including
+        ones this very screen retired.
+    """
     m = json.load(open(MAP_PATH))
     meta = {k: v for k, v in m.items() if not k.startswith("0x")}
+    denied = set(meta.get("_denylist", [])) if honour_denylist else set()
     named = {k: v for k, v in m.items()
-             if k.startswith("0x") and isinstance(v, str)}
+             if k.startswith("0x") and isinstance(v, str) and k not in denied}
     return m, meta, named
 
 
