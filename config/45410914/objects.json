@@ -1,6 +1,6 @@
 {
     "main": {
-        "progress_category": "game",
+        "progress_category": "engine",
         "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
@@ -305,22 +305,8 @@
             "system/oggvorbis/envelope.c": "NonMatching",
             "system/utl/DeJitter.cpp": "NonMatching",
             "system/utl/LogFile.cpp": "NonMatching",
-            "band3/game/HitTracker.cpp": "NonMatching",
             "system/beatmatch/SlotChannelMapping.cpp": "NonMatching",
             "system/beatmatch/DrumTrackWatcherImpl.cpp": "NonMatching",
-            "band3/meta_band/Asset.cpp": "NonMatching",
-            "band3/meta_band/LockStepMgr.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_HANDLE_LOCAL_STATIC"
-                ]
-            },
-            "band3/meta_band/UGCPurchasePanel.cpp": {
-                "status": "NonMatching",
-                "extra_cflags": [
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
-                ]
-            },
             "system/synth_xbox/FxSend.cpp": "NonMatching",
             "system/utl/Pool.cpp": "NonMatching",
             "system/utl/VarTimer.cpp": "NonMatching",
@@ -1152,7 +1138,7 @@
         }
     },
     "xdk": {
-        "progress_category": "engine",
+        "progress_category": "sdk",
         "mw_version": "X360/16.00.10224.00",
         "cflags": "base",
         "objects": {
@@ -2009,7 +1995,21 @@
                 ]
             },
             "band3/meta_band/ParentalControlPanel.cpp": "NonMatching",
-            "band3/tour/TourQuestGameRules.cpp": "NonMatching"
+            "band3/tour/TourQuestGameRules.cpp": "NonMatching",
+            "band3/game/HitTracker.cpp": "NonMatching",
+            "band3/meta_band/Asset.cpp": "NonMatching",
+            "band3/meta_band/LockStepMgr.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
+            "band3/meta_band/UGCPurchasePanel.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                ]
+            }
         }
     },
     "network": {
