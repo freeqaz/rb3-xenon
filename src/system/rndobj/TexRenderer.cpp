@@ -316,23 +316,41 @@ void RndTexRenderer::DrawToTexture() {
         RndCam *current = RndCam::Current();
         RndTex *targetTex = current->TargetTex();
         if (targetTex) {
-            // ⛔ BODYPORT-5 residual, DIAGNOSED AND DELIBERATELY NOT FIXED.
-            // RETAIL SHIPPED THIS NOTIFY AND WE STRIP IT — the inverse of the
-            // usual "code retail never had".  Retail's DrawToTexture carries an
-            // 8-instruction target-only run right here: three `bl ?PathName@@`
-            // in a row plus the `lwz r11,0x78(r25) / cmplwi / beq` early-out,
-            // none of which our object emits, because MILO_NOTIFY_ONCE is
-            // #ifdef HX_NATIVE and the match build never defines it.
-            // Reproducing it means changing os/Debug.h — a PCH input that
-            // cascades to ~281 TUs, where the standing blanket control measured
-            // −21 (project_milo_debug_force_define_2026-07-30).  And the row
-            // cannot pay: it is 94.176 fuzzy with 170 diff_arg rows (82 pure
-            // register), so it will not cross 100 and matched_code is
-            // all-or-nothing per row ⇒ the whole exercise is Δ0 bytes for
-            // engine-wide blast radius.  Per-site only, and not worth it here.
-            // See also lane MATCH-F: base rate for this class is 1 of 11, and
-            // retail FREQUENTLY evaluates the args too — check the TARGET side
-            // before guarding anything, or you will regress it.
+            // ⛔ CORRECTED BY LANE MILOKEEP-1 — BODYPORT-5's reading of this
+            // site was WRONG, and the correction matters because it was briefed
+            // as a whole new ("inverse") defect mechanism.
+            //
+            // BODYPORT-5 wrote: "RETAIL SHIPPED THIS NOTIFY AND WE STRIP IT".
+            // RETAIL DID NOT SHIP THIS NOTIFY.  Adjudicated on retail bytes:
+            //   * the format string "%s: Cannot render to texture (%s) while
+            //     already rendering to texture (%s)." occurs ZERO times in the
+            //     whole of band.exe (raw byte search, not grep — control probe
+            //     "Could not find %s in dir" returns 1, so the search fires);
+            //   * retail's DrawToTexture (0x824448c8) calls NO MakeString and
+            //     makes NO reference to the TheDebug global (0x82cc9874);
+            //   * the only .rdata literals it materialises are "pre_render",
+            //     "WorldDir" and "post_render".
+            // The evidence BODYPORT-5 actually cited — three `bl ?PathName@@`
+            // — is ARGUMENT-EVALUATION RESIDUE, not an emission.  That is the
+            // SAME mechanism as everywhere else in the binary (emission
+            // stripped, side-effecting args kept), and it is already modelled:
+            // see os/Debug.h's RB3_NOTIFY_ONCE_EVAL per-TU opt-in, added for
+            // char/CharFaceServo.cpp::ScaleAdd for exactly this shape.
+            //
+            // CONSEQUENCE: the stated reason for not fixing it — "the lever is
+            // os/Debug.h, a PCH input" — is ALSO wrong.  It never required a
+            // Debug.h change; rndobj/ is PCH-excluded, so the existing per-TU
+            // opt-in applies with no cascade.  The row still should not be
+            // opened, but for the OTHER reason BODYPORT-5 gave, which survives:
+            // it is 94.2 fuzzy with 170 diff_arg (dominated by an r24↔r25
+            // liveness swap), so it cannot cross 100 and matched_code is
+            // all-or-nothing per row ⇒ Δ0 bytes.
+            //
+            // For the whole-binary picture: only FOUR formatted MILO_*-shaped
+            // emissions survive in retail at all (CharClip::Print,
+            // CharBones::Print, CharBonesSamples::Print, RndMesh::
+            // OnConfigureMesh), all four are now correct in our tree, and this
+            // site is not one of them.  Do not re-open this as a lever.
             MILO_NOTIFY_ONCE(
                 "%s: Cannot render to texture (%s) while already rendering to texture (%s).",
                 PathName(targetTex),
