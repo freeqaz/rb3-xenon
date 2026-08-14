@@ -4685,8 +4685,7 @@ Morph.cpp:
 	.text       start:0x82482F98 end:0x8248303C
 	.text       start:0x82483040 end:0x82483144
 	.text       start:0x82483148 end:0x82483264
-	.text       start:0x82483268 end:0x824832BC
-	.text       start:0x824832BC end:0x824833FC
+	.text       start:0x82483268 end:0x824833FC
 	.text       start:0x82483400 end:0x82483470
 	.text       start:0x82483470 end:0x82483548
 	.text       start:0x82483548 end:0x82483854
