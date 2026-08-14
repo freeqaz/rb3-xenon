@@ -995,13 +995,13 @@ void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
                     RndMesh::Vert *verts = &mesh->Verts(0);
                     RndMesh::Vert &vert = verts[v];
                     vert.color.alpha =
-                        (float)((double)(accA * invAngle + vert.color.alpha) * 0.5);
+                        (accA * invAngle + vert.color.alpha) * 0.5f;
                     vert.color.red =
-                        (float)((double)(invAngle * accR + vert.color.red) * 0.5);
+                        (invAngle * accR + vert.color.red) * 0.5f;
                     vert.color.blue =
-                        (float)((double)(accB * invAngle + vert.color.blue) * 0.5);
+                        (accB * invAngle + vert.color.blue) * 0.5f;
                     vert.color.green =
-                        (float)((double)(accG * invAngle + vert.color.green) * 0.5);
+                        (accG * invAngle + vert.color.green) * 0.5f;
                 }
             }
             v++;
