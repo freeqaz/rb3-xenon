@@ -1175,12 +1175,42 @@ run the gate before you land. Two traps, both real:
      read 97.7–99.3, i.e. lanes grinding already-complete rows. **Fixed in
      `mcp_server.py`**; `run_objdiff`/`run_diff_inspect` now replicate the
      grader's config and agree exactly.
-  ⛔ **`scripts/analysis/diff_inspect.py` + `stack_layout.py` pass NO `-c` at all**
-  → they run at `FunctionRelocDiffs::DataValue`, **89.08% disagreement, max
-  16.00 pp**. Deliberately left alone: at `DataValue` a wrong `bl` callee is
-  VISIBLE, which `functionRelocDiffs=none` masks. **Read their percent as a
-  defect-hunting number, never as the graded score.**
-  Full mechanism, counts, conversion rule and nulls:
+  ⛔⛔ **THE "`diff_inspect.py` + `stack_layout.py` RUN AT `DataValue`" CLAIM IS
+  REFUTED — and the mechanism that broke it also broke `mcp_server.py` the other
+  way** (lane MCPRULER-1, 2026-08-14). Both facts follow from one line:
+  **`objdiff-cli diff` applies `objdiff.json`'s `options` block over its own base
+  config** (`diff.rs:953`), and `-c` args are applied **last** (`diff.rs:959`).
+  So since `d04c83df` shipped `options = {"functionRelocDiffs": "name_check"}`
+  on 2026-08-12:
+  - **passing NO `-c` silently stopped meaning `DataValue` and started meaning
+    `name_check`** — measured on `?Handle@OvershellSlot@@`: no-`-c` =
+    **99.995690**, explicit `data_value` = **98.044420**, explicit `name_check` =
+    **99.995690**. The two scripts were *already* on the graded ruler, and the
+    "deliberately left alone, `DataValue` shows a wrong `bl`" property had
+    quietly evaporated. (It is no loss: `name_check` charges a wrong callee by
+    NAME, so the defect stays visible without the address noise.)
+  - conversely **`mcp_server.py`'s hardcoded `-c functionRelocDiffs=none`
+    OVERRODE the shipped ruler**, because `-c` wins.
+  ⇒ **Both are now RESOLVED AT RUNTIME from `report.json`'s
+  `provenance.diff_config`** (a complete 22-key dump written by the grading run
+  itself) via **`scripts/analysis/ruler.py`**, never hardcoded — a second
+  hardcoded constant would rot on the same silent schedule. `ruler=graded`
+  (default) / `none` / `data_value` are explicit opt-ins that change **only**
+  `functionRelocDiffs`, and **every percentage is now labelled with its ruler**.
+  Verified: `objdiff-cli diff` at graded == `report.json`'s
+  `fuzzy_match_percent` on **2,617 / 2,617 rows, 0 disagreements** (787 further
+  sampled rows are `fuzzy == 0` with no base symbol — the UNPAIRABLE
+  `auto_*`/`xdk` classes — and fail identically on both legs, so they hide
+  nothing); the same comparison run on the OLD hardcoded ruler **disagrees on
+  1,332 rows**, i.e. the check can fail.
+  ⚠ **What this cost, measured:** **5,555 rows / 674,936 B** read `fuzzy == 100`
+  under `none` but below 100 on the graded ruler — rows the orchestrator called
+  *"Complete — No action needed"* while the grader withheld every byte.
+  ⚠ **The mismatch COUNT is ruler-dependent too, not just the percent**: one row
+  (`?Handle@OvershellSlot@@`) shows **0 / 2 / 641** charged sites at
+  `none` / `name_check` / `data_value`.
+  Full mechanism, counts, conversion rule and nulls (⚠ EB-4's `-c` prescription
+  is superseded above, its *measurements* stand):
   `docs/decomp/OBJDIFF_DIFF_VS_REPORT_SETTLED_2026-08-03.md`.
   **Still: believe `report.json` for the score.**
 - ★ **`total_code` is EXACTLY Σ(listed function sizes)** — verified whole-binary
