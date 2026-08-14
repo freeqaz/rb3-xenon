@@ -55,8 +55,13 @@ void StorePanel::Load() {
     UIPanel::Load();
     mLoadOk = true;
     ThePlatformMgr.AddSink(this);
-    Profile *profile = StoreProfile();
-    int padNum = profile->GetPadNum();
+    // NOTE (laneFAMILY-1, measured): retail dispatches vtable slot 0x44 (=17,
+    // StoreUser) here, not 0x70 (=28, StoreProfile), and then makes a VIRTUAL
+    // call on the result through the virtual-base adjust — i.e.
+    // LocalUser::GetPadNum(), not the non-virtual Profile::GetPadNum(). This is
+    // the shape StorePanel.h:71's note already predicted from band.exe.
+    LocalUser *user = StoreUser();
+    int padNum = user->GetPadNum();
     if (padNum == 0 || ThePlatformMgr.IsSignedIntoLive(padNum) == 0) {
         if (mState == 0)
             mLoadOk = false;
@@ -76,17 +81,20 @@ void StorePanel::Load() {
 
 void StorePanel::Enter() {
     UIPanel::Enter();
-    Profile *profile = StoreProfile();
-    if (profile == 0) {
-        if (mLoadOk) {
+    // NOTE (laneFAMILY-1, measured): same defect as Load() — retail dispatches
+    // slot 0x44 (=17, StoreUser) and threads the LocalUser* straight into the
+    // LocalUser-typed PlatformMgr overloads. Decisive: retail's callee here is
+    // the NAMED symbol ?IsUserSignedIntoLive@PlatformMgr@@QBA_NPBVLocalUser@@@Z,
+    // whose signature takes const LocalUser* — there is no GetPadNum in retail's
+    // body at all. Branch targets decode to a single 3-term disjunction guarding
+    // `if (mState == 0) mLoadOk = false;` + an UNCONDITIONAL ExitStore(4), which
+    // is the identical shape Load() already matches at 100%.
+    LocalUser *user = StoreUser();
+    if (user == 0 || ThePlatformMgr.IsUserSignedIntoLive(user) == 0
+        || ThePlatformMgr.IsUserAGuest(user) != 0) {
+        if (mState == 0)
             mLoadOk = false;
-            ExitStore(kStoreErrorLiveServer);
-        }
-    } else if ((ThePlatformMgr.IsSignedIntoLive(profile->GetPadNum()) == 0 ||
-                ThePlatformMgr.IsPadAGuest(profile->GetPadNum()) != 0) &&
-               mLoadOk) {
-        mLoadOk = false;
-        ExitStore(kStoreErrorCacheNoSpace);
+        ExitStore(kStoreErrorLiveServer);
     }
     mShowing = (bool)mLoadOk;
     XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_ALWAYS_ALLOW);
@@ -231,8 +239,17 @@ void StorePanel::ExitStore(StoreError) const {}
 LocalUser *StorePanel::StoreUser() const { return nullptr; }
 Profile *StorePanel::StoreProfile() const { return nullptr; }
 
+// NOTE (laneFAMILY-1, measured against retail bytes): retail carries a THIRD
+// clause our port dropped. Retail dereferences `lwz r11,0x84(r31)` / `cmpwi 2`
+// and `lbz r11,0x54(r31)` — and /d1reportSingleClassLayout puts mPostPurchaseState
+// at 0x84 and mLoadOk at 0x54, so the offsets identify the members outright.
+// The rb3-Wii oracle spells the same expression (`mSessionStatus ==
+// kSessionCreated || !mLoadOK`), and Enter() already writes the literal 2.
+// The `!mLoadOk` polarity looks backwards but is what both retail and the
+// oracle say — do not "correct" it.
 bool StorePanel::IsLoaded() const {
-    return (UIPanel::IsLoaded() && TheContentMgr.RefreshDone());
+    return UIPanel::IsLoaded() && TheContentMgr.RefreshDone()
+        && (mPostPurchaseState == 2 || !mLoadOk);
 }
 
 void StorePanel::Unload() {
