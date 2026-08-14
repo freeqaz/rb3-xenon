@@ -38,6 +38,30 @@ preserving node count and out-degree exactly, and re-runs the identical componen
 analysis.  If the null closes cycles at the real rate, the instrument is
 measuring its own construction and its output is worthless.
 
+⛔⛔ AND THAT NULL PASSED WHILE BEING THE WRONG NULL -- READ THIS BEFORE USING
+CYCLE CLOSURE AS A SIGNAL.  On MAP_SUSPECT the real data closes 7 two-cycles and
+the random-rewiring null closes 0.000 over 200 trials, which reads as decisive.
+It is not, because randomly rewiring 74 edges over a 28,933-name map can never
+close a cycle -- the null is not measuring the alternative hypothesis, it is
+measuring nothing.  The RIGHT control is the UNTREATED POPULATION: run the same
+census on the other verdict classes of the same queue.
+
+    --verdict MAP_SUSPECT      74 rows -> 7 CYCLE_len2
+    --verdict BOTH_CONSISTENT  74 rows -> 9 CYCLE_len2 + 1 CYCLE_len3
+    --verdict BOTH_INCONSIST.  19 rows -> 0
+
+The class where the type screen explicitly CANNOT separate the two sides closes
+MORE cycles than the class it indicts, at identical row count.  So closure is a
+property of the queue's structure -- template families in which both directions
+happen to get charged -- and carries NO information about map rotation.  It is
+corroborated independently: ms1_words.py adjudicated all 14 MAP_SUSPECT cycle
+nodes on masked body words and returned MAP_CONFIRMED 14/14.
+
+⇒ CYCLE CLOSURE IS A DEAD LEVER FOR THIS QUEUE.  The census is kept because the
+   shape decomposition is still the useful output, and because the failure is
+   worth more than the tool: a perfect null on a well-formed instrument proved
+   nothing, and only the untreated-population control caught it.
+
 ⛔ WHAT THIS FILE DELIBERATELY DOES NOT CLAIM.  A closed cycle is a *coherent*
 proposal, not a *proven* one.  A rotation among N names is closed for every one
 of the (N-1)! non-identity rotations of those N addresses; closure picks out that
