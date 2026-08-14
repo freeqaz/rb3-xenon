@@ -550,7 +550,13 @@ void MidiParser::InsertDataEvent(float start, float end, const DataNode &ev) {
         FixGap(mBefore < 0 ? &mFirstEnd : mEvents->EndPtr(mBefore));
     }
     float clamped = Clamp(mProcess.minLength, mProcess.maxLength, end - f7) + f7;
-    MemTemp tmp;
+    // Retail uses the EMPTY MemDoTempAllocations guard here, NOT MemTemp: the
+    // call site is a bare `bl 0x827BC270` (== ?MemPushTemp@@YAXXZ in the map)
+    // with no `addi r3, <frame>` this-setup, and the scope-exit helper is
+    // fn_827BC2A0 — the two MemDoTempAllocations helpers named in MemMgr.h.
+    // MemTemp is the OTHER retail guard (out-of-line ctor/dtor, homes an
+    // `int mOld`), whose call site would carry the `addi r3` + a 4-byte slot.
+    MemDoTempAllocations tmp;
     mEvents->InsertEvent(f7, clamped, ev, back + 1);
 }
 
