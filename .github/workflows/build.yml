@@ -55,6 +55,34 @@ jobs:
     - name: Reloc symbol-index guard
       run: python3 tools/reloc_symidx_guard.py -v
 
+    # Guard: every ICF alias group in scripts/symbol_aliases.json must be
+    # GROUNDED.  Under the shipped functionRelocDiffs=name_check ruler an alias
+    # is pure FORGIVENESS -- objdiff consults SymbolEquivalences and drops the
+    # charge -- so an UNPROVEN alias lifts matched_code BY CONSTRUCTION, with no
+    # byte evidence, and the `none` control CANNOT catch it (none ignores
+    # relocation names, so a fabricated alias reads +0 there by construction).
+    # This is therefore the one data file where "the score went up" is not
+    # evidence of anything, and a gate is the only defence.
+    #
+    # Nothing ran this before.  The only shipped alias gate was
+    # `gen_symbol_alias_map.py --check`, which asserts the rendered .map is
+    # FRESH w.r.t. the JSON -- a staleness check that says nothing about whether
+    # the groups are true.  --validate was hand-run only, and emitted 221
+    # undifferentiated failures out of 1,499, so it was ignored; 211 of those
+    # were the checker's own bugs and they hid the 10 that were real (lane
+    # ALIASVAL-1, which fixed the checker and withdrew 6 groups worth 944 B of
+    # fabricated credit).  Failure is now reserved for CONTRADICTED -- two
+    # shipped data files disagreeing -- and the tolerated classes are printed
+    # with counts and reasons on every run.
+    #
+    # Runs AFTER Build: the pre-compile obj_target_symbol_renamer must have
+    # populated the target objs' mangled names, or the check would be vacuous.
+    # It does not merely assume that -- it REFUSES with exit 2 if the target
+    # objs still carry dtk's anonymous `fn_<addr>` symbols, which is what a
+    # fresh worktree looks like and what used to read as "1499 groups failing".
+    - name: ICF alias grounding guard
+      run: python3 tools/icf_alias_finder.py --validate
+
     # Guard: config/<version>/symbols.txt is BOTH an input to dtk's SPLIT and an
     # output of it, so "correct" means FIXED POINT.  When the committed file is
     # off jeff's fixpoint, dtk carves function boundaries it would immediately
