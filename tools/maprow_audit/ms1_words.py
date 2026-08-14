@@ -44,6 +44,23 @@ known independently -- 300 random map rows whose name our compiler also emits --
 and requires a high MAP_CONFIRMED rate.  A word comparator that matched nothing
 would report every proposal UNDECIDABLE_masked, which reads exactly like "masked
 class" and would silently protect any proposal from refutation.
+
+⛔ SCOPE BOUND ON ``MAP_CONFIRMED`` -- READ THIS BEFORE QUOTING IT.  The verdict
+is a statement about TWO candidates, not an identification.  It says: the code at
+the address is in the same masked-word class as our compilation of the map's
+name, and in a DIFFERENT class from our compilation of the accused alternative.
+That REFUTES the proposed swap outright -- swapping would move a name onto an
+address whose code demonstrably belongs to another class -- and that is the only
+thing this lane used it for.
+
+It does NOT say the map name is uniquely right, because the classes are not
+singletons.  Measured on this population: our objs emit 127 ``ObjRefConcrete``
+destructors which collapse into SEVEN masked-word classes, the largest holding
+83 mutually indistinguishable names (``<RndMesh>`` is in the 83, and
+``<RndParticleSys>`` in a 5).  Class-size control over 400 random retail symbols:
+median 0, mean 39.3, max 1035, and 265/400 with no match at all.  So a positive
+"the name here should be X" claim needs the class-size check that ``ms1_third.py``
+applies -- both of its ROTATION_AT_3 candidates died on exactly that test.
 """
 
 import argparse
