@@ -20564,7 +20564,7 @@
  "0x827c95e8": "??0OrderedLocaleChunk@LocaleChunkSort@@QAA@XZ",
  "0x827c9610": "??1OrderedLocaleChunk@LocaleChunkSort@@QAA@XZ",
  "0x827c9750": "?Localize@@YAPBDVSymbol@@PA_N@Z",
- "0x827c97c8": "?LocalizeSeparatedInt@@YAPBDHAAVLocale@@@Z",
+ "0x827c97c8": "?LocalizeSeparatedInt@@YAPBDH@Z",
  "0x827c99d0": "?LocalizeFloat@@YAPBDPBDM@Z",
  "0x827c9af8": "?Init@Locale@@QAAXXZ",
  "0x827ca128": "?SetPlatform@ChunkStream@@AAAXW4Platform@@@Z",
