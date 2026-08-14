@@ -696,8 +696,48 @@ below.
 ### ⚠ Run the native gate before landing shared-`src/` changes
 
 **`tools/native_build_gate.sh` (expect `PASS 18/18, rc=0`).** This has now
-caught `main` broken by a matching lane **three separate times** (X4a, X4d ×2),
-each time costing the native lane a repair it did not own.
+caught `main` broken by a matching lane **four separate times** (X4a, X4d ×2,
+MILOKEEP-1), each time costing the native lane a repair it did not own.
+
+✅ **The gate itself was AUDITED 2026-08-14 (lane GATEGAP-1) and is SOUND — it
+did NOT pass over a broken tree.** Three lanes reported `PASS 18/18, 0 SKIPs`
+around the window MILOKEEP-1 found `main` broken, which looked like the gate
+failing at its one job. Reproduced in a `~/tmp` worktree with the four seeded
+flags, **same worktree, same cache, one variable**:
+
+| tree | verdict |
+|---|---|
+| `b81c03b8` (BODYPORT-4) | `PASS 18/18, 0 SKIPs, rc=0` |
+| `0dfc1ec3` (BODYPORT-5) | `FAIL 16/18, rc=1`, `NOBINARY rb3-milo`/`rb3-render` |
+
+⇒ the instrument **discriminates** (the PASS leg is the control — a gate that
+FAILs on everything proves nothing). **BODYPORT-3/4 predate the breakage
+entirely, so their PASS is worth exactly what it says.**
+
+⛔⛔ **A COMMENT-ONLY COMMIT BROKE THE NATIVE LINK.** Configure-only bisect
+(the prune decision is made at configure time, so no build is needed) pinned it
+to `6c087cbd` — a `docs(src)` commit adding the prose
+`// #ifdef HX_NATIVE and the match build never defines it.` to
+`rndobj/TexRenderer.cpp`. `ScatterIncludes.cmake` matched `#if` **anywhere on a
+line**, so that comment pushed an unmatched `HX_NATIVE` frame; the
+`#include "math/mtx.cpp"` 212 lines below was reclassified from UNCONDITIONAL to
+conditional-and-HX-guarded — **the one bucket the module ignores in SILENCE**
+(not pruned, not warned) — and `mtx.cpp` was then compiled standalone *and*
+emitted from TexRenderer's TU ⇒ 17 duplicate definitions. Fixed two ways
+(line-anchored directives + `/* */` stripping, **and** an `#if`/`#endif`
+balance check at EOF that fires for any future desync cause). ⇒ **"it's only a
+comment, no need to re-gate" is NOT safe**, and the lane's gate run must be its
+**last** action, not its second-to-last.
+
+⚠ **The verdict now self-labels an incomplete run**:
+`PASS (INCOMPLETE: 15/18 verified, 3 SKIPPED) -- NOT full coverage`, listing the
+untested targets and printing the seed command. The old wording put `PASS`
+first and `3 skipped` in a parenthetical, which is trivially relayed upstream as
+"PASS" (lane X21). ★ A link diagnostic contains **no `error:` token** (34
+`multiple definition` lines, 0 matches), so linker errors are now counted and
+shown separately, and a **link** edge's failing target is finally named — that
+attribution matched only compile edges, so a pure link failure printed
+`across target(s): ` blank.
 
 Why it happens: the X360 match build **compiles** `src/`, but the native targets
 **link** a superset of it. A change that matches perfectly can still leave an
