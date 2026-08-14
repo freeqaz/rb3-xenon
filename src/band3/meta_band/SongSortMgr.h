@@ -18,17 +18,28 @@
 #include <vector>
 #include <set>
 
+// NB(rb3-xenon, lane INSDEL-5): these values are READ OFF RETAIL, and they
+// answer the two questions this comment used to ask -- yes, 2 is has-keys and
+// 3 is has-pro-guitar.  Three independent sources agree:
+//   1. retail's FilterTypeToSym dispatch chain (mtctr + bdzf, slot N == ft N);
+//   2. ViewSettingsProvider::BuildFilters, which sits at mpn 100.0000 and
+//      indexes filterSyms[] with RAW INTEGER LITERALS -- a matching row that
+//      is completely independent of this enum, i.e. a control;
+//   3. MusicLibrary::SetupTaskForTrainer, where a kControllerRealGuitar case
+//      passed 3 and a kControllerKeys case passed 2.  The numbers were always
+//      right; only the NAMES were wrong.
+// The old numbering mislabelled every row of the filter view-settings menu.
 enum FilterType {
-    kFilterDifficulty = 0,
-    kFilterVocalParts = 1,
-    // should 2 actually be has keys?
-    // should 3 actually be has pro strings?
-    kFilterLength = 2,
-    kFilterSource = 3,
-    kFilterRating = 4,
-    kFilterDecade = 5,
-    kFilterGenre = 6,
-    // some missing enums here
+    kFilterGenre = 0,
+    kFilterDecade = 1,
+    kFilterKeys = 2,
+    kFilterProGuitar = 3,
+    kFilterVocalParts = 4,
+    kFilterSource = 5,
+    kFilterDifficulty = 6,
+    kFilterLength = 7,
+    kFilterRating = 8,
+    // 9 and 10 are still unidentified (kNumFilterTypes is 0xB in retail)
     kNumFilterTypes = 0xB
 };
 

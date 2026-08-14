@@ -246,8 +246,12 @@ Symbol FilterViewSetting::FilterTypeToSym(FilterType ft) {
     case kFilterRating: return filter_setting_ratings;
     case kFilterSource: return filter_setting_sources;
     case kFilterVocalParts: return filter_setting_vocal_parts;
-    case 7: return filter_setting_pro_guitar;
-    case 8: return filter_setting_keys;
+    // NB: case-label TEXT ORDER is load-bearing here -- it fixes both the
+    // static-Symbol init order and the physical case-body layout, and both
+    // already match retail byte-for-byte.  Only the two bare literals become
+    // named; do not sort these arms.
+    case kFilterProGuitar: return filter_setting_pro_guitar;
+    case kFilterKeys: return filter_setting_keys;
     default:
         MILO_FAIL("no symbol for FilterType %i", ft);
         return gNullStr;
