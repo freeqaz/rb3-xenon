@@ -448,6 +448,30 @@ void CharIKHand::Poll() {
     }
 }
 
+// RB3-360 residual note (lane RESIDUAL-1, 2026-08-14).  IKElbow sits at 94.0%
+// normalized / fuzzy 96.4 with 128 mismatches.  Two facts for whoever opens it:
+//
+//  1. The base-only `fneg` cluster is NOT at the `sinAngle` computation below —
+//     rows 89/97/149/169 (`-std::sqrt(...)`, `-(cosAngle*cosAngle - 1.0f)`,
+//     `-sinAngle`) ALL MATCH retail already.  A lane predicted that site and was
+//     wrong.  The 8+ base-only `fneg`s live in the mElbowCollide matrix block,
+//     rows ~538-580, and the shape there is uniform:
+//         retail   fsubs f5, f21, f5          ;  a - b
+//         ours     fsubs f9, f2, f4 ; fneg f9 ; -(b - a)
+//     i.e. our source spells the subtraction in the OPPOSITE ORDER and negates.
+//     (`-(b-a)` vs `a-b` is exact in IEEE, so this is a source-spelling defect,
+//     not an /fp:fast reassociation question.)
+//
+//  2. ⚠ It is NOT a pure operand-order job: the row also carries a STRUCTURAL
+//     stack-frame delta of -0x10 (our frame is 16 B larger ⇒ extra locals) and
+//     108 register-swap instructions across 23 pairs.  Fix the frame/locals and
+//     the operand order together; per the "REGISTER_SWAP is a symptom" rule,
+//     expect most of the 108 to dissolve rather than needing individual work.
+//     Budget it as a real project, and note it pays 0 bytes unless it reaches
+//     fuzzy == 100 (matched_code is all-or-nothing per row).
+//
+// (FileMerger.cpp unity-build-includes this file; that is deliberate, so the
+// unit reads `default/FileMerger` in objdiff — not a mis-pin.)
 void CharIKHand::IKElbow(RndTransformable *elbow, RndTransformable *shoulder) {
     if (!elbow || !shoulder)
         return;
