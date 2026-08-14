@@ -62,7 +62,23 @@ BEGIN_COPYS(RndLight)
     COPY_MEMBER_FROM(l, mCubeTexture)
     COPY_MEMBER_FROM(l, mShadowOverride)
     COPY_MEMBER_FROM(l, mShadowObjects)
-    COPY_MEMBER_FROM(l, mTextureXfm)
+    // NOTE (lane INSDEL-4): retail does NOT copy mTextureXfm here. Removing this
+    // line closed the row (95.604 -> 100, +364 B). Evidence is ABSENCE measured
+    // against a positive control INSIDE the same function: every other
+    // COPY_MEMBER_FROM in this list emits a visible copy in retail (mColor ->
+    // stw -172/-168/-164/-160(r31), mType -136, the three bools -132/-131/-130,
+    // mRange/mFalloffStart -144/-140, mTopRadius/mBotRadius -16/-12, mTexture +
+    // mCubeTexture via SetObjConcrete, mShadowObjects via the ObjPtrList
+    // operator=, mProjectedBlend -> stw -8(r31)). So the mechanism is provably
+    // visible per member, and mTextureXfm alone has NO trace anywhere in the
+    // body -- retail goes straight from the mShadowObjects assign to
+    // `lwz r11, 344(r30)` (mProjectedBlend). Note r31 == this + 352 in this
+    // function, so `subi r3, r31, 80` is this->mTextureXfm (272 = 352 - 80).
+    // Our surplus was an inlined 64-byte memcpy(this+272, l+272, 64) -- exactly
+    // the 4 charged instructions, and the only ones in the function.
+    // Almost certainly a DC3-newer addition: DC3 cannot adjudicate this (our
+    // src/system is a verbatim DC3 copy), which is why it was settled on retail
+    // bytes alone.
     COPY_MEMBER_FROM(l, mProjectedBlend)
     if (ty == kCopyShallow || (ty == kCopyFromMax && l->mColorOwner != l)) {
         COPY_MEMBER_FROM(l, mColorOwner)
