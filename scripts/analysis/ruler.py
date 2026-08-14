@@ -327,3 +327,88 @@ __all__ = [
     "RULER_DATA_VALUE",
     "VALID_RULERS",
 ]
+
+
+# ── selftest ─────────────────────────────────────────────────────────────────
+# `python3 scripts/analysis/ruler.py --selftest [project_dir]`
+#
+# The REGRESSION GUARD is the point: this defect was not a logic error, it was a
+# constant that stopped being true while every test kept passing. So the guard
+# greps the consumers for a hardcoded `functionRelocDiffs=` and FAILS on one.
+
+_CONSUMERS = (
+    "scripts/orchestrator/mcp_server.py",
+    "scripts/analysis/diff_inspect.py",
+    "scripts/analysis/stack_layout.py",
+)
+
+
+def _selftest(project_dir: Path) -> tuple[bool, list[str]]:
+    import re
+
+    out: list[str] = []
+    ok = True
+
+    def check(label: str, cond: bool, detail: str = "") -> None:
+        nonlocal ok
+        out.append(f"  [{'PASS' if cond else 'FAIL'}] {label}{(' — ' + detail) if detail else ''}")
+        if not cond:
+            ok = False
+
+    graded = graded_ruler(project_dir)
+    out.append(f"resolved: {graded.label()}")
+
+    report = _find_report_json(project_dir)
+    if report is not None:
+        with open(report) as fh:
+            prov = (json.load(fh).get("provenance") or {})
+        declared = _parse_kv([str(x) for x in prov.get("diff_config", [])])
+        check("graded config == report.json provenance.diff_config",
+              graded.config == declared,
+              f"{len(graded.config)} keys vs {len(declared)}")
+        check("graded ruler is authoritative", graded.authoritative)
+    else:
+        out.append("  [SKIP] no report.json under project_dir — cannot check provenance parity")
+
+    # Selector overrides must change EXACTLY one key, or a graded-vs-none delta
+    # no longer isolates the relocation-name class.
+    for sel in (RULER_NONE, RULER_DATA_VALUE):
+        r = resolve_ruler(project_dir, sel)
+        differing = {k for k in set(r.config) | set(graded.config)
+                     if r.config.get(k) != graded.config.get(k)}
+        check(f"ruler={sel} changes exactly one key",
+              differing == {RELOC_KEY}, f"changed: {sorted(differing)}")
+        check(f"ruler={sel} is labelled NOT graded",
+              "NOT the graded ruler" in r.label())
+
+    try:
+        resolve_ruler(project_dir, "bogus")
+        check("unknown ruler is refused", False, "no exception raised")
+    except ValueError:
+        check("unknown ruler is refused", True)
+
+    # ★ Regression guard against the original defect.
+    pattern = re.compile(r"""["']-c["']\s*,\s*["']functionRelocDiffs=""")
+    for rel in _CONSUMERS:
+        path = project_dir / rel
+        if not path.is_file():
+            out.append(f"  [SKIP] {rel} not found")
+            continue
+        hits = [i + 1 for i, line in enumerate(path.read_text().splitlines())
+                if pattern.search(line)]
+        check(f"no hardcoded ruler in {rel}", not hits, f"lines {hits}")
+
+    return ok, out
+
+
+if __name__ == "__main__":
+    import sys
+
+    argv = [a for a in sys.argv[1:] if a != "--selftest"]
+    target = Path(argv[0]) if argv else Path.cwd()
+    print(f"# ruler.py selftest — project_dir={target}")
+    passed, lines = _selftest(target)
+    for line in lines:
+        print(line)
+    print("PASS" if passed else "FAIL")
+    sys.exit(0 if passed else 1)
