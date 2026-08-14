@@ -141,7 +141,13 @@ public:
     unsigned char mShowChordNames : 1;
     unsigned char mShowSlashes : 1;
     unsigned char unk10b1 : 1;
-    unsigned char mRealGuitar : 1;
+    // 0x10 bit 0 is UNUSED.  mRealGuitar is NOT the 8th field of this group -- it
+    // is the FIRST field of the 0x12 group below.  Witness: IsRealGuitarChord
+    // (fn_8278EA68, an identity nobody disputes -- its body is the 6-iteration
+    // mFrets scan with `count > 1`) opens with `lbz r11,0x12(r3); clrrwi. r11,r11,7`,
+    // which keeps ONLY bit 0x80 of byte 0x12.  Our source opens that function with
+    // `if (!mRealGuitar) return false;`, so mRealGuitar IS 0x12 & 0x80.
+    unsigned char : 1;
 
     // 0x11 -- retail X360 writes this as a whole byte (`stb rX, 0x11`) at two
     // independent sites (SongDB::DisableCodaGems, GemTrack::SetEnableSlot), so it
@@ -154,6 +160,14 @@ public:
     // sizeof 0x44 are all unchanged. Whole-binary A/B: +2 matched, 0 regressed.
     unsigned char unk18; // 0x11 (mPlayers?)
 
+    // 0x12.  Retail's ladder of one-bit getters over this byte descends
+    // 0x80,0x40,0x20,0x10,0x08,0x04 at fn_8278EA58/EAD8/EAE8/EAF8/EB08/EB18, and
+    // the map had every one of them attributed one position too EARLY (it read
+    // 0x80 as Loose).  That error and our own header's were mirror images, so the
+    // accessor BODIES matched while every CALL SITE was charged -- a compensating
+    // pair.  Both sides corrected together; unk11b0 dropped so the group stays
+    // eight bits and no offset moves.
+    unsigned char mRealGuitar : 1;
     unsigned char mLoose : 1;
     unsigned char mShowChordNums : 1;
     unsigned char mLeftHandSlide : 1;
@@ -161,7 +175,6 @@ public:
     unsigned char mEnharmonic : 1;
     unsigned char unk11b2 : 1;
     unsigned char unk11b1 : 1;
-    unsigned char unk11b0 : 1;
 
     unsigned char mStrumType : 4;
     unsigned char unk12bot : 4;
