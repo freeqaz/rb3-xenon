@@ -27,7 +27,10 @@ void RndShaderProgram::SaveShaderBuffer(const char *file, RndShaderBuffer &buffe
 void RndShaderProgram::LoadShaderBuffer(
     BinStream &bs, int size, RndShaderBuffer *&buffer
 ) {
-    MemTemp tmp;
+    // Retail: the EMPTY MemDoTempAllocations guard (bare `bl 0x827BC270`
+    // == ?MemPushTemp@@YAXXZ, scope-exit fn_827BC2A0), NOT the out-of-line
+    // MemTemp guard — see MemMgr.h.
+    MemDoTempAllocations tmp;
     buffer = NewBuffer(size);
     bs.Read(buffer->Storage(), size);
 }

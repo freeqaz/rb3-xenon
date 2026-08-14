@@ -118,6 +118,16 @@ void SpotlightDrawer::Init() {
     sEnviron = Hmx::Object::New<RndEnviron>();
     sEnviron->SetUseApproxes(false);
     REGISTER_OBJ_FACTORY(SpotlightDrawer)
+    // ⛔ NEGATIVE RESULT (lane INSDEL-2, measured): retail stores sDefault
+    // BEFORE the float store and RELOADS it for Select()
+    // (`stw r3,sDefault` / `stfs f0,72(r3)` / `lwz r3,sDefault`), where we
+    // sink the store past both. Writing all three statements through the
+    // GLOBAL instead of this local — the obvious source-shaped hypothesis,
+    // since a store through r3 may alias the global and would force a reload —
+    // does NOT reproduce it: MSVC sinks the store anyway and additionally
+    // emits a `clrrwi r3,r3,0`, measured 94.107 -> 90.536 (3 charges -> 4).
+    // The store placement here is codegen scheduling, not a source shape.
+    // Do not re-try the global-write form.
     SpotlightDrawer* ptr = Hmx::Object::New<SpotlightDrawer>();
     ptr->mParams.mLightingInfluence = 0.0f;
     sDefault = ptr;
