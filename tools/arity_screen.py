@@ -1023,6 +1023,13 @@ def load_subject(retail, mapping):
     for k, v in mapping.items():
         if not k.startswith("0x"):
             continue
+        # A map VALUE may be null (a deliberately-nulled row) or a list; only a
+        # string is a name.  Without this the whole tool dies at the demangle
+        # step with `'<' not supported between instances of 'NoneType' and
+        # 'str'` -- 27 such rows exist today, so `arity_screen screen` has been
+        # unrunnable, not merely degraded.
+        if not isinstance(v, str):
+            continue
         va = int(k, 16)
         if not retail.in_text(va):
             continue
