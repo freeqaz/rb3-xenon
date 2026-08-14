@@ -89,8 +89,16 @@ void CustomizePanel::Load() {
     mUnlockedTattoos = mProfile->HasCampaignKey(key_unlocked_tattoos);
 }
 
+// Two separate `return` statements, NOT a ternary: retail materializes each
+// return path directly into r3 (`li r3,0` / `extrwi r3,...`), whereas a single
+// ternary return expression funnels both arms through a common register and
+// emits one `clrlwi r3,r11,24` conversion at the join.  Positive control in
+// this same unit: `IsCurrentAssetPatchable` matches at 100% with the
+// if/return-true/return-false form.  (lane INSDEL-3)
 bool CustomizePanel::IsLoaded() const {
-    return !UIPanel::IsLoaded() ? false : !TheContentMgr.RefreshInProgress();
+    if (!UIPanel::IsLoaded())
+        return false;
+    return !TheContentMgr.RefreshInProgress();
 }
 
 void CustomizePanel::FinishLoad() {
