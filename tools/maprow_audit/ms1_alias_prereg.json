@@ -1,0 +1,251 @@
+{
+ "lane": "MAPSUS-1",
+ "date": "2026-08-14",
+ "status": "PRE-REGISTERED, NOT LANDED \u2014 this lane was briefed 'add no aliases'",
+ "proposal": {
+  "file": "scripts/symbol_aliases.json",
+  "group_address": "0x8274a9a8",
+  "survivor": "??BDataArrayPtr@@QBAPAVDataArray@@XZ",
+  "add_to_folded": [
+   "?Var@DataNode@@QBAPAV1@PBVDataArray@@@Z"
+  ]
+ },
+ "why_the_group_is_missing_this_spelling": "tools/ourside_fold_sweep.py ADMITs it; --install drops it via `if A in existing: continue`, which silently refuses to merge a newly-admitted spelling into a group that already exists at that address. Reported tree-wide as 289 admitted-but-never-installed pairs / 722 sites, 288 (99.7%) swallowed by that one clause. This is an --install defect, not a re-adjudication.",
+ "evidence": [
+  "OUR COMDATs for ??BDataArrayPtr and ?Var@DataNode@@ are byte- AND relocation-identical: both 8 B, ZERO relocations, identical COMDAT characteristics. Two identical zero-reloc COMDATs cannot survive /OPT:ICF separately.",
+  "Retail's body at 0x8274a9a8 is 80 63 00 00 4e 80 00 20 = lwz r3,0(r3); blr \u2014 the same 8 bytes.",
+  "?Var@DataNode@@ has NO address in scripts/target_symbol_map.json and is absent from every dtk-split target obj, while our objs emit it \u2014 the signature of a spelling that folded away.",
+  "\u2605 MAP-INDEPENDENT ARITY REFUTATION: the charged call sites set BOTH r3 and r4 before the bl (+0x58 addi r3,r11,8 ; +0x5c mr r4,r29 ; +0x60 bl 0x8274a9a8). ??BDataArrayPtr::operator DataArray*() const takes NO arguments; DataNode::Var(const DataArray*) const takes one. So the call site cannot mean the survivor's name, and this argument consults no map.",
+  "The group at 0x8274a9a8 already ships and is accepted in-tree (fan-in null: refutes 68-74% of random survivors, 0% of this population); only this spelling is missing."
+ ],
+ "measured": {
+  "tool": "tools/ab_measure.py --from-dirty",
+  "ruler": "name_check (shipped default)",
+  "legA": {
+   "matched_functions": 44360,
+   "masked_equal": 22891,
+   "honest": 21469,
+   "code_pct": 34.672653
+  },
+  "legB": {
+   "matched_functions": 44360,
+   "masked_equal": 22891,
+   "honest": 21469,
+   "code_pct": 34.763073
+  },
+  "delta_code_bytes": 9332,
+  "delta_code_pct": 0.09042,
+  "delta_matched_functions": 0,
+  "delta_honest": 0,
+  "none_ruler_delta_bytes": 0,
+  "units_at_100_mpn": "250 -> 250 (0 reached, 0 fell off)",
+  "units_at_100_fuzzy": "118 -> 118 (0 reached, 0 fell off)",
+  "ab_measure_verdict": "ALIAS_SUSPECT \u2014 name_check UP / none FLAT on a map-only patch. Per CLAUDE.md that flatness is the SIGNATURE, never a clearance; it is answered here by pre-registering the exact rows below, not by the control."
+ },
+ "rows_crossing_to_fuzzy_100": {
+  "count": 38,
+  "bytes": 9332,
+  "rows": [
+   {
+    "symbol": "?DataGetDateTime@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 496,
+    "legA_fuzzy": 99.7581
+   },
+   {
+    "symbol": "?OnGetSectionBoundsTick@GameConfig@@QAA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 372,
+    "legA_fuzzy": 99.7849
+   },
+   {
+    "symbol": "?ExecuteScript@DataArray@@QAA?AVDataNode@@HPAVObject@Hmx@@PBV1@H@Z",
+    "size": 360,
+    "legA_fuzzy": 99.9444
+   },
+   {
+    "symbol": "?DataUnpackColor@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 324,
+    "legA_fuzzy": 99.8148
+   },
+   {
+    "symbol": "?OnGetRot@RndMultiMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 320,
+    "legA_fuzzy": 99.8125
+   },
+   {
+    "symbol": "?OnGetWorldForward@RndTransformable@@AAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 312,
+    "legA_fuzzy": 99.8077
+   },
+   {
+    "symbol": "?OnGetWorldPos@RndTransformable@@AAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 312,
+    "legA_fuzzy": 99.8077
+   },
+   {
+    "symbol": "?OnGetWorldRot@RndTransformable@@AAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 300,
+    "legA_fuzzy": 99.8
+   },
+   {
+    "symbol": "?OnGetSphere@RndDrawable@@IAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 284,
+    "legA_fuzzy": 99.7183
+   },
+   {
+    "symbol": "?OnGetScale@RndMultiMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 280,
+    "legA_fuzzy": 99.7857
+   },
+   {
+    "symbol": "?DataAndEqual@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 280,
+    "legA_fuzzy": 99.9286
+   },
+   {
+    "symbol": "?DataMaskEqual@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 280,
+    "legA_fuzzy": 99.9286
+   },
+   {
+    "symbol": "?DataOrEqual@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 280,
+    "legA_fuzzy": 99.9286
+   },
+   {
+    "symbol": "?OnGetPos@RndMultiMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 268,
+    "legA_fuzzy": 99.7761
+   },
+   {
+    "symbol": "?OnWaitTimeout@ThreadTask@@AAA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 260,
+    "legA_fuzzy": 99.9231
+   },
+   {
+    "symbol": "?OnPostProcs@BandDirector@@QAA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 256,
+    "legA_fuzzy": 99.7656
+   },
+   {
+    "symbol": "?OnGetVertNorm@RndMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 256,
+    "legA_fuzzy": 99.7656
+   },
+   {
+    "symbol": "?OnGetVertXYZ@RndMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 256,
+    "legA_fuzzy": 99.7656
+   },
+   {
+    "symbol": "?OnMBTFromSeconds@Song@@UAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 256,
+    "legA_fuzzy": 99.7656
+   },
+   {
+    "symbol": "?OnGetFace@RndMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 252,
+    "legA_fuzzy": 99.7619
+   },
+   {
+    "symbol": "?FileListCallBack@@YA_NPAD@Z",
+    "size": 240,
+    "legA_fuzzy": 99.9167
+   },
+   {
+    "symbol": "?OnGetLocalScale@RndTransformable@@AAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 240,
+    "legA_fuzzy": 99.75
+   },
+   {
+    "symbol": "?DataInc@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 236,
+    "legA_fuzzy": 99.9153
+   },
+   {
+    "symbol": "?DataDec@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 236,
+    "legA_fuzzy": 99.9153
+   },
+   {
+    "symbol": "?DataStrCat@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 236,
+    "legA_fuzzy": 99.9153
+   },
+   {
+    "symbol": "?OnGetLocalPos@RndTransformable@@AAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 228,
+    "legA_fuzzy": 99.7368
+   },
+   {
+    "symbol": "?OnAdjustForVocalPhrases@Game@@QAA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 228,
+    "legA_fuzzy": 99.8246
+   },
+   {
+    "symbol": "?OnGetSectionBounds@GameConfig@@QAA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 208,
+    "legA_fuzzy": 99.8077
+   },
+   {
+    "symbol": "?OnGetVertUV@RndMesh@@IAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 200,
+    "legA_fuzzy": 99.8
+   },
+   {
+    "symbol": "?DataSearchReplace@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 184,
+    "legA_fuzzy": 99.8913
+   },
+   {
+    "symbol": "?OnGetValueFromIndex@RndPropAnim@@QAA?AVDataNode@@PBVDataArray@@@Z",
+    "size": 176,
+    "legA_fuzzy": 99.8864
+   },
+   {
+    "symbol": "?DataOptionSym@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 172,
+    "legA_fuzzy": 99.8837
+   },
+   {
+    "symbol": "?DataOptionStr@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 144,
+    "legA_fuzzy": 99.8611
+   },
+   {
+    "symbol": "?DataAddEq@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 120,
+    "legA_fuzzy": 99.8333
+   },
+   {
+    "symbol": "?DataSubEq@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 120,
+    "legA_fuzzy": 99.8333
+   },
+   {
+    "symbol": "?DataClampEq@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 120,
+    "legA_fuzzy": 99.8333
+   },
+   {
+    "symbol": "?DataMultiplyEq@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 120,
+    "legA_fuzzy": 99.8333
+   },
+   {
+    "symbol": "?DataDivideEq@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "size": 120,
+    "legA_fuzzy": 99.8333
+   }
+  ]
+ },
+ "rows_falling_off": {
+  "count": 0,
+  "bytes": 0,
+  "rows": []
+ },
+ "residual_hazards_not_ruled_out": [
+  "For a 4-8 byte body an alias would hide an our-side body that is WRONG but coincidentally identical to the survivor. Here there is no machine-code difference to hide \u2014 only which name the fold survivor carries \u2014 but the hazard is stated, not dismissed.",
+  "A paired-bl census surfaced ?IsASubclass@@YA_NVSymbol@@0@Z at one site; comdat_fold_gate REJECTS it (108 B, 6 relocs). That site is a REAL defect and must NOT be aliased away \u2014 a blanket install from the census alone would have concealed it.",
+  "fn_8274A9A8 renders inside build/45410914/asm/Task.s, implying splits.txt pins Task.cpp across 0x8274a9a8 \u2014 possibly a mis-pin. Unexamined."
+ ]
+}
