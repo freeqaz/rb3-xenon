@@ -33,8 +33,7 @@ public:
     void SetNoOverdrive();
 
     DECLARE_REVS;
-    NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    OBJ_MEM_OVERLOAD(0x24);
     NEW_OBJ(OverdriveMeter)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(OverdriveMeter)

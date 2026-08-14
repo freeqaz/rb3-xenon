@@ -13,7 +13,8 @@ public:
     virtual void Copy(const Hmx::Object *, CopyType);
     virtual void Load(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0x1C)
+    NEW_OVERLOAD;
+    DELETE_OVERLOAD
     NEW_OBJ(PropertyEventProvider)
 protected:
     PropertyEventProvider();
