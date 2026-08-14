@@ -1727,8 +1727,38 @@ def _resolve_ambiguous_objdiff(output: str, symbol: str) -> str | None:
     return candidates[0]
 
 
-def run_objdiff_for_symbol(symbol, project_dir=None, unit=None):
-    """Run objdiff-cli diff and return path to JSON output."""
+def _ruler_for(project_dir, selector):
+    """Resolve the diff ruler, tolerating an unimportable helper."""
+    try:
+        from analysis.ruler import resolve_ruler
+    except ImportError:
+        try:
+            from ruler import resolve_ruler  # same-directory fallback
+        except ImportError:
+            return None
+    return resolve_ruler(project_dir, selector)
+
+
+def run_objdiff_for_symbol(symbol, project_dir=None, unit=None, ruler="graded"):
+    """Run objdiff-cli diff and return path to JSON output.
+
+    ★ The ruler is passed EXPLICITLY (lane MCPRULER-1, 2026-08-14).
+    ⛔ This function used to pass no `-c` at all, and CLAUDE.md described that as
+    a deliberate choice landing on `FunctionRelocDiffs::DataValue`, where a wrong
+    `bl` callee is visible. **That has been FALSE since 2026-08-12** (`d04c83df`):
+    `objdiff-cli diff` applies objdiff.json's `options` block over its own base
+    (diff.rs:953), so once the project shipped
+    `options = {"functionRelocDiffs": "name_check"}`, "no `-c`" silently became
+    `name_check` — measured on `?Handle@OvershellSlot@@`: no-`-c` = 99.995690,
+    explicit data_value = 98.044420, explicit name_check = 99.995690.
+
+    Depending on a base config that a config file can move out from under you is
+    how the orchestrator's ruler rotted in the first place, so the ruler is now
+    named at the call site. The default `graded` is what this already did in
+    practice, minus three other keys it disagreed with the grader on
+    (`ppc.calculatePoolRelocations` etc.). `data_value` restores the
+    address-charging behaviour the docs valued.
+    """
     # Extract param hint for disambiguation: "Class::Method(Hint)" → base + hint
     param_hint = None
     if "(" in symbol and not symbol.startswith("?"):
@@ -1760,11 +1790,23 @@ def run_objdiff_for_symbol(symbol, project_dir=None, unit=None):
     print(f"Running objdiff for: {symbol}", file=sys.stderr)
     print(f"Output: {json_path}", file=sys.stderr)
 
+    resolved_ruler = _ruler_for(effective_project_dir, ruler)
+    if resolved_ruler is not None:
+        # Self-label: this percent is meaningless without its ruler.
+        print(f"[ruler] {resolved_ruler.banner()}", file=sys.stderr)
+        ruler_args = resolved_ruler.args
+    else:
+        print("[ruler] WARNING: could not resolve ruler (analysis.ruler not "
+              "importable) — objdiff defaults apply, percent is UNLABELLED",
+              file=sys.stderr)
+        ruler_args = []
+
     cmd = [
         objdiff_bin, "diff",
         "-p", str(effective_project_dir),
         symbol,
         "--include-instructions", "--build", "--incremental",
+        *ruler_args,
         "-f", "json", "-o", json_path
     ]
     if unit:
@@ -1877,6 +1919,13 @@ Filter modes:
         "--unit", type=str, default=None,
         help="Unit name for objdiff disambiguation (e.g. 'default/link_glue')")
     parser.add_argument(
+        "--ruler", type=str, default="graded",
+        choices=["graded", "none", "data_value"],
+        help="Diff ruler. 'graded' (default) matches report.json's "
+             "provenance.diff_config. 'none' ignores relocation names (upper "
+             "bound). 'data_value' charges relocation addresses too. The ruler "
+             "used is always printed to stderr.")
+    parser.add_argument(
         "--compare", nargs=2, metavar=("BASELINE_JSON", "CANDIDATE_JSON"),
         help="Compare two objdiff JSON files")
     parser.add_argument(
@@ -1898,7 +1947,8 @@ Filter modes:
     # Resolve JSON input
     json_file = args.json_file
     if args.symbol:
-        json_file = run_objdiff_for_symbol(args.symbol, project_dir=args.project_dir, unit=args.unit)
+        json_file = run_objdiff_for_symbol(args.symbol, project_dir=args.project_dir,
+                                           unit=args.unit, ruler=args.ruler)
     if not json_file:
         parser.error("Either json_file or --symbol is required")
 
