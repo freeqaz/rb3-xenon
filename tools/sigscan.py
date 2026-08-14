@@ -275,6 +275,26 @@ def main():
             del sites[k]
             n_ph += 1
 
+    # ⛔ RE-DERIVE the per-row site counts over the SURVIVING pairs only.
+    # per_fn_charged is first built during the COFF sweep, i.e. BEFORE the alias
+    # and placeholder subtractions -- so its denominator counted sites that
+    # name_check never charges. That made the "pair_sites / row_sites" column
+    # read 1/9 for a row whose only REAL charge was ours, and the tool then
+    # filed the row as unrealisable.
+    # MEASURED COST: UtilDrawSphere was pre-registered at +68 B and came in at
+    # +272 B, because the 204 B ?Highlight@RndDrawable@@UAAXXZ row -- reported
+    # as "1 of 9, cannot cross" and used as the CONTROL on that prediction --
+    # was really 1 of 1 and crossed. Re-deriving moved the tool's
+    # fully-realisable total from 200 B to 3,468 B.
+    # The error direction matters: it UNDER-states realisable bytes, which is
+    # the direction that silently closes candidates nobody reopens.
+    per_fn_charged = collections.Counter()
+    for pair, encs in victims.items():
+        if pair not in sites:
+            continue
+        for enc, n in encs.items():
+            per_fn_charged[enc] += n
+
     print("\n=== CHARGED-PAIR POPULATION (binary-wide, name_check definition) ===")
     print("  raw distinct (T,B) pairs            : %6d  (%d sites)" % (raw_pairs, raw_sites))
     print("  - already aliased (objdiff forgives): %6d" % n_alias)
