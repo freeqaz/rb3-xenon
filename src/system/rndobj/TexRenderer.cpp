@@ -316,6 +316,23 @@ void RndTexRenderer::DrawToTexture() {
         RndCam *current = RndCam::Current();
         RndTex *targetTex = current->TargetTex();
         if (targetTex) {
+            // ⛔ BODYPORT-5 residual, DIAGNOSED AND DELIBERATELY NOT FIXED.
+            // RETAIL SHIPPED THIS NOTIFY AND WE STRIP IT — the inverse of the
+            // usual "code retail never had".  Retail's DrawToTexture carries an
+            // 8-instruction target-only run right here: three `bl ?PathName@@`
+            // in a row plus the `lwz r11,0x78(r25) / cmplwi / beq` early-out,
+            // none of which our object emits, because MILO_NOTIFY_ONCE is
+            // #ifdef HX_NATIVE and the match build never defines it.
+            // Reproducing it means changing os/Debug.h — a PCH input that
+            // cascades to ~281 TUs, where the standing blanket control measured
+            // −21 (project_milo_debug_force_define_2026-07-30).  And the row
+            // cannot pay: it is 94.176 fuzzy with 170 diff_arg rows (82 pure
+            // register), so it will not cross 100 and matched_code is
+            // all-or-nothing per row ⇒ the whole exercise is Δ0 bytes for
+            // engine-wide blast radius.  Per-site only, and not worth it here.
+            // See also lane MATCH-F: base rate for this class is 1 of 11, and
+            // retail FREQUENTLY evaluates the args too — check the TARGET side
+            // before guarding anything, or you will regress it.
             MILO_NOTIFY_ONCE(
                 "%s: Cannot render to texture (%s) while already rendering to texture (%s).",
                 PathName(targetTex),
