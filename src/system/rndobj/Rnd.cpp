@@ -55,6 +55,7 @@
 #include "rndobj/Part.h"
 #include "rndobj/PartAnim.h"
 #include "rndobj/PartLauncher.h"
+#include "rndobj/EnvAnim.h"
 #include "rndobj/Ribbon.h"
 #include "rndobj/Set.h"
 #include "rndobj/ShaderMgr.h"
@@ -335,11 +336,20 @@ void Rnd::PreInit() {
     RndGenerator::Init();
     RndParticleSys::Init();
     RndParticleSysAnim::Init();
-    RndRibbon::Init();
+    // ⚠ Retail does NOT call RndRibbon::Init() here, and DOES call
+    // RndEnvAnim::Init() straight after RndCamAnim -- our inherited (DC3) list
+    // had those two swapped, which shifted five consecutive registrations.
+    // Verified WITHOUT going through the symbol map: each registration's
+    // Symbol argument reaches X::StaticClassName(), whose body references a
+    // .rdata string literal read out of orig/45410914/band.exe -- "MultiMesh",
+    // "RndMultiMeshProxy", "Morph", "CamAnim", "EnvAnim" in that order.
+    // RndRibbon has no retail symbol at all (?StaticClassName@RndRibbon@@ is
+    // absent from every target obj), i.e. it is engine code RB3 never shipped.
     RndMultiMesh::Init();
     RndMultiMeshProxy::Init();
     RndMorph::Init();
     RndCamAnim::Init();
+    RndEnvAnim::Init();
     REGISTER_OBJ_FACTORY(RndTransformable)
     RndGroup::Init();
     RndDir::Init();
