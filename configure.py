@@ -978,13 +978,35 @@ config.print_progress_categories = False
 # group it is listed under. Silence here is the healthy state; a line is not an
 # error, it is a group tag that has drifted from the tree and should be fixed in
 # objects.json (or the file moved). Audit in full: tools/source_category.py audit
-if _category_retagged:
+#
+# ⚠ ONE DISAGREEMENT IS STRUCTURAL AND IS **NOT** DRIFT (lane VENDTIER-1). A
+# library group is a CFLAGS grouping; `thirdparty` is a finer tier that cuts
+# ACROSS groups, because the vendored libs are compiled with the engine's flags
+# and are listed in the `engine` group. That group is now legitimately
+# tier-heterogeneous (732 engine + 28 thirdparty), so there is no group tag it
+# could carry that would make the comparison agree.
+#
+# Listing those 28+2 as drift would print 30 permanent lines on every single
+# configure -- which destroys the only property that makes this notice worth
+# reading, namely that SILENCE IS THE HEALTHY STATE. A warning that always fires
+# is a warning nobody reads. So the thirdparty refinement is SUMMARISED in one
+# line and genuine drift is still listed in full.
+_tp_refine = [r for r in _category_retagged if r[2] == "thirdparty"]
+_real_drift = [r for r in _category_retagged if r[2] != "thirdparty"]
+if _tp_refine:
     print(
-        f"NOTE: progress_category derived from source path overrides the "
-        f"library group tag for {len(_category_retagged)} object(s):",
+        f"NOTE: {len(_tp_refine)} vendored object(s) refine their library "
+        f"group's tier to `thirdparty` (expected: groups are cflags groupings "
+        f"and are coarser than tiers). Detail: tools/source_category.py audit",
         file=sys.stderr,
     )
-    for _sp, _was, _now in sorted(_category_retagged):
+if _real_drift:
+    print(
+        f"NOTE: progress_category derived from source path overrides the "
+        f"library group tag for {len(_real_drift)} object(s):",
+        file=sys.stderr,
+    )
+    for _sp, _was, _now in sorted(_real_drift):
         print(f"        {_sp}: {_was} -> {_now}", file=sys.stderr)
 config.progress_each_module = args.verbose
 
