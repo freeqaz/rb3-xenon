@@ -28030,6 +28030,54 @@
    ],
    "witness": "nrel==0 (COMPLETE criterion) + 92-caller heterogeneous fan-in on ONE address (Curl_gethostname / MD5::transform / Quazal _Rb_tree cannot all call a reverse_iterator<Synchronizable**> copy-ctor) + DC3 oracle COUNT MATCH 3==3 on OnAddSink",
    "evidence": "Lane FOLDPROVE-1. Retail body at 0x823ea598 is 12 B / nrel=0: `lwz r11,0(r4); stw r11,0(r3); blr` -- copy one word into the sret buffer. nrel==0 means NOTHING is masked, so byte identity is /OPT:ICF's COMPLETE criterion (FATAL-1 scoping), and our compiled ?LiteralSym@DataNode@@ is byte-identical. Retail keeps EXACTLY ONE address for this body and the folded spelling is not map-resident, so addr(folded)==0x823ea598 necessarily. HETEROGENEOUS FAN-IN, decisive: 92 retail call sites reach this ONE address from mutually impossible contexts -- Curl_gethostname, ?transform@MD5@Quazal@@, ?_S_right@?$_Rb_tree@VDOHandle@Quazal@@, ??1ScopedCS@Quazal@@, ?Init@Locale@@, XShowSocialNetworkImagePostUI and ?OnAddSink@MsgSource@@. No single source function is called by all 92, so the linker folded a large class onto this address; internal inconsistency needs no fold model. 92 heterogeneous callers WITH retail_addrs_for_body==1 is precisely what ICF predicts, so the fan-in CORROBORATES the fold rather than refuting it. INDEPENDENT SOURCE ORACLE + COUNT MATCH: DC3 Object.cpp OnAddSink calls LiteralSym exactly THREE times -- LiteralArray()->LiteralSym(1), LiteralSym(0) and eval.LiteralSym() -- all routing through DataNode::LiteralSym(const DataArray*) via the Data.h:403 inline, and the census counts EXACTLY 3 charged sites (3==3). With MILO_FAIL_DTA compiled out (the MILO_* family is #ifdef HX_NATIVE, never defined in the match build) DataNode::LiteralSym reduces to `return mValue.symbol`, exactly the three observed instructions. The 3==3 count match is what rules out our source having picked a DIFFERENT member of the same fold class."
+  },
+  {
+   "name": "FOLDPROVE2_vector_4byte_operator_assign",
+   "address": "0x82bab758",
+   "survivor": "??4?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": [
+    "??4?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@PAUDummySample@MidiChannel@@V?$StlNodeAlloc@PAUDummySample@MidiChannel@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@PAVRemoteBandUser@@V?$StlNodeAlloc@PAVRemoteBandUser@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@PAVTail@@V?$StlNodeAlloc@PAVTail@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@PAVUIScreen@@V?$StlNodeAlloc@PAVUIScreen@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
+   ],
+   "body_bytes": 260,
+   "nrel": 7,
+   "retail_addrs_for_body": 1,
+   "retail_fanin": 57,
+   "retail_callers": [
+    "?LoadEvents@TalkyMatcher@@QAAXABV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@0@Z",
+    "?GetWaitingUsers@SessionMgr@@QAAXAAV?$vector@PAVRemoteBandUser@@V?$StlNodeAlloc@PAVRemoteBandUser@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "??0NonDestructiveTransitionEvent@@QAA@PAVNetSync@@ABV?$vector@PAVUIScreen@@V?$StlNodeAlloc@PAVUIScreen@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "?SetSongs@SavedSetlist@@UAAXABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "?GetWaitingUsers@OpenGateData@?A0xe564e51a@@QBAXAAV?$vector@PAVBandUser@@V?$StlNodeAlloc@PAVBandUser@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+    "?_M_fill_insert_aux@?$vector@VTrackChannels@@V?$StlNodeAlloc@VTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVTrackChannels@@IABV3@ABU__false_type@2@@Z",
+    "??4Stats@@QAAAAV0@ABV0@@Z"
+   ],
+   "witness": "HETEROGENEOUS RETAIL FAN-IN THAT NAMES THE ELEMENT TYPE: 57 retail call sites reach 0x82bab758, and several callers carry the vector's element type in their OWN mangled signature -- TalkyMatcher::LoadEvents(const vector<float>&), SessionMgr::GetWaitingUsers(vector<RemoteBandUser*>&), NonDestructiveTransitionEvent::ctor(...,const vector<UIScreen*>&), SavedSetlist::SetSongs(const vector<int>&). One address cannot be four different source functions. PLUS masked-body uniqueness: retail keeps EXACTLY ONE 260-byte body of this shape while our source emits seven instantiations. PLUS recursive relocation consistency: the single differing slot (_M_allocate_and_copy) resolves to retail's ONE body at 0x82b670a0 (masked-dupes 1), and our spelling is not map-resident.",
+   "evidence": "Lane FOLDPROVE-2. /OPT:ICF folds STL instantiations over same-sized trivially-copyable types; every element type here is a 4-byte trivially-copyable scalar or pointer (int, float, Tail*, UIScreen*, RemoteBandUser*, RndAnimatable*, DummySample*), so vector<T>::operator= emits bit-identical code for all seven. THREE INDEPENDENT CHANNELS. (1) MASKED-BODY UNIQUENESS = 1: indexing retail by (size, masked bytes) -- i.e. IGNORING relocation target names, which is the axis CD-7 calls 'shape-identical' -- retail holds exactly ONE 260-byte body of this shape, at 0x82bab758. (2) RECURSIVE RELOCATION CONSISTENCY: /OPT:ICF requires identity INCLUDING relocations, so a parent fold is real only if every differing relocation slot resolves to one address. The only differing slot is _M_allocate_and_copy<T*>; retail keeps ONE body of that shape at 0x82b670a0 and our spelling is not map-resident, so the chain closes. (3) HETEROGENEOUS FAN-IN, which never looks at the body and is therefore orthogonal to every body-comparison vacuity: 57 retail call sites, with four callers naming vector<float>, vector<RemoteBandUser*>, vector<UIScreen*> and vector<int> respectively in their own signatures. Channel 3 also PINS MEMBERSHIP for the individual spellings, which byte identity alone cannot do (FOLDPROVE-1 finding #6). CONTRAST -- the control that shows these gates can refute: the sibling candidate map<CRC,float>::operator[] <- map<int,float>::operator[] (8,212 B, WRONGCALL-3's own headline proof case) FAILS channel 2, because retail keeps SIX distinct addresses for masked-identical _Rb_tree::insert_unique bodies; that family was demonstrably NOT folded and was refuted rather than installed.",
+   "lane": "FOLDPROVE-2"
+  },
+  {
+   "name": "FOLDPROVE2_vector_ptr_M_fill_insert_aux",
+   "address": "0x82272798",
+   "survivor": "?_M_fill_insert_aux@?$vector@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndDrawable@@IABQAV3@ABU__false_type@2@@Z",
+   "folded": [
+    "?_M_fill_insert_aux@?$vector@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVObject@Hmx@@IABQAV34@ABU__false_type@2@@Z"
+   ],
+   "body_bytes": 328,
+   "nrel": 6,
+   "retail_addrs_for_body": 1,
+   "retail_fanin": 2,
+   "retail_callers": [
+    "?_M_fill_insert_aux@?$vector@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndDrawable@@IABQAV3@ABU__false_type@2@@Z",
+    "?_M_fill_insert@?$vector@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVObject@Hmx@@IABQAV34@@Z"
+   ],
+   "witness": "FAN-IN NAMES OUR FOLDED SPELLING'S OWN CLASS: retail's ?_M_fill_insert@vector<Object*> calls 0x82272798, which the map names _M_fill_insert_aux@vector<RndDrawable*>. A vector<Object*> method calling a vector<RndDrawable*> helper is internally inconsistent unless the linker folded them. PLUS masked-body uniqueness: retail keeps exactly ONE 328-byte body of this shape.",
+   "evidence": "Lane FOLDPROVE-2. RndDrawable* and Object* are both 4-byte pointers, so vector<T*>::_M_fill_insert_aux emits identical code. TWO INDEPENDENT CHANNELS. (1) MASKED-BODY UNIQUENESS = 1: retail holds exactly one 328-byte body of this shape. (2) HETEROGENEOUS FAN-IN naming the folded spelling: of the two retail call sites reaching 0x82272798, one is ?_M_fill_insert@?$vector@PAVObject@Hmx@@ -- i.e. retail's own vector<Object*> code calls the address the map labels vector<RndDrawable*>, which is impossible without folding, and it names EXACTLY the spelling being aliased. DELIBERATELY NOT COUNTED AS A THIRD CHANNEL: the recursive-relocation probe returns SUPPORTED here, but its only differing slot is a SELF-RECURSIVE tail call (_M_fill_insert_aux calling itself), so that test degenerates to re-comparing the parent against itself and carries no independent information. It is excluded from the witness rather than banked.",
+   "lane": "FOLDPROVE-2"
   }
  ]
 }
