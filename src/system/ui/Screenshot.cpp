@@ -51,7 +51,21 @@ BEGIN_COPYS(Screenshot)
         if (ty != kCopyFromMax)
             COPY_MEMBER(mTexPath)
     END_COPYING_MEMBERS
-    Sync();
+    // NOTE (lane INSDEL-4): retail's Copy does NOT call Sync() -- dropping the
+    // call closed the row (92.938 -> 100, +128 B). Retail's body ends straight
+    // after the mTexPath String assign with `addi r1,r1,112; b __restgprlr_29`.
+    // Two controls, both readable before editing:
+    //  (1) SIZE INEQUALITY IN THE DIRECTION THAT EXCLUDES INLINING -- target
+    //      128 B vs our 136 B, exactly the 8 bytes of `subi r3,r31,60` +
+    //      `bl ?Sync@Screenshot@@AAAXXZ`. Sync() is large (two RELEASEs, two
+    //      Hmx::Object::New, SetBitmap, SetZMode, SetDiffuseTex), so an INLINED
+    //      Sync would make retail much BIGGER; retail is smaller by exactly the
+    //      call sequence, so it is absent rather than inlined.
+    //  (2) The note at the top of this file records a prior lane finding the
+    //      SAME divergence at an adjacent site: retail's Screenshot::SyncProperty
+    //      also has no Sync() call where dc3/rb3-Wii do.
+    // Load() keeps its Sync() -- retail's Load is anonymous in the map so it
+    // could not be used as the control, and it was left untouched.
 END_COPYS
 
 INIT_REVS(1, 0)

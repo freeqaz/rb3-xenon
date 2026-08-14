@@ -415,8 +415,17 @@ void FormatString::InitializeWithFmt(const char *fmt, bool b2) {
         UpdateType();
 }
 
+// NOTE (lane INSDEL-4): mType(kNone) removed from this init list -- retail does
+// not initialize mType here (89.905 -> 100, +84 B). Our surplus was exactly
+// `li r9, 3; stw r9, 2064(r31)`, and the compiler confirms offset 2064 is
+// `Type mType` with kNone == 3, so the two instructions name the initializer
+// 1:1. Target 84 B vs our 92 B = precisely those 8 bytes.
+// Control readable before editing: the SIBLING ctor above (line ~115) already
+// omits mType from its init list, so the two ctors disagreed in our source and
+// retail matches the sibling's shape. The initializer is also DEAD --
+// InitializeWithFmt() -> UpdateType() assigns mType immediately after.
 FormatString::FormatString(const char *str)
-    : mBuf(NextBuf()), mBufSize(MAX_BUF_SIZE), mFmtEnd(nullptr), mType(kNone) {
+    : mBuf(NextBuf()), mBufSize(MAX_BUF_SIZE), mFmtEnd(nullptr) {
     InitializeWithFmt(str, true);
 }
 
