@@ -838,6 +838,26 @@ run the gate before you land. Two traps, both real:
   the entry removed the full build passes). ⇒ a **single-function unit can never
   be completed by a boundary move** — it VANISHES instead of reaching 100% (lane
   DG-2 `1cbcabc8`: 3 of 23 candidates, a case the candidate filter never tested).
+  ★★★ **PIN NEUTRALITY IS SCOPED TO *REATTRIBUTION*, AND THIS DOC CARRIED
+  NEITHER HALF OF IT** (recorded 2026-08-14; the scoping lives in
+  `docs/decomp/pin-neutrality-scoped-2026-08-14.md`, which corrects
+  `PIN_WAVES_AND_DENOMINATOR_2026-08-09.md`):
+  - **ADDING a pin over previously-unpinned (`auto_*`) code is metric-neutral —
+    Δ exactly 0 on the matching keys**, because `auto_*` units are **already in
+    the denominator**; a pin only *reattributes* bytes anonymous→named. Such
+    waves need **no A/B**.
+  - ⛔ **RE-HOMING an already-pinned address is NOT neutral** — measured **+3
+    functions / +428 B** (lane PINHOME-1, `8e6eb9be`). **objdiff pairs by NAME,
+    so a target row whose base obj cannot define that name reads 0% however
+    correct our code is**; re-homing changes *which base obj is consulted*, and
+    therefore changes pairability. Reattribution never does.
+  ⚠ **But the re-homable vein is 13× smaller than its raw figure**: of 267
+  orphan-pin rows / 38,096 B, only **59 rows / 2,972 B** are re-homable — the
+  rest is absent source or a wrong map name, which no pin move can help.
+  ⚠ And ⛔ **`total_code` is NOT guaranteed neutral even for additions**: at
+  scale a pin wave measured **−5,120 B / −1 function**, because pinning **evicted
+  a PHANTOM `type:label` row whose extent DOUBLE-COUNTED 33 real functions.**
+  That is a *correction*, not a regression.
 - `tools/project.py` — patched so objects in `objects.json` get a compile edge
   even without a `splits.txt` address range (compile-only scaffolding).
 - `tools/fingerprint_match.py` — function-identification tool (extract / report
