@@ -556,8 +556,12 @@ DataArray *DataReadFile(const char *file, bool warn) {
     if (fs.Fail()) {
         if (warn)
             MILO_WARN("DataReadFile: Can't open %s", buf);
-        if (!node)
-            FinishDataRead();
+        // NOTE(INSDEL-1): retail has NO `if (!node) FinishDataRead();` here --
+        // the open-failure path returns without ending the read.  Adjudicated on
+        // retail bytes: the body carries exactly ONE `bl FinishDataRead` (the
+        // else-branch below), and our guard was 3 surplus instructions
+        // (cmplwi/bne/bl).  DC3 CANNOT adjudicate this -- src/system is a
+        // verbatim DC3 copy and DC3 (newer) carries the guard at DataFile.cpp:522.
         return nullptr;
     } else {
         DataArray *ret;

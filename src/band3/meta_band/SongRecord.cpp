@@ -25,9 +25,13 @@ SongRecord::SongRecord(const BandSongMetadata *data)
     mRestricted = TheSongMgr.IsRestricted(data->ID());
     FOREACH (it, data->Ranks()) {
         Symbol key = it->first;
-        data->BandSongMetadata::HasPart(key, false);
-        float val = it->second;
-        int tier = TheSongMgr.RankTier(val, key);
+        // NOTE(INSDEL-1): retail calls the NON-VIRTUAL `Rank(Symbol)` and feeds its
+        // float return straight to RankTier -- it never reads `it->second`.  The
+        // previous `HasPart(key,false)` (return value DISCARDED, from an automated
+        // near-miss wave, b2958f2d) mis-paired with retail's `bl ?Rank@...@QBAMVSymbol@@@Z`
+        // and forced two surplus instructions: `li r5,0` (HasPart's bool arg) and
+        // `lfs f1,8(r25)` (`it->second`).  Adjudicated on retail bytes.
+        int tier = TheSongMgr.RankTier(data->BandSongMetadata::Rank(key), key);
         mTier.insert(std::make_pair(key, tier));
     }
     for (int i = 0; i < kNumScoreTypes; i++) {
