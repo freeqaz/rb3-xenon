@@ -5114,11 +5114,17 @@ PartLauncher.cpp:
 	.text       start:0x82451F30 end:0x82451F74
 
 DataNode.cpp:
+	.pdata      start:0x82216278 end:0x82216280
+	.pdata      start:0x822162F8 end:0x82216300
+	.pdata      start:0x82216308 end:0x82216310
 	.pdata      start:0x8223B150 end:0x8223B1A8
 	.pdata      start:0x8223B780 end:0x8223B860
 	.pdata      start:0x8223B868 end:0x8223B8E0
 	.pdata      start:0x82243610 end:0x82243618
 	.pdata      start:0x82261630 end:0x822616C0
+	.text       start:0x824F8968 end:0x824F89C4
+	.text       start:0x824F8F50 end:0x824F901C
+	.text       start:0x824F90A8 end:0x824F9188
 	.text       start:0x82744E48 end:0x82745304
 	.text       start:0x8274AA08 end:0x8274BB88
 	.text       start:0x8274BBE4 end:0x8274C4E0
@@ -10139,9 +10145,6 @@ BandSongMetadata.cpp:
 	.pdata      start:0x82200B00 end:0x82200B08
 	.pdata      start:0x82200B38 end:0x82200B40
 	.pdata      start:0x82212BC8 end:0x82212BD0
-	.pdata      start:0x82216278 end:0x82216280
-	.pdata      start:0x822162F8 end:0x82216300
-	.pdata      start:0x82216308 end:0x82216310
 	.pdata      start:0x82221090 end:0x822211A0
 	.pdata      start:0x822211A0 end:0x822211C8
 	.pdata      start:0x822211C8 end:0x822211D8
@@ -10156,9 +10159,6 @@ BandSongMetadata.cpp:
 	.text       start:0x82365510 end:0x82365560
 	.text       start:0x823658F8 end:0x82365974
 	.text       start:0x824B4390 end:0x824B43F8
-	.text       start:0x824F8968 end:0x824F89C4
-	.text       start:0x824F8F50 end:0x824F901C
-	.text       start:0x824F90A8 end:0x824F9188
 	.text       start:0x8259D9C0 end:0x8259E788
 	.text       start:0x8259E788 end:0x8259E928
 	.text       start:0x8259E928 end:0x8259E9B8
