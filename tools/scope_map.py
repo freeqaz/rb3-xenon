@@ -46,6 +46,40 @@ TERMINOLOGY -- "mapped" means two different things in this repo, do not conflate
     the 8 layers above -- pinned or not. It is therefore always >= the pinned
     number. The dashboard labels it "tier-classified" for exactly this reason.
 
+★★★ AND "the game fuzzy number" MEANT AT LEAST SIX THINGS ON ONE TREE (lane
+SCOPEDEN-1, 2026-08-14, measured at b574f653). Two independent axes multiply:
+
+  WHICH FIELD          aon%   Sigma size of rows at fuzzy==100 / denominator. What
+                              `matched_code` keys on; a 99.9% row contributes 0.
+                       mean%  size-weighted mean of fuzzy_match_percent. Always
+                              >= aon%. Both are legitimate; they are NOT two
+                              views of one measure.
+  WHICH DENOMINATOR    pinned units we compile (base object exists => rows CAN
+                              pair). "How is our SOURCE doing."
+                       all-in pinned + mass the map ATTRIBUTES to the tier that
+                              has no base object and cannot pair today.
+
+  ... times the fact that "game" itself has more than one extension:
+
+    band3 only, pinned          2,107,200 B   aon 59.85%   mean 82.07%
+    band3+network, pinned       2,376,840 B   aon 54.36%   mean 74.68%   <- the
+                                              remembered "we were at 75%"
+    scope tier, pinned          2,387,580 B   aon 54.60%   mean 74.82%   <- printed
+    scope tier, all-in          3,039,424 B   aon 42.89%   mean 58.78%   <- printed
+
+`src/network/` alone is 269,640 B at mean 16.96%, so INCLUDING it costs 7.4 pp
+before any inferred mass is folded in at all. Nothing regressed to produce any of
+these; they are four denominators and two fields.
+
+⚠ The dtk `progress_categories` join and this tool's `bucket_for_source` disagree
+on 8 units: FOUR `src/band3/` units are tagged `['engine']` in the category config
+(HitTracker, Asset, LockStepMgr, UGCPurchasePanel = 13,692 B of game code counted
+as engine), while the category side additionally sweeps in `src/Main.cpp`,
+`src/Memory_Xbox.cpp`, `src/keygen_xbox.cpp` and a zlib unit (6,520 B). That
+disagreement IS the 74.68 vs 74.82 gap -- it is not noise, and the category tags
+are the side that is wrong. Fixing them belongs to objects.json/configure.py, NOT
+here: this tool is reporting-only and must stay metric-neutral by construction.
+
 CACHE HYGIENE -- scope_map.json is gitignored and addr-keyed to ONE target build.
 If it is absent (fresh checkout / worktree) or keyed to a different revision of
 the XEX, `priority` falls back to source-path/name-class only, ~65k anonymous
@@ -925,8 +959,23 @@ def _print_report(sm):
 
     print()
     print("=== BUCKET BREAKDOWN (tier = priority + oracle, NOT in/out) ===")
+    # ⚠ COLUMN NAMES MATTER HERE -- this is the SAME disease the dashboard's
+    # aon%/mean% split fixes, one field further out. `matched` in scope_map.json
+    # is the match_percent_normalized==100 predicate -- the ARG-BLIND ruler --
+    # while matched_code (and every number in the dashboard below) keys on
+    # fuzzy_match_percent==100. Printed as a bare "m_bytes" it read as an
+    # optimistic duplicate of the dashboard's figure and was quoted as one.
+    # Measured at b574f653 on the game tier: mpn 1,653,676 B vs fuzzy
+    # 1,303,552 B. Of the 342,456 B gap vs the cached value, 350,124 B is the
+    # PREDICATE and only 7,668 B is cache staleness -- so "it's just a stale
+    # snapshot" is the wrong explanation by ~44x. Whole-binary the mpn-vs-fuzzy
+    # gap is 922,112 B, i.e. MPNGAP-1's documented 930,204 B mpn==100/fuzzy<100
+    # stratum, reached here independently.
+    print("(mpn_* = match_percent_normalized==100, the ARG-BLIND ruler. They do")
+    print(" NOT reconcile with matched_code, which keys on fuzzy==100; the")
+    print(" dashboard below is the fuzzy-keyed view. Cached + dedup'd.)")
     print("%-12s %8s %12s %8s %12s  %-9s" %
-          ("bucket", "fns", "bytes", "m_fns", "m_bytes", "tier"))
+          ("bucket", "fns", "bytes", "mpn_fns", "mpn_bytes", "tier"))
     for b in BUCKET_ORDER:
         fns, byt, mf, mb = by[b]
         print("%-12s %8d %12d %8d %12d  %-9s" % (b, fns, byt, mf, mb, tier(b)))
@@ -968,34 +1017,94 @@ LABELS = {
 }
 
 
-def _by_live(scope_by_addr, funcs):
-    """Per-bucket aggregate [fns, bytes, m_fns, m_bytes, fuzzy_bytes] over EVERY
-    report fn (funcs must be dedup=False), classified by the cached map (real addr)
-    with a name/source fallback for catch-all fns the build's dedup dropped. Because
-    no fn is dropped, sum(bytes) == report total_code and sum(fns) == total_functions
-    EXACTLY -- the per-tier denominators are honest TRUE tier sizes."""
-    # per bucket: [fns, bytes, m_fns(normalized), m_bytes(raw byte-perfect),
-    #              fuzzy_bytes(size-weighted fuzzy_match_percent)]
+def _acc():
+    """[fns, bytes, m_fns(normalized), m_bytes(fuzzy==100), fuzzy_bytes]."""
+    return [0, 0, 0, 0, 0.0]
+
+
+# Index names for an _acc() row, so call sites read as prose.
+A_FNS, A_BYTES, A_MFNS, A_MBYTES, A_FZBYTES = 0, 1, 2, 3, 4
+
+# AUTOID-1 (2026-08-13) controlled the two-sided spatial inference -- "enclosed by
+# the same heading on both sides => membership" -- at 66.24% precision, i.e. a
+# 33.76% FALSE-POSITIVE rate. The one-sided after-/before- form is weaker still,
+# so this is a floor on the error, not an estimate of it.
+GUESS_FP_RATE = 0.3376
+
+
+def _is_guess(prov):
+    """Provenance that is an ADJACENCY or NAME-CLASS inference about the function
+    rather than evidence about it. `spatial:*` inherits a neighbour's tier across
+    an unlabeled .text run; `name:`/`name-prefix:` route a mangled class token.
+    Both attribute a tier without any per-function proof, and the spatial form's
+    measured precision is 66.24% (GUESS_FP_RATE). Everything else -- pinned
+    source, an address-keyed provenance label, a thirdparty range, an xdk import
+    address -- rests on evidence about that specific address."""
+    return prov.startswith("spatial:") or prov.startswith("name:") \
+        or prov.startswith("name-prefix:")
+
+
+def _by_live(scope_by_addr, prov_by_addr, funcs):
+    """Per-bucket aggregate over EVERY report fn (funcs must be dedup=False),
+    classified by the cached map (real addr) with a name/source fallback for
+    catch-all fns the build's dedup dropped. Because no fn is dropped,
+    sum(bytes) == report total_code and sum(fns) == total_functions EXACTLY.
+
+    Returns {bucket: {"pin": _acc(), "unp": _acc(), "guess": [fns, bytes]}}.
+
+    ★ THE SPLIT IS THE POINT (lane SCOPEDEN-1). A tier's denominator is TWO
+    populations that must never be summed into one unqualified percentage:
+
+      pin  PINNED -- the report unit declares a `source_path`, so we compile it,
+           so it has a base object, so its rows CAN pair. This is the "how is our
+           SOURCE doing" denominator, and it is the number people remember.
+      unp  UNPINNED -- attributed to this tier by the map (spatial adjacency,
+           name class, provenance label, thirdparty range) but with NO compiled
+           base object, so every row is structurally unmatchable TODAY. It is
+           real binary that someone must eventually match, so it stays in the
+           whole-tier denominator -- deleting it would be the ForceEmit_* disease
+           of shrinking the denominator until the number looks good.
+
+    Measured on b574f653: `sp` truthy reproduces NOOBJ-1's PAIRABLE census
+    EXACTLY -- 1,045 units / 6,512,524 B pairable vs 3,808,140 B not -- so this
+    split is the 63.10% reachable ceiling, localized per tier. It is also
+    CACHE-INDEPENDENT (it reads report.json, not scope_map.json), so it stays
+    correct even under the stale-cache banner.
+
+    `guess` counts the UNPINNED subset whose tier came from an adjacency/name
+    inference (see _is_guess) -- the slice carrying AUTOID-1's 33.76% FP rate.
+    """
     # m_fns uses normalized (sums to measures.matched_functions); m_bytes uses the
     # raw fuzzy_match_percent==100 predicate (sums to measures.matched_code) -- the
     # two predicates objdiff itself uses, so each axis reconciles with ninja's All.
-    # fuzzy_bytes / bytes == the tier's size-weighted fuzzy% (work-in-progress).
-    by = defaultdict(lambda: [0, 0, 0, 0, 0.0])
+    # fuzzy_bytes / bytes == the tier's size-weighted mean fuzzy%.
+    by = defaultdict(lambda: {"pin": _acc(), "unp": _acc(), "guess": [0, 0]})
     engine_cls, game_cls, vendor_cls = load_name_class(WN_DATA)
     for addr, size, matched, sp, unit, name, fz in funcs:
-        sc = scope_by_addr.get("%08X" % addr)
+        key = "%08X" % addr
+        sc = scope_by_addr.get(key)
         if sc is None:                # not in cache (dropped by build dedup / new)
             sc = bucket_for_source(sp)
             if sc is None:            # catch-all named fn -> try class-by-name
                 sc = classify_name(name, engine_cls, game_cls, vendor_cls)[0]
             sc = sc or "unknown"
-        by[sc][0] += 1
-        by[sc][1] += size
+        rec = by[sc]
+        pinned = bool(sp)
+        a = rec["pin"] if pinned else rec["unp"]
+        a[A_FNS] += 1
+        a[A_BYTES] += size
         if matched:
-            by[sc][2] += 1
+            a[A_MFNS] += 1
         if fz >= 100.0:
-            by[sc][3] += size
-        by[sc][4] += size * fz / 100.0
+            a[A_MBYTES] += size
+        a[A_FZBYTES] += size * fz / 100.0
+        if not pinned:
+            # A fn absent from the cache reached its tier via classify_name above,
+            # which IS the name-class guess -- count it as one.
+            prov = prov_by_addr.get(key)
+            if prov is None or _is_guess(prov):
+                rec["guess"][0] += 1
+                rec["guess"][1] += size
     for b in BUCKET_ORDER:            # ensure every bucket key exists
         by[b]
     return by
@@ -1186,17 +1295,35 @@ _CACHE_BANNER = {
 
 def print_progress(by, measures, cache=None, compact=False):
     """The single at-a-glance decomp dashboard ninja prints after every build.
-    Headline reads report.json's official `measures` (== ninja "All"); the per-tier
-    `by` uses objdiff's OWN predicates so each axis sums to its official total:
-      * matched%  = match_percent_normalized==100 fns / raw fuzzy==100 bytes
-      * fuzzy%    = size-weighted fuzzy_match_percent (work-in-progress indicator)
-    Denominator per tier = the TRUE tier size from the map (sums to total_code).
+
+    Headline reads report.json's official `measures` (== ninja "All"). Everything
+    below it is per-tier, and after lane SCOPEDEN-1 every per-tier percentage
+    names BOTH of the two things that were previously left implicit:
+
+    WHICH FIELD (they are different measures, not two views of one):
+      aon%   ALL-OR-NOTHING byte share -- Sigma size of rows at fuzzy==100 over the
+             denominator. This is what `matched_code` keys on; a row at 99.9%
+             contributes ZERO.
+      mean%  SIZE-WEIGHTED MEAN of fuzzy_match_percent over the same rows. A
+             work-in-progress indicator; always >= aon%.
+
+    WHICH DENOMINATOR (see _by_live):
+      pinned  units we compile (have a base object, so their rows can pair) --
+              "how is our SOURCE doing", and the number people remember.
+      all-in  pinned + unpinned mass the map attributes to this tier but which has
+              no base object and therefore cannot pair today.
+
+    Both rows are printed for every tier, deliberately: three defensible "game
+    fuzzy" numbers coexisted on one tree (82.07 band3-pinned / 74.68
+    band3+network-pinned / 58.78 all-in) and a single unqualified column called
+    "fuzzy" is what let a denominator change read as "scope_map build totally
+    broke our matches" when the numerator had not moved at all.
 
     `cache` is the _cache_status() record. When it is not `ok` the tier
-    denominators collapse to pinned-only coverage and every percentage below the
-    headline reads HIGH, so we shout about it instead of silently reporting a
-    number that is not comparable to main's. The binary/headline line is always
-    honest (it comes straight from report.json) and is unaffected."""
+    denominators collapse to pinned-only coverage and every all-in percentage
+    reads HIGH, so we shout about it instead of silently reporting a number that
+    is not comparable to main's. The binary/headline line is always honest (it
+    comes straight from report.json) and is unaffected."""
     def mb(x):
         return x / 1048576.0
 
@@ -1207,19 +1334,35 @@ def print_progress(by, measures, cache=None, compact=False):
         v = measures.get(k, 0)
         return int(v) if isinstance(v, str) else v
 
+    def tot(b, i):
+        return by[b]["pin"][i] + by[b]["unp"][i]
+
+    def s_pin(bs, i):
+        return sum(by[b]["pin"][i] for b in bs)
+
+    def s_tot(bs, i):
+        return sum(tot(b, i) for b in bs)
+
     off_mc, off_tc = mi("matched_code"), mi("total_code")
     off_mf, off_tf = mi("matched_functions"), mi("total_functions")
     fuzzy_pct = float(measures.get("fuzzy_match_percent", 0.0) or 0.0)
 
-    tot_b = sum(v[1] for v in by.values())           # == off_tc (no-dedup)
-    orac_b = sum(by[b][1] for b in ORACLE_BACKED)
-    orac_mb = sum(by[b][3] for b in ORACLE_BACKED)   # raw matched bytes
-    orac_fzb = sum(by[b][4] for b in ORACLE_BACKED)  # fuzzy-weighted bytes
-    noora_b = sum(by[b][1] for b in NO_ORACLE)
-    noora_mb = sum(by[b][3] for b in NO_ORACLE)
-    noora_fzb = sum(by[b][4] for b in NO_ORACLE)
-    unk_b = by["unknown"][1]
+    tot_b = s_tot(by.keys(), A_BYTES)                # == off_tc (no-dedup)
+    orac_b = s_tot(ORACLE_BACKED, A_BYTES)
+    orac_mb = s_tot(ORACLE_BACKED, A_MBYTES)         # raw matched bytes
+    orac_fzb = s_tot(ORACLE_BACKED, A_FZBYTES)       # fuzzy-weighted bytes
+    orac_pb = s_pin(ORACLE_BACKED, A_BYTES)          # PINNED denominator
+    orac_pmb = s_pin(ORACLE_BACKED, A_MBYTES)
+    orac_pfzb = s_pin(ORACLE_BACKED, A_FZBYTES)
+    noora_b = s_tot(NO_ORACLE, A_BYTES)
+    noora_mb = s_tot(NO_ORACLE, A_MBYTES)
+    unk_b = tot("unknown", A_BYTES)
     mapped_b = (tot_b - unk_b)
+    # Unpinned mass folded into the oracle-backed tiers, and the guessed subset
+    # of it -- the two numbers the reader needs to discount an all-in row.
+    orac_ub = sum(by[b]["unp"][A_BYTES] for b in ORACLE_BACKED)
+    orac_umb = sum(by[b]["unp"][A_MBYTES] for b in ORACLE_BACKED)
+    orac_gb = sum(by[b]["guess"][1] for b in ORACLE_BACKED)
     delta, window = _progress_delta(off_mc, off_tc, off_mf, fuzzy_pct,
                                     ruler=(cache or {}).get("ruler"))
 
@@ -1232,11 +1375,18 @@ def print_progress(by, measures, cache=None, compact=False):
 
     out = []
     if compact:
+        # Even the one-liner names both denominators: quoting the oracle number
+        # without saying which one is exactly the failure this tool exists to
+        # prevent.
         out.append("Decomp %.2f%% matched · %.2f%% fuzzy · %d/%d fns%s"
-                   "  |  north-star oracle %.2f MB @ %.2f%% matched / %.2f%% fuzzy · %.0f%% tier-classified%s" %
+                   "  |  oracle-backed pinned %.2f MB @ aon %.2f%% / mean %.2f%%"
+                   " · all-in %.2f MB @ aon %.2f%% / mean %.2f%%"
+                   " · %.0f%% tier-classified%s" %
                    (pct(off_mc, off_tc), fuzzy_pct, off_mf, off_tf,
                     "  (moved " + delta + ")" if delta else "",
-                    mb(orac_b), pct(orac_mb, orac_b), pct(orac_fzb, orac_b), pct(mapped_b, tot_b),
+                    mb(orac_pb), pct(orac_pmb, orac_pb), pct(orac_pfzb, orac_pb),
+                    mb(orac_b), pct(orac_mb, orac_b), pct(orac_fzb, orac_b),
+                    pct(mapped_b, tot_b),
                     ("  [!! scope cache %s — tier %% INFLATED, run: python3 tools/scope_map.py build]"
                      % cstate) if cbad else ""))
     else:
@@ -1256,22 +1406,40 @@ def print_progress(by, measures, cache=None, compact=False):
                 content = content[:IW - 1] + "…"
             return "│" + content.ljust(IW) + "│"
 
-        # tier · match% · fuzzy% · fns m/t · MB m/t · guessed share of denominator
-        cols = "   %-11s%8s%8s%14s%15s%7s"
-        _inf = (cache or {}).get("inferred") or {}
+        # tier · WHICH DENOMINATOR · aon% · mean% · fns m/t · MB m/t
+        # 3 + 11 + 8 + 8 + 8 + 15 + 13 == 66 == IW exactly. If you widen a column,
+        # take the width from another one: line() CLAMPS to IW with an ellipsis, so
+        # an over-wide row silently loses its right-hand number instead of breaking
+        # the box visibly.
+        cols = "   %-11s%-8s%8s%8s%15s%13s"
 
-        def tier_line(b):
-            fns, byt, mf, mbr, fzb = by[b]
-            # "inf" = % of this tier's DENOMINATOR assigned by address-adjacency
-            # guess (spatial:*), whose measured FP rate is 33.76% at best. A tier
-            # whose inf is high can move many points with no change in matched
-            # code -- which is exactly how `build` appeared to "break matches"
-            # on 2026-08-13 (game denominator +24%, 75% -> 59%, numerator flat).
-            g, t = _inf.get(b, (0, 0))
-            inf = ("%.0f%%" % (100.0 * g / t)) if t else "-"
-            return line(cols % (b, "%.2f%%" % pct(mbr, byt), "%.2f%%" % pct(fzb, byt),
-                                "%d / %d" % (mf, fns), "%.2f / %.2f" % (mb(mbr), mb(byt)),
-                                inf))
+        def _row(nm, which, a, byt, fns):
+            return line(cols % (
+                nm, which,
+                ("%.2f%%" % pct(a[A_MBYTES], byt)) if byt else "—",
+                ("%.2f%%" % pct(a[A_FZBYTES], byt)) if byt else "—",
+                "%d / %d" % (a[A_MFNS], fns),
+                "%.2f / %.2f" % (mb(a[A_MBYTES]), mb(byt))))
+
+        def tier_lines(b):
+            """TWO rows per tier, one per denominator -- see print_progress's
+            docstring for why a single unqualified row is the defect.
+
+            Deliberately RIGID: a tier with zero pinned bytes still prints its
+            em-dash `pinned` row rather than collapsing to one line. "This entire
+            tier has no source at all" is precisely what a reader must not be able
+            to miss, and a layout whose shape changes with the data cannot be
+            compared build-to-build.
+
+            The two rows share a numerator BY CONSTRUCTION (an unpinned row has no
+            base object, so it cannot pair), which makes the pair self-evidencing:
+            the reader watches the denominator grow while `MB m` stands still. If
+            an unpinned row ever does match, the numerators separate on screen and
+            the claim visibly fails instead of being silently wrong."""
+            p, u = by[b]["pin"], by[b]["unp"]
+            allin = [p[i] + u[i] for i in range(len(p))]
+            return [_row(b, "pinned", p, p[A_BYTES], p[A_FNS]),
+                    _row("", "all-in", allin, allin[A_BYTES], allin[A_FNS])]
 
         out.append(edge("╭", "╮"))
         out.append(line("  RB3-XENON · decomp dashboard"))
@@ -1305,25 +1473,40 @@ def print_progress(by, measures, cache=None, compact=False):
             out.append(line())
 
         # Core goals: oracle-backed (the cheap near-term work; crt folds into the
-        # MB subtotal rather than spending a row). Bars gauge the run to 100% =
-        # "cruising". Tier rows break the cluster down (matched / total each axis).
-        out.append(rule("CORE GOALS — oracle-backed · %.2f / %.2f MB" %
-                        (mb(orac_mb), mb(orac_b))))
+        # MB subtotal rather than spending a row). The BARS are drawn on the
+        # PINNED denominator -- the source-progress question -- and the rule names
+        # that denominator so the bar can never be read against the other one.
+        out.append(rule("CORE GOALS — oracle-backed · pinned %.2f / %.2f MB" %
+                        (mb(orac_pmb), mb(orac_pb))))
         out.append(line())
-        out.append(line("   %-8s%s  %6.2f%%" % ("matched", _bar(pct(orac_mb, orac_b)), pct(orac_mb, orac_b))))
-        out.append(line("   %-8s%s  %6.2f%%" % ("fuzzy", _bar(pct(orac_fzb, orac_b)), pct(orac_fzb, orac_b))))
+        out.append(line("   %-8s%s  %6.2f%%" % ("aon", _bar(pct(orac_pmb, orac_pb)), pct(orac_pmb, orac_pb))))
+        out.append(line("   %-8s%s  %6.2f%%" % ("mean", _bar(pct(orac_pfzb, orac_pb)), pct(orac_pfzb, orac_pb))))
         out.append(line())
-        out.append(line(cols % ("", "match", "fuzzy", "fns m/t", "MB m/t", "inf")))
+        out.append(line("   aon% = bytes in rows at fuzzy==100 (what matched_code counts)"))
+        out.append(line("   mean% = size-weighted mean fuzzy.  Never quote one without"))
+        out.append(line("   saying WHICH FIELD and against WHICH DENOMINATOR:"))
+        out.append(line(cols % ("", "", "aon%", "mean%", "fns m/t", "MB m/t")))
         for b in TIER_ROWS:
-            out.append(tier_line(b))
+            out.extend(tier_lines(b))
+        out.append(line())
+
+        # The all-in rows above are only honest if the reader is told what was
+        # added to reach them, in the same currency (bytes) as the table.
+        out.append(line("   all-in adds %.2f MB UNPINNED (no base obj ⇒ cannot pair"
+                        % mb(orac_ub)))
+        out.append(line("   today); it moved the numerator by %.2f MB." % mb(orac_umb)))
+        out.append(line("   %.2f MB of that is adjacency/name GUESS at 66.24%%"
+                        % mb(orac_gb)))
+        out.append(line("   precision (AUTOID-1) ⇒ ~%.2f MB sits in the WRONG tier."
+                        % mb(orac_gb * GUESS_FP_RATE)))
         out.append(line())
 
         # Lower priority: no-oracle (matchable too, just deferred), largest first.
-        out.append(rule("lower priority — no oracle · %.2f / %.2f MB" %
+        out.append(rule("lower priority — no oracle · %.2f / %.2f MB all-in" %
                         (mb(noora_mb), mb(noora_b))))
         out.append(line())
-        for b in sorted(NO_ORACLE, key=lambda x: -by[x][1]):
-            out.append(tier_line(b))
+        for b in sorted(NO_ORACLE, key=lambda x: -tot(x, A_BYTES)):
+            out.extend(tier_lines(b))
         out.append(line())
 
         # NB: "tier-classified" != the dtk/build box's "mapped". That one counts
@@ -1389,47 +1572,31 @@ def _cache_status(scope_by_addr, funcs, state):
     return st
 
 
-def _inferred_share(sm):
-    """Per-tier share of the DENOMINATOR that is an address-adjacency GUESS.
-
-    `spatial:*` provenance means the function was assigned a tier by inheriting
-    it from its neighbours in .text, not from any evidence about the function
-    itself. That inference is measurable and it is weak: lane AUTOID-1
-    (2026-08-13) controlled the two-sided form -- 'enclosed by the same heading
-    on both sides' -- at 66.24% precision, i.e. a 33.76% FALSE-POSITIVE rate,
-    and the one-sided 'after/before' form is weaker still.
-
-    It belongs in the denominator (those bytes are real and must be matched by
-    someone) but a tier % built partly from a 34%-FP guess must not be printed
-    as a single confident number -- so we surface the share and let the reader
-    discount it. Returns {scope: (guess_fns, tier_fns)}."""
-    agg = {}
-    for e in sm.values():
-        sc = e.get("scope", "?")
-        g, t = agg.get(sc, (0, 0))
-        prov = e.get("provenance") or ""
-        agg[sc] = (g + (1 if prov.startswith("spatial:") else 0), t + 1)
-    return agg
-
-
 def _progress_by_live():
     """Fresh per-bucket aggregate (every fn, no dedup) over the cached map, plus
     report.json's official `measures` for the authoritative headline, plus a
-    health record for the cache itself (see _cache_status)."""
+    health record for the cache itself (see _cache_status).
+
+    The old per-tier `inf` column (share of a tier's FUNCTION COUNT carrying
+    `spatial:*` provenance, computed separately over the dedup'd cache) is gone.
+    It reported the right hazard on the wrong axis and from a second arithmetic:
+    bytes are the currency every other number here is in, and the reader still
+    could not recover the pinned-only percentage from a share. `_by_live` now
+    carries the pinned/unpinned byte split and the guess subset in ONE pass over
+    the same rows, so the disclosure and the percentages cannot disagree."""
     funcs, rep = load_functions(REPORT, dedup=False)
     state = "ok"
     try:
         sm = _load_scope_map()
         scope_by_addr = {a: e["scope"] for a, e in sm.items()}
-        inferred = _inferred_share(sm)
+        prov_by_addr = {a: (e.get("provenance") or "") for a, e in sm.items()}
     except FileNotFoundError:
-        scope_by_addr, state, inferred = {}, "missing", {}
+        scope_by_addr, prov_by_addr, state = {}, {}, "missing"
     except (json.JSONDecodeError, OSError, KeyError, TypeError):
-        scope_by_addr, state, inferred = {}, "unreadable", {}
+        scope_by_addr, prov_by_addr, state = {}, {}, "unreadable"
     cache = _cache_status(scope_by_addr, funcs, state)
     cache["ruler"] = _ruler_key(rep)      # carried through to the delta guard
-    cache["inferred"] = inferred          # -> the per-tier "inf" column
-    return _by_live(scope_by_addr, funcs), rep.get("measures", {}), cache
+    return _by_live(scope_by_addr, prov_by_addr, funcs), rep.get("measures", {}), cache
 
 
 def cmd_priority(args):
