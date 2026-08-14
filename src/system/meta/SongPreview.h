@@ -33,11 +33,17 @@ public:
     void SetMusicVol(float);
     void Init();
     void Terminate();
-    void Start(Symbol, TexMovie *);
-    // Retail RB3-360 has a single-arg Start(Symbol) overload (fn_827808B0);
-    // the two-arg TexMovie form is a DC3-newer addition. MusicLibrary's
-    // Clear/CheckSongPreview call the single-arg form. rb3-Wii oracle agrees.
+    // Retail RB3-360 has exactly ONE Start, and it takes a single Symbol:
+    // fn_827A5790, whose prologue captures only r3 (this) and r4 (the Symbol)
+    // and never reads r5, and whose 4 callers all stage r3/r4 only. The
+    // two-arg TexMovie form is a DC3-newer addition, kept native-only below.
+    // ⚠ This comment previously cited "fn_827808B0" as the single-arg form.
+    // That is a TU0-era address and is INVALID since the TU5 flip — 0x827808B0
+    // is mid-function branch code on TU5, not a function start.
     void Start(Symbol);
+#ifdef HX_NATIVE
+    void Start(Symbol, TexMovie *);
+#endif
     void PreparePreview();
     void Poll();
     DataNode OnStart(DataArray *);

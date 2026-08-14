@@ -71,7 +71,7 @@ void BandLabel::Poll() {
         float val = 0;
         float uisecs = TheTaskMgr.UISeconds() * 1000.0f;
         unk1dc.AtFrame(uisecs, val);
-        SetTokenFmt(unk1e4, LocalizeSeparatedInt(val, TheLocale));
+        SetTokenFmt(unk1e4, LocalizeSeparatedInt(val));
         if (uisecs > unk1dc.LastFrame()) {
             unk1dc.clear();
             BandLabelCountDoneMsg msg(this);
@@ -96,7 +96,7 @@ void BandLabel::Count(int i1, int i2, float f, Symbol s) {
 void BandLabel::FinishCount() {
     if (unk1dc.size() >= 2) {
         Key<float> &key = unk1dc[1];
-        SetTokenFmt(unk1e4, LocalizeSeparatedInt(key.value, TheLocale));
+        SetTokenFmt(unk1e4, LocalizeSeparatedInt(key.value));
         unk1dc.clear();
     }
 }

@@ -149,13 +149,18 @@ void SongPreview::Terminate() {
     }
 }
 
-void SongPreview::Start(Symbol song, TexMovie *texMovie) {
+// RB3-360 retail's Start takes ONE argument (fn_827A5790): its prologue
+// captures `mr r31,r3` (this) and `mr r30,r4` (the Symbol) and never reads r5
+// — r5 is only ever WRITTEN there (`li r5, 1`) to stage an onward call — and
+// 0 of its 4 callers stage r5. The TexMovie parameter is DC3-newer. It is kept
+// on a native-only overload below because native uses it for mTexMovie.
 #ifdef HX_NATIVE
+void SongPreview::Start(Symbol song, TexMovie *texMovie) {
     if (!mInitted)
         return; // Audio/synth not initialized on native
     if (mInitted || !song.Null()) {
 #else
-    (void)texMovie;
+void SongPreview::Start(Symbol song) {
     {
 #endif
         MILO_ASSERT(mFader && mMusicFader && mCrowdSingFader,0x6c);
@@ -237,6 +242,13 @@ void SongPreview::PreparePreview() {
     }
 }
 
+#ifdef HX_NATIVE
+// Native-only 1-arg form so the shared call sites (OnStart, MusicLibrary) can
+// spell Start(sym) in both builds. In the match build the 1-arg form above IS
+// the real retail function, so no forwarding exists there.
+void SongPreview::Start(Symbol song) { Start(song, nullptr); }
+#endif
+
 DataNode SongPreview::OnStart(DataArray *arr) {
     mSecurePreview = false;
     if (arr->Size() == 3) {
@@ -245,7 +257,7 @@ DataNode SongPreview::OnStart(DataArray *arr) {
         MILO_LOG(
             "start called in upper OnStart here : sym='%s'\n", arr->ForceSym(2).Str()
         );
-        Start(arr->ForceSym(2), nullptr);
+        Start(arr->ForceSym(2));
     } else {
         mStartPreviewMs = arr->Float(3);
         mEndPreviewMs = arr->Float(4);
@@ -256,7 +268,7 @@ DataNode SongPreview::OnStart(DataArray *arr) {
         MILO_LOG(
             "start called in lower OnStart here : sym='%s'\n", arr->ForceSym(2).Str()
         );
-        Start(arr->ForceSym(2), nullptr);
+        Start(arr->ForceSym(2));
     }
     return 1;
 }
