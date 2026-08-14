@@ -15164,7 +15164,7 @@
  "0x82677478": "?OnRemoteTrackerPlayerDisplay@Game@@QAAXPAVPlayer@@HHH@Z",
  "0x82677480": "?OnRemoteTrackerDeploy@Game@@QAAXPAVPlayer@@@Z",
  "0x82677488": "?OnRemoteTrackerEndDeployStreak@Game@@QAAXPAVPlayer@@H@Z",
- "0x82677490": "?TrackSkeleton_CommitProcessingState@Pipeline@ST@@QAAXPAUSTPipelineProcessingState@@@Z",
+ "0x82677490": "?OnRemoteTrackerEndStreak@Game@@QAAXPAVPlayer@@HH@Z",
  "0x82677498": "??0Properties@Game@@QAA@XZ",
  "0x82677c88": "??1UnkTU5GuidePitchOwner@@QAA@XZ",
  "0x82677ce8": "?ClassName@GemTrainerLoopPanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
