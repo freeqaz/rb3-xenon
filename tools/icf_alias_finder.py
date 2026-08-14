@@ -289,7 +289,25 @@ def cmd_validate(args=None) -> int:
     print()
     print(f"COVERAGE: {len(groups)} groups over {len(live_target_obj_paths())} live "
           f"target objs ({mangled} mangled names indexed)")
-    print(f"  OK (grounded)          {n_ok:5d}")
+    # ⚠ NOT "grounded" -- RENAMED 2026-08-14 (lane GROUNDED-1). This bucket means
+    # ONLY: the survivor is map-resident and every spelling is referenced. It says
+    # NOTHING about whether retail's linker folded anything, and the word "grounded"
+    # was read upstream as if it did (a coordinator brief called ~7 pp of
+    # matched_code "grounded", meaning proven). The demonstration that it cannot
+    # carry that weight: the eight groups 5a8a8bf9 emptied of EVERY folded spelling
+    # -- i.e. groups that now declare no fold at all -- still land in this bucket,
+    # and the count did not move. A label insensitive to the claim it appears to
+    # certify is worse than no label.
+    #
+    # The fold evidence lives per-group in scripts/symbol_aliases.json's `evidence`
+    # field (tiers T1/T2/T3) and is re-derivable on retail bytes today with
+    # tools/icf_pair_adjudicate.py. Measured byte split of the 720,992 B this
+    # mechanism forgives: 82.51% PROVEN on retail bytes, 6.12% blocked on absent
+    # source, 0.10% on one unidentified map address, 0.27% CONTRADICTED (withdrawn
+    # in 5a8a8bf9), 11.00% unattributable by a name-keyed census (anonymous rows).
+    # See docs/decomp/ALIAS_FORGIVENESS_SIZED_2026-08-14.md.
+    print(f"  OK (MAP-CONSISTENT)    {n_ok:5d}  -- survivor map-resident + every "
+          f"spelling referenced. NOT a fold proof; see the comment at this print.")
     for k in sorted(TOLERATED):
         rows = buckets.get(k, [])
         if rows:
@@ -306,7 +324,7 @@ def cmd_validate(args=None) -> int:
             {k: [{"name": n, "address": a, "detail": d} for n, a, d in v]
              for k, v in buckets.items()}, indent=1))
         print(f"wrote {args.json}")
-    print(f"VALIDATE: {'PASS' if n_bad == 0 else 'FAIL'} -- {n_ok} grounded, "
+    print(f"VALIDATE: {'PASS' if n_bad == 0 else 'FAIL'} -- {n_ok} map-consistent, "
           f"{n_tol} tolerated (enumerated above), {n_bad} contradicted, "
           f"{len(groups)} total")
     return 0 if n_bad == 0 else 1
