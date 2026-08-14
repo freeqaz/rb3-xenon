@@ -9939,7 +9939,7 @@ TrackerManager.cpp:
 	.text       start:0x82693140 end:0x82693170
 	.text       start:0x82693170 end:0x826931F8
 	.text       start:0x826931F8 end:0x82693364
-	.text       start:0x82693368 end:0x826933D8
+	.text       start:0x82693368 end:0x82693424
 	.text       start:0x82693428 end:0x826934B0
 	.text       start:0x826934B0 end:0x8269352C
 	.text       start:0x82693530 end:0x82693544
@@ -10572,7 +10572,6 @@ BeatMatchController.cpp:
 	.pdata      start:0x8223F198 end:0x8223F1E0
 	.pdata      start:0x8223F1E0 end:0x8223F1E8
 	.pdata      start:0x8223F1E8 end:0x8223F1F8
-	.text       start:0x826933D8 end:0x82693424
 	.text       start:0x8278FB08 end:0x8278FB2C
 	.text       start:0x8278FB30 end:0x8278FFD0
 	.text       start:0x8278FFD0 end:0x82790054
