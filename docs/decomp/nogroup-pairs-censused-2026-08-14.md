@@ -217,3 +217,107 @@ the decoy control, **never** by the `none` control, which cannot clear an alias.
 5. **Name a class for what it PROVES, not what it suggests.** `MAPNAME_WRONG` was
    renamed to `MAP_REPAIR_CANDIDATE` after measuring that 90% of its `¬T_S` evidence
    was just "our S is unfinished".
+
+---
+
+## ⛔ CORRECTION (lane WRONGCALL-3, 2026-08-14, on `e17ad55d`)
+
+**The "313 GENUINE WRONG-CALLEE SOURCE DEFECTS" headline above does not survive
+re-testing, and 54% of the queue's advertised bytes are NOT source defects.**
+The census reproduces exactly (311 SOURCE_DEFECT + 2 weak on this tree), so this
+is a re-reading of the same evidence, not a different population.
+
+### The mechanism: `!T_F` is TRUE BY CONSTRUCTION for instantiation pairs
+
+Both tests run through `relocs_agree`, which masks relocated fields but **compares
+relocation TARGET NAMES**. Two template instantiations over layout-compatible types
+emit identical code while calling *per-instantiation* helpers (`_Rb_tree<CRC,...>`
+vs `_Rb_tree<int,...>`), so `T_F` is false **whether or not `/OPT:ICF` folded them**
+— and a false `T_F` is precisely what routes a pair into `SOURCE_DEFECT`.
+
+Re-tested on the **masked body alone** (`tools/wrongcall3_requalify.py`, which also
+writes three columns into the queue TSV):
+
+| re-test | pairs | queue `solo_closable_B` | share of bytes |
+|---|---:|---:|---:|
+| size differs ⇒ genuinely different functions | 173 | 13,000 | 32.0% |
+| same size, masked body genuinely differs | 40 | 5,696 | 14.0% |
+| **masked body BYTE-IDENTICAL** (differs only in reloc *names*) | **100** | **21,912** | **54.0%** |
+
+The 100 belong in the census's own **`UNDECIDABLE_relocs`** category — *"bodies agree
+modulo relocation but relocation TARGET NAMES disagree"* — which the census simply
+never evaluated on the `T_S ∧ ¬T_F` branch.
+
+**Proof case — the queue's #1 row, 8,212 B.** `Hmx::CRC` (`utl/CRC.h`) is a lone
+`int mCRC` whose `operator<` is `mCRC < c.mCRC`, i.e. bit-identical to `less<int>`.
+`map<CRC,float>` and `map<int,float>` **cannot differ in a single instruction**, and
+measured they do not. `BandCamShot::Target::UpdateTarget` (1,692 B) and the
+`BeatMatcher` pair (892 B) are fold-shaped too — three of the doc's own calibration
+examples.
+
+⛔⛔ **The actionable hazard is a "fix", not an alias.** The no-alias rule was already
+stated; the mirror image was not. `SongData::mRangeShifts` is **correctly**
+`map<int,float>` (`AddRangeShift(int,float)` indexes by `int`). Editing it to
+`map<CRC,float>` to collect 8,212 B would **break working code to satisfy a fold**.
+
+### The anti-vacuity floor was never applied to this branch
+
+`nogroup_census.py` computes `vac = vacuous(rt) or vacuous(ob)` for every record but
+consults it **only in the fold branch**, where it took that class 23 → 4. **45 of 313
+(14.4%)** SOURCE_DEFECT rows have a retail body below the same floor (<16 B, or >50%
+relocated), so their map-corroboration leg is worthless — `stb r4,0x40(r3); blr`
+matches **any** class with a byte at `0x40`.
+⚠ **This is a weakening, not a refutation**: vacuity manufactures false *equality*,
+and the load-bearing evidence here is a *difference*.
+Instances: the `GameGem` bool getters (12 B — a doc calibration example) and
+`Interp`/`Nlerp` (**4 B**, the literal "`blr` compares equal to everything" case).
+
+### Oracle screen: in the decidable subset the class runs ~6.5:1 the OTHER way
+
+Asking whether the **oracle** sides with retail or with us at each call site
+(21 of 311 decidable; the rest are templates / same-shortname / absent):
+
+| | pairs |
+|---|---:|
+| ORACLE_AGREES_RETAIL ⇒ our source wrong | **2** |
+| ORACLE_AGREES_US ⇒ the **map** is wrong | **13** |
+
+⚠ Small and biased toward non-template pairs — **do not extrapolate to all 313**.
+⛔ The screen's first cut was **vacuous in one direction**: its window began at the
+victim's *definition line*, so any pair whose `ours` name equalled the victim's own
+method name "agreed with us" for free (63 rows). Fixed with a self-match guard.
+
+Worked instances of the ORACLE_AGREES_US direction, all **map** defects:
+* `AppLabel::SetUserName` calls `UserName()`, not `GetTrackIcon()`.
+* `AccomplishmentSongConditional::CheckStarsCondition` calls `GetBestStars`; our
+  source and the oracle are identical, so the address the map calls `GetBestStreak`
+  **is** `GetBestStars`.
+* `0x8278eb78` is `GameGem::SetImportantStrings`, **not**
+  `RndShaderMgr::SetAllowPerPixel` (an inline one-liner in `ShaderMgr.h`): it is a
+  `stb r4,0x40(r3)` setter sitting inside a contiguous run of GameGem accessors,
+  paired with the getter twin `fn_8278EB70` on the same byte, and its only caller is
+  `GemManager::SetupRealGuitarImportantStrings`. **Not repaired here** — left charged
+  rather than guessed at.
+
+### Two claims of mine that FAILED, recorded so nobody re-runs them
+
+* **`collect()`'s first-wins `setdefault` over a sorted glob** does pick a copy the
+  grader never compares (`Rot.obj`'s `SpotlightEntry::Animate` inlines
+  `Interp`→`Nlerp` because `Rot.cpp:147` defines the forwarder in-TU; the other six
+  objs emit `bl Interp`). I predicted this was systematic. **Measured: 8 pairs,
+  2.6%.** Small.
+* **`Interp`/`Nlerp` looked like the best oracle-confirmed defect** (3 sites) and is
+  worth **zero**: the queue prices it `solo_closable_B=0, rows=0`, and
+  `world/LightPreset.obj` — the obj the grader actually reads — already spells
+  `Interp`. Nothing to fix.
+
+### Landed
+
+One row, the only pair that survived every screen: `AccomplishmentPanel::
+HasCorrectPlayerCount`'s unison block (`cfec935d`). **PREDICTED Δmatched +0,
+Δcode_bytes +520, `none` FLAT — MEASURED exactly that**, units 250 → 250, 0 fell off.
+
+★ **The honest re-statement of the class:** of 313, **173 (32.0% of bytes) keep the
+wrong-callee reading on size grounds alone**, and those are where a future lane
+should spend — but each still needs its **map** leg adjudicated on retail bytes,
+because the decidable-subset screen says the map is the wrong side ~6.5:1.

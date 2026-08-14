@@ -847,7 +847,7 @@ bool AccomplishmentPanel::HasCorrectPlayerCount() {
         return false;
     if (pAccomplishment->GetRequiresUnisonAbility()) {
         std::vector<BandUser *> users;
-        TheBandUserMgr->GetParticipatingBandUsers(users);
+        TheBandUserMgr->GetParticipatingBandUsersInSession(users);
         int newnum = TheBandUserMgr->GetNumParticipants();
         for (std::vector<BandUser *>::iterator it = users.begin(); it != users.end();
              ++it) {
