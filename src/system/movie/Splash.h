@@ -59,6 +59,17 @@ public:
     CriticalSection mStateLock;
     SynchronizationEvent mWorkerEvent;
     SynchronizationEvent mMainEvent;
+    // ⛔ NEGATIVE RESULT (lane INSDEL-2, measured both legs): mState is NOT
+    // volatile in retail, despite WaitForState re-reading it.
+    // `?WaitForState@Splash@@` is 1 charge from 100: retail reloads
+    // `lwz r11,0x94(r31)` before the `mState > kResumed` test where we CSE it
+    // against the loop condition's load one branch earlier. Marking mState
+    // `volatile int` DOES close WaitForState (96.552 -> 100.0, +116 B) — but
+    // it simultaneously knocks `?SetImmutableState@Splash@@` OFF 100
+    // (100.0 -> 95.455, base 176 -> 184 B), for a NET -60 B. SetImmutableState
+    // matching at 100 non-volatile is proof retail's member is a plain int, so
+    // WaitForState's reload is CSE/scheduling, not a type qualifier.
+    // Do not re-try volatile here.
     int mState; // 0x94
     CriticalSection mScreenLock;
     std::list<PreparedScreenParams> mPreparedScreens;
