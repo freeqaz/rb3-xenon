@@ -57,10 +57,11 @@ This file contains the progress categories and the compiler flags for your proje
 ## This repo
 
 rb3-xenon's actual file is `config/45410914/config.json` (not `config.json` —
-paths are keyed by title ID, `45410914`). Verified contents as of 2026-07-06:
+paths are keyed by title ID, `45410914`). Verified contents as of 2026-08-14:
 
 ```json
 "progress_categories": { "game": "Game Code", "engine": "Milo Engine Code",
+                          "thirdparty": "Third-Party Libraries",
                           "sdk": "XDK Code", "network": "Quazal Network Code" },
 "asflags": [], "ldflags": [],
 "cflags": { "base": { "flags": ["/nologo", "/wd4355", "/wd4164", "/c",
@@ -77,3 +78,20 @@ size-optimized release, no LTCG) are documented in `CLAUDE.md` under
 "Optimization level". See `config/45410914/objects.json` (via `docs/objects.md`)
 for how individual `.cpp` files pick a `cflags` set (mostly `"base"`; a few
 opt into `"curl"` or add `extra_cflags` like `/Od`).
+
+⚠ **A `progress_category` is NOT set here per object, and it is NOT the library
+group's tag either — it is DERIVED FROM THE SOURCE PATH** by
+`tools/source_category.py`, called from `configure.py` for all 1,434 declared
+objects (lane CATTAG-1; `thirdparty` added by VENDTIER-1). The group tags still
+in `objects.json` are a fallback used only when the classifier returns `None`,
+which is currently true for zero objects. **To change a file's tier, move the
+file** — editing a tag does nothing. Adding an id here without a matching rule
+in `source_category.py` therefore produces a category no object can ever land
+in; adding a rule without an id here makes `tools/project.py` hard-fail with
+"Progress category '<id>' missing from config.progress_categories".
+
+⚠ The tiers are **not** a partition of the library groups. `thirdparty` cuts
+ACROSS them: the vendored libs compile with the engine's flags and are listed in
+the `engine` group, so that group is legitimately tier-heterogeneous (732
+`engine` + 28 `thirdparty`, plus 2 in `curl`). A library group is a **cflags**
+grouping; do not read it as a tier.
