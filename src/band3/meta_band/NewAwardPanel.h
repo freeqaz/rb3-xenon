@@ -48,7 +48,6 @@ public:
     OBJ_CLASSNAME(NewAwardPanel);
     OBJ_SET_TYPE(NewAwardPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~NewAwardPanel() {}
     virtual void Enter();
     virtual void Load();
     virtual void Unload();
