@@ -70,7 +70,11 @@ void PushBack(const DataNode &n) {
             );
         }
 #endif
-        MemTemp tmp;
+        // Retail: the EMPTY MemDoTempAllocations guard (bare `bl 0x827BC270`
+        // == ?MemPushTemp@@YAXXZ, scope-exit fn_827BC2A0), NOT the out-of-line
+        // MemTemp guard — see MemMgr.h. MemTemp emitted a spurious
+        // `addi r3, <frame>` this-setup at each of scope entry and exit.
+        MemDoTempAllocations tmp;
         int x = gNode << 1;
         if (x > 0x7FFF) x = 0x7FFF;
         gArray->Resize(x);
