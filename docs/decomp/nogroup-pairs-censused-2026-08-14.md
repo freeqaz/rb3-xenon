@@ -321,3 +321,98 @@ HasCorrectPlayerCount`'s unison block (`cfec935d`). **PREDICTED Δmatched +0,
 wrong-callee reading on size grounds alone**, and those are where a future lane
 should spend — but each still needs its **map** leg adjudicated on retail bytes,
 because the decidable-subset screen says the map is the wrong side ~6.5:1.
+
+---
+
+## ⛔ CORRECTION 2 (lane WRONGCALL-4, 2026-08-14, on `1ad913dc`)
+
+**Worked the 213 rows WRONGCALL-3 requalified (18,696 B). Landed +9,560 B —
+51.1% of the whole requalified queue — from FIVE map rows and two source fixes.**
+Both A/Bs hit their pre-registered numbers (one exactly), Δmatched +0 as
+predicted, 0 units fell off, native gate PASS 18/18 / 0 SKIPs.
+
+| row | B | which side was wrong | witness |
+|---|---:|---|---|
+| `Terminate@Movie` → **`MsToTick`** @ `0x827C90B8` | **+5,976** | MAP (+ a source co-defect) | TempoMap.s STORES `&gSimpleTempoMap` into `lbl_82C78F5C` ⇒ it is `TheTempoMap`; vtable `+0x8` is `TimeToTick` because `+0x4` is `SimpleTempoMap::TickToTime` (`f * mTempo`) 24 B later |
+| GameGem 0x12 ladder, 5 rows shifted | **+2,676** | **BOTH — mirror images** | `IsRealGuitarChord` opens `lbz r11,0x12(r3); clrrwi. r11,r11,7` (keeps only 0x80) and our source opens it `if (!mRealGuitar)` |
+| `SetAllowPerPixel@RndShaderMgr` → **`SetImportantStrings@GameGem`** @ `0x8278EB78` | **+904** | MAP | all 13 other `RndShaderMgr` methods cluster at `0x8246B5F0`-`0x8246BD70`, 3.3 MB away; `0x8278EB78` is `stb r4,0x40(r3)` right after a `lbz r3,0x40(r3)` getter twin |
+
+### ★★★ The "map vs source" framing is itself wrong — the paying class is BOTH
+
+WRONGCALL-3's decidable-subset screen ran 13 "map wrong" : 2 "source wrong" and
+declined to extrapolate. On this larger, byte-adjudicated sample the *direction*
+held (the map was implicated in 4 of 5 decidable rows) **but the binary framing
+did not**: the two largest results were **COMPENSATING PAIRS in which BOTH sides
+were wrong in mirror-image ways**, a third category the screen cannot express.
+
+That category is where the bytes are, and it is **only collectable by fixing both
+sides in ONE commit**:
+
+* **GameGem**: the map named the 0x12 bit-getters one position EARLY; our header
+  ended the 0x10 group with `mRealGuitar` instead of starting the 0x12 group with
+  it. The errors cancelled, so all five accessor BODIES read fuzzy 100 while four
+  CALL SITES were charged. Fixing either side alone REGRESSES.
+* **`BandTrack::GetTrackIcon` / `UserName`** (84 B, `0x8234D6C8`/`0x8234D720`):
+  the map has them **TRANSPOSED — proven on retail bytes**, not inferred.
+  `lbl_82000C55` is a lone `0x00` (= `""`) and `lbl_82039E74` is `.string "G"`;
+  our `UserName()` falls back to `MakeString("")` and `GetTrackIcon()` to
+  `MakeString("G")`, so `0x8234D6C8` is `UserName`. **NOT REPAIRED, and do not
+  repair it map-only**: both bodies are *already* fuzzy 100 because `name_check`
+  FORGIVES the placeholder `lbl_` literal, and they match on the *vtable slot*
+  (`0x84` vs `0x7c`) — i.e. our own vtable order mirrors the transposition. A
+  map-only swap is **+84 on AppLabel, −168 on the two bodies = net −84**. The
+  honest repair needs a vtable reorder in the parent, which no 84 B row justifies.
+
+⇒ **Before repairing any map row, ask what our own side does with it.** The
+compensating pair is not rare here; it is the modal shape of the big rows.
+
+### The mechanism behind both big map defects is the same, and it is FIXABLE UPSTREAM
+
+An unpinned or mis-pinned TU's functions fall inside a neighbour's over-broad
+`.text` pin and inherit that neighbour's symbol names:
+
+* **`system/utl/TimeConversion.cpp` is compiled but has NO `splits.txt` entry**, so
+  its functions sit inside `StringTable.cpp`'s pin `0x827C8C88`-`0x827C9180`.
+  `StringTable.cpp` COMDAT-scatter-includes `{GlitchFinder, Locale, Movie,
+  TimeConversion}` — which is exactly why TimeConversion's addresses were handed
+  **Movie's** symbols. `0x827C9110` is still mis-named `?Init@Movie@@SAXXZ`; it
+  uses vtable `+0x4` (`TickToTime`) so it is **`TickToMs`**. Not repaired here:
+  we do not define `TickToMs`, so renaming it alone LOSES the 24 B its false
+  pairing currently earns.
+* **`DepthBuffer3D.cpp`'s pin `0x8278EB78`-`0x8278EBA8` is WRONG** — that 48-byte
+  range is a hole carved out of GameGem.cpp's accessor run and every function in
+  it (`stb 0x40`, `lbz 0x30`, `lwz 0x38`, `lbz 0x31`) is a GameGem accessor.
+
+⇒ **a pinning lane can drain this vein at the source rather than row by row.**
+
+### Rows adjudicated and DELIBERATELY not taken
+
+* **`SetVolume@MoggClip`** (148 B, `default/Sfx`) — **the map is RIGHT**, proven:
+  `fn_8270D720` stores `0x40` = `mControllerVolume`, `fn_8270D748` stores `0x48`
+  = `mVolume`. So **our source is the wrong side**, and so is the oracle — rb3-Wii's
+  `SfxInst::UpdateVolume` also calls `SetControllerVolume`. This is a genuine
+  retail-X360-vs-Wii-dev divergence. Left alone because `SetVolume` is *virtual*
+  in our header, so a direct `bl` implies a call form (explicit qualification, or
+  a non-virtual retail declaration) that I could not witness.
+* **`GetType@AccomplishmentOneShot`** (452 B, the largest row left) — `fn_82654AB8`
+  is `li r3,0x9; blr`, **8 bytes, below the anti-vacuity floor**. `li r3,N; blr`
+  compares equal to every function returning N. Undecidable; fold-suspect ⇒
+  FOLDPROVE-1's territory, not a source row.
+* The **9 reciprocal pairs** in the queue were left untouched on principle — a
+  reciprocal charge is the transposed-map signature, most of them are template
+  instantiations (which cannot be transposed at a call site, because the type
+  picks them), and a family permutation is what cost WRONGCALL-1 −1,248 B.
+* `AccomplishmentCmp` (1,248 B) and `GetParticipatingBandUsersInSession` (520 B)
+  are **already settled** — reverted by WRONGCALL-1 and landed by WRONGCALL-3
+  respectively. The queue TSV is static and still lists both.
+
+### Two side-findings, verified, for whoever owns GameGem layout
+
+* **`mFrets` is at `0x32`, not `0x19`.** `GameGem.h`'s comment asserting "mFrets
+  stays at 0x19" is WRONG. objdiff on `IsRealGuitarChord` shows
+  `addi r8,r3,0x32` vs our `0x19`, and `GetFret` (`fn_8278EAC8`) is
+  `add r11,r4,r3; lbz r3,0x32(r11)`. After this lane's bitfield fix that offset is
+  the function's **only** remaining mismatch — closing it finishes a 92 B row.
+* **Retail's `MsToBeat` (`fn_827C90D0`) has no `if (TheBeatMap && TheTempoMap)`
+  guard either** — 17 straight-line instructions, no conditional branch. Same
+  DC3-is-newer divergence as `MsToTick`, still unfixed.
