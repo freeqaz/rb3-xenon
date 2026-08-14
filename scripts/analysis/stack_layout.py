@@ -1019,8 +1019,15 @@ def _find_objdiff_cli(project_dir: str) -> str:
 
 
 def run_objdiff_for_symbol(symbol: str, project_dir: Optional[str] = None,
-                            unit: Optional[str] = None) -> str:
-    """Run objdiff-cli diff and return path to JSON output."""
+                            unit: Optional[str] = None,
+                            ruler: str = "graded") -> str:
+    """Run objdiff-cli diff and return path to JSON output.
+
+    ★ The ruler is passed EXPLICITLY and self-labelled (lane MCPRULER-1,
+    2026-08-14). This used to pass no `-c` at all; see the long note on
+    diff_inspect.run_objdiff_for_symbol for why "no `-c`" stopped meaning
+    `DataValue` on 2026-08-12 and silently started meaning `name_check`.
+    """
     import hashlib
     import subprocess
 
@@ -1036,11 +1043,27 @@ def run_objdiff_for_symbol(symbol: str, project_dir: Optional[str] = None,
     objdiff = _find_objdiff_cli(project_dir)
 
     print(f"Running objdiff for: {symbol}", file=sys.stderr)
+
+    ruler_args: list = []
+    try:
+        try:
+            from analysis.ruler import resolve_ruler
+        except ImportError:
+            from ruler import resolve_ruler  # same-directory fallback
+        resolved = resolve_ruler(project_dir, ruler)
+        print(f"[ruler] {resolved.banner()}", file=sys.stderr)
+        ruler_args = resolved.args
+    except ImportError:
+        print("[ruler] WARNING: could not resolve ruler (analysis.ruler not "
+              "importable) — objdiff defaults apply, percent is UNLABELLED",
+              file=sys.stderr)
+
     cmd = [
         objdiff, "diff",
         "-p", project_dir,
         symbol,
         "--include-instructions", "--build", "--incremental",
+        *ruler_args,
         "-f", "json", "-o", json_path,
     ]
     if unit:
@@ -1254,6 +1277,12 @@ def main() -> None:
                              "Default is to REFUSE with exit 2.")
     parser.add_argument("--unit", default=None, help="Unit for objdiff disambiguation")
     parser.add_argument("--project-dir", default=None, help="Project root")
+    parser.add_argument("--ruler", default="graded",
+                        choices=["graded", "none", "data_value"],
+                        help="Diff ruler. 'graded' (default) matches "
+                             "report.json's provenance.diff_config. 'none' "
+                             "ignores relocation names. 'data_value' charges "
+                             "relocation addresses too. Always printed to stderr.")
     parser.add_argument("--show-equal", action="store_true",
                         help="Also list MATCH rows (default: hide)")
     parser.add_argument("--show-callee-save", action="store_true",
@@ -1279,7 +1308,8 @@ def main() -> None:
         json_path = args.json_file
     else:
         json_path = run_objdiff_for_symbol(
-            args.symbol, project_dir=args.project_dir, unit=args.unit)
+            args.symbol, project_dir=args.project_dir, unit=args.unit,
+            ruler=args.ruler)
 
     with open(json_path) as f:
         data = json.load(f)

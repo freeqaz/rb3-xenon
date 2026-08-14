@@ -54,6 +54,13 @@ from orchestrator.database import (
     DEFAULT_EXCLUDE_PATTERNS,
 )
 from tools.struct_db import StructDB
+from analysis.ruler import (
+    RULER_DATA_VALUE,
+    RULER_GRADED,
+    RULER_NONE,
+    VALID_RULERS,
+    resolve_ruler,
+)
 try:
     from tools.merged_symbols import MergedSymbolLookup
 except ImportError:
@@ -313,6 +320,30 @@ def _resolve_ambiguous_symbol(output: str, hint: str | None) -> str | None:
     return candidates[0]
 
 
+def _fmt_pct(pct: float) -> str:
+    """Format a match percent WITHOUT rounding a sub-100 value up to 100.0.
+
+    ★ `?Handle@OvershellSlot@@` scores 99.995690 on the graded ruler — a row
+    whose 9,276 bytes the grader withholds entirely, because `matched_code` is
+    all-or-nothing per row at `fuzzy == 100`. Printed as `{:.1f}` that reads
+    `100.0%`, which is the same "confident wrong answer" this ruler work exists
+    to remove. Only an EXACT 100.0 may render as `100.0`.
+    """
+    try:
+        val = float(pct)
+    except (TypeError, ValueError):
+        return str(pct)
+    if val == 100.0:
+        return "100.0"
+    for places in range(1, 10):
+        text = f"{val:.{places}f}"
+        if float(text) != 100.0:
+            return text
+    # Astronomically close to 100 but NOT 100. Never render a bare number here:
+    # any fixed-width form rounds to "100.0" and would assert completion.
+    return f"{val!r} (<100, NOT complete)"
+
+
 class DecompMCPServer:
     """MCP Server providing decomp orchestration tools."""
 
@@ -528,6 +559,21 @@ class DecompMCPServer:
                                 "type": "string",
                                 "description": "Unit name to disambiguate when a symbol exists in multiple units (e.g. 'default/link_glue'). Required when objdiff reports 'Multiple instances found'.",
                             },
+                            "ruler": {
+                                "type": "string",
+                                "enum": ["graded", "none", "data_value"],
+                                "description": (
+                                    "Which diff ruler to score on. 'graded' (DEFAULT) reads "
+                                    "report.json's `provenance.diff_config` so this percent equals "
+                                    "the grader's `fuzzy_match_percent` exactly. 'none' ignores "
+                                    "relocation NAMES (a wrong callee and a folded callee both read "
+                                    "equal) — an UPPER BOUND, useful only as the control half of a "
+                                    "graded-vs-none delta that isolates the relocation-name class. "
+                                    "'data_value' additionally charges relocation ADDRESSES — reads "
+                                    "LOWER than graded, for hunting a wrong `bl` callee. The ruler "
+                                    "used is always labelled in the output."
+                                ),
+                            },
                         },
                         "required": ["symbol", "project_dir"],
                     },
@@ -589,7 +635,24 @@ class DecompMCPServer:
                             "diff_mode": {
                                 "type": "string",
                                 "enum": ["normalized", "raw"],
-                                "description": "Diff scoring mode. 'normalized' (default) ignores relocation address differences (functionRelocDiffs=none). 'raw' includes relocation diffs so you can inspect which relocations differ.",
+                                "description": (
+                                    "DEPRECATED alias for `ruler`; use `ruler` instead. "
+                                    "'normalized' (default) => ruler=graded; 'raw' => ruler=data_value "
+                                    "(relocation differences charged, so you can see which relocations differ). "
+                                    "`ruler` wins when both are given."
+                                ),
+                            },
+                            "ruler": {
+                                "type": "string",
+                                "enum": ["graded", "none", "data_value"],
+                                "description": (
+                                    "Which diff ruler to score on. 'graded' (DEFAULT) reads "
+                                    "report.json's `provenance.diff_config`, so the percent equals the "
+                                    "grader's `fuzzy_match_percent`. 'none' ignores relocation NAMES "
+                                    "(upper bound; the control half of a graded-vs-none delta). "
+                                    "'data_value' charges relocation ADDRESSES (defect-hunting; reads "
+                                    "lower than graded). The ruler used is labelled in the output."
+                                ),
                             },
                         },
                         "required": ["symbol", "mode", "project_dir"],
@@ -718,9 +781,15 @@ class DecompMCPServer:
                 # Guard: validate base_size > 0 before accepting COMPLETE
                 if status == "complete":
                     try:
+                        # `base_size` is ruler-INDEPENDENT (it is the base
+                        # symbol's byte length, not a score), so this check was
+                        # never wrong. It uses the graded ruler anyway so that
+                        # exactly one ruler resolution path exists in this file
+                        # — the previous hardcoded `-c functionRelocDiffs=none`
+                        # here was a copy of the constant that rotted elsewhere.
                         check_result = subprocess.run(
                             [str(self.project_root / "bin" / "objdiff-cli"), "diff", "-p", str(self.project_root), symbol,
-                             "-c", "functionRelocDiffs=none"],
+                             *resolve_ruler(self.project_root).args],
                             capture_output=True, text=True, timeout=60,
                         )
                         stdout = check_result.stdout
@@ -1559,6 +1628,7 @@ class DecompMCPServer:
         concise = args.get("concise", True)
         full_listing = args.get("full_listing", False)
         unit = args.get("unit", None)
+        ruler_sel = args.get("ruler", RULER_GRADED)
 
         if not symbol:
             return [TextContent(type="text", text="Error: No symbol provided.")]
@@ -1597,39 +1667,38 @@ class DecompMCPServer:
 
         # Common args for both runs.
         #
-        # ★ These four flags REPLICATE `objdiff-cli report generate`'s hardcoded
-        # config (objdiff-cli/src/cmd/report.rs:406-412) so that this tool's
-        # `normalized_match_percent` EQUALS report.json's `fuzzy_match_percent`
-        # exactly. `objdiff-cli diff` has its own, DIFFERENT hardcoded defaults
-        # (diff.rs:872 => FunctionRelocDiffs::DataValue) plus schema defaults for
-        # the other three, and objdiff.json sets no project options to reconcile
-        # them.
+        # ★ The diff config is RESOLVED AT RUNTIME from the artifact the grading
+        # run itself wrote (report.json's `provenance.diff_config`), never
+        # hardcoded -- see scripts/analysis/ruler.py for the full rationale.
         #
-        # Measured (lane EB-4, 2026-08-03, docs/decomp/OBJDIFF_DIFF_VS_REPORT_SETTLED_2026-08-03.md):
-        # with functionRelocDiffs=none ALONE, 118 of 1,639 named sub-100 rows
-        # disagreed with the graded report value by up to 14.75 pp, and 11 of
-        # 20,667 rows the grader scores at fuzzy==100 read 97.7-99.3 here -- i.e.
-        # lanes grinding rows that are already complete. Adding
-        # ppc.calculatePoolRelocations=false takes that to 0/1,639 (it is both
-        # necessary and sufficient; combineTextSections is inert and
-        # combineDataSections moves one row -- all three are set anyway, because
-        # the rule is "replicate the grader", not "add what fixed the sample").
+        # History, because it is the whole point (lane MCPRULER-1, 2026-08-14):
+        # this used to hardcode four `-c` flags including
+        # `functionRelocDiffs=none`. That was CORRECT when lane EB-4 wrote it on
+        # 2026-08-03 and became a LIE on 2026-08-12 (`d04c83df`), when the
+        # project shipped `options = {"functionRelocDiffs": "name_check"}` in
+        # objdiff.json. Measured on this tree at `1f078361`: **5,555 rows /
+        # 674,936 B** read `fuzzy == 100` under `none` but below 100 on the
+        # graded ruler -- i.e. rows this tool called "Complete, no action needed"
+        # while the grader withheld every byte. A second hardcoded constant would
+        # rot the same way, so DO NOT reintroduce one.
         #
         # ⚠ Do NOT read this percent as report's `match_percent_normalized`
         # (`mpn`) -- the ruler `matched_functions` counts on. `mpn` excludes
         # arg-only penalties, is >= this value ALWAYS, and is not emitted by
         # `objdiff-cli diff` at all. A sub-100 reading here NEVER proves a row is
         # unmatched; confirm against report.json.
+        try:
+            ruler = resolve_ruler(project_dir, ruler_sel)
+        except ValueError as e:
+            return [TextContent(type="text", text=f"Error: {e}")]
+
         base_args = [
             str(objdiff_cli),
             "diff",
             "-p", str(project_dir),
             symbol,
             "--verdict",
-            "-c", "functionRelocDiffs=none",
-            "-c", "ppc.calculatePoolRelocations=false",
-            "-c", "combineDataSections=true",
-            "-c", "combineTextSections=true",
+            *ruler.args,
         ]
         if unit:
             base_args.extend(["-u", unit])
@@ -1677,19 +1746,18 @@ class DecompMCPServer:
                     resolved = _resolve_ambiguous_symbol(combined_output, param_hint)
                     if resolved:
                         # Update base_args with the resolved symbol.
-                        # ⚠ Keep this flag list IDENTICAL to the one above --
-                        # a retry on a different ruler silently reports a
-                        # different number for the same symbol.
+                        # ⚠ The retry reuses the SAME resolved `ruler` object --
+                        # a retry on a different ruler would silently report a
+                        # different number for the same symbol. (This used to be
+                        # a hand-copied duplicate of the flag list, kept in sync
+                        # by a comment.)
                         base_args = [
                             str(objdiff_cli),
                             "diff",
                             "-p", str(project_dir),
                             resolved,
                             "--verdict",
-                            "-c", "functionRelocDiffs=none",
-                            "-c", "ppc.calculatePoolRelocations=false",
-                            "-c", "combineDataSections=true",
-                            "-c", "combineTextSections=true",
+                            *ruler.args,
                         ]
                         if unit:
                             base_args.extend(["-u", unit])
@@ -1752,6 +1820,14 @@ class DecompMCPServer:
             )
             output = md_result.stdout
 
+            # ★ Disclose the ruler. A percentage without its ruler is not a
+            # measurement: the SAME tree scores 3,722,476 B / 36.07% on
+            # `name_check` and 4,397,412 B / 42.61% on `none`. Every percent
+            # below is on the ruler named here.
+            output = f"_{ruler.label()}_\n\n" + output
+            if ruler.selector != RULER_GRADED or ruler.warning:
+                output += "\n\n" + ruler.banner()
+
             # 3) Enrich from JSON and append enrichment sections
             enrichment = ""
             try:
@@ -1760,14 +1836,15 @@ class DecompMCPServer:
                 enrichment = self._format_enrichment_sections(data, skip_rb3=concise)
 
                 # Fix match% in markdown header: use fuzzy_match_percent from JSON
-                # (which respects functionRelocDiffs=none) to override the markdown
+                # (which respects the resolved ruler) to override the markdown
                 # header which may not apply the config consistently.
                 fuzzy_pct = data.get("fuzzy_match_percent")
                 raw_pct = data.get("raw_match_percent")
                 if fuzzy_pct is not None and raw_pct is not None:
                     output = re.sub(
                         r"Match: [\d.]+% normalized \([\d.]+% raw\)",
-                        f"Match: {fuzzy_pct:.1f}% normalized ({raw_pct:.1f}% raw)",
+                        f"Match: {_fmt_pct(fuzzy_pct)}% normalized "
+                        f"({_fmt_pct(raw_pct)}% raw)",
                         output,
                         count=1,
                     )
@@ -1998,6 +2075,7 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
         baseline_json = args.get("baseline_json", None)
         unit = args.get("unit", None)
         diff_mode = args.get("diff_mode", "normalized")  # "normalized" or "raw"
+        ruler_sel = args.get("ruler")  # explicit ruler wins over diff_mode
 
         if not symbol:
             return [TextContent(type="text", text="Error: No symbol provided.")]
@@ -2029,20 +2107,31 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
         # objdiff-cli is always in the main repo bin/
         objdiff_cli = self.project_root / "bin" / "objdiff-cli"
 
-        # In "normalized" mode (default), ignore relocation address noise.
-        # In "raw" mode, include relocation diffs so they can be inspected.
-        # Non-raw mode replicates `report generate`'s config exactly (see the
-        # long note on run_objdiff's base_args, and lane EB-4's doc
-        # docs/decomp/OBJDIFF_DIFF_VS_REPORT_SETTLED_2026-08-03.md) so the
-        # percent shown here equals report.json's `fuzzy_match_percent`.
-        # `raw` mode is deliberately left fully raw -- the caller asked to SEE
-        # relocation differences, not to match the grader.
-        reloc_config = [
-            "-c", "functionRelocDiffs=none",
-            "-c", "ppc.calculatePoolRelocations=false",
-            "-c", "combineDataSections=true",
-            "-c", "combineTextSections=true",
-        ] if diff_mode != "raw" else []
+        # Ruler resolution (lane MCPRULER-1, 2026-08-14). See
+        # scripts/analysis/ruler.py for why this is read at runtime rather than
+        # hardcoded.
+        #
+        # `ruler` is the explicit control. `diff_mode` is kept for backwards
+        # compatibility and maps onto it:
+        #   normalized -> graded      (equals report.json's fuzzy_match_percent)
+        #   raw        -> data_value  (relocation ADDRESSES charged, so a wrong
+        #                              `bl` callee is visible)
+        #
+        # ⚠ `raw` USED to be implemented as "pass no `-c` at all", which landed
+        # on `objdiff-cli diff`'s own base of `FunctionRelocDiffs::DataValue`.
+        # That stopped being true on 2026-08-12 when objdiff.json gained an
+        # `options` block: `diff` applies project options over its base, so "no
+        # `-c`" silently started meaning `name_check` and `raw` mode stopped
+        # being raw. Mapping it to an EXPLICIT data_value restores the
+        # documented behaviour instead of depending on a base config that a
+        # config file can move out from under it.
+        if ruler_sel is None:
+            ruler_sel = RULER_DATA_VALUE if diff_mode == "raw" else RULER_GRADED
+        try:
+            ruler = resolve_ruler(project_dir, ruler_sel)
+        except ValueError as e:
+            return [TextContent(type="text", text=f"Error: {e}")]
+        reloc_config = ruler.args
 
         try:
             # ── save_baseline mode ──
@@ -2196,7 +2285,10 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
 
                 if not mismatches:
                     match_pct = data.get("fuzzy_match_percent", 100)
-                    return [TextContent(type="text", text=f"No mismatches — all {total} instructions match ({match_pct}%).")]
+                    return [TextContent(type="text", text=(
+                        f"No mismatches — all {total} instructions match ({match_pct}%).\n\n"
+                        f"_{ruler.label()}_"
+                    ))]
 
                 # Cap at 30
                 MAX_MISMATCHES = 30
@@ -2207,9 +2299,23 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                 from analysis.diff_inspect import fmt_instr as _fmt_instr, diff_annotation as _diff_annotation
 
                 raw_pct = data.get("raw_match_percent", data.get("fuzzy_match_percent", "?"))
-                header = f"## Mismatched Instructions ({len(mismatches)} of {total} total) — {raw_pct}% raw match\n"
-                if diff_mode == "raw":
-                    header += "*Raw mode: relocation diffs included*\n"
+                graded_pct = data.get("fuzzy_match_percent", "?")
+                header = (
+                    f"## Mismatched Instructions ({len(mismatches)} of {total} total)\n"
+                    f"{graded_pct}% on this ruler · {raw_pct}% raw\n\n"
+                    f"_{ruler.label()}_\n"
+                )
+                # ★ The COUNT is ruler-dependent, not just the percent. On the
+                # `none` ruler every relocation-NAME difference is uncharged, so
+                # a wrong/unproven callee vanishes from this table entirely —
+                # which is how `?Handle@CustomizePanel@@` was briefed to three
+                # consecutive lanes as "behind exactly 3 mismatches" when the
+                # graded ruler charged five sites.
+                if ruler.selector != RULER_GRADED:
+                    header += (
+                        f"\n⚠ This count is on the **{ruler.reloc_mode}** ruler and "
+                        f"will differ from the graded one.\n"
+                    )
                 if truncated:
                     header += f"*Showing {MAX_MISMATCHES} of {len(mismatches)} mismatches*\n"
 
@@ -2259,6 +2365,7 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                     sys.executable, str(stack_script),
                     "--symbol", symbol,
                     "--project-dir", str(project_dir),
+                    "--ruler", ruler.selector,
                 ]
                 if unit:
                     cmd.extend(["--unit", unit])
@@ -2267,7 +2374,7 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                     timeout=300,
                 )
 
-                output = result.stdout
+                output = f"_{ruler.label()}_\n\n" + result.stdout
                 if result.stderr:
                     filtered_stderr = _filter_build_output(result.stderr)
                     if filtered_stderr:
@@ -2295,6 +2402,7 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                     "--symbol", symbol,
                     f"--{mode}",
                     "--project-dir", str(project_dir),
+                    "--ruler", ruler.selector,
                 ]
                 if unit:
                     cmd.extend(["--unit", unit])
@@ -2303,7 +2411,7 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                     timeout=300,
                 )
 
-                output = result.stdout
+                output = f"_{ruler.label()}_\n\n" + result.stdout
                 if result.stderr:
                     filtered_stderr = _filter_build_output(result.stderr)
                     if filtered_stderr:
