@@ -44,7 +44,6 @@ public:
     OBJ_SET_TYPE(QuestFilterPanel);
     NEW_OBJ(QuestFilterPanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~QuestFilterPanel() {}
     virtual void Enter();
     virtual void Load();
     virtual void Unload();

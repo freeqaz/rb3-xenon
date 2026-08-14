@@ -217,6 +217,17 @@ void GemTrainerPanel::HandleLooping() {
     }
 }
 
+// DEFERRED as codegen, lane INSDEL-3 (2026-08-14). 93.0%, 2 charges: we emit a
+// surplus trailing `clrlwi r3,r11,24` and compute the compare into r11 where
+// retail puts it straight in r3.
+// ⚠ This is the SAME charge signature as CustomizePanel::IsLoaded, which lane
+// INSDEL-3 CLOSED -- but there the cause was a ternary creating a JOIN POINT for
+// two return paths. Here the full listing has NO BRANCH AT ALL, so there is no
+// join and the mask is pure bool materialization (codegen behaviour, not a
+// source token). Removing the `fret` local is also inert: the `extsb r10,r3` is
+// forced by GetHighestFret() returning char, not by the local.
+// ⇒ the signature does not carry the direction; do not re-open on the strength
+// of the IsLoaded win.
 bool GemTrainerPanel::GetFretboardView(const GameGem &gem) const {
     char fret = gem.GetHighestFret();
     return fret <= 11;
