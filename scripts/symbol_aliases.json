@@ -27045,6 +27045,19 @@
     "?SendMsgToAll@SessionMgr@@QAAXAAVNetMessage@@W4PacketType@@@Z"
    ],
    "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x825857a0 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 3 charged name_check sites. Per spelling: [?SendMsgToAll@SessionMgr@@QAAXAAVNetMessage@@W4PacketType@@@Z map_name_unresolved CF2, 3 sites: identical: 1/2 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]"
+  },
+  {
+   "name": "A?$hash_map@H",
+   "address": "0x825d3228",
+   "survivor": "??A?$hash_map@HPAVSongUpgradeData@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVSongUpgradeData@@ABH@Z",
+   "folded": [
+    "??A?$hash_map@HHU?$hash@H@stlpmtx_std@@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAHABH@Z",
+    "??A?$hash_map@HPAVColorPalette@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVColorPalette@@ABH@Z",
+    "??A?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVSongMetadata@@ABH@Z",
+    "??A?$hash_map@HPAVSongStatus@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVSongStatus@@ABH@Z",
+    "??A?$hash_map@HPAVUIComponent@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVUIComponent@@ABH@Z"
+   ],
+   "evidence": "ICF fold group adjudicated by lane ICFPROVE-1 with tools/icf_pair_adjudicate.py --family, on RETAIL BYTES, no metric consulted. Flat T1 (icf_alias_build) REFUTES this group and the refutation is FALSE: relocs_agree compares relocation target NAMES literally, so it cannot see through a fold in the CALLEE, and /OPT:ICF is iterative. Evidence: (E1) masked bodies identical, 120 B both sides. (E2) the retail survivor is INTERNALLY INCONSISTENT for any single-T reading -- it calls the _M_find survivor named for SongMetadata and the _M_insert survivor named for SongStatus, i.e. THREE different T in one function, which no non-folded instantiation can be. (E3) the _M_find leaf fold is already T1-PROVEN and landed as group 0x82576088 and already contains the UIComponent spelling; --chase re-derives SLOT-FOLD-OK for it independently. (E4) PIGEONHOLE: 6 of our spellings share (body, slot-0 callee body) and map onto EXACTLY 1 retail address -- and the partition discriminates rather than blurs, correctly EXCLUDING fn_827B0E78, which has the identical masked body but the Symbol-keyed _M_find. That exclusion is the control: it is the in-family decoy --chasetest refuses. The T in hash_map<int,T*> is not recoverable from retail machine code -- the whole 4-byte-value family compiles to one body and folds to one address -- so the survivor's SongUpgradeData spelling is one arbitrary member's name and charging our UIComponent spelling charges a distinction the retail binary does not contain."
   }
  ]
 }
