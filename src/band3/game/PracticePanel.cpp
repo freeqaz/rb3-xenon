@@ -147,7 +147,7 @@ void PracticePanel::Poll() {
                 GetTrackPanel()->Handle(setShowingMsg, true);
             } else {
                 players[0]->SetCrowdMeterActive(false);
-                float ms = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0;
+                float ms = TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f;
                 VocalPlayer *vp = dynamic_cast<VocalPlayer *>(players[0]);
                 if (vp && vp->ScoringEnabled()) {
                     mGuidePitch->Poll(ms);
@@ -186,12 +186,21 @@ void PracticePanel::Poll() {
                         GemPlayer *gp = dynamic_cast<GemPlayer *>(players[0]);
                         if (gp) {
                             BeatMatchController *cnt = gp->GetController();
-                            bool needsReset = true;
                             Symbol cntSym = TheGameConfig->GetController(gp->GetUser());
-                            if (cntSym == keys && cntSym == gp->GetControllerType())
-                                needsReset = false;
-                            if (needsReset) {
+                            // RB3-360 retail: the reset is gated on a CACHED
+                            // last-controller Symbol member (unk64), not on the
+                            // Wii build's `cntSym == keys && cntSym ==
+                            // gp->GetControllerType()` pair.  Retail bytes:
+                            //   lwz r11,0x64(this) / lwz r10,cntSym / cmplw
+                            //   beq  -> skip                     (one compare)
+                            //   ... cnt->IsDisabled(); gp->ResetController(..)
+                            //   lwz r11,cntSym / stw r11,0x64(this)  <- store
+                            // The store back into unk64 is inside the if (its
+                            // skip target is the same label the outer `gp==0`
+                            // test branches to).
+                            if (cntSym != unk64) {
                                 gp->ResetController(cnt->IsDisabled());
+                                unk64 = cntSym;
                             }
                         }
                     }

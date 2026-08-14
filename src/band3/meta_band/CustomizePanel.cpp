@@ -258,6 +258,60 @@ void CustomizePanel::UpdateAssetProvider() {
 // and with it a bool->int mask) was TRIED and changed NOTHING -- do not re-fund
 // that idea.  For (a): the slot 0x94(r31) is the setup_asset_patch_data Symbol
 // temp, and in our build nothing ever reloads `this` from it.
+//
+// ── lane RESIDUAL-1 (2026-08-14): SECOND DOCUMENTED NEGATIVE.  DO NOT REOPEN
+//    THIS ROW FOR THE BYTES.  Read the next paragraph before anything else.
+//
+// ⛔⛔ THE "5,036 B BEHIND 3 MISMATCHES" FRAMING IS WRONG, AND THE ERROR IS AN
+// INSTRUMENT ERROR.  `run_objdiff` reports on the `none` ruler, which is
+// STRUCTURALLY BLIND to relocation-NAME charges.  `report.json` — the graded
+// ruler — has shipped `functionRelocDiffs=name_check` since d04c83df, and on it
+// this row has FIVE charged sites, not three:
+//     3x insert/delete  (the two below), plus
+//     2x diff_arg from ICF fold-aliases:
+//       [ 330] tgt ??A?$hash_map@HPAVSongUpgradeData@@...  vs
+//              base ??A?$hash_map@HPAVUIComponent@@...
+//       [1112] tgt ?RemoveCPPT@CCFGLM@NUISPEECH@@AAAXPAVCPPT@2@G@Z  vs
+//              base ?TakePortrait@ClosetMgr@@QAAXXZ
+// Measured on the graded ruler: fuzzy 99.75378 / mpn 99.76172.  `mpn` excludes
+// arg penalties, `fuzzy` includes them.  ⇒ CLOSING ALL THREE INSTRUCTIONS BUYS
+// mpn == 100 (+1 matched_function) AND ZERO BYTES, because `matched_code` is
+// all-or-nothing on `fuzzy == 100`.  The row would simply join the documented
+// "mpn==100, fuzzy<100" population.  The 5,036 B additionally requires BOTH ICF
+// aliases to be proven on retail bytes and added to icf_aliases.map — and an
+// UNPROVEN alias lifts the score by construction (integrity hazard).
+//
+// (a) is now DIAGNOSED, not guessed.  cl.exe /FAs names the slot:
+//         stw r10,$T266039(r31)   ; 148 (94h)      <- src line 1178
+// It is a COMPILER TEMPORARY holding the vbase-adjusted `this` (r26-0xb8),
+// created by the INLINED MEMBER CALL, and it is dead.  Control, with an
+// untreated population: in our build 4 of 4 inlined member calls in Handle
+// home `this` (in_clothing_state, set_current_character_patch,
+// refresh_patch_edit, has_patch); RETAIL HAS THE HOME IN 3 OF THOSE 4 —
+// has_patch's is `subi r11,r26,0xb8 / stw r11,0x78(r31)`, equally dead.  Only
+// in_clothing_state lacks it.  ⇒ retail did NOT inline a member call of `this`
+// there.  But retail DOES have the trailing `clrlwi` that ONLY the call form
+// produces (replacing the call with the raw `mCustomizeState >= .. && <= ..`
+// comparison drops the mask AND swaps retail's stw order).  ⇒ retail inlined a
+// bool-returning NON-MEMBER.  No plausible source shape for that was found —
+// both call sites and rb3-Wii spell it as a const member — so nothing was
+// changed.  RULED OUT by compiling and reading the listing, not by argument:
+//     * `const` on InClothingState()          -> home still emitted (identical)
+//     * in-class (header) definition instead of out-of-line -> home still emitted
+//
+// (b) RULED OUT, new: moving the `!= 0` INSIDE a bool-returning HasLicense
+// (which is what rb3-Wii's arm shape implies, since its arm has no `!= 0`)
+// changes NOTHING — MSVC emits no truncation at a bool return boundary when the
+// value came from a comparison.  A scan of the entire TU's /FAs listing finds
+// ZERO occurrences of `subfe` followed by `clrlwi ,24` anywhere, i.e. no
+// construct in this file reproduces retail's shape.
+//
+// ★ REUSABLE INSTRUMENT FOUND HERE (the dead store is a source-shape oracle):
+// MSVC /O1 creates a dead stack home for the vbase-adjusted `this` of an
+// INLINED MEMBER call.  Presence/absence of that dead home therefore witnesses
+// whether retail's source called a MEMBER or a NON-MEMBER at that site — a
+// source-level fact no source diff and no oracle can see.  Pair it with the
+// trailing `clrlwi`, which witnesses that an inlined callee RETURNED bool.
 void CustomizePanel::UpdateMakeupProvider(Symbol type) {
     // retail fn_82614E60 is 0x80 bytes and is CALLED (not inlined) from the
     // update_makeup_provider arm. Its body is: two guarded function-local
