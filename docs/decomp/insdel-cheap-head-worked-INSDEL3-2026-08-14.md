@@ -135,14 +135,26 @@ byte-for-byte the same charge signature.
 ## State of the cheap head
 
 Re-derived on the current tree from INSTR-1's census joined to a fresh
-`report.json`: **37 `SOURCE_INSDEL` rows at ≤3 charges were still open** at lane
-start, of which ~12 are INSDEL-1/2 deferrals. After this lane the fresh,
-never-opened remainder is **≈ 20 rows**, and they are getting harder — they
-skew to STL template bodies (`_M_fill_insert`, `__destroy_range_aux`,
-`_Rb_tree::_M_create_node`), tiny vtordisp adjustor thunks (8–16 B), and layout
-rows. ⇒ **The head is thinning but not exhausted.** A next lane should expect a
-lower hit rate than 4/4 and should probably widen to 4–6 charges rather than
-grind the ≤3 remainder.
+`report.json`. Exact disposition of the ≤3-charge `SOURCE_INSDEL` head:
+
+| disposition | rows | bytes |
+|---|---:|---:|
+| now at `fuzzy == 100` (closed by INSDEL-1/2/3) | 12 | — |
+| deferred with reasons by INSDEL-1/2 | 12 | — |
+| deferred with reasons by INSDEL-3 | 5 | — |
+| **FRESH, never opened** | **16** | **752** |
+
+⛔⛔ **THE CHEAP HEAD IS EXHAUSTED BY VALUE, NOT JUST THINNING.** The entire
+never-opened remainder is **752 B across 16 rows — a ~47 B average**, and it is
+made of tiny vtordisp adjustor thunks (8–16 B), STL template bodies
+(`_M_fill_insert`, `__destroy_range_aux`, `_Rb_tree::_M_create_node`) and
+`??1ObjRef`-class stubs. Even a perfect 16/16 sweep buys **under 800 B**, less
+than half of what this lane's four rows bought.
+
+⇒ **Do not fund another ≤3-charge pass.** The next lane should widen to **4–6
+charges**, where INSDEL-1's reasoning still applies (an insert/delete row's
+charges are *structural*, so when they are explicable at all they are explicable
+together) and the rows are large enough to pay. Expect a hit rate below 4/4.
 
 ⚠ And re-derive the census: INSTR-1's TSV is stale, so join it to a fresh
 `report.json` and drop rows already at `fuzzy == 100` before ranking.
