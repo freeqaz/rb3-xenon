@@ -612,7 +612,11 @@ void NgSpotlightDrawer::RenderScene() {
         TheHiResScreen.mOverride = false;
         SetupForPostProcess();
     } else {
-        ClearPostDraw();
+        // Retail dispatches vtable slot 0x58 here, not 0x54.  Witness: the
+        // ClearPostProc() call in SetupForPostProcess emits `lwz r11,0x58,r11`
+        // and objdiff marks it EQUAL, so retail agrees slot 0x58 == ClearPostProc
+        // (0x54 == ClearPostDraw).  We were calling the wrong virtual.
+        ClearPostProc();
     }
 }
 
