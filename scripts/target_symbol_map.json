@@ -18473,7 +18473,7 @@
  "0x8274aab8": "??0DataNode@@QAA@ABVString@@@Z",
  "0x8274ab60": "??0DataNode@@QAA@ABVDataArrayPtr@@@Z",
  "0x8274ab88": "??0DataNode@@QAA@PAVDataArray@@W4DataType@@@Z",
- "0x8274ad78": "?NuipHeadOrientationAllowTitleChangeColorSettings@@YAHXZ",
+ "0x8274ad78": "??9DataNode@@QBA_NABV0@@Z",
  "0x8274ada8": "??4DataNode@@QAAAAV0@ABV0@@Z",
  "0x8274ae28": "?UseQueue@@YAABVDataNode@@ABV1@@Z",
  "0x8274ae98": "?Evaluate@DataNode@@QBAABV1@XZ",
