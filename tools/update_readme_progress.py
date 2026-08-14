@@ -27,10 +27,16 @@ END = "<!-- progress-table:end -->"
 BAR_WIDTH = 20
 
 # Category id -> README row label. Order here is display order.
+# ⚠ A category id missing from this list does NOT fall into the "Not yet
+# attributed" row below -- that row counts units with NO categories at all. It
+# vanishes from the table entirely while still counting in the whole-binary row,
+# so the per-area rows silently stop summing. Add a row whenever
+# config/45410914/config.json gains a progress_category. (lane VENDTIER-1)
 CATEGORY_ROWS = [
     ("game", "Game code (`src/band3/`)"),
     ("engine", "Milo engine (`src/system/`)"),
     ("network", "Quazal network (`src/network/`)"),
+    ("thirdparty", "Third-party libs (vendored under `src/system/`)"),
 ]
 
 
