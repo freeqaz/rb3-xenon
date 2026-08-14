@@ -27541,20 +27541,6 @@
    "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
   },
   {
-   "name": "CVEIN1__M_insert",
-   "address": "0x825afb38",
-   "survivor": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVDataArray@@@2@ABU32@@Z",
-   "folded": [
-    "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@2@ABU32@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "??A?$hash_map@VSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
    "name": "CVEIN1___adjust_heap",
    "address": "0x825543c8",
    "survivor": "??$__adjust_heap@PAPAVPrefabChar@@HPAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@HHPAV1@USortPrefabByPortraitFileName@@@Z",
@@ -27569,20 +27555,6 @@
     "??$sort_heap@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z"
    ],
    "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
-  },
-  {
-   "name": "CVEIN1___linear_insert",
-   "address": "0x82554680",
-   "survivor": "??$__linear_insert@PAPAVPrefabChar@@PAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0PAV1@USortPrefabByPortraitFileName@@@Z",
-   "folded": [
-    "??$__linear_insert@PAPAUEventEntry@@PAU1@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0PAU1@UMaxSort@@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "??$__insertion_sort@PAPAUEventEntry@@PAU1@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@00UMaxSort@@@Z"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
   },
   {
    "name": "CVEIN1___unguarded_linear_insert",
@@ -27600,62 +27572,6 @@
    "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
   },
   {
-   "name": "CVEIN1___median",
-   "address": "0x826978b0",
-   "survivor": "??$__median@U?$pair@HM@stlpmtx_std@@UPartPercentageSorter@SingerStats@@@stlpmtx_std@@YAABU?$pair@HM@0@ABU10@00UPartPercentageSorter@SingerStats@@@Z",
-   "folded": [
-    "??$__median@PAUObjEntry@@UObjSort@@@stlpmtx_std@@YAABQAUObjEntry@@ABQAU1@00UObjSort@@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "??$__introsort_loop@PAPAUObjEntry@@PAU1@HUObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@00HUObjSort@@@Z"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
-   "name": "CVEIN1___median",
-   "address": "0x82554118",
-   "survivor": "??$__median@PAVPrefabChar@@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAABQAVPrefabChar@@ABQAV1@00USortPrefabByPortraitFileName@@@Z",
-   "folded": [
-    "??$__median@PAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAABQAUEventEntry@@ABQAU1@00UMaxSort@@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "??$__introsort_loop@PAPAUEventEntry@@PAU1@HUMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@00HUMaxSort@@@Z"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
-   "name": "CVEIN1___unguarded_partition",
-   "address": "0x82554600",
-   "survivor": "??$__unguarded_partition@PAPAVPrefabChar@@PAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAPAPAVPrefabChar@@PAPAV1@0PAV1@USortPrefabByPortraitFileName@@@Z",
-   "folded": [
-    "??$__unguarded_partition@PAPAUEventEntry@@PAU1@UMaxSort@@@stlpmtx_std@@YAPAPAUEventEntry@@PAPAU1@0PAU1@UMaxSort@@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "??$__introsort_loop@PAPAUEventEntry@@PAU1@HUMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@00HUMaxSort@@@Z"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
-   "name": "CVEIN1___partial_sort",
-   "address": "0x82554d10",
-   "survivor": "??$__partial_sort@PAPAVPrefabChar@@PAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@000USortPrefabByPortraitFileName@@@Z",
-   "folded": [
-    "??$__partial_sort@PAPAUEventEntry@@PAU1@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@000UMaxSort@@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "??$__introsort_loop@PAPAUEventEntry@@PAU1@HUMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@00HUMaxSort@@@Z"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
    "name": "CVEIN1__M_erase",
    "address": "0x823aab50",
    "survivor": "?_M_erase@?$vector@VStrand@CharHair@@V?$StlNodeAlloc@VStrand@CharHair@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVStrand@CharHair@@PAV34@ABU__false_type@2@@Z",
@@ -27667,21 +27583,7 @@
    "retail_callers": [
     "??$PropSync@UDynamicPropertyEntry@Flow@@@@YA_NAAV?$ObjVector@UDynamicPropertyEntry@Flow@@@@AAVDataNode@@PAVDat"
    ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
-   "name": "CVEIN1_erase",
-   "address": "0x82328c90",
-   "survivor": "?erase@?$list@VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VLayer@LayerDir@@U?$_Nonconst_traits@VLayer@LayerDir@@@stlpmtx_std@@@2@U32@0@Z",
-   "folded": [
-    "?erase@?$list@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VFilePath@@U?$_Nonconst_traits@VFilePath@@@stlpmtx_std@@@2@U32@0@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "?resize@?$list@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVFilePath@@@Z"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
+   "witness": "T1 x2 (re-audited, lane ALIASAUDIT-2): map-naming inconsistency PLUS heterogeneous retail fan-in on BOTH of the survivor's callees -- ??4Strand@CharHair@@ 0x823aa650 is called by ?_M_erase@?$vector@UDynamicPropertyEntry@Flow@@ 0x823aad78, and ??1Strand@CharHair@@ 0x823a8c40 is called by ??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@ 0x823a94f0 and ??$PropSync@UDynamicPropertyEntry@Flow@@ 0x823aae58. Independently, our compiled body for the folded spelling is byte-identical to retail@A on all 23 non-relocated words."
   },
   {
    "name": "CVEIN1__M_find",
@@ -27748,20 +27650,6 @@
    "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
   },
   {
-   "name": "CVEIN1__M_erase",
-   "address": "0x822a4f58",
-   "survivor": "?_M_erase@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPiece@Piercing@OutfitConfig@@PAV345@0ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@UDistEntry@@V?$StlNodeAlloc@UDistEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDistEntry@@PAU3@0ABU__false_type@2@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "?resize@?$vector@UDistEntry@@V?$StlNodeAlloc@UDistEntry@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUDistEntry@@@Z"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
    "name": "CVEIN1___destroy_range_aux",
    "address": "0x82429170",
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVDataArrayPtr@@@0@0ABU__false_type@0@@Z",
@@ -27775,20 +27663,6 @@
     "?_M_clear_after_move@?$vector@VDataArrayPtr@@V?$StlNodeAlloc@VDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
    ],
    "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
-  },
-  {
-   "name": "CVEIN1_erase",
-   "address": "0x824e0ea0",
-   "survivor": "?erase@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UOldMMInst@@U?$_Nonconst_traits@UOldMMInst@@@stlpmtx_std@@@2@U32@0@Z",
-   "folded": [
-    "?erase@?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@2@U32@0@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "?resize@?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
   },
   {
    "name": "CVEIN1___destroy_range_aux",
@@ -27817,7 +27691,7 @@
    "retail_callers": [
     "??$PropSync@VTransformArea@@@@YA_NAAV?$ObjVector@VTransformArea@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
    ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
+   "witness": "T1 x2 (re-audited, lane ALIASAUDIT-2): map-naming inconsistency PLUS heterogeneous retail fan-in on the survivor's callee ??4MatSwap@OutfitConfig@@ 0x822a7d10, called by ?_M_fill_insert_aux@?$vector@VTransformArea@@ 0x822a8cb8 (x3) and ?_M_erase@?$vector@VTransformArea@@ 0x822a92a0. NOTE: the map also names 0x822a96a8 ??4TransformArea@@, but that row is refuted by its OWN fan-in (entirely ?$vector@VOldColorOption@@ callers), so it is a map defect, not a rival. Our folded body is byte-identical to retail@A on all 23 non-relocated words."
   },
   {
    "name": "CVEIN1__M_fill_insert_aux",
@@ -27835,20 +27709,6 @@
    "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
   },
   {
-   "name": "CVEIN1__M_erase",
-   "address": "0x822a6e60",
-   "survivor": "?_M_erase@?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVMeshAO@OutfitConfig@@PAV34@0ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVSongPattern@@PAV3@0ABU__false_type@2@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "?resize@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSongPattern@@"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
    "name": "CVEIN1__M_fill_insert_aux",
    "address": "0x8237fc00",
    "survivor": "?_M_fill_insert_aux@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBone@CharBones@@IABU34@ABU__false_type@2@@Z",
@@ -27862,20 +27722,6 @@
     "?_M_fill_insert_aux@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@AAA"
    ],
    "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
-  },
-  {
-   "name": "CVEIN1_sort",
-   "address": "0x8280d3e0",
-   "survivor": "??$sort@PAPAVUILabel@@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUILabel@@0ULabelSort@?A0x15e3583a@@@Z",
-   "folded": [
-    "??$sort@PAPAVUIListWidget@@UWidgetDrawSort@?A0xd29bb4b7@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0UWidgetDrawSort@?A0xd29bb4b7@@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "?CreateElements@UIListDir@@QAAXPAVUIList@@AAV?$vector@PAVUIListWidget@@V?$StlNodeAlloc@PAVUIListWidget@@@stlpm"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
   },
   {
    "name": "CVEIN1___adjust_heap",
@@ -27991,34 +27837,6 @@
    "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
   },
   {
-   "name": "CVEIN1___linear_insert",
-   "address": "0x826712c0",
-   "survivor": "??$__linear_insert@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@0V1@P6A_N11@Z@Z",
-   "folded": [
-    "??$__linear_insert@PAPAVUIListWidget@@PAV1@UWidgetDrawSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUIListWidget@@0PAV1@UWidgetDrawSort@?A0x15e3583a@@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "??$__insertion_sort@PAPAVUIListWidget@@PAV1@UWidgetDrawSort@?A0x530db9db@@@stlpmtx_std@@YAXPAPAVUIListWidget@@"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
-   "name": "CVEIN1___partial_sort",
-   "address": "0x82348420",
-   "survivor": "??$__partial_sort@PAPAVVert@RndMesh@@PAV12@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@000USortByZ@@@Z",
-   "folded": [
-    "??$__partial_sort@PAPAVUIListWidget@@PAV1@UWidgetDrawSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUIListWidget@@000UWidgetDrawSort@?A0x15e3583a@@@Z"
-   ],
-   "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
-   "retail_fanin": 1,
-   "retail_callers": [
-    "??$__introsort_loop@PAPAVUIListWidget@@PAV1@HUWidgetDrawSort@?A0x530db9db@@@stlpmtx_std@@YAXPAPAVUIListWidget@"
-   ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
-  },
-  {
    "name": "CVEIN1___median",
    "address": "0x8280aed8",
    "survivor": "??$__median@PAVUIListWidget@@UWidgetDrawSort@?A0x4c78cf70@@@stlpmtx_std@@YAABQAVUIListWidget@@ABQAV1@00UWidgetDrawSort@?A0x4c78cf70@@@Z",
@@ -28030,7 +27848,7 @@
    "retail_callers": [
     "??$__introsort_loop@PAPAVUILabel@@PAV1@HULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUILabel@@00HULabelSort@"
    ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
+   "witness": "T1 x2 (re-audited, lane ALIASAUDIT-2): map-naming inconsistency PLUS all FIVE comparator relocations in our folded body resolving to the single retail address 0x8280ad68 (??RWidgetDrawSort), which retail@A calls at exactly those offsets, and whose 12-site fan-in includes FOUR LabelSort-named helpers (__push_heap 0x8280afe0, __adjust_heap 0x8280b5f8, __linear_insert 0x8280c500, __partial_sort 0x8280cdc8). A comparator taking UIListWidget* cannot be called by a UILabel/LabelSort helper unless the two comparators folded. Our folded body is byte-identical to retail@A on all 36 non-relocated words."
   },
   {
    "name": "CVEIN1___unguarded_partition",
@@ -28044,7 +27862,7 @@
    "retail_callers": [
     "??$__introsort_loop@PAPAVUILabel@@PAV1@HULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUILabel@@00HULabelSort@"
    ],
-   "witness": "T1 x1: map-naming inconsistency only (single retail caller)"
+   "witness": "T1 x2 (re-audited, lane ALIASAUDIT-2): same witness as the __median group at 0x8280aed8 -- both comparator relocations in our folded body resolve to 0x8280ad68 (??RWidgetDrawSort), whose fan-in includes four LabelSort-named helpers. Our folded body is byte-identical to retail@A on all 28 non-relocated words."
   },
   {
    "name": "CVEIN1_resize",
