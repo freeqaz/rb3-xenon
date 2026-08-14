@@ -1245,6 +1245,40 @@ What it enforces — the manual steps survive here only as the explanation of
   (`[APPLIED] … 0 files patched`; lane CF-1 lost a whole leg to that
   absent-vs-absent A/B). Leg B must show SPLIT ran and the renamer patched
   >0 files, or the run refuses.
+  ★★ **AND THE RE-SPLIT IS NOW ITERATED TO A `symbols.txt` FIXED POINT, ON
+  BOTH LEGS — ONE FORCED SPLIT PER LEG SILENTLY UNDER-REPORTED BYTES** (lane
+  ABSPLIT-1, 2026-08-14). `symbols.txt` is simultaneously a *discovered input*
+  of the SPLIT edge and an *output* of it, so jeff's Class-4 over-carve merge
+  (`merge_branch_reached_overcarve_tails`) converges **across** re-splits:
+  split #1 performs the merge and writes the merged symbol back, but the obj
+  it emitted was carved before that merge was recorded. Measured on the landed
+  known-answer fixture `ab5ebed3` (worth **+1 fn / +120 B** at its own
+  converged fixed point), splits-only patch, one worktree, warm cache:
+
+  | | Δmatched | Δcode_bytes |
+  |---|---|---|
+  | one forced split per leg (old) | **+1** | **+0** ⛔ |
+  | iterate to the fixed point (new) | **+1** | **+120** ✅ |
+
+  ⛔ **The shortfall was invisible because `matched_functions` moved either
+  way** — `mpn` excludes the arg-only penalty the un-converged carve leaves
+  behind, so the two rulers disagreed and nothing flagged it; leg B read
+  `fuzzy 99.833` un-converged vs `100.0` converged. A confident
+  "A/B RESULT (MEASURED)" was printed for a reading short by the FULL amount.
+  ⇒ Each leg now re-splits until the split's **output** `symbols.txt` equals
+  its **input** (`--max-resplit`, default 4), and a leg that never converges
+  is **REFUSED**, never priced (oscillation is diagnosed separately — raising
+  the bound cannot help a two-cycle).
+  ⚠ **The iteration count is leg-DEPENDENT data, which is why both legs must
+  iterate**: on that fixture leg A was *already* at a fixed point (0 extra
+  builds, and its leg-A numbers are byte-identical old-vs-new) while leg B
+  needed 1 — so "one split each" was comparing two structurally different
+  states. A map-only patch converges in **0 on both legs** (measured), so the
+  fix is free on that path.
+  ⚠ **Nothing here restores `symbols.txt`** — convergence works by feeding the
+  drift BACK IN, the exact opposite of the wave-CJ in-loop restore that made
+  settling impossible (lane CK-2). The selftest's shape guard was widened to
+  cover the new code for precisely that reason.
 - **Source patches must recompile ≥1 TU in leg B** or the run refuses as
   absent-vs-absent. The leg B recompile count is taken from the build log
   BEFORE any report step (`run_objdiff`-style flows compile invisibly, so a
