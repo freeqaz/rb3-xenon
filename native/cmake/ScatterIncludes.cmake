@@ -83,10 +83,39 @@ function(_rb3_scatter_scan _file _out_uncond _out_cond _out_cond_hx)
 
     file(READ "${_file}" _content)
     string(REPLACE ";" "\\;" _content "${_content}")
+
+    # ---- COMMENTS ARE NOT DIRECTIVES ---------------------------------------
+    # !! This scanner used to match `#if`/`#endif` ANYWHERE on a line, so PROSE
+    # INSIDE A COMMENT was parsed as a live directive. That is not theoretical:
+    # `6c087cbd` (2026-08-14) added, to rndobj/TexRenderer.cpp, the comment
+    #
+    #     // #ifdef HX_NATIVE and the match build never defines it.
+    #
+    # which pushed an unmatched HX_NATIVE frame onto the stack and never popped
+    # it. The `#include "math/mtx.cpp"` 212 lines below was therefore classified
+    # CONDITIONAL-and-HX-guarded instead of UNCONDITIONAL -- and that is the one
+    # bucket this module deliberately ignores in SILENCE: not pruned, and not
+    # warned about either. mtx.cpp was then compiled standalone AS WELL AS being
+    # emitted from TexRenderer's TU, and rb3-milo / rb3-render died with 17
+    # duplicate definitions. A COMMENT-ONLY COMMIT BROKE THE NATIVE LINK.
+    #
+    # Two independent defences, because one regex should not be load-bearing:
+    #
+    #  1. Strip /* ... */ blocks, then require every directive to be preceded by
+    #     a newline and whitespace ONLY. A real directive always starts its line;
+    #     `// #ifdef X` and `foo(); // #endif` no longer match. CMake regexes
+    #     have no multiline `^`, hence the explicit leading \n (and the prepended
+    #     one, so a directive on line 1 is still seen).
+    #  2. The #if/#endif stack must balance at EOF. If it does not, the scan is
+    #     KNOWN-UNRELIABLE for this file and says so LOUDLY -- see below. That is
+    #     the general net: it fires for any future desync cause, not just this
+    #     one, which a comment-stripping fix alone would not.
+    string(REGEX REPLACE "/\\*[^*]*\\*+([^/*][^*]*\\*+)*/" "" _content "${_content}")
+    set(_content "\n${_content}")
     # Only the directives we care about: any #if flavour, #endif, and
     # #include of a .cpp. Ordinary header includes are not matched.
     string(REGEX MATCHALL
-           "#[ \t]*(if[a-z]*[^\n]*|endif|include[ \t]*\"[^\"]*\\.cpp\")"
+           "\n[ \t]*#[ \t]*(if[a-z]*[^\n]*|endif|include[ \t]*\"[^\"]*\\.cpp\")"
            _dirs "${_content}")
 
     set(_stack "")      # one entry per open #if: 1 if it mentions HX_NATIVE
@@ -94,18 +123,18 @@ function(_rb3_scatter_scan _file _out_uncond _out_cond _out_cond_hx)
     set(_c "")
     set(_h "")
     foreach(_d IN LISTS _dirs)
-        if(_d MATCHES "^#[ \t]*if")
+        if(_d MATCHES "^\n[ \t]*#[ \t]*if")
             if(_d MATCHES "HX_NATIVE")
                 list(APPEND _stack 1)
             else()
                 list(APPEND _stack 0)
             endif()
-        elseif(_d MATCHES "^#[ \t]*endif")
+        elseif(_d MATCHES "^\n[ \t]*#[ \t]*endif")
             list(LENGTH _stack _n)
             if(_n GREATER 0)
                 list(REMOVE_AT _stack -1)
             endif()
-        elseif(_d MATCHES "^#[ \t]*include[ \t]*\"([^\"]+)\"")
+        elseif(_d MATCHES "#[ \t]*include[ \t]*\"([^\"]+)\"")
             set(_inc "${CMAKE_MATCH_1}")
             list(LENGTH _stack _n)
             if(_n EQUAL 0)
@@ -118,6 +147,24 @@ function(_rb3_scatter_scan _file _out_uncond _out_cond _out_cond_hx)
             endif()
         endif()
     endforeach()
+
+    # ---- ANTI-VACUITY: did the stack balance? ------------------------------
+    # A non-empty stack at EOF means this scanner's model of the file is WRONG,
+    # so every include it classified as conditional is unreliable -- exactly the
+    # failure that shipped a broken native link on 2026-08-14. Only worth saying
+    # for a file that actually has a .cpp include, since that is the only case
+    # where the misclassification can change a decision.
+    list(LENGTH _stack _depth)
+    if(_depth GREATER 0)
+        set(_any "${_u}" "${_c}")
+        if(_any MATCHES "[^;]")
+            message(WARNING
+                "[scatter] ${_file}: #if/#endif do not balance (depth ${_depth} at EOF), "
+                "so this file's scatter-includes may be MISCLASSIFIED as conditional and "
+                "silently left un-pruned -- which is how a duplicate definition reaches "
+                "the link. Usual cause: preprocessor-looking text inside a comment.")
+        endif()
+    endif()
 
     set_property(GLOBAL PROPERTY "${_key}_u" "${_u}")
     set_property(GLOBAL PROPERTY "${_key}_c" "${_c}")
