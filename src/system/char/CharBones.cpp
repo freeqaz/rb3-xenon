@@ -203,11 +203,36 @@ void *CharBones::FindPtr(Symbol s) const {
         return (void *)&mStart[offset];
 }
 
+// RETAIL KEPT THIS EMISSION (lane MILOKEEP-1).  A whole-binary census of every
+// reference to the `TheDebug` global (0x82cc9874 — the complete superset of all
+// MILO_* emission sites, since every emitter funnels through it) found only FOUR
+// surviving formatted emissions in the entire retail binary, and this is one of
+// them: retail's ?Print@CharBones@@UAAXXZ (0x823adf08) materialises the format
+// literal at .rdata 0x8204bca4 and calls MakeString + TextStream::operator<<.
+// Our stripped MILO_LOG (`((void)(__VA_ARGS__))`) deletes all of that, which is
+// why the row sat at 23.9% with `MakeString`/`TextStream::operator<<` showing as
+// target-only calls.
+//
+// Fixed TU-LOCALLY via push_macro, the Mesh.cpp:1619 / UIComponent.cpp:495
+// precedent — os/Debug.h is a PCH input cascading to ~281 TUs where the blanket
+// control measured −21, so it is deliberately NOT touched.  `char/` is PCH-
+// excluded, so the blast radius is this one TU.  The two sibling functions that
+// retail also kept (CharClip::Print, CharBonesSamples::Print) already spell this
+// same residue explicitly as `TheDebug << MakeString(...)`.
+// HX_NATIVE is left alone so the native port keeps its real logging path.
+#ifndef HX_NATIVE
+#pragma push_macro("MILO_LOG")
+#undef MILO_LOG
+#define MILO_LOG(...) TheDebug << MakeString(__VA_ARGS__)
+#endif
 void CharBones::Print() {
     for (auto it = mBones.begin(); it != mBones.end(); ++it) {
         MILO_LOG("%s %.2f: %s\n", it->name, it->weight, StringVal(it->name));
     }
 }
+#ifndef HX_NATIVE
+#pragma pop_macro("MILO_LOG")
+#endif
 
 BinStream &operator<<(BinStream &bs, const CharBones::Bone &bone) {
     bs << bone.name;
