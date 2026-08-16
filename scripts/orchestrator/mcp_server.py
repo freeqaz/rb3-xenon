@@ -426,8 +426,9 @@ class DecompMCPServer:
                             },
                             "status": {
                                 "type": "string",
-                                "description": "Filter by function status: 'workable' (default, excludes complete/at_limit), 'all' (no filtering), 'complete' (only complete), 'at_limit' (only at_limit)",
-                                "enum": ["workable", "all", "complete", "at_limit"],
+                                "description": "Filter by function status: 'workable' (default, excludes complete/at_limit), 'all' (no filtering), 'complete' (only complete), 'at_limit' (only at_limit), 'identity_unestablished' (only rows whose target body is not established to be that function — audit view; these are never returned by any other status, including 'all')",
+                                "enum": ["workable", "all", "complete", "at_limit",
+                                         "identity_unestablished"],
                             },
                             "skip_boilerplate": {
                                 "type": "boolean",
@@ -778,6 +779,30 @@ class DecompMCPServer:
             if func:
                 start_percent = func.get("current_percent") or 0
 
+                # Fail closed: refuse any verdict on a row whose target body is
+                # not established to be this function. Both COMPLETE and
+                # AT_LIMIT assert something about a comparison against a
+                # specific body; with identity unestablished there is nothing
+                # to assert it against, and a COMPLETE here is a false crack
+                # admitted through the project's sole admission gate.
+                if func.get("verdict") == "IDENTITY_UNESTABLISHED":
+                    return [TextContent(
+                        type="text",
+                        text=(
+                            f"REFUSED: `{symbol}` is recorded "
+                            f"IDENTITY_UNESTABLISHED — the target body is not "
+                            f"established to be this function, so no verdict "
+                            f"can be reported against it.\n\n"
+                            f"Reason on record: {func.get('verdict_reason') or '(none)'}\n\n"
+                            f"Exit from this state is EVIDENCE work, not source "
+                            f"work: establish which address the symbol denotes, "
+                            f"land it in scripts/target_symbol_map.json, then "
+                            f"clear the state with "
+                            f"`scripts/mark_identity_unestablished.py --clear`.\n"
+                            f"See docs/decomp/VERDICT_STATES.md."
+                        ),
+                    )]
+
                 # Guard: validate base_size > 0 before accepting COMPLETE
                 if status == "complete":
                     try:
@@ -888,6 +913,11 @@ class DecompMCPServer:
             exclude_complete = True
             exclude_at_limit = False
             verdict_filter = "AT_LIMIT"
+        elif status == "identity_unestablished":
+            # Auditing the state by name is the one way to see these rows.
+            exclude_complete = True
+            exclude_at_limit = True
+            verdict_filter = "IDENTITY_UNESTABLISHED"
         else:  # "workable" (default)
             exclude_complete = True
             exclude_at_limit = True

@@ -23,6 +23,7 @@ sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 from orchestrator.database import (
     get_connection,
     normalize_unit_pattern,
+    unworkable_verdict_clause,
     update_function_status,
     BOILERPLATE_SYMBOL_PREFIXES,
     DEFAULT_EXCLUDE_PATTERNS,
@@ -44,13 +45,18 @@ def batch_check(unit_pattern: str, dry_run: bool = False, skip_boilerplate: bool
     conn = get_connection(DB_PATH)
     norm_pattern = normalize_unit_pattern(unit_pattern)
 
+    # NOTE the unworkable clause: this loop auto-stamps verdict=COMPLETE on any
+    # function objdiff reports at 100%. A row whose target body is not
+    # established to be this function must never enter that loop -- byte-exact
+    # against an unestablished body is precisely the false crack the
+    # IDENTITY_UNESTABLISHED state exists to prevent.
     query = """
         SELECT id, symbol, demangled, unit, current_percent
         FROM functions
         WHERE unit GLOB ?
           AND (verdict IS NULL OR verdict NOT IN ('COMPLETE', 'AT_LIMIT'))
           AND symbol NOT LIKE 'merged_%'
-    """
+    """ + unworkable_verdict_clause()
     params: list = [norm_pattern]
 
     for ep in DEFAULT_EXCLUDE_PATTERNS:

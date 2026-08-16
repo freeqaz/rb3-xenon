@@ -38,7 +38,15 @@ def get_progress() -> str:
     at_limit = conn.execute(
         "SELECT COUNT(*) FROM functions WHERE verdict = 'AT_LIMIT' AND unit NOT LIKE '%xdk%'"
     ).fetchone()[0]
-    remaining = non_excluded - complete - at_limit
+    # Its own bucket, deliberately in NEITHER Done nor Remaining. These rows
+    # are not finished (nothing was matched) and they are not open work
+    # (working them is what mints a false crack). Folding them into either
+    # number would make a progress report assert something untrue.
+    unidentified = conn.execute(
+        "SELECT COUNT(*) FROM functions "
+        "WHERE verdict = 'IDENTITY_UNESTABLISHED' AND unit NOT LIKE '%xdk%'"
+    ).fetchone()[0]
+    remaining = non_excluded - complete - at_limit - unidentified
 
     complete_pct = (complete / non_excluded * 100) if non_excluded else 0
     done_pct = ((complete + at_limit) / non_excluded * 100) if non_excluded else 0
@@ -51,6 +59,9 @@ def get_progress() -> str:
     output += f"| Non-excluded | {non_excluded:,} | 100% |\n"
     output += f"| COMPLETE | {complete:,} | {complete_pct:.1f}% |\n"
     output += f"| AT_LIMIT | {at_limit:,} | {at_limit / non_excluded * 100:.1f}% |\n"
+    if unidentified:
+        output += (f"| IDENTITY_UNESTABLISHED | {unidentified:,} | "
+                   f"{unidentified / non_excluded * 100:.1f}% |\n")
     output += f"| Remaining | {remaining:,} | {remaining / non_excluded * 100:.1f}% |\n"
     output += f"| **Done (COMPLETE + AT_LIMIT)** | **{complete + at_limit:,}** | **{done_pct:.1f}%** |\n"
 
