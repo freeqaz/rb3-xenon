@@ -48,7 +48,19 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _REPO = os.path.dirname(os.path.dirname(_HERE))
 
 # DB verdicts that mean "do not work this function" (case-insensitive match).
-_DEAD_VERDICTS = {"complete", "at_limit"}
+#
+# This is a closed allow-list, so a verdict value added elsewhere and NOT added
+# here silently FALLS THROUGH and stays in the worklist -- measured, not
+# assumed: a probe against a scratch DB confirmed an unlisted verdict leaks
+# here while every other selector caught it. Adding a verdict to
+# database.KNOWN_VERDICTS is not enough; if it means "not work", add it here.
+#
+# `identity_unestablished`: the target body is not established to be this
+# function. Not open work, not done, not at a floor -- and the one state where
+# leaving it in the worklist is actively dangerous, because a one-token edit
+# can drive it to byte-exact against a body that is not the function, which is
+# this project's sole admission gate saying yes to a false crack.
+_DEAD_VERDICTS = {"complete", "at_limit", "identity_unestablished"}
 
 
 def load_db_index(db_path):

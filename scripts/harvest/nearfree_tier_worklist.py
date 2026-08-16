@@ -206,6 +206,24 @@ def main():
            if r["S"] in tiers
            and r["csz"] < args.max_cluster
            and (args.include_stl or not r["stl"])]
+    # IDENTITY_UNESTABLISHED is DROPPED outright, not annotated.
+    #
+    # This file's stance on AT_LIMIT -- "advisory, not authoritative", because
+    # this lane flipped an AT_LIMIT row -- is deliberate and stays. It does not
+    # extend here. AT_LIMIT is a judgement about a floor that a harder attempt
+    # may overturn; IDENTITY_UNESTABLISHED says the target body is not
+    # established to be this function, so attempting it harder is the hazard,
+    # not the remedy. There is nothing for a lane to overturn by trying.
+    #
+    # Dropping (rather than ranking last) matters because the fresh/stale split
+    # below keys on attempt_count, so a NEVER-ATTEMPTED row in this state would
+    # sort into "route these first" -- the top of the routing list.
+    n_unident = sum(1 for r in sel if r.get("verdict") == "IDENTITY_UNESTABLISHED")
+    if n_unident:
+        sel = [r for r in sel if r.get("verdict") != "IDENTITY_UNESTABLISHED"]
+        print(f"dropped {n_unident} IDENTITY_UNESTABLISHED row(s) "
+              f"(target body not established; see docs/decomp/VERDICT_STATES.md)")
+
     if not args.include_attempted:
         fresh = [r for r in sel if not r["attempts"]]
         stale = [r for r in sel if r["attempts"]]
