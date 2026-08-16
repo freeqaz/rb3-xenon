@@ -417,35 +417,46 @@ void StorePanel::PopulateOffers(DataArray *arr, bool b) {
 
 void StorePanel::EnumerateOffers(bool b) {
     RELEASE(mEnum);
-    Profile *profile = StoreProfile();
-    MILO_ASSERT(profile, 0x356);
+    // NOTE (laneSTORE-2, measured against retail bytes): the same StoreProfile ->
+    // StoreUser defect FAMILY-1 proved in Enter(). Retail dispatches slot 0x44
+    // (= 17, StoreUser) here, not 0x70 (StoreProfile), and then threads the
+    // LocalUser* through the rest of the body:
+    //   - the pad number comes from slot 0 of the LocalUser's OWN vftable
+    //     (LocalUser::GetPadNum, its first new virtual), not Profile::GetPadNum;
+    //   - the discarded `user && user->IsLocal()` below is retail's assert. It
+    //     emits `if (user) user->IsLocal();` because MILO_ASSERT is ((void)(cond))
+    //     and a virtual call cannot be proven side-effect-free. Retail navigates
+    //     the User virtual base (vbptr@4, vbase = vbptr_addr + vbtable[1], folded
+    //     as (user+disp)+4) and dispatches 0x5c, which User.h's byte-verified slot
+    //     map identifies as IsLocal(). The result is dead -- r3 is overwritten by
+    //     the next `mr r3, r30` -- which is what makes it an assert and not a use.
+    LocalUser *user = StoreUser();
+    MILO_ASSERT(user && user->IsLocal(), 0x356);
     if (EnumerateSubsetOfOfferIDs()) {
         std::vector<UINT64> offerIDs;
         GetOfferIDsToEnumerate(offerIDs, b);
         if (offerIDs.empty()) {
-            if (mLoadOk) {
-                mLoadOk = false;
-                ExitStore(kStoreErrorSignedOut);
-            }
-            // NOTE (laneAX-W7, measured): retail's EnumerateOffers does carry a
-            // second `static Message("enum_finished")` + HandleType + TheUI->Handle
-            // pair (target 0x827B66E0, guard at +0xfc, mirrored again at +0x25c),
-            // but its body is otherwise materially different from ours (two
-            // duplicated branches calling fn_827BD2F0/fn_827B84A0/fn_827BCA50).
-            // Adding the static here alone cost 4 strict matches in this unit
-            // (fn_82605040, fn_827B6994, fn_827B69DC, fn_827B6A04 -- EH funclets
-            // un-pairing on the changed frame) for 0 gain, so it is deliberately
-            // NOT applied until the body is ported. Do not re-add in isolation.
+            // laneAX-W7 found this second static Message + HandleType in retail
+            // but could not apply it alone (it cost 4 strict matches for 0 gain).
+            // It is correct only as part of the full body port: retail has NO
+            // mLoadOk/ExitStore(kStoreErrorSignedOut) block here at all -- the
+            // empty-offerIDs path IS the enum_finished notification. The string
+            // is adjudicated, not guessed: lbl_82115D90 is .string "enum_finished".
+            static Message msg("enum_finished");
+            HandleType(msg);
             return;
         }
-        mEnum = new XboxEnumeration(profile->GetPadNum(), &offerIDs);
+        mEnum = new XboxEnumeration(user->GetPadNum(), &offerIDs);
     } else {
-        mEnum = new XboxEnumeration(profile->GetPadNum(), 0);
+        mEnum = new XboxEnumeration(user->GetPadNum(), 0);
     }
     mEnum->Start();
     static Message msg("enum_start");
     HandleType(msg);
-    TheUI->Handle(msg, false);
+    // Retail does NOT forward this to TheUI: the whole
+    // `TheUI->Handle(msg, false)` sequence is an 18-instruction base-only insert
+    // cluster (idx 173-190) with no counterpart in the 692-byte retail body,
+    // which ends at HandleType + the DataNode temp's Release.
 }
 
 // Retail fn_827B4AE0: `ld r11,0x10(r3); ld r10,0x30(r4); cmpld` -- a 64-bit
