@@ -47,11 +47,42 @@ Two shapes produce it, both real, both currently populated:
   `fn_82B69220`, so the relocation test that settled the sibling rows cannot
   discriminate. Both are on the `_denylist` in
   `scripts/target_symbol_map.json` — the map deliberately claims neither.
-- **Located but not landed.** Evidence exists, but the map does not carry it,
-  so nothing in the pipeline binds the name to a body.
-  `?Null@Symbol@@QBA_NXZ` (id 130424): its home was located at `0x8227c70c`
-  (the only body in `.text` with the required shape — offset-0 load, contents
-  of `gNullStr`) and never applied. **Located is not established.**
+- **Absent from the map, and its only candidate refuted.**
+  `?Null@Symbol@@QBA_NXZ` (id 130424). No address claims the name. The one home
+  ever proposed, `0x8227c70c`, was **refuted** by lane R (`9fe65045`): it is
+  interior code of `??8Symbol@@QBA_NPBD@Z` at `0x8227c6d0` — `0x8227c708`
+  branches *into* it, which cannot cross a COMDAT boundary under `/Gy`, and it
+  has zero inbound `bl` against 297 for `0x8227c6d0`, so an out-of-line COMDAT
+  there would have been `/OPT:REF`'d away.
+
+  **This is the sharpest illustration of why the state exists.** Every
+  sub-claim of the original argument was true — `gNullStr` really is a pointer
+  variable, the 28 bytes really are `return mStr == gNullStr;`, and that byte
+  string really does occur exactly once in `.text`. And our build *does* emit a
+  standalone `?Null@Symbol@@QBA_NXZ` COMDAT byte-identical to that retail
+  fragment. Re-homing it would have paired and scored **a clean byte-exact 100%
+  against a non-function** — the headline hazard, arriving with a correct body
+  argument and a uniqueness proof attached. A shape match, even a unique one,
+  is not a function-identity proof.
+
+### Reading the map: check it through the loader, not the JSON
+
+`scripts/target_symbol_map.json` has three distinct states for a name, and the
+raw JSON shows only two of them. Through the renamer's own
+`load_address_map()` — the view the gate actually scores — the three rows sit
+like this:
+
+| symbol | raw JSON | through `load_address_map` |
+|---|---|---|
+| `?DataDir@UIPanel@@$4…` (130115) | present | **claimed** at `0x826412e0` |
+| `??$__destroy_aux@ULevelData@@…` (130132) | present ×2 | **denylisted** — claims neither |
+| `?Null@Symbol@@QBA_NXZ` (130424) | absent | **absent** |
+
+So "two of the three names are present in the map" — which is what a raw
+`json.load` tells you — is **wrong in the way that matters**: one is *claimed*,
+one is *denied*, one is *absent*, and only the loader distinguishes the first
+two. `_denylist` entries carry a real string value and are filtered out at load
+time. Always read the map through `load_address_map`.
 
 ### Why it needs to exist
 
@@ -81,7 +112,17 @@ Every other value gets these rows wrong, and one of them is dangerous:
    update is a monotone `MAX(COALESCE(best_percent,0), ?)`, which can raise a
    value and can **never lower one**, so a stale reading is otherwise
    unretractable.
-4. **Never offered to any model, worklist, or Ghidra export.** The Ghidra case
+4. **Never offered to any model, worklist, suggestion surface, or Ghidra
+   export.** "Suggestion surface" is in that list because it was the one this
+   lane missed: `search_functions_by_name` is not a worklist, but it backs
+   `mcp_server._suggest_similar_symbols`, reached from the **`run_objdiff` MCP
+   tool** whenever an agent's symbol lookup fails — so the server would answer
+   "did you mean …?" with the one target the agent must not work. Severity is
+   moderate, not fatal: every downstream WRITE seam refuses
+   (`report_result`, `batch_check`, `atexit_fuzzy_verify`,
+   `sync_match_percent`, `refresh_permuter_db`), so an agent could be pointed
+   at the row but could not bank a crack on it. The false-crack gate held; the
+   "never offered" claim did not. The Ghidra case
    is not cosmetic: `tools/ghidra/build_symbol_map.py` pushes *names onto
    addresses*, i.e. it asserts identity. Exporting one of these rows would
    launder an open question into a stated fact in the analysis DB, downstream
@@ -116,11 +157,17 @@ to its pre-repair 91.2857%, counting selectors that still offered it:
 
 | shape | leaks |
 |---|---|
-| baseline (`verdict NULL`) | 12 |
-| new verdict value, **unwired** | **12 — zero improvement** |
-| `excluded = 1` alone, unwired | 11 |
-| both, unwired | 11 |
+| baseline (`verdict NULL`) | 13 |
+| new verdict value, **unwired** | **13 — zero improvement** |
+| `excluded = 1` alone, unwired | 12 |
+| both, unwired | 12 |
 | **both, wired (shipped)** | **0** |
+
+⚠ **13 is a FLOOR, not a total.** It is the count of consumers *this lane
+enumerated*, and the first enumeration said 12 — adversarial review found a
+13th (`search_functions_by_name`, below) that the sweep missed because it is
+not a worklist. The "0" is likewise 0-of-the-known-13. Treat any future
+"complete consumer list" claim here with the same suspicion.
 
 Two conclusions, and the first is the important one:
 
@@ -143,6 +190,22 @@ would conflate a *permanent non-target* with an *exit-able unbound* one and
 destroy the ability to count them separately. They stay distinct: 168 rows
 carry `excluded = 1` alongside `COMPLETE`/`AT_LIMIT`, so the flag never
 implied a verdict.
+
+## Side effect: a unit holding one of these can never be promoted to `Matching`
+
+`sync_match_percent.find_complete_units` treats a unit as done only when every
+row in it is `COMPLETE`/`AT_LIMIT`, and it now also requires zero
+`IDENTITY_UNESTABLISHED` rows. So while a row is in this state, its unit is
+**permanently blocked** from being promoted to `Matching` in `objects.json`.
+
+Today that is `default/FilePath` and
+`default/system/synth_xbox/FxSendMeterEffect`.
+
+This is intended — a unit containing a function we cannot even attribute to a
+target body is not finished — but it **outlives the incident**, so it is
+written down here rather than left to be rediscovered as a mystery when someone
+asks why `FilePath` will not promote. The unblock is the same as the exit:
+establish the identity, land the map entry, clear the state.
 
 ## How to write it
 
@@ -218,10 +281,18 @@ surfaced by testing it.
   one database that matters; a DB built fresh by `init_database()` did not have
   it, so all 15 `excluded = 0` queries raised on a clean clone. Fixed here by
   **migration v19**, which is idempotent against the live DB.
-- **`scripts/recon.py` reported no DB info for any symbol.** Its query selected
-  `exclusion_reason`, a column that does not exist, and `_load_db_info` catches
-  `Exception` and returns `None` — so the failure was silent and its
-  `COMPLETE`/`AT_LIMIT` assessment branches were unreachable. Fixed here.
+- **`scripts/recon.py` reported no DB info for any symbol** — and it took two
+  passes to actually fix, which is the instructive part. Its query selected
+  `exclusion_reason` (nonexistent); `_load_db_info` catches `Exception` and
+  returns `None`, so the failure was silent and every `db`-keyed branch in
+  `_assess` was unreachable. Removing that column was **not sufficient**: the
+  same SELECT also asked for `ease_score`, `impact_score` and
+  `confidence_score`, which exist in neither a fresh v19 build nor the live DB,
+  so it kept raising and the fix was believed-done while the tool stayed blind.
+  Both are removed now, and the blanket `except` carries a warning. Verified by
+  execution, not inspection — `recon` is the tool an agent runs to decide
+  whether to work a function, so a silent blind spot there is the worst place
+  for one.
 - **`get_stats.avg_percent` counts dead and excluded rows.** 518 `excluded=1`
   and 2,370 `live=0` rows carry percentages; the shipped average is 67.74 vs
   72.10 with them removed. Only the `IDENTITY_UNESTABLISHED` exclusion was
