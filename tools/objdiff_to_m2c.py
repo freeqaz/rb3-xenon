@@ -5,6 +5,28 @@ Convert objdiff JSON output to m2c-compatible assembly format.
 This script parses the JSON output from objdiff-cli (with --include-instructions)
 and converts it to GNU-as style assembly that m2c can process.
 
+Canonical home: this file is the single source of truth for the converter.
+Each consuming target repo (dc3-decomp, rb3-xenon, and the mwcc/ELF GC/Wii
+clone repos under ~/code/milohax/decomp-clones/<key>) vendors its own copy at
+`tools/objdiff_to_m2c.py` (or points `$OBJDIFF_TO_M2C_PATH` /
+`decomp-synth.json`'s `objdiff_to_m2c_path` at this file directly) --
+`tools/il_witness/build_decomp_target_corpus.py:_resolve_m2c()` documents the
+resolution order. Fix bugs HERE first, then re-vendor.
+
+Two object formats feed this script:
+  - MSVC/COFF PPC (dc3, rb3-xenon -- Xbox 360 targets)
+  - mwcc/ELF32-BE PPC (the GC/Wii clone repos -- melee, tww, tp, ss, pikmin2,
+    pikmin, pik2wii, bfbb)
+objdiff-cli's disassembly hides that difference for ordinary instructions, but
+one mwcc/ELF-specific quirk leaks through: constant-pool / small-data-area
+(SDA) relocations (`R_PPC_EMB_SDA21`/`R_PPC_EMB_SDA2REL`). In the *unlinked*
+object, the raw instruction bytes encode a placeholder base register (rA=0)
+that only gets patched to the real r2/r13 SDA base at link time, so objdiff's
+disassembly of these ops omits the base register entirely and just shows the
+bare pool-ref symbol -- spelled either `@NNN` (a per-TU constant-pool counter,
+e.g. `lfd f0, @158`) or a plain SDA global name (e.g. `stw r3, sSkidMarkRaster`).
+See `format_instruction()`'s memory-op handling below for the fix.
+
 Usage:
     # Pipe from objdiff-cli
     ./bin/objdiff-cli diff -p . "CharClip::SetFlags" -f json --include-instructions | \
@@ -112,6 +134,85 @@ def symbol_to_label(name: str) -> str:
     return name or 'unknown'
 
 
+#: objdiff `typed_args` types that render as hex in the flat `args` spelling.
+_HEX_ARG_TYPES = ('Signed', 'Unsigned', 'BranchDest')
+
+
+def flat_args_from_typed(typed_args: list) -> str:
+    """
+    Rebuild objdiff's flat `args` spelling from its `typed_args`.
+
+    WHY THIS EXISTS. objdiff-cli fdc5113 ("ruler I", 2026-08-16) changed the
+    JSON `args` string from the COMPARISON arg list to the DISPLAY parts:
+
+        lwz r0, 0x0, r5                 ->  lwz r0, 0x0(r5)
+        lis r11, ?TheDebug@@3VDebug@@A  ->  lis r11, ?TheDebug@@3VDebug@@A@h
+        mr r5, r6, sDevices__6UsbWii    ->  mr r5, r6
+
+    That is a strictly better rendering, and everything below was written
+    against the old one. Parsing the new spelling with the old rules produced
+    silent corruption rather than an error -- `lis r11, "sym@h"@ha` (the
+    relocation suffix swallowed into the quoted symbol name, plus a second
+    macro), and `lwz r4, "sym@l(r11)"@sda21(r13)` for a plain symbolic load.
+    Measured over 7 real dc3/rb3-xenon functions: every one changed, and every
+    change was a corruption.
+
+    THE FIX IS NOT TO PARSE THE NEW SPELLING -- it is to stop depending on the
+    spelling at all. `typed_args` is structured, carries the clean symbol name
+    with no relocation suffix, and did NOT move across the change. Rebuilding
+    the flat string from it makes this converter's output invariant to which
+    objdiff built the JSON, which is the property we actually want: an m2c seed
+    that changes because the ruler was rebuilt is a change to the proposer's
+    input distribution that nothing downstream would flag.
+
+    Verified exact, not assumed: over 4,466 instruction sides drawn from real
+    dc3-decomp and rb3-xenon objects dumped under BOTH rulers, this function
+    reproduces ruler H's `args` byte-for-byte, 4,466/4,466, 0 mismatches. The
+    rendering rules mirror objdiff's own `InstructionArgValue` Display impl
+    (`objdiff-core/src/obj/mod.rs:188`) and the pre-fdc5113 `build_instruction_info`
+    join: Signed/Unsigned/BranchDest as `{:#x}` (negatives as `-0x…`), Register
+    and Symbol and Other verbatim, joined with ", ".
+
+    Rows with no `typed_args` at all keep whatever `args` they had; in the same
+    sample those were 104 rows, all `bctrl`, all with `args: null`.
+    """
+    parts = []
+    for arg in typed_args:
+        value = arg.get('value')
+        if arg.get('type') in _HEX_ARG_TYPES and isinstance(value, int):
+            parts.append('-0x%x' % -value if value < 0 else '0x%x' % value)
+        else:
+            parts.append(str(value))
+    return ', '.join(parts)
+
+
+def normalize_instruction_args(instructions: list) -> int:
+    """
+    Rewrite every instruction side's `args` into the flat spelling, in place.
+
+    Applied once at the parse boundary so all three `args` readers below --
+    branch-target scanning, jump-table detection and format_instruction -- see
+    one spelling and none of them has to know a ruler change happened.
+
+    Returns the number of sides rewritten (0 when the JSON came from a
+    pre-fdc5113 objdiff, since the rebuild is then a no-op).
+    """
+    rewritten = 0
+    for instr in instructions:
+        for side in ('target', 'base'):
+            row = instr.get(side)
+            if not isinstance(row, dict):
+                continue
+            typed_args = row.get('typed_args')
+            if not typed_args:
+                continue
+            flat = flat_args_from_typed(typed_args)
+            if flat != row.get('args'):
+                row['args'] = flat
+                rewritten += 1
+    return rewritten
+
+
 def parse_branch_targets(instructions: list) -> set:
     """
     Identify branch target addresses from branch instructions.
@@ -148,7 +249,12 @@ def parse_branch_targets(instructions: list) -> set:
 def quote_symbol(sym: str) -> str:
     """
     Quote a symbol name if it contains characters that need escaping.
-    MSVC mangled names contain ? and @ which need quoting.
+    MSVC mangled names contain ? and @ which need quoting. mwcc bare
+    constant-pool refs (`@158`) and string-pool-base symbols (`@stringBase0`)
+    also start with `@` and need the same quoting -- m2c's assembly grammar
+    treats a leading `@` as the start of a `@ha`/`@l`/`@sda21`/... relocation
+    macro, so an unquoted symbol whose NAME itself begins with `@` can't be
+    told apart from that macro syntax without quotes.
     """
     # Check if quoting is needed
     if '?' in sym or '@' in sym or '$' in sym or '<' in sym or '>' in sym:
@@ -159,47 +265,45 @@ def quote_symbol(sym: str) -> str:
     return sym
 
 
+#: A literal number in the normalized flat `args` spelling: hex (the form
+#: `flat_args_from_typed` emits for Signed/Unsigned/BranchDest, `{:#x}`, with
+#: negatives as `-0x…`) or bare decimal, either sign.
+_NUMERIC_OPERAND_RE = re.compile(r'-?(?:0[xX][0-9a-fA-F]+|[0-9]+)')
+
+
 def _is_numeric_operand(s: str) -> bool:
-    """True if an objdiff operand is a plain integer literal rather than a symbol.
-
-    Handles negative AND hexadecimal forms together, which is the whole point. The
-    check this replaced was
-
-        not offset.startswith('0x') and not offset.lstrip('-').isdigit()
-
-    and that misclassifies every NEGATIVE HEX displacement as a symbol, because
-    '-0x10' neither starts with '0x' nor is '0x10'.isdigit(). The rewriters then
-    appended a relocation suffix to it and emitted
-
-        std r5, -0x10@l(r1)
-
-    instead of `std r5, -0x10(r1)`. That matters a lot on MSVC/Xenon: negative
-    r1 displacements are everywhere -- `stwu r1, -0x70(r1)` opens essentially
-    every non-leaf prologue, and MSVC also parks scratch below SP -- so the bug
-    fired on most real functions. m2c does not reject the malformed operand; it
-    silently reinterprets the stack slot as an incoming stack argument, so a leaf
-    function acquires a phantom `s64 arg_sp0` parameter. Wrong output, no error.
     """
-    t = s.strip()
-    if not t:
-        return False
-    if t[0] in '+-':
-        t = t[1:]
-    if t[:2].lower() == '0x':
-        try:
-            int(t, 16)
-            return True
-        except ValueError:
-            return False
-    return t.isdigit()
+    True when an operand is a literal number rather than a symbol reference.
+
+    The four callers below all ask the same question -- "is this operand a
+    displacement/immediate, or a relocated symbol that needs a `@ha`/`@l`/
+    `@sda21` macro?" -- and each used to ask it as
+    `not s.startswith('0x') and not s.lstrip('-').isdigit()`. That guard is
+    blind to NEGATIVE hex: `'-0x120'.lstrip('-')` is `'0x120'`, which is not
+    `isdigit()`, and the `0x` prefix test fails on the leading `-`. So every
+    negative hex operand took the symbol branch and came out with a bogus
+    relocation macro glued to a number -- `stwu r1, -0x120@l(r1)` for a plain
+    stack-frame store, `addi r1, r1, -0x120@l`, `lis r11, -0x1@ha`.
+
+    Negative hex is the whole of the miss: POSITIVE hex was already caught by
+    the `startswith('0x')` test and both signs of decimal by `isdigit()`. The
+    bug predates fdc5113 ("ruler I") -- the old comparison spelling emitted
+    `-0x…` too -- and was left in place by the ruler-I repair only so that
+    repair's differential stayed a clean no-op; this is that follow-on.
+    """
+    return bool(_NUMERIC_OPERAND_RE.fullmatch(s))
 
 
 def _is_reloc_symbol(s: str) -> bool:
     """Check if a string looks like a relocation symbol appended by objdiff."""
-    # MSVC mangled names, labels, merged symbols
+    # MSVC mangled names, labels, merged symbols, and mwcc bare pool-ref /
+    # string-pool-base symbols (`@158`, `@stringBase0` -- these can only ever
+    # be relocation-symbol annotations here since a real register/immediate
+    # argument never starts with a literal `@`).
     return (s.startswith('?') or s.startswith('merged_') or
             s.startswith('lbl_') or s.startswith('jumptable_') or
             s.startswith('switch_') or s.startswith('__jtbl') or
+            s.startswith('@') or
             (s.startswith('"') and '@' in s))
 
 
@@ -346,6 +450,29 @@ def read_jump_table_from_obj(obj_path: str, symbol_name: str,
     then reads the entries from the appropriate section.
 
     Returns list of integer offsets, or None on failure.
+
+    KNOWN GAP (documented, not fixed by the mwcc `@NNN` pool-ref patch):
+    this reader is COFF-only (MSVC/X360 objects: dc3, rb3-xenon). It does
+    NOT understand ELF32-BE objects (the mwcc/GC/Wii clone repos), because
+    `detect_jump_tables()`'s pattern match is itself MSVC-specific (looks for
+    a `jumptable_*`-named symbol fed through `lis`/`addi` HIGH/LOW halves --
+    mwcc's switch-table codegen and symbol naming differ enough that the
+    detector and this reader would both need separate ELF-aware
+    implementations, not a one-line fix).
+
+    Verified empirically (2026-08-05) that this degrades SAFELY rather than
+    corrupting output or hanging: fed a real mwcc ELF `.o`
+    (doldecomp_melee's `ansi_fp.o`), the COFF field layout misreads section
+    headers, hits a `struct.error` on the very first `f.read(4)` short-read,
+    and the `except (OSError, struct.error)` below catches it -- this
+    function returns `None`, `convert_objdiff_json()`'s caller treats that
+    exactly like "file unreadable" and skips resolving that jump table (the
+    switch's case labels are left unresolved; m2c gets an assembly listing
+    that still assembles, it just won't decompile the switch statement
+    correctly). No ELF object crashed or hung during that check. A real ELF
+    jump-table reader would need `elf_ppc.py`'s symbol/section access
+    extended to non-`.text` data symbols -- out of scope for this converter
+    file alone.
     """
     try:
         with open(obj_path, 'rb') as f:
@@ -466,6 +593,8 @@ def format_instruction(instr: dict) -> str:
     - Branch targets
     - Extra relocation info appended by objdiff (strip it for mr, etc.)
     - Quoting MSVC mangled symbols
+    - mwcc constant-pool / SDA-relative memory ops with the base register
+      omitted (bare `@NNN` or bare named SDA global -- see memory_ops below)
     """
     target = instr.get('target', {})
     opcode = target.get('opcode', '')
@@ -482,10 +611,7 @@ def format_instruction(instr: dict) -> str:
         parts = args.split(', ', 1)
         if len(parts) == 2:
             reg, operand = parts
-            # If operand is a symbol (starts with ? or letter, not a numeric literal).
-            # _is_numeric_operand, not a startswith('0x')/isdigit() pair: lis takes a
-            # signed 16-bit immediate, so a negative hex form is legal here and the
-            # pair would misread it as a symbol and emit `lis r11, -0x1@ha`.
+            # If operand is a symbol (starts with ? or letter, not 0x number)
             if operand and not _is_numeric_operand(operand):
                 # Quote and add @ha suffix for high-adjusted address
                 return f"{opcode} {reg}, {quote_symbol(operand)}@ha"
@@ -502,11 +628,7 @@ def format_instruction(instr: dict) -> str:
                 # Format: "addi r7, r28, 0x4, lbl_82017228"
                 # Strip the relocation info, keep: "addi r7, r28, 0x4"
                 return f"{opcode} {parts[0]}, {parts[1]}, {parts[2]}"
-            # Check if third part is a symbol. _is_numeric_operand, not a
-            # startswith('0x')/isdigit() pair: negative hex immediates are ordinary
-            # here -- `addi r3, r1, -0x10` takes the address of a stack slot below SP,
-            # which MSVC/Xenon emits constantly -- and the pair misread every one of
-            # them as a symbol, producing `addi r3, r1, -0x10@l`.
+            # Check if third part is a symbol
             last = parts[-1]
             if last and not _is_numeric_operand(last):
                 # Reconstruct with @l suffix and quote
@@ -547,8 +669,6 @@ def format_instruction(instr: dict) -> str:
             reg_dest, offset, reg_base = parts
             # Check if offset is a symbol reference (not numeric)
             # e.g. "lwz r4, ?gNullStr@@3PBDB, r11" -> "lwz r4, "?gNullStr..."@l(r11)"
-            # NB: _is_numeric_operand, not a startswith('0x')/isdigit() pair --
-            # see its docstring for the negative-hex misclassification it fixes.
             if offset and not _is_numeric_operand(offset):
                 return f"{opcode} {reg_dest}, {quote_symbol(offset)}@l({reg_base})"
             # Format: "lwz r11, 0x4c, r3" -> "lwz r11, 0x4c(r3)"
@@ -557,6 +677,36 @@ def format_instruction(instr: dict) -> str:
             # Format with relocation: "lwz r11, 0x3c, r10, ?TheTaskMgr..." -> "lwz r11, 0x3c(r10)"
             reg_dest, offset, reg_base, _reloc = parts
             return f"{opcode} {reg_dest}, {offset}({reg_base})"
+        elif len(parts) == 2:
+            # mwcc/ELF SDA-relative memory op with the base register omitted.
+            # In the unlinked object, R_PPC_EMB_SDA21/SDA2REL relocs leave the
+            # instruction's rA field as a 0-placeholder (patched to r2/r13 at
+            # link time), so objdiff's disassembly shows only the bare
+            # symbol: "lfd f0, @158" (mwcc constant-pool id) or
+            # "stw r3, sSkidMarkRaster" (a plain SDA global), never a
+            # "reg, offset, base" triple like the len==3 case above.
+            #
+            # m2c's PPC parser requires an explicit base register in parens
+            # (`sym@sda21(reg)` / `sym@sda2(reg)`, see m2c's own
+            # end-to-end fixtures under tests/end_to_end/*/mwcc-o4p.s), but
+            # m2c discards whichever register we name here once it recognizes
+            # the sda2/sda21 macro (`translate.py:strip_macros` replaces the
+            # whole `AsmAddressMode` with just the symbol, unconditionally --
+            # confirmed by reading that code directly). So the register
+            # choice below is cosmetic, not semantic; we still follow the
+            # real embedded-PPC EABI convention for readability: r2 backs the
+            # read-only `.sdata2`/`.sbss2` area (float/double constant pools,
+            # conventionally reached via lfd/lfs/stfd/stfs), r13 backs the
+            # read-write `.sdata`/`.sbss` area (everything else).
+            reg_dest, sym = parts
+            if sym and not _is_numeric_operand(sym):
+                base_reg = 'r2' if opcode in ('lfd', 'lfs', 'stfd', 'stfs') else 'r13'
+                return f"{opcode} {reg_dest}, {quote_symbol(sym)}@sda21({base_reg})"
+            # Not a symbol-shaped operand (e.g. a bare numeric literal with no
+            # base register) -- an addressing-mode shape we don't recognize.
+            # Fall through to the general handling below, which will emit it
+            # unchanged (fail-closed: m2c will reject it rather than us
+            # guessing at semantics).
 
     # Indexed memory ops (ending in 'x') use 3 registers: "lbzx rD, rA, rB"
     # objdiff may append relocation info as a 4th part - strip it
@@ -612,6 +762,12 @@ def convert_objdiff_json(data: dict, symbol_override: Optional[str] = None,
     if not instructions:
         print(f"Warning: No instructions found for {symbol}", file=sys.stderr)
         return ""
+
+    # Canonicalize the arg spelling BEFORE anything reads it, so the rest of
+    # this file is independent of which objdiff wrote the JSON. See
+    # flat_args_from_typed for what changed and why parsing the new spelling
+    # would have been the wrong repair.
+    normalize_instruction_args(instructions)
 
     # Find branch targets to create labels
     branch_targets = parse_branch_targets(instructions)
