@@ -302,8 +302,29 @@ def cmd_reclaim(a):
 
 
 def cmd_selftest(a):
-    """Controls that MUST be able to fail.  --self-break proves they do."""
+    """Controls that MUST be able to fail.  --self-break proves they do.
+
+    ⚠ A control whose pinned constant has left the population is DISARMED, not
+    passing (lane task93, 2026-08-16). The named-known-positive controls used to
+    print `SKIP` and fall through without touching `fails`, so the run still
+    ended on "SELFTEST PASSED (and every control above can fail)" -- a claim that
+    is false for a control that did not run.
+
+    That was not hypothetical. Measured against build/45410914/report.json on the
+    primary checkout: KNOWN_CMP and KNOWN_DOLLAR have both reached 100.0% (fixed
+    upstream) and are no longer in the sub-100 population, so TWO of the four
+    named controls -- including the shape-2 guard against the silent-empty-diff
+    regression that once ate 204 of 461 rows -- were already disarmed and
+    invisible.
+
+    Reaching 100% is good news, so a disarmed control is not a FAILURE. It is
+    also not a pass: the shape it guarded is no longer guarded until the constant
+    is re-pinned. Following the house idiom in tools/screen_gate.py -- "an
+    untestable screen is NOT a passing screen; this run exits non-zero" -- a
+    disarmed control is reported separately and exits 3.
+    """
     fails = []
+    disarmed = []
     M, rows = load_rows(a.project_dir)
     by = {r['sym']: r for r in rows}
     cache = os.path.join(a.cache_dir, 'diffs')
@@ -311,10 +332,14 @@ def cmd_selftest(a):
     # -- control 1 (shape 2): a '$'-bearing template symbol must produce a diff.
     #    The first driver shelled through bash and silently returned EMPTY for
     #    all 204 such symbols out of 461.
-    sym = KNOWN_DOLLAR if not a.self_break else KNOWN_DOLLAR
+    sym = KNOWN_DOLLAR
     r = by.get(sym)
     if r is None:
-        print(f"  SKIP  control 1: {sym[:44]}... no longer in the sub-100 population")
+        print(f"  DISARMED  control 1 (dollar-symbol resolves): {sym[:40]}... "
+              f"no longer in the sub-100 population")
+        disarmed.append(f'control 1 (shape 2, dollar-symbol): {sym} has left the '
+                        f'sub-100 population -- re-pin KNOWN_DOLLAR to a template '
+                        f'symbol that is still sub-100')
     else:
         d = None if a.self_break else diff_one(a.project_dir, r['sym'], r['unit'], cache)
         ok = d is not None and (d.get('instructions') is not None)
@@ -347,7 +372,11 @@ def cmd_selftest(a):
     for sym, want in ((KNOWN_CMP, 'CMP_REVERSAL'), (KNOWN_ARITH, 'ARITH_COMMUTE')):
         got = cls_of.get(sym)
         if got is None:
-            print(f"  SKIP  control 1b: {sym[:44]}... no longer sub-100 (fixed upstream?)")
+            print(f"  DISARMED  control 1b (known positive {want}): {sym[:40]}... "
+                  f"no longer sub-100 (fixed upstream?)")
+            disarmed.append(f'control 1b (shape 1, known positive {want}): {sym} '
+                            f'has left the sub-100 population -- re-pin it to '
+                            f'another {want} row that is still sub-100')
             continue
         arms, pure = got
         ok = pure and set(arms) == {want}
@@ -357,11 +386,21 @@ def cmd_selftest(a):
             fails.append(f'known positive {sym} classified {sorted(set(arms))}, expected pure {want}')
 
     print()
+    print(f'controls: {len(fails)} failed, {len(disarmed)} disarmed')
     if fails:
         print('SELFTEST FAILED:')
         for f in fails:
             print('  -', f)
         sys.exit(2)
+    if disarmed:
+        print('SELFTEST INCONCLUSIVE -- %d control(s) DISARMED, so this run did '
+              'NOT validate\nevery shape it claims to. A disarmed control is not '
+              'a passing control.' % len(disarmed), file=sys.stderr)
+        for msg in disarmed:
+            print('  - ' + msg, file=sys.stderr)
+        print('\nRe-pin the constant(s) above, then re-run. Do not read this as a '
+              'PASS.', file=sys.stderr)
+        sys.exit(3)
     print('SELFTEST PASSED (and every control above can fail -- try --self-break)')
 
 
