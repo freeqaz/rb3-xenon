@@ -351,25 +351,60 @@ def test_atexit_verify_does_not_select_it(db, monkeypatch, tmp_path):
     assert iu_sym not in fake.symbols, "atexit_fuzzy_verify selected the IU row"
 
 
-def test_ghidra_export_query_as_shipped_excludes_it(db):
-    """Executes the SQL LIFTED FROM the shipped build_symbol_map.py source.
+def _shipped_ghidra_export_sql() -> str:
+    """The SQL the shipped build_symbol_map.py actually builds, as a string.
 
     That file's main() needs report.json and built objects, so it cannot be
-    driven here. Extracting its query text instead still binds the assertion to
-    the real file: delete the guard there and this fails.
+    driven here. We instead lift the first argument of its `rows = con.execute(`
+    call out of the source with `ast` and EVALUATE that expression with the real
+    `unworkable_verdict_clause` bound. Evaluating rather than regexing string
+    literals matters twice over:
+
+      * the clause is a helper CALL, not a literal, so a literal-only scrape
+        sees a query with no guard at all;
+      * `ast.literal_eval`-grade evaluation gives the runtime string, so
+        `ESCAPE '\\'` needs no hand-unescaping the way a raw-source scrape did.
+
+    The eval namespace holds exactly the one name the expression may reference,
+    so a consumer that grew a second, unbound helper fails loudly here rather
+    than being silently scraped into something that still passes.
     """
-    import re
+    import ast
     src = (HERE.parent.parent / "tools/ghidra/build_symbol_map.py").read_text()
-    start = src.index("rows = con.execute(")
-    end = src.index(".fetchall()", start)
-    call = src[start:end]
-    # Only the string literals inside the call itself -- not the comments above
-    # it, which is what a looser pattern picked up.
-    sql = "".join(re.findall(r'"([^"]*)"', call))
+    tree = ast.parse(src)
+    assigns = [
+        node for node in ast.walk(tree)
+        if isinstance(node, ast.Assign)
+        and any(isinstance(t, ast.Name) and t.id == "rows" for t in node.targets)
+    ]
+    assert len(assigns) == 1, f"expected one `rows = ...`, found {len(assigns)}"
+    # The statement is `rows = con.execute(<query>, params).fetchall()`, so the
+    # query lives in the INNER call, not in the .fetchall() wrapper.
+    execs = [
+        node for node in ast.walk(assigns[0])
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "execute"
+    ]
+    assert len(execs) == 1, f"expected one .execute( in the row query, found {len(execs)}"
+    expr = execs[0].args[0]
+    sql = eval(  # noqa: S307 - source is a file in this repo, not input
+        compile(ast.Expression(expr), "<build_symbol_map query>", "eval"),
+        {"__builtins__": {}},
+        {"unworkable_verdict_clause": D.unworkable_verdict_clause},
+    )
     assert sql.lstrip().startswith("SELECT"), f"extraction missed the query: {sql!r}"
-    # We read raw source, so a Python-level "\\" is still two characters here;
-    # SQLite's ESCAPE wants the one character Python would have produced.
-    sql = sql.replace("\\\\", "\\")
+    return sql
+
+
+def test_ghidra_export_query_as_shipped_excludes_it(db):
+    """Executes the SQL the shipped build_symbol_map.py builds.
+
+    This is the path that pushes NAMES onto addresses in Ghidra, i.e. asserts
+    identity, and Ghidra is downstream of nothing -- nobody catches a bad name
+    there. Delete the guard in that file and this fails.
+    """
+    sql = _shipped_ghidra_export_sql()
     assert "IDENTITY_UNESTABLISHED" in sql, (
         f"shipped Ghidra export query has no identity guard: {sql!r}"
     )
@@ -379,7 +414,38 @@ def test_ghidra_export_query_as_shipped_excludes_it(db):
     conn.commit()
     got = {r[0] for r in conn.execute(
         sql.replace("SELECT symbol, unit, current_percent", "SELECT id"), (80.0,))}
-    assert 4 not in got
+    assert 4 not in got, "shipped Ghidra export query selected the IU row"
+
+
+def test_ghidra_export_query_follows_the_shared_clause(db, monkeypatch):
+    """A SECOND unworkable verdict must reach the Ghidra export for free.
+
+    The guard used to be spelled inline in build_symbol_map.py. It agreed with
+    `unworkable_verdict_clause()` character for character, so nothing was wrong
+    today -- but the day someone adds a verdict to `UNWORKABLE_VERDICTS`, every
+    other consumer follows and the one that exports NAMES does not. This is the
+    drift test: it fabricates that future verdict and asserts the shipped query
+    excludes it, which is only possible if the file calls the helper.
+
+    Mutation-checked: restore the inline literal in build_symbol_map.py and this
+    test fails while the one above still passes.
+    """
+    monkeypatch.setattr(
+        D, "UNWORKABLE_VERDICTS", frozenset(D.UNWORKABLE_VERDICTS | {"BODY_DISPUTED"}))
+    sql = _shipped_ghidra_export_sql()
+    assert "BODY_DISPUTED" in sql, (
+        "the shipped Ghidra export query did not follow UNWORKABLE_VERDICTS -- "
+        f"it is not calling unworkable_verdict_clause(): {sql!r}"
+    )
+
+    conn = sqlite3.connect(db)
+    conn.execute("UPDATE functions SET current_percent=95.0, verdict='BODY_DISPUTED' "
+                 "WHERE id=4")
+    conn.commit()
+    got = {r[0] for r in conn.execute(
+        sql.replace("SELECT symbol, unit, current_percent", "SELECT id"), (80.0,))}
+    assert got, "positive control failed: the query matched no row at all"
+    assert 4 not in got, "a newly unworkable verdict still reached the Ghidra export"
 
 
 def test_search_by_name_does_not_suggest_it(db):
