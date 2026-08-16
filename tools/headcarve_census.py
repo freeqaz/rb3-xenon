@@ -21,17 +21,27 @@ TWO INDEPENDENT SIGNATURES, deliberately not combined into one score:
      before the successor's address, execution falls through into it.  A real
      function is never entered by fall-through.
 
-  B. DATA FLOW -- the successor reads a register before defining it, restricted
-     to registers that are NOT live on entry under the MSVC X360 ABI (r11 and
-     the callee-saved r14-r31).  r3-r10 are argument registers and r12 arrives
-     holding the parent frame in an EH funclet, so both are excluded: including
-     them would fire on every legitimate function.
+  B. DATA FLOW -- the successor reads r11 before defining it.  r11 is the ONLY
+     register that discriminates: r3-r10 are arguments, r12 carries the parent
+     frame into an EH funclet, and r14-r31 are callee-saved and therefore STORED
+     before being defined by every prologue on earth.  An earlier version
+     included r14-r31 and duly flagged ?SaveForEndGame@Stats@@ at fuzzy==100.
 
 Controls this script runs on itself (a detector that cannot fail is worthless):
   * NULL      -- the fall-through rate over ALL adjacent function pairs.
   * NEGATIVE  -- flagged rate among rows the grader scores at fuzzy == 100.
                  A head at 100% PROVES its carve is right (SPLITBLOCK-1).
   * POSITIVE  -- the known instance 0x8268FC38 must appear.
+
+The first version of this script was ANTI-DISCRIMINATING -- 685 rows, with the
+fuzzy==100 rate (1.184%) ABOVE the null (0.992%) -- because of three bugs:
+trailing padding inside a declared size, the 8-byte EH prefix typed as code
+(dtk sometimes sizes it 4, so `size==8` does not catch it), and the r14-r31
+prologue artifact above.  Chasing the CONTROL rather than the result is what
+found all three; the headline number alone looked entirely plausible.
+
+FIXABILITY is measured, not asserted: splits.txt gates jeff's P5 (same split
+unit) ONLY, so the tool reports how many rows have P5 as their sole blocker.
 """
 import json
 import re
@@ -382,6 +392,94 @@ print(f"  of which score > 0 on either ruler   : {len(live)}")
 print(f"  total bytes of NAMED flagged heads   : {sum(r.get('rsize', 0) for r in named)}")
 print(f"  total bytes of ALL flagged heads     : {sum(r['head_size'] for r in rows)}")
 print(f"  total bytes of pred+head runs        : {sum(r['head_size']+r['pred_size'] for r in rows)}")
+
+# --------------------------------------------------- REACHABILITY (fixability)
+# jeff's Class-4 pass (`merge_branch_reached_overcarve_tails`, jeff
+# src/cmd/xex.rs) builds its xref table from RELOCATIONS and requires a branch
+# INTO the tail (P2'), with no reference sourced outside the reconstructed span
+# (P3').  A head reached ONLY by fall-through can therefore never be merged by
+# it, no matter what splits.txt says -- splits.txt gates P5 (same split unit)
+# alone.  This pass decodes every branch in .text and scans every data word in
+# the image so the fixability verdict rests on measurement, not on assertion.
+_text = [s_ for s_ in SECS if s_[0] == ".text"][0]
+_, TB, TVSZ, TPTR, TRSZ = _text
+_targets = {r["head_addr"] for r in rows}
+_branch = {t: [] for t in _targets}
+for _i in range(min(TVSZ, TRSZ) // 4):
+    _w = struct.unpack_from(">I", DATA, TPTR + _i * 4)[0]
+    _op = (_w >> 26) & 0x3F
+    _va = TB + _i * 4
+    if _op == 18:
+        _d = _w & 0x03FFFFFC
+        if _d & 0x02000000:
+            _d -= 0x04000000
+        _t = (_d if (_w & 2) else _va + _d) & 0xFFFFFFFF
+    elif _op == 16:
+        _d = _w & 0xFFFC
+        if _d & 0x8000:
+            _d -= 0x10000
+        _t = (_d if (_w & 2) else _va + _d) & 0xFFFFFFFF
+    else:
+        continue
+    if _t in _branch:
+        _branch[_t].append(_va)
+_ptr = {t: 0 for t in _targets}
+for _nm, _b, _vsz, _p, _rsz in SECS:
+    for _i in range(min(_vsz, _rsz) // 4):
+        _w = struct.unpack_from(">I", DATA, _p + _i * 4)[0]
+        if _w in _ptr:
+            _ptr[_w] += 1
+
+# split-block ownership, keyed on the FULL heading path (never basename())
+_cur = None
+_blocks = []
+for _l in (ROOT / "config/45410914/splits.txt").read_text().splitlines():
+    if _l and not _l[0].isspace() and _l.rstrip().endswith(":"):
+        _cur = _l.strip()[:-1]
+        continue
+    _m = re.match(r"\s*\.text\s+start:0x([0-9A-Fa-f]+)\s+end:0x([0-9A-Fa-f]+)", _l)
+    if _m and _cur:
+        _blocks.append((int(_m.group(1), 16), int(_m.group(2), 16), _cur))
+_blocks.sort()
+import bisect as _bisect
+_bs = [b[0] for b in _blocks]
+
+
+def _owner(a):
+    i = _bisect.bisect_right(_bs, a) - 1
+    if i >= 0 and _blocks[i][0] <= a < _blocks[i][1]:
+        return _blocks[i]
+    return None
+
+
+for r in rows:
+    _ext = [v for v in _branch[r["head_addr"]]
+            if not (r["pred_addr"] <= v < r["head_addr"])]
+    r["branch_refs"] = len(_branch[r["head_addr"]])
+    r["branch_refs_external"] = len(_ext)
+    r["ptr_refs"] = _ptr[r["head_addr"]]
+    _po, _ho = _owner(r["pred_addr"]), _owner(r["head_addr"])
+    r["pred_unit"] = _po[2] if _po else None
+    r["head_unit"] = _ho[2] if _ho else None
+    r["pred_block"] = [_po[0], _po[1]] if _po else None
+    r["head_block"] = [_ho[0], _ho[1]] if _ho else None
+    r["p1_adjacent"] = r["kind"].endswith("|adjacent")
+    r["p5_would_refuse"] = r["pred_block"] != r["head_block"]
+
+_pure = sum(1 for r in rows if not r["branch_refs"] and not r["ptr_refs"])
+_c4 = [r for r in rows
+       if r["p1_adjacent"] and r["branch_refs"] > 0 and r["branch_refs_external"] == 0]
+_morph = [r for r in _c4 if r["p5_would_refuse"]]
+print()
+print("FIXABILITY")
+print(f"  pure fall-through (no branch, no data ptr) : {_pure}"
+      f"  -> Class-4 can NEVER fire, whatever splits.txt says")
+print(f"  P1+P2'+P3' satisfied                       : {len(_c4)}")
+print(f"  ...of which P5 is the ONLY blocker (Morph) : {len(_morph)}"
+      f"  <- the only shape splits.txt can fix")
+print(f"  ...of those, NAMED in the map              : "
+      f"{sum(1 for r in _morph if r.get('mapped'))}"
+      f"  <- unnamed rows move 0 -> 0 (SPLITBLOCK-1)")
 
 out = ROOT / "docs/decomp/headcarve-census-PINFIX2.json"
 out.write_text(json.dumps(rows, indent=1))
