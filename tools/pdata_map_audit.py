@@ -39,10 +39,50 @@ four accessors mapped at 0x826c48f8/4908/4910/4958, all strictly inside
     expose one entry label per register inside a SINGLE .pdata range.  34 of the
     first 42 raw hits were these; they are real entry points, not mismaps.
 
+THE ANTI-VACUITY CONTRACT (lane P, 2026-08-16)
+----------------------------------------------
+`--selftest --sabotage shift` MUST fail.  That is the control which makes every
+green `--selftest` mean something.  It was VACUOUS IN EVERY WORKTREE until this
+lane, and it reported success while dead:
+
+  * `fingerprints.json` is gitignored (15.9 MB, regenerable) so it never travels
+    to a worktree, and the size cross-check `[SKIP]`ped when it was absent.
+  * That cross-check was THE ONLY ONE OF THE FIVE THAT DISCRIMINATED.  Measured
+    on main: under `--sabotage shift` the other four all still PASS.
+  * So in a worktree the sabotage leg printed a bare `OK` and exited 0 -- the
+    clean and sabotaged runs were byte-identical but for the `shift=` header.
+  * Worse, "null over .pdata starts flags nothing" was a TAUTOLOGY: it sampled
+    `Extents.keys` and called `interior_of()`, whose first line is
+    `if a in self.ext: return None`.  It returned 0 for ANY table -- verified
+    PASSing on an all-zero-length table and on random garbage.
+
+The fix is NOT merely to report the skip.  It is that the discriminating
+controls are now INTRINSIC -- checkable from the retail binary alone, which
+does travel (`setup_worktree.sh` reflinks `orig/`).  A RUNTIME_FUNCTION table
+partitions code, so its extents must be DISJOINT and must lie inside an
+executable section.  Measured separation is total: 0/57,732 neighbour pairs
+overlap under the real shift, 57,730/57,732 (100.00%) under the sabotage.
+
+  ! The first cut of that bound used `.text` alone and FIRED ON THE REAL
+    TABLE (106/57,733).  Those 106 are genuine -- they live in `BINK`, the
+    video codec's own code section.  An over-strict control is its own kind of
+    dead control, so the bound is the union of EXECUTE-flagged sections.
+
+Two rules this file now obeys, and callers should rely on:
+  * It NEVER prints `OK` when a control did not run.  A skipped control yields
+    `INCOMPLETE ... NOT a clean bill of health` and **exit 2** -- distinct from
+    exit 1 (a control FAILED) and exit 0 (every control ran and passed).
+  * `--strict` turns any skip into a failure, for callers that want fail-closed.
+
 Usage:
     python3 tools/pdata_map_audit.py --selftest
+    python3 tools/pdata_map_audit.py --selftest --strict     # skips become FAIL
     python3 tools/pdata_map_audit.py --selftest --sabotage shift  # MUST fail
     python3 tools/pdata_map_audit.py audit [--json out.json]
+
+Exit codes (--selftest):  0 = all controls ran and passed
+                          1 = a control FAILED (expected under --sabotage)
+                          2 = INCOMPLETE, a control could not run
 """
 from __future__ import annotations
 
@@ -76,8 +116,36 @@ def _sections(data: bytes):
         va = struct.unpack_from("<I", data, e + 12)[0]
         rsize = struct.unpack_from("<I", data, e + 16)[0]
         raw = struct.unpack_from("<I", data, e + 20)[0]
-        out.append((name, imgbase + va, raw, rsize))
+        chars = struct.unpack_from("<I", data, e + 36)[0]
+        out.append((name, imgbase + va, raw, rsize, chars))
     return imgbase, out
+
+
+IMAGE_SCN_MEM_EXECUTE = 0x20000000
+
+
+def code_spans(exe: str) -> list[tuple[int, int]]:
+    """[(lo, hi)] of every EXECUTABLE section, merged where adjacent.
+
+    ! Bounding .pdata extents against `.text` ALONE is WRONG and this was
+      measured, not assumed: 106 of 57,733 real extents land in `BINK`, the
+      Bink video codec's own code section (0x82c4d000-0x82c5d200), which
+      carries legitimate unwind records.  Keying on the section CHARACTERISTICS
+      bit rather than the name keeps that correct if another codec is linked in.
+    """
+    data = open(exe, "rb").read()
+    _, secs = _sections(data)
+    spans = sorted((va, va + rsize) for _n, va, _r, rsize, ch in secs
+                   if ch & IMAGE_SCN_MEM_EXECUTE and rsize)
+    if not spans:
+        raise SystemExit("no executable sections")
+    merged = [list(spans[0])]
+    for lo, hi in spans[1:]:
+        if lo <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], hi)
+        else:
+            merged.append([lo, hi])
+    return [(lo, hi) for lo, hi in merged]
 
 
 def load_extents(exe: str = DEFAULT_EXE, shift: int = 8) -> dict[int, int]:
@@ -87,7 +155,7 @@ def load_extents(exe: str = DEFAULT_EXE, shift: int = 8) -> dict[int, int]:
     pd = [s for s in secs if s[0] == ".pdata"]
     if not pd:
         raise SystemExit("no .pdata section")
-    _, _, praw, psz = pd[0]
+    _, _, praw, psz, _ = pd[0]
     ext: dict[int, int] = {}
     for off in range(praw, praw + psz, 8):
         begin, w = struct.unpack_from(">II", data, off)
@@ -95,6 +163,36 @@ def load_extents(exe: str = DEFAULT_EXE, shift: int = 8) -> dict[int, int]:
             continue
         ext[begin] = ((w >> shift) & 0x3FFFFF) * 4
     return ext
+
+
+def check_extents(ext: dict[int, int], spans: list[tuple[int, int]]) -> dict:
+    """INTRINSIC consistency of the decoded .pdata table -- no external fixture.
+
+    A RUNTIME_FUNCTION table partitions code, so two properties hold for any
+    correct decode and are checkable from the retail binary ALONE:
+        (1) extents are DISJOINT           -- no body runs into the next
+        (2) extents lie inside CODE        -- some executable section
+    These are what make `--sabotage shift` discriminate in a worktree, where
+    `fingerprints.json` is absent.  Do not replace them with a fixture-dependent
+    check: that is precisely the regression this function exists to prevent.
+    """
+    keys = sorted(ext)
+
+    def inside(a: int, b: int) -> bool:
+        return any(lo <= a and b <= hi for lo, hi in spans)
+
+    overlaps = [k for i, k in enumerate(keys[:-1]) if k + ext[k] > keys[i + 1]]
+    outside = [k for k in keys if not inside(k, k + ext[k])]
+    return {
+        "n": len(keys),
+        "pairs": max(1, len(keys) - 1),
+        "overlaps": len(overlaps),
+        "first_overlap": overlaps[0] if overlaps else None,
+        "outside": len(outside),
+        "first_outside": outside[0] if outside else None,
+        "covered": sum(ext.values()),
+        "code_size": sum(hi - lo for lo, hi in spans),
+    }
 
 
 class Extents:
@@ -119,24 +217,72 @@ class Extents:
     def is_start(self, a: int) -> bool:
         return a in self.ext
 
+    def covered_by_predecessor(self, a: int):
+        """Owning start if the extent immediately BEFORE `a` runs past `a`.
 
-def selftest(exe=DEFAULT_EXE, sabotage=None) -> int:
+        Deliberately does NOT short-circuit on `a in self.ext` the way
+        interior_of() does.  That short-circuit is correct for the detector --
+        a .pdata start is by definition a real function start -- but it makes
+        "sample .pdata starts, assert none are flagged" a question that cannot
+        return anything but 0.  The null uses THIS predicate so it can fail.
+        """
+        i = bisect.bisect_left(self.keys, a)
+        if i <= 0:
+            return None
+        p = self.keys[i - 1]
+        return p if p + self.ext[p] > a else None
+
+
+def selftest(exe=DEFAULT_EXE, sabotage=None, strict=False) -> int:
     shift = 2 if sabotage == "shift" else 8
     ok = True
+    ran = 0
+    skipped: list[tuple[str, str, str]] = []
 
     def chk(name, cond, detail=""):
-        nonlocal ok
+        nonlocal ok, ran
+        ran += 1
         print(f"  [{'PASS' if cond else 'FAIL'}] {name}")
         if detail:
             print(f"         {detail}")
         ok = ok and bool(cond)
 
+    def skip(name, why, howto):
+        """Record a control that COULD NOT RUN.  Never silently.
+
+        Under --strict this is a failure outright; otherwise it downgrades the
+        verdict to INCOMPLETE (exit 2).  It must never leave the run printing OK.
+        """
+        nonlocal ok
+        skipped.append((name, why, howto))
+        print(f"  [{'FAIL' if strict else 'SKIP'}] {name}")
+        print(f"         DID NOT RUN: {why}")
+        if strict:
+            ok = False
+
     print(f"pdata_map_audit selftest  exe={exe}  shift={shift}"
-          + ("  (SABOTAGED)" if sabotage else ""))
+          + ("  (SABOTAGED)" if sabotage else "")
+          + ("  [strict]" if strict else ""))
     ext = load_extents(exe, shift=shift)
     chk("pdata parsed", len(ext) > 40000, f"entries={len(ext)}")
 
-    # cross-check sizes against fingerprints.json where available
+    # ---- INTRINSIC controls: binary-only, so they run in EVERY worktree -----
+    # These are the discriminating legs.  See THE ANTI-VACUITY CONTRACT above:
+    # the fingerprints cross-check used to be the only one that noticed the
+    # sabotage, and it is exactly the one that cannot run in a worktree.
+    st = check_extents(ext, code_spans(exe))
+    chk("extents are DISJOINT (intrinsic -- no fixture needed)",
+        st["overlaps"] == 0,
+        f'{st["overlaps"]}/{st["pairs"]} neighbour pairs overlap'
+        + (f' (first at {st["first_overlap"]:#010x})' if st["first_overlap"] else ""))
+    chk("extents lie inside executable sections (intrinsic)", st["outside"] == 0,
+        f'{st["outside"]}/{st["n"]} extents fall outside code'
+        + (f' (first at {st["first_outside"]:#010x})' if st["first_outside"] else ""))
+    chk("total covered <= code size (intrinsic)",
+        st["covered"] <= st["code_size"],
+        f'covered={st["covered"]:,} B  code={st["code_size"]:,} B')
+
+    # ---- corroborating control: needs gitignored, regenerable fingerprints --
     fpp = os.path.join(ROOT, "fingerprints.json")
     if os.path.exists(fpp):
         fp = json.load(open(fpp))
@@ -148,7 +294,12 @@ def selftest(exe=DEFAULT_EXE, sabotage=None) -> int:
         chk("extent sizes agree with fingerprints.json", rate > 0.9,
             f"{agree}/{len(common)} = {100*rate:.2f}%")
     else:
-        print("  [SKIP] fingerprints.json absent -- size cross-check not run")
+        skip("extent sizes agree with fingerprints.json",
+             f"fingerprints.json absent at {fpp} (gitignored -- it does not "
+             "travel to a worktree)",
+             "re-run scripts/setup_worktree.sh (it now reflink-copies the file), "
+             "or: cp <main-repo>/fingerprints.json .  / regenerate with "
+             "tools/fingerprint_match.py extract")
 
     E = Extents(ext)
     # known-positive: the four inlined DirectInstrument accessors
@@ -158,18 +309,47 @@ def selftest(exe=DEFAULT_EXE, sabotage=None) -> int:
         all(g == 0x826C44F8 for g in got), f"{[hex(g) if g else None for g in got]}")
     # known-negative: a real function start is never flagged
     chk("real function start not flagged", E.interior_of(0x826C44F8) is None)
-    # null: .pdata starts must flag at 0%
+    # null: no .pdata start may be swallowed by its predecessor's extent.
+    # Uses covered_by_predecessor(), NOT interior_of() -- the latter's
+    # `if a in self.ext: return None` made this leg a tautology that PASSed on
+    # an all-zero table and on random garbage alike.
     random.seed(3)
     sample = random.sample(E.keys, min(2000, len(E.keys)))
-    nulls = sum(1 for a in sample if E.interior_of(a))
-    chk("null over .pdata starts flags nothing", nulls == 0, f"{nulls} flagged")
+    nulls = sum(1 for a in sample if E.covered_by_predecessor(a))
+    chk("null: sampled .pdata starts not swallowed by predecessor",
+        nulls == 0, f"{nulls}/{len(sample)} flagged")
 
-    print(f"  {'OK' if ok else 'FAILED'}")
-    return 0 if ok else 1
+    if not ok:
+        print("  FAILED")
+        return 1
+    if skipped:
+        # NEVER print OK here.  A control that did not run is not evidence of
+        # absence -- this is the failure class the whole file guards against.
+        print(f"  INCOMPLETE -- {ran} controls ran, {len(skipped)} COULD NOT RUN"
+              "  (NOT a clean bill of health)")
+        for name, why, howto in skipped:
+            print(f"    not examined: {name}")
+            print(f"      why: {why}")
+            print(f"      fix: {howto}")
+        print("  exit 2 = incomplete coverage; use --strict to make this fatal")
+        return 2
+    print(f"  OK ({ran}/{ran} controls ran)")
+    return 0
 
 
 def audit(exe=DEFAULT_EXE, mapf=DEFAULT_MAP, report=DEFAULT_REPORT, out=None) -> int:
-    E = Extents(load_extents(exe))
+    ext = load_extents(exe)
+    # The audit's whole output is the word "PROVABLY FALSE".  That claim is only
+    # as good as the extent table under it, so refuse outright rather than
+    # emit confident rows off a table that fails its own intrinsic invariants.
+    st = check_extents(ext, code_spans(exe))
+    if st["overlaps"] or st["outside"]:
+        raise SystemExit(
+            f"REFUSING to audit: decoded .pdata table is self-inconsistent "
+            f'({st["overlaps"]}/{st["pairs"]} neighbour pairs overlap, '
+            f'{st["outside"]} extents outside code).  Every "PROVABLY FALSE" '
+            f"row would be an artefact of the decode.  Run --selftest.")
+    E = Extents(ext)
     m = json.load(open(mapf))
     rows = [(int(a, 16), n) for a, n in m.items()
             if a.startswith("0x") and isinstance(n, str)]
@@ -230,6 +410,9 @@ def main(argv=None):
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--sabotage", choices=["shift"],
                     help="deliberately break the bit field; --selftest MUST then fail")
+    ap.add_argument("--strict", action="store_true",
+                    help="fail closed: a control that cannot run is a FAILURE "
+                         "(exit 1) rather than INCOMPLETE (exit 2)")
     sub = ap.add_subparsers(dest="cmd")
     a = sub.add_parser("audit", help="scan the map for provably-false rows")
     a.add_argument("--map", default=DEFAULT_MAP)
@@ -237,7 +420,7 @@ def main(argv=None):
     a.add_argument("--json", dest="out", default=None)
     ns = ap.parse_args(argv)
     if ns.selftest:
-        return selftest(ns.exe, ns.sabotage)
+        return selftest(ns.exe, ns.sabotage, ns.strict)
     if ns.cmd == "audit":
         return audit(ns.exe, ns.map, ns.report, ns.out)
     ap.print_help()

@@ -458,6 +458,15 @@ fi
 # coverage, and the worktree silently reports INFLATED tier percentages that are not
 # comparable to main's.  (scope_map.py now also shouts when it is absent.)
 #
+# fingerprints.json (15.9 MB, reflink => free on btrfs) is here because its
+# absence used to make a CONTROL vacuous rather than merely degrade an output:
+# tools/pdata_map_audit.py's `--selftest --sabotage shift` leg -- the anti-vacuity
+# check for that whole audit -- [SKIP]ped its only discriminating comparison and
+# then printed OK, so the sabotage passed in every worktree (lane P, 2026-08-16).
+# That tool no longer DEPENDS on this file (its discriminating controls are now
+# intrinsic to the binary, and it exits 2 + prints INCOMPLETE when this is
+# missing), but carrying it restores full coverage for free.
+#
 # Source resolution: prefer MAIN_REPO (= the repo containing this script).
 # Fallback: if MAIN_REPO is itself a worktree (e.g. wt-infra), scan
 # `git worktree list` for the primary tree (first entry = [main] branch or
@@ -501,6 +510,7 @@ fi
 echo "==> Copying gitignored analysis inputs (non-fatal if absent)"
 for analysis_file in \
         struct_db.sqlite \
+        fingerprints.json \
         config/45410914/scope_map.json; do
     # Try MAIN_REPO first, then PRIMARY_REPO fallback.
     src="$MAIN_REPO/$analysis_file"
