@@ -43,7 +43,14 @@ Two instruments replace it, and between them no name is matched anywhere:
 
 `tools/alias_class_ablate.py` prices each evidence class in a handful of legs.
 
-## The measured partition of the 818,416 B
+## The measured partition of the 819,108 B
+
+⚠ **Two trees, two totals — do not mix them.** The headline re-measure above
+(**818,416 B**) is worktree `wt-alias2` at `9dbea49f`; the partition below is
+worktree `wt-alias2b` at `1a9f6648`, where the same mechanism measures
+**819,108 B** (+692 B, from the map/pin work that landed between). Every row in
+the table is from the second tree and sums to *its* total, exactly. This is the
+`total_code`-is-not-a-constant rule applying to the alias mechanism too.
 
 | evidence under the bytes | memberships | bytes | share |
 |---|---:|---:|---:|
