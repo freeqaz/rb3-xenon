@@ -30072,5 +30072,6 @@
  "0x8280a000": "?SyncSlider@UISlider@@AAAXXZ",
  "0x827e09b0": "?PreLoad@TrackDir@@UAAXAAVBinStream@@@Z",
  "0x823ebf88": "?Handle@NetworkEmulator@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x822a0008": "??6@YAAAVBinStream@@AAV0@ABVMatSwap@OutfitConfig@@@Z"
+ "0x822a0008": "??6@YAAAVBinStream@@AAV0@ABVMatSwap@OutfitConfig@@@Z",
+ "0x827bcd38": "?MemAlloc@@YAPAXHH@Z"
 }

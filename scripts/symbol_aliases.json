@@ -6449,10 +6449,19 @@
    "survivor": "??$?6VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@Z",
    "folded": [
     "??$?6VContentPoolMapping@SongSectionController@@V?$StlNodeAlloc@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VContentPoolMapping@SongSectionController@@V?$StlNodeAlloc@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-    "??$?6VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-    "??$?6VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+    "??$?6VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@stlpmtx_std@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$?6VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_ELEMENT_SERIALIZER_RESIDENT",
+     "blocking_address": "fn_82327050",
+     "why": "Retail's list<T> serializer calls its per-element operator<< at 0x50; retail's is fn_82327050. Our folded spelling's element serializer ??6@YAAAVBinStream@@AAV0@ABVPracticeSectionMapping@SongSectionController@@@Z is ITSELF map-resident at 0x8230d6e8 -- retail kept it at its own address, so it is not fn_82327050. Two list serializers whose element callees are different functions cannot be one COMDAT under reloc-restricted /OPT:ICF. This argument is build-independent (two retail addresses), not a cross-build size test. PIGEONHOLE: groups 344 and 857 both claim this spelling, survivors at 0x82327878 and 0x824c93c0. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    }
+   ]
   },
   {
    "name": "_GWorldReflection",
@@ -9629,9 +9638,7 @@
     "??_G?$ObjRefConcrete@VRhythmDetector@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRhythmDetectorGroup@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndCamAnim@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndFont3d@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLight@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLightAnim@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLine@@VObjectDir@@@@UAAPAXI@Z",
@@ -9774,7 +9781,25 @@
     "??_GWiiMessageList@@QAAPAXI@Z",
     "??_GXboxMultipleItemsPurchaser@@UAAPAXI@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BF72E0",
+     "why": "Retail's callee at the blocking offset is fn_82BF72E0, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls ?TB_SAFE_CLOSE_HANDLE@@YAXAAPAX@Z (x3) and ??3@YAXPAX@Z). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    },
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BF72E0",
+     "why": "Retail's callee at the blocking offset is fn_82BF72E0, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls ?TB_SAFE_CLOSE_HANDLE@@YAXAAPAX@Z (x3) and ??3@YAXPAX@Z). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    }
+   ]
   },
   {
    "name": "$Find",
@@ -9955,9 +9980,7 @@
     "??_G?$ObjRefConcrete@VRhythmDetector@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRhythmDetectorGroup@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndCamAnim@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndFont3d@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLight@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLightAnim@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLine@@VObjectDir@@@@UAAPAXI@Z",
@@ -10100,7 +10123,25 @@
     "??_GWiiMessageList@@QAAPAXI@Z",
     "??_GXboxMultipleItemsPurchaser@@UAAPAXI@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BD4C48",
+     "why": "Retail's callee at the blocking offset is fn_82BD4C48, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls fn_82BCE0D0 twice; sits in the XAUDIO2 vendor band with CX2SourceVoice). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    },
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BD4C48",
+     "why": "Retail's callee at the blocking offset is fn_82BD4C48, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls fn_82BCE0D0 twice; sits in the XAUDIO2 vendor band with CX2SourceVoice). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    }
+   ]
   },
   {
    "name": "Name",
@@ -11688,9 +11729,7 @@
     "??_G?$ObjRefConcrete@VRhythmDetector@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRhythmDetectorGroup@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndCamAnim@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndFont3d@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLight@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLightAnim@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLine@@VObjectDir@@@@UAAPAXI@Z",
@@ -11833,7 +11872,25 @@
     "??_GWiiMessageList@@QAAPAXI@Z",
     "??_GXboxMultipleItemsPurchaser@@UAAPAXI@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BC4B28",
+     "why": "Retail's callee at the blocking offset is fn_82BC4B28, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls ?Uninitialize@CAudioFilter@LEAPFX@@AAAXXZ and ??1CXAPOParametersBase@@UAA@XZ). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    },
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BC4B28",
+     "why": "Retail's callee at the blocking offset is fn_82BC4B28, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls ?Uninitialize@CAudioFilter@LEAPFX@@AAAXXZ and ??1CXAPOParametersBase@@UAA@XZ). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    }
+   ]
   },
   {
    "name": "_GCAudioFilter",
@@ -11915,9 +11972,7 @@
     "??_G?$ObjRefConcrete@VRhythmDetector@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRhythmDetectorGroup@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndCamAnim@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndFont3d@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLight@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLightAnim@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLine@@VObjectDir@@@@UAAPAXI@Z",
@@ -12060,7 +12115,25 @@
     "??_GWiiMessageList@@QAAPAXI@Z",
     "??_GXboxMultipleItemsPurchaser@@UAAPAXI@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BD0EB8",
+     "why": "Retail's callee at the blocking offset is fn_82BD0EB8, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls ??1?$CNonBlockingQueue@PAUMusicCommand@CX2Engine@XAUDIO2@@@@QAA@XZ and ??1CX2SourceVoice@XAUDIO2@@UAA@XZ). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    },
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BD0EB8",
+     "why": "Retail's callee at the blocking offset is fn_82BD0EB8, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls ??1?$CNonBlockingQueue@PAUMusicCommand@CX2Engine@XAUDIO2@@@@QAA@XZ and ??1CX2SourceVoice@XAUDIO2@@UAA@XZ). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    }
+   ]
   },
   {
    "name": "$Find",
@@ -12835,9 +12908,7 @@
     "??_G?$ObjRefConcrete@VRhythmDetector@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRhythmDetectorGroup@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndCamAnim@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndFont3d@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLight@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLightAnim@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLine@@VObjectDir@@@@UAAPAXI@Z",
@@ -12980,7 +13051,25 @@
     "??_GWiiMessageList@@QAAPAXI@Z",
     "??_GXboxMultipleItemsPurchaser@@UAAPAXI@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BD2E78",
+     "why": "Retail's callee at the blocking offset is fn_82BD2E78, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls ??1?$CNonBlockingQueue@PAUMusicCommand@CX2Engine@XAUDIO2@@@@QAA@XZ and ??1CX2SourceVoice@XAUDIO2@@UAA@XZ). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    },
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BD2E78",
+     "why": "Retail's callee at the blocking offset is fn_82BD2E78, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls ??1?$CNonBlockingQueue@PAUMusicCommand@CX2Engine@XAUDIO2@@@@QAA@XZ and ??1CX2SourceVoice@XAUDIO2@@UAA@XZ). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    }
+   ]
   },
   {
    "name": "1?$ObjRefConcrete",
@@ -13736,9 +13825,7 @@
     "??_G?$ObjRefConcrete@VRhythmDetector@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRhythmDetectorGroup@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndCamAnim@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndFont3d@@VObjectDir@@@@UAAPAXI@Z",
-    "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLight@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLightAnim@@VObjectDir@@@@UAAPAXI@Z",
     "??_G?$ObjRefConcrete@VRndLine@@VObjectDir@@@@UAAPAXI@Z",
@@ -13881,7 +13968,25 @@
     "??_GWiiMessageList@@QAAPAXI@Z",
     "??_GXboxMultipleItemsPurchaser@@UAAPAXI@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 239 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndCubeTex@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BD4EF0",
+     "why": "Retail's callee at the blocking offset is fn_82BD4EF0, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls fn_82BCE0D0 twice; sits in the XAUDIO2 vendor band with CX2SourceVoiceWMA). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    },
+    {
+     "spelling": "??_G?$ObjRefConcrete@VRndFur@@VObjectDir@@@@UAAPAXI@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_VENDOR_CALLEE",
+     "blocking_address": "fn_82BD4EF0",
+     "why": "Retail's callee at the blocking offset is fn_82BD4EF0, identified from its OWN named relocations as a vendor XAUDIO2/LEAPFX destructor (calls fn_82BCE0D0 twice; sits in the XAUDIO2 vendor band with CX2SourceVoiceWMA). Our folded spelling is Milo's ObjRefConcrete<T,ObjectDir>::~ObjRefConcrete, whose body stores the per-T vtable ??_7?$ObjRefConcrete@V<T>@@VObjectDir@@@@6B@ and calls ?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z. A deleting-dtor thunk is ~90% relocation-free boilerplate whose ENTIRE information content is the two bl targets, so T1 accepted this pair across a game<->vendor boundary vacuously. PIGEONHOLE: this same folded spelling is claimed by SIX groups whose survivors sit at six DISTINCT retail addresses (0x82bf7570, 0x82bd4c98, 0x82bc4d38, 0x82bd0f30, 0x82bd2ee0, 0x82bd4f40) -- a folded function has ONE address, so at most one could be true and none is. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    }
+   ]
   },
   {
    "name": "$Find",
@@ -20811,10 +20916,19 @@
    "survivor": "??$?6UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@@Z",
    "folded": [
     "??$?6VContentPoolMapping@SongSectionController@@V?$StlNodeAlloc@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VContentPoolMapping@SongSectionController@@V?$StlNodeAlloc@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-    "??$?6VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-    "??$?6VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+    "??$?6VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VLayer@LayerDir@@V?$StlNodeAlloc@VLayer@LayerDir@@@stlpmtx_std@@@stlpmtx_std@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$?6VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "lane": "MAPID-1 2026-08-16",
+     "class": "CONTRADICTED_ELEMENT_SERIALIZER_RESIDENT",
+     "blocking_address": "fn_824C8F68",
+     "why": "Retail's list<T> serializer calls its per-element operator<< at 0x50; retail's is fn_824C8F68. Our folded spelling's element serializer ??6@YAAAVBinStream@@AAV0@ABVPracticeSectionMapping@SongSectionController@@@Z is ITSELF map-resident at 0x8230d6e8 -- retail kept it at its own address, so it is not fn_824C8F68. Two list serializers whose element callees are different functions cannot be one COMDAT under reloc-restricted /OPT:ICF. This argument is build-independent (two retail addresses), not a cross-build size test. PIGEONHOLE: groups 344 and 857 both claim this spelling, survivors at 0x82327878 and 0x824c93c0. Do NOT re-add.",
+     "note": "Measured cost of this withdrawal: 0 B. The whole 28,964 B NEEDS_MAP_ID class rests on the two fn_827BCD38 memberships in group 1339, which are LICENSED (identified), not withdrawn."
+    }
+   ]
   },
   {
    "name": "$PropSync",
