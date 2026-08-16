@@ -32,12 +32,43 @@ alias lifts matched_code BY CONSTRUCTION -- the hazard direction. The 8th record
 (`Keys<Quat>::Remove`, KeyLessEq vs KeyGreaterEq) is CONFIRMED and left untouched:
 our KeyLessEq is 176 B and our KeyGreaterEq 192 B, different bodies, so those
 callees cannot fold.
+
+★ SUPERSEDED FOR 6 OF THE 7 -- lane GROUNDED-2, 2026-08-16 (rb3-xenon
+`79d74650`).  The paragraph above is preserved as written; two of its claims are
+now measured false, and `--fix-grounded1` MUST NOT be re-run against those six
+records, which no longer exist (they are `restored[].superseded_record` now).
+
+  * "a UNIFORM +8 B across the whole __uninitialized_copy /
+    _M_allocate_and_copy family ... ONE shared source defect in the STLport copy
+    helpers" -- there is no such defect.  Lane STLPORT-1 (`ff832b50`) found the
+    +8 was `tools/coff_bodies_ext.py` billing the SUCCESSOR's 8-byte EH prefix to
+    the preceding function.  The counts (95 pairs, 52 at retail-96, 43 at
+    retail-100) reproduce; only the cause was wrong.
+  * "the membership stays WITHDRAWN ... do not re-add without positive fold
+    evidence" -- the positive evidence was then produced.  objdiff at the
+    instruction level, a raw compare against band.exe over the full COMDAT span,
+    and probe_icf_foldtest all read FOLD on 7 of 7 (the six plus the
+    never-withdrawn control), and retail's own symbols.txt places an 8-byte
+    `except_data` object at A+extent with the funclet at A+extent+8, so the
+    "96 vs 104" was the FUNCLET PREFIX, never a body size.  Restoring the six
+    measured +1,728 B / 12 rows UP / 0 DOWN.
+
+  The METHODOLOGICAL ruling -- keep the size test inside one build -- is
+  UNAFFECTED and was right: our(S) == our(F) raw-identically at all six.  What
+  the ruling could not do is prove a fold, and that is what needed the retail
+  side measured with the RIGHT ruler.  Lane report:
+  `decomp-synth docs/plans/il-witness/GROUNDED2_RESTORATION_2026-08-16.md`.
 """
 import argparse, collections, json, os, sys
 from pathlib import Path
 
 LANE = "ALIAS-2 2026-08-16"
 
+# ⚠ SUPERSEDED TEMPLATE -- kept verbatim so the records it already stamped can be
+# traced back to their generator, and so a reader who greps the note text lands
+# here.  Do NOT stamp it again: its "UNIFORM +8 B / shared STLport source defect"
+# clause was refuted by STLPORT-1 (`ff832b50`) and its "stays WITHDRAWN" clause by
+# GROUNDED-2 (`79d74650`).  `--fix-grounded1` now refuses; see the docstring.
 G1_NOTE = (
     "CORRECTED by %s. The original reason -- 'different body SIZE (%s) -- cannot "
     "be one COMDAT ... we instantiate a different overload' -- compared RETAIL's "
@@ -92,15 +123,17 @@ def main():
           % (removed, kept_missing, len(byg)))
 
     if a.fix_grounded1:
-        n = 0
-        for g in groups:
-            for r in g.get("withdrawn", []):
-                if r.get("lane", "").startswith("GROUNDED-1") and \
-                        "different body SIZE" in r.get("why", ""):
-                    r["superseded_by"] = LANE
-                    r["note"] = G1_NOTE % (r.get("why", ""), "same")
-                    n += 1
-        print("GROUNDED-1 records corrected (reason only, alias NOT restored): %d" % n)
+        # Refuses by design since GROUNDED-2 (2026-08-16).  Re-stamping G1_NOTE
+        # would re-assert a refuted cause on the records it can still reach, and
+        # on a RESTORED group it would write a `withdrawn` entry for a spelling
+        # that is live in `folded`.  Left as an explicit refusal rather than
+        # deleted, so an operator who reaches for the flag reads why.
+        sys.exit(
+            "--fix-grounded1 is RETIRED. Six of the seven records it targeted were\n"
+            "restored on measurement (rb3-xenon 79d74650, +1,728 B) and the note it\n"
+            "stamps carries a cause STLPORT-1 refuted (ff832b50). See this module's\n"
+            "docstring and docs/plans/il-witness/GROUNDED2_RESTORATION_2026-08-16.md."
+        )
 
     if a.dry_run:
         print("DRY RUN -- no write"); return

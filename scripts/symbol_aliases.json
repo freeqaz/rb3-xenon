@@ -25684,15 +25684,24 @@
    "name": "$__uninitialized_copy",
    "address": "0x82387d90",
    "survivor": "??$__uninitialized_copy@PAUCharInterestState@CharEyes@@PAU12@@stlpmtx_std@@YAPAUCharInterestState@CharEyes@@PAU12@00ABU__false_type@0@@Z",
-   "folded": [],
+   "folded": [
+    "??$__uninitialized_copy@PBUCharInterestState@CharEyes@@PAU12@@stlpmtx_std@@YAPAUCharInterestState@CharEyes@@PBU12@0PAU12@ABU__false_type@0@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
+   "restored": [
     {
      "spelling": "??$__uninitialized_copy@PBUCharInterestState@CharEyes@@PAU12@@stlpmtx_std@@YAPAUCharInterestState@CharEyes@@PBU12@0PAU12@ABU__false_type@0@@Z",
-     "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
-     "lane": "GROUNDED-1 2026-08-14",
-     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
-     "superseded_by": "ALIAS-2 2026-08-16"
+     "lane": "GROUNDED-2 2026-08-16",
+     "verdict": "FOLD -- PROVEN on retail bytes by three independent instruments",
+     "why_the_original_premise_failed": "The premise was a UNITS error, and both of its successors inherited it. GROUNDED-1 compared retail's `.pdata` FUNCTION extent (96/100 B) against a COMDAT SPAN read out of our object (104/108 B) and read the 8-byte difference as a body-size difference. It is the FUNCLET PREFIX. Retail's own symbols.txt names an 8-byte `except_data` object at A+extent and the `__unwind$`/`__catch$` funclet as its own function at A+extent+8, at every one of the six -- so 96 and 104 are two different spans of ONE layout, not two body sizes, and 'two COMDATs of different size cannot fold' never applied. ALIAS-2 2026-08-16 corrected the const/non-const half of the diagnosis (our two spellings are the SAME size within our build) but kept the withdrawal pending positive fold evidence, and attributed the residual +8 to a shared STLport source defect; STLPORT-1 (rb3-xenon `ff832b50`) then showed that +8 was `tools/coff_bodies_ext.py` billing the successor's EH prefix to the preceding function. This lane supplies the positive evidence the ALIAS-2 note asked for.",
+     "evidence": "Three instruments with no shared failure mode, all seven memberships (the six + the never-withdrawn control 0x827148b0), uniform: (A) objdiff-cli 4.2.3 at the instruction level, on the retail-split target object and on a scratch copy of it renamed to the FOLDED spelling -- target_size == base_size (96/96 or 100/100) and EVERY instruction equal, diff score 0, at the shipped `functionRelocDiffs=none`; (B) a direct raw-byte compare against orig/45410914/band.exe over the full COMDAT span (144/148/152 B = function + 8 B funclet prefix + funclet), full 32-bit words, skipping only words our object relocates -- 0 mismatches for BOTH spellings, and our(survivor) raw == our(folded) raw exactly; (C) probe_icf_foldtest.py --explain -- FOLD, 7 of 7. The residual `name_check` differences are relocation TARGET NAMES only (`_Copy_Construct` vs `_Param_Construct`, `MemOrPoolAlloc` vs `MemOrPoolAllocSTL`, and the inner `__uninitialized_copy` PA/PB spelling) -- each a separate fold one level down, and the never-withdrawn CONTROL carries the same one. Run of record: <decomp-bench>/archive/runs/2026-08-16-grounded2-restoration/; lane report: decomp-synth docs/plans/il-witness/GROUNDED2_RESTORATION_2026-08-16.md.",
+     "superseded_record": {
+      "spelling": "??$__uninitialized_copy@PBUCharInterestState@CharEyes@@PAU12@@stlpmtx_std@@YAPAUCharInterestState@CharEyes@@PBU12@0PAU12@ABU__false_type@0@@Z",
+      "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
+      "lane": "GROUNDED-1 2026-08-14",
+      "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+      "superseded_by": "ALIAS-2 2026-08-16"
+     }
     }
    ]
   },
@@ -25700,15 +25709,24 @@
    "name": "$__uninitialized_copy",
    "address": "0x823a88a8",
    "survivor": "??$__uninitialized_copy@PAUPoint@CharHair@@PAU12@@stlpmtx_std@@YAPAUPoint@CharHair@@PAU12@00ABU__false_type@0@@Z",
-   "folded": [],
+   "folded": [
+    "??$__uninitialized_copy@PBUPoint@CharHair@@PAU12@@stlpmtx_std@@YAPAUPoint@CharHair@@PBU12@0PAU12@ABU__false_type@0@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
+   "restored": [
     {
      "spelling": "??$__uninitialized_copy@PBUPoint@CharHair@@PAU12@@stlpmtx_std@@YAPAUPoint@CharHair@@PBU12@0PAU12@ABU__false_type@0@@Z",
-     "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
-     "lane": "GROUNDED-1 2026-08-14",
-     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
-     "superseded_by": "ALIAS-2 2026-08-16"
+     "lane": "GROUNDED-2 2026-08-16",
+     "verdict": "FOLD -- PROVEN on retail bytes by three independent instruments",
+     "why_the_original_premise_failed": "The premise was a UNITS error, and both of its successors inherited it. GROUNDED-1 compared retail's `.pdata` FUNCTION extent (96/100 B) against a COMDAT SPAN read out of our object (104/108 B) and read the 8-byte difference as a body-size difference. It is the FUNCLET PREFIX. Retail's own symbols.txt names an 8-byte `except_data` object at A+extent and the `__unwind$`/`__catch$` funclet as its own function at A+extent+8, at every one of the six -- so 96 and 104 are two different spans of ONE layout, not two body sizes, and 'two COMDATs of different size cannot fold' never applied. ALIAS-2 2026-08-16 corrected the const/non-const half of the diagnosis (our two spellings are the SAME size within our build) but kept the withdrawal pending positive fold evidence, and attributed the residual +8 to a shared STLport source defect; STLPORT-1 (rb3-xenon `ff832b50`) then showed that +8 was `tools/coff_bodies_ext.py` billing the successor's EH prefix to the preceding function. This lane supplies the positive evidence the ALIAS-2 note asked for.",
+     "evidence": "Three instruments with no shared failure mode, all seven memberships (the six + the never-withdrawn control 0x827148b0), uniform: (A) objdiff-cli 4.2.3 at the instruction level, on the retail-split target object and on a scratch copy of it renamed to the FOLDED spelling -- target_size == base_size (96/96 or 100/100) and EVERY instruction equal, diff score 0, at the shipped `functionRelocDiffs=none`; (B) a direct raw-byte compare against orig/45410914/band.exe over the full COMDAT span (144/148/152 B = function + 8 B funclet prefix + funclet), full 32-bit words, skipping only words our object relocates -- 0 mismatches for BOTH spellings, and our(survivor) raw == our(folded) raw exactly; (C) probe_icf_foldtest.py --explain -- FOLD, 7 of 7. The residual `name_check` differences are relocation TARGET NAMES only (`_Copy_Construct` vs `_Param_Construct`, `MemOrPoolAlloc` vs `MemOrPoolAllocSTL`, and the inner `__uninitialized_copy` PA/PB spelling) -- each a separate fold one level down, and the never-withdrawn CONTROL carries the same one. Run of record: <decomp-bench>/archive/runs/2026-08-16-grounded2-restoration/; lane report: decomp-synth docs/plans/il-witness/GROUNDED2_RESTORATION_2026-08-16.md.",
+     "superseded_record": {
+      "spelling": "??$__uninitialized_copy@PBUPoint@CharHair@@PAU12@@stlpmtx_std@@YAPAUPoint@CharHair@@PBU12@0PAU12@ABU__false_type@0@@Z",
+      "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
+      "lane": "GROUNDED-1 2026-08-14",
+      "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+      "superseded_by": "ALIAS-2 2026-08-16"
+     }
     }
    ]
   },
@@ -25716,15 +25734,24 @@
    "name": "$_M_allocate_and_copy",
    "address": "0x827d1380",
    "survivor": "??$_M_allocate_and_copy@PAVString@@@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@IPAV2@0@Z",
-   "folded": [],
+   "folded": [
+    "??$_M_allocate_and_copy@PBVString@@@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@IPBV2@0@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
+   "restored": [
     {
      "spelling": "??$_M_allocate_and_copy@PBVString@@@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@IPBV2@0@Z",
-     "why": "different body SIZE (100 vs 108) -- cannot be one COMDAT",
-     "lane": "GROUNDED-1 2026-08-14",
-     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (100 vs 108) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
-     "superseded_by": "ALIAS-2 2026-08-16"
+     "lane": "GROUNDED-2 2026-08-16",
+     "verdict": "FOLD -- PROVEN on retail bytes by three independent instruments",
+     "why_the_original_premise_failed": "The premise was a UNITS error, and both of its successors inherited it. GROUNDED-1 compared retail's `.pdata` FUNCTION extent (96/100 B) against a COMDAT SPAN read out of our object (104/108 B) and read the 8-byte difference as a body-size difference. It is the FUNCLET PREFIX. Retail's own symbols.txt names an 8-byte `except_data` object at A+extent and the `__unwind$`/`__catch$` funclet as its own function at A+extent+8, at every one of the six -- so 96 and 104 are two different spans of ONE layout, not two body sizes, and 'two COMDATs of different size cannot fold' never applied. ALIAS-2 2026-08-16 corrected the const/non-const half of the diagnosis (our two spellings are the SAME size within our build) but kept the withdrawal pending positive fold evidence, and attributed the residual +8 to a shared STLport source defect; STLPORT-1 (rb3-xenon `ff832b50`) then showed that +8 was `tools/coff_bodies_ext.py` billing the successor's EH prefix to the preceding function. This lane supplies the positive evidence the ALIAS-2 note asked for.",
+     "evidence": "Three instruments with no shared failure mode, all seven memberships (the six + the never-withdrawn control 0x827148b0), uniform: (A) objdiff-cli 4.2.3 at the instruction level, on the retail-split target object and on a scratch copy of it renamed to the FOLDED spelling -- target_size == base_size (96/96 or 100/100) and EVERY instruction equal, diff score 0, at the shipped `functionRelocDiffs=none`; (B) a direct raw-byte compare against orig/45410914/band.exe over the full COMDAT span (144/148/152 B = function + 8 B funclet prefix + funclet), full 32-bit words, skipping only words our object relocates -- 0 mismatches for BOTH spellings, and our(survivor) raw == our(folded) raw exactly; (C) probe_icf_foldtest.py --explain -- FOLD, 7 of 7. The residual `name_check` differences are relocation TARGET NAMES only (`_Copy_Construct` vs `_Param_Construct`, `MemOrPoolAlloc` vs `MemOrPoolAllocSTL`, and the inner `__uninitialized_copy` PA/PB spelling) -- each a separate fold one level down, and the never-withdrawn CONTROL carries the same one. Run of record: <decomp-bench>/archive/runs/2026-08-16-grounded2-restoration/; lane report: decomp-synth docs/plans/il-witness/GROUNDED2_RESTORATION_2026-08-16.md.",
+     "superseded_record": {
+      "spelling": "??$_M_allocate_and_copy@PBVString@@@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@IPBV2@0@Z",
+      "why": "different body SIZE (100 vs 108) -- cannot be one COMDAT",
+      "lane": "GROUNDED-1 2026-08-14",
+      "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (100 vs 108) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+      "superseded_by": "ALIAS-2 2026-08-16"
+     }
     }
    ]
   },
@@ -25732,15 +25759,24 @@
    "name": "$__uninitialized_copy",
    "address": "0x824e2ac8",
    "survivor": "??$__uninitialized_copy@PAUChar3D@CharData@WorldCrowd@@PAU123@@stlpmtx_std@@YAPAUChar3D@CharData@WorldCrowd@@PAU123@00ABU__false_type@0@@Z",
-   "folded": [],
+   "folded": [
+    "??$__uninitialized_copy@PBUChar3D@CharData@WorldCrowd@@PAU123@@stlpmtx_std@@YAPAUChar3D@CharData@WorldCrowd@@PBU123@0PAU123@ABU__false_type@0@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
+   "restored": [
     {
      "spelling": "??$__uninitialized_copy@PBUChar3D@CharData@WorldCrowd@@PAU123@@stlpmtx_std@@YAPAUChar3D@CharData@WorldCrowd@@PBU123@0PAU123@ABU__false_type@0@@Z",
-     "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
-     "lane": "GROUNDED-1 2026-08-14",
-     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
-     "superseded_by": "ALIAS-2 2026-08-16"
+     "lane": "GROUNDED-2 2026-08-16",
+     "verdict": "FOLD -- PROVEN on retail bytes by three independent instruments",
+     "why_the_original_premise_failed": "The premise was a UNITS error, and both of its successors inherited it. GROUNDED-1 compared retail's `.pdata` FUNCTION extent (96/100 B) against a COMDAT SPAN read out of our object (104/108 B) and read the 8-byte difference as a body-size difference. It is the FUNCLET PREFIX. Retail's own symbols.txt names an 8-byte `except_data` object at A+extent and the `__unwind$`/`__catch$` funclet as its own function at A+extent+8, at every one of the six -- so 96 and 104 are two different spans of ONE layout, not two body sizes, and 'two COMDATs of different size cannot fold' never applied. ALIAS-2 2026-08-16 corrected the const/non-const half of the diagnosis (our two spellings are the SAME size within our build) but kept the withdrawal pending positive fold evidence, and attributed the residual +8 to a shared STLport source defect; STLPORT-1 (rb3-xenon `ff832b50`) then showed that +8 was `tools/coff_bodies_ext.py` billing the successor's EH prefix to the preceding function. This lane supplies the positive evidence the ALIAS-2 note asked for.",
+     "evidence": "Three instruments with no shared failure mode, all seven memberships (the six + the never-withdrawn control 0x827148b0), uniform: (A) objdiff-cli 4.2.3 at the instruction level, on the retail-split target object and on a scratch copy of it renamed to the FOLDED spelling -- target_size == base_size (96/96 or 100/100) and EVERY instruction equal, diff score 0, at the shipped `functionRelocDiffs=none`; (B) a direct raw-byte compare against orig/45410914/band.exe over the full COMDAT span (144/148/152 B = function + 8 B funclet prefix + funclet), full 32-bit words, skipping only words our object relocates -- 0 mismatches for BOTH spellings, and our(survivor) raw == our(folded) raw exactly; (C) probe_icf_foldtest.py --explain -- FOLD, 7 of 7. The residual `name_check` differences are relocation TARGET NAMES only (`_Copy_Construct` vs `_Param_Construct`, `MemOrPoolAlloc` vs `MemOrPoolAllocSTL`, and the inner `__uninitialized_copy` PA/PB spelling) -- each a separate fold one level down, and the never-withdrawn CONTROL carries the same one. Run of record: <decomp-bench>/archive/runs/2026-08-16-grounded2-restoration/; lane report: decomp-synth docs/plans/il-witness/GROUNDED2_RESTORATION_2026-08-16.md.",
+     "superseded_record": {
+      "spelling": "??$__uninitialized_copy@PBUChar3D@CharData@WorldCrowd@@PAU123@@stlpmtx_std@@YAPAUChar3D@CharData@WorldCrowd@@PBU123@0PAU123@ABU__false_type@0@@Z",
+      "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
+      "lane": "GROUNDED-1 2026-08-14",
+      "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+      "superseded_by": "ALIAS-2 2026-08-16"
+     }
     }
    ]
   },
@@ -25748,15 +25784,24 @@
    "name": "$__uninitialized_copy",
    "address": "0x82393c60",
    "survivor": "??$__uninitialized_copy@PAUMerger@FileMerger@@PAU12@@stlpmtx_std@@YAPAUMerger@FileMerger@@PAU12@00ABU__false_type@0@@Z",
-   "folded": [],
+   "folded": [
+    "??$__uninitialized_copy@PBUMerger@FileMerger@@PAU12@@stlpmtx_std@@YAPAUMerger@FileMerger@@PBU12@0PAU12@ABU__false_type@0@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
+   "restored": [
     {
      "spelling": "??$__uninitialized_copy@PBUMerger@FileMerger@@PAU12@@stlpmtx_std@@YAPAUMerger@FileMerger@@PBU12@0PAU12@ABU__false_type@0@@Z",
-     "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
-     "lane": "GROUNDED-1 2026-08-14",
-     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
-     "superseded_by": "ALIAS-2 2026-08-16"
+     "lane": "GROUNDED-2 2026-08-16",
+     "verdict": "FOLD -- PROVEN on retail bytes by three independent instruments",
+     "why_the_original_premise_failed": "The premise was a UNITS error, and both of its successors inherited it. GROUNDED-1 compared retail's `.pdata` FUNCTION extent (96/100 B) against a COMDAT SPAN read out of our object (104/108 B) and read the 8-byte difference as a body-size difference. It is the FUNCLET PREFIX. Retail's own symbols.txt names an 8-byte `except_data` object at A+extent and the `__unwind$`/`__catch$` funclet as its own function at A+extent+8, at every one of the six -- so 96 and 104 are two different spans of ONE layout, not two body sizes, and 'two COMDATs of different size cannot fold' never applied. ALIAS-2 2026-08-16 corrected the const/non-const half of the diagnosis (our two spellings are the SAME size within our build) but kept the withdrawal pending positive fold evidence, and attributed the residual +8 to a shared STLport source defect; STLPORT-1 (rb3-xenon `ff832b50`) then showed that +8 was `tools/coff_bodies_ext.py` billing the successor's EH prefix to the preceding function. This lane supplies the positive evidence the ALIAS-2 note asked for.",
+     "evidence": "Three instruments with no shared failure mode, all seven memberships (the six + the never-withdrawn control 0x827148b0), uniform: (A) objdiff-cli 4.2.3 at the instruction level, on the retail-split target object and on a scratch copy of it renamed to the FOLDED spelling -- target_size == base_size (96/96 or 100/100) and EVERY instruction equal, diff score 0, at the shipped `functionRelocDiffs=none`; (B) a direct raw-byte compare against orig/45410914/band.exe over the full COMDAT span (144/148/152 B = function + 8 B funclet prefix + funclet), full 32-bit words, skipping only words our object relocates -- 0 mismatches for BOTH spellings, and our(survivor) raw == our(folded) raw exactly; (C) probe_icf_foldtest.py --explain -- FOLD, 7 of 7. The residual `name_check` differences are relocation TARGET NAMES only (`_Copy_Construct` vs `_Param_Construct`, `MemOrPoolAlloc` vs `MemOrPoolAllocSTL`, and the inner `__uninitialized_copy` PA/PB spelling) -- each a separate fold one level down, and the never-withdrawn CONTROL carries the same one. Run of record: <decomp-bench>/archive/runs/2026-08-16-grounded2-restoration/; lane report: decomp-synth docs/plans/il-witness/GROUNDED2_RESTORATION_2026-08-16.md.",
+     "superseded_record": {
+      "spelling": "??$__uninitialized_copy@PBUMerger@FileMerger@@PAU12@@stlpmtx_std@@YAPAUMerger@FileMerger@@PBU12@0PAU12@ABU__false_type@0@@Z",
+      "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
+      "lane": "GROUNDED-1 2026-08-14",
+      "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+      "superseded_by": "ALIAS-2 2026-08-16"
+     }
     }
    ]
   },
@@ -25773,15 +25818,24 @@
    "name": "$_M_allocate_and_copy",
    "address": "0x8239c640",
    "survivor": "??$_M_allocate_and_copy@PAVFace@RndMesh@@@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFace@RndMesh@@IPAV23@0@Z",
-   "folded": [],
+   "folded": [
+    "??$_M_allocate_and_copy@PBVFace@RndMesh@@@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFace@RndMesh@@IPBV23@0@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
+   "restored": [
     {
      "spelling": "??$_M_allocate_and_copy@PBVFace@RndMesh@@@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFace@RndMesh@@IPBV23@0@Z",
-     "why": "different body SIZE (100 vs 108) -- cannot be one COMDAT",
-     "lane": "GROUNDED-1 2026-08-14",
-     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (100 vs 108) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
-     "superseded_by": "ALIAS-2 2026-08-16"
+     "lane": "GROUNDED-2 2026-08-16",
+     "verdict": "FOLD -- PROVEN on retail bytes by three independent instruments",
+     "why_the_original_premise_failed": "The premise was a UNITS error, and both of its successors inherited it. GROUNDED-1 compared retail's `.pdata` FUNCTION extent (96/100 B) against a COMDAT SPAN read out of our object (104/108 B) and read the 8-byte difference as a body-size difference. It is the FUNCLET PREFIX. Retail's own symbols.txt names an 8-byte `except_data` object at A+extent and the `__unwind$`/`__catch$` funclet as its own function at A+extent+8, at every one of the six -- so 96 and 104 are two different spans of ONE layout, not two body sizes, and 'two COMDATs of different size cannot fold' never applied. ALIAS-2 2026-08-16 corrected the const/non-const half of the diagnosis (our two spellings are the SAME size within our build) but kept the withdrawal pending positive fold evidence, and attributed the residual +8 to a shared STLport source defect; STLPORT-1 (rb3-xenon `ff832b50`) then showed that +8 was `tools/coff_bodies_ext.py` billing the successor's EH prefix to the preceding function. This lane supplies the positive evidence the ALIAS-2 note asked for.",
+     "evidence": "Three instruments with no shared failure mode, all seven memberships (the six + the never-withdrawn control 0x827148b0), uniform: (A) objdiff-cli 4.2.3 at the instruction level, on the retail-split target object and on a scratch copy of it renamed to the FOLDED spelling -- target_size == base_size (96/96 or 100/100) and EVERY instruction equal, diff score 0, at the shipped `functionRelocDiffs=none`; (B) a direct raw-byte compare against orig/45410914/band.exe over the full COMDAT span (144/148/152 B = function + 8 B funclet prefix + funclet), full 32-bit words, skipping only words our object relocates -- 0 mismatches for BOTH spellings, and our(survivor) raw == our(folded) raw exactly; (C) probe_icf_foldtest.py --explain -- FOLD, 7 of 7. The residual `name_check` differences are relocation TARGET NAMES only (`_Copy_Construct` vs `_Param_Construct`, `MemOrPoolAlloc` vs `MemOrPoolAllocSTL`, and the inner `__uninitialized_copy` PA/PB spelling) -- each a separate fold one level down, and the never-withdrawn CONTROL carries the same one. Run of record: <decomp-bench>/archive/runs/2026-08-16-grounded2-restoration/; lane report: decomp-synth docs/plans/il-witness/GROUNDED2_RESTORATION_2026-08-16.md.",
+     "superseded_record": {
+      "spelling": "??$_M_allocate_and_copy@PBVFace@RndMesh@@@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFace@RndMesh@@IPBV23@0@Z",
+      "why": "different body SIZE (100 vs 108) -- cannot be one COMDAT",
+      "lane": "GROUNDED-1 2026-08-14",
+      "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (100 vs 108) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+      "superseded_by": "ALIAS-2 2026-08-16"
+     }
     }
    ]
   },
