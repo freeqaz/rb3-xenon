@@ -14,7 +14,7 @@ from typing import Any
 DEFAULT_DB_PATH = "decomp.db"
 
 # Schema version for migrations
-SCHEMA_VERSION = 18
+SCHEMA_VERSION = 19
 
 # Default maximum attempts before deprioritizing a function
 # Functions with >= this many attempts are excluded from normal queries
@@ -637,6 +637,41 @@ def _run_migrations(conn: sqlite3.Connection, from_version: int, to_version: int
             "CREATE INDEX IF NOT EXISTS idx_functions_live ON functions(live)"
         )
 
+    if from_version < 19 <= to_version:
+        # Migration v18 -> v19: Add `excluded`, which has been in USE for a
+        # long time and was never in the schema.
+        #
+        # Measured 2026-08-16: the live decomp.db carries `excluded` (520 rows
+        # set), but a DB built fresh by init_database() at v18 does NOT have
+        # the column at all -- it was added out of band, by hand, on the one
+        # database that matters. Meanwhile 15 shipped queries filter on
+        # `excluded = 0` (query_functions_by_priority, query_divergent_logic,
+        # get_priority_stats, query_functions_by_merged_category,
+        # obj_regswap_patcher, ...). Every one of them raises
+        # "no such column: excluded" on a clean clone. The tests for the
+        # IDENTITY_UNESTABLISHED state are what surfaced it: they build their
+        # DB through init_database, which is the path nothing else exercises.
+        #
+        # Idempotent by the same duplicate-column guard as every migration
+        # above, so this is a no-op against the live DB -- it only records that
+        # the column is part of the schema, and repairs fresh ones.
+        #
+        # Ownership is unchanged and deliberate (see the v18 note): `excluded`
+        # means "not a real workable target" and is set by classify_funclets.py
+        # for EH funclets, and by mark_identity_unestablished() as the SECONDARY
+        # axis for rows whose target body is not established. It is not a
+        # verdict and does not imply one -- 168 rows carry it alongside
+        # COMPLETE/AT_LIMIT.
+        print("  Migration v19: Adding functions.excluded (in use since before v18)...")
+        try:
+            conn.execute("ALTER TABLE functions ADD COLUMN excluded INTEGER DEFAULT 0")
+        except sqlite3.OperationalError as e:
+            if "duplicate column" not in str(e).lower():
+                raise
+        conn.execute(
+            "CREATE INDEX IF NOT EXISTS idx_functions_excluded ON functions(excluded)"
+        )
+
     # Update schema version
     conn.execute("UPDATE schema_version SET version = ?", (to_version,))
     conn.commit()
@@ -1091,16 +1126,26 @@ def query_functions(
         # Unconditional, as in get_next_function.
         query += unworkable_verdict_clause()
 
-    query += " AND symbol NOT LIKE 'merged_%'"
-    query += " AND demangled NOT LIKE '%stlpmtx_std::%'"
+    # Auditing an unworkable verdict by name is an OBSERVABILITY path, not a
+    # work path, so the suppressions that exist to keep noise out of worklists
+    # must not apply to it. Measured: without this, asking for
+    # IDENTITY_UNESTABLISHED returned 1 of the 2 rows actually in that state --
+    # the missing one is an stlpmtx_std template, silently dropped by the STL
+    # filter below. A state whose whole purpose is "someone must come and
+    # establish this identity" cannot be allowed to under-report itself.
+    auditing_unworkable = verdict_filter in UNWORKABLE_VERDICTS
+
+    if not auditing_unworkable:
+        query += " AND symbol NOT LIKE 'merged_%'"
+        query += " AND demangled NOT LIKE '%stlpmtx_std::%'"
 
     # Liveness: exclude symbols absent from the most recently ingested report.
     # Without this a lane can be handed a target that no longer exists under
     # that name (e.g. a function since re-pinned to a named symbol).
-    if not include_dead:
+    if not include_dead and not auditing_unworkable:
         query += " AND (live IS NULL OR live = 1)"
 
-    if skip_boilerplate:
+    if skip_boilerplate and not auditing_unworkable:
         for prefix in BOILERPLATE_SYMBOL_PREFIXES:
             escaped = prefix.replace("_", r"\_")
             query += f" AND symbol NOT LIKE '{escaped}%' ESCAPE '\\'"
