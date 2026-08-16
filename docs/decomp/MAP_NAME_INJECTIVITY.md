@@ -12,6 +12,15 @@
 > placeholder target), the count of cleared floor certifications (**three**),
 > and the repair SHA. Added: the `gated_map_write.py` prior art this doc
 > omitted, and a forward worklist.
+>
+> **Revised 2026-08-16 by lane R**, which re-derived the forward worklist's two
+> nulled-name re-homes from the retail image before applying either.
+> `0x8249d5b0` survived on four independent witnesses and is APPLIED (+1
+> matched / +204 B on both rulers); **`?Null@Symbol@@QBA_NXZ` at `0x8227c70c`
+> is REFUTED** — that address is interior code of
+> `??8Symbol@@QBA_NPBD@Z`, and naming it would have minted a byte-exact 100%
+> against a non-function. Both write-ups are in the final section; the worklist
+> entries are corrected in place.
 
 ## The invariant
 
@@ -293,18 +302,168 @@ with the evidence that makes it a re-home rather than a guess — the distinctio
 - **Three `PropSync` VAs have evidenced re-homes.** Re-homing converts the
   unverifiable `100.0` above into an evidenced one, because the call site
   regains a real name to be checked against:
-  - `0x8249d5b0` → the `ObjOwnerPtr<RndDrawable>` instantiation. Two
-    independent witnesses: its own tail call is `SetOwnerObj`, **and** the
-    caller-side relocation in base `EventTrigger.obj` names that exact
-    instantiation at the same offset.
-  - `0x8249d4b0` → `ObjOwnerPtr<EventTrigger>`.
+  - ~~`0x8249d5b0` → the `ObjOwnerPtr<RndDrawable>` instantiation.~~
+    **DONE, lane R 2026-08-16** — see "The RTTI channel" below. Measured
+    **Δmatched +1 / +204 B on BOTH rulers**.
+  - `0x8249d4b0` → `ObjOwnerPtr<EventTrigger>`. **Independently corroborated**
+    by lane R's RTTI channel (its `??_R0` reads `.?AVEventTrigger@@`) but not
+    applied here — it was outside that lane's brief.
   - `0x822c93e0` → `ObjPtr<RndAnimatable>`.
-- **Two nulled names have located true homes.** `?Null@Symbol@@QBA_NXZ` belongs
-  at `0x8227c70c`; `?DataDir@UIPanel@@$4PPPPPPPM@EM@…` at `0x826412e0`. Both
-  were left unclaimed by lane J2 rather than moved.
+- **One nulled name has a located true home; the other claim is REFUTED.**
+  `?DataDir@UIPanel@@$4PPPPPPPM@EM@…` → `0x826412e0` was taken by a later lane
+  and is live in the map. **`?Null@Symbol@@QBA_NXZ` does NOT belong at
+  `0x8227c70c`** — refuted by lane R, below.
 - **A `$4` displacement audit is outstanding, repo-wide.** 17 `$4` rows carry a
   mangled static displacement that contradicts their body. Of the 10 whose jump
   target is named, **10/10 also fail the independent callee-name test** — two
   unrelated tests agreeing on the same rows, which is why this is a finding and
   not decode noise. Example: `0x82604a40`, `?Load@UIPanel@@$4…EM@`, whose name
   says `0x4c` and whose body says `-8`.
+
+## Lane R (2026-08-16): one re-home applied, one REFUTED
+
+Both rows in the worklist above were re-derived from the retail image before
+either was touched. One survived on four independent witnesses; the other did
+not survive at all. **A lane that re-homes zero rows because the evidence did
+not hold is a success** — and half of this lane was exactly that.
+
+### `0x8249d5b0` = `PropSync<ObjOwnerPtr<RndDrawable>>` — APPLIED
+
+The prior review's two witnesses were confirmed and two more were added. The
+decisive one is new and is the cheapest of the four:
+
+- **The RTTI channel (new, and it names `T` outright).** Every `PropSync<T>`
+  over an obj-pointer ends in `__RTDynamicCast(obj, 0, srcType, targetType, 0)`,
+  and `r6` (`targetType`) is the **`??_R0` Type Descriptor for `T`**, whose
+  name string sits at `+8`. Reading it needs no map, no oracle and no build:
+  `0x8249d5b0` → `.?AVRndDrawable@@`. `r5` is `.?AVObject@Hmx@@` on every row,
+  as `dynamic_cast<T*>(Hmx::Object*)` requires.
+  **Validated on six controls** whose names were derived by unrelated means —
+  `RndAnimatable`, `ObjectDir`, `RndDrawable`(ObjPtr), `RndMesh`,
+  `RndTransformable`, `CharLookAt` — 6/6 agree. It discriminates (distinct
+  names per row), so the agreement is not vacuous.
+- **The callee channel** (the prior lane's test) reproduces: ObjOwnerPtr rows
+  tail-call `0x82383328` (`SetOwnerObj` family), ObjPtr rows call `0x8227ce58`
+  (`SetObjConcrete` family). `0x8249d5b0` calls `SetOwnerObj` ⇒ ObjOwnerPtr.
+  Note both callee names are themselves ICF-arbitrary picks, so this channel
+  adjudicates the *family*, never `T` — which is why the RTTI channel matters.
+- **Caller side:** retail's ONLY `bl` to `0x8249d5b0` is from
+  `?PropSync@@YA_NAAUHideDelay@EventTrigger@@…`.
+- **Source side:** `EventTrigger::HideDelay`'s only obj member is
+  `ObjOwnerPtr<RndDrawable> mHide` (`src/system/rndobj/EventTrigger.h:73`).
+
+`0x8249d5b0` was also removed from `_bijection_arbitrary` — its identity is now
+established, and that list means the opposite. Precedent: lane MAPDEF-3
+(`db9eb318`) removed the eight VAs it evidenced.
+
+**Measured** (`ab_measure --from-dirty --name-check`, both legs settled, map
+kind ⇒ forced re-split, renamer_patched=1824, split fixed point on both legs,
+objdiff-cli sha `6a4d96e3b7ecb6e4`):
+
+| | leg A | leg B | Δ |
+|---|---|---|---|
+| `matched_functions` | 44,443 | 44,444 | **+1** |
+| `masked_equal` | 22,898 | 22,898 | +0 |
+| honest | 21,545 | 21,546 | **+1** |
+| code% `name_check` (shipped) | 36.061363 | 36.063340 | **+0.001977pp / +204 B** |
+| code% `none` (control) | 42.729694 | 42.731670 | **+0.001976pp / +204 B** |
+| fuzzy | 48.589966 | 48.591938 | +0.001972pp |
+
+One unit moved — `default/EventTrigger` 287 → 288. Units at 100% unchanged on
+both rulers, nothing fell off.
+
+⚠ **Read the `none` leg correctly.** It moved by the same +204 B, and that is
+*expected and required* here: this is a **first-naming** of a previously-null
+address, so a body that never paired now pairs. The fabricated-alias shape is
+the opposite one (`name_check` UP while `none` FLAT), and `ab_measure`'s own
+classifier returned `REAL_PAIRING`. But the `none` leg is a **sanity check, not
+the evidence** — an alias/name tier cannot be validated by the `none` control.
+The evidence is the four retail-byte witnesses above.
+
+⚠ **A prediction this lane got WRONG, recorded because it looks authoritative.**
+Our compiled COMDAT for this instantiation is **244 B** while retail's `.pdata`
+extent is **204 B** (and the already-mapped sibling `ObjOwnerPtr<RndAnimatable>`
+is *also* 244 B in our build, so the whole family reads 40 B long). From that
+the lane predicted Δmatched **+0**, byte-exactness impossible. The measurement
+returned **+1 / +204 B** — the full retail extent. Do not infer non-matching
+from a COMDAT-size delta against a `.pdata` extent; the two are not the same
+quantity (`comdat_bytes` reports `value=8`, i.e. an EH prefix inside the same
+section, and the tail is not necessarily scored with the body).
+
+### `0x8227c70c` is NOT `?Null@Symbol@@QBA_NXZ` — REFUTED, do not retry
+
+The recorded argument was that `Symbol` is one `const char *mStr` at offset 0,
+`gNullStr` is a pointer VARIABLE, so `Null()` must load `0(r3)` and compare
+against the *contents* of `gNullStr` — and that `0x8227c70c` was the only body
+in `.text` with that shape. **Every one of those sub-claims is true. The
+conclusion is still false**, and that is exactly why it is worth recording.
+
+Confirmed first: `gNullStr` is at `0x82c71838` in `.data`, holding `0x82000c55`,
+which points at an empty string in `.rdata`. The 28 bytes at `0x8227c70c` are
+
+```
+lis    r11, 0x82c7
+lwz    r10, 0(r3)          ; mStr, at offset 0
+lwz    r11, 0x1838(r11)    ; CONTENTS of gNullStr
+subf   r11, r10, r11
+cntlzw r11, r11
+rlwinm r3,  r11, 27, 31, 31 ; -> 1 iff equal
+blr
+```
+
+— precisely `return mStr == gNullStr;`, and that 28-byte string occurs **exactly
+once** in `.text` (the body is position-independent, so an ICF twin would be
+byte-identical; there is none).
+
+**It is nevertheless not a function.** It is interior code of
+`??8Symbol@@QBA_NPBD@Z` (`Symbol::operator==(char const*) const`) at
+`0x8227c6d0`, which is `{ if (cc) return strcmp(mStr,cc)==0; else return Null(); }`
+with `Null()` inlined into the `else` and the `cntlzw/rlwinm/blr` tail **shared**
+between the two paths:
+
+- `0x8227c6d8  beq cr6, 0x8227c70c` — the `cc == 0` branch, into "the body".
+- `0x8227c708  b   0x8227c720` — the strcmp path jumping into the **interior**
+  (6th of 7 instructions) of that same body. **A compiler cannot branch into the
+  middle of a different COMDAT**; with `/Gy` on, that alone proves the two are
+  one section.
+- Branch census over all of `.text`: `0x8227c6d0` has **297 inbound `bl`**;
+  `0x8227c70c` has **zero `bl`** and exactly one inbound edge — the conditional
+  four instructions above it. An out-of-line COMDAT with no callers would have
+  been removed by `/OPT:REF`, so it cannot be one.
+
+⛔ **`.pdata` cannot settle this and must not be quoted as if it had.** Both
+`0x8227c6d0` and `0x8227c70c` fall in a `.pdata` **gap** — they are leaf
+functions touching neither stack nor LR, so neither gets an unwind record.
+`tools/pdata_map_audit.py`'s `interior_of()` returns `None` for the candidate,
+and `None` there means *undecidable*, never *valid* (its own docstring says so).
+The branch census is what settles it.
+
+★ **What the row would have cost.** Our build **does** emit a standalone
+`?Null@Symbol@@QBA_NXZ` COMDAT (`SELECT_ANY`, in 676 objs including
+`BandCharacter.obj`, which owns `0x8227c70c`'s split range), and its bytes are
+**identical to the retail fragment modulo the two link-time-relocated fields**
+(`lis` imm and `lwz` disp, both patched by the `gNullStr` relocation).
+So the re-home would have paired and scored a clean **byte-exact 100%** against
+a target that is not a function — the precise hazard the top of this document
+describes, arriving through the front door, carrying a correct-looking body
+argument and a uniqueness proof.
+
+⚠ **Method note for the next lane.** The prior review searched for a *body
+shape* and found a *code fragment*. A shape match, even a unique one, is not a
+function-identity proof. Before re-homing onto an address that is not a `.pdata`
+start, run the branch census: **a real out-of-line COMDAT has `bl` callers.**
+
+Two instrument defects were found and worked around while doing this, both
+worth knowing:
+
+- **`tools/pdata_map_audit.py --selftest --sabotage shift` PASSES in a fresh
+  worktree**, i.e. the anti-vacuity control is dead exactly where lanes work.
+  `fingerprints.json` is gitignored and never travels, so the one leg that
+  catches a wrong shift reports `[SKIP]` and the run still says `OK`. Symlink
+  it from the main checkout first; the control then reads 55,999/55,999 PASS
+  and the sabotage leg correctly FAILs 0/55,999.
+- **`tools/gated_map_write.py` cannot perform a re-home.** It refuses an
+  existing key (`P4 … would be a PHANTOM EDIT`), which is right for an
+  *insert* and means a null→name repair needs a reviewed single-line textual
+  edit instead. Its `--selftest` (15/15) is still worth running for the
+  writer's other invariants.
