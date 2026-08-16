@@ -63,7 +63,7 @@ def main():
     # objdiff metadata. Join on symbol == report function 'name'.
     rep = json.load(open(report))
     conn = sqlite3.connect(str(db))
-    updated = matched = nearmiss = 0
+    updated = matched = nearmiss = skipped_unidentified = 0
     for unit in rep.get("units", []):
         for f in unit.get("functions", []):
             sym = f.get("symbol") or f.get("name")
@@ -75,9 +75,17 @@ def main():
             verdict = "COMPLETE" if pct >= 99.995 else None
             # best_percent = max(existing best, pct)
             row = conn.execute(
-                "SELECT best_percent FROM functions WHERE symbol=?", (sym,)
+                "SELECT best_percent, verdict FROM functions WHERE symbol=?", (sym,)
             ).fetchone()
             if row is None:
+                continue
+            # Never stamp a percent or a COMPLETE onto a row whose target body
+            # is not established to be this function. This loop keys purely on
+            # the report's percent, so without this guard a re-added map entry
+            # reading 99.995+ would mint a byte-exact verdict against a body we
+            # have explicitly recorded that we cannot attribute to the symbol.
+            if row[1] == "IDENTITY_UNESTABLISHED":
+                skipped_unidentified += 1
                 continue
             prev_best = row[0] if row[0] is not None else 0.0
             best = max(prev_best, pct)
@@ -104,6 +112,9 @@ def main():
 
     print(f"  metadata: set current_percent on {updated} fns "
           f"(>=100: {matched}, near-miss[50,100): {nearmiss})")
+    if skipped_unidentified:
+        print(f"  skipped {skipped_unidentified} IDENTITY_UNESTABLISHED fn(s) "
+              f"(target body not established -- percent/verdict suppressed)")
 
     st = get_stats(db)
     print("\nstats:")

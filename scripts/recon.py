@@ -33,13 +33,25 @@ def _load_db_info(symbol, db_path):
                       unicorn_verdict, unicorn_class, unicorn_confidence,
                       reachable_100, primary_pattern, has_linker_merged,
                       has_bool_mask, has_addtostrings, has_makestring,
-                      priority_score, ease_score, impact_score, confidence_score,
-                      excluded, exclusion_reason
+                      priority_score,
+                      excluded
                FROM functions WHERE symbol = ?""",
             (symbol,),
         ).fetchone()
         return dict(row) if row else None
     except Exception:
+        # ⚠ This blanket except is why the query above must be kept honest.
+        # It swallows OperationalError, so a single non-existent column in the
+        # SELECT makes recon report NO database info for EVERY symbol, silently
+        # and forever -- every `db`-keyed branch in `_assess` (COMPLETE,
+        # AT_LIMIT, IDENTITY_UNESTABLISHED) simply becomes unreachable.
+        # That was the live state until 2026-08-16: the SELECT asked for
+        # `exclusion_reason` and then `ease_score`/`impact_score`/
+        # `confidence_score`, none of which exist in a fresh v19 build or in the
+        # live DB. `ease_score` and friends are still rendered by `_assess`,
+        # which uses `.get(..., '?')` and degrades to '?' rather than raising.
+        # Before adding a column here, confirm it exists:
+        #   sqlite3 decomp.db 'PRAGMA table_info(functions)'
         return None
 
 
@@ -179,7 +191,11 @@ def recon(symbol, unit_name=None, db_path="decomp.db", timeout=5_000_000,
             "has_addtostrings": bool(db_info.get("has_addtostrings")),
             "has_makestring": bool(db_info.get("has_makestring")),
             "excluded": bool(db_info.get("excluded")),
-            "exclusion_reason": db_info.get("exclusion_reason"),
+            # There is no `exclusion_reason` column -- selecting it made the
+            # whole DB query raise, and `_load_db_info` swallows every
+            # exception, so recon silently reported NO database info for every
+            # symbol. `verdict_reason` is the field that actually carries why.
+            "exclusion_reason": db_info.get("verdict_reason"),
         }
 
     # Resolve unit for unicorn/field-access
@@ -321,6 +337,17 @@ def _assess(data):
     if verdict == "AT_LIMIT":
         reason = db.get("verdict_reason", "unknown")
         lines.append(f"AT_LIMIT ({reason}) - not a viable work target")
+        return lines
+
+    if verdict == "IDENTITY_UNESTABLISHED":
+        reason = db.get("verdict_reason", "unknown")
+        lines.append(f"IDENTITY_UNESTABLISHED ({reason})")
+        lines.append("The target body is NOT established to be this function. "
+                     "Do NOT work the source: driving this to byte-exact would "
+                     "mint a match against a body we cannot attribute to this "
+                     "symbol. Exit is EVIDENCE work -- establish which address "
+                     "the symbol denotes and land it in "
+                     "scripts/target_symbol_map.json.")
         return lines
 
     if flags.get("excluded"):

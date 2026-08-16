@@ -327,9 +327,20 @@ def main():
 
     # target set from decomp.db
     con = sqlite3.connect(f"file:{DECOMP_DB}?mode=ro", uri=True)
+    # The verdict filter is load-bearing, not cosmetic: this map pushes NAMES
+    # onto addresses in Ghidra, i.e. it asserts identity. A row recorded as
+    # IDENTITY_UNESTABLISHED is one where we have explicitly found that we
+    # cannot attribute a target body to the symbol, so exporting it would
+    # launder an open question into a stated fact in the analysis DB -- and
+    # Ghidra is downstream of nothing, so nobody would catch it.
+    #
+    # A percent threshold alone does not do this. It only excludes such rows
+    # while their percents happen to be NULL; anything that re-stamps a
+    # percentage would silently re-admit them.
     rows = con.execute(
         "SELECT symbol, unit, current_percent FROM functions "
-        "WHERE current_percent >= ? AND symbol NOT LIKE 'fn\\_%' ESCAPE '\\'",
+        "WHERE current_percent >= ? AND symbol NOT LIKE 'fn\\_%' ESCAPE '\\' "
+        "  AND (verdict IS NULL OR verdict != 'IDENTITY_UNESTABLISHED')",
         (args.min_percent,),
     ).fetchall()
     con.close()
