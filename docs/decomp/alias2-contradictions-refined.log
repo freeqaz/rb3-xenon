@@ -1,0 +1,89 @@
+      collect(retail): 3088 objs -> 69415 symbols [corrected reader]
+      collect(ours): 1204 objs -> 94896 symbols [corrected reader]
+CONTRADICTED memberships: 156
+re-adjudicated with untruncated reasons
+
+REFINED SPLIT OF THE CONTRADICTIONS
+  DECISIVE   (withdraw)        80
+       CALLEE_SIZE_MISMATCH       60
+       SURVIVOR_SIZE_MISMATCH     20
+  NOT DECISIVE (keep)          10   callees same size -- may fold
+  BUILD DIVERGENCE (keep)       1   our(S)==our(F), retail differs -- SOURCE DEFECT, not a refuted fold
+  UNRESOLVED  (keep)           65
+
+  build-divergence leads (fix the source, do NOT withdraw):
+    ??$__uninitialized_copy@PAULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName
+      our(S)=our(F)=104 B but retail(S)=96 -- INTERNALLY CONSISTENT; our build diverges from retail. Source defect, NOT a refu
+
+DECISIVE withdrawals, by group:
+  group 587    48 memberships  ??$_Param_Construct@VCacheDirEntry@@V1@@stlpmtx_std@@YAXPAVCacheDirEntry@@
+        <- ??$_Copy_Construct@UGrammar@SpeechMgr@@@stlpmtx_std@@YAXPAUGrammar@SpeechMgr@@ABU1
+           callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0Grammar@SpeechMgr@@QAA@ABU01@@Z(1
+        <- ??$_Copy_Construct@UJumpInstance@@@stlpmtx_std@@YAXPAUJumpInstance@@ABU1@@Z
+           callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0JumpInstance@@QAA@ABU0@@Z(96 B)
+  group 568     8 memberships  ??0NgMat@@QAA@XZ
+        <- ??0AnimPtr@@QAA@ABV0@@Z
+           callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0?$ObjPtr@VRndPropAnim@@@@QAA@ABV0@@Z(136 B)
+        <- ??0DeleteSessionJob@@QAA@PAX@Z
+           callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0XboxSessionJob@@QAA@PAX@Z(100 B)
+  group 1491    4 memberships  ??2CriticalSection@@SAPAXI@Z
+        <- ??2BandRetargetVignette@@SAPAXI@Z
+           our(S)=8 B vs our(F)=60 B [retail(S)=8] -- our own build gives them different-sized COMDATs
+        <- ??2LayerDir@@SAPAXI@Z
+           our(S)=8 B vs our(F)=60 B [retail(S)=8] -- our own build gives them different-sized COMDATs
+  group 248     3 memberships  ?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectMsg@@@Z
+        <- ?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z
+           our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs
+        <- ?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z
+           our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs
+  group 56      2 memberships  ?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVConnectionStatusChangedMsg@@@Z
+        <- ?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVNetStartUtilityFinishedMsg@@@Z
+           our(S)=76 B vs our(F)=132 B [retail(S)=76] -- our own build gives them different-sized COMDATs
+        <- ?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z
+           our(S)=76 B vs our(F)=132 B [retail(S)=76] -- our own build gives them different-sized COMDATs
+  group 1500    2 memberships  ??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymb
+        <- ??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?
+           our(S)=128 B vs our(F)=120 B [retail(S)=128] -- our own build gives them different-sized COMDATs
+        <- ??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V
+           our(S)=128 B vs our(F)=120 B [retail(S)=128] -- our own build gives them different-sized COMDATs
+  group 1495    1 memberships  ??$__destroy_range_aux@V?$reverse_iterator@PAUPose@RndMorph@@@stlpmtx_std@
+        <- ??$__destroy_range_aux@V?$reverse_iterator@PAVDrivenPropertyEntry@@@stlpmtx_std@@@
+           callees @0x28 differ in OUR build: ??1Pose@RndMorph@@QAA@XZ(100 B) vs ??1DrivenPropertyEntry@@QAA@XZ(108 B)
+  group 1496    1 memberships  ?_M_erase@?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmt
+        <- ?_M_erase@?$vector@VExtraTail@TrainerGemTab@@V?$StlNodeAlloc@VExtraTail@TrainerGem
+           our(S)=96 B vs our(F)=88 B [retail(S)=96] -- our own build gives them different-sized COMDATs
+  group 1497    1 memberships  ??$__adjust_heap@PAPAVPrefabChar@@HPAV1@USortPrefabByPortraitFileName@@@st
+        <- ??$__adjust_heap@PAPAUEventEntry@@HPAU1@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry
+           our(S)=184 B vs our(F)=180 B [retail(S)=184] -- our own build gives them different-sized COMDATs
+  group 1498    1 memberships  ??$__unguarded_linear_insert@PAPAVPrefabChar@@PAV1@USortPrefabByPortraitFi
+        <- ??$__unguarded_linear_insert@PAPAUEventEntry@@PAU1@UMaxSort@@@stlpmtx_std@@YAXPAPA
+           our(S)=80 B vs our(F)=84 B [retail(S)=80] -- our own build gives them different-sized COMDATs
+  group 1499    1 memberships  ?_M_erase@?$vector@VStrand@CharHair@@V?$StlNodeAlloc@VStrand@CharHair@@@st
+        <- ?_M_erase@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEnt
+           callees @0x40 differ in OUR build: ??4Strand@CharHair@@QAAAAV01@ABV01@@Z(152 B) vs ??4DynamicPropertyEntry@Flo
+  group 1501    1 memberships  ?_M_fill_insert_aux@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@
+        <- ?_M_fill_insert_aux@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransfor
+           our(S)=396 B vs our(F)=392 B [retail(S)=396] -- our own build gives them different-sized COMDATs
+  group 1502    1 memberships  ?_M_fill_insert_aux@?$vector@UBeatCollisionData@@V?$StlNodeAlloc@UBeatColl
+        <- ?_M_fill_insert_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_
+           our(S)=396 B vs our(F)=392 B [retail(S)=396] -- our own build gives them different-sized COMDATs
+  group 1505    1 memberships  ??$__destroy_range_aux@V?$reverse_iterator@PAVMatSwap@OutfitConfig@@@stlpm
+        <- ??$__destroy_range_aux@V?$reverse_iterator@PAVTransformArea@@@stlpmtx_std@@@stlpmt
+           callees @0x28 differ in OUR build: ??1MatSwap@OutfitConfig@@QAA@XZ(120 B) vs ??1TransformArea@@QAA@XZ(96 B)
+  group 1506    1 memberships  ?_M_erase@?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitC
+        <- ?_M_erase@?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@
+           callees @0x40 differ in OUR build: ??4MatSwap@OutfitConfig@@QAAAAV01@ABV01@@Z(172 B) vs ??4TransformArea@@QAAA
+  group 1507    1 memberships  ?_M_fill_insert_aux@?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_st
+        <- ?_M_fill_insert_aux@?$vector@PAVSpotlight@@V?$StlNodeAlloc@PAVSpotlight@@@stlpmtx_
+           our(S)=376 B vs our(F)=328 B [retail(S)=376] -- our own build gives them different-sized COMDATs
+  group 1508    1 memberships  ?_M_fill_insert_aux@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBo
+        <- ?_M_fill_insert_aux@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@US
+           our(S)=388 B vs our(F)=472 B [retail(S)=388] -- our own build gives them different-sized COMDATs
+  group 1509    1 memberships  ??$__adjust_heap@PAPAVVert@RndMesh@@HPAV12@USortByZ@@@stlpmtx_std@@YAXPAPA
+        <- ??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileC
+           our(S)=220 B vs our(F)=204 B [retail(S)=220] -- our own build gives them different-sized COMDATs
+  group 1514    1 memberships  ?clear@?$_List_base@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstanc
+        <- ?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@s
+           our(S)=76 B vs our(F)=88 B [retail(S)=76] -- our own build gives them different-sized COMDATs
+
+wrote /home/free/tmp/alias2_withdraw.json
