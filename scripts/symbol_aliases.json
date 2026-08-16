@@ -2386,14 +2386,28 @@
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVInviteReceivedMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVJoypadConnectionMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVMatchmakerChangedMsg@@@Z",
-    "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVNetStartUtilityFinishedMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVPartyMembersChangedMsg@@@Z",
-    "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVSessionBusyMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVSessionDisconnectedMsg@@@Z",
     "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVSigninChangedMsg@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 10, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 9 folded spelling(s), 7 census sites over 2 functions. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 10, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 9 folded spelling(s), 7 census sites over 2 functions. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident.",
+   "withdrawn": [
+    {
+     "spelling": "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVNetStartUtilityFinishedMsg@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=76 B vs our(F)=132 B [retail(S)=76] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVServerStatusChangedMsg@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=76 B vs our(F)=132 B [retail(S)=76] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "RWidgetDrawSort",
@@ -5338,12 +5352,32 @@
    "address": "0x825390e0",
    "survivor": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectMsg@@@Z",
    "folded": [
-    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
-    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z",
-    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
     "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectDoneMsg@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident.",
+   "withdrawn": [
+    {
+     "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "_M_clear",
@@ -6871,7 +6905,8 @@
      "spelling": "??0?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
      "why": "different body SIZE (8 vs 104) -- cannot be one COMDAT",
      "lane": "GROUNDED-1 2026-08-14",
-     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (8 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+     "superseded_by": "ALIAS-2 2026-08-16"
     }
    ]
   },
@@ -10935,21 +10970,71 @@
    "address": "0x824aa280",
    "survivor": "??0NgMat@@QAA@XZ",
    "folded": [
-    "??0AnimPtr@@QAA@ABV0@@Z",
     "??0ClientProtocol@Quazal@@QAA@I@Z",
-    "??0DeleteSessionJob@@QAA@PAX@Z",
     "??0DisplacementNode@@QAA@W4ErrorNodeType@@PBVDataArray@@@Z",
     "??0DxShaderInclude@@QAA@XZ",
-    "??0DxShaderMgr@@QAA@XZ",
-    "??0EndSessionJob@@QAA@PAX@Z",
     "??0Ham1FilterVersion@@QAA@W4FilterVersionType@@PBVDataArray@@@Z",
-    "??0Ham2FilterVersion@@QAA@W4FilterVersionType@@PBVDataArray@@@Z",
-    "??0StartSessionJob@@QAA@PAX@Z",
-    "??0SynthSample360@@QAA@XZ",
-    "??0TexPtr@RndMatAnim@@QAA@ABV01@@Z",
-    "??0XboxContentMgr@@QAA@XZ"
+    "??0Ham2FilterVersion@@QAA@W4FilterVersionType@@PBVDataArray@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 13 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 13 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??0AnimPtr@@QAA@ABV0@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0?$ObjPtr@VRndPropAnim@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??0DeleteSessionJob@@QAA@PAX@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0XboxSessionJob@@QAA@PAX@Z(100 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??0DxShaderMgr@@QAA@XZ",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0RndShaderMgr@@QAA@XZ(80 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??0EndSessionJob@@QAA@PAX@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0XboxSessionJob@@QAA@PAX@Z(100 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??0StartSessionJob@@QAA@PAX@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0XboxSessionJob@@QAA@PAX@Z(100 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??0SynthSample360@@QAA@XZ",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0SynthSample@@IAA@XZ(104 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??0TexPtr@RndMatAnim@@QAA@ABV01@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0?$ObjPtr@VRndTex@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??0XboxContentMgr@@QAA@XZ",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0ContentMgr@@QAA@XZ(176 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "$Find",
@@ -12223,9 +12308,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
     "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Copy_Construct@UGrammar@SpeechMgr@@@stlpmtx_std@@YAXPAUGrammar@SpeechMgr@@ABU12@@Z",
-    "??$_Copy_Construct@UJumpInstance@@@stlpmtx_std@@YAXPAUJumpInstance@@ABU1@@Z",
-    "??$_Copy_Construct@ULabelStyle@UILabel@@@stlpmtx_std@@YAXPAULabelStyle@UILabel@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
@@ -12239,35 +12321,12 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UOSCValue@OSCMessenger@@@stlpmtx_std@@YAXPAUOSCValue@OSCMessenger@@ABU12@@Z",
-    "??$_Copy_Construct@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@YAXPAUPropTriggerDefn@FlowTrigger@@ABU12@@Z",
-    "??$_Copy_Construct@URecurseInfo@@@stlpmtx_std@@YAXPAURecurseInfo@@ABU1@@Z",
-    "??$_Copy_Construct@UTarget@HamCamShot@@@stlpmtx_std@@YAXPAUTarget@HamCamShot@@ABU12@@Z",
-    "??$_Copy_Construct@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@YAXPAV?$ObjDirPtr@VUILabelDir@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VCharClip@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VWaypoint@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VBandTrack@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VObject@Hmx@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndAnimatable@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndMesh@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPropAnim@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTex@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VSequence@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VTask@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VTask@@@@ABV1@@Z",
-    "??$_Copy_Construct@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VUIColor@@@@ABV1@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Copy_Construct@VFlowMathOp@@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
-    "??$_Copy_Construct@VGem@@@stlpmtx_std@@YAXPAVGem@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Copy_Construct@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
-    "??$_Copy_Construct@VPracticeStep@@@stlpmtx_std@@YAXPAVPracticeStep@@ABV1@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
     "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
@@ -12275,15 +12334,9 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@ABU1@@Z",
-    "??$_Param_Construct@UDynamicPropertyEntry@Flow@@U12@@stlpmtx_std@@YAXPAUDynamicPropertyEntry@Flow@@ABU12@@Z",
     "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@UGrammar@SpeechMgr@@U12@@stlpmtx_std@@YAXPAUGrammar@SpeechMgr@@ABU12@@Z",
-    "??$_Param_Construct@UJumpInstance@@U1@@stlpmtx_std@@YAXPAUJumpInstance@@ABU1@@Z",
-    "??$_Param_Construct@ULabelStyle@UILabel@@U12@@stlpmtx_std@@YAXPAULabelStyle@UILabel@@ABU12@@Z",
     "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
-    "??$_Param_Construct@UNavItem@HamNavProvider@@U12@@stlpmtx_std@@YAXPAUNavItem@HamNavProvider@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -12294,19 +12347,6 @@
     "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@URecurseInfo@@U1@@stlpmtx_std@@YAXPAURecurseInfo@@ABU1@@Z",
-    "??$_Param_Construct@V?$ObjOwnerPtr@VCharClip@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VCharClip@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjOwnerPtr@VWaypoint@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VWaypoint@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VObject@Hmx@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VObject@Hmx@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VRndAnimatable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndAnimatable@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VRndGroup@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VRndMesh@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndMesh@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VRndPartLauncher@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VRndPropAnim@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPropAnim@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VRndTex@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTex@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSequence@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VTask@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VTask@@@@ABV1@@Z",
-    "??$_Param_Construct@V?$ObjPtr@VUIColor@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VUIColor@@@@ABV1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
@@ -12315,13 +12355,348 @@
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VDrivenPropertyEntry@@V1@@stlpmtx_std@@YAXPAVDrivenPropertyEntry@@ABV1@@Z",
-    "??$_Param_Construct@VGem@@V1@@stlpmtx_std@@YAXPAVGem@@ABV1@@Z",
     "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
     "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_Copy_Construct@UGrammar@SpeechMgr@@@stlpmtx_std@@YAXPAUGrammar@SpeechMgr@@ABU12@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0Grammar@SpeechMgr@@QAA@ABU01@@Z(100 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UJumpInstance@@@stlpmtx_std@@YAXPAUJumpInstance@@ABU1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0JumpInstance@@QAA@ABU0@@Z(96 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULabelStyle@UILabel@@@stlpmtx_std@@YAXPAULabelStyle@UILabel@@ABU12@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0LabelStyle@UILabel@@QAA@ABU01@@Z(56 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UOSCValue@OSCMessenger@@@stlpmtx_std@@YAXPAUOSCValue@OSCMessenger@@ABU12@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0OSCValue@OSCMessenger@@QAA@ABU01@@Z(92 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@YAXPAUPropTriggerDefn@FlowTrigger@@ABU12@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0PropTriggerDefn@FlowTrigger@@QAA@ABU01@@Z(56 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@URecurseInfo@@@stlpmtx_std@@YAXPAURecurseInfo@@ABU1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0RecurseInfo@@QAA@ABU0@@Z(56 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UTarget@HamCamShot@@@stlpmtx_std@@YAXPAUTarget@HamCamShot@@ABU12@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0Target@HamCamShot@@QAA@ABU01@@Z(248 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjDirPtr@VUILabelDir@@@@@stlpmtx_std@@YAXPAV?$ObjDirPtr@VUILabelDir@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjDirPtr@VUILabelDir@@@@QAA@ABV0@@Z(124 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VCharClip@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjOwnerPtr@VCharClip@@@@QAA@ABV0@@Z(112 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjOwnerPtr@VRndTransformable@@@@QAA@ABV0(128 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VWaypoint@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjOwnerPtr@VWaypoint@@@@QAA@ABV0@@Z(128 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VBandTrack@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VEventTrigger@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VObject@Hmx@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VObject@Hmx@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndAnimatable@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndAnimatable@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndDir@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndDir@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndMesh@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndMesh@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPropAnim@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndPropAnim@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTex@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndTex@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VSequence@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VTask@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VTask@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VTask@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VUIColor@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VUIColor@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VFlowMathOp@@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0FlowMathOp@@QAA@ABV0@@Z(92 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VGem@@@stlpmtx_std@@YAXPAVGem@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0Gem@@QAA@ABV0@@Z(308 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV01(56 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VPracticeStep@@@stlpmtx_std@@YAXPAVPracticeStep@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0PracticeStep@@QAA@ABV0@@Z(92 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@UDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@ABU1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0DistEntry@@QAA@ABU0@@Z(112 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@UDynamicPropertyEntry@Flow@@U12@@stlpmtx_std@@YAXPAUDynamicPropertyEntry@Flow@@ABU12@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0DynamicPropertyEntry@Flow@@QAA@ABU01@@Z(128 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@UGrammar@SpeechMgr@@U12@@stlpmtx_std@@YAXPAUGrammar@SpeechMgr@@ABU12@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0Grammar@SpeechMgr@@QAA@ABU01@@Z(100 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@UJumpInstance@@U1@@stlpmtx_std@@YAXPAUJumpInstance@@ABU1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0JumpInstance@@QAA@ABU0@@Z(96 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@ULabelStyle@UILabel@@U12@@stlpmtx_std@@YAXPAULabelStyle@UILabel@@ABU12@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0LabelStyle@UILabel@@QAA@ABU01@@Z(56 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNavItem@HamNavProvider@@U12@@stlpmtx_std@@YAXPAUNavItem@HamNavProvider@@ABU12@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0NavItem@HamNavProvider@@QAA@ABU01@@Z(156 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@URecurseInfo@@U1@@stlpmtx_std@@YAXPAURecurseInfo@@ABU1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0RecurseInfo@@QAA@ABU0@@Z(56 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjOwnerPtr@VCharClip@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VCharClip@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjOwnerPtr@VCharClip@@@@QAA@ABV0@@Z(112 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjOwnerPtr@VWaypoint@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VWaypoint@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjOwnerPtr@VWaypoint@@@@QAA@ABV0@@Z(128 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VObject@Hmx@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VObject@Hmx@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VObject@Hmx@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VRndAnimatable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndAnimatable@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndAnimatable@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VRndGroup@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndGroup@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VRndMesh@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndMesh@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndMesh@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VRndPartLauncher@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndPartLauncher@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VRndPropAnim@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPropAnim@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndPropAnim@@@@QAA@ABV0@@Z(136 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VRndTex@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTex@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VRndTex@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VSequence@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSequence@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VSequence@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VTask@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VTask@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VTask@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VUIColor@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VUIColor@@@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0?$ObjPtr@VUIColor@@@@QAA@ABV0@@Z(120 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@VDrivenPropertyEntry@@V1@@stlpmtx_std@@YAXPAVDrivenPropertyEntry@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0DrivenPropertyEntry@@QAA@ABV0@@Z(64 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@VGem@@V1@@stlpmtx_std@@YAXPAVGem@@ABV1@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0Gem@@QAA@ABV0@@Z(308 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV01(56 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "0ColorPalette",
@@ -25202,7 +25577,8 @@
      "spelling": "??$__uninitialized_copy@PBUCharInterestState@CharEyes@@PAU12@@stlpmtx_std@@YAPAUCharInterestState@CharEyes@@PBU12@0PAU12@ABU__false_type@0@@Z",
      "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
      "lane": "GROUNDED-1 2026-08-14",
-     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+     "superseded_by": "ALIAS-2 2026-08-16"
     }
    ]
   },
@@ -25217,7 +25593,8 @@
      "spelling": "??$__uninitialized_copy@PBUPoint@CharHair@@PAU12@@stlpmtx_std@@YAPAUPoint@CharHair@@PBU12@0PAU12@ABU__false_type@0@@Z",
      "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
      "lane": "GROUNDED-1 2026-08-14",
-     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+     "superseded_by": "ALIAS-2 2026-08-16"
     }
    ]
   },
@@ -25232,7 +25609,8 @@
      "spelling": "??$_M_allocate_and_copy@PBVString@@@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVString@@IPBV2@0@Z",
      "why": "different body SIZE (100 vs 108) -- cannot be one COMDAT",
      "lane": "GROUNDED-1 2026-08-14",
-     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (100 vs 108) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+     "superseded_by": "ALIAS-2 2026-08-16"
     }
    ]
   },
@@ -25247,7 +25625,8 @@
      "spelling": "??$__uninitialized_copy@PBUChar3D@CharData@WorldCrowd@@PAU123@@stlpmtx_std@@YAPAUChar3D@CharData@WorldCrowd@@PBU123@0PAU123@ABU__false_type@0@@Z",
      "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
      "lane": "GROUNDED-1 2026-08-14",
-     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+     "superseded_by": "ALIAS-2 2026-08-16"
     }
    ]
   },
@@ -25262,7 +25641,8 @@
      "spelling": "??$__uninitialized_copy@PBUMerger@FileMerger@@PAU12@@stlpmtx_std@@YAPAUMerger@FileMerger@@PBU12@0PAU12@ABU__false_type@0@@Z",
      "why": "different body SIZE (96 vs 104) -- cannot be one COMDAT",
      "lane": "GROUNDED-1 2026-08-14",
-     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (96 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+     "superseded_by": "ALIAS-2 2026-08-16"
     }
    ]
   },
@@ -25286,7 +25666,8 @@
      "spelling": "??$_M_allocate_and_copy@PBVFace@RndMesh@@@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFace@RndMesh@@IPBV23@0@Z",
      "why": "different body SIZE (100 vs 108) -- cannot be one COMDAT",
      "lane": "GROUNDED-1 2026-08-14",
-     "note": "Retail bytes CONTRADICT this fold. Do NOT re-add: the alias was forgiving a real source divergence (we instantiate a different overload / call a different method than retail did)."
+     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (100 vs 108) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+     "superseded_by": "ALIAS-2 2026-08-16"
     }
    ]
   },
@@ -27387,7 +27768,6 @@
     "??2BandLabel@@SAPAXI@Z",
     "??2BandLeadMeter@@SAPAXI@Z",
     "??2BandList@@SAPAXI@Z",
-    "??2BandRetargetVignette@@SAPAXI@Z",
     "??2BandScoreboard@@SAPAXI@Z",
     "??2BandScreen@@SAPAXI@Z",
     "??2BandSongPref@@SAPAXI@Z",
@@ -27442,7 +27822,6 @@
     "??2Job@@SAPAXI@Z",
     "??2KerningTable@@SAPAXI@Z",
     "??2Layer@HamDriver@@SAPAXI@Z",
-    "??2LayerDir@@SAPAXI@Z",
     "??2Loader@@SAPAXI@Z",
     "??2MCContainer@@SAPAXI@Z",
     "??2MCFile@@SAPAXI@Z",
@@ -27455,7 +27834,6 @@
     "??2NetLoader@@SAPAXI@Z",
     "??2ObjEntry@@SAPAXI@Z",
     "??2OnlineID@@SAPAXI@Z",
-    "??2OverdriveMeter@@SAPAXI@Z",
     "??2OvershellDir@@SAPAXI@Z",
     "??2ParticleCommonPool@@SAPAXI@Z",
     "??2PitchArrow@@SAPAXI@Z",
@@ -27484,7 +27862,6 @@
     "??2UIListLabelElement@@SAPAXI@Z",
     "??2UIListSlotElement@@SAPAXI@Z",
     "??2UIListSubListElement@@SAPAXI@Z",
-    "??2UnisonIcon@@SAPAXI@Z",
     "??2VocalTrackDir@@SAPAXI@Z",
     "??_U@YAPAXI@Z",
     "??_UMidiMessage@@SAPAXI@Z",
@@ -27495,7 +27872,37 @@
     "?BinkAlloc@@YAPAXI@Z",
     "JsonMalloc"
    ],
-   "evidence": "tools/alloc_fold_gate.py -- 8-byte allocator-thunk fold class. Every folded spelling's COMDAT is byte- AND relocation-identical to the map-resident survivor's, which is the /OPT:ICF condition itself applied to two of our own COMDATs: both carry the same relocation to the same symbol, so the fold does not depend on naming retail's branch target (0x827bcd38 is unnamed in the map, which is where tools/comdat_fold_gate.py fail-closes). The survivor is corroborated on retail bytes -- 8 B, word0 equal as a FULL 32-bit value, matching branch opcode/AA/LK -- and the pair (word0, resolved dest) is UNIQUE image-wide: 712 retail 8-byte <word>+<branch> bodies carry 707 distinct combos and the 12 sharing `li r4,0` have 12 DISTINCT destinations, so shape does none of the work. REFUSED, each on a different mechanism and each a real finding: ??2Task (map address 0x822d4278 is `blr`+pad with ZERO fan-in -- a map defect, not a function), ??2OutfitConfig (0x82b66c48 is a real thunk to a DIFFERENT allocator -- our identical COMDAT is a source defect), ?SampleAlloc (our objs define two distinct COMDAT variants)."
+   "evidence": "tools/alloc_fold_gate.py -- 8-byte allocator-thunk fold class. Every folded spelling's COMDAT is byte- AND relocation-identical to the map-resident survivor's, which is the /OPT:ICF condition itself applied to two of our own COMDATs: both carry the same relocation to the same symbol, so the fold does not depend on naming retail's branch target (0x827bcd38 is unnamed in the map, which is where tools/comdat_fold_gate.py fail-closes). The survivor is corroborated on retail bytes -- 8 B, word0 equal as a FULL 32-bit value, matching branch opcode/AA/LK -- and the pair (word0, resolved dest) is UNIQUE image-wide: 712 retail 8-byte <word>+<branch> bodies carry 707 distinct combos and the 12 sharing `li r4,0` have 12 DISTINCT destinations, so shape does none of the work. REFUSED, each on a different mechanism and each a real finding: ??2Task (map address 0x822d4278 is `blr`+pad with ZERO fan-in -- a map defect, not a function), ??2OutfitConfig (0x82b66c48 is a real thunk to a DIFFERENT allocator -- our identical COMDAT is a source defect), ?SampleAlloc (our objs define two distinct COMDAT variants).",
+   "withdrawn": [
+    {
+     "spelling": "??2BandRetargetVignette@@SAPAXI@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=8 B vs our(F)=60 B [retail(S)=8] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??2LayerDir@@SAPAXI@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=8 B vs our(F)=60 B [retail(S)=8] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??2OverdriveMeter@@SAPAXI@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=8 B vs our(F)=60 B [retail(S)=8] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??2UnisonIcon@@SAPAXI@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=8 B vs our(F)=60 B [retail(S)=8] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "OnMsg",
@@ -27537,39 +27944,51 @@
    "name": "CVEIN1___destroy_range_aux",
    "address": "0x82483b48",
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAUPose@RndMorph@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUPose@RndMorph@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVDrivenPropertyEntry@@@0@0ABU__false_type@0@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "??1?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "?_M_clear@?$vector@VDrivenPropertyEntry@@V?$StlNodeAlloc@VDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@IAA"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVDrivenPropertyEntry@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVDrivenPropertyEntry@@@0@0ABU__false_type@0@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x28 differ in OUR build: ??1Pose@RndMorph@@QAA@XZ(100 B) vs ??1DrivenPropertyEntry@@QAA@XZ(108 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_erase",
    "address": "0x8247b020",
    "survivor": "?_M_erase@?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPoint@RndLine@@PAV34@0ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@VExtraTail@TrainerGemTab@@V?$StlNodeAlloc@VExtraTail@TrainerGemTab@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVExtraTail@TrainerGemTab@@PAV34@0ABU__false_type@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "?Draw@TrainerGemTab@@QAAXH@Z",
     "?resize@?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVPoint@Rnd"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$vector@VExtraTail@TrainerGemTab@@V?$StlNodeAlloc@VExtraTail@TrainerGemTab@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVExtraTail@TrainerGemTab@@PAV34@0ABU__false_type@2@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=96 B vs our(F)=88 B [retail(S)=96] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1___adjust_heap",
    "address": "0x825543c8",
    "survivor": "??$__adjust_heap@PAPAVPrefabChar@@HPAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@HHPAV1@USortPrefabByPortraitFileName@@@Z",
-   "folded": [
-    "??$__adjust_heap@PAPAUEventEntry@@HPAU1@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@HHPAU1@UMaxSort@@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
    "retail_callers": [
@@ -27577,44 +27996,65 @@
     "??$__partial_sort@PAPAVPrefabChar@@PAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@000US",
     "??$sort_heap@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$__adjust_heap@PAPAUEventEntry@@HPAU1@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@HHPAU1@UMaxSort@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=184 B vs our(F)=180 B [retail(S)=184] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1___unguarded_linear_insert",
    "address": "0x825541d8",
    "survivor": "??$__unguarded_linear_insert@PAPAVPrefabChar@@PAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@PAV1@USortPrefabByPortraitFileName@@@Z",
-   "folded": [
-    "??$__unguarded_linear_insert@PAPAUEventEntry@@PAU1@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@PAU1@UMaxSort@@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "??$__final_insertion_sort@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z",
     "??$__linear_insert@PAPAVPrefabChar@@PAV1@USortPrefabByPortraitFileName@@@stlpmtx_std@@YAXPAPAVPrefabChar@@0PAV"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$__unguarded_linear_insert@PAPAUEventEntry@@PAU1@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@PAU1@UMaxSort@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=80 B vs our(F)=84 B [retail(S)=80] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_erase",
    "address": "0x823aab50",
    "survivor": "?_M_erase@?$vector@VStrand@CharHair@@V?$StlNodeAlloc@VStrand@CharHair@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVStrand@CharHair@@PAV34@ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDynamicPropertyEntry@Flow@@PAU34@ABU__false_type@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 1,
    "retail_callers": [
     "??$PropSync@UDynamicPropertyEntry@Flow@@@@YA_NAAV?$ObjVector@UDynamicPropertyEntry@Flow@@@@AAVDataNode@@PAVDat"
    ],
-   "witness": "T1 x2 (re-audited, lane ALIASAUDIT-2): map-naming inconsistency PLUS heterogeneous retail fan-in on BOTH of the survivor's callees -- ??4Strand@CharHair@@ 0x823aa650 is called by ?_M_erase@?$vector@UDynamicPropertyEntry@Flow@@ 0x823aad78, and ??1Strand@CharHair@@ 0x823a8c40 is called by ??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@ 0x823a94f0 and ??$PropSync@UDynamicPropertyEntry@Flow@@ 0x823aae58. Independently, our compiled body for the folded spelling is byte-identical to retail@A on all 23 non-relocated words."
+   "witness": "T1 x2 (re-audited, lane ALIASAUDIT-2): map-naming inconsistency PLUS heterogeneous retail fan-in on BOTH of the survivor's callees -- ??4Strand@CharHair@@ 0x823aa650 is called by ?_M_erase@?$vector@UDynamicPropertyEntry@Flow@@ 0x823aad78, and ??1Strand@CharHair@@ 0x823a8c40 is called by ??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@ 0x823a94f0 and ??$PropSync@UDynamicPropertyEntry@Flow@@ 0x823aae58. Independently, our compiled body for the folded spelling is byte-identical to retail@A on all 23 non-relocated words.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUDynamicPropertyEntry@Flow@@PAU34@ABU__false_type@2@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x40 differ in OUR build: ??4Strand@CharHair@@QAAAAV01@ABV01@@Z(152 B) vs ??4DynamicPropertyEntry@Flow@@QAAAAU01@ABU01@@(164 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_find",
    "address": "0x82557770",
    "survivor": "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
    "folded": [
-    "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@LightPresetManager@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
-    "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@PatchDir@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
@@ -27641,37 +28081,67 @@
     "??A?$hash_map@VSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@",
     "??A?$hash_map@VSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@U"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@LightPresetManager@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=128 B vs our(F)=120 B [retail(S)=128] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@PatchDir@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@1@ABVSymbol@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=128 B vs our(F)=120 B [retail(S)=128] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_fill_insert_aux",
    "address": "0x82787868",
    "survivor": "?_M_fill_insert_aux@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRGRollChord@@IABV3@ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_fill_insert_aux@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VTransform@@@@IABV3@ABU__false_type@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "?_M_fill_insert@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@",
     "?_M_fill_insert_aux@?$vector@VRGRollChord@@V?$StlNodeAlloc@VRGRollChord@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRG"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VTransform@@@@IABV3@ABU__false_type@2@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=396 B vs our(F)=392 B [retail(S)=396] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_fill_insert_aux",
    "address": "0x82781160",
    "survivor": "?_M_fill_insert_aux@?$vector@UBeatCollisionData@@V?$StlNodeAlloc@UBeatCollisionData@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBeatCollisionData@@IABU3@ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_fill_insert_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVVocalPhrase@@IABV3@ABU__false_type@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "?_M_fill_insert@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVVocalP",
     "?_M_fill_insert_aux@?$vector@UBeatCollisionData@@V?$StlNodeAlloc@UBeatCollisionData@@@stlpmtx_std@@@stlpmtx_st"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVVocalPhrase@@IABV3@ABU__false_type@2@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=396 B vs our(F)=392 B [retail(S)=396] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_erase",
@@ -27708,68 +28178,94 @@
    "name": "CVEIN1___destroy_range_aux",
    "address": "0x822a5970",
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVMatSwap@OutfitConfig@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVTransformArea@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVTransformArea@@@0@0ABU__false_type@0@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "??1?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "?_M_clear_after_move@?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@IAAX"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVTransformArea@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVTransformArea@@@0@0ABU__false_type@0@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x28 differ in OUR build: ??1MatSwap@OutfitConfig@@QAA@XZ(120 B) vs ??1TransformArea@@QAA@XZ(96 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_erase",
    "address": "0x822a8c40",
    "survivor": "?_M_erase@?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVMatSwap@OutfitConfig@@PAV34@ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTransformArea@@PAV3@ABU__false_type@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 1,
    "retail_callers": [
     "??$PropSync@VTransformArea@@@@YA_NAAV?$ObjVector@VTransformArea@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
    ],
-   "witness": "T1 x2 (re-audited, lane ALIASAUDIT-2): map-naming inconsistency PLUS heterogeneous retail fan-in on the survivor's callee ??4MatSwap@OutfitConfig@@ 0x822a7d10, called by ?_M_fill_insert_aux@?$vector@VTransformArea@@ 0x822a8cb8 (x3) and ?_M_erase@?$vector@VTransformArea@@ 0x822a92a0. NOTE: the map also names 0x822a96a8 ??4TransformArea@@, but that row is refuted by its OWN fan-in (entirely ?$vector@VOldColorOption@@ callers), so it is a map defect, not a rival. Our folded body is byte-identical to retail@A on all 23 non-relocated words."
+   "witness": "T1 x2 (re-audited, lane ALIASAUDIT-2): map-naming inconsistency PLUS heterogeneous retail fan-in on the survivor's callee ??4MatSwap@OutfitConfig@@ 0x822a7d10, called by ?_M_fill_insert_aux@?$vector@VTransformArea@@ 0x822a8cb8 (x3) and ?_M_erase@?$vector@VTransformArea@@ 0x822a92a0. NOTE: the map also names 0x822a96a8 ??4TransformArea@@, but that row is refuted by its OWN fan-in (entirely ?$vector@VOldColorOption@@ callers), so it is a map defect, not a rival. Our folded body is byte-identical to retail@A on all 23 non-relocated words.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$vector@VTransformArea@@V?$StlNodeAlloc@VTransformArea@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVTransformArea@@PAV3@ABU__false_type@2@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "CALLEE_SIZE_MISMATCH",
+     "why": "callees @0x40 differ in OUR build: ??4MatSwap@OutfitConfig@@QAAAAV01@ABV01@@Z(172 B) vs ??4TransformArea@@QAAAAV0@ABV0@@Z(148 B)",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_fill_insert_aux",
    "address": "0x82307b78",
    "survivor": "?_M_fill_insert_aux@?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSymbol@@IABV3@ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_fill_insert_aux@?$vector@PAVSpotlight@@V?$StlNodeAlloc@PAVSpotlight@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVSpotlight@@IABQAV3@ABU__false_type@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "?_M_fill_insert@?$vector@PAVSpotlight@@V?$StlNodeAlloc@PAVSpotlight@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVSpot",
     "?_M_fill_insert_aux@?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSymbol@@IABV"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@PAVSpotlight@@V?$StlNodeAlloc@PAVSpotlight@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVSpotlight@@IABQAV3@ABU__false_type@2@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=376 B vs our(F)=328 B [retail(S)=376] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_fill_insert_aux",
    "address": "0x8237fc00",
    "survivor": "?_M_fill_insert_aux@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUBone@CharBones@@IABU34@ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_fill_insert_aux@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUSpotlightDrawerEntry@LightPreset@@IABU34@ABU__false_type@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "?_M_fill_insert@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@",
     "?_M_fill_insert_aux@?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@AAA"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUSpotlightDrawerEntry@LightPreset@@IABU34@ABU__false_type@2@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=388 B vs our(F)=472 B [retail(S)=388] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1___adjust_heap",
    "address": "0x823461c8",
    "survivor": "??$__adjust_heap@PAPAVVert@RndMesh@@HPAV12@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@HHPAV12@USortByZ@@@Z",
-   "folded": [
-    "??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@HHPAV1@UPriority@@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
    "retail_callers": [
@@ -27777,7 +28273,16 @@
     "??$__partial_sort@PAPAVVert@RndMesh@@PAV12@USortByZ@@@stlpmtx_std@@YAXPAPAVVert@RndMesh@@000USortByZ@@@Z",
     "fn_82347D48"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@HHPAV1@UPriority@@@Z",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=220 B vs our(F)=204 B [retail(S)=220] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1___adjust_heap",
@@ -27848,9 +28353,7 @@
    "name": "CVEIN1_clear",
    "address": "0x8243dbf0",
    "survivor": "?clear@?$_List_base@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
-   "folded": [
-    "?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 16,
    "retail_callers": [
@@ -27859,7 +28362,16 @@
     "??$_S_sort@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@V?$WidgetInstanceCmp@VMeshInstance@@@@@",
     "??1?$_List_base@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_s"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+     "lane": "ALIAS-2 2026-08-16",
+     "class": "SURVIVOR_SIZE_MISMATCH",
+     "why": "our(S)=76 B vs our(F)=88 B [retail(S)=76] -- our own build gives them different-sized COMDATs",
+     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    }
+   ]
   },
   {
    "name": "CVEIN1___unguarded_linear_insert",

@@ -379,4 +379,6 @@ def main():
         cmd_control(wt)
 
 
-main()
+if __name__ == "__main__":       # ALIAS-2: this call was UNGUARDED, so the module
+    main()                       # could not be imported -- `import Sides` ran main()
+                                 # and died in argparse on the importer's argv.
