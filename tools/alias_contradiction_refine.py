@@ -82,6 +82,14 @@ def main():
     # _M_allocate_and_copy uniformly +8 B vs retail across ~95 same-name pairs, so
     # a retail-vs-ours test fires on that whole family for the wrong reason and
     # would withdraw ~95 aliases to hide one shared defect.
+    #   ⛔ CORRECTED 2026-08-16 (lane STLPORT-1, c3983794): the "uniformly +8 B"
+    #   claim on the line above is an ARTIFACT of coff_bodies_ext.function_bodies_ext
+    #   billing the SUCCESSOR's 8-byte EH prefix to the preceding function -- not a
+    #   source defect.  objdiff on the named symbol: target 96 / base 96, 24/24
+    #   instructions equal.  Now fixed at the reader.  THE RULING BELOW IS UNCHANGED
+    #   AND WAS RIGHT FOR A BETTER REASON THAN IT KNEW: our(S) vs our(F) is immune to
+    #   one-sided reader bugs of exactly this kind, which is why it survived while
+    #   the retail-vs-ours test silently mis-fired on ~95 pairs.
     #   apples-to-apples: our(S) vs our(F).  If OUR build gives the two spellings
     #   different-sized COMDATs, they cannot be one COMDAT in any build.
     #   If our(S) == our(F) but retail(S) != our(S), the pair is INTERNALLY

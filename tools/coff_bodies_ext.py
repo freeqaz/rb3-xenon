@@ -30,6 +30,40 @@ Slice each code section by CONSECUTIVE defining-symbol values: symbol i owns
 [value_i, value_{i+1}), the last owns [value_i, end). Relocations are rebased
 into the owning slice and anything in the unnamed prefix is dropped.
 
+⛔⛔ THE EH_PREFIX_SUFFIX_ARTIFACT -- fixed 2026-08-16, lane STLPORT-1
+---------------------------------------------------------------------
+"anything in the unnamed prefix is dropped" was true of the LEADING prefix only.
+EVERY EH-bearing region carries that same 8-byte prefix -- the entry AND each
+funclet -- so a section laid out
+
+    +0    8-byte EH prefix          <- excluded: the slice starts at value==8
+    +8    the function body, 96 B
+    +104  8-byte EH prefix          <- BILLED TO THE FUNCTION ABOVE
+    +112  __catch$NNNNN
+
+yielded a 104-byte body for a function that is 96 bytes.  dtk's split objs carve
+the target side by .pdata extents and carry no prefixes, so a retail-vs-ours size
+test read a UNIFORM +8 on every EH-bearing function with a successor.
+
+Measured on this tree: 288 symbols comparable to retail carry the signature and
+260 read a false +8; the fix moves 259 of them to delta 0 and leaves all 22,563
+control symbols bit-identical.
+
+★ WHAT IT COST, and why this docstring is long: the artifact was read as a SOURCE
+defect and written into the record as one.  ALIAS-2 (docs/decomp/
+ALIAS_UNPROVEN_REMAINDER_ADJUDICATED_2026-08-16.md) reported "our STLport emits
+__uninitialized_copy / _M_allocate_and_copy uniformly +8 B vs retail across ~95
+same-name pairs -- ONE shared source bug".  The ~95 is real and reproduces to the
+row; the CAUSE was this function.  objdiff on the exact symbol it named reports
+target 96 / base 96, 24/24 instructions equal.  A whole lane was commissioned to
+fix a bug that does not exist.
+
+⚠ Note the direction of the failure: `Sides.l3_exact` returns "NO -- size %d vs
+%d" the moment lengths differ, so the artifact made retail-byte fold proof
+IMPOSSIBLE for this entire population, while the within-build test (`l4_ourside`,
+our(S) vs our(F)) was immune because the artifact cancels on both sides.  A
+one-sided instrument error is invisible to the two-sided control.
+
 Validation, stated so it can fail: retail's .pdata entry VA is the function
 ENTRY (not the prefix), so recovered bodies must show the same length-delta-0
 dominance against retail .pdata as the already-working offset-0 population. If
@@ -70,6 +104,19 @@ def is_aux_code_symbol(name):
     return name.startswith("__unwind$") or name.startswith("__ehhandler$")
 
 
+# Every EH-bearing region MSVC X360 emits -- the function entry itself and each
+# funclet -- is preceded by the same unnamed 8-byte prefix.  The LEADING one is
+# already excluded because the slice starts at the symbol's `value` (== 8).  An
+# INTERIOR one is not: it sits inside [value_i, value_{i+1}) and so was being
+# billed to the PRECEDING function.  See EH_PREFIX_SUFFIX_ARTIFACT below.
+EH_PREFIXED = ("__unwind$", "__catch$", "__ehhandler$",
+               "__tryblocktable$", "__unwindfunclet$")
+
+
+def _has_eh_prefix(names):
+    return any(n.startswith(EH_PREFIXED) for n in names)
+
+
 def function_bodies_ext(path, stats=None):
     """Yield (name, body_bytes, relocs, entry_off) for each function slice."""
     data = Path(path).read_bytes()
@@ -98,12 +145,24 @@ def function_bodies_ext(path, stats=None):
         pts = sorted({(s["value"], s["name"]) for s in defs})
         bounds = sorted({v for v, _n in pts} | {len(raw)})
         nxt = {v: bounds[i + 1] for i, v in enumerate(bounds[:-1])}
+        at = collections.defaultdict(list)
+        for v, n in pts:
+            at[v].append(n)
         for v, name in pts:
             if v % 4 or v >= len(raw):
                 if stats is not None:
                     stats["skip_bad_off"] += 1
                 continue
             end = nxt.get(v, len(raw))
+            # Hand the successor's 8-byte EH prefix back to the successor.  Gated
+            # STRUCTURALLY (successor is EH-bearing) *and* on the bytes actually
+            # being the zero prefix -- a trailing-zeros sniff alone would mis-fire
+            # on any body that happens to end in two zero words.
+            if end < len(raw) and end - 8 > v and _has_eh_prefix(at.get(end, ())) \
+                    and raw[end - 8:end] == b"\0" * 8:
+                end -= 8
+                if stats is not None:
+                    stats["eh_prefix_suffix_stripped"] += 1
             if stats is not None:
                 stats["entry_off_%s" % (v if v <= 8 else "gt8")] += 1
                 stats["slices"] += 1
