@@ -43,6 +43,15 @@ Two instruments replace it, and between them no name is matched anywhere:
 
 `tools/alias_class_ablate.py` prices each evidence class in a handful of legs.
 
+⚠ **Which instrument each number came from.** Every figure in this document is
+from **class ablation + membership adjudication**, both of which are complete and
+whole-tree. The **per-group** sweep is a finer-grained *confirmatory* artifact
+(exact row→group attribution) and is slower; the two were cross-checked where
+they overlap and agree. Do not read a per-group concentration figure quoted from
+a partial sweep as final — GROUNDED-1's "only 448 of 1,493 groups forgive any
+bytes" is measured here at **53.8% of the first 699 groups**, which is *not* the
+same statistic and is not yet a refutation of it.
+
 ## The measured partition of the 819,108 B
 
 ⚠ **Two trees, two totals — do not mix them.** The headline re-measure above
