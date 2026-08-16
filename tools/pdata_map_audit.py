@@ -56,23 +56,37 @@ lane, and it reported success while dead:
     `if a in self.ext: return None`.  It returned 0 for ANY table -- verified
     PASSing on an all-zero-length table and on random garbage.
 
-The fix is NOT merely to report the skip.  It is that the discriminating
-controls are now INTRINSIC -- checkable from the retail binary alone, which
-does travel (`setup_worktree.sh` reflinks `orig/`).  A RUNTIME_FUNCTION table
-partitions code, so its extents must be DISJOINT and must lie inside an
-executable section.  Measured separation is total: 0/57,732 neighbour pairs
-overlap under the real shift, 57,730/57,732 (100.00%) under the sabotage.
+The fix is NOT merely to report the skip.  The discriminating controls are now
+mostly INTRINSIC -- checkable from the retail binary alone, which travels
+further than `fingerprints.json` does (`setup_worktree.sh` reflinks `orig/`).
+A RUNTIME_FUNCTION table partitions code, so its extents must be DISJOINT and
+must lie inside an executable section.  Measured separation is total:
+0/57,732 neighbour pairs overlap under the real shift, 57,730/57,732 (100.00%)
+under the sabotage.
 
-  ! The first cut of that bound used `.text` alone and FIRED ON THE REAL
-    TABLE (106/57,733).  Those 106 are genuine -- they live in `BINK`, the
+⛔ "INTRINSIC" IS NOT "SUFFICIENT", AND THE FINGERPRINTS LEG IS NOT REDUNDANT.
+   Do not delete it as superseded -- that is the single likeliest way for this
+   file to go quietly vacuous a second time.  Two reasons, both measured:
+     * The intrinsic legs are ONE-SIDED.  Disjointness and containment get
+       easier as lengths shrink, so they cannot see an UNDER-decode; a lost
+       `*4` (23.6% coverage) and `*2`-for-`*4` (47.1%) passed every one of
+       them.  `MIN_COVERED_FRAC` closes that side with a lower bound, but only
+       the fingerprints cross-check tests EXACT EQUALITY, i.e. bounds the
+       decode from both directions at once.
+     * They assert well-formedness of ANY PE, not the identity of THIS one --
+       all four pass unchanged on DC3's `ham_xbox_r.exe`.  Only the
+       known-positive leg and the fingerprints leg pin us to RB3.
+
+  ! The first cut of the containment bound used `.text` alone and FIRED ON THE
+    REAL TABLE (106/57,733).  Those 106 are genuine -- they live in `BINK`, the
     video codec's own code section.  An over-strict control is its own kind of
     dead control, so the bound is the union of EXECUTE-flagged sections.
 
 Two rules this file now obeys, and callers should rely on:
-  * It NEVER prints `OK` when a control did not run.  A skipped control yields
-    `INCOMPLETE ... NOT a clean bill of health` and **exit 2** -- distinct from
-    exit 1 (a control FAILED) and exit 0 (every control ran and passed).
-  * `--strict` turns any skip into a failure, for callers that want fail-closed.
+  * It NEVER prints `OK` when a control did not run, and never reports a bare
+    `N/N` -- the census is reconciled against the pinned `EXPECTED_CONTROLS`,
+    so deleting a control is itself a failure rather than a smaller `N/N`.
+  * "Could not run" is never spelled the same way as "ran and failed".
 
 Usage:
     python3 tools/pdata_map_audit.py --selftest
@@ -82,7 +96,11 @@ Usage:
 
 Exit codes (--selftest):  0 = all controls ran and passed
                           1 = a control FAILED (expected under --sabotage)
-                          2 = INCOMPLETE, a control could not run
+                          2 = NEVER USED -- argparse owns it for usage errors,
+                              and a typo'd flag must not look like a verdict
+                          3 = INCOMPLETE, a control could not run
+                          4 = CANNOT RUN, nothing was examined (no band.exe)
+`--strict` collapses 3 and 4 into 1, for callers that want fail-closed.
 """
 from __future__ import annotations
 
@@ -101,6 +119,19 @@ DEFAULT_MAP = os.path.join(ROOT, "scripts/target_symbol_map.json")
 DEFAULT_REPORT = os.path.join(ROOT, "build/45410914/report.json")
 
 CRT_CHAIN = re.compile(r"^__(save|rest)(fpr|gpr|vmx)_\d+$")
+
+# Exit codes.  2 is DELIBERATELY UNUSED: argparse spends it on its own usage
+# errors, so a typo'd flag would otherwise return the same code as INCOMPLETE
+# while running zero controls -- a green-looking failure of exactly the kind
+# this file exists to prevent.
+EXIT_OK = 0
+EXIT_FAILED = 1          # a control ran and FAILED (expected under --sabotage)
+EXIT_INCOMPLETE = 3      # every control that ran passed, but >=1 could not run
+EXIT_CANNOT_RUN = 4      # nothing was examined at all (no retail binary)
+
+# Pinned so `N/N controls ran` cannot be a tautology: delete a control and the
+# old wording printed `7/7` and still read complete.  Bump this deliberately.
+EXPECTED_CONTROLS = 9
 
 
 def _sections(data: bytes):
@@ -168,13 +199,23 @@ def load_extents(exe: str = DEFAULT_EXE, shift: int = 8) -> dict[int, int]:
 def check_extents(ext: dict[int, int], spans: list[tuple[int, int]]) -> dict:
     """INTRINSIC consistency of the decoded .pdata table -- no external fixture.
 
-    A RUNTIME_FUNCTION table partitions code, so two properties hold for any
-    correct decode and are checkable from the retail binary ALONE:
+    A RUNTIME_FUNCTION table partitions code, so these hold for any correct
+    decode and are checkable from the retail binary ALONE:
         (1) extents are DISJOINT           -- no body runs into the next
         (2) extents lie inside CODE        -- some executable section
+        (3) coverage is PLAUSIBLE          -- see the one-sidedness note below
     These are what make `--sabotage shift` discriminate in a worktree, where
     `fingerprints.json` is absent.  Do not replace them with a fixture-dependent
     check: that is precisely the regression this function exists to prevent.
+
+    ⛔ ONE-SIDEDNESS -- read before adding or removing a leg here.
+    Disjointness, containment and `covered <= code_size` are all MONOTONE in
+    "smaller is safer": every one of them gets *easier* to satisfy as the
+    decoded lengths shrink, so as a set they are blind to an UNDER-decode.
+    Review probed 13 decode variants: a lost `*4` scale (23.6% coverage) and
+    `*2` instead of `*4` (47.1%) satisfied all of them.  `covered_frac` exists
+    to close that side, and the fingerprints cross-check -- exact equality --
+    is the only leg that bounds the decode from BOTH directions at once.
     """
     keys = sorted(ext)
 
@@ -192,7 +233,16 @@ def check_extents(ext: dict[int, int], spans: list[tuple[int, int]]) -> dict:
         "first_outside": outside[0] if outside else None,
         "covered": sum(ext.values()),
         "code_size": sum(hi - lo for lo, hi in spans),
+        "covered_frac": sum(ext.values()) / max(1, sum(hi - lo for lo, hi in spans)),
     }
+
+
+# Lower bound on the fraction of executable bytes the .pdata table accounts for.
+# Retail measures 0.943.  The under-decodes this exists to catch measure 0.236
+# (lost *4 scale) and 0.471 (*2 instead of *4), so 0.80 sits an order of
+# magnitude clear of both while leaving 14 pp of headroom below the real value
+# for leaf functions, which legitimately carry no unwind record.
+MIN_COVERED_FRAC = 0.80
 
 
 class Extents:
@@ -239,6 +289,27 @@ def selftest(exe=DEFAULT_EXE, sabotage=None, strict=False) -> int:
     ran = 0
     skipped: list[tuple[str, str, str]] = []
 
+    # ⛔ THE BINARY IS ITSELF GITIGNORED (.gitignore: *.exe) and reaches a
+    # worktree only via setup_worktree.sh -- the SAME mechanism that failed for
+    # fingerprints.json.  Without this guard a missing band.exe raises
+    # FileNotFoundError, and a traceback exits 1, which is indistinguishable
+    # from "a control FAILED".  The `--sabotage` leg's contract is "MUST fail",
+    # so an unguarded crash SATISFIES IT WHILE EXAMINING NOTHING -- this file's
+    # own defect, re-created one dependency to the left.  Measured at review:
+    # 3 of 84 live worktrees have no band.exe.
+    if not os.path.exists(exe):
+        print(f"pdata_map_audit selftest  exe={exe}")
+        print("  CANNOT RUN -- 0 of "
+              f"{EXPECTED_CONTROLS} controls executed  (NOT a clean bill of health)")
+        print(f"    the retail binary is absent: {exe}")
+        print("    it is gitignored (*.exe) and travels only via "
+              "scripts/setup_worktree.sh, which reflink-copies orig/")
+        print("    fix: scripts/setup_worktree.sh <path> <branch>, or "
+              "--exe <path to band.exe>")
+        print(f"  exit {EXIT_CANNOT_RUN} = nothing was examined; this is NOT a "
+              "sabotage-leg failure")
+        return 1 if strict else EXIT_CANNOT_RUN
+
     def chk(name, cond, detail=""):
         nonlocal ok, ran
         ran += 1
@@ -278,9 +349,16 @@ def selftest(exe=DEFAULT_EXE, sabotage=None, strict=False) -> int:
     chk("extents lie inside executable sections (intrinsic)", st["outside"] == 0,
         f'{st["outside"]}/{st["n"]} extents fall outside code'
         + (f' (first at {st["first_outside"]:#010x})' if st["first_outside"] else ""))
-    chk("total covered <= code size (intrinsic)",
+    chk("total covered <= code size (intrinsic, UPPER bound)",
         st["covered"] <= st["code_size"],
         f'covered={st["covered"]:,} B  code={st["code_size"]:,} B')
+    # The only intrinsic leg that is not monotone in "smaller is safer".
+    # Without it a decode that UNDER-states every length passes everything
+    # above: measured 23.6% for a lost *4, 47.1% for *2-instead-of-*4.
+    chk(f"covered fraction >= {MIN_COVERED_FRAC:.0%} (intrinsic, LOWER bound)",
+        st["covered_frac"] >= MIN_COVERED_FRAC,
+        f'{st["covered_frac"]:.1%} of executable bytes are inside some .pdata '
+        f"extent (retail: 94.3%)")
 
     # ---- corroborating control: needs gitignored, regenerable fingerprints --
     fpp = os.path.join(ROOT, "fingerprints.json")
@@ -319,25 +397,41 @@ def selftest(exe=DEFAULT_EXE, sabotage=None, strict=False) -> int:
     chk("null: sampled .pdata starts not swallowed by predecessor",
         nulls == 0, f"{nulls}/{len(sample)} flagged")
 
+    # `ran/ran` would be a tautology -- it reads complete for any number of
+    # controls, including a set someone has quietly deleted from.  Reconcile
+    # against the pinned census instead.
+    accounted = ran + len(skipped)
+    if accounted != EXPECTED_CONTROLS:
+        print(f"  FAILED -- control census mismatch: {accounted} controls "
+              f"accounted for, EXPECTED_CONTROLS says {EXPECTED_CONTROLS}. "
+              "A control was added or removed without updating the pin; this "
+              "verdict cannot be trusted either way.")
+        return EXIT_FAILED
+
     if not ok:
         print("  FAILED")
-        return 1
+        return EXIT_FAILED
     if skipped:
         # NEVER print OK here.  A control that did not run is not evidence of
         # absence -- this is the failure class the whole file guards against.
-        print(f"  INCOMPLETE -- {ran} controls ran, {len(skipped)} COULD NOT RUN"
-              "  (NOT a clean bill of health)")
+        print(f"  INCOMPLETE -- {ran}/{EXPECTED_CONTROLS} controls ran, "
+              f"{len(skipped)} COULD NOT RUN  (NOT a clean bill of health)")
         for name, why, howto in skipped:
             print(f"    not examined: {name}")
             print(f"      why: {why}")
             print(f"      fix: {howto}")
-        print("  exit 2 = incomplete coverage; use --strict to make this fatal")
-        return 2
-    print(f"  OK ({ran}/{ran} controls ran)")
-    return 0
+        print(f"  exit {EXIT_INCOMPLETE} = incomplete coverage; "
+              "use --strict to make this fatal")
+        return EXIT_INCOMPLETE
+    print(f"  OK ({ran}/{EXPECTED_CONTROLS} controls ran)")
+    return EXIT_OK
 
 
 def audit(exe=DEFAULT_EXE, mapf=DEFAULT_MAP, report=DEFAULT_REPORT, out=None) -> int:
+    if not os.path.exists(exe):
+        raise SystemExit(
+            f"REFUSING to audit: the retail binary is absent ({exe}). It is "
+            "gitignored (*.exe) and travels only via scripts/setup_worktree.sh.")
     ext = load_extents(exe)
     # The audit's whole output is the word "PROVABLY FALSE".  That claim is only
     # as good as the extent table under it, so refuse outright rather than
@@ -412,7 +506,7 @@ def main(argv=None):
                     help="deliberately break the bit field; --selftest MUST then fail")
     ap.add_argument("--strict", action="store_true",
                     help="fail closed: a control that cannot run is a FAILURE "
-                         "(exit 1) rather than INCOMPLETE (exit 2)")
+                         "(exit 1) rather than INCOMPLETE (3) / CANNOT RUN (4)")
     sub = ap.add_subparsers(dest="cmd")
     a = sub.add_parser("audit", help="scan the map for provably-false rows")
     a.add_argument("--map", default=DEFAULT_MAP)
