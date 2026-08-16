@@ -28,6 +28,11 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pdata_map_audit import (  # noqa: E402
     DEFAULT_EXE,
+    EXIT_CANNOT_RUN,
+    EXIT_FAILED,
+    EXIT_INCOMPLETE,
+    EXPECTED_CONTROLS,
+    MIN_COVERED_FRAC,
     Extents,
     check_extents,
 )
@@ -170,7 +175,7 @@ def test_clean_run_without_fingerprints_is_incomplete_not_ok(tmp_path):
     tool = _tool_in_fresh_root(tmp_path)
     r = subprocess.run([sys.executable, str(tool), "--selftest",
                         "--exe", DEFAULT_EXE], capture_output=True, text=True)
-    assert r.returncode == 2, r.stdout
+    assert r.returncode == EXIT_INCOMPLETE, r.stdout
     assert "INCOMPLETE" in r.stdout
     assert "NOT a clean bill of health" in r.stdout
     assert "not examined: extent sizes agree with fingerprints.json" in r.stdout
@@ -183,5 +188,120 @@ def test_strict_turns_a_skipped_control_into_a_failure(tmp_path):
     tool = _tool_in_fresh_root(tmp_path)
     r = subprocess.run([sys.executable, str(tool), "--selftest", "--strict",
                         "--exe", DEFAULT_EXE], capture_output=True, text=True)
-    assert r.returncode == 1, r.stdout
+    assert r.returncode == EXIT_FAILED, r.stdout
     assert "FAILED" in r.stdout
+
+
+# --------------------------------------------------------------------------
+# the ONE-SIDEDNESS gap: intrinsic legs cannot see an UNDER-decode
+# --------------------------------------------------------------------------
+
+def test_intrinsic_legs_are_monotone_and_miss_an_underdecode():
+    """Halving every length keeps disjointness/containment/upper-bound green.
+
+    Pins WHY the coverage floor exists: shrinking lengths only makes those
+    three easier, so as a set they are blind on the low side.
+    """
+    spans = [(0x1000, 0x2000)]
+    full = {0x1000 + 0x10 * i: 0x10 for i in range(0x100)}   # 100% covered
+    half = {a: v // 2 for a, v in full.items()}
+    for ext in (full, half):
+        st = check_extents(ext, spans)
+        assert st["overlaps"] == 0
+        assert st["outside"] == 0
+        assert st["covered"] <= st["code_size"]
+    assert check_extents(full, spans)["covered_frac"] == 1.0
+    assert check_extents(half, spans)["covered_frac"] == 0.5
+
+
+def test_coverage_floor_is_the_leg_that_catches_it():
+    spans = [(0x1000, 0x2000)]
+    full = {0x1000 + 0x10 * i: 0x10 for i in range(0x100)}
+    half = {a: v // 2 for a, v in full.items()}
+    assert check_extents(full, spans)["covered_frac"] >= MIN_COVERED_FRAC
+    assert check_extents(half, spans)["covered_frac"] < MIN_COVERED_FRAC
+
+
+@needs_exe
+def test_real_binary_underdecodes_are_caught_only_by_the_floor():
+    """The two variants review found, on the real table: 23.6% and 47.1%.
+
+    Both satisfy disjointness, containment, the upper bound AND the
+    known-positive leg. Only the floor separates them from retail's 94.3%.
+    """
+    import struct
+
+    from pdata_map_audit import _sections, code_spans
+
+    data = open(DEFAULT_EXE, "rb").read()
+    _, secs = _sections(data)
+    _, _, praw, psz, _ = [s for s in secs if s[0] == ".pdata"][0]
+    spans = code_spans(DEFAULT_EXE)
+
+    def decode(scale):
+        ext = {}
+        for off in range(praw, praw + psz, 8):
+            b, w = struct.unpack_from(">II", data, off)
+            if b == 0 or not (0x82000000 <= b < 0x83000000):
+                continue
+            ext[b] = ((w >> 8) & 0x3FFFFF) * scale
+        return ext
+
+    pos = [0x826C48F8, 0x826C4908, 0x826C4910, 0x826C4958]
+    for scale, want_ok in ((4, True), (2, False), (1, False)):
+        ext = decode(scale)
+        st = check_extents(ext, spans)
+        # the one-sided legs are green for ALL THREE
+        assert st["overlaps"] == 0 and st["outside"] == 0
+        assert st["covered"] <= st["code_size"]
+        # ...so is the known-positive leg
+        E = Extents(ext)
+        assert all(E.interior_of(a) == 0x826C44F8 for a in pos)
+        # only the floor discriminates
+        assert (st["covered_frac"] >= MIN_COVERED_FRAC) is want_ok, (
+            f"scale={scale} covered_frac={st['covered_frac']:.3f}")
+
+
+# --------------------------------------------------------------------------
+# the binary is gitignored too: a missing one must not read as "control fired"
+# --------------------------------------------------------------------------
+
+def test_missing_binary_is_cannot_run_not_a_traceback(tmp_path):
+    tool = _tool_in_fresh_root(tmp_path)
+    r = subprocess.run([sys.executable, str(tool), "--selftest",
+                        "--exe", str(tmp_path / "nope.exe")],
+                       capture_output=True, text=True)
+    assert r.returncode == EXIT_CANNOT_RUN, r.stdout + r.stderr
+    assert "Traceback" not in r.stderr
+    assert "CANNOT RUN" in r.stdout
+    assert f"0 of {EXPECTED_CONTROLS}" in r.stdout
+
+
+def test_missing_binary_does_not_satisfy_the_sabotage_contract(tmp_path):
+    """THE re-created defect. `--sabotage` MUST fail -- but a crash exiting 1
+    would satisfy that while examining nothing, which is the original bug one
+    dependency to the left. A missing binary must be its own outcome."""
+    tool = _tool_in_fresh_root(tmp_path)
+    r = subprocess.run([sys.executable, str(tool), "--selftest",
+                        "--sabotage", "shift",
+                        "--exe", str(tmp_path / "nope.exe")],
+                       capture_output=True, text=True)
+    assert r.returncode == EXIT_CANNOT_RUN, r.stdout + r.stderr
+    assert r.returncode != EXIT_FAILED
+
+
+def test_usage_error_does_not_collide_with_a_verdict(tmp_path):
+    """argparse owns exit 2; no verdict may share it."""
+    tool = _tool_in_fresh_root(tmp_path)
+    r = subprocess.run([sys.executable, str(tool), "--selftest", "--nope"],
+                       capture_output=True, text=True)
+    assert r.returncode == 2
+    assert 2 not in (EXIT_FAILED, EXIT_INCOMPLETE, EXIT_CANNOT_RUN)
+
+
+@needs_exe
+def test_verdict_reports_against_the_pinned_census_not_n_over_n(tmp_path):
+    """`N/N` reads complete for any N, including a set someone deleted from."""
+    r = subprocess.run([sys.executable, str(TOOL), "--selftest",
+                        "--exe", DEFAULT_EXE], capture_output=True, text=True)
+    assert f"/{EXPECTED_CONTROLS} controls ran" in r.stdout, r.stdout
