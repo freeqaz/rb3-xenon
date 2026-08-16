@@ -164,6 +164,38 @@ Our STLport emits `__uninitialized_copy` and `_M_allocate_and_copy` **uniformly
 size-differing rows). A retail-vs-ours test fires on that entire family for the
 wrong reason.
 
+> ⛔⛔ **CORRECTED 2026-08-16, lane STLPORT-1 (`c3983794`) — THE CONCLUSION OF THIS
+> SECTION STANDS; THE CAUSE IT NAMES DOES NOT EXIST.** The counts above are right
+> and reproduce to the row (95 pairs at +8; 52 at retail-96, 43 at retail-100).
+> But the **+8 is not our STLport and not a source defect** — it is
+> `tools/coff_bodies_ext.py` billing the *successor's* 8-byte EH prefix to the
+> preceding function. Our COMDAT is
+> `[+0 prefix][+8 body 96 B][+104 prefix of __catch$NNNNN][+112 funclet]`, and the
+> slicer took `raw[8:112] = 104`. dtk's target objs carve by `.pdata` and carry no
+> prefixes, hence a uniform, entirely artefactual +8.
+>
+> On the exact symbol this section names
+> (`??$__uninitialized_copy@PAULocalizedName@HamMove@@…`) **objdiff reports target
+> 96 / base 96, 24 of 24 instructions equal, diff score 0/2400.** Adjudicated on
+> retail bytes across all 95: **72 are byte-identical modulo relocation names**;
+> the other 23 are per-instantiation `sizeof(element)` divergences in 23 *different*
+> element types, **in both directions** (retail 12 / ours 76 for `RndBone`, retail
+> 76 / ours 12 for `FilePath` — a mutually-swapped pair that looks like a map
+> mis-assignment, not a layout bug). **There is no shared STLport source bug.**
+>
+> ★ The *methodological* ruling — keep the size test inside one build — is
+> **unaffected and correct**, and it is what made this lane's diagnosis findable:
+> the within-build test (`l4_ourside`) is immune because the artifact cancels on
+> both sides, while the one-sided `l3_exact` reads `"NO — size differs"` and so
+> could never prove a fold for this population. **A one-sided instrument error is
+> invisible to the two-sided control used to check it.**
+>
+> Blast radius, measured and deliberately not oversold: 942 of our symbols were
+> over-reported, 288 of them comparable to retail (260 at a false +8), but only
+> **10 alias groups / 11 memberships (0.07%)** are touched — the alias ledger was
+> **not** materially corrupted. The cost was the false source lead below, which
+> commissioned a lane to fix a bug that does not exist.
+
 ⇒ The comparison is now **our(S) vs our(F)**. If our own build gives the two
 spellings different-sized COMDATs they cannot be one COMDAT in any build. If
 `our(S) == our(F)` while retail differs, the pair is INTERNALLY CONSISTENT and the
@@ -258,10 +290,16 @@ verdict.
 
 ## Leads handed on, not taken
 
-* ★ **The +8 STLport family divergence** (`__uninitialized_copy` 96→104,
+* ~~★ **The +8 STLport family divergence** (`__uninitialized_copy` 96→104,
   `_M_allocate_and_copy` 100→108, ~95 pairs). One shared source defect; fixing it
-  would plausibly restore the folds it caused to be withdrawn. **Not read at the
+  would plausibly restore the folds it caused to be withdrawn.~~ **Not read at the
   instruction level here — this is a size census only.**
+  ⛔ **CLOSED 2026-08-16, lane STLPORT-1 (`c3983794`): the lead was an artifact of
+  `tools/coff_bodies_ext.py`, not a source defect — see the correction under "The
+  size test must stay inside ONE build". Reading it at the instruction level, which
+  this bullet correctly flags as not done, is exactly what refuted it: target 96 /
+  base 96, 24/24 equal. DO NOT RE-FUND.** The self-flagged caveat was the honest
+  part of this entry and it was the right one — a size census cannot name a cause.
 * ★ **16 `NEEDS_MAP_ID` memberships carrying 28,964 B rest on just NINE distinct
   unidentified addresses** — the densest remaining alias vein by a wide margin,
   and it needs **map identifications, not source**:
