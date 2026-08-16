@@ -246,8 +246,24 @@ verdict.
   `_M_allocate_and_copy` 100→108, ~95 pairs). One shared source defect; fixing it
   would plausibly restore the folds it caused to be withdrawn. **Not read at the
   instruction level here — this is a size census only.**
-* **16 `NEEDS_MAP_ID` memberships carrying 28,964 B** — the densest remaining
-  alias vein, needing map identifications rather than source.
+* ★ **16 `NEEDS_MAP_ID` memberships carrying 28,964 B rest on just NINE distinct
+  unidentified addresses** — the densest remaining alias vein by a wide margin,
+  and it needs **map identifications, not source**:
+
+  | address | memberships | what it gates |
+  |---|---:|---|
+  | **`fn_827BCD38`** | 2 | `?MemOrPoolAlloc@@YAPAXHPBDH0@Z` ← the 1-arg forms |
+  | `fn_82BF72E0` · `fn_82BD4C48` · `fn_82BC4B28` | 2 each | XAUDIO2 / LEAPFX vector-dtor thunks vs `ObjRefConcrete<RndCubeTex\|RndFur>` |
+  | `fn_82BD0EB8` · `fn_82BD2E78` · `fn_82BD4EF0` | 2 each | same family |
+  | `fn_82327050` · `fn_824C8F68` | 1 each | `operator<<(BinStream&, list<T>)` twins |
+
+  ⚠ **`0x827bcd38` is the SAME address GROUNDED-1 named as gating its largest
+  single block** — `??2CriticalSection@@SAPAXI@Z ← ??2@YAPAXI@Z` (73,496 B) is
+  proven only via L4 because retail's branch destination `0x827bcd38` is unnamed
+  and there is no `?MemAlloc@@YAPAXHH@Z` row in the map at all. **One
+  identification upgrades that block to destination-verified L3 AND clears 2 of
+  these 16 memberships.** It is the highest evidence-per-unit-of-work item in the
+  alias corpus.
 * **The 4 allocator-thunk classes** (`BandRetargetVignette`, `LayerDir`,
   `OverdriveMeter`, `UnisonIcon`) at 60 B vs our 8 B survivor — NEWOBJ-1's
   per-class macro misassignment, now no longer forgiven.
