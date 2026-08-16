@@ -38,7 +38,42 @@ Usage
     tools/index_liveness_audit.py foo.json           # audit specific file(s)
     tools/index_liveness_audit.py --field rb3_va x.json
 
-Exit status: 1 if any audited index is DEAD (so it can gate CI / a pre-flight).
+Exit status
+-----------
+    0  every audited index is LIVE/PARTIAL, and the positive control checked out
+    1  at least one audited index is DEAD (gates CI / a pre-flight)
+    2  the audit is VOID -- see below. NOT a pass.
+
+⚠ Why exit 2 exists (lane task93, 2026-08-16)
+─────────────────────────────────────────────
+A target that could not be audited used to `continue` with a one-word note --
+`(absent)`, `LOAD FAIL`, `(no usable address field -- skipped)` -- and nothing
+accumulated. With every target unavailable, `dead` stayed empty and main()
+returned 0. Measured: `index_liveness_audit.py does_not_exist.json
+also_missing.json` printed a header, one `(absent)` line per file, and exited 0.
+
+That matters here more than usual, because this tool's inputs are DELIBERATELY
+barred from travelling to worktrees (see the block at scripts/setup_worktree.sh
+that refuses to copy `unified_id_rb3wii.json` / `global_fuzzy_pairs.json`), and
+worktrees are where lanes run. A tool whose whole purpose is catching data that
+"still parses but means nothing" was itself returning a clean status while
+reading nothing -- the same failure mode, one level up.
+
+So an audit that measured nothing is now its own loud outcome rather than a
+silent pass, and the run always prints an explicit accounting of how many
+targets it actually audited. The audit is VOID when:
+
+  * zero targets were audited, or
+  * a target named EXPLICITLY on the command line could not be audited (you
+    asked for that file by name -- its absence is an error, not a skip), or
+  * the default target set was used and the positive control
+    (`scripts/target_symbol_map.json`, documented above as known LIVE) did not
+    come back LIVE. Without the control, a row of DEAD verdicts is
+    indistinguishable from a broken instrument.
+
+Absent members of the DEFAULT target set are not by themselves an error -- most
+of them are genuinely not present in a worktree -- but they are always listed on
+stderr, and they cannot be mistaken for audited targets.
 """
 import argparse
 import json
@@ -60,8 +95,12 @@ ADDR_FIELDS = ("rb3_addr", "rb3_va", "addr", "address", "va")
 _FN_NAME = re.compile(r"^fn_([0-9A-Fa-f]{8})$")
 FN_FIELDS = ("fn", "rb3_fn", "name", "symbol")
 
+# The positive control. If THIS does not read LIVE, the instrument is not
+# validated on this tree and no other verdict in the run can be trusted.
+CONTROL = "scripts/target_symbol_map.json"
+
 DEFAULT_TARGETS = [
-    "scripts/target_symbol_map.json",  # positive control: known LIVE
+    CONTROL,  # positive control: known LIVE
     "unified_id.json",
     "unified_id_callgraph.json",
     "unified_id_rtti.json",
@@ -183,33 +222,83 @@ def main():
     print(f"Target universe: {len(starts)} `.text` function starts "
           f"from {os.path.relpath(args.symbols, ROOT)}\n")
 
+    explicit = bool(args.files)
     targets = args.files or [os.path.join(ROOT, f) for f in DEFAULT_TARGETS]
     print("%-34s %7s %7s %7s %7s  %s"
           % ("index", "n", "hit%", "null%", "ratio", "verdict"))
     print("-" * 84)
     dead = []
+    audited = []                 # rel paths that produced a real verdict
+    unavailable = []             # (rel, why) — could NOT be audited
+    control_verdict = None       # verdict for the positive control, if seen
     for path in targets:
         rel = os.path.relpath(path, ROOT)
         if not os.path.exists(path):
             print("%-34s %s" % (rel, "(absent)"))
+            unavailable.append((rel, "absent"))
             continue
         try:
             doc = json.load(open(path))
         except Exception as exc:
             print("%-34s LOAD FAIL: %s" % (rel, exc))
+            unavailable.append((rel, "load failed: %s" % exc))
             continue
         addrs, field = extract_addrs(doc, args.field)
         addrs = sorted(set(addrs))
         if len(addrs) < 20:
             print("%-34s %7d  (no usable address field — skipped)" % (rel, len(addrs)))
+            unavailable.append((rel, "no usable address field (%d addrs)" % len(addrs)))
             continue
         hit, null, ratio, beaten = audit(addrs, starts, args.trials)
         v = verdict(hit, ratio)
         note = "  <- an arbitrary shift beats the true offset" if beaten else ""
         print("%-34s %7d %6.2f%% %6.2f%% %7.2f  %s%s"
               % (rel, len(addrs), hit, null, ratio, v, note))
+        audited.append(rel)
+        if rel == CONTROL:
+            control_verdict = v
         if v.startswith("DEAD"):
             dead.append(rel)
+
+    # ── accounting ───────────────────────────────────────────────────────────
+    # Printed on EVERY run, pass or fail. An audit that measured nothing must
+    # never be able to look like an audit that measured everything.
+    print("\naudited %d of %d targets (%d unavailable)"
+          % (len(audited), len(targets), len(unavailable)))
+    if unavailable:
+        print("\nNOT AUDITED — these targets produced no verdict:", file=sys.stderr)
+        for rel, why in unavailable:
+            print("  - %s (%s)" % (rel, why), file=sys.stderr)
+
+    # ── VOID conditions: the audit did not measure what it claims to ─────────
+    void = []
+    if not audited:
+        void.append("audited NOTHING — 0 of %d targets produced a verdict"
+                    % len(targets))
+    if explicit and unavailable:
+        void.append("target(s) named explicitly on the command line could not be "
+                    "audited: " + ", ".join(rel for rel, _ in unavailable))
+    if not explicit and audited:
+        if control_verdict is None:
+            void.append("positive control %s was not audited — with no control, "
+                        "a DEAD verdict is indistinguishable from a broken "
+                        "instrument" % CONTROL)
+        elif not control_verdict.startswith("LIVE"):
+            void.append("positive control %s read %s, not LIVE — the instrument "
+                        "itself is not validated on this tree"
+                        % (CONTROL, control_verdict))
+
+    if void:
+        print("\n" + "=" * 78, file=sys.stderr)
+        print("INPUTS UNAVAILABLE — audited nothing (or nothing trustworthy). "
+              "This is NOT a pass.", file=sys.stderr)
+        for reason in void:
+            print("  ! " + reason, file=sys.stderr)
+        print("\nThis tool's inputs are deliberately not copied into worktrees "
+              "(see scripts/setup_worktree.sh).\nRun it from the primary "
+              "checkout, or pass the index paths explicitly.", file=sys.stderr)
+        print("=" * 78, file=sys.stderr)
+        return 2
 
     if dead:
         print("\nDEAD indices (addresses carry no signal against this binary):")
