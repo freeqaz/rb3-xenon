@@ -1,0 +1,71 @@
+      collect(retail): 3088 objs -> 69415 symbols [corrected reader]
+      collect(ours): 1204 objs -> 94896 symbols [corrected reader]
+ALL_FOLD rows (every charged site classified FOLD): 5975 of 9943 rows
+distinct (target,base) pairs inside ALL_FOLD rows: 2198 over 6986 sites
+adjudicating 120 pairs (60 most-charged + 60 random tail)
+
+  0/120
+  25/120
+  50/120
+  75/120
+  100/120
+
+VERDICTS ON THE ALL_FOLD SAMPLE (pairs, and the sites they carry)
+  PROVEN           72 pairs ( 60.0%)   2320 charged sites
+  CONTRADICTED     40 pairs ( 33.3%)    914 charged sites
+  NEEDS_MAP_ID      4 pairs (  3.3%)     98 charged sites
+  NEEDS_SOURCE      4 pairs (  3.3%)     23 charged sites
+
+examples per class:
+ [PROVEN]
+   1050 sites  ??3BinStream@@SAXPAX@Z
+            <- ??3@YAXPAX@Z
+            L3_EXACT | every word compared in full; every relocated target name agrees
+   181 sites  ??1ObjRef@@QAA@XZ
+            <- ??1ObjRefOwner@@UAA@XZ
+            L3_EXACT | every word compared in full; every relocated target name agrees
+   154 sites  ??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H
+            <- ??3@YAXPAX0@Z
+            L3_EXACT | every word compared in full; every relocated target name agrees
+   149 sites  ??1LoaderGlitchContext@@QAA@XZ
+            <- ??1FilePath@@UAA@XZ
+            L3_EXACT | every word compared in full; every relocated target name agrees
+ [CONTRADICTED]
+   151 sites  ??1?$ObjRefConcrete@VFlowLabel@@VObjectDir@@@@UAA@XZ
+            <- ??1?$ObjPtr@VEventTrigger@@@@UAA@XZ
+            CONTRADICTED | size 116 vs 4 | different body SIZE -- cannot be one COMDAT
+   137 sites  ??1?$ObjRefConcrete@VRndTransformable@@VObjectDir@@@@UAA@XZ
+            <- ??1?$ObjPtr@VRndTransformable@@@@UAA@XZ
+            CONTRADICTED | size 116 vs 4 | different body SIZE -- cannot be one COMDAT
+    87 sites  ?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA
+            <- ?insert@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@
+            CONTRADICTED | target names differ @0x24: ?_M_create_node@?$list@PAUDep@CharPollableSorter@@ vs ?_M_create_node@?$l
+    79 sites  ?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V
+            <- ?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V
+            CONTRADICTED | target names differ @0x90: ?_M_insert@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@s vs ?_M_insert@?$_Rb_tr
+ [NEEDS_MAP_ID]
+    44 sites  ??3BandHighlight@@SAXPAX@Z
+            <- ??1MemDoTempAllocations@@QAA@XZ
+            NEEDS_MAP_ID | unidentified target fn_827BC2A0 @0x0
+    33 sites  ??$_Destroy@UBoneOp@CharSignalApplier@@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@@Z
+            <- ??1OutfitPiece@BandCharDesc@@UAA@XZ
+            NEEDS_MAP_ID | unidentified target fn_827A28D0 @0x0
+    20 sites  ??1?$map@HPAVUIComponent@@U?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUICompo
+            <- ??1?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNod
+            NEEDS_MAP_ID | unidentified target fn_826100F8 @0x0
+     1 sites  ??4?$ObjVector@UBoneOp@CharSignalApplier@@@@QAAXABV0@@Z
+            <- ??4?$ObjVector@VHighlightObject@@@@QAAXABV0@@Z
+            NEEDS_MAP_ID | unidentified target fn_82340160 @0x38
+ [NEEDS_SOURCE]
+    19 sites  ?LocalizeSeparatedInt@@YAPBDHAAVLocale@@@Z
+            <- ?LocalizeSeparatedInt@@YAPBDH@Z
+            NEEDS_SOURCE | absent
+     1 sites  ?_M_erase@?$vector@PAVRCJob@@V?$StlNodeAlloc@PAVRCJob@@@stlpmtx_std@@@stlpmtx_std@@IAAPA
+            <- ?_M_erase@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@IAAPAMPAMABU__false_typ
+            NEEDS_SOURCE | absent
+     1 sites  ??$__introsort_loop@PAPAVUILabel@@PAV1@HULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVU
+            <- ??$__introsort_loop@PAPAVUILabel@@PAV1@HULabelSort@?A0x4c78cf70@@@stlpmtx_std@@YAXPAPAVU
+            NEEDS_SOURCE | absent
+     2 sites  ??$__insertion_sort@PAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUI
+            <- ??$__insertion_sort@PAPAVUILabel@@PAV1@ULabelSort@?A0x4c78cf70@@@stlpmtx_std@@YAXPAPAVUI
+            NEEDS_SOURCE | absent
