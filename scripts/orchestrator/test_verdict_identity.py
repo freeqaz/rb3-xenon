@@ -292,8 +292,15 @@ def test_ghidra_export_excludes_it(db):
 
 def test_grind_worklist_dead_verdicts_covers_it():
     """A closed allow-list: an unlisted verdict silently stays in the worklist."""
-    sys.path.insert(0, str(HERE.parent / "grind"))
-    import worklist  # noqa: E402
+    # Loaded by path rather than by `sys.path.insert` + `import worklist`:
+    # putting scripts/ or scripts/grind/ on sys.path shadows generically-named
+    # third-party packages for every other test in the same pytest session
+    # (scripts/unicorn/ vs the unicorn emulator being the live example here).
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "_laneS_worklist", HERE.parent / "grind" / "worklist.py")
+    worklist = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(worklist)
     assert IU.lower() in worklist._DEAD_VERDICTS
 
 
