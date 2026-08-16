@@ -49,6 +49,8 @@ def main():
     ap.add_argument("--wt", required=True)
     ap.add_argument("--ablate", required=True)
     ap.add_argument("--fell", required=True)
+    ap.add_argument("--memberships", required=True,
+                    help="tools/alias_membership_adjudicate.py --out JSON")
     ap.add_argument("--out", default="")
     a = ap.parse_args()
     wt = Path(a.wt).resolve()
@@ -71,28 +73,24 @@ def main():
     print("REDUNDANT_COVER (fell in FULL-vs-EMPTY but under no single ablation): "
           "%d rows / %d B" % (len(redundant), sum(redundant.values())))
 
-    # ---- adjudicate memberships of every group that forgives anything --------
-    sys.path.insert(0, str(wt / "tools")); sys.path.insert(0, str(wt))
-    from alias_forgiveness_audit import Sides
-    S = Sides(wt)
+    # ---- membership verdicts, precomputed on RETAIL BYTES --------------------
     groups = json.loads((wt / "scripts/symbol_aliases.json").read_text())["groups"]
+    mem = json.load(open(os.path.expanduser(a.memberships)))
+    bygroup = collections.defaultdict(list)
+    for m in mem:
+        bygroup[m["i"]].append(m)
+    print("membership verdicts loaded: %d over %d groups" % (len(mem), len(bygroup)))
 
-    live = sorted({i for r in abl if r["fell_bytes"] > 0 for i in [r["i"]]})
+    live = sorted({r["i"] for r in abl if r["fell_bytes"] > 0})
     print("groups forgiving >0 B: %d of %d" % (len(live), len(abl)))
 
-    memo, gverd, gdetail = {}, {}, {}
-    for c, i in enumerate(live):
-        g = groups[i]
-        vs, det = set(), []
-        for f in g.get("folded", []):
-            v, why = S.verdict(g["survivor"], f, memo)
-            v2 = "PROVEN" if v in PROVEN else v
-            vs.add(v2); det.append((f, v, why))
-        if not g.get("folded"):
-            vs.add("UNPROVEN")           # emptied/withdrawn group forgives nothing real
+    gverd, gdetail = {}, {}
+    for i in live:
+        det = [(m["folded"], m["verdict"], m["why"]) for m in bygroup.get(i, [])]
+        vs = {m["cls"] for m in bygroup.get(i, [])}
+        if not vs:
+            vs = {"UNPROVEN"}            # emptied/withdrawn group declares no fold
         gverd[i] = worst(vs); gdetail[i] = det
-        if c % 25 == 0:
-            print("  adjudicated %d/%d groups" % (c, len(live)), flush=True)
 
     # ---- row verdict = worst over its necessary groups ----------------------
     cls_rows, cls_bytes = collections.Counter(), collections.Counter()
