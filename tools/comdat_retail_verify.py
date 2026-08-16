@@ -37,16 +37,53 @@ THE GENERAL RULE: never compare a COMDAT section size against a report.json
 skips relocated words (whose displacements differ by construction -- see
 CLAUDE.md on why raw memcmp of function bodies is silently vacuous).
 
+READING THE MAP (lane task89, 2026-08-16)
+-----------------------------------------
+`scripts/target_symbol_map.json` does NOT hold "address -> name" for every row.
+A row may claim no name at all, and that state is load-bearing here:
+
+  * ``"0xADDR": null`` -- **deliberately unclaimed**. The address is real code,
+    but no name is attributed to it. This is the map-side spelling of
+    ``verdict='IDENTITY_UNESTABLISHED'`` (docs/decomp/VERDICT_STATES.md): the
+    premise "this body IS that function" is unsound, so the map claims nothing
+    rather than claiming something false.
+  * an address on ``_denylist`` -- **refused**, whatever string value it still
+    carries. Five such rows in the checked-in map do carry a name, including
+    ``??$__destroy_aux@ULevelData@@...`` at both `0x82b5b1d0` and `0x82b63ec8`
+    -- the canonical unadjudicable pair.
+
+This tool prints "SECTION byte-identical to retail", which IS an identity
+claim, so it must not source an address from a row that claims nothing.  Both
+states are therefore resolved through the renamer's own ``load_address_map``
+rather than a local ``json.load`` + substring test, so the filter here and the
+filter the build applies cannot drift (same rule, same reason, as
+tools/map_name_injectivity.py).
+
+It used to be a bare dict comprehension over ``raw.items()``, which crashed --
+``TypeError: argument of type 'NoneType' is not iterable`` -- for ANY
+``--pattern`` the moment the map held one null, i.e. the tool was unusable on
+exactly the unestablished-identity population it is most needed for. The counts
+are REPORTED, not just skipped: a row dropped in silence is this repo's
+recurring failure mode (the `_denylist` sat declared-and-ignored by the loader
+itself until f3fe9ab1).
+
 Usage:
     python3 tools/comdat_retail_verify.py --pattern _Copy_Construct@
     python3 tools/comdat_retail_verify.py --pattern '??0Foo@@' --show-diffs 20
 """
 import argparse
+import contextlib
 import glob
+import io
 import json
 import os
 import struct
 import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'scripts'))
+from obj_target_symbol_renamer import load_address_map  # noqa: E402
 
 
 def read_coff(path):
@@ -121,6 +158,84 @@ class Retail:
         return out
 
 
+def classify_map_rows(raw):
+    """-> dict of row-population counts for `raw`, a parsed target_symbol_map.
+
+    Pure and total: no I/O, no globals, and it must survive the null vector
+    (`{}`) and every value type the map has ever held. REPORTING ONLY -- the
+    admission filter is `load_address_map`, which is imported rather than
+    re-derived. These counts exist so that what the filter drops is visible in
+    the summary instead of vanishing.
+
+    Buckets partition `raw` exactly, and test_comdat_retail_verify.py asserts
+    that on the checked-in map -- so a row cannot be dropped by falling into
+    no bucket, which is the same shape as the defect being fixed:
+      unclaimed  -- `"0xADDR": null`, deliberately unclaimed / identity not
+                    established. Carries no name, so no --pattern can ever
+                    match it. NOT an empty string: '' would silently match
+                    every pattern-free lookup, which is the bug next door.
+      denied     -- an address key on `_denylist` (whether or not it still
+                    carries a name), plus the denied addresses that are absent
+                    from the map body.
+      nonstring  -- a list/dict/number under a `0x` key. Never legitimate.
+      metadata   -- non-`0x` keys (`_denylist`, `_icf_arbitrary`, ...).
+      claimed    -- string-valued `0x` rows that are not denied.
+    """
+    denied_addrs = set()
+    for entry in raw.get('_denylist', []) or []:
+        if isinstance(entry, str) and entry.lower().startswith('0x'):
+            denied_addrs.add(int(entry, 16))
+
+    out = dict(total=len(raw), claimed=0, unclaimed=0, denied=0,
+               nonstring=0, metadata=0)
+    seen_denied = set()
+    for k, v in raw.items():
+        if not isinstance(k, str) or not k.lower().startswith('0x'):
+            out['metadata'] += 1
+            continue
+        try:
+            addr = int(k, 16)
+        except ValueError:
+            out['nonstring'] += 1
+            continue
+        if addr in denied_addrs:
+            out['denied'] += 1
+            seen_denied.add(addr)
+        elif v is None:
+            out['unclaimed'] += 1
+        elif isinstance(v, str):
+            out['claimed'] += 1
+        else:
+            out['nonstring'] += 1
+    # A denied address need not appear in the map body at all; it is still a
+    # refusal, and saying so keeps the printed denial count honest.
+    out['denied_absent'] = len(denied_addrs - seen_denied)
+    return out
+
+
+def resolve_addresses(map_path, pattern):
+    """-> (name -> retail VA for names matching `pattern`, row counts).
+
+    The APPLIED map, via the renamer's own loader: null rows are unclaimed,
+    `_denylist` rows are refused, non-strings are dropped. The loader lives in
+    THIS checkout's `scripts/` (not `--project-dir`'s) so the rule is the one
+    that was reviewed with this tool, not whatever revision the pointed-at
+    worktree happens to carry.
+
+    `load_address_map` emits `fn_XXXXXXXX` and `lbl_XXXXXXXX` for the same
+    address; read the `fn_` half only or every row counts twice. Its own
+    skip tally is swallowed -- this tool reprints those numbers in its summary,
+    where they sit next to the match counts they explain.
+    """
+    raw = json.loads(Path(map_path).read_text())
+    with contextlib.redirect_stdout(io.StringIO()):
+        applied = load_address_map(Path(map_path))
+    addr_of = {name: int(key[3:], 16)
+               for key, name in applied.items()
+               if key.startswith('fn_') and pattern in name}
+    return addr_of, classify_map_rows(raw)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -134,8 +249,8 @@ def main():
     root = args.project_dir
     retail = Retail(os.path.join(root, 'orig/45410914/band.exe'))
     lens = retail.pdata_lengths()
-    tmap = json.load(open(os.path.join(root, 'scripts/target_symbol_map.json')))
-    addr_of = {v: int(k, 16) for k, v in tmap.items() if args.pattern in v}
+    addr_of, mapstats = resolve_addresses(
+        os.path.join(root, 'scripts/target_symbol_map.json'), args.pattern)
 
     ours = {}
     pat = os.path.join(root, 'build/45410914/src/**/*.obj')
@@ -162,7 +277,11 @@ def main():
     if not ours:
         sys.exit('no COMDAT .text symbols matched %r -- build first?' % args.pattern)
 
-    ident, diff, noaddr, rows = 0, 0, 0, []
+    # `noaddr` (no claim in the map) and `unreadable` (claimed, but the retail
+    # read fell outside a section) used to share one counter printed as
+    # "unidentified". They are different findings -- one is missing evidence,
+    # the other is a bad address or a bad extent -- so they are counted apart.
+    ident, diff, noaddr, unreadable, rows = 0, 0, 0, 0, []
     for n, o in sorted(ours.items()):
         a = addr_of.get(n)
         if a is None:
@@ -170,7 +289,7 @@ def main():
             continue
         rb = retail.read(a - o['off'], o['size'])
         if rb is None or len(rb) < o['size']:
-            noaddr += 1
+            unreadable += 1
             continue
         bad = []
         for i in range(0, o['size'], 4):
@@ -187,9 +306,29 @@ def main():
         else:
             ident += 1
 
+    # Disclose the map population BEFORE the verdict. The rows this tool
+    # cannot see are part of the reading of the rows it can: an unclaimed or
+    # denied address is not a passing check and not a failing one, it is a
+    # symbol whose identity nobody has established, and it must not read as
+    # absent.
+    ms = mapstats
+    print('target_symbol_map.json: %d rows -> %d claimed address(es) scored'
+          % (ms['total'], ms['claimed']))
+    print('  SKIPPED, deliberately unclaimed ("0xADDR": null) : %d'
+          % ms['unclaimed'])
+    print('  SKIPPED, _denylist (claims refused)              : %d%s'
+          % (ms['denied'],
+             '  (+%d denied address(es) absent from the map body)' % ms['denied_absent']
+             if ms['denied_absent'] else ''))
+    if ms['nonstring']:
+        print('  SKIPPED, non-string value under a 0x key         : %d'
+              % ms['nonstring'])
+    print('  (unclaimed rows carry no name and can never match a --pattern)')
     print('matched pattern %r: %d distinct instantiations in our build' % (args.pattern, len(ours)))
     print('  with a retail address in target_symbol_map.json : %d  (unidentified: %d)'
           % (ident + diff, noaddr))
+    if unreadable:
+        print('  claimed but retail read out of range            : %d' % unreadable)
     print('  SECTION byte-identical to retail (reloc words skipped): %d' % ident)
     print('  differing                                            : %d' % diff)
     shown = 0
