@@ -21,6 +21,15 @@
 > `??8Symbol@@QBA_NPBD@Z`, and naming it would have minted a byte-exact 100%
 > against a non-function. Both write-ups are in the final section; the worklist
 > entries are corrected in place.
+>
+> **Corrected after adversarial review, same day.** The identification held and
+> got *stronger* (69 clean controls, not 6; the tail-callee partition is exact).
+> Four numbers/claims in lane R's first pass were wrong and are fixed in place:
+> the inbound edge is **13** instructions above, not four; the COMDAT is
+> **252 B = 8 + 204 + 40**, not 244, and its body equals retail's extent
+> exactly; the `name_check` **code%** delta is below its own ~0.05pp noise
+> floor; and — the one that matters — **the +204 B measurement carries no
+> information about which `T` is correct.**
 
 ## The invariant
 
@@ -307,7 +316,11 @@ with the evidence that makes it a re-home rather than a guess — the distinctio
     **Δmatched +1 / +204 B on BOTH rulers**.
   - `0x8249d4b0` → `ObjOwnerPtr<EventTrigger>`. **Independently corroborated**
     by lane R's RTTI channel (its `??_R0` reads `.?AVEventTrigger@@`) but not
-    applied here — it was outside that lane's brief.
+    applied here — it was outside that lane's brief. ⚠ It is **not** an
+    off-by-one against `0x8249d3b0`: `EventTrigger::ProxyCall` has TWO obj
+    members (`ObjOwnerPtr<ObjectDir> mProxy`, `ObjOwnerPtr<EventTrigger>
+    mEvent`), so one caller legitimately owns both VAs, and `d4b0` reading
+    EventTrigger while still null is correct.
   - `0x822c93e0` → `ObjPtr<RndAnimatable>`.
 - **One nulled name has a located true home; the other claim is REFUTED.**
   `?DataDir@UIPanel@@$4PPPPPPPM@EM@…` → `0x826412e0` was taken by a later lane
@@ -338,13 +351,21 @@ decisive one is new and is the cheapest of the four:
   name string sits at `+8`. Reading it needs no map, no oracle and no build:
   `0x8249d5b0` → `.?AVRndDrawable@@`. `r5` is `.?AVObject@Hmx@@` on every row,
   as `dynamic_cast<T*>(Hmx::Object*)` requires.
-  **Validated on six controls** whose names were derived by unrelated means —
-  `RndAnimatable`, `ObjectDir`, `RndDrawable`(ObjPtr), `RndMesh`,
-  `RndTransformable`, `CharLookAt` — 6/6 agree. It discriminates (distinct
-  names per row), so the agreement is not vacuous.
-- **The callee channel** (the prior lane's test) reproduces: ObjOwnerPtr rows
-  tail-call `0x82383328` (`SetOwnerObj` family), ObjPtr rows call `0x8227ce58`
-  (`SetObjConcrete` family). `0x8249d5b0` calls `SetOwnerObj` ⇒ ObjOwnerPtr.
+  This lane validated it on **six** controls whose names were derived by
+  unrelated means — `RndAnimatable`, `ObjectDir`, `RndDrawable`(ObjPtr),
+  `RndMesh`, `RndTransformable`, `CharLookAt` — 6/6 agree, and it returns
+  distinct names per row, so the agreement is not vacuous.
+  ★ **Adversarial review (2026-08-16) replaced that sample with the whole
+  population and the channel got stronger, not weaker** — figures inherited
+  from that review, not measured here: all **146** mapped `??$PropSync@`
+  symbols, **88 adjudicable, 0 disagreements, 62 distinct `T` values**, and
+  **69 of the 88 are not `_bijection_arbitrary`-flagged**, i.e. **69** clean
+  independent controls rather than 6.
+- **The callee channel** (the prior lane's test) reproduces, and the review
+  measured the partition as **exact rather than merely suggestive**:
+  `{0x82383328, 0x8245cc78}` → **14/14 ObjOwnerPtr, 0 ObjPtr**;
+  `{0x8227ce58, 0x8238b130}` → **44/44 ObjPtr, 0 ObjOwnerPtr**. It never
+  crosses. `0x8249d5b0` calls `SetOwnerObj` ⇒ ObjOwnerPtr.
   Note both callee names are themselves ICF-arbitrary picks, so this channel
   adjudicates the *family*, never `T` — which is why the RTTI channel matters.
 - **Caller side:** retail's ONLY `bl` to `0x8249d5b0` is from
@@ -372,6 +393,12 @@ objdiff-cli sha `6a4d96e3b7ecb6e4`):
 One unit moved — `default/EventTrigger` 287 → 288. Units at 100% unchanged on
 both rulers, nothing fell off.
 
+⚠ `Δmatched` and `Δcode_bytes` are **exact integers** and are unaffected by
+ruler noise. The `name_check` **aggregate code%** is build-unstable at ~0.05pp
+(`ab_measure` prints this itself), so the `+0.001977pp` figure is **25× below
+its own noise floor** and must not be read as a precise quantity. Quote the
+`+1` and the `+204 B`.
+
 ⚠ **Read the `none` leg correctly.** It moved by the same +204 B, and that is
 *expected and required* here: this is a **first-naming** of a previously-null
 address, so a body that never paired now pairs. The fabricated-alias shape is
@@ -380,15 +407,46 @@ classifier returned `REAL_PAIRING`. But the `none` leg is a **sanity check, not
 the evidence** — an alias/name tier cannot be validated by the `none` control.
 The evidence is the four retail-byte witnesses above.
 
+⛔⛔ **AND THE MEASUREMENT CARRIES ZERO INFORMATION ABOUT WHICH `T` IS CORRECT —
+do not cite the +204 B as if it confirmed the name.** Every `ObjOwnerPtr<T>`
+body in this family is **masked-identical**, so **any** of the 14 ObjOwnerPtr
+candidates placed at this VA would produce *exactly* +1 matched / +204 B on
+both rulers, with the same `REAL_PAIRING` verdict. The A/B confirms that a real
+body now pairs; it cannot distinguish `RndDrawable` from any sibling
+instantiation. **All evidential weight rests on the RTTI / tail-callee
+identification above**, and none of it on the bytes moved.
+
+This is the project's standing doctrine — *an alias/name tier cannot be
+validated by the `none` control* — extended to **first-namings**: there the
+`none` leg does move, which makes the reading look safe, and the movement is
+still name-blind. A `REAL_PAIRING` verdict certifies "a body paired", never
+"the right name paired".
+
 ⚠ **A prediction this lane got WRONG, recorded because it looks authoritative.**
-Our compiled COMDAT for this instantiation is **244 B** while retail's `.pdata`
-extent is **204 B** (and the already-mapped sibling `ObjOwnerPtr<RndAnimatable>`
-is *also* 244 B in our build, so the whole family reads 40 B long). From that
-the lane predicted Δmatched **+0**, byte-exactness impossible. The measurement
-returned **+1 / +204 B** — the full retail extent. Do not infer non-matching
-from a COMDAT-size delta against a `.pdata` extent; the two are not the same
-quantity (`comdat_bytes` reports `value=8`, i.e. an EH prefix inside the same
-section, and the tail is not necessarily scored with the body).
+The lane compared our COMDAT against retail's `.pdata` extent, read a 40 B
+shortfall, and predicted Δmatched **+0** — byte-exactness impossible. The
+measurement returned **+1 / +204 B**.
+
+The comparison was not like-for-like. The COMDAT **section is 252 B**, and it
+decomposes as
+
+```
+  +0x00     8 B   EH prefix   (ptr to __CxxFrameHandler)
+  +0x08   204 B   BODY        <- equals retail's .pdata extent EXACTLY
+  +0xd4    40 B   __unwind$<n> EH cleanup funclet
+```
+
+so the body never differed from retail at all; the "244 B" the lane quoted is
+the symbol size, i.e. **body + funclet**, measured against a **function-only**
+retail extent. That is the documented EH-prefix/funclet units error — see
+`tools/comdat_retail_verify.py`'s header (lane STL-104), the same class the
+STLPORT-1 fix addressed, where a phantom "+8 B STLport bug" turned out to be
+the reader billing the successor's EH prefix.
+
+⇒ **Never compare a COMDAT symbol size against a `.pdata` extent.** Subtract
+the prefix and the funclet first, or use a reader that reports the body span.
+The lesson about not trusting the prediction stands unchanged; only the numbers
+were wrong.
 
 ### `0x8227c70c` is NOT `?Null@Symbol@@QBA_NXZ` — REFUTED, do not retry
 
@@ -427,9 +485,10 @@ between the two paths:
   middle of a different COMDAT**; with `/Gy` on, that alone proves the two are
   one section.
 - Branch census over all of `.text`: `0x8227c6d0` has **297 inbound `bl`**;
-  `0x8227c70c` has **zero `bl`** and exactly one inbound edge — the conditional
-  four instructions above it. An out-of-line COMDAT with no callers would have
-  been removed by `/OPT:REF`, so it cannot be one.
+  `0x8227c70c` has **zero `bl`** and exactly one inbound edge — the `bc` at
+  `0x8227c6d8`, **13 instructions** above it, inside the same function. An
+  out-of-line COMDAT with no callers would have been removed by `/OPT:REF`, so
+  it cannot be one.
 
 ⛔ **`.pdata` cannot settle this and must not be quoted as if it had.** Both
 `0x8227c6d0` and `0x8227c70c` fall in a `.pdata` **gap** — they are leaf
