@@ -44,6 +44,7 @@ from orchestrator.database import (  # noqa: E402
     DEFAULT_EXCLUDE_PATTERNS,
     get_connection,
     normalize_unit_pattern,
+    unworkable_verdict_clause,
     update_function_status,
 )
 
@@ -88,13 +89,17 @@ def verify(unit_pattern, apply=False, mark_at_limit=False, verbose=False, limit=
 
     # Note: SQLite LIKE treats `_` as a single-char wildcard, so we must
     # escape underscores to match the literal `??__F` prefix exactly.
+    # `verdict != 'COMPLETE'` alone would ADMIT an IDENTITY_UNESTABLISHED row,
+    # and with --mark-at-limit this loop would then certify a floor on a body
+    # not established to be this function -- the exact mis-certification of
+    # 2026-08-13. Excluded explicitly.
     query = r"""
         SELECT id, symbol, unit, current_percent, verdict
         FROM functions
         WHERE symbol LIKE '??\_\_F%' ESCAPE '\'
           AND (verdict IS NULL OR verdict != 'COMPLETE')
           AND symbol NOT LIKE 'merged\_%' ESCAPE '\'
-    """
+    """ + unworkable_verdict_clause()
     params = []
 
     # Exclude default patterns (XDK, link_glue, binkxenon)

@@ -26,6 +26,13 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+# Imported rather than re-spelled as a literal: a copy of the string here is
+# how a state drifts out of sync with the filters that enforce it.
+from orchestrator.database import (  # noqa: E402
+    VERDICT_IDENTITY_UNESTABLISHED,
+)
 DEFAULT_REPORT = REPO_ROOT / "build" / "45410914" / "report.json"
 DEFAULT_DB = REPO_ROOT / "decomp.db"
 DEFAULT_OBJECTS = REPO_ROOT / "config" / "45410914" / "objects.json"
@@ -118,15 +125,24 @@ def load_report(report_path: Path) -> tuple[dict[str, dict], set[str]]:
 def find_complete_units(conn: sqlite3.Connection) -> set[str]:
     """Find units where ALL functions are COMPLETE or AT_LIMIT in the DB."""
     # Get all units that have at least one function
+    # `unidentified` is counted explicitly rather than left to fall out of
+    # total != done. It already would -- IDENTITY_UNESTABLISHED is in neither
+    # bucket -- but a unit containing a row we cannot even attribute to a
+    # target body is not "done", and that must not depend on an accident of
+    # arithmetic that a later edit to the CASE could quietly reverse.
     rows = conn.execute("""
         SELECT unit,
                COUNT(*) as total,
-               SUM(CASE WHEN verdict IN ('COMPLETE', 'AT_LIMIT') THEN 1 ELSE 0 END) as done
+               SUM(CASE WHEN verdict IN ('COMPLETE', 'AT_LIMIT') THEN 1 ELSE 0 END) as done,
+               SUM(CASE WHEN verdict = 'IDENTITY_UNESTABLISHED' THEN 1 ELSE 0 END) as unidentified
         FROM functions
         WHERE unit NOT LIKE 'default/xdk/%'
         GROUP BY unit
     """).fetchall()
-    return {r["unit"] for r in rows if r["total"] > 0 and r["total"] == r["done"]}
+    return {
+        r["unit"] for r in rows
+        if r["total"] > 0 and r["total"] == r["done"] and not r["unidentified"]
+    }
 
 
 def promote_units(
@@ -260,6 +276,7 @@ def sync(args: argparse.Namespace) -> None:
         "improvements": 0, "regressions": 0,
         "size_updated": 0, "demangled_updated": 0, "unit_updated": 0,
         "promoted": 0, "not_in_db": 0, "not_in_report": 0,
+        "identity_unestablished_skipped": 0,
     }
 
     pct_updates: list[tuple] = []       # (new_percent, new_percent, function_id)
@@ -272,6 +289,18 @@ def sync(args: argparse.Namespace) -> None:
             continue
 
         db_row = db_funcs[symbol]
+
+        # A row whose target body is not established to be this function must
+        # not be re-stamped with a percentage, and must NEVER be promoted to
+        # COMPLETE. The report enumerates TARGET-object symbols, so a stale or
+        # re-added map entry can put this symbol back in the report at any
+        # percent -- including 100 -- and the promote path below keys only on
+        # "report says 100 and verdict != COMPLETE". That is the silent revival
+        # this guard closes.
+        if db_row["verdict"] == VERDICT_IDENTITY_UNESTABLISHED:
+            stats["identity_unestablished_skipped"] += 1
+            continue
+
         new_pct = report_info["percent"]
         old_pct = db_row["current_percent"]
 
@@ -378,6 +407,10 @@ def sync(args: argparse.Namespace) -> None:
         print(f"  Promoted:         {stats['promoted']} (-> COMPLETE)")
     print(f"  Not in DB:        {stats['not_in_db']}")
     print(f"  Not in report:    {stats['not_in_report']}")
+    if stats["identity_unestablished_skipped"]:
+        print(f"  IDENTITY_UNESTABLISHED skipped: "
+              f"{stats['identity_unestablished_skipped']} "
+              f"(target body not established; percent/promote suppressed)")
 
     # Promote units in objects.json
     if args.promote_units:

@@ -20,6 +20,75 @@ SCHEMA_VERSION = 18
 # Functions with >= this many attempts are excluded from normal queries
 DEFAULT_MAX_ATTEMPTS = 20
 
+# --- functions.verdict domain -------------------------------------------
+# The column is free-text TEXT, but these are the ONLY values any tool may
+# write. NULL means "not adjudicated -- open work". Full semantics, and the
+# incident that produced IDENTITY_UNESTABLISHED, are in
+# docs/decomp/VERDICT_STATES.md. Read it before adding a value.
+VERDICT_COMPLETE = "COMPLETE"
+VERDICT_AT_LIMIT = "AT_LIMIT"
+VERDICT_IDENTITY_UNESTABLISHED = "IDENTITY_UNESTABLISHED"
+
+#: Every legal non-NULL verdict. `''` is NOT legal -- lane J2 wrote it in
+#: 2026-08-13 and it sat in no bucket while still feeding avg_percent.
+KNOWN_VERDICTS = frozenset({
+    VERDICT_COMPLETE,
+    VERDICT_AT_LIMIT,
+    VERDICT_IDENTITY_UNESTABLISHED,
+})
+
+#: Verdicts that count toward decomp PROGRESS (the "Done" bucket).
+#: IDENTITY_UNESTABLISHED is deliberately absent: the row is not done, it is
+#: not at a floor, and its percentage is meaningless.
+DONE_VERDICTS = frozenset({VERDICT_COMPLETE, VERDICT_AT_LIMIT})
+
+#: Verdicts that must NEVER be handed out as work, under any flag combination.
+#: COMPLETE/AT_LIMIT are suppressed by caller-controlled `exclude_*` flags --
+#: callers legitimately ask for them. These are different: there is no
+#: caller-facing switch that re-enables them, because the row's target body is
+#: not established to be this function, and byte-exactness against an
+#: unestablished body is exactly the false crack this state exists to prevent.
+UNWORKABLE_VERDICTS = frozenset({VERDICT_IDENTITY_UNESTABLISHED})
+
+
+class _Clear:
+    """Sentinel meaning "write SQL NULL into this column".
+
+    `update_function_status` uses `None` to mean "caller did not ask to update
+    this field", so `None` cannot express a clear. That forced every clearing
+    tool in the repo to bypass the API with raw SQL, and in one case to invent
+    a fourth verdict value (`''`) because it was the only in-band way to say
+    "not COMPLETE, not AT_LIMIT". Passing `CLEAR` is the in-band way.
+    """
+
+    __slots__ = ()
+
+    def __repr__(self) -> str:  # pragma: no cover - debugging aid
+        return "CLEAR"
+
+    def __bool__(self) -> bool:
+        # Guard against `if value:` treating a clear request as "unset".
+        return True
+
+
+#: Sentinel: write SQL NULL. See `_Clear`.
+CLEAR = _Clear()
+
+
+def unworkable_verdict_clause(alias: str = "") -> str:
+    """SQL fragment excluding rows whose verdict makes them non-work.
+
+    Returns a leading-` AND `-prefixed fragment safe to concatenate onto any
+    WHERE clause over `functions`. `alias` is an optional table alias with its
+    trailing dot, e.g. ``"f."``.
+
+    This is unconditional by design. It is NOT gated on a caller flag, because
+    every gate is a thing a future caller can forget to set.
+    """
+    col = f"{alias}verdict"
+    placeholders = ", ".join(f"'{v}'" for v in sorted(UNWORKABLE_VERDICTS))
+    return f" AND ({col} IS NULL OR {col} NOT IN ({placeholders}))"
+
 SCHEMA = """
 -- Schema version tracking
 CREATE TABLE IF NOT EXISTS schema_version (
@@ -753,7 +822,8 @@ def get_function_by_symbol(
     row = conn.execute(
         """
         SELECT id, symbol, demangled, unit, size, current_percent, best_percent,
-               verdict, locked_by, locked_at, attempt_count, last_model, next_model
+               verdict, verdict_reason, excluded,
+               locked_by, locked_at, attempt_count, last_model, next_model
         FROM functions
         WHERE symbol = ?
         """,
@@ -833,12 +903,16 @@ def get_next_function(
 
     excluded_verdicts = []
     if exclude_complete:
-        excluded_verdicts.append('COMPLETE')
+        excluded_verdicts.append(VERDICT_COMPLETE)
     if exclude_at_limit:
-        excluded_verdicts.append('AT_LIMIT')
+        excluded_verdicts.append(VERDICT_AT_LIMIT)
     if excluded_verdicts:
         placeholders = ", ".join(f"'{v}'" for v in excluded_verdicts)
         query += f" AND (verdict IS NULL OR verdict NOT IN ({placeholders}))"
+
+    # Unconditional: never hand out a row whose target identity is not
+    # established, regardless of the exclude_* flags above.
+    query += unworkable_verdict_clause()
 
     # Build ORDER BY clause
     direction = "ASC" if order_asc else "DESC"
@@ -998,18 +1072,24 @@ def query_functions(
         query += " AND locked_by IS NULL"
 
     if verdict_filter:
-        # Positive filter: only return functions with this specific verdict
+        # Positive filter: only return functions with this specific verdict.
+        # Asking for IDENTITY_UNESTABLISHED by name is how you AUDIT the state,
+        # so that request is honoured; everything else still excludes it.
         query += f" AND verdict = '{verdict_filter}'"
+        if verdict_filter not in UNWORKABLE_VERDICTS:
+            query += unworkable_verdict_clause()
     else:
         # Negative filter: exclude specified verdicts
         excluded_verdicts = []
         if exclude_complete:
-            excluded_verdicts.append('COMPLETE')
+            excluded_verdicts.append(VERDICT_COMPLETE)
         if exclude_at_limit:
-            excluded_verdicts.append('AT_LIMIT')
+            excluded_verdicts.append(VERDICT_AT_LIMIT)
         if excluded_verdicts:
             placeholders = ", ".join(f"'{v}'" for v in excluded_verdicts)
             query += f" AND (verdict IS NULL OR verdict NOT IN ({placeholders}))"
+        # Unconditional, as in get_next_function.
+        query += unworkable_verdict_clause()
 
     query += " AND symbol NOT LIKE 'merged_%'"
     query += " AND demangled NOT LIKE '%stlpmtx_std::%'"
@@ -1219,35 +1299,78 @@ def record_attempt(
 
 def update_function_status(
     function_id: int,
-    current_percent: float | None = None,
-    verdict: str | None = None,
-    source_patch: str | None = None,
-    verdict_reason: str | None = None,
+    current_percent: float | _Clear | None = None,
+    verdict: str | _Clear | None = None,
+    source_patch: str | _Clear | None = None,
+    verdict_reason: str | _Clear | None = None,
+    best_percent: float | _Clear | None = None,
     db_path: str | Path = DEFAULT_DB_PATH,
 ) -> None:
-    """Update function status after an attempt."""
+    """Update function status after an attempt.
+
+    `None` means "caller did not ask to update this field" (unchanged, every
+    existing caller relies on it). Pass the module-level `CLEAR` sentinel to
+    write SQL NULL into a column -- this is the supported way to un-set a
+    verdict or a measured percentage, and exists so clearing tools no longer
+    have to bypass this API with raw SQL.
+
+    `best_percent` is normally maintained automatically: setting
+    `current_percent` raises `best_percent` monotonically via MAX(). Pass it
+    explicitly (a float, or `CLEAR`) to override that -- note that a monotone
+    MAX() can never LOWER a stale best_percent, so `CLEAR` is the only way to
+    retract one.
+
+    Raises ValueError for a verdict outside `KNOWN_VERDICTS`. An unknown
+    verdict is invisible to half the codebase's filters, which is how `''`
+    ended up in no bucket at all while still feeding avg_percent.
+    """
+    if verdict is not None and not isinstance(verdict, _Clear):
+        if verdict not in KNOWN_VERDICTS:
+            raise ValueError(
+                f"unknown verdict {verdict!r}; legal values are "
+                f"{sorted(KNOWN_VERDICTS)} or CLEAR to un-set. "
+                f"See docs/decomp/VERDICT_STATES.md."
+            )
+
     conn = get_connection(db_path)
 
     updates = ["updated_at = CURRENT_TIMESTAMP"]
     params: list[Any] = []
 
-    if current_percent is not None:
+    if isinstance(current_percent, _Clear):
+        updates.append("current_percent = NULL")
+    elif current_percent is not None:
         updates.append("current_percent = ?")
         params.append(current_percent)
 
-        # Update best_percent if this is better
-        updates.append("best_percent = MAX(COALESCE(best_percent, 0), ?)")
-        params.append(current_percent)
+        # Update best_percent if this is better -- unless the caller is
+        # setting best_percent explicitly, in which case two assignments to
+        # the same column in one UPDATE would be ambiguous.
+        if best_percent is None:
+            updates.append("best_percent = MAX(COALESCE(best_percent, 0), ?)")
+            params.append(current_percent)
 
-    if verdict is not None:
+    if isinstance(best_percent, _Clear):
+        updates.append("best_percent = NULL")
+    elif best_percent is not None:
+        updates.append("best_percent = ?")
+        params.append(best_percent)
+
+    if isinstance(verdict, _Clear):
+        updates.append("verdict = NULL")
+    elif verdict is not None:
         updates.append("verdict = ?")
         params.append(verdict)
 
-    if source_patch is not None:
+    if isinstance(source_patch, _Clear):
+        updates.append("source_patch = NULL")
+    elif source_patch is not None:
         updates.append("source_patch = ?")
         params.append(source_patch)
 
-    if verdict_reason is not None:
+    if isinstance(verdict_reason, _Clear):
+        updates.append("verdict_reason = NULL")
+    elif verdict_reason is not None:
         updates.append("verdict_reason = ?")
         params.append(verdict_reason)
 
@@ -1258,6 +1381,120 @@ def update_function_status(
         params,
     )
     conn.commit()
+
+
+def mark_identity_unestablished(
+    function_id: int,
+    reason: str,
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> dict[str, Any]:
+    """Record that this row's TARGET BODY is not established to be this function.
+
+    Sets, atomically:
+      * ``verdict = 'IDENTITY_UNESTABLISHED'`` -- the primary axis. Removes the
+        row from every work selector unconditionally.
+      * ``excluded = 1`` -- the secondary axis, belt and braces. 15 queries in
+        this repo filter on ``excluded = 0`` and do not look at verdict at all;
+        setting both means a query written by someone unaware of this state is
+        caught whichever of the repo's two "is this workable" idioms it used.
+      * ``current_percent = NULL``, ``best_percent = NULL`` -- the percentage
+        is a measurement against a body we cannot attribute to this symbol, so
+        it is meaningless and must not reach any average or worklist ordering.
+        ``best_percent`` in particular can only be retracted, never lowered:
+        its normal update is a monotone MAX().
+      * ``verdict_reason = reason`` -- required, and non-empty. The reason is
+        the evidence trail; a bare state change here is unauditable.
+
+    Exit from this state is EVIDENCE work, not source work: establish which
+    body the symbol denotes (land it in scripts/target_symbol_map.json), then
+    call `clear_identity_unestablished`. Do not "fix" the source to close the
+    residual -- with the target unestablished, driving the row to byte-exact
+    mints a false crack, which is the failure this state exists to prevent.
+
+    Returns the row's prior state, so callers can record what was overwritten.
+    """
+    if not reason or not reason.strip():
+        raise ValueError(
+            "mark_identity_unestablished requires a non-empty reason: it is "
+            "the only evidence trail for why the row left the work queue"
+        )
+
+    conn = get_connection(db_path)
+    before = conn.execute(
+        "SELECT id, symbol, unit, current_percent, best_percent, verdict, "
+        "       verdict_reason, excluded "
+        "FROM functions WHERE id = ?",
+        (function_id,),
+    ).fetchone()
+    if before is None:
+        raise KeyError(f"no function row with id {function_id}")
+
+    conn.execute(
+        """
+        UPDATE functions
+           SET verdict         = ?,
+               verdict_reason  = ?,
+               excluded        = 1,
+               current_percent = NULL,
+               best_percent    = NULL,
+               updated_at      = CURRENT_TIMESTAMP
+         WHERE id = ?
+        """,
+        (VERDICT_IDENTITY_UNESTABLISHED, reason, function_id),
+    )
+    conn.commit()
+    return dict(before)
+
+
+def clear_identity_unestablished(
+    function_id: int,
+    reason: str,
+    db_path: str | Path = DEFAULT_DB_PATH,
+) -> dict[str, Any]:
+    """Return an IDENTITY_UNESTABLISHED row to open work, identity established.
+
+    The inverse of `mark_identity_unestablished`: clears the verdict back to
+    NULL and drops ``excluded`` to 0. Percentages stay NULL -- they must be
+    re-measured against the newly established target body, not restored from
+    the readings taken against the wrong one.
+
+    `reason` should name the evidence that established identity (the map
+    commit, the address, the witness). Refuses to act on a row that is not
+    actually in this state, so it cannot silently un-exclude a funclet.
+    """
+    if not reason or not reason.strip():
+        raise ValueError("clear_identity_unestablished requires a non-empty reason")
+
+    conn = get_connection(db_path)
+    before = conn.execute(
+        "SELECT id, symbol, unit, verdict, verdict_reason, excluded "
+        "FROM functions WHERE id = ?",
+        (function_id,),
+    ).fetchone()
+    if before is None:
+        raise KeyError(f"no function row with id {function_id}")
+    if before["verdict"] != VERDICT_IDENTITY_UNESTABLISHED:
+        raise ValueError(
+            f"row {function_id} has verdict {before['verdict']!r}, not "
+            f"{VERDICT_IDENTITY_UNESTABLISHED}; refusing to clear. This guard "
+            f"stops the inverse from un-excluding a funclet or a floor."
+        )
+
+    conn.execute(
+        """
+        UPDATE functions
+           SET verdict         = NULL,
+               verdict_reason  = ?,
+               excluded        = 0,
+               current_percent = NULL,
+               best_percent    = NULL,
+               updated_at      = CURRENT_TIMESTAMP
+         WHERE id = ?
+        """,
+        (reason, function_id),
+    )
+    conn.commit()
+    return dict(before)
 
 
 def get_last_attempt(
@@ -1358,14 +1595,29 @@ def query_batch_stats(
     if max_attempts is not None:
         attempts_filter = f" AND (attempt_count IS NULL OR attempt_count < {max_attempts})"
 
+    # Rows whose target identity is not established are not work, and so are
+    # not "in range" either -- they must not inflate the scope an operator
+    # sizes a batch against.
+    unworkable_filter = unworkable_verdict_clause()
+
     # Count functions in match percentage range
     in_range = conn.execute(
         f"""
         SELECT COUNT(*) FROM functions
         WHERE {glob_clause}
           AND (current_percent IS NULL OR (current_percent >= ? AND current_percent <= ?))
-        """ + symbol_filter,
+        """ + symbol_filter + unworkable_filter,
         glob_params + [min_percent, max_percent],
+    ).fetchone()[0]
+
+    # Count them separately so the number is visible rather than merely absent.
+    identity_unestablished = conn.execute(
+        f"""
+        SELECT COUNT(*) FROM functions
+        WHERE {glob_clause}
+          AND verdict = '{VERDICT_IDENTITY_UNESTABLISHED}'
+        """,
+        glob_params,
     ).fetchone()[0]
 
     # Count locked functions in range
@@ -1380,11 +1632,14 @@ def query_batch_stats(
     ).fetchone()[0]
 
     # Build excluded verdicts list
-    excluded_verdicts = ['COMPLETE']
+    excluded_verdicts = [VERDICT_COMPLETE]
     if exclude_at_limit:
-        excluded_verdicts.append('AT_LIMIT')
+        excluded_verdicts.append(VERDICT_AT_LIMIT)
     verdict_placeholders = ", ".join(f"'{v}'" for v in excluded_verdicts)
-    verdict_filter = f" AND (verdict IS NULL OR verdict NOT IN ({verdict_placeholders}))"
+    verdict_filter = (
+        f" AND (verdict IS NULL OR verdict NOT IN ({verdict_placeholders}))"
+        + unworkable_filter
+    )
 
     # Count complete/at_limit functions in range
     excluded_verdict = conn.execute(
@@ -1455,6 +1710,7 @@ def query_batch_stats(
         "total_matching_pattern": total_matching,
         "in_match_range": in_range,
         "locked": locked,
+        "identity_unestablished": identity_unestablished,
         "excluded_complete": excluded_verdict,
         "exceeded_attempts": exceeded_attempts,
         "available": available,
@@ -1476,6 +1732,10 @@ def get_stats(db_path: str | Path = DEFAULT_DB_PATH) -> dict[str, Any]:
     at_limit = conn.execute(
         "SELECT COUNT(*) FROM functions WHERE verdict = 'AT_LIMIT'"
     ).fetchone()[0]
+    identity_unestablished = conn.execute(
+        "SELECT COUNT(*) FROM functions WHERE verdict = ?",
+        (VERDICT_IDENTITY_UNESTABLISHED,),
+    ).fetchone()[0]
     locked = conn.execute(
         "SELECT COUNT(*) FROM functions WHERE locked_by IS NOT NULL"
     ).fetchone()[0]
@@ -1484,9 +1744,15 @@ def get_stats(db_path: str | Path = DEFAULT_DB_PATH) -> dict[str, Any]:
     ).fetchone()[0]
     total_attempts = conn.execute("SELECT COUNT(*) FROM attempts").fetchone()[0]
 
-    # Average match percent (for non-null)
+    # Average match percent (for non-null).
+    # IDENTITY_UNESTABLISHED rows are excluded explicitly rather than relying
+    # on their percent being NULL: a percentage measured against a body we
+    # cannot attribute to the symbol is meaningless, and belt-and-braces here
+    # means a row that somehow keeps a stale reading still cannot skew the
+    # headline average -- which is exactly what `''` did in 2026-08-13.
     avg_percent = conn.execute(
-        "SELECT AVG(current_percent) FROM functions WHERE current_percent IS NOT NULL"
+        "SELECT AVG(current_percent) FROM functions "
+        "WHERE current_percent IS NOT NULL" + unworkable_verdict_clause()
     ).fetchone()[0]
 
     # Pattern counts — query all 20 pattern columns in one go
@@ -1510,6 +1776,8 @@ def get_stats(db_path: str | Path = DEFAULT_DB_PATH) -> dict[str, Any]:
         "total_functions": total,
         "complete": complete,
         "at_limit": at_limit,
+        # NOT part of "done" -- see DONE_VERDICTS.
+        "identity_unestablished": identity_unestablished,
         "locked": locked,
         "with_percent": with_percent,
         "total_attempts": total_attempts,
@@ -1793,7 +2061,7 @@ def query_functions_by_priority(
           AND priority_score >= ?
           AND (current_percent IS NULL OR (current_percent >= ? AND current_percent < ?))
           AND (verdict IS NULL OR verdict NOT IN ('COMPLETE', 'AT_LIMIT'))
-    """
+    """ + unworkable_verdict_clause()
     params: list[Any] = [min_priority, min_percent, effective_max]
 
     if reachable_only:
@@ -1879,7 +2147,7 @@ def query_functions_for_unit_completion(
           AND f.unit IN ({placeholders})
           AND f.current_percent < 100
           AND (f.verdict IS NULL OR f.verdict NOT IN ('COMPLETE', 'AT_LIMIT'))
-    """
+    """ + unworkable_verdict_clause("f.")
     params: list[Any] = list(unit_names)
 
     if reachable_only:
