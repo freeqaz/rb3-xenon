@@ -214,9 +214,15 @@ def build_pool(project, min_pct, min_size):
 
 
 def batch_gate(objdiff, project, symbols, wide):
+    # NB: no --include-instructions here.  This gate reads only
+    # `instruction_summary` and `symbol`; the per-row instruction stream is
+    # stage 2's business (run_symbol).  objdiff-cli used to drop the flag in
+    # --batch mode, so asking for it was free; 4.2.3 honours it and the
+    # stage-1 stdout grows ~25x (0.22 MB -> 5.7 MB on a 60-symbol sample) for
+    # output no consumer here reads.  Every other field is identical.
     proc = subprocess.run(
         [objdiff, "diff", "-p", project, "--batch",
-         "--include-instructions", "-f", "json", "-o", "-"],
+         "-f", "json", "-o", "-"],
         cwd=project, input="\n".join(symbols) + "\n",
         capture_output=True, text=True)
     keep = []
