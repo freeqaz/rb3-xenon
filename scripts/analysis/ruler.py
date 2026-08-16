@@ -335,6 +335,27 @@ __all__ = [
 # The REGRESSION GUARD is the point: this defect was not a logic error, it was a
 # constant that stopped being true while every test kept passing. So the guard
 # greps the consumers for a hardcoded `functionRelocDiffs=` and FAILS on one.
+#
+# ⚠ Two things this guard got wrong, and why they are wired the way they are now
+# (lane task93, 2026-08-16):
+#
+#   1. `_CONSUMERS` are files in THIS tool's own repo, but they used to be
+#      resolved against `project_dir` — the argument of the documented
+#      `--selftest [project_dir]` form. Point the selftest at any project that is
+#      not this checkout (the normal case: a scored game tree) and all three
+#      consumer greps resolved to paths that do not exist.
+#   2. A consumer that did not resolve printed `[SKIP]` and did NOT set ok=False.
+#
+# Together those made the regression guard self-disabling: `--selftest <project>`
+# printed three [SKIP]s, then a bare `PASS`, then exited 0 — with the guard
+# having read nothing. That is the SAME failure shape the guard exists to catch
+# (a check that stops being true while every test keeps passing), one level up.
+# So: resolve consumers against the tool's own repo, and treat a consumer that
+# cannot be read as a FAILURE. There is no benign reason for one to be missing —
+# if a consumer is genuinely renamed or retired, edit `_CONSUMERS`.
+
+# scripts/analysis/ruler.py → scripts/analysis → scripts → <tool repo root>
+_TOOL_REPO = Path(__file__).resolve().parent.parent.parent
 
 _CONSUMERS = (
     "scripts/orchestrator/mcp_server.py",
@@ -388,13 +409,25 @@ def _selftest(project_dir: Path) -> tuple[bool, list[str]]:
         check("unknown ruler is refused", True)
 
     # ★ Regression guard against the original defect.
+    #
+    # Consumers live in THIS tool's repo, not in project_dir — see the note above
+    # `_CONSUMERS`. An unreadable consumer FAILS; it never skips, because a guard
+    # that silently reads nothing is indistinguishable from a guard that passed.
     pattern = re.compile(r"""["']-c["']\s*,\s*["']functionRelocDiffs=""")
+    out.append(f"consumer scan root: {_TOOL_REPO} (this tool's repo, NOT project_dir)")
     for rel in _CONSUMERS:
-        path = project_dir / rel
+        path = _TOOL_REPO / rel
         if not path.is_file():
-            out.append(f"  [SKIP] {rel} not found")
+            check(f"consumer is readable: {rel}", False,
+                  "not found under the tool repo — the regression guard cannot "
+                  "run; fix the path or edit _CONSUMERS")
             continue
-        hits = [i + 1 for i, line in enumerate(path.read_text().splitlines())
+        try:
+            text = path.read_text()
+        except OSError as exc:
+            check(f"consumer is readable: {rel}", False, f"unreadable: {exc}")
+            continue
+        hits = [i + 1 for i, line in enumerate(text.splitlines())
                 if pattern.search(line)]
         check(f"no hardcoded ruler in {rel}", not hits, f"lines {hits}")
 

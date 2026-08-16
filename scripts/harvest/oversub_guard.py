@@ -190,17 +190,61 @@ def unit_oversubscription(target_path, base_path, detail=False):
     return excess, rows
 
 
-def census(worktree, detail=False):
+class InputsUnavailable(RuntimeError):
+    """The census could not read a single unit's object pair.
+
+    Raised rather than returned, so that EVERY consumer goes loud. `funclet_signatures`
+    answers `{}` for a path that does not exist, which made an unbuilt tree
+    indistinguishable from a clean one: `census()` returned `{}`, `--verify`
+    computed `current 0 fake`, and the gate printed "OK: no over-subscription
+    growth" and exited 0 while reading nothing. `scripts/harvest/diffunit_gap_apply.py`
+    already wraps `census()` in a try/except that refuses to write and says
+    "Build the objs first" -- exactly the right response, which it never got to
+    give because no exception was ever raised.
+    """
+
+
+def census(worktree, detail=False, stats=None):
+    """Per-unit over-subscription census.
+
+    `stats`, if given, is filled with the input-coverage accounting:
+    `units` (total), `read` (units whose target AND base object BOTH exist on
+    disk), `no_target`, `no_base`. Coverage is measured by FILE EXISTENCE, not
+    by an empty signature dict -- an object with no funclets is a real
+    measurement of zero, a missing object is not a measurement at all.
+
+    Partial coverage is normal here: only decompiled units have a base object
+    (measured 1,047 of 3,088 on the primary checkout), so a shortfall is not an
+    error. ZERO coverage is, and raises InputsUnavailable.
+    """
     cfg = json.load(open(os.path.join(worktree, 'objdiff.json')))
     out = {}
+    n_units = n_read = n_no_target = n_no_base = 0
     for u in cfg['units']:
         t = u.get('target_path')
         b = u.get('base_path')
         t = os.path.join(worktree, t) if t else None
         b = os.path.join(worktree, b) if b else None
+        n_units += 1
+        t_ok = bool(t) and os.path.exists(t)
+        b_ok = bool(b) and os.path.exists(b)
+        if t_ok and b_ok:
+            n_read += 1
+        else:
+            n_no_target += 0 if t_ok else 1
+            n_no_base += 0 if b_ok else 1
         ex, rows = unit_oversubscription(t, b, detail)
         if ex:
             out[u['name']] = {'excess': ex, 'detail': rows} if detail else {'excess': ex}
+    if stats is not None:
+        stats.update(units=n_units, read=n_read,
+                     no_target=n_no_target, no_base=n_no_base)
+    if n_units and not n_read:
+        raise InputsUnavailable(
+            'read 0 of %d units: no unit has BOTH its target and base object on '
+            'disk under %s. This tree is not built, so the census measured '
+            'NOTHING -- it is not a clean result. Build the objs first '
+            '(./tools/ninja-locked).' % (n_units, worktree))
     return out
 
 
@@ -213,6 +257,24 @@ BANNER = """
  supplies therefore BUYS FAKE MATCHES.  Numbers below are fake matches.
 ================================================================================
 """
+
+
+# Coverage record embedded in a baseline JSON. Shaped like a unit entry so that
+# older readers summing `v['excess']` are unaffected by its presence.
+COVERAGE_KEY = '_coverage'
+
+
+def print_coverage(st):
+    """Always say how many units' objects were actually READ.
+
+    A census that read nothing used to be printed exactly like a census that
+    read everything and found nothing.
+    """
+    if not st:
+        return
+    print('objects read: %d of %d units (missing target: %d, missing base: %d)'
+          % (st.get('read', 0), st.get('units', 0),
+             st.get('no_target', 0), st.get('no_base', 0)))
 
 
 def main():
@@ -248,15 +310,26 @@ def main():
         return 0
 
     if a.baseline:
-        c = census(a.worktree, a.detail)
-        json.dump(c, open(a.baseline, 'w'), indent=0, sort_keys=True)
+        st = {}
+        c = census(a.worktree, a.detail, st)
+        print_coverage(st)
+        # Coverage is recorded so --verify can refuse a comparison made against a
+        # tree it can see LESS of than the baseline saw. Shaped like a unit entry
+        # (with excess 0) so older readers that do
+        # `sum(v['excess'] for v in base.values())` are unaffected.
+        payload = dict(c)
+        payload[COVERAGE_KEY] = {'excess': 0, 'units_read': st.get('read', 0),
+                                 'units_total': st.get('units', 0)}
+        json.dump(payload, open(a.baseline, 'w'), indent=0, sort_keys=True)
         print('baseline: %d units, %d fake matches -> %s'
               % (len(c), sum(v['excess'] for v in c.values()), a.baseline))
         return 0
 
     if a.verify:
         base = json.load(open(a.verify))
-        cur = census(a.worktree, False)
+        b_cov = base.pop(COVERAGE_KEY, None)
+        st = {}
+        cur = census(a.worktree, False, st)
         b_tot = sum(v['excess'] for v in base.values())
         c_tot = sum(v['excess'] for v in cur.values())
         grew = []
@@ -265,6 +338,23 @@ def main():
             if d > 0:
                 grew.append((name, base.get(name, {}).get('excess', 0), v['excess'], d))
         print(BANNER)
+        print_coverage(st)
+        # A gate that read fewer objects than its baseline did cannot see the
+        # growth it exists to refuse. Silence from it is not evidence.
+        if b_cov is None:
+            print('\n!! baseline carries no coverage record (written before this '
+                  'check existed) -- coverage parity with the baseline is '
+                  'UNVERIFIABLE for this comparison.', file=sys.stderr)
+        elif st.get('read', 0) < b_cov.get('units_read', 0):
+            print('\n' + '=' * 78, file=sys.stderr)
+            print('INPUTS UNAVAILABLE -- this comparison is VOID.', file=sys.stderr)
+            print('  ! the baseline was taken over %d units\' objects; this run '
+                  'read only %d.\n    A gate that reads fewer objects than its '
+                  'baseline cannot see the growth it\n    exists to refuse. '
+                  'Rebuild before verifying.'
+                  % (b_cov.get('units_read', 0), st.get('read', 0)), file=sys.stderr)
+            print('=' * 78, file=sys.stderr)
+            return 2
         print('baseline %d fake -> current %d fake  (delta %+d, allow %d)'
               % (b_tot, c_tot, c_tot - b_tot, a.allow))
         for name, b0, c0, d in sorted(grew, key=lambda r: -r[3])[:a.top]:
@@ -278,9 +368,11 @@ def main():
         return 0
 
     # default: census
-    c = census(a.worktree, a.detail)
+    st = {}
+    c = census(a.worktree, a.detail, st)
     tot = sum(v['excess'] for v in c.values())
     print(BANNER)
+    print_coverage(st)
     print('%d units over-subscribed | %d fake matches total' % (len(c), tot))
     print('%-56s %8s' % ('unit', 'fake'))
     for name, v in sorted(c.items(), key=lambda kv: -kv[1]['excess'])[:a.top]:
@@ -292,4 +384,12 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except InputsUnavailable as exc:
+        print('\n' + '=' * 78, file=sys.stderr)
+        print('INPUTS UNAVAILABLE -- the census measured NOTHING. This is NOT a pass.',
+              file=sys.stderr)
+        print('  ! %s' % exc, file=sys.stderr)
+        print('=' * 78, file=sys.stderr)
+        sys.exit(2)
