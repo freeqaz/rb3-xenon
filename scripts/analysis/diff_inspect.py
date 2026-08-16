@@ -1115,11 +1115,28 @@ def _extract_frame_size_from_instrs(instrs, side='target'):
     (3 functions in the retail binary; measured, not estimated). Keeping two
     independent prologue parsers is how they drift apart, so this one now just
     forwards. Falls back to the old stwu-only scan if the import fails.
+
+    ★ 2026-08-16. The fallback below was UNREACHABLE whenever the import
+    succeeded, which is always. The guard was written for a delegate that
+    RAISES; `_scan_frame_size` never raises, it returns. So when objdiff 4.2.3
+    re-spelled the d-form and `_scan_frame_size` started returning
+    `(0, "frameless/leaf")` for real frames, this function returned that 0 —
+    even though `_STWU_RE` two lines down was already tolerant of BOTH spellings
+    and would have got it right. A working local parser sat behind a delegate
+    that had silently broken.
+
+    The delegate's return is now read as the tri-state it documents itself to
+    be: None means "an allocation form is present but could not be decoded", and
+    THAT is fallback-worthy. 0 means "scanned, positively no allocation" and is
+    trusted — reverting to the local scan on a 0 would just reintroduce a second
+    opinion on the one case the delegate is certain about.
     """
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         from stack_layout import _scan_frame_size  # type: ignore
-        return _scan_frame_size(instrs, side, min(80, len(instrs)))[0]
+        size = _scan_frame_size(instrs, side, min(80, len(instrs)))[0]
+        if size is not None:
+            return size
     except Exception:
         pass
     for ins in instrs[:20]:
