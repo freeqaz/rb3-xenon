@@ -82,24 +82,40 @@ DEFAULT_DB = REPO_ROOT / "decomp.db"
 # The 2026-08-13 rows, with the reason each is in this state.
 #
 # ⚠ id 130115 (?DataDir@UIPanel@@$4...) is DELIBERATELY ABSENT. The incident
-# listed it, but its identity has since been ESTABLISHED: lane AK landed
-# "0x826412e0" -> that symbol in scripts/target_symbol_map.json (commit
-# 62098fc5), which is exactly the home the repair doc recorded as located but
-# not yet applied ("displacement and callee both agree"). Verified by loading
-# the map through the renamer's own `load_address_map`. It is ordinary open
-# work now, and marking it would be asserting something false.
+# listed it, but its identity has since been ESTABLISHED: commit `eb1518e7`
+# (2026-08-13, "re-home 3 disproved $4 thunk names onto their real bodies")
+# replaced the value at "0x826412e0" with that symbol, on evidence -- the `EM@`
+# displacement is 0x4c = 76, equal to the body's own `addi`; the branch target
+# is `?DataDir@UIPanel@@UAA...`; and the name is required to be *defined* in the
+# owning unit's obj. Verified by loading the map through the renamer's own
+# `load_address_map`. It is ordinary open work now, and marking it would assert
+# something false.
+#
+# ⚠ Do NOT confirm this with `git log -S'"0x826412e0"'`. That reports only
+# `62098fc5`, which put a DIFFERENT name there by arbitrary byte-class
+# bijection (establishing nothing). `-S` tracks the occurrence COUNT of the
+# string, and REPLACING a value leaves the count of the key unchanged, so the
+# commit that actually made the identification is invisible to it. Use
+# `git log -p -- scripts/target_symbol_map.json | grep -n 826412e0`, or
+# `git log -G`.
 INCIDENT_2026_08_13 = {
     130424: (
         "?Null@Symbol@@QBA_NXZ",
-        "2026-08-13 ICF/alias map-injectivity repair: the retail body this row "
-        "was scored against was disproved as this function, and the symbol is "
-        "absent from scripts/target_symbol_map.json, so no target body is "
-        "assigned. A home was LOCATED but never landed (0x8227c70c -- the only "
-        "body in .text with the required shape: offset-0 load, contents of "
-        "gNullStr). Located is not established: exit this state by landing that "
-        "map entry, not by editing source. Was AT_LIMIT @ 91.2857%, a "
-        "certification of a floor that did not exist. "
-        "See docs/decomp/VERDICT_STATES.md."
+        "2026-08-13 ICF/alias map-injectivity repair, reinforced 2026-08-16 by "
+        "lane R (9fe65045): the retail body this row was scored against was "
+        "disproved as this function, and the symbol is absent from "
+        "scripts/target_symbol_map.json, so no target body is assigned. The one "
+        "candidate home ever proposed, 0x8227c70c, is REFUTED: it is interior "
+        "code of ??8Symbol@@QBA_NPBD@Z at 0x8227c6d0 (0x8227c708 branches INTO "
+        "it, which cannot cross a COMDAT boundary under /Gy; and it has zero "
+        "inbound bl against 297 for 0x8227c6d0, so an out-of-line COMDAT there "
+        "would have been /OPT:REF'd away). Note WHY that matters: our build does "
+        "emit a standalone ?Null@Symbol@@QBA_NXZ COMDAT byte-identical to that "
+        "retail fragment, so re-homing it would have scored a clean byte-exact "
+        "100% AGAINST A NON-FUNCTION -- arriving with a correct body argument "
+        "and a uniqueness proof attached. A shape match, even a unique one, is "
+        "not a function-identity proof. Was AT_LIMIT @ 91.2857%, a certification "
+        "of a floor that did not exist. See docs/decomp/VERDICT_STATES.md."
     ),
     130132: (
         "??$__destroy_aux@ULevelData@@@stlpmtx_std@@YAXPAULevelData@@ABU__false_type@0@@Z",

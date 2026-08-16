@@ -263,31 +263,162 @@ def test_get_stats_counts_it_separately_and_not_as_done(db):
 # Raw-SQL consumers: assert the shipped predicates verbatim
 # --------------------------------------------------------------------------
 
-@pytest.mark.parametrize("label,sql", [
-    # scripts/batch_check.py -- auto-stamps COMPLETE at 100%
-    ("batch_check",
-     "SELECT id FROM functions WHERE unit GLOB 'default/Test' "
-     "AND (verdict IS NULL OR verdict NOT IN ('COMPLETE','AT_LIMIT')) "
-     "AND symbol NOT LIKE 'merged_%'"),
-    # scripts/atexit_fuzzy_verify.py -- can stamp AT_LIMIT
-    ("atexit_fuzzy_verify",
-     "SELECT id FROM functions WHERE (verdict IS NULL OR verdict != 'COMPLETE')"),
-])
-def test_raw_sql_consumers_exclude_it(db, label, sql):
+def _load_real(name: str, relpath: str):
+    """Load a shipped module BY PATH, so the test binds to real code.
+
+    Re-spelling a consumer's SQL as a literal in the test and appending the
+    clause here would pass even if someone deleted the clause from the shipped
+    file -- it would only prove the clause works, which is not the claim. The
+    claim is that the consumer USES it.
+    """
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(name, HERE.parent / relpath)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+class _FakeRun:
+    """Stand-in for subprocess.run that records the symbol argv and fails the
+    call benignly (returncode 1), so the consumer's own error path runs and no
+    toolchain is needed."""
+
+    def __init__(self):
+        self.symbols: list[str] = []
+
+    def __call__(self, argv, *a, **k):
+        self.symbols.extend(argv)
+        return type("R", (), {"returncode": 1, "stdout": "", "stderr": ""})()
+
+
+def test_batch_check_does_not_select_it(db, monkeypatch, tmp_path):
+    """Drives the REAL scripts/batch_check.py, which auto-stamps COMPLETE at 100%.
+
+    Carries a POSITIVE CONTROL. An earlier version of this test asserted only
+    "nothing was selected" and passed even with the filter deleted, because
+    `normalize_unit_pattern('Only')` returns 'Only' and never matches
+    'default/Only' -- it was selecting zero rows for pattern reasons and
+    proving nothing. Asserting that the open row IS reached makes that
+    impossible.
+    """
     conn = sqlite3.connect(db)
-    got = {r[0] for r in conn.execute(sql + D.unworkable_verdict_clause())}
-    assert 4 not in got, f"{label} leaked the row"
+    conn.execute("DELETE FROM functions WHERE id NOT IN (1, 4)")
+    conn.execute("UPDATE functions SET unit='default/Only'")
+    conn.commit()
+    iu_sym, open_sym = (conn.execute(
+        "SELECT symbol FROM functions WHERE id=?", (i,)).fetchone()[0] for i in (4, 1))
+
+    bc = _load_real("_laneS_batch_check", "batch_check.py")
+    fake = _FakeRun()
+    monkeypatch.setattr(bc, "DB_PATH", db)
+    monkeypatch.setattr(bc, "OBJDIFF_CLI", tmp_path)  # must merely exist
+    monkeypatch.setattr(bc, "subprocess", type("S", (), {"run": fake,
+                                                         "TimeoutExpired": TimeoutError})())
+    bc.batch_check("default/Only")
+
+    assert open_sym in fake.symbols, (
+        "positive control failed: batch_check never reached the ordinary open "
+        "row, so this test cannot distinguish a working filter from a query "
+        "that matched nothing"
+    )
+    assert iu_sym not in fake.symbols, "batch_check selected the IU row"
 
 
-def test_ghidra_export_excludes_it(db):
-    """Exporting a name INTO Ghidra asserts identity; it must not."""
+def test_atexit_verify_does_not_select_it(db, monkeypatch, tmp_path):
+    """Drives the REAL scripts/atexit_fuzzy_verify.py.
+
+    With --mark-at-limit this tool stamps AT_LIMIT, i.e. certifies a floor.
+    Certifying a floor against a body not established to be the function is the
+    2026-08-13 mis-certification exactly. Positive control as above.
+    """
+    conn = sqlite3.connect(db)
+    conn.execute("DELETE FROM functions WHERE id NOT IN (1, 4)")
+    conn.execute("UPDATE functions SET unit='default/Only', "
+                 "symbol='??__F' || CAST(id AS TEXT) || '@@YAXXZ'")
+    conn.commit()
+    iu_sym, open_sym = (conn.execute(
+        "SELECT symbol FROM functions WHERE id=?", (i,)).fetchone()[0] for i in (4, 1))
+
+    av = _load_real("_laneS_atexit", "atexit_fuzzy_verify.py")
+    fake = _FakeRun()
+    monkeypatch.setattr(av, "DB_PATH", db)
+    monkeypatch.setattr(av, "OBJDIFF_CLI", tmp_path)
+    monkeypatch.setattr(av, "subprocess", type("S", (), {"run": fake,
+                                                         "TimeoutExpired": TimeoutError})())
+    av.verify(None, apply=False, mark_at_limit=True)
+
+    assert open_sym in fake.symbols, "positive control failed: no row was reached"
+    assert iu_sym not in fake.symbols, "atexit_fuzzy_verify selected the IU row"
+
+
+def test_ghidra_export_query_as_shipped_excludes_it(db):
+    """Executes the SQL LIFTED FROM the shipped build_symbol_map.py source.
+
+    That file's main() needs report.json and built objects, so it cannot be
+    driven here. Extracting its query text instead still binds the assertion to
+    the real file: delete the guard there and this fails.
+    """
+    import re
+    src = (HERE.parent.parent / "tools/ghidra/build_symbol_map.py").read_text()
+    start = src.index("rows = con.execute(")
+    end = src.index(".fetchall()", start)
+    call = src[start:end]
+    # Only the string literals inside the call itself -- not the comments above
+    # it, which is what a looser pattern picked up.
+    sql = "".join(re.findall(r'"([^"]*)"', call))
+    assert sql.lstrip().startswith("SELECT"), f"extraction missed the query: {sql!r}"
+    # We read raw source, so a Python-level "\\" is still two characters here;
+    # SQLite's ESCAPE wants the one character Python would have produced.
+    sql = sql.replace("\\\\", "\\")
+    assert "IDENTITY_UNESTABLISHED" in sql, (
+        f"shipped Ghidra export query has no identity guard: {sql!r}"
+    )
+
     conn = sqlite3.connect(db)
     conn.execute("UPDATE functions SET current_percent=95.0 WHERE id=4")
     conn.commit()
-    sql = ("SELECT id FROM functions WHERE current_percent >= 80 "
-           "AND symbol NOT LIKE 'fn\\_%' ESCAPE '\\' "
-           "AND (verdict IS NULL OR verdict != 'IDENTITY_UNESTABLISHED')")
-    assert 4 not in {r[0] for r in conn.execute(sql)}
+    got = {r[0] for r in conn.execute(
+        sql.replace("SELECT symbol, unit, current_percent", "SELECT id"), (80.0,))}
+    assert 4 not in got
+
+
+def test_search_by_name_does_not_suggest_it(db):
+    """The suggestion surface behind the run_objdiff MCP tool.
+
+    Not a worklist, which is why it was missed on the first pass: reached from
+    `mcp_server._suggest_similar_symbols` when an agent's symbol lookup fails,
+    so the server would answer "did you mean ...?" with the one target the
+    agent must not work.
+    """
+    assert not [r for r in D.search_functions_by_name("unident", limit=10, db_path=db)]
+    conn = sqlite3.connect(db)
+    sym = conn.execute("SELECT symbol FROM functions WHERE id=4").fetchone()[0]
+    assert not [r for r in D.search_functions_by_name(sym, limit=10, db_path=db)]
+
+
+def test_merged_category_selector_excludes_it(db):
+    conn = sqlite3.connect(db)
+    conn.execute("INSERT INTO merged_symbols (function_id, symbol_name, category) "
+                 "VALUES (4, 'x', 'addtostrings')")
+    # Clear the belt so the primary axis is what is under test.
+    conn.execute("UPDATE functions SET excluded=0 WHERE id=4")
+    conn.commit()
+    rows = D.query_functions_by_merged_category("addtostrings", db_path=db, limit=100)
+    assert 4 not in _ids(rows)
+
+
+def test_public_api_cannot_create_a_half_state(db):
+    """update_function_status writes ONE column; this state needs four.
+
+    Measured before the guard: update_function_status(verdict=IU) produced
+    ('IDENTITY_UNESTABLISHED', 0, 91.2857, 91.2857) -- a row that
+    obj_regswap_patcher (excluded=0-only) still offers and the near-100 band
+    still counts.
+    """
+    with pytest.raises(ValueError, match="mark_identity_unestablished"):
+        D.update_function_status(1, verdict=IU, db_path=db)
+    conn = sqlite3.connect(db)
+    assert conn.execute("SELECT verdict FROM functions WHERE id=1").fetchone()[0] is None
 
 
 def test_grind_worklist_dead_verdicts_covers_it():

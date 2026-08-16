@@ -1376,6 +1376,24 @@ def update_function_status(
                 f"{sorted(KNOWN_VERDICTS)} or CLEAR to un-set. "
                 f"See docs/decomp/VERDICT_STATES.md."
             )
+        if verdict in UNWORKABLE_VERDICTS:
+            # This function writes ONE column. IDENTITY_UNESTABLISHED is not a
+            # one-column fact: it is a verdict AND excluded=1 AND both percents
+            # retracted, and every consumer guarantee rests on all four holding
+            # together. Allowing it here produces
+            # ('IDENTITY_UNESTABLISHED', 0, 91.2857, 91.2857) -- a row that
+            # obj_regswap_patcher.find_regswap_candidates (excluded=0-only)
+            # still offers and the near-100 band still counts. Refuse, and name
+            # the entry point that writes the whole state atomically.
+            raise ValueError(
+                f"{verdict!r} cannot be set through update_function_status: it "
+                f"is not a single-column state. It requires excluded=1 and "
+                f"current_percent/best_percent retracted in the same write, or "
+                f"the row stays visible to every excluded=0 consumer. Use "
+                f"mark_identity_unestablished(function_id, reason) -- or the "
+                f"CLI, scripts/mark_identity_unestablished.py. "
+                f"See docs/decomp/VERDICT_STATES.md."
+            )
 
     conn = get_connection(db_path)
 
@@ -1991,6 +2009,16 @@ def search_functions_by_name(
 
     Returns:
         List of function dicts with symbol, demangled, unit, current_percent
+
+    Excludes IDENTITY_UNESTABLISHED rows. This is NOT a worklist, which is
+    exactly why it was missed on the first pass: it is a *suggestion* surface,
+    reached from the `run_objdiff` MCP tool via
+    `mcp_server._suggest_similar_symbols` whenever an agent's symbol lookup
+    fails. Without the filter the server answers "did you mean ...?" with a row
+    whose target body is not established to be that function -- pointing an
+    agent straight at the one target it must not work. The downstream WRITE
+    seams all refuse, so this could not by itself bank a false crack; it could
+    only waste a lane's time and invite the attempt.
     """
     conn = get_connection(db_path)
 
@@ -2003,6 +2031,7 @@ def search_functions_by_name(
         SELECT symbol, demangled, unit, current_percent
         FROM functions
         WHERE demangled LIKE ?
+        """ + unworkable_verdict_clause() + """
         ORDER BY current_percent DESC NULLS LAST
         LIMIT ?
         """,
@@ -2020,9 +2049,11 @@ def search_functions_by_name(
         SELECT symbol, demangled, unit, current_percent
         FROM functions
         WHERE symbol LIKE ? AND symbol NOT IN ({})
+        """.format(",".join("?" * len(seen_symbols)) if seen_symbols else "'__none__'")
+        + unworkable_verdict_clause() + """
         ORDER BY current_percent DESC NULLS LAST
         LIMIT ?
-        """.format(",".join("?" * len(seen_symbols)) if seen_symbols else "'__none__'"),
+        """,
         [f"%{name}%"] + list(seen_symbols) + [limit - len(results)],
     ).fetchall()
     results.extend(dict(r) for r in rows)
@@ -2622,6 +2653,7 @@ def query_functions_by_merged_category(
         WHERE ms.category = ?
           AND f.excluded = 0
           AND (f.current_percent IS NULL OR (f.current_percent >= ? AND f.current_percent <= ?))
+        """ + unworkable_verdict_clause("f.") + """
         ORDER BY f.current_percent DESC
         LIMIT ?
         """,
@@ -2725,6 +2757,18 @@ def get_functions_for_unit(
 ) -> list[dict[str, Any]]:
     """
     Get all functions for a specific unit.
+
+    ⚠ UNFILTERED, deliberately. This is a plain enumeration -- it returns
+    COMPLETE, AT_LIMIT, excluded, dead and IDENTITY_UNESTABLISHED rows alike --
+    and it has no callers today. The filter is NOT applied here because the
+    function's contract is "all", and silently dropping rows from something
+    named `get_functions_for_unit` would be its own trap: a unit-level audit
+    that quietly under-reports is worse than one that shows everything.
+
+    So: if you are adding the first caller and it selects WORK, filter it
+    yourself. `+ unworkable_verdict_clause()` excludes rows whose target body
+    is not established to be that function; prefer `query_functions()`, which
+    already applies every work filter. See docs/decomp/VERDICT_STATES.md.
 
     Args:
         unit: Unit path (e.g., "default/system/char/CharBones")

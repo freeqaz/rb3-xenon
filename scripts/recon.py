@@ -33,13 +33,25 @@ def _load_db_info(symbol, db_path):
                       unicorn_verdict, unicorn_class, unicorn_confidence,
                       reachable_100, primary_pattern, has_linker_merged,
                       has_bool_mask, has_addtostrings, has_makestring,
-                      priority_score, ease_score, impact_score, confidence_score,
+                      priority_score,
                       excluded
                FROM functions WHERE symbol = ?""",
             (symbol,),
         ).fetchone()
         return dict(row) if row else None
     except Exception:
+        # ⚠ This blanket except is why the query above must be kept honest.
+        # It swallows OperationalError, so a single non-existent column in the
+        # SELECT makes recon report NO database info for EVERY symbol, silently
+        # and forever -- every `db`-keyed branch in `_assess` (COMPLETE,
+        # AT_LIMIT, IDENTITY_UNESTABLISHED) simply becomes unreachable.
+        # That was the live state until 2026-08-16: the SELECT asked for
+        # `exclusion_reason` and then `ease_score`/`impact_score`/
+        # `confidence_score`, none of which exist in a fresh v19 build or in the
+        # live DB. `ease_score` and friends are still rendered by `_assess`,
+        # which uses `.get(..., '?')` and degrades to '?' rather than raising.
+        # Before adding a column here, confirm it exists:
+        #   sqlite3 decomp.db 'PRAGMA table_info(functions)'
         return None
 
 
