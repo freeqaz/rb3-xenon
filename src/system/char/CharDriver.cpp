@@ -309,6 +309,20 @@ void CharDriver::SyncInternalBones() {
     }
 }
 
+// Out-of-line, NOT in the header: retail calls this from BandWardrobe::
+// OnEnterVignette and BandCharacter::SetClipTypes, and there is no LTCG, so a
+// body defined in this .cpp cannot be inlined into those TUs -- which is exactly
+// what reproduces retail's two out-of-line call sites. Defined here, directly
+// after SyncInternalBones and well before SyncProperty/Copy, so /Ob2 can still
+// inline it WITHIN this TU (retail's SyncProperty and Copy reference
+// SyncInternalBones, not SetClipType, i.e. retail inlines it here too).
+void CharDriver::SetClipType(Symbol s) {
+    if (mClipType != s) {
+        mClipType = s;
+        SyncInternalBones();
+    }
+}
+
 #ifdef HX_NATIVE
 void CharDriver::SetClipWeightMap() {
     mClipWeightMap.clear();
