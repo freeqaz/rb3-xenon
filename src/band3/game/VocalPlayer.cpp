@@ -2074,16 +2074,23 @@ const VocalPhrase *VocalPlayer::GetNextPhraseMarker(const VocalPhrase *const &p)
 
 bool VocalPlayer::AtFirstPhrase() const {
     VocalPart *vp = mVocalParts.front();
-    // Retail reads mPhrases._M_finish (`lwz r10, 0x4, r10`), not _M_start, so
-    // this is end() -- NOT a VocalNoteList layout bug: all 13 mapped
-    // ?...@VocalNoteList@@ methods are at 100% with mPhrases at offset 0.
-    // The Wii dev build uses .data().
-    return vp->mThisPhrase == vp->mVocalNoteList->mPhrases.end();
+    // begin(), NOT end(). The old comment here read retail's _M_finish load off
+    // 0x826e5ae8 and concluded this function is end() -- but the map had this
+    // name TRANSPOSED with PastFinalNote (see W40-ACCURACY / scripts/
+    // target_symbol_map.json). AtFirstPhrase is 0x826e5688, whose one
+    // distinguishing instruction is `lwz r10, 0(r10)` = mPhrases._M_start.
+    // This is a REAL behavioural fix, not a codegen one: VocalTrack.cpp:746
+    // takes the else branch to hunt for the PREVIOUS phrase, which only makes
+    // sense when we are not at the first one.
+    return vp->mThisPhrase == vp->mVocalNoteList->mPhrases.begin();
 }
 
 bool VocalPlayer::AtLastPhrase() const {
     VocalPart *vp = mVocalParts.front();
-    return vp->mThisPhrase == vp->mVocalNoteList->mPhrases.data() + vp->mVocalNoteList->mPhrases.size();
+    // end(), not data()+size(). Identical VALUE, but data()+size() compiles to a
+    // subtract/shift sequence instead of retail's single `lwz r10, 4(r10)`
+    // (_M_finish). PastFinalNote forwards here and is retail's 0x826e5ae8.
+    return vp->mThisPhrase == vp->mVocalNoteList->mPhrases.end();
 }
 
 void VocalPlayer::ToggleOverlay() {
