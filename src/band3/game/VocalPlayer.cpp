@@ -1569,17 +1569,30 @@ DECOMP_FORCEACTIVE(
 
 // Retail calls this out of line from Handle()'s HANDLE_MESSAGE(ButtonUpMsg) arm
 // (`subi r3,r25,0x47c; bl fn_826E5E98; clrlwi r11,r3,24`), so the arm also emits the
-// ButtonUpMsg temp construction and its ~Message() vtable restore. Retail's body is
-// the HandleDeactivateVolume path -- see the DECOMP_FORCEACTIVE strings above
-// ("HandleDeactivateVolume: Couldn't get a VocalParam for supposed volume button
-// %d!\n" plus the "( 0) <= ( o_rMicNumber) && ( o_rMicNumber) < ( 3)" range assert)
-// -- whose helpers are not ported yet, so the body stays a stub and is NOT invented.
-// /Ob2 folds that stub to a constant and deletes the whole temp, costing Handle 12
-// instructions and 0x10 of frame. auto_inline(off) restores retail's call shape.
+// ButtonUpMsg temp construction and its ~Message() vtable restore.
 // Measured: moving the definition below END_HANDLERS does NOT work -- this MSVC
 // (16.00.10224) inlines out-of-line member definitions that appear *later* in the TU,
 // so parse order is not a lever; only the pragma is. Per OvershellSlot.cpp:1874,
 // __declspec(noinline) is not a substitute for auto_inline in this codebase.
+//
+// *** CORRECTED 2026-08-17 (lane W22-FRAME) *** This note used to end: "/Ob2 folds that
+// stub to a constant and deletes the whole temp, costing Handle 12 instructions and
+// 0x10 of frame. auto_inline(off) restores retail's call shape." That mechanism is
+// WRONG and it sent one lane at the wrong lever. MEASURED, with the pragma in place:
+// the temp is NOT deleted -- both sides construct it and both call OUT OF LINE at the
+// same instruction index. The pragma had already done its job; the residual was the
+// temp's SLOT, not its existence.
+// The real mechanism is ESCAPE / MEMORY-EFFECT analysis, which auto_inline(off) does
+// not touch -- it stops INLINING, not MSVC's intra-TU reasoning about a callee. With
+// an EMPTY body MSVC proved OnMsg neither writes memory nor lets `&msg` escape, so in
+// Handle it killed the dead ~Message vptr store (`stw r30,0x88`), forwarded r27
+// instead of reloading mData (`lwz r3,0x8c`), and OVERLAID the temp onto the shared
+// scratch slot 0x58 instead of giving it 8 private bytes. Retail keeps FOUR 8-byte
+// message temps (0x58/0x88/0x90/0x98); the stub left us with three. That missing 8
+// rounds the frame down by 0x10 (0xe0 vs 0xf0) and displaces every callee-saved
+// register by one -- 212 charged r28<->r29 sites, ALL of which dissolved with the
+// frame. Handing `&msg` to an out-of-TU callee (GetUser) is what defeats the analysis.
+// Full record + the Poll wall: docs/decomp/w22-frame.md.
 // Retail's predicate MATERIALIZES a bool (`li r11,0/1; clrlwi. r11,r11,24; beq`)
 // instead of branching straight to the call, so it is an inlined helper returning
 // bool -- a raw `if (a || b || c)` branches directly and never builds the 0/1.
