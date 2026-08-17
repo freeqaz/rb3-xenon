@@ -49,6 +49,51 @@ def toks(s):
     return [t for t in re.split(r'[,\s()]+', s or '') if t]
 
 
+def flat_args(side):
+    """Rebuild the pre-fdc5113 flat operand join from `typed_args`.
+
+    objdiff-cli fdc5113 ("ruler I", 2026-08-16) changed the JSON `args` string
+    from a comma-join of the COMPARISON arg list to the DISPLAY spelling. Of the
+    three things that moved, this file was immune to two of them and fatally
+    exposed to the third:
+
+      * d-form parens (`0x38, r4` -> `0x38(r4)`): HARMLESS here. `toks` already
+        splits on `(` and `)`, so the operand splits back into ['0x38','r4'] and
+        both the token count and the IMM_RE/REG_RE classification survive. This
+        is the one tokenizer in the repo that got it right by construction --
+        do not "fix" it.
+      * `@h`/`@l` reloc suffixes: harmless, because every consumer of a symbol
+        token here is UNNAMED.search, a substring test.
+      * the trailing NON-DISPLAYED relocation leaving the string: FATAL. That
+        operand is where `bl fn_XXXX`-style naming evidence lives for pooled
+        rows, so CALL_NAMING -- the "climbs when we name the symbol" bucket that
+        is the whole point of this pass -- lost 78% of its rows, and rows whose
+        relocation was the only difference produced no `diffs` at all and were
+        dropped entirely.
+
+    So the repair is the relocation channel, not the parens: rebuild from
+    typed_args, whose trailing Symbol entry still carries the relocation. That
+    reproduces the old join exactly (objdiff-core/src/obj/mod.rs' Display impls:
+    Signed/BranchDest as signed hex, Unsigned as hex, everything else verbatim),
+    and re-appending the symbol to the DISPLAY string instead would double-count
+    it on rows like `stw r10, SYM@l(r11)` where it is already spelled out.
+    """
+    ta = side.get('typed_args')
+    if ta is None:
+        return side.get('args') or ''
+    out = []
+    for a in ta:
+        t = a.get('type')
+        v = a.get('value')
+        if t in ('Signed', 'BranchDest') and isinstance(v, int):
+            out.append(('-0x%x' % -v) if v < 0 else '0x%x' % v)
+        elif t == 'Unsigned' and isinstance(v, int):
+            out.append('0x%x' % v)
+        else:
+            out.append(str(v))
+    return ', '.join(out)
+
+
 def diff_one(unit, sym):
     out = f"/tmp/claude/_enr_{os.getpid()}_{abs(hash((unit,sym)))%99999}.json"
     try:
@@ -74,7 +119,9 @@ def classify_insn(ins):
     t = ins.get("target") or {}
     b = ins.get("base") or {}
     top, bop = t.get("opcode"), b.get("opcode")
-    targs, bargs = t.get("args") or "", b.get("args") or ""
+    # flat_args, never side["args"] -- the display spelling drops the trailing
+    # relocation this classifier reads. See flat_args' docstring.
+    targs, bargs = flat_args(t), flat_args(b)
     if not t or not b:
         return ("BODY", "indel")
     if top != bop:
