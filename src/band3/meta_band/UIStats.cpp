@@ -39,7 +39,7 @@ void UIStats::Init() {
 
 void UIStats::Terminate() {
     if (mPadLogBuffer) {
-        _MemFree(mPadLogBuffer);
+        MemFree(mPadLogBuffer);
         mPadLogBuffer = 0;
     }
     mPadLogWritePtr = 0;

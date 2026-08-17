@@ -38,7 +38,7 @@ MetaMusic::~MetaMusic() {
         }
         mBuf = 0;
     } else if (mBuf) {
-        _MemFree(mBuf);
+        MemFree(mBuf);
         mBuf = 0;
     }
     delete mFader;
