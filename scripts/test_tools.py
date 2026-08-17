@@ -114,6 +114,13 @@ EXCLUDED: list[dict] = [
 
 TEST_FILE_RE = re.compile(r"(^|/)(test_[^/]*\.py|[^/]*_test\.py)$")
 
+# This runner is itself named test_tools.py, so it matches TEST_FILE_RE. Once it
+# was committed the lane reported ITSELF as an UNCOVERED tracked test file and
+# exited 1 (measured 2026-08-17 — the anti-staleness check working correctly on
+# the wrong input). It is also handed to pytest by any root that contains it,
+# which collects zero tests from it. Excluded from both.
+SELF = Path(__file__).resolve().relative_to(REPO_ROOT).as_posix()
+
 # pytest short-summary lines. The id runs to the first " - " (pytest's separator
 # before the exception's first line); parametrized ids contain spaces, so
 # ``\S+`` would truncate them.
@@ -142,7 +149,7 @@ def tracked_test_files() -> list[str]:
     except (subprocess.CalledProcessError, FileNotFoundError):
         files = [p.relative_to(REPO_ROOT).as_posix()
                  for p in REPO_ROOT.rglob("*.py")]
-    return sorted(f for f in files if TEST_FILE_RE.search(f))
+    return sorted(f for f in files if TEST_FILE_RE.search(f) and f != SELF)
 
 
 def _claimed_by_a_root(f: str, roots: list[dict]) -> bool:
@@ -193,6 +200,8 @@ def run_root(root: dict, python: str, extra: list[str], log_dir: Path) -> dict:
     cmd = [python, "-m", "pytest", "-q", "--tb=no", "-rEf",
            "--continue-on-collection-errors", "-p", "no:cacheprovider"]
     ignores = list(root.get("ignore", []))
+    if SELF.startswith(root["path"].rstrip("/") + "/"):
+        ignores.append(SELF)
     # A script-arm or excluded file inside this root must not be collected:
     # pytest would report it as an error or as "no tests ran".
     for entry in SCRIPT_ARM + EXCLUDED:
