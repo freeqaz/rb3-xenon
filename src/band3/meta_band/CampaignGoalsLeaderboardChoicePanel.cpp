@@ -40,7 +40,7 @@ private:
         if (_M_len > (ptrdiff_t)(INT_MAX / sizeof(Symbol)))
             _M_len = INT_MAX / sizeof(Symbol);
         while (_M_len > 0) {
-            _M_buffer = (Symbol *)_MemAlloc(_M_len * sizeof(Symbol), 0);
+            _M_buffer = (Symbol *)MemAlloc(_M_len * sizeof(Symbol), __FILE__, 43, "_Temporary_buffer", 0);
             if (_M_buffer)
                 break;
             _M_len /= 2;

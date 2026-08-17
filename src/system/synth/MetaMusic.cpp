@@ -72,10 +72,10 @@ void MetaMusic::Load(const char *cc, float f, bool b1, bool b2) {
             // NOTE (match): retail homes this size into a frame temp AND passes it in
             // r3 (a redundant `stw r3, 0x58(r31)` before the alloc call). That store
             // only appears when the size is a local declared INSIDE this block whose
-            // live range ends at the _MemAlloc call; hoisting it above the `if`, or
+            // live range ends at the MemAlloc call; hoisting it above the `if`, or
             // keeping it live past the call, both lose the store. See DB notes.
             int size = mBufSize;
-            mBuf = (unsigned char *)_MemAlloc(size, 0);
+            mBuf = (unsigned char *)MemAlloc(size, __FILE__, 0xC1, "MetaMusic", 0);
             MILO_ASSERT(!mLoader, 0xC2);
             mLoader = new MetaMusicLoader(mFile, mBytesRead, mBuf, mBufSize);
         }
