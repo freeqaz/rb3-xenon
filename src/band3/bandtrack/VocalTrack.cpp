@@ -1091,7 +1091,8 @@ void VocalTrack::UpdateLyricZ() {
                     }
                     lyric->mBeginPos.z = z;
                 }
-                plate->mText->DirtyLocalXfm().v.z += delta;
+                float &leadZ = plate->mText->DirtyLocalXfm().v.z;
+                leadZ = delta + leadZ;
             }
         }
     }
