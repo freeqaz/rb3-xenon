@@ -28315,9 +28315,7 @@
    "name": "CVEIN1__M_erase",
    "address": "0x822dd9a0",
    "survivor": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
-   "folded": [
-    "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
    "retail_callers": [
@@ -28325,22 +28323,38 @@
     "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1s",
     "fn_82B9A9F0"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "lane": "W4-ALIAS 2026-08-17",
+     "class": "NODE_SIZE_MISMATCH",
+     "why": "one non-relocated word differs @0x30: survivor `addi r3,r0,20` (_Rb_tree_node<Symbol>, a SET node = 16 B header + 4 B Symbol) vs folded `addi r3,r0,24` (_Rb_tree_node<pair<Symbol const,CharLipSync*>>, a MAP node = 16+8). Different deallocation sizes => different COMDATs. CONTAINER-1's node-size criterion.",
+     "note": "Refuted WITHIN ONE BUILD on CONTENT, not on a cross-build size comparison (the instrument GROUNDED-1 got 7 of 8 wrong with, and which coff_bodies_ext.py's +8 EH-prefix artifact makes unusable). our(S) reproduces retail(S) on every non-relocated word, so our survivor instantiation is correct and the divergence is FORCED by the template argument. Do NOT re-add without positive fold evidence."
+    }
+   ]
   },
   {
    "name": "CVEIN1___destroy_range_aux",
    "address": "0x82429170",
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVDataArrayPtr@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVTextureStore@LiveCameraInput@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVTextureStore@LiveCameraInput@@@0@0ABU__false_type@0@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "??1?$vector@VTextureStore@LiveCameraInput@@V?$StlNodeAlloc@VTextureStore@LiveCameraInput@@@stlpmtx_std@@@stlpm",
     "?_M_clear_after_move@?$vector@VDataArrayPtr@@V?$StlNodeAlloc@VDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVTextureStore@LiveCameraInput@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVTextureStore@LiveCameraInput@@@0@0ABU__false_type@0@@Z",
+     "lane": "W4-ALIAS 2026-08-17",
+     "class": "CALLEE_SHAPE_MISMATCH",
+     "why": "our(S)=our(F)=96 B, exactly ONE non-relocated word differs @0x24: survivor `lwz r3,-4(r11)` loads the POINTEE out of the DataArrayPtr element and calls DataArray::Release (an inlined ~DataArrayPtr); folded `addi r3,r11,-4` passes the ELEMENT ADDRESS to ~TextureStore (an 80 B out-of-line dtor). A pointer-wrapper element and a value-type element cannot share one COMDAT.",
+     "note": "Refuted WITHIN ONE BUILD on CONTENT, not on a cross-build size comparison (the instrument GROUNDED-1 got 7 of 8 wrong with, and which coff_bodies_ext.py's +8 EH-prefix artifact makes unusable). our(S) reproduces retail(S) on every non-relocated word, so our survivor instantiation is correct and the divergence is FORCED by the template argument. Do NOT re-add without positive fold evidence."
+    }
+   ]
   },
   {
    "name": "CVEIN1___destroy_range_aux",
@@ -28456,9 +28470,7 @@
    "name": "CVEIN1___adjust_heap",
    "address": "0x82346360",
    "survivor": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
-   "folded": [
-    "??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@HHPAV1@UPriority@@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
    "retail_callers": [
@@ -28466,7 +28478,16 @@
     "??$sort_heap@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@@Z",
     "fn_823471A8"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@HHPAV1@UPriority@@@Z",
+     "lane": "W4-ALIAS 2026-08-17",
+     "class": "INLINED_COMPARATOR_MISMATCH",
+     "why": "our(S) and our(F) are the same size but EIGHT non-relocated words differ (0x20,0x24,0x28,0x2c,0x8c,0x94,0x98,0x9c). The comparator is inlined in both and reads a different member offset (`lwz rX,0(rY)` vs `lwz rX,40(rY)`), compares with different signedness (cmplw vs cmpw) and branches on a different CR bit. MoveDetectorCmp and Priority are different predicates.",
+     "note": "Refuted WITHIN ONE BUILD on CONTENT, not on a cross-build size comparison (the instrument GROUNDED-1 got 7 of 8 wrong with, and which coff_bodies_ext.py's +8 EH-prefix artifact makes unusable). our(S) reproduces retail(S) on every non-relocated word, so our survivor instantiation is correct and the divergence is FORCED by the template argument. Do NOT re-add without positive fold evidence."
+    }
+   ]
   },
   {
    "name": "CVEIN1_clear",
