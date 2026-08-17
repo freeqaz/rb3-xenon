@@ -227,16 +227,36 @@ FocusTracker::GetNextFocusPlayer(const TrackerPlayerID &pid, float f, bool &b) c
         } else if (ret.mGuid == empty.mGuid) {
             break;
         }
-        // Lane CN-3e: retail materializes the LOOP-AGAIN flag via cntlzw/extrwi
-        // (a dead bool) and branches bne; this form materializes the opposite
-        // polarity. Measured alternatives, all WORSE -- keep this one:
-        //   `b1 = !canfocus || !wantsfocus; while(b1)`  -> 97.5% (4 mismatches)
-        //   explicit `if (canfocus) b1=!wantsfocus; else b1=true;` -> 96.1%,
-        //     and it triggers an r11<->r28 regalloc cascade breaking idx 74-79.
-        // Remaining delta is MSVC bool-materialization = permuter class (banned).
+        // Lane W1-GAME: the LOOP FLAG POLARITY IS SETTLED -- retail's flag is
+        // the NEGATION.  Retail (0x826D6DA0 idx 115-121):
+        //     beq .E88                                   ; !canfocus -> 1
+        //     cmplwi cr6,r28,0; li r11,0; bne cr6,.E8C    ; wantsfocus -> 0
+        //   .E88: li r11,1
+        //   .E8C: clrlwi. r11,r11,24; bne <loop>
+        // i.e. b1 = !(canfocus && wantsfocus), looped on bne.  Writing exactly
+        // that closed 2 of the 6 charges (the `li` +/-1 pair at idx 117/119 and
+        // the bne/beq at 121).  NOTE lane CN-3e tried the De Morgan twin
+        // `!canfocus || !wantsfocus` and measured it WORSE -- the twins are NOT
+        // interchangeable to MSVC (same lesson as GemPlayer::LocalSetEnabledState,
+        // where three semantically identical spellings scored 96.9 / 97.6 / 100.0).
+        //
+        // Caveat for whoever reads the number: fuzzy went 98.198 -> 97.500 even
+        // though mismatches went 6 -> 4, because one `delete` scores worse than
+        // two `diff_arg`s.  Both forms are sub-100, so matched_code is 0 either
+        // way; this form is kept because the residual is now ONE mechanism.
+        //
+        // RESIDUAL (idx 113-117, all that is left): retail materialises the
+        // inlined PlayerCanHaveFocus bool with cntlzw/extrwi. and tests THAT,
+        // where we fold to cmpwi/bne.  The SAME shape blocks
+        // StreakFocusTracker::GetNextFocusPlayer, so the cause is the HELPER,
+        // not the call site.  Measured inert here: inlining the call into the
+        // && instead of hoisting `canfocus` is BYTE-IDENTICAL (97.500 both,
+        // same 4 charges at the same indices) -- independently reproducing
+        // INSDEL-1's result on the sibling.  Do not re-try hoist-vs-inline;
+        // attack PlayerCanHaveFocus itself.
         bool canfocus = PlayerCanHaveFocus(ret);
-        b1 = canfocus && wantsfocus;
-    } while (!b1);
+        b1 = !(canfocus && wantsfocus);
+    } while (b1);
     return ret;
 }
 
