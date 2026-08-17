@@ -186,18 +186,25 @@ DataNode SetBSPParams(DataArray *da) {
 
 void GeoInit() {
     DataArray *cfg = SystemConfig("math");
-    auto _tmp4 = cfg->FindArray("bsp_check_scale")->Float(1);
-    // Retail constructs the property Symbols in the order
+    // W23-FRAMESWEEP: all five bsp_* Symbol temps must live in ONE full
+    // expression.  Retail gives each its own 4-byte slot (0x54/0x58/0x5c/0x60/
+    // 0x64, reusing 0x64 for set_bsp_params); hoisting any of them into its own
+    // statement lets the temp die at the semicolon and MSVC recycles the slot,
+    // collapsing five slots into three and costing 0x10 of frame.
+    // ⚠ The hoisting this replaces was introduced to control CONSTRUCTION ORDER
+    // -- but it was never needed: MSVC evaluates call arguments RIGHT-TO-LEFT,
+    // so this single expression already yields retail's order
     //   math, bsp_check_scale, bsp_max_candidates, bsp_max_depth, bsp_dir_tol,
     //   bsp_pos_tol, set_bsp_params
-    // MSVC evaluates call arguments right-to-left, so whichever FindArray is
-    // HOISTED runs first and the rest run in reverse argument order.  Hoisting
-    // bsp_max_depth (as this line used to) yields ..depth, candidates.. -- the
-    // swap retail does not have.  Hoisting bsp_max_candidates instead
-    // reproduces retail's order.  ⚠ Property names are RELOCATION ARGS, which
-    // report.rs:394 masks, so this ordering is invisible to the default ruler.
-    auto _tmp2 = cfg->FindArray("bsp_max_candidates")->Int(1);
-    SetBSPParams(cfg->FindArray("bsp_pos_tol")->Float(1), cfg->FindArray("bsp_dir_tol")->Float(1), cfg->FindArray("bsp_max_depth")->Int(1), _tmp2, _tmp4);
+    // verified against retail bytes.  Fixing the order by hoisting bought the
+    // order and paid for it in stack slots; inlining buys both.
+    SetBSPParams(
+        cfg->FindArray("bsp_pos_tol")->Float(1),
+        cfg->FindArray("bsp_dir_tol")->Float(1),
+        cfg->FindArray("bsp_max_depth")->Int(1),
+        cfg->FindArray("bsp_max_candidates")->Int(1),
+        cfg->FindArray("bsp_check_scale")->Float(1)
+    );
     DataRegisterFunc("set_bsp_params", SetBSPParams);
 }
 
