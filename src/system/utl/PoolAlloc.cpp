@@ -145,7 +145,21 @@ int *FixedSizeAlloc::RawAlloc(int size) {
             MemPushHeap(0);
         }
 
-        sPoolBuf = (int *)_MemAllocTemp(gBigHunk, __FILE__, 0x71, "PoolChunk", 0);
+        // Retail/match: retail is `li r4, 0; bl 0x827BCD38` =
+        // MemAlloc(gBigHunk, 0) -- the PERSISTENT allocator. Decoded from
+        // band.exe at 0x827BAF14: lis r11,0x82C8 ; li r4,0 ; lwz r3,-0x721C(r11)
+        // (= gBigHunk) ; bl 0x827BCD38. 0x827BCFF0 (_MemAllocTemp) appears
+        // nowhere in the 176-byte body.
+        //
+        // A pool chunk is NEVER FREED, so taking it from the temp heap
+        // (MemHeap::kLastFit, top-down) rather than the default bottom-up heap
+        // is a genuine behavioural bug, not naming noise.
+        //
+        // align is 0 here, so the plain 4-arg debug form is enough: MemMgr.h's
+        // macro rewrites it to exactly (MemAlloc)((gBigHunk), 0). Under
+        // HX_NATIVE the same call binds to the 5-arg debug overload, so native
+        // gets the fix too and no #ifdef is needed.
+        sPoolBuf = (int *)MemAlloc(gBigHunk, __FILE__, 0x71, "PoolChunk");
 
         if (MemNumHeaps() > 0) {
             MemPopHeap();
