@@ -50,8 +50,13 @@ our F is compiled wrong -- and aliasing would paper over the second case.  So:
   FT1      addr(F) is absent from the map, or retail's body at addr(F) is
            itself identical to the body at addr(S).  Nothing contradicts.
   FT2      retail's body at addr(F) differs, AND that map entry is discredited by
-           the image itself -- addr(F) has ZERO `.text` fan-in, or no
-           `symbols.txt` extent at all (padding / mid-function parking).
+           the image itself -- NOTHING REFERENCES addr(F) (`Image.refs()`: no
+           branch, no address-taken `lis`/`addi` immediate pair, no `.rdata`
+           /`.data` pointer word), or it has no `symbols.txt` extent at all
+           (padding / mid-function parking).  This used to read `Image.fanin()`,
+           which counts branches only and is therefore vacuous for an
+           address-taken or vtable-dispatched form -- see the CF2 note in
+           tools/comdat_fold_gate.py for the false PASS that cost.
   FT3      retail's body at addr(F) differs and is a HOMONYM: dc3's LEAKED
            ham_xbox_r.map names F at more than one address, and the dc3 body at
            one of them is byte-identical (masked) to retail's body at addr(F),
@@ -150,6 +155,18 @@ class Retail:
         self.byva = {int(a, 16): n for a, n in smap.items()
                      if a.startswith("0x") and isinstance(n, str)}
         self.fanin = self.img.fanin()
+        # FT2 asks "does the image discredit the map's parking spot", i.e. does
+        # ANYTHING reach that address -- which `fanin()` (branches only) cannot
+        # answer for an address-taken or vtable-dispatched form. See the CF2 note
+        # in tools/comdat_fold_gate.py.
+        self.refs = self.img.refs_detail()
+
+    def ref_note(self, va):
+        """'N reference(s) (branch B, address-taken A, pointer word P)'."""
+        d = self.refs
+        return ("%d reference(s) -- %d branch, %d address-taken (lis/addi immediate pair), "
+                "%d data pointer word" % (d["total"][va], d["branch"][va],
+                                          d["addr_taken"][va], d["data_ptr"][va]))
 
     def canon(self, va):
         """(masked_words, {offset: target_name}, note) or (None, None, why)."""
@@ -334,7 +351,8 @@ def main():
 
         # second gate: retail's own definition of F
         fw, ft, ferr = retail.canon(fa)
-        f_fanin = retail.fanin[fa]
+        f_refs = retail.refs["total"][fa]
+        row["retail_F_refs"] = retail.ref_note(fa)
         if ferr:
             row["retail_F"] = "no body at %s (%s)" % (r["base_addr"], ferr)
             tier, disc = "FT2", "map parks %s at %s with no symbols.txt extent" % (F, r["base_addr"])
@@ -342,20 +360,21 @@ def main():
             tier, disc = "FT1", None
             row["retail_F"] = "retail body at %s is the SAME body as the survivor" % r["base_addr"]
         else:
-            row["retail_F"] = ("retail body at %s differs (%d words, fan-in %d)"
-                               % (r["base_addr"], len(fw), f_fanin))
+            row["retail_F"] = ("retail body at %s differs (%d words, %s)"
+                               % (r["base_addr"], len(fw), retail.ref_note(fa)))
             hom = homonym(dc3, dc3img, retail, F, fa, len(fw) * 4)
-            if f_fanin == 0:
-                tier, disc = "FT2", ("map parks %s at %s, which has ZERO .text fan-in"
-                                     % (F, r["base_addr"]))
+            if f_refs == 0:
+                tier, disc = "FT2", ("map parks %s at %s, which NOTHING IN THE IMAGE REFERENCES: "
+                                     "%s" % (F, r["base_addr"], retail.ref_note(fa)))
             elif hom:
                 tier, disc = "FT3", hom
             else:
                 rows.append({**row, "verdict": "REFUSE", "tier": None,
-                             "reason": ("retail has a DIFFERENT body named %s at %s (fan-in %d); "
-                                        "no zero-fan-in parking and no dc3 homonym witness, so "
-                                        "the map entry stands and aliasing would hide a source "
-                                        "defect" % (F, r["base_addr"], f_fanin))})
+                             "reason": ("retail has a DIFFERENT body named %s at %s (%s); the "
+                                        "image does not discredit the parking spot and there is "
+                                        "no dc3 homonym witness, so the map entry stands and "
+                                        "aliasing would hide a source defect"
+                                        % (F, r["base_addr"], retail.ref_note(fa)))})
                 continue
         if not rt:
             tier = "FT-EMPTY"
@@ -416,7 +435,8 @@ def install(groups, path):
               "destination RESOLVED through the map and NAME-equal rather than masked away; "
               "the survivor takes %d direct branches across .text. FT1=retail's map places "
               "the folded spelling on the same body or nowhere. FT2=it places it on a "
-              "different body the image itself discredits (zero .text fan-in, or no "
+              "different body the image itself discredits (ZERO REFERENCES -- no branch, no "
+              "address-taken immediate pair, no .rdata/.data pointer word -- or no "
               "symbols.txt extent -- padding or a mid-function word). FT3=it places it on a "
               "HOMONYM, a distinct function under another module that legitimately carries "
               "the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. "
