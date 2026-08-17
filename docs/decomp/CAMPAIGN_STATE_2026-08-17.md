@@ -9,7 +9,113 @@
 
 ## 0. SESSION CLOSE
 
-### 0.7 ROUND EIGHT — W20/W21/W22 ← **LATEST**
+### 0.8 ROUND NINE — W23/W24/W25 (all three survived an API outage) ← **LATEST**
+
+**44,504 fns / 3,760,132 B = 36.433043%**, honest **21,594**. **Day total
++60 fns / +36,428 B**; **59.61% of the 61.121% reachable ceiling.**
+
+| lane | predicted | measured | |
+|---|---:|---:|---|
+| W25-UI | 0 / +3,564 | **0 / +3,564** | ✓ |
+| W23-FRAMESWEEP | +1 / +0 | **+1 / +0** | ✓ |
+| W24-PAIRING | 0 / 0 | **0 / 0** | ✓ *by design* |
+
+⚠ All three were killed mid-run by sustained API 529s and **resumed from
+transcript with their committed tools intact** — no work was lost. Their
+in-flight reasoning was preserved as explicitly-unverified hypotheses in
+`docs/decomp/open-leads-2026-08-17-round-nine.md`; **all three are now
+resolved, two of them as refutations.**
+
+★★★★★ **THE PAIRING BOUND BECAME A PREDICTION — BRACKET 0 ON BOTH RULERS.**
+The named test held: `0x82456190` reads graded **99.70588**, `none` **100.0**.
+The mechanism: **two things decide an un-pairing row's cost and only one is
+ruler-dependent.** The **un-pairing verdict** (does the obj define the name) is
+a **COFF fact and RULER-INVARIANT** — `none` forgives relocation *names*, it does
+**not** forgive an **absent base symbol**. Only the **credit test** is
+ruler-dependent. Predicted graded −2,396 / `none` −2,520 / Δfns −10, **all
+exact**; it *explains* W20's residual rather than beating it (W20 was loose by
+exactly 204 − 80 = **124 B**).
+★★★★★ **FLATNESS IS THE ALIAS SIGNATURE; MOVEMENT IS THE PAIRING SIGNATURE.**
+A fabricated alias moves only relocation-name *arguments*, so it leaves `none`
+at **0 by construction**; here `none` **moved −2,520**. The long-standing
+ambiguity about what a flat `none` means is resolved.
+★★ **A TWO-RULER FIXTURE IS STRICTLY STRONGER THAN EITHER LEG** — under sabotage
+the graded leg fails while `none` still passes, so **a `none`-only fixture would
+have green-lit a broken model.**
+
+★★★★ **W25 NEARLY BOUGHT THE RIGHT BYTES WITH THE WRONG REASONING, AND CAUGHT
+ITSELF.** Retail's `Handle@BandUI` calls **one** address from **five** arms
+building five RTTI-distinct classes. "Five roles ⇒ one address" *looks* like a
+fold — and adding the three spellings to the alias group would have paid the
+**identical +3,564 B**. But it is **equally consistent with our source wrongly
+carrying five bodies**, which is what it was. A **relocation-set** comparison of
+our own COMDATs settled it: 64 B / 4 relocs vs the survivor's 52 B / 1 reloc ⇒
+**different-size COMDATs cannot fold.** The real defect was three stale
+`HAQManager::Print` calls **this very file already documented for two sibling
+handlers**. ⇒ **The discriminator is the RELOCATION SET, not size** (size tests
+cancel on both legs), and **the `none` control reads +0 either way**, so it could
+not have caught the bad version.
+
+⛔⛔ **A TEST BRIEFED TO EVERY LANE ALL DAY IS VACUOUS ON MOST OF WHAT IT
+SELECTS.** `fuzzy == mpn ⇒ zero relocation-name charges` is true, but **309 of
+the 319 rows it flagged were `fuzzy == 0`**, where `0 == 0` is **trivially
+true**. **Gate it on `fuzzy > 0`** — it is meaningful only on rows that are
+**paired and credited**. ⇒ *Ask what a test SELECTS, not only whether it is
+true.* Correction propagated to the running lane and to memory.
+
+⛔ **W23 REFUTED ITS OWN HYPOTHESIS**, which is why it was worth resuming:
+**lexical scope and named-vs-temporary are INERT on MSVC stack-slot merging** —
+tested twice on `Load@SampleData`, **both spellings byte-identical**. MSVC
+canonicalises them. **Not a near-miss to tune; a closed vein that reads as
+attractive and unexplored.**
+★ Its whole-binary detector decodes PPC prologues from COFF bodies — **1,048
+paired units in 26 s, no objdiff** — finds **317 frame-differing rows / 17,122
+(1.85%)**, and validates in **both** directions (fires on `Poll@VocalPlayer`
+reproducing W22's exact figures, clears on the row W22 fixed).
+★★★ **And it re-prices its own queue: COLLECTABLE 19 rows / 21,636 B vs
+NAME-BLOCKED 41 rows / 50,076 B — ~70% of those bytes need a proven alias or map
+fix, not a body port.** The control passed 60/60 **and was proven able to fail.**
+
+⛔ **"REGISTER_SWAP dissolves with the frame" is a PATTERN, NOT A LAW** — W23's
+`r30`↔`r31` swap did **not** dissolve even though the frame closed completely.
+W22's 212-charge result generalised further than it should have.
+★★ **A FRAME FIX IS NEVER WORTH ZERO**: W23 predicted Δfns 0 from a model *it
+had built earlier in the same lane* (`mpn 100 ⟺ hard == 0`), and `GeoInit`
+refuted it — `hard == 0` on both sides while `mpn` went 99.930 → **100.000**,
+because **the immediate class is charged by `mpn` and the register class is
+not.** ⇒ closing frame immediates pays **+1 function per row** even when bytes
+stay locked behind register charges.
+★ `GeoInit` itself: **hoisting a subexpression to fix evaluation order silently
+costs a stack slot** — and the hoist was never needed, since MSVC evaluates
+arguments right-to-left and already yields retail's order.
+
+⛔ **THE INVERSE PAIRING LEVER IS MEASURED AND REFUSED**: 280 orphan rows /
+39,372 B, re-homable **64 / 3,472 B**, ceiling **0.034% of `total_code`** —
+**91.2% has no destination anywhere**, being **real unimplemented code**
+(`fft_altivec`, `DxRnd::DrawRect`, `GranularSynth::*`) that needs **source, not
+pins**. ★ W24 **relabelled its own in-flight overclaim** ("REAL and NEARLY
+EMPTY") to an upper bound licensing no yield claim.
+★★★ **A THIRD PAIRING CHANNEL, found because a self-validation was allowed to
+fail**: **anonymous-namespace hashes are normalized away before pairing** ⇒ 2 of
+282 orphans normalize onto a base definition and exactly 1 pairs as an
+**over-subscription** loser. `masked_equal` is **not** set, so it is distinct
+from byte-signature pairing ⇒ **`can_define` can return a FALSE `BLOCKED` for
+`?A0x` names.**
+
+⚠ **`main` and `grounded2-restoration` have genuinely divergent map state** —
+W24's fixture detector found **W17's map edit reverted at 10 of 11 fixture
+addresses on `main`**, and **refused (exit 2)** rather than score a state it
+could not interpret. Verified separately that this branch is unaffected (W17's
+names live, 23 `SetlistRecord` entries).
+
+★ **W25 sized the UI cluster wall**: 35 units / 2,452 rows / 265,212 B, gap
+**87,732 B** — **49.9% is `fuzzy == 0`** (unpaired, no residual to work), only
+**17 rows / 3,208 B collectable by source**, and **91.0% relocation-name
+charged**, *independently reproducing MPNGAP-1's ~91% on a cluster it never
+examined.* **Exactly 13 rows / 596 B** in the whole cluster are a clean
+instruction-level residual.
+
+### 0.7 ROUND EIGHT — W20/W21/W22
 
 **44,503 fns / 3,756,568 B = 36.398511%**, honest **21,593**. **Day total
 +59 fns / +32,864 B**; **59.55% of the 61.121% reachable ceiling.** All three
