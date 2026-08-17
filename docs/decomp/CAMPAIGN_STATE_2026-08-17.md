@@ -82,7 +82,7 @@ nested-`if` scored **87.1%** where our own `&&`/`||` spelling was already better
 a direct counter-example to W8's "restore it verbatim" result. **Both directions
 are real; neither is a default. Let the bytes decide.**
 
-### 0.3 ROUND THREE — W7-SYMPAIR + W8-TWINPORT ← **LATEST**
+### 0.3 ROUND THREE — W7-SYMPAIR + W8-TWINPORT
 
 **+2 fns / +328 B** (all of it W8; W7 measured **Δ exactly 0** and landed anyway).
 Twelve consecutive lanes have now composed to the byte.
