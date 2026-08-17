@@ -121,6 +121,13 @@ void SaveLoadManager::HandleEventResponseStart(int) { mStateAtSelectStart = mSta
 void SaveLoadManager::Start() {
     mUser = NULL;
     mLocalUser = NULL;
+    // RB3-360 retail: Start() subscribes to TheMemcardMgr here.  The rb3-Wii dev
+    // build's Start() does not (it calls AddSink at its other 10 sites only), so
+    // this line is retail-byte evidence, not an oracle transcription.  The three
+    // null-Symbol/kHandle arguments are AddSink's DEFAULT arguments -- retail's
+    // `lwz r6,<gNullStr>` / `mr r5,r6` / `li r7,0` are the defaults being
+    // materialised, which is why the one-argument spelling reproduces them.
+    TheMemcardMgr.AddSink(this);
     SetState(kS_Start);
     if (mMode == kMode_AutoLoad) {
         UpdateStatus(kSaveLoadMgrStatus_Start);
@@ -693,6 +700,37 @@ void SaveLoadManager::Poll() {
     }
 }
 
+// CASCADE EXPERIMENT (lane W1-GAME) -- ANSWERED, NEGATIVE.  4,096 B,
+// fuzzy 96.740 / mpn 97.297, ~114 estimated charged arg sites.  The lane was
+// sent to test whether a large arg-gated row's charges are "a register cascade
+// downstream of ONE real defect that dissolves when the defect is fixed".
+// Measured composition (run_diff_inspect diagnose, graded ruler):
+//
+//   110 diff_arg, ZERO unexplained -- 105 register swaps across 28 DISTINCT
+//       pairs; the dominant pair r25<->r26 is only 30 of 105 (29%), and the
+//       swaps span idx 6 -> 1022, i.e. the whole function.
+//    25 insert/delete in 13 SEPARATE clusters (idx 516 .. 968).
+//     4 real replaces at 4 distinct sites.
+//
+// 13 independent body divergences, not one.  There is no single defect for a
+// cascade to be downstream OF, so "fix the cause and the charges dissolve"
+// does not apply to this row -- and because matched_code is all-or-nothing per
+// row, closing any ONE cluster buys exactly ZERO bytes.  Price this row at 13
+// fixes, not one.  (Corroborating micro-instances measured the same day:
+// FocusTracker::GetNextFocusPlayer -- fixing the loop-flag polarity closed
+// exactly the 3 charges AT that site and left the other 3 untouched at their
+// original indices; GemPlayer::LocalSetEnabledState -- all 3 charges sat at
+// one site and all 3 closed together.  Charges close where their cause is;
+// they do not dissolve at a distance.)
+//
+// TWO REAL DEFECTS LOCATED HERE, both still open, for whoever funds the 13:
+//   1. idx 580 and 639: retail loads a static (`lis r10, lbl_82C72830@h`)
+//      where we `bl ?Localize@@YAPBDVSymbol@@PA_N@Z`.  Retail does not call
+//      Localize at these two sites at all.
+//   2. idx 798-799: retail dispatches off ONE unsigned compare --
+//      `lwz r11,0x1c(r30); cmplwi cr6,r11,0x1; blt (==0); bne (exit); (==1)`
+//      -- i.e. a SWITCH on mMode (0x1c) with cases 0 and 1.  We emit a signed
+//      `cmpwi cr6,r11,0x0; beq`, i.e. an if/else chain that re-compares.
 void SaveLoadManager::SetState(State newState) {
     if (mState == newState) return;
 
@@ -716,7 +754,7 @@ void SaveLoadManager::SetState(State newState) {
     case 0x3e:
         if (newState != (State)0x6b) {
             if (mData != NULL) {
-                _MemFree(mData);
+                MemFree(mData);
                 mData = NULL;
             }
         }
@@ -732,7 +770,7 @@ void SaveLoadManager::SetState(State newState) {
         break;
     case 0x6b:
         if (mData != NULL) {
-            _MemFree(mData);
+            MemFree(mData);
             mData = NULL;
         }
         break;

@@ -1,0 +1,78 @@
+{
+ "provenance": {
+  "commit": "7e9c2d01",
+  "lane": "W17-FAMILYSWEEP",
+  "doc": "docs/decomp/w17-familysweep.md",
+  "measured": "graded +1652 B / +3 fns; functionRelocDiffs=none control +792 B (predicted +792, EXACT)",
+  "why": "The none/graded split localises +580 B of the graded gain to FOUR ROWS NOT IN THE PATCH. Those four rows, with these exact byte values, are the frozen known-answer test for any cascade pricer."
+ },
+ "edits": {
+  "0x82456190": {
+   "old": "?_M_insert@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@PAVFaderGroup@@U?$_SetTraitsT@PAVFaderGroup@@@priv@stlpmtx_std@@@2@PAU_Rb_tree_node_base@2@ABQAVFaderGroup@@00@Z",
+   "new": "?_M_insert@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIVMeshInfo@RndText@@@2@U?$_Select1st@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBIVMeshInfo@RndText@@@2@00@Z"
+  },
+  "0x824563d8": {
+   "old": "?insert_unique@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@PAVFaderGroup@@U?$_SetTraitsT@PAVFaderGroup@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABQAVFaderGroup@@@Z",
+   "new": "?insert_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIVMeshInfo@RndText@@@2@U?$_Select1st@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBIVMeshInfo@RndText@@@2@@Z"
+  },
+  "0x824566e8": {
+   "old": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVAward@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBVSymbol@@PAVAward@@@2@@Z",
+   "new": "?insert_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIVMeshInfo@RndText@@@2@U?$_Select1st@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBIVMeshInfo@RndText@@@2@@Z"
+  },
+  "0x824730e8": {
+   "old": "?_M_insert@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@2@U?$_Select1st@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBGPAUCharInfo@RndFont3d@@@2@00@Z",
+   "new": "?_M_insert@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBGUCharInfo@RndFont@@@2@00@Z"
+  },
+  "0x824731c0": {
+   "old": "?_M_copy@?$_Rb_tree@PAVCharClip@@U?$less@PAVCharClip@@@stlpmtx_std@@U?$pair@QAVCharClip@@M@3@U?$_Select1st@U?$pair@QAVCharClip@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVCharClip@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVCharClip@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z",
+   "new": "?_M_copy@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z"
+  },
+  "0x824732b8": {
+   "old": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@2@U?$_Select1st@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBGPAUCharInfo@RndFont3d@@@2@@Z",
+   "new": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBGUCharInfo@RndFont@@@2@@Z"
+  },
+  "0x82473630": {
+   "old": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@2@U?$_Select1st@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBGPAUCharInfo@RndFont3d@@@2@@Z",
+   "new": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBGUCharInfo@RndFont@@@2@@Z"
+  },
+  "0x824742e8": {
+   "old": "??A?$map@GPAUCharInfo@RndFont3d@@U?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAPAUCharInfo@RndFont3d@@ABG@Z",
+   "new": "??A?$map@GUCharInfo@RndFont@@U?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAAAUCharInfo@RndFont@@ABG@Z"
+  },
+  "0x824f9288": {
+   "old": "?_M_copy@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z",
+   "new": "?_M_copy@?$_Rb_tree@VString@@U?$less@VString@@@stlpmtx_std@@U?$pair@$$CBVString@@VDataNode@@@3@U?$_Select1st@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z"
+  },
+  "0x82597098": {
+   "old": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+   "new": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSetlistRecord@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ"
+  },
+  "0x82472df0": {
+   "old": "fn_82472DF0",
+   "new": "?_M_create_node@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBGUCharInfo@RndFont@@@2@@Z"
+  }
+ },
+ "cascade": [
+  {
+   "row": "?SupportChar@RndText@@QAAPAVRndFont@@GPAV2@@Z",
+   "unit": "default/Text",
+   "bytes": 212
+  },
+  {
+   "row": "?CharAdvance@RndFont@@UBAMG@Z",
+   "unit": "default/Font",
+   "bytes": 76
+  },
+  {
+   "row": "?CharWidth@RndFont@@UBAMG@Z",
+   "unit": "default/Font",
+   "bytes": 52
+  },
+  {
+   "row": "??0?$_Rb_tree@VString@@U?$less@VString@@@stlpmtx_std@@U?$pair@$$CBVString@@VDataNode@@@3@U?$_Select1st@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@ABV01@@Z",
+   "unit": "default/RockCentral",
+   "bytes": 240
+  }
+ ],
+ "cascade_total": 580
+}

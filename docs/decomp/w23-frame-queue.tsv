@@ -1,0 +1,318 @@
+prize	tgt_size	funclet_bytes	funclets	fuzzy	mpn	tgt_frame	base_frame	delta	direction	verdict	hard	name	reg	imm	unit	symbol
+8068	8068	0	0	70.524	72.235	0x190	0x100	144	RETAIL_BIGGER	UNTRIAGED					default/DataFunc	?DataInitFuncs@@YAXXZ
+3852	3452	400	10	88.191	88.968	0x250	0x260	-16	OURS_BIGGER	NAME-BLOCKED	100	3	100	78	default/Mesh	?Load@RndMesh@@UAAXAAVBinStream@@@Z
+3548	3388	160	4	93.826	94.623	0x1d0	0x1c0	16	RETAIL_BIGGER	NAME-BLOCKED	50	10	109	6	default/VocalPlayer	?Poll@VocalPlayer@@UAAXMABVSongPos@@@Z
+3372	3092	280	7	84.713	86.485	0x210	0x230	-32	OURS_BIGGER	NAME-BLOCKED	133	5	214	55	default/system/obj/Dir	?PreLoad@ObjectDir@@UAAXAAVBinStream@@@Z
+3320	3320	0	0	94.176	95.055	0x3d0	0x370	96	RETAIL_BIGGER	COLLECTABLE	43	0	113	56	default/TexRenderer	?DrawToTexture@RndTexRenderer@@QAAXXZ
+2880	2880	0	0	94.026	95.36	0x280	0x270	16	RETAIL_BIGGER	NAME-BLOCKED	34	2	79	15	default/FileMerger	?IKElbow@CharIKHand@@IAAXPAVRndTransformable@@0@Z
+2584	2584	0	0	35.361	36.715	0xc0	0xb0	16	RETAIL_BIGGER	UNTRIAGED					default/Accomplishment	?Configure@Accomplishment@@QAAXPAVDataArray@@@Z
+2516	2436	80	2	95.585	96.011	0x220	0x230	-16	OURS_BIGGER	COLLECTABLE	25	0	30	38	default/Part	?Load@RndParticleSys@@UAAXAAVBinStream@@@Z
+2492	2492	0	0	57.958	61.096	0x110	0x140	-48	OURS_BIGGER	UNTRIAGED					default/Part	?InitParticle@RndParticleSys@@IAAXMPAVRndParticle@@PBVTransform@@AAVPartOverride@@@Z
+2192	2072	120	3	86.981	88.38	0x260	0x230	48	RETAIL_BIGGER	NAME-BLOCKED	61	1	97	57	default/Crowd	?DrawShowing@WorldCrowd@@UAAXXZ
+2188	2188	0	0	90.45	91.592	0x110	0x130	-32	OURS_BIGGER	NAME-BLOCKED	49	5	76	10	default/VocalTrack	?RebuildHUD@VocalTrack@@QAAXXZ
+2104	2104	0	0	32.73	35.268	0x220	0x1a0	128	RETAIL_BIGGER	UNTRIAGED					default/SpotlightDrawer_NG	?SetupXSection@NgSpotlightDrawer@@IAAXPAVSpotlight@@ABUBeamDef@2@@Z
+2020	1980	40	1	86.804	88.895	0x1c0	0x1d0	-16	OURS_BIGGER	NAME-BLOCKED	57	2	139	26	default/system/rndobj/Utl	?ResetNormals@@YAXPAVRndMesh@@@Z
+1936	1936	0	0	15.579	17.428	0xf0	0xe0	16	RETAIL_BIGGER	UNTRIAGED					default/Shader	?CalcShaderOpts@RndShaderMultimesh@@MAA_KPAVNgMat@@W4ShaderType@@_N@Z
+1900	1620	280	7	85.694	86.756	0x140	0x170	-48	OURS_BIGGER	NAME-BLOCKED	58	9	57	38	default/Synapse_dsp	??0Synapse@0DSP@@QAA@M@Z
+1876	1836	40	1	83.675	85.386	0x1b0	0x1c0	-16	OURS_BIGGER	NAME-BLOCKED	71	9	118	17	default/VocalNoteList	?NotesDone@VocalNoteList@@QAAXABVTempoMap@@_N@Z
+1812	1692	120	3	89.012	90.123	0x190	0x1a0	-16	OURS_BIGGER	NAME-BLOCKED	46	1	69	20	default/BandWardrobe	?OnEnterVignette@BandWardrobe@@QAA?AVDataNode@@PAVDataArray@@@Z
+1688	1688	0	0	98.102	98.114	0x120	0x110	16	RETAIL_BIGGER	COLLECTABLE	8	0	1	35	default/BandDirector	?Enter@BandDirector@@UAAXXZ
+1684	1684	0	0	66.829	69.964	0x110	0x140	-48	OURS_BIGGER	UNTRIAGED					default/CharEyes	?NextLook@CharEyes@@IAAXXZ
+1644	1644	0	0	73.861	79.993	0xd0	0xb0	32	RETAIL_BIGGER	UNTRIAGED					default/CharBones	?RotateTo@CharBones@@QBAXAAV1@M@Z
+1644	980	664	16	45.045	46.106	0xf0	0x140	-80	OURS_BIGGER	UNTRIAGED					default/band3/meta_band/BandStorePanel	?Poll@BandStorePanel@@UAAXXZ
+1532	1280	252	6	84.963	86.025	0xc0	0xe0	-32	OURS_BIGGER	NAME-BLOCKED	50	3	54	44	default/Part	??0RndParticleSys@@IAA@XZ
+1480	1440	40	1	60.383	62.369	0x110	0x120	-16	OURS_BIGGER	UNTRIAGED					default/Character	?PostLoad@Character@@UAAXAAVBinStream@@@Z
+1428	1348	80	2	89.306	89.795	0x220	0x210	16	RETAIL_BIGGER	COLLECTABLE	38	0	23	37	default/Leaderboard	?ShowData@Leaderboard@@QAAXXZ
+1420	1420	0	0	86.065	91.91	0xc0	0xb0	16	RETAIL_BIGGER	NAME-BLOCKED	30	2	216	5	default/CharBones	?RotateBy@CharBones@@QBAXAAV1@@Z
+1396	1396	0	0	99.289	99.304	0xf0	0x100	-16	OURS_BIGGER	NAME-BLOCKED	2	1	0	43	default/OvershellSlot	?OnMsg@OvershellSlot@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z
+1352	1192	160	4	79.587	79.604	0xd0	0xe0	-16	OURS_BIGGER	UNTRIAGED					default/StorePanel	?Handle@StorePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z
+1348	1348	0	0	4.786	5.172	0x8f0	0x80	2160	RETAIL_BIGGER	UNTRIAGED					default/FlowNode	??$__uninitialized_fill_n@PAVDrivenPropertyEntry@@IV1@@stlpmtx_std@@YAPAVDrivenPropertyEntry@@PAV1@IABV1@ABU__false_type@0@@Z
+1344	1104	240	6	99.772	99.953	0xe0	0x120	-64	OURS_BIGGER	NAME-BLOCKED	0	10	0	13	default/BandCrowdMeter	?SyncObjects@BandCrowdMeter@@UAAXXZ
+1340	1340	0	0	93.11	93.946	0x1b0	0x1e0	-48	OURS_BIGGER	COLLECTABLE	21	0	39	20	default/Spotlight	?UpdateTransforms@Spotlight@@IAAXXZ
+1324	1324	0	0	66.32	68.36	0x1d0	0x1b0	32	RETAIL_BIGGER	UNTRIAGED					default/SpotlightDrawer_NG	?RenderConeDefs@NgSpotlightDrawer@@IAAXPAVSpotlight@@ABVColor@Hmx@@@Z
+1312	1312	0	0	32.659	34.229	0xc0	0xd0	-16	OURS_BIGGER	UNTRIAGED					default/Rnd_Xbox	?InitBuffers@DxRnd@@AAAXXZ
+1292	1292	0	0	68.248	69.981	0xa0	0x90	16	RETAIL_BIGGER	UNTRIAGED					default/MusicLibrary	?Text@MusicLibrary@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z
+1260	892	368	8	85.942	87.018	0x130	0x120	16	RETAIL_BIGGER	NAME-BLOCKED	32	5	32	5	default/File	?RecursePatternInternal@@YAXPBDP6AX00@Z_N2@Z
+1236	1236	0	0	50.032	54.272	0x100	0x120	-32	OURS_BIGGER	UNTRIAGED					default/Lit_NG	?SphereConeTest@NgLight@@IAA_NABVVector3@@M@Z
+1232	1192	40	1	94.671	96.903	0x150	0x120	48	RETAIL_BIGGER	NAME-BLOCKED	10	2	108	3	default/Mesh	?OnSync@RndMesh@@MAAXH@Z
+1200	1200	0	0	55.08	57.93	0x1d0	0x1b0	32	RETAIL_BIGGER	UNTRIAGED					default/FFT	?fft_matrix_forward_columnwise@@YAHPAMJ0@Z
+1192	1192	0	0	95.074	95.493	0xe0	0xf0	-16	OURS_BIGGER	NAME-BLOCKED	15	2	22	2	default/OutfitConfig	?SetSkinTextures@OutfitConfig@@SAXPAVObjectDir@@0PAVBandCharDesc@@@Z
+1168	1168	0	0	8.908	9.216	0x100	0xa0	96	RETAIL_BIGGER	UNTRIAGED					default/BandLabel	?PreLoad@BandLabel@@UAAXAAVBinStream@@@Z
+1164	1164	0	0	6.725	8.701	0x100	0x170	-112	OURS_BIGGER	UNTRIAGED					default/VocalTrackDir	?ApplyFontStyle@VocalTrackDir@@QAAXPAVObject@Hmx@@@Z
+1160	1160	0	0	73.386	75.852	0x170	0x9d0	-2144	OURS_BIGGER	UNTRIAGED					default/VocalTrack	?PrepareNoteTubes@VocalTrack@@QAAXMHAAHH@Z
+1160	1160	0	0	84.131	85.855	0x190	0x1a0	-16	OURS_BIGGER	COLLECTABLE	43	0	32	2	default/FFT	?fft_matrix_inverse_columnwise@@YAHPAMJ0@Z
+1160	1160	0	0	5.593	5.972	0x140	0x80	192	RETAIL_BIGGER	UNTRIAGED					default/MatAnim	??$_M_allocate_and_copy@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VColor@Hmx@@@@IPBV2@0@Z
+1156	1156	0	0	32.073	35.498	0xe0	0xf0	-16	OURS_BIGGER	UNTRIAGED					default/PropSync	?PropSync@@YA_NAAVMatrix3@Hmx@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z
+1148	1148	0	0	95.564	95.913	0xc0	0xd0	-16	OURS_BIGGER	NAME-BLOCKED	12	2	8	53	default/CameraShot	?Shake@CamShot@@IAAXMMABVVector2@@AAVVector3@@1@Z
+1144	1104	40	1	87.692	87.891	0xc0	0xd0	-16	OURS_BIGGER	COLLECTABLE	34	0	9	20	default/band3/meta_band/UGCPurchasePanel	?Poll@UGCPurchasePanel@@UAAXXZ
+1124	1124	0	0	98.527	98.918	0x130	0x120	16	RETAIL_BIGGER	COLLECTABLE	3	0	21	2	default/Flare	?DrawShowing@RndFlare@@UAAXXZ
+1116	1116	0	0	78.136	78.53	0xb0	0xa0	16	RETAIL_BIGGER	UNTRIAGED					default/system/bandobj/BandTrack	?Reset@BandTrack@@UAAXXZ
+1088	1088	0	0	91.577	91.945	0xc0	0xb0	16	RETAIL_BIGGER	NAME-BLOCKED	24	2	14	28	default/CharBonesSamples	?Save@CharBonesSamples@@QAAXAAVBinStream@@@Z
+1056	1056	0	0	39.633	41.905	0xb0	0xc0	-16	OURS_BIGGER	UNTRIAGED					default/Shader	?CalcShaderOpts@RndShaderFur@@MAA_KPAVNgMat@@W4ShaderType@@_N@Z
+1040	696	344	8	96.437	96.81	0x160	0x150	16	RETAIL_BIGGER	COLLECTABLE	6	0	13	35	default/NetCacheMgr	?AddLoaderRef@NetCacheMgr@@IAAPAUNetLoaderRef@@PBDW4RefType@1@W4NetLoaderPos@@@Z
+1024	1024	0	0	92.723	94.441	0xa0	0xb0	-16	OURS_BIGGER	COLLECTABLE	15	0	51	2	default/Mic	?Poll@MicXbox@@QAAXXZ
+1020	1020	0	0	76.408	78.035	0x140	0x130	16	RETAIL_BIGGER	UNTRIAGED					default/PatchDir	?Draw@PatchLayer@@QAAXXZ
+1012	932	80	2	69.382	69.94	0xb0	0xc0	-16	OURS_BIGGER	UNTRIAGED					default/ContentMgr_Xbox	?StartRefresh@XboxContentMgr@@UAAXXZ
+1012	1012	0	0	29.877	31.518	0x170	0x110	96	RETAIL_BIGGER	UNTRIAGED					default/Crowd	?Draw3DChars@WorldCrowd@@IAAXXZ
+976	976	0	0	99.012	99.156	0xe0	0xf0	-16	OURS_BIGGER	NAME-BLOCKED	2	2	5	6	default/Line	?SetNumPoints@RndLine@@QAAXH@Z
+972	972	0	0	99.436	99.436	0x1c0	0x1b0	16	RETAIL_BIGGER	COLLECTABLE	2	0	0	17	default/MidiReader	?ReadMetaEvent@MidiReader@@AAAXHEAAVBinStream@@@Z
+964	964	0	0	84.174	87.805	0xd0	0xc0	16	RETAIL_BIGGER	NAME-BLOCKED	34	2	106	4	default/Spotlight	?BuildNGQuad@Spotlight@@IAAXAAUBeamDef@1@W4Constraint@RndTransformable@@@Z
+948	948	0	0	35.384	37.852	0xc0	0xb0	16	RETAIL_BIGGER	UNTRIAGED					default/Scheduler	??0Scheduler@Quazal@@QAA@EPAVSchedulerWorkerThread@01@@Z
+944	904	40	1	79.341	79.54	0xf0	0xd0	32	RETAIL_BIGGER	UNTRIAGED					default/Spotlight	?DrawShowing@Spotlight@@UAAXXZ
+904	904	0	0	85.102	86.894	0x110	0x140	-48	OURS_BIGGER	NAME-BLOCKED	32	5	64	2	default/BandCharacter	?OnInstallFilter@BandCharacter@@QAA?AVDataNode@@PAVDataArray@@@Z
+896	896	0	0	47.183	48.634	0xd0	0xc0	16	RETAIL_BIGGER	UNTRIAGED					default/BandCharacter	?PlayMainClip@BandCharacter@@QAAPAVCharClipDriver@@H_N@Z
+872	872	0	0	66.858	69.977	0xa0	0xb0	-16	OURS_BIGGER	UNTRIAGED					default/StandardStream	?InitInfo@StandardStream@@QAAXHH_NH@Z
+868	828	40	1	55.961	58.039	0x110	0xf0	32	RETAIL_BIGGER	UNTRIAGED					default/BandWardrobe	?FindBestScoringHint@BandWardrobe@@QAAHPAVSymbol@@PAVSlotInfo@1@AAH@Z
+864	824	40	1	0	1.068	0xd0	0xf0	-32	OURS_BIGGER	UNTRIAGED					default/ContentMgr_Xbox	?PollRefresh@XboxContentMgr@@UAAXXZ
+844	596	248	6	81.322	81.691	0x80	0x90	-16	OURS_BIGGER	COLLECTABLE	32	0	11	6	default/Gen	??0RndGenerator@@IAA@XZ
+792	792	0	0	56.106	56.586	0xb0	0xd0	-32	OURS_BIGGER	UNTRIAGED					default/UI	?Poll@UIManager@@UAAXXZ
+792	792	0	0	5.667	6.02	0x200	0x70	400	RETAIL_BIGGER	UNTRIAGED					default/File	FileMakePath
+780	780	0	0	95.682	95.887	0xb0	0xc0	-16	OURS_BIGGER	NAME-BLOCKED	8	3	4	2	default/PropSync	?DrawShowing@WorldDir@@UAAXXZ
+776	616	160	4	59.396	59.851	0xc0	0xd0	-16	OURS_BIGGER	UNTRIAGED					default/StreakMeter	?PreLoad@StreakMeter@@UAAXAAVBinStream@@@Z
+776	776	0	0	90.856	92.505	0xf0	0x120	-48	OURS_BIGGER	COLLECTABLE	15	0	47	31	default/CharMeshHide	?UpdateOverlay@Synth@@UAAMPAVRndOverlay@@M@Z
+772	772	0	0	90.668	91.834	0xf0	0x100	-16	OURS_BIGGER	NAME-BLOCKED	16	1	38	9	default/VocalTrack	?UpdateTubePlates@VocalTrack@@QAAXAAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@MM_N@Z
+768	728	40	1	50.918	52.291	0x120	0xc0	96	RETAIL_BIGGER	UNTRIAGED					default/system/rnddx9/ShaderMgr	?Compile@DxShader@@MAA_NW4ShaderType@@ABUShaderOptions@@AAPAVRndShaderBuffer@@2@Z
+764	764	0	0	64.387	67.293	0x130	0xc0	112	RETAIL_BIGGER	UNTRIAGED					default/Lit	?Projection@RndLight@@QAA?AVTransform@@XZ
+756	756	0	0	99.344	99.741	0x150	0x190	-64	OURS_BIGGER	COLLECTABLE	0	0	9	49	default/system/rndobj/Utl	?UtilDrawPlane@@YAXABVPlane@@ABVVector3@@ABVColor@Hmx@@HM_N@Z
+744	744	0	0	13.306	14.086	0x90	0x70	32	RETAIL_BIGGER	UNTRIAGED					default/LightPreset	?Copy@RhythmDetector@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z
+740	740	0	0	76.908	78.178	0xf0	0xe0	16	RETAIL_BIGGER	UNTRIAGED					default/DOFProc_NG	?SetVHBlurWeights@@YAX_NHH@Z
+736	736	0	0	0	1.902	0xb0	0x100	-80	OURS_BIGGER	UNTRIAGED					default/ByteGrinder	?SyncProperty@SkeletonClip@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z
+712	712	0	0	67.955	69.079	0xb0	0xa0	16	RETAIL_BIGGER	UNTRIAGED					default/MicInputArrow	?Handle@MicInputArrow@@UAA?AVDataNode@@PAVDataArray@@_N@Z
+708	708	0	0	0	2.966	0xb0	0x1f0	-320	OURS_BIGGER	UNTRIAGED					default/GemPlayer	??0GemPlayer@@QAA@PAVBandUser@@PAVBeatMaster@@PAVBand@@HPAVBandPerformer@@@Z
+696	616	80	2	65.955	66.247	0xb0	0xe0	-48	OURS_BIGGER	UNTRIAGED					default/TourDescPanel	?Mat@TourDescProvider@@UBAPAVRndMat@@HHPAVUIListMesh@@@Z
+696	696	0	0	91.052	92.0	0x1a0	0x1b0	-16	OURS_BIGGER	COLLECTABLE	14	0	26	22	default/Mesh	?CollideShowing@RndMesh@@UAAPAVRndDrawable@@ABVSegment@@AAMAAVPlane@@@Z
+692	648	44	1	44.253	46.259	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/SongInfoCopy	??0SongInfoCopy@@QAA@XZ
+660	660	0	0	66.109	68.776	0x180	0x140	64	RETAIL_BIGGER	UNTRIAGED					default/SoftParticleBuffer	?BlurSurface@RndSoftParticleBuffer@@AAAXXZ
+652	652	0	0	95.718	96.761	0xf0	0xe0	16	RETAIL_BIGGER	NAME-BLOCKED	6	3	27	8	default/BandCrowdMeter	?Poll@BandCrowdMeter@@UAAXXZ
+652	652	0	0	49.399	50.38	0xb0	0xa0	16	RETAIL_BIGGER	UNTRIAGED					default/Rnd_Xbox	?FinishPostProcess@DxRnd@@AAAXXZ
+648	648	0	0	84.981	85.352	0xa0	0xb0	-16	OURS_BIGGER	NAME-BLOCKED	24	1	9	7	default/BaseMaterial	??0RndMat@@IAA@XZ
+644	564	80	2	32.965	35.411	0xe0	0xf0	-16	OURS_BIGGER	UNTRIAGED					default/Anim	?SyncObjects@RndDir@@UAAXXZ
+636	636	0	0	96.302	97.465	0xc0	0xd0	-16	OURS_BIGGER	NAME-BLOCKED	4	2	22	3	default/BandCharDesc	?CopyCharDesc@BandCharDesc@@QAAXPBV1@@Z
+632	632	0	0	2.095	3.013	0x1b0	0xb0	256	RETAIL_BIGGER	UNTRIAGED					default/DirLoader	?OpenFile@DirLoader@@AAAXXZ
+632	464	168	4	38.638	39.888	0xb0	0x1c0	-272	OURS_BIGGER	UNTRIAGED					default/DirLoader	??0DirLoader@@QAA@ABVFilePath@@W4LoaderPos@@PAVCallback@Loader@@PAVBinStream@@PAVObjectDir@@_N@Z
+616	616	0	0	96.279	96.701	0x1120	0x1130	-16	OURS_BIGGER	NAME-BLOCKED	5	2	10	8	default/StandardStream	?ConsumeData@StandardStream@@QAAHPAPAXHH@Z
+604	604	0	0	61.43	63.119	0xa0	0x80	32	RETAIL_BIGGER	UNTRIAGED					default/BandDirector	?EnterVenue@BandDirector@@QAAXXZ
+572	572	0	0	72.392	74.769	0xc0	0xe0	-32	OURS_BIGGER	UNTRIAGED					default/system/rndobj/Utl	?BuildFromBSP@@YAXPAVRndMesh@@@Z
+556	556	0	0	96.489	96.957	0xb0	0xa0	16	RETAIL_BIGGER	NAME-BLOCKED	5	2	9	2	default/Spotlight	?Poll@Spotlight@@UAAXXZ
+556	516	40	1	92.349	94.364	0x120	0x110	16	RETAIL_BIGGER	NAME-BLOCKED	8	3	44	3	default/Archive	?Merge@Archive@@QAAXAAV1@@Z
+552	552	0	0	8.413	8.884	0xa0	0x90	16	RETAIL_BIGGER	UNTRIAGED					default/CameraShot	?StartAnim@CamShot@@UAAXXZ
+544	544	0	0	38.559	40.581	0xa0	0xb0	-16	OURS_BIGGER	UNTRIAGED					default/Shader	?CalcShaderOpts@RndShaderParticles@@MAA_KPAVNgMat@@W4ShaderType@@_N@Z
+544	544	0	0	48.169	48.831	0x90	0xa0	-16	OURS_BIGGER	UNTRIAGED					default/NetworkEmulator	??0NetworkEmulator@@QAA@XZ
+528	528	0	0	82.402	82.553	0x90	0xa0	-16	OURS_BIGGER	NAME-BLOCKED	23	2	1	3	default/VocalTrackDir	?SetConfiguration@VocalTrackDir@@QAAXPAVObject@Hmx@@W4HarmonyShowingState@1@@Z
+524	484	40	1	98.017	98.306	0xf0	0xe0	16	RETAIL_BIGGER	NAME-BLOCKED	2	1	6	5	default/MidiParser	?PushIdle@MidiParser@@AAAXMMHVSymbol@@@Z
+520	520	0	0	49.777	56.123	0x120	0xf0	48	RETAIL_BIGGER	UNTRIAGED					default/BoxMap	?ApplyQueuedLights@BoxMapLighting@@QBAXPIAVColor@Hmx@@PBVVector3@@@Z
+512	512	0	0	0	2.773	0xa0	0xb0	-16	OURS_BIGGER	UNTRIAGED					default/QuestFilterPanel	?Text@QuestFilterProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z
+512	424	88	2	68.387	70.415	0x80	0x90	-16	OURS_BIGGER	UNTRIAGED					default/CameraShot	??0CamShotFrame@@QAA@PAVObject@Hmx@@@Z
+508	428	80	2	98.944	98.944	0xa0	0x90	16	RETAIL_BIGGER	COLLECTABLE	1	0	0	13	default/network/net/NetSession	?Poll@NetSession@@UAAXXZ
+508	508	0	0	68.126	68.992	0xb0	0xd0	-32	OURS_BIGGER	UNTRIAGED					default/TrackWatcherImpl	?Load@RndParticleSysAnim@@UAAXAAVBinStream@@@Z
+500	500	0	0	18.92	21.0	0xe0	0xf0	-16	OURS_BIGGER	UNTRIAGED					default/AmbientOcclusion	?FindSplit_Mean@kdTreeNode@?$kdTree@VTriangle@@@@QAA_NABVBox@@ABV?$list@PAVTriangle@@V?$StlNodeAlloc@PAVTriangle@@@stlpmtx_std@@@stlpmtx_std@@@Z
+492	492	0	0	72.789	74.415	0x90	0xa0	-16	OURS_BIGGER	UNTRIAGED					default/VelocityBuffer	?DrawMesh@RndVelocityBuffer@@QBAXPAVRndMesh@@@Z
+480	480	0	0	67.25	69.542	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/ProfileMgr	?LoadGlobalOptions@ProfileMgr@@QAAXAAVFixedSizeSaveableStream@@@Z
+472	472	0	0	54.381	55.907	0xb0	0x90	32	RETAIL_BIGGER	UNTRIAGED					default/band3/meta_band/SongSort	?GetUserFontChar@@YAPBDPAVBandUser@@PAVMetaPerformer@@H@Z
+460	460	0	0	89.557	90.6	0xc0	0xb0	16	RETAIL_BIGGER	COLLECTABLE	11	0	17	15	default/RockCentral	?DataPointToQString@RockCentral@@SAXABVDataPoint@@AAVString@Quazal@@@Z
+460	460	0	0	92.374	92.635	0xa0	0x90	16	RETAIL_BIGGER	NAME-BLOCKED	11	2	3	2	default/Mesh	?SaveVertices@RndMesh@@UAAXAAVBinStream@@@Z
+460	460	0	0	20.93	21.843	0x290	0xb0	480	RETAIL_BIGGER	UNTRIAGED					default/HAQManager	?GetButtonText@HAQManager@@ABA?AVString@@XZ
+456	224	232	5	69.571	69.929	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/CharNeckTwist	??0CharNeckTwist@@IAA@XZ
+444	400	44	1	93.75	95.15	0xc0	0xb0	16	RETAIL_BIGGER	NAME-BLOCKED	6	2	24	5	default/system/synth_xbox/Synth	?_M_insert_overflow_aux@?$vector@UXAUDIO2_SEND_DESCRIPTOR@@V?$StlNodeAlloc@UXAUDIO2_SEND_DESCRIPTOR@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUXAUDIO2_SEND_DESCRIPTOR@@ABU3@ABU__false_type@2@I_N@Z
+440	440	0	0	60.491	62.582	0xe0	0xf0	-16	OURS_BIGGER	UNTRIAGED					default/system/obj/Dir	?Iterate@ObjectDir@@IAAXPAVDataArray@@_N@Z
+440	440	0	0	99.955	99.955	0x90	0xa0	-16	OURS_BIGGER	COLLECTABLE	0	0	0	5	default/SampleData	?Load@SampleData@@QAAXAAVBinStream@@ABVFilePath@@@Z
+436	436	0	0	23.073	23.945	0xb0	0x70	64	RETAIL_BIGGER	UNTRIAGED					default/PlayerLeaderboards	?OnSelectRow@PlayerLeaderboard@@UAA?AVSymbol@@HPAVBandUser@@@Z
+428	428	0	0	10.486	11.327	0x280	0x70	528	RETAIL_BIGGER	UNTRIAGED					default/OSCMessenger	?MakeOSCAddress@OSCMessenger@@AAAHVString@@PAD@Z
+428	428	0	0	51.056	53.112	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/UISlider	?PostLoad@PanelDir@@UAAXAAVBinStream@@@Z
+424	424	0	0	85.425	85.991	0xa0	0xb0	-16	OURS_BIGGER	NAME-BLOCKED	16	2	4	5	default/system/rndobj/Rnd	?UpdateRate@Rnd@@IAAXXZ
+420	420	0	0	0	2.048	0xa0	0x100	-96	OURS_BIGGER	UNTRIAGED					default/system/utl/SongInfoAudioType	?SymbolToAudioType@@YA?AW4SongInfoAudioType@@VSymbol@@@Z
+420	420	0	0	66.314	67.838	0x1490	0xc70	2080	RETAIL_BIGGER	UNTRIAGED					default/MapFile_Xbox	?GetFunction@XboxMapFile@@QAAPBDI_N@Z
+416	416	0	0	0	2.548	0x80	0xd0	-80	OURS_BIGGER	UNTRIAGED					default/Character	?DrawShowing@Character@@UAAXXZ
+412	412	0	0	0	2.476	0x90	0xe0	-80	OURS_BIGGER	UNTRIAGED					default/band3/meta_band/ManageBandPanel	?RefreshAll@ManageBandPanel@@QAAXXZ
+404	404	0	0	81.812	83.297	0xb0	0xc0	-16	OURS_BIGGER	NAME-BLOCKED	20	5	21	6	default/SongCollision	?_M_insert_overflow_aux@?$vector@USongCollisionOutput@@V?$StlNodeAlloc@USongCollisionOutput@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUSongCollisionOutput@@ABU3@ABU__false_type@2@I_N@Z
+404	404	0	0	85.208	86.644	0xc0	0xb0	16	RETAIL_BIGGER	NAME-BLOCKED	17	4	21	6	default/GemPlayer	?_M_insert_overflow_aux@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVUpcomingFretRelease@GemPlayer@@ABV34@ABU__false_type@2@I_N@Z
+404	404	0	0	85.158	86.644	0xc0	0xb0	16	RETAIL_BIGGER	NAME-BLOCKED	17	5	21	6	default/SongParser	?_M_insert_overflow_aux@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@HH@2@ABU32@ABU__false_type@2@I_N@Z
+404	404	0	0	70.624	72.257	0xa0	0x80	32	RETAIL_BIGGER	UNTRIAGED					default/GameConfig	?GetController@GameConfig@@QBA?AVSymbol@@PAVBandUser@@@Z
+400	400	0	0	99.83	99.93	0xa0	0x90	16	RETAIL_BIGGER	COLLECTABLE	0	0	2	7	default/Geo	?GeoInit@@YAXXZ
+400	400	0	0	53.54	55.29	0x1d0	0x210	-64	OURS_BIGGER	UNTRIAGED					default/BandSongMgr	?ReadCachedMetadataFromStream@BandSongMgr@@UAAXAAVBinStream@@H@Z
+396	356	40	1	33.292	36.326	0x90	0xd0	-64	OURS_BIGGER	UNTRIAGED					default/Tex	?SetBitmap@RndTex@@QAAXPAVFileLoader@@@Z
+392	392	0	0	94.367	95.949	0xe0	0xc0	32	RETAIL_BIGGER	NAME-BLOCKED	6	7	18	9	default/HamCamTransform	?_M_fill_insert_aux@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$ObjOwnerPtr@VCharClip@@@@IABV3@ABU__false_type@2@@Z
+392	392	0	0	87.745	89.224	0xc0	0xd0	-16	OURS_BIGGER	NAME-BLOCKED	13	5	18	8	default/SongLayout	?_M_fill_insert_aux@?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSongPattern@@IABV3@ABU__false_type@2@@Z
+388	388	0	0	91.412	91.722	0xb0	0xa0	16	RETAIL_BIGGER	NAME-BLOCKED	8	1	4	3	default/Object	?Property@Object@Hmx@@QBAPBVDataNode@@PAVDataArray@@_N@Z
+388	388	0	0	79.773	82.969	0x150	0x160	-16	OURS_BIGGER	UNTRIAGED					default/HamIKEffector	?ApplyPosConstraints@HamIKEffector@@IAAMAAVVector3@@ABV2@PAV1@@Z
+384	384	0	0	46.01	47.469	0xb0	0x120	-112	OURS_BIGGER	UNTRIAGED					default/UIScreen	?Enter@UIScreen@@UAAXPAV1@@Z
+384	384	0	0	14.365	16.917	0xd0	0x90	64	RETAIL_BIGGER	UNTRIAGED					default/PreloadPanel	?Load@PreloadPanel@@UAAXXZ
+384	384	0	0	68.927	69.865	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/TrackDir	?SetupKeyShifting@TrackDir@@QAAXPAVRndDir@@@Z
+380	380	0	0	67.989	68.147	0xd0	0xc0	16	RETAIL_BIGGER	UNTRIAGED					default/GemTrackDir	?SetPitch@GemTrackDir@@QAAXM@Z
+372	372	0	0	50.28	51.516	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/BandWardrobe	?ValidGenreGender@BandWardrobe@@QAA_NPAVCamShot@@@Z
+360	360	0	0	92.967	93.911	0xa0	0xb0	-16	OURS_BIGGER	UNTRIAGED					default/TourDescPanel	?LoadIcons@TourDescPanel@@QAAXXZ
+360	360	0	0	59.922	62.2	0xa0	0x90	16	RETAIL_BIGGER	UNTRIAGED					default/OutfitConfig	?PropSync@@YA_NAAVMeshAO@OutfitConfig@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z
+356	356	0	0	96.371	97.719	0xf0	0x100	-16	OURS_BIGGER	UNTRIAGED					default/LightPreset	??$PropSync@USpotlightEntry@LightPreset@@@@YA_NAAV?$ObjVector@USpotlightEntry@LightPreset@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z
+356	356	0	0	23.326	24.843	0xc0	0x80	64	RETAIL_BIGGER	UNTRIAGED					default/Overlay	?erase@?$list@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VString@@U?$_Nonconst_traits@VString@@@stlpmtx_std@@@2@U32@0@Z
+356	356	0	0	10.506	12.191	0x70	0xd0	-96	OURS_BIGGER	UNTRIAGED					default/Group	?Load@RndGroup@@UAAXAAVBinStream@@@Z
+352	312	40	1	20.846	23.346	0xa0	0xc0	-32	OURS_BIGGER	UNTRIAGED					default/CharClipDriver	?ExecuteEvent@CharClipDriver@@IAAXVSymbol@@@Z
+348	348	0	0	48.379	49.126	0x90	0xa0	-16	OURS_BIGGER	UNTRIAGED					default/CampaignSongInfoPanel	?Refresh@CampaignSongInfoPanel@@QAAXXZ
+340	340	0	0	0	1.118	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/StringTable	??0GlitchFinder@@QAA@XZ
+340	340	0	0	72.471	73.294	0xa0	0x90	16	RETAIL_BIGGER	UNTRIAGED					default/BandSongMetadata	?HasPart@BandSongMetadata@@QBA_NVSymbol@@@Z
+332	332	0	0	53.301	55.771	0xb0	0x80	48	RETAIL_BIGGER	UNTRIAGED					default/BandDirector	?GetModeInst@BandDirector@@QAA?AVSymbol@@V2@@Z
+328	328	0	0	77.805	79.024	0xe0	0x100	-32	OURS_BIGGER	UNTRIAGED					default/MeshAnim	?Load@RndMultiMesh@@UAAXAAVBinStream@@@Z
+328	328	0	0	38.183	39.402	0xc0	0x80	64	RETAIL_BIGGER	UNTRIAGED					default/SpotlightDrawer	?DrawShadow@SpotlightDrawer@@MAAXXZ
+328	328	0	0	6.89	8.902	0xa0	0x90	16	RETAIL_BIGGER	UNTRIAGED					default/Splash	??0Splash@@QAA@XZ
+328	328	0	0	84.22	86.171	0xc0	0xb0	16	RETAIL_BIGGER	UNTRIAGED					default/MetaMusic	?_M_insert_overflow_aux@?$vector@VDataArrayPtr@@V?$StlNodeAlloc@VDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVDataArrayPtr@@ABV3@ABU__false_type@2@I_N@Z
+324	324	0	0	19.136	19.815	0xc0	0x80	64	RETAIL_BIGGER	UNTRIAGED					default/SongLayout	??1?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ
+324	284	40	1	81.254	81.606	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/CharBoneOffset	??0CharBoneOffset@@IAA@XZ
+320	320	0	0	14.275	15.088	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/Mesh	??$__destroy_range@PAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@0@00@Z
+312	312	0	0	68.218	68.923	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/HDCache	?WriteDone@HDCache@@QAA_NXZ
+300	300	0	0	14.84	15.907	0x70	0x90	-32	OURS_BIGGER	UNTRIAGED					default/OvershellSlot	?AttemptRemoveUser@OvershellSlot@@QAAXXZ
+296	176	120	3	99.636	99.864	0xa0	0xb0	-16	OURS_BIGGER	UNTRIAGED					default/CharClip	?_M_insert_overflow_aux@?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@2@ABV32@ABU__true_type@2@I_N@Z
+292	292	0	0	50.068	54.795	0xa0	0xe0	-64	OURS_BIGGER	UNTRIAGED					default/CharBonesMeshes	?ReallocateInternal@CharBonesMeshes@@MAAXXZ
+292	292	0	0	92.767	93.041	0x1a0	0x1b0	-16	OURS_BIGGER	UNTRIAGED					default/Rnd_Xbox	?SetDefaultRenderStates@DxRnd@@QAAXXZ
+288	288	0	0	3.875	6.028	0x130	0x80	176	RETAIL_BIGGER	UNTRIAGED					default/CharPollGroup	??0CharPollGroup@@IAA@XZ
+284	244	40	1	61.787	63.344	0x90	0xb0	-32	OURS_BIGGER	UNTRIAGED					default/Spotlight	?Load@ColorPalette@@UAAXAAVBinStream@@@Z
+284	284	0	0	94.197	96.31	0xc0	0xb0	16	RETAIL_BIGGER	UNTRIAGED					default/Bitmap	?NearestColor@RndBitmap@@ABAEEEEE@Z
+284	284	0	0	0	3.169	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/Tour	??0Tour@@QAA@PAVDataArray@@ABVSongMgr@@AAVBandUserMgr@@_N@Z
+280	280	0	0	81.471	85.257	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/keygen_xbox	?getMasher@KeyChain@@YAXPAE@Z
+280	280	0	0	93.186	94.257	0x80	0x90	-16	OURS_BIGGER	UNTRIAGED					default/UIListWidget	?ScrollDirection@@YAHABVButtonDownMsg@@VSymbol@@_NH@Z
+280	280	0	0	82.757	83.971	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/UILabel	??4?$vector@ULabelStyle@UILabel@@V?$StlNodeAlloc@ULabelStyle@UILabel@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z
+280	280	0	0	51.3	52.443	0xa0	0xc0	-32	OURS_BIGGER	UNTRIAGED					default/ChecksumAlgorithm	?DeriveKey@ChecksumAlgorithm@Quazal@@QAA?AVKey@2@ABVBuffer@2@I@Z
+268	268	0	0	0	2.164	0xa0	0xb0	-16	OURS_BIGGER	UNTRIAGED					default/PracticeSection	?SyncProperty@PracticeSection@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z
+268	268	0	0	91.91	93.104	0x80	0x90	-16	OURS_BIGGER	UNTRIAGED					default/Tex	?SetBitmap@RndTex@@QAAXABVRndBitmap@@PBD_NW4Type@1@@Z
+264	264	0	0	20.621	23.045	0xa0	0x80	32	RETAIL_BIGGER	UNTRIAGED					default/TrackPanelDirBase	??4?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXABV0@@Z
+264	264	0	0	33.939	35.076	0x80	0x11b0	-4400	OURS_BIGGER	UNTRIAGED					default/Debug	?Fail@Debug@@QAAXPBDPAX@Z
+264	264	0	0	18.818	19.5	0x90	0x60	48	RETAIL_BIGGER	UNTRIAGED					default/MeshAnim	??6@YAAAVTextStream@@AAV0@PBVObject@Hmx@@@Z
+260	260	0	0	74.062	74.985	0xb0	0xa0	16	RETAIL_BIGGER	UNTRIAGED					default/FFT	?CalculateSinCosTable@@YAHJPAM@Z
+260	216	44	1	58.333	60.0	0x90	0xa0	-16	OURS_BIGGER	UNTRIAGED					default/Instance	?PostLoad@WorldInstance@@UAAXAAVBinStream@@@Z
+256	256	0	0	18.766	19.547	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/Console	?insert@?$list@UBreakpoint@RndConsole@@V?$StlNodeAlloc@UBreakpoint@RndConsole@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UBreakpoint@RndConsole@@U?$_Nonconst_traits@UBreakpoint@RndConsole@@@stlpmtx_std@@@2@U32@ABUBreakpoint@RndConsole@@@Z
+252	252	0	0	94.952	96.778	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/Mesh	?Add@PatchVerts@@QAAXHAAVVertVector@RndMesh@@AAVVector3@@@Z
+248	248	0	0	0	3.71	0xa0	0xc0	-32	OURS_BIGGER	UNTRIAGED					default/Line	?SyncProperty@RndLine@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z
+244	244	0	0	43.0	44.23	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/LabelNumberTicker	?PreLoad@LabelNumberTicker@@UAAXAAVBinStream@@@Z
+240	240	0	0	16.883	19.05	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/MeshAnim	?Load@RndMeshAnim@@UAAXAAVBinStream@@@Z
+236	236	0	0	48.153	49.424	0x90	0x70	32	RETAIL_BIGGER	UNTRIAGED					default/BandSongMetadata	?Rank@BandSongMetadata@@QBAMVSymbol@@@Z
+236	236	0	0	66.746	68.102	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/AppLabel	?SetFromSongSelectNode@AppLabel@@QAAXPBVNode@@@Z
+236	236	0	0	21.949	23.729	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/SpeechMgr	??$__uninitialized_copy@PAUGrammar@SpeechMgr@@PAU12@@stlpmtx_std@@YAPAUGrammar@SpeechMgr@@PAU12@00ABU__false_type@0@@Z
+232	232	0	0	29.586	31.483	0xa0	0xb0	-16	OURS_BIGGER	UNTRIAGED					default/SongStatusMgr	?LoadFixed@SongStatusMgr@@UAAXAAVFixedSizeSaveableStream@@H@Z
+232	232	0	0	12.81	15.569	0xf0	0x80	112	RETAIL_BIGGER	UNTRIAGED					default/MatAnim	??4?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAAXABV0@@Z
+228	228	0	0	57.93	60.211	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/LightHue	?Load@WorldReflection@@UAAXAAVBinStream@@@Z
+224	224	0	0	99.161	99.964	0xa0	0x90	16	RETAIL_BIGGER	UNTRIAGED					default/system/rndobj/Utl	?insert_unique@?$_Rb_tree@UEdge@RndAmbientOcclusion@@U?$less@UEdge@RndAmbientOcclusion@@@stlpmtx_std@@U12@U?$_Identity@UEdge@RndAmbientOcclusion@@@4@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@4@V?$StlNodeAlloc@UEdge@RndAmbientOcclusion@@@4@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@UEdge@RndAmbientOcclusion@@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABUEdge@RndAmbientOcclusion@@@Z
+224	224	0	0	24.964	26.75	0x90	0x70	32	RETAIL_BIGGER	UNTRIAGED					default/BandSongMgr	?RankTierToken@BandSongMgr@@QBA?AVSymbol@@H@Z
+220	220	0	0	74.055	74.145	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/Sequence	?Load@Sequence@@UAAXAAVBinStream@@@Z
+220	220	0	0	62.309	64.582	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/EnvAnim	?Load@RndEnvAnim@@UAAXAAVBinStream@@@Z
+216	216	0	0	1.056	2.815	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/MusicLibrary	?RemoveLastSongFromSetlist@MusicLibrary@@QAAXXZ
+212	212	0	0	56.434	56.811	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/Group	?Save@RndGroup@@UAAXAAVBinStream@@@Z
+204	204	0	0	0	2.353	0x70	0x90	-32	OURS_BIGGER	UNTRIAGED					default/Anim	?Enter@RndDir@@UAAXXZ
+204	204	0	0	91.49	92.078	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/MetaMusic	??$__introsort_loop@PAPAUObjEntry@@PAU1@HUObjSort@@@stlpmtx_std@@YAXPAPAUObjEntry@@00HUObjSort@@@Z
+200	200	0	0	63.44	66.64	0xa0	0xb0	-16	OURS_BIGGER	UNTRIAGED					default/BandCamShot	?View@BandCamShot@@QAAXXZ
+200	200	0	0	33.32	34.92	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/Shader	?CalcShaderOpts@RndShaderDrawRect@@MAA_KPAVNgMat@@W4ShaderType@@_N@Z
+200	200	0	0	37.8	39.5	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/MidiInstrument	?Load@MidiInstrument@@UAAXAAVBinStream@@@Z
+200	200	0	0	57.54	59.34	0x90	0xa0	-16	OURS_BIGGER	UNTRIAGED					default/VocalNoteList	?GenerateLegalFreestyleSections@VocalNoteList@@QBAXAAV?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@@Z
+196	196	0	0	71.837	75.408	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/Character	?UnhookShadow@Character@@IAAXXZ
+196	196	0	0	23.735	24.959	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/StandardStream	?SetJump@StandardStream@@UAAXMMPBD@Z
+196	196	0	0	40.327	41.143	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/system/bandobj/DialogDisplay	?Poll@DialogDisplay@@UAAXXZ
+192	192	0	0	54.75	56.0	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/CharBoneDir	?PostLoad@CharBoneDir@@UAAXAAVBinStream@@@Z
+192	192	0	0	29.917	31.062	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/File	FileGetBase
+192	192	0	0	67.667	68.292	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/PracticePanel	?Exit@PracticePanel@@UAAXXZ
+188	188	0	0	89.596	92.255	0xa0	0x90	16	RETAIL_BIGGER	UNTRIAGED					default/EventTrigger	??4?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z
+188	188	0	0	48.553	51.426	0x90	0xa0	-16	OURS_BIGGER	UNTRIAGED					default/MemMgr	?MemFree@@YAXPAX@Z
+188	188	0	0	38.574	40.383	0x90	0x70	32	RETAIL_BIGGER	UNTRIAGED					default/AccomplishmentCategory	?Configure@AccomplishmentCategory@@QAAXPBVDataArray@@@Z
+188	188	0	0	81.957	82.809	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/network/Platform/MemoryManager	?GetDefaultMemoryManager@MemoryManager@Quazal@@SAPAV12@XZ
+184	184	0	0	0	1.63	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/Tex	?PlatformBppOrder@RndTex@@SAXPBDAAH1_N@Z
+184	184	0	0	59.935	60.37	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/ScreenMask	?Load@RndScreenMask@@UAAXAAVBinStream@@@Z
+180	180	0	0	60.4	61.289	0x880	0x890	-16	OURS_BIGGER	UNTRIAGED					default/MemHeap	?PrintAlloc@?A0xb5f23974@@YAXAAVTextStream@@PAHHHPBVAllocInfo@@@Z
+180	180	0	0	56.378	57.711	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/InlineHelp	?Update@InlineHelp@@MAAXXZ
+180	180	0	0	34.267	35.489	0xd0	0x80	80	RETAIL_BIGGER	UNTRIAGED					default/system/os/UsbMidiGuitar	??1Queue@@QAA@XZ
+176	176	0	0	76.318	79.5	0x90	0xb0	-32	OURS_BIGGER	UNTRIAGED					default/EventTrigger	??4?$list@UPropTriggerDefn@FlowTrigger@@V?$StlNodeAlloc@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z
+176	176	0	0	99.818	99.932	0xc0	0xb0	16	RETAIL_BIGGER	UNTRIAGED					default/OriginalChoreoRemixer	?_M_insert_overflow_aux@?$vector@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@2@ABV32@ABU__true_type@2@I_N@Z
+176	176	0	0	98.886	99.909	0xa0	0xb0	-16	OURS_BIGGER	UNTRIAGED					default/StorePanel	?LoadArt@StorePanel@@UAAXPBDPAVUIPanel@@@Z
+176	176	0	0	69.386	70.295	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/system/ui/UIProxy	?PostLoad@UIProxy@@UAAXAAVBinStream@@@Z
+172	172	0	0	6.209	7.256	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/MusicLibrary	?ByteCode@RemoveLastSongFromSetlistMsg@@UBAEXZ
+172	172	0	0	58.605	61.163	0x90	0xa0	-16	OURS_BIGGER	UNTRIAGED					default/ArkFile	??0ArkFile@@QAA@PBDH@Z
+172	172	0	0	31.442	33.186	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/DuplicatedObject	?GetInstanceFromVector@InstanceTable@Quazal@@QAAIII@Z
+172	172	0	0	62.674	65.93	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/Tour	?CombinePartSymbols@Tour@@QAA?AVSymbol@@V2@0@Z
+172	172	0	0	7.512	9.023	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/NetGameMsgs	?Dispatch@RestartGameMsg@@UAAXXZ
+168	168	0	0	53.571	56.548	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/ClipDistMap	??$__partial_sort@PAUNode@ClipDistMap@@U12@UDistMapNodeSort@@@stlpmtx_std@@YAXPAUNode@ClipDistMap@@000UDistMapNodeSort@@@Z
+164	164	0	0	57.683	61.341	0x80	0x90	-16	OURS_BIGGER	UNTRIAGED					default/Object	?SetProperty@Object@Hmx@@QAAXPAVDataArray@@ABVDataNode@@@Z
+164	164	0	0	34.756	36.463	0xa0	0x80	32	RETAIL_BIGGER	UNTRIAGED					default/CharLipSync	??$__uninitialized_copy@PAVString@@PAV1@@stlpmtx_std@@YAPAVString@@PAV1@00ABU__false_type@0@@Z
+160	160	0	0	47.3	48.425	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/CharClipSet	?SetBpm@CharClipSet@@UAAXH@Z
+160	160	0	0	0	3.0	0x70	0xb0	-64	OURS_BIGGER	UNTRIAGED					default/PracticeSection	?Load@PracticeSection@@UAAXAAVBinStream@@@Z
+152	152	0	0	56.868	57.789	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/CameraShot	??0CamShotCrowd@@QAA@PAVObject@Hmx@@@Z
+152	152	0	0	26.105	28.079	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/SpotlightDrawer	?Load@SpotlightDrawer@@UAAXAAVBinStream@@@Z
+152	152	0	0	30.605	31.526	0xd0	0xf0	-32	OURS_BIGGER	UNTRIAGED					default/UIListMesh	?Draw@UIListMesh@@UAAXABUUIListWidgetDrawState@@ABVUIListState@@ABVTransform@@W4State@UIComponent@@PAVBox@@W4DrawCommand@@@Z
+152	152	0	0	65.211	65.605	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/GemTrackDir	?SetPlayerLocal@GemTrackDir@@UAAXM@Z
+152	152	0	0	20.763	21.947	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/NextSongPanel	?Exiting@NextSongPanel@@UBA_NXZ
+152	152	0	0	66.079	67.789	0x90	0x190	-256	OURS_BIGGER	UNTRIAGED					default/BandSongMgr	?AddSongData@BandSongMgr@@UAAXPAVDataArray@@PAVDataLoader@@W4ContentLocT@@@Z
+148	148	0	0	43.432	45.189	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/PatchDir	?DrawShowing@PatchDir@@UAAXXZ
+148	148	0	0	17.189	19.757	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/CharBoneDir	?PreLoad@CharBoneDir@@UAAXAAVBinStream@@@Z
+148	148	0	0	0	3.514	0x70	0xc0	-80	OURS_BIGGER	UNTRIAGED					default/Anim	?SyncProperty@RndSpline@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z
+148	148	0	0	17.189	19.757	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/UISlider	?PreLoad@PanelDir@@UAAXAAVBinStream@@@Z
+144	144	0	0	60.361	61.472	0x70	0x180	-272	OURS_BIGGER	UNTRIAGED					default/File_Win	?FileQualifiedFilename@@YAXPADHPBD@Z
+144	144	0	0	0	1.528	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/system/bandobj/BandTrack	?SpotlightPhraseSuccess@BandTrack@@UAAXXZ
+140	140	0	0	17.029	19.6	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/LabelShrinkWrapper	?PreLoad@LabelShrinkWrapper@@UAAXAAVBinStream@@@Z
+140	140	0	0	32.914	34.771	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/UITransitionHandler	??$?5VTexPtr@RndMatAnim@@@@YAAAVBinStreamRev@@AAV0@AAV?$Key@VTexPtr@RndMatAnim@@@@@Z
+140	140	0	0	76.029	76.457	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/band3/game/Game	??0GemTrainerLoopPanel@@QAA@XZ
+136	136	0	0	28.588	29.765	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/BandList	?PreLoad@BandList@@UAAXAAVBinStream@@@Z
+136	136	0	0	0	2.794	0x70	0x90	-32	OURS_BIGGER	UNTRIAGED					default/PracticeSection	?Copy@PracticeSection@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z
+136	136	0	0	46.206	46.794	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/GranularSynth	??1?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ
+136	136	0	0	2.912	4.529	0x80	0x60	32	RETAIL_BIGGER	UNTRIAGED					default/ColorPalette	?push_back@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVColor@Hmx@@@Z
+136	136	0	0	10.118	12.765	0x60	0x90	-48	OURS_BIGGER	UNTRIAGED					default/VocalPlayer	?SongSectionOnly@VocalPlayer@@QBA_NAAM0@Z
+136	136	0	0	27.882	29.647	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/ProfileMgr	?FakeProfileFill@ProfileMgr@@QAAXXZ
+132	132	0	0	47.515	48.424	0x80	0x60	32	RETAIL_BIGGER	UNTRIAGED					default/Group	?ListDrawChildren@RndGroup@@UAAXAAV?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@@Z
+128	128	0	0	24.688	26.719	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/Debug	?DevHostname@@YAPBDVSymbol@@@Z
+128	128	0	0	53.812	56.156	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/system/synth_xbox/Synth	?push_back@?$vector@UXAUDIO2_SEND_DESCRIPTOR@@V?$StlNodeAlloc@UXAUDIO2_SEND_DESCRIPTOR@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUXAUDIO2_SEND_DESCRIPTOR@@@Z
+128	128	0	0	41.969	44.938	0x80	0xd0	-80	OURS_BIGGER	UNTRIAGED					default/DirLoader	?HandleType@Object@Hmx@@QAA?AVDataNode@@PAVDataArray@@@Z
+128	128	0	0	47.094	47.875	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/AccomplishmentPanel	?GetAccomplishmentName@AccomplishmentPanel@@QAA?AVSymbol@@XZ
+128	128	0	0	84.156	84.312	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/UIEventMgr	?CurrentTransitionEvent@UIEventMgr@@QBA?AVSymbol@@XZ
+128	128	0	0	26.0	28.5	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/system/hamobj/MiniLeaderboardDisplay	?PreLoad@MiniLeaderboardDisplay@@UAAXAAVBinStream@@@Z
+124	124	0	0	0	1.29	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/DepthBuffer3D	?DoPost@NgPostProc@@UAAXXZ
+124	124	0	0	86.226	89.613	0x80	0x60	32	RETAIL_BIGGER	UNTRIAGED					default/system/rndobj/Utl	??$_M_find@UEdge@RndAmbientOcclusion@@@?$_Rb_tree@UEdge@RndAmbientOcclusion@@U?$less@UEdge@RndAmbientOcclusion@@@stlpmtx_std@@U12@U?$_Identity@UEdge@RndAmbientOcclusion@@@4@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@4@V?$StlNodeAlloc@UEdge@RndAmbientOcclusion@@@4@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABUEdge@RndAmbientOcclusion@@@Z
+124	124	0	0	61.258	64.806	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/HamCamTransform	??6@YAAAVBinStream@@AAV0@ABUDynamicPropertyEntry@Flow@@@Z
+124	124	0	0	0	2.097	0x80	0xb0	-48	OURS_BIGGER	UNTRIAGED					default/Anim	?CollidePlane@RndDir@@UAAHABVPlane@@@Z
+124	124	0	0	0	2.097	0x70	0x90	-32	OURS_BIGGER	UNTRIAGED					default/PracticeSection	?Save@PracticeSection@@UAAXAAVBinStream@@@Z
+124	124	0	0	35.258	37.194	0xa0	0x70	48	RETAIL_BIGGER	UNTRIAGED					default/HAQManager	?PrintComponentInfo@HAQManager@@AAAXPAVUIComponent@@@Z
+124	124	0	0	19.065	21.161	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/Group	?CollidePlane@RndGroup@@UAAHABVPlane@@@Z
+120	120	0	0	65.867	66.533	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/VocalTrack	?OnPhraseComplete@VocalTrack@@QAAXMMH@Z
+120	120	0	0	0	1.667	0x60	0xa0	-64	OURS_BIGGER	UNTRIAGED					default/ContentMgr_Xbox	?Init@XboxContentMgr@@UAAXXZ
+120	120	0	0	48.4	49.233	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/TypeProps	?ReplaceObject@TypeProps@@AAAXAAVDataNode@@PAVObject@Hmx@@1@Z
+120	120	0	0	0.933	2.433	0x90	0x70	32	RETAIL_BIGGER	UNTRIAGED					default/PartAnim	??$?6VColor@Hmx@@@@YAAAVTextStream@@AAV0@ABV?$Key@VColor@Hmx@@@@@Z
+120	120	0	0	60.0	61.167	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/WavMgr	?Get@?$ResMgr@X@@QAAPAXVCRC@Hmx@@@Z
+116	116	0	0	34.241	36.31	0x90	0x80	16	RETAIL_BIGGER	UNTRIAGED					default/Rot	??$_M_allocate_and_copy@PBVVector3@@@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector3@@IPBV2@0@Z
+116	116	0	0	38.345	40.586	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/UIList	?PreLoad@UIList@@UAAXAAVBinStream@@@Z
+116	116	0	0	48.483	48.828	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/band3/game/PracticeSectionProvider	??1PracticeSectionProvider@@UAA@XZ
+112	112	0	0	75.929	76.286	0xc0	0xa0	32	RETAIL_BIGGER	UNTRIAGED					default/SongLayout	??$?5VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@@Z
+112	112	0	0	99.25	99.786	0xe0	0x90	80	RETAIL_BIGGER	UNTRIAGED					default/Archive	??$?5VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@@Z
+108	108	0	0	80.667	81.407	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/Mesh	?HasVert@PatchVerts@@QBA_NH@Z
+108	108	0	0	0	5.37	0x70	0x90	-32	OURS_BIGGER	UNTRIAGED					default/Text	??1RndText@@UAA@XZ
+108	108	0	0	0	2.037	0x70	0xa0	-48	OURS_BIGGER	UNTRIAGED					default/UISlider	?PreLoad@UISlider@@UAAXAAVBinStream@@@Z
+104	104	0	0	0	2.5	0x60	0xa0	-64	OURS_BIGGER	UNTRIAGED					default/StreakMeter	?SetType@StreakMeter@@UAAXVSymbol@@@Z
+100	100	0	0	34.68	35.88	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/system/rndobj/Rnd	?CompressThread@@YAKPAX@Z
+96	96	0	0	49.292	50.75	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/MemMgr	?_MemAllocTemp@@YAPAXHH@Z
+96	96	0	0	34.625	37.333	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/WaveFile	??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0x81ddebd1@@0@Z
+96	96	0	0	56.292	59.0	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/SongCollision	??$__uninitialized_fill_n@PAUSongCollisionOutput@@IU1@@stlpmtx_std@@YAPAUSongCollisionOutput@@PAU1@IABU1@ABU__false_type@0@@Z
+96	96	0	0	60.917	61.542	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/band3/meta_band/BandStorePanel	?MakeNewOffer@BandStorePanel@@UAAPAVStoreOffer@@PBVStorePackedOfferBase@@_N@Z
+96	96	0	0	17.333	18.792	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/band3/meta_band/StoreMainPanel	??$__destroy_range_aux@V?$reverse_iterator@PAVNewReleaseEntry@StoreMainPanel@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVNewReleaseEntry@StoreMainPanel@@@0@0ABU__false_type@0@@Z
+92	92	0	0	81.652	82.522	0xb0	0xa0	16	RETAIL_BIGGER	UNTRIAGED					default/MeshAnim	?SetTransform@RndShaderMgr@@QAAXABVTransform@@@Z
+92	92	0	0	58.391	59.913	0x70	0x880	-2064	OURS_BIGGER	UNTRIAGED					default/Rnd_NG	??$MakeString@HH@@YAPBDPBDHH@Z
+92	92	0	0	86.826	86.826	0xa0	0xd0	-48	OURS_BIGGER	UNTRIAGED					default/Spotlight	??$?5UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@@Z
+92	92	0	0	0	3.478	0x70	0xb0	-64	OURS_BIGGER	UNTRIAGED					default/JoypadMsgs	?_M_insert_overflow_aux@?$vector@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVMoveVariant@@PBV1@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAU?$pair@PBVMoveVariant@@PBV1@@2@ABU32@ABU__false_type@2@I_N@Z
+92	92	0	0	0	3.478	0x890	0x80	2064	RETAIL_BIGGER	UNTRIAGED					default/system/gesture/DrawUtl	?CreateCameraBufferMat@@YAPAVRndMat@@HHW4Type@RndTex@@@Z
+88	88	0	0	40.409	42.227	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/OvershellSlot	?clear@?$_List_base@PAVPassiveMessage@@V?$StlNodeAlloc@PAVPassiveMessage@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ
+88	88	0	0	78.318	80.364	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/TypeProps	??E?$ObjDirItr@VObjectDir@@@@QAAAAV0@XZ
+88	88	0	0	61.409	65.273	0x80	0xa0	-32	OURS_BIGGER	UNTRIAGED					default/SpotlightDrawer	?DrawAdditional@SpotlightDrawer@@MAAXPAVSpotlightEntry@1@ABQAV21@@Z
+88	88	0	0	76.273	77.182	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/MidiReader	?DefaultMidiLess@?A0x7d41cf68@@YA_NABUMidi@MidiReader@@0@Z
+88	88	0	0	0	3.182	0x70	0x90	-32	OURS_BIGGER	UNTRIAGED					default/UISlider	?PostLoad@UISlider@@UAAXAAVBinStream@@@Z
+88	88	0	0	99.818	99.818	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/MultiTempoTempoMap	?PointForTime@MultiTempoTempoMap@@ABAPBUTempoInfoPoint@1@M@Z
+88	88	0	0	85.0	86.136	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/BandSongMgr	?GetNumVocalParts@BandSongMgr@@QBAHVSymbol@@@Z
+88	88	0	0	84.364	86.182	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/SongDB	?PostLoad@SongDB@@QAAXPAVDataEventList@@@Z
+84	84	0	0	4.19	5.619	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/BandCharacter	??$__uninitialized_copy@PAVRangeShift@GemTrack@@PAV12@@stlpmtx_std@@YAPAVRangeShift@GemTrack@@PAV12@00ABU__false_type@0@@Z
+84	84	0	0	3.952	5.619	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/Morph	??$__uninitialized_copy@PAVMoveFrame@@PAV1@@stlpmtx_std@@YAPAVMoveFrame@@PAV1@00ABU__false_type@0@@Z
+84	84	0	0	15.333	17.0	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/Crowd	??0Char3D@CharData@WorldCrowd@@QAA@ABU012@@Z
+84	84	0	0	1.238	6.0	0x70	0x90	-32	OURS_BIGGER	UNTRIAGED					default/DuplicatedObject	?IsInDuplicationSet@DuplicatedObject@Quazal@@QBA_NVDOHandle@2@@Z
+80	80	0	0	82.15	83.9	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/MoveMgr	?OnRandomSeed@CameraManager@@AAA?AVDataNode@@PAVDataArray@@@Z
+80	80	0	0	12.4	15.9	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/WaveFile	??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z
+80	80	0	0	43.0	44.75	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/MidiInstrument	?Start@NoteVoiceInst@@UAAXXZ
+72	72	0	0	0	1.111	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/BandCamShot	??$_Destroy_Range@V?$reverse_iterator@PAVSingerStats@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSingerStats@@@0@0@Z
+72	72	0	0	70.944	72.056	0x80	0x90	-16	OURS_BIGGER	UNTRIAGED					default/Character	?resize@?$ObjVector@ULod@Character@@@@QAAXI@Z
+72	72	0	0	0	1.667	0x80	0x70	16	RETAIL_BIGGER	UNTRIAGED					default/Graph	??0DrawString3D@@QAA@PBDABVVector3@@ABVColor@Hmx@@@Z
+68	68	0	0	0	2.941	0x60	0x150	-240	OURS_BIGGER	UNTRIAGED					default/BandCharacter	?DrawShowing@BandCharacter@@UAAXXZ
+68	68	0	0	99.235	99.824	0xd0	0x100	-48	OURS_BIGGER	UNTRIAGED					default/Flow	?resize@?$ObjVector@UDynamicPropertyEntry@Flow@@@@QAAXI@Z
+68	68	0	0	29.059	29.941	0x60	0x70	-16	OURS_BIGGER	UNTRIAGED					default/LabelNumberTicker	?PostLoad@LabelNumberTicker@@UAAXAAVBinStream@@@Z
+68	68	0	0	0	1.765	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/band3/meta_band/ViewSetting	?_M_insert@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_std@@U?$pair@QAVFlowNode@@W4QueueState@1@@3@U?$_Select1st@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@QAVFlowNode@@W4QueueState@1@@2@00@Z
+64	64	0	0	72.562	74.75	0x70	0x80	-16	OURS_BIGGER	UNTRIAGED					default/CheatProvider	??0Cheat@CheatProvider@@QAA@AAVString@@0PAVDataArray@@@Z
+64	64	0	0	20.75	22.312	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/FilterVersion	?Sym@DataArray@@QBA?AVSymbol@@H@Z
+60	60	0	0	57.2	58.533	0x70	0x60	16	RETAIL_BIGGER	UNTRIAGED					default/RockCentral	??0RBDataClient@Quazal@@QAA@XZ
+60	60	0	0	31.8	33.133	0xb0	0x60	80	RETAIL_BIGGER	UNTRIAGED					default/ContentMgr_Xbox	??$Obj@VCharPollable@@@DataNode@@QBAPAVCharPollable@@PBVDataArray@@@Z
+48	48	0	0	0	0.833	0x60	0x80	-32	OURS_BIGGER	UNTRIAGED					default/User	?IsJoypadConnected@LocalUser@@UBA_NXZ

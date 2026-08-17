@@ -67,7 +67,7 @@ private:
         if (_M_len > (ptrdiff_t)(INT_MAX / sizeof(Symbol)))
             _M_len = INT_MAX / sizeof(Symbol);
         while (_M_len > 0) {
-            _M_buffer = (Symbol *)_MemAlloc(_M_len * sizeof(Symbol), 0);
+            _M_buffer = (Symbol *)MemAlloc(_M_len * sizeof(Symbol), __FILE__, 70, "_Temporary_buffer", 0);
             if (_M_buffer)
                 break;
             _M_len /= 2;
@@ -93,7 +93,7 @@ public:
 
     ~_Temporary_buffer() {
         _STLP_STD::_Destroy_Range(_M_buffer, _M_buffer + _M_len);
-        _MemFree(_M_buffer);
+        MemFree(_M_buffer);
     }
 
 private:
@@ -1534,6 +1534,30 @@ AccomplishmentProvider::Custom(int, int data, UIListCustom *slot, Hmx::Object *o
 // That is a constant-pool adjacency/layout artifact with no source lever — the
 // `lfs` displacements themselves are already forgiven (lbl_ is a placeholder
 // name under functionRelocDiffs=name_check).
+// GATE (lane W1-GAME): 360 B, CLEAN row (mpn == fuzzy == 97.1111), 3 charges,
+// and they are a CONSTANT-POOL LAYOUT artifact, not a source defect.
+//
+// Retail (0x825FD090 idx 70-79) materialises ONE base address and reaches BOTH
+// float constants from it, the second via a NEGATIVE displacement:
+//     lis  r11, lbl_820BC0E0@ha
+//     beq  .L_144
+//     lfs  f0, lbl_820BC0E0@l(r11)     ; 1.0f   at lbl+0
+//     b    .L_14C
+//   .L_144:
+//     addi r11, r11, lbl_820BC0E0@l
+//     lfs  f0, -0x1c(r11)              ; 0.25f  at lbl-0x1c
+//   .L_14C:
+//     stfs f0, 0x38(r30)
+// We emit two independent `lis __real@3f800000@ha` / `lis __real@3e800000@ha`
+// because our 1.0f and 0.25f are separate `__real@` COMDATs with no
+// guaranteed -0x1c relationship -- that relation is a property of retail's
+// .rdata packing, which no source spelling of SetAlpha(1.0f)/SetAlpha(0.25f)
+// can express.  Structural; the row cannot cross by source work.
+//
+// The Function Call Diff here is likewise not a defect: String(const char*)
+// vs String(Symbol) and the BeatMatcher::GetTick / UIListMesh::DefaultMat pair
+// are ICF folds already forgiven (hence mpn == fuzzy), and fn_82593F90 is a
+// placeholder target, which name_check forgives by construction.
 inline RndMat *AccomplishmentProvider::Mat(int, int i_iData, UIListMesh *slot) const {
     MILO_ASSERT(i_iData < NumData(), 0x2B2);
     Accomplishment *pAccomplishment = GetAccomplishment(i_iData);

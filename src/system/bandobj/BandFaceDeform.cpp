@@ -21,7 +21,7 @@ BandFaceDeform::DeltaArray::operator=(const BandFaceDeform::DeltaArray &da) {
     return *this;
 }
 
-BandFaceDeform::DeltaArray::~DeltaArray() { _MemFree(mData); }
+BandFaceDeform::DeltaArray::~DeltaArray() { MemFree(mData); }
 void BandFaceDeform::DeltaArray::Clear() { SetSize(0); }
 
 int BandFaceDeform::DeltaArray::NumVerts() {
@@ -229,8 +229,8 @@ void BandFaceDeform::DeltaArray::AppendDeltas(
 void BandFaceDeform::DeltaArray::SetSize(int i) {
     if (mSize != i) {
         mSize = i;
-        _MemFree(mData);
-        mData = _MemAlloc(mSize, 0);
+        MemFree(mData);
+        mData = MemAlloc(mSize, __FILE__, 0xE9, "DeltaArray", 0);
     }
 }
 

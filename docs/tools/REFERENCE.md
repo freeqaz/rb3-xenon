@@ -4,15 +4,34 @@ Scripts, commands, and reference material for the rb3-xenon decompilation projec
 
 ## Project Scripts
 
+> **STATUS (2026-08-17).** Three entries were removed from the table below —
+> `tools/decompile.sh`, `tools/asm_to_m2c.py` and
+> `scripts/build/rebuild_jeff_link.sh` — **verified absent from the tree**, as is
+> `./bin/analyze-function` (`bin/` holds only the gitignored `objdiff-cli`
+> symlink). The live entry points are the orchestrator **MCP tools** and
+> **skills**; see the table under "Live entry points" and [INDEX.md](INDEX.md).
+
 | Script | Description |
 |--------|-------------|
-| `tools/decompile.sh` | **Combined m2c decompilation workflow** (objdiff → m2c) |
 | `tools/objdiff_to_m2c.py` | Convert objdiff JSON to m2c assembly format (with jump table resolution) |
 | `tools/ghidra/export_types.py` | Export Ghidra types as m2c context headers |
-| `tools/asm_to_m2c.py` | Convert rb3-xenon dtk assembly to m2c-compatible format |
 | `tools/decompctx.py` | Generate context files for decomp.me |
 | `configure.py` | Generate build files (ninja) |
-| `scripts/build/rebuild_jeff_link.sh` | Rebuild jeff (dtk), re-split XEX objects, link, show error summary |
+
+### Live entry points (prefer these)
+
+| Entry point | Use |
+|---|---|
+| `mcp__orchestrator__run_objdiff` | Build + diff one function; match% and verdict. ⚠ pass `project_dir` = your worktree |
+| `mcp__orchestrator__run_analyze_function` | Enriched diff with struct-offset field names resolved |
+| `mcp__orchestrator__run_diff_inspect` | Deep root-cause analysis (`diagnose`, `clusters`, `regswaps`, `offsets`, `replaces`, `mismatches`, `asm_listing`, `stack-layout`) |
+| `mcp__orchestrator__lookup_struct_offset` | Which field sits at an offset — asks the **compiler** (`/d1reportSingleClassLayout`), not the header comments |
+| `mcp__orchestrator__lookup_dc3` | DC3 source oracle — engine code (`src/system/**`), same compiler + flags |
+| `mcp__orchestrator__lookup_rb3wii` | rb3-Wii source oracle — game code (`src/band3/**`, `src/network/**`) |
+| `mcp__orchestrator__lookup_merged_symbol` | Symbols sharing an ICF-merged address |
+| `/recon`, `/compare-asm`, `/stack-layout` | Skill wrappers for the above |
+| `/permute` | Source permuter — ⚠ **OFF by standing directive** |
+| `python3 tools/ab_measure.py` (or `/ab-measure`) | The **only** sanctioned way to price a change whole-binary |
 
 ## Symbol Lookup (No Map File for RB3)
 
@@ -23,7 +42,7 @@ shown below is **DC3's** map, at `../dc3-decomp/orig/373307D9/ham_xbox_r.map`
 not a direct source of RB3 addresses). For RB3 identification, use:
 
 - **`tools/fingerprint_match.py`** (extract/report/autoid/identify) — indexes
-  all 66,838 RB3 functions by referenced strings/callees/constants and
+  all 69,227 RB3 functions by referenced strings/callees/constants and
   cross-refs against `../rb3/src` (Wii dev decomp, named functions) and
   `../dc3-decomp/src` (same engine, named functions) to propose source-file
   mappings. See `project_function_identification.md` in memory.
@@ -152,16 +171,13 @@ objdiff-cli diff -p . "Game::Poll" --verdict -C 3
 # Check function info from report
 objdiff-cli report function build/45410914/report.json "Game::Poll"
 
-# Quick m2c decompilation from target binary
-tools/decompile.sh "CharClip::SetFlags"
+# Full analysis (replaces the removed ./bin/analyze-function)
+#   mcp__orchestrator__run_analyze_function  symbol="Game::Poll"  project_dir="<worktree>"
+# Source oracle instead of a decompiler reconstruction:
+#   mcp__orchestrator__lookup_dc3 / lookup_rb3wii
 
-# m2c with Ghidra type context
-tools/decompile.sh "CharMirror::Load" --context
-
-# Full analysis with m2c included
-./bin/analyze-function "Game::Poll" --m2c
-
-# Manual m2c pipeline (alternative, with jump table support)
+# m2c pipeline (with jump table support) — the surviving m2c path,
+# now that tools/decompile.sh is gone
 ./bin/objdiff-cli diff -p . "Foo::Bar" -f json --include-instructions | \
     python3 tools/objdiff_to_m2c.py --project-dir . | \
     python3 ~/code/milohax/m2c/m2c.py -t ppc -

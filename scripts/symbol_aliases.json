@@ -4948,10 +4948,17 @@
    "name": "HandleProfileLoadComplete",
    "address": "0x827b7d88",
    "survivor": "?HandleProfileLoadComplete@ProfileMgr@@QAAXXZ",
-   "folded": [
-    "?Unload@StoreArtLoaderPanel@@UAAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?Unload@StoreArtLoaderPanel@@UAAXXZ",
+     "lane": "W9-FALSECREDIT 2026-08-17",
+     "class": "SURVIVOR_MISNAMED",
+     "why": "the T1 byte-identity is REAL but the inference from it was wrong: retail's body at 0x827b7d88 is byte-identical to our compiled ?Unload@StoreArtLoaderPanel@@ because that address IS Unload@StoreArtLoaderPanel -- it calls ClearArt@StoreArtLoaderPanel and Unload@UIPanel, and ProfileMgr derives from MsgSource, not UIPanel. No fold exists to forgive.",
+     "note": "target_symbol_map.json 0x827b7d88 corrected to ?Unload@StoreArtLoaderPanel@@UAAXXZ in the same change, so the spelling now pairs DIRECTLY and needs no alias. ?HandleProfileLoadComplete@ProfileMgr@@QAAXXZ is a genuine folded spelling of 0x825490e8 (?HandleProfileSaveComplete@ProfileMgr@@, source-identical twins) -- that group was NOT added here; it needs its own T1 proof. Group kept, not pruned."
+    }
+   ]
   },
   {
    "name": "json_object_put",
@@ -5352,9 +5359,12 @@
    "address": "0x825390e0",
    "survivor": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectMsg@@@Z",
    "folded": [
-    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectDoneMsg@@@Z"
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectDoneMsg@@@Z",
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident.",
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | LANE W25-UI (2026-08-17) ADDED 3 SPELLINGS -- UIComponentFocusChangeMsg / ButtonDownMsg / ButtonUpMsg -- AND THE ORDER OF OPERATIONS IS THE WHOLE POINT. tools/dispatch_fold_enum.py on Handle@BandUI @0x82539210 shows FIVE arms calling 0x825390E0 while constructing five classes read from RETAIL BYTES via the COL at vtable[-1] (0x82539838 FocusChange, 0x825399B4 ButtonDown, 0x82539A2C ButtonUp, 0x82539AA4 Select = the map-resident survivor, 0x82539B1C SelectDone). One address cannot be five distinct handlers. BUT THAT ALONE DOES NOT LICENSE AN ALIAS: it is equally consistent with retail having ONE handler and OUR source wrongly carrying five. tools/w25_fold_proof.py settled it against us -- our three bodies were 64 B / 4 relocs (calling ?Print@HAQManager@@ plus __savegprlr_29/__restgprlr_29) vs the survivor's 52 B / 1 reloc, and DIFFERENT-SIZE COMDATS CANNOT FOLD. So the alias was WITHDRAWN and the real defect fixed instead: three stale HAQManager::Print calls removed from src/band3/meta_band/BandUI.cpp (the same HAQ strip already recorded in that file for two sibling handlers). AFTER that fix all five COMDATs are 52 B / 1 reloc, byte- AND relocation-identical, which IS /OPT:ICF's own condition -- so the fold is real and this alias forgives a naming artifact rather than hiding a behavioural divergence. Installed BEFORE the fix it would have bought the same 3,564 B while concealing the Print call, and the `none` control could not have caught it (it ignores relocation names and reads +0 either way, so its flatness is the hazard's signature, not a clearance). Body carries 1 relocation, so this is not the zero-reloc cheap-identity case. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident.",
    "withdrawn": [
     {
      "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
@@ -5944,7 +5954,8 @@
    "folded": [
     "?NewCopyMesh@@YAPAVRndMesh@@PBV1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 134, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 134, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | CHALLENGED AND UPHELD -- NO CHANGE (lane ALIASFIX, 2026-08-17, rb3-xenon 447cd49e). A prior reading (probe-index-exposure phase 3 filter 2) called this a misattribution needing the survivor renamed to ?NewCopyMesh@@YAPAVRndMesh@@PBV1@@Z, because our ?deallocate@... is 8 B in 32 objects and 36 B in one and matches nothing here. Refuted on the target side, which that reading never opened: the split target object obj/Archive.obj emits the 128-byte body at 0x822dc9d0 UNDER THE SURVIVOR'S NAME, and that body calls ??$New@VRndMesh@@@Object@Hmx@@SAPAVRndMesh@@XZ -- it IS NewCopyMesh, misnamed by the map. Our NewCopyMesh body equals it on 31 plain words plus 1 opcode-preserved relocated word and has EXACTLY ONE placement in the whole image, 0x822dc9d0. So this group is not an ICF fold: it is a MAP NAMING repair, the PoolAlloc shape (ALIAS-X2), and it is the only thing making our `bl NewCopyMesh` compare equal to the target's `bl deallocate`. Renaming the survivor would DELETE a correct equivalence -- NewCopyMesh is defined in no target object, so the loader would reject the renamed group outright, and default/ChordShapeGenerator :: ?MakeInvertedMesh@ChordShapeGenerator@@ (212 B on BOTH sides, same name) depends on it. PRE-EXISTING HAZARD, not created by this group and not fixable inside it: the map's name collides with the real 8-byte ?deallocate@?$StlNodeAlloc@VString@@... that we build, so a call to the REAL deallocate compares equal to a target call to NewCopyMesh's body under the identity map.",
+   "lane": "ALIASFIX 2026-08-17"
   },
   {
    "name": "OnMsg",
@@ -21716,7 +21727,20 @@
     "??0?$ObjPtr@VSpotlight@@@@QAA@PAVObject@Hmx@@PAVSpotlight@@@Z",
     "??0?$ObjPtr@VWorldCrowd@@@@QAA@PAVObject@Hmx@@PAVWorldCrowd@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions. | INDEX ARTIFACT -- FABRICATED FOLD, NOT withdrawn (lane OBJPTR-LABEL, 2026-08-17, rb3-xenon a2473cf0). The T1 masked-equality is an artifact: each ObjPtr<T> two-arg ctor stores a per-T vtable via a REFHI/REFLO lis/addi pair, and retail carries 11 distinct 112-byte bodies with this instruction stream and 11 distinct vtable constants, so /OPT:ICF folded none of them. Groups at 0x822b9590 and 0x82311910 fold the SAME three spellings onto DIFFERENT survivors and are each other's only defence under validator gate (e) -- they must move together or the survivor's memberships go LIVE. Memberships deliberately LEFT IN PLACE: this lane changes no gate. See index_artifact[] and <decomp-bench>/archive/runs/2026-08-17-objptr-918-1047/.",
+   "index_artifact": [
+    {
+     "verdict": "INDEX ARTIFACT -- FABRICATED FOLD, all 3 memberships. NOT withdrawn: this lane is label-only and moves no gate.",
+     "why": "ObjPtr<T>::ObjPtr(Hmx::Object*, T*) materialises its OWN per-T vtable pointer -- our object carries IMAGE_REL_PPC_REFHI + IMAGE_REL_PPC_REFLO to ??_7?$ObjPtr@V<T>@@@@6B@ on a lis/addi pair at body offsets 0x20|0x24 and 0x30 -- so two instantiations can never be one COMDAT. Retail carries 11 DISTINCT 112-byte bodies with this instruction stream (0x8227f138 0x8228e530 0x8229db58 0x8229eaf0 0x822b0d48 0x822b9590 0x822bb970 0x822bbb30 0x822d3c10 0x822d6690 0x82311910): 11 distinct raw bodies, 11 distinct vtable constants (0x82011184 0x820144b4 0x82017a34 0x82017c0c 0x8201ba34 0x8201d3cc 0x8201dc4c 0x8201dcd4 0x82022674 0x82022ffc 0x8201b9e8), i.e. /OPT:ICF folded NONE of them. They compare equal only because every ruler we own masks the one word that carries the instantiation's identity -- the T1 rule, probe_icf_foldtest's shape(), objdiff at functionRelocDiffs=none, AND lane ALIASFIX's opcode-preserving sharp.py, which still masks the 16-bit displacement where the whole difference lives. This is the same fabrication withdrawn at 0x8229ef00 (lane ALIASFIX 2026-08-17), one function over: the two-argument ctor rather than the copy ctor. Re-derived independently on bytes at rb3-xenon a2473cf0, alias file 2f88e8ff..., 1205 base objects.",
+     "self_refuting_with": "The group at 0x82311910 (index 1047 at this file rev) folds the SAME three spellings onto a DIFFERENT survivor. The two survivors are demonstrably different functions -- different raw bodies, different vtable constants -- so at most one of the two groups could be true, and neither is.",
+     "do_not_re_add": "Do NOT re-admit these memberships as evidence-backed on a regeneration. icf_alias_build.py does not read this adjudication, so a regeneration will re-emit them; that is the defect doc 59 section 4 named, not a refutation of this note. Re-deriving the fold needs the RESOLVED relocation operand, not a masked-word comparison -- no ruler in this repo reads it today.",
+     "live_status": "NOT live in the admission predicate at this rev, and NOT for evidentiary reasons: symbol_equivalences gate (e) drops both groups because the same three spellings appear in more than one group. The two fabrications are each other's only defence. Empty, excise or regenerate away EITHER group alone and gate (e) stops firing, the other group's memberships enter raw_text_reloc_eq, and our 'bl' to a folded spelling compares EQUAL to the target's 'bl' to a different retail function -- the 0x8229ef00 fail-open channel. THEY MUST MOVE TOGETHER.",
+     "gate_effect_of_this_annotation": "NONE. Memberships are intact and unchanged; the loader reads only name/address/survivor/folded. This is a label, not an excision. Disposition is owner decision #44 -- see the draft re-mint ratified_alias_excisions_2026-08-17.DRAFT.json and the memo at decomp-synth docs/plans/il-witness/OBJPTR_LABEL_REMINT_MEMO_2026-08-17.md.",
+     "evidence": "<decomp-bench>/archive/runs/2026-08-17-objptr-918-1047/",
+     "lane": "OBJPTR-LABEL 2026-08-17"
+    }
+   ],
+   "lane": "OBJPTR-LABEL 2026-08-17"
   },
   {
    "name": "$__linear_insert",
@@ -23062,7 +23086,20 @@
     "??0?$ObjPtr@VSpotlight@@@@QAA@PAVObject@Hmx@@PAVSpotlight@@@Z",
     "??0?$ObjPtr@VWorldCrowd@@@@QAA@PAVObject@Hmx@@PAVWorldCrowd@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 0 census sites over 1 functions. | INDEX ARTIFACT -- FABRICATED FOLD, NOT withdrawn (lane OBJPTR-LABEL, 2026-08-17, rb3-xenon a2473cf0). The T1 masked-equality is an artifact: each ObjPtr<T> two-arg ctor stores a per-T vtable via a REFHI/REFLO lis/addi pair, and retail carries 11 distinct 112-byte bodies with this instruction stream and 11 distinct vtable constants, so /OPT:ICF folded none of them. Groups at 0x822b9590 and 0x82311910 fold the SAME three spellings onto DIFFERENT survivors and are each other's only defence under validator gate (e) -- they must move together or the survivor's memberships go LIVE. Memberships deliberately LEFT IN PLACE: this lane changes no gate. See index_artifact[] and <decomp-bench>/archive/runs/2026-08-17-objptr-918-1047/.",
+   "index_artifact": [
+    {
+     "verdict": "INDEX ARTIFACT -- FABRICATED FOLD, all 3 memberships. NOT withdrawn: this lane is label-only and moves no gate.",
+     "why": "ObjPtr<T>::ObjPtr(Hmx::Object*, T*) materialises its OWN per-T vtable pointer -- our object carries IMAGE_REL_PPC_REFHI + IMAGE_REL_PPC_REFLO to ??_7?$ObjPtr@V<T>@@@@6B@ on a lis/addi pair at body offsets 0x20|0x24 and 0x30 -- so two instantiations can never be one COMDAT. Retail carries 11 DISTINCT 112-byte bodies with this instruction stream (0x8227f138 0x8228e530 0x8229db58 0x8229eaf0 0x822b0d48 0x822b9590 0x822bb970 0x822bbb30 0x822d3c10 0x822d6690 0x82311910): 11 distinct raw bodies, 11 distinct vtable constants (0x82011184 0x820144b4 0x82017a34 0x82017c0c 0x8201ba34 0x8201d3cc 0x8201dc4c 0x8201dcd4 0x82022674 0x82022ffc 0x8201b9e8), i.e. /OPT:ICF folded NONE of them. They compare equal only because every ruler we own masks the one word that carries the instantiation's identity -- the T1 rule, probe_icf_foldtest's shape(), objdiff at functionRelocDiffs=none, AND lane ALIASFIX's opcode-preserving sharp.py, which still masks the 16-bit displacement where the whole difference lives. This is the same fabrication withdrawn at 0x8229ef00 (lane ALIASFIX 2026-08-17), one function over: the two-argument ctor rather than the copy ctor. Re-derived independently on bytes at rb3-xenon a2473cf0, alias file 2f88e8ff..., 1205 base objects.",
+     "self_refuting_with": "The group at 0x822b9590 (index 918 at this file rev) folds the SAME three spellings onto a DIFFERENT survivor. The two survivors are demonstrably different functions -- different raw bodies, different vtable constants -- so at most one of the two groups could be true, and neither is.",
+     "do_not_re_add": "Do NOT re-admit these memberships as evidence-backed on a regeneration. icf_alias_build.py does not read this adjudication, so a regeneration will re-emit them; that is the defect doc 59 section 4 named, not a refutation of this note. Re-deriving the fold needs the RESOLVED relocation operand, not a masked-word comparison -- no ruler in this repo reads it today.",
+     "live_status": "NOT live in the admission predicate at this rev, and NOT for evidentiary reasons: symbol_equivalences gate (e) drops both groups because the same three spellings appear in more than one group. The two fabrications are each other's only defence. Empty, excise or regenerate away EITHER group alone and gate (e) stops firing, the other group's memberships enter raw_text_reloc_eq, and our 'bl' to a folded spelling compares EQUAL to the target's 'bl' to a different retail function -- the 0x8229ef00 fail-open channel. THEY MUST MOVE TOGETHER.",
+     "gate_effect_of_this_annotation": "NONE. Memberships are intact and unchanged; the loader reads only name/address/survivor/folded. This is a label, not an excision. Disposition is owner decision #44 -- see the draft re-mint ratified_alias_excisions_2026-08-17.DRAFT.json and the memo at decomp-synth docs/plans/il-witness/OBJPTR_LABEL_REMINT_MEMO_2026-08-17.md.",
+     "evidence": "<decomp-bench>/archive/runs/2026-08-17-objptr-918-1047/",
+     "lane": "OBJPTR-LABEL 2026-08-17"
+    }
+   ],
+   "lane": "OBJPTR-LABEL 2026-08-17"
   },
   {
    "name": "_M_insert",
@@ -23306,11 +23343,23 @@
    "name": "0?$ObjPtr",
    "address": "0x8229ef00",
    "survivor": "??0?$ObjPtr@VRndMat@@@@QAA@ABV0@@Z",
-   "folded": [
-    "??0?$ObjPtr@VRndDrawable@@@@QAA@ABV0@@Z",
-    "??0?$ObjPtr@VWorldCrowd@@@@QAA@ABV0@@Z"
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions. | FOLD REFUTED -- 2 memberships WITHDRAWN (lane ALIASFIX, 2026-08-17, rb3-xenon 447cd49e). The two prior readings are wrong in OPPOSITE directions: ALIAS-X4 section 4.6 ruled KEEP ('index artifact', fold real), probe-index-exposure phase 3 ruled it a survivor MISATTRIBUTION (fold real, wrong survivor). The fold is FABRICATED and the survivor name is RIGHT -- the split target object obj/OutfitConfig.obj emits the 120-byte body at 0x8229ef00 under the survivor's own name, and each ObjPtr<T> copy ctor stores a per-T vtable, so the 17 masked-equal retail placements (0x8229dc70 0x8229ef00 0x822b1680 0x822b1728 0x822bc0b0 0x822bc158 0x822cb430 0x822cdb70 0x822d3f18 0x822d6f90 0x822d7038 0x82304720 0x823047c8 0x823a0700 0x824be668 0x824cb6b0 0x824e0250) are 17 different functions. See withdrawn[]. OUT OF SCOPE, real, untouched: our own survivor body misses retail here on 7 of 25 plain words -- ours stores TWO vtables (ObjRefConcrete<RndMat,ObjectDir> and ObjPtr<RndMat>) where retail stores one. A source defect the alias never concealed.",
+   "withdrawn": [
+    {
+     "spelling": "??0?$ObjPtr@VRndDrawable@@@@QAA@ABV0@@Z",
+     "why": "FABRICATED FOLD, not a wrong survivor. ObjPtr<T>::ObjPtr(const ObjPtr&) stores its OWN per-T vtable -- our object relocates ??_7?$ObjPtr@V<T>@@@@6B@ at body offsets 0x20/0x24 -- so two instantiations can never be one COMDAT. Retail carries 17 DISTINCT 120-byte bodies with this instruction stream (0x8229dc70 0x8229ef00 0x822b1680 0x822b1728 0x822bc0b0 0x822bc158 0x822cb430 0x822cdb70 0x822d3f18 0x822d6f90 0x822d7038 0x82304720 0x823047c8 0x823a0700 0x824be668 0x824cb6b0 0x824e0250): 17 distinct raw bodies, 17 distinct vtable constants, i.e. /OPT:ICF folded NONE of them. They compare equal only because the T1 rule masks the one word that carries the instantiation's identity. This spelling's home is one of the other 16, not 0x8229ef00.",
+     "lane": "ALIASFIX 2026-08-17",
+     "note": "Do NOT re-add. The group was LIVE in the admission predicate, so this membership was a FALSE-PASS (fail-open) channel: our `bl` to this spelling compared EQUAL to the target's `bl` to a different retail function. Re-deriving it needs the RESOLVED relocation operand, not a masked-word comparison -- the T1 rule, probe_icf_foldtest's shape() and objdiff at functionRelocDiffs=none are all blind to it. Withdrawal priced at 0 B."
+    },
+    {
+     "spelling": "??0?$ObjPtr@VWorldCrowd@@@@QAA@ABV0@@Z",
+     "why": "FABRICATED FOLD, not a wrong survivor. ObjPtr<T>::ObjPtr(const ObjPtr&) stores its OWN per-T vtable -- our object relocates ??_7?$ObjPtr@V<T>@@@@6B@ at body offsets 0x20/0x24 -- so two instantiations can never be one COMDAT. Retail carries 17 DISTINCT 120-byte bodies with this instruction stream (0x8229dc70 0x8229ef00 0x822b1680 0x822b1728 0x822bc0b0 0x822bc158 0x822cb430 0x822cdb70 0x822d3f18 0x822d6f90 0x822d7038 0x82304720 0x823047c8 0x823a0700 0x824be668 0x824cb6b0 0x824e0250): 17 distinct raw bodies, 17 distinct vtable constants, i.e. /OPT:ICF folded NONE of them. They compare equal only because the T1 rule masks the one word that carries the instantiation's identity. This spelling's home is one of the other 16, not 0x8229ef00.",
+     "lane": "ALIASFIX 2026-08-17",
+     "note": "Do NOT re-add. The group was LIVE in the admission predicate, so this membership was a FALSE-PASS (fail-open) channel: our `bl` to this spelling compared EQUAL to the target's `bl` to a different retail function. Re-deriving it needs the RESOLVED relocation operand, not a masked-word comparison -- the T1 rule, probe_icf_foldtest's shape() and objdiff at functionRelocDiffs=none are all blind to it. Withdrawal priced at 0 B."
+    }
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
+   "lane": "ALIASFIX 2026-08-17"
   },
   {
    "name": "DataSymbol",
@@ -26179,11 +26228,16 @@
   {
    "name": "_M_create_node",
    "address": "0x8235c328",
-   "survivor": "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z",
-   "folded": [
-    "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z"
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "survivor": "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z",
+   "folded": [],
+   "evidence": "CORRECTED by lane W6-ACCURACY on retail bytes. The group previously named the map<int,float> spelling as SURVIVOR and set<MoveDetector*> as folded -- the roles were INVERTED, because target_symbol_map.json/0x8235c328 carried the wrong name. Retail's body at 0x8235c328 allocates 0x14 (li r3,0x14) and copies ONE word (lwz/stw) into node+0x10, i.e. a 4-byte value_type. pair<const int,float> is 8 bytes and needs 0x18 + two copies, so a map<int,float> node builder CANNOT be this body. set<MoveDetector*> (value_type = a 4-byte pointer) fits exactly, and our compiled body is byte-identical to retail's 76 bytes once the single relocation slot at +0x18 is masked (both call MemOrPoolAlloc/STL, already equated by group @0x827bd208). Corroborated independently: retail _M_insert@set<MoveDetector*> at 0x8235C538 -- already pinned to MoveAsyncDetector.cpp -- calls 0x8235C328 three times.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z",
+     "reason": "PHYSICALLY IMPOSSIBLE at this address: value_type pair<const int,float> is 8 bytes, retail's body here allocates 0x14 = 0x10 header + 4. Our compiled 84-byte body for this spelling is instead byte-identical (reloc-masked) to retail 0x82271D48, so its true fold survivor is map<CRC,float>::_M_create_node -- see the group at 0x82271d48.",
+     "withdrawn_by": "lane W6-ACCURACY"
+    }
+   ]
   },
   {
    "name": "_M_insert_overflow",
@@ -28094,10 +28148,7 @@
    "name": "CVEIN1_insert_unique",
    "address": "0x82594990",
    "survivor": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBHM@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBHM@2@@Z",
-   "folded": [
-    "?insert_unique@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@W4ScoreType@@U?$_SetTraitsT@W4ScoreType@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABW4ScoreType@@@Z",
-    "?insert_unique@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@W4TrackType@@U?$_SetTraitsT@W4TrackType@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABW4TrackType@@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 10,
    "retail_callers": [
@@ -28106,7 +28157,23 @@
     "?InqRequiredScoreTypes@Accomplishment@@UBA_NAAV?$set@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@V?$StlNod",
     "?InqRequiredScoreTypes@AccomplishmentConditional@@UBA_NAAV?$set@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?insert_unique@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@W4ScoreType@@U?$_SetTraitsT@W4ScoreType@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABW4ScoreType@@@Z",
+     "lane": "W4b-DUALWIT 2026-08-17",
+     "class": "NODE_SIZE_AND_VALUE_TYPE_MISMATCH",
+     "why": "chased within one build, 2 levels. The two insert_unique bodies ARE byte-identical (232 B, 0 non-relocated diffs) and differ at exactly one relocation: _M_insert. Our two _M_insert bodies likewise differ only at _M_create_node. Our two _M_create_node bodies then diverge in CONTENT: map<int,float> does `li r3,0x18` (24 B node = 16 hdr + 8 for pair<const int,float>) and copies the mapped float with `lfs f0,4(r31)` / `stfs f0,4(r11)`; set<ScoreType> does `li r3,0x14` (20 B node = 16 + 4 enum) and copies one integer word. The float copy and the node size are FORCED by the template argument, so those COMDATs cannot fold, so _M_insert cannot, so insert_unique cannot. SIDE-FINDING (map defect, not acted on): the retail body carrying the map spelling ?_M_create_node@_Rb_tree<int,...pair<const int,float>> is 76 B and does `li r3,0x14` with a single-word copy -- i.e. it is a 4-byte-key SET node builder. A pair<const int,float> map node cannot be 20 B; that retail address is misnamed.",
+     "note": "Refuted WITHIN ONE BUILD (our(S) vs our(F)), with CVEIN-1's guard PASSING on the survivor (our(S) reproduces retail(S) on every non-relocated word), so the divergence is not ours. NOT refuted on a cross-build size comparison. Do NOT re-add without evidence that addresses the specific content divergence named below."
+    },
+    {
+     "spelling": "?insert_unique@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@W4TrackType@@U?$_SetTraitsT@W4TrackType@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABW4TrackType@@@Z",
+     "lane": "W4b-DUALWIT 2026-08-17",
+     "class": "NODE_SIZE_AND_VALUE_TYPE_MISMATCH",
+     "why": "identical chase and identical divergence as the ScoreType membership of this group; our _M_create_node for set<TrackType> is the same 76 B `li r3,0x14` body.",
+     "note": "Refuted WITHIN ONE BUILD (our(S) vs our(F)), with CVEIN-1's guard PASSING on the survivor (our(S) reproduces retail(S) on every non-relocated word), so the divergence is not ours. NOT refuted on a cross-build size comparison. Do NOT re-add without evidence that addresses the specific content divergence named below."
+    }
+   ]
   },
   {
    "name": "CVEIN1___destroy_range_aux",
@@ -28315,9 +28382,7 @@
    "name": "CVEIN1__M_erase",
    "address": "0x822dd9a0",
    "survivor": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
-   "folded": [
-    "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
    "retail_callers": [
@@ -28325,22 +28390,38 @@
     "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1s",
     "fn_82B9A9F0"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "lane": "W4-ALIAS 2026-08-17",
+     "class": "NODE_SIZE_MISMATCH",
+     "why": "one non-relocated word differs @0x30: survivor `addi r3,r0,20` (_Rb_tree_node<Symbol>, a SET node = 16 B header + 4 B Symbol) vs folded `addi r3,r0,24` (_Rb_tree_node<pair<Symbol const,CharLipSync*>>, a MAP node = 16+8). Different deallocation sizes => different COMDATs. CONTAINER-1's node-size criterion.",
+     "note": "Refuted WITHIN ONE BUILD on CONTENT, not on a cross-build size comparison (the instrument GROUNDED-1 got 7 of 8 wrong with, and which coff_bodies_ext.py's +8 EH-prefix artifact makes unusable). our(S) reproduces retail(S) on every non-relocated word, so our survivor instantiation is correct and the divergence is FORCED by the template argument. Do NOT re-add without positive fold evidence."
+    }
+   ]
   },
   {
    "name": "CVEIN1___destroy_range_aux",
    "address": "0x82429170",
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVDataArrayPtr@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVTextureStore@LiveCameraInput@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVTextureStore@LiveCameraInput@@@0@0ABU__false_type@0@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
     "??1?$vector@VTextureStore@LiveCameraInput@@V?$StlNodeAlloc@VTextureStore@LiveCameraInput@@@stlpmtx_std@@@stlpm",
     "?_M_clear_after_move@?$vector@VDataArrayPtr@@V?$StlNodeAlloc@VDataArrayPtr@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVTextureStore@LiveCameraInput@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVTextureStore@LiveCameraInput@@@0@0ABU__false_type@0@@Z",
+     "lane": "W4-ALIAS 2026-08-17",
+     "class": "CALLEE_SHAPE_MISMATCH",
+     "why": "our(S)=our(F)=96 B, exactly ONE non-relocated word differs @0x24: survivor `lwz r3,-4(r11)` loads the POINTEE out of the DataArrayPtr element and calls DataArray::Release (an inlined ~DataArrayPtr); folded `addi r3,r11,-4` passes the ELEMENT ADDRESS to ~TextureStore (an 80 B out-of-line dtor). A pointer-wrapper element and a value-type element cannot share one COMDAT.",
+     "note": "Refuted WITHIN ONE BUILD on CONTENT, not on a cross-build size comparison (the instrument GROUNDED-1 got 7 of 8 wrong with, and which coff_bodies_ext.py's +8 EH-prefix artifact makes unusable). our(S) reproduces retail(S) on every non-relocated word, so our survivor instantiation is correct and the divergence is FORCED by the template argument. Do NOT re-add without positive fold evidence."
+    }
+   ]
   },
   {
    "name": "CVEIN1___destroy_range_aux",
@@ -28456,9 +28537,7 @@
    "name": "CVEIN1___adjust_heap",
    "address": "0x82346360",
    "survivor": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
-   "folded": [
-    "??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@HHPAV1@UPriority@@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
    "retail_callers": [
@@ -28466,15 +28545,22 @@
     "??$sort_heap@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@@Z",
     "fn_823471A8"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@HHPAV1@UPriority@@@Z",
+     "lane": "W4-ALIAS 2026-08-17",
+     "class": "INLINED_COMPARATOR_MISMATCH",
+     "why": "our(S) and our(F) are the same size but EIGHT non-relocated words differ (0x20,0x24,0x28,0x2c,0x8c,0x94,0x98,0x9c). The comparator is inlined in both and reads a different member offset (`lwz rX,0(rY)` vs `lwz rX,40(rY)`), compares with different signedness (cmplw vs cmpw) and branches on a different CR bit. MoveDetectorCmp and Priority are different predicates.",
+     "note": "Refuted WITHIN ONE BUILD on CONTENT, not on a cross-build size comparison (the instrument GROUNDED-1 got 7 of 8 wrong with, and which coff_bodies_ext.py's +8 EH-prefix artifact makes unusable). our(S) reproduces retail(S) on every non-relocated word, so our survivor instantiation is correct and the divergence is FORCED by the template argument. Do NOT re-add without positive fold evidence."
+    }
+   ]
   },
   {
    "name": "CVEIN1_clear",
    "address": "0x822fa110",
    "survivor": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVColor@Hmx@@@2@U?$_Select1st@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
-   "folded": [
-    "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 11,
    "retail_callers": [
@@ -28483,15 +28569,22 @@
     "??1StreakFocusTracker@@UAA@XZ",
     "??1VocalTrackDir@@UAA@XZ"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W4b-DUALWIT 2026-08-17",
+     "class": "NODE_SIZE_MISMATCH",
+     "why": "chased within one build, 1 level. The two clear bodies ARE byte-identical (80 B, 0 non-relocated diffs) and differ at exactly one relocation: _M_erase. Our two _M_erase bodies differ in exactly one non-relocated word: `li r3,0x24` (36 B node, pair<const int,Hmx::Color> = 4+16 => 16+20) vs `li r3,0x28` (40 B node, pair<const unsigned short,RndFont::CharInfo>). Different deallocation sizes cannot be one COMDAT -- if retail had folded these, one container would free with the wrong node size. The two clear bodies are the SAME SIZE, so a size test could not have found this.",
+     "note": "Refuted WITHIN ONE BUILD (our(S) vs our(F)), with CVEIN-1's guard PASSING on the survivor (our(S) reproduces retail(S) on every non-relocated word), so the divergence is not ours. NOT refuted on a cross-build size comparison. Do NOT re-add without evidence that addresses the specific content divergence named below."
+    }
+   ]
   },
   {
    "name": "CVEIN1__M_fill_insert_aux",
    "address": "0x822df0b0",
    "survivor": "?_M_fill_insert_aux@?$vector@MV?$XboxAllocator@M@@@stlpmtx_std@@AAAXPAMIABMABU__false_type@2@@Z",
-   "folded": [
-    "?_M_fill_insert_aux@?$vector@PAMV?$StlNodeAlloc@PAM@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAMIABQAMABU__false_type@2@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
    "retail_callers": [
@@ -28499,15 +28592,22 @@
     "?_M_fill_insert@?$vector@PAMV?$StlNodeAlloc@PAM@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAMIABQAM@Z",
     "?_M_fill_insert_aux@?$vector@MV?$XboxAllocator@M@@@stlpmtx_std@@AAAXPAMIABMABU__false_type@2@@Z"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@PAMV?$StlNodeAlloc@PAM@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAMIABQAMABU__false_type@2@@Z",
+     "lane": "W4b-DUALWIT 2026-08-17",
+     "class": "ELEMENT_REGISTER_CLASS_MISMATCH",
+     "why": "direct within-build content divergence at EQUAL size (both 328 B): THIRTEEN non-relocated words differ. The survivor is vector<float> and moves elements in the FP register class (`lfs f0,0(r27)` / `stfs f0,...`); the folded spelling is vector<float*> and moves them as integers (`lwz r10,0(r27)` / `stw r10,...`), with the consequent register renumbering. The register class of the element copy is forced by the template argument. Equal size, so a size test was structurally blind to this.",
+     "note": "Refuted WITHIN ONE BUILD (our(S) vs our(F)), with CVEIN-1's guard PASSING on the survivor (our(S) reproduces retail(S) on every non-relocated word), so the divergence is not ours. NOT refuted on a cross-build size comparison. Do NOT re-add without evidence that addresses the specific content divergence named below."
+    }
+   ]
   },
   {
    "name": "CVEIN1_erase",
    "address": "0x8241aa68",
    "survivor": "?erase@?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@2@U32@0@Z",
-   "folded": [
-    "?erase@?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@2@U32@0@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
    "retail_callers": [
@@ -28515,7 +28615,16 @@
     "?RemoveInstances@?$TrackWidgetImp@UInstance@RndMultiMesh@@@@UAAXAAV?$list@UInstance@RndMultiMesh@@V?$StlNodeAl",
     "?resize@?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_st"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?erase@?$list@UInstance@RndMultiMesh@@V?$StlNodeAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@2@U32@0@Z",
+     "lane": "W4b-DUALWIT 2026-08-17",
+     "class": "DEALLOCATOR_MISMATCH",
+     "why": "chased within one build, 1 level. The two erase bodies ARE byte-identical (96 B, 0 non-relocated diffs) and differ at exactly one relocation: the sibling erase overload. Our two sibling bodies diverge in CONTENT, not merely size (88 vs 84 B): the TransformListAlloc variant calls ?CustFree@ReclaimableAlloc@@QAAXPAX@Z, the StlNodeAlloc variant calls ?MemOrPoolFreeSTL@@YAXHPAX@Z and passes an explicit `li r3,0x48`. A different deallocation function is forced by the allocator template argument; those COMDATs cannot fold.",
+     "note": "Refuted WITHIN ONE BUILD (our(S) vs our(F)), with CVEIN-1's guard PASSING on the survivor (our(S) reproduces retail(S) on every non-relocated word), so the divergence is not ours. NOT refuted on a cross-build size comparison. Do NOT re-add without evidence that addresses the specific content divergence named below."
+    }
+   ]
   },
   {
    "name": "CVEIN1_clear",
@@ -28588,9 +28697,7 @@
    "name": "CVEIN1_resize",
    "address": "0x822b7e40",
    "survivor": "?resize@?$ObjList@VKeyFrame@EventAnim@@@@QAAXI@Z",
-   "folded": [
-    "?resize@?$ObjList@VEventCall@EventAnim@@@@QAAXI@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
    "retail_callers": [
@@ -28598,7 +28705,16 @@
     "fn_822B7EB8",
     "fn_824CA458"
    ],
-   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address"
+   "witness": "T1 x2: map-naming inconsistency + heterogeneous retail fan-in on one address",
+   "withdrawn": [
+    {
+     "spelling": "?resize@?$ObjList@VEventCall@EventAnim@@@@QAAXI@Z",
+     "lane": "W4b-DUALWIT 2026-08-17",
+     "class": "PIGEONHOLE_DISTINCT_RETAIL_ADDRESS",
+     "why": "REFUTED BY PIGEONHOLE, which is build-independent: a folded function has ONE address. Our ?resize@ObjList<EventCall> body is byte-identical -- 0 non-relocated word diffs, 68 B -- to RETAIL's body at 0x822b6ee8 (map-named ?resize@ObjList<ProxyCall@EventTrigger>), including exact relocation-target-name agreement on the discriminating slot @0x38 (??1EventCall). This group claims it folded into the survivor at 0x822b7e40 instead. It cannot be at both. Corroborating within-build content at EQUAL size (68 B, 4 non-relocated words): stack frame `stwu r1,-0x80` vs `-0x90` and the temporary at r31+0x54 vs r31+0x50, forced by sizeof(KeyFrame) vs sizeof(EventCall); and our(F) tail-calls ??1EventCall where our(S) calls a _List_base<T>::clear. Independently confirmed by tools/icf_alias_finder.py --validate, which rates this exact pair CONTRADICTED (FATAL) when asserted as a group. NOTE the @0x38 asymmetry between our(S) and retail(S) is ordinary fold-alias noise (retail names that clear <BitmapOverride@WorldDir>), NOT a defect.",
+     "note": "Refuted WITHIN ONE BUILD (our(S) vs our(F)), with CVEIN-1's guard PASSING on the survivor (our(S) reproduces retail(S) on every non-relocated word), so the divergence is not ours. NOT refuted on a cross-build size comparison. Do NOT re-add without evidence that addresses the specific content divergence named below."
+    }
+   ]
   },
   {
    "name": "NOGROUP1___uninitialized_fill_n",
@@ -28758,6 +28874,16 @@
    "witness": "FAN-IN NAMES OUR FOLDED SPELLING'S OWN CLASS: retail's ?_M_fill_insert@vector<Object*> calls 0x82272798, which the map names _M_fill_insert_aux@vector<RndDrawable*>. A vector<Object*> method calling a vector<RndDrawable*> helper is internally inconsistent unless the linker folded them. PLUS masked-body uniqueness: retail keeps exactly ONE 328-byte body of this shape.",
    "evidence": "Lane FOLDPROVE-2. RndDrawable* and Object* are both 4-byte pointers, so vector<T*>::_M_fill_insert_aux emits identical code. TWO INDEPENDENT CHANNELS. (1) MASKED-BODY UNIQUENESS = 1: retail holds exactly one 328-byte body of this shape. (2) HETEROGENEOUS FAN-IN naming the folded spelling: of the two retail call sites reaching 0x82272798, one is ?_M_fill_insert@?$vector@PAVObject@Hmx@@ -- i.e. retail's own vector<Object*> code calls the address the map labels vector<RndDrawable*>, which is impossible without folding, and it names EXACTLY the spelling being aliased. DELIBERATELY NOT COUNTED AS A THIRD CHANNEL: the recursive-relocation probe returns SUPPORTED here, but its only differing slot is a SELF-RECURSIVE tail call (_M_fill_insert_aux calling itself), so that test degenerates to re-comparing the parent against itself and carries no independent information. It is excluded from the witness rather than banked.",
    "lane": "FOLDPROVE-2"
+  },
+  {
+   "name": "_M_create_node",
+   "address": "0x82271d48",
+   "survivor": "?_M_create_node@?$_Rb_tree@VCRC@Hmx@@U?$less@VCRC@Hmx@@@stlpmtx_std@@U?$pair@$$CBVCRC@Hmx@@M@4@U?$_Select1st@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@4@U?$_MapTraitsT@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@priv@4@V?$StlNodeAlloc@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@4@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVCRC@Hmx@@M@2@@Z",
+   "folded": [
+    "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z"
+   ],
+   "evidence": "T1 retail-byte identity established by lane W6-ACCURACY. Our compiled map<int,float>::_M_create_node is 84 bytes and equals retail 0x82271D48 (map<CRC,float>::_M_create_node, 84 bytes) at every word except offset 0x18, which is the function's ONLY relocation (a bl); the relocation target name is MemOrPoolAllocSTL on our side and MemOrPoolAlloc in retail, already equated by the proven group at 0x827bd208, so relocation-target NAME equality holds under the /OPT:ICF fixpoint closure. Hmx::CRC is a single 4-byte member (utl/CRC.h), so pair<const CRC,float> and pair<const int,float> have identical layout AND identical copy codegen (lwz/stw for the key, lfs/stfs for the float) -- they cannot NOT fold. Anti-vacuity: the two bodies are 84 bytes with a 21-instruction shape that differs from every other surviving _M_create_node in the image (19 sizes measured, alloc 0x14/0x18/0x1c/0x20/0x24/0x28/0x2c/0x34/0x40).",
+   "witness": "T1 reloc-masked byte identity + layout-forced codegen identity"
   }
  ]
 }

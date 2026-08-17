@@ -146,8 +146,39 @@ void *MemTruncate(
     const char *name = "unknown"
 );
 void *_MemAllocTemp(int size, const char *file, int line, const char *name, int align);
-void *_MemAlloc(int size, int align); // rb3-Wii two-arg allocator used in STLPort specializations
-void _MemFree(void *mem);             // rb3-Wii free used in STLPort specializations
+// ⛔ PHANTOMS -- `_MemAlloc` / `_MemFree` are rb3-Wii (MWCC) spellings that
+// RETAIL RB3-360 DOES NOT HAVE, and that we never defined either.  Adjudicated
+// on retail bytes (lane W1b-GAME): across all 396 pinned target objs the
+// mangled `?_MemAlloc@@` and `?_MemFree@@` appear ZERO times, while their real
+// siblings `?MemAlloc@@`, `?MemFree@@`, `?_MemAllocTemp@@`, `?MemOrPoolFreeSTL@@`
+// all appear -- so the absence is a measurement, not a lookup that silently
+// failed.  Retail's whole global free family is MemFree / MemOrPoolFreeSTL /
+// MemFreeH / MemTrackFree.  Every one of the 12 `_MemFree` call sites we had
+// was freeing a buffer that had been allocated with `MemAlloc`, and objdiff
+// showed retail calling `?MemFree@@YAXPAX@Z` at those very sites (e.g.
+// UIStats::Terminate idx 10; the `_Temporary_buffer` dtor is an 8-byte thunk
+// `lwz r3,0x8(r3); b ?MemFree@@`), so they were wrong callees, not a style
+// choice.  Lane W0-ALLOC rewrote the 8 `_MemAlloc` sites; W1b-GAME rewrote the
+// 12 `_MemFree` sites.
+//
+// The MIRROR-IMAGE case W0-ALLOC warned about (retail spelling X where we
+// spell Y) is STRUCTURALLY EMPTY here rather than merely unobserved: retail
+// never references either phantom anywhere, so there is no site that could
+// want one.  ⚠ Note the per-unit relocation-count comparison is NOT a usable
+// instrument for that question -- it "disagrees" on 361 of 396 units because
+// our objs carry template COMDATs and inlined dtors that retail's pinned
+// extents do not.  A gate that fires on 91% of units cannot discriminate.
+//
+// Kept ONLY for HX_NATIVE: the shared native engine (SHA-pinned sibling repo
+// milo-native-engine, src/platform/RB3TexSharpen.cpp) still calls both, and by
+// house rule only the coordinator bumps that pin -- so removing these outright
+// would break a repo this lane does not own.  Under the match build they are
+// gone, which makes the phantoms UNCALLABLE (a reintroduced call is now a
+// compile error instead of a silent wrong relocation).
+#ifdef HX_NATIVE
+void *_MemAlloc(int size, int align); // rb3-Wii two-arg allocator (native only)
+void _MemFree(void *mem);             // rb3-Wii free (native only)
+#endif
 void *
 MemRealloc(void *mem, int size, const char *file, int line, const char *name, int align);
 void *MemAlloc(int size, const char *file, int line, const char *name, int align = 0);

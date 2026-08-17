@@ -17,7 +17,10 @@ StreamReceiver360::StreamReceiver360(int sampleRate, int numBuffers, bool slip)
     : StreamReceiver(numBuffers, slip), mStreamBuf(0), mSlipVoice(0), mVoice(0),
       mSampleRate(sampleRate), mNumBufs(numBuffers), mVolume(1.0f), mPan(0.0f), mSpeed(1.0f),
       mFxSend(0), mTagged(false) {
-    mStreamBuf = (unsigned char *)_MemAllocTemp(
+    // Retail uses the PERSISTENT heap here (retail obj: `bl ?MemAlloc@@YAPAXHH@Z`),
+    // not the temp heap — the stream buffer lives for the receiver's lifetime.
+    // Lane W0-ALLOC.
+    mStreamBuf = (unsigned char *)MemAlloc(
         numBuffers * 0xC000, "StreamReceiver.cpp", 0x33, "StreamBuffer", 0);
 
     mVoice = new Voice(false, 1, false);

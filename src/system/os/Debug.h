@@ -175,11 +175,17 @@ inline void MiloStripEval(const char *, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)
 #define MILO_FAIL(...) TheDebugFailer << MakeString(__VA_ARGS__)
 #else
 // Retail RB3-360 compiled MILO_FAIL's emission (TheDebugFailer << MakeString)
-// to NO code: DebugFailer::operator<< (0x8235C970) has ZERO bl callers in the
-// whole binary, and the fail strings ("Could not find %s in dir", "**no file**")
-// are absent from .text/.rdata. But unlike the WARN family, the FAIL *arguments*
+// to NO code. But unlike the WARN family, the FAIL *arguments*
 // were still EVALUATED for side effects (Find<T>'s fail path calls PathName(this)
 // twice — the ternary — but never MakeString/Fail). So use (void)(args), a comma
+// (CORRECTED, lane W13-CHARINFO: this block used to justify the above with
+// "DebugFailer::operator<< (0x8235C970) has ZERO bl callers ... and the fail
+// strings are absent from .text/.rdata". BOTH halves are FALSE.
+// `"Could not find %s in dir \"%s\""` IS present in .rdata
+// (auto_00_82000400_rdata.s), and 0x8235C970 names no function at all — it is
+// interior to fn_8235C94C, a 40-byte body in CharClip.s. The macro definition
+// below is unaffected: it rests on the argument-evaluation argument above,
+// which was checked independently and stands.)
 // expression that evaluates each arg and discards: side-effecting args (PathName
 // vcalls) survive, the format-string materialization + MakeString + Fail vanish.
 // This is what flips the ObjectDir::Find<T> template family to 100%.

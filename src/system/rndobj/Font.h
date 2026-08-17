@@ -50,24 +50,42 @@ public:
         float kerning; // 0x4
     };
 
-    // Retail CharInfo is 20 bytes: four floats plus one trailing word.
-    // Two independent retail instruments pin it, and only this shape satisfies
-    // both:
-    //   * Save (0x82472EC0) / CharDefined (0x82473A98) put FLOATS at +0x0, +0x4,
-    //     +0x8, +0xc -- the per-char FOREACH emits `sth` then 4x `lfs` and never
-    //     a `lwz`, so DC3's leading `int mPage` cannot be there.
-    //   * _Rb_tree<...CharInfo>::_M_erase deallocates with `li r3, 0x28` -- a
-    //     40-byte node. _Rb_tree_node_base is 16 and the key sits at node+0x10,
-    //     so sizeof(pair<const u16, CharInfo>) is 24 and sizeof(CharInfo) is 20.
-    // Hence a fifth word AFTER the floats. Retail's Save does not serialize it
-    // and no decoded body reads it, so its meaning is unidentified -- it is NOT
-    // DC3's mPage (that was the first member and was serialized).
+    // Retail CharInfo is 16 bytes: exactly four floats, no trailing word.
+    //
+    // CORRECTION (lane W13-CHARINFO). This block previously claimed 20 bytes and
+    // carried a fifth `int mUnk10`, on the strength of an `_M_erase` that
+    // deallocates `li r3, 0x28` (a 40-byte node). That instrument was
+    // MISATTRIBUTED. The 0x28 body is `fn_826DC4C0`, and a whole-binary caller
+    // scan of the split asm finds it reached only from `fn_826DC598`
+    // (CharLipSync) and from itself -- NO RndFont body calls it. Its
+    // `...UCharInfo@RndFont@@...` map name is a fold-alias survivor's name, not
+    // evidence about this map. (0x28 is, however, exactly the node size OUR
+    // 20-byte CharInfo compiled to, which is how the misreading survived: the
+    // "retail" figure being cited was our own codegen.)
+    //
+    // The map-name-independent chain, followed from RndFont's own pinned bodies
+    // outward, gives 16:
+    //   * RndFont bodies 0x82473568, 0x82473B38 and 0x82474560 each do
+    //     `addi r3, <this>, 0x40` then `bl fn_822FA110` -- i.e. they clear THE
+    //     MAP AT +0x40, which is mCharInfoMap.
+    //   * fn_822FA110 (_Rb_tree::clear) calls fn_822F8B40 (_M_erase), which
+    //     deallocates `li r3, 0x24` -- a 36-byte node.
+    //   * The same family's _M_create_node (fn_822F8F80, reached from Font.s via
+    //     _M_copy fn_822FA500) allocates `li r3, 0x24` and copies the value as
+    //     FIVE words from node+0x10 -- a 20-byte pair, independently.
+    //   _Rb_tree_node_base is 16 and the value sits at node+0x10, so
+    //   sizeof(pair<const u16, CharInfo>) is 20 and sizeof(CharInfo) is 16.
+    //
+    // The float evidence is unchanged and still holds: Save (0x82472EC0) and
+    // CharDefined (0x82473A98) put FLOATS at +0x0, +0x4, +0x8, +0xc -- the
+    // per-char FOREACH emits `sth` then 4x `lfs` and never a `lwz`, so DC3's
+    // leading `int mPage` cannot be there. With 16 bytes the four floats fill
+    // the struct exactly and there is no room for an unidentified fifth word.
     struct CharInfo {
         float mU; // 0x0
         float mV; // 0x4
         float mCharWidth; // 0x8
         float mAdvance; // 0xc
-        int mUnk10; // 0x10 -- unidentified; sized by the 0x28 node, never saved
     };
     virtual ~RndFont();
     virtual void Replace(ObjRef *, Hmx::Object *);
