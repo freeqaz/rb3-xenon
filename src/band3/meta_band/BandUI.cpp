@@ -461,13 +461,50 @@ DataNode BandUI::OnMsg(const JoypadConnectionMsg &msg) {
     return DataNode(kDataUnhandled, 0);
 }
 
+// ---------------------------------------------------------------------------
+// HAQ STRIP, three remaining sites (lane W25-UI). The HAQManager::Print calls
+// that used to sit in ButtonDown / ButtonUp / UIComponentFocusChange are GONE in
+// retail X360 -- the same "HAQ debug strip" already recorded above for
+// OnMsg(UITransitionCompleteMsg) and below for OnMsg(UIComponentScrollMsg). The
+// prior pass fixed those two and missed these three.
+//
+// PROVED THREE INDEPENDENT WAYS, none of which is a name-similarity argument:
+//
+//  1. RETAIL DISPATCH ENUMERATION (tools/dispatch_fold_enum.py over
+//     Handle@BandUI @0x82539210). Retail calls ONE address, 0x825390E0, from
+//     FIVE arms whose message classes are read from RETAIL BYTES via the COL at
+//     vtable[-1]: 0x82539838 UIComponentFocusChangeMsg, 0x825399B4
+//     ButtonDownMsg, 0x82539A2C ButtonUpMsg, 0x82539AA4 UIComponentSelectMsg,
+//     0x82539B1C UIComponentSelectDoneMsg. One address cannot be five distinct
+//     handlers, so all five retail bodies are IDENTICAL -- which they can only
+//     be if none of them calls HAQManager::Print.
+//
+//  2. OUR OWN COMDATs (tools/w25_fold_proof.py over the compiled
+//     src/band3/meta_band/BandUI.obj). Before this fix the two Print-free
+//     spellings compiled to 52 bytes / 1 relocation (a leaf that tail-calls
+//     OnOvershellMsgCommon) while these three compiled to 64 bytes / 4
+//     relocations -- the extra ones being ?Print@HAQManager@@ plus
+//     __savegprlr_29/__restgprlr_29 for the frame the call forces. Different
+//     SIZES cannot fold under /OPT:ICF at all. Note the discriminator here is
+//     the RELOCATION SET, not the size: a pure size test is exactly what
+//     STLPORT-1 showed can be a one-sided reader artifact.
+//
+//  3. This file's own two prior HAQ-strip findings, above and below.
+//
+// ⛔ DO NOT "FIX" THIS BY DECLARING AN ICF ALIAS INSTEAD. That was tried first
+// in this lane and WITHDRAWN. Adding the three spellings to the fold group at
+// 0x825390e0 would have made objdiff drop the charge BY CONSTRUCTION and bought
+// the same 3,564 B while leaving the extra Print call in place -- i.e. the
+// forgiveness mechanism hiding a genuine behavioural divergence. The `none`
+// ruler cannot catch that (it ignores relocation names and reads +0 either
+// way), so its flatness would have looked like a clearance. The fold is real
+// only AFTER this fix makes the five bodies identical.
+// ---------------------------------------------------------------------------
 DataNode BandUI::OnMsg(const ButtonDownMsg &msg) {
-    HAQManager::Print(kHAQType_Button);
     return OnOvershellMsgCommon(msg, true);
 }
 
 DataNode BandUI::OnMsg(const ButtonUpMsg &msg) {
-    HAQManager::Print(kHAQType_Button);
     return OnOvershellMsgCommon(msg, true);
 }
 
@@ -480,7 +517,6 @@ DataNode BandUI::OnMsg(const UIComponentSelectDoneMsg &msg) {
 }
 
 DataNode BandUI::OnMsg(const UIComponentFocusChangeMsg &msg) {
-    HAQManager::Print(kHAQType_Focus);
     return OnOvershellMsgCommon(msg, true);
 }
 
