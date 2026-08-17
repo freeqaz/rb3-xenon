@@ -21,9 +21,31 @@ it and classify by whether those units' SOURCE is available:
     NO_ENTRY       pinned but absent from objects.json
 
 Only a row flanked by SRC_REAL on BOTH sides is attributable-and-portable: it
-can be pinned to a TU we can actually compile.  A row flanked by scaffolds can
-be *named* but never ported, which buys a pairable row at 0% with no content --
-the `ForceEmit_*`-class metric fitting NOOBJ-1 correctly refused.
+sits in a neighbourhood where compilable source exists.  A row flanked by
+scaffolds can be *named* but never ported, which buys a pairable row at 0% with
+no content -- the `ForceEmit_*`-class metric fitting NOOBJ-1 correctly refused.
+
+⛔⛔ THAT SENTENCE USED TO END "...it can be pinned to a TU we can actually
+compile", AND THAT IS FALSE -- it conflates two different claims with two very
+different error rates (lane W43-AUTOID, 2026-08-17).  `--control`'s 0.60% FP
+prices the SOURCE-CLASS claim ("is there portable source around here").  Writing
+a splits.txt line needs the MEMBERSHIP claim ("WHICH unit is this row"), and
+`--membership` prices that one at **72.04% FP**:
+
+    98.7% of the slice's ROWS and 96.0% of its BYTES (1,795 of 1,818 rows /
+    169,728 of 176,712 B) lie between two DIFFERENT units, and there the truth
+    is a THIRD unit 44.22% of the time; the best fixed side-picking strategy is
+    27.96% precise.
+    The only sub-slice with a defensible instrument is prev==nxt (a hole inside
+    one unit's own range) at 65.77% -- worth 23 rows / 6,984 B = 0.068% of
+    total_code, i.e. nothing, and still 34% FP.
+
+⇒ THE SLICE IS REAL AND IT IS NOT PINNABLE ON SPATIAL EVIDENCE.  Do not read a
+sizing number as an attribution licence; ask which claim its FP rate priced.
+Membership needs CONTENT evidence (fingerprint_match.py strings/callees,
+BinDiff/BSim) -- and the slice is hostile to it: median row 32 B, 214 rows
+<= 16 B.  If it is ever funded, target the 40 rows >= 512 B that carry 38% of
+the bytes, not all 1,818.
 
 CONTROLS (--control).  A provenance-by-adjacency instrument is worthless
 unaudited, and a control whose population is defined by the absence of what it
@@ -39,7 +61,21 @@ sizing rests on.  Measured 2026-08-13 at 7a6de44d:
 A third, weaker instrument is reported and deliberately NOT used: "enclosed by
 the same heading on both sides implies membership in that heading" scores only
 66.24% (FP 33.76%).  It looked like the cheapest possible attribution and it
-failed its control; it is kept here so nobody re-derives it.
+failed its control; it is kept here so nobody re-derives it.  `--membership`
+(below) generalises it to the geometry the auto rows ACTUALLY have and is the
+number to quote before pinning anything.
+
+MEMBERSHIP + NULL + PROXIMITY (--membership).  Measured 2026-08-17 at 05445c10:
+
+  * null (heading labels shuffled, 5 seeds): NEITHER = 99.39-99.64% vs 46.95%
+    real.  So adjacency carries GENUINE signal -- the instrument is not vacuous,
+    it is merely far too weak to name a unit.  Units are fragmented (6,594 spans
+    over 1,278 headings, mean 5.16; 42.8% single-span), which is why the signal
+    exists at all.
+  * ⛔ PROXIMITY DOES NOT RESCUE IT.  "within D bytes of prev span's end => prev"
+    is FLAT at 26-28% precision for every D from 0 (literally abutting) to
+    unbounded.  Distance carries ZERO information here.  This is the obvious
+    next instrument and it is dead; do not re-derive it either.
 
 TRAPS this tool exists to avoid (each has cost a lane):
 
@@ -68,6 +104,7 @@ import collections
 import importlib.util
 import json
 import os
+import random
 import re
 import sys
 from pathlib import Path
@@ -238,6 +275,75 @@ def run_controls(spans, srcclass):
     )
 
 
+def run_membership(spans, srcclass):
+    """Price the MEMBERSHIP claim -- 'which unit is this row' -- not the
+    source-class claim.  Mirrors the auto-row geometry exactly: immediate
+    address-adjacent spans, same-heading NOT skipped."""
+    print("\n=== MEMBERSHIP control (SRC_REAL/SRC_REAL flanks) ===")
+    print("This is the claim a splits.txt line makes.  --control prices a")
+    print("DIFFERENT claim (source class) and its FP rate does NOT transfer.\n")
+    same = [0, 0]
+    diff = collections.Counter()
+    for i in range(1, len(spans) - 1):
+        prev, truth, nxt = spans[i - 1][2], spans[i][2], spans[i + 1][2]
+        if srcclass(prev) != "SRC_REAL" or srcclass(nxt) != "SRC_REAL":
+            continue
+        if prev == nxt:
+            same[0] += 1
+            same[1] += truth == prev
+        elif truth == prev:
+            diff["is_prev"] += 1
+        elif truth == nxt:
+            diff["is_nxt"] += 1
+        else:
+            diff["is_NEITHER"] += 1
+    n, d = same[0], sum(diff.values())
+    print("  prev==nxt (hole inside one unit): %d cases, right %d = %.2f%% (FP %.2f%%)"
+          % (n, same[1], 100.0 * same[1] / max(1, n), 100.0 * (n - same[1]) / max(1, n)))
+    print("  prev!=nxt (must pick a side):     %d cases" % d)
+    for k, v in diff.most_common():
+        print("      %-12s %5d = %6.2f%%" % (k, v, 100.0 * v / max(1, d)))
+    best = max(diff["is_prev"], diff["is_nxt"])
+    print("  best fixed strategy on prev!=nxt: %.2f%% precision (FP %.2f%%)"
+          % (100.0 * best / max(1, d), 100.0 * (d - best) / max(1, d)))
+
+    # NULL: shuffle the heading labels.  Without this, "the truth is a third
+    # unit" could be structurally guaranteed rather than measured.
+    def neither(sp):
+        c = collections.Counter()
+        for i in range(1, len(sp) - 1):
+            p, t, x = sp[i - 1][2], sp[i][2], sp[i + 1][2]
+            if p == x:
+                continue
+            c["N" if t not in (p, x) else "hit"] += 1
+        return 100.0 * c["N"] / max(1, sum(c.values()))
+
+    heads = [s[2] for s in spans]
+    rs = []
+    for seed in range(5):
+        random.seed(seed)
+        sh = heads[:]
+        random.shuffle(sh)
+        rs.append(neither([(a, b, h) for (a, b, _), h in zip(spans, sh)]))
+    print("\n  NULL: is_NEITHER real %.2f%% vs shuffled %.2f%%-%.2f%%  =>  adjacency"
+          % (neither(spans), min(rs), max(rs)))
+    print("        carries REAL signal, but not enough to name a unit.")
+
+    print("\n  PROXIMITY 'within D bytes of prev span end => prev' (expect FLAT):")
+    for D in (0, 16, 64, 256, 1024, 4096, 1 << 30):
+        ok = tot = 0
+        for i in range(1, len(spans) - 1):
+            ps, truth, nxt = spans[i - 1], spans[i][2], spans[i + 1][2]
+            if ps[2] == nxt or spans[i][0] - ps[1] > D:
+                continue
+            if srcclass(ps[2]) != "SRC_REAL" or srcclass(nxt) != "SRC_REAL":
+                continue
+            tot += 1
+            ok += truth == ps[2]
+        print("      D=%-11d commits %5d  precision %6.2f%%  (FP %6.2f%%)"
+              % (D, tot, 100.0 * ok / max(1, tot), 100.0 * (tot - ok) / max(1, tot)))
+
+
 # --------------------------------------------------------------------------- #
 def main():
     ap = argparse.ArgumentParser()
@@ -246,6 +352,8 @@ def main():
     ap.add_argument("--objdiff", default="objdiff.json")
     ap.add_argument("--symbol-map", default="scripts/target_symbol_map.json")
     ap.add_argument("--control", action="store_true", help="run the instrument controls")
+    ap.add_argument("--membership", action="store_true",
+                    help="price the MEMBERSHIP claim (what a pin asserts) + null + proximity")
     ap.add_argument("--queue", type=int, default=0, help="print top N attributable gaps")
     args = ap.parse_args()
 
@@ -300,6 +408,8 @@ def main():
 
     if args.control:
         run_controls(spans, srcclass)
+    if args.membership:
+        run_membership(spans, srcclass)
 
     # ---- classify each auto row by flanking source availability ------------ #
     symmap = json.load(open(args.symbol_map))
@@ -307,6 +417,7 @@ def main():
 
     verdicts = collections.defaultdict(lambda: [0, 0])
     gaps = collections.defaultdict(lambda: [0, 0])
+    srcreal_geom = collections.defaultdict(lambda: [0, 0])
     for unit, _, _ in auto_units:
         for f in unit.get("functions") or []:
             name = f["name"]
@@ -328,6 +439,9 @@ def main():
                 if a == b == "SRC_REAL":
                     gaps[(prev, nxt)][0] += 1
                     gaps[(prev, nxt)][1] += size
+                    geom = "prev==nxt" if prev == nxt else "prev!=nxt"
+                    srcreal_geom[geom][0] += 1
+                    srcreal_geom[geom][1] += size
             verdicts[key][0] += 1
             verdicts[key][1] += size
 
@@ -345,6 +459,13 @@ def main():
         "%d rows / %d B = %.1f%% of the auto class, %.2f%% of total_code"
         % (att_rows, att_bytes, 100.0 * att_bytes / auto_bytes, 100.0 * att_bytes / total_code)
     )
+    # ...but split by the geometry that decides whether it can be PINNED.
+    print("    of which, by membership geometry (see --membership for the FP rates):")
+    for g, v in sorted(srcreal_geom.items()):
+        note = ("65.77% precise -- the only defensible sub-slice"
+                if g == "prev==nxt" else "27.96% precise / 72.04% FP -- NOT PINNABLE")
+        print("      %-10s %5d rows %8d B (%5.1f%% of slice)  %s"
+              % (g, v[0], v[1], 100.0 * v[1] / max(1, att_bytes), note))
     upper = att_bytes + sum(
         v[1] for k, v in verdicts.items() if k.startswith("MIXED") or k == "EDGE"
     )
