@@ -15,6 +15,22 @@ committed artifact in this repo, and no file at any of these tools' default
 output paths, falls inside that window -- this banner exists for outputs held
 outside git.
 
+`--validate48` was DELETED 2026-08-17 (task #117).  It was not broken-by-absence
+— its ground truth `tools/testdata/mdgrind_gt48.jsonl` is committed and it ran
+to completion — it was VACUOUS.  Measured against the live tree that day:
+29 of its 48 symbols no longer resolve (all 24 FUNCLET_PAIRING rows plus 5
+others name `fn_<address>` funclets whose addresses moved when the units were
+reorganised, so objdiff returns nothing and classify_fn answers CLEAN), and 11
+of the surviving 19 are matched at 100% with zero differing instructions.  It
+therefore printed a permanent 15/48 = 31.2% whose FUNCLET_PAIRING row read 0/24
+because the symbols were gone, not because the classifier was wrong — a red that
+can never go green, which teaches readers to ignore it.  Its "CRITICAL: genuine
+MEMBER_DELTA must survive" section printed [OK] for three rows that were simply
+already solved.  Reconstruction is not cheap: the funclet pairings are keyed on
+addresses that no longer exist.  The jsonl stays in the repo as 2026-06-09
+provenance, and its three still-live, still-discriminating rows were promoted
+into VALIDATE_CASES below as independent (non-self-referential) ground truth.
+
 wall_classify.py — Auto-tag HAS_REAL near-miss functions with playbook wall classes.
 
 Implements the 8 wall detectors from docs/decomp/playbooks/hasreal-grind.md §3 plus
@@ -50,7 +66,10 @@ Routes:
 Usage:
   python3 tools/wall_classify.py                          # process ~/tmp/hasreal_worklist.json
   python3 tools/wall_classify.py --worklist /path/to.json
-  python3 tools/wall_classify.py --validate               # accuracy on pilot's 12 targets
+  python3 tools/wall_classify.py --validate               # FIXTURE suite (hermetic)
+  python3 tools/wall_classify.py --validate-live          # same cases vs the LIVE tree
+  python3 tools/wall_classify.py --mutation-matrix        # prove the suite discriminates
+  python3 tools/wall_classify.py --refresh-fixtures       # re-capture fixtures from live
   python3 tools/wall_classify.py --sym "?Foo@Bar@@..." --unit "default/Foo"  # single fn
 """
 
@@ -206,8 +225,25 @@ def _toi(s: str) -> Optional[int]:
 
 # ── objdiff diff extraction ───────────────────────────────────────────────────
 
+# Injection seam for the fixture-driven validation suite (see run_validation).
+# When set, `diff_fn` serves this instead of shelling out to objdiff-cli, and
+# `unit_vbase_for_class` / `InheritanceDB.has_virtual_base` answer from the
+# environment snapshot recorded in the fixture rather than from build/ and src/.
+#
+# WHY this exists: the old --validate ran the classifier against the LIVE tree,
+# so its score tracked how much of the tree had been fixed, not whether the
+# classifier still worked.  7 of its 11 targets reached 100% and started
+# reporting "no diff instructions"; the suite scored an identical 4/11 on
+# broken and repaired code (measured 2026-08-17).  A control has to hold its
+# input still.
+_DIFF_SOURCE = None       # Optional[Callable[[str, str], Optional[dict]]]
+_VBASE_SOURCE = None      # Optional[dict] {'coff': {cls: [sym]}, 'header': {cls: bool}}
+
+
 def diff_fn(unit: str, sym: str, proj: str = ROOT) -> Optional[dict]:
     """Run objdiff for one symbol; return parsed JSON or None."""
+    if _DIFF_SOURCE is not None:
+        return _DIFF_SOURCE(unit, sym)
     tmp = f'/tmp/_wc_{os.getpid()}.json'
     args_u = [CLI, 'diff', '-p', proj, '-u', unit, sym,
                '-f', 'json', '-o', tmp, '--include-instructions']
@@ -307,6 +343,9 @@ def unit_vbase_for_class(unit: str, cls: str) -> Tuple[bool, List[str]]:
     """
     if cls == '':
         return False, []
+    if _VBASE_SOURCE is not None:
+        syms = list((_VBASE_SOURCE.get('coff') or {}).get(cls) or [])
+        return bool(syms), syms[:4]
     obj_path = _find_compiled_obj(unit)
     if not obj_path:
         return False, []
@@ -369,6 +408,8 @@ class InheritanceDB:
 
     def has_virtual_base(self, cls: str, _visited: Optional[Set[str]] = None,
                          _depth: int = 0) -> bool:
+        if _VBASE_SOURCE is not None:
+            return bool((_VBASE_SOURCE.get('header') or {}).get(cls, False))
         self._ensure()
         if _visited is None:
             _visited = set()
@@ -1428,6 +1469,123 @@ def _detect_member_delta(insns: List[dict], unit: str, sym: str) -> Tuple[bool, 
     return True, evidence, dominant_delta, threshold
 
 
+# Hard blockers that must suppress the MEMBER_DELTA struct-offset fallback
+# (these are routed elsewhere; the fallback would otherwise re-tag them as
+# member deltas).  Module scope since 2026-08-17 so the fallback can live in its
+# own function.
+_FALLBACK_BLOCKERS = {'VBASE_WALL', 'BOOL_NEG', 'SIGNEDNESS', 'FPR_SCHED',
+                      'SIZE_DIVERGENCE', 'NO_ORACLE_LAYOUT', 'UNVERIFIABLE',
+                      'FUNCLET_PAIRING', 'VTABLE_DIVERGENCE', 'OFFSET_SWAP'}
+
+
+def _detect_member_delta_fallback(
+        diff_insns: List[dict], classes: List[str],
+        funclet_reg: Optional[str],
+        has_divergent_call: bool) -> Tuple[bool, List[str], int, int]:
+    """STRUCT_OFF fallback for MEMBER_DELTA — the SECOND, independent reading.
+
+    If struct-offset diffs exist and the only OTHER classes are ANON_FN or
+    NAMED_MISMATCH (not real blockers for layout), classify as MEMBER_DELTA.
+    Catches cases where this-tracing fails for legitimate reasons.
+
+    GATE: skip if FUNCLET_PAIRING was already detected — this path is exactly
+    what produced false positives for the Rnd/MoveMgr/Archive/Overlay funclet
+    clusters (direct-r31 frame slot diffs look like struct offsets here but are
+    frame-slot index artifacts, not member deltas).
+
+    Extracted from classify_fn 2026-08-17 so it can be mutated independently of
+    _detect_member_delta.  It turns out the two readings are REDUNDANT on every
+    clean live case: disabling either one alone leaves the verdict unchanged,
+    which is why --mutation-matrix reports both `member-delta` and
+    `member-delta-fallback` as surviving mutants and only the combined
+    `member-delta-both` turns the case red.  Behaviour is byte-identical to the
+    inline version (verified over 1,695 cached live functions).
+
+    Returns (ok, evidence, delta, threshold).
+    """
+    # Hard blockers that must suppress the fallback (these are routed elsewhere;
+    # the fallback would otherwise re-tag them as member deltas).
+    if _FALLBACK_BLOCKERS & set(classes):
+        return False, [], 0, 0
+
+    # Check if all diff_insns are pure structural offset diffs (addi/mem w/ num delta)
+    struct_count = 0
+    total_diff = len(diff_insns)
+    for ins in diff_insns:
+        t = ins.get('target') or {}
+        b = ins.get('base') or {}
+        top = t.get('opcode', '')
+        bop = b.get('opcode', '')
+        ta = (t.get('args') or '')
+        ba = (b.get('args') or '')
+        if top == bop and top in ('addi', 'subi', 'addic'):
+            tt = _tokens(ta)
+            bt = _tokens(ba)
+            if len(tt) >= 3 and len(bt) >= 3:
+                tv = _toi(tt[2])
+                bv = _toi(bt[2])
+                if tv is not None and bv is not None and tv != bv:
+                    struct_count += 1
+        elif top == bop and top in MEM_LOADS_STORES:
+            tt = _tokens(ta)
+            bt = _tokens(ba)
+            # Same base register required — an offset delta is only a member delta
+            # when both sides dereference the SAME base (a `lwz r11,0x50,r1` vs
+            # `lwz r11,0x0,r3` is a different load entirely, not a +0x50 member).
+            if (len(tt) >= 3 and len(bt) >= 3 and tt[2] == bt[2]):
+                tv = _toi(tt[1])
+                bv = _toi(bt[1])
+                if tv is not None and bv is not None and tv != bv:
+                    struct_count += 1
+    # Suppress the fallback if a FUNCLET diff carries a divergent named call —
+    # the struct-offset shift came from a mis-paired structurally different funclet.
+    # For NON-funclet functions, a divergent named call is usually ICF naming noise
+    # (e.g. _Destroy_Range@Cheat folded with @Merger): the uniform member-size
+    # delta is still the real signal, so do NOT suppress the fallback there.
+    funclet_divergent_call = (funclet_reg is not None) and has_divergent_call
+    if not (total_diff > 0 and struct_count >= 1 and not funclet_divergent_call):
+        return False, [], 0, 0
+
+    # Has struct offsets — compute the uniform delta from the structural diffs
+    offsets = []
+    for ins in diff_insns:
+        t = ins.get('target') or {}
+        b = ins.get('base') or {}
+        top = t.get('opcode', '')
+        bop = b.get('opcode', '')
+        ta = (t.get('args') or '')
+        ba = (b.get('args') or '')
+        if top == bop and top in ('addi', 'subi', 'addic'):
+            tt = _tokens(ta)
+            bt = _tokens(ba)
+            if len(tt) >= 3 and len(bt) >= 3:
+                tv = _toi(tt[2])
+                bv = _toi(bt[2])
+                if tv is not None and bv is not None:
+                    offsets.append((tv, bv))
+        elif top == bop and top in MEM_LOADS_STORES:
+            tt = _tokens(ta)
+            bt = _tokens(ba)
+            if len(tt) >= 3 and len(bt) >= 3 and tt[2] == bt[2]:
+                tv = _toi(tt[1])
+                bv = _toi(bt[1])
+                if tv is not None and bv is not None:
+                    offsets.append((tv, bv))
+    if not offsets:
+        return False, [], 0, 0
+
+    deltas_fb = [t - b for t, b in offsets]
+    fb_counter = Counter(deltas_fb)
+    fb_dom_delta, fb_dom_count = fb_counter.most_common(1)[0]
+    if not (fb_dom_count == len(deltas_fb) and fb_dom_delta != 0):
+        return False, [], 0, 0
+    fb_thresh = min(t for t, _ in offsets)
+    return True, [
+        f'fallback: uniform delta={fb_dom_delta:+d} on {len(offsets)} struct-offset diff(s)',
+        f'threshold ~0x{fb_thresh:x}',
+    ], fb_dom_delta, fb_thresh
+
+
 # ── Main classifier ────────────────────────────────────────────────────────────
 
 ROUTE_ORDER = [
@@ -1587,107 +1745,22 @@ def classify_fn(unit: str, sym: str, diff_insns: Optional[List[dict]] = None,
                 'threshold': threshold,
             }
 
-    # STRUCT_OFF fallback: if struct-offset diffs exist and the only OTHER classes
-    # are ANON_FN or NAMED_MISMATCH (not real blockers for layout), also classify
-    # as MEMBER_DELTA. Catches cases where this-tracing fails for legitimate reasons.
-    # GATE: skip if FUNCLET_PAIRING was already detected — the fallback path is
-    # exactly what produced false positives for the Rnd/MoveMgr/Archive/Overlay
-    # funclet clusters (direct-r31 frame slot diffs look like struct offsets to the
-    # fallback but are frame-slot index artifacts, not member deltas).
-    # Condition: at least 1 struct-offset diff AND no hard blockers (VBASE/BOOL/etc.)
-    # Hard blockers that must suppress the MEMBER_DELTA fallback (these are routed
-    # elsewhere; the fallback would otherwise re-tag them as member deltas).
-    _FALLBACK_BLOCKERS = {'VBASE_WALL', 'BOOL_NEG', 'SIGNEDNESS', 'FPR_SCHED',
-                          'SIZE_DIVERGENCE', 'NO_ORACLE_LAYOUT', 'UNVERIFIABLE',
-                          'FUNCLET_PAIRING', 'VTABLE_DIVERGENCE', 'OFFSET_SWAP'}
-    non_struct_classes = set(classes) - _FALLBACK_BLOCKERS
-    already_has_member = 'MEMBER_DELTA' in classes
-
-    if (not already_has_member and not is_member
-            and not (_FALLBACK_BLOCKERS & set(classes))):
-        # Check if all diff_insns are pure structural offset diffs (addi/mem w/ num delta)
-        struct_count = 0
-        total_diff = len(diff_insns)
-        for ins in diff_insns:
-            t = ins.get('target') or {}
-            b = ins.get('base') or {}
-            top = t.get('opcode', '')
-            bop = b.get('opcode', '')
-            ta = (t.get('args') or '')
-            ba = (b.get('args') or '')
-            if top == bop and top in ('addi', 'subi', 'addic'):
-                tt = _tokens(ta)
-                bt = _tokens(ba)
-                if len(tt) >= 3 and len(bt) >= 3:
-                    tv = _toi(tt[2])
-                    bv = _toi(bt[2])
-                    if tv is not None and bv is not None and tv != bv:
-                        struct_count += 1
-            elif top == bop and top in MEM_LOADS_STORES:
-                tt = _tokens(ta)
-                bt = _tokens(ba)
-                # Same base register required — an offset delta is only a member delta
-                # when both sides dereference the SAME base (a `lwz r11,0x50,r1` vs
-                # `lwz r11,0x0,r3` is a different load entirely, not a +0x50 member).
-                if (len(tt) >= 3 and len(bt) >= 3 and tt[2] == bt[2]):
-                    tv = _toi(tt[1])
-                    bv = _toi(bt[1])
-                    if tv is not None and bv is not None and tv != bv:
-                        struct_count += 1
-        # Allow mixed cases too: struct + anon/named-mismatch callee diffs
-        # (the struct offset is still fixable; the callee naming is secondary)
-        has_hard_non_struct = bool(_FALLBACK_BLOCKERS & set(classes))
-        # Suppress the fallback if a FUNCLET diff carries a divergent named call —
-        # the struct-offset shift came from a mis-paired structurally different funclet.
-        # For NON-funclet functions, a divergent named call is usually ICF naming noise
-        # (e.g. _Destroy_Range@Cheat folded with @Merger): the uniform member-size
-        # delta is still the real signal, so do NOT suppress the fallback there.
-        funclet_divergent_call = (funclet_reg is not None) and has_divergent_call
-        if total_diff > 0 and struct_count >= 1 and not has_hard_non_struct \
-                and not funclet_divergent_call:
-            # Has struct offsets — compute the uniform delta from the structural diffs
-            offsets = []
-            for ins in diff_insns:
-                t = ins.get('target') or {}
-                b = ins.get('base') or {}
-                top = t.get('opcode', '')
-                bop = b.get('opcode', '')
-                ta = (t.get('args') or '')
-                ba = (b.get('args') or '')
-                if top == bop and top in ('addi', 'subi', 'addic'):
-                    tt = _tokens(ta)
-                    bt = _tokens(ba)
-                    if len(tt) >= 3 and len(bt) >= 3:
-                        tv = _toi(tt[2])
-                        bv = _toi(bt[2])
-                        if tv is not None and bv is not None:
-                            offsets.append((tv, bv))
-                elif top == bop and top in MEM_LOADS_STORES:
-                    tt = _tokens(ta)
-                    bt = _tokens(ba)
-                    if len(tt) >= 3 and len(bt) >= 3 and tt[2] == bt[2]:
-                        tv = _toi(tt[1])
-                        bv = _toi(bt[1])
-                        if tv is not None and bv is not None:
-                            offsets.append((tv, bv))
-            if offsets:
-                deltas_fb = [t - b for t, b in offsets]
-                fb_counter = Counter(deltas_fb)
-                fb_dom_delta, fb_dom_count = fb_counter.most_common(1)[0]
-                if fb_dom_count == len(deltas_fb) and fb_dom_delta != 0:
-                    fb_thresh = min(t for t, _ in offsets)
-                    classes.append('MEMBER_DELTA')
-                    all_evidence['MEMBER_DELTA'] = {
-                        'evidence': [
-                            f'fallback: uniform delta={fb_dom_delta:+d} on {len(offsets)} struct-offset diff(s)',
-                            f'threshold ~0x{fb_thresh:x}',
-                        ],
-                        'delta': fb_dom_delta,
-                        'threshold': fb_thresh,
-                        'confidence': 'low',
-                    }
-                    delta = fb_dom_delta
-                    threshold = fb_thresh
+    # STRUCT_OFF fallback (the SECOND, independent member-delta reading) — see
+    # _detect_member_delta_fallback.  Only runs when the this-tracer found
+    # nothing and no hard blocker claimed the function.
+    if not is_member and 'MEMBER_DELTA' not in classes:
+        fb_ok, fb_ev, fb_delta, fb_thresh = _detect_member_delta_fallback(
+            diff_insns, classes, funclet_reg, has_divergent_call)
+        if fb_ok:
+            classes.append('MEMBER_DELTA')
+            all_evidence['MEMBER_DELTA'] = {
+                'evidence': fb_ev,
+                'delta': fb_delta,
+                'threshold': fb_thresh,
+                'confidence': 'low',
+            }
+            delta = fb_delta
+            threshold = fb_thresh
 
     # ── Route assignment ──────────────────────────────────────────────────────
     # Priority: FUNCLET_PAIRING / VTABLE_DIVERGENCE > VBASE > OFFSET_SWAP
@@ -1808,293 +1881,650 @@ def process_worklist(worklist_path: str, proj: str = ROOT, verbose: bool = False
     return results
 
 
-# ── Validation against pilot targets ──────────────────────────────────────────
+# ── Validation: a hermetic fixture suite ──────────────────────────────────────
+#
+# Each case is verbatim `objdiff-cli diff ... --include-instructions -f json`
+# output frozen under tools/testdata/wall_validate/, plus the COFF/header
+# virtual-base answers the classifier would otherwise read out of build/ and
+# src/.  Nothing here touches the live tree, so the score moves only when the
+# CLASSIFIER changes.
+#
+# Every `expected_*` below was hand-read off the instruction stream in the
+# fixture (the `truth` field records the reading) before it was written down.
+# Do NOT add a case by running the classifier and freezing whatever it said --
+# that scores the classifier against itself.  Two cases (the ??_G vbase pair
+# and the FPR rename) carry INDEPENDENT ground truth: they are rows of the
+# 2026-06-09 mdgrind wave, tools/testdata/mdgrind_gt48.jsonl, whose verdicts
+# were reached by hand months before this classifier had these detectors.
+#
+# `discriminates` names the mutations (see MUTATIONS) that must turn the case
+# red.  `--mutation-matrix` re-derives it and fails if a claim is wrong, so the
+# field cannot silently rot into decoration.
 
-PILOT_TARGETS = [
+FIXTURE_DIR = os.path.join(ROOT, 'tools', 'testdata', 'wall_validate')
+
+VALIDATE_CASES = [
     {
-        'label': 'DxRnd::Present',
+        'slug': 'funclet-dform-faders',
+        'label': 'Faders funclet (d-form frame slot)',
+        'unit': 'default/Faders',
+        'sym': 'fn_8270C66C',
+        'expected_class': 'FUNCLET_PAIRING',
+        'expected_route': 'DEFER_DEEP',
+        'truth': 'Both sides open `subi r31, r12, 0xa0` -- identical funclet '
+                 'prologue bytes, which is exactly how dtk address-pairs two '
+                 'unrelated cleanup funclets. The single diff is `lwz r3, '
+                 '0x50(r31)` vs `0x54(r31)`: a frame-SLOT index directly on the '
+                 'funclet frame register, not a member offset on an object '
+                 'pointer. No source edit fixes it => DEFER_DEEP.',
+        'discriminates': ['ingest-args', 'funclet-prologue', 'funclet-direct'],
+    },
+    {
+        'slug': 'funclet-framesize-mls',
+        'label': 'MusicLibraryNetSetlists funclet (frame sizes differ)',
+        'unit': 'default/band3/meta_band/MusicLibraryNetSetlists',
+        'sym': 'fn_825D0AF8',
+        'expected_class': 'FUNCLET_PAIRING',
+        'expected_route': 'DEFER_DEEP',
+        'truth': 'Prologue immediates DIFFER (`subi r31, r12, 0x2a0` vs '
+                 '`0x260`) and the body access is `lwz r3, 0x60(r31)` vs '
+                 '`0x5c(r31)`, directly on the frame register. Two different '
+                 'funclets with different frame sizes. This is the case that '
+                 'shows what the ruler-I defect COST: with ingest broken the '
+                 'lwz is unreadable, only the two subi immediates parse, and '
+                 'the fallback reports a uniform +0x40 MEMBER_DELTA -- i.e. it '
+                 'hands a human a header edit for a frame-size difference '
+                 'between two unrelated funclets.',
+        'discriminates': ['ingest-args', 'funclet-prologue', 'funclet-direct'],
+    },
+    {
+        'slug': 'funclet-addi-storeoffer',
+        'label': 'StoreOfferProvider funclet (addi-form, no d-form operand)',
+        'unit': 'default/band3/meta_band/StoreOfferProvider',
+        'sym': 'fn_826653F0',
+        'expected_class': 'FUNCLET_PAIRING',
+        'expected_route': 'DEFER_DEEP',
+        'truth': 'Same shape as the Faders case but the differing access is '
+                 '`addi r3, r31, 0xb8` vs `0xd0` -- three bare comma-separated '
+                 'operands in BOTH spellings. Deliberate CONTRAST case: it '
+                 'proves the funclet route survives the ruler-I defect when no '
+                 'd-form operand is involved, so a green here plus a red on the '
+                 'two cases above localises the fault to operand ingest rather '
+                 'than to the funclet detector.',
+        'discriminates': ['funclet-prologue', 'funclet-direct'],
+    },
+    {
+        'slug': 'funclet-divcall-ambientocclusion',
+        'label': 'AmbientOcclusion funclet (divergent bl callee)',
+        'unit': 'default/AmbientOcclusion',
+        'sym': 'fn_82491300',
+        'expected_class': 'FUNCLET_PAIRING',
+        'expected_route': 'DEFER_DEEP',
+        'truth': 'mdgrind MISROUTE-1, the arm with no coverage before this '
+                 'suite. Funclet prologue (`subi r31, r12, 0x170` vs `0x1a0`); '
+                 'the differing instruction is `bl ??1Message@@UAA@XZ` vs `bl '
+                 '??1DataNode@@QAA@XZ` -- the two bodies destroy DIFFERENT '
+                 'types, so the pairing is structural nonsense. The frame '
+                 'access `addi r3, r31, 0x70` is EQUAL, so _is_funclet_direct_'
+                 'access says False: this case can only be caught by the '
+                 'divergent-callee arm.',
+        'discriminates': ['funclet-prologue', 'funclet-divcall'],
+    },
+    {
+        'slug': 'vtable-div-preload-synth',
+        'label': 'Hmx::Object::PreLoad thunk (vtable slot)',
+        'unit': 'default/system/synth_xbox/Synth',
+        'sym': '?PreLoad@Object@Hmx@@UAAXAAVBinStream@@@Z',
+        'expected_class': 'VTABLE_DIVERGENCE',
+        'expected_route': 'DEFER_DEEP',
+        'truth': 'Four-instruction virtual thunk: `lwz r11, 0x0(r3)` (vtable '
+                 'pointer) -> differing `lwz r11, 0x40(r11)` vs `0x28(r11)` -> '
+                 '`mtctr r11` -> `bctr`. The delta is a vtable SLOT index '
+                 '(0x18 = 6 slots), fixable only by reconstructing the vtable '
+                 'layout, so DEFER_DEEP. A data-member reading of that offset '
+                 'would be wrong.',
+        'discriminates': ['ingest-args', 'vtable-div'],
+    },
+    {
+        'slug': 'vbase-adjustor-hamlistribbon',
+        'label': 'HamListRibbon ??_G (diverging vbase adjustor)',
+        'unit': 'default/HamListRibbon',
+        'sym': '??_GHamListRibbon@@UAAPAXI@Z',
+        'expected_class': 'VBASE_WALL',
+        'expected_route': 'DEFER_VBASE',
+        'truth': 'Independent ground truth: mdgrind_gt48.jsonl row, wall_class '
+                 'VBASE_WALL, 2026-06-09. The vector-deleting dtor computes its '
+                 'subobject pointer with `subi r31, r3, 0x168` vs `0x314` -- a '
+                 'DIVERGING large immediate, i.e. the compiler-computed '
+                 'secondary-base offset, which no member edit reaches. '
+                 'Corroborated by three ??_8HamListRibbon@@7B* vbtables in the '
+                 'COFF symbol table and by virtual inheritance in the header.',
+        'discriminates': ['vbase'],
+    },
+    {
+        'slug': 'vbase-coff-rndribbon',
+        'label': 'RndRibbon ??_G (COFF/header vbase, weak adjustor)',
+        'unit': 'default/Ribbon',
+        'sym': '??_GRndRibbon@@UAAPAXI@Z',
+        'expected_class': 'VBASE_WALL',
+        'expected_route': 'DEFER_VBASE',
+        'truth': 'Independent ground truth: mdgrind_gt48.jsonl row, wall_class '
+                 'VBASE_WALL, 2026-06-09. Same family as the case above but it '
+                 'reaches the verdict down the OTHER path: the adjustor `subi '
+                 'r31, r3, 0x58` vs `0x88` is read as a plain base-subobject '
+                 'adjust and the vbase call is carried by the COFF ??_8 '
+                 'vbtables plus header virtual inheritance. Paired with the '
+                 'HamListRibbon case so a `vbase` mutation cannot be passed off '
+                 'as a one-off.',
+        'discriminates': ['vbase'],
+    },
+    {
+        'slug': 'boolneg-dxrnd-present',
+        'label': 'DxRnd::Present (bool normalization)',
         'unit': 'default/Rnd_Xbox',
         'sym': '?Present@DxRnd@@QAAXXZ',
         'expected_class': 'BOOL_NEG',
         'expected_route': 'AT_LIMIT',
+        'truth': 'Survivor of the original pilot set, still live. Playbook '
+                 'Section 3b verbatim: target normalizes a bool with `rlwinm '
+                 'r11, r3, 0, 30, 30` + `subic` + `subfe` where our base emits '
+                 '`extrwi r11, r3, 1, 30`. No known source spelling reaches the '
+                 'retail sequence => AT_LIMIT.',
+        'discriminates': ['bool-neg'],
     },
     {
-        'label': 'VocalTrackDir::TrackReset',
-        'unit': 'default/VocalTrackDir',
-        'sym': '?TrackReset@VocalTrackDir@@UAAXXZ',
-        'expected_class': 'VBASE_WALL',
-        'expected_route': 'DEFER_VBASE',
+        'slug': 'fpr-rename-postproc',
+        'label': 'NgPostProc::CheckPosterizeAndKaleidoscope (FPR rename)',
+        'unit': 'default/PostProc_NG',
+        'sym': '?CheckPosterizeAndKaleidoscope@NgPostProc@@IAAXXZ',
+        'expected_class': 'FPR_SCHED',
+        'expected_route': 'PERMUTE',
+        'truth': 'Independent ground truth: mdgrind_gt48.jsonl row, wall_class '
+                 'PERMUTE, 2026-06-09. Two diffs, same opcodes, same operand '
+                 'roles, f0 and f13 exchanged: `fmuls f0, f12, f0` vs `fmuls '
+                 'f13, f12, f13` and `fdivs f13, f13, f9` vs `fdivs f0, f0, '
+                 'f9`. A pure FPR register-allocation choice => /permute.',
+        'discriminates': ['fpr'],
     },
     {
-        'label': 'Player::SetMultiplierActive',
-        'unit': 'default/band3/game/Player',
-        'sym': '?SetMultiplierActive@Player@@UAAX_N@Z',
-        'expected_class': 'VBASE_WALL',
-        'expected_route': 'DEFER_VBASE',
-    },
-    {
-        'label': 'String::operator= (strcpy signedness)',
-        'unit': 'default/Str',
-        'sym': '??4String@@QAAAAV0@PBD@Z',
-        'expected_class': 'SIGNEDNESS',
-        'expected_route': 'AT_LIMIT',
-    },
-    {
-        'label': 'TransformNormal (FPR_SCHED)',
+        'slug': 'fpr-sched-transformnormal',
+        'label': 'TransformNormal (FPR sched + spill slots)',
         'unit': 'default/Mesh',
         'sym': '?TransformNormal@@YA?AVVector3@@ABV1@ABVMatrix3@Hmx@@@Z',
         'expected_class': 'FPR_SCHED',
         'expected_route': 'PERMUTE',
+        'truth': 'Survivor of the original pilot set, still live. The whole FPR '
+                 'file is renamed (f12->f0, f10->f12, ...), the `lfs` spill '
+                 'slots off r1 are reassigned, and the `fmadds` chain is '
+                 'reassociated across the same three dot products. Register '
+                 'allocation and scheduling, no source-visible difference => '
+                 'PERMUTE.',
+        'discriminates': ['fpr'],
     },
     {
-        'label': 'Rot::MakeScale (FPR_SCHED)',
-        'unit': 'default/Rot',
-        'sym': '?MakeScale@@YAXABVMatrix3@Hmx@@AAVVector3@@@Z',
-        'expected_class': 'FPR_SCHED',
+        'slug': 'offset-swap-kerningtable',
+        'label': 'KerningTable::SetKerning (mirrored offset swap)',
+        'unit': 'default/Font',
+        'sym': ('?SetKerning@KerningTable@@QAAXABV?$vector@VKernInfo@RndFont@@'
+                'V?$StlNodeAlloc@VKernInfo@RndFont@@@stlpmtx_std@@@stlpmtx_std@@'
+                'PAVRndFont@@@Z'),
+        'expected_class': 'OFFSET_SWAP',
         'expected_route': 'PERMUTE',
+        'truth': 'mdgrind MISROUTE-2. Two adjacent halfword loads TRADE their '
+                 'displacements: `lhz r9, 0x0(r31)` / `lhz r10, 0x2(r31)` vs '
+                 '`0x2` / `0x0`. The deltas are +2 and -2, so the net '
+                 'same-sign shift is zero -- a scheduling reorder, NOT a layout '
+                 'difference. Guards the classifier against reporting a member '
+                 'delta here.',
+        'discriminates': ['ingest-args', 'offset-swap'],
     },
     {
-        'label': 'Geo::Intersect (Segment/Triangle, FPR_SCHED)',
-        'unit': 'default/Geo',
-        'sym': '?Intersect@@YA_NABVSegment@@ABVTriangle@@_NAAM@Z',
-        'expected_class': 'FPR_SCHED',
-        'expected_route': 'PERMUTE',
+        'slug': 'member-delta-resetbeattasktime',
+        'label': 'TaskMgr::ResetBeatTaskTime (uniform this-relative delta)',
+        'unit': 'default/Task',
+        'sym': '?ResetBeatTaskTime@TaskMgr@@QAAXM@Z',
+        'expected_class': 'MEMBER_DELTA',
+        'expected_route': 'MEMBER_DELTA_CANDIDATE',
+        'truth': 'Three-instruction function; the one diff is `lwz r11, '
+                 '0x60(r3)` vs `0x28(r3)` -- same base register, and r3 is '
+                 '`this` on entry with no intervening call to clobber it. A '
+                 'clean uniform +0x38 this-relative shift, the one shape that '
+                 'IS a one-line header fix. Positive control: the funclet, '
+                 'vtable, vbase and offset-swap guards above must not steal it. '
+                 'NOTE it does not isolate either member-delta reading: the '
+                 'this-tracer and the STRUCT_OFF fallback both reach the same '
+                 'verdict here, so only `member-delta-both` turns it red.',
+        'discriminates': ['ingest-args', 'member-delta-both'],
     },
     {
-        'label': 'RndGroup::SetFrame (INLINE_POLICY)',
-        'unit': 'default/Group',
-        'sym': '?SetFrame@RndGroup@@UAAXMM@Z',
-        'expected_class': 'INLINE_POLICY',
-        'expected_route': 'INLINE_POLICY',
-    },
-    {
-        'label': 'BlockMgr::ReadError (UNVERIFIABLE)',
-        'unit': 'default/BlockMgr',
-        'sym': '?ReadError@?A0xd12e7047@@YAHXZ',
-        'expected_class': 'UNVERIFIABLE',
-        'expected_route': 'DEFER_DEEP',
-    },
-    {
-        'label': 'DataWriteFile (SIZE_DIVERGENCE)',
-        'unit': 'default/DataFile',
-        'sym': '?DataWriteFile@@YAXPBDPBVDataArray@@H@Z',
+        'slug': 'size-divergence-uipanel-newobject',
+        'label': 'UIPanel::NewObject (operator new size)',
+        'unit': 'default/UI',
+        'sym': '?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ',
         'expected_class': 'SIZE_DIVERGENCE',
         'expected_route': 'DEFER_DEEP',
+        'truth': 'Playbook Section 3h: `li r3, 0x108` vs `li r3, 0x68` feeding '
+                 'the allocator -- retail UIPanel is 0x108 bytes and ours is '
+                 '0x68. The base side additionally carries a vbtable lookup '
+                 '(`lwz r11, 0x4(r3)` / `lwz r11, 0x4(r11)` / `add` / `addi '
+                 'r3, r11, 0x4`) that retail does not. A whole-class size '
+                 'reconstruction, not a local edit => DEFER_DEEP.',
+        'discriminates': ['size-div'],
     },
     {
-        'label': 'MicNull::MicNull (SIGNEDNESS extsh)',
-        'unit': 'default/MicNull',
-        'sym': '??0MicNull@@QAA@XZ',
-        'expected_class': 'SIGNEDNESS',
-        'expected_route': 'AT_LIMIT',
+        'slug': 'inline-policy-addsongdata',
+        'label': 'BandSongMgr::AddSongData (call vs const-fold)',
+        'unit': 'default/BandSongMgr',
+        'sym': ('?AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAV'
+                'SongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNode'
+                'Alloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_'
+                'std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_'
+                'std@@@4@@Z'),
+        'expected_class': 'INLINE_POLICY',
+        'expected_route': 'INLINE_POLICY',
+        'truth': 'Playbook Section 3e: retail has `li r3, 0x0` where our base '
+                 'emits `bl ?IsInExclusionList@BandSongMgr@@QBA_NPBDH@Z`. The '
+                 'retail compiler inlined and const-folded the predicate; ours '
+                 'calls it. An inline-policy difference, routed to its own '
+                 'lane. Also exercises the metadata-only VBASE path NOT taking '
+                 'the route: BandSongMgr has a ??_8 vbtable, but with no '
+                 'vbase evidence in the instructions INLINE_POLICY wins.',
+        'discriminates': ['inline'],
     },
 ]
 
+# Classes that had a case in the pilot set and have NO hand-verifiable live
+# exemplar left.  Recorded rather than faked: a smaller honest suite beats a
+# larger vacuous one.  Re-add a case here the moment a clean one appears.
+DROPPED_CLASSES = {
+    'SIGNEDNESS': (
+        'Both pilot targets (String::operator=, MicNull::MicNull) reached 100%. '
+        'Swept 1,690 live near-miss functions: 14 trip the extsb/extsh detector '
+        'and the smallest carries 16 differing instructions, all of them cases '
+        'where the target TAIL-CALLS an ICF-folded CRT routine and our base '
+        'inlines the loop -- an inline-policy difference the signedness gate '
+        'happens to catch, not a clean signedness wall. Nothing here is '
+        'honestly labellable as SIGNEDNESS ground truth.'),
+    'UNVERIFIABLE': (
+        'Pilot target BlockMgr::ReadError reached 100%. ZERO hits across 1,690 '
+        'live near-miss functions: the `bl lbl_<addr>` shape the detector looks '
+        'for is gone from this tree now that symbol identification has '
+        'advanced. The detector is untested, and this suite says so instead of '
+        'pretending otherwise.'),
+    'NO_ORACLE_LAYOUT': (
+        '10 live hits, but not one of them ROUTES through NO_ORACLE_LAYOUT -- '
+        'every one also trips FPR_SCHED or OFFSET_SWAP, which outrank it, and '
+        'the smallest carries 23 differing instructions. A case whose expected '
+        'route is decided by a different detector would not test this one.'),
+}
 
-def run_validation(proj: str = ROOT) -> None:
-    """Run classifier against the 11 known pilot targets and report accuracy."""
-    print("\n=== Validation against pilot's targets ===\n")
-    correct = 0
-    total = len(PILOT_TARGETS)
-    rows = []
 
-    for pt in PILOT_TARGETS:
-        label = pt['label']
-        unit = pt['unit']
-        sym = pt['sym']
-        exp_class = pt['expected_class']
-        exp_route = pt['expected_route']
+# ── Mutations: the suite has to prove it can go red ───────────────────────────
+#
+# Each entry re-introduces ONE defect and returns a restore callable.  A case
+# that no mutation turns red is measuring nothing, and --mutation-matrix is
+# what makes that visible instead of assumed.
 
-        print(f"  [{label}] ...", file=sys.stderr)
-        diff_insns = get_diff_instructions(unit, sym, proj)
-        if not diff_insns:
-            # Try to get any diff at all
-            result = classify_fn(unit, sym, None, proj)
-        else:
-            result = classify_fn(unit, sym, diff_insns, proj)
+def _mut_ingest_args():
+    """The ruler-I (objdiff-cli fdc5113) defect, verbatim: leave the DISPLAY
+    operand spelling in `args`, so `0xNN(rY)` never splits on ','."""
+    orig = _normalize_args_inplace
 
-        got_classes = result['classes']
-        got_route = result['route']
-        class_ok = exp_class in got_classes
-        route_ok = got_route == exp_route
-        ok = class_ok and route_ok
-        if ok:
-            correct += 1
+    def broken(d: dict) -> dict:
+        for ins in d.get('instructions') or []:
+            for k in ('target', 'base'):
+                side = ins.get(k)
+                if side:
+                    side['args_display'] = side.get('args') or ''
+        return d
+    globals()['_normalize_args_inplace'] = broken
+    return lambda: globals().__setitem__('_normalize_args_inplace', orig)
 
-        status = 'PASS' if ok else ('PARTIAL' if (class_ok or route_ok) else 'FAIL')
-        rows.append({
-            'label': label,
-            'status': status,
-            'expected_class': exp_class,
-            'got_classes': got_classes,
-            'expected_route': exp_route,
-            'got_route': got_route,
-            'evidence': result.get('evidence', {}),
-        })
 
-    # Print table
-    print(f"\n{'Label':<45} {'Status':<8} {'Expected':<18} {'Got class':<35} {'Route'}")
-    print('-' * 130)
-    for r in rows:
-        got_cls_str = ','.join(r['got_classes'])[:32]
-        print(f"{r['label']:<45} {r['status']:<8} {r['expected_class']:<18} "
-              f"{got_cls_str:<35} {r['got_route']} (exp:{r['expected_route']})")
+def _mut_stub(name: str, value):
+    """Replace module-global callable `name` with one returning `value`."""
+    def apply():
+        orig = globals()[name]
+        globals()[name] = lambda *a, **kw: value
+        return lambda: globals().__setitem__(name, orig)
+    return apply
 
-    print(f"\nAccuracy: {correct}/{total} = {correct/total*100:.1f}%")
-    if correct >= 9:
-        print("PASS (≥9/12 target)")
+
+def _mut_both_member_delta():
+    """Disable BOTH member-delta readings at once.
+
+    Each is individually invisible on every clean live case -- they are
+    redundant -- so only the pair moves the score.  See EXPECTED_SURVIVORS.
+    """
+    r1 = _mut_stub('_detect_member_delta', (False, [], 0, 0))()
+    r2 = _mut_stub('_detect_member_delta_fallback', (False, [], 0, 0))()
+
+    def restore():
+        r1()
+        r2()
+    return restore
+
+
+MUTATIONS = {
+    'ingest-args':      ('operand ingest normalization removed (the ruler-I defect)',
+                         _mut_ingest_args),
+    'funclet-prologue': ('funclet frame register never detected',
+                         _mut_stub('_get_funclet_frame_reg', None)),
+    'funclet-direct':   ('direct-frame-access arm disabled',
+                         _mut_stub('_is_funclet_direct_access', False)),
+    'funclet-divcall':  ('divergent-callee arm disabled (mdgrind MISROUTE-1)',
+                         _mut_stub('_detect_divergent_call', (False, []))),
+    'vtable-div':       ('vtable-slot arm disabled (mdgrind MISROUTE-3)',
+                         _mut_stub('_detect_vtable_divergence', (False, []))),
+    'offset-swap':      ('mirrored-offset arm disabled (mdgrind MISROUTE-2)',
+                         _mut_stub('_detect_offset_swap', (False, []))),
+    'vbase':            ('virtual-base detector disabled',
+                         _mut_stub('_detect_vbase', (False, []))),
+    'bool-neg':         ('boolean-normalization detector disabled',
+                         _mut_stub('_detect_bool_neg', (False, []))),
+    'fpr':              ('FPR scheduling detector disabled',
+                         _mut_stub('_is_fpr_heavy', (False, []))),
+    'inline':           ('inline-policy detector disabled',
+                         _mut_stub('_detect_inline_policy', (False, []))),
+    'size-div':         ('operator-new size detector disabled',
+                         _mut_stub('_detect_size_divergence', (False, []))),
+    'member-delta':     ('this-relative member-delta tracer disabled',
+                         _mut_stub('_detect_member_delta', (False, [], 0, 0))),
+    'member-delta-fallback': ('struct-offset member-delta fallback disabled',
+                              _mut_stub('_detect_member_delta_fallback',
+                                        (False, [], 0, 0))),
+    'member-delta-both': ('BOTH member-delta readings disabled',
+                          _mut_both_member_delta),
+}
+
+
+# Mutations that are EXPECTED to survive, with the reason.  Not a licence to
+# ignore a survivor: each line is a measured statement about redundancy in the
+# classifier, and --mutation-matrix still prints them.
+EXPECTED_SURVIVORS = {
+    'member-delta': (
+        'the STRUCT_OFF fallback re-derives the same verdict, so disabling the '
+        'this-tracer alone changes nothing'),
+    'member-delta-fallback': (
+        'the this-tracer already produced the verdict, so disabling the '
+        'fallback alone changes nothing'),
+}
+
+
+# ── Fixture load / capture ────────────────────────────────────────────────────
+
+def _fixture_path(case: dict) -> str:
+    return os.path.join(FIXTURE_DIR, case['slug'] + '.json')
+
+
+def _install_fixture(case: dict) -> dict:
+    """Point diff_fn and the vbase lookups at this case's frozen capture."""
+    import copy as _copy
+    path = _fixture_path(case)
+    if not os.path.exists(path):
+        raise FileNotFoundError(path)
+    with open(path) as f:
+        raw = json.load(f)
+    meta = raw.get('_wc_fixture') or {}
+
+    def source(unit: str, sym: str) -> Optional[dict]:
+        if (unit, sym) != (case['unit'], case['sym']):
+            return None
+        # Mirror diff_fn's real contract: a fresh object, normalized at ingest.
+        # Looked up through globals() so --mutate ingest-args reaches it.
+        return globals()['_normalize_args_inplace'](_copy.deepcopy(raw))
+
+    globals()['_DIFF_SOURCE'] = source
+    globals()['_VBASE_SOURCE'] = meta.get('vbase') or {'coff': {}, 'header': {}}
+    return meta
+
+
+def _clear_fixture() -> None:
+    globals()['_DIFF_SOURCE'] = None
+    globals()['_VBASE_SOURCE'] = None
+
+
+def _capture_vbase_env(unit: str, sym: str) -> dict:
+    """Snapshot the COFF/header virtual-base answers for this symbol's class."""
+    cls = demangle_class(sym, unit)
+    _clear_fixture()
+    coff_ok, coff_syms = unit_vbase_for_class(unit, cls)
+    hdr = get_idb().has_virtual_base(cls) if cls else False
+    return {'coff': {cls: list(coff_syms)} if coff_ok else {},
+            'header': {cls: bool(hdr)}}
+
+
+def refresh_fixtures(proj: str = ROOT, only: Optional[str] = None) -> int:
+    """Re-capture every fixture from the live tree.  VERBATIM objdiff-cli JSON.
+
+    The classifier normalizes operands at INGEST, so a hand-authored fixture
+    would be testing a spelling this tool never actually receives.  Everything
+    written here comes straight out of `objdiff-cli diff -f json
+    --include-instructions`; only a `_wc_fixture` provenance block is added.
+    """
+    os.makedirs(FIXTURE_DIR, exist_ok=True)
+    import datetime
+    import shutil
+    cli_ver = ''
+    try:
+        cli_ver = subprocess.run([CLI, '--version'], capture_output=True,
+                                 text=True, timeout=30).stdout.strip()
+    except Exception:
+        pass
+    head = ''
+    if shutil.which('git'):
+        try:
+            head = subprocess.run(['git', '-C', proj, 'rev-parse', 'HEAD'],
+                                  capture_output=True, text=True,
+                                  timeout=30).stdout.strip()
+        except Exception:
+            pass
+
+    _clear_fixture()
+    bad = 0
+    for case in VALIDATE_CASES:
+        if only and case['slug'] != only:
+            continue
+        unit, sym = case['unit'], case['sym']
+        d = diff_fn(unit, sym, proj)
+        if not d:
+            print(f"  MISSING  {case['slug']}: objdiff returned nothing for "
+                  f"{sym} [{unit}]", file=sys.stderr)
+            bad += 1
+            continue
+        n = sum(1 for i in d.get('instructions') or []
+                if i.get('match_type') not in ('equal', None))
+        if n == 0:
+            print(f"  EMPTY    {case['slug']}: 0 differing instructions -- the "
+                  f"function is matched now; drop or replace the case",
+                  file=sys.stderr)
+            bad += 1
+            continue
+        # diff_fn normalized in place; re-read the raw capture so the fixture
+        # keeps the spelling objdiff-cli actually emits.
+        for ins in d.get('instructions') or []:
+            for k in ('target', 'base'):
+                side = ins.get(k)
+                if side and 'args_display' in side:
+                    side['args'] = side.pop('args_display')
+        d['_wc_fixture'] = {
+            'slug': case['slug'], 'unit': unit, 'sym': sym,
+            'captured': datetime.date.today().isoformat(),
+            'objdiff_cli': cli_ver, 'repo_head': head,
+            'diff_count': n,
+            'vbase': _capture_vbase_env(unit, sym),
+        }
+        with open(_fixture_path(case), 'w') as f:
+            json.dump(d, f, indent=1, sort_keys=True)
+        print(f"  wrote    {case['slug']}  ({n} differing instructions)",
+              file=sys.stderr)
+    return bad
+
+
+# ── Validation runners ────────────────────────────────────────────────────────
+
+def _classify_case(case: dict, proj: str, live: bool) -> dict:
+    if live:
+        _clear_fixture()
     else:
-        print("FAIL (< 9/12 target)")
+        _install_fixture(case)
+    try:
+        return classify_fn(case['unit'], case['sym'], None, proj)
+    finally:
+        _clear_fixture()
 
-    # Show evidence for failures
+
+def run_validation(proj: str = ROOT, live: bool = False,
+                   mutate: Optional[str] = None, quiet: bool = False):
+    """Score the classifier against the fixture suite.  Returns (rows, correct)."""
+    restore = None
+    if mutate:
+        if mutate not in MUTATIONS:
+            print(f"ERROR: unknown mutation {mutate!r}; known: "
+                  f"{', '.join(sorted(MUTATIONS))}", file=sys.stderr)
+            sys.exit(2)
+        restore = MUTATIONS[mutate][1]()
+
+    rows = []
+    correct = 0
+    try:
+        for case in VALIDATE_CASES:
+            try:
+                result = _classify_case(case, proj, live)
+            except FileNotFoundError as e:
+                rows.append({'case': case, 'status': 'NO_FIXTURE',
+                             'got_classes': [], 'got_route': '-',
+                             'evidence': {'error': str(e)}})
+                continue
+            class_ok = case['expected_class'] in result['classes']
+            route_ok = result['route'] == case['expected_route']
+            ok = class_ok and route_ok
+            correct += bool(ok)
+            rows.append({
+                'case': case,
+                'status': 'PASS' if ok else ('PARTIAL' if (class_ok or route_ok)
+                                             else 'FAIL'),
+                'got_classes': result['classes'],
+                'got_route': result['route'],
+                'evidence': result.get('evidence', {}),
+            })
+    finally:
+        if restore:
+            restore()
+
+    if quiet:
+        return rows, correct
+
+    total = len(VALIDATE_CASES)
+    src = 'LIVE TREE' if live else f'fixtures ({FIXTURE_DIR})'
+    print(f"\n=== wall_classify validation -- source: {src} ===")
+    if mutate:
+        print(f"=== MUTATION ACTIVE: {mutate} -- {MUTATIONS[mutate][0]} ===")
+    print()
+    print(f"{'Case':<46} {'Status':<10} {'Expected':<20} {'Got class':<34} Route")
+    print('-' * 140)
+    for r in rows:
+        c = r['case']
+        got = ','.join(r['got_classes'])[:32] or '-'
+        print(f"{c['label'][:45]:<46} {r['status']:<10} {c['expected_class']:<20} "
+              f"{got:<34} {r['got_route']} (exp:{c['expected_route']})")
+    print(f"\nAccuracy: {correct}/{total}")
+
     failures = [r for r in rows if r['status'] != 'PASS']
     if failures:
         print("\nFailure details:")
         for r in failures:
-            print(f"\n  [{r['label']}]")
-            print(f"    expected: class={r['expected_class']}, route={r['expected_route']}")
-            print(f"    got:      class={r['got_classes']}, route={r['got_route']}")
-            for cls, ev in r['evidence'].items():
+            c = r['case']
+            print(f"\n  [{c['label']}]  {c['unit']} :: {c['sym'][:60]}")
+            print(f"    expected: class={c['expected_class']} "
+                  f"route={c['expected_route']}")
+            print(f"    got:      class={r['got_classes']} route={r['got_route']}")
+            print(f"    truth:    {c['truth']}")
+            for cls, ev in (r['evidence'] or {}).items():
                 print(f"    {cls}: {ev}")
-
+    if DROPPED_CLASSES and not live:
+        print("\nClasses with NO case in this suite (deliberately, not by "
+              "oversight):")
+        for cls, why in sorted(DROPPED_CLASSES.items()):
+            print(f"  {cls}: {why}")
     return rows, correct
 
 
-# ── Validation against the mdgrind 48-fn ground-truth set ─────────────────────
-# Ground-truth verdicts from the 2026-06-09 MEMBER_DELTA_CANDIDATE grind wave
-# (~/tmp/mdgrind_abandoned.jsonl).  Maps each ground-truth wall_class to the coarse
-# route bucket the classifier should produce.  This is the regression suite for the
-# three mdgrind misroute corrections (funclet divergent-bl, offset-swap, vtable-slot)
-# plus the CameraShot vbase-adjust gate.
+def run_mutation_matrix(proj: str = ROOT) -> int:
+    """Run the suite once per mutation and print which case each turns red.
 
-# Canonical copy is in-repo (tools/testdata/) — /tmp copies are volatile AND were
-# appended to by a later agent with summary rows lacking the 'unit' key.
-_GT48_PATH = next((p for p in (os.path.join(ROOT, 'tools/testdata/mdgrind_gt48.jsonl'),
-                                '/tmp/mdgrind_abandoned.jsonl',
-                                os.path.expanduser('~/tmp/mdgrind_abandoned.jsonl'))
-                   if os.path.exists(p)), '/tmp/mdgrind_abandoned.jsonl')
+    This is the evidence that the suite is a control at all.  Exit non-zero if
+    any mutation leaves the score untouched (a mutant nothing detects) or if a
+    case's declared `discriminates` list does not match what actually happened.
+    """
+    base_rows, base_correct = run_validation(proj, quiet=True)
+    total = len(VALIDATE_CASES)
+    base_pass = {r['case']['slug'] for r in base_rows if r['status'] == 'PASS'}
+    print(f"\n=== mutation matrix ({total} cases, "
+          f"{len(MUTATIONS)} mutations) ===")
+    print(f"baseline (no mutation): {base_correct}/{total}\n")
 
-_GT48_TO_BUCKET = {
-    'VBASE_WALL': 'VBASE',
-    'FUNCLET_PAIRING': 'FUNCLET_PAIRING',
-    'VTABLE_DIVERGENCE_DC3': 'VTABLE_DIVERGENCE',
-    'VTABLE_WALL': 'VTABLE_DIVERGENCE',
-    'PERMUTE': 'PERMUTE',
-    'PERMUTE_PAIRING': 'PERMUTE',
-    'DC3_REV_MEMBER': 'DC3_REV_MEMBER',
-    'DEFER_LAYOUT': 'DEEP_OTHER',
-    'FIXED': 'MEMBER_DELTA',
-}
+    slugs = [c['slug'] for c in VALIDATE_CASES]
+    width = max(len(s) for s in slugs) + 2
+    observed: Dict[str, Set[str]] = {s: set() for s in slugs}
+    survivors = []
 
+    print(f"{'mutation':<22} {'score':<9} cases turned red")
+    print('-' * 100)
+    for name in sorted(MUTATIONS):
+        restore = MUTATIONS[name][1]()
+        try:
+            rows, correct = run_validation(proj, quiet=True)
+        finally:
+            restore()
+        reds = [r['case']['slug'] for r in rows
+                if r['status'] != 'PASS' and r['case']['slug'] in base_pass]
+        for s in reds:
+            observed[s].add(name)
+        if not reds:
+            if name in EXPECTED_SURVIVORS:
+                note = f'(expected survivor: {EXPECTED_SURVIVORS[name]})'
+            else:
+                note = '** NOTHING -- MUTANT SURVIVED **'
+                survivors.append(name)
+        else:
+            note = ', '.join(reds)
+        print(f"{name:<24} {correct}/{total:<7} {note}")
 
-def _route_bucket(res: dict) -> str:
-    classes = set(res['classes'])
-    route = res['route']
-    if route == 'DEFER_DEEP':
-        if 'FUNCLET_PAIRING' in classes:
-            return 'FUNCLET_PAIRING'
-        if 'VTABLE_DIVERGENCE' in classes:
-            return 'VTABLE_DIVERGENCE'
-        return 'DEEP_OTHER'
-    return {
-        'DEFER_VBASE': 'VBASE', 'PERMUTE': 'PERMUTE',
-        'MEMBER_DELTA_CANDIDATE': 'MEMBER_DELTA', 'AT_LIMIT': 'AT_LIMIT',
-        'INLINE_POLICY': 'INLINE_POLICY',
-    }.get(route, 'UNKNOWN')
+    print(f"\n{'case':<{width}} mutations that turn it red")
+    print('-' * 100)
+    dead = []
+    mismatched = []
+    for case in VALIDATE_CASES:
+        s = case['slug']
+        got = observed[s]
+        declared = set(case.get('discriminates') or [])
+        mark = ''
+        if not got:
+            dead.append(s)
+            mark = '   ** DISCRIMINATES NOTHING **'
+        elif got != declared:
+            mismatched.append((s, sorted(declared), sorted(got)))
+            mark = f'   ** declared {sorted(declared)} **'
+        print(f"{s:<{width}} {', '.join(sorted(got)) or '-'}{mark}")
 
-
-def run_validation48(proj: str = ROOT, gt_path: str = _GT48_PATH) -> None:
-    """Confusion matrix against the mdgrind 48-fn ground-truth set."""
-    if not os.path.exists(gt_path):
-        print(f"ERROR: ground-truth file not found: {gt_path}", file=sys.stderr)
-        sys.exit(1)
-
-    # Resolve truncated jsonl symbols ('...') against the report's full names.
-    unit_syms: Dict[str, List[str]] = {}
-    try:
-        rep = json.load(open(REPORT))
-        for u in rep.get('units', []):
-            unit_syms[u['name']] = [f['name'] for f in u.get('functions', [])]
-    except Exception:
-        pass
-
-    def _resolve(unit: str, sym: str) -> str:
-        if not sym.endswith('...'):
-            return sym
-        pre = sym[:-3]
-        for s in unit_syms.get(unit, []):
-            if s.startswith(pre):
-                return s
-        return sym
-
-    # Skip rows without 'unit' — later agents appended unit-less summary rows
-    # to the shared /tmp jsonl (the canonical tools/testdata copy is clean).
-    rows = [r for r in (json.loads(l) for l in open(gt_path) if l.strip())
-            if 'unit' in r]
-    confusion: Dict[str, Counter] = defaultdict(Counter)
-    misroutes = []
-    md_survival = []
-
-    print(f"\n=== mdgrind 48-fn validation ({len(rows)} entries) ===", file=sys.stderr)
-    for i, r in enumerate(rows):
-        unit, gt_class = r['unit'], r['wall_class']
-        gt = _GT48_TO_BUCKET.get(gt_class, 'UNKNOWN_GT')
-        sym = _resolve(unit, r['symbol'])
-        res = classify_fn(unit, sym, None, proj)
-        pred = _route_bucket(res)
-        is_clean = res['classes'] == ['CLEAN']
-        # FIXED entries whose fix landed on a later base read CLEAN here — acceptable.
-        if gt == 'MEMBER_DELTA' and is_clean:
-            pred = 'MEMBER_DELTA'
-        confusion[gt][pred] += 1
-        ok = (gt == pred)
-        if gt == 'DC3_REV_MEMBER':
-            ok = pred != 'MEMBER_DELTA'   # accept any non-member route
-        if gt == 'MEMBER_DELTA':
-            md_survival.append((sym, res['route'], is_clean, ok))
-        if not ok:
-            misroutes.append((gt, pred, res['route'], sym, unit))
-        print(f"  [{i+1}/{len(rows)}] {gt:<18} -> {pred:<18} {sym[:40]}", file=sys.stderr)
-
-    gt_order = ['FUNCLET_PAIRING', 'VBASE', 'VTABLE_DIVERGENCE', 'PERMUTE',
-                'MEMBER_DELTA', 'DC3_REV_MEMBER', 'DEEP_OTHER']
-    pred_order = ['FUNCLET_PAIRING', 'VBASE', 'VTABLE_DIVERGENCE', 'PERMUTE',
-                  'MEMBER_DELTA', 'DEEP_OTHER', 'AT_LIMIT', 'INLINE_POLICY', 'UNKNOWN']
-    print("\n=== CONFUSION MATRIX (ground-truth rows x predicted cols) ===\n")
-    hdr = "GT \\ PRED".ljust(20) + "".join(p[:6].ljust(7) for p in pred_order) + " | TOT"
-    print(hdr)
-    print('-' * len(hdr))
-    for g in gt_order:
-        if not confusion.get(g):
-            continue
-        line = g.ljust(20)
-        for p in pred_order:
-            n = confusion[g].get(p, 0)
-            line += (str(n) if n else '.').ljust(7)
-        print(line + f" | {sum(confusion[g].values())}")
-
-    print("\n=== Per-GT-bucket accuracy ===")
-    total_ok = total = 0
-    for g in gt_order:
-        c = confusion.get(g)
-        if not c:
-            continue
-        tot = sum(c.values())
-        ok = (tot - c.get('MEMBER_DELTA', 0)) if g == 'DC3_REV_MEMBER' else c.get(g, 0)
-        total_ok += ok
-        total += tot
-        print(f"  {g:<22} {ok}/{tot}")
-    print(f"\nOverall: {total_ok}/{total} = {total_ok/total*100:.1f}%")
-
-    print("\n=== CRITICAL: genuine MEMBER_DELTA must survive ===")
-    for sym, route, clean, ok in md_survival:
-        tag = ' (CLEAN/already-matched)' if clean else ''
-        print(f"  [{'OK' if ok else 'MISS'}] route={route}{tag}  {sym[:55]}")
-
-    if misroutes:
-        print("\n=== Remaining (non-critical) misroutes ===")
-        for gt, pred, route, sym, unit in misroutes:
-            print(f"  GT={gt:<18} PRED={pred:<16} route={route:<22} {sym[:45]}  [{unit}]")
+    rc = 0
+    if survivors:
+        print(f"\nSURVIVING MUTANTS ({len(survivors)}): "
+              f"{', '.join(survivors)} -- no case covers these arms.")
+        rc = 1
+    if dead:
+        print(f"\nCASES THAT MEASURE NOTHING ({len(dead)}): {', '.join(dead)}")
+        rc = 1
+    if mismatched:
+        print("\nDECLARED-vs-OBSERVED MISMATCH:")
+        for s, decl, got in mismatched:
+            print(f"  {s}: declared {decl}, observed {got}")
+        rc = 1
+    if rc == 0:
+        print("\nOK: every mutation is caught, every case catches something, "
+              "and every declared `discriminates` list is exact.")
+    return rc
 
 
 # ── Output formatting ──────────────────────────────────────────────────────────
@@ -2171,11 +2601,25 @@ def main():
     ap.add_argument('--out', default=os.path.expanduser('~/tmp/hasreal_routed.json'),
                     help='Output routed JSON (default ~/tmp/hasreal_routed.json)')
     ap.add_argument('--validate', action='store_true',
-                    help='Run validation against pilot\'s 11 targets and exit')
-    ap.add_argument('--validate48', action='store_true',
-                    help='Run the mdgrind 48-fn confusion-matrix validation and exit')
-    ap.add_argument('--gt48', default=_GT48_PATH,
-                    help='Path to the 48-fn ground-truth jsonl (default ~/tmp/mdgrind_abandoned.jsonl)')
+                    help='Score the classifier against the frozen fixture suite')
+    ap.add_argument('--validate-live', action='store_true',
+                    help='Same cases, but re-diffed against the LIVE tree. Use to '
+                         'see how far the tree has drifted from the fixtures; a '
+                         'red here is drift, NOT a classifier regression')
+    ap.add_argument('--mutate', default='',
+                    help='Apply one named defect before validating (see '
+                         '--list-mutations)')
+    ap.add_argument('--mutation-matrix', action='store_true',
+                    help='Run the suite once per mutation and report which case '
+                         'each one turns red; exits non-zero if any mutant '
+                         'survives or any case discriminates nothing')
+    ap.add_argument('--list-mutations', action='store_true',
+                    help='List the available mutations and exit')
+    ap.add_argument('--refresh-fixtures', action='store_true',
+                    help='Re-capture every fixture from the live tree (verbatim '
+                         'objdiff-cli JSON) and exit')
+    ap.add_argument('--only', default='',
+                    help='Restrict --refresh-fixtures to one case slug')
     ap.add_argument('--sym', default='',
                     help='Classify a single symbol (requires --unit)')
     ap.add_argument('--unit', default='',
@@ -2186,13 +2630,21 @@ def main():
                     help='Print per-function classification as it runs')
     a = ap.parse_args()
 
-    if a.validate:
-        run_validation(a.proj)
+    if a.list_mutations:
+        for name in sorted(MUTATIONS):
+            print(f'  {name:<20} {MUTATIONS[name][0]}')
         return
 
-    if a.validate48:
-        run_validation48(a.proj, a.gt48)
-        return
+    if a.refresh_fixtures:
+        sys.exit(1 if refresh_fixtures(a.proj, a.only or None) else 0)
+
+    if a.mutation_matrix:
+        sys.exit(run_mutation_matrix(a.proj))
+
+    if a.validate or a.validate_live:
+        _rows, correct = run_validation(a.proj, live=a.validate_live,
+                                        mutate=a.mutate or None)
+        sys.exit(0 if correct == len(VALIDATE_CASES) else 1)
 
     if a.sym:
         if not a.unit:
