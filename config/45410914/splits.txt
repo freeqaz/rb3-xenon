@@ -733,13 +733,11 @@ VocalTrackDir.cpp:
 	.text       start:0x822F8FF0 end:0x822FA1D0
 	.text       start:0x822FA24C end:0x822FA428
 	.text       start:0x822FA428 end:0x822FA4F4
-	.text       start:0x822FA4F4 end:0x822FA500
-	.text       start:0x822FA5C8 end:0x822FA5F8
+	.text       start:0x822FA4F4 end:0x822FA5F8
 	.text       start:0x822FA5F8 end:0x822FA6E0
 	.text       start:0x822FA6E0 end:0x822FA6E8
 	.text       start:0x822FA7B0 end:0x822FAFF8
-	.text       start:0x822FAFF8 end:0x822FC180
-	.text       start:0x822FC248 end:0x822FC430
+	.text       start:0x822FAFF8 end:0x822FC430
 	.text       start:0x822FD26C end:0x822FD2F4
 	.text       start:0x822FD2F4 end:0x822FE750
 	.text       start:0x822FE750 end:0x822FE780
@@ -3818,8 +3816,6 @@ Font.cpp:
 	.text       start:0x822DF250 end:0x822DF300
 	.text       start:0x822DF548 end:0x822DF704
 	.text       start:0x822FA1D0 end:0x822FA24C
-	.text       start:0x822FA500 end:0x822FA5C8
-	.text       start:0x822FC180 end:0x822FC248
 	.text       start:0x82347930 end:0x82347A18
 	.text       start:0x82380598 end:0x823806D8
 	.text       start:0x82469388 end:0x824693F4
