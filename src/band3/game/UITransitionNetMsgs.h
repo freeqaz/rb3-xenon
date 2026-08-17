@@ -8,11 +8,18 @@ class StartTransitionMsg : public StartLockMsg, public LockData {
 public:
     StartTransitionMsg() {}
     StartTransitionMsg(UIScreen *);
-    // NO user dtor: retail's ??1 (0x82522AE0, 72B) is the COMPILER-GENERATED
-    // implicit dtor — a real body exists only because mScreenName needs
-    // destruction, and it has NO own-vtable stores (the user-empty-dtor
-    // signature). Declaring `virtual ~StartTransitionMsg() {}` adds the
-    // ??_7StartTransitionMsg vtable-store block and drops the match to 21.6%.
+    // NO user dtor: retail's ??1 is the COMPILER-GENERATED implicit dtor — a
+    // real body exists only because mScreenName needs destruction, and it has NO
+    // own-vtable stores (the user-empty-dtor signature). Declaring
+    // `virtual ~StartTransitionMsg() {}` adds the ??_7StartTransitionMsg
+    // vtable-store block and drops the match to 21.6%.
+    //
+    // (CORRECTED, lane W13-CHARINFO: this used to cite the dtor as
+    // "(0x82522AE0, 72B)". That address names no function — it is interior to
+    // fn_82522A98 in DateTime.s (size 0x6C), at exactly +72, i.e. the "72B" size
+    // looks to have been ADDED to a base address rather than measured. The
+    // decision stands on the cited 21.6% regression, which is independent of the
+    // address; the address is withdrawn.)
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual LockData *GetLockData();
