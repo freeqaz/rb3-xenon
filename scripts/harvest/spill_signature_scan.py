@@ -98,6 +98,39 @@ def parse_int(s):
     return int(s, 16) if s.lower().startswith(("0x", "-0x")) else int(s)
 
 
+def flat_args(side):
+    """Rebuild the pre-4.2 flat comparison-join spelling from `typed_args`.
+
+    objdiff-cli 4.2.x prints the *display* spelling in `side["args"]`:
+    d-form operands are parenthesised (`r11, 0x22(r11)`), COFF relocations
+    carry an `@h`/`@l` suffix, and a relocation that is not part of the
+    printed operand is DROPPED from the string entirely. MEM_RE below wants
+    the old flat join (`r11, 0x22, r11, lbl_82C926B8`), which is exactly
+    `", ".join(typed_args)` — the paren goes away AND the dropped relocation
+    comes back as the trailing token that the global-addressing guard in
+    frame_store_slot/frame_load_slot tests for. Tolerating parens in MEM_RE
+    would not do: the relocation is not in the display string at all, so the
+    guard could only be restored from typed_args.
+
+    Deliberately applied to the ADDI_RE readers too, which is a no-op:
+    `addi`/`subi` typed_args are (Register, Register, Signed|Symbol) with no
+    trailing relocation in any object in either repo, so the rebuilt string
+    is byte-identical to the display string for them.
+    """
+    if not side:
+        return ""
+    out = []
+    for a in side.get("typed_args") or []:
+        t, v = a.get("type"), a.get("value")
+        if t == "Signed" and isinstance(v, int):
+            out.append(("-0x%x" % -v) if v < 0 else "0x%x" % v)
+        elif t in ("Unsigned", "BranchDest") and isinstance(v, int):
+            out.append("0x%x" % v)
+        else:
+            out.append(str(v))
+    return ", ".join(out)
+
+
 def frame_store_slot(side, bases=FRAME_BASES):
     """If `side` is a store to a frame slot, return (base, off); else None."""
     if not side:
@@ -105,7 +138,7 @@ def frame_store_slot(side, bases=FRAME_BASES):
     op = (side.get("opcode") or "").strip()
     if op not in STORE_OPS:
         return None
-    args = side.get("args", "") or ""
+    args = flat_args(side)
     m = MEM_RE.search(args)
     if not m:
         return None
@@ -125,7 +158,7 @@ def frame_load_slot(side, bases=FRAME_BASES):
     op = (side.get("opcode") or "").strip()
     if op not in LOAD_OPS:
         return None
-    args = side.get("args", "") or ""
+    args = flat_args(side)
     m = MEM_RE.search(args)
     if not m:
         return None
@@ -143,7 +176,7 @@ def addi_slot(side, bases=FRAME_BASES):
         return None
     if (side.get("opcode") or "").strip() != "addi":
         return None
-    m = ADDI_RE.match(side.get("args", "") or "")
+    m = ADDI_RE.match(flat_args(side))
     if not m:
         return None
     if m.group(2) not in bases:
@@ -165,7 +198,7 @@ def frame_bases_for_side(instrs, side_key):
         if not side:
             continue
         op = (side.get("opcode") or "").strip()
-        args = (side.get("args", "") or "").strip()
+        args = flat_args(side).strip()
         if op in ("subi", "addi"):
             m = ADDI_RE.match(args)
             if m and m.group(1) in ("r30", "r31") and m.group(2) == "r1":
@@ -585,5 +618,60 @@ def main():
         print(json.dumps(results[-1], indent=1))
 
 
+# --- selftest ──────────────────────────────────────────────────────────────
+# EVERY fixture below is a verbatim instruction side captured from live
+# `objdiff-cli diff -f json --include-instructions` (4.2.3, 0fd82159607c) over
+# rb3-xenon build/45410914 objects. The whole reason this scanner ran dead for
+# six months is that nothing here ever saw real CLI output -- so do not replace
+# these with invented strings, re-capture them from the CLI.
+_ST_STW_R1 = {"opcode": "stw", "args": "r12, -0x8(r1)", "typed_args": [
+    {"type": "Register", "value": "r12"}, {"type": "Signed", "value": -8},
+    {"type": "Register", "value": "r1"}]}
+_ST_LWZ_R31 = {"opcode": "lwz", "args": "r11, 0x14(r31)", "typed_args": [
+    {"type": "Register", "value": "r11"}, {"type": "Signed", "value": 20},
+    {"type": "Register", "value": "r31"}]}
+# Global+offset addressing THROUGH A FRAME BASE -- the case that decides
+# whether the guard is doing any work. `args` shows a plain `0x4(r30)` and r30
+# is a frame base, so without the relocation this reads as a spill reload; the
+# relocation says it is a global object member. Under 4.2 that relocation is
+# not in `args` at all, so only typed_args can tell the two apart.
+_ST_LWZ_GLOBAL_R30 = {"opcode": "lwz", "args": "r5, 0x4(r30)", "typed_args": [
+    {"type": "Register", "value": "r5"}, {"type": "Signed", "value": 4},
+    {"type": "Register", "value": "r30"},
+    {"type": "Symbol", "value": "lbl_82CC2C28"}]}
+_ST_STW_GLOBAL = {"opcode": "stw", "args": "r11, 0x0(r25)", "typed_args": [
+    {"type": "Register", "value": "r11"}, {"type": "Signed", "value": 0},
+    {"type": "Register", "value": "r25"},
+    {"type": "Symbol", "value": "lbl_82CC2638"}]}
+_ST_ADDI_R1 = {"opcode": "addi", "args": "r3, r1, 0x50", "typed_args": [
+    {"type": "Register", "value": "r3"}, {"type": "Register", "value": "r1"},
+    {"type": "Signed", "value": 80}]}
+
+
+def _selftest():
+    checks = [
+        ("frame_store_slot r1", frame_store_slot(_ST_STW_R1), ("r1", -8)),
+        ("frame_load_slot r31", frame_load_slot(_ST_LWZ_R31), ("r31", 20)),
+        # base r25 is not a frame base AND it is global-addressed: not a spill
+        ("frame_store_slot global", frame_store_slot(_ST_STW_GLOBAL), None),
+        # base r30 IS a frame base -- only the hidden relocation rejects it
+        ("frame_load_slot global-through-r30",
+         frame_load_slot(_ST_LWZ_GLOBAL_R30), None),
+        ("addi_slot r1", addi_slot(_ST_ADDI_R1), ("r1", 80)),
+        ("flat_args round-trip", flat_args(_ST_STW_R1), "r12, -0x8, r1"),
+        ("flat_args restores reloc", flat_args(_ST_STW_GLOBAL),
+         "r11, 0x0, r25, lbl_82CC2638"),
+    ]
+    bad = 0
+    for name, got, want in checks:
+        if got != want:
+            bad += 1
+            print(f"FAIL {name}: want {want!r}, got {got!r}")
+    print(f"selftest: {len(checks) - bad}/{len(checks)} passed")
+    return 1 if bad else 0
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv:
+        sys.exit(_selftest())
     main()
