@@ -166,6 +166,7 @@ def adjudicate_armB(members, survivor, our_idx, tgt_idx, ours, tgt):
 
     tot_ours = tot_retail = 0
     covered = skipped = 0
+    short_callers = excess_callers = 0
     per_caller = []
     for caller, k in sorted(ours_by_caller.items()):
         if caller not in tgt:            # caller unpinned on the retail side
@@ -175,6 +176,10 @@ def adjudicate_armB(members, survivor, our_idx, tgt_idx, ours, tgt):
         r = retail_by_caller.get(caller, 0)
         tot_ours += k
         tot_retail += r
+        if r < k:
+            short_callers += 1
+        elif r > k:
+            excess_callers += 1
         if r != k:
             per_caller.append((caller, k, r))
 
@@ -183,7 +188,22 @@ def adjudicate_armB(members, survivor, our_idx, tgt_idx, ours, tgt):
             "callers_ours": len(ours_by_caller), "callers_skipped": skipped}
     detail = {"shared_callers": covered, "callers_skipped": skipped,
               "slots_ours": tot_ours, "slots_retail": tot_retail,
+              "callers_short": short_callers, "callers_excess": excess_callers,
               "disagreeing": per_caller[:8]}
+
+    # ⛔ BIDIRECTIONAL DISAGREEMENT IS INLINING NOISE, NOT A MISSING CALLEE.
+    # An unported twin sends retail's slots elsewhere at SOME sites and to extra
+    # sites at NONE -- the shortfall is one-directional. When some callers show
+    # MORE retail slots than ours, the two builds inlined the callee differently
+    # and the totals cannot be read as evidence in either direction.
+    # MEASURED: DataNode::Array/Int -- 954 shared callers, 1976 ours vs 1953
+    # retail, disagreements in BOTH directions -- and that pair is a PROVEN fold
+    # (our two COMDATs are identical INCLUDING relocations, which is exactly
+    # /OPT:ICF's own condition). Without this guard the highest-fan-in accessors
+    # in the tree all read DEFECT, which is the FP mode that would bury the
+    # signal this tool exists to find.
+    if excess_callers and short_callers:
+        return "NOISE_BIDIRECTIONAL", detail
     if tot_retail < tot_ours:
         return "DEFECT", detail
     if tot_retail == tot_ours:
