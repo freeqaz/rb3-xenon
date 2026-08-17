@@ -4,10 +4,20 @@
 fix at `src/Memory_Xbox.cpp:287` and (2) a ranked list of allocator functions worth
 decompiling.
 
-> **⚠ STATUS: RESEARCH IN FLIGHT.** Sections marked `[PENDING]` are awaiting
-> verification agents and must not be acted on. Sections marked **GROUNDED BY THE
-> COORDINATOR** were verified directly against the tree at `0f20a01c` before any
-> agent reported, and carry their evidence inline.
+> **✅ STATUS: CLOSED 2026-08-17.** All research reported; both fixes and both map
+> names **landed and verified on main** (§6.5, `4f5b0cac`), plus a tooling defect the
+> handoff surfaced by accident (§5.5, `5dd5e4f0`). Follow-on queue at the end of
+> §6.5. Sections marked **GROUNDED BY THE COORDINATOR** were verified directly
+> against the tree at `0f20a01c` before any agent reported.
+>
+> **The three things worth carrying out of this effort:**
+> 1. **Pairability is a correctness instrument, not a scoring one.** Two live
+>    behavioural bugs sat in the allocator *because* their rows were unpaired, and
+>    were therefore invisible to the census built to find exactly that defect.
+> 2. **`mpn` is structurally incapable of registering a wrong-callee fix** — measured
+>    identical to the last digit across two independent fixes (§6.5).
+> 3. **An enrichment ratio computed with a blind-spot-bearing detector describes the
+>    DETECTOR** (§5.5) — the lesson that doubled the known size of the scope_map bug.
 
 ---
 
@@ -679,6 +689,100 @@ of the strategy plumbing.
 
 ---
 
+## 6.5 ✅ LANDED — lane W0-XMEM (`4f5b0cac`), verified by the coordinator on main
+
+Both bugs fixed **and** both rows named, in one lane. Commits: map
+`64709708`/`2463c8d2`, source `0d0296ea`/`ecb4556e`.
+
+**Coordinator's independent verification** (main rebuilt with a forced re-split
+after the map edit, since the lane measured pre-rebase):
+
+| row | before | after (measured on main) |
+|---|---|---|
+| `fn_822735B0` → **`XMemAlloc`** (204 B) | **unpaired, 0 / 0** | **fuzzy 89.37255 / mpn 89.76471** |
+| `fn_827BAEC0` → **`?RawAlloc@FixedSizeAlloc@@MAAPAHH@Z`** (176 B) | **unpaired, 0 / 0** | **fuzzy 55.204544 / mpn 59.295456** |
+
+Unit fuzzy: `default/Memory_Xbox` 20.90 → **25.938395**; `default/PoolAlloc`
+31.27 → **36.198486**. All four figures reproduce the lane's to the last digit.
+
+★ **A bonus cross-check the verification produced for free.** Whole-binary on main
+reads **44,506 / 3,760,352 B / 36.435173%** against the lane's baseline of
+44,505 / 3,760,224 / 36.433937% — a difference of **+1 function / +128 B**. That is
+**not ours** (this lane measured Δ0 on all four legs); it is exactly the **+128 B
+predicted exactly** claimed by lane **W28-UISRC**, which merged in between. Two
+independent lanes' arithmetic closes to the byte.
+
+**All four legs predicted 0/0/0 and measured 0/0/0**, `none` control flat on both
+map legs. The MAPID-1-style negative did **not** occur, for a *checkable* reason
+rather than luck: every caller of `fn_822735B0` is in the unpairable `xdk` no-source
+class or inside a still-anonymous function, and `fn_827BAEC0` has **no code call
+sites at all** (vtable-only) — there were no forgiven placeholder sites to convert.
+
+### ★★★ The prediction that failed — and it is the most important line in this doc
+
+The lane expected the callee fixes to raise the rows' fuzzy visibly. Fuzzy moved
+**+0.098** and **+0.114** — while **`mpn` stayed IDENTICAL TO THE LAST DIGIT on
+both** (89.764710 → 89.764710; 59.295456 → 59.295456).
+
+> A wrong callee is a relocation-name **arg** penalty — precisely the class `mpn`
+> excludes *by construction*. **Two genuine behavioural fixes moved the
+> `matched_functions` ruler by literally zero**, reproduced independently on two
+> functions.
+
+⇒ concrete proof of the §0 premise: on this defect class the headline ruler is
+**structurally incapable** of registering the correctness win. Land these on merit.
+
+### Naming exposed the bug — and caught a tool restating its own input
+
+The moment the row paired, objdiff charged the site `diff_arg bl [sym]`, **target
+`?MemAlloc@@YAPAXHH@Z` vs base `?_MemAllocTemp@@YAPAXHH@Z`** — invisible before —
+**and simultaneously labelled it `LINKER_MERGED … ICF (RarelyHandFixable)`**, i.e.
+it called a callee we hold retail-byte proof is simply *wrong* an unfixable fold.
+After the source fix the pattern block **disappears entirely**. A fresh live
+instance of MPNGAP-1: **the `AT_LIMIT`/`LINKER_MERGED` label on a `diff_arg`-only
+stratum restates its own input.**
+
+### ⛔ Two corrections this lane made to THIS DOC
+
+1. **§3.5 correction 2 was WRONG.** "The `#ifdef HX_NATIVE` split is optional" holds
+   for the match build only. The 2-arg `MemAlloc(int,int)` exists **only** under
+   `#ifndef HX_NATIVE`, so an unguarded `(MemAlloc)(size, align)` binds `align` to
+   `const char *file` and **does not compile natively**. It is **mandatory** for a
+   tree that must pass the native gate. The arm was kept and pointed at `MemAlloc`,
+   so **native also stops using the temp heap** — deliberate and correct per retail.
+2. **§3.6's "bonus divergence" is half wrong.** Our `AllocType` *does* have the
+   Game/Middleware/Unknown default. Only the **base-0 vs base-0x80 dispatch** half
+   of that divergence stands.
+
+`NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0
+failed=0 rc=0` — and it relinked every target, so it genuinely exercised both
+changed `HX_NATIVE` arms.
+
+### Follow-on queue, in priority order
+
+1. **`RawAlloc`'s inherited `printf` block (~24 B)** — our body is 200 B vs retail's
+   176, and the only surplus call is `printf` at `+0x6c`; retail's block is bare
+   with no `gBigHunk == gSmallHunk` test. A binary scan **with a control that could
+   fail** (`POOL REPORT` and `Allocation failure` **present**; `PoolAlloc warning`,
+   `allocating small pool chunk`, `PoolChunk` **absent**) confirms it is inherited
+   dead code. **Very likely the only thing between that row and 100.**
+2. **XMemAlloc's ~16 B physical-branch residual** — retail inlines a reduced
+   `GlobalMemoryStatus` (`addi r3, r1, 0x50`) where we call out to
+   `MemAllocFailed(size, bool)`, plus our `MemTrackAlloc` passes `__FILE__`/line
+   retail does not.
+3. **Port `?MemAlloc@@YAPAXHH@Z`'s 644 B body** (§4.6 #1) — paired, unblocked, and
+   today every allocation in our source ends at `malloc()`.
+4. **`MemPrintOverview` signature → `TextStream&`** (3 sites) then name it.
+5. **Fix the stale note at `MemMgr.cpp:416`** — still says *"Do NOT name 0x827bcd38
+   first"*; events inverted that on 2026-08-16.
+
+⚠ Minor, recorded: `?Refill@FixedSizeAlloc@@IAAXXZ` and
+`?RawAlloc@ReclaimableAlloc@@…` are attributed to unit
+`default/ConnectionStatusPanel`, not `default/PoolAlloc` — the cluster straddles two
+pinned units. Both score; nothing broken.
+
+---
+
 ## 7. Ledger
 
 | # | item | state |
@@ -686,9 +790,9 @@ of the strategy plumbing.
 | 1 | Verify the wrong-callee bug on retail bytes | **DONE** — §3, CONFIRMED |
 | 2 | Audit the tier 1–3 target list | **DONE** — §4 |
 | 3 | Adjudicate the three data-quality snags | **DONE** — §5 |
-| 4 | This doc | open |
-| 5 | Dispatch implementation lane(s) | blocked on 1–2 |
-| 6 | Name + pin the Memory_Xbox allocator rows | blocked on §2.3 |
+| 4 | This doc | **DONE** |
+| 5 | Dispatch implementation lane(s) | ✅ **LANDED** `4f5b0cac` — §6.5 |
+| 6 | Name + pin the Memory_Xbox allocator rows | ✅ **LANDED** — both rows paired, §6.5 |
 | 7 | **NEW: fix `tools/scope_map.py`'s pinned-unit address key** (§5.1) | ✅ **LANDED** `5dd5e4f0` — see §5.5 |
 | 8 | **NEW: comment-only refresh of 5 stale TU0 addresses in `MemMgr.h`** (§5.3) | ready to dispatch — run the native gate LAST |
 | 9 | **NEW: adjudicate `0x82709EE0`** — stale citation or ICF fold survivor? (§5.3) | open, low priority |
