@@ -120,16 +120,29 @@ public:
     // holds in both, so the two slots between SetClearColor and ScreenDump are
     // simply swapped vs the dc3 header shape).
     virtual void ForceColorClear() {}
-    // Retail RB3 Rnd base has NO Clear virtual: ground-truthed from the TU5
-    // DxRnd vtable (Ghidra). slot 26=ForceColorClear, 27=ScreenDumpUnique,
-    // 28=ScreenDump -- retail OnScreenDump calls vtable+0x70 (slot 28), so
-    // ScreenDump must stay at slot 28 and ScreenDumpUnique is declared FIRST.
-    // Clear is introduced only in NgRnd (slot 0xf8/62, after SetViewport/
-    // GetViewport) -- see Rnd_NG.h. Keeping ScreenDumpUnique virtual preserves
-    // the 2-slot span (27,28) so DrawRect@slot29 and every later Rnd vcall stay
-    // aligned now that Clear no longer occupies a base slot.
-    virtual void ScreenDumpUnique(const char *);
+    // Retail RB3 Rnd base has NO Clear virtual. Clear is introduced only in
+    // NgRnd (slot 0xf8/62, after SetViewport/GetViewport) -- see Rnd_NG.h.
+    // Keeping ScreenDumpUnique virtual preserves the 2-slot span (27,28) so
+    // DrawRect@slot29 and every later Rnd vcall stay aligned now that Clear no
+    // longer occupies a base slot.
+    //
+    // ⛔ CORRECTED 2026-08-17 (lane W7-SYMPAIR). This block used to read
+    // "slot 27=ScreenDumpUnique, 28=ScreenDump -- retail OnScreenDump calls
+    // vtable+0x70 (slot 28), so ScreenDump must stay at slot 28 and
+    // ScreenDumpUnique is declared FIRST". ITS PREMISE WAS A TRANSPOSED MAP
+    // NAME. "retail OnScreenDump" was read off target_symbol_map.json, which
+    // had ?OnScreenDump@Rnd@@ and ?OnScreenDumpUnique@Rnd@@ swapped.
+    //
+    // Adjudicated on retail bytes with an anchor OUTSIDE the map -- the .rdata
+    // dispatch strings in Rnd::Handle (0x82413350), i.e. W2-ENGINE's copy_cats
+    // method: 'screen_dump' at +4544 is followed by bl 0x82413098, and
+    // 'screen_dump_unique' at +4668 by bl 0x824130f0. The two retail bodies are
+    // otherwise identical and differ ONLY in the vtable slot they call:
+    // 0x82413098 -> +0x6C, 0x824130f0 -> +0x70. Since our own OnScreenDump
+    // calls ScreenDump(da->Str(2)), retail's ScreenDump is the +0x6C slot.
+    // => ScreenDump is the LOWER slot (27) and is declared FIRST.
     virtual void ScreenDump(const char *);
+    virtual void ScreenDumpUnique(const char *);
     virtual void DrawRect(
         const Hmx::Rect &,
         const Hmx::Color &,

@@ -1,5 +1,20 @@
 # rb3-xenon TOOLING — audited inventory (2026-07-29)
 
+> **STATUS (2026-08-17): the AUDIT is as-of 2026-07-29 and still the best
+> per-tool record we have; the COUNTS in it are stale.** The audit method
+> (§"How this doc was made") is unchanged in value — every verdict below was
+> produced by actually invoking the tool. What has moved is the population:
+>
+> | figure as written | measured 2026-08-17 |
+> |---|---|
+> | **138 files** in `scripts/harvest/` | **163** `.py` files (172 dir entries) |
+> | **3,862 live units** (`objdiff.json`) | **3,088** units in `report.json` |
+> | **"69.7% of it is stale today"** (§3, and the `build/45410914/asm` figures) | a **2026-07-29 reading**; `tools/prune_split_outputs.py` now runs on every successful split, so this is not the steady state — re-measure, do not quote |
+>
+> Nothing below has been re-audited. Tools added since 2026-07-29 are listed
+> **un-audited** at the end of this file. Re-measure any number here rather than
+> quoting it, exactly as the original note says.
+
 > **How this doc was made, and what "audited" means here.** Every Python tool in
 > `tools/`, `tools/ghidra/`, `scripts/`, `scripts/{analysis,triage,grind,recarve,orchestrator,harvest}/`
 > was (a) AST-parsed, (b) checked for `argparse`, (c) actually invoked with `--help`
@@ -708,3 +723,31 @@ Machine-generated from an AST parse + a real `--help` run per argparse tool.
 | `search-string.sh` | SHELL | (shell script — not executed by this audit; read its header) | positional args | n/a |
 | `struct_check.py` | WORKING | Compare C++ header struct layouts against Ghidra's inferred layouts. Uses the local struct_db.sqlite (built from annotated headers) as our source | --help | n/a |
 | `test-hardening.sh` | SHELL | (shell script — not executed by this audit; read its header) | positional args | n/a |
+
+---
+
+## Added since 2026-07-29 (UN-AUDITED list)
+
+⚠ **These have NOT been through the audit above** — no `--help` invocation, no
+stale-glob screen, no WORKING/BROKEN verdict. Presence on disk was verified
+2026-08-17; behaviour was not. Descriptions are lifted from each tool's own
+docstring. **This list is NOT exhaustive** — it is the set named in the
+2026-08-17 docs refresh, not a re-inventory of the tree.
+
+⚠ Note the directory split: several of these live in `scripts/`, **not**
+`tools/`. Check the path before assuming a sibling name.
+
+| tool | one-line description |
+|---|---|
+| `scripts/analysis/ruler.py` | Resolves the diff ruler the **grader** is actually using, at runtime, from `report.json`'s `provenance.diff_config` — never hardcoded. Backs the MCP tools and `diff_inspect`/`stack_layout` after lane MCPRULER-1. |
+| `tools/gate_liveness.py` | **Non-metric** liveness probe for a per-TU `/D` compile gate: compiles a TU twice (flag on/off) with `OBJCACHE=off` and the same `/Fo`, reports which **TU-owned** symbols changed. |
+| `tools/noobj_census.py` | Census of report rows that can **never pair**, and why — rows pinned to a unit with no compiled base object are pure denominator. Source of the reachable-ceiling figure. |
+| `tools/headcarve_census.py` | Censuses the HEAD-side over-carve class: dtk function symbols that are not real function starts because execution **falls through** into them. Mirror of the over-carved-tails census. |
+| `tools/type_screen.py` | Map-independent mispair detector via argument **type** (sibling of `arity_screen.py`, which asks how *many* argument registers a body consumes). |
+| `tools/dispatch_fold_enum.py` | Enumerates ICF fold classes from **retail's own dispatch table** — answers "did these two `Handle()` handlers fold, or is the map name wrong?" |
+| `tools/prune_worktrees.py` | Reclaims disk from idle lane worktrees, conservatively and reversibly; dry-run by default, `--execute` to act, `--protect` per live lane. Never deletes a branch. |
+| `tools/alias_apply_withdrawal.py` | Applies alias **withdrawals** to `scripts/symbol_aliases.json`. Withdrawal is **per-membership, never per-group**. |
+| `scripts/icf_alias_fixpoint.py` | Closes the ICF alias set under the fold relation, supplying candidates from the **charge list** rather than the site census. |
+| `scripts/icf_alias_merge.py` | Merges a generated alias **delta** into an alias file **by address** — a group is identified by its address, not by its survivor spelling. |
+| `scripts/wrong_callee_triage.py` | Triages the `different_function` charges `name_check` raises, splitting **source defects** from **symbol-naming artifacts**. |
+| `scripts/mark_identity_unestablished.py` | Marks (or clears) rows whose **target body is not established** to be that function — a fourth `decomp.db` verdict beyond NULL / COMPLETE / AT_LIMIT. |

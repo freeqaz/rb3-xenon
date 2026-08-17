@@ -13,9 +13,16 @@ class StorePreviewMgr;
     MusicLibrary::Poll. NO oracle exists (absent from the rb3-Wii dev branch and
     from DC3). Reconstructed from the retail XEX (title 45410914).
 
-    RTTI: `.?AVMusicLibraryStore@@`, vtable @0x820abc8c, Complete Object Locator
-    @0x821da4e0, Class Hierarchy Descriptor @0x821da4f4. The CHD decodes to a
-    plain single-inheritance chain (3 classes, all mdisp=0/pdisp=-1):
+    RTTI: `.?AVMusicLibraryStore@@`, vtable @0x820adf94, Complete Object Locator
+    @0x821e1a88 (attributes 0x0 = single inheritance, no virtual bases).
+    (ADDRESSES CORRECTED, lane W16-HEADERTRUTH: this used to cite vtable
+    @0x820abc8c / COL @0x821da4e0 / CHD @0x821da4f4. None of the three is what
+    it claimed -- 0x820abc8c has no COL at [-1] and is EH data, the word at
+    +4 being the MSVC FuncInfo magic 0x19930522. ★ The DECODE BELOW IS
+    UNAFFECTED AND IS NOW CONFIRMED against the real COL: it does decode to
+    exactly 3 classes in that order. Only the addresses were wrong.)
+    The CHD decodes to a plain single-inheritance chain (3 classes, all
+    mdisp=0/pdisp=-1):
 
         MusicLibraryStore  ->  Hmx::Object  ->  ObjRefOwner (RTTI: "ObjRef")
 

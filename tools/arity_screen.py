@@ -807,34 +807,180 @@ def build_decl(mangled, demangled):
     return d
 
 
-def demangle_batch(names, chunk=4000):
-    """llvm-undname in batches.  Echoes input then output, blank-line separated."""
+class UndnameDesync(RuntimeError):
+    """llvm-undname's record stream did not line up with the input list."""
+
+
+def _legacy_pair_parse(stdout, inputs):
+    """The ORIGINAL parser, kept ONLY as the selftest's negative control.
+
+    ⛔ IT IS WRONG.  Preserved verbatim so `demangle-selftest` can PROVE that the
+    fixture discriminates: a regression test that passes under both the broken
+    and the fixed parser is vacuous (CLAUDE.md: "check a witness CAN
+    discriminate before it blocks work").  Never call this for real work.
+    """
     out = {}
-    names = list(names)
-    for i in range(0, len(names), chunk):
-        part = names[i:i + chunk]
+    cur = None
+    for l in stdout.split("\n"):
+        if not l.strip():
+            continue
+        if cur is None:
+            cur = l.strip()
+        else:
+            out[cur] = l.strip()
+            cur = None
+    for n in inputs:
+        out.setdefault(n, None)
+    return out
+
+
+def _parse_undname_stdout(stdout, inputs):
+    """Parse llvm-undname stdout as BLANK-LINE-DELIMITED RECORDS.
+
+    ⛔⛔ THE OBVIOUS PARSE IS WRONG, AND IT FAILS SILENTLY IN THE DIRECTION OF A
+    CONFIDENT NEGATIVE.  llvm-undname echoes each input then writes its result,
+    but the record is delimited by a BLANK LINE and the *error* text goes to
+    STDERR -- so on stdout a REJECTED name is a ONE-LINE record:
+
+        ?Foo@Bar@@QAEXXZ                       <- accepted: 2-line record
+        public: void __thiscall Bar::Foo(void)
+                                               <- blank delimiter
+        NOT_A_MANGLED_NAME                     <- REJECTED: 1-line record
+                                               <- blank delimiter
+        ?Baz@@YAHH@Z
+        int __cdecl Baz(int)
+
+    Dropping the blanks and pairing lines two-at-a-time therefore DESYNCS
+    PERMANENTLY at the first rejection: every subsequent name is handed the NEXT
+    name's mangled text as its "demangled" form, and the real entries fall out to
+    None.  In lane W18 that produced a confident "100% UNDEMANGLABLE" verdict on
+    1,624 names that demangle perfectly well -- a vacuity shaped exactly like a
+    decisive result, which is the class that closes veins.
+
+    Records are matched to inputs POSITIONALLY and the echo is cross-checked, so
+    a desync raises instead of corrupting the mapping.
+    """
+    recs, cur = [], []
+    for line in stdout.split("\n"):
+        if line == "":
+            if cur:
+                recs.append(cur)
+                cur = []
+            continue
+        cur.append(line)
+    if cur:
+        recs.append(cur)
+
+    if len(recs) != len(inputs):
+        raise UndnameDesync(
+            f"llvm-undname produced {len(recs)} records for {len(inputs)} inputs")
+    out = {}
+    for rec, name in zip(recs, inputs):
+        if rec[0] != name:
+            raise UndnameDesync(f"record echo {rec[0]!r} != input {name!r}")
+        # >1 line == accepted; exactly 1 line == rejected (error went to stderr).
+        out[name] = "\n".join(rec[1:]).strip() if len(rec) > 1 else None
+    return out
+
+
+def demangle_batch(names, chunk=4000):
+    """Demangle MSVC names with llvm-undname.  Rejected names map to None.
+
+    See `_parse_undname_stdout` for the record format and the silent-desync trap
+    it exists to defeat.  On any desync we fall back to one-name-per-invocation
+    for that chunk (correct by construction, just slow) and say so on stderr --
+    never a silent partial result.
+    """
+    out = {}
+    # llvm-undname echoes the input STRIPPED, and target_symbol_map.json really
+    # does contain a whitespace-padded prose row, so send stripped text and key
+    # the result by the caller's original spelling.  (Without this the echo
+    # cross-check below correctly fires and drops the whole chunk to the slow
+    # per-name path -- correct, but needlessly so.)
+    orig = [n for n in names if n and not n.isspace()]
+    for i in range(0, len(orig), chunk):
+        part = orig[i:i + chunk]
+        sent = [n.strip() for n in part]
         try:
-            p = subprocess.run(["llvm-undname"], input="\n".join(part) + "\n",
+            p = subprocess.run(["llvm-undname"], input="\n".join(sent) + "\n",
                                capture_output=True, text=True, timeout=600)
         except Exception:
             for n in part:
                 out[n] = None
             continue
-        lines = [l for l in p.stdout.split("\n")]
-        j = 0
-        cur = None
-        for l in lines:
-            if not l.strip():
-                continue
-            if cur is None:
-                cur = l.strip()
-            else:
-                out[cur] = l.strip()
-                cur = None
-                j += 1
+        try:
+            rec = _parse_undname_stdout(p.stdout, sent)
+            for n, s in zip(part, sent):
+                out[n] = rec[s]
+        except UndnameDesync as e:
+            print(f"  WARN llvm-undname desync ({e}); falling back to per-name "
+                  f"for {len(part)} names", file=sys.stderr)
+            for n, s in zip(part, sent):
+                try:
+                    q = subprocess.run(["llvm-undname"], input=s + "\n",
+                                       capture_output=True, text=True, timeout=60)
+                    out[n] = _parse_undname_stdout(q.stdout, [s])[s]
+                except Exception:
+                    out[n] = None
         for n in part:
             out.setdefault(n, None)
     return out
+
+
+# --- regression fixture -----------------------------------------------------
+# MUST contain a REJECTED name, and one that is NOT last: the bug is a desync,
+# so a fixture whose only rejection sits at the end cannot expose it.
+DEMANGLE_FIXTURE = [
+    ("?SupportChar@RndText@@QAA_NG@Z", True),
+    ("fn_82472df0", False),                      # placeholder -> REJECTED, mid-list
+    ("?CharAdvance@RndFont@@QBAMGG@Z", True),
+    ("NOT_A_MANGLED_NAME", False),               # REJECTED, mid-list
+    ("?CharWidth@RndFont@@QBAMG@Z", True),
+    ("lbl_82E035a0", False),                     # REJECTED, mid-list
+    ("??0Symbol@@QAA@PBD@Z", True),
+]
+
+
+def cmd_demangle_selftest():
+    """Prove the record parser survives rejected names AND that the fixture can fail."""
+    names = [n for n, _ in DEMANGLE_FIXTURE]
+    print("llvm-undname record-parser selftest")
+    print(f"  fixture: {len(names)} names, "
+          f"{sum(1 for _, ok in DEMANGLE_FIXTURE if not ok)} of them REJECTED "
+          f"(none of them last)\n")
+
+    got = demangle_batch(names)
+    bad = []
+    for n, should_demangle in DEMANGLE_FIXTURE:
+        v = got.get(n)
+        ok = (v is not None) if should_demangle else (v is None)
+        # A desync's signature is a name mapped to ANOTHER INPUT's text.
+        if v is not None and v in names:
+            ok = False
+        print(f"  {'ok  ' if ok else 'FAIL'}  {n:<34} -> {v}")
+        if not ok:
+            bad.append(n)
+
+    p = subprocess.run(["llvm-undname"], input="\n".join(names) + "\n",
+                       capture_output=True, text=True)
+    legacy = _legacy_pair_parse(p.stdout, names)
+    legacy_bad = [n for n, should in DEMANGLE_FIXTURE
+                  if (legacy.get(n) is not None) != should
+                  or (legacy.get(n) is not None and legacy.get(n) in names)]
+
+    print(f"\n  fixed parser : {len(bad)} wrong")
+    print(f"  LEGACY parser: {len(legacy_bad)} wrong  {legacy_bad}")
+    if not legacy_bad:
+        print("\nVACUOUS: the legacy parser also passes, so this fixture proves "
+              "nothing. Add a rejected name earlier in the list.")
+        return 2
+    if bad:
+        print("\nFAIL: the fixed parser is wrong on "
+              f"{len(bad)} fixture names: {bad}")
+        return 1
+    print("\nPASS: rejected names map to None, no name inherits another's text, "
+          "and the legacy parser demonstrably FAILS the same fixture.")
+    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -1233,7 +1379,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("cmd", choices=["screen", "control-pos", "control-null", "all",
-                                    "corroborate"])
+                                    "corroborate", "demangle-selftest"])
     ap.add_argument("--rows", default=None, help="screen JSON for `corroborate`")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--top", type=int, default=25)
@@ -1241,6 +1387,8 @@ def main():
     ap.add_argument("--json", default=None)
     a = ap.parse_args()
 
+    if a.cmd == "demangle-selftest":
+        sys.exit(cmd_demangle_selftest())
     if a.cmd == "corroborate":
         cmd_corroborate(a)
         return

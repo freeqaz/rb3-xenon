@@ -70,7 +70,22 @@ public:
     // retail-360 UILabel own-virtual @ vtable slot 0x50 (first UILabel own slot).
     // RndDrawable::Draw is NON-virtual in retail-360 (rndobj/Draw.h), so this is
     // a NEW own-virtual, not an override. Verified against the retail UILabel
-    // vtable @0x8211AEB4: slot 0x50 = fn 0x827CCDF0 (the alpha-gated Draw body).
+    // primary vtable @0x821206dc: slot 0x50 = 0x827f2318.
+    //
+    // (CORRECTED, lane W16-HEADERTRUTH, tools/vtable_claim_audit.py: this used
+    // to cite "vtable @0x8211AEB4: slot 0x50 = fn 0x827CCDF0". BOTH halves were
+    // wrong, and they were wrong in mutually reinforcing ways.
+    //   * 0x8211AEB4 is not a vtable -- it carries no ??_R4, and it lies +0xc
+    //     inside a 2-entry MSVC C++ EH IP-to-state map at 0x8211aea8.
+    //   * 0x827CCDF0 is not a function at all -- it is 0xc8 bytes INTERIOR to
+    //     fn_827CCD28, and it is referenced by NO vtable anywhere in the image
+    //     (0 word-refs; the same scan finds 5 for the real slot value, so the
+    //     zero is a real absence rather than a broken search).
+    // The real UILabel vtables are 0x821206dc (COL 0x821ecf40, offset 0x0,
+    // 23 slots -- the primary), plus secondaries at offsets 0x24/0xd8/0x218/
+    // 0x244. Slot 0x50 of the primary is 0x827f2318, and it IS the first slot
+    // past the UIComponent 20-slot prefix, so the placement decision below is
+    // unaffected -- only the citations were bogus.)
     // Placed FIRST among the UILabel own-virtuals so SetCreditsText stays 0x54
     // and SetDisplayText stays 0x58 (matches retail; no AppLabel slot shift).
     virtual void Draw();

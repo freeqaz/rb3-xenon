@@ -28,7 +28,7 @@ UIStats *TheUIStats = &gUIStats;
 UIStats::UIStats() {}
 
 void UIStats::Init() {
-    void *mem = _MemAlloc(0x10000, 0);
+    void *mem = MemAlloc(0x10000, __FILE__, 0x1F, "UIStats", 0);
     mPadLogBuffer = mem;
     mPadLogWritePtr = mem;
     mPadLogCount = 0;
@@ -39,7 +39,7 @@ void UIStats::Init() {
 
 void UIStats::Terminate() {
     if (mPadLogBuffer) {
-        _MemFree(mPadLogBuffer);
+        MemFree(mPadLogBuffer);
         mPadLogBuffer = 0;
     }
     mPadLogWritePtr = 0;

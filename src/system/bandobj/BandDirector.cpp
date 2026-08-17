@@ -1679,29 +1679,24 @@ DataNode BandDirector::OnStompPresets(DataArray *da) {
 }
 
 DataNode BandDirector::OnGetCatList(DataArray *da) {
-    if (!mPropAnim)
-        return 0;
-    else {
-        Symbol s2 = da->Sym(2);
-        String str30(s2.Str());
-        str30.replace(0, 4, "shot");
-        PropKeys *shotkeys =
-            mPropAnim->GetKeys(this, DataArrayPtr(Symbol(str30.c_str())));
-        PropKeys *shot5keys = mPropAnim->GetKeys(this, DataArrayPtr(Symbol("shot_5")));
-        if (!shotkeys || !shot5keys)
-            return 0;
-        else {
-            Keys<Symbol, Symbol> &sym5keys = *shot5keys->AsSymbolKeys();
-            Keys<Symbol, Symbol> &symkeys = *shotkeys->AsSymbolKeys();
-            symkeys.clear();
-            for (int i = 0; i < sym5keys.size(); i++) {
-                Key<Symbol> curkey(sym5keys[i]);
-                curkey.value = RemapCat(curkey.value, s2);
-                symkeys.push_back(curkey);
-            }
+    Symbol s2 = da->Sym(2);
+    DataArray *arr3 = da->Array(3);
+    DataArray *arr = new DataArray(arr3->Size());
+    int i1 = 0;
+    for (int i = 0; i < arr3->Size(); i++) {
+        Symbol cursym = arr3->Sym(i);
+        if (RemapCat(cursym, s2) == cursym) {
+            arr->Node(i1++) = cursym;
         }
-        return 0;
     }
+    arr->Resize(i1);
+    // ⚠ NOT redundant, and NOT a decomp artifact: retail's relocation sequence at
+    // 0x822905D0 is ??0DataNode, Release, ??0DataNode, Release -- TWO DataNode
+    // constructions and two Releases (the second Release is ~ret, inlined). The
+    // tidier `return ret;` emits only one pair and is 36 B short.
+    DataNode ret(arr, kDataArray);
+    arr->Release();
+    return DataNode(arr, kDataArray);
 }
 
 DataNode BandDirector::OnCopyCats(DataArray *da) {

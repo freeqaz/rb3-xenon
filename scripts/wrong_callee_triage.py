@@ -70,6 +70,28 @@ ROOT = Path(__file__).resolve().parent.parent
 BUILD_ID = "45410914"
 
 
+# `addr_taken` pairing window, in instructions.  Measured on band.exe @45410914:
+# window 2 finds 2,402 distinct `.text` VAs, 8 finds 2,727 and 32 finds 2,739 --
+# so 8 is where the curve flattens (99.6% of what 32 finds).  Widening it only
+# over-counts, which is the safe direction.
+ADDR_TAKEN_WINDOW = 8
+
+# Sections scanned for pointer words.  BINK/BINKDATA/.reloc were measured and are
+# pure noise -- 0, 0 and 1 of their 87 combined `.text`-ranged words land on a
+# symbols.txt function start, against 36,467 of `.rdata`'s and 745 of `.data`'s.
+POINTER_SECTIONS = (".rdata", ".data")
+
+# Opcodes we are SURE write rT (bits 6-10), used only to retire a pending `lis`.
+# Conservative by construction: a missed clobber leaves the `lis` live and
+# over-counts references (safe); a wrong one drops a real reference (unsafe), so
+# nothing goes in here that is not a plain D-form rT destination.
+D_FORM_RT_DEST = frozenset({
+    7, 8, 12, 13, 14, 15,                      # mulli subfic addic addic. addi addis
+    24, 25, 26, 27, 28, 29,                    # ori oris xori xoris andi. andis.
+    32, 33, 34, 35, 40, 41, 42, 43, 46, 58,    # lwz lwzu lbz lbzu lhz lhzu lha lhau lmw ld
+})
+
+
 # --------------------------------------------------------------------------- PE
 class Image:
     def __init__(self, path):
@@ -103,6 +125,14 @@ class Image:
         return None if o is None else struct.unpack_from(">I", self.data, o + 4 * i)[0]
 
     def fanin(self):
+        """BRANCHES only: how many `b`/`bl` in `.text` target each address.
+
+        Deliberately unchanged in meaning -- `fold_thunk_naming` thresholds and
+        the caller-demand comparisons in tools/ourside_fold_sweep.py are all
+        statements about CALL SITES.  For "is this address referenced at all",
+        which is what a zero-fan-in discredit needs, use `refs()`: a function
+        whose address is TAKEN is never branched to and is invisible here.
+        """
         base, raw, rawsz = self.text
         c = collections.Counter()
         for i in range(rawsz // 4):
@@ -113,6 +143,98 @@ class Image:
                     li -= 0x04000000
                 c[base + 4 * i + li] += 1
         return c
+
+    def addr_taken(self, window=ADDR_TAKEN_WINDOW):
+        """`.text` addresses MATERIALISED by an instruction-immediate pair.
+
+        A static factory, a callback, a registration-table entry: its address is
+        taken, never branched to.  On PPC the value is built from two 16-bit
+        immediates -- `lis rX, hi` then `addi rD, rX, lo` (signed, `@ha`/`@l`) or
+        `ori rD, rX, lo` (unsigned) -- so it appears NOWHERE as a 32-bit word and
+        is invisible both to `fanin()` and to any literal-word scan.  A linked
+        X360 image carries no relocation records, so the only way to see the
+        reference is to reconstruct the immediates.
+
+        Over-counting is the SAFE direction here (a spurious reference makes a
+        zero-reference discredit refuse, i.e. fail closed), so the register model
+        is deliberately lax: a `lis` stays live until something we are SURE
+        writes that register does, and pairing is capped at `window`
+        instructions rather than at a basic-block boundary.
+        """
+        base, raw, rawsz = self.text
+        n = rawsz // 4
+        words = struct.unpack_from(">%dI" % n, self.data, raw)
+        c = collections.Counter()
+        pend = {}                              # reg -> (hi << 16, index of the lis)
+        for i, w in enumerate(words):
+            op = w >> 26
+            rt, ra = (w >> 21) & 31, (w >> 16) & 31
+            if op == 15 and ra == 0:           # lis rT, hi  ==  addis rT, r0, hi
+                pend[rt] = ((w & 0xFFFF) << 16, i)
+                continue
+            if op in (14, 24) and ra in pend:  # addi / ori rD, rA, lo
+                hi, j = pend[ra]
+                if i - j <= window:
+                    imm = w & 0xFFFF
+                    if op == 14:
+                        va = (hi + (imm - 0x10000 if imm & 0x8000 else imm)) & 0xFFFFFFFF
+                    else:
+                        va = hi | imm
+                    if base <= va < base + rawsz and not (va & 3):
+                        c[va] += 1
+            if op in D_FORM_RT_DEST:
+                pend.pop(rt, None)
+        return c
+
+    def data_pointers(self, sections=POINTER_SECTIONS):
+        """`.text` addresses appearing as a POINTER WORD in a data section.
+
+        Vtable slots, jump/registration tables, static-initialiser lists.
+        `.pdata` is excluded on purpose: the unwind table names EVERY function
+        by construction, so counting it would discredit nothing.  `.text` is
+        excluded because its words are instructions, not pointers -- see the
+        residual blind spot in `refs()`.
+        """
+        base, _, rawsz = self.text
+        c = collections.Counter()
+        for name, _sva, raw, srawsz in self.secs:
+            if name not in sections:
+                continue
+            for i in range(srawsz // 4):
+                w = struct.unpack_from(">I", self.data, raw + 4 * i)[0]
+                if base <= w < base + rawsz and not (w & 3):
+                    c[w] += 1
+        return c
+
+    def refs_detail(self, window=ADDR_TAKEN_WINDOW, sections=POINTER_SECTIONS):
+        """{'branch': …, 'addr_taken': …, 'data_ptr': …, 'total': …} of Counters."""
+        b, a, d = self.fanin(), self.addr_taken(window), self.data_pointers(sections)
+        t = collections.Counter()
+        for x in (b, a, d):
+            t.update(x)
+        return {"branch": b, "addr_taken": a, "data_ptr": d, "total": t}
+
+    def refs(self, window=ADDR_TAKEN_WINDOW, sections=POINTER_SECTIONS):
+        """ALL inbound references: branches + address-taken pairs + pointer words.
+
+        This is the counter a "nothing in the image references this address"
+        discredit must use.  `fanin() == 0` is NOT that claim -- measured on
+        band.exe @45410914, 38,713 of the 48,724 zero-fan-in `.text` functions
+        are referenced by one of the other two channels.
+
+        RESIDUAL BLIND SPOTS -- this shrinks the hole, it does not close it:
+          * a COMPUTED address (base + runtime index, e.g. a table walked with
+            `lwzx`) is not an immediate pair and is not seen;
+          * an address materialised across a basic-block boundary further apart
+            than `window`, or through a register this scan believes clobbered;
+          * `li`/`oris` and other two-immediate orders are not modelled;
+          * a pointer word living inside `.text` (an in-code jump table);
+          * a reference from a module outside this image.
+        So a zero from `refs()` is "no reference in the four forms scanned",
+        which is stronger evidence than a zero from `fanin()` and still not
+        proof that the address is unreferenced.
+        """
+        return self.refs_detail(window, sections)["total"]
 
 
 # 16-bit-immediate opcodes whose field carries a relocation

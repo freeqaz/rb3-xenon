@@ -355,13 +355,27 @@ class MergeFilter;
 // decomp, src/system/obj/Dir.h) has NO such slot in ObjectDir's vbase vtable —
 // its presence here pushed SyncObjects/ResetEditorState/InlineSubDirType (and
 // every ObjectDir-vbase virtual of every descendant) down one slot. Verified
-// against the retail vtable @0x82029D64 (slot 3 = SyncObjects, directly after
-// SetSubDir; no GetExposedProperties), which made VocalTrackDir::TrackReset's
+// against the retail ObjectDir-vbase vtable @0x82105d5c (slot 3 = SyncObjects,
+// directly after SetSubDir; no GetExposedProperties), which made
+// VocalTrackDir::TrackReset's
 // SyncObjects() vcall load +0xc retail vs our +0x10. Gate the `virtual` keyword
 // behind HX_NATIVE (same idiom as DRAW_DC3_VIRTUAL); the method stays a normal
 // member so the TypeProps.cpp call site still compiles (nothing overrides it, so
 // non-virtual dispatch is behavior-identical). See
 // docs/decomp/research/2026-06-11-vtable-walls.md.
+//
+// (ADDRESS CORRECTED, lane W16-HEADERTRUTH, tools/vtable_claim_audit.py: this
+// used to cite "the retail vtable @0x82029D64". That address is not a vtable
+// and not even code -- it is a STRING in the .rdata literal pool, "front1.grp".
+// The real ObjectDir vtables, from retail RTTI:
+//     0x82105db4  COL 0x821eaa0c  subobject offset 0x0    10 slots  (primary)
+//     0x82105d5c  COL 0x821eaa20  subobject offset 0xa4   21 slots  (vbase)
+// The vbase vtable is the one this note means, so its address is used above.
+// ⚠ The slot-3-is-SyncObjects identification was NOT independently re-derived
+// here; what IS re-verified is that the vbase vtable exists at that address and
+// that slot 3 sits at +0xc, which is consistent with -- and therefore does not
+// disturb -- the independent vcall evidence quoted below (+0xc retail vs our
+// +0x10). The decision stands on that vcall evidence either way.)
 #ifdef HX_NATIVE
 #define DIR_DC3_VIRTUAL virtual
 #else

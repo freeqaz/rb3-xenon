@@ -142,6 +142,18 @@ void SampleData::Load(BinStream &bs, const FilePath &fp) {
     int rev;
     bs >> rev;
     if (rev > gSampleDataMaxRev) {
+        // W23-FRAMESWEEP: retail overlays BOTH of this function's FilePath temps
+        // onto stack slot 0x60; we give the second one a private slot at 0x70,
+        // which is the whole of this row's 0x10 frame surplus (frame 0xa0 vs
+        // retail 0x90) and its only 5 charged sites -- 440 B, otherwise 105/110
+        // instructions equal.  TWO SPELLINGS MEASURED AND REFUTED, do not retry:
+        //   1. unnamed temporaries -- `(void)FilePath(fp);` in both branches
+        //   2. (1) PLUS a brace-less `else`, matching rb3-Wii's own shape
+        // Both produced output BYTE-IDENTICAL to the form below: same 5
+        // diff_arg sites, same 0x70 slot, same 0xa0 frame.  => MSVC X360 /O1
+        // canonicalizes all three, so lexical scope depth and named-local-vs-
+        // temporary are INERT levers on stack-slot merging.  Whatever makes
+        // retail overlay these two is not reachable from this call site.
         if (rev > 0x3E8 && rev < 0x249F0) {
             { FilePath tmp(fp); }
             mSampleRate = rev;

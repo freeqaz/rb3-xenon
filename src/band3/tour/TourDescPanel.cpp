@@ -49,7 +49,7 @@ inline void _Temporary_buffer<Symbol *, Symbol>::_M_allocate_buffer() {
     if (_M_len > (ptrdiff_t)(INT_MAX / sizeof(Symbol)))
         _M_len = INT_MAX / sizeof(Symbol);
     while (_M_len > 0) {
-        _M_buffer = (Symbol *)_MemAlloc(_M_len * sizeof(Symbol), 0);
+        _M_buffer = (Symbol *)MemAlloc(_M_len * sizeof(Symbol), __FILE__, 52, "_Temporary_buffer", 0);
         if (_M_buffer)
             break;
         _M_len /= 2;
@@ -59,7 +59,7 @@ inline void _Temporary_buffer<Symbol *, Symbol>::_M_allocate_buffer() {
 template <>
 inline _Temporary_buffer<Symbol *, Symbol>::~_Temporary_buffer() {
     _STLP_STD::_Destroy_Range(_M_buffer, _M_buffer + _M_len);
-    _MemFree(_M_buffer);
+    MemFree(_M_buffer);
 }
 } // namespace stlpmtx_std
 #endif
