@@ -1,5 +1,28 @@
 # Paths to 100% — ranked index
 
+> **STATUS (2026-08-17): SUPERSEDED as wall-sizing.** Replaced by
+> [`docs/decomp/CAMPAIGN_STATE_2026-08-17.md`](../../decomp/CAMPAIGN_STATE_2026-08-17.md)
+> for the live partition, the reachable ceiling and the ranked levers. This doc
+> survives as the **RFC catalogue and its dated verdicts** — the per-RFC
+> reasoning is still worth reading; its *numbers* are not.
+>
+> **Specifically refuted: the bottom line that "without a Wall-1 recall
+> breakthrough strict saturates ~17.5–18%"** (also stated at §"Framing" and in
+> the RFC-03 rows). The tree is at **strict 44,444/69,227 = 64.2%** and
+> **`matched_code` 36.080082% @name_check** — strict passed the claimed
+> saturation ceiling by ~46 pp without the breakthrough the claim made a
+> precondition. Treat the whole saturation argument as historical.
+>
+> **All three internal "current" figures are historical, not current:**
+> **13.34%** of code bytes (top banner), **8.69%** whole-binary byte (§Framing,
+> and the RFC-14 row's "moves 8.69→8.75%"), and **17.19%** strict (§"11,278 /
+> 17.19%"). ⚠ They also predate the **2026-08-12 ruler flip** — see
+> [`RULER_CHANGE_name_check_2026-08-12.md`](../../decomp/RULER_CHANGE_name_check_2026-08-12.md);
+> byte absolutes from before that date are on the `@none` ruler and are not
+> comparable to today's without restating the ruler.
+>
+> Body below is unedited dated record.
+
 > **STATUS UPDATE — 2026-07-16 (post-TU5-flip).** The decomp target is now
 > **TU5** (`orig/45410914/default.xex` = TU5 bytes since merge d9c44305);
 > the "Framing" numbers below are TU0-era and stale. Current:
