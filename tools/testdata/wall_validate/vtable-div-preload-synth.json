@@ -1,0 +1,174 @@
+{
+ "_wc_fixture": {
+  "captured": "2026-08-17",
+  "diff_count": 1,
+  "objdiff_cli": "objdiff-cli 4.2.3 (88b425bc3bad, xxh3 c8170f625ef1331d)",
+  "repo_head": "ff22c4404ed8d6eb1e7b7504e453cd631910d321",
+  "slug": "vtable-div-preload-synth",
+  "sym": "?PreLoad@Object@Hmx@@UAAXAAVBinStream@@@Z",
+  "unit": "default/system/synth_xbox/Synth",
+  "vbase": {
+   "coff": {},
+   "header": {
+    "Object": false
+   }
+  }
+ },
+ "base_size": 16,
+ "demangled": "public: virtual void __cdecl Hmx::Object::PreLoad(class BinStream &)",
+ "diff_score": {
+  "max_score": 400,
+  "score": 1
+ },
+ "fuzzy_match_percent": 99.75,
+ "instructions": [
+  {
+   "base": {
+    "address": "0x0",
+    "args": "r11, 0x0(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 0,
+   "match_type": "equal",
+   "target": {
+    "address": "0x0",
+    "args": "r11, 0x0(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x4",
+    "args": "r11, 0x28(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 40
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "diff_breakdown": {
+    "arguments": [
+     {
+      "arg_type": "immediate",
+      "base": {
+       "type": "Signed",
+       "value": 40
+      },
+      "index": 1,
+      "target": {
+       "type": "Signed",
+       "value": 64
+      }
+     }
+    ]
+   },
+   "index": 1,
+   "match_type": "diff_arg",
+   "target": {
+    "address": "0x4",
+    "args": "r11, 0x40(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 64
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x8",
+    "args": "r11",
+    "opcode": "mtctr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 2,
+   "match_type": "equal",
+   "target": {
+    "address": "0x8",
+    "args": "r11",
+    "opcode": "mtctr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xc",
+    "args": "",
+    "opcode": "bctr"
+   },
+   "index": 3,
+   "match_type": "equal",
+   "target": {
+    "address": "0xc",
+    "args": "",
+    "opcode": "bctr"
+   }
+  }
+ ],
+ "masked_equal_rows": 0,
+ "masked_equal_symbol": false,
+ "normalized_match_percent": 99.75,
+ "raw_match_percent": 99.75,
+ "reloc_ignored_rows": 0,
+ "symbol": "?PreLoad@Object@Hmx@@UAAXAAVBinStream@@@Z",
+ "target_size": 16,
+ "unit": "default/system/synth_xbox/Synth"
+}

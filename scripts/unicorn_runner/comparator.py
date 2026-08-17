@@ -4,7 +4,10 @@ import hashlib
 import json
 import struct
 
-from .engine import CL_INDEX, CL_TRAMP_ADDR, CL_SRC_OFFSET, CL_R3, CL_R4, CL_R5, CL_R6
+# From call_log, NOT engine: engine imports the Unicorn bindings at module
+# scope, and this module is pure logic over recorded results. Importing engine
+# here made all 41 comparator tests fail on a box without the emulator.
+from .call_log import CL_INDEX, CL_TRAMP_ADDR, CL_SRC_OFFSET, CL_R3, CL_R4, CL_R5, CL_R6
 from .memory_map import STACK_BASE, OBJECT_BASE, GLOBAL_BASE, REGION_SIZE
 
 

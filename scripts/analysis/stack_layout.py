@@ -26,6 +26,8 @@ Usage:
 """
 
 import argparse
+import contextlib
+import io
 import json
 import os
 import re
@@ -344,12 +346,31 @@ class Prologue:
     # unparsed prologue on BOTH sides printed "→ Frame sizes match." off 0 == 0.
     frame_size: Optional[int] = None
     frame_evidence: str = "not scanned"
-    # Same tri-state for the callee-save counts: a bare `bl __savegprlr` used to
-    # read 0 against a base-side 18, fabricating a +18 delta out of pure symbol
-    # naming (see SAVE_HELPER_BARE_NN).
+    # ★ Same tri-state for the callee-save counts — and until 2026-08-17 that
+    #   sentence was ASPIRATIONAL. The fields were declared Optional, but
+    #   parse_prologue's tail unconditionally settled every None to 0 on the
+    #   reasoning "we scanned the whole prologue window", which is the exact
+    #   hole the frame_size repair above closed one field over: with ZERO
+    #   instructions on this side the window was never entered, and 0 is then a
+    #   claim about a function nobody read. print_report and mcp_server both
+    #   subtract these into a delta, so a side nobody read reported a clean
+    #   `Δ +0` — vacuous success, one field to the right of the one we fixed.
+    #
+    #   None  = NO EVIDENCE: zero instructions carried this side inside the
+    #           horizon, so there was nothing to count. `saves_evidence` says so.
+    #   0     = scanned at least one instruction and positively found no
+    #           callee saves. MEASURED in this repo: 42,608 of 69,202 functions
+    #           (61.57%) in build/45410914/asm save nothing, so 0 is the single
+    #           most common real answer here and must not be weakened.
+    #   N > 0 = counted saves.
+    #
+    #   The historical defect this shares with frame_size: a bare
+    #   `bl __savegprlr` read 0 against a base-side 18, fabricating a +18 delta
+    #   out of pure symbol naming (see SAVE_HELPER_BARE_NN).
     saved_gpr_count: Optional[int] = None
     saved_fpr_count: Optional[int] = None
     saved_vmx_count: Optional[int] = None
+    saves_evidence: str = "not scanned"
     callee_save_slots: set = field(default_factory=set)  # offsets, new-r1-relative
     raw_savegprlr: Optional[int] = None
     raw_savefpr: Optional[int] = None
@@ -358,6 +379,22 @@ class Prologue:
     @property
     def frame_known(self) -> bool:
         return self.frame_size is not None
+
+    @property
+    def saves_known(self) -> bool:
+        """True when the callee-save counts are measurements, not defaults.
+
+        NOT implied by `frame_known` and not implying it. They are settled by
+        the same `scanned` count inside parse_prologue, so for a Prologue that
+        parse_prologue produced they move together — but a consumer that
+        overwrites `frame_size` from another source (dc3-decomp's mcp_server
+        adopts objdiff's structured PrologueMismatchInfo this way) can make
+        `frame_known` True on a side whose counts were never scanned.
+        Consumers must test the one they are about to subtract.
+        """
+        return (self.saved_gpr_count is not None
+                and self.saved_fpr_count is not None
+                and self.saved_vmx_count is not None)
 
 
 def _try_int(s: str) -> Optional[int]:
@@ -595,6 +632,14 @@ def parse_prologue(instrs: list, side_key: str) -> Prologue:
     After stwu, the saved slots live at:
       LR slot:  frame_size - 8
       GPR/FPR:  frame_size + neg_offset  (where neg_offset is the pre-stwu negative offset)
+
+    ★ 2026-08-17. Pass 2 keeps its own `scanned` counter for the same reason
+      _scan_frame_size does, and it is deliberately NOT borrowed from pass 1:
+      the two loops have different stopping rules (pass 2 breaks at the first
+      non-save `bl`), so pass 1's count is not pass 2's evidence. Both are 0 in
+      exactly the case that matters — no row in the horizon carries this side —
+      and only then are the three counts left None. See Prologue's field
+      comment for why 0 is otherwise kept as a real, dominant answer.
     """
     p = Prologue()
 
@@ -608,11 +653,13 @@ def parse_prologue(instrs: list, side_key: str) -> Prologue:
     callee_vmx: set[int] = set()
     saw_stwu = False
     seen_stmw_gpr: Optional[int] = None
+    scanned = 0                # instructions actually present on THIS side
 
     for ins in instrs[:horizon]:
         side = ins.get(side_key)
         if not side:
             continue
+        scanned += 1
         op = side.get("opcode", "")
         args = side.get("args", "")
         parts = split_operands(args)
@@ -733,15 +780,26 @@ def parse_prologue(instrs: list, side_key: str) -> Prologue:
     if callee_gprs:
         p.saved_gpr_count = _maxi(p.saved_gpr_count, len(callee_gprs))
 
-    # We scanned the whole prologue window. If nothing at all was found, that is
-    # a positive "no callee saves", not an unknown -- so settle it to 0 here
-    # rather than leaving None to propagate as a fake delta.
+    if scanned == 0:
+        # ★ We looked at NOTHING on this side. The pre-2026-08-17 code settled
+        #   all three to 0 right here on the reasoning "we scanned the whole
+        #   prologue window" — but the window was never entered, so there was no
+        #   scan and 0 was a fabrication. Leave them None; `saves_known` is the
+        #   gate every consumer must pass before subtracting.
+        p.saves_evidence = (f"no {side_key}-side instructions in the scan window "
+                            f"(0 of {len(instrs)} rows carry a {side_key} side) "
+                            f"— no evidence, not zero saves")
+        return p
+
+    # We scanned at least one instruction and found nothing: that is a positive
+    # "no callee saves" (61.57% of this binary), not an unknown. Settle to 0.
     if p.saved_gpr_count is None:
         p.saved_gpr_count = 0
     if p.saved_fpr_count is None:
         p.saved_fpr_count = 0
     if p.saved_vmx_count is None:
         p.saved_vmx_count = 0
+    p.saves_evidence = f"scanned {scanned} {side_key}-side instruction(s)"
 
     return p
 
@@ -917,11 +975,28 @@ def print_report(rows: list[Row], tgt_prol: Prologue, base_prol: Prologue,
     print()
 
     frame_ok = tgt_prol.frame_known and base_prol.frame_known
-    gpr_delta = base_prol.saved_gpr_count - tgt_prol.saved_gpr_count
-    fpr_delta = base_prol.saved_fpr_count - tgt_prol.saved_fpr_count
+    # ★ 2026-08-17. These two subtractions used to run unconditionally, off
+    #   counts parse_prologue had settled to 0 whether or not it had read
+    #   anything — so a side with no instructions printed "TGT 0 BASE 0 Δ +0",
+    #   a clean register-save verdict on a function nobody looked at. The
+    #   counts are tri-state now, so the subtraction has to be gated the same
+    #   way the frame one already was, or it raises TypeError.
+    saves_ok = tgt_prol.saves_known and base_prol.saves_known
+    if saves_ok:
+        gpr_delta = base_prol.saved_gpr_count - tgt_prol.saved_gpr_count
+        fpr_delta = base_prol.saved_fpr_count - tgt_prol.saved_fpr_count
+    else:
+        gpr_delta = fpr_delta = None
 
     def fs(p):
         return f"0x{p.frame_size:x}" if p.frame_known else "UNKNOWN"
+
+    def cs(v):
+        """Format one callee-save count/delta without collapsing None into 0."""
+        return "UNKNOWN" if v is None else str(v)
+
+    def csd(v):
+        return "UNKNOWN" if v is None else f"{v:+d}"
 
     if frame_ok:
         frame_delta = base_prol.frame_size - tgt_prol.frame_size
@@ -931,15 +1006,18 @@ def print_report(rows: list[Row], tgt_prol: Prologue, base_prol: Prologue,
         frame_delta = None
         print(f"  Frame size:          TGT {fs(tgt_prol):<9s} "
               f"BASE {fs(base_prol):<9s} Δ UNKNOWN")
-    print(f"  Callee-saved GPRs:   TGT {tgt_prol.saved_gpr_count:<5d}   "
-          f"BASE {base_prol.saved_gpr_count:<5d}   Δ {gpr_delta:+d}")
-    print(f"  Callee-saved FPRs:   TGT {tgt_prol.saved_fpr_count:<5d}   "
-          f"BASE {base_prol.saved_fpr_count:<5d}   Δ {fpr_delta:+d}")
+    print(f"  Callee-saved GPRs:   TGT {cs(tgt_prol.saved_gpr_count):<7s} "
+          f"BASE {cs(base_prol.saved_gpr_count):<7s} Δ {csd(gpr_delta)}")
+    print(f"  Callee-saved FPRs:   TGT {cs(tgt_prol.saved_fpr_count):<7s} "
+          f"BASE {cs(base_prol.saved_fpr_count):<7s} Δ {csd(fpr_delta)}")
     print(f"    frame evidence: TGT {tgt_prol.frame_evidence}")
     print(f"                    BASE {base_prol.frame_evidence}")
+    if not saves_ok:
+        print(f"    saves evidence: TGT {tgt_prol.saves_evidence}")
+        print(f"                    BASE {base_prol.saves_evidence}")
 
     # Xenon GPRs are 64-bit (std), so each GPR slot = 8 bytes
-    callee_bytes = gpr_delta * 8 + fpr_delta * 8
+    callee_bytes = None if not saves_ok else gpr_delta * 8 + fpr_delta * 8
     if not frame_ok:
         # ★ REFUSE. v1 defaulted an unparsed frame to 0 and then printed
         #   "→ Frame sizes match." off 0 == 0 -- a vacuous success. A frame we
@@ -954,6 +1032,14 @@ def print_report(rows: list[Row], tgt_prol: Prologue, base_prol: Prologue,
         print("     filtered for prologue slots and may contain them.")
     elif frame_delta == 0:
         print("  → Frame sizes match.")
+    elif callee_bytes is None:
+        # Frame known but the counts are not: the AT_LIMIT attribution below
+        # divides the frame Δ into "callee saves" and "structural", and with a
+        # None it would either read AT_LIMIT off a fabricated 0 or raise. Say
+        # what we do not know instead of splitting an unmeasured total.
+        print(f"  → Frame Δ {frame_delta:+#x}, but the callee-saved counts are "
+              "UNKNOWN on at least one side, so it cannot be attributed "
+              "(no AT_LIMIT verdict).")
     elif callee_bytes == frame_delta:
         print(f"  → Frame Δ fully explained by callee-saved counts ({gpr_delta} GPR + "
               f"{fpr_delta} FPR = {callee_bytes:+#x} bytes). AT_LIMIT (not source-fixable).")
@@ -1105,6 +1191,13 @@ def print_report(rows: list[Row], tgt_prol: Prologue, base_prol: Prologue,
         elif frame_delta == 0:
             print("    • User-slot layouts match. If diff is still poor, root cause is not "
                   "stack-layout (check regswaps / replaces / inserts).")
+        elif callee_bytes is None:
+            # ★ 2026-08-17. `None == frame_delta` is False, so this case used to
+            #   fall into the catch-all below and blame the fingerprint matcher
+            #   for a frame Δ it could not attribute. Name the real reason.
+            print("    • Frame Δ exists and the callee-saved counts are UNKNOWN on at "
+                  "least one side — it cannot be attributed, and this is NOT an "
+                  "AT_LIMIT finding.")
         elif callee_bytes == frame_delta:
             print("    • Pure callee-saved-register shift. AT_LIMIT.")
         else:
@@ -1612,6 +1705,155 @@ def selftest():
           _scan_frame_size_v1([], "target", H), 0)
     check("v1 calls the absent side frameless (STAYS WRONG)",
           _scan_frame_size_v1(tgt_only, "base", H), 0)
+
+    # ── Fixture 9: the callee-save counts are tri-state too ──────────────────
+    # Fixture 8 fixed frame_size and left saved_gpr/fpr/vmx_count settling to 0
+    # one field to the right, on the same "we scanned the whole window"
+    # reasoning and with the same hole. print_report and mcp_server both
+    # SUBTRACT these, so a side nobody read reported a clean `Δ +0`.
+    out.append("fixture 9 — no instructions on a side means UNKNOWN saves, not 0:")
+    p_empty = parse_prologue([], "target")
+    check("empty instruction list: GPR count is UNKNOWN",
+          p_empty.saved_gpr_count, None)
+    check("empty instruction list: FPR count is UNKNOWN",
+          p_empty.saved_fpr_count, None)
+    check("empty instruction list: VMX count is UNKNOWN",
+          p_empty.saved_vmx_count, None)
+    check("empty instruction list: saves_known is False", p_empty.saves_known, False)
+    # `tgt_only` is fixture 8's shape: rows exist, none carries a `base` side.
+    p_absent = parse_prologue(tgt_only, "base")
+    check("absent side: GPR count is UNKNOWN", p_absent.saved_gpr_count, None)
+    check("absent side: saves_known is False", p_absent.saves_known, False)
+    check("...and it says WHY (no evidence, not zero saves)",
+          "no evidence" in p_absent.saves_evidence, True)
+
+    # CONTROLS (rule 4). Without these, the branch above is `return None` and
+    # 61.57% of this binary's 69,202 functions — the 42,608 that save nothing —
+    # would be dragged from a measured 0 into UNKNOWN.
+    p_leaf9 = parse_prologue(leaf, "target")          # `mr r11, r3` / `blr`
+    check("a scanned frameless leaf has KNOWN-zero saves, not UNKNOWN",
+          (p_leaf9.saved_gpr_count, p_leaf9.saved_fpr_count, p_leaf9.saved_vmx_count),
+          (0, 0, 0))
+    check("...and saves_known is True there", p_leaf9.saves_known, True)
+    p_stub9 = parse_prologue(stub, "base")            # one `blr`, one row
+    check("a ONE-instruction stub side has KNOWN-zero saves", p_stub9.saved_gpr_count, 0)
+    # fn_822C13A8's shape: saves into the CALLER's frame. 203 functions here.
+    # Real saves, no allocation — the count must be the measured 3
+    # (__savegprlr_29 => r31..r29), not 0 and not UNKNOWN.
+    p_sv9 = parse_prologue(saves_no_frame, "target")
+    check("mflr + __savegprlr_29 without an allocation counts 3 saved GPRs",
+          p_sv9.saved_gpr_count, 3)
+    check("...with a KNOWN-zero FPR count beside it", p_sv9.saved_fpr_count, 0)
+    # The delta itself: the whole point is that it must NOT come out +0.
+    check("target-only diff: BASE saves are UNKNOWN so no delta is computable",
+          parse_prologue(tgt_only, "target").saves_known
+          and parse_prologue(tgt_only, "base").saves_known,
+          False)
+
+    # 9c — the INVARIANT that decides whether each consumer's guard is live.
+    # frame_known IMPLIES saves_known, and the implication runs one way only.
+    # Both are settled by the same "did we look at this side" question, so a
+    # consumer that leaves frame_size alone cannot reach the unknown-saves
+    # branch: by the time it has a frame it has counts. One that OVERWRITES
+    # frame_size from another source (objdiff's structured PrologueMismatchInfo)
+    # CAN, and must guard. If this ever fails, the guards changed status.
+    #
+    # The converse is FALSE and the `weird` fixture is why: `stwux r1, r1, r7`
+    # is an allocation we cannot decode, so the frame is UNKNOWN — but we
+    # scanned an instruction, so the counts are a measured 0. UNKNOWN frame with
+    # KNOWN saves is a real state; KNOWN frame with UNKNOWN saves is not.
+    _all_fixtures = [(mixed, "target"), (mixed, "base"), (plain, "target"),
+                     (leaf, "target"), (stub, "base"), (obj, "target"),
+                     (tgt_only, "target"), (tgt_only, "base"), ([], "target"),
+                     (saves_no_frame, "target"), (weird, "target")]
+    _states = [(parse_prologue(i, k).frame_known, parse_prologue(i, k).saves_known)
+               for i, k in _all_fixtures]
+    # ANTI-VACUITY (rule 4): "no counterexample" is satisfied by an empty or
+    # one-sided battery, so assert the battery actually spans both states first.
+    check("the battery spans both known and unknown frames",
+          (sum(1 for st in _states if st == (True, True)) >= 6,
+           sum(1 for st in _states if st == (False, False)) >= 2),
+          (True, True))
+    check("frame_known implies saves_known on every fixture in this battery",
+          [st for st in _states if st == (True, False)], [])
+    check("...and the converse does NOT hold (weird: undecodable alloc, "
+          "scanned saves)",
+          (parse_prologue(weird, "target").frame_known,
+           parse_prologue(weird, "target").saves_known), (False, True))
+
+    # 9b — print_report must survive the tri-state and print UNKNOWN, not 0.
+    # This is the consumer the defect actually reached; without it the fields
+    # could be tri-state and the report still fabricate.
+    out.append("fixture 9b — print_report renders UNKNOWN instead of subtracting None:")
+    _buf = io.StringIO()
+    with contextlib.redirect_stdout(_buf):
+        print_report([], parse_prologue(tgt_only, "target"),
+                     parse_prologue(tgt_only, "base"),
+                     show_equal=False, show_callee_save=False, dominant_delta=0)
+    _txt = _buf.getvalue()
+    check("report prints an UNKNOWN callee-save GPR delta",
+          "Callee-saved GPRs:   TGT 0       BASE UNKNOWN Δ UNKNOWN" in _txt, True)
+    check("report does NOT print a fabricated +0 GPR delta",
+          "Callee-saved GPRs:   TGT 0     BASE 0     Δ +0" in _txt, False)
+    check("report shows the saves evidence when they are unknown",
+          "saves evidence:" in _txt, True)
+    # CONTROL: a fully-scanned pair must still print real numbers and no
+    # "UNKNOWN", or 9b passes on a report that says UNKNOWN to everything.
+    _buf2 = io.StringIO()
+    with contextlib.redirect_stdout(_buf2):
+        print_report([], parse_prologue(plain, "target"),
+                     parse_prologue(plain, "base"),
+                     show_equal=False, show_callee_save=False, dominant_delta=0)
+    _txt2 = _buf2.getvalue()
+    check("a scanned pair still prints a real GPR delta",
+          "Callee-saved GPRs:   TGT 8       BASE 8       Δ +0" in _txt2, True)
+    check("a scanned pair prints no UNKNOWN callee-save line",
+          "Callee-saved GPRs" in _txt2 and "UNKNOWN" not in _txt2.split(
+              "Callee-saved GPRs")[1].split("\n")[0], True)
+    check("a scanned pair prints no saves-evidence line",
+          "saves evidence:" in _txt2, False)
+
+    # 9d — KNOWN frame, UNKNOWN saves. 9c says parse_prologue never produces
+    # this pair, so it is reachable only through a caller that sets frame_size
+    # from somewhere else — which is exactly what dc3-decomp's mcp_server does
+    # with objdiff's structured PrologueMismatchInfo. print_report accepts
+    # Prologue objects from its caller, so build the pair directly rather than
+    # asserting a branch nobody can enter.
+    out.append("9d — known frame + unknown saves must not become AT_LIMIT:")
+    _pt = Prologue(frame_size=0x80, frame_evidence="structured (objdiff)")
+    _pb = Prologue(frame_size=0x90, frame_evidence="structured (objdiff)")
+    check("the constructed pair really is (frame known, saves unknown)",
+          [(_pt.frame_known, _pt.saves_known), (_pb.frame_known, _pb.saves_known)],
+          [(True, False), (True, False)])
+    _buf3 = io.StringIO()
+    with contextlib.redirect_stdout(_buf3):
+        print_report([], _pt, _pb, show_equal=False, show_callee_save=False,
+                     dominant_delta=0)
+    _txt3 = _buf3.getvalue()
+    check("the frame Δ is still reported", "Δ +0x10" in _txt3, True)
+    check("it is NOT attributed to callee saves",
+          "cannot be attributed" in _txt3, True)
+    # NB substring care: the refusal text itself contains the word AT_LIMIT
+    # ("NOT an AT_LIMIT finding"), so match the two VERDICT spellings instead.
+    check("and no AT_LIMIT verdict is issued",
+          ("AT_LIMIT (not source-fixable)" in _txt3,
+           "Pure callee-saved-register shift" in _txt3), (False, False))
+    # CONTROL: the same delta WITH counts must still reach AT_LIMIT, or the
+    # three checks above pass on a print_report that never says AT_LIMIT.
+    _buf4 = io.StringIO()
+    with contextlib.redirect_stdout(_buf4):
+        print_report([], Prologue(frame_size=0x80, saved_gpr_count=0,
+                                  saved_fpr_count=0, saved_vmx_count=0),
+                     Prologue(frame_size=0x90, saved_gpr_count=2,
+                              saved_fpr_count=0, saved_vmx_count=0),
+                     show_equal=False, show_callee_save=False, dominant_delta=0)
+    _txt4 = _buf4.getvalue()
+    check("a 2-GPR difference over a 0x10 frame Δ IS AT_LIMIT",
+          "AT_LIMIT" in _txt4, True)
+    check("...and the summary block calls it a pure callee-saved shift",
+          "Pure callee-saved-register shift" in _txt4, True)
+    check("...while the unknown-saves report names the reason in the summary",
+          "NOT an AT_LIMIT finding" in _txt3, True)
 
     return ok, out
 

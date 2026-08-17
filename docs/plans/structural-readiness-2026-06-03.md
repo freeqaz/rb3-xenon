@@ -1,5 +1,68 @@
 # Structural Readiness — base-class/struct layout wall (2026-06-03)
 
+> **CORRECTION 2026-08-17 (task #114) — EVERY `layout_fix_rank.py` FAN-OUT
+> NUMBER BELOW IS INFLATED TOWARD STRUCT-LAYOUT EVIDENCE, INCLUDING THE §1
+> "CORRECTED TOOL" NUMBERS AND THE §2 TABLE. PROVENANCE — NOT REWRITTEN.**
+>
+> §1 announces that `layout_fix_rank.py` was fixed by putting `r12` into
+> `STACK_REGS`. **That fix never took effect.** In the same function the
+> `addi/subi` branch built its base register as `'r' + m.group(2)` where group 2
+> already carried its `r`, so it returned `rr1` / `rr12` / `rr31`. `rr12` is not
+> in `STACK_REGS`, so the r12-funclet false positive §1 says was eliminated was
+> still being counted as struct evidence when this doc was written, and stayed
+> that way for ~2.5 months. (The `subi r31, r12, N` shape §1 names *was* caught,
+> but by the unrelated `FRAME_DEST_REGS` guard on the r31 destination — not by
+> the `STACK_REGS` change §1 credits.) Nothing ever printed a base register, so
+> it was invisible. Fixed 2026-08-17 in `b57f9e7e`.
+>
+> Compounding it: objdiff-cli emitted a flat comma-join `args` from 2026-01-31
+> to 2026-08-16, which the `imm(rBase)` branch could not match at all. So for
+> this doc's entire authoring window the tool saw **only** three-register
+> `addi/subi` forms — none of the `lwz`/`stw` field accesses its own docstring
+> names as the primary evidence class — and spelled every one of their bases
+> `rr*`.
+>
+> **Direction: inflation of struct-layout evidence. Magnitude, measured
+> paired** (one objdiff sweep, three classifiers, all 2128 near-miss functions
+> in [80,100) on the current tree — run of record
+> `<decomp-bench>/archive/runs/rb3x-layout-fix-rank-rerank-2026-08-17/`):
+>
+> | | offset rows parsed | struct | stack/frame | fns credited w/ struct | coherent units | keystone clusters |
+> |---|---:|---:|---:|---:|---:|---:|
+> | as shipped here (2026-06-03 code + the `args` spelling of the day) | 1385 | **1385 (100.0%)** | **0** | 689 | 21 | 13 |
+> | corrected (`b57f9e7e`) | 3513 | 1097 (31.2%) | 2416 | 470 | 16 | 12 |
+>
+> **The stack bucket was structurally EMPTY.** The struct-vs-stack split that
+> this document's §1 is entirely about — and that the module header exists to
+> enforce — never fired once. Every offset delta the tool ever saw, it called
+> struct evidence.
+>
+> **What did NOT survive, re-measured on today's tree:** the top keystone
+> cluster. The uncorrected #1 (**+8**, 5 units / 13 fns, led by `Geo`(4) and
+> `StorePreviewMgr`(3)) collapses to 1 unit / 2 fns at rank 6. `Geo` is not a
+> `+8` unit at all — corrected it is **−4** (a sign flip on the largest
+> contributor to the top-ranked cluster); `StorePreviewMgr`, `Campaign`,
+> `MoviePanel` and `AccomplishmentManager` lose *all* struct evidence;
+> `BandDirector` goes −4-coherent → +4-incoherent; `VocalPlayer` +8-coherent →
+> +3-incoherent. Top-3 clusters go `[+8, +4, +28]` → `[+4, +28, −4]`.
+>
+> **What DID survive:** the unit ranking's tail (top-10 unit overlap 8/10,
+> top-15 12/15 — but top-3 only 2/3, i.e. the head people act on is the least
+> stable part); the `FlowIf −96` coherent cluster (4 → 3 votes); `GranularSynth
+> +28` (5 fns, identical in all arms); `PanelDir +4`, `FlowNode −12`, `Mic −1`.
+> The correction is **not** purely subtractive — restoring the `imm(rBase)`
+> branch adds real field evidence, so `Part` *gains* coherence (+4) and the
+> pool of functions with any offset-class evidence rises 689 → 1207.
+>
+> **Not re-runnable, and therefore not re-run:** the specific counts below are
+> against the **June tree** (4094 matched, ~1064 near-misses, `634297c`). That
+> tree no longer exists in the working checkout and rebuilding it was out of
+> scope, so the figures below are corrected in *direction and magnitude* by the
+> paired measurement above, not replaced. §3–§5's *verified* targets rest on
+> hand-read header offsets and `cl.exe` layout reports, **not** on the tool, and
+> are unaffected — see `plans/coupled-base-and-body-port-playbook.md` for which
+> of them survived contact.
+
 **Purpose:** get the engine/game layout *ready* for the per-function matching grind.
 This is the output of a verified ultracode campaign: an empirical fan-out map
 (`tools/layout_fix_rank.py`) + 6 Opus mapping agents + 6 Sonnet adversarial
