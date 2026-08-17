@@ -89,6 +89,45 @@ def tokens(s):
     return [t.strip() for t in (s or '').split(',') if t.strip()]
 
 
+def flat_args(side):
+    """Rebuild the pre-fdc5113 flat operand join from `typed_args`.
+
+    objdiff-cli fdc5113 ("ruler I", 2026-08-16) changed the JSON `args` string
+    from a comma-join of the COMPARISON arg list to the DISPLAY spelling, so the
+    MEM form documented above became `r11, 0x7c(r4)` -- two tokens, failing the
+    `len(tk) == 3` gate. The load/store channel went to zero and only the `addi`
+    compute-&member channel survived, silently: "no candidates", not an error.
+
+    A paren-tolerant tokenizer would be the WRONG repair here, and by a
+    measurable margin. objdiff also stopped printing the trailing NON-DISPLAYED
+    relocation, which survives only as the last typed_args entry. Splitting the
+    display string on parens turns a relocated global access (`stw r10,
+    SYM@l(r11)`, and the pooled rows that carry a hidden trailing Symbol) into a
+    clean-looking 3-token MEM form and feeds it to the member-layout analysis --
+    36 such rows in the dc3 audit sample, 586 in the rb3-xenon [80,100) band,
+    323 in [99,100). The old flat spelling rejected every one of them at
+    `len(tk) == 3`, because the relocation was a fourth token. Rebuilding from
+    typed_args preserves that rejection exactly.
+
+    Rendering matches objdiff-core/src/obj/mod.rs' Display impls exactly:
+    Signed/BranchDest as signed hex, Unsigned as hex, everything else verbatim.
+    """
+    ta = side.get('typed_args')
+    if ta is None:
+        return side.get('args') or ''
+    out = []
+    for a in ta:
+        t = a.get('type')
+        v = a.get('value')
+        if t in ('Signed', 'BranchDest') and isinstance(v, int):
+            out.append(('-0x%x' % -v) if v < 0 else '0x%x' % v)
+        elif t == 'Unsigned' and isinstance(v, int):
+            out.append('0x%x' % v)
+        else:
+            out.append(str(v))
+    return ', '.join(out)
+
+
 def diff_fn(unit, sym, proj):
     """Run objdiff for one symbol; return parsed JSON or None."""
     tmp = f'/tmp/_mdf_{os.getpid()}.json'
@@ -127,7 +166,7 @@ def _step_dataflow(x, this_regs, param_regs):
     """
     t = x.get('target') or {}
     op = t.get('opcode')
-    tk = tokens(t.get('args') or '')
+    tk = tokens(flat_args(t))
     if not op:
         return
     if op in ('bl', 'bla', 'bctrl', 'blrl'):
@@ -195,8 +234,9 @@ def collect_accesses(d):
         bop = b.get('opcode')
         if op is None:
             continue
-        tk = tokens(t.get('args') or '')
-        bk = tokens(b.get('args') or '')
+        # flat_args, never side['args'] -- see flat_args' docstring
+        tk = tokens(flat_args(t))
+        bk = tokens(flat_args(b))
         is_diff = mt in ('diff_arg', 'replace', 'mismatch')
         # MEM form: "reg, disp, basereg"
         if op in MEM_LOADS_STORES and len(tk) == 3 and REG_RE.match(tk[2]):
