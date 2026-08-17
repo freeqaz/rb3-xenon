@@ -14968,10 +14968,12 @@
    "name": "OnPlayerQuarantined",
    "address": "0x826936f8",
    "survivor": "?OnPlayerQuarantined@TrackerManager@@QAAXPAVPlayer@@@Z",
-   "folded": [
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
     "?OnRemoteTrackerEndStreak@TrackerManager@@QAAXPAVPlayer@@HH@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "withdrawn_reason": "lane W34-TRACKER (2026-08-17): NOT A FOLD -- a MAP DEFECT, and the T1 that installed it was VACUOUS. Retail 0x826936f8 is `lwz r3,0x1c(r3); cmplwi; beqlr; b ?RemoteEndStreak@Tracker@@QAAXPAVPlayer@@HH@Z`, i.e. it IS TrackerManager::OnRemoteTrackerEndStreak (source: OnRemoteTrackerEndStreak forwards to Tracker::RemoteEndStreak). TrackerManager::OnPlayerQuarantined is a DIFFERENT function that folds into 0x82693158 instead. The two cannot fold: their branch destinations are Tracker::RemoteEndStreak vs Tracker::HandleRemovePlayer. The original T1 passed only because it MASKS the relocated destination, and every TrackerManager mTracker-forwarder shares the identical 20-byte body 8063001c 2b030000 4d9a0020 4bfffff4 4e800020 -- so masked-T1 proves a fold between ANY two of them. Map corrected in the same patch."
   },
   {
    "name": "0Hide",
@@ -28979,6 +28981,24 @@
    ],
    "evidence": "T1 retail-byte identity established by lane W6-ACCURACY. Our compiled map<int,float>::_M_create_node is 84 bytes and equals retail 0x82271D48 (map<CRC,float>::_M_create_node, 84 bytes) at every word except offset 0x18, which is the function's ONLY relocation (a bl); the relocation target name is MemOrPoolAllocSTL on our side and MemOrPoolAlloc in retail, already equated by the proven group at 0x827bd208, so relocation-target NAME equality holds under the /OPT:ICF fixpoint closure. Hmx::CRC is a single 4-byte member (utl/CRC.h), so pair<const CRC,float> and pair<const int,float> have identical layout AND identical copy codegen (lwz/stw for the key, lfs/stfs for the float) -- they cannot NOT fold. Anti-vacuity: the two bodies are 84 bytes with a 21-instruction shape that differs from every other surviving _M_create_node in the image (19 sizes measured, alloc 0x14/0x18/0x1c/0x20/0x24/0x28/0x2c/0x34/0x40).",
    "witness": "T1 reloc-masked byte identity + layout-forced codegen identity"
+  },
+  {
+   "name": "HandleRemovePlayer",
+   "address": "0x82693158",
+   "survivor": "?HandleRemovePlayer@TrackerManager@@QAAXPAVPlayer@@@Z",
+   "folded": [
+    "?OnPlayerQuarantined@TrackerManager@@QAAXPAVPlayer@@@Z"
+   ],
+   "evidence": "lane W34-TRACKER (2026-08-17). PROVEN with the relocation DESTINATION COMPARED, not masked (the non-vacuity condition): our compiled COMDATs are byte-identical AND their ordered relocation TARGET NAMES are identical. Control that fires: TrackerManager::HandleRemovePlayer vs TrackerManager::HandleGameOver have the SAME body bytes but DIFFERENT destination names, and are correctly rejected. Mechanism: TrackerManager::OnPlayerQuarantined(p) { HandleRemovePlayer(p); } inlines under /O1 /Ob2 into exactly HandleRemovePlayer's body."
+  },
+  {
+   "name": "OnPlayerRemoved",
+   "address": "0x82677458",
+   "survivor": "?OnPlayerRemoved@Game@@QAAXPAVPlayer@@@Z",
+   "folded": [
+    "?OnPlayerQuarantined@Game@@QAAXPAVPlayer@@@Z"
+   ],
+   "evidence": "lane W34-TRACKER (2026-08-17). /OPT:ICF FIXPOINT CLOSURE over the proven TrackerManager::HandleRemovePlayer == TrackerManager::OnPlayerQuarantined fold at 0x82693158. Our Game::OnPlayerRemoved and Game::OnPlayerQuarantined COMDATs are byte-identical (806301504bfffffc) and their single relocation targets become equal once that fold is closed. INDEPENDENT CORROBORATION from caller semantics: two DISTINCT source spellings call the one retail address 0x82677458 -- Band::RemoveUser (Band.cpp:161, OnPlayerRemoved) and Player::SetQuarantined (Player.cpp:1108, OnPlayerQuarantined). A single address serving two distinct spellings is what a fold IS."
   }
  ]
 }
