@@ -172,10 +172,7 @@ Symbol UIEventMgr::CurrentDialogEvent() const {
 
 Symbol UIEventMgr::CurrentTransitionEvent() const {
     UIEvent *event = mTransitionEventQueue.CurrentEvent();
-    if (event)
-        return event->Type();
-    else
-        return gNullStr;
+    return event ? event->Type() : Symbol(gNullStr);
 }
 
 bool UIEventMgr::IsTransitionEventFinished() const {
