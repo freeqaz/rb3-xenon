@@ -227,6 +227,31 @@ FocusTracker::GetNextFocusPlayer(const TrackerPlayerID &pid, float f, bool &b) c
         } else if (ret.mGuid == empty.mGuid) {
             break;
         }
+        // ★ LANE W1b-GAME: THE BOOL MATERIALIZATION IS SETTLED -- the lever is
+        // `& 1` AT THE CALL, and it is NOT reachable from the helper at all.
+        // Retail materialises the inlined PlayerCanHaveFocus bool as a VALUE
+        // (`cntlzw`/`extrwi.`) and branches on THAT; we folded it to
+        // `cmpwi`/`bne`.  `x & 1` on a bool is semantically a no-op (a bool is
+        // already 0/1) but puts the operand in a VALUE context, which is what
+        // forces MSVC to emit the materialisation while KEEPING the branch.
+        //
+        // MEASURED INERT -- 10 structurally distinct forms, ALL BYTE-IDENTICAL
+        // (Streak 98.7%/score 220, Focus 97.5%/score 320 for every one), so do
+        // NOT re-attack the helper: `== kPlayerEnabled`, `!x`, ternary, local
+        // bool, pointer local, int local, `(bool)` cast, `!!`, `!(x != k)`, and
+        // defining the helper INLINE IN THE HEADER (front-end vs back-end
+        // inlining).  Also inert at the call site: `(int)`, `== true`, int
+        // local, `!= false`, `!!`.  The previous note here said "attack
+        // PlayerCanHaveFocus itself" -- that is REFUTED; the helper body is
+        // measurably irrelevant.
+        //
+        // NEGATIVE RESULTS worth keeping: plain `&` instead of `&&` DOES force
+        // the materialisation (idx 113 `cntlzw` matches) but collapses the
+        // branch into `and.` and scores WORSE overall (97.5 -> 95.5); and
+        // swapping the operands to `!(wantsfocus && (canfocus & 1))` scores
+        // 93.7 -- independently reproducing lane CN-3e's result that these
+        // boolean twins are NOT interchangeable to MSVC.
+        //
         // Lane W1-GAME: the LOOP FLAG POLARITY IS SETTLED -- retail's flag is
         // the NEGATION.  Retail (0x826D6DA0 idx 115-121):
         //     beq .E88                                   ; !canfocus -> 1
@@ -254,7 +279,7 @@ FocusTracker::GetNextFocusPlayer(const TrackerPlayerID &pid, float f, bool &b) c
         // same 4 charges at the same indices) -- independently reproducing
         // INSDEL-1's result on the sibling.  Do not re-try hoist-vs-inline;
         // attack PlayerCanHaveFocus itself.
-        bool canfocus = PlayerCanHaveFocus(ret);
+        bool canfocus = PlayerCanHaveFocus(ret) & 1;
         b1 = !(canfocus && wantsfocus);
     } while (b1);
     return ret;
@@ -407,8 +432,11 @@ TrackerPlayerID StreakFocusTracker::GetNextFocusPlayer(
         // characterised at line ~230 for FocusTracker::GetNextFocusPlayer.
         // Re-tested here rather than inherited: hoisting to `bool canfocus = ...;`
         // is BYTE-IDENTICAL to this form (98.728325 both, same 3 charges at the
-        // same indices).  Permuter class, and the permuter is OFF by directive.
-        if (PlayerCanHaveFocus(iterid)) {
+        // same indices).  ★ W1b-GAME: the "permuter class" label was WRONG -- it
+        // was a symptom, not a diagnosis.  `& 1` puts the inlined bool in a VALUE
+        // context and crosses this row to 100.0%/score 0.  See the long note in
+        // FocusTracker::GetNextFocusPlayer for the 10 inert forms.
+        if (PlayerCanHaveFocus(iterid) & 1) {
             Player *pPlayer = mSource->GetPlayer(iterid);
             MILO_ASSERT(pPlayer, 0x2F5);
             int num = pPlayer->GetTrackNum();
