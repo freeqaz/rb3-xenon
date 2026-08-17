@@ -90,16 +90,25 @@ void MemTrackReportClose(const char *name) {
     }
 }
 
+// See the declaration in MemMgr.h: retail's MemTrackAlloc takes six
+// parameters. file/line are a dev-build tracking feature, native-only.
 void MemTrackAlloc(
     int req,
     int act,
     const char *type,
     void *mem,
     bool pooled,
-    unsigned char strat,
+    unsigned char strat
+#ifdef HX_NATIVE
+    ,
     const char *file,
     int line
+#endif
 ) {
+#ifndef HX_NATIVE
+    const char *const file = nullptr;
+    const int line = 0;
+#endif
     if (gMemTracker && gMemTrackerTracking) {
         CritSecTracker tracker(gMemLock);
         int heap = GetCurrentHeapNum();

@@ -455,9 +455,31 @@ not automatically right for RB3.)
 **Dead code we inherited that retail does not have:** the `gMemTracker` /
 `fopen("alloc_fail.txt")` / `SpitAllocInfo` block at `MemHeap.cpp:406-413` (string
 absent from `band.exe`); the `printf("PoolAlloc warning…")` at `PoolAlloc.cpp:143`;
-the `if(!ptr) MemAllocFailed(...)` branch in `PhysicalAlloc`. ⚠ **Where retail's
+the `if(!ptr) MemAllocFailed(...)` branch in `PhysicalAlloc`. ~~⚠ **Where retail's
 `MemAllocFailed` lives is UNRESOLVED** — no retail counterpart located, and its only
-distinguishing string is absent.
+distinguishing string is absent.~~
+
+✅ **RESOLVED 2026-08-17 (lane W0-XMEM2): it does not live anywhere.** Retail never
+compiled the body. Inside retail's `XMemAlloc` the entire failure branch is two
+instructions — `addi r3, r1, 0x50 ; bl fn_8283C980` (`GlobalMemoryStatus`) — with
+**no argument setup**, and retail's frame is `0x90` where ours was `0x70`: the
+**+0x20 delta is exactly `sizeof(MEMORYSTATUS)`**, i.e. the local was inlined into
+`XMemAlloc`'s own frame and both parameters are unused. A `band.exe` scan finds
+**none** of the function's distinguishing literals — `want %d, have %d`,
+`total phys`, `out_of_mem_alloc_info.csv`, `devkit:` — while the **controls in the
+same `.rdata` neighbourhood all fire** (`XTL:D3DX`, `XTL(phys):Middleware`,
+`POOL REPORT`), so the scan is capable of finding strings here and the absences are
+real. Corroboration: retail has no failure branch in `PhysicalAlloc` /
+`PhysicalAllocTracked` either — `fn_82273350` runs `XPhysicalAlloc` →
+`XPhysicalSize` → `MemTrackAlloc` with no null test between them.
+
+⚠ **The near-miss that had to be ruled out by hand, recorded because §4.3.7 came
+within one character of the wrong answer:** `band.exe` **does** contain
+`"Allocation failure, "` — comma and space included — at `0x117460`, which looks
+exactly like this function's format-string prefix. Dumping the whole string shows it
+is `'Allocation failure, heap "%s", want %d bytes\n   lFrags=…'`, i.e. **MemHeap's**
+report sharing a coincidental prefix. **A prefix probe was too weak; only reading the
+whole string settled it.**
 
 ⚠ **The orchestrator DB is stale and must not be used as a state source here** — zero
 prior attempts on any candidate, and it shows `?MemFree@@` at 0.0%/`AT_LIMIT` where
@@ -760,16 +782,62 @@ changed `HX_NATIVE` arms.
 
 ### Follow-on queue, in priority order
 
-1. **`RawAlloc`'s inherited `printf` block (~24 B)** — our body is 200 B vs retail's
-   176, and the only surplus call is `printf` at `+0x6c`; retail's block is bare
-   with no `gBigHunk == gSmallHunk` test. A binary scan **with a control that could
-   fail** (`POOL REPORT` and `Allocation failure` **present**; `PoolAlloc warning`,
-   `allocating small pool chunk`, `PoolChunk` **absent**) confirms it is inherited
-   dead code. **Very likely the only thing between that row and 100.**
-2. **XMemAlloc's ~16 B physical-branch residual** — retail inlines a reduced
-   `GlobalMemoryStatus` (`addi r3, r1, 0x50`) where we call out to
-   `MemAllocFailed(size, bool)`, plus our `MemTrackAlloc` passes `__FILE__`/line
-   retail does not.
+1. ✅ **DONE — `RawAlloc`'s inherited `printf` block** (lane W0-XMEM2). The scan
+   reproduces with its control intact. ⛔ **But the queue's prediction — "very
+   likely the only thing between that row and 100" — was WRONG, and usefully so.**
+   Removing it took the row 55.204544 → 74.7 only; **two further divergences the
+   queue did not know about** were needed:
+   - **The pool is walked in INT UNITS, not bytes.** Retail emits `srawi`+`slwi` as
+     a *non-folding pair* at two sites; MSVC folds the byte-wise `(size >> 2) << 2`
+     into a single `clrrwi`, so retail cannot have written that. A non-folding
+     `srawi`/`slwi` pair is the signature of **`int *` pointer arithmetic** — the
+     `>> 2` is the source's, the `slwi 2` is the compiler's `sizeof(int)` scaling,
+     emitted by a different pass so the two never combine.
+   - ★ **The global ADDRESSING shape, which was the biggest single lever (74.7 →
+     93.5).** Retail co-addresses `gBigHunk`(+0)/`gSmallHunk`(+4) through one
+     materialized base register and hoists a **separate** `lis` for `sPoolBuf` and
+     `sPoolEnd`; we did the exact mirror image, costing an extra `lis` and
+     cascading through the whole register assignment. **Rule** (in-tree precedent:
+     `MemTrackLogState` in `utl/MemTrack.cpp`, then confirmed here): MSVC
+     co-addresses internal-linkage **statics** whose layout it chose itself, but
+     gives each **external** symbol its own relocation ⇒ *a compile-time +4
+     displacement between two globals implies **one aggregate***. So retail's
+     `gBigHunk`/`gSmallHunk` are one aggregate and its `sPoolBuf`/`sPoolEnd` are
+     **not** file statics.
+   ⚠ **NEGATIVE RESULT — do not re-run it:** swapping the `sPoolBuf`/`sPoolEnd`
+   **declaration order** *does* control `.bss` order (verified: the base register
+   moved) but is **INERT** for the addressing choice — 74.7 before and after. The
+   obvious lever was the wrong one; linkage and aggregation were the real ones.
+   **Final: fuzzy 93.52273 / mpn 97.72727, A/B +0 fn / +0 B (predicted 0/0).**
+   Residual is 180 vs 176 B and is now *purely* register allocation — a consistent
+   permutation (retail r30=`sPoolBuf` base, r31=hunk base; ours inverted, with
+   `sPoolEnd` in r29 on **both** sides) plus one trailing register move because
+   retail holds `buf` in `r3` across the shared tail. **No stack-slot or offset
+   diffs**, which is the case the docs call inert for declaration reordering, and
+   the permuter is OFF by standing directive. **Stopped deliberately.**
+2. ✅ **DONE — XMemAlloc reaches `fuzzy 100.0 / mpn 100.0`** (lane W0-XMEM2), A/B
+   **+1 fn / +204 B, predicted +1/+204 exactly**, `none` control +204 (the correct
+   shape for a source patch — a flat `none` would have meant the gain was bought
+   with relocation names alone). Two fixes: `MemAllocFailed` reduced to its retail
+   remnant (see the RESOLVED block in §4.5), and — **new, not in this queue** —
+   **`MemTrackAlloc` takes SIX parameters, not eight**: both retail call sites
+   (`fn_822735B0`, `fn_82273350`) set up `r3..r8` only, with no `r9`/`r10` and no
+   stores to the outgoing argument area. The X360 EABI passes integer arguments 7
+   and 8 in `r9`/`r10`, so their absence is **decisive rather than suggestive**,
+   and two independent sites agree. `file`/`line` kept under `HX_NATIVE`. Zero
+   metric risk: `0x827C43E0` is anonymous, so the callee name is a forgiven
+   placeholder however we spell it.
+   ⛔⛔ **TRAP, recorded because it produced a confident false `AT_LIMIT`:**
+   `run_objdiff` reported **99.7%** and *"AtLimit (High) … these are
+   linker/path-derived; **no source mutation can close them**"*, citing 3
+   `ANONYMOUS_NAMESPACE_HASH` charges on `gPhysicalUsage` (`?A0x7a439e55` target vs
+   `?A0x5be8b7be` base). **That was a PHANTOM.** The MCP builds a single `.obj`
+   incrementally, which **SKIPS THE 6 OBJ PATCHERS** — and `obj_anon_ns` is one of
+   them, i.e. *part of the ruler* (`CLAUDE.md` documents exactly this hazard). A
+   full `ninja` + `report.json` read gives **100.0**. The tell was that the same
+   instruction read **equal on both sides before the edits**, and the map does
+   carry `0x82cbc63c → ?gPhysicalUsage@?A0x7a439e55@@3HA`. ⇒ **Never accept an
+   anon-namespace-hash `at_limit` from an incremental single-obj diff.**
 3. **Port `?MemAlloc@@YAPAXHH@Z`'s 644 B body** (§4.6 #1) — paired, unblocked, and
    today every allocation in our source ends at `malloc()`.
 4. **`MemPrintOverview` signature → `TextStream&`** (3 sites) then name it.
