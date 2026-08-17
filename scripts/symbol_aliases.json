@@ -26179,11 +26179,16 @@
   {
    "name": "_M_create_node",
    "address": "0x8235c328",
-   "survivor": "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z",
-   "folded": [
-    "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z"
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "survivor": "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z",
+   "folded": [],
+   "evidence": "CORRECTED by lane W6-ACCURACY on retail bytes. The group previously named the map<int,float> spelling as SURVIVOR and set<MoveDetector*> as folded -- the roles were INVERTED, because target_symbol_map.json/0x8235c328 carried the wrong name. Retail's body at 0x8235c328 allocates 0x14 (li r3,0x14) and copies ONE word (lwz/stw) into node+0x10, i.e. a 4-byte value_type. pair<const int,float> is 8 bytes and needs 0x18 + two copies, so a map<int,float> node builder CANNOT be this body. set<MoveDetector*> (value_type = a 4-byte pointer) fits exactly, and our compiled body is byte-identical to retail's 76 bytes once the single relocation slot at +0x18 is masked (both call MemOrPoolAlloc/STL, already equated by group @0x827bd208). Corroborated independently: retail _M_insert@set<MoveDetector*> at 0x8235C538 -- already pinned to MoveAsyncDetector.cpp -- calls 0x8235C328 three times.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z",
+     "reason": "PHYSICALLY IMPOSSIBLE at this address: value_type pair<const int,float> is 8 bytes, retail's body here allocates 0x14 = 0x10 header + 4. Our compiled 84-byte body for this spelling is instead byte-identical (reloc-masked) to retail 0x82271D48, so its true fold survivor is map<CRC,float>::_M_create_node -- see the group at 0x82271d48.",
+     "withdrawn_by": "lane W6-ACCURACY"
+    }
+   ]
   },
   {
    "name": "_M_insert_overflow",
@@ -28820,6 +28825,16 @@
    "witness": "FAN-IN NAMES OUR FOLDED SPELLING'S OWN CLASS: retail's ?_M_fill_insert@vector<Object*> calls 0x82272798, which the map names _M_fill_insert_aux@vector<RndDrawable*>. A vector<Object*> method calling a vector<RndDrawable*> helper is internally inconsistent unless the linker folded them. PLUS masked-body uniqueness: retail keeps exactly ONE 328-byte body of this shape.",
    "evidence": "Lane FOLDPROVE-2. RndDrawable* and Object* are both 4-byte pointers, so vector<T*>::_M_fill_insert_aux emits identical code. TWO INDEPENDENT CHANNELS. (1) MASKED-BODY UNIQUENESS = 1: retail holds exactly one 328-byte body of this shape. (2) HETEROGENEOUS FAN-IN naming the folded spelling: of the two retail call sites reaching 0x82272798, one is ?_M_fill_insert@?$vector@PAVObject@Hmx@@ -- i.e. retail's own vector<Object*> code calls the address the map labels vector<RndDrawable*>, which is impossible without folding, and it names EXACTLY the spelling being aliased. DELIBERATELY NOT COUNTED AS A THIRD CHANNEL: the recursive-relocation probe returns SUPPORTED here, but its only differing slot is a SELF-RECURSIVE tail call (_M_fill_insert_aux calling itself), so that test degenerates to re-comparing the parent against itself and carries no independent information. It is excluded from the witness rather than banked.",
    "lane": "FOLDPROVE-2"
+  },
+  {
+   "name": "_M_create_node",
+   "address": "0x82271d48",
+   "survivor": "?_M_create_node@?$_Rb_tree@VCRC@Hmx@@U?$less@VCRC@Hmx@@@stlpmtx_std@@U?$pair@$$CBVCRC@Hmx@@M@4@U?$_Select1st@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@4@U?$_MapTraitsT@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@priv@4@V?$StlNodeAlloc@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@4@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVCRC@Hmx@@M@2@@Z",
+   "folded": [
+    "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z"
+   ],
+   "evidence": "T1 retail-byte identity established by lane W6-ACCURACY. Our compiled map<int,float>::_M_create_node is 84 bytes and equals retail 0x82271D48 (map<CRC,float>::_M_create_node, 84 bytes) at every word except offset 0x18, which is the function's ONLY relocation (a bl); the relocation target name is MemOrPoolAllocSTL on our side and MemOrPoolAlloc in retail, already equated by the proven group at 0x827bd208, so relocation-target NAME equality holds under the /OPT:ICF fixpoint closure. Hmx::CRC is a single 4-byte member (utl/CRC.h), so pair<const CRC,float> and pair<const int,float> have identical layout AND identical copy codegen (lwz/stw for the key, lfs/stfs for the float) -- they cannot NOT fold. Anti-vacuity: the two bodies are 84 bytes with a 21-instruction shape that differs from every other surviving _M_create_node in the image (19 sizes measured, alloc 0x14/0x18/0x1c/0x20/0x24/0x28/0x2c/0x34/0x40).",
+   "witness": "T1 reloc-masked byte identity + layout-forced codegen identity"
   }
  ]
 }

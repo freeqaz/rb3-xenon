@@ -4234,7 +4234,7 @@
  "0x8235c020": "?ClearCurrentQuest@Tour@@QAAXXZ",
  "0x8235c288": "?GetCurrentFilterName@Tour@@QBA?AVString@@XZ",
  "0x8235c2e0": "?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
- "0x8235c328": "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHM@2@@Z",
+ "0x8235c328": "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z",
  "0x8235c378": "?GetTourStatusIndexForFanCount@Tour@@QBAHH@Z",
  "0x8235c3c8": "?DoesTourStatusExist@Tour@@QBA_NHH@Z",
  "0x8235c418": "?GetTourStatusForStarCount@Tour@@QBA?AVSymbol@@HH@Z",
