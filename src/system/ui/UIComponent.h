@@ -98,11 +98,19 @@ public:
 
 protected:
     // OldResourcePreload is a DC3-only virtual; retail-360 UIComponent has NO
-    // such vtable slot (verified: retail primary vtable @0x8211D4A4 is exactly
-    // 20 slots with no OldResourcePreload). Gate the `virtual` behind HX_NATIVE
+    // such vtable slot. Gate the `virtual` behind HX_NATIVE
     // exactly like DRAW_DC3_VIRTUAL (rndobj/Draw.h). All derived-class
     // OldResourcePreload overrides use the same macro so they don't insert a
     // bogus first-class virtual slot.
+    //
+    // (CORRECTED, lane W13-CHARINFO: the "no such slot" claim used to be
+    // supported by "verified: retail primary vtable @0x8211D4A4 is exactly 20
+    // slots". That citation is FALSE — 0x8211D4A4 is +20 bytes into
+    // lbl_8211D490, a 0xCC-byte SWITCH JUMP TABLE for fn_827E2038, not a vtable.
+    // The gating decision is left in place because it is corroborated by DC3
+    // being the newer engine, but the slot count is NOT evidence and this claim
+    // is now UNVERIFIED. Identical failure mode to TrackDir.h:35 — a .rdata
+    // array of code addresses was eyeballed as a vtable.)
 #ifdef HX_NATIVE
 #define UICOMP_DC3_VIRTUAL virtual
 #else

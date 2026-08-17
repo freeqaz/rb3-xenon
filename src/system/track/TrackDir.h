@@ -30,11 +30,18 @@ public:
     virtual void DrawShowing();
     virtual void Poll();
     // everything below this is for TrackDir (i.e. not from PanelDir)
-    // NOTE: SyncFingerFeedback is declared LAST (after PostDraw) to match the
-    // retail vtable — retail places it at the tail of TrackDir's virtuals
-    // (GemTrackDir vtable @0x82026d3c slot 35), NOT before SetDisplayRange like
-    // the rb3-Wii dev header. Declaring it here would push SetDisplayRange (and
-    // every TrackDir virtual after it) one slot too high.
+    // NOTE: SyncFingerFeedback is declared LAST (after PostDraw), NOT before
+    // SetDisplayRange like the rb3-Wii dev header (rb3/src/system/track/
+    // TrackDir.h:33-34 declares it first). Declaring it here would push
+    // SetDisplayRange (and every TrackDir virtual after it) one slot too high.
+    //
+    // (CORRECTED, lane W13-CHARINFO: this note used to cite "GemTrackDir vtable
+    // @0x82026d3c slot 35" as the retail evidence. That is NOT a vtable —
+    // 0x82026d3c is interior to lbl_82026B00, a 0x378-byte SWITCH JUMP TABLE
+    // for fn_822E8DF8, which interleaves case constants with code addresses and
+    // so reads like a vtable in .rdata. The declaration-order decision itself is
+    // unaffected and correct; only the citation was bogus. ⚠ This is a repeating
+    // failure mode in this tree — see UIComponent.h:101 for the same mistake.)
     virtual void SetDisplayRange(float) {}
     virtual void SetDisplayOffset(float, bool) {}
     virtual RndDir *SmasherPlate();
