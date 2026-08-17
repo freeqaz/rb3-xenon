@@ -21,6 +21,20 @@ whatever retail placed at addr(A) is the same code as our B, so the call is
 correct and the name is arbitrary (FOLD).  Different => retail's callee is
 genuinely different code from our B (MAP or CALLEE).
 
+⛔⛔ MASKED T1 IS VACUOUS FOR THUNKS AND SMALL FORWARDERS (lane W34-TRACKER,
+confirmed independently here at scale).  If a body is mostly a branch, THE
+DESTINATION IS THE ENTIRE INFORMATION CONTENT -- mask the relocated word and you
+have masked the only discriminator, so masked-T1 "proves" a fold between ANY TWO
+same-shaped thunks.  W34 found `symbol_aliases.json` carrying exactly such a bad
+group at 0x826936f8 whose two members branch to different functions.
+
+Measured on THIS binary, first 400 target objs: **80 groups** of 12-24 byte
+retail forwarders share identical MASKED bytes while differing in relocation
+destination -- one group has **661 members** (vbase adjustor thunks,
+`$4PPPPPPPM@A@AA`).  Masked-T1 would fold all 661 into one.  This tool returns
+NOT-a-fold on them because it compares DESTINATIONS.  The hazard is not an edge
+case in this binary; it is a large fraction of the small-body population.
+
 WHY NOT THE OBVIOUS TESTS -- each is silently vacuous (CLAUDE.md):
   * raw memcmp: PC-relative `bl` displacements differ at different addresses,
     so identical functions are NOT identical bytes.  It "proves" ICF by finding
