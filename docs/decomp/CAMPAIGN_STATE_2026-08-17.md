@@ -9,6 +9,92 @@
 
 ## 0. SESSION CLOSE
 
+### 0.3 ROUND THREE — W7-SYMPAIR + W8-TWINPORT ← **LATEST**
+
+**+2 fns / +328 B** (all of it W8; W7 measured **Δ exactly 0** and landed anyway).
+Twelve consecutive lanes have now composed to the byte.
+
+★★★★★ **THE SYMPAIR QUEUE IS LARGE AND MOSTLY UNREACHABLE — AND THE TRIAGE IS
+THE DELIVERABLE.** `tools/sympair_queue.py` (promoted from W2-ENGINE's scratch,
+which would otherwise have died in `~/tmp`) finds every row whose **only**
+charges are relocation-symbol pairs, i.e. realizable by naming alone. Whole
+binary: **2,340 rows / 536,528 B**. But:
+
+| class | rows | bytes | share |
+|---|---:|---:|---:|
+| `FOLD_FANIN` — ≥2 of our fns hit ONE target address | 1,099 | 285,548 | **53.22% IRREDUCIBLE** |
+| `ALL_OURS_UNMAPPED` — callee has no retail address | 724 | 158,300 | 29.50% |
+| `MIXED/UNKNOWN` | 415 | 76,060 | 14.18% |
+| `ALL_RECIPROCAL` — transposed map bijection | 102 | 16,620 | **3.10% fixable** |
+
+⇒ **Only ~3% carries a fixable-naming signature.** The big prizes are folds:
+`BandUI::Handle` (3,564 B) calls **one** address where our source calls three
+distinct `OnMsg` overloads. **A raw "536 kB crossable" figure would have been
+badly misleading** — do not quote it without the triage.
+★ Self-validates against a **frozen fixture** (23 rows / 41,088 B, W2's figure,
+bit-for-bit) and the gate is **proven able to fail** (`--selftest --mutate` →
+exit 1). The fixture is frozen because W2's worktree was already removed and it
+is **not regenerable**.
+
+★★★★ **A FOLD CANNOT TRANSPOSE ACROSS TWO DISTINCT ADDRESSES** — a fold maps N
+names onto ONE address. So reciprocal pairs are **provably not folds**: 54 found.
+⛔ **The map's own `_bijection_arbitrary` list UNDER-COUNTS** — only **11 of 54**
+sit on a flagged address, and only 8.03% of queue bytes touch the flagged
+population. **43 transpositions are in the UNFLAGGED map.**
+
+★★★★★ **A WRONG MAP NAME PROPAGATES INTO SOURCE.** `Rnd.h` carried a deliberate,
+confident comment reasoning **from** a transposed map name, elaborated into a
+load-bearing **vtable slot-ordering decision**. Settled with an **anchor OUTSIDE
+the map** (the `.rdata` dispatch strings in `Rnd::Handle`): `'screen_dump'` →
+`bl 0x82413098` (`+0x6C`), `'screen_dump_unique'` → `bl 0x824130f0` (`+0x70`),
+bodies otherwise identical ⇒ **ScreenDump is the LOWER slot, declared FIRST.**
+Header claim retracted in place with its refutation.
+⇒ **A map defect is NOT contained by the map.** Δ measured exactly 0, and the
+mechanism was verified so Δ0 could not silently mean "nothing happened"
+(`Rnd::Handle` 3 charges → 1, survivor = the predicted `FOLD_FANIN` pair).
+
+★★★★ **RECIPROCITY PROVES A MAP DEFECT EXISTS WITHOUT PROVING WHICH SIDE IS
+WRONG** — existence and assignment are separate claims. W7 **deliberately shipped
+no swap** on the `FileCache` STL-sort cluster: it is *provably* self-contradictory
+(`sort<T,Cmp>` must call `__introsort_loop<T,Cmp>`; the map has the two sorts
+pointing at each other's callees), but body-identity, call-edge tokens and TU
+spatial grouping give **three mutually inconsistent answers**, and ⛔ **the token
+check is CONTAMINATED BY CONSTRUCTION** — the callee names it trusts come from
+the same suspect map, making it a **fixed-point problem, not a proof**. A swap
+would have paid +224 B and been a guess.
+
+★★★ **THE COPY-PASTE TWIN CLASS IS NOT SYSTEMATIC — one instance, now closed**
+(W8). The structurally important part: **ARM A (both twins map-resident) is NOT
+the hidden class** — objdiff already charges the copy against its own retail
+address. **The hidden class is ARM B: one twin UNPAIRED, carrying no penalty at
+all.** Positive control passes (reproduced the known defect mechanically);
+negative control passes (19/21 T1 folds classified FOLD). ARM-B copy-paste
+defects are now **zero**. ⇒ The tool survives with a **changed purpose: it is a
+poor copy-paste detector and a good MAP-DEFECT detector** — every non-known hit
+was a `target_symbol_map.json` misidentification.
+
+★★★ **RETAIL CORRECTED THE PORT — the LITERAL ORACLE SPELLING WAS LOAD-BEARING.**
+The oracle's apparently-redundant `DataNode ret(...); arr->Release(); return
+DataNode(arr, kDataArray);` reads like a Wii artifact; tidying it to `return ret;`
+gives **324 B**. Retail's relocation sequence has **two** `DataNode`
+constructions — restoring the oracle **verbatim** moved **324 → 360 == retail
+exactly**. ⇒ The standing rule "the oracle records intent, not the spelling" has
+a **live converse**; neither direction is a safe default.
+
+⛔ **TWO PRICING RULES CORRECTED BY MEASURED PREDICTION FAILURES** (W8 predicted
++24 B and measured **+184**; predicted inert and measured **+2 fns / +144 B**):
+1. **Price from the charged-site list, not from the PATCH** — a wrong name also
+   charges every **CALLER**.
+2. ⛔ **"unmapped ⇒ metric-inert" IS FALSE** — `masked_equal` rose +2 because
+   `matched_code` pairs bodies through the **funclet byte-signature channel,
+   which needs NO map name.**
+
+⚠ **Do not edit a worktree while `ab_measure` runs** — its restore-on-every-exit
+path (correct, newly installed by TOOL-AB) silently reverted a mid-run tool edit.
+⚠ **`collect()` over our objs is MULTI-DEFINER**: scatter-includes put
+`BandDirector.cpp` in **15** objs and a glob keeps whichever sorts last — a
+successful port briefly read as a no-op.
+
 ### 0.2 ROUND TWO — four more lanes, composition exact again ← **LATEST**
 
 **Measured after a FORCED re-split** (map + alias files both changed, so a bare
