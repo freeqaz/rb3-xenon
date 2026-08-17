@@ -862,7 +862,140 @@ pinned units. Both score; nothing broken.
 | 5 | Dispatch implementation lane(s) | ✅ **LANDED** `4f5b0cac` — §6.5 |
 | 6 | Name + pin the Memory_Xbox allocator rows | ✅ **LANDED** — both rows paired, §6.5 |
 | 7 | **NEW: fix `tools/scope_map.py`'s pinned-unit address key** (§5.1) | ✅ **LANDED** `5dd5e4f0` — see §5.5 |
-| 8 | **NEW: comment-only refresh of 5 stale TU0 addresses in `MemMgr.h`** (§5.3) | ready to dispatch — run the native gate LAST |
+| 8 | **NEW: comment-only refresh of 5 stale TU0 addresses in `MemMgr.h`** (§5.3) | open — run the native gate LAST |
 | 9 | **NEW: adjudicate `0x82709EE0`** — stale citation or ICF fold survivor? (§5.3) | open, low priority |
+| 10 | **NEW: drive both rows to 100** | ✅ **LANDED** `a47a1507` — XMemAlloc **100.0**, RawAlloc **93.52** (regalloc floor) |
+| 11 | **NEW: `scope_map` commit policy adjudicated + gate fixed** | ✅ **LANDED** `605fd91a` — keep IGNORED, see §8 |
+| 12 | **NEW: `configure.py configure` bakes a broken `build.ninja`** | open — see §8, pre-existing, breaks every subsequent ninja at rc=2 |
 
-**Nothing is landed. No source, map, or splits file has been edited by this effort.**
+---
+
+## 8. Final state — VERIFIED ON MAIN 2026-08-17
+
+Rebuilt with a forced re-split and read from `report.json`:
+
+| row | at open | **final** |
+|---|---|---|
+| `XMemAlloc` (204 B) | unpaired 0 / 0 | **fuzzy 100.0 / mpn 100.0** ✅ |
+| `?RawAlloc@FixedSizeAlloc@@MAAPAHH@Z` (176 B) | unpaired 0 / 0 | **fuzzy 93.52273 / mpn 97.72727** |
+
+⚠ **Whole-binary absolutes here (44,509 / 3,761,084 B / 36.44227%) do NOT match the
+lanes' own readings**, because main advanced under us (W27-FRAMEQ and others merged
+mid-effort). That is the standing rule demonstrating itself — **deltas compose,
+absolutes do not.** Each lane's Δ was measured in-run and hit its prediction exactly;
+do not reconcile these absolutes against theirs.
+
+### 8.1 RawAlloc stops at 93.5 — an honest floor, not a failure
+
+⛔ **My briefed lead was RIGHT BUT INCOMPLETE, and I should not have briefed it as
+sufficient.** I passed down *"the `printf` block is very likely the single thing
+between that row and 100."* Removing it was worth **55.2 → 74.7**. Two further
+divergences were required:
+
+- **The pool is walked in `int` units.** Retail emits a **non-folding** `srawi`+`slwi`
+  pair twice; MSVC folds `(size>>2)<<2` into one `clrrwi`, so retail did not write
+  that — **the pair is the signature of `int*` pointer arithmetic.**
+- ★ **The real lever, 74.7 → 93.5: GLOBAL CO-ADDRESSING.** Retail co-addresses
+  `gBigHunk`(+0)/`gSmallHunk`(+4) through one base register and hoists separate `lis`
+  for `sPoolBuf`/`sPoolEnd`; we did the mirror image. **Rule** (in-tree precedent
+  `MemTrackLogState`, re-confirmed here): **MSVC co-addresses internal-linkage
+  statics but gives each external its own relocation ⇒ a compile-time `+4` implies
+  ONE AGGREGATE.**
+
+⛔ **NEGATIVE RESULT — do not retry:** swapping the `sPoolBuf`/`sPoolEnd`
+**declaration order** does control `.bss` order but is **INERT** for the addressing
+choice (74.7 either way). The obvious lever was the wrong one.
+
+**What remains is 180 vs 176 B and is purely register allocation** — a consistent
+permutation (`sPoolEnd` lands in r29 on *both* sides) plus one trailing register
+move, with **zero** `diff_op`/`replace`/`delete` and no stack-slot or offset diffs.
+The permuter is **OFF by standing directive**, so source work cannot close it.
+Neither row is in `symbol_aliases.json`, so no fold-forgiveness is involved.
+
+### 8.2 ⛔⛔ `run_objdiff` shipped a CONFIDENT FALSE `AT_LIMIT` on the row that reached 100
+
+It reported `XMemAlloc` at **99.7%** with *"no source mutation can close them"* over
+3 `ANONYMOUS_NAMESPACE_HASH` charges. **Phantom:** the MCP builds a single `.obj`
+incrementally, which **SKIPS THE 6 OBJ PATCHERS**, and `obj_anon_ns` **is part of the
+ruler**. A full `ninja` + `report.json` reads **100.0**. The tell was that the same
+instruction read *equal* before the edits.
+
+⇒ This is the documented *"`ninja <one .obj>` manufactures a phantom regression"*
+trap **reappearing through the MCP path**. Had the lane believed the label, **a row
+that reaches 100 would have been closed as unfixable.** Same disease as every other
+confident "unfixable" in this codebase: **the label closes veins, and nobody
+re-opens them.**
+
+### 8.3 `MemAllocFailed` — the open question is RESOLVED
+
+**Retail's `MemAllocFailed` does not live anywhere.** Retail never compiled the body;
+only the inlined `GlobalMemoryStatus` survives. None of its literals are in
+`band.exe` while controls in the same `.rdata` fire, and retail's `fn_82273350` has
+no null test at all.
+
+⚠ **Near-miss worth carrying:** `band.exe` **does** contain `"Allocation failure, "`
+at `0x117460`, which reads as a hit. Dumping the **whole** string shows it is
+MemHeap's `'Allocation failure, heap "%s"…'` — a **coincidental prefix**. The prefix
+probe was too weak; only reading the entire string settled it. **A substring test
+against a binary can confirm the wrong hypothesis.**
+
+### 8.4 `scope_map.json` — KEEP IT GITIGNORED (adjudicated, then implemented)
+
+Committing **would not have prevented the incident** (a committed copy goes stale
+identically — it derives from the gitignored `report.json`) and would break two
+working things:
+
+- **It kills the only staleness signal.** `_cache_status` warns off the file's
+  **mtime**; **git does not preserve mtimes**, so a committed artifact reads as
+  freshly-minted in every clone and worktree forever.
+- **It would make every A/B refuse.** `ab_measure` treats `config/` as
+  build-relevant and refuses on modified tracked files — importing a second
+  `restore_symbols()`-style special case.
+
+⚠ **Churn was measured expecting it to decide this, and it did NOT** — the format is
+git-friendly (sorted keys, one field per line) and ordinary drift is ~33 lines. Size
+is not the rule either; we already track a 14.6 MB `symbols.txt`. The operative rule
+is **"committed if it feeds the build/ruler or cannot be reproduced from repo
+contents + a build"** — this is 1.0 s from `report.json`.
+
+★ **The multi-worktree angle decides it, and it runs OPPOSITE to intuition.**
+`setup_worktree.sh` already **reflinks main's cache into every new worktree**, which
+is how the original defect propagated fleet-wide. Committed, a fresh worktree gets a
+stale file with an mtime of *"now"* and git's apparent authority ⇒ **committing is
+the option MORE likely to produce a silently wrong answer in a lane.**
+
+★★ **And `605fd91a` made the decision LOAD-BEARING rather than merely correct:** the
+artifact is now rewritten on **every** build. Ignored, that is invisible to A/B (the
+refusal reads `git status --porcelain`, which never lists ignored files).
+**Committed, it would be a modified TRACKED file and would refuse EVERY A/B.**
+
+**What was fixed instead** (§5.5's hole, closed): `validate-addrs` now asserts the
+**on-disk artifact** — it previously returned PASS over the stale file *and over a
+deleted one*. Coordinator-verified independently on main, all four cells:
+
+| artifact on disk | exit |
+|---|---|
+| correct (**the control**) | **0** |
+| the real historical stale file | **1** — flags C1 at exactly **−650 keys** |
+| absent | **3** (distinct signal, not a silent pass) |
+
+`_cache_status` is now graded (`< 1.0` STALE, `< 0.50` DEAD) — a correct artifact
+scores **exactly 1.0000** by construction, so the old 0.50 threshold was 31 points of
+slack that swallowed the incident (the stale file scored 0.6881 and reported `ok`).
+The cache also **self-heals** on the `priority` path, testing **both** coverage and
+mtime because neither suffices alone: coverage catches the **reflink** case (newer
+than every input but keyed to another tree), mtime catches stale **tiers** after a
+splits edit (coverage stays 1.0000).
+
+### 8.5 ⚠ Pre-existing trap found in passing — worth a separate fix
+
+**`python3 configure.py configure`** — the explicitly-spelled default mode — bakes
+`configure_args = configure` into `build.ninja`, so the progress rule emits two
+positionals and **every subsequent `ninja` fails rc=2**. Repair is `python3
+configure.py` with no positional. Not caused by this effort; ledger item 12.
+
+⚠ And a hazard for hand-rolled measurement: `ab_measure`'s `count_lines` reported
+`work=0` for a **failed** build, because it counts work descriptions and never
+observes `rc`. `ab_measure` itself checks `rc` separately, so this bites only
+ad-hoc uses — but it is the same family as `EXIT=$?` after a pipe reporting
+**`tail`'s** status, which also fired during this effort's own verification.
