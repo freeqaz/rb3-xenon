@@ -143,6 +143,13 @@ explained — its single differing name pair (`??2CriticalSection@@SAPAXI@Z` vs
 **reported, never silently applied** — these groups are the thing under audit,
 and applying them would let a fabricated alias validate itself.
 
+⚠ **The alias file was checked across the whole stratum up front, and it
+matters: 24 of the 54 genuine pairs have at least one name already appearing in
+`scripts/symbol_aliases.json`** (1,528 groups). §9's case C shows the cost of
+skipping that check — two "fixes" were written against rows whose charges were
+**already forgiven** by groups 34 and 150, and were discarded only because the
+check was run.
+
 ### ⛔⛔ Then the fixed instrument produced a FALSE `IDENTICAL`
 
 It reported `??1ObjRefConcrete<FlowLabel>` ≡ our `<EventTrigger>`, "bodies and
