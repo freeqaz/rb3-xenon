@@ -3781,9 +3781,6 @@ Waypoint.cpp:
 
 Font.cpp:
 	.pdata      start:0x821F4968 end:0x821F4970
-	.pdata      start:0x821F8640 end:0x821F8648
-	.pdata      start:0x821F8648 end:0x821F8650
-	.pdata      start:0x821F8660 end:0x821F8668
 	.pdata      start:0x821F8670 end:0x821F8678
 	.pdata      start:0x821F9FE0 end:0x821F9FE8
 	.pdata      start:0x821FA000 end:0x821FA008
@@ -3812,10 +3809,7 @@ Font.cpp:
 	.pdata      start:0x82235CA0 end:0x82235CB8
 	.pdata      start:0x82235CC0 end:0x82235CE8
 	.text       start:0x822A3EB0 end:0x822A3F54
-	.text       start:0x822DEED0 end:0x822DEF9C
-	.text       start:0x822DEFA0 end:0x822DF0B0
 	.text       start:0x822DF250 end:0x822DF300
-	.text       start:0x822DF300 end:0x822DF4D8
 	.text       start:0x822DF548 end:0x822DF704
 	.text       start:0x822FA1D0 end:0x822FA24C
 	.text       start:0x822FA500 end:0x822FA5C8
@@ -3845,8 +3839,6 @@ Font.cpp:
 	.text       start:0x826DDC38 end:0x826DDE54
 
 XLSPConnection.cpp:
-	.pdata      start:0x821F8518 end:0x821F8520
-	.pdata      start:0x821F8638 end:0x821F8640
 	.pdata      start:0x82243600 end:0x82243610
 	.pdata      start:0x82243618 end:0x82243620
 	.pdata      start:0x82243620 end:0x82243628
@@ -3855,8 +3847,6 @@ XLSPConnection.cpp:
 	.pdata      start:0x82243660 end:0x82243668
 	.pdata      start:0x82243668 end:0x82243670
 	.pdata      start:0x82243670 end:0x82243680
-	.text       start:0x822DDA78 end:0x822DDB44
-	.text       start:0x822DEDF0 end:0x822DEED0
 	.text       start:0x827D9648 end:0x827D96D8
 	.text       start:0x827D9750 end:0x827D97CC
 	.text       start:0x827D97D0 end:0x827D9918
@@ -4072,8 +4062,13 @@ ChordShapeGenerator.cpp:
 	.pdata      start:0x821F84C0 end:0x821F84C8
 	.pdata      start:0x821F84C8 end:0x821F84F8
 	.pdata      start:0x821F8500 end:0x821F8508
+	.pdata      start:0x821F8518 end:0x821F8520
 	.pdata      start:0x821F8520 end:0x821F8620
+	.pdata      start:0x821F8638 end:0x821F8640
+	.pdata      start:0x821F8640 end:0x821F8648
+	.pdata      start:0x821F8648 end:0x821F8650
 	.pdata      start:0x821F8658 end:0x821F8660
+	.pdata      start:0x821F8660 end:0x821F8668
 	.pdata      start:0x821F8678 end:0x821F8690
 	.pdata      start:0x821F8698 end:0x821F86A0
 	.pdata      start:0x821F86B8 end:0x821F86C0
@@ -4082,8 +4077,13 @@ ChordShapeGenerator.cpp:
 	.text       start:0x822DD240 end:0x822DD28C
 	.text       start:0x822DD290 end:0x822DD7AC
 	.text       start:0x822DD808 end:0x822DD9A0
+	.text       start:0x822DDA78 end:0x822DDB44
 	.text       start:0x822DDB48 end:0x822DEA4C
+	.text       start:0x822DEDF0 end:0x822DEED0
+	.text       start:0x822DEED0 end:0x822DEF9C
+	.text       start:0x822DEFA0 end:0x822DF0B0
 	.text       start:0x822DF1F8 end:0x822DF24C
+	.text       start:0x822DF300 end:0x822DF4D8
 	.text       start:0x822DF708 end:0x822DF8B0
 	.text       start:0x822DFA20 end:0x822DFAC0
 	.text       start:0x822DFD88 end:0x822DFF28
