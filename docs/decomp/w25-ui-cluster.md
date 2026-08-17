@@ -252,6 +252,26 @@ pass an extra `Distance*` (`PAH`). That is an **STLport `__copy` signature**
 difference in shared headers used by every `vector` in the binary — a
 force-multiplier or a disaster, and not A/B-able within one lane's budget.
 
+> ⛔⛔ **CORRECTED 2026-08-17 (lane W32-STLPORT) — THE OBSERVATION ABOVE
+> REPRODUCES EXACTLY AND ITS CAUSE IS WRONG. There is NO STLport signature
+> difference.** DC3's leaked `ham_xbox_r.map` (shipped Milo, same compiler) has
+> **12/12** `__copy` symbols in the 5-arg `...@PAH@Z` form and **zero** 4-arg
+> forms — *including the byte-identical `LabelStyle@UILabel` instantiation* — so
+> **our signature is confirmed correct**, and the version argument runs backwards
+> (4.x 5-arg → 5.x 4-arg, and DC3 is *newer* than RB3). The real mechanism is
+> **inline policy**: `_M_erase` calls `__copy_ptrs(..., _TrivialAss())`, which
+> already **has 4 params** with an empty-tag `const&` 4th — retail out-lines
+> `__copy_ptrs`, we inline it and out-line `__copy` instead. Forcing it
+> out-of-line takes this row to **100.0%, 28/28**, but the whole-binary A/B is
+> **−411 matched / −57,396 B across 134 regressed units**: retail inlines
+> `__copy_ptrs` at **≥411 sites** and out-lines it at this one.
+> ⇒ **Family lever DEAD; do not re-open. Dropping `_Distance*` would move our
+> source AWAY from shipped-Milo ground truth.** Full record:
+> `docs/decomp/w32-stlport-copy-signature-refuted-2026-08-17.md`.
+> ⚠ Note the trap: "does the callee read r7?" is **vacuous** — `fn_8234C2D8`
+> reads only r3/r4/r5, because a dead tag-dispatch param is unread under *both*
+> hypotheses.
+
 ## Not attempted
 
 `PostLoad@PanelDir` (428 B), `??0UIListArrow@@` (144 B), `Copy@UISlider` (112 B),
