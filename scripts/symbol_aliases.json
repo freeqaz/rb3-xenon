@@ -25920,10 +25920,12 @@
    "name": "GetVocalNoteList",
    "address": "0x82770730",
    "survivor": "?GetVocalNoteList@SongDB@@QBAPAVVocalNoteList@@H@Z",
-   "folded": [
+   "folded": [],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
+   "withdrawn": [
     "?GetGemList@SongData@@QAAPAVGameGemList@@H@Z"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "withdrawn_reason": "lane W31-SONGDB (2026-08-17): NOT A FOLD -- a MAP DEFECT. The survivor name was wrong at this address. Retail 0x82770730 is a 24-byte body that loads mTrackDifficulties(0x50)[i] and mGemDBs(0xb0)[i] and tail-calls GameGemDB::GetDiffGemList -- i.e. it IS SongData::GetGemList, which is exactly why the T1 byte test passed against our compiled GetGemList. SongDB::GetVocalNoteList is an 8-byte forwarder and lives at 0x82684fa8. This lane renamed 0x82770730 to ?GetGemList@SongData@@QAAPAVGameGemList@@H@Z, so the two spellings now sit at DISTINCT map addresses and the equivalence would forgive a genuinely wrong callee. Group kept with folded:[] per house rule (nothing pruned)."
   },
   {
    "name": "0?$_Vector_base",
