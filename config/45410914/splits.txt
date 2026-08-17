@@ -729,11 +729,14 @@ VocalTrackDir.cpp:
 	.text       start:0x822F8F80 end:0x822F8FF0
 	.text       start:0x822F8FF0 end:0x822FA1D0
 	.text       start:0x822FA24C end:0x822FA428
+	.text       start:0x822FA428 end:0x822FA4F4
 	.text       start:0x822FA4F4 end:0x822FA500
 	.text       start:0x822FA5C8 end:0x822FA5F8
+	.text       start:0x822FA5F8 end:0x822FA6E0
 	.text       start:0x822FA6E0 end:0x822FA6E8
 	.text       start:0x822FA7B0 end:0x822FAFF8
 	.text       start:0x822FAFF8 end:0x822FC180
+	.text       start:0x822FC248 end:0x822FC430
 	.text       start:0x822FD26C end:0x822FD2F4
 	.text       start:0x822FD2F4 end:0x822FE750
 	.text       start:0x822FE750 end:0x822FE780
@@ -4359,9 +4362,6 @@ MoveMgr.cpp:
 	.text       start:0x822D1768 end:0x822D2C28
 	.text       start:0x822D2C80 end:0x822D2D58
 	.text       start:0x822D3910 end:0x822D3928
-	.text       start:0x822FA428 end:0x822FA4F4
-	.text       start:0x822FA5F8 end:0x822FA6E0
-	.text       start:0x822FC248 end:0x822FC430
 	.text       start:0x82341FF8 end:0x82342068
 	.text       start:0x82347218 end:0x82347284
 	.text       start:0x82347E80 end:0x82348048
@@ -6634,9 +6634,6 @@ Song.cpp:
 	.text       start:0x8230E654 end:0x8230E658
 	.text       start:0x8230EBE0 end:0x8230EC88
 	.text       start:0x8233BEA0 end:0x8233BF3C
-	.text       start:0x826DA488 end:0x826DA554
-	.text       start:0x826DA558 end:0x826DA640
-	.text       start:0x826DA9A8 end:0x826DAB90
 	.text       start:0x827C55E8 end:0x827C668C
 	.text       start:0x827C6AA8 end:0x827C6B38
 	.text       start:0x827C6B38 end:0x827C70F0
@@ -11115,8 +11112,11 @@ band3/game/PerfectSectionTracker.cpp:
 	.text       start:0x822D79B8 end:0x822D7A50
 	.text       start:0x826DA0E0 end:0x826DA260
 	.text       start:0x826DA260 end:0x826DA488
+	.text       start:0x826DA488 end:0x826DA554
+	.text       start:0x826DA558 end:0x826DA640
 	.text       start:0x826DA640 end:0x826DA8A8
 	.text       start:0x826DA8A8 end:0x826DA9A8
+	.text       start:0x826DA9A8 end:0x826DAB90
 	.text       start:0x826DAB90 end:0x826DBC68
 	.text       start:0x826DBEE4 end:0x826DC128
 
