@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
-"""wall_classify.py — Auto-tag HAS_REAL near-miss functions with playbook wall classes.
+"""VOID-OUTPUT WINDOW 2026-08-16 -> 2026-08-17. The `args` spelling change zeroed
+VBASE_VTBL_RE and four `len(tt) >= 3` detectors, so FUNCLET_PAIRING stopped
+routing DEFER_DEEP (mdgrind MISROUTE-1) and FPR struct-offset diffs misrouted
+to PERMUTE. Measured on 80 real functions: 11 get a different ROUTE and 17 a
+different CLASS.
+
+Every number this tool printed between the first rebuild carrying objdiff-cli
+fdc5113 ("ruler I", committed 2026-08-16 08:34:03 UTC with its release binary
+deliberately NOT rebuilt; confirmed live by 21:30 that day) and the repair
+described below is VOID. Re-run it; do not carry it forward. Audit:
+`ARGS_READER_AUDIT.md` in decomp-bench `archive/runs/objdiff-silent-flags-and-
+dead-controls-2026-08-16/` (task #96); repair task #103. Swept 2026-08-17: NO
+committed artifact in this repo, and no file at any of these tools' default
+output paths, falls inside that window -- this banner exists for outputs held
+outside git.
+
+wall_classify.py — Auto-tag HAS_REAL near-miss functions with playbook wall classes.
 
 Implements the 8 wall detectors from docs/decomp/playbooks/hasreal-grind.md §3 plus
 MEMBER_DELTA, FUNCLET_PAIRING, and routes each function to an actionable decision.

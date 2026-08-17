@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
-"""Honest "true progress" classifier for the near-miss pool.
+"""VOID-OUTPUT WINDOW 2026-08-16 -> 2026-08-17. The `args` spelling change
+reclassified struct-layout diffs STRUCT_OFF -> REG and collapsed DATA_LBL.
+Scope, measured: per-FUNCTION buckets were NOT affected (HAS_REAL absorbs
+both), so a worklist from the window has the right membership; what is void is
+each row's `sub_classes` / `sub_counts` / `diff_samples`, which is what
+wall_classify and member_delta_finder read downstream.
+
+Every number this tool printed between the first rebuild carrying objdiff-cli
+fdc5113 ("ruler I", committed 2026-08-16 08:34:03 UTC with its release binary
+deliberately NOT rebuilt; confirmed live by 21:30 that day) and the repair
+described below is VOID. Re-run it; do not carry it forward. Audit:
+`ARGS_READER_AUDIT.md` in decomp-bench `archive/runs/objdiff-silent-flags-and-
+dead-controls-2026-08-16/` (task #96); repair task #103. Swept 2026-08-17: NO
+committed artifact in this repo, and no file at any of these tools' default
+output paths, falls inside that window -- this banner exists for outputs held
+outside git.
+
+Honest "true progress" classifier for the near-miss pool.
 
 Motivation (LTO/ICF investigation, 2026-06-06): the project owner suspected the
 retail XEX was an LTCG/LTO build whose link-time optimization was hiding matches.
