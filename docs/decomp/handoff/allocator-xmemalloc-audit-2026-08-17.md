@@ -455,9 +455,31 @@ not automatically right for RB3.)
 **Dead code we inherited that retail does not have:** the `gMemTracker` /
 `fopen("alloc_fail.txt")` / `SpitAllocInfo` block at `MemHeap.cpp:406-413` (string
 absent from `band.exe`); the `printf("PoolAlloc warning…")` at `PoolAlloc.cpp:143`;
-the `if(!ptr) MemAllocFailed(...)` branch in `PhysicalAlloc`. ⚠ **Where retail's
+the `if(!ptr) MemAllocFailed(...)` branch in `PhysicalAlloc`. ~~⚠ **Where retail's
 `MemAllocFailed` lives is UNRESOLVED** — no retail counterpart located, and its only
-distinguishing string is absent.
+distinguishing string is absent.~~
+
+✅ **RESOLVED 2026-08-17 (lane W0-XMEM2): it does not live anywhere.** Retail never
+compiled the body. Inside retail's `XMemAlloc` the entire failure branch is two
+instructions — `addi r3, r1, 0x50 ; bl fn_8283C980` (`GlobalMemoryStatus`) — with
+**no argument setup**, and retail's frame is `0x90` where ours was `0x70`: the
+**+0x20 delta is exactly `sizeof(MEMORYSTATUS)`**, i.e. the local was inlined into
+`XMemAlloc`'s own frame and both parameters are unused. A `band.exe` scan finds
+**none** of the function's distinguishing literals — `want %d, have %d`,
+`total phys`, `out_of_mem_alloc_info.csv`, `devkit:` — while the **controls in the
+same `.rdata` neighbourhood all fire** (`XTL:D3DX`, `XTL(phys):Middleware`,
+`POOL REPORT`), so the scan is capable of finding strings here and the absences are
+real. Corroboration: retail has no failure branch in `PhysicalAlloc` /
+`PhysicalAllocTracked` either — `fn_82273350` runs `XPhysicalAlloc` →
+`XPhysicalSize` → `MemTrackAlloc` with no null test between them.
+
+⚠ **The near-miss that had to be ruled out by hand, recorded because §4.3.7 came
+within one character of the wrong answer:** `band.exe` **does** contain
+`"Allocation failure, "` — comma and space included — at `0x117460`, which looks
+exactly like this function's format-string prefix. Dumping the whole string shows it
+is `'Allocation failure, heap "%s", want %d bytes\n   lFrags=…'`, i.e. **MemHeap's**
+report sharing a coincidental prefix. **A prefix probe was too weak; only reading the
+whole string settled it.**
 
 ⚠ **The orchestrator DB is stale and must not be used as a state source here** — zero
 prior attempts on any candidate, and it shows `?MemFree@@` at 0.0%/`AT_LIMIT` where
@@ -760,16 +782,62 @@ changed `HX_NATIVE` arms.
 
 ### Follow-on queue, in priority order
 
-1. **`RawAlloc`'s inherited `printf` block (~24 B)** — our body is 200 B vs retail's
-   176, and the only surplus call is `printf` at `+0x6c`; retail's block is bare
-   with no `gBigHunk == gSmallHunk` test. A binary scan **with a control that could
-   fail** (`POOL REPORT` and `Allocation failure` **present**; `PoolAlloc warning`,
-   `allocating small pool chunk`, `PoolChunk` **absent**) confirms it is inherited
-   dead code. **Very likely the only thing between that row and 100.**
-2. **XMemAlloc's ~16 B physical-branch residual** — retail inlines a reduced
-   `GlobalMemoryStatus` (`addi r3, r1, 0x50`) where we call out to
-   `MemAllocFailed(size, bool)`, plus our `MemTrackAlloc` passes `__FILE__`/line
-   retail does not.
+1. ✅ **DONE — `RawAlloc`'s inherited `printf` block** (lane W0-XMEM2). The scan
+   reproduces with its control intact. ⛔ **But the queue's prediction — "very
+   likely the only thing between that row and 100" — was WRONG, and usefully so.**
+   Removing it took the row 55.204544 → 74.7 only; **two further divergences the
+   queue did not know about** were needed:
+   - **The pool is walked in INT UNITS, not bytes.** Retail emits `srawi`+`slwi` as
+     a *non-folding pair* at two sites; MSVC folds the byte-wise `(size >> 2) << 2`
+     into a single `clrrwi`, so retail cannot have written that. A non-folding
+     `srawi`/`slwi` pair is the signature of **`int *` pointer arithmetic** — the
+     `>> 2` is the source's, the `slwi 2` is the compiler's `sizeof(int)` scaling,
+     emitted by a different pass so the two never combine.
+   - ★ **The global ADDRESSING shape, which was the biggest single lever (74.7 →
+     93.5).** Retail co-addresses `gBigHunk`(+0)/`gSmallHunk`(+4) through one
+     materialized base register and hoists a **separate** `lis` for `sPoolBuf` and
+     `sPoolEnd`; we did the exact mirror image, costing an extra `lis` and
+     cascading through the whole register assignment. **Rule** (in-tree precedent:
+     `MemTrackLogState` in `utl/MemTrack.cpp`, then confirmed here): MSVC
+     co-addresses internal-linkage **statics** whose layout it chose itself, but
+     gives each **external** symbol its own relocation ⇒ *a compile-time +4
+     displacement between two globals implies **one aggregate***. So retail's
+     `gBigHunk`/`gSmallHunk` are one aggregate and its `sPoolBuf`/`sPoolEnd` are
+     **not** file statics.
+   ⚠ **NEGATIVE RESULT — do not re-run it:** swapping the `sPoolBuf`/`sPoolEnd`
+   **declaration order** *does* control `.bss` order (verified: the base register
+   moved) but is **INERT** for the addressing choice — 74.7 before and after. The
+   obvious lever was the wrong one; linkage and aggregation were the real ones.
+   **Final: fuzzy 93.52273 / mpn 97.72727, A/B +0 fn / +0 B (predicted 0/0).**
+   Residual is 180 vs 176 B and is now *purely* register allocation — a consistent
+   permutation (retail r30=`sPoolBuf` base, r31=hunk base; ours inverted, with
+   `sPoolEnd` in r29 on **both** sides) plus one trailing register move because
+   retail holds `buf` in `r3` across the shared tail. **No stack-slot or offset
+   diffs**, which is the case the docs call inert for declaration reordering, and
+   the permuter is OFF by standing directive. **Stopped deliberately.**
+2. ✅ **DONE — XMemAlloc reaches `fuzzy 100.0 / mpn 100.0`** (lane W0-XMEM2), A/B
+   **+1 fn / +204 B, predicted +1/+204 exactly**, `none` control +204 (the correct
+   shape for a source patch — a flat `none` would have meant the gain was bought
+   with relocation names alone). Two fixes: `MemAllocFailed` reduced to its retail
+   remnant (see the RESOLVED block in §4.5), and — **new, not in this queue** —
+   **`MemTrackAlloc` takes SIX parameters, not eight**: both retail call sites
+   (`fn_822735B0`, `fn_82273350`) set up `r3..r8` only, with no `r9`/`r10` and no
+   stores to the outgoing argument area. The X360 EABI passes integer arguments 7
+   and 8 in `r9`/`r10`, so their absence is **decisive rather than suggestive**,
+   and two independent sites agree. `file`/`line` kept under `HX_NATIVE`. Zero
+   metric risk: `0x827C43E0` is anonymous, so the callee name is a forgiven
+   placeholder however we spell it.
+   ⛔⛔ **TRAP, recorded because it produced a confident false `AT_LIMIT`:**
+   `run_objdiff` reported **99.7%** and *"AtLimit (High) … these are
+   linker/path-derived; **no source mutation can close them**"*, citing 3
+   `ANONYMOUS_NAMESPACE_HASH` charges on `gPhysicalUsage` (`?A0x7a439e55` target vs
+   `?A0x5be8b7be` base). **That was a PHANTOM.** The MCP builds a single `.obj`
+   incrementally, which **SKIPS THE 6 OBJ PATCHERS** — and `obj_anon_ns` is one of
+   them, i.e. *part of the ruler* (`CLAUDE.md` documents exactly this hazard). A
+   full `ninja` + `report.json` read gives **100.0**. The tell was that the same
+   instruction read **equal on both sides before the edits**, and the map does
+   carry `0x82cbc63c → ?gPhysicalUsage@?A0x7a439e55@@3HA`. ⇒ **Never accept an
+   anon-namespace-hash `at_limit` from an incremental single-obj diff.**
 3. **Port `?MemAlloc@@YAPAXHH@Z`'s 644 B body** (§4.6 #1) — paired, unblocked, and
    today every allocation in our source ends at `malloc()`.
 4. **`MemPrintOverview` signature → `TextStream&`** (3 sites) then name it.
@@ -794,7 +862,140 @@ pinned units. Both score; nothing broken.
 | 5 | Dispatch implementation lane(s) | ✅ **LANDED** `4f5b0cac` — §6.5 |
 | 6 | Name + pin the Memory_Xbox allocator rows | ✅ **LANDED** — both rows paired, §6.5 |
 | 7 | **NEW: fix `tools/scope_map.py`'s pinned-unit address key** (§5.1) | ✅ **LANDED** `5dd5e4f0` — see §5.5 |
-| 8 | **NEW: comment-only refresh of 5 stale TU0 addresses in `MemMgr.h`** (§5.3) | ready to dispatch — run the native gate LAST |
+| 8 | **NEW: comment-only refresh of 5 stale TU0 addresses in `MemMgr.h`** (§5.3) | open — run the native gate LAST |
 | 9 | **NEW: adjudicate `0x82709EE0`** — stale citation or ICF fold survivor? (§5.3) | open, low priority |
+| 10 | **NEW: drive both rows to 100** | ✅ **LANDED** `a47a1507` — XMemAlloc **100.0**, RawAlloc **93.52** (regalloc floor) |
+| 11 | **NEW: `scope_map` commit policy adjudicated + gate fixed** | ✅ **LANDED** `605fd91a` — keep IGNORED, see §8 |
+| 12 | **NEW: `configure.py configure` bakes a broken `build.ninja`** | open — see §8, pre-existing, breaks every subsequent ninja at rc=2 |
 
-**Nothing is landed. No source, map, or splits file has been edited by this effort.**
+---
+
+## 8. Final state — VERIFIED ON MAIN 2026-08-17
+
+Rebuilt with a forced re-split and read from `report.json`:
+
+| row | at open | **final** |
+|---|---|---|
+| `XMemAlloc` (204 B) | unpaired 0 / 0 | **fuzzy 100.0 / mpn 100.0** ✅ |
+| `?RawAlloc@FixedSizeAlloc@@MAAPAHH@Z` (176 B) | unpaired 0 / 0 | **fuzzy 93.52273 / mpn 97.72727** |
+
+⚠ **Whole-binary absolutes here (44,509 / 3,761,084 B / 36.44227%) do NOT match the
+lanes' own readings**, because main advanced under us (W27-FRAMEQ and others merged
+mid-effort). That is the standing rule demonstrating itself — **deltas compose,
+absolutes do not.** Each lane's Δ was measured in-run and hit its prediction exactly;
+do not reconcile these absolutes against theirs.
+
+### 8.1 RawAlloc stops at 93.5 — an honest floor, not a failure
+
+⛔ **My briefed lead was RIGHT BUT INCOMPLETE, and I should not have briefed it as
+sufficient.** I passed down *"the `printf` block is very likely the single thing
+between that row and 100."* Removing it was worth **55.2 → 74.7**. Two further
+divergences were required:
+
+- **The pool is walked in `int` units.** Retail emits a **non-folding** `srawi`+`slwi`
+  pair twice; MSVC folds `(size>>2)<<2` into one `clrrwi`, so retail did not write
+  that — **the pair is the signature of `int*` pointer arithmetic.**
+- ★ **The real lever, 74.7 → 93.5: GLOBAL CO-ADDRESSING.** Retail co-addresses
+  `gBigHunk`(+0)/`gSmallHunk`(+4) through one base register and hoists separate `lis`
+  for `sPoolBuf`/`sPoolEnd`; we did the mirror image. **Rule** (in-tree precedent
+  `MemTrackLogState`, re-confirmed here): **MSVC co-addresses internal-linkage
+  statics but gives each external its own relocation ⇒ a compile-time `+4` implies
+  ONE AGGREGATE.**
+
+⛔ **NEGATIVE RESULT — do not retry:** swapping the `sPoolBuf`/`sPoolEnd`
+**declaration order** does control `.bss` order but is **INERT** for the addressing
+choice (74.7 either way). The obvious lever was the wrong one.
+
+**What remains is 180 vs 176 B and is purely register allocation** — a consistent
+permutation (`sPoolEnd` lands in r29 on *both* sides) plus one trailing register
+move, with **zero** `diff_op`/`replace`/`delete` and no stack-slot or offset diffs.
+The permuter is **OFF by standing directive**, so source work cannot close it.
+Neither row is in `symbol_aliases.json`, so no fold-forgiveness is involved.
+
+### 8.2 ⛔⛔ `run_objdiff` shipped a CONFIDENT FALSE `AT_LIMIT` on the row that reached 100
+
+It reported `XMemAlloc` at **99.7%** with *"no source mutation can close them"* over
+3 `ANONYMOUS_NAMESPACE_HASH` charges. **Phantom:** the MCP builds a single `.obj`
+incrementally, which **SKIPS THE 6 OBJ PATCHERS**, and `obj_anon_ns` **is part of the
+ruler**. A full `ninja` + `report.json` reads **100.0**. The tell was that the same
+instruction read *equal* before the edits.
+
+⇒ This is the documented *"`ninja <one .obj>` manufactures a phantom regression"*
+trap **reappearing through the MCP path**. Had the lane believed the label, **a row
+that reaches 100 would have been closed as unfixable.** Same disease as every other
+confident "unfixable" in this codebase: **the label closes veins, and nobody
+re-opens them.**
+
+### 8.3 `MemAllocFailed` — the open question is RESOLVED
+
+**Retail's `MemAllocFailed` does not live anywhere.** Retail never compiled the body;
+only the inlined `GlobalMemoryStatus` survives. None of its literals are in
+`band.exe` while controls in the same `.rdata` fire, and retail's `fn_82273350` has
+no null test at all.
+
+⚠ **Near-miss worth carrying:** `band.exe` **does** contain `"Allocation failure, "`
+at `0x117460`, which reads as a hit. Dumping the **whole** string shows it is
+MemHeap's `'Allocation failure, heap "%s"…'` — a **coincidental prefix**. The prefix
+probe was too weak; only reading the entire string settled it. **A substring test
+against a binary can confirm the wrong hypothesis.**
+
+### 8.4 `scope_map.json` — KEEP IT GITIGNORED (adjudicated, then implemented)
+
+Committing **would not have prevented the incident** (a committed copy goes stale
+identically — it derives from the gitignored `report.json`) and would break two
+working things:
+
+- **It kills the only staleness signal.** `_cache_status` warns off the file's
+  **mtime**; **git does not preserve mtimes**, so a committed artifact reads as
+  freshly-minted in every clone and worktree forever.
+- **It would make every A/B refuse.** `ab_measure` treats `config/` as
+  build-relevant and refuses on modified tracked files — importing a second
+  `restore_symbols()`-style special case.
+
+⚠ **Churn was measured expecting it to decide this, and it did NOT** — the format is
+git-friendly (sorted keys, one field per line) and ordinary drift is ~33 lines. Size
+is not the rule either; we already track a 14.6 MB `symbols.txt`. The operative rule
+is **"committed if it feeds the build/ruler or cannot be reproduced from repo
+contents + a build"** — this is 1.0 s from `report.json`.
+
+★ **The multi-worktree angle decides it, and it runs OPPOSITE to intuition.**
+`setup_worktree.sh` already **reflinks main's cache into every new worktree**, which
+is how the original defect propagated fleet-wide. Committed, a fresh worktree gets a
+stale file with an mtime of *"now"* and git's apparent authority ⇒ **committing is
+the option MORE likely to produce a silently wrong answer in a lane.**
+
+★★ **And `605fd91a` made the decision LOAD-BEARING rather than merely correct:** the
+artifact is now rewritten on **every** build. Ignored, that is invisible to A/B (the
+refusal reads `git status --porcelain`, which never lists ignored files).
+**Committed, it would be a modified TRACKED file and would refuse EVERY A/B.**
+
+**What was fixed instead** (§5.5's hole, closed): `validate-addrs` now asserts the
+**on-disk artifact** — it previously returned PASS over the stale file *and over a
+deleted one*. Coordinator-verified independently on main, all four cells:
+
+| artifact on disk | exit |
+|---|---|
+| correct (**the control**) | **0** |
+| the real historical stale file | **1** — flags C1 at exactly **−650 keys** |
+| absent | **3** (distinct signal, not a silent pass) |
+
+`_cache_status` is now graded (`< 1.0` STALE, `< 0.50` DEAD) — a correct artifact
+scores **exactly 1.0000** by construction, so the old 0.50 threshold was 31 points of
+slack that swallowed the incident (the stale file scored 0.6881 and reported `ok`).
+The cache also **self-heals** on the `priority` path, testing **both** coverage and
+mtime because neither suffices alone: coverage catches the **reflink** case (newer
+than every input but keyed to another tree), mtime catches stale **tiers** after a
+splits edit (coverage stays 1.0000).
+
+### 8.5 ⚠ Pre-existing trap found in passing — worth a separate fix
+
+**`python3 configure.py configure`** — the explicitly-spelled default mode — bakes
+`configure_args = configure` into `build.ninja`, so the progress rule emits two
+positionals and **every subsequent `ninja` fails rc=2**. Repair is `python3
+configure.py` with no positional. Not caused by this effort; ledger item 12.
+
+⚠ And a hazard for hand-rolled measurement: `ab_measure`'s `count_lines` reported
+`work=0` for a **failed** build, because it counts work descriptions and never
+observes `rc`. `ab_measure` itself checks `rc` separately, so this bites only
+ad-hoc uses — but it is the same family as `EXIT=$?` after a pipe reporting
+**`tail`'s** status, which also fired during this effort's own verification.
