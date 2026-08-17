@@ -358,7 +358,9 @@ def main() -> int:
 
     deselected = [(r["path"], d) for r in roots for d in r.get("deselect", [])]
     if deselected:
-        print(f"DESELECTED — these HANG and would take the root down with them "
+        print(f"DESELECTED — the known-bad manifest cannot cover these, "
+              f"because a manifested test still RUNS (these hang, or corrupt "
+              f"the tree). Reasons are in {Path(__file__).name}, STATIC_ROOTS "
               f"({len(deselected)}):")
         for _root, d in deselected:
             print(f"    {d}")
