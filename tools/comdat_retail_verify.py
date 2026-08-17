@@ -60,12 +60,24 @@ A row may claim no name at all, and that state is load-bearing here:
     it moved 59 rows out of "byte-identical to retail" and into "unidentified"
     with ``differing`` unchanged -- i.e. it deletes true byte evidence and
     reports it as missing evidence, which reads WORSE, not safer.
-    ⚠ OPEN, and the honest residue: those rows still satisfy the byte claim
-    under any member of their class, so the per-symbol line "instantiation N
-    lives at 0xVA" is not established for them. The map's own comments require
-    a tool "deriving identity, callers, or unit ownership" to treat them as
-    UNRESOLVED. The fix is to LABEL them in the per-symbol rows and count them
-    apart in the summary -- not to refuse them. Not implemented here.
+    The honest residue: those rows still satisfy the byte claim under ANY
+    member of their fold class, so the per-symbol line "instantiation N lives
+    at 0xVA" is not established for them. The map's own comments require a tool
+    "deriving identity, callers, or unit ownership" to treat them as
+    UNRESOLVED. LABELLING, not refusing, is therefore the fix, and lane task110
+    (2026-08-17) implemented it here: `name_grain_index` tags every address on
+    either list, the summary counts `name pinned` apart from `fold-arbitrary`
+    inside BOTH the byte-identical and the differing tallies, and every
+    `--json` row carries `name_grain`. Admission is untouched -- the same rows
+    are scored with the same verdicts; what changed is that a reader can now
+    tell "byte-identical AND the name is pinned" from "byte-identical under an
+    arbitrary choice within a fold class".
+    ⚠ STILL OPEN: which name actually belongs on which VA. That needs a
+    non-ICF anchor per fold class (a caller, a unit-ownership constraint, an
+    RTTI/vftable slot) and is repair work, not reporting -- lane MAPDEF-3
+    (`db9eb318`) showed it is positive-yield at small scale (+108 B from 9
+    rows). Nothing here resolves an identity; it only stops the summary from
+    implying one.
 
 This tool prints "SECTION byte-identical to retail", which IS an identity
 claim, so it must not source an address from a row that claims nothing.  Both
@@ -173,6 +185,49 @@ class Retail:
         return out
 
 
+# Map keys that tag NAME ambiguity on a row whose BYTES are witnessed. These
+# are NOT refusals -- see `REFUSAL_KEYS` (imported) for the one key that is,
+# and load_address_map's docstring for why refusing these was measured and
+# rejected. They are reporting labels, and keeping them OUT of REFUSAL_KEYS is
+# the whole point: the rows stay admitted, they just stop reading as pinned.
+NAME_GRAIN_KEYS = ('_icf_arbitrary', '_bijection_arbitrary')
+# Label carried by a claimed row on none of the above: the map asserts this
+# name at this VA, and nothing in the map says the assertion is arbitrary.
+NAME_PINNED = 'name_pinned'
+
+
+def name_grain_index(raw):
+    """-> {addr:int -> grain label} for addresses tagged fold-arbitrary.
+
+    Pure and total; survives the null vector and any junk under the keys.
+    Addresses absent from the result are `NAME_PINNED` by construction, so the
+    caller must default rather than expect a hit -- 28,000 pinned rows are not
+    worth materialising.
+
+    An address on BOTH lists gets the '+'-joined label of both, sorted, rather
+    than first-key-wins. Measured on the checked-in map the intersection is
+    EMPTY, so this branch is dead today; it exists because first-key-wins would
+    make the per-label counts stop summing to `claimed` the day it isn't, and a
+    count that silently stops partitioning is this file's whole subject.
+    """
+    tags = {}
+    for key in NAME_GRAIN_KEYS:
+        entries = raw.get(key, [])
+        if not isinstance(entries, list):
+            continue
+        label = key.lstrip('_')
+        for entry in entries:
+            if not isinstance(entry, str) or not entry.lower().startswith('0x'):
+                continue
+            try:
+                addr = int(entry, 16)
+            except ValueError:
+                continue
+            prev = tags.get(addr)
+            tags[addr] = label if prev is None else '+'.join(sorted({prev, label}))
+    return tags
+
+
 def classify_map_rows(raw):
     """-> dict of row-population counts for `raw`, a parsed target_symbol_map.
 
@@ -202,6 +257,14 @@ def classify_map_rows(raw):
       nonstring  -- a list/dict/number under a `0x` key. Never legitimate.
       metadata   -- non-`0x` keys (`_denylist`, `_icf_arbitrary`, ...).
       claimed    -- string-valued `0x` rows that are not denied.
+
+    `claimed_by_grain` is a SECOND, cross-cutting split of `claimed` alone --
+    it is not a sixth bucket and must not be added to the partition sum. It
+    answers a different question: of the rows we do score, on how many is the
+    NAME pinned, and on how many does the map itself say the name was an
+    arbitrary pick inside an ICF/bijection fold class (lane task110)? Its
+    values sum to `claimed`, and the three canonical labels are always present
+    (at 0 if unused) so the shape does not depend on the input.
     """
     denied_addrs = set()
     for key in REFUSAL_KEYS:
@@ -209,8 +272,13 @@ def classify_map_rows(raw):
             if isinstance(entry, str) and entry.lower().startswith('0x'):
                 denied_addrs.add(int(entry, 16))
 
+    grain_of = name_grain_index(raw)
+    by_grain = {NAME_PINNED: 0}
+    for key in NAME_GRAIN_KEYS:
+        by_grain[key.lstrip('_')] = 0
+
     out = dict(total=len(raw), claimed=0, unclaimed=0, denied=0,
-               nonstring=0, metadata=0)
+               nonstring=0, metadata=0, claimed_by_grain=by_grain)
     seen_denied = set()
     for k, v in raw.items():
         if not isinstance(k, str) or not k.lower().startswith('0x'):
@@ -228,6 +296,8 @@ def classify_map_rows(raw):
             out['unclaimed'] += 1
         elif isinstance(v, str):
             out['claimed'] += 1
+            label = grain_of.get(addr, NAME_PINNED)
+            by_grain[label] = by_grain.get(label, 0) + 1
         else:
             out['nonstring'] += 1
     # A denied address need not appear in the map body at all; it is still a
@@ -237,7 +307,12 @@ def classify_map_rows(raw):
 
 
 def resolve_addresses(map_path, pattern):
-    """-> (name -> retail VA for names matching `pattern`, row counts).
+    """-> (name -> retail VA for matching names, row counts, addr -> grain).
+
+    The third element is `name_grain_index`'s output over the WHOLE map, not
+    just the matched names: callers key it by address and default to
+    `NAME_PINNED`. It changes nothing about which names come back in the first
+    element -- admission is `load_address_map` and only `load_address_map`.
 
     The APPLIED map, via the renamer's own loader: null rows are unclaimed,
     `_denylist` rows are refused, non-strings are dropped. The loader lives in
@@ -256,7 +331,60 @@ def resolve_addresses(map_path, pattern):
     addr_of = {name: int(key[3:], 16)
                for key, name in applied.items()
                if key.startswith('fn_') and pattern in name}
-    return addr_of, classify_map_rows(raw)
+    return addr_of, classify_map_rows(raw), name_grain_index(raw)
+
+
+def label_rows(rows, grain_of):
+    """Stamp `name_grain` onto every emitted row, in place. -> `rows`.
+
+    Split out of `main`'s scoring loop deliberately: that loop needs a real
+    COFF and a real retail PE, so anything inline there is reachable only
+    end-to-end, and THIS is the seam where a fold-arbitrary row would silently
+    become a pinned one. `grain_of` is keyed by int address; a row absent from
+    it is pinned, which is why the default is spelled out rather than left to
+    a bare `[]`.
+    """
+    for r in rows:
+        r['name_grain'] = grain_of.get(int(r['addr'], 16), NAME_PINNED)
+    return rows
+
+
+def tally_by_grain(rows):
+    """-> (byte-identical tally, differing tally), each keyed by name grain.
+
+    Pure, and deliberately derived from the emitted `rows` rather than
+    accumulated inside the scoring loop: the printed split and the `--json`
+    rows are then the SAME data, so a summary cannot disagree with the file it
+    was computed alongside. `nbad` is the byte verdict and is read, never
+    recomputed -- this function must not be able to move a row between
+    identical and differing.
+    """
+    ident, diff = {}, {}
+    for r in rows:
+        grain = r.get('name_grain', NAME_PINNED)
+        into = diff if r['nbad'] else ident
+        into[grain] = into.get(grain, 0) + 1
+    return ident, diff
+
+
+def _print_grain_split(by_grain):
+    """Print the name-grain breakdown of one byte verdict, or nothing.
+
+    Silent when every row in the tally is pinned: on a pattern with no
+    fold-arbitrary rows the split carries no information, and printing
+    'fold-arbitrary: 0' under every line trains the reader to skip the block
+    on exactly the patterns where it is non-zero. The pinned line is printed
+    only alongside a non-zero arbitrary one, so the two always read as a pair.
+    """
+    arbitrary = {g: c for g, c in by_grain.items() if g != NAME_PINNED and c}
+    if not arbitrary:
+        return
+    print('      name pinned (this symbol IS the one at that VA) : %d'
+          % by_grain.get(NAME_PINNED, 0))
+    print('      fold-arbitrary (bytes true, WHICH name is open) : %d'
+          % sum(arbitrary.values()))
+    for g in sorted(arbitrary):
+        print('          _%-26s: %d' % (g, arbitrary[g]))
 
 
 def main():
@@ -272,7 +400,7 @@ def main():
     root = args.project_dir
     retail = Retail(os.path.join(root, 'orig/45410914/band.exe'))
     lens = retail.pdata_lengths()
-    addr_of, mapstats = resolve_addresses(
+    addr_of, mapstats, grain_of = resolve_addresses(
         os.path.join(root, 'scripts/target_symbol_map.json'), args.pattern)
 
     ours = {}
@@ -304,6 +432,14 @@ def main():
     # read fell outside a section) used to share one counter printed as
     # "unidentified". They are different findings -- one is missing evidence,
     # the other is a bad address or a bad extent -- so they are counted apart.
+    #
+    # `ident` and `diff` are BYTE verdicts and stay exactly as they were. What
+    # is added is an orthogonal NAME-grain split of each (lane task110): a
+    # fold-arbitrary row's bytes are witnessed, but they would be witnessed
+    # just the same under any other member of its fold class, so "this
+    # instantiation is at this VA" is not established for it. Collapsing the
+    # two into one `ident` number reports a per-symbol identity the map does
+    # not claim -- see the module docstring.
     ident, diff, noaddr, unreadable, rows = 0, 0, 0, 0, []
     for n, o in sorted(ours.items()):
         a = addr_of.get(n)
@@ -328,6 +464,7 @@ def main():
             diff += 1
         else:
             ident += 1
+    ident_by_grain, diff_by_grain = tally_by_grain(label_rows(rows, grain_of))
 
     # Disclose the map population BEFORE the verdict. The rows this tool
     # cannot see are part of the reading of the rows it can: an unclaimed or
@@ -347,13 +484,26 @@ def main():
         print('  SKIPPED, non-string value under a 0x key         : %d'
               % ms['nonstring'])
     print('  (unclaimed rows carry no name and can never match a --pattern)')
+    # SCORED, not skipped -- the indentation is deliberate. These rows are
+    # admitted and their bytes count; only the NAME on them is an arbitrary
+    # pick inside a fold class.
+    bg = ms['claimed_by_grain']
+    arbitrary = sum(c for g, c in bg.items() if g != NAME_PINNED)
+    print('  of the %d scored, name grain: %d pinned, %d fold-arbitrary'
+          % (ms['claimed'], bg.get(NAME_PINNED, 0), arbitrary))
+    for g in sorted(bg):
+        if g != NAME_PINNED:
+            print('      _%-30s: %d  (bytes witnessed, WHICH name is open)'
+                  % (g, bg[g]))
     print('matched pattern %r: %d distinct instantiations in our build' % (args.pattern, len(ours)))
     print('  with a retail address in target_symbol_map.json : %d  (unidentified: %d)'
           % (ident + diff, noaddr))
     if unreadable:
         print('  claimed but retail read out of range            : %d' % unreadable)
     print('  SECTION byte-identical to retail (reloc words skipped): %d' % ident)
+    _print_grain_split(ident_by_grain)
     print('  differing                                            : %d' % diff)
+    _print_grain_split(diff_by_grain)
     shown = 0
     for r in rows:
         if not r['nbad'] or shown >= args.show_diffs:
