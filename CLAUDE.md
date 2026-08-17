@@ -752,6 +752,18 @@ balance check at EOF that fires for any future desync cause). ⇒ **"it's only a
 comment, no need to re-gate" is NOT safe**, and the lane's gate run must be its
 **last** action, not its second-to-last.
 
+📋 **Paste the gate's own summary line into your write-up — do not paraphrase
+the verdict.** The last line of every run, on every exit path, is
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+`verdict ∈ {PASS, INCOMPLETE, PARTIAL, FAIL, UNRUNNABLE}`. This is the only
+machine-readable surface the gate has, and it exists because the prose verdict
+is easy to relay wrongly: the full-pass line is `PASS  (rc=0, …` and the
+incomplete one is `PASS (INCOMPLETE: …`, one space apart (lane X21).
+
 ⚠ **The verdict now self-labels an incomplete run**:
 `PASS (INCOMPLETE: 15/18 verified, 3 SKIPPED) -- NOT full coverage`, listing the
 untested targets and printing the seed command. The old wording put `PASS`

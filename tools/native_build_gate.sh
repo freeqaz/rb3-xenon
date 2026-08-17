@@ -119,8 +119,36 @@
 #
 # Exit 0 = native still builds. Exit 1 = it does not; diagnostics are printed
 # and the log path is reported. Exit 2 = the gate could not run at all.
+#
+# MACHINE-READABLE SUMMARY
+#     The LAST line of every run, on every exit path, is
+#
+#       NATIVE_GATE_RESULT verdict=INCOMPLETE expected=18 verified=15 skipped=3 partial=0 failed=0 rc=0
+#
+#     PASTE THAT LINE into your lane write-up instead of paraphrasing the
+#     verdict. There was no machine surface here at all before, and the prose
+#     verdict is easy to relay wrongly: the full-pass line is `PASS  (rc=0, …`
+#     and the incomplete one is `PASS (INCOMPLETE: …`, which differ by one
+#     space, and lane X21's incomplete baseline was very nearly relayed upstream
+#     as "PASS". Field meanings:
+#       verdict   PASS | INCOMPLETE | PARTIAL | FAIL | UNRUNNABLE
+#       expected  targets this run was asked to vouch for (the subset size under
+#                 NATIVE_GATE_ONLY, otherwise MANIFEST u DECLARED)
+#       verified  ended OK -- relinked this run, or ninja says up to date
+#       skipped   not configured, with an independently verified environmental
+#                 reason (see conditional_reason)
+#       partial   targets OMITTED by NATIVE_GATE_ONLY; 0 on a full run
+#       failed    target defects: DROPPED / MISSING / NOBINARY / STALE. Under
+#                 --strict the SKIPPED targets are promoted into this count and
+#                 are therefore counted in BOTH `skipped` and `failed`.
+#       rc        this script's exit status
+#     Keys, order and spelling are the contract; add fields at the end only.
 
 set -uo pipefail
+
+emit_result() {  # verdict expected verified skipped partial failed rc
+    echo "NATIVE_GATE_RESULT verdict=$1 expected=$2 verified=$3 skipped=$4 partial=$5 failed=$6 rc=$7"
+}
 
 # --------------------------------------------------------------- MANIFEST ---
 # The floor. If you add or remove a target in native/CMakeLists.txt, update
@@ -139,23 +167,27 @@ DIR=""
 for arg in "$@"; do
     case "$arg" in
         --strict) STRICT=1 ;;
-        -*)       echo "native_build_gate: unknown option $arg" >&2; exit 2 ;;
+        -*)       echo "native_build_gate: unknown option $arg" >&2
+                  emit_result UNRUNNABLE 0 0 0 0 0 2; exit 2 ;;
         *)        DIR="$arg" ;;
     esac
 done
 [ -n "$DIR" ] || DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # Normalise: a relative arg such as `.` otherwise yields a log named
 # `native_gate_..log` and an unreadable "tree:" line.
-DIR="$(cd "$DIR" 2>/dev/null && pwd)" || { echo "native_build_gate: no such dir" >&2; exit 2; }
+DIR="$(cd "$DIR" 2>/dev/null && pwd)" \
+    || { echo "native_build_gate: no such dir" >&2
+         emit_result UNRUNNABLE 0 0 0 0 0 2; exit 2; }
 
 LOG="${TMPDIR:-$HOME/tmp}/native_gate_$(basename "$DIR").log"
 mkdir -p "$(dirname "$LOG")"
 
 if [ ! -d "$DIR/native" ]; then
     echo "native_build_gate: no native/ under $DIR" >&2
+    emit_result UNRUNNABLE 0 0 0 0 0 2
     exit 2
 fi
-cd "$DIR/native" || exit 2
+cd "$DIR/native" || { emit_result UNRUNNABLE 0 0 0 0 0 2; exit 2; }
 BUILD=build
 CML=CMakeLists.txt
 
@@ -231,6 +263,7 @@ if [ $cfg_rc -ne 0 ]; then
     echo "NATIVE GATE: FAIL (cmake configure rc=$cfg_rc)"
     tail -20 "$LOG"
     echo "log: $LOG"
+    emit_result FAIL 0 0 0 0 0 1
     exit 1
 fi
 
@@ -261,6 +294,7 @@ if [ -z "$configured" ]; then
     echo "NATIVE GATE: FAIL (the gate could not enumerate ANY target from the ninja graph --"
     echo "  its own probe is broken, so no verdict is reportable)"
     echo "log: $LOG"
+    emit_result UNRUNNABLE 0 0 0 0 0 2
     exit 2
 fi
 # Exact-line membership, done WITHOUT a pipe on purpose.
@@ -440,15 +474,19 @@ if [ $build_rc -ne 0 ] || [ "$errs" -ne 0 ] || [ "$link_errs" -ne 0 ] || [ $n_ba
         echo "--- $failed_edges failed edge(s) across target(s): $(echo $failed_targets | tr '\n' ' ')---"
     fi
     echo "log: $LOG"
+    emit_result FAIL "${#expected[@]}" "$n_ok" "$n_skip" "${#omitted[@]}" "$n_bad" 1
     exit 1
 fi
 
 # The warning policy is -Wno-everything + explicit -Werror= opt-ins, so a
 # non-zero warning count here means something got past an opt-in that should
 # have been an error, or a new -W was added without -Werror=. Report, don't fail.
+verdict_kind=PASS
 if [ $partial -eq 1 ]; then
+    verdict_kind=PARTIAL
     echo "NATIVE GATE: PASS (PARTIAL: $n_ok of ${#KNOWN_TARGETS[@]} known target(s) requested) -- NOT full coverage"
 elif [ $n_skip -gt 0 ]; then
+    verdict_kind=INCOMPLETE
     # SELF-LABEL an incomplete run. The house rule is "always require 0 SKIPs,
     # never just PASS", but that used to be a rule a HUMAN had to remember while
     # reading a verdict whose first word was "PASS": the old line read
@@ -474,4 +512,5 @@ else
 fi
 [ "$warns" -ne 0 ] && echo "  note: $warns warning(s) -- policy expects 0; check the opt-in list in native/CMakeLists.txt"
 echo "log: $LOG"
+emit_result "$verdict_kind" "${#expected[@]}" "$n_ok" "$n_skip" "${#omitted[@]}" "$n_bad" 0
 exit 0
