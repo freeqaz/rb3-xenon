@@ -37,11 +37,25 @@ public:
     //
     // (CORRECTED, lane W13-CHARINFO: this note used to cite "GemTrackDir vtable
     // @0x82026d3c slot 35" as the retail evidence. That is NOT a vtable —
-    // 0x82026d3c is interior to lbl_82026B00, a 0x378-byte SWITCH JUMP TABLE
-    // for fn_822E8DF8, which interleaves case constants with code addresses and
-    // so reads like a vtable in .rdata. The declaration-order decision itself is
-    // unaffected and correct; only the citation was bogus. ⚠ This is a repeating
-    // failure mode in this tree — see UIComponent.h:101 for the same mistake.)
+    // 0x82026d3c is interior to the 0x378-byte .rdata table at 0x82026B00,
+    // which belongs to fn_822E8DF8 and interleaves small integers with code
+    // addresses, so it reads like a vtable in .rdata. The declaration-order
+    // decision itself is unaffected and correct; only the citation was bogus.
+    // ⚠ This is a repeating failure mode in this tree — see UIComponent.h for
+    // the same mistake.
+    //
+    // REFINED, lane W16-HEADERTRUTH (tools/vtable_claim_audit.py): W13 called
+    // this "a SWITCH JUMP TABLE". The extent (0x82026B00, 0x378 B) and the
+    // owning function (fn_822E8DF8) are both exactly right; the KIND is not.
+    // MSVC X360 emits switch tables as compact BYTE-OFFSET tables containing no
+    // code addresses at all, so they are not confusable with a vtable. This is
+    // a C++ EH IP-TO-STATE MAP -- {void *pc; int state;}[111] = 888 B = 0x378,
+    // declared by the FuncInfo at 0x82026ad8, with 0x82026d3c at +0x23c into
+    // it. The "case constants" are EH state values and the code addresses are
+    // interior PCs, which is exactly why the .pdata interiority test settles
+    // it. Naming the structure correctly matters because it is the ONE
+    // confusable-with-a-vtable shape in this binary, and therefore the thing a
+    // future sweep should look for.)
     virtual void SetDisplayRange(float) {}
     virtual void SetDisplayOffset(float, bool) {}
     virtual RndDir *SmasherPlate();
