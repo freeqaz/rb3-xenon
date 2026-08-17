@@ -71,6 +71,31 @@ agrees with the null and closes the vein permanently.
     NEGATIVE: groups drawn from scripts/symbol_aliases.json's T1-PROVEN folds
               (proven on retail bytes) must be classified FOLD.
 
+⚠ THE POSITIVE CONTROL DIES WHEN THE DEFECT IS FIXED. Lane W8 ported the real
+OnGetCatList body, so the two are no longer one body and the pair is no longer
+grouped -- `--selftest` then reports "the known twin pair was not even grouped"
+and FAILS. That is the fix working, not the instrument breaking. Re-point the
+control at a fresh known instance, or run it against the parent commit; do NOT
+"repair" it by loosening the grouping.
+
+⚠ TWO FALSE-POSITIVE MODES, BOTH MEASURED IN W8 -- 2 of the 3 flagged hits.
+  1. A MIS-MAPPED CALLER. The discriminator counts retail slots per caller, so
+     if the CALLER's own map name is wrong, retail's slots appear to go
+     elsewhere and the callee pair is blamed. SongStatusMgr::GetScore/
+     GetHighScore read DEFECT purely because BandProfile::GetSongHighScore was
+     mis-mapped; fixing the caller flipped the group to FOLD.
+     ⇒ A DEFECT verdict is a suspicion about a NEIGHBOURHOOD, not a proof about
+     the pair. Always read the caller's retail relocation targets before
+     believing it -- a false twin-hit is a map-defect detector in disguise.
+  2. HIGH FAN-IN INLINING NOISE -- now caught by NOISE_BIDIRECTIONAL, below.
+
+⚠ OUR-SIDE INDEXING IS MULTI-DEFINER. Scatter-includes (`#include "Foo.cpp"`)
+mean one function is defined in many objs -- BandDirector.cpp lands in 15 --
+and `collect()` over a glob keeps whichever definer sorts LAST. Rebuild the
+WHOLE tree before reading our side, or a stale sibling obj will silently show
+you the pre-edit body. (W8 hit exactly this and briefly read a successful port
+as a no-op.)
+
     python3 tools/twin_body_sweep.py --selftest
     python3 tools/twin_body_sweep.py --arm B --min-size 64
 """
