@@ -1916,6 +1916,16 @@ void VocalTrack::UpdateScrolling(float ms) {
 }
 
 void VocalTrack::Poll(float f1) {
+    // laneW19-VOCAL: residual 4 charged sites are retail materializing the
+    // InRollback() result in a SCRATCH reg and copying it into gamebool's r30
+    // with a redundant `clrlwi r30, r11, 24` normalization; we assign r30
+    // directly and MSVC elides the mask. Our code is one instruction SHORTER
+    // and otherwise identical -- a failure-to-coalesce in retail, not a source
+    // difference. REFUTED spelling, do not retry: the two-statement form
+    //     bool gamebool = true; if (!TheGame->InRollback()) gamebool = false;
+    // matches retail's `li 1` / conditional-clear SHAPE but scores far worse
+    // (97.617 -> 95.195): the explicit `!` on an already-bool value makes MSVC
+    // negate arithmetically (subfic/subfe/and), adding 4 instructions.
     bool gamebool = TheGame->InRollback();
     if (f1 < unk2a4 && !gamebool) {
         RebuildHUD();
