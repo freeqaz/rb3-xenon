@@ -7,7 +7,81 @@
 > (GAPMAP-1: gap decomposition; DOCAUDIT-1: history + docs audit), both run
 > 2026-08-17 with **all decomp lanes paused**.
 
-## 0. SESSION CLOSE — five lanes landed, composition verified exactly
+## 0. SESSION CLOSE
+
+### 0.2 ROUND TWO — four more lanes, composition exact again ← **LATEST**
+
+**Measured after a FORCED re-split** (map + alias files both changed, so a bare
+`ninja` would have under-reported — see the round-one warning below):
+
+| key | value |
+|---|---:|
+| `matched_functions` | **44,476 / 69,227** |
+| `matched_code` | **3,743,844 / 10,320,664 B = 36.275223%** |
+| honest floor | **21,578** |
+| fuzzy | 48.616750 |
+| **% of the 61.121% reachable ceiling** | **59.35%** |
+
+**Round-two delta: +3 functions / +15,496 B**, composing EXACTLY with the four
+independent A/Bs — W2-ENGINE +12,780 · W1b-GAME +2,892 · W5-CEILING +460 ·
+W4b-DUALWIT −636. **Day total across nine lanes: +32 fns / +20,140 B.**
+
+★★★★★ **THE CEILING IS EFFECTIVELY FIXED — AND RAISING IT DOES NOT CLOSE THE
+GAP.** W5-CEILING walked the FULL cost chain (identify → pin → wire → compile →
+pair → match) on the most favourable unit in the tree and measured
+**Δgap-to-ceiling EXACTLY 0**: the work raises the target and collects it in the
+same step. Rate: **~1.5 h of expert time bought 460 B**; total available
+≈1.6 kB genuinely-ours, ≤8.4 kB as a loose upper bound — against a **2,579,704 B
+gap that already exists BELOW the ceiling**. ⇒ **Grinding under the ceiling
+dominates by two orders of magnitude. Do not re-fund `auto_*` pin+wire.**
+⚠ The briefed "8.9% portable slice" re-measured at 10.2%, but **96.0% of it has
+NO identity hypothesis at all** (flanked by two *different* units); the part that
+does was predicted at 20–45 kB and **measured 6,984 B**. Its #1 item is code
+`f1874de3` deliberately un-attributed *for accuracy*.
+
+★★★★ **THE YIELD WAS IN METADATA, NOT SOURCE — AGAIN.** W2-ENGINE was briefed at
+the engine's 387,776 B divergence pool and found its **+12,780 B in the arg-only
+class this doc twice calls "drained"**, via two wrong **map names** and **zero
+source edits**. Three separate lanes today opened on a suspected source defect
+and each **refuted its own hypothesis**: the source was right and the metadata
+wrong. ⇒ **The near-term vein is map/pin accuracy, not porting.**
+
+⛔ **AN "EQUAL" VERDICT ON A PLACEHOLDER TARGET CARRIES NO INFORMATION.** objdiff
+called a string relocation *equal* while its target was the placeholder
+`lbl_82016FB4`; `name_check` forgives placeholders **by construction**. The lane
+had to read the bytes, which said `"copy_cats"`. Same disease as reading a 100%
+row as evidence a callee is right.
+
+★★★ **A REAL DEFECT CLASS THE METRIC CANNOT SEE, FOUND BY ACCIDENT.**
+`BandDirector::OnGetCatList` and `OnCopyCats` have **byte-identical SOURCE
+bodies** — a decomp copy-paste. The body is `copy_cats` semantics, so
+`OnGetCatList`'s real body is **unported** — yet it pairs at **99.96% BECAUSE it
+was copied from its twin.** No amount of residue grinding can surface this.
+(Lane W8-TWINPORT dispatched to test whether it is systematic.)
+
+⚠ **THE `cntlzw`/`extrwi.` BOOL-MATERIALIZATION LEVER IS PROVEN BUT THE VEIN IS
+THIN** — W1b swept the top 90 named game near-misses for the signature and found
+**0 hits**. The lever itself is settled: `& 1` **at the call site** (a semantic
+no-op that forces a value context), and the **helper body is MEASURABLY INERT
+across 10 structurally distinct forms**, including defining it inline in the
+header. The prior in-file note saying "attack the helper itself" is **refuted and
+corrected in source**. Do not fund a sweep.
+
+⚠ **W4b: three of six alias withdrawals differ at EQUAL SIZE**, where a size test
+is structurally blind — the within-build **content** test is what found them.
+Its gate was **shown able to fail first** (fabricated alias → `CONTRADICTED
+(FATAL)` → restored byte-for-byte). Nothing pruned; all groups kept.
+
+⚠⚠ **COORDINATION DEFECT, RECORDED SO IT IS NOT REPEATED:** this whole session's
+work landed on branch **`grounded2-restoration`, NOT `main`** — the shared tree
+was checked out there on 08-16 and the environment banner still said "Current
+branch: main", which the coordinator took at face value for nine lanes.
+Concurrently another agent advanced `refs/heads/main` by **46 commits** in its
+own job worktree. Nothing was lost and only **two files overlap**
+(`CLAUDE.md`, `docs/decomp/TOOLING.md`), but ⇒ **verify the checked-out branch
+with `git branch --show-current` before landing, never from the session banner.**
+
+### 0.1 ROUND ONE — five lanes landed, composition verified exactly
 
 **Measured at `3a524480` after a FORCED re-split** (renamer stamp removed +
 `config.yml` touched; renamer patched 1,824 files):
