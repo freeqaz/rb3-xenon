@@ -1,0 +1,64 @@
+# Known-bad entries for `python3 scripts/test_tools.py` — this repo's test lane.
+#
+# Baseline measured 2026-08-17 on this box at branch point ff22c440, one pytest
+# process per collection root. The runner reports these and does not fail on
+# them; anything NOT listed here that fails makes the runner exit non-zero.
+#
+# Format: one pytest id per line, `#` starts a comment. A file path covers every
+# test in that file; a `file::test` id covers its parametrizations.
+#
+# THE POINT OF THIS FILE IS TO SHRINK. Fixing an entry means DELETING its line
+# (the runner reports a listed entry that now passes as STALE). Deleting the
+# TEST instead of fixing it is not a fix — every entry below is a correct-looking
+# assertion reporting a real disagreement, which is precisely why the lane
+# exists.
+#
+# Classification:
+#   [dep]   missing optional dependency in this venv
+#   [env]   needs external state (built target tree, live artifact) this box
+#           does not have
+#   [bug]   genuine defect in shipped code — a correct assertion, unattended
+#   [drift] fixture/expectation the code moved past
+#
+# NOTE ON THE BASELINE. The pre-lane audit of this repo recorded 45 reds under
+# scripts/unicorn_runner/tests (41 failures in test_comparator.py plus one
+# collection error each in test_coloader/test_engine/test_prober), all reporting
+# `ImportError: cannot import name 'Uc' from 'unicorn'`. Those were NOT an
+# absent optional dependency: the Unicorn checkout is present and usable on this
+# box. They were a path-resolution defect (engine.py located the checkout by
+# counting parent directories, which is wrong inside every git worktree) layered
+# under a name collision (this repo's own scripts/unicorn takes the `unicorn`
+# name when the real bindings are not found first). Both are fixed; see
+# scripts/unicorn_runner/unicorn_dep.py. The seven entries below are what those
+# 45 were HIDING.
+
+# ── scripts/unicorn_runner/tests ──────────────────────────────────────────────
+
+# [drift] classify_divergence's taxonomy and the tests' expectations disagree,
+# and they disagree in ONE direction: the tests assert the coarse two-value
+# vocabulary ("logic" / "build_env") while the shipped comparator returns the
+# refined ~20-value one it grew ("merged_call", "call_count", "error",
+# "fpr_precision", "merged_arg", ...). Both files arrived in the same commit
+# (06022df7, "port DC3 behavioral-probe harness for TU5 divergence probing"), so
+# these six have never passed in this repo — the ported test file is an older
+# revision than the ported code. The fix is to update the expectations to the
+# shipped enum, which needs someone who knows which of the fine-grained classes
+# each case is meant to land in; it is NOT a code bug.
+#   expects build_env, gets merged_call
+scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_build_env_call_count_merged
+#   expects build_env, gets merged_arg
+scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_build_env_merged_symbol_warning
+#   expects logic, gets call_count
+scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_logic_call_count_no_merged
+#   expects logic, gets error
+scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_logic_decomp_error
+#   expects logic, gets error
+scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_logic_error_mismatch
+#   expects logic, gets fpr_precision
+scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_logic_fpr_mismatch
+
+# [drift] same commit, same shape, different module: the test asserts the string
+# "Equiv fills:" appears in format_probe_result's output; prober.py:454 now
+# writes "  Runs: N (x equiv, y div, z err)" instead. A display-string
+# expectation the formatter moved past.
+scripts/unicorn_runner/tests/test_prober.py::TestFormatProbeResult::test_format_input_sensitive
