@@ -1174,6 +1174,14 @@ def cmd_build(args):
     # 2026-08-13 the game tier moved 20,688 -> 24,985 fns (denominator +24%,
     # reading 75% -> 59%) and the change was only reconstructable because
     # unrelated worktrees happened to hold reflinked copies from 07-31.
+    # --quiet is for the automated PROGRESS path, where this rebuild is a
+    # cache refresh nobody asked for and the tier dashboard prints immediately
+    # after: the RECLASSIFIED diff and the summary table are signal when a human
+    # types `build` and pure noise in front of the thing they actually ran.
+    # ONE line still prints -- a rebuild that silently did nothing must not look
+    # identical to one that ran.
+    quiet = getattr(args, "quiet", False)
+
     prev = None
     if os.path.exists(SCOPE_MAP):
         try:
@@ -1181,13 +1189,17 @@ def cmd_build(args):
                 prev = json.load(f)
             bak = SCOPE_MAP + ".bak"
             os.replace(SCOPE_MAP, bak)
-            print("backed up previous cache -> %s" % bak)
+            if not quiet:
+                print("backed up previous cache -> %s" % bak)
         except (OSError, ValueError) as e:
             print("(could not back up previous cache: %s)" % e)
             prev = None
 
     with open(SCOPE_MAP, "w") as f:
         json.dump(out, f, indent=0, sort_keys=True)
+    if quiet:
+        print("scope cache rebuilt from report.json (%d functions)" % len(out))
+        return
     print("wrote %s (%d functions)" % (SCOPE_MAP, len(out)))
 
     if prev:
@@ -2405,7 +2417,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("build", help="classify all fns, write scope_map.json")
+    b = sub.add_parser("build", help="classify all fns, write scope_map.json")
+    b.add_argument("--quiet", action="store_true",
+                   help="one line of output; no RECLASSIFIED diff, no summary "
+                        "table (for the automated PROGRESS refresh)")
     sub.add_parser("report", help="per-bucket breakdown + progress toward 100%%")
     pr = sub.add_parser("priority", help="progress toward 100%% by priority tier (live matched, cached classification)")
     pr.add_argument("--compact", action="store_true", help="one-line form (for the build PROGRESS step)")
