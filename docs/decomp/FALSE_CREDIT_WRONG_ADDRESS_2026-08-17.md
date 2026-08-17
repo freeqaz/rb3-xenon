@@ -10,11 +10,19 @@ instead — and the reason that happened is the most reusable thing in this file
 |---|---|---|
 | (1) `map<int,float>` node-builder false credits | **FIXED** | **+268 B**, Δfn 0 |
 | (2) `0x827b7d88` = `StoreArtLoaderPanel::Unload` | **FIXED** | **+52 B**, Δfn 0 |
-| (3) `ByteCode`/`StaticByteCode` bijection | see the section below | — |
+| (3) `ByteCode`/`StaticByteCode` bijection | **4 of 8 FIXED, 4 REFUSED** | **Δ0**, Δfn 0 |
 
 Baseline `44,479 fns / 3,744,044 B / 36.277164% / honest 21,579 / 254 units at
-100%`. After both: `36.280262%`. The two runs chain exactly (run 2's leg A ==
-run 1's leg B == 36.279760), so the deltas compose.
+100%`. Final: **`44,479 fns / 3,744,364 B / 36.280262%`, honest 21,579, 254
+units at 100%** — `+320 B`, `Δmatched 0`. The three runs chain exactly (each
+leg A equals the previous leg B: 36.277164 -> 36.279760 -> 36.280262), so the
+deltas compose rather than being three absolutes summed.
+
+**Corrections to figures I was briefed on defect (3):** "8 of 51" is the right
+count but the wrong composition — only **7** are `ByteCode` bodies wearing
+another class's name; "~8 matched_functions" is **7**; "6 of 7 at a clean
+100/100" is **7 of 7**; and one row (`0x823f1028`) was missed entirely by the
+`?ByteCode@` name filter. The ~420 B figure is exact.
 
 ---
 
@@ -156,6 +164,43 @@ right name is not determined. **Do not guess one to move the metric.**
 ⛔ **Scope bound:** only **26** `_M_insert` rows are mapped at all, and the
 MAP-side rule fires only at value_type < 8 B. A map whose pair is merely the
 *wrong* size ≥ 8 is not caught. This is a screen, not a census.
+
+---
+
+## Defect (3): the `ByteCode` bijection — 4 shipped at Δ0, 4 refused
+
+`NETMSG_BYTECODE(name)` (`src/network/net/NetMessage.h:43`) makes `ByteCode()`
+a one-line forwarder to an in-class-inline `StaticByteCode()`, so the two are
+byte- *and relocation*-identical and ICF folds them to one VA. Every body is a
+60 B leaf that builds a `String` from an `.rdata` literal and calls
+`GetNetMessageByteCode`; `this` is never read. **That literal is `#name` — the
+class name by construction**, which is why it can adjudicate a map defect at
+all. A 53-body census finds 53 bodies, 53 distinct strings, zero duplicates, and
+an **independent RTTI channel** (COL → TypeDescriptor → *primary* vtable slot 6,
+which never reads the map) confirms the literal on **53/53**.
+
+**Shipped: 4 rows, Δ0 on every key** (`TriggerBackSoundMsg`, `PlayerStatsMsg`,
+`ResumeNoScoreGameMsg`, `SetPartyShuffleModeMsg`). There are **zero direct `bl`
+sites** into any of them — dispatch is virtual through slot 6 — so the
+caller-cascade lever that dominated defects (1) and (2) does not apply, and the
+exposure was exactly the rows' own bytes. Aggregate credit was already right and
+only the *attribution* was wrong: the "metric blind to attribution" class.
+
+**Refused: 4 rows.** Three (Tier B: `SyncAllMsg`, `LockResponseMsg`,
+`EndLockMsg`) have equally-proven class identity, but the pinned unit's obj
+**cannot define** the new name, so a map-only rename reads 0% — **−180 B / −3
+matched_functions** *and* leaves permanently unpairable rows. One (Tier C,
+`0x823f1028`, a `??0RBDataClient@Quazal@@` name on a `JoinResponseMsg::ByteCode`
+body with a lone 60 B circular `RockCentral.cpp` pin) was briefed as "costs
+literally nothing"; **my own check found `RockCentral.obj` does not define the
+new name**, so it too needs a splits re-home. ⇒ **Proving a name is wrong does
+not make renaming it safe — check that the pinned unit's obj can host the
+replacement, or you trade a false credit for a dead row.**
+
+`0x8253dd58` is **unassignable**: it is not a `ByteCode` body at all (172 B of
+`MusicLibrary::RemoveLastSongFromSetlist`), and its true name is already mapped
+at `0x8253d820` — which is *also* wrong. Fixing one without the other breaks
+injectivity. Needs a MusicLibrary map lane.
 
 ---
 
