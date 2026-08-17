@@ -35,6 +35,26 @@ void StoreMainPanel::Load() {
     BandStorePanel::Instance()->AddSink(this);
 }
 
+// GATE (lane W1-GAME): 592 B, CLEAN row (mpn == fuzzy == 99.3243), 147/148
+// instructions equal.  The single charge is a target-only
+// `stw r29, 0x50(r31)` at idx 29.
+//
+// DO NOT read that as a missing member store.  Retail's prologue is
+//     subi r31, r1, 0xa0        <-- BEFORE the stwu
+//     stwu r1, -0xa0(r1)
+// so r31 is a SECOND FRAME POINTER aliasing the new r1; `this` is r30.  The
+// instruction is a dead HOME-SLOT SPILL of the loop's `mat` into a stack slot
+// that is later reused for a different temporary (`addi r3, r31, 0x50` twice
+// after the loop).  Our frame layout is otherwise byte-identical -- every
+// other r31- and r30-relative offset matches.
+//
+// Also do not chase the Function Call Diff here: target MakeString<const
+// char*> vs our MakeString<int>, and SetObjConcrete<Hmx::Object> vs
+// <RndTex>, are legitimate ICF folds (identical bodies -- the arg is passed
+// straight through), already forgiven, which is why mpn == fuzzy.
+//
+// Unresolved: what source form makes MSVC home `mat` when it already lives in
+// a callee-saved register.  No byte is collectable until it is found.
 void StoreMainPanel::FinishLoad() {
     UIPanel::FinishLoad();
     mNoneTex = mDir->Find<RndTex>("cover_art_none.tex", true);

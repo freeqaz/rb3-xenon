@@ -1510,7 +1510,12 @@ void GemPlayer::LocalSetEnabledState(EnabledState state, int i2, BandUser *user,
     if (TheGamePanel->GetState() != UIPanel::kUnloaded) {
         mMatcher->Enable(false);
         mCommonPhraseCapturer->Enabled(this, mTrackNum, i2, false);
-        bool b1 = unk315 ? !unk314 : false;
+        // Retail (0x826BE418 idx 29-36) short-circuits with a two-way
+        // li 1 / li 0 join:  lbz 0x351; beq ->0 ; lbz 0x350; li 1; beq ->join;
+        // li 0; join: clrlwi.  That is the rb3-Wii oracle's form.  Writing it
+        // as a ternary (`unk315 ? !unk314 : false`) instead makes MSVC compute
+        // !unk314 as a VALUE via cntlzw/extrwi and fall through unconditionally.
+        bool b1 = unk315 && !unk314;
         if (b1)
             unk314 = true;
         if (state == kPlayerDroppingIn) {
