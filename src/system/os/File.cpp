@@ -768,7 +768,17 @@ void RecursePatternInternal(
             recurse = false;
         } else {
             // Path separator found: we need to recurse into subdirectories
-            String subPattern = pttn.substr((unsigned int)forwardPos);
+            // Two-arg substr, not the one-arg form: retail's RecursePatternInternal
+            // makes 3 calls to ?substr@String@@QBA?AV1@II@Z and 0 to the one-arg
+            // ?substr@String@@QBA?AV1@I@Z (measured on the split target obj's
+            // relocations). dc3 -- which is NEWER than RB3 -- uses the one-arg form
+            // here and we inherited it; the RB3-era rb3-Wii oracle (File.cpp:599)
+            // uses the two-arg form and retail agrees with rb3-Wii.
+            // Behaviourally identical: pttnLen is length()-1, so the count
+            // (pttnLen+1)-forwardPos is exactly length()-forwardPos, i.e. "to end".
+            String subPattern = pttn.substr(
+                (unsigned int)forwardPos, (unsigned int)(pttnLen + 1) - forwardPos
+            );
             pttn = pttn.substr(0, (unsigned int)forwardPos);
 
             // Enumerate subdirectories at this level
