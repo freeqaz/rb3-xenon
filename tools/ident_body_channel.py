@@ -68,12 +68,6 @@ def is_aux_code_symbol(name):
     return name.startswith('__unwind$') or name.startswith('__ehhandler$')
 
 
-# Funclet spellings that carry the 8-byte EH prefix. Used only by the FALLBACK
-# rule below; the primary boundary is the `$EH*` mark the build injects.
-EH_PREFIXED = ('__unwind$', '__catch$', '__ehhandler$',
-               '__tryblocktable$', '__unwindfunclet$')
-
-
 def eh_boundaries(section_symbols):
     """Offsets a slice may END at that are NOT function definitions.
 
@@ -194,12 +188,17 @@ def function_slices(path):
             if is_aux_code_symbol(name):
                 continue
             end = nxt.get(v, len(raw))
-            # FALLBACK for a tree with no `$EH*` marks (an unpatched obj, or a
-            # build that ran before the patcher step). Structural -- successor is
-            # EH-bearing -- plus the prefix bytes AND the relocation pair, so a
-            # body that legitimately ends in two zero words is not trimmed.
+            # FALLBACK, for a tree with no `$EH*` marks -- an unpatched obj, or a
+            # build that ran before the patcher step. Two words that RELOCATE to
+            # `__CxxFrameHandler` and `__ehfuncinfo$...` are an EH prefix by
+            # definition; they cannot be instructions. That is the whole test.
+            #
+            # It deliberately does NOT also require the successor to be
+            # `__catch$`-named. 3 of the 6,395 interior prefixes on this build
+            # precede an ORDINARY FUNCTION in a non-COMDAT multi-function
+            # `.text`, so a successor-name test silently misses them -- the
+            # defect still present in `coff_bodies_ext`.
             if end not in marks and end < len(raw) and end - 8 > v \
-                    and any(n.startswith(EH_PREFIXED) for n in at.get(end, ())) \
                     and raw[end - 8:end] == b'\0' * 8 \
                     and rel.get(end - 8) == '__CxxFrameHandler' \
                     and rel.get(end - 4, '').startswith('__ehfuncinfo$'):
