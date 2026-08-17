@@ -1091,7 +1091,8 @@ void VocalTrack::UpdateLyricZ() {
                     }
                     lyric->mBeginPos.z = z;
                 }
-                plate->mText->DirtyLocalXfm().v.z += delta;
+                float &leadZ = plate->mText->DirtyLocalXfm().v.z;
+                leadZ = delta + leadZ;
             }
         }
     }
@@ -1915,6 +1916,16 @@ void VocalTrack::UpdateScrolling(float ms) {
 }
 
 void VocalTrack::Poll(float f1) {
+    // laneW19-VOCAL: residual 4 charged sites are retail materializing the
+    // InRollback() result in a SCRATCH reg and copying it into gamebool's r30
+    // with a redundant `clrlwi r30, r11, 24` normalization; we assign r30
+    // directly and MSVC elides the mask. Our code is one instruction SHORTER
+    // and otherwise identical -- a failure-to-coalesce in retail, not a source
+    // difference. REFUTED spelling, do not retry: the two-statement form
+    //     bool gamebool = true; if (!TheGame->InRollback()) gamebool = false;
+    // matches retail's `li 1` / conditional-clear SHAPE but scores far worse
+    // (97.617 -> 95.195): the explicit `!` on an already-bool value makes MSVC
+    // negate arithmetically (subfic/subfe/and), adding 4 instructions.
     bool gamebool = TheGame->InRollback();
     if (f1 < unk2a4 && !gamebool) {
         RebuildHUD();
@@ -2079,10 +2090,18 @@ float VocalTrack::GetHarmonyScore(int singerIdx) {
         return harmonyScore;
     for (int part = 0; part < numParts; part++) {
         if (part != singer->mFrameAssignedPart) {
-            // NOTE (laneBF-3): residual single mismatch is `lwzx r3,r11,r30` vs
-            // our `lwzx r3,r30,r11` — the rA/rB operands of the indexed load are
-            // swapped (semantically identical `add`). `*(begin()+part)` spelling
-            // tested, no change. Regalloc-class, permuter banned.
+            // NOTE (laneBF-3, re-confirmed laneW19-VOCAL): residual single
+            // mismatch is `lwzx r3,r11,r30` vs our `lwzx r3,r30,r11` — the rA/rB
+            // operands of the indexed load are swapped (semantically identical
+            // `add`). Spellings tested and REFUTED, do not retry:
+            //   BF-3    `*(begin() + part)`   — identical to operator[], no change
+            //   W19     `*(part + begin())`   — reversed operands, STILL no change
+            // W19 tried the reversed form because the commutative-operand
+            // reversal is REAL for floats — proved on UpdateLyricZ in this same
+            // file, where source `delta + z` is what emits `fadds fD, f(z),
+            // f(delta)`. That mechanism does NOT transfer to integer indexed
+            // loads: MSVC canonicalizes lwzx rA/rB independently of source order.
+            // Regalloc-class, permuter banned.
             Singer *candidate = mPlayer->mVocalParts[part]->GetBestSingerCandidate();
             if (candidate) {
                 float tmp = frameScore * candidate->mFrameBestHitScore;
