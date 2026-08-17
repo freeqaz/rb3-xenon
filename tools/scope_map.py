@@ -2330,8 +2330,78 @@ def _progress_by_live():
     return _by_live(scope_by_addr, prov_by_addr, funcs), rep.get("measures", {}), cache
 
 
+def _cache_inputs():
+    """Every file the cached classification is derived from."""
+    ins = [REPORT, SPLITS, SYMBOLS_TXT, os.path.abspath(__file__)]
+    if os.path.isdir(WN_DATA):
+        ins += [os.path.join(WN_DATA, n) for n in sorted(os.listdir(WN_DATA))
+                if n.endswith(".json")]
+    return [p for p in ins if os.path.exists(p)]
+
+
+def _rebuild_reason(cache):
+    """Why the cache should be rebuilt before it is read, or None.
+
+    TWO tests, because neither alone is sufficient and they fail on DIFFERENT
+    things:
+
+      COVERAGE (from _cache_status) -- catches a cache whose ADDRESSES do not
+        belong to this report.  This is the one that catches the reflink case:
+        scripts/setup_worktree.sh copies main's scope_map.json into every new
+        worktree, so the artifact is NEWER than every input while being keyed
+        to another tree's report.  An mtime test reads that as fresh and would
+        re-open the exact hole this lane exists to close.
+
+      MTIME -- catches a cache whose addresses still resolve but whose TIERS
+        are stale, e.g. after a splits.txt re-pin or a tools/scope_data edit.
+        Coverage stays 1.0000 through both, so the content check is blind to
+        them.
+
+    Deliberately NOT an unconditional rebuild.  Measured here: `build` costs
+    0.83 s of which 0.40 s is re-parsing report.json, and `priority` ALREADY
+    loads report.json and the cache and already computes coverage -- so
+    detecting staleness is free while rebuilding regardless is not.  An
+    unconditional rebuild doubles the progress step (0.51 s -> 1.34 s), and a
+    no-op `tools/ninja-locked` pays it TWICE (ninja runs the PROGRESS edge and
+    the wrapper prints the dashboard again).  tools/ninja-locked's own comment
+    already sizes that tail at 3.4%-32% of wall clock for automated per-object
+    builds, which is a cost worth not tripling for a cache that is usually
+    fine."""
+    st = cache.get("state")
+    if st in ("missing", "unreadable", "dead", "incomplete"):
+        return {"missing": "no cache on disk",
+                "unreadable": "cache is corrupt",
+                "dead": "cache is keyed to a different build",
+                "incomplete": "cache resolves %.2f%% of report addrs "
+                              "(%s fns unclassified)"
+                              % (100.0 * (cache.get("coverage") or 0.0),
+                                 cache.get("unresolved"))}[st]
+    try:
+        mt = os.path.getmtime(SCOPE_MAP)
+    except OSError:
+        return "no cache on disk"
+    newer = [os.path.relpath(p, ROOT) for p in _cache_inputs()
+             if os.path.getmtime(p) > mt]
+    if newer:
+        return "inputs newer than cache: %s" % ", ".join(sorted(newer)[:3])
+    return None
+
+
 def cmd_priority(args):
     by, measures, cache = _progress_by_live()
+    # Self-heal, once.  The dashboard is the most-read number in the project and
+    # it was being computed from whatever cache happened to be lying around --
+    # there is no automation path that ever regenerated it, and a gitignored
+    # artifact has no committed copy to fall back on.  Healing HERE rather than
+    # in configure.py's progress mode covers every entry point (the ninja
+    # PROGRESS edge, tools/ninja-locked's no-op tail, and a human typing
+    # `scope_map.py priority`) instead of only the first.
+    reason = None if getattr(args, "no_refresh", False) else _rebuild_reason(cache)
+    if reason:
+        print("scope cache refresh (%s)" % reason)
+        del UNRESOLVED_NAMED[:]          # load_functions APPENDS to this global
+        cmd_build(argparse.Namespace(quiet=True))
+        by, measures, cache = _progress_by_live()   # re-read; never loops
     print_progress(by, measures, cache=cache, compact=args.compact)
 
 
@@ -2436,6 +2506,10 @@ def main():
     sub.add_parser("report", help="per-bucket breakdown + progress toward 100%%")
     pr = sub.add_parser("priority", help="progress toward 100%% by priority tier (live matched, cached classification)")
     pr.add_argument("--compact", action="store_true", help="one-line form (for the build PROGRESS step)")
+    pr.add_argument("--no-refresh", action="store_true",
+                    help="never rebuild the cache first — report it exactly as "
+                         "found (for INSPECTING a stale cache, which the "
+                         "self-heal would otherwise fix out from under you)")
     w = sub.add_parser("worklist", help="size-ranked unmatched oracle-backed clusters (cheapest work)")
     w.add_argument("--limit", type=int, default=50)
     w.add_argument("--bucket", choices=BUCKET_ORDER, help="filter to one bucket")
