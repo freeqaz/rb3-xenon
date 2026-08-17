@@ -46,8 +46,12 @@ stage 2  shape     : per-symbol `objdiff-cli diff --include-instructions`
 Scores/percentages printed here are objdiff's, for RANKING ONLY.  Strict match
 is report.json `match_percent_normalized == 100.0`; always A/B whole-binary.
 
+Stage 2's per-symbol JSON is pure scratch -- read once, then unlinked.  It goes
+in a PRIVATE self-cleaning temp dir (see run_scan), never in `~/tmp` and never
+next to `-o`.
+
 Usage:
-  python3 scripts/harvest/subobject_ref_scan.py -p . -o ~/tmp/subobj_scan.json
+  python3 scripts/harvest/subobject_ref_scan.py -p . -o subobj_scan.json
   python3 scripts/harvest/subobject_ref_scan.py -p . --sym '?Foo@Bar@@QAAXXZ'
 """
 import argparse
@@ -55,6 +59,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 
 MEM_OPS = {
     "lwz", "lwzu", "lhz", "lhzu", "lha", "lhau", "lbz", "lbzu", "lmw",
@@ -175,22 +180,33 @@ def classify(instructions):
     return hits
 
 
-def run_symbol(objdiff, project, symbol, out_dir):
-    path = os.path.join(out_dir, "sr_%d.json" % (abs(hash(symbol)) % (10 ** 12)))
+def run_symbol(objdiff, project, symbol, scratch_dir):
+    """Diff one symbol into a scratch file, read it, and always remove it.
+
+    `scratch_dir` is this process's private temp dir (run_scan).  mkstemp gives
+    a name no other writer can hold, so the old `sr_<hash(symbol)>.json` in a
+    directory shared by every concurrent lane is gone: two lanes scanning the
+    same symbol can no longer truncate or unlink each other's file mid-read --
+    a race that silently DROPPED the symbol (`return None`) rather than erroring.
+    """
+    fd, path = tempfile.mkstemp(prefix="sr_", suffix=".json", dir=scratch_dir)
+    os.close(fd)
     cmd = [objdiff, "diff", "-p", project, symbol,
            "--include-instructions", "-f", "json", "-o", path]
-    r = subprocess.run(cmd, cwd=project, capture_output=True, text=True)
-    if r.returncode != 0 or not os.path.exists(path):
-        return None
     try:
+        r = subprocess.run(cmd, cwd=project, capture_output=True, text=True)
+        # mkstemp pre-creates the file, so existence is no longer the tell --
+        # size is.  This also catches a zero-byte/truncated write, which the
+        # old os.path.exists() check accepted as success.
+        if r.returncode != 0 or os.path.getsize(path) == 0:
+            return None
         with open(path) as fh:
-            d = json.load(fh)
+            return json.load(fh)
     finally:
         try:
             os.unlink(path)
         except OSError:
             pass
-    return d
 
 
 def build_pool(project, min_pct, min_size):
@@ -259,10 +275,21 @@ def main():
     objdiff = os.path.join(project, "bin", "objdiff-cli")
     if not os.path.exists(objdiff):
         sys.exit("objdiff-cli not found at %s" % objdiff)
-    out_dir = os.path.expanduser("~/tmp")
 
+    # Stage-2 scratch lives in a private, self-cleaning temp dir (honours
+    # TMPDIR), NOT in `~/tmp`: that path is shared by every lane on the box and
+    # "~/tmp is not storage".  It is also NOT the `-o` directory -- `-o` is an
+    # optional FILE (absent entirely in --sym mode) and this scratch is never a
+    # deliverable, so parking it beside the output would both surprise the
+    # caller and re-create the shared-directory race whenever two lanes write
+    # their results to the same place.
+    with tempfile.TemporaryDirectory(prefix="subobj_ref_scan.") as scratch:
+        run_scan(args, project, objdiff, scratch)
+
+
+def run_scan(args, project, objdiff, scratch):
     if args.sym:
-        d = run_symbol(objdiff, project, args.sym, out_dir)
+        d = run_symbol(objdiff, project, args.sym, scratch)
         if not d:
             sys.exit("objdiff failed for %s" % args.sym)
         print(json.dumps(classify(d.get("instructions") or []), indent=2))
@@ -281,7 +308,7 @@ def main():
     for i, sym in enumerate(survivors):
         if i % 50 == 0:
             print("  ... %d/%d" % (i, len(survivors)), file=sys.stderr)
-        d = run_symbol(objdiff, project, sym, out_dir)
+        d = run_symbol(objdiff, project, sym, scratch)
         if not d:
             continue
         hits = classify(d.get("instructions") or [])
