@@ -7,7 +7,39 @@
 > (GAPMAP-1: gap decomposition; DOCAUDIT-1: history + docs audit), both run
 > 2026-08-17 with **all decomp lanes paused**.
 
-## 1. Headline, measured at HEAD `6e13ee3f`
+## 0. SESSION CLOSE — five lanes landed, composition verified exactly
+
+**Measured at `3a524480` after a FORCED re-split** (renamer stamp removed +
+`config.yml` touched; renamer patched 1,824 files):
+
+| key | value |
+|---|---:|
+| `matched_functions` | **44,473 / 69,227** |
+| `matched_code` | **3,728,348 / 10,320,664 B = 36.125079%** |
+| honest floor | **21,575** |
+| fuzzy | 48.612083 |
+
+**Session delta: +29 functions / +4,644 B**, and it **composes EXACTLY** with
+the five lanes measured independently in their own worktrees —
+W3-IDENT +26/+1,976 · W0-ALLOC +0/+1,736 · W0-SIZEOF +2/+948 ·
+W1-GAME +1/+296 · W4-ALIAS +0/−312. Five separate A/Bs, one whole-binary
+confirmation, no inflation.
+
+⚠⚠ **A MAP-ONLY MERGE IS INERT IN MAIN'S REPORT UNTIL YOU FORCE A RE-SPLIT.**
+The coordinator's first post-merge read was `+26 / +3,712 B` — exactly W3 +
+W0-ALLOC, with W0-SIZEOF's contribution **entirely absent** — because a bare
+`ninja build/45410914/report.json` does not re-run SPLIT/renamer.
+**It was caught ONLY because the composition failed by exactly one lane's
+figure.** `ab_measure` does this automatically; a hand read does not.
+
+★★★★ **EVERY ONE OF THE FIVE LANES REFUTED ITS OWN BRIEF, ALL IN THE
+INFORMATIVE DIRECTION**: six allocator sites were **seven**; a two-cycle was a
+**three-cycle**; an "unexecuted" pipeline had **run three times**; a "cascade"
+was **thirteen independent bugs**; and "alias residue" was an **install queue
+of the opposite sign**. ⇒ **The literal-testing rule is not ceremony — it fired
+5 for 5.**
+
+## 1. Headline at the start of the session (HEAD `6e13ee3f`)
 
 | key | value | provenance |
 |---|---:|---|
@@ -101,7 +133,11 @@ that memory. Shares unaffected; today's replay has zero residue.
 memberships** (= MAPID-1's 15,190 + GROUNDED-2's 6 restorations, exact); 29
 groups carry withdrawals, 6 restorations, nothing pruned. Magnitude by
 ablation (ALIAS-2, `64088f62`): **818,416 B / 7.93 pp** — **~22% of everything
-we count as matched rests on this mechanism.** Evidence split: PROVEN 92.73% ·
+we count as matched rests on this mechanism.**
+⚠ **Re-ablated 2026-08-17 (W4-ALIAS) at −810,540 B / −7.853563 pp** — the
+mechanism did not shrink, **the tree moved under it** (source work replaces
+forgiven bytes with earned ones). ⇒ **Deltas compose; absolutes do not.
+Re-ablate before quoting this, exactly as with `total_code`.** Evidence split: PROVEN 92.73% ·
 NEEDS_SOURCE 1.96% · CONTRADICTED 1.78% · NEEDS_MAP_ID **0.00% (drained to
 zero by MAPID-1)**. **129,360 B is irreducible by construction** —
 relocation-free thunks where ICF destroyed which name the site meant. The 11%
@@ -215,9 +251,29 @@ the placeholder forgiveness had been hiding.
 *(Retracted original text: "the only route to the big class … standing plan,
 never executed (XEXLoaderWV needs a Ghidra 12.1 rebuild)".)*
 
-**W4 — Alias ledger residue.** TEMPLATE-1 (~98 kB, largest open queue; needs
-a demangled→mangled join); 76 withheld contradictions (`verdict()` fallback ≠
-refutation); the 129,360 B floor is accepted, not work.
+**W4 — Alias ledger.** ⛔ **THE "TEMPLATE-1 = ~98 kB OF ALIAS RESIDUE" FRAMING
+IS WRONG BY SIGN — corrected by lane W4-ALIAS (`3a524480`).** The *figure* is
+right (98,032 B over 435 rows / 332 pairs, reproducing the 08-16 census
+exactly — one of only two briefed counts to survive literal testing this
+session). But **only 1,864 B of it is currently COUNTED AS MATCHED: 98.1% is
+UNCOLLECTED POTENTIAL, not forgiven bytes**, and **592 of 631 pairs forgive
+zero because they are not in the map at all.** ⇒ **TEMPLATE-1 is an INSTALL
+queue, and its own census already ruled both open classes non-levers**
+(`UNDECIDABLE` = "settled by pinning"; `BC_DIFFERENT_UNRESOLVED` = "downstream
+of ordinary matching progress"). **Do not re-brief the 98 kB as alias work.**
+✅ The demangled→mangled join now **exists and is validated**:
+`tools/tmpl_demangle_join.py`, 631/631 pairs joined both sides, negative
+control passes, 5 anonymous-namespace ambiguities reported rather than
+silently resolved.
+★ **Live lead instead:** the **21 dual-witness groups ALIASAUDIT-2 declined to
+re-adjudicate are NOT clean** — 3 of them withdrew here at −312 B (predicted
+exactly), each forced by the template argument, **two at EQUAL SIZE so no size
+test could have found them**. A fan-in witness is evidence about the *callee*
+address and **does not establish that the parent bodies fold**; the other **18
+have never had the within-build content test applied.**
+Still open and unchanged: 76 withheld contradictions (`verdict()`'s
+`CONTRADICTED` is a **fallback, not a refutation**); the 129,360 B irreducible
+thunk floor is **accepted, not work**.
 
 **W5 — Gated / declined (do not fund without new evidence).** Permuter
 (user OFF; floor 8.1% of divergence); jeff P1 relaxation for
