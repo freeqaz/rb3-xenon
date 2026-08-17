@@ -1,0 +1,2028 @@
+{
+ "_what": "Frozen replay fixture: lane W2-ENGINE's original engine top-45 sympair sweep.",
+ "_why": "W2's worktree ~/tmp/wt-w2engine was REMOVED, so this measurement is not regenerable. It is the only surviving record of the population that produced W2's reported 41,088 B. tools/sympair_queue.py --selftest replays it to prove a rewrite did not silently change the population.",
+ "_provenance": {
+  "source_diffs": "/home/free/tmp/w2engine/diff_*.json (objdiff-cli diff --include-instructions, graded ruler)",
+  "sweep_wave": "files with mtime >= 08:49 on 2026-08-17 (the 08:43 wave is batch.py, excluded)",
+  "attribution": "each cached file was attributed by recomputing md5(symbol + '/home/free/tmp/wt-w2engine')[:10]; 53/53 files attributed, 0 unattributed",
+  "w2_filters": "progress_categories contains 'engine', not auto_generated, non-placeholder name, 0<fuzzy<100, mpn==100, top 45 by size",
+  "w2_reported": "23 rows / 41088 B crossable",
+  "frozen_by": "lane W7-SYMPAIR, 2026-08-17"
+ },
+ "rows": [
+  {
+   "symbol": "?SyncProperty@VocalTrackDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "unit": "default/VocalTrackDir",
+   "size": 7260,
+   "fuzzy": 100.0,
+   "mpn": 100.0,
+   "instructions": 1815,
+   "charges": []
+  },
+  {
+   "symbol": "?Handle@Rnd@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+   "unit": "default/system/rndobj/Rnd",
+   "size": 6416,
+   "fuzzy": 99.99065,
+   "mpn": 100.0,
+   "instructions": 1604,
+   "charges": [
+    [
+     781,
+     "diff_arg",
+     "SYM ??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z -> ?TakeShot@HiResScreen@@QAAXPBDH@Z"
+    ],
+    [
+     1146,
+     "diff_arg",
+     "SYM ?OnScreenDumpUnique@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z -> ?OnScreenDump@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z"
+    ],
+    [
+     1177,
+     "diff_arg",
+     "SYM ?OnScreenDump@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z -> ?OnScreenDumpUnique@Rnd@@IAA?AVDataNode@@PBVDataArray@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SyncProperty@GemTrackDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "unit": "default/GemTrackDir",
+   "size": 4924,
+   "fuzzy": 99.99594,
+   "mpn": 100.0,
+   "instructions": 1231,
+   "charges": [
+    [
+     975,
+     "diff_arg",
+     "SYM ?_M_insert@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V1@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@V1@@2@00@Z -> ??$PropSync@VTrackWidget@@@@YA_NAAV?$ObjPtrList@VTrackWidget@@VObjectDir@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Handle@BandDirector@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+   "unit": "default/BandDirector",
+   "size": 4732,
+   "fuzzy": 100.0,
+   "mpn": 100.0,
+   "instructions": 1183,
+   "charges": [
+    [
+     843,
+     "diff_arg",
+     "SYM ?OnGetCatList@BandDirector@@QAA?AVDataNode@@PAVDataArray@@@Z -> ?OnCopyCats@BandDirector@@QAA?AVDataNode@@PAVDataArray@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Handle@PlatformMgr@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+   "unit": "default/PlatformMgr",
+   "size": 3112,
+   "fuzzy": 99.96144,
+   "mpn": 100.0,
+   "instructions": 778,
+   "charges": [
+    [
+     417,
+     "diff_arg",
+     "SYM ?InviteUserParty@PlatformMgr@@QAAXPBVLocalUser@@@Z -> ?ShowUserFriendsUI@PlatformMgr@@QAAXPBVLocalUser@@@Z"
+    ],
+    [
+     514,
+     "diff_arg",
+     "SYM ?ShowUserFriendsUI@PlatformMgr@@QAAXPBVLocalUser@@@Z -> ?InviteUserParty@PlatformMgr@@QAAXPBVLocalUser@@@Z"
+    ],
+    [
+     544,
+     "diff_arg",
+     "SYM ?IsUserAGuest@PlatformMgr@@QBA_NPBVLocalUser@@@Z -> ?ShowOfferUI@PlatformMgr@@QAAXPBVLocalUser@@@Z"
+    ],
+    [
+     600,
+     "diff_arg",
+     "SYM ??1?$ObjPtr@VMoggClip@@@@UAA@XZ -> ?EnableXMP@PlatformMgr@@QAAXXZ"
+    ],
+    [
+     643,
+     "diff_arg",
+     "SYM ??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z -> ?CheckMailbox@PlatformMgr@@QAAXXZ"
+    ],
+    [
+     661,
+     "diff_arg",
+     "SYM ??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z -> ?RunNetStartUtility@PlatformMgr@@QAAXXZ"
+    ]
+   ]
+  },
+  {
+   "symbol": "?GenerateMacros@ShaderOptions@@QBAXW4ShaderType@@AAV?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "unit": "default/ShaderOptions",
+   "size": 3084,
+   "fuzzy": 99.54604,
+   "mpn": 100.0,
+   "instructions": 771,
+   "charges": [
+    [
+     24,
+     "diff_arg",
+     "SYM ?reserve@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z -> ?reserve@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
+    ],
+    [
+     32,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     41,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     48,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     61,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     72,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     83,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     94,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     105,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     116,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     127,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     138,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     149,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     160,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     171,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     182,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     193,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     203,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     214,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     225,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     236,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     247,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     258,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     269,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     280,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     291,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     302,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     313,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     324,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     335,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     346,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     357,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     368,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     379,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     390,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     401,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     412,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     423,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     434,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     445,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     456,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     467,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     478,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     489,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     500,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     511,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     522,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     533,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     544,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     555,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     566,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     577,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     588,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     599,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     610,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     621,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     632,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     643,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     654,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     665,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     676,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     687,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     698,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     709,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     720,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     731,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     741,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     752,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     763,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ],
+    [
+     768,
+     "diff_arg",
+     "SYM ?push_back@?$vector@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PBVVocalPhrase@@PAVVocalPart@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@PBVVocalPhrase@@PAVVocalPart@@@2@@Z -> ?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SyncProperty@UIList@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "unit": "default/UIList",
+   "size": 2664,
+   "fuzzy": 99.99249,
+   "mpn": 100.0,
+   "instructions": 666,
+   "charges": [
+    [
+     340,
+     "diff_arg",
+     "SYM ??0?$reverse_iterator@PAH@stlpmtx_std@@QAA@PAH@Z -> ?SetMaxDisplay@UIListState@@QAAXH@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SyncProperty@ChordShapeGenerator@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "unit": "default/ChordShapeGenerator",
+   "size": 2644,
+   "fuzzy": 99.99244,
+   "mpn": 100.0,
+   "instructions": 661,
+   "charges": [
+    [
+     655,
+     "diff_arg",
+     "SYM ?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z -> ?SyncProperty@Object@Hmx@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "??0DataArraySongInfo@@QAA@PAVDataArray@@0VSymbol@@@Z",
+   "unit": "default/DataArraySongInfo",
+   "size": 2496,
+   "fuzzy": 99.96795,
+   "mpn": 100.0,
+   "instructions": 624,
+   "charges": [
+    [
+     231,
+     "diff_arg",
+     "SYM ?reserve@?$vector@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z -> ?reserve@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
+    ],
+    [
+     283,
+     "diff_arg",
+     "SYM ?reserve@?$vector@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z -> ?reserve@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
+    ],
+    [
+     335,
+     "diff_arg",
+     "SYM ?reserve@?$vector@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z -> ?reserve@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
+    ],
+    [
+     383,
+     "diff_arg",
+     "SYM ?reserve@?$vector@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z -> ?reserve@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?ParseNode@@YA_NXZ",
+   "unit": "default/DataFile",
+   "size": 2432,
+   "fuzzy": 99.9671,
+   "mpn": 100.0,
+   "instructions": 608,
+   "charges": [
+    [
+     86,
+     "diff_arg",
+     "SYM ??1Queue@@QAA@XZ -> ?ReadEmbeddedFile@@YAPAVDataArray@@PBD_N@Z"
+    ],
+    [
+     459,
+     "diff_arg",
+     "reg r30->r11; reg r11->r30"
+    ],
+    [
+     587,
+     "diff_arg",
+     "SYM ??1Queue@@QAA@XZ -> ?ReadEmbeddedFile@@YAPAVDataArray@@PBD_N@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Handle@Synth@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+   "unit": "default/CharMeshHide",
+   "size": 2320,
+   "fuzzy": 99.99138,
+   "mpn": 100.0,
+   "instructions": 580,
+   "charges": [
+    [
+     457,
+     "diff_arg",
+     "SYM ??$Find@VFlow@@@Synth@@QAAPAVFlow@@PBD_N@Z -> ??$Find@VObject@Hmx@@@Synth@@QAAPAVObject@Hmx@@PBD_N@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Poll@CharLookAt@@UAAXXZ",
+   "unit": "default/CharLookAt",
+   "size": 2268,
+   "fuzzy": 99.91182,
+   "mpn": 100.0,
+   "instructions": 567,
+   "charges": [
+    [
+     191,
+     "diff_arg",
+     "reg f30->f0; reg f0->f30"
+    ],
+    [
+     192,
+     "diff_arg",
+     "reg f28->f0; reg f0->f28"
+    ],
+    [
+     328,
+     "diff_arg",
+     "reg f6->f12; reg f12->f6"
+    ],
+    [
+     415,
+     "diff_arg",
+     "reg f31->f8; reg f8->f31"
+    ],
+    [
+     416,
+     "diff_arg",
+     "reg f31->f7; reg f7->f31"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Init@ByteGrinder@@QAAXXZ",
+   "unit": "default/ByteGrinder",
+   "size": 2084,
+   "fuzzy": 99.32822,
+   "mpn": 100.0,
+   "instructions": 521,
+   "charges": [
+    [
+     50,
+     "diff_arg",
+     "SYM ?getRandomSequence32B@@YA?AVDataNode@@PAVDataArray@@@Z -> ?getRandomSequence32A@@YA?AVDataNode@@PAVDataArray@@@Z"
+    ],
+    [
+     52,
+     "diff_arg",
+     "SYM ?getRandomSequence32B@@YA?AVDataNode@@PAVDataArray@@@Z -> ?getRandomSequence32A@@YA?AVDataNode@@PAVDataArray@@@Z"
+    ],
+    [
+     59,
+     "diff_arg",
+     "SYM ?getRandomSequence32A@@YA?AVDataNode@@PAVDataArray@@@Z -> ?getRandomSequence32B@@YA?AVDataNode@@PAVDataArray@@@Z"
+    ],
+    [
+     61,
+     "diff_arg",
+     "SYM ?getRandomSequence32A@@YA?AVDataNode@@PAVDataArray@@@Z -> ?getRandomSequence32B@@YA?AVDataNode@@PAVDataArray@@@Z"
+    ],
+    [
+     71,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     77,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     83,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     89,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     95,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     101,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     107,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     113,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     119,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     125,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     131,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     137,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     143,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     149,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     155,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     161,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     167,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     173,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     179,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     185,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     191,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     197,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     203,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     209,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     215,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     221,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     227,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     233,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     239,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     245,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     251,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     257,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     297,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     303,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     309,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     315,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     321,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     327,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     333,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     339,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     345,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     351,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     357,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     363,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     369,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     375,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     381,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     387,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     393,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     399,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     405,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     411,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     417,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     423,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     429,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     435,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     441,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     447,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     448,
+     "diff_arg",
+     "SYM ?op40@@YA?AVDataNode@@PAVDataArray@@@Z -> ?op58@@YA?AVDataNode@@PAVDataArray@@@Z"
+    ],
+    [
+     450,
+     "diff_arg",
+     "SYM ?op40@@YA?AVDataNode@@PAVDataArray@@@Z -> ?op58@@YA?AVDataNode@@PAVDataArray@@@Z"
+    ],
+    [
+     453,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     459,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     465,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     471,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     477,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ],
+    [
+     483,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@P6A?AVDataNode@@PAVDataArray@@@ZV?$StlNodeAlloc@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@stlpmtx_std@@QAAXABQ6A?AVDataNode@@PAVDataArray@@@Z@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Poll@CharSleeve@@UAAXXZ",
+   "unit": "default/CharSleeve",
+   "size": 1980,
+   "fuzzy": 99.818184,
+   "mpn": 100.0,
+   "instructions": 495,
+   "charges": [
+    [
+     54,
+     "diff_arg",
+     "reg f0->f26; reg f26->f0"
+    ],
+    [
+     106,
+     "diff_arg",
+     "reg f9->f12; reg f12->f9"
+    ],
+    [
+     108,
+     "diff_arg",
+     "reg f8->f0; reg f0->f8"
+    ],
+    [
+     141,
+     "diff_arg",
+     "reg f11->f26; reg f26->f11"
+    ],
+    [
+     235,
+     "diff_arg",
+     "reg f29->f10; reg f10->f29"
+    ],
+    [
+     260,
+     "diff_arg",
+     "reg f13->f12; reg f12->f13"
+    ],
+    [
+     330,
+     "diff_arg",
+     "reg f10->f12; reg f12->f10"
+    ],
+    [
+     337,
+     "diff_arg",
+     "reg f8->f12; reg f12->f8"
+    ],
+    [
+     410,
+     "diff_arg",
+     "reg f12->f30; reg f30->f12"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Init@UIManager@@UAAXXZ",
+   "unit": "default/UI",
+   "size": 1916,
+   "fuzzy": 99.98956,
+   "mpn": 100.0,
+   "instructions": 479,
+   "charges": [
+    [
+     362,
+     "diff_arg",
+     "SYM ?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z -> ?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SyncDir@WorldInstance@@AAAXXZ",
+   "unit": "default/Instance",
+   "size": 1840,
+   "fuzzy": 99.95652,
+   "mpn": 100.0,
+   "instructions": 460,
+   "charges": [
+    [
+     172,
+     "diff_arg",
+     "SYM ?insert@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UWeightContext@CharBone@@U?$_Nonconst_traits@UWeightContext@CharBone@@@stlpmtx_std@@@2@U32@ABUWeightContext@CharBone@@@Z -> ?insert@?$list@UObjPair@@V?$StlNodeAlloc@UObjPair@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UObjPair@@U?$_Nonconst_traits@UObjPair@@@stlpmtx_std@@@2@U32@ABUObjPair@@@Z"
+    ],
+    [
+     322,
+     "diff_arg",
+     "SYM ?insert@?$list@UWeightContext@CharBone@@V?$StlNodeAlloc@UWeightContext@CharBone@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UWeightContext@CharBone@@U?$_Nonconst_traits@UWeightContext@CharBone@@@stlpmtx_std@@@2@U32@ABUWeightContext@CharBone@@@Z -> ?insert@?$list@UObjPair@@V?$StlNodeAlloc@UObjPair@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UObjPair@@U?$_Nonconst_traits@UObjPair@@@stlpmtx_std@@@2@U32@ABUObjPair@@@Z"
+    ],
+    [
+     324,
+     "diff_arg",
+     "SYM ??E?$ObjDirItr@VCharBone@@@@QAAAAV0@XZ -> ??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ"
+    ],
+    [
+     335,
+     "diff_arg",
+     "SYM ??0?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z -> ??0?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?PreInit@Rnd@@UAAXXZ",
+   "unit": "default/system/rndobj/Rnd",
+   "size": 1836,
+   "fuzzy": 99.96732,
+   "mpn": 100.0,
+   "instructions": 459,
+   "charges": [
+    [
+     25,
+     "diff_arg",
+     "SYM ?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z -> ?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z"
+    ],
+    [
+     115,
+     "diff_arg",
+     "SYM ?NewObject@Object@Hmx@@SAPAV12@XZ -> ?NewObject@DOFProc@@SAPAVObject@Hmx@@XZ"
+    ],
+    [
+     117,
+     "diff_arg",
+     "SYM ?NewObject@Object@Hmx@@SAPAV12@XZ -> ?NewObject@DOFProc@@SAPAVObject@Hmx@@XZ"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Poll@CharIKHead@@UAAXXZ",
+   "unit": "default/CharIKHead",
+   "size": 1820,
+   "fuzzy": 99.93407,
+   "mpn": 100.0,
+   "instructions": 455,
+   "charges": [
+    [
+     127,
+     "diff_arg",
+     "reg f30->f0; reg f0->f30"
+    ],
+    [
+     129,
+     "diff_arg",
+     "reg f29->f0; reg f0->f29"
+    ],
+    [
+     291,
+     "diff_arg",
+     "reg f10->f0; reg f0->f10"
+    ]
+   ]
+  },
+  {
+   "symbol": "?AddObject@BandCharacter@@QAAXPAVObject@Hmx@@@Z",
+   "unit": "default/BandCharacter",
+   "size": 1716,
+   "fuzzy": 99.98834,
+   "mpn": 100.0,
+   "instructions": 429,
+   "charges": [
+    [
+     213,
+     "diff_arg",
+     "SYM ?Link@?$ObjPtrList@VRndMesh@@VObjectDir@@@@AAAXViterator@1@PAUNode@1@@Z -> ?Link@?$ObjPtrList@VCharCollide@@VObjectDir@@@@AAAXViterator@1@PAUNode@1@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?PropSync@@YA_NAAUTarget@HamCamShot@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "unit": "default/BandCamShot",
+   "size": 1692,
+   "fuzzy": 99.98818,
+   "mpn": 100.0,
+   "instructions": 423,
+   "charges": [
+    [
+     48,
+     "diff_arg",
+     "SYM ?UpdateTarget@Target@BandCamShot@@QAAXVSymbol@@PAV2@@Z -> ?UpdateTarget@Target@HamCamShot@@QAAXVSymbol@@PAV2@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?RGGetChordName@@YAXPADHABVGameGem@@HH_N@Z",
+   "unit": "default/RGUtl",
+   "size": 1652,
+   "fuzzy": 99.95158,
+   "mpn": 100.0,
+   "instructions": 413,
+   "charges": [
+    [
+     84,
+     "diff_arg",
+     "SYM lbl_82C78598 -> ?gSlashString@@3HA; reg r26->r25"
+    ],
+    [
+     87,
+     "diff_arg",
+     "SYM lbl_82C7859C -> ?gSlashFret@@3HA; reg r27->r26"
+    ],
+    [
+     92,
+     "diff_arg",
+     "SYM lbl_82C78594 -> ?gSlashNote@@3HA; reg r25->r27"
+    ],
+    [
+     410,
+     "diff_arg",
+     "SYM ??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z -> ??1GameGem@@QAA@XZ"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SetParameter@EQEffect@@QAAXHM@Z",
+   "unit": "default/EQEffect",
+   "size": 1644,
+   "fuzzy": 99.95134,
+   "mpn": 100.0,
+   "instructions": 411,
+   "charges": [
+    [
+     229,
+     "diff_arg",
+     "reg f13->f12; reg f12->f13"
+    ],
+    [
+     393,
+     "diff_arg",
+     "reg f10->f9; reg f9->f10"
+    ]
+   ]
+  },
+  {
+   "symbol": "??0SongParser@@QAA@AAVInternalSongParserSink@@HAAPAVTempoMap@@AAPAVMeasureMap@@H@Z",
+   "unit": "default/SongParser",
+   "size": 1632,
+   "fuzzy": 99.963234,
+   "mpn": 100.0,
+   "instructions": 408,
+   "charges": [
+    [
+     165,
+     "diff_arg",
+     "SYM ??__EgNotifies@@YAXXZ -> ?SystemConfig@@YAPAVDataArray@@XZ"
+    ],
+    [
+     299,
+     "diff_arg",
+     "SYM ?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z -> ?insert@?$list@W4TrackType@@V?$StlNodeAlloc@W4TrackType@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@W4TrackType@@U?$_Nonconst_traits@W4TrackType@@@stlpmtx_std@@@2@U32@ABW4TrackType@@@Z"
+    ],
+    [
+     343,
+     "diff_arg",
+     "SYM ?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z -> ?insert@?$list@W4TrackType@@V?$StlNodeAlloc@W4TrackType@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@W4TrackType@@U?$_Nonconst_traits@W4TrackType@@@stlpmtx_std@@@2@U32@ABW4TrackType@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Cleanup@EventTrigger@@KA?AVDataNode@@PAVDataArray@@@Z",
+   "unit": "default/EventTrigger",
+   "size": 1596,
+   "fuzzy": 99.987465,
+   "mpn": 100.0,
+   "instructions": 399,
+   "charges": [
+    [
+     56,
+     "diff_arg",
+     "SYM ?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z -> ?insert@?$list@PAVEventTrigger@@V?$StlNodeAlloc@PAVEventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVEventTrigger@@U?$_Nonconst_traits@PAVEventTrigger@@@stlpmtx_std@@@2@U32@ABQAVEventTrigger@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?UpdateMix@MetaMusic@@QAAXXZ",
+   "unit": "default/MetaMusic",
+   "size": 1572,
+   "fuzzy": 99.84733,
+   "mpn": 100.0,
+   "instructions": 393,
+   "charges": [
+    [
+     206,
+     "diff_arg",
+     "reg f29->f1; reg f30->f31"
+    ],
+    [
+     209,
+     "diff_arg",
+     "reg f1->f29; reg f31->f30"
+    ],
+    [
+     250,
+     "diff_arg",
+     "reg f29->f1; reg f30->f31"
+    ],
+    [
+     254,
+     "diff_arg",
+     "reg f1->f29; reg f31->f30"
+    ],
+    [
+     269,
+     "diff_arg",
+     "reg f29->f1; reg f30->f31"
+    ],
+    [
+     273,
+     "diff_arg",
+     "reg f1->f29; reg f31->f30"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Init@HDCache@@QAAXXZ",
+   "unit": "default/HDCache",
+   "size": 1504,
+   "fuzzy": 99.77393,
+   "mpn": 100.0,
+   "instructions": 376,
+   "charges": [
+    [
+     27,
+     "diff_arg",
+     "SYM ??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z -> ?Flush@HDCache@@AAAXXZ"
+    ],
+    [
+     52,
+     "diff_arg",
+     "SYM ?_M_fill_insert@?$vector@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVObject@Hmx@@IABQAV34@@Z -> ?_M_fill_insert@?$vector@PAVFile@@V?$StlNodeAlloc@PAVFile@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVFile@@IABQAV3@@Z"
+    ],
+    [
+     75,
+     "diff_arg",
+     "SYM ?_M_fill_insert@?$vector@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVObject@Hmx@@IABQAV34@@Z -> ?_M_fill_insert@?$vector@PAVFile@@V?$StlNodeAlloc@PAVFile@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVFile@@IABQAV3@@Z"
+    ],
+    [
+     196,
+     "diff_arg",
+     "reg r30->r28; reg r28->r30"
+    ],
+    [
+     205,
+     "diff_arg",
+     "reg r29->r28; reg r28->r29"
+    ],
+    [
+     214,
+     "diff_arg",
+     "reg r30->r28; reg r28->r30"
+    ],
+    [
+     222,
+     "diff_arg",
+     "reg r30->r28; reg r28->r30"
+    ],
+    [
+     223,
+     "diff_arg",
+     "reg r29->r28; reg r28->r29"
+    ],
+    [
+     231,
+     "diff_arg",
+     "reg r29->r28; reg r28->r29"
+    ],
+    [
+     232,
+     "diff_arg",
+     "reg r30->r28; reg r28->r30"
+    ]
+   ]
+  },
+  {
+   "symbol": "?CopyTypeProperties@@YAXPAVObject@Hmx@@0@Z",
+   "unit": "default/system/obj/Utl",
+   "size": 1472,
+   "fuzzy": 99.945656,
+   "mpn": 100.0,
+   "instructions": 368,
+   "charges": [
+    [
+     143,
+     "diff_arg",
+     "SYM ??$_S_sort@IV?$StlNodeAlloc@I@stlpmtx_std@@U?$less@I@2@@stlpmtx_std@@YAXAAV?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@0@U?$less@I@0@@Z -> ??$_S_sort@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@U?$less@VSymbol@@@3@@stlpmtx_std@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@0@U?$less@VSymbol@@@0@@Z"
+    ],
+    [
+     146,
+     "diff_arg",
+     "SYM ??$_S_sort@IV?$StlNodeAlloc@I@stlpmtx_std@@U?$less@I@2@@stlpmtx_std@@YAXAAV?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@0@U?$less@I@0@@Z -> ??$_S_sort@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@U?$less@VSymbol@@@3@@stlpmtx_std@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@0@U?$less@VSymbol@@@0@@Z"
+    ],
+    [
+     149,
+     "diff_arg",
+     "SYM ??$_S_sort@IV?$StlNodeAlloc@I@stlpmtx_std@@U?$less@I@2@@stlpmtx_std@@YAXAAV?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@0@U?$less@I@0@@Z -> ??$_S_sort@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@U?$less@VSymbol@@@3@@stlpmtx_std@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@0@U?$less@VSymbol@@@0@@Z"
+    ],
+    [
+     152,
+     "diff_arg",
+     "SYM ??$_S_sort@IV?$StlNodeAlloc@I@stlpmtx_std@@U?$less@I@2@@stlpmtx_std@@YAXAAV?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@0@U?$less@I@0@@Z -> ??$_S_sort@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@U?$less@VSymbol@@@3@@stlpmtx_std@@YAXAAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@0@U?$less@VSymbol@@@0@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Load@RndText@@UAAXAAVBinStream@@@Z",
+   "unit": "default/Text",
+   "size": 1400,
+   "fuzzy": 99.98572,
+   "mpn": 100.0,
+   "instructions": 350,
+   "charges": [
+    [
+     57,
+     "diff_arg",
+     "SYM ??1?$ObjPtrList@VCharInterest@@VObjectDir@@@@UAA@XZ -> ??1?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@UAA@XZ"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SyncProperty@RndTexRenderer@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "unit": "default/TexRenderer",
+   "size": 1380,
+   "fuzzy": 99.985504,
+   "mpn": 100.0,
+   "instructions": 345,
+   "charges": [
+    [
+     339,
+     "diff_arg",
+     "SYM ?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z -> ?SyncProperty@Object@Hmx@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?CheckBSPTree@@YA_NPBVBSPNode@@ABVBox@@@Z",
+   "unit": "default/Geo",
+   "size": 1336,
+   "fuzzy": 99.91018,
+   "mpn": 100.0,
+   "instructions": 334,
+   "charges": [
+    [
+     25,
+     "diff_arg",
+     "SYM ?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVStreakInfo@Stats@@@Z -> ?resize@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVVector2@@@Z"
+    ],
+    [
+     86,
+     "diff_arg",
+     "SYM ?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVStreakInfo@Stats@@@Z -> ?resize@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVVector2@@@Z"
+    ],
+    [
+     140,
+     "diff_arg",
+     "SYM ?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVStreakInfo@Stats@@@Z -> ?resize@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVVector2@@@Z"
+    ],
+    [
+     185,
+     "diff_arg",
+     "SYM ?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVStreakInfo@Stats@@@Z -> ?resize@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVVector2@@@Z"
+    ],
+    [
+     230,
+     "diff_arg",
+     "SYM ?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVStreakInfo@Stats@@@Z -> ?resize@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVVector2@@@Z"
+    ],
+    [
+     275,
+     "diff_arg",
+     "SYM ?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVStreakInfo@Stats@@@Z -> ?resize@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVVector2@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?PostLoad@CharClipSet@@UAAXAAVBinStream@@@Z",
+   "unit": "default/CharClipSet",
+   "size": 1324,
+   "fuzzy": 99.98489,
+   "mpn": 100.0,
+   "instructions": 331,
+   "charges": [
+    [
+     103,
+     "diff_arg",
+     "SYM ??$__uninitialized_copy@PAVRangeShift@GemTrack@@PAV12@@stlpmtx_std@@YAPAVRangeShift@GemTrack@@PAV12@00ABU__false_type@0@@Z -> ??E?$ObjDirItr@VCharClip@@@@QAAAAV0@XZ"
+    ]
+   ]
+  },
+  {
+   "symbol": "?LinearizeKeys@@YAXPAVRndTransAnim@@MMMMM@Z",
+   "unit": "default/system/rndobj/Utl",
+   "size": 1296,
+   "fuzzy": 99.81481,
+   "mpn": 100.0,
+   "instructions": 324,
+   "charges": [
+    [
+     38,
+     "diff_arg",
+     "SYM ?FindBounds@?$Keys@VQuat@Hmx@@V12@@@QAAXAAM0AAH1@Z -> ?FindBounds@?$Keys@VVector3@@V1@@@QAAXAAM0AAH1@Z"
+    ],
+    [
+     49,
+     "diff_arg",
+     "SYM ?push_back@?$vector@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPressRec@@@Z -> ?push_back@?$vector@V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$Key@VVector3@@@@@Z"
+    ],
+    [
+     56,
+     "diff_arg",
+     "reg r11->r29; reg r29->r11"
+    ],
+    [
+     104,
+     "diff_arg",
+     "reg r10->r29; reg r29->r10"
+    ],
+    [
+     106,
+     "diff_arg",
+     "SYM ?_M_fill_insert@?$vector@VMultiplierInfo@Stats@@V?$StlNodeAlloc@VMultiplierInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMultiplierInfo@Stats@@IABV34@@Z -> ?_M_fill_insert@?$vector@V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector3@@@@IABV3@@Z"
+    ],
+    [
+     156,
+     "diff_arg",
+     "SYM ?push_back@?$vector@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPressRec@@@Z -> ?push_back@?$vector@V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$Key@VQuat@Hmx@@@@@Z"
+    ],
+    [
+     196,
+     "diff_arg",
+     "SYM ?_M_fill_insert@?$vector@VMultiplierInfo@Stats@@V?$StlNodeAlloc@VMultiplierInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMultiplierInfo@Stats@@IABV34@@Z -> ?_M_fill_insert@?$vector@V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VQuat@Hmx@@@@IABV3@@Z"
+    ],
+    [
+     235,
+     "diff_arg",
+     "SYM ?FindBounds@?$Keys@VQuat@Hmx@@V12@@@QAAXAAM0AAH1@Z -> ?FindBounds@?$Keys@VVector3@@V1@@@QAAXAAM0AAH1@Z"
+    ],
+    [
+     246,
+     "diff_arg",
+     "SYM ?push_back@?$vector@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPressRec@@@Z -> ?push_back@?$vector@V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABV?$Key@VVector3@@@@@Z"
+    ],
+    [
+     303,
+     "diff_arg",
+     "SYM ?_M_fill_insert@?$vector@VMultiplierInfo@Stats@@V?$StlNodeAlloc@VMultiplierInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVMultiplierInfo@Stats@@IABV34@@Z -> ?_M_fill_insert@?$vector@V?$Key@VVector3@@@@V?$StlNodeAlloc@V?$Key@VVector3@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector3@@@@IABV3@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SetFrame@CharClipSet@@UAAXMM@Z",
+   "unit": "default/CharClipSet",
+   "size": 1288,
+   "fuzzy": 99.984474,
+   "mpn": 100.0,
+   "instructions": 322,
+   "charges": [
+    [
+     190,
+     "diff_arg",
+     "SYM ?find@FixedString@@QBAIPBD@Z -> ?find@String@@QBAIPBD@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?DrawShowing@TrackDir@@UAAXXZ",
+   "unit": "default/TrackDir",
+   "size": 1252,
+   "fuzzy": 99.69649,
+   "mpn": 100.0,
+   "instructions": 313,
+   "charges": [
+    [
+     6,
+     "diff_arg",
+     "reg r27->r26"
+    ],
+    [
+     8,
+     "diff_arg",
+     "reg r27->r26"
+    ],
+    [
+     15,
+     "diff_arg",
+     "reg r27->r26"
+    ],
+    [
+     17,
+     "diff_arg",
+     "reg r27->r26"
+    ],
+    [
+     19,
+     "diff_arg",
+     "reg r27->r26"
+    ],
+    [
+     34,
+     "diff_arg",
+     "reg r26->r28"
+    ],
+    [
+     41,
+     "diff_arg",
+     "reg r26->r28; SYM lbl_82CC2928 -> ?sCurrent@RndCam@@1PAV1@A"
+    ],
+    [
+     47,
+     "diff_arg",
+     "reg r27->r26"
+    ],
+    [
+     48,
+     "diff_arg",
+     "reg r27->r26"
+    ],
+    [
+     90,
+     "diff_arg",
+     "reg r28->r27"
+    ],
+    [
+     139,
+     "diff_arg",
+     "reg r28->r27"
+    ],
+    [
+     183,
+     "diff_arg",
+     "reg r28->r27"
+    ],
+    [
+     231,
+     "diff_arg",
+     "reg r28->r27"
+    ],
+    [
+     259,
+     "diff_arg",
+     "reg r28->r27"
+    ],
+    [
+     295,
+     "diff_arg",
+     "reg r27->r26"
+    ],
+    [
+     296,
+     "diff_arg",
+     "reg r27->r26"
+    ],
+    [
+     300,
+     "diff_arg",
+     "reg r26->r28"
+    ],
+    [
+     302,
+     "diff_arg",
+     "reg r26->r28"
+    ],
+    [
+     303,
+     "diff_arg",
+     "reg r26->r28"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Update@MicInputArrow@@UAAXXZ",
+   "unit": "default/MicInputArrow",
+   "size": 1176,
+   "fuzzy": 99.863945,
+   "mpn": 100.0,
+   "instructions": 294,
+   "charges": [
+    [
+     50,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVEventTrigger@@V?$StlNodeAlloc@PAVEventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVEventTrigger@@@Z"
+    ],
+    [
+     84,
+     "diff_arg",
+     "reg r11->r28; reg r28->r11"
+    ],
+    [
+     93,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVEventTrigger@@V?$StlNodeAlloc@PAVEventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVEventTrigger@@@Z"
+    ],
+    [
+     136,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVEventTrigger@@V?$StlNodeAlloc@PAVEventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVEventTrigger@@@Z"
+    ],
+    [
+     179,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVEventTrigger@@V?$StlNodeAlloc@PAVEventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVEventTrigger@@@Z"
+    ],
+    [
+     222,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVEventTrigger@@V?$StlNodeAlloc@PAVEventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVEventTrigger@@@Z"
+    ],
+    [
+     265,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?NotifyFileLoaded@FileMerger@@IAAPAUMerger@1@PAVLoader@@PAVObjectDir@@@Z",
+   "unit": "default/FileMerger",
+   "size": 1148,
+   "fuzzy": 99.98258,
+   "mpn": 100.0,
+   "instructions": 287,
+   "charges": [
+    [
+     269,
+     "diff_arg",
+     "SYM ??$__uninitialized_copy@PAVRangeShift@GemTrack@@PAV12@@stlpmtx_std@@YAPAVRangeShift@GemTrack@@PAV12@00ABU__false_type@0@@Z -> ??E?$ObjDirItr@VCharClip@@@@QAAAAV0@XZ"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Load@OutfitConfig@@UAAXAAVBinStream@@@Z",
+   "unit": "default/OutfitConfig",
+   "size": 1120,
+   "fuzzy": 99.89286,
+   "mpn": 100.0,
+   "instructions": 280,
+   "charges": [
+    [
+     113,
+     "diff_arg",
+     "SYM ?resize@?$ObjVector@VTransformArea@@@@QAAXI@Z -> ?resize@?$ObjVector@VMatSwap@OutfitConfig@@@@QAAXI@Z"
+    ],
+    [
+     134,
+     "diff_arg",
+     "SYM ??4?$ObjVector@VTransformCrowd@@@@QAAXABV0@@Z -> ??4?$ObjVector@V?$ObjPtr@VRndTex@@@@@@QAAXABV0@@Z"
+    ],
+    [
+     185,
+     "diff_arg",
+     "SYM ??$?5V?$ObjOwnerPtr@VCharClip@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjOwnerPtr@VCharClip@@@@@@@Z -> ??$?5V?$ObjPtr@VRndDir@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjPtr@VRndDir@@@@@@@Z"
+    ],
+    [
+     204,
+     "diff_arg",
+     "SYM ??$?5V?$ObjOwnerPtr@VCharClip@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjOwnerPtr@VCharClip@@@@@@@Z -> ??$?5V?$ObjPtr@VRndDir@@@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@V?$ObjPtr@VRndDir@@@@@@@Z"
+    ],
+    [
+     206,
+     "diff_arg",
+     "SYM ??1?$vector@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ -> ??1?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+    ],
+    [
+     215,
+     "diff_arg",
+     "SYM ??$?5VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@@YAAAVBinStreamRev@@AAV0@AAV?$vector@VSongPattern@@V?$StlNodeAlloc@VSongPattern@@@stlpmtx_std@@@stlpmtx_std@@@Z -> ??$?5VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SyncProperty@SongSectionController@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "unit": "default/SongSectionController",
+   "size": 1116,
+   "fuzzy": 99.98208,
+   "mpn": 100.0,
+   "instructions": 279,
+   "charges": [
+    [
+     28,
+     "diff_arg",
+     "SYM ?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z -> ?SyncProperty@Object@Hmx@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?MergeCharacter@CharBoneDir@@IAAXABVFilePath@@@Z",
+   "unit": "default/CharBoneDir",
+   "size": 1116,
+   "fuzzy": 99.96416,
+   "mpn": 100.0,
+   "instructions": 279,
+   "charges": [
+    [
+     90,
+     "diff_arg",
+     "SYM ?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z -> ?insert@?$list@PAVRndTransformable@@V?$StlNodeAlloc@PAVRndTransformable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndTransformable@@U?$_Nonconst_traits@PAVRndTransformable@@@stlpmtx_std@@@2@U32@ABQAVRndTransformable@@@Z"
+    ],
+    [
+     168,
+     "diff_arg",
+     "SYM ?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z -> ?insert@?$list@PAVRndTransformable@@V?$StlNodeAlloc@PAVRndTransformable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndTransformable@@U?$_Nonconst_traits@PAVRndTransformable@@@stlpmtx_std@@@2@U32@ABQAVRndTransformable@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?Load@CharEyes@@UAAXAAVBinStream@@@Z",
+   "unit": "default/CharEyes",
+   "size": 1084,
+   "fuzzy": 99.98155,
+   "mpn": 100.0,
+   "instructions": 271,
+   "charges": [
+    [
+     36,
+     "diff_arg",
+     "SYM ??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAVBinStreamRev@@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z -> ??$?5UEyeDesc@CharEyes@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@UEyeDesc@CharEyes@@@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SyncProperty@LabelNumberTicker@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "unit": "default/LabelNumberTicker",
+   "size": 1080,
+   "fuzzy": 99.98148,
+   "mpn": 100.0,
+   "instructions": 270,
+   "charges": [
+    [
+     52,
+     "diff_arg",
+     "SYM ?SetObjConcrete@?$ObjRefConcrete@VBandCharacter@@VObjectDir@@@@QAAXPAVBandCharacter@@@Z -> ?SetObjConcrete@?$ObjRefConcrete@VUILabel@@VObjectDir@@@@QAAXPAVUILabel@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "??0TrackWatcherImpl@@QAA@HABVUserGuid@@HPAVSongData@@PAVGameGemList@@PAVTrackWatcherParent@@PAVDataArray@@H@Z",
+   "unit": "default/TrackWatcherImpl",
+   "size": 1080,
+   "fuzzy": 99.96296,
+   "mpn": 100.0,
+   "instructions": 270,
+   "charges": [
+    [
+     229,
+     "diff_arg",
+     "SYM ?_M_fill_insert@?$vector@PAMV?$StlNodeAlloc@PAM@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAMIABQAM@Z -> ?_M_fill_insert@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@AAAXPAMIABM@Z"
+    ],
+    [
+     263,
+     "diff_arg",
+     "SYM ?_M_fill_insert@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNote@MidiParser@@IABU34@@Z -> ?_M_fill_insert@?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUGemInProgress@@IABU3@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?UpdateOverlay@NgRnd@@MAAMPAVRndOverlay@@M@Z",
+   "unit": "default/Env_NG",
+   "size": 1052,
+   "fuzzy": 99.73384,
+   "mpn": 100.0,
+   "instructions": 263,
+   "charges": [
+    [
+     129,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     137,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     145,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     153,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     161,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     169,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     177,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     185,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     193,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     201,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     209,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     217,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     225,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ],
+    [
+     233,
+     "diff_arg",
+     "SYM ??$MakeString@PBDPBD@@YAPBDPBD00@Z -> ??$MakeString@HH@@YAPBDPBDHH@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "?SyncProperty@CharHair@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "unit": "default/CharHair",
+   "size": 1048,
+   "fuzzy": 99.98092,
+   "mpn": 100.0,
+   "instructions": 262,
+   "charges": [
+    [
+     214,
+     "diff_arg",
+     "SYM ??$PropSync@UDynamicPropertyEntry@Flow@@@@YA_NAAV?$ObjVector@UDynamicPropertyEntry@Flow@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z -> ??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+    ]
+   ]
+  },
+  {
+   "symbol": "??0FingerShape@@QAA@PAVRndDir@@@Z",
+   "unit": "default/FingerShape",
+   "size": 1040,
+   "fuzzy": 99.61539,
+   "mpn": 100.0,
+   "instructions": 260,
+   "charges": [
+    [
+     53,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     62,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     71,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     80,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     89,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     98,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     107,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     116,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     125,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     134,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     143,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     152,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     161,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     170,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     179,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     188,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     197,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     206,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     215,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ],
+    [
+     224,
+     "diff_arg",
+     "SYM ?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z -> ?push_back@?$vector@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndAnimatable@@@Z"
+    ]
+   ]
+  }
+ ]
+}
