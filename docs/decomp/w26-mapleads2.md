@@ -100,6 +100,21 @@ about the A/B.
 
 ## Lead 2 — `BandCamShot` / `HamCamShot` — REFUSED, with the numbers
 
+> ✅ **FOLLOWED UP AND SHIPPED at +2,364 B by lane W29-CAMSHOT
+> (`docs/decomp/w29-camshot.md`, 2026-08-17).** Every number below reproduces
+> exactly. **Two of its conclusions are superseded:**
+> ⛔ *"our two class definitions genuinely diverge (~88 B)"* — measured on the
+> EH-fixed reader, **exactly 1 of 15 rows diverges**; the other 14 are
+> byte-size-identical under both spellings. The whole 88 B was one missing
+> `SYNC_PROP(to, o.mXfm)`.
+> ⛔ *"a coherent rename would pair that row against the wrong body"* — true
+> before the source fix, and the reason the rename must follow it. The charges
+> are on **callee spellings inside the bodies**, so the rename is a **BODY
+> SWAP**, not a re-pairing.
+> The refusals **stand and were strengthened**: the 4 duplicate-name collisions
+> are now adjudicated on **differing absolute call targets**, and excluding them
+> drops the +576 B group-85 capture automatically.
+
 ### The anchor applies, it fires cleanly, and it confirms an existing in-tree claim
 
 | probe in retail `band.exe` | count |
@@ -163,6 +178,13 @@ then rename the whole family. That is a `src/**` change needing the native gate 
 is out of proportion to a ≤+1,196 B genuine prize. **Well-specified next lane.**
 
 ### ⛔ An instrument defect found in `cascade_price`, in the place it matters
+
+> ✅ **FIXED by W29 (`ce2df740`)** — `can_define` now compares the defined
+> COMDAT's body size against retail's extent and reports `SIZE_MISMATCH`, with a
+> tolerance calibrated on 19,074 `fuzzy == 100` rows (delta is only `{−4,0,+4}`
+> there; **0** exceed 8) and a `selftest` whose `--self-break` proves it goes red.
+> ⚠ W29 found a **SECOND instance of the same defect** it did not fix: local-row
+> charge verdicts are computed against the **pre-swap** body. See w29-camshot.md.
 
 `cascade_price`'s local verdict is **`PAIRS (obj defines the new name)`**, which
 checks that our obj *defines* the symbol — **not that the defined body is the same
