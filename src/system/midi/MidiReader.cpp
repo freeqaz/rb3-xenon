@@ -62,7 +62,7 @@ void MidiReader::ReadTrackHeader(BinStream &bs) {
     MILO_ASSERT(mState == kNewTrack, 0x180);
     MidiChunkHeader header(bs);
     if (header.mID != MidiChunkID::kMTrk) {
-        MILO_NOTIFY(
+        MILO_WARN(
             "%s: MIDI track header for track %d is corrupt",
             mStreamName.c_str(),
             mCurTrackIndex
@@ -162,7 +162,7 @@ void MidiReader::ReadMidiEvent(
         data2 = 0;
         break;
     default:
-        MILO_NOTIFY(
+        MILO_WARN(
             "%s (%s): Cannot parse event %i",
             mStreamName.c_str(),
             mCurTrackName.c_str(),
@@ -191,6 +191,34 @@ float pow(float base, int exponent) {
     return result;
 }
 
+// MILO_WARN (not MILO_NOTIFY) throughout this file -- lane W27-FRAMEQ, 2026-08-17.
+// dc3-decomp spells every site in this TU MILO_NOTIFY and we inherited that, but DC3
+// is NEWER than RB3: the RB3-era rb3-Wii oracle spells them all MILO_WARN, and RETAIL
+// BYTES break the tie in rb3-Wii's favour.  MILO_WARN expands to MiloStripEval (a real
+// function call -> MSVC evaluates arguments RIGHT-TO-LEFT); MILO_NOTIFY expands to the
+// comma form ((void)(args)) which is LEFT-TO-RIGHT.  See the long analysis above
+// MILO_WARN in os/Debug.h -- and do NOT "fix" that asymmetry globally, it is measured
+// -20 strict.  Only ONE site in this file can observe the difference: the track-name
+// warning below, which passes TWO TickFormat() calls.  Retail runs TickFormat(tick,..)
+// BEFORE TickFormat(0,..) => right-to-left => the function-call form.  Whole-binary A/B
+// of the flip: exactly ONE row moved (ReadMetaEvent 99.43621 -> 99.93004 fuzzy, both
+// hard `replace` diffs closed), zero regressions, dmatched/dbytes/dhonest all +0.  The
+// other 17 sites here carry at most one side-effecting arg, so both macro forms emit
+// identical code -- which is why flipping them costs nothing.
+//
+// REFUTED, do not retry -- ReadMetaEvent's remaining 17 charges are NOT declaration
+// order.  Retail's frame is 0x1c0 vs our 0x1b0 and the residue is three independent
+// causes: (a) retail gives the float->int conversion temp (fctiwz/stfd/lwz for
+// `powed`) its OWN 8-byte slot at 0x68, while we overlay it onto ts_b at 0x60 -- that
+// alone shifts ts_t +8 and buf[0x100] +0x10 after 16-byte alignment, i.e. the whole
+// frame delta and 11 of the 17 sites; (b) a 6-site permutation of the byte locals
+// (retail ts_num=0x50 c=0x51 b=0x52 ts_den=0x53 a=0x54; ours ts_num=0x50 a=0x51
+// b=0x52 c=0x53 ts_den=0x54).  Reordering `unsigned char c, b, a;` to `a, b, c` was
+// MEASURED BYTE-IDENTICAL (obj confirmed 7.5 s newer than source, so the null is a
+// real compile, not a stale artifact) -- MSVC canonicalizes it, exactly as lane W23
+// found for named-vs-temporary and lexical scope in synth/SampleData.cpp.  matched_code
+// keys on fuzzy==100 and is all-or-nothing, so ALL 17 must close for the 972 B; with no
+// lever for (a) or (b) this row is not collectable by source work today.
 void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
     MidiVarLenNumber num(bs);
     unsigned int numVal = num.Value();
@@ -205,7 +233,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
         if (numVal >= 0x100) {
             bs.Read(buf, 8);
             buf[8] = 0;
-            MILO_NOTIFY(
+            MILO_WARN(
                 "%s (%s): Text event beginning with '%s' at %s exceeds maximum allowed length of %d characters",
                 mStreamName.c_str(),
                 mCurTrackName.c_str(),
@@ -218,7 +246,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
             buf[numVal] = 0;
             if (type == 3) {
                 if (tick != 0) {
-                    MILO_NOTIFY(
+                    MILO_WARN(
                         "%s (%s): MIDI track name event must appear at %s; found track name '%s' at %s",
                         mStreamName.c_str(),
                         buf,
@@ -233,7 +261,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
                 if (str.empty())
                     str = buf;
                 else if (str != buf) {
-                    MILO_NOTIFY(
+                    MILO_WARN(
                         "%s (%s): Track contains multiple track name events (%s and %s)",
                         mStreamName.c_str(),
                         str.c_str(),
@@ -254,7 +282,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
         bs >> c >> b >> a;
         int product = a + c * 0x10000 + b * 0x100;
         if (product < 200000) {
-            MILO_NOTIFY(
+            MILO_WARN(
                 "%s (%s): Tempo marker at %s (%f bpm) is too fast; maximum is 300 bpm",
                 mStreamName.c_str(),
                 mCurTrackName.c_str(),
@@ -263,7 +291,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
             );
         }
         if (product > 1500000) {
-            MILO_NOTIFY(
+            MILO_WARN(
                 "%s (%s): Tempo marker at %s (%f bpm) is too slow; minimum is 40 bpm",
                 mStreamName.c_str(),
                 mCurTrackName.c_str(),
@@ -274,7 +302,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
         if (mTempoMap->AddTempoInfoPoint(tick, product)) {
             mRcvr.OnTempo(tick, product);
         } else {
-            MILO_NOTIFY(
+            MILO_WARN(
                 "%s (%s): Tempo marker at %s (%.f bpm) conflicts with other tempo markers",
                 mStreamName.c_str(),
                 mCurTrackName.c_str(),
@@ -303,7 +331,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
         unsigned char ts_num, ts_den;
         bs >> ts_num >> ts_den;
         if (ts_den > 6) {
-            MILO_NOTIFY(
+            MILO_WARN(
                 "%s (%s): Time signature at %s has invalid denominator (2^%d); max is 64 (2^6)",
                 mStreamName.c_str(),
                 mCurTrackName.c_str(),
@@ -313,7 +341,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
         } else {
             int powed = pow(2.0f, (int)ts_den);
             if (ts_num == 0) {
-                MILO_NOTIFY(
+                MILO_WARN(
                     "%s (%s): Time signature %d/%d at %s has invalid numerator (%d)",
                     mStreamName.c_str(),
                     mCurTrackName.c_str(),
@@ -328,7 +356,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
             if (mMeasureMap->AddTimeSignature(ts_m, ts_num, powed, true)) {
                 mRcvr.OnTimeSig(tick, ts_num, powed);
             } else {
-                MILO_NOTIFY(
+                MILO_WARN(
                     "%s (%s): Time signature %d/%d at %s overlaps or conflicts with nearby time signatures",
                     mStreamName.c_str(),
                     mCurTrackName.c_str(),
@@ -350,7 +378,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
     case kKeySignature:
         break;
     default:
-        MILO_NOTIFY(
+        MILO_WARN(
             "%s (%s): Cannot parse meta event %i",
             mStreamName.c_str(),
             mCurTrackName.c_str(),
@@ -367,12 +395,12 @@ void MidiReader::ReadFileHeader(BinStream &bs) {
     MidiChunkHeader header(bs);
 
     if ((header.mID != MidiChunkID::kMThd) || header.Length() != 6U) {
-        MILO_NOTIFY("%s: MIDI file header is corrupt", mStreamName.c_str());
+        MILO_WARN("%s: MIDI file header is corrupt", mStreamName.c_str());
     }
     short midiType;
     bs >> midiType;
     if (midiType != 1) {
-        MILO_NOTIFY(
+        MILO_WARN(
             "%s: Only type 1 MIDI files are supported; this file is type %d",
             mStreamName.c_str(),
             midiType
@@ -380,19 +408,19 @@ void MidiReader::ReadFileHeader(BinStream &bs) {
     }
     bs >> mNumTracks;
     if (mNumTracks <= 0) {
-        MILO_NOTIFY("%s: MIDI file has no tracks", mStreamName.c_str());
+        MILO_WARN("%s: MIDI file has no tracks", mStreamName.c_str());
     } else {
         mTrackNames.resize(mNumTracks, "");
     }
     bs >> mTicksPerQuarter;
     if ((unsigned short)mTicksPerQuarter & 0x8000U) {
-        MILO_NOTIFY(
+        MILO_WARN(
             "%s: MIDI file uses SMPTE time division; this is not allowed",
             mStreamName.c_str()
         );
     }
     if (mTicksPerQuarter != 480) {
-        MILO_NOTIFY(
+        MILO_WARN(
             "%s: Time division must be 480 ticks per quarter; this file is %d ticks per quarter",
             mStreamName.c_str(),
             mTicksPerQuarter
@@ -421,7 +449,7 @@ void MidiReader::ReadSystemEvent(int tick, unsigned char type, BinStream &bs) {
         break;
     }
     default:
-        MILO_NOTIFY(
+        MILO_WARN(
             "%s (%s): Cannot parse system event %i",
             mStreamName.c_str(),
             mCurTrackName.c_str(),
