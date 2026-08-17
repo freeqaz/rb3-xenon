@@ -67,8 +67,16 @@ public:
     virtual void Enter();
     virtual void Exit();
     // UIComponent own-virtuals — retail-360 order/set verified from the retail
-    // vtable @0x8211D4A4 (20 slots; own region slots 12-19 = 0x30..0x4c), see
-    // docs/decomp/research/2026-06-11-uicomponent-virtuals.md
+    // primary vtable @0x82122c84 (20 slots; own region slots 12-19 = 0x30..0x4c),
+    // see docs/decomp/research/2026-06-11-uicomponent-virtuals.md
+    //
+    // (ADDRESS CORRECTED, lane W16-HEADERTRUTH, tools/vtable_claim_audit.py:
+    // this cited @0x8211D4A4, which is not a vtable -- see the long note at
+    // OldResourcePreload below. ★ THE 20-SLOT CLAIM ITSELF IS TRUE AND IS NOW
+    // MECHANICALLY VERIFIED at the correct address: the COL at 0x821ed164 has
+    // subobject offset 0x0, so 0x82122c84 is the primary vtable, and it runs
+    // exactly 20 slots / 0x50 bytes before terminating on a non-code word --
+    // with slots 12-19 at +0x30..+0x4c exactly as asserted here.)
     virtual void ResourceCopy(const UIComponent *);              // slot 12, 0x30
     virtual void SetState(UIComponent::State);                   // slot 13, 0x34
     virtual Symbol StateSym() const;                             // slot 14, 0x38
@@ -105,12 +113,27 @@ protected:
     //
     // (CORRECTED, lane W13-CHARINFO: the "no such slot" claim used to be
     // supported by "verified: retail primary vtable @0x8211D4A4 is exactly 20
-    // slots". That citation is FALSE — 0x8211D4A4 is +20 bytes into
-    // lbl_8211D490, a 0xCC-byte SWITCH JUMP TABLE for fn_827E2038, not a vtable.
-    // The gating decision is left in place because it is corroborated by DC3
-    // being the newer engine, but the slot count is NOT evidence and this claim
-    // is now UNVERIFIED. Identical failure mode to TrackDir.h:35 — a .rdata
-    // array of code addresses was eyeballed as a vtable.)
+    // slots". That citation is FALSE — 0x8211D4A4 is not a vtable.
+    //
+    // REFINED TWICE OVER, lane W16-HEADERTRUTH (tools/vtable_claim_audit.py):
+    //  1. THE STRUCTURE IS NOT A SWITCH JUMP TABLE. W13 named it "a 0xCC-byte
+    //     SWITCH JUMP TABLE for fn_827E2038". The extent and owner are right,
+    //     the KIND is not: MSVC X360 emits switch tables as compact BYTE-OFFSET
+    //     tables (00 08 10 18 20 28 ...) containing no code addresses at all,
+    //     so a switch table cannot be mistaken for a vtable on this target
+    //     (208 harvested from bctr dispatch sites: 0 with pointer shape).
+    //     What 0x8211D4A4 actually lies inside is a C++ EH IP-TO-STATE MAP --
+    //     an array of {void *pc; int state;} -- at 0x8211d490, 25 entries /
+    //     200 bytes (0xC8), declared by the FuncInfo at 0x8211d468, with
+    //     0x8211D4A4 sitting at +0x14 into it. That is why it reads as code
+    //     addresses interleaved with small integers.
+    //  2. ★ THE 20-SLOT CLAIM IS NOT MERELY UNVERIFIED, IT IS TRUE. The real
+    //     primary vtable is 0x82122c84 (COL 0x821ed164, subobject offset 0x0)
+    //     and it is exactly 20 slots / 0x50 bytes. So the withdrawal was more
+    //     cautious than the evidence required: the slot count IS evidence, it
+    //     was simply attached to the wrong address. The gating decision below
+    //     therefore stands on BOTH grounds -- the DC3-is-newer argument and
+    //     the retail slot count.)
 #ifdef HX_NATIVE
 #define UICOMP_DC3_VIRTUAL virtual
 #else
