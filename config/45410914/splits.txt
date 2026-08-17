@@ -650,7 +650,10 @@ BandList.cpp:
 	.pdata      start:0x821FE320 end:0x821FE330
 	.pdata      start:0x821FE330 end:0x821FE338
 	.pdata      start:0x821FE338 end:0x821FE360
+	.pdata      start:0x821FE368 end:0x821FE370
 	.pdata      start:0x821FE378 end:0x821FE3A0
+	.pdata      start:0x821FE3C0 end:0x821FE3D0
+	.pdata      start:0x821FE3E0 end:0x821FE3E8
 	.pdata      start:0x821FE430 end:0x821FE440
 	.pdata      start:0x821FE468 end:0x821FE4F0
 	.pdata      start:0x821FE4F0 end:0x821FE500
@@ -1359,7 +1362,7 @@ FileChecksum.cpp:
 	.text       start:0x8278BD3C end:0x8278BD68
 
 Rot.cpp:
-	.pdata      start:0x821FE3E0 end:0x821FE420
+	.pdata      start:0x821FE3E8 end:0x821FE420
 	.pdata      start:0x821FE420 end:0x821FE430
 	.pdata      start:0x821FEB90 end:0x821FEB98
 	.pdata      start:0x821FF938 end:0x821FF948
@@ -4653,7 +4656,8 @@ CharForeTwist.cpp:
 	.text       start:0x823C68C8 end:0x823C69B0
 
 CharSignalApplier.cpp:
-	.pdata      start:0x821FE3A0 end:0x821FE3E0
+	.pdata      start:0x821FE3A0 end:0x821FE3C0
+	.pdata      start:0x821FE3D0 end:0x821FE3E0
 	.pdata      start:0x821FE440 end:0x821FE448
 	.pdata      start:0x821FE458 end:0x821FE460
 	.pdata      start:0x821FE460 end:0x821FE468
@@ -6618,7 +6622,7 @@ MakeString.cpp:
 Song.cpp:
 	.pdata      start:0x821F42D0 end:0x821F42D8
 	.pdata      start:0x821FB660 end:0x821FB670
-	.pdata      start:0x821FE368 end:0x821FE378
+	.pdata      start:0x821FE370 end:0x821FE378
 	.pdata      start:0x82242420 end:0x82242548
 	.pdata      start:0x82242568 end:0x82242570
 	.pdata      start:0x82242570 end:0x822425D0
