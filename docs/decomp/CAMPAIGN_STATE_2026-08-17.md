@@ -9,7 +9,84 @@
 
 ## 0. SESSION CLOSE
 
-### 0.8 ROUND NINE — W23/W24/W25 (all three survived an API outage) ← **LATEST**
+### 0.9 ROUND TEN — W26-MAPLEADS2, and the branch LANDED ← **LATEST**
+
+**44,505 fns / 3,760,224 B = 36.433937%**, honest **21,595**. **Day total
++61 fns / +36,520 B**; **59.61% of the 61.121% reachable ceiling.**
+
+| lane | predicted | measured | |
+|---|---:|---:|---|
+| W26-MAPLEADS2 | +1 / +92 | **+1 / +92** | ✓ *all five pre-registered lines exact* |
+
+★★★ **THE FAMILY DEFECT, FOURTH INSTANCE — AND THE STRUCTURAL REASON A WRONG
+NAME SURVIVES.** `0x826dc4c0` was named as a `RndFont`/`CharInfo` tree
+`_M_erase` and pinned to `Font.cpp`, whose every other range is at `0x8247xxxx`;
+it physically sits **inside** `DeployCountTracker`'s otherwise contiguous run,
+whose `TrackerPlayerID`/`PlayerDeployData` family was missing **precisely** its
+`_M_erase`. Identified **six independent ways without reading the map for the
+assignment** (unique masked-body match among our 3,903 `_Rb_tree` COMDATs;
+unique among 674 same-extent retail functions; fills exactly the hole in the
+region; the family's one missing member; the sibling `StreakTracker` family
+shows the same `_M_erase`→`_M_create_node` 0x60 stride; our obj defines it at
+retail's exact 92 B).
+★★★★★ **WHY IT WENT UNCHARGED:** the row's only relocations are a **recursive
+self-call — self-consistent under ANY name** — plus one correctly-mapped
+callee. **A wrong name is invisible when nothing that references it can
+disagree.** That is the general condition, not a property of this row.
+⛔ The lane's own **ICF-twin prediction was REFUTED**: it expected a degenerate
+fold set and found exactly one match, so W20's dispersion trap did not apply.
+
+★ **W24's model held prospectively.** The re-home was **pre-registered as the
+PAIRING signature** (`none` +92, not 0) and measured **+92** — flatness/movement
+in `none` used as a forward instrument rather than a post-hoc reading.
+
+⛔ **Lead 2 (`BandCamShot`/`HamCamShot`) REFUSED AND PRICED, not waved off.**
+The RTTI anchor fires cleanly (`.?AVBandCamShot@@`=1, `.?AVHamCamShot@@`=0,
+ASCII `HamCamShot` **zero times in the whole binary**, both controls behaving) —
+but it only **confirms an existing in-tree claim** (`CameraShot.h:281`), and
+`BandCamShot.cpp:856` deliberately scatter-includes `HamCamShot.cpp`. Of an
+estimated +1,652 B, **+576 B would put TWO ADDRESSES ON ONE SYMBOL**, and
+`0x822b4298`'s Band twin is **1,604 B against retail's 1,692 B** — different-size
+COMDATs cannot fold. Genuine prize **≤ +1,196 B**, and the accurate fix is a
+`src/**` reconciliation.
+
+**Lead 3 — the 4 untestable `_Rb_tree` components** re-derived as **9 rows /
+1,272 B / 0.0123% of `total_code`, ALL at `fuzzy 0`** ⇒ **zero direct byte
+value.** A third instrument (drop the same-name requirement; search all 4,744
+tree COMDATs for a node-layout-equivalent body) reaches **6 of 9** and **is
+shown able to fail**. ⚠ Blind spot reported rather than hidden: three 4-byte
+`blr` stubs match 226 COMDATs and are unreachable by **any** body comparison.
+⚠ Note this class **IS** the `fuzzy == 0` population — exactly where the
+`fuzzy == mpn` certificate is **vacuous** (§0.8).
+
+⛔ **TWO INSTRUMENT DEFECTS RECORDED, ONE LANDING UNFIXED ON PURPOSE:**
+1. **`cascade_price`'s `PAIRS` verdict checks that our obj DEFINES the name,
+   not that the defined body is retail's SIZE.** Where our obj defines both
+   spellings, a rename swaps which body objdiff compares and the tool prints
+   *"no movement"*. **LIVE** — it will mislead the next scatter-include case.
+2. ⚠ The lane's masked-body test blanks **branch displacements only**, so on a
+   42-relocation body it reports a false `DIFF` for a row scoring `fuzzy 100`.
+   Valid only on low-relocation functions.
+
+### ✅ LANDED AND PUBLISHED
+
+`grounded2-restoration` merged to `main` as **`4114b66c`** (`--no-ff`,
+162 commits / 32 lane merges / 41 `src/` files) and **pushed to `origin/main`**
+— fast-forward `1df8dd83..4114b66c`, no force. Gate on the merged tree:
+`NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0
+failed=0 rc=0`, all 18 relinked.
+★ `main`'s own 28 commits touch **zero build inputs**, and the merged build
+inputs are **byte-identical to the lane branch** (verified by tree comparison —
+exact, rather than inferred from a rebuild) ⇒ the merge is **metric-neutral by
+construction**.
+⚠ **Correction to W24's report:** it described `main` as having W17's map edit
+*"reverted"* at 10 of 11 fixture addresses. `main`'s `target_symbol_map.json` is
+**byte-identical to the merge base** — main never **received** the edit; nothing
+was reverted.
+
+---
+
+### 0.8 ROUND NINE — W23/W24/W25 (all three survived an API outage)
 
 **44,504 fns / 3,760,132 B = 36.433043%**, honest **21,594**. **Day total
 +60 fns / +36,428 B**; **59.61% of the 61.121% reachable ceiling.**
