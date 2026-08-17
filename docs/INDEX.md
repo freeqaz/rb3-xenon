@@ -31,8 +31,11 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 - **`MILO_DEBUG` does NOT gate `MILO_ASSERT` — `HX_NATIVE` does.** `src/macros.h:3`
   force-defines `MILO_DEBUG` tree-wide, and several commit messages and header comments claim
   this is "to keep `MILO_ASSERT` live". **It is not**: `MILO_DEBUG` appears nowhere in
-  `os/Debug.h`; the whole `MILO_*` family is `#ifdef HX_NATIVE`, and the match build passes
-  **no `/D` at all**, so `MILO_ASSERT(cond,line)` is `((void)(cond))`. The force-define's only
+  `os/Debug.h`; the whole `MILO_*` family is `#ifdef HX_NATIVE`, and the match build's cflags
+  carry **exactly two `/D`s — `/DCURL_STATICLIB` and `/D_XBOX360`** (⚠ corrected 2026-08-13,
+  lane METAMAT-1; this index said "**no `/D` at all**" for months). Neither is `HX_NATIVE`, so
+  the load-bearing conclusion is unchanged: `MILO_ASSERT(cond,line)` is
+  `((void)(cond))`. The force-define's only
   effect is to switch on rb3-Wii **dev-build** code that retail compiled out. ⚠ But do **not**
   blanket-remove it — the measured whole-binary control is **−21 functions** (one guard,
   `BandCharacter`'s `toggle_interests_overlay` handler, is genuinely in retail and costs −22 by
@@ -210,7 +213,25 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 - [../CLAUDE.md](../CLAUDE.md) — project framing, build tracks, decomp priority, worktree/git
   rules, toolchain wiring. Authoritative current state.
-- ★★★ [decomp/CAMPAIGN_STATE_2026-08-14.md](decomp/CAMPAIGN_STATE_2026-08-14.md) —
+- ★★★ **START HERE — the single current-state doc.**
+  [decomp/CAMPAIGN_STATE_2026-08-17.md](decomp/CAMPAIGN_STATE_2026-08-17.md) —
+  **third edition; replaces `CAMPAIGN_STATE_2026-08-14.md` wholesale.** Measured
+  at HEAD `6e13ee3f` on the shipped **`name_check`** ruler: **44,444 / 69,227
+  matched · `matched_code` 3,723,704 / 10,320,664 = 36.080082% · fuzzy
+  48.591938 · masked_equal 22,898 ⇒ honest 21,546**. Carries the four-way
+  self-validated partition of **every byte** in the binary (rows sum to
+  `total_functions`, bytes to `total_code`), the re-measured ceiling —
+  **62.867% raw / 61.121% corrected, and we stand at 59.03% of it** — the alias
+  mechanism sized by ablation (**1,528 groups / 818,416 B / 7.93 pp ⇒ ~22% of
+  everything we count as matched rests on it**), a one-line-per-arc history of
+  the ~130 lanes from 08-01 → 08-16, the W0–W5 roadmap, and a top-20 crossing
+  queue **with the arg-gating trap labelled per row**. ★ Its strategic finding,
+  re-confirmed: **there is no big lever left** — every large-looking one has now
+  been sized and deflated, so from here it is a long honest grind plus the
+  identification-infrastructure play (the only thing that moves the *ceiling*).
+  Read §1 and §7 first.
+- [HIST] ★★★ [decomp/CAMPAIGN_STATE_2026-08-14.md](decomp/CAMPAIGN_STATE_2026-08-14.md) —
+  **superseded as live state by the 08-17 edition above; keep for its evidence trail.**
   **the campaign consolidation: what is drained, what is open, and what will lie to you.**
   Rewritten end-of-session at `3eb85dfd` after **47 lanes** landed in one day.
   ★★★ **Every large lever was sized this session and they all deflate** — alias
@@ -261,8 +282,12 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   (WORKING/BROKEN/SUPERSEDED/ONE-SHOT), a "start here for task X" routing table, the
   ground-truth artifact table (incl. `band.exe`), the stale-build-dir offender list, and
   the known-defective set. **Read this before running any scanner.**
-- [plans/decomp-state-2026-07-19.md](plans/decomp-state-2026-07-19.md) — **live state & veins
-  doc** (strict count, PIVOT POINT: cheap veins exhausted → deep grind), updated as waves land.
+- [HIST] [plans/decomp-state-2026-07-19.md](plans/decomp-state-2026-07-19.md) — ⚠ **SUPERSEDED
+  AS LIVE STATE** by [decomp/CAMPAIGN_STATE_2026-08-17.md](decomp/CAMPAIGN_STATE_2026-08-17.md);
+  it is no longer updated as waves land, and every count in it predates the 2026-08-12
+  `name_check` ruler flip. Still worth reading as the veins doc that called the **PIVOT
+  POINT** correctly (cheap veins exhausted → deep grind) — a verdict the 08-17 state
+  re-confirms from a completely different direction.
 - [plans/paths-to-100/README.md](plans/paths-to-100/README.md) — **paths-to-100 RFC set
   (2026-07-08, 20 RFCs + ranked index)**: every remaining vein sized against the two walls
   (identification recall, body-divergence), verify-before-assert, with PURSUE/PILOT/DO-NOT
@@ -328,11 +353,13 @@ Each of these is a **pricing or refutation** — read the verdict before re-open
   `build/45410914/asm/<Unit>.s`, grep its `addi r4, r11, lbl_…` sequence, and resolve each
   label in `auto_00_82000400_rdata.s`.
 
-- ★★ [decomp/NEXT_WAVE_BRIEF_2026-08-05.md](decomp/NEXT_WAVE_BRIEF_2026-08-05.md) —
-  **START HERE to pick up the campaign cold.** How to establish a real baseline (and why
-  the numbers in it must not be trusted as current), the primary target with its ready
-  queue, the drained/refuted ledger, the settled rev model, and the 13 instrument hazards
-  — every one of which produced a *clean wrong answer* rather than an obvious failure.
+- [HIST] ★★ [decomp/NEXT_WAVE_BRIEF_2026-08-05.md](decomp/NEXT_WAVE_BRIEF_2026-08-05.md) —
+  ⚠ **NO LONGER THE START-HERE**: for a cold pickup use
+  [decomp/CAMPAIGN_STATE_2026-08-17.md](decomp/CAMPAIGN_STATE_2026-08-17.md) (§1), which
+  supersedes this brief's baseline, target queue and drained ledger. Retained for its
+  durable half — the 13 instrument hazards, **every one of which produced a *clean wrong
+  answer* rather than an obvious failure** — plus how to establish a real baseline and why
+  the numbers in it must not be trusted as current.
 
 ### 2026-08-03 results (waves EB→EE, 43,848 → ~43,872 matched · 254 → 255 units)
 
@@ -418,7 +445,161 @@ Read the verdict before re-opening any of these.
   keeping `d >>` for **container** reads preserved 412 B of byte-exact retail code that
   DY-1's `bs >>` conversion would have deleted.
 
+### 2026-08-13 → 08-17 results
+
+~130 lanes. **The defining character of this window is that almost every large lever
+was SIZED and DEFLATED** — and that several lanes' headline product is a correction to
+a prior lane's instrument rather than bytes. Consolidated verdict:
+[decomp/CAMPAIGN_STATE_2026-08-17.md](decomp/CAMPAIGN_STATE_2026-08-17.md). Read the
+verdict before re-opening any of these.
+
+**The ruler**
+
+- ★★★ [decomp/RULER_CHANGE_name_check_2026-08-12.md](decomp/RULER_CHANGE_name_check_2026-08-12.md) —
+  **the authoritative record of the `functionRelocDiffs=name_check` flip (shipped
+  `d04c83df`, 2026-08-12): `none` is now the OPT-IN ruler.** The ruler alone moves
+  `matched_code` by **~817 kB / 7.9 pp with zero source change**, while
+  `matched_functions` stays bit-identical. ⇒ **any byte absolute recorded before
+  2026-08-12 00:47 is incomparable to one after it unless the ruler is stated.**
+  `report.json` self-declares its ruler in `provenance.diff_config` — read it, never
+  infer it.
+
+**Alias / fold ledger** — the period's most-corrected thread
+
+- ★★★ [decomp/ALIAS_FORGIVENESS_SIZED_2026-08-14.md](decomp/ALIAS_FORGIVENESS_SIZED_2026-08-14.md) —
+  GROUNDED-1: the 720,992 alias-forgiven bytes adjudicated on retail bytes — **82.51%
+  are PROVEN**, and `OK (grounded)` meant only *map-consistency*, not proof of folding.
+  Establishes the **129,360 B irreducible floor** (relocation-free thunks where ICF
+  destroyed which name the site meant).
+- ★★★ [decomp/ALIAS_UNPROVEN_REMAINDER_ADJUDICATED_2026-08-16.md](decomp/ALIAS_UNPROVEN_REMAINDER_ADJUDICATED_2026-08-16.md) —
+  ALIAS-2: **the "11.00% unattributable" class is not an evidence class — it is 100%
+  PROVEN**, and existed only because the attributing instrument was **name-keyed**.
+  Re-sizes the whole mechanism by **ablation** at **1,528 groups / 818,416 B / 7.93 pp**.
+  ★ **Ablation beats a name-keyed census.**
+- ★★★ [decomp/ALIAS_NEEDS_MAP_ID_DRAINED_2026-08-16.md](decomp/ALIAS_NEEDS_MAP_ID_DRAINED_2026-08-16.md) —
+  MAPID-1: the nine unidentified addresses identified on retail bytes, **class drained to
+  zero**. `0x827bcd38` is now `?MemAlloc@@YAPAXHH@Z`. Measured **−1,656 B** and **exposed
+  6 real wrong-callee divergences** ⇒ **naming pays in bug exposure, not bytes.**
+- [decomp/incomplete-fold-groups-censused-2026-08-14.md](decomp/incomplete-fold-groups-censused-2026-08-14.md) —
+  INCOMPLETE-1: groups that **exist but are incomplete**, censused tree-wide (completing
+  them paid **+60,700 B**) — a pairwise comparator finds only SOME members while a
+  dispatcher enumerates the class exhaustively.
+- [decomp/nogroup-pairs-censused-2026-08-14.md](decomp/nogroup-pairs-censused-2026-08-14.md) —
+  NOGROUP-1: the **1,392 charged pairs touching no alias group at all**, classified.
+- [decomp/foldprove-unproven60-adjudicated-2026-08-14.md](decomp/foldprove-unproven60-adjudicated-2026-08-14.md) —
+  FOLDPROVE-1: NOGROUP-1's 60 "fold-shaped but unproven" pairs adjudicated; the strict
+  gate's **recall against known folds is 19.5%**, so its "4 proven" was a FLOOR, not a ceiling.
+- [decomp/foldprove2-fold-shaped-100-adjudicated-2026-08-14.md](decomp/foldprove2-fold-shaped-100-adjudicated-2026-08-14.md) —
+  FOLDPROVE-2: WRONGCALL-3's 100 "fold-shaped" pairs (21,912 B) adjudicated. ⚠ Carries the
+  **reflinked-worktree vacuity**: its first run read a unanimous 100/100 refuted because
+  every retail symbol name was absent pre-build — *a vacuity that confirms your prior.*
+
+**Strata worked to exhaustion** (the `mpn < 100` grind)
+
+- ★★ [decomp/mpn-lt-100-stratum-censused-2026-08-14.md](decomp/mpn-lt-100-stratum-censused-2026-08-14.md) —
+  INSTR-1: the whole `mpn < 100` stratum censused; data in
+  [decomp/mpn-lt-100-census-INSTR1.tsv](decomp/mpn-lt-100-census-INSTR1.tsv).
+- [decomp/insdel-stratum-worked-2026-08-14.md](decomp/insdel-stratum-worked-2026-08-14.md) (INSDEL-1, +3 fns / +1,612 B) ·
+  [INSDEL-2](decomp/insdel-cheap-head-worked-INSDEL2-2026-08-14.md) (+5 / +672 B) ·
+  [INSDEL-3](decomp/insdel-cheap-head-worked-INSDEL3-2026-08-14.md) (+4 / +316 B) ·
+  [INSDEL-4](decomp/insdel-4-6-charge-band-worked-INSDEL4-2026-08-14.md) (4–6 charge band
+  worked to 64% by bytes, +3 / +576 B) ·
+  [INSDEL-5](decomp/insdel-7-15-charge-band-worked-INSDEL5-2026-08-14.md) (7–15 band, sized
+  and re-characterised) — **every one pre-registered its prediction and measured it EXACT.**
+- [decomp/insdel-family-census-FAMILY1-2026-08-14.md](decomp/insdel-family-census-FAMILY1-2026-08-14.md) —
+  FAMILY-1: `SOURCE_INSDEL` re-censused **by unit and type, ignoring charge bands** — the
+  band framing was the wrong axis.
+- [decomp/srcarg-stratum-worked-2026-08-14.md](decomp/srcarg-stratum-worked-2026-08-14.md) —
+  SRCARG-1: the `SOURCE_ARG` stratum worked.
+- ★★ [decomp/template-args-stratum-censused-2026-08-14.md](decomp/template-args-stratum-censused-2026-08-14.md) —
+  TEMPLATE-1: **the `TEMPLATE_ARGS` stratum is HALF FOLD**, and the "wrong template argument
+  in our source" vein that motivated the lane is **4% of it**. Queue:
+  [decomp/template-args-queue-TEMPLATE1.tsv](decomp/template-args-queue-TEMPLATE1.tsv).
+- [decomp/template-args-C-class-is-folds-2026-08-14.md](decomp/template-args-C-class-is-folds-2026-08-14.md) —
+  CVEIN-1: the (C) class is mostly folds and **its prescribed action cannot pay** — our
+  source spelling is already right.
+
+**Frontier re-pricing** — what "the wall" actually is
+
+- ★★★ [decomp/identification-frontier-censused-2026-08-14.md](decomp/identification-frontier-censused-2026-08-14.md) —
+  IDENT-1: **the wall is NOT identification tooling** — it is worth **~0.2% of
+  `total_code`**. Five lanes had bottomed out on what looked like one wall from five
+  directions. Queue: [decomp/ident-body-channel-queue-IDENT1.json](decomp/ident-body-channel-queue-IDENT1.json).
+- ★★ [decomp/nobody-class-censused-by-unit-2026-08-14.md](decomp/nobody-class-censused-by-unit-2026-08-14.md) —
+  BODYWRITE-1: "we do not hold the body" censused by unit — **it is a long grind and its
+  fat head is mis-pins**, not unwritten code. Data:
+  [decomp/nobody-class-by-unit-BODYWRITE1.tsv](decomp/nobody-class-by-unit-BODYWRITE1.tsv).
+- ★★★ [decomp/bodywrite-surface-repriced-GRIND1-2026-08-14.md](decomp/bodywrite-surface-repriced-GRIND1-2026-08-14.md) —
+  GRIND-1: **the body-write surface is ~5 kB, not 52 kB**, and its top unit is code we
+  already hold — the Wii *dev* build's surplus functions are themselves suspect.
+
+**Map, pins and carving**
+
+- ★★ [decomp/gamerow2-map-defect-class-2026-08-14.md](decomp/gamerow2-map-defect-class-2026-08-14.md) —
+  GAMEROW-2: **the map-defect class pays twice more (+8,780 B)** — the map carried a
+  SpeedTree name on an RB3 address, and a plausible *sibling* name on another. Three veins closed.
+- ★★★ [decomp/pin-neutrality-scoped-2026-08-14.md](decomp/pin-neutrality-scoped-2026-08-14.md) —
+  PINHOME-1: **pinning is metric-neutral for REATTRIBUTION, not for RE-HOMING** (+3 matched
+  / +428 B with the denominator provably unmoved). **Cite before assuming a pin change
+  cannot move the metric.**
+- [decomp/compiled-but-unpinned-census-2026-08-14.md](decomp/compiled-but-unpinned-census-2026-08-14.md) —
+  PINSRC-1: the compiled-but-unpinned class is **NOT drainable wholesale — 5 rows / 544 B**.
+  Cite before funding a pinning lane on "unpinned units".
+- [decomp/head-carve-class-sized-PINFIX2-2026-08-16.md](decomp/head-carve-class-sized-PINFIX2-2026-08-16.md) —
+  PINFIX-2: the head-side over-carve class sized — **0 rows reachable by `splits.txt`.**
+  Per-row data: [decomp/headcarve-census-PINFIX2.json](decomp/headcarve-census-PINFIX2.json).
+- [decomp/rbtree-value-type-adjudicated-2026-08-14.md](decomp/rbtree-value-type-adjudicated-2026-08-14.md) —
+  CONTAINER-1: the tree at `0x824f8968` holds `DataNode` — **our source was RIGHT and the
+  MAP NAME was wrong** (+7,672 B; the −2 matched functions were provably false 100%s).
+- [decomp/newobj-allocation-size-discriminator-2026-08-13.md](decomp/newobj-allocation-size-discriminator-2026-08-13.md) —
+  NEWOBJ-1: the allocation-size immediate is an **UNMASKED discriminator** for masked-class
+  rows — evidence the metric cannot mask.
+
+**The material hierarchy — three DC3-era classes that RB3 retail does not have**
+
+- ★★ [decomp/metamaterial-does-not-exist-in-rb3-retail-2026-08-13.md](decomp/metamaterial-does-not-exist-in-rb3-retail-2026-08-13.md) —
+  METAMAT-1: **no `MetaMaterial` class, no metamaterial `ObjectDir`, no `<prop>_edit_action`
+  system, no code path that could create one.** All DC3-era.
+- ★ [decomp/basematerial-is-a-dc3-refactor-2026-08-13.md](decomp/basematerial-is-a-dc3-refactor-2026-08-13.md) —
+  BASEMAT-1: **the `BaseMaterial` / `RndMat` split is a DC3-era refactor**; retail has ONE
+  material class deriving directly from `Hmx::Object`. ⚠ Confirms the prior flag but **not
+  for the reason it gave** — RTTI absence alone was insufficient.
+- [decomp/rndmat-syncproperty-no-superclass-chain-2026-08-13.md](decomp/rndmat-syncproperty-no-superclass-chain-2026-08-13.md) —
+  SYNCPROP-1: `RndMat::SyncProperty` crosses to 100% (**+4,808 B**) — and **the residual was
+  NOT property order**.
+
+**Repo hygiene**
+
+- [decomp/ORPHAN_CENSUS_2026-08-13.md](decomp/ORPHAN_CENSUS_2026-08-13.md) — every branch in
+  the repo censused: **663 branches, 440 with commits `git cherry` calls unlanded, and after
+  per-branch content verification the number that should be landed is ZERO.** Data:
+  `decomp/orphan-census-2026-08-13.json` / `.tsv`.
+- [decomp/handoff/laneJ2-at-limit-clearance-2026-08-13.md](decomp/handoff/laneJ2-at-limit-clearance-2026-08-13.md) —
+  laneJ2: three **stale `AT_LIMIT` floor certifications cleared** (records a local
+  `decomp.db` state change, which is gitignored and not recoverable from git).
+
 ### Active worklists (open work to pull from)
+
+**Live queues (2026-08-13 → 08-17 lanes).** These are the machine-readable
+deliverables the recent census lanes shipped; each is the companion data for the
+result doc indexed above. ⚠ **Read the parent doc's verdict before pulling from a
+queue** — several of these were *sized and deflated* by the lane that produced them,
+so queue length is not a measure of available yield.
+
+| queue | parent lane | status |
+|---|---|---|
+| [decomp/template-args-queue-TEMPLATE1.tsv](decomp/template-args-queue-TEMPLATE1.tsv) | TEMPLATE-1 | **the largest open queue (~98 kB)** — but the stratum is HALF FOLD; needs a demangled→mangled join before it is workable |
+| [decomp/mpn-lt-100-census-INSTR1.tsv](decomp/mpn-lt-100-census-INSTR1.tsv) | INSTR-1 | full `mpn < 100` census — the targeting surface for W1/W2 grind work |
+| [decomp/ident-body-channel-queue-IDENT1.json](decomp/ident-body-channel-queue-IDENT1.json) | IDENT-1 | identification/body channel; ⚠ the class it indexes is worth **~0.2% of `total_code`** |
+| [decomp/nobody-class-by-unit-BODYWRITE1.tsv](decomp/nobody-class-by-unit-BODYWRITE1.tsv) | BODYWRITE-1 | "no body" by unit — ⚠ **repriced by GRIND-1 to ~5 kB actionable**, and its fat head is mis-pins |
+| [decomp/nogroup-wrong-callee-queue-NOGROUP1.tsv](decomp/nogroup-wrong-callee-queue-NOGROUP1.tsv) | NOGROUP-1 | wrong-callee candidates touching no alias group; ⚠ **54% fold-shaped** per WRONGCALL-3/FOLDPROVE-2 |
+| [decomp/foldprove-reclassified-queue-FOLDPROVE1.tsv](decomp/foldprove-reclassified-queue-FOLDPROVE1.tsv) | FOLDPROVE-1 | the 60 fold-shaped-but-unproven pairs, reclassified |
+| [decomp/bodyport-queue-EE2.tsv](decomp/bodyport-queue-EE2.tsv) | EE-2 | ⛔ **BOUNDED / effectively CLOSED** — the body-port class measured **~9.6 kB actionable**, not the 440 kB it opened as |
+| [decomp/headcarve-census-PINFIX2.json](decomp/headcarve-census-PINFIX2.json) | PINFIX-2 | ⛔ **reference only — 0 rows reachable by `splits.txt`** |
+
+**[HIST] Older plan-era worklists.** Retained as links, but they predate the
+2026-08-12 `name_check` flip and the census lanes above; treat their counts as
+historical and re-derive before funding.
 
 - [plans/auto03-sourceless-guard-funclets-2026-08-02.md](plans/auto03-sourceless-guard-funclets-2026-08-02.md) —
   the **75 source-less `auto_03_*` guard funclets** in 15 units, sized and identified
@@ -546,10 +727,13 @@ Read the verdict before re-opening any of these.
 ### objdiff / analysis / orchestrator
 
 - [decomp/TOOLING.md](decomp/TOOLING.md) — ★ **the audited tooling inventory (2026-07-29)**:
-  ~350 tools across `tools/`, `scripts/`, `scripts/harvest/`, each actually invoked and
+  the tools across `tools/`, `scripts/`, `scripts/harvest/`, each actually invoked and
   status-graded; routing table; ground-truth artifacts (incl. `band.exe`); the
   stale-build-dir offender list; the known-defective set; verified `configure.py` patcher
-  wiring and MCP tool list.
+  wiring and MCP tool list. ⚠ **The inventory is dated 2026-07-29 and the tree has grown
+  past it** — as of 2026-08-17 there are **253 `.py` in `tools/` + 163 in
+  `scripts/harvest/` + 56 in `scripts/`**, so TOOLING.md's "~350" undercounts. Treat it as
+  a curated audit, not a complete census.
 - [plans/claude-md-proposed-2026-07-29.md](plans/claude-md-proposed-2026-07-29.md) —
   **PROPOSAL, NOT APPLIED**: 7 ready-to-apply CLAUDE.md amendments from the 2026-07-29
   audit (band.exe oracle, stale-artifact hazard, the "100% ≠ correct" defect class,
@@ -580,9 +764,12 @@ Read the verdict before re-opening any of these.
 ### Harvest / identification scanners (`scripts/harvest/`, read-only unless noted)
 
 > **STATUS (2026-07-29):** there IS now a standalone doc —
-> **[decomp/TOOLING.md](decomp/TOOLING.md)**, an audited inventory of all ~350
-> tools (each one actually invoked, not just read). The notes below stay as the
-> curated highlights; TOOLING.md is the complete table plus the defect list.
+> **[decomp/TOOLING.md](decomp/TOOLING.md)**, an audited inventory of the tools
+> as of that date (each one actually invoked, not just read). The notes below
+> stay as the curated highlights; TOOLING.md is the table plus the defect list.
+> ⚠ **Counted 2026-08-17: 253 `.py` in `tools/`, 163 in `scripts/harvest/`, 56 in
+> `scripts/`** — the "~350" this index used to quote is an undercount, and the
+> 07-29 audit no longer covers everything on disk.
 
 Each tool's module docstring is its detailed reference, and they are
 long and evidence-carrying. Read the docstring before running one; several encode

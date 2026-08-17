@@ -1,5 +1,21 @@
 # INSTRUMENT DESIGN — how to build a scanner/control/census that can actually FAIL
 
+> **STATUS (2026-08-17): STILL CURRENT as a design doc.** Re-checked in the
+> 2026-08-17 docs refresh: the rules here are about how to build an instrument
+> that *can fail*, and none of them has been overtaken. Two cross-references for
+> the reader:
+> - **[`CAMPAIGN_STATE_2026-08-14.md`](CAMPAIGN_STATE_2026-08-14.md) §5**
+>   (*"What will mislead you — ~35 instrument failures, by mode"*) — the
+>   CONSOLIDATE-1 catalogue remains the **superset catalogue** of observed
+>   failure modes. Read it next to these rules.
+> - **[`CAMPAIGN_STATE_2026-08-17.md` §6 arc 7](CAMPAIGN_STATE_2026-08-17.md)**
+>   — measurement-epistemics arc: what the last fortnight added.
+>
+> ⚠ The wave figures below (43,527 → 43,590 matched, DC..DG) are dated 2026-08-02
+> and predate the 2026-08-12 ruler flip; they illustrate the rules and are not
+> current state. Live: **44,444 matched / 69,227 functions**, `matched_code`
+> **36.080082% @name_check**.
+
 > **STATUS (2026-08-02):** current. Written by lane DH-1 from the 23-commit
 > DC..DG wave (`eda76311`..`1cbcabc8`) and the five lane memories it produced;
 > amended same day with rules 14–15, the never-links blind spot (`dce343a1`,
