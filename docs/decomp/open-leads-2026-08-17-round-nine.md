@@ -1,6 +1,21 @@
 # Open leads from round nine — three lanes interrupted by an API outage
 
-**Status: UNVERIFIED HYPOTHESES, not findings.** All three lanes (W23-FRAMESWEEP,
+> ## ✅ ALL THREE RESOLVED — 2026-08-17, after the lanes were resumed
+>
+> This file is now a **historical record of what was in flight**, kept because
+> the reasoning was worth preserving and because two of the three resolutions
+> are *refutations* that would otherwise look like unexplored ideas.
+>
+> | lead | outcome |
+> |---|---|
+> | **1 — `none` measures pairing exactly** | ✅ **CONFIRMED.** `0x82456190` graded **99.70588**, `none` **100.0**. The bound became a prediction, **bracket 0 on both rulers**. See `docs/decomp/w24-pairing.md`. |
+> | **2 — unnamed vs named temporaries** | ⛔ **REFUTED.** Tested twice on `Load@SampleData`: **both spellings byte-identical.** Lexical scope and named-vs-temporary are **INERT** on MSVC stack-slot merging — MSVC canonicalises them. **Not a near-miss to tune.** See `docs/decomp/w23-framesweep.md`. |
+> | **3 — the dirty alias edit** | ✅ **ADJUDICATED AND REFUTED AS AN ALIAS.** The fold inference did not follow; the real defect was three stale `HAQManager::Print` calls. **+3,564 B**, and the alias became legitimate only *after* the source fix made the COMDATs relocation-identical. See `docs/decomp/w25-ui-cluster.md`. |
+>
+> ⚠ **Lead 2's refutation is the most valuable line here** — it closes a vein
+> that reads as attractive and unexplored. Do not re-open it.
+
+**Status at the time of writing: UNVERIFIED HYPOTHESES, not findings.** All three lanes (W23-FRAMESWEEP,
 W24-PAIRING, W25-UI) were terminated mid-investigation by repeated API 529
 capacity errors on 2026-08-17 — not by anything they measured, and not by
 reaching a conclusion. Their committed tools survive in their branches; what
