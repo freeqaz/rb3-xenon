@@ -12542,7 +12542,6 @@ ProfileMgr.cpp:
 	.text       start:0x8254BC20 end:0x8254BD78
 	.text       start:0x827B7970 end:0x827B7BA8
 	.text       start:0x827B7C20 end:0x827B7D88
-	.text       start:0x827B7D88 end:0x827B7DC8
 	.text       start:0x82B8FC88 end:0x82B8FED8
 	.text       start:0x82C45E88 end:0x82C45EC4
 
@@ -13523,6 +13522,7 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.text       start:0x827B73E8 end:0x827B74D0
 	.text       start:0x827B78F8 end:0x827B7970
 	.text       start:0x827B7BA8 end:0x827B7C20
+	.text       start:0x827B7D88 end:0x827B7DC8
 	.text       start:0x827B7DC8 end:0x827B7ED0
 
 system/world/World.cpp:
