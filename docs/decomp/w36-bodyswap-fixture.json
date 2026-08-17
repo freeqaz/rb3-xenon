@@ -1,0 +1,136 @@
+{
+ "provenance": {
+  "lane": "W36-INSTRUMENT",
+  "date": "2026-08-17",
+  "base_commit": "1fde5496",
+  "what": "BandCamShot Ham->Band rename (W29's landed fe089f83), re-measured as a PRE/POST pair on ONE tree that already carries the source fix, so the map rename is the ONLY variable.",
+  "measured_matched_code_pre": 3765500,
+  "measured_matched_code_post": 3767864,
+  "measured_delta": 2364,
+  "closure": "row-level PRE/POST diff sums to +3684/-1320 = +2364, EXACTLY the matched_code delta. local=+1552, cascade=+812.",
+  "ruler": "name_check (graded), resolved from report.json provenance",
+  "note": "Five local rows are ZERO because they WASH -- the Ham row vanishes at 100 and a Band row appears at 100. They are the nulls of this fixture: a model that fires on them is wrong in the other direction."
+ },
+ "edits": {
+  "0x822b1cd8": {
+   "old": "??$_Destroy@UTarget@HamCamShot@@@stlpmtx_std@@YAXPAUTarget@HamCamShot@@@Z",
+   "new": "??$_Destroy@UTarget@BandCamShot@@@stlpmtx_std@@YAXPAUTarget@BandCamShot@@@Z"
+  },
+  "0x822b2e20": {
+   "old": "?TeleportTarget@HamCamShot@@QAAXPAVRndTransformable@@ABVTransform@@_N@Z",
+   "new": "?TeleportTarget@BandCamShot@@QAAXPAVRndTransformable@@ABVTransform@@_N@Z"
+  },
+  "0x822b4298": {
+   "old": "?PropSync@@YA_NAAUTarget@HamCamShot@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "new": "?PropSync@@YA_NAAUTarget@BandCamShot@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+  },
+  "0x822b4df0": {
+   "old": "?GetNumShots@HamCamShot@@QAAHXZ",
+   "new": "?GetNumShots@BandCamShot@@QAAHXZ"
+  },
+  "0x822b4eb0": {
+   "old": "?GetTotalDurationSeconds@HamCamShot@@QAAMXZ",
+   "new": "?GetTotalDurationSeconds@BandCamShot@@QAAMXZ"
+  },
+  "0x822b5590": {
+   "old": "?clear@?$_List_base@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+   "new": "?clear@?$_List_base@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
+  },
+  "0x822b5648": {
+   "old": "?erase@?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTarget@HamCamShot@@U?$_Nonconst_traits@UTarget@HamCamShot@@@stlpmtx_std@@@2@U32@0@Z",
+   "new": "?erase@?$list@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UTarget@BandCamShot@@U?$_Nonconst_traits@UTarget@BandCamShot@@@stlpmtx_std@@@2@U32@0@Z"
+  },
+  "0x822b5ee0": {
+   "old": "??1?$ObjList@UTarget@HamCamShot@@@@QAA@XZ",
+   "new": "??1?$ObjList@UTarget@BandCamShot@@@@QAA@XZ"
+  },
+  "0x822b5ef0": {
+   "old": "??$PropSync@UTarget@HamCamShot@@@@YA_NAAV?$ObjList@UTarget@HamCamShot@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "new": "??$PropSync@UTarget@BandCamShot@@@@YA_NAAV?$ObjList@UTarget@BandCamShot@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+  },
+  "0x822b6720": {
+   "old": "?resize@?$ObjList@UTarget@HamCamShot@@@@QAAXI@Z",
+   "new": "?resize@?$ObjList@UTarget@BandCamShot@@@@QAAXI@Z"
+  },
+  "0x822b6d70": {
+   "old": "?SyncProperty@HamCamShot@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "new": "?SyncProperty@BandCamShot@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+  }
+ },
+ "local": [
+  {
+   "addr": "0x822b1cd8",
+   "bytes": 0
+  },
+  {
+   "addr": "0x822b2e20",
+   "bytes": 0
+  },
+  {
+   "addr": "0x822b4298",
+   "bytes": 1692
+  },
+  {
+   "addr": "0x822b4df0",
+   "bytes": 140
+  },
+  {
+   "addr": "0x822b4eb0",
+   "bytes": 172
+  },
+  {
+   "addr": "0x822b5590",
+   "bytes": 0
+  },
+  {
+   "addr": "0x822b5648",
+   "bytes": 0
+  },
+  {
+   "addr": "0x822b5ee0",
+   "bytes": 0
+  },
+  {
+   "addr": "0x822b5ef0",
+   "bytes": -396
+  },
+  {
+   "addr": "0x822b6720",
+   "bytes": -68
+  },
+  {
+   "addr": "0x822b6d70",
+   "bytes": 12
+  }
+ ],
+ "cascade": [
+  {
+   "row": "?SyncProperty@BandCamShot@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "bytes": 848
+  },
+  {
+   "row": "?push_back@?$ObjList@UTarget@BandCamShot@@@@QAAXABUTarget@BandCamShot@@@Z",
+   "bytes": 108
+  },
+  {
+   "row": "??$?5UTarget@BandCamShot@@@@YAAAVBinStream@@AAV0@AAV?$ObjList@UTarget@BandCamShot@@@@@Z",
+   "bytes": 84
+  },
+  {
+   "row": "??4?$ObjList@UTarget@HamCamShot@@@@QAAXABV0@@Z",
+   "bytes": -108
+  },
+  {
+   "row": "fn_822B60A4",
+   "bytes": -40
+  },
+  {
+   "row": "fn_822B6764",
+   "bytes": -40
+  },
+  {
+   "row": "fn_822B70A4",
+   "bytes": -40
+  }
+ ]
+}
