@@ -230,7 +230,7 @@ void BandFaceDeform::DeltaArray::SetSize(int i) {
     if (mSize != i) {
         mSize = i;
         _MemFree(mData);
-        mData = _MemAlloc(mSize, 0);
+        mData = MemAlloc(mSize, __FILE__, 0xE9, "DeltaArray", 0);
     }
 }
 

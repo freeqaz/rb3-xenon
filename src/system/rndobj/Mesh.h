@@ -83,12 +83,17 @@ public:
             tangent.Set(1, 0, 0, 1);
         }
 
+        // Retail allocates Vert storage from the PERSISTENT heap (MemAlloc), not the
+        // temp heap: ?resize@VertVector@RndMesh@@ and ??4VertVector@RndMesh@@ both
+        // `bl ?MemAlloc@@YAPAXHH@Z` in the retail objs. Calling _MemAllocTemp here was
+        // a real behavioural divergence (vertex buffers outlive the temp heap), hidden
+        // while 0x827bcd38 was an unnamed placeholder the ruler forgave. Lane W0-ALLOC.
         static void *operator new(size_t s) {
-            return _MemAllocTemp(s, __FILE__, 0x78, "Vert", 0);
+            return MemAlloc(s, __FILE__, 0x78, "Vert", 0);
         }
         static void *operator new(size_t s, void *place) { return place; }
         static void *operator new[](size_t s) {
-            return _MemAllocTemp(s, __FILE__, 0x78, "Vert", 0);
+            return MemAlloc(s, __FILE__, 0x78, "Vert", 0);
         }
         static void operator delete(void *v) { MemFree(v, __FILE__, 0x78, "Vert"); }
         static void operator delete[](void *v) { MemFree(v, __FILE__, 0x78, "Vert"); }
