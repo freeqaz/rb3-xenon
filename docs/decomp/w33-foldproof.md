@@ -109,7 +109,32 @@ independent instrument — `report.json` gives `?SyncObjects@BandCrowdMeter@@`
 `fuzzy=99.771736`, matching the classifier's 99.772.
 
 ⇒ **The entire 50,436 B is unreachable by this lane's tools *by construction*,
-before any fold question is asked.** Proving every fold in the stratum, landing
+before any fold question is asked.**
+
+### ⚠ Cross-checked against W34's charge-count formula — which does NOT generalise here
+
+W34 offers `charged_sites = (100 − fuzzy_match_percent) × size / 20`, exact on
+8/8 of its rows. Run against my per-instruction counts on all 42 rows:
+
+| | |
+|---|---:|
+| rows within ±10% | **1 of 42** |
+| ratio formula/actual — median | **6.05×** |
+| ratio range | 0.55× – 16.02× |
+
+⇒ **the formula is calibrated to the near-100, `diff_arg`-only population W34
+measured it on, and over-predicts by ~6× on rows carrying hard diffs** (mine
+carry 34–133). On the single row in my stratum matching W34's population
+(`SyncObjects`, `hard == 0`) it is much closer but still not exact, and it
+*under*-predicts there (0.55×, 12.6 vs 23) — so it errs in **both** directions.
+**Reported back as a scope bound, not a defect**: this is the campaign's most
+repeated failure shape — a figure validated on one stratum briefed as general.
+
+⚠ Importantly this **does not touch §4's conclusion**, and both instruments agree
+on the direction that matters (these rows carry *many* charges, not one name
+each). §4 rests on a **stronger** instrument than either aggregate: per-charged-
+site classification of objdiff's own emitted diff, asking only whether *any*
+non-name charge exists — a ground-truth read, not an estimate. Proving every fold in the stratum, landing
 every map fix, and fabricating every alias would move **+0 B**.
 
 ## 5. The fold question, adjudicated on retail bytes — 0 of 54 proven
@@ -186,7 +211,19 @@ separately):
 | not testable (symbol absent) | 1 |
 | **FOLD_CONSISTENT** | **0** |
 
-**19 of 19 testable pairs refute the fold.** For the remaining 33
+**19 of 19 testable pairs refute the fold.** ⚠ **And `OURS_UNMAPPED` needs a FOURTH branch that the brief's three-way split
+does not contain.** W34's `TrackerManager::HandleGameOver` **has no retail
+address at all** — retail inlined it into `Poll`. ⇒ *"the name exists in our
+source"* does **not** imply *"an address needs it"*. So a pair where our `B` is
+absent from the map may be **fold / map-error / wrong-callee / OR
+`B` DOES NOT EXIST IN RETAIL**, the last being an **inline-policy** difference
+and neither a defect nor an alias candidate. This is not hypothetical here:
+§9's cases **A and E are exactly that shape in the opposite direction** (retail
+emits out-of-line, we inline it away), which is why they read as "wrong callee"
+to objdiff while being behaviourally equivalent. **Before assigning any name to
+an address, check the thing needing the name exists.**
+
+For the remaining 33
 `OURS_UNMAPPED` pairs the fold is **UNDECIDABLE by body comparison** — retail's
 distinguishing data references are anonymous, and 15 of them are `SHAPE_ONLY`
 (shape-identical, relocation-target-different), which per CD-7 is *precisely the
@@ -194,7 +231,38 @@ population MSVC does NOT fold*: folding requires identity **including
 relocations**. `_List_base<T>::clear` survives at 42 addresses for this exact
 reason.
 
-**Total proven folds in the stratum: 0 of 54 pairs.**
+**Total proven folds in the stratum: 0 of 54 pairs** — and this is the verdict of
+the *final* tool, **re-run end-to-end after the `UNDECIDED` fix rather than
+reasoned forward from the pre-fix run**: `DIFFERENT` 27 · `SHAPE_ONLY` 19 ·
+`REFUSE` 5 · `UNDECIDED` 2 · `TOO_WEAK` 1 · **`IDENTICAL` 0**.
+
+### ★★★ W34's masked-T1 thunk hazard, confirmed here at scale — and this tool is immune
+
+Lane W34-TRACKER found `symbol_aliases.json` declaring a T1-proven fold at
+`0x826936f8` whose two members **branch to different functions**: every
+TrackerManager forwarder compiles to the identical 20-byte body, and masked T1
+masks the one relocated word that distinguishes them. **For a thunk, the
+destination IS the information content.**
+
+Independently reproduced here, and it is **not an edge case in this binary** —
+scanning the first 400 target objs for 12–24 byte retail forwarders and grouping
+by *masked* bytes:
+
+| | |
+|---|---:|
+| groups sharing masked bytes but differing in relocation destination | **80** |
+| members in the largest such group (vbase adjustor thunks `$4PPPPPPPM@A@AA`) | **661** |
+
+Masked-T1 would fold all **661** into one group. This tool returns **NOT a fold**
+on them, because comparing relocation **destinations** — never masking them — was
+its design premise from the start.
+
+★ **W34's mechanism and §5's false `IDENTICAL` are the same root cause, reached
+independently: masking (or forgiving) the one word that carries the
+discriminator.** W34's discriminator was a branch target; mine was a vtable
+pointer. **Two lanes, two operand kinds, one bug class** — which is why the rule
+is stated generally in the tool: *never mask a relocation; if you cannot resolve
+it, return UNDECIDED.*
 
 ## 6. ✅ One real defect proven on retail bytes: a MAP error
 
