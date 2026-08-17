@@ -1440,8 +1440,20 @@ def cmd_validate_addrs(args):
          `?SetTypeDef@Object@Hmx@@UAAXPAVDataArray@@@Z`, whose true home is
          0x8275AB18.
 
-    Exit 1 if any row fails, so this can gate.  Rows in units with no `.text`
-    pin are counted and skipped (they have no blocks to be inside of).
+    Rows in units with no `.text` pin are counted and skipped (they have no
+    blocks to be inside of).
+
+    C. ARTIFACT -- the on-disk scope_map.json must agree with this report.  See
+       _artifact_check: A and B are recomputed from report.json and hold
+       whether or not that file exists, so they vouch for the DERIVATION and
+       not for the CACHE.
+
+    Exit codes, so this can gate:
+      0  everything above holds
+      1  a row failed, or the on-disk artifact contradicts this report
+      3  the artifact is ABSENT -- addresses pass, cache NOT validated.
+         Deliberately not 0: "there was nothing to check" and "I checked and it
+         is fine" must not be the same signal.  --allow-absent demotes it.
 
     ⚠⚠ CONTAINMENT UNDERCOUNTS BY ~2x AND ITS "CONTROL" IS NOT ONE.  Measured
     against the true pre-fix addresses (lane SCOPEMAP-VA): of 23,036 pinned
