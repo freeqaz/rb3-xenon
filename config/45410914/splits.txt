@@ -2111,7 +2111,7 @@ envelope.c:
 
 lsp.c:
 	.pdata      start:0x822613C8 end:0x82261490
-	.text       start:0x82C3E298 end:0x82C3ED68
+	.text       start:0x82C3E298 end:0x82C3E5B4
 
 window.c:
 	.pdata      start:0x82261100 end:0x82261108
