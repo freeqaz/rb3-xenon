@@ -7,6 +7,38 @@
 // Kept under version control deliberately: an agent-facing prompt that is
 // wrong silently steers every future lane, and while these were untracked
 // nothing prevented that. Fix or delete in review -- do not shadow-edit.
+//
+// CORRECTION 2026-08-17 (task #114): SECOND, INDEPENDENT REASON NOT TO RUN --
+// EVERY HARDCODED FAN-OUT NUMBER IN THIS FILE IS WRONG, AND THIS IS THE ONE
+// FILE THAT STILL PRESENTS THEM AS CURRENT.
+//
+//   * The per-unit delta pairs baked into the phase prompts below -- BandDirector
+//     (+32, 24), Part (-64, 19), Rnd (-80, 13), MidiParser (-48, 14), WaveFile
+//     (-48, 9), DataFile (-16, 18), Crowd (-4, 52/45), Shockwave (+724),
+//     Cache_Xbox (+2048), and the rest -- are from the layout_fix_rank **v1**
+//     map, which docs/plans/structural-readiness-2026-06-03.md s1 RETRACTED as
+//     EH-cleanup-funclet false positives ("~150 fns, not ~700"). This file was
+//     never updated to the v2 map.
+//   * The v2 map is inflated too. layout_fix_rank's addi branch built its base
+//     register as `'r' + m.group(2)` where group 2 already carried its `r`, so
+//     bases were spelled rr1/rr12/rr31 and could not match STACK_REGS -- the
+//     r12-funclet fix s1 announces never actually took effect. Measured paired
+//     over 2128 near-miss fns: the as-shipped tool put 100.0% of the 1385 offset
+//     rows it parsed into the STRUCT bucket and 0 into stack; corrected, 31.2% /
+//     68.8%. Fixed 2026-08-17 in b57f9e7e.
+//   * The "97% of the 1064 near-miss functions ... differ from retail ONLY by
+//     struct-field-offset immediates" premise in meta.description and phase 1 is
+//     not what the repaired tool measures. On the current tree only 56.7% of
+//     near-miss functions carry ANY offset-class delta and 22.1% carry struct
+//     evidence. (Different tree and a different denominator from the 2026-05-29
+//     hand sample in plans/struct-offset-sweep.md that this 97% descends from --
+//     so treat it as unsupported, not as refuted at matched grain.)
+//   * /home/free/tmp/layout_fix_rank.json, which phases 1-6 tell every agent to
+//     read, is a scratch path outside the repo. It is gone.
+//
+// If this workflow is ever revived: delete the hardcoded numbers, do not port
+// them. Re-run tools/layout_fix_rank.py at b57f9e7e or later. Re-measurement of
+// record: <decomp-bench>/archive/runs/rb3x-layout-fix-rank-rerank-2026-08-17/.
 // ============================================================================
 export const meta = {
   name: 'structural-readiness-map',
