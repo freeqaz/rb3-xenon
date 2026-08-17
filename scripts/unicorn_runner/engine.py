@@ -12,12 +12,15 @@ try:
 except ImportError:
     _HAS_C_HOOK = False
 
-# Use local Unicorn checkout
-_MILOHAX_DIR = Path(__file__).resolve().parent.parent.parent.parent
-_UNICORN_DIR = _MILOHAX_DIR / "unicorn"
-UNICORN_PATH = str(_UNICORN_DIR / "bindings" / "python")
-sys.path.insert(0, UNICORN_PATH)
-os.environ["LIBUNICORN_PATH"] = str(_UNICORN_DIR / "build")
+# Locate the local Unicorn checkout and put its bindings AHEAD of this repo's
+# own scripts/unicorn package on sys.path. See unicorn_dep.py for why counting
+# parent directories here was wrong (it broke in every git worktree, and the
+# unconditional LIBUNICORN_PATH assignment overwrote a correct value).
+from .unicorn_dep import ensure_unicorn_on_path, require as _require_unicorn
+
+_UNICORN_DIR = ensure_unicorn_on_path()
+UNICORN_PATH = str(_UNICORN_DIR / "bindings" / "python") if _UNICORN_DIR else ""
+_require_unicorn()
 
 from unicorn import Uc, UC_ARCH_PPC, UC_MODE_PPC32, UC_MODE_BIG_ENDIAN
 from unicorn import UC_HOOK_BLOCK, UC_HOOK_CODE, UC_HOOK_MEM_READ_UNMAPPED, UC_HOOK_MEM_WRITE_UNMAPPED
@@ -66,14 +69,12 @@ class ExecutionResult:
         self.unmapped_log = unmapped_log or []
 
 
-# Call log tuple indices (flat tuple instead of nested dicts for speed)
-CL_INDEX = 0
-CL_TRAMP_ADDR = 1
-CL_SRC_OFFSET = 2
-CL_R3 = 3
-CL_R4 = 4
-CL_R5 = 5
-CL_R6 = 6
+# Call log tuple indices (flat tuple instead of nested dicts for speed).
+# Defined in call_log.py so that pure-logic consumers (comparator.py) can read a
+# call log without importing the emulator; re-exported here for existing callers.
+from .call_log import (  # noqa: E402,F401
+    CL_INDEX, CL_TRAMP_ADDR, CL_SRC_OFFSET, CL_R3, CL_R4, CL_R5, CL_R6,
+)
 
 
 # Pre-computed static vtable data (same for every execution)
