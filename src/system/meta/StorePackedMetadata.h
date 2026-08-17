@@ -65,7 +65,7 @@ class StoreSingleStringTable {
 public:
     ~StoreSingleStringTable() {
         if (mBuffer)
-            _MemFree(mBuffer);
+            MemFree(mBuffer);
     }
     bool LoadFile(const char *);
     const char *GetString(int idx) const {
