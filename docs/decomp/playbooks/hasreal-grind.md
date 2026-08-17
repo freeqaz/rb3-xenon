@@ -267,8 +267,12 @@ and a uniform delta keyed off them is **not** a member delta — abandon/defer, 
   (e.g. Rnd uniform +0x20 = 8 slots), not a data member. Fixable only by vtable-layout
   reconstruction — defer.
 
-`tools/wall_classify.py` encodes all four gates (run it first; `--validate48` is the
-regression suite). MEMBER_DELTA route was ~87% polluted by these before the 2026-06-09 fix.
+`tools/wall_classify.py` encodes all four gates (run it first; `--validate` is the
+regression suite, and `--mutation-matrix` is the proof that it can go red).
+MEMBER_DELTA route was ~87% polluted by these before the 2026-06-09 fix.
+`--validate48` was deleted 2026-08-17: 29 of its 48 ground-truth symbols no longer
+resolve and 11 more are matched, so it scored a permanent, meaningless 15/48 —
+see the wall_classify.py header.
 
 Use `mode=offsets`. If you see a **single dominant UNIFORM SAME-SIGN `this`-relative delta**
 (not r1/stack, not a vtable-slot, not a stack-frame `stwu r1,-0xNN` change), it's a real

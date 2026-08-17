@@ -1,0 +1,6096 @@
+{
+ "_wc_fixture": {
+  "captured": "2026-08-17",
+  "diff_count": 2,
+  "objdiff_cli": "objdiff-cli 4.2.3 (88b425bc3bad, xxh3 c8170f625ef1331d)",
+  "repo_head": "ff22c4404ed8d6eb1e7b7504e453cd631910d321",
+  "slug": "inline-policy-addsongdata",
+  "sym": "?AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@4@@Z",
+  "unit": "default/BandSongMgr",
+  "vbase": {
+   "coff": {
+    "BandSongMgr": [
+     "??_8BandSongMgr@@7B@"
+    ]
+   },
+   "header": {
+    "BandSongMgr": true
+   }
+  }
+ },
+ "base_size": 652,
+ "demangled": "public: virtual void __cdecl BandSongMgr::AddSongData(class DataArray *, class stlpmtx_std::hash_map<int, class SongMetadata *, struct stlpmtx_std::hash<int>, struct stlpmtx_std::equal_to<int>, class stlpmtx_std::StlNodeAlloc<struct stlpmtx_std::pair<int const, class SongMetadata *> > > &, char const *, enum ContentLocT, class stlpmtx_std::vector<int, class stlpmtx_std::StlNodeAlloc<int> > &)",
+ "diff_score": {
+  "max_score": 16300,
+  "score": 65
+ },
+ "fuzzy_match_percent": 99.60123,
+ "instructions": [
+  {
+   "base": {
+    "address": "0x8",
+    "args": "r12",
+    "opcode": "mflr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     }
+    ]
+   },
+   "index": 0,
+   "match_type": "equal",
+   "target": {
+    "address": "0x0",
+    "args": "r12",
+    "opcode": "mflr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xc",
+    "args": "__savegprlr_16",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "__savegprlr_16"
+     }
+    ]
+   },
+   "index": 1,
+   "match_type": "equal",
+   "target": {
+    "address": "0x4",
+    "args": "__savegprlr_16",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "__savegprlr_16"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x10",
+    "args": "r31, r1, 0x100",
+    "opcode": "subi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Signed",
+      "value": 256
+     }
+    ]
+   },
+   "index": 2,
+   "match_type": "equal",
+   "target": {
+    "address": "0x8",
+    "args": "r31, r1, 0x100",
+    "opcode": "subi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Signed",
+      "value": 256
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x14",
+    "args": "r1, -0x100(r1)",
+    "opcode": "stwu",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Signed",
+      "value": -256
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     }
+    ]
+   },
+   "index": 3,
+   "match_type": "equal",
+   "target": {
+    "address": "0xc",
+    "args": "r1, -0x100(r1)",
+    "opcode": "stwu",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Signed",
+      "value": -256
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x18",
+    "args": "r26, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r26"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 4,
+   "match_type": "equal",
+   "target": {
+    "address": "0x10",
+    "args": "r26, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r26"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1c",
+    "args": "r30, 0x8(r4)",
+    "opcode": "lha",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Signed",
+      "value": 8
+     },
+     {
+      "type": "Register",
+      "value": "r4"
+     }
+    ]
+   },
+   "index": 5,
+   "match_type": "equal",
+   "target": {
+    "address": "0x14",
+    "args": "r30, 0x8(r4)",
+    "opcode": "lha",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Signed",
+      "value": 8
+     },
+     {
+      "type": "Register",
+      "value": "r4"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x20",
+    "args": "r3, r4",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r4"
+     }
+    ]
+   },
+   "index": 6,
+   "match_type": "equal",
+   "target": {
+    "address": "0x18",
+    "args": "r3, r4",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r4"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x24",
+    "args": "r23, r4",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r23"
+     },
+     {
+      "type": "Register",
+      "value": "r4"
+     }
+    ]
+   },
+   "index": 7,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1c",
+    "args": "r23, r4",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r23"
+     },
+     {
+      "type": "Register",
+      "value": "r4"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x28",
+    "args": "r21, r5",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r21"
+     },
+     {
+      "type": "Register",
+      "value": "r5"
+     }
+    ]
+   },
+   "index": 8,
+   "match_type": "equal",
+   "target": {
+    "address": "0x20",
+    "args": "r21, r5",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r21"
+     },
+     {
+      "type": "Register",
+      "value": "r5"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x2c",
+    "args": "r18, r7",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r18"
+     },
+     {
+      "type": "Register",
+      "value": "r7"
+     }
+    ]
+   },
+   "index": 9,
+   "match_type": "equal",
+   "target": {
+    "address": "0x24",
+    "args": "r18, r7",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r18"
+     },
+     {
+      "type": "Register",
+      "value": "r7"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x30",
+    "args": "r16, r8",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r16"
+     },
+     {
+      "type": "Register",
+      "value": "r8"
+     }
+    ]
+   },
+   "index": 10,
+   "match_type": "equal",
+   "target": {
+    "address": "0x28",
+    "args": "r16, r8",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r16"
+     },
+     {
+      "type": "Register",
+      "value": "r8"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x34",
+    "args": "?CountSongsInArray@@YAHPAVDataArray@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?CountSongsInArray@@YAHPAVDataArray@@@Z"
+     }
+    ]
+   },
+   "index": 11,
+   "match_type": "equal",
+   "target": {
+    "address": "0x2c",
+    "args": "?CountSongsInArray@@YAHPAVDataArray@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?CountSongsInArray@@YAHPAVDataArray@@@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x38",
+    "args": "r11, r3, r30",
+    "opcode": "subf",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   },
+   "index": 12,
+   "match_type": "equal",
+   "target": {
+    "address": "0x30",
+    "args": "r11, r3, r30",
+    "opcode": "subf",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x3c",
+    "args": "cr6, r11, r30",
+    "opcode": "cmpw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   },
+   "index": 13,
+   "match_type": "equal",
+   "target": {
+    "address": "0x34",
+    "args": "cr6, r11, r30",
+    "opcode": "cmpw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x40",
+    "args": "cr6, 0x28c",
+    "branch_dest": 652,
+    "opcode": "bge",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 652
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 0,
+    "target_index": 161
+   },
+   "index": 14,
+   "match_type": "equal",
+   "target": {
+    "address": "0x38",
+    "args": "cr6, 0x284",
+    "branch_dest": 644,
+    "opcode": "bge",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 644
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 0,
+    "target_index": 161
+   }
+  },
+  {
+   "base": {
+    "address": "0x44",
+    "args": "r20, r11, 3",
+    "opcode": "slwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r20"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Other",
+      "value": "3"
+     }
+    ]
+   },
+   "index": 15,
+   "match_type": "equal",
+   "target": {
+    "address": "0x3c",
+    "args": "r20, r11, 3",
+    "opcode": "slwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r20"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Other",
+      "value": "3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x48",
+    "args": "r17, r11, r30",
+    "opcode": "subf",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r17"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   },
+   "index": 16,
+   "match_type": "equal",
+   "target": {
+    "address": "0x40",
+    "args": "r17, r11, r30",
+    "opcode": "subf",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r17"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x4c",
+    "args": "r11, ??_C@_0BC@DGHAIIKJ@missing_song_data?$AA@@h",
+    "opcode": "lis",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Symbol",
+      "value": "??_C@_0BC@DGHAIIKJ@missing_song_data?$AA@"
+     }
+    ]
+   },
+   "index": 17,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x44",
+    "args": "r11, lbl_8209E638@h",
+    "opcode": "lis",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_8209E638"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x50",
+    "args": "r10, ?missing_song_data@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4VSymbol@@A@h",
+    "opcode": "lis",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Symbol",
+      "value": "?missing_song_data@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4VSymbol@@A"
+     }
+    ]
+   },
+   "index": 18,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x48",
+    "args": "r10, lbl_82DFE790@h",
+    "opcode": "lis",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_82DFE790"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x54",
+    "args": "r22, ?$S1@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4IA@h",
+    "opcode": "lis",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r22"
+     },
+     {
+      "type": "Symbol",
+      "value": "?$S1@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4IA"
+     }
+    ]
+   },
+   "index": 19,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x4c",
+    "args": "r22, lbl_82DFE78C@h",
+    "opcode": "lis",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r22"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_82DFE78C"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x58",
+    "args": "r19, r11, ??_C@_0BC@DGHAIIKJ@missing_song_data?$AA@@l",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r19"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Symbol",
+      "value": "??_C@_0BC@DGHAIIKJ@missing_song_data?$AA@"
+     }
+    ]
+   },
+   "index": 20,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x50",
+    "args": "r19, r11, lbl_8209E638@l",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r19"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_8209E638"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x5c",
+    "args": "r24, r10, ?missing_song_data@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4VSymbol@@A@l",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r24"
+     },
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Symbol",
+      "value": "?missing_song_data@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4VSymbol@@A"
+     }
+    ]
+   },
+   "index": 21,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x54",
+    "args": "r24, r10, lbl_82DFE790@l",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r24"
+     },
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_82DFE790"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x60",
+    "args": "r11, 0x0(r23)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r23"
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 10,
+    "source_indices": [
+     160
+    ]
+   },
+   "index": 22,
+   "match_type": "equal",
+   "target": {
+    "address": "0x58",
+    "args": "r11, 0x0(r23)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r23"
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 10,
+    "source_indices": [
+     160
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x64",
+    "args": "r4, r23",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r23"
+     }
+    ]
+   },
+   "index": 23,
+   "match_type": "equal",
+   "target": {
+    "address": "0x5c",
+    "args": "r4, r23",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r23"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x68",
+    "args": "r3, r11, r20",
+    "opcode": "add",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r20"
+     }
+    ]
+   },
+   "index": 24,
+   "match_type": "equal",
+   "target": {
+    "address": "0x60",
+    "args": "r3, r11, r20",
+    "opcode": "add",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r20"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x6c",
+    "args": "?Array@DataNode@@QBAPAVDataArray@@PBV2@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?Array@DataNode@@QBAPAVDataArray@@PBV2@@Z"
+     }
+    ]
+   },
+   "index": 25,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x64",
+    "args": "?Int@DataNode@@QBAHPBVDataArray@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?Int@DataNode@@QBAHPBVDataArray@@@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x70",
+    "args": "r30, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 26,
+   "match_type": "equal",
+   "target": {
+    "address": "0x68",
+    "args": "r30, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x74",
+    "args": "r3, r31, 0x54",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 84
+     }
+    ]
+   },
+   "index": 27,
+   "match_type": "equal",
+   "target": {
+    "address": "0x6c",
+    "args": "r3, r31, 0x54",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 84
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x78",
+    "args": "r5, r30",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   },
+   "index": 28,
+   "match_type": "equal",
+   "target": {
+    "address": "0x70",
+    "args": "r5, r30",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x7c",
+    "args": "r4, 0x0(r30)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   },
+   "index": 29,
+   "match_type": "equal",
+   "target": {
+    "address": "0x74",
+    "args": "r4, 0x0(r30)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x80",
+    "args": "?Sym@DataNode@@QBA?AVSymbol@@PBVDataArray@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?Sym@DataNode@@QBA?AVSymbol@@PBVDataArray@@@Z"
+     }
+    ]
+   },
+   "index": 30,
+   "match_type": "equal",
+   "target": {
+    "address": "0x78",
+    "args": "?Sym@DataNode@@QBA?AVSymbol@@PBVDataArray@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?Sym@DataNode@@QBA?AVSymbol@@PBVDataArray@@@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x84",
+    "args": "r11, ?$S1@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4IA@l(r22)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Symbol",
+      "value": "?$S1@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4IA"
+     },
+     {
+      "type": "Register",
+      "value": "r22"
+     }
+    ]
+   },
+   "index": 31,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x7c",
+    "args": "r11, lbl_82DFE78C@l(r22)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_82DFE78C"
+     },
+     {
+      "type": "Register",
+      "value": "r22"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x88",
+    "args": "r10, r11, 31",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Other",
+      "value": "31"
+     }
+    ]
+   },
+   "index": 32,
+   "match_type": "equal",
+   "target": {
+    "address": "0x80",
+    "args": "r10, r11, 31",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Other",
+      "value": "31"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x8c",
+    "args": "0xa4",
+    "branch_dest": 164,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 164
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 1,
+    "target_index": 39
+   },
+   "index": 33,
+   "match_type": "equal",
+   "target": {
+    "address": "0x84",
+    "args": "0x9c",
+    "branch_dest": 156,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 156
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 1,
+    "target_index": 39
+   }
+  },
+  {
+   "base": {
+    "address": "0x90",
+    "args": "r11, r11, 0x1",
+    "opcode": "ori",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 1
+     }
+    ]
+   },
+   "index": 34,
+   "match_type": "equal",
+   "target": {
+    "address": "0x88",
+    "args": "r11, r11, 0x1",
+    "opcode": "ori",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 1
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x94",
+    "args": "r11, ?$S1@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4IA@l(r22)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Symbol",
+      "value": "?$S1@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4IA"
+     },
+     {
+      "type": "Register",
+      "value": "r22"
+     }
+    ]
+   },
+   "index": 35,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x8c",
+    "args": "r11, lbl_82DFE78C@l(r22)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_82DFE78C"
+     },
+     {
+      "type": "Register",
+      "value": "r22"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x98",
+    "args": "r4, r19",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r19"
+     },
+     {
+      "type": "Symbol",
+      "value": "??_C@_0BC@DGHAIIKJ@missing_song_data?$AA@"
+     }
+    ]
+   },
+   "index": 36,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x90",
+    "args": "r4, r19",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r19"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_8209E638"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x9c",
+    "args": "r3, r24",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r24"
+     },
+     {
+      "type": "Symbol",
+      "value": "?missing_song_data@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4VSymbol@@A"
+     }
+    ]
+   },
+   "index": 37,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x94",
+    "args": "r3, r24",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r24"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_82DFE790"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xa0",
+    "args": "??0Symbol@@QAA@PBD@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??0Symbol@@QAA@PBD@Z"
+     }
+    ]
+   },
+   "index": 38,
+   "match_type": "equal",
+   "target": {
+    "address": "0x98",
+    "args": "??0Symbol@@QAA@PBD@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??0Symbol@@QAA@PBD@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xa4",
+    "args": "r3, 0x0(r24)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r24"
+     },
+     {
+      "type": "Symbol",
+      "value": "?missing_song_data@?3??AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@5@@Z@4VSymbol@@A"
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 1,
+    "source_indices": [
+     33
+    ]
+   },
+   "index": 39,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x9c",
+    "args": "r3, 0x0(r24)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r24"
+     },
+     {
+      "type": "Symbol",
+      "value": "lbl_82DFE790"
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 1,
+    "source_indices": [
+     33
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xa8",
+    "args": "r29, 0x0",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r29"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   },
+   "index": 40,
+   "match_type": "equal",
+   "target": {
+    "address": "0xa0",
+    "args": "r29, 0x0",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r29"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xac",
+    "args": "r28, 0x54(r31)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r28"
+     },
+     {
+      "type": "Signed",
+      "value": 84
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   },
+   "index": 41,
+   "match_type": "equal",
+   "target": {
+    "address": "0xa4",
+    "args": "r28, 0x54(r31)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r28"
+     },
+     {
+      "type": "Signed",
+      "value": 84
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xb0",
+    "args": "?SystemConfig@@YAPAVDataArray@@VSymbol@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?SystemConfig@@YAPAVDataArray@@VSymbol@@@Z"
+     }
+    ]
+   },
+   "index": 42,
+   "match_type": "equal",
+   "target": {
+    "address": "0xa8",
+    "args": "?SystemConfig@@YAPAVDataArray@@VSymbol@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?SystemConfig@@YAPAVDataArray@@VSymbol@@@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xb4",
+    "args": "r4, r28",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r28"
+     }
+    ]
+   },
+   "index": 43,
+   "match_type": "equal",
+   "target": {
+    "address": "0xac",
+    "args": "r4, r28",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r28"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xb8",
+    "args": "r5, r29",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r29"
+     }
+    ]
+   },
+   "index": 44,
+   "match_type": "equal",
+   "target": {
+    "address": "0xb0",
+    "args": "r5, r29",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r29"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xbc",
+    "args": "?FindArray@DataArray@@QBAPAV1@VSymbol@@_N@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?FindArray@DataArray@@QBAPAV1@VSymbol@@_N@Z"
+     }
+    ]
+   },
+   "index": 45,
+   "match_type": "equal",
+   "target": {
+    "address": "0xb4",
+    "args": "?FindArray@DataArray@@QBAPAV1@VSymbol@@_N@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?FindArray@DataArray@@QBAPAV1@VSymbol@@_N@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xc0",
+    "args": "r29, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r29"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 46,
+   "match_type": "equal",
+   "target": {
+    "address": "0xb8",
+    "args": "r29, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r29"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xc4",
+    "args": "r3, r30",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   },
+   "index": 47,
+   "match_type": "equal",
+   "target": {
+    "address": "0xbc",
+    "args": "r3, r30",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xc8",
+    "args": "r4, r29",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r29"
+     }
+    ]
+   },
+   "index": 48,
+   "match_type": "equal",
+   "target": {
+    "address": "0xc0",
+    "args": "r4, r29",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r29"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xcc",
+    "args": "?GetSongID@@YAHPAVDataArray@@0@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?GetSongID@@YAHPAVDataArray@@0@Z"
+     }
+    ]
+   },
+   "index": 49,
+   "match_type": "equal",
+   "target": {
+    "address": "0xc4",
+    "args": "?GetSongID@@YAHPAVDataArray@@0@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?GetSongID@@YAHPAVDataArray@@0@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xd0",
+    "args": "r11, 0x5e6",
+    "opcode": "lis",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 1510
+     }
+    ]
+   },
+   "index": 50,
+   "match_type": "equal",
+   "target": {
+    "address": "0xc8",
+    "args": "r11, 0x5e6",
+    "opcode": "lis",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 1510
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xd4",
+    "args": "r27, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r27"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 51,
+   "match_type": "equal",
+   "target": {
+    "address": "0xcc",
+    "args": "r27, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r27"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xd8",
+    "args": "r3, 0x50(r31)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   },
+   "index": 52,
+   "match_type": "equal",
+   "target": {
+    "address": "0xd0",
+    "args": "r3, 0x50(r31)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xdc",
+    "args": "r11, r11, 0x9ec1",
+    "opcode": "ori",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 40641
+     }
+    ]
+   },
+   "index": 53,
+   "match_type": "equal",
+   "target": {
+    "address": "0xd4",
+    "args": "r11, r11, 0x9ec1",
+    "opcode": "ori",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 40641
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xe0",
+    "args": "r4, 0x54(r31)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Signed",
+      "value": 84
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   },
+   "index": 54,
+   "match_type": "equal",
+   "target": {
+    "address": "0xd8",
+    "args": "r4, 0x54(r31)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Signed",
+      "value": 84
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xe4",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 55,
+   "match_type": "equal",
+   "target": {
+    "address": "0xdc",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xe8",
+    "args": "r11, r27, r11",
+    "opcode": "subf",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 56,
+   "match_type": "equal",
+   "target": {
+    "address": "0xe0",
+    "args": "r11, r27, r11",
+    "opcode": "subf",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xec",
+    "args": "r5, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   },
+   "index": 57,
+   "match_type": "equal",
+   "target": {
+    "address": "0xe4",
+    "args": "r5, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xf0",
+    "args": "r11, r11",
+    "opcode": "cntlzw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 58,
+   "match_type": "equal",
+   "target": {
+    "address": "0xe8",
+    "args": "r11, r11",
+    "opcode": "cntlzw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xf4",
+    "args": "r25, r11, 1, 26",
+    "opcode": "extrwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r25"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Other",
+      "value": "1"
+     },
+     {
+      "type": "Other",
+      "value": "26"
+     }
+    ]
+   },
+   "index": 59,
+   "match_type": "equal",
+   "target": {
+    "address": "0xec",
+    "args": "r25, r11, 1, 26",
+    "opcode": "extrwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r25"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Other",
+      "value": "1"
+     },
+     {
+      "type": "Other",
+      "value": "26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xf8",
+    "args": "?IsInExclusionList@BandSongMgr@@QBA_NPBDH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?IsInExclusionList@BandSongMgr@@QBA_NPBDH@Z"
+     }
+    ]
+   },
+   "index": 60,
+   "match_type": "replace",
+   "target": {
+    "address": "0xf0",
+    "args": "r3, 0x0",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0xfc",
+    "args": "r11, r3, 24",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Other",
+      "value": "24"
+     }
+    ]
+   },
+   "index": 61,
+   "match_type": "equal",
+   "target": {
+    "address": "0xf4",
+    "args": "r11, r3, 24",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Other",
+      "value": "24"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x100",
+    "args": "0x280",
+    "branch_dest": 640,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 640
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   },
+   "index": 62,
+   "match_type": "equal",
+   "target": {
+    "address": "0xf8",
+    "args": "0x278",
+    "branch_dest": 632,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 632
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   }
+  },
+  {
+   "base": {
+    "address": "0x104",
+    "args": "cr6, r27, 0x0",
+    "opcode": "cmpwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   },
+   "index": 63,
+   "match_type": "equal",
+   "target": {
+    "address": "0xfc",
+    "args": "cr6, r27, 0x0",
+    "opcode": "cmpwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x108",
+    "args": "cr6, 0x280",
+    "branch_dest": 640,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 640
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   },
+   "index": 64,
+   "match_type": "equal",
+   "target": {
+    "address": "0x100",
+    "args": "cr6, 0x278",
+    "branch_dest": 632,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 632
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   }
+  },
+  {
+   "base": {
+    "address": "0x10c",
+    "args": "r4, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   },
+   "index": 65,
+   "match_type": "equal",
+   "target": {
+    "address": "0x104",
+    "args": "r4, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x110",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 66,
+   "match_type": "equal",
+   "target": {
+    "address": "0x108",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x114",
+    "args": "?HasSong@SongMgr@@QBA_NH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?HasSong@SongMgr@@QBA_NH@Z"
+     }
+    ]
+   },
+   "index": 67,
+   "match_type": "equal",
+   "target": {
+    "address": "0x10c",
+    "args": "?HasSong@SongMgr@@QBA_NH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?HasSong@SongMgr@@QBA_NH@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x118",
+    "args": "r11, r3, 24",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Other",
+      "value": "24"
+     }
+    ]
+   },
+   "index": 68,
+   "match_type": "equal",
+   "target": {
+    "address": "0x110",
+    "args": "r11, r3, 24",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Other",
+      "value": "24"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x11c",
+    "args": "0x280",
+    "branch_dest": 640,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 640
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   },
+   "index": 69,
+   "match_type": "equal",
+   "target": {
+    "address": "0x114",
+    "args": "0x278",
+    "branch_dest": 632,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 632
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   }
+  },
+  {
+   "base": {
+    "address": "0x120",
+    "args": "r11, 0x0(r26)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 70,
+   "match_type": "equal",
+   "target": {
+    "address": "0x118",
+    "args": "r11, 0x0(r26)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x124",
+    "args": "r10, r18, 0x2",
+    "opcode": "subi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Register",
+      "value": "r18"
+     },
+     {
+      "type": "Signed",
+      "value": 2
+     }
+    ]
+   },
+   "index": 71,
+   "match_type": "equal",
+   "target": {
+    "address": "0x11c",
+    "args": "r10, r18, 0x2",
+    "opcode": "subi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Register",
+      "value": "r18"
+     },
+     {
+      "type": "Signed",
+      "value": 2
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x128",
+    "args": "r4, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   },
+   "index": 72,
+   "match_type": "equal",
+   "target": {
+    "address": "0x120",
+    "args": "r4, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x12c",
+    "args": "r5, 0x54(r31)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Signed",
+      "value": 84
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   },
+   "index": 73,
+   "match_type": "equal",
+   "target": {
+    "address": "0x124",
+    "args": "r5, 0x54(r31)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Signed",
+      "value": 84
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x130",
+    "args": "r10, r10",
+    "opcode": "cntlzw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Register",
+      "value": "r10"
+     }
+    ]
+   },
+   "index": 74,
+   "match_type": "equal",
+   "target": {
+    "address": "0x128",
+    "args": "r10, r10",
+    "opcode": "cntlzw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Register",
+      "value": "r10"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x134",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 75,
+   "match_type": "equal",
+   "target": {
+    "address": "0x12c",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x138",
+    "args": "r28, r10, 1, 26",
+    "opcode": "extrwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r28"
+     },
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Other",
+      "value": "1"
+     },
+     {
+      "type": "Other",
+      "value": "26"
+     }
+    ]
+   },
+   "index": 76,
+   "match_type": "equal",
+   "target": {
+    "address": "0x130",
+    "args": "r28, r10, 1, 26",
+    "opcode": "extrwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r28"
+     },
+     {
+      "type": "Register",
+      "value": "r10"
+     },
+     {
+      "type": "Other",
+      "value": "1"
+     },
+     {
+      "type": "Other",
+      "value": "26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x13c",
+    "args": "r11, 0x6c(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 108
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 77,
+   "match_type": "equal",
+   "target": {
+    "address": "0x134",
+    "args": "r11, 0x6c(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 108
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x140",
+    "args": "r11",
+    "opcode": "mtctr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 78,
+   "match_type": "equal",
+   "target": {
+    "address": "0x138",
+    "args": "r11",
+    "opcode": "mtctr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x144",
+    "args": "",
+    "opcode": "bctrl"
+   },
+   "index": 79,
+   "match_type": "equal",
+   "target": {
+    "address": "0x13c",
+    "args": "",
+    "opcode": "bctrl"
+   }
+  },
+  {
+   "base": {
+    "address": "0x148",
+    "args": "r5, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   },
+   "index": 80,
+   "match_type": "equal",
+   "target": {
+    "address": "0x140",
+    "args": "r5, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x14c",
+    "args": "r4, r21",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r21"
+     }
+    ]
+   },
+   "index": 81,
+   "match_type": "equal",
+   "target": {
+    "address": "0x144",
+    "args": "r4, r21",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r21"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x150",
+    "args": "r3, r31, 0x58",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 88
+     }
+    ]
+   },
+   "index": 82,
+   "match_type": "equal",
+   "target": {
+    "address": "0x148",
+    "args": "r3, r31, 0x58",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 88
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x154",
+    "args": "??$_M_find@H@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@1@ABH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??$_M_find@H@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@1@ABH@Z"
+     }
+    ]
+   },
+   "index": 83,
+   "match_type": "equal",
+   "target": {
+    "address": "0x14c",
+    "args": "??$_M_find@H@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@1@ABH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??$_M_find@H@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@1@ABH@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x158",
+    "args": "r11, 0x0(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 84,
+   "match_type": "equal",
+   "target": {
+    "address": "0x150",
+    "args": "r11, 0x0(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x15c",
+    "args": "cr6, r11, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   },
+   "index": 85,
+   "match_type": "equal",
+   "target": {
+    "address": "0x154",
+    "args": "cr6, r11, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x160",
+    "args": "cr6, 0x198",
+    "branch_dest": 408,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 408
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 3,
+    "target_index": 100
+   },
+   "index": 86,
+   "match_type": "equal",
+   "target": {
+    "address": "0x158",
+    "args": "cr6, 0x190",
+    "branch_dest": 400,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 400
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 3,
+    "target_index": 100
+   }
+  },
+  {
+   "base": {
+    "address": "0x164",
+    "args": "r5, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   },
+   "index": 87,
+   "match_type": "equal",
+   "target": {
+    "address": "0x15c",
+    "args": "r5, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x168",
+    "args": "r4, r21",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r21"
+     }
+    ]
+   },
+   "index": 88,
+   "match_type": "equal",
+   "target": {
+    "address": "0x160",
+    "args": "r4, r21",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r21"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x16c",
+    "args": "r3, r31, 0x5c",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 92
+     }
+    ]
+   },
+   "index": 89,
+   "match_type": "equal",
+   "target": {
+    "address": "0x164",
+    "args": "r3, r31, 0x5c",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 92
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x170",
+    "args": "??$_M_find@H@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@1@ABH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??$_M_find@H@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@1@ABH@Z"
+     }
+    ]
+   },
+   "index": 90,
+   "match_type": "equal",
+   "target": {
+    "address": "0x168",
+    "args": "??$_M_find@H@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@1@ABH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??$_M_find@H@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@ABA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@1@ABH@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x174",
+    "args": "r11, 0x0(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 91,
+   "match_type": "equal",
+   "target": {
+    "address": "0x16c",
+    "args": "r11, 0x0(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x178",
+    "args": "r3, 0x8(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 8
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 92,
+   "match_type": "equal",
+   "target": {
+    "address": "0x170",
+    "args": "r3, 0x8(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 8
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x17c",
+    "args": "cr6, r3, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   },
+   "index": 93,
+   "match_type": "equal",
+   "target": {
+    "address": "0x174",
+    "args": "cr6, r3, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x180",
+    "args": "cr6, 0x198",
+    "branch_dest": 408,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 408
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 3,
+    "target_index": 100
+   },
+   "index": 94,
+   "match_type": "equal",
+   "target": {
+    "address": "0x178",
+    "args": "cr6, 0x190",
+    "branch_dest": 400,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 400
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 3,
+    "target_index": 100
+   }
+  },
+  {
+   "base": {
+    "address": "0x184",
+    "args": "r11, 0x0(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 95,
+   "match_type": "equal",
+   "target": {
+    "address": "0x17c",
+    "args": "r11, 0x0(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x188",
+    "args": "r4, 0x1",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Signed",
+      "value": 1
+     }
+    ]
+   },
+   "index": 96,
+   "match_type": "equal",
+   "target": {
+    "address": "0x180",
+    "args": "r4, 0x1",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Signed",
+      "value": 1
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x18c",
+    "args": "r11, 0x0(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 97,
+   "match_type": "equal",
+   "target": {
+    "address": "0x184",
+    "args": "r11, 0x0(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x190",
+    "args": "r11",
+    "opcode": "mtctr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 98,
+   "match_type": "equal",
+   "target": {
+    "address": "0x188",
+    "args": "r11",
+    "opcode": "mtctr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x194",
+    "args": "",
+    "opcode": "bctrl"
+   },
+   "index": 99,
+   "match_type": "equal",
+   "target": {
+    "address": "0x18c",
+    "args": "",
+    "opcode": "bctrl"
+   }
+  },
+  {
+   "base": {
+    "address": "0x198",
+    "args": "cr6, r29, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r29"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 3,
+    "source_indices": [
+     86,
+     94
+    ]
+   },
+   "index": 100,
+   "match_type": "equal",
+   "target": {
+    "address": "0x190",
+    "args": "cr6, r29, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "Register",
+      "value": "r29"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 3,
+    "source_indices": [
+     86,
+     94
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x19c",
+    "args": "r3, 0x138",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 312
+     }
+    ]
+   },
+   "index": 101,
+   "match_type": "equal",
+   "target": {
+    "address": "0x194",
+    "args": "r3, 0x138",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 312
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a0",
+    "args": "cr6, 0x1e0",
+    "branch_dest": 480,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 480
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 4,
+    "target_index": 118
+   },
+   "index": 102,
+   "match_type": "equal",
+   "target": {
+    "address": "0x198",
+    "args": "cr6, 0x1d8",
+    "branch_dest": 472,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "cr6"
+     },
+     {
+      "type": "BranchDest",
+      "value": 472
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 4,
+    "target_index": 118
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a4",
+    "args": "??2@YAPAXI@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??2@YAPAXI@Z"
+     }
+    ]
+   },
+   "index": 103,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x19c",
+    "args": "??2CriticalSection@@SAPAXI@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??2CriticalSection@@SAPAXI@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a8",
+    "args": "r3, 0x60(r31)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 96
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   },
+   "index": 104,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1a0",
+    "args": "r3, 0x60(r31)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 96
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1ac",
+    "args": "r3, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   },
+   "index": 105,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1a4",
+    "args": "r3, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1b0",
+    "args": "0x1d0",
+    "branch_dest": 464,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 464
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 5,
+    "target_index": 114
+   },
+   "index": 106,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1a8",
+    "args": "0x1c8",
+    "branch_dest": 456,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 456
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 5,
+    "target_index": 114
+   }
+  },
+  {
+   "base": {
+    "address": "0x1b4",
+    "args": "r7, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r7"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 107,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1ac",
+    "args": "r7, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r7"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1b8",
+    "args": "r6, r28",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r6"
+     },
+     {
+      "type": "Register",
+      "value": "r28"
+     }
+    ]
+   },
+   "index": 108,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1b0",
+    "args": "r6, r28",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r6"
+     },
+     {
+      "type": "Register",
+      "value": "r28"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1bc",
+    "args": "r5, r30",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   },
+   "index": 109,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1b4",
+    "args": "r5, r30",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1c0",
+    "args": "r4, r29",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r29"
+     }
+    ]
+   },
+   "index": 110,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1b8",
+    "args": "r4, r29",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r29"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1c4",
+    "args": "??0BandSongMetadata@@QAA@PAVDataArray@@0_NPAVBandSongMgr@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??0BandSongMetadata@@QAA@PAVDataArray@@0_NPAVBandSongMgr@@@Z"
+     }
+    ]
+   },
+   "index": 111,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1bc",
+    "args": "fn_825A0B28",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "fn_825A0B28"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1c8",
+    "args": "r30, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 112,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1c0",
+    "args": "r30, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1cc",
+    "args": "0x1d4",
+    "branch_dest": 468,
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 468
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 6,
+    "target_index": 115
+   },
+   "index": 113,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1c4",
+    "args": "0x1cc",
+    "branch_dest": 460,
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 460
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 6,
+    "target_index": 115
+   }
+  },
+  {
+   "base": {
+    "address": "0x1d0",
+    "args": "r30, 0x0",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 5,
+    "source_indices": [
+     106
+    ]
+   },
+   "index": 114,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1c8",
+    "args": "r30, 0x0",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 5,
+    "source_indices": [
+     106
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1d4",
+    "args": "r4, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 6,
+    "source_indices": [
+     113
+    ]
+   },
+   "index": 115,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1cc",
+    "args": "r4, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 6,
+    "source_indices": [
+     113
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1d8",
+    "args": "r3, r21",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r21"
+     }
+    ]
+   },
+   "index": 116,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1d0",
+    "args": "r3, r21",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r21"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1dc",
+    "args": "0x218",
+    "branch_dest": 536,
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 536
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 7,
+    "target_index": 132
+   },
+   "index": 117,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1d4",
+    "args": "0x210",
+    "branch_dest": 528,
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 528
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 7,
+    "target_index": 132
+   }
+  },
+  {
+   "base": {
+    "address": "0x1e0",
+    "args": "??2@YAPAXI@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??2@YAPAXI@Z"
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 4,
+    "source_indices": [
+     102
+    ]
+   },
+   "index": 118,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1d8",
+    "args": "??2CriticalSection@@SAPAXI@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??2CriticalSection@@SAPAXI@Z"
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 4,
+    "source_indices": [
+     102
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1e4",
+    "args": "r3, 0x60(r31)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 96
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   },
+   "index": 119,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1dc",
+    "args": "r3, 0x60(r31)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Signed",
+      "value": 96
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1e8",
+    "args": "r3, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   },
+   "index": 120,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1e0",
+    "args": "r3, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1ec",
+    "args": "0x20c",
+    "branch_dest": 524,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 524
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 8,
+    "target_index": 129
+   },
+   "index": 121,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1e4",
+    "args": "0x204",
+    "branch_dest": 516,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 516
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 8,
+    "target_index": 129
+   }
+  },
+  {
+   "base": {
+    "address": "0x1f0",
+    "args": "r7, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r7"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 122,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1e8",
+    "args": "r7, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r7"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1f4",
+    "args": "r6, r28",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r6"
+     },
+     {
+      "type": "Register",
+      "value": "r28"
+     }
+    ]
+   },
+   "index": 123,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1ec",
+    "args": "r6, r28",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r6"
+     },
+     {
+      "type": "Register",
+      "value": "r28"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1f8",
+    "args": "r5, 0x0",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   },
+   "index": 124,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1f0",
+    "args": "r5, 0x0",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1fc",
+    "args": "r4, r30",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   },
+   "index": 125,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1f4",
+    "args": "r4, r30",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r30"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x200",
+    "args": "??0BandSongMetadata@@QAA@PAVDataArray@@0_NPAVBandSongMgr@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??0BandSongMetadata@@QAA@PAVDataArray@@0_NPAVBandSongMgr@@@Z"
+     }
+    ]
+   },
+   "index": 126,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1f8",
+    "args": "fn_825A0B28",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "fn_825A0B28"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x204",
+    "args": "r30, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 127,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1fc",
+    "args": "r30, r3",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x208",
+    "args": "0x210",
+    "branch_dest": 528,
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 528
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 9,
+    "target_index": 130
+   },
+   "index": 128,
+   "match_type": "equal",
+   "target": {
+    "address": "0x200",
+    "args": "0x208",
+    "branch_dest": 520,
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 520
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 9,
+    "target_index": 130
+   }
+  },
+  {
+   "base": {
+    "address": "0x20c",
+    "args": "r30, 0x0",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 8,
+    "source_indices": [
+     121
+    ]
+   },
+   "index": 129,
+   "match_type": "equal",
+   "target": {
+    "address": "0x204",
+    "args": "r30, 0x0",
+    "opcode": "li",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 8,
+    "source_indices": [
+     121
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x210",
+    "args": "r4, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 9,
+    "source_indices": [
+     128
+    ]
+   },
+   "index": 130,
+   "match_type": "equal",
+   "target": {
+    "address": "0x208",
+    "args": "r4, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 9,
+    "source_indices": [
+     128
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x214",
+    "args": "r3, r21",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r21"
+     }
+    ]
+   },
+   "index": 131,
+   "match_type": "equal",
+   "target": {
+    "address": "0x20c",
+    "args": "r3, r21",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r21"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x218",
+    "args": "??A?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVSongMetadata@@ABH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??A?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVSongMetadata@@ABH@Z"
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 7,
+    "source_indices": [
+     117
+    ]
+   },
+   "index": 132,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x210",
+    "args": "??A?$hash_map@HPAVSongUpgradeData@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVSongUpgradeData@@ABH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??A?$hash_map@HPAVSongUpgradeData@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAAAPAVSongUpgradeData@@ABH@Z"
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 7,
+    "source_indices": [
+     117
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x21c",
+    "args": "r30, 0x0(r3)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "index": 133,
+   "match_type": "equal",
+   "target": {
+    "address": "0x214",
+    "args": "r30, 0x0(r3)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r30"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x220",
+    "args": "r5, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   },
+   "index": 134,
+   "match_type": "equal",
+   "target": {
+    "address": "0x218",
+    "args": "r5, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r5"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x224",
+    "args": "r4, r26, 0x1c",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     },
+     {
+      "type": "Signed",
+      "value": 28
+     }
+    ]
+   },
+   "index": 135,
+   "match_type": "equal",
+   "target": {
+    "address": "0x21c",
+    "args": "r4, r26, 0x1c",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     },
+     {
+      "type": "Signed",
+      "value": 28
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x228",
+    "args": "r3, r31, 0x68",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 104
+     }
+    ]
+   },
+   "index": 136,
+   "match_type": "equal",
+   "target": {
+    "address": "0x220",
+    "args": "r3, r31, 0x68",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 104
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x22c",
+    "args": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@HU?$_SetTraitsT@H@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@HU?$_SetTraitsT@H@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABH@Z"
+     }
+    ]
+   },
+   "diff_breakdown": {
+    "arguments": [
+     {
+      "arg_type": "symbol",
+      "base": {
+       "type": "Symbol",
+       "value": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@HU?$_SetTraitsT@H@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABH@Z"
+      },
+      "index": 0,
+      "target": {
+       "type": "Symbol",
+       "value": "?insert_unique@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@W4ScoreType@@U?$_SetTraitsT@W4ScoreType@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABW4ScoreType@@@Z"
+      }
+     }
+    ]
+   },
+   "index": 137,
+   "match_type": "diff_arg",
+   "target": {
+    "address": "0x224",
+    "args": "?insert_unique@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@W4ScoreType@@U?$_SetTraitsT@W4ScoreType@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABW4ScoreType@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?insert_unique@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@W4ScoreType@@U?$_SetTraitsT@W4ScoreType@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABW4ScoreType@@@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x230",
+    "args": "r4, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   },
+   "index": 138,
+   "match_type": "equal",
+   "target": {
+    "address": "0x228",
+    "args": "r4, r31, 0x50",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 80
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x234",
+    "args": "r3, r16",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r16"
+     }
+    ]
+   },
+   "index": 139,
+   "match_type": "equal",
+   "target": {
+    "address": "0x22c",
+    "args": "r3, r16",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r16"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x238",
+    "args": "?push_back@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAAXABH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?push_back@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAAXABH@Z"
+     }
+    ]
+   },
+   "index": 140,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x230",
+    "args": "?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?push_back@?$vector@PAVChatReceiver@@V?$StlNodeAlloc@PAVChatReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChatReceiver@@@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x23c",
+    "args": "r11, r25, 24",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r25"
+     },
+     {
+      "type": "Other",
+      "value": "24"
+     }
+    ]
+   },
+   "index": 141,
+   "match_type": "equal",
+   "target": {
+    "address": "0x234",
+    "args": "r11, r25, 24",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r25"
+     },
+     {
+      "type": "Other",
+      "value": "24"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x240",
+    "args": "0x280",
+    "branch_dest": 640,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 640
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   },
+   "index": 142,
+   "match_type": "equal",
+   "target": {
+    "address": "0x238",
+    "args": "0x278",
+    "branch_dest": 632,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 632
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   }
+  },
+  {
+   "base": {
+    "address": "0x244",
+    "args": "r11, 0x144(r26)",
+    "opcode": "lbz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 324
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 143,
+   "match_type": "equal",
+   "target": {
+    "address": "0x23c",
+    "args": "r11, 0x144(r26)",
+    "opcode": "lbz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 324
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x248",
+    "args": "r11, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   },
+   "index": 144,
+   "match_type": "equal",
+   "target": {
+    "address": "0x240",
+    "args": "r11, 0x0",
+    "opcode": "cmplwi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Unsigned",
+      "value": 0
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x24c",
+    "args": "0x280",
+    "branch_dest": 640,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 640
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   },
+   "index": 145,
+   "match_type": "equal",
+   "target": {
+    "address": "0x244",
+    "args": "0x278",
+    "branch_dest": 632,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 632
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   }
+  },
+  {
+   "base": {
+    "address": "0x250",
+    "args": "r11, 0x0(r26)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 146,
+   "match_type": "equal",
+   "target": {
+    "address": "0x248",
+    "args": "r11, 0x0(r26)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 0
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x254",
+    "args": "r4, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   },
+   "index": 147,
+   "match_type": "equal",
+   "target": {
+    "address": "0x24c",
+    "args": "r4, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x258",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 148,
+   "match_type": "equal",
+   "target": {
+    "address": "0x250",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x25c",
+    "args": "r11, 0x40(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 64
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 149,
+   "match_type": "equal",
+   "target": {
+    "address": "0x254",
+    "args": "r11, 0x40(r11)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 64
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x260",
+    "args": "r11",
+    "opcode": "mtctr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   },
+   "index": 150,
+   "match_type": "equal",
+   "target": {
+    "address": "0x258",
+    "args": "r11",
+    "opcode": "mtctr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x264",
+    "args": "",
+    "opcode": "bctrl"
+   },
+   "index": 151,
+   "match_type": "equal",
+   "target": {
+    "address": "0x25c",
+    "args": "",
+    "opcode": "bctrl"
+   }
+  },
+  {
+   "base": {
+    "address": "0x268",
+    "args": "?RB3AddSongDataUpgradeGate@@YA_NXZ",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?RB3AddSongDataUpgradeGate@@YA_NXZ"
+     }
+    ]
+   },
+   "index": 152,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x260",
+    "args": "fn_8259E5B0",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "fn_8259E5B0"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x26c",
+    "args": "r11, r3, 24",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Other",
+      "value": "24"
+     }
+    ]
+   },
+   "index": 153,
+   "match_type": "equal",
+   "target": {
+    "address": "0x264",
+    "args": "r11, r3, 24",
+    "opcode": "clrlwi.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Other",
+      "value": "24"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x270",
+    "args": "0x280",
+    "branch_dest": 640,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 640
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   },
+   "index": 154,
+   "match_type": "equal",
+   "target": {
+    "address": "0x268",
+    "args": "0x278",
+    "branch_dest": 632,
+    "opcode": "beq",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 632
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 2,
+    "target_index": 158
+   }
+  },
+  {
+   "base": {
+    "address": "0x274",
+    "args": "r4, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   },
+   "index": 155,
+   "match_type": "equal",
+   "target": {
+    "address": "0x26c",
+    "args": "r4, r27",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r4"
+     },
+     {
+      "type": "Register",
+      "value": "r27"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x278",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   },
+   "index": 156,
+   "match_type": "equal",
+   "target": {
+    "address": "0x270",
+    "args": "r3, r26",
+    "opcode": "mr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r26"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x27c",
+    "args": "?AddRecentSong@BandSongMgr@@QAAXH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?AddRecentSong@BandSongMgr@@QAAXH@Z"
+     }
+    ]
+   },
+   "index": 157,
+   "match_type": "equal",
+   "target": {
+    "address": "0x274",
+    "args": "?AddRecentSong@BandSongMgr@@QAAXH@Z",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?AddRecentSong@BandSongMgr@@QAAXH@Z"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x280",
+    "args": "r17, r17, 0x1",
+    "opcode": "subic.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r17"
+     },
+     {
+      "type": "Register",
+      "value": "r17"
+     },
+     {
+      "type": "Signed",
+      "value": 1
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 2,
+    "source_indices": [
+     62,
+     64,
+     69,
+     142,
+     145,
+     154
+    ]
+   },
+   "index": 158,
+   "match_type": "equal",
+   "target": {
+    "address": "0x278",
+    "args": "r17, r17, 0x1",
+    "opcode": "subic.",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r17"
+     },
+     {
+      "type": "Register",
+      "value": "r17"
+     },
+     {
+      "type": "Signed",
+      "value": 1
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 2,
+    "source_indices": [
+     62,
+     64,
+     69,
+     142,
+     145,
+     154
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x284",
+    "args": "r20, r20, 0x8",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r20"
+     },
+     {
+      "type": "Register",
+      "value": "r20"
+     },
+     {
+      "type": "Signed",
+      "value": 8
+     }
+    ]
+   },
+   "index": 159,
+   "match_type": "equal",
+   "target": {
+    "address": "0x27c",
+    "args": "r20, r20, 0x8",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r20"
+     },
+     {
+      "type": "Register",
+      "value": "r20"
+     },
+     {
+      "type": "Signed",
+      "value": 8
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x288",
+    "args": "0x60",
+    "branch_dest": 96,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 96
+     }
+    ]
+   },
+   "base_branch_to": {
+    "branch_idx": 10,
+    "target_index": 22
+   },
+   "index": 160,
+   "match_type": "equal",
+   "target": {
+    "address": "0x280",
+    "args": "0x58",
+    "branch_dest": 88,
+    "opcode": "bne",
+    "typed_args": [
+     {
+      "type": "BranchDest",
+      "value": 88
+     }
+    ]
+   },
+   "target_branch_to": {
+    "branch_idx": 10,
+    "target_index": 22
+   }
+  },
+  {
+   "base": {
+    "address": "0x28c",
+    "args": "r1, r31, 0x100",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 256
+     }
+    ]
+   },
+   "base_branch_from": {
+    "branch_idx": 0,
+    "source_indices": [
+     14
+    ]
+   },
+   "index": 161,
+   "match_type": "equal",
+   "target": {
+    "address": "0x284",
+    "args": "r1, r31, 0x100",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 256
+     }
+    ]
+   },
+   "target_branch_from": {
+    "branch_idx": 0,
+    "source_indices": [
+     14
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x290",
+    "args": "__restgprlr_16",
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "__restgprlr_16"
+     }
+    ]
+   },
+   "index": 162,
+   "match_type": "equal",
+   "target": {
+    "address": "0x288",
+    "args": "__restgprlr_16",
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "__restgprlr_16"
+     }
+    ]
+   }
+  }
+ ],
+ "masked_equal_rows": 18,
+ "masked_equal_symbol": false,
+ "normalized_match_percent": 99.60123,
+ "raw_match_percent": 99.11043,
+ "reloc_ignored_rows": 18,
+ "symbol": "?AddSongData@BandSongMgr@@UAAXPAVDataArray@@AAV?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@3@@stlpmtx_std@@PBDW4ContentLocT@@AAV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@4@@Z",
+ "target_size": 652,
+ "unit": "default/BandSongMgr"
+}
