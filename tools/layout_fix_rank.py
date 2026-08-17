@@ -1,9 +1,25 @@
 #!/usr/bin/env python3
 """Rank candidate struct/base-class LAYOUT fixes by empirical fan-out.
 
-The engine matching wall is offset-class: ~97% of near-miss functions differ from
-retail only by struct-field-offset immediates (`lwz/stw/addi rX, off(rBase)` with a
-wrong `off`). Those offsets cascade from a small set of shared base-class layout
+EVERY RANKING THIS TOOL PRODUCED BEFORE 2026-08-17 IS INFLATED toward struct
+evidence and must be re-run before being cited (task #114; fix in b57f9e7e; see
+the `addi` comment in parse_mem_operand for the defect). Measured paired over
+all 2128 near-miss fns in [80,100): as-shipped 1385 offset rows, 100.0% struct /
+0 stack; corrected 3513 rows, 1097 struct / 2416 stack. Fns credited with struct
+evidence 689 -> 470, coherent units 21 -> 16, keystone clusters 13 -> 12, and the
+#1 keystone cluster (+8, 5 units/13 fns) collapses to 1 unit/2 fns at rank 6.
+Run of record: <decomp-bench>/archive/runs/rb3x-layout-fix-rank-rerank-2026-08-17/.
+
+The engine matching wall was framed as offset-class: "~97% of near-miss functions
+differ from retail only by struct-field-offset immediates (`lwz/stw/addi rX,
+off(rBase)` with a wrong `off`)". That premise descends from a 2026-05-29 hand
+sample (docs/plans/struct-offset-sweep.md) and THIS TOOL DOES NOT REPRODUCE IT:
+on the current tree only 56.7% of near-miss functions carry any offset-class
+delta at all and 22.1% carry struct-offset evidence. Different tree and a
+different denominator from the hand sample, so this does not refute it at
+matched grain -- but do not quote the 97% as something this tool measured.
+
+Those offsets cascade from a small set of shared base-class layout
 divergences. This tool quantifies the cascade: for every near-miss function it
 extracts the OFFSET-class immediate deltas, separates *struct* reads (base register
 is an object pointer) from *stack* noise (base = r1/r31 = regalloc/permuter-class),
