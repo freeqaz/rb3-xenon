@@ -2352,7 +2352,6 @@ CharClip.cpp:
 	.pdata      start:0x8223F500 end:0x8223F508
 	.pdata      start:0x8223F518 end:0x8223F528
 	.text       start:0x822A0F38 end:0x822A0F9C
-	.text       start:0x8235C328 end:0x8235C374
 	.text       start:0x8235C608 end:0x8235C974
 	.text       start:0x8235C974 end:0x8235CA80
 	.text       start:0x8235CAD8 end:0x8235CAE0
@@ -3944,6 +3943,7 @@ MoveAsyncDetector.cpp:
 	.text       start:0x82347284 end:0x82347320
 	.text       start:0x82347438 end:0x82347478
 	.text       start:0x82347720 end:0x82347770
+	.text       start:0x8235C328 end:0x8235C374
 	.text       start:0x8235C538 end:0x8235C604
 	.text       start:0x826C75E0 end:0x826C7650
 
