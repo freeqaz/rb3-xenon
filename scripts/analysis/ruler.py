@@ -389,7 +389,32 @@ def _selftest(project_dir: Path) -> tuple[bool, list[str]]:
               f"{len(graded.config)} keys vs {len(declared)}")
         check("graded ruler is authoritative", graded.authoritative)
     else:
-        out.append("  [SKIP] no report.json under project_dir — cannot check provenance parity")
+        # ⛔ THIS USED TO BE `[SKIP]`, WHICH DID NOT SET ok=False -- the exact
+        # failure shape the note above `_CONSUMERS` describes and fixes one
+        # paragraph up, left in place here (lane W38-GATES, 2026-08-17).
+        #
+        # Point the selftest at a directory with no report.json and the ruler
+        # falls through to layer (3), which self-labels "THE RULER IS UNVERIFIED
+        # — do not quote this percentage as the graded score". The selftest then
+        # printed one [SKIP] and validated the FALLBACK as though it were the
+        # graded ruler.
+        #
+        # ⚠ Measured: today that run happens to exit 1 anyway -- but by
+        # COINCIDENCE, not by a check. REPORT_GENERATE_BASE's functionRelocDiffs
+        # is itself `none`, so `resolve_ruler(..., 'none')` changes ZERO keys and
+        # trips the unrelated "changes exactly one key" assertion. Set that base
+        # to anything else (`name_check`, say -- the shipped ruler since
+        # d04c83df) and the whole selftest returns a clean PASS over an
+        # explicitly-unverified ruler. Verified by counterfactual: with the base
+        # reloc mode set to `name_check`, every check PASSes and the verdict is
+        # PASS. So the guard was being held closed by luck.
+        #
+        # A selftest cannot vouch for a ruler it could not read. This is a
+        # FAILURE, never a skip.
+        check("report.json is present, so the graded ruler can be verified", False,
+              f"no report.json under {project_dir} — the ruler fell back to "
+              f"'{graded.source}', which is NOT authoritative. The selftest cannot "
+              f"certify a ruler it never read; point --selftest at a built tree.")
 
     # Selector overrides must change EXACTLY one key, or a graded-vs-none delta
     # no longer isolates the relocation-name class.

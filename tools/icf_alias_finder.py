@@ -123,10 +123,33 @@ def target_map_names() -> set:
     return {v for k, v in raw.items() if k.lower().startswith("0x")}
 
 
-def compiled_obj_symbol_index() -> dict:
+def compiled_obj_paths() -> list:
+    """Our compiled objs. Superset of objdiff.json's `base_path` set (measured)."""
+    return glob.glob(str(PROJECT_ROOT / "build/45410914/src/**/*.obj"), recursive=True)
+
+
+def authoritative_base_obj_paths() -> list:
+    """objdiff.json's `base_path` entries that exist on disk -- the compiled-side
+    analogue of live_target_obj_paths(), used ONLY as a self-calibrating FLOOR.
+
+    We do NOT switch compiled_obj_symbol_index() over to this list: measured
+    2026-08-17, the glob returns 1,205 objs and this list 1,048, and the glob is
+    a strict SUPERSET (0 base_paths missing from it). Narrowing to base_path
+    would DROP 160 objs and silently move groups into STALE_SPELLING -- the very
+    misclassification this floor exists to detect.
+    """
+    try:
+        cfg = json.loads(OBJDIFF_JSON.read_text())
+    except (OSError, ValueError):
+        return []
+    return [u["base_path"] for u in cfg.get("units", [])
+            if u.get("base_path") and os.path.exists(u["base_path"])]
+
+
+def compiled_obj_symbol_index(paths=None) -> dict:
     """name -> list of compiled-obj stems referencing it."""
     idx = defaultdict(list)
-    for p in glob.glob(str(PROJECT_ROOT / "build/45410914/src/**/*.obj"), recursive=True):
+    for p in (compiled_obj_paths() if paths is None else paths):
         for s in coff_referenced_symbols(Path(p).read_bytes()):
             idx[s].append(Path(p).stem)
     return idx
@@ -246,36 +269,146 @@ def classify_group(g, tmap, compiled, target_objs):
     return "OK", ""
 
 
+# ---------------------------------------------------------------------------
+# PRECONDITIONS -- the ABSENT-POPULATION class (lane W38-GATES, 2026-08-17)
+# ---------------------------------------------------------------------------
+# This gate guarded rigorously against MALFORMED inputs and not at all against
+# ABSENT or EMPTY ones. An empty population passes every check by construction,
+# and the resulting PASS is indistinguishable from a real one. Measured, on a
+# fully built tree at grounded2-restoration (where the real run exits 1 with 5
+# CONTRADICTED):
+#
+#   scripts/symbol_aliases.json = {"groups": []}   -> "VALIDATE: PASS", rc 0
+#   scripts/symbol_aliases.json = {}               -> "VALIDATE: PASS", rc 0
+#   truncated to 5 of 1,531 groups                 -> "VALIDATE: PASS", rc 0
+#
+# The third is the dangerous one: it is the shape of a bad merge-resolve or a
+# buggy regeneration, and it turns a RED gate GREEN. A gate whose failure can be
+# cured by deleting its own input is worse than no gate -- this one stands over
+# the ~818,416 B / 7.93 pp of matched_code that alias forgiveness carries
+# (ablation, lane ALIAS-2 `64088f62`).
+#
+# And a SECOND vacuity of the same shape sat one layer down, unbriefed: the tool
+# had a loud REFUSING precondition for the TARGET objs and NONE for the COMPILED
+# objs. With the compiled index empty, `stale = [f for f in folded if f not in
+# compiled]` is true of everything, so every group with a folded spelling lands
+# in STALE_SPELLING. Measured with the compiled index emptied:
+#
+#   OK (MAP-CONSISTENT)  1307 -> 30      STALE_SPELLING  144 -> 1421
+#   CONTRADICTED            5 ->  5      exit code        1 -> 1   (IDENTICAL)
+#
+# i.e. 92.8% of the population is silently reclassified, the COVERAGE line still
+# reports a confident "1531 groups over 3091 live target objs", and the verdict
+# does not move. It fails into a bucket whose own documented rationale is that
+# acting on it is MEASURED HARMFUL (-94,616 B to reverse) -- so the misreading it
+# invites is precisely the prune that a745039e had to undo.
+#
+# Every threshold below is either ZERO (not a choice) or read from an artifact
+# that moves with the data (objdiff.json). No constant is chosen by hand.
+
+REFUSAL_REASONS = {
+    "UNRENAMED_TARGET_OBJS":
+        "the dtk-split target objs still carry anonymous `fn_<addr>` symbols",
+    "EMPTY_POPULATION":
+        "scripts/symbol_aliases.json declares ZERO alias groups",
+    "EMPTY_COMPILED_INDEX":
+        "no compiled objs were indexed under build/45410914/src",
+    "INCOMPLETE_COMPILED_INDEX":
+        "objdiff.json names base objs that the compiled-obj scan did not reach",
+}
+
+
+def preconditions(groups, target_objs, compiled_paths, base_paths) -> list:
+    """-> list of (REASON, detail). Empty list means the instrument has its inputs.
+
+    Split out of cmd_validate so the selftest can assert the SPECIFIC reason a
+    control went red. Asserting only "rc != 0" is how a control ends up passing
+    for the wrong cause -- cf. the --self-break trap that has bitten three lanes.
+    """
+    out = []
+
+    # (1) Target objs must be RENAMED. A fresh worktree's reflinked target objs
+    # are PRE-renamer, so every mangled name reads ABSENT until the first build.
+    mangled = sum(1 for s in target_objs if s.startswith("?"))
+    if mangled < 1000:
+        out.append(("UNRENAMED_TARGET_OBJS",
+                    f"only {mangled} mangled symbol(s) in the target objs; every "
+                    f"group would report `target objs name []` and the run would "
+                    f"claim a 100% failure that reflects the BUILD STATE, not the "
+                    f"data. fix: run `./tools/ninja-locked` first."))
+
+    # (2) The population must EXIST. Zero is not a threshold anyone chose.
+    if not groups:
+        out.append(("EMPTY_POPULATION",
+                    "0 groups loaded. There is nothing to validate, so a PASS "
+                    "here would certify only that the file is empty -- which is "
+                    "exactly how a truncated or mis-merged alias file turns a red "
+                    "gate green."))
+
+    # (3) The COMPILED objs must be present, and must cover objdiff.json's own
+    # base_path set. The floor is READ from objdiff.json, never hardcoded, so it
+    # tracks the build instead of rotting. Measured 2026-08-17: the glob returns
+    # 1,205 objs against 1,048 existing base_paths, a strict superset -- 0
+    # missing -- so this check has 0 false positives on a healthy tree by
+    # construction, and it is that superset property (not a margin) that licenses it.
+    if not compiled_paths:
+        out.append(("EMPTY_COMPILED_INDEX",
+                    "0 compiled objs found under build/45410914/src. Every folded "
+                    "spelling would read unreferenced and the whole population "
+                    "would collapse into TOLERATED STALE_SPELLING while the exit "
+                    "code stayed put."))
+    elif base_paths:
+        have = {os.path.realpath(p) for p in compiled_paths}
+        missing = [p for p in base_paths if os.path.realpath(p) not in have]
+        if missing:
+            out.append(("INCOMPLETE_COMPILED_INDEX",
+                        f"{len(missing)}/{len(base_paths)} objdiff.json base objs "
+                        f"were not reached by the compiled-obj scan (e.g. "
+                        f"{missing[0]}). STALE_SPELLING would be overstated by an "
+                        f"unknown amount."))
+    return out
+
+
 def cmd_validate(args=None) -> int:
     groups = load_aliases()
     tmap = target_map_names()
-    compiled = compiled_obj_symbol_index()
+    compiled_paths = compiled_obj_paths()
+    base_paths = authoritative_base_obj_paths()
+    compiled = compiled_obj_symbol_index(compiled_paths)
     target_objs = target_obj_symbol_index()
 
-    # ── PRECONDITION: the target objs must be RENAMED. ──────────────────────────
-    # Without this the whole gate is vacuous in the one place lanes actually run
-    # it. A fresh worktree's target objs still carry dtk's anonymous `fn_<addr>`
-    # symbols until the pre-compile obj_target_symbol_renamer has run, so NO
-    # mangled name is present, every group reports `target objs name []`, and the
-    # gate prints "0 group(s) OK, 1499 group(s) failing" -- a 100% failure that
-    # says nothing about the data. (Measured, lane ALIASVAL-1: that is exactly
-    # what a fresh `scripts/setup_worktree.sh` tree reports before its first
-    # build.) Refuse loudly instead of reporting a number that cannot be right.
-    mangled = sum(1 for s in target_objs if s.startswith("?"))
-    if mangled < 1000:
-        print(f"REFUSING: target objs carry only {mangled} mangled symbol(s) -- they "
-              f"look UNRENAMED (dtk `fn_<addr>` form).", file=sys.stderr)
-        print("  Every group would report `target objs name []` and the run would "
-              "claim 100% failure that reflects the BUILD STATE, not the data.",
+    refusals = preconditions(groups, target_objs, compiled_paths, base_paths)
+    if refusals:
+        print("REFUSING: the instrument does not have its inputs -- a verdict here "
+              "would describe the BUILD/DATA STATE, not the alias data.",
               file=sys.stderr)
-        print("  fix: run `./tools/ninja-locked` first (the pre-compile "
-              "obj_target_symbol_renamer populates the mangled names).", file=sys.stderr)
+        for reason, detail in refusals:
+            print(f"  [{reason}] {REFUSAL_REASONS[reason]}", file=sys.stderr)
+            print(f"      {detail}", file=sys.stderr)
+        print("VALIDATE: REFUSED (exit 2) -- NOT a pass and NOT a failure.",
+              file=sys.stderr)
         return 2
 
+    mangled = sum(1 for s in target_objs if s.startswith("?"))
+
+    # ── INSTRUMENT THE INSTRUMENT ──────────────────────────────────────────────
+    # Count what was REACHED, not just what passed. A prior lane's calibration in
+    # a sibling tool reported "0 disagreements" over ZERO rows and was caught only
+    # by not-reached counters, so the classification loop asserts its own coverage
+    # rather than trusting that it ran.
     buckets = defaultdict(list)
+    classified = 0
+    spellings_looked_up = 0
     for g in groups:
         verdict, detail = classify_group(g, tmap, compiled, target_objs)
         buckets[verdict].append((g.get("name", g["survivor"]), g["address"], detail))
+        classified += 1
+        spellings_looked_up += 1 + len(g.get("folded", []))
+    if classified != len(groups):
+        print(f"REFUSING: classified {classified} of {len(groups)} groups -- the "
+              f"classification loop did not reach the whole population.",
+              file=sys.stderr)
+        return 2
 
     n_bad = len(buckets.get("CONTRADICTED", []))
     n_ok = len(buckets.get("OK", []))
@@ -287,8 +420,17 @@ def cmd_validate(args=None) -> int:
         print(f"EXEMPT [{name} @ {addr}]: {detail}")
 
     print()
-    print(f"COVERAGE: {len(groups)} groups over {len(live_target_obj_paths())} live "
-          f"target objs ({mangled} mangled names indexed)")
+    # ⚠ This block used to report ONLY the target-obj side. The compiled-obj side
+    # was consulted by classify_group (it decides STALE_SPELLING) but never
+    # counted, so an absent compiled population was invisible in the output --
+    # 1,277 groups could move OK -> STALE_SPELLING with the printed COVERAGE line
+    # unchanged. Both populations are reported now, and both are refused when empty.
+    print(f"COVERAGE: {len(groups)} groups classified ({classified}/{len(groups)} "
+          f"reached, {spellings_looked_up} member spellings looked up)")
+    print(f"  target side  : {len(live_target_obj_paths())} live target objs, "
+          f"{mangled} mangled names indexed")
+    print(f"  compiled side: {len(compiled_paths)} compiled objs, {len(compiled)} "
+          f"symbols indexed (floor: {len(base_paths)} objdiff.json base objs, all reached)")
     # ⚠ NOT "grounded" -- RENAMED 2026-08-14 (lane GROUNDED-1). This bucket means
     # ONLY: the survivor is map-resident and every spelling is referenced. It says
     # NOTHING about whether retail's linker folded anything, and the word "grounded"
@@ -328,6 +470,84 @@ def cmd_validate(args=None) -> int:
           f"{n_tol} tolerated (enumerated above), {n_bad} contradicted, "
           f"{len(groups)} total")
     return 0 if n_bad == 0 else 1
+
+
+# ---------------------------------------------------------------------------
+# --selftest : PROVE each refusal can fire, and that they DISCRIMINATE
+# ---------------------------------------------------------------------------
+# ⛔ The --self-break trap has bitten three lanes, including one briefed on it.
+# Two rules encoded here:
+#
+#   1. FROZEN fixtures. Every population below is a literal, never derived from
+#      the live tree. A control built from live data can have its own red set
+#      emptied by the very breakage it is meant to detect, and then it trips a
+#      DIFFERENT refusal (or a vacuity refusal) and still looks red.
+#   2. Assert the SPECIFIC reason, never merely "rc != 0". A red for the wrong
+#      cause is not a proof that the check works.
+#
+# And the HEALTHY leg is the load-bearing one: a gate that refuses everything
+# proves nothing. `_HEALTHY` must produce exactly ZERO refusals or the whole
+# selftest is meaningless.
+
+_HEALTHY = dict(
+    groups=[{"survivor": "?a@@YAXXZ", "folded": ["?b@@YAXXZ"], "address": "0x1"},
+            {"survivor": "?c@@YAXXZ", "folded": [], "address": "0x2"}],
+    target_objs={f"?frozen{i}@@YAXXZ": 1 for i in range(1500)},
+    compiled_paths=["/frozen/x.obj", "/frozen/y.obj"],
+    base_paths=["/frozen/x.obj"],
+)
+
+
+def _selftest() -> int:
+    def run(**over):
+        kw = dict(_HEALTHY)
+        kw.update(over)
+        return [r for r, _ in preconditions(**kw)]
+
+    ok = True
+
+    def check(label, cond, detail=""):
+        nonlocal ok
+        print(f"  [{'PASS' if cond else 'FAIL'}] {label}"
+              f"{(' -- ' + detail) if detail else ''}")
+        if not cond:
+            ok = False
+
+    # ── DISCRIMINATION CONTROL (must be GREEN, or every red below is worthless) ─
+    base = run()
+    check("healthy frozen population raises NO refusal", base == [], f"got {base}")
+
+    # ── Each refusal must fire, and must be the one named. ─────────────────────
+    for label, over, want in (
+        ("EMPTY_POPULATION fires on groups=[]",
+         {"groups": []}, "EMPTY_POPULATION"),
+        ("EMPTY_POPULATION fires on a `groups` key absent from the file",
+         {"groups": json.loads("{}").get("groups", [])}, "EMPTY_POPULATION"),
+        ("UNRENAMED_TARGET_OBJS fires on pre-renamer target objs",
+         {"target_objs": {f"fn_{i:08x}": 1 for i in range(1500)}},
+         "UNRENAMED_TARGET_OBJS"),
+        ("EMPTY_COMPILED_INDEX fires on 0 compiled objs",
+         {"compiled_paths": []}, "EMPTY_COMPILED_INDEX"),
+        ("INCOMPLETE_COMPILED_INDEX fires when a base obj is unreached",
+         {"base_paths": ["/frozen/x.obj", "/frozen/UNREACHED.obj"]},
+         "INCOMPLETE_COMPILED_INDEX"),
+    ):
+        got = run(**over)
+        check(label, want in got, f"reasons={got}")
+
+    # A truncation is NOT caught by a count threshold -- deliberately. Group count
+    # is NOT monotonic in this repo: measured over all 52 commits that touched
+    # scripts/symbol_aliases.json, 7 legitimate DECREASES occur (worst 521->511,
+    # 1.92%). A "count must not drop" rule would fire on 13.5% of real commits --
+    # the noise failure mode, which trains people to ignore the gate. What IS
+    # non-arbitrary is zero, so EMPTY_POPULATION is the guard, and a partial
+    # truncation is caught by the CONTRADICTED groups it can no longer hide.
+    check("truncation-to-nonempty is NOT refused (count is not monotonic; "
+          "7/52 historical commits legitimately shrink the population)",
+          run(groups=_HEALTHY["groups"][:1]) == [])
+
+    print("SELFTEST:", "PASS" if ok else "FAIL")
+    return 0 if ok else 1
 
 
 # ---------------------------------------------------------------------------
@@ -509,7 +729,11 @@ def main() -> int:
     ap.add_argument("--out", default=None, help="write scan/report JSON to PATH")
     ap.add_argument("--map", default=None, help="synthetic map path (for --report)")
     ap.add_argument("--json", default=None, help="write the --validate classification to PATH")
+    ap.add_argument("--selftest", action="store_true",
+                    help="prove each --validate precondition can fire (frozen fixtures)")
     args = ap.parse_args()
+    if args.selftest:
+        return _selftest()
     if args.validate:
         return cmd_validate(args)
     if args.scan:
