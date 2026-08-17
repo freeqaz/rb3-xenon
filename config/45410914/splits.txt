@@ -676,7 +676,10 @@ BandList.cpp:
 	.text       start:0x8233BA00 end:0x8233BAE0
 	.text       start:0x8233BAE0 end:0x8233BBAC
 	.text       start:0x8233BBB0 end:0x8233BE48
+	.text       start:0x8233BEA0 end:0x8233BEF4
 	.text       start:0x8233BF3C end:0x8233C200
+	.text       start:0x8233C2C8 end:0x8233C480
+	.text       start:0x8233C668 end:0x8233C850
 	.text       start:0x8233CC00 end:0x8233CCB0
 	.text       start:0x8233CF78 end:0x8233D558
 	.text       start:0x8233D558 end:0x8233D730
@@ -1370,7 +1373,7 @@ Rot.cpp:
 	.pdata      start:0x82215C70 end:0x82215CA0
 	.pdata      start:0x82215CA0 end:0x82215D28
 	.pdata      start:0x82215D38 end:0x82215D40
-	.text       start:0x8233C668 end:0x8233CAB8
+	.text       start:0x8233C850 end:0x8233CAB8
 	.text       start:0x8233CAB8 end:0x8233CC00
 	.text       start:0x82345520 end:0x823455B0
 	.text       start:0x823455B0 end:0x82345634
@@ -4658,7 +4661,8 @@ CharSignalApplier.cpp:
 	.pdata      start:0x821FE680 end:0x821FE6B8
 	.pdata      start:0x821FE6D8 end:0x821FE758
 	.pdata      start:0x821FE780 end:0x821FE788
-	.text       start:0x8233C200 end:0x8233C668
+	.text       start:0x8233C200 end:0x8233C2C8
+	.text       start:0x8233C480 end:0x8233C668
 	.text       start:0x8233CCB0 end:0x8233CD20
 	.text       start:0x8233CED8 end:0x8233CF44
 	.text       start:0x8233CF44 end:0x8233CF78
@@ -6631,7 +6635,7 @@ Song.cpp:
 	.text       start:0x8230E604 end:0x8230E608
 	.text       start:0x8230E654 end:0x8230E658
 	.text       start:0x8230EBE0 end:0x8230EC88
-	.text       start:0x8233BEA0 end:0x8233BF3C
+	.text       start:0x8233BEF4 end:0x8233BF3C
 	.text       start:0x827C55E8 end:0x827C668C
 	.text       start:0x827C6AA8 end:0x827C6B38
 	.text       start:0x827C6B38 end:0x827C70F0
