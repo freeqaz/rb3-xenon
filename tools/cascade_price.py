@@ -266,33 +266,56 @@ def pinning_unit(splits, addr):
     return None, None, None
 
 
-def base_obj_for_unit(root, unit_src):
-    """Map a splits.txt heading (a SOURCE path) to its compiled base .obj.
+_OBJDIFF_CACHE = {}
 
-    ⚠ Keyed on the FULL PATH, never basename(): CLAUDE.md records four
-    consecutive lanes broken by basename collisions (`Movie.obj` exists in both
-    rnddx9/ and rndobj/).
+
+def _objdiff_units(root):
+    if root not in _OBJDIFF_CACHE:
+        _OBJDIFF_CACHE[root] = json.load(open(Path(root) / "objdiff.json")).get("units", [])
+    return _OBJDIFF_CACHE[root]
+
+
+def base_obj_for_unit(root, unit_src, unit_name=None):
+    """Resolve a unit to its compiled base .obj.
+
+    ⛔ SUFFIX MATCHING IS A TRAP AND THIS TOOL FELL INTO IT ONCE. A first cut
+    used `base_path.endswith(stem + ".obj")`, which resolved the splits heading
+    `Song.cpp` to `SongSortBySong.obj` -- a WRONG obj, and therefore a wrong
+    BLOCKED/OK verdict on the single most expensive decision this tool makes.
+    That is CLAUDE.md's basename hazard (`Movie.obj` exists in both `rnddx9/`
+    and `rndobj/`) wearing a slightly different costume.
+
+    So prefer report.json's OWN unit name, which objdiff.json also keys on --
+    an identity, not a string guess. Fall back to a PATH-COMPONENT match, and
+    return None on ambiguity rather than picking one.
     """
-    cfg = json.load(open(Path(root) / "objdiff.json"))
+    if unit_name:
+        for u in _objdiff_units(root):
+            if u.get("name") == unit_name:
+                return u.get("base_path")
     stem = unit_src[:-4] if unit_src.endswith(".cpp") else unit_src
-    best = None
-    for u in cfg.get("units", []):
+    want = stem + ".obj"
+    cands = []
+    for u in _objdiff_units(root):
         bp = u.get("base_path") or ""
         if not bp:
             continue
-        # base_path is build/<v>/src/<same relative path>.obj
-        if bp.endswith("/" + stem + ".obj") or bp.endswith(stem + ".obj"):
-            # prefer the longest matching suffix => the full-path match
-            if best is None or len(bp) > len(best):
-                best = bp
-    return best
+        rel = bp.split("/src/", 1)[1] if "/src/" in bp else bp
+        if rel == want:
+            return bp                                  # exact relative path
+        if "/" not in want and rel.rsplit("/", 1)[-1] == want:
+            cands.append(bp)
+    return cands[0] if len(cands) == 1 else None
 
 
-def can_define(root, unit_src, name):
+def can_define(root, unit_src, name, unit_name=None):
     """(verdict, detail) -- does the unit's compiled obj define `name`?"""
-    bp = base_obj_for_unit(root, unit_src)
+    bp = base_obj_for_unit(root, unit_src, unit_name)
     if not bp:
-        return "UNKNOWN", f"no base obj wired for {unit_src}"
+        return "UNKNOWN", (f"could not resolve a UNIQUE base obj for {unit_src} "
+                           f"(ambiguous basename, or unit not wired) -- refusing "
+                           f"to guess, because a wrong obj here gives a "
+                           f"confidently wrong BLOCKED/OK verdict")
     p = Path(root) / bp
     if not p.exists():
         return "UNKNOWN", f"{bp} not built"
@@ -532,8 +555,9 @@ def gather(root, edits, selector="graded", verbose=True):
         old = smap.get(addr) or f"fn_{addr:08X}"
         unit, s, e = pinning_unit(splits, addr)
         size, fuzzy = 0, 0.0
+        report_unit = None
         if old in rows:
-            _u, size, fuzzy, _m = rows[old]
+            report_unit, size, fuzzy, _m = rows[old]
         if unit is None:
             verdict, detail = "UNPINNED", ("address is in no splits.txt .text block "
                                            "(auto_* / unattributed) -- it cannot pair "
@@ -542,7 +566,7 @@ def gather(root, edits, selector="graded", verbose=True):
             verdict, detail = "DE-NAMED", ("replacement is a placeholder: the row "
                                            "un-pairs and its bytes are withdrawn")
         else:
-            v, detail = can_define(root, unit, new)
+            v, detail = can_define(root, unit, new, report_unit)
             verdict = {"OK": "PAIRS (obj defines the new name)",
                        "BLOCKED": "BLOCKED (obj cannot define the new name)",
                        "UNKNOWN": "UNKNOWN"}[v]
@@ -619,6 +643,55 @@ def report(verdicts, notes, rlabel, measures, locals_, title):
                   f"Re-home the pin to a unit whose obj\n"
                   f"     defines the name, and lift the spelling VERBATIM from "
                   f"that obj's symbol table.")
+
+    # ---- CALLER-SPELLING CONSENSUS --------------------------------------
+    # ★ THE SHAPE OF THE CALLER SET DISCRIMINATES A WRONG NAME FROM AN
+    #   ARBITRARY ICF SURVIVOR NAME, AND IT IS THE ONLY MAP-INDEPENDENT TEST
+    #   HERE THAT DOES.
+    #
+    # An ICF survivor's name is arbitrary (CLAUDE.md / W7's fixed-point trap):
+    # every tree whose `clear` folded into one body reaches it, so OUR side
+    # spells a DIFFERENT per-tree name at each site. Only one spelling can ever
+    # match, so the cascade is structurally ZERO and no rename can collect it --
+    # the remedy, if any, is a PROVEN alias, never a rename.
+    #
+    # A genuinely WRONG map name looks the opposite: the callers agree with each
+    # other and disagree only with the map, so one repair clears every site.
+    #
+    # Measured on this tool's two real candidates: `map<int,bool>`'s builder had
+    # 1 caller, and `clear@map<Symbol,CharLipSync*>`'s 62 call sites spelled at
+    # least four different trees (`<H,..>`, `<PAVFaderGroup,..>`,
+    # `<PAVTrackWidget,..>`, ...) -- dispersed, so +0, so W17's refusal to ship
+    # it was right and is now quantified rather than argued.
+    spell = {}
+    for v in verdicts:
+        for kind, tsym, bsym, newt in v.events:
+            if kind.startswith(("PERSISTS", "CLEARED")):
+                spell.setdefault(tsym, {}).setdefault(bsym, 0)
+                spell[tsym][bsym] += 1
+    if spell:
+        print("\n  CALLER-SPELLING CONSENSUS (what OUR side calls at the charged sites):")
+        for tsym, hist in spell.items():
+            tot = sum(hist.values())
+            top, topn = max(hist.items(), key=lambda kv: kv[1])
+            frac = topn / tot
+            if len(hist) == 1:
+                tag = ("CONCENTRATED — every caller agrees on one spelling ⇒ "
+                       "consistent with a WRONG MAP NAME; the cascade is collectable")
+            elif frac >= 0.8:
+                tag = (f"MOSTLY CONCENTRATED ({frac:.0%}) — a dominant spelling with "
+                       f"{len(hist)-1} outlier spelling(s)")
+            else:
+                tag = ("DISPERSED ⇒ ARBITRARY ICF SURVIVOR. Callers spell "
+                       f"{len(hist)} different names, so at most one can ever match "
+                       "and the cascade is STRUCTURALLY ZERO. Do NOT rename to "
+                       "capture these sites — that is picking the higher-scoring "
+                       "arbitrary name, i.e. metric fitting. A PROVEN alias is the "
+                       "only legitimate remedy.")
+            print(f"    target {tsym[:56]}")
+            print(f"      {tot} charged site(s), {len(hist)} distinct our-side spelling(s) -> {tag}")
+            for b, n in sorted(hist.items(), key=lambda kv: -kv[1])[:5]:
+                print(f"        {n:>3}x  {str(b)[:80]}")
 
     pairing_change = any(l["verdict"].startswith(("BLOCKED", "PAIRS"))
                          for l in locals_)
