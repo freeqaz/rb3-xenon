@@ -950,6 +950,19 @@ run the gate before you land. Two traps, both real:
   PAIRABLE have base objs defining only 1–2 symbols** (**914 rows / 180,196 B /
   1.75% of `total_code`**) — the same map-scaffold mechanism as the no-source
   class, but counted on the *favourable* side.
+  ✅ **RE-MEASURED 2026-08-17 at `6e13ee3f` on the `name_check` ruler: raw
+  **62.867%** (6,488,248 B pairable) / **CORRECTED 61.121%** (6,308,052 B, after
+  subtracting the 180,196 B map-scaffold class above), and the current
+  `matched_code` of 3,723,704 B / **36.080082%** is **59.03% of the corrected
+  reachable surface** — not 36.08% of it.** `total_functions` is now **69,227**
+  (the 69,228 above is NOOBJ-1's own 08-13 self-validation, left as written).
+  ⇒ The movement off 63.10% is **fully attributed and is NOT a regression**:
+  PAIRABLE lost exactly the 24,276 B that `auto_*` gained — a **pin
+  reattribution** — while the no-source and map-scaffold classes are
+  byte-identical across all three measurements. ★ **This is the standing rule
+  demonstrating itself: the ceiling moves BOTH WAYS, so re-measure it and NEVER
+  inherit a prior lane's figure.** Current partition + provenance:
+  `docs/decomp/CAMPAIGN_STATE_2026-08-17.md`.
   ⛔⛔ **AND THE `auto_*` CLASS IS MOSTLY UNREACHABLE TOO — DO NOT FUND
   ATTRIBUTION THERE.** Only **8.9% (1,766 rows / 151,024 B = 1.46% of
   `total_code`)** is attributable-**and-portable**, at a measured 0.64% FP;
@@ -1068,6 +1081,17 @@ run the gate before you land. Two traps, both real:
   **exactly +0**, the `none` ruler **exactly flat**, and units at all-rows-`fuzzy`
   **124 → 51 (−73)** — the arg-blind shape exactly. ⇒ **~7 pp of `matched_code`
   is alias forgiveness.**
+  ✅ **RE-MEASURED 2026-08-16 by the same ablation (lane ALIAS-2, `64088f62`):
+  **1,528 groups / 15,196 folded memberships / 818,416 B = 7.929877 pp.** The
+  mechanism GREW — **~22% of everything we count as matched rests on it.** The
+  evidence-split table below is superseded along with it: **PROVEN 92.73% ·
+  NEEDS_SOURCE 1.96% · CONTRADICTED 1.78% · NEEDS_MAP_ID 0.00%**, the last
+  **drained to zero** by MAPID-1 (see the `0x827bcd38` correction below).
+  ⛔ **And the table's "11.00% unattributable" row was a CENSUS BLIND SPOT, not
+  an exposure** — ablation shows **0 of 1,894 rows depend on a non-proven
+  membership**, i.e. the name-keyed census could not see what the forgiveness
+  actually rested on and booked its own blindness as risk. ⇒ **size this
+  mechanism by ABLATION, never by a name-keyed census.**
   ⛔⛔ **`OK (grounded)` MEANT MAP-CONSISTENCY, NOT PROOF OF FOLDING** — the
   survivor is map-resident and every spelling is referenced, nothing more. The
   gate is real (a *fabricated* alias between symbols our map places at distinct
@@ -1107,15 +1131,43 @@ run the gate before you land. Two traps, both real:
   worth 73,496 B**, proven only by our-side COMDAT identity because retail's
   branch destination `0x827bcd38` is **unnamed** (no `?MemAlloc@@YAPAXHH@Z` in
   the map at all).
+  ✅ **NO LONGER TRUE — CORRECTED 2026-08-16 (lane MAPID-1, `436bfb22`):
+  `0x827bcd38` IS NOW NAMED `?MemAlloc@@YAPAXHH@Z`.** The identification was
+  made and measured **−1,656 B** — deliberately net-negative, accuracy over
+  headline — and it **exposed 6 real wrong-callee divergences** the alias had
+  been forgiving (`MemAlloc` / `_MemAlloc` / `_MemAllocTemp`; the temp allocator
+  is a *different allocator*, so those are behavioural bugs, not naming noise).
+  `NEEDS_MAP_ID` is drained to zero as a result. ⇒ **the payout of naming an
+  anonymous address under `name_check` is BUG EXPOSURE, not bytes.**
   ⛔ **THE 10 WITHDRAWN WERE A REAL DEFECT THE ALIAS WAS HIDING** — eight
   memberships where **retail's instantiation is 8 bytes SMALLER than ours**
   (different-size COMDATs **cannot** fold; the alias was forgiving **our use of
   the wrong overload**), plus one where retail calls `KeyLessEq` and we call
   `KeyGreaterEq`. Predicted **−1,920 B**, measured **−1,920 B exactly.** Groups
   kept with `folded: []` + a `withdrawn` record; **nothing pruned.**
-  ⚠ `tools/alloc_fold_gate.py`'s docstring still refuses `??2@YAPAXI@Z` over a
-  `gNewOperatorAlign` divergence that **no longer exists** — ours is
-  byte-identical to retail's today.
+  ⚠⚠ **CORRECTED 2026-08-16/17 — THE SIZE PREMISE WAS AN ARTIFACT IN OUR OWN
+  READER, AND 6 OF THE 8 SIZE-BASED WITHDRAWALS ARE RESTORED.** STLPORT-1
+  (`ff832b50`) refuted the "+8 B STLport source bug" outright: it did not
+  exist — `tools/coff_bodies_ext.py` was billing the **successor symbol's EH
+  funclet prefix** into the COMDAT span, so "retail's instantiation is 8 bytes
+  SMALLER" compared a `.pdata` *function extent* against a COMDAT *span
+  including the funclet*. The two sides were never the same measurement.
+  GROUNDED-2 (`6e13ee3f`) restored **6 folds at +1,728 B**, confirmed on three
+  independent instruments. The `KeyLessEq`/`KeyGreaterEq` membership
+  (`Keys<Quat>::Remove`) is **untouched by this and stays confirmed-withdrawn**
+  — that one was a genuine defect. ⇒ **Count right, cause wrong: a reproducing
+  count is NOT evidence for its mechanism**, and a *size* test cannot catch a
+  one-sided reader artifact because it cancels on both sides
+  (`project_one_sided_instrument_error_invisible_to_two_sided_control_2026-08-16.md`).
+  ✅ **FIXED (lane ALLOCGATE-1, `07c62807`)** — this doc used to warn that
+  `tools/alloc_fold_gate.py`'s docstring *still* refused `??2@YAPAXI@Z` over a
+  `gNewOperatorAlign` divergence that no longer exists. That paragraph now
+  carries a **⚠ DATED RECORD** banner and a **★ TODAY IT ADMITS** section (the
+  admission was installed in `b288c232` and measured **+67,884 B / +339
+  complete fns**). ★ The durable point the gate makes about itself: **nothing
+  in it is hardcoded — every verdict is recomputed from the compiled COMDAT
+  bytes, so a refusal recorded in prose can never be an operative refusal.
+  Re-run it; do not read a docstring for a verdict.**
   ⚠ **Do NOT prune the classes that currently forgive 0** (`STALE_SPELLING` 143,
   `UNWITNESSED` 11): they **become live as porting advances**, and a prior prune
   (`a745039e`) cost **+94,616 B to reverse**. **A Δ0 today would license a change
