@@ -1130,6 +1130,20 @@ def _extract_frame_size_from_instrs(instrs, side='target'):
     THAT is fallback-worthy. 0 means "scanned, positively no allocation" and is
     trusted — reverting to the local scan on a 0 would just reintroduce a second
     opinion on the one case the delegate is certain about.
+
+    ★ 2026-08-17. The delegate's None now carries a SECOND cause: "there were no
+    instructions on this side to scan at all". The only caller
+    (`cmd_stack_layout`, below) previously got a confident 0 for an empty
+    instruction list — `_scan_frame_size` fell through to its frameless/leaf
+    branch without executing its loop once — and that 0 is a claim about a
+    function nobody looked at. It is reachable from live objdiff-cli 4.2.3:
+    `diff -p . __savegprlr --include-instructions` returns an empty
+    `instructions` array.
+
+    The fall-through here needs no change for it: on a no-evidence None the
+    local `_STWU_RE` scan below runs over the same empty/absent input, finds
+    nothing to iterate, and returns None too. Both routes agree, and neither
+    invents a 0.
     """
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -1340,11 +1354,24 @@ def cmd_stack_layout(instrs, symbol=None, project_dir=None):
     print("=" * 70)
     print()
 
-    tgt_str = f"0x{tgt_frame:x} ({tgt_frame} bytes)" if tgt_frame else "unknown"
-    src_str = f"0x{src_frame:x} ({src_frame} bytes)" if src_frame else "unknown"
-    print(f"  Target frame: {tgt_str}")
-    print(f"  Source frame: {src_str}")
-    if tgt_frame and src_frame:
+    # ★ 2026-08-17. These four tests were `if tgt_frame` — TRUTHINESS, which
+    #   collapses the frame-size tri-state at the first consumer in BOTH
+    #   directions: a measured, positively-frameless 0 printed as "unknown"
+    #   (17.1% of this binary's functions are genuinely frameless), and, once
+    #   the two sides were frameless, the "frames match" line was suppressed
+    #   entirely. `is not None` is the whole fix; the distinction only became
+    #   worth anything when `_extract_frame_size_from_instrs` stopped returning
+    #   0 for "no evidence".
+    def _fstr(v):
+        if v is None:
+            return "UNKNOWN (no evidence — nothing to read on this side)"
+        if v == 0:
+            return "0x0 (frameless / leaf — scanned, no allocation)"
+        return f"0x{v:x} ({v} bytes)"
+
+    print(f"  Target frame: {_fstr(tgt_frame)}")
+    print(f"  Source frame: {_fstr(src_frame)}")
+    if tgt_frame is not None and src_frame is not None:
         delta = src_frame - tgt_frame
         if delta != 0:
             bigger = "source" if delta > 0 else "target"
@@ -1394,9 +1421,11 @@ def cmd_stack_layout(instrs, symbol=None, project_dir=None):
     permuted = [r for r in rows if r['status'] == 'PERMUTED']
 
     if tgt_frame is None or src_frame is None:
-        print("  ⛔ Frame size could not be determined on "
-              f"{'target' if tgt_frame is None else 'our build'} — no frame "
-              "verdict. (A frame we cannot read is not a frame that matches.)")
+        which = ("both sides" if tgt_frame is None and src_frame is None
+                 else ("the target side" if tgt_frame is None else "our build"))
+        print(f"  ⛔ Frame size could not be determined on {which} — no frame "
+              "verdict. (A frame we cannot read is not a frame that matches, "
+              "and a side we never read is not a frameless one.)")
     if permuted:
         print(f"  {len(permuted)} slot(s) PERMUTED: present on both sides at the same "
               "offset but\n    accessed at different program points — the same slot SET "
@@ -1405,7 +1434,8 @@ def cmd_stack_layout(instrs, symbol=None, project_dir=None):
 
     if not swapped and not tgt_only and not src_only and not permuted:
         print("  All stack slots match. No layout mismatches.")
-        if tgt_frame and src_frame and tgt_frame != src_frame:
+        if (tgt_frame is not None and src_frame is not None
+                and tgt_frame != src_frame):
             print(f"  Frame size difference ({src_frame - tgt_frame:+d}) is likely from "
                   f"callee-saved register count difference (AT_LIMIT).")
     elif swapped:
@@ -1425,7 +1455,8 @@ def cmd_stack_layout(instrs, symbol=None, project_dir=None):
         print("  Fix: Try reordering variable declarations in source.")
     elif tgt_only or src_only:
         print(f"  {len(tgt_only)} target-only slot(s), {len(src_only)} source-only slot(s)")
-        if tgt_frame and src_frame and tgt_frame != src_frame:
+        if (tgt_frame is not None and src_frame is not None
+                and tgt_frame != src_frame):
             print(f"  Frame size differs by {abs(src_frame - tgt_frame)} bytes — "
                   "may be callee-saved register count mismatch (AT_LIMIT)")
 

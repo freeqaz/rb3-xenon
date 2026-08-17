@@ -331,8 +331,14 @@ def build_fingerprints(side_key: str, instrs: list,
 @dataclass
 class Prologue:
     # ★ TRI-STATE, and the whole point of the 2026-08-03 repair (lane DQ-2).
-    #   None  = COULD NOT DETERMINE (an allocation form we do not model)
-    #   0     = scanned, positively found NO frame allocation (frameless leaf)
+    #   None  = NO EVIDENCE. Two disjoint causes, both reported in
+    #           `frame_evidence`: (a) an allocation form is present but we
+    #           cannot decode it, (b) we examined ZERO instructions on this
+    #           side, so there was nothing to decide from (2026-08-17).
+    #   0     = scanned at least one instruction on this side and positively
+    #           found NO frame allocation (frameless leaf). 17.1% of this
+    #           binary — see the survey below — so 0 is a real answer, not a
+    #           nobody-home default.
     #   N > 0 = measured frame size
     # v1 used a plain `int = 0`, conflating "unparsed" with "frameless", so an
     # unparsed prologue on BOTH sides printed "→ Frame sizes match." off 0 == 0.
@@ -422,7 +428,34 @@ def _scan_frame_size_v1(instrs: list, side_key: str, horizon: int) -> int:
 def _scan_frame_size(instrs: list, side_key: str, horizon: int) -> tuple:
     """-> (size_or_None, evidence_str).
 
-    Preference order: stwu > stwux > r31-alias > positively-frameless(0).
+    Preference order: stwu > stwux > r31-alias > no-evidence(None) >
+    positively-frameless(0).
+
+    ★ 2026-08-17. `scanned` — the count of instructions actually present on
+      THIS side within the horizon — is the second half of the tri-state, and
+      it is the same defect as the `saw_alloc_form` one below, one layer down.
+      With an empty `instrs`, a zero `horizon`, or a side that is absent from
+      every row, the loop below never executes: nothing sets `saw_alloc_form`,
+      nothing sets a size, and control fell into the final `else`, which
+      answered "no frame allocation found in prologue (frameless/leaf)". That
+      is a POSITIVE claim about a function we never looked at. `frame_known`
+      then read True, so print_report skipped its ⛔ REFUSAL and printed
+      "Frame size: TGT 0x0 BASE 0x0 Δ +0x0 / → Frame sizes match." off 0 == 0
+      — the exact vacuous success the refusal was built to stop, reproduced on
+      zero evidence one layer further down.
+
+      Reachable from live objdiff-cli 4.2.3 (0fd82159607c), not just from a
+      test: `bin/objdiff-cli diff -p . __savegprlr --include-instructions -f
+      json` returns a well-formed diff whose `instructions` array is EMPTY.
+      Same for __restgprlr, __savefpr and __savevmx.
+
+      0 is still a real, common answer and is NOT weakened here. Surveyed all
+      69,202 functions in build/45410914/asm: 11,627 (16.80%) have neither
+      `mflr r12` nor any allocation, and a further 203 (0.29%) — e.g.
+      fn_822C13A8 in mtx.s — do `mflr r12` and save registers into the
+      caller's frame without allocating one. Seeing instructions and finding
+      no allocation means 0. Seeing NO instructions means None. The difference
+      is whether we looked.
     """
     consts: dict = {}          # reg -> last materialized constant
     stwu_size = None
@@ -431,11 +464,13 @@ def _scan_frame_size(instrs: list, side_key: str, horizon: int) -> tuple:
     alias_size = None
     alias_note = None
     saw_alloc_form = False
+    scanned = 0                # instructions actually present on THIS side
 
     for ins in instrs[:horizon]:
         side = ins.get(side_key)
         if not side:
             continue
+        scanned += 1
         op = side.get("opcode", "")
         args = side.get("args", "")
         parts = split_operands(args)
@@ -527,6 +562,13 @@ def _scan_frame_size(instrs: list, side_key: str, horizon: int) -> tuple:
     elif saw_alloc_form:
         # We SAW an allocation but could not decode it. Never report 0 here.
         return None, (stwux_note or "frame allocation present but not decodable")
+    elif scanned == 0:
+        # We looked at NOTHING on this side. Never report 0 here either: a
+        # frameless verdict is a claim, and a claim needs something to have
+        # been read. See the note in this function's docstring.
+        return None, (f"no {side_key}-side instructions in the scan window "
+                      f"(0 of {len(instrs)} rows carry a {side_key} side) "
+                      f"— no evidence, not frameless")
     else:
         return 0, "no frame allocation found in prologue (frameless/leaf)"
 
@@ -1527,6 +1569,49 @@ def selftest():
 
     # ── Fixture 7: the spelling fixtures 1-6 could not see ───────────────────
     _selftest_ruler_fixtures(check, out, H)
+
+    # ── Fixture 8: NO EVIDENCE is not framelessness ──────────────────────────
+    # Fixtures 1-7 all hand a side at least one instruction, so none of them
+    # could see the empty-input branch. `objdiff-cli diff -p . __savegprlr
+    # --include-instructions` really does return an EMPTY `instructions` array
+    # against this repo's own build (same for __restgprlr/__savefpr/__savevmx),
+    # so this is a live shape, not a synthetic one.
+    out.append("fixture 8 — no instructions on a side is UNKNOWN, never 0:")
+    check("empty instruction list is UNKNOWN",
+          _scan_frame_size([], "target", 0)[0], None)
+    check("empty list, non-zero horizon, still UNKNOWN",
+          _scan_frame_size([], "target", H)[0], None)
+    # The >1-row shape of the same thing: rows exist, but not one of them
+    # carries the side we were asked about.
+    tgt_only = [_ins(0, ("mflr", "r12"), None),
+                _ins(1, ("stwu", "r1, -0x80(r1)"), None),
+                _ins(2, ("blr", ""), None)]
+    check("TARGET side of a target-only diff still decodes",
+          _scan_frame_size(tgt_only, "target", H)[0], 0x80)
+    check("BASE side of a target-only diff is UNKNOWN, never 0",
+          _scan_frame_size(tgt_only, "base", H)[0], None)
+    check("...and it says WHY (no evidence, not frameless)",
+          "no evidence" in _scan_frame_size(tgt_only, "base", H)[1], True)
+    check("Prologue.frame_known is False for the absent side",
+          parse_prologue(tgt_only, "base").frame_known, False)
+    # CONTROLS (rule 4). Without these the branch above is just `return None`,
+    # and 17.1% of this binary is genuinely frameless — 0 must survive.
+    stub = [_ins(0, ("mflr", "r12"), ("blr", ""))]
+    check("a ONE-instruction stub side is KNOWN-zero, not UNKNOWN",
+          _scan_frame_size(stub, "base", H)[0], 0)
+    # 203 functions here (e.g. fn_822C13A8 in mtx.s) do `mflr r12` and save
+    # registers WITHOUT allocating a frame. Must NOT be dragged into UNKNOWN.
+    saves_no_frame = [_ins(0, ("mflr", "r12"), None),
+                      _ins(1, ("bl", "__savegprlr_29"), None),
+                      _ins(2, ("li", "r7, 0x0"), None),
+                      _ins(3, ("blr", ""), None)]
+    check("mflr + save helper WITHOUT an allocation is KNOWN-zero",
+          _scan_frame_size(saves_no_frame, "target", H)[0], 0)
+    # v1 is the frozen control: it conflates all three states into 0.
+    check("v1 calls the empty list frameless (STAYS WRONG)",
+          _scan_frame_size_v1([], "target", H), 0)
+    check("v1 calls the absent side frameless (STAYS WRONG)",
+          _scan_frame_size_v1(tgt_only, "base", H), 0)
 
     return ok, out
 
