@@ -1663,6 +1663,34 @@ def cmd_selftest(args):
     cov = _artifact_check(paths["correct"], funcs, tf)["coverage"]
     check("correct coverage == 1.0", round(cov, 6), 1.0)
 
+    # --- _rebuild_reason: when does `priority` self-heal? -------------------
+    # ⚠ The load-bearing cell is REFLINK. setup_worktree.sh copies main's
+    # scope_map.json into every new worktree, so a WRONG cache is NEWER than
+    # every input. If this ever regresses to an mtime-only test it reads that
+    # as fresh and the stale cache survives -- which is the original defect.
+    global SCOPE_MAP
+    _saved = SCOPE_MAP
+    try:
+        SCOPE_MAP = paths["correct"]
+        os.utime(SCOPE_MAP, None)                       # newer than every input
+        check("_rebuild_reason(healthy)",
+              _rebuild_reason({"state": "ok"}), None)
+
+        check("_rebuild_reason(REFLINK: newer but wrong addrs)",
+              _rebuild_reason({"state": "incomplete", "coverage": 0.6667,
+                               "unresolved": 23076}) is not None, True)
+
+        check("_rebuild_reason(missing)",
+              _rebuild_reason({"state": "missing"}) is not None, True)
+
+        old = os.path.getmtime(REPORT) - 3600            # cache older than input
+        os.utime(SCOPE_MAP, (old, old))
+        r = _rebuild_reason({"state": "ok"})
+        check("_rebuild_reason(input newer than cache)",
+              bool(r) and "newer" in r, True)
+    finally:
+        SCOPE_MAP = _saved
+
     print("=" * 70)
     print("scope_map selftest -- artifact gate discrimination")
     print("=" * 70)
