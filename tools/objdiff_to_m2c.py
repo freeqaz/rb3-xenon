@@ -65,6 +65,57 @@ import sys
 from typing import Dict, List, Optional, Tuple
 
 
+# PPC branch mnemonics as objdiff spells them. Shared by the two sites that
+# have to agree about what a branch is: `parse_branch_targets`, which MINTS a
+# `.L_` label from a branch's destination, and `convert_objdiff_json`'s emit
+# loop, which CONSUMES one by respelling that destination as the label. The
+# two used to disagree -- the consumer had no opcode test at all -- and that
+# asymmetry is the bug described in `_is_branch_opcode` below.
+BRANCH_OPCODES = frozenset({
+    'b', 'bl', 'ba', 'bla',
+    'bc', 'bcl', 'bca', 'bcla',
+    'bclr', 'bclrl', 'bcctr', 'bcctrl',
+    'beq', 'bne', 'blt', 'bgt', 'ble', 'bge',
+    'beqlr', 'bnelr', 'bltlr', 'bgtlr', 'blelr', 'bgelr',
+    'bdnz', 'bdz', 'bdnzl', 'bdzl',
+    'bdzf', 'bdzt', 'bdnzf', 'bdnzt',
+})
+
+# A trailing hex operand, refused when it is glued to the token on its left.
+# The `(?<![-\w.])` guard makes the match a whole operand rather than the tail
+# of one: it refuses `-0x10` (a negative displacement, whose magnitude is not
+# an address), `foo0x10` / `lbl_0x10` (a symbol that merely ends in something
+# hex-shaped) and `.0x10`. On the measured rb3-xenon corpus the guard changes
+# nothing on its own -- it is a second line of defence behind the opcode gate,
+# not the load-bearing half of the repair. See `convert_objdiff_json`.
+_TRAILING_HEX_RE = re.compile(r'(?<![-\w.])(0x[0-9a-fA-F]+)$')
+
+
+def _is_branch_opcode(opcode: str) -> bool:
+    """
+    True when `opcode` is a PPC branch, i.e. when its trailing hex operand is
+    a code ADDRESS and may legitimately be respelled as a `.L_xxxxxxxx` label.
+
+    Every other opcode's trailing hex operand is an IMMEDIATE, and respelling
+    it produces assembly m2c cannot parse -- `addi r3, r3, .L_00000120` for
+    `addi r3, r3, 0x120`, whenever 0x120 also happens to be some branch's
+    destination in the same function. Measured on rb3-xenon build/45410914,
+    all 1948 functions scoring in [90,100): 453 such lines across 147
+    functions (addi 293, li 43, cmplwi 42, subi 37, ori 18, cmpwi 8, oris 6,
+    mulli 4, lis 1, subfic 1), against 6931 legitimate branch respellings
+    across 475 functions. Gating on this predicate drops all 453 and loses 0
+    of the 6931. The failure surfaced as an *m2c* parse failure rather than as
+    a converter error, which is why it went unnoticed.
+
+    Deliberately the same predicate `parse_branch_targets` uses to mint the
+    labels in the first place, so producer and consumer cannot drift apart
+    again. The bare `startswith('b')` arm is intentional (it catches `blr`,
+    `bctr`, `bctrl` and any `bcond` spelling not enumerated above); on the
+    measured corpus every b-prefixed opcode objdiff emits is in fact a branch.
+    """
+    return opcode in BRANCH_OPCODES or opcode.startswith('b')
+
+
 def symbol_to_label(name: str) -> str:
     """
     Convert a symbol name to a valid assembly label.
@@ -219,22 +270,13 @@ def parse_branch_targets(instructions: list) -> set:
     Returns a set of addresses that are branch targets.
     """
     targets = set()
-    branch_opcodes = {
-        'b', 'bl', 'ba', 'bla',
-        'bc', 'bcl', 'bca', 'bcla',
-        'bclr', 'bclrl', 'bcctr', 'bcctrl',
-        'beq', 'bne', 'blt', 'bgt', 'ble', 'bge',
-        'beqlr', 'bnelr', 'bltlr', 'bgtlr', 'blelr', 'bgelr',
-        'bdnz', 'bdz', 'bdnzl', 'bdzl',
-        'bdzf', 'bdzt', 'bdnzf', 'bdnzt',
-    }
 
     for instr in instructions:
         target = instr.get('target', {})
         opcode = target.get('opcode', '')
 
         # Check if this is a branch instruction
-        if opcode in branch_opcodes or opcode.startswith('b'):
+        if _is_branch_opcode(opcode):
             args = target.get('args', '')
             # Look for hex addresses like 0x17dc or cr6, 0x17dc
             # Branch targets in objdiff are shown as absolute addresses
@@ -844,18 +886,25 @@ def convert_objdiff_json(data: dict, symbol_override: Optional[str] = None,
         # Format the instruction
         asm = format_instruction(instr)
         if asm:
-            # Convert branch target addresses to labels
-            # Look for branch to hex address pattern
-            match = re.search(r'(0x[0-9a-fA-F]+)$', asm)
-            if match:
-                target_addr_str = match.group(1)
-                try:
-                    target_addr = int(target_addr_str, 16)
-                    if target_addr in branch_targets:
-                        # Replace address with label reference
-                        asm = asm[:match.start()] + f".L_{target_addr:08X}"
-                except ValueError:
-                    pass
+            # Convert branch target addresses to labels.
+            #
+            # ONLY on a branch. The trailing hex operand of a non-branch is an
+            # immediate, not an address, and respelling it as a label emits
+            # assembly m2c cannot parse -- `addi r3, r3, .L_00000120` for
+            # `addi r3, r3, 0x120` -- whenever the immediate happens to equal
+            # some branch's destination in the same function. See
+            # `_is_branch_opcode` for the measured scale of that collision.
+            if _is_branch_opcode(target.get('opcode', '')):
+                match = _TRAILING_HEX_RE.search(asm)
+                if match:
+                    target_addr_str = match.group(1)
+                    try:
+                        target_addr = int(target_addr_str, 16)
+                        if target_addr in branch_targets:
+                            # Replace address with label reference
+                            asm = asm[:match.start()] + f".L_{target_addr:08X}"
+                    except ValueError:
+                        pass
 
             output.append(f"\t{asm}")
 
