@@ -68,6 +68,19 @@ jobs:
             --binutils /binutils --compilers /compilers
         ninja all_source progress build/${{ matrix.version }}/report.json
 
+    # Guard: the scope-cache gate must DISCRIMINATE.  `validate-addrs`
+    # recomputes its address invariants from report.json and for months never
+    # opened config/45410914/scope_map.json at all, so it reported PASS/exit 0
+    # over a stale fabricating artifact AND over a DELETED one -- two green
+    # signals for one bad cache.  This selftest synthesises stale/dead/correct
+    # fixtures deterministically from report.json (no preserved incident file,
+    # which is why it can run here) and asserts the gate fails the bad ones and
+    # PASSES the correct one -- the control is half the evidence, since a gate
+    # that fails on everything proves nothing.  Runs after Build because it
+    # needs report.json.
+    - name: Scope-cache gate discrimination selftest
+      run: python3 tools/scope_map.py selftest
+
     # Guard: a COFF relocation's SymbolTableIndex COUNTS AUX RECORDS, so
     # indexing an aux-free symbol list returns a GARBAGE NAME.  Measured: only
     # 20.99% of relocations resolve correctly without a correction.  The bug has

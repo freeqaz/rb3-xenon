@@ -1174,6 +1174,14 @@ def cmd_build(args):
     # 2026-08-13 the game tier moved 20,688 -> 24,985 fns (denominator +24%,
     # reading 75% -> 59%) and the change was only reconstructable because
     # unrelated worktrees happened to hold reflinked copies from 07-31.
+    # --quiet is for the automated PROGRESS path, where this rebuild is a
+    # cache refresh nobody asked for and the tier dashboard prints immediately
+    # after: the RECLASSIFIED diff and the summary table are signal when a human
+    # types `build` and pure noise in front of the thing they actually ran.
+    # ONE line still prints -- a rebuild that silently did nothing must not look
+    # identical to one that ran.
+    quiet = getattr(args, "quiet", False)
+
     prev = None
     if os.path.exists(SCOPE_MAP):
         try:
@@ -1181,13 +1189,17 @@ def cmd_build(args):
                 prev = json.load(f)
             bak = SCOPE_MAP + ".bak"
             os.replace(SCOPE_MAP, bak)
-            print("backed up previous cache -> %s" % bak)
+            if not quiet:
+                print("backed up previous cache -> %s" % bak)
         except (OSError, ValueError) as e:
             print("(could not back up previous cache: %s)" % e)
             prev = None
 
     with open(SCOPE_MAP, "w") as f:
         json.dump(out, f, indent=0, sort_keys=True)
+    if quiet:
+        print("scope cache rebuilt from report.json (%d functions)" % len(out))
+        return
     print("wrote %s (%d functions)" % (SCOPE_MAP, len(out)))
 
     if prev:
@@ -1286,6 +1298,130 @@ def load_symbols_txt_addr2size():
     return out
 
 
+# Exit code for "the artifact this command is believed to validate is not on
+# disk". Deliberately NOT 0 and NOT 1: absent is neither a clean bill of health
+# nor a defect, and the two must be distinguishable by a caller. See
+# _artifact_check's docstring for why 0 was the dangerous answer.
+EXIT_ARTIFACT_ABSENT = 3
+
+
+def _artifact_check(scope_map_path, funcs_nodedup, total_functions):
+    """Assert the ON-DISK scope_map.json agrees with THIS report.json.
+
+    ⛔⛔ THIS COMMAND USED TO VALIDATE A FILE IT NEVER OPENED.  Everything below
+    `validate-addrs`' own banner is RECOMPUTED from report.json + symbols.txt +
+    splits.txt, so it graded the DERIVATION LOGIC and said nothing whatever
+    about `config/45410914/scope_map.json`.  Measured, both on the same tree:
+    with the stale fabricating artifact on disk it reported `VERDICT: PASS,
+    exit 0`, and with the artifact **DELETED ENTIRELY** it still reported
+    `VERDICT: PASS, exit 0`.  That is the hole that let one stale cache produce
+    two green signals -- a gate that cannot fail is worse than no gate, because
+    it is also a gate nobody re-checks.
+
+    The invariant was already WRITTEN in this command's docstring and never
+    wired up: the artifact must hold exactly `total_functions` keys with ZERO
+    address collisions.  Three checks, chosen so each can fail alone:
+
+      C1 COUNT      keys on disk == report `total_functions`.  The fabricating
+                    version lost 650 functions to colliding synthetic keys, so
+                    a short count is that defect's direct signature.
+      C2 COLLISION  the derivation itself must not collapse two functions onto
+                    one address (unique report addrs == report row count).
+                    Fails on the derivation, not the file -- kept separate so a
+                    regression in load_functions cannot be misread as staleness.
+      C3 IDENTITY   the key SET on disk == the set of addresses in this report.
+                    Strictly stronger than C1: it catches a cache with the right
+                    number of keys pointing at the WRONG addresses, which is
+                    exactly the shape of the incident file (68,576 keys, 0.6881
+                    coverage -- a count within 1% of correct, and a third of the
+                    addresses fabricated).
+
+    ⚠ `expected` is derived from the no-dedup rows the caller already loaded,
+    NOT from a second `load_functions(dedup=True)` call: `load_functions`
+    APPENDS to the module-global UNRESOLVED_NAMED, so calling it twice
+    double-counts the unresolved list this command reports and gates on.
+    Dedup is a pure group-by on `addr` (see load_functions), so the dedup'd key
+    set IS the set of unique addresses -- same answer, no side effect.
+
+    Returns a dict with `status` in {ok, fail, absent, unreadable} plus the
+    counts, and never raises: a reporting bug must not be able to mask the
+    finding it is reporting."""
+    rel = os.path.relpath(scope_map_path, ROOT)
+    res = {"status": "ok", "path": rel, "keys": None, "expected": None,
+           "total_functions": total_functions, "missing": None, "extra": None,
+           "collisions": None, "coverage": None, "fails": []}
+
+    expected = {"%08X" % f[0] for f in funcs_nodedup}
+    res["expected"] = len(expected)
+    # C2 is a property of the derivation, so it is computable even with no file.
+    res["collisions"] = len(funcs_nodedup) - len(expected)
+
+    if not os.path.exists(scope_map_path):
+        res["status"] = "absent"
+        return res
+    try:
+        with open(scope_map_path) as f:
+            sm = json.load(f)
+        if not isinstance(sm, dict):
+            raise ValueError("top level is %s, not an object" % type(sm).__name__)
+    except (OSError, ValueError) as e:
+        res["status"] = "unreadable"
+        res["error"] = str(e)
+        res["fails"].append("artifact unreadable: %s" % e)
+        return res
+
+    keys = set(sm)
+    res["keys"] = len(keys)
+    res["missing"] = len(expected - keys)
+    res["extra"] = len(keys - expected)
+    res["coverage"] = (len(expected & keys) / float(len(expected))) if expected else None
+
+    if total_functions and len(keys) != total_functions:
+        res["fails"].append(
+            "C1 COUNT: %d keys on disk != report total_functions %d (%+d)"
+            % (len(keys), total_functions, len(keys) - total_functions))
+    if res["collisions"]:
+        res["fails"].append(
+            "C2 COLLISION: %d report rows collapse onto a shared address "
+            "(%d rows -> %d unique addrs)"
+            % (res["collisions"], len(funcs_nodedup), len(expected)))
+    if res["missing"] or res["extra"]:
+        res["fails"].append(
+            "C3 IDENTITY: key set disagrees with this report -- %d expected "
+            "addrs absent, %d keys not in the report"
+            % (res["missing"], res["extra"]))
+    if res["fails"]:
+        res["status"] = "fail"
+    return res
+
+
+def _print_artifact_check(res):
+    print("=" * 70)
+    print("scope_map ON-DISK ARTIFACT -- %s" % res["path"])
+    print("=" * 70)
+    if res["status"] == "absent":
+        print("  NOT PRESENT -- nothing was validated.")
+        print("  The address invariants above are recomputed from report.json and")
+        print("  hold whether or not this file exists, so they do NOT vouch for it.")
+        print("  build it:  python3 tools/scope_map.py build      (~1 s)")
+        return
+    print("  keys on disk                           %s"
+          % ("-" if res["keys"] is None else res["keys"]))
+    print("  expected (unique report addrs)         %d" % res["expected"])
+    print("  report total_functions                 %d" % res["total_functions"])
+    if res["coverage"] is not None:
+        print("  coverage of report addrs               %.4f" % res["coverage"])
+    if res["missing"] is not None:
+        print("  expected addrs absent / extra keys     %d / %d"
+              % (res["missing"], res["extra"]))
+    print("  address collisions in derivation       %s"
+          % ("-" if res["collisions"] is None else res["collisions"]))
+    for f in res["fails"]:
+        print("    FAIL: %s" % f)
+    if not res["fails"]:
+        print("  all artifact invariants hold.")
+
+
 def cmd_validate_addrs(args):
     """Assert every PINNED-unit function address is real, not fabricated.
 
@@ -1304,8 +1440,20 @@ def cmd_validate_addrs(args):
          `?SetTypeDef@Object@Hmx@@UAAXPAVDataArray@@@Z`, whose true home is
          0x8275AB18.
 
-    Exit 1 if any row fails, so this can gate.  Rows in units with no `.text`
-    pin are counted and skipped (they have no blocks to be inside of).
+    Rows in units with no `.text` pin are counted and skipped (they have no
+    blocks to be inside of).
+
+    C. ARTIFACT -- the on-disk scope_map.json must agree with this report.  See
+       _artifact_check: A and B are recomputed from report.json and hold
+       whether or not that file exists, so they vouch for the DERIVATION and
+       not for the CACHE.
+
+    Exit codes, so this can gate:
+      0  everything above holds
+      1  a row failed, or the on-disk artifact contradicts this report
+      3  the artifact is ABSENT -- addresses pass, cache NOT validated.
+         Deliberately not 0: "there was nothing to check" and "I checked and it
+         is fine" must not be the same signal.  --allow-absent demotes it.
 
     ⚠⚠ CONTAINMENT UNDERCOUNTS BY ~2x AND ITS "CONTROL" IS NOT ONE.  Measured
     against the true pre-fix addresses (lane SCOPEMAP-VA): of 23,036 pinned
@@ -1397,9 +1545,171 @@ def cmd_validate_addrs(args):
             print(f"    {label}: {r[2]:08X} {r[0]} {r[1][:60]} {r[3:]}")
     for unit, name in UNRESOLVED_NAMED[: args.samples]:
         print(f"    UNRESOLVED: {unit} {name[:70]}")
-    ok = (nb_c == 0 and nb_s == 0 and not UNRESOLVED_NAMED)
-    print("\n  VERDICT: " + ("PASS" if ok else "FAIL"))
-    return 0 if ok else 1
+    addr_ok = (nb_c == 0 and nb_s == 0 and not UNRESOLVED_NAMED)
+    print("\n  address invariants: " + ("PASS" if addr_ok else "FAIL"))
+
+    # ---- the file this command is BELIEVED to validate --------------------
+    # int()-coerced: report.json is protobuf-JSON and several numerics arrive as
+    # STRINGS, where `!=` against an int is silently true for every value.
+    print()
+    tf = int((rep.get("measures") or {}).get("total_functions", 0) or 0)
+    art = _artifact_check(args.scope_map, funcs, tf)
+    _print_artifact_check(art)
+
+    if art["status"] == "absent" and args.allow_absent:
+        print("  (--allow-absent: not a failure here, but still NOT validated.)")
+        art_absent_rc = 0
+    else:
+        art_absent_rc = EXIT_ARTIFACT_ABSENT
+
+    if not addr_ok or art["status"] in ("fail", "unreadable"):
+        print("\n  VERDICT: FAIL")
+        return 1
+    if art["status"] == "absent":
+        # NOT a PASS: the old code returned 0 here, which is how a DELETED
+        # artifact used to produce a confident green.
+        print("\n  VERDICT: ADDRESSES PASS / ARTIFACT NOT VALIDATED (absent)")
+        return art_absent_rc
+    print("\n  VERDICT: PASS")
+    return 0
+
+
+def _synth_fixtures(funcs_nodedup, out_dir):
+    """Deterministically synthesise {correct, stale, dead} scope_map fixtures.
+
+    Reproducible on ANY machine from report.json alone -- no preserved incident
+    file required.  (One was preserved at ~/tmp/scopemap-policy/bak-stale-68576
+    .json, but a fixture that lives in ~/tmp is a fixture that gets swept, and a
+    test nobody can re-run is a test that silently stops running.)
+
+    The `stale` fixture reproduces the INCIDENT'S SHAPE, not merely a small
+    file: it drops every 3rd address AND injects the same number of fabricated
+    ones, so its key COUNT lands within ~1% of correct while a third of its
+    addresses are wrong.  That matters -- a fixture that only truncates would be
+    caught by C1 alone and would never exercise C3, which is the check that
+    actually catches a same-size, wrong-addresses cache (the real file scored
+    68,576 keys @ 0.6881 coverage).
+    """
+    addrs = sorted({f[0] for f in funcs_nodedup})
+    size_of = {}
+    for a, size, *_ in funcs_nodedup:
+        size_of.setdefault(a, size)
+
+    def ent(sz):
+        return {"size": sz, "scope": "unknown", "provenance": "selftest",
+                "confidence": 0.0, "matched": False}
+
+    correct = {"%08X" % a: ent(size_of[a]) for a in addrs}
+
+    stale = {"%08X" % a: ent(size_of[a])
+             for i, a in enumerate(addrs) if i % 3 != 0}
+    for j in range(len(addrs) - len(stale)):          # fabricated, not in report
+        stale["%08X" % (0xF0000000 + j)] = ent(16)
+
+    dead = {"%08X" % a: ent(size_of[a])
+            for i, a in enumerate(addrs) if i % 5 == 0}   # 20% coverage
+
+    paths = {}
+    for name, obj in (("correct", correct), ("stale", stale), ("dead", dead)):
+        p = os.path.join(out_dir, "scope_map.%s.json" % name)
+        with open(p, "w") as f:
+            json.dump(obj, f, indent=0, sort_keys=True)
+        paths[name] = p
+    return paths, {"correct": correct, "stale": stale, "dead": dead}
+
+
+def cmd_selftest(args):
+    """Prove the artifact gate DISCRIMINATES -- it must PASS the correct
+    artifact and FAIL the stale one.
+
+    A gate that fails on everything proves nothing, so the correct-artifact
+    control is not optional here: it is half the evidence.  Exits 1 if any cell
+    disagrees, so this can run in CI as a known-answer test the way
+    tools/source_category.py selftest does."""
+    import tempfile
+    funcs, rep = load_functions(REPORT, dedup=False)
+    tf = int((rep.get("measures") or {}).get("total_functions", 0) or 0)
+    out_dir = args.keep or tempfile.mkdtemp(prefix="scope_map_selftest_")
+    os.makedirs(out_dir, exist_ok=True)
+    paths, objs = _synth_fixtures(funcs, out_dir)
+
+    cells, fails = [], 0
+
+    def check(label, got, want):
+        nonlocal fails
+        ok = got == want
+        if not ok:
+            fails += 1
+        cells.append((label, got, want, ok))
+
+    # --- _cache_status: graded coverage -----------------------------------
+    for name, want in (("correct", "ok"), ("stale", "incomplete"), ("dead", "dead")):
+        st = _cache_status({a: e["scope"] for a, e in objs[name].items()},
+                           funcs, "ok")
+        check("_cache_status(%s)" % name, st["state"], want)
+    check("_cache_status(missing)",
+          _cache_status({}, funcs, "missing")["state"], "missing")
+
+    # --- _artifact_check: the on-disk assertion ----------------------------
+    for name, want in (("correct", "ok"), ("stale", "fail"), ("dead", "fail")):
+        check("_artifact_check(%s)" % name,
+              _artifact_check(paths[name], funcs, tf)["status"], want)
+    check("_artifact_check(absent)",
+          _artifact_check(os.path.join(out_dir, "nope.json"), funcs, tf)["status"],
+          "absent")
+
+    # The control that makes the rest mean something: a correct artifact must
+    # resolve EXACTLY every report address, so coverage is 1.0 by construction.
+    cov = _artifact_check(paths["correct"], funcs, tf)["coverage"]
+    check("correct coverage == 1.0", round(cov, 6), 1.0)
+
+    # --- _rebuild_reason: when does `priority` self-heal? -------------------
+    # ⚠ The load-bearing cell is REFLINK. setup_worktree.sh copies main's
+    # scope_map.json into every new worktree, so a WRONG cache is NEWER than
+    # every input. If this ever regresses to an mtime-only test it reads that
+    # as fresh and the stale cache survives -- which is the original defect.
+    global SCOPE_MAP
+    _saved = SCOPE_MAP
+    try:
+        SCOPE_MAP = paths["correct"]
+        os.utime(SCOPE_MAP, None)                       # newer than every input
+        check("_rebuild_reason(healthy)",
+              _rebuild_reason({"state": "ok"}), None)
+
+        check("_rebuild_reason(REFLINK: newer but wrong addrs)",
+              _rebuild_reason({"state": "incomplete", "coverage": 0.6667,
+                               "unresolved": 23076}) is not None, True)
+
+        check("_rebuild_reason(missing)",
+              _rebuild_reason({"state": "missing"}) is not None, True)
+
+        old = os.path.getmtime(REPORT) - 3600            # cache older than input
+        os.utime(SCOPE_MAP, (old, old))
+        r = _rebuild_reason({"state": "ok"})
+        check("_rebuild_reason(input newer than cache)",
+              bool(r) and "newer" in r, True)
+    finally:
+        SCOPE_MAP = _saved
+
+    print("=" * 70)
+    print("scope_map selftest -- artifact gate discrimination")
+    print("=" * 70)
+    print("  fixtures: %s" % out_dir)
+    print("  report total_functions %d · unique addrs %d"
+          % (tf, len({f[0] for f in funcs})))
+    print("  stale fixture: %d keys (%.4f coverage)"
+          % (len(objs["stale"]),
+             _artifact_check(paths["stale"], funcs, tf)["coverage"]))
+    print()
+    for label, got, want, ok in cells:
+        print("  %-32s %-12s want %-12s %s"
+              % (label, got, want, "ok" if ok else "MISMATCH"))
+    print("\n  VERDICT: %s (%d/%d)"
+          % ("PASS" if not fails else "FAIL", len(cells) - fails, len(cells)))
+    if not args.keep:
+        import shutil
+        shutil.rmtree(out_dir, ignore_errors=True)
+    return 1 if fails else 0
 
 
 def cmd_report(args):
@@ -1783,8 +2093,14 @@ def print_progress(by, measures, cache=None, compact=False):
     cstate = cache.get("state", "ok")
     cbad = cstate in _CACHE_BANNER
     # Stale-but-live cache: boundaries age even though the matched overlay doesn't.
+    # TWO independent reasons to advise a rebuild, and the COVERAGE one is the
+    # load-bearing half: mtime is a proxy that a `setup_worktree.sh` reflink or a
+    # `touch` resets, whereas an unresolved report address is direct evidence
+    # that this cache was not built from this report.
     age = cache.get("age_days")
-    cstale = (not cbad) and age is not None and age >= CACHE_STALE_DAYS
+    cincomplete = (not cbad) and cstate == "incomplete"
+    cstale = cincomplete or ((not cbad) and age is not None
+                             and age >= CACHE_STALE_DAYS)
 
     out = []
     if compact:
@@ -1801,7 +2117,10 @@ def print_progress(by, measures, cache=None, compact=False):
                     mb(orac_b), pct(orac_mb, orac_b), pct(orac_fzb, orac_b),
                     pct(mapped_b, tot_b),
                     ("  [!! scope cache %s — tier %% INFLATED, run: python3 tools/scope_map.py build]"
-                     % cstate) if cbad else ""))
+                     % cstate) if cbad else
+                    ("  [scope cache INCOMPLETE: %d fns unclassified — run: "
+                     "python3 tools/scope_map.py build]"
+                     % (cache.get("unresolved") or 0)) if cincomplete else ""))
     else:
         # ---- framed dashboard --------------------------------------------------
         IW = 66                                  # inner width between the │ borders
@@ -1928,8 +2247,16 @@ def print_progress(by, measures, cache=None, compact=False):
         out.append(rule("%.0f%% of binary tier-classified · %.2f MB unclassified" %
                         (pct(mapped_b, tot_b), mb(unk_b))))
         if cstale:
-            out.append(line("   scope cache %s (%dd old) — tier bounds may drift;"
-                            % (cache.get("mtime") or "?", age)))
+            if cincomplete:
+                out.append(line("   scope cache INCOMPLETE — %d of %d report fns "
+                                "unclassified" % (cache.get("unresolved") or 0,
+                                                  off_tf)))
+                out.append(line("   (%.2f%% coverage — a correct cache resolves "
+                                "100.00%%)"
+                                % (100.0 * (cache.get("coverage") or 0.0))))
+            else:
+                out.append(line("   scope cache %s (%dd old) — tier bounds may drift;"
+                                % (cache.get("mtime") or "?", age)))
             out.append(line("   refresh: python3 tools/scope_map.py build"))
             out.append(edge("╰", "╯"))
         else:
@@ -1951,6 +2278,16 @@ def print_progress(by, measures, cache=None, compact=False):
 # is treated as DEAD (keyed to a different target build, e.g. a pre-TU5 map):
 # behaviourally identical to no cache at all, so it gets the same loud banner.
 CACHE_DEAD_COVERAGE = 0.50
+# ⛔ 0.50 IS THE *FLOOR*, NOT THE HEALTH BAR, AND THE 31 POINTS BETWEEN THEM WERE
+# A BLIND SPOT.  A correct cache is built from the SAME report.json the dashboard
+# reads, so every report address resolves BY CONSTRUCTION: coverage is EXACTLY
+# 1.0000, never 0.99.  The dead-only test therefore bought nothing on the way
+# down -- the fabricating cache that caused this lane scored **0.6881 and
+# reported `ok`, with no banner at all**, because 0.6881 > 0.50.  Graded now:
+# anything short of full resolution says REBUILD.  Kept as a separate constant
+# (not inlined as `< 1.0`) so the exactness is a stated invariant rather than a
+# float literal someone later "fixes" into a tolerance.
+CACHE_FRESH_COVERAGE = 1.0
 # Age (days) past which the cache gets a one-line staleness footer. The matched
 # overlay is always live (it comes from report.json); what ages is the TIER
 # BOUNDARIES baked into the map.
@@ -1961,15 +2298,21 @@ def _cache_status(scope_by_addr, funcs, state):
     """Describe the health of the cached scope map for the dashboard.
 
     Returns {state, path, age_days, mtime (ISO date or None), coverage (0..1 or
-    None)}. `state` is one of:
-      ok        -- present, readable, resolves most report addrs
+    None), unresolved (int or None)}. `state` is one of:
+      ok        -- present, readable, resolves EVERY report addr (coverage 1.0)
+      incomplete-- present and live, but some report addrs are unclassified;
+                   tier denominators are short by that much -> REBUILD ADVISED
       missing   -- scope_map.json absent (fresh checkout / un-primed worktree)
       unreadable-- present but truncated/corrupt JSON
       dead      -- present but addr-keyed to a DIFFERENT target build
-    Every non-`ok` state means the tier denominators are pinned-only -> INFLATED.
+    `missing`/`unreadable`/`dead` mean the tier denominators are pinned-only ->
+    INFLATED, and get the loud banner.  `incomplete` is deliberately the quieter
+    advisory channel (same footer as age-staleness): it is a partial cache, not
+    an absent one, and a legitimate upstream change that adds functions should
+    print "rebuild", not shout that every number is wrong.
     Never raises: dashboard output must not be able to break a build."""
     st = {"state": state, "path": os.path.relpath(SCOPE_MAP, ROOT),
-          "age_days": None, "mtime": None, "coverage": None}
+          "age_days": None, "mtime": None, "coverage": None, "unresolved": None}
     try:
         mt = os.path.getmtime(SCOPE_MAP)
         d = datetime.date.fromtimestamp(mt)
@@ -1980,8 +2323,11 @@ def _cache_status(scope_by_addr, funcs, state):
     if state == "ok" and funcs:
         hit = sum(1 for f in funcs if ("%08X" % f[0]) in scope_by_addr)
         st["coverage"] = hit / float(len(funcs))
+        st["unresolved"] = len(funcs) - hit
         if st["coverage"] < CACHE_DEAD_COVERAGE:
             st["state"] = "dead"
+        elif st["coverage"] < CACHE_FRESH_COVERAGE:
+            st["state"] = "incomplete"
     return st
 
 
@@ -2012,8 +2358,78 @@ def _progress_by_live():
     return _by_live(scope_by_addr, prov_by_addr, funcs), rep.get("measures", {}), cache
 
 
+def _cache_inputs():
+    """Every file the cached classification is derived from."""
+    ins = [REPORT, SPLITS, SYMBOLS_TXT, os.path.abspath(__file__)]
+    if os.path.isdir(WN_DATA):
+        ins += [os.path.join(WN_DATA, n) for n in sorted(os.listdir(WN_DATA))
+                if n.endswith(".json")]
+    return [p for p in ins if os.path.exists(p)]
+
+
+def _rebuild_reason(cache):
+    """Why the cache should be rebuilt before it is read, or None.
+
+    TWO tests, because neither alone is sufficient and they fail on DIFFERENT
+    things:
+
+      COVERAGE (from _cache_status) -- catches a cache whose ADDRESSES do not
+        belong to this report.  This is the one that catches the reflink case:
+        scripts/setup_worktree.sh copies main's scope_map.json into every new
+        worktree, so the artifact is NEWER than every input while being keyed
+        to another tree's report.  An mtime test reads that as fresh and would
+        re-open the exact hole this lane exists to close.
+
+      MTIME -- catches a cache whose addresses still resolve but whose TIERS
+        are stale, e.g. after a splits.txt re-pin or a tools/scope_data edit.
+        Coverage stays 1.0000 through both, so the content check is blind to
+        them.
+
+    Deliberately NOT an unconditional rebuild.  Measured here: `build` costs
+    0.83 s of which 0.40 s is re-parsing report.json, and `priority` ALREADY
+    loads report.json and the cache and already computes coverage -- so
+    detecting staleness is free while rebuilding regardless is not.  An
+    unconditional rebuild doubles the progress step (0.51 s -> 1.34 s), and a
+    no-op `tools/ninja-locked` pays it TWICE (ninja runs the PROGRESS edge and
+    the wrapper prints the dashboard again).  tools/ninja-locked's own comment
+    already sizes that tail at 3.4%-32% of wall clock for automated per-object
+    builds, which is a cost worth not tripling for a cache that is usually
+    fine."""
+    st = cache.get("state")
+    if st in ("missing", "unreadable", "dead", "incomplete"):
+        return {"missing": "no cache on disk",
+                "unreadable": "cache is corrupt",
+                "dead": "cache is keyed to a different build",
+                "incomplete": "cache resolves %.2f%% of report addrs "
+                              "(%s fns unclassified)"
+                              % (100.0 * (cache.get("coverage") or 0.0),
+                                 cache.get("unresolved"))}[st]
+    try:
+        mt = os.path.getmtime(SCOPE_MAP)
+    except OSError:
+        return "no cache on disk"
+    newer = [os.path.relpath(p, ROOT) for p in _cache_inputs()
+             if os.path.getmtime(p) > mt]
+    if newer:
+        return "inputs newer than cache: %s" % ", ".join(sorted(newer)[:3])
+    return None
+
+
 def cmd_priority(args):
     by, measures, cache = _progress_by_live()
+    # Self-heal, once.  The dashboard is the most-read number in the project and
+    # it was being computed from whatever cache happened to be lying around --
+    # there is no automation path that ever regenerated it, and a gitignored
+    # artifact has no committed copy to fall back on.  Healing HERE rather than
+    # in configure.py's progress mode covers every entry point (the ninja
+    # PROGRESS edge, tools/ninja-locked's no-op tail, and a human typing
+    # `scope_map.py priority`) instead of only the first.
+    reason = None if getattr(args, "no_refresh", False) else _rebuild_reason(cache)
+    if reason:
+        print("scope cache refresh (%s)" % reason)
+        del UNRESOLVED_NAMED[:]          # load_functions APPENDS to this global
+        cmd_build(argparse.Namespace(quiet=True))
+        by, measures, cache = _progress_by_live()   # re-read; never loops
     print_progress(by, measures, cache=cache, compact=args.compact)
 
 
@@ -2111,10 +2527,17 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("build", help="classify all fns, write scope_map.json")
+    b = sub.add_parser("build", help="classify all fns, write scope_map.json")
+    b.add_argument("--quiet", action="store_true",
+                   help="one line of output; no RECLASSIFIED diff, no summary "
+                        "table (for the automated PROGRESS refresh)")
     sub.add_parser("report", help="per-bucket breakdown + progress toward 100%%")
     pr = sub.add_parser("priority", help="progress toward 100%% by priority tier (live matched, cached classification)")
     pr.add_argument("--compact", action="store_true", help="one-line form (for the build PROGRESS step)")
+    pr.add_argument("--no-refresh", action="store_true",
+                    help="never rebuild the cache first — report it exactly as "
+                         "found (for INSPECTING a stale cache, which the "
+                         "self-heal would otherwise fix out from under you)")
     w = sub.add_parser("worklist", help="size-ranked unmatched oracle-backed clusters (cheapest work)")
     w.add_argument("--limit", type=int, default=50)
     w.add_argument("--bucket", choices=BUCKET_ORDER, help="filter to one bucket")
@@ -2125,10 +2548,23 @@ def main():
     v.add_argument("--report",
                    default=os.path.join(ROOT, "build", "45410914", "report.json"))
     v.add_argument("--samples", type=int, default=10)
+    v.add_argument("--scope-map", default=SCOPE_MAP,
+                   help="artifact to validate (default: %s). Exists so the "
+                        "gate can be pointed at a fixture and PROVED to fail."
+                        % os.path.relpath(SCOPE_MAP, ROOT))
+    v.add_argument("--allow-absent", action="store_true",
+                   help="a missing artifact exits 0 instead of %d (for hosts "
+                        "that legitimately never build it)" % EXIT_ARTIFACT_ABSENT)
+    stp = sub.add_parser("selftest",
+                         help="prove the artifact gate DISCRIMINATES (synthetic "
+                              "stale fixtures + a correct-artifact control)")
+    stp.add_argument("--keep", metavar="DIR",
+                     help="write the fixtures here and leave them in place")
     args = ap.parse_args()
     rc = {"build": cmd_build, "report": cmd_report, "priority": cmd_priority,
           "worklist": cmd_worklist, "classify": cmd_classify,
-          "validate-addrs": cmd_validate_addrs}[args.cmd](args)
+          "validate-addrs": cmd_validate_addrs,
+          "selftest": cmd_selftest}[args.cmd](args)
     sys.exit(rc or 0)
 
 
