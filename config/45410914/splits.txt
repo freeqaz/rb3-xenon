@@ -3853,7 +3853,6 @@ Font.cpp:
 	.text       start:0x8247565C end:0x82475778
 	.text       start:0x82475778 end:0x82475938
 	.text       start:0x82475938 end:0x824764D0
-	.text       start:0x826DC4C0 end:0x826DC51C
 	.text       start:0x826DDB48 end:0x826DDBC0
 	.text       start:0x826DDC38 end:0x826DDE54
 
@@ -11102,6 +11101,7 @@ DeployCountTracker.cpp:
 	.pdata      start:0x82235C20 end:0x82235C28
 	.text       start:0x822F58D8 end:0x822F5B18
 	.text       start:0x826DC128 end:0x826DC4BC
+	.text       start:0x826DC4C0 end:0x826DC51C
 	.text       start:0x826DC51C end:0x826DC598
 	.text       start:0x826DC5E8 end:0x826DC6C4
 	.text       start:0x826DC6C4 end:0x826DD314
