@@ -1,10 +1,34 @@
 # rb3-xenon decomp — state & live veins (2026-07-20)
 
-**Current (read from `report.json` at HEAD `f48bcad7`, 2026-08-02): 43,454
-strict-matched functions / `masked_equal` 22,640 / honest proxy 20,814 /
-`matched_code_percent` 38.810524 / `fuzzy_match_percent` 45.912785.**
+> **STATUS (2026-08-17): SUPERSEDED as live state** by
+> [`docs/decomp/CAMPAIGN_STATE_2026-08-17.md`](../decomp/CAMPAIGN_STATE_2026-08-17.md).
+> Live figures today: **44,444 matched / 69,227 `total_functions`**,
+> `matched_code` **3,723,704 / 10,320,664 = 36.080082% @name_check**, honest
+> **21,546**. This document remains the dated record of the 07-19→08-02 waves and
+> its **vein analysis is not superseded** — only its state block is.
+>
+> ⛔ **WITHDRAWN: the `name_check` pricing rule below** (§"Wave CD (2026-07-31) —
+> STOP PRICING ON `name_check` AGGREGATE code%", and its conclusion *"never price
+> a delta below ~0.05pp on `name_check` aggregate code%"*). Since **2026-08-12
+> `d04c83df`**, `name_check` **IS the shipped grading ruler** — `objdiff.json`
+> carries `options = {"functionRelocDiffs": "name_check"}` and `none` is the
+> opt-in. It is no longer an optional detector one may decline to price on; it is
+> the scoreboard. The **noise-floor observation itself still stands as measured**
+> (nc aggregate code% is build-unstable ~0.05pp, and `--name-check` still carries
+> that warning) — what is withdrawn is the *prescription* to price elsewhere.
+> See [`docs/decomp/RULER_CHANGE_name_check_2026-08-12.md`](../decomp/RULER_CHANGE_name_check_2026-08-12.md).
+>
+> Body below is unedited dated record.
+
+**State as of 2026-08-02 — the last refresh of this header; all absolutes
+`@none`, i.e. PRE-2026-08-12 ruler (read from `report.json` at HEAD `f48bcad7`):
+43,454 strict-matched functions / `masked_equal` 22,640 / honest proxy 20,814 /
+`matched_code_percent` 38.810524 @none / `fuzzy_match_percent` 45.912785 @none.**
 Denominator is the whole TU5 XEX (`total_functions` 69,357; `total_code`
 10,688,688). Honest = matched − masked_equal.
+⚠ Those byte/percent absolutes are **not comparable** to any post-2026-08-12
+figure without restating the ruler — the flip alone moves `matched_code` ~817 kB
+/ 7.9 pp at an unchanged tree.
 
 > ⚠⚠ **RULER CHANGE 2026-08-02 — READ BEFORE COMPARING THE HONEST FIGURE ABOVE TO
 > ANY EARLIER ONE IN THIS DOC.** On 2026-08-02 the objdiff fork was flipped so

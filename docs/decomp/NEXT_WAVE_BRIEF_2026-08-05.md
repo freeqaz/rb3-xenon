@@ -15,10 +15,20 @@ a fresh absolute, and this project has burned real work on stale absolutes twice
 | | value | provenance |
 |---|---|---|
 | matched_functions | ~43,877 | composed from per-lane settled A/Bs |
-| matched_code | ~4,242,936 B | composed |
-| code% | ~39.694 | composed |
+| matched_code | ~4,242,936 B **`@none`** | composed |
+| code% | ~39.694 **`@none`** | composed |
 | units at 100% | 255 | EC-2 landed 254 → 255 |
-| last measured absolute | **43,868 / 4,239,592 B / 39.663130 / honest 21,136** | EE-1 + EE-2 leg A at `4f05581a`, independently agreeing |
+| last measured absolute | **43,868 / 4,239,592 B `@none` / 39.663130 `@none` / honest 21,136** | EE-1 + EE-2 leg A at `4f05581a`, independently agreeing |
+
+> **Ruler tag added 2026-08-17 (labelling amendment only — no figure changed).**
+> Every byte/percent absolute in this table is **`@none`**: it was measured before
+> `d04c83df` (2026-08-12) made `functionRelocDiffs=name_check` the shipped grading
+> ruler. **A lower `matched_code` figure today is NOT a regression** — the ruler
+> alone moves ~817 kB / 7.9 pp at an unchanged tree. `matched_functions` and
+> `honest` are **ruler-invariant** and compare directly. See
+> [`RULER_CHANGE_name_check_2026-08-12.md`](RULER_CHANGE_name_check_2026-08-12.md).
+> *(Precedent: `RULER_CHANGE_2026-08-02.md` was amended with ruler tags on
+> 2026-08-06 the same way.)*
 
 **First thing a new wave does: measure a real baseline** in a clean worktree built
 from committed state — **never** from the shared `main` tree, where other agents'

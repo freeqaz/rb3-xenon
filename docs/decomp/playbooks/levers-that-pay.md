@@ -1,5 +1,26 @@
 # Levers that pay — field guide from waves DC..DG
 
+> **STATUS (2026-08-17): AS-OF 2026-08-02 `@none` ruler — SUPERSEDED for lever
+> selection** by [`CAMPAIGN_STATE_2026-08-17.md`](../CAMPAIGN_STATE_2026-08-17.md)
+> **§4** (the gap decomposed) and **§7** (roadmap), where these levers have been
+> sized and substantially **deflated**. The *mechanisms* and the failure modes
+> below remain the best field guide we have — the **verdicts and the sizing are
+> historical**.
+>
+> ⚠ **Every absolute here predates the 2026-08-12 ruler flip and is `@none`.**
+> `matched_code` figures are not comparable to today's `@name_check` numbers
+> without restating the ruler (the flip alone moves ~817 kB / 7.9 pp at an
+> unchanged tree) — see
+> [`RULER_CHANGE_name_check_2026-08-12.md`](../RULER_CHANGE_name_check_2026-08-12.md).
+> `matched_functions` and unit counts are ruler-invariant and stand as written.
+>
+> Live tree for scale: **44,444 matched / 69,227 functions**, `matched_code`
+> **36.080082% @name_check**, **3,088 units** in `report.json` — note this doc's
+> "of 1,024" unit denominator is a 2026-08-02 *pairable-unit* partition and is
+> not today's report unit count.
+>
+> Body below is unedited dated record.
+
 > **STATUS (2026-08-02):** current as of `362217af`. Records the **eight
 > matching levers** exercised in waves **DC..DG** (2026-08-02) — each with its
 > precondition, the failure mode it has already inflicted on somebody, a worked
@@ -616,14 +637,22 @@ systematic, likely the "missing stack temp" family, no source lever found.
 
 ### 9.1 The reachable-ceiling partition
 
+⛔ **HISTORICAL (2026-08-17): the "right now" below is 2026-08-02.** Wave DI
+completed long ago; do not read this as live work-in-flight. The **1,024-unit
+ceiling partition in this section is likewise historical** — the reachable
+ceiling has since been re-measured (and moves in BOTH directions; it is
+**61.121%** of `total_code` today, per
+[`CAMPAIGN_STATE_2026-08-17.md`](../CAMPAIGN_STATE_2026-08-17.md) §3). **Re-derive
+the partition before selecting targets from it; never inherit a ceiling.**
+
 ⏱ **Live as of 2026-08-02 — check the tree before re-funding any of this.**
 Wave **DI** is working these follow-ons right now: **DI-1** the mislabelled
 MAP_ONLY source-workable pool (the 31 below), **DI-2** the COMPLETABLE bucket,
 **DI-3** map/splits cleanup plus the native `ObjPtr<T>` unblock from §8.
 
-★★★ **Read this before selecting targets.** The reachable-ceiling census
-(DF-4 `5f7bf5b4`, all 1,024 pairable units; `TARGETING.json`,
-`reachable_ceiling_census.json`):
+★★★ **Read this before selecting targets** *(as of 2026-08-02)*. The
+reachable-ceiling census (DF-4 `5f7bf5b4`, all 1,024 pairable units;
+`TARGETING.json`, `reachable_ceiling_census.json`):
 
 | bucket | units | meaning |
 |---|---:|---|
