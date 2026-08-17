@@ -9,7 +9,91 @@
 
 ## 0. SESSION CLOSE
 
-### 0.6 ROUND SEVEN — W17/W18/W19 ← **LATEST**
+### 0.7 ROUND EIGHT — W20/W21/W22 ← **LATEST**
+
+**44,503 fns / 3,756,568 B = 36.398511%**, honest **21,593**. **Day total
++59 fns / +32,864 B**; **59.55% of the 61.121% reachable ceiling.** All three
+exact.
+
+| lane | predicted | measured | |
+|---|---:|---:|---|
+| W22-FRAME | +11 / +5,296 | **+11 / +5,296** | ✓ *largest of the day* |
+| W21-CARVE | +4 / +1,008 | **+4 / +1,008** | ✓ cascade **exactly 0** |
+| W20-CASCADE | 0 / 0 | **0 / 0** | ✓ *by design — priced, then declined* |
+
+★★★★★ **THE CALLER CASCADE IS ONLY 19.5% OF A MAP EDIT'S DELTA. THE DOMINANT
+TERM IS UN-PAIRING (80.5%), AND IT HAD NO NAME.** W20's round trip
+pre-registered −2,180 and measured −2,976: **−580 B / 4 rows** was the cascade
+(**predicted exactly**), **−2,396 B / 10 rows** were rows that **VANISHED FROM
+THE REPORT** because the pinned obj cannot define the spelling — **W9's −180 B
+mode at scale**, which we had filed as a rare edge case. ⇒ We spent three lanes
+diagnosing the minority term.
+⛔⛔ **"A pure rename moves `none` by 0" is FALSE when the edit changes
+PAIRING** — W20 missed `none` by −2,520 while still calling its edit a pure
+rename, and **`ab_measure`'s own control had already said `REAL_PAIRING`.**
+★ The pricer had **5 rows right BY THE WRONG MECHANISM**; they are now excluded
+from the point estimate and pairing is reported as an explicit **bound**.
+*A right number from a wrong mechanism is a coincidence waiting to mislead.*
+
+★★★★ **CALLER-SPELLING DISPERSION ⇒ CASCADE STRUCTURALLY ZERO** — the new
+discriminator between a repairable wrong name and an arbitrary ICF survivor. It
+killed **both** open leads: `0x822dea78` (7 distinct our-side spellings, +0 vs
+80 B blocked — **W17's refusal quantified**) and `0x8233bea0` (+0, its only
+caller itself unpaired). ★ W21 then landed that carve for **+1,008 B with
+cascade measured at exactly 0** — **two lanes, two instruments, same answer.**
+
+★★★★ **A KNOWABLE NAME CAN BE METRIC-NEGATIVE, AND PRICEABLE.** W21 **refused**
+to name `0x8233cb58`: three callers sit at `fuzzy` 100 **today** (1,212 B)
+*precisely because* the placeholder is forgiven, and our `PerfectSectionTracker`
+legitimately spells `<TrackType,bool>`. ⇒ **not "we don't know the name" but
+"naming it costs 620 B of CORRECT code, because the grader cannot represent a
+fold."**
+★★★ **BLOCK the cascade structurally rather than estimate it** — W21 is the
+first of four consecutive lanes to get it right, and did so by arranging the
+edit so there was nothing to estimate. ⚠ The brief undercounted the chain:
+**FOUR members, not three** — a three-way carve would have **stranded a member**.
+
+★★★★ **W19's IN-SOURCE MECHANISM NOTE WAS WRONG, AND IT MATTERED.** It blamed
+`/Ob2` deleting the temp and prescribed `auto_inline(off)`; measured, **with**
+the pragma the temp *is* constructed and the call *is* out-of-line on both
+sides. The real cause is **escape / memory-effect analysis** — an empty body let
+MSVC kill a dead vptr store, forward `r27`, and **overlay the temp onto shared
+scratch** instead of giving it 8 private bytes. Retail keeps **four** 8-byte
+message temps; we kept three. That is the 0x10. ★ W22 **proved** W19's
+load-bearing assumption instead of inheriting it: **all 212 `r28`↔`r29` charges
+dissolve with the frame** — `REGISTER_SWAP`-is-a-symptom holding at 212 sites.
+
+⛔⛔ **A FIFTH BUILD-PROBE VACUITY: `ninja <one .obj>` IS NOT A MEASUREMENT.**
+The **six post-compile obj patchers never run**, so a one-obj rebuild plus a
+hand-run objdiff **MANUFACTURED A PHANTOM 396 B REGRESSION** on a row that is
+**98/98 instructions equal** and loses only to 8 B of COMDAT alignment padding.
+**The patchers are part of the ruler.** W22's whole prediction miss was that
+phantom — in the direction that would have made it revert real work.
+★ Sibling: **a probe can buy the frame and MISS THE SCHEDULE** (the probe
+reached `-0xf0` but left an 8-instruction residual; the **faithful** body scored
+100.000) ⇒ **do not read "permuter-class" off a probe.**
+
+⛔ **`Poll@VocalPlayer`'s 3,388 B is UNREACHABLE REGARDLESS OF BODY QUALITY** —
+8 of its 10 name charges are ICF fold-survivor names **where our source is
+CORRECT**. It needs *proven aliases*, which **gates** the work rather than
+enabling it. And *"Poll has a missing local at `0x78`"* is **refuted in-source**:
+shared scratch, retail's 5 extra stores all overwritten before any read — **dead
+stores retail failed to eliminate, the same class W19 refuted on
+`Poll@VocalTrack`, now found twice.**
+
+⚠ **`arity_screen.py`'s parser failure was TOTAL, not partial** — over 30,059
+map names the fixed parser demangles **27,931** vs the old **1,063**, and **all
+1,063 of the old parser's non-`None` answers were CORRUPT.** Fixture requires the
+legacy parser to **fail**, exiting 2 as `VACUOUS` if it ever passes.
+⚠ **Grep `symbol_aliases.json` BEFORE believing a relocation-name find** — W21
+"discovered" `0x827bd208`, counted 403 call sites, and it had been solved since
+2026-08-13 with the identical argument.
+★ **The untested-by-construction class is cut 34 → 4** (`rbtree_body_anchor.py`,
+selftest 156/202 sabotages flagged; the surviving 22.8% are **ICF twins, reported
+as the blind spot**). ⚠ It is **34, not W17's 35** — *the map moved under W17's
+own renames.*
+
+### 0.6 ROUND SEVEN — W17/W18/W19
 
 **44,488 fns / 3,750,264 B = 36.337429%**, honest **21,588**, units at 100%
 **254 → 255**. **Day total +44 fns / +26,560 B**; **59.45% of the 61.121%
