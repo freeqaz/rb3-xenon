@@ -14,8 +14,8 @@ int gSmallHunk = 0xC800;
 int gPoolCapacity = 0;
 bool gPoolAllocInitted = 0;
 ChunkAllocator *gChunkAlloc = nullptr;
-static int *sPoolEnd;
 static int *sPoolBuf;
+static int *sPoolEnd;
 
 void PoolAllocInit(DataArray *a) {
     a->FindData("big_hunk", gBigHunk);

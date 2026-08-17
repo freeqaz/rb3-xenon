@@ -244,9 +244,38 @@ namespace {
         }
     }
 
+    // Retail/match: retail's failure path is ONLY the GlobalMemoryStatus call.
+    // Inside retail's XMemAlloc (fn_822735B0) the whole branch is two
+    // instructions -- `addi r3, r1, 0x50 ; bl fn_8283C980` -- with NO argument
+    // setup, and retail's frame is 0x90 where ours is 0x70: the +0x20 delta is
+    // exactly sizeof(MEMORYSTATUS), i.e. the local was inlined into XMemAlloc's
+    // own frame. `size` and `physical` are therefore unused in retail, which is
+    // why retail sets up no arguments for the call.
+    //
+    // Everything below the GlobalMemoryStatus call is dev-build code retail
+    // never compiled. SETTLED ON RETAIL BYTES (this was an open question in
+    // docs/decomp/handoff/allocator-xmemalloc-audit-2026-08-17.md §4.5, "where
+    // retail's MemAllocFailed lives is UNRESOLVED"): a band.exe string scan
+    // finds NONE of this function's distinguishing literals --
+    // "want %d, have %d", "total phys", "out_of_mem_alloc_info.csv", "devkit:"
+    // -- while the CONTROLS in the same .rdata neighbourhood all fire
+    // ("XTL:D3DX", "XTL(phys):Middleware", "POOL REPORT"), so the scan is
+    // capable of finding strings here and the absences are real.
+    //
+    // ⚠ The near-miss that had to be ruled out by hand: band.exe DOES contain
+    // "Allocation failure, " at 0x117460, which looks like this function's
+    // format string. Dumping the bytes shows it is
+    // 'Allocation failure, heap "%s", want %d bytes\n   lFrags=...' -- MemHeap's
+    // report, a coincidental shared prefix. A prefix probe was too weak here;
+    // only reading the whole string settled it.
+    //
+    // Retail also has no failure branch at ALL in PhysicalAlloc /
+    // PhysicalAllocTracked: retail's fn_82273350 runs XPhysicalAlloc ->
+    // XPhysicalSize -> MemTrackAlloc with no null test in between.
     void MemAllocFailed(unsigned long size, bool physical) {
         MEMORYSTATUS memStatus;
         GlobalMemoryStatus(&memStatus);
+#ifdef HX_NATIVE
         MemDeltaFullReport();
 
         if (gMemTracker && !gMemTracker->GetHeapOnly()) {
@@ -269,6 +298,10 @@ namespace {
             allocType, size, memStatus.dwAvailPhys, gPhysicalUsage);
         MemPrintOverview(kNoHeap, buf + strlen(buf));
         MILO_FAIL(buf);
+#else
+        (void)size;
+        (void)physical;
+#endif
     }
 }
 
