@@ -132,7 +132,47 @@ def _opcode(side):
 
 
 def _args(side):
+    """The DISPLAY spelling, as objdiff-cli prints it.
+
+    Used only by _is_r30_r31_swap, which is a purely textual r30<->r31
+    substitution test and is symmetric under either spelling.
+    """
     return side.get("args") or ""
+
+
+def _flat_args(side):
+    """The pre-4.2 flat comparison-join spelling, rebuilt from `typed_args`.
+
+    objdiff-cli 4.2.x prints a *display* string in `side["args"]`: d-form
+    operands are parenthesised (`r11, 0xc(r30)`), COFF relocations carry an
+    `@h`/`@l` suffix, and a relocation that is not part of the printed
+    operand is DROPPED from the string altogether. Both signature halves
+    below read the old flat join, which is exactly `", ".join(typed_args)`:
+
+      MEMBER_RE     wants `..., 0xc, r30` and sees `..., 0xc(r30)` -> 0 hits.
+      REV_STATIC_RE wants the `lbl_82C[BC]....` token, which survives inside
+                    `lbl_82CC6E90@l(r30)` but VANISHES on a plain d-form load
+                    whose relocation is the dropped one. Measured on 25 rb3
+                    near-miss functions: 389 hits on the display string vs 647
+                    on the rebuild -- so the rev half was NOT merely "still
+                    working", it was down 40%.
+
+    Rebuilding is the only way to get the second one back: the relocation is
+    not in the display string at all, so no amount of paren-tolerance in the
+    regex can recover it.
+    """
+    if not side:
+        return ""
+    out = []
+    for a in side.get("typed_args") or []:
+        t, v = a.get("type"), a.get("value")
+        if t == "Signed" and isinstance(v, int):
+            out.append(("-0x%x" % -v) if v < 0 else "0x%x" % v)
+        elif t in ("Unsigned", "BranchDest") and isinstance(v, int):
+            out.append("0x%x" % v)
+        else:
+            out.append(str(v))
+    return ", ".join(out)
 
 
 def _swap_r30_r31(s):
@@ -199,7 +239,8 @@ def classify_function(instrs):
     for ins in mismatches:
         t, b = _side(ins, "target"), _side(ins, "base")
         top, bop = _opcode(t), _opcode(b)
-        targ, barg = _args(t), _args(b)
+        # Both signature halves read the FLAT spelling -- see _flat_args.
+        targ, barg = _flat_args(t), _flat_args(b)
         is_rev = top in REV_STATIC_OPS and REV_STATIC_RE.search(targ)
         # a bare `lis rX, lbl_82C..@ha` companion of the rev load also counts
         is_lis_rev = top == "lis" and REV_STATIC_RE.search(targ)
@@ -444,5 +485,61 @@ def main():
         print(f"\nWrote {args.out}", file=sys.stderr)
 
 
+# --- selftest ──────────────────────────────────────────────────────────────
+# EVERY fixture is a verbatim instruction side from live `objdiff-cli diff
+# -f json --include-instructions` (4.2.3, 0fd82159607c) over rb3-xenon
+# build/45410914 objects. Re-capture from the CLI rather than hand-editing:
+# hand-authored fixtures are precisely what let a dead parser stay green.
+_ST_REV_VISIBLE = {"opcode": "lwz", "args": "r11, lbl_82CC79AC@l(r30)",
+                   "typed_args": [
+                       {"type": "Register", "value": "r11"},
+                       {"type": "Symbol", "value": "lbl_82CC79AC"},
+                       {"type": "Register", "value": "r30"}]}
+# Same rev-static read, but here the relocation is the one 4.2 stopped
+# printing -- `args` is a bare `0x4(r26)` and the lbl_82CB.... token exists
+# only in typed_args. This is the 40% of the rev half that went missing.
+_ST_REV_HIDDEN = {"opcode": "lhz", "args": "r11, 0x4(r26)", "typed_args": [
+    {"type": "Register", "value": "r11"}, {"type": "Signed", "value": 4},
+    {"type": "Register", "value": "r26"},
+    {"type": "Symbol", "value": "lbl_82CBD98C"}]}
+# Shifted BinStreamRev member read (stream@0x14) -- MEMBER_RE's whole job.
+_ST_MEMBER = {"opcode": "lwz", "args": "r11, 0x14(r31)", "typed_args": [
+    {"type": "Register", "value": "r11"}, {"type": "Signed", "value": 20},
+    {"type": "Register", "value": "r31"}]}
+_ST_PLAIN = {"opcode": "lwz", "args": "r10, 0x0(r11)", "typed_args": [
+    {"type": "Register", "value": "r10"}, {"type": "Signed", "value": 0},
+    {"type": "Register", "value": "r11"}]}
+
+
+def _selftest():
+    def rev(s):
+        return bool(REV_STATIC_RE.search(_flat_args(s)))
+
+    def member(s):
+        return bool(MEMBER_RE.search(_flat_args(s)))
+
+    checks = [
+        ("rev read, relocation printed", rev(_ST_REV_VISIBLE), True),
+        ("rev read, relocation HIDDEN", rev(_ST_REV_HIDDEN), True),
+        ("plain member load is not a rev read", rev(_ST_MEMBER), False),
+        ("member read at 0x14", member(_ST_MEMBER), True),
+        ("offset 0x0 is not a member read", member(_ST_PLAIN), False),
+        # _is_r30_r31_swap stays on the DISPLAY string: it is a textual
+        # substitution test and both spellings are symmetric under it.
+        ("r30<->r31 swap on the display spelling",
+         _is_r30_r31_swap({"opcode": "lwz", "args": "r11, 0x14(r31)"},
+                          {"opcode": "lwz", "args": "r11, 0x14(r30)"}), True),
+    ]
+    bad = 0
+    for name, got, want in checks:
+        if got != want:
+            bad += 1
+            print(f"FAIL {name}: want {want!r}, got {got!r}")
+    print(f"selftest: {len(checks) - bad}/{len(checks)} passed")
+    return 1 if bad else 0
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv:
+        sys.exit(_selftest())
     main()
