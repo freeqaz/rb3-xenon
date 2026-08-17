@@ -140,6 +140,14 @@ control fire on `0x825948c0` exactly.
 | `0x822deed0` | `map<unsigned short,…>::_M_insert` | `0x14` | a 4 B-value SET |
 | `0x82456190` | `set<FaderGroup*>::_M_insert` | `0x20` | a 16 B-value tree |
 
+The first two are defect (1)'s exact shape — a 4-byte-value **set** wearing a
+map name — and the builders they call corroborate it: `0x822dd240` is *itself*
+mapped `_M_create_node@set<unsigned short>`. Each has few callers
+(`0x822dda78` → 1 site at `0x822dee80`; `0x822deed0` → 2 at `0x822df030`,
+`0x822df35c`), so the defect-(1) recipe applies directly: comparator
+signed/unsigned to fix the key class, callers + pin-hole + `.obj` provenance to
+break the fold tie.
+
 The last is defect (1)'s mirror image and is **harder**: its key compare is
 `cmplw` (**unsigned**), which does *not* fit `map<TrackType,…>` — the family
 owning the `0x826e0950` builder it calls. So the wrongness is proven and the
