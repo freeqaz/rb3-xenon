@@ -73,7 +73,7 @@ void SfxInst::UpdateVolume() {
     FOREACH (it, mMoggClips) {
         MoggClip *clip = (*it)->GetMoggClip();
         if (clip) {
-            clip->SetControllerVolume(mRandVol + mVolume + mOwner->Faders().GetVal());
+            clip->MoggClip::SetVolume(mRandVol + mVolume + mOwner->Faders().GetVal());
         }
     }
 }
