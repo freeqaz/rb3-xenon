@@ -24,7 +24,50 @@
 
 **Round-two delta: +3 functions / +15,496 B**, composing EXACTLY with the four
 independent A/Bs — W2-ENGINE +12,780 · W1b-GAME +2,892 · W5-CEILING +460 ·
-W4b-DUALWIT −636. **Day total across nine lanes: +32 fns / +20,140 B.**
+W4b-DUALWIT −636.
+
+**Then W6-ACCURACY landed on top: +1 fn / −128 B, composing exactly**, giving
+**44,477 / 3,743,716 B = 36.273983%**, honest **21,579**, **254 units at 100%**.
+**Day total across ten lanes: +33 fns / +20,012 B.**
+
+★★★ **A PIN DEFECT'S SYMPTOM WAS RIGHT WHILE MY DIAGNOSIS WAS WRONG.** I briefed
+`default/lsp` as mis-pinned because "the pin starts exactly where `lookup.c`'s
+`vorbis_fromdBlook` is mapped." That clause is **literally true and
+diagnostically worthless** — **`lsp.c:59` does `#include "lookup.c"`**, so that
+function genuinely *is* lsp.c's TU and matches 100%. **The start was correct; the
+TAIL was foreign** — 1,872 B of `memchr`, a CRT errno stub, an `NtCancelTimer`
+wrapper and a run of `??__E`/atexit thunks, with the old end landing **mid-`??__E`
+block**. Fixed by truncation: rows 37 → 2, units 253 → **254**, Δbytes 0.
+⇒ **A reproducing symptom is not evidence for its mechanism** — same shape as the
+2026-08-16 "count right, cause wrong" finding.
+
+★★★★ **A NAME REPAIR HAS A DISTINCTIVE TWO-RULER SIGNATURE — USE IT.**
+`0x8235c328` is `set<MoveDetector*>::_M_create_node`, **not**
+`map<int,float>` — a whole-image census found only **19** surviving
+`_M_create_node` bodies and exactly one whose value_type size contradicts its
+allocation (`li r3,0x14` = 4-byte value_type; `pair<const int,float>` is 8).
+The alias group also had **survivor/folded INVERTED**. Predicted **+76 − 204 =
+−128 B**; measured **−128 B exactly, Δmatched +1**, and the **`none` control read
++76 B** — independently splitting the result into **+76 B of real code gained**
+and **−204 B of forgiveness that rested on a false name**. Land the negative.
+
+⛔ **TWO `fuzzy == 100` ROWS ARE FALSE CREDITS ON THAT SAME WRONG NAME** —
+`_M_insert@map<int,float>` (BandList, 204 B) and `insert_unique@map<int,float>`
+(232 B) both read **100** while their retail bodies call the **0x14 SET**
+builder, impossible for a real map. **The at-100% defect class again.** Needs its
+own pass.
+
+✅ **A CHANGE DELIBERATELY NOT MADE IS A RESULT.** The `LabelSort` "retail sorts
+by draw order" reading is **TYPE-IMPOSSIBLE** — `UILabel : public UIComponent`
+has no `DrawOrder()`, and retail's comparator takes `const UIListWidget*`.
+Rewriting our `LabelSort` would have been a **regression**. All ten
+`LabelSort`-named entries bottom out in `WidgetDrawSort::operator()`; the family
+is closed and never reaches a `stricmp` comparator. The lane ran **the control
+W4b lacked** — **341** `lwz +0x164` (`mTextToken`) loads exist in `.text`, so the
+instrument *can* fire, and **zero** feed a `bl stricmp`. Stays **UNPROVEN**, no
+source change, and the ten wrong names are deliberately left alone (already
+neutralised by proven aliases at 99.8–100%; renaming risks another −204 with no
+accuracy gain).
 
 ★★★★★ **THE CEILING IS EFFECTIVELY FIXED — AND RAISING IT DOES NOT CLOSE THE
 GAP.** W5-CEILING walked the FULL cost chain (identify → pin → wire → compile →
