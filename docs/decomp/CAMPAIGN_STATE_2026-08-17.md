@@ -168,16 +168,52 @@ kB per lane.
 Same discipline. DC3-verbatim units cannot be adjudicated by source diff
 (DC3 is newer); adjudicate on retail bytes.
 
-**W3 — Identification at scale (the only route to the big class: 1.33 MB anon
-`fuzzy==0` + what's reachable of 1.73 MB `auto_*`).** Byte-cheap per row
-(naming buys rows at 0%) but it is what converts UNPAIRABLE→PAIRABLE and
-raises the *ceiling*. The funded route is infrastructure, not grinding:
-Ghidra+BinDiff transfer of dc3's named functions (`ham_xbox_r.map` Rosetta) —
-standing plan, never executed (XEXLoaderWV needs a Ghidra 12.1 rebuild).
-⚠ Naming under `name_check` is a bet: right name = 0, wrong name = new
-charge; its payout is **bug exposure, not bytes** (MemAlloc precedent).
-⚠ Only ~8.9% of `auto_*` is attributable-and-portable; do not fund blind
-attribution.
+**W3 — Identification at scale.** ⛔⛔ **THIS ENTRY WAS WRONG ON EVERY LOAD-
+BEARING CLAIM AND IS RETRACTED — see
+`W3_IDENTIFICATION_ADJUDICATED_2026-08-17.md` (lane W3-IDENT, merged
+`6b519b3d`). The original text is preserved below the correction because it
+is the second time a lane was funded off it.**
+
+✅ **What is actually true:**
+1. **The Ghidra+BinDiff route is NOT unexecuted — it RAN THREE TIMES and
+   landed ~549 map names** (`e5293a8c` +286, `aa86fb41` +263, `5ff856bc`
+   repoints), precision 89.8% → 96.4% → **98.6%**.
+2. **It was KILLED ON MEASUREMENT, not abandoned** (lane DL-1, `254e80bd`):
+   scoping to the correct DC3 `.obj` lifts top-1 46.8% → 80.7% with a
+   sabotage leg at **0.0%** (a control that could fail), but the decoy null
+   has **p95 = 1.000 ⇒ NO THRESHOLD EXISTS.** DL-1's verdict is structural:
+   **obtaining a location prior IS WHAT PINNING A TU MEANS**, so the method
+   is **circular for exactly the unpinned population it keeps being proposed
+   for.** Also: DC3-BinDiff names only shared *engine* code (**9%** game
+   yield), and `bindiff_match.json` is TU0-era **address-dead** (3.13% valid
+   on TU5).
+3. ⛔ **"W3 is the only ceiling-mover" is FALSE.** W3-IDENT's wave measured
+   **Δceiling exactly 0, by construction** — named rows sit in units that
+   *already* have base objs, so naming is a **pairing** play, not a
+   pairability one. The only ceiling-*raising* route is `auto_*` pin+wire,
+   which is 8.9% attributable-and-portable and dominated by 7-line Quazal
+   scaffolds ⇒ **the ceiling is much closer to fixed than this doc assumed.**
+4. **The XEX-loader conflict is resolved and NEITHER doc was right**: the
+   service does not use `/opt/ghidra`; it uses the **VMX128 fork at Ghidra
+   12.2, which already has `XEXLoaderWV` installed.** The real gap is
+   **BinExport**, and per (2) it is not worth closing.
+5. ⛔ **ROOT CAUSE, structural — `tools/bindiff_match.json` is GITIGNORED**:
+   3.7 MB on disk with **zero git history**, indistinguishable from
+   un-acted-on scratch. **A gitignored artifact is an invisible
+   institutional memory.** Pointer committed at
+   `tools/BINDIFF_MATCH_POINTER.md`.
+
+✅ **What remains fundable here:** the **body-identity channel**
+(`tools/ident_body_channel.py`), whose whole reachable surface is **234 rows
+/ 21,224 B = 0.206% of `total_code`** — real, measured, and small. W3-IDENT
+took 26 of them (+26 fns / +1,976 B, predicted +20…+26 / +1,900…+2,372).
+⚠ Naming under `name_check` remains a bet whose payout is **bug exposure,
+not bytes** — that wave surfaced `HamBattleData`'s `operator<<` for
+`list<BattleStep>` dropping 100.0 → 99.791664 with `mpn` unmoved, a defect
+the placeholder forgiveness had been hiding.
+
+*(Retracted original text: "the only route to the big class … standing plan,
+never executed (XEXLoaderWV needs a Ghidra 12.1 rebuild)".)*
 
 **W4 — Alias ledger residue.** TEMPLATE-1 (~98 kB, largest open queue; needs
 a demangled→mangled join); 76 withheld contradictions (`verdict()` fallback ≠
