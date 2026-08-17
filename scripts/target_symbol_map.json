@@ -1608,7 +1608,7 @@
  "0x822981f0": "?_M_fill_insert@?$vector@V?$Key@VObjectStage@@@@V?$StlNodeAlloc@V?$Key@VObjectStage@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VObjectStage@@@@IABV3@@Z",
  "0x822983f8": "?_M_fill_insert@?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@M@@IABV3@@Z",
  "0x82298508": "??_GBandDirector@@UAAPAXI@Z",
- "0x82298560": "?OnGetCatList@BandDirector@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82298560": "?OnCopyCats@BandDirector@@QAA?AVDataNode@@PAVDataArray@@@Z",
  "0x82298898": "?Add@?$Keys@VSymbol@@V1@@@QAAHABVSymbol@@M_N@Z",
  "0x82298978": "?Init@BandDirector@@SAXXZ",
  "0x82298a18": "?AddSymbolKey@BandDirector@@QAAXVSymbol@@0M@Z",
