@@ -235,7 +235,9 @@ def objdiff_bin(project_dir):
 #      own unit's objects moved is unavailable, a miss in a unit that held
 #      still is a defect.  That attribution is what keeps a peer's rebuild of
 #      three units from voiding a run that caught a real regression in the
-#      other 2,500.
+#      other 2,500.  The four GLOBAL inputs are compared by CONTENT and the
+#      ~5,000 objects by mtime+size -- see _content_sig and _sig for why the
+#      two halves are measured differently.
 #
 # PRECEDENCE, and why: FAIL outranks VOID.  A guard that voids everything is
 # worse than no guard, and downgrading a stable-tree failure to "nothing was
@@ -270,13 +272,34 @@ RETRY_PAUSE_S = 0.25
 
 
 def _sig(path):
-    """mtime+size, not content.  Content-hashing every .obj costs more than the
-    measurement it guards, and mtime+size catches a rebuild (compare_bins_v2)."""
+    """mtime+size, for the ~5,000 object files.  Content-hashing them costs more
+    than the measurement it guards, and mtime+size catches a rebuild -- the same
+    call compare_bins_v2.sh makes.  Cheap false positives are acceptable here
+    because ninja does not rewrite a unit it did not recompile."""
     try:
         st = os.stat(path)
     except OSError:
         return None
     return [st.st_size, st.st_mtime_ns]
+
+
+def _content_sig(path):
+    """Content hash, for the FOUR global inputs, where mtime is a bad proxy.
+
+    `objdiff-cli report generate` rewrites report.json in full on every run, so
+    an mtime comparison would VOID on a rebuild that changed nothing -- and the
+    global void is unconditional, so that false positive would be the loudest
+    one available.  These four files total ~35 MB; hashing them twice costs
+    well under a second against a run measured in minutes, so pay it here and
+    nowhere else."""
+    try:
+        with open(path, 'rb') as fh:
+            h = hashlib.sha256()
+            for chunk in iter(lambda: fh.read(1 << 20), b''):
+                h.update(chunk)
+    except OSError:
+        return None
+    return h.hexdigest()[:16]
 
 
 class InputStability:
@@ -304,7 +327,7 @@ class InputStability:
         self.after = None
 
     def _scan(self):
-        return {'globals': {k: _sig(p) for k, p in self.global_paths.items()},
+        return {'globals': {k: _content_sig(p) for k, p in self.global_paths.items()},
                 'units': {u: [_sig(p) for p in ps] for u, ps in self.unit_paths.items()}}
 
     def recheck(self):
@@ -328,7 +351,7 @@ class InputStability:
             return
         print('INPUT STABILITY: inputs MOVED under this run --', file=out)
         for k in self.moved_globals:
-            print(f'    global input changed: {k} '
+            print(f'    global input changed (content): {k} '
                   f'({self.before["globals"][k]} -> {self.after["globals"][k]})', file=out)
         if self.moved_units:
             shown = sorted(self.moved_units)[:5]
