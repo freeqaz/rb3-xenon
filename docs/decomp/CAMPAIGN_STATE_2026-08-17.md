@@ -9,7 +9,95 @@
 
 ## 0. SESSION CLOSE
 
-### 0.5 ROUNDS FIVE–SIX — W11b/W12/W13/W14/W15/W16 ← **LATEST**
+### 0.6 ROUND SEVEN — W17/W18/W19 ← **LATEST**
+
+**44,488 fns / 3,750,264 B = 36.337429%**, honest **21,588**, units at 100%
+**254 → 255**. **Day total +44 fns / +26,560 B**; **59.45% of the 61.121%
+reachable ceiling.** All three exact.
+
+| lane | predicted | measured | |
+|---|---:|---:|---|
+| W19-VOCAL | 0 / +732 | **0 / +732** | ✓ (4 of 4 legs) |
+| W18-SYMPAIR | 0 / +148 | **0 / +148** | ✓ |
+| W17-FAMILYSWEEP | +3 / +1,652 | **+3 / +1,652** | ✓ *(headline; components missed — see below)* |
+
+★★★★★ **THE CHARGED-SITE CENSUS WAS COUNTING REGISTER DIFFS AS NAME CHARGES.**
+objdiff's `reloc_eq` **forgives placeholder target names**
+(`fn_`/`lbl_`/`jumptable_`/…), so a site whose only differing argument is a
+placeholder **never reaches `diff_arg`**. ⇒ **an `arg:{Register,Symbol}` diff is
+charged BY THE REGISTER; only a BARE `arg:{Symbol}` is a real name charge.**
+Naive counting reads **138** name charges on `Handle@VocalPlayer` and files it
+**fold-alias-walled and unreachable by source work** — **the true count is
+ZERO.** That is the difference between a closed vein and an open row, produced
+by an instrument nobody had questioned. Tooled as `tools/w19_charge_census.py`.
+
+★★★ **THE CALLER-CASCADE UNDERESTIMATE IS NOW THREE-FOR-THREE** (W8, W9, W17),
+always in the same direction. W17 makes the mechanism unmistakable: graded
+predicted **+1,072** / measured **+1,652**, while the **`none` control predicted
++792 and measured +792 EXACTLY** — localising the whole **+580** to four rows
+**not in the patch**. ⇒ *"remember to include call sites"* **has failed as a
+rule**; the cascade must be **enumerated and priced as its own line item**
+(dispatched as W20). Attribution was **scored, not asserted**: row-level net
+== headline.
+★★★★ **And the cascade is the DISCRIMINATOR, not just yield** — W17 nearly
+re-homed a family off an **ICF survivor**, whose name is *arbitrary* (W7's
+fixed-point problem). The cascade refuted it, and the metric then **confirmed**
+the true assignment through `SupportChar@RndText`, a row the lane never touched.
+
+⛔ **THE TWO UNEXAMINED SYMPAIR CLASSES ARE 93% UNREACHABLE.** 232,604 B →
+**792 B of source work (0.34%)**, and W18 hand-checked the survivors and reports
+the true figure is **below** that. Breakdown: **PROVEN FOLD 59.96%** · **callee
+ABSENT FROM RETAIL 27.01%** · no compiled body 7.28% · unnamed/ambiguous 3.87% ·
+row-name refuted 1.40%. A 232 kB slice bought **148 B** —
+[[ceiling-raising-is-futile]] at ~100× the ratio.
+⛔ **`TEMPLATE_ARGS_DIFFER` is what a PROVEN FOLD LOOKS LIKE** (65.5% of applied
+aliases, 55.3% of the in-queue control) ⇒ the shape covering ~48% of
+`MIXED/UNKNOWN` is **the least informative feature available, not a lead** — and
+**only a control showed that.**
+★ The actionable class shrank **3,308 → 1,484 → 1,016 → 792 B** as the
+classifier got more careful. **Stopping at the first number would have briefed a
+4× overstatement.**
+
+★★★★ **THE REFERENCE YOU BIND IS ITSELF CODEGEN.** W19 proved *without the
+oracle* that MSVC emits commutative `a + b` as `fadds fD, fb, fa` — **reversed**
+(`UpdateLyricZ`'s two identical halves get *different* operand orders in retail).
+But **getting the arithmetic right was NOT sufficient**: the obvious
+`Transform &xfm = …` form flipped the `fadds` correctly and **still scored
+worse** (99.945 → **99.399**), costing an `addi` and flipping an untouched half.
+A **`float&`** gives **100.000**.
+
+⛔ **Three spellings refuted and documented IN-SOURCE so they are not retried:**
+the FP operand reversal **does not generalise to integer indexed loads**
+(`lwzx` is canonicalised independently of source order — and BF-3's earlier test
+was **vacuous**, it *is* `operator[]`); an explicit `!` on an already-`bool`
+makes MSVC negate **arithmetically** (**97.617 → 95.195**; our code is one
+instruction *shorter* than retail's — retail failing to coalesce); and a virtual
+`clip->SetVolume(...)` measured **worse** where the qualified
+`clip->MoggClip::SetVolume(...)` is exact, and was **already the idiom four
+functions above in the same TU**.
+
+⚠ **Two live instrument defects recorded, one still UNFIXED:**
+`tools/sympair_queue.py` classifies a pure symbol pair iff the detail string
+**starts with `SYM`**, i.e. **by argument order** (blast radius measured: 1 row /
+1,652 B wrongly called crossable); and **`llvm-undname` emits blank-line
+records where a REJECTED name yields a ONE-LINE record**, desyncing the natural
+parser and producing a confident *"100% UNDEMANGLABLE"* on **1,624 names that
+demangle fine** — ⚠ **that bug is still live in `tools/arity_screen.py:810`**
+(handed to W20).
+
+⛔ **W17's sweep is NOT a clearance and says so**: **35 of 86 components reach no
+builder and no eraser** (`_M_find`, `swap`, `begin`, bare `_M_erase`) and are
+**untested BY CONSTRUCTION** — a clean sweep clears **51, not 86**. Handed to
+W21 with the `map<int,bool>` chain, which W17 raised from *existence-proved* to
+**assignment-proved** but deliberately did not ship (it needs a three-way carve).
+
+★ **Two corrections to lanes that landed the same day**: W12's `CharInfo`
+hand-back is confirmed but its `src/**` premise was wrong (`CharInfo` was
+**already 16 B**, so the header fix handed onward was never needed); and W15's
+*"sole caller of `0x8233c668` is `map<int,int>::operator[]`"* is **wrong** — its
+conclusion survives, its stated evidence did not.
+
+### 0.5 ROUNDS FIVE–SIX — W11b/W12/W13/W14/W15/W16
 
 **44,485 fns / 3,747,732 B = 36.312896%**, honest **21,585**,
 `total_functions` **69,226**. **Day total +41 fns / +24,028 B**;
