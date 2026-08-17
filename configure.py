@@ -1020,37 +1020,12 @@ elif args.mode == "progress":
     # canonical dtk printer, kept ONLY as a fallback if scope_map fails -- a build
     # must never be left with no progress output.
     rc = 1
-    _here = os.path.dirname(os.path.abspath(__file__))
     try:
         import subprocess
 
-        # Refresh the scope cache BEFORE reading it.  scope_map.json is a pure
-        # downstream artifact of report.json (~1 s to derive) and is gitignored,
-        # so it has no committed copy to inherit -- and scripts/setup_worktree.sh
-        # REFLINKS main's copy into every new worktree, which is precisely how one
-        # stale cache propagated fleet-wide and had lanes quoting tier
-        # percentages computed against another tree's classification.  Deriving
-        # it here means the dashboard is always read from a cache built off the
-        # SAME report.json the ninja edge already declares as an input, so the
-        # `incomplete` coverage state should be unreachable on this path.
-        #
-        # Best-effort by construction: a cache refresh must never be able to
-        # fail a build, so a non-zero rc or an exception here is printed and
-        # stepped over -- the dashboard (and its loud missing-cache banner) then
-        # reports whatever is actually on disk.
-        try:
-            br = subprocess.run(
-                [sys.executable, "tools/scope_map.py", "build", "--quiet"],
-                cwd=_here, check=False,
-            ).returncode
-            if br != 0:
-                print(f"(scope cache refresh returned {br}; using cache as found)")
-        except Exception as e:
-            print(f"(scope cache refresh failed, using cache as found: {e})")
-
         rc = subprocess.run(
             [sys.executable, "tools/scope_map.py", "priority"],
-            cwd=_here,
+            cwd=os.path.dirname(os.path.abspath(__file__)),
             check=False,
         ).returncode
     except Exception as e:
