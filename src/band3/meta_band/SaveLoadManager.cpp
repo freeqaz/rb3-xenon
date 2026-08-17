@@ -121,6 +121,13 @@ void SaveLoadManager::HandleEventResponseStart(int) { mStateAtSelectStart = mSta
 void SaveLoadManager::Start() {
     mUser = NULL;
     mLocalUser = NULL;
+    // RB3-360 retail: Start() subscribes to TheMemcardMgr here.  The rb3-Wii dev
+    // build's Start() does not (it calls AddSink at its other 10 sites only), so
+    // this line is retail-byte evidence, not an oracle transcription.  The three
+    // null-Symbol/kHandle arguments are AddSink's DEFAULT arguments -- retail's
+    // `lwz r6,<gNullStr>` / `mr r5,r6` / `li r7,0` are the defaults being
+    // materialised, which is why the one-argument spelling reproduces them.
+    TheMemcardMgr.AddSink(this);
     SetState(kS_Start);
     if (mMode == kMode_AutoLoad) {
         UpdateStatus(kSaveLoadMgrStatus_Start);
