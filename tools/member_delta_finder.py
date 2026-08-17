@@ -343,7 +343,15 @@ def main():
     ap.add_argument('--proj', default=ROOT)
     ap.add_argument('--out', default=os.path.expanduser('~/tmp/forcemult/member_candidates.json'))
     ap.add_argument('--limit', type=int, default=0)
-    ap.add_argument('--bucket', default='STRUCT_WORK')
+    # 'STRUCT_WORK' is a LEGACY bucket name. true_progress.main() labels every
+    # row with bucket_from_subs(), whose vocabulary is CLEAN / HAS_REAL /
+    # BL_LBL_FUNCLET / ANON_FN_CALLEE / NAMED_MISMATCH / DATA_LBL / FRAME_ONLY /
+    # OTHER -- it cannot emit 'STRUCT_WORK'. Only the deprecated bucket()
+    # helper, which main() does not call, ever returns that string. So the old
+    # default selected an EMPTY pool from any current true_progress.json and the
+    # tool printed "no candidates" without processing a single function.
+    # member_delta_finder2.py already defaults to HAS_REAL; match it.
+    ap.add_argument('--bucket', default='HAS_REAL')
     a = ap.parse_args()
 
     # compiler-generated thunks: ??_G scalar-deleting dtor, ??_D vbase dtor,
