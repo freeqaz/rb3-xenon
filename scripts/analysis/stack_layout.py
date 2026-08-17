@@ -88,6 +88,67 @@ LS_OPCODES = {**LOAD_OPCODES, **STORE_OPCODES}
 FRAME_BASE_REGS = {"r1", "r31"}
 
 
+# ── Operand splitting: objdiff renders d-form TWO ways ───────────────────────
+#
+# ★ 2026-08-16. objdiff-cli's `args` field is a DISPLAY string and its spelling
+#   is not stable across objdiff revisions. Two spellings exist in the wild for
+#   the same instruction:
+#
+#       stwu r1, -0x80, r1      (flat; objdiff <= 4.2.2, "ruler H" and earlier)
+#       stwu r1, -0x80(r1)      (parenthesised d-form; objdiff 4.2.3 fdc5113+)
+#
+#   Every parser in this module used to do `args.split(",")` and gate on
+#   `len(parts) >= 3`. Under the paren spelling a d-form instruction yields TWO
+#   comma-parts, so every gate failed closed and the module reported a confident
+#   `(0, "frameless/leaf")` for real 0x80 / 0x70 / 0x60 frames. MEASURED on 7
+#   real functions (ARGS_READER_AUDIT, task #96): parse_prologue frame sizes read
+#   0/0/0/272/0/0/160 where the true sizes are 128/112/96/272/112/0/160, and
+#   parse_stack_ref found 18 frame-slot references where the flat spelling finds
+#   49 (-63%). This is rendered inline in every MCP `run_objdiff` response.
+#
+#   `split_operands` accepts BOTH spellings, so the rest of the module keeps its
+#   canonical flat operand list (`rD, imm, rBase`) and none of the `len(parts)`
+#   gates had to move. It works on typed_args-free rows too, which is what keeps
+#   the in-memory selftest fixtures usable.
+#
+#   Deliberately NOT applied to `_scan_frame_size_v1`, which is a frozen
+#   wrong-on-purpose control — see its docstring.
+#
+#   The *structural* guard against the NEXT unmodelled spelling is not this
+#   regex: it is `_scan_frame_size` setting `saw_alloc_form` from the OPCODE
+#   before decoding any operand, so an allocation we cannot read reports UNKNOWN
+#   rather than a confident zero. See the note there.
+#
+# The `[^()]+` guard keeps this from mangling a symbol that itself contains
+# parentheses; a relocated d-form like `sym@l(r30)` splits to `['sym@l','r30']`,
+# which is exactly the pre-4.2.3 flat spelling and is correctly rejected as a
+# frame reference by `int(..., 0)` further down.
+_DFORM_RE = re.compile(r"^([^()]+)\(\s*(r\d+)\s*\)$")
+
+
+def split_operands(args: str) -> list:
+    """Split an objdiff `args` display string into a flat operand list.
+
+    Accepts both the flat (`0x374, r1`) and parenthesised (`0x374(r1)`)
+    d-form spellings; the returned list is always the flat form.
+
+        >>> split_operands("r0, 0x374(r1)")
+        ['r0', '0x374', 'r1']
+        >>> split_operands("r0, 0x374, r1")
+        ['r0', '0x374', 'r1']
+    """
+    out = []
+    for part in (args or "").split(","):
+        part = part.strip()
+        m = _DFORM_RE.match(part)
+        if m:
+            out.append(m.group(1).strip())
+            out.append(m.group(2))
+        else:
+            out.append(part)
+    return out
+
+
 def frame_base_regs(instrs: list, side_key: str) -> set:
     """Which registers actually address the FRAME in this function.
 
@@ -110,7 +171,7 @@ def frame_base_regs(instrs: list, side_key: str) -> set:
         if not side:
             continue
         op = side.get("opcode", "")
-        parts = [p.strip() for p in side.get("args", "").split(",")]
+        parts = split_operands(side.get("args", ""))
         if not parts or parts[0] != "r31":
             continue
         if op == "subf":                       # subf r31, rA, rB => rB - rA
@@ -127,14 +188,18 @@ def parse_stack_ref(opcode: str, args: str,
     """Return (offset, kind, size) if this instruction references the frame
     base (r1 or r31), else None.
 
-    objdiff arg format examples:
-      stw  r0, 0x374, r1          -> (0x374, 'int',   4)
-      stfd f31, 0x360, r1         -> (0x360, 'float', 8)
-      std  r29, 0x88, r1          -> (0x88,  'int',   8)  (Xenon 64-bit)
-      stw  r11, 0x58, r31         -> (0x58,  'int',   4)  (MSVC frame-ptr alias)
-      addi r11, r1, 0x270         -> filtered (r1/r11/r31 frame arithmetic)
+    objdiff arg format examples — BOTH spellings are accepted (see
+    `split_operands`; objdiff <= 4.2.2 emits the flat form, 4.2.3+ the paren
+    form, and this parser must not care which):
+
+      stw  r0, 0x374, r1  / stw  r0, 0x374(r1)   -> (0x374, 'int',   4)
+      stfd f31, 0x360, r1 / stfd f31, 0x360(r1)  -> (0x360, 'float', 8)
+      std  r29, 0x88, r1  / std  r29, 0x88(r1)   -> (0x88,  'int',   8)  (Xenon 64-bit)
+      stw  r11, 0x58, r31 / stw  r11, 0x58(r31)  -> (0x58,  'int',   4)  (MSVC frame-ptr alias)
+      addi r11, r1, 0x270                        -> filtered (r1/r11/r31 frame arithmetic)
+      lwz  r3, sym@l(r30)                        -> None (relocated global, not a frame ref)
     """
-    parts = [p.strip() for p in args.split(",")]
+    parts = split_operands(args)
     if len(parts) < 3:
         return None
 
@@ -266,8 +331,14 @@ def build_fingerprints(side_key: str, instrs: list,
 @dataclass
 class Prologue:
     # ★ TRI-STATE, and the whole point of the 2026-08-03 repair (lane DQ-2).
-    #   None  = COULD NOT DETERMINE (an allocation form we do not model)
-    #   0     = scanned, positively found NO frame allocation (frameless leaf)
+    #   None  = NO EVIDENCE. Two disjoint causes, both reported in
+    #           `frame_evidence`: (a) an allocation form is present but we
+    #           cannot decode it, (b) we examined ZERO instructions on this
+    #           side, so there was nothing to decide from (2026-08-17).
+    #   0     = scanned at least one instruction on this side and positively
+    #           found NO frame allocation (frameless leaf). 17.1% of this
+    #           binary — see the survey below — so 0 is a real answer, not a
+    #           nobody-home default.
     #   N > 0 = measured frame size
     # v1 used a plain `int = 0`, conflating "unparsed" with "frameless", so an
     # unparsed prologue on BOTH sides printed "→ Frame sizes match." off 0 == 0.
@@ -334,7 +405,13 @@ _CONST_LIS = re.compile(r"^(r\d+)$")
 def _scan_frame_size_v1(instrs: list, side_key: str, horizon: int) -> int:
     """SUPERSEDED 2026-08-03 (lane DQ-2). Retained ONLY so the selftest can
     assert it STAYS WRONG. Handles `stwu r1, -N, r1` and nothing else, and
-    returns a plain 0 -- indistinguishable from a frameless leaf -- otherwise."""
+    returns a plain 0 -- indistinguishable from a frameless leaf -- otherwise.
+
+    ★ Deliberately NOT given `split_operands` (2026-08-16). This function is a
+    frozen control, and its raw `.split(",")` is now doing double duty: on the
+    objdiff-4.2.3 paren fixtures it reproduces, in-tree, the exact confident-zero
+    that shipped for the whole of 2026-08-16. Do not "fix" it -- the selftest
+    asserts it stays 0 there."""
     for ins in instrs[:horizon]:
         side = ins.get(side_key)
         if not side:
@@ -351,7 +428,34 @@ def _scan_frame_size_v1(instrs: list, side_key: str, horizon: int) -> int:
 def _scan_frame_size(instrs: list, side_key: str, horizon: int) -> tuple:
     """-> (size_or_None, evidence_str).
 
-    Preference order: stwu > stwux > r31-alias > positively-frameless(0).
+    Preference order: stwu > stwux > r31-alias > no-evidence(None) >
+    positively-frameless(0).
+
+    ★ 2026-08-17. `scanned` — the count of instructions actually present on
+      THIS side within the horizon — is the second half of the tri-state, and
+      it is the same defect as the `saw_alloc_form` one below, one layer down.
+      With an empty `instrs`, a zero `horizon`, or a side that is absent from
+      every row, the loop below never executes: nothing sets `saw_alloc_form`,
+      nothing sets a size, and control fell into the final `else`, which
+      answered "no frame allocation found in prologue (frameless/leaf)". That
+      is a POSITIVE claim about a function we never looked at. `frame_known`
+      then read True, so print_report skipped its ⛔ REFUSAL and printed
+      "Frame size: TGT 0x0 BASE 0x0 Δ +0x0 / → Frame sizes match." off 0 == 0
+      — the exact vacuous success the refusal was built to stop, reproduced on
+      zero evidence one layer further down.
+
+      Reachable from live objdiff-cli 4.2.3 (0fd82159607c), not just from a
+      test: `bin/objdiff-cli diff -p . __savegprlr --include-instructions -f
+      json` returns a well-formed diff whose `instructions` array is EMPTY.
+      Same for __restgprlr, __savefpr and __savevmx.
+
+      0 is still a real, common answer and is NOT weakened here. Surveyed all
+      69,202 functions in build/45410914/asm: 11,627 (16.80%) have neither
+      `mflr r12` nor any allocation, and a further 203 (0.29%) — e.g.
+      fn_822C13A8 in mtx.s — do `mflr r12` and save registers into the
+      caller's frame without allocating one. Seeing instructions and finding
+      no allocation means 0. Seeing NO instructions means None. The difference
+      is whether we looked.
     """
     consts: dict = {}          # reg -> last materialized constant
     stwu_size = None
@@ -360,14 +464,16 @@ def _scan_frame_size(instrs: list, side_key: str, horizon: int) -> tuple:
     alias_size = None
     alias_note = None
     saw_alloc_form = False
+    scanned = 0                # instructions actually present on THIS side
 
     for ins in instrs[:horizon]:
         side = ins.get(side_key)
         if not side:
             continue
+        scanned += 1
         op = side.get("opcode", "")
         args = side.get("args", "")
-        parts = [a.strip() for a in args.split(",")]
+        parts = split_operands(args)
 
         # --- constant materialization: lis / ori / li ------------------------
         if op == "lis" and len(parts) == 2:
@@ -386,9 +492,25 @@ def _scan_frame_size(instrs: list, side_key: str, horizon: int) -> tuple:
                 consts[parts[0]] = v & 0xFFFFFFFF
             continue
 
+        # --- the allocation forms: stwu / stwux, writing back to r1 ----------
+        #
+        # ★ 2026-08-16. `saw_alloc_form` is set from the OPCODE + destination,
+        #   BEFORE any operand is decoded, and this ordering is the load-bearing
+        #   part of the tri-state. It used to be set inside the fully-decoded
+        #   gates below (`len(parts) >= 3 and parts[2] == "r1"`). objdiff 4.2.3
+        #   re-spelled the d-form as `stwu r1, -0x80(r1)`, those gates stopped
+        #   matching, the flag never set, and the function fell through to the
+        #   confident-zero `else` — reporting a real 0x80 frame as a frameless
+        #   leaf. The module's own note above says this is THE bug that matters
+        #   because it is unbounded, and it recurred anyway, so the recognition
+        #   is now decoupled from the decode: if we see an allocation we cannot
+        #   read, we return UNKNOWN. `split_operands` fixes today's spelling;
+        #   this makes the NEXT one loud instead of silent.
+        if op in ("stwu", "stwux") and parts and parts[0] == "r1":
+            saw_alloc_form = True
+
         # --- stwu r1, -N, r1  (83.31% of functions) --------------------------
         if op == "stwu" and len(parts) >= 3 and parts[0] == "r1" and parts[2] == "r1":
-            saw_alloc_form = True
             n = _try_int(parts[1])
             if n is not None and n < 0 and stwu_size is None:
                 stwu_size = -n
@@ -396,7 +518,6 @@ def _scan_frame_size(instrs: list, side_key: str, horizon: int) -> tuple:
 
         # --- stwux r1, r1, rX  (big frames; 3 functions in the whole binary) --
         if op == "stwux" and len(parts) >= 3 and parts[0] == "r1" and parts[1] == "r1":
-            saw_alloc_form = True
             reg = parts[2]
             raw = consts.get(reg)
             if raw is None:
@@ -441,6 +562,13 @@ def _scan_frame_size(instrs: list, side_key: str, horizon: int) -> tuple:
     elif saw_alloc_form:
         # We SAW an allocation but could not decode it. Never report 0 here.
         return None, (stwux_note or "frame allocation present but not decodable")
+    elif scanned == 0:
+        # We looked at NOTHING on this side. Never report 0 here either: a
+        # frameless verdict is a claim, and a claim needs something to have
+        # been read. See the note in this function's docstring.
+        return None, (f"no {side_key}-side instructions in the scan window "
+                      f"(0 of {len(instrs)} rows carry a {side_key} side) "
+                      f"— no evidence, not frameless")
     else:
         return 0, "no frame allocation found in prologue (frameless/leaf)"
 
@@ -487,7 +615,7 @@ def parse_prologue(instrs: list, side_key: str) -> Prologue:
             continue
         op = side.get("opcode", "")
         args = side.get("args", "")
-        parts = [a.strip() for a in args.split(",")]
+        parts = split_operands(args)
 
         # bl __save(gpr|fpr|gprlr)[_NN]  (one or two leading underscores)
         #
@@ -1090,6 +1218,16 @@ def run_objdiff_for_symbol(symbol: str, project_dir: Optional[str] = None,
 #   code is asserted to STAY WRONG on the same fixtures. A selftest that only
 #   demonstrates the new comparator would pass just as happily after somebody
 #   "simplified" the fix back out.
+#
+# ★ 2026-08-16, and this is the second lesson: fixtures 1-6 are HAND-AUTHORED,
+#   and every one of them hand-writes the FLAT operand spelling
+#   (`("stwu", "r1, -0x150, r1")`). objdiff 4.2.3 emits `r1, -0x80(r1)`. So the
+#   whole battery ran green for the entire day on which the parser was, in the
+#   field, reading a confident 0 for every framed function it was handed. A
+#   synthetic fixture can only test the input shape its author imagined.
+#   Fixture 7 below is therefore a VERBATIM dump of live `bin/objdiff-cli`
+#   output, not a hand-written approximation, and fixture 7's first assertion is
+#   that the fixture still literally contains a parenthesis.
 
 def _ins(idx, t=None, b=None):
     """One objdiff-shaped aligned row. t/b are (opcode, args) or None."""
@@ -1116,6 +1254,175 @@ def _bigframe_prologue(hi, lo, idx0=0):
         _ins(idx0 + 7, ("bl", "_RtlCheckStack12"), ("bl", "_RtlCheckStack12")),
         _ins(idx0 + 8, ("stwux", "r1, r1, r12"), ("stwux", "r1, r1, r12")),
     ]
+
+
+# ── Fixture 7 data: VERBATIM live objdiff-cli output ─────────────────────────
+#
+# Dumped 2026-08-16 with `objdiff-cli 4.2.3 (0fd82159607c)` (the repo's
+# bin/objdiff-cli symlink), against this repo's own build:
+#
+#   bin/objdiff-cli diff -p . '<symbol>' --include-instructions -f json
+#
+# and transcribed opcode-for-opcode, args-for-args. NOTHING here is normalised
+# or prettied; the `-0x80(r1)` spellings are what the tool actually printed.
+# Regenerate the same way if objdiff's display changes again — and if you find
+# yourself editing a paren out of this list to make a test pass, the test is
+# telling you the truth and the parser is the thing that is wrong.
+
+# ?PoolFree@@YAXHPAX@Z — 0x80 frame, `subi r31, r1, 0x80` alias (so r31 IS a
+# frame base here), `bl __savegprlr_28`, one real r31 slot at 0x50, and two
+# relocated `sym@l(rN)` loads that must NOT be read as frame references.
+_RULER_J_POOLFREE = [
+    _ins(0, ("mflr", "r12"), ("mflr", "r12")),
+    _ins(1, ("bl", "__savegprlr_28"), ("bl", "__savegprlr_28")),
+    _ins(2, ("subi", "r31, r1, 0x80"), ("subi", "r31, r1, 0x80")),
+    _ins(3, ("stwu", "r1, -0x80(r1)"), ("stwu", "r1, -0x80(r1)")),
+    _ins(4, ("lis", "r11, ?gMemLock@@3PAVCriticalSection@@A@h"),
+            ("lis", "r11, ?gMemLock@@3PAVCriticalSection@@A@h")),
+    _ins(5, ("mr", "r28, r3"), ("mr", "r28, r3")),
+    _ins(6, ("mr", "r30, r4"), ("mr", "r30, r4")),
+    _ins(7, ("lwz", "r3, ?gMemLock@@3PAVCriticalSection@@A@l(r11)"),
+            ("lwz", "r3, ?gMemLock@@3PAVCriticalSection@@A@l(r11)")),
+    _ins(8, ("mr", "r29, r3"), ("mr", "r29, r3")),
+    _ins(9, ("cmplwi", "cr6, r3, 0x0"), ("cmplwi", "cr6, r3, 0x0")),
+    _ins(10, ("stw", "r3, 0x50(r31)"), ("stw", "r3, 0x50(r31)")),
+    _ins(11, ("beq", "cr6, 0x34"), ("beq", "cr6, 0x3c")),
+    _ins(12, ("bl", "?Enter@CriticalSection@@QAAXXZ"),
+             ("bl", "?Enter@CriticalSection@@QAAXXZ")),
+    _ins(13, ("mr", "r3, r30"), ("mr", "r3, r30")),
+    _ins(14, ("bl", "?MemTrackFree@@YAXPAX@Z"), ("bl", "?MemTrackFree@@YAXPAX@Z")),
+    _ins(15, ("subi", "r11, r28, 0x1"), ("subi", "r11, r28, 0x1")),
+    _ins(16, ("lis", "r10, lbl_82E0699C@h"),
+             ("lis", "r10, ?gChunkAlloc@@3PAVChunkAllocator@@A@h")),
+    _ins(17, ("srawi", "r11, r11, 4"), ("srawi", "r11, r11, 4")),
+    _ins(18, ("slwi", "r9, r11, 2"), ("slwi", "r9, r11, 2")),
+    _ins(19, ("lwz", "r11, lbl_82E0699C@l(r10)"),
+             ("lwz", "r11, ?gChunkAlloc@@3PAVChunkAllocator@@A@l(r10)")),
+    _ins(20, ("lwzx", "r10, r9, r11"), ("lwzx", "r10, r9, r11")),
+    _ins(21, ("lwz", "r11, 0x14(r10)"), ("lwz", "r11, 0x14(r10)")),
+    _ins(22, ("stw", "r11, 0x0(r30)"), ("stw", "r11, 0x0(r30)")),
+    _ins(23, ("lwz", "r11, 0x8(r10)"), ("lwz", "r11, 0x8(r10)")),
+    _ins(24, ("subi", "r11, r11, 0x1"), ("subi", "r11, r11, 0x1")),
+    _ins(25, ("stw", "r30, 0x14(r10)"), ("stw", "r30, 0x14(r10)")),
+    _ins(26, ("stw", "r11, 0x8(r10)"), ("stw", "r11, 0x8(r10)")),
+    _ins(27, ("cmplwi", "cr6, r29, 0x0"), ("cmplwi", "cr6, r29, 0x0")),
+    _ins(28, ("beq", "cr6, 0x7c"), ("beq", "cr6, 0x84")),
+    _ins(29, ("mr", "r3, r29"), ("mr", "r3, r29")),
+    _ins(30, ("bl", "?Exit@CriticalSection@@QAAXXZ"),
+             ("bl", "?Exit@CriticalSection@@QAAXXZ")),
+    _ins(31, ("addi", "r1, r31, 0x80"), ("addi", "r1, r31, 0x80")),
+    _ins(32, ("b", "__restgprlr_28"), ("b", "__restgprlr_28")),
+]
+
+# ?Release@DataArray@@QAAXXZ — 0x60 frame with MANUAL pre-stwu callee saves in
+# the paren spelling (`stw r12, -0x8(r1)`, `std r31, -0x10(r1)`) and `mr r31, r3`,
+# i.e. r31 holds `this` and is NOT a frame base. This is fixture 6's shape as it
+# actually occurs in the binary, rather than as it was imagined.
+# The base side is absent on every row (this symbol had no base object at dump
+# time); that is verbatim too, and it exercises the None-side skip.
+_RULER_J_DATAARRAY_RELEASE = [
+    _ins(0, ("mflr", "r12"), None),
+    _ins(1, ("stw", "r12, -0x8(r1)"), None),
+    _ins(2, ("std", "r31, -0x10(r1)"), None),
+    _ins(3, ("stwu", "r1, -0x60(r1)"), None),
+    _ins(4, ("lhz", "r11, 0xa(r3)"), None),
+    _ins(5, ("mr", "r31, r3"), None),
+    _ins(6, ("subi", "r11, r11, 0x1"), None),
+    _ins(7, ("extsh.", "r11, r11"), None),
+    _ins(8, ("sth", "r11, 0xa(r3)"), None),
+    _ins(9, ("bne", "0x38"), None),
+    _ins(10, ("bl", "??1DataArray@@AAA@XZ"), None),
+    _ins(11, ("mr", "r4, r31"), None),
+    _ins(12, ("li", "r3, 0x10"), None),
+    _ins(13, ("bl", "?PoolFree@@YAXHPAX@Z"), None),
+    _ins(14, ("addi", "r1, r1, 0x60"), None),
+    _ins(15, ("lwz", "r12, -0x8(r1)"), None),
+    _ins(16, ("mtlr", "r12"), None),
+    _ins(17, ("ld", "r31, -0x10(r1)"), None),
+    _ins(18, ("blr", ""), None),
+]
+
+
+def _selftest_ruler_fixtures(check, out, H):
+    """Fixture 7 — the objdiff-4.2.3 paren spelling, on VERBATIM tool output.
+
+    Every assertion in here fails if `split_operands` loses its paren branch,
+    which is the mutation this fixture exists to catch.
+    """
+    out.append("fixture 7 — REAL objdiff-4.2.3 output, parenthesised d-form:")
+
+    # 7.0 — the fixture must still BE the thing it claims to be. Without this,
+    # a future "cleanup" that rewrites `-0x80(r1)` to `-0x80, r1` silently turns
+    # fixture 7 back into fixture 3 and the battery goes vacuous again.
+    paren_rows = sum(1 for r in _RULER_J_POOLFREE + _RULER_J_DATAARRAY_RELEASE
+                     for k in ("target", "base")
+                     if r.get(k) and "(" in r[k]["args"])
+    check("fixture is still in the PAREN spelling (do not normalise it)",
+          paren_rows, 25)
+
+    # 7.1 — the shipped bug, reproduced in-tree. v1 has no paren branch, so it
+    # reads a confident 0 on a real 0x80 frame: exactly what every MCP
+    # run_objdiff response printed on 2026-08-16.
+    check("v1 reads a confident 0 on a real 0x80 frame (STAYS WRONG)",
+          _scan_frame_size_v1(_RULER_J_POOLFREE, "target", H), 0)
+    check("v1 verdict is a FALSE 'frameless leaf'",
+          _scan_frame_size_v1(_RULER_J_POOLFREE, "target", H)
+          == _scan_frame_size_v1(_RULER_J_DATAARRAY_RELEASE, "target", H) == 0,
+          True)
+
+    # 7.2 — v2 must read the real frame sizes off the paren spelling.
+    check("v2 PoolFree TARGET frame", _scan_frame_size(_RULER_J_POOLFREE, "target", H)[0], 128)
+    check("v2 PoolFree BASE   frame", _scan_frame_size(_RULER_J_POOLFREE, "base", H)[0], 128)
+    check("v2 Release  TARGET frame",
+          _scan_frame_size(_RULER_J_DATAARRAY_RELEASE, "target", H)[0], 96)
+    check("v2 evidence names the stwu, not the r31 alias",
+          _scan_frame_size(_RULER_J_POOLFREE, "target", H)[1], "stwu r1, -0x80, r1")
+
+    # 7.3 — prologue classification off the paren spelling.
+    pp = parse_prologue(_RULER_J_POOLFREE, "target")
+    check("PoolFree frame_size", pp.frame_size, 128)
+    check("PoolFree saved GPRs (__savegprlr_28)", pp.saved_gpr_count, 4)
+    pr = parse_prologue(_RULER_J_DATAARRAY_RELEASE, "target")
+    check("Release frame_size", pr.frame_size, 96)
+    check("Release manual pre-stwu saves seen through `stw r12, -0x8(r1)` / "
+          "`std r31, -0x10(r1)`", sorted(pr.callee_save_slots), [0x50, 0x58])
+
+    # 7.4 — slot references. This is the -63% the audit measured.
+    check("PoolFree r31 IS a frame base (subi r31, r1, 0x80)",
+          sorted(frame_base_regs(_RULER_J_POOLFREE, "target")), ["r1", "r31"])
+    check("PoolFree finds the real r31 slot at 0x50",
+          sorted(build_fingerprints("target", _RULER_J_POOLFREE)), [0x50])
+    check("Release r31 holds `this`, so it is NOT a frame base",
+          sorted(frame_base_regs(_RULER_J_DATAARRAY_RELEASE, "target")), ["r1"])
+    check("Release finds no stack slots (all r3/r31 refs are members)",
+          sorted(build_fingerprints("target", _RULER_J_DATAARRAY_RELEASE)), [])
+
+    # 7.5 — CONTROL (rule 4): a relocated d-form is not a frame reference.
+    # `lwz r3, sym@l(r11)` splits to ['r3','sym@l','r11'] and must be REJECTED,
+    # or the paren branch would be manufacturing slots out of globals.
+    check("relocated `sym@l(r11)` load is NOT a frame reference",
+          parse_stack_ref("lwz", "r3, ?gMemLock@@3PAVCriticalSection@@A@l(r11)",
+                          {"r1", "r31", "r11"}),
+          None)
+    check("a plain paren d-form on a frame base IS one",
+          parse_stack_ref("stw", "r3, 0x50(r31)", {"r1", "r31"}), (0x50, "int", 4))
+
+    # 7.6 — the honest branch, in the paren spelling (rules 2 & 4).
+    # `saw_alloc_form` is set from the OPCODE, so an allocation whose operands we
+    # cannot decode reports UNKNOWN. If this ever reads 0 again, the 2026-08-16
+    # failure mode is back.
+    undecodable = [_ins(0, ("mflr", "r12"), None),
+                   _ins(1, ("stwu", "r1, __chkstk_frame@l(r1)"), None)]
+    check("undecodable displacement in a paren d-form is UNKNOWN, never 0",
+          _scan_frame_size(undecodable, "target", H)[0], None)
+    unmodelled = [_ins(0, ("stwu", "r1, -0x80(r1) [scaled]"), None)]
+    check("an allocation spelling we do not model at all is UNKNOWN, never 0",
+          _scan_frame_size(unmodelled, "target", H)[0], None)
+    # ...and the CONTROL: a genuinely frameless leaf must still read 0-KNOWN,
+    # or the two clauses above are just `return None`.
+    leaf7 = [_ins(0, ("lwz", "r3, 0x10(r3)"), None), _ins(1, ("blr", ""), None)]
+    check("a real frameless leaf still reads KNOWN-zero",
+          _scan_frame_size(leaf7, "target", H)[0], 0)
 
 
 def selftest():
@@ -1259,6 +1566,52 @@ def selftest():
     # and the subf form, which is the one UIStats uses
     check("v2 detects `subf r31, r12, r1` as a frame base",
           sorted(frame_base_regs(_bigframe_prologue(0x1, 0x2f0), "target")), ["r1", "r31"])
+
+    # ── Fixture 7: the spelling fixtures 1-6 could not see ───────────────────
+    _selftest_ruler_fixtures(check, out, H)
+
+    # ── Fixture 8: NO EVIDENCE is not framelessness ──────────────────────────
+    # Fixtures 1-7 all hand a side at least one instruction, so none of them
+    # could see the empty-input branch. `objdiff-cli diff -p . __savegprlr
+    # --include-instructions` really does return an EMPTY `instructions` array
+    # against this repo's own build (same for __restgprlr/__savefpr/__savevmx),
+    # so this is a live shape, not a synthetic one.
+    out.append("fixture 8 — no instructions on a side is UNKNOWN, never 0:")
+    check("empty instruction list is UNKNOWN",
+          _scan_frame_size([], "target", 0)[0], None)
+    check("empty list, non-zero horizon, still UNKNOWN",
+          _scan_frame_size([], "target", H)[0], None)
+    # The >1-row shape of the same thing: rows exist, but not one of them
+    # carries the side we were asked about.
+    tgt_only = [_ins(0, ("mflr", "r12"), None),
+                _ins(1, ("stwu", "r1, -0x80(r1)"), None),
+                _ins(2, ("blr", ""), None)]
+    check("TARGET side of a target-only diff still decodes",
+          _scan_frame_size(tgt_only, "target", H)[0], 0x80)
+    check("BASE side of a target-only diff is UNKNOWN, never 0",
+          _scan_frame_size(tgt_only, "base", H)[0], None)
+    check("...and it says WHY (no evidence, not frameless)",
+          "no evidence" in _scan_frame_size(tgt_only, "base", H)[1], True)
+    check("Prologue.frame_known is False for the absent side",
+          parse_prologue(tgt_only, "base").frame_known, False)
+    # CONTROLS (rule 4). Without these the branch above is just `return None`,
+    # and 17.1% of this binary is genuinely frameless — 0 must survive.
+    stub = [_ins(0, ("mflr", "r12"), ("blr", ""))]
+    check("a ONE-instruction stub side is KNOWN-zero, not UNKNOWN",
+          _scan_frame_size(stub, "base", H)[0], 0)
+    # 203 functions here (e.g. fn_822C13A8 in mtx.s) do `mflr r12` and save
+    # registers WITHOUT allocating a frame. Must NOT be dragged into UNKNOWN.
+    saves_no_frame = [_ins(0, ("mflr", "r12"), None),
+                      _ins(1, ("bl", "__savegprlr_29"), None),
+                      _ins(2, ("li", "r7, 0x0"), None),
+                      _ins(3, ("blr", ""), None)]
+    check("mflr + save helper WITHOUT an allocation is KNOWN-zero",
+          _scan_frame_size(saves_no_frame, "target", H)[0], 0)
+    # v1 is the frozen control: it conflates all three states into 0.
+    check("v1 calls the empty list frameless (STAYS WRONG)",
+          _scan_frame_size_v1([], "target", H), 0)
+    check("v1 calls the absent side frameless (STAYS WRONG)",
+          _scan_frame_size_v1(tgt_only, "base", H), 0)
 
     return ok, out
 

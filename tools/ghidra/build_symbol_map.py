@@ -69,6 +69,10 @@ import struct
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, REPO)
+
+from scripts.orchestrator.database import unworkable_verdict_clause  # noqa: E402
+
 OBJ_DIR = os.path.join(REPO, "build/45410914/obj")
 ASM_DIR = os.path.join(REPO, "build/45410914/asm")
 REPORT = os.path.join(REPO, "build/45410914/report.json")
@@ -337,10 +341,15 @@ def main():
     # A percent threshold alone does not do this. It only excludes such rows
     # while their percents happen to be NULL; anything that re-stamps a
     # percentage would silently re-admit them.
+    #
+    # The clause comes from the shared helper rather than being spelled inline,
+    # so a second unworkable verdict added to UNWORKABLE_VERDICTS propagates
+    # here too. This is the path that pushes NAMES into Ghidra; it must never
+    # be the one consumer that missed the update.
     rows = con.execute(
         "SELECT symbol, unit, current_percent FROM functions "
         "WHERE current_percent >= ? AND symbol NOT LIKE 'fn\\_%' ESCAPE '\\' "
-        "  AND (verdict IS NULL OR verdict != 'IDENTITY_UNESTABLISHED')",
+        + unworkable_verdict_clause(),
         (args.min_percent,),
     ).fetchall()
     con.close()

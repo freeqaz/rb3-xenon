@@ -893,7 +893,95 @@ target_link_libraries(rb3-ark PRIVATE Threads::Threads ZLIB::ZLIB)
 # =============================================================================
 option(RB3X_BUILD_ENGINE "Build + link milo-native-engine (needs Dawn + glfw3)" ON)
 
-set(MILO_ENGINE_PATH "${CMAKE_SOURCE_DIR}/../../milo-native-engine"
+# =============================================================================
+# WHERE ARE OUR SIBLINGS? — resolve from the REAL repo, not from the source tree
+# =============================================================================
+# MILO_ENGINE_PATH and Dawn_DIR used to default RELATIVE TO THE SOURCE TREE
+# (`${CMAKE_SOURCE_DIR}/../..`). Every lane works in a worktree under `~/tmp`
+# (house rule — CoW reflinks only work on the repo's own btrfs), so those
+# defaults resolved to `~/tmp/milo-native-engine` and `~/tmp/dc3-decomp-deps/…`,
+# which do not exist. The engine then auto-disabled (below) and rb3-frame,
+# rb3-milo and rb3-render silently left the ninja graph, so
+# `tools/native_build_gate.sh` reported
+# `PASS (INCOMPLETE: 15/18 verified, 3 SKIPPED)` AT rc=0 — the three targets its
+# own comment calls "most likely to break" were the three never tested, in the
+# only location any lane ever runs it.
+#
+# Same bug class, same fix, already landed in this repo: `60837907` taught
+# `tools/pin_from_symnames.py::_find_dc3()` to find dc3-decomp from a worktree
+# via the gitdir pointer, after the sibling-relative guess made every row read
+# `obj=-` — a false negative shaped exactly like a legitimate "not applicable".
+# This is a port of that resolution order, not new design:
+#
+#   1. sibling of the REAL repository, located with `git rev-parse
+#      --git-common-dir` (the probe `tools/ab_measure.py` already uses to tell a
+#      worktree from main). Measured 2026-08-17: that command answers `../.git`
+#      (RELATIVE to cwd) in a primary checkout and `<mainrepo>/.git` (absolute)
+#      from a linked worktree, so both spellings are handled below;
+#   2. sibling of the source tree — today's default, so a primary checkout
+#      resolves byte-for-byte as it did before this block existed;
+#   3. `$ENV{HOME}/code/milohax` — covers decomp-synth's agent-tools mode, which
+#      MOVES `<wt>/.git` to a sidecar so rule 1 has nothing to read, and the
+#      frozen tree copies under `decomp-bench/` and `decomp-synth/out/`.
+#
+# ⚠ EACH CANDIDATE MUST PASS A WITNESS TEST — and the witness is the very file
+# CMake branches on below and `native_build_gate.sh::conditional_reason()`
+# re-checks independently (`src/platform/NativeSettings.h`, `DawnConfig.cmake`).
+# A resolver that returns something no matter what would make that adjudication
+# VACUOUS and reopen the exact hole the gate exists to close. So when no
+# candidate is witnessed we hand back the historical relative guess and let the
+# auto-disable + SKIP path run precisely as it does today, and an explicit
+# `-DMILO_ENGINE_PATH=/nonexistent` still SKIPs — an existing cache entry is
+# never overwritten by the `set(… CACHE …)` calls below. Both legs are verified
+# in the lane record; do not "simplify" the witness away.
+
+# The directory CONTAINING the real repository, or "" if git cannot say.
+set(_RB3X_SIBLING_DIR "")
+execute_process(COMMAND git rev-parse --git-common-dir
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE _rb3x_gitcommon OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET RESULT_VARIABLE _rb3x_git_rc)
+if(_rb3x_git_rc EQUAL 0 AND _rb3x_gitcommon)
+    if(NOT IS_ABSOLUTE "${_rb3x_gitcommon}")
+        set(_rb3x_gitcommon "${CMAKE_SOURCE_DIR}/${_rb3x_gitcommon}")
+    endif()
+    # <repo>/.git -> <repo> -> the directory that holds <repo>
+    get_filename_component(_RB3X_SIBLING_DIR "${_rb3x_gitcommon}/../.." ABSOLUTE)
+endif()
+
+# _rb3x_resolve_sibling(<outvar> <path-under-the-sibling-dir> <witness-file>)
+function(_rb3x_resolve_sibling outvar tail witness)
+    # Parallel lists: base directory + the rule name that produced it, so the
+    # configure log says WHICH rule answered (rule 1 firing is the whole point
+    # of this block; rule 2 answering in a worktree would mean it did not).
+    set(_bases "")
+    set(_names "")
+    if(_RB3X_SIBLING_DIR)
+        list(APPEND _bases "${_RB3X_SIBLING_DIR}")
+        list(APPEND _names "1:real-repo-sibling")
+    endif()
+    list(APPEND _bases "${REPO_ROOT}/.." "$ENV{HOME}/code/milohax")
+    list(APPEND _names "2:source-tree-sibling" "3:HOME/code/milohax")
+    set(_i 0)
+    foreach(_base IN LISTS _bases)
+        list(GET _names ${_i} _name)
+        math(EXPR _i "${_i} + 1")
+        get_filename_component(_p "${_base}/${tail}" ABSOLUTE)
+        if(EXISTS "${_p}/${witness}")
+            message(STATUS "[sibling] ${tail} -> ${_p} (rule ${_name}, witness ${witness})")
+            set(${outvar} "${_p}" PARENT_SCOPE)
+            return()
+        endif()
+    endforeach()
+    get_filename_component(_p "${REPO_ROOT}/../${tail}" ABSOLUTE)
+    message(STATUS "[sibling] ${tail} NOT FOUND by any rule (no ${witness}); "
+                   "keeping the relative default ${_p} — dependent targets will SKIP")
+    set(${outvar} "${_p}" PARENT_SCOPE)
+endfunction()
+
+_rb3x_resolve_sibling(_rb3x_milo_default
+    "milo-native-engine" "src/platform/NativeSettings.h")
+set(MILO_ENGINE_PATH "${_rb3x_milo_default}"
     CACHE PATH "Path to milo-native-engine checkout")
 # Soft SHA pin (warn, never fail) — mirrors rb3/native/CMakeLists.txt:88-102.
 # Seeded from the engine HEAD SPIKE-X0 measured against.
@@ -906,7 +994,9 @@ set(MILO_ENGINE_PIN "40dd2a12f592ee46e63f96618c9a4bcf99f45ac0"
 # find_package(Dawn REQUIRED) inside the engine would abort configure and take
 # all 15 pre-existing targets down with it on a machine without the deps tree.
 if(NOT DEFINED Dawn_DIR)
-    set(Dawn_DIR "${REPO_ROOT}/../dc3-decomp-deps/dawn/lib/cmake/Dawn"
+    _rb3x_resolve_sibling(_rb3x_dawn_default
+        "dc3-decomp-deps/dawn/lib/cmake/Dawn" "DawnConfig.cmake")
+    set(Dawn_DIR "${_rb3x_dawn_default}"
         CACHE PATH "Path to Dawn's CMake package config")
 endif()
 if(RB3X_BUILD_ENGINE AND NOT EXISTS "${Dawn_DIR}/DawnConfig.cmake")

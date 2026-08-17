@@ -25,6 +25,30 @@ KILL with that inventory is an explicitly valid outcome.
   (opcode-level instruction selection), REGALLOC (missed reg-only diff), IMM_OFFSET
   (immediate/displacement), BODY (insert/delete = code divergence).
 - `tools/split_imm_offset.py` — splits IMM_OFFSET into stack/struct/const context.
+  ⛔ **Its STACK/STRUCT/CONST split was VOID on 2026-06-30 and stayed void until
+  2026-08-16** (found by task #104; audit `ARGS_READER_AUDIT.md` row 17). Its
+  memory-displacement regex expects `0xNN(rY)`, and objdiff-cli's JSON `args`
+  field emitted the flat `rX, 0xNN, rY` join from 2026-01-31 to 2026-08-16 — so
+  the STACK and STRUCT buckets were structurally empty for this whole document's
+  lifetime and every memory diff was counted CONST. Re-measured on the repaired
+  ruler: STACK 0→45, STRUCT 0→350, CONST 287→71. **Any stack/struct/const
+  proportion attributed to this tool anywhere below or downstream must be
+  re-run, not carried forward.** The IMM_OFFSET *population* count (359, from
+  `enrich_unattributed.py`) is a different measurement and is not affected by
+  this defect.
+
+  ⚠ **Companion note added 2026-08-17 (task #103) — scope the sentence above
+  correctly.** `enrich_unattributed.py` is indeed unaffected by *that* defect,
+  and everything in this document, minted 2026-06-30, was produced by a working
+  copy of it. But it had a defect of its own for one day: objdiff-cli fdc5113
+  ("ruler I") stopped printing the trailing non-displayed relocation, which cut
+  **CALL_NAMING by 78%** (37 → 8 on the audit's dc3 corpus, 692 → 368 on 60
+  rb3-xenon functions) and dropped every row whose relocation was the only
+  difference. So: the numbers **below** stand; a **regeneration** of them
+  performed between 2026-08-16 and 2026-08-17 does not. Repaired 2026-08-17 and
+  re-measured back to the pre-2026-08-16 baseline exactly. Note the asymmetry
+  with `split_imm_offset.py` above — that tool wanted the parenthesised form and
+  was dead for 6.5 months; this one wanted the flat form and was dead for a day.
 
 ## The pool (report.json `match_percent_normalized`, strict 10664/65568)
 
@@ -52,6 +76,12 @@ artifacts** (uniformly ~99.9%, no real body) — not real codegen near-misses.
 | INSTR_SELECT_CMP | 2 | 0 | instr_select | no (internal) |
 
 ### UNATTRIBUTED (562) sub-split — `tools/enrich_unattributed.py`
+
+> Counts below are the 2026-06-30 reading and STAND — the tool was working then.
+> Do not compare them against any re-run made between 2026-08-16 and 2026-08-17:
+> in that window `CALL_NAMING` under-reported by ~78% and reloc-only rows were
+> dropped entirely, so a fresh run would have moved mass into REGALLOC/OTHER for
+> a reason that has nothing to do with the codebase (task #103).
 
 | sub | count | named | nature |
 |---|---:|---:|---|
@@ -142,6 +172,16 @@ artifacts = 1811 total). "reach-by-NEW-codegen-tool" is the mission's question:
 | STRUCT_OFFSET | 7 | 0 | header lever |
 | REGALLOC_FPR_CALLEE | **5** | **0–3** | the ONLY new-tool-shaped class; f14-f31 are sequential-by-float-decl-order (no graph coloring) so theoretically solvable — but volatile-f0-f13-contaminated + multi-pair over-constrained ⇒ realistic ~0 |
 | (others: MIXED/COMMUTATIVE/INSTR_SELECT/BUILD_ENV/NOISE) | ~40 | 0 | mislabel / patcher / source-immune |
+
+> **2026-08-16 correction, IMM_OFFSET row only** (task #104). The row's
+> "never r1/stack" rests on a 23-function hand sample, which stands as read —
+> but `split_imm_offset.py`, the tool that would have measured it mechanically,
+> could not have contradicted it: its STACK bucket was structurally unreachable
+> (see the tooling note above). Re-measured per-INSTRUCTION on the repaired
+> ruler over 32 real objdiff docs, 45 of 395 memory-displacement diffs (11%) are
+> off r1. That is a different grain from the per-function-dominant sample and
+> does not overturn the KILL — the class is still the header lever — but "never
+> r1/stack" should not be requoted as a measured fact.
 
 **Why KILL (hard numbers):**
 1. The big-count classes are **not codegen**: IMM_OFFSET+STRUCT_OFFSET (366) are
