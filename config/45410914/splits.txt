@@ -2110,7 +2110,7 @@ envelope.c:
 	.text       start:0x82C36B38 end:0x82C36B98
 
 lsp.c:
-	.pdata      start:0x822613C8 end:0x82261490
+	.pdata      start:0x822613C8 end:0x822613D0
 	.text       start:0x82C3E298 end:0x82C3E5B4
 
 window.c:
@@ -2327,7 +2327,6 @@ CharBoneDir.cpp:
 
 CharClip.cpp:
 	.pdata      start:0x821F4680 end:0x821F4688
-	.pdata      start:0x82200080 end:0x82200088
 	.pdata      start:0x822000A8 end:0x822000D8
 	.pdata      start:0x822000D8 end:0x822000E8
 	.pdata      start:0x82200350 end:0x82200358
@@ -3928,6 +3927,7 @@ MoveAsyncDetector.cpp:
 	.pdata      start:0x821FC010 end:0x821FC040
 	.pdata      start:0x821FEC68 end:0x821FEC70
 	.pdata      start:0x821FEC78 end:0x821FEC88
+	.pdata      start:0x82200080 end:0x82200088
 	.pdata      start:0x822000A0 end:0x822000A8
 	.pdata      start:0x82234690 end:0x82234698
 	.text       start:0x823178F8 end:0x82317900
