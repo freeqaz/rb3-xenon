@@ -1445,6 +1445,10 @@ framing.c:
 	.pdata      start:0x82260D88 end:0x82260DE0
 	.text       start:0x82C2C910 end:0x82C2D970
 
+synthesis.c:
+	.pdata      start:0x82260E18 end:0x82260E20
+	.text       start:0x82C2E358 end:0x82C2E528
+
 bitwise.c:
 	.pdata      start:0x82260F90 end:0x82260FA8
 	.text       start:0x82C306B8 end:0x82C30AFC
