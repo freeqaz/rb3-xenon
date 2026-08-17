@@ -246,48 +246,151 @@ BEGIN_COPYS(PanelDir)
     END_COPYING_MEMBERS
 END_COPYS
 
-INIT_REVS(8, 0)
+// ── lane W35-CUSTOMIZE (2026-08-17): RB3-360 retail uses the rb3-Wii
+// MUTABLE-GLOBAL rev dialect here, NOT DC3's BinStreamRev.  This is read off
+// RETAIL BYTES, not off the oracle -- ?PreLoad@PanelDir@@ @0x82809520 and
+// ?PostLoad@PanelDir@@ @0x828095C8:
+//
+//   * PreLoad splits the packed rev into two halves, stores them to a GLOBAL
+//     (`sth r11, lbl_82E07938@l(r10)` / `sth r3, 0x4(r8)`), and then RE-PACKS
+//     them with `rlwimi r3, r11, 16, 0, 15` before `bl PushRev`.  A re-pack is
+//     meaningless unless the halves live in mutable globals -- DC3's
+//     BinStreamRev would forward the already-packed `revs` unchanged.  That
+//     single `rlwimi` is the decisive witness for the dialect.
+//   * gRevAlt is at +0 and gRev at +4 (the `srwi` half is the one stored at
+//     offset 0), 4 bytes apart => align(4) on a 2-byte type.
+//   * PreLoad calls RndDir::PreLoad LAST (`subi r3,r31,0x5c; bl` is the final
+//     call before the epilogue); the DC3 form calls it FIRST.
+//   * PostLoad calls RndDir::PostLoad FIRST (`subi r3,r3,0x5c; bl` at
+//     instructions 5/7, ahead of PopRev); the DC3 form calls PopRev first.
+//   * retail has NO `rev < 7 && !mCam -> SetCurViewport(...)` block.  That is a
+//     DC3-era addition: it is absent from rb3-Wii AND absent from retail, and
+//     it accounted for a chunk of our base-only instructions.  This is oracle
+//     failure mode 4 (the newer engine has statements RB3 never had).
+//
+// `!IsProxy()` is retained rather than rb3-Wii's `this == Dir()`: Dir.h defines
+// `IsProxy() const { return this != Dir(); }`, so the two are the same inline
+// expression and the spelling is not load-bearing.
+//
+// ── MEASURED RESULT (whole-binary A/B, from-dirty, same-ruler):
+//     Δmatched=+2  Δhonest=+2  Δcode_bytes=+0  Δcode%=+0.000000pp
+//     Δfuzzy=+0.003093pp, 1 unit improved (default/UISlider 68->70), 0 fell off.
+//   PreLoad  17.18919 fuzzy / 19.75676 mpn  ->  99.86487 / 100.0
+//   PostLoad 51.05608 fuzzy / 53.11215 mpn  ->  99.90654 / 100.0
+//
+// ⛔ BOTH ROWS LAND IN THE `mpn == 100, fuzzy < 100` POPULATION, SO THEY BUY +2
+// FUNCTIONS AND EXACTLY ZERO BYTES.  Do not re-price this at 576 B off an
+// objdiff "100.0% normalized / all instructions equal" reading -- that reading
+// is instruction-level and CANNOT SEE relocation-name (`diff_arg`) charges.
+// This lane pre-registered +576 B from exactly that mistake and measured +0.
+// The `none` ruler DOES move +576 B, which is the signature of the class.
+//
+// The residual diff_scores are 5 and 10 == one and two PENALTY_REG_DIFF
+// relocation-name charges.  All three are IDENTIFICATION, not body defects:
+//   PreLoad  [30] tgt `?SyncProperty@RndSpline@@UAA_NAAVDataNode@@...`
+//                 vs our `?PreLoad@RndDir@@UAAXAAVBinStream@@@Z`
+//                 -- map[0x82406178] carries the RndSpline name and
+//                 `?PreLoad@RndDir@@` is ABSENT from target_symbol_map.json.
+//   PostLoad [83],[85] tgt `operator>>(BinStreamRev&, vector<FilePath>&)`
+//                 vs our `operator>>(BinStream&, vector<FilePath>&)`
+//                 -- BinStreamRev derives from BinStream, so the two template
+//                 instantiations are prime ICF fold candidates.
+// ⚠ Note the asymmetry that proves the mechanism: PostLoad's OTHER base call,
+// `?PostLoad@RndDir@@`, resolves to an UNNAMED `fn_82404F80` and is FORGIVEN
+// (placeholder targets cost nothing); only the NAMED one is charged.
+// ⛔ NO ALIAS WAS INSTALLED.  An alias lifts the score BY CONSTRUCTION and the
+// `none` control cannot catch a fabrication, so these need relocation-normalized
+// body-identity proof (target names compared) before anyone adds them.  The
+// characterisation above is the expensive half of that work; the adjudication
+// is deliberately left undone rather than done on a guess.
+// ⚠⚠ THE .bss ORDER OF THE TWO HALVES IS NOT CONTROLLABLE BY ORDINARY MEANS
+// -- THREE LEVERS MEASURED INERT, so do not retry any of them:
+//   * declaration order      -- byte-identical object either way
+//   * assignment order       -- layout unmoved; it only flips the compute order
+//                               (`clrlwi`/`srwi` swap) and cost PreLoad
+//                               99.7% -> 97.4%
+//   * renaming so the alt half sorts first (gAltRev -> gRevAlt) -- unmoved
+// CAUSE, read out of the COFF symbol table rather than guessed: MSVC emits
+// EXACTLY ONE .bss symbol for the pair (`gRev_PanelDir` at offset 0) and places
+// the other half at an ANONYMOUS +4 addressed off that symbol.  Whichever half
+// owns the symbol is therefore pinned to +0, and retail needs the ALT half
+// there.  A single struct is the one spelling that makes both offsets explicit,
+// and it reproduces retail's `lbl_82E07938` exactly: alt at +0, rev at +4.
+// The LAYOUT is retail-evidenced; the STRUCT SPELLING is a choice.
+static struct {
+    unsigned short alt;
+    unsigned short _pad0;
+    unsigned short rev;
+    unsigned short _pad1;
+} gRevs;
 
 void PanelDir::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
-    ASSERT_REVS(8, 0)
-    RndDir::PreLoad(d.stream);
-    d.PushRev(this);
+    int rev;
+    bs >> rev;
+    // ⚠ MEASURED NEGATIVE, do not retry: swapping these two assignments (to try
+    // to move gRevs.alt to .bss +0) does NOT move the layout at all -- it only
+    // flips the compute order (`clrlwi`/`srwi` swap) and cost PreLoad
+    // 99.7% -> 97.4%.  Declaration order is equally inert (byte-identical obj).
+    gRevs.rev = getHmxRev(rev);
+    gRevs.alt = getAltRev(rev);
+    BinStream::PushRev(packRevs(gRevs.alt, gRevs.rev), this);
+    RndDir::PreLoad(bs);
 }
 
 void PanelDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
-    RndDir::PostLoad(d.stream);
+    RndDir::PostLoad(bs);
+    int revs = BinStream::PopRev(this);
+    gRevs.rev = getHmxRev(revs);
+    gRevs.alt = getAltRev(revs);
     if (!IsProxy()) {
-        if (d.rev > 0) {
-            d >> mCam;
+        if (gRevs.rev != 0) {
+            bs >> mCam;
         }
-        if (d.rev > 1 && d.rev < 3) {
+        // ⚠ retail spells this DC3's way (`> 1 && < 3` -> `cmplwi 1; ble` +
+        // `cmplwi 3; bge`), NOT rb3-Wii's `gRevs.rev == 2` (which emits
+        // `cmplwi 2; bne`).  Measured, not assumed.
+        if (gRevs.rev > 1 && gRevs.rev < 3) {
             Symbol s;
-            d >> s;
+            bs >> s;
         }
     }
-    if (d.rev < 7 && !mCam) {
+    // ⛔ THIS BLOCK IS IN RETAIL.  An earlier revision of this lane deleted it
+    // because rb3-Wii has no such block -- that was WRONG, and retail bytes
+    // refuted it: instructions [50]-[64] of ?PostLoad@PanelDir@@ are literally
+    // `cmplwi r10,0x7 / bge` + `lwz r10,-0x50(r30)` (mCam) + `lis
+    // lbl_82C721F0` (TheUI) + `lwz r11,0x40(r11)` (GetCam).  RB3-360 retail is a
+    // HYBRID: rb3-Wii's rev DIALECT and call ordering, but DC3's BODY.  Do not
+    // re-delete this on the strength of the Wii oracle.
+    if (gRevs.rev < 7 && !mCam) {
         SetCurViewport(kNumViewports, TheUI->GetCam());
     }
-    if (d.rev > 3) {
-        d >> mCanEndWorld;
+    if (gRevs.rev > 3) {
+        bs >> mCanEndWorld;
     }
-    if (d.rev > 4) {
-        d >> mBackFilenames >> mFrontFilenames;
+    if (gRevs.rev > 4) {
+        bs >> mBackFilenames >> mFrontFilenames;
     }
-    if (d.rev > 5) {
-        d >> mShowEditModePanels;
+    if (gRevs.rev > 5) {
+        bs >> mShowEditModePanels;
     }
-    if (d.rev > 7) {
+    if (gRevs.rev > 7) {
         if (gLoadingProxyFromDisk) {
             bool b;
-            d >> b;
+            bs >> b;
         } else {
-            d >> mUseSpecifiedCam;
+            bs >> mUseSpecifiedCam;
         }
     }
-    SyncEditModePanels();
+    // ⛔ NO trailing SyncEditModePanels() here -- BOTH oracles have one and
+    // RETAIL DOES NOT.  Retail's ?PostLoad@PanelDir@@ ends
+    // `.L_8280976C: addi r1,r1,0x80 / b __restgprlr_28` with no call after the
+    // `gRevs.rev > 7` block's `bl`, and the diff shows our `mr r3,r29 / bl
+    // ?SyncEditModePanels@PanelDir@@AAAXXZ` as the ONLY two base-only
+    // instructions in the function (it also costs 16 bytes of frame:
+    // target `stwu -0x80` vs our `-0x90`).  Behavioural note: the sync still
+    // runs on every other path that had it (SYNC_PROP_MODIFY(show_view_only_panels),
+    // the PropSync setters, and the two other call sites in this file); only the
+    // post-load call is dropped, which is what retail does.
 }
 
 void PanelDir::SyncObjects() {
