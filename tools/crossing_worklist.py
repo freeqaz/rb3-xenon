@@ -889,7 +889,11 @@ def main():
     ap.add_argument('--reclaim', action='store_true')
     ap.add_argument('--selftest', action='store_true')
     ap.add_argument('--self-break', action='store_true',
-                    help='sabotage the controls to prove they can FAIL')
+                    help='sabotage the controls to prove they can FAIL. Run it on a '
+                         'SETTLED tree: on a tree a peer is rebuilding, the sabotaged '
+                         'controls come back VOID (4) rather than FAIL (2), because '
+                         'that is the honest reading of a run whose inputs moved -- '
+                         'the lever is not broken, the tree was')
     a = ap.parse_args()
     if not os.path.exists(report_path(a.project_dir)):
         sys.exit(f'REFUSE: no report.json under {a.project_dir}. Build first.')
