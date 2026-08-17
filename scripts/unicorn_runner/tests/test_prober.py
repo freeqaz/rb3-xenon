@@ -1,7 +1,22 @@
-"""Tests for prober.py — multi-input probing logic."""
+"""Tests for prober.py — multi-input probing logic.
+
+These are pure-logic tests over mocks, but ``prober`` reaches ``run`` for
+``ComparisonBundle`` and ``run`` imports the emulator at module scope, so the
+module cannot even be COLLECTED without the Unicorn bindings. Skip at module
+level rather than letting that surface as a collection error — an absent
+optional dependency is a skip, not a red.
+
+Force the skip path with ``UNICORN_DIR=/nonexistent`` to verify this guard is
+live; see scripts/unicorn_runner/unicorn_dep.py.
+"""
 
 import unittest
 from unittest.mock import patch, MagicMock
+
+from scripts.unicorn_runner.unicorn_dep import HAS_UNICORN, SKIP_REASON
+
+if not HAS_UNICORN:  # pragma: no cover - depends on the box
+    raise unittest.SkipTest(SKIP_REASON)
 
 from .helpers import MockExecutionResult
 
