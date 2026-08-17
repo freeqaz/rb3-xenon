@@ -87,6 +87,7 @@ import argparse
 import json
 import os
 import re
+import struct
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -101,8 +102,141 @@ VERSION = "45410914"
 NORM_ANON = re.compile(r"\?A0x[0-9a-f]+")
 
 # W20's measured answer for the round trip. Frozen; see docs/decomp/w20-cascade.md.
-W20_MEASURED_PAIRING_BYTES = -2396
-W20_MEASURED_DFNS = -10
+W20_MEASURED_PAIRING_BYTES = -2396      # graded (name_check) -- the shipped ruler
+W20_MEASURED_NONE_BYTES = -2520         # functionRelocDiffs=none control
+W20_MEASURED_DFNS = -10                 # matched_functions is RULER-INVARIANT
+
+
+def credit_at_ruler(root, names_units, selector):
+    """fuzzy per row ON A GIVEN RULER.
+
+    ★ THE SEPARATION THIS LANE IS BUILT ON.  Two things decide an un-pairing
+    row's byte cost and only ONE of them is ruler-dependent:
+
+      * the UN-PAIRING VERDICT (does the pinned obj define the name?) is a COFF
+        fact -- RULER-INVARIANT.  `none` forgives relocation NAMES; it does NOT
+        forgive an ABSENT BASE SYMBOL, so an un-paired row reads 0 on every
+        ruler.
+      * the CREDIT TEST (is this row credited TODAY?) is ruler-dependent: a row
+        charged only by relocation names sits below 100 graded and at exactly
+        100 under `none`.  Measured here on 0x82456190: graded 99.70588,
+        none 100.0.
+
+    Conflating the two is how a pairing change gets mistaken for name
+    forgiveness.  A FABRICATED ALIAS leaves `none` FLAT (it only ever moves
+    relocation-name arguments); a PAIRING change MOVES `none`.  Same direction,
+    different mechanism -- so the two rulers are predicted separately, never
+    assumed equal.
+    """
+    if selector == "graded":
+        return None                     # report.json already carries it
+    rargs, _lbl = cp.ruler_args(root, selector)
+    out = {}
+    for nm, unit in names_units:
+        d, _err = cp.run_diff(root, nm, unit, rargs,
+                              cache_dir=f"/tmp/claude/w24_{selector}")
+        if d is not None:
+            out[nm] = float(d.get("fuzzy_match_percent", 0.0) or 0.0)
+    return out
+
+
+
+# ---------------------------------------------------------------------------
+# R2a -- ADJUDICATE a re-pairing row, so the bracket collapses to a prediction
+#
+# When the obj CAN define the new name the row re-pairs against a DIFFERENT
+# COMDAT, and W20 could only bound the outcome because "the body decides".  But
+# the body is available statically: compare the two COMDATs in our own obj with
+# every relocation-patched word MASKED.  (Raw memcmp is vacuous -- PC-relative
+# displacements differ at different addresses; CLAUDE.md's ICF section makes the
+# same point.)
+#
+#   bodies differ                -> genuinely different code: stays BOUNDED.
+#   bodies equal, reloc TARGETS equal
+#                                -> indistinguishable on every ruler: cost 0.
+#   bodies equal, reloc TARGETS differ
+#                                -> the ONLY difference is a relocation NAME:
+#                                   `none` ignores it  => cost 0
+#                                   `name_check` charges it => the row drops off
+#                                   fuzzy 100 (cost = size) but KEEPS mpn 100,
+#                                   because mpn excludes argument penalties.
+#
+# That last cell is why the two rulers must be predicted separately, and it is
+# exactly the 80 B by which the graded and `none` answers differ on the W20
+# fixture (SongSortMgr's two `clear` COMDATs: 80 B, 1 reloc, reloc-normalized
+# IDENTICAL, differing only in _M_erase<...int> vs _M_erase<...SetlistRecord>).
+# ---------------------------------------------------------------------------
+
+def _comdat_bodies(path, names):
+    """{name: (masked_body, [reloc target names])} for COMDATs in one obj."""
+    d = open(path, "rb").read()
+    _m, nsec, _t, psym, nsym, opt, _c = struct.unpack_from("<HHIIIHH", d, 0)
+    stro = psym + nsym * 18
+    strt = d[stro:]
+
+    def nm(off):
+        raw = d[off:off + 8]
+        if raw[:4] == b"\x00\x00\x00\x00":
+            o = struct.unpack_from("<I", raw, 4)[0]
+            e = strt.find(b"\x00", o)
+            return strt[o:e].decode("latin-1") if e >= 0 else ""
+        return raw.rstrip(b"\x00").decode("latin-1")
+
+    secs = []
+    for i in range(nsec):
+        o = 20 + opt + i * 40
+        secs.append((struct.unpack_from("<I", d, o + 16)[0],
+                     struct.unpack_from("<I", d, o + 20)[0],
+                     struct.unpack_from("<I", d, o + 24)[0],
+                     struct.unpack_from("<H", d, o + 32)[0]))
+    symname, want = {}, {}
+    i = 0
+    while i < nsym:
+        o = psym + i * 18
+        n = nm(o)
+        symname[i] = n
+        if n in names:
+            want[n] = struct.unpack_from("<h", d, o + 12)[0]
+        i += 1 + d[o + 17]
+
+    out = {}
+    for n, sec in want.items():
+        if sec <= 0 or sec > len(secs):
+            continue
+        sz, pdata, preloc, nrel = secs[sec - 1]
+        body = bytearray(d[pdata:pdata + sz])
+        tgts = []
+        for r in range(nrel):
+            ro = preloc + r * 10
+            va = struct.unpack_from("<I", d, ro)[0]
+            si = struct.unpack_from("<I", d, ro + 4)[0]
+            tgts.append(symname.get(si, "?"))
+            body[va:va + 4] = b"\xAA\xAA\xAA\xAA"
+        out[n] = (bytes(body), tgts)
+    return out
+
+
+def adjudicate_repair(root, unit_src, old, new, unit_name=None):
+    """(verdict, none_cost_factor, graded_cost_factor) for a RE-PAIRS row.
+
+    Factors multiply the row's size; None means UNDETERMINED (stay bounded).
+    """
+    bp = cp.base_obj_for_unit(root, unit_src, unit_name)
+    if not bp or not (Path(root) / bp).exists():
+        return "UNDETERMINED (no base obj)", None, None
+    try:
+        b = _comdat_bodies(Path(root) / bp, {old, new})
+    except Exception as e:
+        return f"UNDETERMINED ({e})", None, None
+    if old not in b or new not in b:
+        return "UNDETERMINED (a COMDAT is not a distinct section)", None, None
+    (ba, ta), (bb, tb) = b[old], b[new]
+    if ba != bb:
+        return "BODIES DIFFER -> bounded", None, None
+    if ta == tb:
+        return "IDENTICAL incl. reloc targets -> free on every ruler", 0, 0
+    return ("RELOC-NAME ONLY -> free under `none`, charged under name_check",
+            0, 1)
 
 
 # ---------------------------------------------------------------------------
@@ -118,6 +252,8 @@ class RowFate:
         self.size, self.fuzzy, self.mpn = size, fuzzy, mpn
         self.verdict = "?"
         self.detail = ""
+        self.adj = None          # R2a verdict string
+        self.adj_factor = None   # 0/1 * size, or None = still bounded
 
     # -- R1: the row un-pairs. Both effects are DETERMINED. ------------------
     @property
@@ -136,25 +272,35 @@ class RowFate:
 
     # -- R2: the row re-pairs; the BODY decides, so this is a bracket. -------
     @property
+    def adjudicated_bytes(self):
+        """R2a resolved this re-pairing row -> a DETERMINED cost, not a bound."""
+        if self.unpairs or self.adj_factor is None:
+            return 0
+        return -self.size * self.adj_factor if self.fuzzy >= 100.0 else 0
+
+    @property
     def bounded_bytes(self):
-        """Worst case for a row that re-pairs: it may fall off fuzzy 100."""
-        if self.unpairs:
+        """Worst case for a re-pairing row R2a could NOT resolve."""
+        if self.unpairs or self.adj_factor is not None:
             return 0
         return -self.size if self.fuzzy >= 100.0 else 0
 
     @property
     def bounded_gain(self):
         """Best case for a row that re-pairs from below 100."""
-        if self.unpairs:
+        if self.unpairs or self.adj_factor is not None:
             return 0
         return self.size if self.fuzzy < 100.0 else 0
 
 
-def fate_of(root, addr, old, new, smap, rows, splits):
+def fate_of(root, addr, old, new, smap, rows, splits, fuzzy_override=None,
+            ruler="graded"):
     """Classify one edited address under R1/R2.  No build, no body diff."""
     r = rows.get(old)
     unit, size, fuzzy, mpn = (r if r else (None, 0, 0.0, 0.0))
     pin_unit, _s, _e = cp.pinning_unit(splits, addr)
+    if fuzzy_override is not None and old in fuzzy_override:
+        fuzzy = fuzzy_override[old]
     f = RowFate(addr, old, new, unit, pin_unit, size, fuzzy, mpn)
 
     if r is None:
@@ -173,17 +319,24 @@ def fate_of(root, addr, old, new, smap, rows, splits):
     v, detail = cp.can_define(root, pin_unit, new, unit)
     f.verdict = {"OK": "RE-PAIRS", "BLOCKED": "BLOCKED", "UNKNOWN": "UNKNOWN"}[v]
     f.detail = detail
+    if f.verdict == "RE-PAIRS":
+        f.adj, none_fac, graded_fac = adjudicate_repair(
+            root, pin_unit, old, new, unit)
+        fac = none_fac if ruler == "none" else graded_fac
+        f.adj_factor = fac
     return f
 
 
-def price_pairing(root, edits, smap, rows, splits):
+def price_pairing(root, edits, smap, rows, splits, fuzzy_override=None,
+                  ruler="graded"):
     """edits: {addr:int -> new_name}.  Returns [RowFate] for the edited rows."""
     out = []
     for addr, new in sorted(edits.items()):
         old = smap.get(addr) or f"fn_{addr:08X}"
         if old == new:
             continue
-        out.append(fate_of(root, addr, old, new, smap, rows, splits))
+        out.append(fate_of(root, addr, old, new, smap, rows, splits,
+                           fuzzy_override, ruler))
     return out
 
 
@@ -196,12 +349,14 @@ def render(fates, title, self_break=False):
         db = f.det_bytes
         if self_break:                      # sabotage: ignore the credit test
             db = -f.size if f.unpairs else 0
-        det_b += db
+        det_b += db + f.adjudicated_bytes
         det_f += f.det_fns
         lo += f.bounded_bytes
         hi += f.bounded_gain
         print(f"0x{f.addr:08x}{f.size:>6}{f.fuzzy:>10.4f}{f.mpn:>7.1f}  "
               f"{f.verdict:<10} {str(f.unit)[:30]}")
+        if f.adj:
+            print(f"{'':>12}R2a: {f.adj}  => determined {f.adjudicated_bytes:+d} B")
     print(f"\n  DETERMINED  bytes {det_b:+d}   fns {det_f:+d}")
     print(f"  BOUNDED     re-pairing rows may additionally move "
           f"[{lo:+d}, {hi:+d}] B  (body-dependent, NOT a point estimate)")
@@ -230,27 +385,38 @@ def cmd_validate(args):
 
     # The round trip = revert every edited address to its OLD spelling.
     edits = {int(a, 16): e["old"] for a, e in fix["edits"].items()}
-    fates = price_pairing(root, edits, smap, rows, splits)
-    det_b, det_f, lo, hi = render(
-        fates, "W20 ROUND TRIP (inverse of 7e9c2d01) -- PAIRING channel",
-        self_break=args.self_break)
 
-    print(f"\n  W20 MEASURED  bytes {W20_MEASURED_PAIRING_BYTES:+d}   "
-          f"fns {W20_MEASURED_DFNS:+d}")
+    results = {}
+    for sel, measured in (("graded", W20_MEASURED_PAIRING_BYTES),
+                          ("none", W20_MEASURED_NONE_BYTES)):
+        nu = [(smap[addr], rows[smap[addr]][0])
+              for addr in edits if smap.get(addr) in rows]
+        ov = credit_at_ruler(root, nu, sel)
+        fates = price_pairing(root, edits, smap, rows, splits, ov, sel)
+        det_b, det_f, lo, hi = render(
+            fates, f"W20 ROUND TRIP (inverse of 7e9c2d01) -- PAIRING, ruler={sel}",
+            self_break=args.self_break)
+        inside = (det_b + lo) <= measured <= (det_b + hi)
+        print(f"\n  W20 MEASURED ({sel}) bytes {measured:+d}")
+        print(f"  MEASURED inside the bracket : {'PASS' if inside else 'FAIL'} "
+              f"(bracket width {hi - lo} B)")
+        results[sel] = (det_b, det_f, lo, hi, inside, measured)
+
+    det_f = results["graded"][1]
     ok_f = (det_f == W20_MEASURED_DFNS)
-    ok_b = (det_b + lo) <= W20_MEASURED_PAIRING_BYTES <= (det_b + hi)
-    width = hi - lo
-    print(f"  d_fns  DETERMINED == MEASURED        : {'PASS' if ok_f else 'FAIL'}")
-    print(f"  bytes  MEASURED inside the bracket   : {'PASS' if ok_b else 'FAIL'} "
-          f"(bracket width {width} B)")
+    print(f"\n  d_fns DETERMINED {det_f:+d} vs W20 MEASURED {W20_MEASURED_DFNS:+d} "
+          f"(matched_functions is ruler-invariant): {'PASS' if ok_f else 'FAIL'}")
+
+    ok = ok_f and all(r[4] for r in results.values())
     if args.self_break:
-        if ok_f and ok_b:
+        if ok:
             print("\n  VACUOUS: the sabotaged model still passes -- the fixture "
                   "cannot discriminate. Exit 2.")
             return 2
         print("\n  Sabotage correctly REJECTED -> the fixture can fail.")
         return 0
-    return 0 if (ok_f and ok_b) else 1
+    print(f"\n  OVERALL: {'PASS' if ok else 'FAIL'}")
+    return 0 if ok else 1
 
 
 # ---------------------------------------------------------------------------
