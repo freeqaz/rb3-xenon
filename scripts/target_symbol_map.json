@@ -20285,6 +20285,7 @@
  "0x827bad08": "?Refill@FixedSizeAlloc@@IAAXXZ",
  "0x827badb0": "?PoolFree@@YAXHPAX@Z",
  "0x827bae60": "?Alloc@FixedSizeAlloc@@QAAPAXXZ",
+ "0x827baec0": "?RawAlloc@FixedSizeAlloc@@MAAPAHH@Z",
  "0x827baff8": "?Print@ChunkAllocator@@QAAXAAVTextStream@@@Z",
  "0x827bb0e8": "?PoolAlloc@@YAPAXHHPBDH0@Z",
  "0x827bb1e0": "?PoolReport@@YAXAAVTextStream@@@Z",
