@@ -68,6 +68,30 @@ def is_aux_code_symbol(name):
     return name.startswith('__unwind$') or name.startswith('__ehhandler$')
 
 
+# Funclet spellings that carry the 8-byte EH prefix. Used only by the FALLBACK
+# rule below; the primary boundary is the `$EH*` mark the build injects.
+EH_PREFIXED = ('__unwind$', '__catch$', '__ehhandler$',
+               '__tryblocktable$', '__unwindfunclet$')
+
+
+def eh_boundaries(section_symbols):
+    """Offsets a slice may END at that are NOT function definitions.
+
+    `scripts/obj_eh_boundary_patcher.py` (build step, stamp
+    `eh_boundary_patched.stamp`) appends a STATIC/type-0 `$EH*` symbol at every
+    interior EH prefix, because MSVC leaves only a class-6 `$M#####` debug label
+    at a function's true end. Type 0 is exactly what a `type == 0x20` filter
+    discards, so the boundary the build inserts for this purpose was being
+    thrown away -- see `function_slices`.
+
+    Deliberately keyed on the `$EH` name and class 3 / type 0, NOT on storage
+    class alone: class-6 `$M` labels sit INSIDE a body (695,516 of them on this
+    build) and bounding on one truncates a function at its prologue.
+    """
+    return {s['value'] for s in section_symbols
+            if s['storage'] == 3 and s['type'] == 0 and s['name'].startswith('$EH')}
+
+
 # ---------------------------------------------------------------- COFF reader
 def parse_coff(data):
     """Minimal PE/COFF + bigobj reader. Returns (sections, symbols)."""
@@ -123,9 +147,19 @@ def parse_coff(data):
 
 
 def function_slices(path):
-    """Yield (name, body, relocs, comdat_sel). EH-aware: slices a code section by
-    consecutive defining-symbol values, so the [+0 EH prefix][+8 entry]
-    [+N __unwind$] layout does not swallow the function."""
+    """Yield (name, body, relocs, comdat_sel).
+
+    Slices a code section by consecutive defining-symbol values, so the
+    [+0 EH prefix][+8 entry][+N funclet] layout does not swallow the function --
+    AND hands the successor's own 8-byte prefix back to the successor.
+
+    The second half is the part that was missing. `type == 0x20` decides what to
+    YIELD; it must not also decide where a slice ENDS, or the `$EH*` boundary
+    the build injects (class 3, type 0) is discarded and the slice runs on into
+    the next region's prefix. Measured on build 45410914: 6,393 slices move,
+    257 of them into agreement with a retail `.pdata` extent they had been +8
+    against.
+    """
     try:
         data = Path(path).read_bytes()
     except OSError:
@@ -146,15 +180,30 @@ def function_slices(path):
         if not defs:
             continue
         raw = sec['raw']
+        marks = eh_boundaries(by_sec.get(si, []))
         pts = sorted({(s['value'], s['name']) for s in defs})
-        bounds = sorted({v for v, _ in pts} | {len(raw)})
+        bounds = sorted({v for v, _ in pts} | marks | {len(raw)})
         nxt = {v: bounds[i + 1] for i, v in enumerate(bounds[:-1])}
+        at = collections.defaultdict(list)
+        for v, n in pts:
+            at[v].append(n)
+        rel = {o: idx_name.get(i, '?') for (o, i, _t) in sec['relocs']}
         for v, name in pts:
             if v % 4 or v >= len(raw):
                 continue
             if is_aux_code_symbol(name):
                 continue
             end = nxt.get(v, len(raw))
+            # FALLBACK for a tree with no `$EH*` marks (an unpatched obj, or a
+            # build that ran before the patcher step). Structural -- successor is
+            # EH-bearing -- plus the prefix bytes AND the relocation pair, so a
+            # body that legitimately ends in two zero words is not trimmed.
+            if end not in marks and end < len(raw) and end - 8 > v \
+                    and any(n.startswith(EH_PREFIXED) for n in at.get(end, ())) \
+                    and raw[end - 8:end] == b'\0' * 8 \
+                    and rel.get(end - 8) == '__CxxFrameHandler' \
+                    and rel.get(end - 4, '').startswith('__ehfuncinfo$'):
+                end -= 8
             rl = [o - v for (o, _i, _t) in sec['relocs'] if v <= o < end]
             yield name, raw[v:end], rl, sec['sel']
 
