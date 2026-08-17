@@ -9,7 +9,80 @@
 
 ## 0. SESSION CLOSE
 
-### 0.4 ROUND FOUR — W9-FALSECREDIT + W10-BODYPORT ← **LATEST**
+### 0.5 ROUNDS FIVE–SIX — W11b/W12/W13/W14/W15/W16 ← **LATEST**
+
+**44,485 fns / 3,747,732 B = 36.312896%**, honest **21,585**,
+`total_functions` **69,226**. **Day total +41 fns / +24,028 B**;
+**59.41% of the 61.121% reachable ceiling.**
+
+| lane | predicted | measured | |
+|---|---:|---:|---|
+| W11b-CUSTOMIZE | +1 / +132 | **+1 / +132** | ✓ |
+| W12-MAPLEADS | +2 / +632 | **+2 / +632** | ✓ |
+| W14-FAMILY | +3 / +1,540 | **+3 / +1,540** | ✓ |
+| W13-CHARINFO | −1 / −92 | **−1 / −92** | ✓ *(deliberate)* |
+| W15-UNLOCK | 0 / +1,156 | **0 / +1,156** | ✓ |
+| W16-HEADERTRUTH | 0 / 0 | **0 / 0** | ✓ |
+
+★★★★★ **THE FAMILY DEFECT IS THE STRONGEST LEVER FOUND — FOUR INSTANCES IN
+ONE DAY.** A wrong `_Rb_tree` name is invisible to `name_check` when the
+whole family carries it consistently: intra-family relocation names agree,
+members sit at `fuzzy` 100, and only the boundary edge is charged.
+**Flagged row alone = −696 B; the family = +632 B.** The screen flags a
+member; the fix is the component.
+
+★★★★ **W15: THE BLOCKER W14 REFUSED TO GUESS WAS A PHANTOM.** `0x8235c610`
+is not a function — it is the interior (+8) of the 104-byte leaf at
+`0x8235c608`, which the map **already named correctly**. dtk carved one
+function into an 8 B head and a 96 B tail and the tail took the name. Every
+symptom follows (nothing can call mid-function; a mid-function slice scores
+~0). **The row was DELETED, not renamed.** Independent corroboration nobody
+solicited: `total_functions` fell **69,227 → 69,226**, and alias group 386
+had already recorded *"different body SIZE (8 vs 104)"*.
+⇒ **When an identification is "missing", first ask whether the thing needing
+a name EXISTS.**
+
+⛔⛔ **W16 REFUTED THE COORDINATOR'S PREMISE MECHANICALLY: THERE IS NO
+".rdata SWITCH JUMP TABLE READ AS A VTABLE" FAILURE MODE ON THIS TARGET.**
+MSVC X360 emits switch tables as compact **byte-offset** tables containing
+no code addresses — 208 harvested via `bctr` dispatch sites, **0** with
+pointer shape. The confusable structure is the **MSVC C++ EH IP-to-state
+map** (`{void *pc; int state;}[]`), whose `pc` fields are interior to one
+function. Both of W13's falses are that.
+★ **6 of 7 corrections are REPAIRS, NOT WITHDRAWALS** — the substance was
+right and the address wrong. `UIComponent.h`'s "20 slots" is **TRUE**
+(`0x82122c84`, 20 slots / 0x50 B); W13's withdrawal was *more cautious than
+the evidence required* **and left the false address still asserted on line
+69**. `ContentMgr.h` had **inherited** `SongMgr.h`'s false address —
+header-to-header propagation is the disease.
+⇒ **An over-cautious correction is still a defect, and a lane auditing the
+lane before it is worth funding.**
+
+★★ **THREE BRIEFED FIGURES OF MINE WERE WRONG AND EACH WAS REFUTED**: the
+switch-table premise; a "9-item" interior queue that measures **174**
+(0/174 are `bl` targets vs a 36.3% control that fires); and a
+"97-instance `SyncProperty` lever" that is a **historical landed result**,
+not a live claim — its check runs and returns `DIFF=0` over **4 adjudicable
+rows**, so it is not a lever, and saying so is the finding.
+
+⛔ **HEADER COMMENTS REMAIN A SYSTEMIC HAZARD, RATE UNQUOTABLE.** 7 of 17
+live claims false = 41.2%, Wilson CI **[21.6%, 64.0%]** — consistent with
+W13's 3/10 and **still far too wide to quote as a point rate**. Both lanes
+refused to publish a point estimate; that restraint is the correct output.
+★ **W13's headline: the header's cited "retail" `li r3,0x28` was OUR OWN
+CODEGEN** — exactly what our wrong 20-byte `CharInfo` compiles to. The
+comment reasoned from the output it existed to justify. `CharInfo` is
+**16 B**, compiler-confirmed.
+
+⚠ **Two coordinator process failures worth keeping:** I relayed W12's cited
+address `0x824730e8`, which is wrong (it is `RndFont3d`'s
+`map<u16,CharInfo*>` in `Font3d.s`) — **W12's conclusion was right and its
+evidence was not**; and I briefed W13 a **stale baseline**, which it
+re-measured as instructed. Also: a merge-message backtick was
+shell-evaluated and silently ate a word — **write merge messages to a file,
+never inline.**
+
+### 0.4 ROUND FOUR — W9-FALSECREDIT + W10-BODYPORT
 
 **44,480 fns / 3,744,364 B = 36.280262%**, honest **21,580**, 254 units at 100%.
 **Day total: +36 fns / +20,660 B across FOURTEEN lanes, every one composing to
@@ -168,7 +241,7 @@ path (correct, newly installed by TOOL-AB) silently reverted a mid-run tool edit
 `BandDirector.cpp` in **15** objs and a glob keeps whichever sorts last — a
 successful port briefly read as a no-op.
 
-### 0.2 ROUND TWO — four more lanes, composition exact again ← **LATEST**
+### 0.2 ROUND TWO — four more lanes, composition exact again
 
 **Measured after a FORCED re-split** (map + alias files both changed, so a bare
 `ninja` would have under-reported — see the round-one warning below):
