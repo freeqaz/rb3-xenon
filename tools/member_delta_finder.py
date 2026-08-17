@@ -1,5 +1,21 @@
 #!/usr/bin/env python3
-"""member_delta_finder.py — detect the DC3 DROPPED/ADDED-MEMBER force-multiplier.
+"""VOID-OUTPUT WINDOW 2026-08-16 -> 2026-08-17. The `args` spelling change zeroed
+the load/store channel, leaving only `addi` computes -- and it blinded the
+stack-noise REJECTION channel too (1 r1-access seen where 296 should have
+been), so the clean-threshold invariant was judged on a fraction of the data.
+member_delta_finder2.py consumes this core and inherits the window.
+
+Every number this tool printed between the first rebuild carrying objdiff-cli
+fdc5113 ("ruler I", committed 2026-08-16 08:34:03 UTC with its release binary
+deliberately NOT rebuilt; confirmed live by 21:30 that day) and the repair
+described below is VOID. Re-run it; do not carry it forward. Audit:
+`ARGS_READER_AUDIT.md` in decomp-bench `archive/runs/objdiff-silent-flags-and-
+dead-controls-2026-08-16/` (task #96); repair task #103. Swept 2026-08-17: NO
+committed artifact in this repo, and no file at any of these tools' default
+output paths, falls inside that window -- this banner exists for outputs held
+outside git.
+
+member_delta_finder.py — detect the DC3 DROPPED/ADDED-MEMBER force-multiplier.
 
 THE PATTERN (proven wins: CharSleeve/CharIKSliderMidi mMe -0xC; Gem Tail -0x14;
 postproc pad). DC3-decomp is *newer* than retail RB3. When DC3 ADDED a member to a

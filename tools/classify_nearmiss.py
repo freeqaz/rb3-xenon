@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
-"""Classify the mismatch CAUSE of near-miss functions via objdiff per-fn JSON.
+"""VOID-OUTPUT WINDOW 2026-08-16 -> 2026-08-17. The `args` spelling change
+INVERTED this tool's headline verdict: NAME_RELOC fell to 0 and OFFSET filled
+with 43 phantom rows per 219 mismatches, so "naming climbs it for free" was
+reported as "source-fidelity struct bug" and vice versa.
+
+Every number this tool printed between the first rebuild carrying objdiff-cli
+fdc5113 ("ruler I", committed 2026-08-16 08:34:03 UTC with its release binary
+deliberately NOT rebuilt; confirmed live by 21:30 that day) and the repair
+described below is VOID. Re-run it; do not carry it forward. Audit:
+`ARGS_READER_AUDIT.md` in decomp-bench `archive/runs/objdiff-silent-flags-and-
+dead-controls-2026-08-16/` (task #96); repair task #103. Swept 2026-08-17: NO
+committed artifact in this repo, and no file at any of these tools' default
+output paths, falls inside that window -- this banner exists for outputs held
+outside git.
+
+Classify the mismatch CAUSE of near-miss functions via objdiff per-fn JSON.
 
 For each function in a match band, run objdiff diff -f json and bucket each
 non-equal instruction into a cause class, then assign the function a dominant

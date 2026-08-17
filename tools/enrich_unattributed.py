@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
-"""Sub-classify the UNATTRIBUTED near-miss bucket by instruction-level signature.
+"""VOID-OUTPUT WINDOW 2026-08-16 -> 2026-08-17. The `args` spelling change cut
+CALL_NAMING by 78% and dropped every row whose relocation was the only
+difference. (The d-form parens were harmless here -- `toks` already splits on
+them; it was the vanished trailing relocation that did the damage.)
+
+Every number this tool printed between the first rebuild carrying objdiff-cli
+fdc5113 ("ruler I", committed 2026-08-16 08:34:03 UTC with its release binary
+deliberately NOT rebuilt; confirmed live by 21:30 that day) and the repair
+described below is VOID. Re-run it; do not carry it forward. Audit:
+`ARGS_READER_AUDIT.md` in decomp-bench `archive/runs/objdiff-silent-flags-and-
+dead-controls-2026-08-16/` (task #96); repair task #103. Swept 2026-08-17: NO
+committed artifact in this repo, and no file at any of these tools' default
+output paths, falls inside that window -- this banner exists for outputs held
+outside git.
+
+Sub-classify the UNATTRIBUTED near-miss bucket by instruction-level signature.
 
 The fork's pattern detector finds no recognized pattern for ~560 real-bodied
 near-misses. That bucket is a grab-bag. This pass pulls the per-instruction diff
