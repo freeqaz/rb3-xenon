@@ -9,19 +9,11 @@ import sys
 import io
 import unittest
 
-# Unicorn imports (must match engine.py's path setup)
-from pathlib import Path
-_MILOHAX_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent
-_UNICORN_DIR = _MILOHAX_DIR / "unicorn"
-UNICORN_PATH = str(_UNICORN_DIR / "bindings" / "python")
-sys.path.insert(0, UNICORN_PATH)
-os.environ["LIBUNICORN_PATH"] = str(_UNICORN_DIR / "build")
-
-try:
-    from unicorn import Uc
-    HAS_UNICORN = True
-except ImportError:
-    HAS_UNICORN = False
+# Unicorn availability. The path search, the shadow ordering and the
+# reason string all live in scripts/unicorn_runner/unicorn_dep.py — the
+# hand-rolled `parent.parent.parent.parent.parent` block that used to sit
+# here resolved to a nonexistent directory inside every git worktree.
+from scripts.unicorn_runner.unicorn_dep import HAS_UNICORN, SKIP_REASON
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 SKELETON_DECOMP = os.path.join(PROJECT_ROOT, "build", "373307D9", "system", "gesture", "Skeleton.obj")
@@ -31,7 +23,8 @@ HAS_SKELETON = os.path.exists(SKELETON_DECOMP) and os.path.exists(SKELETON_ORIG)
 CAN_RUN = HAS_UNICORN and HAS_SKELETON
 
 
-@unittest.skipUnless(CAN_RUN, "Requires Unicorn PPC and Skeleton .obj build artifacts")
+@unittest.skipUnless(
+    CAN_RUN, SKIP_REASON or "Skeleton .obj build artifacts required")
 class TestIntegration(unittest.TestCase):
     """End-to-end tests using real .obj files."""
 
