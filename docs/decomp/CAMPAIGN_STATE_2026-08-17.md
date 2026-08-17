@@ -9,7 +9,122 @@
 
 ## 0. SESSION CLOSE
 
-### 0.11 ROUND TWELVE — the largest stratum measured at ZERO, and a gate that had NEVER FIRED ← **LATEST**
+### 0.12 ROUND THIRTEEN — a red CI gate made green HONESTLY, and the best-priced row in the tree CLOSED ← **LATEST**
+
+**44,513 fns / 3,763,448 B = 36.465176%**, honest **21,602**. Round **+2 fns /
++2,296 B**. **Day total +69 fns / +39,744 B**; **59.66% of the ceiling.**
+
+| lane | predicted | measured | |
+|---|---:|---:|---|
+| W39-PUSHBACK | +1,680 / +436 | **+1,680 / +436** | ✓ both exact |
+| W40-ACCURACY | +2 fns / +180 B | **+2 / +180** | ✓ |
+| W41-CONTRA | net-**negative** | **EXACTLY 0 on every key** | ⛔ *informative miss* |
+| W37-CLRLWI | Δ0 | **Δ0** | ✓ *priced refusal* |
+| W38-GATES | Δ0 | *n/a — refused as absent-vs-absent* | ✓ |
+
+★★★★★ **THE CI GATE WAS RED AND IS NOW GREEN HONESTLY.**
+`icf_alias_finder --validate`: **`PASS — 1314 map-consistent, 217 tolerated, 0
+contradicted, 1533 total`, rc 0.** In **all five** contradicted groups **the
+ALIAS was wrong and the MAP is right.** The parent bodies genuinely *are*
+byte-identical modulo relocations — which is why they were installed — but
+**every differing relocation names the member's own instantiation sibling**, so
+the claim is a **FIXPOINT** that holds only if the callee chain folds. It
+doesn't: `_M_create_node` differs per `value_type` at 84/92/100/108/112 B.
+★★★ **And the verdict deliberately does NOT rest on size:** `<int,float>` vs
+`<int,bool>` vs `<int,int>` all have **84-byte roots with different bytes** —
+**equal size, differing bytes**, which no one-sided extent artifact can produce.
+Both minefield warnings were checked and **absent** (the STLPORT-1 diagonals
+give `retail == ours` per instantiation; **zero** of 17 carves end in an
+unconditional `bctr`). **Surgical, not blanket:** `0x823599e8` **keeps 13 of
+15**; `0x8233c668` proved a **conflation of three sub-clusters**. **1531 in,
+1531 out — nothing pruned**, all 16 kept as `withdrawn` with class
+`FIXPOINT_ROOT_DIFFERS`.
+
+★★★★ **W38: A GATE WHOSE FAILURE COULD BE CURED BY DELETING ITS OWN INPUT.**
+That same validator passed on `{"groups": []}`, on `{}`, and — the dangerous
+one, being the shape of a **bad merge-resolve** — on a file **truncated to 5 of
+1,531 groups**, all at rc 0, while guarding the **~7.9 pp** forgiveness
+mechanism. ★ **A seventh defect one layer down in the same tool:** a loud
+`REFUSING` precondition for the *target* objs and **none** for the *compiled*
+objs — emptying the compiled index reclassified **92.8%** of the population
+(`OK` 1307→30, `STALE_SPELLING` 144→**1421**) with the **exit code identical**,
+failing into the one bucket whose documented rationale is that acting on it is
+measured harmful (**−94,616 B to reverse**).
+★ **It refused to ship a plausible rule:** "group count must not drop" is
+**refuted** — across 52 commits the count is **not monotonic** (7 legitimate
+decreases), so it would fire on **13.5% of real commits**. ⛔ Two briefed items
+**did not reproduce**: `ruler.py`'s selftest already exits 1 **but only by
+coincidence** (latent, held closed by luck), and `map_lint` **crashes** rather
+than failing open — on valid input too.
+
+★★★★★ **W37: THE +5,036 B ROW CANNOT CROSS FROM SOURCE — AND THE SPELLING
+PROGRAM IS REFUTED, NOT EXTENDED.** The price is re-confirmed
+(`fuzzy == mpn == 99.92057`, one charged site). The lane **did not sweep
+spellings**: it localised the mask idiom to the one 100% row that emits it,
+proved the instrument could move with a control, then **transplanted that exact
+construct into the target arm — same TU, same flags — and it emits NO MASK.**
+**Identical source, different codegen at the two sites.** Diagnosis: MSVC masks
+a bool from a **phi of bool constants** or an inlined callee's converted return,
+never a `subfe` result; retail's tail is the one combination our compiler never
+produced. ★ This **partly rehabilitates** RESIDUAL-2's phi intuition that W11b
+refuted — W11b's counter-scan was over *other* functions; **the masked site
+inside this function IS a phi. Right shape, wrong scope.** ⛔ And **W11b's cited
+oracles are not reproducible** (one file has zero sites, the other is not a
+split unit) — the third stale figure this row has carried.
+⇒ **Do not brief this row for a source fix again.** The burden on anyone
+reopening it is to move the ProbeX transplant — a 20-second check.
+
+★★★★★ **W40: THE QUEUED FIX FOR THE REAL BUG WAS A −1.** W33 queued a
+**map-only** swap for the transposed `PastFinalNote`/`AtFirstPhrase`. The map
+half is right; **the source half is false** — the wrong map name had been
+**reasoned backwards into our source** via an in-source comment. Measured as a
+deliberate control: **map-only −1 fn / −36 B, *worse than doing nothing and it
+leaves the bug in place*;** map+source **+1 / +36**.
+★★★ **The score could never have caught it:** `AtFirstPhrase` read **100% under
+both transpositions**, because the bodies differ by one instruction and **both
+names were wrong together** — the arg-blind `mpn` hazard in its most complete
+form, *a self-consistent pair of errors the metric certifies*.
+⚠ **Exactly one of the five is behavioural** (`.end()` vs `.begin()`, so at the
+first phrase it returned false and `BuildPhrase` never ran); the other four are
+**identical-semantics** spelling/inline corrections, stated as such without
+inflation. ★ E's **risk was ~17× its upside** (two rows at 100.0000 totalling
+1,732 B vs +104 B) — priced first, reject rule set **in advance**, both held.
+⛔ `??__FsLoadedFile` proven misnamed and **deliberately not renamed**: the
+correct name is defined only by another obj, so renaming forces a **permanent
+0%** — the *definition* check is what separates it from D.
+
+★★★★ **W39: BOTH OF W34's HANDOFFS PROVEN (+2,116 B), INCLUDING THE ONE IT
+CALLED UNPROVABLE.** The strongest proof was **not a byte test** but a
+**pigeonhole on retail's address space**: the caller pushes an element built by
+**two integer stores**, so the callee is the `Extent` instantiation, while the
+map's `Vector2` and the alternatives have **no address at all** among 89
+distinguished `push_back` addresses — corroborated by a **cross-spelling call a
+compiler cannot emit and only a linker fold can**.
+⛔⛔ **`w33_fold_adjudicate.py` returned a confident `DIFFERENT` — a FALSE
+NEGATIVE.** dtk truncates the carve at an unconditional `bctr`, dropping a
+trailing `blr` retail genuinely has; corrected, the two are **byte-identical
+across all 44 bytes with zero relocations**. **STLPORT-1's disease inside the
+tool written to avoid it** — a size comparison where the two sides are not the
+same measurement. ★ Refuted by control as **rare, not systemic**: 1 of 83
+candidates across 15,716 functions.
+
+★★★★★ **FORGIVENESS SURFACE IS A COST, NOT A FREE OPTION — measured twice this
+round.** W39 **declined to install a fold it had proven `IDENTICAL`** (stronger
+than what it did install) because its callers were nowhere near crossing; W41's
+16 withdrawals measured **exactly 0 bytes**, i.e. they were ~0 B of benefit
+carrying real mis-forgiveness risk. ★ Both answered `none`-flatness with
+**row-level attribution** rather than a control that cannot catch a fabrication.
+
+⛔ **THE VACUITY-THAT-AGREES-WITH-YOUR-PRIOR TRAP FIRED ON THREE MORE LANES**,
+including **inside the very check written to prevent it** (W41's pre-renamer
+probe read **0 symbols** and would have "confirmed" the folds refuted for
+entirely the wrong reason — caught only because the tool's own indexer said
+167,894). W38 hit it twice more; W39 discarded a reader that claimed 83 charges
+against a predicted 1. **Four lanes, one shape.**
+
+---
+
+### 0.11 ROUND TWELVE — the largest stratum measured at ZERO, and a gate that had NEVER FIRED
 
 **44,511 fns / 3,761,152 B = 36.442930%**, honest **21,601**. **Day total
 +67 fns / +37,448 B.**
