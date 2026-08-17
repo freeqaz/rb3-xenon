@@ -9,13 +9,33 @@
 #include "utl/TextStream.h"
 #include "utl/Std.h"
 
-int gBigHunk = 0xC800;
-int gSmallHunk = 0xC800;
+// Struct packing: retail addresses gBigHunk and gSmallHunk through a SINGLE
+// materialized base register -- inside RawAlloc it emits
+// `addi r31, r11, <sym> ; lwz r10, 0x0(r31) ; ... ; lwz r10, 0x4(r31) ;
+// stw r10, 0x0(r31)`. A compile-time +4 displacement is only possible if the
+// two are ONE AGGREGATE; two independent globals each take their own
+// relocation, which is exactly what this file emitted before (a separate
+// `lis` for each). Same technique, and the same reasoning, as
+// MemTrackLogState in utl/MemTrack.cpp.
+struct PoolHunkSizes {
+    int big; // at +0x0
+    int small; // at +0x4
+};
+PoolHunkSizes gPoolHunkSizes = { 0xC800, 0xC800 };
+#define gBigHunk gPoolHunkSizes.big
+#define gSmallHunk gPoolHunkSizes.small
 int gPoolCapacity = 0;
 bool gPoolAllocInitted = 0;
 ChunkAllocator *gChunkAlloc = nullptr;
-static int *sPoolEnd;
-static int *sPoolBuf;
+// NOT file statics: retail hoists a SEPARATE `lis` for each of these and keeps
+// both live across the calls in RawAlloc (r30 for sPoolBuf, r29 for sPoolEnd),
+// which is why retail's prologue saves r28-r31 where ours saved r29-r31. MSVC
+// co-addresses internal-linkage statics it has laid out itself, but gives each
+// external symbol its own relocation -- the mirror image of the gBigHunk /
+// gSmallHunk case above, and the reason our build made the opposite choice on
+// both pairs.
+int *sPoolBuf;
+int *sPoolEnd;
 
 void PoolAllocInit(DataArray *a) {
     a->FindData("big_hunk", gBigHunk);
@@ -134,14 +154,28 @@ void FixedSizeAlloc::Free(void *v) {
 
 int *FixedSizeAlloc::RawAlloc(int size) {
     int *buf = sPoolBuf;
-    int alignedSize = (size >> 2) << 2;
+    // Retail/match: the pool is walked in INT UNITS, not bytes. Retail's body
+    // computes `srawi r11, r4, 2` then `slwi r28, r11, 2` -- two separate
+    // instructions -- and reuses r28 for both the bounds check (`add r8, r28,
+    // r3`) and the bump (`add r11, r28, r3`). MSVC folds the byte-wise spelling
+    // `(size >> 2) << 2` into a single `clrrwi r28, r4, 2`, so retail cannot
+    // have written that. A srawi/slwi PAIR that does not fold is the signature
+    // of `int *` pointer arithmetic: the `>> 2` is the source's, the `slwi 2`
+    // is the compiler's sizeof(int) scaling, and those are emitted by different
+    // passes so they never combine. Same pattern appears twice (here and at
+    // sPoolEnd below).
+    int words = size >> 2;
     gPoolCapacity += size;
 
-    if ((unsigned int)((char *)buf + alignedSize) > (unsigned int)sPoolEnd) {
+    if (buf + words > sPoolEnd) {
         if (MemNumHeaps() > 0) {
-            if (gBigHunk == gSmallHunk) {
-                printf("PoolAlloc warning: allocating small pool chunk\n");
-            }
+            // NOTE: retail's block here is bare -- `bl MemNumHeaps ; cmpwi r3,0
+            // ; ble +0xc ; li r3,0 ; bl MemPushHeap` -- with NO
+            // gBigHunk == gSmallHunk test and no printf. Confirmed by a
+            // string scan of band.exe with a control that fires: "POOL REPORT"
+            // (0x117084) and the AllocType literals are PRESENT, while
+            // "PoolAlloc warning", "allocating small pool chunk", "PoolChunk"
+            // and "PoolAlloc.cpp" are ABSENT. Inherited dev-build dead code.
             MemPushHeap(0);
         }
 
@@ -165,13 +199,16 @@ int *FixedSizeAlloc::RawAlloc(int size) {
             MemPopHeap();
         }
 
-        int hunkSize = gBigHunk;
-        buf = (int *)((char *)sPoolBuf + 0x40);
-        sPoolEnd = (int *)((char *)sPoolBuf + ((hunkSize >> 2) << 2));
+        // gBigHunk is re-read from memory here, not cached across the calls:
+        // retail loads it twice (once as the MemAlloc argument, once again
+        // after MemPopHeap), which is what a plain global read either side of
+        // an opaque call produces.
+        buf = sPoolBuf + 0x10;
+        sPoolEnd = sPoolBuf + (gBigHunk >> 2);
         gBigHunk = gSmallHunk;
     }
 
-    sPoolBuf = (int *)((char *)buf + alignedSize);
+    sPoolBuf = buf + words;
     return buf;
 }
 

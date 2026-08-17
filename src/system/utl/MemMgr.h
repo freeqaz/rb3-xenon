@@ -26,7 +26,19 @@ int MemFindHeap(const char *);
 void MemPushHeap(int heapNum);
 void MemPopHeap();
 void MemForceNewOperatorAlign(int align);
+// Retail/match: SIX parameters, not eight. Both of retail's call sites of
+// fn_827C43E0 -- XMemAlloc (fn_822735B0) and PhysicalAllocTracked
+// (fn_82273350) -- set up r3..r8 ONLY: no r9, no r10, and no stores to the
+// outgoing argument area. The X360 EABI passes integer arguments 7 and 8 in
+// r9/r10, so their absence is decisive rather than suggestive, and the two
+// sites agree. Our tree's trailing (const char *file, int line) are a
+// dev-build tracking feature retail did not compile; they are kept for the
+// native build only.
+#ifdef HX_NATIVE
 void MemTrackAlloc(int, int, const char *, void *, bool, unsigned char, const char *, int);
+#else
+void MemTrackAlloc(int, int, const char *, void *, bool, unsigned char);
+#endif
 void MemTrackFree(void *);
 void MemTrackRealloc(void *, int, int, void *);
 int MemHeapSize(int heapNum);
