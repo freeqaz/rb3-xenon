@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
-"""Sub-classify the UNATTRIBUTED near-miss bucket by instruction-level signature.
+"""VOID-OUTPUT WINDOW 2026-08-16 -> 2026-08-17. The `args` spelling change cut
+CALL_NAMING by 78% and dropped every row whose relocation was the only
+difference. (The d-form parens were harmless here -- `toks` already splits on
+them; it was the vanished trailing relocation that did the damage.)
+
+Every number this tool printed between the first rebuild carrying objdiff-cli
+fdc5113 ("ruler I", committed 2026-08-16 08:34:03 UTC with its release binary
+deliberately NOT rebuilt; confirmed live by 21:30 that day) and the repair
+described below is VOID. Re-run it; do not carry it forward. Audit:
+`ARGS_READER_AUDIT.md` in decomp-bench `archive/runs/objdiff-silent-flags-and-
+dead-controls-2026-08-16/` (task #96); repair task #103. Swept 2026-08-17: NO
+committed artifact in this repo, and no file at any of these tools' default
+output paths, falls inside that window -- this banner exists for outputs held
+outside git.
+
+Sub-classify the UNATTRIBUTED near-miss bucket by instruction-level signature.
 
 The fork's pattern detector finds no recognized pattern for ~560 real-bodied
 near-misses. That bucket is a grab-bag. This pass pulls the per-instruction diff
@@ -49,6 +64,51 @@ def toks(s):
     return [t for t in re.split(r'[,\s()]+', s or '') if t]
 
 
+def flat_args(side):
+    """Rebuild the pre-fdc5113 flat operand join from `typed_args`.
+
+    objdiff-cli fdc5113 ("ruler I", 2026-08-16) changed the JSON `args` string
+    from a comma-join of the COMPARISON arg list to the DISPLAY spelling. Of the
+    three things that moved, this file was immune to two of them and fatally
+    exposed to the third:
+
+      * d-form parens (`0x38, r4` -> `0x38(r4)`): HARMLESS here. `toks` already
+        splits on `(` and `)`, so the operand splits back into ['0x38','r4'] and
+        both the token count and the IMM_RE/REG_RE classification survive. This
+        is the one tokenizer in the repo that got it right by construction --
+        do not "fix" it.
+      * `@h`/`@l` reloc suffixes: harmless, because every consumer of a symbol
+        token here is UNNAMED.search, a substring test.
+      * the trailing NON-DISPLAYED relocation leaving the string: FATAL. That
+        operand is where `bl fn_XXXX`-style naming evidence lives for pooled
+        rows, so CALL_NAMING -- the "climbs when we name the symbol" bucket that
+        is the whole point of this pass -- lost 78% of its rows, and rows whose
+        relocation was the only difference produced no `diffs` at all and were
+        dropped entirely.
+
+    So the repair is the relocation channel, not the parens: rebuild from
+    typed_args, whose trailing Symbol entry still carries the relocation. That
+    reproduces the old join exactly (objdiff-core/src/obj/mod.rs' Display impls:
+    Signed/BranchDest as signed hex, Unsigned as hex, everything else verbatim),
+    and re-appending the symbol to the DISPLAY string instead would double-count
+    it on rows like `stw r10, SYM@l(r11)` where it is already spelled out.
+    """
+    ta = side.get('typed_args')
+    if ta is None:
+        return side.get('args') or ''
+    out = []
+    for a in ta:
+        t = a.get('type')
+        v = a.get('value')
+        if t in ('Signed', 'BranchDest') and isinstance(v, int):
+            out.append(('-0x%x' % -v) if v < 0 else '0x%x' % v)
+        elif t == 'Unsigned' and isinstance(v, int):
+            out.append('0x%x' % v)
+        else:
+            out.append(str(v))
+    return ', '.join(out)
+
+
 def diff_one(unit, sym):
     out = f"/tmp/claude/_enr_{os.getpid()}_{abs(hash((unit,sym)))%99999}.json"
     try:
@@ -74,7 +134,9 @@ def classify_insn(ins):
     t = ins.get("target") or {}
     b = ins.get("base") or {}
     top, bop = t.get("opcode"), b.get("opcode")
-    targs, bargs = t.get("args") or "", b.get("args") or ""
+    # flat_args, never side["args"] -- the display spelling drops the trailing
+    # relocation this classifier reads. See flat_args' docstring.
+    targs, bargs = flat_args(t), flat_args(b)
     if not t or not b:
         return ("BODY", "indel")
     if top != bop:

@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
-"""Honest "true progress" classifier for the near-miss pool.
+"""VOID-OUTPUT WINDOW 2026-08-16 -> 2026-08-17. The `args` spelling change
+reclassified struct-layout diffs STRUCT_OFF -> REG and collapsed DATA_LBL.
+Scope, measured: per-FUNCTION buckets were NOT affected (HAS_REAL absorbs
+both), so a worklist from the window has the right membership; what is void is
+each row's `sub_classes` / `sub_counts` / `diff_samples`, which is what
+wall_classify and member_delta_finder read downstream.
+
+Every number this tool printed between the first rebuild carrying objdiff-cli
+fdc5113 ("ruler I", committed 2026-08-16 08:34:03 UTC with its release binary
+deliberately NOT rebuilt; confirmed live by 21:30 that day) and the repair
+described below is VOID. Re-run it; do not carry it forward. Audit:
+`ARGS_READER_AUDIT.md` in decomp-bench `archive/runs/objdiff-silent-flags-and-
+dead-controls-2026-08-16/` (task #96); repair task #103. Swept 2026-08-17: NO
+committed artifact in this repo, and no file at any of these tools' default
+output paths, falls inside that window -- this banner exists for outputs held
+outside git.
+
+Honest "true progress" classifier for the near-miss pool.
 
 Motivation (LTO/ICF investigation, 2026-06-06): the project owner suspected the
 retail XEX was an LTCG/LTO build whose link-time optimization was hiding matches.
@@ -83,6 +100,49 @@ def _tokens(s):
     return [t.strip() for t in (s or '').split(',') if t.strip()]
 
 
+def flat_args(side):
+    """Rebuild the pre-fdc5113 flat operand join from `typed_args`.
+
+    objdiff-cli fdc5113 ("ruler I", 2026-08-16) changed the JSON `args` string
+    from a comma-join of the COMPARISON arg list to the DISPLAY spelling:
+    d-form operands gained parens (`0x1c, r30` -> `0x1c(r30)`), COFF relocations
+    gained `@h`/`@l` suffixes, and the trailing NON-DISPLAYED relocation was
+    dropped from the string (it survives only as the last `typed_args` entry,
+    of type Symbol).
+
+    Every classifier below was written against the old spelling and reads it
+    with a bare `split(',')`, so the change was silently destructive in two
+    directions at once:
+
+      * `0x1c(r30)` vs `0x20(r30)` is one token that matches neither HEX_RE nor
+        REG_RE, so the MEM_OPS scan fell to its `else: result.add('REG')
+        # conservative` arm -- a STRUCT-LAYOUT bug reported as permuter-class
+        regalloc noise, which is the exact conflation this module's header
+        docstring exists to prevent.
+      * losing the trailing Symbol took the `lbl_`/`__real@` token away, so
+        DATA_LBL collapsed, and rows whose relocation was the ONLY difference
+        became byte-identical on `args` and returned set() at the early-out --
+        a real mismatch counted as nothing, under-counting HAS_REAL worklists.
+
+    Rendering matches objdiff-core/src/obj/mod.rs' Display impls exactly:
+    Signed/BranchDest as signed hex, Unsigned as hex, everything else verbatim.
+    """
+    ta = side.get('typed_args')
+    if ta is None:
+        return side.get('args') or ''
+    out = []
+    for a in ta:
+        t = a.get('type')
+        v = a.get('value')
+        if t in ('Signed', 'BranchDest') and isinstance(v, int):
+            out.append(('-0x%x' % -v) if v < 0 else '0x%x' % v)
+        elif t == 'Unsigned' and isinstance(v, int):
+            out.append('0x%x' % v)
+        else:
+            out.append(str(v))
+    return ', '.join(out)
+
+
 def _classify_insn_sub(ins):
     """Return a set of fine-grained sub-class strings for one differing instruction.
 
@@ -96,14 +156,24 @@ def _classify_insn_sub(ins):
         return set()
     top = t.get('opcode', '')
     bop = b.get('opcode', '')
-    ta = (t.get('args') or '').strip()
-    ba_s = (b.get('args') or '').strip()
+    # NB: classify from the typed_args rebuild, never from the display string --
+    # see flat_args' docstring for what the display spelling costs us.
+    ta = flat_args(t).strip()
+    ba_s = flat_args(b).strip()
     tt = _tokens(ta)
     bt = _tokens(ba_s)
 
     if top != bop:
         return {'OPCODE'}
-    if ta == ba_s:
+    # "nothing differs" must be decided on typed_args, not on a rendered string:
+    # the render is lossy (Signed 3 and Unsigned 3 both print `0x3`), so a string
+    # compare can drop a row objdiff called a mismatch. Residual blind spot,
+    # PRE-EXISTING and unchanged by ruler I: a `bl SYM` pair whose relocations
+    # point at different addresses but carry the SAME symbol name is identical in
+    # both `args` and `typed_args` (only the row `address` differs) and still
+    # returns the empty set here. 88 of the 219 mismatch rows in the dc3 audit
+    # sample are that shape.
+    if ta == ba_s and (t.get('typed_args') or []) == (b.get('typed_args') or []):
         return set()
 
     # Branch instructions -- classify by target symbol type
