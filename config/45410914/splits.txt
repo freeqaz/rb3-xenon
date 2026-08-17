@@ -3820,7 +3820,6 @@ Font.cpp:
 	.pdata      start:0x8220FA98 end:0x8220FAA0
 	.pdata      start:0x8220FAA0 end:0x8220FAB0
 	.pdata      start:0x8220FAB0 end:0x8220FAF8
-	.pdata      start:0x82235B78 end:0x82235B80
 	.pdata      start:0x82235CA0 end:0x82235CB8
 	.pdata      start:0x82235CC0 end:0x82235CE8
 	.text       start:0x822A3EB0 end:0x822A3F54
@@ -11095,6 +11094,7 @@ TrackerSource.cpp:
 DeployCountTracker.cpp:
 	.pdata      start:0x821F9CA8 end:0x821F9CC8
 	.pdata      start:0x82235B40 end:0x82235B78
+	.pdata      start:0x82235B78 end:0x82235B80
 	.pdata      start:0x82235B80 end:0x82235B88
 	.pdata      start:0x82235B90 end:0x82235B98
 	.pdata      start:0x82235B98 end:0x82235C20
