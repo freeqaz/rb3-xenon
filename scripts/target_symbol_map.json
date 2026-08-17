@@ -20224,7 +20224,7 @@
  "0x827b7b28": "??_EProfileMgr@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x827b7ba8": "?ClearArt@StoreArtLoaderPanel@@QAAXXZ",
  "0x827b7ca0": "?FakeProfileFill@ProfileMgr@@QAAXXZ",
- "0x827b7d88": "?HandleProfileLoadComplete@ProfileMgr@@QAAXXZ",
+ "0x827b7d88": "?Unload@StoreArtLoaderPanel@@UAAXXZ",
  "0x827b7dc8": "?EnsureArtLoader@StoreArtLoaderPanel@@QAAXABVString@@@Z",
  "0x827b7e88": "??_GStoreArtLoaderPanel@@UAAPAXI@Z",
  "0x827b7ed0": "?Mirrored@HamMove@@QBA?AW4MoveMirrored@@XZ",
