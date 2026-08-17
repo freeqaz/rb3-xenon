@@ -15,6 +15,14 @@ Cached inventory the streams draw from (regenerable, read-only):
 - `/tmp/claude/unattributed_enriched.jsonl` (instruction-level sub-class)
 - regen: `tools/classify_nearmiss_codegen.py` → `tools/enrich_unattributed.py`
   → `tools/split_imm_offset.py`
+  ⛔ **The `split_imm_offset.py` stage was VOID for this doc's whole execution
+  window** (2026-01-31 → 2026-08-16; task #104). Its STACK/STRUCT buckets could
+  not populate under the objdiff `args` spelling of the time, so everything
+  landed in CONST. Regenerating now gives a materially different — and roughly
+  inverted — split (STACK 0→45, STRUCT 0→350, CONST 287→71 on a 32-function
+  re-measure). Any STREAM below that was scoped from a stack/struct/const
+  proportion must be re-scoped from a fresh run, not from a remembered number.
+  The upstream two stages are unaffected by this particular defect.
 
 ## DISCIPLINE (non-negotiable — these are MATCHING changes, not diagnosis)
 - Each candidate worked in an ISOLATED CoW worktree (`scripts/setup_worktree.sh`).
