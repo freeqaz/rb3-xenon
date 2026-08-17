@@ -242,9 +242,32 @@ register cascade downstream of one defect), `VocalPlayer::Handle` 4,936 B
 3,816 B (**~2 sites — RESIDUAL-1 shape, independent charges**),
 `SaveLoadManager::SetState` 4,096 B. ⚠ `CustomizePanel::Handle` (5,036 B)
 reads CLEAN and is **DRAINED** (RESIDUAL-2: 9 shapes inert + 3 worse) — do
-not re-brief. Small est-site counts (2–3) = independent reloc charges that
-survive a body fix; large counts = probably dissolve with the real defect.
-Both readings are bets, not verdicts.
+not re-brief.
+
+⛔⛔ **THE "LARGE COUNTS PROBABLY DISSOLVE WITH THE REAL DEFECT" READING IS
+REFUTED — MEASURED, NOT ARGUED** (lane W1-GAME, merged `cb03ef87`). It was
+pre-registered on `SaveLoadManager::SetState` (~114 est sites) and the
+composition came back **110 `diff_arg`, ZERO unexplained**: **105 register
+swaps across 28 DISTINCT pairs** (dominant pair only 29%, spanning idx
+6→1022), **25 insert/delete in 13 SEPARATE clusters**, 4 real replaces ⇒
+**thirteen independent body divergences, not one defect with a cascade.**
+Two same-day micro-instances corroborate: FocusTracker's fix closed exactly
+the 3 charges **at its site** and left the other 3 untouched at their
+original indices; GemPlayer's 3 were all at one site and all closed.
+
+> ★★★★ **CHARGES CLOSE WHERE THEIR CAUSE IS. THEY DO NOT DISSOLVE AT A
+> DISTANCE.** ⇒ **Price a 114-site row at ~13 fixes, not at one**, and note
+> that a partial fix buys **zero bytes by construction** (`matched_code` is
+> all-or-nothing per row). The site estimator is valid as a **SIZE** signal
+> and refuted as a **STRUCTURE** signal.
+
+★★★★ **AND THE ORACLE RECORDS INTENT, NOT THE MSVC SPELLING.** W1-GAME's
+headline failed prediction: transcribing rb3-Wii's own spelling of a fixed
+expression scored **96.9% — WORSE than the 97.6% it started from**. Three
+semantically identical spellings scored **96.9 / 97.6 / 100.0**. ⇒ On
+bool-materialization shapes, **literal oracle transcription is actively
+harmful**; the oracle tells you *what* retail computes, never *how* to spell
+it.
 
 ## 9. Provenance
 
