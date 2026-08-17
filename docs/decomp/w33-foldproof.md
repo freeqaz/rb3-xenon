@@ -253,12 +253,93 @@ brace-less `else` both compiled **byte-identical**, recorded in
 * **Withdrew nothing and pruned nothing.** Classes forgiving 0 today become live
   as porting advances; a prior prune cost +94,616 B to reverse.
 * **Did not fix the `??__FsLoadedFile` map row** — §6.
+* **Landed none of §9's six adjudications, deliberately.** Every one collects
+  **0 B** by §4, so none can be justified on score; each needs its own settled
+  whole-binary A/B (and, for the source ones, `native_build_gate.sh`) to land
+  safely. Two carry specific measured hazards: **A and E are `inline`-removal
+  levers**, whose blast radius is every TU that includes the header and which
+  `/Ob2` may re-inline anyway (the sure lever is `__declspec(noinline)`); **D is
+  a map rename**, the edit class where un-pairing is 80.5% of the delta. Landing
+  four unmeasured edits at the end of a long lane to book accuracy credit would
+  be exactly the failure mode this campaign keeps recording. They are queued
+  below with their evidence so the next lane can price them **one per A/B run**.
 * **Did not resolve the 33 `OURS_UNMAPPED` pairs.** Deciding them requires
   resolving retail's anonymous `lbl_<addr>` operands to their data content
   (vtable / RTTI identity). That is a real instrument and it does not exist yet;
   it is the only way this class could ever be settled.
 
-## 9. For the next lane
+## 9. The six strongest pairs adjudicated individually — 4 SOURCE_BUG, 1 MAP_ERROR, 0 folds
+
+Because §5 refuted the fold for every `BOTH_MAPPED` pair, each of these is
+MAP_ERROR or SOURCE_BUG by elimination, and each was then decided on retail
+bytes. ⚠ **All of them collect 0 B** (§4) — they are **accuracy** findings, and
+they are queued, not landed (§10). Map names checked against retail bytes for all
+six: **only D is wrong.**
+
+| # | pair | verdict | decisive retail-byte evidence |
+|---|---|---|---|
+| **A** | `PrintTick@VocalNoteList` vs `TickFormat` | **SOURCE_BUG** (inline policy) | `0x827809e0` tail-calls `0x827d1018` — it *is* `PrintTick(int){return TickFormat(...);}`. Retail makes 8 out-of-line calls across 4 fns; we make **0** because `VocalNoteList.cpp:12` marks it `inline`. |
+| **B** | `substr(II)` vs `substr(I)` | **SOURCE_BUG** | `0x827be7e0` uses `r5` **and** `r6` (`strncpy` len=`r6`); `0x827be7a8` never touches `r6`. Retail 3×two-arg/0×one-arg; ours 2/1. |
+| **C** | `String(const char*)` vs `operator=` | **MIXED — 2 of 4 flagged rows are NOT defects** | ⚠ see below |
+| **D** | `PastFinalNote` vs `AtFirstPhrase` | **MAP_ERROR — the two names are TRANSPOSED; our source is right** | three independent instruments, below |
+| **E** | `SetClipType@CharDriver` vs `SyncInternalBones` | **SOURCE_BUG** (inline policy) | retail's site loads `r4` then calls `0x8237a9e0`, which stores `r4` to `this+0x7c` — it takes an argument, so both map names are right. Our call site is **already correct**; `SetClipType` is defined inline in `CharDriver.h:91`. |
+| **F** | `Find<Object>@ObjectDir` vs `FindObject` | **SOURCE_BUG** | `0x82270438` **calls** `0x82750188` at `+0x18` after `li r5,0` — template wrapper → implementation. Two genuinely distinct functions. |
+
+★ **A refutes the hypothesis it was sent to test.** The "3+1+1 criss-cross"
+across three retail names looked exactly like W31's SongDB **name permutation**.
+It is not: relocation counts in `NotesDone` are retail **4× `PrintTick` / 0×
+`TickFormat`** against ours **0 / 4**, with `SongFullPath` **6 vs 6** — one clean
+4-vs-4 substitution smeared by objdiff alignment across the interleaved
+`SongFullPath` calls. **The map is correct; the shape was an artifact of
+alignment.**
+
+★★ **D is the one real map defect, and it is proven three ways** — the strongest
+single result of the adjudication:
+1. **Vtable membership.** `0x826e5ae8` (map: *non-virtual* `QBA AtFirstPhrase`)
+   sits in a `.rdata` code-pointer table at `0x820f1a34`; `0x826e5688` (map:
+   *virtual* `UBA PastFinalNote`) has **zero** word references binary-wide. **A
+   non-virtual method cannot occupy a vtable slot.**
+2. **Slot alignment.** That table is VocalPlayer's vtable; our vtable has
+   `GetStarRating` → `PastFinalNote` at Δ+0x10, and retail has `GetStarRating` at
+   `0x820f1a24` → the mystery address at `0x820f1a34`, followed by the same six
+   names in order.
+3. **Field semantics.** The two bodies differ by one instruction: `0x826e5688`
+   reads `+0` (begin) ⇒ "at first"; `0x826e5ae8` reads `+4` (end) ⇒ "past final".
+
+⇒ the map has them **swapped**, and `VocalTrack::RebuildHUD` calling
+`AtFirstPhrase` is correct.
+
+⚠⚠ **C is the cautionary one, and it is why "grep the alias file first" is a
+rule.** Two of the four rows flagged there (`PlatformMgr::SetRegion`,
+`AccomplishmentProvider::Mat`) charge `??0String@@QAA@PBD@Z` against our
+`??0String@@QAA@VSymbol@@@Z` — **already forgiven by ICF alias group 34**, as is
+`ToUpper@FixedString`/`ToUpper@String` by **group 150**. Fixing those would have
+been chasing forgiven noise. **Verdict: not defects.** Of the genuine remainder,
+`File.cpp RecursePatternInternal`'s direction is known but the exact line is
+**UNDECIDED**, and `PreloadPanel::Load` is a real missing statement whose exact
+form is unpinned — with the element-type conclusion **explicitly withheld**
+(retail also references `vector<Symbol>::erase`, so its `vector<String>`
+`push_back` is a different container).
+
+★ **B's root cause is the documented provenance trap, exactly as CLAUDE.md
+predicts.** dc3 (which is *newer* than RB3) uses the one-arg `substr` at
+`File.cpp:688`; the RB3-era rb3-Wii oracle uses the two-arg form at
+`File.cpp:599`; **we copied dc3**, and retail agrees with rb3-Wii. Same shape as
+W27's `MidiReader` MILO_WARN/NOTIFY finding.
+
+⚠ **Semantics, stated honestly:** A, E and F are objdiff-"wrong callee" but
+**behaviourally equivalent** — they are inline-policy and call-spelling
+differences, not logic bugs. B is equivalent in effect (a two-arg `substr` with
+an oversized length takes the same tail path). **The only true behavioural
+divergence candidate is C's `PreloadPanel::Load`**, a missing statement.
+
+⚠ **Instrument control worth reusing:** the VA reader was validated against
+`band.exe` bytes with relocations masked **before** use — and its first PE parse
+was off by one section-table field, producing *plausible but wrong*
+disassembly. The control caught it. Plausible-looking disassembly is not
+self-validating.
+
+## 10. For the next lane
 
 * ⛔ **Do not re-price this stratum off "50,436 B".** The collectable content is
   **0 B** and the reason is structural, not effort-shaped.
@@ -284,3 +365,14 @@ brace-less `else` both compiled **byte-identical**, recorded in
 * ★ **`tools/w33_fold_adjudicate.py` is reusable**, with its control. Run
   `--pairs` with the CTRL+/CTRL− fixture before believing any run: **it produced
   a false IDENTICAL once, and only a control that could fail caught it.**
+
+### Queued accuracy fixes from §9 — one per A/B run, none of them worth bytes
+
+| # | edit | risk |
+|---|---|---|
+| **B** | `src/system/os/File.cpp:771` — `pttn.substr((unsigned)forwardPos)` → `pttn.substr((unsigned)forwardPos, (unsigned)(pttnLen+1)-forwardPos)` (rb3-Wii's spelling; reproduces retail's 3/0) | **lowest — one line, oracle-backed** |
+| **F** | `src/system/bandobj/BandCharacter.cpp` — `FindObject(...)` → `Find<Hmx::Object>(...)` at **2739**, **2753**, **2883**, **2904**; **2899-2901** `dynamic_cast<RndTransformable*>(...FindObject(...))` → `Find<RndTransformable>(...)`. Independent check: `__RTDynamicCast` count 4→3 | low, but 5 sites |
+| **D** | `scripts/target_symbol_map.json` — swap `0x826e5688` → `?AtFirstPhrase@VocalPlayer@@QBA_NXZ` and `0x826e5ae8` → `?PastFinalNote@VocalPlayer@@UBA_NXZ` | **map rename — un-pairing risk; force a re-split** |
+| **A** | `src/system/beatmatch/VocalNoteList.cpp:12` — drop `inline` on `PrintTick` | `/Ob2` may re-inline; header blast radius |
+| **E** | `src/system/char/CharDriver.h:91-96` — move `SetClipType` out-of-line into `CharDriver.cpp` (`SetApply` just below has the identical shape) | same as A |
+| **C** | `PreloadPanel::Load` — a missing `String` construction + `push_back`; exact form **unpinned** | ⛔ do not guess the container element type — explicitly withheld |
