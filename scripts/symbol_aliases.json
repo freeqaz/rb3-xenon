@@ -28999,6 +28999,15 @@
     "?OnPlayerQuarantined@Game@@QAAXPAVPlayer@@@Z"
    ],
    "evidence": "lane W34-TRACKER (2026-08-17). /OPT:ICF FIXPOINT CLOSURE over the proven TrackerManager::HandleRemovePlayer == TrackerManager::OnPlayerQuarantined fold at 0x82693158. Our Game::OnPlayerRemoved and Game::OnPlayerQuarantined COMDATs are byte-identical (806301504bfffffc) and their single relocation targets become equal once that fold is closed. INDEPENDENT CORROBORATION from caller semantics: two DISTINCT source spellings call the one retail address 0x82677458 -- Band::RemoveUser (Band.cpp:161, OnPlayerRemoved) and Player::SetQuarantined (Player.cpp:1108, OnPlayerQuarantined). A single address serving two distinct spellings is what a fold IS."
+  },
+  {
+   "name": "push_back",
+   "address": "0x82441658",
+   "survivor": "?push_back@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVVector2@@@Z",
+   "folded": [
+    "?push_back@?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVExtent@@@Z"
+   ],
+   "evidence": "W39-PUSHBACK retail-byte fold proof (NOT masked-T1). Retail Player::LocalSetEnabledState @0x826a7d68+0x4e8 = VA 0x826a8250 decodes in band.exe to `bl 0x82441658`, and the element it pushes is built by TWO INTEGER STORES (li r11,-1 / stw r23,0xa0(r31) / stw r11,0xa4(r31)) -- Extent(int,int), NOT Vector2(float,float) -- with every caller instruction byte-equal, so 0x82441658 IS vector<Extent>::push_back in retail. The map names 0x82441658 push_back<Vector2>; push_back<Extent> and push_back<Key<float>> have NO address of their own in a map that distinguishes 89 other push_back addresses. Retail's body at 0x82441658 (120 B, 1 reloc) is IDENTICAL (relocation TARGET NAMES COMPARED, not masked) to our push_back<Key<float>>, and its single reloc targets the aux the map spells _M_insert_overflow_aux<Key<float>> @0x822969b0 while OUR push_back<Vector2> calls aux<Vector2> (which has no retail address) -- i.e. the aux family's fold is DIRECTLY WITNESSED in retail bytes. vs our push_back<Extent>: bodies identical, sole reloc = that aux pair; aux pair bodies identical (396 B, 7 relocs) with 4 name diffs that are T-INVARIANT (the same-spelling control, retail aux<Key<float>> vs OUR aux<Key<float>>, shows the SAME 4 diffs at the SAME offsets). Of those 4, 3 were independently proven IDENTICAL WITH ZERO RELOCATIONS here (__uninitialized_copy 56 B x2, __uninitialized_fill_n 48 B); the 4th is the global MemOrPoolAlloc/MemOrPoolAllocSTL allocator wiring, present for every STL container. Anti-vacuity control FIRES: the comparator returns DIFFERENT for push_back<Vector3> (136 B), <int> (112 B), <String> (116 B) vs retail's 120 B. No relocation was masked at any depth."
   }
  ]
 }
