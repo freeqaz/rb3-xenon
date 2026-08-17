@@ -23,6 +23,13 @@ Cached inventory the streams draw from (regenerable, read-only):
   re-measure). Any STREAM below that was scoped from a stack/struct/const
   proportion must be re-scoped from a fresh run, not from a remembered number.
   The upstream two stages are unaffected by this particular defect.
+  ⚠ **2026-08-17 (task #103):** "unaffected by this particular defect" is
+  correct and is not a clean bill for the pipeline. `enrich_unattributed.py`
+  had its own one-day outage — objdiff-cli fdc5113 dropped the trailing
+  non-displayed relocation from `args`, cutting its CALL_NAMING bucket by 78%
+  and dropping reloc-only rows. The 2026-06-30 cache this doc draws on predates
+  that and stands; a **regen of `unattributed_enriched.jsonl` performed between
+  2026-08-16 and 2026-08-17 is VOID and must be re-run** on the repaired tool.
 
 ## DISCIPLINE (non-negotiable — these are MATCHING changes, not diagnosis)
 - Each candidate worked in an ISOLATED CoW worktree (`scripts/setup_worktree.sh`).
