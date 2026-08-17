@@ -1061,6 +1061,7 @@
  "0x822734b8": "??1PhysMemTypeTracker@@QAA@XZ",
  "0x822734d8": "??2Node@?$ObjPtrList@VRndGroup@@VObjectDir@@@@SAPAXI@Z",
  "0x82273580": "?CamOverride@RndDrawable@@UAAPAVRndCam@@XZ",
+ "0x822735b0": "XMemAlloc",
  "0x82273680": "??0PhysMemTypeTracker@@QAA@VSymbol@@@Z",
  "0x822736b8": "??1RndHighlightable@@UAA@XZ",
  "0x822736e0": "??1RndAnimatable@@UAA@XZ",
