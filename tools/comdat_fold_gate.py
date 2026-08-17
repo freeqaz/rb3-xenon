@@ -144,15 +144,36 @@ ObjDirItr<RndAnimatable> ctor/operator++) and `PracticePanel::MarkGemsAsProcesse
 our SOURCE spells both callees correctly and it is the MAP ROW that is wrong, the
 same 804 B is recoverable HONESTLY by repairing the swapped rows.
 
-⚠ LATENT (not live) HAZARD IN CF2, recorded so it is not discovered the hard way.
-CF2 discredits addr(F) on "ZERO .text fan-in -- nothing in the image branches
-there".  That reasoning is VACUOUS for virtual functions: `??_E`/`??_G` deleting
-destructors and any other vtable-dispatched method are reached through a vtable
-SLOT, not a direct `bl`, so zero `.text` fan-in is their NORMAL state and is no
-evidence at all.  Audited 2026-08-13: 0 of the 9 installed CF2 spellings and 0 of
-the 16 currently-admitted ones are such a form -- every one is a non-virtual STL
-or free function, where zero fan-in genuinely is evidence.  So this is a bound to
-respect if CF2 is ever pointed at a virtual population, NOT a live defect.
+CF2's discredit is ZERO REFERENCES, not zero fan-in (lane CF2-FANIN, 2026-08-17)
+--------------------------------------------------------------------------------
+CF2 used to discredit addr(F) on "ZERO .text fan-in -- nothing in the image
+branches there", reading `Image.fanin()`, which counts BRANCHES.  That is a
+different claim from "nothing references this address", and the gap is where a
+false PASS lived.
+
+  * VTABLE DISPATCH.  `??_E`/`??_G` and any virtual method is reached through a
+    vtable SLOT, not a `bl`, so zero fan-in is its NORMAL state.  Recorded as a
+    LATENT hazard on 2026-08-13; 0 of the 9 installed and 0 of the 16
+    then-admitted CF2 spellings were such a form.
+  * ADDRESS TAKEN.  A static factory / callback is never branched to either: the
+    registration site materialises its address across two instruction immediates
+    (`lis r11,0x82b6` … `addi r4,r11,0xadc0`), which appears NOWHERE as a 32-bit
+    word, so it is invisible to a branch scan AND to a literal-word scan.  That
+    one went LIVE: `?NewObject@FxSendChorus360@@SA...` was ADMITted by CF2 while
+    `?Init@Synth360@@UAAXXZ` registers it (and its Reverb and EQ siblings) by
+    address, three live 84-byte bodies that ICF did not fold.
+
+Both are now the same instrument bug and both are fixed at the source: the tier
+reads `Image.refs()` -- branches + address-taken immediate pairs + `.rdata`
+/`.data` pointer words -- and every CF2 verdict quotes the per-channel
+breakdown.  Measured on band.exe @45410914: 38,713 of the 48,724 `.text`
+functions with `fanin() == 0` are referenced through one of the added channels,
+so the old discredit was vacuous for 79.5% of the population it could fire on.
+
+It is a SMALLER blind spot, not none.  `refs()` does not see a computed address,
+an immediate pair split wider than its window, an in-`.text` jump table, or a
+cross-module reference; its docstring enumerates them.  A CF2 zero remains
+evidence, never proof.
 
 !! `Retail.same_function` IS VACUOUSLY FALSE ON MOST REAL BODIES !!
 ------------------------------------------------------------------
@@ -214,6 +235,11 @@ REL_BRANCH = {3, 5, 6, 7}          # ADDR24, ADDR14, REL24, REL14
 REL_IMM16 = {4, 0x10, 0x11}        # ADDR16, REFHI, REFLO
 DEFAULT_SUBCLASSES = "bijection_class,map_name_unresolved,residual"
 
+# Compiler-generated EH funclet spellings.  A symbols.txt extent inside a COMDAT
+# span carrying one of these IS that COMDAT's tail, not a function the span
+# swallows -- see Retail.span_extents.  25 rows in target_symbol_map.json.
+FUNCLET_NAMES = ("__unwind$", "__catch$", "__ehhandler$")
+
 
 def branch_dest(w, va):
     op = w >> 26
@@ -249,6 +275,70 @@ class Retail:
         for va in smap.get("_icf_arbitrary", []):
             self.arbitrary.setdefault(int(va, 16), "_icf_arbitrary")
         self.fanin = self.img.fanin()
+        # CF2 asks "does ANYTHING in the image reach this address", which is not
+        # the question `fanin()` answers -- see the CF2 note in the docstring.
+        self.refs = self.img.refs_detail()
+        self.starts = sorted(a for a in self.size
+                             if self.img.text[0] <= a < self.img.text[0] + self.img.text[2])
+
+    def ref_note(self, va):
+        """'N reference(s) (branch B, address-taken A, pointer word P)'."""
+        d = self.refs
+        return ("%d reference(s) -- %d branch, %d address-taken (lis/addi immediate pair), "
+                "%d data pointer word" % (d["total"][va], d["branch"][va],
+                                          d["addr_taken"][va], d["data_ptr"][va]))
+
+    def span_extents(self, va, nbytes):
+        """Is [va, va+nbytes) covered EXACTLY by consecutive symbols.txt functions?
+
+        Returns (ok, why).  The hazard this exists for: a retail read widened
+        from the `.pdata` FUNCTION extent to our COMDAT's span can run past the
+        function's own funclets and into an ADJACENT, UNRELATED function, and
+        then a byte compare over the wider span is comparing two different
+        COMDATs.  On the two pairs the reverted widening (d3f809ac / 9156c659)
+        made live it happened to land exactly -- layout luck, not construction --
+        so the check was never exercised.
+
+        NOT WIRED INTO A VERDICT here: `words()` still reads the function extent
+        only, because the widening is reverted and re-landing it is an owner
+        decision.  This is the check that re-land owes, kept next to the reader
+        it guards and covered by tools/test_addr_taken_refs.py.
+
+        A funclet carries its own `.pdata` entry, so a real COMDAT tail reads as
+        a chain of consecutive extents.  An interior start that
+        target_symbol_map.json NAMES is not a funclet -- it is another function
+        the span would swallow -- and refuses, EXCEPT for the compiler-generated
+        EH names in FUNCLET_NAMES, which are exactly what a COMDAT tail is
+        (25 such rows in the map; `__unwind$79385` at 0x82b5ae14 is the funclet
+        of the survivor this lane re-adjudicated).
+        """
+        n = self.size.get(va)
+        if not n:
+            return False, "no symbols.txt extent at 0x%08x" % va
+        if nbytes < n:
+            return False, ("span %d bytes is SHORTER than the function extent %d at 0x%08x"
+                           % (nbytes, n, va))
+        end, cur, chain = va + nbytes, va, []
+        while cur < end:
+            m = self.size.get(cur)
+            if not m:
+                return False, ("0x%08x is inside the span but carries no symbols.txt extent, so "
+                               "the span is not a chain of consecutive functions" % cur)
+            chain.append((cur, m))
+            cur += m
+        if cur != end:
+            return False, ("the extent chain from 0x%08x overruns the span: it ends at 0x%08x, "
+                           "%d bytes past 0x%08x" % (va, cur, cur - end, end))
+        named = [(a, self.byva[a]) for a, _ in chain[1:]
+                 if a in self.byva and not self.byva[a].startswith(FUNCLET_NAMES)]
+        if named:
+            return False, ("the span swallows %d separately NAMED function(s): %s -- those are "
+                           "not this COMDAT's funclets"
+                           % (len(named), ", ".join("0x%08x %s" % (a, n[:48]) for a, n in named)))
+        return True, ("span 0x%08x+%d is covered exactly by %d consecutive symbols.txt extent(s) "
+                      "(%s); no interior start is separately named"
+                      % (va, nbytes, len(chain),
+                         " + ".join("0x%08x/%d" % (a, m) for a, m in chain)))
 
     def first_dest(self, va):
         w, err = self.words(va)
@@ -640,15 +730,16 @@ def main():
         # 2,308.  Different functions, admitted as CF1.
         #
         # Tiers now, in evaluation order, discredits FIRST so none is shadowed:
-        f_fanin = retail.fanin[fa]
+        f_refs = retail.refs["total"][fa]
+        row["folded_refs"] = retail.ref_note(fa)
         fw, ferr = retail.words(fa)
         if ferr:
             tier, disc = "CF2", ("map parks %s at %s with no symbols.txt extent"
                                  % (F, r["base_addr"]))
-        elif f_fanin == 0:
-            tier, disc = "CF2", ("map parks %s at %s, which has ZERO .text fan-in -- nothing in "
-                                 "the image branches there, so the entry is unsupported by the "
-                                 "image" % (F, r["base_addr"]))
+        elif f_refs == 0:
+            tier, disc = "CF2", ("map parks %s at %s, which NOTHING IN THE IMAGE REFERENCES: %s. "
+                                 "So the entry is unsupported by the image"
+                                 % (F, r["base_addr"], retail.ref_note(fa)))
         elif retail.same_function(fa, sa):
             tier, disc = "CF1", ("retail's body at %s is the SAME FUNCTION as the survivor: same "
                                  "size, every unrelocated word equal, and every branch destination "
@@ -656,11 +747,11 @@ def main():
         elif homonym(dc3, dc3img, retail, F, fa):
             tier, disc = "CF3", homonym(dc3, dc3img, retail, F, fa)
         else:
-            why = ("retail has a DIFFERENT LIVE body named %s at %s (fan-in %d, %d bytes, "
+            why = ("retail has a DIFFERENT LIVE body named %s at %s (%s, %d bytes, "
                    "branches to %s); the image does not discredit it and there is no dc3 homonym "
                    "witness, so the entry stands and an alias would assert a false equality "
                    "between two live addresses"
-                   % (F, r["base_addr"], f_fanin, len(fw) * 4,
+                   % (F, r["base_addr"], retail.ref_note(fa), len(fw) * 4,
                       retail.first_dest(fa) or "no resolvable destination"))
             if fa in retail.arbitrary:
                 why += (" -- AND %s IS listed in %s, which is exactly the (removed) CF4 warrant: "
@@ -780,8 +871,9 @@ def install(groups, path):
               "destination resolved through target_symbol_map.json and name-compared. A 16-bit "
               "immediate relocation is unresolvable in a linked image and REFUSES the pair rather "
               "than being masked away. CF1=retail's map places the folded spelling on the same "
-              "body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, "
-              "or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked "
+              "body or nowhere. CF2=on a different body the image discredits (ZERO REFERENCES -- "
+              "no branch, no address-taken immediate pair, no .rdata/.data pointer word -- or no "
+              "symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked "
               "ham_xbox_r.map. %d folded spelling(s), %d charged name_check sites. Per spelling: %s"
               % (",".join(sorted({r["tier"] for r in rs})), addr, len(folded),
                  sum(r["sites"] for r in rs),
