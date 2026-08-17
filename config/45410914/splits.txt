@@ -702,9 +702,12 @@ VocalTrackDir.cpp:
 	.pdata      start:0x821F9F58 end:0x821F9F60
 	.pdata      start:0x821F9F60 end:0x821F9FE0
 	.pdata      start:0x821F9FE8 end:0x821F9FF8
+	.pdata      start:0x821F9FF8 end:0x821FA000
 	.pdata      start:0x821FA008 end:0x821FA010
+	.pdata      start:0x821FA010 end:0x821FA018
 	.pdata      start:0x821FA020 end:0x821FA060
 	.pdata      start:0x821FA060 end:0x821FA188
+	.pdata      start:0x821FA190 end:0x821FA198
 	.pdata      start:0x821FA1A8 end:0x821FA1B8
 	.pdata      start:0x821FA1B8 end:0x821FA590
 	.pdata      start:0x821FA590 end:0x821FA598
@@ -4349,9 +4352,6 @@ MoveMgr.cpp:
 	.pdata      start:0x821F76D0 end:0x821F7838
 	.pdata      start:0x821F7840 end:0x821F7938
 	.pdata      start:0x821F7940 end:0x821F7948
-	.pdata      start:0x821F9FF8 end:0x821FA000
-	.pdata      start:0x821FA010 end:0x821FA018
-	.pdata      start:0x821FA190 end:0x821FA198
 	.pdata      start:0x821FE8F8 end:0x821FE900
 	.pdata      start:0x821FEC60 end:0x821FEC68
 	.pdata      start:0x821FED08 end:0x821FED18
@@ -6614,9 +6614,6 @@ Song.cpp:
 	.pdata      start:0x821F42D0 end:0x821F42D8
 	.pdata      start:0x821FB660 end:0x821FB670
 	.pdata      start:0x821FE368 end:0x821FE378
-	.pdata      start:0x82235A08 end:0x82235A10
-	.pdata      start:0x82235A10 end:0x82235A18
-	.pdata      start:0x82235A30 end:0x82235A38
 	.pdata      start:0x82242420 end:0x82242548
 	.pdata      start:0x82242568 end:0x82242570
 	.pdata      start:0x82242570 end:0x822425D0
@@ -11105,8 +11102,11 @@ band3/game/PerfectSectionTracker.cpp:
 	.pdata      start:0x821F7E68 end:0x821F7E70
 	.pdata      start:0x822359B0 end:0x822359D8
 	.pdata      start:0x822359D8 end:0x82235A08
+	.pdata      start:0x82235A08 end:0x82235A10
+	.pdata      start:0x82235A10 end:0x82235A18
 	.pdata      start:0x82235A18 end:0x82235A28
 	.pdata      start:0x82235A28 end:0x82235A30
+	.pdata      start:0x82235A30 end:0x82235A38
 	.pdata      start:0x82235A38 end:0x82235B28
 	.pdata      start:0x82235B30 end:0x82235B40
 	.text       start:0x822D79B8 end:0x822D7A50
