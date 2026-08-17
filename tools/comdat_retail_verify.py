@@ -52,6 +52,21 @@ A row may claim no name at all, and that state is load-bearing here:
     ``??$__destroy_aux@ULevelData@@...`` at both `0x82b5b1d0` and `0x82b63ec8`
     -- the canonical unadjudicable pair.
 
+  * an address on ``_icf_arbitrary`` / ``_bijection_arbitrary`` -- **APPLIED,
+    and deliberately so**. The bytes are witnessed; what is unestablished is
+    WHICH of N ICF-folded names belongs on the VA. Refusing them was measured
+    and rejected (lane task100, 2026-08-17): it would drop 957 strict-100
+    name-checked matches build-wide, and on ``--pattern ?SyncProperty@`` alone
+    it moved 59 rows out of "byte-identical to retail" and into "unidentified"
+    with ``differing`` unchanged -- i.e. it deletes true byte evidence and
+    reports it as missing evidence, which reads WORSE, not safer.
+    ⚠ OPEN, and the honest residue: those rows still satisfy the byte claim
+    under any member of their class, so the per-symbol line "instantiation N
+    lives at 0xVA" is not established for them. The map's own comments require
+    a tool "deriving identity, callers, or unit ownership" to treat them as
+    UNRESOLVED. The fix is to LABEL them in the per-symbol rows and count them
+    apart in the summary -- not to refuse them. Not implemented here.
+
 This tool prints "SECTION byte-identical to retail", which IS an identity
 claim, so it must not source an address from a row that claims nothing.  Both
 states are therefore resolved through the renamer's own ``load_address_map``
@@ -83,7 +98,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
-from obj_target_symbol_renamer import load_address_map  # noqa: E402
+from obj_target_symbol_renamer import REFUSAL_KEYS, load_address_map  # noqa: E402
 
 
 def read_coff(path):
@@ -174,17 +189,25 @@ def classify_map_rows(raw):
                     established. Carries no name, so no --pattern can ever
                     match it. NOT an empty string: '' would silently match
                     every pattern-free lookup, which is the bug next door.
-      denied     -- an address key on `_denylist` (whether or not it still
+      denied     -- an address key on a refusal list (whether or not it still
                     carries a name), plus the denied addresses that are absent
-                    from the map body.
+                    from the map body. The refusal keys are imported as
+                    `REFUSAL_KEYS` rather than hardcoded here: this bucket used
+                    to re-derive `_denylist` locally, so had the loader ever
+                    started refusing a second key the summary would have gone
+                    on reporting the old count -- a silent drop, which is the
+                    exact failure this disclosure block exists to prevent.
+                    Measured drift when that was tried (lane task100): loader
+                    refusing 945 addresses, summary still printing 5.
       nonstring  -- a list/dict/number under a `0x` key. Never legitimate.
       metadata   -- non-`0x` keys (`_denylist`, `_icf_arbitrary`, ...).
       claimed    -- string-valued `0x` rows that are not denied.
     """
     denied_addrs = set()
-    for entry in raw.get('_denylist', []) or []:
-        if isinstance(entry, str) and entry.lower().startswith('0x'):
-            denied_addrs.add(int(entry, 16))
+    for key in REFUSAL_KEYS:
+        for entry in raw.get(key, []) or []:
+            if isinstance(entry, str) and entry.lower().startswith('0x'):
+                denied_addrs.add(int(entry, 16))
 
     out = dict(total=len(raw), claimed=0, unclaimed=0, denied=0,
                nonstring=0, metadata=0)
