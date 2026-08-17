@@ -9,7 +9,143 @@
 
 ## 0. SESSION CLOSE
 
-### 0.9 ROUND TEN — W26-MAPLEADS2, and the branch LANDED ← **LATEST**
+### 0.10 ROUND ELEVEN — six lanes, and THREE BRIEFED PRIZES MEASURED UNREACHABLE ← **LATEST**
+
+**44,508 fns / 3,767,864 B = 36.507960%**, honest **21,598**. **Day total
++64 fns / +44,160 B**; **59.73% of the 61.121% reachable ceiling.**
+
+| lane | predicted | measured | |
+|---|---:|---:|---|
+| W31-SONGDB | +2 / +56 | **+2 / +5,148** | ⚠ *92× LOW — cascade* |
+| W29-CAMSHOT | +0 / +2,364 | **+0 / +2,364** | ✓ |
+| W28-UISRC | +1 / +128 | **+1 / +128** | ✓ |
+| W27-FRAMEQ | 0 / 0 | **0 / 0** | ✓ *accuracy fix, landed at Δ0* |
+| W30-SCROLL | — | **priced refusal** | ✓ |
+| W32-STLPORT | +10..80 / +1k..12k | **−411 / −57,396** | ⛔ *reverted* |
+
+⛔⛔⛔ **THE ROUND'S DOMINANT RESULT: "COLLECTABLE" IS NECESSARY, NOT
+SUFFICIENT — AND IT WAS BRIEFED AS THOUGH IT WERE SUFFICIENT.** Two lanes
+reached this independently from opposite ends of the queue. It means only that
+**no relocation-name charge blocks the row**; it does **not** model whether a
+**source lever exists**. W27 partitioned the frame queue by the actual binding
+constraint (permuter is OFF, so `reg > 0` walls the bytes):
+
+| | rows | bytes |
+|---|---:|---:|
+| `reg == 0` — reachable | **3** | **1,920 B** |
+| `reg > 0` — blocked | 15 | 19,316 B |
+
+⇒ the pool was **1,920 B, not the 21,636 B briefed** — an 11× error — and all
+three rows adjudicated to **no available lever. THE VEIN IS DRAINED.** W28
+found the same on the UI cluster: at least 3 of its 17 "collectable" rows are
+layout/identification problems no body edit reaches (`FocusComponent@UIPanel`
+has our source **identical to rb3-Wii's** while retail loads a different field
+*and* a different vtable slot).
+★ W27's detector **validated itself against a landed fix**: 316 rows vs W23's
+317, differing by **exactly `?GeoInit@@`** — the one row W23 fixed. The
+instrument clears precisely where a fix lands.
+
+⛔⛔ **THREE HEADLINE PRIZES DIED THIS ROUND, ALL BY MEASUREMENT:**
+- **`UpdateScrolling` 8,948 B — UNCOLLECTABLE.** Both briefed figures
+  re-derived and reproduced **exactly** (618 hard diffs; 12 bare `arg:{Symbol}`
+  charges, correctly excluding 7 `lbl_*` rows charged by their *register*) —
+  and **"618 + 12" still understates the price by 2.2×**, because
+  `matched_code` is all-or-nothing so the bytes need **all 1,383** charged
+  sites. 11 of 12 name charges are not source-closable; one pair is unprovable
+  by **both** routes (`TickToMs` is **declared and never defined** in our tree,
+  and absent from DC3's map). ⇒ closing every instruction diff buys **+1
+  function and zero bytes**. **Do not fund.**
+- **`ReadMetaEvent@MidiReader` 972 B — DEAD.** W27 proved **declaration order
+  is byte-identical-inert for byte locals** (extending W23's `SampleData` law
+  to a new construct), which accounts for 6 charges; 11 more are retail giving
+  a temp its own slot where we overlay it.
+- **The STLport `__copy` family — REFUTED AND REVERTED** (below).
+
+★★★★★ **W32: W28's OBSERVATION IS REAL AND ITS CAUSE IS REFUTED — "COUNT
+RIGHT, CAUSE WRONG" IN A NEW DISGUISE.** There is **no STLport signature
+difference**. ⛔ The obvious discriminator is **vacuous**: retail's callee reads
+only r3/r4/r5, so r6 and r7 are **never read** and are dead tag-dispatch params
+under *both* hypotheses — "does the callee use r7?" confirms whichever prior is
+brought to it. DC3's leaked map has **12/12** `__copy` in the 5-arg form and
+**zero** 4-arg, *including the byte-identical instantiation our build emits*
+(and the version argument runs **backwards**). The real mechanism is **inline
+policy**: `__copy_ptrs` already has 4 params, and `__declspec(noinline)` took
+the row **88.57 → 100.0%, 28/28 equal**.
+⇒ The family "fix" measured **−411 fns / −57,396 B** against a pre-registered
+*net positive* — **wrong in sign, and the regression is the decisive
+measurement**: those 411 functions matched *because* retail inlines
+`__copy_ptrs` at ≥411 sites and out-lines it at exactly **one**.
+★ **Had it been "fixed", it would have moved our source AWAY from shipped-Milo
+ground truth while plausibly moving the metric.**
+
+★★★★ **W31: THE FAMILY DEFECT PAYS A FIFTH TIME — and the briefed economics
+INVERT.** SongDB's forwarder block was a **full permutation of 7 names across 9
+forwarders** (a 3-cycle plus a 4-chain), one with **no map name at all** — W30
+flagged three; the family was seven. Identified with a **control** (an
+already-consistent sibling) and three independent instruments including
+**caller semantics** (the map called one address a `void(bool)` setter whose 15
+callers are all readers).
+⛔⛔ **"Un-pairing 80.5% / cascade 19.5%" became CASCADE 98.9% / PAIRING 0.6%.**
+The ratio is **not a constant** — it tracks how heavily the renamed symbols are
+**called** (15–22 call sites each). **Do not price a family rename off 19.5%.**
+Pairing predicted **+32 B exact**; the byte total missed **92× low** because 16
+caller rows at 99.80–99.98% crossed at once.
+★★★ **Safety checks ran BEFORE firing and changed the patch:** our `SongDB.obj`
+carries `SongData::GetGemList` only as **UNDEF**, so renaming without also
+moving the `splits.txt` pin would have pinned that row at a **permanent 0%**.
+★★★★ **The alias there was NOT a fold — it was this defect in disguise**; its
+T1 byte test passed *precisely because* retail really is our `GetGemList`.
+Withdrawn with `folded: []`, **nothing pruned**.
+
+★★★ **W29: A REFUSAL OVERTURNED ON BETTER EVIDENCE.** W26 refused this lead and
+every one of its figures **reproduced exactly** — but one premise was wrong:
+**the divergence is ONE function, not the family.** The 88 B shortfall that
+justified the refusal was **a real behavioural bug in our source** (a missing
+`SYNC_PROP(to, o.mXfm)`); adding it moved our COMDAT 1604 B/180 relocs →
+**1692 B/194, predicted exactly, identical to retail**. **Three legs attribute
+the channels**: source-only **+0** / map-only **+672** / both **+2,364**, with
+`none` **−1,692 predicted to the byte**. `ALIAS_SUSPECT` was *able* to fire on
+the map-only leg and did not. **No `symbol_aliases.json` change — none of the
+gain rests on alias forgiveness.**
+★ Its Job-1 instrument fix (`cascade_price`'s **size-blind `PAIRS` verdict**,
+green either way in the scatter-include case) **immediately caught its own
+lane**: the lane disputed a `FALLS −396` verdict and **the tool was right**.
+The tolerance is **calibrated, not chosen** — 19,074 `fuzzy == 100` rows are
+free nulls, delta `{−4: 8, 0: 18844, +4: 222}`, so |delta| > 4 gives **0 FP**.
+⛔ Its first calibration returned **"0 disagreements" over ZERO rows** (bad
+join), caught only by *not-reached* counters. ⚠ And the negative control needed
+a **frozen** constant — spelled the obvious way it would have emptied its own
+red set and tripped the vacuity refusal **instead of going red**.
+
+★ **W28's fix is three lines and NEITHER ORACLE CONTAINS IT** —
+`CurrentTransitionEvent` 84.16 → **100%** via a ternary, because retail builds
+one common temporary where our per-branch returns let MSVC apply RVO. ⚠ The
+intermediate reading was **worse** (84.2 → **65.4**): a named local
+default-constructs from `gNullStr` and MSVC hoists it. **The near-miss was not
+on the path to the answer.**
+
+★ **W27 landed a DC3-contamination fix at Δ0**: all 18 `MidiReader` sites are
+**`MILO_WARN`, not `MILO_NOTIFY`** (our copy is verbatim DC3 at identical line
+numbers; **DC3 is newer**, rb3-Wii says WARN, **retail bytes break the tie** via
+argument evaluation order). **Zero units fell off either ruler** — that check
+was the point. ⚠ The in-source note forbids globalising it: measured **−20**.
+
+⚠ **INSTRUMENT TRAP, propagate:** objdiff labelled `r31`-relative offsets as
+**struct members** with a *"wrong field?"* hint. They are **STACK** offsets —
+`r31` is set before the `stwu`. The labels derive from stale `// 0x..` header
+comments; the **compiler** says our layout already matches retail. Acting on the
+hint would have meant "fixing" a **correct class**. Same disease as
+`REGISTER_SWAP`: a confident attribution restating its own stale input.
+
+**Open handoff:** a second permutation family of the same shape —
+`Game → TrackerManager → Tracker`, with hard arity/type contradictions
+(`OnPlayerQuarantined(Player*)` → `HandleGameOver(float)`; arity 3 vs 1). Not
+actioned because the `Tracker` level is itself unresolved and a partial rename
+un-pairs rows for nothing.
+
+---
+
+### 0.9 ROUND TEN — W26-MAPLEADS2, and the branch LANDED
 
 **44,505 fns / 3,760,224 B = 36.433937%**, honest **21,595**. **Day total
 +61 fns / +36,520 B**; **59.61% of the 61.121% reachable ceiling.**
