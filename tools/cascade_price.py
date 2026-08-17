@@ -115,6 +115,7 @@ except Exception:                                            # pragma: no cover
 
 VERSION = "45410914"
 FIXTURE = "docs/decomp/w17-cascade-fixture.json"
+SWAP_FIXTURE = "docs/decomp/w36-bodyswap-fixture.json"
 
 PLACEHOLDER_PREFIXES = ("fn_", "lbl_", "jumptable_", "code_",
                         "data_", "bss_", "rdata_")
@@ -440,6 +441,110 @@ def can_define(root, unit_src, name, unit_name=None, retail_size=None):
 
 
 # ---------------------------------------------------------------------------
+# HARD LIMIT #1c -- THE BASE BODY SWAPS UNDER A LOCAL RENAME
+#
+# ⛔ W29 found this and deliberately left it unfixed, because the one cell it
+#    hand-adjudicated came out in the TOOL's favour. Lane W36 built the
+#    known-answer fixture W29 asked for and the defect is REAL and LARGE:
+#    on the 11-row BandCamShot rename the local channel is worth +1,552 B and
+#    the old model priced it at -396 B -- an error of 1,948 B, while its
+#    CASCADE estimate (+812) was exactly right. 100% of the error was here.
+#
+# THE MECHANISM. objdiff pairs target<->base BY NAME. In the scatter-include
+# case (`BandCamShot.cpp` `#include`s `hamobj/HamCamShot.cpp`) ONE obj defines
+# BOTH spellings, so a rename does not create a pairing -- it changes WHICH OF
+# OUR BODIES objdiff compares. The target side keeps the same retail bytes; the
+# BASE side is swapped wholesale. Measured on those 11 rows: all 11 base bodies
+# are BYTE-IDENTICAL between the two spellings, but 8 of 11 carry DIFFERENT
+# RELOCATION NAMES -- and `name_check` charges on exactly those names.
+#
+# So a verdict computed from the pre-swap diff is computed against a body
+# objdiff will never compare. Concretely, `?GetNumShots@HamCamShot` is charged
+# T=`?ListNextShots@BandCamShot` vs B=`?ListNextShots@HamCamShot`; the target
+# spelling is ALREADY Band, so it is not in the rename dict, so the old model
+# carried the charge forward as PERSISTS. Post-rename the base body is the
+# Band-spelled COMDAT, which spells that callee Band, and the charge CLEARS.
+#
+# THE FIX. Because the two bodies are byte-identical, their relocation lists
+# are positionally aligned, which yields a BASE-SIDE rename dict
+# {old_body_reloc_name -> new_body_reloc_name}. Applying it to `bsym` before
+# every comparison prices the post-swap body instead of the pre-swap one.
+#
+# ⚠ THIS IS NOT A LICENCE TO GUESS. Every precondition is asserted and a
+#   failure returns a REASON, never a silently-empty map -- an empty map is
+#   indistinguishable from "no swap", which is precisely the vacuity this lane
+#   exists to remove. When the swap cannot be modelled the row is marked
+#   UNRELIABLE and says so in the report.
+# ---------------------------------------------------------------------------
+
+def base_body_swap(root, unit_src, unit_name, old, new):
+    """{old_body_reloc_name -> new_body_reloc_name} for a LOCAL rename.
+
+    Returns (mapping, status). `mapping` is None when the swap cannot be
+    modelled; `status` always explains which case fired:
+
+      NO_SWAP      -- our obj does not define `old`, so nothing is swapped away
+                      and the existing (pre-swap == post-swap) model is exact.
+      SWAP         -- both spellings defined; mapping is the base-side rename.
+      SWAP_NOMAP   -- both defined but the bodies are not positionally
+                      comparable (different bytes / reloc geometry). The local
+                      verdicts for this row are NOT trustworthy.
+      UNKNOWN      -- obj unresolvable or unbuilt.
+    """
+    bp = base_obj_for_unit(root, unit_src, unit_name)
+    if not bp or not (Path(root) / bp).exists():
+        return None, "UNKNOWN (no resolvable/built base obj)"
+    rel = _body_relocs(root, bp)
+    o, n = rel.get(old), rel.get(new)
+    if n is None:
+        # can_define() already reports this as BLOCKED; nothing to swap.
+        return {}, "NO_SWAP (obj does not define the new name)"
+    if o is None:
+        return {}, ("NO_SWAP (obj does not define the OLD name -- this rename "
+                    "creates a pairing rather than swapping a body)")
+    ob, orl = o
+    nb, nrl = n
+    if len(ob) != len(nb) or ob != nb:
+        return None, (f"SWAP_NOMAP (obj defines BOTH spellings but the bodies "
+                      f"differ: {len(ob)} B vs {len(nb)} B, bytes_equal="
+                      f"{ob == nb}) -- the post-swap body cannot be derived "
+                      f"positionally, so the local charge verdicts for this row "
+                      f"are UNRELIABLE")
+    if len(orl) != len(nrl) or [x[0] for x in orl] != [x[0] for x in nrl]:
+        return None, ("SWAP_NOMAP (bodies are byte-identical but their "
+                      "relocation geometry differs) -- local charge verdicts "
+                      "for this row are UNRELIABLE")
+    mapping = {}
+    for (_off, on_, _t1), (_off2, nn, _t2) in zip(orl, nrl):
+        if on_ == nn:
+            continue
+        if mapping.get(on_, nn) != nn:
+            return None, (f"SWAP_NOMAP (base spelling {on_[:40]!r} maps to two "
+                          f"different post-swap names) -- UNRELIABLE")
+        mapping[on_] = nn
+    return mapping, (f"SWAP ({len(mapping)} base-side relocation name(s) change "
+                     f"when objdiff switches to the {new[:34]!r} body)")
+
+
+_BODY_RELOC_CACHE = {}
+
+
+def _body_relocs(root, bp):
+    """{symbol -> (body_bytes, [(offset, name, type), ...])} for one obj."""
+    key = str(Path(root) / bp)
+    if key not in _BODY_RELOC_CACHE:
+        out = {}
+        try:
+            import coff_bodies_ext
+            for n, body, rel, _eo in coff_bodies_ext.function_bodies_ext(key):
+                out.setdefault(n, (body, list(rel)))
+        except Exception:                                     # pragma: no cover
+            out = {}
+        _BODY_RELOC_CACHE[key] = out
+    return _BODY_RELOC_CACHE[key]
+
+
+# ---------------------------------------------------------------------------
 # objdiff
 # ---------------------------------------------------------------------------
 
@@ -522,9 +627,17 @@ def equiv(a, b, aliases):
     return bool(ga and gb and ga & gb)
 
 
-def price_row(diff, rename, aliases, unit, size, fuzzy, mpn, name):
-    """Charged sites now vs after the edit.  `rename` is {old_name: new_name}."""
+def price_row(diff, rename, aliases, unit, size, fuzzy, mpn, name,
+              base_rename=None):
+    """Charged sites now vs after the edit.  `rename` is {old_name: new_name}.
+
+    `base_rename` is the BASE-side rename induced by a body swap (HARD LIMIT
+    #1c).  It is empty for every ordinary rename, and when it is empty this
+    function is behaviourally identical to its pre-W36 form -- which the frozen
+    W17 fixture exists to keep true.
+    """
     v = Verdict(name, unit, size, fuzzy, mpn)
+    base_rename = base_rename or {}
     for ins in diff.get("instructions", []):
         mt = ins.get("match_type")
         tsym = sym_arg(ins.get("target"))
@@ -533,16 +646,21 @@ def price_row(diff, rename, aliases, unit, size, fuzzy, mpn, name):
         if charged_now:
             v.cur += 1
 
+        # ⇣ HARD LIMIT #1c: which of OUR bodies objdiff compares can change.
+        bsym_after = base_rename.get(bsym, bsym) if bsym else bsym
+        base_moved = (bsym_after != bsym)
+
         touched = tsym in rename if tsym else False
-        if not touched:
+        if not touched and not base_moved:
             v.post += 1 if charged_now else 0
             continue
 
-        new_t = rename[tsym]
+        new_t = rename.get(tsym, tsym)
+        tag = "/swap" if base_moved else ""
         if not charged_now:
             # Site is EQUAL today. Either the names agree, or objdiff forgave a
-            # difference. Renaming can only ADD a charge here.
-            if equiv(new_t, bsym, aliases):
+            # difference. A rename -- of EITHER side -- can add a charge here.
+            if equiv(new_t, bsym_after, aliases):
                 continue                       # still agrees -> still free
             if is_placeholder(new_t):
                 continue                       # still forgiven (rename to placeholder)
@@ -550,21 +668,22 @@ def price_row(diff, rename, aliases, unit, size, fuzzy, mpn, name):
                 # Was forgiven by placeholder-ness or an alias; the new REAL name
                 # will be checked against ours and disagrees.
                 v.post += 1
-                v.events.append(("NEW_CHARGE(was forgiven)", tsym, bsym, new_t))
+                v.events.append(("NEW_CHARGE(was forgiven)" + tag,
+                                 tsym, bsym_after, new_t))
             else:
                 v.post += 1
-                v.events.append(("NEW_CHARGE", tsym, bsym, new_t))
+                v.events.append(("NEW_CHARGE" + tag, tsym, bsym_after, new_t))
             continue
 
         # Site is CHARGED today.
         kinds = differing_kinds(ins)
         if mt == "diff_arg" and kinds == {"Symbol"}:
             # A genuine relocation-NAME charge (the W19 rule).
-            if equiv(new_t, bsym, aliases):
-                v.events.append(("CLEARED", tsym, bsym, new_t))
+            if equiv(new_t, bsym_after, aliases):
+                v.events.append(("CLEARED" + tag, tsym, bsym_after, new_t))
                 continue
             v.post += 1
-            v.events.append(("PERSISTS", tsym, bsym, new_t))
+            v.events.append(("PERSISTS" + tag, tsym, bsym_after, new_t))
         else:
             # Charged by a register / immediate / branch-dest / whole-instruction
             # difference. The symbol is incidental; a rename cannot clear it.
@@ -578,7 +697,7 @@ def price_row(diff, rename, aliases, unit, size, fuzzy, mpn, name):
 # Driver
 # ---------------------------------------------------------------------------
 
-def gather(root, edits, selector="graded", verbose=True):
+def gather(root, edits, selector="graded", verbose=True, model_swap=True):
     """edits: {addr:int -> new_name:str}.  Returns (verdicts, notes, ruler_label)."""
     smap = load_map(root)
     symbols = load_symbols(root)
@@ -631,6 +750,28 @@ def gather(root, edits, selector="graded", verbose=True):
     for a in edits:
         cand[a] = "local"
 
+    # HARD LIMIT #1c: for a LOCAL row, work out whether the rename swaps which
+    # of OUR bodies objdiff compares, and if so how the BASE side is respelled.
+    # ⚠ Computed per LOCAL address only -- a caller row keeps its own body, so
+    # only its TARGET-side spelling moves, which the old model already handled.
+    swap_by_addr, swap_status = {}, {}
+    splits_pre = load_splits(root)
+    for addr, new in (edits.items() if model_swap else []):
+        old = smap.get(addr) or f"fn_{addr:08X}"
+        if old == new:
+            continue
+        u, _s, _e = pinning_unit(splits_pre, addr)
+        ru = rows.get(old, (None,))[0] if old in rows else None
+        if u is None:
+            swap_status[addr] = "UNKNOWN (address is not in any splits.txt block)"
+            continue
+        mp, st = base_body_swap(root, u, new, old, new)
+        swap_status[addr] = st
+        if mp:
+            swap_by_addr[addr] = mp
+        elif mp is None:
+            swap_by_addr[addr] = None            # UNRELIABLE, not "no swap"
+
     verdicts = []
     for addr, kind in sorted(cand.items()):
         # Row name AFTER the edit for a local row, BEFORE for a caller row: the
@@ -645,9 +786,15 @@ def gather(root, edits, selector="graded", verbose=True):
         if diff is None:
             notes.append(f"objdiff could not diff {nm[:50]} in {unit}: {err}")
             continue
-        v = price_row(diff, rename, aliases, unit, size, fuzzy, mpn, nm)
+        br = swap_by_addr.get(addr) if kind == "local" else None
+        v = price_row(diff, rename, aliases, unit, size, fuzzy, mpn, nm,
+                      base_rename=(br if br else None))
         v.kind = kind
         v.addr = addr
+        if kind == "local":
+            v.swap_status = swap_status.get(addr, "")
+            if addr in swap_by_addr and swap_by_addr[addr] is None:
+                v.uncertain.append("body-swap-UNMODELLABLE")
         if any(t in ambiguous for t, *_ in [(e[1],) for e in v.events]):
             v.uncertain.append("ambiguous-old-name")
         verdicts.append(v)
@@ -728,6 +875,32 @@ def report(verdicts, notes, rlabel, measures, locals_, title):
     print(f"  cascade GAIN  +{gain} B")
     print(f"  cascade LOSS  -{loss} B")
     print(f"  CASCADE POINT ESTIMATE (call-site name charges): {gain - loss:+d} B")
+
+    # ---- LOCAL CHARGE term (HARD LIMIT #1c) ------------------------------
+    # ★ This number did not exist before W36. The old tool printed local rows
+    #   with a verdict but no byte total, and those verdicts were computed
+    #   against the PRE-SWAP body. On the BandCamShot fixture the local channel
+    #   is +1,552 B and the old model implied -396 B.
+    locs = [v for v in verdicts if getattr(v, "kind", "caller") == "local"]
+    if locs:
+        lg = sum(v.size for v in locs if v.crosses)
+        ll = sum(v.size for v in locs if v.falls)
+        unrel = [v for v in locs if "body-swap-UNMODELLABLE" in v.uncertain]
+        swaps = [v for v in locs
+                 if str(getattr(v, "swap_status", "")).startswith("SWAP (")]
+        print(f"  LOCAL CHARGE ESTIMATE (edited rows, post-swap body): "
+              f"{lg - ll:+d} B   (+{lg} / -{ll})")
+        if swaps:
+            print(f"     {len(swaps)} of {len(locs)} edited rows are BODY SWAPS "
+                  f"(our obj defines both spellings); their charges are priced "
+                  f"against\n     the body objdiff will compare AFTER the "
+                  f"rename, not the one it compares now.")
+        if unrel:
+            print(f"  ⛔ {len(unrel)} edited row(s) have an UNMODELLABLE body "
+                  f"swap -- their local verdicts above are NOT trustworthy:")
+            for v in unrel:
+                print(f"       0x{getattr(v,'addr',0):08x}  "
+                      f"{getattr(v,'swap_status','')}")
 
     # ---- LOCAL / PAIRING term -------------------------------------------
     # ⛔ MEASURED, NOT ASSUMED (lane W20, this tool's own round-trip): renaming
@@ -1060,6 +1233,128 @@ def cmd_selftest(args):
     return 0
 
 
+# ---------------------------------------------------------------------------
+# NEGATIVE CONTROL for the body-swap model (HARD LIMIT #1c)
+#
+# ★ Same discipline as the size selftest above: the fixture's POPULATION is a
+#   FROZEN list of 11 addresses in the fixture file, NEVER derived from the
+#   model under test. That is deliberate -- W29's note records that a
+#   self-break spelled the obvious way (deriving its rows from the thing it is
+#   disabling) empties its own red set and trips the vacuity refusal INSTEAD of
+#   producing a red. A self-break that cannot break is the disease one level up.
+#
+# The expectations are the MEASURED PRE/POST report closure of the real
+# BandCamShot rename (+2,364 B matched_code, row-level sum +3,684/-1,320),
+# not the tool's own output. So the fixture can convict the tool.
+# ---------------------------------------------------------------------------
+
+def cmd_validate_swap(args):
+    root = args.project_dir
+    fx = json.load(open(Path(root) / SWAP_FIXTURE))
+    smap = load_map(root)
+
+    def at(addr):
+        return smap.get(addr) or f"fn_{addr:08X}"
+
+    n = len(fx["edits"])
+    at_new = sum(1 for k, v in fx["edits"].items() if at(int(k, 16)) == v["new"])
+    at_old = sum(1 for k, v in fx["edits"].items() if at(int(k, 16)) == v["old"])
+    if at_new == n:
+        direction, sign = "INVERSE (tree carries the Band names: undo it)", -1
+        edits = {int(k, 16): v["old"] for k, v in fx["edits"].items()}
+    elif at_old == n:
+        direction, sign = "FORWARD (tree carries the Ham names: apply it)", +1
+        edits = {int(k, 16): v["new"] for k, v in fx["edits"].items()}
+    else:
+        raise SystemExit(
+            f"REFUSED: tree is in neither fixture state ({at_new}/{n} at new "
+            f"names, {at_old}/{n} at old). The fixture cannot be scored here.")
+
+    print(f"W36 BODY-SWAP fixture -- direction: {direction}")
+    print(f"provenance: {fx['provenance']['closure']}")
+    if args.self_break:
+        print("\n⚠ --self-break: the base-body swap model is DISABLED. The "
+              "fixture MUST now fail.")
+
+    verdicts, notes, rlabel, measures, locals_ = gather(
+        root, edits, args.ruler, model_swap=not args.self_break)
+    report(verdicts, notes, rlabel, measures, locals_,
+           "W36 BODY-SWAP KNOWN-ANSWER FIXTURE")
+
+    by_addr = {getattr(v, "addr", None): v for v in verdicts
+               if getattr(v, "kind", "") == "local"}
+    by_row = {v.row: v for v in verdicts}
+
+    print(f"\n{'='*100}\nSCORING vs the frozen fixture (measured, not modelled)"
+          f"\n{'='*100}")
+    ok, reached = True, 0
+    print("  LOCAL channel -- the rows being renamed (this is what W36 fixed):")
+    for l in fx["local"]:
+        addr = int(l["addr"], 16)
+        want = sign * l["bytes"]
+        v = by_addr.get(addr)
+        have = v.delta if v else None
+        if v is not None:
+            reached += 1
+        good = (have == want)
+        ok &= good
+        print(f"    {'ok  ' if good else 'FAIL'}  0x{addr:08x}  want {want:+6d}  "
+              f"got {('%+d' % have) if have is not None else 'ROW NOT REACHED'}")
+    print("  CASCADE channel -- unedited callers (unchanged by W36):")
+    creached = 0
+    for c in fx["cascade"]:
+        want = sign * c["bytes"]
+        v = by_row.get(c["row"])
+        have = v.delta if v else None
+        if v is not None:
+            creached += 1
+        good = (have == want)
+        ok &= good
+        print(f"    {'ok  ' if good else 'FAIL'}  {c['row'][:52]:<52} "
+              f"want {want:+6d}  got "
+              f"{('%+d' % have) if have is not None else 'ROW NOT REACHED'}")
+
+    # ⛔ VACUITY GUARD. `all([])` is True, so a fixture whose rows all failed to
+    #    join would score a confident PASS over nothing. W29's first calibration
+    #    did exactly that ("0 disagreements" over ZERO rows) and was caught only
+    #    by a not-reached counter. Count reach explicitly and REFUSE.
+    print(f"\n  rows reached: local {reached}/{len(fx['local'])}, "
+          f"cascade {creached}/{len(fx['cascade'])}")
+    if reached < len(fx["local"]) or creached < len(fx["cascade"]):
+        print("\nREFUSED (exit 2): not every fixture row was reached, so a PASS "
+              "would be scored over\n  a partly-empty population. This is the "
+              "`all([])` failure mode, not a result.")
+        return 2
+
+    want_local = sign * sum(l["bytes"] for l in fx["local"])
+    got_local = sum(by_addr[int(l["addr"], 16)].delta for l in fx["local"])
+    want_casc = sign * sum(c["bytes"] for c in fx["cascade"])
+    got_casc = sum(by_row[c["row"]].delta for c in fx["cascade"])
+    print(f"  LOCAL   want {want_local:+d}  got {got_local:+d}")
+    print(f"  CASCADE want {want_casc:+d}  got {got_casc:+d}")
+    print(f"  TOTAL   want {want_local+want_casc:+d}  got {got_local+got_casc:+d}"
+          f"   (measured whole-binary matched_code delta: "
+          f"{sign*fx['provenance']['measured_delta']:+d})")
+
+    if args.self_break:
+        if ok:
+            print("\nSELF-BREAK FAILED: the body-swap model was disabled and the "
+                  "fixture STILL PASSED.\n  The fixture cannot go red and proves "
+                  "nothing. Treat it as broken.")
+            return 1
+        print("\nSELF-BREAK OK: with the body-swap model disabled the fixture "
+              "goes RED, so it\n  discriminates rather than confirming whatever "
+              "it is pointed at.")
+        return 0
+    if not ok:
+        print("\nFAIL: the pricer does not reproduce the measured BandCamShot "
+              "rename.")
+        return 1
+    print("\nPASS: every local AND cascade row reproduced the MEASURED A/B "
+          "exactly, by\n  enumeration. Run with --self-break to see it go red.")
+    return 0
+
+
 def cmd_price(args):
     root = args.project_dir
     edits = parse_edits(args, root)
@@ -1072,10 +1367,12 @@ def cmd_price(args):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["price", "validate", "selftest"])
+    ap.add_argument("cmd", choices=["price", "validate", "selftest",
+                                    "validate-swap"])
     ap.add_argument("--self-break", action="store_true",
-                    help="selftest: disable the size check and PROVE the test "
-                         "goes red (a test that cannot fail is worth nothing)")
+                    help="selftest/validate-swap: disable the check under test "
+                         "and PROVE it goes red (a test that cannot fail is "
+                         "worth nothing)")
     ap.add_argument("--edit", action="append", help="0xADDR=NewMangledName")
     ap.add_argument("--edit-file", help='JSON {"0xaddr": "NewName", ...}')
     ap.add_argument("--project-dir", default=str(ROOT))
@@ -1083,6 +1380,7 @@ def main():
                     choices=["graded", "none", "data_value"])
     a = ap.parse_args()
     sys.exit({"validate": cmd_validate,
+              "validate-swap": cmd_validate_swap,
               "selftest": cmd_selftest,
               "price": cmd_price}[a.cmd](a))
 

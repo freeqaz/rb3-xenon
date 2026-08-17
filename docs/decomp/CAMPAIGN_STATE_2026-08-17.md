@@ -9,7 +9,135 @@
 
 ## 0. SESSION CLOSE
 
-### 0.10 ROUND ELEVEN — six lanes, and THREE BRIEFED PRIZES MEASURED UNREACHABLE ← **LATEST**
+### 0.11 ROUND TWELVE — the largest stratum measured at ZERO, and a gate that had NEVER FIRED ← **LATEST**
+
+**44,511 fns / 3,761,152 B = 36.442930%**, honest **21,601**. **Day total
++67 fns / +37,448 B.**
+
+⚠ **THE BYTE TOTAL FELL AND THAT IS NOT A REGRESSION — IT IS ATTRIBUTED.**
+Between measurements another thread landed 22 commits (an **alias-surgery** lane
+withdrawing *fabricated* memberships, plus allocator work):
+
+| | Δfns | Δbytes |
+|---|---:|---:|
+| concurrent lanes (other thread) | +1 | **−6,780** |
+| W34-TRACKER (A/B proven in place) | 0 | **+68** |
+| W35-CUSTOMIZE | +2 | 0 |
+
+★ W34's prediction "missed" **because the base moved under me, not because the
+lane was wrong.** Both it and the alias lane had touched `symbol_aliases.json`,
+so an interaction was plausible — reverting W34 in a settled worktree measured
+**−68 B**, i.e. exactly **+68 forward**. **Measure the attribution; do not
+explain a mismatch away.** A code% drop from a **truer** denominator is a win.
+
+⛔⛔⛔ **W33: THE 50,436 B "NAME-BLOCKED" STRATUM IS WORTH ZERO BYTES AT ANY
+SOURCE QUALITY** — the **third** headline prize this session measured
+unreachable rather than unattempted. Two independent findings, either
+sufficient:
+1. **The name charge is never the binding constraint — 0 of 42 rows can
+   cross.** All 42 *also* carry immediate charges, 41 hard diffs, 40 register
+   charges; `matched_code` is all-or-nothing, so proving every fold, landing
+   every map fix **and fabricating every alias** moves **+0 B**. Generalised to
+   the whole 178-row queue: rows whose only charges are genuine names =
+   **0 rows / 0 B**.
+2. **Nothing here is a fold** — 0 of 54 pairs proven; retail-vs-retail refutes
+   **19/19**.
+★ **16 of 42 rows (32.9%) are blocked only by `__savegprlr`/`__restgprlr` — a
+register COUNT wearing a symbol NAME.** ⇒ **"NAME-BLOCKED" is a charge class,
+not a diagnosis**, exactly as **"COLLECTABLE"** was in §0.10. That is the same
+error twice in two rounds: *a label naming the charge, read as naming the
+cause.*
+★ Anti-vacuity gate passed **first** (359,022 COFF symbols, identical to main),
+so every negative is real rather than a pre-renamer absence.
+
+★★★★★ **THE ROUND'S BEST RESULT IS A CONVERGENCE NEITHER LANE SOUGHT.** W34
+found a T1-"proven" alias whose two members **branch to different functions** —
+every forwarder compiles to the same 20-byte body and **masked-T1 masks the one
+relocated word that distinguishes them.** W33, independently, produced a false
+`IDENTICAL` because retail's two `ObjRefConcrete` dtors differ at exactly one
+relocation: **the per-type vtable pointer, which retail spells anonymously.**
+⇒ **Same root cause, two operand kinds: masking or forgiving the one word
+carrying the discriminator.**
+⇒ ★★★★★ **PLACEHOLDER FORGIVENESS IS CORRECT FOR SCORING AND UNSOUND FOR FOLD
+PROOF.** Rule encoded: **never mask a relocation; if you cannot resolve it,
+return `UNDECIDED`.**
+★★ **Not one bad group:** 80 groups in the first 400 objs share masked bytes
+while differing in destination — **the largest with 661 members** (vbase
+adjustor thunks). Masked-T1 would have folded all 661 into one.
+
+★★★★★ **W36: THE PROJECT'S ONLY GATE INTO `COMPLETE` HAD NEVER FIRED.**
+`report_result`'s `base_size == 0` check omitted `-f json`, so objdiff returned
+**markdown**, `stdout.find("{")` was **−1 on every call it ever made**, and with
+no `else` it **fell through and admitted everything** — beneath a third
+fail-open (`except: pass`). Proved by running its exact argv, corroborated
+twice: it is the sole writer of `is_stub = 1`, which reads **0 on all 86,675
+rows**, and `reset_false_complete.py` exists solely to undo that damage at
+scale. **A gate that cannot reject is indistinguishable from no gate** — and
+this one guarded the DB every lane reads for targets. Fixed to fail closed with
+a selftest driving the real handler (rejects 2/2 stubs, admits 2/2 real, 0/25
+over-blocks, `--self-break` red).
+★★★★★ **THE CROSS-CUTTING PATTERN, and the lane's real deliverable:** six
+further gates left unfixed and reported — `icf_alias_finder --validate`
+**passes on an EMPTY alias file while being a CI gate over the ~7.9 pp
+forgiveness mechanism** (take next), `check_regression_lock` CLEAN over an
+empty baseline, `screen_gate` over zero screens, `ruler.py`'s selftest passing
+on the **loud fallback**, `map_lint` CLEAN for a `--unit` typo,
+`validate_symbols.py` firing 2,284 phantom alarms. **Every one guards
+rigorously against a MALFORMED input and not at all against an ABSENT or EMPTY
+one.** An empty population passes every check by construction, and that PASS is
+indistinguishable from a real one.
+⛔ **Three of the vacuities W36 hit were its own** — a probe comparing
+relocation *type ints* instead of names; a selftest built with
+`record_attempts=False`, **which skips the whole guard**; and a `--self-break`
+that broke its own control *discovery* and tripped the vacuity refusal
+**instead of going red** — W29's hazard reproduced verbatim, by a lane briefed
+on it.
+★ Its assigned defect was real: `cascade_price`'s **cascade** estimate was
+**+812, exactly right**, while its **local** channel was wrong by **1,948 B
+(100% of the error)**. Two lanes' arithmetic closes independently — drop the
+1,692 B PropSync and the remainder is **+672**, W29's separately-measured
+map-only leg, **to the byte**.
+★ `ab_measure` **REFUSED** the tooling change as `kinds=['NONE']` — the correct
+verdict and **stronger than the Δ0 the lane pre-registered**, since
+absent-vs-absent cannot earn a Δ0.
+
+★★★★ **W35: A BRIEFING FIVE CONSECUTIVE LANES RECEIVED WAS WRONG IN THE
+*FAVOURABLE* DIRECTION.** `?Handle@CustomizePanel@@` is **ONE instruction worth
++1 function AND +5,036 B** — not "3 mismatches + 2 charging aliases ⇒ zero
+bytes". Re-derived by two measurements sharing no arithmetic:
+`fuzzy == mpn == 99.92057` **exactly** proves `arg_diff_score == 0` (a reloc
+charge would show as 0.00397 pp at five decimals), and Diff Score `100/125900`
+with `PENALTY_INSERT_DELETE == 100` gives **exactly one charged site**. The
+aliases landed earlier and no longer charge. ⚠ Note this is a **sound** use of
+the `fuzzy == mpn` identity precisely because the row is **paired and
+credited** — the guard from §0.8.
+★ W11b had corrected this in-tree the same day and the stale framing **kept
+shipping**; W35 committed the correction **into the source file the next lane
+reads**, not into a report nobody re-reads.
+★ It also **found `PreLoad@PanelDir` beside the briefed `PostLoad` with the
+identical defect, never briefed by anyone**; retail is a **hybrid neither
+oracle spells alone** (rb3-Wii's rev dialect + call order, **DC3's body**).
+**+2 fns / +0 B.**
+⛔ W35 made the exact error it was briefed against and said so: it
+pre-registered **+576 B** off objdiff's *"all instructions equal"* reading,
+which cannot see `diff_arg` charges. `none` moved +576; the shipped ruler moved
+**+0**.
+
+★ **Cascade/pairing confirmed NON-CONSTANT in a third direction:** W31's
+forwarders had 15–22 call sites and cascaded **98.9%**; W34's have 1–2 and
+cascaded **ZERO**. ★ And W33 **scope-bounded W34's new charge-count formula the
+day it was created** — exact on 8/8 of W34's rows, within ±10% on **1 of 42** in
+W33's stratum (median **6.05×**), erring in **both** directions.
+
+**Open, priced, not funded:** `LocalSetEnabledState` +1,432 B behind a provable
+`push_back` fold (needs cross-TU proof); `Band::RemoveUser` +436 B,
+**unprovable our-side** (vendor, no source); W33's 1 proven MAP_ERROR + 4
+SOURCE_BUGs (each worth **0 bytes**, one rename would force a row
+**permanently to 0%**); `icf_alias_finder --validate`'s empty-file pass.
+
+---
+
+### 0.10 ROUND ELEVEN — six lanes, and THREE BRIEFED PRIZES MEASURED UNREACHABLE
 
 **44,508 fns / 3,767,864 B = 36.507960%**, honest **21,598**. **Day total
 +64 fns / +44,160 B**; **59.73% of the 61.121% reachable ceiling.**

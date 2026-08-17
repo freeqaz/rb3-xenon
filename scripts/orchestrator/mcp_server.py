@@ -841,30 +841,69 @@ class DecompMCPServer:
                         # exactly one ruler resolution path exists in this file
                         # — the previous hardcoded `-c functionRelocDiffs=none`
                         # here was a copy of the constant that rotted elsewhere.
+                        # ⛔⛔ `-f json` IS LOAD-BEARING AND WAS MISSING FOR
+                        # MONTHS (lane W36, 2026-08-17). objdiff-cli's default
+                        # output format is MARKDOWN, so `stdout.find("{")`
+                        # returned -1 on every single call, the branch below was
+                        # never entered, and this — the ONLY admission gate into
+                        # COMPLETE — silently admitted everything. Corroborated
+                        # two ways: `:857` is the sole writer of `is_stub = 1`
+                        # in the tree and the column reads 0 on ALL 86,675 rows;
+                        # and `scripts/reset_false_complete.py` exists purely to
+                        # undo "false COMPLETE caused by base_size=0" at scale.
+                        # ⇒ A guard that cannot reject is worse than no guard,
+                        # because it is BELIEVED. Prove it can still fail before
+                        # trusting it: `python3 scripts/orchestrator/complete_guard_selftest.py`.
                         check_result = subprocess.run(
                             [str(self.project_root / "bin" / "objdiff-cli"), "diff", "-p", str(self.project_root), symbol,
-                             *resolve_ruler(self.project_root).args],
+                             *resolve_ruler(self.project_root).args, "-f", "json"],
                             capture_output=True, text=True, timeout=60,
                         )
                         stdout = check_result.stdout
                         json_start = stdout.find("{")
-                        if json_start >= 0:
-                            check_data = json.loads(stdout[json_start:])
-                            if check_data.get("base_size", 0) == 0:
-                                # Mark as stub and reject COMPLETE
-                                conn = get_connection(self.db_path)
-                                conn.execute(
-                                    "UPDATE functions SET is_stub = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-                                    (func["id"],),
-                                )
-                                conn.commit()
-                                return [TextContent(
-                                    type="text",
-                                    text=f"Cannot mark as COMPLETE — base_size=0 (unimplemented stub). "
-                                         f"Function `{symbol}` has no original code to compare against.",
-                                )]
-                    except Exception:
-                        pass  # If check fails, allow the report through
+                        if json_start < 0:
+                            # ⚠ FAIL CLOSED. The previous code had no `else`
+                            # here and fell through to COMPLETE.
+                            return [TextContent(
+                                type="text",
+                                text=(
+                                    f"REFUSED: could not verify `{symbol}` is "
+                                    f"not a stub — objdiff-cli returned no JSON "
+                                    f"(rc={check_result.returncode}).\n\n"
+                                    f"This gate FAILS CLOSED by design: an "
+                                    f"unverifiable COMPLETE is exactly the "
+                                    f"failure this check exists to prevent.\n"
+                                    f"stderr: {(check_result.stderr or '')[:400]}"
+                                ),
+                            )]
+                        check_data = json.loads(stdout[json_start:])
+                        if int(check_data.get("base_size", 0) or 0) == 0:
+                            # Mark as stub and reject COMPLETE
+                            conn = get_connection(self.db_path)
+                            conn.execute(
+                                "UPDATE functions SET is_stub = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+                                (func["id"],),
+                            )
+                            conn.commit()
+                            return [TextContent(
+                                type="text",
+                                text=f"Cannot mark as COMPLETE — base_size=0 (unimplemented stub). "
+                                     f"Function `{symbol}` has no original code to compare against.",
+                            )]
+                    except Exception as exc:
+                        # ⚠ WAS `pass  # If check fails, allow the report
+                        # through` — the third of three stacked fail-opens.
+                        # A gate whose error path ADMITS is not a gate.
+                        return [TextContent(
+                            type="text",
+                            text=(
+                                f"REFUSED: the stub check for `{symbol}` raised "
+                                f"{type(exc).__name__}: {exc}\n\n"
+                                f"This gate FAILS CLOSED. Fix the check (or the "
+                                f"tree) rather than recording an unverified "
+                                f"COMPLETE."
+                            ),
+                        )]
 
                 # Determine verdict from status
                 verdict = None
