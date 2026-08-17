@@ -1475,14 +1475,14 @@ void BandCharacter::SyncObjects() {
 
 float sDrawOrder = -1.0f;
 
-template <void (CharDriver::*Fn)(Symbol)>
-__declspec(noinline) void _outline_SetClipType(CharDriver *_obj, Symbol s) {
-    (_obj->*Fn)(s);
-}
-
+// The _outline_SetClipType<> __declspec(noinline) wrapper that used to live here
+// existed only to force an out-of-line call to CharDriver::SetClipType, which was
+// defined inline in CharDriver.h. That call is out-of-line for real now
+// (CharDriver.cpp), so the workaround is redundant -- and it was not free: it put
+// a `bl _outline_SetClipType` at a site where retail has `bl SetClipType`.
 void BandCharacter::SetClipTypes(Symbol s1, Symbol s2) {
     if (mDriver) {
-        _outline_SetClipType<&CharDriver::SetClipType>(mDriver, s2);
+        mDriver->SetClipType(s2);
         if (BoneServo()) {
             BoneServo()->SetClipType(s1);
         }
