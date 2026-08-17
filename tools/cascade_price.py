@@ -308,8 +308,92 @@ def base_obj_for_unit(root, unit_src, unit_name=None):
     return cands[0] if len(cands) == 1 else None
 
 
-def can_define(root, unit_src, name, unit_name=None):
-    """(verdict, detail) -- does the unit's compiled obj define `name`?"""
+# ---------------------------------------------------------------------------
+# HARD LIMIT #1b -- DEFINING THE NAME IS NOT THE SAME AS DEFINING THE RIGHT BODY
+#
+# ⛔ THE DEFECT THIS FIXES (found by lane W26, landed unfixed with a warning;
+#    repaired by W29). `can_define` used to answer only "is this name present in
+#    our obj's symbol table?" and print a confident
+#    `PAIRS (obj defines the new name)`. That is the RIGHT question exactly when
+#    our obj defines ONE of the two spellings. It is the WRONG question in the
+#    SCATTER-INCLUDE case -- where one .cpp `#include`s another and the single
+#    obj therefore defines BOTH spellings of a whole family.
+#
+#    There a rename does not create a pairing, it SWAPS WHICH BODY objdiff
+#    COMPARES. The name resolves either way, so the old verdict was green either
+#    way, and the tool modelled the row as `no movement` while it was in fact
+#    about to be paired against a DIFFERENT function.
+#
+#    Measured on W26's own case, `?PropSync@@...Target@HamCamShot@@...` at
+#    0x822b4298: retail's extent is 1692 B, our `HamCamShot`-spelled COMDAT is
+#    1692 B / 194 relocations, and our `BandCamShot`-spelled COMDAT is
+#    1604 B / 180 relocations. The rename would have swapped a body that matches
+#    retail's size exactly for one 88 B short, and the tool said `no movement`.
+#
+#    Same disease as W20's "right bytes, wrong mechanism": the verdict was never
+#    wrong about DEFINITION, it was SILENT about IDENTITY.
+#
+# THE TOLERANCE IS CALIBRATED ON THE UNTREATED POPULATION, NOT CHOSEN
+# -------------------------------------------------------------------
+# A row at `fuzzy == 100` is instruction-for-instruction equal, so its base
+# COMDAT size MUST equal retail's extent -- which makes every such row a FREE
+# NULL for this check. Measured on build 45410914 (19,074 scored rows), the
+# delta `retail_extent - our_COMDAT_size` at `fuzzy == 100` takes exactly three
+# values:
+#
+#       -4 :     8 rows
+#       +0 : 18844 rows
+#       +4 :   222 rows        (mostly `$4PPPPPPPM@A@` vbase adjustor thunks)
+#
+# NOT ONE provably-matching row disagrees by 8 or more. The +/-4 band is carve
+# granularity (retail extents are 8-byte aligned; a 12 B thunk is carved 16),
+# not divergence. So firing at |delta| >= 8 has a MEASURED false-positive rate
+# of 0 / 19,074, while still firing on ~495 of the 3,601 sub-100 rows -- i.e.
+# it discriminates rather than confirming whatever it is pointed at.
+#
+# ⚠ The size must come from `coff_bodies_ext`, NEVER from a hand-rolled COMDAT
+# span. Lane STLPORT-1 measured a whole fabricated "+8 B STLport source bug"
+# that was `coff_bodies_ext`'s predecessor billing the SUCCESSOR symbol's
+# 8-byte EH prefix into the function above it. That reader has the artifact
+# fixed (twice: marker-first, name-never) and is the only one that should be
+# used here. Re-implementing it would resurrect the bug at exactly the
+# tolerance that matters.
+#
+# ⚠ AND A SIZE TEST IS A NECESSARY, NOT SUFFICIENT, CONDITION. Two bodies of
+# equal size can still be different functions. This check can therefore only
+# ever REFUTE a swap, never bless one -- which is why an equal size prints
+# nothing rather than an endorsement.
+# ---------------------------------------------------------------------------
+
+# Max |retail_extent - our_COMDAT_size| observed over rows that PROVABLY match.
+# Anything above this is not carve granularity.
+SIZE_TOLERANCE_B = 4
+
+_BODY_SIZE_CACHE = {}
+
+
+def defined_body_sizes(root, bp):
+    """{symbol -> body size} for one obj, via the EH-artifact-fixed reader."""
+    key = str(Path(root) / bp)
+    if key not in _BODY_SIZE_CACHE:
+        sizes = {}
+        try:
+            import coff_bodies_ext
+            for n, body, _rel, _eo in coff_bodies_ext.function_bodies_ext(key):
+                sizes.setdefault(n, len(body))
+        except Exception as exc:                              # pragma: no cover
+            sizes = {"__error__": str(exc)}
+        _BODY_SIZE_CACHE[key] = sizes
+    return _BODY_SIZE_CACHE[key]
+
+
+def can_define(root, unit_src, name, unit_name=None, retail_size=None):
+    """(verdict, detail) -- does the unit's obj define `name`, AS THE RIGHT BODY?
+
+    `retail_size` is the target extent at the address being renamed. When it is
+    known, a definition whose body diverges beyond SIZE_TOLERANCE_B is reported
+    as SIZE_MISMATCH rather than a green PAIRS -- see HARD LIMIT #1b above.
+    """
     bp = base_obj_for_unit(root, unit_src, unit_name)
     if not bp:
         return "UNKNOWN", (f"could not resolve a UNIQUE base obj for {unit_src} "
@@ -321,13 +405,38 @@ def can_define(root, unit_src, name, unit_name=None):
         return "UNKNOWN", f"{bp} not built"
     owned, shared = coff_owned.analyze(p)
     if name in owned:
-        return "OK", f"{bp} defines it (COMDAT NO_DUPLICATES / owned)"
-    if name in shared:
-        return "OK", f"{bp} defines it (COMDAT ANY / template-shared)"
-    return "BLOCKED", (f"{bp} does NOT define this name -- an in-place rename "
-                       f"sends the row to 0% PERMANENTLY (W9's -180 B failure). "
-                       f"Re-home to a unit whose obj defines it, and lift the "
-                       f"spelling verbatim from that obj's symbol table.")
+        kind = "COMDAT NO_DUPLICATES / owned"
+    elif name in shared:
+        kind = "COMDAT ANY / template-shared"
+    else:
+        return "BLOCKED", (f"{bp} does NOT define this name -- an in-place rename "
+                           f"sends the row to 0% PERMANENTLY (W9's -180 B failure). "
+                           f"Re-home to a unit whose obj defines it, and lift the "
+                           f"spelling verbatim from that obj's symbol table.")
+
+    # The name resolves. Now ask the question the old verdict skipped: is the
+    # body it resolves TO the same function retail has at this address?
+    ours = defined_body_sizes(root, bp).get(name)
+    if retail_size is None or ours is None:
+        why = ("no retail extent for this address" if retail_size is None
+               else "no readable COMDAT body for this name")
+        return "OK", (f"{bp} defines it ({kind}) -- SIZE UNVERIFIED ({why}); "
+                      f"this verdict is about DEFINITION only")
+    delta = retail_size - ours
+    if abs(delta) > SIZE_TOLERANCE_B:
+        return "SIZE_MISMATCH", (
+            f"{bp} defines the name ({kind}) BUT ITS BODY IS THE WRONG SIZE: "
+            f"ours {ours} B vs retail's {retail_size} B ({delta:+d}). "
+            f"The obj defines BOTH spellings, so this rename does not create a "
+            f"pairing -- it SWAPS WHICH BODY objdiff COMPARES, onto a function "
+            f"that cannot reach fuzzy==100 at any register allocation. "
+            f"Reconcile the SOURCE first (the two definitions genuinely differ), "
+            f"then re-price. Tolerance is {SIZE_TOLERANCE_B} B, calibrated so "
+            f"that 0 of 19,074 provably-matching rows fire.")
+    return "OK", (f"{bp} defines it ({kind}); body {ours} B vs retail "
+                  f"{retail_size} B ({delta:+d}, within the {SIZE_TOLERANCE_B} B "
+                  f"carve tolerance) -- size is CONSISTENT, which refutes a swap "
+                  f"but does not prove identity")
 
 
 # ---------------------------------------------------------------------------
@@ -550,6 +659,10 @@ def gather(root, edits, selector="graded", verbose=True):
     # LOCAL / PAIRING term: can the pin behind each edited address define the
     # replacement at all?  (HARD LIMIT #1 -- see can_define.)
     splits = load_splits(root)
+    # ⚠ Retail extent comes from symbols.txt keyed on ADDRESS. CLAUDE.md: dtk's
+    # `.s` address COLUMNS are synthetic for multi-block units, but symbols.txt
+    # is the authoritative extent table and is what load_symbols() already read.
+    ext_by_addr = {a: sz for a, sz, _n in symbols}
     locals_ = []
     for addr, new in sorted(edits.items()):
         old = smap.get(addr) or f"fn_{addr:08X}"
@@ -566,9 +679,12 @@ def gather(root, edits, selector="graded", verbose=True):
             verdict, detail = "DE-NAMED", ("replacement is a placeholder: the row "
                                            "un-pairs and its bytes are withdrawn")
         else:
-            v, detail = can_define(root, unit, new, report_unit)
+            v, detail = can_define(root, unit, new, report_unit,
+                                   retail_size=ext_by_addr.get(addr))
             verdict = {"OK": "PAIRS (obj defines the new name)",
                        "BLOCKED": "BLOCKED (obj cannot define the new name)",
+                       "SIZE_MISMATCH": "⛔ SIZE_MISMATCH (defines the name, "
+                                        "WRONG BODY -- see detail)",
                        "UNKNOWN": "UNKNOWN"}[v]
         locals_.append(dict(addr=addr, unit=(unit or "-")[:26], size=size,
                             fuzzy=fuzzy, verdict=verdict, detail=detail,
@@ -629,6 +745,7 @@ def report(verdicts, notes, rlabel, measures, locals_, title):
         print("  LOCAL / PAIRING term -- the edited rows themselves "
               "(SEPARATE CHANNEL, not in the estimate above):")
         blocked = 0
+        swapped = 0
         for l in locals_:
             print(f"    0x{l['addr']:08x}  {l['unit']:<26} {l['size']:>6} B  "
                   f"fuzzy={l['fuzzy']:>8.4f}  {l['verdict']}")
@@ -636,6 +753,17 @@ def report(verdicts, notes, rlabel, measures, locals_, title):
             print(f"        {l['detail']}")
             if l["verdict"].startswith("BLOCKED"):
                 blocked += l["size"]
+            if "SIZE_MISMATCH" in l["verdict"]:
+                swapped += l["size"]
+        if swapped:
+            print(f"\n  ⛔ BODY-SWAP EXPOSURE: {swapped} B of rows whose obj DOES "
+                  f"define the replacement name but\n     defines it as a "
+                  f"DIFFERENT-SIZED body. These are the SCATTER-INCLUDE rows: one "
+                  f".cpp\n     `#include`s another, so a single obj carries both "
+                  f"spellings and the rename SWAPS\n     which body objdiff "
+                  f"compares rather than creating a pairing. A family carrying "
+                  f"any\n     of these CANNOT be renamed coherently -- reconcile "
+                  f"the SOURCE first, then re-price.")
         if blocked:
             print(f"\n  ⛔ BLOCKED EXPOSURE: {blocked} B of rows whose pinned unit "
                   f"CANNOT define the replacement name.\n"
@@ -693,7 +821,9 @@ def report(verdicts, notes, rlabel, measures, locals_, title):
             for b, n in sorted(hist.items(), key=lambda kv: -kv[1])[:5]:
                 print(f"        {n:>3}x  {str(b)[:80]}")
 
-    pairing_change = any(l["verdict"].startswith(("BLOCKED", "PAIRS"))
+    # A SIZE_MISMATCH row also moves `none`: swapping which body is compared is
+    # visible to a ruler that ignores relocation NAMES but not bodies.
+    pairing_change = any(l["verdict"].startswith(("BLOCKED", "PAIRS", "⛔ SIZE_MISMATCH"))
                          for l in locals_)
     if pairing_change:
         print(f"\n  PREDICTED `none` delta: NON-ZERO. This edit changes PAIRING "
@@ -795,6 +925,141 @@ def cmd_validate(args):
     return 0
 
 
+# ---------------------------------------------------------------------------
+# NEGATIVE CONTROL for the size check (HARD LIMIT #1b)
+#
+# ★ A REPAIR WHOSE TEST CANNOT GO RED IS WORTH NOTHING. This project has been
+#   burned repeatedly by instruments that confirm whatever they are pointed at:
+#   a `/GS` cookie detector that scored 0 on a known-`/GS` object; a `grep` that
+#   cannot match inside binaries; a `fuzzy == mpn` certificate that is trivially
+#   true on the unpaired rows it was applied to. So this selftest is built to
+#   FAIL, and `--self-break` demonstrates that it does.
+#
+# It derives BOTH populations from the live tree rather than hardcoding a
+# fixture, so it cannot rot into agreement with a changed tree:
+#
+#   GREEN population -- every row at `fuzzy == 100` that has both a retail
+#       extent and a readable base COMDAT. These PROVABLY match, so the check
+#       must fire ZERO times. (Tighten SIZE_TOLERANCE_B to 0 and this goes red.)
+#   RED population -- rows whose |delta| >= 8. The check must fire on all of
+#       them. (Remove the size check and this goes red -- that is --self-break.)
+#
+# ⛔ VACUITY GUARD, and it is the point. `all([])` is True, so an empty
+#   population would make both assertions pass and print a confident green.
+#   Both populations are floor-checked and the selftest REFUSES (exit 2) rather
+#   than passing on no data -- the failure mode that produced this project's
+#   vacuous `/GS` detector.
+# ---------------------------------------------------------------------------
+
+def _size_population(root, verbose=True):
+    """(green, red, skipped) row lists of (name, unit, retail_ext, our_size, fuzzy)."""
+    import os
+    smap = load_map(root)
+    byname = {}
+    for a, n in smap.items():
+        byname.setdefault(n, []).append(a)
+    ext_by_addr = {a: sz for a, sz, _n in load_symbols(root)}
+    # ⚠ Refuse names that are not UNIQUE in the map: a duplicate spelling cannot
+    # be attributed to one extent, and guessing would inject the very
+    # false-confidence this check exists to remove.
+    ext_by_name = {n: ext_by_addr[a[0]] for n, a in byname.items()
+                   if len(a) == 1 and a[0] in ext_by_addr}
+    rep = json.load(open(Path(root) / "build" / VERSION / "report.json"))
+    units = {u["name"]: u for u in _objdiff_units(root)}
+    green, red, skipped = [], [], 0
+    for u in rep.get("units", []):
+        meta = units.get(u.get("name"))
+        fns = u.get("functions") or []
+        if not meta or not fns:
+            continue
+        bp = meta.get("base_path")
+        if not bp or not os.path.exists(Path(root) / bp):
+            continue
+        sizes = defined_body_sizes(root, bp)
+        for f in fns:
+            nm = f.get("name", "")
+            fz = float(f.get("fuzzy_match_percent", 0.0) or 0.0)
+            e, s = ext_by_name.get(nm), sizes.get(nm)
+            if e is None or s is None:
+                skipped += 1
+                continue
+            row = (nm, u["name"], e, s, fz)
+            if fz >= 100.0:
+                green.append(row)
+            elif abs(e - s) > CALIBRATED_TOLERANCE_B:
+                red.append(row)
+        if verbose:
+            print(".", end="", flush=True)
+    if verbose:
+        print()
+    return green, red, skipped
+
+
+# ⚠ The POPULATION is selected with the frozen calibrated value, never with the
+# mutable SIZE_TOLERANCE_B under test. Otherwise `--self-break` would empty the
+# red population and trip the vacuity refusal instead of producing the RED it
+# exists to demonstrate -- a self-break that cannot break.
+CALIBRATED_TOLERANCE_B = 4
+
+MIN_GREEN, MIN_RED = 1000, 1
+
+
+def cmd_selftest(args):
+    global SIZE_TOLERANCE_B
+    root = args.project_dir
+    print("cascade_price size-check SELFTEST (HARD LIMIT #1b negative control)")
+    print(f"  tolerance: |retail_extent - our_COMDAT_size| > {SIZE_TOLERANCE_B} B fires")
+    if args.self_break:
+        print("  --self-break: DISABLING the size check; the RED assertion MUST fail.")
+        SIZE_TOLERANCE_B = 1 << 30                 # size-blind, i.e. the OLD tool
+    green, red, skipped = _size_population(root)
+    print(f"\npopulations: green(fuzzy==100)={len(green)}  "
+          f"red(|delta|>{4})={len(red)}  unreachable={skipped}")
+
+    if len(green) < MIN_GREEN or len(red) < MIN_RED:
+        print(f"\nREFUSED (exit 2): population too small to test "
+              f"(need >= {MIN_GREEN} green and >= {MIN_RED} red).\n"
+              f"  An empty population makes BOTH assertions vacuously true, so "
+              f"this refuses rather than\n  printing a green that means nothing. "
+              f"Did the tree build? Did the target-symbol renamer run?")
+        return 2
+
+    # --- GREEN: the check must never fire on a provably-matching row ---------
+    fp = [r for r in green if abs(r[2] - r[3]) > SIZE_TOLERANCE_B]
+    print(f"\nGREEN assertion -- 0 fires among {len(green)} rows at fuzzy==100")
+    print(f"  fires: {len(fp)}   {'ok' if not fp else 'FAIL'}")
+    for r in fp[:8]:
+        print(f"    FP {r[0][:58]:<58} retail={r[2]} ours={r[3]}")
+
+    # --- RED: the check must fire on every row it is supposed to ------------
+    hit = [r for r in red if abs(r[2] - r[3]) > SIZE_TOLERANCE_B]
+    print(f"\nRED assertion -- fires on all {len(red)} rows whose |delta| > 4")
+    print(f"  fires: {len(hit)}/{len(red)}   "
+          f"{'ok' if len(hit) == len(red) else 'FAIL'}")
+    for r in sorted(red, key=lambda r: -abs(r[2] - r[3]))[:5]:
+        print(f"    RED {r[0][:58]:<58} retail={r[2]} ours={r[3]} "
+              f"({r[2]-r[3]:+d}) fuzzy={r[4]:.4f}")
+
+    ok = (not fp) and len(hit) == len(red)
+    if args.self_break:
+        if ok:
+            print("\nSELF-BREAK FAILED: the size check was disabled and the "
+                  "selftest STILL PASSED.\n  That means the test cannot go red "
+                  "and proves nothing. Treat it as broken.")
+            return 1
+        print("\nSELF-BREAK OK: with the size check disabled the selftest goes "
+              "RED, so it discriminates\n  rather than confirming whatever it is "
+              "pointed at.")
+        return 0
+    if not ok:
+        print("\nFAIL: the size check does not discriminate on this tree.")
+        return 1
+    print(f"\nPASS: 0 false positives over {len(green)} provably-matching rows, "
+          f"and the check fires on\n  all {len(red)} divergent rows. Run with "
+          f"--self-break to see it go red.")
+    return 0
+
+
 def cmd_price(args):
     root = args.project_dir
     edits = parse_edits(args, root)
@@ -807,14 +1072,19 @@ def cmd_price(args):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["price", "validate"])
+    ap.add_argument("cmd", choices=["price", "validate", "selftest"])
+    ap.add_argument("--self-break", action="store_true",
+                    help="selftest: disable the size check and PROVE the test "
+                         "goes red (a test that cannot fail is worth nothing)")
     ap.add_argument("--edit", action="append", help="0xADDR=NewMangledName")
     ap.add_argument("--edit-file", help='JSON {"0xaddr": "NewName", ...}')
     ap.add_argument("--project-dir", default=str(ROOT))
     ap.add_argument("--ruler", default="graded",
                     choices=["graded", "none", "data_value"])
     a = ap.parse_args()
-    sys.exit(cmd_validate(a) if a.cmd == "validate" else cmd_price(a))
+    sys.exit({"validate": cmd_validate,
+              "selftest": cmd_selftest,
+              "price": cmd_price}[a.cmd](a))
 
 
 if __name__ == "__main__":
