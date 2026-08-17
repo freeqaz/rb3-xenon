@@ -394,7 +394,7 @@ def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=
     return None
 
 
-def diff_many(project_dir, rows, cache_dir, stab, stats=None, workers=8):
+def diff_many(project_dir, rows, cache_dir, stab=None, stats=None, workers=8):
     """diff_many_tolerant, but a miss is terminal -- with the RIGHT diagnosis.
 
     A partial dump yields a plausible but WRONG census (shape 2), so this never
@@ -404,7 +404,16 @@ def diff_many(project_dir, rows, cache_dir, stab, stats=None, workers=8):
     MEASURED NOTHING and exits VOID (4).  A miss on a tree that held still is a
     real defect and exits REFUSE (1), unchanged.  Reporting the first as the
     second is what trains people to wave off the second.
+
+    `stab` defaults to None and is built here when omitted, so the two in-repo
+    importers of this module -- tools/structural_decompose.py and
+    tools/shape_families.py, which call diff_many(project_dir, rows, cache_dir,
+    workers=8) -- inherit the guard without an edit and without a signature
+    break.  They run the same diff pass over the same tree and had the same
+    ambiguity.
     """
+    if stab is None:
+        stab = InputStability(project_dir)      # must be built BEFORE the pass
     out = diff_many_tolerant(project_dir, rows, cache_dir, stab, stats, workers)
     stab.recheck()
     miss = [r for r, o in zip(rows, out) if o is None]
