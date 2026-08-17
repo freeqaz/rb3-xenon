@@ -106,6 +106,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "scripts" / "analysis"))
 
 import retail_callers  # noqa: E402  (reuse the PE bl scan, never re-implement it)
+import coff_owned      # noqa: E402  (reuse the COMDAT-aware obj symbol reader)
 
 try:
     from ruler import resolve_ruler
@@ -226,6 +227,84 @@ def load_aliases(root):
         if len(parts) >= 3 and parts[0].count(":") == 1:
             groups.setdefault(parts[1], set()).add(parts[2].lower())
     return groups
+
+
+# ---------------------------------------------------------------------------
+# HARD LIMIT #1 -- can the pinned unit's base obj even DEFINE the new name?
+#
+# ⛔ PROVING A NAME WRONG DOES NOT MAKE RENAMING IT SAFE. objdiff pairs
+# target<->base BY NAME, so if the obj behind the pin cannot define the
+# replacement, the row reads 0% however correct the new name is -- permanently.
+# That is W9's measured -180 B failure mode, and it is the single most expensive
+# mistake available in this lane, so it is checked mechanically rather than
+# remembered.
+# ---------------------------------------------------------------------------
+
+SPLIT_UNIT_RE = re.compile(r"^(\S.*):\s*$")
+SPLIT_TEXT_RE = re.compile(r"\.text\s+start:0x([0-9a-fA-F]+)\s+end:0x([0-9a-fA-F]+)")
+
+
+def load_splits(root):
+    """Sorted [(start, end, unit)] over pinned .text blocks."""
+    out, cur = [], None
+    for line in open(Path(root) / "config" / VERSION / "splits.txt"):
+        m = SPLIT_UNIT_RE.match(line)
+        if m and not line.startswith((" ", "\t")):
+            cur = m.group(1).strip()
+            continue
+        t = SPLIT_TEXT_RE.search(line)
+        if t and cur:
+            out.append((int(t.group(1), 16), int(t.group(2), 16), cur))
+    out.sort()
+    return out
+
+
+def pinning_unit(splits, addr):
+    for s, e, u in splits:
+        if s <= addr < e:
+            return u, s, e
+    return None, None, None
+
+
+def base_obj_for_unit(root, unit_src):
+    """Map a splits.txt heading (a SOURCE path) to its compiled base .obj.
+
+    ⚠ Keyed on the FULL PATH, never basename(): CLAUDE.md records four
+    consecutive lanes broken by basename collisions (`Movie.obj` exists in both
+    rnddx9/ and rndobj/).
+    """
+    cfg = json.load(open(Path(root) / "objdiff.json"))
+    stem = unit_src[:-4] if unit_src.endswith(".cpp") else unit_src
+    best = None
+    for u in cfg.get("units", []):
+        bp = u.get("base_path") or ""
+        if not bp:
+            continue
+        # base_path is build/<v>/src/<same relative path>.obj
+        if bp.endswith("/" + stem + ".obj") or bp.endswith(stem + ".obj"):
+            # prefer the longest matching suffix => the full-path match
+            if best is None or len(bp) > len(best):
+                best = bp
+    return best
+
+
+def can_define(root, unit_src, name):
+    """(verdict, detail) -- does the unit's compiled obj define `name`?"""
+    bp = base_obj_for_unit(root, unit_src)
+    if not bp:
+        return "UNKNOWN", f"no base obj wired for {unit_src}"
+    p = Path(root) / bp
+    if not p.exists():
+        return "UNKNOWN", f"{bp} not built"
+    owned, shared = coff_owned.analyze(p)
+    if name in owned:
+        return "OK", f"{bp} defines it (COMDAT NO_DUPLICATES / owned)"
+    if name in shared:
+        return "OK", f"{bp} defines it (COMDAT ANY / template-shared)"
+    return "BLOCKED", (f"{bp} does NOT define this name -- an in-place rename "
+                       f"sends the row to 0% PERMANENTLY (W9's -180 B failure). "
+                       f"Re-home to a unit whose obj defines it, and lift the "
+                       f"spelling verbatim from that obj's symbol table.")
 
 
 # ---------------------------------------------------------------------------
@@ -411,12 +490,14 @@ def gather(root, edits, selector="graded", verbose=True):
                 continue
             callers.setdefault(fn[0], set()).add(tgt)
 
-    # Candidate rows = callers, plus the edited addresses themselves (local term).
-    cand = {}
-    for a in callers:
-        cand[a] = "caller"
+    # Candidate rows = callers, plus the edited addresses themselves.
+    # ⚠ An EDITED address is classified `local` even when it is also a caller
+    # (family members call each other). Its dominant effect is the PAIRING
+    # channel, and folding it into the cascade estimate would credit the right
+    # bytes to the wrong mechanism -- the "count right, cause wrong" trap.
+    cand = {a: "caller" for a in callers}
     for a in edits:
-        cand.setdefault(a, "local")
+        cand[a] = "local"
 
     verdicts = []
     for addr, kind in sorted(cand.items()):
@@ -442,10 +523,37 @@ def gather(root, edits, selector="graded", verbose=True):
             print(".", end="", flush=True)
     if verbose:
         print()
-    return verdicts, notes, rlabel, measures
+
+    # LOCAL / PAIRING term: can the pin behind each edited address define the
+    # replacement at all?  (HARD LIMIT #1 -- see can_define.)
+    splits = load_splits(root)
+    locals_ = []
+    for addr, new in sorted(edits.items()):
+        old = smap.get(addr) or f"fn_{addr:08X}"
+        unit, s, e = pinning_unit(splits, addr)
+        size, fuzzy = 0, 0.0
+        if old in rows:
+            _u, size, fuzzy, _m = rows[old]
+        if unit is None:
+            verdict, detail = "UNPINNED", ("address is in no splits.txt .text block "
+                                           "(auto_* / unattributed) -- it cannot pair "
+                                           "at all until it is pinned")
+        elif is_placeholder(new):
+            verdict, detail = "DE-NAMED", ("replacement is a placeholder: the row "
+                                           "un-pairs and its bytes are withdrawn")
+        else:
+            v, detail = can_define(root, unit, new)
+            verdict = {"OK": "PAIRS (obj defines the new name)",
+                       "BLOCKED": "BLOCKED (obj cannot define the new name)",
+                       "UNKNOWN": "UNKNOWN"}[v]
+        locals_.append(dict(addr=addr, unit=(unit or "-")[:26], size=size,
+                            fuzzy=fuzzy, verdict=verdict, detail=detail,
+                            pin=(f"{unit} [0x{s:08x}-0x{e:08x}]" if unit else "none"),
+                            old=old, new=new))
+    return verdicts, notes, rlabel, measures, locals_
 
 
-def report(verdicts, notes, rlabel, measures, title):
+def report(verdicts, notes, rlabel, measures, locals_, title):
     print(f"\n{'='*100}\n{title}\n{'='*100}")
     print(f"ruler: {rlabel}")
     if measures:
@@ -458,12 +566,15 @@ def report(verdicts, notes, rlabel, measures, title):
     print("-" * len(hdr))
     gain = loss = 0
     for v in sorted(verdicts, key=lambda x: -abs(x.delta)):
+        is_local = getattr(v, "kind", "caller") == "local"
         if v.crosses:
-            verdict = f"CROSSES  +{v.size}"
-            gain += v.size
+            verdict = f"CROSSES  +{v.size}" + ("  [local — see PAIRING term]" if is_local else "")
+            if not is_local:
+                gain += v.size
         elif v.falls:
-            verdict = f"FALLS    -{v.size}"
-            loss += v.size
+            verdict = f"FALLS    -{v.size}" + ("  [local — see PAIRING term]" if is_local else "")
+            if not is_local:
+                loss += v.size
         elif v.cur > 0 and v.post < v.cur:
             verdict = f"improves (still {v.post} charged)"
         else:
@@ -476,10 +587,50 @@ def report(verdicts, notes, rlabel, measures, title):
     print("-" * len(hdr))
     print(f"  cascade GAIN  +{gain} B")
     print(f"  cascade LOSS  -{loss} B")
-    print(f"  PREDICTED graded delta: {gain - loss:+d} B")
-    print(f"  PREDICTED `none`  delta: +0 B for a PURE RENAME "
-          f"(the none ruler ignores relocation names). A RE-HOME moves `none` too "
-          f"-- price that separately, it is a pairing change, not a name change.")
+    print(f"  CASCADE POINT ESTIMATE (call-site name charges): {gain - loss:+d} B")
+
+    # ---- LOCAL / PAIRING term -------------------------------------------
+    # ⛔ MEASURED, NOT ASSUMED (lane W20, this tool's own round-trip): renaming
+    # 11 addresses moved -2,976 B, of which only -580 was the call-site cascade.
+    # The other -2,396 B was TEN ROWS VANISHING FROM THE REPORT ENTIRELY
+    # (`fuzzy` absent, not merely below 100) because the pinned unit's obj could
+    # not define the new spelling. That is a DIFFERENT CHANNEL from the one
+    # priced above, it is bigger than it, and it is exactly W9's -180 B failure
+    # mode at scale. It is reported separately because its byte value is only
+    # bounded, never a point estimate: whether a newly-pairable row reaches
+    # fuzzy==100 depends on the BODY, which cannot be diffed until the map edit
+    # lands and the tree is re-split.
+    if locals_:
+        print()
+        print("  LOCAL / PAIRING term -- the edited rows themselves "
+              "(SEPARATE CHANNEL, not in the estimate above):")
+        blocked = 0
+        for l in locals_:
+            print(f"    0x{l['addr']:08x}  {l['unit']:<26} {l['size']:>6} B  "
+                  f"fuzzy={l['fuzzy']:>8.4f}  {l['verdict']}")
+            print(f"        pin: {l['pin']}")
+            print(f"        {l['detail']}")
+            if l["verdict"].startswith("BLOCKED"):
+                blocked += l["size"]
+        if blocked:
+            print(f"\n  ⛔ BLOCKED EXPOSURE: {blocked} B of rows whose pinned unit "
+                  f"CANNOT define the replacement name.\n"
+                  f"     Renaming these in place sends them to 0% PERMANENTLY. "
+                  f"Re-home the pin to a unit whose obj\n"
+                  f"     defines the name, and lift the spelling VERBATIM from "
+                  f"that obj's symbol table.")
+
+    pairing_change = any(l["verdict"].startswith(("BLOCKED", "PAIRS"))
+                         for l in locals_)
+    if pairing_change:
+        print(f"\n  PREDICTED `none` delta: NON-ZERO. This edit changes PAIRING "
+              f"(a name added, removed, or\n     moved to an obj that defines it), "
+              f"and `none` sees pairing even though it ignores\n     relocation "
+              f"names. Do NOT pre-register `none` = 0 here.")
+    else:
+        print(f"\n  PREDICTED `none` delta: +0 B — this edit is a PURE RENAME "
+              f"between two names both\n     already defined by the pinned objs, "
+              f"so only relocation-name comparison moves.")
     if notes:
         print("\nNOTES / REFUSALS:")
         for n in dict.fromkeys(notes):
@@ -517,8 +668,14 @@ def cmd_validate(args):
     # Which direction does this tree support?  Post-W17 trees carry the NEW
     # names, so the reproducible known-answer test is the INVERSE edit: the same
     # four rows must FALL by the same byte values they GAINED.
-    at_new = sum(1 for k, v in fx["edits"].items() if smap.get(int(k, 16)) == v["new"])
-    at_old = sum(1 for k, v in fx["edits"].items() if smap.get(int(k, 16)) == v["old"])
+    # ⚠ An ANONYMOUS address is an ABSENT map key, not a key holding the literal
+    # `fn_<addr>` spelling. Comparing against the spelling reads 10/11 and
+    # refuses a tree that is genuinely in the fixture's old state.
+    def at(addr):
+        return smap.get(addr) or f"fn_{addr:08X}"
+
+    at_new = sum(1 for k, v in fx["edits"].items() if at(int(k, 16)) == v["new"])
+    at_old = sum(1 for k, v in fx["edits"].items() if at(int(k, 16)) == v["old"])
     n = len(fx["edits"])
     if at_new == n:
         direction, edits, sign = "INVERSE (post-W17 tree: undo the repair)", rev, -1
@@ -536,8 +693,8 @@ def cmd_validate(args):
         print(f"   {c['row'][:60]:<60} {sign*c['bytes']:+d} B")
     print()
 
-    verdicts, notes, rlabel, measures = gather(root, edits, args.ruler)
-    got = report(verdicts, notes, rlabel, measures,
+    verdicts, notes, rlabel, measures, locals_ = gather(root, edits, args.ruler)
+    got = report(verdicts, notes, rlabel, measures, locals_,
                  "W17 KNOWN-ANSWER FIXTURE")
 
     # Score ONLY the cascade rows: the local (in-patch) rows are re-homes as well
@@ -568,8 +725,9 @@ def cmd_validate(args):
 def cmd_price(args):
     root = args.project_dir
     edits = parse_edits(args, root)
-    verdicts, notes, rlabel, measures = gather(root, edits, args.ruler)
-    report(verdicts, notes, rlabel, measures, "PROPOSED MAP EDIT -- CASCADE PRICE")
+    verdicts, notes, rlabel, measures, locals_ = gather(root, edits, args.ruler)
+    report(verdicts, notes, rlabel, measures, locals_,
+           "PROPOSED MAP EDIT -- CASCADE PRICE")
     return 0
 
 
