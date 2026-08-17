@@ -106,28 +106,191 @@ expected payout of naming an anonymous address is precisely **bug exposure, not
 bytes** ([naming-an-anon-address-exposes-real-bugs](../../../CLAUDE.md)). We should
 expect the row to begin pairing and *immediately* show the wrong callee.
 
-### 2.3 The hard prerequisite before any map edit `[PENDING]`
+### 2.3 The prerequisite — **CLEARED. The name is `XMemAlloc`, and it is safe.**
 
-Standing project rule, and the reason this is not a rubber stamp: **objdiff pairs by
-NAME. If the target row is renamed to a symbol our base obj cannot define, the row
-reads 0% permanently, however correct our source is.** Un-pairing is 80.5% of a map
-edit's measured delta.
+Standing rule: objdiff pairs by NAME, and renaming a target row to a symbol our base
+obj cannot define leaves it at 0% **permanently**. So this had to be evidence, not
+inference. Read from the **COFF symbol table** of `build/45410914/src/Memory_Xbox.obj`:
 
-So the map entry for `fn_822735B0` may only be written once we have, as evidence
-rather than inference:
+| | our base obj | map today | retail row |
+|---|---|---|---|
+| `XMemFree` | **`XMemFree`**, sec 120, class 2 EXTERNAL, **defined**, COMDAT 140 B | `"0x822732c0": "XMemFree"` | 140 B, **100/100** |
+| `XMemAlloc` | **`XMemAlloc`**, sec 117, class 2 EXTERNAL, **defined**, COMDAT 220 B | **absent** | `fn_822735B0`, 204 B, **0%** |
 
-1. The **exact** symbol spelling our compiled `Memory_Xbox.obj` emits for
-   `XMemAlloc`, read from the COFF symbol table — *not* guessed from the C++
-   declaration. `XMemAlloc` is an XDK override and may be `extern "C"` /
-   undecorated.
-2. Confirmation that our base obj **does** define it today (and if not, what would
-   have to change — an obj patcher, a linkage change, or `ForceLinkXMemFuncs`
-   swallowing it).
-3. `XMemFree` is the working template — same unit, named in
-   `scripts/target_symbol_map.json`, scoring **100%**. Whatever rule spells it
-   should spell `XMemAlloc`.
+Both are declared in the same `extern "C" {` block (`src/xdk/xapilibi/xbox.h:13`,
+`XMemAlloc` at :121, `XMemFree` at :123) ⇒ both undecorated. **XMemAlloc follows
+XMemFree's rule exactly — same unit, one function later, same linkage.**
 
-`[PENDING — agent 1]`
+**Safety, affirmatively:** our base obj **defines `XMemAlloc` today** (section index
+117 > 0, storage class 2, a real 220-byte COMDAT with 20 relocations). It is *not*
+swallowed by `ForceLinkXMemFuncs`, which is its own separate 8 B
+`?ForceLinkXMemFuncs@@YAHXZ` COMDAT. And the name is **injective**: `"XMemAlloc"`
+occurs **0 times** as a map value today. ⇒ adding `"0x822735b0": "XMemAlloc"` cannot
+produce the permanently-0% row the standing rule warns about.
+
+**Will naming expose the bug? YES — verified, not assumed.** Once paired, the `+0x3c`
+relocation differs (`?MemAlloc@@YAPAXHH@Z` vs `?_MemAllocTemp@@YAPAXHH@Z`). Neither
+is a placeholder (`fn_`/`lbl_`/…), so `name_check` will **not** forgive it, and a
+check of `scripts/symbol_aliases.json` (1,529 groups) confirms **no alias group
+carries either symbol** as survivor, folded member, or withdrawn entry. The charge
+will be live and visible. **That is the auditability win, and it is the deliverable.**
+
+---
+
+## 3. The bug — **CONFIRMED on retail bytes**
+
+Provenance: `report.json` at `provenance.diff_config = functionRelocDiffs=name_check`
+(the shipped graded ruler), `tool_commit 88b425bc3bad`. Unit `default/Memory_Xbox`:
+`total_code` 3,636 / `matched_code` 552 (15.181518%), 19 of 45 functions matched.
+
+### 3.1 (a) The branch target — CONFIRMED, and this is the ONLY decisive evidence
+
+Read from the retail image, not the split asm: `orig/45410914/band.exe`, `.text`
+VA `0x82270000` / raw `0x264E00` ⇒ file offset **`0x2683EC`**, bytes **`48 54 97 4D`**.
+Decoded by hand: opcode `0x4854974D >> 26 = 18` (branch), `LI = 0x0054974C`, `AA=0`
+(relative), `LK=1` (linked) ⇒ target `0x822735EC + 0x0054974C` = **`0x827BCD38`** =
+`?MemAlloc@@YAPAXHH@Z`.
+
+Corroborated at COFF level: retail's `Memory_Xbox.obj` section `/22` carries a
+type-0x6 relocation at **+0x3c** to `?MemAlloc@@YAPAXHH@Z`; **our** obj carries, at
+the **same +0x3c**, a type-0x6 relocation to `?_MemAllocTemp@@YAPAXHH@Z`. Same
+offset, different callee. Retail `.pdata` extent for `0x822735B0` is **exactly 204**
+(decoder calibrated on two known answers first).
+
+### 3.2 (b) The missing refcount bumps — TRUE, but a WITNESS THAT CANNOT FAIL
+
+All 51 instructions decoded: there is **no `+0x44` access anywhere** in the 204
+bytes. **But this proves nothing**, and should not have been offered as evidence.
+Retail's `?_MemAllocTemp@@YAPAXHH@Z` lives at **`0x827BCFF0`** (96 B) and the bumps
+are *inside it*:
+
+```
+827BD00C: bl -> 827BB898     (ThreadMemStack(true))
+827BD010: lwz  r11, 0x44(r3)
+827BD014: addi r11, r11, 1
+827BD018: stw  r11, 0x44(r3)   <-- mTempRefs++
+827BD024: bl -> 827BCD38      (MemAlloc)
+```
+
+Our source calls the **out-of-line** `_MemAllocTemp`, so our compiled `XMemAlloc`
+contains no `+0x44` pattern either. **The witness is present under both hypotheses.**
+Claim (a) alone carries the verdict.
+
+### 3.3 (c) AllocType on the heap path — CONFIRMED for retail, but THE PATCH'S PREMISE IS WRONG
+
+Every `bl` in the body, offsets relative to `0x822735B0`: `+0x04` `__savegprlr_29` ·
+`+0x30` **AllocAlign** · **`+0x3c` `?MemAlloc@@YAPAXHH@Z`** · `+0x5c` `memset` ·
+`+0x6c` `XMemAllocDefault` · `+0x7c` `GlobalMemoryStatus` · `+0x88` `XMemSizeDefault`
+· `+0xa8` **AllocType** · `+0xbc` `MemTrackAlloc` · `+0xc8` `__restgprlr_29`.
+
+AllocType is called **once, at +0xa8, in the physical branch**. The heap branch calls
+only AllocAlign and MemAlloc — as claimed.
+
+> ★★★ **BUT A PREDICTION FAILED HERE, AND THE FAILURE IS THE USEFUL PART.** The agent
+> predicted our 220 B vs retail's 204 B was exactly the 16 B cost of the stray
+> `AllocType` call. **Wrong.** Our COMDAT has **exactly one** AllocType relocation, at
+> `+0xb4` — *in the physical branch*, matching retail's single call at `+0xa8`. MSVC
+> **already dead-code-eliminated** the heap-branch call, because the `_MemAllocTemp`
+> macro swallows `type`, leaving the variable unused and the call (pure,
+> anon-namespace, visible body) removable. Our first five call sites land at
+> `+0x04 / +0x30 / +0x3c / +0x5c / +0x6c` — **byte-identical offsets to retail**; the
+> whole first 0x6C aligns. The entire 16 B delta lives in the **physical** branch.
+>
+> ⇒ **Removing `AllocType` from the match path buys ZERO bytes.** Do it for source
+> honesty — it makes the source say what the binary does, which is this effort's
+> stated goal — but **it is not the fix and must not be sold as one.** A plausible
+> arithmetic coincidence (220 − 204 = 16) nearly ratified the wrong mechanism.
+
+### 3.4 (d) The behavioural stake — CONFIRMED, with the mechanism
+
+`MemMgr.cpp:458` defines `_MemAllocTemp(size, align)` as
+`MemDoTempAllocations tmp; return (MemAlloc)(size, align);`, and the retail body
+above proves it. Per the placement logic at `MemMgr.cpp:380`/`:405`, a live temp ref
+selects `MemHeap::kLastFit` — top-down from the temp region — where plain `MemAlloc`
+uses the default bottom-up strategy.
+
+**Concrete consequence:** `XMemAlloc` is the XDK's *global* allocation hook, so
+**every non-physical XDK allocation — D3D, D3DX, XAudio, XAPI, XACT, XGRAPHICS, XUI,
+XMV — is currently placed top-down on the temp heap instead of the normal heap.**
+Same defect class W0-ALLOC fixed for vertex and stream buffers, and by fan-in
+plausibly the **largest single instance of it in the binary**.
+
+### 3.5 Patch assessment — directionally right, needs three corrections
+
+**Correct as written:** the parenthesized `(MemAlloc)(size, align)` is *required* —
+`MemMgr.h`'s macro force-zeros align, and align is genuinely non-zero here (our
+`AllocAlign` heap path returns `0x10`/`8`; retail's `fn_82273588` returns
+`li r3,0x10` / `li r3,8`). Matches `src/system/synth/Mic.cpp:38`. `type` is used
+nowhere else in the non-physical branch, so deleting it is safe. The `MILO_ASSERT`s
+at 0xf9/0x10d are **free** — confirmed *empirically*, not just by reading the macro:
+our heap-branch call offsets are byte-identical to retail's through `+0x6c`, which
+could not happen if the asserts emitted anything.
+
+**Corrections:**
+
+1. **Drop the claim that removing `AllocType` fixes anything measurable** (§3.3). The
+   only load-bearing edit is `_MemAllocTemp` → `MemAlloc`.
+2. **The `#ifdef HX_NATIVE` split is optional.** A one-line change with `type`
+   deleted gives the identical match build. If the split is kept, note it also
+   changes **native** behaviour (native stops using the temp heap here) — correct per
+   retail, but state it deliberately rather than let it happen as a side effect.
+3. ⛔ **Expect ZERO bytes from the source patch alone.** `matched_code` keys on
+   `fuzzy == 100` and the row is **unpaired** — it reads 0% before *and* after.
+   **The map entry and the source fix must land TOGETHER**, or the fix is invisible
+   on every instrument. Even together, the residual 16 B of physical-branch
+   divergence keeps the row below 100 until that is addressed too.
+
+---
+
+## 3.6 Sibling anonymous rows — ranked, and TWO HANDOFF IDs REFUTED
+
+**SAFE TO NAME** (real, whole, `.pdata`-confirmed functions):
+
+| row | name | confidence | evidence |
+|---|---|---|---|
+| `fn_822735B0` | **`XMemAlloc`** | VERY HIGH | §2.3 + §3.1 |
+| `fn_82273420` | **`?PhysicalAlloc@@YAPAXH@Z`** | HIGH | `.pdata` len 80; body is `XPhysicalAlloc(size,-1,0,4)` (`li r6,4; li r5,0; li r4,-1`) → `XPhysicalSize` → `gPhysicalUsage +=`. The `4` in r6 distinguishes it from `PhysicalAllocTracked`, which takes alignment as a parameter and calls `MemTrackAlloc` (retail's body calls neither). |
+| `fn_82273470` | **`?PhysicalFree@@YAXPAX@Z`** | HIGH | ⚠ **the handoff said `PhysicalAllocTracked` — REFUTED.** `.pdata` len 68; body is `XPhysicalSize` → `gPhysicalUsage -=` → `XPhysicalFree`. Exactly two calls, no `MemTrackFree`, so not `PhysicalFreeTracked` (already named at `0x822733B8`, 84 B, 100%) and not an *alloc* at all. |
+
+Note both Physical rows have geometry mismatches that are **the point, not a
+problem**: ours are 124 B and 76 B vs retail's 80 B and 68 B, because our source
+carries a `MemAllocFailed` failure branch and an `if (address != 0)` guard that
+retail lacks. Pairing them surfaces exactly that.
+
+⛔ **DO NOT NAME — these are dtk mis-carves, not functions:**
+
+- **`fn_82272EE8` is the ENTRY of AllocType**, not a whole function — it computes
+  `isPhys` and `type = (attrs>>16)&0xFF`, indexes a byte table at `lbl_8200E610` and
+  `bctr`s. The source function spans `0x82272EE8..0x822732C0` = **984 B across three
+  rows** (68 + 824 + 92); our obj has **one** 1,164 B COMDAT. Naming the 68 B
+  fragment would pair 68 target bytes against 1,164 base bytes — a *misleading*
+  pairing, worse than none.
+- **`fn_822734E0` is the ENTRY of AllocAlign.** ⚠ **The handoff had this inverted**,
+  calling `fn_8227351C` AllocAlign and `fn_822734E0` a "dispatcher". Span
+  `0x822734E0..0x822735B0` = **208 B across four rows**; ours is one 224 B COMDAT.
+- **`fn_82272F2C`, `fn_82273264`, `fn_8227351C`, `fn_82273580`, `fn_82273588` are not
+  independently callable — PROVEN, not assumed.** `fn_82273264`'s *first* instruction
+  is `cmplwi cr6, r10, 0x7f`, reading `r10` **live-in** from `fn_82272EE8`'s
+  `extrwi`; `fn_82273588`'s first instruction reads `r11` live-in from `fn_822734E0`.
+  `fn_8227351C` is twelve `li r3,<pow2>; blr` pairs reachable only by `bctr`. None is
+  a `.pdata` BeginAddress.
+- ⚠ **`fn_82272F2C` is NOT `MemAllocFailed`** (the handoff's guess). Its blocks return
+  AllocType's string literals, read out of `.rdata`: `"XTL:D3D"`, `"XTL(phys):D3D"`,
+  `"XTL:D3DX"`, `"XTL:XAUDIO"`, `"XTL:XAPI"`, with the default path returning
+  `"XTL:Game"` / `"XTL(phys):Middleware"` / `"XTL:Unknown"`. **`MemAllocFailed` has
+  no standalone retail row in this region at all** — retail inlined a reduced version
+  into XMemAlloc, of which only `GlobalMemoryStatus` survives.
+
+Extra caution even if the carve is ever fixed: 4–7 are anonymous-namespace statics
+spelled `?AllocType@?A0x7a439e55@@YAPBDK@Z`, whose hash MSVC derives from machine
+name + source path. A map entry would need the post-`anon_ns`-patcher spelling and
+would be fragile across environments. Another reason to defer.
+
+★ **Bonus source-correctness divergence, independent of the callee bug:** retail's
+AllocType dispatches on `type - 0x80` over `[0, 0x1a]` (type ∈ `[0x80, 0x9A]`), with
+`type ≤ 0x7f` → `"XTL:Game"`, `type ≥ 0xc0` → `"XTL:Middleware"`, else
+`"XTL:Unknown"`. **Our source switches on `type` at base 0** and has no
+Game/Middleware/Unknown default. That explains the 1,164 vs 984 byte gap.
 
 ---
 
@@ -166,22 +329,147 @@ confirmation that this is what retail does.
 
 ---
 
-## 4. The ranked target list `[PENDING]`
+## 4. The ranked target list — **AUDITED. Roughly half does not survive.**
 
-Handoff's tiers, to be audited against current state, asm-extent sizes, and
-pairability. Expect staleness given §1.
+Every size below was verified against the `.fn`/`.endfn` extent in
+`build/45410914/asm/*.s` and **all agree with `report.json` exactly**, so the
+"8,852 B billed for a 12 B body" hazard did not fire here. No candidate appears in
+`scripts/symbol_aliases.json` (checked by `command grep -a` on every address and
+name — zero hits) ⇒ **none of these bytes are alias-forgiven, and none is
+uncollectable for want of a proven fold.**
 
-- **Tier 1** — `0x827BCA78` `MemHeap::Alloc` 652 B (claim: retail inlines `TryAlloc`
-  *without* the `mBlock == nullptr` guard both decomps carry ⇒ derefs at `+0x14c`
-  with `gMemLock` held — "that is the crash") · `0x827BCD38` `MemAlloc` 644 B (ours
-  is a 20 B `malloc` stub; W0-ALLOC explicitly declined to port it) · `0x827BAEC0`
-  `FixedSizeAlloc::RawAlloc` 176 B.
-- **Tier 2** — the `Memory_Xbox.cpp` XDK boundary, all unpaired (see §2).
-- **Tier 3** — `0x827BD300` `MemInit` 788 B · `0x827BC2D0` (garbled in the handoff)
-  · `0x827BC838` `MemPrintOverview` 300 B.
+### 4.1 ★★★ THE REORDERING FINDING: three distinct pairability blockers
 
-`[PENDING — agent 2: state, true size, play type (identification / source /
-body-port), audit value, blockers, priority]`
+- **Blocker A — anonymous target row.** The base obj already defines the right
+  mangled name; **one map row makes it pair.** Cheap, and the only thing between us
+  and seeing the divergence.
+- **Blocker B — MIS-HOMED PIN: the name exists, but in the wrong obj.**
+  `fn_827BCA78` sits in **MemMgr**'s target obj while our
+  `?Alloc@MemHeap@@QAAPAHHHAAH@Z` is defined in **MemHeap.obj**. Naming it would
+  produce a row that reads **0% forever** — the exact standing hazard. `fn_827BD300`
+  and `fn_827BC2D0` have the same shape in the opposite direction.
+  ★ **The remedy is already in-tree and proven, and it is NOT re-homing pins**
+  (measured non-neutral): `src/system/utl/MemHeap.cpp:545-560` carries a
+  `#ifndef HX_NATIVE` **"retail TU-reunification"** block that duplicates definitions
+  into whichever unit owns the address — retail compiled MemHeap + the free `Mem*`
+  API into **one** TU; the MemMgr/MemHeap split is **DC3's, not retail's**.
+  `MemNumHeaps`/`MemHeapSize`/`MemFindAddrHeap`/`MemPushHeap`/`MemPopHeap`/
+  `MemPushTemp` are all at 100% because of it.
+- **Blocker C — the row is a PHANTOM (dtk mis-carve).** Uncollectable at the current
+  carve; the work would be a **split-carve fix, not decompilation**.
+
+### 4.2 Candidates
+
+| # | row | true extent | unit | now | play | blocker | bytes if crossed |
+|---|---|---:|---|---|---|---|---:|
+| 1 | `?MemAlloc@@YAPAXHH@Z` `0x827BCD38` | **644** | MemMgr | **paired**, fuzzy 2.57 | **body port** | **none — unblocked** | 644 |
+| 2 | `fn_827BCA78` MemHeap::Alloc | 652 | MemMgr | anon, 0% | ident + TU-reunify + body port | **B** | 652 |
+| 3 | `fn_827BAEC0` FixedSizeAlloc::RawAlloc | 176 | PoolAlloc | anon, 0% | **identification** | A only | 176 |
+| 4 | `fn_822735B0` **XMemAlloc** | 204 | Memory_Xbox | anon, 0% | **identification** | A only | 204 |
+| 5 | `fn_827BC838` MemPrintOverview | 300 | MemMgr | anon, 0% | signature fix + ident | A + wrong param type | 300 |
+| 6 | `fn_82273420` PhysicalAlloc | 80 | Memory_Xbox | anon, 0% | identification | A only | 80 |
+| 7 | `fn_82273470` **PhysicalFree** | 68 | Memory_Xbox | anon, 0% | identification | A only | 68 |
+| 8 | `fn_827BD300` MemInit | 788 | MemHeap | anon, 0% | ident + TU-reunify | B | 788 |
+| 9 | `fn_827BC2D0` heap-config parse | 344 | MemHeap | anon, 0% | ident (**unsettled**) + reunify | B + ID | 344 |
+| — | AllocType/AllocAlign complex (6 rows) | 1,184 | Memory_Xbox | anon, 0% | **none** | **C** | **0** |
+| — | `fn_82279710…50` ×5 | 5×16 | Memory_Xbox | anon, 0% | **not allocator code** | — | 0 |
+
+Near-term collectible: **644 B unblocked + 528 B behind one map row each + 300 B
+behind a signature fix.** Carve-blocked: **1,184 B.**
+
+### 4.3 ⛔ Handoff claims REFUTED or STALE
+
+1. **`fn_82272F2C` = MemAllocFailed, 824 B — REFUTED.** It is AllocType's jump-table
+   **arm block**. (Both agents independently. The handoff's own suspicion — the CSV
+   string is missing — was the tell; the conclusion drawn from it was wrong.)
+2. **`fn_8227351C` = AllocAlign — REFUTED.** That is AllocAlign's *arm block*; the
+   head is `fn_822734E0`.
+3. **`fn_82273470` = PhysicalAllocTracked — REFUTED.** It *subtracts* from
+   `gPhysicalUsage` and calls `XPhysicalFree`. It is `PhysicalFree(void*)`.
+4. **"five 16 B XMemFree/XMemSize stubs" — REFUTED.** All five are **virtual-base
+   adjustor thunks** (`lwz r11,-4(r3); subf r3,r11,r3; subi r3,0x3c; b <target>`);
+   the first branches to `?Highlight@RndDir@@UAAXXZ`. Not allocator code at all.
+5. **"both decomps carry the `mBlock == nullptr` guard" — HALF REFUTED.** DC3 does
+   (separate `TryAlloc`, `MemHeap.cpp:314`). **rb3-Wii has no `TryAlloc` at all** —
+   `Heap::Alloc` holds `FreeBlockInfo` directly, structurally like retail.
+   **Neither oracle describes RB3-360.**
+6. **"derefs at `+0x14c`" — NOT REPRODUCED.** The null-path derefs are at
+   `+0x0/+0x4/+0x8` of `r30`. "With `gMemLock` held" is right on the main-thread path
+   only (`Abandon()` fires only when `!MainThread`).
+7. **"`out_of_mem_alloc_info.csv` absent from retail" — CONFIRMED**, and the
+   instrument discriminates: the same scan *finds* `Allocation failure` at
+   `0x117460`, the very `lbl_82117460` the asm references.
+8. ⚠ **STALE IN-SOURCE NOTE.** `src/system/utl/MemMgr.cpp:416` still says *"IT CANNOT
+   SCORE UNTIL 0x827bcd38 IS NAMED … Do NOT name it first."* **MAPID-1 named it on
+   2026-08-16.** The prescribed order was inverted by events; the port is now simply
+   unblocked. Fix this comment when the port lands.
+
+### 4.4 ★★★★ THE SECOND LIVE BUG — same class, same cause, found only because we asked about pairability
+
+**`src/system/utl/PoolAlloc.cpp:148`** — `sPoolBuf = _MemAllocTemp(gBigHunk, …)`,
+where retail is `li r4,0; bl fn_827BCD38` = `MemAlloc(gBigHunk, 0)`.
+
+> **A pool chunk is never freed. Allocating it from the temp heap is a genuine
+> behavioural bug**, not a metric artifact.
+
+It survived W0-ALLOC's census for **precisely the same reason** as XMemAlloc: its row
+is unpaired, so the comparator never saw it. ⇒ **Two wrong-callee bugs of the class
+W0-ALLOC fixed were sitting live in this tree, both invisible to the instrument
+built to find them, both surfaced by asking a *pairability* question rather than a
+scoring one.** This is the coordinator's §2 point demonstrated twice over:
+**pairability is a correctness instrument, not a scoring one.**
+
+### 4.5 Audit-value findings — the part that matters most for the stated goal
+
+**The OOM crash path is real, and our source misdescribes it.** In retail
+`fn_827BCA78` the strategy switch dispatches to the four fit functions, then
+`lwz r30,0x70(r31); cmplwi r30,0; bne .L_823F21BC`. The **fall-through** is the
+failure report — `FreeBlockStats` → `MainThread` → `gInsideMemFunc=0;
+gMemLock->Abandon()` → `MakeString("Allocation failure…")` → `MemPrintOverview(-3,…)`
+→ `~String` — **and it then falls straight into `.L_823F21BC`, whose first
+instruction is `lwz r9,0x4(r30)`, dereferencing the NULL block.** There is no
+`return`, and the switch's `default:` arm branches into the same path. That is a
+compiled-out-`MILO_FAIL` crash path: the dev build halts in the assert, retail walks
+off the end. **Our tree returns `nullptr` cleanly — so anyone debugging an OOM
+against our source would predict a graceful null return and be wrong.**
+
+**An oracle-fidelity error with a clean answer.** `fn_827BC838` is
+`MemPrintOverview`, and its second parameter is a **`TextStream&`** — retail
+constructs a `String`, appends via `??6TextStream@@…`, passes it, destroys it, and
+`Str.h:65` confirms `class String : public TextStream`. **rb3-Wii's
+`MemPrintOverview(int, TextStream&)` is correct; DC3's `(int, char* const)`, which
+our tree uses, is wrong.** Three call sites: `Rnd.cpp:1527`, `MemHeap.cpp:426`,
+`Memory_Xbox.cpp:270`. (Textbook instance of the standing rule that DC3 is newer and
+not automatically right for RB3.)
+
+**Dead code we inherited that retail does not have:** the `gMemTracker` /
+`fopen("alloc_fail.txt")` / `SpitAllocInfo` block at `MemHeap.cpp:406-413` (string
+absent from `band.exe`); the `printf("PoolAlloc warning…")` at `PoolAlloc.cpp:143`;
+the `if(!ptr) MemAllocFailed(...)` branch in `PhysicalAlloc`. ⚠ **Where retail's
+`MemAllocFailed` lives is UNRESOLVED** — no retail counterpart located, and its only
+distinguishing string is absent.
+
+⚠ **The orchestrator DB is stale and must not be used as a state source here** — zero
+prior attempts on any candidate, and it shows `?MemFree@@` at 0.0%/`AT_LIMIT` where
+`report.json` says 48.55%.
+
+### 4.6 Recommended priority (by AUDIT value, per the §0 goal)
+
+1. **Port `?MemAlloc@@YAPAXHH@Z` (644 B)** — paired, unblocked, and the body is
+   already reverse-engineered from retail bytes at `MemMgr.cpp:356-424`. Today
+   *every* allocation in our source ends at `malloc()`, so heap selection, the
+   temp-heap fallback and the `kNoHeap` physical path are **all fiction**.
+2. **`fn_822735B0` XMemAlloc + `fn_827BAEC0` RawAlloc (380 B)** — cheapest real work
+   in the list: one map row each, and each **immediately exposes a live temp-heap
+   misrouting**. A/B each naming *separately*.
+3. **`fn_827BCA78` MemHeap::Alloc (652 B)** — highest behavioural value, highest
+   effort; needs the reunification duplicate *and* a body neither oracle supplies.
+   Landing it makes the OOM crash path legible.
+4. **`fn_827BC838` MemPrintOverview (300 B)** — fix the signature to `TextStream&`
+   first (3 sites), then name.
+5. **PhysicalAlloc + PhysicalFree (148 B)** — small, pair on naming.
+6. **Defer** MemInit / `fn_827BC2D0` (1,132 B, dual-blocked, one identity unsettled).
+7. **Do not fund** the AllocType/AllocAlign complex or the five thunks.
 
 ---
 
@@ -347,8 +635,8 @@ of the strategy plumbing.
 
 | # | item | state |
 |---|---|---|
-| 1 | Verify the wrong-callee bug on retail bytes | in flight |
-| 2 | Audit the tier 1–3 target list | in flight |
+| 1 | Verify the wrong-callee bug on retail bytes | **DONE** — §3, CONFIRMED |
+| 2 | Audit the tier 1–3 target list | **DONE** — §4 |
 | 3 | Adjudicate the three data-quality snags | **DONE** — §5 |
 | 4 | This doc | open |
 | 5 | Dispatch implementation lane(s) | blocked on 1–2 |
