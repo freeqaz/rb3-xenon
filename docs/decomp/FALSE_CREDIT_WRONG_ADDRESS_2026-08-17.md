@@ -2,9 +2,10 @@
 
 Three defects were handed to this lane, all previously adjudicated on retail
 bytes by earlier lanes but left unapplied because each needs a coordinated
-multi-file edit. Two are closed here. The lane was briefed to expect a
-**net-negative** byte result (accuracy over headline). It measured **+320 B**
-instead — and the reason that happened is the most reusable thing in this file.
+multi-file edit. Two are closed here; the third is half-closed and half
+**deliberately refused**. The lane was briefed to expect a **net-negative** byte
+result (accuracy over headline). It measured **+320 B** instead — and the reason
+that happened is the most reusable thing in this file.
 
 | defect | verdict | measured |
 |---|---|---|
