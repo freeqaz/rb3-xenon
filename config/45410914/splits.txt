@@ -692,8 +692,6 @@ BandList.cpp:
 	.text       start:0x82340148 end:0x82340274
 	.text       start:0x82340278 end:0x82340408
 	.text       start:0x82340478 end:0x82340580
-	.text       start:0x825948C0 end:0x8259498C
-	.text       start:0x82594990 end:0x82594A78
 
 VocalTrackDir.cpp:
 	.pdata      start:0x821F2090 end:0x821F20A0
@@ -8337,6 +8335,8 @@ Accomplishment.cpp:
 	.text       start:0x825945A8 end:0x825945B0
 	.text       start:0x825945B0 end:0x82594748
 	.text       start:0x82594778 end:0x825948C0
+	.text       start:0x825948C0 end:0x8259498C
+	.text       start:0x82594990 end:0x82594A78
 	.text       start:0x82594A78 end:0x82594BF8
 	.text       start:0x82594BF8 end:0x82594CA0
 	.text       start:0x82594CA0 end:0x82595930
@@ -12542,7 +12542,6 @@ ProfileMgr.cpp:
 	.text       start:0x8254BC20 end:0x8254BD78
 	.text       start:0x827B7970 end:0x827B7BA8
 	.text       start:0x827B7C20 end:0x827B7D88
-	.text       start:0x827B7D88 end:0x827B7DC8
 	.text       start:0x82B8FC88 end:0x82B8FED8
 	.text       start:0x82C45E88 end:0x82C45EC4
 
@@ -13523,6 +13522,7 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.text       start:0x827B73E8 end:0x827B74D0
 	.text       start:0x827B78F8 end:0x827B7970
 	.text       start:0x827B7BA8 end:0x827B7C20
+	.text       start:0x827B7D88 end:0x827B7DC8
 	.text       start:0x827B7DC8 end:0x827B7ED0
 
 system/world/World.cpp:

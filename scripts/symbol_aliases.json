@@ -4948,10 +4948,17 @@
    "name": "HandleProfileLoadComplete",
    "address": "0x827b7d88",
    "survivor": "?HandleProfileLoadComplete@ProfileMgr@@QAAXXZ",
-   "folded": [
-    "?Unload@StoreArtLoaderPanel@@UAAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?Unload@StoreArtLoaderPanel@@UAAXXZ",
+     "lane": "W9-FALSECREDIT 2026-08-17",
+     "class": "SURVIVOR_MISNAMED",
+     "why": "the T1 byte-identity is REAL but the inference from it was wrong: retail's body at 0x827b7d88 is byte-identical to our compiled ?Unload@StoreArtLoaderPanel@@ because that address IS Unload@StoreArtLoaderPanel -- it calls ClearArt@StoreArtLoaderPanel and Unload@UIPanel, and ProfileMgr derives from MsgSource, not UIPanel. No fold exists to forgive.",
+     "note": "target_symbol_map.json 0x827b7d88 corrected to ?Unload@StoreArtLoaderPanel@@UAAXXZ in the same change, so the spelling now pairs DIRECTLY and needs no alias. ?HandleProfileLoadComplete@ProfileMgr@@QAAXXZ is a genuine folded spelling of 0x825490e8 (?HandleProfileSaveComplete@ProfileMgr@@, source-identical twins) -- that group was NOT added here; it needs its own T1 proof. Group kept, not pruned."
+    }
+   ]
   },
   {
    "name": "json_object_put",
