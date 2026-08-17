@@ -61,13 +61,19 @@ INSTRUMENT DISCIPLINE (docs/decomp/INSTRUMENT_DESIGN.md)
    containing `$` (i.e. every C++ TEMPLATE instantiation) was eaten by parameter
    expansion and wrote a ZERO-BYTE file.  204 of 461 rows vanished, 44%, with no
    error -- and the surviving 257 still produced a plausible-looking census.
-   `--selftest` now asserts a `$`-bearing symbol resolves; that control fails on
-   the old driver.
+   `--selftest` asserts that EVERY `$`-bearing row in the live sub-100
+   population resolves to a non-empty diff (1,377 rows as measured, not the
+   single pinned symbol it used to check); that control fails on the old driver.
  * shape 3 (one-label classifier) -- asserts >= 2 distinct row classes AND that
    both of the two named veins are present, so a degenerate constant classifier
    fails loudly.
- * shape 1 (vacuous control) -- asserts two KNOWN POSITIVES by name, one per
-   vein, so a PASS has shown it could have failed.
+ * shape 1 (vacuous control) -- asserts KNOWN POSITIVES by name, one vein each,
+   every one hand-verified in its instruction diff and pinned as a LIST so that
+   a single upstream fix cannot disarm the control.  Deliberately NOT selected
+   dynamically: the only selector available would be the classifier under test,
+   which makes the control a tautology.  See CONTROL SUBJECTS below.
+ * shape 4 (a control that cannot fail is not a passing control) -- a pin that
+   has left the population is reported DISARMED and exits 3, never PASS.
  * RULER SPLIT -- `objdiff-cli diff` and `objdiff-cli report generate` do NOT
    agree: 123/1,727 rows (7.1%) differ, ALWAYS with report >= diff, up to
    +14.75 pp.  Band membership is therefore taken from report.json (the
@@ -93,13 +99,58 @@ ARITH_OPS = {'add', 'addc', 'and', 'or', 'xor', 'eqv', 'nand', 'nor', 'mullw',
              'fmadds', 'fmsubs', 'fnmadds', 'fnmsubs',
              'lwzx', 'lbzx', 'lhzx', 'lfsx', 'lfdx', 'stwx'}
 
-# Known positives asserted by --selftest.  Both are named, both are PURE, and
-# they sit in OPPOSITE veins so a constant classifier cannot satisfy both.
-KNOWN_CMP = '?Swing@DrumTrackWatcherImpl@@UAA_NH_N0W4GemHitFlags@@@Z'
-KNOWN_ARITH = '?ParseNode@@YA_NXZ'
-# A template instantiation: its mangled name contains '$'.  The first draft of
-# this tool silently produced an EMPTY diff for every such symbol.
-KNOWN_DOLLAR = '??$_Copy_Construct@UEventSink@MsgSource@@@stlpmtx_std@@YAXPAUEventSink@MsgSource@@ABU12@@Z'
+# ---------------------------------------------------------------------------
+# CONTROL SUBJECTS -- and why two controls choose their subjects two DIFFERENT
+# ways.  This is the deliberate answer to the re-pinning left open by task93.
+# ---------------------------------------------------------------------------
+# control 1 (shape 2, the silent-empty-diff guard) selects DYNAMICALLY from the
+#   live population, and there is no constant to rot.  Its subject predicate --
+#   "the mangled name contains '$'", i.e. a C++ template instantiation -- is
+#   LEXICAL: it is read off report.json without running classify_arms or
+#   anything else under test.  Selection and assertion ("...and it yields a
+#   non-empty instruction stream") are therefore independent, so the control is
+#   not circular, and it can cover the WHOLE '$'-bearing population instead of
+#   one hand-picked symbol -- 1,377 rows as measured, against the 1 it used to
+#   check.  It disarms only if templates vanish from the sub-100 population
+#   entirely, which is a real event worth hearing about.
+#
+# control 1b (shape 1, the known-positive guard) stays a NAMED PIN, and that is
+#   a deliberate REFUSAL of the same treatment.  The only available selector
+#   for "a pure CMP_REVERSAL row" is classify_arms -- the function under test.
+#   A control that picks its own subject with the code it is testing and then
+#   asserts that code's verdict cannot fail: it is precisely the "confirms
+#   whatever you point it at" class that tools/screen_gate.py exists to warn
+#   about, and it would quietly convert a control into a tautology.  A known
+#   positive has to be ratified by a human reading the instruction diff.  So it
+#   stays pinned and the rot is accepted as the price of non-circularity.
+#
+#   Two mitigations for that rot, neither of which reintroduces circularity:
+#     * each vein pins a LIST, tried in order, so one upstream fix no longer
+#       disarms the control -- only exhausting the whole list does.  The
+#       entries are spread across distinct units so that fixing one unit cannot
+#       take them all.
+#     * when a list IS exhausted, the DISARMED message prints classifier-
+#       nominated replacements.  Those are SUGGESTIONS FOR A HUMAN TO VERIFY
+#       AND PIN, never assertions -- which is exactly what keeps them honest.
+#
+# Every symbol below was verified by READING its objdiff instruction diff (a
+# single diff_arg row, same opcode, register operands swapped), not by asking
+# classify_arms.  Anonymous-namespace symbols (`?A0x<hash>@`) are excluded on
+# purpose: that hash is build-dependent, so it is not a stable pin.
+KNOWN_CMP = (
+    '?DeterminePhraseTimes@VocalNoteList@@QAAXABVTempoMap@@@Z',        # cmplw cr6,r30,r10 <- r10,r30
+    '?Dispatch@EnterFlowMsg@@UAAXXZ',                                  # cmpw  cr6,r3,r11  <- r11,r3
+    '?MaybeAutoplayFutureCymbal@TrackWatcherImpl@@QAAXH@Z',            # cmpw  cr6,r11,r10 <- r10,r11
+    '?SetState@NetSession@@QAAXW4SessionState@1@@Z',                   # cmplw cr6,r11,r10 <- r10,r11
+    '?TrackNumOfExactType@PlayerTrackConfigList@@QAAHW4TrackType@@@Z',  # cmpw  cr6,r8,r4   <- r4,r8
+)
+KNOWN_ARITH = (
+    '?ParseNode@@YA_NXZ',                                              # add   r3,r30,r11  <- r11,r30
+    '?Update@MicInputArrow@@UAAXXZ',                                   # add   r3,r11,r28  <- r28,r11
+    '?HandlePhraseEnd@VocalPart@@QAAXAAHAAM10M@Z',                     # mullw r10,r29,r3  <- r3,r29
+    '?Poll@BandIKEffector@@UAAXXZ',                                    # fmuls f0,f11,f0   <- f0,f11
+    '?ProcessInPlace@Synapse@1DSP@@QAAXIPAM@Z',                        # add   r3,r11,r29  <- r29,r11
+)
 
 
 def report_path(project_dir):
@@ -153,6 +204,22 @@ def diff_many(project_dir, rows, cache_dir, workers=8):
         sys.exit(f'REFUSE: {missing}/{len(rows)} diffs produced no output. '
                  f'A partial dump yields a plausible but WRONG census (shape 2).')
     return out
+
+
+def diff_many_tolerant(project_dir, rows, cache_dir, workers=8):
+    """diff_many, but hands the misses back as DATA instead of exiting on them.
+
+    cmd_adjudicate must REFUSE on a partial dump -- a plausible but WRONG
+    census is the whole point of shape 2.  The SELFTEST must not: a
+    silent-empty-diff regression is the very thing control 1 exists to CATCH,
+    and aborting inside diff_many would kill the run before the control could
+    name it, reporting a generic REFUSE where a named control failure belongs.
+    So the selftest takes the misses as evidence and lets its controls
+    adjudicate them (control 1 for template rows, control 2 for the rest --
+    together they reproduce diff_many's guarantee, so nothing is given up).
+    """
+    with cf.ThreadPoolExecutor(max_workers=workers) as ex:
+        return list(ex.map(lambda r: diff_one(project_dir, r['sym'], r['unit'], cache_dir), rows))
 
 
 def classify_arms(diff):
@@ -302,34 +369,103 @@ def cmd_reclaim(a):
 
 
 def cmd_selftest(a):
-    """Controls that MUST be able to fail.  --self-break proves they do."""
+    """Controls that MUST be able to fail.  --self-break proves they do.
+
+    ⚠ A control whose pinned constant has left the population is DISARMED, not
+    passing (lane task93, 2026-08-16). The named-known-positive controls used to
+    print `SKIP` and fall through without touching `fails`, so the run still
+    ended on "SELFTEST PASSED (and every control above can fail)" -- a claim that
+    is false for a control that did not run.
+
+    That was not hypothetical. Measured against build/45410914/report.json on the
+    primary checkout: the then-pinned KNOWN_CMP (?Swing@DrumTrackWatcherImpl@@..)
+    and KNOWN_DOLLAR (??$_Copy_Construct@UEventSink@MsgSource@@..) had both
+    reached 100.0% (fixed upstream) and left the sub-100 population, so TWO of
+    the four named controls -- including the shape-2 guard against the
+    silent-empty-diff regression that once ate 204 of 461 rows -- were already
+    disarmed and invisible.
+
+    Reaching 100% is good news, so a disarmed control is not a FAILURE. It is
+    also not a pass: the shape it guarded is no longer guarded until the constant
+    is re-pinned. Following the house idiom in tools/screen_gate.py -- "an
+    untestable screen is NOT a passing screen; this run exits non-zero" -- a
+    disarmed control is reported separately and exits 3.
+
+    Task #105 (2026-08-17) supplies the re-pinning task93 deliberately left
+    open, and does it two different ways on purpose. Control 1 no longer has a
+    constant at all: it selects every '$'-bearing row in the live population by
+    a LEXICAL predicate, so it cannot rot and cannot be circular. Control 1b
+    keeps human-ratified named pins, now LISTS rather than single symbols,
+    because the only dynamic selector available to it is the classifier it is
+    testing. See the CONTROL SUBJECTS block at the top of this file.
+    """
     fails = []
+    disarmed = []
     M, rows = load_rows(a.project_dir)
     by = {r['sym']: r for r in rows}
     cache = os.path.join(a.cache_dir, 'diffs')
 
-    # -- control 1 (shape 2): a '$'-bearing template symbol must produce a diff.
-    #    The first driver shelled through bash and silently returned EMPTY for
-    #    all 204 such symbols out of 461.
-    sym = KNOWN_DOLLAR if not a.self_break else KNOWN_DOLLAR
-    r = by.get(sym)
-    if r is None:
-        print(f"  SKIP  control 1: {sym[:44]}... no longer in the sub-100 population")
+    # ONE diff pass over the whole sub-100 population; every control below
+    # reads it.  Misses are DATA here rather than a REFUSE -- see the docstring
+    # of diff_many_tolerant for why the selftest must not abort on them.
+    diffs = diff_many_tolerant(a.project_dir, rows, cache)
+    diff_of = {r['sym']: d for r, d in zip(rows, diffs)}
+
+    # -- control 1 (shape 2): EVERY '$'-bearing template symbol in the live
+    #    population must produce a non-empty diff.  The first driver shelled
+    #    out through bash, so '$' was eaten by parameter expansion and 204 of
+    #    461 rows silently came back EMPTY.  Subject selection is lexical, so
+    #    this control cannot be disarmed by a row reaching 100% -- only by the
+    #    template population emptying out completely.
+    dollar = [r for r in rows if '$' in r['sym']]
+    if not dollar:
+        print("  DISARMED  control 1 (template symbols resolve): the sub-100 "
+              "population contains NO '$'-bearing symbol")
+        disarmed.append('control 1 (shape 2, template symbols): no template '
+                        'instantiation is sub-100 any more, so the '
+                        'silent-empty-diff shape is unguarded. Widen the '
+                        'population or retire the control deliberately -- do '
+                        'not just delete it.')
     else:
-        d = None if a.self_break else diff_one(a.project_dir, r['sym'], r['unit'], cache)
-        ok = d is not None and (d.get('instructions') is not None)
-        print(f"  {'PASS' if ok else 'FAIL'}  control 1 (dollar-symbol resolves): {sym[:40]}...")
+        empty = [r['sym'] for r in dollar
+                 if a.self_break or not ((diff_of.get(r['sym']) or {}).get('instructions'))]
+        ok = not empty
+        print(f"  {'PASS' if ok else 'FAIL'}  control 1 (template symbols resolve): "
+              f"{len(dollar) - len(empty)}/{len(dollar)} '$'-bearing symbols produced a diff")
         if not ok:
-            fails.append('dollar-symbol produced no diff (shell-quoting regression)')
+            for s in empty[:5]:
+                print(f"          EMPTY: {s[:86]}")
+            fails.append(f"{len(empty)}/{len(dollar)} '$'-bearing symbols produced no "
+                         f'diff -- the shell-quoting regression (shape 2) is back')
+
+    # -- control 2: the same guarantee for everything else.  The selftest reads
+    #    its diffs tolerantly, so without this a missing NON-template diff would
+    #    slip through where diff_many would have REFUSED.  Controls 1 + 2
+    #    together restore that invariant.
+    rest = [r for r in rows if '$' not in r['sym']]
+    gone = [r['sym'] for r in rest if diff_of.get(r['sym']) is None]
+    ok = not gone
+    print(f"  {'PASS' if ok else 'FAIL'}  control 2 (non-template rows resolve): "
+          f"{len(rest) - len(gone)}/{len(rest)} resolved")
+    if not ok:
+        for s in gone[:5]:
+            print(f"          MISSING: {s[:84]}")
+        fails.append(f'{len(gone)}/{len(rest)} non-template rows produced no diff -- '
+                     f'a partial dump yields a plausible but WRONG census')
 
     # -- control 3 (shape 3): the classifier must emit >= 2 labels, and BOTH
     #    named veins must be present.  A constant classifier fails here.
-    sample = rows if not a.self_break else rows[:1]
-    diffs = diff_many(a.project_dir, sample, cache)
+    #    --self-break installs exactly that: a degenerate classifier that calls
+    #    every mismatch STRUCTURAL, which must take 3, 3b AND 1b red.
     labels = collections.Counter()
     cls_of = {}
-    for rr, dd in zip(sample, diffs):
+    for rr in rows:
+        dd = diff_of.get(rr['sym'])
+        if dd is None:
+            continue
         arms = classify_arms(dd)
+        if a.self_break:
+            arms = ['STRUCTURAL'] * len(arms)
         labels.update(arms)
         cls_of[rr['sym']] = (arms, len(set(arms)) == 1)
     nlab = len([k for k, v in labels.items() if v])
@@ -344,24 +480,55 @@ def cmd_selftest(a):
             fails.append(f'vein {want} absent -- classifier cannot discriminate the two verdicts')
 
     # -- control 1b (shape 1): named known positives, one per vein, both PURE.
-    for sym, want in ((KNOWN_CMP, 'CMP_REVERSAL'), (KNOWN_ARITH, 'ARITH_COMMUTE')):
-        got = cls_of.get(sym)
-        if got is None:
-            print(f"  SKIP  control 1b: {sym[:44]}... no longer sub-100 (fixed upstream?)")
+    #    Each vein pins a LIST; the first entry still in the population is the
+    #    subject, so one upstream fix no longer disarms the control.
+    for pins, want in ((KNOWN_CMP, 'CMP_REVERSAL'), (KNOWN_ARITH, 'ARITH_COMMUTE')):
+        live = [s for s in pins if s in cls_of]
+        if not live:
+            print(f"  DISARMED  control 1b (known positive {want}): none of the "
+                  f"{len(pins)} pinned symbol(s) is sub-100 any more")
+            nominees = sorted((s for s, (arms, pure) in cls_of.items()
+                               if pure and set(arms) == {want} and '?A0x' not in s),
+                              key=lambda s: -by[s]['size'])
+            if nominees:
+                print(f"            {len(nominees)} candidate(s) nominated BY THE "
+                      f"CLASSIFIER ITSELF -- verify each in the diff by hand "
+                      f"before pinning;")
+                print(f"            a self-selected known positive is a tautology, "
+                      f"not a control:")
+                for s in nominees[:5]:
+                    print(f"              fz={by[s]['fz']:>7.3f} {by[s]['size']:>6} B  "
+                          f"{by[s]['unit'][:30]:<30} {s[:70]}")
+            disarmed.append(f'control 1b (shape 1, known positive {want}): all '
+                            f'{len(pins)} pinned symbol(s) have left the sub-100 '
+                            f'population -- re-pin to a {want} row a HUMAN has '
+                            f'verified in the instruction diff')
             continue
-        arms, pure = got
+        sym = live[0]
+        arms, pure = cls_of[sym]
         ok = pure and set(arms) == {want}
         print(f"  {'PASS' if ok else 'FAIL'}  control 1b (known positive {want}): "
-              f"{sym[:38]}... -> {sorted(set(arms))}")
+              f"{sym[:38]}... -> {sorted(set(arms))}"
+              f"{'' if len(live) == len(pins) else f'  [{len(live)}/{len(pins)} pins live]'}")
         if not ok:
             fails.append(f'known positive {sym} classified {sorted(set(arms))}, expected pure {want}')
 
     print()
+    print(f'controls: {len(fails)} failed, {len(disarmed)} disarmed')
     if fails:
         print('SELFTEST FAILED:')
         for f in fails:
             print('  -', f)
         sys.exit(2)
+    if disarmed:
+        print('SELFTEST INCONCLUSIVE -- %d control(s) DISARMED, so this run did '
+              'NOT validate\nevery shape it claims to. A disarmed control is not '
+              'a passing control.' % len(disarmed), file=sys.stderr)
+        for msg in disarmed:
+            print('  - ' + msg, file=sys.stderr)
+        print('\nRe-pin the constant(s) above, then re-run. Do not read this as a '
+              'PASS.', file=sys.stderr)
+        sys.exit(3)
     print('SELFTEST PASSED (and every control above can fail -- try --self-break)')
 
 

@@ -515,12 +515,28 @@ start, run the branch census: **a real out-of-line COMDAT has `bl` callers.**
 Two instrument defects were found and worked around while doing this, both
 worth knowing:
 
-- **`tools/pdata_map_audit.py --selftest --sabotage shift` PASSES in a fresh
-  worktree**, i.e. the anti-vacuity control is dead exactly where lanes work.
-  `fingerprints.json` is gitignored and never travels, so the one leg that
-  catches a wrong shift reports `[SKIP]` and the run still says `OK`. Symlink
-  it from the main checkout first; the control then reads 55,999/55,999 PASS
-  and the sabotage leg correctly FAILs 0/55,999.
+- ✅ **`tools/pdata_map_audit.py --selftest --sabotage shift` used to PASS in a
+  fresh worktree — FIXED, lane P 2026-08-16.** The finding was right and the
+  workaround it prescribed is now obsolete: **do not symlink `fingerprints.json`
+  from the main checkout**, and do not read a bare `OK` as coverage.
+  `fingerprints.json` is gitignored and never travelled, so the one leg that
+  caught a wrong shift reported `[SKIP]` and the run still said `OK` — and it
+  was the *only* one of the five legs that discriminated (the other four PASS
+  under sabotage). The repair moved the discriminating controls onto the retail
+  binary itself (extents must be disjoint, inside an executable section, and
+  cover ≥80% of code): 0/57,732 neighbour pairs overlap under the real shift
+  vs 57,730/57,732 under the sabotage. A worktree sabotage leg now FAILs
+  (exit 1) with no fixture at all. `scripts/setup_worktree.sh` also reflink-copies
+  `fingerprints.json` now, so the cross-check runs too and still reads
+  55,999/55,999.
+  ⚠ **The fingerprints leg is NOT redundant** — the binary-only legs are
+  one-sided (monotone in "smaller is safer", so blind to an under-decode) and
+  assert well-formedness of any PE rather than the identity of this one. It is
+  the only exact-equality, both-directions bound. Do not delete it.
+  ⚠ Read the **exit code**, not the word: `0` all controls ran and passed,
+  `1` a control failed, `3` INCOMPLETE (a control could not run), `4` CANNOT RUN
+  (no `band.exe` — itself gitignored). `2` is left to argparse so a typo'd flag
+  cannot impersonate a verdict.
 - **`tools/gated_map_write.py` cannot perform a re-home.** It refuses an
   existing key (`P4 … would be a PHANTOM EDIT`), which is right for an
   *insert* and means a null→name repair needs a reviewed single-line textual

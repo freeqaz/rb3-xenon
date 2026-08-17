@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
-"""Classify the mismatch CAUSE of near-miss functions via objdiff per-fn JSON.
+"""VOID-OUTPUT WINDOW 2026-08-16 -> 2026-08-17. The `args` spelling change
+INVERTED this tool's headline verdict: NAME_RELOC fell to 0 and OFFSET filled
+with 43 phantom rows per 219 mismatches, so "naming climbs it for free" was
+reported as "source-fidelity struct bug" and vice versa.
+
+Every number this tool printed between the first rebuild carrying objdiff-cli
+fdc5113 ("ruler I", committed 2026-08-16 08:34:03 UTC with its release binary
+deliberately NOT rebuilt; confirmed live by 21:30 that day) and the repair
+described below is VOID. Re-run it; do not carry it forward. Audit:
+`ARGS_READER_AUDIT.md` in decomp-bench `archive/runs/objdiff-silent-flags-and-
+dead-controls-2026-08-16/` (task #96); repair task #103. Swept 2026-08-17: NO
+committed artifact in this repo, and no file at any of these tools' default
+output paths, falls inside that window -- this banner exists for outputs held
+outside git.
+
+Classify the mismatch CAUSE of near-miss functions via objdiff per-fn JSON.
 
 For each function in a match band, run objdiff diff -f json and bucket each
 non-equal instruction into a cause class, then assign the function a dominant
@@ -25,8 +40,50 @@ from collections import Counter, defaultdict
 ROOT="/home/free/code/milohax/rb3-xenon"
 UNNAMED=re.compile(r'\b(fn_[0-9A-Fa-f]+|lbl_[0-9A-Fa-f]+|sub_[0-9A-Fa-f]+|loc_[0-9A-Fa-f]+)\b')
 
+def flat_args(side):
+    """Rebuild the pre-fdc5113 flat operand join from `typed_args`.
+
+    objdiff-cli fdc5113 ("ruler I", 2026-08-16) changed the JSON `args` string
+    from a comma-join of the COMPARISON arg list to the DISPLAY spelling. Three
+    things moved, and this tool was tuned against all three of the old ones:
+
+      * d-form operands gained parens:  `0x38, r4`  ->  `0x38(r4)`
+      * COFF relocations gained suffixes: `sym`     ->  `sym@h` / `sym@l(r22)`
+      * the trailing NON-DISPLAYED relocation vanished from the string
+        (`mr r5, r6, sym` -> `mr r5, r6`); it survives only as the last
+        `typed_args` entry, of type Symbol.
+
+    tok_syms treats anything that is not a bare register or immediate as a
+    SYMBOL token, so under the new spelling `0x38(r4)` read as a symbol and the
+    tool's headline verdict inverted: NAME_RELOC ("naming climbs it for free")
+    went to zero and OFFSET ("source-fidelity struct bug") filled with rows that
+    are nothing of the kind. Rebuilding from typed_args restores the exact old
+    string -- crucially INCLUDING the hidden trailing Symbol, so a row whose two
+    sides are now byte-identical on `args` but still differ in the relocation is
+    scored NAME_RELOC (a relocation-name difference) instead of falling through
+    to the typed_args scan and being mislabelled an immediate difference.
+
+    Rendering matches objdiff-core/src/obj/mod.rs' Display impls exactly:
+    Signed/BranchDest as signed hex, Unsigned as hex, everything else verbatim.
+    """
+    ta = side.get('typed_args')
+    if ta is None:
+        return side.get('args') or ''
+    out=[]
+    for a in ta:
+        t=a.get('type'); v=a.get('value')
+        if t in ('Signed','BranchDest') and isinstance(v,int):
+            out.append(('-0x%x'%-v) if v<0 else '0x%x'%v)
+        elif t=='Unsigned' and isinstance(v,int):
+            out.append('0x%x'%v)
+        else:
+            out.append(str(v))
+    return ', '.join(out)
+
+
 def tok_syms(args):
     # return set of symbol-like tokens (mangled names / labels), strip pure regs/imm
+    # NOTE: pass flat_args(side), never side['args'] -- see flat_args' docstring.
     out=set()
     for t in re.split(r'[,\s]+', args or ''):
         t=t.strip()
@@ -47,7 +104,7 @@ def classify_insn(ins):
     ta=tg.get('typed_args',[]); ba=bs.get('typed_args',[])
     # register-only diff?
     reg_diff=False; imm_diff=False; sym_diff=False
-    tsy=tok_syms(tg.get('args')); bsy=tok_syms(bs.get('args'))
+    tsy=tok_syms(flat_args(tg)); bsy=tok_syms(flat_args(bs))
     if tsy!=bsy:
         # symbol token differs
         only_t=tsy-bsy; only_b=bsy-tsy

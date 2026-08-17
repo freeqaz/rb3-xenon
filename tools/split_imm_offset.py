@@ -13,6 +13,36 @@ immediate's *context*:
   MIXED/OTHER.
 
 Read-only. Usage: tools/split_imm_offset.py [--jobs 12]
+
+⛔ EVERY SPLIT THIS TOOL PRODUCED BEFORE 2026-08-16 IS VOID. Re-run before
+citing; do not carry an old number forward.
+
+MEMREF below matches the parenthesised d-form `0xNN(rY)`, which objdiff-cli's
+JSON `args` field did not emit between 2026-01-31 (`e1e04ff`, when `args`
+became the flat comparison-join `rX, 0xNN, rY`) and 2026-08-16 (4.2, when it
+became the display spelling again). For those six-and-a-half months MEMREF
+never matched anything, so the STACK and STRUCT buckets — the entire reason
+this tool exists — were structurally EMPTY, and every memory-displacement diff
+fell through to the token path and was counted CONST.
+
+The parser is correct now and needs no change. What it means is that the old
+splits were not merely noisy, they were inverted. Measured over 25 rb3-xenon
+near-miss functions plus the 7-function dc3 audit corpus (task #104):
+
+               STACK  STRUCT  CONST  STRUCT_OR_CONST
+  pre-4.2 args     0       0    287              205
+  4.2 args        45     350     71              205
+
+i.e. what the old runs reported as "literal constant, data/source" is
+overwhelmingly struct-member-offset — the header lever, not a source constant.
+
+One thing NOT to "fix" here: the `if ta == ba: continue` guard below now drops
+rows whose display strings are identical while a hidden relocation differs
+(14 such rows in the corpora above, 0 before 4.2). That is correct for THIS
+tool — a relocation name is not a STACK/STRUCT/CONST immediate, and pre-4.2
+those rows reached the token path and were counted as nothing anyway. Verified
+identical either way; the guard is a real hazard in tools that classify
+relocations, not here.
 """
 import argparse
 import json

@@ -53,6 +53,14 @@ from typing import Dict, List, Optional, Tuple
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_MAP = PROJECT_ROOT / "scripts" / "target_symbol_map.json"
 
+# The ONLY map keys that refuse an address. Single source of truth: consumers
+# that report what the loader dropped (tools/comdat_retail_verify.py) iterate
+# this rather than re-deriving `_denylist` locally, so a future addition cannot
+# be honoured by the loader while the disclosure line keeps quoting the old set.
+# Which sibling keys are deliberately ABSENT here, and why, is in
+# `load_address_map`'s docstring -- read it before adding one.
+REFUSAL_KEYS: Tuple[str, ...] = ("_denylist",)
+
 
 def parse_coff_symbols(data: bytes) -> List[Tuple[str, int, int, int]]:
     """Return list of (name, entry_off, str_abs_off_or_-1, str_len)."""
@@ -118,7 +126,68 @@ def load_address_map(path: Path) -> Dict[str, str]:
 
     i.e. a null was a DATA-DEPENDENT LANDMINE, not a uniform failure. Skipping
     it here makes a null mean exactly what a delete wants it to mean: no
-    rename, this address stays anonymous."""
+    rename, this address stays anonymous.
+
+    WHICH MAP KEYS REFUSE AN ADDRESS (adjudicated by lane task100, 2026-08-17)
+    -------------------------------------------------------------------------
+    The map declares five list-valued metadata keys and only ONE of them is a
+    refusal list. Stated here so the next reader does not re-derive it from the
+    fact that `_denylist` once sat declared-and-ignored (fixed in `f3fe9ab1`)
+    and conclude that every sibling list is another such bug. They are not.
+
+    HONOURED -- see `REFUSAL_KEYS`:
+
+      * `_denylist` -- adjudicated refusals. An address here is unclaimed
+        whatever string value it still carries. Each entry carries a
+        per-address rationale in `_denylist_comment`; that rationale is what
+        makes it a denial rather than a suspicion.
+
+    DELIBERATELY NOT HONOURED. Each was measured against the checked-in map and
+    the built target tree (`build/45410914`, ruler `functionRelocDiffs=name_check`);
+    honouring any of them only DESTROYS byte-verified matches:
+
+      * `_denylist_unadjudicated` (1 address, 1 live row, currently strict-100)
+        -- NOT a refusal list, and not an oversight: it was CREATED by
+        `f3fe9ab1`, the very commit that fixed the `_denylist` defect, as the
+        bucket for a suspicion with no recorded rationale. Its own comment says
+        it is "NOT honoured by scripts/obj_target_symbol_renamer.py", and that
+        commit priced honouring it at -1 matched / -1 honest / 0 code bytes,
+        all of it `default/SongDB` 118->117. The credit at stake is
+        mpn-only, so it is not byte-evidence the name is RIGHT -- and nothing
+        shows it wrong either. The two keys are a two-state machine: adjudicate
+        on retail bytes, then MOVE the address into `_denylist`, which is
+        already honoured. Refusing here would delete the state `f3fe9ab1`
+        deliberately built.
+
+      * `_icf_arbitrary` (28 live rows, 28 strict-100) and
+      * `_bijection_arbitrary` (939 live rows, 929 strict-100, 10 sub-100)
+        -- these tag NAME AMBIGUITY on rows whose BYTES are verified. Retail
+        ICF-folded N of our symbols onto one body (or a bijection was chosen
+        over a reloc-masked byte-identical class), so the MATCH is true and
+        byte-witnessed; what is unestablished is WHICH of the N names belongs
+        on the VA. That is not the same claim as a denial, and the map says so:
+        both comments direct "any tool deriving identity, callers, or unit
+        ownership from these entries must treat them as UNRESOLVED" -- an
+        instruction to the CONSUMER, not to this loader. `_bijection_arbitrary_comment`
+        further records the current behaviour as known and intended ("these rows
+        ARE applied to target objs on every build -- load_address_map filters
+        only JSON-null rows and _denylist, NOT this list") and prescribes the
+        remedy: REFINE the name, which is positive-yield repair work (lane
+        MAPDEF-3 `db9eb318`: +108 B from 9 such rows). Refusing them would drop
+        967 renames and 957 strict-100 name-checked matches, and laneAV already
+        tested and REFUTED the refuse-them hypothesis on the sub-band where it
+        looked strongest.
+
+      * `_internal_linkage_allow` -- an ALLOW list, the opposite polarity: it
+        enumerates the one legitimate exception to map name-injectivity (a
+        file-static function is not a COMDAT, so one mangled name really does
+        sit at one VA per defining TU). Refusing it would be backwards.
+
+    So the map's refusal vocabulary is exactly: a JSON `null` value, or
+    `_denylist`. The `_arbitrary` lists are provenance, and the correct
+    response to them is per-consumer -- a tool making an IDENTITY claim should
+    label or exclude those rows itself; a tool applying names for SCORING
+    should keep them."""
     raw = json.loads(path.read_text())
 
     # `_denylist` = addresses gen_target_map must never auto-emit (hand-flagged
@@ -129,15 +198,16 @@ def load_address_map(path: Path) -> Dict[str, str]:
     # raises rather than quietly emptying the filter, because a silently-empty
     # denylist is exactly the failure this fixes.
     denied: set = set()
-    raw_deny = raw.get("_denylist", [])
-    if not isinstance(raw_deny, list):
-        raise ValueError(f"_denylist in {path} must be a list, got "
-                         f"{type(raw_deny).__name__}")
-    for entry in raw_deny:
-        if not isinstance(entry, str) or not entry.lower().startswith("0x"):
-            raise ValueError(f"_denylist entry {entry!r} in {path} is not a "
-                             f"'0x...' address string")
-        denied.add(int(entry.lower().removeprefix("0x"), 16))
+    for key in REFUSAL_KEYS:
+        raw_deny = raw.get(key, [])
+        if not isinstance(raw_deny, list):
+            raise ValueError(f"{key} in {path} must be a list, got "
+                             f"{type(raw_deny).__name__}")
+        for entry in raw_deny:
+            if not isinstance(entry, str) or not entry.lower().startswith("0x"):
+                raise ValueError(f"{key} entry {entry!r} in {path} is not a "
+                                 f"'0x...' address string")
+            denied.add(int(entry.lower().removeprefix("0x"), 16))
 
     out: Dict[str, str] = {}
     n_null = 0

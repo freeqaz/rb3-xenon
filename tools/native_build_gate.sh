@@ -110,17 +110,79 @@
 #     tools/native_build_gate.sh [project_dir] [--strict]
 #
 #     --strict / NATIVE_GATE_STRICT=1
-#         SKIPPED targets FAIL too. Use on a machine that has the full deps
-#         tree (i.e. repo main), where a skip means the environment moved.
+#         Promote an incomplete run to a HARD FAIL (rc=1): SKIPPED targets and
+#         subset-OMITTED targets are counted as defects. For anyone who wants
+#         "the environment moved" treated as breakage rather than as the
+#         absence of evidence rc=3 now reports.
 #     NATIVE_GATE_ONLY="rb3-dta rb3-ark"
 #         Build+assert only these targets. The verdict can then NEVER be a bare
 #         "PASS" -- it is "PASS (PARTIAL: n of N)" and lists what was omitted --
 #         so a subset run cannot be mistaken for full coverage.
+#     NATIVE_GATE_ALLOW_INCOMPLETE=1
+#         An INCOMPLETE run returns 0 again, AND SAYS SO on the verdict line.
+#         For environments that STRUCTURALLY cannot host the engine: CI (the
+#         container has no milo-native-engine and no Dawn), a clone on another
+#         machine, and the frozen tree copies under decomp-bench/ and
+#         decomp-synth/out/. Never silent, never a default. It does NOT apply
+#         to PARTIAL -- a subset run is a deliberate choice by whoever set
+#         NATIVE_GATE_ONLY, and it must not be able to report as a pass.
 #
-# Exit 0 = native still builds. Exit 1 = it does not; diagnostics are printed
-# and the log path is reported. Exit 2 = the gate could not run at all.
+# EXIT CODES
+#     0   full coverage, and all of it builds.
+#     1   the native build is BROKEN (or cmake configure failed).
+#     2   the gate COULD NOT RUN AT ALL -- unknown option, no such dir, no
+#         native/, cd failed, or its own ninja probe returned nothing.
+#     3   the gate RAN and does NOT VOUCH FOR FULL COVERAGE: targets were
+#         SKIPPED for a verified environmental reason (INCOMPLETE), or only a
+#         subset was requested (PARTIAL). NOTHING IS KNOWN TO BE BROKEN --
+#         something was not TESTED. It is the absence of evidence, and it is a
+#         distinct fact from both "fine" and "broken".
+#
+# !! 3, not 2. 2 is taken, documented above, and live at five call sites meaning
+# "the gate could not run at all"; overloading it would make the two states
+# indistinguishable. House precedent for a distinct "I refuse to vouch" code:
+# tools/gated_map_write.py's EXIT_REFUSED_PRE=4 / EXIT_REFUSED_POST=5, and
+# docs/decomp/INSTRUMENT_DESIGN.md's staleness-refusal exit 3.
+#
+# WHY 3 EXISTS. Until 2026-08-17 an INCOMPLETE run printed
+# `PASS (INCOMPLETE: 15/18 verified, 3 SKIPPED)` and EXITED 0 -- indistinguishable
+# from a full pass to anything reading rc, and the 0-SKIP rule that caught every
+# false green so far (X21, MATCH-A) was a rule a HUMAN had to remember while
+# reading a verdict whose first word is "PASS". The reason it was left at 0 was
+# that a worktree could not do better; that stopped being true when
+# native/CMakeLists.txt learned to resolve its siblings from the real repo (task
+# #90) and a cold, unseeded worktree started returning 18/18. rc=3 now fires
+# only on a tree that genuinely has no engine, which is a true statement.
+#
+# MACHINE-READABLE SUMMARY
+#     The LAST line of every run, on every exit path, is
+#
+#       NATIVE_GATE_RESULT verdict=INCOMPLETE expected=18 verified=15 skipped=3 partial=0 failed=0 rc=0
+#
+#     PASTE THAT LINE into your lane write-up instead of paraphrasing the
+#     verdict. There was no machine surface here at all before, and the prose
+#     verdict is easy to relay wrongly: the full-pass line is `PASS  (rc=0, …`
+#     and the incomplete one is `PASS (INCOMPLETE: …`, which differ by one
+#     space, and lane X21's incomplete baseline was very nearly relayed upstream
+#     as "PASS". Field meanings:
+#       verdict   PASS | INCOMPLETE | PARTIAL | FAIL | UNRUNNABLE
+#       expected  targets this run was asked to vouch for (the subset size under
+#                 NATIVE_GATE_ONLY, otherwise MANIFEST u DECLARED)
+#       verified  ended OK -- relinked this run, or ninja says up to date
+#       skipped   not configured, with an independently verified environmental
+#                 reason (see conditional_reason)
+#       partial   targets OMITTED by NATIVE_GATE_ONLY; 0 on a full run
+#       failed    target defects: DROPPED / MISSING / NOBINARY / STALE. Under
+#                 --strict the SKIPPED targets are promoted into this count and
+#                 are therefore counted in BOTH `skipped` and `failed`.
+#       rc        this script's exit status
+#     Keys, order and spelling are the contract; add fields at the end only.
 
 set -uo pipefail
+
+emit_result() {  # verdict expected verified skipped partial failed rc
+    echo "NATIVE_GATE_RESULT verdict=$1 expected=$2 verified=$3 skipped=$4 partial=$5 failed=$6 rc=$7"
+}
 
 # --------------------------------------------------------------- MANIFEST ---
 # The floor. If you add or remove a target in native/CMakeLists.txt, update
@@ -139,23 +201,36 @@ DIR=""
 for arg in "$@"; do
     case "$arg" in
         --strict) STRICT=1 ;;
-        -*)       echo "native_build_gate: unknown option $arg" >&2; exit 2 ;;
+        -*)       echo "native_build_gate: unknown option $arg" >&2
+                  emit_result UNRUNNABLE 0 0 0 0 0 2; exit 2 ;;
         *)        DIR="$arg" ;;
     esac
 done
 [ -n "$DIR" ] || DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 # Normalise: a relative arg such as `.` otherwise yields a log named
 # `native_gate_..log` and an unreadable "tree:" line.
-DIR="$(cd "$DIR" 2>/dev/null && pwd)" || { echo "native_build_gate: no such dir" >&2; exit 2; }
+DIR="$(cd "$DIR" 2>/dev/null && pwd)" \
+    || { echo "native_build_gate: no such dir" >&2
+         emit_result UNRUNNABLE 0 0 0 0 0 2; exit 2; }
 
-LOG="${TMPDIR:-$HOME/tmp}/native_gate_$(basename "$DIR").log"
+# The log name must be UNIQUE PER TREE, and `native_gate_$(basename "$DIR").log`
+# was not: SEVEN live worktrees are named `wt` or `wt-rb3x` (five bare `wt`
+# alone: ~/tmp/laneCK3/wt, ~/tmp/laneCM3b/wt, and four
+# .claude/jobs/*/tmp/task*/wt), so two concurrent lanes silently overwrote each
+# other's diagnostics -- in a repo whose house rule is "assume other agents are
+# working right now", i.e. exactly when a log is worth having. Last two path
+# components (readable) PLUS a checksum of the FULL path (collision-proof).
+_log_slug="$(printf '%s_%s' "$(basename "$(dirname "$DIR")")" "$(basename "$DIR")" \
+             | tr -c 'A-Za-z0-9._-' '_')"
+LOG="${TMPDIR:-$HOME/tmp}/native_gate_${_log_slug}_$(printf '%s' "$DIR" | cksum | cut -d' ' -f1).log"
 mkdir -p "$(dirname "$LOG")"
 
 if [ ! -d "$DIR/native" ]; then
     echo "native_build_gate: no native/ under $DIR" >&2
+    emit_result UNRUNNABLE 0 0 0 0 0 2
     exit 2
 fi
-cd "$DIR/native" || exit 2
+cd "$DIR/native" || { emit_result UNRUNNABLE 0 0 0 0 0 2; exit 2; }
 BUILD=build
 CML=CMakeLists.txt
 
@@ -231,6 +306,7 @@ if [ $cfg_rc -ne 0 ]; then
     echo "NATIVE GATE: FAIL (cmake configure rc=$cfg_rc)"
     tail -20 "$LOG"
     echo "log: $LOG"
+    emit_result FAIL 0 0 0 0 0 1
     exit 1
 fi
 
@@ -261,6 +337,7 @@ if [ -z "$configured" ]; then
     echo "NATIVE GATE: FAIL (the gate could not enumerate ANY target from the ninja graph --"
     echo "  its own probe is broken, so no verdict is reportable)"
     echo "log: $LOG"
+    emit_result UNRUNNABLE 0 0 0 0 0 2
     exit 2
 fi
 # Exact-line membership, done WITHOUT a pipe on purpose.
@@ -424,6 +501,15 @@ if [ $STRICT -eq 1 ] && [ $n_skip -gt 0 ]; then
     for l in "${skipped_lines[@]}"; do echo "  STRICT-FAIL${l#  SKIPPED}"; done
     n_bad=$(( n_bad + n_skip ))
 fi
+# A SUBSET RUN MUST NOT BE ABLE TO REPORT AS A PASS. --strict used to promote
+# only skipped_lines, and omitted targets never enter `expected`, so they
+# generated no fail line at all: `NATIVE_GATE_ONLY=rb3-dta --strict` exited 0,
+# i.e. by rc it was indistinguishable from full coverage. Without --strict the
+# PARTIAL verdict now exits 3; with it, the omitted targets are defects.
+if [ $STRICT -eq 1 ] && [ $partial -eq 1 ] && [ ${#omitted[@]} -gt 0 ]; then
+    echo "  STRICT-FAIL OMITTED   ${omitted[*]} -- a subset was requested, and --strict does not accept partial coverage"
+    n_bad=$(( n_bad + ${#omitted[@]} ))
+fi
 
 # `link_errs` is an INDEPENDENT trigger, deliberately. build_rc already catches
 # every case seen so far, but a gate should not rest on a single signal for the
@@ -440,15 +526,27 @@ if [ $build_rc -ne 0 ] || [ "$errs" -ne 0 ] || [ "$link_errs" -ne 0 ] || [ $n_ba
         echo "--- $failed_edges failed edge(s) across target(s): $(echo $failed_targets | tr '\n' ' ')---"
     fi
     echo "log: $LOG"
+    emit_result FAIL "${#expected[@]}" "$n_ok" "$n_skip" "${#omitted[@]}" "$n_bad" 1
     exit 1
 fi
 
 # The warning policy is -Wno-everything + explicit -Werror= opt-ins, so a
 # non-zero warning count here means something got past an opt-in that should
 # have been an error, or a new -W was added without -Werror=. Report, don't fail.
+verdict_kind=PASS
+rc=0
+allow_note=""
 if [ $partial -eq 1 ]; then
-    echo "NATIVE GATE: PASS (PARTIAL: $n_ok of ${#KNOWN_TARGETS[@]} known target(s) requested) -- NOT full coverage"
+    verdict_kind=PARTIAL
+    rc=3
+    echo "NATIVE GATE: PASS (PARTIAL: $n_ok of ${#KNOWN_TARGETS[@]} known target(s) requested) -- NOT full coverage (rc=3)"
 elif [ $n_skip -gt 0 ]; then
+    verdict_kind=INCOMPLETE
+    rc=3
+    if [ "${NATIVE_GATE_ALLOW_INCOMPLETE:-0}" = "1" ]; then
+        rc=0
+        allow_note="  [rc forced to 0 by NATIVE_GATE_ALLOW_INCOMPLETE]"
+    fi
     # SELF-LABEL an incomplete run. The house rule is "always require 0 SKIPs,
     # never just PASS", but that used to be a rule a HUMAN had to remember while
     # reading a verdict whose first word was "PASS": the old line read
@@ -456,22 +554,31 @@ elif [ $n_skip -gt 0 ]; then
     # relayed upstream as "PASS". Lane X21's first baseline was exactly this,
     # and only the operator applying the 0-SKIP rule by hand caught it.
     #
-    # This matters most in a ~/tmp worktree, which is where EVERY lane works:
-    # MILO_ENGINE_PATH / Dawn_DIR default RELATIVE to the source tree, so
-    # rb3-frame, rb3-milo and rb3-render legitimately vanish and the gate is
-    # then STRUCTURALLY INCAPABLE of testing the three targets most likely to
-    # break. Seed the cache with all four absolute flags to get real coverage.
-    echo "NATIVE GATE: PASS (INCOMPLETE: $n_ok/${#expected[@]} verified, $n_skip SKIPPED) -- NOT full coverage"
+    # This USED TO BE the steady state in a ~/tmp worktree, which is where EVERY
+    # lane works: MILO_ENGINE_PATH / Dawn_DIR defaulted RELATIVE to the source
+    # tree, so rb3-frame, rb3-milo and rb3-render legitimately vanished and the
+    # gate was STRUCTURALLY INCAPABLE of testing the three targets most likely
+    # to break. native/CMakeLists.txt now resolves both from the REAL repository
+    # (task #90; ported from 60837907), so a plain worktree gets 18/18 with no
+    # seeding at all -- verified in a cold worktree 2026-08-17. Landing here now
+    # means the deps tree is GENUINELY absent, or the cache carries an explicit
+    # override, which is a fact about the machine and not about the location.
+    echo "NATIVE GATE: PASS (INCOMPLETE: $n_ok/${#expected[@]} verified, $n_skip SKIPPED) -- NOT full coverage (rc=$rc)$allow_note"
     echo "  the skipped target(s) were NOT built and NOT tested by this run:"
     for l in "${skipped_lines[@]}"; do echo "  ${l#  SKIPPED   }" | sed 's/^/    /'; done
-    echo "  If you are in a worktree, seed the cache and re-run for full coverage:"
-    echo "    cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \\"
-    echo "      -DMILO_ENGINE_PATH=/home/free/code/milohax/milo-native-engine \\"
-    echo "      -DDawn_DIR=/home/free/code/milohax/dc3-decomp-deps/dawn/lib/cmake/Dawn"
-    echo "  (or run with --strict to make a SKIP a FAIL)"
+    echo "  native/CMakeLists.txt resolves these from the real repo, so a worktree"
+    echo "  should NOT land here. Check the '[sibling]' lines in the configure log"
+    echo "  ($LOG), then seed explicitly if the deps really are elsewhere:"
+    echo "    cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \\"
+    echo "      -DMILO_ENGINE_PATH=\"\$HOME/code/milohax/milo-native-engine\" \\"
+    echo "      -DDawn_DIR=\"\$HOME/code/milohax/dc3-decomp-deps/dawn/lib/cmake/Dawn\""
+    echo "  rc=3 means NOT TESTED, not broken. --strict makes it a hard FAIL (rc=1);"
+    echo "  NATIVE_GATE_ALLOW_INCOMPLETE=1 forces rc=0 where the engine cannot exist"
+    echo "  (CI, another machine, the frozen tree copies) -- and says so on the line."
 else
     echo "NATIVE GATE: PASS  (rc=0, $errs errors, $warns warnings, $n_ok/${#expected[@]} target(s) verified)"
 fi
 [ "$warns" -ne 0 ] && echo "  note: $warns warning(s) -- policy expects 0; check the opt-in list in native/CMakeLists.txt"
 echo "log: $LOG"
-exit 0
+emit_result "$verdict_kind" "${#expected[@]}" "$n_ok" "$n_skip" "${#omitted[@]}" "$n_bad" "$rc"
+exit $rc
