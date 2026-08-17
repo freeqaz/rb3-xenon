@@ -69,11 +69,15 @@ def sections(buf):
     return imgbase, secs
 
 
-def main():
-    if len(sys.argv) < 2:
-        raise SystemExit(__doc__)
-    targets = {int(a, 16) for a in sys.argv[1:]}
-    buf = open(PE, "rb").read()
+def bl_sites(targets, pe=None):
+    """{target_va: [call_site_va, ...]} for every `bl` in retail .text.
+
+    Exposed as a function so tools/cascade_price.py can reuse the scan instead of
+    re-implementing it (a second copy of the AA/LK decoding is a second chance to
+    get it wrong).  `targets` is any iterable of ints.
+    """
+    targets = set(targets)
+    buf = open(pe or PE, "rb").read()
     _imgbase, secs = sections(buf)
     _n, vaddr, vsize, rawptr, rawsize = [s for s in secs if s[0] == ".text"][0]
     data = buf[rawptr:rawptr + min(rawsize, vsize)]
@@ -89,6 +93,14 @@ def main():
         dest = li if ((w >> 1) & 1) else pc + li   # AA=1 => absolute
         if dest in hits:
             hits[dest].append(pc)
+    return hits
+
+
+def main():
+    if len(sys.argv) < 2:
+        raise SystemExit(__doc__)
+    targets = {int(a, 16) for a in sys.argv[1:]}
+    hits = bl_sites(targets)
     for t in sorted(targets):
         print(f"== bl -> 0x{t:08x}: {len(hits[t])} call site(s)")
         for pc in hits[t]:
