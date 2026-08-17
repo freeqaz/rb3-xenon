@@ -86,6 +86,7 @@ Usage:
 import argparse
 import json
 import os
+import re
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -95,6 +96,9 @@ import cascade_price as cp          # noqa: E402  loaders + can_define + splits
 import coff_owned                   # noqa: E402
 
 VERSION = "45410914"
+
+# Anonymous-namespace hashes are normalized away before objdiff pairs symbols.
+NORM_ANON = re.compile(r"\?A0x[0-9a-f]+")
 
 # W20's measured answer for the round trip. Frozen; see docs/decomp/w20-cascade.md.
 W20_MEASURED_PAIRING_BYTES = -2396
@@ -294,7 +298,7 @@ def cmd_rehome(args):
     idx = build_definition_index(root, units)
     print(f"  {len(idx):,} distinct symbols defined across the base objs")
 
-    orphans = []
+    orphans, anon_over = [], []
     for u in units:
         name, tp, bp = u.get("name", ""), u.get("target_path"), u.get("base_path")
         if not tp or not bp:
@@ -308,15 +312,28 @@ def cmd_rehome(args):
         except Exception:
             continue
         bdef = bowned | bshared
+        bnorm = {NORM_ANON.sub("?A", x) for x in bdef}
         for sym in (towned | tshared):
             key = (name, sym)
-            if key not in rows or sym.startswith(cp.PLACEHOLDER_PREFIXES
-                                                 if hasattr(cp, "PLACEHOLDER_PREFIXES")
-                                                 else ("fn_", "lbl_", "jumptable_",
-                                                       "data_", "bss_", "rdata_")):
+            # Anonymous rows are a DIFFERENT, already-sized class (they never
+            # pair by name at all); excluding them keeps this census about
+            # re-homing rather than about identification.
+            if key not in rows or cp.is_placeholder(sym):
                 continue
             size, fuzzy, mpn = rows[key]
             if sym in bdef:
+                continue
+            # ⚠ PAIRING IS NOT STRICTLY EXACT-NAME. An anonymous-namespace hash
+            # (?A0x<hash>, which MSVC derives from machine name + source path)
+            # is normalized away before pairing, so a symbol the obj does not
+            # define VERBATIM can still pair. Measured: 21 of 282 orphans carry
+            # such a hash, 2 normalize onto a base definition, and exactly 1 of
+            # those 2 pairs -- 2 target symbols against 1 base definition, so
+            # the other loses an OVER-SUBSCRIPTION. Booking these as orphans is
+            # what made the self-validation fail; they are a different class.
+            if NORM_ANON.sub("?A", sym) in bnorm:
+                anon_over.append(dict(unit=name, symbol=sym, size=size,
+                                      fuzzy=fuzzy, mpn=mpn))
                 continue
             elsewhere = {k: v for k, v in idx.get(sym, {}).items() if k != name}
             orphans.append(dict(unit=name, symbol=sym, size=size, fuzzy=fuzzy,
@@ -328,6 +345,11 @@ def cmd_rehome(args):
     print(f"  {len(orphans)} rows / {tot:,} B")
     print(f"  SELF-VALIDATION -- every orphan must read fuzzy 0.0: "
           f"{len(bad)} violations ({'PASS' if not bad else 'FAIL'})")
+    ao_paired = sum(1 for o in anon_over if o["fuzzy"] > 0)
+    print(f"  ANON-NORMALIZED (pair despite no verbatim definition): "
+          f"{len(anon_over)} rows / {sum(o['size'] for o in anon_over):,} B, "
+          f"of which {ao_paired} actually pair "
+          f"({len(anon_over) - ao_paired} lose an over-subscription)")
     for o in bad[:5]:
         print("    ", o["unit"], o["symbol"][:60], o["fuzzy"])
 
@@ -363,6 +385,28 @@ def cmd_rehome(args):
     return 0 if not bad else 1
 
 
+def cmd_whereis(args):
+    """Which compiled objs can DEFINE this name?  The shipping gate for a
+    rename: if the answer is 'only unit V' and the row is pinned to U, then an
+    in-place rename sends the row to 0% and the remedy is a RE-HOME to V."""
+    root = args.root
+    units = json.load(open(Path(root) / "objdiff.json")).get("units", [])
+    idx = build_definition_index(root, units)
+    for pat in args.pattern:
+        hits = {s: d for s, d in idx.items() if pat in s}
+        print(f"\n=== {pat!r}: {len(hits)} matching symbol(s) ===")
+        for s, d in sorted(hits.items())[:40]:
+            own = [k for k, v in d.items() if v == "owned"]
+            print(f"  {s[:88]}")
+            print(f"     defined in {len(d)} obj(s); owned in {len(own)}: "
+                  f"{', '.join(sorted(d)[:6])}{' ...' if len(d) > 6 else ''}")
+        if not hits:
+            print("  NO compiled obj defines any symbol containing this. A rename "
+                  "to such a name un-pairs the row WHEREVER it is pinned; the "
+                  "remedy is SOURCE, not a pin move.")
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -375,6 +419,9 @@ def main():
     r = sub.add_parser("rehome-census", help="the inverse: rows that would PAIR if re-homed")
     r.add_argument("--json", default=None)
     r.set_defaults(fn=cmd_rehome)
+    w = sub.add_parser("whereis", help="which objs can DEFINE a name (rename gate)")
+    w.add_argument("pattern", nargs="+")
+    w.set_defaults(fn=cmd_whereis)
     args = ap.parse_args()
     args.root = os.path.abspath(args.root)
     return args.fn(args)
