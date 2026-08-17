@@ -134,14 +134,28 @@ void FixedSizeAlloc::Free(void *v) {
 
 int *FixedSizeAlloc::RawAlloc(int size) {
     int *buf = sPoolBuf;
-    int alignedSize = (size >> 2) << 2;
+    // Retail/match: the pool is walked in INT UNITS, not bytes. Retail's body
+    // computes `srawi r11, r4, 2` then `slwi r28, r11, 2` -- two separate
+    // instructions -- and reuses r28 for both the bounds check (`add r8, r28,
+    // r3`) and the bump (`add r11, r28, r3`). MSVC folds the byte-wise spelling
+    // `(size >> 2) << 2` into a single `clrrwi r28, r4, 2`, so retail cannot
+    // have written that. A srawi/slwi PAIR that does not fold is the signature
+    // of `int *` pointer arithmetic: the `>> 2` is the source's, the `slwi 2`
+    // is the compiler's sizeof(int) scaling, and those are emitted by different
+    // passes so they never combine. Same pattern appears twice (here and at
+    // sPoolEnd below).
+    int words = size >> 2;
     gPoolCapacity += size;
 
-    if ((unsigned int)((char *)buf + alignedSize) > (unsigned int)sPoolEnd) {
+    if (buf + words > sPoolEnd) {
         if (MemNumHeaps() > 0) {
-            if (gBigHunk == gSmallHunk) {
-                printf("PoolAlloc warning: allocating small pool chunk\n");
-            }
+            // NOTE: retail's block here is bare -- `bl MemNumHeaps ; cmpwi r3,0
+            // ; ble +0xc ; li r3,0 ; bl MemPushHeap` -- with NO
+            // gBigHunk == gSmallHunk test and no printf. Confirmed by a
+            // string scan of band.exe with a control that fires: "POOL REPORT"
+            // (0x117084) and the AllocType literals are PRESENT, while
+            // "PoolAlloc warning", "allocating small pool chunk", "PoolChunk"
+            // and "PoolAlloc.cpp" are ABSENT. Inherited dev-build dead code.
             MemPushHeap(0);
         }
 
@@ -165,13 +179,16 @@ int *FixedSizeAlloc::RawAlloc(int size) {
             MemPopHeap();
         }
 
-        int hunkSize = gBigHunk;
-        buf = (int *)((char *)sPoolBuf + 0x40);
-        sPoolEnd = (int *)((char *)sPoolBuf + ((hunkSize >> 2) << 2));
+        // gBigHunk is re-read from memory here, not cached across the calls:
+        // retail loads it twice (once as the MemAlloc argument, once again
+        // after MemPopHeap), which is what a plain global read either side of
+        // an opaque call produces.
+        buf = sPoolBuf + 0x10;
+        sPoolEnd = sPoolBuf + (gBigHunk >> 2);
         gBigHunk = gSmallHunk;
     }
 
-    sPoolBuf = (int *)((char *)buf + alignedSize);
+    sPoolBuf = buf + words;
     return buf;
 }
 
