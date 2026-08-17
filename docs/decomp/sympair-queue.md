@@ -127,6 +127,33 @@ integrity hazard as a fabricated alias, none was made.
 without proving which side is wrong.* Existence and assignment are separate
 claims, and this queue currently supports only the first.
 
+## ✅ One case WAS settled — with an anchor outside the map (`80fca393`)
+
+`Rnd::Handle`'s two screen-dump charges. The map had `?OnScreenDump@Rnd@@` and
+`?OnScreenDumpUnique@Rnd@@` **transposed** (`0x824130f0` ↔ `0x82413098`), and
+`src/system/rndobj/Rnd.h` carried a deliberate comment *reasoning from that
+wrong name* — "retail OnScreenDump calls vtable+0x70 (slot 28), so ScreenDump
+must stay at slot 28 and ScreenDumpUnique is declared FIRST" — which had been
+elaborated into a load-bearing **vtable ordering decision**.
+
+The anchor that settled it is external to the map: the `.rdata` dispatch
+strings in retail `Rnd::Handle` (`0x82413350`). `'screen_dump'` at +4544 is
+followed by `bl 0x82413098`; `'screen_dump_unique'` at +4668 by
+`bl 0x824130f0`. The two retail bodies are otherwise identical and differ
+**only** in the vtable slot they call (`+0x6C` vs `+0x70`). Our own
+`OnScreenDump` calls `ScreenDump(da->Str(2))` ⇒ retail's `ScreenDump` is the
+`+0x6C` slot ⇒ **ScreenDump is the LOWER slot and is declared FIRST.**
+
+Measured **Δ exactly 0** on every key — landed anyway (accuracy > headline).
+Mechanism verified so that Δ0 could not mean "nothing happened":
+`Rnd::Handle` went **3 charged sites → 1**, fuzzy 99.99065 → 99.99688, and the
+survivor is precisely the `FOLD_FANIN` pair predicted to remain — which is why
+the 6,416 B row still does not cross.
+
+★ Note what this cost and bought: the *byte* yield was zero and the *accuracy*
+yield was a corrected vtable and a retracted header claim. Budget for that
+ratio on this vein.
+
 ## What would settle it
 
 An anchor **outside** the map: retail `.rdata` string content at the call site
