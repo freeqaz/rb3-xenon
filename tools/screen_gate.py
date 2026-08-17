@@ -223,18 +223,46 @@ class ScreenResult:
 
 
 class GateResult:
+    """Aggregate verdict over the screens that were run.
+
+    ⛔ EMPTY-POPULATION GUARD (lane W38-GATES, 2026-08-17). `armed` was
+    `all(r.armed for r in self.results)`, and `all([])` is **True** -- so
+    `gate([])` reported armed=True, any_refused=False and **exit code 0**.
+    Measured before the fix:
+
+        >>> r = gate([]); r.armed, r.any_refused, r.exit_code()
+        (True, False, 0)
+
+    A harness whose whole job is to refuse instruments that cannot fail was
+    itself an instrument that could not fail, in exactly the configuration that
+    matters: a registry that silently loaded zero screens (an import error
+    swallowed upstream, a filter that matched nothing, a `--only` typo) is
+    indistinguishable from every screen passing. This is the same shape as the
+    module's own `must_fire`/`populations` refusals, one level up.
+
+    Zero screens is now VACUOUS-GATE / exit 2 -- not a pass and not a failure.
+    """
+
     def __init__(self, results):
         self.results = results
 
     @property
+    def vacuous(self):
+        """No screens were run at all -- the gate reached nothing."""
+        return not self.results
+
+    @property
     def armed(self):
-        return all(r.armed for r in self.results)
+        # `and self.results` first: an empty gate is never armed, whatever all() says.
+        return bool(self.results) and all(r.armed for r in self.results)
 
     @property
     def any_refused(self):
-        return any(r.refused for r in self.results)
+        return self.vacuous or any(r.refused for r in self.results)
 
     def exit_code(self):
+        if self.vacuous:
+            return 2
         if any(r.refused for r in self.results):
             return 2
         if any(r.verdict in ("DRAINED", "UNTESTABLE") for r in self.results):
@@ -356,6 +384,13 @@ def gate(screens, verbose=False, run_populations=True, out=sys.stdout):
         r = run_screen(s, run_populations=run_populations)
         results.append(r)
         _report_screen(r, verbose, out)
+    if not results:
+        # Say it out loud. A silent empty run is the failure mode -- the caller
+        # gates on `.armed`, and before this the empty gate answered True.
+        print("VACUOUS-GATE: ZERO screens were run. This is a REFUSAL (exit 2), "
+              "not a pass -- an empty screen registry cannot fail, so a green "
+              "verdict here would certify nothing. Check the registry/filter.",
+              file=out)
     return GateResult(results)
 
 

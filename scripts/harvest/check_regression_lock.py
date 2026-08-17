@@ -94,6 +94,38 @@ def latest_snapshot_strict(db_path):
             (commit, STRICT),
         ):
             strict[(unit, fn, occ)] = pct
+
+        # ── EMPTY-BASELINE REFUSAL (lane W38-GATES, 2026-08-17) ─────────────────
+        # The guard above catches an ABSENT snapshot (`head is None`). It does not
+        # catch a snapshot that EXISTS but contributes ZERO strict-100 rows -- and
+        # with `strict = {}` the comparison loop below runs zero times and this
+        # tool prints "VERDICT: CLEAN (no unlisted strict-100 regressions)" and
+        # exits 0. Reproduced against a synthetic db holding one sub-strict row:
+        # rc=0, CLEAN, over a baseline containing no functions at all.
+        #
+        # That is a rubber stamp on the landing pipeline's hard gate, and it is
+        # reachable without anything looking broken: a snapshot written before the
+        # report was built, a partial/aborted insert, a keying or unit-name
+        # convention change, or a merge_commit that does not match the rows.
+        #
+        # The floor is ZERO -- not a chosen threshold. A snapshot whose whole point
+        # is to enumerate the strict-100 set cannot legitimately enumerate none of
+        # it: this repo carries tens of thousands of matched functions, so an empty
+        # strict set means the snapshot did not record what it claims to record.
+        if not strict:
+            total = conn.execute(
+                "SELECT COUNT(*) FROM landing_snapshot WHERE merge_commit = ?",
+                (commit,),
+            ).fetchone()[0]
+            raise SystemExit(
+                f"REFUSING: snapshot @ {commit[:12]} contributes ZERO strict-100 "
+                f"rows ({total} row(s) total for that commit, none >= {STRICT}).\n"
+                "  The baseline is EMPTY, so every comparison below would be "
+                "vacuous and the gate would print CLEAN having checked nothing.\n"
+                "  This is NOT a clean landing -- it is a broken baseline. Re-run "
+                "snapshot_landing.py against a freshly built report.json, and "
+                "check that the snapshot's unit/fn keying matches the report's."
+            )
         return commit, strict
     finally:
         conn.close()
@@ -143,17 +175,23 @@ def is_allowed(key, allowed):
 
 
 def check(db_path, report_path, allowed):
-    """Return (commit, regressed, allowed_drops).
+    """Return (commit, regressed, allowed_drops, checked, found).
 
     regressed / allowed_drops are lists of (unit, fn, occ, old_pct, new_pct).
+    `checked` is how many baseline keys were compared; `found` how many of them
+    resolved in the new report (a collapse there means keying drift, not health).
     """
     commit, strict = latest_snapshot_strict(db_path)
     now = pct_map(report_path)
 
     regressed = []
     allowed_drops = []
+    checked = 0
+    found = 0
     for key, old in sorted(strict.items()):
         new = now.get(key)
+        checked += 1
+        found += new is not None
         # Missing from the new report OR below strict = a drop. A function that
         # vanished entirely (unit dropped from the build / renamed) counts as a
         # drop, treated as new_pct = 0.0 (the safe/loud interpretation).
@@ -164,7 +202,7 @@ def check(db_path, report_path, allowed):
                 allowed_drops.append(rec)
             else:
                 regressed.append(rec)
-    return commit, regressed, allowed_drops
+    return commit, regressed, allowed_drops, checked, found
 
 
 def main():
@@ -184,10 +222,17 @@ def main():
     args = ap.parse_args()
 
     allowed = parse_allow_drop(args.allow_drop, args.allow_drop_file)
-    commit, regressed, allowed_drops = check(args.db, args.report, allowed)
+    commit, regressed, allowed_drops, checked, found = check(
+        args.db, args.report, allowed)
 
+    # Report what was REACHED, not just what passed: "CLEAN" over 0 compared rows
+    # and "CLEAN" over 40,000 are the same sentence otherwise. `found` is how many
+    # baseline keys resolved in the new report at all -- if that collapses, the
+    # keying convention has drifted and the run is measuring absence, not health.
     print(f"regression-lock: comparing against snapshot @ {commit[:12]} "
           f"(strict-100 baseline)")
+    print(f"  baseline strict-100 rows compared: {checked}  "
+          f"(resolved in the new report: {found})")
 
     if allowed_drops:
         print(f"\nALLOWED DROPS ({len(allowed_drops)}) — intentional, audit-logged:")
