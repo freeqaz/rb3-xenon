@@ -72,11 +72,22 @@ class ContentMgr : public Hmx::Object {
 public:
 // retail RB3-360 ContentMgr::Callback has NO ContentTitleDiscovered vtable slot
 // (DC3-era addition; proven from the retail SongMgr Callback-subobject vtable
-// @0x8209cd1c which has a 14-slot prefix, ContentDiscovered directly followed by
+// @0x8209e91c which has a 14-slot prefix, ContentDiscovered directly followed by
 // ContentMountBegun with no bool-returning slot between). It is only ever called
 // through the base default (no overrides exist), so a non-virtual keeps the one
 // call site in ContentMgr_Xbox.cpp working while restoring the retail slot count.
 // Gated like DRAW_DC3_VIRTUAL so DC3-native keeps the virtual.
+//
+// (ADDRESS CORRECTED, lane W16-HEADERTRUTH, tools/vtable_claim_audit.py: this
+// used to cite @0x8209cd1c, which carries no ??_R4 and whose leading words are
+// not code addresses -- it is not a vtable, and the same false address had
+// propagated here from SongMgr.h. The SongMgr ContentMgr::Callback subobject
+// is COL 0x821e0004 at subobject offset 0xd4, whose vtable is 0x8209e91c;
+// ContentMgr::Callback's own standalone vtable is 0x8208f47c (COL 0x821df178).
+// ⚠ ONLY THE ADDRESS IS RE-VERIFIED HERE. The "14-slot prefix, ContentDiscovered
+// directly followed by ContentMountBegun" sub-claim names individual slots and
+// was NOT re-checked by this lane -- do not read the corrected address as
+// endorsing it. The gating decision is left standing on its existing grounds.)
 #ifdef HX_NATIVE
 #define CONTENTMGR_DC3_VIRTUAL virtual
 #else
