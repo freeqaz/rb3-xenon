@@ -534,6 +534,14 @@ bool NetSession::OnMsg(const JoinResponseMsg &msg) {
 void NetSession::AddLocalUser(LocalUser *newUser) {
     MILO_ASSERT(mState == kIdle, 0x2F9);
     MILO_ASSERT(newUser, 0x2FA);
+    // RB3-360 retail evaluates PlatformMgr::IsUserSignedIn(newUser) here and
+    // discards the result: `lis/addi ThePlatformMgr; bl IsUserSignedIn` sits
+    // between the prologue and the IsHost() call, with no branch on r3.  The
+    // rb3-Wii oracle has no such statement -- but our own assert line numbers
+    // give it away: 0x2F9, 0x2FA, **0x2FB missing**, 0x2FC.  MILO_ASSERT is
+    // ((void)(cond)) in this build, so restoring the assert at its own line
+    // number reproduces the call exactly without inventing a new statement.
+    MILO_ASSERT(ThePlatformMgr.IsUserSignedIn(newUser), 0x2FB);
     MILO_ASSERT(!HasUser(newUser), 0x2FC);
     if (IsHost()) {
         AddLocalToSession(newUser);

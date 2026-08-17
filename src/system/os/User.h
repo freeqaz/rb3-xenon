@@ -56,9 +56,6 @@ public:
     bool ComesBefore(const User *u) { return (mUserGuid < u->mUserGuid); }
     const UserGuid &GetUserGuid() const { return mUserGuid; }
     OnlineID *GetOnlineID() const { return mOnlineID; }
-    // Wii-only online-ID refresh, referenced by Wii profile-swap game paths
-    // (e.g. OvershellSlot::SelectGuestProfile). Decl-only; matches rb3-Wii User.
-    void UpdateOnlineID();
 };
 
 class LocalUser : public virtual User {
@@ -82,6 +79,20 @@ public:
     virtual const LocalUser *GetLocalUser() const;
     virtual RemoteUser *GetRemoteUser();
     virtual const RemoteUser *GetRemoteUser() const;
+
+    // Online-ID refresh. Declared on LocalUser, NOT on the virtual base User.
+    // The old placement on User claimed to "match rb3-Wii User" -- that comment
+    // was simply wrong: rb3-Wii declares it inside LocalUser (os/User.h) and
+    // defines it as `void LocalUser::UpdateOnlineID()` (os/User.cpp:67).
+    // Retail agrees INDEPENDENTLY of the oracle: in NetSession::AddLocalUser
+    // retail calls it with `mr r3, r30` -- the RAW LocalUser* -- whereas a
+    // member of the virtual base User requires the 4-instruction adjust
+    // (lwz vbptr / lwz off / add / addi 4) that our build was emitting.
+    // That adjust also PROVED the pointer non-null, which made MSVC elide the
+    // null check retail keeps on the following LocalUser*->const User*
+    // conversion -- so one misplaced declaration caused both divergences.
+    // Decl-only, exactly as before; all four call sites hold a LocalUser*.
+    void UpdateOnlineID();
 };
 
 // this is...never used anywhere in DC3
