@@ -1,5 +1,35 @@
 # Coupled-base & Body-port matching — playbook (2026-06-05)
 
+> **CORRECTION 2026-08-17 (task #114) — the `~fns` fan-out column in the work
+> order below is INFLATED; the `net` results are NOT. Provenance, bannered not
+> rewritten.**
+>
+> The `~fns` estimates are inherited from `layout_fix_rank.py`, whose `addi`
+> branch spelled every base register `rr1`/`rr12`/`rr31` (`'r' + m.group(2)`
+> where group 2 already carried its `r`), so no `addi/subi` off the stack
+> pointer, the r31 frame alias, or the r12 funclet establisher could ever reach
+> the `STACK_REGS` stack bucket. Measured paired over 2128 near-miss functions,
+> the as-shipped tool put **100.0% of the 1385 offset rows it parsed into the
+> struct bucket and 0 into stack**; corrected the split is 31.2% / 68.8%.
+> Direction: inflation of struct-layout evidence. Detail and the re-measurement
+> are in `plans/structural-readiness-2026-06-03.md`'s banner; run of record
+> `<decomp-bench>/archive/runs/rb3x-layout-fix-rank-rerank-2026-08-17/`.
+>
+> **The Pass 1 `net` column is unaffected** — those are whole-binary
+> `ab_measure.py` build outcomes (4094 → 4136), not tool output, and they stand
+> as measured.
+>
+> Read the two columns together and this page is corroborating evidence for the
+> defect rather than a victim of it: the two items whose tool-estimated fan-out
+> most overstated their yield — **Flow collections (~9 → 0, RETIRED)** and
+> **PanelDir mComponents (~6 → 0, held)** — are exactly the two this doc then
+> independently root-caused as a mis-diagnosis and a backwards direction (§"Flow
+> collections … was a MIS-DIAGNOSIS", §"PanelDir readiness T2 had the direction
+> BACKWARDS"). The items that paid (Char3D, AccomplishmentProgress,
+> MicManagerXbox, UIManager) were each pinned from **hand-read header offsets
+> and ctor asm**, not from the ranking. Treat the ranking as having contributed
+> the two dead ends and none of the five wins.
+
 The structural-readiness audit (`docs/plans/structural-readiness-2026-06-03.md`)
 proved the foundational base-class cascade is already landed and the remaining
 engine/game layout near-misses fall into exactly two hard classes. This doc is the
