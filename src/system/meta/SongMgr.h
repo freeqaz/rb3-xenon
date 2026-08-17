@@ -45,14 +45,28 @@ _STLP_TEMPLATE_NULL struct hash<Symbol> {
 
 // Retail RB3-360 SongMgr derives from MsgSource (virtual Hmx::Object base) +
 // ContentMgr::Callback, NOT plain Hmx::Object. Proven from the retail RTTI
-// Complete Object Locator @0x821d89ec (attr=0x3 = MI+virtual, 5 base classes)
-// and the retail primary vtable @0x8209cd1c (own-virtuals begin at slot 14/+0x38,
+// Complete Object Locator @0x821dffac (attr=0x3 = MI+virtual, 5 base classes)
+// and the retail primary vtable @0x8209e974 (own-virtuals begin at slot 14/+0x38,
 // vs our former 21-slot Hmx::Object prefix). The MsgSource base shrinks the
 // vtable prefix by 0x1c and the object head by 0x10; combined with dropping the
 // DC3-era AlternateSongDir virtual slot (retail has no such slot), every member
 // offset and own-virtual slot then matches retail. The retail SongMgr.cpp TU
 // also uses sizeof(map)=0x1c with sizeof(set)=0x18 -> gate RB3_MAP_0x1C per-TU.
 // See docs/decomp/research/2026-06-11-bp4-songmgr.md.
+//
+// (ADDRESSES CORRECTED, lane W16-HEADERTRUTH, tools/vtable_claim_audit.py: the
+// two addresses above used to read "COL @0x821d89ec" and "primary vtable
+// @0x8209cd1c". Neither is what it claimed -- neither carries a ??_R4, and
+// 0x8209cd1c's leading words are not code addresses at all.
+// ★ THE CLAIM ITSELF IS NOT MERELY RESTORED, IT IS CONFIRMED: the real COL
+// 0x821dffac decodes to attributes 0x3 with exactly 5 base classes --
+//     .?AVSongMgr@@ .?AVMsgSource@@ .?AVObject@Hmx@@ .?AVObjRef@@
+//     .?AVCallback@ContentMgr@@
+// i.e. MsgSource + ContentMgr::Callback, precisely the derivation asserted
+// above. Its vtable (subobject offset 0x0) is 0x8209e974; the
+// ContentMgr::Callback subobject is COL 0x821e0004 at offset 0xd4, vtable
+// 0x8209e91c. So the decision here rests on stronger evidence than before,
+// not weaker.)
 #ifdef HX_NATIVE
 #define SONGMGR_DC3_VIRTUAL virtual
 #else
