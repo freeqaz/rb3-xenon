@@ -714,11 +714,12 @@ below.
 caught `main` broken by a matching lane **four separate times** (X4a, X4d ×2,
 MILOKEEP-1), each time costing the native lane a repair it did not own.
 
-✅ **The gate itself was AUDITED 2026-08-14 (lane GATEGAP-1) and is SOUND — it
-did NOT pass over a broken tree.** Three lanes reported `PASS 18/18, 0 SKIPs`
-around the window MILOKEEP-1 found `main` broken, which looked like the gate
-failing at its one job. Reproduced in a `~/tmp` worktree with the four seeded
-flags, **same worktree, same cache, one variable**:
+✅ **The gate was AUDITED 2026-08-14 (lane GATEGAP-1) and it *discriminates*: on
+a fully seeded tree it FAILs a broken build and PASSes a healthy one.** Three
+lanes reported `PASS 18/18, 0 SKIPs` around the window MILOKEEP-1 found `main`
+broken, which looked like the gate failing at its one job. Reproduced in a
+`~/tmp` worktree with the seeded flags, **same worktree, same cache, one
+variable**:
 
 | tree | verdict |
 |---|---|
@@ -728,6 +729,13 @@ flags, **same worktree, same cache, one variable**:
 ⇒ the instrument **discriminates** (the PASS leg is the control — a gate that
 FAILs on everything proves nothing). **BODYPORT-3/4 predate the breakage
 entirely, so their PASS is worth exactly what it says.**
+
+⚠ **That audit covered what the gate PRINTS, not what it RETURNS**, and only on
+a *seeded* tree. On an unseeded one it prints
+`PASS (INCOMPLETE: 15/18 verified, 3 SKIPPED)` and **exits 0** — indistinguishable
+from a full pass to anything checking `rc`. `0 SKIPs` is therefore a rule a human
+must apply by hand, and it is the rule, not the exit code, that has caught every
+false green so far (X21, MATCH-A).
 
 ⛔⛔ **A COMMENT-ONLY COMMIT BROKE THE NATIVE LINK.** Configure-only bisect
 (the prune decision is made at configure time, so no build is needed) pinned it
@@ -766,12 +774,30 @@ run the gate before you land. Two traps, both real:
 - **Seed the cache explicitly first, and PIN the compilers.** The gate's own
   `cmake` line omits `-DMILO_ENGINE_PATH=` and `-DDawn_DIR=`, and without them
   three targets silently **SKIP** while the gate still reports `PASS`. It
-  *also* sets the compiler (`native_build_gate.sh:228`) — so a seed configure
-  supplying only those two picks up system `g++` and fails with ~104 errors
-  that look exactly like a broken `main`. **Passing the compiler flags is not
-  enough: the compilers must be pinned to the same absolute paths the gate
-  uses, or it wipes the cache and SKIPs the three engine targets anyway.**
-  X21 hit this after X18 documented the four-flag recipe — its first baseline
+  *also* sets the compiler (`native_build_gate.sh`) — and **a seed configure
+  that does not pin the compiler is worse than not seeding at all**: the cache
+  then holds the resolved defaults `/usr/bin/cc` + `/usr/bin/c++`, the gate's
+  `-DCMAKE_C_COMPILER=clang` differs, and CMake answers *"You have changed
+  variables that require your cache to be deleted"* — silently wiping your two
+  path flags and re-deriving them from the relative defaults.
+  **Re-measured 2026-08-17 (task #90, CMake 4.4.1), cold worktree, both legs:**
+
+  | seed | gate's reconfigure over it | `cache to be deleted` | paths after | targets in graph |
+  |---|---|---|---|---|
+  | no compiler flags | `-DCMAKE_C_COMPILER=clang` | **1** | wiped → `<wt>/native/../../…` | **15** |
+  | `-DCMAKE_C_COMPILER=/usr/bin/clang` | `-DCMAKE_C_COMPILER=clang` | **0** | intact | **18** |
+
+  ★ So the wipe is real but **the *spelling* of the pinned compiler is not
+  load-bearing** — this corrects X21 (`x21-compose-path-2026-08-03.md:399-411`)
+  and the earlier wording here, both of which blamed `/usr/bin/clang` vs bare
+  `clang`. CMake 4.4.1 resolves the literal before comparing. Pinning *at all*
+  is what matters. Likewise `-Dglfw3_DIR=` and `-DRB3X_BUILD_ENGINE=ON` are
+  **not** required: measured, `find_package(glfw3)` writes `glfw3_DIR` and
+  `option()` writes `RB3X_BUILD_ENGINE:BOOL=ON` into the cache by themselves,
+  which is why every seeded worktree cache carries them. Use the gate's own
+  spelling anyway — bare `clang` is guaranteed identical to what the gate
+  passes, so it cannot be the thing that differs.
+  X21 hit the wipe after X18 documented the recipe — its first baseline
   read 15/18 with 3 SKIPs, and **the 0-SKIP rule is what caught it**. Always
   require `0 SKIPs`, never just `PASS`.
   ★ **WHY it always fires in a `~/tmp` worktree (measured 2026-08-09, lane
@@ -785,17 +811,14 @@ run the gate before you land. Two traps, both real:
   four absolute flags first:
   ```bash
   cd <worktree>/native && rm -rf build && cmake -S . -B build -G Ninja \
-    -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
-    -DMILO_ENGINE_PATH=/home/free/code/milohax/milo-native-engine \
-    -DDawn_DIR=/home/free/code/milohax/dc3-decomp-deps/dawn/lib/cmake/Dawn
+    -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
+    -DMILO_ENGINE_PATH="$HOME/code/milohax/milo-native-engine" \
+    -DDawn_DIR="$HOME/code/milohax/dc3-decomp-deps/dawn/lib/cmake/Dawn"
   ```
   ⚠ Same bug class as `tools/pin_from_symnames.py`'s DC3-map path (fixed in
   `60837907`): **a sibling-relative path silently vanishes in a worktree, and
   the failure is shaped like a legitimate "not applicable" rather than an
   error.**
-- **Delete stale binaries first.** The gate counts binaries on disk and
-  `ninja -k1` masks failures, so a stale tree can report green over a broken
-  build.
 
 ## Build wiring
 
