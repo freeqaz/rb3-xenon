@@ -9,6 +9,79 @@
 
 ## 0. SESSION CLOSE
 
+### 0.4 ROUND FOUR — W9-FALSECREDIT + W10-BODYPORT ← **LATEST**
+
+**44,480 fns / 3,744,364 B = 36.280262%**, honest **21,580**, 254 units at 100%.
+**Day total: +36 fns / +20,660 B across FOURTEEN lanes, every one composing to
+the byte.** `main` was reconciled into this branch and measured **exactly
+metric-neutral** (+0/+0).
+
+★★★★★ **A WRONG MAP NAME IS NOT A FREE +N — IT IS A LOCAL +N FINANCED BY A
+CHARGE ON EVERY CALLER THAT RELOCATES AGAINST IT.** W9 was briefed to expect
+net-NEGATIVE bytes and measured **+320**. The touched rows netted **exactly
+zero** (232 B of false credit out of BandList, the identical 232 B of honest
+credit into Accomplishment); **all +268 B came from three callers the lane never
+touched.** ⇒ **"Accuracy work costs bytes" is TOO CRUDE** — true for
+*withdrawing an unproven alias*, **false for repairing a wrong name**.
+
+★★★★ **THE CASCADE IS EVIDENCE, NOT JUST YIELD.** Several signed-4-byte `set`
+instantiations were candidates; the +268 B arrives **only** under
+`set<ScoreType>` — pick `set<int>` or `set<TrackType>` and those three untouched
+rows **do not cross**. **A caller cascade discriminates between rival
+assignments.**
+
+⛔⛔ **PROVING A NAME IS WRONG DOES NOT MAKE RENAMING IT SAFE.** Four ByteCode
+rows with equally proven identity were **refused**: the **pinned unit's obj
+cannot define the replacement**, so renaming trades a false credit for a
+**permanently 0% row** (−180 B / −3 fns). One had been briefed as *"costs
+literally nothing."* **Check the base obj can define the name first.**
+
+★★★★ **AN ALIAS'S EVIDENCE CAN BE TRUE WHILE ITS INFERENCE IS FALSE.** "Retail
+at A is byte-identical to our symbol B" is equally consistent with **folded** and
+with **"A IS B and the map is wrong"**; `icf_alias_build.py` cannot separate
+them. Here the second held, and **the forgiveness measured WORSE than the fact —
+99.23 aliased vs 100.0 corrected.**
+
+⚠ **PRICED FROM THE PATCH TWICE IN ONE DAY** (W9 ~0→+268, W8 +24→+184) ⇒ **price
+from the charged-site list INCLUDING CALL SITES.**
+
+★★★ **THE GAME LAYER'S *PURE* SOURCE SURFACE IS ~3,656 B — 15× SMALLER THAN THE
+RAW DIVERGENCE FIGURE** (W10). Named `mpn<100` rows in `src/band3/` +
+`src/network/` are 237 rows / 137,332 B, but split by whether every charge is
+instruction-level: **PURE 34 rows / 8,692 B** vs **MIXED 203 rows / 128,640 B**,
+and **58% of the pure mass is the single already-drained CustomizePanel row.**
+Independent corroboration that **the gap is mostly not source work.**
+
+★★ **A DROPPED STATEMENT LEAVES A HOLE IN THE `MILO_ASSERT` LINE NUMBERING** even
+when the source text matches the oracle byte-for-byte. W10 crossed
+`NetSession::AddLocalUser` by spotting `0x2F9, 0x2FA, ⟨gap⟩, 0x2FC` and restoring
+the assert at `0x2FB` — `MILO_ASSERT` is `((void)(cond))` here, so it still
+**evaluates**, reproducing retail's discarded call. Reusable oracle.
+
+★★ **ONE MISPLACED DECLARATION CAUSED TWO DIVERGENCES.** `UpdateOnlineID` was
+declared on the virtual base `User` instead of `LocalUser` — a header comment
+claimed this "matches rb3-Wii" and **it was simply false**. Retail agrees
+independently: it calls with `mr r3, r30` (raw pointer) where a vbase member
+needs the 4-instruction adjust — and that adjust also **proved the pointer
+non-null**, making MSVC elide a null check retail keeps. *(Second header comment
+today asserting an untrue fact; cf. the `Rnd.h` vtable claim W7 retracted.)*
+
+⛔ **`run_objdiff`'s OFFSET RESOLVER LABELS r31 FRAME OFFSETS AS STRUCT MEMBERS**,
+complete with "wrong field?" hints, while every *object* access already matched —
+W10 nearly rewrote a header for nothing. **The documented r31 coin-flip, live.**
+Adjudicate layout with `scripts/harvest/class_layout_report.py` (which asks the
+**compiler**), never the `// 0xHEX` comments or the resolver.
+
+★ **`CustomizePanel::Handle` RE-PRICED: RESIDUAL-2's "buys zero bytes" IS STALE.**
+(a) is closed and both aliases landed ⇒ **5,036 B behind exactly one
+instruction**, the best size-per-fix in the game layer. Lane W11 re-opened it on
+that changed price.
+
+⚠ **THE ORACLE'S LITERAL FORM CAN BE WORSE**: on `NetSession::Poll` the oracle's
+nested-`if` scored **87.1%** where our own `&&`/`||` spelling was already better —
+a direct counter-example to W8's "restore it verbatim" result. **Both directions
+are real; neither is a default. Let the bytes decide.**
+
 ### 0.3 ROUND THREE — W7-SYMPAIR + W8-TWINPORT ← **LATEST**
 
 **+2 fns / +328 B** (all of it W8; W7 measured **Δ exactly 0** and landed anyway).
