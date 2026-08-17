@@ -179,7 +179,16 @@ DIR="$(cd "$DIR" 2>/dev/null && pwd)" \
     || { echo "native_build_gate: no such dir" >&2
          emit_result UNRUNNABLE 0 0 0 0 0 2; exit 2; }
 
-LOG="${TMPDIR:-$HOME/tmp}/native_gate_$(basename "$DIR").log"
+# The log name must be UNIQUE PER TREE, and `native_gate_$(basename "$DIR").log`
+# was not: SEVEN live worktrees are named `wt` or `wt-rb3x` (five bare `wt`
+# alone: ~/tmp/laneCK3/wt, ~/tmp/laneCM3b/wt, and four
+# .claude/jobs/*/tmp/task*/wt), so two concurrent lanes silently overwrote each
+# other's diagnostics -- in a repo whose house rule is "assume other agents are
+# working right now", i.e. exactly when a log is worth having. Last two path
+# components (readable) PLUS a checksum of the FULL path (collision-proof).
+_log_slug="$(printf '%s_%s' "$(basename "$(dirname "$DIR")")" "$(basename "$DIR")" \
+             | tr -c 'A-Za-z0-9._-' '_')"
+LOG="${TMPDIR:-$HOME/tmp}/native_gate_${_log_slug}_$(printf '%s' "$DIR" | cksum | cut -d' ' -f1).log"
 mkdir -p "$(dirname "$LOG")"
 
 if [ ! -d "$DIR/native" ]; then
@@ -494,18 +503,24 @@ elif [ $n_skip -gt 0 ]; then
     # relayed upstream as "PASS". Lane X21's first baseline was exactly this,
     # and only the operator applying the 0-SKIP rule by hand caught it.
     #
-    # This matters most in a ~/tmp worktree, which is where EVERY lane works:
-    # MILO_ENGINE_PATH / Dawn_DIR default RELATIVE to the source tree, so
-    # rb3-frame, rb3-milo and rb3-render legitimately vanish and the gate is
-    # then STRUCTURALLY INCAPABLE of testing the three targets most likely to
-    # break. Seed the cache with all four absolute flags to get real coverage.
+    # This USED TO BE the steady state in a ~/tmp worktree, which is where EVERY
+    # lane works: MILO_ENGINE_PATH / Dawn_DIR defaulted RELATIVE to the source
+    # tree, so rb3-frame, rb3-milo and rb3-render legitimately vanished and the
+    # gate was STRUCTURALLY INCAPABLE of testing the three targets most likely
+    # to break. native/CMakeLists.txt now resolves both from the REAL repository
+    # (task #90; ported from 60837907), so a plain worktree gets 18/18 with no
+    # seeding at all -- verified in a cold worktree 2026-08-17. Landing here now
+    # means the deps tree is GENUINELY absent, or the cache carries an explicit
+    # override, which is a fact about the machine and not about the location.
     echo "NATIVE GATE: PASS (INCOMPLETE: $n_ok/${#expected[@]} verified, $n_skip SKIPPED) -- NOT full coverage"
     echo "  the skipped target(s) were NOT built and NOT tested by this run:"
     for l in "${skipped_lines[@]}"; do echo "  ${l#  SKIPPED   }" | sed 's/^/    /'; done
-    echo "  If you are in a worktree, seed the cache and re-run for full coverage:"
-    echo "    cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \\"
-    echo "      -DMILO_ENGINE_PATH=/home/free/code/milohax/milo-native-engine \\"
-    echo "      -DDawn_DIR=/home/free/code/milohax/dc3-decomp-deps/dawn/lib/cmake/Dawn"
+    echo "  native/CMakeLists.txt resolves these from the real repo, so a worktree"
+    echo "  should NOT land here. Check the '[sibling]' lines in the configure log"
+    echo "  ($LOG), then seed explicitly if the deps really are elsewhere:"
+    echo "    cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \\"
+    echo "      -DMILO_ENGINE_PATH=\"\$HOME/code/milohax/milo-native-engine\" \\"
+    echo "      -DDawn_DIR=\"\$HOME/code/milohax/dc3-decomp-deps/dawn/lib/cmake/Dawn\""
     echo "  (or run with --strict to make a SKIP a FAIL)"
 else
     echo "NATIVE GATE: PASS  (rc=0, $errs errors, $warns warnings, $n_ok/${#expected[@]} target(s) verified)"
