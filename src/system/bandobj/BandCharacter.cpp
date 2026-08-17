@@ -1475,14 +1475,14 @@ void BandCharacter::SyncObjects() {
 
 float sDrawOrder = -1.0f;
 
-template <void (CharDriver::*Fn)(Symbol)>
-__declspec(noinline) void _outline_SetClipType(CharDriver *_obj, Symbol s) {
-    (_obj->*Fn)(s);
-}
-
+// The _outline_SetClipType<> __declspec(noinline) wrapper that used to live here
+// existed only to force an out-of-line call to CharDriver::SetClipType, which was
+// defined inline in CharDriver.h. That call is out-of-line for real now
+// (CharDriver.cpp), so the workaround is redundant -- and it was not free: it put
+// a `bl _outline_SetClipType` at a site where retail has `bl SetClipType`.
 void BandCharacter::SetClipTypes(Symbol s1, Symbol s2) {
     if (mDriver) {
-        _outline_SetClipType<&CharDriver::SetClipType>(mDriver, s2);
+        mDriver->SetClipType(s2);
         if (BoneServo()) {
             BoneServo()->SetClipType(s1);
         }
@@ -2736,7 +2736,7 @@ BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
     if (o1->Dir() == sInstrumentDir || o1->Dir() == sInstResourceDir) {
         RndTransformable *rt = dynamic_cast<RndTransformable *>(o1);
         if (rt) {
-            Hmx::Object *found = FindObject(o1->Name(), false);
+            Hmx::Object *found = Find<Hmx::Object>(o1->Name(), false);
             if (found) {
                 if (rt->TransParent()) {
                     dynamic_cast<RndTransformable *>(found)->SetLocalXfm(rt->LocalXfm());
@@ -2750,7 +2750,7 @@ BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
         if (o1->Dir() == sBoneMergeDir) {
             RndTransformable *rt = dynamic_cast<RndTransformable *>(o1);
             if (rt) {
-                Hmx::Object *found = FindObject(o1->Name(), false);
+                Hmx::Object *found = Find<Hmx::Object>(o1->Name(), false);
                 if (found)
                     ::ReplaceRefs(o1, found);
             }
@@ -2880,7 +2880,7 @@ DataNode BandCharacter::OnInstallFilter(DataArray *da) {
         }
     }
     mFileMerger->mFilter = this;
-    if (Hmx::Object *pelvis = FindObject("bone_pelvis.mesh", false)) {
+    if (Hmx::Object *pelvis = Find<Hmx::Object>("bone_pelvis.mesh", false)) {
         boneMeshDir = pelvis->Dir();
     }
     sInstResourceDir = 0;
@@ -2895,13 +2895,12 @@ DataNode BandCharacter::OnInstallFilter(DataArray *da) {
         }
     }
     if (sOutfitDir) {
-        RndTransformable *xfm = dynamic_cast<RndTransformable *>(
-            sOutfitDir->FindObject("bone_pelvis.mesh", false)
-        );
+        RndTransformable *xfm =
+            sOutfitDir->Find<RndTransformable>("bone_pelvis.mesh", false);
         if (xfm) {
             sBoneMergeDir = xfm->Dir();
         }
-        Hmx::Object *feetObj = sOutfitDir->FindObject("feet_skin.mat", false);
+        Hmx::Object *feetObj = sOutfitDir->Find<Hmx::Object>("feet_skin.mat", false);
         if (feetObj) {
             sCharSharedDir = feetObj->Dir();
         }

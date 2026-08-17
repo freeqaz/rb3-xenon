@@ -88,12 +88,9 @@ protected:
     DataNode OnEvaluateFlags(const DataArray *);
     DataNode OnGetFirstFlags(const DataArray *);
     void SyncInternalBones();
-    void SetClipType(Symbol s) {
-        if (mClipType != s) {
-            mClipType = s;
-            SyncInternalBones();
-        }
-    }
+    // Defined out-of-line in CharDriver.cpp -- see the comment there. Retail
+    // calls it out-of-line from BandWardrobe and BandCharacter.
+    void SetClipType(Symbol s);
     void SetApply(ApplyMode m) {
         if (m != mApply) {
             mApply = m;
