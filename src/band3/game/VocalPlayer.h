@@ -225,6 +225,10 @@ public:
     // (`clrlwi r11, r3, 24` before the DataNode store) => bool, not int.
     bool OnMsg(const ButtonDownMsg &);
     bool OnMsg(const ButtonUpMsg &);
+    // Retail fn_826E50C0 (72 B), called from OnMsg(ButtonUpMsg) as (this, button)
+    // -- retail keeps the button live in r4 via `mr r4,r3` across the predicate.
+    // Named by the DECOMP_FORCEACTIVE string in VocalPlayer.cpp. Body NOT ported.
+    void HandleDeactivateVolume(JoypadButton);
     bool AllowPitchCorrection() const;
     void OnGameOver();
     void OnDisableController();
