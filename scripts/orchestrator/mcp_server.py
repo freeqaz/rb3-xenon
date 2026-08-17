@@ -138,14 +138,43 @@ def _stack_signal_summary(instrs: list) -> "str | None":
         parts.append("frame Δ UNKNOWN (prologue not parsed — callee-save "
                      "filtering unreliable)")
     elif frame_delta != 0:
-        callee_bytes = (
-            (base_prol.saved_gpr_count - tgt_prol.saved_gpr_count) * 8
-            + (base_prol.saved_fpr_count - tgt_prol.saved_fpr_count) * 8
-        )
-        if callee_bytes == frame_delta:
-            parts.append(f"frame Δ {frame_delta:+#x} (callee-save AT_LIMIT)")
+        # ★ 2026-08-17. saved_gpr_count / saved_fpr_count are TRI-STATE too:
+        #   None when parse_prologue saw ZERO instructions on that side. This
+        #   subtraction used to run off a fabricated 0 and label the frame Δ
+        #   "callee-save AT_LIMIT" / "structural" off counts nobody measured;
+        #   with the tri-state in place it would raise TypeError instead.
+        #
+        #   ★ HONEST STATUS OF THIS BRANCH IN THIS REPO: unreachable, and
+        #   deliberately kept anyway. On a Prologue that parse_prologue
+        #   produced, frame_known IMPLIES saves_known (both are settled by the
+        #   same `scanned` count), and nothing here overwrites frame_size — so
+        #   by the time control reaches `elif frame_delta != 0` the counts are
+        #   always known. Confirmed by mutation 2026-08-17: replacing this
+        #   guard with `if False` leaves every probe green, i.e. the mutant
+        #   SURVIVES. It is reported as a survivor rather than dressed up with
+        #   a test that could not fail.
+        #
+        #   The implication is asserted by stack_layout's selftest fixture 9c,
+        #   which is the real control: if a future change lets frame_size be
+        #   set from outside the scan, 9c goes red and this branch goes live.
+        #   It is ALREADY live in dc3-decomp's copy of this file, which adopts
+        #   objdiff's structured PrologueMismatchInfo frame sizes and can make
+        #   frame_known True on an unscanned side — there the same mutation is
+        #   killed by a TypeError. Kept identical in both so they do not drift.
+        saves_known = (getattr(tgt_prol, "saves_known", True)
+                       and getattr(base_prol, "saves_known", True))
+        if not saves_known:
+            parts.append(f"frame Δ {frame_delta:+#x} (callee-save counts "
+                         "UNKNOWN — not attributed)")
         else:
-            parts.append(f"frame Δ {frame_delta:+#x} (structural)")
+            callee_bytes = (
+                (base_prol.saved_gpr_count - tgt_prol.saved_gpr_count) * 8
+                + (base_prol.saved_fpr_count - tgt_prol.saved_fpr_count) * 8
+            )
+            if callee_bytes == frame_delta:
+                parts.append(f"frame Δ {frame_delta:+#x} (callee-save AT_LIMIT)")
+            else:
+                parts.append(f"frame Δ {frame_delta:+#x} (structural)")
 
     verdict_pieces = []
     if swapped:
