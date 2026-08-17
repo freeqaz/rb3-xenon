@@ -79,6 +79,23 @@ INSTRUMENT DISCIPLINE (docs/decomp/INSTRUMENT_DESIGN.md)
    +14.75 pp.  Band membership is therefore taken from report.json (the
    authoritative ruler, per CLAUDE.md) and the tool REFUSES if the split would
    move >2% of rows across the band boundary.
+ * INPUT STABILITY -- a run whose inputs moved under it has MEASURED NOTHING,
+   and saying "nothing was measured" is not the same as saying "the regression
+   is back".  VOID is a third outcome with its own exit code.  See the INPUT
+   STABILITY block below.
+
+EXIT CODES
+----------
+    0  PASS      every control ran, on inputs that held still, and held
+    1  REFUSE    a precondition failed, or --adjudicate would print a PARTIAL
+                 census on a tree that held still (unchanged, pre-existing)
+    2  FAIL      a --selftest control failed on evidence that did NOT move
+    3  DISARMED  a pinned control has left the population; nothing was proven
+    4  VOID      the inputs moved under the run; NOTHING WAS MEASURED
+
+VOID is a third outcome, distinct from both PASS and FAIL, and it is the point
+of the input-stability guard: a run whose inputs moved has measured nothing,
+and "nothing was measured" is not "the regression is back".
 
 USAGE
 -----
@@ -87,7 +104,7 @@ USAGE
     python3 tools/crossing_worklist.py --adjudicate    [--max-mismatch 3]
     python3 tools/crossing_worklist.py --reclaim
 """
-import argparse, collections, hashlib, json, os, re, subprocess, sys
+import argparse, collections, hashlib, json, os, re, subprocess, sys, threading, time
 import concurrent.futures as cf
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -180,33 +197,247 @@ def objdiff_bin(project_dir):
     return p
 
 
-def diff_one(project_dir, sym, unit, cache_dir):
-    """Run objdiff-cli via argv ONLY -- never through a shell.  See shape 2 above."""
+# ---------------------------------------------------------------------------
+# INPUT STABILITY -- VOID is a THIRD outcome, not a flavour of FAIL (task #115)
+# ---------------------------------------------------------------------------
+# Task #105 made control 1 dynamic: it diffs EVERY '$'-bearing row in the live
+# population.  That made it sensitive to something it cannot see -- the tree
+# moving underneath it.  Peer agents rebuild the primary checkout constantly;
+# objdiff-cli reading an .obj mid-write returns an empty diff, so the control
+# reported "the shell-quoting regression (shape 2) is back" for a transient.
+# Measured 2026-08-17 on the primary checkout: run 1 = 10 misses / 2 controls
+# failed / exit 2; run 2 on the SAME code and SAME tree = 0 misses / exit 0.
+# All four sampled "missing" symbols diffed cleanly on direct retry, and
+# report.json's mtime moved mid-run.
+#
+# A control that goes red whenever a peer builds trains people to ignore it,
+# which is exactly how a real shape-2 regression gets waved off.  So follow the
+# in-house precedent -- compare_bins_v2.sh's input-stability guard, which
+# fingerprints the object trees and map files around its two arms and prints
+# `*** VOID ***` if they moved rather than printing a number that looks like a
+# result.  VOID is distinct from BOTH pass and fail: a run whose inputs moved
+# has measured nothing, and "nothing was measured" is not "the regression is
+# back".
+#
+# Three mechanisms, deliberately layered cheapest-first:
+#
+#   1. RETRY (diff_one).  A miss is retried once.  A torn read is transient and
+#      the retry fixes it; the shell-quoting bug is deterministic and the retry
+#      does NOT fix it.  That asymmetry is the cheapest discriminator we have,
+#      and it is why retrying does not launder a real defect.
+#   2. CACHE STAMPING (diff_one).  The cache entry carries the (size, mtime_ns)
+#      of the unit's object files.  Without this the guard would be theatre:
+#      it would notice the tree moved while the cache quietly answered from the
+#      tree before it.  An entry minted against a different build is a
+#      different measurement, so it is recomputed, not served.
+#   3. FINGERPRINT (InputStability).  Snapshot before, re-scan after, and
+#      attribute.  Per-ROW where possible, not one global verdict: a miss whose
+#      own unit's objects moved is unavailable, a miss in a unit that held
+#      still is a defect.  That attribution is what keeps a peer's rebuild of
+#      three units from voiding a run that caught a real regression in the
+#      other 2,500.
+#
+# PRECEDENCE, and why: FAIL outranks VOID.  A guard that voids everything is
+# worse than no guard, and downgrading a stable-tree failure to "nothing was
+# measured" is precisely the laundering this is supposed to prevent.  So a
+# control that failed on evidence the tree did not move still exits 2, even if
+# something else in the tree moved.  VOID outranks DISARMED, and both outrank
+# PASS.
+#
+# ASYMMETRY between global and per-unit movement, on purpose:
+#   * GLOBAL inputs -- report.json, objdiff.json, the map file, the objdiff-cli
+#     binary -- define WHAT was measured and WITH WHAT.  If one of those moved,
+#     the population we enumerated and the diffs we ran come from different
+#     builds, so the run is VOID even if every control was green.  This is the
+#     only unconditional VOID.
+#   * PER-UNIT object movement is only void-worthy where it EXPLAINS a miss.
+#     A unit that rebuilt while every row still diffed is a NOTE, not a VOID.
+#     Voiding on any object touch would leave the tool permanently red in this
+#     repo, which is the failure mode being fixed, not a stricter version of
+#     the fix.  This deliberately parts company with compare_bins_v2.sh, which
+#     voids on any object movement -- it has to, because it has TWO arms and
+#     movement between them flips the sign of its answer.  There is no second
+#     arm here for movement to bias.
+EXIT_FAIL, EXIT_DISARMED, EXIT_VOID = 2, 3, 4
+
+# Cache format version.  v1 entries were the raw diff blob with no record of
+# which build produced them; they are not evidence about the current tree and
+# are recomputed rather than trusted.
+CACHE_FORMAT = 2
+
+# Pause before retrying a miss.  Paid only by misses.
+RETRY_PAUSE_S = 0.25
+
+
+def _sig(path):
+    """mtime+size, not content.  Content-hashing every .obj costs more than the
+    measurement it guards, and mtime+size catches a rebuild (compare_bins_v2)."""
+    try:
+        st = os.stat(path)
+    except OSError:
+        return None
+    return [st.st_size, st.st_mtime_ns]
+
+
+class InputStability:
+    """Fingerprint the run's inputs before it starts and again after it ends."""
+
+    def __init__(self, project_dir):
+        self.project_dir = project_dir
+        cfg_path = os.path.join(project_dir, 'objdiff.json')
+        cfg = json.load(open(cfg_path))
+        self.unit_paths = {}
+        for u in cfg.get('units') or []:
+            self.unit_paths[u['name']] = [
+                os.path.join(project_dir, u[k])
+                for k in ('target_path', 'base_path') if u.get(k)]
+        self.global_paths = {'report.json': report_path(project_dir),
+                             'objdiff.json': cfg_path}
+        if cfg.get('map_file'):
+            self.global_paths['map_file'] = os.path.join(project_dir, cfg['map_file'])
+        # the ruler itself: bin/objdiff-cli is a symlink into a shared build
+        # tree, so stat the RESOLVED binary -- a relink under the run changes
+        # what we measured with, and is exactly as void-worthy as a rebuild.
+        self.global_paths['objdiff-cli'] = os.path.realpath(objdiff_bin(project_dir))
+        self.moved_globals, self.moved_units = [], set()
+        self.before = self._scan()
+        self.after = None
+
+    def _scan(self):
+        return {'globals': {k: _sig(p) for k, p in self.global_paths.items()},
+                'units': {u: [_sig(p) for p in ps] for u, ps in self.unit_paths.items()}}
+
+    def recheck(self):
+        self.after = self._scan()
+        self.moved_globals = sorted(k for k, v in self.before['globals'].items()
+                                    if self.after['globals'].get(k) != v)
+        self.moved_units = {u for u, v in self.before['units'].items()
+                            if self.after['units'].get(u) != v}
+        return self
+
+    def unit_sig(self, unit):
+        return self.before['units'].get(unit)
+
+    def row_moved(self, unit):
+        """Did anything this row's verdict depends on move under the run?"""
+        return bool(self.moved_globals) or unit in self.moved_units
+
+    def report(self, out=sys.stdout):
+        if not (self.moved_globals or self.moved_units):
+            print('INPUT STABILITY: inputs held still for the whole run.', file=out)
+            return
+        print('INPUT STABILITY: inputs MOVED under this run --', file=out)
+        for k in self.moved_globals:
+            print(f'    global input changed: {k} '
+                  f'({self.before["globals"][k]} -> {self.after["globals"][k]})', file=out)
+        if self.moved_units:
+            shown = sorted(self.moved_units)[:5]
+            print(f'    {len(self.moved_units)} unit(s) rebuilt: '
+                  f'{", ".join(shown)}{" ..." if len(self.moved_units) > 5 else ""}', file=out)
+
+
+class Counters:
+    def __init__(self):
+        self._c, self._lk = collections.Counter(), threading.Lock()
+
+    def bump(self, k, n=1):
+        with self._lk:
+            self._c[k] += n
+
+    def __getitem__(self, k):
+        return self._c[k]
+
+
+def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=None):
+    """Run objdiff-cli via argv ONLY -- never through a shell.  See shape 2 above.
+
+    Retries a miss once and stamps the cache with the unit's object signature;
+    see mechanisms 1 and 2 in the INPUT STABILITY block.
+    """
     os.makedirs(cache_dir, exist_ok=True)
     h = hashlib.md5((sym + '\x00' + unit).encode()).hexdigest()[:20]
     p = os.path.join(cache_dir, h + '.json')
     if os.path.exists(p) and os.path.getsize(p) > 0:
-        return json.load(open(p))
-    r = subprocess.run([objdiff_bin(project_dir), 'diff', sym, '-u', unit,
-                        '--include-instructions', '-c', 'functionRelocDiffs=none',
-                        '-f', 'json'], cwd=project_dir, capture_output=True)
-    if r.returncode != 0 or not r.stdout.strip():
-        return None
-    open(p, 'wb').write(r.stdout)
-    return json.loads(r.stdout)
+        try:
+            blob = json.load(open(p))
+        except ValueError:
+            blob = None
+        if (isinstance(blob, dict) and blob.get('_cw_cache') == CACHE_FORMAT
+                and (unit_sig is None or blob.get('inputs') == unit_sig)):
+            return blob['diff']
+        # v1 entry, torn write, or a stamp from a different build: not evidence
+        # about THIS tree.  Fall through and recompute.
+        if stats is not None:
+            stats.bump('cache_stale')
+    argv = [objdiff_bin(project_dir), 'diff', sym, '-u', unit,
+            '--include-instructions', '-c', 'functionRelocDiffs=none', '-f', 'json']
+    for attempt in range(retries + 1):
+        r = subprocess.run(argv, cwd=project_dir, capture_output=True)
+        if r.returncode == 0 and r.stdout.strip():
+            if attempt and stats is not None:
+                stats.bump('rescued_by_retry')
+            d = json.loads(r.stdout)
+            # atomic: two lanes may share a cache dir, and a half-written entry
+            # reads back as a miss -- i.e. as the very defect being guarded.
+            tmp = f'{p}.{os.getpid()}.tmp'
+            with open(tmp, 'w') as fh:
+                json.dump({'_cw_cache': CACHE_FORMAT, 'inputs': unit_sig, 'diff': d}, fh)
+            os.replace(tmp, p)
+            return d
+        if stats is not None:
+            stats.bump('retried' if attempt < retries else 'missed')
+        if attempt < retries:
+            # a beat, so the retry lands AFTER a writer that is mid-file rather
+            # than on top of it.  Only misses pay it, so it costs nothing on a
+            # healthy run and nothing on a deterministic defect either.
+            time.sleep(RETRY_PAUSE_S)
+    return None
 
 
-def diff_many(project_dir, rows, cache_dir, workers=8):
-    with cf.ThreadPoolExecutor(max_workers=workers) as ex:
-        out = list(ex.map(lambda r: diff_one(project_dir, r['sym'], r['unit'], cache_dir), rows))
-    missing = sum(1 for o in out if o is None)
-    if missing:
-        sys.exit(f'REFUSE: {missing}/{len(rows)} diffs produced no output. '
-                 f'A partial dump yields a plausible but WRONG census (shape 2).')
+def diff_many(project_dir, rows, cache_dir, stab, stats=None, workers=8):
+    """diff_many_tolerant, but a miss is terminal -- with the RIGHT diagnosis.
+
+    A partial dump yields a plausible but WRONG census (shape 2), so this never
+    returns one and never lets one be printed.  What changes in task #115 is
+    not the fatality but the LABEL and the exit code: a miss whose unit's
+    objects moved under the run -- or any run whose global inputs moved -- has
+    MEASURED NOTHING and exits VOID (4).  A miss on a tree that held still is a
+    real defect and exits REFUSE (1), unchanged.  Reporting the first as the
+    second is what trains people to wave off the second.
+    """
+    out = diff_many_tolerant(project_dir, rows, cache_dir, stab, stats, workers)
+    stab.recheck()
+    miss = [r for r, o in zip(rows, out) if o is None]
+    stable_miss = [r for r in miss if not stab.row_moved(r['unit'])]
+    if miss:
+        stab.report(sys.stderr)
+        if stable_miss:
+            for r in stable_miss[:5]:
+                print(f'    STABLE MISS: {r["unit"]}  {r["sym"][:70]}', file=sys.stderr)
+            sys.exit(f'REFUSE: {len(miss)}/{len(rows)} diffs produced no output, '
+                     f'{len(stable_miss)} of them on inputs that did NOT move. '
+                     f'A partial dump yields a plausible but WRONG census (shape 2).')
+        print(f'*** VOID *** {len(miss)}/{len(rows)} diffs were unavailable and EVERY '
+              f'one of them\nis in a unit whose objects moved under the run (or the run\'s '
+              f'global inputs\nmoved). This census MEASURED NOTHING -- it is not evidence '
+              f'of a defect.\nRe-run on a settled tree; the diff cache makes the re-run '
+              f'cheap.', file=sys.stderr)
+        sys.exit(EXIT_VOID)
+    if stab.moved_globals:
+        stab.report(sys.stderr)
+        print('*** VOID *** the population (report.json) or the ruler moved under this '
+              'run,\nso the rows enumerated and the diffs measured come from different '
+              'builds.\nNo census is printed. Re-run on a settled tree.', file=sys.stderr)
+        sys.exit(EXIT_VOID)
+    if stab.moved_units:
+        stab.report(sys.stderr)
+        print('NOTE: those units rebuilt but every row still resolved, so the census '
+              'below\nis complete; some rows were read from a newer build than the rest.',
+              file=sys.stderr)
     return out
 
 
-def diff_many_tolerant(project_dir, rows, cache_dir, workers=8):
+def diff_many_tolerant(project_dir, rows, cache_dir, stab=None, stats=None, workers=8):
     """diff_many, but hands the misses back as DATA instead of exiting on them.
 
     cmd_adjudicate must REFUSE on a partial dump -- a plausible but WRONG
@@ -218,8 +449,10 @@ def diff_many_tolerant(project_dir, rows, cache_dir, workers=8):
     adjudicate them (control 1 for template rows, control 2 for the rest --
     together they reproduce diff_many's guarantee, so nothing is given up).
     """
+    sig = stab.unit_sig if stab is not None else (lambda _u: None)
     with cf.ThreadPoolExecutor(max_workers=workers) as ex:
-        return list(ex.map(lambda r: diff_one(project_dir, r['sym'], r['unit'], cache_dir), rows))
+        return list(ex.map(lambda r: diff_one(project_dir, r['sym'], r['unit'], cache_dir,
+                                              unit_sig=sig(r['unit']), stats=stats), rows))
 
 
 def classify_arms(diff):
@@ -301,10 +534,21 @@ def cmd_census(a):
 
 
 def cmd_adjudicate(a):
+    """The REFUSE here stays deliberately fatal, and stays UNCONDITIONAL in the
+    thing that matters: no partial census is ever printed, whatever moved.  All
+    task #115 changes is the diagnosis -- see diff_many.  Keeping it fatal but
+    mislabelled was the worse option: the operator reads "REFUSE: 10/3618 diffs
+    produced no output" as a defect in the tool or the tree, and the next real
+    partial dump reads the same way."""
     M, rows = load_rows(a.project_dir)
+    stab = InputStability(a.project_dir)
+    stats = Counters()
     cache = os.path.join(a.cache_dir, 'diffs')
     print(f"diffing {len(rows)} rows (cache {cache}) ...", file=sys.stderr)
-    diffs = diff_many(a.project_dir, rows, cache)
+    diffs = diff_many(a.project_dir, rows, cache, stab, stats)
+    if stats['rescued_by_retry']:
+        print(f"note: {stats['rescued_by_retry']} row(s) missed on the first attempt and "
+              f"resolved on retry (transient, not a defect)", file=sys.stderr)
     ruler_gate(rows, diffs)
     for r, d in zip(rows, diffs):
         r['arms'] = classify_arms(d)
@@ -398,18 +642,58 @@ def cmd_selftest(a):
     keeps human-ratified named pins, now LISTS rather than single symbols,
     because the only dynamic selector available to it is the classifier it is
     testing. See the CONTROL SUBJECTS block at the top of this file.
+
+    Task #115 (2026-08-17) supplies what task #105 could not see. Making
+    control 1 dynamic made it sensitive to the tree moving underneath it: a
+    peer rebuilding the primary checkout makes objdiff read objects mid-write,
+    and the control reported "the shell-quoting regression (shape 2) is back"
+    for a transient. Measured: run 1 = 10 misses / exit 2, run 2 on the SAME
+    code and SAME tree = 0 misses / exit 0. So a control can now come back
+    VOID (exit 4) as well as PASS, FAIL and DISARMED -- and FAIL outranks VOID,
+    so a stable-tree failure is never laundered into "nothing was measured".
+    See the INPUT STABILITY block at the top of this file.
     """
     fails = []
     disarmed = []
+    voids = []
     M, rows = load_rows(a.project_dir)
     by = {r['sym']: r for r in rows}
+    unit_of = {r['sym']: r['unit'] for r in rows}
     cache = os.path.join(a.cache_dir, 'diffs')
+
+    # Fingerprint the inputs BEFORE the diff pass and again after it, so a
+    # control that goes red can say whether the tree held still while it did.
+    # See the INPUT STABILITY block at the top of this file.
+    stab = InputStability(a.project_dir)
+    stats = Counters()
 
     # ONE diff pass over the whole sub-100 population; every control below
     # reads it.  Misses are DATA here rather than a REFUSE -- see the docstring
     # of diff_many_tolerant for why the selftest must not abort on them.
-    diffs = diff_many_tolerant(a.project_dir, rows, cache)
+    diffs = diff_many_tolerant(a.project_dir, rows, cache, stab, stats)
+    stab.recheck()
     diff_of = {r['sym']: d for r, d in zip(rows, diffs)}
+    if stats['rescued_by_retry']:
+        print(f"  note: {stats['rescued_by_retry']} row(s) missed on the first attempt "
+              f"and resolved on retry -- transient, not counted as misses")
+
+    def adjudicate(name, subjects, message, moved_message):
+        """Route a control's failure by whether its EVIDENCE moved under the run.
+
+        `subjects` are the rows the control failed ON.  If every one of them is
+        in a unit that moved (or any global input moved), the control did not
+        observe a defect -- it observed a tree in motion, and says VOID.  If any
+        subject's inputs held still, that is real and stays a FAIL: FAIL
+        outranks VOID, so a guard can never launder a stable-tree failure."""
+        stable = [s for s in subjects if not stab.row_moved(unit_of.get(s, s))]
+        if stable:
+            print(f"  FAIL  {name}: {message(len(stable), len(subjects))}")
+            for s in stable[:5]:
+                print(f"          {s[:86]}")
+            fails.append(message(len(stable), len(subjects)))
+        else:
+            print(f"  VOID  {name}: {moved_message(len(subjects))}")
+            voids.append(f'{name}: {moved_message(len(subjects))}')
 
     # -- control 1 (shape 2): EVERY '$'-bearing template symbol in the live
     #    population must produce a non-empty diff.  The first driver shelled
@@ -429,14 +713,21 @@ def cmd_selftest(a):
     else:
         empty = [r['sym'] for r in dollar
                  if a.self_break or not ((diff_of.get(r['sym']) or {}).get('instructions'))]
-        ok = not empty
-        print(f"  {'PASS' if ok else 'FAIL'}  control 1 (template symbols resolve): "
-              f"{len(dollar) - len(empty)}/{len(dollar)} '$'-bearing symbols produced a diff")
-        if not ok:
-            for s in empty[:5]:
-                print(f"          EMPTY: {s[:86]}")
-            fails.append(f"{len(empty)}/{len(dollar)} '$'-bearing symbols produced no "
-                         f'diff -- the shell-quoting regression (shape 2) is back')
+        if not empty:
+            print(f"  PASS  control 1 (template symbols resolve): "
+                  f"{len(dollar)}/{len(dollar)} '$'-bearing symbols produced a diff")
+        else:
+            adjudicate(
+                'control 1 (template symbols resolve)', empty,
+                lambda n, t: (f"{n}/{len(dollar)} '$'-bearing symbols produced no diff on "
+                              f"inputs that did NOT move ({t} unavailable in total) -- "
+                              f'a real silent-empty-diff defect; the shell-quoting '
+                              f'regression (shape 2) is the known cause, an unreadable '
+                              f'object is the other one'),
+                lambda t: (f"{t}/{len(dollar)} '$'-bearing symbols were unavailable, and "
+                           f"every one of them\n        sits behind an input that moved "
+                           f"under this run. NOTHING WAS MEASURED here;\n        this is "
+                           f"NOT evidence the shell-quoting regression is back."))
 
     # -- control 2: the same guarantee for everything else.  The selftest reads
     #    its diffs tolerantly, so without this a missing NON-template diff would
@@ -444,14 +735,18 @@ def cmd_selftest(a):
     #    together restore that invariant.
     rest = [r for r in rows if '$' not in r['sym']]
     gone = [r['sym'] for r in rest if diff_of.get(r['sym']) is None]
-    ok = not gone
-    print(f"  {'PASS' if ok else 'FAIL'}  control 2 (non-template rows resolve): "
-          f"{len(rest) - len(gone)}/{len(rest)} resolved")
-    if not ok:
-        for s in gone[:5]:
-            print(f"          MISSING: {s[:84]}")
-        fails.append(f'{len(gone)}/{len(rest)} non-template rows produced no diff -- '
-                     f'a partial dump yields a plausible but WRONG census')
+    if not gone:
+        print(f"  PASS  control 2 (non-template rows resolve): "
+              f"{len(rest)}/{len(rest)} resolved")
+    else:
+        adjudicate(
+            'control 2 (non-template rows resolve)', gone,
+            lambda n, t: (f'{n}/{len(rest)} non-template rows produced no diff on inputs '
+                          f'that did NOT move ({t} unavailable in total) -- a partial '
+                          f'dump yields a plausible but WRONG census'),
+            lambda t: (f'{t}/{len(rest)} non-template rows were unavailable, and every '
+                       f"one of them\n        sits behind an input that moved under this "
+                       f'run -- a racing rebuild, not a defect.'))
 
     # -- control 3 (shape 3): the classifier must emit >= 2 labels, and BOTH
     #    named veins must be present.  A constant classifier fails here.
@@ -468,16 +763,34 @@ def cmd_selftest(a):
             arms = ['STRUCTURAL'] * len(arms)
         labels.update(arms)
         cls_of[rr['sym']] = (arms, len(set(arms)) == 1)
+    # A classifier verdict is only as good as the diffs it read.  If the
+    # POPULATION or the RULER moved (a global input), a red here says nothing;
+    # per-unit churn does not reach a statistic taken over thousands of rows,
+    # so it is not grounds to void one.
+    def verdict(name, ok, msg):
+        if ok:
+            return
+        if stab.moved_globals:
+            print(f"          VOID: {', '.join(stab.moved_globals)} moved under this run, "
+                  f"so the diffs behind this verdict\n          are not a measurement of "
+                  f"any one build")
+            voids.append(f'{name}: {msg} (global inputs moved)')
+        else:
+            fails.append(msg)
+
+    def mark(ok):
+        return 'PASS' if ok else ('VOID' if stab.moved_globals else 'FAIL')
+
     nlab = len([k for k, v in labels.items() if v])
     ok = nlab >= 2
-    print(f"  {'PASS' if ok else 'FAIL'}  control 3 (not a one-label classifier): {nlab} distinct labels")
-    if not ok:
-        fails.append(f'classifier emitted {nlab} label(s) -- constant function')
+    print(f"  {mark(ok)}  control 3 (not a one-label classifier): {nlab} distinct labels")
+    verdict('control 3 (not a one-label classifier)', ok,
+            f'classifier emitted {nlab} label(s) -- constant function')
     for want in ('CMP_REVERSAL', 'ARITH_COMMUTE'):
         ok = labels.get(want, 0) > 0
-        print(f"  {'PASS' if ok else 'FAIL'}  control 3b (vein '{want}' present): n={labels.get(want,0)}")
-        if not ok:
-            fails.append(f'vein {want} absent -- classifier cannot discriminate the two verdicts')
+        print(f"  {mark(ok)}  control 3b (vein '{want}' present): n={labels.get(want,0)}")
+        verdict(f"control 3b (vein '{want}' present)", ok,
+                f'vein {want} absent -- classifier cannot discriminate the two verdicts')
 
     # -- control 1b (shape 1): named known positives, one per vein, both PURE.
     #    Each vein pins a LIST; the first entry still in the population is the
@@ -507,19 +820,51 @@ def cmd_selftest(a):
         sym = live[0]
         arms, pure = cls_of[sym]
         ok = pure and set(arms) == {want}
-        print(f"  {'PASS' if ok else 'FAIL'}  control 1b (known positive {want}): "
+        moved = (not ok) and stab.row_moved(unit_of.get(sym, ''))
+        print(f"  {'PASS' if ok else 'VOID' if moved else 'FAIL'}  "
+              f"control 1b (known positive {want}): "
               f"{sym[:38]}... -> {sorted(set(arms))}"
               f"{'' if len(live) == len(pins) else f'  [{len(live)}/{len(pins)} pins live]'}")
-        if not ok:
-            fails.append(f'known positive {sym} classified {sorted(set(arms))}, expected pure {want}')
+        msg = f'known positive {sym} classified {sorted(set(arms))}, expected pure {want}'
+        if moved:
+            print(f"          VOID: its unit ({unit_of.get(sym)}) or a global input moved "
+                  f"under this run")
+            voids.append(f'control 1b (known positive {want}): {msg} (inputs moved)')
+        elif not ok:
+            fails.append(msg)
 
     print()
-    print(f'controls: {len(fails)} failed, {len(disarmed)} disarmed')
+    stab.report()
+    print(f'controls: {len(fails)} failed, {len(voids)} void, {len(disarmed)} disarmed')
+
+    # PRECEDENCE (argued in the INPUT STABILITY block): FAIL > VOID > DISARMED.
+    # A stable-tree failure is real evidence and is never downgraded to
+    # "nothing was measured" -- a guard that voids everything is worse than no
+    # guard at all.
     if fails:
         print('SELFTEST FAILED:')
         for f in fails:
             print('  -', f)
-        sys.exit(2)
+        if voids or stab.moved_globals:
+            print('  (some inputs also moved under this run -- see INPUT STABILITY above.')
+            print('   The failures listed are the ones whose evidence held still.)')
+        sys.exit(EXIT_FAIL)
+    # The one UNCONDITIONAL void: report.json is the population and objdiff-cli
+    # is the ruler.  If either moved, the rows enumerated and the diffs measured
+    # come from different builds, so even an all-green run proved nothing about
+    # any one build.
+    if voids or stab.moved_globals:
+        print('*** VOID *** this run MEASURED NOTHING -- its inputs moved under it.',
+              file=sys.stderr)
+        print('A void run is not a pass and it is NOT a regression: it is a racing '
+              'rebuild.\nRe-run on a settled tree before reading anything into it.',
+              file=sys.stderr)
+        for msg in voids:
+            print('  - ' + msg, file=sys.stderr)
+        if stab.moved_globals:
+            print(f'  - global input(s) moved: {", ".join(stab.moved_globals)}',
+                  file=sys.stderr)
+        sys.exit(EXIT_VOID)
     if disarmed:
         print('SELFTEST INCONCLUSIVE -- %d control(s) DISARMED, so this run did '
               'NOT validate\nevery shape it claims to. A disarmed control is not '
@@ -528,8 +873,9 @@ def cmd_selftest(a):
             print('  - ' + msg, file=sys.stderr)
         print('\nRe-pin the constant(s) above, then re-run. Do not read this as a '
               'PASS.', file=sys.stderr)
-        sys.exit(3)
-    print('SELFTEST PASSED (and every control above can fail -- try --self-break)')
+        sys.exit(EXIT_DISARMED)
+    print('SELFTEST PASSED (inputs held still, and every control above can fail -- '
+          'try --self-break)')
 
 
 def main():
