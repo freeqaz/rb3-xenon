@@ -146,3 +146,136 @@ was billed 8,852 B for a 12-byte `return true`.
   "function `0x827CCDF0`" is not a function. That correction lives on the
   unlanded `w16-headertruth` branch, so **this worktree still carries the false
   citation**; nothing here rests on it.
+
+---
+
+# Lane W28-UISRC — working the §4 remainder
+
+**Date:** 2026-08-17 · **Base:** `0ba670bc` (worktree `~/tmp/wt-w28uisrc`, branch
+`w28-uisrc`) · **Ruler:** `name_check`, resolved from `report.json` provenance.
+
+Baseline **re-measured, not inherited**: 44,505 fns · 3,760,224 B · 36.433937% ·
+honest 21,595 · `total_code` 10,320,664 · `total_functions` 69,226. (+2 fns /
++3,656 B ahead of W25's baseline — W25's own landing plus later work.)
+
+★ **§4's ranking REPRODUCED EXACTLY** by re-running `w25_charge_census.py`:
+17 rows / 3,208 B COLLECTABLE, same rows, same sizes, 126/126 profiled, 0
+dropped. The ranking is sound. Two rows W25's top-10 table cut off are charged
+by **immediates only**, not registers — so they are workable, unlike the 828 B
+register-only class.
+
+## Collected: +128 B, predicted exactly
+
+`?CurrentTransitionEvent@UIEventMgr@@` 84.16 → **100.0%** (32/32 equal).
+A/B: Δmatched **+1**, Δhonest **+1**, Δcode_bytes **+128**, unit
+`default/UIEventMgr` 35→36. Native gate `verdict=PASS … skipped=0 rc=0`.
+
+Retail constructs the returned `Symbol` into a **stack temporary per branch**
+and copies one word into the return slot; our `if/else` returned each branch
+expression directly, so MSVC applied RVO. `return event ? event->Type() :
+Symbol(gNullStr);` reproduces retail exactly.
+⛔ **Both oracles are WRONG here** — rb3-Wii and our tree carry the identical
+`if/else`; the ternary is in neither. Retail bytes were the only guide.
+⚠ The natural "named local" reading (`Symbol s; … return s;`) scored **84.2 →
+65.4**: it produced the right copy-to-return-slot *and* frame, but
+`Symbol s;` default-constructs from `gNullStr` and MSVC **hoists that to the top**.
+The shape must come from temporaries, not a default-constructed local.
+
+## ⛔ The headline correction: "COLLECTABLE" ≠ "workable"
+
+`COLLECTABLE` means only *"no relocation-name charge blocks this row."* It does
+**not** mean the blocker is a source body. Adjudicated on retail bytes, at least
+three of the remaining rows are **layout or map-identification** problems that no
+body edit can reach:
+
+| row | evidence | real class |
+|---|---|---|
+| `?FocusComponent@UIPanel@@` (40 B) | source is IDENTICAL to rb3-Wii; retail loads field `0x2c` + vtable slot `0x6c`, we load `0x8` (`mDir`, compiler-VERIFIED) + slot `0x34`. **Two independent** differences on a maximally generic body | wrong map name / layout |
+| `?NewObject@UIPanel@@` (76 B) | retail `li r3, 0x108` (264 B alloc) vs our `li r3, 0x68` (= our `sizeof(UIPanel)`); retail calls unnamed `fn_8268B4E8` and **omits the vbase `this` adjustment** we emit | layout / identification |
+| `??0?$reverse_iterator@PAH@…` (8 B) | whole body is `stw r4, 0x18(r3); blr` vs our `stw r4, 0x0(r3)` | ICF fold artifact |
+
+⇒ **Price the §4 remainder well below 2,380 B.** Budget against rows whose
+charges name a *source construct*, not merely rows with no name charge.
+
+## ⛔ `?Scroll@UIListState@@` (652 B) — 84.19 → 86.0, NOT crossed, REVERTED
+
+Worth reading before anyone reopens it; four defects were positively identified.
+
+Our body is a near-verbatim **DC3** copy; **rb3-Wii's is structurally different**
+(goto-into-loop + a `State2Data` helper). DC3 is *newer* than RB3, so for
+pure-logic engine code rb3-Wii is the truer era oracle — and it fixed real things:
+
+- retail's two unconditional forward `b`s (`b 0x6c`, `b 0x284`) = goto-into-loop;
+- `int hitBoundary` with explicit `0/1` inside `if`s kills the bool
+  materialization (our `hitBoundary = (x == y)` emitted `subf`/`cntlzw`/`extrwi`
+  where retail just does `cmpw`) — **this is the BOOL_MASK the detector flags, and
+  its cause was a source construct, not the permuter**;
+- but `changed` must stay **`bool`** (DC3's spelling): rb3-Wii's `int changed`
+  forces a `clrlwi` zero-extend where retail does `mr` ⇒ **the answer was a
+  HYBRID of the two oracles, neither one verbatim**;
+- comparison order `mFirstShowing != mTargetShowing` (DC3's) matches retail's
+  `cmpw` operand order.
+
+Verbatim rb3-Wii alone scored **84.0** (worse than baseline) — oracle mode 3.
+Remaining wall at 86.0%: a **16-byte frame deficit** + a 12-instruction register
+cascade + 1 bool mask. Retail caches `state.mSelectedDisplay` in a callee-saved
+register (`mr r11,r29`) where we reload it (`lwz r11,0x54(r1)`) — an extra local.
+Adding `curFirst`/`curSel` **does close the frame gap** (the `stwu` mismatch
+disappears), but hand-inlining `State2Data` alongside it regressed to **80.8**
+(retail tests `mCircular` where we then loaded `mProvider`), and confining the
+locals to the boundary block leaves them **dead-store-eliminated and inert**.
+
+**Reverted**: 86.0% pays **0 bytes** (`matched_code` is all-or-nothing) and the
+row's residual is permuter-class, which is OFF.
+⚠ Correction to a fear I raised and then disproved: rb3-Wii's `State2Data` using
+`SelectedDisplay()` is **exactly equivalent** to DC3's `sel = mMinDisplay`,
+because our `SelectedDisplay()` *is* `if (mCircular) return mMinDisplay;`. There
+is **no** semantic divergence between the two spellings.
+
+## ⛔ `?SetTypeDef@UIComponent@@` (500 B) — not attempted past diagnosis
+
+rb3-Wii guards the tail with `if (TypeDef() != da)`. **Retail does NOT** —
+instructions 127–136 show `bl SetTypeDef@Object@Hmx` then `bl UpdateResource`
+with no preceding compare, on both sides. Our unguarded version is already right;
+adding the oracle's guard would have been a regression. **Checking retail bytes
+first is what prevented it.**
+Real residual is region 97–126 (30 instructions, 0%): the same `ClassName()` /
+`Name()` / `PathName(Dir())` sequences inside the `MILO_WARN`/`MILO_FAIL` branches
+in a **different evaluation order**, with retail sharing a tail via `b` where we
+duplicate `mtctr`/`bctrl`.
+
+## ⛔ Wide-ripple, deliberately untouched
+
+`_M_erase@vector<UILabel::LabelStyle>` (112 B, 88.57): retail zero-initializes a
+`random_access_iterator_tag` stack temp and passes **one fewer argument**; we
+pass an extra `Distance*` (`PAH`). That is an **STLport `__copy` signature**
+difference in shared headers used by every `vector` in the binary — a
+force-multiplier or a disaster, and not A/B-able within one lane's budget.
+
+> ⛔⛔ **CORRECTED 2026-08-17 (lane W32-STLPORT) — THE OBSERVATION ABOVE
+> REPRODUCES EXACTLY AND ITS CAUSE IS WRONG. There is NO STLport signature
+> difference.** DC3's leaked `ham_xbox_r.map` (shipped Milo, same compiler) has
+> **12/12** `__copy` symbols in the 5-arg `...@PAH@Z` form and **zero** 4-arg
+> forms — *including the byte-identical `LabelStyle@UILabel` instantiation* — so
+> **our signature is confirmed correct**, and the version argument runs backwards
+> (4.x 5-arg → 5.x 4-arg, and DC3 is *newer* than RB3). The real mechanism is
+> **inline policy**: `_M_erase` calls `__copy_ptrs(..., _TrivialAss())`, which
+> already **has 4 params** with an empty-tag `const&` 4th — retail out-lines
+> `__copy_ptrs`, we inline it and out-line `__copy` instead. Forcing it
+> out-of-line takes this row to **100.0%, 28/28**, but the whole-binary A/B is
+> **−411 matched / −57,396 B across 134 regressed units**: retail inlines
+> `__copy_ptrs` at **≥411 sites** and out-lines it at this one.
+> ⇒ **Family lever DEAD; do not re-open. Dropping `_Distance*` would move our
+> source AWAY from shipped-Milo ground truth.** Full record:
+> `docs/decomp/w32-stlport-copy-signature-refuted-2026-08-17.md`.
+> ⚠ Note the trap: "does the callee read r7?" is **vacuous** — `fn_8234C2D8`
+> reads only r3/r4/r5, because a dead tag-dispatch param is unread under *both*
+> hypotheses.
+
+## Not attempted
+
+`PostLoad@PanelDir` (428 B), `??0UIListArrow@@` (144 B), `Copy@UISlider` (112 B),
+`_M_allocate_and_copy<FlowMathOp>` (96 B), `Terminate@UIEventMgr` (80 B — all 7
+mismatches attribute to REGISTER_SWAP + address-relocation noise), and
+`ReadMetaEvent@MidiReader` (972 B, the queued extra). The 828 B register-only
+class and the 88 name-pair rows remain out of scope per W25.

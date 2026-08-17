@@ -671,6 +671,15 @@ void BandCamShot::Target::UpdateTarget(Symbol s, BandCamShot *shot) {
 
 BEGIN_CUSTOM_PROPSYNC(BandCamShot::Target)
     SYNC_PROP_SET(target, o.mTarget, o.UpdateTarget(_val.Sym(), gBandCamShotOwner))
+    // W29: `to` was MISSING here and is present in the Ham spelling of the same
+    // block (`hamobj/HamCamShot.cpp`, which this TU scatter-includes at the
+    // bottom of the file).  Retail has it: the target extent at 0x822b4298 is
+    // 1692 B, our `HamCamShot`-spelled COMDAT is 1692 B / 194 relocations and
+    // scores fuzzy 99.9882 against it with exactly ONE charged site (a callee
+    // NAME), whereas our `BandCamShot`-spelled COMDAT was 1604 B / 180
+    // relocations.  So the 88 B shortfall was this property, adjudicated on
+    // retail bytes rather than on a preference between the two oracles.
+    SYNC_PROP(to, o.mXfm)
     SYNC_PROP_MODIFY(anim_group, o.mAnimGroup, gBandCamShotOwner->StartAnim())
     SYNC_PROP(fast_forward, o.mFastForward)
     SYNC_PROP(forward_event, o.mForwardEvent) {

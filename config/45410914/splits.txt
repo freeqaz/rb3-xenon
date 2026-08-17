@@ -3820,7 +3820,6 @@ Font.cpp:
 	.pdata      start:0x8220FA98 end:0x8220FAA0
 	.pdata      start:0x8220FAA0 end:0x8220FAB0
 	.pdata      start:0x8220FAB0 end:0x8220FAF8
-	.pdata      start:0x82235B78 end:0x82235B80
 	.pdata      start:0x82235CA0 end:0x82235CB8
 	.pdata      start:0x82235CC0 end:0x82235CE8
 	.text       start:0x822A3EB0 end:0x822A3F54
@@ -10687,6 +10686,7 @@ SongData.cpp:
 	.text       start:0x827705C8 end:0x82770718
 	.text       start:0x82770718 end:0x8277072C
 	.text       start:0x8277072C end:0x82770730
+	.text       start:0x82770730 end:0x82770748
 	.text       start:0x82770748 end:0x82770800
 	.text       start:0x82770800 end:0x827708C0
 	.text       start:0x82770920 end:0x827709D8
@@ -11095,6 +11095,7 @@ TrackerSource.cpp:
 DeployCountTracker.cpp:
 	.pdata      start:0x821F9CA8 end:0x821F9CC8
 	.pdata      start:0x82235B40 end:0x82235B78
+	.pdata      start:0x82235B78 end:0x82235B80
 	.pdata      start:0x82235B80 end:0x82235B88
 	.pdata      start:0x82235B90 end:0x82235B98
 	.pdata      start:0x82235B98 end:0x82235C20
@@ -12061,7 +12062,6 @@ SongDB.cpp:
 	.text       start:0x82688310 end:0x826883F8
 	.text       start:0x826883F8 end:0x82688530
 	.text       start:0x82688530 end:0x82688658
-	.text       start:0x82770730 end:0x82770748
 
 VocalPart.cpp:
 	.pdata      start:0x82236B08 end:0x82236B50
