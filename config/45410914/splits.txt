@@ -3812,10 +3812,7 @@ Font.cpp:
 	.pdata      start:0x82235CA0 end:0x82235CB8
 	.pdata      start:0x82235CC0 end:0x82235CE8
 	.text       start:0x822A3EB0 end:0x822A3F54
-	.text       start:0x822DEED0 end:0x822DEF9C
-	.text       start:0x822DEFA0 end:0x822DF0B0
 	.text       start:0x822DF250 end:0x822DF300
-	.text       start:0x822DF300 end:0x822DF4D8
 	.text       start:0x822DF548 end:0x822DF704
 	.text       start:0x822FA1D0 end:0x822FA24C
 	.text       start:0x822FA500 end:0x822FA5C8
@@ -3855,8 +3852,6 @@ XLSPConnection.cpp:
 	.pdata      start:0x82243660 end:0x82243668
 	.pdata      start:0x82243668 end:0x82243670
 	.pdata      start:0x82243670 end:0x82243680
-	.text       start:0x822DDA78 end:0x822DDB44
-	.text       start:0x822DEDF0 end:0x822DEED0
 	.text       start:0x827D9648 end:0x827D96D8
 	.text       start:0x827D9750 end:0x827D97CC
 	.text       start:0x827D97D0 end:0x827D9918
@@ -4089,6 +4084,11 @@ ChordShapeGenerator.cpp:
 	.text       start:0x822DFD88 end:0x822DFF28
 	.text       start:0x822DFF28 end:0x822E1234
 	.text       start:0x822E12B0 end:0x822E33E8
+	.text       start:0x822DEED0 end:0x822DEF9C
+	.text       start:0x822DEFA0 end:0x822DF0B0
+	.text       start:0x822DF300 end:0x822DF4D8
+	.text       start:0x822DDA78 end:0x822DDB44
+	.text       start:0x822DEDF0 end:0x822DEED0
 
 CheckboxDisplay.cpp:
 	.pdata      start:0x821FC8F8 end:0x821FC9C8
