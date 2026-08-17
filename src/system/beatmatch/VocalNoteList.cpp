@@ -9,7 +9,7 @@
                   // same value, 0x7F7FFFFF, and is MSVC/clang portable)
 #include <functional>
 
-inline const char *VocalNoteList::PrintTick(int tick) const {
+const char *VocalNoteList::PrintTick(int tick) const {
     return TickFormat(tick, *mSongData->GetMeasureMap());
 }
 
