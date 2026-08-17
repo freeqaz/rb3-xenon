@@ -605,6 +605,54 @@ oracle. It is not — the implied mapping is **non-monotonic**, so it cannot be 
 rebase correspondence. It would have "confirmed" `0x827977D0 → 0x827BC430`, which is
 `MemFree`, **not** MemAlloc: a wrong answer with a plausible shape.
 
+### 5.5 ✅ LANDED as `5dd5e4f0` (lane SCOPEMAP-VA) — and the lane corrected §5.1 twice
+
+Fix: one shared `resolve_named_va()` (target_symbol_map → symbols.txt → dup
+disambiguation by block containment, 99.99% coverage); the catch-all branch now
+calls it too, so there is **one** address-resolution implementation instead of
+three. Unresolvable rows are parked and **counted**, never given a plausible
+address. New `scope_map.py validate-addrs` asserts containment **and**
+size-vs-`symbols.txt`, exit 1 on failure.
+
+⛔⛔ **CORRECTION 1 — the defect was ~2× the size recorded in §5.1, and §5.1's
+"control" was NOT a control.** Measured against true pre-fix addresses: **22,090 of
+23,036 pinned named rows (95.89%)** carried a fabricated address, not the 11,240
+(48.79%) a containment test can see. The other **47.10% landed inside ANOTHER BLOCK
+OF THE SAME UNIT**, where containment is structurally blind. ⇒ single-block units are
+**87.53% fabricated while reading only 7.62% "bad"**, so **§5.1's 6.1× enrichment
+measures DETECTABILITY, not defect rate.**
+
+> ★★★ **The reusable lesson: an enrichment ratio computed with a
+> blind-spot-bearing detector describes the DETECTOR, not the population.** §5.1's
+> figure was passed down as though it sized the defect; it sized the instrument.
+
+⛔ **CORRECTION 2 — §5.1's recommended block-walk fallback is WRONG.** Implemented
+and measured: it recovers the true VA for only **5.20%** of rows (4–12 B errors
+accumulating, because pinned spans include alignment/EH padding the cumulative
+offsets do not). Rejected, with an in-code comment so it is not reintroduced.
+
+**Proof it discriminates** (a PASS is worthless until the gate is shown to fail): a
+mutation reintroducing `base + rel` gives `FAIL 11,240` / exit 1; the fixed tree
+gives `FAIL 0` / exit 0; and 11,240 matches an independently written auditor to the
+row. **Control unchanged**: `fn_` anchor rows 40,858 changed **0**, catch-all rows
+5,332 changed **0**, zero drift in size/matched/source_path/fuzzy, key set identical.
+
+★ **Arithmetic self-validation on a route sharing no logic with the above:**
+`scope_map.json` now holds exactly `total_functions` = **69,226** keys with zero
+collisions. **The fabricating version held 68,576 — it had been silently LOSING 650
+functions to colliding synthetic keys**, and nothing had noticed.
+
+⚠⚠ **DEPLOYMENT GOTCHA, caught by the coordinator after the merge:**
+`config/45410914/scope_map.json` is **gitignored**, so **merging the fix does NOT
+refresh the artifact everyone reads.** Immediately post-merge, main's on-disk file
+was still the stale 68,576-key version *still containing the bad `822734E0` row*,
+while `validate-addrs` reported **PASS** — because the gate recomputes from
+`report.json` through the fixed code path rather than reading the artifact. ⇒ **run
+`python3 tools/scope_map.py build` after landing**, and do not read the gate's PASS
+as a statement about the file on disk. Verified after regenerating: 69,226 keys,
+`822734E0` → `pinned:src/Memory_Xbox.cpp` size 60, and `8275AB18` → SetTypeDef size
+116 (**previously absent from the map entirely**).
+
 ### 5.4 ★ The cross-cutting finding
 
 **SNAGs 1 and 2 are the same bug in two different tools.**
@@ -641,7 +689,7 @@ of the strategy plumbing.
 | 4 | This doc | open |
 | 5 | Dispatch implementation lane(s) | blocked on 1–2 |
 | 6 | Name + pin the Memory_Xbox allocator rows | blocked on §2.3 |
-| 7 | **NEW: fix `tools/scope_map.py`'s pinned-unit address key** (§5.1) | ready to dispatch — 11,122 rows, no metric exposure |
+| 7 | **NEW: fix `tools/scope_map.py`'s pinned-unit address key** (§5.1) | ✅ **LANDED** `5dd5e4f0` — see §5.5 |
 | 8 | **NEW: comment-only refresh of 5 stale TU0 addresses in `MemMgr.h`** (§5.3) | ready to dispatch — run the native gate LAST |
 | 9 | **NEW: adjudicate `0x82709EE0`** — stale citation or ICF fold survivor? (§5.3) | open, low priority |
 
