@@ -747,7 +747,7 @@ void SaveLoadManager::SetState(State newState) {
     case 0x3e:
         if (newState != (State)0x6b) {
             if (mData != NULL) {
-                _MemFree(mData);
+                MemFree(mData);
                 mData = NULL;
             }
         }
@@ -763,7 +763,7 @@ void SaveLoadManager::SetState(State newState) {
         break;
     case 0x6b:
         if (mData != NULL) {
-            _MemFree(mData);
+            MemFree(mData);
             mData = NULL;
         }
         break;

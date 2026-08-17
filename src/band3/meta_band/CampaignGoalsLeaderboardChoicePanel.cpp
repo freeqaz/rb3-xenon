@@ -66,7 +66,7 @@ public:
 
     ~_Temporary_buffer() {
         _STLP_STD::_Destroy_Range(_M_buffer, _M_buffer + _M_len);
-        _MemFree(_M_buffer);
+        MemFree(_M_buffer);
     }
 
 private:

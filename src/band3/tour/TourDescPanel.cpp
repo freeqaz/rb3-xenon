@@ -59,7 +59,7 @@ inline void _Temporary_buffer<Symbol *, Symbol>::_M_allocate_buffer() {
 template <>
 inline _Temporary_buffer<Symbol *, Symbol>::~_Temporary_buffer() {
     _STLP_STD::_Destroy_Range(_M_buffer, _M_buffer + _M_len);
-    _MemFree(_M_buffer);
+    MemFree(_M_buffer);
 }
 } // namespace stlpmtx_std
 #endif
