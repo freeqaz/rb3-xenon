@@ -505,6 +505,11 @@ SPLIT_TEXT_RE = re.compile(r"\.text\s+start:0x([0-9A-Fa-f]+)\s+end:0x([0-9A-Fa-f
 # real .text (max real fn ~0x82C23xxx) and never participate in spatial runs.
 SYNTH_BASE = 0xF0000000
 
+# Pinned-unit named functions no ground-truth map could place, recorded rather
+# than given a fabricated real-looking address.  Populated by load_functions();
+# reported by `validate-addrs`.  Measured on the current tree: 0 rows.
+UNRESOLVED_NAMED = []
+
 
 def load_splits_text_bases(splits_path):
     """basename(no ext) -> .text start addr, from pinned splits.txt entries."""
@@ -522,6 +527,78 @@ def load_splits_text_bases(splits_path):
                 stem = cur.rsplit(".", 1)[0]
                 bases[stem] = int(t.group(1), 16)
     return bases
+
+
+_SPLIT_TEXT_BLOCKS = None
+
+
+def load_splits_text_blocks(splits_path=None):
+    """stem(basename, no ext) -> [ [(start,end), ...], ... ] -- one block LIST
+    per splits heading sharing that stem.
+
+    ⚠ Deliberately a list-of-lists, not a flat list: `Movie`, `Game`, `UIStats`,
+    `Utl` and 23 other stems have BOTH a bare `Foo.cpp:` heading and a nested
+    `band3/.../Foo.cpp:` one, and they are DIFFERENT units at different
+    addresses.  Collapsing them by basename is the trap CLAUDE.md records as
+    having broken four consecutive lanes; callers must disambiguate with real
+    addresses (see `blocks_for_report_unit`), never by string matching.
+    """
+    global _SPLIT_TEXT_BLOCKS
+    if splits_path is None:
+        splits_path = SPLITS
+        if _SPLIT_TEXT_BLOCKS is not None:
+            return _SPLIT_TEXT_BLOCKS
+    out = {}
+    if os.path.exists(splits_path):
+        per_head = {}
+        order = []
+        cur = None
+        for line in open(splits_path):
+            h = SPLIT_HDR_RE.match(line)
+            if h and not line.startswith((" ", "\t")):
+                cur = h.group(1)
+            elif cur:
+                t = SPLIT_TEXT_RE.search(line)
+                if t:
+                    if cur not in per_head:
+                        per_head[cur] = []
+                        order.append(cur)
+                    per_head[cur].append((int(t.group(1), 16), int(t.group(2), 16)))
+        for head in order:
+            stem = os.path.basename(head).rsplit(".", 1)[0]
+            out.setdefault(stem, []).append(per_head[head])
+    if splits_path == SPLITS:
+        _SPLIT_TEXT_BLOCKS = out
+    return out
+
+
+def _addr_in_blocks(addr, blks):
+    return any(s <= addr < e for s, e in blks)
+
+
+def blocks_for_report_unit(unit, anchors, blocks_by_stem=None):
+    """Resolve a report unit name to its splits `.text` blocks.
+
+    `anchors` are the unit's own `fn_<addr>` VAs, which are GROUND TRUTH (the
+    address is in the symbol name).  When a basename is shared by several
+    headings we pick the candidate containing the most anchors -- never a
+    string-suffix match, which picks the wrong one for `Game`/`UIStats`/
+    `AccomplishmentProgress` (measured: 79 phantom verdicts).  Returns None
+    when the unit has no `.text` pin or cannot be disambiguated.
+    """
+    if blocks_by_stem is None:
+        blocks_by_stem = load_splits_text_blocks()
+    cands = blocks_by_stem.get(unit.split("/")[-1])
+    if not cands:
+        return None
+    if len(cands) == 1:
+        return cands[0]
+    best, best_hits = None, 0
+    for blks in cands:
+        hits = sum(1 for a in anchors if _addr_in_blocks(a, blks))
+        if hits > best_hits:
+            best, best_hits = blks, hits
+    return best
 
 
 # ---------------------------------------------------------------------------
@@ -589,6 +666,64 @@ def load_symbols_txt_name2addr():
     return out
 
 
+_TARGET_SYMBOL_NAME2ADDRS = None
+
+
+def load_target_symbol_name2addrs():
+    """name -> [addr, ...] INCLUDING the duplicates `load_target_symbol_name2addr`
+    drops.  A name mapping to >1 address cannot be resolved by name alone, but a
+    caller who knows the row's unit CAN pick the candidate lying inside that
+    unit's own `.text` blocks.  That recovers the residual (measured: 2 rows,
+    both `?NodeCmp@@YAHPBX0@Z`, a file-static name present in several TUs)."""
+    global _TARGET_SYMBOL_NAME2ADDRS
+    if _TARGET_SYMBOL_NAME2ADDRS is not None:
+        return _TARGET_SYMBOL_NAME2ADDRS
+    out = {}
+    if os.path.exists(TARGET_SYMBOL_MAP):
+        for k, v in json.load(open(TARGET_SYMBOL_MAP)).items():
+            if k.startswith("0x") and isinstance(v, str):
+                out.setdefault(v, []).append(int(k, 16))
+    _TARGET_SYMBOL_NAME2ADDRS = out
+    return out
+
+
+def resolve_named_va(name, unit_blocks=None):
+    """Mangled/named function -> its TRUE virtual address, or None.
+
+    THE single address-resolution path for named functions, shared by the
+    pinned-unit and catch-all branches of load_functions().  Order:
+
+      (1) scripts/target_symbol_map.json  -- ground truth, the same map
+          obj_target_symbol_renamer used, inverted;
+      (2) config/45410914/symbols.txt     -- covers compiler runtime helpers
+          (__savegprlr_N etc.) and dtk lbl_ labels the map does not carry;
+      (3) ambiguous map names (>1 address) disambiguated by `unit_blocks`.
+
+    ⛔ There is deliberately NO arithmetic fallback here.  report.json's per-fn
+    `address` is a per-unit CUMULATIVE offset, so `block_start + address` is a
+    SYNTHETIC address -- the identical formula CLAUDE.md documents for dtk's
+    `.s` address columns, and the defect this function exists to remove.  A
+    block-list walk over the unit's `.text` spans looks like it should invert
+    that cumulative offset and DOES NOT: measured, it reproduces the true VA
+    for only 5.20% of rows (errors of 4-12 B that accumulate across blocks,
+    because the pinned spans include alignment/EH padding the cumulative
+    offsets do not).  It was implemented, measured and rejected -- do not
+    reintroduce it.  Callers must handle None rather than fabricate.
+    """
+    addr = load_target_symbol_name2addr().get(name)
+    if addr is not None:
+        return addr
+    addr = load_symbols_txt_name2addr().get(name)
+    if addr is not None:
+        return addr
+    if unit_blocks:
+        cands = [a for a in load_target_symbol_name2addrs().get(name, ())
+                 if _addr_in_blocks(a, unit_blocks)]
+        if len(cands) == 1:
+            return cands[0]
+    return None
+
+
 # ---------------------------------------------------------------------------
 # load report.json -> list of (addr, size, matched, source_path, unit)
 # ---------------------------------------------------------------------------
@@ -614,10 +749,26 @@ def load_functions(report_path, dedup=True):
             continue
 
         # -- PINNED SOURCE UNITS (have source_path) --
-        # dtk emits clean per-unit relative offsets, so base + rel is exact.
-        # Base from any fn_ anchor (base = abs - rel), else splits.txt .text
-        # pin, else a synthetic island (handful of .pdata-only pinned units).
+        # `fn_<addr>` rows carry their VA in the name.  NAMED rows are resolved
+        # by real VA through resolve_named_va(), exactly as the catch-all
+        # branch below does -- ONE shared implementation.
+        #
+        # ⛔ This branch used to read `base + int(fn["address"])`, with the
+        # comment "dtk emits clean per-unit relative offsets, so base + rel is
+        # exact".  That premise is FALSE: report.json's per-fn `address` is a
+        # per-unit CUMULATIVE offset, so for a MULTI-BLOCK unit it computed
+        # `first_block_start + cumulative offset` -- a synthetic address that
+        # is well-formed, confident, and points at another TU's code.  Measured
+        # on the unfixed tool: 11,023 / 20,190 named rows in multi-block units
+        # (54.60%) landed outside every real `.text` block of their own unit,
+        # vs 217 / 2,846 (7.62%) in single-block units where the defect is
+        # structurally impossible -- a 7.16x enrichment, 11,240 rows total.
+        # The unit ATTRIBUTIONS were always right: of the bad rows with a known
+        # true address, 11,239 / 11,239 (100%) lie inside their own unit.
         if sp:
+            anchors = [int(m.group(1), 16)
+                       for m in (FN_ADDR_RE.match(f["name"]) for f in fns) if m]
+            unit_blocks = blocks_for_report_unit(unit, anchors)
             base = None
             for fn in fns:
                 m = FN_ADDR_RE.match(fn["name"])
@@ -631,12 +782,24 @@ def load_functions(report_path, dedup=True):
                 base = synth
                 synth += 0x10000
             for fn in fns:
-                m = FN_ADDR_RE.match(fn["name"])
-                addr = int(m.group(1), 16) if m else base + int(fn.get("address", "0"))
+                name = fn["name"]
+                m = FN_ADDR_RE.match(name)
+                if m:
+                    addr = int(m.group(1), 16)
+                else:
+                    addr = resolve_named_va(name, unit_blocks)
+                    if addr is None:
+                        # Unresolvable by any ground-truth map.  Park it in the
+                        # synthetic island rather than on a plausible-looking
+                        # real address: a wrong-but-well-formed VA is the defect
+                        # this branch exists to remove, and UNRESOLVED_NAMED
+                        # lets `validate-addrs` count it instead of hiding it.
+                        addr = SYNTH_BASE + (len(UNRESOLVED_NAMED) + 1)
+                        UNRESOLVED_NAMED.append((unit, name))
                 size = int(fn.get("size", "0"))
                 matched = float(fn.get("match_percent_normalized", 0.0)) >= 100.0
                 fz = float(fn.get("fuzzy_match_percent", 0.0))
-                funcs.append((addr, size, matched, sp, unit, fn["name"], fz))
+                funcs.append((addr, size, matched, sp, unit, name, fz))
             continue
 
         # -- CATCH-ALL / auto UNITS (no source_path) --
@@ -661,8 +824,6 @@ def load_functions(report_path, dedup=True):
         # listing order (good enough to inherit that neighbor's bucket via
         # spatial locality) with a tiny distinct delta to avoid collisions.
         # Functions are listed in `address`-monotonic order.
-        tsm_name2addr = load_target_symbol_name2addr()
-        symtxt_name2addr = load_symbols_txt_name2addr()
         last_anchor = None
         named_off = 0
         for fn in fns:
@@ -676,9 +837,7 @@ def load_functions(report_path, dedup=True):
                 last_anchor = addr
                 named_off = 0
             else:
-                real_addr = tsm_name2addr.get(name)
-                if real_addr is None:
-                    real_addr = symtxt_name2addr.get(name)
+                real_addr = resolve_named_va(name)
                 if real_addr is not None:
                     # Real VA recovered -- do NOT touch last_anchor/named_off,
                     # those only govern the synthetic-placement fallback for
@@ -1102,6 +1261,145 @@ def _print_report(sm):
     # + a no-dedup live classification for per-tier (sums to total_code exactly).
     by_live, measures, cache = _progress_by_live()
     print_progress(by_live, measures, cache=cache)
+
+
+# Tolerated |report size - symbols.txt size| gap; see cmd_validate_addrs.
+SIZE_TOLERANCE = 4
+
+_SYMBOLS_TXT_ADDR2SIZE = None
+_SYMBOLS_TXT_SIZE_RE = re.compile(
+    r"^\S+ = \.text:0x([0-9A-Fa-f]+);.*\bsize:0x([0-9A-Fa-f]+)")
+
+
+def load_symbols_txt_addr2size():
+    """.text VA -> size, from config/45410914/symbols.txt."""
+    global _SYMBOLS_TXT_ADDR2SIZE
+    if _SYMBOLS_TXT_ADDR2SIZE is not None:
+        return _SYMBOLS_TXT_ADDR2SIZE
+    out = {}
+    if os.path.exists(SYMBOLS_TXT):
+        for line in open(SYMBOLS_TXT):
+            m = _SYMBOLS_TXT_SIZE_RE.match(line)
+            if m:
+                out[int(m.group(1), 16)] = int(m.group(2), 16)
+    _SYMBOLS_TXT_ADDR2SIZE = out
+    return out
+
+
+def cmd_validate_addrs(args):
+    """Assert every PINNED-unit function address is real, not fabricated.
+
+    Two independent invariants, because the defect this guards against produced
+    a confident, well-formed, WRONG answer that no consistency check inside the
+    tool could see:
+
+      A. CONTAINMENT -- a row's address must lie inside one of its OWN unit's
+         `.text` blocks in splits.txt.  The fabricated key
+         `first_block_start + cumulative_offset` violates this for multi-block
+         units (11,240 rows before the fix).
+      B. SIZE AGREEMENT -- the row's size must equal symbols.txt's size for the
+         symbol AT that address.  This is the check that originally exposed the
+         bug by byte geometry: scope_map claimed 116 B at 0x822734E0 where
+         symbols.txt says 0x3C = 60 B, because 116 B is the size of
+         `?SetTypeDef@Object@Hmx@@UAAXPAVDataArray@@@Z`, whose true home is
+         0x8275AB18.
+
+    Exit 1 if any row fails, so this can gate.  Rows in units with no `.text`
+    pin are counted and skipped (they have no blocks to be inside of).
+
+    ⚠⚠ CONTAINMENT UNDERCOUNTS BY ~2x AND ITS "CONTROL" IS NOT ONE.  Measured
+    against the true pre-fix addresses (lane SCOPEMAP-VA): of 23,036 pinned
+    named rows, **22,090 (95.89%) carried a fabricated address**, but only
+    11,240 (48.79%) were outside every block -- the other 10,850 (47.10%) landed
+    inside ANOTHER BLOCK OF THE SAME UNIT, where invariant A is structurally
+    blind.  Consequently the single-block-vs-multi-block split that sized the
+    defect measures **detectability, not defect rate**: single-block units were
+    87.53% fabricated while reading only 7.62% "bad", so the apparent ~6-7x
+    multi/single enrichment is an ARTIFACT of containment's blind spot, not a
+    real difference between the populations.  The instrument that has no blind
+    spot is the arithmetic one: after the fix `scope_map.json` holds exactly
+    `total_functions` keys (69,226) with ZERO address collisions, where the
+    fabricating version lost **650 functions** to colliding synthetic keys.
+    Check that identity before trusting this command's counts.
+    """
+    report_path = args.report
+    with open(report_path) as f:
+        rep = json.load(f)
+    funcs, _ = load_functions(report_path, dedup=False)
+    addr_of = {}
+    for addr, size, matched, sp, unit, name, fz in funcs:
+        addr_of[(unit, name)] = (addr, size)
+
+    a2s = load_symbols_txt_addr2size()
+    blocks_by_stem = load_splits_text_blocks()
+
+    n_named = n_contain = n_size = n_size_tol = 0
+    no_blocks = no_symrow = 0
+    bad_contain, bad_size = [], []
+    for u in rep["units"]:
+        unit = u["name"]
+        sp = (u.get("metadata") or {}).get("source_path")
+        if not sp:
+            continue
+        fns = u.get("functions") or []
+        if not fns:
+            continue
+        anchors = [int(m.group(1), 16)
+                   for m in (FN_ADDR_RE.match(f["name"]) for f in fns) if m]
+        blks = blocks_for_report_unit(unit, anchors, blocks_by_stem)
+        if not blks:
+            no_blocks += 1
+            continue
+        for fn in fns:
+            name = fn["name"]
+            if FN_ADDR_RE.match(name):
+                continue
+            got = addr_of.get((unit, name))
+            if got is None:
+                continue
+            addr, size = got
+            n_named += 1
+            if _addr_in_blocks(addr, blks):
+                n_contain += 1
+            elif len(bad_contain) < 100000:
+                bad_contain.append((unit, name, addr, size, blks[0][0], len(blks)))
+            want = a2s.get(addr)
+            if want is None:
+                no_symrow += 1            # no symbols.txt row at that VA
+            elif want == size:
+                n_size += 1
+            elif abs(want - size) <= SIZE_TOLERANCE:
+                # Known systematic one-word accounting gap between report.json's
+                # function size and dtk's symbol extent.  MEASURED across all
+                # 23,034 checkable rows: delta 0 x22,779, +4 x253, -4 x2, and
+                # NOTHING else -- so it is a convention, not corruption, and it
+                # predates this lane (which is tooling-only and must not touch
+                # symbols.txt).  Tolerated, but COUNTED, never hidden.
+                n_size_tol += 1
+            elif len(bad_size) < 100000:
+                bad_size.append((unit, name, addr, size, want))
+
+    nb_c, nb_s = len(bad_contain), len(bad_size)
+    print("=" * 70)
+    print("scope_map validate-addrs -- PINNED-unit named functions")
+    print("=" * 70)
+    print(f"  named rows checked                     {n_named}")
+    print(f"  A. inside own unit's .text blocks      {n_contain}   FAIL {nb_c}")
+    print(f"  B. size agrees with symbols.txt        {n_size}   FAIL {nb_s}")
+    print(f"     (+/-{SIZE_TOLERANCE}B known accounting gap, tolerated) {n_size_tol}")
+    print(f"  unresolvable by any ground-truth map   {len(UNRESOLVED_NAMED)}")
+    if no_symrow:
+        print(f"  no symbols.txt row at resolved VA      {no_symrow}")
+    if no_blocks:
+        print(f"  units skipped (no .text pin)           {no_blocks}")
+    for label, rows in (("CONTAINMENT", bad_contain), ("SIZE", bad_size)):
+        for r in rows[: args.samples]:
+            print(f"    {label}: {r[2]:08X} {r[0]} {r[1][:60]} {r[3:]}")
+    for unit, name in UNRESOLVED_NAMED[: args.samples]:
+        print(f"    UNRESOLVED: {unit} {name[:70]}")
+    ok = (nb_c == 0 and nb_s == 0 and not UNRESOLVED_NAMED)
+    print("\n  VERDICT: " + ("PASS" if ok else "FAIL"))
+    return 0 if ok else 1
 
 
 def cmd_report(args):
@@ -1822,9 +2120,16 @@ def main():
     w.add_argument("--bucket", choices=BUCKET_ORDER, help="filter to one bucket")
     c = sub.add_parser("classify", help="classify a single addr")
     c.add_argument("addr")
+    v = sub.add_parser("validate-addrs",
+                       help="assert pinned-unit fn addresses are real, not fabricated")
+    v.add_argument("--report",
+                   default=os.path.join(ROOT, "build", "45410914", "report.json"))
+    v.add_argument("--samples", type=int, default=10)
     args = ap.parse_args()
-    {"build": cmd_build, "report": cmd_report, "priority": cmd_priority,
-     "worklist": cmd_worklist, "classify": cmd_classify}[args.cmd](args)
+    rc = {"build": cmd_build, "report": cmd_report, "priority": cmd_priority,
+          "worklist": cmd_worklist, "classify": cmd_classify,
+          "validate-addrs": cmd_validate_addrs}[args.cmd](args)
+    sys.exit(rc or 0)
 
 
 if __name__ == "__main__":
