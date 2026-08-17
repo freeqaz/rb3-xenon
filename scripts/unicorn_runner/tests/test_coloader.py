@@ -8,21 +8,13 @@ import sys
 import os
 import unittest
 
-from scripts.unicorn_runner.engine import CL_TRAMP_ADDR
+from scripts.unicorn_runner.call_log import CL_TRAMP_ADDR
 
-# Unicorn imports (must match engine.py's path setup)
-from pathlib import Path
-_MILOHAX_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent
-_UNICORN_DIR = _MILOHAX_DIR / "unicorn"
-UNICORN_PATH = str(_UNICORN_DIR / "bindings" / "python")
-sys.path.insert(0, UNICORN_PATH)
-os.environ["LIBUNICORN_PATH"] = str(_UNICORN_DIR / "build")
-
-try:
-    from unicorn import Uc
-    HAS_UNICORN = True
-except ImportError:
-    HAS_UNICORN = False
+# Unicorn availability. The path search, the shadow ordering and the
+# reason string all live in scripts/unicorn_runner/unicorn_dep.py — the
+# hand-rolled `parent.parent.parent.parent.parent` block that used to sit
+# here resolved to a nonexistent directory inside every git worktree.
+from scripts.unicorn_runner.unicorn_dep import HAS_UNICORN, SKIP_REASON
 
 from .helpers import (
     assemble, ppc_li, ppc_blr, ppc_bl, ppc_nop,
@@ -556,7 +548,7 @@ class TestAdjustRelocs(unittest.TestCase):
 # Unicorn integration tests
 # ---------------------------------------------------------------------------
 
-@unittest.skipUnless(HAS_UNICORN, "Unicorn PPC not available")
+@unittest.skipUnless(HAS_UNICORN, SKIP_REASON)
 class TestColoadedExecution(unittest.TestCase):
     """Integration tests verifying co-loaded callees execute correctly."""
 

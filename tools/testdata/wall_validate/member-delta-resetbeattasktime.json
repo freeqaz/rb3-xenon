@@ -1,0 +1,161 @@
+{
+ "_wc_fixture": {
+  "captured": "2026-08-17",
+  "diff_count": 1,
+  "objdiff_cli": "objdiff-cli 4.2.3 (88b425bc3bad, xxh3 c8170f625ef1331d)",
+  "repo_head": "ff22c4404ed8d6eb1e7b7504e453cd631910d321",
+  "slug": "member-delta-resetbeattasktime",
+  "sym": "?ResetBeatTaskTime@TaskMgr@@QAAXM@Z",
+  "unit": "default/Task",
+  "vbase": {
+   "coff": {},
+   "header": {
+    "TaskMgr": false
+   }
+  }
+ },
+ "base_size": 12,
+ "demangled": "public: void __cdecl TaskMgr::ResetBeatTaskTime(float)",
+ "diff_score": {
+  "max_score": 300,
+  "score": 1
+ },
+ "fuzzy_match_percent": 99.666664,
+ "instructions": [
+  {
+   "base": {
+    "address": "0x0",
+    "args": "r11, 0x28(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 40
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   },
+   "diff_breakdown": {
+    "arguments": [
+     {
+      "arg_type": "immediate",
+      "base": {
+       "type": "Signed",
+       "value": 40
+      },
+      "index": 1,
+      "target": {
+       "type": "Signed",
+       "value": 96
+      }
+     }
+    ]
+   },
+   "index": 0,
+   "match_type": "diff_arg",
+   "target": {
+    "address": "0x0",
+    "args": "r11, 0x60(r3)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 96
+     },
+     {
+      "type": "Register",
+      "value": "r3"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x4",
+    "args": "r3, r11, 0x1c",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 28
+     }
+    ]
+   },
+   "index": 1,
+   "match_type": "equal",
+   "target": {
+    "address": "0x4",
+    "args": "r3, r11, 0x1c",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r11"
+     },
+     {
+      "type": "Signed",
+      "value": 28
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x8",
+    "args": "?ResetTaskTime@TaskTimeline@@QAAXM@Z",
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "?ResetTaskTime@TaskTimeline@@QAAXM@Z"
+     }
+    ]
+   },
+   "index": 2,
+   "masked_equal": true,
+   "match_type": "equal",
+   "target": {
+    "address": "0x8",
+    "args": "fn_82270690",
+    "opcode": "b",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "fn_82270690"
+     }
+    ]
+   }
+  }
+ ],
+ "masked_equal_rows": 1,
+ "masked_equal_symbol": false,
+ "normalized_match_percent": 99.666664,
+ "raw_match_percent": 98.0,
+ "reloc_ignored_rows": 1,
+ "symbol": "?ResetBeatTaskTime@TaskMgr@@QAAXM@Z",
+ "target_size": 12,
+ "unit": "default/Task"
+}

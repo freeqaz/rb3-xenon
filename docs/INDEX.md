@@ -938,7 +938,7 @@ Per-TU / per-wave landing records from the port campaigns (mostly 2026-07-01/02)
 - [plans/objptr-regression-analysis-2026-05-30.md](plans/objptr-regression-analysis-2026-05-30.md) — [HIST] post-landing ObjPtr: +54 net, 4 regressed units.
 - [plans/hmx-object-layout.md](plans/hmx-object-layout.md) — [HIST] Hmx::Object 0x2c→0x28 correction (landed).
 - [plans/ui-base-layout-reconstruction.md](plans/ui-base-layout-reconstruction.md) — [HIST] UIComponent retail layout (0x140) reconstructed.
-- [plans/structural-readiness-2026-06-03.md](plans/structural-readiness-2026-06-03.md) — [HIST] struct-layout readiness audit (4094-matched era).
+- [plans/structural-readiness-2026-06-03.md](plans/structural-readiness-2026-06-03.md) — [HIST] struct-layout readiness audit (4094-matched era). **Its `layout_fix_rank.py` fan-out counts are INFLATED toward struct evidence — read the 2026-08-17 correction banner before quoting any of them (task #114).**
 - [plans/struct-offset-sweep.md](plans/struct-offset-sweep.md) — [HIST] engine near-misses 82% struct-offset bugs.
 - [plans/recon-structural-levers-2026-05-29.md](plans/recon-structural-levers-2026-05-29.md) — [HIST] 5-lever survey: StlNodeAlloc, LightPreset, NgStats, SAVE_REVS, EH funclets.
 - [plans/next-levers-2026-05-29.md](plans/next-levers-2026-05-29.md) — [HIST] post-strict-oracle lever ranking.

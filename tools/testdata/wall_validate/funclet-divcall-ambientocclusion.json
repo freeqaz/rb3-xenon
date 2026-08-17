@@ -1,0 +1,409 @@
+{
+ "_wc_fixture": {
+  "captured": "2026-08-17",
+  "diff_count": 2,
+  "objdiff_cli": "objdiff-cli 4.2.3 (88b425bc3bad, xxh3 c8170f625ef1331d)",
+  "repo_head": "ff22c4404ed8d6eb1e7b7504e453cd631910d321",
+  "slug": "funclet-divcall-ambientocclusion",
+  "sym": "fn_82491300",
+  "unit": "default/AmbientOcclusion",
+  "vbase": {
+   "coff": {},
+   "header": {
+    "AmbientOcclusion": false
+   }
+  }
+ },
+ "base_size": 40,
+ "diff_score": {
+  "max_score": 1000,
+  "score": 6
+ },
+ "fuzzy_match_percent": 99.4,
+ "instructions": [
+  {
+   "base": {
+    "address": "0x1a14",
+    "args": "r31, r12, 0x1a0",
+    "opcode": "subi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Register",
+      "value": "r12"
+     },
+     {
+      "type": "Signed",
+      "value": 416
+     }
+    ]
+   },
+   "diff_breakdown": {
+    "arguments": [
+     {
+      "arg_type": "immediate",
+      "base": {
+       "type": "Signed",
+       "value": 416
+      },
+      "index": 2,
+      "target": {
+       "type": "Signed",
+       "value": 368
+      }
+     }
+    ]
+   },
+   "index": 0,
+   "match_type": "diff_arg",
+   "target": {
+    "address": "0x0",
+    "args": "r31, r12, 0x170",
+    "opcode": "subi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Register",
+      "value": "r12"
+     },
+     {
+      "type": "Signed",
+      "value": 368
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a18",
+    "args": "r12",
+    "opcode": "mflr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     }
+    ]
+   },
+   "index": 1,
+   "match_type": "equal",
+   "target": {
+    "address": "0x4",
+    "args": "r12",
+    "opcode": "mflr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a1c",
+    "args": "r12, -0x8(r1)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     },
+     {
+      "type": "Signed",
+      "value": -8
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     }
+    ]
+   },
+   "index": 2,
+   "match_type": "equal",
+   "target": {
+    "address": "0x8",
+    "args": "r12, -0x8(r1)",
+    "opcode": "stw",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     },
+     {
+      "type": "Signed",
+      "value": -8
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a20",
+    "args": "r1, -0x60(r1)",
+    "opcode": "stwu",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Signed",
+      "value": -96
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     }
+    ]
+   },
+   "index": 3,
+   "match_type": "equal",
+   "target": {
+    "address": "0xc",
+    "args": "r1, -0x60(r1)",
+    "opcode": "stwu",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Signed",
+      "value": -96
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a24",
+    "args": "r3, r31, 0x70",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 112
+     }
+    ]
+   },
+   "index": 4,
+   "match_type": "equal",
+   "target": {
+    "address": "0x10",
+    "args": "r3, r31, 0x70",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r3"
+     },
+     {
+      "type": "Register",
+      "value": "r31"
+     },
+     {
+      "type": "Signed",
+      "value": 112
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a28",
+    "args": "??1DataNode@@QAA@XZ",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??1DataNode@@QAA@XZ"
+     }
+    ]
+   },
+   "diff_breakdown": {
+    "arguments": [
+     {
+      "arg_type": "symbol",
+      "base": {
+       "type": "Symbol",
+       "value": "??1DataNode@@QAA@XZ"
+      },
+      "index": 0,
+      "target": {
+       "type": "Symbol",
+       "value": "??1Message@@UAA@XZ"
+      }
+     }
+    ]
+   },
+   "index": 5,
+   "match_type": "diff_arg",
+   "target": {
+    "address": "0x14",
+    "args": "??1Message@@UAA@XZ",
+    "opcode": "bl",
+    "typed_args": [
+     {
+      "type": "Symbol",
+      "value": "??1Message@@UAA@XZ"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a2c",
+    "args": "r1, r1, 0x60",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Signed",
+      "value": 96
+     }
+    ]
+   },
+   "index": 6,
+   "match_type": "equal",
+   "target": {
+    "address": "0x18",
+    "args": "r1, r1, 0x60",
+    "opcode": "addi",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     },
+     {
+      "type": "Signed",
+      "value": 96
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a30",
+    "args": "r12, -0x8(r1)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     },
+     {
+      "type": "Signed",
+      "value": -8
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     }
+    ]
+   },
+   "index": 7,
+   "match_type": "equal",
+   "target": {
+    "address": "0x1c",
+    "args": "r12, -0x8(r1)",
+    "opcode": "lwz",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     },
+     {
+      "type": "Signed",
+      "value": -8
+     },
+     {
+      "type": "Register",
+      "value": "r1"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a34",
+    "args": "r12",
+    "opcode": "mtlr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     }
+    ]
+   },
+   "index": 8,
+   "match_type": "equal",
+   "target": {
+    "address": "0x20",
+    "args": "r12",
+    "opcode": "mtlr",
+    "typed_args": [
+     {
+      "type": "Register",
+      "value": "r12"
+     }
+    ]
+   }
+  },
+  {
+   "base": {
+    "address": "0x1a38",
+    "args": "",
+    "opcode": "blr"
+   },
+   "index": 9,
+   "match_type": "equal",
+   "target": {
+    "address": "0x24",
+    "args": "",
+    "opcode": "blr"
+   }
+  }
+ ],
+ "masked_equal_rows": 0,
+ "masked_equal_symbol": true,
+ "normalized_match_percent": 99.4,
+ "raw_match_percent": 99.4,
+ "reloc_ignored_rows": 0,
+ "symbol": "fn_82491300",
+ "target_size": 40,
+ "unit": "default/AmbientOcclusion"
+}

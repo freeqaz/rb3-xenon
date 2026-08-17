@@ -229,8 +229,10 @@ Agent harness
   whole-binary A/B harness — it refuses a broken run rather than reporting
   noise), and the two pairing oracles **`/dc3-pair`**
   (engine) and **`/rb3wii-pair`** (game code). Native-port skills too:
-  `/native-build`, `/asset-extract`, `/screenshot`, `/gpu-capture`,
-  `/gpu-debug`, `/gpu-inspect`, `/xenia-gameplay`.
+  `/asset-extract`, `/screenshot`, `/gpu-capture`, `/gpu-debug`,
+  `/gpu-inspect`, `/xenia-gameplay`. There is deliberately no native-BUILD
+  skill: the native build has exactly one supported entry point,
+  `tools/native_build_gate.sh`, documented in `CLAUDE.md`.
 - **Worktree pool** (`scripts/setup_worktree.sh`, `worktree_pool.py`) —
   concurrent agents work on isolated git worktrees built via btrfs CoW reflinks,
   sharing the warm build cache, tools, and target objects without serializing on
