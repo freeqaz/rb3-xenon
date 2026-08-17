@@ -500,3 +500,350 @@ def test_negative_hex_survives_the_ruler_i_respelling_end_to_end():
     m.normalize_instruction_args(instrs)
     assert instrs[0]["target"]["args"] == "r1, -0x120, r1"
     assert m.format_instruction(instrs[0]) == "stwu r1, -0x120(r1)"
+
+
+# ---------------------------------------------------------------------------
+# the branch-label rewrite must fire ONLY on a branch (`_is_branch_opcode`)
+#
+# `convert_objdiff_json` respells a branch's hex destination as a `.L_` label.
+# Until this suite existed that respelling ran on EVERY formatted instruction
+# with no opcode test, so any non-branch whose trailing immediate happened to
+# equal a branch destination in the same function was corrupted into assembly
+# m2c cannot mean -- `addi r3, r11, 0x34` -> `addi r3, r11, .L_00000034`.
+#
+# Measured on rb3-xenon build/45410914, all 1948 functions in [90,100):
+# 453 corrupted lines across 147 functions (addi 293, li 43, cmplwi 42,
+# subi 37, ori 18, cmpwi 8, oris 6, mulli 4, lis 1, subfic 1) against 6931
+# legitimate branch respellings across 475 functions; gating drops 453 and
+# loses 0. It never surfaced as an error: m2c ACCEPTS the corrupt input
+# (rc=0 on all 147, before and after) and silently mis-decompiles it --
+# `&unksp-B0 + (s32) &.L_00000058` for a stack offset, or an
+# `M2C_ERROR(/* unknown instruction: subi $r31, $r1, .L_000000C0 */)` that
+# poisons every later use of that register. 141 of the 147 produce different
+# C; the `.L_`-in-an-expression signature went from 142 functions to 8, and
+# `M2C_ERROR` from 54 to 21.
+#
+# Every `(address, opcode, args)` row below is VERBATIM objdiff-cli 4.2.3
+# `diff --include-instructions` output against rb3-xenon build/45410914 --
+# whole functions except the BandCrowdMeter one, which is a contiguous
+# verbatim window (0x400..0x454) of a 347-instruction function.
+# ---------------------------------------------------------------------------
+
+def _fn(symbol: str, rows) -> dict:
+    """An objdiff-JSON function body from verbatim (address, opcode, args) rows."""
+    return {
+        "symbol": symbol,
+        "instructions": [
+            {"target": ({"address": a, "opcode": o} if g is None
+                        else {"address": a, "opcode": o, "args": g})}
+            for a, o, g in rows
+        ],
+    }
+
+
+# `beq 0x34` mints `.L_00000034`; the `addi` at 0x2c carries 0x34 as a plain
+# immediate and was corrupted. Note `stw r12, -0x8(r1)` at 0x8: the frame
+# setup's negative displacement sits inside `(r1)` and can never reach a
+# `$`-anchored regex -- which is why the negative-immediate half of this line
+# was never the bug.
+FN_823C605C = _fn("fn_823C605C", [
+    ('0x0', 'subi', 'r31, r12, 0x80'),
+    ('0x4', 'mflr', 'r12'),
+    ('0x8', 'stw', 'r12, -0x8(r1)'),
+    ('0xc', 'stwu', 'r1, -0x60(r1)'),
+    ('0x10', 'lwz', 'r11, 0x50(r31)'),
+    ('0x14', 'clrlwi.', 'r11, r11, 31'),
+    ('0x18', 'beq', '0x34'),
+    ('0x1c', 'lwz', 'r11, 0x50(r31)'),
+    ('0x20', 'clrrwi', 'r11, r11, 1'),
+    ('0x24', 'stw', 'r11, 0x50(r31)'),
+    ('0x28', 'lwz', 'r11, 0x94(r31)'),
+    ('0x2c', 'addi', 'r3, r11, 0x34'),
+    ('0x30', 'bl', '??1Object@Hmx@@UAA@XZ'),
+    ('0x34', 'addi', 'r1, r1, 0x60'),
+    ('0x38', 'lwz', 'r12, -0x8(r1)'),
+    ('0x3c', 'mtlr', 'r12'),
+    ('0x40', 'blr', None),
+])
+
+# `beq 0x38` mints `.L_00000038`; BOTH the `subi` at 0xc and the `addi` at
+# 0x14 carry 0x38 as an immediate (a `this`-adjustment thunk pair) and were
+# corrupted -- one function, two opcodes, two mangled lines.
+FN_FLOWTRIGGER_DTOR = _fn("??_GFlowTrigger@@UAAPAXI@Z", [
+    ('0x0', 'mflr', 'r12'),
+    ('0x4', 'bl', '__savegprlr_29'),
+    ('0x8', 'stwu', 'r1, -0x70(r1)'),
+    ('0xc', 'subi', 'r30, r3, 0x38'),
+    ('0x10', 'mr', 'r29, r4'),
+    ('0x14', 'addi', 'r31, r30, 0x38'),
+    ('0x18', 'mr', 'r3, r31'),
+    ('0x1c', 'bl', 'fn_823EB610'),
+    ('0x20', 'mr', 'r3, r31'),
+    ('0x24', 'bl', '??1Object@Hmx@@UAA@XZ'),
+    ('0x28', 'clrlwi.', 'r11, r29, 31'),
+    ('0x2c', 'beq', '0x38'),
+    ('0x30', 'mr', 'r3, r30'),
+    ('0x34', 'bl', '??3BinStream@@SAXPAX@Z'),
+    ('0x38', 'mr', 'r3, r30'),
+    ('0x3c', 'addi', 'r1, r1, 0x70'),
+    ('0x40', 'b', '__restgprlr_29'),
+])
+
+# The `b 0x0` at 0x84 and `bdnzf lt, 0x0` at 0x6c are a real loop back to the
+# function entry, so 0x0 is a branch target -- and address 0 is the single
+# most collision-prone value there is: `li rX, 0x0` and `cmplwi ..., 0x0` are
+# everywhere. Three corrupted lines here (li at 0x1c, cmplwi at 0x3c, li at
+# 0x74); `li r11, 0x1` / `li r9, 0x1` are untouched because 0x1 is not a
+# target. This is why `li` and `cmplwi` rank 2nd and 3rd in the census.
+FN_BIT_FILL = _fn(
+    "??$fill@U?$_Bit_iter@U_Bit_reference@stlpmtx_std@@PAU12@@stlpmtx_std@@_N"
+    "@stlpmtx_std@@YAXU?$_Bit_iter@U_Bit_reference@stlpmtx_std@@PAU12@@0@0AB_N@Z",
+    [
+        ('0x0', 'lwz', 'r10, 0x0(r3)'),
+        ('0x4', 'lwz', 'r11, 0x0(r4)'),
+        ('0x8', 'cmplw', 'cr6, r11, r10'),
+        ('0xc', 'bne', 'cr6, 0x24'),
+        ('0x10', 'lwz', 'r11, 0x4(r4)'),
+        ('0x14', 'lwz', 'r9, 0x4(r3)'),
+        ('0x18', 'cmplw', 'cr6, r11, r9'),
+        ('0x1c', 'li', 'r11, 0x0'),
+        ('0x20', 'beq', 'cr6, 0x28'),
+        ('0x24', 'li', 'r11, 0x1'),
+        ('0x28', 'clrlwi.', 'r11, r11, 24'),
+        ('0x2c', 'beqlr', None),
+        ('0x30', 'lbz', 'r11, 0x0(r5)'),
+        ('0x34', 'li', 'r9, 0x1'),
+        ('0x38', 'lwz', 'r8, 0x4(r3)'),
+        ('0x3c', 'cmplwi', 'r11, 0x0'),
+        ('0x40', 'slw', 'r11, r9, r8'),
+        ('0x44', 'lwz', 'r9, 0x0(r10)'),
+        ('0x48', 'beq', '0x54'),
+        ('0x4c', 'or', 'r11, r9, r11'),
+        ('0x50', 'b', '0x58'),
+        ('0x54', 'andc', 'r11, r9, r11'),
+        ('0x58', 'stw', 'r11, 0x0(r10)'),
+        ('0x5c', 'lwz', 'r11, 0x4(r3)'),
+        ('0x60', 'addi', 'r10, r11, 0x1'),
+        ('0x64', 'cmplwi', 'cr6, r11, 0x1f'),
+        ('0x68', 'stw', 'r10, 0x4(r3)'),
+        ('0x6c', 'bdnzf', 'lt, 0x0'),
+        ('0x70', 'lwz', 'r11, 0x0(r3)'),
+        ('0x74', 'li', 'r10, 0x0'),
+        ('0x78', 'addi', 'r11, r11, 0x4'),
+        ('0x7c', 'stw', 'r10, 0x4(r3)'),
+        ('0x80', 'stw', 'r11, 0x0(r3)'),
+        ('0x84', 'b', '0x0'),
+        ('0x88', 'blr', None),
+    ],
+)
+
+# Contiguous verbatim window 0x400..0x454 of `BandCrowdMeter::Handle`. The
+# `b 0x400` at 0x454 mints `.L_00000400`; `ori r11, r11, 0x400` at 0x418 is a
+# bit-set immediate that happens to equal it. The window also carries a real
+# negative displacement inside parens (`lwz r3, -0x60(r25)`).
+FN_BANDCROWDMETER_HANDLE_WINDOW = _fn(
+    "?Handle@BandCrowdMeter@@UAA?AVDataNode@@PAVDataArray@@_N@Z", [
+        ('0x400', 'bctrl', None),
+        ('0x404', 'b', '0xdc'),
+        ('0x408', 'lis', 'r10, lbl_82CBCF9C@h'),
+        ('0x40c', 'rlwinm.', 'r9, r11, 0, 21, 21'),
+        ('0x410', 'addi', 'r28, r10, lbl_82CBCF9C@l'),
+        ('0x414', 'bne', '0x434'),
+        ('0x418', 'ori', 'r11, r11, 0x400'),
+        ('0x41c', 'stw', 'r11, lbl_82CBCFC8@l(r30)'),
+        ('0x420', 'lis', 'r11, lbl_8201E094@h'),
+        ('0x424', 'mr', 'r3, r28'),
+        ('0x428', 'addi', 'r4, r11, lbl_8201E094@l'),
+        ('0x42c', 'bl', '??0Symbol@@QAA@PBD@Z'),
+        ('0x430', 'lwz', 'r11, lbl_82CBCFC8@l(r30)'),
+        ('0x434', 'lwz', 'r10, 0x0(r28)'),
+        ('0x438', 'lwz', 'r9, 0x50(r31)'),
+        ('0x43c', 'cmplw', 'cr6, r9, r10'),
+        ('0x440', 'bne', 'cr6, 0x458'),
+        ('0x444', 'lwz', 'r3, -0x60(r25)'),
+        ('0x448', 'lwz', 'r11, 0x0(r3)'),
+        ('0x44c', 'lwz', 'r11, 0x24(r11)'),
+        ('0x450', 'mtctr', 'r11'),
+        ('0x454', 'b', '0x400'),
+    ])
+
+ALL_FIXTURES = [
+    ("fn_823C605C", FN_823C605C),
+    ("FlowTrigger_scalar_deleting_dtor", FN_FLOWTRIGGER_DTOR),
+    ("stlpmtx_std_fill_Bit_iter", FN_BIT_FILL),
+    ("BandCrowdMeter_Handle_window", FN_BANDCROWDMETER_HANDLE_WINDOW),
+]
+
+
+def _body(out: str):
+    """The emitted instruction lines (tab-indented), minus label definitions."""
+    return [l[1:] for l in out.split('\n') if l.startswith('\t')]
+
+
+# --- one case per corrupted opcode, on the real function it came from ------
+
+@pytest.mark.parametrize("opcode,line", [
+    ("addi", "addi r3, r11, 0x34"),
+])
+def test_addi_immediate_colliding_with_a_branch_target_survives(opcode, line):
+    out = m.convert_objdiff_json(FN_823C605C)
+    assert line in _body(out)
+    assert "addi r3, r11, .L_00000034" not in _body(out)
+
+
+@pytest.mark.parametrize("line", [
+    "subi r30, r3, 0x38",
+    "addi r31, r30, 0x38",
+])
+def test_subi_and_addi_immediates_colliding_with_a_target_survive(line):
+    out = m.convert_objdiff_json(FN_FLOWTRIGGER_DTOR)
+    assert line in _body(out)
+    assert ".L_00000038" not in line
+    assert not [b for b in _body(out)
+                if b.startswith(("subi ", "addi ")) and ".L_" in b]
+
+
+@pytest.mark.parametrize("line", [
+    "li r11, 0x0",
+    "li r10, 0x0",
+    "cmplwi r11, 0x0",
+])
+def test_li_and_cmplwi_immediates_colliding_with_entry_address_survive(line):
+    """Address 0x0 is the worst collision: a loop back to the function entry
+    makes `.L_00000000` a real label, and every `li rX, 0x0` in the function
+    then matched the ungated regex."""
+    out = m.convert_objdiff_json(FN_BIT_FILL)
+    assert line in _body(out)
+    assert not [b for b in _body(out)
+                if b.startswith(("li ", "cmplwi ")) and ".L_" in b]
+
+
+def test_ori_bitmask_immediate_colliding_with_a_target_survives():
+    out = m.convert_objdiff_json(FN_BANDCROWDMETER_HANDLE_WINDOW)
+    assert "ori r11, r11, 0x400" in _body(out)
+    assert "ori r11, r11, .L_00000400" not in _body(out)
+
+
+# --- the other direction: legitimate branch rewrites must still happen -----
+
+@pytest.mark.parametrize("name,data,expected", [
+    ("fn_823C605C", FN_823C605C, ["beq .L_00000034"]),
+    ("FlowTrigger", FN_FLOWTRIGGER_DTOR, ["beq .L_00000038"]),
+    ("bit_fill", FN_BIT_FILL, ["b .L_00000000", "bdnzf lt, .L_00000000",
+                               "bne cr6, .L_00000024", "beq .L_00000054"]),
+    ("BandCrowdMeter", FN_BANDCROWDMETER_HANDLE_WINDOW,
+     ["b .L_00000400", "bne .L_00000434"]),
+])
+def test_legitimate_branch_rewrites_still_happen(name, data, expected):
+    body = _body(m.convert_objdiff_json(data))
+    for line in expected:
+        assert line in body, f"{name}: lost the branch rewrite {line!r}"
+
+
+@pytest.mark.parametrize("name,data", ALL_FIXTURES)
+def test_the_label_definition_is_still_emitted(name, data):
+    """Every respelled destination that lies inside the fixture must also have
+    its `.L_xxxxxxxx:` definition emitted. Scoped to addresses present because
+    the BandCrowdMeter fixture is a WINDOW of a larger function and two of its
+    branches legitimately leave it (0xdc, 0x458)."""
+    out = m.convert_objdiff_json(data)
+    present = {int(i["target"]["address"], 16) for i in data["instructions"]}
+    refs = {l.split('.L_')[1][:8] for l in _body(out) if '.L_' in l}
+    refs = {r for r in refs if int(r, 16) in present}
+    defs = {l[3:11] for l in out.split('\n') if l.startswith('.L_')}
+    assert refs, f"{name}: no branch was respelled at all"
+    assert refs <= defs, f"{name}: dangling label refs {refs - defs}"
+
+
+@pytest.mark.parametrize("name,data", ALL_FIXTURES)
+def test_only_branches_are_ever_relabelled(name, data):
+    """The invariant, stated once: a `.L_` reference may appear only on a line
+    whose opcode `_is_branch_opcode` accepts."""
+    for line in _body(m.convert_objdiff_json(data)):
+        if '.L_' in line:
+            assert m._is_branch_opcode(line.split()[0]), \
+                f"{name}: non-branch line was relabelled: {line!r}"
+
+
+@pytest.mark.parametrize("name,data", ALL_FIXTURES)
+def test_no_negated_label_is_ever_emitted(name, data):
+    assert '-.L_' not in m.convert_objdiff_json(data)
+
+
+def test_minting_and_consuming_use_the_same_predicate():
+    """`parse_branch_targets` mints a label for anything `_is_branch_opcode`
+    accepts, including the bare `startswith('b')` arm (`bnl` is not in
+    BRANCH_OPCODES). If the emit loop gated on a narrower set instead, the
+    label would be defined and never referenced."""
+    data = _fn("sym", [
+        ('0x0', 'bnl', '0x8'),
+        ('0x4', 'li', 'r3, 0x8'),
+        ('0x8', 'blr', None),
+    ])
+    body = _body(m.convert_objdiff_json(data))
+    assert "bnl .L_00000008" in body
+    assert "li r3, 0x8" in body
+
+
+@pytest.mark.parametrize("opcode,expected", [
+    ('b', True), ('bl', True), ('beq', True), ('bne', True), ('bdnz', True),
+    ('bdnzf', True), ('blr', True), ('bctr', True), ('bctrl', True),
+    ('bnl', True), ('bcl', True),
+    ('addi', False), ('subi', False), ('li', False), ('lis', False),
+    ('cmplwi', False), ('cmpwi', False), ('ori', False), ('oris', False),
+    ('mulli', False), ('subfic', False), ('lwz', False), ('stw', False),
+    ('', False),
+])
+def test_is_branch_opcode_truth_table(opcode, expected):
+    assert m._is_branch_opcode(opcode) is expected
+
+
+# --- the lookbehind: a hex tail glued to its left neighbour is not an operand
+
+@pytest.mark.parametrize("asm,expected", [
+    ("b 0x34", "0x34"),
+    ("bne cr6, 0x34", "0x34"),
+    ("bdnzf lt, 0x0", "0x0"),
+    # glued on the left -- not a whole operand, so not an address
+    ("b -0x34", None),
+    ("bl lbl_0x34", None),
+    ("bl foo0x34", None),
+    ("b sym.0x34", None),
+    # not at the end at all
+    ("stw r12, -0x8(r1)", None),
+    ("lwz r11, 0x50(r31)", None),
+])
+def test_trailing_hex_regex_refuses_a_glued_left_neighbour(asm, expected):
+    match = m._TRAILING_HEX_RE.search(asm)
+    assert (match.group(1) if match else None) == expected
+
+
+def test_a_negative_branch_operand_is_not_read_as_an_address():
+    """SYNTHETIC, and deliberately so: objdiff spells branch destinations as
+    absolute addresses and never emits a negative one. Measured over the same
+    1948 rb3-xenon functions, all 85 lines ending in `-0xN` are `li`/`cmpwi`/
+    `twi` immediates (81 of them `-0x1`, plus `-0x2`, `-0x5` and two `-0x780`)
+    and 0 of the 85 have a branch-target magnitude, so no function emits
+    `-.L_`. This guard is prophylactic: if that ever changes, the magnitude
+    must not be mistaken for the address."""
+    data = _fn("sym", [
+        ('0x0', 'b', '0x8'),
+        ('0x4', 'bdnzf', 'lt, -0x8'),
+        ('0x8', 'blr', None),
+    ])
+    body = _body(m.convert_objdiff_json(data))
+    assert "b .L_00000008" in body      # the real one still fires
+    assert "bdnzf lt, -0x8" in body     # the negative magnitude does not
+    assert "-.L_" not in "\n".join(body)
+
+
+def test_the_ungated_regex_really_would_have_fired_here():
+    """Pins the mutant. The pre-fix rule was a bare `(0x[0-9a-fA-F]+)$` applied
+    to every formatted instruction; this asserts it matches the `addi` line
+    above, so the opcode gate -- not some incidental spelling -- is what keeps
+    that line intact."""
+    import re as _re
+    assert _re.search(r'(0x[0-9a-fA-F]+)$', 'addi r3, r11, 0x34')
+    assert 0x34 in m.parse_branch_targets(FN_823C605C["instructions"])
+    assert not m._is_branch_opcode('addi')
+
