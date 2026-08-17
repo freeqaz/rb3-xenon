@@ -289,18 +289,38 @@ def harvest_switch_tables(R: RetailRtti, limit: Optional[int] = None) -> list[in
 # ---------------------------------------------------------------------------
 
 ADDR_RE = re.compile(r"0x8[0-9a-fA-F]{7}")
-# A claim counts as a VTABLE claim when the word vtable/vftable/vtbl appears in
-# the same comment neighbourhood as the address.  A window is used because the
-# claims wrap across lines constantly.
-VT_RE = re.compile(r"\bv-?f?tables?\b|\bvtbl\b|\bvftable\b", re.I)
+
+# ★ THE DENOMINATOR IS THE HARD PART, NOT THE VERDICT.
+# A naive "address within N lines of the word vtable" window yields 95 hits of
+# which most are NOT vtable claims at all -- they are FUNCTION addresses that
+# merely share a comment with the word (`GameConfig::AutoAssignMissingSlots
+# (va 0x82688e68)`), or slot TARGETS (`vtable slot 0x44 = 0x82605720`), or
+# outright negations (`there is no vtable call anywhere`).  Auditing that set
+# and reporting the miss rate would inflate the defect rate several-fold.
+#
+# So a claim counts only when the address is SYNTACTICALLY ATTACHED to the
+# vtable noun: `vtable @ADDR`, `vtable at ADDR`, or a `/`-separated list
+# immediately following `vtables`.  Anything separated from the noun by
+# `slot`, `fn`, `impl`, `body` or `*` names a DIFFERENT object and is dropped.
+# Both the kept and the dropped sets are small enough to hand-adjudicate, and
+# were (see the lane report) -- a regex alone is not a denominator.
+VT_TOKEN = re.compile(r"v-?f?tables?\b", re.I)
+# text permitted between the noun and a qualifying address
+_LINK_OK = re.compile(r"^[\s@:]*(at\s*|@\s*)?$|^[\s\w]{0,40}\($", re.I)
+_LINK_LIST = re.compile(r"^[\s,/()]*(and[\s,/()]*)?$", re.I)
+_DISQUALIFY = re.compile(r"\b(slot|fn|impl|body|call|refs?)\b|\*", re.I)
 
 
-def harvest_claims(root: str, window: int = 2):
-    """[(path, lineno, addr, line)] for every vtable-context 0x82 address."""
+def harvest_claims(root: str, window: int = 2, tight: bool = True):
+    """[(path, lineno, addr, line)] for vtable-address claims in src/**.
+
+    tight=False reproduces the over-inclusive proximity window, kept so the
+    report can state BOTH denominators honestly.
+    """
     claims = []
     src = os.path.join(root, "src")
     for dirpath, _dirs, files in os.walk(src):
-        for fn in files:
+        for fn in sorted(files):
             if not fn.endswith((".h", ".cpp", ".hpp", ".c")):
                 continue
             p = os.path.join(dirpath, fn)
@@ -308,16 +328,41 @@ def harvest_claims(root: str, window: int = 2):
                 lines = open(p, encoding="utf-8", errors="replace").read().splitlines()
             except OSError:
                 continue
+            rel = os.path.relpath(p, root)
             for i, ln in enumerate(lines):
-                addrs = ADDR_RE.findall(ln)
-                if not addrs:
-                    continue
                 lo, hi = max(0, i - window), min(len(lines), i + window + 1)
                 ctx = "\n".join(lines[lo:hi])
-                if not VT_RE.search(ctx):
+                if not VT_TOKEN.search(ctx):
                     continue
-                for a in addrs:
-                    claims.append((os.path.relpath(p, root), i + 1, int(a, 16), ln.strip()))
+                if not tight:
+                    for a in ADDR_RE.findall(ln):
+                        claims.append((rel, i + 1, int(a, 16), ln.strip()))
+                    continue
+                # tight: anchor on the noun, walk forward over this line +
+                # the next (claims wrap constantly), collect attached addrs.
+                # strip comment prefixes: a claim that wraps across lines
+                # otherwise has "// " between the noun and its address, which
+                # would read as an unrelated token and DROP a real claim.
+                joined = " ".join(
+                    re.sub(r"^\s*(///?|\*|/\*)\s*", "", x)
+                    for x in lines[i:min(len(lines), i + 2)])
+                for m in VT_TOKEN.finditer(joined):
+                    prev_end = m.end()
+                    first = True
+                    for am in ADDR_RE.finditer(joined[m.end():]):
+                        between = joined[m.end():][prev_end - m.end():am.start()]
+                        if _DISQUALIFY.search(between):
+                            break
+                        okmatch = _LINK_OK.match(between) if first else (
+                            _LINK_OK.match(between) or _LINK_LIST.match(between))
+                        if not okmatch:
+                            break
+                        addr = int(am.group(), 16)
+                        if not any(c[0] == rel and c[2] == addr and abs(c[1] - (i + 1)) <= 2
+                                   for c in claims):
+                            claims.append((rel, i + 1, addr, lines[i].strip()))
+                        prev_end = m.end() + am.end()
+                        first = False
     return claims
 
 
