@@ -55,6 +55,9 @@ from pathlib import Path
 
 PLACEHOLDER_RE = re.compile(r'^(fn|lbl|jumptable|data|bss|rdata|sdata|sbss)_[0-9A-Fa-f]+$')
 IMAGE_SCN_CNT_CODE = 0x20
+#: A type-18 PAIR record's "VirtualAddress" is a DISPLACEMENT, not an address, so
+#: it must never claim an offset in a reloc-by-offset map.
+IMAGE_REL_PPC_PAIR = 0x12
 
 SEL_NO_DUPLICATES = 1
 SEL_ANY = 2
@@ -185,7 +188,13 @@ def function_slices(path):
         at = collections.defaultdict(list)
         for v, n in pts:
             at[v].append(n)
-        rel = {o: idx_name.get(i, '?') for (o, i, _t) in sec['relocs']}
+        # Reloc-by-offset map for the EH-prefix fallback below. PAIR records are
+        # excluded (their VirtualAddress is a displacement) and the first writer
+        # wins, so no later record can squat on a real offset and veto the trim.
+        rel = {}
+        for (o, i, t) in sec['relocs']:
+            if t != IMAGE_REL_PPC_PAIR:
+                rel.setdefault(o, idx_name.get(i, '?'))
         for v, name in pts:
             if v % 4 or v >= len(raw):
                 continue

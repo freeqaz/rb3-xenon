@@ -264,7 +264,23 @@ def test_a_pair_pseudo_reloc_cannot_veto_the_fallback(tmp_path):
     displacement, not an offset in the section. Indexing a reloc map on it lets
     a PAIR record squat on the prefix offset and hide `__CxxFrameHandler`."""
     sec = eh_section(eh_marker=False, pair_decoy=True)
-    assert sizes(coff([sec]), tmp_path)["f"] == 96
+    assert both(coff([sec]), tmp_path)["f"] == 96
+
+
+def test_a_pair_pseudo_reloc_cannot_veto_the_fallback_ident(tmp_path):
+    """Same decoy read through `ident_body_channel` alone, so the reader that
+    carried this defect is pinned by name and not only via `both`."""
+    sec = eh_section(eh_marker=False, pair_decoy=True)
+    assert ident_sizes(coff([sec]), tmp_path)["f"] == 96
+
+
+def test_a_duplicate_reloc_offset_is_first_writer_wins(tmp_path):
+    """Two records at one offset: the map must keep the first. A later
+    non-PAIR record at the prefix offset would otherwise hide the personality
+    routine just as a PAIR did."""
+    sec = eh_section(eh_marker=False)
+    sec["relocs"] = sec["relocs"] + [(104, REL_ADDR32, "callee")]
+    assert both(coff([sec]), tmp_path)["f"] == 96
 
 
 # --------------------------------------------------------------------------
