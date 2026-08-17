@@ -376,6 +376,60 @@ void CustomizePanel::UpdateAssetProvider() {
 //     bytes (whole-binary A/B this lane: Dmatched +0, Dcode_bytes +0,
 //     Dcode% +0.000000pp, Dfuzzy +0.000080pp, 0 units off 100%).
 //
+// ── lane W11b-CUSTOMIZE (2026-08-17): RESIDUAL-2's WALL RULE IS REFUTED, BUT THE
+//    ROW STILL DOES NOT CROSS.  Four more spellings measured; all recorded below.
+//
+// ⛔ THE "mask is emitted ONLY AT A PHI" RULE IS WRONG, AND SO IS THE 12-SITE
+// CENSUS IT RESTS ON.  Re-scanned every target .s keyed on the `.fn` symbol for
+// the EXACT retail shape -- `subfe rD,rA,rB` IMMEDIATELY followed by
+// `clrlwi rD,rD,24` (same dest register).  Result: 9 sites in named units, and
+// ALL NINE ARE STRAIGHT-LINE (no label on the clrlwi).  Zero phis.  RESIDUAL-2's
+// 12 sites came from a LOOSER pattern (different registers, gaps allowed), which
+// mixes in a different construct -- its cited controls (DataFunc, MetaPerformer,
+// TourProgress) are in that loose set, NOT in the exact-shape set.  ⇒ the claim
+// "the one shape no source form reproduces" is false: our compiler emits this
+// straight-line in code we already match 100%.
+//
+// ★ TWO WORKING ORACLES, both fuzzy == mpn == 100.0, both returning DataNode:
+//     ?Handle@ModifierMgr@@   -- HANDLE_EXPR(is_modifier_delayed_effect,
+//                                IsModifierDelayedEffect(_msg->Sym(2)))
+//         bl GetModifier / mr r11,r3 / lbz r11,0x4(r11) / subic / subfe / clrlwi
+//     ?Handle@BandSongMgr@@   -- HANDLE_EXPR(has_license, HasLicense(...)) bare.
+// MECHANISM read off those: the triple `isolate-byte -> subic/subfe -> clrlwi` is
+// MSVC's materialization of a bool it does NOT TRUST to be 0/1 (a byte reached
+// through an opaque pointer/call).  Our arm instead spells `!= 0` on an int; the
+// subfe is then a SOURCE COMPARISON, whose result MSVC range-analyses as 0/1 and
+// whose widening for DataNode(int) it therefore elides.  The two shapes coincide
+// for four instructions and differ only in the fifth.
+//
+// ⚠ BUT THE MERGE DIRECTION IS PINNED BY THE int/`!= 0` FORM, and the mask and
+// the merge cannot be had together by any spelling tried.  Measured this lane:
+//   * `bool HasLicense` pure pass-through (no comparison at ANY level) + bare arm
+//     -- the ONE shape absent from RESIDUAL-2's list, and the oracle's own shape:
+//     99.4% (was 99.92).  Cross-jump FLIPS: retail's whole 5-instruction tail
+//     becomes target-only at [526] and ours moves to the has_patch site [1049]
+//     WITHOUT a mask.  Reproduces DQ-1's failure mode independently.
+//   * `unsigned char HasLicense` + arm `!= 0`            -- INERT (1 delete).
+//   * `bool HasLicense` + arm `!= 0`                     -- INERT (1 delete).
+//     (RESIDUAL-2 measured this pre-(a)-closure; re-measured at HEAD, still inert,
+//     so that negative DOES survive the tree change.)
+//   * adding a `DataNode(bool)` ctor overload to obj/Data.h -- INERT (1 delete).
+//     This was W11's named "consumer" lever: every bool arm currently binds to
+//     DataNode(int), so a bool overload would put the value across an inlined
+//     `bool` PARAMETER boundary.  MSVC folds it.  Inert on the row ⇒ reverted
+//     without a whole-binary A/B (it would have had engine-wide overload-
+//     resolution blast radius for zero measured gain).
+//
+// ★ THE PRICE IS REAL AND WAS RE-VERIFIED, so this is a bounded wall, not a
+// mispriced one: report.json has fuzzy == mpn == 99.92057 EXACTLY EQUAL, and
+// since mpn excludes arg penalties while fuzzy includes them, that equality is
+// proof that ZERO diff_arg charges remain (both ICF aliases landed).  The row is
+// 5,036 B behind exactly ONE instruction, base 5032 vs target 5036.
+// ⇒ What is still missing is a source shape that supplies the untrusted-bool
+// mask WITHOUT flipping the cross-jump.  Do not re-try the nine spellings above
+// or RESIDUAL-2's nine; the vein is the merge/mask interaction, not the arm
+// expression.
+//
 // ★ REUSABLE INSTRUMENT FOUND HERE (the dead store is a source-shape oracle):
 // MSVC /O1 creates a dead stack home for the vbase-adjusted `this` of an
 // INLINED MEMBER call.  Presence/absence of that dead home therefore witnesses
