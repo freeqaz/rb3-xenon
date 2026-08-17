@@ -127,6 +127,7 @@ RockCentralJobs.cpp:
 	.text       start:0x8250C808 end:0x8250D0D8
 
 RockCentral.cpp:
+	.text       start:0x824F9288 end:0x824F9358
 	.pdata      start:0x821F1BF0 end:0x821F1BF8
 	.pdata      start:0x821F2B08 end:0x821F2B28
 	.pdata      start:0x821F2B28 end:0x821F2B48
@@ -3783,6 +3784,12 @@ Waypoint.cpp:
 	.text       start:0x82705DC0 end:0x82705E20
 
 Font.cpp:
+	.text       start:0x82472DF0 end:0x82472E60
+	.text       start:0x824730E8 end:0x824731C0
+	.text       start:0x824731C0 end:0x824732B8
+	.text       start:0x824732B8 end:0x82473398
+	.text       start:0x82473630 end:0x82473808
+	.text       start:0x824742E8 end:0x824743B8
 	.pdata      start:0x821F4968 end:0x821F4970
 	.pdata      start:0x821F8670 end:0x821F8678
 	.pdata      start:0x821F9FE0 end:0x821F9FE8
@@ -3946,6 +3953,9 @@ HamListRibbon.cpp:
 	.text       start:0x827742B0 end:0x82774498
 
 Text.cpp:
+	.text       start:0x82456190 end:0x8245625C
+	.text       start:0x824563D8 end:0x824564B8
+	.text       start:0x824566E8 end:0x824568C0
 	.pdata      start:0x821F4808 end:0x821F4810
 	.pdata      start:0x821FC4F8 end:0x821FC508
 	.pdata      start:0x82201BF0 end:0x82201BF8
@@ -4252,6 +4262,7 @@ HamLabel.cpp:
 	.text       start:0x82340670 end:0x823406E8
 
 SkeletonClip.cpp:
+	.text       start:0x824564B8 end:0x824566E8
 	.pdata      start:0x821FEC88 end:0x821FEC90
 	.pdata      start:0x821FED80 end:0x821FEDA0
 	.pdata      start:0x821FEDA0 end:0x821FEDA8
@@ -4281,7 +4292,6 @@ SkeletonClip.cpp:
 	.text       start:0x82456260 end:0x824562B0
 	.text       start:0x824562B0 end:0x82456378
 	.text       start:0x82456378 end:0x824563D8
-	.text       start:0x824564B8 end:0x824568C0
 	.text       start:0x824569F0 end:0x82456A20
 	.text       start:0x82457680 end:0x824576F8
 	.text       start:0x82457D18 end:0x82457D98
@@ -4566,7 +4576,6 @@ Ham.cpp:
 HamCharacter.cpp:
 	.pdata      start:0x8220F8B8 end:0x8220F8C8
 	.pdata      start:0x82246BF8 end:0x82246C58
-	.text       start:0x824731C0 end:0x824732B8
 	.text       start:0x828121E8 end:0x82812508
 
 MoveDir.cpp:
@@ -5188,11 +5197,6 @@ Font3d.cpp:
 	.pdata      start:0x8220F8E8 end:0x8220F8F0
 	.pdata      start:0x8220F9A0 end:0x8220F9A8
 	.text       start:0x822DD188 end:0x822DD1E0
-	.text       start:0x82472DF0 end:0x82472E60
-	.text       start:0x824730E8 end:0x824731C0
-	.text       start:0x824732B8 end:0x82473398
-	.text       start:0x82473630 end:0x82473808
-	.text       start:0x824742E8 end:0x824743B8
 
 system/rndobj/Movie.cpp:
 	.pdata      start:0x8220FC08 end:0x8220FC20
@@ -11499,8 +11503,6 @@ Faders.cpp:
 	.text       start:0x822E4500 end:0x822E4508
 	.text       start:0x82310E50 end:0x82310ED0
 	.text       start:0x823A0848 end:0x823A0A00
-	.text       start:0x82456190 end:0x8245625C
-	.text       start:0x824563D8 end:0x824564B8
 	.text       start:0x8270B910 end:0x8270B960
 	.text       start:0x8270B960 end:0x8270B9D0
 	.text       start:0x8270B9D0 end:0x8270BA40
@@ -12614,7 +12616,6 @@ AccomplishmentDiscSongConditional.cpp:
 	.pdata      start:0x82226390 end:0x822263B0
 	.pdata      start:0x82226408 end:0x82226420
 	.pdata      start:0x82226428 end:0x82226440
-	.text       start:0x824F9288 end:0x824F9358
 	.text       start:0x824F9358 end:0x824F9430
 	.text       start:0x825E4EE8 end:0x825E4EF0
 	.text       start:0x825E4EF0 end:0x825E4F50
