@@ -151,6 +151,31 @@ MAP-side rule fires only at value_type < 8 B. A map whose pair is merely the
 
 ---
 
+## A false DEBIT, left for an alias lane (evidence recorded, NOT applied)
+
+The corrected `?_M_insert@?$_Rb_tree@W4ScoreType@@…` still sits at
+`fuzzy 99.70588`, charged **one** relocation-name site: we spell its callee
+`_M_create_node@set<ScoreType>` while retail's survivor at `0x8235c328` is named
+`_M_create_node@set<MoveDetector*>`. That fold is **real** — and the evidence is
+unusually strong, because it is not a byte-identity inference at all:
+
+> retail's `set<ScoreType>::_M_insert` body **physically calls** `0x8235c328`.
+> A tree's `_M_insert` can only call its own builder, so `0x8235c328` **is**
+> `set<ScoreType>::_M_create_node`.
+
+So we are currently charging a row for a fold that demonstrably exists — the
+mirror image of this lane's subject, a false *debit* rather than a false credit.
+The group at `0x8235c328` has `folded: []`; W6-ACCURACY's `withdrawn` record
+there covers only the `map<int,float>` spelling (physically impossible at a
+`0x14` node), so `set<ScoreType>` is **not** forbidden and was never considered.
+
+**Deliberately NOT applied here.** Adding forgiveness lifts the score by
+construction, and the house mechanism is a gated `tools/icf_alias_build.py` run,
+not a hand edit to `symbol_aliases.json` by the lane that benefits from it.
+Worth roughly the 204 B row plus whatever call sites it unblocks.
+
+---
+
 ## Traps this lane hit (all cost real time)
 
 * ⛔ **`git diff` is the wrong way to build a splits patch.** HEAD's
