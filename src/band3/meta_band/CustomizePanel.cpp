@@ -430,6 +430,33 @@ void CustomizePanel::UpdateAssetProvider() {
 // or RESIDUAL-2's nine; the vein is the merge/mask interaction, not the arm
 // expression.
 //
+// ── lane W35-CUSTOMIZE (2026-08-17): PRICE RE-DERIVED INDEPENDENTLY, FROM FIRST
+//    PRINCIPLES, AND IT CONFIRMS W11b ABOVE.  Nothing was changed in this file.
+//
+// ⚠ THE BRIEFING LOOP IS STILL RE-ISSUING RESIDUAL-1's STALE FRAMING.  This lane
+// was dispatched, as the FIFTH in a row, with "5,036 B behind 3 mismatches plus
+// 2 diff_arg ICF fold-aliases (hash_map<int,SongUpgradeData*>,
+// NUISPEECH::CCFGLM::RemoveCPPT) => closing the instructions buys +1 function and
+// ZERO BYTES".  That is wrong on this tree and was re-refuted before any body
+// work, by two measurements that do not share arithmetic:
+//   1. report.json has fuzzy == mpn == 99.92057 EXACTLY.  objdiff-core computes
+//      `normalized_diff_score = diff_score - arg_diff_score` (diff/code.rs:282),
+//      and a relocation-name arg mismatch is NON-IMMEDIATE, so its penalty is
+//      added to BOTH counters (code.rs:1640) and is therefore excluded from mpn.
+//      Equality thus PROVES arg_diff_score == 0.  One reloc charge would be
+//      5/125900 = 0.00397 pp, plainly visible at five decimals -- this is not a
+//      rounding artifact.
+//   2. objdiff reports Diff Score 100 / 125900 with PENALTY_INSERT_DELETE == 100,
+//      i.e. EXACTLY ONE charged site: `[530] delete: clrlwi r11, r11, 24`.
+// ⇒ The row is 5,036 B behind ONE instruction, and closing it buys +1 FUNCTION
+// AND +5,036 BYTES.  The two named aliases are already landed (FOLDPROVE-1/2) and
+// no longer charge; the `hash_map` and `fn_*` callees still shown in
+// run_objdiff's "Function Call Diff" are NOT charges -- the `fn_*` ones are
+// placeholder targets, forgiven by construction.
+// ⇒ Do NOT brief this row as "+1 function, zero bytes" again.  The correct
+// framing is a bounded ONE-INSTRUCTION wall worth 5,036 B, whose remaining vein
+// is the merge/mask interaction per W11b.
+//
 // ★ REUSABLE INSTRUMENT FOUND HERE (the dead store is a source-shape oracle):
 // MSVC /O1 creates a dead stack home for the vbase-adjusted `this` of an
 // INLINED MEMBER call.  Presence/absence of that dead home therefore witnesses
