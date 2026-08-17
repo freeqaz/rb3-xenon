@@ -1580,8 +1580,61 @@ DECOMP_FORCEACTIVE(
 // (16.00.10224) inlines out-of-line member definitions that appear *later* in the TU,
 // so parse order is not a lever; only the pragma is. Per OvershellSlot.cpp:1874,
 // __declspec(noinline) is not a substitute for auto_inline in this codebase.
+// Retail's predicate MATERIALIZES a bool (`li r11,0/1; clrlwi. r11,r11,24; beq`)
+// instead of branching straight to the call, so it is an inlined helper returning
+// bool -- a raw `if (a || b || c)` branches directly and never builds the 0/1.
+// Retail's compare chain is `==1 -> T; <=2 -> F; <=5 -> T; ==7 -> T; else F`,
+// i.e. true for {1,3,4,5,7} == {R2, R1, Tri, Circle, Square} (X/A is excluded).
+static bool IsVocalVolumeButton(JoypadButton but) {
+    switch (but) {
+    case kPad_R2:
+    case kPad_R1:
+    case kPad_Tri:
+    case kPad_Circle:
+    case kPad_Square:
+        return true;
+    default:
+        return false;
+    }
+}
+
+// Ported from retail bytes (fn_826E5E98, 0xF4 B) -- NOT from an oracle: rb3-Wii has
+// `OnMsg(const ButtonUpMsg&) { return 0; }`, a stub, and the RB2 dump carries only
+// signatures. Retail's body, instruction for instruction:
+//   lwz 0x260(this) + vbase adjust      -> (User *)GetUser()
+//   bl fn_825150C8 + vbase adjust       -> msg.GetUser();  differ => return false
+//   guarded static-Symbol init          -> static Symbol vocalist_volume(...)
+//                                          (lbl_82E03510, guard lbl_82E03514,
+//                                           string lbl_8202B3CC = "vocalist_volume")
+//   mData->Node(3).Int(mData)           -> msg.GetButton()
+//   compare chain, then bl fn_826E50C0(this, button)
+// The static Symbol is initialized and never READ in retail -- its only effect is
+// the ctor -- so it is written as an unused local static deliberately; do not
+// "tidy" it away, it is load-bearing codegen.
+//
+// WHY THIS FUNCTION'S BODY DECIDES ?Handle@VocalPlayer@@'s STACK FRAME (lane W22):
+// the previous stub let MSVC prove OnMsg neither writes memory nor lets `&msg`
+// escape, so in Handle it (a) killed the dead `~Message` vptr store, (b) forwarded
+// r27 instead of reloading mData from the temp, and therefore (c) overlaid the
+// ButtonUpMsg temp onto the shared scratch slot 0x58 instead of giving it its own
+// 8 bytes -- costing 0x10 of frame (0xe0 vs retail 0xf0) and displacing every
+// callee-saved register by one (212 charged r28<->r29 sites). `auto_inline(off)`
+// alone does NOT fix this: it stops INLINING, not MSVC's intra-TU memory-effect
+// analysis. Handing `&msg` to an out-of-TU callee (GetUser) is what defeats it.
 #pragma auto_inline(off)
-bool VocalPlayer::OnMsg(const ButtonUpMsg &) { return false; }
+bool VocalPlayer::OnMsg(const ButtonUpMsg &msg) {
+    if ((User *)GetUser() != msg.GetUser())
+        return false;
+    static Symbol vocalist_volume("vocalist_volume");
+    JoypadButton but = msg.GetButton();
+    if (IsVocalVolumeButton(but))
+        HandleDeactivateVolume(but);
+    return false;
+}
+
+// Retail fn_826E50C0, 72 B, unpaired (the map does not name it) -- body NOT ported
+// and NOT invented. Kept out of line so OnMsg above retains retail's call shape.
+void VocalPlayer::HandleDeactivateVolume(JoypadButton) {}
 #pragma auto_inline(on)
 
 bool VocalPlayer::AllowPitchCorrection() const {
