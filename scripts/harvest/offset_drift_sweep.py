@@ -35,6 +35,40 @@ MEM_RE = re.compile(r",\s*(-?0x[0-9a-fA-F]+|-?\d+),\s*(r\d+)\b")
 LDST_RE = re.compile(r"^(l[bhwfd]|st[bhwfd]|lm|stm)")
 
 
+def flat_args(side):
+    """Rebuild the pre-4.2 flat comparison-join spelling from `typed_args`.
+
+    objdiff-cli 4.2.x prints the *display* spelling in `side["args"]`:
+    d-form operands are parenthesised (`r11, 0x22(r11)`), COFF relocations
+    carry an `@h`/`@l` suffix, and — the part that matters here — a
+    relocation that is not part of the printed operand is DROPPED from the
+    string entirely. MEM_RE below and the `'global'` class both read the old
+    flat join (`r11, 0x22, r11, lbl_82C926B8`), which is exactly
+    `", ".join(typed_args)`: the paren goes away AND the dropped relocation
+    comes back as a trailing token. Rebuild rather than "tolerate parens",
+    because tolerating parens cannot recover the relocation — it is not in
+    the display string at all.
+
+    Note the one shape this does NOT turn into a 'global': a symbolic
+    displacement (`lwz r11, lbl_X@l(r30)`, typed_args
+    Register/Symbol/Register) rebuilds to `r11, lbl_X, r30`, where MEM_RE
+    finds no integer offset and mem_operand_class returns None. That is the
+    pre-4.2 behaviour too, preserved deliberately.
+    """
+    if not side:
+        return ""
+    out = []
+    for a in side.get("typed_args") or []:
+        t, v = a.get("type"), a.get("value")
+        if t == "Signed" and isinstance(v, int):
+            out.append(("-0x%x" % -v) if v < 0 else "0x%x" % v)
+        elif t in ("Unsigned", "BranchDest") and isinstance(v, int):
+            out.append("0x%x" % v)
+        else:
+            out.append(str(v))
+    return ", ".join(out)
+
+
 def mem_operand_class(side):
     """Classify an instruction side's memory operand.
 
@@ -48,7 +82,7 @@ def mem_operand_class(side):
     op = (side.get("opcode") or "").strip()
     if not LDST_RE.match(op):
         return None
-    args = side.get("args", "") or ""
+    args = flat_args(side)
     m = MEM_RE.search(args)
     if not m:
         return None
@@ -181,5 +215,60 @@ def main():
           f"offset diffs (layout-drift candidates)")
 
 
+# --- selftest -------------------------------------------------------------
+# EVERY fixture below is a verbatim instruction side captured from live
+# `objdiff-cli diff -f json --include-instructions` (4.2.3, 0fd82159607c) over
+# rb3-xenon build/45410914 objects. Hand-authored fixtures are what let this
+# parser sit dead for six months while a green battery certified it, so do not
+# "simplify" these into invented strings -- re-capture them from the CLI.
+_SELFTEST_SIDES = [
+    # (expected mem_operand_class, side)
+    ("stack", {"opcode": "stw", "args": "r12, -0x8(r1)", "typed_args": [
+        {"type": "Register", "value": "r12"}, {"type": "Signed", "value": -8},
+        {"type": "Register", "value": "r1"}]}),
+    ("struct", {"opcode": "lwz", "args": "r10, 0x0(r11)", "typed_args": [
+        {"type": "Register", "value": "r10"}, {"type": "Signed", "value": 0},
+        {"type": "Register", "value": "r11"}]}),
+    ("frame", {"opcode": "lwz", "args": "r11, 0x14(r31)", "typed_args": [
+        {"type": "Register", "value": "r11"}, {"type": "Signed", "value": 20},
+        {"type": "Register", "value": "r31"}]}),
+    # THE CHANNEL RULER-I/J DELETED: the relocation is nowhere in `args`, so
+    # this can only be classified 'global' via typed_args.
+    ("global", {"opcode": "lwz", "args": "r10, 0x0(r28)", "typed_args": [
+        {"type": "Register", "value": "r10"}, {"type": "Signed", "value": 0},
+        {"type": "Register", "value": "r28"},
+        {"type": "Symbol", "value": "lbl_82E00B88"}]}),
+    # symbolic displacement: no integer offset -> not a class this tool models
+    (None, {"opcode": "lwz", "args": "r11, lbl_82E00B8C@l(r30)", "typed_args": [
+        {"type": "Register", "value": "r11"},
+        {"type": "Symbol", "value": "lbl_82E00B8C"},
+        {"type": "Register", "value": "r30"}]}),
+    # not a load/store
+    (None, {"opcode": "addi", "args": "r3, r1, 0x50", "typed_args": [
+        {"type": "Register", "value": "r3"}, {"type": "Register", "value": "r1"},
+        {"type": "Signed", "value": 80}]}),
+]
+
+
+def _selftest():
+    bad = 0
+    for want, side in _SELFTEST_SIDES:
+        got = mem_operand_class(side)
+        if got != want:
+            bad += 1
+            print(f"FAIL {side['opcode']:5s} {side['args']!r}: "
+                  f"want {want!r}, got {got!r}")
+    # flat_args must be an exact round-trip when there is nothing to restore
+    plain = _SELFTEST_SIDES[0][1]
+    if flat_args(plain) != "r12, -0x8, r1":
+        bad += 1
+        print(f"FAIL flat_args round-trip: {flat_args(plain)!r}")
+    print(f"selftest: {len(_SELFTEST_SIDES) + 1 - bad}/"
+          f"{len(_SELFTEST_SIDES) + 1} passed")
+    return 1 if bad else 0
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv:
+        sys.exit(_selftest())
     main()
