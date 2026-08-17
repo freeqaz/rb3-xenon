@@ -9,13 +9,33 @@
 #include "utl/TextStream.h"
 #include "utl/Std.h"
 
-int gBigHunk = 0xC800;
-int gSmallHunk = 0xC800;
+// Struct packing: retail addresses gBigHunk and gSmallHunk through a SINGLE
+// materialized base register -- inside RawAlloc it emits
+// `addi r31, r11, <sym> ; lwz r10, 0x0(r31) ; ... ; lwz r10, 0x4(r31) ;
+// stw r10, 0x0(r31)`. A compile-time +4 displacement is only possible if the
+// two are ONE AGGREGATE; two independent globals each take their own
+// relocation, which is exactly what this file emitted before (a separate
+// `lis` for each). Same technique, and the same reasoning, as
+// MemTrackLogState in utl/MemTrack.cpp.
+struct PoolHunkSizes {
+    int big; // at +0x0
+    int small; // at +0x4
+};
+PoolHunkSizes gPoolHunkSizes = { 0xC800, 0xC800 };
+#define gBigHunk gPoolHunkSizes.big
+#define gSmallHunk gPoolHunkSizes.small
 int gPoolCapacity = 0;
 bool gPoolAllocInitted = 0;
 ChunkAllocator *gChunkAlloc = nullptr;
-static int *sPoolBuf;
-static int *sPoolEnd;
+// NOT file statics: retail hoists a SEPARATE `lis` for each of these and keeps
+// both live across the calls in RawAlloc (r30 for sPoolBuf, r29 for sPoolEnd),
+// which is why retail's prologue saves r28-r31 where ours saved r29-r31. MSVC
+// co-addresses internal-linkage statics it has laid out itself, but gives each
+// external symbol its own relocation -- the mirror image of the gBigHunk /
+// gSmallHunk case above, and the reason our build made the opposite choice on
+// both pairs.
+int *sPoolBuf;
+int *sPoolEnd;
 
 void PoolAllocInit(DataArray *a) {
     a->FindData("big_hunk", gBigHunk);
