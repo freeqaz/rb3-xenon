@@ -363,7 +363,12 @@ VOID *XMemAlloc(SIZE_T size, DWORD attrs) {
         }
         int allocSize = XMemSizeDefault(ptr, attrs);
         gPhysicalUsage += allocSize;
+#ifdef HX_NATIVE
         MemTrackAlloc(size, allocSize, AllocType(attrs), ptr, false, 0, __FILE__, 0xf0);
+#else
+        // Retail passes r3..r8 only -- no __FILE__, no line. See MemMgr.h.
+        MemTrackAlloc(size, allocSize, AllocType(attrs), ptr, false, 0);
+#endif
     }
 
     return ptr;
@@ -428,7 +433,12 @@ void *PhysicalAllocTracked(unsigned long size, unsigned long alignment, const ch
             MemAllocFailed(size, true);
         }
     }
+#ifdef HX_NATIVE
     MemTrackAlloc(size, allocSize, name, ptr, false, 0, file, line);
+#else
+    // Retail's fn_82273350 sets up r3..r8 only. See MemMgr.h.
+    MemTrackAlloc(size, allocSize, name, ptr, false, 0);
+#endif
     return ptr;
 }
 
