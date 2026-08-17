@@ -80,6 +80,18 @@ necessary, not sufficient — it describes the CHARGE CLASS, not whether a sourc
 lever exists."* W33: **"NAME-BLOCKED" also describes the charge class, not the
 binding constraint** — and here the name is never binding at all.
 
+### Self-validation — the partition reconciles exactly, zero rows dropped
+
+| quantity | genuine-name | save/restore | sum | expected |
+|---|---:|---:|---:|---:|
+| rows | 26 | 16 | **42** | 42 |
+| bytes | 33,852 | 16,584 | **50,436 B** | 50,436 B |
+| charged sites | 76 | 65 | **141** | 141 |
+| distinct pairs | 54 | 52 | **106** | 106 |
+
+and the fold adjudication covers all 54 genuine pairs
+(20 `BOTH_MAPPED` + 33 `OURS_UNMAPPED` + 1 `NEITHER_MAPPED`).
+
 ## 4. ★★★ The decisive number: 0 of 42 rows can cross
 
 `matched_code` is all-or-nothing per row, so a row collects its bytes only when
