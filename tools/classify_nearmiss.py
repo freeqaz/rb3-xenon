@@ -34,10 +34,19 @@ Cause classes per mismatch instruction:
   OPCODE      : opcode itself differs -> genuine code divergence.
   OTHER       : length mismatch / missing side / branch target / misc.
 """
-import json, subprocess, sys, re, os, argparse
+import json, subprocess, sys, re, os, argparse, atexit, shutil, tempfile
 from collections import Counter, defaultdict
 
 ROOT="/home/free/code/milohax/rb3-xenon"
+
+_SCRATCH=None
+def _scratch():
+    # Lazy so that merely importing this module (the tests do) creates nothing.
+    global _SCRATCH
+    if _SCRATCH is None:
+        _SCRATCH=tempfile.mkdtemp(prefix='classify_nearmiss.')
+        atexit.register(shutil.rmtree, _SCRATCH, True)
+    return _SCRATCH
 UNNAMED=re.compile(r'\b(fn_[0-9A-Fa-f]+|lbl_[0-9A-Fa-f]+|sub_[0-9A-Fa-f]+|loc_[0-9A-Fa-f]+)\b')
 
 def flat_args(side):
@@ -81,6 +90,28 @@ def flat_args(side):
     return ', '.join(out)
 
 
+# Bare register / immediate operands, which tok_syms strips before comparing
+# symbol tokens.
+#
+# The immediate half was `0x[0-9A-Fa-f]+|-?\d+` until 2026-08-17, which is BLIND
+# TO NEGATIVE HEX. `flat_args` renders a Signed/BranchDest operand as `-0x%x`
+# (see its docstring), so every negative displacement -- the ordinary spelling of
+# a stack slot below the frame pointer, and of a negative struct offset -- failed
+# the fullmatch, fell through to `out.add(t)`, and was compared as if it were a
+# SYMBOL. Two sides differing only in a negative displacement therefore produced
+# `only_t={'-0x8'}, only_b={'-0xc'}`, neither matching UNNAMED, and classify_insn
+# returned WRONG_PAIR ("objdiff mis-paired the top-level symbol; needs re-pin")
+# instead of reaching the typed_args scan and returning OFFSET ("struct layout /
+# stack bug"). Positive hex and both signs of decimal were always covered.
+#
+# This defect is SPELLING-INDEPENDENT and PREDATES objdiff-cli fdc5113 -- it is
+# not part of the args-spelling regression the module banner describes, and the
+# fdc5113 repair (task #103) deliberately left it alone to hold an exact-parity
+# restoration target. `0[xX]` also admits uppercase-prefixed hex, which no
+# current producer emits but which costs nothing to accept.
+_BARE_OPERAND_RE = re.compile(r'r\d+|f\d+|cr\d+|-?(?:0[xX][0-9a-fA-F]+|\d+)')
+
+
 def tok_syms(args):
     # return set of symbol-like tokens (mangled names / labels), strip pure regs/imm
     # NOTE: pass flat_args(side), never side['args'] -- see flat_args' docstring.
@@ -88,7 +119,7 @@ def tok_syms(args):
     for t in re.split(r'[,\s]+', args or ''):
         t=t.strip()
         if not t: continue
-        if re.fullmatch(r'r\d+|f\d+|cr\d+|0x[0-9A-Fa-f]+|-?\d+', t): continue
+        if _BARE_OPERAND_RE.fullmatch(t): continue
         out.add(t)
     return out
 
@@ -129,7 +160,14 @@ def classify_insn(ins):
     return 'OTHER'
 
 def diff_fn(unit, sym):
-    out="/home/free/tmp/_cls.json"
+    # Per-process scratch path. This was a FIXED absolute path
+    # (`/home/free/tmp/_cls.json`) until 2026-08-17, which is a silent
+    # cross-run corruption hazard: two concurrent invocations -- two lanes, or
+    # one interactive run beside a batch -- alternately overwrite and read the
+    # same file, so each can load the OTHER function's diff and classify it
+    # under its own symbol name, with no error anywhere. Nothing in the output
+    # would look wrong. Also removes a write to `~/tmp`, which is not storage.
+    out=os.path.join(_scratch(), '_cls.json')
     r=subprocess.run([os.path.join(ROOT,'bin','objdiff-cli'),'diff','-p',ROOT,'-u',unit,
                       sym,'-f','json','-o',out,'--include-instructions'],
                      capture_output=True, text=True, timeout=120)
