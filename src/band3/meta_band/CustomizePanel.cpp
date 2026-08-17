@@ -457,6 +457,88 @@ void CustomizePanel::UpdateAssetProvider() {
 // framing is a bounded ONE-INSTRUCTION wall worth 5,036 B, whose remaining vein
 // is the merge/mask interaction per W11b.
 //
+// ── lane W37-CLRLWI (2026-08-17): THE SOURCE-SPELLING PROGRAM IS CLOSED, NOT BY
+//    ENUMERATING A 23rd SPELLING BUT BY A TRANSPLANT THAT REFUTES THE WHOLE CLASS.
+//
+// W35's price is re-confirmed on this tree, read from report.json, not from a
+// mismatch count: fuzzy == mpn == 99.92057 EXACTLY, size 5036, Diff Score
+// 100/125900, one charged site `[530] delete: clrlwi r11,r11,24`.  So the row is
+// still +1 function AND +5,036 B if that instruction closes.  What follows is why
+// it does not close from source.
+//
+// ★ THE RETAIL SITE, READ OFF THE TARGET .s (0x82619774-0x82619788).  The merge
+// label sits BEFORE the subic, so the triple is a tail SHARED by both arms:
+//     bl fn_82575670        ; TheSongMgr.HasLicense(s) -> bool in r3
+//     clrlwi r11, r3, 24    ; bool -> int
+//   .L_82619778:            ; <- has_patch jumps in here, `FindPatchIndex()+1` in r11
+//     subic  r10, r11, 0x1
+//     stw    r25, 0x4(r28)
+//     subfe  r11, r10, r11
+//     clrlwi r11, r11, 24   ; <- THE MISSING INSTRUCTION
+// has_patch's entry was confirmed by finding the only branch to that label
+// (0x82619FA0, `addi r11,r3,0x1 / b .L_82619778`).  Our build reproduces ALL of
+// this, including the merge and its direction, minus the final mask.
+//
+// ★ THE MASK IS NOW MECHANISTICALLY IDENTIFIED, WITH A CONTROL THAT MOVES IT.
+// A binary-wide scan keyed on the `.fn` symbol (⚠ operand is `, 24` WITH a space)
+// finds the exact shape `subfe rD,rA,rB` + `clrlwi rD,rD,24` at 8 sites.  Only one
+// is a named row we match outright: ?OnMsg@BandUI@@...ContentReadFailureMsg, 100%.
+// ⚠ W11b's two cited oracles are NOT reproducible as cited -- BandSongMgr.s has
+// ZERO sites and ModifierMgr.s does not exist as a split unit at all.  Use BandUI.
+// Its source is os/ContentMgr.h:210 `bool GetBool() const { return mData->Int(2); }`
+// consumed by `init[0] = msg.GetBool();`, and our compiler emits
+// `bl Int / addic / subfe / clrlwi / stw`.  CONTROL (the instrument can move):
+// editing that one line to `init[0] = (msg.GetBool() != 0);` leaves the mask in
+// place and appends a SECOND addic/subfe after it -- proving the mask belongs to
+// GetBool's inlined `bool` RETURN materialization, not to the store.
+//
+// ⛔⛔ AND THAT CONSTRUCT, TRANSPLANTED VERBATIM INTO THIS ARM, STILL EMITS NO
+// MASK.  `static bool ProbeX(DataArray *a) { return a->Int(2); }` +
+// `HANDLE_EXPR(has_license, ProbeX(_msg))` -- the literal shape of GetBool, same
+// TU, same /FAs -- compiles to `bl Int / mr / addic / stw / subfe / b`.  Identical
+// source, different codegen at the two sites.  ⇒ THE DISCRIMINATOR IS NOT THE ARM
+// EXPRESSION, NOT THE CALLEE SHAPE, AND NOT THE VALUE'S PROVENANCE.  That is a
+// refutation of the entire "find the right spelling" program, not one more
+// negative in it, and it is why this lane stopped rather than trying a 23rd form.
+//
+// Seven mechanism-driven probes this lane, all INERT (1259 instr / 1 delete, or
+// no mask in the /FAs listing), none of them re-runs of the ~15 already recorded:
+//   * `bool HasPatch(){ return FindPatchIndex(...) + 1; }`  (conversion, not `!= -1`)
+//   * `HANDLE_EXPR(has_license, (bool)HasLicense(...))`      (explicit bool cast)
+//   * file-static bool boundary `static bool ToBoolProbe(int v){ return v; }`
+//   * `(unsigned char)(HasLicense(...) != 0)`  -- cast of the RESULT, where every
+//     earlier `(unsigned char)` attempt cast the OPERAND
+//   * bool-object round trip `static bool ToBool2(int v){ bool b=(v!=0); return b; }`
+//   * two-level file-statics so the int->bool conversion acts on a CALL RESULT
+//     inside the bool-returning callee (GetBool's structural shape)
+//   * the ProbeX transplant above (both ingredients at once)
+// DIAGNOSTIC (do not redo): breaking the cross-jump entirely -- `HANDLE_EXPR(
+// has_patch, mRefreshingContent)` -- leaves the STANDALONE has_license arm ALSO
+// mask-free, so the merge is not suppressing anything.  MSVC's int->bool
+// conversion is `addic/subfe` with NO mask even at a bool return boundary
+// (`?ToBoolProbe@@YA_NH@Z` is two instructions).
+//
+// ★ WHAT DOES MASK HERE, and it is IN THIS FUNCTION so the context is exonerated:
+// the in_clothing_state arm -- which we already MATCH -- ends
+// `li r11,1 / .L: mr r11,r25 / clrlwi r11,r11,24 / stw r11,0x0(r28)`.  Same sret
+// DataNode consumer, mask present on BOTH sides.  ⇒ the sret/DataNode context can
+// carry a mask perfectly well; what MSVC will not do is mask a `subfe` RESULT.
+// It masks a bool that arrives from a PHI OF BOOL CONSTANTS, or as the
+// materialized return of an inlined callee that converted a value it produced
+// itself.  Retail's tail is `phi-of-raw-ints -> subic/subfe -> mask`, and that
+// third combination is one our compiler did not emit at this site under any probe.
+// ⚠ Note this partially REHABILITATES RESIDUAL-2's "phi" intuition that W11b
+// refuted: W11b's counter-scan was over OTHER functions, and it is correct that
+// straight-line masked sites exist; but within this function the masked site is a
+// phi, so "phi" was the right shape and the wrong scope.
+//
+// ⇒ STATUS: a PRICED REFUSAL, not a mispricing.  The row is worth +1 fn / +5,036 B
+// and is behind exactly one instruction, but that instruction is not reachable
+// from source at this site.  The next lane should NOT open this row for another
+// spelling; if anyone reopens it, the only untried channel is a compiler/codegen
+// one (a different 10224 QFE, or a pragma affecting bool canonicalization), and
+// the burden is to move the ProbeX transplant above, which is a 20-second check.
+//
 // ★ REUSABLE INSTRUMENT FOUND HERE (the dead store is a source-shape oracle):
 // MSVC /O1 creates a dead stack home for the vbase-adjusted `this` of an
 // INLINED MEMBER call.  Presence/absence of that dead home therefore witnesses
