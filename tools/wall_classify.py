@@ -84,8 +84,12 @@ BOOL_NEG_OPS = frozenset({'subic', 'subfe'})
 SIGN_EXT_OPS = frozenset({'extsb', 'extsh', 'extsb.', 'extsh.'})
 UNSIGNED_CMP = frozenset({'cmplwi', 'cmplw'})
 
-# VBASE: vtable-slot load pattern: lwz rX, 0xNN(rY) where rY was loaded from vtable
-# Uniform +4 slot delta in vtable calls
+# VBASE: vtable-slot load pattern, matched against the NORMALIZED (flat) operand
+# spelling this file ingests -- `lwz rX, 0xNN, rY` -- where rY was loaded from a
+# vtable. Uniform +4 slot delta in vtable calls.
+# The comment here used to claim `lwz rX, 0xNN(rY)` while the regex demanded the
+# flat form; that was aspirational, never true, and it is what let ruler I zero
+# this regex unnoticed. Feed it `_flat_args(side)`, never `side['args']`.
 VBASE_VTBL_RE = re.compile(r'^lwz\s+r(\d+),\s*(0x[0-9a-f]+),\s*r(\d+)', re.I)
 
 # Operator new / size divergence
@@ -104,6 +108,76 @@ BUILD_SRC = os.path.join(ROOT, 'build', '45410914', 'src')
 
 def _tokens(s: str) -> List[str]:
     return [t.strip() for t in (s or '').split(',') if t.strip()]
+
+
+def _flat_args(side: dict) -> str:
+    """Rebuild the pre-fdc5113 flat operand join from `typed_args`.
+
+    objdiff-cli fdc5113 ("ruler I", 2026-08-16) changed the JSON `args` string
+    from a comma-join of the COMPARISON arg list to the DISPLAY spelling:
+    d-form operands gained parens (`0xNN, rY` -> `0xNN(rY)`), COFF relocations
+    gained `@h`/`@l` suffixes, and the trailing NON-DISPLAYED relocation left
+    the string (it survives only as the last `typed_args` entry, type Symbol).
+
+    Every detector in this file reads operands through `_tokens`, a bare
+    split(','), against the OLD spelling -- so the change silently zeroed
+    VBASE_VTBL_RE and every `len(tt) >= 3` gate that depends on it. See
+    _normalize_args_inplace for the blast radius and the measured numbers.
+
+    Rendering matches objdiff-core/src/obj/mod.rs' Display impls exactly:
+    Signed/BranchDest as signed hex, Unsigned as hex, everything else verbatim.
+    """
+    ta = side.get('typed_args')
+    if ta is None:
+        return side.get('args') or ''
+    out: List[str] = []
+    for a in ta:
+        t = a.get('type')
+        v = a.get('value')
+        if t in ('Signed', 'BranchDest') and isinstance(v, int):
+            out.append(('-0x%x' % -v) if v < 0 else '0x%x' % v)
+        elif t == 'Unsigned' and isinstance(v, int):
+            out.append('0x%x' % v)
+        else:
+            out.append(str(v))
+    return ', '.join(out)
+
+
+def _normalize_args_inplace(d: dict) -> dict:
+    """Rewrite every instruction side's `args` to the flat pre-fdc5113 spelling.
+
+    Done ONCE at ingest rather than at the 44 `args` read sites in this file,
+    because three different operand conventions are in flight here (load/store
+    `rD, imm, rBase`; `addi rD, rSrc, imm`; 5-operand `rlwinm`) and a per-site
+    patch would have to get each one right 44 times.
+
+    What ruler I cost this file, measured on real objdiff-cli 4.2.3 JSON
+    (dc3 7-fn audit sample / rb3-xenon [80,100) 60 fns / rb3-xenon [99,100)
+    80 fns), shipped spelling vs the rebuilt old one:
+
+        VBASE_VTBL_RE matches      0 vs   218 /  10056 /  4497
+        load-store rows readable   0 vs   186 /   9700 /  4708
+        FPR offset pairs readable  0 vs     3 /   1773 /   730
+
+    Four detectors died with those gates: _detect_vbase_wall's slot-delta scan,
+    _detect_no_oracle_layout, _is_funclet_direct_access (so FUNCLET_PAIRING
+    stopped routing DEFER_DEEP -- the mdgrind MISROUTE-1 it was built to stop),
+    and _detect_fpr_sched, whose offset compare returned None and let the
+    `tt[0] != bt[0]` arm relabel a header-layout bug an FPR register rename and
+    route it PERMUTE.
+
+    The original display string is preserved as `args_display`: it is strictly
+    more readable and is the better source for the human-facing `evidence`
+    strings, which currently read the normalized `args` like everything else.
+    """
+    for ins in d.get('instructions') or []:
+        for k in ('target', 'base'):
+            side = ins.get(k)
+            if not side:
+                continue
+            side['args_display'] = side.get('args') or ''
+            side['args'] = _flat_args(side)
+    return d
 
 
 def _toi(s: str) -> Optional[int]:
@@ -130,7 +204,11 @@ def diff_fn(unit: str, sym: str, proj: str = ROOT) -> Optional[dict]:
                 with open(tmp) as f:
                     d = json.load(f)
                 if d.get('instructions'):
-                    return d
+                    # Single ingest point for every path in this file
+                    # (get_diff_instructions and the three direct callers all
+                    # come through here), so normalizing once here covers all
+                    # 44 `args` read sites.
+                    return _normalize_args_inplace(d)
         except Exception:
             pass
     return None
