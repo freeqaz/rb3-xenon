@@ -3,6 +3,23 @@
 import struct
 
 
+def _is_eh_boundary(sym):
+    """A `$EH*` extent marker appended by scripts/obj_eh_boundary_patcher.py.
+
+    The patcher (lane CM-3) marks every interior EH prefix with a STATIC symbol
+    of type 0, because the only thing MSVC leaves at an EH-bearing function's
+    true end is a class-6 `$M#####` debug label. It IS a function boundary, and
+    the `$`-prefix test below would otherwise throw it away -- which does not
+    merely miss the fix, it deletes the one the build went to the trouble of
+    injecting.
+
+    Matched on name AND class 3 / type 0 so this can never widen into the
+    class-6 labels the `$` test exists to exclude.
+    """
+    return (sym['name'].startswith('$EH')
+            and sym['storage_class'] == 3 and sym['type'] == 0)
+
+
 def _is_internal_label(name):
     """Check if a symbol is a compiler-internal label, not a function boundary.
 
@@ -11,6 +28,8 @@ def _is_internal_label(name):
       $T<digits>  - compiler temporaries
       $LN<digits> - local numeric labels
       .text       - section name pseudo-symbol (always at offset 0)
+
+    `$EH<hex>` is NOT one of these -- see `_is_eh_boundary`.
     """
     return name.startswith('$') or name == '.text'
 
@@ -29,7 +48,7 @@ def _find_function_end(coff, sym):
         if (s['section'] == sym['section']
                 and s['value'] > start
                 and s['value'] < end
-                and not _is_internal_label(s['name'])):
+                and (_is_eh_boundary(s) or not _is_internal_label(s['name']))):
             end = s['value']
 
     return end

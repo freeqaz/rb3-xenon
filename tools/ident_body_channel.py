@@ -68,6 +68,28 @@ def is_aux_code_symbol(name):
     return name.startswith('__unwind$') or name.startswith('__ehhandler$')
 
 
+def eh_boundaries(section_symbols):
+    """Offsets of the `$EH*` EH-prefix markers in one section.
+
+    `scripts/obj_eh_boundary_patcher.py` (build step, stamp
+    `eh_boundary_patched.stamp`) appends a STATIC/type-0 `$EH*` symbol at every
+    interior EH prefix, because MSVC leaves only a class-6 `$M#####` debug label
+    at a function's true end. Type 0 is exactly what a `type == 0x20` filter
+    discards, so the boundary the build inserts for this purpose was being
+    thrown away -- see `function_slices`.
+
+    Keyed on the `$EH` name AND class 3 / type 0, not on storage class alone.
+    Two reasons, both measured: 695,516 class-6 `$M` labels sit INSIDE bodies in
+    this build, and the class-2/3 rule that is equivalent here is NOT equivalent
+    on dc3, where it truncates a target function (lane EHFIX-SYNTH).
+
+    Consumed as a bounded `end - 8` trim, never merged into the boundary set, so
+    a marker in the wrong place can cost 8 bytes and never truncate a body.
+    """
+    return {s['value'] for s in section_symbols
+            if s['storage'] == 3 and s['type'] == 0 and s['name'].startswith('$EH')}
+
+
 # ---------------------------------------------------------------- COFF reader
 def parse_coff(data):
     """Minimal PE/COFF + bigobj reader. Returns (sections, symbols)."""
@@ -123,9 +145,19 @@ def parse_coff(data):
 
 
 def function_slices(path):
-    """Yield (name, body, relocs, comdat_sel). EH-aware: slices a code section by
-    consecutive defining-symbol values, so the [+0 EH prefix][+8 entry]
-    [+N __unwind$] layout does not swallow the function."""
+    """Yield (name, body, relocs, comdat_sel).
+
+    Slices a code section by consecutive defining-symbol values, so the
+    [+0 EH prefix][+8 entry][+N funclet] layout does not swallow the function --
+    AND hands the successor's own 8-byte prefix back to the successor.
+
+    The second half is the part that was missing. `type == 0x20` decides what to
+    YIELD; it must not also decide where a slice ENDS, or the `$EH*` boundary
+    the build injects (class 3, type 0) is discarded and the slice runs on into
+    the next region's prefix. Measured on build 45410914: 6,393 slices move,
+    257 of them into agreement with a retail `.pdata` extent they had been +8
+    against.
+    """
     try:
         data = Path(path).read_bytes()
     except OSError:
@@ -146,15 +178,44 @@ def function_slices(path):
         if not defs:
             continue
         raw = sec['raw']
+        marks = eh_boundaries(by_sec.get(si, []))
         pts = sorted({(s['value'], s['name']) for s in defs})
         bounds = sorted({v for v, _ in pts} | {len(raw)})
         nxt = {v: bounds[i + 1] for i, v in enumerate(bounds[:-1])}
+        at = collections.defaultdict(list)
+        for v, n in pts:
+            at[v].append(n)
+        rel = {o: idx_name.get(i, '?') for (o, i, _t) in sec['relocs']}
         for v, name in pts:
             if v % 4 or v >= len(raw):
                 continue
             if is_aux_code_symbol(name):
                 continue
             end = nxt.get(v, len(raw))
+            # Hand the successor's 8-byte EH prefix back to the successor.
+            #
+            # PRIMARY: the `$EH*` marker the build injects at `end - 8`. Applied
+            # as a bounded trim rather than by merging the markers into `bounds`,
+            # so a marker in the wrong place can only ever cost 8 bytes -- it can
+            # never truncate a body. (All 6,395 markers on this build do sit at a
+            # slice `end - 8`; the bound is for the one that someday does not.)
+            #
+            # FALLBACK, for a tree with no markers -- an unpatched obj, or a build
+            # from before the patcher step. Two words that RELOCATE to
+            # `__CxxFrameHandler` and `__ehfuncinfo$...` are an EH prefix by
+            # definition; they cannot be instructions. That is the whole test. It
+            # deliberately does NOT also require the successor to be
+            # `__catch$`-named: 3 of the 6,395 interior prefixes here precede an
+            # ORDINARY FUNCTION in a non-COMDAT multi-function `.text`, so a
+            # successor-name test misses them -- the defect still in
+            # `coff_bodies_ext`.
+            if end - 8 > v and (end - 8) in marks:
+                end -= 8
+            elif end < len(raw) and end - 8 > v \
+                    and raw[end - 8:end] == b'\0' * 8 \
+                    and rel.get(end - 8) == '__CxxFrameHandler' \
+                    and rel.get(end - 4, '').startswith('__ehfuncinfo$'):
+                end -= 8
             rl = [o - v for (o, _i, _t) in sec['relocs'] if v <= o < end]
             yield name, raw[v:end], rl, sec['sel']
 

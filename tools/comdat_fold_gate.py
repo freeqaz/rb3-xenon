@@ -302,14 +302,33 @@ class Retail:
                 return False
         return True
 
-    def words(self, va):
-        """Raw big-endian words of the retail body at `va`, or (None, why)."""
+    def words(self, va, nbytes=None):
+        """Raw big-endian words of the retail body at `va`, or (None, why).
+
+        `nbytes` widens the read past the `.pdata` FUNCTION extent, to the span
+        our COMDAT actually covers. The two are NOT the same ruler: `symbols.txt`
+        gives the function, and an EH-bearing COMDAT is
+        `function + 8-byte funclet prefix + funclet(s)`. Retail holds all of
+        those bytes at these addresses -- comparing the full span at
+        `addr - value` is what tools/comdat_retail_verify.py does, and its
+        docstring states the rule this widening exists to obey.
+
+        Never NARROWS: the caller must have checked that the function extent is
+        covered, or a shorter COMDAT would be admitted on a prefix match.
+        """
         n = self.size.get(va)
         o = self.img.off(va)
         if not n:
             return None, "no symbols.txt extent at 0x%08x" % va
         if o is None:
             return None, "0x%08x is outside the image" % va
+        if nbytes is not None:
+            if nbytes < n:
+                return None, ("refusing to narrow the retail read: %d bytes asked for, "
+                              "function extent is %d" % (nbytes, n))
+            n = nbytes
+        if o + n > len(self.img.data):
+            return None, "body at 0x%08x runs past the end of the image" % va
         return list(struct.unpack_from(">%dI" % (n // 4), self.img.data, o)), None
 
     def masked(self, va):
@@ -619,6 +638,29 @@ def main():
         row["our_def"] = objp + ("" if len(defs) == 1 else " (+%d identical)" % (len(defs) - 1))
         row["our_bytes"] = len(cd["raw"])
         relocs = {off: (nm, ty) for off, nm, ty in cd["relocs"]}
+
+        # Read retail over the span our COMDAT covers, not over the `.pdata`
+        # FUNCTION extent. The old `len(rwords)*4 != len(ourraw)` refusal was two
+        # rulers meeting at one `!=`: `symbols.txt` gives the function, `comdats`
+        # gives `function + funclet prefix + funclet(s)`. It refused 776 of the
+        # 1,048 charged pairs, 151 of them where our function extent DOES equal
+        # retail's.
+        #
+        # The widening is one-directional by construction, which is the whole
+        # safety argument: the funclet bytes are ADDED to the comparison, never
+        # dropped from it, so nothing that used to have to match stops having to.
+        # A COMDAT SHORTER than the retail function extent still refuses on size
+        # -- narrowing the retail read would admit on a prefix match.
+        if len(cd["raw"]) < len(rw) * 4:
+            refuse("our COMDAT is not the retail body at the survivor address -- "
+                   "body size %d bytes (retail function extent) vs %d (our COMDAT): "
+                   "ours is SHORTER, so the retail function is not covered"
+                   % (len(rw) * 4, len(cd["raw"])))
+            continue
+        rw, err = retail.words(sa, len(cd["raw"]))
+        if err:
+            refuse("retail survivor body unreadable over our COMDAT's span: " + err)
+            continue
 
         ok, why = compare(rw, sa, cd["raw"], relocs, retail.byva, alias)
         row["body_evidence"] = why
