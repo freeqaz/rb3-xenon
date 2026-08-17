@@ -7,6 +7,21 @@
 // Kept under version control deliberately: an agent-facing prompt that is
 // wrong silently steers every future lane, and while these were untracked
 // nothing prevented that. Fix or delete in review -- do not shadow-edit.
+//
+// CORRECTION 2026-08-17 (task #114): the "~N fns" CASCADE SIZES quoted per
+// target below ("~20 std::vector<Char3D> template fns", and the equivalents for
+// Flow / PanelDir / Accomplishment) come from layout_fix_rank.py, which for ~6
+// months bucketed every addi/subi off r1 / r31 / r12 as struct-layout evidence
+// (base register built as `'r' + m.group(2)` where group 2 already carried its
+// `r` -> rr1/rr12/rr31, never matching STACK_REGS). They are inflated. The
+// per-class STRUCT OFFSETS quoted alongside them (Char3D 0x50 vs 0x54,
+// mComponents 0x1f8 vs 0x200, FlowNode 0x38 vs 0x64, the Accomplishment field
+// addresses) are hand-read from headers, cl.exe layout reports and ctor asm, and
+// are NOT affected by the tool defect -- though the pass that ran this workflow
+// separately found the Flow figures to be funclet/ICF false positives and the
+// PanelDir direction backwards (see plans/coupled-base-and-body-port-playbook.md).
+// Tool fixed 2026-08-17 in b57f9e7e; re-measurement of record:
+// <decomp-bench>/archive/runs/rb3x-layout-fix-rank-rerank-2026-08-17/.
 // ============================================================================
 export const meta = {
   name: 'structural-grind-pass',
