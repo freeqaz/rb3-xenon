@@ -283,8 +283,35 @@ VOID *XMemAlloc(SIZE_T size, DWORD attrs) {
         MILO_ASSERT((attrs & 0x30000000) != 0x20000000, 0xf9);
 
         int align = AllocAlign(attrs);
+#ifdef HX_NATIVE
         const char *type = AllocType(attrs);
-        ptr = _MemAllocTemp(size, __FILE__, 0x107, type, align);
+        ptr = MemAlloc(size, __FILE__, 0x107, type, align);
+#else
+        // Retail/match: retail's heap branch is `bl AllocAlign` at +0x30 then
+        // `bl ?MemAlloc@@YAPAXHH@Z` at +0x3c -- the PERSISTENT allocator, not
+        // the temp one. Verified on retail bytes: band.exe file offset 0x2683EC
+        // holds 48 54 97 4D, which decodes as bl -> 0x827BCD38
+        // (?MemAlloc@@YAPAXHH@Z); 0x827BCFF0 (?_MemAllocTemp@@YAPAXHH@Z) does
+        // not appear anywhere in the 204-byte body.
+        //
+        // XMemAlloc is the XDK's GLOBAL allocation hook, so calling the temp
+        // allocator here routed every non-physical XDK allocation -- D3D, D3DX,
+        // XAudio, XAPI, XACT, XGRAPHICS, XUI, XMV -- through the temp heap's
+        // MemHeap::kLastFit (top-down) placement instead of the default
+        // bottom-up one. That is a behavioural bug, not naming noise.
+        //
+        // align is genuinely non-zero here (AllocAlign returns 0x10 or 8), so
+        // the parenthesized form is REQUIRED to bypass MemMgr.h's align-0-
+        // forcing macro. House pattern: src/system/synth/Mic.cpp:38.
+        //
+        // No AllocType on this path: retail's single AllocType call is at +0xa8,
+        // in the physical branch below. Our compiled COMDAT already had exactly
+        // one AllocType relocation (at +0xb4, the physical branch) because MSVC
+        // dead-code-eliminated the heap-branch call once the macro swallowed
+        // `type` -- so dropping the local here is a SOURCE-HONESTY change worth
+        // exactly ZERO bytes, and must not be sold as part of the fix.
+        ptr = (MemAlloc)(size, align);
+#endif
 
         // Assert allocation succeeded if zero-init requested
         if (attrs & 0x00004000) {
