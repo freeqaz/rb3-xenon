@@ -126,6 +126,10 @@ def main():
     print("== TOP candidates by SIZE-IF-IT-CROSSES (fuzzy < 100) ==")
     print("   cert PURE = fuzzy == mpn exactly => ZERO relocation-name")
     print("   charges; residual is purely instruction-level.")
+    print("   ⛔ PURE IS GATED ON fuzzy > 0. Ungated it is VACUOUS: an UNPAIRED")
+    print("      row has fuzzy == mpn == 0 and satisfies the equality trivially.")
+    print("      Measured on this tree: 22,090 of 22,687 ungated PURE rows")
+    print("      (97.4%, 5,196,904 of 5,245,780 B) are that 0 == 0 case.")
     cands = []
     for name, f in rows_all:
         fz = F(f.get("fuzzy_match_percent"))
@@ -142,18 +146,28 @@ def main():
     print(hdr2)
     print("-" * 118)
     for sz, fz, mpn, unit, sym in cands[:40]:
-        cert = "PURE" if abs(fz - mpn) < 1e-9 else "argchg"
+        # ⛔ GATED: `fz > 0`. See the banner above -- an unpaired row is
+        #    fuzzy == mpn == 0 and would be certified PURE for no reason.
+        cert = ("PURE" if (abs(fz - mpn) < 1e-9 and fz > 0.0)
+                else "UNPAIR" if fz <= 0.0 else "argchg")
         print(f"{sz:>7} {fz:>10.4f} {mpn:>10.4f} {cert:>6}  {unit:<24} "
               f"{sym[:60]}")
 
     print()
     print(f"== gap composition over {len(cands)} sub-100 rows ==")
-    pure = [c for c in cands if abs(c[1] - c[2]) < 1e-9]
+    # ⛔ `pure` IS GATED ON fuzzy > 0 -- ungated, this bucket is 97.4% the
+    #    trivial 0 == 0 case and certifies the UNPAIRABLE stratum as a clean
+    #    instruction-level residual. That reading was briefed to numerous lanes
+    #    for a full day before it was caught.
+    pure = [c for c in cands if abs(c[1] - c[2]) < 1e-9 and c[1] > 0.0]
+    vac = [c for c in cands if abs(c[1] - c[2]) < 1e-9 and c[1] <= 0.0]
     argc = [c for c in cands if abs(c[1] - c[2]) >= 1e-9]
     zero = [c for c in cands if c[1] == 0.0]
     anon = [c for c in cands if c[4].startswith(("fn_", "lbl_"))]
-    print(f"  PURE   (fuzzy==mpn, instruction-level only): "
+    print(f"  PURE   (fuzzy==mpn AND fuzzy>0 -- GATED):    "
           f"{len(pure):>4} rows  {sum(c[0] for c in pure):>8} B")
+    print(f"  ⛔ would-be PURE at fuzzy==0 (VACUOUS 0==0): "
+          f"{len(vac):>4} rows  {sum(c[0] for c in vac):>8} B")
     print(f"  argchg (fuzzy<mpn, has arg charges):         "
           f"{len(argc):>4} rows  {sum(c[0] for c in argc):>8} B")
     print(f"  fuzzy==0 (unpaired / no base symbol):        "
