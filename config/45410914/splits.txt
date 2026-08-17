@@ -664,8 +664,6 @@ BandList.cpp:
 	.pdata      start:0x821FE758 end:0x821FE778
 	.pdata      start:0x821FE778 end:0x821FE780
 	.pdata      start:0x821FE788 end:0x821FE790
-	.pdata      start:0x82220608 end:0x82220610
-	.pdata      start:0x82220610 end:0x82220618
 	.text       start:0x8233B348 end:0x8233B34C
 	.text       start:0x8233B350 end:0x8233B468
 	.text       start:0x8233B468 end:0x8233B4AC
@@ -8297,6 +8295,8 @@ Accomplishment.cpp:
 	.pdata      start:0x822205C0 end:0x822205C8
 	.pdata      start:0x822205C8 end:0x822205E0
 	.pdata      start:0x822205E8 end:0x82220608
+	.pdata      start:0x82220608 end:0x82220610
+	.pdata      start:0x82220610 end:0x82220618
 	.pdata      start:0x82220618 end:0x82220630
 	.pdata      start:0x82220630 end:0x82220638
 	.pdata      start:0x82220638 end:0x82220678
@@ -12516,7 +12516,6 @@ ProfileMgr.cpp:
 	.pdata      start:0x8221B7E0 end:0x8221B7E8
 	.pdata      start:0x82241680 end:0x822416A0
 	.pdata      start:0x822416A8 end:0x822416C8
-	.pdata      start:0x822416C8 end:0x822416D0
 	.pdata      start:0x8225D040 end:0x8225D068
 	.pdata      start:0x82261BA0 end:0x82261BA8
 	.text       start:0x823EC398 end:0x823EC418
@@ -13515,6 +13514,7 @@ system/meta/StoreArtLoaderPanel.cpp:
 	.pdata      start:0x82241618 end:0x82241628
 	.pdata      start:0x82241670 end:0x82241680
 	.pdata      start:0x822416A0 end:0x822416A8
+	.pdata      start:0x822416C8 end:0x822416D0
 	.pdata      start:0x822416D0 end:0x822416E8
 	.text       start:0x827B7170 end:0x827B729C
 	.text       start:0x827B72F0 end:0x827B7344
