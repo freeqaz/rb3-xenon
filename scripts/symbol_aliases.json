@@ -5951,7 +5951,8 @@
    "folded": [
     "?NewCopyMesh@@YAPAVRndMesh@@PBV1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 134, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 134, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | CHALLENGED AND UPHELD -- NO CHANGE (lane ALIASFIX, 2026-08-17, rb3-xenon 447cd49e). A prior reading (probe-index-exposure phase 3 filter 2) called this a misattribution needing the survivor renamed to ?NewCopyMesh@@YAPAVRndMesh@@PBV1@@Z, because our ?deallocate@... is 8 B in 32 objects and 36 B in one and matches nothing here. Refuted on the target side, which that reading never opened: the split target object obj/Archive.obj emits the 128-byte body at 0x822dc9d0 UNDER THE SURVIVOR'S NAME, and that body calls ??$New@VRndMesh@@@Object@Hmx@@SAPAVRndMesh@@XZ -- it IS NewCopyMesh, misnamed by the map. Our NewCopyMesh body equals it on 31 plain words plus 1 opcode-preserved relocated word and has EXACTLY ONE placement in the whole image, 0x822dc9d0. So this group is not an ICF fold: it is a MAP NAMING repair, the PoolAlloc shape (ALIAS-X2), and it is the only thing making our `bl NewCopyMesh` compare equal to the target's `bl deallocate`. Renaming the survivor would DELETE a correct equivalence -- NewCopyMesh is defined in no target object, so the loader would reject the renamed group outright, and default/ChordShapeGenerator :: ?MakeInvertedMesh@ChordShapeGenerator@@ (212 B on BOTH sides, same name) depends on it. PRE-EXISTING HAZARD, not created by this group and not fixable inside it: the map's name collides with the real 8-byte ?deallocate@?$StlNodeAlloc@VString@@... that we build, so a call to the REAL deallocate compares equal to a target call to NewCopyMesh's body under the identity map.",
+   "lane": "ALIASFIX 2026-08-17"
   },
   {
    "name": "OnMsg",
@@ -23313,11 +23314,23 @@
    "name": "0?$ObjPtr",
    "address": "0x8229ef00",
    "survivor": "??0?$ObjPtr@VRndMat@@@@QAA@ABV0@@Z",
-   "folded": [
-    "??0?$ObjPtr@VRndDrawable@@@@QAA@ABV0@@Z",
-    "??0?$ObjPtr@VWorldCrowd@@@@QAA@ABV0@@Z"
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions. | FOLD REFUTED -- 2 memberships WITHDRAWN (lane ALIASFIX, 2026-08-17, rb3-xenon 447cd49e). The two prior readings are wrong in OPPOSITE directions: ALIAS-X4 section 4.6 ruled KEEP ('index artifact', fold real), probe-index-exposure phase 3 ruled it a survivor MISATTRIBUTION (fold real, wrong survivor). The fold is FABRICATED and the survivor name is RIGHT -- the split target object obj/OutfitConfig.obj emits the 120-byte body at 0x8229ef00 under the survivor's own name, and each ObjPtr<T> copy ctor stores a per-T vtable, so the 17 masked-equal retail placements (0x8229dc70 0x8229ef00 0x822b1680 0x822b1728 0x822bc0b0 0x822bc158 0x822cb430 0x822cdb70 0x822d3f18 0x822d6f90 0x822d7038 0x82304720 0x823047c8 0x823a0700 0x824be668 0x824cb6b0 0x824e0250) are 17 different functions. See withdrawn[]. OUT OF SCOPE, real, untouched: our own survivor body misses retail here on 7 of 25 plain words -- ours stores TWO vtables (ObjRefConcrete<RndMat,ObjectDir> and ObjPtr<RndMat>) where retail stores one. A source defect the alias never concealed.",
+   "withdrawn": [
+    {
+     "spelling": "??0?$ObjPtr@VRndDrawable@@@@QAA@ABV0@@Z",
+     "why": "FABRICATED FOLD, not a wrong survivor. ObjPtr<T>::ObjPtr(const ObjPtr&) stores its OWN per-T vtable -- our object relocates ??_7?$ObjPtr@V<T>@@@@6B@ at body offsets 0x20/0x24 -- so two instantiations can never be one COMDAT. Retail carries 17 DISTINCT 120-byte bodies with this instruction stream (0x8229dc70 0x8229ef00 0x822b1680 0x822b1728 0x822bc0b0 0x822bc158 0x822cb430 0x822cdb70 0x822d3f18 0x822d6f90 0x822d7038 0x82304720 0x823047c8 0x823a0700 0x824be668 0x824cb6b0 0x824e0250): 17 distinct raw bodies, 17 distinct vtable constants, i.e. /OPT:ICF folded NONE of them. They compare equal only because the T1 rule masks the one word that carries the instantiation's identity. This spelling's home is one of the other 16, not 0x8229ef00.",
+     "lane": "ALIASFIX 2026-08-17",
+     "note": "Do NOT re-add. The group was LIVE in the admission predicate, so this membership was a FALSE-PASS (fail-open) channel: our `bl` to this spelling compared EQUAL to the target's `bl` to a different retail function. Re-deriving it needs the RESOLVED relocation operand, not a masked-word comparison -- the T1 rule, probe_icf_foldtest's shape() and objdiff at functionRelocDiffs=none are all blind to it. Withdrawal priced at 0 B."
+    },
+    {
+     "spelling": "??0?$ObjPtr@VWorldCrowd@@@@QAA@ABV0@@Z",
+     "why": "FABRICATED FOLD, not a wrong survivor. ObjPtr<T>::ObjPtr(const ObjPtr&) stores its OWN per-T vtable -- our object relocates ??_7?$ObjPtr@V<T>@@@@6B@ at body offsets 0x20/0x24 -- so two instantiations can never be one COMDAT. Retail carries 17 DISTINCT 120-byte bodies with this instruction stream (0x8229dc70 0x8229ef00 0x822b1680 0x822b1728 0x822bc0b0 0x822bc158 0x822cb430 0x822cdb70 0x822d3f18 0x822d6f90 0x822d7038 0x82304720 0x823047c8 0x823a0700 0x824be668 0x824cb6b0 0x824e0250): 17 distinct raw bodies, 17 distinct vtable constants, i.e. /OPT:ICF folded NONE of them. They compare equal only because the T1 rule masks the one word that carries the instantiation's identity. This spelling's home is one of the other 16, not 0x8229ef00.",
+     "lane": "ALIASFIX 2026-08-17",
+     "note": "Do NOT re-add. The group was LIVE in the admission predicate, so this membership was a FALSE-PASS (fail-open) channel: our `bl` to this spelling compared EQUAL to the target's `bl` to a different retail function. Re-deriving it needs the RESOLVED relocation operand, not a masked-word comparison -- the T1 rule, probe_icf_foldtest's shape() and objdiff at functionRelocDiffs=none are all blind to it. Withdrawal priced at 0 B."
+    }
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
+   "lane": "ALIASFIX 2026-08-17"
   },
   {
    "name": "DataSymbol",
