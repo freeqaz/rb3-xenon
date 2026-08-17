@@ -187,13 +187,30 @@ spells the same site `?GetBandUser@BandUserMgr@@` (`User` → `BandUser`
 `dynamic_cast`, RTTI `??_R0?AVBandUser@@@8` / `??_R0?AVUser@@@8`), whose shape
 matches retail's exactly.
 
-⇒ **the map name is wrong and our source is right** — the same adjudication
-shape MPNGAP-1 used to kill `Handle@GemPlayer`. **Not fixed here**: the row it
-sits on (`?OnMsg@OvershellSlot@@`, 1,396 B) also carries 2 hard diffs and **43
-immediate charges**, so per §4 correcting it collects **0 B**, and a map rename
-is the edit class with the worst measured risk/reward (un-pairing is 80.5% of a
-map edit's delta). Recorded for a lane that can price it against the cascade
-channel.
+⇒ **the map name is wrong** — the same adjudication shape MPNGAP-1 used to kill
+`Handle@GemPlayer`: retail's callee's *shape* contradicts the name the map gives
+it. The address is **`0x82682668`**.
+
+⚠ **Stated to exactly the strength the evidence supports, and no further.** What
+is proven is the NEGATIVE: a body that calls `__RTDynamicCast` and references two
+RTTI type descriptors is a `dynamic_cast` thunk, and **an atexit destructor for a
+static is not that**. It is *consistent* with our `?GetBandUser@BandUserMgr@@`,
+but that match rests on placeholder-vs-named RTTI operands — which §5 just
+established is **`UNDECIDED`, not proof**. Claiming the positive identification
+here would be the very error §5 documents, one paragraph later.
+
+⛔ **And renaming it would be actively harmful, which is why it was not done.**
+The row lives in `default/CharLipSync`, and our `CharLipSync.obj` does **not**
+define `GetBandUser` (our `BandUserMgr.obj` does). objdiff pairs by NAME, so
+moving that name into CharLipSync's target obj would leave a base obj that cannot
+define it ⇒ the row goes **permanently 0%**. This is precisely the documented
+trap: *proving a name wrong ≠ renaming is safe.* The row is 28 B and its charging
+row (`?OnMsg@OvershellSlot@@`, 1,396 B) carries 43 immediate charges, so per §4
+the entire upside is **0 B** either way.
+⚠ Note also that `??__FsLoadedFile@@YAXXZ` is defined in **three** of our objs
+(`BandCamShot`, `CharLipSync`, `SkeletonClip`) — `??__F` names are per-TU
+compiler-generated and collide freely, so pinning one to a single address is
+fragile by construction.
 
 ## 7. The one row that is *nearly* actionable, and why it still isn't
 
@@ -236,9 +253,22 @@ brace-less `else` both compiled **byte-identical**, recorded in
 * ⛔ **`NAME-BLOCKED` is a charge-class label, not a diagnosis** — like
   `COLLECTABLE` (W27), `REGISTER_SWAP`, and objdiff's `AT_LIMIT`. Three lanes
   have now each independently found a confident label restating its own input.
-* ★ **The frame queue's remaining value, if any, is the `UNTRIAGED` tail** (257
-  rows / 107,124 B, untouched by W23/W27/W33) — but price it with §4's test
-  *first*: rank by *"are names the only charge?"*, not by prize.
+* ⛔⛔ **THE `UNTRIAGED` TAIL IS THE SAME — DO NOT OPEN IT AS A NAME LANE.** §4's
+  test was run over the **whole** frame queue, not just the top-60 window
+  (178 rows at `fuzzy ≥ 50`, `tools/w23_collectable.py --min-fuzzy 50 --top 320`):
+
+  | verdict | rows | bytes |
+  |---|---:|---:|
+  | NAME-BLOCKED | 108 | 88,340 B |
+  | COLLECTABLE | 47 | 30,916 B |
+  | NO-FRAME-SITE | 23 | 9,144 B |
+
+  **Rows whose only charges are genuine relocation names: 0 rows / 0 B** —
+  binary-wide across the queue, not merely in the head. And **50 rows /
+  32,880 B** are blocked *only* by save/restore helpers (§3's class), i.e. 37%
+  of the NAME-BLOCKED population by row count is a register count, not a name.
+  ⇒ the §4 result is **structural, not a property of the window W23 happened to
+  triage.**
 * ★ **`tools/w33_fold_adjudicate.py` is reusable**, with its control. Run
   `--pairs` with the CTRL+/CTRL− fixture before believing any run: **it produced
   a false IDENTICAL once, and only a control that could fail caught it.**
