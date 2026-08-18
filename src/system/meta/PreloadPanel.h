@@ -42,14 +42,25 @@ public:
 protected:
     Symbol CurrentSong() const;
 
-    PreloadResult mPreloadResult; // 0x3c
-    std::vector<String> mPreloadedFiles; // 0x40
-    bool mMounted; // 0x4c
-    std::vector<Symbol> mContentNames; // 0x50
-    Hmx::Object *mAppReadFailureHandler; // 0x5c
-    bool mContentCorrupt; // 0x60
-    String mCorruptContentName; // 0x64
-    bool mSongDoesNotExist; // 0x6c
+    // ⚠ OFFSETS BELOW ARE COMPILER-VERIFIED (cl.exe /d1reportSingleClassLayout,
+    // 2026-08-17, lane W44-REQUEUE). They previously read 0x3c/0x40/0x4c/0x50/
+    // 0x5c/0x60/0x64/0x6c -- every one stale by 4, because the {vfptr} for the
+    // ContentMgr::Callback base at 0x3c was not counted. The LAYOUT was always
+    // correct; only these comments were wrong, and they are what made
+    // PreloadPanel::Load look like a container-element-type defect to three
+    // rounds of triage. Retail confirms all three witnessed offsets:
+    //   push_back into this+0x44  (?push_back@?$vector@VString@@...)
+    //   stb r26, 0x50(r3)         (mMounted = true at top of Load)
+    //   lbz r11, 0x74(r28)        (mSongDoesNotExist)
+    // The element type is String and was never in doubt -- do not "fix" it.
+    PreloadResult mPreloadResult; // 0x40
+    std::vector<String> mPreloadedFiles; // 0x44
+    bool mMounted; // 0x50
+    std::vector<Symbol> mContentNames; // 0x54
+    Hmx::Object *mAppReadFailureHandler; // 0x60
+    bool mContentCorrupt; // 0x64
+    String mCorruptContentName; // 0x68
+    bool mSongDoesNotExist; // 0x74
     // NOTE(laneBQ2): `int mMaxCacheSize` used to be the last member here. Retail RB3
     // does not have it: the rb3-Wii oracle's PreloadPanel ends at `bool unk68`
     // (= mSongDoesNotExist) and our member list matches it 1:1 with mMaxCacheSize as
