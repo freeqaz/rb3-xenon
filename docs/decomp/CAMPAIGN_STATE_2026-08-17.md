@@ -9,32 +9,130 @@
 
 ## 0. SESSION CLOSE
 
-### 0.15 ROUND FIFTEEN (IN PROGRESS) — the thunk stratum is adjudicable FROM THE OTHER DIRECTION ← **LATEST**
+### 0.15 ROUND FIFTEEN — the thunk vein DRAINED under a gate set that refuses rather than guesses, and a REAL vtable-order source bug ← **LATEST**
 
-**44,513 fns / 3,763,984 B = 36.470367%**, honest **21,602**, **59.67% of the
-ceiling**. Round so far **+0 fns / +184 B**, from W45-NAMEADJ waves 1–2. **Both
-predictions exact**; the two lanes' deltas **composed** (3,763,800 + 144 + 40 =
-3,763,984, measured exactly). ⚠ **Round is NOT closed** — W45 was stopped
-mid-sweep by a harness exit, its worktree was clean with both waves committed,
-and it has been **resumed on the remaining hits**.
+**44,514 fns / 3,764,200 B = 36.472460%**, honest **21,603**, **59.67% of the
+ceiling**. Round **+1 fn / +400 B**, all from W45-NAMEADJ across four waves.
+**All four byte predictions exact**, and the deltas **composed across lanes**
+(3,763,800 + 144 + 40 + 132 + 84 = 3,764,200, measured exactly).
+`NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0
+failed=0 rc=0` — **applicable, not inherited** (wave 4 touches a base-class
+vtable), and **7 targets relinked in that run**, so the gate genuinely exercised
+the change rather than reporting a stale pass.
+⚠ W45 was **stopped mid-sweep by a harness exit** with a clean worktree and both
+early waves committed; it was **resumed**, not re-run.
 
 | wave | pre-registered | measured | |
 |---|---:|---:|---|
 | W45 wave 1 — 12 adjustor-thunk names | +144 B | **+144 B** | ✓ exact |
 | W45 wave 2 — 6 `StandardEffect<T>::Reset` | +40 B | **+40 B** | ✓ exact |
+| W45 wave 3c — 30 thunk renames *(rejected cut)* | +360 B / **+3 fns** | **+192 B / −11 fns** | ⛔ **MISS — gate bug, see below** |
+| W45 wave 3e — 11 thunk renames | +132 B / +1 fn | **+132 B / +1 fn** | ✓ exact *(`none` +24 B, predicted +0)* |
+| W45 wave 4 — `TrackInterface` vtable order | +84 B | **+84 B** | ✓ exact |
 
-★★★★★ **AN INSTRUMENT'S RESIDUAL BOUNDS THE INSTRUMENT, NOT THE STRATUM — and
-this amends §0.14, landed hours earlier.** W42 characterised 45% of its residual
-(22 of 49 rows) as **fan-in 0 BY CONSTRUCTION**, since vtable adjustor thunks are
-reached *through the vtable* rather than by `bl`, so **caller** semantics is
-structurally unavailable. That is **true, and it is not the end of the stratum**:
-W42's instrument reads the **CALLER** direction, W45's reads the **CALLEE**
-direction. An adjustor thunk adjusts `this` and **tail-branches to the final
-override**, so thunk class+method **must equal** branch-target class+method **by
-construction** — the thunk's own single branch is a *complete* identification and
-**no caller is needed at all**. ⇒ *"structurally unavailable to THIS instrument"
-is not "structurally unidentifiable."* Both lanes are right. Read W42's 992 B as
-a bound on its own reach — **exactly as W42 itself warned**.
+★★★★★ **WAVE 4 IS A REAL SOURCE BUG, NOT A NAMING REPAIR** — "the payout of
+naming is BUG EXPOSURE, not bytes" running in **reverse**: the 84 B is
+incidental, and **the vtable layout of every `TrackInterface` implementor was
+wrong.** Retail's `Track` vtable (`.rdata`, **three independent copies, all
+identical**) runs `PlayerDisabled, GetTrackIcon, GetPlayerName, UserName`; ours
+ran `PlayerDisabled, UserName, GetPlayerName, GetTrackIcon` — a clean
+transposition around an unchanged middle slot. Root cause is the **base class**:
+`Track.h` already had retail's order (a red herring), because slot order is
+fixed by `TrackInterface.h`.
+⛔ **THE TRAP, AND IT IS GENERAL: "both rows score 100" IS NOT THE ANCHOR IT
+LOOKS LIKE.** Our `GetTrackIcon` falls back to `MakeString("G")` where retail's
+body uses an empty string — **and it still scores 100**, because the string is a
+**relocation whose target is a placeholder name, which objdiff FORGIVES**. What
+actually matched was the vtable-slot **immediate**, which *is* compared.
+Adjudicating on the forgiven operand would have anchored both names on nothing.
+The two errors **cancelled for scoring** while leaving the call site charged —
+so map and header had to be fixed **in the same patch**; header-only measures
+**−168 B**. Corroborated by the rb3-Wii oracle spelling `AppLabel::SetUserName`
+identically to our source ⇒ **our source was right and only the call looked
+wrong.**
+
+★★★★ **WAVE 3's NEGATIVE RESULT COST 14 ROWS AND IS THE REUSABLE LESSON.** An
+intermediate 30-rename cut measured **+192 B but −11 matched functions across 11
+units.** Not noise — a **gate bug**: the rule is *the obj **owning the row** must
+**define** the name*, and definedness was checked against **any** of the 1,205
+objs. A cross-class rename moves a name into a unit whose obj cannot define it,
+so the row **stops pairing and reads a permanent 0%** — and the **`none` control
+moved −120 B**, confirming the mechanism was **pairing, not naming**. Re-gating
+on the owning obj cut 30 → 15; re-solving injectivity over the **actual** set cut
+15 → 11, because **filtering AFTER a fixed-point solve un-vacates the names the
+dropped partners were surrendering** (the same trap wave 1 hit).
+★ **`tools/map_name_injectivity.py` caught it; the lane's hand-rolled check
+passed it. Use the project's tool.**
+
+**THREE INSTRUMENTS COVERING EACH OTHER'S BLIND SPOTS, each with an untreated
+control** — **I1** branch target (class+method *by construction*; **cannot**
+supply the vtordisp token, which is why wave 1 refused 34 rows) · **I2** vtable
+oracle (the **only** channel supplying the token; can **mis-align across a vtable
+boundary**, since vtables are adjacent in `.rdata` with no separator — control:
+**confirms 1,817 / 2,165 = 83.9%** of existing names, changes 258, refuses 90, so
+it is not describing itself) · **I3** adjusted-register veto (`lwz r11,-4(r4)` ⇔
+by-value class return; control **1,135/1,135**, and it contradicts only **1 of
+103** suspects because the permutation happens *within* a return-kind class).
+
+★ **LESSON 1 QUANTIFIED AT SCALE: the detector fires on 105 BOUNDARY rows; the
+wrong REGION is 258** — ~3× the boundary that reveals it.
+
+⚠ **A LIMIT THE LANE RECORDED AGAINST ITSELF:** `callee_ident.py` **masks
+relocations**, so it is **structurally incapable of distinguishing shape twins**
+— and in this stratum (stereotyped `ClassName`/`Finalize` accessors) twins are
+the norm. It produced **three** confident "the map is wrong at the callee
+address" verdicts and **all three dissolved** once the rival name was found
+already mapped nearby. *This is the ICF trap running backwards:
+relocation-normalisation is the right instrument for **detecting** a fold and the
+wrong one for **distinguishing** twins.*
+
+**REFUSED, each with its specific blocker:** 15 cross-class thunks need a
+`splits.txt` **re-home**, which is **not metric-neutral** and would confound a
+map-only A/B · ~90 refused + 102 target-unmapped (I1 unavailable or I1/I2
+disagree) · 4 that pass every gate but **collide on injectivity** with rows that
+themselves cannot be corrected ⇒ **fixed point = 0 candidates** · non-thunk
+`DUAL_MAPPED` twins (`GameGemDB Finalize`/`MergeChordGems`, `ClassName`
+StreakMeter/RndTransformable) **unsettleable by body bytes** — both already fuzzy
+100, retail bodies differ in **3/23** and **1/12** words, **all
+relocation-shaped**; a swap risks **−184 B for a +52 B prize** ·
+`StlNodeAlloc<String>::deallocate` at fuzzy **4.219** is **body** divergence, no
+rename crosses it.
+
+⚠ **Two defects found in `tools/reachability_census.py` and DELIBERATELY NOT
+PATCHED** (recorded rather than silently fixed — it is W44's tool): `~223`
+`r["reg"], r["name"] = g, n` overwrites the symbol **name** with a count so the
+coverage self-check **can never pass**, and `257` then raises `TypeError`.
+**Class totals are unaffected, so W44's published partition stands.**
+
+⇒ **Live `DUAL_MAPPED` set: 38 rows / 588 B** size-if-it-crosses, down from
+992 B. **The thunk vein is DRAINED under a gate set that refuses rather than
+guesses**, and the non-thunk remainder is blocked by a twin ambiguity **body
+bytes cannot resolve.**
+
+⛔⛔ **CORRECTION — THIS ENTRY ORIGINALLY CLAIMED TO "AMEND" §0.14. IT DOES NOT,
+AND THE CLAIM WAS THE COORDINATOR'S PARAPHRASE ERROR, NOT A LANE'S FINDING.**
+The first version of this section (landed in `d78da62e`) said W45 corrected W42
+by adjudicating a stratum W42 had called structurally unavailable. **W42 said no
+such thing.** `W42_NAME_PERMUTATION_SWEEP_2026-08-18.md:232-237` reads in full:
+the thunks *"are **not un-adjudicable**, but they need a **different**
+instrument: **vtable slot identity** (`scripts/dump_vtable.py`, `/vtable`), not
+call-site fan-in. **Anyone reopening this should start there and nowhere
+else.**"* W45 built exactly that instrument. ⇒ **W45 is W42's CONFIRMATION, not
+its refutation**, W42's record is accurate as written, and the "amendment"
+**degraded a correct record**. The coordinator relayed only the first half of
+the paragraph and then built a headline on its own paraphrase — ★ **the standing
+`READ THE IN-TREE RECORD FIRST` rule failing in the one place it is most
+expensive: a lane brief.** The lane refused the amendment when asked to make it.
+
+★ **What W42 actually established, restated correctly:** an instrument's
+residual bounds **that instrument's reach**, not the stratum. W42's `bl`-based
+caller-semantics channel cannot see thunks (reached *through the vtable*), said
+so, and **prescribed the replacement**. W45's three channels are that
+replacement: **I1** branch target (a `$4` thunk tail-branches to the final
+override ⇒ class+method equal *by construction*), **I2** vtable-slot identity
+(the only channel supplying the **vtordisp token**), **I3** adjusted-register
+veto (`lwz r11,-4(r4)` ⇔ the method returns a class **by value**, sret
+displacing `this` to `r4`).
 
 ★ **Validated as a population instrument with an UNTREATED CONTROL before any row
 was touched**: over all **2,165** map thunks, class+method **AGREE 1,543 / 1,648
