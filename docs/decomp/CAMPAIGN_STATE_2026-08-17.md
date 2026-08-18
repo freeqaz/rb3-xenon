@@ -9,7 +9,120 @@
 
 ## 0. SESSION CLOSE
 
-### 0.12 ROUND THIRTEEN — a red CI gate made green HONESTLY, and the best-priced row in the tree CLOSED ← **LATEST**
+### 0.13 ROUND FOURTEEN — the round that MEASURED how little is left, and gave the family defect a DETECTOR ← **LATEST**
+
+**44,513 fns / 3,763,544 B = 36.466103%**, honest **21,602**. Round **+0 fns /
++96 B**. **Day total +69 fns / +39,840 B**; **59.66% of the ceiling.**
+
+| lane | predicted | measured | |
+|---|---:|---:|---|
+| W42-PERMSWEEP | +192 B (range +96..+192) | **+96 B / +0 fns** | ✓ *bottom of range — the shortfall IS the finding* |
+| W43-AUTOID | Δ0 | **Δ0** *(no A/B — no build inputs touched)* | ✓ *priced refusal* |
+| W44-REQUEUE | Δ0 | **Δ0** | ✓ |
+
+Composition verified after a forced re-split: predicted 3,763,448 + 96 =
+**3,763,544, measured exactly**, `matched_functions` unchanged at 44,513 as
+pre-registered. Two lanes were **stopped mid-flight** when the previous process
+exited; both had committed real work, which is why the round is landed rather
+than re-run.
+
+★★★★★ **W44: THE REACHABLE SOURCE SURFACE IS 0.59% OF THE GAP — MEASURED, NOT
+SUSPECTED.** `tools/reachability_census.py` re-derives the whole partition from
+`report.json` + retail bytes, inheriting nothing. Of the **6,557,216 B** gap:
+**42.84% identification-blocked** (placeholder-named — **cannot pair by name at
+any source quality**), **35.81% xdk/vendor with no source** (out of scope by
+standing directive), **20.59% credited residual**. Charge-classifying **all
+3,597** named partial rows at **full coverage** (0 missing, 0 failed units):
+**WALLED_REG 560,000 B (48.6%)** — permuter is OFF, so `reg > 0` **walls** a row
+— **NAME_ADJUDICATION 553,396 B (48.0%)**, and **SOURCE_LEVER just 38,840 B =
+0.59% of the gap / 0.38% of `total_code`.**
+⇒ This corroborates the **5.21 pp not ~25 pp** finding by an **independent
+construction** and should govern how any further round is funded. ★ The tool
+**self-validates on four independent keys and exits 1** rather than report a
+census it cannot reconcile (69,226 / 10,320,664 / 3,763,448 / 44,513 — all exact
+at its commit), and reports **profiling coverage**, because a silently dropped
+row understates charges and makes the reachable pool look **larger** — the
+failure mode that *flatters*. It prints the warning its own top row earns:
+**SOURCE_LEVER is a charge class, not a promise.**
+
+★★★★★ **`PreloadPanel::Load` SETTLED — AND THE OPEN QUESTION WAS THE WRONG
+QUESTION.** W33 withheld the container element type; W40 recorded that guessing
+it is the documented error. From retail bytes: `0x8250fc08` is
+`push_back(const String&)` ⇒ the element type **is `String`, which our source
+already said. It was never the defect.** What was wrong were the header's
+`// 0xHEX` comments — **every one stale by 4**, because the `{vfptr}` for the
+`ContentMgr::Callback` base at `0x3c` was not counted;
+`/d1reportSingleClassLayout` confirms the real layout matches retail on all
+three independently witnessed offsets. ⇒ The **384 B** residual is **not** a
+layout or element-type defect, and **three rounds deferred it as one**. Textbook
+instance of the standing hazard: **header offset comments are derived from
+nobody — ask the compiler.**
+
+★★★★★ **W42: THE FAMILY DEFECT FINALLY HAS A DETECTOR — AND IT FIRES ONLY AT
+THE BOUNDARY OF A WRONG REGION, NEVER INSIDE IT.** Six such families have been
+found on this campaign and **every one by accident**. A **uniformly** wrong name
+family is **self-consistent**, so nothing referencing it can disagree and
+`name_check` never charges: GemPlayer's two rows scored **fuzzy 100.0 before and
+after while carrying the WRONG names**, because the callee they named was
+misnamed the same way. The SongDB pair paid **only** because it is the
+**boundary** where the wrong region meets correctly-named
+`MultiplayerAnalyzer` — which is exactly why the measured +96 B sits at the
+bottom of the predicted range. ⇒ **Two of the four corrections are worth exactly
+0 bytes and were landed anyway: accuracy over headline.**
+★ The instrument hunts **structural inconsistency between our source's call
+graph and the map's** (our objs' `IMAGE_REL_PPC_REL24` relocations *are* that
+call graph), deliberately **replacing** W31's name-equality screen that W34
+proved wrong — **the source is the arbiter, not name equality**. Fold
+adjudication is mandatory: **1,054 raw → 53 live**, and `TEMPLATE_ARGS_DIFFER`
+**is what a fold looks like**. ★ Branches are decoded by **raw word masking,
+never capstone** — capstone silently drops VMX128 words, and **a dropped row is
+a false negative shaped like a clean result**. Adjudicated on retail bytes by
+four instruments with a **control that could have failed** (`VocalPlayer`
+declares the same three virtuals in the same order and is **already correct**;
+`GetBaseMaxStreakPoints` is the **fixed point** of the transposition, correct in
+all three classes).
+
+★★★★★ **W43: A SIZING NUMBER IS NOT AN ATTRIBUTION LICENCE — ASK WHICH CLAIM
+ITS FP RATE PRICED.** The `auto_*` attributable slice **reproduces** and even
+grew (**1,818 rows / 176,712 B / 1.71%**, FP **0.60%**, join self-validated to
+the exact row and byte). But that 0.60% prices the **source-class** claim
+*"is there portable source here"*, while a `splits.txt` line asserts the
+**membership** claim *"which unit is this row"* — and a tool **docstring**
+silently converted one into the other. Priced honestly: **98.7% of rows lie
+between two different units, where the truth is a THIRD unit 44.22% of the time
+and the best fixed side-pick is 27.96% precise (72.04% FP)**; only `prev==nxt`
+is defensible at 65.77%, worth **23 rows / 6,984 B = 0.068% of `total_code`.**
+⇒ **No pins were made** — pins over `auto_*` are metric-neutral, so a wrong pin
+buys **only a false identification a later porting lane would trust**. ★ The
+instrument is **not vacuous** (shuffled-label null 99.39–99.64% vs 46.95% real),
+and ⛔ **proximity is dead** — flat 26–28% precision for **every** distance.
+This is the **third label-read-as-diagnosis** this session (after COLLECTABLE
+and NAME-BLOCKED) and the first embedded in a **tool's own docstring** rather
+than a coordinator brief.
+
+★★★ **TWO DEAD CHECKERS REVIVED** — *"corpses that look like tools"*.
+`validate_symbols.py`'s **2,284 alarms of 69,060 were 100% PHANTOM**, from a
+hardcoded **TU0-era** section table (main has targeted TU5 since 2026-07-15):
+measured old-vs-live, **2,284 false alarms, 0 false passes** — ⚠ though the
+stale table was also **too permissive** at the bottom, so it was *structurally*
+capable of false passes and had none **only by luck**. Ranges now come from the
+PE section table, so it follows a target flip automatically, it **refuses with
+rc=2** rather than silently falling back to constants, and — because **a check
+that suddenly always passes must be shown able to fail** — `--self-test` injects
+an out-of-range address and asserts the count moves by exactly +1.
+`map_lint.py` was **DEAD, not fail-open**: 27 legitimate `"0xADDR": null` rows
+killed it with `AttributeError` **on valid input**, so it could never lint
+anything. ⇒ **Noise that trains people to ignore a checker is a real defect; a
+checker that cannot run is worse than no checker at all.**
+
+⚠ **NOT LANDED, DELIBERATELY:** W42 left an **uncommitted**
+`AccomplishmentSongConditional` block edit when its process was stopped — a
+block re-alignment **plus two NEW names** over possibly-anonymous addresses.
+That is a materially larger claim than the transposition it proved, and naming
+an anonymous address is **a bet paying in bug exposure, not bytes**. It is being
+adjudicated separately and is **not** in this round.
+
+### 0.12 ROUND THIRTEEN — a red CI gate made green HONESTLY, and the best-priced row in the tree CLOSED
 
 **44,513 fns / 3,763,448 B = 36.465176%**, honest **21,602**. Round **+2 fns /
 +2,296 B**. **Day total +69 fns / +39,744 B**; **59.66% of the ceiling.**
