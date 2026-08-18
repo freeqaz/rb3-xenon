@@ -100,6 +100,16 @@ collapse produced a *false answer*, not a missing one::
                    answer -- "not here" -- and legitimately empty.
     COMPILE_FAILED the compiler could not answer at all.  NEVER a zero.
 
+⚠ AND IT IS SLOW ENOUGH THAT A SHORT TIMEOUT IMPERSONATES ``CLASS_ABSENT``.
+The compile prints **nothing** until the TU finishes: measured ~10 min for
+``BandSongMgr`` and up to ~50 min under fleet load.  A caller that kills it
+early sees no class in the output and cannot distinguish that from the
+legitimate "not here" answer above -- i.e. the three-label contract is only
+honoured if you actually let the compiler finish.  **Budget 60 min.**
+(Recorded 2026-07-26 in ``docs/plans/lane-ah-layout-oracle-2026-07-26.md``;
+promoted here 2026-08-18 because a trap filed only in a dated lane write-up is
+invisible to the person running the tool.)
+
 The defect that forced this (reproduced before the fix): the compile command is
 lifted verbatim from ninja, so for the **nine PCH-eligible engine dirs**
 (``flow synth meta obj os utl movie hamobj gesture``) it carries
