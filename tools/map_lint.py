@@ -426,15 +426,46 @@ def _va_from_label(label: str) -> Optional[int]:
 # ---------------------------------------------------------------------------
 
 def load_map(path: Path) -> Dict[int, str]:
+    """Load address -> mangled-name from the target symbol map.
+
+    NULL VALUES (``"0xADDR": null``) mean "deliberately unclaimed" and are
+    SKIPPED -- same polarity as ``scripts/obj_target_symbol_renamer.py``, which
+    hit this exact defect first and documents the semantics: a null is emitted
+    by the delete path in ``tools/maprow_audit/ci1_apply.py`` and means "no
+    name, this address stays anonymous".
+
+    ⛔ This loop had no type check, so a None flowed into ``mangled_classes()``
+    and killed the whole linter with
+    ``AttributeError: 'NoneType' object has no attribute 'startswith'`` --
+    ON VALID INPUT.  The map legitimately carries 27 nulls of 29,036 rows
+    (measured 2026-08-17, lane W44-REQUEUE), so ``map_lint`` was DEAD, not
+    merely fail-open: it could not lint anything, ever, and was not in CI.
+    The 5 list-valued rows are metadata keys (``_denylist`` etc.), already
+    excluded here by the ``0x`` key prefix test.
+    """
     raw = json.load(open(path))
     out: Dict[int, str] = {}
+    n_null = n_bad = 0
     for k, v in raw.items():
         if not isinstance(k, str) or not k.startswith("0x"):
             continue
         try:
-            out[int(k, 16)] = v
+            addr = int(k, 16)
         except ValueError:
             continue
+        if v is None:
+            n_null += 1
+            continue
+        if not isinstance(v, str):
+            # A list/dict/number would crash the same way None did.
+            print(f"WARN: non-string value for {k!r} ({type(v).__name__}) in "
+                  f"{path} -- skipping", file=sys.stderr)
+            n_bad += 1
+            continue
+        out[addr] = v
+    if n_null or n_bad:
+        print(f"[map] skipped {n_null} null (deliberately unclaimed) and "
+              f"{n_bad} non-string row(s) in {path}", file=sys.stderr)
     return out
 
 
@@ -906,6 +937,16 @@ def _report(findings: List[dict], units: List[Unit], amap: Dict[int, str],
         print("\n[CLASS_MIXING] %d entries whose owner class is homed in a "
               "DIFFERENT pinned unit (stale / mis-pin):"
               % len(by_check["class_mixing"]))
+        # ⚠ This count is NOT a backlog. Sampled 2026-08-17 (lane W44-REQUEUE)
+        # over 728 parsed detail rows: 15.7% are vtable ADJUSTOR THUNKS
+        # ($4PPPPPPPM@) and 12.4% are template instantiations -- both are
+        # emitted into whichever TU instantiates them, so a "foreign" home is
+        # EXPECTED, not a mis-pin. Most of the remainder are free functions
+        # whose "owner class" this heuristic derives from the RETURN TYPE
+        # (e.g. ?EnableAppChild@@YA?AVDataNode@@... -> owner "DataNode").
+        # Adjudicate a row on retail bytes before treating it as a defect.
+        print("  ⚠ heuristic: thunks/templates/return-type-derived owners are "
+              "expected foreign -- NOT a mis-pin backlog. See load_map() notes.")
         for unit in sorted(by_unit):
             fs = by_unit[unit]
             owners = Counter("%s->home:%s" % (f["owner_class"],
