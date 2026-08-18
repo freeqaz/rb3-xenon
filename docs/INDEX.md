@@ -213,6 +213,15 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 - [../CLAUDE.md](../CLAUDE.md) — project framing, build tracks, decomp priority, worktree/git
   rules, toolchain wiring. Authoritative current state.
+- ⛔ **CLOSURE RECORD — do not re-mine session `d40e3b86` (2026-07-24 → 07-29).**
+  [decomp/MINING_SESSION_D40E_CERTIFIED_DRAINED_2026-08-18.md](decomp/MINING_SESSION_D40E_CERTIFIED_DRAINED_2026-08-18.md)
+  — 8 sonnet miners + 1 fable reviewer over the full 92K-token narration:
+  **zero lost findings**, because that session **wrote the current record itself**
+  (`hub_agent_ops.md` still carries its `originSessionId`). ★ Its durable output is
+  a **method** correction: a recorded-vs-lost audit whose scope omits
+  **`docs/plans/` (208 files)** manufactures false positives — **13 of 13 here**,
+  ~10 found verbatim there. Also the standing reminder that **every numeric
+  absolute predating 2026-08-12 is dead on the ruler flip**.
 - ★★★ **START HERE — the single current-state doc.**
   [decomp/CAMPAIGN_STATE_2026-08-17.md](decomp/CAMPAIGN_STATE_2026-08-17.md) —
   **third edition; replaces `CAMPAIGN_STATE_2026-08-14.md` wholesale.** Measured
