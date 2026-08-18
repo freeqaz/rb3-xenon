@@ -530,10 +530,54 @@ def parse(text):
 RE_HDR_COMMENT = re.compile(r"//\s*0x([0-9A-Fa-f]+)")
 
 
-def audit_header(project_dir, header, cls_info):
+def class_body_span(lines, cls):
+    """(start_idx, end_idx, base_depth) of `class cls`'s OWN body, 0-based.
+
+    Returns None if the declaration cannot be located unambiguously.  Callers
+    MUST treat None as "do not audit" rather than falling back to the whole
+    file -- see the ⛔ note in audit_header.
+    """
+    decl = re.compile(r"^\s*(?:class|struct)\s+(?:[A-Za-z_]\w*\s+)?"
+                      + re.escape(cls) + r"\s*(?::|\{|$)")
+    for i, line in enumerate(lines):
+        if not decl.match(line):
+            continue
+        # walk forward to the '{' that opens the body
+        j, depth, opened = i, 0, False
+        while j < len(lines):
+            for ch in lines[j]:
+                if ch == "{":
+                    depth += 1
+                    opened = True
+                elif ch == "}":
+                    depth -= 1
+            if opened and depth <= 0:
+                return i, j, 1
+            if opened and j - i > 4000:      # runaway guard
+                break
+            j += 1
+        return None
+    return None
+
+
+def audit_header(project_dir, header, cls_info, cls=None):
     """Compare `// 0xHEX` trailing comments in a header to the compiler's truth.
 
     Returns list of (line_no, member, commented_offset, real_offset).
+
+    ⛔⛔ SCOPED TO `cls`'s OWN BODY -- AND IT MUST BE.  This function used to scan
+    the WHOLE FILE while comparing against ONE class's offsets, so in any header
+    declaring more than one class a **correct** comment on class B was reported
+    wrong against class A's layout whenever the member NAMES collided.  Measured
+    2026-08-18 on `src/system/utl/Str.h` (declares FixedString, String,
+    StackString): line 68's `char *mStr; // 0x8` is CORRECT for `String` and
+    retail-verified in the surrounding comment, but auditing `FixedString`
+    (whose `mStr` is at 0x0) flagged it as wrong by -8.
+    ⇒ That was not merely noise: **`--fix-header` writes these rows back**, so
+    the bug would have REWRITTEN A CORRECT COMMENT TO A WRONG VALUE -- silent
+    corruption of the very ground truth this tool exists to protect.
+    ⇒ If the class body cannot be located, we audit NOTHING (under-report rather
+    than corrupt).  Members at nested-class depth are skipped for the same reason.
     """
     path = os.path.join(project_dir, header)
     if not os.path.exists(path):
@@ -541,19 +585,31 @@ def audit_header(project_dir, header, cls_info):
     real = {}
     for m in cls_info["members"]:
         real.setdefault(m["name"].lstrip("*&"), m["offset"])
-    bad = []
-    with open(path, errors="replace") as fh:
-        for i, line in enumerate(fh, 1):
-            cm = RE_HDR_COMMENT.search(line)
-            if not cm:
-                continue
-            decl = line[:cm.start()]
-            ids = re.findall(r"([A-Za-z_][A-Za-z0-9_]*)\s*(?:\[[^\]]*\])?\s*;", decl)
-            if not ids:
-                continue
-            name = ids[-1]
-            if name in real and real[name] != int(cm.group(1), 16):
-                bad.append((i, name, int(cm.group(1), 16), real[name]))
+
+    text = open(path, errors="replace").read().split("\n")
+    name_for_span = (cls or cls_info.get("name") or "").split("::")[-1]
+    span = class_body_span(text, name_for_span) if name_for_span else None
+    if span is None:
+        return []
+    start, end, _ = span
+
+    bad, depth = [], 0
+    for i in range(start, min(end + 1, len(text))):
+        line = text[i]
+        line_depth = depth                      # depth BEFORE this line's braces
+        depth += line.count("{") - line.count("}")
+        if line_depth != 1:                     # only this class's own scope
+            continue
+        cm = RE_HDR_COMMENT.search(line)
+        if not cm:
+            continue
+        decl_part = line[:cm.start()]
+        ids = re.findall(r"([A-Za-z_][A-Za-z0-9_]*)\s*(?:\[[^\]]*\])?\s*;", decl_part)
+        if not ids:
+            continue
+        nm = ids[-1]
+        if nm in real and real[nm] != int(cm.group(1), 16):
+            bad.append((i + 1, nm, int(cm.group(1), 16), real[nm]))
     return bad
 
 
@@ -839,7 +895,7 @@ def main():
         hdrs = find_header(args.project_dir, args.cls)
         info = parsed["classes"].get(args.cls)
         if hdrs and info:
-            bad = audit_header(args.project_dir, hdrs[0], info)
+            bad = audit_header(args.project_dir, hdrs[0], info, args.cls)
             print(f"\n=== header comment audit: {hdrs[0]} ===")
             if not bad:
                 print("  all // 0xHEX comments agree with the compiler")
