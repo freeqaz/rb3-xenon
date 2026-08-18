@@ -9,7 +9,76 @@
 
 ## 0. SESSION CLOSE
 
-### 0.13 ROUND FOURTEEN — the round that MEASURED how little is left, and gave the family defect a DETECTOR ← **LATEST**
+### 0.14 ROUND FOURTEEN (ADDENDUM) — the held-back edit came back PROVEN, and the lane RETRACTED its own framing ← **LATEST**
+
+**44,513 fns / 3,763,800 B = 36.468582%**, honest **21,602**. Addendum **+0 fns /
++256 B**; **59.67% of the ceiling** (6,308,052 B corrected). Prediction
+**3,763,544 + 256 = 3,763,800, measured EXACTLY**, `matched_functions` unchanged
+as pre-registered. No `src/` file changed, so `3f05a15e`'s
+`NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 rc=0`
+**carries over by inheritance** — stated explicitly rather than silently skipped.
+
+This is the `AccomplishmentSongConditional` edit **§0.13 deliberately did NOT
+land**, held back as a materially larger claim (a block re-alignment plus two
+NEW names over possibly-anonymous addresses) and sent back to meet the same
+evidentiary standard as the transposition **or be discarded** — with a discard
+stated in advance to be a good outcome. It met the standard.
+
+★★★★★ **THE LANE WAS WRONG ABOUT ITS OWN CLAIM AND SAID SO — and the retraction
+is worth more than the fix.** It is **NOT** a block re-alignment. `Score` and
+`Accuracy` sit at the **right** addresses and were left untouched: they are the
+**in-family control**, and they rule out a systematic mis-derivation of the
+block. Only `Stars` and `Streak` were each **one slot late**. *The smaller claim
+was the true one* — a general lesson about lanes that arrive holding a big
+hypothesis.
+
+**Why the assignment is FORCED, not chosen.** The 12 bodies at
+`0x82669898`–`0x82669d98` are byte-shape-identical — same prologue, same
+`GetSongIDFromShortName`, and exactly **one** distinguishing `bl` to a
+`SongStatusMgr` accessor, which **is** the body's whole information content. The
+accessor is a **BIJECTION** over the 7 distinct-accessor bodies. Corroborated by
+byte geometry (all four addresses own a 128 B `.pdata` entry ⇒ no dtk mis-carve
+phantom) and size agreement (ours **128/124/128/128** vs retail
+**128/124/128/128**).
+
+★★ **A FAILED PREDICTION RESOLVED ON MECHANISM, NOT ASSERTION.** The lane
+pre-registered that `none` would **move**; it was **FLAT** and `ab_measure` fired
+`ALIAS_SUSPECT`. The reason is the detector's whole thesis in one number: in leg
+A our `Stars` body sat on retail's **Streak** body and **still scored fuzzy
+99.8438 / mpn 100**, because the family is uniformly shaped and the only
+difference was the `bl` callee **NAME** — which `none` ignores. **Flatness is
+FORCED.** ⇒ *A mis-homed member of a uniform family is 0.16 pp from invisible.*
+`ALIAS_SUSPECT` was **answered**: no alias added, and +256 B is two rows landing
+on **exactly 100.0000**, which a fabricated assignment cannot produce.
+
+**ECONOMICS — a THIRD distinct ratio, so the split is NOT a constant.**
+**RENAMES +256 B** (correcting a wrong existing name pays) · **ADDITIONS +0 B**
+(exactly as the standing rule predicts — objdiff **forgives** placeholder
+targets, so naming an anonymous address has zero call-site upside) · **CASCADE
+predicted up to +1,188 B on fan-in 1, MEASURED +0** (`CheckConditionsForSong`
+moved 99.9495 → 99.9663 and **did not cross**). ⇒ **100% pairing / 0% cascade**,
+after the 98.9/0.6 and 19.5/80.5 already on record.
+
+⛔ **BUG EXPOSED — the actual payout of the two additions**, invisible while the
+rows were unpaired: our `CheckAwesomes`/`DoubleAwesomes`/`TripleAwesomes` compile
+to **156 B against retail's 128 B**. The 28 B excess is an **unconditional guard
+branch retail does not have** (`MILO_WARN` is a no-op in the match build, but the
+`if` survives). Priced source lever **up to 3 × 128 B**; **not taken** — it
+touches `src/**` and the lane's change budget was the map edit.
+
+⚠ **VEIN DRAINED, WITH ITS CAVEAT.** `DUAL_MAPPED` fell **53 → 51 → 49** across
+the two fixes (self-validating the detector). The entire remaining live class is
+**49 rows / 992 B = 0.0096% of `total_code`** — the ceiling **if every candidate
+were real AND every one crossed**. Median row **16 B**; **45% (22 rows) have
+fan-in 0 BY CONSTRUCTION**, because vtable adjustor thunks are reached *through
+the vtable*, not by `bl`, so caller semantics is **structurally unavailable** to
+this instrument and they need vtable-slot identity instead.
+⛔ **992 B bounds WHAT THIS INSTRUMENT CAN SEE, never how many map names are
+wrong** — the detector fires only at the **BOUNDARY** of a wrong region.
+
+Full record: `docs/decomp/W42_NAME_PERMUTATION_SWEEP_2026-08-18.md`.
+
+### 0.13 ROUND FOURTEEN — the round that MEASURED how little is left, and gave the family defect a DETECTOR
 
 **44,513 fns / 3,763,544 B = 36.466103%**, honest **21,602**. Round **+0 fns /
 +96 B**. **Day total +69 fns / +39,840 B**; **59.66% of the ceiling.**
