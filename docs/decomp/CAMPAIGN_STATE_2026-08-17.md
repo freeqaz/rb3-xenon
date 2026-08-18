@@ -9,7 +9,74 @@
 
 ## 0. SESSION CLOSE
 
-### 0.14 ROUND FOURTEEN (ADDENDUM) — the held-back edit came back PROVEN, and the lane RETRACTED its own framing ← **LATEST**
+### 0.15 ROUND FIFTEEN (IN PROGRESS) — the thunk stratum is adjudicable FROM THE OTHER DIRECTION ← **LATEST**
+
+**44,513 fns / 3,763,984 B = 36.470367%**, honest **21,602**, **59.67% of the
+ceiling**. Round so far **+0 fns / +184 B**, from W45-NAMEADJ waves 1–2. **Both
+predictions exact**; the two lanes' deltas **composed** (3,763,800 + 144 + 40 =
+3,763,984, measured exactly). ⚠ **Round is NOT closed** — W45 was stopped
+mid-sweep by a harness exit, its worktree was clean with both waves committed,
+and it has been **resumed on the remaining hits**.
+
+| wave | pre-registered | measured | |
+|---|---:|---:|---|
+| W45 wave 1 — 12 adjustor-thunk names | +144 B | **+144 B** | ✓ exact |
+| W45 wave 2 — 6 `StandardEffect<T>::Reset` | +40 B | **+40 B** | ✓ exact |
+
+★★★★★ **AN INSTRUMENT'S RESIDUAL BOUNDS THE INSTRUMENT, NOT THE STRATUM — and
+this amends §0.14, landed hours earlier.** W42 characterised 45% of its residual
+(22 of 49 rows) as **fan-in 0 BY CONSTRUCTION**, since vtable adjustor thunks are
+reached *through the vtable* rather than by `bl`, so **caller** semantics is
+structurally unavailable. That is **true, and it is not the end of the stratum**:
+W42's instrument reads the **CALLER** direction, W45's reads the **CALLEE**
+direction. An adjustor thunk adjusts `this` and **tail-branches to the final
+override**, so thunk class+method **must equal** branch-target class+method **by
+construction** — the thunk's own single branch is a *complete* identification and
+**no caller is needed at all**. ⇒ *"structurally unavailable to THIS instrument"
+is not "structurally unidentifiable."* Both lanes are right. Read W42's 992 B as
+a bound on its own reach — **exactly as W42 itself warned**.
+
+★ **Validated as a population instrument with an UNTREATED CONTROL before any row
+was touched**: over all **2,165** map thunks, class+method **AGREE 1,543 / 1,648
+classified = 93.6%**, so the **105** disagreements are anomalies rather than
+noise. *A rule that agreed everywhere would be vacuous; one that agreed rarely
+would be describing the map instead of a defect.*
+
+**Wave 2's decisive argument is INSTRUCTION ACCOUNTING.** All six bodies are
+exactly `lwz r3, mEffect(r3) ; b T::SetParameters`. A no-argument `Reset()`
+**cannot** call `SetParameters(const Params&)` in two instructions — it has no way
+to materialise the reference argument and would need a third (`addi r4,r3,off`).
+`OnSetParameters(const Params&)` already has `r4` live and forwards in exactly
+two. **The 8-byte extent excludes `Reset` by construction.** Corroborated by the
+map being self-consistent against itself (it places `T::Reset` at a *different*
+address for 5 of 6), by a whole-binary branch scan finding **no** tail-branch
+forwarder to any `T::Reset` anywhere in `.text`, and by `mEffect` offsets varying
+per `T` (204/132/156/228/108/216) in step with each `T::Params` size.
+
+★ **REGION SWEEP PAID, and exposed a forgiveness case.** The detector fired on
+only **four**; testing every `?Reset@?$StandardEffect@` entry on retail bytes
+found **six**. `WahEffect` was invisible because its branch target is **unmapped**,
+so objdiff **forgives** the placeholder and the row **already read fuzzy 100.0
+while carrying a wrong name**. Renaming it is worth **exactly 0 bytes** and was
+landed anyway — accuracy over headline %.
+
+⚠ **A FIXED-POINT TRAP WORTH REUSING.** Two clean permutation cycles (EnvAnim
+3-cycle, ContentLoadingPanel 2-cycle) are safe **only because applied
+simultaneously**, and the admissible subset had to be iterated to a **fixed
+point** (5 iterations, dropping 34/7/2/1): **dropping one rename UN-VACATES the
+name it was surrendering and creates fresh collisions.** The naive one-pass
+filter left **7 duplicates while asserting 0**.
+
+**Refused, deliberately:** 34 further disagreeing thunks whose proposal would
+**collide with a live name** — class+method are solid but the **vtordisp token**
+is inherited from the name just proved wrong, and a class with two secondary
+vtables needs two thunks with *different* tokens. **Refusing beats guessing.**
+**Source finding recorded but not acted on:** `src/system/dsp/StandardEffect.h:16`
+`virtual void Reset() { mEffect->Reset(); }` is an override **retail does not
+have**; removing it changes a vtable and cascades to 8 synth TUs, and the family's
+byte value is already collected by the rename.
+
+### 0.14 ROUND FOURTEEN (ADDENDUM) — the held-back edit came back PROVEN, and the lane RETRACTED its own framing
 
 **44,513 fns / 3,763,800 B = 36.468582%**, honest **21,602**. Addendum **+0 fns /
 +256 B**; **59.67% of the ceiling** (6,308,052 B corrected). Prediction
