@@ -225,7 +225,11 @@ def function_slices(path):
                     and rel.get(end - 8) == '__CxxFrameHandler' \
                     and rel.get(end - 4, '').startswith('__ehfuncinfo$'):
                 end -= 8
-            rl = [o - v for (o, _i, _t) in sec['relocs'] if v <= o < end]
+            # PAIR excluded here too: a displacement that happens to fall inside
+            # the body extent would mask a real instruction word and cost the
+            # hash its entropy, letting two different bodies collide.
+            rl = [o - v for (o, _i, t) in sec['relocs']
+                  if t != IMAGE_REL_PPC_PAIR and v <= o < end]
             yield name, raw[v:end], rl, sec['sel']
 
 

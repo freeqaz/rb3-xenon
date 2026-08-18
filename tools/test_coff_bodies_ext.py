@@ -274,6 +274,69 @@ def test_a_pair_pseudo_reloc_cannot_veto_the_fallback_ident(tmp_path):
     assert ident_sizes(coff([sec]), tmp_path)["f"] == 96
 
 
+def _one_fn(relocs):
+    """A bare 96-byte function at offset 0 -- no EH, no funclet, no markers."""
+    return coff([{"data": BODY_96, "syms": [("f", 0, 0x20, 2)],
+                  "relocs": relocs}])
+
+
+def _ident_body(obj, tmp_path, name):
+    p = tmp_path / name
+    p.write_bytes(obj)
+    return {n: (b, rl) for n, b, rl, _sel in ibc.function_slices(p)}["f"]
+
+
+#: A word inside BODY_96 (`lwz r11,0x10(r3)`) whose low half survives only if
+#: nothing masks it -- and which carries no relocation of its own.
+DECOY_OFF = 8
+
+
+def test_a_pair_displacement_does_not_mask_a_real_instruction(tmp_path):
+    """The mask list is not a reloc map, and it has the same rule.
+
+    `body_hash` masks every word a relocation covers. A PAIR record's
+    `VirtualAddress` is a DISPLACEMENT, so admitting it lets a value that
+    happens to equal a real instruction's offset erase that instruction's
+    operand from the fingerprint -- entropy the hash needs, since a bijective
+    body match is what names a retail address.
+    """
+    real = [(BODY_BL_OFF, REL_BRANCH, "callee")]
+    clean_b, clean_rl = _ident_body(_one_fn(real), tmp_path, "clean.obj")
+    decoy_b, decoy_rl = _ident_body(
+        _one_fn(real + [(DECOY_OFF, REL_PAIR, "callee")]), tmp_path, "decoy.obj")
+
+    assert DECOY_OFF not in decoy_rl
+    assert decoy_rl == clean_rl
+    assert ibc.body_hash(decoy_b, decoy_rl) == ibc.body_hash(clean_b, clean_rl)
+
+
+def test_the_pair_assertion_is_not_vacuous(tmp_path):
+    """Null vector: the SAME decoy offset carrying a real relocation type must
+    move the hash. Without this, a `body_hash` that masked nothing at all would
+    pass the test above."""
+    real = [(BODY_BL_OFF, REL_BRANCH, "callee")]
+    clean_b, clean_rl = _ident_body(_one_fn(real), tmp_path, "clean.obj")
+    hit_b, hit_rl = _ident_body(
+        _one_fn(real + [(DECOY_OFF, REL_ADDR32, "callee")]), tmp_path, "hit.obj")
+
+    assert DECOY_OFF in hit_rl
+    assert ibc.body_hash(hit_b, hit_rl) != ibc.body_hash(clean_b, clean_rl)
+
+
+def test_a_pair_at_a_real_reloc_offset_still_masks_that_word(tmp_path):
+    """Excluding PAIR must not withdraw a mask a real record earns. This is the
+    shape the whole build actually emits: MSVC writes the PAIR record at its
+    REFHI/REFLO partner's own VirtualAddress, so the word stays masked."""
+    real = [(BODY_BL_OFF, REL_BRANCH, "callee"),
+            (DECOY_OFF, REL_ADDR32, "callee")]
+    a_b, a_rl = _ident_body(_one_fn(real), tmp_path, "a.obj")
+    b_b, b_rl = _ident_body(
+        _one_fn(real + [(DECOY_OFF, REL_PAIR, "callee")]), tmp_path, "b.obj")
+
+    assert DECOY_OFF in b_rl
+    assert ibc.body_hash(b_b, b_rl) == ibc.body_hash(a_b, a_rl)
+
+
 def test_a_duplicate_reloc_offset_is_first_writer_wins(tmp_path):
     """Two records at one offset: the map must keep the first. A later
     non-PAIR record at the prefix offset would otherwise hide the personality
