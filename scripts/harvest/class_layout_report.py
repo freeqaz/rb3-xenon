@@ -100,15 +100,24 @@ collapse produced a *false answer*, not a missing one::
                    answer -- "not here" -- and legitimately empty.
     COMPILE_FAILED the compiler could not answer at all.  NEVER a zero.
 
-⚠ AND IT IS SLOW ENOUGH THAT A SHORT TIMEOUT IMPERSONATES ``CLASS_ABSENT``.
-The compile prints **nothing** until the TU finishes: measured ~10 min for
-``BandSongMgr`` and up to ~50 min under fleet load.  A caller that kills it
-early sees no class in the output and cannot distinguish that from the
-legitimate "not here" answer above -- i.e. the three-label contract is only
-honoured if you actually let the compiler finish.  **Budget 60 min.**
-(Recorded 2026-07-26 in ``docs/plans/lane-ah-layout-oracle-2026-07-26.md``;
-promoted here 2026-08-18 because a trap filed only in a dated lane write-up is
-invisible to the person running the tool.)
+⚠ AND A SHORT TIMEOUT IMPERSONATES ``CLASS_ABSENT``.  The compile prints
+**nothing** until the TU finishes, so a caller that kills it early sees no class
+in the output and cannot distinguish that from the legitimate "not here" answer
+above -- the three-label contract is only honoured if you let the compiler
+finish.
+
+★ **COST IS PER *TU*, AND ITS SPREAD IS ~200x.**  Measured **13.8 s** for an
+ordinary TU (see COST below) but **~10 min for ``BandSongMgr``** and up to
+**~50 min under fleet load** (``docs/plans/lane-ah-layout-oracle-2026-07-26.md``).
+Both figures are real; they differ by TU size and machine load, not by flag.
+⇒ **Set the timeout from the WORST case (budget 60 min) and the BATCHING from
+the best**: because the cost is per TU rather than per class, ``--all-classes``
+amortises one compile across every class in the file.  **Do not infer "audit a
+few classes and prioritise hard" from the 60-minute number** -- that reasoning
+was briefed to a lane on 2026-08-18 and was wrong; a tree-wide sweep is
+affordable.  (Latency note promoted here 2026-08-18 from a dated lane write-up,
+where it was invisible to the person running the tool; reconciled against COST
+the same day.)
 
 The defect that forced this (reproduced before the fix): the compile command is
 lifted verbatim from ninja, so for the **nine PCH-eligible engine dirs**
