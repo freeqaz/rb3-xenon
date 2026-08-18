@@ -23,18 +23,30 @@ and it has been **resumed on the remaining hits**.
 | W45 wave 1 — 12 adjustor-thunk names | +144 B | **+144 B** | ✓ exact |
 | W45 wave 2 — 6 `StandardEffect<T>::Reset` | +40 B | **+40 B** | ✓ exact |
 
-★★★★★ **AN INSTRUMENT'S RESIDUAL BOUNDS THE INSTRUMENT, NOT THE STRATUM — and
-this amends §0.14, landed hours earlier.** W42 characterised 45% of its residual
-(22 of 49 rows) as **fan-in 0 BY CONSTRUCTION**, since vtable adjustor thunks are
-reached *through the vtable* rather than by `bl`, so **caller** semantics is
-structurally unavailable. That is **true, and it is not the end of the stratum**:
-W42's instrument reads the **CALLER** direction, W45's reads the **CALLEE**
-direction. An adjustor thunk adjusts `this` and **tail-branches to the final
-override**, so thunk class+method **must equal** branch-target class+method **by
-construction** — the thunk's own single branch is a *complete* identification and
-**no caller is needed at all**. ⇒ *"structurally unavailable to THIS instrument"
-is not "structurally unidentifiable."* Both lanes are right. Read W42's 992 B as
-a bound on its own reach — **exactly as W42 itself warned**.
+⛔⛔ **CORRECTION — THIS ENTRY ORIGINALLY CLAIMED TO "AMEND" §0.14. IT DOES NOT,
+AND THE CLAIM WAS THE COORDINATOR'S PARAPHRASE ERROR, NOT A LANE'S FINDING.**
+The first version of this section (landed in `d78da62e`) said W45 corrected W42
+by adjudicating a stratum W42 had called structurally unavailable. **W42 said no
+such thing.** `W42_NAME_PERMUTATION_SWEEP_2026-08-18.md:232-237` reads in full:
+the thunks *"are **not un-adjudicable**, but they need a **different**
+instrument: **vtable slot identity** (`scripts/dump_vtable.py`, `/vtable`), not
+call-site fan-in. **Anyone reopening this should start there and nowhere
+else.**"* W45 built exactly that instrument. ⇒ **W45 is W42's CONFIRMATION, not
+its refutation**, W42's record is accurate as written, and the "amendment"
+**degraded a correct record**. The coordinator relayed only the first half of
+the paragraph and then built a headline on its own paraphrase — ★ **the standing
+`READ THE IN-TREE RECORD FIRST` rule failing in the one place it is most
+expensive: a lane brief.** The lane refused the amendment when asked to make it.
+
+★ **What W42 actually established, restated correctly:** an instrument's
+residual bounds **that instrument's reach**, not the stratum. W42's `bl`-based
+caller-semantics channel cannot see thunks (reached *through the vtable*), said
+so, and **prescribed the replacement**. W45's three channels are that
+replacement: **I1** branch target (a `$4` thunk tail-branches to the final
+override ⇒ class+method equal *by construction*), **I2** vtable-slot identity
+(the only channel supplying the **vtordisp token**), **I3** adjusted-register
+veto (`lwz r11,-4(r4)` ⇔ the method returns a class **by value**, sret
+displacing `this` to `r4`).
 
 ★ **Validated as a population instrument with an UNTREATED CONTROL before any row
 was touched**: over all **2,165** map thunks, class+method **AGREE 1,543 / 1,648
