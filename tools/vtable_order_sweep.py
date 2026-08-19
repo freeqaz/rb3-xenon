@@ -44,14 +44,16 @@ be read as a clean bill.
 
 Usage:
   python3 tools/vtable_order_sweep.py --selftest
-  python3 tools/vtable_order_sweep.py --class TrackInterface -v
-  python3 tools/vtable_order_sweep.py --sweep --json out.json
+  python3 tools/vtable_order_sweep.py --class RndSet -v
+  python3 tools/vtable_order_sweep.py --json out.json          # full sweep
+  python3 tools/vtable_order_sweep.py --map-audit               # map defects
 """
 import argparse
 import collections
 import importlib.util
 import json
 import os
+import re
 import struct
 import sys
 
@@ -186,23 +188,64 @@ def _obj_index(project_dir):
             except Exception:
                 continue
             for (name, _val, secnum, _t, _sc, _i2) in syms:
-                if secnum > 0 and name.startswith('??_7') and name.endswith('@@6B@'):
+                if secnum > 0 and name.startswith('??_7') and '@@6B' in name:
                     idx.setdefault(name, p)
     _OBJ_INDEX = idx
     return idx
 
 
-def our_vtable(cls, project_dir):
-    import dump_vtable
-    sym = f'??_7{cls}@@6B@'
-    p = _obj_index(project_dir).get(sym)
-    if not p:
-        return []
+def read_our_vtable(objpath, symname):
+    """Ordered slot symbols of one `??_7...` vtable in our compiled obj.
+
+    Relocations are filtered to the SYMBOL's own extent and sorted by offset.
+    ⚠ `dump_vtable.find_vtable()` returns every relocation of the whole
+    SECTION, which is fine only while each vtable owns its COMDAT -- for a
+    multi-vtable class that would interleave two tables' slots.
+    """
+    sys.path.insert(0, os.path.join(os.path.dirname(objpath), ''))
+    import coff_func_bodies as cfb
     try:
-        return dump_vtable.get_vtable_layout(cls, obj_path=p,
-                                             project_root=project_dir)
+        d, secs, syms, _ = cfb.parse(objpath)
     except Exception:
         return []
+    me = None
+    for (n, val, secnum, _t, _sc, i) in syms:
+        if n == symname and secnum > 0:
+            me = (val, secnum)
+            break
+    if me is None:
+        return []
+    val, secnum = me
+    sec = secs[secnum - 1]
+    # end = next symbol in the same section strictly after us
+    ends = [v for (n, v, sn, _t, _sc, _i) in syms
+            if sn == secnum and v > val and not n.startswith('$')]
+    end = min(ends) if ends else sec['rawsz']
+    idx = {}
+    for (n, _v, _sn, _t, _sc, i) in syms:
+        idx[i] = n
+    out = []
+    for r in range(sec['nrel']):
+        off = sec['relptr'] + r * 10
+        rva, sidx, _rt = struct.unpack_from('<IIH', d, off)
+        if val <= rva < end:
+            out.append((rva, idx.get(sidx, f'<unk{sidx}>')))
+    out.sort()
+    return [n for _o, n in out]
+
+
+def our_vtable(cls, project_dir, base=None):
+    """Our vtable slot symbols for `cls`; `base` selects a secondary table."""
+    idx = _obj_index(project_dir)
+    if base:
+        cands = [f'??_7{cls}@@6B{base}@@@']
+    else:
+        cands = [f'??_7{cls}@@6B@', f'??_7{cls}@@6B0@@']
+    for sym in cands:
+        p = idx.get(sym)
+        if p:
+            return [dict(symbol=s) for s in read_our_vtable(p, sym)]
+    return []
 
 
 # --------------------------------------------------------------------------
@@ -249,11 +292,45 @@ def compare_orders(retail_names, our_names):
     return verdict, covered, mism
 
 
+def retail_subobject_base(R, vt_va):
+    """Which BASE subobject this retail vtable belongs to, or None for primary.
+
+    `COL.offset` is the vftable's offset within the complete object; the
+    ClassHierarchyDescriptor's BaseClassDescriptors carry each base's `mdisp`.
+    Matching offset->mdisp names the subobject, which is exactly what our COFF
+    encodes in `??_7Class@@6B<Base>@@@`.  That makes the multi-vtable join
+    PRINCIPLED rather than a guess -- previously all 1,306 such vtables were
+    refused outright.
+    """
+    col_ptr = R.u32(vt_va - 4)
+    if not R.is_image_va(col_ptr):
+        return None, None
+    c = R.decode_col(col_ptr)
+    if not R._col_is_plausible(c):
+        return None, None
+    if c.offset == 0:
+        return 0, None
+    got = R.bases_of_col(col_ptr)
+    if not got:
+        return c.offset, None
+    _c, _chd, bases = got
+    for b in bases:
+        if b.mdisp == c.offset and b.name:
+            n = b.name
+            if n.startswith('.?A') and len(n) > 4:
+                n = n[4:]
+            if n.endswith('@@'):
+                n = n[:-2]
+            return c.offset, n
+    return c.offset, None
+
+
 def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
                 n_vtables=1):
     """Compare one class.  Folded slots are EXCLUDED, not counted as agreement."""
     bare = bare_class(cls_rtti)
-    if n_vtables > 1:
+    sub_off, sub_base = retail_subobject_base(R, vt_va)
+    if n_vtables > 1 and sub_off is None:
         # ⛔ 440 of 1,354 retail classes have MORE THAN ONE vtable (multiple or
         # virtual inheritance -- the `$4...` adjustor-thunk classes).  Our COFF
         # exposes a single `??_7X@@6B@`, so comparing it against whichever
@@ -262,6 +339,11 @@ def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
         # reported a 5-slot rotation of Hmx::Object's virtuals, which cannot be
         # real -- a wrong Hmx::Object order would break essentially every match
         # in the binary, and 44,514 functions match.
+        return dict(cls=bare, rtti=cls_rtti, vt_va=vt_va,
+                    retail_slots=len(slots), our_slots=0, folded_slots=0,
+                    verdict='AMBIGUOUS_MULTI_VTABLE', covered=0, mismatches=[])
+    if n_vtables > 1 and sub_off != 0 and sub_base is None:
+        # secondary vtable whose subobject we could not name -> still ambiguous
         return dict(cls=bare, rtti=cls_rtti, vt_va=vt_va,
                     retail_slots=len(slots), our_slots=0, folded_slots=0,
                     verdict='AMBIGUOUS_MULTI_VTABLE', covered=0, mismatches=[])
@@ -284,7 +366,7 @@ def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
             n_folded += 1
             continue
         retail_names.append(addr2name.get(f"0x{w:08x}"))
-    ours = our_vtable(bare, project_dir)
+    ours = our_vtable(bare, project_dir, base=sub_base)
     # ⚠ OUR COFF vtable symbol includes the `??_R4` Complete Object Locator as
     # its first entry; the RETAIL table is read from AFTER the COL (it sits at
     # vtable[-1]).  Comparing them raw shifts every slot by one and made the
@@ -302,6 +384,56 @@ def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
                 folded_slots=n_folded,
                 verdict=verdict, covered=covered,
                 mismatches=[dict(slot=i, retail=r, ours=o) for (i, r, o) in mism])
+
+
+_VIRT = set('EMU')          # E private virtual, M protected virtual, U public virtual
+_NONVIRT = set('QAIS')      # Q public, A private, I protected, S static
+
+
+def access_class(sym):
+    """MSVC member-function access class, or None if not decodable.
+
+    ⚠ ADJUSTOR THUNKS MUST BE EXCLUDED.  `?F@C@@$4PPPPPPPM@A@AAX...` carries a
+    displacement encoding between the `@@` and the real access class, so a
+    naive scan reads a letter out of THAT and reports every thunk as
+    non-virtual -- 1,379 false positives (29.3%) before the exclusion, 47 (1.6%)
+    after.
+    """
+    if not sym or not sym.startswith('?') or sym.startswith('??'):
+        return None
+    if '@@$' in sym:
+        return None
+    m = re.search(r'@@([A-Z])', sym)
+    return m.group(1) if m else None
+
+
+def map_audit(tables, occ, addr2name):
+    """Vtable membership PROVES virtuality -- so a slot named by a non-virtual
+    symbol is a map-spelling defect.
+
+    Control: 96.6% of plain named unfolded slots decode as virtual, which is
+    what makes the 1.6% residue meaningful rather than detector noise.
+    Mechanism is usually an ICF fold where the map recorded a static or
+    non-virtual twin (e.g. `?StaticByteCode@NetPushScreenMsg@@SAEXZ` sitting in
+    a vtable slot); under `name_check` our source spelling then reads as a wrong
+    callee.
+    """
+    bad, seen, virt = [], 0, 0
+    for va, slots in tables.items():
+        within = collections.Counter(w for (_v, w, _p) in slots)
+        for i, (_v, w, _p) in enumerate(slots):
+            if occ.get(w, 0) != 1 or within[w] != 1:
+                continue
+            nm = addr2name.get(f"0x{w:08x}")
+            a = access_class(nm) if nm else None
+            if a is None:
+                continue
+            seen += 1
+            if a in _VIRT:
+                virt += 1
+            elif a in _NONVIRT:
+                bad.append(dict(vtable=va, slot=i, addr=w, name=nm, access=a))
+    return dict(seen=seen, virtual=virt, bad=bad)
 
 
 def selftest(project_dir):
@@ -361,6 +493,9 @@ def main():
     ap.add_argument('--json')
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('-v', '--verbose', action='store_true')
+    ap.add_argument('--map-audit', action='store_true',
+                    help='report vtable slots the map names with a NON-VIRTUAL '
+                         'symbol (impossible => map-spelling defect)')
     ap.add_argument('--selftest', action='store_true')
     args = ap.parse_args()
 
@@ -383,6 +518,21 @@ def main():
     text = [(s.va, s.va + s.rawsize) for s in R.sections if s.name == '.text'][0]
     tables = {va: read_retail_slots(R, va, exts, starts, text) for va, _n in vts}
     occ = fold_counts(tables)
+
+    if args.map_audit:
+        ma = map_audit(tables, occ, addr2name)
+        pct = 100.0 * ma['virtual'] / max(ma['seen'], 1)
+        print(f"plain named unfolded vtable slots : {ma['seen']}")
+        print(f"  virtual (E/M/U) -- the control  : {ma['virtual']} ({pct:.1f}%)")
+        print(f"  NON-VIRTUAL => MAP DEFECT       : {len(ma['bad'])} "
+              f"({100.0 * len(ma['bad']) / max(ma['seen'], 1):.1f}%)")
+        for b in ma['bad'][:40]:
+            print(f"    0x{b['addr']:08x} slot {b['slot']:<3} {b['access']}  {b['name'][:72]}")
+        if args.json:
+            with open(args.json, 'w') as fh:
+                json.dump(ma, fh, indent=1)
+            print(f"\nwrote {args.json}")
+        return 0
 
     sel = vts
     if args.cls:
