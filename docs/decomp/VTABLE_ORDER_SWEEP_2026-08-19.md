@@ -37,13 +37,21 @@ Verdicts: `PERMUTED` (same name multiset, different order — the prize),
 
 ## 2. Result
 
-| verdict | count |
-|---|---:|
-| **PERMUTED** | **2 — both REFUTED on inspection (§3)** |
-| SET_DIFFER | 62 |
-| SAME | 305 |
-| UNRESOLVED | 545 |
-| ⛔ AMBIGUOUS_MULTI_VTABLE | **1,306** |
+| verdict | primary only | **+ multi-vtable join** |
+|---|---:|---:|
+| **PERMUTED** | 2 | **2 — both REFUTED (§3)** |
+| SET_DIFFER | 62 | 85 |
+| SAME | 305 | **400** |
+| UNRESOLVED | 545 | 1,323 |
+| ⛔ AMBIGUOUS_MULTI_VTABLE | 1,306 | **410** |
+| **adjudicated** | 369 | **487** |
+
+★ **The multi-vtable join is principled, not a guess.** `COL.offset` is the
+vftable's offset within the complete object, and the ClassHierarchyDescriptor's
+BaseClassDescriptors carry each base's `mdisp` — so matching `offset → mdisp`
+names the subobject, which is exactly what our COFF encodes in
+`??_7Class@@6B<Base>@@@` (509 of 1,736 of our classes emit more than one).
+That moved 896 vtables out of the refused bucket. It did **not** find new bugs.
 
 ## 3. Four instrument defects, each caught by a control that could fail
 
@@ -116,6 +124,34 @@ and were an artifact.
 - The 62 SET_DIFFER are dominated by fold-alias naming (e.g. `ObjectKeys` slot
   14 reads `Save@FloatKeys` vs our `Save@ObjectKeys` — one folded `Keys<T>::Save`
   instantiation). Not triaged individually.
+
+## 4b. ★★ A BY-PRODUCT WORTH MORE THAN THE SWEEP: a map-defect detector
+
+**Vtable membership PROVES virtuality.** A slot's function must be declared
+`virtual`, so an MSVC access class of `Q`/`A`/`I` (non-virtual) or `S` (static)
+on a vtable slot is impossible. `--map-audit`:
+
+| plain named unfolded vtable slots | 2,929 |
+|---|---:|
+| virtual (`E`/`M`/`U`) — **the control** | **2,829 (96.6%)** |
+| **non-virtual/static ⇒ MAP DEFECT** | **47 (1.6%)** |
+
+The 96.6% is what makes the residue meaningful rather than detector noise.
+Examples: `?StaticByteCode@NetPushScreenMsg@@SAEXZ` (**static**) in slot 6 of
+four different message classes; `?DisplayName@MemcardXbox@@QAAPA_WXZ` (public
+non-virtual) in slot 27; `?MoveBeat@MoveDir@@QBAHXZ` in slot 3.
+
+Mechanism is usually an **ICF fold where the map recorded the non-virtual twin**
+(`StaticByteCode` and a virtual `ByteCode` returning the same constant are
+byte-identical). Under `name_check` our source then spells the *other* member of
+the fold and is charged as a wrong callee — so these are actionable, not
+cosmetic.
+
+⚠ **This number was 1,379 (29.3%) before excluding adjustor thunks** — their
+`@@$4PPPPPPPM@A@` displacement encoding sits between the `@@` and the real
+access class, so a naive scan reads a letter out of the *thunk* and reports
+every one as non-virtual. A 29.3% "defect rate" that is 96% artifact is exactly
+the shape of a finding that should not be shipped.
 
 ## 5. Leads left open
 
