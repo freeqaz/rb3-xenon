@@ -85,3 +85,29 @@ def test_no_alias_tool_selects_groups_by_name():
          str(ROOT / "tools"), str(ROOT / "scripts")],
         capture_output=True, text=True).stdout.strip()
     assert not hits, "alias group selected by `name`:\n" + hits
+
+
+# --------------------------------------------------------------------------- #
+# The map renderer's address requirement
+# --------------------------------------------------------------------------- #
+def _render(groups):
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gen_symbol_alias_map as gm
+    return gm.render_map(groups)
+
+
+def test_render_map_skips_an_address_less_group():
+    """`icf_aliases.map` is keyed BY address -- parse_msvc_map groups whatever
+    shares one. A group with no retail placement has no bucket to go in, and
+    borrowing another group's address would assert a fold nobody proved."""
+    out = _render([{"name": "g", "address": "0x82000000", "survivor": "surv_placed",
+                    "folded": ["fold_placed"]},
+                   {"name": "g", "address": None, "survivor": "surv_unplaced",
+                    "folded": ["fold_unplaced"]}])
+    assert "surv_placed" in out and "fold_placed" in out
+    assert "surv_unplaced" not in out and "fold_unplaced" not in out
+
+
+def test_render_map_still_renders_a_placed_group():
+    out = _render([{"address": "0x82000000", "survivor": "surv_placed", "folded": ["fold_placed"]}])
+    assert out.count("82000000") >= 2
