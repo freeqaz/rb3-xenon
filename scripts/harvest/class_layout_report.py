@@ -100,15 +100,24 @@ collapse produced a *false answer*, not a missing one::
                    answer -- "not here" -- and legitimately empty.
     COMPILE_FAILED the compiler could not answer at all.  NEVER a zero.
 
-⚠ AND IT IS SLOW ENOUGH THAT A SHORT TIMEOUT IMPERSONATES ``CLASS_ABSENT``.
-The compile prints **nothing** until the TU finishes: measured ~10 min for
-``BandSongMgr`` and up to ~50 min under fleet load.  A caller that kills it
-early sees no class in the output and cannot distinguish that from the
-legitimate "not here" answer above -- i.e. the three-label contract is only
-honoured if you actually let the compiler finish.  **Budget 60 min.**
-(Recorded 2026-07-26 in ``docs/plans/lane-ah-layout-oracle-2026-07-26.md``;
-promoted here 2026-08-18 because a trap filed only in a dated lane write-up is
-invisible to the person running the tool.)
+⚠ AND A SHORT TIMEOUT IMPERSONATES ``CLASS_ABSENT``.  The compile prints
+**nothing** until the TU finishes, so a caller that kills it early sees no class
+in the output and cannot distinguish that from the legitimate "not here" answer
+above -- the three-label contract is only honoured if you let the compiler
+finish.
+
+★ **COST IS PER *TU*, AND ITS SPREAD IS ~200x.**  Measured **13.8 s** for an
+ordinary TU (see COST below) but **~10 min for ``BandSongMgr``** and up to
+**~50 min under fleet load** (``docs/plans/lane-ah-layout-oracle-2026-07-26.md``).
+Both figures are real; they differ by TU size and machine load, not by flag.
+⇒ **Set the timeout from the WORST case (budget 60 min) and the BATCHING from
+the best**: because the cost is per TU rather than per class, ``--all-classes``
+amortises one compile across every class in the file.  **Do not infer "audit a
+few classes and prioritise hard" from the 60-minute number** -- that reasoning
+was briefed to a lane on 2026-08-18 and was wrong; a tree-wide sweep is
+affordable.  (Latency note promoted here 2026-08-18 from a dated lane write-up,
+where it was invisible to the person running the tool; reconciled against COST
+the same day.)
 
 The defect that forced this (reproduced before the fix): the compile command is
 lifted verbatim from ninja, so for the **nine PCH-eligible engine dirs**
@@ -530,10 +539,54 @@ def parse(text):
 RE_HDR_COMMENT = re.compile(r"//\s*0x([0-9A-Fa-f]+)")
 
 
-def audit_header(project_dir, header, cls_info):
+def class_body_span(lines, cls):
+    """(start_idx, end_idx, base_depth) of `class cls`'s OWN body, 0-based.
+
+    Returns None if the declaration cannot be located unambiguously.  Callers
+    MUST treat None as "do not audit" rather than falling back to the whole
+    file -- see the ⛔ note in audit_header.
+    """
+    decl = re.compile(r"^\s*(?:class|struct)\s+(?:[A-Za-z_]\w*\s+)?"
+                      + re.escape(cls) + r"\s*(?::|\{|$)")
+    for i, line in enumerate(lines):
+        if not decl.match(line):
+            continue
+        # walk forward to the '{' that opens the body
+        j, depth, opened = i, 0, False
+        while j < len(lines):
+            for ch in lines[j]:
+                if ch == "{":
+                    depth += 1
+                    opened = True
+                elif ch == "}":
+                    depth -= 1
+            if opened and depth <= 0:
+                return i, j, 1
+            if opened and j - i > 4000:      # runaway guard
+                break
+            j += 1
+        return None
+    return None
+
+
+def audit_header(project_dir, header, cls_info, cls=None):
     """Compare `// 0xHEX` trailing comments in a header to the compiler's truth.
 
     Returns list of (line_no, member, commented_offset, real_offset).
+
+    ⛔⛔ SCOPED TO `cls`'s OWN BODY -- AND IT MUST BE.  This function used to scan
+    the WHOLE FILE while comparing against ONE class's offsets, so in any header
+    declaring more than one class a **correct** comment on class B was reported
+    wrong against class A's layout whenever the member NAMES collided.  Measured
+    2026-08-18 on `src/system/utl/Str.h` (declares FixedString, String,
+    StackString): line 68's `char *mStr; // 0x8` is CORRECT for `String` and
+    retail-verified in the surrounding comment, but auditing `FixedString`
+    (whose `mStr` is at 0x0) flagged it as wrong by -8.
+    ⇒ That was not merely noise: **`--fix-header` writes these rows back**, so
+    the bug would have REWRITTEN A CORRECT COMMENT TO A WRONG VALUE -- silent
+    corruption of the very ground truth this tool exists to protect.
+    ⇒ If the class body cannot be located, we audit NOTHING (under-report rather
+    than corrupt).  Members at nested-class depth are skipped for the same reason.
     """
     path = os.path.join(project_dir, header)
     if not os.path.exists(path):
@@ -541,19 +594,62 @@ def audit_header(project_dir, header, cls_info):
     real = {}
     for m in cls_info["members"]:
         real.setdefault(m["name"].lstrip("*&"), m["offset"])
-    bad = []
-    with open(path, errors="replace") as fh:
-        for i, line in enumerate(fh, 1):
-            cm = RE_HDR_COMMENT.search(line)
-            if not cm:
-                continue
-            decl = line[:cm.start()]
-            ids = re.findall(r"([A-Za-z_][A-Za-z0-9_]*)\s*(?:\[[^\]]*\])?\s*;", decl)
-            if not ids:
-                continue
-            name = ids[-1]
-            if name in real and real[name] != int(cm.group(1), 16):
-                bad.append((i, name, int(cm.group(1), 16), real[name]))
+
+    text = open(path, errors="replace").read().split("\n")
+    name_for_span = (cls or cls_info.get("name") or "").split("::")[-1]
+    span = class_body_span(text, name_for_span) if name_for_span else None
+    if span is None:
+        return []
+    start, end, _ = span
+
+    bad, depth = [], 0
+    cond = []          # preprocessor stack: True == this branch is LIVE here
+    for i in range(start, min(end + 1, len(text))):
+        line = text[i]
+        s = line.strip()
+
+        # ⛔ PREPROCESSOR-AWARE.  A comment inside `#ifdef HX_NATIVE` documents
+        # the NATIVE layout, and the match build never defines HX_NATIVE, so
+        # comparing it against the (non-native) compile is a guaranteed false
+        # positive.  Measured 2026-08-18 on src/system/obj/Object.h:1886 --
+        # `ObjRef mRefs; // 0x4 (native)` inside #ifdef HX_NATIVE, flagged
+        # against the retail layout where mRefs is at 0x20, with the correct
+        # retail value documented three lines above.
+        if s.startswith("#"):
+            d = s[1:].lstrip()
+            if d.startswith(("ifdef", "ifndef", "if ", "if(")):
+                neg = d.startswith("ifndef")
+                live = not ("HX_NATIVE" in d) if not neg else True
+                if d.startswith("if 0"):
+                    live = False
+                cond.append(live)
+            elif d.startswith("elif"):
+                if cond:
+                    cond[-1] = "HX_NATIVE" not in d
+            elif d.startswith("else"):
+                if cond:
+                    cond[-1] = not cond[-1]
+            elif d.startswith("endif"):
+                if cond:
+                    cond.pop()
+            continue
+
+        line_depth = depth                      # depth BEFORE this line's braces
+        depth += line.count("{") - line.count("}")
+        if line_depth != 1:                     # only this class's own scope
+            continue
+        if not all(cond):                       # inside a dead #if branch
+            continue
+        cm = RE_HDR_COMMENT.search(line)
+        if not cm:
+            continue
+        decl_part = line[:cm.start()]
+        ids = re.findall(r"([A-Za-z_][A-Za-z0-9_]*)\s*(?:\[[^\]]*\])?\s*;", decl_part)
+        if not ids:
+            continue
+        nm = ids[-1]
+        if nm in real and real[nm] != int(cm.group(1), 16):
+            bad.append((i + 1, nm, int(cm.group(1), 16), real[nm]))
     return bad
 
 
@@ -839,7 +935,7 @@ def main():
         hdrs = find_header(args.project_dir, args.cls)
         info = parsed["classes"].get(args.cls)
         if hdrs and info:
-            bad = audit_header(args.project_dir, hdrs[0], info)
+            bad = audit_header(args.project_dir, hdrs[0], info, args.cls)
             print(f"\n=== header comment audit: {hdrs[0]} ===")
             if not bad:
                 print("  all // 0xHEX comments agree with the compiler")
