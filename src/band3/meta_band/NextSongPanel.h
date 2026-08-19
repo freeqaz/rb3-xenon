@@ -73,6 +73,6 @@ public:
     bool unk80[4];
     bool unk84[4];
     RndGroup *mScrollGroups[4]; // 0x88
-    bool unk98; // 0x98
+    bool unk98; // 0xa0
     std::vector<UILabel *> mDetailLabels; // 0x9c
 };

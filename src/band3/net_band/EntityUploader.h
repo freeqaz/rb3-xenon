@@ -58,12 +58,12 @@ public:
 
     int GenerateOpID() { return ++mOpIdGenerator; }
 
-    int mCallType; // 0x1c
-    int mState; // 0x20
-    EntityData **mUploadOps; // 0x24
-    int mNumUploadOps; // 0x28
-    DataArray *mEmptyArray; // 0x2c
-    Hmx::Object *mCallbackObj; // 0x30
+    int mCallType; // 0x28
+    int mState; // 0x2c
+    EntityData **mUploadOps; // 0x30
+    int mNumUploadOps; // 0x34
+    DataArray *mEmptyArray; // 0x38
+    Hmx::Object *mCallbackObj; // 0x3c
     DateTime mSubmittedTime; // 0x40
     bool unk34; // 0x46
     int mOpIdGenerator; // 0x48

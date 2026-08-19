@@ -130,12 +130,12 @@ public:
     int HasNoteInRange(int, int) const;
 
     std::vector<VocalPhrase> mPhrases; // 0x0
-    std::vector<VocalPhrase> mLyricPhrases; // 0x8
-    std::vector<VocalNote> mNotes; // 0x10
-    std::vector<int> mTambourineGems; // 0x18
-    std::vector<std::pair<float, float> > mFreestyleSections; // 0x20
+    std::vector<VocalPhrase> mLyricPhrases; // 0xc
+    std::vector<VocalNote> mNotes; // 0x18
+    std::vector<int> mTambourineGems; // 0x24
+    std::vector<std::pair<float, float> > mFreestyleSections; // 0x30
     Symbol mTrackName; // 0x28
-    SongData *mSongData; // 0x2c
-    DataArray *mFreestyleMinDuration; // 0x30
+    SongData *mSongData; // 0x40
+    DataArray *mFreestyleMinDuration; // 0x44
     DataArray *mFreestylePad; // 0x34
 };

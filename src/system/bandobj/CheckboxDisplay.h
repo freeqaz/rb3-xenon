@@ -34,6 +34,6 @@ public:
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
-    RndMesh *mCheckMesh; // 0x10c
+    RndMesh *mCheckMesh; // 0x140
     bool mChecked; // 0x110
 };

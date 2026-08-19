@@ -90,22 +90,22 @@ public:
     float GetRange() const { return mRange; }
     float GetOffset() const { return mOffset; }
 
-    bool mResetFills; // 0x68
-    bool mUseFills; // 0x69
-    ObjPtr<GemTrackDir> mTrackDir; // 0x6c
-    int mLastTopTick; // 0x78
-    int mLastBottomTick; // 0x7c
-    GemManager *mGemManager; // 0x80
-    PlayerState mPlayerState; // 0x84
-    PlayerState mLastPlayerState; // 0x9c
-    unsigned short mKickPassCounter; // 0xb4
-    bool mUpdateShifting; // 0xb6
-    bool mEnableShifting; // 0xb7
-    std::vector<RangeShift> mRangeShifts; // 0xb8
+    bool mResetFills; // 0x78
+    bool mUseFills; // 0x79
+    ObjPtr<GemTrackDir> mTrackDir; // 0x7c
+    int mLastTopTick; // 0x88
+    int mLastBottomTick; // 0x8c
+    GemManager *mGemManager; // 0x90
+    PlayerState mPlayerState; // 0x94
+    PlayerState mLastPlayerState; // 0xac
+    unsigned short mKickPassCounter; // 0xc4
+    bool mUpdateShifting; // 0xc6
+    bool mEnableShifting; // 0xc7
+    std::vector<RangeShift> mRangeShifts; // 0xc8
     RangeShift *mCurrentRangeShift; // 0xc0
-    float mRange; // 0xc4
-    float mOffset; // 0xc8
-    ObjPtr<RndAnimatable> mUpcomingShiftMaskAnim; // 0xcc
+    float mRange; // 0xd8
+    float mOffset; // 0xdc
+    ObjPtr<RndAnimatable> mUpcomingShiftMaskAnim; // 0xe0
     int mBeatLineSubdivisionTicks; // 0xd8
-    ObjPtrList<Task> mKeyIntroTasks; // 0xdc
+    ObjPtrList<Task> mKeyIntroTasks; // 0xf0
 };

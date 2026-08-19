@@ -19,6 +19,6 @@ public:
     Symbol mName; // 0x04
     bool mIsInternal; // 0x08
     SongSortMgr::SongFilter mFilter; // 0xc
-    Symbol mFilteredPartSym; // 0x20
-    float mWeight; // 0x24
+    Symbol mFilteredPartSym; // 0x28
+    float mWeight; // 0x2c
 };

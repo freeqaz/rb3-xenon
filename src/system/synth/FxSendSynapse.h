@@ -26,21 +26,21 @@ protected:
     FxSendSynapse();
 
     /** "amount of correction". Ranges from 0 to 1. */
-    float mAmount; // 0x60
+    float mAmount; // 0x54
     /** "amount of correction dependence on error". Ranges from 0 to 1. */
-    float mProximityEffect; // 0x64
+    float mProximityEffect; // 0x58
     /** "focus for amount of correction dependence on error". Ranges from 0 to 1. */
-    float mProximityFocus; // 0x68
+    float mProximityFocus; // 0x5c
     /** "target note 1 frequency". Ranges from 10 to 1000. */
-    float mNote1Hz; // 0x6c
+    float mNote1Hz; // 0x60
     /** "target note 2 frequency". Ranges from 10 to 1000. */
-    float mNote2Hz; // 0x70
+    float mNote2Hz; // 0x64
     /** "target note 3 frequency". Ranges from 10 to 1000. */
-    float mNote3Hz; // 0x74
+    float mNote3Hz; // 0x68
     /** "whether the three voices would sing in unison" */
-    bool mUnisonTrio; // 0x78
+    bool mUnisonTrio; // 0x6c
     /** "attack time ms for correction". Ranges from 10 to 500. */
-    float mAttackSmoothing; // 0x7c
+    float mAttackSmoothing; // 0x70
     /** "release time ms for correction". Ranges from 10 to 500. */
-    float mReleaseSmoothing; // 0x80
+    float mReleaseSmoothing; // 0x74
 };

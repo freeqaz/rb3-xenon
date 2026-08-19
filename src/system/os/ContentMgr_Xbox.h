@@ -35,12 +35,12 @@ private:
     bool mValidLicenseBits; // 0x144
     String mRoot; // 0x148
     String mContentPath; // 0x150
-    State mState; // 0x158
-    int mPadNum; // 0x15c
-    bool mPendingDelete; // 0x160
+    State mState; // 0x160
+    int mPadNum; // 0x164
+    bool mPendingDelete; // 0x168
     bool mCorrupt; // 0x161
-    Symbol mFilename; // 0x164
-    unsigned int mLRM; // 0x168
+    Symbol mFilename; // 0x16c
+    unsigned int mLRM; // 0x170
 };
 
 #define kNumberOfBuffers 7

@@ -44,20 +44,20 @@ public:
 private:
     float getCalculatedSpeed(float);
 
-    SampleInst *mSample; // 0x2c
+    SampleInst *mSample; // 0x28
     float mVolume; // 0x30
     float mStartProgress; // 0x34
     unsigned char mTriggerNote; // 0x38
-    unsigned char mCenterNote; // 0x39
+    unsigned char mCenterNote; // 0x35
     bool mStarted; // 0x3a
     bool mStopped; // 0x3b
     int mGlideID; // 0x3c
-    int mGlideFrames; // 0x40
-    float mGlideToNote; // 0x44
-    float mGlideFromNote; // 0x48
-    int mGlideFramesLeft; // 0x4c
-    float mFineTune; // 0x50
-    int mDurationFramesLeft; // 0x54
+    int mGlideFrames; // 0x3c
+    float mGlideToNote; // 0x40
+    float mGlideFromNote; // 0x44
+    int mGlideFramesLeft; // 0x48
+    float mFineTune; // 0x4c
+    int mDurationFramesLeft; // 0x50
     MidiInstrument *mOwner; // 0x58
 };
 
@@ -115,16 +115,16 @@ private:
 protected:
     MidiInstrument();
 
-    ObjVector<SampleZone> mMultiSampleMap; // 0x38
-    int mPatchNumber; // 0x48
+    ObjVector<SampleZone> mMultiSampleMap; // 0x28
+    int mPatchNumber; // 0x38
     /** "Effect chain to use" */
     ObjPtr<FxSend> mSend; // 0x4c
     /** "Reverb send for this instrument". Ranges from -96 to 20. */
-    float mReverbMixDb; // 0x60
+    float mReverbMixDb; // 0x48
     /** "Enable reverb send" */
-    bool mReverbEnable; // 0x64
-    ObjPtrList<NoteVoiceInst> mActiveVoices; // 0x68
+    bool mReverbEnable; // 0x4c
+    ObjPtrList<NoteVoiceInst> mActiveVoices; // 0x50
     /** "Faders affecting this sound effect" */
     FaderGroup mFaders; // 0x7c
-    float mFineTuneCents; // 0x94
+    float mFineTuneCents; // 0x7c
 };

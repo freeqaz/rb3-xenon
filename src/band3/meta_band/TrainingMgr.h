@@ -31,9 +31,9 @@ public:
     static void Init();
     static TrainingMgr *GetTrainingMgr();
 
-    LocalBandUser *mUser; // 0x1c
-    Difficulty mMinimumDifficulty; // 0x20
+    LocalBandUser *mUser; // 0x28
+    Difficulty mMinimumDifficulty; // 0x2c
     Symbol mReturnScreen; // 0x24
     Symbol mQuitToken; // 0x28
-    int mCurrentLesson; // 0x2c
+    int mCurrentLesson; // 0x38
 };

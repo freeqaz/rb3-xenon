@@ -56,6 +56,6 @@ public:
 
     OBJ_MEM_OVERLOAD(0x39);
 
-    ObjList<Layer> mLayers; // 0x18c
-    bool mUseFreeCam; // 0x198
+    ObjList<Layer> mLayers; // 0x1dc
+    bool mUseFreeCam; // 0x1e8
 };

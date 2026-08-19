@@ -37,30 +37,30 @@ public:
         Anim &operator=(const Anim &);
 
         ObjOwnerPtr<RndAnimatable> mAnim; // 0x0
-        float mBlend; // 0x14
-        bool mWait; // 0x18
-        float mDelay; // 0x1c
+        float mBlend; // 0xc
+        bool mWait; // 0x10
+        float mDelay; // 0x14
         /** "Enable animation filtering" */
-        bool mEnable; // 0x20
+        bool mEnable; // 0x18
         /** "Rate to animate" */
-        RndAnimatable::Rate mRate; // 0x24
+        RndAnimatable::Rate mRate; // 0x1c
         /** "Start frame of animation" */
-        float mStart; // 0x28
+        float mStart; // 0x20
         /** "End frame of animation" */
-        float mEnd; // 0x2c
+        float mEnd; // 0x24
         /** "Period of animation if non-zero" */
-        float mPeriod; // 0x30
+        float mPeriod; // 0x28
         /** "Scale of animation" */
-        float mScale; // 0x34
+        float mScale; // 0x2c
         /** "Type of animation" */
-        Symbol mType; // 0x38
+        Symbol mType; // 0x30
     };
     struct ProxyCall {
         ProxyCall(Hmx::Object *);
         ProxyCall &operator=(const ProxyCall &);
 
         ObjOwnerPtr<ObjectDir> mProxy; // 0x0
-        Symbol mCall; // 0x14
+        Symbol mCall; // 0xc
         /** "event trigger to fire" */
         ObjOwnerPtr<EventTrigger> mEvent; // 0x18
     };
@@ -72,9 +72,9 @@ public:
         /** "object to hide" */
         ObjOwnerPtr<RndDrawable> mHide; // 0x0
         /** "seconds to delay hiding" */
-        float mDelay; // 0x14
+        float mDelay; // 0xc
         /** "rate by which to measure delay" */
-        int mRate; // 0x18
+        int mRate; // 0x10
     };
 
     virtual void Replace(ObjRef *, Hmx::Object *);
@@ -145,15 +145,15 @@ protected:
     ObjPtr<EventTrigger> mNextLink; // 0xa4
     Symbol mHandler; // 0xb8
     ObjPtrList<RndPartLauncher> mPartLaunchers; // 0xbc
-    bool mParticleTriggerConverted; // 0xd0
+    bool mParticleTriggerConverted; // 0xc8
     TriggerAnim mAnimTrigger; // 0xd4
     float mAnimFrame; // 0xd8
-    bool mEnabled; // 0xdc
-    bool mEnabledAtStart; // 0xdd
+    bool mEnabled; // 0xd4
+    bool mEnabledAtStart; // 0xd5
     bool mWaiting; // 0xde
     ObjPtrList<RndDrawable> mHidden; // 0xe0
     ObjPtrList<RndDrawable> mShown; // 0xf4
-    bool mTriggered; // 0x108
+    bool mTriggered; // 0x100
     TriggerOrder mTriggerOrder; // 0x10c
     int mLastTriggerIndex; // 0x110
 };

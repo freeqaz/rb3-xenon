@@ -32,13 +32,13 @@ private:
     /** "Which sample to play" */
     ObjPtr<SynthSample> mSample; // 0x0
     /** "Volume in dB (0 is full volume, -96 is silence)" */
-    float mVolume; // 0x14
+    float mVolume; // 0xc
     /** "Surround pan, between -4 and 4" */
-    float mPan; // 0x18
+    float mPan; // 0x10
     /** "Transpose in half steps" */
-    float mTranspose; // 0x1c
+    float mTranspose; // 0x14
     /** "Which core's digital FX should be used in playing this sample" */
-    FXCore mFXCore; // 0x20
+    FXCore mFXCore; // 0x18
     ADSRImpl mADSR; // 0x24
 };
 
@@ -113,13 +113,13 @@ public:
 protected:
     Sfx();
 
-    ObjVector<SfxMap> mMaps; // 0x80
-    ObjVector<MoggClipMap> mMoggClipMaps; // 0x90
+    ObjVector<SfxMap> mMaps; // 0x7c
+    ObjVector<MoggClipMap> mMoggClipMaps; // 0x8c
     /** "Effect chain to use" */
     ObjPtr<FxSend> mSend; // 0xa0
     /** "Reverb send for this sfx" */
-    float mReverbMixDb; // 0xb4
+    float mReverbMixDb; // 0xa8
     /** "Enable reverb send" */
-    bool mReverbEnable; // 0xb8
-    ObjPtrList<SfxInst> mSfxInsts; // 0xbc
+    bool mReverbEnable; // 0xac
+    ObjPtrList<SfxInst> mSfxInsts; // 0xb0
 };

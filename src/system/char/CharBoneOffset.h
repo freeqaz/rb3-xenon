@@ -32,5 +32,5 @@ protected:
     /** "The bone to offset" */
     ObjPtr<RndTransformable> mDest; // 0x10
     /** "the offset" */
-    Vector3 mOffset; // 0x24
+    Vector3 mOffset; // 0x1c
 };

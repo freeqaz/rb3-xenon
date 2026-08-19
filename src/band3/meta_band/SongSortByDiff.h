@@ -29,5 +29,5 @@ public:
     virtual OwnedSongSortNode *NewSongNode(SongRecord *) const;
     virtual StoreSongSortNode *NewSongNode(class StoreOffer *) const;
 
-    Symbol mSortPart; // 0x3c
+    Symbol mSortPart; // 0x50
 };

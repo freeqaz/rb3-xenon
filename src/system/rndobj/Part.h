@@ -318,15 +318,15 @@ protected:
     DataNode OnSetPos(const DataArray *);
     DataNode OnActiveParticles(const DataArray *);
 
-    Type mType; // 0x118
+    Type mType; // 0xf0
     /** "maximum number of particles". Ranges from 0 to 3072. */
     int mMaxParticles; // 0x11c
     RndParticle *mPersistentParticles; // 0x120
-    RndParticle *mFreeParticles; // 0x124
-    RndParticle *mActiveParticles; // 0x128
-    int mNumActive; // 0x12c
+    RndParticle *mFreeParticles; // 0xfc
+    RndParticle *mActiveParticles; // 0x100
+    int mNumActive; // 0x104
     float mEmitCount; // 0x130
-    bool mFrameDrive; // 0x134
+    bool mFrameDrive; // 0x10c
     float mLastFrame;
     int mDrawCount;
     /** "Freezes the particle motion when they are offscreen, CPU savings" */
@@ -344,7 +344,7 @@ protected:
     Vector3 mBoxExtent2; // 0x170
     /** "Speed range, in world units per frame, of particles." */
     Vector2 mSpeed; // 0x180
-    Vector2 mPitch; // 0x188
+    Vector2 mPitch; // 0x160
     Vector2 mYaw; // 0x190
     /** "Frame range to generate particles." */
     Vector2 mEmitRate; // 0x198
@@ -363,7 +363,7 @@ protected:
     ObjPtr<RndMesh> mMeshEmitter; // 0x1f0
     /** "material for particle system" */
     ObjPtr<RndMat> mMat; // 0x204
-    bool mPreserveParticles; // 0x218
+    bool mPreserveParticles; // 0x1e0
     Transform mRelativeXfm; // 0x21c
     Transform mLastWorldXfm; // 0x25c
     /** "If [motion_parent] is set, is amount to make movement relative to it,
@@ -391,7 +391,7 @@ protected:
     bool mBubble; // 0x2ec
     /** "Spawns particles on enter, so we start out with particles there" */
     bool mFastForward; // 0x2ed
-    bool mNeedForward; // 0x2ee
+    bool mNeedForward; // 0x296
     bool mRotate; // 0x2ef
     Vector2 mRPM; // 0x2f0
     float mRPMDrag; // 0x2f8
@@ -432,10 +432,10 @@ protected:
     int mMaxBurst; // 0x3a0
     float mTimeTillBurst; // 0x3a4
     Vector2 mBurstInterval; // 0x3a8
-    Vector2 mBurstPeak; // 0x3b0
+    Vector2 mBurstPeak; // 0x350
     Vector2 mBurstLength; // 0x3b8
     int mExplicitParts; // 0x3c0
-    float mElapsedTime; // 0x3c4
+    float mElapsedTime; // 0x364
 #ifdef HX_NATIVE
     // DC3 (newer engine) UV-tile-animation + particle-attractor block. Retail RB3
     // has neither feature, so this entire tail (0x30 = 48B) does NOT exist in the

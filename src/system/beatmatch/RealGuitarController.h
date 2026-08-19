@@ -29,8 +29,8 @@ public:
     int OnMsg(const RGStompBoxMsg &);
     int OnMsg(const StringStoppedMsg &) { return 0; }
 
-    bool mDisabled; // 0x3c
+    bool mDisabled; // 0x48
     int unk40; // 0x40 - usbmidiguitar* mguitar?
-    BeatMatchControllerSink *mSink; // 0x44
+    BeatMatchControllerSink *mSink; // 0x50
     int mStrings[kNumRGStrings]; // 0x48
 };

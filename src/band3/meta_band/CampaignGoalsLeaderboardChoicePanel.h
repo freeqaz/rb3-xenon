@@ -47,7 +47,7 @@ public:
     }
 
     std::vector<Symbol> mEntries; // 0x20
-    const std::vector<DynamicTex *> &mIcons; // 0x28
+    const std::vector<DynamicTex *> &mIcons; // 0x38
 };
 
 class CampaignGoalsLeaderboardChoicePanel : public TexLoadPanel {
@@ -66,5 +66,5 @@ public:
     NEW_OBJ(CampaignGoalsLeaderboardChoicePanel);
     static void Init() { REGISTER_OBJ_FACTORY(CampaignGoalsLeaderboardChoicePanel); }
 
-    CampaignGoalsLeaderboardChoiceProvider *mCampaignGoalsLeaderboardChoiceProvider; // 0x4c
+    CampaignGoalsLeaderboardChoiceProvider *mCampaignGoalsLeaderboardChoiceProvider; // 0x54
 };

@@ -24,7 +24,7 @@ public:
     static void Init();
 
     ObjDirPtr<ObjectDir> unk1c; // 0x1c
-    bool unk28; // 0x28
+    bool unk28; // 0x34
 };
 
 extern CharCache *TheCharCache;

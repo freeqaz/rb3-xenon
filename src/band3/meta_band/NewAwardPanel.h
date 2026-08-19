@@ -34,12 +34,12 @@ public:
         return ret;
     }
 
-    Symbol unk20; // 0x20
-    std::vector<Symbol> unk24; // 0x24
-    const std::vector<DynamicTex *> &mIcons; // 0x2c
-    RndMat *mMaleMat; // 0x30
-    RndMat *mFemaleMat; // 0x34
-    RndMat *mUnisexMat; // 0x38
+    Symbol unk20; // 0x2c
+    std::vector<Symbol> unk24; // 0x30
+    const std::vector<DynamicTex *> &mIcons; // 0x3c
+    RndMat *mMaleMat; // 0x40
+    RndMat *mFemaleMat; // 0x44
+    RndMat *mUnisexMat; // 0x48
 };
 
 class NewAwardPanel : public TexLoadPanel {
@@ -59,8 +59,8 @@ public:
     NEW_OBJ(NewAwardPanel);
     static void Init() { REGISTER_OBJ_FACTORY(NewAwardPanel); }
 
-    LocalBandUser *mUser; // 0x4c
-    Symbol mAwardName; // 0x50
-    Symbol mAwardReason; // 0x54
-    AwardAssetProvider *m_pAwardAssetProvider; // 0x58
+    LocalBandUser *mUser; // 0x54
+    Symbol mAwardName; // 0x58
+    Symbol mAwardReason; // 0x5c
+    AwardAssetProvider *m_pAwardAssetProvider; // 0x60
 };

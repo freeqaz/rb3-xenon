@@ -29,14 +29,14 @@ public:
 
     DataNode OnMsg(const JoypadConnectionMsg &);
 
-    BeatMatchController *mController; // 0x3c
-    BandUser *mUser; // 0x40
-    float mSecsPerBeat; // 0x44
-    float mBeatTimer; // 0x48
-    int mBeatCount; // 0x4c
-    Metronome *mMetronome; // 0x50
-    bool mSoloEnabled; // 0x54
-    float mSoloStartSecs; // 0x58
-    float mLastSwingSecs; // 0x5c
-    bool mFreestylePaused; // 0x60
+    BeatMatchController *mController; // 0x40
+    BandUser *mUser; // 0x44
+    float mSecsPerBeat; // 0x48
+    float mBeatTimer; // 0x4c
+    int mBeatCount; // 0x50
+    Metronome *mMetronome; // 0x54
+    bool mSoloEnabled; // 0x58
+    float mSoloStartSecs; // 0x5c
+    float mLastSwingSecs; // 0x60
+    bool mFreestylePaused; // 0x64
 };

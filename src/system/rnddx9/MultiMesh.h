@@ -22,7 +22,7 @@ private:
     static D3DVertexDeclaration *sVertexDecl;
     static D3DVertexDeclaration *sMutableVertexDecl;
 
-    int mGeomDirtyFlags;                  // 0x5C
+    int mGeomDirtyFlags;                  // 0x38
     int mBufferCycleIndex;                 // 0x60 - cycles through 3 buffers
     D3DVertexBuffer *mVertexBuffers[3];    // 0x64 - triple-buffered vertex data
     D3DVertexBuffer *mIndexBuffers[3];     // 0x70 - triple-buffered index data

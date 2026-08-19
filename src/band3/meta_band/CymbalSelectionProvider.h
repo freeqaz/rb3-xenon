@@ -15,5 +15,5 @@ public:
     void ReloadData();
 
     std::vector<Symbol> unk20;
-    OvershellSlot *mSlot; // 0x28
+    OvershellSlot *mSlot; // 0x38
 };

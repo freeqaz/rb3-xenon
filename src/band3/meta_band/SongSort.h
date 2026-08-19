@@ -42,10 +42,10 @@ public:
 
     static Symbol FirstChar(const char *, bool);
 
-    std::vector<ShortcutNode *> mTree; // 0x20
-    std::list<SortNode *> mFunctions; // 0x28
-    std::vector<SortNode *> mList; // 0x30
-    Symbol mShortName; // 0x38
+    std::vector<ShortcutNode *> mTree; // 0x2c
+    std::list<SortNode *> mFunctions; // 0x38
+    std::vector<SortNode *> mList; // 0x40
+    Symbol mShortName; // 0x4c
 };
 
 class SongSort : public NodeSort {

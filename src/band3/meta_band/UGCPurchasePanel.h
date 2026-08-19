@@ -26,11 +26,11 @@ public:
     DataNode OnMsg(const SigninChangedMsg &);
     DataNode OnMsg(const RockCentralOpCompleteMsg &);
 
-    int mPurchaseState; // 0x38
-    LocalBandUser *mUser; // 0x3c
+    int mPurchaseState; // 0x3c
+    LocalBandUser *mUser; // 0x40
     Symbol mSong; // 0x40
-    const char *mOfferID; // 0x44
-    StorePurchaser *mPurchaser; // 0x48
-    bool unk4c; // 0x4c
+    const char *mOfferID; // 0x48
+    StorePurchaser *mPurchaser; // 0x4c
+    bool unk4c; // 0x50
     DataResultList mResultList; // 0x50
 };

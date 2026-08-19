@@ -42,11 +42,11 @@ public:
     int GetNeighboringBlackKeySlot(int, int) const;
     int GetNeighboring5LaneSlot(int, int) const;
 
-    int mHeldGem; // 0xd4
-    unsigned int mHeldSlots; // 0xd8
-    unsigned int mDownKeys; // 0xdc
+    int mHeldGem; // 0xe0
+    unsigned int mHeldSlots; // 0xe4
+    unsigned int mDownKeys; // 0xe8
     float mMissWindowMs; // 0xe0
     float mLastMissTimeMs; // 0xe4
-    float mFatFingerWindowMs; // 0xe8
-    std::vector<FatFingerData> mFatFingerDatas; // 0xec
+    float mFatFingerWindowMs; // 0xf4
+    std::vector<FatFingerData> mFatFingerDatas; // 0xf8
 };

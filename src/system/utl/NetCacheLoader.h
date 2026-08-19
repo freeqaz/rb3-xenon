@@ -33,11 +33,11 @@ public:
     State mState; // 0x0
     FileCache *mCache; // 0x4
     String mRemotePath; // 0x8
-    FileLoader *mFileLoader; // 0x10
-    char *mFileLoaderBuffer; // 0x14
-    NetLoader *mNetLoader; // 0x18
-    char *mNetLoaderBuffer; // 0x1c
-    int mFailType; // 0x20
+    FileLoader *mFileLoader; // 0x14
+    char *mFileLoaderBuffer; // 0x18
+    NetLoader *mNetLoader; // 0x1c
+    char *mNetLoaderBuffer; // 0x20
+    int mFailType; // 0x24
 
 protected:
     void SetState(NetCacheLoader::State);

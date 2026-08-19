@@ -11,6 +11,6 @@ public:
     virtual void FillSwing(int, int, int, bool);
     virtual void CodaSwing(int, int);
 
-    DrumFillInfo *mFillInfo; // 0xc8
-    int mFillNotes; // 0xcc
+    DrumFillInfo *mFillInfo; // 0xd4
+    int mFillNotes; // 0xd8
 };

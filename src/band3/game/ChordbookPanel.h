@@ -77,33 +77,33 @@ public:
     DataNode OnSkipConfirm(DataArray *);
     DataNode OnSkipCancel(DataArray *);
 
-    bool mStartChordbook; // 0x3c
-    GemPlayer *mGemPlayer; // 0x40
-    BandUser *unk44; // 0x44
-    Symbol mSongName; // 0x48
-    TrackDir *unk4c; // 0x4c
-    RndDir *mChordLegend; // 0x50
-    GameGemList *mGameGemList; // 0x54
-    TrackWidget *mChordWid; // 0x58
-    TrackWidget *mFretWid; // 0x5c
-    TrackWidget *mLabelWid; // 0x60
-    unsigned int mNumSteps; // 0x64
-    BeatMatchController *mController; // 0x68
-    int mCurrentChord; // 0x6c
+    bool mStartChordbook; // 0x40
+    GemPlayer *mGemPlayer; // 0x44
+    BandUser *unk44; // 0x48
+    Symbol mSongName; // 0x4c
+    TrackDir *unk4c; // 0x50
+    RndDir *mChordLegend; // 0x54
+    GameGemList *mGameGemList; // 0x58
+    TrackWidget *mChordWid; // 0x5c
+    TrackWidget *mFretWid; // 0x60
+    TrackWidget *mLabelWid; // 0x64
+    unsigned int mNumSteps; // 0x68
+    BeatMatchController *mController; // 0x6c
+    int mCurrentChord; // 0x70
     int unk70;
     int unk74;
-    unsigned int mNumChords; // 0x78
+    unsigned int mNumChords; // 0x7c
     ChordInfo mChords[20]; // 0x7c
-    bool unk66c; // 0x66c
+    bool unk66c; // 0x670
     int unk670;
     bool unk674;
     unsigned char mFret[6]; // 0x675
     float mStringSwings[6]; // 0x67c
-    unsigned char mCorrect; // 0x694
-    unsigned char mInUse; // 0x695
-    unsigned char mStrum; // 0x696
+    unsigned char mCorrect; // 0x698
+    unsigned char mInUse; // 0x699
+    unsigned char mStrum; // 0x69a
     FingerStep mStep[5]; // 0x698
-    ChordPreview *mChordPreview; // 0x6c0
+    ChordPreview *mChordPreview; // 0x6c4
     bool unk6c4;
     bool unk6c5;
     int unk6c8;
@@ -111,8 +111,8 @@ public:
     int unk6d0;
     int unk6d4;
     int unk6d8;
-    TrainerProgressMeter *mProgressMeter; // 0x6dc
+    TrainerProgressMeter *mProgressMeter; // 0x6e0
     RGState mState; // 0x6e0
-    bool mRelearnChords; // 0x6f8
+    bool mRelearnChords; // 0x6fc
     bool mLefty; // 0x6f9
 };

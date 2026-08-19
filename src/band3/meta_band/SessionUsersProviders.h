@@ -21,10 +21,10 @@ public:
     void RefreshUserList(const BandUser *, const BandUserMgr *);
     bool IsMuted(int) const;
 
-    std::vector<BandUser *> mUsers; // 0x20
+    std::vector<BandUser *> mUsers; // 0x2c
     bool unk28;
     bool unk29;
     bool unk2a;
-    RndMat *mCheckedMat; // 0x2c
-    RndMat *mUncheckedMat; // 0x30
+    RndMat *mCheckedMat; // 0x3c
+    RndMat *mUncheckedMat; // 0x40
 };

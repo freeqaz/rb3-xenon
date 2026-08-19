@@ -38,8 +38,8 @@ protected:
     ObjPtr<RndParticleSys> mPart; // 0x8
     ObjPtr<RndTransformable> mTrans; // 0x1c
     ObjPtr<RndMesh> mMeshEmitter; // 0x30
-    int mNumParts; // 0x44
+    int mNumParts; // 0x2c
     Vector2 mEmitRate; // 0x48
     float mEmitCount; // 0x50
-    PartOverride mPartOverride; // 0x54
+    PartOverride mPartOverride; // 0x3c
 };

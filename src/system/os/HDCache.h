@@ -45,7 +45,7 @@ private:
     MemStream *mHdrBuf; // 0x50
     String mHdrFmt; // 0x54
     String mFileFmt; // 0x5c
-    bool unk64; // 0x64
+    bool unk64; // 0x6c
 };
 
 extern HDCache TheHDCache;

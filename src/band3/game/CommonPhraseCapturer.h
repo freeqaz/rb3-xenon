@@ -31,8 +31,8 @@ public:
     bool DidTrackFail(int, int) const;
 
     std::vector<PhraseState> mPhraseStates; // 0x0
-    int mDisabledTracks; // 0x8
-    int mFinishedTracks; // 0xc
-    bool mInUnisonPhrase; // 0x10
-    int mLastStartedPhraseID; // 0x14
+    int mDisabledTracks; // 0xc
+    int mFinishedTracks; // 0x10
+    bool mInUnisonPhrase; // 0x14
+    int mLastStartedPhraseID; // 0x18
 };

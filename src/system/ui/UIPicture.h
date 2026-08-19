@@ -50,7 +50,7 @@ protected:
     FilePath mTexFile; // 0x138
     FilePath mLoadedFile; // 0x144
     RndTex *mTex; // 0x150
-    FileLoader *mLoader; // 0x154
+    FileLoader *mLoader; // 0x18c
     bool mHookTex; // 0x158
     FilePath mDelayedTexFile; // 0x15c
 };

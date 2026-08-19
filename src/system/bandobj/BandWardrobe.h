@@ -105,24 +105,24 @@ public:
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
-    ObjDirPtr<ObjectDir> unk8; // 0x8
+    ObjDirPtr<ObjectDir> unk8; // 0x4
     ObjDirPtr<ObjectDir> unk14; // 0x14
     ObjPtr<FileMerger> unk20; // 0x20
-    std::list<Symbol> unk2c; // 0x2c
+    std::list<Symbol> unk2c; // 0x28
     TargetNames mVignetteNames; // 0x34
     TargetNames mClosetNames; // 0x44
     TargetNames mVenueNames; // 0x54
-    TargetNames *mCurNames; // 0x64
+    TargetNames *mCurNames; // 0x60
     BandCharacter *mTargets[4]; // 0x68
-    Symbol unk78; // 0x78
-    bool unk7c; // 0x7c
+    Symbol unk78; // 0x74
+    bool unk7c; // 0x78
     ObjectDir *mVenueDir; // 0x80 - dir
-    Symbol mGenre; // 0x84
-    Symbol mTempo; // 0x88
-    Symbol mVocalGender; // 0x8c
+    Symbol mGenre; // 0x80
+    Symbol mTempo; // 0x84
+    Symbol mVocalGender; // 0x88
     ObjPtr<Hmx::Object> mModeSink; // 0x90
-    bool mShotSetPlayMode; // 0x9c
-    bool mPlayShot5; // 0x9d
+    bool mShotSetPlayMode; // 0x98
+    bool mPlayShot5; // 0x99
     Symbol mDemandLoad; // 0xa0
     Symbol mPlayerForcedFocuses[4]; // 0xa4
     bool mPlayerEnableBlinks[4]; // 0xb4

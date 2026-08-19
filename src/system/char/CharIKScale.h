@@ -33,15 +33,15 @@ protected:
     CharIKScale();
 
     /** "The bone to be scaled" */
-    ObjPtr<RndTransformable> mDest; // 0x28
+    ObjPtr<RndTransformable> mDest; // 0x20
     /** "Scale to apply" */
-    float mScale; // 0x3c
+    float mScale; // 0x2c
     /** "Apply remainder weight to these targets" */
-    ObjPtrList<RndTransformable> mSecondaryTargets; // 0x40
+    ObjPtrList<RndTransformable> mSecondaryTargets; // 0x30
     /** "If dest starts out at or below this height, weight will be 0" */
-    float mBottomHeight; // 0x54
+    float mBottomHeight; // 0x44
     /** "If dest starts out at or above this height, weight will be 1" */
-    float mTopHeight; // 0x58
+    float mTopHeight; // 0x48
     /** "Automatically determine weight from top & bottom heights" */
-    bool mAutoWeight; // 0x5c
+    bool mAutoWeight; // 0x4c
 };

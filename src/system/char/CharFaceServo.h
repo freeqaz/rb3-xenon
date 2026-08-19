@@ -57,13 +57,13 @@ protected:
     Symbol mClipType; // 0x90
     ObjPtr<CharClip> mBaseClip; // 0x94
     /** "Blink clip, used to close the left eye" */
-    Symbol mBlinkClipLeftName; // 0xa8
+    Symbol mBlinkClipLeftName; // 0x90
     /** "A second clip that contributes to closing the left eye" */
-    Symbol mBlinkClipLeftName2; // 0xac
+    Symbol mBlinkClipLeftName2; // 0x94
     /** "Blink clip, used to close the right eye" */
-    Symbol mBlinkClipRightName; // 0xb0
+    Symbol mBlinkClipRightName; // 0x98
     /** "A second clip that contributes to closing the right eye" */
-    Symbol mBlinkClipRightName2; // 0xb4
+    Symbol mBlinkClipRightName2; // 0x9c
     ObjPtr<CharClip> mBlinkClipLeft; // 0xb8
     ObjPtr<CharClip> mBlinkClipLeft2; // 0xcc
     ObjPtr<CharClip> mBlinkClipRight; // 0xe0
@@ -71,6 +71,6 @@ protected:
     float mBlinkWeightLeft; // 0x108
     float mBlinkWeightRight; // 0x10c
     bool mNeedScaleDown; // 0x110
-    float mProceduralBlinkWeight; // 0x114
-    bool mAppliedProceduralBlink; // 0x118
+    float mProceduralBlinkWeight; // 0xdc
+    bool mAppliedProceduralBlink; // 0xe0
 };

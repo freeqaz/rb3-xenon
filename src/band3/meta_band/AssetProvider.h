@@ -21,6 +21,6 @@ public:
     static bool SortAssetsByIndex(Symbol, Symbol);
 
     BandProfile *mProfile; // 0x20
-    std::vector<Symbol> mAssets; // 0x24
+    std::vector<Symbol> mAssets; // 0x30
     AssetGender mGender; // 0x2c
 };

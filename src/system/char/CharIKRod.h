@@ -46,11 +46,11 @@ protected:
     /** "Right end of the rod" */
     ObjPtr<RndTransformable> mRightEnd; // 0x1c
     /** "Fraction of the way dest is from left (0) to right(1)" */
-    float mDestPos; // 0x30
+    float mDestPos; // 0x20
     /** "Take the z axis from this bone rather than from rod end delta" */
     ObjPtr<RndTransformable> mSideAxis; // 0x34
     /** "Force the dest to be vertically upright" */
-    bool mVertical; // 0x48
+    bool mVertical; // 0x30
     /** "The bone to set" */
     ObjPtr<RndTransformable> mDest; // 0x4c
     Transform mXfm; // 0x60

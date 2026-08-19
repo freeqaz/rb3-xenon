@@ -51,7 +51,7 @@ public:
     Band *mBand; // 0x18
     Tracker *mTracker; // 0x1c
     TrackerDesc mDesc; // 0x20
-    bool unk48; // 0x48
-    bool unk49; // 0x49
-    float unk4c; // 0x4c
+    bool unk48; // 0x4c
+    bool unk49; // 0x4d
+    float unk4c; // 0x50
 };

@@ -80,12 +80,12 @@ public:
     float mEndX; // 0x38
     RndMat *mBackMat; // 0x3c
     RndMat *mFrontMat; // 0x40
-    TubePlate *mBackPlate; // 0x44
-    TubePlate *mFrontPlate; // 0x48
+    TubePlate *mBackPlate; // 0x50
+    TubePlate *mFrontPlate; // 0x54
     RndGroup *mBackParent; // 0x4c
     RndGroup *mFrontParent; // 0x50
-    float mXPos; // 0x54
-    std::vector<Vector3> mPoints; // 0x58
+    float mXPos; // 0x60
+    std::vector<Vector3> mPoints; // 0x64
     float mAlpha; // 0x60
 };
 

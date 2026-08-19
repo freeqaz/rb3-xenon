@@ -28,11 +28,11 @@ public:
     NEW_OBJ(ContentLoadingPanel);
     static void Init() { REGISTER_OBJ_FACTORY(ContentLoadingPanel); }
 
-    int unk3c; // 0x3c
-    int unk40; // 0x40
-    int unk44; // 0x44
-    UILabel *mProgressLabel; // 0x48
-    UILabel *mMessageLabel; // 0x4c
-    UITrigger *mFindingTrig; // 0x50
-    UITrigger *mLoadingTrig; // 0x54
+    int unk3c; // 0x40
+    int unk40; // 0x44
+    int unk44; // 0x48
+    UILabel *mProgressLabel; // 0x4c
+    UILabel *mMessageLabel; // 0x50
+    UITrigger *mFindingTrig; // 0x54
+    UITrigger *mLoadingTrig; // 0x58
 };

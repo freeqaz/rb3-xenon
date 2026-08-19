@@ -63,7 +63,7 @@ public:
     std::map<TrackType, PlayerStreakData> unk5c; // 0x5c
     std::map<TrackType, bool> unk74; // 0x74
     std::map<TrackType, int> unk8c; // 0x8c
-    std::vector<SectionData> mSectionData; // 0xa4
+    std::vector<SectionData> mSectionData; // 0xb0
     int unkac;
     float unkb0;
     float unkb4;

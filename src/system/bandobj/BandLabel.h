@@ -35,10 +35,10 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(BandLabel); }
     NEW_OBJ(BandLabel);
 
-    Keys<float, float> unk1dc; // 0x1dc
-    Symbol unk1e4; // 0x1e4
+    Keys<float, float> unk1dc; // 0x238
+    Symbol unk1e4; // 0x244
     String unk1e8; // 0x1e8
-    bool unk1f4; // 0x1f4
+    bool unk1f4; // 0x254
     // Retail vbase trailing reserve (see AppLabel::Handle vtordisp evidence):
     // retail AppLabel's Hmx::Object virtual base sits at 0x25C into the
     // complete object; ours sat at 0x1B0 (-172). The missing 0xAC bytes are

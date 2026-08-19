@@ -31,10 +31,10 @@ public:
     double mFullBandEnergy; // 0x130
     double mFloorSigma; // 0x138
     std::vector<float> mPeaks; // 0x140
-    std::vector<float> mTimes; // 0x148
-    double mCount; // 0x150
-    double mRate; // 0x158
-    bool mTriggered; // 0x160
+    std::vector<float> mTimes; // 0x14c
+    double mCount; // 0x158
+    double mRate; // 0x160
+    bool mTriggered; // 0x168
 };
 
 class EventTracker {
@@ -49,13 +49,13 @@ public:
     void invalidate();
 
     std::vector<float> mTimes; // 0x0
-    std::vector<float> mPeaks; // 0x8
-    std::vector<bool> mHits; // 0x10
-    std::vector<bool> mMisses; // 0x18
-    std::vector<int> mSwings; // 0x20
-    int mSelFrom; // 0x28
-    int mSelTo; // 0x2c
-    float mAvgHitTime; // 0x30
+    std::vector<float> mPeaks; // 0xc
+    std::vector<bool> mHits; // 0x18
+    std::vector<bool> mMisses; // 0x2c
+    std::vector<int> mSwings; // 0x40
+    int mSelFrom; // 0x4c
+    int mSelTo; // 0x50
+    float mAvgHitTime; // 0x54
 };
 
 class TalkyMatcher {

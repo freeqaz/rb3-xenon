@@ -25,6 +25,6 @@ protected:
     virtual void SetSpeedImpl(float);
 
 private:
-    Voice *mVoice; // 0xa8
+    Voice *mVoice; // 0x54
     int unk_ac; // 0xac
 };

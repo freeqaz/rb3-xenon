@@ -39,9 +39,9 @@ private:
 public:
     int unk24;
     int unk28;
-    std::vector<Friend *> mFriends; // 0x2c
+    std::vector<Friend *> mFriends; // 0x38
     DataResultList unk34;
-    int mState; // 0x4c
+    int mState; // 0x5c
 };
 
 class UpdateMasterProfileFriendsListJob : public RockCentralJob, public Hmx::Object {

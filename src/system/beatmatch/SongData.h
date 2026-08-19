@@ -210,38 +210,38 @@ public:
     int mSectionEndTick; // 0x24
     bool mFakeHitGemsInFill; // 0x28
     std::vector<SongParserSink *> mSongParserSinks; // 0x2c
-    std::vector<BeatMatcher *> mBeatMatchers; // 0x34
-    std::vector<TrackInfo *> mTrackInfos; // 0x3c
-    std::vector<int> mTrackDifficulties; // 0x44
-    std::vector<DrumFillInfo *> mFills; // 0x4c
-    std::vector<DrumMap *> mDrumMaps; // 0x54
-    std::vector<RangedDataCollection<unsigned int> *> mRollInfos; // 0x5c
-    std::vector<RangedDataCollection<std::pair<int, int> > *> mTrillInfos; // 0x64
-    std::vector<RangedDataCollection<RGRollChord> *> mRGRollInfos; // 0x6c
-    std::vector<RangedDataCollection<RGTrill> *> mRGTrillInfos; // 0x74
-    std::vector<DrumMixDB *> mDrumMixDBs; // 0x7c
-    std::vector<GameGemDB *> mGemDBs; // 0x84
-    std::vector<PhraseDB *> mPhraseDBs; // 0x8c
-    PhraseAnalyzer *mPhraseAnalyzer; // 0x94
+    std::vector<BeatMatcher *> mBeatMatchers; // 0x38
+    std::vector<TrackInfo *> mTrackInfos; // 0x44
+    std::vector<int> mTrackDifficulties; // 0x50
+    std::vector<DrumFillInfo *> mFills; // 0x5c
+    std::vector<DrumMap *> mDrumMaps; // 0x68
+    std::vector<RangedDataCollection<unsigned int> *> mRollInfos; // 0x74
+    std::vector<RangedDataCollection<std::pair<int, int> > *> mTrillInfos; // 0x80
+    std::vector<RangedDataCollection<RGRollChord> *> mRGRollInfos; // 0x8c
+    std::vector<RangedDataCollection<RGTrill> *> mRGTrillInfos; // 0x98
+    std::vector<DrumMixDB *> mDrumMixDBs; // 0xa4
+    std::vector<GameGemDB *> mGemDBs; // 0xb0
+    std::vector<PhraseDB *> mPhraseDBs; // 0xbc
+    PhraseAnalyzer *mPhraseAnalyzer; // 0xc8
     int mLoadingVocalNoteListIndex; // 0x98
-    std::vector<VocalNoteList *> mVocalNoteLists; // 0x9c
-    std::vector<BackupTrack *> mBackupTracks; // 0xa4
-    std::vector<FakeTrack *> mFakeTracks; // 0xac
-    TempoMap *mTempoMap; // 0xb4
-    MeasureMap *mMeasureMap; // 0xb8
-    BeatMap *mBeatMap; // 0xbc
-    TuningOffsetList *mTuningOffsetList; // 0xc0
-    std::vector<float> mVocalFeatureVectorTimes; // 0xc4
-    std::vector<float> mVocalFeatureVectorPeaks; // 0xcc
+    std::vector<VocalNoteList *> mVocalNoteLists; // 0xd0
+    std::vector<BackupTrack *> mBackupTracks; // 0xdc
+    std::vector<FakeTrack *> mFakeTracks; // 0xe8
+    TempoMap *mTempoMap; // 0xf4
+    MeasureMap *mMeasureMap; // 0xf8
+    BeatMap *mBeatMap; // 0xfc
+    TuningOffsetList *mTuningOffsetList; // 0x100
+    std::vector<float> mVocalFeatureVectorTimes; // 0x104
+    std::vector<float> mVocalFeatureVectorPeaks; // 0x110
     float mLastGemTime; // 0xd4
-    MemStream *mMemStream; // 0xd8
-    SongParser *mSongParser; // 0xdc
-    PlayerTrackConfigList *mPlayerTrackConfigList; // 0xe0
+    MemStream *mMemStream; // 0x120
+    SongParser *mSongParser; // 0x124
+    PlayerTrackConfigList *mPlayerTrackConfigList; // 0x128
     String mSongPath; // 0xe4
     std::map<int, float> mRangeShifts; // 0xf0
-    std::vector<RangeSection> mRangeSections; // 0x108
+    std::vector<RangeSection> mRangeSections; // 0x150
     std::vector<std::vector<RangeSection> > mKeyboardRangeSections; // 0x110
     GameGemList *mGems; // 0x118
-    int mHopoThreshold; // 0x11c
-    bool mDetailedGrid; // 0x120
+    int mHopoThreshold; // 0x16c
+    bool mDetailedGrid; // 0x170
 };

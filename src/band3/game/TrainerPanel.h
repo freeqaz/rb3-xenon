@@ -93,11 +93,11 @@ public:
 
     bool HasChallenge(int idx) const { return mSections[idx].mChallenge; }
 
-    TrainerProgressMeter *mProgressMeter; // 0x38
-    std::vector<TrainerSection> mSections; // 0x3c
-    int mCurrSection; // 0x44
-    bool mShowProgressMeter; // 0x48
-    std::vector<int> unk4c; // 0x4c
+    TrainerProgressMeter *mProgressMeter; // 0x3c
+    std::vector<TrainerSection> mSections; // 0x40
+    int mCurrSection; // 0x4c
+    bool mShowProgressMeter; // 0x50
+    std::vector<int> unk4c; // 0x54
 };
 
 extern TrainerPanel *TheTrainerPanel;

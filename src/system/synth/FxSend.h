@@ -66,20 +66,20 @@ protected:
     ObjOwnerPtr<FxSend> mNextSend; // 0x2c
     /** "The relative order that this send is processed compared to other sends." Ranges
      * from 0 to 9. */
-    int mStage; // 0x40
+    int mStage; // 0x34
     /** "Bypass the effect and stop it from processing" */
-    bool mBypass; // 0x44
+    bool mBypass; // 0x38
     /** "Gain applied to dry signal (dB)". Ranges from -96.0 to 20.0. */
-    float mDryGain; // 0x48
+    float mDryGain; // 0x3c
     /** "Gain applied to effect output (dB)" Ranges from -96.0 to 20.0. */
-    float mWetGain; // 0x4c
+    float mWetGain; // 0x40
     /** "Gain applied to effect input (dB)" Ranges from -96.0 to 20.0. */
-    float mInputGain; // 0x50
+    float mInputGain; // 0x44
     /** "Reverb send for this effect". Ranges from -96.0 to 20.0. */
-    float mReverbMixDb; // 0x54
+    float mReverbMixDb; // 0x48
     /** "Enable reverb send" */
-    bool mReverbEnable; // 0x58
+    bool mReverbEnable; // 0x4c
     bool mEnableUpdates; // 0x59
     /** "Which channels the FX applies to" */
-    SendChannels mChannels; // 0x5c
+    SendChannels mChannels; // 0x50
 };

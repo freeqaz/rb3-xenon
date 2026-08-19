@@ -40,7 +40,7 @@ public:
 
     static TrainingState sBackStates[kTrainingState_COUNT];
 
-    TrainingState mTrainingState; // 0x38
+    TrainingState mTrainingState; // 0x3c
     int unk3c;
     TrainerProvider *mTrainerProvider; // 0x40
     LessonProvider *mLessonProvider; // 0x44

@@ -77,9 +77,9 @@ protected:
     ObjPtr<CharLipSync> mLipSync; // 0x24
     /** "pointer to the visemes" */
     ObjPtr<ObjectDir> mClips; // 0x30
-    ObjPtr<CharClip> mBlinkClip; // 0x3c
+    ObjPtr<CharClip> mBlinkClip; // 0x40
     /** "Will use this song if set, except for blinks" */
-    ObjPtr<CharLipSyncDriver> mSongOwner; // 0x48
+    ObjPtr<CharLipSyncDriver> mSongOwner; // 0x4c
     /** "offset within song in seconds, resets on song change" */
     float mSongOffset; // 0x54
     /** "should we loop this song, resets on song change" */
@@ -90,7 +90,7 @@ protected:
     /** "Test charclip to apply, does nothing else" */
     ObjPtr<CharClip> mTestClip; // 0x6c
     /** "weight to apply this clip with" */
-    float mTestWeight; // 0x78
+    float mTestWeight; // 0x7c
     /** "default clip to be used as the override - maybe be overriden programatically" */
     ObjPtr<CharClip> mOverrideClip; // 0x7c
     /** "weight to blend override clip. this is mostly here for testing,

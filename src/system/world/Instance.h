@@ -53,10 +53,10 @@ protected:
     WorldInstance();
 
     /** "Which file we instance, only set in instances" */
-    ObjDirPtr<WorldInstance> mDir; // 0x1fc
+    ObjDirPtr<WorldInstance> mDir; // 0x1dc
     /** "Pointer to shared group, if any" */
-    SharedGroup *mSharedGroup; // 0x210
-    SharedGroup *mSharedGroup2; // 0x214
+    SharedGroup *mSharedGroup; // 0x1e8
+    SharedGroup *mSharedGroup2; // 0x1ec
 };
 
 class SharedGroup : public RndPollable {
@@ -81,5 +81,5 @@ private:
     RndGroup *mGroup; // 0x8
     /** "Am I the guy that polls the shared group" */
     ObjPtr<WorldInstance> mPollMaster; // 0xc
-    std::list<RndPollable *> mPolls; // 0x20
+    std::list<RndPollable *> mPolls; // 0x18
 };

@@ -32,6 +32,6 @@ public:
     static void Terminate();
     static ColorPalette *sDummyPalette;
 
-    std::vector<UIColor *> unk1e8; // 0x1e8
+    std::vector<UIColor *> unk1e8; // 0x23c
     ObjPtr<ColorPalette> mColorPalette; // 0x1f0
 };

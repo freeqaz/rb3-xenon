@@ -92,7 +92,7 @@ public:
         DataResultList ir_result; // 0x0
         bool friendMode; // 0x18
         BandStatsInfo stats; // 0x1c
-        Symbol song; // 0x68
+        Symbol song; // 0x6c
     };
     enum WiiPendingFlags {
     };

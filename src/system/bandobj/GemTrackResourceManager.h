@@ -29,5 +29,5 @@ public:
     void ReleaseSmasherPlate(RndDir *);
 
     ObjPtr<ObjectDir> unk1c; // 0x1c
-    std::vector<SmasherPlateInfo> unk28; // 0x28
+    std::vector<SmasherPlateInfo> unk28; // 0x34
 };

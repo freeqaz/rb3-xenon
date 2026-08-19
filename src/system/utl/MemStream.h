@@ -22,9 +22,9 @@ public:
     const char *Buffer() const { return mBuffer.begin(); }
 #endif
 
-    bool mFail; // 0x10
-    int mTell; // 0x14
-    std::vector<char> mBuffer; // 0x18
+    bool mFail; // 0xc
+    int mTell; // 0x10
+    std::vector<char> mBuffer; // 0x14
 
 private:
     virtual void ReadImpl(void *, int);

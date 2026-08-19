@@ -107,8 +107,8 @@ public:
         }
 
         std::vector<std::set<Symbol> > filters; // 0x0
-        TrackType requiredTrackType; // 0x8
-        std::vector<int> excludedSongs; // 0xc
+        TrackType requiredTrackType; // 0xc
+        std::vector<int> excludedSongs; // 0x10
     };
 
     SongSortMgr();
@@ -143,8 +143,8 @@ public:
     std::map<Symbol, SongRecord> mSongs; // 0x4
     std::map<Symbol, SetlistRecord> mSetlists; // 0x1c
     std::vector<StoreOffer *> unk34; // 0x34
-    std::vector<SavedSetlist *> mInternalSetlists; // 0x3c
-    NodeSort *mSorts[kNumSongSortTypes]; // 0x44
+    std::vector<SavedSetlist *> mInternalSetlists; // 0x40
+    NodeSort *mSorts[kNumSongSortTypes]; // 0x4c
 };
 
 BinStream &operator<<(BinStream &, const SongSortMgr::SongFilter &);

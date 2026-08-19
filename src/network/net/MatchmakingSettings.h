@@ -26,7 +26,7 @@ public:
     int mModeFilter; // 0x8
     bool mRanked; // 0xc
     std::vector<int> mCustomIDs; // 0x10
-    std::vector<int> mCustomValues; // 0x18
+    std::vector<int> mCustomValues; // 0x1c
 };
 
 class SessionSettings : public MatchmakingSettings, public Synchronizable {

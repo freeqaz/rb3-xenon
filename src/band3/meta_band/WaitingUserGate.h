@@ -20,5 +20,5 @@ public:
     DataNode OnMsg(const LockStepCompleteMsg &);
     DataNode OnMsg(const ProcessedJoinRequestMsg &);
 
-    LockStepMgr *mLockStepMgr; // 0x1c
+    LockStepMgr *mLockStepMgr; // 0x28
 };

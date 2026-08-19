@@ -128,16 +128,16 @@ public:
     // Adjudicate layout with /d1reportSingleClassLayout, never with the
     // comments -- five of them were measurably wrong in this class alone.
     std::hash_map<int, UIComponent *> mFocusComponents; // retail 0x58
-    ClosetMgr *mClosetMgr; // 0x68
-    TourCharLocal *mCharacter; // 0x6c
-    BandCharDesc *mPreviewDesc; // 0x70
-    FaceTypeProvider *mFaceTypeProvider; // 0x74
-    OutfitProvider *mOutfitProvider; // 0x78
-    FaceHairProvider *mFaceHairProvider; // 0x7c
-    FaceOptionsProvider *mFaceOptionsProvider; // 0x80
-    UIGridProvider *mFaceOptionsGridProvider; // 0x84
-    EyebrowsProvider *mEyebrowsProvider; // 0x88
-    UIGridProvider *mEyebrowsGridProvider; // 0x8c
+    ClosetMgr *mClosetMgr; // 0x74
+    TourCharLocal *mCharacter; // 0x78
+    BandCharDesc *mPreviewDesc; // 0x7c
+    FaceTypeProvider *mFaceTypeProvider; // 0x80
+    OutfitProvider *mOutfitProvider; // 0x84
+    FaceHairProvider *mFaceHairProvider; // 0x88
+    FaceOptionsProvider *mFaceOptionsProvider; // 0x8c
+    UIGridProvider *mFaceOptionsGridProvider; // 0x90
+    EyebrowsProvider *mEyebrowsProvider; // 0x94
+    UIGridProvider *mEyebrowsGridProvider; // 0x98
     Symbol mGender; // 0x90
     Symbol mOutfit; // 0x94
     bool mGenderChanged; // 0x98

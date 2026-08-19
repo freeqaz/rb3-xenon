@@ -24,7 +24,7 @@ public:
 
     float CalcCurrentStat() const;
 
-    float mLastValue; // 0x58
+    float mLastValue; // 0x64
 };
 
 #include "utl/Symbols.h"

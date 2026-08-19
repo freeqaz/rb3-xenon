@@ -71,18 +71,18 @@ public:
     }
 
     std::vector<int> mTrackDiffs; // 0x0
-    std::vector<int> mTrackNums; // 0x8
-    std::vector<TrackType> mTrackTypes; // 0x10
-    std::vector<int> mTrackOccupied; // 0x18
-    std::vector<PlayerTrackConfig> mConfigs; // 0x20
-    bool mAutoVocals; // 0x28
+    std::vector<int> mTrackNums; // 0xc
+    std::vector<TrackType> mTrackTypes; // 0x18
+    std::vector<int> mTrackOccupied; // 0x24
+    std::vector<PlayerTrackConfig> mConfigs; // 0x30
+    bool mAutoVocals; // 0x3c
     bool mUseVocalHarmony; // 0x29
-    bool mUseRealDrums; // 0x2a
-    bool mDiscoUnflip; // 0x2b
-    bool unk2c; // 0x2c
-    unsigned int mGameCymbalLanes; // 0x30
+    bool mUseRealDrums; // 0x3e
+    bool mDiscoUnflip; // 0x3f
+    bool unk2c; // 0x40
+    unsigned int mGameCymbalLanes; // 0x44
     bool mUseGHDrums; // 0x34
-    int mDefaultDifficulty; // 0x38
+    int mDefaultDifficulty; // 0x4c
     bool mNeedsProcessing; // 0x3c
-    bool mProcessed; // 0x3d
+    bool mProcessed; // 0x51
 };

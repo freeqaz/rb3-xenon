@@ -16,13 +16,13 @@ public:
     void UpdateFretNumber(const RGState &, bool);
 
     std::vector<RndAnimatable *> mFretHeightAnims; // 0x0
-    std::vector<RndAnimatable *> mContourHeightAnims; // 0x8
-    std::vector<RndAnimatable *> mContourAngleAnims; // 0x10
-    RGState *mLastState; // 0x18
+    std::vector<RndAnimatable *> mContourHeightAnims; // 0xc
+    std::vector<RndAnimatable *> mContourAngleAnims; // 0x18
+    RGState *mLastState; // 0x24
     RndAnimatable *mFretNumberShowAnim; // 0x1c
     RndAnimatable *mFretNumberPositionAnim; // 0x20
     RndText *mFretNumberText; // 0x24
     int mLastFretNumber; // 0x28
     float mAnimPeriod; // 0x2c
-    bool mLefty; // 0x30
+    bool mLefty; // 0x3c
 };

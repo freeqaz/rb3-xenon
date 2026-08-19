@@ -79,5 +79,5 @@ protected:
     ObjPtr<RndGroup> mFocusedBackgroundGroup;
     ObjPtr<RndGroup> mUnfocusedBackgroundGroup;
     /** "allow non-localized text with this resource?" */
-    bool mAllowEditText; // 0x360
+    bool mAllowEditText; // 0x350
 };

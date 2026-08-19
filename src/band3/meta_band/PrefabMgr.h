@@ -47,14 +47,14 @@ public:
     static DataNode OnPrefabToggleUsesProfilePatches(DataArray *);
     static void Init(BandUserMgr *);
 
-    std::vector<PrefabChar *> mPrefabs; // 0x1c
-    std::vector<CharCreatorPrefab *> mCharCreatorMalePrefabs; // 0x24
-    std::vector<CharCreatorPrefab *> mCharCreatorFemalePrefabs; // 0x2c
-    std::vector<BandCharDesc *> unk34; // 0x34
+    std::vector<PrefabChar *> mPrefabs; // 0x28
+    std::vector<CharCreatorPrefab *> mCharCreatorMalePrefabs; // 0x34
+    std::vector<CharCreatorPrefab *> mCharCreatorFemalePrefabs; // 0x40
+    std::vector<BandCharDesc *> unk34; // 0x4c
     std::vector<PrefabChar *> mDefaultPrefabs; // 0x3c
     std::set<Symbol> unk44; // 0x44
     BandUserMgr *unk5c; // 0x5c
-    bool unk60; // 0x60
-    std::vector<PrefabChar *> unk64; // 0x64
-    std::vector<OvershellSlot *> unk6c; // 0x6c
+    bool unk60; // 0x80
+    std::vector<PrefabChar *> unk64; // 0x84
+    std::vector<OvershellSlot *> unk6c; // 0x90
 };

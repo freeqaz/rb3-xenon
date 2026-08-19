@@ -193,5 +193,5 @@ protected:
 
     RndEnviron *mOld; // 0x0
     Vector3 mOldPos; // 0x4
-    bool mOldPosSet; // 0x10
+    bool mOldPosSet; // 0x14
 };

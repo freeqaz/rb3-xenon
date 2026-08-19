@@ -26,7 +26,7 @@ public:
 
 private:
     String name; // 0x0
-    int sample; // 0x8
+    int sample; // 0xc
 };
 
 // Retail RB3 alloc/free signatures are size-only alloc and pointer-only free.

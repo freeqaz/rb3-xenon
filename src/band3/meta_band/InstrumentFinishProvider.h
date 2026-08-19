@@ -12,5 +12,5 @@ public:
 
     void Update(Symbol);
 
-    std::vector<Symbol> mFinishes; // 0x20
+    std::vector<Symbol> mFinishes; // 0x2c
 };

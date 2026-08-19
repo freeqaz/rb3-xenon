@@ -45,11 +45,11 @@ public:
 
     static void Init();
 
-    BandMachine *mLockMachine; // 0x1c
-    WaitList mWaitList; // 0x20
-    bool mHasResponded; // 0x28
-    bool mLockSuccess; // 0x29
-    Hmx::Object *mCallback; // 0x2c
+    BandMachine *mLockMachine; // 0x28
+    WaitList mWaitList; // 0x2c
+    bool mHasResponded; // 0x38
+    bool mLockSuccess; // 0x39
+    Hmx::Object *mCallback; // 0x3c
 };
 
 class LockStepStartMsg : public Message {

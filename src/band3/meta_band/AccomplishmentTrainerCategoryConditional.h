@@ -20,5 +20,5 @@ public:
     void Configure(DataArray *);
 
     Symbol mCategory; // 0x7c
-    int mNumLessons; // 0x80
+    int mNumLessons; // 0x9c
 };

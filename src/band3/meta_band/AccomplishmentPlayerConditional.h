@@ -22,6 +22,6 @@ public:
     InqConditionProgress(BandProfile *, const AccomplishmentCondition &, int &, int &)
         const;
 
-    SongSortMgr::SongFilter mLaunchFilter; // 0x7c
+    SongSortMgr::SongFilter mLaunchFilter; // 0x98
     Symbol mLaunchPartDifficultySym; // 0x90
 };

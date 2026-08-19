@@ -22,11 +22,11 @@ protected:
     virtual void _Close();
 
     int mSectorBytes; // 0x34
-    HANDLE mFile; // 0x38
-    int mFd; // 0x3c
-    bool mReadInProgress; // 0x40
-    bool mWriteInProgress; // 0x41
-    OVERLAPPED mOverlapped; // 0x44
+    HANDLE mFile; // 0x3c
+    int mFd; // 0x40
+    bool mReadInProgress; // 0x44
+    bool mWriteInProgress; // 0x45
+    OVERLAPPED mOverlapped; // 0x48
     bool unk58;
     void *unk5c;
     void *unk60;

@@ -51,5 +51,5 @@ public:
 private:
     VarTimer mTimer; // 0x8
     FaderGroup mFaders; // 0x40
-    std::vector<FaderGroup *> mChannelFaders; // 0x54
+    std::vector<FaderGroup *> mChannelFaders; // 0x58
 };

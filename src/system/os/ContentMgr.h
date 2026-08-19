@@ -119,8 +119,8 @@ public:
         ~CallbackFile() {}
 
         FilePath mFile; // 0x0
-        Callback *mCallback; // 0x8
-        ContentLocT mLocation; // 0xc
+        Callback *mCallback; // 0xc
+        ContentLocT mLocation; // 0x10
         String mName; // 0x10
     };
 
@@ -187,9 +187,9 @@ protected:
         kContentMgrState7 = 7
     } mState; // 0x2c
     std::list<Callback *> mCallbacks; // 0x30
-    std::list<Content *> mContents; // 0x38
+    std::list<Content *> mContents; // 0x34
     std::list<String> mExtraContents; // 0x40
-    bool mDirty; // 0x48
+    bool mDirty; // 0x44
     Loader *mLoader; // 0x4c
     Callback *mCallback; // 0x50
     ContentLocT mLocation; // 0x54

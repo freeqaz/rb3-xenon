@@ -64,5 +64,5 @@ protected:
     /** "the minimum distance, in inches, that this interest can be from the eyes.
         only applied if overrides_min_target_dist is true..." */
     float mMinTargetDistOverride; // 0xf0
-    float mMaxViewAngleCos; // 0xf4
+    float mMaxViewAngleCos; // 0xe0
 };

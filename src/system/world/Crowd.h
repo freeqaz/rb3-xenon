@@ -41,13 +41,13 @@ public:
         /** "The character to use as the archetype" */
         ObjPtr<Character> mChar; // 0x0
         /** "The height at which to render the character" */
-        float mHeight; // 0x14
+        float mHeight; // 0xc
         /** "Density to place this character" */
-        float mDensity; // 0x18
+        float mDensity; // 0x10
         /** "Collision radius of the character -
             characters won't be placed within this range" */
-        float mRadius; // 0x1c
-        bool mUseRandomColor; // 0x20
+        float mRadius; // 0x14
+        bool mUseRandomColor; // 0x18
         ObjPtrList<RndMat> mMats; // 0x24
     };
 
@@ -124,27 +124,27 @@ protected:
     DataNode OnIterateFrac(DataArray *);
 
     /** "The placement mesh" */
-    ObjPtr<RndMesh> mPlacementMesh; // 0x48
+    ObjPtr<RndMesh> mPlacementMesh; // 0x2c
     /** "Character archetypes for the crowd" */
-    ObjList<CharData> mCharacters; // 0x5c
+    ObjList<CharData> mCharacters; // 0x38
     /** "Number of characters to place" */
-    int mNum; // 0x68
-    CrowdRotate mCrowdRotate; // 0x6c
+    int mNum; // 0x44
+    CrowdRotate mCrowdRotate; // 0x48
     Vector3 mCenter; // 0x70
     /** "Makes crowd be 3D regardless of the CamShot" */
-    bool mForce3DCrowd; // 0x80
+    bool mForce3DCrowd; // 0x5c
     /** "Shows only the 3D crowd, but ONLY in Milo
         so you can more easily distinguish them from the 2d crowd" */
-    bool mShow3DOnly; // 0x81
-    float mCharFullness; // 0x84
-    float mFlatFullness; // 0x88
-    int mLod; // 0x8c
+    bool mShow3DOnly; // 0x5d
+    float mCharFullness; // 0x60
+    float mFlatFullness; // 0x64
+    int mLod; // 0x68
     /** "The environ to render the imposter billboards with" */
     ObjPtr<RndEnviron> mEnviron; // 0x90
     /** "The environ used when rendering the 3D crowd set by a cam shot" */
     ObjPtr<RndEnviron> mEnviron3D; // 0xa4
     /** "Optional crowd facing focus when rotate is set to kCrowdRotateNone" */
-    ObjPtr<RndTransformable> mFocus; // 0xb8
+    ObjPtr<RndTransformable> mFocus; // 0x84
     // NOTE: DC3 (newer) has `LODType mCharForceLod; // 0xcc` + `int unkd0; // 0xd0`
     // here that retail RB3-360 lacks. rb3-Wii agrees (mFocus is directly followed
     // by mModifyStamp, ASSERT_REVS(0xE,0) with no rev>0xE/>0xF Load branches), and
@@ -156,5 +156,5 @@ protected:
     LODType mCharForceLod; // 0xcc
     int unkd0; // 0xd0
 #endif
-    int mModifyStamp; // 0xcc
+    int mModifyStamp; // 0x90
 };

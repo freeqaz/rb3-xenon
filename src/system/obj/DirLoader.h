@@ -98,9 +98,9 @@ private:
     DirLoaderStateFunc mState; // 0x20
     class String mRoot; // 0x28
     bool mOwnStream; // 0x30
-    BinStream *mStream; // 0x34
-    int mRev; // 0x38
-    int mCounter; // 0x3c
+    BinStream *mStream; // 0x38
+    int mRev; // 0x3c
+    int mCounter; // 0x40
     ObjPtrList<Hmx::Object> mObjects; // 0x40
     Callback *mCallback; // 0x54
     class ObjectDir *mDir; // 0x58

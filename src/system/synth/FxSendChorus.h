@@ -25,21 +25,21 @@ protected:
     FxSendChorus();
 
     /** "Maximum delay time in milliseconds". Ranges from 0 to 100. */
-    float mDelayMs; // 0x60
+    float mDelayMs; // 0x54
     /** "Rate at which pitch is modulated (Hz)". Ranges from 0 to 10. */
-    float mRate; // 0x64
+    float mRate; // 0x58
     /** "Depth of pitch modulation, in centitones". Ranges from 0 to 1000. */
-    float mDepth; // 0x68
+    float mDepth; // 0x5c
     /** "Percent of output that is fed back to input". Ranges from 0 to 100. */
-    int mFeedbackPct; // 0x6c
+    int mFeedbackPct; // 0x60
     /** "LFO phase offset between channels (for wider stereo effect)". Ranges from 0 to
      * 100. */
-    int mOffsetPct; // 0x70
+    int mOffsetPct; // 0x64
     /** "Sync modulation to song tempo?" */
-    bool mTempoSync; // 0x74
+    bool mTempoSync; // 0x68
     /** "Note value to synchronize modulation to". Sync type options: (sixteenth eighth
      * dotted_eighth quarter dotted_quarter half whole) */
-    Symbol mSyncType; // 0x78
+    Symbol mSyncType; // 0x6c
     /** "Tempo for modulation; can be driven by game code". Ranges from 20 to 300. */
-    float mTempo; // 0x7c
+    float mTempo; // 0x70
 };

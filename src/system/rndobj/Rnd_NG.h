@@ -69,14 +69,14 @@ protected:
     virtual void ResetStats();
     virtual float UpdateOverlay(RndOverlay *, float);
 
-    Viewport mViewport; // 0x1e0
+    Viewport mViewport; // 0x180
     bool mLowRes;
-    RndTex *mShadowMap; // 0x1fc
-    RndCam *mShadowCam; // 0x200
-    RndOcclusionQueryMgr *mOcclusionQueryMgr; // 0x204
-    RndSoftParticleBuffer *mParticleBuffer; // 0x208
-    std::vector<RndPointTest> mPointTestQueries; // 0x20c
-    bool mInited; // 0x218
+    RndTex *mShadowMap; // 0x19c
+    RndCam *mShadowCam; // 0x1a0
+    RndOcclusionQueryMgr *mOcclusionQueryMgr; // 0x1a4
+    RndSoftParticleBuffer *mParticleBuffer; // 0x1a8
+    std::vector<RndPointTest> mPointTestQueries; // 0x1ac
+    bool mInited; // 0x1b8
 };
 
 extern NgRnd &TheNgRnd;

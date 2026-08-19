@@ -258,7 +258,7 @@ public:
 
     Performer *mBandPerformer; // 0x2cc
     bool mSpoofed; // 0x2d0
-    VocalTrack *mTrack; // 0x2d4
+    VocalTrack *mTrack; // 0x30c
     bool mAutoPlay; // 0x2d8
     float mVocalPartBias; // 0x2dc
     int unk2e0;
@@ -272,15 +272,15 @@ public:
     float unk300;
     float unk304;
     float mTrackWrappingMargin; // 0x308
-    float mPitchMaximumDistance; // 0x30c
-    float mSynapseProximitySolo; // 0x310
-    float mSynapseFocusSolo; // 0x314
-    float mSynapseProximityHarmony; // 0x318
-    float mSynapseFocusHarmony; // 0x31c
+    float mPitchMaximumDistance; // 0x344
+    float mSynapseProximitySolo; // 0x348
+    float mSynapseFocusSolo; // 0x34c
+    float mSynapseProximityHarmony; // 0x350
+    float mSynapseFocusHarmony; // 0x354
     DataArray *mFreestyleDeploymentTimes; // 0x320
     DataArray *mFreestyleMinDurations; // 0x324
     int mLastDeploymentSinger; // 0x328
-    int mPhraseValue; // 0x32c
+    int mPhraseValue; // 0x364
     DataArray *mPartScoreMultipliers; // 0x330
     DataArray *mRatingThresholds; // 0x334
     float mNonpitchStickiness; // 0x338
@@ -289,16 +289,16 @@ public:
     bool unk344;
     float mTuningOffset; // 0x348
     float unk34c;
-    std::vector<Singer *> mSingers; // 0x350
-    std::vector<VocalPart *> mVocalParts; // 0x358
-    std::vector<MicClientID> mInitialMicClientIDs; // 0x360
+    std::vector<Singer *> mSingers; // 0x388
+    std::vector<VocalPart *> mVocalParts; // 0x394
+    std::vector<MicClientID> mInitialMicClientIDs; // 0x3a0
     int mInitialMicCount; // 0x368
     int unk36c;
     int unk370;
     int mPhraseActivePartCount; // 0x374
     float mPhrasePercentageTotal; // 0x378
     int mPhrasePercentageCount; // 0x37c
-    RndOverlay *mOverlay; // 0x380
+    RndOverlay *mOverlay; // 0x3c4
     VocalOverlay *mVocalOverlay; // 0x384
     bool mScoringEnabled; // 0x388
     TambourineManager mTambourineManager; // 0x38c

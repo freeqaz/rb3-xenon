@@ -26,9 +26,9 @@ public:
     void Update(Symbol);
     const LessonEntry &GetLessonEntry(int) const;
 
-    std::vector<Symbol> *mCategories; // 0x20
-    std::vector<Symbol> *mLessons; // 0x24
-    RndMat *mCategoryMat; // 0x28
-    RndMat *mLessonMat; // 0x2c
-    std::vector<LessonEntry> mLessonEntries; // 0x30
+    std::vector<Symbol> *mCategories; // 0x2c
+    std::vector<Symbol> *mLessons; // 0x30
+    RndMat *mCategoryMat; // 0x34
+    RndMat *mLessonMat; // 0x38
+    std::vector<LessonEntry> mLessonEntries; // 0x3c
 };

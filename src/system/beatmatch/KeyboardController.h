@@ -26,8 +26,8 @@ public:
 
     int MidiNoteToSlot(int) const;
 
-    bool mDisabled; // 0x3c
-    int mFretButtons; // 0x40
-    float mWhammy; // 0x44
-    BeatMatchControllerSink *mSink; // 0x48
+    bool mDisabled; // 0x48
+    int mFretButtons; // 0x4c
+    float mWhammy; // 0x50
+    BeatMatchControllerSink *mSink; // 0x54
 };

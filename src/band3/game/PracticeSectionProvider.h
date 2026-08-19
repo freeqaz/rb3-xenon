@@ -35,7 +35,7 @@ public:
     float GetSectionStartMs(int) const;
     float GetSectionEndMs(int) const;
 
-    std::vector<PracticeSection> mSections; // 0x20
-    PracticeSection unk28; // 0x28
+    std::vector<PracticeSection> mSections; // 0x2c
+    PracticeSection unk28; // 0x38
     int unk4c; // 0x4c - start section?
 };

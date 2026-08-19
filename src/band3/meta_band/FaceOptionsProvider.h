@@ -18,8 +18,8 @@ public:
         mFaceOptionCount = BandHeadShaper::GetCount(s);
     }
 
-    const std::vector<DynamicTex *> &mIcons; // 0x20
-    Symbol mGender; // 0x24
+    const std::vector<DynamicTex *> &mIcons; // 0x2c
+    Symbol mGender; // 0x30
     String mFaceOption; // 0x28
-    int mFaceOptionCount; // 0x34
+    int mFaceOptionCount; // 0x40
 };

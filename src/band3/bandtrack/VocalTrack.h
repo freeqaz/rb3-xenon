@@ -155,15 +155,15 @@ public:
     DataNode OnSetDisplayMode(const DataArray *);
 
     bool unk68; // 0x68
-    VocalStyle mVocalStyleOverride; // 0x6c
+    VocalStyle mVocalStyleOverride; // 0x7c
     int unk70; // 0x70
-    float unk74; // 0x74
-    float unk78; // 0x78
+    float unk74; // 0x84
+    float unk78; // 0x88
     int unk7c; // 0x7c
     ObjPtr<VocalTrackDir> mDir; // 0x80
     ObjPtr<VocalPlayer> mPlayer; // 0x8c
-    std::deque<LyricPlate *> mLyricsLead; // 0x98
-    std::deque<LyricPlate *> mLyricsHarmony; // 0xc0
+    std::deque<LyricPlate *> mLyricsLead; // 0xa8
+    std::deque<LyricPlate *> mLyricsHarmony; // 0xd0
     float mPhraseStartMs; // 0xe8
     float mPhraseEndMs; // 0xec
     float mNextPhraseEndMs; // 0xf0
@@ -207,17 +207,17 @@ public:
     float unk2ac;
     float unk2b0;
     VocalNoteList *mAlternateNoteList[3]; // 0x2b4
-    float mStaticDeployZoneXSize; // 0x2c0
-    float mStaticDeployBufferX; // 0x2c4
-    float mStaticDeployMarginX; // 0x2c8
-    float mLyricShiftMs; // 0x2cc
-    float mLyricShiftQuickMs; // 0x2d0
-    float mLyricShiftAnticipationMs; // 0x2d4
-    float mMinLyricHighlightMs; // 0x2d8
-    float mMinPhraseHighlightMs; // 0x2dc
-    float mLyricOverlapWindowMs; // 0x2e0
+    float mStaticDeployZoneXSize; // 0x2e0
+    float mStaticDeployBufferX; // 0x2e4
+    float mStaticDeployMarginX; // 0x2e8
+    float mLyricShiftMs; // 0x2ec
+    float mLyricShiftQuickMs; // 0x2f0
+    float mLyricShiftAnticipationMs; // 0x2f4
+    float mMinLyricHighlightMs; // 0x2f8
+    float mMinPhraseHighlightMs; // 0x2fc
+    float mLyricOverlapWindowMs; // 0x300
     bool unk2e4;
     bool unk2e5;
-    NoteTube *mNoteTube; // 0x2e8
+    NoteTube *mNoteTube; // 0x308
     bool unk2ec;
 };

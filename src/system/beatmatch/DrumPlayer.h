@@ -12,6 +12,6 @@ public:
 
     float mAttenuation; // 0x0
     std::vector<Symbol> v1; // 0x4
-    std::vector<Symbol> v2; // 0xc
-    ObjDirPtr<ObjectDir> mDrumKitBank; // 0x14
+    std::vector<Symbol> v2; // 0x10
+    ObjDirPtr<ObjectDir> mDrumKitBank; // 0x1c
 };

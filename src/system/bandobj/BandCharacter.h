@@ -232,18 +232,18 @@ public:
 
     int mPlayFlags; // 0x450
     ObjPtr<CharDriver> unk454; // 0x454
-    CharDriver *mAddDriver; // 0x460
-    CharDriver *mFaceDriver; // 0x464
-    char mGroupName[64]; // 0x468
+    CharDriver *mAddDriver; // 0x4bc
+    CharDriver *mFaceDriver; // 0x4c0
+    char mGroupName[64]; // 0x4c4
     char mFaceGroupName[64]; // 0x4a8
-    char mOverrideGroup[64]; // 0x4e8
+    char mOverrideGroup[64]; // 0x544
     bool mForceNextGroup; // 0x528
     bool mForceVertical; // 0x529
     ObjPtr<Character> mOutfitDir; // 0x52c
     ObjPtr<Character> mInstDir; // 0x538
     Symbol mTempo; // 0x544
-    FileMerger *mFileMerger; // 0x548
-    RndOverlay *mOverlay; // 0x54c
+    FileMerger *mFileMerger; // 0x5a4
+    RndOverlay *mOverlay; // 0x5a8
     ObjPtr<CharLookAt> mHeadLookAt; // 0x550
     ObjPtr<CharLookAt> mNeckLookAt; // 0x55c
     ObjPtr<CharEyes> mEyes; // 0x568
@@ -252,9 +252,9 @@ public:
     Symbol mGenre; // 0x584
     Symbol mDrumVenue; // 0x588
     Symbol mTestTourEndingVenue; // 0x58c
-    Symbol mInstrumentType; // 0x590
+    Symbol mInstrumentType; // 0x5ec
     ObjPtr<Waypoint> unk594; // 0x594
-    bool mInCloset; // 0x5a0
+    bool mInCloset; // 0x5fc
     bool unk5a1; // 0x5a1
     bool unk5a2; // 0x5a2
     bool unk5a3; // 0x5a3

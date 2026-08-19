@@ -13,7 +13,7 @@ public:
 
     void Update(Symbol);
 
-    std::vector<Symbol> mEyebrows; // 0x20
-    const std::vector<DynamicTex *> &mIcons; // 0x28
-    Symbol mGender; // 0x2c
+    std::vector<Symbol> mEyebrows; // 0x2c
+    const std::vector<DynamicTex *> &mIcons; // 0x38
+    Symbol mGender; // 0x3c
 };
