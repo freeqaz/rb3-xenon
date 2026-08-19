@@ -594,11 +594,42 @@ def audit_header(project_dir, header, cls_info, cls=None):
     start, end, _ = span
 
     bad, depth = [], 0
+    cond = []          # preprocessor stack: True == this branch is LIVE here
     for i in range(start, min(end + 1, len(text))):
         line = text[i]
+        s = line.strip()
+
+        # ⛔ PREPROCESSOR-AWARE.  A comment inside `#ifdef HX_NATIVE` documents
+        # the NATIVE layout, and the match build never defines HX_NATIVE, so
+        # comparing it against the (non-native) compile is a guaranteed false
+        # positive.  Measured 2026-08-18 on src/system/obj/Object.h:1886 --
+        # `ObjRef mRefs; // 0x4 (native)` inside #ifdef HX_NATIVE, flagged
+        # against the retail layout where mRefs is at 0x20, with the correct
+        # retail value documented three lines above.
+        if s.startswith("#"):
+            d = s[1:].lstrip()
+            if d.startswith(("ifdef", "ifndef", "if ", "if(")):
+                neg = d.startswith("ifndef")
+                live = not ("HX_NATIVE" in d) if not neg else True
+                if d.startswith("if 0"):
+                    live = False
+                cond.append(live)
+            elif d.startswith("elif"):
+                if cond:
+                    cond[-1] = "HX_NATIVE" not in d
+            elif d.startswith("else"):
+                if cond:
+                    cond[-1] = not cond[-1]
+            elif d.startswith("endif"):
+                if cond:
+                    cond.pop()
+            continue
+
         line_depth = depth                      # depth BEFORE this line's braces
         depth += line.count("{") - line.count("}")
         if line_depth != 1:                     # only this class's own scope
+            continue
+        if not all(cond):                       # inside a dead #if branch
             continue
         cm = RE_HDR_COMMENT.search(line)
         if not cm:
