@@ -49,31 +49,31 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
 import class_layout_report as clr  # noqa: E402
 
 
-def tus_from_objects(project_dir):
-    """Every compiled .cpp declared in objects.json, in declaration order."""
-    p = os.path.join(project_dir, "config", "45410914", "objects.json")
-    with open(p) as fh:
-        data = json.load(fh)
+def tus_from_ninja(project_dir):
+    """Every compiled .cpp, read from build.ninja's own msvc/msvc_pch edges.
+
+    ⛔ Read the TU list from BUILD.NINJA, not from objects.json.  objects.json
+    keys are BARE FILENAMES whose directory lives in a group's ``src_dir``
+    option, so reconstructing paths from it is the documented trap that has
+    broken four separate lanes (MISPIN-1, PINFIX-1, NOOBJ-1, ...).  build.ninja
+    is what actually compiles, i.e. it is the same surface the ruler uses.
+    ⚠ Ninja wraps long edges with a trailing ``$``, putting the source on the
+    NEXT line -- a naive single-line regex finds 14 edges instead of 1,205 and
+    yields a 1%-coverage sweep that looks like it worked.  Join continuations
+    first.  Self-validation: this should return ~1,204 compiled objects.
+    """
+    import re
+    txt = open(os.path.join(project_dir, "build.ninja"),
+               errors="replace").read().replace("$\n", "")
+    srcs = re.findall(r"^build\s+\S+\.obj:\s+msvc(?:_pch)?\s+(\S+\.cpp)\b",
+                      txt, re.M)
     out = []
-
-    def walk(node):
-        if isinstance(node, dict):
-            sp = node.get("src_path") or node.get("path") or node.get("name")
-            if isinstance(sp, str) and sp.endswith(".cpp"):
-                out.append(sp)
-            for v in node.values():
-                walk(v)
-        elif isinstance(node, list):
-            for v in node:
-                walk(v)
-
-    walk(data)
-    seen, uniq = set(), []
-    for t in out:
-        if t not in seen and os.path.exists(os.path.join(project_dir, t)):
-            seen.add(t)
-            uniq.append(t)
-    return uniq
+    for s in sorted(set(srcs)):
+        if not s.startswith("src/") or "/xdk/" in s or "/stlport/" in s:
+            continue
+        if os.path.exists(os.path.join(project_dir, s)):
+            out.append(s)
+    return out
 
 
 def audit_tu(project_dir, tu):
@@ -105,48 +105,80 @@ def main():
     ap.add_argument("--limit", type=int, default=0, help="audit only first N TUs")
     ap.add_argument("--tu", action="append", help="explicit TU (repeatable)")
     ap.add_argument("--json", help="write full findings here")
+    ap.add_argument("--ledger", help="JSONL progress ledger (default .header_audit.jsonl)")
     args = ap.parse_args()
 
     pd = os.path.abspath(args.project_dir)
-    tus = args.tu or tus_from_objects(pd)
+    tus = args.tu or tus_from_ninja(pd)
     if args.limit:
         tus = tus[:args.limit]
-    print(f"project_dir={pd}\nTUs to audit: {len(tus)}", flush=True)
 
-    seen_class = {}       # class -> header  (first declaring header wins)
-    findings = {}         # header -> {class: [rows]}
-    failed = []
-    audited_tus = 0
+    # ⛔ APPEND PER TU, RESUME ON RESTART.  A sweep that buffers findings and
+    # writes once at the end loses EVERYTHING to a kill -- measured 2026-08-18:
+    # this tool's first run was killed before its 25-TU progress checkpoint and
+    # produced a completely empty log despite real work.  Each TU's result is
+    # now flushed to a JSONL ledger immediately, and an existing ledger is
+    # replayed so a restart skips finished TUs.
+    ledger = args.ledger or os.path.join(pd, ".header_audit.jsonl")
+    done, seen_class, findings, failed = set(), {}, {}, []
+    if os.path.exists(ledger):
+        with open(ledger, errors="replace") as fh:
+            for line in fh:
+                try:
+                    rec = json.loads(line)
+                except json.JSONDecodeError:
+                    continue          # torn last line from a kill -- expected
+                done.add(rec["tu"])
+                if rec.get("err"):
+                    failed.append((rec["tu"], rec["err"]))
+                for cls, (hdr, bad) in (rec.get("hits") or {}).items():
+                    seen_class[cls] = hdr
+                    if bad:
+                        findings.setdefault(hdr, {})[cls] = bad
+                seen_class.update({c: h for c, h in (rec.get("seen") or {}).items()})
+    todo = [t for t in tus if t not in done]
+    print(f"project_dir={pd}\nTUs total {len(tus)}  already done {len(done)}  "
+          f"to audit now {len(todo)}\nledger: {ledger}", flush=True)
 
-    for i, tu in enumerate(tus, 1):
+    audited_tus = len(done) - len(failed)
+    lf = open(ledger, "a")
+    for i, tu in enumerate(todo, 1):
+        rec = {"tu": tu, "hits": {}, "seen": {}}
         parsed, err = audit_tu(pd, tu)
         if parsed is None:
+            rec["err"] = err
             failed.append((tu, err))
-            continue
-        audited_tus += 1
-        for cls, info in (parsed.get("classes") or {}).items():
-            if cls in seen_class or not isinstance(info, dict):
-                continue
-            if not info.get("members"):
-                continue
-            # find_header returns a LIST, sorted best-first (stem==class, then
-            # shortest path).  Take the best hit; skip ambiguous-to-zero cases.
-            hdrs = clr.find_header(pd, cls.split("::")[-1])
-            if not hdrs:
-                continue
-            hdr = hdrs[0]
-            # OUR source only -- vendor/CRT/STL headers carry no // 0xHEX contract
-            if not (hdr.startswith("src/") and "/xdk/" not in hdr
-                    and "/stlport/" not in hdr):
-                continue
-            seen_class[cls] = hdr
-            bad = clr.audit_header(pd, hdr, info, cls.split("::")[-1])
-            if bad:
-                findings.setdefault(hdr, {})[cls] = bad
-        if i % 25 == 0 or i == len(tus):
-            print(f"  [{i}/{len(tus)}] tus_ok={audited_tus} "
-                  f"classes={len(seen_class)} bad_headers={len(findings)}",
-                  flush=True)
+        else:
+            audited_tus += 1
+            for cls, info in (parsed.get("classes") or {}).items():
+                if cls in seen_class or not isinstance(info, dict):
+                    continue
+                if not info.get("members"):
+                    continue
+                # find_header returns a LIST, sorted best-first (stem==class,
+                # then shortest path).  Take the best hit.
+                hdrs = clr.find_header(pd, cls.split("::")[-1])
+                if not hdrs:
+                    continue
+                hdr = hdrs[0]
+                # OUR source only -- vendor/CRT/STL carry no // 0xHEX contract
+                if not (hdr.startswith("src/") and "/xdk/" not in hdr
+                        and "/stlport/" not in hdr):
+                    continue
+                seen_class[cls] = hdr
+                rec["seen"][cls] = hdr
+                bad = clr.audit_header(pd, hdr, info, cls.split("::")[-1])
+                if bad:
+                    findings.setdefault(hdr, {})[cls] = bad
+                    rec["hits"][cls] = [hdr, bad]
+        lf.write(json.dumps(rec) + "\n")
+        lf.flush()
+        os.fsync(lf.fileno())
+        print(f"  [{i}/{len(todo)}] {tu}  classes={len(seen_class)} "
+              f"bad_headers={len(findings)}"
+              + (f"  ERR {rec.get('err')}" if rec.get("err") else ""),
+              flush=True)
+    lf.close()
 
     total_rows = sum(len(r) for h in findings.values() for r in h.values())
     print("\n" + "=" * 72)
