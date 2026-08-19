@@ -159,6 +159,55 @@ third FP class the 08-18 audit did not know it had:
 - **multi-declarator lines**: `float mSlope, mB; // 0x14 0x18`.
 - **annotated comments**: `// 0x38 - enum`, `// 0x58 / -0x8c`.
 
+## 4b. ★★ A SECOND DISCRIMINATOR THAT NEEDS NO RETAIL EVIDENCE
+
+`--structural` refutes a comment by **structural impossibility**: the compiler's
+own layout gives each member's true extent as the gap to the next member, so if
+the *commented* gap between two consecutive members is **smaller** than that, the
+comment claims the earlier member occupies fewer bytes than its declared type
+can. That is impossible for this source — no retail bytes required.
+
+⇒ **It reaches the NO_WITNESS and UNADJUDICABLE classes that no name-keyed
+instrument can touch:**
+
+| bucket | refuted with no retail evidence |
+|---|---|
+| NO_WITNESS | **8 / 32** |
+| UNADJUDICABLE (top 45 by rows) | **7 / 45** (1 `LAYOUT_FAILED`: `ChordPreview`) |
+
+The refutations are one story told eight times:
+
+| class | impossible gap | true |
+|---|---|---:|
+| `SongParser::DifficultyInfo` | `mGemsInProgress → mActivePlayers` = 8 | **12** (STLport `vector`) |
+| `Merger` (×3) | `FilePath` gaps = 8 | **12** |
+| `SkeletonClip`, `Cheat`, `DebugGraph` | `String` gaps = 8 | **12** |
+| `MeshVert` (×2) | `Vector3` gaps = 12 | **16** |
+| `CrossSec` | `vector<Edge>` gap = 8 | **12** |
+
+**`String`, `FilePath` and STLport `vector` are 12 bytes here and the comments
+assume 8; `Vector3` is 16 and they assume 12.** That is §3's provenance finding
+showing up structurally — **rb3-Wii is MWCC/Wii, where those types are smaller.**
+Our `String` = 12 is independently corroborated: CLAUDE.md's retail-verified
+`char *mStr; // 0x8` requires `String` ≥ 12.
+
+⚠ **Scope, stated precisely:** this proves the comment does not describe **our**
+layout, so the comment is stale. It does **not** prove our layout matches
+**retail** — a class with no matching function stays unconstrained against retail
+in either direction.
+
+⚠ Two defects were found building it, both by the result disagreeing with a
+hand-worked case:
+- The first version scored only the audit's **disagreeing** rows, so
+  `DifficultyInfo` read "not refuted" — its decisive predecessor
+  `mGemsInProgress` has a comment that **agrees** and is therefore absent from
+  the findings. Fixed by reading every commented member of the class body ⇒
+  5 → 8 refuted.
+- That reader initially fell back to scanning the **whole file** when
+  `class_body_span` returned `None` — reintroducing the exact `utl/Str.h`
+  cross-class bug §2.1 exists to prevent. `class_body_span`'s docstring says
+  callers **must** treat `None` as "do not audit"; it now returns nothing.
+
 ## 5. Not done — read before quoting this
 
 - **The 32 NO_WITNESS classes are NOT cleared.** 17 are DC3-only
