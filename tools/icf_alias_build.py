@@ -629,8 +629,12 @@ def main() -> int:
             # name_check). The old blanket check silently dropped that landed
             # group on every regeneration.
             if g["survivor"] in have_f or (set(g["folded"]) & have_s):
-                print("  !! CONFLICT, hand group %s overlaps a generated group's "
-                      "SURVIVOR -- NOT merged; adjudicate by hand" % g["name"],
+                # `g["name"]` KeyErrors on the 5 name-less FT/CF-tier groups,
+                # and names are not unique -- carry the address, as the sibling
+                # messages below already do.
+                print("  !! CONFLICT, hand group %s @ %s overlaps a generated "
+                      "group's SURVIVOR -- NOT merged; adjudicate by hand"
+                      % (g.get("name") or g["survivor"], g.get("address")),
                       file=sys.stderr)
                 continue
             dup_f = set(g["folded"]) & have_f
