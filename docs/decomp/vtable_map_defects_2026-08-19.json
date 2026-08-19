@@ -1,0 +1,335 @@
+{
+ "seen": 2929,
+ "virtual": 2829,
+ "bad": [
+  {
+   "vtable": 2181102004,
+   "slot": 0,
+   "addr": 2183621840,
+   "name": "?CancelOutstandingCalls@RockCentral@@QAAXPAVObject@Hmx@@@Z",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181102072,
+   "slot": 3,
+   "addr": 2183609808,
+   "name": "?MoveBeat@MoveDir@@QBAHXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181155580,
+   "slot": 10,
+   "addr": 2183884104,
+   "name": "?GetEnv@RndDir@@QBAPAVRndEnviron@@XZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181387332,
+   "slot": 4,
+   "addr": 2185112296,
+   "name": "?Ranked@MatchmakingSettings@@QBA_NXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181396796,
+   "slot": 11,
+   "addr": 2186521832,
+   "name": "?GetMaxSetlistSize@MusicLibrary@@QAAHXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181403828,
+   "slot": 16,
+   "addr": 2185182904,
+   "name": "?Main@ObjectDir@@SAPAV1@XZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181489692,
+   "slot": 12,
+   "addr": 2186868016,
+   "name": "?GetTotalUpstrums@AccomplishmentProgress@@QBAHXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181608780,
+   "slot": 27,
+   "addr": 2186455336,
+   "name": "?DisplayName@MemcardXbox@@QAAPA_WXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181620164,
+   "slot": 6,
+   "addr": 2186502512,
+   "name": "?StaticByteCode@NetPushScreenMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181620372,
+   "slot": 6,
+   "addr": 2186502808,
+   "name": "?StaticByteCode@NetPopScreenMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181625364,
+   "slot": 6,
+   "addr": 2186521112,
+   "name": "?StaticByteCode@AppendSongToSetlistMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181625424,
+   "slot": 6,
+   "addr": 2186521176,
+   "name": "?StaticByteCode@RemoveLastSongFromSetlistMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181687092,
+   "slot": 22,
+   "addr": 2186934656,
+   "name": "?HasPart@BandSongMetadata@@QBA_NVSymbol@@@Z",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181701716,
+   "slot": 10,
+   "addr": 2184609712,
+   "name": "?GetNumGigs@TourDesc@@QBAHXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181717716,
+   "slot": 6,
+   "addr": 2186913736,
+   "name": "?StaticByteCode@ComponentSelectNetMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181717836,
+   "slot": 6,
+   "addr": 2186913936,
+   "name": "?StaticByteCode@ComponentScrollNetMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181718388,
+   "slot": 6,
+   "addr": 2186914784,
+   "name": "?StaticByteCode@ComponentFocusNetMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181718916,
+   "slot": 6,
+   "addr": 2186915904,
+   "name": "?StaticByteCode@NetGotoScreenMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181719212,
+   "slot": 6,
+   "addr": 2186916680,
+   "name": "?StaticByteCode@NetSyncScreenMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181734052,
+   "slot": 6,
+   "addr": 2186980512,
+   "name": "?StaticByteCode@BasicStartLockMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181784068,
+   "slot": 17,
+   "addr": 2189279576,
+   "name": "?GetBufferSize@HttpGet@@QAAIXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181793460,
+   "slot": 17,
+   "addr": 2184559400,
+   "name": "?GetProfile@Tour@@QBAPAVBandProfile@@XZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2181939116,
+   "slot": 6,
+   "addr": 2187811808,
+   "name": "?StaticByteCode@RestartGameMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181939252,
+   "slot": 6,
+   "addr": 2187812128,
+   "name": "?StaticByteCode@SetUserTrackTypeMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181939428,
+   "slot": 6,
+   "addr": 2187812456,
+   "name": "?StaticByteCode@SetUserDifficultyMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181939548,
+   "slot": 6,
+   "addr": 2187812520,
+   "name": "?StaticByteCode@TourMostStarsMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181939604,
+   "slot": 6,
+   "addr": 2187812584,
+   "name": "?StaticByteCode@TourPlayedMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181939656,
+   "slot": 6,
+   "addr": 2187812648,
+   "name": "?StaticByteCode@AccomplishmentMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181939712,
+   "slot": 6,
+   "addr": 2187812856,
+   "name": "?StaticByteCode@AccomplishmentEarnedMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181939908,
+   "slot": 6,
+   "addr": 2187813040,
+   "name": "?StaticByteCode@TourHideShowFiltersMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181939968,
+   "slot": 6,
+   "addr": 2187813104,
+   "name": "?StaticByteCode@SongResultsScrollMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181940028,
+   "slot": 6,
+   "addr": 2187813168,
+   "name": "?StaticByteCode@SetUpMicsMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181942260,
+   "slot": 6,
+   "addr": 2187820424,
+   "name": "?StaticByteCode@PlayerGameplayMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181943580,
+   "slot": 6,
+   "addr": 2187830728,
+   "name": "?StaticByteCode@SetlistSubmissionMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2181947068,
+   "slot": 6,
+   "addr": 2187850464,
+   "name": "?StaticByteCode@MusicLibraryTaskMsg@@SAEXZ",
+   "access": "S"
+  },
+  {
+   "vtable": 2182020420,
+   "slot": 13,
+   "addr": 2188229736,
+   "name": "?_M_fill_insert@?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@AAAXPAMIABM@Z",
+   "access": "A"
+  },
+  {
+   "vtable": 2182022508,
+   "slot": 18,
+   "addr": 2188236136,
+   "name": "?GetBandContribution@Stats@@QBAMXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182027780,
+   "slot": 66,
+   "addr": 2188262632,
+   "name": "?SongSectionOnly@VocalPlayer@@QBA_NAAM0@Z",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182055100,
+   "slot": 22,
+   "addr": 2184585408,
+   "name": "?IsOnTour@TourProgress@@QBA_NXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182154068,
+   "slot": 39,
+   "addr": 2187137104,
+   "name": "?GetCachedTotalScore@SongStatusMgr@@QBAHW4ScoreType@@@Z",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182178380,
+   "slot": 2,
+   "addr": 2189131472,
+   "name": "?Mirrored@HamMove@@QBA?AW4MoveMirrored@@XZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182232844,
+   "slot": 9,
+   "addr": 2189436864,
+   "name": "?FocusComponent@UIPanel@@QAAPAVUIComponent@@XZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182702020,
+   "slot": 26,
+   "addr": 2192981720,
+   "name": "?allocate@?$StlNodeAlloc@ULevelData@@@stlpmtx_std@@QBAPAULevelData@@IPBX@Z",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182712436,
+   "slot": 5,
+   "addr": 2193052680,
+   "name": "?IsDone@CacheMgr@@QAA_NXZ",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182730676,
+   "slot": 5,
+   "addr": 2193161352,
+   "name": "?GetSongToTaskMgrMs@ProfileMgr@@QBAMW4LagContext@@@Z",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182735420,
+   "slot": 92,
+   "addr": 2193178456,
+   "name": "?Ignore@GemTrack@@QAAXH@Z",
+   "access": "Q"
+  },
+  {
+   "vtable": 2182735420,
+   "slot": 93,
+   "addr": 2193178784,
+   "name": "?PartialHit@GemTrack@@QAAXMHIH@Z",
+   "access": "Q"
+  }
+ ]
+}
