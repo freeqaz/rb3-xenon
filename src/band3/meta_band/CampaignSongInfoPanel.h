@@ -14,7 +14,7 @@ public:
 
     void Update();
 
-    std::vector<Symbol> unk20; // 0x20
+    std::vector<Symbol> unk20; // 0x2c
 };
 
 class CampaignSongInfoPanel : public UIPanel {

@@ -40,7 +40,7 @@ public:
     DataNode OnMsg(const ButtonDownMsg &);
     DataNode OnMsg(const RockCentralOpCompleteMsg &);
 
-    int mRedemptionState; // 0x3c
+    int mRedemptionState; // 0x40
     String mActiveToken; // 0x40
     DataResultList mResultList; // 0x4c
     std::vector<String> mListData; // 0x68

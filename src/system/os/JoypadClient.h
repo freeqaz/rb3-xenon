@@ -32,10 +32,10 @@ public:
     void SetRepeatMask(int);
 
     User *mUser; // 0x28
-    Hmx::Object *mSink; // 0x30
-    int mBtnMask; // 0x34
-    float mHoldMs; // 0x38
-    float mRepeatMs; // 0x3c
+    Hmx::Object *mSink; // 0x2c
+    int mBtnMask; // 0x30
+    float mHoldMs; // 0x34
+    float mRepeatMs; // 0x38
     JoypadRepeat mRepeats[4]; // 0x40
     bool mVirtualDpad; // 0x200
     bool mFilterAllButStart; // 0x201

@@ -36,6 +36,6 @@ public:
 
     RGGemMatcher mMatcher; // 0xe8
     float unk1f0; // 0x1f0 - mLastMissTime
-    float mMissWindowMs; // 0x1f4
-    bool mIs22Fret; // 0x1f8
+    float mMissWindowMs; // 0x200
+    bool mIs22Fret; // 0x204
 };

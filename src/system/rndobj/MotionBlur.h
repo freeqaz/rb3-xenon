@@ -22,5 +22,5 @@ protected:
     bool CanMotionBlur(RndDrawable *);
     DataNode OnAllowedDrawable(const DataArray *);
 
-    ObjPtrList<RndDrawable> mDrawList; // 0x40
+    ObjPtrList<RndDrawable> mDrawList; // 0x24
 };

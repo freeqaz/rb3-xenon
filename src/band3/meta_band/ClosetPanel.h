@@ -36,8 +36,8 @@ public:
     NEW_OBJ(ClosetPanel);
     static void Init() { REGISTER_OBJ_FACTORY(ClosetPanel); }
 
-    ClosetMgr *mClosetMgr; // 0x88
-    CameraManager *mCameraManager; // 0x8c
-    RndTexRenderer *mPortraitRenderer; // 0x90
-    int mPortraitState; // 0x94
+    ClosetMgr *mClosetMgr; // 0x90
+    CameraManager *mCameraManager; // 0x94
+    RndTexRenderer *mPortraitRenderer; // 0x98
+    int mPortraitState; // 0x9c
 };

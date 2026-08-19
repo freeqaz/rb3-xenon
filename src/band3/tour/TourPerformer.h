@@ -62,9 +62,9 @@ public:
     void UpdateTourPlayerContributionLabel(UILabel *, BandUser *);
     String GetPlayerContributionString(BandUser *);
 
-    const BandUserMgr &mUserMgr; // 0x1c
-    MetaPerformer *mMetaPerformer; // 0x20
+    const BandUserMgr &mUserMgr; // 0x28
+    MetaPerformer *mMetaPerformer; // 0x2c
     Symbol mQuestFilter; // 0x24
-    TourSetlistType mFilterType; // 0x28
-    std::vector<GigData> mGigData; // 0x2c
+    TourSetlistType mFilterType; // 0x34
+    std::vector<GigData> mGigData; // 0x38
 };

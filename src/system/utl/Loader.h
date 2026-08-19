@@ -161,15 +161,15 @@ private:
     void LoadStream();
 
     File *mFile; // 0x18
-    BinStream *mStream; // 0x1c
-    const char *mBuffer; // 0x20
-    int mBufLen; // 0x24
-    bool mAccessed; // 0x28
-    bool mTemp; // 0x29
-    bool mWarn; // 0x2a
-    int mFlags; // 0x2c
+    BinStream *mStream; // 0x20
+    const char *mBuffer; // 0x24
+    int mBufLen; // 0x28
+    bool mAccessed; // 0x2c
+    bool mTemp; // 0x2d
+    bool mWarn; // 0x2e
+    int mFlags; // 0x30
     String mFilename; // 0x30
-    int mBytesLoaded; // 0x3c
-    int mChunkSize; // 0x40
-    FileLoaderStateFunc mState; // 0x44
+    int mBytesLoaded; // 0x40
+    int mChunkSize; // 0x44
+    FileLoaderStateFunc mState; // 0x48
 };

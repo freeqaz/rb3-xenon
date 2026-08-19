@@ -75,7 +75,7 @@ protected:
     // full 4 bytes at the same static address, and PostLoad has no PopRev call.
     static int gRev;
 
-    CubeTexProperties props; // 0x2c
+    CubeTexProperties props; // 0x28
     CubeTexProperties moreprops[kNumCubeFaces]; // 0x40
     FilePath mFile[kNumCubeFaces]; // 0xb8
     RndBitmap mBitmap[kNumCubeFaces]; // 0xe8

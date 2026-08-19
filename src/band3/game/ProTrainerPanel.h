@@ -13,5 +13,5 @@ public:
     virtual float GetLessonCompleteSpeed(int) const;
     virtual void SetSongSectionComplete(BandProfile *, int, Difficulty, int) = 0;
 
-    std::vector<float> mSpeedCompleted; // 0xd4
+    std::vector<float> mSpeedCompleted; // 0xf4
 };

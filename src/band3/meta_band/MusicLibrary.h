@@ -144,16 +144,16 @@ public:
 
         SetlistMode setlistMode; // 0x0
         SongSortMgr::SongFilter filter; // 0x4
-        bool filterLocked; // 0x18
-        bool allowDuplicates; // 0x19
-        bool requiresStandardParts; // 0x1a
-        Symbol backScreen; // 0x1c
-        Symbol nextScreen; // 0x20
-        int maxSetlistSize; // 0x24
-        Symbol partSym; // 0x28
-        ScoreType scoreType; // 0x2c
-        Symbol titleToken; // 0x30
-        Symbol makingSetlistToken; // 0x34
+        bool filterLocked; // 0x20
+        bool allowDuplicates; // 0x21
+        bool requiresStandardParts; // 0x22
+        Symbol backScreen; // 0x24
+        Symbol nextScreen; // 0x28
+        int maxSetlistSize; // 0x2c
+        Symbol partSym; // 0x30
+        ScoreType scoreType; // 0x34
+        Symbol titleToken; // 0x38
+        Symbol makingSetlistToken; // 0x3c
     };
 
     MusicLibrary(SongPreview &);
@@ -297,18 +297,18 @@ public:
 
     static void Init(SongPreview &);
 
-    bool unk40; // 0x40
-    MusicLibraryTask mTask; // 0x44
+    bool unk40; // 0x50
+    MusicLibraryTask mTask; // 0x54
     SongSortMgr::SongFilter mFilter; // 0x7c
-    ViewSettingsProvider *mViewSettingsProvider; // 0x90
-    SongPreview &mSongPreview; // 0x94
+    ViewSettingsProvider *mViewSettingsProvider; // 0xb0
+    SongPreview &mSongPreview; // 0xb4
     Timer mSongPreviewTimer; // 0x98
-    float mSongPreviewDelay; // 0xc8
-    Symbol mLastSongPreview; // 0xcc
-    int mCurrentHighlightIndex; // 0xd0
+    float mSongPreviewDelay; // 0xe8
+    Symbol mLastSongPreview; // 0xec
+    int mCurrentHighlightIndex; // 0xf0
     Symbol unkd4;
     SongNodeType unkd8;
-    SongSortType unkdc; // 0xdc
+    SongSortType unkdc; // 0xfc
     SongSortType unke0;
     SongSortType unke4;
     SongSortType unke8;
@@ -322,12 +322,12 @@ public:
     RndMat *mDiscMatOdd; // 0x108
     RndMat *mDlcMatEven; // 0x10c
     RndMat *mDlcMatOdd; // 0x110
-    RndMat *mStoreMatEven; // 0x114
-    RndMat *mStoreMatOdd; // 0x118
+    RndMat *mStoreMatEven; // 0x134
+    RndMat *mStoreMatOdd; // 0x138
     RndMat *mUgcMatEven; // 0x11c
     RndMat *mUgcMatOdd; // 0x120
-    RndMat *mSetlistMatEven; // 0x124
-    RndMat *mSetlistMatOdd; // 0x128
+    RndMat *mSetlistMatEven; // 0x144
+    RndMat *mSetlistMatOdd; // 0x148
     bool unk12c;
     bool unk12d;
     std::vector<int> mSetlist; // 0x130

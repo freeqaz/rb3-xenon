@@ -231,22 +231,22 @@ public:
     DataNode OnSendNetGameplayMsg(DataArray *);
     DataNode OnSendNetGameplayMsgToPlayer(DataArray *);
 
-    PlayerParams *mParams; // 0x228
+    PlayerParams *mParams; // 0x258
     PlayerBehavior *mBehavior; // 0x22c
-    BandUser *mUser; // 0x230
+    BandUser *mUser; // 0x260
     CommonPhraseCapturer *mCommonPhraseCapturer; // 0x234
     bool mRemote; // 0x238
     String mPlayerName; // 0x23c
     int mTrackNum; // 0x248
-    TrackType mTrackType; // 0x24c
-    EnabledState mEnabledState; // 0x250
-    int mTimesFailed; // 0x254
+    TrackType mTrackType; // 0x27c
+    EnabledState mEnabledState; // 0x280
+    int mTimesFailed; // 0x284
     float mEnableMs; // 0x258
     float unk25c;
     std::vector<Extent VECTOR_SIZE_SMALL> unk260;
     bool mIsInCoda;
-    float mBandEnergy; // 0x26c
-    bool mDeployingBandEnergy; // 0x270
+    float mBandEnergy; // 0x2a0
+    bool mDeployingBandEnergy; // 0x2a4
     int unk274;
     int unk278;
     bool mPhraseBonus; // 0x27c

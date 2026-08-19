@@ -34,5 +34,5 @@ protected:
     /** "Proxy object this will look into." */
     ObjPtr<ObjectDir> mProxy; // 0xc0
     /** "The part inside it" */
-    Symbol mPart; // 0xd4
+    Symbol mPart; // 0xc0
 };

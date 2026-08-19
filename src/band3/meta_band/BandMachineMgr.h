@@ -40,8 +40,8 @@ public:
 
     static void Init();
 
-    SessionMgr *mSessionMgr; // 0x1c
-    BandUserMgr *mUserMgr; // 0x20
-    LocalBandMachine *mLocalMachine; // 0x24
-    std::vector<RemoteBandMachine *> mRemoteMachines; // 0x28
+    SessionMgr *mSessionMgr; // 0x18
+    BandUserMgr *mUserMgr; // 0x1c
+    LocalBandMachine *mLocalMachine; // 0x20
+    std::vector<RemoteBandMachine *> mRemoteMachines; // 0x24
 };

@@ -69,7 +69,7 @@ public:
     const char *mName; // 0x0
     SongData *mSongData; // 0x4
     std::vector<Data> mDatas; // 0x8
-    std::vector<PlayerScoreInfo> mBaseScores; // 0x10
-    PlayerTrackConfigList *mConfig; // 0x18
-    int mNumPlayers; // 0x1c
+    std::vector<PlayerScoreInfo> mBaseScores; // 0x14
+    PlayerTrackConfigList *mConfig; // 0x20
+    int mNumPlayers; // 0x24
 };

@@ -87,11 +87,11 @@ public:
     NEW_OBJ(MainHubPanel);
     static void Init() { REGISTER_OBJ_FACTORY(MainHubPanel); }
 
-    MainHubState mHubState; // 0x38
-    MainHubOverride mHubOverride; // 0x3c
-    MainHubMessageProvider *mMessageProvider; // 0x40
+    MainHubState mHubState; // 0x3c
+    MainHubOverride mHubOverride; // 0x40
+    MainHubMessageProvider *mMessageProvider; // 0x44
     int mCurrentMessage; // 0x44
-    float mMessageRotationMs; // 0x48
+    float mMessageRotationMs; // 0x4c
     Timer mMessageTimer; // 0x50
     BandMachineMgr *mMachineMgr; // 0x80
     LockStepMgr *mWaitingStateLock; // 0x84

@@ -118,28 +118,28 @@ public:
     MercurySwitchFilter *mMercurySwitchFilter; // 0x40
     TrackWatcher *mWatcher; // 0x44
     std::vector<TrackType> mTrackTypes; // 0x48
-    std::vector<float> unk50; // 0x50
-    DrumPlayer *mDrumPlayer; // 0x58
-    int mCurTrack; // 0x5c
+    std::vector<float> unk50; // 0x54
+    DrumPlayer *mDrumPlayer; // 0x60
+    int mCurTrack; // 0x64
     bool unk60; // 0x60
     SongPos mSongPos; // 0x64
-    float mNow; // 0x78
-    int mTick; // 0x7c
+    float mNow; // 0x80
+    int mTick; // 0x84
     float mLastSwing; // 0x80
     float mLastReleaseSwing; // 0x84
     bool unk88; // 0x88
     int mLastVelocityBucket; // 0x8c
     float mRawMercurySwitchState; // 0x90
-    bool mMercurySwitchState; // 0x94
+    bool mMercurySwitchState; // 0x9c
     bool mForceMercurySwitch; // 0x95
-    float mSyncOffset; // 0x98
+    float mSyncOffset; // 0xa0
     bool mDrivingPitchBendExternally; // 0x9c
-    int mFillStartTick; // 0xa0
+    int mFillStartTick; // 0xa8
     int mLastFillEndTick; // 0xa4
     int mCodaStartTick; // 0xa8
     bool unkac; // 0xac
     bool mAutoplay; // 0xad
-    bool mForceFill; // 0xae
+    bool mForceFill; // 0xb6
     bool mNoFills; // 0xaf
     bool mFillAudio; // 0xb0
     FillLogic mFillLogic; // 0xb4

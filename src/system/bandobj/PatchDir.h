@@ -89,16 +89,16 @@ public:
     static void Terminate();
     static int PackedBitCount();
 
-    Symbol mStickerCategory; // 0x1c
-    int mStickerIdx; // 0x20
-    int mColorIdx; // 0x24
-    float unk28; // 0x28
-    int mPosX; // 0x2c
-    int mPosZ; // 0x30
-    int mRot; // 0x34
-    int mScaleX; // 0x38
-    int mScaleY; // 0x3c
-    int mDeformFrame; // 0x40
+    Symbol mStickerCategory; // 0x28
+    int mStickerIdx; // 0x2c
+    int mColorIdx; // 0x30
+    float unk28; // 0x34
+    int mPosX; // 0x38
+    int mPosZ; // 0x3c
+    int mRot; // 0x40
+    int mScaleX; // 0x44
+    int mScaleY; // 0x48
+    int mDeformFrame; // 0x4c
 };
 
 class PatchDir : public FixedSizeSaveable, public RndDir {

@@ -72,14 +72,14 @@ public:
     int GetTrackNum() const;
 
     TrackConfig mTrackConfig; // 0x1c
-    float mLastRating; // 0x48
-    CrowdMeterState mLastRatingState; // 0x4c
-    bool unk50; // 0x50
-    int mLastStreakCount; // 0x54
-    int mSlotIdx; // 0x58
+    float mLastRating; // 0x58
+    CrowdMeterState mLastRatingState; // 0x5c
+    bool unk50; // 0x60
+    int mLastStreakCount; // 0x64
+    int mSlotIdx; // 0x68
     GameplayOptions *mGameplayOptions; // 0x5c
-    bool mIntroPlaying; // 0x60
-    float mIntroEndMs; // 0x64
+    bool mIntroPlaying; // 0x70
+    float mIntroEndMs; // 0x74
 };
 
 Track *NewTrack(BandUser *);

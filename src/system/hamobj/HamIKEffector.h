@@ -26,7 +26,7 @@ public:
             is same as radius in feet of full effect.
             If zero or negative [effector] will be constrained
             directly to the [target]" */
-        float mWeight; // 0x14
+        float mWeight; // 0x18
     };
     enum EffectorType {
         kEffectorTypeNone = 0,

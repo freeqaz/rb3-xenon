@@ -18,5 +18,5 @@ public:
 protected:
     FxSendPitchShift();
 
-    float mRatio; // 0x60
+    float mRatio; // 0x54
 };

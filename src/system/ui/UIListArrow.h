@@ -45,9 +45,9 @@ protected:
     /** "animation to play on scroll" */
     ObjPtr<RndAnimatable> mScrollAnim; // 0x70
     /** "whether to position relative to first or last element" */
-    UIListArrowPosition mPosition; // 0x84
+    UIListArrowPosition mPosition; // 0x68
     /** "show only when list is scrollable" */
-    bool mShowOnlyScroll; // 0x88
+    bool mShowOnlyScroll; // 0x6c
     /** "position arrow relative to higlight" */
-    bool mOnHighlight; // 0x89
+    bool mOnHighlight; // 0x6d
 };

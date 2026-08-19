@@ -56,19 +56,19 @@ protected:
      * graph, no nodes". Options are: none, nodes, raw */
     Symbol mShowDistMap; // 0x80
     /** "Which transition to use between clip1 and clip2" */
-    int mTransition; // 0x84
+    int mTransition; // 0x5c
     /** "Cycle through all the transitions" */
-    bool mCycleTransition; // 0x88
+    bool mCycleTransition; // 0x60
     /** "Click on every beat transition" */
-    bool mMetronome; // 0x89
+    bool mMetronome; // 0x61
     /** "Character does not travel, constantly zeros out position and facing" */
-    bool mZeroTravel; // 0x8a
+    bool mZeroTravel; // 0x62
     /** "graphically displays the screensize and lod next to the character" */
-    bool mShowScreenSize; // 0x8b
-    bool mShowFootExtents; // 0x8c
+    bool mShowScreenSize; // 0x63
+    bool mShowFootExtents; // 0x64
     /** "Beat threshold at which the transition from clip2 fires" */
     float mTransEndBeat; // 0x90
-    int mTransitionIdx; // 0x94
+    int mTransitionIdx; // 0x6c
     ClipDistMap *mDistMap;
     RndOverlay *mOverlay; // 0x9c
 };

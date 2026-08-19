@@ -35,9 +35,9 @@ protected:
     /** "File - extension is automatically converted to platform" */
     FilePath mFile; // 0x10
     /** "Stream the file for this movie?" */
-    bool mStream; // 0x18
+    bool mStream; // 0x1c
     /** "Loop this movie?" */
-    bool mLoop; // 0x19
+    bool mLoop; // 0x1d
     /** "Texture to animate." */
     ObjOwnerPtr<RndTex> mTex; // 0x1c
 };

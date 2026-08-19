@@ -32,16 +32,16 @@ public:
         ObjPtr<RndTransformable> mFinger02; // 0x3c
         ObjPtr<RndTransformable> mFinger03; // 0x50
         ObjPtr<RndTransformable> mFingertip; // 0x64
-        float mDestFinger02Angle; // 0x78
-        float mDestFinger03Angle; // 0x7c
-        float mCurFinger02Angle; // 0x80
-        float mCurFinger03Angle; // 0x84
-        int mBlendFrames; // 0x88
-        int mBlendOutFrames; // 0x8c
-        bool mNeedsUpdate; // 0x90
-        Vector3 mDestOrientVec; // 0x94
-        Vector3 mCurOrientVec; // 0xa4
-        bool mNeedsIKSolve; // 0xb4
+        float mDestFinger02Angle; // 0x58
+        float mDestFinger03Angle; // 0x5c
+        float mCurFinger02Angle; // 0x60
+        float mCurFinger03Angle; // 0x64
+        int mBlendFrames; // 0x68
+        int mBlendOutFrames; // 0x6c
+        bool mNeedsUpdate; // 0x70
+        Vector3 mDestOrientVec; // 0x74
+        Vector3 mCurOrientVec; // 0x84
+        bool mNeedsIKSolve; // 0x94
     };
     // Hmx::Object
     virtual ~CharIKFingers();
@@ -98,7 +98,7 @@ protected:
     bool mIsRightHand; // 0x16c
     bool mMoveHand; // 0x16d
     bool mIsSetup; // 0x16e
-    std::vector<FingerDesc> mFingers; // 0x170
+    std::vector<FingerDesc> mFingers; // 0x150
     float mInv2ab; // 0x17c
     float mAAPlusBB; // 0x180
     /** "This trans will be set to the desired hand position." */

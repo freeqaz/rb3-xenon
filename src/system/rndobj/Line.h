@@ -87,17 +87,17 @@ protected:
     DataNode OnSetMat(const DataArray *);
 
     /** "Width of the line". Ranges from 0 to 1000. */
-    float mWidth; // 0x100
-    std::vector<Point> mPoints; // 0x104
-    RndMesh *mMesh; // 0x110
+    float mWidth; // 0xd8
+    std::vector<Point> mPoints; // 0xdc
+    RndMesh *mMesh; // 0xe8
     /** "The line has end caps" */
-    bool mHasCaps; // 0x114
+    bool mHasCaps; // 0xec
     /** "Consider the [points] as an array of pairs, rather than a continuous line" */
-    bool mLinePairs; // 0x115
+    bool mLinePairs; // 0xed
     /** "Degrees at which the line starts to fold". Ranges from 0 to 180. */
-    float mFoldAngle; // 0x118
+    float mFoldAngle; // 0xf0
     float mFoldCos; // 0x11c
     /** "Material the line uses." */
     ObjPtr<RndMat> mMat; // 0x120
-    bool mLineUpdate; // 0x134
+    bool mLineUpdate; // 0x104
 };

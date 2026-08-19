@@ -44,14 +44,14 @@ public:
 
     NEW_OBJ(StarDisplay)
 
-    BandLabel *mRsrcStarsLabel; // 0x10C
-    BandLabel *mRsrcStarsMixedLabel; // 0x110
-    bool mForceMixedMode; // 0x114
-    bool mShowDenominator; // 0x115
-    bool mShowEmptyStars; // 0x116
-    int mStars; // 0x118
-    int mTotalStars; // 0x11C
-    RndText::Alignment mAlignment; // 0x120
+    BandLabel *mRsrcStarsLabel; // 0x140
+    BandLabel *mRsrcStarsMixedLabel; // 0x144
+    bool mForceMixedMode; // 0x148
+    bool mShowDenominator; // 0x149
+    bool mShowEmptyStars; // 0x14a
+    int mStars; // 0x14c
+    int mTotalStars; // 0x150
+    RndText::Alignment mAlignment; // 0x154
     Symbol mIconOverride; // 0x124
     Symbol mEmptyIconOverride; // 0x128
 };

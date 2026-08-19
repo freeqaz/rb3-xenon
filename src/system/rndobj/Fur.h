@@ -30,34 +30,34 @@ protected:
     RndFur();
 
     /** "Number of passes" */
-    int mLayers; // 0x2c
+    int mLayers; // 0x28
     /** "Length of fur" */
-    float mThickness; // 0x30
+    float mThickness; // 0x2c
     /** "Curvature exponent". Ranges from 0 to 3. */
-    float mCurvature; // 0x34
+    float mCurvature; // 0x30
     /** "Bunch shells towards surface". Ranges from 0 to 1. */
-    float mShellOut; // 0x38
+    float mShellOut; // 0x34
     /** "Bunch opacity towards surface". Ranges from 0 to 1. */
-    float mAlphaFalloff; // 0x3c
+    float mAlphaFalloff; // 0x38
     /** "Maximum stretch" */
-    float mStretch; // 0x40
+    float mStretch; // 0x3c
     /** "Maximum lateral motion" */
-    float mSlide; // 0x44
+    float mSlide; // 0x40
     /** "Strength of gravity". Ranges from 0 to 1. */
-    float mGravity; // 0x48
+    float mGravity; // 0x44
     /** "Langor of motion". Ranges from 0 to 1. */
-    float mFluidity; // 0x4c
+    float mFluidity; // 0x48
     /** "Tint at hair roots" */
-    Hmx::Color mRootsTint; // 0x50
+    Hmx::Color mRootsTint; // 0x4c
     /** "Tint at hair ends" */
-    Hmx::Color mEndsTint; // 0x60
+    Hmx::Color mEndsTint; // 0x5c
     /** "Detail map for finer fur.  Only the alpha channel is used." */
     ObjPtr<RndTex> mFurDetail; // 0x70
     /** "Tiling for fur detail map.
         UVs of fur_detail are multiplied by this value."
         Ranges from 2.0e-2 to 100.
     */
-    float mFurTiling; // 0x84
+    float mFurTiling; // 0x78
     /** "Wind Object, if set, blows on the fur." */
     ObjPtr<RndWind> mWind; // 0x88
 };

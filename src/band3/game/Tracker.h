@@ -49,8 +49,8 @@ public:
     bool unk12; // 0x12
     float unk14; // 0x14
     std::vector<float> unk18; // 0x18
-    bool unk20; // 0x20
-    const DataArray *unk24; // 0x24
+    bool unk20; // 0x24
+    const DataArray *unk24; // 0x28
 };
 
 class Tracker {
@@ -109,9 +109,9 @@ public:
     TrackerBroadcastDisplay &mBroadcastDisplay; // 0xc
     std::vector<TrackerPlayerDisplay> mPlayerDisplays; // 0x10
     TrackerDesc mDesc; // 0x18
-    TrackerSource *mSource; // 0x40
+    TrackerSource *mSource; // 0x48
     float unk44;
     Symbol unk48;
     Symbol unk4c;
-    std::vector<float> mTargets; // 0x50
+    std::vector<float> mTargets; // 0x58
 };

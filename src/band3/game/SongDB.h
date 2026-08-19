@@ -22,13 +22,13 @@ public:
 
         TrackType mTrackType; // 0x0
         std::vector<Extent> mSoloPhraseExtents; // 0x4
-        std::vector<Extent> mCommonPhraseExtents; // 0xc
-        std::vector<Extent> mArpeggioPhraseExtents; // 0x14
-        std::vector<Extent> mChordMarkupPhraseExtents; // 0x1c
-        std::vector<unsigned char> unk24; // 0x24
-        std::vector<unsigned char> unk2c; // 0x2c
-        std::vector<int> unk34; // 0x34
-        std::vector<int> unk3c; // 0x3c
+        std::vector<Extent> mCommonPhraseExtents; // 0x10
+        std::vector<Extent> mArpeggioPhraseExtents; // 0x1c
+        std::vector<Extent> mChordMarkupPhraseExtents; // 0x28
+        std::vector<unsigned char> unk24; // 0x34
+        std::vector<unsigned char> unk2c; // 0x40
+        std::vector<int> unk34; // 0x4c
+        std::vector<int> unk3c; // 0x58
     };
 
     SongDB();
@@ -111,12 +111,12 @@ public:
     // evidence exists that this member list is missing retail members.
     SongData *mSongData; // 0x4
     std::vector<TrackData> mTrackData; // 0x8
-    float mSongDurationMs; // 0x10
-    int mCodaStartTick; // 0x14
-    MultiplayerAnalyzer *mMultiplayerAnalyzer; // 0x18
-    std::vector<PracticeSection> mPracticeSections; // 0x1c
-    int unk24; // 0x24
-    int unk28; // 0x28
+    float mSongDurationMs; // 0x14
+    int mCodaStartTick; // 0x18
+    MultiplayerAnalyzer *mMultiplayerAnalyzer; // 0x1c
+    std::vector<PracticeSection> mPracticeSections; // 0x20
+    int unk24; // 0x2c
+    int unk28; // 0x30
 };
 
 extern SongDB *TheSongDB;

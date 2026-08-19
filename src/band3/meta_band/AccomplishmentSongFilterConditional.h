@@ -25,7 +25,7 @@ public:
     const SongSortMgr::SongFilter &GetFilter() const;
     Symbol GetFilteredPartSym() const;
 
-    int mNumSongs; // 0x7c
+    int mNumSongs; // 0x98
     SongSortMgr::SongFilter mFilter; // 0x80
-    Symbol mPartDifficultySym; // 0x94
+    Symbol mPartDifficultySym; // 0xb8
 };

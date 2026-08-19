@@ -163,10 +163,10 @@ private:
     // static D3DXMATRIX sIdentityMtx;
 
     int mInited;
-    D3DDevice *mD3DDevice; // 0x224
+    D3DDevice *mD3DDevice; // 0x1c4
     int mRenderThreadId; // 0x228
     void *mFocusWindow;
-    D3DDEVTYPE mDeviceType; // 0x230
+    D3DDEVTYPE mDeviceType; // 0x1d0
     D3DPRESENT_PARAMETERS mPresentParams; // 0x234
     std::list<DxObject *> mDxObjects;
     int unk2b8;
@@ -178,36 +178,36 @@ private:
     Timer unk2d0;
     bool unk300;
     u8 mReverseZ;
-    std::vector<D3DResource *> mPendingReleases; // 0x304
-    std::vector<D3DBaseTexture *> mPendingDeletes; // 0x310
+    std::vector<D3DResource *> mPendingReleases; // 0x2a4
+    std::vector<D3DBaseTexture *> mPendingDeletes; // 0x2b0
     XVIDEO_MODE mVideoMode; // 0x31c
     bool mTilingActive;
     bool unk34d;
-    D3DTexture *mFrontBuffers[2]; // 0x350
-    D3DTexture *mFrontBufferDepth; // 0x358
-    int mFrontBufIdx; // 0x35c
+    D3DTexture *mFrontBuffers[2]; // 0x2f0
+    D3DTexture *mFrontBufferDepth; // 0x2f8
+    int mFrontBufIdx; // 0x2fc
     bool mAsyncSwapNext;
-    bool mAsyncSwapCurrent; // 0x361
-    D3DPerfCounters *mPerfCounterStart; // 0x364
-    D3DPerfCounters *mPerfCounterEnd; // 0x368
-    Timer *mGPUTimer; // 0x36c
+    bool mAsyncSwapCurrent; // 0x301
+    D3DPerfCounters *mPerfCounterStart; // 0x304
+    D3DPerfCounters *mPerfCounterEnd; // 0x308
+    Timer *mGPUTimer; // 0x30c
     float mGPUBusyMs;
     float mGPUCountMs;
-    bool mCreatedPerfCounters; // 0x378
-    int mFlags; // 0x37c
-    D3DSurface *mBackBuffer; // 0x380
+    bool mCreatedPerfCounters; // 0x318
+    int mFlags; // 0x31c
+    D3DSurface *mBackBuffer; // 0x320
     D3DSurface *mOffscreenRT;
     D3DSurface *mWorldDepth;
     D3DSurface *mOffscreenDepth;
-    D3DTexture *mPreProcessBuffer; // 0x390
-    D3DTexture *mPostProcessBuffer; // 0x394
+    D3DTexture *mPreProcessBuffer; // 0x330
+    D3DTexture *mPostProcessBuffer; // 0x334
     DxTex *mPreProcessTex; // 0x398
     DxTex *mPostProcessTex; // 0x39c
     DxTex *mPreDepthTex; // 0x3a0
     bool mPostProcDone;
     unsigned int mEdramBase;
     unsigned int mEdramHzBase;
-    int mNumTiles; // 0x3b0
+    int mNumTiles; // 0x350
     D3DRECT mTileRect; // 0x3b4
     int unk3c4;
     int unk3c8;

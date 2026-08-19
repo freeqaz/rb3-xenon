@@ -10,5 +10,5 @@ public:
     virtual Symbol DataSymbol(int) const;
     virtual int NumData() const;
 
-    std::vector<Symbol> unk20; // 0x20
+    std::vector<Symbol> unk20; // 0x2c
 };

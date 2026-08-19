@@ -32,14 +32,14 @@ public:
 
     DataNode OnMsg(const RockCentralOpCompleteMsg &);
 
-    bool mFailed; // 0x1c
-    bool mSucceeded; // 0x1d
+    bool mFailed; // 0x28
+    bool mSucceeded; // 0x29
     std::vector<NetSavedSetlist *> unk20;
     std::vector<NetSavedSetlist *> unk28;
     DataResultList mDataResults; // 0x30
     bool unk48;
-    RndTex *mPendingSetlistArt; // 0x4c
+    RndTex *mPendingSetlistArt; // 0x60
     Symbol unk50;
-    NetCacheLoader *mSetlistArtLoader; // 0x54
-    std::list<SetlistArtRecord> mSetlists; // 0x58
+    NetCacheLoader *mSetlistArtLoader; // 0x68
+    std::list<SetlistArtRecord> mSetlists; // 0x6c
 };

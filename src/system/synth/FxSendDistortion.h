@@ -25,5 +25,5 @@ protected:
     FxSendDistortion();
 
     /** "amount of drive". Ranges from 0 to 100. */
-    float mDrive; // 0x60
+    float mDrive; // 0x54
 };

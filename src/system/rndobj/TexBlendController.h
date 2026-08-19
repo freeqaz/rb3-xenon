@@ -52,10 +52,10 @@ protected:
     /** "The second object to use as a distance reference" */
     ObjPtr<RndTransformable> mObject2; // 0x54
     /** "The base distance used to compute which blending to use" */
-    float mReferenceDistance; // 0x68
+    float mReferenceDistance; // 0x4c
     /** "The distance where the 'near' texture map will be fully visible" */
-    float mMinDistance; // 0x6c
+    float mMinDistance; // 0x50
     /** "The distance where the 'far' texture map will be fully visible" */
-    float mMaxDistance; // 0x70
+    float mMaxDistance; // 0x54
     ObjPtr<RndTex> mTex; // 0x74
 };

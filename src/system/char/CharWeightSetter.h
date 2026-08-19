@@ -30,21 +30,21 @@ protected:
     CharWeightSetter();
 
     /** "If driver not set, uses this to get base weight" */
-    ObjPtr<CharWeightable> mBase; // 0x28
+    ObjPtr<CharWeightable> mBase; // 0x20
     /** "The Driver to monitor" */
-    ObjPtr<CharDriver> mDriver; // 0x3c
+    ObjPtr<CharDriver> mDriver; // 0x2c
     /** "Weight can't be greater than this weightable" */
-    ObjPtrList<CharWeightSetter> mMinWeights; // 0x50
+    ObjPtrList<CharWeightSetter> mMinWeights; // 0x38
     /** "Weight can't be less than this weightable" */
-    ObjPtrList<CharWeightSetter> mMaxWeights; // 0x64
+    ObjPtrList<CharWeightSetter> mMaxWeights; // 0x4c
     /** "Which clip flags to look for" */
-    int mFlags; // 0x78
+    int mFlags; // 0x60
     /** "Constant offset to apply to the weight." */
-    float mOffset; // 0x7c
+    float mOffset; // 0x64
     /** "Constant scale to apply to the weight." */
-    float mScale; // 0x80
+    float mScale; // 0x68
     /** "The base weight that the real weight is derived from" */
-    float mBaseWeight; // 0x84
+    float mBaseWeight; // 0x6c
     /** "how many beats it should take to change the weight from 0 to 1" */
-    float mBeatsPerWeight; // 0x88
+    float mBeatsPerWeight; // 0x70
 };

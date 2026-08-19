@@ -22,9 +22,9 @@ public:
     PatchDir *GetPatchDir(int) const;
     bool HasAnyPatches() const;
 
-    std::vector<PatchDir *> &mPatches; // 0x20
-    std::vector<RndMat *> unk24; // 0x24
-    RndMat *mEmptyMat; // 0x2c
+    std::vector<PatchDir *> &mPatches; // 0x2c
+    std::vector<RndMat *> unk24; // 0x30
+    RndMat *mEmptyMat; // 0x3c
 };
 
 class PatchSelectPanel : public UIPanel {

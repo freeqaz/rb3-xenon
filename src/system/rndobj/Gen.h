@@ -95,7 +95,7 @@ protected:
     float mRateGenHigh; // 0x178
     float mScaleGenLow; // 0x17c
     float mScaleGenHigh; // 0x180
-    float mPathVarMaxX; // 0x184
+    float mPathVarMaxX; // 0x13c
     float mPathVarMaxY; // 0x188
     float mPathVarMaxZ; // 0x18c
     RndParticle *mCurParticle; // 0x190

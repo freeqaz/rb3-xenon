@@ -25,23 +25,23 @@ protected:
     FxSendCompress();
 
     /** "threshold (in dB) at which compression is applied". Ranges from -96 to 0 */
-    float mThresholdDB; // 0x60
+    float mThresholdDB; // 0x54
     /** "Compression factor - ratio of input level to output level". Ranges from 1 to 80
      */
-    float mRatio; // 0x64
+    float mRatio; // 0x58
     /** "output level for a maxed signal, in dB". Ranges from -10 to 10. */
-    float mOutputLevel; // 0x68
+    float mOutputLevel; // 0x5c
     /** "Attack time in seconds". Ranges from 1.0e-3 to 1. */
-    float mAttack; // 0x6c
+    float mAttack; // 0x60
     /** "Release time in seconds". Ranges from 1.0e-3 to 2. */
-    float mRelease; // 0x70
+    float mRelease; // 0x64
     /** "Expansion factor - ratio of input level to output level.  The expander uses the
      * same threshold as the compressor.". Ranges from 1 to 20. */
-    float mExpRatio; // 0x74
+    float mExpRatio; // 0x68
     /** "Attack time in seconds". Ranges from 1.0e-3 to 2. */
-    float mExpAttack; // 0x78
+    float mExpAttack; // 0x6c
     /** "Release time in seconds". Ranges from 1.0e-3 to 1. */
-    float mExpRelease; // 0x7c
+    float mExpRelease; // 0x70
     /** "threshold (in dB) at which gating is applied". Ranges from -96 to 0 */
-    float mGateThresholdDB; // 0x80
+    float mGateThresholdDB; // 0x74
 };

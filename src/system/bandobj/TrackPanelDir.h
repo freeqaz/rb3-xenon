@@ -78,7 +78,7 @@ public:
 
     int unk244; // 0x244
     int mTestMultiplier; // 0x248
-    int unk24c; // 0x24c
+    int unk24c; // 0x2bc
     int unk250; // 0x250
     int unk254; // 0x254
     ObjPtr<VocalTrackDir> mVocalTrack; // 0x258
@@ -88,8 +88,8 @@ public:
     ObjPtr<EndingBonus> mEndingBonus; // 0x288
     ObjPtr<RndDir> mScoreboard; // 0x294
     ObjPtr<RndGroup> mPulseAnimGrp; // 0x2a0
-    bool unk2ac; // 0x2ac
-    bool unk2ad; // 0x2ad
+    bool unk2ac; // 0x31c
+    bool unk2ad; // 0x31d
     bool mTracksExtended; // 0x2ae
     // Retail X360 stores this as a RAW owning pointer (4 bytes at this+0x320),
     // not an ObjPtr: the ctor emits a single `stw r0, 0x320(this)` with no

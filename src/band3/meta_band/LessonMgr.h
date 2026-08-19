@@ -52,7 +52,7 @@ public:
     static void Init();
     static LessonMgr *GetLessonMgr();
 
-    std::vector<Symbol> mTrainers; // 0x1c
+    std::vector<Symbol> mTrainers; // 0x28
     std::hash_map<Symbol, std::vector<Symbol> *> mTrainerToCategoriesMap; // 0x24
     std::hash_map<Symbol, std::vector<Symbol> *> mCategoryToLessonsMap; // 0x3c
     std::hash_map<Symbol, Lesson *> mLessonsMap; // 0x54

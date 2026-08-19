@@ -28,8 +28,8 @@ public:
     int GetNumSongs() const;
     bool IsBattle() const;
 
-    float mMarqueeRotationMs; // 0x3c
+    float mMarqueeRotationMs; // 0x40
     Timer mMarqueeTimer; // 0x40
-    unsigned int mCurrentSongIx; // 0x70
+    unsigned int mCurrentSongIx; // 0x78
     int unk74; // 0x74
 };

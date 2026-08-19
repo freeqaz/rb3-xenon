@@ -89,16 +89,16 @@ public:
     bool mIsShared; // real 0x2c
     bool mDemo; // real 0x2d
     bool mRestricted; // real 0x2e
-    std::map<Symbol, int> mTier; // 0x24
-    ScoreType mActiveScoreType; // 0x3c
+    std::map<Symbol, int> mTier; // 0x30
+    ScoreType mActiveScoreType; // 0x48
     int mScores[11]; // 0x40
     Difficulty mDiffs[11]; // 0x6c
     int mStars[11]; // 0x98
     int mNotesPct[11]; // 0xc4
-    short mBandInstrumentMask; // 0xf0
-    int mReview; // 0xf4
-    int mPlays; // 0xf8
-    const BandSongMetadata *mData; // 0xfc
+    short mBandInstrumentMask; // 0xfc
+    int mReview; // 0x100
+    int mPlays; // 0x104
+    const BandSongMetadata *mData; // 0x108
 };
 
 class SetlistRecord : public Hmx::Object {
@@ -117,10 +117,10 @@ public:
     Symbol GetToken() const { return mToken; }
     SavedSetlist *GetSetlist() const { return mSetlist; }
 
-    SavedSetlist *mSetlist; // 0x1c
-    Symbol mToken; // 0x20
-    bool unk24; // 0x24
-    int mID; // 0x28
-    int mBattleTimeLeft; // 0x2c
-    int unk30; // 0x30
+    SavedSetlist *mSetlist; // 0x28
+    Symbol mToken; // 0x2c
+    bool unk24; // 0x30
+    int mID; // 0x34
+    int mBattleTimeLeft; // 0x38
+    int unk30; // 0x3c
 };

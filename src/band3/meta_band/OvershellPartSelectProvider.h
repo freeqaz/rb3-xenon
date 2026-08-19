@@ -25,8 +25,8 @@ public:
     void Reload(ControllerType, BandUser *);
     void AddPart(Symbol, TrackType, const char *);
 
-    ControllerType mControllerType; // 0x20
-    std::vector<PartSelectEntry> mPartSelections; // 0x24
-    BandUser *mUser; // 0x2c
-    OvershellPanel *mOvershell; // 0x30
+    ControllerType mControllerType; // 0x2c
+    std::vector<PartSelectEntry> mPartSelections; // 0x30
+    BandUser *mUser; // 0x3c
+    OvershellPanel *mOvershell; // 0x40
 };

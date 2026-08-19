@@ -56,8 +56,8 @@ protected:
 
     /** "Preview base character to use-
         for example, char/male/male_guitar.milo for male guitarist" */
-    FilePath mCharFilePath; // 0xec
-    ObjPtr<RndDir> mPreviewChar; // 0xf4
+    FilePath mCharFilePath; // 0xd4
+    ObjPtr<RndDir> mPreviewChar; // 0xe0
     /** "Pick a clip to play" */
     ObjPtr<CharClip> mPreviewClip; // 0x108
     /** "Flags for filtering preview clip" */

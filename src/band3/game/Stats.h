@@ -20,8 +20,8 @@ public:
     void GetPitchDeviationInfo(float &, float &) const;
 
     std::vector<std::pair<int, float> > unk0; // 0x0
-    float mPitchDeviation1; // 0x08
-    float mPitchDeviation2; // 0x0c
+    float mPitchDeviation1; // 0xc
+    float mPitchDeviation2; // 0x10
 };
 
 class Stats {
@@ -401,48 +401,48 @@ public:
     int m0x68; // 0x068
     int m0x6c; // 0x06c
     std::vector<float> mVocalPartPercentages; // 0x070
-    std::vector<SingerStats> mSingerStats; // 0x078
-    std::vector<Symbol> mPerformanceAwards; // 0x080
-    int mAccuracy; // 0x88
+    std::vector<SingerStats> mSingerStats; // 0x7c
+    std::vector<Symbol> mPerformanceAwards; // 0x88
+    int mAccuracy; // 0x94
     int m0x8c;
-    int mSolo; // 0x90
-    float mOverdrive; // 0x94
-    float mSustain; // 0x98
-    float mScoreStreak; // 0x9c
-    float mBandContribution; // 0xa0
-    int mCodaPoints; // 0xa4
-    bool mHasCoda; // 0xa8
-    bool mHasSolos; // 0xa9
-    float mTambourine; // 0xac
-    int mHarmony; // 0xb0
-    bool mFullCombo; // 0xb4
-    float mNoScorePercent; // 0xb8
+    int mSolo; // 0x9c
+    float mOverdrive; // 0xa0
+    float mSustain; // 0xa4
+    float mScoreStreak; // 0xa8
+    float mBandContribution; // 0xac
+    int mCodaPoints; // 0xb0
+    bool mHasCoda; // 0xb4
+    bool mHasSolos; // 0xb5
+    float mTambourine; // 0xb8
+    int mHarmony; // 0xbc
+    bool mFullCombo; // 0xc0
+    float mNoScorePercent; // 0xc4
     StreakInfo mCurrentHitStreak; // 0xbc
-    std::vector<StreakInfo> mHitStreaks; // 0xc4
+    std::vector<StreakInfo> mHitStreaks; // 0xd0
     StreakInfo mCurrentMissStreak; // 0xcc
-    std::vector<StreakInfo> mMissStreaks; // 0xd4
-    std::vector<float> mFailurePoints; // 0xdc
-    std::vector<float> mSavedPoints; // 0xe4
-    int mPlayersSaved; // 0xec
-    std::vector<float> mClosestPlayersSaved; // 0xf0
+    std::vector<StreakInfo> mMissStreaks; // 0xe4
+    std::vector<float> mFailurePoints; // 0xf0
+    std::vector<float> mSavedPoints; // 0xfc
+    int mPlayersSaved; // 0x108
+    std::vector<float> mClosestPlayersSaved; // 0x10c
     int mTimesSaved; // 0xf8
-    std::vector<float> mClosestTimesSaved; // 0xfc
-    std::vector<int> mBestSolos; // 0x104
+    std::vector<float> mClosestTimesSaved; // 0x11c
+    std::vector<int> mBestSolos; // 0x128
     MultiplierInfo mCurrentOverdriveDeployment; // 0x10c
-    std::vector<MultiplierInfo> mBestOverdriveDeployments; // 0x120
+    std::vector<MultiplierInfo> mBestOverdriveDeployments; // 0x148
     float mTotalOverdriveDurationMs; // 0x128
     MultiplierInfo mCurrentStreakMultiplier; // 0x12c
-    std::vector<MultiplierInfo> mBestStreakMultipliers; // 0x140
+    std::vector<MultiplierInfo> mBestStreakMultipliers; // 0x16c
     float mTotalMultiplierDuration; // 0x148
     int m0x14c; // 0x14c
     int m0x150;
     int mEndGameScore; // 0x154
     float mEndGameCrowdLevel; // 0x158
     float mEndGameOverdrive; // 0x15c
-    int mOverdrivePhrasesCompleted; // 0x160
-    int mOverdrivePhraseCount; // 0x164
-    int mUnisonPhraseCompleted; // 0x168
-    int mUnisonPhraseCount; // 0x16c
+    int mOverdrivePhrasesCompleted; // 0x190
+    int mOverdrivePhraseCount; // 0x194
+    int mUnisonPhraseCompleted; // 0x198
+    int mUnisonPhraseCount; // 0x19c
     int mHopoGemsHopoed; // 0x170
     int mHopoGemsStrummed; // 0x174
     int mHopoGemCount; // 0x178
@@ -452,7 +452,7 @@ public:
     int mSustainGemsHitCompletely; // 0x188
     int mSustainGemsHitPartially; // 0x18c
     int mSustainGemCount; // 0x190
-    float mAverageMultiplier; // 0x194
+    float mAverageMultiplier; // 0x1c4
     int mRollCount; // 0x198
     int mRollsHitCompletely; // 0x19c
     int mTrillCount; // 0x1a0
@@ -461,7 +461,7 @@ public:
     int mCymbalGemCount; // 0x1ac
     int mCymbalGemsHitOnCymbals; // 0x1b0
     int mCymbalGemsHitOnPads; // 0x1b4
-    std::vector<SectionInfo> mSections; // 0x1b8
+    std::vector<SectionInfo> mSections; // 0x1e8
     float unk1c0;
     float unk1c4;
     float unk1c8;

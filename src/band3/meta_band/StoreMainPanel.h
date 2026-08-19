@@ -38,18 +38,18 @@ public:
     const NewReleaseEntry *CurrentEntry() const;
     const char *MarqueePath() const;
 
-    DataArray *mConfigData; // 0x40
-    float mTimeNextEvent; // 0x44
-    int mCurrentEntry; // 0x48
-    float mDisplayRate; // 0x4c
-    float mCrossfadeDuration; // 0x50
+    DataArray *mConfigData; // 0x48
+    float mTimeNextEvent; // 0x4c
+    int mCurrentEntry; // 0x50
+    float mDisplayRate; // 0x54
+    float mCrossfadeDuration; // 0x58
     RndMat *mCoverArtMats[6]; // 0x54
-    bool unk6c; // 0x6c
-    RndTex *mNoneTex; // 0x70
-    std::vector<RndTex *> mCoverArtTexs; // 0x74
-    RndAnimatable *mScrollAnim; // 0x7c
-    AppLabel *mLabel1; // 0x80
-    AppLabel *mLabel2; // 0x84
-    AppLabel *mLabel3; // 0x88
-    std::vector<NewReleaseEntry> mNewReleaseList; // 0x8c
+    bool unk6c; // 0x74
+    RndTex *mNoneTex; // 0x78
+    std::vector<RndTex *> mCoverArtTexs; // 0x7c
+    RndAnimatable *mScrollAnim; // 0x88
+    AppLabel *mLabel1; // 0x8c
+    AppLabel *mLabel2; // 0x90
+    AppLabel *mLabel3; // 0x94
+    std::vector<NewReleaseEntry> mNewReleaseList; // 0x98
 };

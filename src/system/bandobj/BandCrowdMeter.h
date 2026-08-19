@@ -81,13 +81,13 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(BandCrowdMeter)
 
-    std::vector<IconData> mIconData; // 0x18c
-    bool mMaxed; // 0x194
+    std::vector<IconData> mIconData; // 0x1dc
+    bool mMaxed; // 0x1e8
     float mPeakValue; // 0x198
-    bool mDisabled; // 0x19c
+    bool mDisabled; // 0x1f0
     std::vector<Hmx::Color> mLevelColors; // 0x1a0
     int mExcitement; // 0x1a8 - excitementlevel
-    TrackPanelInterface *mTrackPanel; // 0x1ac
+    TrackPanelInterface *mTrackPanel; // 0x204
     ObjPtrList<RndGroup> mOrderedPeaks; // 0x1b0
     ObjPtr<EventTrigger> mBandEnergyDeployTrig; // 0x1c0
     ObjPtr<EventTrigger> mBandEnergyStopTrig; // 0x1cc
@@ -95,7 +95,7 @@ public:
     ObjPtr<EventTrigger> mDisabledStopTrig; // 0x1e4
     ObjPtr<EventTrigger> mShowPeakArrowTrig; // 0x1f0
     ObjPtr<EventTrigger> mHidePeakArrowTrig; // 0x1fc
-    std::vector<ObjPtr<EventTrigger> > mExcitementTrigs; // 0x208
+    std::vector<ObjPtr<EventTrigger> > mExcitementTrigs; // 0x264
     ObjPtr<EventTrigger> mCanJoinTrig; // 0x210
     ObjPtr<EventTrigger> mCannotJoinTrig; // 0x21c
     ObjPtr<EventTrigger> mJoinInvalidTrig; // 0x228

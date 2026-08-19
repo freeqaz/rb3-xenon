@@ -213,15 +213,19 @@ def test_grain_counts_sum_to_claimed_on_the_real_map():
 
 
 def test_the_real_map_populations_are_bound_as_floors():
-    """Measured 2026-08-17 on the checked-in map: 28 icf, 939 bijection
-    (the `_bijection_arbitrary` LIST holds 1025 addresses -- 85 are absent
-    from the map body and one more is a null row, so the list length is NOT
-    the scored population and must not be quoted as one)."""
+    """The arbitrary grains are floors over a map name lanes keep growing, and
+    arbitrary labelling must stay marginal against the pinned grain; the
+    `_bijection_arbitrary` LIST length is never the scored population (absent
+    addresses and a null row inflate it)."""
     raw = json.loads(MAP_PATH.read_text())
-    bg = classify_map_rows(raw)["claimed_by_grain"]
-    assert bg["icf_arbitrary"] == 28
-    assert bg["bijection_arbitrary"] == 939
+    s = classify_map_rows(raw)
+    bg = s["claimed_by_grain"]
+    assert bg["icf_arbitrary"] >= 28
+    assert bg["bijection_arbitrary"] >= 939
     assert bg[NAME_PINNED] > 20000
+    # A ceiling, not a floor: growth here is honest labelling of a fold, but it
+    # becoming the bulk would mean we stopped proving identities.
+    assert bg["icf_arbitrary"] + bg["bijection_arbitrary"] < 0.05 * s["claimed"]
     assert len(raw["_bijection_arbitrary"]) > bg["bijection_arbitrary"]
 
 

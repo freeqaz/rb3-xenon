@@ -18,7 +18,7 @@ public:
         /** "Where to move the hand to" */
         ObjPtr<RndTransformable> mTarget; // 0x0
         /** "Distance along the negative z axis of the transform to snap to" */
-        float mExtent; // 0x14
+        float mExtent; // 0xc
     };
     // Hmx::Object
     virtual ~CharIKHand();
@@ -47,28 +47,28 @@ protected:
     void IKElbow(RndTransformable *, RndTransformable *);
 
     /** "The hand to be moved, must be child of elbow" */
-    ObjPtr<RndTransformable> mHand; // 0x30
+    ObjPtr<RndTransformable> mHand; // 0x28
     /** "If non null, will be the thing that actually hits the target,
         the hand will be moved into such a location as to make it hit.
         You probably always want to turn on orientation in this case, as otherwise,
         the hand will be in a somewhat random orientation,
         which will probably mean that the finger will miss the mark." */
-    ObjPtr<RndTransformable> mFinger; // 0x44
+    ObjPtr<RndTransformable> mFinger; // 0x34
     /** "Targets for the hand" */
-    ObjVector<IKTarget> mTargets; // 0x58
+    ObjVector<IKTarget> mTargets; // 0x40
     /** "Orient the hand to the dest" */
-    bool mOrientation; // 0x68
+    bool mOrientation; // 0x50
     /** "Stretch the hand to the dest" */
-    bool mStretch; // 0x69
+    bool mStretch; // 0x51
     /** "Recalculate bone length every frame, needed for bones which scale" */
-    bool mScalable; // 0x6a
+    bool mScalable; // 0x52
     /** "Moves the elbow and shoulder to position the hand,
         if false, just teleports the hand" */
-    bool mMoveElbow; // 0x6b
+    bool mMoveElbow; // 0x53
     /** "Range to swing the elbow in radians to hit target, better looking suggest .7" */
-    float mElbowSwing; // 0x6c
+    float mElbowSwing; // 0x54
     /** "Turn this on to do IK calcs even if weight is 0" */
-    bool mAlwaysIKElbow; // 0x70
+    bool mAlwaysIKElbow; // 0x58
     bool mHandChanged; // 0x71
     /** "Are we allowed to pull the shoulder to reach goal,
         or do we lock the elbow when goal is too far?" */
@@ -78,13 +78,13 @@ protected:
     float mAABB; // 0x88 - precomputed: forearm^2 + hand^2, law-of-cosines constant
     float mAAPlusBB; // 0x8c - total arm reach: forearm + hand
     /** "Constrain the wrist rotation to be believable" */
-    bool mConstraintWrist; // 0x90
+    bool mConstraintWrist; // 0x78
     /** "Constrain wrist rotation to this angle (in radians)" */
-    float mWristRadians; // 0x94
+    float mWristRadians; // 0x7c
     /** "Collision sphere that elbow won't enter." */
-    ObjPtr<CharCollide> mElbowCollide; // 0x98
+    ObjPtr<CharCollide> mElbowCollide; // 0x80
     /** "Choose the clockwise solution for the collision detection" */
-    bool mClockwise; // 0xac
+    bool mClockwise; // 0x8c
 };
 
 BinStream &operator>>(BinStream &, CharIKHand::IKTarget &);

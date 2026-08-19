@@ -36,8 +36,8 @@ public:
     void AddTickerData(TickerDataType, int, int, bool, bool);
     bool IsUnlinkedMotdAvailable() { return !mUnlinkedMotd.empty(); }
 
-    DataNode mMessages; // 0x20
-    MainHubPanel *mMainHub; // 0x28
+    DataNode mMessages; // 0x2c
+    MainHubPanel *mMainHub; // 0x34
     TickerData mRoleStanding; // 0x2c
     TickerData mBandStanding; // 0x38
     TickerData mBattleStanding; // 0x44

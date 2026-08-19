@@ -228,7 +228,7 @@ protected:
     /** "translucency group to show independent of lod. Drawables in it are
         guaranteed to be drawn last." */
     ObjPtr<RndGroup> mTransGroup; // 0x220
-    CharDriver *mDriver; // 0x22c
+    CharDriver *mDriver; // 0x20c
     /** "Whether this character should be self-shadowed." */
     bool mSelfShadow; // 0x230
     /** "Does the character have a spot-light cutout?" */
@@ -246,7 +246,7 @@ protected:
     /** "if true, is frozen in place, no polling happens" */
     bool mFrozen; // 0x270
     DrawMode mDrawMode; // 0x274
-    bool mTeleported; // 0x278
+    bool mTeleported; // 0x250
     /** "select an interest object here and select 'force_interest' below
         to force the character to look at it." */
     Symbol mInterestToForce; // 0x27c

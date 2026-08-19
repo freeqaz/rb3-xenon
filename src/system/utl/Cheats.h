@@ -73,16 +73,16 @@ private:
 protected:
     std::vector<LongJoyCheat> mLongJoyCheats; // 0x2c
     std::vector<QuickJoyCheat> mQuickJoyCheats[2]; // 0x38
-    std::vector<KeyCheat> mKeyCheats; // 0x50
+    std::vector<KeyCheat> mKeyCheats; // 0x4c
     Symbol mSymMode; // 0x5c
     std::vector<QuickJoyCheat *> mJoyCheatPtrsMode[2]; // 0x60
-    std::vector<KeyCheat *> mKeyCheatPtrsMode; // 0x78
+    std::vector<KeyCheat *> mKeyCheatPtrsMode; // 0x74
     Timer mLastButtonTime; // 0x88
     bool mKeyCheatsEnabled; // 0xb8
     bool mJoyCheatsEnabled; // 0xb9
     bool mUnlockAll; // 0xba
-    std::list<CheatLog> mBuffer; // 0xbc
-    int mMaxBuffer; // 0xc4
+    std::list<CheatLog> mBuffer; // 0xb4
+    int mMaxBuffer; // 0xbc
 #ifdef HX_NATIVE
     // NOT PRESENT IN RB3 RETAIL.  These five are DC3-era additions (dc3-decomp
     // is NEWER than RB3).  Retail's CheatsInit allocates the object with

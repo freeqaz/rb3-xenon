@@ -281,9 +281,9 @@ public:
     NEW_OBJ(MsgSource)
     static void Init() { REGISTER_OBJ_FACTORY(MsgSource) }
 
-    std::list<Sink> mSinks;        // 0x8
-    std::list<EventSink> mEventSinks; // 0x10
-    int mExporting;                // 0x18
+    std::list<Sink> mSinks;        // 0x4
+    std::list<EventSink> mEventSinks; // 0xc
+    int mExporting;                // 0x14
 };
 
 class MsgSinks {

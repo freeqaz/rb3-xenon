@@ -111,8 +111,8 @@ protected:
         just to clean up mutable character meshes" */
     ObjPtr<RndMesh> mMesh; // 0x2c
     Transform mMeshInverse; // 0x40
-    ObjVector<BoneDesc> mBones; // 0x80
-    VertArray mVerts; // 0x94
+    ObjVector<BoneDesc> mBones; // 0x74
+    VertArray mVerts; // 0x84
     bool mSkipInverse;
     bool mDeformed;
 };

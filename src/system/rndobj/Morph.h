@@ -61,9 +61,9 @@ protected:
     /** "Mesh for the morph to occur" */
     ObjPtr<RndMesh> mTarget; // 0x20
     /** "Interpolates the normals if set to true, otherwise normals are not affected." */
-    bool mNormals; // 0x34
+    bool mNormals; // 0x2c
     /** "Smooths the interpolation of the morphing." */
-    bool mSpline; // 0x35
+    bool mSpline; // 0x2d
     /** "Modifier for weight interpolation" */
-    float mIntensity; // 0x38
+    float mIntensity; // 0x30
 };

@@ -31,10 +31,10 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(BandScoreboard)
 
-    int mScore; // 0x18c
+    int mScore; // 0x1dc
     ObjPtr<RndMesh> mThousandsCommaMesh; // 0x190
     ObjPtr<RndMesh> mMillionsCommaMesh; // 0x19c
-    ObjVector<ObjPtr<RndMesh> > mNumMeshes; // 0x1a8
-    ObjVector<ObjPtr<RndMesh> > mSrcMeshes; // 0x1b4
+    ObjVector<ObjPtr<RndMesh> > mNumMeshes; // 0x1f8
+    ObjVector<ObjPtr<RndMesh> > mSrcMeshes; // 0x208
     ObjPtr<BandStarDisplay> mStarDisplay; // 0x1c0
 };

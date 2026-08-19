@@ -61,7 +61,7 @@ public:
     ObjPtr<EventTrigger> mDropOutTrig; // 0x21c
     ObjPtr<BandLabel> mIconLabel; // 0x228
     ObjPtr<RndAnimatable> mIconStateAnim; // 0x234
-    TrackPanelDirBase *unk240; // 0x240
-    CrowdMeterState mState; // 0x244
-    bool mQuarantined; // 0x248
+    TrackPanelDirBase *unk240; // 0x290
+    CrowdMeterState mState; // 0x294
+    bool mQuarantined; // 0x298
 };

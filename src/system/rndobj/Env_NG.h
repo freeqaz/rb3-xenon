@@ -26,10 +26,10 @@ public:
 protected:
     NgEnviron();
 
-    RndLight::ProjectedBlend mProjectedBlend; // 0x298
-    int mNumLightsReal; // 0x29c
-    int mNumLightsApprox; // 0x2a0
-    int mNumLightsPoint; // 0x2a4
-    int mNumLightsProj; // 0x2a8
-    bool mHasPointCubeTex; // 0x2ac
+    RndLight::ProjectedBlend mProjectedBlend; // 0x1b0
+    int mNumLightsReal; // 0x1b4
+    int mNumLightsApprox; // 0x1b8
+    int mNumLightsPoint; // 0x1bc
+    int mNumLightsProj; // 0x1c0
+    bool mHasPointCubeTex; // 0x1c4
 };

@@ -39,8 +39,8 @@ public:
     NETMSG_NAME(NetGotoScreenMsg);
     NETMSG_NEWNETMSG(NetGotoScreenMsg);
 
-    bool mForce; // 0x28
-    bool mBack; // 0x29
+    bool mForce; // 0x24
+    bool mBack; // 0x25
 };
 
 class NetSyncScreenMsg : public StartTransitionMsg {
@@ -53,7 +53,7 @@ public:
     NETMSG_NAME(NetSyncScreenMsg);
     NETMSG_NEWNETMSG(NetSyncScreenMsg);
 
-    bool mDepth; // 0x28
+    bool mDepth; // 0x24
 };
 
 class NetPushScreenMsg : public StartTransitionMsg {

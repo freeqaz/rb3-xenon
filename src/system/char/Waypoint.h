@@ -56,19 +56,19 @@ protected:
     /** "Flags for this waypoint, should be a bitfield per app" */
     int mFlags; // 0xc0
     /** "Radius within we can stop from a walk, or be tethered to" */
-    float mRadius; // 0xc4
+    float mRadius; // 0xb8
     /** "If positive, makes this shape a box with radius the x axis X half width,
         and y_radius the Y axis half width" */
-    float mYRadius; // 0xc8
+    float mYRadius; // 0xbc
     /** "Angular slop in degrees away from y axis" */
-    float mAngRadius; // 0xcc
+    float mAngRadius; // 0xc0
     int mPad; // 0xd0
     /** "degrees beyond ang radius you can never rotate past, if >= 0".
         Ranges from -1 to 360. */
-    float mStrictAngDelta; // 0xd4
+    float mStrictAngDelta; // 0xc8
     /** "how much beyond radius you will never leave,
         it will forcibly pull you back, ignored if <= 0" */
-    float mStrictRadiusDelta; // 0xd8
+    float mStrictRadiusDelta; // 0xcc
     /** "Waypoints we can walk to" */
     ObjVector<ObjOwnerPtr<Waypoint> > mConnections; // 0xd0
 };

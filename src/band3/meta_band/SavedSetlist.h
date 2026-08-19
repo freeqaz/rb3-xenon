@@ -61,7 +61,7 @@ public:
     virtual SetlistType GetType() const { return kSetlistInternal; }
     virtual Symbol GetIdentifyingToken() const { return mNameSymbol; }
 
-    Symbol mNameSymbol; // 0x2c
+    Symbol mNameSymbol; // 0x30
 };
 
 class NetSavedSetlist : public SavedSetlist {
@@ -91,13 +91,13 @@ public:
     const char *GetSongTitle(int) const;
     void AddSongTitle(const char *);
 
-    SetlistType mSetlistType; // 0x2c
+    SetlistType mSetlistType; // 0x30
     String mOwner; // 0x30
     OnlineID mOID; // 0x3c
     bool unk44;
     String unk48;
     String mGuid; // 0x54
-    std::vector<String> mSongTitles; // 0x60
+    std::vector<String> mSongTitles; // 0x6c
 };
 
 class BattleSavedSetlist : public NetSavedSetlist {
@@ -178,10 +178,10 @@ public:
 
     static int SaveSize(int);
 
-    BandProfile *mOwnerProfile; // 0x48
-    bool mIsShared; // 0x4c
-    bool mNeedsUpload; // 0x4d
+    BandProfile *mOwnerProfile; // 0x4c
+    bool mIsShared; // 0x50
+    bool mNeedsUpload; // 0x51
     HxGuid mGuid; // 0x50
-    PatchDescriptor mArt; // 0x60
-    int unk68; // 0x68
+    PatchDescriptor mArt; // 0x64
+    int unk68; // 0x6c
 };

@@ -55,14 +55,14 @@ public:
     int GetFret(int, int) const;
 
     std::vector<FingerStep> mFingerSteps; // 0xdc
-    bool mLegendMode; // 0xe4
+    bool mLegendMode; // 0x10c
     bool unke5; // 0xe5
-    int mLegendGemID; // 0xe8
-    float unkec; // 0xec
-    bool mLefty; // 0xf0
+    int mLegendGemID; // 0x110
+    float unkec; // 0x114
+    bool mLefty; // 0x118
     RGGemMatcher mMatcher; // 0xf4
     RGTutor mTutor; // 0x1fc
-    RndDir *mChordLegend; // 0x218
+    RndDir *mChordLegend; // 0x240
     FretHand mFretHand; // 0x21c
     bool mIsBass; // 0x24c
 };

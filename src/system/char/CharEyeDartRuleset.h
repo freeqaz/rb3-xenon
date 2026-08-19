@@ -62,5 +62,5 @@ public:
 protected:
     CharEyeDartRuleset();
 
-    EyeDartRulesetData mData; // 0x2c
+    EyeDartRulesetData mData; // 0x28
 };

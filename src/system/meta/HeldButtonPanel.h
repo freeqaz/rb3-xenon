@@ -21,6 +21,6 @@ public:
 private:
     DataNode OnMsg(const ProcessedButtonDownMsg &);
 
-    ButtonHolder *mHolder; // 0x38
-    bool mHandling; // 0x3c
+    ButtonHolder *mHolder; // 0x3c
+    bool mHandling; // 0x40
 };

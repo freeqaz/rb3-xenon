@@ -163,19 +163,19 @@ protected:
 #endif
     /** The bitmap associated with this texture. */
     RndBitmap mBitmap; // 0x2c
-    float mMipMapK; // 0x50
+    float mMipMapK; // 0x44
     /** The texture's type. */
-    Type mType; // 0x54
+    Type mType; // 0x48
     /** The texture's width, in pixels. */
-    int mWidth; // 0x58
+    int mWidth; // 0x4c
     /** The texture's height, in pixels. */
-    int mHeight; // 0x5c
+    int mHeight; // 0x50
     /** The texture's bits per pixel. */
-    int mBpp; // 0x60
+    int mBpp; // 0x54
     /** The texture's file. */
     FilePath mFilepath; // 0x64
     /** The number of mips in this texture's mipmap. */
-    int mNumMips; // 0x6c
+    int mNumMips; // 0x64
     /** Unused. Presumably, whether to use specialized computations for the PS3. */
     bool mOptimizeForPS3; // 0x68
     /** Whether or not this texture's width and height are powers of 2. */

@@ -14,7 +14,7 @@ public:
     Symbol DataSymbol(int) const;
     int NumData() const;
 
-    BandProfile *mProfile; // 0x20
-    AssetGender mGender; // 0x24
-    std::vector<Symbol> mSymbols; // 0x28
+    BandProfile *mProfile; // 0x2c
+    AssetGender mGender; // 0x30
+    std::vector<Symbol> mSymbols; // 0x34
 };

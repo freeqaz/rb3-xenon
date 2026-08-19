@@ -38,9 +38,9 @@ private:
 
     DataNode OnMsg(const ButtonDownMsg &);
 
-    Hmx::Object *mCallback; // 0x2c
-    UserMgr *mUserMgr; // 0x30
-    std::vector<ActionRec> mActionRecs; // 0x34
+    Hmx::Object *mCallback; // 0x28
+    UserMgr *mUserMgr; // 0x2c
+    std::vector<ActionRec> mActionRecs; // 0x30
 };
 
 #include "obj/Msg.h"

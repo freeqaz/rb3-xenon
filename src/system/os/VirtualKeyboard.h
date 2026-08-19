@@ -3,9 +3,9 @@
 
 class VirtualKeyboard : public Hmx::Object {
 private:
-    Hmx::Object *mPobjKeyboardCallback; // 0x2c
-    bool mCallbackReady; // 0x30
-    bool mMsgOk; // 0x31
+    Hmx::Object *mPobjKeyboardCallback; // 0x28
+    bool mCallbackReady; // 0x2c
+    bool mMsgOk; // 0x2d
     String mCallbackMsg; // 0x34
 
     void PlatformPoll();

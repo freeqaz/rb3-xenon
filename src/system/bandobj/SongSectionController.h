@@ -27,8 +27,8 @@ public:
               mLastActivatedIdx(-1) {}
         Symbol mPoolCategory; // 0x0
         ObjPtrList<EventTrigger, ObjectDir> mContentPools; // 0x4
-        PoolTriggerOrder mTriggerOrder; // 0x14
-        int mLastActivatedIdx; // 0x18
+        PoolTriggerOrder mTriggerOrder; // 0x18
+        int mLastActivatedIdx; // 0x1c
     };
 
     SongSectionController();

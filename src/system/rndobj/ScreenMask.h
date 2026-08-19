@@ -26,11 +26,11 @@ protected:
     /** "Material to draw on full screen quad" */
     ObjPtr<RndMat> mMat; // 0x40
     /** "Color of full screen quad" */
-    Hmx::Color mColor; // 0x54
+    Hmx::Color mColor; // 0x30
     /** "The area of the screen in normalized coordinates (0 to 1) to draw into." */
-    Hmx::Rect mRect; // 0x64
+    Hmx::Rect mRect; // 0x40
     /** "Use current camera screen_rect instead of the full screen" */
-    bool mUseCamRect; // 0x74
+    bool mUseCamRect; // 0x50
     // NOTE(laneBQ2): a 148-byte `mDroppedTrailingState_[0x94]` pad used to sit here
     // (added by 0149637d to make ??_GRndScreenMask's `this`-adjust read -236).
     // REMOVED: that adjustor evidence was a MAP MISPAIR -- the retail body at

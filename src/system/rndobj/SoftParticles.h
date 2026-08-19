@@ -25,7 +25,7 @@ protected:
     RndSoftParticles();
 
     /** "The list of particle objects to draw" */
-    ObjPtrList<RndDrawable> mParticles; // 0x40
+    ObjPtrList<RndDrawable> mParticles; // 0x24
     /** "Blending to use for the particle system" */
-    RndMat::Blend mBlend; // 0x54
+    RndMat::Blend mBlend; // 0x38
 };

@@ -32,8 +32,8 @@ public:
     bool mChunkEnd; // 0x49
     int mDeployIdx; // 0x4c
     bool mAfterMidPhraseShift; // 0x50
-    Vector3 mBeginPos; // 0x54
-    float mXWidth; // 0x60
+    Vector3 mBeginPos; // 0x58
+    float mXWidth; // 0x68
     float mHighlightMs; // 0x64
     float mActiveMs; // 0x68
     float mEndMs; // 0x6c
@@ -78,8 +78,8 @@ public:
     Hmx::Color mPastPhonemeColor; // 0xac
     RndText::Style mPitchedStyle; // 0xbc
     RndText::Style mUnpitchedStyle; // 0xd4
-    float mInvalidateMs; // 0xec
-    bool mBaked; // 0xf0
-    bool mNeedSync; // 0xf1
-    bool mPastNow; // 0xf2
+    float mInvalidateMs; // 0x108
+    bool mBaked; // 0x10c
+    bool mNeedSync; // 0x10d
+    bool mPastNow; // 0x10e
 };

@@ -52,9 +52,9 @@ protected:
     int ThreadGetDir(String, String);
 
     CacheIDXbox mCacheID; // 0x10
-    String mThreadStr; // 0x150
-    void *mData; // 0x158
-    unsigned int mSize; // 0x15c
-    std::vector<CacheDirEntry> *mCacheDirList; // 0x160
-    Hmx::Object *mCallbackObj; // 0x164
+    String mThreadStr; // 0x154
+    void *mData; // 0x160
+    unsigned int mSize; // 0x164
+    std::vector<CacheDirEntry> *mCacheDirList; // 0x168
+    Hmx::Object *mCallbackObj; // 0x16c
 };

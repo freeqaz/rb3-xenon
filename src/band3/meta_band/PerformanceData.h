@@ -33,15 +33,15 @@ public:
 
     int m0x24;
     bool m0x28;
-    bool mIsOnline; // 0x29
-    bool mIsPlaytest; // 0x2a
-    bool mIsCheating; // 0x2b
+    bool mIsOnline; // 0x35
+    bool mIsPlaytest; // 0x36
+    bool mIsCheating; // 0x37
     int mSongId; // 0x2c
-    ScoreType mScoreType; // 0x30
-    Difficulty mDifficulty; // 0x34
-    int mStars; // 0x38
-    int mBattleId; // 0x3c
-    int mTimestamp; // 0x40
+    ScoreType mScoreType; // 0x3c
+    Difficulty mDifficulty; // 0x40
+    int mStars; // 0x44
+    int mBattleId; // 0x48
+    int mTimestamp; // 0x4c
     Symbol mMode; // 0x44
     Stats mStats; // 0x48
 };

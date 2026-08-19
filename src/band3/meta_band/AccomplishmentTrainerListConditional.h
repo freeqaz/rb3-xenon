@@ -14,5 +14,5 @@ public:
 
     void Configure(DataArray *);
 
-    std::vector<Symbol> mLessons; // 0x7c
+    std::vector<Symbol> mLessons; // 0x98
 };

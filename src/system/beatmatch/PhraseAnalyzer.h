@@ -32,7 +32,7 @@ public:
     bool mPerformedAnalysis; // 0x0
     int mPhraseStartWindow; // 0x4
     std::vector<PhraseData> mPhrases; // 0x8
-    std::vector<RawPhrase> mRawPhrases; // 0x10
+    std::vector<RawPhrase> mRawPhrases; // 0x14
     class SongData *mSongData; // 0x18
     // String mSong; // 0x1c
     bool mNotify; // 0x1c

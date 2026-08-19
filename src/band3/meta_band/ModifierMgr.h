@@ -57,7 +57,7 @@ public:
 
     static void Init();
 
-    std::vector<Modifier *> mModifiers; // 0x20
+    std::vector<Modifier *> mModifiers; // 0x1c
     std::vector<Modifier *> mModifiersList; // 0x28
 };
 

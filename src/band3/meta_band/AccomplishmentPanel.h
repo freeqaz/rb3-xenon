@@ -121,8 +121,8 @@ public:
     AccomplishmentGroup *GetAccomplishmentGroup(int data) const;
     Symbol GetCareerLevel(float) const;
 
-    const std::vector<DynamicTex *> &mIcons; // 0x20
-    std::vector<Symbol> mGroups; // 0x24
+    const std::vector<DynamicTex *> &mIcons; // 0x2c
+    std::vector<Symbol> mGroups; // 0x30
 };
 
 class AccomplishmentCategoryProvider : public UIListProvider, public Hmx::Object {
@@ -148,7 +148,7 @@ public:
     void Update(Symbol);
     AccomplishmentCategory *GetAccomplishmentCategory(int data) const;
 
-    std::vector<Symbol> mCategories; // 0x20
+    std::vector<Symbol> mCategories; // 0x2c
 };
 
 class AccomplishmentEntryProvider : public UIListProvider, public Hmx::Object {
@@ -161,8 +161,8 @@ public:
 
     void Update(Accomplishment *);
 
-    Accomplishment *m_pAccomplishment; // 0x20
-    std::vector<Symbol> m_vEntries; // 0x24
+    Accomplishment *m_pAccomplishment; // 0x2c
+    std::vector<Symbol> m_vEntries; // 0x30
 };
 
 enum CareerState {
@@ -262,11 +262,11 @@ public:
     NEW_OBJ(AccomplishmentPanel);
     static void Init() { REGISTER_OBJ_FACTORY(AccomplishmentPanel); }
 
-    CareerState mCareerState; // 0x4c
+    CareerState mCareerState; // 0x54
     Symbol mGoal; // 0x50
     Symbol mGroup; // 0x54
     Symbol mCategory; // 0x58
-    AccomplishmentEntryProvider *mAccomplishmentEntryProvider; // 0x5c
+    AccomplishmentEntryProvider *mAccomplishmentEntryProvider; // 0x64
     AccomplishmentProvider *mAccomplishmentProvider; // 0x60
     AccomplishmentCategoryProvider *mAccomplishmentCategoryProvider; // 0x64
     AccomplishmentGroupProvider *mAccomplishmentGroupProvider; // 0x68
