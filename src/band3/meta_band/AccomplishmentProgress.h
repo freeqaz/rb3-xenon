@@ -238,28 +238,28 @@ public:
     std::list<GamerAwardStatus *> mGamerAwardStatusList; // 0x54
     std::set<Symbol> mAccomplishments; // 0x4c
     std::set<Symbol> mNewlyAcquiredAccomplishments; // 0x64
-    std::vector<Symbol> unk7c; // 0x7c
-    int mMetaScore; // 0x84
+    std::vector<Symbol> unk7c; // 0x8c
+    int mMetaScore; // 0x98
     std::set<Symbol> mAwards; // 0x88
-    std::list<std::pair<Symbol, Symbol> > mNewAwards; // 0xa0
-    std::list<Symbol> mNewRewardVignettes; // 0xa8
-    std::set<Symbol> unkb0; // 0xb0
-    int mTotalGemsSmashed; // 0xc8
-    int mTotalBassHopos; // 0xcc
-    int mTotalGuitarHopos; // 0xd0
-    int mTotalUpstrums; // 0xd4
-    int mTotalTimesRevived; // 0xd8
-    int mTotalSaves; // 0xdc
-    int mTotalAwesomes; // 0xe0
-    int mTotalDoubleAwesomes; // 0xe4
-    int mTotalTripleAwesomes; // 0xe8
-    int mCareerFills; // 0xec
+    std::list<std::pair<Symbol, Symbol> > mNewAwards; // 0xb4
+    std::list<Symbol> mNewRewardVignettes; // 0xbc
+    std::set<Symbol> unkb0; // 0xc4
+    int mTotalGemsSmashed; // 0xdc
+    int mTotalBassHopos; // 0xe0
+    int mTotalGuitarHopos; // 0xe4
+    int mTotalUpstrums; // 0xe8
+    int mTotalTimesRevived; // 0xec
+    int mTotalSaves; // 0xf0
+    int mTotalAwesomes; // 0xf4
+    int mTotalDoubleAwesomes; // 0xf8
+    int mTotalTripleAwesomes; // 0xfc
+    int mCareerFills; // 0x100
     int mBestStars[kNumScoreTypes][kNumDifficulties]; // 0xf0
     int mBestSolo[kNumScoreTypes][kNumDifficulties]; // 0x1a0
     int mBestAccuracy[kNumScoreTypes][kNumDifficulties]; // 0x250
     int mBestHoposPercent[kNumScoreTypes][kNumDifficulties]; // 0x300
     int mBestScore[kNumScoreTypes]; // 0x3b0
-    int mBestBandScore; // 0x3dc
+    int mBestBandScore; // 0x3f0
     int mBestStreak[kNumScoreTypes]; // 0x3e0
     int mTotalOverdriveDeploys[kNumScoreTypes]; // 0x40c
     int mTotalOverdriveTime[kNumScoreTypes]; // 0x438
@@ -276,13 +276,13 @@ public:
     int mTotalProDrumRollCount[kNumDifficulties]; // 0x5ac
     int mBestSoloButtonPercent[kNumDifficulties]; // 0x5bc
     int mBestDrumRollPercent[kNumDifficulties]; // 0x5cc
-    int mTotalSongsPlayed; // 0x5dc
-    int mTourTotalSongsPlayed; // 0x5e0
+    int mTotalSongsPlayed; // 0x5f0
+    int mTourTotalSongsPlayed; // 0x5f4
     std::hash_map<Symbol, int> mToursPlayedMap; // 0x5e4 (hashtable, 0x1c)
     std::hash_map<Symbol, int> mTourMostStarsMap; // 0x5fc
     std::hash_map<Symbol, int> mToursGotAllStarsMap; // 0x614
     std::hash_map<int, int> mGigTypeCompletedMap; // 0x62c
-    bool mUploadDirty; // 0x644
-    bool unk645; // 0x645
-    int unk648; // 0x648
+    bool mUploadDirty; // 0x668
+    bool unk645; // 0x669
+    int unk648; // 0x66c
 };

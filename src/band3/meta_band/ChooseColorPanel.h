@@ -27,9 +27,9 @@ public:
     NEW_OBJ(ChooseColorPanel);
     static void Init() { REGISTER_OBJ_FACTORY(ChooseColorPanel); }
 
-    ClosetMgr *mClosetMgr; // 0x38
-    OutfitConfig *mCurrentOutfitConfig; // 0x3c
-    BandCharDesc::OutfitPiece *mCurrentOutfitPiece; // 0x40
+    ClosetMgr *mClosetMgr; // 0x3c
+    OutfitConfig *mCurrentOutfitConfig; // 0x40
+    BandCharDesc::OutfitPiece *mCurrentOutfitPiece; // 0x44
     // Retail RB3-360 uses an STLport hash_map here, not the Wii build's
     // std::map (same divergence SongStatusMgr.h documents). Adjudicated on
     // RETAIL BODY SIZES, which are independent of the symbol name's value-type
@@ -43,6 +43,6 @@ public:
     // @0x68 — compiler-verified, and note the old "// 0x44" comment was wrong;
     // the real offset is 0x48). Lane DS-1.
     std::hash_map<int, ColorPalette *> mColorOptions; // 0x48, 0x1c bytes
-    int mNumOptions; // 0x5c
-    int mCurrentOption; // 0x60
+    int mNumOptions; // 0x64
+    int mCurrentOption; // 0x68
 };

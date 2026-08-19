@@ -10,9 +10,9 @@ class RemoteUser;
 
 class User : public Hmx::Object {
 public:
-    OnlineID *mOnlineID; // 0x2c
+    OnlineID *mOnlineID; // 0x28
     UserGuid mUserGuid; // 0x30
-    unsigned int mMachineID; // 0x40
+    unsigned int mMachineID; // 0x3c
 
     User();
     // Hmx::Object

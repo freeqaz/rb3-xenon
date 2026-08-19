@@ -163,14 +163,14 @@ protected:
     static bool sDisableAll;
 
     /** "Array of file mergers" */
-    ObjVector<Merger> mMergers; // 0x40
-    bool mAsyncLoad; // 0x50
-    bool mLoadingLoad; // 0x51
-    Loader *mCurLoader; // 0x54
-    std::list<Merger *> mFilesPending; // 0x58
-    MergeFilter *mFilter; // 0x60
-    int mHeap; // 0x64
-    Loader::Callback *mOrganizer; // 0x68
+    ObjVector<Merger> mMergers; // 0x3c
+    bool mAsyncLoad; // 0x4c
+    bool mLoadingLoad; // 0x4d
+    Loader *mCurLoader; // 0x50
+    std::list<Merger *> mFilesPending; // 0x54
+    MergeFilter *mFilter; // 0x5c
+    int mHeap; // 0x60
+    Loader::Callback *mOrganizer; // 0x64
 };
 
 struct FileMergerSort {

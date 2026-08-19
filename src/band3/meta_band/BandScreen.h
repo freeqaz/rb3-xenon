@@ -26,7 +26,7 @@ public:
     NEW_OBJ(BandScreen);
     static void Init() { REGISTER_OBJ_FACTORY(BandScreen); }
 
-    std::vector<UIPanel *> mExtraPanels; // 0x34
+    std::vector<UIPanel *> mExtraPanels; // 0x40
 };
 
 #include "obj/Msg.h"

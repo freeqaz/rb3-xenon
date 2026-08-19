@@ -51,16 +51,16 @@ private:
     /** Clear the lists of parsed note-ons and text events. */
     void FreeAllData();
 
-    std::vector<int> mNoteOns; // 0x34
-    std::vector<MidiParser::VocalEvent> mText; // 0x40
-    GemListInterface *mGems; // 0x4c
-    bool mLoaded; // 0x50
-    const char *mFilename; // 0x54
-    Symbol mTrackName; // 0x58
-    Symbol mSongName; // 0x5c
-    std::vector<Symbol> mTrackNames; // 0x60
-    bool mWarnUnnamedTracks; // 0x6c
-    bool mPlaybackEnabled; // 0x6d
+    std::vector<int> mNoteOns; // 0x30
+    std::vector<MidiParser::VocalEvent> mText; // 0x3c
+    GemListInterface *mGems; // 0x48
+    bool mLoaded; // 0x4c
+    const char *mFilename; // 0x50
+    Symbol mTrackName; // 0x54
+    Symbol mSongName; // 0x58
+    std::vector<Symbol> mTrackNames; // 0x5c
+    bool mWarnUnnamedTracks; // 0x68
+    bool mPlaybackEnabled; // 0x69
 };
 
 extern MidiParserMgr *TheMidiParserMgr;

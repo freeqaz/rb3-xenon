@@ -45,21 +45,21 @@ protected:
 
     ObjPtrList<SeqInst> mInsts; // 0x38
     /** "Average volume this sequence will be played at, in dB" */
-    float mAvgVol; // 0x4c
+    float mAvgVol; // 0x48
     /** "Amount to vary the volume above and below the average, in dB" */
-    float mVolSpread; // 0x50
+    float mVolSpread; // 0x4c
     /** "Average transpose this sequence will be played at, in semitones" */
-    float mAvgTranspose; // 0x54
+    float mAvgTranspose; // 0x50
     /** "Amount to vary the transpose, in semitones" */
-    float mTransposeSpread; // 0x58
+    float mTransposeSpread; // 0x54
     /** "Average pan to apply to this sequence (-1 - 1)" */
-    float mAvgPan; // 0x5c
+    float mAvgPan; // 0x58
     /** "Amount to vary the pan" */
-    float mPanSpread; // 0x60
+    float mPanSpread; // 0x5c
     FaderGroup mFaders; // 0x64
     /** "If false, this sequence will play to its end and can't be stopped prematurely"
      */
-    bool mCanStop; // 0x7c
+    bool mCanStop; // 0x78
 };
 
 /** "A Sequence type which just waits a specified duration, generating
@@ -83,9 +83,9 @@ public:
 
 protected:
     /** "Average wait time, in seconds" */
-    float mAvgWaitSecs; // 0x80
+    float mAvgWaitSecs; // 0x7c
     /** "Amount to vary the wait time, in seconds" */
-    float mWaitSpread; // 0x84
+    float mWaitSpread; // 0x80
 };
 
 /** "A sequence which plays other sequences.  Abstract base class." */
@@ -102,7 +102,7 @@ protected:
     GroupSeq();
 
     /** "The children of this sequence" */
-    ObjPtrList<Sequence> mChildren; // 0x80
+    ObjPtrList<Sequence> mChildren; // 0x7c
 };
 
 /** "Plays one or more of its child sequences, selected at random." */
@@ -140,12 +140,12 @@ public:
 
 protected:
     /** "Number of children to play simultaneously" */
-    int mNumSimul; // 0x94
+    int mNumSimul; // 0x90
     /** "If false, you will never hear the same sequence again until all have played (only
      * if num_simul is 1)" */
-    bool mAllowRepeats; // 0x98
-    int mNextIndex; // 0x9c
-    int mForceChooseIndex; // 0xa0
+    bool mAllowRepeats; // 0x94
+    int mNextIndex; // 0x98
+    int mForceChooseIndex; // 0x9c
     std::list<int> mPlayHistory; // 0xa4
 };
 
@@ -170,12 +170,12 @@ public:
 
 protected:
     /** "the number of seconds on average we wait to play a child cue again" */
-    float mAvgIntervalSecs; // 0x94
+    float mAvgIntervalSecs; // 0x90
     /** "We randomly deviate + or - this many seconds from the average when picking our
      * wait interval" */
-    float mIntervalSpread; // 0x98
+    float mIntervalSpread; // 0x94
     /** "the maximum number of sounds we allow at one time" */
-    int mMaxSimultaneous; // 0x9c
+    int mMaxSimultaneous; // 0x98
 };
 
 /** "Plays its child sequences in order, waiting for each to stop
@@ -239,12 +239,12 @@ public:
     bool Started() const { return mStarted; }
 
 protected:
-    Sequence *mOwner; // 0x2c
-    float mRandVol; // 0x30
-    float mRandPan; // 0x34
-    float mRandTp; // 0x38
-    float mVolume; // 0x3c
-    bool mStarted; // 0x40
+    Sequence *mOwner; // 0x28
+    float mRandVol; // 0x2c
+    float mRandPan; // 0x30
+    float mRandTp; // 0x34
+    float mVolume; // 0x38
+    bool mStarted; // 0x3c
 };
 
 #include "Sequence_p.h"

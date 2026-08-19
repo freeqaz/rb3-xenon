@@ -93,19 +93,19 @@ public:
     float unk20;
     int unk24;
     int unk28;
-    float mRemotePhraseMeterFrac; // 0x2c
-    float mPhraseScorePartMultiplier; // 0x30
-    float mPhraseScoreMax; // 0x34
+    float mRemotePhraseMeterFrac; // 0x30
+    float mPhraseScorePartMultiplier; // 0x34
+    float mPhraseScoreMax; // 0x38
     float unk38;
     int unk3c;
-    float mPhraseScore; // 0x40
+    float mPhraseScore; // 0x44
     float unk44;
     float unk48;
     float unk4c;
     int unk50;
     float unk54;
     int unk58;
-    const VocalPhrase *mThisPhrase; // 0x5c
+    const VocalPhrase *mThisPhrase; // 0x60
     int mPhraseValue; // 0x60
     float mSlop; // 0x64
     float mPitchSigma; // 0x68
@@ -117,7 +117,7 @@ public:
     float mNoteLengthFactor; // 0x80
     float unk84;
     int unk88;
-    int mSpotlightPhraseID; // 0x8c
+    int mSpotlightPhraseID; // 0x90
     float mNonPitchEasyMultiplier; // 0x90
     float mPhraseScoreCapGrowth; // 0x94
     int unk98;
@@ -125,16 +125,16 @@ public:
     float unka0;
     float unka4;
     float unka8;
-    bool mInFreestyleSection; // 0xac
+    bool mInFreestyleSection; // 0xb0
     bool unkad;
     float unkb0;
     bool unkb4;
-    float mFirstPhraseMsToScore; // 0xb8
+    float mFirstPhraseMsToScore; // 0xbc
     float unkbc;
-    Singer *mBestSinger; // 0xc0
-    float mBestSingerPitchDistance; // 0xc4
+    Singer *mBestSinger; // 0xc4
+    float mBestSingerPitchDistance; // 0xc8
     int unkc8;
-    bool mScoringEnabled; // 0xcc
-    int mPhraseRank; // 0xd0
-    float mTalkyEnergyThreshold; // 0xd4
+    bool mScoringEnabled; // 0xd0
+    int mPhraseRank; // 0xd4
+    float mTalkyEnergyThreshold; // 0xd8
 };

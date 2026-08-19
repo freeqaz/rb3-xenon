@@ -15,10 +15,10 @@ public:
     void Poll(bool, bool, float, float, float);
     FxSend *GetFxSend();
 
-    TrackType mTrackType; // 0x1c
-    int unk20; // 0x20
-    ObjDirPtr<ObjectDir> mFxDir; // 0x24
+    TrackType mTrackType; // 0x28
+    int unk20; // 0x2c
+    ObjDirPtr<ObjectDir> mFxDir; // 0x30
     bool unk30; // 0x30
-    bool unk31; // 0x31
-    float unk34; // 0x34
+    bool unk31; // 0x3d
+    float unk34; // 0x40
 };

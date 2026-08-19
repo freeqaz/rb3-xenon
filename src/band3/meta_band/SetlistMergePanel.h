@@ -32,6 +32,6 @@ public:
     DataNode OnMsg(const RemoteMachineLeftMsg &);
     DataNode OnMsg(const NewRemoteMachineMsg &);
 
-    std::vector<std::pair<std::vector<int>, int> > mSetlists; // 0x38
-    LockStepMgr *mSetlistMergeLock; // 0x40
+    std::vector<std::pair<std::vector<int>, int> > mSetlists; // 0x3c
+    LockStepMgr *mSetlistMergeLock; // 0x48
 };

@@ -27,7 +27,7 @@ public:
 
         ObjPtr<RndTransformable> mPiercing; // 0x0
         Transform unkc; // 0xc
-        bool mReskin; // 0x3c
+        bool mReskin; // 0x4c
         ObjVector<Piece> mPieces; // 0x40
     };
 
@@ -87,7 +87,7 @@ public:
         ObjPtr<ColorPalette> mColor2Palette; // 0x4c
         int mColor2Option; // 0x58
         ObjVector<ObjPtr<RndTex> > mTextures; // 0x5c
-        bool mTwoColor; // 0x68
+        bool mTwoColor; // 0x6c
     };
 
     class MeshAO {
@@ -103,7 +103,7 @@ public:
         String mMeshName; // 0x0
         String unkc; // 0xc
         std::vector<int> mCoeffs; // 0x18
-        std::vector<Seam> mSeams; // 0x20
+        std::vector<Seam> mSeams; // 0x24
     };
 
     class Overlay {
@@ -166,7 +166,7 @@ public:
     ObjVector<MatSwap> mMats; // 0x2c
     int unk38; // 0x38
     int unk3c; // 0x3c
-    std::vector<MeshAO> mMeshAO; // 0x40
+    std::vector<MeshAO> mMeshAO; // 0x48
     bool mComputeAO; // 0x48
     ObjVector<BandPatchMesh> mPatches; // 0x4c
     bool mPermaProject; // 0x58

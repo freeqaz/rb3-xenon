@@ -30,9 +30,9 @@ private:
     virtual void WriteImpl(const void *, int);
     virtual void SeekImpl(int, SeekType);
 
-    NetworkSocket *mSocket; // 0x10
-    bool mFail; // 0x14
-    float mReadTimeoutMs; // 0x18
-    int mBytesRead; // 0x1c
-    int mBytesWritten; // 0x20
+    NetworkSocket *mSocket; // 0xc
+    bool mFail; // 0x10
+    float mReadTimeoutMs; // 0x14
+    int mBytesRead; // 0x18
+    int mBytesWritten; // 0x1c
 };

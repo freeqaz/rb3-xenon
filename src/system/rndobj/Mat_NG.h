@@ -36,13 +36,13 @@ protected:
     float mTexHalfPixelY; // 0x230
     float mTexHalfPixelNegX; // 0x234
     float mTexHalfPixelNegY; // 0x238
-    RndRenderState::Blend mBlendSrc; // 0x23c
-    RndRenderState::Blend mBlendDest; // 0x240
-    bool mDepthTestEnable; // 0x244
-    bool mDepthWriteEnable; // 0x245
-    RndRenderState::TestFunc mDepthFunc; // 0x248
-    RndRenderState::TestFunc mStencilFunc; // 0x24c
-    RndRenderState::StencilOp mStencilZFail; // 0x250
+    RndRenderState::Blend mBlendSrc; // 0x19c
+    RndRenderState::Blend mBlendDest; // 0x1a0
+    bool mDepthTestEnable; // 0x1a4
+    bool mDepthWriteEnable; // 0x1a5
+    RndRenderState::TestFunc mDepthFunc; // 0x1a8
+    RndRenderState::TestFunc mStencilFunc; // 0x1ac
+    RndRenderState::StencilOp mStencilZFail; // 0x1b0
     Hmx::Matrix4 mTexGenMatrix; // 0x254
     Hmx::Matrix4 mTexGenMatrix2; // 0x294
     int unk2d4; // 0x2d4
@@ -50,6 +50,6 @@ protected:
     float unk2dc;
     float unk2e0;
     float unk2e4;
-    RndRenderState::BlendOp mBlendOp; // 0x2e8
-    bool mBlendEnable; // 0x2ec
+    RndRenderState::BlendOp mBlendOp; // 0x248
+    bool mBlendEnable; // 0x24c
 };

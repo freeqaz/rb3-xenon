@@ -20,5 +20,5 @@ public:
     bool InqSongs(std::vector<Symbol> &, bool) const;
 
     SongSortMgr::SongFilter mFilter; // 0x7c
-    Symbol mPartDifficultySym; // 0x90
+    Symbol mPartDifficultySym; // 0xb4
 };

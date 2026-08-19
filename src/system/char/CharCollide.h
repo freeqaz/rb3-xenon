@@ -71,7 +71,7 @@ protected:
     int NumSpheres(Shape) const;
 
     /** "Type of collision" */
-    Shape mShape; // 0xc0
+    Shape mShape; // 0xb4
     int mFlags; // 0xc4
     /** "Optional mesh that will deform, used to resize ourselves.
         If this is set, make sure you are not parented to any bone with scale,
@@ -97,7 +97,7 @@ protected:
     float unk1f4; // 0x1f4
     float unk1f8; // 0x1f8
     Vector3 unk1fc; // 0x1fc
-    Vector3 unk20c; // 0x20c
+    Vector3 unk20c; // 0x1f8
 };
 
 struct ByRadius {

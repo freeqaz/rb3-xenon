@@ -10,5 +10,5 @@ public:
     virtual Symbol DataSymbol(int) const;
     virtual int NumData() const { return mTrainers.size(); }
 
-    std::vector<Symbol> mTrainers; // 0x20
+    std::vector<Symbol> mTrainers; // 0x2c
 };

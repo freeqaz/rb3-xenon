@@ -21,9 +21,9 @@ enum StoreError {
 
 struct EnumProduct {
     String mName;       // 0x00
-    u64 mOfferID;       // 0x08
-    int mPurchased;     // 0x10
-    int mPrice;         // 0x14
+    u64 mOfferID;       // 0x10
+    int mPurchased;     // 0x18
+    int mPrice;         // 0x1c
 };
 
 class StoreEnumeration {

@@ -56,5 +56,5 @@ public:
     virtual ~WaveFileData();
 
 private:
-    WaveFile &mWaveFile; // 0x28
+    WaveFile &mWaveFile; // 0x24
 };

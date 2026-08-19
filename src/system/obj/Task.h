@@ -37,7 +37,7 @@ public:
 class MessageTask : public Task {
 private:
     ObjOwnerPtr<Hmx::Object> mObj; // 0x2c
-    DataArray *mMsg; // 0x40
+    DataArray *mMsg; // 0x34
 public:
     MessageTask(Hmx::Object *, DataArray *);
     virtual ~MessageTask();
@@ -61,11 +61,11 @@ public:
     virtual void Poll(float);
 
 protected:
-    std::list<Var> mVars; // 0x2c
-    std::list<Hmx::Object *> mObjects; // 0x34
+    std::list<Var> mVars; // 0x28
+    std::list<Hmx::Object *> mObjects; // 0x30
     ObjOwnerPtr<Hmx::Object> mThis; // 0x3c
-    DataArray *mScript; // 0x48
-    bool mOnce; // 0x4c
+    DataArray *mScript; // 0x44
+    bool mOnce; // 0x48
 
     void SwapVars();
     void UpdateVarsObjects(DataArray *);
@@ -73,7 +73,7 @@ protected:
 
 class ThreadTask : public ScriptTask {
 private:
-    bool mWait; // 0x4d
+    bool mWait; // 0x4c
     int mCurrent; // 0x50
     float mTime; // 0x54
     bool mExecuting; // 0x58
@@ -184,9 +184,9 @@ public:
 private:
     DataNode OnTimeTilNext(DataArray *);
 
-    TaskTimeline *mTimelines; // 0x2c
+    TaskTimeline *mTimelines; // 0x28
     SongPos mSongPos; // 0x30
-    bool mAutoSecondsBeats; // 0x48
+    bool mAutoSecondsBeats; // 0x40
     int unk4c; // 0x4c
     Timer mTime; // 0x50
     float mAVOffset; // 0x80

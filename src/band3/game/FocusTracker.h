@@ -44,21 +44,21 @@ public:
     void LocalSetFocusPlayer(const TrackerPlayerID &, float, int, float, FocusFlags);
     void SetTrackFocus(const TrackerPlayerID &, bool, FocusFlags);
 
-    float mFocusDelayMs; // 0x58
-    bool mInFocusDelay; // 0x5c
-    FocusFlags mFocusFlags; // 0x60
-    TrackerPlayerID mFocusPlayer; // 0x64
-    bool unk74; // 0x74
-    float unk78; // 0x78
-    float unk7c; // 0x7c
-    float unk80; // 0x80
-    float unk84; // 0x84
-    int unk88; // 0x88
-    int unk8c; // 0x8c
-    std::map<TrackerPlayerID, int> mFocusCountMap; // 0x90
+    float mFocusDelayMs; // 0x64
+    bool mInFocusDelay; // 0x68
+    FocusFlags mFocusFlags; // 0x6c
+    TrackerPlayerID mFocusPlayer; // 0x70
+    bool unk74; // 0x80
+    float unk78; // 0x84
+    float unk7c; // 0x88
+    float unk80; // 0x8c
+    float unk84; // 0x90
+    int unk88; // 0x94
+    int unk8c; // 0x98
+    std::map<TrackerPlayerID, int> mFocusCountMap; // 0x9c
     TrackerMultiplierMap unka8; // 0xa8
     int unkc4; // 0xc4
-    bool unkc8; // 0xc8
+    bool unkc8; // 0xd4
 };
 
 class StreakFocusTracker : public FocusTracker {
@@ -112,7 +112,7 @@ public:
     virtual void BroadcastFocusSuccess() const;
 
     int unkcc;
-    float mRequiredAccuracy; // 0xd0
+    float mRequiredAccuracy; // 0xdc
     int unkd4;
     int unkd8;
     int unke0;

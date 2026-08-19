@@ -30,5 +30,5 @@ public:
     Symbol GetAssociatedTour() const;
     int GetTourValue() const;
 
-    std::list<AccomplishmentTourCondition> m_vConditions; // 0x74
+    std::list<AccomplishmentTourCondition> m_vConditions; // 0x90
 };

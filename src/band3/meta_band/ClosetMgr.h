@@ -104,24 +104,24 @@ public:
     static void Init();
     static ClosetMgr *GetClosetMgr();
 
-    LocalBandUser *mUser; // 0x1c
-    int mSlot; // 0x20
-    bool mNoUserMode; // 0x24
-    BandProfile *unk28; // 0x28
-    CharData *mCurrentCharacter; // 0x2c
-    CharData *mPreviousCharacter; // 0x30
-    BandCharacter *mBandCharacter; // 0x34
-    BandCharDesc *mBandCharDesc; // 0x38
+    LocalBandUser *mUser; // 0x18
+    int mSlot; // 0x1c
+    bool mNoUserMode; // 0x20
+    BandProfile *unk28; // 0x24
+    CharData *mCurrentCharacter; // 0x28
+    CharData *mPreviousCharacter; // 0x2c
+    BandCharacter *mBandCharacter; // 0x30
+    BandCharDesc *mBandCharDesc; // 0x34
     BandCharDesc *unk3c; // 0x3c - preview desc
-    ClosetPanel *mCurrentClosetPanel; // 0x40
+    ClosetPanel *mCurrentClosetPanel; // 0x3c
     Symbol unk44;
-    BandCharDesc::OutfitPiece *mCurrentOutfitPiece; // 0x48
-    OutfitConfig *mCurrentOutfitConfig; // 0x4c
+    BandCharDesc::OutfitPiece *mCurrentOutfitPiece; // 0x44
+    OutfitConfig *mCurrentOutfitConfig; // 0x48
     AssetStore mAssetStore; // 0x50 (360: base+0x4c) - sizeof 0x4c
     PatchDescriptor unk50;
-    Symbol mReturnScreen; // 0x58
-    Symbol mGender; // 0x5c
-    bool mCharacterLoading; // 0x60
+    Symbol mReturnScreen; // 0xa0
+    Symbol mGender; // 0xa4
+    bool mCharacterLoading; // 0xa8
     bool unk61;
 };
 

@@ -46,7 +46,7 @@ public:
     PlayerTrackConfigList *GetConfigList() const { return mPlayerTrackConfigList; }
     float GetSongLimitMs() const { return mSongLimitMs; }
 
-    PlayerTrackConfigList *mPlayerTrackConfigList; // 0x1c
+    PlayerTrackConfigList *mPlayerTrackConfigList; // 0x28
     PracticeSectionProvider *mPracticeSectionProvider; // 0x20
     float mSongLimitMs; // 0x24
     int mPracticeSections[2]; // 0x28

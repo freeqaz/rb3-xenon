@@ -26,5 +26,5 @@ public:
     bool IsAllArtLoadedOrFailed();
     RndBitmap *GetBmp(const String &);
 
-    std::vector<ArtEntry> mArtList; // 0x38
+    std::vector<ArtEntry> mArtList; // 0x3c
 };

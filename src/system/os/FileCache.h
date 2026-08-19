@@ -44,14 +44,14 @@ public:
 
 private:
     FilePath mFileName; // 0x0
-    FilePath mReadFileName; // 0x8
-    const char *mBuf; // 0x10
-    FileLoader *mLoader; // 0x14
-    int mSize; // 0x18
-    int mRefCount; // 0x1c
-    int mPriority; // 0x20
-    int mReads; // 0x24
-    float mLastRead; // 0x28
+    FilePath mReadFileName; // 0xc
+    const char *mBuf; // 0x18
+    FileLoader *mLoader; // 0x1c
+    int mSize; // 0x20
+    int mRefCount; // 0x24
+    int mPriority; // 0x28
+    int mReads; // 0x2c
+    float mLastRead; // 0x30
 };
 
 class FileCacheFile : public File {

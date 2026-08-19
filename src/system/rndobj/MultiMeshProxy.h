@@ -33,6 +33,6 @@ protected:
     // RndTransformable
     virtual void UpdatedWorldXfm();
 
-    ObjPtr<RndMultiMesh> mMultiMesh; // 0x100
-    std::list<RndMultiMesh::Instance>::iterator mIndex; // 0x114
+    ObjPtr<RndMultiMesh> mMultiMesh; // 0xd8
+    std::list<RndMultiMesh::Instance>::iterator mIndex; // 0xe4
 };

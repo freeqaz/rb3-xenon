@@ -41,15 +41,15 @@ public:
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
-    Vector3 unk10c; // 0x10c
-    Vector3 unk118; // 0x118
+    Vector3 unk10c; // 0x140
+    Vector3 unk118; // 0x150
     float unk124;
     float mAnimDuration; // 0x128
     BandLabel *mHelpTextLabel; // 0x12c
-    Vector3 unk130; // 0x130
-    Vector3 unk13c; // 0x13c
-    RndTransformable *unk148; // 0x148
+    Vector3 unk130; // 0x16c
+    Vector3 unk13c; // 0x17c
+    RndTransformable *unk148; // 0x18c
     std::vector<RndMat *> mMirrorMats; // 0x14c
-    UIComponent *unk154; // 0x154
-    int unk158; // 0x158
+    UIComponent *unk154; // 0x19c
+    int unk158; // 0x1a0
 };

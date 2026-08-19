@@ -19,6 +19,6 @@ public:
     bool CheckCymbal(const GameGem &, GemHitFlags) const;
     void CheckForKickAutoplay(float);
 
-    int mNextKickGemToAutoplay; // 0xc0
-    unsigned int mGameCymbalLanes; // 0xc4
+    int mNextKickGemToAutoplay; // 0xcc
+    unsigned int mGameCymbalLanes; // 0xd0
 };

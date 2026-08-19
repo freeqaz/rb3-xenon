@@ -37,5 +37,5 @@ public:
     CharBonesMeshes *mBones; // 0x10
     std::vector<int> *mMapping; // 0x14
     std::vector<RndTransformable *> unk18; // 0x18
-    bool mBonesOnly; // 0x20
+    bool mBonesOnly; // 0x24
 };

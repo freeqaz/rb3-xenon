@@ -15,12 +15,12 @@ public:
     void Poll();
     void SetVolume(float);
 
-    float mMasterVol; // 0x2c
-    float mStreamVol; // 0x30
-    bool mLoop; // 0x34
-    bool mStarted; // 0x35
-    bool mPaused; // 0x36
-    Stream *mStream; // 0x38
+    float mMasterVol; // 0x28
+    float mStreamVol; // 0x2c
+    bool mLoop; // 0x30
+    bool mStarted; // 0x31
+    bool mPaused; // 0x32
+    Stream *mStream; // 0x34
 
 private:
     void Delete();

@@ -74,5 +74,5 @@ public:
     bool FillAt(int tick, FillExtent &outExtent, bool include_end) const;
 
     TickedInfoCollection<int> mLanes; // 0x4
-    std::vector<FillExtent> mFills; // 0xc
+    std::vector<FillExtent> mFills; // 0x10
 };

@@ -201,26 +201,26 @@ public:
     OvershellSlotState *mState; // 0x2c
     OvershellSlotStateID mOverrideFlowReturnState; // 0x30
     OvershellPanel *mOvershell; // 0x34
-    BandUserMgr *mBandUserMgr; // 0x34
-    SessionMgr *mSessionMgr; // 0x38
-    int mSlotNum; // 0x3c
+    BandUserMgr *mBandUserMgr; // 0x38
+    SessionMgr *mSessionMgr; // 0x3c
+    int mSlotNum; // 0x40
     std::vector<ControllerType> unk40;
     std::vector<ControllerType> unk48;
-    OvershellDir *mOvershellDir; // 0x50
-    bool mAutohideEnabled; // 0x54
-    bool mIsLeavingOptions; // 0x55
+    OvershellDir *mOvershellDir; // 0x5c
+    bool mAutohideEnabled; // 0x60
+    bool mIsLeavingOptions; // 0x61
     bool unk80; // 0x56 (retail packs these two into the 2-byte pad before mCurrentView)
     bool unk81; // 0x57
-    Symbol mCurrentView; // 0x58
-    bool mBlockAllInput; // 0x5c
-    bool mInGame; // 0x5d
-    bool mSongOptionsRequired; // 0x5e
-    std::vector<PotentialUserEntry> mPotentialUsers; // 0x60
+    Symbol mCurrentView; // 0x64
+    bool mBlockAllInput; // 0x68
+    bool mInGame; // 0x69
+    bool mSongOptionsRequired; // 0x6a
+    std::vector<PotentialUserEntry> mPotentialUsers; // 0x6c
     DataResultList mLinkingCodeResultList; // 0x68 (ends 0x80)
-    TourCharLocal *mCharForEdit; // 0x80
-    unsigned int mCymbalConfiguration; // 0x88
-    PassiveMessageQueue *mMessageQueue; // 0x8c
-    OvershellOverrideFlow mSlotOverrideFlow; // 0x90
+    TourCharLocal *mCharForEdit; // 0x90
+    unsigned int mCymbalConfiguration; // 0x94
+    PassiveMessageQueue *mMessageQueue; // 0x98
+    OvershellOverrideFlow mSlotOverrideFlow; // 0x9c
     // Retail provider block (offsets verified from the retail ctor fn_825C7188
     // / dtor fn_825C7A90): mCharProvider 0xa0, mKickUsers 0xa4, mMuteUsers 0xa8,
     // mGamercardUsers 0xac (X360-only), mSwappableProfiles 0xb0, mFriendsProvider

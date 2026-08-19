@@ -64,8 +64,8 @@ protected:
     DataNode ForeachPanel(DataArray const *);
     void ReloadStrings();
 
-    std::list<PanelRef> mPanelList; // 0x2c
-    UIPanel *mFocusPanel; // 0x34
+    std::list<PanelRef> mPanelList; // 0x28
+    UIPanel *mFocusPanel; // 0x30
     DataArray *mBack; // 0x38
     bool mClearVram; // 0x3c
     bool mShowing; // 0x3d

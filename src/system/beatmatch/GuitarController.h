@@ -35,12 +35,12 @@ public:
     int OnMsg(const ButtonUpMsg &);
     void ReconcileFretState();
 
-    bool mDisabled; // 0x3c
+    bool mDisabled; // 0x48
     bool mAutoSoloButtons; // 0x3d
-    unsigned int mFretMask; // 0x40
+    unsigned int mFretMask; // 0x4c
     int mShiftButtonMask; // 0x44
-    BeatMatchControllerSink *mSink; // 0x48
-    ControllerStyle mControllerStyle; // 0x4c
-    std::vector<int> mStrumBarButtons; // 0x50
-    JoypadButton mMercuryButton; // 0x58
+    BeatMatchControllerSink *mSink; // 0x54
+    ControllerStyle mControllerStyle; // 0x58
+    std::vector<int> mStrumBarButtons; // 0x5c
+    JoypadButton mMercuryButton; // 0x68
 };

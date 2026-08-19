@@ -47,7 +47,7 @@ public:
         Vert() {}
 
         Vector3 pos; // 0x0
-        Vector3 norm; // 0xc
+        Vector3 norm; // 0x10
     };
 
     SyncMeshCB() {}
@@ -329,27 +329,27 @@ public:
 protected:
 
     /** This mesh's vertices. */
-    VertVector mVerts; // 0x100
+    VertVector mVerts; // 0xd8
     /** This mesh's faces. */
-    std::vector<Face> mFaces; // 0x110
+    std::vector<Face> mFaces; // 0xe4
     /** "Material used for rendering the Mesh" */
     ObjPtr<RndMat> mMat; // 0x11c
-    std::vector<unsigned char> mPatches; // 0x130
+    std::vector<unsigned char> mPatches; // 0xfc
     /** "Geometry owner for the mesh" */
     ObjOwnerPtr<RndMesh> mGeomOwner; // 0x13c
     /** This mesh's bones. */
-    ObjVector<RndBone> mBones; // 0x150
-    int mMutable; // 0x160
+    ObjVector<RndBone> mBones; // 0x114
+    int mMutable; // 0x124
     /** "Volume of the Mesh" */
-    Volume mVolume; // 0x164
-    BSPNode *mBSPTree; // 0x168
+    Volume mVolume; // 0x128
+    BSPNode *mBSPTree; // 0x12c
     /** The MultiMesh that will draw this Mesh multiple times. */
-    RndMultiMesh *mMultiMesh; // 0x16c
-    bool mHasAOCalc; // 0x170
-    bool mKeepMeshData; // 0x171
-    MotionBlurCache mMotionCache; // 0x174
-    unsigned char *mCompressedVerts; // 0x184
-    unsigned int mNumCompressedVerts; // 0x188
+    RndMultiMesh *mMultiMesh; // 0x130
+    bool mHasAOCalc; // 0x134
+    bool mKeepMeshData; // 0x135
+    MotionBlurCache mMotionCache; // 0x138
+    unsigned char *mCompressedVerts; // 0x144
+    unsigned int mNumCompressedVerts; // 0x148
 };
 
 class PatchVerts {
@@ -368,5 +368,5 @@ protected:
     int GreaterEq(int) const;
 
     Vector3 mCentroid; // 0x0
-    std::vector<int> mPatchVerts; // 0xc
+    std::vector<int> mPatchVerts; // 0x10
 };

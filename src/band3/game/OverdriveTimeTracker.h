@@ -20,10 +20,10 @@ public:
 
     void UpdateTimeRemainingDisplay();
 
-    float mPastDurationMs; // 0x58
-    float mCurrentDurationMs; // 0x5c
-    float mLongestDurationMs; // 0x60
-    float mDeployStartMs; // 0x64
-    int mLastUpdateSeconds; // 0x68
-    bool mWasDeploying; // 0x6c
+    float mPastDurationMs; // 0x64
+    float mCurrentDurationMs; // 0x68
+    float mLongestDurationMs; // 0x6c
+    float mDeployStartMs; // 0x70
+    int mLastUpdateSeconds; // 0x74
+    bool mWasDeploying; // 0x78
 };

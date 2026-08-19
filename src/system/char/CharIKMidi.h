@@ -38,17 +38,17 @@ protected:
     /** "The bone to move" */
     ObjPtr<RndTransformable> mBone; // 0x10
     /** "Spot to go to, zero indexed" */
-    ObjPtr<RndTransformable> mCurSpot; // 0x24
-    ObjPtr<RndTransformable> mNewSpot; // 0x38
-    Transform mLocalXfm; // 0x4c
-    Transform mOldLocalXfm; // 0x8c
-    float mFrac; // 0xcc
+    ObjPtr<RndTransformable> mCurSpot; // 0x1c
+    ObjPtr<RndTransformable> mNewSpot; // 0x28
+    Transform mLocalXfm; // 0x34
+    Transform mOldLocalXfm; // 0x74
+    float mFrac; // 0xb4
     float mFracPerBeat; // 0xd0
-    bool mSpotChanged; // 0xd4
+    bool mSpotChanged; // 0xbc
     /** "Weightable to change animation between frets" */
-    ObjPtr<CharWeightable> mAnimBlender; // 0xd8
+    ObjPtr<CharWeightable> mAnimBlender; // 0xc0
     /** "Max weight for animation change" */
-    float mMaxAnimBlend; // 0xec
-    float mAnimFracPerBeat; // 0xf0
-    float mAnimFrac; // 0xf4
+    float mMaxAnimBlend; // 0xcc
+    float mAnimFracPerBeat; // 0xd0
+    float mAnimFrac; // 0xd4
 };

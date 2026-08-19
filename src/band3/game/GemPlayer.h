@@ -496,11 +496,11 @@ public:
     float mLastTimeWhammyVelWasHigh; // 0x360
     float unk364;
     GemTrack *mTrack; // 0x368
-    BeatMatchController *mController; // 0x36c
-    Symbol mControllerType; // 0x370
-    BeatMatcher *mMatcher; // 0x374
+    BeatMatchController *mController; // 0x3a8
+    Symbol mControllerType; // 0x3ac
+    BeatMatcher *mMatcher; // 0x3b0
     float mSyncOffset; // 0x378
-    GuitarFx *mGuitarFx; // 0x37c
+    GuitarFx *mGuitarFx; // 0x3b8
     KeysFx *mKeysFx; // 0x380
     int mFxPos; // 0x384
     bool unk388;

@@ -75,9 +75,9 @@ public:
     bool IsEarnedAccomplishmentMessage(PassiveMessage *);
     bool IsEarnedCampaignLevelMessage(PassiveMessage *);
 
-    float mMessageDuration; // 0x4
-    std::list<PassiveMessage *> mQueue; // 0x8
-    Hmx::Object *mCallback; // 0x10
+    float mMessageDuration; // 0x8
+    std::list<PassiveMessage *> mQueue; // 0xc
+    Hmx::Object *mCallback; // 0x14
     Timer mTimer; // 0x14
 };
 

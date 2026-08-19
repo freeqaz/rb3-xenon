@@ -170,7 +170,7 @@ public:
     std::hash_map<Symbol, float> mLessonCompletions; // 0x34
     SongStatusMgr *mScores; // 0x50
     std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x54
-    std::vector<StandIn> mStandIns; // 0x54
+    std::vector<StandIn> mStandIns; // 0x60
     HxGuid unk5c; // 0x5c
     // unk6c (mLastPrefabCharUsed) sits HERE, exactly as on Wii — an earlier
     // hypothesis relocated it below mAccomplishmentProgress to shift this whole
@@ -186,7 +186,7 @@ public:
     GameplayOptions mGameplayOptions; // retail 0xb8
     AccomplishmentProgress mAccomplishmentProgress; // retail 0x110
     int unk740;
-    int mAccomplishmentDataUploadContextID; // 0x744
+    int mAccomplishmentDataUploadContextID; // 0x784
     // Present on Wii (BandProfile.h:161) and in retail: CheckWebLinkStatus reads
     // unk74c at 0x78c / unk754 at 0x794, i.e. +4 vs a layout without this slot.
     // Restoring it makes the whole unk74c..mPerformanceDataList block land right
@@ -196,7 +196,7 @@ public:
     int unk750;
     DataResultList unk754;
     DataResultList unk76c;
-    int mPerformanceDataUploadContextID; // 0x784
+    int mPerformanceDataUploadContextID; // 0x7c4
     PerformanceData mPerformanceDataList[50]; // 0x788
     int unk6f70;
     int unk6f74;
@@ -206,8 +206,8 @@ public:
     ProfileAssets mProfileAssets; // 0x6f78
     int unk6fb4;
     int unk6fb8;
-    ProfilePicture *mProfilePicture; // 0x6fbc
-    TourBand *mTourBand; // 0x6fc0
+    ProfilePicture *mProfilePicture; // 0x7c7c
+    TourBand *mTourBand; // 0x7c80
 };
 
 DECLARE_MESSAGE(ProfilePreDeleteMsg, "profile_pre_delete_msg");

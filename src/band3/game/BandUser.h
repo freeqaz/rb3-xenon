@@ -124,7 +124,7 @@ public:
     Symbol mPreviousAward; // 0x74
     float mLastHitFraction; // 0x78
     Track *mTrack; // 0x7c
-    Player *mPlayer; // 0x80
+    Player *mPlayer; // 0x8c
     bool mParticipating; // 0x84
     bool mIsWiiRemoteController; // 0x85
     bool mJustDisconnected; // 0x86

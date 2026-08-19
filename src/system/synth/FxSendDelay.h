@@ -25,15 +25,15 @@ protected:
 #endif
     FxSendDelay();
 
-    float mDelayTime; // 0x60
-    float mGain; // 0x64
+    float mDelayTime; // 0x54
+    float mGain; // 0x58
     /** "Depth of ping pong effect (percent)". Ranges from 0 to 100. */
-    float mPingPongPct; // 0x68
+    float mPingPongPct; // 0x5c
     /** "Sync delay to song tempo?" */
-    bool mTempoSync; // 0x6c
+    bool mTempoSync; // 0x60
     /** "Note value of delay". Sync type options: (sixteenth eighth dotted_eighth quarter
      * dotted_quarter half whole) */
-    Symbol mSyncType; // 0x70
+    Symbol mSyncType; // 0x64
     /** "Tempo for delay; can be driven by game code". Ranges from 20 to 300. */
-    float mTempo; // 0x74
+    float mTempo; // 0x68
 };

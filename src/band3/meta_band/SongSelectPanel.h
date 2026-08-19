@@ -31,8 +31,8 @@ public:
     void RestartLeaderboardTimer();
     void CancelLeaderboardTimer();
 
-    Leaderboard *mLeaderboard; // 0x44
-    AppMiniLeaderboardDisplay *unk48; // 0x48
+    Leaderboard *mLeaderboard; // 0x48
+    AppMiniLeaderboardDisplay *unk48; // 0x4c
     float unk4c;
     float unk50;
     bool unk54;

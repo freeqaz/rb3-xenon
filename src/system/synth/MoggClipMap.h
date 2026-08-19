@@ -32,13 +32,13 @@ protected:
     /** "Which moggclip to play" */
     ObjPtr<MoggClip> mMoggClip; // 0x28 (after Object 0x28)
     /** "Surround pan, between -4 and 4" */
-    float mPan; // 0x3c
+    float mPan; // 0x34
     /** "Surround pan width, between 0 and 4" */
-    float mPanWidth; // 0x40
+    float mPanWidth; // 0x38
     /** "Volume in dB (0 is full volume, -96 is silence)" */
-    float mVolume; // 0x44
+    float mVolume; // 0x3c
     /** "Is the mogg clip stereo?" */
-    bool mIsStereo; // 0x48
+    bool mIsStereo; // 0x40
 };
 
 BinStream &operator<<(BinStream &, const MoggClipMap &);

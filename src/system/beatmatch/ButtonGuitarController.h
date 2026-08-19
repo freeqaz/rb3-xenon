@@ -33,9 +33,9 @@ public:
 
     int GetCurrentSlot() const;
 
-    bool mDisabled; // 0x3c
-    bool mShifted; // 0x3d
-    unsigned int mSlotMask; // 0x40
+    bool mDisabled; // 0x48
+    bool mShifted; // 0x49
+    unsigned int mSlotMask; // 0x4c
     int unk44; // 0x44
-    BeatMatchControllerSink *mSink; // 0x48
+    BeatMatchControllerSink *mSink; // 0x54
 };

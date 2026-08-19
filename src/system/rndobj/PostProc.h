@@ -133,22 +133,22 @@ protected:
     static float sBloomLocFactor;
     static DOFOverrideParams sDOFOverride;
 
-    float mPriority; // 0x30
+    float mPriority; // 0x2c
     /** "Color tint for bloom effect" */
-    Hmx::Color mBloomColor; // 0x34
+    Hmx::Color mBloomColor; // 0x30
     /** "Luminance intensity at which to bloom" */
-    float mBloomThreshold; // 0x44
+    float mBloomThreshold; // 0x40
     /** "Bloom intensity" */
-    float mBloomIntensity; // 0x48
+    float mBloomIntensity; // 0x44
     /** "Whether or not to use the glare effect" */
-    bool mBloomGlare; // 0x4C
+    bool mBloomGlare; // 0x48
     /** "Whether or not to use directional light streaks" */
-    bool mBloomStreak; // 0x4D
+    bool mBloomStreak; // 0x49
     /** "Attenuation (scattering amount) of light streak.
         0.9 to 0.95 is the sweet spot.". Ranges from -2 to 2. */
-    float mBloomStreakAttenuation; // 0x50
+    float mBloomStreakAttenuation; // 0x4c
     /** "Angle for light streak". Ranges from -360 to 360. */
-    float mBloomStreakAngle; // 0x54
+    float mBloomStreakAngle; // 0x50
     // RB3-360 retail places 12 bytes (3 words) BEFORE the embedded RndColorXfm
     // (not after, as a prior fix assumed). This shifts the ColorXfm sub-object
     // — and therefore its internal Transform — +0xc higher, which is what
@@ -188,42 +188,42 @@ protected:
     /** "Input high end" */
     /** "Output low end" */
     /** "Output high end" */
-    RndColorXfm mColorXfm; // 0x68
+    RndColorXfm mColorXfm; // 0x64
     /** "Number of levels for posterization, 0 turns off". Ranges from 0 to 255. */
-    float mPosterLevels; // 0xf0
+    float mPosterLevels; // 0xf8
     /** "Minimum intensity to posterize, 1.0 is posterize all". Ranges from 0 to 1. */
-    float mPosterMin; // 0xf4
+    float mPosterMin; // 0xfc
 
     /** "Kaleidoscope settings" */
     /** "Number of slices in kaleidoscope, 0 turns off, 2 for vertical mirror". Ranges
      * from 0 to 64. */
-    float mKaleidoscopeComplexity; // 0xf8
+    float mKaleidoscopeComplexity; // 0x100
     /** "Smaller size means more repeated areas, but each area is smaller". Ranges
      * from 1.0e-2 to 64. */
-    float mKaleidoscopeSize; // 0xfc
+    float mKaleidoscopeSize; // 0x104
     /** "Additional clockwise degrees of rotation around center.".
         Ranges from 0 to 360. */
-    float mKaleidoscopeAngle; // 0x100
+    float mKaleidoscopeAngle; // 0x108
     /** "Additional distance from center". Ranges from -0.5 to 0.5. */
-    float mKaleidoscopeRadius; // 0x104
+    float mKaleidoscopeRadius; // 0x10c
     /** "Flip texture UV coords when reflect" */
-    bool mKaleidoscopeFlipUVs; // 0x108
+    bool mKaleidoscopeFlipUVs; // 0x110
     /** "Min and max intensity range [0..1], 0.0 to disable" */
-    Vector2 mFlickerModBounds; // 0x10c
+    Vector2 mFlickerModBounds; // 0x114
     /** "Min and max number of seconds for a light to dark cycle" */
-    Vector2 mFlickerTimeBounds; // 0x114
+    Vector2 mFlickerTimeBounds; // 0x11c
     Vector2 mFlickerSeconds; // 0x11c
-    float mColorModulation; // 0x124
+    float mColorModulation; // 0x12c
     /** "X and Y tiling of the noise map" */
-    Vector2 mNoiseBaseScale; // 0x128
-    float mNoiseTopScale; // 0x130
+    Vector2 mNoiseBaseScale; // 0x130
+    float mNoiseTopScale; // 0x138
     /** "intensity of the noise, 0.0 to disable". Ranges from -10 to 10. */
-    float mNoiseIntensity; // 0x134
+    float mNoiseIntensity; // 0x13c
     /** "keep the noise map static over the screen" */
-    bool mNoiseStationary; // 0x138
+    bool mNoiseStationary; // 0x140
     /** "Applies the noise using at mid-tones of the scene,
         using an Overlay blend mode." */
-    bool mNoiseMidtone; // 0x139
+    bool mNoiseMidtone; // 0x141
     /** "Optional noise bitmap" */
     ObjPtr<RndTex> mNoiseMap; // 0x13c
     /** "Min pixel value to leave trails [0..1]". Ranges from 0 to 1. */
@@ -269,50 +269,50 @@ protected:
      * to use when the pixel is black is on the left and white is on the right." */
     ObjPtr<RndTex> mGradientMap; // 0x1a8
     /** "The opacity of the gradient map effect.". Ranges from 0 to 1. */
-    float mGradientMapOpacity; // 0x1bc
+    float mGradientMapOpacity; // 0x1b4
     /** "This indexes veritically into the gradient map texture. This is useful for
      * storing multiple gradient map textures in a single texture, and to blend between
      * them.". Ranges from 0 to 1. */
-    float mGradientMapIndex; // 0x1c0
+    float mGradientMapIndex; // 0x1b8
     /** "The depth where the gradient map will begin to take effect.". Ranges from 0
     to 1.
      */
-    float mGradientMapStart; // 0x1c4
+    float mGradientMapStart; // 0x1bc
     /** "The depth where the gradient map will no longer take effect.". Ranges from 0
      * to 1. */
-    float mGradientMapEnd; // 0x1c8
+    float mGradientMapEnd; // 0x1c0
 
     /** "Full-screen refraction settings" */
     /** "This is a normal map used to distort the screen." */
     ObjPtr<RndTex> mRefractMap; // 0x1cc
     /** "The distance to refract each pixel of the screen. This can also be negative to
      * reverse the direction. Set to zero to disable." */
-    float mRefractDist; // 0x1e0
+    float mRefractDist; // 0x1d0
     /** "This scales the refraction texture before distorting the screen,
         in the X and Y directions." */
-    Vector2 mRefractScale; // 0x1e4
+    Vector2 mRefractScale; // 0x1d4
     /** "The amount to offset the refraction texture, in the X and Y directions. This
         is a fixed amount to offset the refraction effect." */
-    Vector2 mRefractPanning; // 0x1ec
+    Vector2 mRefractPanning; // 0x1dc
     /** "The velocity to scroll the refraction texture, in the X and Y directions. The
      * value is specified in units per second, and will offset the refraction effect
      over time." */
-    Vector2 mRefractVelocity; // 0x1f4
+    Vector2 mRefractVelocity; // 0x1e4
     /** "The angle to rotate the refraction texture, in degrees.".
         Ranges from 0 to 360. */
-    float mRefractAngle; // 0x1fc
+    float mRefractAngle; // 0x1ec
     /** "Chromatic sharpen will sharpen the image, while chromatic aberration is an
      * artifact where color channels are slightly shifted. This is useful to simulate
      old cameras, poor quality video, or underwater scenes." */
     /** "The size, in pixels, of the chromatic aberration or sharpen effect." */
-    float mChromaticAberrationOffset; // 0x200
+    float mChromaticAberrationOffset; // 0x1f0
     /** "Whether to sharpen the chromatic image or apply the aberration effect." */
-    bool mChromaticSharpen; // 0x204
+    bool mChromaticSharpen; // 0x1f4
     /** "Color tint for vignette effect" */
-    Hmx::Color mVignetteColor; // 0x208
+    Hmx::Color mVignetteColor; // 0x1f8
     /** "0 for no effect, 1 for normal, less than one for smaller effect, 2 is full
      * color". Ranges from 0 to 2. */
-    float mVignetteIntensity; // 0x218
+    float mVignetteIntensity; // 0x208
 
     // RB3-2010 retail: the hue-converge / blend / brightness post-proc effect
     // was ADDED in the newer DC3-2012 engine; rb3-Wii's RndPostProc ends at

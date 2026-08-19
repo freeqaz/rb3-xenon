@@ -13,5 +13,5 @@ public:
     virtual float GetCurrentValue() const { return mScoreTotal; }
     virtual void SavePlayerStats() const;
 
-    int mScoreTotal; // 0x58
+    int mScoreTotal; // 0x64
 };

@@ -34,20 +34,20 @@ protected:
     void DoLOD(int);
 
     /** "things to draw in the reflection, in this order" */
-    ObjPtrList<RndDrawable> mDraws; // 0x100
+    ObjPtrList<RndDrawable> mDraws; // 0xd8
     /** "Set LOD to 1 on these reflected characters" */
-    ObjPtrList<Character> mLodChars; // 0x114
+    ObjPtrList<Character> mLodChars; // 0xec
     /** "How far to stretch vertically" */
-    float mVerticalStretch; // 0x128
-    std::list<RndMat *> unk12c; // 0x12c
-    RndCam *mReflectionCamera; // 0x134
-    bool mInDrawShowing; // 0x138
+    float mVerticalStretch; // 0x100
+    std::list<RndMat *> unk12c; // 0x104
+    RndCam *mReflectionCamera; // 0x10c
+    bool mInDrawShowing; // 0x110
     /** "List of objects to hide in the reflection,
         shows them when reflection has finished drawing." */
-    ObjPtrList<RndDrawable> mHideList; // 0x13c
+    ObjPtrList<RndDrawable> mHideList; // 0x114
     /** "List of objects to show in the reflection,
         hides them when reflection has finished drawing." */
-    ObjPtrList<RndDrawable> mShowList; // 0x15c
-    ObjPtrList<RndDrawable> mPreviouslyShownDrawables; // 0x164
-    ObjPtrList<RndDrawable> mPreviouslyHiddenDrawables; // 0x178
+    ObjPtrList<RndDrawable> mShowList; // 0x128
+    ObjPtrList<RndDrawable> mPreviouslyShownDrawables; // 0x13c
+    ObjPtrList<RndDrawable> mPreviouslyHiddenDrawables; // 0x150
 };

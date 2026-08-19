@@ -36,24 +36,24 @@ public:
     DataNode OnPlayTambourine(DataArray *);
     void OnRemoteTambourineSucceeding(DataArray *);
 
-    class VocalPlayer &mPlayerRef; // 0x1c
-    bool mIsLocal; // 0x20
-    ObjDirPtr<ObjectDir> mBank; // 0x24
-    Sequence *mTambourineSequence; // 0x30
-    Fader *mTambourineFader; // 0x34
-    MidiParser *mTambourineParser; // 0x38
-    std::vector<int> unk3c; // 0x3c
-    int mTambourineIdx; // 0x44
-    bool unk48; // 0x48
-    int unk4c; // 0x4c
-    int mTambourineWindowTicks; // 0x50
-    float mTambourineCrowdSuccess; // 0x54
-    float mTambourineCrowdFailure; // 0x58
-    bool mTambourineActive; // 0x5c
-    int unk60; // 0x60
-    float mTambourinePoints; // 0x64
-    int unk68; // 0x68
-    std::vector<int> unk6c; // 0x6c
+    class VocalPlayer &mPlayerRef; // 0x28
+    bool mIsLocal; // 0x2c
+    ObjDirPtr<ObjectDir> mBank; // 0x30
+    Sequence *mTambourineSequence; // 0x3c
+    Fader *mTambourineFader; // 0x40
+    MidiParser *mTambourineParser; // 0x44
+    std::vector<int> unk3c; // 0x48
+    int mTambourineIdx; // 0x54
+    bool unk48; // 0x58
+    int unk4c; // 0x5c
+    int mTambourineWindowTicks; // 0x60
+    float mTambourineCrowdSuccess; // 0x64
+    float mTambourineCrowdFailure; // 0x68
+    bool mTambourineActive; // 0x6c
+    int unk60; // 0x70
+    float mTambourinePoints; // 0x74
+    int unk68; // 0x78
+    std::vector<int> unk6c; // 0x7c
     // unk74 is a DC3-only mic-mute state bool. Retail rb3-xenon TambourineManager
     // is 4 bytes smaller (mGemStates at standalone-offset 0x90, proven by
     // vector begin/end loads lwz 0x90/0x94 in fn_826DC7C0/fn_826DCB88/fn_826DD580;

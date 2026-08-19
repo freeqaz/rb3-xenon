@@ -93,10 +93,10 @@ public:
     /** "The focal point when calculated depth of field" */
     ObjPtr<RndTransformable> mFocalTarget; // 0xfc
     /** "Whether to take the parent object's rotation into account" */
-    bool mUseParentRotation; // 0x110
+    bool mUseParentRotation; // 0x100
     /** "Only parent on the first frame" */
-    bool mParentFirstFrame; // 0x111
-    CamShot *mCamShot; // 0x114
+    bool mParentFirstFrame; // 0x101
+    CamShot *mCamShot; // 0x104
 };
 
 inline BinStream &operator<<(BinStream &bs, const CamShotFrame &f) {
@@ -124,9 +124,9 @@ public:
     /** "The crowd to show for this shot" */
     ObjPtr<WorldCrowd> mCrowd; // 0x0
     /** "How to rotate crowd" */
-    CrowdRotate mCrowdRotate; // 0x14
+    CrowdRotate mCrowdRotate; // 0xc
     std::vector<std::pair<int, int> > m3DCharIndices; // 0x18
-    CamShot *mCamShot; // 0x24
+    CamShot *mCamShot; // 0x1c
 };
 
 inline BinStream &operator<<(BinStream &bs, const CamShotCrowd &f) {
@@ -223,11 +223,11 @@ protected:
     DataNode OnRadio(DataArray *);
 
     /** The collection of keyframes. */
-    ObjVector<CamShotFrame> mKeyframes; // 0xd0
+    ObjVector<CamShotFrame> mKeyframes; // 0x10
     /** "Whether the animation should loop." */
-    bool mLooping; // 0xe0
+    bool mLooping; // 0x20
     /** "If looping true, which keyframe to loop to." */
-    int mLoopKeyframe; // 0xe4
+    int mLoopKeyframe; // 0x24
     /** "Near clipping plane for the camera" */
     float mNearPlane; // 0xe8
     /** "Far clipping plane for the camera" */
@@ -305,7 +305,7 @@ protected:
     CamShotFrame *mLastNext; // 0x270
     CamShotFrame *mLastPrev; // 0x274
     /** "duration of the camshot" */
-    float mDuration; // 0x278
+    float mDuration; // 0x190
     /** "disabled bits" */
     int mDisabled; // 0x27c
     bool mShotStarted; // 0x280

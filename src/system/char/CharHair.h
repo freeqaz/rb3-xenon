@@ -73,7 +73,7 @@ public:
         ObjVector<Point> mPoints; // 0x14
         Hmx::Matrix3 mBaseMat; // 0x20
         Hmx::Matrix3 mRootMat; // 0x44
-        int mHookupFlags; // 0x68
+        int mHookupFlags; // 0x84
     };
     // Hmx::Object
     virtual ~CharHair();
@@ -140,7 +140,7 @@ protected:
     ObjVector<Strand> mStrands; // 0x30
     int mReset; // 0x3c
     /** "Simulate physics or not" */
-    bool mSimulate; // 0x40
+    bool mSimulate; // 0x44
     bool mUsePostProc; // 0x41
     ObjPtr<Character> mMe; // 0x44
     /** "wind object to use" */

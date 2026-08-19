@@ -25,9 +25,9 @@ public:
     virtual void EnumerateRankRange(int, int) {}
     virtual void GetStats() {}
 
-    ScoreType mScoreType; // 0x84
-    int mSongID; // 0x88
-    int mNotesPct; // 0x8c
+    ScoreType mScoreType; // 0xa0
+    int mSongID; // 0xa4
+    int mNotesPct; // 0xa8
 };
 
 class AppMiniLeaderboardDisplay : public MiniLeaderboardDisplay,
@@ -59,16 +59,16 @@ public:
     void UpdateLeaderboardOnline(int songID);
     void CancelOldServerRequest();
 
-    LeaderboardStatus mStatus; // 0x114
-    AppLabel *mTitleLabel; // 0x118
-    AppLabel *mIconsLabel; // 0x11c
-    UIList *mLeaderboardList; // 0x120
-    RndGroup *mPendingGroup; // 0x124
-    EventTrigger *mResetTrigger; // 0x128
-    EventTrigger *mFadeInTrigger; // 0x12c
-    EventTrigger *mFadeOutTrigger; // 0x130
-    PlayerMiniLeaderboard *mLeaderboard; // 0x134
-    int mSongID; // 0x138
-    ScoreType mScoreType; // 0x13c
-    float mUpdateTime; // 0x140
+    LeaderboardStatus mStatus; // 0x148
+    AppLabel *mTitleLabel; // 0x14c
+    AppLabel *mIconsLabel; // 0x150
+    UIList *mLeaderboardList; // 0x154
+    RndGroup *mPendingGroup; // 0x158
+    EventTrigger *mResetTrigger; // 0x15c
+    EventTrigger *mFadeInTrigger; // 0x160
+    EventTrigger *mFadeOutTrigger; // 0x164
+    PlayerMiniLeaderboard *mLeaderboard; // 0x168
+    int mSongID; // 0x16c
+    ScoreType mScoreType; // 0x170
+    float mUpdateTime; // 0x174
 };

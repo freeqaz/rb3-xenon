@@ -28,7 +28,7 @@ class ObjKeys : public Keys<ObjectStage, Hmx::Object *> {
 public:
     ObjKeys(Hmx::Object *o) : mOwner(o) {}
     ~ObjKeys() {}
-    Hmx::Object *mOwner; // 0x8
+    Hmx::Object *mOwner; // 0xc
 
     void operator=(const ObjKeys &keys) {
         if (this == &keys)
@@ -306,15 +306,15 @@ protected:
     /** The target object to animate properties on. */
     ObjOwnerPtr<Hmx::Object> mTarget; // 0x4
     /** The property of the target object to animate. */
-    DataArray *mProp; // 0x18
+    DataArray *mProp; // 0x10
     /** The animation keys type. */
-    AnimKeysType mKeysType; // 0x1c
+    AnimKeysType mKeysType; // 0x14
     /** The key interpolation type. */
-    Interpolation mInterpolation; // 0x20
-    ExceptionID mPropExceptionID; // 0x24
-    RndTransformable *mTrans; // 0x28
+    Interpolation mInterpolation; // 0x18
+    ExceptionID mPropExceptionID; // 0x1c
+    RndTransformable *mTrans; // 0x20
     /** The handler name of any propagated interp messages. */
-    Symbol mInterpHandler; // 0x2c
+    Symbol mInterpHandler; // 0x24
     /** The index of the last keyframe that was modified. */
     int mLastKeyFrameIndex; // 0x30
     bool unk34; // 0x34
@@ -579,7 +579,7 @@ public:
     virtual Keys<Hmx::Quat, Hmx::Quat> *AsQuatKeys() { return this ? this : nullptr; }
     virtual int QuatAt(float, Hmx::Quat &);
 
-    Vector3 mVec; // 0x28
+    Vector3 mVec; // 0x3c
 };
 
 /** A collection of Vector3 keys to animate on its target object's properties. */
@@ -687,7 +687,7 @@ public:
     virtual Keys<Symbol, Symbol> *AsSymbolKeys() { return this ? this : nullptr; }
     virtual int SymbolAt(float, Symbol &);
 
-    int mPrevRangeFirst; // 0x28
-    int mPrevRangeLast; // 0x2c
-    bool mClampToPrevRange; // 0x30
+    int mPrevRangeFirst; // 0x3c
+    int mPrevRangeLast; // 0x40
+    bool mClampToPrevRange; // 0x44
 };

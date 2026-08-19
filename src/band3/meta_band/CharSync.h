@@ -16,7 +16,7 @@ public:
 
     static void Init(BandUserMgr *);
 
-    BandUserMgr *mUserMgr; // 0x1c
+    BandUserMgr *mUserMgr; // 0x28
 };
 
 extern CharSync *TheCharSync;

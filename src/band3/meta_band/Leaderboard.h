@@ -64,7 +64,7 @@ public:
     int mNotesPct; // 0x20
     int mScore; // 0x24
     short mInstMask; // 0x28
-    OnlineID mLBOnlineID; // 0x2c
+    OnlineID mLBOnlineID; // 0x30
 };
 
 enum EnumState {
@@ -147,18 +147,18 @@ public:
     static int sPageSize;
 
     DataResultList mDataResultList; // 0x20
-    std::vector<LeaderboardRow> mLeaderboardRows; // 0x38
-    int unk40; // 0x40
-    bool mHasStats; // 0x44
-    Mode mMode; // 0x48
+    std::vector<LeaderboardRow> mLeaderboardRows; // 0x44
+    int unk40; // 0x50
+    bool mHasStats; // 0x54
+    Mode mMode; // 0x58
     EntityID mEntityID; // 0x4c
     HxGuid mNetBandGuid; // 0x5c
-    Callback *mCallback; // 0x6c
-    LeaderboardShortcutProvider *mShortcutProvider; // 0x70
-    EnumState mEnumState; // 0x74
-    UIColor *mSelfColor; // 0x78
-    UIColor *mFriendColor; // 0x7c
-    int unk80; // 0x80
+    Callback *mCallback; // 0x88
+    LeaderboardShortcutProvider *mShortcutProvider; // 0x8c
+    EnumState mEnumState; // 0x90
+    UIColor *mSelfColor; // 0x94
+    UIColor *mFriendColor; // 0x98
+    int unk80; // 0x9c
 };
 
 class LeaderboardShortcutProvider : public UIListProvider, public Hmx::Object {
@@ -173,6 +173,6 @@ public:
     int LeaderboardIxToIx(int);
     int IxToLeaderboardIx(int ix) const { return mIndices[ix]; }
 
-    const Leaderboard *mLeaderboard; // 0x20
-    std::vector<int> mIndices; // 0x24
+    const Leaderboard *mLeaderboard; // 0x2c
+    std::vector<int> mIndices; // 0x30
 };

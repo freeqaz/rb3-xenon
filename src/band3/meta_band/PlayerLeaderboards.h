@@ -20,8 +20,8 @@ public:
     virtual void GetStats();
     virtual bool ShowsDifficultyAndPct() const { return mScoreType != kScoreBand; }
 
-    ScoreType mScoreType; // 0x84
-    int mSongID; // 0x88
+    ScoreType mScoreType; // 0xa0
+    int mSongID; // 0xa4
 };
 
 class PlayerBattleLeaderboard : public PlayerLeaderboard {
@@ -31,5 +31,5 @@ public:
     virtual void EnumerateRankRange(int, int);
     virtual void GetStats();
 
-    int mSongID; // 0x84
+    int mSongID; // 0xa0
 };

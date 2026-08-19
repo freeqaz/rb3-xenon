@@ -127,8 +127,8 @@ public:
     ObjPtr<RndTransformable> mBaseXSection; // 0x34
     ObjPtr<RndTransformable> mContourXSection; // 0x40
     ObjPtr<RndTransformable> mBaseHeight; // 0x4c
-    int mNumSlots; // 0x58
-    std::vector<int> mStringFrets; // 0x5c
+    int mNumSlots; // 0x64
+    std::vector<int> mStringFrets; // 0x68
     std::vector<bool> unk64; // 0x64
     ObjPtr<RndTransformable> mString0; // 0x6c
     ObjPtr<RndTransformable> mString1; // 0x78
@@ -136,7 +136,7 @@ public:
     ObjPtr<RndTransformable> mString3; // 0x90
     ObjPtr<RndTransformable> mString4; // 0x9c
     ObjPtr<RndTransformable> mString5; // 0xa8
-    std::vector<float> mFretHeights; // 0xb4
+    std::vector<float> mFretHeights; // 0xd0
     std::vector<float> mGradeDistances; // 0xbc
     RndMesh *mSource; // 0xc4
     float mBaseXVal; // 0xc8

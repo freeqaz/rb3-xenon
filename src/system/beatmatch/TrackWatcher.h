@@ -41,14 +41,14 @@ public:
 
     TrackWatcherImpl *mImpl; // 0x0
     std::vector<BeatMatchSink *> mSinks; // 0x4
-    int mTrack; // 0xc
+    int mTrack; // 0x10
     bool mIndependentSlots; // 0x10
-    UserGuid mUserGuid; // 0x14
-    int mPlayerSlot; // 0x24
-    Symbol mControllerType; // 0x28
-    SongData *mSongData; // 0x2c
-    TrackWatcherParent *mParent; // 0x30
-    DataArray *mCfg; // 0x34
+    UserGuid mUserGuid; // 0x18
+    int mPlayerSlot; // 0x28
+    Symbol mControllerType; // 0x2c
+    SongData *mSongData; // 0x30
+    TrackWatcherParent *mParent; // 0x34
+    DataArray *mCfg; // 0x38
 };
 
 Symbol ControllerTypeToTrackWatcherType(Symbol);

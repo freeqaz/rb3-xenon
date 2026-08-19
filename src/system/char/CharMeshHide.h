@@ -13,8 +13,8 @@ public:
         Hide &operator=(const Hide &);
 
         ObjPtr<RndDrawable> mDraw; // 0x0
-        int mFlags; // 0x14
-        bool mShow; // 0x18
+        int mFlags; // 0xc
+        bool mShow; // 0x10
     };
 
     virtual ~CharMeshHide();
@@ -35,5 +35,5 @@ protected:
     CharMeshHide();
 
     ObjVector<Hide> mHides; // 0x2c
-    int mFlags; // 0x3c
+    int mFlags; // 0x38
 };

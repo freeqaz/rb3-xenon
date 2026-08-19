@@ -93,7 +93,7 @@ private:
     Mode mMode; // 0x50
     unsigned int mMaxArkfileSize; // 0x54
     bool mIsPatched; // 0x58
-    HxGuid mGuid; // 0x5c
+    HxGuid mGuid; // 0x60
     const int *mPermissionCodes; // 0x6c
     int mPermissionCount; // 0x70
 };

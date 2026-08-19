@@ -247,36 +247,36 @@ public:
     String mFilename; // 0x28
     bool mMerging; // 0x34
     std::vector<MidiReceiver *> mReceivers; // 0x38
-    InternalSongParserSink *mSink; // 0x40
+    InternalSongParserSink *mSink; // 0x44
     SongInfo *mSongInfo; // 0x44
     DataArray *mTrackNameMapping; // 0x48
     int mNumPlayers; // 0x4c
-    int mNumDifficulties; // 0x50
-    int mTrack; // 0x54
+    int mNumDifficulties; // 0x54
+    int mTrack; // 0x58
     int mCurTrackIndex; // 0x58
     int mTrackPartNum; // 0x5c
     int mNextRealTrack; // 0x60
     int mNextFakeTrack; // 0x64
     DataArray *mSubMixes; // 0x68
-    DataArray *mRollIntervals; // 0x6c
-    DataArray *mTrillIntervals; // 0x70
+    DataArray *mRollIntervals; // 0x70
+    DataArray *mTrillIntervals; // 0x74
     std::vector<PartInfo> mParts; // 0x74
-    std::vector<DifficultyInfo> mDifficultyInfos; // 0x7c
-    int mCommonPhraseInProgress; // 0x84
-    int mSoloPhraseInProgress; // 0x88
-    int mDrumFillInProgress; // 0x8c
-    int mRollInProgress; // 0x90
-    int mTrillInProgress; // 0x94
+    std::vector<DifficultyInfo> mDifficultyInfos; // 0x84
+    int mCommonPhraseInProgress; // 0x90
+    int mSoloPhraseInProgress; // 0x94
+    int mDrumFillInProgress; // 0x98
+    int mRollInProgress; // 0x9c
+    int mTrillInProgress; // 0xa0
     int mPlayerFocusInProgress[2]; // 0x98, 0x9c
-    unsigned char mTrillMask; // 0xa0
-    unsigned char mRollMask; // 0xa1
+    unsigned char mTrillMask; // 0xac
+    unsigned char mRollMask; // 0xad
     std::vector<unsigned int> mRollSlotsArray; // 0xa4
     std::vector<std::pair<int, int> > mTrillSlotsArray; // 0xac
     std::vector<RGRollChord> mRGRollArray; // 0xb4
     std::vector<RGTrill> mRGTrillArray; // 0xbc
-    int mVocalRangeShiftStartTick; // 0xc4
-    int mSoloPhraseEndTick; // 0xc8
-    int mDrumFillEndTick; // 0xcc
+    int mVocalRangeShiftStartTick; // 0xe0
+    int mSoloPhraseEndTick; // 0xe4
+    int mDrumFillEndTick; // 0xe8
     int mNumSoloPhrases; // 0xd0
     enum {
         kIgnore = 0,
@@ -287,24 +287,24 @@ public:
         kRealGuitar = 5
     } mState; // 0xd4
     Symbol mTrackName; // 0xd8
-    TrackType mTrackType; // 0xdc
+    TrackType mTrackType; // 0xf8
     PartInfo *mTrackPart; // 0xe0
     bool mTrackAllowsHopos; // 0xe4
-    int mKeyboardDifficulty; // 0xe8
+    int mKeyboardDifficulty; // 0x104
     int mKeyboardRangeFirstPitch; // 0xec
     int mKeyboardRangeSecondPitch; // 0xf0
     int mKeyboardRangeStartTick; // 0xf4
     float mKeyboardRangeShiftDuration; // 0xf8
-    unsigned int mCurrentFillLanes; // 0xfc
-    unsigned int mCurrentCymbalSlots; // 0x100
+    unsigned int mCurrentFillLanes; // 0x118
+    unsigned int mCurrentCymbalSlots; // 0x11c
     bool mIgnoreGemDurations; // 0x104
     bool mSeparateParts; // 0x105
     std::list<TrackType> mDrumStyleInstruments; // 0x108
     std::list<TrackType> mVocalStyleInstruments; // 0x110
-    bool mDrumStyleGems; // 0x118
+    bool mDrumStyleGems; // 0x134
     bool mForceDrumStyleGems; // 0x119
-    int mSectionStartTick; // 0x11c
-    int mSectionEndTick; // 0x120
+    int mSectionStartTick; // 0x138
+    int mSectionEndTick; // 0x13c
     std::vector<Symbol> mTrackNames; // 0x124
     bool mLyricPitchSet; // 0x12c
     bool mLyricTextSet; // 0x12d
@@ -315,30 +315,30 @@ public:
     VocalNote mPrevVocalNote; // 0x174
     ReadingState mReadingState; // 0x1a8
     int mNumDrumChannels; // 0x1ac
-    int mDrumSubmixDifficultyMask; // 0x1b0
+    int mDrumSubmixDifficultyMask; // 0x1d0
     bool mReportedMissingDrumSubmix[4]; // 0x1b4, 0x1b5, 0x1b6, 0x1b7
-    int mCodaStartTick; // 0x1b8
-    int mCodaEndTick; // 0x1bc
-    int mSoloGemDifficultyMask; // 0x1c0
-    int mVocalPhraseStartTick; // 0x1c4
-    int mLastTambourineGemTick; // 0x1c8
-    int mLastTambourineAutoTick; // 0x1cc
+    int mCodaStartTick; // 0x1d8
+    int mCodaEndTick; // 0x1dc
+    int mSoloGemDifficultyMask; // 0x1e0
+    int mVocalPhraseStartTick; // 0x1e4
+    int mLastTambourineGemTick; // 0x1e8
+    int mLastTambourineAutoTick; // 0x1ec
     int mLastBeatTick; // 0x1d0
     int mLastBeatType; // 0x1d4
     bool mHaveBeatFailure; // 0x1d8
     int mPartToReadIdx; // 0x1dc
     unsigned char mSoloPitch; // 0x1e0
-    int mRGHandPos; // 0x1e4
-    int mRGRootNote; // 0x1e8
-    int mChordMarkupMedInProgress; // 0x1ec
-    int mChordMarkupHrdInProgress; // 0x1f0
-    int mChordMarkupExpInProgress; // 0x1f4
-    int mRGSlashesStartTick; // 0x1f8
-    int mRGSlashesEndTick; // 0x1fc
-    int mRGChordNamingStartTick; // 0x200
-    int mRGChordNamingEndTick; // 0x204
-    int mRGEnharmonicStartTick; // 0x208
-    int mRGEnharmonicEndTick; // 0x20c
+    int mRGHandPos; // 0x204
+    int mRGRootNote; // 0x208
+    int mChordMarkupMedInProgress; // 0x20c
+    int mChordMarkupHrdInProgress; // 0x210
+    int mChordMarkupExpInProgress; // 0x214
+    int mRGSlashesStartTick; // 0x218
+    int mRGSlashesEndTick; // 0x21c
+    int mRGChordNamingStartTick; // 0x220
+    int mRGChordNamingEndTick; // 0x224
+    int mRGEnharmonicStartTick; // 0x228
+    int mRGEnharmonicEndTick; // 0x22c
 };
 
 class MidiTrackLister : public MidiReceiver {

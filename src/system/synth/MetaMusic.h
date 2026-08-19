@@ -30,9 +30,9 @@ public:
 
     File *mFile; // 0x18
     int &mBytesRead; // 0x1c
-    unsigned char *mBuf; // 0x20
-    int mBufSize; // 0x24
-    MetaMusicLoaderStateFunc mState; // 0x28
+    unsigned char *mBuf; // 0x24
+    int mBufSize; // 0x28
+    MetaMusicLoaderStateFunc mState; // 0x2c
 };
 
 class MetaMusic : public Hmx::Object {
@@ -60,29 +60,29 @@ public:
     float SomeMinusFunc() { return 1.0f - (float)unk84 / 90.0f; }
     float SomePlusFunc() { return (float)unk84 / 90.0f; }
 
-    Stream *mStream; // 0x1c
-    bool mLoop; // 0x20
-    float mFadeTime; // 0x24
-    float mVolume; // 0x28
-    bool mPlayFromBuffer; // 0x2c
-    bool mRndHeap; // 0x2d
+    Stream *mStream; // 0x28
+    bool mLoop; // 0x2c
+    float mFadeTime; // 0x30
+    float mVolume; // 0x34
+    bool mPlayFromBuffer; // 0x38
+    bool mRndHeap; // 0x39
     String mFilename; // 0x30
-    MemHandle *mBufferH; // 0x3c
-    unsigned char *mBuf; // 0x40
-    File *mFile; // 0x44
-    Symbol mExt; // 0x48
-    int mBufSize; // 0x4c
-    int mBytesRead; // 0x50
-    Fader *mFader; // 0x54
-    Fader *mFaderMute; // 0x58
-    ObjPtrList<Fader> mExtraFaders; // 0x5c
-    MetaMusicLoader *mLoader; // 0x6c
-    std::vector<ObjDirPtr<ObjectDir> > unk70; // 0x70
-    bool unk78; // 0x78
+    MemHandle *mBufferH; // 0x48
+    unsigned char *mBuf; // 0x4c
+    File *mFile; // 0x50
+    Symbol mExt; // 0x54
+    int mBufSize; // 0x58
+    int mBytesRead; // 0x5c
+    Fader *mFader; // 0x60
+    Fader *mFaderMute; // 0x64
+    ObjPtrList<Fader> mExtraFaders; // 0x68
+    MetaMusicLoader *mLoader; // 0x7c
+    std::vector<ObjDirPtr<ObjectDir> > unk70; // 0x80
+    bool unk78; // 0x8c
     DataArray *m_CurrentFxConfig; // 0x7c
     DataArray *unk80; // 0x80
     int unk84; // 0x84
-    const char *unk88; // 0x88
-    bool unk8c; // 0x8c
+    const char *unk88; // 0x9c
+    bool unk8c; // 0xa0
     std::vector<int> mStartTimes; // 0x90 - basing this off of the ChooseStartMs function
 };

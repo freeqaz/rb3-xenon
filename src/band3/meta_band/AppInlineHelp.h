@@ -26,5 +26,5 @@ public:
     DataNode OnMsg(const LocalUserLeftMsg &);
     DataNode OnMsg(const AddLocalUserResultMsg &);
 
-    LocalBandUser *mOverrideUser; // 0x13c
+    LocalBandUser *mOverrideUser; // 0x17c
 };

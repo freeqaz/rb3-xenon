@@ -42,14 +42,14 @@ public:
     RndAnimatable *mConfigAnim; // 0xc
     RndAnimatable *mVerticalTrans; // 0x10
     Transform mTrans; // 0x14
-    RndGroup *mDrawOrderGroup; // 0x44
+    RndGroup *mDrawOrderGroup; // 0x54
     int unk48;
     std::vector<GameGem> unk4c;
     const TrainerSection *unk54;
     RndMesh *mGems[9]; // 0x58
     RndMesh *mTails[5]; // 0x7c
     int unk90;
-    RndGroup *mTrackGroup; // 0x94
+    RndGroup *mTrackGroup; // 0xa8
     RndTransformable *mInstLanes[25]; // 0x98 - 0xf8, inclusive
     union {
         struct {
@@ -61,11 +61,11 @@ public:
         };
         RndMesh *mGemChordLanes[5]; // 0xfc
     };
-    RndMesh *mGemSustainCyan; // 0x110
+    RndMesh *mGemSustainCyan; // 0x124
     BandLabel *mNumLabels[4]; // 0x114, 0x118, 0x11c, 0x120
-    BandLabel *mStartLabel; // 0x124
-    BandLabel *mFinishLabel; // 0x128
+    BandLabel *mStartLabel; // 0x138
+    BandLabel *mFinishLabel; // 0x13c
     float unk12c; // 0x12c
     std::vector<ExtraTail> unk130;
-    bool mLefty; // 0x138
+    bool mLefty; // 0x150
 };

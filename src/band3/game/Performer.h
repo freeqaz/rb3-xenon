@@ -96,18 +96,18 @@ public:
     float mPollMs; // 0x8
     CrowdRating *mCrowd; // 0xc
     Stats mStats; // 0x10
-    Band *mBand; // 0x1dc
+    Band *mBand; // 0x210
     bool unk1e0;
     bool unk1e1;
     bool unk1e2;
-    float mScore; // 0x1e4
-    SongPos mSongPos; // 0x1e8
-    bool mQuarantined; // 0x1fc
+    float mScore; // 0x218
+    SongPos mSongPos; // 0x21c
+    bool mQuarantined; // 0x230
     bool unk1fd;
     bool unk1fe;
     bool unk1ff;
-    float mProgressMs; // 0x200
-    bool mGameOver; // 0x204
-    bool mMultiplierActive; // 0x205
-    int mNumRestarts; // 0x208
+    float mProgressMs; // 0x234
+    bool mGameOver; // 0x238
+    bool mMultiplierActive; // 0x239
+    int mNumRestarts; // 0x23c
 };

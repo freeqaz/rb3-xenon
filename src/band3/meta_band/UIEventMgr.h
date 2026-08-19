@@ -45,7 +45,7 @@ public:
     static void Init();
     static void Terminate();
 
-    UIEventQueue mTransitionEventQueue; // 0x1c
+    UIEventQueue mTransitionEventQueue; // 0x18
     UIEventQueue mDialogEventQueue; // 0x24
 };
 

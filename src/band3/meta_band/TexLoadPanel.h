@@ -61,7 +61,7 @@ protected:
     DLCTex *NextDLCTex();
 
 public:
-    int unk3c; // 0x3c
-    std::vector<DynamicTex *> mTexs; // 0x40
-    int mCurrentFinalizingTexture; // 0x48
+    int unk3c; // 0x40
+    std::vector<DynamicTex *> mTexs; // 0x44
+    int mCurrentFinalizingTexture; // 0x50
 };

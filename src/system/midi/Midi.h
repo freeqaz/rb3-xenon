@@ -197,18 +197,18 @@ private:
     class String mCurTrackName; // offset 0x34, size 0xC
     /** The list of track names in the midi. */
     std::vector<String> mTrackNames; // 0x40
-    std::vector<Midi> mMidiList; // 0x48
-    int mMidiListTick; // 0x50
+    std::vector<Midi> mMidiList; // 0x4c
+    int mMidiListTick; // 0x58
     /** The sort function to use for the read midi list. */
     bool (*mLessFunc)(const struct Midi &, const struct Midi &); // 0x54
     /** Is this MidiReader the owner of its tempo and measure maps? */
-    bool mOwnMaps; // 0x58
+    bool mOwnMaps; // 0x60
     /** The tempo map associated with this midi. */
-    class MultiTempoTempoMap *mTempoMap; // 0x5c
+    class MultiTempoTempoMap *mTempoMap; // 0x64
     /** The measure map associated with this midi. */
-    class MeasureMap *mMeasureMap; // 0x60
+    class MeasureMap *mMeasureMap; // 0x68
     /** Did this midi fail to read properly? */
-    bool mFail; // 0x64
+    bool mFail; // 0x6c
 
     static bool sVerify;
 };

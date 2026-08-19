@@ -36,17 +36,17 @@ private:
     void InsertBreak(DataArray *, int);
     bool OnMsg(const KeyboardKeyMsg &);
 
-    bool mShowing; // 0x2c
-    RndOverlay *mOutput; // 0x30
-    RndOverlay *mInput; // 0x34
-    std::list<String> mBuffer; // 0x38
-    std::list<String>::iterator mBufPtr; // 0x40
-    int mMaxBuffer; // 0x44
-    int mTabLen; // 0x48
-    int mCursor; // 0x4c
+    bool mShowing; // 0x28
+    RndOverlay *mOutput; // 0x2c
+    RndOverlay *mInput; // 0x30
+    std::list<String> mBuffer; // 0x34
+    std::list<String>::iterator mBufPtr; // 0x3c
+    int mMaxBuffer; // 0x40
+    int mTabLen; // 0x44
+    int mCursor; // 0x48
     Hmx::Object *mKeyboardOverride; // 0x50
-    bool mPumpMsgs; // 0x54
-    DataArray *mDebugging; // 0x58
-    int mLevel; // 0x5c
-    std::list<Breakpoint> mBreakpoints; // 0x60
+    bool mPumpMsgs; // 0x50
+    DataArray *mDebugging; // 0x54
+    int mLevel; // 0x58
+    std::list<Breakpoint> mBreakpoints; // 0x5c
 };

@@ -144,7 +144,7 @@ public:
     NETMSG_NEWNETMSG(SetlistSubmissionMsg);
 
     std::vector<int> mSongIDs; // 0x4
-    int mNumUsers; // 0xc
+    int mNumUsers; // 0x10
 };
 
 class TourMostStarsMsg : public NetMessage {

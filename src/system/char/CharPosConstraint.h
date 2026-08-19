@@ -36,5 +36,5 @@ protected:
     /** "Bones to constrain" */
     ObjPtrList<RndTransformable> mTargets; // 0x1c
     /** "Bounding box, make min > max to ignore that dimension" */
-    Box mBox; // 0x30
+    Box mBox; // 0x28
 };

@@ -14,5 +14,5 @@ public:
     virtual float GetCurrentValue() const { return mCurrentAccuracy; }
     virtual void SavePlayerStats() const;
 
-    float mCurrentAccuracy; // 0x58
+    float mCurrentAccuracy; // 0x64
 };

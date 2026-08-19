@@ -43,16 +43,16 @@ public:
     OBJ_MEM_OVERLOAD(0x1B)
     NEW_OBJ(CharServoBone)
 
-    RndTransformable *mPelvis; // 0x84
-    float *mFacingRotDelta; // 0x88
-    Vector3 *mFacingPosDelta; // 0x8c
-    float *mFacingRot; // 0x90
-    Vector3 *mFacingPos; // 0x94
-    bool mMoveSelf; // 0x98
-    bool mDeltaChanged; // 0x99
-    Character *mMe; // 0x9c
-    Symbol mClipType; // 0xa0
-    ObjPtr<Waypoint> mRegulate; // 0xa4
+    RndTransformable *mPelvis; // 0x7c
+    float *mFacingRotDelta; // 0x80
+    Vector3 *mFacingPosDelta; // 0x84
+    float *mFacingRot; // 0x88
+    Vector3 *mFacingPos; // 0x8c
+    bool mMoveSelf; // 0x90
+    bool mDeltaChanged; // 0x91
+    Character *mMe; // 0x94
+    Symbol mClipType; // 0x98
+    ObjPtr<Waypoint> mRegulate; // 0x9c
 
 protected:
     // CharBonesMeshes

@@ -90,6 +90,22 @@ fine."** Closing that gap is the next step and needs a real header→unit map (t
 same `basename()` hazard that broke four pinning lanes applies — key on FULL
 PATH, and replicate `tools/project.py`'s own `objects()`).
 
+> ✅ **RESOLVED 2026-08-19 — see `HEADER_OFFSET_TRIAGE_2026-08-19.md`.** The
+> un-triaged bucket is **0**: A_PROVEN **551 / 4,017**, NO_WITNESS **32 / 237**,
+> and a third bucket this table did not anticipate, UNADJUDICABLE **157 / 1,053**
+> (no identified member function in the RB3 binary at all).
+> ⚠ **The prescription above was itself unnecessary**: no header→unit map was
+> needed. MSVC mangled names carry their own class qualifier, so an **exact
+> name-keyed join** resolves all 740 classes with *no path reconstruction*, which
+> is why the `basename()` hazard cannot apply.
+> ⛔⛔ **AND §3's PREMISE IS SUBSTANTIALLY WRONG.** Class B assumed the comment
+> "often copied from retail RE". Measured: **91.3% of disagreeing comments are
+> byte-identical to dc3-decomp's or rb3-Wii's** — inherited verbatim from a
+> sibling decomp of a **different build** (rb3-Wii is a different CPU, compiler
+> and ABI). They are **provenance artifacts, not retail measurements**, so the
+> compiler is the right side by default and class-B risk is far smaller than
+> "740 classes disagree" implies.
+
 **Class-A candidates worth taking first** (proven layout ⇒ the comment is wrong,
 fix is metric-neutral by construction): `band3/game/Stats.h` (61),
 `band3/game/Game.h` (56), `band3/meta_band/PatchPanel.h` (52),

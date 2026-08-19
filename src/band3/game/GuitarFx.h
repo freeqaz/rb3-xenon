@@ -18,19 +18,19 @@ public:
 
     DataNode OnMidiParser(DataArray *);
 
-    int mLastSetting; // 0x1c
-    bool mLastGains; // 0x20
-    bool mLastReverb; // 0x21
-    TrackType mTrackType; // 0x24
-    int mFramesWhammyIdle; // 0x28
-    DataArray *mFxCfg; // 0x2c
-    ObjDirPtr<ObjectDir> mFxDir; // 0x30
+    int mLastSetting; // 0x28
+    bool mLastGains; // 0x2c
+    bool mLastReverb; // 0x2d
+    TrackType mTrackType; // 0x30
+    int mFramesWhammyIdle; // 0x34
+    DataArray *mFxCfg; // 0x38
+    ObjDirPtr<ObjectDir> mFxDir; // 0x3c
     float unk3c;
-    float mFbNote; // 0x40
-    float mFbEnd; // 0x44
+    float mFbNote; // 0x4c
+    float mFbEnd; // 0x50
     int unk48;
     int unk4c;
     int unk50;
-    bool mLastWhammying; // 0x54
-    float mLastWhammyPos; // 0x58
+    bool mLastWhammying; // 0x60
+    float mLastWhammyPos; // 0x64
 };
