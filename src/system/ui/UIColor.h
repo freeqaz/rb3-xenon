@@ -28,5 +28,5 @@ protected:
     UIColor();
 
     /** The color. */
-    Hmx::Color mColor; // 0x2c
+    Hmx::Color mColor; // 0x28
 };

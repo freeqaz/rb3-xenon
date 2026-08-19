@@ -30,7 +30,7 @@ public:
     float WeightedCrowdLevel() const;
     bool NoOneContributingToCrowd() const;
 
-    DataArray *unk20c; // 0x20c
+    DataArray *unk20c; // 0x240
     int unk210; // 0x210
-    int unk214; // 0x214
+    int unk214; // 0x248
 };

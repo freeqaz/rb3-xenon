@@ -51,14 +51,14 @@ protected:
     DataNode OnGetContextFlags(DataArray *);
 
     /** "when to animate position" */
-    int mPositionContext; // 0x2c
+    int mPositionContext; // 0x28
     /** "when to animate scale" */
-    int mScaleContext; // 0x30
+    int mScaleContext; // 0x2c
     /** "what axis or axes to animate". Types are: kRotNone, kRotFull, kRotX, kRotY, kRotZ
      * (???) */
-    CharBones::Type mRotation; // 0x34
+    CharBones::Type mRotation; // 0x30
     /** "when to use this rotation context" */
-    int mRotationContext; // 0x38
+    int mRotationContext; // 0x34
     /** "If set will exactly track this target during keyframe acquisition, used for IK
      * bones" */
     ObjPtr<CharBone> mTarget; // 0x3c
@@ -67,5 +67,5 @@ protected:
     /** "Object to specify trans info" */
     ObjPtr<RndTransformable> mTrans; // 0x58
     /** "When baking out facing, use this as a top-level bone (like the pelvis)" */
-    bool mBakeOutAsTopLevel; // 0x6c
+    bool mBakeOutAsTopLevel; // 0x58
 };

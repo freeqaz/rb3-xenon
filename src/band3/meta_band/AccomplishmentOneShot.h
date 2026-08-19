@@ -17,5 +17,5 @@ public:
     bool HasSpecificSongsToLaunch() const;
 
     Symbol mOneShotSong; // 0x7c
-    int mOneShotPlayerMin; // 0x80
+    int mOneShotPlayerMin; // 0x9c
 };

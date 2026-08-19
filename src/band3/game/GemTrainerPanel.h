@@ -59,14 +59,14 @@ public:
     int NumGems() const { return mPattern.size(); }
 
     std::vector<GameGem> mPattern; // 0x54
-    GemPlayer *mGemPlayer; // 0x5c
+    GemPlayer *mGemPlayer; // 0x6c
     GameGemList *mGameGemLists[kNumDifficulties]; // 0x60
     GemTrack *mTrack; // 0x70
-    GemManager *mGemManager; // 0x74
+    GemManager *mGemManager; // 0x84
     Difficulty mDifficulty; // 0x78
-    LocalBandUser *mLocalUser; // 0x7c
+    LocalBandUser *mLocalUser; // 0x8c
     int mWriteTick; // 0x80
-    int mScoreTick; // 0x84
+    int mScoreTick; // 0x94
     std::vector<GameGem> mSongGems[kNumDifficulties]; // 0x88
     bool mAddBeatMask; // 0x80
     bool mAddBeatMaskImmediately; // 0xa9

@@ -14,7 +14,7 @@ public:
 
     void Update(Symbol);
 
-    std::vector<Symbol> mMakeupEyes; // 0x20
-    std::vector<Symbol> mMakeupLips; // 0x28
-    std::vector<Symbol> *mCurrentMakeupList; // 0x30
+    std::vector<Symbol> mMakeupEyes; // 0x2c
+    std::vector<Symbol> mMakeupLips; // 0x38
+    std::vector<Symbol> *mCurrentMakeupList; // 0x44
 };

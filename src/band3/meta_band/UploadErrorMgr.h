@@ -13,7 +13,7 @@ public:
 
     static void Init();
 
-    std::set<String> mDisplayedErrors; // 0x1c
+    std::set<String> mDisplayedErrors; // 0x28
 };
 
 extern UploadErrorMgr *TheUploadErrorMgr;

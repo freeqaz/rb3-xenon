@@ -37,7 +37,7 @@ public:
     DECLARE_REVS
     NEW_OBJ(ReviewDisplay)
 
-    RndAnimatable *mReviewAnim; // 0x10c
-    RndAnimatable *mFocusAnim; // 0x110
-    int mScore; // 0x114
+    RndAnimatable *mReviewAnim; // 0x140
+    RndAnimatable *mFocusAnim; // 0x144
+    int mScore; // 0x148
 };

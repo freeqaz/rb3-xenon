@@ -96,13 +96,13 @@ public:
     float mMuteVolume; // 0x28
     float mVocalMuteVolume; // 0x2c
     std::vector<float> mPans; // 0x30
-    std::vector<float> mVols; // 0x38
-    std::vector<int> mCores; // 0x40
-    std::vector<int> mCrowdChannels; // 0x48
-    std::vector<Symbol> mDrumSoloSamples; // 0x50
-    std::vector<Symbol> mDrumFreestyleSamples; // 0x58
-    std::vector<TrackChannels> mTrackChannels; // 0x60
-    std::vector<class String> mExtraMidiFiles; // 0x68
+    std::vector<float> mVols; // 0x3c
+    std::vector<int> mCores; // 0x48
+    std::vector<int> mCrowdChannels; // 0x54
+    std::vector<Symbol> mDrumSoloSamples; // 0x60
+    std::vector<Symbol> mDrumFreestyleSamples; // 0x6c
+    std::vector<TrackChannels> mTrackChannels; // 0x78
+    std::vector<class String> mExtraMidiFiles; // 0x84
 };
 
 #endif

@@ -128,9 +128,9 @@ protected:
      * Z-buffer resolution. Note that on the PS2, object polys are
      * culled rather than clipped to the far plane."
      */
-    float mFarPlane; // 0x2c4
+    float mFarPlane; // 0x2b8
     float mYFov; // 0x2c8
-    float mAspectRatio; // 0x2cc
+    float mAspectRatio; // 0x2c0
     /**
      * @brief
      * Original _objects description:

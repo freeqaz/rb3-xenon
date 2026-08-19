@@ -129,7 +129,12 @@ def main() -> int:
         status = "RE-DERIVED" if got and not miss else \
                  ("PARTIAL missing=%s" % sorted(miss) if got else "ABSENT")
         ok += 1 if (got and not miss) else 0
-        print("  %-28s %s" % (g["name"], status))
+        # `name` is neither present on every group (5 of 1,533 have none, and
+        # `g["name"]` KeyErrored the whole audit on them) nor unique (619
+        # distinct values), so the address goes on the line: without it the
+        # reader cannot tell which of 69 same-named groups a row is about.
+        print("  %-28s %-12s %s"
+              % (g.get("name") or g["survivor"][:28], g.get("address"), status))
     print("  recovered %d / %d" % (ok, len(landed)))
     return 0
 

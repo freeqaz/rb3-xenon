@@ -22,10 +22,10 @@ public:
     DataNode OnMsg(const SigninChangedMsg &);
     DataNode OnMsg(const UIChangedMsg &);
 
-    bool mMustNotBeAGuest; // 0x3c
-    bool mMustBeOnline; // 0x3d
-    bool mMustBeMultiplayerCapable; // 0x3e
-    bool mHandleSignOuts; // 0x3f
-    bool mLimitUserSignin; // 0x40
+    bool mMustNotBeAGuest; // 0x4c
+    bool mMustBeOnline; // 0x4d
+    bool mMustBeMultiplayerCapable; // 0x4e
+    bool mHandleSignOuts; // 0x4f
+    bool mLimitUserSignin; // 0x50
     bool unk41; // 0x41 - mSigninMsgDuringGuide?
 };

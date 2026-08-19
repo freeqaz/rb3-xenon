@@ -190,7 +190,7 @@ public:
     ObjPtr<RndPropAnim> mPropAnim; // 0x34
     ObjPtr<FileMerger> mMerger; // 0x40
     ObjPtr<WorldDir> mCurWorld; // 0x4c
-    bool unk58; // 0x58
+    bool unk58; // 0x5c
     int mNumPlayersFailed; // 0x5c
     int mExcitement; // 0x60 - ExcitementLevel?
     Symbol mForceAttention[4]; // 0x64
@@ -209,7 +209,7 @@ public:
     ObjPtr<BandCamShot> mNextShot; // 0xc4
     ObjPtr<BandCamShot> mIntroShot; // 0xd0
     Symbol mShotCategory; // 0xdc
-    float unke0; // 0xe0
+    float unke0; // 0xe4
     bool mDisablePicking; // 0xe4
     bool unke5; // 0xe5 - enable world polling?
     Keys<DircutEntry, DircutEntry> mDircuts; // 0xe8 (retail vector start this+0xec)

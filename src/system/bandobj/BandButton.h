@@ -36,5 +36,5 @@ public:
     RndAnimatable *mFocusAnim; // 0x1bc - might be a RndPropAnim* instead?
     RndAnimatable *mPulseAnim; // 0x1c0 - might be a RndPropAnim* instead?
     Task *mAnimTask; // 0x1c4 - Task*
-    float mStartTime; // 0x1c8
+    float mStartTime; // 0x220
 };

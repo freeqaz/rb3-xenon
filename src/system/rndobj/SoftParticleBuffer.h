@@ -24,7 +24,7 @@ private:
     void FreeData();
     void BlurSurface();
 
-    RndTex *mSurfaces[2]; // 0x30
-    int unk38; // 0x38
-    ObjPtrList<RndDrawable> mSoftParticleDrawList; // 0x3c
+    RndTex *mSurfaces[2]; // 0x2c
+    int unk38; // 0x34
+    ObjPtrList<RndDrawable> mSoftParticleDrawList; // 0x38
 };

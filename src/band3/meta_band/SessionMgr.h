@@ -114,9 +114,9 @@ public:
     BandNetGameData *mBandNetGameData; // 0x58
     BandUser *mUserLeader; // 0x5c
     std::vector<RemoteBandUser *> mWaitingUsers; // 0x60
-    bool mActiveRosterSet; // 0x68
-    int mNetRandomSeed; // 0x6c
-    bool mInvitesAllowed; // 0x70
+    bool mActiveRosterSet; // 0x6c
+    int mNetRandomSeed; // 0x70
+    bool mInvitesAllowed; // 0x74
 };
 
 extern SessionMgr *TheSessionMgr;

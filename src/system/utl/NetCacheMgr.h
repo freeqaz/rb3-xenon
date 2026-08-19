@@ -51,9 +51,9 @@ struct NetLoaderRef {
     NetLoaderRef &operator=(const NetLoaderRef &);
 
     String mName; // 0x0
-    int mRefCount; // 0x8
-    NetLoader *mNetLoader; // 0xc
-    NetCacheLoader *mCacheLoader; // 0x10
+    int mRefCount; // 0xc
+    NetLoader *mNetLoader; // 0x10
+    NetCacheLoader *mCacheLoader; // 0x14
 };
 
 class NetCacheMgr : public Hmx::Object {
@@ -127,7 +127,7 @@ protected:
 
     int mState;
     bool mHasFailed;
-    NetCacheMgrFailType mFailType; // 0x34
+    NetCacheMgrFailType mFailType; // 0x30
     String mXLSPFilter; // 0x38
     unsigned int mServiceId; // 0x40
     // NB: RB3 has no mServiceIDObtained flag here (DC3-newer addition). RB3's

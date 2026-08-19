@@ -15,7 +15,7 @@ public:
     int mNumSongs; // 0x10
     std::vector<Symbol> mSetlistTypes; // 0x14
     Symbol mFilter; // 0x1c
-    Symbol mCity; // 0x20
+    Symbol mCity; // 0x24
     Symbol mVenue; // 0x24
     Symbol mAnnouncementScreen; // 0x28
     Symbol mMapScreen; // 0x2c

@@ -47,10 +47,10 @@ public:
     float mAdvanceBeat; // 0x1c
     float mWeight; // 0x20
     ObjOwnerPtr<CharClip> mClip; // 0x24
-    CharClipDriver *mNext; // 0x38
-    int mNextEvent; // 0x3c
-    DataArray *mEventData; // 0x40
-    bool mPlayMultipleClips; // 0x44
+    CharClipDriver *mNext; // 0x30
+    int mNextEvent; // 0x34
+    DataArray *mEventData; // 0x38
+    bool mPlayMultipleClips; // 0x3c
 
 protected:
     void PlayEvents(float oldBeat);

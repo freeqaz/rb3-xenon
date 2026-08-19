@@ -93,13 +93,13 @@ protected:
     DataNode OnSupportedEvents(DataArray *);
 
     /** "List of all the draws" */
-    std::vector<RndDrawable *> mDraws; // 0x1b4
+    std::vector<RndDrawable *> mDraws; // 0x1a8
     /** Animations for this dir. */
-    std::vector<RndAnimatable *> mAnims; // 0x1c0
+    std::vector<RndAnimatable *> mAnims; // 0x1b4
     /** "List of all the polls" */
-    std::vector<RndPollable *> mPolls; // 0x1cc
+    std::vector<RndPollable *> mPolls; // 0x1c0
     /** The dedicated RndEnviron for this dir. */
     ObjPtr<RndEnviron> mEnv; // 0x1e4
     /** "Test event" */
-    Symbol mTestEvent; // 0x1f8
+    Symbol mTestEvent; // 0x1d8
 };

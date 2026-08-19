@@ -35,10 +35,10 @@ protected:
     short mVersion; // 0x28
     Symbol mShortName; // 0x2c
     int mID; // 0x30
-    bool mIsOnDisc; // 0x38
-    Symbol mGameOrigin; // 0x3c
-    float mPreviewStartTime; // 0x40
-    float mPreviewEndTime; // 0x44
-    DataArraySongInfo *mSongInfo; // 0x48
+    bool mIsOnDisc; // 0x34
+    Symbol mGameOrigin; // 0x38
+    float mPreviewStartTime; // 0x3c
+    float mPreviewEndTime; // 0x40
+    DataArraySongInfo *mSongInfo; // 0x44
     int mAge; // 0x4c - used for song cache?
 };

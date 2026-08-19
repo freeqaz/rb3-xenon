@@ -79,16 +79,16 @@ public:
         return GetStreakList(mStreakMultLists, s);
     }
 
-    PointInfo mPointInfo[10]; // 0xc
+    PointInfo mPointInfo[10]; // 0x0
     std::vector<StreakList> mStreakMultLists; // 0x78
-    std::vector<StreakList> mStreakEnergyLists; // 0x80
+    std::vector<StreakList> mStreakEnergyLists; // 0x84
     int unk88;
-    DataArray *mConfig; // 0x8c
+    DataArray *mConfig; // 0x94
     OverdriveConfig mOverdriveConfig; // 0x90
-    float mCommonPhraseReward; // 0xb0
-    float mCommonPhrasePenalty; // 0xb4
-    mutable std::vector<int> mStarThresholds; // 0xb8
-    int unkc0; // 0xc0
+    float mCommonPhraseReward; // 0xb8
+    float mCommonPhrasePenalty; // 0xbc
+    mutable std::vector<int> mStarThresholds; // 0xc0
+    int unkc0; // 0xcc
 };
 
 extern Scoring *TheScoring;

@@ -49,23 +49,23 @@ protected:
     Hmx::Rect &CalcRect(Vector2 &, float &);
     bool RectOffscreen(const Hmx::Rect &) const;
 
-    bool mPointTest; // 0x100
-    bool mAreaTest; // 0x101
-    bool mVisible; // 0x102
+    bool mPointTest; // 0xd8
+    bool mAreaTest; // 0xd9
+    bool mVisible; // 0xda
     /** "Size of the flare" */
-    Vector2 mSizes; // 0x104
+    Vector2 mSizes; // 0xdc
     /** "Material to use for the flare" */
     ObjPtr<RndMat> mMat; // 0x10C
     /** "Range of the flare" */
-    Vector2 mRange; // 0x120
-    float mOffset; // 0x128
+    Vector2 mRange; // 0xf0
+    float mOffset; // 0xf8
     /** "Steps for the flare". Ranges from 1 to 10000. */
-    int mSteps; // 0x12c
-    int mStep; // 0x130
+    int mSteps; // 0xfc
+    int mStep; // 0x100
     Hmx::Rect mArea; // 0x134
-    float mOcclusionResult; // 0x144
-    bool mOcclusionReady; // 0x148
-    bool mOcclusionPending; // 0x149
-    Hmx::Matrix3 mMatrix; // 0x14c
-    Vector2 mScaleFactors; // 0x17c
+    float mOcclusionResult; // 0x114
+    bool mOcclusionReady; // 0x118
+    bool mOcclusionPending; // 0x119
+    Hmx::Matrix3 mMatrix; // 0x11c
+    Vector2 mScaleFactors; // 0x14c
 };

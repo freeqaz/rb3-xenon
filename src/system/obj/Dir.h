@@ -427,9 +427,9 @@ protected:
         InlinedDir();
         ~InlinedDir();
         ObjDirPtr<ObjectDir> dir; // 0x0
-        FilePath file; // 0x14
-        bool shared; // 0x1c
-        InlineDirType mType; // 0x20
+        FilePath file; // 0xc
+        bool shared; // 0x18
+        InlineDirType mType; // 0x1c
     };
 
     KeylessHash<const char *, Entry> mHashTable; // 0x8

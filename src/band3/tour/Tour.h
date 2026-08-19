@@ -113,8 +113,8 @@ public:
 
     const SongMgr &mSongMgr; // 0x1c
     BandUserMgr &mBandUserMgr; // 0x20
-    TourPerformerImpl *m_pTourPerformer; // 0x24
-    TourProgress *m_pTourProgress; // 0x28
+    TourPerformerImpl *m_pTourPerformer; // 0x30
+    TourProgress *m_pTourProgress; // 0x34
     std::map<Symbol, TourProperty *> m_mapTourProperties; // 0x2c
     std::vector<TourStatusEntry> m_vTourStatus; // 0x44
     TourWeightManager mWeightManager; // 0x4c

@@ -55,9 +55,9 @@ protected:
     /** "Alternative to scale, overriden period of animation" */
     float mPeriod; // 0x24
     /** "Overriden start frame of animation" */
-    float mStart; // 0x28
+    float mStart; // 0x20
     /** "Overriden end frame of animation" */
-    float mEnd; // 0x2c
+    float mEnd; // 0x24
     /** "Multiplier to speed of animation" */
     float mScale; // 0x30
     /** "Amount to offset frame for animation" */

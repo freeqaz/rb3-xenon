@@ -66,13 +66,13 @@ protected:
     /** "Seconds of lag when moving the source" */
     float mHalfTime; // 0x6c
     /** "Degrees of min allowable yaw, looking left". Ranges from -80 to 80. */
-    float mMinYaw; // 0x70
+    float mMinYaw; // 0x50
     /** "Degrees of max allowable yaw, looking right". Ranges from -80 to 80. */
-    float mMaxYaw; // 0x74
+    float mMaxYaw; // 0x54
     /** "Degrees of min allowable pitch, looking down". Ranges from -80 to 80. */
-    float mMinPitch; // 0x78
+    float mMinPitch; // 0x58
     /** "Degrees of max allowable pitch, looking up". Ranges from -80 to 80. */
-    float mMaxPitch; // 0x7c
+    float mMaxPitch; // 0x5c
     /** "Degrees of yaw to start auto-weight, -1 means no auto-weight" */
     float mMinWeightYaw; // 0x80
     /** "Degrees of yaw to stop auto-weight, must be greater than mMinWeightYaw" */

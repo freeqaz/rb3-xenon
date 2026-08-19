@@ -72,11 +72,11 @@ public:
     virtual ChunkHeader *Header() { return mHeader; }
 
 private:
-    IListChunk *mParent; // 0x10
-    BinStream &mBaseBinStream; // 0x14
-    ChunkHeader *mHeader; // 0x18
-    int mStartMarker; // 0x1c
-    int mEndMarker; // 0x20
-    bool mFailed; // 0x24
-    bool mEof; // 0x25
+    IListChunk *mParent; // 0xc
+    BinStream &mBaseBinStream; // 0x10
+    ChunkHeader *mHeader; // 0x14
+    int mStartMarker; // 0x18
+    int mEndMarker; // 0x1c
+    bool mFailed; // 0x20
+    bool mEof; // 0x21
 };

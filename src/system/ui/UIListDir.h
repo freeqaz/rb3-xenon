@@ -68,25 +68,25 @@ public:
 
 protected:
     /** "scroll direction of list" */
-    UIListOrientation mOrientation; // 0x204
+    UIListOrientation mOrientation; // 0x1e4
     /** "Number of elements to fade from beginning/end of list". Ranges from 0 to 10. */
-    int mFadeOffset; // 0x208
+    int mFadeOffset; // 0x1e8
     /** "spacing between elements". Ranges from 0 to 1000. */
-    float mElementSpacing; // 0x20c
+    float mElementSpacing; // 0x1ec
     /** "point during scroll when highlight changes". Ranges from 0 to 1. */
-    float mScrollHighlightChange; // 0x210
+    float mScrollHighlightChange; // 0x1f0
     /** "draw widgets in preview mode?" */
-    bool mTestMode; // 0x214
+    bool mTestMode; // 0x1f4
     UIListState mTestState; // 0x218
     /** "total number of data elements" */
-    int mTestNumData; // 0x260
+    int mTestNumData; // 0x240
     /** "test gaps between elements". Ranges from 0 to 1000. */
-    float mTestGapSize; // 0x264
-    UIComponent::State mTestComponentState; // 0x268
+    float mTestGapSize; // 0x244
+    UIComponent::State mTestComponentState; // 0x248
     /** "test disable every other element" */
-    bool mTestDisableElements; // 0x26c
-    std::vector<UIListWidget *> mTestWidgets; // 0x270
-    int mDirection; // 0x27c
+    bool mTestDisableElements; // 0x24c
+    std::vector<UIListWidget *> mTestWidgets; // 0x250
+    int mDirection; // 0x25c
 
 private:
     float SetElementPos(Vector3 &v, float position, int gridSpan, float primaryBase, float secondaryBase) const;

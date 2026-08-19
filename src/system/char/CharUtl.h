@@ -41,7 +41,7 @@ public:
     void *mAngChannel; // 0x4
     void *mPosChannel; // 0x8
     Vector3 mPos; // 0xc
-    float mAng; // 0x18
+    float mAng; // 0x1c
     Vector3 mLastPos; // 0x1c
     float mLastAng; // 0x28
 };

@@ -92,8 +92,8 @@ public:
     int mFlags; // 0x4
     bool mDisabled; // 0x8
     std::vector<SyncMeshCB::Vert> mVerts; // 0xc
-    std::vector<RndMesh::Face> mFaces; // 0x14
-    std::vector<Hmx::Color> mColors; // 0x1c
+    std::vector<RndMesh::Face> mFaces; // 0x18
+    std::vector<Hmx::Color> mColors; // 0x24
 };
 
 class CharMeshCacheMgr : public SyncMeshCB {

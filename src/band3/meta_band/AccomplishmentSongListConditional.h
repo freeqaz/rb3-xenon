@@ -16,6 +16,6 @@ public:
 
     void Configure(DataArray *);
 
-    std::vector<Symbol> unk7c; // 0x7c
-    std::set<Symbol> unk84; // 0x84
+    std::vector<Symbol> unk7c; // 0x98
+    std::set<Symbol> unk84; // 0xa4
 };

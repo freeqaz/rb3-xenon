@@ -79,5 +79,5 @@ public:
     void AttemptNextTransition();
 
     std::vector<UIScreen *> mDestState; // 0x10
-    NetSync *mNetSync; // 0x18
+    NetSync *mNetSync; // 0x1c
 };

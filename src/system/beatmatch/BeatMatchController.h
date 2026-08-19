@@ -48,15 +48,15 @@ public:
     bool IsLefty() const { return mLefty; }
     void SetMapping(BeatMatchControllerGemMapping m) { mGemMapping = m; }
 
-    User *mUser; // 0x1c
+    User *mUser; // 0x28
     int mForceMercuryBut; // 0x20
-    bool mLefty; // 0x24
+    bool mLefty; // 0x30
     bool unk25; // 0x25
     BeatMatchControllerGemMapping mGemMapping; // 0x28
-    HitSink *mHitSink; // 0x2c
-    DataArray *mSlots; // 0x30
-    DataArray *mLeftySlots; // 0x34
-    DataArray *mRightySlots; // 0x38
+    HitSink *mHitSink; // 0x38
+    DataArray *mSlots; // 0x3c
+    DataArray *mLeftySlots; // 0x40
+    DataArray *mRightySlots; // 0x44
 };
 
 BeatMatchController *

@@ -90,26 +90,26 @@ public:
         // mUnkTU5_prop5 as an unidentified TU5 tail bool; repurposed here.
         bool mAllowOverdrivePhrases; // 0x5 (was mUnkTU5_prop5)
         bool mEndWithSong; // 0x6 (was 0x4)
-        bool mForceUseCymbals; // 0x5
-        bool mForceDontUseCymbals; // 0x6
-        bool mAllowAutoVocals; // 0x7
-        bool mHasSongSections; // 0x8
-        bool mLoadChars; // 0x9
-        bool mLetterbox; // 0xa
-        bool mCrowdReacts; // 0xb
-        bool mIsPractice; // 0xc
-        bool mEnableWhammy; // 0xd
-        bool mEnableCapstrip; // 0xe
-        bool mDisableGuitarFx; // 0xf
-        bool mDisableKeysFx; // 0x10
-        bool mEnableOverdrive; // 0x11
-        bool mEnableCoda; // 0x12
-        bool mCanSolo; // 0x13
-        bool mHasBeatMask; // 0x14
-        bool mCanLose; // 0x15
-        bool mEnableStreak; // 0x16
-        bool mShowStars; // 0x17
-        bool mPlayStarSfx; // 0x18
+        bool mForceUseCymbals; // 0x7
+        bool mForceDontUseCymbals; // 0x8
+        bool mAllowAutoVocals; // 0x9
+        bool mHasSongSections; // 0xa
+        bool mLoadChars; // 0xb
+        bool mLetterbox; // 0xc
+        bool mCrowdReacts; // 0xd
+        bool mIsPractice; // 0xe
+        bool mEnableWhammy; // 0xf
+        bool mEnableCapstrip; // 0x10
+        bool mDisableGuitarFx; // 0x11
+        bool mDisableKeysFx; // 0x12
+        bool mEnableOverdrive; // 0x13
+        bool mEnableCoda; // 0x14
+        bool mCanSolo; // 0x15
+        bool mHasBeatMask; // 0x16
+        bool mCanLose; // 0x17
+        bool mEnableStreak; // 0x18
+        bool mShowStars; // 0x19
+        bool mPlayStarSfx; // 0x1a
         // TU5: ONE more bool brings Properties to 28 bytes (0x2c..0x47).
         // It used to be two (29 bytes, ending at 0x48) purely to push mSongPos
         // to 0x4c, but retail actually spends that last word on a real pointer
@@ -268,7 +268,7 @@ public:
     SongPos mSongPos; // 0x4c
     SongDB *mSongDB; // 0x54
     SongInfo *mSongInfo; // 0x58
-    BeatMaster *mMaster; // 0x5c
+    BeatMaster *mMaster; // 0x68
     std::vector<Player *> mAllActivePlayers; // 0x60
     // Retail places mRealtime at this+0x78 and unk6f at this+0x79 (proven by
     // Game::HandleAudioLoad reading lbz 0x78 / stb 0x79). With mAllActivePlayers
@@ -281,11 +281,11 @@ public:
     bool mGameWantsPause; // 0x75
     bool mOvershellWantsPause; // 0x76
     bool mPauseTime; // 0x77
-    bool mRealtime; // 0x78
-    bool unk6f; // 0x79
+    bool mRealtime; // 0x7c
+    bool unk6f; // 0x7d
     bool unk6b; // 0x7a (pad region)
     bool unk6c; // 0x7b (pad region) - screen saver?
-    float mTimeOffset; // 0x7c
+    float mTimeOffset; // 0x80
     // TU5: a new 4-byte member sits between mTimeOffset and mTime. Proven by
     // Game::Poll reading mTimeOffset at 0x80 (+4) but mTime (Timer) at 0x88
     // (+8) — the extra +4 lands exactly here. TODO: identify this member.
@@ -308,7 +308,7 @@ public:
     int mDemoMaxPctComplete; // 0xc0
     float mDemoMaxMs; // 0xc4
     bool unkc4; // 0xc8
-    LoadState mLoadState; // 0xcc
+    LoadState mLoadState; // 0xd4
     EndGameResult mResult; // 0xcc
     Band *mBand; // 0xd0
     Shuttle *mShuttle; // 0xd4
@@ -327,7 +327,7 @@ public:
     bool mDrumFillsMod; // 0x139
     int unk13c;
     float unk140;
-    TrackerManager *mTrackerManager; // 0x144
+    TrackerManager *mTrackerManager; // 0x150
     bool unk148;
     float mDisablePauseMs; // 0x14c
     bool unk150;

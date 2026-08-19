@@ -39,5 +39,5 @@ protected:
     /** The list of allowed objects. */
     ObjPtrList<Hmx::Object> mObjects; // 0x2c
     /** The collection of properties that allowed objects must have. */
-    std::vector<Symbol> mProps; // 0x40
+    std::vector<Symbol> mProps; // 0x3c
 };

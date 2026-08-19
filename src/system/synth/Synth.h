@@ -192,7 +192,7 @@ protected:
     std::list<ObjectDir *> unk5c; // 0x5c (DC3-only)
     ObjDirPtr<ObjectDir> mCommonBank; // 0x64
     std::list<SampleInst *> mZombieInsts; // 0x78
-    Fader *mMasterFader; // 0x80
+    Fader *mMasterFader; // 0x68
     Fader *mSfxFader; // 0x84
     Fader *mMidiInstrumentFader; // 0x88
 #else

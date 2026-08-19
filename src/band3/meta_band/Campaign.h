@@ -122,17 +122,17 @@ public:
         return m_mapCampaignKeys;
     }
 
-    AccomplishmentManager *m_pAccomplishmentMgr; // 0x1c
-    Symbol m_symCurrentAccomplishment; // 0x20
+    AccomplishmentManager *m_pAccomplishmentMgr; // 0x28
+    Symbol m_symCurrentAccomplishment; // 0x2c
     bool m_bWasLaunchedIntoMusicLibrary; // 0x24
     bool unk25; // 0x25
-    Symbol unk28; // 0x28
-    std::vector<Symbol> m_vCampaignLevels; // 0x2c
+    Symbol unk28; // 0x34
+    std::vector<Symbol> m_vCampaignLevels; // 0x38
     std::hash_map<Symbol, CampaignLevel *> m_mapCampaignLevels; // 0x34
     std::hash_map<Symbol, Symbol> unk4c; // 0x60 (verified via class_layout_report; was mis-typed as std::map)
-    std::vector<Symbol> unk64; // 0x64
+    std::vector<Symbol> unk64; // 0x7c
     std::hash_map<Symbol, CampaignKey *> m_mapCampaignKeys; // 0x6c
-    BandProfile *unk84; // 0x84
+    BandProfile *unk84; // 0xa4
     int unk88; // 0x88
 };
 

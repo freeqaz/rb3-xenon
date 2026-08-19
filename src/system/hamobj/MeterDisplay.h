@@ -40,7 +40,7 @@ protected:
 
     void UpdateDisplay();
 
-    RndAnimatable *mMeterAnim; // 0x44
+    RndAnimatable *mMeterAnim; // 0x140
     /** "length of value change animation, in seconds" */
     float mAnimPeriod; // 0x48
     float unk4c; // 0x4c
@@ -49,15 +49,15 @@ protected:
     /** "whether or not to show text" */
     bool mShowText; // 0x58
     /** "whether or not to show text in percentage form" */
-    bool mPercentageText; // 0x59
+    bool mPercentageText; // 0x155
     /** "whether or not to hide denominator" */
-    bool mHideDenominator; // 0x5a
+    bool mHideDenominator; // 0x156
     /** "Localization token to use for wrapper" */
     Symbol mWrapperText; // 0x5c
     /** "current value of meter" */
-    int mCurrentValue; // 0x60
+    int mCurrentValue; // 0x15c
     /** "max value of meter" */
-    int mMaxValue; // 0x64
+    int mMaxValue; // 0x160
     // NOTE(laneBQ2): `ResourceDirPtr<RndDir> mResourceDir` used to follow. Retail RB3
     // has no such member -- the rb3-Wii oracle's MeterDisplay ends at `mMaxValue`, and
     // RB3 reaches the dir through the INHERITED UIComponent::mResource (a UIResource*

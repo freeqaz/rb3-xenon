@@ -124,7 +124,7 @@ protected:
     float mBlendWidth; // 0xb4 / -0x30
     Symbol mClipType; // 0xb8 / -0x2c
     ApplyMode mApply; // 0xbc / -0x28;
-    CharBonesAlloc *mInternalBones; // 0xc0
+    CharBonesAlloc *mInternalBones; // 0x84
     bool mPlayMultipleClips; // 0xc4 / -0x20
 #ifdef HX_NATIVE
     // DC3-only: retail RB3 X360 CharDriver has no clip-weight map (part of the

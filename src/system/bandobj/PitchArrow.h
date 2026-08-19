@@ -51,12 +51,12 @@ public:
     float mScore; // 0x190
     float mHarmonyFX; // 0x194
     float mVolume; // 0x198
-    float mTilt; // 0x19c
-    VocalHUDColor mVocalHUDColor; // 0x1a0
+    float mTilt; // 0x1ec
+    VocalHUDColor mVocalHUDColor; // 0x1f0
     float mColorFade; // 0x1a4
-    bool mSpotlight; // 0x1a8
-    bool mDeploying; // 0x1a9
-    bool mPitched; // 0x1aa
+    bool mSpotlight; // 0x1f8
+    bool mDeploying; // 0x1f9
+    bool mPitched; // 0x1fa
     bool unk1ab; // 0x1ab
     Symbol mTestColor; // 0x1ac
     int mArrowStyle; // 0x1b0

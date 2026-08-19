@@ -82,10 +82,10 @@ public:
     int GetIndex() const { return mIndex; }
 
     int mIndex; // 0x24
-    Symbol mToken; // 0x28
-    bool mLocalizeToken; // 0x2c
-    DateTime *mDateTime; // 0x30
-    std::list<SortNode *> mChildren; // 0x34
+    Symbol mToken; // 0x34
+    bool mLocalizeToken; // 0x38
+    DateTime *mDateTime; // 0x3c
+    std::list<SortNode *> mChildren; // 0x40
     int unk3c;
 };
 
@@ -110,9 +110,9 @@ public:
     void SetShortcut(ShortcutNode *);
     int GetIndex() const { return mStartIx; }
 
-    std::list<SortNode *> mChildren; // 0x24
-    ShortcutNode *mShortcut; // 0x2c
-    int mStartIx; // 0x30
+    std::list<SortNode *> mChildren; // 0x30
+    ShortcutNode *mShortcut; // 0x38
+    int mStartIx; // 0x3c
 };
 
 // LeafSortNode : SortNode
@@ -143,9 +143,9 @@ public:
     bool mCover; // 0x34 - cover
     int unk38; // 0x38 - disc count
     int unk3c; // 0x3c - download count
-    Symbol mToken; // 0x40
-    bool mLocalizeToken; // 0x44
-    DateTime *mDateTime; // 0x48
+    Symbol mToken; // 0x4c
+    bool mLocalizeToken; // 0x50
+    DateTime *mDateTime; // 0x54
 };
 
 // SongSortNode : LeafSortNode
@@ -190,11 +190,11 @@ public:
     virtual int GetTier() const { return -1; }
     virtual const char *GetShortcutStr() { return gNullStr; }
 
-    bool mActive; // 0x34
+    bool mActive; // 0x40
     String mArtPath; // 0x38
     String mRowMatPath; // 0x44
-    Symbol mToken; // 0x50
-    Symbol mByline; // 0x54
+    Symbol mToken; // 0x5c
+    Symbol mByline; // 0x60
 };
 
 class SubheaderSortNode : public HeaderSortNode {
@@ -232,7 +232,7 @@ public:
     int GetPotentialStars();
     SongRecord *GetSongRecord() const { return mSongRecord; }
 
-    SongRecord *mSongRecord; // 0x34
+    SongRecord *mSongRecord; // 0x40
 };
 
 class SetlistSortNode : public LeafSortNode {
@@ -255,5 +255,5 @@ public:
 
     SetlistRecord *GetSetlistRecord() const { return mSetlistRecord; }
 
-    SetlistRecord *mSetlistRecord; // 0x34
+    SetlistRecord *mSetlistRecord; // 0x40
 };

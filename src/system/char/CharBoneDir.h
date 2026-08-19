@@ -21,7 +21,7 @@ public:
         ObjPtrList<CharBone> mAverage; // 0x10
         /** "Slide the character over the course of the clip.  If false, just uses the
          * start of the clip" */
-        bool mSlide; // 0x20
+        bool mSlide; // 0x28
     };
 
     virtual ~CharBoneDir();
@@ -62,17 +62,17 @@ protected:
         If slide is true evaluates the [average] bones and
         the start of the clip and end of the clip,
         and recenters [targets] smoothly between those." */
-    Recenter mRecenter; // 0x9c
+    Recenter mRecenter; // 0xa0
     /** "context in which character should move itself around via bone_facing.pos and
      * bone_facing.rotz bones" */
-    int mMoveContext; // 0xc8
+    int mMoveContext; // 0xcc
     /** "if false, won't bake out facing, will just bake out position" */
-    bool mBakeOutFacing; // 0xcc
-    DataNode mContextFlags; // 0xd0
+    bool mBakeOutFacing; // 0xd0
+    DataNode mContextFlags; // 0xd4
     /** "Context to use for listing filter_bones" */
-    int mFilterContext; // 0xd8
+    int mFilterContext; // 0xdc
     /** "bones with context specified in filter_context" */
-    ObjPtrList<CharBone> mFilterBones; // 0xdc
+    ObjPtrList<CharBone> mFilterBones; // 0xe0
     /** "name of bone with context specified in filter_context" */
-    std::list<String> mFilterNames; // 0xf0
+    std::list<String> mFilterNames; // 0xf4
 };

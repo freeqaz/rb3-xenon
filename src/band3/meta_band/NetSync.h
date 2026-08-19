@@ -38,8 +38,8 @@ public:
     static void Terminate();
 
     bool unk1c; // 0x1c - mSelectSwitch
-    UIScreen *mDestinationScreen; // 0x20
-    int mDestinationDepth; // 0x24
+    UIScreen *mDestinationScreen; // 0x2c
+    int mDestinationDepth; // 0x30
     bool unk28; // 0x28 - mForceAllowTransitions
     bool unk29; // 0x29 - mForceDisableMessages
     LockStepMgr *mUILockStep; // 0x2c

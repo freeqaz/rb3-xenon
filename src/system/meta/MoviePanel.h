@@ -49,8 +49,8 @@ protected:
     bool mFillWidth; // 0x3b
     int mLanguage; // 0x3c
     const char *mCurrentMovie; // 0x40
-    std::vector<const char *> mMovies; // 0x44
-    std::list<const char *> mRecent; // 0x50
+    std::vector<const char *> mMovies; // 0x48
+    std::list<const char *> mRecent; // 0x54
     Movie mMovie; // 0x58
     DataLoader *mSubtitlesLoader; // 0x60
     DataArray *mSubtitles; // 0x64

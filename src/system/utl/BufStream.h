@@ -19,12 +19,12 @@ public:
     void SetName(const char *);
 
 private:
-    char *mBuffer; // 0x10
-    bool mFail; // 0x14
-    int mTell; // 0x18
-    int mSize; // 0x1c
-    StreamChecksumValidator *mChecksum; // 0x20
-    int mBytesChecksummed; // 0x24
+    char *mBuffer; // 0xc
+    bool mFail; // 0x10
+    int mTell; // 0x14
+    int mSize; // 0x18
+    StreamChecksumValidator *mChecksum; // 0x1c
+    int mBytesChecksummed; // 0x20
     String mName; // 0x28
 
     virtual void ReadImpl(void *, int);

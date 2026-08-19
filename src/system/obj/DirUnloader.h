@@ -13,5 +13,5 @@ public:
 private:
     virtual void PollLoading();
 
-    std::vector<ObjPtr<Hmx::Object> > mObjects; // 0x48
+    std::vector<ObjPtr<Hmx::Object> > mObjects; // 0x44
 };

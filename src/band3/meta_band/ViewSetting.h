@@ -167,10 +167,10 @@ public:
     void ResetActiveSetting();
 
 protected:
-    std::vector<ViewSetting *> mSettings; // 0x20
-    ViewSetting *mActiveSetting; // 0x28
-    UIColor *mDisabledColor; // 0x2C
-    RndMat *mHeaderMat; // 0x30
-    RndMat *mEvenMat; // 0x34
-    RndMat *mOddMat; // 0x38
+    std::vector<ViewSetting *> mSettings; // 0x2c
+    ViewSetting *mActiveSetting; // 0x38
+    UIColor *mDisabledColor; // 0x3c
+    RndMat *mHeaderMat; // 0x40
+    RndMat *mEvenMat; // 0x44
+    RndMat *mOddMat; // 0x48
 };

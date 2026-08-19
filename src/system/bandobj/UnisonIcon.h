@@ -33,12 +33,12 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(UnisonIcon)
 
-    float mProgress; // 0x18c
-    EventTrigger *mStartTrig; // 0x190
-    EventTrigger *mEndTrig; // 0x194
-    EventTrigger *mSucceedTrig; // 0x198
-    EventTrigger *mFailTrig; // 0x19c
-    EventTrigger *mResetTrig; // 0x1a0
-    RndAnimatable *mMeterWipeAnim; // 0x1a4
-    BandLabel *mIconLabel; // 0x1a8
+    float mProgress; // 0x1dc
+    EventTrigger *mStartTrig; // 0x1e0
+    EventTrigger *mEndTrig; // 0x1e4
+    EventTrigger *mSucceedTrig; // 0x1e8
+    EventTrigger *mFailTrig; // 0x1ec
+    EventTrigger *mResetTrig; // 0x1f0
+    RndAnimatable *mMeterWipeAnim; // 0x1f4
+    BandLabel *mIconLabel; // 0x1f8
 };

@@ -47,11 +47,11 @@ public:
     static void Init() { REGISTER_OBJ_FACTORY(Fader) }
 
     /** "volume level in dB" */
-    float mVal; // 0x1c
-    class FaderTask *mFaderTask; // 0x20
-    Symbol mLocalName; // 0x24
-    std::set<FaderGroup *> mClients; // 0x28
-    Mode mMode; // 0x40
+    float mVal; // 0x28
+    class FaderTask *mFaderTask; // 0x2c
+    Symbol mLocalName; // 0x30
+    std::set<FaderGroup *> mClients; // 0x34
+    Mode mMode; // 0x4c
     float mTranspose; // 0x44
 };
 
@@ -87,7 +87,7 @@ public:
     void Load(BinStream &);
 
     ObjPtrList<Fader> mFaders; // 0x0
-    bool mDirty; // 0x10
+    bool mDirty; // 0x14
 };
 
 bool PropSync(FaderGroup &, DataNode &, DataArray *, int, PropOp);

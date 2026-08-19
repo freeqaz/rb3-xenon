@@ -86,11 +86,11 @@ public:
     int unk80;
     int unk84;
     BandProfile *mProfile; // 0x88
-    LocalSavedSetlist *mEditingSetlist; // 0x8c
+    LocalSavedSetlist *mEditingSetlist; // 0x90
     unsigned short **unk90;
     char *unk94;
     void *unk98; // async profanity-check IO handle; word-sized on Xbox 360 retail
     int unk9c; // mode? 0 = create setlist, 1 = edit setlist, 2 = create battle
-    EditState mEditState; // 0xa0
-    FailureReason unka4; // 0xa4
+    EditState mEditState; // 0xa4
+    FailureReason unka4; // 0xa8
 };

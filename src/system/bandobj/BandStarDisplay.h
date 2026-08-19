@@ -33,8 +33,8 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(BandStarDisplay)
 
-    float mNumStars; // 0x18c
-    ObjVector<ObjPtr<RndDir> > mStars; // 0x190
+    float mNumStars; // 0x1dc
+    ObjVector<ObjPtr<RndDir> > mStars; // 0x1e0
     ObjVector<ObjPtr<RndAnimatable> > mStarSweepAnims; // 0x19c
     ObjVector<ObjPtr<EventTrigger> > mStarFullTriggers; // 0x1a8
     ObjVector<ObjPtr<EventTrigger> > mStarGoldTriggers; // 0x1b4

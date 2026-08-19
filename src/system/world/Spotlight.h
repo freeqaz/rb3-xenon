@@ -75,7 +75,7 @@ public:
         /** "cross section intensity override texture" */
         ObjPtr<RndTex> mXSection; // 0x40
         /** "Objects that create cutout shadow in the beam." */
-        ObjPtrList<RndDrawable> mCutouts; // 0x54
+        ObjPtrList<RndDrawable> mCutouts; // 0x4c
         /** "The material to use for the beam/cone" */
         ObjPtr<RndMat> mMat; // 0x68
     };
@@ -174,7 +174,7 @@ protected:
     float mSpotScale; // 0x128
     /** "Height offset of the floor disc" */
     float mSpotHeight; // 0x12c
-    Transform mFloorSpotXfm; // 0x130
+    Transform mFloorSpotXfm; // 0x100
     Transform mLensXfm; // 0x170
     /** "Color of the spotlight" */
     Hmx::Color mColor; // 0x1b0
@@ -188,7 +188,7 @@ protected:
     float mLensOffset; // 0x1dc
     /** "Material to use for the lens" */
     ObjPtr<RndMat> mLensMaterial; // 0x1e0
-    BeamDef mBeam; // 0x1f4
+    BeamDef mBeam; // 0x1b4
     ObjPtrList<RndLight> mSlaves; // 0x270
     /** "Optional light can mesh to use" */
     ObjPtr<RndMesh> mLightCanMesh; // 0x284

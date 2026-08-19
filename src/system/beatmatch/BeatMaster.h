@@ -44,17 +44,17 @@ public:
     bool mRecording; // 0x8
     SongData *mSongData; // 0xc
     std::vector<BeatMasterSink *> mSinks; // 0x10
-    MasterAudio *mAudio; // 0x18
-    MidiParserMgr *mMidiParserMgr; // 0x1c
-    SongInfo *mSongInfo; // 0x20
-    PlayerTrackConfigList *mPtCfg; // 0x24
-    BeatMasterLoader *mLoader; // 0x28
-    bool mLoaded; // 0x2c
-    bool unk2d; // 0x2d
-    SongPos mSongPos; // 0x30
-    SongPos mLastSongPos; // 0x44
-    std::vector<int> mSubmixIdxs; // 0x58
-    DataArray *mHandlers; // 0x60
+    MasterAudio *mAudio; // 0x1c
+    MidiParserMgr *mMidiParserMgr; // 0x20
+    SongInfo *mSongInfo; // 0x24
+    PlayerTrackConfigList *mPtCfg; // 0x28
+    BeatMasterLoader *mLoader; // 0x2c
+    bool mLoaded; // 0x30
+    bool unk2d; // 0x31
+    SongPos mSongPos; // 0x34
+    SongPos mLastSongPos; // 0x48
+    std::vector<int> mSubmixIdxs; // 0x5c
+    DataArray *mHandlers; // 0x68
 };
 
 class BeatMasterLoader : public Loader {
@@ -67,5 +67,5 @@ public:
     virtual const char *StateName() const { return "BeatMasterLoader"; }
     virtual void PollLoading() { mBeatMaster->LoaderPoll(); }
 
-    BeatMaster *mBeatMaster; // 0x18
+    BeatMaster *mBeatMaster; // 0x1c
 };

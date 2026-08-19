@@ -141,14 +141,14 @@ public:
     std::vector<Gem> mGems; // 0x8
     DataArray *mGemData; // 0x10
     float mGemsEnabledStart;
-    std::vector<Extent> mMissedPhrases; // 0x18
+    std::vector<Extent> mMissedPhrases; // 0x1c
     std::list<HitGem> mHitGems; // 0x20
-    int mBegin; // 0x28
-    int mEnd; // 0x2c
+    int mBegin; // 0x30
+    int mEnd; // 0x34
     GemRepTemplate mTemplate; // 0x30
     DataArray *mConfig; // 0xb4
     bool unkb8; // 0xb8
-    NowBar *mNowBar; // 0xbc
+    NowBar *mNowBar; // 0xc8
     bool mBonusGems; // 0xc0
     bool mInCoda; // 0xc1
     float unkc4;
@@ -157,16 +157,16 @@ public:
     std::list<int> mDisabledSlotsList; // 0xd0
     std::vector<TrackWidget *> unkd8;
     std::map<Symbol, TrackWidget *> mWidgets; // 0xe0
-    RndGroup *mTailsGrp; // 0xf8
+    RndGroup *mTailsGrp; // 0x108
     int unkfc;
     int unk100;
     int unk104;
     unsigned int mEnabledSlots; // 0x108
     int unk10c;
-    std::vector<ArpeggioPhrase> mArpeggioPhrases; // 0x110
+    std::vector<ArpeggioPhrase> mArpeggioPhrases; // 0x120
     int mNextArpeggioPhrase;
-    std::vector<ArpeggioPhrase *> mActiveArpeggios; // 0x11c
-    std::vector<ArpeggioPhrase *> mExpiredArpeggios; // 0x124
+    std::vector<ArpeggioPhrase *> mActiveArpeggios; // 0x130
+    std::vector<ArpeggioPhrase *> mExpiredArpeggios; // 0x13c
     float unk12c;
     int unk130;
     int unk134;

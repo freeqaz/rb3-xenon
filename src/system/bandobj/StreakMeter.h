@@ -81,18 +81,18 @@ public:
     int unk244; // 0x244
     ObjPtr<EventTrigger> mFlashTrig; // 0x248
     ObjPtr<EventTrigger> mFlashSparksTrig; // 0x254
-    bool unk260; // 0x260
+    bool unk260; // 0x2b0
     ObjPtr<RndGroup> mPartBarsGroup; // 0x264
     bool unk270[3]; // 0x270
     ObjVector<ObjPtr<RndPropAnim> > mPartColorAnims; // 0x274
-    ObjVector<ObjPtr<RndPropAnim> > mPartFadeAnims; // 0x280
+    ObjVector<ObjPtr<RndPropAnim> > mPartFadeAnims; // 0x2d4
     ObjVector<ObjPtr<RndPropAnim> > mPartWipeAnims; // 0x28c
     ObjVector<ObjPtr<RndPropAnim> > mPartWipeResidualAnims; // 0x298
     ObjPtr<EventTrigger> mResidueFadeTrig; // 0x2a4
     ObjPtr<RndPropAnim> mNumPartsAnim; // 0x2b0
     ObjVector<ObjPtr<RndPartLauncher> > mPartSparksLaunchers; // 0x2bc
-    int unk2c8; // 0x2c8
+    int unk2c8; // 0x32c
     bool unk2cc[3]; // 0x2cc
-    int unk2d0; // 0x2d0
+    int unk2d0; // 0x334
     int unk2d4; // 0x2d4
 };

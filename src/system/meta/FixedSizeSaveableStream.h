@@ -55,6 +55,6 @@ public:
 
     std::hash_map<Symbol, int> m_mapSymbolToID; // 0x30
     std::hash_map<int, Symbol> m_mapIDToSymbol; // 0x4c
-    int m_iCurrentID; // 0x60
-    int m_iTableOffset; // 0x64
+    int m_iCurrentID; // 0x68
+    int m_iTableOffset; // 0x6c
 };

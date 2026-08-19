@@ -33,11 +33,11 @@ protected:
     void SetFailType(NetLoaderFailType);
 
     String mStrRemotePath; // 0x4
-    bool mIsLoaded; // 0xc
-    char *mBuffer; // 0x10
+    bool mIsLoaded; // 0x10
+    char *mBuffer; // 0x14
     int unk14; // 0x14
-    int mSize; // 0x18
-    NetLoaderFailType mFailType; // 0x1c
+    int mSize; // 0x1c
+    NetLoaderFailType mFailType; // 0x20
 };
 
 class NetLoaderStub : public NetLoader {
@@ -52,8 +52,8 @@ private:
     static const float kNetSimInitialDelay;
     static const float kNetSimKbPerSecond;
 
-    FileLoader *mFileLoader; // 0x20
-    float mNetSimEndTime; // 0x24
+    FileLoader *mFileLoader; // 0x24
+    float mNetSimEndTime; // 0x28
 };
 
 class DataNetLoader {

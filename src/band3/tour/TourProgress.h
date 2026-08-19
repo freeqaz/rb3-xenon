@@ -86,17 +86,17 @@ public:
     QuestJournal mQuests; // 0x1c
     TourPropertyCollection mTourProperties; // 0x40
     unsigned int mLastTouchTime; // 0x60
-    bool mOnTour; // 0x64
-    mutable Symbol m_symTourDesc; // 0x68
-    int mNumCompletedGigs; // 0x6c
-    std::vector<int> unk70; // 0x70
-    Symbol mCurrentQuest; // 0x78
+    bool mOnTour; // 0x68
+    mutable Symbol m_symTourDesc; // 0x6c
+    int mNumCompletedGigs; // 0x70
+    std::vector<int> unk70; // 0x74
+    Symbol mCurrentQuest; // 0x80
     Symbol mQuestFilters[3]; // 0x7c, 0x80, 0x84
     std::map<Symbol, int> unk88;
     std::map<Symbol, int> unka0;
     int mMetaScore; // 0xb8
     int mNewStars; // 0xbc
-    bool mWonQuest; // 0xc0
-    int mCurrentGigNum; // 0xc4
-    TourPropertyCollection mPerformanceProperties; // 0xc8
+    bool mWonQuest; // 0xc8
+    int mCurrentGigNum; // 0xcc
+    TourPropertyCollection mPerformanceProperties; // 0xd0
 };

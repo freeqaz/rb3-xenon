@@ -29,12 +29,12 @@ protected:
     virtual bool Enabled() const;
     virtual void UnSet() { mEnabled = false; }
 
-    bool mEnabled; // 0x30
-    float mDepthOfFieldScale; // 0x34
-    float mDepthOfFieldBias; // 0x38
-    float mFocalPlane; // 0x3c
-    float mBlurDepth; // 0x40
-    float mMinBlur; // 0x44
-    float mMaxBlur; // 0x48
-    RndTex *mBlurTex[2]; // 0x4c
+    bool mEnabled; // 0x2c
+    float mDepthOfFieldScale; // 0x30
+    float mDepthOfFieldBias; // 0x34
+    float mFocalPlane; // 0x38
+    float mBlurDepth; // 0x3c
+    float mMinBlur; // 0x40
+    float mMaxBlur; // 0x44
+    RndTex *mBlurTex[2]; // 0x48
 };

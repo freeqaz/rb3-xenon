@@ -83,5 +83,5 @@ protected:
     ObjPtr<BandIKEffector> mMore; // 0x40
     ObjPtr<BandIKEffector> mElbow; // 0x4c
     ObjVector<Constraint> mConstraints; // 0x58
-    ObjPtr<BandCharacter> unk64; // 0x64
+    ObjPtr<BandCharacter> unk64; // 0x68
 };

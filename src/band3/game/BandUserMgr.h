@@ -68,7 +68,7 @@ public:
     std::vector<RemoteBandUser *> mRemoteUsers; // 0x2c
     NullLocalBandUser *mNullUser; // 0x34
     UserGuid mSlotMap[4]; // 0x38, 0x48, 0x58, 0x68
-    SessionMgr *mSessionMgr; // 0x78
+    SessionMgr *mSessionMgr; // 0x90
 };
 
 void BandUserMgrInit();

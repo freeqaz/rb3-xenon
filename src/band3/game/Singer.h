@@ -199,11 +199,11 @@ public:
     float mAutoplayOffset; // 0x258
     std::vector<VocalScoreHistory> mScoreHistories; // 0x25c
     std::vector<VocalScoreCache> mScoreCaches; // 0x264
-    std::vector<SingerResultsData> mResultsData; // 0x26c
-    std::vector<AmbiguousData> mAmbiguousData; // 0x274
+    std::vector<SingerResultsData> mResultsData; // 0x274
+    std::vector<AmbiguousData> mAmbiguousData; // 0x280
     TambourineDetector mTambourineDetector; // 0x27c
-    float mPitchDeviationMean; // 0x29c
-    float mPitchDeviationDev; // 0x2a0
-    int mPitchDeviationFrameCount; // 0x2a4
+    float mPitchDeviationMean; // 0x2ac
+    float mPitchDeviationDev; // 0x2b0
+    int mPitchDeviationFrameCount; // 0x2b4
     TalkyMatcher *mTalkyMatcher; // 0x2a8
 };

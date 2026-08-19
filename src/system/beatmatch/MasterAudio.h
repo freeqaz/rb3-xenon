@@ -226,30 +226,30 @@ public:
         return mTrackData[num]->GetSucceeding(slot);
     }
 
-    int mNumPlayers; // 0x28
-    Stream *mSongStream; // 0x2c
-    SongData *mSongData; // 0x30
-    bool mStreamEnabled; // 0x34
-    Fader *mMasterFader; // 0x38
-    Fader *mForegroundFader; // 0x3c
-    Fader *mMultiplayerFader; // 0x40
-    Fader *mBackgroundFader; // 0x44
-    Fader *mBackgroundAttenFader; // 0x48
-    Fader *mCommonFader; // 0x4c
-    Fader *mRemoteFader; // 0x50
-    Fader *mPracticeFader; // 0x54
-    Fader *mVocalDuckFader; // 0x58
-    Fader *mVocalCueFader; // 0x5c
-    Fader *mVocalFailFader; // 0x60
-    Fader *mCrowdFader; // 0x64
-    Fader *mBaseCrowdFader; // 0x68
-    SubmixCollection *mSubmixes; // 0x6c
-    std::vector<ChannelData *> mChannelData; // 0x70
-    TrackDataCollection mTrackData; // 0x78
-    bool mPlayingInCommon; // 0x80
+    int mNumPlayers; // 0x34
+    Stream *mSongStream; // 0x38
+    SongData *mSongData; // 0x3c
+    bool mStreamEnabled; // 0x40
+    Fader *mMasterFader; // 0x44
+    Fader *mForegroundFader; // 0x48
+    Fader *mMultiplayerFader; // 0x4c
+    Fader *mBackgroundFader; // 0x50
+    Fader *mBackgroundAttenFader; // 0x54
+    Fader *mCommonFader; // 0x58
+    Fader *mRemoteFader; // 0x5c
+    Fader *mPracticeFader; // 0x60
+    Fader *mVocalDuckFader; // 0x64
+    Fader *mVocalCueFader; // 0x68
+    Fader *mVocalFailFader; // 0x6c
+    Fader *mCrowdFader; // 0x70
+    Fader *mBaseCrowdFader; // 0x74
+    SubmixCollection *mSubmixes; // 0x78
+    std::vector<ChannelData *> mChannelData; // 0x7c
+    TrackDataCollection mTrackData; // 0x88
+    bool mPlayingInCommon; // 0x94
     float mMultiplayerStereoScale; // 0x84
     float mMultiplayerVolume; // 0x88
-    float mMultiplayerCommonVolume; // 0x8c
+    float mMultiplayerCommonVolume; // 0xa0
     float mPlayerAtten; // 0x90
     float mBackgroundVolume; // 0x94
     float mMuteVolume; // 0x98
@@ -261,8 +261,8 @@ public:
     float mRemoteVolume; // 0xb0
     float mMasterVolume; // 0xb4
 
-    bool mMuteMaster; // 0xb8
-    bool mMuckWithPitch; // 0xb9
+    bool mMuteMaster; // 0xcc
+    bool mMuckWithPitch; // 0xcd
 
     PitchMucker *mPitchMucker; // 0xbc - PitchMucker*
     bool mWhammyEnabled; // 0xc0

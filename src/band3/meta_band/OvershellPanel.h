@@ -152,22 +152,22 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(OvershellPanel); }
 
-    std::vector<OvershellSlot *> mSlots; // 0x70
+    std::vector<OvershellSlot *> mSlots; // 0x74
     std::vector<int> mSlotPriorities; // 0x78
-    OvershellOverrideFlow mPanelOverrideFlow; // 0x80
-    OvershellActiveStatus mActiveStatus; // 0x84
+    OvershellOverrideFlow mPanelOverrideFlow; // 0x8c
+    OvershellActiveStatus mActiveStatus; // 0x90
     bool mSongOptionsRequired; // 0x88
     bool mUseExtendedMicArrows; // 0x89
     bool mAllowsButtonPulse; // 0x8a
     std::vector<LocalBandUser *> mQueuedJoinUsers; // 0x8c
-    SessionMgr *mSessionMgr; // 0x94
-    BandUserMgr *mBandUserMgr; // 0x98
+    SessionMgr *mSessionMgr; // 0xa4
+    BandUserMgr *mBandUserMgr; // 0xa8
     BandUser *mPartRestrictedUser; // 0x9c
     TrackType mPartRestriction; // 0xa0
     Difficulty mMinimumDifficulty; // 0xa4
     Rand mPartResolver; // 0xa8
     int mPartResolverSeed; // 0x4b8
-    bool mAllowRealGuitarFlow; // 0x4bc
+    bool mAllowRealGuitarFlow; // 0x4cc
     // RB3-360: no unk4c0 (std::vector<u64> friends console codes) / unk4c8 /
     // unk4cc — Wii-dev-only online-registration state (Poll filled unk4c0 from
     // TheWiiFriendMgr). Retail members end at mAllowRealGuitarFlow 0x4CD,

@@ -31,10 +31,10 @@ public:
         }
     }
 
-    const std::vector<DynamicTex *> &m_rIcons; // 0x20
-    std::vector<Symbol> m_vQuestFilters; // 0x24
-    TourProgress &m_rProgress; // 0x2c
-    UIList *unk30; // 0x30
+    const std::vector<DynamicTex *> &m_rIcons; // 0x2c
+    std::vector<Symbol> m_vQuestFilters; // 0x30
+    TourProgress &m_rProgress; // 0x3c
+    UIList *unk30; // 0x40
 };
 
 class QuestFilterPanel : public TexLoadPanel {
@@ -65,6 +65,6 @@ public:
     void HandleLeaderToggledFilters(bool);
     bool AreCurrentFiltersValid();
 
-    Symbol m_symQuest; // 0x4c
-    QuestFilterProvider *m_pQuestFilterProvider; // 0x50
+    Symbol m_symQuest; // 0x54
+    QuestFilterProvider *m_pQuestFilterProvider; // 0x58
 };

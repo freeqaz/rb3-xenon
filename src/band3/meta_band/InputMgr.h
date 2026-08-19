@@ -36,13 +36,13 @@ public:
     static void Init();
     static void Terminate();
 
-    BandUserMgr *mBandUserMgr; // 0x1c
-    UIEventMgr *mEventMgr; // 0x20
-    NetSync *mNetSync; // 0x24
-    SessionMgr *mSessionMgr; // 0x28
-    bool mAutoVocalsConfirmAllowed; // 0x2c
-    bool unk2d; // 0x2d
-    BandUser *mUser; // 0x30
+    BandUserMgr *mBandUserMgr; // 0x18
+    UIEventMgr *mEventMgr; // 0x1c
+    NetSync *mNetSync; // 0x20
+    SessionMgr *mSessionMgr; // 0x24
+    bool mAutoVocalsConfirmAllowed; // 0x28
+    bool unk2d; // 0x29
+    BandUser *mUser; // 0x2c
 };
 
 extern InputMgr *TheInputMgr;

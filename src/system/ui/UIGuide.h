@@ -25,8 +25,8 @@ protected:
     UIGuide();
 
     /** "Horizontal or vertical guide?" */
-    Type mType; // 0x2c
+    Type mType; // 0x28
     /** "position in proportion to screen width (if vertical) or height (if horizontal)".
      * Ranges from 0 to 1. */
-    float mPos; // 0x30
+    float mPos; // 0x2c
 };

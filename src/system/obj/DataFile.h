@@ -29,13 +29,13 @@ private:
     void DoneLoading();
 
     String mFilename; // 0x18
-    DataArray *mData; // 0x24
+    DataArray *mData; // 0x28
     File *mFile; // 0x28
-    int mBufLen; // 0x2C
-    char *mBuffer; // 0x30
-    bool mDtb; // 0x34
-    class DataLoaderThreadObj *mThreadObj; // 0x38
-    DataLoaderStateFunc mState; // 0x3C
+    int mBufLen; // 0x30
+    char *mBuffer; // 0x34
+    bool mDtb; // 0x38
+    class DataLoaderThreadObj *mThreadObj; // 0x3c
+    DataLoaderStateFunc mState; // 0x40
 };
 
 class DataLoaderThreadObj : public ThreadCallback {

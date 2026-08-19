@@ -25,10 +25,10 @@ public:
      *  and the match build never links. */
     void StartMetadataLoaders();
 
-    std::vector<DataNetLoader *> mLoaders; // 0x38
-    DataArray *mAllMetadata; // 0x40
-    std::vector<int> mSongs; // 0x44
-    std::vector<String> mSongNames; // 0x4c
+    std::vector<DataNetLoader *> mLoaders; // 0x3c
+    DataArray *mAllMetadata; // 0x48
+    std::vector<int> mSongs; // 0x4c
+    std::vector<String> mSongNames; // 0x58
     int unk54; // 0x54
-    Timer unk58; // 0x58
+    Timer unk58; // 0x68
 };

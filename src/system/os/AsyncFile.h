@@ -40,12 +40,12 @@ protected:
     int mMode; // 0x4
     bool mFail; // 0x8
     String mFilename; // 0xc
-    unsigned int mTell; // 0x14
-    int mOffset; // 0x18
-    unsigned int mSize; // 0x1c
-    unsigned int mUCSize; // 0x20
-    char *mBuffer; // 0x24
-    char *mData; // 0x28
-    int mBytesLeft; // 0x2c
-    int mBytesRead; // 0x30
+    unsigned int mTell; // 0x18
+    int mOffset; // 0x1c
+    unsigned int mSize; // 0x20
+    unsigned int mUCSize; // 0x24
+    char *mBuffer; // 0x28
+    char *mData; // 0x2c
+    int mBytesLeft; // 0x30
+    int mBytesRead; // 0x34
 };

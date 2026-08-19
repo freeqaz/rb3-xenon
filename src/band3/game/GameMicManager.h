@@ -41,8 +41,8 @@ public:
     bool unk2f;
     float mSynapseProximity; // 0x30
     float mSynapseFocus; // 0x34
-    int mMicCount; // 0x38
-    std::vector<GameMic *> mMics; // 0x3c
+    int mMicCount; // 0x34
+    std::vector<GameMic *> mMics; // 0x38
 #ifdef HX_NATIVE
     // DC3-only fake-mic feature (frame_rate mode). Retail RB3 X360 has no
     // mFakeMics: the retail funclet places the Hmx::Object vbase at 0x4c, which

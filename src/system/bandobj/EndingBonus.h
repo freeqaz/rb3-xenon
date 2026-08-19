@@ -68,13 +68,13 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(EndingBonus)
 
-    bool mSuppressUnisonDisplay; // 0x18c
-    bool mInUnison; // 0x18d
+    bool mSuppressUnisonDisplay; // 0x1dc
+    bool mInUnison; // 0x1dd
     int mScore; // 0x190
     bool mSucceeded; // 0x194
     ObjPtr<Task> mCodaEndTask; // 0x198
     std::vector<TrackInstrument> mTrackOrder; // 0x1a4
-    std::vector<MiniIconData> mIconData; // 0x1ac
+    std::vector<MiniIconData> mIconData; // 0x200
     ObjPtr<BandLabel> mScoreLabel; // 0x1b4
     ObjPtr<EventTrigger> mUnisonStartTrig; // 0x1c0
     ObjPtr<EventTrigger> mUnisonEndTrig; // 0x1cc

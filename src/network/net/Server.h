@@ -79,12 +79,12 @@ public:
 
     CriticalSection mLogoutCritSec; // 0x1c
     int mLoginState; // 0x38 - enum
-    const char *mKey; // 0x3c
+    const char *mKey; // 0x40
     String mAddress; // 0x40
-    int mPort; // 0x4c
+    int mPort; // 0x50
     int mPadLoggingIn; // 0x50
     unsigned int mPlayerIDLoggingIn; // 0x54
-    unsigned int mPlayerIDs[4]; // 0x58
+    unsigned int mPlayerIDs[4]; // 0x5c
 };
 
 extern Server &TheServer;

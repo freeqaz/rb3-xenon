@@ -35,11 +35,11 @@ public:
 protected:
     UITrigger();
 
-    bool mBlockTransition; // 0x11c
+    bool mBlockTransition; // 0x114
     ObjPtr<Hmx::Object> mCallbackObject; // 0x120
-    float mStartTime; // 0x134
-    float mEndTime; // 0x138
-    bool mDone; // 0x13c
+    float mStartTime; // 0x124
+    float mEndTime; // 0x128
+    bool mDone; // 0x12c
 };
 
 #include "obj/Msg.h"

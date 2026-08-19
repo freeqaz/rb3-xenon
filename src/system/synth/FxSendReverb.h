@@ -33,20 +33,20 @@ protected:
      * city mountains quarry plain parking_lot sewer_pipe underwater small_room
      * medium_room large_room medium_hall large_hall plate)
      */
-    Symbol mEnvironmentPreset; // 0x60
+    Symbol mEnvironmentPreset; // 0x54
     // everything below this line is a PS3 param
     /** "Pre-delay in milliseconds". Ranges from 0 to 148. */
-    float mPreDelayMs; // 0x64
+    float mPreDelayMs; // 0x58
     /** "High cutoff frequency in Hz". Ranges from 0 to 20000. */
-    float mHighCut; // 0x68
+    float mHighCut; // 0x5c
     /** "Low cutoff frequency in Hz". Ranges from 0 to 20000. */
-    float mLowCut; // 0x6c
+    float mLowCut; // 0x60
     /** "Room size (0-1)" */
-    float mRoomSize; // 0x70
+    float mRoomSize; // 0x64
     /** "Amount of damping (0-1)" */
-    float mDamping; // 0x74
+    float mDamping; // 0x68
     /** "Amount of dffusion (0-1)" */
-    float mDiffusion; // 0x78
+    float mDiffusion; // 0x6c
     /** "Balance of early and late reflections; 0=early only, 1=late only" */
-    float mEarlyLate; // 0x7c
+    float mEarlyLate; // 0x70
 };

@@ -73,37 +73,37 @@ protected:
     /** "These objects will be automatically tessellated." */
     ObjPtrList<Hmx::Object> mTessellate; // 0x54
     /** "Ignore transparent objects when casting shadows." */
-    bool mIgnoreTransparent; // 0x68
+    bool mIgnoreTransparent; // 0x64
     /** "Ignore prelit materials when receiving shadows." */
-    bool mIgnorePrelit; // 0x69
+    bool mIgnorePrelit; // 0x65
     /** "Ignore hidden objects when casting or receiving shadows." */
-    bool mIgnoreHidden; // 0x6a
+    bool mIgnoreHidden; // 0x66
     /** "Use the mesh normals when calculating. Otherwise,
         smoothed normals will be re-generated for each mesh." */
-    bool mUseMeshNormals; // 0x6b
+    bool mUseMeshNormals; // 0x67
     /** "If true, this will cause back faces of triangles to be added.
         This will more than double the calculation time." */
-    bool mIntersectBackFaces; // 0x6c
+    bool mIntersectBackFaces; // 0x68
     /** "The maximum number of polys tessellation will generate.
         This is a multiplier of the current poly count.
         A value of 2 will generate a maximum of 2x the polys."
         Ranges from 2 to 32. */
-    int mTessellateTriLimit; // 0x70
+    int mTessellateTriLimit; // 0x6c
     /** "The error threshold for the ambient occlusion calculation.
         Error larger than this value will result in a triangle being split."
         Ranges from 0.1 to 15.0. */
-    float mTessellateTriError; // 0x74
+    float mTessellateTriError; // 0x70
     /** "Triangles larger than this size will always be split."
         Ranges from 1 to 500. */
-    float mTessellateTriLarge; // 0x78
+    float mTessellateTriLarge; // 0x74
     /** "Triangles smaller than this size will not be split any further."
         Ranges from 0.1 to 500. */
-    float mTessellateTriSmall; // 0x7c
+    float mTessellateTriSmall; // 0x78
     std::vector<RndMesh *> mObjectsCast; // 0x80
     std::vector<RndMesh *> mObjectsReceive; // 0x8c
     std::vector<RndMesh *> mObjectsTessellate; // 0x98
     std::vector<Triangle> mTriList; // 0xa4
     kdTree<Triangle> *mTree; // 0xb0
-    Quality mQuality; // 0xb4
+    Quality mQuality; // 0xb0
     std::vector<Vector3> mSampleDirs; // 0xb8
 };

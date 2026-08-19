@@ -23,5 +23,5 @@ protected:
 #endif
     FxSendBitCrush();
 
-    float mAmount; // 0x60
+    float mAmount; // 0x54
 };

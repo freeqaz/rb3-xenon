@@ -11,6 +11,6 @@ public:
     virtual bool IsSafeToDelete() const { return true; }
 
 private:
-    HttpGet *mHttpGet; // 0x20
+    HttpGet *mHttpGet; // 0x24
     bool unk24; // 0x24
 };

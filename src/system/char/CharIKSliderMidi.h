@@ -37,21 +37,21 @@ protected:
     CharIKSliderMidi();
 
     /** "The bone to move" */
-    ObjPtr<RndTransformable> mTarget; // 0x30
+    ObjPtr<RndTransformable> mTarget; // 0x28
     /** "Spot at 0%" */
-    ObjPtr<RndTransformable> mFirstSpot; // 0x44
+    ObjPtr<RndTransformable> mFirstSpot; // 0x34
     /** "Spot at 100%" */
-    ObjPtr<RndTransformable> mSecondSpot; // 0x58
+    ObjPtr<RndTransformable> mSecondSpot; // 0x40
     Vector3 mDestPos; // 0x6c
-    Vector3 mOldPos; // 0x7c
-    Vector3 mCurPos; // 0x8c
-    float mTargetPercentage; // 0x9c
-    float mOldPercentage; // 0xa0
-    float mFrac; // 0xa4
-    float mFracPerBeat; // 0xa8
-    bool mPercentageChanged; // 0xac
-    bool mResetAll; // 0xad
-    ObjPtr<Character> mMe; // 0xb0
+    Vector3 mOldPos; // 0x5c
+    Vector3 mCurPos; // 0x6c
+    float mTargetPercentage; // 0x7c
+    float mOldPercentage; // 0x80
+    float mFrac; // 0x84
+    float mFracPerBeat; // 0x88
+    bool mPercentageChanged; // 0x8c
+    bool mResetAll; // 0x8d
+    ObjPtr<Character> mMe; // 0x90
     /** "Only move if percentage changes more than this (0.0 - 1.0)" */
-    float mTolerance; // 0xbc
+    float mTolerance; // 0x9c
 };

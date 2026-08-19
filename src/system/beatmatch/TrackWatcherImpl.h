@@ -168,7 +168,7 @@ public:
     bool mSucceeding; // 0x3c
     bool mEnabled; // 0x3d
     std::vector<BeatMatchSink *> mSinks; // 0x40
-    SongData *mSongData; // 0x48
+    SongData *mSongData; // 0x50
     bool mTrillSucceeding; // 0x4c
     int mTrillNextSlot; // 0x50
     float mTrillLastFretMs; // 0x54
@@ -176,7 +176,7 @@ public:
     DataArray *mRollIntervalsConfig; // 0x5c
     int mTrack; // 0x60
     bool mButtonMashingMode; // 0x64
-    int mLastGemPassed; // 0x68
+    int mLastGemPassed; // 0x70
     int mLastGemSeen; // 0x6c
     float mLastMiss; // 0x70
     bool mCheating; // 0x74
@@ -188,14 +188,14 @@ public:
     float mAutoplayAccuracy; // 0x88
     int mCymbalAutoplayMs; // 0x8c
     GemHitFlags mLastPlayedHitFlags; // 0x90
-    bool mPitchBendReady; // 0x94
+    bool mPitchBendReady; // 0x9c
     int mPitchBendRange; // 0x98
     int mPitchBendMsToFull; // 0x9c
     float mPitchBendMsHit; // 0xa0
-    float mBiggestWhammy; // 0xa4
+    float mBiggestWhammy; // 0xac
     std::vector<float> mRollSlotsLastSwingMs; // 0xa8
     int mRollActiveSlots; // 0xb0
     float mRollIntervalMs; // 0xb4
-    int mRollEndTick; // 0xb8
+    int mRollEndTick; // 0xc4
     DataArray *mTrillIntervalsConfig; // 0xbc
 };

@@ -21,8 +21,8 @@ public:
     bool IsLocked(int);
     Symbol GetScreen(int);
 
-    DataArray *unk20; // 0x20
-    std::vector<Symbol> mEntries; // 0x24
+    DataArray *unk20; // 0x2c
+    std::vector<Symbol> mEntries; // 0x30
 };
 
 class ManageBandPanel : public UIPanel {
@@ -70,11 +70,11 @@ public:
     NEW_OBJ(ManageBandPanel);
     static void Init() { REGISTER_OBJ_FACTORY(ManageBandPanel); }
 
-    ManageBandState mManageBandState; // 0x38
+    ManageBandState mManageBandState; // 0x3c
     int unk3c; // 0x3c
-    int mSelectedStandIn; // 0x40
-    StandInProvider *mStandInProvider; // 0x44
-    CharProvider *mCharProvider; // 0x48
-    BandProfile *mProfile; // 0x4c
+    int mSelectedStandIn; // 0x44
+    StandInProvider *mStandInProvider; // 0x48
+    CharProvider *mCharProvider; // 0x4c
+    BandProfile *mProfile; // 0x50
     VignetteViewerProvider *mHistoryProvider; // 0x50
 };

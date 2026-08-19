@@ -17,5 +17,5 @@ public:
 
     Symbol RandomVOContextItem();
 
-    bool mFinished; // 0x5c
+    bool mFinished; // 0x60
 };

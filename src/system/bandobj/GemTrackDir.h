@@ -164,10 +164,10 @@ public:
     std::vector<ObjPtr<RndPropAnim> > mRealGuitarMashAnims; // 0x588
     std::vector<
         std::pair<ObjPtr<EventTrigger>, ObjPtr<EventTrigger> > >
-        mDrumRollTrigs; // 0x590
+        mDrumRollTrigs; // 0x63c
     std::vector<
         std::pair<ObjPtr<EventTrigger>, ObjPtr<EventTrigger> > >
-        mTrillTrigs; // 0x598
+        mTrillTrigs; // 0x648
     std::vector<ObjPtr<EventTrigger> > mFillHitTrigs; // 0x5a0
     ObjPtr<EventTrigger> mDrumFillResetTrig; // 0x5a8
     ObjPtr<RndPropAnim> mDrumMash2ndPassActivateAnim; // 0x5b4
@@ -186,18 +186,18 @@ public:
     ObjPtr<RndAnimatable> unk654; // 0x654
     ObjPtr<RndAnimatable> mKeysShiftAnim; // 0x660
     ObjPtr<RndPropAnim> mKeysMashAnim; // 0x66c
-    float mKeyRange; // 0x678
-    float mKeyOffset; // 0x67c
-    std::vector<RndDir *> unk680; // 0x680
-    std::vector<EventTrigger *> unk688; // 0x688
-    std::vector<EventTrigger *> unk690; // 0x690
-    FingerShape *mFingerShape; // 0x698
+    float mKeyRange; // 0x734
+    float mKeyOffset; // 0x738
+    std::vector<RndDir *> unk680; // 0x73c
+    std::vector<EventTrigger *> unk688; // 0x748
+    std::vector<EventTrigger *> unk690; // 0x754
+    FingerShape *mFingerShape; // 0x760
     std::vector<float> mFretPosOffsets; // 0x69c
     float mChordLabelPosOffset; // 0x6a4
     ObjPtr<ChordShapeGenerator> mChordShapeGen; // 0x6a8
     std::map<unsigned int, std::pair<int, RndMesh *> > unk6b4; // 0x6b4
     std::map<unsigned int, std::pair<int, RndMesh *> > unk6cc; // 0x6cc
-    ArpeggioShapePool *mArpShapePool; // 0x6e4
+    ArpeggioShapePool *mArpShapePool; // 0x7b0
     bool unk6e8; // 0x6e8
     // Retail RB3-360 (MILO_DEBUG off) ends here: sizeof == 0x6ec. rb3-Wii (dev)
     // gates 4 more members under MILO_DEBUG (mFakeFingerShape,

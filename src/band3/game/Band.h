@@ -77,10 +77,10 @@ public:
     int AccumulatedScore() const { return mAccumulatedScore; }
     float GetTotalStars() const { return mTotalStars; }
 
-    BandPerformer *mBandPerformer; // 0x1c
-    std::vector<Player *> mActivePlayers; // 0x20
-    std::vector<float> mCrowdRatings; // 0x28
-    float unk30; // 0x30
+    BandPerformer *mBandPerformer; // 0x28
+    std::vector<Player *> mActivePlayers; // 0x2c
+    std::vector<float> mCrowdRatings; // 0x38
+    float unk30; // 0x44
     int mAccumulatedScore; // 0x34
     float mTotalStars; // 0x38
     int unk3c; // 0x3c
@@ -94,7 +94,7 @@ public:
     bool mMultiplierActive; // 0x70
     char unk60; // 0x71 (byte; packs into mMultiplierActive word so mMaxBonusLevel lands at 0x74)
     int mMaxBonusLevel; // 0x74
-    std::vector<int> unk68; // 0x68
-    std::vector<int> unk70; // 0x6c
-    CommonPhraseCapturer *mCommonPhraseCapturer; // 0x78
+    std::vector<int> unk68; // 0x78
+    std::vector<int> unk70; // 0x84
+    CommonPhraseCapturer *mCommonPhraseCapturer; // 0x90
 };

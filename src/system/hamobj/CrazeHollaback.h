@@ -23,7 +23,7 @@ protected:
     CrazeHollaback();
 
     /** "Music loop start and end" */
-    Range mMusicRange; // 0x2c
+    Range mMusicRange; // 0x28
     /** "Playable range of hollaback" */
-    Range mPlayRange; // 0x34
+    Range mPlayRange; // 0x30
 };

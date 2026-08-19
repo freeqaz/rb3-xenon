@@ -62,9 +62,9 @@ public:
     bool IsIndexPrefab(int);
     int GetDefaultCharIndex() const;
 
-    LocalBandUser *unk20; // 0x20
-    std::vector<CharacterEntry> mCharacters; // 0x24
-    bool unk2c; // 0x2c
-    bool unk2d; // 0x2d
-    int unk30; // 0x30
+    LocalBandUser *unk20; // 0x2c
+    std::vector<CharacterEntry> mCharacters; // 0x30
+    bool unk2c; // 0x3c
+    bool unk2d; // 0x3d
+    int unk30; // 0x40
 };

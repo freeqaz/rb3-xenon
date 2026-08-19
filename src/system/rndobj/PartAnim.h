@@ -40,11 +40,11 @@ protected:
     RndParticleSysAnim();
 
     ObjPtr<RndParticleSys> mParticleSys; // 0x10
-    Keys<Hmx::Color, Hmx::Color> mStartColorKeys; // 0x24
-    Keys<Hmx::Color, Hmx::Color> mEndColorKeys; // 0x30
-    Keys<Vector2, Vector2> mEmitRateKeys; // 0x3c
-    Keys<Vector2, Vector2> mSpeedKeys; // 0x48
-    Keys<Vector2, Vector2> mLifeKeys; // 0x54
-    Keys<Vector2, Vector2> mStartSizeKeys; // 0x60
+    Keys<Hmx::Color, Hmx::Color> mStartColorKeys; // 0x1c
+    Keys<Hmx::Color, Hmx::Color> mEndColorKeys; // 0x28
+    Keys<Vector2, Vector2> mEmitRateKeys; // 0x34
+    Keys<Vector2, Vector2> mSpeedKeys; // 0x40
+    Keys<Vector2, Vector2> mLifeKeys; // 0x4c
+    Keys<Vector2, Vector2> mStartSizeKeys; // 0x58
     ObjOwnerPtr<RndParticleSysAnim> mKeysOwner; // 0x6c
 };

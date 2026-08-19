@@ -27,9 +27,9 @@ public:
     void ResetChordInProgress();
     void TryToCompleteChord(float ms, int slot);
 
-    float mChordSlop; // 0xc0
-    int mChordGemInProgress; // 0xc4
-    int mChordSlotsInProgress; // 0xc8
-    int mChordLastSlot; // 0xcc
-    float mChordTimeout; // 0xd0
+    float mChordSlop; // 0xcc
+    int mChordGemInProgress; // 0xd0
+    int mChordSlotsInProgress; // 0xd4
+    int mChordLastSlot; // 0xd8
+    float mChordTimeout; // 0xdc
 };
