@@ -126,6 +126,14 @@ def normalize_addr(addr: str) -> str:
 def render_map(groups: list) -> str:
     out = [HEADER]
     for g in groups:
+        # A group with no address has no retail placement, and this map is keyed
+        # BY address -- parse_msvc_map groups whatever shares one. Borrowing some
+        # other group's address to render it would put its spellings in that
+        # group's bucket, i.e. assert a fold nobody proved. Skip it: no address,
+        # no map equivalence. (A partitioned-out class from
+        # decomp-synth tools/il_witness/alias_repair.py is exactly this shape.)
+        if not g.get("address"):
+            continue
         addr = normalize_addr(g["address"])
         syms = [g["survivor"], *g.get("folded", [])]
         out.append(f"; --- ICF group {g.get('name', addr)} @ {addr} ---\n")
