@@ -416,6 +416,105 @@ def body_evidence(t, finder, max_fns=8, null_shift=0x40):
                 hit_null=hit_null, rows=per_row)
 
 
+def header_comments(project_dir, header, cls):
+    """member -> commented offset, for EVERY commented member of the class body.
+
+    ⚠ Using only the audit's DISAGREEING rows misses the decisive pair.
+    `SongParser::DifficultyInfo` is refuted by `mGemsInProgress -> mActivePlayers`
+    (comment gap 8 vs a 12-byte STLport vector) -- but `mGemsInProgress`'s own
+    comment AGREES with the compiler, so it is absent from the findings and the
+    first version of this test reported the class "not refuted".
+    Scoped to the class body for the reason `audit_header` was: `utl/Str.h`
+    declares three classes and a whole-file scan attributes one's comment to
+    another.
+    """
+    sys.path.insert(0, os.path.join(project_dir, 'scripts', 'harvest'))
+    try:
+        import class_layout_report as clr
+    except Exception:
+        return {}
+    path = header if os.path.isabs(header) else os.path.join(project_dir, header)
+    try:
+        lines = open(path).read().splitlines()
+    except Exception:
+        return {}
+    try:
+        span = clr.class_body_span(lines, cls)
+    except Exception:
+        span = None
+    # ⛔ class_body_span returns (start, end, base_depth) and None when the
+    # declaration cannot be located unambiguously.  Its docstring is explicit
+    # that callers MUST treat None as "do not audit" -- falling back to the
+    # whole file is the exact bug that made audit_header attribute `String`'s
+    # retail-verified `mStr // 0x8` to `FixedString` in utl/Str.h.  Under-report.
+    if not span:
+        return {}
+    lo, hi = span[0], span[1]
+    out = {}
+    for s in lines[lo:hi]:
+        m = re.search(r'//\s*(0[xX][0-9a-fA-F]+)\s*$', s)
+        if not m:
+            continue
+        decl = s[:m.start()]
+        for ident in re.findall(r'\b(\w+)\s*(?:\[[^\]]*\])?\s*;', decl):
+            out[ident] = int(m.group(1), 16)
+    return out
+
+
+def structural_verdict(project_dir, cls, rows, header=None, timeout=1800):
+    """Refute a comment WITHOUT any retail evidence, by structural impossibility.
+
+    The compiler's own layout gives each member's true extent as the gap to the
+    NEXT member.  If the COMMENT's gap between two consecutive members is
+    SMALLER than that, the comment claims the earlier member occupies fewer
+    bytes than its declared type can -- impossible for THIS source.
+
+    Worked case: `SongParser::DifficultyInfo` comments put `mActivePlayers` at
+    0x8 immediately after a `std::vector`, implying an 8-byte vector; the
+    compiler reports STLport `vector` = 12 B (_M_start/_M_finish/
+    _M_end_of_storage).  The comment is refuted with no retail bytes at all --
+    which is why this reaches the NO_WITNESS and UNADJUDICABLE classes that no
+    name-keyed instrument can touch.
+
+    ⚠ SCOPE: this proves the comment does not describe OUR layout, hence the
+    comment is stale.  It does NOT prove our layout matches RETAIL.  A class
+    with no matching function stays unconstrained against retail either way.
+    """
+    import subprocess
+    cmd = [sys.executable,
+           os.path.join(project_dir, 'scripts', 'harvest', 'class_layout_report.py'),
+           cls, '--project-dir', project_dir, '--json', '--no-vtable']
+    try:
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        data = json.loads(out.stdout)
+    except Exception as e:
+        return dict(cls=cls, status='LAYOUT_FAILED', detail=str(e)[:120])
+    info = data.get('classes', {}).get(cls)
+    if not info:
+        return dict(cls=cls, status='CLASS_NOT_IN_REPORT')
+    members = [m for m in info.get('members', []) if not m.get('is_vfptr')]
+    off = {m['name']: int(m['offset']) for m in members}
+    order = sorted(members, key=lambda m: int(m['offset']))
+    comment = {r[1]: int(r[2]) for r in rows}
+    if header:
+        full = header_comments(project_dir, header, cls)
+        for k, v in full.items():
+            comment.setdefault(k, v)
+    findings = []
+    for a, b in zip(order, order[1:]):
+        na, nb = a['name'], b['name']
+        if na not in comment or nb not in comment:
+            continue
+        true_gap = int(b['offset']) - int(a['offset'])
+        cmt_gap = comment[nb] - comment[na]
+        if cmt_gap < true_gap:
+            findings.append(dict(prev=na, nxt=nb, true_gap=true_gap,
+                                 comment_gap=cmt_gap,
+                                 prev_type=a.get('type', '')))
+    return dict(cls=cls, status='OK', size=info.get('size'),
+                n_members=len(members), impossible=findings)
+
+
 _COMMENT_RE = re.compile(r'^(?P<pre>.*?//\s*)(?P<val>0[xX][0-9a-fA-F]+)(?P<post>\s*)$')
 
 
@@ -602,6 +701,9 @@ def main():
                     help='add T1 displacement evidence (parses compiled objs)')
     ap.add_argument('--json', help='write full triage to this path')
     ap.add_argument('--top', type=int, default=25)
+    ap.add_argument('--structural', metavar='BUCKET',
+                    help="refute comments by structural impossibility (no retail "
+                         "evidence): NO_WITNESS | UNADJUDICABLE | A_PROVEN | ALL")
     ap.add_argument('--selftest', action='store_true')
     ap.add_argument('--apply', action='store_true',
                     help='rewrite proven-stale // 0xHEX comments (implies --bodies)')
@@ -677,6 +779,35 @@ def main():
                     print(f"       [{mark}] {r['member']:<28} comment=0x{r['comment']:x} "
                           f"compiler=0x{r['compiler']:x} seen(c/k/null)="
                           f"{int(r['compiler_seen'])}/{int(r['comment_seen'])}/{int(r['null_seen'])}")
+
+    if args.structural:
+        sel = [t for t in tri if t['bucket'] == args.structural] if args.structural != 'ALL' \
+            else tri
+        sel.sort(key=lambda t: -t['rows'])
+        if args.top:
+            sel = sel[:args.top]
+        print(f"\nstructural-impossibility test over {len(sel)} classes "
+              f"(one compile each -- no retail evidence used)\n")
+        n_ref = 0
+        for t in sel:
+            v = structural_verdict(args.project_dir, t['cls'], t['raw_rows'], header=t['header'])
+            if v['status'] != 'OK':
+                print(f"  {t['cls']:<26} {v['status']} {v.get('detail','')}")
+                continue
+            imp = v['impossible']
+            if imp:
+                n_ref += 1
+                print(f"  {t['cls']:<26} REFUTED  ({len(imp)} impossible gaps, "
+                      f"sizeof={v['size']}, {t['rows']} disagreeing rows)")
+                for f in imp[:3]:
+                    print(f"      {f['prev']} -> {f['nxt']}: comment gap "
+                          f"{f['comment_gap']} < true {f['true_gap']}"
+                          f"  ({f['prev_type'] or 'member'})")
+            else:
+                print(f"  {t['cls']:<26} not refuted by this test "
+                      f"(sizeof={v['size']}, {t['rows']} rows)")
+        print(f"\ncomments REFUTED without retail evidence: {n_ref} / {len(sel)}")
+        return 0
 
     if args.apply:
         rows = proven_rows(tri)
