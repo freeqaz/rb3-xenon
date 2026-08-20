@@ -292,6 +292,7 @@ def main() -> int:
         print("enumerator: %d hash-collision candidate pairs" % len(hash_cand),
               file=sys.stderr)
     pair_fns = collections.defaultdict(set)
+    call_pairs = set()
     for unit, fn, rows in sites:
         for kind, t, b in rows:
             if not isinstance(t, str) or not isinstance(b, str):
@@ -302,6 +303,8 @@ def main() -> int:
                 continue
             pairs[(t, b)] += 1
             pair_fns[(t, b)].add((unit, fn))
+            if kind == "bl":
+                call_pairs.add((t, b))
     observed = set(pairs)
     xfold_pairs = set()
     if args.xfold:
@@ -370,17 +373,35 @@ def main() -> int:
     # This tool joins on SYMBOL names rather than unit names so it did not share
     # that specific break, but the failure SHAPE is identical, so assert the join
     # landed instead of trusting a small number.
-    if pairs:
-        _sn = {t for t, _b in pairs} | {b for _t, b in pairs}
+    # ★ 2026-08-20: measure it over CALL sites only. A `refhi`/`reflo` pair names
+    # data -- `lbl_<addr>`, `??_C@...`, `__real@...` -- which is not a function
+    # COMDAT and so can never be in these tables. Counting those in the
+    # denominator makes the statistic track the census's CODE/DATA MIX rather
+    # than naming desync, and CY-1's own site fix moved that mix enough to trip a
+    # threshold calibrated before it: measured here, all-sites fell 46.4% (the
+    # 2026-07-31 census) -> 19.5% (the same tree, 2026-08-20) and REFUSED, while
+    # over call sites the two read 87.0% and 88.0%. The guard was firing on the
+    # fix. Restricted to the population that can actually join, the threshold
+    # keeps the meaning its comment claims.
+    if call_pairs:
+        _sn = {t for t, _b in call_pairs} | {b for _t, b in call_pairs}
         _kn = set(ours) | set(retail)
         _hit = len(_sn & _kn)
-        print("join check: census names %d, obj-table names %d, INTERSECTION %d "
-              "(%.1f%%)" % (len(_sn), len(_kn), _hit, 100.0 * _hit / len(_sn)),
-              file=sys.stderr)
+        _an = {t for t, _b in pairs} | {b for _t, b in pairs}
+        print("join check: call-site names %d, obj-table names %d, INTERSECTION "
+              "%d (%.1f%%) [all sites incl. data: %d names, %.1f%% -- "
+              "informational]"
+              % (len(_sn), len(_kn), _hit, 100.0 * _hit / len(_sn), len(_an),
+                 100.0 * len(_an & _kn) / len(_an)), file=sys.stderr)
         if _hit == 0 or _hit < 0.20 * len(_sn):
             sys.exit("REFUSING: the sites census does not join against the COFF "
-                     "symbol tables (%d/%d names). Do not read the decision "
-                     "census below as a result." % (_hit, len(_sn)))
+                     "symbol tables (%d/%d call-site names). Do not read the "
+                     "decision census below as a result." % (_hit, len(_sn)))
+    elif pairs:
+        sys.exit("REFUSING: the sites census charges %d pair(s) and NOT ONE is a "
+                 "call site. Every alias this tool can emit is licensed by a "
+                 "`bl`, so that is a census-format break, not an empty result."
+                 % len(pairs))
     if args.enumerate == "hash":
         keep = hash_cand | xfold_pairs
         pairs = collections.Counter({p: pairs.get(p, 0) for p in keep})
