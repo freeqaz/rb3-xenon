@@ -100,7 +100,18 @@
   "Withdrawals are per-membership in each group's `withdrawn[]` and the",
   "emptied groups are KEPT. Accepted canon measured BIT-IDENTICAL across",
   "the sweep (1,007 accepted / 5,475 names / e11be6271102).",
-  ""
+  "",
+  "PARTITIONED 2026-08-20 on retail's own call sites (arm D-prime).",
+  "125 memberships moved to the address retail's resolved bl reaches; 42 removed",
+  "whose landing address the target map does not name. What was deliberately NOT",
+  "acted on matters more than what was: 109 too_few_unmasked_words rows were",
+  "withheld because retail holds those thunks as separate functions and the linker",
+  "merely straightened bl through them; 7 proven_fold rows were withheld because",
+  "moving them COSTS 456 B; 2 rows were withheld because their destination is",
+  "itself a 2-instruction adapter. Measured +1,172 B against a size-matched",
+  "derangement control at exactly 0. Zero overlap with the 71 hand-adjudicated",
+  "restorations of 72ed4634, which consensus independently confirms 70/71.",
+  "Run of record: decomp-bench archive/runs/2026-08-20-alias-partition-preland/"
  ],
  "groups": [
   {
@@ -1442,11 +1453,7 @@
    "address": "0x8249d1f0",
    "survivor": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
    "folded": [
-    "?clear@?$ObjPtrList@VBandCamShot@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VCamShot@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharBone@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VCharBoneOffset@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VCharCollide@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharCuff@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharDriverMidi@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharHair@@VObjectDir@@@@QAAXXZ",
@@ -1455,9 +1462,6 @@
     "?clear@?$ObjPtrList@VCharIKScale@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharInterest@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharKeyHandMidi@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VCharLookAt@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VCharPollable@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharWeightable@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharacter@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VFader@@VObjectDir@@@@QAAXXZ",
@@ -1465,26 +1469,15 @@
     "?clear@?$ObjPtrList@VHamCamShot@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VObjectDir@@V1@@@QAAXXZ",
     "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VRndDrawable@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndFont@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VRndLight@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndMat@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VRndMesh@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VSeqInst@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VSequence@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VThreeDSound@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VTrackWidget@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VUILabel@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VWaypoint@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VWorldCrowd@@VObjectDir@@@@QAAXXZ"
+    "?clear@?$ObjPtrList@VUILabel@@VObjectDir@@@@QAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 34, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 46 folded spelling(s), 16 census sites over 4 functions.",
    "withdrawn": [
@@ -1752,7 +1745,6 @@
     "??$__uninitialized_copy@PAVVector2@@PAV1@@stlpmtx_std@@YAPAVVector2@@PAV1@00ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PAVWaitingMachine@WaitList@LockStepMgr@@PAV123@@stlpmtx_std@@YAPAVWaitingMachine@WaitList@LockStepMgr@@PAV123@00ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBU?$pair@HH@stlpmtx_std@@PAU12@@stlpmtx_std@@YAPAU?$pair@HH@0@PBU10@0PAU10@ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PBUXUSER_ACHIEVEMENT@@PAU1@@stlpmtx_std@@YAPAUXUSER_ACHIEVEMENT@@PBU1@0PAU1@ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBV?$Key@M@@PAV1@@stlpmtx_std@@YAPAV?$Key@M@@PBV1@0PAV1@ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBV?$Key@VSymbol@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VSymbol@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBV?$Key@_N@@PAV1@@stlpmtx_std@@YAPAV?$Key@_N@@PBV1@0PAV1@ABU__false_type@0@@Z",
@@ -1761,8 +1753,7 @@
     "??$__uninitialized_copy@PBVGemScore@MultiplayerAnalyzer@@PAV12@@stlpmtx_std@@YAPAVGemScore@MultiplayerAnalyzer@@PBV12@0PAV12@ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBVSeam@MeshAO@OutfitConfig@@PAV123@@stlpmtx_std@@YAPAVSeam@MeshAO@OutfitConfig@@PBV123@0PAV123@ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBVStreakInfo@Stats@@PAV12@@stlpmtx_std@@YAPAVStreakInfo@Stats@@PBV12@0PAV12@ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PBVStreakItem@Scoring@@PAV12@@stlpmtx_std@@YAPAVStreakItem@Scoring@@PBV12@0PAV12@ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PBVVector2@@PAV1@@stlpmtx_std@@YAPAVVector2@@PBV1@0PAV1@ABU__false_type@0@@Z"
+    "??$__uninitialized_copy@PBVStreakItem@Scoring@@PAV12@@stlpmtx_std@@YAPAVStreakItem@Scoring@@PBV12@0PAV12@ABU__false_type@0@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 63, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 61 folded spelling(s), 12 census sites over 3 functions."
   },
@@ -2856,8 +2847,7 @@
     "?OnSaveSong@HamDirector@@IAA?AVDataNode@@PAVDataArray@@@Z",
     "?OnSetAllCrowdChars3D@CamShot@@IAA?AVDataNode@@PAVDataArray@@@Z",
     "?OnSetSize@RndTex@@IAA?AVDataNode@@HH@Z",
-    "?OnShowFontPicker@UIFontImporter@@IAA?AVDataNode@@PAVDataArray@@@Z",
-    "?SavePrefabFromCloset@BandCharacter@@QAA?AVDataNode@@PBD@Z"
+    "?OnShowFontPicker@UIFontImporter@@IAA?AVDataNode@@PAVDataArray@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 40, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 39 folded spelling(s), 11 census sites over 3 functions."
   },
@@ -3352,7 +3342,6 @@
     "??$__uninitialized_copy@PAVRGTrill@@PAV1@@stlpmtx_std@@YAPAVRGTrill@@PAV1@00ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PAVSection@TrackerSectionManager@@PAV12@@stlpmtx_std@@YAPAVSection@TrackerSectionManager@@PAV12@00ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PAVSectionInfo@Stats@@PAV12@@stlpmtx_std@@YAPAVSectionInfo@Stats@@PAV12@00ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PBUCompEv@DataEventList@@PAU12@@stlpmtx_std@@YAPAUCompEv@DataEventList@@PBU12@0PAU12@ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBUGemInProgress@@PAU1@@stlpmtx_std@@YAPAUGemInProgress@@PBU1@0PAU1@ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBUHamSupereasyMeasure@@PAU1@@stlpmtx_std@@YAPAUHamSupereasyMeasure@@PBU1@0PAU1@ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBV?$Key@VVector2@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@VVector2@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
@@ -4072,7 +4061,6 @@
     "??$__uninitialized_fill_n@PAVTourStatusEntry@@IV1@@stlpmtx_std@@YAPAVTourStatusEntry@@PAV1@IABV1@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAVTrackSlot@TrackPanel@@IV12@@stlpmtx_std@@YAPAVTrackSlot@TrackPanel@@PAV12@IABV12@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAVUpcomingFretRelease@GemPlayer@@IV12@@stlpmtx_std@@YAPAVUpcomingFretRelease@GemPlayer@@PAV12@IABV12@ABU__false_type@0@@Z",
-    "??$__uninitialized_fill_n@PAVVector2@@IV1@@stlpmtx_std@@YAPAVVector2@@PAV1@IABV1@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAVWaitingMachine@WaitList@LockStepMgr@@IV123@@stlpmtx_std@@YAPAVWaitingMachine@WaitList@LockStepMgr@@PAV123@IABV123@ABU__false_type@0@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 45, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 43 folded spelling(s), 3 census sites over 3 functions."
@@ -4273,7 +4261,6 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
@@ -4288,8 +4275,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -4300,8 +4285,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -4316,13 +4299,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 3 census sites over 3 functions.",
    "withdrawn": [
@@ -7565,9 +7546,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -7580,8 +7559,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -7592,8 +7569,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -7608,7 +7583,6 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
@@ -10338,8 +10312,7 @@
    "address": "0x823873f8",
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
    "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAUCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUCharInterestState@CharEyes@@@0@0ABU__false_type@0@@Z",
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVTransformCrowd@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVTransformCrowd@@@0@0ABU__false_type@0@@Z"
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUCharInterestState@CharEyes@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUCharInterestState@CharEyes@@@0@0ABU__false_type@0@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions."
   },
@@ -10978,9 +10951,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -10993,8 +10964,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -11005,8 +10974,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -11021,13 +10988,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -12162,7 +12127,8 @@
    "address": "0x82713ad8",
    "survivor": "??$_Copy_Construct@VSampleZone@@@stlpmtx_std@@YAXPAVSampleZone@@ABV1@@Z",
    "folded": [
-    "??$_Param_Construct@VSampleZone@@V1@@stlpmtx_std@@YAXPAVSampleZone@@ABV1@@Z"
+    "??$_Param_Construct@VSampleZone@@V1@@stlpmtx_std@@YAXPAVSampleZone@@ABV1@@Z",
+    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
   },
@@ -12972,7 +12938,9 @@
    "address": "0x82576320",
    "survivor": "??$__uninitialized_copy@PAU?$pair@MM@stlpmtx_std@@PAU12@@stlpmtx_std@@YAPAU?$pair@MM@0@PAU10@00ABU__false_type@0@@Z",
    "folded": [
-    "??$__uninitialized_copy@PBU?$pair@MM@stlpmtx_std@@PAU12@@stlpmtx_std@@YAPAU?$pair@MM@0@PBU10@0PAU10@ABU__false_type@0@@Z"
+    "??$__uninitialized_copy@PBU?$pair@MM@stlpmtx_std@@PAU12@@stlpmtx_std@@YAPAU?$pair@MM@0@PBU10@0PAU10@ABU__false_type@0@@Z",
+    "??$__uninitialized_copy@PBUXUSER_ACHIEVEMENT@@PAU1@@stlpmtx_std@@YAPAUXUSER_ACHIEVEMENT@@PBU1@0PAU1@ABU__false_type@0@@Z",
+    "??$__uninitialized_copy@PBVVector2@@PAV1@@stlpmtx_std@@YAPAVVector2@@PBV1@0PAV1@ABU__false_type@0@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
   },
@@ -14474,7 +14442,6 @@
    "survivor": "??1?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [
     "??1?$vector@UEntry@LocalePanel@@V?$StlNodeAlloc@UEntry@LocalePanel@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@V?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@VVocalScoreHistory@@V?$StlNodeAlloc@VVocalScoreHistory@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions."
@@ -16386,9 +16353,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -16401,8 +16366,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -16413,8 +16376,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -16429,13 +16390,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -17411,7 +17370,9 @@
    "name": "_M_clear",
    "address": "0x8246efa8",
    "survivor": "?_M_clear@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
-   "folded": [],
+   "folded": [
+    "?_M_clear_after_move@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 35 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -17603,9 +17564,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -17618,8 +17577,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -17630,8 +17587,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -17646,13 +17601,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -22427,9 +22380,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -22442,8 +22393,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -22454,8 +22403,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -22470,13 +22417,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -23169,9 +23114,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -23184,8 +23127,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -23196,8 +23137,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -23212,13 +23151,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -24285,9 +24222,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -24300,8 +24235,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -24312,8 +24245,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -24328,13 +24259,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -26268,9 +26197,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -26283,8 +26210,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -26295,8 +26220,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -26311,13 +26234,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -30915,9 +30836,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -30930,8 +30849,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -30942,8 +30859,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -30958,13 +30873,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -33171,9 +33084,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -33186,8 +33097,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -33198,8 +33107,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -33214,13 +33121,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -33978,9 +33883,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -33993,8 +33896,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -34005,8 +33906,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -34021,13 +33920,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -37560,9 +37457,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -37575,8 +37470,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -37587,8 +37480,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -37603,13 +37494,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -38557,9 +38446,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -38572,8 +38459,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -38584,8 +38469,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -38600,13 +38483,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -40549,9 +40430,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -40564,8 +40443,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -40576,8 +40453,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -40592,13 +40467,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -42084,9 +41957,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -42099,8 +41970,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -42111,8 +41980,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -42127,13 +41994,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -43872,9 +43737,7 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
     "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
@@ -43887,8 +43750,6 @@
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
     "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
@@ -43899,8 +43760,6 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
@@ -43915,13 +43774,11 @@
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Param_Construct@VSongPattern@@V1@@stlpmtx_std@@YAXPAVSongPattern@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -44672,9 +44529,7 @@
    "name": "NonStrumSwing",
    "address": "0x8279d720",
    "survivor": "?NonStrumSwing@TrackWatcher@@QAAXH_N0@Z",
-   "folded": [
-    "?IsOpen@Movie@@QBA_NXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },
   {
@@ -52012,7 +51867,9 @@
    "name": "$_Param_Construct",
    "address": "0x822a46c8",
    "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
-   "folded": [],
+   "folded": [
+    "??$_Param_Construct@VTransformArea@@V1@@stlpmtx_std@@YAXPAVTransformArea@@ABV1@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -52059,9 +51916,7 @@
    "name": "RGFretButtonDown",
    "address": "0x8279d768",
    "survivor": "?RGFretButtonDown@TrackWatcher@@QAAXH@Z",
-   "folded": [
-    "?CheckOpen@Movie@@QAA_N_N@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },
   {
@@ -60564,8 +60419,7 @@
    "address": "0x8246ef38",
    "survivor": "?_M_clear@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
    "folded": [
-    "?_M_clear@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
-    "?_M_clear_after_move@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+    "?_M_clear@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
   },
@@ -63923,7 +63777,6 @@
    "address": "0x8251be08",
    "survivor": "?IsEthernetCableConnected@PlatformMgr@@QAA_NXZ",
    "folded": [
-    "?HasAsset@AssetMgr@@QBA_NVSymbol@@@Z",
     "?SceneExists@MetaMusicManager@@QBA_NVSymbol@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
@@ -64422,9 +64275,7 @@
    "name": "Jump",
    "address": "0x8279d6d8",
    "survivor": "?Jump@TrackWatcher@@QAAXM@Z",
-   "folded": [
-    "?Draw@Movie@@QAAXXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },
   {
@@ -66374,9 +66225,7 @@
    "name": "$_Copy_Construct",
    "address": "0x8229d350",
    "survivor": "??$_Copy_Construct@VTransformArea@@@stlpmtx_std@@YAXPAVTransformArea@@ABV1@@Z",
-   "folded": [
-    "??$_Param_Construct@VTransformArea@@V1@@stlpmtx_std@@YAXPAVTransformArea@@ABV1@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },
   {
@@ -68331,9 +68180,7 @@
    "name": "SetAutoplayError",
    "address": "0x8279d6f0",
    "survivor": "?SetAutoplayError@TrackWatcher@@QAAXH@Z",
-   "folded": [
-    "?Poll@Movie@@QAA_NXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },
   {
@@ -69394,9 +69241,7 @@
    "name": "FretButtonDown",
    "address": "0x8279d738",
    "survivor": "?FretButtonDown@TrackWatcher@@QAAXH@Z",
-   "folded": [
-    "?IsLoading@Movie@@QBA_NXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
   },
   {
@@ -73456,6 +73301,70 @@
     "?DeletePlayer@BandUser@@QAAXXZ"
    ],
    "evidence": "W39-PUSHBACK retail-byte fold proof, ZERO RELOCATIONS ON BOTH SIDES (nothing maskable, nothing unresolved -- the strongest tier). Retail 0x8268b1f0 is byte-for-byte IDENTICAL to our compiled ?DeletePlayer@BandUser@@QAAXXZ across all 44 bytes / 11 instructions: 7c6b1b78 80630088 39400000 2b030000 914b008c 4d9a0020 81630000 816b017c 7d6903a6 4e800420 4e800020. Corroboration: retail's Band::RemoveUser calls 0x8268b1f0 at exactly the site our source spells u->DeletePlayer(), with all other 435 of its 436 bytes matching; and ?DeletePlayer@BandUser@@ has NO address of its own in a map naming 29,036 symbols. \u26d4 tools/w33_fold_adjudicate.py returns DIFFERENT on this pair (`size differs 40 vs 44`) and that verdict is a FALSE NEGATIVE from a ONE-SIDED READER ARTIFACT: dtk carves the retail extent at the unconditional `bctr` (0x8268b214) and DROPS the trailing dead `blr`. Verified in orig/45410914/band.exe: 0x8268b218 = 4e800020 (blr), 0x8268b21c = 00000000 (alignment padding), and the next function starts 0x8268b220 = ?UpdateData@BandUser@@. NO symbol exists at 0x8268b218 in either symbols.txt or target_symbol_map.json, so nothing else claims that word. 0x8268b1f0 has no .pdata record at all (it touches neither stack nor LR -- the sub-.pdata stub stratum), so .pdata is silent here rather than contradicting. This is the STLPORT-1 artifact class running in the opposite direction: there the reader billed 8 bytes too MANY, here it bills 4 too FEW. Control that the 4-byte gap is not a build-wide bias: both builds emit both shapes (retail 64 functions end `bctr;blr` vs 114 ending bare; ours 132 vs 820), so the trailing blr is context-dependent, not systematic. Supersedes W34's 'UNPROVABLE our-side -- NUISPEECH is vendor with no source': the adjudication needs retail's BYTES for the survivor, never our SOURCE for it."
+  },
+  {
+   "name": "consensus_partition",
+   "address": "0x827ed198",
+   "survivor": "??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PBV1@0PAV1@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PBUCompEv@DataEventList@@PAU12@@stlpmtx_std@@YAPAUCompEv@DataEventList@@PBU12@0PAU12@ABU__false_type@0@@Z"
+   ],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+  },
+  {
+   "name": "consensus_partition",
+   "address": "0x823d3b38",
+   "survivor": "??$__uninitialized_fill_n@PAVString@@IV1@@stlpmtx_std@@YAPAVString@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_fill_n@PAVVector2@@IV1@@stlpmtx_std@@YAPAVVector2@@PAV1@IABV1@ABU__false_type@0@@Z"
+   ],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+  },
+  {
+   "name": "consensus_partition",
+   "address": "0x826989e0",
+   "survivor": "??$_Copy_Construct@VSingerStats@@@stlpmtx_std@@YAXPAVSingerStats@@ABV1@@Z",
+   "folded": [
+    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
+    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z"
+   ],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+  },
+  {
+   "name": "consensus_partition",
+   "address": "0x82772b08",
+   "survivor": "??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@0@ABV10@@Z",
+   "folded": [
+    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z"
+   ],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+  },
+  {
+   "name": "consensus_partition",
+   "address": "0x82b6f100",
+   "survivor": "??$_Copy_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z",
+   "folded": [
+    "??$_Param_Construct@V?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@0@ABV10@@Z"
+   ],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+  },
+  {
+   "name": "consensus_partition",
+   "address": "0x82ba8e98",
+   "survivor": "??1?$vector@V?$vector@PAUUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@PAUUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$vector@V?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+  },
+  {
+   "name": "consensus_partition",
+   "address": "0x8256a268",
+   "survivor": "?HasLesson@LessonMgr@@QBA_NVSymbol@@@Z",
+   "folded": [
+    "?HasAsset@AssetMgr@@QBA_NVSymbol@@@Z"
+   ],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
   }
  ]
 }
