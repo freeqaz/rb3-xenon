@@ -96,9 +96,9 @@ void RndLight::Replace(ObjRef *ref, Hmx::Object *obj) {
         == reinterpret_cast<Hmx::Object *>(ref)) {
         RndLight *lit = dynamic_cast<RndLight *>(obj);
         if (lit) {
-            mColorOwner.SetObjConcrete(lit->mColorOwner.Ptr());
+            mColorOwner.SetOwnerObj(lit->mColorOwner.Ptr());
         } else {
-            mColorOwner.SetObjConcrete(this);
+            mColorOwner.SetOwnerObj(this);
         }
     }
 }

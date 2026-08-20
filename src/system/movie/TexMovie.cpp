@@ -50,7 +50,7 @@ void TexMovie::Replace(ObjRef *a, Hmx::Object *b) {
     // (ref, held), which costs exactly one instruction here.
     if (reinterpret_cast<void *>(mTex.Ptr()) == reinterpret_cast<void *>(a)) {
         mMovie.End();
-        mTex.SetObjConcrete(dynamic_cast<RndTex *>(b));
+        mTex.SetOwnerObj(dynamic_cast<RndTex *>(b));
     }
 }
 
