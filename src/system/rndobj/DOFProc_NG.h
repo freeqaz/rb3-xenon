@@ -17,7 +17,6 @@ public:
     virtual float MinBlur() { return mMinBlur; }
     // PostProcessor
     virtual void DoPost();
-    virtual const char *GetProcType() { return "NgDOFProc"; }
 
     static void Init();
     static void Terminate();
