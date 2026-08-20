@@ -199,7 +199,7 @@ void NgLight::RenderShadows(std::vector<RndDrawable *> &shadowCasters) {
     mShadowRT->MakeDrawTarget();
     SetAndClearShadowViewport();
     SetShadowTransforms();
-    Rnd::DrawMode savedDrawMode = TheRnd.GetDrawMode();
+    Rnd::Mode savedDrawMode = TheRnd.DrawMode();
     TheRnd.SetDrawMode(Rnd::kDrawOcclusion);
     for (std::vector<RndDrawable *>::iterator it = shadowCasters.begin(), end = shadowCasters.end();
          it != end;

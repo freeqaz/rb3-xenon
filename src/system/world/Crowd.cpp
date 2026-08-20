@@ -1113,10 +1113,10 @@ void WorldCrowd::DrawShowing() {
     START_AUTO_TIMER("crowd_draw");
     if (!mPlacementMesh) return;
     Draw3DChars();
-    // Retail RB3 X360 gates on raw Rnd::DrawMode value 4 here (dc3's newer enum
+    // Retail RB3 X360 gates on raw Rnd::Mode value 4 here (dc3's newer enum
     // shifted kDrawOcclusionDepth to 5); same -1 divergence as Shader.cpp's
     // CalcShaderOpts/CheckForceCull raw-DrawMode casts.
-    if ((Rnd::DrawMode)4 == TheRnd.GetDrawMode()) return;
+    if ((Rnd::Mode)4 == TheRnd.DrawMode()) return;
     MILO_ASSERT(!gImpostorMat->NextPass(), 0x3A0);
     std::vector<Hmx::Rect> rects;
     rects.reserve(12);
@@ -1124,7 +1124,7 @@ void WorldCrowd::DrawShowing() {
         Character *curChar = charIt->mDef.mChar;
         RndMultiMesh *mmesh = charIt->mMMesh;
         if (curChar && mmesh && !mShow3DOnly
-            && TheRnd.GetDrawMode() != (Rnd::DrawMode)4) {
+            && TheRnd.DrawMode() != (Rnd::Mode)4) {
             int numInstances = 0;
             for (InstanceList::iterator instIt = mmesh->Instances().begin();
                  instIt != mmesh->Instances().end(); ++instIt) {
@@ -1401,7 +1401,7 @@ void WorldCrowd::DrawShowing() {
                 float clampedMaxX = (float)__fsel(maxX - 1.0f, 1.0f, maxX);
 
                 // --- Render character to impostor texture ---
-                if (TheRnd.GetDrawMode() == Rnd::kDrawNormal) {
+                if (TheRnd.DrawMode() == Rnd::kDrawNormal) {
                     if (!mEnviron) {
                         // Retail's DrawShowing contains EXACTLY ONE PathName
                         // call (the collide-not-found site below).  The "%s: "

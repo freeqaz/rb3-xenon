@@ -157,7 +157,7 @@ void RndVelocityBuffer::DrawMesh(RndMesh *mesh) const {
     MILO_ASSERT(mesh, 0x123);
     auto _tmp2 = mesh->Showing();
     MILO_ASSERT(_tmp2, 0x124);
-    MILO_ASSERT(TheRnd.GetDrawMode() == Rnd::kDrawVelocity, 0x125);
+    MILO_ASSERT(TheRnd.DrawMode() == Rnd::kDrawVelocity, 0x125);
 
     RndMat *mat = mesh->Mat();
     if (mesh && mat != nullptr && mat->GetZMode() != kZModeTransparent) {
@@ -236,7 +236,7 @@ bool RndVelocityBuffer::Draw(RndCam *cam, ObjPtrList<RndDrawable> &drawList) {
 
             auto _tmp0 = drawList.size();
             if (_tmp0 != 0) {
-                Rnd::DrawMode savedDrawMode = TheRnd.GetDrawMode();
+                Rnd::Mode savedDrawMode = TheRnd.DrawMode();
                 TheRnd.SetDrawMode(Rnd::kDrawVelocity);
                 mMat->SetBlend((RndMat::Blend)3);
                 mMat->SetZMode(kZModeNormal);

@@ -119,7 +119,7 @@ bool RndTexBlender::MakeWorldSphere(Sphere &sphere, bool b) {
 }
 
 void RndTexBlender::DrawShowing() {
-    if (TheRnd.GetDrawMode() != Rnd::kDrawNormal)
+    if (TheRnd.DrawMode() != Rnd::kDrawNormal)
         return;
 
     ProcessCmd cmds = TheRnd.ProcCmds();

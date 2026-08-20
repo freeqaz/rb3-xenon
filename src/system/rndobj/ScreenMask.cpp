@@ -88,7 +88,7 @@ BEGIN_LOADS(RndScreenMask)
 END_LOADS
 
 void RndScreenMask::DrawShowing() {
-    if (TheRnd.GetDrawMode() != Rnd::kDrawNormal)
+    if (TheRnd.DrawMode() != Rnd::kDrawNormal)
         return;
 
     float width = (float)TheRnd.Width();

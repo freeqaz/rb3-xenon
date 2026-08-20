@@ -345,7 +345,7 @@ void StreamRenderer::SetCrewPhotoPlayerCenters() {
 }
 
 void StreamRenderer::DrawToTexture() {
-    if (TheRnd.GetDrawMode() != 0)
+    if (TheRnd.DrawMode() != 0)
         return;
     if (!Showing())
         return;
