@@ -15,9 +15,9 @@ void RndTransAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {
         RndTransAnim *ta;
         if (mKeysOwner == this || !(ta = dynamic_cast<RndTransAnim *>(obj))) {
-            mKeysOwner.SetObjConcrete(this);
+            mKeysOwner.SetOwnerObj(this);
         } else {
-            mKeysOwner.SetObjConcrete(ta->mKeysOwner.Ptr());
+            mKeysOwner.SetOwnerObj(ta->mKeysOwner.Ptr());
         }
         return;
     }
@@ -71,7 +71,7 @@ BEGIN_COPYS(RndTransAnim)
     COPY_SUPERCLASS(RndAnimatable)
     mTrans = t->mTrans;
     if (ty == kCopyShallow || ty == kCopyFromMax && t->mKeysOwner != t) {
-        mKeysOwner.SetObjConcrete(t->mKeysOwner);
+        mKeysOwner.SetOwnerObj(t->mKeysOwner);
     } else {
         mKeysOwner = this;
         mTransKeys = t->mKeysOwner->mTransKeys;

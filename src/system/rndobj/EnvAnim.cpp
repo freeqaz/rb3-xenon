@@ -26,9 +26,9 @@ ObjRefConcrete<RndEnvAnim, ObjectDir>::~ObjRefConcrete() {
 void RndEnvAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {
         if (!obj)
-            mKeysOwner.SetObjConcrete(this);
+            mKeysOwner.SetOwnerObj(this);
         else
-            mKeysOwner.SetObjConcrete(dynamic_cast<RndEnvAnim *>(obj)->mKeysOwner.Ptr());
+            mKeysOwner.SetOwnerObj(dynamic_cast<RndEnvAnim *>(obj)->mKeysOwner.Ptr());
         return;
     }
     Hmx::Object::Replace(ref, obj);

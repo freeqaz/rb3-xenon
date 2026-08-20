@@ -204,10 +204,10 @@ void Spotlight::Replace(ObjRef *from, Hmx::Object *to) {
     RndTransformable::Replace(from, to);
     if (static_cast<Hmx::Object *>(mColorOwner.Ptr())
         == reinterpret_cast<Hmx::Object *>(from)) {
-        mColorOwner.SetObjConcrete(dynamic_cast<Spotlight *>(to));
+        mColorOwner.SetOwnerObj(dynamic_cast<Spotlight *>(to));
     }
     if (!mColorOwner.Ptr()) {
-        mColorOwner.SetObjConcrete(this);
+        mColorOwner.SetOwnerObj(this);
     }
 }
 
