@@ -330,7 +330,11 @@
    "address": "0x8227d2c8",
    "survivor": "??$MakeString@PBD@@YAPBDPBD0@Z",
    "folded": [
-    "??$MakeString@PAD@@YAPBDPBDPAD@Z"
+    "??$MakeString@H@@YAPBDPBDH@Z",
+    "??$MakeString@PAD@@YAPBDPBDPAD@Z",
+    "??$MakeString@VSymbol@@@@YAPBDPBDVSymbol@@@Z",
+    "??$MakeString@W4TrackInstrument@@@@YAPBDPBDW4TrackInstrument@@@Z",
+    "??$MakeString@_K@@YAPBDPBD_K@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 11 folded spelling(s), 137 census sites over 6 functions.",
    "withdrawn": [
@@ -406,6 +410,16 @@
      2
     ],
     "n_subgroups": 2
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$MakeString@H@@YAPBDPBDH@Z",
+     "??$MakeString@VSymbol@@@@YAPBDPBDVSymbol@@@Z",
+     "??$MakeString@W4TrackInstrument@@@@YAPBDPBDW4TrackInstrument@@@Z",
+     "??$MakeString@_K@@YAPBDPBD_K@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -764,7 +778,15 @@
    "name": "$MakeString",
    "address": "0x8229d148",
    "survivor": "??$MakeString@PBDPBD@@YAPBDPBD00@Z",
-   "folded": [],
+   "folded": [
+    "??$MakeString@HPBD@@YAPBDPBDH0@Z",
+    "??$MakeString@KH@@YAPBDPBDKH@Z",
+    "??$MakeString@PBDH@@YAPBDPBD0H@Z",
+    "??$MakeString@PBDJ@@YAPBDPBD0J@Z",
+    "??$MakeString@PBDVSymbol@@@@YAPBDPBD0VSymbol@@@Z",
+    "??$MakeString@VSymbol@@V1@@@YAPBDPBDVSymbol@@1@Z",
+    "??$MakeString@W4JoinResponseError@@H@@YAPBDPBDW4JoinResponseError@@H@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 15 folded spelling(s), 29 census sites over 4 functions.",
    "withdrawn": [
     {
@@ -875,6 +897,19 @@
      1
     ],
     "n_subgroups": 4
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$MakeString@HPBD@@YAPBDPBDH0@Z",
+     "??$MakeString@KH@@YAPBDPBDKH@Z",
+     "??$MakeString@PBDH@@YAPBDPBD0H@Z",
+     "??$MakeString@PBDJ@@YAPBDPBD0J@Z",
+     "??$MakeString@PBDVSymbol@@@@YAPBDPBD0VSymbol@@@Z",
+     "??$MakeString@VSymbol@@V1@@@YAPBDPBDVSymbol@@1@Z",
+     "??$MakeString@W4JoinResponseError@@H@@YAPBDPBDW4JoinResponseError@@H@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -979,7 +1014,9 @@
    "name": "clear",
    "address": "0x822dea78",
    "survivor": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
-   "folded": [],
+   "folded": [
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 32, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 27 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -999,6 +1036,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -1120,7 +1164,18 @@
    "name": "$MakeString",
    "address": "0x8229d1a8",
    "survivor": "??$MakeString@VSymbol@@PBDPBD@@YAPBDPBDVSymbol@@00@Z",
-   "folded": [],
+   "folded": [
+    "??$MakeString@HHH@@YAPBDPBDHHH@Z",
+    "??$MakeString@HHPBD@@YAPBDPBDHH0@Z",
+    "??$MakeString@HPBDPBD@@YAPBDPBDH00@Z",
+    "??$MakeString@PADHH@@YAPBDPBDPADHH@Z",
+    "??$MakeString@PADPBDPAD@@YAPBDPBDPAD01@Z",
+    "??$MakeString@PBDHH@@YAPBDPBD0HH@Z",
+    "??$MakeString@PBDHI@@YAPBDPBD0HI@Z",
+    "??$MakeString@PBDPBDPBD@@YAPBDPBD000@Z",
+    "??$MakeString@PBDPBDVSymbol@@@@YAPBDPBD00VSymbol@@@Z",
+    "??$MakeString@VSymbol@@V1@V1@@@YAPBDPBDVSymbol@@11@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 20 census sites over 5 functions.",
    "withdrawn": [
     {
@@ -1269,6 +1324,22 @@
      1
     ],
     "n_subgroups": 3
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$MakeString@HHH@@YAPBDPBDHHH@Z",
+     "??$MakeString@HHPBD@@YAPBDPBDHH0@Z",
+     "??$MakeString@HPBDPBD@@YAPBDPBDH00@Z",
+     "??$MakeString@PADHH@@YAPBDPBDPADHH@Z",
+     "??$MakeString@PADPBDPAD@@YAPBDPBDPAD01@Z",
+     "??$MakeString@PBDHH@@YAPBDPBD0HH@Z",
+     "??$MakeString@PBDHI@@YAPBDPBD0HI@Z",
+     "??$MakeString@PBDPBDPBD@@YAPBDPBD000@Z",
+     "??$MakeString@PBDPBDVSymbol@@@@YAPBDPBD00VSymbol@@@Z",
+     "??$MakeString@VSymbol@@V1@V1@@@YAPBDPBDVSymbol@@11@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -1344,6 +1415,7 @@
    "folded": [
     "?clear@?$ObjPtrList@VBandCamShot@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCamShot@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharBone@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharBoneOffset@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharCollide@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharCuff@@VObjectDir@@@@QAAXXZ",
@@ -1359,17 +1431,26 @@
     "?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharWeightable@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharacter@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VFader@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VFlowNode@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VHamCamShot@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VObjectDir@@V1@@@QAAXXZ",
     "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndDrawable@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VRndFont@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndLight@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VRndMat@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndMesh@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VSeqInst@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VSequence@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VThreeDSound@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VTrackWidget@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VUILabel@@VObjectDir@@@@QAAXXZ",
@@ -1467,6 +1548,22 @@
      13
     ],
     "n_subgroups": 1
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "?clear@?$ObjPtrList@VCharBone@@VObjectDir@@@@QAAXXZ",
+     "?clear@?$ObjPtrList@VFader@@VObjectDir@@@@QAAXXZ",
+     "?clear@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@QAAXXZ",
+     "?clear@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@QAAXXZ",
+     "?clear@?$ObjPtrList@VRndFont@@VObjectDir@@@@QAAXXZ",
+     "?clear@?$ObjPtrList@VRndMat@@VObjectDir@@@@QAAXXZ",
+     "?clear@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@QAAXXZ",
+     "?clear@?$ObjPtrList@VSeqInst@@VObjectDir@@@@QAAXXZ",
+     "?clear@?$ObjPtrList@VSequence@@VObjectDir@@@@QAAXXZ",
+     "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -2902,7 +2999,9 @@
    "name": "clear",
    "address": "0x822b4bd0",
    "survivor": "?clear@?$_List_base@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
-   "folded": [],
+   "folded": [
+    "?clear@?$_List_base@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 7 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -2922,6 +3021,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "?clear@?$_List_base@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -3017,7 +3123,9 @@
    "survivor": "??$MakeString@HHHH@@YAPBDPBDHHHH@Z",
    "folded": [
     "??$MakeString@HPBDPBDH@@YAPBDPBDH00H@Z",
-    "??$MakeString@PBDPBDIPBD@@YAPBDPBD00I0@Z"
+    "??$MakeString@PBDHHH@@YAPBDPBD0HHH@Z",
+    "??$MakeString@PBDPBDIPBD@@YAPBDPBD00I0@Z",
+    "??$MakeString@PBDPBDPBDPBD@@YAPBDPBD0000@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 14 folded spelling(s), 6 census sites over 2 functions.",
    "withdrawn": [
@@ -3114,6 +3222,14 @@
      1
     ],
     "n_subgroups": 1
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$MakeString@PBDHHH@@YAPBDPBD0HHH@Z",
+     "??$MakeString@PBDPBDPBDPBD@@YAPBDPBD0000@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -4538,7 +4654,10 @@
    "name": "$_Param_Construct",
    "address": "0x82557060",
    "survivor": "??$_Param_Construct@VPracticeStep@@V1@@stlpmtx_std@@YAXPAVPracticeStep@@ABV1@@Z",
-   "folded": [],
+   "folded": [
+    "??$_Copy_Construct@UGoalAcquisitionInfo@@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
+    "??$_Param_Construct@UGoalAcquisitionInfo@@U1@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 3 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -4564,6 +4683,14 @@
      1
     ],
     "n_subgroups": 1
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$_Copy_Construct@UGoalAcquisitionInfo@@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
+     "??$_Param_Construct@UGoalAcquisitionInfo@@U1@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -4664,6 +4791,7 @@
    "address": "0x824bd808",
    "survivor": "??$MakeString@VString@@PAD@@YAPBDPBDVString@@PAD@Z",
    "folded": [
+    "??$MakeString@VString@@I@@YAPBDPBDVString@@I@Z",
     "??$MakeString@VString@@PBD@@YAPBDPBDVString@@0@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 2 census sites over 2 functions.",
@@ -4698,6 +4826,13 @@
      1
     ],
     "n_subgroups": 1
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$MakeString@VString@@I@@YAPBDPBDVString@@I@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -6399,7 +6534,9 @@
    "name": "_DUIEventMgr",
    "address": "0x8257c368",
    "survivor": "??_DUIEventMgr@@QAAXXZ",
-   "folded": [],
+   "folded": [
+    "??_DInstarank@@QAAXXZ"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 2 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -6433,6 +6570,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??_DInstarank@@QAAXXZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -8227,7 +8371,9 @@
    "name": "$_Copy_Construct",
    "address": "0x827fb758",
    "survivor": "??$_Copy_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
-   "folded": [],
+   "folded": [
+    "??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -8247,6 +8393,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -8382,7 +8535,9 @@
    "name": "$__lower_bound",
    "address": "0x825f3480",
    "survivor": "??$__lower_bound@PAVSymbol@@V1@VAccomplishmentCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VAccomplishmentCmp@@PAH@Z",
-   "folded": [],
+   "folded": [
+    "??$__lower_bound@PAVSymbol@@V1@VGoalCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VGoalCmp@@PAH@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -8402,13 +8557,22 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$__lower_bound@PAVSymbol@@V1@VGoalCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VGoalCmp@@PAH@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
    "name": "$__merge_sort_loop",
    "address": "0x825f3c58",
    "survivor": "??$__merge_sort_loop@PAVSymbol@@PAV1@HVAccomplishmentCategoryCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVAccomplishmentCategoryCmp@@@Z",
-   "folded": [],
+   "folded": [
+    "??$__merge_sort_loop@PAVSymbol@@PAV1@HVGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVGoalCmp@@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -8428,6 +8592,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$__merge_sort_loop@PAVSymbol@@PAV1@HVGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVGoalCmp@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -8472,7 +8643,9 @@
    "name": "0DancerSequence",
    "address": "0x827b7800",
    "survivor": "??0DancerSequence@@IAA@XZ",
-   "folded": [],
+   "folded": [
+    "??0StoreArtLoaderPanel@@QAA@XZ"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -8492,6 +8665,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??0StoreArtLoaderPanel@@QAA@XZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -8620,7 +8800,9 @@
    "name": "insert",
    "address": "0x822b1f90",
    "survivor": "?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@2@U32@ABQAVRndAnimatable@@@Z",
-   "folded": [],
+   "folded": [
+    "?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTargetCache@BandCamShot@@U?$_Nonconst_traits@VTargetCache@BandCamShot@@@stlpmtx_std@@@2@U32@ABVTargetCache@BandCamShot@@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 53, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -8640,6 +8822,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTargetCache@BandCamShot@@U?$_Nonconst_traits@VTargetCache@BandCamShot@@@stlpmtx_std@@@2@U32@ABVTargetCache@BandCamShot@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -9376,7 +9565,9 @@
    "name": "0NewRemoteMachineMsg",
    "address": "0x825c2430",
    "survivor": "??0NewRemoteMachineMsg@@QAA@PAVRemoteBandMachine@@@Z",
-   "folded": [],
+   "folded": [
+    "??0RemoteMachineLeftMsg@@QAA@PAVRemoteBandMachine@@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -9396,6 +9587,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??0RemoteMachineLeftMsg@@QAA@PAVRemoteBandMachine@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -9411,7 +9609,9 @@
    "name": "$__make_heap",
    "address": "0x823470c8",
    "survivor": "??$__make_heap@PAPAVFileCacheEntry@@UPriority@@PAV1@H@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@0PAH@Z",
-   "folded": [],
+   "folded": [
+    "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -9431,6 +9631,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -10201,7 +10408,9 @@
    "name": "$_Destroy_Range",
    "address": "0x823a94f0",
    "survivor": "??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@@stlpmtx_std@@YAXPAUDynamicPropertyEntry@Flow@@0@Z",
-   "folded": [],
+   "folded": [
+    "??$_Destroy_Range@PAVStrand@CharHair@@@stlpmtx_std@@YAXPAVStrand@CharHair@@0@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -10227,6 +10436,13 @@
      1
     ],
     "n_subgroups": 1
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$_Destroy_Range@PAVStrand@CharHair@@@stlpmtx_std@@YAXPAVStrand@CharHair@@0@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -10248,7 +10464,9 @@
    "name": "4?$ObjList",
    "address": "0x82310cf0",
    "survivor": "??4?$ObjList@UMatOverride@WorldDir@@@@QAAXABV0@@Z",
-   "folded": [],
+   "folded": [
+    "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -10268,6 +10486,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -10546,7 +10771,9 @@
    "name": "0QuickplayPerformerImpl",
    "address": "0x82466000",
    "survivor": "??0QuickplayPerformerImpl@@QAA@XZ",
-   "folded": [],
+   "folded": [
+    "??0DOFProc@@QAA@XZ"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 8 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -10615,6 +10842,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??0DOFProc@@QAA@XZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -10646,7 +10880,9 @@
    "name": "find_last_of",
    "address": "0x827bd990",
    "survivor": "?find_last_of@FixedString@@QBAIPBD@Z",
-   "folded": [],
+   "folded": [
+    "?find_last_of@String@@QBAIPBD@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -10666,6 +10902,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "?find_last_of@String@@QBAIPBD@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -11246,7 +11489,9 @@
    "name": "4?$ObjDirPtr",
    "address": "0x82817ae8",
    "survivor": "??4?$ObjDirPtr@VObjectDir@@@@QAAAAV0@PAVObjectDir@@@Z",
-   "folded": [],
+   "folded": [
+    "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -11266,6 +11511,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -11391,7 +11643,9 @@
    "name": "E?$ObjDirItr",
    "address": "0x824afa78",
    "survivor": "??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ",
-   "folded": [],
+   "folded": [
+    "??E?$ObjDirItr@VSpotlightDrawer@@@@QAAAAV0@XZ"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -11411,6 +11665,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??E?$ObjDirItr@VSpotlightDrawer@@@@QAAAAV0@XZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -12067,7 +12328,9 @@
    "name": "4?$ObjVector",
    "address": "0x822a82e0",
    "survivor": "??4?$ObjVector@UCharInterestState@CharEyes@@@@QAAXABV0@@Z",
-   "folded": [],
+   "folded": [
+    "??4?$ObjVector@VOverlay@OutfitConfig@@@@QAAXABV0@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -12087,6 +12350,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??4?$ObjVector@VOverlay@OutfitConfig@@@@QAAXABV0@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -12514,7 +12784,9 @@
    "name": "0ParallelGroupSeq",
    "address": "0x82709f30",
    "survivor": "??0ParallelGroupSeq@@QAA@XZ",
-   "folded": [],
+   "folded": [
+    "??0SfxSeq@@QAA@XZ"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -12541,6 +12813,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??0SfxSeq@@QAA@XZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -12583,7 +12862,9 @@
    "name": "$MakeString",
    "address": "0x827bb730",
    "survivor": "??$MakeString@PBDHHHHH@@YAPBDPBD0HHHHH@Z",
-   "folded": [],
+   "folded": [
+    "??$MakeString@PBDPBD_KPBDPBDVSymbol@@@@YAPBDPBD00_K00VSymbol@@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -12603,6 +12884,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$MakeString@PBDPBD_KPBDPBDVSymbol@@@@YAPBDPBD00_K00VSymbol@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -12711,7 +12999,9 @@
    "name": "$_Copy_Construct",
    "address": "0x8230df20",
    "survivor": "??$_Copy_Construct@UEventSink@MsgSinks@@@stlpmtx_std@@YAXPAUEventSink@MsgSinks@@ABU12@@Z",
-   "folded": [],
+   "folded": [
+    "??$_Copy_Construct@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@YAXPAVContentPoolMapping@SongSectionController@@ABV12@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -12731,6 +13021,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$_Copy_Construct@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@YAXPAVContentPoolMapping@SongSectionController@@ABV12@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -13516,7 +13813,9 @@
    "name": "$MakeString",
    "address": "0x82790bc0",
    "survivor": "??$MakeString@HMHH@@YAPBDPBDHMHH@Z",
-   "folded": [],
+   "folded": [
+    "??$MakeString@HMHI@@YAPBDPBDHMHI@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -13536,6 +13835,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$MakeString@HMHI@@YAPBDPBDHMHI@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -14081,7 +14387,9 @@
    "name": "$_Param_Construct",
    "address": "0x826ce268",
    "survivor": "??$_Param_Construct@VLeaderboardRow@@V1@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
-   "folded": [],
+   "folded": [
+    "??$_Copy_Construct@VData@MultiplayerAnalyzer@@@stlpmtx_std@@YAXPAVData@MultiplayerAnalyzer@@ABV12@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -14107,6 +14415,13 @@
      1
     ],
     "n_subgroups": 1
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$_Copy_Construct@VData@MultiplayerAnalyzer@@@stlpmtx_std@@YAXPAVData@MultiplayerAnalyzer@@ABV12@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -14199,7 +14514,9 @@
    "name": "$__linear_insert",
    "address": "0x825f3db8",
    "survivor": "??$__linear_insert@PAVSymbol@@V1@VAccomplishmentCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VAccomplishmentCmp@@@Z",
-   "folded": [],
+   "folded": [
+    "??$__linear_insert@PAVSymbol@@V1@VGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VGoalCmp@@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -14219,13 +14536,22 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$__linear_insert@PAVSymbol@@V1@VGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VGoalCmp@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
    "name": "$__merge_backward",
    "address": "0x825f3e38",
    "survivor": "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VAccomplishmentCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VAccomplishmentCmp@@@Z",
-   "folded": [],
+   "folded": [
+    "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VGoalCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VGoalCmp@@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -14245,6 +14571,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VGoalCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VGoalCmp@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -14305,7 +14638,9 @@
    "name": "0?$vector",
    "address": "0x8263fd68",
    "survivor": "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVVector2@@ABV?$StlNodeAlloc@VVector2@@@1@@Z",
-   "folded": [],
+   "folded": [
+    "??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVString@@ABV?$StlNodeAlloc@VString@@@1@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -14325,6 +14660,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVString@@ABV?$StlNodeAlloc@VString@@@1@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -61282,7 +61624,9 @@
    "name": "$MakeString",
    "address": "0x82522b58",
    "survivor": "??$MakeString@HE@@YAPBDPBDHE@Z",
-   "folded": [],
+   "folded": [
+    "??$MakeString@IE@@YAPBDPBDIE@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -61302,6 +61646,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$MakeString@IE@@YAPBDPBDIE@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -64632,7 +64983,9 @@
    "name": "1NetLoaderXbox",
    "address": "0x827cfcb0",
    "survivor": "??1NetLoaderXbox@@UAA@XZ",
-   "folded": [],
+   "folded": [
+    "??1NetLoaderStub@@UAA@XZ"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -64652,6 +65005,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??1NetLoaderStub@@UAA@XZ"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -68652,7 +69012,9 @@
    "name": "$MakeString",
    "address": "0x823abd20",
    "survivor": "??$MakeString@HMH@@YAPBDPBDHMH@Z",
-   "folded": [],
+   "folded": [
+    "??$MakeString@VSymbol@@MPBD@@YAPBDPBDVSymbol@@M0@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions. INCOMPLETE-1 (2026-08-14): 1 spelling(s) added by CHARGED-SITE enumeration -- the group existed but was a SUBSET, the same blind spot ONMSG-1 found (a pairwise comparator finds only SOME members). Each added spelling is map-absent, same-size, byte-identical to retail at the survivor address modulo relocated fields with relocation target names agreeing (flat T1 or chase), and passes a retail-UNIQUENESS gate: the body occupies exactly ONE retail address, so the alias cannot forgive a wrong callee. witness=PROVEN_flatT1",
    "withdrawn": [
     {
@@ -68679,6 +69041,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$MakeString@VSymbol@@MPBD@@YAPBDPBDVSymbol@@M0@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -69792,7 +70161,12 @@
    "name": "_M_erase",
    "address": "0x822cb828",
    "survivor": "?_M_erase@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjOwnerPtr@VWaypoint@@@@PAV3@0ABU__false_type@2@@Z",
-   "folded": [],
+   "folded": [
+    "?_M_erase@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VBandTrack@@@@PAV3@0ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndGroup@@@@PAV3@0ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPartLauncher@@@@PAV3@0ABU__false_type@2@@Z",
+    "?_M_erase@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPropAnim@@@@PAV3@0ABU__false_type@2@@Z"
+   ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
    "withdrawn": [
     {
@@ -69854,6 +70228,16 @@
      1
     ],
     "n_subgroups": 1
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "?_M_erase@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VBandTrack@@@@PAV3@0ABU__false_type@2@@Z",
+     "?_M_erase@?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndGroup@@@@PAV3@0ABU__false_type@2@@Z",
+     "?_M_erase@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPartLauncher@@@@PAV3@0ABU__false_type@2@@Z",
+     "?_M_erase@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPropAnim@@@@PAV3@0ABU__false_type@2@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
@@ -72699,7 +73083,9 @@
    "name": "CVEIN1___unguarded_linear_insert",
    "address": "0x8280af88",
    "survivor": "??$__unguarded_linear_insert@PAPAVUIListWidget@@PAV1@UWidgetDrawSort@?A0x530db9db@@@stlpmtx_std@@YAXPAPAVUIListWidget@@PAV1@UWidgetDrawSort@?A0x530db9db@@@Z",
-   "folded": [],
+   "folded": [
+    "??$__unguarded_linear_insert@PAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@Z"
+   ],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
@@ -72725,13 +73111,22 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$__unguarded_linear_insert@PAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
    "name": "CVEIN1___median",
    "address": "0x8280aed8",
    "survivor": "??$__median@PAVUIListWidget@@UWidgetDrawSort@?A0x4c78cf70@@@stlpmtx_std@@YAABQAVUIListWidget@@ABQAV1@00UWidgetDrawSort@?A0x4c78cf70@@@Z",
-   "folded": [],
+   "folded": [
+    "??$__median@PAVUILabel@@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAABQAVUILabel@@ABQAV1@00ULabelSort@?A0x15e3583a@@@Z"
+   ],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 1,
    "retail_callers": [
@@ -72756,13 +73151,22 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$__median@PAVUILabel@@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAABQAVUILabel@@ABQAV1@00ULabelSort@?A0x15e3583a@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
    "name": "CVEIN1___unguarded_partition",
    "address": "0x8280c480",
    "survivor": "??$__unguarded_partition@PAPAVUIListWidget@@PAV1@UWidgetDrawSort@?A0x4c78cf70@@@stlpmtx_std@@YAPAPAVUIListWidget@@PAPAV1@0PAV1@UWidgetDrawSort@?A0x4c78cf70@@@Z",
-   "folded": [],
+   "folded": [
+    "??$__unguarded_partition@PAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAPAPAVUILabel@@PAPAV1@0PAV1@ULabelSort@?A0x15e3583a@@@Z"
+   ],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 1,
    "retail_callers": [
@@ -72787,6 +73191,13 @@
      1
     ],
     "n_subgroups": 0
+   },
+   "restore": {
+    "lane": "RELOC-RECONCILE 2026-08-20",
+    "names": [
+     "??$__unguarded_partition@PAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAPAPAVUILabel@@PAPAV1@0PAV1@ULabelSort@?A0x15e3583a@@@Z"
+    ],
+    "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
    }
   },
   {
