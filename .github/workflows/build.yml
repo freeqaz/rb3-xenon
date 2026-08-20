@@ -89,6 +89,20 @@ jobs:
     - name: Reloc symbol-index guard
       run: python3 tools/reloc_symidx_guard.py -v
 
+    # Guard: ICF FOLD POISONING.  One retail address serves many functions, so
+    # target_symbol_map.json names it with ONE arbitrary survivor spelling, and
+    # any name comparison conflates "folded" with "wrong".  This defect was
+    # found, documented, fixed -- and REBUILT ONE DAY LATER by a new scan whose
+    # author had personally fixed it, because a helper you must remember to call
+    # is not a guard.  tools/icf_fold_safe.py makes the unsafe comparison RAISE.
+    # Fixtures are real retail bytes (XboxContent @ 0x8208968c slot 3), and
+    # --self-break proves the gate can fail.  See
+    # docs/decomp/patterns/icf-fold-poisoning.md.
+    - name: ICF fold-poisoning guard
+      run: |
+        python3 tools/test_icf_fold_safe.py
+        python3 tools/test_icf_fold_safe.py --self-break
+
     # Guard: every ICF alias group in scripts/symbol_aliases.json must be
     # GROUNDED.  Under the shipped functionRelocDiffs=name_check ruler an alias
     # is pure FORGIVENESS -- objdiff consults SymbolEquivalences and drops the

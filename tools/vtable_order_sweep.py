@@ -57,6 +57,9 @@ import re
 import struct
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import icf_fold_safe as ifs
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
@@ -136,24 +139,14 @@ def read_retail_slots(R, vt_va, exts, starts, text, max_slots=512):
     return slots
 
 
-def fold_counts(tables):
-    """slot address -> number of DISTINCT vtables it appears in.
-
-    ⛔ THE BINDING CONSTRAINT ON THIS WHOLE SWEEP.  ICF folds identical
-    COMDATs, so one retail address serves many classes' slots -- measured, a
-    single address is a slot in hundreds of distinct vtables, and
-    target_symbol_map.json can only name it with ONE arbitrary survivor
-    spelling.  Comparing such a slot by NAME conflates "folded" with "wrong",
-    the same disease that makes objdiff's LINKER_MERGED verdict uninformative.
-    Only slots whose address appears in exactly ONE vtable are comparable; for
-    the rest, retail itself destroyed the distinction and no instrument can
-    recover it.
-    """
-    occ = collections.Counter()
-    for slots in tables.values():
-        for w in {w for (_va, w, _p) in slots}:
-            occ[w] += 1
-    return occ
+# ⛔ THE FOLD-AWARENESS THIS SWEEP DEPENDS ON NOW LIVES IN ONE PLACE.
+# It used to be an inline `occ[w] != 1 or within[w] != 1` predicate, duplicated
+# in `sweep_class` AND `map_audit` right here in this file -- and a third,
+# fold-BLIND copy in a prefix scan written a day later rebuilt the defect and
+# confidently reported `XboxContent INTERIOR@3`.  Do not re-derive it; import
+# it.  `Slot.__eq__` RAISES on a poisoned comparison, so a fold-blind copy now
+# crashes instead of producing a wrong verdict.
+fold_counts = ifs.fold_counts
 
 
 # --------------------------------------------------------------------------
@@ -259,37 +252,65 @@ def bare_class(mangled_rtti):
     return s[:-2] if s.endswith('@@') else s
 
 
-def normalize_dtor(sym):
-    """Fold `??_E` (vector deleting dtor) and `??_G` (scalar deleting dtor).
+normalize_dtor = ifs.normalize_dtor
 
-    MSVC emits both; their bodies are frequently ICF-identical, so which
-    spelling the map records for the surviving address is arbitrary.  Treating
-    them as distinct would report a reordering that does not exist.
+
+def hierarchy_names(R, vt_va):
+    """Every class name in this vtable's RTTI hierarchy (self + all bases).
+
+    Used to reject slot names owned by an UNRELATED class -- see
+    `icf_fold_safe.name_owned_by`.  Returns an empty set when RTTI cannot be
+    decoded, which the primitive treats as "no opinion" rather than as grounds
+    to exclude.
     """
-    if sym and sym.startswith('??_E'):
-        return '??_G' + sym[4:]
-    return sym
+    out = set()
+    col = R.u32(vt_va - 4)
+    if not R.is_image_va(col):
+        return out
+    got = R.bases_of_col(col)
+    if not got:
+        return out
+    _c, _chd, bases = got
+    for b in bases:
+        n = b.name or ''
+        if n.startswith('.?A') and len(n) > 4:
+            n = n[4:]
+        if n.endswith('@@'):
+            n = n[:-2]
+        if n:
+            out.add(n)
+    return out
 
 
-def compare_orders(retail_names, our_names):
-    """Compare two slot->name lists, ignoring slots retail could not name.
+def compare_orders(retail, ours):
+    """Compare two `ifs.Slot` lists, ignoring slots retail could not speak to.
 
-    Returns (verdict, covered, detail).  Only slots where BOTH sides have a
-    name participate: an unnamed retail slot is UNKNOWN, and excluding it is
-    the honest choice -- counting it as agreement would manufacture SAMEs.
+    Returns (verdict, covered, detail).  Only slots BOTH sides can name
+    participate: an incomparable retail slot is UNKNOWN, and excluding it is
+    the honest choice -- counting it as agreement would manufacture SAMEs, and
+    counting it as disagreement is the fold-poisoning defect.
     """
-    pairs = [(i, r, o) for i, (r, o) in enumerate(zip(retail_names, our_names))
-             if r and o]
-    covered = len(pairs)
+    if retail and not isinstance(retail[0], ifs.Slot):
+        # tolerate plain-string callers (selftest fixtures)
+        retail = [ifs.Slot(name=x) if x else ifs.Slot(reason='unnamed')
+                  for x in retail]
+        ours = [ifs.Slot(name=x) if x else ifs.Slot(reason='unnamed')
+                for x in ours]
+    pairs = ifs.comparable_pairs(retail, ours)
+    agree, mism_p, withheld = ifs.charge(pairs)
+    # Coverage counts what we were willing to CHARGE ON: agreements plus real
+    # disagreements.  Withheld pairs are reported separately -- never folded
+    # into coverage, which would overstate what the instrument actually saw.
+    covered = len(agree) + len(mism_p)
     if covered < 2:
-        return 'UNRESOLVED', covered, []
-    mism = [(i, r, o) for (i, r, o) in pairs if r != o]
-    if not mism:
-        return 'SAME', covered, []
-    rs = collections.Counter(r for (_i, r, _o) in pairs)
-    os_ = collections.Counter(o for (_i, _r, o) in pairs)
+        return 'UNRESOLVED', covered, [], withheld
+    if not mism_p:
+        return 'SAME', covered, [], withheld
+    scored = agree + mism_p
+    rs = collections.Counter(r.name for (_i, r, _o) in scored)
+    os_ = collections.Counter(o.name for (_i, _r, o) in scored)
     verdict = 'PERMUTED' if rs == os_ else 'SET_DIFFER'
-    return verdict, covered, mism
+    return verdict, covered, [(i, r.name, o.name) for (i, r, o) in mism_p], withheld
 
 
 def retail_subobject_base(R, vt_va):
@@ -347,64 +368,37 @@ def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
         return dict(cls=bare, rtti=cls_rtti, vt_va=vt_va,
                     retail_slots=len(slots), our_slots=0, folded_slots=0,
                     verdict='AMBIGUOUS_MULTI_VTABLE', covered=0, mismatches=[])
-    # ⚠ TWO fold shapes, and the first version caught only one.
-    #   (a) ACROSS vtables -- one address serves many classes' slots.
-    #   (b) WITHIN this vtable -- the SAME address occupies two slots, because
-    #       two of the class's own virtuals have identical bodies.  Measured on
-    #       MCContainerXbox: `Format()` and `Unformat()` are both
-    #       `{ return (MCResult)0xD; }`, so retail's slots 9 and 10 hold ONE
-    #       address and the map names it `Format`.  `occ` is 1 (it appears in a
-    #       single vtable) so the across-vtables filter passed it, and the row
-    #       was reported as a SET_DIFFER "Format vs Unformat" defect that does
-    #       not exist.  Retail cannot distinguish them; neither can we.
-    within = collections.Counter(w for (_va, w, _p) in slots)
-    retail_names = []
-    n_folded = 0
-    for (_va, w, _p) in slots:
-        if occ.get(w, 0) != 1 or within[w] != 1:
-            retail_names.append(None)
-            n_folded += 1
-            continue
-        retail_names.append(addr2name.get(f"0x{w:08x}"))
+    # All fold/name-trust reasoning is delegated -- see tools/icf_fold_safe.py
+    # for the four shapes it handles and why it is a TYPE rather than a helper.
+    hier = hierarchy_names(R, vt_va) | {bare}
+    retail_sl = ifs.retail_slots(slots, occ, addr2name, hierarchy=hier)
     ours = our_vtable(bare, project_dir, base=sub_base)
-    # ⚠ OUR COFF vtable symbol includes the `??_R4` Complete Object Locator as
-    # its first entry; the RETAIL table is read from AFTER the COL (it sits at
-    # vtable[-1]).  Comparing them raw shifts every slot by one and made the
-    # first full sweep report SAME=0 / SET_DIFFER=472 -- an instrument that can
-    # never agree.  A zero-agreement result is the tell; drop the COL.
-    our_names = [e['symbol'] for e in ours if not e['symbol'].startswith('??_R4')]
-    retail_names = [normalize_dtor(x) for x in retail_names]
-    our_names = [normalize_dtor(x) for x in our_names]
-    n = max(len(retail_names), len(our_names))
-    retail_names += [None] * (n - len(retail_names))
-    our_names += [None] * (n - len(our_names))
-    verdict, covered, mism = compare_orders(retail_names, our_names)
+    our_sl = ifs.our_slot_names(ours)
+    verdict, covered, mism, withheld = compare_orders(retail_sl, our_sl)
+    excl = ifs.exclusion_counts(retail_sl)
     return dict(cls=bare, rtti=cls_rtti, vt_va=vt_va,
                 retail_slots=len(slots), our_slots=len(ours),
-                folded_slots=n_folded,
+                folded_slots=excl.get('folded_across', 0) + excl.get('folded_within', 0),
+                # ★ surfaced, not swallowed: an instrument that quietly narrows
+                # its own population reads as "covered everything" when it did
+                # not (CLAUDE.md, "no silent caps").
+                excluded=dict(excl),
                 verdict=verdict, covered=covered,
-                mismatches=[dict(slot=i, retail=r, ours=o) for (i, r, o) in mism])
+                mismatches=[dict(slot=i, retail=r, ours=o) for (i, r, o) in mism],
+                # disagreements we refused to CHARGE because the retail name is
+                # suspect -- a worklist for byte-level adjudication, not noise.
+                withheld=[dict(slot=i, retail=r.name, ours=o.name,
+                               reason=(r.reason or o.reason))
+                          for (i, r, o) in withheld])
 
 
 _VIRT = set('EMU')          # E private virtual, M protected virtual, U public virtual
 _NONVIRT = set('QAIS')      # Q public, A private, I protected, S static
 
 
-def access_class(sym):
-    """MSVC member-function access class, or None if not decodable.
-
-    ⚠ ADJUSTOR THUNKS MUST BE EXCLUDED.  `?F@C@@$4PPPPPPPM@A@AAX...` carries a
-    displacement encoding between the `@@` and the real access class, so a
-    naive scan reads a letter out of THAT and reports every thunk as
-    non-virtual -- 1,379 false positives (29.3%) before the exclusion, 47 (1.6%)
-    after.
-    """
-    if not sym or not sym.startswith('?') or sym.startswith('??'):
-        return None
-    if '@@$' in sym:
-        return None
-    m = re.search(r'@@([A-Z])', sym)
-    return m.group(1) if m else None
+# Single definition, in the fold-safe module (the adjustor-thunk exclusion that
+# makes it correct is documented there -- 1,379 false positives without it).
+access_class = ifs.access_class
 
 
 def map_audit(tables, occ, addr2name):
@@ -420,9 +414,13 @@ def map_audit(tables, occ, addr2name):
     """
     bad, seen, virt = [], 0, 0
     for va, slots in tables.items():
-        within = collections.Counter(w for (_v, w, _p) in slots)
+        # NOTE: no `hierarchy` here ON PURPOSE.  This audit's whole job is to
+        # find slots whose NAME is untrustworthy, so excluding them up front
+        # would be circular -- it would hide exactly the population it exists
+        # to count.  It only needs the two ICF fold shapes.
+        raw = ifs.retail_slots(slots, occ, addr2name)
         for i, (_v, w, _p) in enumerate(slots):
-            if occ.get(w, 0) != 1 or within[w] != 1:
+            if raw[i].reason in ('folded_across', 'folded_within'):
                 continue
             nm = addr2name.get(f"0x{w:08x}")
             a = access_class(nm) if nm else None
@@ -556,6 +554,23 @@ def main():
     for k in ('PERMUTED', 'SET_DIFFER', 'SAME', 'UNRESOLVED',
               'AMBIGUOUS_MULTI_VTABLE'):
         print(f"  {k:<24} {by[k]}")
+
+    # ★ Report what the instrument could NOT see, every run.  A sweep that
+    # quietly narrows its own population reads as "covered everything" when it
+    # did not, and the withheld list is a byte-adjudication worklist, not noise.
+    excl = collections.Counter()
+    for r in results:
+        excl.update(r.get('excluded') or {})
+    n_withheld = sum(len(r.get('withheld') or []) for r in results)
+    print(f"\ncomparable slots charged on : {sum(r['covered'] for r in results)}")
+    print(f"withheld (suspect name, disagreed): {n_withheld}"
+          "   <- adjudicate on retail bytes, not by name")
+    for k, v in excl.most_common():
+        print(f"  excluded {k:<18} {v}")
+
+    # The SAME=0 tell.  Cheap, and it has already caught a real off-by-one.
+    ifs.assert_can_agree(by['SAME'], by['SAME'] + by['SET_DIFFER'] + by['PERMUTED'],
+                         label='vtable order sweep')
 
     interesting = [r for r in results if r['verdict'] == 'PERMUTED']
     interesting.sort(key=lambda r: -r['covered'])
