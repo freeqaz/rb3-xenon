@@ -442,6 +442,21 @@ def main() -> int:
         stats[f"ACCEPT_T{tier}"] += 1
         ssites[f"ACCEPT_T{tier}"] += n
         why[(t, b)] = f"ACCEPT_T{tier}"
+        # ⛔ THE UNION KEY IS `t` ALONE, AND EVERY CONSUMER READS THE RESULT AS AN
+        # EQUIVALENCE CLASS. Each tier above adjudicates one PAIR against the
+        # survivor, so the evidence is a STAR and the emitted group is a CLIQUE;
+        # two folded spellings are never compared. Same shape at the --merge
+        # carry-forward below, which re-appends with no cross-member check.
+        #
+        # DO NOT "fix" this with decomp-synth's resolved-operand read (gate (g)).
+        # That was built, measured and reverted (760cb450): it asks whether OUR
+        # bodies agree, ICF happened in RETAIL's link, and on a 36.7%-matched
+        # tree the gap is systematic. Over the 517 memberships it withdraws,
+        # band.exe confirms 164 TRUE and refutes at most 57 -- three true folds
+        # discarded per fabrication caught. A correct partition must be anchored
+        # on the retail image; none is ready.
+        # <decomp-bench>/archive/runs/2026-08-20-gen-partition/ has the numbers,
+        # 2026-08-20-reloc-reconcile/tools/ has the instruments.
         g = groups.setdefault(t, {"name": None, "address": addr_of[t], "survivor": t,
                                   "folded": [], "_meta": []})
         g["folded"].append(b)
