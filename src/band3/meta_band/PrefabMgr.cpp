@@ -140,6 +140,7 @@ static void Randomize(int *arr, int n, int start) {
 }
 
 void PrefabMgr::AssignPrefabsToSlots() {
+    mDefaultPrefabs.clear();
     MILO_ASSERT(mPrefabs.size() >= kGameNumSlots, 0xD6);
     MILO_ASSERT(mPrefabs.size() < 256, 0xDB);
     int indices[256];
