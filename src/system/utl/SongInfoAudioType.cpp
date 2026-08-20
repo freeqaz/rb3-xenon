@@ -3,62 +3,33 @@
 #include "os/Debug.h"
 #include "utl/Symbol.h"
 
+// Retail RB3 tests exactly six symbols, in this order: drum, guitar, bass, vocals,
+// keys, multi.  Ground truth is the retail body at 0x827D4260 (420 bytes), whose only
+// .rdata string references are 0x82010E1C "drum", 0x82013FA8 "guitar", 0x82013FA0
+// "bass", 0x8201DB6C "vocals", 0x8201DB64 "keys", 0x820F3064 "multi" -- six
+// Symbol(const char*) constructions and no others.  The wider drum2/perc/guitar2/
+// harm*/keys2/keys3/backing*/center/side chain that used to be here is DC3-shaped and
+// has no counterpart in this binary; see the note in SongInfoAudioType.h.
 SongInfoAudioType SymbolToAudioType(Symbol s) {
     static Symbol drum("drum");
-    static Symbol drum2("drum2");
-    static Symbol perc("perc");
-    static Symbol bass("bass");
     static Symbol guitar("guitar");
-    static Symbol guitar2("guitar2");
+    static Symbol bass("bass");
     static Symbol vocals("vocals");
-    static Symbol harm1("harm1");
-    static Symbol harm2("harm2");
     static Symbol keys("keys");
-    static Symbol keys2("keys2");
-    static Symbol keys3("keys3");
-    static Symbol backing("backing");
-    static Symbol backing2("backing2");
-    static Symbol backing3("backing3");
     static Symbol multi("multi");
-    static Symbol center("center");
-    static Symbol side("side");
 
     if (s == drum)
         return kAudioTypeDrum;
-    else if (s == drum2)
-        return kAudioTypeDrum2;
-    else if (s == perc)
-        return kAudioTypePerc;
-    else if (s == bass)
-        return kAudioTypeBass;
     else if (s == guitar)
         return kAudioTypeGuitar;
-    else if (s == guitar2)
-        return kAudioTypeGuitar2;
-    else if (s == vocals)
-        return kAudioTypeVocals;
-    else if (s == harm1)
-        return kAudioTypeHarm1;
-    else if (s == harm2)
-        return kAudioTypeHarm2;
+    else if (s == bass)
+        return kAudioTypeBass;
     else if (s == keys)
         return kAudioTypeKeys;
-    else if (s == keys2)
-        return kAudioTypeKeys2;
-    else if (s == keys3)
-        return kAudioTypeKeys3;
-    else if (s == backing)
-        return kAudioTypeBacking;
-    else if (s == backing2)
-        return kAudioTypeBacking2;
-    else if (s == backing3)
-        return kAudioTypeBacking3;
+    else if (s == vocals)
+        return kAudioTypeVocals;
     else if (s == multi)
         return kAudioTypeMulti;
-    else if (s == center)
-        return kAudioTypeCenter;
-    else if (s == side)
-        return kAudioTypeSide;
     else {
         MILO_FAIL("No instrument for %s\n", s);
         return kAudioTypeDrum;

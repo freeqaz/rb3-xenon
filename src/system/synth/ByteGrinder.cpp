@@ -1044,9 +1044,9 @@ void ByteGrinder::Init() {
     functionName[0] = 'z';
     DataRegisterFunc(functionName, hashTo6Bits);
     functionName[0] = 'x';
-    DataRegisterFunc(functionName, getRandomSequence32A);
-    functionName[0] = 'y';
     DataRegisterFunc(functionName, getRandomSequence32B);
+    functionName[0] = 'y';
+    DataRegisterFunc(functionName, getRandomSequence32A);
     std::vector<DataFunc *> funPtrs;
     funPtrs.push_back(op0);
     funPtrs.push_back(op1);
