@@ -48,27 +48,6 @@ Hard gates preserved from the existing file:
     lets the unchanged T1/T2/T3 adjudicators and every hard gate above decide
     them.  The accept rate is the measurement of how much the two comparators
     actually agree; see ``--why`` for the per-pair decision.
-
-★ ``--partition`` -- A GROUP IS A PARTITION CLASS, NOT A STAR (lane GEN-PARTITION).
-    Every tier above adjudicates ONE PAIR (S, F) and the accepted pairs are then
-    appended to a single list keyed on the survivor name alone.  The evidence is
-    therefore a STAR centred on S; the consumer (objdiff's ``map_file``,
-    ``symbol_equivalences``) reads the emitted group as an EQUIVALENCE CLASS.
-    Two folded spellings are never compared with each other, so a group can and
-    does claim folds no tier ever adjudicated.
-
-    T1's key is also coarser than a linked body: it compares retail(S) with
-    ours(F) modulo relocated fields, and ``relocs_agree`` tolerates a retail-side
-    ``fn_<addr>`` placeholder.  Measured over the 158 groups gate (g) charges at
-    alias sha ``f04f4705…``: 262 of 404 charged memberships differ at a slot
-    where retail names a placeholder, so the SAME slot passes for every
-    candidate and both star edges are bought with an absence of information.
-
-    So after every group is assembled -- adjudicated AND ``--merge`` carried --
-    ``partition_emitted`` splits any group whose compiled members agree under
-    masking and disagree on their RESOLVED operands, reusing decomp-synth's
-    ``tools/il_witness/alias_repair.py`` rather than growing a second copy of
-    its semantics.  Fail-closed: the step refuses to run rather than skip.
 """
 
 import argparse
@@ -208,95 +187,6 @@ def vacuous(rec):
     return (size - masked) < MIN_UNMASKED_FRAC * size
 
 
-# --------------------------------------------------------------------------- #
-# The partition step -- see PARTITION, NOT CLOSURE in the module docstring.
-# --------------------------------------------------------------------------- #
-def _partition_instrument():
-    """decomp-synth's resolved-operand read + repair semantics, or `None`.
-
-    This generator cannot supply the read itself: every comparison it makes is
-    stated modulo relocated fields (T1, above), which is precisely the half of
-    the body that separates the members of a fabricated closure. Import the one
-    instrument that exists rather than growing a second, drifting copy of it.
-    """
-    root = os.environ.get("DECOMP_SYNTH_ROOT") or (PROJECT_ROOT.parent / "decomp-synth")
-    p = Path(root) / "tools" / "il_witness"
-    if not (p / "alias_repair.py").is_file():
-        return None, str(p)
-    sys.path.insert(0, str(p))
-    import resolved_operands as ro          # noqa: E402
-    import alias_repair as ar               # noqa: E402
-    import symbol_equivalences as se        # noqa: E402
-    return (ro, ar, se), str(p)
-
-
-def partition_emitted(emitted, scope):
-    """Split every emitted group the resolved-operand read charges.
-
-    Runs on the FINAL list, so it covers the freshly adjudicated groups and the
-    ``--merge`` carry-forwards alike -- a fix on the adjudication path only
-    would leave the carry-forward free to re-grow the closures it dropped.
-
-    Scope. ``accepted`` restricts the split to the groups that pass
-    ``validate_groups`` against the map THIS run would render, which is the
-    restriction ``alias_repair.repair_file`` documents: a subgroup's members all
-    belong to its origin, so when the origin is accepted they already share one
-    canon class and no split of them can join anything. Splitting a REJECTED
-    origin can instead elect a survivor that passes a gate the origin failed,
-    which WIDENS the admission predicate -- a per-group adjudication, not a
-    generator's business. ``all`` is offered for measuring that difference.
-    """
-    mod, where = _partition_instrument()
-    if mod is None:
-        # Fail closed. A generator that silently skipped this step would emit
-        # exactly the file the step exists to prevent, and nothing downstream
-        # can tell the two apart.
-        sys.exit("REFUSING: --partition needs decomp-synth's resolved-operand "
-                 "read and none is at %s. Set DECOMP_SYNTH_ROOT, or pass "
-                 "--partition off to reproduce the pre-2026-08-20 (closure) "
-                 "output deliberately." % where)
-    ro, ar, se = mod
-    sys.path.insert(0, str(PROJECT_ROOT / "tools"))
-    import gen_symbol_alias_map as gsam     # noqa: E402
-
-    print("\npartitioning (scope=%s) ..." % scope, file=sys.stderr)
-    bodies, amb = ro.index_bodies(PROJECT_ROOT)
-    block, rounds = ro.icf_congruence(bodies)
-    print("  bodies %d (%d with divergent copies); congruence %d blocks, "
-          "%d rounds" % (len(bodies), len(amb), len(set(block.values())), rounds),
-          file=sys.stderr)
-
-    only = None
-    if scope == "accepted":
-        # Gate (f) reads the map RENDERED FROM the alias file, so the only
-        # coherent reading of a file is against its own map. Render the
-        # pre-partition set in memory: that is the file this run would have
-        # written without the step, which is exactly the population the
-        # restriction is about.
-        mc = se.parse_msvc_map_classes(gsam.render_map(emitted))
-        before = se.validate_groups(PROJECT_ROOT, emitted, map_classes=mc)
-        only = set(before["accepted_index"])
-        print("  accepted (own map, gate (g) unarmed): %d of %d groups"
-              % (len(only), len(emitted)), file=sys.stderr)
-
-    out, report = ar.repair_file(PROJECT_ROOT, emitted, bodies=bodies,
-                                 block=block, only=only)
-    # Structural safety, asserted here rather than argued in a comment: no
-    # emitted group may claim a fold the un-partitioned run did not already
-    # claim. Raises, naming the violator.
-    report["split_never_join"] = ar.assert_split_never_join(emitted, out)
-    report["scope"] = scope
-    report["n_bodies"] = len(bodies)
-    report["n_congruence_blocks"] = len(set(block.values()))
-    print("  %d group(s) split, %d membership(s) withdrawn, %d re-emitted into "
-          "%d class(es), %d dropped as singletons -> %d groups"
-          % (report["n_repaired"], report["n_memberships_withdrawn"],
-             report["n_memberships_recovered_into_subgroups"],
-             report["n_subgroups_emitted"], report["n_singletons_dropped"],
-             len(out)), file=sys.stderr)
-    return out, report
-
-
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-class", type=int, default=8,
@@ -330,15 +220,6 @@ def main() -> int:
     ap.add_argument("--loose-placeholders", action="store_true",
                     help="restore the pre-CD-9 blanket retail-placeholder tolerance "
                          "(UNSOUND -- for A/B measurement of the gate only)")
-    ap.add_argument("--partition", choices=("accepted", "all", "off"),
-                    default="accepted",
-                    help="split an emitted group whose compiled members agree "
-                         "under masking and DISAGREE on their resolved operands "
-                         "(default: accepted). `off` reproduces the closure "
-                         "output; `all` also splits rejected groups, which can "
-                         "WIDEN the predicate -- see partition_emitted.")
-    ap.add_argument("--partition-report", default="",
-                    help="write the per-group partition report here")
     args = ap.parse_args()
     tiers = {int(x) for x in args.tiers.split(",") if x.strip()}
     strict = not args.loose_placeholders
@@ -793,12 +674,6 @@ def main() -> int:
               "member carry-forward: %d never-adjudicated kept, %d REFUTED and "
               "dropped; validator-gate drops: %d group(s), %d member(s)"
               % (kept, merged, kept_m, drop_m, drop_g, drop_gm))
-
-    if args.partition != "off":
-        emitted, prep = partition_emitted(emitted, args.partition)
-        if args.partition_report:
-            Path(args.partition_report).write_text(json.dumps(prep, indent=1) + "\n")
-            print("partition report -> %s" % args.partition_report)
 
     if args.worklist:
         # ★ CD-9 DELIVERABLE. What is left after aliasing is NOT "noise" -- lane CD-7
