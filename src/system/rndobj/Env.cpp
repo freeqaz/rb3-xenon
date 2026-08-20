@@ -102,7 +102,7 @@ void RndEnviron::Replace(ObjRef *from, Hmx::Object *to) {
         } else {
             RndEnviron *env = dynamic_cast<RndEnviron *>(to);
             if (env) {
-                mAmbientFogOwner.SetObjConcrete(env->mAmbientFogOwner.Ptr());
+                mAmbientFogOwner.SetOwnerObj(env->mAmbientFogOwner.Ptr());
             } else {
                 mAmbientFogOwner = this;
             }

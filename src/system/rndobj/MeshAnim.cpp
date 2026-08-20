@@ -22,11 +22,11 @@ void RndMeshAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (static_cast<Hmx::Object *>(mKeysOwner.Ptr())
         == reinterpret_cast<Hmx::Object *>(ref)) {
         if (!obj) {
-            mKeysOwner.SetObjConcrete(this);
+            mKeysOwner.SetOwnerObj(this);
         } else {
             const ObjOwnerPtr<RndMeshAnim> &ko =
                 dynamic_cast<RndMeshAnim *>(obj)->mKeysOwner;
-            mKeysOwner.SetObjConcrete(ko.Ptr());
+            mKeysOwner.SetOwnerObj(ko.Ptr());
         }
     }
 }
