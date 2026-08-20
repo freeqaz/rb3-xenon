@@ -197,9 +197,16 @@ def main() -> int:
     unchanged = out_path.is_file() and out_path.read_text() == content
     if not unchanged:
         out_path.write_text(content)
-    n_syms = sum(1 + len(g.get("folded", [])) for g in groups)
+    # Count what was RENDERED, not what was offered: an address-less group is
+    # skipped above, so summing over `groups` overstates the map by exactly the
+    # skipped memberships and invites a reader to price a channel off a number
+    # the file does not contain.
+    n_syms = sum(1 for l in content.splitlines() if l.startswith(" 0001:"))
+    n_placed = sum(1 for g in groups if g.get("address"))
     verb = "unchanged" if unchanged else "wrote"
-    print(f"{verb} {out_path}: {len(groups)} ICF groups, {n_syms} symbol lines")
+    skipped = len(groups) - n_placed
+    tail = f" ({skipped} address-less group(s) skipped)" if skipped else ""
+    print(f"{verb} {out_path}: {n_placed} ICF groups, {n_syms} symbol lines{tail}")
     return 0
 
 
