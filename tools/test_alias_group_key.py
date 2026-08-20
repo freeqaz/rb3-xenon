@@ -1,10 +1,14 @@
 """Pin which field identifies an alias group in scripts/symbol_aliases.json.
 
 `name` does not: it is a display label, it is optional, and it is shared by up
-to 69 groups. `survivor` and `address` each identify a group exactly. A
-consumer that keys acceptance, dedupe, a join or a census on `name` conflates
-groups whose verdicts differ -- measured in decomp-bench
+to 69 groups. A consumer that keys acceptance, dedupe, a join or a census on
+`name` conflates groups whose verdicts differ -- measured in decomp-bench
 `archive/runs/2026-08-19-namekey-audit/`.
+
+`survivor` is the TOTAL key: it identifies every group. `address` identifies
+every *placed* group, and is partial by design -- a class partitioned out of an
+under-partitioned closure has no retail placement, carries `address: null`, and
+renders into no map bucket.
 """
 import json
 import subprocess
@@ -23,12 +27,33 @@ def groups():
     return json.loads(ALIASES.read_text())["groups"]
 
 
+def _placed(groups):
+    return [g for g in groups if g.get("address")]
+
+
 def test_survivor_identifies_a_group(groups):
+    """The total key -- every group, placed or not."""
     assert len({g["survivor"] for g in groups}) == len(groups)
 
 
-def test_address_identifies_a_group(groups):
-    assert len({g["address"] for g in groups}) == len(groups)
+def test_address_identifies_a_placed_group(groups):
+    """Address is the map's bucket key, so two placed groups sharing one would
+    silently merge into a single equivalence class -- a fold nobody proved.
+    Uniqueness therefore binds over the placed groups, which is the set that
+    reaches the map; it is NOT a claim that every group has an address."""
+    placed = _placed(groups)
+    assert len({g["address"] for g in placed}) == len(placed)
+
+
+def test_address_is_partial_and_survivor_is_not(groups):
+    """Guards the restatement above against being read as a weakening. An
+    address-less group is the partitioned-class shape: real fold evidence, no
+    retail placement to anchor it. Some exist, they are a minority, and
+    `survivor` still covers all of them."""
+    unplaced = [g for g in groups if not g.get("address")]
+    assert unplaced, "no address-less group -- has the partition been reverted?"
+    assert len(unplaced) < 0.10 * len(groups)
+    assert all(g.get("survivor") for g in unplaced)
 
 
 def test_name_does_not_identify_a_group(groups):
@@ -55,8 +80,9 @@ def test_the_rendered_map_never_keys_on_name(groups):
 
     text = G.render_map(groups)
     data = [l for l in text.splitlines() if l.startswith(" 0001:")]
-    assert len(data) == sum(1 + len(g.get("folded", [])) for g in groups)
-    assert len({l.split()[2] for l in data}) == len(groups)
+    placed = _placed(groups)
+    assert len(data) == sum(1 + len(g.get("folded", [])) for g in placed)
+    assert len({l.split()[2] for l in data}) == len(placed)
 
     twins = G.render_map([
         {"name": "Replace", "address": "0x82000010",
