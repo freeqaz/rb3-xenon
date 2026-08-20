@@ -398,10 +398,14 @@ def main() -> int:
                      "symbol tables (%d/%d call-site names). Do not read the "
                      "decision census below as a result." % (_hit, len(_sn)))
     elif pairs:
+        # Not "every alias needs a bl" -- measured 2026-08-20, 11 of the 1,376
+        # census-derived pairs in a full run are seen ONLY at refhi/reflo sites
+        # (address-taken function references). But `bl` is 99.2% of the supply,
+        # so a census with charged pairs and none of them is a format break.
         sys.exit("REFUSING: the sites census charges %d pair(s) and NOT ONE is a "
-                 "call site. Every alias this tool can emit is licensed by a "
-                 "`bl`, so that is a census-format break, not an empty result."
-                 % len(pairs))
+                 "call site. `bl` sites are ~99%% of what this tool derives an "
+                 "alias from, so that is a census-format break, not an empty "
+                 "result." % len(pairs))
     if args.enumerate == "hash":
         keep = hash_cand | xfold_pairs
         pairs = collections.Counter({p: pairs.get(p, 0) for p in keep})
