@@ -11,7 +11,11 @@ public:
     virtual EofType Eof() { return (EofType)((mTell == mSize) ? 1 : 0); }
     virtual bool Fail() { return mFail; }
     virtual const char *Name() const;
-    virtual int Size();
+    // NOT virtual: BinStream declares no Size(), so `virtual` here APPENDS a
+    // 12th vtable slot; retail's BufStream vtable has 11.  The sole subclass
+    // (FixedSizeSaveableStream) does not override it, so devirtualizing
+    // changes no dispatch.  See NetStream.h for the same defect.
+    int Size();
 
     void DeleteChecksum();
     void StartChecksum(const char *);
