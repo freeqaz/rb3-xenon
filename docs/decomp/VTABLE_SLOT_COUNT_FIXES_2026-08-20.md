@@ -172,8 +172,9 @@ three-way decomposition and landed exactly.
 - `PostProcessor` (6 vs 5) is **not** fixed: it is a base of the
   multiply-inheriting `RndPostProc`, so its table is reached as a secondary
   subobject and the single-vtable gate does not clear it.
-- ★ **`RndFont` (+13) is the biggest remaining candidate and is VERIFIED as a
-  real disagreement — deliberately deferred to its own lane.** Ours 34, retail
+> ✅ **`RndFont` RESOLVED in a second wave — see §8 below.** 34 → **21**, exact.
+
+- ★ **`RndFont` (+13) — the original deferral note.** Ours 34, retail
   **21**, and 21 is exactly `Hmx::Object`'s slot count ⇒ retail's `RndFont`
   declares **no new virtuals at all**. Verified against retail bytes rather
   than the count alone: the vtable at `0x8206d344` has slot[21] = `0xffffffff`
@@ -200,3 +201,87 @@ three-way decomposition and landed exactly.
 - slot counts re-read against retail after the build: 5/5 now `ours == retail`
 - 18 of the 25 survivors have **covered ≤ 1**, i.e. essentially no name-level
   corroboration; they rest on the count alone.
+
+## 8. Wave 2 — `RndFont` 34 → 21, and a HALF-WRONG in-tree claim corrected
+
+### 8.1 The claim that had to be resolved first
+
+`rndobj/Font.h` carried a deliberate decision:
+
+> *"The VTABLE is deliberately NOT changed to rb3-Wii's. Retail's CharDefined
+> and Print are mangled `?...@RndFont@@UB...` — public virtual const — whereas
+> rb3-Wii declares both non-virtual."*
+
+⛔ **A mangled name in `scripts/target_symbol_map.json` is NOT retail evidence
+about virtuality.** The map is populated by our own matching, so a `UB` spelling
+is our declaration reflected back — the same circularity that killed the
+`StreamReceiver360` "finding" on 08-19.
+
+★ **Vtable MEMBERSHIP is retail bytes, and it adjudicates each member
+separately.** That is what makes the prior claim *half* right:
+
+| symbol | body | in retail's vtable? | verdict |
+|---|---|---|---|
+| `?Print@RndFont@@` | `0x82472C18` | **YES** | virtual — prior claim RIGHT |
+| `?CharDefined@RndFont@@` | `0x82473A98` | **no** | not virtual — prior claim WRONG |
+| `?CharWidth@RndFont@@` | `0x82474478` | **no** | not virtual |
+
+⇒ The instrument the prior lane used **could not distinguish these two cases**,
+which is why it got one of them wrong. The `UB` spelling is identical either way.
+
+### 8.2 The two defects
+
+1. **`Print() const` did not override.** `Hmx::Object::Print()` is non-const, so
+   a `const` override is a *different signature*: MSVC keeps `Object::Print` in
+   slot 13 **and appends a new slot**. Retail puts a `Print@RndFont` body in slot
+   13 ⇒ it overrides ⇒ same signature ⇒ non-const. Corroborated by the oracles:
+   **rb3-Wii declares it non-const; dc3 declares it const and we inherited dc3's**
+   — the standing "cross-check dc3 against rb3-Wii, dc3 is NEWER" rule paying out.
+   Further corroboration: of ~40 retail `Print` overrides in the map, **every
+   other one is `UAA` (non-const)**; the lone `UBA` is this symbol.
+2. **12 accessors were virtual and retail has no slot for any of them**
+   (`CharWidth`, `CharAdvance` ×2, `Kerning`, `CharDefined`, `AspectRatio`,
+   `Mat`, `DataOwner`, `FontUnit`, `FontUnitInverse`, `BitmapFont`,
+   `SetASCIIChars`). `RndFont` has **no subclasses** in `src/`, so no dispatch
+   changes. This generalises what a prior lane had already established
+   one-at-a-time for `HasChar` ("retail issues direct `bl` calls with no vtable
+   load").
+
+Result: **34 → 21, exactly retail's count**, with slot 13 now `?Print@RndFont@@UAAXXZ`.
+
+### 8.3 ⛔ The first A/B REGRESSED −748 B, and the regression was the MAP
+
+```
+Δmatched=-4  Δcode_bytes=-748   unit REGRESSIONS: default/Font (77->73)
+```
+
+Four rows went **100.000 → 0.000**: `?Print@RndFont@@UBAXXZ` (352 B),
+`?CharDefined@RndFont@@UBA_NG@Z` (152 B), `?CharWidth@RndFont@@UBAMG@Z` (52 B),
+`?CharAdvance@RndFont@@UBAMG@Z` (76 B) — every one a **`UBA`** spelling.
+
+★★ **A member function's BODY is identical whether or not it is virtual** — only
+the vtable and the call sites change. So those rows were at 100% because our
+*bodies* already matched retail, and they fell to 0 purely because our symbols
+are now spelled `QBA`/`UAA` while the map still said `UBA`. Pure un-pairing:
+*a target row whose base obj cannot define that name reads 0% however correct
+our code is.*
+
+⚠ **The row SET was unchanged (108 both legs), so a row-level "renamed away"
+check REFUTES the un-pairing hypothesis and is the wrong test.** The un-pairing
+is at symbol level *within* a row. Diff `fuzzy` per row, not the row set.
+
+Fixed by renaming the 4 map entries to the spellings **read out of our compiled
+COFF** (the CLAUDE.md rule: read the name from COFF, after building — never
+guess it), which also guarantees the base obj defines them so the rename cannot
+strand a row at permanent 0%.
+
+### 8.4 Re-measured, both legs at a split fixed point
+
+```
+Δmatched=+0  Δmasked_equal=+0  Δhonest=+0  Δcode%=+0.000000pp  Δcode_bytes=+0
+Δfuzzy=+0.000875pp   (48.995415 -> 48.996290)
+```
+native gate: `verdict=PASS expected=18 verified=18 skipped=0 partial=0 rc=0`
+
+⇒ The −748 was entirely the stale map spelling. Net effect: **vtable shape now
+exactly retail's, metric-neutral, aggregate fuzzy marginally up.**

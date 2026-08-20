@@ -636,7 +636,7 @@ bool RndFont::CharDefined(unsigned short c) const {
 // and prints the material's name, then cellSize@0x60, deprecated size@0x68,
 // space@0x5c, then walks mChars@0x6c. There is no "pages:" line and no material
 // list -- that was the DC3 multi-page form.
-void RndFont::Print() const {
+void RndFont::Print() {
     TheDebug << "   mat: " << mMat << "\n";
     TheDebug << "   cellSize: " << mCellSize << "\n";
     TheDebug << "   deprecated size: " << mDeprecatedSize << "\n";
