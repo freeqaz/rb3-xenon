@@ -52,11 +52,11 @@ void RndParticleSysAnim::Replace(ObjRef *from, Hmx::Object *to) {
     if (static_cast<Hmx::Object *>(mKeysOwner.Ptr())
         == reinterpret_cast<Hmx::Object *>(from)) {
         if (!to) {
-            mKeysOwner.SetObjConcrete(this);
+            mKeysOwner.SetOwnerObj(this);
         } else {
             const ObjOwnerPtr<RndParticleSysAnim> &ko =
                 dynamic_cast<RndParticleSysAnim *>(to)->mKeysOwner;
-            mKeysOwner.SetObjConcrete(ko.Ptr());
+            mKeysOwner.SetOwnerObj(ko.Ptr());
         }
     }
 }

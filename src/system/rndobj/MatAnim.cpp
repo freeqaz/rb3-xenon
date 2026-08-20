@@ -23,9 +23,9 @@ void RndMatAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {
         RndMatAnim *ma;
         if (mKeysOwner == this || !(ma = dynamic_cast<RndMatAnim *>(obj))) {
-            mKeysOwner.SetObjConcrete(this);
+            mKeysOwner.SetOwnerObj(this);
         } else {
-            mKeysOwner.SetObjConcrete(ma->mKeysOwner.Ptr());
+            mKeysOwner.SetOwnerObj(ma->mKeysOwner.Ptr());
         }
         return;
     }

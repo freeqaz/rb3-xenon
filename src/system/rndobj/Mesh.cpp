@@ -984,9 +984,9 @@ void RndMesh::Replace(ObjRef *ref, Hmx::Object *obj) {
         == reinterpret_cast<Hmx::Object *>(ref)) {
         RndMesh *meshObj = dynamic_cast<RndMesh *>(obj);
         if (meshObj) {
-            mGeomOwner.SetObjConcrete(meshObj->mGeomOwner.Ptr());
+            mGeomOwner.SetOwnerObj(meshObj->mGeomOwner.Ptr());
         } else {
-            mGeomOwner.SetObjConcrete(this);
+            mGeomOwner.SetOwnerObj(this);
         }
     }
 }
