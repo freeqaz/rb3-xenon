@@ -223,7 +223,7 @@ void NgEnviron::Select(const Vector3 *pos) {
     mHasPointCubeTex = false;
     mProjectedBlend = (RndLight::ProjectedBlend)0;
 
-    Rnd::DrawMode mode = TheRnd.GetDrawMode();
+    Rnd::Mode mode = TheRnd.DrawMode();
     if (mode == 4 || mode == 2 || mode == 6 || mode == 3) {
         RndEnviron::Select(pos);
         NgMat::SetCurrent(0);

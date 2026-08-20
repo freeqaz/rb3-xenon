@@ -891,7 +891,7 @@ void Character::DrawShowing() {
     } else {
         lod = Clamp<int>(0, mLods.size() - 1, mForceLod);
     }
-    bool doSelfShadow = mSelfShadow && TheRnd.GetDrawMode() == 0 && lod <= 1 && (mDrawMode & 1);
+    bool doSelfShadow = mSelfShadow && TheRnd.DrawMode() == 0 && lod <= 1 && (mDrawMode & 1);
     if (doSelfShadow) {
         if (GetGfxMode() == kNewGfx) {
             if (TheNgRnd.Offscreen())
@@ -910,7 +910,7 @@ void Character::DrawShowing() {
     if (doSelfShadow)
         RndShadowMap::EndShadow();
 
-    if (TheLoadMgr.EditMode() && TheRnd.GetDrawMode() == 0) {
+    if (TheLoadMgr.EditMode() && TheRnd.DrawMode() == 0) {
         mTest->Draw();
     }
 
@@ -995,7 +995,7 @@ void Character::SyncShadow() {
 }
 
 void Character::DrawLod(int lod) {
-    int rndDrawMode = TheRnd.GetDrawMode();
+    int rndDrawMode = TheRnd.DrawMode();
     unsigned char opaqueBit = mDrawMode & 1;
     if (rndDrawMode == 4)
         return;
