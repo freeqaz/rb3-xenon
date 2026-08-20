@@ -35,8 +35,13 @@ class FixedSizeSaveableStream : public BufStream {
 public:
     FixedSizeSaveableStream(void *, int, bool);
     virtual ~FixedSizeSaveableStream();
-    virtual bool FinishWrite() { return 0; }
-    virtual bool FinishStream() { return 0; }
+    // NOT virtual: retail's FixedSizeSaveableStream vtable has 11 slots -- the
+    // SAME count as its BufStream base -- so retail adds no new virtuals here.
+    // Ours measured 14.  The +3 decomposes exactly: BufStream::Size (fixed in
+    // BufStream.h) plus these two, which are declared here and never called,
+    // never overridden, and have no subclass to dispatch to.
+    bool FinishWrite() { return 0; }
+    bool FinishStream() { return 0; }
 
     bool HasSymbol(Symbol) const;
     bool HasID(int) const;

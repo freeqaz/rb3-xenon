@@ -69,7 +69,11 @@ public:
     virtual void ReadImpl(void *, int);
     virtual void WriteImpl(const void *, int) {}
     virtual void SeekImpl(int, SeekType);
-    virtual ChunkHeader *Header() { return mHeader; }
+    // NOT virtual: BinStream declares no Header(), so `virtual` here APPENDS a
+    // 12th vtable slot; retail's IDataChunk vtable has 11.  The sole subclass
+    // (WaveFileData) does not override it -- and it inherits this table, which
+    // is why WaveFileData measured +1 for the same single cause.
+    ChunkHeader *Header() { return mHeader; }
 
 private:
     IListChunk *mParent; // 0xc

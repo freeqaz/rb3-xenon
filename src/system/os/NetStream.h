@@ -14,7 +14,15 @@ public:
     virtual void Flush() {}
     virtual EofType Eof();
     virtual bool Fail() { return mFail; }
-    virtual int ReadAsync(void *, int);
+    // NOT virtual: BinStream does not declare ReadAsync, so a `virtual` here
+    // is a NEW virtual and MSVC appends it to the vtable.  Retail's
+    // ??_7NetStream@@6B@ (0x8208da10) has exactly 11 slots -- the word after
+    // slot 10 is 0x00000000 followed by the 0x19930522 FuncInfo EH magic, so
+    // the table demonstrably ends there, while ours had 12 with ReadAsync at
+    // [11].  Corroborating: retail's map carries ReadAsync only for
+    // FileCacheFile / HDCache / CacheXbox, never NetStream.  Found by
+    // tools/vtable_order_sweep.py slot-COUNT comparison (lane VTGRIND).
+    int ReadAsync(void *, int);
 
     void ClientConnect(const NetAddress &);
     NetworkSocket *Socket() const { return mSocket; }
