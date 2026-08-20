@@ -35,10 +35,25 @@ class KerningTable;
 // mNextFont fallback chain, and a FOUR-FLOAT CharInfo with no page index. The
 // multi-page DC3 shape this file used to carry does not exist in RB3 retail.
 //
-// The VTABLE is deliberately NOT changed to rb3-Wii's. Retail's CharDefined and
+// ⛔ CORRECTED 2026-08-20 (lane VTGRIND). This paragraph used to read: "The
+// VTABLE is deliberately NOT changed to rb3-Wii's. Retail's CharDefined and
 // Print are mangled `?...@RndFont@@UB...` -- public *virtual* const -- whereas
 // rb3-Wii declares both non-virtual. RB3-360 is a hybrid: Wii-era members under
-// a DC3-era vtable. Only the members move here.
+// a DC3-era vtable."  That is HALF RIGHT, and the half that is wrong was
+// unknowable from the instrument it used.
+//
+// A mangled name in scripts/target_symbol_map.json is NOT retail evidence about
+// virtuality -- the map is populated by OUR matching, so the `UB` (public
+// virtual const) spelling is our own declaration reflected back. Retail's
+// VTABLE is retail bytes, and it adjudicates each member separately:
+//   * ?Print@RndFont@@ body 0x82472C18  IS  in retail's vtable -> virtual. ✓
+//   * ?CharDefined@RndFont@@ body 0x82473A98 is NOT -> not virtual. ✗
+//   * ?CharWidth@RndFont@@ body 0x82474478  is NOT -> not virtual. ✗
+// Retail's RndFont vtable (0x8206D344) has exactly 21 slots -- Hmx::Object's
+// count -- so RndFont adds NO new virtuals; Print occupies Object::Print's slot
+// (13), i.e. it OVERRIDES, which is why it must be non-const here.
+// The members still move as described above; it is the vtable claim that is
+// corrected.
 class RndFont : public Hmx::Object {
     friend class UIFontImporter;
     friend class RndText;
@@ -96,24 +111,45 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
-    virtual float CharWidth(unsigned short) const;
-    virtual float CharAdvance(unsigned short) const;
-    virtual bool CharAdvance(unsigned short, unsigned short, float &) const;
-    virtual float Kerning(unsigned short, unsigned short) const;
-    virtual bool CharDefined(unsigned short) const;
-    virtual float AspectRatio() const { return mCellSize.y / mCellSize.x; }
-    virtual RndMat *Mat() const { return mMat; }
+    // ★ NONE of the accessors below is virtual in retail.  RndFont's retail
+    // vtable (0x8206d344) has exactly 21 slots -- byte-verified: slot[21] is
+    // 0xffffffff, not a function VA, followed by EH state-table entries, and
+    // the next enumerated vtable is 471 words away, so the bound is not what
+    // stopped the read.  21 is exactly Hmx::Object's slot count, so retail's
+    // RndFont declares NO new virtuals at all.  Ours declared 13 (12 accessors
+    // + a non-overriding Print), giving 34.
+    // RndFont has no subclasses in src/, so devirtualizing changes no dispatch.
+    // Same reasoning a prior lane applied one-at-a-time to HasChar below
+    // ("retail issues direct bl calls with no vtable load"); this is that
+    // finding generalized by tools/vtable_order_sweep.py's slot COUNT.
+    float CharWidth(unsigned short) const;
+    float CharAdvance(unsigned short) const;
+    bool CharAdvance(unsigned short, unsigned short, float &) const;
+    float Kerning(unsigned short, unsigned short) const;
+    bool CharDefined(unsigned short) const;
+    float AspectRatio() const { return mCellSize.y / mCellSize.x; }
+    RndMat *Mat() const { return mMat; }
     // rb3-Wii's accessor, and NON-virtual on purpose. Retail reads the font's
     // material with a plain `lwz r4, 0x30(font)` field load at every SetMat site
     // in rndobj/Text.cpp (0x82458E20, 0x82458ED4, 0x8245911C, 0x824594C4) -- no
     // vtable call appears anywhere. Callers that retail inlines must use this,
-    // not the virtual Mat() above (which stays, since it occupies a vtable slot).
+    // not the Mat() above.  (That parenthetical used to read "which stays,
+    // since it occupies a vtable slot" -- REFUTED 2026-08-20: retail's RndFont
+    // vtable has 21 slots, exactly Hmx::Object's count, so NO RndFont accessor
+    // occupies a slot.  Mat() is now non-virtual too.)
     RndMat *GetMat() const { return mMat; }
-    virtual const RndFont *DataOwner() const { return mTextureOwner; }
-    virtual float FontUnit() const { return mCellSize.x; }
-    virtual float FontUnitInverse() const { return 1.0f / FontUnit(); }
-    virtual void Print() const;
-    virtual bool BitmapFont() const { return true; }
+    const RndFont *DataOwner() const { return mTextureOwner; }
+    float FontUnit() const { return mCellSize.x; }
+    float FontUnitInverse() const { return 1.0f / FontUnit(); }
+    // NOT const: Hmx::Object::Print() is non-const, so a `const` here does NOT
+    // override -- MSVC keeps Object::Print in its slot AND appends a new one.
+    // dc3-decomp declares it const and we inherited that; rb3-Wii, the closer
+    // oracle for RB3, declares it NON-const.  Retail agrees: a Print@RndFont
+    // body sits in Object::Print's slot (13), and of ~40 retail Print
+    // overrides every other one is `UAA` (non-const) -- the lone `UBA` is this
+    // symbol, whose spelling comes from OUR declaration via the map.
+    virtual void Print();
+    bool BitmapFont() const { return true; }
 
     OBJ_MEM_OVERLOAD(0x7C)
     NEW_OBJ(RndFont)
@@ -162,7 +198,7 @@ protected:
     bool HasChar(unsigned short c) const {
         return mCharInfoMap.find(c) != mCharInfoMap.end();
     }
-    virtual void SetASCIIChars(String);
+    void SetASCIIChars(String);
 
     String GetASCIIChars() const;
 
