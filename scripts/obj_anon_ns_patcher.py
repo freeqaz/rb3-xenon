@@ -104,8 +104,27 @@ once our names equal retail's, rule 1 maps them to themselves.
 
 Usage:
     python3 scripts/obj_anon_ns_patcher.py --batch [--apply] [--verbose]
+    python3 scripts/obj_anon_ns_patcher.py [--apply] <rel/path.obj> ...
 
 Without --apply, performs a dry run showing what would be changed.
+
+Per-file mode, and why it is still the same answer
+--------------------------------------------------
+The per-file form takes paths relative to --src-dir, matching
+obj_guard_patcher/obj_bool_mangle_patcher.  Unlike those two this pass DOES
+have cross-object state -- `global_index`, the union of every hash tuple in
+every RETAIL object some compiled object is paired with -- so restricting the
+work is not the same thing as restricting the inputs.  Per-file mode therefore
+builds the index EXACTLY as batch does (whole `--obj-dir`, whole `--src-dir`,
+whole objdiff.json) and only narrows the final rewrite loop.
+
+That is sound for the single-TU rescore this exists for, because every input to
+the index is either a retail target object or a compiled object's PATH, and a
+recompile of one TU changes neither: `live_targets` reads relpaths, never
+contents.  Two compiled objects never inform each other here.  Verified by
+control rather than argued: a full-graph object and a single-TU compile +
+per-file chain are byte-identical (<decomp-bench>/archive/runs/
+2026-08-21-permuter-name-check-path/).
 """
 
 import argparse
@@ -557,7 +576,20 @@ def process_batch(args):
     rules = Counter()
     hashless = []            # (relpath, ours, retail's) -- see hashless_names()
 
-    for relpath, decomp_path in sorted(decomp_by_relpath.items()):
+    # The index above is always built over the WHOLE tree (see the module note);
+    # only the rewrite loop narrows. `args.files` is relative to --src-dir.
+    if args.batch:
+        work = sorted(decomp_by_relpath.items())
+    else:
+        work = []
+        for f in args.files:
+            rel = os.path.normpath(f)
+            if rel not in decomp_by_relpath:
+                print(f"ERROR: {f} is not an object under {src_dir}", file=sys.stderr)
+                sys.exit(1)
+            work.append((rel, decomp_by_relpath[rel]))
+
+    for relpath, decomp_path in work:
         with open(decomp_path, 'rb') as fh:
             data = fh.read()
         if not ANON_NS_PATTERN.search(data):
@@ -678,13 +710,12 @@ def main():
     parser.add_argument('--check', action='store_true',
                         help='Dry-run and EXIT 2 if any object in the build tree '
                              'still needs this pass')
+    parser.add_argument('files', nargs='*',
+                        help='Specific .obj files to patch (paths relative to --src-dir)')
     args = parser.parse_args()
 
-    if not args.batch:
-        print("ERROR: Currently only --batch mode is supported.", file=sys.stderr)
-        print("Usage: python3 scripts/obj_anon_ns_patcher.py --batch [--apply] [--verbose]",
-              file=sys.stderr)
-        sys.exit(1)
+    if not args.batch and not args.files:
+        parser.error('Specify --batch or provide specific files')
 
     process_batch(args)
 
