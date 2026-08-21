@@ -192,16 +192,39 @@ endif()
 # which of those files must NOT also be compiled standalone. See the module.
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ScatterIncludes.cmake)
 
+# ⛔ `file(GLOB *.cpp)` MATCHES DOTFILES, and the permuter writes its working
+# copies as hidden `.permuter_work_<pid>_<hash>_<Orig>.cpp` NEXT TO the original.
+# Two of them for one TU are two full copies of every symbol in it, so the
+# native LINK fails with `multiple definition` -- while the X360 match build,
+# which compiles an explicit objects.json list, is completely unaffected and
+# stays green.  Measured on main 2026-08-21: 78 stale scratch files left by four
+# DEAD permuter PIDs took the gate to FAIL 1/18 (rb3-dta and 16 dependents), and
+# `git status` was CLEAN throughout because `.permuter_work_*` is gitignored.
+#
+# A prior lane hit exactly this and filtered `MILO_FORK_SOURCES` (see the
+# `list(FILTER ... "/\\.[^/]*\\.cpp$")` further down) -- but only that ONE
+# variable, leaving the nine globs below exposed.  Same defect, same file,
+# fixed once centrally instead of per-variable so the next glob added here
+# inherits it.
+function(rb3x_drop_hidden var)
+  list(FILTER ${var} EXCLUDE REGEX "/\\.[^/]*\\.cpp$")
+  set(${var} "${${var}}" PARENT_SCOPE)
+endfunction()
+
 # --- Engine core: the subset needed for DTA parsing ---
 # obj (DataNode/DataArray/Object), utl (MemMgr/Str/Symbol/streams),
 # os (File/Debug/System), math (already known-good).
 # CONFIGURE_DEPENDS: a bare file(GLOB) expands once and never re-runs, so a
 # newly added engine .cpp would be silently missing until someone deleted the
 # build directory.
-file(GLOB ENGINE_OBJ  CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/obj/*.cpp)
-file(GLOB ENGINE_UTL  CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/utl/*.cpp)
-file(GLOB ENGINE_OS   CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/os/*.cpp)
+file(GLOB ENGINE_OBJ CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/obj/*.cpp)
+rb3x_drop_hidden(ENGINE_OBJ)
+file(GLOB ENGINE_UTL CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/utl/*.cpp)
+rb3x_drop_hidden(ENGINE_UTL)
+file(GLOB ENGINE_OS CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/os/*.cpp)
+rb3x_drop_hidden(ENGINE_OS)
 file(GLOB ENGINE_MATH CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/math/*.cpp)
+rb3x_drop_hidden(ENGINE_MATH)
 set(ENGINE_SOURCES ${ENGINE_OBJ} ${ENGINE_UTL} ${ENGINE_OS} ${ENGINE_MATH})
 
 # Drop platform-specific TUs — native shims replace them.
@@ -222,6 +245,7 @@ set(RNDOBJ_SOURCES ${REPO_ROOT}/src/system/rndobj/Anim.cpp)
 
 # --- Native platform shims (from dc3-decomp) ---
 file(GLOB PLATFORM_SHIMS CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/src/platform/*.cpp)
+rb3x_drop_hidden(PLATFORM_SHIMS)
 set(NATIVE_SHIMS
     ${CMAKE_SOURCE_DIR}/src/xdk_shims.cpp
     ${CMAKE_SOURCE_DIR}/src/native_link_glue.cpp
@@ -1179,13 +1203,17 @@ endif()
 # X3 is where the engine link and the collision table come due together.
 # =============================================================================
 file(GLOB ENGINE_RNDOBJ CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/rndobj/*.cpp)
-file(GLOB ENGINE_CHAR   CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/char/*.cpp)
-file(GLOB ENGINE_WORLD  CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/world/*.cpp)
+rb3x_drop_hidden(ENGINE_RNDOBJ)
+file(GLOB ENGINE_CHAR CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/char/*.cpp)
+rb3x_drop_hidden(ENGINE_CHAR)
+file(GLOB ENGINE_WORLD CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/world/*.cpp)
+rb3x_drop_hidden(ENGINE_WORLD)
 # ui/ is 38/38 clang-LP64-clean as measured -- not one exclusion. It is here
 # because the world/ and rndobj/ object graphs reach PanelDir, UIComponent and
 # TheUI, and PanelDir is an ObjectDir SUBCLASS: stubbing it would be the exact
 # desync hazard main_milo.cpp gates against, not a cosmetic gap.
-file(GLOB ENGINE_UI     CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/ui/*.cpp)
+file(GLOB ENGINE_UI CONFIGURE_DEPENDS ${REPO_ROOT}/src/system/ui/*.cpp)
+rb3x_drop_hidden(ENGINE_UI)
 set(MILO_FORK_SOURCES ${ENGINE_RNDOBJ} ${ENGINE_CHAR} ${ENGINE_WORLD} ${ENGINE_UI})
 
 # ---- X4b STEP-0: the classes every RB3 venue root needs -------------------
