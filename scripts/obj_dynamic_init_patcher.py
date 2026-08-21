@@ -14,8 +14,14 @@ Patches are LOST on rebuild (same as regswap/anon_ns patchers) — this is a pos
 
 Usage:
     python3 scripts/obj_dynamic_init_patcher.py --batch [--apply] [--verbose]
+    python3 scripts/obj_dynamic_init_patcher.py [--apply] <rel/path.obj> ...
 
 Without --apply, performs a dry run showing what would be changed.
+
+The per-file form takes paths relative to --src-dir, matching obj_guard_patcher
+and obj_bool_mangle_patcher. It is exactly the batch pass restricted to those
+files: this patcher reads only the object in front of it (no target obj, no
+cross-object index), so per-file and batch are byte-identical by construction.
 """
 
 import argparse
@@ -84,11 +90,16 @@ def process_batch(args):
         print(f"ERROR: Decomp .obj directory not found: {src_dir}", file=sys.stderr)
         sys.exit(1)
 
+    if args.batch:
+        obj_paths = sorted(glob.glob(str(src_dir / '**' / '*.obj'), recursive=True))
+    else:
+        obj_paths = [str(src_dir / f) for f in args.files]
+
     total_patched = 0
     files_patched = 0
     all_symbols = []
 
-    for obj_path in sorted(glob.glob(str(src_dir / '**' / '*.obj'), recursive=True)):
+    for obj_path in obj_paths:
         names = patch_obj(obj_path, apply=args.apply, verbose=args.verbose)
         if names:
             files_patched += 1
@@ -139,6 +150,8 @@ def main():
     parser.add_argument('--check', action='store_true',
                         help='Dry-run and EXIT 2 if any object in the build tree '
                              'still needs this pass')
+    parser.add_argument('files', nargs='*',
+                        help='Specific .obj files to patch (paths relative to --src-dir)')
     args = parser.parse_args()
 
     if args.check:
@@ -146,11 +159,8 @@ def main():
         # auditing is not a checker.
         args.apply = False
 
-    if not args.batch:
-        print("ERROR: Currently only --batch mode is supported.", file=sys.stderr)
-        print("Usage: python3 scripts/obj_dynamic_init_patcher.py --batch [--apply] [--verbose]",
-              file=sys.stderr)
-        sys.exit(1)
+    if not args.batch and not args.files:
+        parser.error('Specify --batch or provide specific files')
 
     pending = process_batch(args)
     if args.check:
