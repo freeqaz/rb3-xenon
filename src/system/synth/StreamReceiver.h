@@ -35,6 +35,28 @@ public:
     // then 0x34). DC3 hoisted GetPlayCursor above PauseImpl, shifting both by one
     // slot. rb3-Wii's StreamReceiver has the same PauseImpl/PlayImpl/GetPlayCursor
     // relative order as RB3-360, corroborating that DC3 is the one that moved it.
+    //
+    // ⚠ DO NOT "FIX" THIS ORDER TO MATCH tools/vtable_order_sweep.py. The sweep
+    // reports StreamReceiver360 as PERMUTED with slots 13/14 swapped, and that is
+    // a FALSE POSITIVE driven by a wrong map name, not a defect here. Adjudicated
+    // on retail bytes 2026-08-21:
+    //   * retail's StreamReceiver360 vtable @0x8219754C really does hold
+    //     0x82B6BAE8 at slot 13 and 0x82B6BAF8 at slot 14, and
+    //     target_symbol_map.json names those GetPlayCursor and PlayImpl
+    //     respectively -- which is what the sweep is reporting.
+    //   * BUT both are 16-byte tail-call thunks with BYTE-IDENTICAL bodies except
+    //     the branch displacement, so which name belongs to which is exactly the
+    //     kind of assignment ICF makes arbitrary. Their branch targets resolve to
+    //     an unrelated symbol and to no map entry at all.
+    //   * The CALL SITE settles it. StreamReceiver::Play dispatches 0x30 with
+    //     `li r4,0` (an argument -> PauseImpl(bool), consistent), and dispatches
+    //     0x34 with NO argument and DISCARDS the result. `Play()` calling
+    //     GetPlayCursor() and throwing the int away is not a plausible reading;
+    //     the play path calling PlayImpl() is. So 0x34 is PlayImpl, as declared
+    //     here, and the MAP has the two thunk names swapped.
+    // Fixing the map is a separate, measured lane (a map edit's delta is mostly
+    // un-pairing, so it is not a free rename). Until then the sweep's PERMUTED
+    // verdict on StreamReceiver360 is KNOWN and EXPECTED.
     virtual void PauseImpl(bool) = 0;
     virtual void PlayImpl() = 0;
     virtual int GetPlayCursor() = 0;
