@@ -579,3 +579,142 @@ believing it.
 Tests: 14 checks, both fixtures anchored on real retail bytes, `--self-break`
 still fails as required. Nothing is hardcoded to a verdict — shapes are
 recomputed from bytes every run.
+
+---
+
+## §12 — wave 6 (2026-08-21): the sweep was joining the wrong table, and what was left is a MAP worklist, not a source worklist
+
+Two results, one good and one that closes a vein. **Zero source defects were
+found, and the two source edits this lane made were both REVERTED after retail
+bytes refuted them.** That is the finding, not a preamble to one.
+
+### 12a. The our-side table was chosen by MANGLED NAME, and the rule was false
+
+`sweep_class` picked our vtable as bare `??_7X@@6B@`, treating it as "the
+primary (offset-0) table". `cl /d1reportSingleClassLayoutCustomizePanel` says
+otherwise for `class CustomizePanel : public UIPanel, public ContentMgr::Callback`:
+
+```
+0x0   {vfptr} [UIPanel]                <- retail COL.offset == 0 means THIS
+0x3c  {vfptr} [Callback]               <- and THIS is ??_7CustomizePanel@@6B@
+0xb8  {vfptr} [Object > ObjRefOwner]
+=== vtable CustomizePanel@UIPanel@ (15 slots) ===
+```
+
+So the bare name is a **secondary** table. Comparing it against retail's primary
+aligns two different tables, and *every* covered slot disagrees — which is
+exactly what a `SET_DIFFER` then reports. Our side's mismatching slots were all
+`ContentMgr::Callback` methods while retail's were all `UIPanel` methods, and
+`??_7CustomizePanel@@6BUIPanel@@@` agrees with retail on all six.
+
+**Fix: join OFFSET to OFFSET.** We build `/GR`, so our objs carry `??_R4` COLs
+whose names parallel the `??_7` vftables one-for-one, and a COL states its own
+offset (big-endian DWORD at +4). Both sides are then authoritative RTTI and no
+mangled-name rule survives in the path. Ambiguity **refuses**
+(`AMBIGUOUS_MULTI_VTABLE`) rather than guessing.
+
+| verdict | before | after |
+|---|---:|---:|
+| `AMBIGUOUS_MULTI_VTABLE` | 410 | **3** |
+| `SAME` | 454 | **959** |
+| `SET_DIFFER` | 22 | **15** |
+| `PERMUTED` | 0 | **1** |
+| comparable slots charged | 2,078 | **5,082** |
+
+★★ **The transition table is the evidence, not the totals.** All **17**
+multi-vtable `SET_DIFFER` became `SAME`; all **5** single-vtable ones — where no
+ambiguity is possible — are unchanged **with identical coverage**; regressions
+(was `SAME`, now a defect) = **ZERO**. Resolving 407 previously-refused classes
+also surfaced 11 new candidates, so the refusal had been hiding leads, not only
+noise.
+
+⚠ **Endianness is load-bearing and offset 0 cannot detect it.** A little-endian
+read returns `0x3c` as `1006632960` — not obviously wrong, just a number no
+retail offset equals, so every secondary join silently MISSES and degrades to
+"ambiguous". The selftest pins `0x3c` and `0xb8` for exactly this reason;
+a test using only the primary table would have passed while the join was broken.
+Mutation-verified: flipping to `<I` gives `SELFTEST FAIL`.
+
+### 12b. ⛔⛔ THE CALL SITE OUTRANKS THE MAP NAME, THE ORACLE, AND THE BODY SHAPE
+
+Two source edits were made on what looked like strong evidence. **Both were
+wrong**, and the same instrument caught both: retail's own compiled **dispatch
+offset**, which encodes the slot number as an immediate.
+
+**`TrackWatcherImpl` — reverted.** Moving `RGFretButtonDown` after
+`FretButtonUp` measured **−2 matched / −40 B**, all in `default/TrackWatcher`.
+The two regressed rows name the cause:
+
+```
+?FretButtonUp@TrackWatcher@@QAAXH@Z      100.000 -> 99.800   (20 B)
+?RGFretButtonDown@TrackWatcher@@QAAXH@Z  100.000 -> 99.800   (20 B)
+  [2]  target `lwz r11, 0x30(r11)`   base `lwz r11, 0x2c(r11)`   diff_arg
+```
+
+Retail dispatches `FretButtonUp` at **0x30 = slot 12** — our original order.
+
+**`Cache` — reverted.** Toggle test on `SaveLoadManager::SetState`, one
+instruction flips:
+
+| state | instruction 369 |
+|---|---|
+| `GetFileSizeAsync` moved to slot 6 | target `0x1c` vs base `0x18` → **mismatch** |
+| original order | no mismatch (both `0x1c`) |
+
+Retail dispatches it at **0x1c = slot 7** — our original order.
+
+★★★ **Why the "three independent confirmations" were not three.** This is the
+reusable lesson:
+
+1. **The map name at the disputed slot IS THE CLAIM UNDER TEST.** Counting it as
+   evidence for itself is circular, and it read as one of three agreeing
+   sources.
+2. **The rb3-Wii oracle is a different build and does not bind retail-360's
+   declaration order.** It agreed with the map here and both were wrong —
+   cf. `project_oracle_fidelity_has_four_modes_2026-08-17`: retail bytes outrank
+   the oracle in every mode.
+3. ⛔ **The body-shape argument was CIRCULAR IN ITS INDEX.** Retail's slot 12
+   tail-calls virtual slot `0xb8/4 == 46`, and *our* slot 46 is
+   `RecordFretButtonDown`, so it "must" be `RGFretButtonDown`. But **retail's
+   slot 46 is read through OUR numbering, which is the very thing in dispute** —
+   retail's 46 is `RecordFretButtonUp` (our 47), so the thunk actually says
+   slot 12 is `FretButtonUp`, agreeing with the call site and refuting the edit.
+   *An off-by-one in the numbering you are testing is invisible to a test that
+   uses that numbering.*
+
+### 12c. Score card: 6 adjudicated, 6 MAP defects, 0 source defects
+
+Every `SET_DIFFER`/`PERMUTED` row adjudicated on retail bytes turned out to be a
+**map** defect. None was a source defect.
+
+| class | map says | retail bytes say | instrument |
+|---|---|---|---|
+| `StreamReceiver360` (§11) | `GetPlayCursor`/`PlayImpl` swapped | our header right | call-site arity |
+| `Synth360::NewBufStream` | 5 args (`_N`) | **6** — prologue keeps `{r4,r5,r6,r8,r9,f1}`, r7 consumed by the float | prologue |
+| `MetaMusicLoader` s4 | `IsLoaded` | `PollLoading`; s2 is `IsLoaded` (`mState == 0x826c3888`, the `blr` stub `DoneLoading`) | body |
+| `StandardStream` s52 | `SetJump` | `UpdateTimeByFiltering`; real `SetJump` is unnamed s40, which stores `f1`,`f2` and forwards a `const char*` (`MMPBD`) | body/signature |
+| `TrackWatcherImpl` s11 | `FretButtonUp` | slot 12 | **call site 0x30** |
+| `CacheXbox` s6/s7 | `GetFileSizeAsync`/`GetDirectoryAsync` | swapped | **call site 0x1c** |
+
+⇒ ★★★★★ **The residual `SET_DIFFER`/`PERMUTED` list measures MAP QUALITY, not
+source quality.** Do not fund it as a source-defect lever. It is a good
+**map-defect worklist**, and each entry needs retail-byte adjudication before
+any edit — the sweep cannot distinguish "our order is wrong" from "the map's
+name is wrong", because both produce the identical row.
+
+⚠ **`Cache.h:11-12`'s op-kind table (`kOpFileSize == 1`) and Cache_Xbox.cpp:351
+("GetDirectoryAsync stores 0x160") are DOWNSTREAM OF THE SAME WRONG MAP** and
+are therefore not independent corroboration. An in-tree record is evidence about
+what a previous lane concluded, not proof of the conclusion — check what it was
+derived FROM.
+
+### 12d. What was NOT done
+
+- **The map is not fixed.** Six proven defects are recorded above; a map edit's
+  delta is mostly un-pairing rather than cascade, so it is its own measured lane.
+- `DxShaderMgr` s11 was **deferred, not adjudicated** — only one retail slot in
+  that whole region is named (s9/s10/s12/s13 are all unnamed), which is too thin
+  to decide `SetPConstant` vs `SetVConstant`.
+- The remaining 9 `SET_DIFFER` rows are unadjudicated. Given 6/6 above, expect
+  map defects, but expect is not measured.
+- 1,242 `UNRESOLVED` remain untouched.

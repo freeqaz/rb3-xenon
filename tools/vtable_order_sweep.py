@@ -11,6 +11,32 @@ N dispatches to the wrong method.  Precedent from this project:
 `bandobj/TrackInterface.h` declared `UserName`/`GetTrackIcon` in the wrong order,
 found via retail `.rdata` across 3 independent vtable copies.
 
+⛔⛔ READ BEFORE EDITING ANY SOURCE ON A VERDICT FROM THIS TOOL
+--------------------------------------------------------------
+**A `SET_DIFFER`/`PERMUTED` row does NOT distinguish "our declaration order is
+wrong" from "the MAP's name for that slot is wrong" -- both produce the
+identical row**, because the retail side of the comparison is a *map name*.
+Wave 6 (2026-08-21) adjudicated **6 of these on retail bytes and got 6 MAP
+defects and 0 source defects**, after two source edits made on apparently
+strong evidence were measured at **-2 matched / -40 B** and reverted.
+
+★★★ **THE AUTHORITATIVE INSTRUMENT IS THE CALL SITE, NOT THE NAME.** A caller
+dispatching a virtual emits `lwz r11, (slot*4)(r11); mtctr; bctr[l]` -- the slot
+index is an **immediate in retail's own machine code**.  It cannot be poisoned
+by ICF (it is not a relocation) and depends on no name.  `objdiff` already
+surfaces it as a `diff_arg` on that `lwz`.  Three weaker things that all agreed
+with each other and were all WRONG:
+
+  1. the map name at the disputed slot -- that IS the claim under test;
+  2. the rb3-Wii / DC3 oracle's declaration order -- a different build, not
+     binding on retail-360 (see the four oracle-fidelity modes);
+  3. "retail slot N tail-calls slot M, and OUR slot M is X" -- ⛔ circular: it
+     reads retail's index through OUR numbering, which is the thing in dispute.
+     An off-by-one is invisible to a test that uses the numbering being tested.
+
+⇒ Treat the residual worklist as a **map-defect** worklist.  Full write-up and
+the 6-row score card: docs/decomp/VTABLE_SLOT_COUNT_FIXES_2026-08-20.md §12.
+
 THE TWO SIDES
 -------------
   retail : MSVC puts a `??_R4` Complete Object Locator pointer at vtable[-1];
@@ -181,7 +207,8 @@ def _obj_index(project_dir):
             except Exception:
                 continue
             for (name, _val, secnum, _t, _sc, _i2) in syms:
-                if secnum > 0 and name.startswith('??_7') and '@@6B' in name:
+                if secnum > 0 and '@@6B' in name and (
+                        name.startswith('??_7') or name.startswith('??_R4')):
                     idx.setdefault(name, p)
     _OBJ_INDEX = idx
     return idx
@@ -227,18 +254,92 @@ def read_our_vtable(objpath, symname):
     return [n for _o, n in out]
 
 
-def our_vtable(cls, project_dir, base=None):
-    """Our vtable slot symbols for `cls`; `base` selects a secondary table."""
+def our_col_offset(objpath, symname):
+    """`offset` field of one of OUR `??_R4` Complete Object Locators, or None.
+
+    MSVC's COL is 5 DWORDs -- signature, **offset**, cdOffset, pTypeDescriptor,
+    pClassDescriptor -- so the vftable's offset within the complete object is
+    the DWORD at +4.
+
+    ⛔ **BIG-ENDIAN.**  The COFF *headers* are little-endian but the X360
+    *payload* is big-endian PowerPC (same trap CLAUDE.md records for `.pdata`).
+    Read little-endian and `0x3c` comes back as `1006632960`, which is not
+    obviously wrong -- it is just a large number that no retail offset will ever
+    equal, so every join silently MISSES and the sweep degrades to "ambiguous"
+    rather than erroring.  `test_vtable_offset_join` pins the endianness against
+    three compiler-verified offsets for exactly this reason.
+    """
+    sys.path.insert(0, os.path.join(os.path.dirname(objpath), ''))
+    import coff_func_bodies as cfb
+    try:
+        d, secs, syms, _ = cfb.parse(objpath)
+    except Exception:
+        return None
+    for (n, val, secnum, _t, _sc, _i) in syms:
+        if n == symname and secnum > 0:
+            sec = secs[secnum - 1]
+            off = sec['rawptr'] + val
+            if off + 8 > len(d):
+                return None
+            return struct.unpack_from('>I', d, off + 4)[0]
+    return None
+
+
+def our_vtable_candidates(cls, project_dir):
+    """Every `??_7{cls}@@6B<suffix>` we compiled, as {suffix: (vt_sym, path)}."""
     idx = _obj_index(project_dir)
-    if base:
-        cands = [f'??_7{cls}@@6B{base}@@@']
-    else:
-        cands = [f'??_7{cls}@@6B@', f'??_7{cls}@@6B0@@']
-    for sym in cands:
-        p = idx.get(sym)
-        if p:
-            return [dict(symbol=s) for s in read_our_vtable(p, sym)]
-    return []
+    pre = f'??_7{cls}@@6B'
+    return {k[len(pre):]: (k, v) for k, v in idx.items() if k.startswith(pre)}
+
+
+def our_vtable_by_offset(cls, project_dir, want_offset):
+    """Our vftable at `want_offset`, joined via OUR OWN RTTI -- never by name.
+
+    ★★★ The rule this REPLACES was a false premise, and the compiler refuted it.
+    The sweep used to treat bare `??_7X@@6B@` as "the offset-0 (primary) table".
+    For `CustomizePanel` (`class CustomizePanel : public UIPanel, public
+    ContentMgr::Callback`) `cl /d1reportSingleClassLayoutCustomizePanel` places
+
+        0x0   {vfptr} [UIPanel]      <- retail's COL.offset == 0 means THIS
+        0x3c  {vfptr} [Callback]     <- and this is `??_7CustomizePanel@@6B@`
+        0xb8  {vfptr} [Object > ObjRefOwner]
+
+    so the bare name is a SECONDARY table.  Comparing it against retail's
+    primary aligns two different tables and manufactures a full-width
+    disagreement -- 17 of 22 `SET_DIFFER` verdicts were exactly this, and our
+    source was correct in every one.  Same shape as the thunk-twin artifact:
+    the tool read its input correctly and joined the wrong two things.
+
+    ⇒ Join OFFSET to OFFSET.  Our objs are built `/GR`, so they carry `??_R4`
+    COLs whose names parallel the `??_7` vftables one-for-one; each COL states
+    its own offset.  Both sides are then authoritative RTTI and no mangled-name
+    rule is involved.  **Ambiguity REFUSES rather than guesses** -- returning
+    None yields AMBIGUOUS_MULTI_VTABLE, which is a worklist entry, not a
+    verdict about the source.
+    """
+    cands = our_vtable_candidates(cls, project_dir)
+    if not cands:
+        return None, 'no_vtable'
+    if len(cands) == 1 and want_offset in (0, None):
+        # Single table and retail says primary -- no ambiguity to resolve.
+        sfx, (sym, path) = next(iter(cands.items()))
+        return [dict(symbol=s) for s in read_our_vtable(path, sym)], f'sole:{sym}'
+    if want_offset is None:
+        return None, 'retail_offset_unknown'
+    idx = _obj_index(project_dir)
+    hits = []
+    for sfx, (sym, path) in cands.items():
+        col = f'??_R4{cls}@@6B{sfx}'
+        cp = idx.get(col)
+        if cp is None:
+            continue
+        off = our_col_offset(cp, col)
+        if off == want_offset:
+            hits.append((sym, path))
+    if len(hits) != 1:
+        return None, f'col_join_{len(hits)}_hits'
+    sym, path = hits[0]
+    return [dict(symbol=s) for s in read_our_vtable(path, sym)], f'col:{sym}'
 
 
 # --------------------------------------------------------------------------
@@ -363,11 +464,10 @@ def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
         return dict(cls=bare, rtti=cls_rtti, vt_va=vt_va,
                     retail_slots=len(slots), our_slots=0, folded_slots=0,
                     verdict='AMBIGUOUS_MULTI_VTABLE', covered=0, mismatches=[])
-    if n_vtables > 1 and sub_off != 0 and sub_base is None:
-        # secondary vtable whose subobject we could not name -> still ambiguous
-        return dict(cls=bare, rtti=cls_rtti, vt_va=vt_va,
-                    retail_slots=len(slots), our_slots=0, folded_slots=0,
-                    verdict='AMBIGUOUS_MULTI_VTABLE', covered=0, mismatches=[])
+    # ⚠ `sub_base` (the base NAME from the retail hierarchy descriptor) is
+    # deliberately NOT used to pick our table any more -- see
+    # `our_vtable_by_offset` for the compiler-verified refutation of the
+    # name-based rule.  It is kept only for reporting.
     # All fold/name-trust reasoning is delegated -- see tools/icf_fold_safe.py
     # for the four shapes it handles and why it is a TYPE rather than a helper.
     hier = hierarchy_names(R, vt_va) | {bare}
@@ -380,7 +480,19 @@ def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
     _txt = [(s.va, s.va + s.rawsize) for s in R.sections if s.name == '.text'][0]
     retail_sl = ifs.mark_thunk_twins(
         retail_sl, lambda va: R.u32(va) if _txt[0] <= va < _txt[1] else None)
-    ours = our_vtable(bare, project_dir, base=sub_base)
+    ours, how = our_vtable_by_offset(bare, project_dir, sub_off)
+    if how == 'no_vtable':
+        ours = []       # we simply do not compile this class -> UNRESOLVED
+    elif ours is None:
+        # Could not PROVE which of our tables retail means.  Refuse: an
+        # AMBIGUOUS row is a worklist entry, a verdict would be a claim about
+        # the source we cannot support.
+        return dict(cls=bare, rtti=cls_rtti, vt_va=vt_va,
+                    retail_slots=len(slots), our_slots=0, folded_slots=0,
+                    verdict='AMBIGUOUS_MULTI_VTABLE', covered=0, mismatches=[],
+                    excluded={}, withheld=[], join=how)
+    if how == 'no_vtable':
+        ours = []       # we simply do not compile this class -> UNRESOLVED
     our_sl = ifs.our_slot_names(ours)
     verdict, covered, mism, withheld = compare_orders(retail_sl, our_sl)
     excl = ifs.exclusion_counts(retail_sl)
@@ -485,6 +597,31 @@ def selftest(project_dir):
     if not good:
         ok = False
     print(f"  [{'ok ' if good else 'FAIL'}] .pdata extents: {len(exts)} (want >40000)")
+
+    # ---- the our-side table join, pinned against COMPILER ground truth ------
+    # `cl /d1reportSingleClassLayoutCustomizePanel` reports
+    #     0x0 {vfptr} [UIPanel] · 0x3c {vfptr} [Callback] · 0xb8 {vfptr} [Object]
+    # These three constants are transcribed from that report, so a wrong
+    # endianness, a wrong COL field offset, or a regression to picking the
+    # table by mangled name all FAIL here rather than silently mis-joining.
+    idx = _obj_index(project_dir)
+    if '??_R4CustomizePanel@@6B@' not in idx:
+        print("  [skip] COL-offset join: CustomizePanel.obj not built")
+    else:
+        for sym, want in (('??_R4CustomizePanel@@6BUIPanel@@@', 0x00),
+                          ('??_R4CustomizePanel@@6B@', 0x3c),
+                          ('??_R4CustomizePanel@@6BObject@Hmx@@@', 0xb8)):
+            chk(f'COL offset {sym}', our_col_offset(idx[sym], sym), want)
+        # retail COL.offset == 0 must select the UIPanel table (15 slots),
+        # NOT the bare `??_7...@@6B@` name (14 slots, the Callback subobject).
+        sl, how = our_vtable_by_offset('CustomizePanel', project_dir, 0)
+        chk('join(0) picks UIPanel table', 'UIPanel' in (how or ''), True)
+        chk('join(0) slot count', len(sl or []), 15)
+        chk('join(0) slot 0', (sl or [{}])[0].get('symbol'),
+            '?Load@CustomizePanel@@UAAXXZ')
+        # ★ ambiguity must REFUSE, never fall back to a guess
+        sl3, how3 = our_vtable_by_offset('CustomizePanel', project_dir, 0x999)
+        chk('bogus offset refuses', (sl3, how3), (None, 'col_join_0_hits'))
 
     print("\nSELFTEST", "PASS" if ok else "FAIL")
     return 0 if ok else 1
