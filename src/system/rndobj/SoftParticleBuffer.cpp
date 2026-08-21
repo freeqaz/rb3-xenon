@@ -105,8 +105,8 @@ void RndSoftParticleBuffer::DoPost() {
             RndCam *cam = TheRnd.mWorldCamCopy;
             cam->SetTargetTex(mSurfaces[0]);
             cam->Select();
-            Rnd::DrawMode savedMode = TheRnd.GetDrawMode();
-            TheRnd.mDrawMode = (Rnd::DrawMode)6;
+            Rnd::Mode savedMode = TheRnd.DrawMode();
+            TheRnd.mDrawMode = (Rnd::Mode)6;
             TheShaderMgr.SetPConstant((PShaderConstant)9, TheNgRnd.PreDepthTexture());
             TheRenderState.SetTextureFilter(9, (RndRenderState::FilterMode)0, false);
             TheRenderState.SetTextureClamp(9, (RndRenderState::ClampMode)2);

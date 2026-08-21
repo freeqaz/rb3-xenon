@@ -285,3 +285,101 @@ native gate: `verdict=PASS expected=18 verified=18 skipped=0 partial=0 rc=0`
 
 ⇒ The −748 was entirely the stale map spelling. Net effect: **vtable shape now
 exactly retail's, metric-neutral, aggregate fuzzy marginally up.**
+
+---
+
+## 9. Wave 3 — the survivors, and §3's defect finally fixed at the root
+
+### 9a. The instrument was rebuilt properly first
+
+§3 recorded that a longest-common-prefix scan **rebuilt the fold-poisoning
+defect one day after it was fixed**, and concluded "any new vtable comparator
+must be fold-aware from line one". That conclusion was right and **insufficient**
+— it asks the next author to *remember*. The author who wrote the poisoned scan
+had personally fixed the same defect the previous day.
+
+So the fold reasoning now lives in **`tools/icf_fold_safe.py`**, where a poisoned
+slot is *a value that refuses to answer*: `Slot.__eq__` raises `FoldPoisonError`
+and `Slot` is unhashable. A future `if retail != ours:` **crashes** instead of
+producing a confident wrong verdict. Gate: `tools/test_icf_fold_safe.py`
+(CI, `--self-break`-verified, fixtures are real retail bytes). Full write-up:
+`docs/decomp/patterns/icf-fold-poisoning.md`.
+
+Building it surfaced **two criteria this doc did not have**, and one
+over-correction caught by measurement:
+
+| | mismatches | SAME | SET_DIFFER | comparable slots |
+|---|---|---|---|---|
+| fold-blind (what §2/§3 measured) | 141 | 401 | 84 | 2,180 |
+| SOFT-as-HARD (over-strict) | 68 | 320 | 23 | **1,652** |
+| final (charge rule) | **68** | **451** | **23** | 2,086 |
+
+⛔ **61 of 84 `SET_DIFFER` verdicts were artifacts** — `nonvirtual_name`
+(vtable membership proves virtuality, so a `Q`/`A`/`I`/`S` spelling proves the
+NAME is wrong) and `unrelated_owner` (a slot of class C can only hold a function
+of C or a base of C). `map_audit` already used the first criterion;
+`sweep_class` never consulted it, so **the two halves of one file disagreed
+about the same slot.**
+
+★ **THE RULE: a suspect name may CONFIRM, but may never ACCUSE.** Treating those
+as hard exclusions moved 127 classes `SAME → UNRESOLVED` and destroyed 528
+comparable slots — **every one an AGREEING slot**, provably, since a class whose
+verdict was `SAME` had zero mismatches by definition. The strictness prevented
+**no false defect at all**. A suspect spelling can only manufacture a false
+*disagreement*.
+
+### 9b. 13 classes fixed — two causes
+
+| family | classes | cause |
+|---|---|---|
+| `*SessionJob` | 6 | `CheckError(DWORD, XOVERLAPPED*)` is not virtual in retail |
+| `PostProcessor` | 5 (+2) | `GetProcType()` does not exist in retail |
+
+`Job` declares exactly five virtuals and every retail table in that family is
+five slots (`StartSessionJob` @`0x82059ddc` slot 3 = `?Cancel@XboxSessionJob@@`).
+`MakeSessionJob` does **not** derive from `XboxSessionJob` — the two `CheckError`
+declarations are independent, which is why **both roots read +1**.
+
+`PostProcessor` @`0x82063a0c` is five slots and ends there (slot 5 holds
+`0x3fadf84d`, a float): `??_G`, then **one folded address for
+BeginWorld/EndWorld/DoPost** (all empty `{}`), then `?Priority@PostProcessor@@`.
+
+✅ **This RESOLVES lane BS-3's OPEN note** in `SpotlightDrawer_NG.h`. BS-3
+suspected exactly this but deferred because `?GetProcType@` has no
+`target_symbol_map` row — **it was waiting on a NAME.** The vtable is a
+name-free instrument, so the missing row never blocked it. BS-3's string-pool
+reading was independently re-verified and **stands**: both `NgSpotlightDrawer`
+hits are RTTI type names, never literals.
+
+### 9c. ⛔ The native gate was RED on main, and it was not this lane
+
+`FAIL 16/18, rc=1` on `Mesh_Wgpu.cpp: cannot refer to type member 'DrawMode' in
+'Rnd' with '.'` — reproduced **identically on an unmodified control worktree at
+the base commit**, which is the only reason it could be attributed correctly.
+
+Cause: engine `f12d4b9` moved to `TheRnd.DrawMode()` on DC3's shipped-linker-map
+proof that retail spells it `DrawMode()` returning `Rnd::Mode`, reasoning that
+*"rb3-xenon still uses GetDrawMode() but does not consume this engine"* — **a
+false premise**; xenon consumes it via `MILO_ENGINE_PIN`. So **our header was
+the wrong one.** Renamed (the enum must move to `Mode` in the same edit, since a
+member function cannot share a name with a nested type — that IS the
+diagnostic). `Character::DrawMode` is a different enum with real map rows and is
+untouched. Gate now `PASS 18/18, rc=0`; A/B Δ0 (the accessor is inline, so no
+`?GetDrawMode@Rnd@@` row exists to un-pair).
+
+### 9d. Still open
+
+- **6 count survivors remain unadjudicated**, all `ours < retail` (we are
+  MISSING a virtual, which is far harder than deleting a spurious one — you must
+  identify *which* function): `RndFur` (−2), `XboxContent` (−1, still refused
+  per §6), `ClientProtocol@Quazal` (−1), `MCResultMsg` (−1), `OggMap` (−1).
+  `NoteVoiceInst` (+1) and `SampleInst`/`SampleInst360` (+5) are the remaining
+  tractable `ours > retail` cases and are the obvious next target.
+- **23 `SET_DIFFER` classes survive the new filters** — these are the honest
+  order-defect worklist, down from 84.
+- **`withheld` pairs are now reported per class** (`vtable_order_sweep --json`).
+  They are a byte-adjudication worklist, not noise; nothing about them is
+  silently dropped.
+- The engine compares `DrawMode() == 8` while our enum tops out at
+  `kDrawVelocity = 6`, so both two-sided-cull overrides are dead on every
+  consumer. **Whether retail's `Rnd::Mode` has values above 6 is unanswered.**

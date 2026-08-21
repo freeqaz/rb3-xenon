@@ -110,11 +110,11 @@ void RndShader::Init() {
 
 void RndShader::CheckForceCull(ShaderType s) {
     int cullOverride = TheShaderMgr.CullModeOverride();
-    // Retail RB3 X360 gates on raw Rnd::DrawMode values 2 and 7 here; dc3's
+    // Retail RB3 X360 gates on raw Rnd::Mode values 2 and 7 here; dc3's
     // newer source used kDrawShadowColor (3) and 8 for these two draw modes.
-    if (TheRnd.GetDrawMode() == (Rnd::DrawMode)2 || cullOverride == 1) {
+    if (TheRnd.DrawMode() == (Rnd::Mode)2 || cullOverride == 1) {
         TheRenderState.SetCullMode((RndRenderState::CullMode)0);
-    } else if (s != kShadowmapShader && cullOverride != 3 && TheRnd.GetDrawMode() != (Rnd::DrawMode)7) {
+    } else if (s != kShadowmapShader && cullOverride != 3 && TheRnd.DrawMode() != (Rnd::Mode)7) {
         if (cullOverride == 2) {
             TheRenderState.SetCullMode((RndRenderState::CullMode)2);
         }
@@ -172,7 +172,7 @@ void RndShader::WarnMatProp(const char *prop, NgMat *mat, NgEnviron *env, Shader
 
 bool RndShader::MatShaderFlagsOK(RndMat *mat, ShaderType s) {
     if (!mat || TheRnd.DefaultEnv() == RndEnviron::Current()
-        || TheRnd.GetDrawMode() == Rnd::kDrawOcclusion) {
+        || TheRnd.DrawMode() == Rnd::kDrawOcclusion) {
         return true;
     }
     NgEnviron *curEnv = (NgEnviron *)RndEnviron::Current();
@@ -213,9 +213,9 @@ bool RndShader::DisplayMatShaderFlagsError(RndMat *mat, ShaderType s) {
 void RndShader::SelectConfig(RndMat *mat, ShaderType shader_type, bool b3) {
     RndShader *shader;
     MILO_ASSERT(shader_type >= ShaderType(0) && shader_type < kMaxShaderTypes, 0x1BB);
-    if (TheRnd.GetDrawMode() == 2) {
+    if (TheRnd.DrawMode() == 2) {
         shader_type = kShadowmapShader;
-    } else if (TheRnd.GetDrawMode() == 6) {
+    } else if (TheRnd.DrawMode() == 6) {
         shader_type = kVelocityObjectShader;
     } else if (TheShaderMgr.InDepthVolume()) {
         shader_type = kDepthVolumeShader;
@@ -266,7 +266,7 @@ void RndShader::Cache(ShaderType s, ShaderOptions opts, RndMat *mat) {
             MatShaderFlagsOK(mat, s);
         }
     }
-    bool select = s == kShadowmapShader || TheRnd.GetDrawMode() == Rnd::kDrawShadowColor;
+    bool select = s == kShadowmapShader || TheRnd.DrawMode() == Rnd::kDrawShadowColor;
     program.Select(select);
 }
 
@@ -300,7 +300,7 @@ bool RndShaderMultimesh::CheckError(MatFlagErrorType type) {
 }
 
 bool RndShaderParticles::CheckError(MatFlagErrorType type) {
-        return !(type != (MatFlagErrorType)1 && type != (MatFlagErrorType)3) && TheRnd.GetDrawMode() != 3;
+        return !(type != (MatFlagErrorType)1 && type != (MatFlagErrorType)3) && TheRnd.DrawMode() != 3;
 }
 
 void SetColorWriteMask(const ShaderOptions &opts, RndMat *mat) {
@@ -383,8 +383,8 @@ void CheckShadow() {
 }
 
 void CheckExtrude() {
-    // Retail RB3 X360 gates extrude on raw Rnd::DrawMode value 2 (dc3 used 3).
-    if (TheRnd.GetDrawMode() == (Rnd::DrawMode)2) {
+    // Retail RB3 X360 gates extrude on raw Rnd::Mode value 2 (dc3 used 3).
+    if (TheRnd.DrawMode() == (Rnd::Mode)2) {
         TheRenderState.SetDepthTestEnable(true);
         TheRenderState.SetDepthWriteEnable(true);
         TheRenderState.SetBlendEnable(true);
@@ -419,7 +419,7 @@ u64 RndShaderUnwrapUV::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 
 u64 RndShaderDepthVolume::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     return (((u64)(TheHiResScreen.IsActive() & 1) << 29
-        | (u64)(TheRnd.GetDrawMode() == Rnd::kDrawShadowColor)) << 23)
+        | (u64)(TheRnd.DrawMode() == Rnd::kDrawShadowColor)) << 23)
         | (((u64)(TheShaderMgr.BoneCount() != 0) << 11
         | (u64)(TheShaderMgr.unk1c & 3)) << 1);
 }
@@ -451,14 +451,14 @@ u64 RndShaderSimple::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     default:
         break;
     }
-    // Retail RB3 X360 gates on raw Rnd::DrawMode value 3 here (dc3's newer enum
+    // Retail RB3 X360 gates on raw Rnd::Mode value 3 here (dc3's newer enum
     // shifted kDrawOcclusion to 4); same -1 divergence handled in CheckForceCull.
-    if (TheRnd.GetDrawMode() == (Rnd::DrawMode)3) opts = 0;
+    if (TheRnd.DrawMode() == (Rnd::Mode)3) opts = 0;
     return opts;
 }
 
 u64 RndShaderDrawRect::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    if (TheRnd.GetDrawMode() == Rnd::kDrawOcclusion) return 0;
+    if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return 0;
     int hasDiffuse = mat->GetDiffuseTex() != nullptr;
     bool prelit = mat->Prelit();
     bool offscreen;
@@ -541,17 +541,17 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
         fog = false;
     }
     opts |= (u64)fog << 0x12;
-    if (TheRnd.GetDrawMode() == (Rnd::DrawMode)7) {
+    if (TheRnd.DrawMode() == (Rnd::Mode)7) {
         opts |= 0x200000000000;
     }
     return (((u64)(TheHiResScreen.IsActive() & 1) << 2
         | (u64)(TheRnd.ResourceCached() & 1)) << 0x32)
-        | (-(u64)(TheRnd.GetDrawMode() != Rnd::kDrawOcclusion) & opts);
+        | (-(u64)(TheRnd.DrawMode() != Rnd::kDrawOcclusion) & opts);
 }
 
 u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     NgEnviron *env = (NgEnviron *)RndEnviron::Current();
-    if (TheRnd.GetDrawMode() == Rnd::kDrawOcclusion) return 0;
+    if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return 0;
     int hasDiffuse = mat->GetDiffuseTex() != nullptr;
     bool prelit = mat->Prelit();
     u64 hasRealLights;
@@ -714,8 +714,8 @@ u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 u64 RndShaderStandard::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     NgEnviron *env = (NgEnviron *)RndEnviron::Current();
     u64 skinned = (u64)(TheShaderMgr.BoneCount() != 0) << 0xc;
-    if (TheRnd.GetDrawMode() == Rnd::kDrawOcclusion) return skinned;
-    if (TheRnd.GetDrawMode() == Rnd::kDrawShadowDepth) {
+    if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return skinned;
+    if (TheRnd.DrawMode() == Rnd::kDrawShadowDepth) {
         u64 base = (((u64)(mat->Prelit() & 1) << 4
             | (u64)(mat->GetDiffuseTex() != nullptr)) << 4) | skinned;
         if (!mat->UseEnviron()) return base;
@@ -961,7 +961,7 @@ u64 RndShaderPostProc::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 u64 RndShaderFur::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     RndEnviron *env = RndEnviron::Current();
     u64 skinned = (u64)(TheShaderMgr.BoneCount() != 0) << 0xc;
-    if (TheRnd.GetDrawMode() == Rnd::kDrawOcclusion) return skinned;
+    if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return skinned;
     int hasDiffuse = mat->GetDiffuseTex() != nullptr;
     bool prelit = mat->Prelit();
     u64 hasRealLights;
@@ -1059,7 +1059,7 @@ u64 RndShaderFur::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 
 u64 RndShaderSyncTrack::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     NgEnviron *env = (NgEnviron *)RndEnviron::Current();
-    if (TheRnd.GetDrawMode() == Rnd::kDrawOcclusion) return 0;
+    if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return 0;
     bool fadeOut;
     if (!b) {
         if (!env->FadeOut() || env->FadeEnd() == env->FadeStart()) {
