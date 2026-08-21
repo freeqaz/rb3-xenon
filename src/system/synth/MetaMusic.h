@@ -15,12 +15,14 @@ public:
     MetaMusicLoader(File *f, int &bytes, unsigned char *buf, int size);
     virtual ~MetaMusicLoader() {}
     virtual bool IsLoaded() const { return mState == &MetaMusicLoader::DoneLoading; }
-    virtual void PollLoading() {
-        while (!TheLoadMgr.CheckSplit() && TheLoadMgr.GetFirstLoading() == this
-               && !IsLoaded()) {
-            (this->*mState)();
-        }
-    }
+    // Retail runs exactly ONE state step per poll -- the loop belongs to the
+    // caller, not here.  Pinned by retail bytes at 0x8270FED8 (vtable slot 4),
+    // whose ENTIRE body is `lwz r11,0x2c(r3); mtctr r11; bctr` (12 B, an
+    // unconditional indirect TAIL call).  A `while (!CheckSplit() && ...)`
+    // form cannot compile to that: there is no compare, no branch, and the
+    // dispatch is `bctr` rather than `bctrl`.  The looping version came from
+    // the newer dc3 engine; do not restore it.
+    virtual void PollLoading() { (this->*mState)(); }
     virtual const char *DebugText() { return "MetaMusicLoader"; }
     virtual const char *StateName() const { return "MetaMusicLoader"; }
 
