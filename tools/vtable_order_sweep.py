@@ -372,6 +372,14 @@ def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
     # for the four shapes it handles and why it is a TYPE rather than a helper.
     hier = hierarchy_names(R, vt_va) | {bare}
     retail_sl = ifs.retail_slots(slots, occ, addr2name, hierarchy=hier)
+    # SOFT-mark interchangeable tail-call thunks.  Their addresses are distinct,
+    # so both fold filters above pass them, but nothing in the bytes says which
+    # name belongs to which twin -- see ifs.mark_thunk_twins for the measurement
+    # (7 slots = 100% of the PERMUTED population) and the retail-byte
+    # adjudication that showed our source was the correct side.
+    _txt = [(s.va, s.va + s.rawsize) for s in R.sections if s.name == '.text'][0]
+    retail_sl = ifs.mark_thunk_twins(
+        retail_sl, lambda va: R.u32(va) if _txt[0] <= va < _txt[1] else None)
     ours = our_vtable(bare, project_dir, base=sub_base)
     our_sl = ifs.our_slot_names(ours)
     verdict, covered, mism, withheld = compare_orders(retail_sl, our_sl)

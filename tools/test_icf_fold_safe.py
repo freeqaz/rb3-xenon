@@ -225,6 +225,65 @@ def run():
     check("CONTROL: a clean disagreement IS still charged",
           len(m) == 1 and not w)
 
+    # --- interchangeable tail-call thunks -------------------------------------
+    # Real bytes, lifted from retail band.exe.  UIFontImporter's adjustor thunks
+    # are `lwz r11,-4(r3); add r3,r11,r3; b <target>` -- identical except the
+    # displacement, so the map's assignment between them is arbitrary.
+    UIFI_A, UIFI_B = 0x82819D70, 0x8281C540      # Copy / SetType thunks
+    SR360_A, SR360_B = 0x82B6BAE8, 0x82B6BAF8    # GetPlayCursor / PlayImpl thunks
+    THUNKS = {
+        UIFI_A:   [0x8163FFFC, 0x7C6B1850, 0x4BFFFE98],
+        UIFI_B:   [0x8163FFFC, 0x7C6B1850, 0x4BFFED58],
+        SR360_A:  [0x3D600001, 0x616B803C, 0x7C63582E, 0x4BFFB154],
+        SR360_B:  [0x3D600001, 0x616B803C, 0x7C63582E, 0x4BFF965C],
+        # a NON-thunk control: a real prologue (mflr / stw / stwu), no tail b
+        0x82B6BA78: [0x7D8802A6, 0x9181FFF8, 0xFBC1FFE8, 0xFBE1FFF0,
+                     0x9421FF90, 0x3D600001],
+    }
+
+    def rw(va):
+        for base, ws in THUNKS.items():
+            if base <= va < base + 4 * len(ws):
+                return ws[(va - base) // 4]
+        return None
+
+    check("tail_thunk_shape identifies a 3-insn adjustor thunk",
+          F.tail_thunk_shape(rw, UIFI_A) == (0x8163FFFC, 0x7C6B1850))
+    check("two thunks differing ONLY in displacement share a shape",
+          F.tail_thunk_shape(rw, UIFI_A) == F.tail_thunk_shape(rw, UIFI_B))
+    check("StreamReceiver360's twins share a shape too",
+          F.tail_thunk_shape(rw, SR360_A) == F.tail_thunk_shape(rw, SR360_B)
+          is not None)
+    check("CONTROL: a real prologue is NOT a tail-call thunk",
+          F.tail_thunk_shape(rw, 0x82B6BA78) is None)
+    check("CONTROL: shapes EXCLUDE the branch, so they must not be equal "
+          "merely because both end in `b`",
+          F.tail_thunk_shape(rw, UIFI_A) != F.tail_thunk_shape(rw, SR360_A))
+
+    twins = F.mark_thunk_twins(
+        [F.Slot(name='?Copy@UIFontImporter@@UAAXXZ', addr=UIFI_A),
+         F.Slot(name='?SetType@UIFontImporter@@UAAXXZ', addr=UIFI_B),
+         F.Slot(name='?PauseImpl@X@@UAAX_N@Z', addr=0x82B6BA78)], rw)
+    check("both twins are SOFT-marked thunk_twin",
+          twins[0].reason == 'thunk_twin' and twins[1].reason == 'thunk_twin')
+    check("the non-thunk slot is left fully comparable",
+          twins[2].reason is None and twins[2].comparable)
+    check("a thunk_twin is SUSPECT, not INCOMPARABLE "
+          "(it must still be able to confirm)",
+          twins[0].suspect and twins[0].comparable)
+
+    # The whole point: a SWAPPED map between twins must be WITHHELD, not charged.
+    swapped = [(0, twins[0], F.Slot(name='?SetType@UIFontImporter@@UAAXXZ')),
+               (1, twins[1], F.Slot(name='?Copy@UIFontImporter@@UAAXXZ'))]
+    a, m, w = F.charge(swapped)
+    check("a swapped thunk pair is WITHHELD, never charged as a defect",
+          not m and len(w) == 2)
+
+    agree = [(0, twins[0], F.Slot(name='?Copy@UIFontImporter@@UAAXXZ'))]
+    a, m, w = F.charge(agree)
+    check("CONTROL: twins that AGREE still count as agreement",
+          len(a) == 1 and not m and not w)
+
     return not FAILS
 
 
