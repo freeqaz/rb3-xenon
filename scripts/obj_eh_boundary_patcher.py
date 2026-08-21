@@ -253,8 +253,15 @@ def main() -> int:
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--verbose", "-v", action="store_true")
     ap.add_argument("--obj-dir", default="build/45410914/src")
+    ap.add_argument("--check", action="store_true",
+                    help="Dry-run and EXIT 2 if any object in the build tree "
+                         "still needs this pass")
     ap.add_argument("files", nargs="*")
     args = ap.parse_args()
+    if args.check:
+        # --check never writes.  A checker that could mutate the tree it is
+        # auditing is not a checker.
+        args.apply = False
     if not args.batch and not args.files:
         ap.error("Specify --batch or provide files")
 
@@ -282,7 +289,18 @@ def main() -> int:
           f"{total} total EH boundaries")
     for e in errors:
         print("ERROR: " + e, file=sys.stderr)
-    return 1 if errors else 0
+    if errors:
+        return 1
+    if args.check and patched:
+        # Exit 2 -- the convention obj_anon_ns_patcher.py established in lane
+        # CN-1.  The non-zero exit is the point: it is what lets an edge in
+        # build.ninja, or scripts/verify_objs_patched.py, refuse rather than
+        # report a number derived from raw compiler output.
+        print("FAIL[eh_boundary]: %d pending patch(es) -- this build tree "
+              "carries objects that were compiled but never post-processed."
+              % patched, file=sys.stderr)
+        return 2
+    return 0
 
 
 if __name__ == "__main__":
