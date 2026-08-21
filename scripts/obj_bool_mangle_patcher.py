@@ -318,7 +318,15 @@ def main():
                         help='Decomp .obj directory')
     parser.add_argument('files', nargs='*',
                         help='Specific .obj files to patch (relative paths)')
+    parser.add_argument('--check', action='store_true',
+                        help='Dry-run and EXIT 2 if any object in the build tree '
+                             'still needs this pass')
     args = parser.parse_args()
+
+    if args.check:
+        # --check never writes.  A checker that could mutate the tree it is
+        # auditing is not a checker.
+        args.apply = False
 
     if not args.batch and not args.files:
         parser.error('Specify --batch or provide specific files')
@@ -360,6 +368,16 @@ def main():
 
     if not args.apply and total_patches > 0:
         print('Run with --apply to modify files.')
+
+    if args.check and patched_files:
+        # Exit 2 -- the convention obj_anon_ns_patcher.py established in lane
+        # CN-1.  The non-zero exit is the point: it is what lets an edge in
+        # build.ninja, or scripts/verify_objs_patched.py, refuse rather than
+        # report a number derived from raw compiler output.
+        print('FAIL[%s]: %d pending patch(es) -- this build tree carries '
+              'objects that were compiled but never post-processed.'
+              % ('bool_mangle', patched_files), file=sys.stderr)
+        sys.exit(2)
 
 
 

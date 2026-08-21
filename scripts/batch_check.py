@@ -28,6 +28,7 @@ from orchestrator.database import (
     BOILERPLATE_SYMBOL_PREFIXES,
     DEFAULT_EXCLUDE_PATTERNS,
 )
+from orchestrator.patch_guard import UnpatchedTreeError, ensure_patched_tree
 
 try:
     from orchestrator.mcp_server import _demangle_itanium_to_qualified
@@ -77,6 +78,16 @@ def batch_check(unit_pattern: str, dry_run: bool = False, skip_boilerplate: bool
     if not OBJDIFF_CLI.exists():
         return f"Error: objdiff-cli not found at {OBJDIFF_CLI}"
 
+    # Bring the tree to the post-compile fixed point and ASSERT it, ONCE,
+    # before scoring anything. Every diff below then reads objects that are a
+    # verified product of the full build graph. Refuse rather than report: a
+    # batch that silently scored raw compiler output would mark functions
+    # `partial` that are actually complete, and write that to decomp.db.
+    try:
+        ensure_patched_tree(PROJECT_ROOT)
+    except UnpatchedTreeError as e:
+        return f"Error: {e}"
+
     checked = 0
     newly_complete = 0
     unimplemented = 0
@@ -97,8 +108,13 @@ def batch_check(unit_pattern: str, dry_run: bool = False, skip_boilerplate: bool
 
         try:
             result = subprocess.run(
+                # No `--build`: it is `ninja <one .obj>`, which stops one
+                # edge short of the six post-compile patchers and leaves raw
+                # compiler output behind for every later reader. The tree was
+                # brought to the `post-compile` fixed point and asserted once,
+                # above, before this loop started.
                 [str(OBJDIFF_CLI), "diff", "-p", str(PROJECT_ROOT),
-                 lookup_symbol, "--build", "--verdict", "-f", "json"],
+                 lookup_symbol, "--verdict", "-f", "json"],
                 capture_output=True, text=True, timeout=90,
                 cwd=str(PROJECT_ROOT),
             )

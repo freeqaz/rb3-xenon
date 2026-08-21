@@ -53,6 +53,10 @@ from orchestrator.database import (
     BOILERPLATE_SYMBOL_PREFIXES,
     DEFAULT_EXCLUDE_PATTERNS,
 )
+from orchestrator.patch_guard import (
+    UnpatchedTreeError,
+    ensure_patched_tree,
+)
 from tools.struct_db import StructDB
 from analysis.ruler import (
     RULER_DATA_VALUE,
@@ -1801,9 +1805,28 @@ class DecompMCPServer:
         if unit:
             base_args.extend(["-u", unit])
 
-        build_flag = ["--build"]
-        if full_build:
-            build_flag.append("--full-build")
+        # NO `--build` here, ever.  `objdiff-cli diff --build` without
+        # `--full-build` is literally `ninja <base_obj_path>` -- a SINGLE
+        # OBJECT target, which stops one edge short of the six post-compile
+        # patchers and overwrites the previously-patched bytes.  This handler
+        # then answered from that raw-compiler object AND left the tree that
+        # way for report.json, measure_progress.sh and every concurrent lane.
+        # Measured on this repo: one such call cost unit default/BandUI 2.006
+        # pp of matched_code_percent and read ?InitPanels@BandUI@@QAAXXZ as
+        # 99.7 when it is 100.0 -- while this tool reported the same verdict in
+        # both states, so the bias was invisible exactly where it was caused.
+        #
+        # Build through `post-compile` instead and then ASSERT, raising rather
+        # than returning a plausible number.  `post-compile` reaches every
+        # object via `all_source`, so the symbol's own unit is still compiled
+        # first; on an already-consistent tree the whole guard is ~0.81 s.
+        # (`full_build` is now the default and only behaviour; the argument is
+        # kept so existing callers do not break.)
+        try:
+            ensure_patched_tree(project_dir)
+        except UnpatchedTreeError as e:
+            return [TextContent(type="text", text=f"Error: {e}")]
+        build_flag = []
 
         # --include-instructions only for JSON run (enrichment/m2c pipeline).
         # The markdown run uses --verdict alone which already contains the
@@ -2194,6 +2217,17 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
         if not project_dir.exists():
             return [TextContent(type="text", text=f"Error: project_dir does not exist: {project_dir}")]
 
+        # Every objdiff invocation below dropped its `--build --incremental`,
+        # because that pair is `ninja <one .obj>` and stops one edge short of
+        # the six post-compile patchers -- answering from, and leaving behind,
+        # a raw-compiler object. Build through `post-compile` once here and
+        # ASSERT the manifest, raising rather than returning a number that
+        # reads low and one-directionally.
+        try:
+            ensure_patched_tree(project_dir)
+        except UnpatchedTreeError as e:
+            return [TextContent(type="text", text=f"Error: {e}")]
+
         # Safe symbol for filenames
         safe_symbol = symbol.replace("?", "_Q_").replace("@", "_A_").replace("<", "_L_").replace(">", "_R_")
 
@@ -2242,7 +2276,12 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                     str(objdiff_cli), "diff",
                     "-p", str(project_dir),
                     symbol,
-                    "--include-instructions", "--build", "--incremental",
+                    # No `--build`: it is `ninja <one .obj>`, which skips the
+                    # six post-compile patchers and leaves raw compiler output
+                    # behind for every later reader. The caller has already run
+                    # ensure_patched_tree(), so the objects on disk are a
+                    # verified fixed point of the chain.
+                    "--include-instructions",
                     *reloc_config,
                     "-f", "json",
                 ]
@@ -2284,7 +2323,12 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                     str(objdiff_cli), "diff",
                     "-p", str(project_dir),
                     symbol,
-                    "--include-instructions", "--build", "--incremental",
+                    # No `--build`: it is `ninja <one .obj>`, which skips the
+                    # six post-compile patchers and leaves raw compiler output
+                    # behind for every later reader. The caller has already run
+                    # ensure_patched_tree(), so the objects on disk are a
+                    # verified fixed point of the chain.
+                    "--include-instructions",
                     *reloc_config,
                     "-f", "json",
                 ]
@@ -2337,7 +2381,12 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
                     str(objdiff_cli), "diff",
                     "-p", str(project_dir),
                     symbol,
-                    "--include-instructions", "--build", "--incremental",
+                    # No `--build`: it is `ninja <one .obj>`, which skips the
+                    # six post-compile patchers and leaves raw compiler output
+                    # behind for every later reader. The caller has already run
+                    # ensure_patched_tree(), so the objects on disk are a
+                    # verified fixed point of the chain.
+                    "--include-instructions",
                     *reloc_config,
                     "-f", "json",
                 ]

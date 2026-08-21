@@ -106,6 +106,24 @@ def process_batch(args):
     if not args.apply and total_patched > 0:
         print(f"\nRun with --apply to actually patch the files.")
 
+    return files_patched
+
+
+def _check_exit(pending, tag):
+    """Shared `--check` contract across all six post-compile patchers.
+
+    Exit 2 -- matching obj_anon_ns_patcher.py, which has had `--check` since
+    lane CN-1 -- when the build tree is NOT a fixed point of this pass.  The
+    non-zero exit is the whole point: it is what lets an edge in build.ninja,
+    or scripts/verify_objs_patched.py, refuse instead of reporting a number
+    derived from raw compiler output.
+    """
+    if pending:
+        print('FAIL[{tag}]: {n} pending patch(es) -- this build tree carries '
+              'objects that were compiled but never post-processed.'.format(
+                  tag=tag, n=pending), file=sys.stderr)
+        sys.exit(2)
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -118,7 +136,15 @@ def main():
                         help='Process all decomp .obj files')
     parser.add_argument('--src-dir',
                         help='Decomp .obj directory (default: build/45410914/src)')
+    parser.add_argument('--check', action='store_true',
+                        help='Dry-run and EXIT 2 if any object in the build tree '
+                             'still needs this pass')
     args = parser.parse_args()
+
+    if args.check:
+        # --check never writes.  A checker that could mutate the tree it is
+        # auditing is not a checker.
+        args.apply = False
 
     if not args.batch:
         print("ERROR: Currently only --batch mode is supported.", file=sys.stderr)
@@ -126,7 +152,9 @@ def main():
               file=sys.stderr)
         sys.exit(1)
 
-    process_batch(args)
+    pending = process_batch(args)
+    if args.check:
+        _check_exit(pending, 'dynamic_init')
 
 
 
