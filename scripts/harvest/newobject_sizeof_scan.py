@@ -68,13 +68,37 @@ def load_symbols(map_path):
     return out
 
 
+def _ensure_patched(project_dir):
+    """Build through `post-compile` and ASSERT, instead of `--build`ing one obj.
+
+    `objdiff-cli diff --build` (without `--full-build`) is `ninja <base .obj>`,
+    a SINGLE-OBJECT target that stops one edge short of rb3-xenon's six
+    post-compile patchers.  It answers from raw compiler output and leaves the
+    object that way for report.json and every concurrent lane.  Measured on
+    rb3-xenon: one such call cost unit default/BandUI 2.006 pp of
+    matched_code_percent and read a 100.0 function as 99.7.
+
+    Memoized per tree per process, so a per-symbol loop pays ~1 s once rather
+    than per symbol.  Raises UnpatchedTreeError rather than returning a number.
+    """
+    import sys as _sys, os as _os
+    _scripts = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+    if _scripts not in _sys.path:
+        _sys.path.insert(0, _scripts)
+    from orchestrator.patch_guard import ensure_patched_tree_once
+    return ensure_patched_tree_once(project_dir)
+
+
 def run_objdiff(symbol, project_dir):
+    _ensure_patched(project_dir)
     objdiff_bin = os.path.join(REPO, "bin", "objdiff-cli")
     h = hashlib.md5(symbol.encode()).hexdigest()[:10]
     out = f"/tmp/claude/nobj_{h}.json"
     os.makedirs("/tmp/claude", exist_ok=True)
     cmd = [objdiff_bin, "diff", "-p", project_dir, symbol,
-           "--include-instructions", "--build", "--incremental",
+           # No `--build --incremental`: `ninja <one .obj>` skips the six
+           # post-compile patchers. _ensure_patched() handles the build.
+           "--include-instructions",
            "-f", "json", "-o", out]
     r = subprocess.run(cmd, cwd=project_dir, capture_output=True, text=True)
     if r.returncode != 0:

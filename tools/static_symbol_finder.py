@@ -134,12 +134,40 @@ def fmt(side):
     return f"{side.get('opcode',''):10s} {side.get('args','')}".rstrip()
 
 
+
+def _ensure_patched(project_dir):
+    """Build through `post-compile` and ASSERT -- never `--build` one object.
+
+    Memoized per tree per process; raises UnpatchedTreeError rather than
+    returning a number taken from a partially-patched tree.
+    """
+    import sys as _sys, os as _os
+    _scripts = _os.path.join(
+        _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), 'scripts')
+    if _scripts not in _sys.path:
+        _sys.path.insert(0, _scripts)
+    from orchestrator.patch_guard import ensure_patched_tree_once
+    return ensure_patched_tree_once(project_dir)
+
+
 def run_diff(symbol, no_build=False):
     """Run objdiff-cli diff for one (globally-unique mangled) symbol; cache JSON.
 
-    Returns parsed dict or None. Uses --build --incremental so a stale unit obj
-    is rebuilt and a warm one is reused (the first symbol in a unit pays the
-    MSVC compile, the rest are ~60ms)."""
+    Returns parsed dict or None.
+
+    NO `--build --incremental`. That pair reads as an optimisation ("rebuild a
+    stale unit obj, reuse a warm one") but it is `ninja <one .obj>`, a
+    single-object target that stops one edge short of rb3-xenon's six
+    post-compile patchers -- so it answered from raw compiler output and left
+    the object unpatched for report.json and every concurrent lane. Measured
+    on rb3-xenon: one such call cost unit default/BandUI 2.006 pp of
+    matched_code_percent and read a 100.0 function as 99.7.
+
+    The tree is instead brought to the `post-compile` fixed point once per
+    process and ASSERTED; `no_build` still skips even that, for callers that
+    deliberately want a read-only look at whatever is on disk."""
+    if not no_build:
+        _ensure_patched(ROOT)
     os.makedirs(CACHE_DIR, exist_ok=True)
     h = hashlib.md5(symbol.encode()).hexdigest()[:12]
     out = os.path.join(CACHE_DIR, f'd_{h}.json')
@@ -150,8 +178,6 @@ def run_diff(symbol, no_build=False):
             pass
     cmd = [CLI, 'diff', '-p', ROOT, symbol,
            '--include-instructions', '-f', 'json', '-o', out]
-    if not no_build:
-        cmd += ['--build', '--incremental']
     try:
         r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, timeout=600)
     except subprocess.TimeoutExpired:
