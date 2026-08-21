@@ -492,3 +492,90 @@ identifying a **missing** virtual requires a name: `RndFur` (−2), `XboxContent
 `OggMap` (−1). The 23 `SET_DIFFER` order classes and the
 410 `AMBIGUOUS_MULTI_VTABLE` / 1,334 `UNRESOLVED` populations are untouched by
 this wave.
+
+---
+
+## 11. Wave 5 (2026-08-21) — `PERMUTED` was 100% artifact, and our source was the correct side
+
+### 11a. The case that started it, and inverted
+
+`StreamReceiver360` reported a clean 2-slot swap at 13/14
+(`GetPlayCursor` ↔ `PlayImpl`). Because an override takes the slot its **base**
+defined, the fix belonged in `StreamReceiver.h` — where a prior lane's comment
+already asserted the **opposite** order, citing retail bytes. One of the two
+instruments had to be wrong.
+
+Adjudicated on retail bytes, and the answer was neither what I expected nor
+what the sweep said:
+
+- retail's vtable `@0x8219754C` really does hold `0x82B6BAE8` at slot 13 and
+  `0x82B6BAF8` at slot 14, and `target_symbol_map.json` really does name those
+  `GetPlayCursor` and `PlayImpl`. **The sweep read its input correctly.**
+- **but both are 16-byte tail-call thunks with byte-identical bodies except the
+  branch displacement.** Their addresses are DISTINCT, so `occ == 1` and both
+  fold filters passed them as fully comparable — yet nothing in the bytes says
+  which name belongs to which.
+- **the call site settles it.** `StreamReceiver::Play` dispatches slot `0x30`
+  with `li r4,0` (an argument ⇒ `PauseImpl(bool)`, consistent either way) and
+  dispatches `0x34` with **no argument and the result DISCARDED**. `Play()`
+  calling `GetPlayCursor()` and throwing the `int` away is not a plausible
+  reading; the play path calling `PlayImpl()` is.
+
+⇒ **Our header is RIGHT and the MAP has the two thunk names swapped.** Had the
+source been "fixed" to match the sweep, correct code would have been broken.
+The prior lane's conclusion stands; what its comment lacked was any warning
+that the map disagrees — which is exactly why the sweep blindsided a later
+reader. That warning is now in the header.
+
+### 11b. ⚠ My own first measurement of the class was WRONG
+
+An initial probe reported **2 of 66** charged mismatches as thunk twins, which
+would have made this a one-instance curiosity not worth encoding. The probe
+required a **4-instruction** body ending in `b`, so it **missed 3-instruction
+adjustor thunks entirely**. Corrected: **7**, and they account for **both
+`PERMUTED` classes in full** — `UIFontImporter` 5/5, `StreamReceiver360` 2/2.
+
+★ The lesson is the ordinary one and it nearly cost the finding: **a detector's
+threshold is part of its result.** A "small, ignorable" class was an artifact of
+where the cutoff sat, not of the population.
+
+### 11c. The criterion
+
+`mark_thunk_twins()` SOFT-marks retail slots that are **shape-identical
+tail-call thunks colliding within one vtable**. The shape deliberately
+**EXCLUDES the branch instruction**, since the displacement is the only thing
+that differs between twins — with a control test for the converse hazard (two
+thunks of *different* shape that both merely end in `b` must NOT pair).
+
+SOFT, not HARD, for the same reason as every other suspect class here:
+**twins that AGREE need no forgiveness** — our side would have to independently
+produce the identical mangled name — so only a DISAGREEMENT is withheld, and
+withheld means *returned as a byte-adjudication worklist item*, never dropped.
+
+### 11d. Measured, full sweep
+
+| verdict | before | after |
+|---|---:|---:|
+| `PERMUTED` | 2 | **0** |
+| `SAME` | 452 | **454** |
+| `SET_DIFFER` | 22 | **22** |
+| `AMBIGUOUS_MULTI_VTABLE` | 410 | 410 |
+| `UNRESOLVED` | 1,334 | 1,334 |
+| charged mismatches | 66 | 58 |
+| withheld | 94 | 102 |
+| comparable slots | 2,086 | 2,078 |
+
+★★ **`SET_DIFFER` not moving is the important row.** The criterion removed
+exactly the artifact class without weakening the real order-defect worklist by
+a single row. And **`PERMUTED` — which by construction means "same name set,
+wrong order", the most confident defect the sweep can report — was 100%
+artifact.**
+
+⚠ **NOT DONE: fixing the map.** A map edit's delta is mostly *un-pairing* rather
+than cascade, so swapping those two names is its own measured lane and not a
+free rename. Until then the map stays wrong and the guard withholds rather than
+believing it.
+
+Tests: 14 checks, both fixtures anchored on real retail bytes, `--self-break`
+still fails as required. Nothing is hardcoded to a verdict — shapes are
+recomputed from bytes every run.
