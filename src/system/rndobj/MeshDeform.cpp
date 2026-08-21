@@ -223,7 +223,9 @@ int RndMeshDeform::VertArray::AppendWeights(int num, int *const boneIndices, flo
         }
         sum += weights[i];
     }
-    if (Abs(sum - 1.0f) > 0.05f) {
+    // Retail emits a single `fabs` here (fn_8240B3F0 @ 0x8240B3F0, idx 81:
+    // fsubs / fabs / fcmpu / ble), NOT the Abs<T> template's fcmpu+fneg form.
+    if (fabsf(sum - 1.0f) > 0.05f) {
         MILO_NOTIFY(
             "%s vert %d weights sum to %g, not close enough to 1, check the skinning",
             PathName(mParent),

@@ -625,7 +625,10 @@ void RndAmbientOcclusion::BurnTransform(
     if (mQuality == 0) {
         canBurn = CanBurnXfm(mesh);
     } else {
-        if (Abs(1.0f - det) > 0.0001f) {
+        // Retail emits a single `fabs` here (fn_8248E200 @ 0x8248E200, idx 33:
+        // fsubs / fabs / fcmpu vs __real@38d1b717 == 0.0001f), NOT the Abs<T>
+        // template's fcmpu+fneg form.
+        if (fabsf(1.0f - det) > 0.0001f) {
             MILO_NOTIFY_ONCE(
                 "%s: Mesh has scale or mirroring applied. Re-export mesh to ensure accurate AO calculation.",
                 PathName(mesh)

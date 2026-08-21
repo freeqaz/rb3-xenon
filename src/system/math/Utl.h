@@ -134,8 +134,29 @@ inline bool MaxEq(T &x, const T &y) {
     return false;
 }
 
-inline float Abs(float x) { return fabsf(x); }
-
+// NOTE: there is deliberately NO `inline float Abs(float)` overload here.
+//
+// One existed (`return fabsf(x);`), inherited from ../dc3-decomp in c5c1650f
+// "Scaffold engine + math library from dc3-decomp".  It is NOT retail's: RB3's
+// own Wii tree (../rb3, the SAME GAME) and ../og-dc3-decomp both declare only
+// the template below.  Because a non-template overload beats a template for a
+// float argument, its mere presence silently rewrote every `Abs(someFloat)` in
+// the tree from the template's fcmpu/ble/fneg into a single `fabs`.
+//
+// Retail RB3-360 uses BOTH lowerings, chosen by how the call site was SPELLED --
+// so this is a per-site question, never a header-wide one.  Adjudicated against
+// retail bytes (lane lane/abs-float-shim):
+//   * fcmpu/ble/fneg (this template): BandList::StartFocusAnim  -- retail
+//     fn_8233D8E0 @ 0x8233D8E0 idx 43-50, no `fabs` anywhere in the function.
+//   * `fabs`: RndMeshDeform::VertArray::AppendWeights (fn_8240B3F0 idx 81) and
+//     RndAmbientOcclusion::BurnTransform (fn_8248E200 idx 33).  Those sites now
+//     spell `fabsf(...)` / `NearlyZero(...)` explicitly and no longer depend on
+//     any overload being in scope.
+//
+// If you want the template's compare/negate form at a site, spell `Abs(x)` (or
+// `Abs<float>(x)`, which names the template explicitly).  If you want a single
+// `fabs`, spell `fabsf(x)` / `NearlyZero(x)` / `NearlyEqual(x,y)`.  Do not
+// re-add a float overload to make one site match -- it silently moves all of them.
 template <class T>
 inline const T Abs(T x) {
     if (x > 0)
