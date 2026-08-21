@@ -24,6 +24,23 @@
 // push Pause/SetADSR into a secondary vtable. Gate the DC3 form behind
 // HX_NATIVE (same treatment as MidiInstrument.h) so the native runtime keeps
 // its poll loop while the matching build reproduces retail's layout+vtable.
+// `virtual` in the native build only. Retail RB3-360's SampleInst vtable is 35
+// slots and ENDS at slot 34 (SetReverbEnableImpl) -- the retail prefix pinned
+// in the comment above -- so nothing declared after it occupies a retail slot.
+// Ours was 40. The five over-length entries were Play/Stop/DonePlaying/
+// EndLoopImpl/ElapsedTime, and four of those exist solely to satisfy
+// PlayableSample's pure virtuals, a base SampleInst only has under HX_NATIVE.
+// Devirtualizing them in the matching build is behaviour-preserving, not just
+// slot-correct: SampleInst360 is the ONLY class deriving from SampleInst and it
+// overrides NONE of the five, so virtual and non-virtual dispatch resolve to the
+// same function. This is the same finding, and the same treatment, that the
+// non-virtual setters below already carry.
+#ifdef HX_NATIVE
+#define SAMPLEINST_NATIVE_VIRTUAL virtual
+#else
+#define SAMPLEINST_NATIVE_VIRTUAL
+#endif
+
 class SampleInst : public Hmx::Object
 #ifdef HX_NATIVE
                    ,
@@ -52,10 +69,10 @@ public:
 #ifdef HX_NATIVE
     virtual void SynthPoll();
 #endif
-    virtual void Play(float);
-    virtual void Stop(bool);
-    virtual bool DonePlaying();
-    virtual void EndLoopImpl() {
+    SAMPLEINST_NATIVE_VIRTUAL void Play(float);
+    SAMPLEINST_NATIVE_VIRTUAL void Stop(bool);
+    SAMPLEINST_NATIVE_VIRTUAL bool DonePlaying();
+    SAMPLEINST_NATIVE_VIRTUAL void EndLoopImpl() {
         MILO_NOTIFY("EndLoop not implemented on this platform\n");
     }
     // Non-virtual setters: retail RB3-360 calls these directly (bl) from
@@ -71,7 +88,7 @@ public:
     virtual Hmx::Object *GetEventReceiver() { return mEventReceiver; }
     virtual void EndLoop();
 #endif
-    virtual float ElapsedTime() { return 0; }
+    SAMPLEINST_NATIVE_VIRTUAL float ElapsedTime() { return 0; }
 
     void SetBankVolume(float);
     void SetBankPan(float);
@@ -106,3 +123,5 @@ protected:
     ObjPtr<SynthSample> mSample;
 #endif
 };
+
+#undef SAMPLEINST_NATIVE_VIRTUAL

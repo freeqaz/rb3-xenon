@@ -383,3 +383,112 @@ untouched. Gate now `PASS 18/18, rc=0`; A/B Δ0 (the accessor is inline, so no
 - The engine compares `DrawMode() == 8` while our enum tops out at
   `kDrawVelocity = 6`, so both two-sided-cull overrides are dead on every
   consumer. **Whether retail's `Rnd::Mode` has values above 6 is unanswered.**
+
+---
+
+## 10. Wave 4 (2026-08-21) — the tractable `ours > retail` survivors, drained
+
+§9d named `NoteVoiceInst` (+1) and `SampleInst`/`SampleInst360` (+5) as the
+obvious next target. Both are now at retail's slot count.
+
+### 10a. `NoteVoiceInst` 31 → 30 — one insertion, not two errors
+
+The sweep charged two mismatches, and they were a single shift:
+
+| slot | retail | ours (before) |
+|---|---|---|
+| 28 | `?SetPan@NoteVoiceInst@@UAAXM@Z` | `?UpdatePan@NoteVoiceInst@@UAAXXZ` |
+| 29 | `?SetVolume@NoteVoiceInst@@UAAXM@Z` | `?SetPan@NoteVoiceInst@@UAAXM@Z` |
+
+Slots 0–27 already agreed in count, so the inserted entry was the **sole**
+extra — which is why deleting one declaration closed the count *and* both
+order charges at once.
+
+`UpdatePan` is **DC3-only**. Four independent lines agree:
+
+1. retail's vtable has no such slot (30 vs 31, and the shift above);
+2. the **rb3-Wii oracle** declares exactly `SetTranspose` / `UpdateVolume` /
+   `SetPan` / `SetVolume`, no `UpdatePan`;
+3. **dc3-decomp — which is NEWER than RB3** — has it *and* calls it from
+   `MidiInstrument::Poll`;
+4. nothing in this tree called it: a prior lane had already removed the **call**
+   (its note survives in `MidiInstrument.cpp`) but left the **declaration**, so
+   the vtable stayed one slot long.
+
+⚠ **The Wii negative was checked for VACUITY before being relied on.** rb3-Wii
+does carry `MidiInstrument.h`/`.cpp` and does declare `NoteVoiceInst`, so the
+absence of `UpdatePan` is a real absence rather than a missing file. A "zero
+hits" that means "the file isn't there" is the standard trap.
+
+Removed declaration **and** definition. The body was `mSample->SetPan(0.0f)` —
+hard-centre the voice — i.e. live behaviour, not a stub, and not something to
+inherit by accident.
+
+### 10b. `SampleInst` / `SampleInst360` 40 → 35 — the answer was already in the header
+
+Both classes read retail 35 / ours 40. The identical +5 pointed at the shared
+base, and **an earlier lane had already pinned the answer from retail bytes**
+in `SampleInst.h`: `SetVolumeImpl` slot 29 → `0x74`, `SetPanImpl` 30 → `0x78`,
+`SetSpeedImpl` 31 → `0x7c`, so retail's vtable is slots 0–34 = **35** and ENDS
+at `SetReverbEnableImpl`. Everything declared after that prefix is over-length.
+
+Exactly five such entries existed: `Play`, `Stop`, `DonePlaying`, `EndLoopImpl`,
+`ElapsedTime`. Four of them exist **only to satisfy `PlayableSample`'s pure
+virtuals**, and `SampleInst` derives `PlayableSample` **only under `HX_NATIVE`**.
+They are now `virtual` in the native build and plain in the matching build
+(`SAMPLEINST_NATIVE_VIRTUAL`).
+
+★ **Devirtualization, not deletion, and the distinction is forced by evidence
+on both sides.** `Sound.cpp`, `Sfx.cpp` and `Synth.cpp` all call these, so they
+must exist; `SampleInst360` is the **only** class deriving from `SampleInst` and
+overrides **none** of the five, so virtual and non-virtual dispatch resolve to
+the same function and the change is behaviour-preserving. This is the same
+finding, and the same treatment, that the non-virtual setters in that header
+already carried.
+
+⚠ **The earlier lane's tail-parking was not wrong, it was incomplete.** Trailing
+slots cannot perturb slots 21–34, so dispatch was already correct. What survived
+was the count.
+
+### 10c. Result, by slot recount
+
+| class | retail | ours | verdict | comparable slots |
+|---|---|---|---|---|
+| `NoteVoiceInst` | 30 | **30** | SAME | 8 |
+| `SampleInst360` | 35 | **35** | SAME | 4 |
+| `SampleInst` | 35 | **35** | **UNRESOLVED** | **0** |
+
+★★ **`SampleInst` is `UNRESOLVED` and deliberately NOT `SAME`.** 34 of its 35
+slots are ICF fold-poisoned, so the **count is verified and the order is not**.
+Reporting SAME there would be precisely the confident-wrong-verdict this
+tooling was built to prevent — the guard refusing to answer *is* the feature.
+
+### 10d. Measurement — a falsifiable one, for once
+
+Unlike the pure-vtable waves (where Δ0 is pre-registered because vtables are
+`.rdata`), this wave **moves `.text`**: devirtualizing rewrites `lwz`/`mtctr`/
+`bctrl` call sites into direct `bl`. That makes it a real test of the reading
+that retail calls these directly. **A clear regression would have refuted it.**
+
+```
+ab_measure --from-dirty, both legs settled, 106 real leg-B recompiles
+Δmatched=+0  Δmasked_equal=+0  Δhonest=+0  Δcode%=+0.000000pp  Δbytes=+0
+Δfuzzy=+0.000237pp   (48.992160 -> 48.992397)
+units at 100%: mpn 150->150, all-rows-fuzzy 122->122
+```
+
+The sign is right and the magnitude is small. **The +0.000237pp is not claimed
+as a win** — it is reported because a *negative* value would have been evidence
+the retail reading was wrong. No row crossed `fuzzy == 100`, so `matched_code`
+(all-or-nothing per row) is flat.
+
+`NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
+
+### 10e. Still open after wave 4
+
+All remaining count survivors are `ours < retail` — the hard direction, since
+identifying a **missing** virtual requires a name: `RndFur` (−2), `XboxContent`
+(−1, still refused per §6), `ClientProtocol@Quazal` (−1), `MCResultMsg` (−1),
+`OggMap` (−1). The 23 `SET_DIFFER` order classes and the
+410 `AMBIGUOUS_MULTI_VTABLE` / 1,334 `UNRESOLVED` populations are untouched by
+this wave.

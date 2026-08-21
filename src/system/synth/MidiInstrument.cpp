@@ -61,11 +61,11 @@ void NoteVoiceInst::UpdateVolume() {
     }
 }
 
-void NoteVoiceInst::UpdatePan() {
-    if (mSample && mOwner) {
-        mSample->SetPan(0.0f);
-    }
-}
+// NoteVoiceInst::UpdatePan() removed -- see the note at its former declaration
+// in MidiInstrument.h. Retail's vtable has no such slot, the rb3-Wii oracle has
+// no such method, and nothing here called it. It is DC3-only, and its body
+// (SetPan(0.0f), i.e. hard-centre the voice) was live behaviour we do not want
+// to inherit by accident.
 
 void NoteVoiceInst::SetPan(float pan) { mSample->SetPan(pan); }
 
