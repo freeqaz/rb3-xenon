@@ -29,7 +29,19 @@ public:
     virtual bool Stopped() { return mStopped; }
     virtual void SetTranspose(float);
     virtual void UpdateVolume();
-    virtual void UpdatePan();
+    // NO UpdatePan() here. It is a DC3-era addition that RB3 does not have,
+    // and it was displacing every later slot by one:
+    //   retail vtable 0x8213xxxx has 30 slots, ours had 31
+    //   slot 28  retail ?SetPan@NoteVoiceInst@@UAAXM@Z   ours ?UpdatePan@...
+    //   slot 29  retail ?SetVolume@NoteVoiceInst@@UAAXM@Z ours ?SetPan@...
+    // Slots 0-27 already agreed in count, so the inserted entry was the sole
+    // extra. The rb3-Wii oracle (RB3 generation, and it DOES carry this class
+    // -- the absence is meaningful, not a missing file) declares exactly
+    // SetTranspose / UpdateVolume / SetPan / SetVolume with no UpdatePan;
+    // dc3-decomp, which is NEWER than RB3, has it and calls it from
+    // MidiInstrument::Poll. A prior lane had already removed the *call* here
+    // (see the note in MidiInstrument.cpp) but left the declaration, so the
+    // vtable stayed one slot long. Nothing in this tree called it.
     virtual void SetPan(float);
     virtual void SetVolume(float);
 
