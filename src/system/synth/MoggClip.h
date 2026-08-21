@@ -28,18 +28,45 @@ public:
     virtual void Load(BinStream &);
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
-    virtual bool IsPlaying() const { return mPlaying; }
-    // SynthPollable
+    // ⛔ NONE of the eight below is virtual in retail, and they were the single
+    // largest vtable defect in the tree: retail's MoggClip Hmx::Object-subobject
+    // vtable (0x820f8f34) holds 21 slots -- exactly Object's set, ending at
+    // FindPathName -- while ours held 29.  The eight surplus slots were these,
+    // appended in declaration order as MoggClip's own NEW virtuals, so retail's
+    // MoggClip introduces NO new virtual at all.  Controls: name coverage on
+    // that table is 21/21 (not a coverage artifact); the word after slot 20 is
+    // 0xffffffff followed by (VA, index) pairs, i.e. a handler table, so the
+    // read is not truncated; and the SynthPollable subobject table is 3/3
+    // EXACT, which is where GetSoundDisplayName/SynthPoll correctly live.
+    //
+    // The `// Playable` block was DC3's newer-engine MI refactor
+    // (PlayableSample/SynthPollable -- see the note in SampleInst.h), which
+    // retail's MoggClip predates.  Two of these still carry a DC3 signature
+    // ALONGSIDE retail's real one further down this header: Play(float) beside
+    // the non-virtual no-arg Play() at 0x8270DE60, and SetPan(float) beside the
+    // non-virtual SetPan(int, float) at 0x8270EB10.  Both retail forms are
+    // mapped and matching; the DC3 forms are left declared (non-virtual) rather
+    // than deleted, because "not virtual" is what the vtable proves and "does
+    // not exist" is a separate claim.
+    //
+    // ⚠ De-virtualizing is a RENAME (U -> Q in the mangling).  Pause and
+    // SetVolume are MAPPED (0x8270D690, 0x8270D748) and were scoring 100%, so
+    // scripts/target_symbol_map.json is corrected in the same commit; without
+    // that, both rows un-pair to 0% permanently.  The other six are unmapped.
+    //
+    // Nothing derives from MoggClip and neither base declares any of these, so
+    // no call can reach them through a base pointer: behaviour is unchanged.
+    bool IsPlaying() const { return mPlaying; }
+    // SynthPollable -- these two ARE virtual (table 0 is 3/3 exact)
     virtual const char *GetSoundDisplayName();
     virtual void SynthPoll();
-    // Playable
-    virtual void Play(float);
-    virtual void Stop();
-    virtual void Pause(bool);
-    virtual bool DonePlaying();
-    virtual void SetVolume(float);
-    virtual void SetPan(float);
-    virtual void SetSend(FxSend *);
+    void Play(float);
+    void Stop();
+    void Pause(bool);
+    bool DonePlaying();
+    void SetVolume(float);
+    void SetPan(float);
+    void SetSend(FxSend *);
 
     void SetLoop(bool, int, int);
     // Retail RB3 (and the rb3-Wii oracle) carry a 1-arg SetLoop plus trivial
