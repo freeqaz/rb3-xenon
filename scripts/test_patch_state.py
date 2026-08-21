@@ -159,12 +159,24 @@ class PatchStateTests(unittest.TestCase):
         this file. This is the one that fails.
         """
         self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        doc = json.loads((self.fx.build / "patch_state.json").read_text())
+        # CONTROL, and it caught a real hole in an earlier draft of this test:
+        # a verifier that records NO target objects still goes red below --
+        # every target obj is then "not in the manifest" -- and the assertions
+        # that follow would certify a verifier that had stopped hashing the
+        # target side entirely. Pin the recorded set, then insist the red is
+        # specifically a CONTENT disagreement.
+        self.assertEqual(set(doc["target_objects"]),
+                         {f"build/{BUILD_ID}/obj/t{i}.obj" for i in range(2)})
+
         victim = self.fx.targets[0]
         victim.write_bytes(b"fn_82001234-NOT-RENAMED")
         red = self.fx.run("--verify-manifest")
         self.assertEqual(red.returncode, 1, red.stdout + red.stderr)
-        self.assertIn("t0.obj", red.stderr)
         self.assertIn("[target]", red.stderr)
+        target_block = red.stderr.split("[target]")[1]
+        self.assertIn("content differs", target_block)
+        self.assertIn("t0.obj", target_block)
         # CONTROL: the decomp section must NOT be implicated -- otherwise the
         # test would pass on a verifier that just reports everything.
         decomp_block = red.stderr.split("[target]")[0]
