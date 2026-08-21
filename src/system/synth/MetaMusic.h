@@ -23,7 +23,13 @@ public:
     // dispatch is `bctr` rather than `bctrl`.  The looping version came from
     // the newer dc3 engine; do not restore it.
     virtual void PollLoading() { (this->*mState)(); }
-    virtual const char *DebugText() { return "MetaMusicLoader"; }
+    // Retail formats the loader's path; it does NOT return a bare constant.
+    // Pinned by retail bytes at 0x8270FF88 (vtable slot 1 -- Loader declares
+    // DebugText first): it copy-constructs a FilePath temp from `this+0xc`
+    // (== Loader::mFile, NOT our shadowing `File *mFile` at 0x18) and tail-
+    // calls MakeString<FilePath>("MetaMusic: %s", temp).  Same house idiom as
+    // DirLoader ("DL: %s") and DirUnloader ("UnLoader: %s").
+    virtual const char *DebugText() { return MakeString("MetaMusic: %s", Loader::mFile); }
     virtual const char *StateName() const { return "MetaMusicLoader"; }
 
     void DoneLoading();
