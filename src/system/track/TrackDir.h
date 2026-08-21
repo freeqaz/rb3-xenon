@@ -85,8 +85,29 @@ public:
     virtual bool IsActiveInSession() const { return false; }
     virtual void PreDraw() {}
     virtual void PostDraw() {}
-    // Declared LAST to match retail vtable slot order (see note above).
-    virtual void SyncFingerFeedback();
+    // ⛔ NOT virtual in retail -- and this SUPERSEDES the "declared LAST to
+    // match retail vtable slot order" decision above, without contradicting
+    // its reasoning: declaring it first would indeed have pushed
+    // SetDisplayRange one slot too high, but the slot it was moved INTO does
+    // not exist either.  Retail's TrackDir primary vtable (0x8211cb0c) holds
+    // 35 slots to our 36, and GemTrackDir's holds 36 to our 37 -- the same
+    // single surplus, inherited.
+    //
+    // TrackDir's own tail cannot localise it: from slot 16 on, nearly every
+    // retail slot is an ICF fold hub (x1433 / x1235 / x195) because these
+    // virtuals are empty inline bodies, so the map shows one arbitrary
+    // survivor name per hub and EVERY row reads as a mismatch.  GemTrackDir
+    // settles it, because GemTrackDir overrides with REAL bodies:
+    //   - retail slot 35 is 0x822e6730 == GemTrackDir::GameWon (our body
+    //     scores fuzzy 100.0 against it), so GameWon is virtual and last;
+    //   - retail slots 33/34 are fold hubs, consistent with the inherited
+    //     empty PreDraw/PostDraw, which GemTrackDir does not override;
+    //   - and there is NO retail slot anywhere holding a real
+    //     GemTrackDir::SyncFingerFeedback body.  If SyncFingerFeedback were
+    //     virtual, that override could not be absent AND could not be a fold
+    //     hub, since its body is not empty.
+    // Hence the surplus is this declaration, not GameWon and not PreDraw.
+    void SyncFingerFeedback();
 
     void AddActiveWidget(class TrackWidget *);
     void AddTestWidget(class TrackWidget *, int);

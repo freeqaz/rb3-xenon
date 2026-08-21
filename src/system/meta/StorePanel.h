@@ -132,10 +132,20 @@ protected:
     virtual void UpdateFromEnumProduct(StorePurchaseable *, EnumProduct const *);
     virtual void StoreUserProfileSwappedToUser(LocalUser *);
     // Retail has no StoreProfile() virtual at all (see the StoreUser() note
-    // above). Six StorePanel.cpp bodies still call it, so it is kept — but
-    // parked at the TAIL of the vtable, where it cannot perturb the dispatch
-    // offsets of slots 0..27, all of which are retail-aligned.
-    virtual Profile *StoreProfile() const;
+    // above). Six StorePanel.cpp bodies still call it, so it is kept — but it
+    // is NON-VIRTUAL, so it occupies no slot at all.
+    //
+    // ⚠ This finishes laneSTORE-2's work rather than revising it.  That lane
+    // proved the same thing and parked it at the TAIL of the vtable so it
+    // "cannot perturb the dispatch offsets of slots 0..27".  That reasoning is
+    // correct as far as it goes, but a tail slot is still a slot: the vtable
+    // sweep measures retail's BandStorePanel (0x820bf28c) at 28 slots against
+    // our 30, and this was one of the two.  Dropping `virtual` keeps slots
+    // 0..27 exactly as laneSTORE-2 left them AND removes the surplus.
+    // Nothing overrides it (BandStorePanel is the only class deriving from
+    // StorePanel and declares no StoreProfile), so every existing call site
+    // binds to this same body and behaviour is unchanged.
+    Profile *StoreProfile() const;
 
     DataNode OnMsg(SigninChangedMsg const &);
     DataNode OnMsg(ProfileSwappedMsg const &);
