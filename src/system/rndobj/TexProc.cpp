@@ -195,7 +195,7 @@ void TexProc::Poll() {
 }
 
 void TexProc::DrawToTexture() {
-    if (TheRnd.GetDrawMode() != 0)
+    if (TheRnd.DrawMode() != 0)
         return;
     if (!Showing() || !mInputTex || !mOutputTex)
         return;

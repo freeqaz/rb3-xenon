@@ -92,7 +92,7 @@ found:
     sLightCam->SetFrustum(nearPlane, farPlane, PI / 4.0f, 1.0f);
     sLightCam->Select();
 
-    Rnd::DrawMode oldMode = TheRnd.GetDrawMode();
+    Rnd::Mode oldMode = TheRnd.DrawMode();
     TheRnd.SetDrawMode(Rnd::kDrawExtrude);
     draw->DrawShowing();
     TheRnd.SetDrawMode(oldMode);

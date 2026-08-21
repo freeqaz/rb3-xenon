@@ -42,13 +42,14 @@ public:
     // PostProcessor
     virtual void EndWorld();
     virtual void DoPost();
-    // OPEN (lane BS-3, not fixed): "NgSpotlightDrawer" is absent from retail
-    // band.exe's string pool, so retail cannot return it here either -- RB3
-    // likely has no such override (DC3, which is newer, does).  Left alone
-    // deliberately: ?GetProcType@ has no target_symbol_map row anywhere, so the
-    // member is unpaired and unadjudicable, and guessing risks a regression for
-    // zero metric.  Reopen if GetProcType ever gets mapped.
-    virtual char const *GetProcType() { return "NgSpotlightDrawer"; }
+    // ✅ RESOLVED (lane VTGRIND wave 3, 2026-08-20) -- BS-3 was RIGHT, and its
+    // string-pool reading re-verified: both "NgSpotlightDrawer" hits in retail
+    // are the RTTI type names `.?AVNgSpotlightDrawer@@` and
+    // `.?AVSpotlightResources@NgSpotlightDrawer@@`, never a literal.  BS-3
+    // deferred only because ?GetProcType@ has no target_symbol_map row, i.e. it
+    // was waiting on a NAME.  The retail VTABLE settles it without one:
+    // PostProcessor @0x82063a0c has FIVE slots and no GetProcType among them.
+    // The whole family is removed at the base -- see rndobj/PostProc.h.
 
     NEW_OBJ(NgSpotlightDrawer);
 

@@ -70,7 +70,6 @@ public:
     // PostProcessor
     virtual void EndWorld();
     virtual float Priority() { return 0.1f; }
-    virtual const char *GetProcType() { return "SpotlightDrawer"; }
 
     OBJ_MEM_OVERLOAD(0x34)
     NEW_OBJ(SpotlightDrawer)

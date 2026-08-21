@@ -14,7 +14,6 @@ public:
     OBJ_SET_TYPE_ENGINE(SoftParticleBuffer);
     // PostProcessor
     virtual void DoPost();
-    virtual const char *GetProcType() { return "SoftParticleBuffer"; }
 
     NEW_OBJ(RndSoftParticleBuffer)
     void Queue(RndDrawable *, RndMat::Blend);

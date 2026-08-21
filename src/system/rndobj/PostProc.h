@@ -48,7 +48,30 @@ public:
     virtual void EndWorld() {}
     virtual void DoPost() {}
     virtual float Priority() { return 1; }
-    virtual const char *GetProcType() = 0;
+    // ⛔ NO GetProcType() IN RETAIL -- and this RESOLVES lane BS-3's OPEN note
+    // in SpotlightDrawer_NG.h, which suspected exactly this but could not
+    // adjudicate it because ?GetProcType@ has no target_symbol_map row.  The
+    // vtable is a NAME-FREE instrument, so the missing map row does not block
+    // it.  Two independent readings agree (lane VTGRIND wave 3, 2026-08-20):
+    //
+    //   1. retail PostProcessor @0x82063a0c is FIVE slots and ends there
+    //      (slot 5 holds 0x3fadf84d, a float constant):
+    //        [0] ??_GPostProcessor@@   [1..3] one folded address -- BeginWorld,
+    //        EndWorld and DoPost are all empty {} so they fold together
+    //        [4] ?Priority@PostProcessor@@UAAMXZ
+    //      The RndPostProc PostProcessor-subobject table @0x82063a34 is 5 too.
+    //   2. NOT ONE of the strings these overrides return is a literal in
+    //      retail band.exe.  "RndPostProc", "NgSpotlightDrawer" and "NgDOFProc"
+    //      appear ONLY as RTTI type names (`.?AVRndPostProc@@`); the lone
+    //      "SpotlightDrawer"/"SoftParticleBuffer" literals sit in the Milo
+    //      class-registration pointer table, not in a return.  A function whose
+    //      only statement is `return "X";` cannot exist without "X".
+    //
+    // ⚠ Scope: the vtable proves no SLOT exists.  Whether RB3 declared a
+    // NON-virtual GetProcType is unprovable this way (an uncalled non-virtual
+    // emits nothing) -- but there are zero call sites in this tree, in
+    // native/, and in milo-native-engine, so it is removed rather than left as
+    // a vestigial declaration retail does not evidence either.
 };
 
 /** "A PostProc drives post-processing effects." */
@@ -70,7 +93,6 @@ public:
     virtual void SetBloomColor() {}
     virtual void DoPost();
     virtual float Priority() { return mPriority; }
-    virtual const char *GetProcType() { return "RndPostProc"; }
 
     OBJ_MEM_OVERLOAD(0x22);
     NEW_OBJ(RndPostProc)

@@ -4,13 +4,28 @@
 #include "xdk/XAPILIB.h"
 #include "xdk/XONLINE.h"
 
+// ★ CheckError IS NOT VIRTUAL IN RETAIL -- measured on retail vtable bytes,
+// not inferred (lane VTGRIND wave 3, 2026-08-20).  `Job` declares exactly five
+// virtuals (~Job, Start, IsFinished, Cancel, OnCompletion) and every retail
+// table in this family is exactly FIVE slots:
+//
+//   StartSessionJob  @0x82059ddc   slot 3 = ?Cancel@XboxSessionJob@@UAAXPAVObject@Hmx@@@Z
+//   MakeSessionJob   @0x82059ccc   5 slots
+//   DeleteSessionJob @0x82059d1c   5 slots
+//
+// so there is no CheckError slot to hold a sixth.  Corroborating: every call
+// site is a direct `CheckError(res, &mXOverlapped)` on `this` inside a member,
+// never through a base pointer, and MakeSessionJob does NOT derive from
+// XboxSessionJob -- the two declarations are independent, which is why BOTH
+// roots read +1.  Devirtualising here removes one trailing slot from six
+// classes at once.
 class XboxSessionJob : public Job {
 public:
     XboxSessionJob(void *);
     virtual ~XboxSessionJob();
     virtual bool IsFinished();
     virtual void Cancel(Hmx::Object *);
-    virtual void CheckError(DWORD, XOVERLAPPED *);
+    void CheckError(DWORD, XOVERLAPPED *);
 
 protected:
     XOVERLAPPED mXOverlapped; // 0x8
@@ -51,7 +66,7 @@ public:
     virtual bool IsFinished();
     virtual void Cancel(Hmx::Object *);
     virtual void OnCompletion(Hmx::Object *);
-    virtual void CheckError(DWORD, XOVERLAPPED *);
+    void CheckError(DWORD, XOVERLAPPED *); // not virtual in retail -- see above
 
 protected:
     HANDLE *mSession; // 0x8

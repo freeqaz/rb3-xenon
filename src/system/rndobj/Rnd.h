@@ -70,7 +70,12 @@ public:
         kDefaultTex_Error = 7,
         kDefaultTex_Max = 8
     };
-    enum DrawMode {
+    // ★ `Mode`, not `DrawMode` -- retail's spelling, proven by DC3's SHIPPED
+    // LINKER MAP (the assert literal in RndVelocityBuffer::DrawMesh names
+    // Rnd::Mode).  The rename is FORCED to come with the accessor rename
+    // below: a member function `DrawMode()` cannot coexist with a nested
+    // type of the same name.
+    enum Mode {
         kDrawNormal = 0,
         kDrawShadowDepth = 1,
         kDrawExtrude = 2,
@@ -195,8 +200,8 @@ public:
     bool WorldEnded() const { return mWorldEnded; }
     bool GetReleaseImmediate() { return mReleaseImmediate; }
     Aspect GetAspect() const { return mAspect; }
-    DrawMode GetDrawMode() { return mDrawMode; }
-    void SetDrawMode(DrawMode d) { mDrawMode = d; }
+    Mode DrawMode() { return mDrawMode; }
+    void SetDrawMode(Mode d) { mDrawMode = d; }
     RndCam *GetDefaultCam() const { return mDefaultCam; }
     RndCam *GetWorldCamCopy() const { return mWorldCamCopy; }
     ProcessCmd ProcCmds() const { return mProcCmds; }
@@ -350,7 +355,7 @@ protected:
     bool mDrawing; // 0xf6
     bool mWorldEnded; // 0xf7 (=1)
     Aspect mAspect; // 0xf8
-    DrawMode mDrawMode; // 0xfc
+    Mode mDrawMode; // 0xfc
     bool mResourceCached; // 0x100
     bool mShowShaderCost; // 0x101
     bool mShrinkToSafe; // 0x102 (=1)

@@ -125,7 +125,7 @@ void RndFlare::Print() {
 }
 
 void RndFlare::DrawShowing() {
-    if (TheRnd.GetDrawMode() != 0)
+    if (TheRnd.DrawMode() != 0)
         return;
     RndCam *cam = RndCam::Current();
 
