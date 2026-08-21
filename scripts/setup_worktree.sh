@@ -55,8 +55,22 @@
 #
 # After setup:
 #   cd <worktree>
-#   ./tools/ninja-locked build/45410914/src/system/flow/FlowCommand.obj
+#   ./tools/ninja-locked          # NO target -- see below
 #   bin/objdiff-cli diff -u <unit> <symbol> --format json-pretty -o /dev/stdout
+#
+# ⛔ Do NOT name a single .obj as the ninja target, and do NOT pass
+# `objdiff-cli --build` (which is the same thing: `ninja <base .obj>`). The six
+# post-compile patchers hang off the `post-compile` phony, DOWNSTREAM of the
+# compile edges, so a single-object build stops one edge short of all of them
+# and the fresh compile overwrites the previously-patched bytes -- answering
+# from raw compiler output and leaving the object that way for report.json and
+# every concurrent lane. Measured on rb3-xenon 2026-08-21: one such build cost
+# unit default/BandUI 2.006 pp of matched_code_percent and read
+# ?InitPanels@BandUI@@QAAXXZ as 99.7 when it is 100.0. A bare
+# `./tools/ninja-locked` on a warm worktree is a no-op in ~24 s, so the advice
+# this block used to give bought nothing and cost a correct measurement.
+# `python3 scripts/verify_objs_patched.py --verify-manifest` answers whether a
+# tree is currently trustworthy.
 #
 # Or via the MCP orchestrator:
 #   run_objdiff(symbol, project_dir="<worktree>")
@@ -789,7 +803,9 @@ echo "  branch:        $BRANCH  (from $BASE_COMMIT on $BASE_BRANCH)"
 echo ""
 echo "Next:"
 echo "  cd $WORKTREE_PATH"
-echo "  ./tools/ninja-locked build/$VERSION/src/<File>.obj   # warm cache = fast"
+echo "  ./tools/ninja-locked                    # NO target: a single-.obj build"
+echo "                                          # skips the post-compile patchers"
+echo "  python3 scripts/verify_objs_patched.py --verify-manifest   # is it trustworthy?"
 echo ""
 echo "Usage with MCP orchestrator:"
 echo "  run_objdiff(symbol, project_dir=\"$WORKTREE_PATH\")"

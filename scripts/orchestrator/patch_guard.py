@@ -82,7 +82,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-__all__ = ["UnpatchedTreeError", "ensure_patched_tree", "POST_COMPILE_TARGET"]
+__all__ = ["UnpatchedTreeError", "ensure_patched_tree",
+           "ensure_patched_tree_once", "POST_COMPILE_TARGET"]
 
 #: The ninja target that owns the patch passes (see `configure.py`
 #: `custom_build_steps`).  Naming the `.obj` instead is the defect.
@@ -229,3 +230,32 @@ def ensure_patched_tree(project_dir: Path | str, *, build: bool = True) -> str:
 
     notes.append((proc.stdout or proc.stderr or "").strip() or "patch state verified")
     return " | ".join(n for n in notes if n)
+
+
+#: Memo for :func:`ensure_patched_tree_once`, keyed on the resolved tree.
+_ENSURED: dict[str, str] = {}
+
+
+def ensure_patched_tree_once(project_dir: Path | str, **kw) -> str:
+    """`ensure_patched_tree`, at most once per tree per process.
+
+    For the scripts that measure MANY symbols out of one tree in a loop.  Each
+    call is `ninja: no work to do.` plus a ~0.56 s hash of 4,296 objects --
+    nothing once, but minutes across a few hundred symbols.
+
+    The tradeoff is explicit and it is not free: this trusts that nothing else
+    unpatches the tree while the loop runs.  That is sound for the loops it is
+    used in -- they no longer build, precisely because this change stopped them
+    building -- and it is NOT sound for anything that compiles between
+    measurements.  Those callers use :func:`ensure_patched_tree` directly.
+
+    A refusal is deliberately not memoized: a raise leaves the memo empty, so a
+    caller that repairs the tree and retries gets an honest second answer
+    rather than the cached complaint.
+    """
+    key = str(Path(project_dir).resolve())
+    note = _ENSURED.get(key)
+    if note is None:
+        note = ensure_patched_tree(project_dir, **kw)
+        _ENSURED[key] = note
+    return note

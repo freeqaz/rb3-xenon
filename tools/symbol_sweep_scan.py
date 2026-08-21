@@ -180,10 +180,42 @@ def near_miss_functions(report_path, tiers, lo, hi):
 
 # ── objdiff invocation (Part A) ──────────────────────────────────────────────
 
+
+def _ensure_patched(project_dir):
+    """Build through `post-compile` and ASSERT -- never `--build` one object.
+
+    `objdiff-cli diff --build` (without `--full-build`) is `ninja <base .obj>`,
+    a single-object target that stops one edge short of rb3-xenon's six
+    post-compile patchers: it answers from raw compiler output and leaves the
+    object that way for report.json and every concurrent lane. Measured on
+    rb3-xenon: one such call cost unit default/BandUI 2.006 pp of
+    matched_code_percent and read a 100.0 function as 99.7.
+
+    Memoized per tree per process; raises UnpatchedTreeError rather than
+    returning a number from a partially-patched tree.
+    """
+    import sys as _sys, os as _os
+    _here = _os.path.dirname(_os.path.abspath(__file__))
+    while _here != "/" and not _os.path.isdir(_os.path.join(_here, "scripts", "orchestrator")):
+        _here = _os.path.dirname(_here)
+    _scripts = _os.path.join(_here, "scripts")
+    if _scripts not in _sys.path:
+        _sys.path.insert(0, _scripts)
+    from orchestrator.patch_guard import ensure_patched_tree_once
+    return ensure_patched_tree_once(project_dir)
+
+
 def run_objdiff_json(objdiff_bin, project_dir, symbol, timeout=180):
-    """Run the proven objdiff invocation, return the last-line JSON dict or None."""
+    """Run the proven objdiff invocation, return the last-line JSON dict or None.
+
+    NO `--build` -- see _ensure_patched(). A sweep is the worst place for it:
+    it builds one object per symbol, so it unpatched the tree once per symbol
+    and every later symbol was scored against a progressively more degraded
+    tree.
+    """
+    _ensure_patched(project_dir)
     cmd = [objdiff_bin, "diff", "-p", ".", symbol,
-           "--build", "-f", "json", "--include-instructions"]
+           "-f", "json", "--include-instructions"]
     try:
         p = subprocess.run(cmd, cwd=project_dir, capture_output=True,
                            text=True, timeout=timeout)

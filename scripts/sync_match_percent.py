@@ -219,7 +219,13 @@ def sync(args: argparse.Namespace) -> None:
     if args.build:
         print("Building report.json...")
         result = subprocess.run(
-            ["ninja", "build/45410914/report.json"],
+            # tools/ninja-locked, never bare ninja: concurrent ninja runs in
+            # one build dir corrupt .ninja_deps and can trigger the
+            # SPLIT->configure regeneration loop (see the wrapper's header).
+            # The report.json edge already takes `post-compile` as an implicit
+            # input, so this DOES run the six patchers -- that part was fine.
+            [str(REPO_ROOT / "tools" / "ninja-locked"),
+             "build/45410914/report.json"],
             cwd=str(REPO_ROOT),
             capture_output=True, text=True,
         )
