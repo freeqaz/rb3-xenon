@@ -1,0 +1,611 @@
+{
+ "_comment": "Residual worklist from lane DC3-ONLY-PINS (2026-08-21, tracker #94), repo rb3-xenon. Every row's pinned name names a class RB3 retail does not contain (OBJ_CLASSNAME string-absence instrument, 95.70% measured recall on a 256-class control; classes declared only under src/system/{hamobj,flow,gesture}/). The lane NULLED the 69 rows that scored PARTIALLY. These rows were LEFT IN PLACE and are NOT a deletion worklist: the `full` rows are byte-TRUE -- our body reproduces retail's bytes exactly -- so the bytes are real and only the NAME is wrong. Nulling them would destroy real matched bytes; the correct fix is to IDENTIFY the true RB3 symbol and rename (cf. _icf_arbitrary). `zero`/`unpaired` rows carry no credit, so they are harmless but still false. 0x826342f0 is already in _denylist.",
+ "_instrument": "OBJ_CLASSNAME(X) emits literal \"X\" via StaticClassName(); X in retail => \"X\" in orig/45410914/band.exe",
+ "_lane_measured": {
+  "merge_base": "0f7f213b",
+  "fuzzy_match_percent": [
+   48.99875,
+   48.913193
+  ],
+  "matched_code": [
+   3764256,
+   3770940
+  ],
+  "matched_code_percent": [
+   36.738945,
+   36.80418
+  ],
+  "matched_functions": [
+   42204,
+   42240
+  ]
+ },
+ "rows": [
+  {
+   "address": "0x823c35d8",
+   "pinned_name": "?PropSync@@YA_NAAVConstraint@HamIKEffector@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "demangled": "bool __cdecl PropSync(class HamIKEffector::Constraint &, class DataNode &, class DataArray *, int, enum PropOp)",
+   "dc3_class": [
+    "HamIKEffector"
+   ],
+   "unit": "default/HamIKEffector",
+   "size": 272,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x8227a828",
+   "pinned_name": "??0HamSong@@QAA@XZ",
+   "demangled": "public: __cdecl HamSong::HamSong(void)",
+   "dc3_class": [
+    "HamSong"
+   ],
+   "unit": "default/Ham",
+   "size": 164,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x822c0b50",
+   "pinned_name": "?Copy@CrazeHollaback@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+   "demangled": "public: virtual void __cdecl CrazeHollaback::Copy(class Hmx::Object const *, enum Hmx::Object::CopyType)",
+   "dc3_class": [
+    "CrazeHollaback"
+   ],
+   "unit": "default/CrazeHollaback",
+   "size": 128,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82817a68",
+   "pinned_name": "?PostLoad@?$ObjDirPtr@VHamListRibbon@@@@QAAXPAVLoader@@@Z",
+   "demangled": "public: void __cdecl ObjDirPtr<class HamListRibbon>::PostLoad(class Loader *)",
+   "dc3_class": [
+    "HamListRibbon"
+   ],
+   "unit": "default/HamNavList",
+   "size": 128,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x822c22c8",
+   "pinned_name": "?Replace@?$ObjPtr@VHamCharacter@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+   "demangled": "public: virtual void __cdecl ObjPtr<class HamCharacter>::Replace(class ObjRef *, class Hmx::Object *)",
+   "dc3_class": [
+    "HamCharacter"
+   ],
+   "unit": "default/HamIKSkeleton",
+   "size": 120,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82340670",
+   "pinned_name": "?Load@HamLabel@@UAAXAAVBinStream@@@Z",
+   "demangled": "public: virtual void __cdecl HamLabel::Load(class BinStream &)",
+   "dc3_class": [
+    "HamLabel"
+   ],
+   "unit": "default/HamLabel",
+   "size": 120,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x8228e2f8",
+   "pinned_name": "??1?$ObjRefConcrete@VFlowNode@@VObjectDir@@@@UAA@XZ",
+   "demangled": "public: virtual __cdecl ObjRefConcrete<class FlowNode, class ObjectDir>::~ObjRefConcrete<class FlowNode, class ObjectDir>(void)",
+   "dc3_class": [
+    "FlowNode"
+   ],
+   "unit": "default/BandDirector",
+   "size": 116,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x822b0e60",
+   "pinned_name": "??1?$ObjRefConcrete@VFlowLabel@@VObjectDir@@@@UAA@XZ",
+   "demangled": "public: virtual __cdecl ObjRefConcrete<class FlowLabel, class ObjectDir>::~ObjRefConcrete<class FlowLabel, class ObjectDir>(void)",
+   "dc3_class": [
+    "FlowLabel"
+   ],
+   "unit": "default/BandCamShot",
+   "size": 116,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x822c2348",
+   "pinned_name": "??1?$ObjRefConcrete@VHamCharacter@@VObjectDir@@@@UAA@XZ",
+   "demangled": "public: virtual __cdecl ObjRefConcrete<class HamCharacter, class ObjectDir>::~ObjRefConcrete<class HamCharacter, class ObjectDir>(void)",
+   "dc3_class": [
+    "HamCharacter"
+   ],
+   "unit": "default/HamIKSkeleton",
+   "size": 116,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x824a1c68",
+   "pinned_name": "??$?0U?$_List_iterator@UPropTriggerDefn@FlowTrigger@@U?$_Const_traits@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UPropTriggerDefn@FlowTrigger@@V?$StlNodeAlloc@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UPropTriggerDefn@FlowTrigger@@U?$_Const_traits@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@UPropTriggerDefn@FlowTrigger@@@1@@Z",
+   "demangled": "public: __cdecl stlpmtx_std::list<struct FlowTrigger::PropTriggerDefn, class stlpmtx_std::StlNodeAlloc<struct FlowTrigger::PropTriggerDefn>>::list<struct FlowTrigger::PropTriggerDefn, class stlpmtx_std::StlNodeAlloc<struct FlowTrigger::PropTriggerDefn>><struct stlpmtx_std::_List_iterator<struct FlowTrigger::PropTriggerDefn, struct stlpmtx_std::_Const_traits<struct FlowTrigger::PropTriggerDefn>>>(struct stlpmtx_std::_List_iterator<struct FlowTrigger::PropTriggerDefn, struct stlpmtx_std::_Const_traits<struct FlowTrigger::PropTriggerDefn>>, struct stlpmtx_std::_List_iterator<struct FlowTrigger::PropTriggerDefn, struct stlpmtx_std::_Const_traits<struct FlowTrigger::PropTriggerDefn>>, class stlpmtx_std::StlNodeAlloc<struct FlowTrigger::PropTriggerDefn> const &)",
+   "dc3_class": [
+    "FlowTrigger"
+   ],
+   "unit": "default/EventTrigger",
+   "size": 116,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82699a50",
+   "pinned_name": "?push_back@?$vector@UFrame@RhythmDetector@@V?$StlNodeAlloc@UFrame@RhythmDetector@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUFrame@RhythmDetector@@@Z",
+   "demangled": "public: void __cdecl stlpmtx_std::vector<struct RhythmDetector::Frame, class stlpmtx_std::StlNodeAlloc<struct RhythmDetector::Frame>>::push_back(struct RhythmDetector::Frame const &)",
+   "dc3_class": [
+    "RhythmDetector"
+   ],
+   "unit": "default/band3/game/Stats",
+   "size": 116,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82715530",
+   "pinned_name": "?_M_fill_insert@?$vector@ULocalizedName@HamMove@@V?$StlNodeAlloc@ULocalizedName@HamMove@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAULocalizedName@HamMove@@IABU34@@Z",
+   "demangled": "private: void __cdecl stlpmtx_std::vector<struct HamMove::LocalizedName, class stlpmtx_std::StlNodeAlloc<struct HamMove::LocalizedName>>::_M_fill_insert(struct HamMove::LocalizedName *, unsigned int, struct HamMove::LocalizedName const &)",
+   "dc3_class": [
+    "HamMove"
+   ],
+   "unit": "default/HamMove",
+   "size": 112,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x824c93c0",
+   "pinned_name": "??$?6UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UTarget@HamCamShot@@V?$StlNodeAlloc@UTarget@HamCamShot@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "demangled": "class BinStream & __cdecl operator<<<struct HamCamShot::Target, class stlpmtx_std::StlNodeAlloc<struct HamCamShot::Target>>(class BinStream &, class stlpmtx_std::list<struct HamCamShot::Target, class stlpmtx_std::StlNodeAlloc<struct HamCamShot::Target>> const &)",
+   "dc3_class": [
+    "HamCamShot"
+   ],
+   "unit": "default/BandCamShot",
+   "size": 108,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82666160",
+   "pinned_name": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+   "demangled": "void __cdecl stlpmtx_std::__linear_insert<class FlowNode **, class FlowNode *, bool (__cdecl *)(class FlowNode *, class FlowNode *)>(class FlowNode **, class FlowNode **, class FlowNode *, bool (__cdecl *)(class FlowNode *, class FlowNode *))",
+   "dc3_class": [
+    "FlowNode"
+   ],
+   "unit": "default/FlowSlider",
+   "size": 108,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82340740",
+   "pinned_name": "?Save@HamLabel@@UAAXAAVBinStream@@@Z",
+   "demangled": "public: virtual void __cdecl HamLabel::Save(class BinStream &)",
+   "dc3_class": [
+    "HamLabel"
+   ],
+   "unit": "default/BandLabel",
+   "size": 100,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x824a06c8",
+   "pinned_name": "?insert@?$list@UPropTriggerDefn@FlowTrigger@@V?$StlNodeAlloc@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPropTriggerDefn@FlowTrigger@@U?$_Nonconst_traits@UPropTriggerDefn@FlowTrigger@@@stlpmtx_std@@@2@U32@ABUPropTriggerDefn@FlowTrigger@@@Z",
+   "demangled": "public: struct stlpmtx_std::_List_iterator<struct FlowTrigger::PropTriggerDefn, struct stlpmtx_std::_Nonconst_traits<struct FlowTrigger::PropTriggerDefn>> __cdecl stlpmtx_std::list<struct FlowTrigger::PropTriggerDefn, class stlpmtx_std::StlNodeAlloc<struct FlowTrigger::PropTriggerDefn>>::insert(struct stlpmtx_std::_List_iterator<struct FlowTrigger::PropTriggerDefn, struct stlpmtx_std::_Nonconst_traits<struct FlowTrigger::PropTriggerDefn>>, struct FlowTrigger::PropTriggerDefn const &)",
+   "dc3_class": [
+    "FlowTrigger"
+   ],
+   "unit": "default/EventTrigger",
+   "size": 100,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82574348",
+   "pinned_name": "?NewObject@FlowAnimate@@SAPAVObject@Hmx@@XZ",
+   "demangled": "public: static class Hmx::Object * __cdecl FlowAnimate::NewObject(void)",
+   "dc3_class": [
+    "FlowAnimate"
+   ],
+   "unit": "default/Flow",
+   "size": 100,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x8230c200",
+   "pinned_name": "??6@YAAAVBinStream@@AAV0@ABUNavItem@HamNavProvider@@@Z",
+   "demangled": "class BinStream & __cdecl operator<<(class BinStream &, struct HamNavProvider::NavItem const &)",
+   "dc3_class": [
+    "HamNavProvider"
+   ],
+   "unit": "default/HamNavProvider",
+   "size": 96,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82657660",
+   "pinned_name": "??$__uninitialized_copy@PAUFrame@RhythmDetector@@PAU12@@stlpmtx_std@@YAPAUFrame@RhythmDetector@@PAU12@00ABU__false_type@0@@Z",
+   "demangled": "struct RhythmDetector::Frame * __cdecl stlpmtx_std::__uninitialized_copy<struct RhythmDetector::Frame *, struct RhythmDetector::Frame *>(struct RhythmDetector::Frame *, struct RhythmDetector::Frame *, struct RhythmDetector::Frame *, struct stlpmtx_std::__false_type const &)",
+   "dc3_class": [
+    "RhythmDetector"
+   ],
+   "unit": "default/RhythmDetector",
+   "size": 96,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x826991c0",
+   "pinned_name": "??$__uninitialized_fill_n@PAUFrame@RhythmDetector@@IU12@@stlpmtx_std@@YAPAUFrame@RhythmDetector@@PAU12@IABU12@ABU__false_type@0@@Z",
+   "demangled": "struct RhythmDetector::Frame * __cdecl stlpmtx_std::__uninitialized_fill_n<struct RhythmDetector::Frame *, unsigned int, struct RhythmDetector::Frame>(struct RhythmDetector::Frame *, unsigned int, struct RhythmDetector::Frame const &, struct stlpmtx_std::__false_type const &)",
+   "dc3_class": [
+    "RhythmDetector"
+   ],
+   "unit": "default/band3/game/Stats",
+   "size": 96,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x827148b0",
+   "pinned_name": "??$__uninitialized_copy@PAULocalizedName@HamMove@@PAU12@@stlpmtx_std@@YAPAULocalizedName@HamMove@@PAU12@00ABU__false_type@0@@Z",
+   "demangled": "struct HamMove::LocalizedName * __cdecl stlpmtx_std::__uninitialized_copy<struct HamMove::LocalizedName *, struct HamMove::LocalizedName *>(struct HamMove::LocalizedName *, struct HamMove::LocalizedName *, struct HamMove::LocalizedName *, struct stlpmtx_std::__false_type const &)",
+   "dc3_class": [
+    "HamMove"
+   ],
+   "unit": "default/HamMove",
+   "size": 96,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x823c3300",
+   "pinned_name": "??6@YAAAVBinStream@@AAV0@ABVConstraint@HamIKEffector@@@Z",
+   "demangled": "class BinStream & __cdecl operator<<(class BinStream &, class HamIKEffector::Constraint const &)",
+   "dc3_class": [
+    "HamIKEffector"
+   ],
+   "unit": "default/HamIKEffector",
+   "size": 84,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x8249f438",
+   "pinned_name": "??1?$ObjPtrList@VFlowNode@@VObjectDir@@@@UAA@XZ",
+   "demangled": "public: virtual __cdecl ObjPtrList<class FlowNode, class ObjectDir>::~ObjPtrList<class FlowNode, class ObjectDir>(void)",
+   "dc3_class": [
+    "FlowNode"
+   ],
+   "unit": "default/EventTrigger",
+   "size": 84,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82641610",
+   "pinned_name": "??_GFlowSlider@@UAAPAXI@Z",
+   "demangled": "public: virtual void * __cdecl FlowSlider::`scalar deleting dtor'(unsigned int)",
+   "dc3_class": [
+    "FlowSlider"
+   ],
+   "unit": "default/FlowSlider",
+   "size": 84,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82768ff8",
+   "pinned_name": "?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_std@@U?$pair@QAVFlowNode@@W4QueueState@1@@3@U?$_Select1st@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@QAVFlowNode@@W4QueueState@1@@2@@Z",
+   "demangled": "protected: struct stlpmtx_std::_Rb_tree_node_base * __cdecl stlpmtx_std::_Rb_tree<class FlowNode *, struct stlpmtx_std::less<class FlowNode *>, struct stlpmtx_std::pair<class FlowNode *const, enum FlowNode::QueueState>, struct stlpmtx_std::_Select1st<struct stlpmtx_std::pair<class FlowNode *const, enum FlowNode::QueueState>>, struct stlpmtx_std::priv::_MapTraitsT<struct stlpmtx_std::pair<class FlowNode *const, enum FlowNode::QueueState>>, class stlpmtx_std::StlNodeAlloc<struct stlpmtx_std::pair<class FlowNode *const, enum FlowNode::QueueState>>>::_M_create_node(struct stlpmtx_std::pair<class FlowNode *const, enum FlowNode::QueueState> const &)",
+   "dc3_class": [
+    "FlowNode"
+   ],
+   "unit": "default/band3/meta_band/ViewSetting",
+   "size": 84,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82703890",
+   "pinned_name": "??$__destroy_range@PAUMoveRating@SkeletonClip@@U12@@stlpmtx_std@@YAXPAUMoveRating@SkeletonClip@@00@Z",
+   "demangled": "void __cdecl stlpmtx_std::__destroy_range<struct SkeletonClip::MoveRating *, struct SkeletonClip::MoveRating>(struct SkeletonClip::MoveRating *, struct SkeletonClip::MoveRating *, struct SkeletonClip::MoveRating *)",
+   "dc3_class": [
+    "SkeletonClip"
+   ],
+   "unit": "default/SkeletonClip",
+   "size": 80,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82714858",
+   "pinned_name": "??$_Destroy_Range@PAULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@0@Z",
+   "demangled": "void __cdecl stlpmtx_std::_Destroy_Range<struct HamMove::LocalizedName *>(struct HamMove::LocalizedName *, struct HamMove::LocalizedName *)",
+   "dc3_class": [
+    "HamMove"
+   ],
+   "unit": "default/HamMove",
+   "size": 80,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x825748e8",
+   "pinned_name": "??_GHamIKEffector@@UAAPAXI@Z",
+   "demangled": "public: virtual void * __cdecl HamIKEffector::`scalar deleting dtor'(unsigned int)",
+   "dc3_class": [
+    "HamIKEffector"
+   ],
+   "unit": "default/HamIKEffector",
+   "size": 68,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82628f40",
+   "pinned_name": "??_GTransConstraint@@UAAPAXI@Z",
+   "demangled": "public: virtual void * __cdecl TransConstraint::`scalar deleting dtor'(unsigned int)",
+   "dc3_class": [
+    "TransConstraint"
+   ],
+   "unit": "default/TransConstraint",
+   "size": 68,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x8231f010",
+   "pinned_name": "?PreLoad@HamScrollSpeedIndicator@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "demangled": "[thunk]: public: virtual void __cdecl HamScrollSpeedIndicator::PreLoad`vtordisp{-4, 0}'(class BinStream &)",
+   "dc3_class": [
+    "HamScrollSpeedIndicator"
+   ],
+   "unit": "default/HamScrollSpeedIndicator",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x8231f020",
+   "pinned_name": "??_EHamScrollSpeedIndicator@@$4PPPPPPPM@A@AAPAXI@Z",
+   "demangled": "[thunk]: public: virtual void * __cdecl HamScrollSpeedIndicator::`vector deleting dtor'`vtordisp{-4, 0}'(unsigned int)",
+   "dc3_class": [
+    "HamScrollSpeedIndicator"
+   ],
+   "unit": "default/HamScrollSpeedIndicator",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x8231f030",
+   "pinned_name": "?SetType@HamScrollSpeedIndicator@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
+   "demangled": "[thunk]: public: virtual void __cdecl HamScrollSpeedIndicator::SetType`vtordisp{-4, 0}'(class Symbol)",
+   "dc3_class": [
+    "HamScrollSpeedIndicator"
+   ],
+   "unit": "default/HamScrollSpeedIndicator",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82341970",
+   "pinned_name": "?Load@HamLabel@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "demangled": "[thunk]: public: virtual void __cdecl HamLabel::Load`vtordisp{-4, 0}'(class BinStream &)",
+   "dc3_class": [
+    "HamLabel"
+   ],
+   "unit": "default/BandLabel",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82341b08",
+   "pinned_name": "?Save@HamLabel@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "demangled": "[thunk]: public: virtual void __cdecl HamLabel::Save`vtordisp{-4, 0}'(class BinStream &)",
+   "dc3_class": [
+    "HamLabel"
+   ],
+   "unit": "default/BandLabel",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82484a40",
+   "pinned_name": "?Load@HamMove@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "demangled": "[thunk]: public: virtual void __cdecl HamMove::Load`vtordisp{-4, 0}'(class BinStream &)",
+   "dc3_class": [
+    "HamMove"
+   ],
+   "unit": "default/Morph",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x8248b900",
+   "pinned_name": "??_EFlowNode@@$4PPPPPPPM@A@AAPAXI@Z",
+   "demangled": "[thunk]: public: virtual void * __cdecl FlowNode::`vector deleting dtor'`vtordisp{-4, 0}'(unsigned int)",
+   "dc3_class": [
+    "FlowNode"
+   ],
+   "unit": "default/TexBlender",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x824a4728",
+   "pinned_name": "??_EFlowTrigger@@$4PPPPPPPM@A@AAPAXI@Z",
+   "demangled": "[thunk]: public: virtual void * __cdecl FlowTrigger::`vector deleting dtor'`vtordisp{-4, 0}'(unsigned int)",
+   "dc3_class": [
+    "FlowTrigger"
+   ],
+   "unit": "default/EventTrigger",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x824b5740",
+   "pinned_name": "?Copy@RhythmDetector@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+   "demangled": "[thunk]: public: virtual void __cdecl RhythmDetector::Copy`vtordisp{-4, 0}'(class Hmx::Object const *, enum Hmx::Object::CopyType)",
+   "dc3_class": [
+    "RhythmDetector"
+   ],
+   "unit": "default/LightPreset",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82604d70",
+   "pinned_name": "??_EDancerSequence@@$4PPPPPPPM@A@AAPAXI@Z",
+   "demangled": "[thunk]: public: virtual void * __cdecl DancerSequence::`vector deleting dtor'`vtordisp{-4, 0}'(unsigned int)",
+   "dc3_class": [
+    "DancerSequence"
+   ],
+   "unit": "default/StorePanel",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82812398",
+   "pinned_name": "??_EHamCharacter@@$4PPPPPPPM@A@AAPAXI@Z",
+   "demangled": "[thunk]: public: virtual void * __cdecl HamCharacter::`vector deleting dtor'`vtordisp{-4, 0}'(unsigned int)",
+   "dc3_class": [
+    "HamCharacter"
+   ],
+   "unit": "default/HamCharacter",
+   "size": 12,
+   "mpn": 100.0,
+   "harm": "full",
+   "action": "rename-not-delete"
+  },
+  {
+   "address": "0x82050164",
+   "pinned_name": "??_7FlowIf@@6BObject@Hmx@@@",
+   "demangled": "const FlowIf::`vftable'{for `Hmx::Object'}",
+   "dc3_class": [
+    "FlowIf"
+   ],
+   "unit": null,
+   "size": null,
+   "mpn": null,
+   "harm": "unpaired",
+   "action": "no-credit"
+  },
+  {
+   "address": "0x820501bc",
+   "pinned_name": "??_7FlowIf@@6BFlowNode@@@",
+   "demangled": "const FlowIf::`vftable'{for `FlowNode'}",
+   "dc3_class": [
+    "FlowIf",
+    "FlowNode"
+   ],
+   "unit": null,
+   "size": null,
+   "mpn": null,
+   "harm": "unpaired",
+   "action": "no-credit"
+  },
+  {
+   "address": "0x826342f0",
+   "pinned_name": "??_GFrame@RhythmDetector@@QAAPAXI@Z",
+   "demangled": "public: void * __cdecl RhythmDetector::Frame::`scalar deleting dtor'(unsigned int)",
+   "dc3_class": [
+    "RhythmDetector"
+   ],
+   "unit": null,
+   "size": null,
+   "mpn": null,
+   "harm": "unpaired",
+   "action": "no-credit"
+  },
+  {
+   "address": "0x823ee630",
+   "pinned_name": "??_EHollaBackMinigame@@UAAPAXI@Z",
+   "demangled": "public: virtual void * __cdecl HollaBackMinigame::`vector deleting dtor'(unsigned int)",
+   "dc3_class": [
+    "HollaBackMinigame"
+   ],
+   "unit": "default/auto_03_823ECD58_text",
+   "size": 68,
+   "mpn": 0.0,
+   "harm": "zero",
+   "action": "no-credit"
+  },
+  {
+   "address": "0x82593f48",
+   "pinned_name": "??_ERhythmDetectorGroup@@UAAPAXI@Z",
+   "demangled": "public: virtual void * __cdecl RhythmDetectorGroup::`vector deleting dtor'(unsigned int)",
+   "dc3_class": [
+    "RhythmDetectorGroup"
+   ],
+   "unit": "default/UIEventMgr",
+   "size": 68,
+   "mpn": 0.0,
+   "harm": "zero",
+   "action": "no-credit"
+  }
+ ]
+}
