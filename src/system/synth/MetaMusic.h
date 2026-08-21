@@ -15,13 +15,21 @@ public:
     MetaMusicLoader(File *f, int &bytes, unsigned char *buf, int size);
     virtual ~MetaMusicLoader() {}
     virtual bool IsLoaded() const { return mState == &MetaMusicLoader::DoneLoading; }
-    virtual void PollLoading() {
-        while (!TheLoadMgr.CheckSplit() && TheLoadMgr.GetFirstLoading() == this
-               && !IsLoaded()) {
-            (this->*mState)();
-        }
-    }
-    virtual const char *DebugText() { return "MetaMusicLoader"; }
+    // Retail runs exactly ONE state step per poll -- the loop belongs to the
+    // caller, not here.  Pinned by retail bytes at 0x8270FED8 (vtable slot 4),
+    // whose ENTIRE body is `lwz r11,0x2c(r3); mtctr r11; bctr` (12 B, an
+    // unconditional indirect TAIL call).  A `while (!CheckSplit() && ...)`
+    // form cannot compile to that: there is no compare, no branch, and the
+    // dispatch is `bctr` rather than `bctrl`.  The looping version came from
+    // the newer dc3 engine; do not restore it.
+    virtual void PollLoading() { (this->*mState)(); }
+    // Retail formats the loader's path; it does NOT return a bare constant.
+    // Pinned by retail bytes at 0x8270FF88 (vtable slot 1 -- Loader declares
+    // DebugText first): it copy-constructs a FilePath temp from `this+0xc`
+    // (== Loader::mFile, NOT our shadowing `File *mFile` at 0x18) and tail-
+    // calls MakeString<FilePath>("MetaMusic: %s", temp).  Same house idiom as
+    // DirLoader ("DL: %s") and DirUnloader ("UnLoader: %s").
+    virtual const char *DebugText() { return MakeString("MetaMusic: %s", Loader::mFile); }
     virtual const char *StateName() const { return "MetaMusicLoader"; }
 
     void DoneLoading();

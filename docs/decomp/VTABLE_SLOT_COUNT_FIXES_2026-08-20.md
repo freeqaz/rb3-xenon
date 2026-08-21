@@ -718,3 +718,160 @@ derived FROM.
 - The remaining 9 `SET_DIFFER` rows are unadjudicated. Given 6/6 above, expect
   map defects, but expect is not measured.
 - 1,242 `UNRESOLVED` remain untouched.
+
+---
+
+## 13. Wave 7 (2026-08-21) — the map worklist, adjudicated and repaired
+
+Wave 6 handed over six "proven map defects" as a worklist. Wave 7 re-adjudicated
+each one **from retail bytes rather than from the note**, and the outcome is
+worth stating plainly: **one of the six was wrong**, four were right, one is
+underdetermined, and two defects wave 6 never saw were found alongside them.
+
+Total, three measured A/B runs, each with both legs settled and at a
+`symbols.txt` split fixed point: **+5 matched functions / +648 bytes**, unit net
+equal to the whole-binary delta in every run (no unexplained cascade).
+
+| # | wave 6 said | wave 7 measured | Δ |
+|---|---|---|---|
+| 1 | `StreamReceiver360` GetPlayCursor/PlayImpl swapped | ⛔ **REFUTED — the map is correct** | — |
+| 2 | `Synth360::NewBufStream` spells 5 args, retail has 6 | ✅ confirmed, repaired | +1 fn |
+| 3 | `MetaMusicLoader` s4 is PollLoading, not IsLoaded | ✅ confirmed, repaired **as a family** | +1 fn |
+| 4 | `StandardStream` s52 is not SetJump | ✅ confirmed, repaired | +2 fns / +392 B |
+| 5 | `CacheXbox` s6/s7 swapped | ⚠ **UNDERDETERMINED — deliberately not edited** | — |
+| 6 | `TrackWatcherImpl` s11 | deferred (42 of its slots are ICF-folded) | — |
+| + | *(not in wave 6's list)* `MetaMusicLoader::IsLoaded` unnamed | ✅ named | (in #3) |
+| + | *(not in wave 6's list)* `MetaMusicLoader::DebugText` | ✅ named + source fixed | +1 fn / +68 B |
+
+### 13a. ⛔ CORRECTION TO §12c: it is 5 of 6, not 6 of 6
+
+**§12c's headline "6 map defects, 0 source defects" overcounts by one.**
+`StreamReceiver360` is **correct as mapped**, and re-checking it took one
+objdiff run:
+
+- `PlayImpl` @ `0x82B6BAF8` — **100.0%, 4 of 4 instructions equal.**
+- `GetPlayCursor` @ `0x82B6BAE8` — 3 of 4 equal; the sole charge is the
+  relocation NAME on the tail-call target, which objdiff itself reports as
+  `ICF:?GetAddr@Voice@@QAAHXZ (cross-function merge)`.
+
+The return types corroborate independently: `GetPlayCursor` returns `int` and
+tail-calls `Voice::GetAddr()` which returns `int`; `PlayImpl` returns `void` and
+tail-calls `Voice::Start()` which returns `void`. **A swap would mismatch both.**
+
+⇒ Wave 6 read an **ICF fold-survivor name** (`??2OutfitConfig@@SAPAXI@Z`) as
+evidence of a swap. That is the trap CLAUDE.md already names — *`LINKER_MERGED`
+is what a fold LOOKS like* — arriving from the opposite direction: §12 was
+written to warn against believing an `AT_LIMIT` label, and then believed a
+fold-survivor name.
+
+### 13b. The instrument that worked: adjudicate on the ARGUMENTS
+
+Every confirmed row was settled by something no name can poison — what the
+retail prologue does with its **incoming registers**:
+
+- **`Synth360::NewBufStream`** preserves `{f1→f31, r4→r30, r5→r28, r6→r27,
+  r8→r26, r9→r25}`. **`r7` is conspicuously absent**, because the float in
+  parameter slot 4 consumes it. That is **six** parameters, so the 5-arg map
+  spelling named nothing and the row was a stub (44 instructions target-side,
+  0 base-side, 0%).
+- **`StandardStream` slot 40** opens `stfs f1,0x8c(r3); stfs f2,0x90(r3);
+  mr r4,r6` — two incoming floats stored into the object plus a third pointer
+  argument ⇒ `(float, float, const char*)`, which **is** `SetJump`'s signature.
+  Slot 52, the map's "SetJump", saves `f30`/`f31` as **callee-saves** and
+  consumes no float argument at all.
+- **`MetaMusicLoader` slot 4** is 12 bytes: `lwz r11,0x2c(r3); mtctr r11; bctr`
+  — it **invokes** the state member-function pointer. Our `IsLoaded` loads the
+  **same** `+0x2c` and **compares** it against `&DoneLoading`. Same field,
+  opposite operation.
+
+### 13c. ★ Fix the FAMILY — and let the base class's declaration order check you
+
+`MetaMusicLoader` is the worked example. Renaming only the flagged row would
+have left `IsLoaded` homeless. Retail's vtable resolves the whole class, and
+`Loader`'s own declaration order (`~Loader`, `DebugText`, `IsLoaded`,
+`StateName`, … `PollLoading`) then pins every slot index **without consulting
+the map at all**:
+
+| slot | addr | before | after |
+|---|---|---|---|
+| 0 | `0x827BFC48` | unnamed | (dtor, left alone) |
+| 1 | `0x8270FF88` | unnamed | **DebugText** |
+| 2 | `0x8270FF68` | unnamed | **IsLoaded** |
+| 3 | `0x8270FEC8` | StateName | StateName (was already right) |
+| 4 | `0x8270FED8` | **IsLoaded** ✗ | **PollLoading** |
+
+Four independent lines agree on this table — body semantics, retail `.rdata`,
+our own compiled slot order, and the base class's declaration order. The sweep
+now reads `SAME` for the class with **charged slots 2 → 4**: the verdict
+improved *and* coverage rose.
+
+### 13d. Two source divergences the map work exposed
+
+Neither is a naming issue; both are real behavioural differences inherited from
+the newer dc3 engine, and both were found only because the map row was fixed
+first and the body then failed to match.
+
+1. **`MetaMusicLoader::PollLoading` runs ONE state step, not a loop.** Retail's
+   entire body is that 12-byte indirect **tail** call — no compare, no branch,
+   `bctr` not `bctrl`. Our `while (!TheLoadMgr.CheckSplit() && … && !IsLoaded())`
+   form (176 B) cannot compile to it.
+2. **`MetaMusicLoader::DebugText` formats the path.** Retail copy-constructs a
+   `FilePath` temp from `this+0xc` and tail-calls
+   `MakeString<FilePath>("MetaMusic: %s", temp)`; ours returned the bare
+   constant `"MetaMusicLoader"`. The unit **already carried the
+   `MakeString<FilePath>` instantiation at 100%** — something in the TU had to
+   be calling it, and this was it.
+   ⚠ `this+0xc` is `Loader::mFile` (a `FilePath`), **not** `MetaMusicLoader`'s
+   own `File *mFile` at `0x18`, which **shadows** it.
+
+### 13e. ⚠ `CacheXbox` is UNDERDETERMINED — and that is the finding
+
+This is the row wave 6 got wrong in the *source* direction, and wave 7
+deliberately did **not** edit it in the *map* direction either.
+
+Retail's `.rdata` is unambiguous — slot 6 = `0x827DA730`, slot 7 = `0x827D9F40`
+— and the two bodies are genuinely distinguishable (nested dispatch
+`lwz r11,4(r11)` vs `8(r11)`, op constant `li r10,2` vs `li r10,1`, field
+`352(r31)` vs `360(r31)`), so they are **not** folded. What is missing is a
+decisive tie to a *name*:
+
+- **Our 100%/100% scores are NOT independent evidence.** Lane CF-10 pinned our
+  `kOpFileSize`/`kOpDirectory` enum **from these very bodies**, so the source
+  was fitted to the map's assignment. `Cache.h:11-12` and `Cache_Xbox.cpp:351`
+  are downstream of the same premise. (§12c already flagged this; wave 7
+  confirms it by re-deriving it.)
+- **The call site is ambiguous here, unusually.** `SaveLoadManager::SetState`
+  dispatches slot 6 **once** (idx 323) and slot 7 **three times** (369, 413,
+  710), while our source contains exactly **one** call to either method — and
+  **no instruction in 304–419 currently mismatches**, so both hypotheses fit
+  the bytes. Wave 6 anchored on idx 369 and read it as decisive; it is not.
+  ★ A slot index only means something once you know the **receiver's class**,
+  and not every `lwz r11,d(r11)` in a function is the dispatch you are after.
+- The two signatures share an **identical ABI shape**
+  (`const char*`, pointer, `Hmx::Object*`), so the call bytes cannot separate
+  them even in principle — only the slot can, and the slot is what is in doubt.
+
+⇒ **Left alone.** Both wave 6's source edit and its map verdict rest on the same
+under-determined reading. Settling it needs a caller whose receiver's static
+type is provable, or a second class overriding the same base.
+
+### 13f. What is still open
+
+- 8 `SET_DIFFER` classes remain unadjudicated: `BandSongMgr`, `GemTrackDir`,
+  `StreakMeter`, `BandStorePanel`, `BandCamShot`, `ModifierMgr`, `AppLabel`,
+  `GameMicManager`. Given 4-of-6 above, expect a mix — **and expect at least one
+  refutation**, which is the actual lesson of this wave.
+- ★ A cheap prioritiser fell out of the `SetJump` repair: **a named row scoring
+  far below its neighbours is the tell for wrong-address pairing.** `SetJump`
+  sat at **23.735%** before the fix. The same scan over the classes above
+  surfaces `?SetType@StreakMeter@@UAAXVSymbol@@@Z` (**0.000%**, 104 B),
+  `?SetDancer@AppLabel@@QAAXVSymbol@@@Z` (0.000%, 112 B) and
+  `?HasMic@GameMicManager@@QBA_NABVMicClientID@@@Z` (0.000%, 56 B) — 55 sub-100
+  rows across 312. Start there, not at the top of the alphabet.
+- `TrackWatcherImpl` remains deferred: 42 of its slots are ICF-folded, its
+  vtable is not in the map, and it is the row a source edit already got wrong.
+- `MetaMusicLoader::IsLoaded` rests at **98.571%** (6 of 7). Its one charge is a
+  relocation name on the fold hub `0x826C3888` (the empty `DoneLoading`, a
+  `StlNodeAlloc` ctor and a `CacheXbox` slot all landed there). **Deliberately
+  not aliased** — that evidence is equally consistent with "folded" and with
+  "the map is wrong", and 28 B does not justify the ambiguity.
