@@ -1056,3 +1056,142 @@ worse than a lower metric.
   0.000% rows are not the same population as the sweep's charged slots.
 - **The three `*TrackWatcherImpl`** — still the ICF-fold wall.
 - **`CacheXbox`** — unchanged and still the only `PERMUTED`; see §13e.
+
+---
+
+## 15. Wave 9 (2026-08-21) — the vein wave 8's instrument opened, and a rename has THREE consumers
+
+Wave 8 established that `retail_slots` vs `our_slots` is the instrument. Wave 9
+**ranked the whole sweep on it** instead of only reading it inside `SET_DIFFER`,
+and that is where the rest of the defects were.
+
+### 15a. ★★★★ THE VERDICT COLUMN HIDES THIS DEFECT CLASS BY CONSTRUCTION
+
+`SET_DIFFER`/`PERMUTED`/`SAME` describe the **order of the covered slots**. They
+say nothing about **length**. So a class can have surplus slots and still be
+reported `SAME` — and seven do:
+
+| | tables |
+|---|---|
+| counts differ, raw | 292 |
+| …of which an our-side table was actually joined (`our_slots > 0`) | **23** |
+| ⇒ reported `SAME` | **7** |
+| ⇒ reported `UNRESOLVED` | 15 |
+| ⇒ reported `SET_DIFFER` | 1 |
+
+⚠ **The 269 with `our_slots == 0` are NOISE, not a backlog** — no our-side table
+was joined, so there is no count claim to make. Filter them before ranking or
+the vein looks 13× bigger than it is.
+
+### 15b. `MoggClip` — 21 retail vs **29** ours, the largest in the tree, reported `SAME`
+
+Retail's `Hmx::Object`-subobject table (`0x820f8f34`) holds exactly Object's 21
+slots and **ends at `FindPathName`**, so retail's MoggClip introduces **no new
+virtual at all**. Ours appended eight in declaration order — `IsPlaying`,
+`Play(float)`, `Stop`, `Pause`, `DonePlaying`, `SetVolume`, `SetPan`, `SetSend`
+— the header's `// Playable` block, which is **DC3's newer-engine
+`PlayableSample`/`SynthPollable` MI refactor that retail's MoggClip predates**.
+
+Three controls, all cheap, all necessary:
+- name coverage on that table is **21/21** ⇒ not a coverage artifact;
+- the word after slot 20 is `0xffffffff` then `(VA, index)` pairs — a handler
+  table ⇒ not a truncated read;
+- the **`SynthPollable` subobject table is 3/3 EXACT** ⇒ not a wrong-table join,
+  and it is where `GetSoundDisplayName`/`SynthPoll` correctly live.
+
+★ **Third instance this session of "NEUTRALISED IS NOT ABSENT."** An earlier
+lane had already *proven* retail's `Play()` is non-virtual and no-arg at
+`0x8270DE60` and added it alongside — but left the DC3 `virtual Play(float)`
+declared, still burning a slot. Same for `SetPan(float)` beside retail's real
+`SetPan(int, float)`. Both DC3 forms are left declared **non-virtual** rather
+than deleted: *"not virtual" is what the vtable proves; "does not exist" is a
+separate claim.*
+
+### 15c. ⛔⛔ A RENAME HAS THREE CONSUMERS: SOURCE, THE MAP, **AND THE ICF ALIAS FILE**
+
+Wave 8 learned that de-virtualizing re-mangles `U` → `Q` and un-pairs a **mapped**
+row. Wave 9 found the second consumer the same way — by measuring a regression
+it did not predict: **−3 matched / −1232 B**, in `default/CrowdAudio`, a unit the
+patch never touched.
+
+The three rows (`Poll`, `SetBank`, `SetPaused`) all call
+`p->MoggClip::Stop()` **qualified**, which suppresses virtual dispatch — so the
+instruction was a direct `bl` before *and* after, and only the relocation's
+**name** moved. `symbol_aliases.json` **group[1398]** (survivor
+`?Stop@BinkClip@@QAAXXZ` at `0x8270d940`, folding `?Stop@MoggClip@@UAAXXZ`) was
+forgiving it. The rename dropped our spelling out of the group, so **a REAL ICF
+fold began reading as a wrong-callee defect.**
+
+Respelling the group member `U` → `Q` restored all three to 100.0 with one edit.
+★ **The group's CLAIM is untouched** — retail `0x8270d940` is still one body
+shared by both spellings; only *our* side is respelled. This is the
+`STALE_SPELLING` class CLAUDE.md warns must never be pruned, arriving from the
+other direction: *a spelling made stale by our own source fix.*
+
+⇒ **Before removing `virtual`, grep all three: the source, `target_symbol_map.json`,
+and `symbol_aliases.json`.** In this wave that was 2 map rows (`Pause`
+`0x8270D690`, `SetVolume` `0x8270D748` — both mapped with the *virtual* mangling
+and both scoring 100%, though neither address is in **either** MoggClip vtable)
+and 1 alias group.
+
+### 15d. ⛔ AND MY ALIAS-FILE SEARCH WAS VACUOUS — THE SECOND SELF-INFLICTED VACUITY IN TWO WAVES
+
+`scripts/symbol_aliases.json` is a **dict** `{_comment, groups}`, not a list.
+`json.load(...)` then iterating yields the two **key strings**, so
+`g.get('folded')` never runs and the scan reports **0 hits** — which I believed,
+and which sent me hunting a nonexistent mechanism for three rounds. A raw
+`grep -c "Stop@MoggClip"` returned **1** and settled it in one second.
+
+Same shape as wave 8's `0x`-prefix bug and the `grep`-binary shim: **the search
+found nothing, and "nothing" was indistinguishable from a real negative.**
+⇒ *When a structured search over a file returns zero, cross-check with a dumb
+text grep before believing it.* One line, and it would have saved both rounds.
+
+### 15e. `BandUI` — 13 → 12, and an in-tree note NARROWED
+
+Retail's BandUI primary table holds 12 and ends at `IsTimelineResetAllowed`;
+`SendTransitionComplete` was our sole new virtual. BandUI.cpp's body carries a
+note: *"Retail calls `UIManager::SendTransitionComplete(s1, s2)` here, but the
+rb3-xenon DC3-derived UIManager omits that virtual … Introducing it would
+perturb UI.cpp."*
+
+The **observation stands**; the **inference does not.** `UIManager`'s own tables
+measure **21/21 and 12/12 EXACT**, so our UIManager omits no slot at all —
+retail's `UIManager::SendTransitionComplete` is simply *not virtual either*,
+which is why there is no base slot to override. ★ The note's proposed-but-
+declined fix was therefore **the wrong one**: adding the virtual to UIManager
+would have made it 13 against retail's 12. The lane declined it for an unrelated
+reason and thereby avoided introducing a defect.
+
+### 15f. Measured
+
+| change | Δmatched | Δbytes |
+|---|---|---|
+| MoggClip ×8 slots, source only | **−3** | **−1232** ⇒ diagnosed, not reverted |
+| + map (×2) + alias respell (×1) | **0** | **0** |
+| BandUI ×1 slot | **0** | **0** (22 TUs) |
+
+Final `42204 / 3,764,256 B / 36.738945%`. Δ0 remains the expected outcome for
+this class and is the **safety check**, not the payoff.
+
+### 15g. Deliberately NOT done — three UNDERDETERMINED, recorded with what would settle them
+
+- **`StoreOffer` 22→23 / `BandStoreOffer`** — our surplus slot 22 is
+  `Cmp(StoreOffer const &, Symbol) const = 0`, and retail's table ends at
+  `IsCompletelyUnavailable` (21). **But `SortCmp::operator()`
+  (StoreOffer.h:118) calls `offer1->Cmp(*offer2, …)` through a `StoreOffer *`,
+  which REQUIRES virtual dispatch** — so retail must sort by some other
+  mechanism, and what that is has not been established. Settle retail's sort
+  path first.
+- **`BandCharacter` 20→21** — our surplus is
+  `?Replace@BandCharacter@@UAAXPAVObject@Hmx@@0@Z`, i.e. `(Object*, Object*)`,
+  where `Hmx::Object::Replace` takes `(ObjRef*, Object*)`. This is the
+  **wrong-base-signature-creates-a-new-slot** shape, the same as
+  `BandStorePanel::MakeNewOffer` (§14f) — not a plain surplus. Adjudicate the
+  intended signature before editing.
+- **`BandUser` 10→11 / `LocalBandUser` / `NullLocalBandUser`** — slots 5–10 are
+  `_purecall` on **both** sides, so names cannot localise which of our pure
+  virtuals is the extra. Use §14c's move: adjudicate on a derived class that
+  overrides with **real** bodies.
+- Also untouched: `XboxContent` (**15 retail vs 14 ours** — we are *missing* a
+  virtual, the opposite direction and a different fix) and `RndFur` (23 vs 21).
