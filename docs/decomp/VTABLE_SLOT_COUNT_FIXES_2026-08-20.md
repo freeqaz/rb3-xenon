@@ -875,3 +875,184 @@ type is provable, or a second class overriding the same base.
   `StlNodeAlloc` ctor and a `CacheXbox` slot all landed there). **Deliberately
   not aliased** — that evidence is equally consistent with "folded" and with
   "the map is wrong", and 28 B does not justify the ambiguity.
+
+---
+
+## 14. Wave 8 (2026-08-21) — the COUNT reached what the NAMES could not, and my own tool was vacuous for an hour
+
+Wave 7 handed over an 8-class `SET_DIFFER` worklist and a prioritiser ("start at
+the low-scoring named rows"). **Neither was what paid.** The sweep's own
+`retail_slots` vs `our_slots` columns — which nobody had ranked on — separated
+the population immediately, and every fix in this wave came from a **count**
+mismatch. Result: `SET_DIFFER` **12 → 10**, `SAME` **962 → 964**, ten surplus
+vtable slots removed across six classes, plus two map rows and one source body.
+
+⚠ The worklist was also **stale in a way worth noticing**: a fresh sweep found
+**12** SET_DIFFER classes, not 8 — `DxShaderMgr` and the three
+`*TrackWatcherImpl` variants were never in wave 7's list. *Re-run the sweep;
+do not inherit the class list any more than you inherit a ceiling figure.*
+
+### 14a. The instrument: retail's vtable LENGTH
+
+A count mismatch consults **no map**, so it is immune to the failure that made
+wave 6 a map worklist rather than a source worklist. It is also cheap to
+falsify, which matters more:
+
+- **End-of-table byte control.** `read_retail_slots` bounds a table by the next
+  enumerated vtable's COL slot, so a short read is the obvious way to
+  manufacture a finding. Dumping the words *past* the claimed end settles it
+  every time: `CamShot` (13) is followed by `0xffffffff` then `(VA, index)`
+  pairs — an EH/handler table; `BandCamShot` (14) by `0xfffffffc, 0x1ec, 0,
+  0xffffffff` — a **vbtable**, and `0x1ec` is exactly the
+  `(vtordisp for vbase Object)` offset `cl /d1reportSingleClassLayout` reports.
+  Both ended where the tool said.
+- **Population control.** `BandCamShot`'s vbase-`Object` table read 14 against
+  our 18 — but **29 other classes have that same table at 18/18**, so 14 is not
+  a truncated read of a standard table. §2 of this doc records 46 of 71 earlier
+  disagreements being artifact that looked exactly like findings; this is the
+  cheapest way to not rejoin them.
+- **The family check** is what separates *"the derived class invented a
+  virtual"* from *"the base declares it and we don't"* — two hypotheses that
+  predict the **same** count on the derived class. Run it on the base:
+  `SongMgr` 30/30 exact ⇒ BandSongMgr's three extras are in neither side's
+  base. `CamShot` 13 vs 17 ⇒ the defect was never BandCamShot's at all.
+
+### 14b. Fixed
+
+| class | was | now | what |
+|---|---|---|---|
+| `CamShot` (⇒ `BandCamShot`) | 17 / 18 | 13 / 14 | `ApplyDynamicOffsetPreLookAt`, `…PostLookAt`, `ApplyFinalCamTransform`, `ZoomFovOffset` — DC3-era additions, **0 overrides and 0 call sites** tree-wide; an earlier lane had already deleted their retail call sites (`NB(idx233)` in CameraShot.cpp) but left the declarations |
+| `BandSongMgr` | 33 | 30 | `AllowCacheWrite` / `SongName(int)` / `CanAddSong`, slots 30/31/32 — exactly the tail block MSVC reserves for a derived class's NEW virtuals, in declaration order |
+| `StorePanel` (⇒ `BandStorePanel`) | 30 | 29 | `StoreProfile` de-virtualized |
+| `TrackDir` (⇒ `GemTrackDir`) | 36 / 37 | 35 / 36 | `SyncFingerFeedback` |
+| `BandSongMgr` map | — | — | `0x82575558` → `ContentPattern`, `0x82575568` → `ContentDir` |
+| `BandSongMgr::ContentPattern` | conditional | `"songs.dta"` | rb3-Wii dev body retail does not have |
+
+★ **`StoreProfile` FINISHES laneSTORE-2 rather than revising it.** That lane
+already proved retail has no such virtual and *parked it at the vtable tail* so
+it "cannot perturb the dispatch offsets of slots 0..27". The reasoning is
+correct and the placement was the right call at the time — but **a tail slot is
+still a slot**, and the count instrument is what makes that visible. Same shape
+as `CamShot`, where the call sites were removed and the declarations were not.
+⇒ **"Neutralised" is not "absent". Grep for the leftover declaration whenever a
+prior lane reports killing a method's uses.**
+
+### 14c. ⛔⛔ I DE-VIRTUALIZED THE WRONG METHOD, AND THE ONLY THING THAT CAUGHT IT WAS THE MEASUREMENT
+
+`GemTrackDir`'s surplus looked like `GameWon`: our last slot, our only new
+virtual, and `BandTrack::GameWon` / `TrackPanelDir::GameWon` are both
+non-virtual, so `virtual` here *hid* a base method rather than overriding it.
+Everything fit. Measured: **−1 matched / −80 B**, isolated to a single row —
+**`GameWon` itself, fuzzy 100.0 → 0.0.**
+
+Two independent defects, and the first is the one worth carrying forward:
+
+1. ⛔⛔ **The side-by-side tool I wrote for this wave was VACUOUS and agreed with
+   me.** It looked the symbol map up with `f'{va:08x}'` while the map's keys
+   carry a **`0x` prefix**, so *every* retail name resolved to `None` and every
+   slot printed `--`. Nothing errored. The output still looked like a
+   side-by-side — our column was real, the positions were real — and I read it
+   as one. **A whole table resolving zero names is not a plausible state of the
+   map**, which is exactly the anti-vacuity check that was missing; the tool now
+   prints name coverage every run and shouts at zero. Same family as the
+   `grep`-binary shim and `all([])`: *the instrument returned a decisive-looking
+   answer by seeing nothing.*
+2. With names resolving, retail slot 35 **is** `GameWon` (`0x822e6730`) — and
+   ★ **our body for it already scored fuzzy 100.0 against that address**, which
+   is what makes the map's spelling trustworthy *here* rather than assumed. So
+   the **−80 B was the un-pairing mechanism**: dropping `virtual` re-mangles the
+   symbol **`U` → `Q`** (public virtual → public), our obj stops defining the
+   name the map assigns to `0x822e6730`, and objdiff un-pairs the row to 0%
+   **permanently**.
+
+⇒ ★★★ **A DE-VIRTUALIZATION IS A RENAME.** `U`/`M`/`I` vs `Q`/`A`/`I` is part of
+the mangling, so any `virtual` removal on a **mapped** symbol silently un-pairs
+its row unless the map is updated in the same patch. Check the map *before*
+editing: of the six methods de-virtualized in this wave, exactly one
+(`GameWon`) was mapped — which is why only one regressed, and why the other
+five measured clean.
+
+★ **The real surplus was one slot earlier, and `GemTrackDir` is what proves it,
+not `TrackDir`.** `TrackDir`'s own tail cannot: from slot 16 on nearly every
+retail slot is an **ICF fold hub** (`x1433`, `x1235`, `x195`) because its
+virtuals are empty inline bodies, so the map shows one arbitrary survivor name
+per hub and **every row reads as a mismatch**. `GemTrackDir` overrides with
+**real** bodies, and there is **no retail slot anywhere holding a real
+`GemTrackDir::SyncFingerFeedback`**: slots 33/34 are fold hubs (consistent with
+the inherited empty `PreDraw`/`PostDraw` it does not override) and 35 is
+`GameWon`. **A non-empty override can be neither absent nor folded**, so
+`SyncFingerFeedback` is not virtual in retail. ⇒ *When a class's own tail is all
+folds, adjudicate on a DERIVED class that overrides with real bodies.*
+
+⚠ This also **supersedes without contradicting** TrackDir.h's "declared LAST to
+match retail vtable slot order" note (itself already corrected twice, by
+W13-CHARINFO and W16-HEADERTRUTH). Declaring it first *would* have pushed
+`SetDisplayRange` one slot too high — the reasoning was sound; the slot it was
+moved into does not exist either.
+
+### 14d. ⛔ A 100% ROW IS NOT EVIDENCE THE MAP NAME IS RIGHT — the `ContentDir` pair
+
+The map named **two different addresses** `ContentDir`, and **both scored fuzzy
+100.000**, 12 B each. At most one can be ContentDir, so a 100% row was
+provably misnamed. The mechanism: a 12-byte `lis / addi / blr` constant return
+relocates against a string symbol that is a **placeholder name** in the target
+obj, and `name_check` **forgives placeholder targets** — so such a body matches
+any other *regardless of which string it returns*.
+
+The string content is the only instrument that discriminates, and it needs no
+map and no ICF reasoning:
+
+| retail | slot | returns | ⇒ is |
+|---|---|---|---|
+| `0x82575558` | 10 | `0x8209DE38` = `"songs.dta"` | `ContentPattern` |
+| `0x82575568` | 11 | `0x82000FE4` = `"songs"` | `ContentDir` |
+
+Our `ContentDir` returns `"songs"` ⇒ slot 11 ⇒ **our declaration order was right
+all along**; only the map disagreed. And slot 10's body has no load of
+`TheArchive`, no compare and no branch, so our
+`TheArchive ? "&songs*.dta" : "&songs*.dt?"` — **copied verbatim from the
+rb3-Wii DEV oracle, which agrees with our old text exactly** — cannot compile to
+it. Retail bytes outrank the oracle.
+
+### 14e. What this measured
+
+Four A/B runs, every leg settled and at a `symbols.txt` split fixed point:
+
+| wave | Δmatched | Δbytes |
+|---|---|---|
+| `CamShot` ×4 slots | **0** | **0** (129 TUs recompiled) |
+| the wrong `GameWon` edit | **−1** | **−80** ⇒ reverted |
+| corrected: `SyncFingerFeedback` + BandSongMgr ×3 + StoreProfile | **0** | **0** (173 TUs) |
+| `ContentPattern` map + source | **0** | **0** (re-split, `renamer_patched=1826`) |
+
+**Δ0 is the expected and correct outcome for this defect class** — `mpn` is
+arg-blind and a vtable is *data*, not a scored function row — so it is the
+**safety check**, not the payoff. The `ContentPattern` run was pre-registered as
+Δ0 and confirmed row-by-row: `ContentDir@Callback@ContentMgr` (12 B @ 100) is
+replaced by `ContentPattern@BandSongMgr` (12 B @ 100), 24 B conserved. Landed on
+accuracy, per the standing directive that a metric which hides real bugs is
+worse than a lower metric.
+
+### 14f. Deliberately NOT done
+
+- **`BandStorePanel` slot 18 / `MakeNewOffer`** — evidence is strong but the fix
+  is not adjudicated. Retail's `StorePanel` slots 16–19 are all `_purecall`
+  (`0x828299b8`, x143), so retail declares `MakeNewOffer` **pure virtual**, and
+  the map names retail's `BandStorePanel` slot 18 `MakeNewOffer(const
+  StorePackedOfferBase *, bool)` — consistent with the bytes, since the body
+  uses **r4 only** and reloads r5 from a global (`lwz r5,0x2ba8(r11)`), i.e. an
+  **unused** `bool`. Our base spells `(DataArray *)`, so the override becomes a
+  NEW slot instead of filling 18. **But changing the base signature requires
+  rewriting `StorePanel::PopulateOffers`'s call at StorePanel.cpp:398, and what
+  retail's `PopulateOffers` does there is not established.** That is the
+  `CacheXbox` situation exactly — left specified, not guessed. `StorePanel`'s
+  own table is already **28/28 exact**.
+- **`StreakMeter`, `AppLabel`, `GameMicManager`, `ModifierMgr`, `DxShaderMgr`**
+  — counts EQUAL, so the count instrument says nothing; their disagreements are
+  on **secondary/adjustor-thunk tables** (`$4PPPPPPPM@…`) where retail and our
+  spellings differ in owner *and* displacement. That is the thunk-twin/fold
+  noise class, not a declaration-order bug. ⚠ Wave 7's prioritiser pointed here
+  (`SetType@StreakMeter` at 0.000%) and it did **not** pay this wave — the
+  0.000% rows are not the same population as the sweep's charged slots.
+- **The three `*TrackWatcherImpl`** — still the ICF-fold wall.
+- **`CacheXbox`** — unchanged and still the only `PERMUTED`; see §13e.
