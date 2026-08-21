@@ -525,6 +525,16 @@ def generate_build_ninja(
     mapinj_script = Path("tools") / "map_name_injectivity.py"
     mapinj_json = Path("scripts") / "target_symbol_map.json"
     mapinj_checked = build_path / "map_name_injectivity_checked.stamp"
+    # Assert the SPLIT TARGET OBJS actually carry the mangled names the renamer
+    # is supposed to install. objdiff pairs BY NAME, so virgin `fn_<addr>` objs
+    # un-pair essentially every named row -- measured on main 2026-08-21 as
+    # matched_functions 22962 / 8.633728% against a true 42198 / 36.730980%, on
+    # a SETTLED build with zero errors. The renamer is a no-op on already-renamed
+    # objs and its stamp can outlive the objs it attests to, so the only sound
+    # check is one that reads the OBJS. Same always-dirty + content-addressed
+    # stamp shape as the two gates above.
+    renamed_script = Path("tools") / "check_target_objs_renamed.py"
+    renamed_checked = build_path / "target_objs_renamed_checked.stamp"
     build_tools_path = config.build_dir / "tools"
     download_tool = config.tools_dir / "download_tool.py"
     n.rule(
@@ -1512,6 +1522,7 @@ def generate_build_ninja(
                 report_path,
                 str(icf_map_checked),
                 str(mapinj_checked),
+                str(renamed_checked),
             ],
             order_only="post-build",
         )
@@ -1688,6 +1699,24 @@ def generate_build_ninja(
             implicit=[str(mapinj_script), str(mapinj_json), "always"],
         )
 
+        n.comment("Assert the split target objs carry their mangled names")
+        n.rule(
+            name="target_objs_renamed_check",
+            command=(f"$python {renamed_script} --title {config.version}"
+                     f" --stamp $out"),
+            description="CHECK TARGET OBJS RENAMED",
+            restat=True,
+        )
+        # `pre-compile` is the renamer's phony, so this can only run after the
+        # renamer had its chance; `always` makes it re-check every build, which
+        # is the point -- the defect appears when a SPLIT re-emits virgin objs
+        # under a stamp that still looks fresh, and nothing else notices.
+        n.build(
+            outputs=str(renamed_checked),
+            rule="target_objs_renamed_check",
+            implicit=[str(renamed_script), "always", "pre-compile"],
+        )
+
         ###
         # BELT AND BRACES: purge the report-cache sidecars when the alias map
         # moves. As of 2026-08-13 this edge is REDUNDANT, and it stays anyway.
@@ -1775,7 +1804,7 @@ def generate_build_ninja(
         report_implicit: List[str | Path] = [
             objdiff, "objdiff.json", "all_source",
             str(icf_map_path), str(icf_map_purged),
-            str(mapinj_checked),
+            str(mapinj_checked), str(renamed_checked),
         ]
         if config.custom_build_steps and "post-compile" in config.custom_build_steps:
             report_implicit.append("post-compile")
