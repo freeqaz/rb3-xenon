@@ -11,6 +11,32 @@ N dispatches to the wrong method.  Precedent from this project:
 `bandobj/TrackInterface.h` declared `UserName`/`GetTrackIcon` in the wrong order,
 found via retail `.rdata` across 3 independent vtable copies.
 
+⛔⛔ READ BEFORE EDITING ANY SOURCE ON A VERDICT FROM THIS TOOL
+--------------------------------------------------------------
+**A `SET_DIFFER`/`PERMUTED` row does NOT distinguish "our declaration order is
+wrong" from "the MAP's name for that slot is wrong" -- both produce the
+identical row**, because the retail side of the comparison is a *map name*.
+Wave 6 (2026-08-21) adjudicated **6 of these on retail bytes and got 6 MAP
+defects and 0 source defects**, after two source edits made on apparently
+strong evidence were measured at **-2 matched / -40 B** and reverted.
+
+★★★ **THE AUTHORITATIVE INSTRUMENT IS THE CALL SITE, NOT THE NAME.** A caller
+dispatching a virtual emits `lwz r11, (slot*4)(r11); mtctr; bctr[l]` -- the slot
+index is an **immediate in retail's own machine code**.  It cannot be poisoned
+by ICF (it is not a relocation) and depends on no name.  `objdiff` already
+surfaces it as a `diff_arg` on that `lwz`.  Three weaker things that all agreed
+with each other and were all WRONG:
+
+  1. the map name at the disputed slot -- that IS the claim under test;
+  2. the rb3-Wii / DC3 oracle's declaration order -- a different build, not
+     binding on retail-360 (see the four oracle-fidelity modes);
+  3. "retail slot N tail-calls slot M, and OUR slot M is X" -- ⛔ circular: it
+     reads retail's index through OUR numbering, which is the thing in dispute.
+     An off-by-one is invisible to a test that uses the numbering being tested.
+
+⇒ Treat the residual worklist as a **map-defect** worklist.  Full write-up and
+the 6-row score card: docs/decomp/VTABLE_SLOT_COUNT_FIXES_2026-08-20.md §12.
+
 THE TWO SIDES
 -------------
   retail : MSVC puts a `??_R4` Complete Object Locator pointer at vtable[-1];
