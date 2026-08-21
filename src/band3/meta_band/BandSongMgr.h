@@ -46,12 +46,27 @@ public:
     virtual void GetContentNames(Symbol, std::vector<Symbol> &) const;
     virtual bool SongCacheNeedsWrite() const;
     virtual void ClearSongCacheNeedsWrite();
-    virtual void AllowCacheWrite(bool);
+    // ⛔ AllowCacheWrite / SongName(int) / CanAddSong are NOT virtual in
+    // retail, and they are the ONLY three that are not.  Retail's BandSongMgr
+    // vtable (0x8209ecd4) has 30 slots; ours had 33.  MSVC lays a derived
+    // class out as [all inherited slots][the derived class's NEW virtuals, in
+    // declaration order], and our extras were slots 30/31/32 == exactly these
+    // three in declaration order -- i.e. retail's BandSongMgr introduces NO
+    // new virtual at all.
+    //
+    // The family check rules out the rival explanation.  If retail declared
+    // them virtual on the BASE instead, BandSongMgr would still read 30, so
+    // the count alone cannot separate the two -- but SongMgr's own table
+    // measures 30 retail / 30 ours (exact), so the base's virtual set is
+    // already complete and these three are not in it on either side.
+    // Nothing derives from BandSongMgr, so removing `virtual` cannot change
+    // dispatch anywhere.
+    void AllowCacheWrite(bool);
     virtual void ClearCachedContent();
     virtual Symbol GetShortNameFromSongID(int, bool) const;
     virtual int GetSongIDFromShortName(Symbol, bool) const;
-    virtual const char *SongName(int) const;
-    virtual bool CanAddSong() const;
+    const char *SongName(int) const;
+    bool CanAddSong() const;
     virtual bool AllowContentToBeAdded(DataArray *, ContentLocT);
     virtual void AddSongData(DataArray *, DataLoader *, ContentLocT);
     virtual void

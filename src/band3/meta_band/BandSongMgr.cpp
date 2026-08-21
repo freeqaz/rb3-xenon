@@ -231,7 +231,17 @@ void BandSongMgr::ContentMounted(const char *c1, const char *c2) {
 }
 
 const char *BandSongMgr::ContentPattern() {
-    return TheArchive ? "&songs*.dta" : "&songs*.dt?";
+    // Retail 360 returns a bare constant -- NOT the rb3-Wii dev build's
+    // `TheArchive ? "&songs*.dta" : "&songs*.dt?"`, which is what this used to
+    // be (../rb3/src/band3/meta_band/BandSongMgr.cpp:204, copied verbatim).
+    // Adjudicated on retail bytes with no map involved: this is vtable slot 10
+    // of the ContentMgr::Callback subobject, 0x82575558, whose ENTIRE body is
+    // `lis r11,0x820a; addi r3,r11,-0x21c8; blr` -- 12 bytes, no load of
+    // TheArchive, no compare, no branch, so the conditional form cannot
+    // compile to it.  The constant it returns is 0x8209DE38 == "songs.dta".
+    // (Slot 11 is 0x82575568 -> 0x82000FE4 == "songs", which is ContentDir --
+    // that pair is what pins the slot numbering without trusting the map.)
+    return "songs.dta";
 }
 
 const char *BandSongMgr::ContentDir() { return "songs"; }

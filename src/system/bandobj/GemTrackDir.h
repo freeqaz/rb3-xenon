@@ -32,7 +32,8 @@ public:
     virtual void PostLoad(BinStream &);
     virtual void SyncObjects();
     virtual void Poll();
-    virtual void SyncFingerFeedback();
+    // Not virtual -- follows TrackDir, where the retail evidence lives.
+    void SyncFingerFeedback();
     virtual void SetDisplayRange(float);
     virtual void SetDisplayOffset(float, bool);
     virtual RndDir *SmasherPlate() { return mSmasherPlate; }
@@ -61,6 +62,16 @@ public:
     virtual void PlayIntro();
     virtual void TrackReset();
     virtual void ResetSmashers(bool);
+    // ⚠ GameWon IS virtual in retail -- do not "fix" this one.  It was
+    // de-virtualized once on the strength of a slot-count argument and the
+    // measurement refuted it immediately (-1 matched / -80 B).  Retail's
+    // GemTrackDir primary vtable (0x820276c4) holds GameWon in its LAST slot
+    // (35) at 0x822e6730, and our body for it scores fuzzy 100.0 against that
+    // very address -- so the address is GameWon, the map's `UAAXXZ` spelling
+    // is right, and the slot is real.  Removing `virtual` re-mangles the
+    // symbol U->Q, our obj stops defining the name the map assigns to
+    // 0x822e6730, and objdiff un-pairs the row to 0% forever.
+    // The surplus slot was SyncFingerFeedback, one slot earlier.
     virtual void GameWon();
     virtual void Retract(bool);
     virtual void Extend(bool);
