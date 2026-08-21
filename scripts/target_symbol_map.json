@@ -30108,5 +30108,6 @@
  "0x8233c2c8": "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBH_N@2@U?$_Select1st@U?$pair@$$CBH_N@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBH_N@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBH_N@2@00@Z",
  "0x8233c398": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBH_N@2@U?$_Select1st@U?$pair@$$CBH_N@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBH_N@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBH_N@2@@Z",
  "0x8233c668": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBH_N@2@U?$_Select1st@U?$pair@$$CBH_N@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBH_N@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBH_N@2@@Z",
- "0x827035f0": "?SetJump@StandardStream@@UAAXMMPBD@Z"
+ "0x827035f0": "?SetJump@StandardStream@@UAAXMMPBD@Z",
+ "0x8270ff88": "?DebugText@MetaMusicLoader@@UAAPBDXZ"
 }
