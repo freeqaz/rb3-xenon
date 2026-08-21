@@ -159,7 +159,7 @@ def name_is_nonvirtual(sym):
 # -- provably, since a class whose verdict was SAME had zero mismatches by
 # definition -- so the strictness bought no defect prevention whatsoever.
 _HARD = ('folded_across', 'folded_within', 'unnamed', 'absent')
-_SOFT = ('nonvirtual_name', 'unrelated_owner')
+_SOFT = ('nonvirtual_name', 'unrelated_owner', 'thunk_twin')
 
 
 class Slot:
@@ -244,6 +244,83 @@ def fold_counts(tables):
         for w in {w for (_va, w, _p) in slots}:
             occ[w] += 1
     return occ
+
+
+def tail_thunk_shape(read_word, va, max_insns=6):
+    """Shape of a TAIL-CALL THUNK at `va`, or None if it is not one.
+
+    A tail-call thunk is a short body ending in an unconditional `b` (opcode 18,
+    LK=0) with no `bl`/`bctrl`/`blr` before it.  The SHAPE is the tuple of words
+    BEFORE that branch -- deliberately excluding the branch itself, because the
+    displacement is the only thing that differs between twins.
+
+    `read_word(va) -> int` returns the big-endian instruction word at `va`, or
+    None if `va` is not in an executable section.  Passing the reader in keeps
+    this module free of any binary-layout knowledge (VA->offset arithmetic is
+    section-dependent and three lanes have already got it wrong).
+    """
+    ws = []
+    for i in range(max_insns):
+        w = read_word(va + i * 4)
+        if w is None:
+            return None
+        op = w >> 26
+        if op == 18:                      # b / ba / bl / bla
+            if w & 1:                     # LK set -> a CALL, not a tail jump
+                return None
+            return tuple(ws)
+        if w in (0x4E800420, 0x4E800421):  # bctr / bctrl
+            return None
+        ws.append(w)
+    return None
+
+
+def mark_thunk_twins(out, read_word):
+    """SOFT-mark retail slots that are INTERCHANGEABLE TAIL-CALL THUNKS.
+
+    ⛔ THE DEFECT THIS CATCHES.  A thunk body is `adjust; b target` -- so two
+    thunks of the same class are BYTE-IDENTICAL except the branch displacement.
+    Their addresses are DISTINCT, so `occ == 1` and both the across- and
+    within-vtable fold filters pass them as fully comparable.  But nothing in
+    the bytes says WHICH name belongs to WHICH thunk, so the map's assignment
+    between them is arbitrary -- and if the map happens to have swapped two of
+    them, a name comparison reports a PERMUTED "defect" in source that is
+    CORRECT.
+
+    Measured 2026-08-21: 7 charged slots across `UIFontImporter` (5/5) and
+    `StreamReceiver360` (2/2) -- i.e. **100% of the PERMUTED population** was
+    this artifact and nothing else.  `StreamReceiver360` was adjudicated on
+    retail bytes: `StreamReceiver::Play` dispatches slot 0x30 with `li r4,0`
+    (an argument, so PauseImpl(bool)) and slot 0x34 with no argument and the
+    result DISCARDED -- `Play()` calling `GetPlayCursor()` and throwing the int
+    away is not a plausible reading, so 0x34 is `PlayImpl`, our header is
+    right, and the MAP has the two thunk names swapped.
+
+    SOFT, not HARD, and for the same reason as every other suspect class here:
+    two twins that AGREE need no forgiveness (our side would have to
+    independently produce the identical mangled name), so agreement still
+    counts.  Only a DISAGREEMENT between twins is withheld -- as a
+    byte-adjudication worklist item, never dropped.
+
+    Scoped to collisions WITHIN one vtable, which is where the ambiguity lives:
+    the twins compete for slots of the same class.
+    """
+    shapes = {}
+    for i, s in enumerate(out):
+        if s.addr is None or s.reason in _HARD:
+            continue
+        sh = tail_thunk_shape(read_word, s.addr)
+        if sh is None:
+            continue
+        shapes.setdefault(sh, []).append(i)
+    for sh, idxs in shapes.items():
+        if len(idxs) < 2:
+            continue
+        for i in idxs:
+            if out[i].reason is None:      # never downgrade an existing reason
+                out[i] = Slot(name=out[i].name, addr=out[i].addr,
+                              reason='thunk_twin')
+    return out
 
 
 def retail_slots(slots, occ, addr2name, hierarchy=None):
