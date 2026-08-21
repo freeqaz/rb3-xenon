@@ -521,6 +521,8 @@ def process_batch(args):
         Path(args.stats_json).write_text(json.dumps(stats, indent=2))
         print(f'\nStats written to: {args.stats_json}')
 
+    return files_renamed
+
 
 def run_selftest():
     """Inline sanity tests for canonical_atexit and counter_sort_key."""
@@ -609,16 +611,33 @@ def main():
                         help='Run inline unit tests and exit')
     parser.add_argument('files', nargs='*',
                         help='Specific .obj files to patch (paths relative to base-dir)')
+    parser.add_argument('--check', action='store_true',
+                        help='Dry-run and EXIT 2 if any object in the build tree '
+                             'still needs this pass')
     args = parser.parse_args()
 
     if args.selftest:
         run_selftest()
         return
 
+    if args.check:
+        # --check never writes.  A checker that could mutate the tree it is
+        # auditing is not a checker.
+        args.apply = False
+
     if not args.batch and not args.files:
         parser.error('Specify --batch or provide specific files')
 
-    process_batch(args)
+    pending = process_batch(args)
+    if args.check and pending:
+        # Exit 2 -- the convention obj_anon_ns_patcher.py established in lane
+        # CN-1.  The non-zero exit is the point: it is what lets an edge in
+        # build.ninja, or scripts/verify_objs_patched.py, refuse rather than
+        # report a number derived from raw compiler output.
+        print('FAIL[atexit_scope]: %d pending patch(es) -- this build tree '
+              'carries objects that were compiled but never post-processed.'
+              % pending, file=sys.stderr)
+        sys.exit(2)
 
 
 
