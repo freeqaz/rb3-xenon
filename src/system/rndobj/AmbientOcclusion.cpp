@@ -625,7 +625,24 @@ void RndAmbientOcclusion::BurnTransform(
     if (mQuality == 0) {
         canBurn = CanBurnXfm(mesh);
     } else {
-        if (Abs(1.0f - det) > 0.0001f) {
+        // Retail uses `fabs` here, not the Abs<T> template's fcmpu+fneg form
+        // (fn_8248E200 @ 0x8248E200 idx 31-34: fsubs / fabs / fcmpu against
+        // __real@38d1b717 == 0.0001f).  Spelled `fabsf` so it no longer depends
+        // on a non-retail Abs(float) overload being in scope.
+        //
+        // ⚠ UNVERIFIABLE HERE, AND THE SHAPE BELOW IS PROBABLY WRONG.  This
+        // site currently emits NOTHING: MILO_NOTIFY_ONCE strips to
+        // `{ (void)sizeof(MakeString(...)); }`, and sizeof is unevaluated, so
+        // the whole condition is dead-code-eliminated (our BurnTransform has 2
+        // lfs and zero fabs/fcmpu/fneg).  Retail's does evaluate it, and feeds
+        // the result to a BOOLEAN, not to a notify: idx 29 `li r11,1` / 35
+        // `bgt cr6` / 36 `li r11,0` computes `!(fabs(1.0f-det) > 0.0001f)` and
+        // that value flows on -- i.e. retail almost certainly assigns it to
+        // `canBurn` (cf. NearlyOne(det)).  Fixing that is a control-flow change
+        // beyond this lane, and unmeasurable: BurnTransform is unpaired (no
+        // report.json row; the name is absent from the target obj, which knows
+        // this body only as fn_8248E200, 552 B vs our 568 B).
+        if (fabsf(1.0f - det) > 0.0001f) {
             MILO_NOTIFY_ONCE(
                 "%s: Mesh has scale or mirroring applied. Re-export mesh to ensure accurate AO calculation.",
                 PathName(mesh)

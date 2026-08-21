@@ -873,7 +873,7 @@ void LiveCameraInput::NuiAudioDataCallback(NUIAUDIO_RESULTS *results) {
     if (confidence > 0.2f) {
         sInstance->mBeamAngle = beamAngle;
         sInstance->mBeamConfidence = confidence;
-        side = (int)(beamAngle / Abs(beamAngle)) + side;
+        side = (int)(beamAngle / fabsf(beamAngle)) + side;
         if (side > 10) {
             side = 10;
         } else if (side < -10) {
@@ -943,10 +943,10 @@ bool LiveCameraInput::GetTweakedAutoexposure() const {
     bool gotRegion = GetExposureRegion(configRegion);
     if (gotRegion) {
         if (val != 2
-            || Abs(currentRegion.Left - configRegion.Left) >= 0.0001f
-            || Abs(currentRegion.Top - configRegion.Top) >= 0.0001f
-            || Abs(currentRegion.Width - configRegion.Width) >= 0.0001f
-            || Abs(currentRegion.Height - configRegion.Height) >= 0.0001f) {
+            || fabsf(currentRegion.Left - configRegion.Left) >= 0.0001f
+            || fabsf(currentRegion.Top - configRegion.Top) >= 0.0001f
+            || fabsf(currentRegion.Width - configRegion.Width) >= 0.0001f
+            || fabsf(currentRegion.Height - configRegion.Height) >= 0.0001f) {
             return false;
         }
         return true;
