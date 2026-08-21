@@ -1946,11 +1946,41 @@ def generate_build_ninja(
         # killed the rebuild-everything failure mode in rb3-Wii.
         restat=True,
     )
+    # target_symbol_map.json is a REAL INPUT to the split (JEFF_MERGE_PROTECT
+    # above reads it to decide which symbols the Class-2 merge may not absorb),
+    # but jeff does not list it in the depfile it emits -- that names only
+    # default.xex, splits.txt and symbols.txt. So it must be declared here or
+    # ninja never learns the split depends on it.
+    #
+    # WHY THIS MATTERS, and why the failure is SILENT: the renamer rewrites the
+    # split target obj's anonymous fn_<addr> symbols to mangled names IN PLACE.
+    # Once an obj is renamed there are no fn_<addr> symbols left, so re-running
+    # the renamer against a NEW map is a guaranteed no-op -- it reports
+    # "[APPLIED] 3091 files checked, 0 files patched, 0 total symbol renames"
+    # and exits 0. The only way a map edit reaches the objs is for the SPLIT to
+    # re-emit virgin ones first. Without this edge a landed map change stays
+    # inert on every warm tree until somebody remembers to touch config.yml,
+    # and the metric silently UNDER-REPORTS in the meantime.
+    #
+    # Measured on main 2026-08-21: commit 1cc6896d corrected RndFont's map rows
+    # from the virtual spelling (?CharDefined@RndFont@@UBA_NG@Z) to the
+    # non-virtual one (...@QBA_NG@Z, which retail bytes at 0x82473A98 support).
+    # main's warm tree still carried the stale U objs, so four RndFont rows sat
+    # at 0% that score 100% against a fresh split. A forced re-split recovered
+    # exactly +5 matched_functions / +748 B (42193 -> 42198), with symbols.txt
+    # byte-identical and the trees provably identical. Nothing detected it; it
+    # only surfaced because a worktree and main disagreed on the same content.
+    #
+    # Safe as a dependency: the split READS this file and never writes it, so
+    # unlike splits.txt/symbols.txt (which are simultaneously split OUTPUTS,
+    # cf. ABSPLIT-1's fixed-point iteration) it cannot make the edge
+    # self-dirtying. Implicit deps are not part of the command string, so
+    # warm-worktree command-hash parity is unaffected.
     n.build(
         inputs=config.config_path,
         outputs=build_config_path,
         rule="split",
-        implicit=dtk,
+        implicit=[dtk, "scripts/target_symbol_map.json"],
         variables={"out_dir": build_path},
     )
     n.newline()
