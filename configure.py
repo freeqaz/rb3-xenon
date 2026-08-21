@@ -852,6 +852,56 @@ config.custom_build_steps = {
                 "desc": "PATCH EH funclet extent boundaries",
             },
         },
+        # ── the assertion, LAST ────────────────────────────────────────────
+        # Everything above REPAIRS the tree; nothing above could say whether
+        # the repair was complete, and a build that omits a post-processing
+        # pass and announces nothing is the failure class this edge exists
+        # for.  Two checks, because there are two ways in:
+        #
+        #   --check  re-runs every patcher in dry-run and fails the build if
+        #            any would still change a file.  Catches a regression of
+        #            THIS dependency graph, including "someone added a seventh
+        #            patcher and forgot the edge".
+        #   --emit   records build/<v>/patch_state.json, a content manifest of
+        #            every decomp AND target object at the moment the tree was
+        #            verified.  Catches what no build-time check can: a tool
+        #            that compiles a single TU outside the graph later and
+        #            leaves one raw-compiler object behind.  Measured cost of
+        #            that on this repo: unit default/BandUI -2.006 pp of
+        #            matched_code_percent, ?InitPanels@BandUI@@QAAXXZ 100.0 ->
+        #            99.7, from ONE object.
+        #
+        # The OUTPUT is patch_state.json itself, not a stamp beside it, and
+        # there is deliberately no `always`.
+        #
+        # `always` was the first draft and it was wrong twice over.  It made
+        # `ninja post-compile` incapable of being a no-op -- re-running six
+        # patcher dry-runs and re-hashing 4,296 objects every time, measured at
+        # 15 s -- which matters because scripts/orchestrator/patch_guard.py
+        # calls this on every measurement.  Without it the edge is a true no-op
+        # on a consistent tree, because the ordinary dependency logic already
+        # covers the case it was there for: the patchers preserve each object's
+        # mtime, so a targeted single-object build leaves that object NEWER
+        # than every patch stamp, which dirties `all_source` and re-fires this
+        # edge along with the rest of the chain.
+        #
+        # Naming patch_state.json as the output rather than a stamp closes the
+        # one gap that reasoning leaves: if the manifest is deleted, a stamp
+        # would still look clean and nothing would re-emit it, whereas a
+        # missing output is rebuilt.
+        {
+            "outputs": str(stamp_dir / "patch_state.json"),
+            "rule": "run_script",
+            "implicit": [
+                "scripts/verify_objs_patched.py",
+                str(stamp_dir / "eh_boundary_patched.stamp"),
+                "all_source",
+            ],
+            "variables": {
+                "cmd": "python3 scripts/verify_objs_patched.py --check --emit",
+                "desc": "VERIFY objs are a fixed point of the patch chain",
+            },
+        },
     ],
 }
 
