@@ -76,6 +76,7 @@ one-way-low bias on the calls that follow an edit.
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -169,10 +170,17 @@ def ensure_patched_tree(project_dir: Path | str, *, build: bool = True) -> str:
         if (project_dir / exe).exists():
             make = [str(project_dir / exe), *make[1:]]
         cmd = [*make, POST_COMPILE_TARGET]
+        # tools/ninja-locked appends `configure.py progress` -- a 40-line
+        # dashboard, measured by the wrapper's own header at 534 ms -- to every
+        # invocation that did not already run the PROGRESS rule.  A guard that
+        # fires once per measurement would pay that every time, for a dashboard
+        # no caller reads, and it buries the one line worth echoing.  The
+        # wrapper documents this env var for exactly this case.
+        env = dict(os.environ, NINJA_LOCKED_SKIP_PROGRESS="1")
         try:
             proc = subprocess.run(
                 cmd, cwd=str(project_dir), capture_output=True, text=True,
-                timeout=_BUILD_TIMEOUT,
+                timeout=_BUILD_TIMEOUT, env=env,
             )
         except subprocess.TimeoutExpired:
             raise UnpatchedTreeError(
