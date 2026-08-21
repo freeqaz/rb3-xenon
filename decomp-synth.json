@@ -9,5 +9,15 @@
   "objdiff_cli": "bin/objdiff-cli",
   "m2c_target": "ppc",
   "m2c_path": "/home/free/code/milohax/m2c/m2c.py",
-  "objdiff_to_m2c_path": null
+  "objdiff_to_m2c_path": null,
+  "scoring_reloc_diff_mode": "project",
+  "obj_patch_chain": [
+    "python3",
+    "scripts/obj_patch_chain.py",
+    "--apply",
+    "--unit",
+    "{unit}",
+    "--obj",
+    "{obj}"
+  ]
 }
