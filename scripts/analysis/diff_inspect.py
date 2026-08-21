@@ -3,7 +3,9 @@
 
 Usage:
     # Generate JSON diff first:
-    ./bin/objdiff-cli diff "symbol_name" --include-instructions --build --incremental -f json -o /tmp/claude/diff.json
+    ./tools/ninja-locked          # NO target -- a single-.obj build skips the
+                                  # six post-compile patchers (see _ensure_patched)
+    ./bin/objdiff-cli diff "symbol_name" --include-instructions -f json -o /tmp/claude/diff.json
 
     # Then inspect it:
     python3 scripts/analysis/diff_inspect.py /tmp/claude/diff.json                  # show all non-equal
@@ -1787,6 +1789,27 @@ def _ruler_for(project_dir, selector):
     return resolve_ruler(project_dir, selector)
 
 
+def _ensure_patched(project_dir):
+    """Build through `post-compile` and ASSERT, instead of `--build`ing one obj.
+
+    `objdiff-cli diff --build` (without `--full-build`) is `ninja <base .obj>`,
+    a SINGLE-OBJECT target that stops one edge short of rb3-xenon's six
+    post-compile patchers.  It answers from raw compiler output and leaves the
+    object that way for report.json and every concurrent lane.  Measured on
+    rb3-xenon: one such call cost unit default/BandUI 2.006 pp of
+    matched_code_percent and read a 100.0 function as 99.7.
+
+    Memoized per tree per process, so a per-symbol loop pays ~1 s once rather
+    than per symbol.  Raises UnpatchedTreeError rather than returning a number.
+    """
+    import sys as _sys, os as _os
+    _scripts = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+    if _scripts not in _sys.path:
+        _sys.path.insert(0, _scripts)
+    from orchestrator.patch_guard import ensure_patched_tree_once
+    return ensure_patched_tree_once(project_dir)
+
+
 def run_objdiff_for_symbol(symbol, project_dir=None, unit=None, ruler="graded"):
     """Run objdiff-cli diff and return path to JSON output.
 
@@ -1807,6 +1830,9 @@ def run_objdiff_for_symbol(symbol, project_dir=None, unit=None, ruler="graded"):
     (`ppc.calculatePoolRelocations` etc.). `data_value` restores the
     address-charging behaviour the docs valued.
     """
+    _ensure_patched(project_dir or os.path.dirname(os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__)))))
+
     # Extract param hint for disambiguation: "Class::Method(Hint)" → base + hint
     param_hint = None
     if "(" in symbol and not symbol.startswith("?"):
@@ -1853,7 +1879,11 @@ def run_objdiff_for_symbol(symbol, project_dir=None, unit=None, ruler="graded"):
         objdiff_bin, "diff",
         "-p", str(effective_project_dir),
         symbol,
-        "--include-instructions", "--build", "--incremental",
+        # No `--build --incremental`: that pair is `ninja <one .obj>`, which
+        # stops one edge short of the six post-compile patchers, answers from
+        # raw compiler output, and leaves the object unpatched for every later
+        # reader. _ensure_patched() built through `post-compile` instead.
+        "--include-instructions",
         *ruler_args,
         "-f", "json", "-o", json_path
     ]

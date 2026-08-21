@@ -869,6 +869,64 @@ still the record of the trap, so read it before hand-seeding anything.
 
 ## Build wiring
 
+⛔⛔ **NEVER `ninja <one>.obj`, and never `objdiff-cli --build` — they are the
+same command, and both leave the tree measurably WRONG for everyone else.**
+The six post-compile patchers hang off the `post-compile` phony, *downstream*
+of the compile edges. Ninja builds only a target's **ancestors**, so naming a
+single `.obj` stops one edge short of every patcher and the fresh compile
+overwrites the previously-patched bytes. `objdiff-cli diff --build` (without
+`--full-build`) **is** `ninja <base_obj_path>`.
+
+Measured 2026-08-21 (rb3-xenon, worktree off `0f7f213b`) — one `touch`, one
+targeted `.obj` build, nothing else:
+
+| ruler | patched | unpatched |
+|---|---|---|
+| unit `default/BandUI` `matched_code_percent` | 93.299904 | **91.293884** (−2.006 pp) |
+| unit `default/BandUI` `matched_code` | 18,604 | 18,204 (−400 B) |
+| `?InitPanels@BandUI@@QAAXXZ` (400 B) | **100.0** | **99.7** |
+| whole-build `matched_code_percent` | 36.738945 | 36.735040 |
+
+⇒ a function that IS matched reads as a near-miss, and byte-exact is the
+admission gate. The bias is **one-directional** (an unpatched object can only
+lose points) and **invisible on the tool that causes it** — `run_objdiff`
+reported the same verdict in both states, so `report.json` and
+`measure_progress.sh` silently disagreed with it and neither looked wrong.
+⚠ And because the patchers **preserve mtime** (they must — see any patcher's
+`_write_preserving_mtime`), the degraded state shows up in **no timestamp**.
+⚠ Do NOT dismiss this as build noise: a full build restored the object's exact
+prior sha256 and `report.json`'s measures byte-identically, **four times**
+across this lane's sabotage cycles. Two clean builds here do not differ at all.
+
+**Instruments** (landed 2026-08-21; dc3 `2f35703d0` and decomp-synth
+`bacceb083` are the siblings):
+
+- `scripts/verify_objs_patched.py` — `--check` re-runs all six passes dry and
+  fails the build if the tree is not a fixed point; `--emit` writes
+  `build/45410914/patch_state.json`, a content manifest of every decomp **and
+  target** object; `--verify-manifest` recomputes it with no toolchain. Wired
+  as the last `post-compile` edge, so every completed build leaves a reference
+  state. **Ask this before trusting a tree you did not build.**
+- `scripts/orchestrator/patch_guard.py` — `ensure_patched_tree()`: builds
+  `post-compile` through `objdiff.json`'s `custom_make` (`tools/ninja-locked`),
+  then **asserts**, raising `UnpatchedTreeError` rather than returning a
+  number. ~0.81 s on a consistent tree. Every tool that builds-and-scores now
+  goes through it.
+
+⚠ **Two honest limits on the green light, both measured, neither fixed:**
+1. **Three of the six passes are idle** — `guard`, `bool_mangle` and
+   `atexit_scope` patch **0 files repo-wide** in APPLY mode on a fully built
+   tree. A green `--check` is earned by three passes, not six. (This is why
+   `patch_guard` asserts the *manifest*, which is content-keyed and does not
+   depend on any pass still being active.)
+2. **Those same three pair target↔base by RELPATH**, reaching only **347 of
+   the 1,048** pairs `objdiff.json` declares — **701 (66.9%) invisible**, and
+   **3** of the 347 paired against a *different* target obj than objdiff.json
+   names. `obj_anon_ns_patcher.py` already solved this with `--objdiff-config`.
+   `--check` prints this coverage and `--emit` records it, so the denominator
+   is visible rather than hidden behind an exit code. **Closing it is a
+   separate lane: it would change matched bytes.**
+
 - `tools/defines_common.py` — include paths. **STLport must come first**, then
   `src/xdk/LIBCMT` (C CRT), then `src`, `src/system`.
 - `config/45410914/objects.json` — declares which `.cpp` files to compile and
