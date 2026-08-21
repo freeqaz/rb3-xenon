@@ -733,7 +733,17 @@ public:
     ObjRefOwner *mOwner; // 0x10 (HX_NATIVE only)
     virtual Hmx::Object *RefOwner() const;
     virtual void Replace(Hmx::Object *obj) { mOwner->Replace(this, obj); }
-    void operator=(T *obj) { SetObjConcrete(obj); }
+    // Portable spelling of "assign the held object", so consumer code can say
+    // SetOwnerObj on BOTH legs (lane OBJREF-FLAVOUR added it to the X360 branch
+    // only, which broke every native TU that adopted it -- 40 errors over 10
+    // instantiations). The two branches differ in WHERE the ring-ref lives, not
+    // in what this call means: on X360 the ring-ref is mOwner, so that branch
+    // must manage the ring by hand; under HX_NATIVE the ring-ref is `this`
+    // (mOwner is a separate member@0x10), which is exactly what SetObjConcrete
+    // already manages. So delegating here is the native-correct equivalent, not
+    // a stub.
+    void SetOwnerObj(T *obj) { SetObjConcrete(obj); }
+    void operator=(T *obj) { SetOwnerObj(obj); }
     T *Ptr() const { return mObject; }
 
     /** X16. The ctor's seed pointer, retained so the native ring-teardown
