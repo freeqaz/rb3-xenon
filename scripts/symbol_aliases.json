@@ -70171,9 +70171,17 @@
    "address": "0x8270d940",
    "survivor": "?Stop@BinkClip@@QAAXXZ",
    "folded": [
-    "?Stop@MoggClip@@UAAXXZ"
+    "?Stop@MoggClip@@QAAXXZ"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
+   "respellings": [
+    {
+     "lane": "vtable-w9 2026-08-21",
+     "from": "?Stop@MoggClip@@UAAXXZ",
+     "to": "?Stop@MoggClip@@QAAXXZ",
+     "why": "MoggClip::Stop was de-virtualized to match retail (retail MoggClip has 21 vtable slots, ours had 29, and Stop was one of the 8 surplus). De-virtualizing re-mangles U->Q, so OUR spelling of this fold member changed. The GROUP CLAIM IS UNCHANGED -- retail 0x8270d940 is still one body shared by BinkClip::Stop and MoggClip::Stop; only our side is respelled. Leaving the stale U spelling would make a REAL fold read as a wrong-callee defect at 3 CrowdAudio call sites (all qualified `p->MoggClip::Stop()`), measured -3 matched / -1232 B."
+    }
+   ]
   },
   {
    "name": "$PropSync",

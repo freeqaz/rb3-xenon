@@ -54,7 +54,24 @@ public:
     virtual bool InComponentSelect();
     virtual bool IsBlockingTransition();
     virtual bool IsTimelineResetAllowed() const;
-    virtual void SendTransitionComplete(UIScreen *, UIScreen *);
+    // NOT virtual in retail.  Retail's BandUI primary vtable (0x82123b0c's
+    // derived counterpart) holds 12 slots and ENDS at IsTimelineResetAllowed;
+    // ours held 13, this being the sole NEW virtual and therefore the last
+    // slot.  Name coverage on that table is 12/12, so it is not an artifact.
+    //
+    // ⚠ This narrows, but does not contradict, the note in BandUI.cpp's body:
+    // that note observes retail calling UIManager::SendTransitionComplete and
+    // infers our "DC3-derived UIManager omits that virtual".  The observation
+    // stands; the inference does not.  UIManager's OWN tables measure 21/21
+    // and 12/12 EXACT against retail, so our UIManager omits no slot at all --
+    // retail's UIManager::SendTransitionComplete is simply not virtual either,
+    // which is why there is no base slot for this to override.  Adding one to
+    // UIManager (which that note declined to do, for fear of perturbing
+    // UI.cpp) would have made UIManager 13 vs retail's 12 and been wrong.
+    //
+    // Unmapped, in no ICF alias group, nothing derives from BandUI, and our
+    // tree has no call site: de-virtualizing is behaviour-neutral here.
+    void SendTransitionComplete(UIScreen *, UIScreen *);
 
     void GetCurrentScreenState(std::vector<UIScreen *> &);
 #ifdef HX_NATIVE
