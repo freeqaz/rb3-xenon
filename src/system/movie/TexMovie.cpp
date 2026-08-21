@@ -34,8 +34,10 @@ BEGIN_COPYS(TexMovie)
     CREATE_COPY(TexMovie)
     BEGIN_COPYING_MEMBERS
         COPY_MEMBER(mTex)
+        // Retail copies the bool at +0x38 (mLoop) BEFORE sRoot, and copies no
+        // other bool -- it never propagates mIsLocalized (+0x3a) on a copy.
+        COPY_MEMBER(mLoop)
         COPY_MEMBER(sRoot)
-        COPY_MEMBER(mIsLocalized)
     END_COPYING_MEMBERS
 END_COPYS
 
