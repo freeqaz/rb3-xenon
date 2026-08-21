@@ -199,12 +199,25 @@ protected:
 
     virtual bool CheckShotStarted();
     virtual bool CheckShotOver(float);
-    // these three could be re-ordered, unsure of current order rn
-    virtual void ApplyDynamicOffsetPreLookAt(Transform &, bool) {}
-    virtual void ApplyDynamicOffsetPostLookAt(Transform &) {}
-    virtual void ApplyFinalCamTransform(Transform &) {}
-
-    virtual float ZoomFovOffset() { return 0; }
+    // ⛔ ApplyDynamicOffsetPreLookAt / ApplyDynamicOffsetPostLookAt /
+    // ApplyFinalCamTransform / ZoomFovOffset USED TO BE DECLARED HERE, as the
+    // last four virtuals, carrying "these three could be re-ordered, unsure of
+    // current order rn".  Retail settles it more strongly than a reordering:
+    // THEY ARE NOT IN THE VTABLE AT ALL.  Retail's CamShot RndAnimatable-
+    // subobject vtable at 0x820791dc holds 13 slots and ENDS at CheckShotOver
+    // (0x824bd750); the next word is 0xffffffff followed by (VA, index) pairs
+    // -- a handler table, not slots.  Ours held 17.  The family corroborates
+    // without consulting the map: BandCamShot is 14 retail vs 18 ours, i.e.
+    // the same 4 extras plus its own SetFrameEx, and retail's last slot and
+    // ours are both SetFrameEx -- the two tables agree at BOTH ends and differ
+    // by exactly these four insertions.
+    //
+    // They were a DC3-era addition (absent from the rb3-Wii oracle's CamShot
+    // entirely), had ZERO overrides and ZERO call sites tree-wide, and their
+    // retail call sites were already removed by an earlier lane -- see the
+    // NB(idx233) notes in CameraShot.cpp's BuildTransform and Interp.  Only
+    // the declarations were left, and a declaration alone still burns a slot.
+    // Do not restore them from dc3-decomp: it is the NEWER engine.
 
     void CacheFrames();
     void UnHide();
