@@ -52,7 +52,40 @@ public:
     virtual LocalBandUser *GetLocalBandUser() const = 0;
     virtual RemoteBandUser *GetRemoteBandUser() = 0;
     virtual RemoteBandUser *GetRemoteBandUser() const = 0;
-    virtual const std::vector<unsigned long long> &GetFriendsConsoleCodes() const = 0;
+    // ⛔ `GetFriendsConsoleCodes` USED TO BE DECLARED HERE, PURE VIRTUAL, AND IT
+    // IS NOT A VIRTUAL OF RETAIL'S BandUser AT ALL.  It was the 8th pure virtual
+    // where retail has 7, making our own-vftable 11 slots against retail's 10.
+    // It sat LAST in declaration order, so it shifted nothing -- which is why no
+    // dispatch-offset check ever caught it and only the slot COUNT did.
+    //
+    // Retail's BandUser own vftable is 0x820e0110: 10 slots = 3 non-pure
+    // (IsInSession / UnkTU5Virtual / IsParticipating, slots 0-2) + 7 `_purecall`
+    // (0x828299b8, slots 3-9).  Every one of the 7 is accounted for, by BODY
+    // rather than by name, in the two derived overrides of that same table:
+    //
+    //   slot        LocalBandUser (0x820e0b6c)     RemoteBandUser (0x820e023c)
+    //   3,4,5       Career / Hardcore / Cymbal     Career / Hardcore / Cymbal
+    //   6,7         `addi r3,r3,-0x6c; blr`        null hub 0x823591e8
+    //   8,9         null hub 0x823591e8            `addi r3,r3,-0x5c; blr`
+    //
+    // Slots 6,7 and 8,9 are ADJACENT IDENTICAL VAs -- the two const/non-const
+    // overload pairs -- and the return INVERTS between the two derived classes
+    // exactly as GetLocalBandUser/GetRemoteBandUser must (a Local has no Remote
+    // and vice versa).  That mirror is the control: it could have come out any
+    // other way.  Both tables end at slot 9, so there is no 8th pure virtual.
+    //
+    // Cross-check on slot 5: RemoteBandUser's slot-5 thunk (0x8268b938) has map
+    // name AND branch target agreeing on GetCymbalConfiguration, so slot 5 is
+    // Cymbal -- which makes LocalBandUser's slot-5 thunk name (the map's
+    // `?GetFriendsConsoleCodes@LocalBandUser@@$4PPPPPPPM@A@BAAB...`, at
+    // 0x8268e3a8) a MAP defect: that thunk branches to 0x8268b4d0, the Cymbal
+    // body.  See docs/decomp/VTABLE_SLOT_COUNT_FIXES_2026-08-20.md §16.
+    //
+    // The method itself is NOT deleted -- "not virtual" is what the vtable
+    // proves, "does not exist" is a separate claim, and RemoteBandUser really
+    // does carry `mFriendsConsoleCodes` plus a WiiFriendsListChangedMsg handler.
+    // It survives as a non-virtual member on each derived class.  Our tree has
+    // zero call sites, so nothing could have reached it through a BandUser*.
     virtual void Reset();
     virtual void SyncSave(BinStream &, unsigned int) const;
 
@@ -139,7 +172,9 @@ public:
     virtual LocalBandUser *GetLocalBandUser() const;
     virtual RemoteBandUser *GetRemoteBandUser();
     virtual RemoteBandUser *GetRemoteBandUser() const;
-    virtual const std::vector<unsigned long long> &GetFriendsConsoleCodes() const;
+    // Not virtual -- BandUser declares no such slot (see the block on
+    // BandUser::GetRemoteBandUser above).  Kept as a plain member.
+    const std::vector<unsigned long long> &GetFriendsConsoleCodes() const;
     virtual void Reset();
     virtual ControllerType ConnectedControllerType() const;
     virtual int GetCurrentInstrumentCareerScore() const;
@@ -195,7 +230,10 @@ public:
     virtual LocalBandUser *GetLocalBandUser() const;
     virtual RemoteBandUser *GetRemoteBandUser();
     virtual RemoteBandUser *GetRemoteBandUser() const;
-    virtual const std::vector<unsigned long long> &GetFriendsConsoleCodes() const;
+    // Not virtual -- see LocalBandUser's copy and the block on
+    // BandUser::GetRemoteBandUser.  This class is the one that actually holds
+    // the data (mFriendsConsoleCodes below), so the member stays.
+    const std::vector<unsigned long long> &GetFriendsConsoleCodes() const;
     virtual int GetCurrentInstrumentCareerScore() const;
     virtual int GetCurrentHardcoreIconLevel() const;
     virtual int GetCymbalConfiguration() const;
