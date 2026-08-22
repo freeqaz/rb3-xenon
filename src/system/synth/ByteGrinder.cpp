@@ -696,12 +696,12 @@ DataNode op60(DataArray *msg) {
 
 DataNode op61(DataArray *msg) {
     u32 operand = msg->Int(2);
-    u8 w = msg->Int(1);
+    unsigned long w = u8(msg->Int(1));
 
     u32 a = (w >> 3) ^ 0x15;
     u32 b = ((w & 7) << 5) ^ 0x1f;
     u32 tmp = a | b;
-    return u8(tmp ^ operand);
+    return DataNode(kDataInt, (int)((tmp ^ operand) & 0xFF));
 }
 
 DataNode op62(DataArray *msg) {
