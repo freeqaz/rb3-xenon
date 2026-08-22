@@ -75,6 +75,7 @@ one-way-low bias on the calls that follow an edit.
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import os
 import shutil
@@ -125,6 +126,14 @@ def _make_command(project_dir: Path | str) -> list[str]:
             make = doc.get("custom_make") or _DEFAULT_MAKE
             args = list(doc.get("custom_args") or [])
     return [make, *args]
+
+
+#: Seconds to wait out an in-flight split before refusing. Concurrent builds
+#: are the common case in these trees, and a guard that trips on one gets
+#: switched off; a STALE split is still refused immediately, because waiting
+#: cannot fix it.
+_SPLIT_WAIT_DEFAULT = 180.0
+SPLIT_WAIT_ENV = "RB3X_SPLIT_GUARD_WAIT"
 
 
 def _tail(text: str, n: int = 25) -> str:
@@ -229,7 +238,57 @@ def ensure_patched_tree(project_dir: Path | str, *, build: bool = True) -> str:
         )
 
     notes.append((proc.stdout or proc.stderr or "").strip() or "patch state verified")
+
+    # ... and the OTHER side of every diff. Everything above establishes that
+    # the BASE objects (build/<v>/src/**) are a fixed point of the post-compile
+    # patchers. It says nothing about the TARGET objects (build/<v>/obj/**),
+    # which are written by an edge -- `dtk xex split` -- that declares only
+    # config.json and so is invisible to ninja, to the patch manifest, and to
+    # every mtime. A report taken while a split is rewriting them, or over
+    # objects split from a symbols.txt that has since moved, does not fail: it
+    # reads a plausible LOWER number (measured in dc3-decomp 2026-08-21: 29,497
+    # matched functions instead of 29,838, a 341-function gap, no warning).
+    #
+    # An in-flight split is WAITED OUT rather than refused -- concurrent builds
+    # are the common case in these trees and a guard that trips on them gets
+    # switched off -- but a STALE one is refused immediately, because waiting
+    # cannot fix it.
+    notes.append(_ensure_split_current(project_dir, wait_seconds=_split_wait()))
     return " | ".join(n for n in notes if n)
+
+
+def _split_wait() -> float:
+    """How long to wait out a split that is merely in flight.
+
+    Env-overridable ONLY so the sabotage test can plant a `running` record and
+    observe the refusal in seconds instead of three minutes. Production callers
+    never set it; a shorter wait in a fleet would turn a normal concurrent
+    build into a refusal.
+    """
+    try:
+        return float(os.environ.get(SPLIT_WAIT_ENV, "") or _SPLIT_WAIT_DEFAULT)
+    except ValueError:
+        return _SPLIT_WAIT_DEFAULT
+
+
+def _ensure_split_current(project_dir: Path, *, wait_seconds: float) -> str:
+    """Assert the target objects came from the config on disk.
+
+    Imported lazily and tolerantly: a worktree or a checkout predating
+    scripts/verify_split_current.py must degrade to a loud note rather than
+    make every measurement in this repo impossible.
+    """
+    guard_path = project_dir / "scripts" / "verify_split_current.py"
+    if not guard_path.exists():
+        return f"split currency UNVERIFIED ({guard_path} absent)"
+    spec = importlib.util.spec_from_file_location(
+        "_rb3x_verify_split_current", guard_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    try:
+        return module.ensure_split_current(project_dir, wait_seconds=wait_seconds)
+    except module.StaleSplitError as exc:
+        raise UnpatchedTreeError(str(exc)) from None
 
 
 #: Memo for :func:`ensure_patched_tree_once`, keyed on the resolved tree.
