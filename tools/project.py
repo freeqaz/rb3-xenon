@@ -535,6 +535,17 @@ def generate_build_ninja(
     # stamp shape as the two gates above.
     renamed_script = Path("tools") / "check_target_objs_renamed.py"
     renamed_checked = build_path / "target_objs_renamed_checked.stamp"
+
+    # The split-currency guard. `dtk xex split` writes build/<v>/obj/** -- the
+    # TARGET side of every diff -- but declares only config.json, so nothing in
+    # the build graph can tell a reader that those objects came from a
+    # DIFFERENT config/<v>/symbols.txt than the one on disk, or that a split is
+    # rewriting them right now. Both failure modes are mtime-invisible and both
+    # read as a plausible LOWER number rather than an error. See
+    # scripts/verify_split_current.py for the 341-function reproduction.
+    split_guard_script = Path("scripts") / "verify_split_current.py"
+    split_stamp = build_path / "split_inputs.stamp"
+    split_checked = build_path / "split_current_checked.stamp"
     build_tools_path = config.build_dir / "tools"
     download_tool = config.tools_dir / "download_tool.py"
     n.rule(
@@ -1717,6 +1728,24 @@ def generate_build_ninja(
             implicit=[str(renamed_script), "always", "pre-compile"],
         )
 
+        n.comment("Assert the target objects came from the current split config")
+        # `always`, because BOTH failure modes are mtime-invisible: a split in
+        # flight, and a symbols.txt restored with an older mtime than
+        # config.json (which ninja does not even plan a SPLIT for).
+        # write-if-changed + restat keeps the OUTPUT from moving unless the
+        # split record does, so this does not re-fire REPORT on a quiet tree.
+        n.rule(
+            name="split_current_check",
+            command=f"$python {split_guard_script} --check --quiet --stamp-out $out",
+            description="CHECK SPLIT CURRENT",
+            restat=True,
+        )
+        n.build(
+            outputs=str(split_checked),
+            rule="split_current_check",
+            implicit=[str(split_guard_script), "always"],
+        )
+
         ###
         # BELT AND BRACES: purge the report-cache sidecars when the alias map
         # moves. As of 2026-08-13 this edge is REDUNDANT, and it stays anyway.
@@ -1805,6 +1834,11 @@ def generate_build_ninja(
             objdiff, "objdiff.json", "all_source",
             str(icf_map_path), str(icf_map_purged),
             str(mapinj_checked), str(renamed_checked),
+            # ... and on the split-currency check, because the TARGET side of
+            # every diff in this report is written by an edge that declares
+            # none of it. Without this the report is free to measure objects
+            # the config on disk did not produce.
+            str(split_checked),
         ]
         if config.custom_build_steps and "post-compile" in config.custom_build_steps:
             report_implicit.append("post-compile")
@@ -1956,9 +1990,19 @@ def generate_build_ninja(
         # that a real unit has since been pinned to. Relative script path (like
         # JEFF_MERGE_PROTECT above) keeps the command string byte-identical in
         # main and every worktree, preserving warm-worktree command-hash reuse.
+        # The --begin/--complete bracket is the split-currency guard. dtk's
+        # 3,091 target objects are NOT declared ninja outputs, so nothing else
+        # can tell a reader that they are mid-rewrite or that they came from a
+        # different symbols.txt. --begin marks the record `running` BEFORE dtk
+        # touches anything and --complete marks it `complete` only on success,
+        # so a crashed split leaves the tree explicitly unvouchable rather than
+        # quietly half-rewritten. Relative script path, like JEFF_MERGE_PROTECT
+        # above, to keep the command string byte-identical across worktrees.
         command=(
+            f"$python {split_guard_script} --begin --quiet && "
             f"JEFF_MERGE_PROTECT=scripts/target_symbol_map.json {dtk} xex split $in $out_dir"
             f" && $python tools/prune_split_outputs.py $out_dir"
+            f" && $python {split_guard_script} --complete --quiet"
         ),
         description="SPLIT $in",
         depfile="$out_dir/dep",
@@ -2008,6 +2052,12 @@ def generate_build_ninja(
     n.build(
         inputs=config.config_path,
         outputs=build_config_path,
+        # DECLARE THE RECORD. The 3,091 target objects still cannot be listed
+        # here (they are not known until the split has run), but the stamp that
+        # VOUCHES for them can be -- so deleting it re-fires the split that can
+        # legitimately recreate it, instead of wedging the build until someone
+        # touches config.yml by hand.
+        implicit_outputs=[str(split_stamp)],
         rule="split",
         implicit=[dtk, "scripts/target_symbol_map.json"],
         variables={"out_dir": build_path},
