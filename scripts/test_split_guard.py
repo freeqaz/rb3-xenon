@@ -79,10 +79,14 @@ def make_scratch() -> Path:
     (scratch / build_dir).mkdir(parents=True, exist_ok=True)
     (scratch / config_rel).parent.mkdir(parents=True, exist_ok=True)
 
+    # Written in the SAME shape configure.py emits, implicit-output clause and
+    # all. An earlier fixture omitted `| .../split_inputs.stamp` and therefore
+    # kept passing after the guard's own wiring made the real edge unparseable.
     (scratch / "build.ninja").write_text(
         "rule split\n"
         "  command = dtk split $in $out_dir\n"
-        f"build {build_dir}/config.json: split {config_rel} | dtk\n"
+        f"build {build_dir}/config.json | {build_dir}/split_inputs.stamp: "
+        f"split {config_rel} | dtk\n"
         f"  out_dir = {build_dir}\n"
     )
 
@@ -103,6 +107,12 @@ def make_scratch() -> Path:
 
 
 def _discover_real_edge() -> tuple[Path, Path] | None:
+    """Discovery against THIS repo's real build.ninja.
+
+    Deliberately not stubbed. The fixture below is synthetic, so if discovery
+    only worked on the fixture every assertion in this file would be about a
+    tree that does not exist.
+    """
     sys.path.insert(0, str(REPO / "scripts"))
     import verify_split_current as guard  # noqa: PLC0415
     return guard.discover_split_edge(REPO)

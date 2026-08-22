@@ -125,8 +125,16 @@ class StaleSplitError(RuntimeError):
 # Discovery: never assume this repo's layout, read it out of the build system
 # --------------------------------------------------------------------------
 
+#: `build <out> [| <implicit outputs>...] : split <config> [| <implicit deps>...]`
+#: The implicit-output clause is not optional decoration: this guard's own
+#: wiring adds `| build/<v>/split_inputs.stamp` there, and the first version of
+#: this regex did not allow it -- so installing the guard broke the guard's
+#: ability to find its own edge. Caught by the test suite, which is the point of
+#: having one.
 _SPLIT_EDGE_RE = re.compile(
-    r"^build\s+(?P<out>\S+config\.json)\s*:\s*split\s+(?P<cfg>\S+)", re.MULTILINE
+    r"^build\s+(?P<out>\S*config\.json)(?P<implicit_outputs>[^:\n]*?)\s*:\s*"
+    r"split\s+(?P<cfg>\S+)",
+    re.MULTILINE,
 )
 
 
