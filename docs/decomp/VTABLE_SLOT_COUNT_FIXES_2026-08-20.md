@@ -1195,3 +1195,142 @@ this class and is the **safety check**, not the payoff.
   overrides with **real** bodies.
 - Also untouched: `XboxContent` (**15 retail vs 14 ours** — we are *missing* a
   virtual, the opposite direction and a different fix) and `RndFur` (23 vs 21).
+
+---
+
+## §16 — wave 10 (2026-08-22): the `_purecall` wall is passable by BODY, and a thunk IS its branch target
+
+Two findings. The first closes §15g's `BandUser` item; the second is a new
+instrument that came out of trying to repair the map row the first one orphaned.
+
+### §16a — `BandUser`: 8 pure virtuals where retail has 7
+
+§15g deferred this with *"slots 5–10 are `_purecall` on **both** sides, so names
+cannot localise which of our pure virtuals is the extra"*. That is true (and the
+slot range is really **3–9**, not 5–10), and it is why every instrument keyed on
+names reads `UNRESOLVED`:
+
+| table | retail | ours | verdict |
+|---|---|---|---|
+| `BandUser` own (`0x820e0110`) | 10 | 11 | UNRESOLVED, covered 0 |
+| `LocalBandUser` BandUser-sub (`0x820e0b6c`) | 10 | 11 | UNRESOLVED, covered 0 |
+| `RemoteBandUser` BandUser-sub (`0x820e023c`) | 10 | — | our obj emits no such vtable |
+
+**§14c's move does not apply** — it says "adjudicate on a derived class that
+overrides with real bodies", but `LocalBandUser`'s overrides are *also* all
+fold-classified, so the sweep still reports `covered 0`. The move that works is
+one step further out: **stop asking for names and read the BODIES.**
+
+Retail's `BandUser` own table is **3 non-pure + 7 `_purecall` (`0x828299b8`)**.
+Ours is 3 non-pure + **8** pure. The three non-pure are byte-identical across
+all three tables above (`0x8268ade0`, `0x8268ad90`, `0x8259db28`), confirming
+they are `IsInSession` / `UnkTU5Virtual` / `IsParticipating`, whose slots 0–2
+were already pinned by call-site evidence. So exactly one of our 8 pure virtuals
+is surplus, and the two derived overrides say which:
+
+| slot | `LocalBandUser` | `RemoteBandUser` |
+|---|---|---|
+| 3,4,5 | Career / Hardcore / **Cymbal** | Career / Hardcore / **Cymbal** |
+| 6,7 | `addi r3,r3,-0x6c; blr` (return this) | null hub `0x823591e8` |
+| 8,9 | null hub `0x823591e8` | `addi r3,r3,-0x5c; blr` (return this) |
+| 10 | `<END>` | `<END>` |
+
+Slots 6,7 and 8,9 are **adjacent identical VAs** — the two const/non-const
+overload pairs, folded — and **the return INVERTS between the two derived
+classes**, exactly as `GetLocalBandUser`/`GetRemoteBandUser` must (a Local has no
+Remote and vice versa). ★ **That mirror is the control**: it could have come out
+any other way, and a single-class read could not have distinguished the pairs
+from a `GetLocalBandUser` + `GetFriendsConsoleCodes` arrangement that also sums
+to 7. Both tables end at slot 9 ⇒ all 7 pure virtuals are spoken for and
+**`GetFriendsConsoleCodes` is the surplus**.
+
+Corroboration that slot 5 is Cymbal and not FriendsConsoleCodes: `Cymbal`'s body
+(`0x8268b4d0`) is `lis; addi r3,<global>; b 0x8235bb28` where `0x8235bb28` is
+`lwz r3,0x9c(r3); blr` — *return an int field of a global*, which a
+`const vector<u64>&` getter cannot be — and `RemoteBandUser`'s slot-5 thunk has
+map name **and** branch target agreeing on `GetCymbalConfiguration`.
+
+⚠ **`GetFriendsConsoleCodes` sat LAST in declaration order, so it shifted no
+slot.** That is why the dispatch-offset checks that pinned slots 0–2 never caught
+it and only the COUNT did — and it is a reason to keep running the count
+instrument even on tables whose every offset check passes.
+
+De-virtualized, not deleted (the MoggClip precedent): `RemoteBandUser` really
+does carry `mFriendsConsoleCodes` and a `WiiFriendsListChangedMsg` handler.
+Three-consumer check: **zero** call sites in source, **one** map row, **zero**
+alias groups.
+
+### §16b — a thunk IS its branch target
+
+An MSVC virtual-base adjustor thunk is `lwz r11,-4(rN); subf rN,r11,rN;
+b <body>`. So if the map names the thunk one thing and names the branch target
+another, **one of the two rows is wrong** — no oracle, no declaration order, no
+name-multiset alignment. `tools/thunk_target_audit.py`.
+
+Validated against a column it never reads:
+
+| bucket | rows | at `fuzzy == 100` |
+|---|---|---|
+| CONSISTENT (**the control**) | 1,293 | 1,287 = **99.5%** |
+| INCONSISTENT | 132 | 4 = **3.0%** |
+
+33× separation, and **the control could have failed** — if flagging were noise
+the two rates would agree. 128 of the 132 are sub-100 and every one is exactly
+12 B (one charged element in a 12-byte body), so the vein is **1,536 B**, all of
+it currently worth zero because `matched_code` is all-or-nothing per row.
+
+⛔⛔ **THE FLAG IS A DETECTOR, NOT A REPAIR RECIPE.** It proves one of the two
+names is wrong, never which. Renaming the thunk after its target makes the
+relocation agree and **lifts `name_check` by construction whether or not the new
+name is right** — bit-for-bit the ALIAS_SUSPECT metric-fitting shape. A bulk pass
+would buy ~1.5 kB and establish nothing.
+
+The independent evidence is **which vtable slot references the thunk**, read from
+the `??_R4` COL, which the tool now prints per row. On that basis:
+
+| | rows |
+|---|---|
+| 1 owning class, **target's class == owner** ⇒ the *thunk* row is the wrong one | **105** |
+| 1 owning class, target's class ≠ owner ⇒ both names suspect | 18 |
+| referenced by >1 class (fold survivor; owner undecidable) | 9 |
+
+The 105 name a *different class entirely* in the thunk row (`RndLine` vs
+`BandCharacter`, `CharClipGroup` vs `OutfitConfig`) while RTTI names the owner —
+a 1,260 B worklist on a non-circular criterion. **NOT applied here**: each still
+needs the check that our obj *defines* the proposed spelling, or the row goes
+permanently 0% (CLAUDE.md: "proving a name wrong ≠ renaming is SAFE").
+
+Two rows *were* repaired, both with independent evidence:
+
+- `0x8268e3a8` `GetFriendsConsoleCodes` → **`GetCymbalConfiguration` thunk**
+  (branch target is the Cymbal body; corroborated by RemoteBandUser's agreeing
+  triple).
+- `0x8268e398` `GetCymbalConfiguration` → **null**. Proven *not* Cymbal (it
+  branches to `addi r3,r3,-0x6c; blr`); its true identity is a
+  `GetLocalBandUser` thunk — slots 6 **and** 7 both point here — but **which of
+  the two spellings survived was destroyed by the fold itself**, and both are
+  occupied by rows this lane did not adjudicate. Nulled rather than guessed.
+
+Both were already flagged in the map's own `_bijection_arbitrary` list.
+
+**Measured together (`ab_measure --from-dirty`): `Δmatched +1`, `Δcode_bytes
++12`, all in `default/BandUser` (136→137), pre-registered and hit exactly.**
+The un-paired FriendsConsoleCodes thunk cost nothing because it scored 98.33.
+⚠ The `none`-ruler control reads **−12 B** — under `none` that thunk *did* score
+100 (relocation names ignored) — a clean illustration that the two rulers price
+the same row differently, not a regression.
+
+### §16c — blind spots and what is still open
+
+⛔ **A thunk and its target misnamed TOGETHER read CONSISTENT.** Measured on this
+very cluster: `0x8268e468` is named `?GetLocalBandUser@LocalBandUser@@$4...` and
+branches to `0x8268dd50`, named `?GetLocalBandUser@LocalBandUser@@UAAPAV1@XZ` —
+perfectly consistent, and **both are wrong**: the thunk is referenced from
+**slot 21 of the 30-slot `User` subobject table**, so it is not a BandUser
+virtual at all. That 104-byte "GetLocalBandUser" scores **5.4%** and is the
+largest unexplained row in the neighbourhood. ⇒ **a CONSISTENT verdict is not a
+clean bill**, and this row is worth its own look.
+
+Still open from §15g, unchanged: `StoreOffer`/`BandStoreOffer`, `BandCharacter`,
+`XboxContent` (15 vs 14 — the *opposite* direction), `RndFur` (23 vs 21),
+`CacheXbox` (§14e), `BandStorePanel::MakeNewOffer` (§14f).
