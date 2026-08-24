@@ -1337,7 +1337,7 @@ Still open from §15g, unchanged: `StoreOffer`/`BandStoreOffer`, `BandCharacter`
 
 ---
 
-## 16. Wave 10 (2026-08-22, lane STOREPANEL) — BOTH deferred rows were adjudicable, and BOTH prior readings were backwards
+## §17 — wave 10 (2026-08-22, lane STOREPANEL) — BOTH deferred rows were adjudicable, and BOTH prior readings were backwards
 
 §14f and §13e were the two rows this doc left "specified, not guessed". Both are
 now settled on retail bytes, and **in both cases the deferred hypothesis was the
@@ -1346,7 +1346,7 @@ It is that **the instrument both rows needed was the same one, and neither wave
 reached for it: read what the ARGUMENT REGISTERS do at the call site, and read
 what the CALLEE is from a string literal.**
 
-### 16a. §14f `BandStorePanel::MakeNewOffer` — our BASE was right, our OVERRIDE was wrong
+### §17a — §14f `BandStorePanel::MakeNewOffer` — our BASE was right, our OVERRIDE was wrong
 
 §14f held that retail spells this `(const StorePackedOfferBase *, bool)` and that
 our base's `(DataArray *)` was the defect. **Refuted.**
@@ -1390,7 +1390,7 @@ half. ⚠ Predicted +1/+96: **the EH funclet is a SEPARATE row.** `fn_826057D8`
 the ctor it calls and crossed 93.5 → 100.0 as a side effect. ⇒ **When a fix
 changes a CALLEE NAME, price the funclet rows too.**
 
-### 16b. ⛔⛔ §13e `CacheXbox` slots 6/7 — SETTLED, and the MAP IS WRONG
+### §17b — ⛔⛔ §13e `CacheXbox` slots 6/7 — SETTLED, and the MAP IS WRONG
 
 §13e called this UNDERDETERMINED and asked for either **(a)** a caller with a
 provable receiver type or **(b)** a second class overriding `Cache`.
@@ -1447,7 +1447,7 @@ evidence either row is correctly identified** — it is equally consistent with 
 consistently-swapped pair. The cheap discriminator is **semantic plausibility of
 the callee** (a file-size query has no business building a wildcard), which no
 score can see.
-## §17 — wave 11 (2026-08-22, lane VT-SIG): both §15g "wrong base signature" deferrals, closed
+## §18 — wave 11 (2026-08-22, lane VT-SIG): both §15g "wrong base signature" deferrals, closed
 
 §15g deferred `StoreOffer`/`BandStoreOffer` and `BandCharacter` as
 UNDERDETERMINED and named what would settle each. Both are now settled **on
@@ -1466,7 +1466,7 @@ identical `+1 trailing slot` symptom.
 `0x82012e0c`. Re-running the sweep is what caught it — the standing rule about
 not inheriting a class list (§14's stale worklist) applied to a table id.
 
-### §17a — `BandCharacter::Replace`: the ObjRefOwner slot, proved on ARGUMENTS
+### §18a — `BandCharacter::Replace`: the ObjRefOwner slot, proved on ARGUMENTS
 
 Our `virtual void Replace(Hmx::Object*, Hmx::Object*)` does not override
 `ObjRefOwner::Replace(ObjRef*, Hmx::Object*)`, so MSVC appended a **new**
@@ -1520,7 +1520,7 @@ and the adjustor encoding moved from `$4PPPPPPPM@FII@` (which is *Character's*,
 i.e. an inherited entry) to **`$4PPPPPPPM@A@`, exactly retail's encoding at
 `0x82289920`**. We did not aim at that; it fell out.
 
-### §17b — `StoreOffer::Cmp`: §15g's blocker dissolved, because retail sorts elsewhere
+### §18b — `StoreOffer::Cmp`: §15g's blocker dissolved, because retail sorts elsewhere
 
 §15g's blocker was real: `SortCmp::operator()` (StoreOffer.h) calls
 `offer1->Cmp(*offer2, …)` through a `StoreOffer*`, which **requires** a
@@ -1586,7 +1586,7 @@ from `objects.json` and `build.ninja`), and its entire content was the
 is not, and that is worth flagging — a dead DC3 artifact reads exactly like a
 finding.
 
-### §17c — measured
+### §18c — measured
 
 Both changes are the pure-vtable class, so **Δ0 was pre-registered** and is the
 **safety check, not the payoff** (a vtable is `.rdata`; `total_code` is Σ of
@@ -1609,7 +1609,7 @@ dumb `grep -a -c` positive control per §15d.
 fix, so a **positive** Δ would have meant the fix cost bytes. It read +0 in that
 direction too.
 
-### §17d — found and DELIBERATELY NOT DONE: a proven map defect, fully specified
+### §18d — found and DELIBERATELY NOT DONE: a proven map defect, fully specified
 
 `BandCharacter`'s two adjustor thunks are a textbook §16b INCONSISTENT pair, and
 the evidence is complete:
@@ -1628,7 +1628,7 @@ non-circular, and independent of the name under test.
 CLAUDE.md rule is *"proving a name wrong ≠ renaming is safe"* — a target row our
 obj cannot define reads 0% forever. Our obj now defines **all four** relevant
 spellings (both `PreLoad` and both `Replace`, thunk and body), and it defines
-`?Replace@BandCharacter@@$4PPPPPPPM@A@…` **only because of §17a**. The source fix
+`?Replace@BandCharacter@@$4PPPPPPPM@A@…` **only because of §18a**. The source fix
 unblocked the map fix.
 
 **Not applied here** because a map edit's delta is dominated by *un-pairing*
@@ -1636,25 +1636,36 @@ rather than cascade and needs its own forced-re-split A/B (§12d's standing
 rule) — bundling it would have destroyed the clean Δ0 attribution of two
 rename-class source patches. It is a ready worklist item, not an open question.
 
-### §17e — still open
+### §18e — still open
 
-Unchanged from §16c minus the two closed here: `XboxContent` (15 retail vs 14 —
-the *opposite*, harder direction), `RndFur` (23 vs 21), `RndFur` (23 vs 21), and the 104-byte
-`GetLocalBandUser` row at 5.4% from §16c.
+⚠ **This list is SUPERSEDED — read §19e instead.** Four lanes ran concurrently
+against `56b82629` and none saw the others, so each wrote an "open" list that
+was already partly closed by the time it landed. As written it named
+`XboxContent` (15 vs 14) and `RndFur` (23 vs 21) — **both closed by §19** — plus
+`CacheXbox` and `BandStorePanel::MakeNewOffer`, **both closed by §17**. What
+actually survives all four lanes is only the 104-byte `GetLocalBandUser` row at
+5.4% from §16c, plus the two deferred map items (§18d here and §17b's atomic
+CacheXbox repair).
 
-⚠ **This subsection was written before §16 landed and originally listed
+★ The generalisable point, and the reason this correction is left visible rather
+than silently rewritten: **a "still open" list is dated the moment it is
+written.** With concurrent lanes it is stale before it lands, so treat every one
+of them — including §19e — as a hypothesis to re-derive, never as a worklist to
+inherit.
+
+⚠ **This subsection was written before §17 landed and originally listed
 `CacheXbox` and `BandStorePanel::MakeNewOffer` as still open. Both were closed
-by lane STOREPANEL in §16, concurrently with this lane** — `MakeNewOffer` is
-indeed the same wrong-base-signature class, and §16a settled it the same way
-§17a settled `BandCharacter` (retail's `PopulateOffers` dispatches slot 18 with
+by lane STOREPANEL in §17, concurrently with this lane** — `MakeNewOffer` is
+indeed the same wrong-base-signature class, and §17a settled it the same way
+§18a settled `BandCharacter` (retail's `PopulateOffers` dispatches slot 18 with
 exactly one argument, so the base was right and the OVERRIDE was wrong).
-`CacheXbox` is settled in §16b as a MAP defect and is queued as one atomic
-repair. Corrected at merge; the rest of §17 stands as the lane wrote it.
-## §18 — wave 11 (2026-08-24): the two `retail > ours` classes, and §6's refusal OVERTURNED
+`CacheXbox` is settled in §17b as a MAP defect and is queued as one atomic
+repair. Corrected at merge; the rest of §18 stands as the lane wrote it.
+## §19 — wave 11 (2026-08-24): the two `retail > ours` classes, and §6's refusal OVERTURNED
 
-> ⚠ **Numbering note (resolved at merge):** this lane wrote itself as `§17`.
-> Lane VT-SIG landed a different `§17` concurrently (the two `wrong base
-> signature` deferrals), so this section is renumbered **§18**. Both lanes ran
+> ⚠ **Numbering note (resolved at merge):** this lane wrote itself as `§18`.
+> Lane VT-SIG landed a different `§18` concurrently (the two `wrong base
+> signature` deferrals), so this section is renumbered **§19**. Both lanes ran
 > against `56b82629` and neither saw the other; nothing in either section
 > depends on the other's findings.
 
@@ -1671,7 +1682,7 @@ Both tables were confirmed to END where the count says, by the §8 `RndFont`
 tell: `XboxContent[15]` and `RndFur[23]` are both the `0xffffffff` sentinel, so
 neither read is truncated.
 
-### §18a — ★★★★ `XboxContent`: §6 REFUSED THIS, AND ALL THREE OF ITS OBJECTIONS WERE ARTIFACTS
+### §19a — ★★★★ `XboxContent`: §6 REFUSED THIS, AND ALL THREE OF ITS OBJECTIONS WERE ARTIFACTS
 
 §6 investigated this exact slot, called the `IsCorrupt` story "a plausible story
 overriding contradictory bytes", and left it open. **The identity was right and
@@ -1696,7 +1707,7 @@ refusal closes a vein and nobody re-opens it.
    `.text`. Nothing else points at it, so no fold is observable.
 3. ✅ **"Body: `0x8251f8f0` reads `field_0xc`, but our `IsCorrupt` reads
    `mState`/`mCorrupt`."** This one is REAL — but it is a *separate* defect
-   (§18b), not a refutation of the virtuality. §6 treated one true objection
+   (§19b), not a refutation of the virtuality. §6 treated one true objection
    as grounds to reject the whole finding.
 
 **The identity is fixed by the CALL SITE — the instrument no ICF fold and no
@@ -1730,7 +1741,7 @@ our header against retail bytes**: `LicenseBits` reads `0x140`,
 `0x170`. DC3 puts the last three at `0x158`/`0x164`/`0x168` — **our port already
 carries the correct RB3 layout and DC3 is the wrong oracle here.**
 
-### §18b — the body: retail's `XboxContent` HAS NO `mCorrupt`
+### §19b — the body: retail's `XboxContent` HAS NO `mCorrupt`
 
 Landed as its own commit so it can be reverted independently of the slot fix.
 `0x8251f8f0` is `lwz r11,0xc(r3); addi r11,r11,-1; cntlzw r11,r11;
@@ -1752,7 +1763,7 @@ where our port sets `mCorrupt`. `mCorrupt` and its assignment are left in place
 (removing them is layout-neutral — the bool sits in padding before `mFilename`)
 but it is now **write-only**; that removal is a follow-up.
 
-### §18c — `RndFur`: the ORDER was settled on the DERIVED class
+### §19c — `RndFur`: the ORDER was settled on the DERIVED class
 
 `RndFur` introduces two virtuals and we had zero. Both retail slots hold
 `0x823591e8`, the shared `li r3,0; blr` hub, so both bodies are trivial
@@ -1783,7 +1794,7 @@ were **NEW virtuals appended to `NgFur`** rather than overrides — so **no
 dispatch through an `RndFur*` could ever reach them.** `NgFur`'s table is 23
 either way, which is why no count-based sweep could see it.
 
-### §18d — measured
+### §19d — measured
 
 Pre-registered **Δmatched 0 / Δcode_bytes 0** before the run, on the grounds
 that `Fur.cpp`/`Fur_NG.cpp` have **no splits heading at all** (searched by full
@@ -1809,7 +1820,7 @@ Rename safety, checked in all three consumers before and after: neither
 that do exist (`?Prep@NgFur@@UBA_NPAVRndMesh@@PAVRndMat@@@Z`,
 `?Shell@NgFur@@UBA_NHPAVRndMesh@@PAVRndMat@@@Z`) are untouched.
 
-### §18e — left open, deliberately
+### §19e — left open, deliberately
 
 - **`0x82520668` is `XboxContentMgr::IsCorrupt(Symbol, const char*&)` and is
   ABSENT from `target_symbol_map.json`.** Proven here (17/17 block alignment +
@@ -1822,6 +1833,6 @@ that do exist (`?Prep@NgFur@@UBA_NPAVRndMesh@@PAVRndMat@@@Z`,
   identified in this section lives at `0x8251f810`-`0x825201e0`. Not touched:
   re-homing an already-pinned address is **not** metric-neutral (PINHOME-1,
   +3 fn / +428 B), so it needs its own lane and its own A/B.
-- **`mCorrupt` is now write-only** (§18b). Removing it and its assignment at
+- **`mCorrupt` is now write-only** (§19b). Removing it and its assignment at
   `ContentMgr_Xbox.cpp:116` is layout-neutral but is a wider behavioural edit
   than this wave adjudicated.
