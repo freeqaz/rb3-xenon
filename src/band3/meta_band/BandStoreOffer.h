@@ -24,7 +24,14 @@ public:
     // order (mUpgrade@0x120 then mDemo@0xe0, then ~StoreOffer) matches retail.
     virtual DataNode Handle(DataArray *, bool);
     virtual bool IsCompletelyUnavailable() const;
-    virtual bool Cmp(const StoreOffer &, Symbol) const;
+    // ⛔ `virtual bool Cmp(const StoreOffer &, Symbol) const;` removed (lane
+    // VT-SIG) together with the pure declaration on the StoreOffer base -- see
+    // meta/StoreOffer.h.  Retail's `??_7BandStoreOffer@@6B@` (`0x820d93b4`) is
+    // 22 slots like its base's, and this override was DECLARED BUT NEVER
+    // DEFINED in this tree; only the compile-to-.obj match build hid that.
+    // ⚠ Removing it from the base alone would NOT have been enough: left here,
+    // `Cmp` would have become a NEW virtual introduced by BandStoreOffer and
+    // the class would still have measured 23.
 
     StorePurchaseable mDemo; // 0xe0
     StorePurchaseable mUpgrade; // 0x120

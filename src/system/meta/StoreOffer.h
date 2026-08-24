@@ -34,13 +34,37 @@ public:
     // Hmx::Object
     virtual ~StoreOffer();
     virtual DataNode Handle(DataArray *, bool);
-    // Retail vtable slot +0x54 (called by the is_completely_unavailable
-    // handler, fn_827827B0) — declared before Cmp. Overridden by
-    // BandStoreOffer.
+    // Retail vtable slot +0x54, and the LAST slot: retail's `??_7StoreOffer@@6B@`
+    // (`0x82112d44`) is 22 words = Hmx::Object's 21 + this one, and the words
+    // after it are an EH state map (`0`, `0xffffffff`, then (VA,state) pairs),
+    // so the table demonstrably ends here.  Name coverage on it is 22/22.
     // Defined in StoreOffer.cpp (retail fn_827A64B8) -- NOT pure; retail emits
-    // a real body here and BandStoreOffer overrides it.
+    // a real body here and BandStoreOffer overrides it (`0x8266e4e8`, which
+    // `bl`s straight into `0x827a64b8`).
+    // ★ Adjudicated ARGUMENT-wise, so it does not rest on the map name: the
+    // body at `0x827a64b8` touches ONLY r3 -- it reads the bools at 0x28
+    // (= StorePurchaseable::isAvailable, compiler-verified), 0xa8 and 0x68 and
+    // returns.  r4/r5 are never read, so this slot cannot hold a two-argument
+    // `Cmp(const StoreOffer&, Symbol)`.
     virtual bool IsCompletelyUnavailable() const;
-    virtual bool Cmp(StoreOffer const &, Symbol) const = 0;
+    // ⛔ DO NOT RE-ADD `virtual bool Cmp(StoreOffer const&, Symbol) const = 0;`
+    // (nor the `SortCmp` functor that used to sit at the bottom of this
+    // header).  Both are DC3-lineage additions that RB3 PREDATES -- the same
+    // shape as MoggClip's `PlayableSample` block
+    // (VTABLE_SLOT_COUNT_FIXES_2026-08-20.md sec 15b).  Removed by lane VT-SIG
+    // on four converging lines:
+    //   1. retail's table has no slot for it (22 vs our 23; see above);
+    //   2. the rb3-Wii oracle -- the RIGHT oracle for this file, and a DEV
+    //      build that retains MORE than retail -- declares neither `Cmp` nor
+    //      `SortCmp` on `StoreOffer` OR `BandStoreOffer`.  Checked for vacuity:
+    //      that header is 253 lines and does declare `StoreOffer`;
+    //   3. dc3-decomp (NEWER than RB3) has both, verbatim what we inherited;
+    //   4. `Cmp` was declared pure here, "overridden" by BandStoreOffer, and
+    //      NEVER DEFINED anywhere -- invisible only because the match build
+    //      compiles to .obj and never links.  Its sole caller was
+    //      `SortCmp::operator()`, and `SortCmp` was never instantiated.
+    // Retail's map also carries ~40 named StoreOffer methods and no `Cmp`, and
+    // instantiates `__find` over `StoreOffer**` but no sort-family algorithm.
 
     Symbol OfferType() const {
         static Symbol type("type");
@@ -111,12 +135,12 @@ protected:
 // Retail fn_827A6548 (= rb3-Wii StoreOffer.cpp:182).
 bool operator==(const StoreOffer *, Symbol);
 
-class SortCmp {
-public:
-    SortCmp(Symbol sortBy) : mSortBy(sortBy) {}
-    bool operator()(const StoreOffer *offer1, const StoreOffer *offer2) const {
-        return offer1->Cmp(*offer2, mSortBy);
-    }
-
-    Symbol mSortBy;
-};
+// ⛔ `class SortCmp` was here and is REMOVED -- see the `Cmp` note inside
+// StoreOffer above for the four converging lines of evidence.  It existed only
+// to call `StoreOffer::Cmp`, was never instantiated anywhere in this tree, and
+// its one appearance outside this header was the never-included
+// `stlport/stl/_algo_special.c` -- a file byte-identical to dc3-decomp's,
+// self-described as "Specialized implementations for DC3-specific scenarios",
+// and dead in BOTH trees.  That file is removed in the same change, since its
+// entire content was the `__unguarded_partition<StoreOffer**, StoreOffer*,
+// SortCmp>` specialization.
