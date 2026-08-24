@@ -14,7 +14,21 @@ public:
     virtual ContentLocT Location();
     virtual unsigned long LicenseBits() { return mLicenseBits; }
     virtual bool HasValidLicenseBits() { return mValidLicenseBits; }
-    bool IsCorrupt() { return mState == 8 && mCorrupt; }
+    // VIRTUAL, and it lands on the TRAILING vtable slot [14].  Retail's
+    // ??_7XboxContent@@6B@ (0x8208968c) has 15 slots -- slot[15] is the
+    // 0xffffffff sentinel, so the table demonstrably ends -- while the base
+    // Content (0x8208959c) and the sibling RootContent (0x820895d8) have 14
+    // each.  That sibling count is the control: were IsCorrupt declared on
+    // Content (as DC3 does, at ITS slot 6), RootContent would have inherited a
+    // 15th slot too.  It has 14, so the 15th virtual is introduced HERE, and
+    // MSVC appends it after GetLRM regardless of where it sits among the
+    // overrides above.
+    // Dispatch is proven by retail's own machine code, not by any name:
+    // XboxContentMgr::IsCorrupt (0x82520668, ContentMgr vtable slot [34])
+    // walks the content list, dynamic_casts Content->XboxContent via
+    // __RTDynamicCast, and calls `lwz r11,0x38(r11)` = slot 14 -- the same
+    // shape our ContentMgr_Xbox.cpp already implements.
+    virtual bool IsCorrupt() { return mState == 8 && mCorrupt; }
     virtual State GetState() { return mState; }
     virtual void Poll();
     virtual void Mount();
