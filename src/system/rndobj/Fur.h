@@ -18,6 +18,28 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+    // The two virtuals RndFur INTRODUCES, at trailing vtable slots [21] and
+    // [22].  Retail ??_7RndFur@@6B@ (0x8206c0bc) has 23 slots -- slot[23] is
+    // the 0xffffffff sentinel, so the table ends there -- while our base
+    // Hmx::Object supplies 21, so these two were simply dropped in the port.
+    // Both retail slots hold 0x823591e8, the shared `li r3,0; blr` hub, which
+    // is what `{ return false; }` folds to.
+    // ORDER (the hub is the SAME address in both slots, so RndFur's own table
+    // cannot discriminate it) is settled on the derived class: retail
+    // ??_7NgFur@@6B@ (0x8219bed4) carries real bodies at the same two slots,
+    // [21] = 0x82b8b2e8 and [22] = 0x82b8b340.  Read non-circularly from the
+    // bodies rather than from their map names: 0x82b8b340 saves FOUR incoming
+    // registers (this + 3 params), does `cmpwi cr6,r4,0` -- treating r4 as an
+    // int -- and reads mLayers at 0x28, so it is Shell(int, ...); 0x82b8b2e8
+    // never consumes r4 as input (it overwrites it with `li r4,0xc`), so it is
+    // Prep(RndMesh*, RndMat*).  Hence Prep first, Shell second.
+    // NgFur (rndobj/Fur_NG.h) already declared both with these exact
+    // signatures; without them here they were NEW virtuals on NgFur instead of
+    // overrides, so no dispatch through an RndFur* could ever reach them.
+    virtual bool Prep(class RndMesh *, class RndMat *) const { return false; }
+    virtual bool Shell(int, class RndMesh *, class RndMat *) const {
+        return false;
+    }
 
     bool LoadOld(BinStreamRev &);
     RndTex* GetFurDetail() const { return mFurDetail; }
