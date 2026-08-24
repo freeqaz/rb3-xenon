@@ -25,14 +25,26 @@ Every such row is 12 B that a single correct name collects.
 
 SELF-VALIDATION (`--validate`) -- reproduce this before trusting a run
 ----------------------------------------------------------------------
-Measured 2026-08-22 at 914d1822 over all 1,561 adjustor thunks in the map:
+Measured at `56b82629` over all 1,560 adjustor thunks in the map, and
+independently REPRODUCED there by a second lane before it acted on the output:
 
-    CONSISTENT  (the control) 1,292 rows -- 1,286 at fuzzy==100  (99.5%)
-    INCONSISTENT                134 rows --     4 at fuzzy==100  ( 3.0%)
+    CONSISTENT  (the control) 1,293 rows -- 1,287 at fuzzy==100  (99.5%)
+    INCONSISTENT                132 rows --     4 at fuzzy==100  ( 3.0%)
 
 A 33x separation on a column this audit never reads, and the control could have
-failed: if flagging were noise the two rates would agree.  130 of the 134 are
-below 100 and every one of them is exactly 12 B => the whole vein is 1,560 B.
+failed: if flagging were noise the two rates would agree.  128 of the 132 are
+below 100 and every one of them is exactly 12 B => the whole vein is 1,536 B.
+
+**After this lane's own repairs the same run reads 1,552 thunks / CONSISTENT
+1,305 (99.5%) / INCONSISTENT 116 (3.4%) / vein 1,344 B** -- i.e. 12 rows moved
+INCONSISTENT -> CONSISTENT and 8 misnamed holders were nulled.  That is what you
+should see today.
+
+⚠ Re-run `--validate` and reproduce the numbers before acting.  They MOVE as the
+map is corrected, so treat any figure quoted here or in a brief as a hypothesis
+(the original write-up's 1,561/1,292/134/1,560 predated two earlier repairs).
+A run where the two rates CONVERGE means this instrument has stopped
+discriminating -- that is a reason to stop, not a clean tree.
 
 ⛔⛔ THE FLAG IS A DETECTOR, NOT A REPAIR RECIPE
 ================================================
@@ -54,6 +66,53 @@ nothing about which spelling retail meant.
    So this tool reports, for every flagged thunk, WHICH VTABLE SLOT REFERENCES
    IT -- because the owning class + slot index is the evidence you need, and
    looking it up by hand is what makes people skip the step.
+
+⛔⛔ CORRECTIONS FROM THE FIRST LANE THAT USED THIS (THUNK-105, 2026-08-24)
+==========================================================================
+Everything above survived; these four things the FIRST WRITE-UP GOT WRONG did
+not.  They are here rather than in a doc because the failure mode is acting on
+the flag list directly.
+
+1. **"105 rows are RTTI-adjudicable" IS WRONG -- it is 51.  Do not inherit it.**
+   Of the 132 INCONSISTENT: **53** are same-class method-only mismatches (RTTI
+   gives the CLASS, never which METHOD), **17** have an RTTI owner matching
+   NEITHER name, **11** are referenced from >1 vtable (owner ambiguous), and
+   **51** are the shape the write-up described.  I generated the 105 with a
+   looser predicate than the one I documented.
+
+2. ★★ **objdiff pairs target<->base PER UNIT.**  "Our tree defines this spelling
+   somewhere" is NOT the check -- the **base obj of the unit that owns THAT
+   ADDRESS** must define it.  Getting this wrong unpaired 9 rows permanently,
+   and **the graded ruler could not see it** (they sat at 98.33 contributing 0
+   bytes, so unpairing cost 0).  Only the `none` control showed it, at exactly
+   -108 B = 9 x 12.  ⇒ **on a map patch, read the `none` control even though it
+   is `NOT_APPLICABLE` for alias adjudication.**
+
+3. **The vein is PIN-GATED, not naming-gated.**  28 of the 45 single-candidate
+   shape-A rows have the thunk and its own body in **different pinned units** --
+   verified against `config/45410914/splits.txt`, which is name-independent:
+   `0x82289748` is inside `Line.cpp`'s `.text` range while its body
+   `0x822896e0`, 0x68 earlier, is inside `BandCharacter.cpp`'s.  A thunk belongs
+   to its body's TU, so **a pin boundary is wrong**, and renaming drives the row
+   to a PERMANENT 0%.  Fixing those is a pin re-homing lane (⚠ re-homing is NOT
+   metric-neutral -- CLAUDE.md), not a naming lane.
+
+4. ★★★ **A WRONG NAME CAN COLLECT BYTES AT A FALSE 100 WHILE THE RIGHT ADDRESS
+   IS CHARGED.**  `0x822d9fd8` carries `?SetType@Waypoint@@$4...` and scores a
+   clean **100.0** -- but it is referenced from `StreakMeter[8]` and branches to
+   an **UNNAMED** target, and objdiff's `is_placeholder_symbol_name` FORGIVES a
+   placeholder callee, so the name is never charged.  The real Waypoint thunk is
+   `0x823dc040` (referenced from `Waypoint[5]`, branching to
+   `?SetType@Waypoint@@UAAXVSymbol@@@Z`) and it scored 98.33.  ⇒ **a 100.0 row is
+   not evidence its name is right**, and correcting these SHOWS AS A REGRESSION.
+
+★ **A STRONGER DETECTOR EXISTS THAN THE ONE THIS FILE IMPLEMENTS.**  For a thunk
+referenced by exactly ONE vtable, the thunk's class must simply EQUAL that
+vtable's RTTI owner.  That needs **no target name at all**, so it also judges the
+**135 TARGET_UNNAMED** rows this audit must skip -- and it proves **125** thunks
+misnamed, vs 132 INCONSISTENT here.  It is what unlocked the blocked chains.
+⚠ It does not judge a class's SECONDARY subobject vtables, whose COL names the
+same class (so thunk-class == owner-class trivially) -- see blind spot 1.
 
 TWO BLIND SPOTS, BOTH MEASURED
 ------------------------------
