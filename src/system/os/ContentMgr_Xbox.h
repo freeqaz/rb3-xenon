@@ -28,7 +28,21 @@ public:
     // walks the content list, dynamic_casts Content->XboxContent via
     // __RTDynamicCast, and calls `lwz r11,0x38(r11)` = slot 14 -- the same
     // shape our ContentMgr_Xbox.cpp already implements.
-    virtual bool IsCorrupt() { return mState == 8 && mCorrupt; }
+    // Body is retail's, read off 0x8251f8f0 (20-byte leaf, no .pdata entry):
+    //   lwz r11,0xc(r3); addi r11,r11,-1; cntlzw r11,r11
+    //   rlwinm r3,r11,0x1b,0x1f,0x1f; blr        => return field_0xc == 1
+    // (the same (x-1)/cntlzw/rlwinm idiom this compiler emits for `== 1` in
+    // OnMemcard just above).  this+0xc is mXData.dwContentType: the ctor
+    // 0x8251fb40 does `addi r3,r30,8; li r5,0x138; memcpy` -- mXData is at
+    // this+8 and is the full 0x138-byte struct, so +0xc is its dwContentType
+    // at +0x4.  Independently anchored by DisplayName (slot 12) tail-calling
+    // WideCharToChar on `this+0x10` = mXData.szDisplayName at +0x8, and by
+    // mLicenseBits landing at 0x8+0x138 = 0x140.
+    // NOT `mState == 8 && mCorrupt` (the DC3 body): retail's XboxContent has
+    // no mCorrupt at all -- a scan of the whole TU (0x8251f800-0x82520200)
+    // finds constant traffic on 0x160 (mState) and 0x168 (mPendingDelete) and
+    // NOT ONE access to 0x161 or 0x169, in any function including Poll.
+    virtual bool IsCorrupt() { return mXData.dwContentType == 1; }
     virtual State GetState() { return mState; }
     virtual void Poll();
     virtual void Mount();
