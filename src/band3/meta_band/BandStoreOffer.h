@@ -11,10 +11,13 @@ class StorePackedOfferBase;
 class BandStoreOffer : public StoreOffer {
 public:
     BandStoreOffer(DataArray *, SongMgr *);
-    // Wii-dev signature.  BandStorePanel::MakeNewOffer still calls it; that TU
-    // has not been re-derived against retail, so the declaration stays (there is
-    // no such ctor in the retail binary and it is intentionally undefined).
-    BandStoreOffer(const StorePackedOfferBase *, SongMgr *, bool);
+    // REMOVED (lane STOREPANEL, 2026-08-22): the rb3-Wii dev-build 3-arg ctor
+    // (const StorePackedOfferBase *, SongMgr *, bool).  It was declared-but-never-
+    // defined solely so the old BandStorePanel::MakeNewOffer(ptr, bool) would
+    // compile.  Retail's BandStorePanel::MakeNewOffer (0x82605778) calls
+    // ??0BandStoreOffer@@QAA@PAVDataArray@@PAVSongMgr@@@Z (0x8266e548) with r4 =
+    // its single DataArray * parameter and r5 = TheSongMgrPtr, and sets no r6 --
+    // so retail has only the 2-arg form and nothing references the 3-arg one now.
     // NOTE(laneCD8): destructor deliberately NOT declared -- see SyncStore.h. An
     // explicit `virtual ~BandStoreOffer() {}` adds a 3-instruction derived-vptr
     // store at dtor entry that retail does not have. Implicit member-destruction
