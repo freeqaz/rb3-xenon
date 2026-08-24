@@ -1447,3 +1447,206 @@ evidence either row is correctly identified** — it is equally consistent with 
 consistently-swapped pair. The cheap discriminator is **semantic plausibility of
 the callee** (a file-size query has no business building a wildcard), which no
 score can see.
+## §17 — wave 11 (2026-08-22, lane VT-SIG): both §15g "wrong base signature" deferrals, closed
+
+§15g deferred `StoreOffer`/`BandStoreOffer` and `BandCharacter` as
+UNDERDETERMINED and named what would settle each. Both are now settled **on
+retail bytes**, and in both cases the deferral was right to ask for more: the
+two classes turned out to be *different defects* despite presenting the
+identical `+1 trailing slot` symptom.
+
+| class | table | was | now | cause |
+|---|---|---|---:|---|
+| `BandCharacter` | `0x82012e0c` (offset 0, ObjectDir) | 21 | **20** | wrong base signature — `Replace` did not override `ObjRefOwner`'s slot |
+| `StoreOffer` | `0x82112d44` | 23 | **22** | DC3-only pure virtual `Cmp` that RB3 predates |
+| `BandStoreOffer` | `0x820d93b4` | 23 | **22** | same cause, inherited (one cause, two classes) |
+
+⚠ **The handover named the wrong table for `BandCharacter`.** Its *main* table
+`0x82012cf4` is **21/21 SAME** and was never the problem; the mismatch is on
+`0x82012e0c`. Re-running the sweep is what caught it — the standing rule about
+not inheriting a class list (§14's stale worklist) applied to a table id.
+
+### §17a — `BandCharacter::Replace`: the ObjRefOwner slot, proved on ARGUMENTS
+
+Our `virtual void Replace(Hmx::Object*, Hmx::Object*)` does not override
+`ObjRefOwner::Replace(ObjRef*, Hmx::Object*)`, so MSVC appended a **new**
+virtual to the offset-0 table. Identical mechanism to `MsgSource::Replace`
+(`obj/Msg.h`), which a prior lane had already diagnosed and fixed — this one
+simply had not been swept.
+
+The chain, none of it resting on a map name:
+
+1. **Which slot.** Retail's `Hmx::Object`-subobject table `0x82012cf4` slot 2
+   holds the adjustor thunk `0x82289920` → body `0x8227e168`. Slot 2 *is* the
+   `ObjRefOwner::Replace` slot: `Character` (`0x82372628` → `0x8236dbf8`) and
+   `RndDir` (`0x82404888` → `0x82402f68`) hold their **own**
+   `Replace(ObjRef*,Hmx::Object*)` at the same slot, and both of those are
+   independently named. That is the control — a sibling population that could
+   have disagreed.
+2. ★★★ **Which signature — the ARGUMENTS.** The body copies `r4`/`r5` into
+   callee-saves and then `bl`s `Character::Replace` with **r4/r5 untouched**,
+   i.e. a **zero-instruction pass-through**. A `Hmx::Object*` first parameter
+   would have required a conversion. This is the *absence of an instruction*
+   used as positive evidence — the same shape as the "absent r7" proof of a
+   6th parameter in `Synth360::NewBufStream` (§12c/§13b).
+3. **Second parameter, independently.** `__RTDynamicCast` is called with
+   **source** type descriptor `.?AVObject@Hmx@@` and target `.?AVBandCharDesc@@`.
+   The source descriptor is the *static* type of the expression ⇒ `to` is
+   `Hmx::Object*`.
+4. **Body identity is over-determined**, so this is not shape-matching some
+   other function: its callees are `Character::Replace`, `__RTDynamicCast`,
+   `ObjOwnerPtr<BandCharDesc>::SetOwnerObj` and `BandCharDesc::CopyCharDesc` —
+   all four named, and the last three are exactly what our old body did.
+
+★ **A refuted in-tree claim, corrected.** The old body carried a NOTE asserting
+that *"RB3-Wii's BandCharDesc::Replace / Character::Replace base calls have no
+dc3 equivalent"*. Retail calls `Character::Replace(from, to)` **first**, and
+`Character::Replace` exists in this tree and itself calls `RndDir::Replace`
+first — a "base call FIRST" pattern a prior lane had already established for
+`Character`/`RndParticleSys`. Both halves of the NOTE were wrong. Cf. §12c:
+*an in-tree record is evidence about what a previous lane concluded, not proof
+of the conclusion.*
+
+⚠ **One thing deliberately NOT copied from that template**: `Character::Replace`
+needs an `ObjOwnerPtr<T>&` binding because retail materializes `&mSphereBase`
+*before* the `__RTDynamicCast`. Retail's `BandCharacter::Replace` materializes
+`&mTestPrefab` **after** it (`addi r3,r31,-0x220` immediately before the `bl`),
+so the plain assignment is correct here. The idiom is not transferable by
+default; read the scheduling.
+
+★ **Independent confirmation from the emitted thunk.** After the fix our slot 2
+holds `?Replace@BandCharacter@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z` —
+and the adjustor encoding moved from `$4PPPPPPPM@FII@` (which is *Character's*,
+i.e. an inherited entry) to **`$4PPPPPPPM@A@`, exactly retail's encoding at
+`0x82289920`**. We did not aim at that; it fell out.
+
+### §17b — `StoreOffer::Cmp`: §15g's blocker dissolved, because retail sorts elsewhere
+
+§15g's blocker was real: `SortCmp::operator()` (StoreOffer.h) calls
+`offer1->Cmp(*offer2, …)` through a `StoreOffer*`, which **requires** a
+virtual — *"so retail must sort by some other mechanism, and what that is has
+not been established. Settle retail's sort path first."*
+
+**Retail does not sort through a `StoreOffer` virtual at all.** The map carries
+**no** sort-family instantiation over `StoreOffer**` — and this is a
+discriminating absence, not a coverage artifact, because many *other*
+`__unguarded_partition` instantiations are named **with their comparator types
+visible** (`SortByZ`, `AlphaSort`, `SortByFrame`, `BlendSorter`, `less`, …), so
+the instrument can show these when they exist. What retail has over
+`StoreOffer**` is `__find` plus `operator==(const StoreOffer*, Symbol)` —
+linear search. Ordering is done by the **SongSort node tree**:
+`?BuildSongTree@SongSort@@` over `vector<StoreOffer*>`,
+`??0StoreSongSortNode@@QAA@PAVSongSortCmp@@PAVStoreOffer@@@Z`, eight
+`NewSongNode(StoreOffer*)` virtuals and
+`?Compare@*Cmp@@UBAHPBVSongSortCmp@@W4SongNodeType@@@Z`. That machinery already
+exists in `src/band3/meta_band/SongSortBy*`.
+
+Five converging lines that retail has no `Cmp` slot:
+
+1. `0x82112d44` is 22 words = `Hmx::Object`'s 21 + `IsCompletelyUnavailable`.
+   **Name coverage 22/22** (anti-vacuity per §14c), and the words after it are
+   an EH state map (`0`, `0xffffffff`, then (VA,state) pairs) ⇒ the table ends,
+   it is not a short read. `BandStoreOffer` `0x820d93b4` is 22 with the same
+   terminator, 22/22 named.
+2. **ARGUMENT-level**, so it does not rest on the map's name for slot 21: the
+   body `0x827a64b8` touches **only r3** — it reads the bools at `0x28`
+   (= `StorePurchaseable::isAvailable`, compiler-verified by lane BU-2), `0xa8`
+   and `0x68`, and returns. **r4/r5 are never read**, so it cannot be a
+   two-argument `Cmp(const StoreOffer&, Symbol)`. `BandStoreOffer`'s slot 21
+   (`0x8266e4e8`) `bl`s straight into it — a derived override calling its base.
+3. ★★★ **Neither retail table contains a single `_purecall` (`0x828299b8`)
+   entry**, so retail's `StoreOffer` declares **no pure virtual at all**. Ours
+   had exactly one, at the surplus slot 22. Name-free, mechanical, and the
+   cheapest of the five.
+4. The **rb3-Wii** oracle — the right oracle for this file, and a DEV build that
+   retains *more* than retail — declares neither `Cmp` nor `SortCmp` on
+   `StoreOffer` **or** `BandStoreOffer`. Checked for vacuity (§10a's trap): that
+   header is 253 lines and does declare `StoreOffer`/`StorePurchaseable`.
+5. **dc3-decomp, which is NEWER than RB3, has both verbatim.** ⇒ the MoggClip
+   §15b shape: a DC3 newer-engine addition RB3 predates.
+
+⛔ **DELETED, not de-virtualized — and the departure from the MoggClip
+precedent is itself evidence-backed.** §15b's rule is *"'not virtual' is what
+the vtable proves; 'does not exist' is a separate claim"*. Here the separate
+claim is *also* proven: `Cmp` was declared **pure**, "overridden" by
+`BandStoreOffer`, and **never defined anywhere** — invisible only because the
+match build compiles to `.obj` and never links. Its sole caller was
+`SortCmp::operator()`, which was never instantiated. Plus line 4 above.
+
+⚠ **Removing it from the base alone would NOT have worked**: left on
+`BandStoreOffer`, `Cmp` becomes a *new* virtual introduced there and the class
+still measures 23. `BandStoreOffer` is the only class deriving from `StoreOffer`.
+
+Also removed: `src/system/stlport/stl/_algo_special.c` — **byte-identical to
+dc3-decomp's copy**, self-described as *"Specialized implementations for
+DC3-specific scenarios"*, never included or compiled in **either** tree (absent
+from `objects.json` and `build.ninja`), and its entire content was the
+`__unguarded_partition<StoreOffer**, StoreOffer*, SortCmp>` specialization.
+⚠ It names `SortCmp` and so *looks* like retail evidence for the sort path; it
+is not, and that is worth flagging — a dead DC3 artifact reads exactly like a
+finding.
+
+### §17c — measured
+
+Both changes are the pure-vtable class, so **Δ0 was pre-registered** and is the
+**safety check, not the payoff** (a vtable is `.rdata`; `total_code` is Σ of
+*function* sizes). Two runs, separately attributed, both legs settled and at a
+`symbols.txt` fixed point:
+
+| change | how measured | leg-B recompiles | Δmatched | Δbytes | units at 100% |
+|---|---|---:|---:|---:|---|
+| `StoreOffer` + `BandStoreOffer` | `--from-dirty` | 120 | **+0** | **+0** | 150→150 mpn, 122→122 fuzzy |
+| `BandCharacter` | `--revert 37dc8be3` | 55 | **+0** | **+0** | 150→150 mpn, 122→122 fuzzy |
+
+Neither is absent-vs-absent (both legs recompiled), `Δfuzzy = +0.000000pp`, and
+**0 units fell off 100% on either ruler** — which is the check that matters,
+since both patches are RENAMES and §14c/§15c cost 80 B and 1,232 B respectively
+to exactly that. The three-consumer check (source / `target_symbol_map.json` /
+`symbol_aliases.json`) was **0/0/0 for both**, each zero cross-checked against a
+dumb `grep -a -c` positive control per §15d.
+
+⚠ On the `--revert` leg the sign is inverted: leg B is the tree *without* the
+fix, so a **positive** Δ would have meant the fix cost bytes. It read +0 in that
+direction too.
+
+### §17d — found and DELIBERATELY NOT DONE: a proven map defect, fully specified
+
+`BandCharacter`'s two adjustor thunks are a textbook §16b INCONSISTENT pair, and
+the evidence is complete:
+
+| addr | map says | branches to | referenced from (`??_R4` COL) | verdict |
+|---|---|---|---|---|
+| `0x82289920` | `?PreLoad@BandCharacter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z` | `0x8227e168` = the **Replace** body | `.?AVBandCharacter@@` slot **2** | ⛔ wrong |
+| `0x82289980` | **unnamed** | `0x82280c58` = the real `?PreLoad@BandCharacter@@UAAXAAVBinStream@@@Z` | `.?AVBandCharacter@@` slot **18** | the real PreLoad thunk |
+
+The map has the `PreLoad`-thunk name on the *Replace* thunk's address and leaves
+the real PreLoad thunk unnamed. Slot 18 is where PreLoad belongs (our own table
+agrees), so this is decided by branch target **and** by RTTI slot ownership —
+non-circular, and independent of the name under test.
+
+★ **And the repair is now SAFE, which it was not before this wave**: the
+CLAUDE.md rule is *"proving a name wrong ≠ renaming is safe"* — a target row our
+obj cannot define reads 0% forever. Our obj now defines **all four** relevant
+spellings (both `PreLoad` and both `Replace`, thunk and body), and it defines
+`?Replace@BandCharacter@@$4PPPPPPPM@A@…` **only because of §17a**. The source fix
+unblocked the map fix.
+
+**Not applied here** because a map edit's delta is dominated by *un-pairing*
+rather than cascade and needs its own forced-re-split A/B (§12d's standing
+rule) — bundling it would have destroyed the clean Δ0 attribution of two
+rename-class source patches. It is a ready worklist item, not an open question.
+
+### §17e — still open
+
+Unchanged from §16c minus the two closed here: `XboxContent` (15 retail vs 14 —
+the *opposite*, harder direction), `RndFur` (23 vs 21), `RndFur` (23 vs 21), and the 104-byte
+`GetLocalBandUser` row at 5.4% from §16c.
+
+⚠ **This subsection was written before §16 landed and originally listed
+`CacheXbox` and `BandStorePanel::MakeNewOffer` as still open. Both were closed
+by lane STOREPANEL in §16, concurrently with this lane** — `MakeNewOffer` is
+indeed the same wrong-base-signature class, and §16a settled it the same way
+§17a settled `BandCharacter` (retail's `PopulateOffers` dispatches slot 18 with
+exactly one argument, so the base was right and the OVERRIDE was wrong).
+`CacheXbox` is settled in §16b as a MAP defect and is queued as one atomic
+repair. Corrected at merge; the rest of §17 stands as the lane wrote it.
