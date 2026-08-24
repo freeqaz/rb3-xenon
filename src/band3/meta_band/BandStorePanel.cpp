@@ -90,8 +90,8 @@ LocalUser *BandStorePanel::StoreUser() const {
     return l;
 }
 
-StoreOffer *BandStorePanel::MakeNewOffer(const StorePackedOfferBase *base, bool isRbn) {
-    return new BandStoreOffer(base, &TheSongMgr, isRbn);
+StoreOffer *BandStorePanel::MakeNewOffer(DataArray *da) {
+    return new BandStoreOffer(da, &TheSongMgr);
 }
 
 StoreOffer *BandStorePanel::FindOffer(Symbol s) const {

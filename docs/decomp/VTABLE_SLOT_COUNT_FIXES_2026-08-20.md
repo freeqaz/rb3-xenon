@@ -1334,3 +1334,116 @@ clean bill**, and this row is worth its own look.
 Still open from §15g, unchanged: `StoreOffer`/`BandStoreOffer`, `BandCharacter`,
 `XboxContent` (15 vs 14 — the *opposite* direction), `RndFur` (23 vs 21),
 `CacheXbox` (§14e), `BandStorePanel::MakeNewOffer` (§14f).
+
+---
+
+## 16. Wave 10 (2026-08-22, lane STOREPANEL) — BOTH deferred rows were adjudicable, and BOTH prior readings were backwards
+
+§14f and §13e were the two rows this doc left "specified, not guessed". Both are
+now settled on retail bytes, and **in both cases the deferred hypothesis was the
+inverted one.** The lesson is not "we should have guessed" — deferring was right.
+It is that **the instrument both rows needed was the same one, and neither wave
+reached for it: read what the ARGUMENT REGISTERS do at the call site, and read
+what the CALLEE is from a string literal.**
+
+### 16a. §14f `BandStorePanel::MakeNewOffer` — our BASE was right, our OVERRIDE was wrong
+
+§14f held that retail spells this `(const StorePackedOfferBase *, bool)` and that
+our base's `(DataArray *)` was the defect. **Refuted.**
+
+**The call site.** `StorePanel::PopulateOffers` is retail primary slot 23 at
+`0x827b6f80` (unnamed in the map; identified by position — rb3-Wii puts
+`PopulateOffers` between `LoadArt` and `EnumerateOffers`, and retail slots 22/24
+are exactly those two). Its dispatch:
+
+```
+827b7008  lwz   r11,0(r30)      ; this->vptr
+827b700c  mr    r4,r3           ; the DataArray * from arr->Array(i)
+827b7010  mr    r3,r30
+827b7014  lwz   r11,0x48(r11)   ; 0x48/4 == slot 18
+827b701c  bctrl
+```
+
+**r5 is never written between the loop head and the `bctrl`**, and the
+intervening `bl` clobbers it. Exactly ONE argument is passed. ★ The slot index
+comes from retail's OWN displacement `0x48`, so this is not circular.
+
+**The body.** `0x82605778` allocates `0x168` bytes and calls
+`??0BandStoreOffer@@QAA@PAVDataArray@@PAVSongMgr@@@Z` (`0x8266e548` — **the map's
+own name, and a TWO-parameter ctor**) with r4 = its single parameter and
+r5 = `lwz 0x2ba8(r11)` = `?TheSongMgrPtr@@3PAVBandSongMgr@@A`. No r6.
+
+⛔ **§14f read that same `lwz r5,0x2ba8(r11)` as "the bool parameter reloaded
+from a global, hence unused, hence r5 looks dead".** It is not a reload of
+anything: **r5 there is an OUTGOING argument of the inner `bl`**, materialised
+beside r4 two instructions before the call. §14f applied the absent-register
+instrument to a register that was **present and outgoing** — the one case where
+that instrument inverts. ★ `#define TheSongMgr (*TheSongMgrPtr)` is the tell:
+the source `&TheSongMgr` compiles to exactly that `lwz`; an address-of would
+have been `lis`/`addi`.
+
+Fixed: override → `(DataArray *)`, map row `0x82605778` renamed (mangling read
+out of our COMDAT), base restored to `= 0` (retail slot 18 is `_purecall`
+`0x828299b8`, 849 refs). **+2 matched / +136 B**, and Δ0 for the pure-virtual
+half. ⚠ Predicted +1/+96: **the EH funclet is a SEPARATE row.** `fn_826057D8`
+(40 B, immediately after the body) was charged only for the relocation NAME of
+the ctor it calls and crossed 93.5 → 100.0 as a side effect. ⇒ **When a fix
+changes a CALLEE NAME, price the funclet rows too.**
+
+### 16b. ⛔⛔ §13e `CacheXbox` slots 6/7 — SETTLED, and the MAP IS WRONG
+
+§13e called this UNDERDETERMINED and asked for either **(a)** a caller with a
+provable receiver type or **(b)** a second class overriding `Cache`.
+
+- **(b) DOES NOT EXIST, decisively.** There is exactly **ONE**
+  BaseClassDescriptor for `Cache` in the whole image (`0x821ec6e0`), referenced
+  by exactly **two** base-class arrays: `Cache`'s own CHD and `CacheXbox`'s.
+  `CacheXbox` is the only class deriving from `Cache`. (Whole-image RTTI census,
+  `/GR` is on.)
+- **(a) is MOOT — a strictly stronger instrument exists.** Not a caller whose
+  RECEIVER type is provable, but **a CALLEE whose identity is provable from a
+  string literal**, plus the worker thread's Win32 calls.
+
+**Four independent readings, all agreeing, none using our declaration order:**
+
+| # | reading | slot 6 (`0x827da730`) | slot 7 (`0x827d9f40`) |
+|---|---|---|---|
+| 1 | nested `mCacheID` dispatch | `lwz r11,8(r11)` = CacheID slot **2** | `lwz r11,4(r11)` = CacheID slot **1** |
+| 2 | that callee's format string | `'%s:\*'` — **WILDCARD** | `'%s:\%s'` — exact path |
+| 3 | `mOpCur` written | **1** ⇒ `ThreadStart` op 1 → `ThreadGetDir` (744 B, two `String` args) | **2** ⇒ op 2 → `CreateFile(OPEN_EXISTING)` + **`GetFileSize`** |
+| 4 | out-pointer field | `0x168` | `0x160` — and the op-2 handler does `stw r31,0(r11)` through `0x160`, a **single 4-byte store**, i.e. `unsigned int *` |
+| | ⇒ | **`GetDirectoryAsync`** | **`GetFileSizeAsync`** |
+
+Reading 2 needs **no map entry at all**: the vtables come from RTTI COLs, and the
+`CacheXbox` ctor (`0x827dad60`) is seen installing `0x8211BE44` at `+0`,
+`0x8211BE34` at `+0xC`, and copy-constructing a **`CacheIDXbox`** (vptr
+`0x8211BCC8`) at `+0x10`. A wildcard is a directory search pattern; nothing else.
+
+⇒ **`scripts/target_symbol_map.json` has these two names SWAPPED**, and our
+`Cache.h` **declaration order is RIGHT**. Consequently `OpType` is wrong:
+retail is **`kOpDirectory = 1`, `kOpFileSize = 2`** — which is exactly what
+**both** oracles declare, and the opposite of `Cache.h:15-21`.
+
+★★★ **WHY BOTH PRIOR SINGLE-SIDED EDITS REGRESSED — the errors CANCEL.**
+objdiff pairs by NAME, so the swapped map names cause our `GetDirectoryAsync` to
+be scored against retail's `GetFileSizeAsync` and vice versa. Lane CF-10 then
+pinned the enum **from those cross-paired bodies**, and later lanes wrote the
+method bodies to suit. The result is visible in the source as plain absurdity:
+`Cache_Xbox.cpp:150` has **`GetFileSizeAsync` build a WILDCARD SEARCH path**, and
+`:253` has **`GetDirectoryAsync` use an EXACT file path** — with a comment at
+`:57-61` documenting the absurdity as though it were a retail quirk. Both rows
+score 100% because **two compensating errors conceal each other**, and touching
+either side alone breaks the cancellation. Wave 6 edited the source alone
+(**−2 / −40 B**); wave 7 correctly declined the map alone.
+
+⇒ **The fix is ONE ATOMIC change or nothing**: swap the two map names, swap the
+`OpType` values, and swap which `CacheID` method each body calls. Expected
+**≈ Δ0** — this buys correct attribution, not bytes, and is exactly the
+"accuracy over headline %" case. **Not done here: this lane was scoped
+read-only on this row.**
+
+⚠ Generalise the shape, not the row: **a matching pair of 100% rows is not
+evidence either row is correctly identified** — it is equally consistent with a
+consistently-swapped pair. The cheap discriminator is **semantic plausibility of
+the callee** (a file-size query has no business building a wildcard), which no
+score can see.

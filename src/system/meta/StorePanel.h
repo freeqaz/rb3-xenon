@@ -81,9 +81,15 @@ public:
     // StorePanel.h:33 `virtual int StoreUser() const = 0; // fix ret type`,
     // in this same position, and declares no StoreProfile at all.
     virtual LocalUser *StoreUser() const;
-    // RB3 overrides this as MakeNewOffer(const StorePackedOfferBase *, bool) —
-    // a different signature. Make the base non-pure so BandStorePanel compiles.
-    virtual StoreOffer *MakeNewOffer(DataArray *) { return 0; }
+    // PURE in retail (lane STOREPANEL, 2026-08-22).  StorePanel's own primary
+    // vtable (0x82115fac, located via RTTI, not via the map) has slot 18 =
+    // 0x828299b8 -- the binary's `_purecall`, referenced 849 times.  The base
+    // was only made non-pure as a workaround for BandStorePanel's override
+    // carrying the WRONG signature (const StorePackedOfferBase *, bool); with
+    // that corrected to (DataArray *) the override binds here and the base can
+    // be pure again, so our slot 18 emits `_purecall` exactly as retail's does.
+    // BandStorePanel is the only subclass in the tree.
+    virtual StoreOffer *MakeNewOffer(DataArray *) = 0;
     virtual StoreOffer *FindOffer(Symbol) const;
     virtual bool EnumerateSubsetOfOfferIDs() const { return false; }
     virtual void GetOfferIDsToEnumerate(std::vector<u64> &, bool) const {}

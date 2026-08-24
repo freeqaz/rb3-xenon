@@ -9,9 +9,6 @@ class DataNetLoader;
 class LocalUserLeftMsg;
 class MetadataLoadedMsg;
 class StoreOfferProvider;
-// RB3 store architecture uses StorePackedOfferBase (not DataArray *) in MakeNewOffer.
-// Forward-declare here; full definition lives in meta/StorePackedMetadata.h (not yet ported).
-class StorePackedOfferBase;
 
 class BandStoreShortcutProvider : public DataProvider {
 public:
@@ -40,7 +37,30 @@ public:
     virtual bool IsSongInLibrary(const int &) const;
     virtual void ExitStore(StoreError) const;
     virtual LocalUser *StoreUser() const;
-    virtual StoreOffer *MakeNewOffer(const StorePackedOfferBase *, bool);
+    // ADJUDICATED ON RETAIL BYTES (lane STOREPANEL, 2026-08-22): this takes a
+    // single DataArray *, NOT the rb3-Wii dev spelling
+    // (const StorePackedOfferBase *, bool).  Two independent readings, both from
+    // retail band.exe:
+    //   * THE CALL SITE.  StorePanel::PopulateOffers (0x827b6f80, retail primary
+    //     slot 23) dispatches this at 0x827b7008-0x827b701c:
+    //         lwz r11,0(r30) / mr r4,r3 / mr r3,r30 / lwz r11,0x48(r11) / bctrl
+    //     0x48/4 == slot 18, and r4 is the DataArray * just returned by
+    //     arr->Array(i).  **r5 is never written between the loop head and the
+    //     bctrl** -- so exactly ONE argument is passed.  A (ptr, bool) overload
+    //     would have to materialise r5 at the call site; retail does not.
+    //   * THE BODY.  0x82605778 allocates 0x168 bytes, then calls
+    //     ??0BandStoreOffer@@QAA@PAVDataArray@@PAVSongMgr@@@Z (0x8266e548 -- the
+    //     map's own name, and a TWO-parameter ctor) with r4 = the incoming
+    //     parameter and r5 = lwz 0x2ba8(r11) = ?TheSongMgrPtr@@3PAVBandSongMgr@@A.
+    //     There is no r6.
+    // ⚠ The earlier reading of that same `lwz r5,0x2ba8(r11)` as "the bool
+    // parameter reloaded from a global, hence unused" is REFUTED: r5 there is an
+    // OUTGOING argument of the inner `bl`, set up beside r4 two instructions
+    // before it -- the ctor's SongMgr *, not a parameter of this function.
+    // Consequence: this override fills StorePanel's slot 18 instead of appending
+    // a 29th, which is why retail's BandStorePanel table is 28 slots and ours
+    // was 29.
+    virtual StoreOffer *MakeNewOffer(DataArray *);
     virtual StoreOffer *FindOffer(Symbol) const;
     virtual bool EnumerateSubsetOfOfferIDs() const { return true; }
     virtual void LoadArt(const char *, UIPanel *);
