@@ -150,14 +150,33 @@ void BandCharacter::RemovingObject(Hmx::Object *o) {
         mFileMerger = 0;
 }
 
-void BandCharacter::Replace(Hmx::Object *from, Hmx::Object *to) {
-    // NOTE: the dc3-lineage Hmx::Object/Character object model has no virtual
-    // object-level Replace(Hmx::Object*, Hmx::Object*) (it uses an ObjRef ring +
-    // Replace(ObjRef*, Hmx::Object*)); RB3-Wii's BandCharDesc::Replace /
-    // Character::Replace base calls have no dc3 equivalent. The ref fix-up is
-    // handled by the ring machinery, so only the BandCharacter-specific prefab
-    // bookkeeping is ported here.
-    if (from == mTestPrefab) {
+// ⛔ CORRECTION (lane VT-SIG, 2026-08-22). This body previously took
+// `(Hmx::Object*, Hmx::Object*)` and carried a NOTE asserting that "RB3-Wii's
+// BandCharDesc::Replace / Character::Replace base calls have no dc3
+// equivalent". BOTH halves are refuted by retail bytes:
+//   * `Character::Replace(ObjRef*, Hmx::Object*)` exists in this tree
+//     (Character.cpp) and retail's body CALLS it FIRST -- `bl 0x8236dbf8`,
+//     which the map names `?Replace@Character@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z`;
+//   * the wrong parameter type meant this did not override ObjRefOwner's slot
+//     and burned a surplus vtable slot instead (see the header note).
+// Retail body `0x8227e168`, reached from slot 2 of the Hmx::Object subobject
+// vftable via the adjustor thunk `0x82289920`, in order:
+//   bl Character::Replace(from,to)                     <- base call FIRST
+//   lwz r11,-0x218(r31); if(r11) vbase-adjust to Hmx::Object*  <- Ptr() + cast
+//   cmplw from,r11 ; bne out
+//   __RTDynamicCast(to, 0, .?AVObject@Hmx@@, .?AVBandCharDesc@@, 0)
+//   addi r3,r31,-0x220 ; bl ObjOwnerPtr<BandCharDesc>::SetOwnerObj
+//   lwz r4,-0x218(r31) ; if(r4) addi r3,r31,-0x58c ; bl BandCharDesc::CopyCharDesc
+// ⚠ Unlike Character::Replace, retail materializes `&mTestPrefab` AFTER the
+// __RTDynamicCast, so the PLAIN assignment is correct here -- do NOT introduce
+// the `ObjOwnerPtr<T> &` binding that Character::Replace needs.
+// `from` is declared `ObjRef*` (the inherited signature) but really is the
+// dying Hmx::Object*; the tree already models that with a reinterpret_cast at
+// the ring boundary -- see Character::Replace, Dir.h:101 and Msg.h.
+void BandCharacter::Replace(ObjRef *from, Hmx::Object *to) {
+    Character::Replace(from, to);
+    if (reinterpret_cast<void *>(from)
+        == reinterpret_cast<void *>(static_cast<Hmx::Object *>(mTestPrefab.Ptr()))) {
         mTestPrefab = dynamic_cast<BandCharDesc *>(to);
         if (mTestPrefab)
             CopyCharDesc(mTestPrefab);
