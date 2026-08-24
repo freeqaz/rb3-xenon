@@ -13590,7 +13590,7 @@
  "0x826055b8": "?Enter@BandStorePanel@@UAAXXZ",
  "0x82605698": "?Exit@BandStorePanel@@UAAXXZ",
  "0x82605710": "?IsSongInLibrary@BandStorePanel@@UBA_NABH@Z",
- "0x82605778": "?MakeNewOffer@BandStorePanel@@UAAPAVStoreOffer@@PBVStorePackedOfferBase@@_N@Z",
+ "0x82605778": "?MakeNewOffer@BandStorePanel@@UAAPAVStoreOffer@@PAVDataArray@@@Z",
  "0x82605800": "?IsLoaded@BandStorePanel@@UBA_NXZ",
  "0x82605868": "?GetRequestPrefix@BandStorePanel@@QBAPBDXZ",
  "0x826058e8": "?CreateCameraBufferMat@@YAPAVRndMat@@HHW4Type@RndTex@@@Z",
