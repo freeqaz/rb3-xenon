@@ -71,7 +71,19 @@ public:
     virtual bool AllowsInlineProxy() { return false; }
     virtual void AddedObject(Hmx::Object *);
     virtual void RemovingObject(Hmx::Object *);
-    virtual void Replace(Hmx::Object *, Hmx::Object *);
+    // ⚠ MUST carry the INHERITED `ObjRefOwner::Replace(ObjRef*, Hmx::Object*)`
+    // signature -- the rb3-Wii dev form `Replace(Hmx::Object*, Hmx::Object*)`
+    // does NOT override it, so MSVC appends a NEW slot and our offset-0
+    // (ObjectDir) vftable ran 21 slots against retail's 20.  Adjudicated on
+    // retail bytes (lane VT-SIG): retail reaches this body from slot 2 of the
+    // Hmx::Object subobject vftable `0x82012cf4` -- the ObjRefOwner Replace
+    // slot, confirmed by `Character` (`0x8236dbf8`) and `RndDir`
+    // (`0x82402f68`) holding their own `Replace(ObjRef*,Hmx::Object*)` at the
+    // same slot -- and the body forwards r4/r5 to `Character::Replace` with
+    // ZERO conversion instructions, which only type-identical parameters
+    // permit.  Same defect and same treatment as `MsgSource::Replace`
+    // (Msg.h) and `ObjDirPtr::Replace` (Dir.h).
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual void DrawShowing();
     virtual RndDrawable *CollideShowing(const Segment &, float &, Plane &);
     virtual void CollideList(const Segment &, std::list<Collision> &);
