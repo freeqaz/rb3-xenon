@@ -1650,3 +1650,178 @@ indeed the same wrong-base-signature class, and §16a settled it the same way
 exactly one argument, so the base was right and the OVERRIDE was wrong).
 `CacheXbox` is settled in §16b as a MAP defect and is queued as one atomic
 repair. Corrected at merge; the rest of §17 stands as the lane wrote it.
+## §18 — wave 11 (2026-08-24): the two `retail > ours` classes, and §6's refusal OVERTURNED
+
+> ⚠ **Numbering note (resolved at merge):** this lane wrote itself as `§17`.
+> Lane VT-SIG landed a different `§17` concurrently (the two `wrong base
+> signature` deferrals), so this section is renumbered **§18**. Both lanes ran
+> against `56b82629` and neither saw the other; nothing in either section
+> depends on the other's findings.
+
+
+Both remaining opposite-direction rows are now closed. Counts re-measured
+first, because a handed-over figure is a hypothesis:
+
+| class | vtable | retail | ours (before) | folded | after |
+|---|---|---:|---:|---:|---|
+| `XboxContent` | `0x8208968c` | 15 | 14 | 0 | **15, `SAME`, 0 mismatches** |
+| `RndFur` | `0x8206c0bc` | 23 | 21 | 21 | **23, `SAME`, 0 mismatches** |
+
+Both tables were confirmed to END where the count says, by the §8 `RndFont`
+tell: `XboxContent[15]` and `RndFur[23]` are both the `0xffffffff` sentinel, so
+neither read is truncated.
+
+### §18a — ★★★★ `XboxContent`: §6 REFUSED THIS, AND ALL THREE OF ITS OBJECTIONS WERE ARTIFACTS
+
+§6 investigated this exact slot, called the `IsCorrupt` story "a plausible story
+overriding contradictory bytes", and left it open. **The identity was right and
+all three objections fail.** Recording this at length because a confident
+refusal closes a vein and nobody re-opens it.
+
+1. ⛔ **"Position: DC3 puts `IsCorrupt` at slot 6, but retail's extra is
+   TRAILING."** This computed position against **DC3's declaration SITE** — DC3
+   declares `IsCorrupt` on the BASE, `Content`. *We* declare it on
+   `XboxContent`, and MSVC appends a derived class's new virtual to the END of
+   the table no matter where it sits among the overrides in the source text.
+   So our declaration site predicts **exactly the trailing slot 14**.
+   ★ **New control, which could have failed and did not:** retail's `Content`
+   (`0x8208959c`) has **14** slots and the sibling `RootContent`
+   (`0x820895d8`) has **14**. Had `Content` declared it, `RootContent` would
+   carry a 15th too. ⇒ the 15th is introduced by `XboxContent`, and our tree
+   was already right to move `IsCorrupt` off the base.
+2. ⛔ **"Identifiability: a 20-byte leaf whose `return field == 1` shape is a
+   prime ICF fold candidate, so its body may not identify the method."**
+   `0x8251f8f0` has **exactly ONE word reference in the whole image** —
+   `0x820896c4`, its own vtable slot — and **ZERO direct branches** in all of
+   `.text`. Nothing else points at it, so no fold is observable.
+3. ✅ **"Body: `0x8251f8f0` reads `field_0xc`, but our `IsCorrupt` reads
+   `mState`/`mCorrupt`."** This one is REAL — but it is a *separate* defect
+   (§18b), not a refutation of the virtuality. §6 treated one true objection
+   as grounds to reject the whole finding.
+
+**The identity is fixed by the CALL SITE — the instrument no ICF fold and no
+map name can poison.** `XboxContentMgr` overrides `ContentMgr` slot **[34]** at
+`0x82520668`: it walks the content list vcalling slot 11 (`0x2c`, `FileName()`),
+compares to the `Symbol` in r4, then `__RTDynamicCast` (map-confirmed at
+`0x8282a0c8`) from `.?AVContent@@` to `.?AVXboxContent@@` and issues
+`lwz r11,0x38(r11)` — **slot 14, an immediate in retail's own machine code**.
+`src/system/os/ContentMgr_Xbox.cpp:268` already implements that exact shape,
+calling `xc->IsCorrupt()` — **non-virtually**, which IS the missing slot.
+
+Corroborated by a **17-for-17** alignment of the whole `ContentMgr` block
+against retail (39 slots both sides), including the two discriminating facts
+that slot **[33] is NOT overridden** by `XboxContentMgr` (= `GetCreationDate
+{return 0;}`) and **[34] IS**.
+
+⚠ **A wrong turn worth recording:** I first read retail `[22]` as `Init` and
+concluded retail had **no `PreInit`**, i.e. that our whole `ContentMgr` block
+was off by one. That was wrong — `scripts/dump_vtable.py` puts the `??_R4` COL
+at its **slot [0]**, so our numbering is offset by one against retail's.
+`Hmx::Object` has **21** slots and retail `[21]` is the empty-body hub =
+`PreInit(){}`. ⇒ **measure the base's slot count, never assume it.** Confirmed
+directly: retail `XboxContentMgr` and `RndFur` hold the *same addresses at the
+same indices* — `[15] 0x8275ab18`, `[16] 0x8275a5c0`, `[17] 0x8275a4e8`,
+`[18] 0x8269d940`, `[20] 0x8275a9d0` — so the `Hmx::Object` block is `[0]`-`[20]`
+in both.
+
+Slots 0-13 were read individually, which also **confirms five member offsets of
+our header against retail bytes**: `LicenseBits` reads `0x140`,
+`HasValidLicenseBits` `0x144`, `GetState` `0x160`, `FileName` `0x16c`, `GetLRM`
+`0x170`. DC3 puts the last three at `0x158`/`0x164`/`0x168` — **our port already
+carries the correct RB3 layout and DC3 is the wrong oracle here.**
+
+### §18b — the body: retail's `XboxContent` HAS NO `mCorrupt`
+
+Landed as its own commit so it can be reverted independently of the slot fix.
+`0x8251f8f0` is `lwz r11,0xc(r3); addi r11,r11,-1; cntlzw r11,r11;
+rlwinm r3,r11,0x1b,0x1f,0x1f; blr` = `return field_0xc == 1` (the same
+`(x-1)/cntlzw/rlwinm` idiom this compiler emits for `== 1` in `OnMemcard` just
+above). `this+0xc` is `mXData.dwContentType`, anchored **four** ways: the ctor
+`0x8251fb40` does `addi r3,r30,8; li r5,0x138; memcpy` (so `mXData` is at
+`this+8` and is the whole `0x138`-byte struct); `DisplayName` is
+`addi r3,r3,0x10; b WideCharToChar` (`szDisplayName` at `+0x8`); the ctor also
+memcpy's `0x2a` bytes from `this+0x110` (`szFileName` at `+0x108`) into
+`mFilename`; and `mLicenseBits` lands at `0x8+0x138 = 0x140`.
+
+★ **The DC3 body cannot be retail's, because retail's `XboxContent` has no
+`mCorrupt` at all.** Scanning every load/store in the whole TU
+(`0x8251f800`-`0x82520200`) for `0x160`/`0x161`/`0x168`/`0x169` finds constant
+traffic on `0x160` (`mState`) and `0x168` (`mPendingDelete`) and **not one
+access to `0x161` or `0x169`** — in any function, including `Poll`, which is
+where our port sets `mCorrupt`. `mCorrupt` and its assignment are left in place
+(removing them is layout-neutral — the bool sits in padding before `mFilename`)
+but it is now **write-only**; that removal is a follow-up.
+
+### §18c — `RndFur`: the ORDER was settled on the DERIVED class
+
+`RndFur` introduces two virtuals and we had zero. Both retail slots hold
+`0x823591e8`, the shared `li r3,0; blr` hub, so both bodies are trivial
+`{ return false; }` — and DC3's `rndobj/Fur.h` declares exactly two such
+methods, `Prep(RndMesh*, RndMat*) const` and `Shell(int, RndMesh*, RndMat*)
+const`. rb3-Wii's `Fur.h` has neither, which is why the port dropped them.
+
+⛔ **`RndFur`'s own table CANNOT order them** — both slots hold the *same*
+address, so either order reproduces retail's bytes exactly. Settled on the
+subclass instead: retail `??_7NgFur@@6B@` (`0x8219bed4`) is also 23 slots and
+carries REAL bodies at the same two positions. Adjudicated on those **bodies**,
+not their map names (a map name can be our own declaration reflected back — the
+`StreamReceiver360` circularity):
+
+- `0x82b8b340` saves **FOUR** incoming registers (`r3->r31, r4->r30, r5->r28,
+  r6->r27`) = `this` + 3 params, does `cmpwi cr6,r4,0` treating **r4 as an
+  int**, and reads `mLayers` at `0x28` ⇒ **`Shell(int, ...)`**
+- `0x82b8b2e8` never consumes r4 as input — it *overwrites* it with
+  `li r4,0xc` ⇒ **`Prep(RndMesh*, RndMat*)`**
+
+⇒ `[21] = Prep`, `[22] = Shell`. **This control could have failed:** had the
+int-first body sat at `[21]`, the order would be inverted. The map names and
+DC3's declaration order both agree.
+
+★ **Knock-on defect this exposed:** `rndobj/Fur_NG.h` ALREADY declared both,
+with exactly these signatures, on `NgFur`. With no declaration on the base they
+were **NEW virtuals appended to `NgFur`** rather than overrides — so **no
+dispatch through an `RndFur*` could ever reach them.** `NgFur`'s table is 23
+either way, which is why no count-based sweep could see it.
+
+### §18d — measured
+
+Pre-registered **Δmatched 0 / Δcode_bytes 0** before the run, on the grounds
+that `Fur.cpp`/`Fur_NG.cpp` have **no splits heading at all** (searched by full
+path, not `basename()`), and that `ContentMgr_Xbox.cpp`'s pinned `.text` spans
+(`0x82408A28`-`0x82408BA8`, `0x82409034`-`0x824090B0`) contain **zero**
+map-named symbols and do not cover the XboxContent bodies at `0x8251f8xx`.
+
+`tools/ab_measure.py --patch`, both legs settled, tree restored:
+
+```
+Δmatched=+0  Δmasked_equal=+0  Δhonest=+0  Δcode%=+0.000000pp  Δcode_bytes=+0
+Δfuzzy=+0.000000pp   units at 100%: 150->150 (0 fell off), 122->122
+leg B recompiles: 586
+```
+
+Prediction hit exactly. The 586 leg-B recompiles rule out an absent-vs-absent
+leg, and **0 units fell off 100%** — which is the point of the run: for a
+`.rdata` vtable change Δ0 is the SAFETY CHECK, not the payoff.
+
+Rename safety, checked in all three consumers before and after: neither
+`scripts/target_symbol_map.json` nor `scripts/symbol_aliases.json` contains any
+`IsCorrupt` symbol, nor a `RndFur` `Prep`/`Shell` entry. The `NgFur` entries
+that do exist (`?Prep@NgFur@@UBA_NPAVRndMesh@@PAVRndMat@@@Z`,
+`?Shell@NgFur@@UBA_NHPAVRndMesh@@PAVRndMat@@@Z`) are untouched.
+
+### §18e — left open, deliberately
+
+- **`0x82520668` is `XboxContentMgr::IsCorrupt(Symbol, const char*&)` and is
+  ABSENT from `target_symbol_map.json`.** Proven here (17/17 block alignment +
+  the caller's body). NOT added: naming an anonymous address is a bet whose
+  payout is bug exposure rather than bytes, and MAPID-1 measured such a naming
+  at **−1,656 B**. It is a ready-made candidate for a map lane that wants one.
+- **`ContentMgr_Xbox.cpp`'s splits pin looks mis-homed.** Its `.text` spans are
+  `0x82408A28`-`0x82408BA8` and `0x82409034`-`0x824090B0`, which contain **no
+  map-named symbols at all**, while every `XboxContent`/`XboxContentMgr` body
+  identified in this section lives at `0x8251f810`-`0x825201e0`. Not touched:
+  re-homing an already-pinned address is **not** metric-neutral (PINHOME-1,
+  +3 fn / +428 B), so it needs its own lane and its own A/B.
+- **`mCorrupt` is now write-only** (§18b). Removing it and its assignment at
+  `ContentMgr_Xbox.cpp:116` is layout-neutral but is a wider behavioural edit
+  than this wave adjudicated.
