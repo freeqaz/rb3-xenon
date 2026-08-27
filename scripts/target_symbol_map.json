@@ -1,5 +1,9 @@
 {
  "_dc3_only_pins_comment": "Rows NULLED by lane DC3-ONLY-PINS (2026-08-21), tracker #94. 69 addresses whose pinned name named a C++ class that RB3 RETAIL DOES NOT CONTAIN -- all 27 classes are declared exclusively under src/system/hamobj/, src/system/flow/ or src/system/gesture/, the three Dance Central 3 subsystems this map was partly seeded from. A pin naming an absent class is a FALSE ASSERTION about retail regardless of what it scores, and these 69 all scored PARTIALLY (0<mpn<100), which is worse than scoring zero because partial credit reads as progress. INSTRUMENT (recall measured, not assumed): OBJ_CLASSNAME(X) emits the literal \"X\" via StaticClassName(), so X-compiled-into-retail => \"X\" appears in orig/45410914/band.exe; the contrapositive is the test. Control: of 256 OBJ_CLASSNAME classes independently attested in the rb3-Wii/og-rb3 source, 245 have their name string in retail = 95.70% recall, and 10 of the 11 misses are Wii/dev-only screens (WiiFriendsScreen, BudgetScreen, LocalePanel...) i.e. CORRECT negatives. Corroborated per-row by address locality and, on three rows, by retail bytes: 0x824b0cf0 (pinned RhythmDetector::Copy) calls RndAnimatable::Save and a vector<LightPreset::Keyframe> serializer -- it is LightPreset::Save; 0x823423e0 (pinned FlowWhile::Save) calls UIComponent::Save, which FlowWhile (: FlowSwitch, PropertyEventListener) cannot do. NOT ACTED ON, deliberately: the 40 rows of the same class set that score 100%. Those are byte-TRUE -- our body reproduces retail's bytes exactly -- so they are wrong NAMES on real bytes and belong to the _icf_arbitrary / rename-not-delete channel; nulling them would destroy real matched bytes. They are a RENAME worklist, not a deletion worklist. Also untouched: 2 rows already scoring 0 (no harm) and 3 unpaired rows (one, 0x826342f0, is already in _denylist). One candidate was REJECTED as a false positive: 0x8285ec30 names D3D::FlowNode, a different FlowNode in the D3D namespace.",
+ "0x82408a48": "?ClassName@RndEnviron@@UBA?AVSymbol@@XZ",
+ "0x82408a80": "?SetType@RndEnviron@@UAAXVSymbol@@@Z",
+ "0x82409038": "??0?$ObjDirItr@VRndLight@@@@QAA@PAVObjectDir@@_N@Z",
+ "0x82463358": "??_GRndMatAnim@@UAAPAXI@Z",
  "0x8274afa8": "?ForceSym@DataNode@@QBA?AVSymbol@@PBVDataArray@@@Z",
  "0x8274b000": "?Str@DataNode@@QBAPBDPBVDataArray@@@Z",
  "0x82001004": "__real@3f7d70a4",
@@ -10434,6 +10438,7 @@
  "0x825204b0": "?DeleteContent@XboxContentMgr@@UAA_NVSymbol@@@Z",
  "0x82520540": "?IsDeleteDone@XboxContentMgr@@UAA_NVSymbol@@@Z",
  "0x825205d8": "?GetLicenseBits@XboxContentMgr@@UAA_NVSymbol@@AAK@Z",
+ "0x82520668": "?IsCorrupt@XboxContentMgr@@UAA_NVSymbol@@AAPBD@Z",
  "0x825206f8": "?NotifyMounted@XboxContentMgr@@MAAXPAVContent@@@Z",
  "0x825207a0": "?NotifyUnmounted@XboxContentMgr@@MAAXPAVContent@@@Z",
  "0x82520830": "?NotifyFailed@XboxContentMgr@@MAAXPAVContent@@@Z",
