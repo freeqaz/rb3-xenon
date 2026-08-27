@@ -14,7 +14,7 @@ Symbol ControllerTypeToSym(ControllerType controllerType) {
 }
 
 ControllerType SymToControllerType(Symbol s) {
-    for (int i = 0; i < 6; i++) {
+    for (unsigned int i = 0; i < 6; i++) {
         if (s == ControllerTypeToSym((ControllerType)i)) {
             return (ControllerType)i;
         }

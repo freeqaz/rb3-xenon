@@ -82,17 +82,18 @@ BinStream &operator>>(BinStream &bs, CharBoneDir::Recenter &r) {
 INIT_REVS(4, 0)
 
 void CharBoneDir::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs)
     ASSERT_REVS(4, 0)
     ObjectDir::PreLoad(bs);
+    LOAD_REVS(bs)
     d.PushRev(this);
 }
 
 void CharBoneDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
     ObjectDir::PostLoad(bs);
+    bool b;
+    auto _tmp0 = bs.PopRev(this);
+    BinStreamRev d(bs, _tmp0);
     if (d.rev < 2) {
-        bool b;
         d >> b;
     } else {
         d >> mMoveContext;
