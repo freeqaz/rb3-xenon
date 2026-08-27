@@ -11,11 +11,10 @@ BufStream::BufStream(void *buffer, int size, bool lilEndian)
 }
 
 void BufStream::ReadImpl(void *data, int bytes) {
-    int tell = mTell;
     int size = mSize;
-    if (tell + bytes > size) {
+    if (mTell + bytes > size) {
         mFail = true;
-        bytes = size - tell;
+        bytes = size - mTell;
     }
 
     memcpy(data, &mBuffer[mTell], bytes);

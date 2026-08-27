@@ -60,10 +60,10 @@ void PreloadPanel::SetTypeDef(DataArray *d) {
 #pragma region UIPanel
 
 void PreloadPanel::Load() {
+    TheContentMgr.RegisterCallback(this, false);
     UIPanel::Load();
     TheLoadMgr.SetLoaderPeriod(14.0f);
     mPreloadResult = kPreloadInProgress;
-    TheContentMgr.RegisterCallback(this, false);
     mAppReadFailureHandler = TheContentMgr.SetReadFailureHandler(this);
     MILO_ASSERT(mAppReadFailureHandler, 0x50);
     mContentCorrupt = false;
@@ -74,17 +74,13 @@ void PreloadPanel::Load() {
     }
     SongMgr *song_mgr = FindSongMgr();
     MILO_ASSERT(song_mgr, 0x5E);
-    mContentNames.clear();
-    mSongDoesNotExist = false;
 #ifdef HX_NATIVE
     // Native: no ark song content to mount/cache — skip directly to success
     fprintf(stderr, "DC3 Native: PreloadPanel::Load — skipping content mount/cache for '%s'\n", cur.Str());
     mMounted = true;
     mPreloadResult = kPreloadSuccess;
 #else
-    if (!song_mgr->HasSong(cur, false)) {
-        mSongDoesNotExist = true;
-    } else {
+    if (!(!song_mgr->HasSong(cur, false))) {
         song_mgr->GetContentNames(cur, mContentNames);
         for (auto it = mContentNames.begin(); it != mContentNames.end();) {
             if (!TheContentMgr.MountContent(*it)) {
@@ -94,11 +90,15 @@ void PreloadPanel::Load() {
                 it = mContentNames.erase(it);
             }
         }
+    } else {
+        mSongDoesNotExist = true;
     }
     if (mContentNames.empty()) {
         StartCache();
     }
 #endif
+    mContentNames.clear();
+    mSongDoesNotExist = false;
 }
 
 bool PreloadPanel::IsLoaded() const {
