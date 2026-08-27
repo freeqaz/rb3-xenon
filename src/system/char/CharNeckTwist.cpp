@@ -6,7 +6,8 @@
 #include "obj/Object.h"
 #include "rndobj/Trans.h"
 
-CharNeckTwist::CharNeckTwist() : mTwist(this), mHead(this) {}
+CharNeckTwist::CharNeckTwist() : mTwist(this), mHead(this) {    volatile int _slotpad = 0; (void)_slotpad;
+}
 
 BEGIN_HANDLERS(CharNeckTwist)
     HANDLE_SUPERCLASS(Hmx::Object)

@@ -43,8 +43,8 @@ INIT_REVS(1, 0)
 void MiniLeaderboardDisplay::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(1, 0)
-    bs >> mAllowSoloScores;
-    UIComponent::PreLoad(bs);
+    UIComponent::PreLoad(d);
+    d >> mAllowSoloScores;
 }
 
 void MiniLeaderboardDisplay::PostLoad(BinStream &bs) {
