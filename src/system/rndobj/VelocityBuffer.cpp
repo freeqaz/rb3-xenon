@@ -191,7 +191,7 @@ void RndVelocityBuffer::DrawMesh(RndMesh *mesh) const {
 #endif
                 } else {
                     auto _tmp3 = PathName(mesh->Mat());
-                    MILO_NOTIFY_ONCE(
+                    MILO_NOTIFY(
                         "%s (%s): Has too many bones to apply object motion blur (%d bones of max %d)",
                         (char *)PathName(mesh), _tmp3, numBonesActual, 40
                     );
@@ -200,15 +200,30 @@ void RndVelocityBuffer::DrawMesh(RndMesh *mesh) const {
         }
     }
 }
+template <class _T>
+__declspec(noinline) auto _outline_SplitMs(_T* _obj) -> decltype(_obj->SplitMs()) {
+    return _obj->SplitMs();
+}
+template <class _T>
+__declspec(noinline) auto _outline_PreDepthTexture(_T* _obj) -> decltype(_obj->PreDepthTexture()) {
+    return _obj->PreDepthTexture();
+}
+template <class _T>
+__declspec(noinline) auto _outline_Select(_T* _obj) -> decltype(_obj->Select()) {
+    return _obj->Select();
+}
+
+
+
 
 bool RndVelocityBuffer::Draw(RndCam *cam, ObjPtrList<RndDrawable> &drawList) {
     mFrameAdvanced = false;
-    float splitMs = mTimer.SplitMs();
+    float splitMs = _outline_SplitMs(&mTimer);
     mTimer.Restart();
     float scale = 41.666668f / (splitMs + 1.0f);
         unk36be8 = scale = Min(2.0f, scale);
 
-    if (cam != nullptr & cam == mCam) {
+    if (cam != nullptr && (bool)(cam == mCam)) {
         mMat->SetBlend(RndMat::kBlendSrc);
         mMat->SetZMode(kZModeDisable);
 
@@ -216,10 +231,10 @@ bool RndVelocityBuffer::Draw(RndCam *cam, ObjPtrList<RndDrawable> &drawList) {
         memcpy(&unk36bec[cacheIdx], &mViewProjXfm, 0x40);
 
 
-        RndTex *depthTex = TheNgRnd.PreDepthTexture();
+        RndTex *depthTex = _outline_PreDepthTexture(&TheNgRnd);
         if (depthTex != nullptr) {
             cam->SetTargetTex(mVelocityTex);
-            cam->Select();
+            _outline_Select(cam);
             TheShaderMgr.SetPConstant((PShaderConstant)9, depthTex);
             bool frameReady = AdvanceFrame(cam);
             TheRenderState.SetTextureFilter(9, (RndRenderState::FilterMode)0, false);
@@ -240,9 +255,9 @@ bool RndVelocityBuffer::Draw(RndCam *cam, ObjPtrList<RndDrawable> &drawList) {
                 TheRnd.SetDrawMode(Rnd::kDrawVelocity);
                 mMat->SetBlend((RndMat::Blend)3);
                 mMat->SetZMode(kZModeNormal);
-                auto _tmp1 = drawList.end();
+                auto _val0 = drawList.end();
                 for (ObjPtrList<RndDrawable>::iterator it = drawList.begin();
-                     it != _tmp1; ++it) {
+                     it != _val0; ++it) {
                     (*it)->DrawShowing();
                 }
                 TheRnd.SetDrawMode(savedDrawMode);
