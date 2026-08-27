@@ -418,7 +418,20 @@ const int gInstFocus[] = { 0x20000, 0x8000, 0x10000, 0x40000, 0x80000 };
 
 bool BandWardrobe::ValidGenreGender(CamShot *shot) {
     int flags = shot->Flags();
+#ifdef HX_NATIVE
+    // ⛔ PERMUTER DEFECT (sweep shard 3, 58172bae) — see
+    // docs/decomp/NATIVE_GATE_REPAIR_2026-08-27.md §4.
+    //
+    // The sweep turned the bitwise `&` into a logical `&&`.  `flags && 0xF03`
+    // yields 0 or 1, which can never equal 0xF03 (3843), so the early
+    // `return true` is UNREACHABLE and every shot falls through to the focus-flag
+    // path below.  The native port uses the correct mask test.  The match build
+    // below is left exactly as the sweep landed it; reverting it is the project
+    // owner's call, not this lane's.
+    if ((flags & 0xF03) == 0xF03)
+#else
     if ((flags && 0xF03) == 0xF03)
+#endif
         return true;
     else {
         if (!PowerOf2(flags & 0xF8000)) {

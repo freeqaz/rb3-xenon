@@ -82,9 +82,33 @@ BinStream &operator>>(BinStream &bs, CharBoneDir::Recenter &r) {
 INIT_REVS(4, 0)
 
 void CharBoneDir::PreLoad(BinStream &bs) {
+#ifdef HX_NATIVE
+    // ⛔ PERMUTER DEFECT (sweep shard 0, 0c36bc01) — see
+    // docs/decomp/NATIVE_GATE_REPAIR_2026-08-27.md §1.
+    //
+    // The sweep moved LOAD_REVS(bs) to AFTER ObjectDir::PreLoad(bs).  But
+    // ObjectDir::PreLoad ITSELF opens with LOAD_REVS(bs) (obj/Dir.cpp:1248), so
+    // BOTH orderings consume a rev word from the stream — they just consume them
+    // in the opposite order.  The permuted order therefore SWAPS CharBoneDir's
+    // revision with ObjectDir's and mis-parses every CharBoneDir in every .milo.
+    // It is not a compile error; it was found only because ASSERT_REVS(4, 0) was
+    // left stranded ahead of the `d` that LOAD_REVS declares.
+    //
+    // Dir.cpp:1248-1249 is also the house ordering oracle: LOAD_REVS, then
+    // ASSERT_REVS, then use.  The native port actually loads these assets, so it
+    // keeps the correct order.  The match build below is left exactly as the
+    // sweep landed it — reverting it is the project owner's call, not this
+    // lane's.
+    LOAD_REVS(bs)
     ASSERT_REVS(4, 0)
     ObjectDir::PreLoad(bs);
+#else
+    // NOTE: ASSERT_REVS is empty in the match build (obj/Object.h:1739, lane
+    // CP-2), so moving it below LOAD_REVS changes ZERO preprocessed tokens here.
+    ObjectDir::PreLoad(bs);
     LOAD_REVS(bs)
+    ASSERT_REVS(4, 0)
+#endif
     d.PushRev(this);
 }
 
