@@ -1453,6 +1453,7 @@
  "0x822897a8": "??_EBandCharacter@@WEKI@AAPAXI@Z",
  "0x822897b8": "?SetType@BandCharacter@@UAAXVSymbol@@@Z",
  "0x82289918": "?GetEyes@BandCharacter@@UAAPAVCharEyes@@XZ",
+ "0x8227e168": "?Replace@BandCharacter@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82289920": "?Replace@BandCharacter@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
   "0x82289980": "?PreLoad@BandCharacter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x82289930": "?DataDir@ObjectDir@@$4PPPPPPPM@HFA@AAPAV1@XZ",
