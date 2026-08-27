@@ -110,9 +110,13 @@ void UGCPurchasePanel::Poll() {
         MILO_ASSERT(mPurchaser, 0x71);
         mPurchaser->Poll();
         if (!mPurchaser->IsPurchasing()) {
-            if (mPurchaser->PurchaseMade()) {
+            // slot 3 (0xc) is IsSuccess, slot 4 (0x10) is PurchaseMade -- see
+            // StorePurchaser.h.  Retail @ 0x8263f018 dispatches 0xc, stores 6 to
+            // +0x3c, then dispatches 0x10 and `stb r3, 0x50`.  Swapped with the
+            // declaration order, so the emitted offsets are unchanged.
+            if (mPurchaser->IsSuccess()) {
                 mPurchaseState = 6;
-                unk4c = mPurchaser->IsSuccess();
+                unk4c = mPurchaser->PurchaseMade();
                 if (unk4c) {
                     TheSongMgr.ClearFromCache(TheSongMgr.ContentName(mSong, true));
                 }
