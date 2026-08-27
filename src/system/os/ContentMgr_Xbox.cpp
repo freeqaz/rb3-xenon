@@ -265,17 +265,25 @@ bool XboxContentMgr::IsMounted(Symbol name) {
     return ret;
 }
 
+// Retail body, read off 0x82520668.  Two things our DC3-derived version did
+// that RB3 retail demonstrably does NOT do:
+//   - no null check on the dynamic_cast: retail does `bl __RTDynamicCast`
+//     and then `lwz r11,0x0(r3)` on the result with no intervening compare,
+//     so the source dereferences it unconditionally;
+//   - no displayName write: the whole body contains exactly TWO vcalls,
+//     slot 11 (FileName) and slot 14 (XboxContent::IsCorrupt).  There is no
+//     slot-12 (DisplayName) call, and r5 -- the displayName reference -- is
+//     never read or written anywhere in the 140 bytes.
+// DC3 has `ret = (*it)->IsCorrupt(); displayName = (*it)->DisplayName();`
+// and needs no cast because DC3 moved IsCorrupt onto the Content base.  RB3
+// is the OLDER form: IsCorrupt lives only on XboxContent, hence the cast.
 bool XboxContentMgr::IsCorrupt(Symbol contentName, const char *&displayName) {
-    bool ret = false;
     FOREACH (it, mContents) {
         if (contentName == (*it)->FileName()) {
-            XboxContent *xc = dynamic_cast<XboxContent *>(*it);
-            if (xc) ret = xc->IsCorrupt();
-            displayName = (*it)->DisplayName();
-            break;
+            return dynamic_cast<XboxContent *>(*it)->IsCorrupt();
         }
     }
-    return ret;
+    return false;
 }
 
 bool XboxContentMgr::DeleteContent(Symbol contentName) {
