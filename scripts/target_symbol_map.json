@@ -10434,6 +10434,7 @@
  "0x825204b0": "?DeleteContent@XboxContentMgr@@UAA_NVSymbol@@@Z",
  "0x82520540": "?IsDeleteDone@XboxContentMgr@@UAA_NVSymbol@@@Z",
  "0x825205d8": "?GetLicenseBits@XboxContentMgr@@UAA_NVSymbol@@AAK@Z",
+ "0x82520668": "?IsCorrupt@XboxContentMgr@@UAA_NVSymbol@@AAPBD@Z",
  "0x825206f8": "?NotifyMounted@XboxContentMgr@@MAAXPAVContent@@@Z",
  "0x825207a0": "?NotifyUnmounted@XboxContentMgr@@MAAXPAVContent@@@Z",
  "0x82520830": "?NotifyFailed@XboxContentMgr@@MAAXPAVContent@@@Z",
