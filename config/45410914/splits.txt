@@ -2137,9 +2137,6 @@ CDReader.cpp:
 	.text       start:0x82533900 end:0x82533C68
 
 ContentMgr_Xbox.cpp:
-	.pdata      start:0x8220A1E8 end:0x8220A208
-	.pdata      start:0x8220A258 end:0x8220A260
-	.pdata      start:0x8220EB60 end:0x8220EB68
 	.pdata      start:0x822187A8 end:0x822187C8
 	.pdata      start:0x82218C30 end:0x82218DF8
 	.text       start:0x8251B900 end:0x8251BA00
@@ -5065,9 +5062,7 @@ Env.cpp:
 	.pdata      start:0x8220A100 end:0x8220A108
 	.pdata      start:0x8220A108 end:0x8220A148
 	.pdata      start:0x8220A148 end:0x8220A1E0
-	.pdata      start:0x8220A1E0 end:0x8220A1E8
-	.pdata      start:0x8220A208 end:0x8220A258
-	.pdata      start:0x8220A260 end:0x8220A278
+	.pdata      start:0x8220A1E0 end:0x8220A278
 	.pdata      start:0x8220A278 end:0x8220A280
 	.pdata      start:0x8220A280 end:0x8220A2B0
 	.pdata      start:0x8220A2B0 end:0x8220A2B8
@@ -8015,8 +8010,7 @@ MatAnim.cpp:
 	.pdata      start:0x8220E7B0 end:0x8220E7B8
 	.pdata      start:0x8220E998 end:0x8220E9F8
 	.pdata      start:0x8220EA08 end:0x8220EA90
-	.pdata      start:0x8220EA98 end:0x8220EB60
-	.pdata      start:0x8220EB68 end:0x8220EB98
+	.pdata      start:0x8220EA98 end:0x8220EB98
 	.pdata      start:0x8220EBA0 end:0x8220EBF8
 	.text       start:0x82270298 end:0x822702F0
 	.text       start:0x82272798 end:0x82272948
