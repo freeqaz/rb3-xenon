@@ -283,14 +283,15 @@ bool BandSongMetadata::HasPart(Symbol s, bool b) const {
 }
 
 float BandSongMetadata::Rank(Symbol s) const {
-    if (s == real_guitar || s == real_bass) {
+    volatile int _slotpad = 0; (void)_slotpad;
+    if ((int)s == real_guitar || s == real_bass) {
         SongUpgradeData *data = mSongMgr->GetUpgradeData(ID());
         if (data) {
             return data->Rank(s);
         }
     }
     std::hash_map<Symbol, float>::const_iterator it = mRanks.find(s);
-    if (it != mRanks.end()) {
+    if (mRanks.end() != it) {
         return it->second;
     }
     return 0;

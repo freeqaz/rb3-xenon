@@ -847,25 +847,27 @@ bool BandSongMgr::SongCacheNeedsWrite() const {
 
 void BandSongMgr::ClearSongCacheNeedsWrite() {
     SongMgr::ClearSongCacheNeedsWrite();
-    mUpgradeMgr->ClearSongCacheNeedsWrite();
+    if (mUpgradeMgr)
+        mUpgradeMgr->ClearSongCacheNeedsWrite();
 }
 
 void BandSongMgr::ReadCachedMetadataFromStream(BinStream &bs, int rev) {
     int count;
     bs >> count;
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; (int)(int)(int)i < count; i++) {
         int i40;
         bs >> i40;
         bool remove;
         int maxCount;
         do {
             maxCount = mMaxSongCount;
-            if (maxCount <= GetCurSongCount())
+            auto _tmp0 = GetCurSongCount();
+            if (_tmp0 >= maxCount)
                 break;
             remove = RemoveOldestCachedContent();
         } while (remove);
         maxCount = mMaxSongCount;
-        if (maxCount <= GetCurSongCount()) {
+        if (GetCurSongCount() >= maxCount) {
             BandSongMetadata data(this);
             data.Load(bs);
         } else {

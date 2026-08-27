@@ -143,12 +143,13 @@ CharClipDriver *CharClipDriver::Exit(bool b) {
 void CharClipDriver::ExecuteEvent(Symbol sym) {
     if (sym.Null())
         return;
-    static Symbol clip_event("clip_event");
     Hmx::Object *owner = mClip.RefOwner();
+    auto _e0 = DataNode(0);
+    static Symbol clip_event("clip_event");
+    static Message msg(clip_event, _e0, _e0, _e0);
     Hmx::Object *exportTarget = owner->Dir();
-    static Message msg(clip_event, DataNode(0), DataNode(0), DataNode(0));
-    msg[0] = DataNode(sym);
     msg[1] = DataNode(mClip.Ptr());
+    msg[0] = DataNode(sym);
     exportTarget->Export(msg, true);
 }
 
