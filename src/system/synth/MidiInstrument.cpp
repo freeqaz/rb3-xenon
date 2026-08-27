@@ -36,11 +36,16 @@ NoteVoiceInst::NoteVoiceInst(
 }
 
 NoteVoiceInst::~NoteVoiceInst() { RELEASE(mSample); }
+template <class _T>
+__declspec(noinline) auto _outline_Faders(_T* _obj) -> decltype(_obj->Faders()) {
+    return _obj->Faders();
+}
+
 
 void NoteVoiceInst::Start() {
     mStarted = true;
     mSample->SetStartProgress(mStartProgress);
-    mSample->Play(mOwner->Faders().GetVal() + mVolume);
+    mSample->Play(_outline_Faders(mOwner).GetVal() + mVolume);
 }
 
 void NoteVoiceInst::Stop() {

@@ -58,9 +58,9 @@ void RndEnviron::Save(BinStream &bs) {
     bs << (const Vector4 &)mAmbientColor << mFogStart << mFogEnd
        << (const Vector4 &)mFogColor;
     bs << mFogEnable;
+    bs << mFadeStart;
     bs << mAnimateFromPreset;
     bs << mFadeOut;
-    bs << mFadeStart;
     bs << mFadeEnd;
     bs << mFadeMax;
     bs << mFadeRef << mLRFade;

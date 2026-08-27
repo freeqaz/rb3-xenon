@@ -1232,6 +1232,7 @@ void Spotlight::BuildCone(BeamDef &def) {
 }
 
 void Spotlight::BuildNGCone(BeamDef &def, int numSegments) {
+    short sideWidth;
     Hmx::Matrix3 identMtx;
     identMtx.x.Set(1.0f, 0.0f, 0.0f);
     identMtx.y.Set(0.0f, 1.0f, 0.0f);
@@ -1282,7 +1283,7 @@ void Spotlight::BuildNGCone(BeamDef &def, int numSegments) {
         float sinH = (float)std::sin((double)halfAngle);
         float segU = (float)seg / numSegsF;
 
-        for (unsigned int v = 0; v < 3; v++) {
+        for (unsigned int v = 0; v < 3; v++, iVert++) {
             float uvV = (float)v * halfStep;
             if (v <= 1) {
                 float t = (float)v;
@@ -1318,10 +1319,8 @@ void Spotlight::BuildNGCone(BeamDef &def, int numSegments) {
             }
             verts[iVert].color.Set(1.0f, 1.0f, 1.0f, 1.0f);
             verts[iVert].tex.Set(segU, uvV);
-            iVert++;
         }
 
-        short sideWidth;
         if (seg < numSegments - 1) {
             sideWidth = 3;
         } else {
@@ -1365,10 +1364,10 @@ void Spotlight::BuildNGCone(BeamDef &def, int numSegments) {
     float pz = verts[baseVertIdx].pos.z;
     verts[baseVertIdx].pos.z =
         orientMtx.y.z * py + (orientMtx.x.z * px + orientMtx.z.z * pz);
-    verts[baseVertIdx].pos.y =
-        orientMtx.y.y * py + (orientMtx.x.y * px + orientMtx.z.y * pz);
     verts[baseVertIdx].pos.x =
         px * orientMtx.x.x + (orientMtx.z.x * pz + orientMtx.y.x * py);
+    verts[baseVertIdx].pos.y =
+        orientMtx.y.y * py + (orientMtx.x.y * px + orientMtx.z.y * pz);
     verts[baseVertIdx].color.Set(1.0f, 1.0f, 1.0f, 1.0f);
     verts[baseVertIdx].tex.Set(0.0f, 1.0f);
 
