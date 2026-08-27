@@ -183,11 +183,13 @@ void MemTrackReport(int i1, bool b2) {
             gMemTracker->Report(i1, *gLog);
             PoolReport(*gLog);
             StopLog();
+            if (gMemTracker)
+                gMemTracker->DiffDump(*gLog);
             StartLog("mem_diff");
-            gMemTracker->DiffDump(*gLog);
             StopLog();
         } else {
-            gMemTracker->DiffDump(TheDebug);
+            if (gMemTracker)
+                gMemTracker->DiffDump(TheDebug);
         }
     }
 }

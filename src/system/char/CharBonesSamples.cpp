@@ -480,17 +480,17 @@ void CharBonesSamples::Relativize(CharClip *clip) {
 
 int CharBonesSamples::FracToSample(float *frac) const {
     if (mNumSamples < 2) {
-        *frac = 0.0f;
+        *frac = 0.0;
         return 0;
     }
     float inputFrac = *frac;
-    float clampedFrac = Clamp(0.0f, 1.0f, inputFrac);
+    float clampedFrac = inputFrac < 0.0f ? 0.0 : inputFrac > 1.0f ? 1.0f : inputFrac;
     *frac = clampedFrac;
     int total = Max((int)mFrames.size(), mNumSamples);
     float scaledPos = clampedFrac * (total - 1);
     *frac = scaledPos;
     int sampleIdx = scaledPos;
-    if ((unsigned int)sampleIdx >= total - 1) {
+    if ((int)(unsigned int)sampleIdx >= total - 1) {
         *frac = 0.0f;
         return mNumSamples - 1;
     }
@@ -504,7 +504,7 @@ int CharBonesSamples::FracToSample(float *frac) const {
         ret = interpFrame;
         *frac = interpFrame - ret;
     }
-    if (ret < 0 || ret >= mNumSamples) {
+    if (ret <= -1 || ret >= mNumSamples) {
         MILO_NOTIFY_ONCE(
             "FracToSample: sample is %d, clip only has %d samples, frac was %g, is %g",
             ret,

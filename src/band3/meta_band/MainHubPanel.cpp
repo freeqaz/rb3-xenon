@@ -108,13 +108,14 @@ void MainHubPanel::Enter() {
 
 void MainHubPanel::Poll() {
     UIPanel::Poll();
-    if (mMessageTimer.Running()) {
-        mMessageTimer.Split();
-        if (mMessageTimer.Ms() > mMessageRotationMs) {
-            mMessageTimer.Restart();
+    auto& _ref0 = mMessageTimer;
+    if (_ref0.Running()) {
+        _ref0.Split();
+        if (_ref0.Ms() > mMessageRotationMs) {
+            _ref0.Restart();
             int num = mMessageProvider->NumData();
             if (num == 0) {
-                mMessageTimer.Stop();
+                _ref0.Stop();
                 mCurrentMessage = 0;
                 PrepareProfilesAndMessages();
             } else {

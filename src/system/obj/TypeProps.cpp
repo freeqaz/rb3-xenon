@@ -333,8 +333,8 @@ void TypeProps::RemoveArrayValue(Symbol prop, int i) {
 }
 
 void TypeProps::InsertArrayValue(Symbol key, int i, const DataNode &value) {
-    DataArray *arr = GetArray(key);
-    arr->Insert(i, value);
+    if (GetArray(key))
+        GetArray(key)->Insert(i, value);
     if (value.Type() == kDataObject) {
         Hmx::Object *obj = value.UncheckedObj();
         if (obj) {

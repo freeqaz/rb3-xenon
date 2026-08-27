@@ -292,9 +292,9 @@ void NgSpotlightDrawer::RenderBeams(const Hmx::Matrix4 &viewProj) {
 
 void NgSpotlightDrawer::RenderConeDefs(Spotlight *sl, const Hmx::Color &color) {
     TheShaderMgr.mCullModeOverride = 3;
-    TheShaderMgr.unk24 = 0;
-
     RndMesh *beam = sl->mBeam.mBeam;
+
+    TheShaderMgr.unk24 = 0;
     if (beam && sl->mBeam.mLength > 0.0f) {
         float brighten = sl->mBeam.mBrighten;
         Vector4 colorVec(
@@ -304,16 +304,15 @@ void NgSpotlightDrawer::RenderConeDefs(Spotlight *sl, const Hmx::Color &color) {
 
         SetupXSection(sl, sl->mBeam);
 
-        const Transform &camXfm = mSpotCam->WorldXfm();
-        const Transform &camXfm2 = mSpotCam->WorldXfm();
-
+        Transform camXfm = mSpotCam->WorldXfm();
+        auto _val0 = mSpotCam->WorldXfm();
         float camPosX = camXfm.v.x;
         float camPosY = camXfm.v.y;
         float camPosZ = camXfm.v.z;
 
-        float camUpX = camXfm2.m.y.x;
-        float camUpY = camXfm2.m.y.y;
-        float camUpZ = camXfm2.m.y.z;
+        float camUpX = _val0.m.y.x;
+        float camUpY = _val0.m.y.y;
+        float camUpZ = _val0.m.y.z;
 
         Vector4 camPos(camPosX, camPosY, camPosZ, 1.0f);
         TheShaderMgr.SetPConstant((PShaderConstant)0xa, camPos);
@@ -635,7 +634,7 @@ void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &d
 
     // Save un-normalized copy
     Vector3 toCamOrig = toCam;
-    Normalize(toCam, toCam);
+    Normalize(toCamOrig, toCamOrig);
 
     // Spotlight direction (m.y row of spotlight world transform)
     Vector3 slDir = slXfm.m.y;
@@ -649,14 +648,14 @@ void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &d
     Normalize(perp, perp);
 
     // Beam radii and length
-    Vector2 radii = def.NGRadii();
-    float topR = radii.x;
-    float botR = radii.y;
-
-    float cc = cmpX - cmpY;
-    float ccTop = cc * topR;
-    float ccBot = cc * botR;
     float len = def.mLength;
+    float cc = cmpX - cmpY;
+    Vector2 radii = def.NGRadii();
+
+    float topR = radii.x;
+    float ccTop = cc * topR;
+    float botR = radii.y;
+    float ccBot = cc * botR;
 
     // Copy lightPos to stack
     Vector3 lp = lightPos;
@@ -758,7 +757,7 @@ void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &d
 
     // Inverse distances
     float dist1 = trYs * n1x + (n1z * lightPos.x + trZs * n1y);
-    float inv1 = 0.0f;
+    float inv1 = 0.0;
     if (dist1 != 0.0f) {
         inv1 = 1.0f / dist1;
     }
@@ -766,7 +765,7 @@ void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &d
     float dist2 = trYs * n2x + (n2z * lightPos.x + trZs * n2y);
     float inv2 = 0.0f;
     if (dist2 != 0.0f) {
-        inv2 = 1.0f / dist2;
+        inv2 = 1.0 / dist2;
     }
 
     float pw = inv2 * d2;

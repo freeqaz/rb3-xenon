@@ -963,12 +963,12 @@ void VocalTrackDir::ApplyArrowStyle(Hmx::Object *o) {
 void VocalTrackDir::ApplyFontStyle(Hmx::Object *o) {
     float r20 = 1.0f, g20 = 1.0f, b20 = 1.0f, a20 = 1.0f;
     float r30 = 1.0f, g30 = 1.0f, b30 = 1.0f, a30 = 0.75f;
-    float r40 = 1.0f, g40 = 1.0f, b40 = 1.0f, a40 = 1.0f;
     float r50 = 1.0f, g50 = 1.0f, b50 = 1.0f, a50 = 0.75f;
+    float r40 = 1.0f, g40 = 1.0f, b40 = 1.0f, a40 = 1.0f;
 
     if (mLeadText) {
         mLeadText->SetShowing(false);
-        int packed20 = (int)mLeadText->GetSingleStyleColor();
+        unsigned char packed20 = (int)mLeadText->GetSingleStyleColor();
         r20 = (float)(packed20 & 0xFF) / 255.0f;
         g20 = (float)((packed20 >> 8) & 0xFF) / 255.0f;
         b20 = (float)((packed20 >> 16) & 0xFF) / 255.0f;
@@ -984,7 +984,7 @@ void VocalTrackDir::ApplyFontStyle(Hmx::Object *o) {
     }
     if (mLeadPhonemeText) {
         mLeadPhonemeText->SetShowing(false);
-        int packed40 = (int)mLeadPhonemeText->GetSingleStyleColor();
+        unsigned char packed40 = (int)mLeadPhonemeText->GetSingleStyleColor();
         r40 = (float)(packed40 & 0xFF) / 255.0f;
         g40 = (float)((packed40 >> 8) & 0xFF) / 255.0f;
         b40 = (float)((packed40 >> 16) & 0xFF) / 255.0f;
@@ -998,8 +998,8 @@ void VocalTrackDir::ApplyFontStyle(Hmx::Object *o) {
         b50 = (float)((packed50 >> 16) & 0xFF) / 255.0f;
         a50 = (float)(int)((unsigned)packed50 >> 24) / 255.0f;
     }
-
     int type_matched = 0;
+
     if (o) {
         if (o->Type() == font_style)
             type_matched = 1;

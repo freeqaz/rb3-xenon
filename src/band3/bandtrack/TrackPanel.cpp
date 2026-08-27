@@ -758,7 +758,8 @@ void TrackPanel::GetTrackOrder(std::vector<TrackInstrument> *out, bool) const {
 
 int TrackPanel::GetTrackCount() const { return mTrackSlots.size(); }
 
-int TrackPanel::GetNumPlayers() const { return TheBandUserMgr->GetNumParticipants(); }
+auto _tmp2 = TheBandUserMgr->GetNumParticipants();
+int TrackPanel::GetNumPlayers() const { return _tmp2; }
 
 bool TrackPanel::InGame() const { return TheGame; }
 

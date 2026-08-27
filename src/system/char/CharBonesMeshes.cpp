@@ -36,14 +36,15 @@ void CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
 
 void CharBonesMeshes::ReallocateInternal() {
     CharBonesAlloc::ReallocateInternal();
-    String str;
     {
         ObjVector<ObjOwnerPtr<RndTransformable> > temp(this);
         mMeshes.swap(temp);
     }
-    mMeshes.resize(mBones.size());
+    auto _tmp0 = mBones.size();
+    mMeshes.resize(_tmp0);
     for (int i = 0; i < mMeshes.size(); i++) {
         mMeshes[i] = CharUtlFindBoneTrans(mBones[i].name.Str(), Dir());
+        String str;
         if (!mMeshes[i]) {
             if (strncmp("bone_facing", mBones[i].name.Str(), 0xB)) {
                 str += MakeString("%s, ", mBones[i].name);
