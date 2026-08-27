@@ -371,10 +371,11 @@ void CheckShadow() {
         Hmx::Matrix4 projMtx;
         shadowCam->GetViewProjectXfms(viewXfm, projMtx);
         Hmx::Matrix4 viewProj = Hmx::operator*(viewXfm, projMtx);
+        auto _tmp4 = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
         static Hmx::Matrix4 sShadowTexMatrix(
             Vector4(0.0f, 0.0f, 0.0f, 0.0f),
             Vector4(0.0f, -0.5f, 0.0f, 0.0f),
-            Vector4(0.0f, 0.0f, 1.0f, 0.0f),
+            _tmp4,
             Vector4(0.0f, 0.501953125f, 0.0f, 1.0f)
         );
         viewProj = Hmx::operator*(viewProj, sShadowTexMatrix);
@@ -418,10 +419,13 @@ u64 RndShaderUnwrapUV::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 }
 
 u64 RndShaderDepthVolume::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    return (((u64)(TheHiResScreen.IsActive() & 1) << 29
-        | (u64)(TheRnd.DrawMode() == Rnd::kDrawShadowColor)) << 23)
+    auto _tmp9 = (u64)(TheShaderMgr.unk1c & 3);
+    auto _tmp7 = (u64)(TheRnd.DrawMode() == Rnd::kDrawShadowColor);
+    auto _tmp8 = (u64)(TheHiResScreen.IsActive() & 1);
+    return ((_tmp8 << 29
+        | _tmp7) << 23)
         | (((u64)(TheShaderMgr.BoneCount() != 0) << 11
-        | (u64)(TheShaderMgr.unk1c & 3)) << 1);
+        | _tmp9) << 1);
 }
 
 u64 RndShaderSimple::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
@@ -462,16 +466,16 @@ u64 RndShaderDrawRect::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     int hasDiffuse = mat->GetDiffuseTex() != nullptr;
     bool prelit = mat->Prelit();
     bool offscreen;
-    if (!b) {
-        offscreen = TheNgRnd.Offscreen();
-    } else {
+    if (!(!b)) {
         offscreen = TheShaderMgr.GetUnk41();
+    } else {
+        offscreen = TheNgRnd.Offscreen();
     }
     u64 pseudoHDR = 0;
     if (!offscreen && mat->AllowHDR()) {
         pseudoHDR = 1;
     }
-    return ((((u64)(TheHiResScreen.IsActive() & 1) << 2
+    return ((((u64)(TheHiResScreen.IsActive() && 1) << 2
         | (u64)(TheRnd.ResourceCached() & 1)) << 28
         | pseudoHDR) << 22)
         | (((u64)(prelit & 1) << 4 | (u64)hasDiffuse) << 4);
@@ -482,30 +486,34 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     int hasDiffuse = mat->GetDiffuseTex() != nullptr;
     int texGen = mat->GetTexGen();
     uint texGenVal;
-    if (texGen == kTexGenSphere) {
-        texGenVal = 1;
-    } else if (texGen == kTexGenProjected) {
-        texGenVal = 2;
-    } else {
-        texGenVal = -(uint)(texGen == kTexGenEnviron) & 3;
-    }
+                                switch (texGen) {
+                    case kTexGenSphere:
+                    texGenVal = 1;
+                    break;
+                    case kTexGenProjected:
+                    texGenVal = 2;
+                    break;
+                    default:
+                    texGenVal = -(uint)(texGen == kTexGenEnviron) & 3;
+                    break;
+                }
     bool fadeOut;
-    if (!b) {
+    if (!(!b)) {
+        fadeOut = mat->FadeOut();
+    } else {
         if (!env->FadeOut() || env->FadeEnd() == env->FadeStart()) {
             fadeOut = false;
         } else {
             fadeOut = true;
         }
-    } else {
-        fadeOut = mat->FadeOut();
     }
     u64 pseudoHDR;
     if (!fadeOut) {
         bool offscreen;
-        if (!b) {
-            offscreen = TheNgRnd.Offscreen();
-        } else {
+        if (!(!b)) {
             offscreen = TheShaderMgr.GetUnk41();
+        } else {
+            offscreen = TheNgRnd.Offscreen();
         }
         if (!offscreen && mat->AllowHDR()) {
             pseudoHDR = 1;
@@ -552,8 +560,6 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     NgEnviron *env = (NgEnviron *)RndEnviron::Current();
     if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return 0;
-    int hasDiffuse = mat->GetDiffuseTex() != nullptr;
-    bool prelit = mat->Prelit();
     u64 hasRealLights;
     if (!mat->UseEnviron()) {
         hasRealLights = 0;
@@ -566,9 +572,11 @@ u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     } else {
         hasApproxLights = (env->NumLights_Approx() >= 1) ? 1 : 0;
     }
+    int texGen = mat->GetTexGen();
     u64 opts = hasApproxLights << 0x11
         | hasRealLights << 0x10
-        | (((u64)(prelit & 1) << 4 | (u64)hasDiffuse) << 4);
+        | (((u64)(mat->Prelit() & 1) << 4 | (u64)(mat->GetDiffuseTex() != nullptr)) << 4);
+    uint texGenVal;
     if (hasRealLights || hasApproxLights) {
         u64 hasSpecular = ((int)(mat->GetSpecularRGB().blue * 255.0f) & 0xff) != 0
             || ((int)(mat->GetSpecularRGB().green * 255.0f) & 0xff) != 0
@@ -626,10 +634,6 @@ u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
         int numPointLights = env->NumLights_Point();
         opts |= ((s64)numPointLights & 3U) << 0x28;
     }
-    int emissiveMap = mat->GetEmissiveMap() != nullptr;
-    bool intensify = mat->GetIntensify();
-    int texGen = mat->GetTexGen();
-    uint texGenVal;
     if (texGen == kTexGenSphere) {
         texGenVal = 1;
     } else if (texGen == kTexGenProjected) {
@@ -682,7 +686,7 @@ u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
         | (u64)fog << 0x12
         | pseudoHDR << 0x16
         | (s64)(int)texGenVal << 10
-        | (((u64)(intensify & 1) << 0x2e | (u64)(emissiveMap != 0)) << 7 | opts);
+        | (((u64)(mat->GetIntensify() & 1) << 0x2e | (u64)((mat->GetEmissiveMap() != nullptr) != 0)) << 7 | opts);
     if (!(opts & 0x100) && TheShaderMgr.UseAO()
         && env->AOEnabled() && 0.003f < env->AOStrength()) {
         shaderOpts |= 0x4000000000;
@@ -903,28 +907,28 @@ u64 RndShaderStandard::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 }
 
 u64 RndShaderPostProc::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    bool v2a = TheShaderMgr.unk2a;
-    bool v2e = TheShaderMgr.unk2e;
-    bool v25 = TheShaderMgr.unk25;
-    bool v39 = TheShaderMgr.unk39;
-    bool v3d = TheShaderMgr.unk3d;
-    bool v3f = TheShaderMgr.unk3f;
-    bool v29 = TheShaderMgr.unk29;
-    bool v2d = TheShaderMgr.unk2d;
+    unsigned char v25 = TheShaderMgr.unk25;
     bool v26 = TheShaderMgr.unk26;
-    bool v27 = TheShaderMgr.unk27;
+    bool v3d = TheShaderMgr.unk3d;
     bool v28 = TheShaderMgr.unk28;
-    bool v2f = TheShaderMgr.unk2f;
-    bool v30 = TheShaderMgr.unk30;
-    bool v2c = TheShaderMgr.unk2c;
+    bool v27 = TheShaderMgr.unk27;
+    bool v3e = TheShaderMgr.unk3e;
+    bool v3b = TheShaderMgr.unk3b;
     bool v31 = TheShaderMgr.unk31;
-    bool v2b = TheShaderMgr.unk2b;
-    uint v34 = TheShaderMgr.unk34;
     bool v38 = TheShaderMgr.unk38;
     bool v3a = TheShaderMgr.unk3a;
-    bool v3b = TheShaderMgr.unk3b;
+    unsigned char v2a = TheShaderMgr.unk2a;
+    bool v3f = TheShaderMgr.unk3f;
+    bool v29 = TheShaderMgr.unk29;
+    bool v2c = TheShaderMgr.unk2c;
+    bool v39 = TheShaderMgr.unk39;
+    bool v2d = TheShaderMgr.unk2d;
     bool v3c = TheShaderMgr.unk3c;
-    bool v3e = TheShaderMgr.unk3e;
+    bool v2f = TheShaderMgr.unk2f;
+    uint v34 = TheShaderMgr.unk34;
+    bool v2e = TheShaderMgr.unk2e;
+    bool v30 = TheShaderMgr.unk30;
+    bool v2b = TheShaderMgr.unk2b;
     TheShaderMgr.unk29 = false;
     TheShaderMgr.unk2d = false;
     TheShaderMgr.unk2e = false;
@@ -947,8 +951,10 @@ u64 RndShaderPostProc::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     TheShaderMgr.unk34 = 0;
     TheShaderMgr.unk3e = false;
     TheShaderMgr.unk3f = false;
-    return ((((((((((((((((((((((((u64)(v2a & 1) << 10
-        | (u64)(TheHiResScreen.IsActive() & 1)) << 1 | (u64)(v25 & 1)) << 4 | (u64)(v2e & 1))
+    auto _tmp5 = (u64)(v25 & 1);
+    auto _tmp1 = (u64)(v2a & 1);
+    return (((((((((((((((((((((((_tmp1 << 10
+        | (u64)(TheHiResScreen.IsActive() && 1)) << 1 | _tmp5) << 4 | (u64)(v2e & 1))
         << 2 | (u64)(v3f & 1)) << 2 | (u64)(v3d & 1)) << 1 | (u64)(v39 & 1)) << 5
         | (u64)(v28 & 1)) << 1 | (u64)(v3e & 1)) << 0xb
         | (u64)(v3a & 1)) << 1 | (u64)(v38 & 1)) << 2
@@ -965,10 +971,10 @@ u64 RndShaderFur::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     int hasDiffuse = mat->GetDiffuseTex() != nullptr;
     bool prelit = mat->Prelit();
     u64 hasRealLights;
-    if (!mat->UseEnviron()) {
-        hasRealLights = 0;
+    if (!(!mat->UseEnviron())) {
+        hasRealLights = (((NgEnviron *)env)->NumLights_Real() > 0) ? 1 : 0;
     } else {
-        hasRealLights = (((NgEnviron *)env)->NumLights_Real() >= 1) ? 1 : 0;
+        hasRealLights = 0;
     }
     u64 hasApproxLights;
     if (!mat->UseEnviron()) {
@@ -991,7 +997,7 @@ u64 RndShaderFur::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
             hasRecvProjLights = (((NgEnviron *)env)->NumLights_Proj() >= 1);
         }
         u64 hasPointCubeTex;
-        if (!mat->GetRecvPointCubeTex() || ((NgEnviron *)env)->NumLights_Point() < 1) {
+        if (!mat->GetRecvPointCubeTex() || ((NgEnviron *)env)->NumLights_Point() <= 0) {
             hasPointCubeTex = 0;
         } else {
             hasPointCubeTex = ((NgEnviron *)env)->HasPointCubeTex() ? 1 : 0;
