@@ -1995,3 +1995,207 @@ ruler is structurally blind to for sub-100 rows.
   carry no pins of these names.
 - **`ThreadWrite` (99.52) and `ThreadDelete` (99.04)** remain the unit's two
   named near-misses; untouched, unrelated to this defect.
+
+## §21 — wave 12 (2026-08-27, lane PRELOAD): the same-class method-level swap both detectors are blind to, and a 140 B body that was already perfect
+
+⚠ Renumbered §20 → §21 on landing: lane CACHEXBOX landed its own §20 the
+same day (both lanes checked main and all five live `vt-*` branches while
+each was still at §19 — concurrent lanes cannot see one another).  Nothing
+in this section depends on the number; the internal `§21b` back-reference
+was moved with it.
+
+**Result: `+152 B / +2 matched functions`, whole-binary, both rulers.**
+Commits `4153e5cd` (slots 2 and 18) and `99ab9ed1` (the body name).
+
+### 20a. The defect, and why the two shipped detectors cannot see it
+
+`0x82289920` carried
+`?PreLoad@BandCharacter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z`. It is wrong: the
+address is the adjustor thunk for **`Replace`**, and `PreLoad`'s thunk is
+`0x82289980`, which was **unnamed**.
+
+Both detectors in `tools/thunk_target_audit.py` pass this row:
+
+- the **name-consistency** test can't fire, because `0x82289920`'s branch
+  target `0x8227e168` was **unnamed** (`TARGET_UNNAMED`, the bucket the audit
+  skips);
+- the **stronger RTTI test** (thunk-class must equal the referencing vtable's
+  `??_R4` owner) passes **trivially** — the thunk says `BandCharacter`, the
+  vtable's COL says `BandCharacter`. ★ **RTTI gives the CLASS and never the
+  METHOD**, so on a same-class method-level swap it is not weak evidence, it
+  is *no* evidence. This is the docstring's "53 method-only" bucket.
+
+⇒ **the adjudication had to come from the SLOT INDEX**, which is the one thing
+neither detector consults.
+
+### 20b. What settled it — three independent retail-byte proofs, no oracle
+
+Both thunks are `lwz r11,-4(r3); subf r3,r11,r3; b <body>` and are referenced
+from the **same** vtable `0x82012cf4`, whose `??_R4` COL has **`offset 0x7f4`**
+— the **`Hmx::Object` VIRTUAL base subobject table**, which is why they are
+`$4` vtordisp thunks at all. `0x82289920` is **slot 2**, `0x82289980` is
+**slot 18**.
+
+**Proof 1 — `Hmx::Object`'s own vtable names 17 of its 21 slots directly.**
+There is exactly **one** `.?AVObject@Hmx@@` vtable in the binary
+(`0x8200f40c`, COL offset 0), so its slots carry un-thunked, directly-named
+functions. Slot 18 there is `0x8269d940`:
+
+```
+81630000   lwz   r11, 0(r3)        # vptr
+816b0028   lwz   r11, 0x28(r11)    # slot 10  <-- 0x28/4 == 10
+7d6903a6   mtctr r11
+4e800420   bctr                    # tail-call
+```
+
+and the *same table* names slot 10 `?Load@Object@Hmx@@UAAXAAVBinStream@@@Z`.
+That is literally `Object::PreLoad(BinStream& bs) { Load(bs); }`. **This was
+pre-registered as a falsifiable prediction — "if slot 18 is PreLoad its
+`Hmx::Object` body must tail-call slot 10, offset `0x28`" — before the bytes
+were read.** ⇒ **slot 18 is PreLoad.**
+
+★ It also explains the shape of the whole table: slots **1, 2, 11, 12, 13, 14,
+19** all ICF-fold into the **4-byte `blr` hub at `0x826c3888`** — because
+`Object`'s empty virtuals (`Replace`, `PreSave`, `PostSave`, `Print`,
+`Export`, `PostLoad`) and `RefOwner() const { return this; }` **compile to the
+same single instruction** (a `void f(){}` and a "return `this` already in r3"
+are byte-identical). Slot 3 is a *different* hub, `li r3,0; blr` — that is
+`IsDirPtr() { return false; }`, folded with `GetCrowdMeter@TrackPanelDirBase`.
+**PreLoad is the one non-trivial one, which is exactly why slot 18 stands out.**
+
+**Proof 2 — arity.** `0x8227e168` executes `mr r29,r5` at instruction 7,
+before any call that could define r5, so **r5 is an incoming argument** ⇒ two
+parameters. `PreLoad(BinStream&)` has one. It therefore **cannot** be PreLoad.
+
+**Proof 3 — the callee.** `0x8227e168`'s first real call is to `0x8236dbf8` =
+`?Replace@Character@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z` — its own base class's
+`Replace`. ⇒ `0x8227e168` is
+`?Replace@BandCharacter@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z`.
+
+Our `Object.h:1979-2056` declaration order reproduces all 17 named slots and
+puts `Replace` at 2 and `PreLoad` at 18. ★ **That is corroboration, not
+evidence** — the 17-slot agreement is what licenses reading the remaining four
+off the header, and it is stated in that order deliberately.
+
+### 20c. The brief was right in verdict and wrong in shape
+
+It described "a swap": two names exchanged. It is **one WRONG name plus one
+ABSENT one** — `0x82289980` was never named at all. That distinction is not
+cosmetic, because it determines the sign of the metric:
+
+| address | before | after |
+|---|---|---|
+| `0x82289920` | `PreLoad` thunk, **fuzzy 100** | `Replace` thunk, fuzzy 100 |
+| `0x82289980` | `fn_82289980`, **fuzzy 0**, unpaired | `PreLoad` thunk, fuzzy 100 |
+
+The 100 on the wrong row was **FALSE** — collected because the target
+`0x8227e168` was unnamed and `is_placeholder_symbol_name` **forgives** a
+placeholder callee, so the name was never charged. ★ The brief predicted the
+repair would therefore "show as a regression". **It did not, and the reason is
+worth keeping:** the vacated address received a name whose target was *also*
+still unnamed, so its forgiveness — and its 12 B — survived the rename. **A
+correction only reads as a regression when the false-100 row's target is named
+on the correct side and unnamed on the wrong one.** Here both were unnamed, so
+the repair was pure upside: `+12 B / +1 fn`, on **both** rulers.
+
+### 20d. The per-unit pairing gate (the check that cost an earlier lane 9 rows)
+
+Both addresses are inside **`BandCharacter.cpp`**'s `.text`
+(`0x82289754-0x8228a23c`) in `splits.txt` — one unit, no boundary problem.
+This worktree's **BUILT** base obj
+(`build/45410914/src/system/bandobj/BandCharacter.obj`, 12,406 symbols)
+defines **all four** spellings. No `symbol_aliases.json` group covers any of
+them.
+
+⚠ **The anti-vacuity control was run FIRST**: three known-good names
+(`?PreLoad@BandCharacter@@UAA...`, `?PostLoad@...$4...`, `?Save@...$4...`)
+read **YES on both base and target**. Without that, "absent" is
+indistinguishable from the reflinked-worktree pre-renamer artifact
+(FOLDPROVE-2), which returns a unanimous negative that *agrees with your
+prior*.
+
+★ **And a second vacuity nearly landed anyway.** An intermediate step
+concluded "the Replace body is not carved as a symbol at all — naming it would
+be inert" (the phantom-row hazard). **That was FALSE**, and it was a
+lowercase-hex artifact: the target `.s` and `.obj` spell it **`fn_8227E168`**,
+uppercase, while `report.json` rows like `fn_82289980` are all-digits and hide
+the issue. A case-sensitive substring search returned a clean, decisive,
+**wrong** negative — the same family as the `grep`-binary trap, and it would
+have closed a **140 B** vein. ⇒ **case-fold every `fn_<addr>` lookup**; the
+digits-only addresses are exactly the ones that won't warn you.
+
+### 20e. Naming the body — priced as a bet before it was taken
+
+Naming an anonymous address converts **forgiven** call sites into **checked**
+ones, so the caller population is priced first. A whole-`.text` scan for
+branches to `0x8227e168` finds **exactly one**, at `0x82289928` — **the `b` of
+the thunk itself**. Zero other callers, and the body is unreachable
+un-thunked (`Hmx::Object` is a virtual base here, so `Replace` appears only in
+the `0x7f4` subobject table). No cascade to misprice.
+
+**Pre-registered:** most likely `Δ0` bytes (a 140 B body rarely reaches 100 on
+first pairing); upside `+140`; downside `−12` if our compiled `$4` thunk
+branched to some other symbol. **Measured the upside** — the row went
+`fuzzy 0 → 100.0` immediately, i.e. **our `BandCharacter::Replace` was already
+byte-exact and merely invisible.**
+
+★★ **That is `PAIRABILITY IS A CORRECTNESS INSTRUMENT` demonstrating itself:
+an UNPAIRED row looks identical to a row with nothing wrong.** 140 B of
+perfect code sat at 0 for want of a name, and no source-side instrument could
+have distinguished it from broken code.
+
+★ Doing this was also **not optional for accuracy**: fixing the spelling
+*without* naming the target would have left `0x82289920` scoring 100 for the
+same forgiven-placeholder reason the whole section is about — a second
+instance of the disease, created by the fix for the first.
+
+### 20f. Measurements (`tools/ab_measure.py --from-dirty`, both legs at a `symbols.txt` split fixed point)
+
+| commit | ruler | Δmatched | Δcode_bytes | Δcode% |
+|---|---|---|---|---|
+| `4153e5cd` slots 2/18 | graded `name_check` | **+1** | **+12** | +0.000117pp |
+| `4153e5cd` | `none` control | +1 | **+12** | +0.000118pp |
+| `99ab9ed1` body name | graded `name_check` | **+1** | **+140** | +0.001367pp |
+| `99ab9ed1` | `none` control | +1 | **+140** | +0.001367pp |
+
+`none` was read explicitly on both — **not** for alias adjudication (where it
+is `NOT_APPLICABLE`) but for **un-pairing**, the failure mode the graded ruler
+is structurally blind to (rows sitting at 98.33 contribute 0 bytes, so
+un-pairing them costs graded exactly 0; only `none` showed the earlier lane's
+−108 B = 9×12). Both runs read **`REAL_PAIRING`, positive** — no row was
+un-paired. Row states after:
+
+```
+?Replace@BandCharacter@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z        140 B  fuzzy 100.0
+?Replace@BandCharacter@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z 12 B  fuzzy 100.0  (EARNED, not forgiven)
+?PreLoad@BandCharacter@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z          12 B  fuzzy 100.0
+?PreLoad@BandCharacter@@UAAXAAVBinStream@@@Z                     140 B  fuzzy  84.28571  (untouched)
+```
+
+### 20g. Deliberately NOT done
+
+- **`?PreLoad@BandCharacter@@UAAXAAVBinStream@@@Z` (140 B, fuzzy 84.28571) was
+  not touched.** It is a pre-existing *body* residual — a source-matching
+  problem, not a naming one — and this lane's mandate was the map. It is now
+  correctly named and correctly paired, so it is a clean hand-off.
+- **`0x82289748` / `Line.cpp` was not repaired.** The audit's docstring flags
+  it, and it reproduces: `splits.txt` puts `0x82289748` (the **slot-4
+  `ClassName` thunk of this very vtable**) inside `Line.cpp`'s
+  `.text 0x82289748-0x82289754`, while its body `0x822896e0` is in
+  `BandCharacter.cpp`'s. A thunk belongs to its body's TU, so **a pin boundary
+  is wrong** — but re-homing an already-pinned address is **not** metric-neutral
+  (PINHOME-1: +3 fn / +428 B), so it needs its own lane and its own A/B. It is
+  a 12-byte, single-line, fully-diagnosed candidate sitting adjacent to this
+  work.
+- **The other ~52 same-class method-only rows in the audit's blind bucket were
+  not swept.** Each needs the slot-index adjudication done here, individually.
+  ⛔ Do **not** bulk-rename them: renaming a thunk after its target lifts
+  `name_check` **by construction**, which is the ALIAS_SUSPECT metric-fitting
+  shape. The reusable recipe is §21b — find the base class's own
+  offset-0 vtable, use its directly-named slots to validate the header's
+  declaration order, then read the disputed slot off the validated order and
+  confirm with an independent byte fact (arity or first callee).
+- **No detector change was made to `tools/thunk_target_audit.py`.** The
+  slot-index test is a real third instrument and would judge the whole
+  `TARGET_UNNAMED` bucket, but building and *validating* it (it needs a control
+  that can fail) is a tooling lane, not this one.
