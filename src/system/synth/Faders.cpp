@@ -234,13 +234,18 @@ void FaderGroup::Save(BinStream &bs) {
     }
     bs << pList;
 }
+template <class _T>
+__declspec(noinline) auto _outline_Owner(_T* _obj) -> decltype(_obj->Owner()) {
+    return _obj->Owner();
+}
+
 
 // fn_80670CA8
 void FaderGroup::Load(BinStream &bs) {
     int rev;
     bs >> rev;
     MILO_ASSERT(rev <= kGroupRev, 0x187);
-    ObjPtrList<Fader> pList(mFaders.Owner(), kObjListNoNull);
+    ObjPtrList<Fader> pList(_outline_Owner(&mFaders), kObjListNoNull);
     bs >> pList;
     for (ObjPtrList<Fader>::iterator it = mFaders.begin(); it != mFaders.end(); it) {
         Fader *f = *it++;

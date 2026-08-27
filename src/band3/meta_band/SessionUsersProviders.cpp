@@ -107,7 +107,9 @@ void SessionUsersProvider::Text(int, int data, UIListLabel *slot, UILabel *label
 
 RndMat *SessionUsersProvider::Mat(int, int data, UIListMesh *slot) const {
     MILO_ASSERT_RANGE(data, 0, mUsers.size(), 0xB9);
-    if (slot->Matches("check")) {
+    bool _cond = slot->Matches("check");
+    auto _tmp0 = slot->DefaultMat();
+    if (_cond) {
         if (unk28) {
             MILO_ASSERT(mCheckedMat, 0xBE);
             MILO_ASSERT(mUncheckedMat, 0xBF);
@@ -118,7 +120,7 @@ RndMat *SessionUsersProvider::Mat(int, int data, UIListMesh *slot) const {
         } else
             return nullptr;
     } else
-        return slot->DefaultMat();
+        return _tmp0;
 }
 
 int SessionUsersProvider::NumData() const { return mUsers.size(); }

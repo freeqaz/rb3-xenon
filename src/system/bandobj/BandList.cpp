@@ -65,12 +65,11 @@ END_LOADS
 void BandList::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(0x16, 0);
-    mBandListRev = gRev;
-    if (mBandListRev <= 0x11) {
+        if (!(mBandListRev = gRev <= 0x11)) {
+        UIList::PreLoad(bs);
+    } else {
         BinStreamRev d(bs, mBandListRev);
         UIList::PreLoadWithRev(d);
-    } else {
-        UIList::PreLoad(bs);
     }
 }
 

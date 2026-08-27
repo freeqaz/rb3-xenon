@@ -55,11 +55,13 @@ const float sMaxThreshold = 80;
 bool CharLookAt::sDisableJitter = false;
 
 CharLookAt::CharLookAt()
-    : mSource(this), mPivot(this), mTarget(this), mHalfTime(0), mMinYaw(-80), mMaxYaw(80),
-      mMinPitch(-80), mMaxPitch(sMaxThreshold), mMinWeightYaw(-1), mMaxWeightYaw(-1),
-      mWeightYawSpeed(10000), mPivotLookTarget(kHugeFloat, 0, 0), mPivotLookWeight(1), mSourceRadius(0),
+    : mSource(this), mPivot(this), mTarget(this), mMaxYaw(80),
+      mMinPitch(-80), mMaxPitch(sMaxThreshold), mMinWeightYaw(-1), mWeightYawSpeed(10000),
+      mMaxWeightYaw(-1), mPivotLookTarget(kHugeFloat, 0, 0), mPivotLookWeight(1), mSourceRadius(0),
       unka4(0, 0, 0), mShowRange(false), mAllowRoll(true), mDisableRoll(false), mEnableJitter(false),
       mYawJitterLimit(0), mPitchJitterLimit(0) {
+    mHalfTime = 0;
+    mMinYaw = -80;
     SyncLimits();
 }
 

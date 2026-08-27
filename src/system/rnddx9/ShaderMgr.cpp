@@ -189,7 +189,9 @@ bool DxShader::Compile(
 
     TheDxShaderInclude.Close(data);
 
-    return (vRes >= 0) && (pRes >= 0);
+        if (!((vRes >= 0)))
+        return false;
+    return (pRes >= 0);
 }
 
 void DxShader::CreateVertexShader(RndShaderBuffer &buffer) {

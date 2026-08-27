@@ -434,11 +434,11 @@ void WorldInstance::PostLoad(BinStream &bs) {
     // after). X4a's theory that it corrupted the venue stream is REFUTED —
     // PopRev does not read the stream — and swapping it was measured to change
     // nothing at runtime. Left as-is; open as a match question, not a bug fix.
+    RndDir::PostLoad(bs);
     int revs = bs.PopRev(this);
     BinStreamRev d(bs, revs);
     sPersistRev = d.rev;
-    RndDir::PostLoad(bs);
-    if (d.rev > 0) {
+    if (d.rev != 0) {
         ObjDirPtr<ObjectDir> dirPtr = PostLoadInlined();
         mDir = dynamic_cast<WorldInstance *>((ObjectDir *)dirPtr);
     } else {
