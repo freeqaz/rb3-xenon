@@ -174,13 +174,13 @@ Hmx::Object::Object()
 }
 
 Hmx::Object::~Object() {
+    RemoveFromDir();
     MILO_ASSERT_FMT(MainThread(), "Can't delete objects outside of the main thread");
     if (mTypeDef) {
         mTypeDef->Release();
         mTypeDef = nullptr;
     }
     ClearAllTypeProps();
-    RemoveFromDir();
 #ifdef HX_NATIVE
     RELEASE(mSinks);
 #endif
@@ -327,11 +327,16 @@ void Hmx::Object::SaveRest(BinStream &bs) {
         bs << mNote;
 #endif
 }
+template <class _T>
+__declspec(noinline) auto _outline_Note(_T* _obj) -> decltype(_obj->Note()) {
+    return _obj->Note();
+}
+
 
 void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
-    if (ty != kCopyFromMax) {
-        mNote = o->Note();
-        if (ClassName() == o->ClassName()) {
+    if ((int)ty != kCopyFromMax) {
+        mNote = _outline_Note(o);
+        if (o->ClassName() == ClassName()) {
             SetTypeDef(o->TypeDef());
 #ifdef HX_NATIVE
             if (o->HasTypeProps() && !mTypeProps) {
@@ -351,12 +356,12 @@ void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
             }
 #endif
         } else if (o->TypeDef() || TypeDef()) {
-            MILO_NOTIFY(
+            MILO_WARN(
                 "Can't copy type \"%s\" or type props of %s to %s, different classes %s and %s",
                 o->Type(),
                 Name(),
                 o->Name(),
-                ClassName(),
+                ClassName().Str(),
                 o->ClassName()
             );
         }

@@ -45,12 +45,12 @@ unsigned char RndBitmap::PixelIndex(int i1, int i2) const {
 void RndBitmap::SetName(const Hmx::CRC &crc) {}
 
 BinStream &RndBitmap::LoadHeader(BinStream &bs, u8 &numMips) {
+    Hmx::CRC name;
     u8 rev, h;
     u8 pad[32];
     bs.Tell();
     bs >> rev;
     if (rev > 1) {
-        Hmx::CRC name; // retail: name CRC read into a local, not a stored member
         bs.ReadEndian(&name.mCRC, 4);
     }
     bs >> mBpp;
@@ -65,11 +65,15 @@ BinStream &RndBitmap::LoadHeader(BinStream &bs, u8 &numMips) {
     bs >> mHeight;
     bs >> mRowBytes;
 
-    int count;
+    unsigned char count;
     if (rev == 0) {
         count = 6;
     } else
-        count = rev == 1 ? 0x13 : 0xF;
+                if (rev == 1) {
+            count = 0x13;
+        } else {
+            count = 0xF;
+        }
     bs.Read(pad, count);
     return bs;
 }
