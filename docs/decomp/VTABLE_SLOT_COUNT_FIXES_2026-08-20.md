@@ -2199,3 +2199,179 @@ un-paired. Row states after:
   slot-index test is a real third instrument and would judge the whole
   `TARGET_UNNAMED` bucket, but building and *validating* it (it needs a control
   that can fail) is a tooling lane, not this one.
+
+## §22 — wave 12 (2026-08-27, lane PINHOME): the brief was inverted, and "byte-identical modulo relocations" is not an identification
+
+⚠ Numbered §22 because main already carried **§20** (lane CACHEXBOX) and
+**§21** (lane PRELOAD) by the time this landed; this lane branched from
+`24ef42e9`, which predates both. Nothing here depends on the number.
+
+**Result: `+548 B / +3 matched functions`, whole-binary, both rulers.**
+Commits `63797653` (map), `7de295ac` (body), `2a38a901` (splits + map).
+Measured in three separate A/B runs so the attribution survives.
+
+### 22a. The brief was refuted on both halves
+
+The brief asserted (a) `ContentMgr_Xbox.cpp` is mis-pinned — its `.text`
+spans "hold NO map-named symbols" while its real bodies live at
+`0x8251f810`–`0x825201e0`.
+
+Both halves are false, and the second contains the refutation of the first:
+
+- the pinned span `0x8251F898`–`0x82521730` holds **42 map-named symbols**,
+  every one an `XboxContent` / `XboxContentMgr` / `RootContent` member;
+- the unit was already **65/81 rows matched at 55.89 % code**;
+- the range the brief wanted to move *to* is a **subset of a span that was
+  already pinned**.
+
+⇒ **a unit can be genuinely mis-pinned and still be mostly right.** The real
+defect was the opposite shape from the one described: `ContentMgr_Xbox` had
+three small **islands punched out of the middle of two other units'
+contiguous runs** — two inside `Env.cpp`, one inside `MatAnim.cpp`. Nothing
+about "the main span is wrong" was true; three foreign fragments had been
+annexed.
+
+★ Scatter alone proves nothing — `/Gy` COMDAT grouping means a TU's functions
+are *expected* to be discontiguous (`ContentMgr_Xbox` legitimately has five
+blocks). What identifies an island is **whose bodies its calls land in**.
+
+### 22b. ⛔ The instrument CLAUDE.md names for identity was nearly wrong twice
+
+Relocation-normalized body comparison is the instrument this repo names as
+the one that settles identity. Run against candidate objs **with a control**,
+it reports:
+
+| retail row | relocation-normalized matches |
+|---|---|
+| `fn_82408A48` (48 B) | **32** — including 3 in the *control* obj |
+| `fn_82409038` (120 B) | **6** |
+| `fn_82463358` (68 B) | **1** |
+
+Every `ClassName@X` forwarding stub is byte-identical once relocations are
+masked; so is every `ObjDirItr<T>` instantiation. I had compared only against
+my hypothesis and read "0 non-reloc words differ" as proof. It is not.
+
+⇒ **"byte-identical modulo relocations" is NOT an identification when the
+masked word IS the discriminator.** What discriminates is the relocation
+**target**, which the mask hides: `ClassName@RndDir` would call
+`StaticClassName@RndDir`, not `StaticClassName@RndEnviron`. This is the same
+lesson §20 (CACHEXBOX) reaches from the other direction — *a matching pair is
+not evidence that either row is identified*.
+
+The control is what caught it. A sweep that only ever sees its own hypothesis
+cannot fail.
+
+### 22c. ⛔ A size precondition turned a perfect row into a clean-looking negative
+
+I predicted `?SetType@RndEnviron@@UAAXVSymbol@@@Z` would **not** match,
+because our COMDAT measured 292 B against retail's 252 B. That size came
+from the section's `SizeOfRawData`, which **is not the function's code
+extent** — it carries the EH prefix / padding. My byte sweep *required equal
+length*, so it silently reported "no match" for the row that was in fact
+**100 %**.
+
+Same family as the `coff_bodies_ext.py` defect this repo already records
+(billing a successor's EH funclet prefix into a COMDAT span), reproduced
+independently. ⇒ **a size filter can convert a true match into a decisive-
+looking negative** — the verdict class that closes veins.
+
+I was also wrong that the two unidentifiable 32 B `??__F` stubs would lose
+their `masked_equal` pairing on re-home (−64 B predicted). They kept it;
+`masked_equal` is unchanged at 22,912.
+
+### 22d. `0x82520668` = `XboxContentMgr::IsCorrupt`, and why it did NOT cost bytes
+
+Identified from retail bytes: its only `.rdata` reference is `0x82089b2c`,
+**slot [34]** of `??_7XboxContentMgr@@6B@`, sitting between `GetLicenseBits`
+[32] and `NotifyMounted` [35] — exactly where our `ContentMgr.h` already
+places `IsCorrupt`. Body: vcall slot 11 (`FileName`), `bl __RTDynamicCast`,
+vcall slot 14.
+
+⚠ **Arity is not decidable from RB3 bytes.** `r5` (the `displayName`
+out-param) is never touched, and under `/O1` an unused reference param emits
+no code, so `IsCorrupt(Symbol)` and `IsCorrupt(Symbol, const char*&)` are
+byte-identical. The spelling is taken from **DC3's leaked map**, ground truth
+for the same method in the same engine. Recorded as oracle-inherited, not
+retail-proven.
+
+The brief predicted a **loss**, on the MAPID-1 precedent that naming an
+anonymous address converts forgiven call sites into checked ones. Measured
+**Δ0 on both rulers** — and the zero was *predicted before the run*, because
+that channel is structurally absent here: a scan of all `0x9dce3c` bytes of
+retail `.text` for a vtable load followed by `lwz *,0x88(*)` finds **40
+slot-34 call sites and not one is a `ContentMgr`**. `0x82520668` has **no
+callers at all**; its only reference is the vtable slot.
+
+⇒ **the MAPID-1 loss is not a property of naming — it is a property of the
+CALLER POPULATION.** Count the call sites before predicting the sign.
+
+What naming bought was **visibility**: the row went from 140 B at 0 % and
+*unpaired* to `fuzzy 54.97`, exposing a body divergence no instrument could
+see. Our source was DC3's newer shape — DC3 moved `IsCorrupt` onto the
+`Content` base and added a `displayName` write. RB3 is the **older** form:
+`IsCorrupt` exists only on `XboxContent`, at trailing slot 14, which is why
+retail must `__RTDynamicCast` to reach it, and retail's 140 bytes contain
+**exactly two vcalls** — no slot-12 `DisplayName` call anywhere. Writing
+retail's body took the row to **100 %**, `+140 B`.
+
+### 22e. The −12 B is the most valuable line in the lane
+
+`?Highlight@RndDir@@$4PPPPPPPM@A@AAXXZ` at `0x82462ec8` scored **100 %**
+only because its branch target was an unnamed placeholder, which
+`name_check` forgives. Naming `0x82463358` converts that forgiven site into
+a checked one, and the row drops to 98.33 — exposing that the **thunk's own
+name is wrong**. Its body is `lwz r11,-4(r3); subf r3,r11,r3; b 0x82463358`,
+a vtordisp adjustor for a **deleting destructor**, not for `Highlight()`
+(which returns `void` and takes no args).
+
+Confirmed independently from RTTI by `tools/thunk_target_audit.py`: the thunk
+is referenced from **`.?AVRndMatAnim@@[0]`** — slot 0 of the `RndMatAnim`
+vtable. Measured bucket transition:
+
+| bucket | before | after |
+|---|---|---|
+| `TARGET_UNNAMED` (cannot judge) | 131 | **130** |
+| `INCONSISTENT` (adjudicate) | 116 | **117** |
+
+⇒ this is the same defect class §21 (PRELOAD) landed the same day, reached by
+the same route — **the slot index is what adjudicates** — and it demonstrates
+the mechanism concretely: *naming an anonymous branch target is how rows
+leave the bucket the audit is structurally blind to.* Repairing the thunk's
+name is a map lane's job; this lane only made it visible.
+
+### 22f. Numbers
+
+Three separate A/B runs, each against the previous committed state, so the
+deltas compose:
+
+| change | Δmatched | Δcode_bytes (name_check) | Δcode_bytes (none) |
+|---|---:|---:|---:|
+| (b1) map: name `0x82520668` | +0 | **+0** | +0 |
+| (b2) `IsCorrupt` retail body | +1 | **+140** | +140 |
+| (a) re-home 3 islands + 4 names | +2 | **+408** | +488 |
+| **lane total** | **+3** | **+548** | +628 |
+
+Tree: `matched_functions` 42,252 → **42,255**; `matched_code` 3,771,292 →
+**3,771,840**; `matched_code_percent` 36.807613 → **36.812965**;
+`masked_equal` unchanged at 22,912.
+
+Per-unit for (a): `Env` 98 → 103, `ContentMgr_Xbox` 66 → 64, `MatAnim`
+82 → 81; whole-binary unit net +2 == whole-binary Δmatched +2.
+
+### 22g. Deliberately NOT done
+
+- **The two 32 B `??__F` stubs (`fn_82408A28`, `fn_82408B7C`) are left
+  unnamed.** No relocation-normalized match exists in any candidate obj, and
+  our `Env.obj` emits no `??__F` at all — retail's statics have destructors
+  ours do not. They ride along in Env's pin as anonymous rows, still pairing
+  by byte signature. A guess here would be a false assertion for 0 bytes.
+- **`?Highlight@RndDir@@$4...`'s name is NOT repaired** — only exposed. The
+  correct name depends on which `RndMatAnim` deleting-destructor form it
+  adjusts, and that is a map lane with the audit's 117-row INCONSISTENT list
+  in front of it, not a drive-by rename.
+- **`??_GRndMatAnim` is left at 99.71 %**, paired with one charged
+  relocation-name arg. Not chased.
+- **`ContentMgr_Xbox`'s remaining sub-100 rows** (`PollRefresh` 824 B,
+  `StartRefresh` 932 B, `Init` 120 B, `fn_8251FDC8` 424 B) are untouched.
+- **The arity of `IsCorrupt` is not settled** and cannot be from RB3 bytes;
+  see 22d.
