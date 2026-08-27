@@ -635,10 +635,10 @@ void OvershellSlot::AttemptRemoveUser() {
         } else {
             LocalUser *lUser = dynamic_cast<LocalUser *>(pUser);
             int i;
-            for (i = 0; i < 4; i++) {
+            for (i = 0; (int)i <= 3; i++) {
                 if (i != lUser->GetPadNum()) {
                     int idx = TheWiiProfileMgr.GetIndexForPad(i);
-                    if (idx >= 0 && TheWiiProfileMgr.IsIndexValid(idx)
+                    if ((unsigned int)idx >= 0 && TheWiiProfileMgr.IsIndexValid(idx)
                         && !TheWiiProfileMgr.IsPadAGuest(i)
                         && TheWiiProfileMgr.IsPadRegistered(i))
                         break;

@@ -149,9 +149,11 @@ String HAQManager::GetButtonStatePressedString(int pad) const {
 }
 
 String HAQManager::GetButtonText() const {
+    volatile int _slotpad = 0; (void)_slotpad;
     String ret("");
+    String str;
     for (int i = 0; i < 4; i++) {
-        String str = GetButtonStatePressedString(i);
+                str = GetButtonStatePressedString(i);
         ret += MakeString("%i %s | ", i, str);
     }
     return ret;
