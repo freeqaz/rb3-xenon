@@ -2142,9 +2142,6 @@ ContentMgr_Xbox.cpp:
 	.pdata      start:0x8220EB60 end:0x8220EB68
 	.pdata      start:0x822187A8 end:0x822187C8
 	.pdata      start:0x82218C30 end:0x82218DF8
-	.text       start:0x82408A28 end:0x82408BA8
-	.text       start:0x82409034 end:0x824090B0
-	.text       start:0x82463358 end:0x8246339C
 	.text       start:0x8251B900 end:0x8251BA00
 	.text       start:0x8251F898 end:0x82521730
 
@@ -5082,9 +5079,7 @@ Env.cpp:
 	.text       start:0x824079C8 end:0x82407A6C
 	.text       start:0x82407A70 end:0x82408050
 	.text       start:0x82408050 end:0x824089D0
-	.text       start:0x824089D0 end:0x82408A28
-	.text       start:0x82408BA8 end:0x82409034
-	.text       start:0x824090B0 end:0x824092E0
+	.text       start:0x824089D0 end:0x824092E0
 	.text       start:0x824092E0 end:0x82409610
 	.text       start:0x82409610 end:0x824098E8
 	.text       start:0x824098E8 end:0x82409AC4
@@ -8037,8 +8032,7 @@ MatAnim.cpp:
 	.text       start:0x8245F410 end:0x8245F56C
 	.text       start:0x82461398 end:0x82461948
 	.text       start:0x824619D8 end:0x82462738
-	.text       start:0x82462798 end:0x82463358
-	.text       start:0x8246339C end:0x82463680
+	.text       start:0x82462798 end:0x82463680
 	.text       start:0x824636E4 end:0x82463EFC
 
 FilterVersion.cpp:
