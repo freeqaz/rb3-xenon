@@ -1836,3 +1836,162 @@ that do exist (`?Prep@NgFur@@UBA_NPAVRndMesh@@PAVRndMat@@@Z`,
 - **`mCorrupt` is now write-only** (§19b). Removing it and its assignment at
   `ContentMgr_Xbox.cpp:116` is layout-neutral but is a wider behavioural edit
   than this wave adjudicated.
+
+---
+
+## §20 — wave 12 (2026-08-27, lane CACHEXBOX): a matching PAIR is not evidence that either row is identified
+
+`CacheXbox` vtable `0x8211BE44`, slots 6 and 7. `scripts/target_symbol_map.json`
+named `0x827D9F40` → `GetDirectoryAsync` and `0x827DA730` → `GetFileSizeAsync`.
+Both wrong; they are exactly the other way round. Swapped, together with the
+`OpType` enum and the three source bodies that had been mutated to compensate.
+
+**Whole-binary A/B: Δ0 on every key, on both rulers.** That is the expected and
+correct outcome — this buys attribution, not bytes.
+
+### 20a. Why this row class is invisible to the metric
+
+Both rows read `mpn 100.0 / fuzzy 100.0` the entire time they were
+misidentified, and the unit's measures were byte-identical before and after the
+swap (75/85 functions, 6,364/9,208 bytes, every percentage equal to the last
+digit).
+
+The mechanism is worth stating generally, because it is not specific to
+`CacheXbox`: **the two retail bodies are structural twins.** `fn_827D9F40` and
+`fn_827DA730` are the same 144-byte function differing in exactly three fields —
+which CacheID vtable slot they call, which member offset they store the
+out-pointer at, and which immediate they write to `mOpCur`. Under *either*
+assignment of the two names, a consistently-written source reproduces both
+targets byte-exactly. So:
+
+> ⛔ **A matching pair of 100% rows is NOT evidence that either row is correctly
+> identified.** Where two functions are structural twins, the metric is
+> *structurally incapable* of distinguishing the correct assignment from the
+> swapped one — both score 100. The errors do not merely coexist; they
+> **cancel**, and the cancellation is what produces the 100s.
+
+Corollary for anyone tempted to fix half of it: a partial edit **regresses**.
+Wave 6 measured −2 functions / −40 B when a cancellation of this shape was
+broken on one side only. The map row, the enum, and the bodies are one atomic
+change or none.
+
+### 20b. The prior in-tree refusal, and how it was manufactured
+
+This tree carried an explicit, confident, byte-cited refusal to fix this —
+`Cache.h` opened with `// ! DO NOT swap kOpFileSize/kOpDirectory to match
+../dc3-decomp or ../rb3`, and `Cache_Xbox.cpp` carried two more comment blocks
+rationalising an "op → handler pairing that retail inverts". It cited real
+retail bytes:
+
+```
+CacheXbox::GetFileSizeAsync   li r10,0x1; stw r10, 0x4, r31   -> 1
+CacheXbox::GetDirectoryAsync  li r10,0x2; stw r10, 0x4, r31   -> 2
+```
+
+**Those bytes are real and the reading of them is correct.** `0x827DA730` does
+emit `li r10,1`. The defect is that the map called `0x827DA730`
+`GetFileSizeAsync`. The observation was attributed to the wrong function, and
+the conclusion "retail disagrees with both its own siblings" was then used to
+*justify* keeping the map — closing the vein. **Count right, cause wrong** (same
+disease as `project_one_sided_instrument_error_invisible_to_two_sided_control`).
+
+⇒ **A byte citation is only as good as the name→address binding it rests on.**
+When a comment says "verified in retail bytes" and the conclusion is that retail
+is anomalous, check the binding before believing the anomaly. *Retail being
+weird is the hypothesis of last resort, not first.*
+
+### 20c. How it was actually adjudicated — four independent lines, no names used
+
+The metric can't answer it and the oracles are only evidence, so the direction
+was settled purely on retail behaviour:
+
+| # | evidence | `fn_827DA730` | `fn_827D9F40` |
+|---|---|---|---|
+| 1 | CacheID vtable slot called | slot 2 → builds `"%s:\*"` **wildcard** | slot 1 → builds `"%s:\"` / `"%s:\%s"` exact |
+| 2 | member offset the out-ptr is stored at | `0x168` — the field `ThreadGetDir` push_backs into | `0x160` — the field the `GetFileSize` worker writes a scalar through |
+| 3 | `mOpCur` immediate | **1**, and `ThreadStart` routes 1 → `ThreadGetDir` | **2**, and `ThreadStart` routes 2 → the size worker |
+| 4 | vtable slot at `0x8211BE44` | **6** | **7** |
+| ⇒ | | **`GetDirectoryAsync`** | **`GetFileSizeAsync`** |
+
+Supporting byte facts, all read out of retail rather than assumed:
+
+- **CacheIDXbox's vtable is at `0x8211BCC8`** (`??_R4` COL at `0x8211BCC4`):
+  dtor / `0x827DA328` / `0x827DA430` / `GetDeviceID`. `0x827DA430` is the
+  wildcard builder, and for its non-null argument it **tail-calls its own
+  vtable slot 1** (`lwz r11,0x0(r3); lwz r11,0x4(r11); bctr`) — which is
+  literally `GetCacheSearchPath`'s `return GetCachePath(c)`. That pins
+  slot 1 = `GetCachePath`, slot 2 = `GetCacheSearchPath` without reference to
+  any declaration order.
+- **`ThreadGetDir` = `fn_827DBAF0`**: identified by behaviour (FindFirstFile /
+  FindNextFile recursion), reads its vector from `lwz r3, 0x168(r26)`.
+- **The file-size worker = `fn_827DA7C0`**: `CreateFileA` with `OPEN_EXISTING`
+  + `FILE_SHARE_READ`, then `GetFileSize` into a stack slot, then
+  `lwz r11,0x160(r30); stw r31,0x0(r11)`.
+- **`ThreadStart` = `fn_827DBF20`**: `cmpwi 1 → bl fn_827DBAF0`,
+  `cmpwi 2 → bl fn_827DA7C0`. ⇒ **`kOpDirectory=1, kOpFileSize=2`**, exactly
+  what `../dc3-decomp` and `../rb3` both declare.
+- Eight of the ten `CacheXbox` slots are pinned by unambiguous names
+  (`GetCacheName`, `Poll`, `IsConnectedSync`, `GetFreeSpaceSync`, `DeleteSync`,
+  `ReadAsync`, `WriteAsync`, `DeleteAsync`) and they match `Cache`'s declaration
+  order exactly — so slots 6/7 sit precisely where `GetDirectoryAsync` /
+  `GetFileSizeAsync` are declared.
+
+⚠ **Trap hit and avoided:** `Cache_Xbox` is a multi-block unit, so `Cache_Xbox.s`
+renders `fn_827D9F40`'s body at address column `82279BF0`. Keyed on the
+`.fn fn_<addr>` symbol per house rule, then re-read the real bytes at
+`0x827D9F40` out of `band.exe` through the PE section table — byte-identical,
+so the `.s` content is trustworthy for these rows.
+
+### 20d. A fifth corroboration that was sitting in our own source
+
+The old `GetFileSizeAsync` needed
+
+```cpp
+mCacheDirList = (std::vector<CacheDirEntry> *)ui;   // ui is unsigned int*
+```
+
+— a cast jamming an `unsigned int*` into a `vector<CacheDirEntry>*`. The old
+`GetDirectoryAsync` had the mirror-image assignment into `void *mData`. Both
+casts vanish under the corrected assignment (`mData = ui` is a plain
+`void*` conversion; `mCacheDirList = entries` is exact).
+
+⇒ **A cast that exists only to make an assignment compile is a smell that the
+identification is wrong.** It is a free, build-free signal available before any
+disassembly. Similarly, the old `GetDirectoryAsync` still carried the oracle's
+`MILO_ASSERT(..., 0x108)` / `0x10B` line numbers as fossils while its body had
+been rewritten away from the oracle — mismatched fossils are the same kind of
+tell.
+
+### 20e. Measurement
+
+`tools/ab_measure.py --worktree … --from-dirty`, kinds `['map','source']`, leg B
+239 recompiles / `split=1` / `renamer_patched=1826`, both legs at a
+`symbols.txt` split fixed point (0 extra re-splits each):
+
+| ruler | leg A | leg B | Δ |
+|---|---|---|---|
+| graded (`name_check`) | matched 42252, code% 36.807613 | matched 42252, code% 36.807613 | **+0 / +0.000000pp / +0 B** |
+| `none` (control) | matched 44485, code% 43.159935 | matched 44485, code% 43.159935 | **+0 B** |
+
+`Δmasked_equal=+0`, `Δhonest=+0`, `Δfuzzy=+0.000000pp`, units at 100% unchanged
+on both rulers (mpn 150, all-rows-fuzzy 122), pairable units 1731→1731. The
+`none` control was correctly reported `NOT_APPLICABLE` for alias-shape purposes
+(this patch carries `source`, so default-UP/none-FLAT would also be the
+wrong-callee-fix signature) — it is quoted here as a **pairing** check: flat on
+`none` confirms nothing was un-paired, which is the failure mode the graded
+ruler is structurally blind to for sub-100 rows.
+
+### 20f. Deliberately not done
+
+- **`0x827DA7C0` (`ThreadGetFileSize`, 196 B) is still unpinned.** Its identity
+  is now proven by bytes (it *is* the CreateFile/GetFileSize worker that
+  `ThreadStart` reaches on op 2), so it is a ready candidate — but naming a
+  previously-anonymous address is an independent bet whose payout is bug
+  exposure, not bytes, and pinning it inside this run would have confounded the
+  A/B. Left as a one-row follow-up.
+- **No other `Cache` subclass was touched.** `GetDirectoryAsync` /
+  `GetFileSizeAsync` appear on exactly two map rows repo-wide, both `CacheXbox`,
+  so the swap was confined to this class. `CacheWii`/`FileCache`/`HDCache`
+  carry no pins of these names.
+- **`ThreadWrite` (99.52) and `ThreadDelete` (99.04)** remain the unit's two
+  named near-misses; untouched, unrelated to this defect.
