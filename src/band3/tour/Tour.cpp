@@ -561,7 +561,7 @@ void Tour::CheatReloadTourData() {
 
 Symbol Tour::CombinePartSymbols(Symbol part1, Symbol part2) {
     Symbol result = part1;
-    if (part2 != gNullStr && part1 != band) {
+    if (part2 != gNullStr && band != part1) {
         if (part1 == gNullStr) result = part2;
         else result = band;
     }

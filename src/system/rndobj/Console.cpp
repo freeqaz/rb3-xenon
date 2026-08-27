@@ -488,9 +488,10 @@ void RndConsole::ExecuteLine() {
 bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {
     if (!mShowing)
         return 0;
-    if (msg.GetKey() == 0x12E) {
+    auto _e0 = msg.GetKey();
+    if (_e0 == 0x12E) {
         SetShowing(false);
-    } else if (msg.GetKey() == 9) {
+    } else if (mInput && _e0 == 9) {
         if (mTabLen == 0)
             mTabLen = mInput->CurrentLine().length();
         if (!mBuffer.empty()) {
@@ -511,7 +512,7 @@ bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {
             } while (mBufPtr != saved);
         }
         MinEq<int>(mCursor, mInput->CurrentLine().length());
-    } else if (msg.GetKey() == 0x142) {
+    } else if (_e0 == 0x142) {
         if (!mBuffer.empty()) {
             if (mBufPtr != mBuffer.end()) {
                 ++mBufPtr;
@@ -522,7 +523,7 @@ bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {
             mInput->CurrentLine() = *mBufPtr;
         }
         mCursor = mInput->CurrentLine().length();
-    } else if (msg.GetKey() == 0x143) {
+    } else if (_e0 == 0x143) {
         if (!mBuffer.empty()) {
             if (mBufPtr != mBuffer.begin()) {
                 --mBufPtr;
@@ -534,26 +535,26 @@ bool RndConsole::OnMsg(const KeyboardKeyMsg &msg) {
             mInput->CurrentLine() = *mBufPtr;
         }
         MinEq<int>(mCursor, mInput->CurrentLine().length());
-    } else if (msg.GetKey() == 8) {
+    } else if (_e0 == 8) {
         String &curLine = mInput->CurrentLine();
         if (mCursor != 0) {
             mCursor--;
             curLine.erase(mCursor, 1);
         }
-    } else if (msg.GetKey() == 0x137) {
+    } else if (_e0 == 0x137) {
         String &curLine = mInput->CurrentLine();
         if (mCursor < mInput->CurrentLine().length()) {
             curLine.erase(mCursor, 1);
         }
-    } else if (msg.GetKey() == 0x140) {
-        mCursor = Max(mCursor - 1, 0);
-    } else if (msg.GetKey() == 0x141) {
+    } else if (_e0 == 0x140) {
+        mCursor = (mCursor - 1) > 0 ? (mCursor - 1) : 0;
+    } else if (_e0 == 0x141) {
         mCursor = Min<int>(mCursor + 1, mInput->CurrentLine().length());
-    } else if (msg.GetKey() == 0x139) {
+    } else if (_e0 == 0x139) {
         mCursor = mInput->CurrentLine().length();
-    } else if (msg.GetKey() == 0x138) {
+    } else if (_e0 == 0x138) {
         mCursor = 0;
-    } else if (msg.GetKey() == 10) {
+    } else if (_e0 == 10) {
         mCursor = 0;
         MILO_TRY { ExecuteLine(); }
         MILO_CATCH(errMsg) {
