@@ -24,8 +24,25 @@ public:
     // RndMesh
     virtual void DrawShowing();
     virtual void DrawFacesInRange(int, int);
-    virtual int NumFaces() const { return mNumFaces; }
-    virtual int NumVerts() const { return mNumVerts; }
+    // ⚠ These MUST use MESH_DC3_VIRTUAL, not a bare `virtual`. rndobj/Mesh.h
+    // already proved (three vcall-displacement anchors) that retail keeps
+    // RndMesh::NumFaces/NumVerts NON-virtual, but leaving the keyword HERE
+    // re-introduced them as two BRAND-NEW virtuals appended to DxMesh's tail:
+    // retail's DxMesh RndDrawable-subobject vtable @0x82101b14 (COL.offset 0,
+    // the primary) is SIXTEEN slots -- slot 16 would be 0x82101b54, which holds
+    // 0xfffffffc and is not an image VA at all, so the bound is hard -- while
+    // ours emitted EIGHTEEN, the extra two being ?NumFaces@DxMesh@@UBAHXZ and
+    // ?NumVerts@DxMesh@@UBAHXZ.
+    //
+    // Slots 0..15 align one-for-one with retail by BODY, no map name involved:
+    // [3] is the `li r3,0; blr` hub (CamOverride returns 0), [6]/[10]/[11] are
+    // the bare-`blr` hub (the three empty void virtuals ListDrawChildren /
+    // DrawPreClear / UpdatePreClearState), [5]/[14]/[15] are referenced by
+    // exactly ONE vtable each (the genuine DxMesh overrides DrawShowing /
+    // DrawFacesInRange / OnSync) and [0][1][2][4][7][8][12][13] by exactly two
+    // (RndMesh's own bodies). So the surplus is unambiguously the tail pair.
+    MESH_DC3_VIRTUAL int NumFaces() const { return mNumFaces; }
+    MESH_DC3_VIRTUAL int NumVerts() const { return mNumVerts; }
     virtual void OnSync(int);
 
     D3DVertexBuffer *GetMultimeshFaces();
