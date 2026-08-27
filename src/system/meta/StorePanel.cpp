@@ -199,7 +199,15 @@ void StorePanel::Poll() {
     if (mPurchaser) {
         mPurchaser->Poll();
         if (!mPurchaser->IsPurchasing()) {
-            if (mPurchaser->PurchaseMade() && mPurchaser->IsSuccess()) {
+            // IsSuccess() FIRST: retail dispatches StorePurchaser slot 3 (0xc)
+            // before slot 4 (0x10) at all five purchaser call sites in .text,
+            // and slot 3's body is `assert(!IsPurchasing()); return mState == 2`
+            // -- i.e. IsSuccess.  Swapped together with the declaration order in
+            // StorePurchaser.h so the emitted dispatch offsets are UNCHANGED;
+            // this fixes the NAMES, not the code.  Note PurchaseMade()'s own
+            // MILO_ASSERT(mState == kPurchaseSuccess) only makes sense when it
+            // runs after IsSuccess() short-circuits.
+            if (mPurchaser->IsSuccess() && mPurchaser->PurchaseMade()) {
                 mNeedsReEnum = true;
                 mUnk75 = true;
             } else {
