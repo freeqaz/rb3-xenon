@@ -17,17 +17,19 @@ enum PurchaseState { // just know the val of kPurchaseSuccess
 
 class StorePurchaser {
 public:
+    /* Retail ??_7StorePurchaser@@6B@ @ 0x8211523c is SIX slots: a destructor
+     * followed by five _purecall (0x828299b8), and the next word (0x821ec094)
+     * is XboxPurchaser's ??_R4 -- the adjacent class's table, so there is no
+     * seventh slot.  NeedsEnum() has a body and therefore could never be one
+     * of those five purecalls; it is a DC3-era addition that RB3 does not
+     * have, and it was deleted here.  See
+     * docs/decomp/VTABLE_COUNT_PURCHASER_2026-08-27.md. */
     virtual ~StorePurchaser() {}
     virtual void Initiate() = 0;
-    // Retail vtable order (from StorePanel::Poll's inlined slot loads):
-    // 0x8 IsPurchasing, 0xc PurchaseMade, 0x10 IsSuccess, 0x14 Poll.
-    // NeedsEnum is a DC3-era addition with no RB3 call sites, so it lands
-    // after Poll where it cannot shift the retail slots.
     virtual bool IsPurchasing() const = 0;
     virtual bool PurchaseMade() const = 0;
     virtual bool IsSuccess() const = 0;
     virtual void Poll() = 0;
-    virtual bool NeedsEnum() const { return true; }
 
     StorePurchaser(Symbol s, unsigned int i) : mSource(s), mUserIndex(i) {}
 
@@ -46,7 +48,6 @@ public:
     virtual bool IsPurchasing() const;
     virtual bool IsSuccess() const;
     virtual bool PurchaseMade() const;
-    virtual bool NeedsEnum() const { return false; }
     virtual void Poll() {}
 
     XboxPurchaser(
@@ -78,7 +79,6 @@ public:
     virtual bool IsPurchasing() const;
     virtual bool IsSuccess() const;
     virtual bool PurchaseMade() const;
-    virtual bool NeedsEnum() const { return false; }
     virtual void Poll() {}
 
     XboxMultipleItemsPurchaser(
