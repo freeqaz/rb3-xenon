@@ -13,6 +13,41 @@
 #include <cstring>
 #include "xdk/XAPILIB.h"
 
+// ---------------------------------------------------------------------------
+// CacheXbox vtable slots 6 and 7 (lane CACHEXBOX, 2026-08-27).
+//
+// target_symbol_map.json used to have these two swapped, which forced this file
+// into a mirror-image set of compensating source errors.  Both rows still read
+// 100%/100% the whole time -- a matching pair is NOT evidence that either row is
+// correctly identified.  The correct assignment, proved on retail bytes with no
+// reliance on any name:
+//
+//   0x827DA730 = GetDirectoryAsync    0x827D9F40 = GetFileSizeAsync
+//
+// 1. WILDCARD.  CacheIDXbox's vtable (0x8211BCC8) is dtor / 0x827DA328 /
+//    0x827DA430 / GetDeviceID.  0x827DA328 builds "%s:\\" + "%s:\\%s" (exact
+//    path); 0x827DA430 builds "%s:\\*" (wildcard) and tail-calls its own slot 1
+//    for the non-null case, which is GetCacheSearchPath's `return
+//    GetCachePath(c)`.  0x827DA730 calls slot 2 (`lwz r11,0x8(r11)`) => it
+//    enumerates; 0x827D9F40 calls slot 1 (`lwz r11,0x4(r11)`) => it opens one file.
+// 2. FIELD DATAFLOW.  ThreadGetDir (0x827DBAF0) push_backs into the vector at
+//    `lwz r3, 0x168(r26)`; the file-size worker (0x827DA7C0) writes a scalar via
+//    `lwz r11,0x160(r30); stw r31,0x0(r11)`.  0x827DA730 stores its out-pointer
+//    at 0x168 (mCacheDirList), 0x827D9F40 at 0x160 (mData).
+// 3. OP DISPATCH.  ThreadStart (0x827DBF20) sends 1 -> ThreadGetDir and
+//    2 -> the file-size worker.  0x827DA730 writes op 1, 0x827D9F40 writes op 2.
+//    => kOpDirectory == 1, kOpFileSize == 2, as both oracles say.
+// 4. VTABLE ORDER.  CacheXbox's vtable at 0x8211BE44 is slot 6 = 0x827DA730,
+//    slot 7 = 0x827D9F40; the other eight slots are pinned by unambiguous names
+//    and match Cache's declaration order exactly, in which slot 6 is
+//    GetDirectoryAsync.
+//
+// There is no "retail quirk" here; retail is entirely name-intuitive.  The
+// earlier claim that it was inverted came from reading `li r10,1` out of
+// 0x827DA730 while the map called that address GetFileSizeAsync -- a true byte
+// observation attributed to the wrong function.
+// ---------------------------------------------------------------------------
+
 CacheIDXbox::CacheIDXbox() { memset(&mContentData, 0, sizeof(XCONTENT_DATA)); }
 
 const char *CacheIDXbox::GetCachePath(const char *c) {
@@ -52,21 +87,13 @@ bool CacheXbox::IsConnectedSync() {
 int CacheXbox::ThreadStart() {
     MILO_ASSERT(!IsDone(), 0x197);
     switch (mOpCur) {
-    // Retail pairs the ops with the *opposite* handler from what their names
-    // suggest, and it does so consistently end-to-end:
-    //   kOpFileSize (1): GetFileSizeAsync builds a wildcard *search* path via
-    //     GetCacheSearchPath and parks its out-pointer in mCacheDirList -- which
-    //     is exactly the field ThreadGetDir push_backs into -- and ThreadDone's
-    //     value-1 arm clears mCacheDirList.
-    //   kOpDirectory (2): GetDirectoryAsync uses GetCachePath, parks its list in
-    //     mData, and ThreadDone's value-2 arm clears mData.
-    // Verified in retail bytes: ThreadStart's cmpwi chain sends value 1 to
-    // ThreadGetDir(mThreadStr, "") (the two-String call) and value 2 to a
-    // no-argument handler.  Do not "correct" this to the name-intuitive
-    // pairing -- that is what puts this function at 81.5%.
-    case kOpFileSize:
-        return ThreadGetDir(mThreadStr, "");
+    // Retail fn_827DBF20's cmpwi chain: value 1 -> the two-String recursive
+    // FindFirstFile worker (fn_827DBAF0 = ThreadGetDir), value 2 -> the
+    // no-argument CreateFile/GetFileSize worker (fn_827DA7C0).  Hence
+    // kOpDirectory == 1 and kOpFileSize == 2.
     case kOpDirectory:
+        return ThreadGetDir(mThreadStr, "");
+    case kOpFileSize:
         return ThreadGetFileSize();
     case kOpRead:
         return ThreadRead();
@@ -84,25 +111,16 @@ void CacheXbox::ThreadDone(int res) {
     MILO_ASSERT(!IsDone(), 0x1B4);
     OpType old = mOpCur;
     switch (old) {
-    case kOpFileSize:
-        // Retail's filesize op parks its out-pointer in mCacheDirList, so its
-        // done-arm clears mCacheDirList and the directory arm clears mData.
-        // The enum numbering is NOT the thing that is unusual here -- it is
-        // pinned directly by retail bytes: GetFileSizeAsync emits
-        // `li r10,1; stw r10, 0x4, r31` and GetDirectoryAsync emits
-        // `li r10,2; stw r10, 0x4, r31`, both in 100%-matching functions.
-        // ==> kOpFileSize == 1 and kOpDirectory == 2, as declared in Cache.h.
-        // (Both DC3 and rb3-Wii declare the reverse; RB3 retail does not
-        // agree with its own siblings.  Do not swap the enum to match them.)
-        // NB when reading ThreadStart/ThreadDone disassembly: both carry a
-        // `this` adjustor of -12 (they live on the ThreadCallback sub-vtable),
-        // so an offset seen off the incoming pointer is field offset - 0xc.
+    // NB when reading ThreadStart/ThreadDone disassembly: both carry a `this`
+    // adjustor of -12 (they live on the ThreadCallback sub-vtable), so an
+    // offset seen off the incoming pointer is field offset - 0xc.
+    case kOpDirectory:
         mLastResult = (CacheResult)res;
         mThreadStr = gNullStr;
         mCacheDirList = nullptr;
         mCallbackObj = nullptr;
         break;
-    case kOpDirectory:
+    case kOpFileSize:
         mLastResult = (CacheResult)res;
         mThreadStr = gNullStr;
         mData = nullptr;
@@ -147,8 +165,8 @@ bool CacheXbox::GetFileSizeAsync(const char *cc, unsigned int *ui, Hmx::Object *
         mLastResult = kCache_ErrorBadParam;
         return false;
     } else {
-        mThreadStr = mCacheID.GetCacheSearchPath(cc);
-        mCacheDirList = (std::vector<CacheDirEntry> *)ui;
+        mThreadStr = mCacheID.GetCachePath(cc);
+        mData = ui;
         mLastResult = kCache_NoError;
         mOpCur = kOpFileSize;
         ThreadCall(this);
@@ -250,12 +268,9 @@ bool CacheXbox::GetDirectoryAsync(
         return false;
     } else {
         MILO_ASSERT(mThreadStr.empty(), 0x108);
-        mThreadStr = mCacheID.GetCachePath(cc);
-        // Retail stores the caller's list in mData (0x160), NOT mCacheDirList
-        // (0x168) -- verified: `stw r30, 0x160, r31` here vs `stw r30, 0x168,
-        // r31` in GetFileSizeAsync.  The op-2 done-arm clears mData to match.
-        MILO_ASSERT(mData == NULL, 0x10B);
-        mData = entries;
+        mThreadStr = mCacheID.GetCacheSearchPath(cc);
+        MILO_ASSERT(mCacheDirList == NULL, 0x10B);
+        mCacheDirList = entries;
         mLastResult = kCache_NoError;
         mOpCur = kOpDirectory;
         ThreadCall(this);
@@ -347,11 +362,10 @@ int CacheXbox::ThreadGetFileSize() {
         DWORD fileSize = 0;
         DWORD res = GetFileSize(file, &fileSize);
         if (!(res != -1)) {
-            // op 2 (kOpDirectory) is this handler's op, and op 2 parks its
-            // pointer in mData (GetDirectoryAsync stores 0x160; ThreadDone's
-            // value-2 arm clears 0x160).  INFERRED, not byte-verified: retail's
-            // counterpart (fn_827DA7C0) has no entry in target_symbol_map.json,
-            // so this function is unpaired and objdiff cannot score it.
+            // Byte-verified against retail fn_827DA7C0 (this function; still
+            // unpinned in target_symbol_map.json, so objdiff cannot score it):
+            // `lwz r11, 0x160(r30); stw r31, 0x0(r11)` -- the size is written
+            // through mData (0x160), which is where GetFileSizeAsync parks it.
             int *data = (int *)mData;
             *data = res;
         } else {
