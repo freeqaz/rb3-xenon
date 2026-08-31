@@ -199,15 +199,11 @@ void DxRnd::DoWorldEnd() {
 
 void DxRnd::FinishPostProcess() {
     SetFrameBuffersAsSource();
-    auto _tmp0 = TheDxRnd.Device();
-    auto _tmp1 = TheDxRnd.Device();
-    D3DDevice_SetSamplerState_MagFilter(_tmp1, 3, 1);
-    auto _tmp2 = TheDxRnd.Device();
-    D3DDevice_SetSamplerState_MinFilter(_tmp0, 3, 1);
-    auto _tmp4 = TheDxRnd.Device();
-    D3DDevice_SetSamplerState_MinFilter(_tmp2, 0xA, 1);
+    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 3, 1);
+    D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 3, 1);
+    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xA, 1);
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xA, 1);
-    D3DDevice_SetSamplerState_MinFilter(_tmp4, 0xF, 1);
+    D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xF, 1);
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xF, 1);
     D3DDevice_SetSamplerState_MinFilter(TheDxRnd.Device(), 0xD, 1);
     D3DDevice_SetSamplerState_MagFilter(TheDxRnd.Device(), 0xD, 1);

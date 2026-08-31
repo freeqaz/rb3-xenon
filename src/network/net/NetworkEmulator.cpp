@@ -23,20 +23,23 @@ NetworkEmulator::NetworkEmulator()
             ic = (Quazal::InstanceControl *)Quazal::InstanceControl::s_oInstanceTable
                      .m_oDefaultContext.GetInstance(1);
         } else {
-            if (!(!(ctx
-                  < Quazal::InstanceControl::s_oInstanceTable.m_pvContextVector->size()))) {
+            if (!(ctx
+                  < Quazal::InstanceControl::s_oInstanceTable.m_pvContextVector->size())) {
+                Quazal::SystemError::SignalError(0, 0, 0xe0000003, 0);
+                ic = (Quazal::InstanceControl *)-1;
+            } else {
                 ic = (Quazal::InstanceControl *)(*Quazal::InstanceControl::s_oInstanceTable
                                                       .m_pvContextVector)[ctx]
                          ->GetInstance(1);
-            } else {
-                Quazal::SystemError::SignalError(0, 0, 0xe0000003, 0);
-                ic = (Quazal::InstanceControl *)-1;
             }
         }
-                void *delegator;
-                delegator = !(ic) ? nullptr : ic->m_pDelegatorInstance;
+        void *delegator = ic ? ic->m_pDelegatorInstance : nullptr;
         void *ptr;
-                ptr = delegator == nullptr ? nullptr : *(void **)((char *)delegator + 0x4c);
+        if (delegator == nullptr) {
+            ptr = nullptr;
+        } else {
+            ptr = *(void **)((char *)delegator + 0x4c);
+        }
         mInDevice = (Quazal::EmulationDevice *)((char *)ptr + 0x4ac);
     }
 

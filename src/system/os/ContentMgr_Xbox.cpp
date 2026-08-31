@@ -460,7 +460,7 @@ void XboxContentMgr::PollRefresh() {
                         if (found != gIgnoredContent.end())
                             continue;
 
-                        unsigned char discovered = 0;
+                        bool discovered = false;
                         if (xdata->dwContentType == 0x7000) {
                             FOREACH (it, mCallbacks) {
                                 Symbol sym(filename);
@@ -468,18 +468,18 @@ void XboxContentMgr::PollRefresh() {
                                         xdata->dwTitleId, sym
                                     )
                                     || discovered) {
-                                    discovered = 1;
+                                    discovered = true;
                                 } else {
-                                    discovered = 0;
+                                    discovered = false;
                                 }
                             }
                         } else {
                             FOREACH (it, mCallbacks) {
                                 Symbol sym(filename);
                                 if (!(*it)->ContentDiscovered(sym) || discovered) {
-                                    discovered = 1;
+                                    discovered = true;
                                 } else {
-                                    discovered = 0;
+                                    discovered = false;
                                 }
                             }
                         }
@@ -532,7 +532,7 @@ void XboxContentMgr::PollRefresh() {
                 (*it)->Unmount();
                 allDone = false;
             } else {
-                allDone = (state != Content::kNeedsMounting) & allDone;
+                allDone = (state != Content::kNeedsMounting) && allDone;
             }
         }
         if (allDone) {
