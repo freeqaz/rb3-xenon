@@ -792,6 +792,9 @@ void D3DDevice_BlockOnFence(DWORD fence);
 #pragma endregion
 #pragma region Misc
 
+void D3DDevice_SetVertexShaderConstantB(
+    D3DDevice *pDevice, DWORD StartRegister, CONST BOOL *pConstantData, DWORD BoolCount
+);
 void D3DDevice_SetPixelShaderConstantB(
     D3DDevice *pDevice, DWORD StartRegister, CONST BOOL *pConstantData, DWORD BoolCount
 );
