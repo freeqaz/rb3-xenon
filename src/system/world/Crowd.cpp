@@ -1183,19 +1183,30 @@ void WorldCrowd::DrawShowing() {
                         float upX = meshXfm.m.z.x;
                         float upY = meshXfm.m.z.y;
                         float upZ = meshXfm.m.z.z;
-                        float fwdY, fwdZ, tempA, tempB;
+                        // Both operands of each product must vary per arm: the
+                        // Face row is cross(up, camY) and the Away row is
+                        // cross(camY, up), a clean negation pair -- exactly
+                        // what the PPC path below (adjudicated on retail
+                        // bytes) spells out.  Pinning the camera components to
+                        // .y/.z across both arms, and varying only the up
+                        // component, made the Face row
+                        // camY.y*up.y - camY.z*up.z: a dot-product-shaped
+                        // quantity that is no component of any cross product.
+                        float fwdY, fwdZ, camA, upA, camB, upB;
                         if (mCrowdRotate == kCrowdRotateFace) {
                             const Transform &camWXfm = curCam->WorldXfm();
                             fwdZ = camWXfm.m.y.y * upX - camWXfm.m.y.x * upY;
                             fwdY = camWXfm.m.y.x * upZ - camWXfm.m.y.z * upX;
-                            tempA = upZ; tempB = upY;
+                            camA = camWXfm.m.y.z; upA = upY;
+                            camB = camWXfm.m.y.y; upB = upZ;
                         } else {
                             const Transform &camWXfm = curCam->WorldXfm();
                             fwdY = camWXfm.m.y.z * upX - camWXfm.m.y.x * upZ;
                             fwdZ = camWXfm.m.y.x * upY - camWXfm.m.y.y * upX;
-                            tempA = upY; tempB = upZ;
+                            camA = camWXfm.m.y.y; upA = upZ;
+                            camB = camWXfm.m.y.z; upB = upY;
                         }
-                        charXfm.m.x.x = curCam->WorldXfm().m.y.y * tempB - curCam->WorldXfm().m.y.z * tempA;
+                        charXfm.m.x.x = camA * upA - camB * upB;
                         charXfm.m.x.y = fwdY;
                         charXfm.m.x.z = fwdZ;
                         Normalize(charXfm.m.x, charXfm.m.x);
