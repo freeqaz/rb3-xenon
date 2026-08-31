@@ -50,10 +50,8 @@ ChordbookPanel::ChordbookPanel()
 ChordbookPanel::~ChordbookPanel() { delete mProgressMeter; }
 
 void ChordbookPanel::Enter() {
-    auto _tmp0 = mDir->Find<RndDir>("chord_legend", true);
     UIPanel::Enter();
-    if (mDir)
-        mChordLegend = _tmp0;
+    mChordLegend = mDir->Find<RndDir>("chord_legend", true);
     mGemPlayer = GetChordbookPlayer();
     if (mGemPlayer) {
         unk44 = mGemPlayer->GetUser();

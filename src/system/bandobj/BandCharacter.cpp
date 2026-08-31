@@ -229,16 +229,12 @@ bool BandCharacter::InVignetteOrCloset() const {
     Symbol cliptype = mDriver->ClipType();
     return cliptype == shell || cliptype == vignette;
 }
-template <class _T>
-__declspec(noinline) auto _outline_Int(_T* _obj) -> decltype(_obj->Int()) {
-    return _obj->Int();
-}
-
 
 DECOMP_FORCEACTIVE(BandCharacter, "BandCharacter.no_anim")
 
 CharClipDriver *BandCharacter::PlayMainClip(int i, bool b) {
-    if (_outline_Int(&DataVariable("BandCharacter.no_anim" + 14)))
+    static DataNode &noAnim = DataVariable("BandCharacter.no_anim" + 14);
+    if (noAnim.Int())
         return 0;
     if (mGroupName[0] == 0 || !unk454)
         return 0;
@@ -249,7 +245,7 @@ CharClipDriver *BandCharacter::PlayMainClip(int i, bool b) {
         else {
             CharClipGroup *grp = clipdir->Find<CharClipGroup>(mGroupName, false);
             if (!grp) {
-                MILO_WARN(
+                MILO_NOTIFY_ONCE(
                     "%s could not find group %s in %s\n",
                     PathName(this),
                     mGroupName,
@@ -2318,8 +2314,7 @@ RndTex *BandCharacter::GetBandLogo() {
 }
 
 void BandCharacter::Compress(RndTex *tex, bool b) {
-    if (tex)
-        tex->Compress((RndTex::AlphaCompress)b);
+    tex->Compress((RndTex::AlphaCompress)b);
 }
 
 // See the declaration in BandCharacter.h: the parameter is intptr_t under LP64
@@ -2741,13 +2736,13 @@ BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
         mInstDir->CopyBoundingSphere(character);
         mInstDir->RepointSphereBase(this);
     }
-    if (!o2 && o1->ClassName() == AmbientOcclusion)
+    else if (!o2 && o1->ClassName() == AmbientOcclusion)
         return kIgnore;
     if (!o2 && o1->ClassName() == CharWeightSetter)
         return kKeep;
     if (o1->ClassName() == "OutfitConfig") {
         if (o2) {
-            MILO_NOTIFY("%s is being merged into", PathName(o2));
+            MILO_NOTIFY_ONCE("%s is being merged into", PathName(o2));
         }
         unk630.push_back(dynamic_cast<OutfitConfig *>(o1));
     }

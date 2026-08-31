@@ -55,9 +55,6 @@ void BandMachine::SyncSave(BinStream &bs, unsigned char mask) const {
 }
 
 void BandMachine::SyncLoad(BinStream &bs, unsigned char mask) {
-    int key;
-    char _slotpad[96]; (void)_slotpad;
-    int size;
     if (mask & 1) {
         unsigned char state;
         bs >> state;
@@ -66,10 +63,11 @@ void BandMachine::SyncLoad(BinStream &bs, unsigned char mask) {
         bs >> mCurrentSongPreview;
     }
     if (mask & 2) {
+        int size;
         bs >> size;
         mAvailableSongs.clear();
         for (int i = 0; i < size; i++) {
-            key = int();
+            int key;
             bs >> key;
             mAvailableSongs.insert(key);
         }

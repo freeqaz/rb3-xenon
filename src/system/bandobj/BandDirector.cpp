@@ -522,8 +522,9 @@ void BandDirector::EnterVenue() {
                     mCurWorld->Handle(remove_midi_parsers_msg, false);
                 mCurWorld = dir;
                 unk58 = true;
-                if (TheCrowdAudio && mCurWorld) {
-                    TheCrowdAudio->SetBank(mCurWorld);
+                if (mCurWorld) {
+                    if (TheCrowdAudio)
+                        TheCrowdAudio->SetBank(mCurWorld);
                     // rb3-Wii dev-build guard: the editor-mode sphere sync is
                     // exactly the TheLoadMgr.EditMode() check CB-7 centralized as
                     // LOADMGR_EDITMODE (utl/Loader.h), but this site was
@@ -1827,7 +1828,7 @@ void BandDirector::SetFog(Symbol s) {
 Symbol BandDirector::GetModeInst(Symbol s) {
     if (s == "guitar" || s == "bass") {
         Symbol playmode = TheBandWardrobe->GetPlayMode();
-        if (s == "guitar" && (int)playmode == coop_bk)
+        if (s == "guitar" && playmode == coop_bk)
             return keyboard;
         if (s == "bass" && playmode == coop_gk)
             return keyboard;

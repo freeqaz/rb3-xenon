@@ -116,7 +116,9 @@ DirLoader::DirLoader(
             }
         }
     }
-    if (!(fp.empty())) {
+    if (fp.empty()) {
+        mRoot = FilePath::Root();
+    } else {
         const char *filePath = FileGetPath(mFile.c_str());
         char buf[256];
         strcpy(buf, filePath);
@@ -125,8 +127,6 @@ DirLoader::DirLoader(
             buf[bufLen - 4] = '\0';
         }
         mRoot = FileMakePath(FileRoot(), buf);
-    } else {
-        mRoot = FilePath::Root();
     }
     mState = &DirLoader::OpenFile;
 }
@@ -1219,12 +1219,15 @@ void DirLoader::LoadHeader() {
 void DirLoader::OpenFile() {
     mTimer.Start();
     if (mStream == nullptr) {
+        Archive *theArchive = TheArchive;
+        bool using_cd = UsingCD();
+        bool cache_mode = sCacheMode;
         const char *fileStr = mFile.c_str();
         bool matches = gHostFile && FileMatch(fileStr, gHostFile);
         if (matches) {
-            TheArchive = nullptr;
             SetCacheMode(gHostCached);
             SetUsingCD(false);
+            TheArchive = nullptr;
         }
 #ifdef __EMSCRIPTEN__
         // Web (MEMFS): always use cached paths — extracted assets are stored
@@ -1233,34 +1236,13 @@ void DirLoader::OpenFile() {
 #else
         const char *path = CachedPath(fileStr, false);
 #endif
-        mOwnStream = true;
         mStream =
             new ChunkStream(path, ChunkStream::kRead, 0x10000, true, kPlatformNone, false);
+        mOwnStream = true;
         if (matches) {
-            // ⛔ PERMUTER DEFECT (sweep shard 0, 0c36bc01) — see
-            // docs/decomp/NATIVE_GATE_REPAIR_2026-08-27.md §2.
-            //
-            // This WAS a save/restore pair.  The saves used to sit ABOVE the
-            // `if (matches)` block that overwrites the three globals; the sweep
-            // moved them BELOW it and deleted `Archive *theArchive`.  All three
-            // restores are therefore now no-ops: cache_mode/using_cd re-read the
-            // values just written (gHostCached / false), and TheArchive = TheArchive
-            // cannot undo the `TheArchive = nullptr` above.  Net effect: after a
-            // host-file load, cache mode / UsingCD / TheArchive are never restored.
-            //
-            // Only the self-assign is a compile error (-Wself-assign), and only
-            // that one line is touched here: eliding a no-op is behaviourally
-            // identical in every build.  The rest is left exactly as the sweep
-            // landed it — reverting it is the project owner's call, not this
-            // lane's.  The block is dev-only (gHostFile comes from the
-            // `-host_file` option), so it is dormant in the native port.
-            bool cache_mode = sCacheMode;
-            bool using_cd = UsingCD();
             SetCacheMode(cache_mode);
             SetUsingCD(using_cd);
-#ifndef HX_NATIVE
-            TheArchive = TheArchive;
-#endif
+            TheArchive = theArchive;
         }
         if (mStream->Fail()) {
             if (mProxyDir) {
@@ -1272,8 +1254,7 @@ void DirLoader::OpenFile() {
 #endif
                 );
             } else {
-                auto _tmp0 = MakeString("Could not load: %s", path);
-                Cleanup(_tmp0);
+                Cleanup(MakeString("Could not load: %s", path));
             }
             return;
         }

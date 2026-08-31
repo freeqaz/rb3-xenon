@@ -348,8 +348,7 @@ void RockCentral::CancelOutstandingCalls(Hmx::Object *o) {
     if (!mContextWrapperPool) // RockCentral::Init() (online) is gated off natively
         return;
 #endif
-    if (mContextWrapperPool)
-        mContextWrapperPool->CancelOutstandingContexts(o);
+    mContextWrapperPool->CancelOutstandingContexts(o);
 }
 
 void RockCentral::FailAllOutstandingCalls() {

@@ -17,16 +17,11 @@
 Plane RndTransformable::sShadowPlane;
 #endif
 
-template <class _T>
-__declspec(noinline) auto _outline_Reset(_T* _obj) -> decltype(_obj->Reset()) {
-    return _obj->Reset();
-}
-
 RndTransformable::RndTransformable()
     : mParent(this), mTarget(this), mConstraint(kConstraintNone), mPreserveScale(false),
       mDirty(true) {
-    _outline_Reset(&mLocalXfm);
-    _outline_Reset(&mWorldXfm);
+    mLocalXfm.Reset();
+    mWorldXfm.Reset();
 #ifdef HX_NATIVE
     mWorldWriterTag = kWorldNeverWritten; // X18 diagnostic, see Trans.h
     mWorldPubCaller = nullptr;
@@ -704,27 +699,7 @@ const Transform &RndTransformable::WorldXfm_Force() {
         mWorldXfm = mLocalXfm;
     } else if (mConstraint == kConstraintParentWorld) {
         mWorldXfm = mParent->WorldXfm();
-#ifdef HX_NATIVE
-        // ⛔ PERMUTER DEFECT (sweep shard 2, 9d99331a) — see
-        // docs/decomp/NATIVE_GATE_REPAIR_2026-08-27.md §3.
-        //
-        // The sweep wrote `!!(mConstraint) == kConstraintLocalRotate`.  Because
-        // kConstraintLocalRotate == 1 (Trans.h:30), that reduces to
-        // `mConstraint != 0` — and this chain has NO kConstraintNone guard ahead
-        // of it (only `!mParent` and kConstraintParentWorld), so it is TRUE for
-        // every nonzero constraint.  kConstraintNoParentRotation (10) and the
-        // trailing `else` become DEAD CODE, and billboard / shadow / target
-        // constraints are all silently routed through the LocalRotate arm.
-        //
-        // This one compiles clean — no warning, in either build — so nothing but
-        // reading it would ever have caught it.  The native port renders through
-        // this function every frame, so it uses the correct comparison.  The
-        // match build below is left exactly as the sweep landed it; reverting it
-        // is the project owner's call, not this lane's.
     } else if (mConstraint == kConstraintLocalRotate) {
-#else
-    } else if (!!(mConstraint) == kConstraintLocalRotate) {
-#endif
         Multiply(mLocalXfm.v, mParent->WorldXfm(), mWorldXfm.v);
         mWorldXfm.m = mLocalXfm.m;
     } else if (mConstraint == kConstraintNoParentRotation) {
@@ -741,21 +716,10 @@ const Transform &RndTransformable::WorldXfm_Force() {
 }
 
 void RndTransformable::ApplyDynamicConstraint() {
-#ifdef HX_NATIVE
-    // ⛔ PERMUTER DEFECT (sweep shard 2, 9d99331a) — same family as
-    // WorldXfm_Force above; see NATIVE_GATE_REPAIR_2026-08-27.md §3.
-    // kConstraintTargetWorld == 9 (Trans.h:50) is outside the {0,1} range of
-    // `!!(mConstraint)`, so the sweep's spelling is ALWAYS FALSE and the
-    // kConstraintTargetWorld arm is dead.  Unlike the site above, this one is
-    // out of range and so clang does flag it — it is the error that opened this
-    // whole lane.
     if (mConstraint == kConstraintTargetWorld) {
-#else
-    if (!!(mConstraint) == kConstraintTargetWorld) {
-#endif
         if (mTarget)
             mWorldXfm = mTarget->WorldXfm();
-    } else if (mTarget && mConstraint == kConstraintShadowTarget) {
+    } else if (mConstraint == kConstraintShadowTarget) {
         Transform tf;
         if (mTarget) {
             Transpose(mTarget->WorldXfm(), tf);

@@ -373,10 +373,10 @@ void UIManager::Terminate() {
     UILabel::Terminate();
     SetName(0, 0);
     KeyboardUnsubscribe(this);
-    TheDebug.RemoveExitCallback(TerminateCallback);
     RELEASE(mCam);
     RELEASE(mEnv);
     RELEASE(mJoyClient);
+    TheDebug.RemoveExitCallback(TerminateCallback);
     RELEASE(mAutomator);
 }
 

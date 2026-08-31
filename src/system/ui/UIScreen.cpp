@@ -249,11 +249,11 @@ void UIScreen::Enter(UIScreen *scr) {
 #ifdef HX_NATIVE
     printf("DC3 UI: Screen '%s' Enter (from '%s')\n", Name(), scr ? scr->Name() : "<null>");
 #endif
-    Rnd::sPostProcPanelCount = 0;
     if (scr) {
         sUnloadingScreen = scr;
         scr->UnloadPanels();
     }
+    Rnd::sPostProcPanelCount = 0;
     std::vector<const char *> vec;
     int i5 = 0;
     FOREACH (it, mPanelList) {

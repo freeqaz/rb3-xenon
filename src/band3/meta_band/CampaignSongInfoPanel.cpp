@@ -58,16 +58,16 @@ inline void CampaignSourceProvider::Update() {
 }
 
 void CampaignSongInfoPanel::Refresh() {
+    static Message refresh_instrument_list_msg("refresh_instrument_list");
+    static Message update_details_msg("update_details");
+    MILO_ASSERT(mCampaignSourceProvider, 0x88);
     mCampaignSourceProvider->Update();
     UIList *pSourceList = mDir->Find<UIList>("sources.lst", true);
-    static Message refresh_instrument_list_msg("refresh_instrument_list");
-    MILO_ASSERT(mCampaignSourceProvider, 0x88);
     MILO_ASSERT(pSourceList, 0x8D);
     pSourceList->SetProvider(mCampaignSourceProvider);
     Handle(refresh_instrument_list_msg, true);
     SelectDefaultInstrument();
-    Message msg("update_details");
-    Handle(msg, true);
+    Handle(update_details_msg, true);
 }
 
 void CampaignSongInfoPanel::SelectDefaultInstrument() {

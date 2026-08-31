@@ -30,32 +30,26 @@ Accomplishment::Accomplishment(DataArray *i_pConfig, int index)
 }
 
 Accomplishment::~Accomplishment() {}
-template <class _T>
-__declspec(noinline) auto _outline_Size(_T* _obj) -> decltype(_obj->Size()) {
-    return _obj->Size();
-}
-
 
 void Accomplishment::Configure(DataArray *i_pConfig) {
-
-    DataArray *controllerTypes = i_pConfig->FindArray(launchable_controller_types, false);
     MILO_ASSERT(i_pConfig, 0x3e);
     mName = i_pConfig->Sym(0);
+
+    DataArray *controllerTypes = i_pConfig->FindArray(launchable_controller_types, false);
     if (controllerTypes != NULL) {
-        auto _tmp0 = _outline_Size(controllerTypes);
-        mControllerTypes.reserve(_tmp0 - 1);
-        for (int i = 1; i < _outline_Size(controllerTypes); i++) {
+        mControllerTypes.reserve(controllerTypes->Size() - 1);
+        for (int i = 1; i < controllerTypes->Size(); i++) {
             ControllerType controllerType = (ControllerType)controllerTypes->Int(i);
             mControllerTypes.push_back(controllerType);
         }
     }
 
-    int launchableDifficulty = 0;
     int scoreType = 0;
     if (i_pConfig->FindData(launchable_scoretype, scoreType, false)) {
         mScoreType = (ScoreType)scoreType;
     }
 
+    int launchableDifficulty = 0;
     if (i_pConfig->FindData(launchable_difficulty, launchableDifficulty, false)) {
         mLaunchableDifficulty = (Difficulty)launchableDifficulty;
     }
@@ -68,8 +62,8 @@ void Accomplishment::Configure(DataArray *i_pConfig) {
 
     DataArray *secretPrereqs = i_pConfig->FindArray(secret_prereqs, false);
     if (secretPrereqs != NULL) {
-        mSecretPrereqs.reserve(_outline_Size(secretPrereqs) - 1);
-        for (int i = 1; i < _outline_Size(secretPrereqs); i++) {
+        mSecretPrereqs.reserve(secretPrereqs->Size() - 1);
+        for (int i = 1; i < secretPrereqs->Size(); i++) {
             Symbol s = secretPrereqs->Sym(i);
             mSecretPrereqs.push_back(s);
         }
@@ -83,8 +77,8 @@ void Accomplishment::Configure(DataArray *i_pConfig) {
 
         DataArray *songsarr = dynamicPrereqs->FindArray(songs, false);
         if (songsarr != NULL) {
-            mDynamicPrereqsSongs.reserve(_outline_Size(songsarr) - 1);
-            for (int i = 1; i < _outline_Size(songsarr); i++) {
+            mDynamicPrereqsSongs.reserve(songsarr->Size() - 1);
+            for (int i = 1; i < songsarr->Size(); i++) {
                 Symbol s = songsarr->Sym(i);
                 mDynamicPrereqsSongs.push_back(s);
             }
