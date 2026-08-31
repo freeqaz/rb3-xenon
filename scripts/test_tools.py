@@ -101,9 +101,18 @@ STATIC_ROOTS: list[dict] = [
 # ``main()``-style self-checks: pytest collects 0 tests (rc=5), but running them
 # as a program is a real check. Run as ``python3 <path>``; rc 0 is pass.
 SCRIPT_ARM: list[dict] = [
-    # (none in this repo as of 2026-08-17 — every tracked test file here is a
-    # real pytest module. The arm is kept so the two game repos share one
-    # contract, and so the next main()-style file has an obvious home.)
+    # The negative control for scripts/test_obj_pairing.py: it applies ten
+    # deliberate defects to a SANDBOX COPY of obj_pairing.py /
+    # obj_guard_patcher.py and requires the named test to go red for each. It
+    # is not a pytest module (pytest collects 0 tests from it) and it is the
+    # only thing in this repo that proves those tests can fail at all, so it
+    # belongs here rather than being run by hand and then never again.
+    #
+    # Safe to run concurrently with a build fleet: it never writes to the
+    # checkout. It is also why test_obj_pairing.py is worth trusting — see
+    # that file's header for the `.pyc` staleness trap this class of harness
+    # falls into.
+    {"path": "scripts/sabotage_obj_pairing.py", "timeout": 300},
 ]
 
 # ── deliberate exclusions ─────────────────────────────────────────────────────

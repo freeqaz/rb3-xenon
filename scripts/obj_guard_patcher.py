@@ -22,6 +22,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import obj_pairing  # noqa: E402
+
 IMAGE_SYM_CLASS_EXTERNAL = 2
 IMAGE_SYM_CLASS_STATIC = 3
 
@@ -235,6 +238,10 @@ def main():
                         help='Original .obj directory')
     parser.add_argument('--src-dir', default='build/45410914/src',
                         help='Decomp .obj directory')
+    parser.add_argument('--objdiff-config', default=None,
+                        help='objdiff.json to take the authoritative '
+                             'target/base pairing from (default: repo root). '
+                             'See scripts/obj_pairing.py.')
     parser.add_argument('files', nargs='*',
                         help='Specific .obj files to patch (relative paths)')
     parser.add_argument('--check', action='store_true',
@@ -253,8 +260,18 @@ def main():
     obj_dir = Path(args.obj_dir)
     src_dir = Path(args.src_dir)
 
+    # ★ PAIRING COMES FROM objdiff.json, NOT FROM THE RELPATH (lane PAIRFIX).
+    # `obj_dir / rel` only ever existed for the minority of units whose
+    # splits.txt heading carries a path: 344 of 1,045 declared objects, and the
+    # other 701 hit the `continue` below and were reported as nothing at all.
+    # Seven real pending guard renames were hiding in that 701.  See
+    # scripts/obj_pairing.py for the measurement and for why an object can have
+    # more than one target.
+    pairing = obj_pairing.ObjPairing(
+        Path(__file__).resolve().parent.parent, obj_dir, src_dir,
+        args.objdiff_config)
+
     if args.batch:
-        # Find all decomp .obj files that have matching originals
         decomp_objs = sorted(glob.glob(str(src_dir / '**/*.obj'), recursive=True))
     else:
         decomp_objs = [str(src_dir / f) for f in args.files]
@@ -262,30 +279,40 @@ def main():
     total_files = 0
     total_patches = 0
     patched_files = 0
+    unpaired = 0
 
     for decomp_path in decomp_objs:
-        # Find corresponding original
         rel = os.path.relpath(decomp_path, src_dir)
-        orig_path = obj_dir / rel
-        if not orig_path.exists():
+        orig_paths = pairing.target_paths_for(rel)
+        if not orig_paths:
+            unpaired += 1
             continue
 
         total_files += 1
-        num_patches, details = patch_obj_file(
-            decomp_path, str(orig_path), apply=args.apply, verbose=args.verbose)
-
-        if num_patches > 0:
-            patched_files += 1
-            total_patches += num_patches
-            if args.verbose:
-                print(f'{rel}: {num_patches} patches')
+        file_patches = 0
+        # One pass per declared target.  Identical to the old single-target
+        # loop for the 1,042 unambiguous objects; for the three declared by two
+        # units it consults BOTH halves of the split TU instead of whichever
+        # one the relpath happened to hit.
+        for orig_path in orig_paths:
+            num_patches, details = patch_obj_file(
+                decomp_path, str(orig_path), apply=args.apply,
+                verbose=args.verbose)
+            file_patches += num_patches
+            if num_patches and args.verbose:
+                print(f'{rel} <- {orig_path.name}: {num_patches} patches')
                 for d in details:
                     print(d)
+
+        if file_patches > 0:
+            patched_files += 1
+            total_patches += file_patches
 
     mode = 'APPLIED' if args.apply else 'DRY RUN'
     print(f'\n[{mode}] {total_files} files checked, '
           f'{patched_files} files patched, '
-          f'{total_patches} total symbol patches')
+          f'{total_patches} total symbol patches '
+          f'({unpaired} on-disk objects had no declared target)')
 
     if not args.apply and total_patches > 0:
         print('Run with --apply to modify files.')
