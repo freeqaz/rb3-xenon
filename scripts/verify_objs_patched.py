@@ -89,15 +89,40 @@ Ported from dc3 (`2f35703d0`) and deliberately not identical:
     build time; what it cannot do is answer a consumer who is not running
     ninja.)
 
-3.  **It states its denominators.**  Three of the six passes are idle and
-    three pair target-to-base by RELPATH, which reaches only 347 of the 1,048
-    target/base pairs objdiff.json declares (66.9% invisible; 3 of the 347 are
-    paired against a different target obj than objdiff.json names).  A green
-    check over a third of the population, reported as if it were the whole
-    population, is the vacuity this project keeps re-learning.  `--check`
-    prints the coverage it actually achieved and `--emit` records it, so the
-    gap is visible instead of hidden behind an exit code.  Closing that gap is
-    a separate lane: it would change matched bytes.
+3.  **It states its denominators, and now ENFORCES them.**  Three of the six
+    passes are idle (`guard`/`bool_mangle`/`atexit_scope` all report 0 pending
+    on a fully built tree), so a green `--check` is earned by three passes, not
+    six.  Those same three used to pair target-to-base by RELPATH.
+
+    ⚠ **The figure this file used to carry -- "347 of the 1,048 pairs, 3
+    mispaired" -- was measured against the wrong denominator and is corrected
+    here.**  Re-derived on main at `0d125b35`, rb3-xenon, title 45410914:
+
+      * `1,048` counted objdiff.json UNITS, but the patcher loops iterate
+        distinct COMPILED OBJECTS, of which there are **1,045**.  The
+        difference is exactly the 3 objects declared by two units each.
+      * `347` likewise double-counted those 3.  The loops examined **344**,
+        which is what the patchers themselves printed all along
+        (`344 files checked`).
+      * The "3 mispaired" were not a patcher choosing wrongly.  They are a
+        **splits.txt defect**: `UIStats`, `AccomplishmentProgress` and `Game`
+        each have BOTH a path-qualified and a bare heading, dtk emits two
+        target objects, and `tools/project.py`'s basename alias binds our one
+        compiled object to both.  The two halves are one retail TU -- address
+        ranges contiguous/interleaved, report.json function sets disjoint
+        (overlap 0), so nothing is double-counted.  Whichever half a pass
+        picked, it saw an arbitrary half of retail's symbols.
+
+    So the honest statement of the old gap is **701 of 1,045 distinct compiled
+    objects (67.1%) invisible**, and it was not free: running the three passes
+    over the objdiff.json pairing found **7 pending `$S` -> `??_B` guard
+    renames, all 7 inside the invisible 701**.
+
+    `scripts/obj_pairing.py` now owns the pairing for all three, and this file
+    ASSERTS its coverage rather than merely printing it: `--check` fails if any
+    declared compiled object resolves to no target, and fails separately if the
+    pairing is vacuous (no objdiff.json, nothing declared).  Printing a
+    denominator that nobody checks is how the 701 survived being written down.
 
 4.  **It drives builds through `custom_make`.**  Not this file's job, but its
     sibling patch_guard.py's -- noted here because bare `ninja` on this repo
@@ -127,7 +152,13 @@ PATCHERS = [
     "obj_eh_boundary_patcher.py",
 ]
 
-MANIFEST_VERSION = 1
+#: 2 (lane PAIRFIX): `pairing_coverage` changed shape.  v1 counted objdiff.json
+#: UNITS with relpath-only keys (`declared_pairs`/`relpath_reachable`/
+#: `relpath_disagrees`/`invisible`); v2 counts DISTINCT COMPILED OBJECTS and is
+#: produced by scripts/obj_pairing.py, the same module the patchers pair with.
+#: A reader that finds v1 is reading a manifest whose coverage block
+#: double-counted the three multi-target objects.
+MANIFEST_VERSION = 2
 
 
 def build_dir(repo: Path) -> Path:
@@ -167,61 +198,81 @@ def sha256(path: Path) -> str:
 
 
 def pairing_coverage(repo: Path) -> dict:
-    """How much of the declared population the relpath-paired passes can see.
+    """How much of the declared population the pairing-driven passes can see.
 
-    Three of the six passes (`guard`, `bool_mangle`, `atexit_scope`) locate an
-    object's target counterpart by RELPATH under `build/<v>/obj`, while
-    objdiff.json carries an explicit, authoritative `target_path` per unit.
-    Where the two disagree the pass is either blind to the pair or looking at
-    the wrong target obj.  `obj_anon_ns_patcher.py` already takes
-    `--objdiff-config` and does this correctly.
-
-    Reported, not enforced: closing it changes matched bytes and belongs to a
-    lane that can measure that.
+    ★ Computed by `scripts/obj_pairing.py` -- THE SAME CODE THE PATCHERS USE,
+    on purpose.  The previous version of this function reimplemented the
+    pairing rule here, and a reimplementation can only ever report on itself:
+    it double-counted the three multi-target objects (`347`/`1,048` for a loop
+    that examined 344 of 1,045) and could have drifted arbitrarily far from the
+    passes it claimed to describe without anything noticing.
     """
-    cfg = repo / "objdiff.json"
-    out = {"declared_pairs": 0, "relpath_reachable": 0,
-           "relpath_disagrees": 0, "invisible": 0}
-    try:
-        doc = json.loads(cfg.read_text())
-    except (OSError, ValueError):
-        return out
-    sd, td = src_dir(repo), target_dir(repo)
-    for u in doc.get("units") or []:
-        t, b = u.get("target_path"), u.get("base_path")
-        if not (t and b):
-            continue
-        tp, bp = repo / t, repo / b
-        if not (tp.exists() and bp.exists()):
-            continue
-        out["declared_pairs"] += 1
-        try:
-            rel = bp.relative_to(sd)
-        except ValueError:
-            out["invisible"] += 1
-            continue
-        guess = td / rel
-        if guess.exists():
-            out["relpath_reachable"] += 1
-            if guess.resolve() != tp.resolve():
-                out["relpath_disagrees"] += 1
-        else:
-            out["invisible"] += 1
-    return out
+    sys.path.insert(0, str(repo / "scripts"))
+    import obj_pairing  # noqa: E402  (deliberately late: repo-relative)
+    return obj_pairing.ObjPairing(
+        repo, target_dir(repo), src_dir(repo), repo / "objdiff.json").coverage()
 
 
 def _coverage_line(cov: dict) -> str:
-    d = cov["declared_pairs"] or 1
-    return ("[patch-state] relpath-paired passes (guard/bool_mangle/atexit) "
-            "see {r}/{d} declared target-base pairs ({p:.1f}%); {i} invisible, "
-            "{x} paired against a different target obj than objdiff.json names"
-            .format(r=cov["relpath_reachable"], d=cov["declared_pairs"],
-                    p=100.0 * cov["relpath_reachable"] / d,
-                    i=cov["invisible"], x=cov["relpath_disagrees"]))
+    sys.path.insert(0, str(REPO / "scripts"))
+    import obj_pairing  # noqa: E402
+    return "[patch-state] " + obj_pairing.coverage_line(cov)
 
 
-def run_check(repo: Path, quiet: bool = False) -> int:
+#: Floor for "objdiff.json still describes a real project".  Deliberately far
+#: below the live count (1,045 on main at `0d125b35`) so that adding or
+#: retiring translation units never trips it, and far above zero so that a
+#: configure.py that emitted a mostly-empty config does.  Without an absolute
+#: floor the vacuity is undetectable: a config declaring one object has 100%
+#: coverage, an empty `declared_unpaired` list, and every ratio green.
+DEFAULT_MIN_DECLARED = 900
+
+
+def check_pairing(repo: Path, quiet: bool = False,
+                  min_declared: int = DEFAULT_MIN_DECLARED) -> int:
+    """Refuse a build whose patchers cannot see the population they claim to.
+
+    This is the half of the assertion that `--check` alone cannot make.
+    `--check` asks "would any pass still change a file?", and a pass that is
+    BLIND to an object answers "no" -- the same answer it gives for an object
+    that is genuinely clean.  That is the whole defect: 701 of 1,045 declared
+    objects answered "no" because nobody looked, and 7 of them had a pending
+    guard rename.
+
+    So coverage is asserted separately, from the patchers' own pairing module,
+    and a shortfall fails the build.
+    """
+    cov = pairing_coverage(repo)
+    sys.path.insert(0, str(repo / "scripts"))
+    import obj_pairing  # noqa: E402
+    try:
+        obj_pairing.assert_full_coverage(cov, min_declared=min_declared)
+    except obj_pairing.PairingCoverageError as e:
+        print("=" * 72, file=sys.stderr)
+        print("POST-COMPILE PATCH PAIRING IS INCOMPLETE", file=sys.stderr)
+        print("=" * 72, file=sys.stderr)
+        print(str(e), file=sys.stderr)
+        print("\nAn unpaired object is not 'clean' -- it is UNEXAMINED.  Every "
+              "pairing-driven pass skips it silently, and the measurement that "
+              "follows is taken over an object that was never patched.\n"
+              "Fix: scripts/obj_pairing.py resolves the pairing from "
+              "objdiff.json; if that file is stale or a unit lost its "
+              "base_path, re-run configure.py.", file=sys.stderr)
+        return 3
+    if not quiet:
+        print(_coverage_line(cov))
+        for rel in cov["multi_target_objects"]:
+            print(f"[patch-state] multi-target (splits.txt declares two "
+                  f"headings for one TU): {rel}")
+    return 0
+
+
+def run_check(repo: Path, quiet: bool = False,
+              min_declared: int = DEFAULT_MIN_DECLARED) -> int:
     """Dry-run every patcher; non-zero if the tree is not a fixed point."""
+    rc = check_pairing(repo, quiet=quiet, min_declared=min_declared)
+    if rc:
+        return rc
     failures = []
     for script in PATCHERS:
         p = subprocess.run(
@@ -234,7 +285,6 @@ def run_check(repo: Path, quiet: bool = False) -> int:
         if not quiet:
             print(f"[patch-state] OK: tree is a fixed point of "
                   f"{len(PATCHERS)} post-compile passes")
-            print(_coverage_line(pairing_coverage(repo)))
         return 0
     print("=" * 72, file=sys.stderr)
     print("BUILD TREE IS NOT FULLY PATCHED", file=sys.stderr)
@@ -388,6 +438,13 @@ def main() -> int:
     ap.add_argument("--verify-manifest", action="store_true",
                     help="recompute patch_state.json and fail on any drift")
     ap.add_argument("--stamp", help="touch this file on success (ninja edge)")
+    ap.add_argument("--min-declared", type=int, default=DEFAULT_MIN_DECLARED,
+                    help="refuse if objdiff.json declares fewer than this many "
+                         "pairable compiled objects (default: %d).  Lower it "
+                         "only for a synthetic fixture -- lowering it on the "
+                         "real tree disarms the vacuity check, which is the "
+                         "one thing a green light cannot tell you about "
+                         "itself." % DEFAULT_MIN_DECLARED)
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()
     repo = Path(a.repo).resolve()
@@ -395,7 +452,7 @@ def main() -> int:
         a.check = a.emit = True
     rc = 0
     if a.check:
-        rc = run_check(repo, quiet=a.quiet)
+        rc = run_check(repo, quiet=a.quiet, min_declared=a.min_declared)
         if rc:
             return rc
     if a.emit:

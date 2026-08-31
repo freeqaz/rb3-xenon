@@ -913,19 +913,55 @@ across this lane's sabotage cycles. Two clean builds here do not differ at all.
   number. ~0.81 s on a consistent tree. Every tool that builds-and-scores now
   goes through it.
 
-⚠ **Two honest limits on the green light, both measured, neither fixed:**
+⚠ **One honest limit on the green light, measured; the second one is now fixed:**
 1. **Three of the six passes are idle** — `guard`, `bool_mangle` and
    `atexit_scope` patch **0 files repo-wide** in APPLY mode on a fully built
-   tree. A green `--check` is earned by three passes, not six. (This is why
-   `patch_guard` asserts the *manifest*, which is content-keyed and does not
-   depend on any pass still being active.)
-2. **Those same three pair target↔base by RELPATH**, reaching only **347 of
-   the 1,048** pairs `objdiff.json` declares — **701 (66.9%) invisible**, and
-   **3** of the 347 paired against a *different* target obj than objdiff.json
-   names. `obj_anon_ns_patcher.py` already solved this with `--objdiff-config`.
-   `--check` prints this coverage and `--emit` records it, so the denominator
-   is visible rather than hidden behind an exit code. **Closing it is a
-   separate lane: it would change matched bytes.**
+   tree *(re-measured 2026-08-31 over the full 1,045-object population, not the
+   344 the old pairing could see)*. A green `--check` is earned by three
+   passes, not six. (This is why `patch_guard` asserts the *manifest*, which is
+   content-keyed and does not depend on any pass still being active.)
+2. ~~Those same three pair target↔base by RELPATH~~ — **FIXED, lane PAIRFIX
+   (2026-08-31). `scripts/obj_pairing.py` now owns the pairing for all three,
+   from `objdiff.json`.**
+
+   ⚠ **The figures this bullet used to carry were against the wrong
+   denominator. Re-derived at `0d125b35`:** `1,048` and `347` counted objdiff
+   **units**; the patcher loops iterate distinct **compiled objects**, of which
+   there are **1,045**, and the loops examined **344** — which is what the
+   patchers printed all along (`344 files checked`). The gap was **701 of
+   1,045 (67.1%) invisible**, and it was not free: the objdiff.json pairing
+   found **7 pending `$S`→`??_B` guard renames, all 7 inside the invisible
+   701** (NetGameMsgs, AccomplishmentSetlist, AppLabel, OvershellSlot,
+   CharClipDriver, DataArraySongInfo, LocaleOrdinal — all STATIC→EXTERNAL
+   storage-class fixes). Applying them changed 7 object hashes and moved
+   `report.json` **not at all**: 42,274 / 3,772,560 / 36.819992% before and
+   after. The value is that the tree is a verified fixed point over the whole
+   population instead of a third of it.
+
+   ⚠ **The "3 mispaired" were never a patcher bug — they are a `splits.txt`
+   defect.** `UIStats`, `AccomplishmentProgress` and `Game` each carry **both**
+   a path-qualified and a bare heading, dtk emits two target objects, and
+   `tools/project.py`'s basename alias binds our one compiled object to both.
+   The two halves are one retail TU: address ranges contiguous/interleaved
+   (UIStats `.text` `0x8255F5C8`–`0x825605F4` then `0x825605F4`–`0x82560B08`)
+   and their report.json function sets are **disjoint (overlap 0)**, so nothing
+   is double-counted — but each half is scored against a source file that
+   supplies only half its functions. `configure.py`'s unresolved-heading hard
+   fail does **not** catch this, because both headings resolve. The fix is to
+   merge the bare heading into the path-qualified one; it moves matched bytes
+   and belongs to a splits lane. Until then `obj_pairing` returns **both**
+   targets and each pass runs once per target, and `--check` names them.
+
+   The coverage is now **asserted, not printed**: `--check` fails (exit 3, and
+   refuses to write the manifest) if any declared compiled object resolves to
+   no target, and separately if the pairing is vacuous — no `objdiff.json`, or
+   fewer than `DEFAULT_MIN_DECLARED = 900` declared objects. Printing a
+   denominator nobody checks is how the 701 survived being written down here.
+   Proof it can fail: `scripts/sabotage_obj_pairing.py` applies **10** defects
+   to a sandbox copy and requires the named test in
+   `scripts/test_obj_pairing.py` to go red for each (**10/10**, run three times
+   consecutively; registered in `scripts/test_tools.py`'s script arm so it has
+   a caller).
 
 - `tools/defines_common.py` — include paths. **STLport must come first**, then
   `src/xdk/LIBCMT` (C CRT), then `src`, `src/system`.
