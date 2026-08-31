@@ -1333,9 +1333,13 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
                 if (isFancy && mBirthMomentum) {
                     RndFancyParticle *fp = (RndFancyParticle *)p;
                     float momentumScale = mBirthMomentumAmount * frameSpan * oneOverThirty;
-                    p->pos.x += momentumScale * fp->mBirthVelocityX;
-                    p->pos.z += fp->mBirthVelocityZ * momentumScale;
-                    p->pos.y += fp->mBirthVelocityY * momentumScale;
+                    // The memcpy'd delta lands in the FIRST three floats of the
+                    // block (mRPMVelocity/mPitchAngularVel/mBirthVelocityX).
+                    // Reading mBirthVelocityX/Y/Z started two slots late and ran
+                    // one slot past the copy, so .z was never initialised.
+                    p->pos.x += momentumScale * fp->mRPMVelocity;
+                    p->pos.z += fp->mBirthVelocityX * momentumScale;
+                    p->pos.y += fp->mPitchAngularVel * momentumScale;
                 }
 #endif
 
@@ -1427,19 +1431,18 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
                     }
 
                     // RPM rotation and swing arm
+                    // RPM rotation reads RPF / swingArmVel on BOTH paths. The old
+                    // HX_NATIVE arm here read mRPMVelocity / mPitchAngularVel --
+                    // the stale pre-d938521bc DC3 body this file forked from. Those
+                    // two floats only ever hold the motion-parent POSITIONAL delta
+                    // (InitParticle's memcpy is their sole writer), so on native a
+                    // spinning fancy emitter took its angular velocity from how far
+                    // its motion parent had moved. DC3 fixed this in d938521bc and
+                    // now runs this body unguarded; so do we.
                     if (isRotate) {
-#ifdef HX_NATIVE
-                        // DC3-era: RPM velocity stored in dedicated fields.
-                        float rpmVel = fp->mRPMVelocity;
-                        p->angle += rpmVel * frameSpan;
-                        fp->mRPMVelocity = rpmVel * rpmDragFactor;
-                        p->swingArm += fp->mPitchAngularVel * frameSpan;
-#else
-                        // Retail RB3 (rb3-Wii semantics): reuse RPF / swingArmVel.
                         p->angle += fp->RPF * frameSpan;
                         fp->RPF *= rpmDragFactor;
                         p->swingArm += fp->swingArmVel * frameSpan;
-#endif
                     }
 
                     // Fancy color: 2-phase Hermite-like blend (before/after midcolFrame).
