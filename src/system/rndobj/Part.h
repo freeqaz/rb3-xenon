@@ -67,11 +67,18 @@ public:
     float RPF; // 0xa8
     float swingArmVel; // 0xac
 #ifdef HX_NATIVE
-    float mRPMVelocity;
-    float mPitchAngularVel;
-    float mBirthVelocityX;
-    float mBirthVelocityY;
-    float mBirthVelocityZ;
+    // 16-byte block written by InitParticle's
+    // memcpy(&mRPMVelocity, &mMotionParentDelta, 16). Only the first three
+    // floats carry the motion-parent POSITIONAL delta (x, y, z); the fourth is
+    // over-copy slop. The names are DC3 misnomers -- this block is birth
+    // momentum only, never angular velocity. Kept field-for-field identical to
+    // DC3's RndFancyParticle so the two native arms cannot drift again.
+    // (Was five floats: the extra mBirthVelocityZ sat past the end of the
+    // memcpy and was read while never written.)
+    float mRPMVelocity; // delta.x
+    float mPitchAngularVel; // delta.y
+    float mBirthVelocityX; // delta.z
+    float mBirthVelocityY; // over-copy slop
 #endif
 };
 
