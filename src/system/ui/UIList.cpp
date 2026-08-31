@@ -199,25 +199,22 @@ BEGIN_LOADS(UIList)
 END_LOADS
 
 void UIList::Copy(const Hmx::Object *obj, CopyType ty) {
+    UIComponent::Copy(obj, ty);
 
     const UIList *c = dynamic_cast<const UIList *>(obj);
-    auto& _ref0 = mListState;
-    UIComponent::Copy(obj, ty);
     if (c) {
-        auto _tmp0 = c->mListState.Circular();
-
         mListDir = c->mListDir;
-        _ref0.SetCircular(_tmp0, true);
-        _ref0.SetNumDisplay(c->mListState.NumDisplay(), true);
-        auto _tmp2 = c->mListState.GridSpan();
-        _ref0.SetGridSpan(_tmp2, true);
-        _ref0.SetSpeed(c->mListState.Speed());
+
+        mListState.SetCircular(c->mListState.Circular(), true);
+        mListState.SetNumDisplay(c->mListState.NumDisplay(), true);
+        mListState.SetGridSpan(c->mListState.GridSpan(), true);
+        mListState.SetSpeed(c->mListState.Speed());
         mPaginate = c->mPaginate;
         mSelectToScroll = c->mSelectToScroll;
-        _ref0.SetMinDisplay(c->mListState.MinDisplay());
-        _ref0.SetScrollPastMinDisplay(c->mListState.ScrollPastMinDisplay());
-        _ref0.SetMaxDisplay(c->mListState.MaxDisplay());
-        _ref0.SetScrollPastMaxDisplay(c->mListState.ScrollPastMaxDisplay());
+        mListState.SetMinDisplay(c->mListState.MinDisplay());
+        mListState.SetScrollPastMinDisplay(c->mListState.ScrollPastMinDisplay());
+        mListState.SetMaxDisplay(c->mListState.MaxDisplay());
+        mListState.SetScrollPastMaxDisplay(c->mListState.ScrollPastMaxDisplay());
 
         mNumData = c->mNumData;
         mAutoScrollPause = c->mAutoScrollPause;
@@ -733,10 +730,10 @@ void UIList::Update() {
         if (!mListDir) return;
 #endif
         MILO_ASSERT(mListDir, 0x238);
+        mListDir->CreateElements(this, mWidgets, mListState.NumDisplay());
+
         if (TheLoadMgr.EditMode())
             Refresh(false);
-
-        mListDir->CreateElements(this, mWidgets, mListState.NumDisplay());
     }
 }
 

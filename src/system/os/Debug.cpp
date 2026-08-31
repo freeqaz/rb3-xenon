@@ -68,7 +68,7 @@ void Debug::StopLog() { RELEASE(mLog); }
 
 const char *DevHostname(Symbol s) {
     static Symbol hostnames = "hostnames";
-                return !(SystemConfig()) ? nullptr : SystemConfig(hostnames, s)->Str(1);
+    return SystemConfig() ? SystemConfig(hostnames, s)->Str(1) : nullptr;
 }
 
 ModalCallbackFunc *Debug::SetModalCallback(ModalCallbackFunc *func) {
@@ -199,15 +199,14 @@ void Debug::Fail(const char *msg, void *v) {
         abort();
     return;
 #endif
-    if (!mNoDebug) {
-        if (!mFailing) {
+    if (!mNoDebug && !mFailing) {
         mFailing = true;
         StackString<256> msgStr(msg);
         StackString<4096> stackTrace;
         DataAppendStackTrace(stackTrace);
+        MILO_LOG(stackTrace.c_str());
         static int heap = MemFindHeap("main");
         MemPushHeap(heap);
-        MILO_LOG(stackTrace.c_str());
         if (!MainThread()) {
             CaptureStackTrace(0x32, (StackData *)mFailThreadStack, v);
             mFailThreadMsg = msg;
@@ -226,13 +225,12 @@ void Debug::Fail(const char *msg, void *v) {
         }
         mFailCallbacks.clear();
         ModalType t = kModalFail;
+        Modal(t, msgStr.c_str(), v);
         if (t != kModalFail) {
             mFailing = false;
         }
-        Modal(t, msgStr.c_str(), v);
         MemPopHeap();
         mFailing = false;
-    }
     }
 }
 

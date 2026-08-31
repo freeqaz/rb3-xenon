@@ -89,23 +89,21 @@ void ManageBandPanel::RefreshAll() {
         mStandInProvider->Reload(mProfile);
 
         static Symbol reward_vignettes("reward_vignettes");
-        auto _tmp0 = Property(reward_vignettes, true)->Array(NULL);
-        mHistoryProvider->unk20 = _tmp0;
+        mHistoryProvider->unk20 = Property(reward_vignettes, true)->Array(NULL);
         VignetteViewerProvider *histProv = mHistoryProvider;
-        int numVignettes = histProv->unk20->Size();
         AccomplishmentProgress &accProgress = mProfile->AccessAccomplishmentProgress();
         std::list<Symbol> &newRewardVignettes = accProgress.mNewRewardVignettes;
         std::set<Symbol> &accomplishedVignettes = accProgress.unkb0;
+        int numVignettes = histProv->unk20->Size();
 
         histProv->mEntries.clear();
-        for (int i = 0; numVignettes > (int)i; i++) {
+        for (int i = 0; i < numVignettes; i++) {
             DataArray *arr = histProv->unk20->Array(i);
             Symbol vigName = arr->Sym(0);
             Symbol accName = arr->Sym(1);
 
-            auto _tmp1 = accomplishedVignettes.find(accName);
             bool isAccomplished =
-                _tmp1 != accomplishedVignettes.end();
+                accomplishedVignettes.find(accName) != accomplishedVignettes.end();
 
             if (!isAccomplished)
                 isAccomplished = MetaPanel::sUnlockAll;

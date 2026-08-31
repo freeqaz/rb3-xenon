@@ -268,11 +268,6 @@ BinStreamRev &operator>>(BinStreamRev &d, Character::Lod &lod) {
     }
     return d;
 }
-template <class _T>
-__declspec(noinline) auto _outline_Ptr(_T* _obj) -> decltype(_obj->Ptr()) {
-    return _obj->Ptr();
-}
-
 
 void Character::PostLoad(BinStream &bs) {
     // ---- REVERTED EXPERIMENT (lane MATCH-G) -- READ BEFORE RETRYING --------
@@ -325,7 +320,7 @@ void Character::PostLoad(BinStream &bs) {
             if (d.rev > 4) {
                 ObjPtr<RndTransformable> tPtr(this, 0);
                 bs >> tPtr;
-                RndTransformable *loadedPtr = _outline_Ptr(&tPtr);
+                RndTransformable *loadedPtr = tPtr.Ptr();
                 if (loadedPtr) {
                     mSphereBase = loadedPtr;
                 } else {
@@ -527,14 +522,11 @@ void Character::SyncObjects() {
         ConvertBonesToTranses(this, false);
     }
     RndDir::SyncObjects();
-    auto& _ref0 = mDraws;
     if (!IsSubDir()) {
-        auto _tmp1 = static_cast<RndDrawable *>(mTransGroup.Ptr());
-        VectorRemove(_ref0, _tmp1);
+        VectorRemove(mDraws, static_cast<RndDrawable *>(mTransGroup.Ptr()));
         for (int i = 0; i < mLods.size(); i++) {
-            VectorRemove(_ref0, static_cast<RndDrawable *>(mLods[i].TransGroup()));
-            auto _tmp2 = static_cast<RndDrawable *>(mLods[i].Group());
-            VectorRemove(_ref0, _tmp2);
+            VectorRemove(mDraws, static_cast<RndDrawable *>(mLods[i].Group()));
+            VectorRemove(mDraws, static_cast<RndDrawable *>(mLods[i].TransGroup()));
         }
         SyncShadow();
         CharPollableSorter sorter;
@@ -972,9 +964,8 @@ void Character::FindInterestObjects(ObjectDir *dir) {
 
 void Character::UnhookShadow() {
     for (int i = 0; i < mShadowBones.size(); i++) {
-        auto _tmp0 = mShadowBones[i]->Parent();
-        if (mShadowBones[i])
-            mShadowBones[i]->ReplaceRefs(_tmp0);
+        ShadowBone *cur = mShadowBones[i];
+        cur->ReplaceRefs(cur->Parent());
     }
     DeleteAll(mShadowBones);
 }

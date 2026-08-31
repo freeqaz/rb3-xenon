@@ -418,7 +418,7 @@ const int gInstFocus[] = { 0x20000, 0x8000, 0x10000, 0x40000, 0x80000 };
 
 bool BandWardrobe::ValidGenreGender(CamShot *shot) {
     int flags = shot->Flags();
-    if ((flags && 0xF03) == 0xF03)
+    if ((flags & 0xF03) == 0xF03)
         return true;
     else {
         if (!PowerOf2(flags & 0xF8000)) {
@@ -1062,7 +1062,7 @@ int BandWardrobe::FindBestScoringHint(Symbol *hints, SlotInfo *info, int &outSlo
             continue;
         if (hint == "customize") {
             bool ok;
-            if (!(!(bestScore > 0))) {
+            if (bestScore > 0) {
                 bestScore = 0;
                 ok = true;
             } else {
@@ -1089,7 +1089,7 @@ int BandWardrobe::FindBestScoringHint(Symbol *hints, SlotInfo *info, int &outSlo
         } else if (hint.Null()) {
             int score = i + 0x15;
             bool ok;
-            if (bestScore > score) {
+            if (score < bestScore) {
                 bestScore = score;
                 ok = true;
             } else {

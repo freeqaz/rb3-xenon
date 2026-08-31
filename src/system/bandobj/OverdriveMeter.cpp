@@ -21,9 +21,8 @@ void OverdriveMeter::SyncObjects() {
     mBeReadyTrig = Find<EventTrigger>("be_ready.trig", false);
     mPulseMiloTrig = Find<EventTrigger>("pulse_milo.trig", false);
     mNoOverdriveTrig = Find<EventTrigger>("no_overdrive.trig", false);
-    auto _tmp7 = Find<RndGroup>("extend_anim.grp", false);
+    mExtendAnimGroup = Find<RndGroup>("extend_anim.grp", false);
     mPulseAnimGroup = Find<RndGroup>("pulse_anim.grp", false);
-    mExtendAnimGroup = _tmp7;
 }
 
 SAVE_OBJ(OverdriveMeter, 0x34)
