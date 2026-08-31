@@ -71,18 +71,16 @@ void UIProxy::PreLoad(BinStream &bs) {
 }
 
 void UIProxy::PostLoad(BinStream &bs) {
-    bool b;
-    char _slotpad[96]; (void)_slotpad;
     mDir.PostLoad(nullptr);
     UIComponent::PostLoad(bs);
-    auto _tmp0 = bs.PopRev(this);
-    BinStreamRev d(bs, _tmp0);
+    BinStreamRev d(bs, bs.PopRev(this));
     if (d.rev == 1) {
+        bool b;
         bs >> b;
     }
-    UpdateDir();
     if (d.rev > 2)
         bs >> mEnv;
+    UpdateDir();
 }
 
 void UIProxy::Poll() {

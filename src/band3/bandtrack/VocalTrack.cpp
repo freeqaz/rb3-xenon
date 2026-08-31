@@ -2385,10 +2385,10 @@ void VocalTrack::PrepareNoteTubes(
             alpha = mDir->mHiddenPartAlpha;
         }
     }
-    if (endNote > curNote) {
+    if (curNote < endNote) {
         while (curNote < endNote) {
             VocalNote &firstNote = notes->mNotes[curNote];
-            if (!(!(mPlayer && mPlayer->GetEnabledStateAt(firstNote.mMs)))) {
+            if (mPlayer && mPlayer->GetEnabledStateAt(firstNote.mMs)) {
                 curNote++;
             } else {
                 int phraseID = TheSongDB->GetCommonPhraseID(
@@ -2597,7 +2597,7 @@ void VocalTrack::MissTambourineGem(int, bool b) {
 
 void VocalTrack::OnPhraseComplete(float f1, float f2, int i3) {
     BuildPhrase(f1, f2);
-    if (mDir && unk68) {
+    if (unk68) {
         const char *txt = MakeString("last: %i\n", i3);
         mDir->Find<RndText>("debug_score_current.txt", true)->SetText(txt);
     }

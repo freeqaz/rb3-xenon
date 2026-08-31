@@ -391,15 +391,13 @@ RndMat *TourDescProvider::Mat(int, int iData, UIListMesh *i_pSlot) const {
     Symbol s = DataSymbol(iData);
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0xB2);
-    bool bSelected = s == pProgress->GetTourDesc();
+    bool bSelected = pProgress->GetTourDesc() == s;
     bool bPlayed = pProgress->GetToursPlayed(s) > 0;
     bPlayed = bPlayed || pProgress->GetTourMostStars(s) > 0;
     (void)bPlayed;
-    bool _cond = i_pSlot->Matches("bronze");
-    if (_cond) {
+    if (i_pSlot->Matches("bronze")) {
         if (!bSelected) {
-            bool _cond = TheTour->HasBronzeMedal(s);
-            if (_cond) {
+            if (TheTour->HasBronzeMedal(s)) {
                 String str("tourprize_bronze");
                 std::vector<DynamicTex *>::iterator it =
                     std::find(mTexs->begin(), mTexs->end(), str);

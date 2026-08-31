@@ -329,7 +329,7 @@ void GemTrackDir::Poll() {
 }
 
 void GemTrackDir::SetPitch(float pitch) {
-    if (mStreakMeter && mRotater && LOADMGR_EDITMODE || mTrackPitch != pitch) {
+    if (LOADMGR_EDITMODE || mTrackPitch != pitch) {
         mTrackPitch = pitch;
         Hmx::Matrix3 mtx;
         Vector3 v;
@@ -341,8 +341,7 @@ void GemTrackDir::SetPitch(float pitch) {
         float precomp = -(pitch + 30.0f);
         RndGroup *grp = Find<RndGroup>("streak.grp", true);
         float sined = std::sin(precomp * DEG2RAD);
-        if (grp)
-            grp->DirtyLocalXfm().v.y = -mStreakMeterOffset / sined;
+        grp->DirtyLocalXfm().v.y = -mStreakMeterOffset / sined;
     }
 }
 
@@ -839,9 +838,9 @@ DECOMP_FORCEACTIVE(GemTrackDir, "game.cam")
 
 void GemTrackDir::SetPlayerLocal(float f) {
     bool b2 = true;
-    int b1 = 0;
+    bool b1 = false;
     if (BandTrack::mParent && BandTrack::mParent->HasNetPlayer())
-        b1 = 1;
+        b1 = true;
     if (!b1 && !mSimulatedNet)
         b2 = false;
     if (b2)
