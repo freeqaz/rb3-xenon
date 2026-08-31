@@ -527,9 +527,9 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
         | (u64)(hasDiffuse != 0) << 4
         | 0x100);
     if (fadeOut) {
-        Vector4 fadeParams(mat->unk2d8, mat->unk2dc, mat->unk2e0, mat->unk2e4);
+        Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        opts |= ((s64)mat->unk2d4 & 3U) << 0x1a;
+        opts |= ((s64)mat->unk234 & 3U) << 0x1a;
     }
     if (mat->GetRefractEnabled(b) && mat->GetRefractNormalMap() != nullptr) {
         opts |= 0x400000000000;
@@ -689,9 +689,9 @@ u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     }
     shaderOpts |= ((u64)env->UseToneMapping() & 1) << 0x27;
     if (fadeOut) {
-        Vector4 fadeParams(mat->unk2d8, mat->unk2dc, mat->unk2e0, mat->unk2e4);
+        Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        shaderOpts |= ((s64)mat->unk2d4 & 3U) << 0x1a;
+        shaderOpts |= ((s64)mat->unk234 & 3U) << 0x1a;
     }
     CheckDistortionOpts((RndMat *)mat, (ShaderOptions &)shaderOpts);
     bool hasRecvProjLights;
@@ -892,9 +892,9 @@ u64 RndShaderStandard::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     }
     shaderOpts |= ((u64)env->UseToneMapping() & 1) << 0x27;
     if (fadeOut && !(shaderOpts & 0x40000)) {
-        Vector4 fadeParams(mat->unk2d8, mat->unk2dc, mat->unk2e0, mat->unk2e4);
+        Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        shaderOpts |= ((s64)mat->unk2d4 & 3U) << 0x1a;
+        shaderOpts |= ((s64)mat->unk234 & 3U) << 0x1a;
     }
     CheckDistortionOpts((RndMat *)mat, (ShaderOptions &)shaderOpts);
     return (((u64)(TheHiResScreen.IsActive() & 1) << 2
@@ -1049,9 +1049,9 @@ u64 RndShaderFur::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
         fadeOut = mat->FadeOut();
     }
     if (fadeOut && !fog) {
-        Vector4 fadeParams(mat->unk2d8, mat->unk2dc, mat->unk2e0, mat->unk2e4);
+        Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        opts |= ((s64)mat->unk2d4 & 3U) << 0x1a;
+        opts |= ((s64)mat->unk234 & 3U) << 0x1a;
     }
     return (((u64)(TheHiResScreen.IsActive() & 1) << 2
         | (u64)(TheRnd.ResourceCached() & 1)) << 0x32) | opts;
@@ -1230,9 +1230,9 @@ u64 RndShaderSyncTrack::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     }
     shaderOpts |= ((u64)env->UseToneMapping() & 1) << 0x27;
     if (fadeOut && !(shaderOpts & 0x40000)) {
-        Vector4 fadeParams(mat->unk2d8, mat->unk2dc, mat->unk2e0, mat->unk2e4);
+        Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        shaderOpts |= ((s64)mat->unk2d4 & 3U) << 0x1a;
+        shaderOpts |= ((s64)mat->unk234 & 3U) << 0x1a;
     }
     u64 result = (((u64)(TheHiResScreen.IsActive() & 1) << 2
         | (u64)(TheRnd.ResourceCached() & 1)) << 0x32) | shaderOpts;

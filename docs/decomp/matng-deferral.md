@@ -1,5 +1,19 @@
 # Mat_NG DC3_REV_MEMBER lever — DEFERRED (deep layout, not a one-liner)
 
+> **CLOSED 2026-08-31 (`lane-ngmat-layout`). The layout described below as needing
+> "a dedicated multi-session pass" is DONE and byte-exact.** The 34-delta table in
+> §"The disproof" is fully resolved: `?SetRegularShaderConst@NgMat@@IAAX_N@Z` — the
+> widest probe in the class, 479 instructions, 34 member touches — now shows **zero**
+> `this`-relative offset mismatches (98.79% canonical; all 53 remaining `diff_arg`
+> rows are FPR/GPR permutation plus one `beq`/`bne`). `?RefreshState@NgMat@@IAAXXZ`
+> likewise carries no NgMat-field offset diff (96.92%). The fixes were `9ea37046`
+> (merge BaseMaterial into RndMat), `3e88e429` (retail has no MetaMaterial) and
+> `32f4fdb1` (drop the 16-byte MetaMaterial block ⇒ `sizeof(RndMat)` 412→396),
+> which is what collapsed the uniform +16. `sizeof(NgMat)` is now 0x250, confirmed
+> by retail's own `li r3, 0x250` in `NgMat::NewObject` (100%). What survived until
+> 2026-08-31 was only the **stale `// 0xNNN` comments** this doc correctly called
+> out — now corrected in `Mat_NG.h` against retail displacements.
+
 **Date:** 2026-06-10  ·  **Branch:** `matng-lever`  ·  **Baseline matched:** 6596 (unchanged — no Mat.h edits applied)
 
 ## TL;DR
