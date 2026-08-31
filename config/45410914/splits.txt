@@ -1053,6 +1053,7 @@ StreakMeter.cpp:
 	.pdata      start:0x821F7F50 end:0x821F7FA0
 	.pdata      start:0x821F7FB8 end:0x821F8138
 	.pdata      start:0x821F8138 end:0x821F8140
+	.pdata      start:0x821F8140 end:0x821F8150
 	.pdata      start:0x821F8150 end:0x821F8218
 	.pdata      start:0x821F8218 end:0x821F8230
 	.pdata      start:0x821F8230 end:0x821F8288
@@ -2087,6 +2088,7 @@ CharUpperTwist.cpp:
 	.pdata      start:0x821FD2E0 end:0x821FD2E8
 	.pdata      start:0x82206138 end:0x82206180
 	.pdata      start:0x82206180 end:0x82206188
+	.pdata      start:0x82206188 end:0x82206198
 	.pdata      start:0x822061B0 end:0x822061C0
 	.pdata      start:0x822061D8 end:0x822061E0
 	.pdata      start:0x82206200 end:0x82206210
@@ -3765,7 +3767,6 @@ system/rndobj/SoftParticles.cpp:
 Waypoint.cpp:
 	.pdata      start:0x821F6280 end:0x821F62E0
 	.pdata      start:0x821F7278 end:0x821F7280
-	.pdata      start:0x821F8140 end:0x821F8150
 	.pdata      start:0x82205970 end:0x82205978
 	.pdata      start:0x822073E8 end:0x82207630
 	.pdata      start:0x82207638 end:0x82207640
@@ -6122,7 +6123,6 @@ UIFontImporter.cpp:
 	.text       start:0x82823340 end:0x828233A0
 
 CharMirror.cpp:
-	.pdata      start:0x822063F8 end:0x82206408
 	.pdata      start:0x82206760 end:0x82206788
 	.pdata      start:0x82206788 end:0x822067B8
 	.pdata      start:0x822067B8 end:0x822067E8
@@ -7618,11 +7618,11 @@ CharDriverMidi.cpp:
 	.text       start:0x823CD9BC end:0x823CDB80
 
 CharIKSliderMidi.cpp:
-	.pdata      start:0x82206188 end:0x82206198
 	.pdata      start:0x82206528 end:0x82206530
 	.pdata      start:0x82206530 end:0x82206538
 	.pdata      start:0x82206538 end:0x82206568
 	.pdata      start:0x82206568 end:0x82206570
+	.pdata      start:0x82206570 end:0x82206580
 	.pdata      start:0x82206580 end:0x82206588
 	.pdata      start:0x82206588 end:0x82206658
 	.pdata      start:0x82208AC8 end:0x82208B40
@@ -7966,7 +7966,6 @@ Group.cpp:
 CharNeckTwist.cpp:
 	.pdata      start:0x82206210 end:0x82206218
 	.pdata      start:0x82206218 end:0x82206238
-	.pdata      start:0x82206570 end:0x82206580
 	.pdata      start:0x82206878 end:0x82206898
 	.pdata      start:0x822068A8 end:0x822068B0
 	.pdata      start:0x822068C0 end:0x822068D0
@@ -12974,6 +12973,7 @@ FlowSlider.cpp:
 CharIKMidi.cpp:
 	.pdata      start:0x82206380 end:0x822063F0
 	.pdata      start:0x822063F0 end:0x822063F8
+	.pdata      start:0x822063F8 end:0x82206408
 	.pdata      start:0x82206408 end:0x82206430
 	.pdata      start:0x82206430 end:0x82206480
 	.pdata      start:0x82206480 end:0x822064C0

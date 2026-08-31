@@ -721,13 +721,21 @@ config.custom_build_steps = {
         {
             "outputs": str(stamp_dir / "target_symbol_renames.stamp"),
             "rule": "run_script",
-            # No explicit input edge to specific objs — ninja will rerun this
-            # when the stamp is older than build/.../config.json (SPLIT output)
-            # via the implicit dep below.
+            # No explicit input edge to specific objs — nothing in the graph
+            # names build/<v>/obj/**, which is exactly the hazard. config.json
+            # is the split's only DECLARED output and the split edge carries
+            # `restat`, so a split that rewrites every target object while
+            # leaving config.json byte-identical leaves this edge clean and
+            # the target objs pre-renamer -- in which state every mangled-name
+            # lookup answers "absent" and any negative result is vacuous.
+            # split_current_checked.stamp is the signal that a split RAN
+            # (its digest covers the split record's pid/unix_time), so it is
+            # the input that actually describes what this edge consumes.
             "implicit": [
                 "scripts/obj_target_symbol_renamer.py",
                 "scripts/target_symbol_map.json",
                 str(stamp_dir / "config.json"),
+                str(stamp_dir / "split_current_checked.stamp"),
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_target_symbol_renamer.py --batch --apply",
@@ -890,11 +898,30 @@ config.custom_build_steps = {
         # would still look clean and nothing would re-emit it, whereas a
         # missing output is rebuilt.
         {
+            #
+            # ★ THE MANIFEST RECORDS TARGET OBJECTS, SO IT MUST DEPEND ON THE
+            # SPLIT. Until this edge named split_current_checked.stamp its
+            # inputs were `all_source` + the patch stamps -- the DECOMP half
+            # only. A split that changed target-object content (a symbols.txt
+            # or splits.txt edit) therefore left the manifest describing
+            # objects that no longer exist, `--verify-manifest` permanently
+            # red, and NO NUMBER OF FULL BUILDS cleared it: measured here at
+            # rc=1 after four consecutive `ninja` runs, cleared only when an
+            # unrelated decomp object happened to change and dirtied
+            # `all_source`. Same family as the splits.txt fixed-point defect
+            # -- a declared dependency that omits the thing it describes.
+            #
+            # `pre-compile` is here for ORDER, not just dirtiness: the manifest
+            # must record target objects as the renamer leaves them, so it has
+            # to run after that edge, and on a split-only change no compile
+            # edge exists to impose that order.
             "outputs": str(stamp_dir / "patch_state.json"),
             "rule": "run_script",
             "implicit": [
                 "scripts/verify_objs_patched.py",
                 str(stamp_dir / "eh_boundary_patched.stamp"),
+                str(stamp_dir / "split_current_checked.stamp"),
+                "pre-compile",
                 "all_source",
             ],
             "variables": {
