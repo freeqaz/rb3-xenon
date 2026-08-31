@@ -482,34 +482,48 @@ u64 RndShaderDrawRect::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 }
 
 u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    RndEnviron *env = RndEnviron::Current();
-    int hasDiffuse = mat->GetDiffuseTex() != nullptr;
+    // Retail RB3 X360 differs from the dc3-era body in four ways, all read off
+    // the target listing: no fog term at all, no HiResScreen/ResourceCached
+    // bits, and Rnd::Mode is one lower than dc3's enum (velocity 6 not 7,
+    // occlusion 3 not 4). The option word is also folded field-by-field as it
+    // is computed rather than assembled in one expression at the end.
+    u64 opts = (((u64)(bool)mat->GetDiffuseTex() & 1) | 0x10) << 4;
     int texGen = mat->GetTexGen();
     uint texGenVal;
-    if (texGen == kTexGenSphere) {
+    switch (texGen) {
+    case kTexGenSphere:
         texGenVal = 1;
-    } else if (texGen == kTexGenProjected) {
+        break;
+    case kTexGenProjected:
         texGenVal = 2;
-    } else {
+        break;
+    default:
         texGenVal = -(uint)(texGen == kTexGenEnviron) & 3;
+        break;
     }
+    // The target clears bits 16-17 alongside the 2-bit texgen field at 10-11
+    // before inserting; bits 16-17 are provably zero here, so the wider clear
+    // is a no-op. dc3's target does exactly the same, so it is a property of
+    // the shared source, not of retail.
+    opts = (opts & ~0x30C00ULL) | (((s64)(int)texGenVal & 3) << 10);
+    RndEnviron *env = RndEnviron::Current();
     bool fadeOut;
-    if (!b) {
+    if (b) {
+        fadeOut = mat->FadeOut();
+    } else {
         if (!env->FadeOut() || env->FadeEnd() == env->FadeStart()) {
             fadeOut = false;
         } else {
             fadeOut = true;
         }
-    } else {
-        fadeOut = mat->FadeOut();
     }
     u64 pseudoHDR;
     if (!fadeOut) {
         bool offscreen;
-        if (!b) {
-            offscreen = TheNgRnd.Offscreen();
-        } else {
+        if (b) {
             offscreen = TheShaderMgr.GetUnk41();
+        } else {
+            offscreen = TheNgRnd.Offscreen();
         }
         if (!offscreen && mat->AllowHDR()) {
             pseudoHDR = 1;
@@ -519,38 +533,27 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     } else {
         pseudoHDR = 0;
     }
+    opts = (opts & ~(1ULL << 0x16)) | ((pseudoHDR & 1) << 0x16);
     bool colorAdjust;
-    if (!b) {
-        colorAdjust = env->UseColorAdjust();
-    } else {
+    if (b) {
         colorAdjust = mat->ColorAdjust();
+    } else {
+        colorAdjust = env->UseColorAdjust();
     }
-    u64 opts = (((u64)(mat->GetIntensify() & 1) << 0x20 | (u64)(colorAdjust & 1)) << 0x15
-        | pseudoHDR << 0x16
-        | (s64)(int)texGenVal << 10
-        | (u64)(hasDiffuse != 0) << 4
-        | 0x100);
+    opts = (opts & ~((1ULL << 0x15) | (1ULL << 0x35)))
+        | (((u64)(mat->GetIntensify() & 1) << 0x20 | (u64)(colorAdjust & 1)) << 0x15);
     if (fadeOut) {
         Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        opts |= ((s64)mat->unk234 & 3U) << 0x1a;
+        opts = (opts & ~(3ULL << 0x1a)) | (((s64)mat->unk234 & 3) << 0x1a);
     }
     if (mat->GetRefractEnabled(b) && mat->GetRefractNormalMap() != nullptr) {
         opts |= 0x400000000000;
     }
-    bool fog;
-    if (mat->AllowFog() && mat->GetFog()) {
-        fog = true;
-    } else {
-        fog = false;
-    }
-    opts |= (u64)fog << 0x12;
-    if (TheRnd.DrawMode() == (Rnd::Mode)7) {
+    if (TheRnd.DrawMode() == (Rnd::Mode)6) {
         opts |= 0x200000000000;
     }
-    return (((u64)(TheHiResScreen.IsActive() & 1) << 2
-        | (u64)(TheRnd.ResourceCached() & 1)) << 0x32)
-        | (-(u64)(TheRnd.DrawMode() != Rnd::kDrawOcclusion) & opts);
+    return -(s64)(bool)(TheRnd.DrawMode() - (Rnd::Mode)3) & opts;
 }
 
 u64 RndShaderMultimesh::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
