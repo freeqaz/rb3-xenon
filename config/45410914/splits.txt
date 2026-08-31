@@ -4644,6 +4644,7 @@ CharForeTwist.cpp:
 	.text       start:0x823C4608 end:0x823C4800
 	.text       start:0x823C5D28 end:0x823C5F20
 	.text       start:0x823C6148 end:0x823C6178
+	.text       start:0x823C6178 end:0x823C6184
 	.text       start:0x823C63D8 end:0x823C6860
 	.text       start:0x823C68C8 end:0x823C69B0
 
@@ -6130,11 +6131,11 @@ CharMirror.cpp:
 	.pdata      start:0x82206830 end:0x82206848
 	.pdata      start:0x82206848 end:0x82206850
 	.pdata      start:0x82206850 end:0x82206878
-	.text       start:0x823C9570 end:0x823C9708
 	.text       start:0x823CD1A0 end:0x823CD4F0
 	.text       start:0x823CD4F0 end:0x823CD868
 	.text       start:0x823CD868 end:0x823CD980
 	.text       start:0x823CD980 end:0x823CD9B0
+	.text       start:0x823CD9B0 end:0x823CD9BC
 	.text       start:0x823CDB80 end:0x823CDBF0
 	.text       start:0x823CDBF0 end:0x823CDD00
 	.text       start:0x823CDD00 end:0x823CE020
@@ -7880,7 +7881,6 @@ CharPollGroup.cpp:
 	.pdata      start:0x82204EE0 end:0x82204EF8
 	.text       start:0x823AF210 end:0x823B08CC
 	.text       start:0x823B0B00 end:0x823B0C78
-	.text       start:0x823CD9B0 end:0x823CD9BC
 
 FlowValueCase.cpp:
 	.pdata      start:0x82204D20 end:0x82204D28
@@ -12983,9 +12983,9 @@ CharIKMidi.cpp:
 	.pdata      start:0x82206430 end:0x82206480
 	.pdata      start:0x82206480 end:0x822064C0
 	.pdata      start:0x822064C0 end:0x82206508
-	.text       start:0x823C6178 end:0x823C6184
 	.text       start:0x823C9010 end:0x823C9540
 	.text       start:0x823C9540 end:0x823C9570
+	.text       start:0x823C9570 end:0x823C9708
 	.text       start:0x823C9708 end:0x823C9880
 	.text       start:0x823C9880 end:0x823C9FD8
 	.text       start:0x823C9FD8 end:0x823CA488
