@@ -45,6 +45,7 @@ Provenance: lane VTGRIND 2026-08-20;
 """
 
 import collections
+import re
 
 __all__ = [
     'FoldPoisonError', 'Slot', 'INCOMPARABLE_REASONS',
@@ -103,6 +104,34 @@ def access_class(sym):
     return m.group(1) if m else None
 
 
+def mangled_class(sym):
+    """Immediate declaring class of an MSVC mangled member name, or None.
+
+    `?Load@StarDisplay@@$4...`  -> 'StarDisplay'
+    `??_GBandScoreboard@@$4...` -> 'BandScoreboard'   (no '@' before the class)
+    `?F@C@N@@...`               -> 'C'                (immediate qualifier)
+
+    Exists because the `('@'+cls+'@@') in sym` substring test cannot see the
+    `??<op>` family -- see name_owned_by's docstring for the measurement.
+    """
+    if not sym or not sym.startswith('?'):
+        return None
+    s = sym[1:]
+    if s.startswith('?'):                       # ??<op>
+        s = s[1:]
+        m = re.match(r'(_[A-Z0-9]|[0-9A-Z])', s)
+        if not m:
+            return None
+        s = s[m.end():]
+    i = s.find('@@')
+    if i < 0:
+        return None
+    toks = [t for t in s[:i].split('@') if t]
+    if not toks:
+        return None
+    return toks[-1] if len(toks) > 1 else toks[0]
+
+
 def name_owned_by(sym, hierarchy):
     """True if `sym` is qualified by the class itself or one of its RTTI bases.
 
@@ -128,10 +157,30 @@ def name_owned_by(sym, hierarchy):
     fake one costs a LANE and closes a vein.  We take the former -- but the
     caller MUST surface the exclusion counts, never drop them silently
     (CLAUDE.md, "no silent caps").
+
+    ⛔ THE `('@' + n + '@@') in sym` SUBSTRING TEST HAD A SYSTEMATIC BLIND SPOT
+    (lane SLOTMAP, 2026-08-31).  It requires an '@' immediately BEFORE the class
+    name, which holds for `?Method@Class@@...` but NOT for the `??<op>` family,
+    where the class name follows the operator code directly:
+
+        ??_GBandScoreboard@@$4PPPPPPPM@A@AAPAXI@Z
+
+    contains `_GBandScoreboard@@`, never `@BandScoreboard@@`, so the deleting
+    destructor OF THE VTABLE'S OWN CLASS was labelled `unrelated_owner`.
+    Measured on the full sweep: **10 of 161** `unrelated_owner` rows are this
+    artifact, every one of them a `??<op>` name whose class EQUALS the vtable's
+    RTTI owner.  They are still genuine DISAGREEMENTS (same class, different
+    method -- the wave-12 PRELOAD shape), but calling them "unrelated owner" sent
+    them to the wrong worklist and made the coordinator's
+    "the wrong class is consistent per vtable" reading look 10 rows stronger
+    than it is.
     """
     if not sym or not hierarchy:
         return True          # no opinion -> do not exclude
-    return any(('@' + n + '@@') in sym for n in hierarchy)
+    if any(('@' + n + '@@') in sym for n in hierarchy):
+        return True
+    c = mangled_class(sym)
+    return c is not None and c in set(hierarchy)
 
 
 def name_is_nonvirtual(sym):
