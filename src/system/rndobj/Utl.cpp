@@ -1548,9 +1548,9 @@ void MakeTangentsLate(RndMesh *m) {
 
 void ComputeFaceTangentBasis(RndMesh *m, int faceIdx, Hmx::Matrix3 &outBasis) {
     MILO_ASSERT(m, 0x250);
+    RndMesh::Face &face = m->Faces()[faceIdx];
     outBasis.x.x = 1.0f;
     outBasis.x.y = 0.0f;
-    RndMesh::Face &face = m->Faces()[faceIdx];
     outBasis.x.z = 0.0f;
     outBasis.y.x = 0.0f;
     outBasis.y.y = 1.0f;
@@ -1621,11 +1621,9 @@ void ComputeFaceTangentBasis(RndMesh *m, int faceIdx, Hmx::Matrix3 &outBasis) {
                 }
             }
         }
-        auto _tmp2 = PathName(m);
-        auto _tmp1 = MakeString(
-            "NOTIFY: %s has bad UVs, should reexport from Max\n", _tmp2
+        TheDebug << MakeString(
+            "NOTIFY: %s has bad UVs, should reexport from Max\n", PathName(m)
         );
-        TheDebug << _tmp1;
     }
 }
 

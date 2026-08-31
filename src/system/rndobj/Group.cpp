@@ -411,13 +411,12 @@ void RndGroup::SortDraws() {
 }
 
 int RndGroup::CollidePlane(const Plane &p) {
-    Sphere s;
     int ret = -1;
     bool first = false;
-    auto _tmp1 = mDraws.end();
-    for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != _tmp1;
+    for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != mDraws.end();
          ++it) {
-        if ((*it)->Showing() & (*it)->MakeWorldSphere(s, false)) {
+        Sphere s;
+        if ((*it)->Showing() && (*it)->MakeWorldSphere(s, false)) {
             if (!first) {
                 ret = (*it)->CollidePlane(p);
                 first = true;

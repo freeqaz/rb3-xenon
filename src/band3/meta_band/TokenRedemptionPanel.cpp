@@ -105,9 +105,9 @@ void TokenRedemptionPanel::Poll() {
 END_UNPOOL_DATA
 
 void TokenRedemptionPanel::Unload() {
+    TheRockCentral.CancelOutstandingCalls(this);
     mResultList.Clear();
     mListData.clear();
-    TheRockCentral.CancelOutstandingCalls(this);
     RELEASE(mEnumeration);
     RELEASE(mPurchaser);
     UIPanel::Unload();

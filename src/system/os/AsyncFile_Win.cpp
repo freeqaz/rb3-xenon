@@ -40,9 +40,9 @@ void AsyncFileWin::_OpenAsync() {
 
     mSize = 0;
     if (gFakeFileErrors) {
-        mFail = true;
         SetLastError(0x20000002);
         ReadError(mFilename.c_str());
+        mFail = true;
         return;
     }
     mSectorBytes = 0x800;

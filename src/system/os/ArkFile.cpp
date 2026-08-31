@@ -70,15 +70,13 @@ bool ArkFile::ReadDone(int &i) {
 }
 
 ArkFile::ArkFile(const char *iFilename, int iMode)
-    : mArkfileNum(0), mByteStart(0), mSize(0), mUCSize(0),
-      mNumOutstandingTasks(0), mBytesRead(0), mTell(0), mReadAhead(true), mFail(false),
+    : mArkfileNum(0), mByteStart(0), mReadStartTime(0), mSize(0), mUCSize(0),
+      mNumOutstandingTasks(0), mBytesRead(0), mTell(0), mFail(false), mReadAhead(true),
       mFilename(iFilename) {
-    mReadStartTime = 0;
-    bool _bit0 = (iMode & 1) != 0;
     if (!TheArchive->GetFileInfo(
             FileMakePath(".", iFilename), mArkfileNum, mByteStart, mSize, mUCSize
         )
-        || (_bit0)) {
+        || (iMode & 1)) {
         mFail = true;
     }
 }

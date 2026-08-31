@@ -1132,10 +1132,10 @@ void VocalPlayer::UnpackFloats(
     o_rFractionArray.resize(4);
     float fDifference = f2 - f1;
     MILO_ASSERT(fDifference > 0.0f, 0x6F3);
-    i1 >>= 8;
+    o_rFractionArray[0] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
     i1 >>= 8;
     o_rFractionArray[1] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
-    o_rFractionArray[0] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
+    i1 >>= 8;
     o_rFractionArray[2] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
     i1 >>= 8;
     o_rFractionArray[3] = (float)(int)(unsigned char)i1 / 255.0f * fDifference + f1;
@@ -2110,7 +2110,9 @@ float VocalPlayer::UpdateOverlay(RndOverlay *o, float f2) {
 }
 
 bool VocalPlayer::SongSectionOnly(float &f1, float &f2) const {
-    if (!(!TheGame->mProperties.mHasSongSections)) {
+    if (!TheGame->mProperties.mHasSongSections) {
+        return false;
+    } else {
         int i20, i24;
         TheGameConfig->GetPracticeSections(i20, i24);
         float f28;
@@ -2118,8 +2120,6 @@ bool VocalPlayer::SongSectionOnly(float &f1, float &f2) const {
         TheGameConfig->GetSectionBounds(i24, f28, f2);
         TheGame->AdjustForVocalPhrases(f1, f2);
         return true;
-    } else {
-        return false;
     }
 }
 

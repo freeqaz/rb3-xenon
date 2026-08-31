@@ -58,10 +58,9 @@ RndTex *NgLight::CreateShadowTex() {
 }
 
 bool NgLight::SphereConeTest(const Vector3 &sphereCenter, float sphereRadius) {
-    const Transform &xfm2 = WorldXfm();
-    const auto& _ref0 = sphereCenter;
     const Transform &xfm1 = WorldXfm();
-    Vector3 sc = _ref0;
+    const Transform &xfm2 = WorldXfm();
+    Vector3 sc = sphereCenter;
 
     float proj = xfm2.m.y.x * (sc.x - xfm1.v.x)
         + xfm2.m.y.z * (sc.z - xfm1.v.z)
@@ -96,8 +95,10 @@ bool NgLight::SphereConeTest(const Vector3 &sphereCenter, float sphereRadius) {
     perpBot *= botR;
 
     Vector3 topPoint = origin;
-        Vector3 toSphere = _ref0;
-    toSphere -= topPoint = perpTop;
+    topPoint += perpTop;
+
+    Vector3 toSphere = sphereCenter;
+    toSphere -= topPoint;
 
     Vector3 botPoint = origin;
     botPoint.x += (float)((double)axis.x * range);

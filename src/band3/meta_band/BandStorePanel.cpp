@@ -316,24 +316,22 @@ BEGIN_PROPSYNCS(BandStorePanel)
 END_PROPSYNCS
 
 void BandStorePanel::Poll() {
-    auto _e1 = DataNode(0);
-    auto _e0 = DataNode(0);
     StorePanel::Poll();
     if (mMetadataLoader && !mLastRequest.empty()) {
         mMetadataLoader->PollLoading();
         if (mMetadataLoader->IsLoaded()) {
             DataArray *metadata = mMetadataLoader->GetUnk4();
             if (metadata->Size()) {
+                metadata->AddRef();
                 MILO_ASSERT(metadata, 0x11C);
                 const char *nullStr = gNullStr;
-                metadata->AddRef();
                 static Message msg(
                     MetadataLoadedMsg::Type(),
                     DataNode(metadata, kDataArray),
                     DataNode(1),
                     DataNode(nullStr),
-                    _e0,
-                    _e0
+                    DataNode(0),
+                    DataNode(0)
                 );
                 msg[0] = DataNode(metadata, kDataArray);
                 msg[2] = DataNode(mLastRequest.c_str());
@@ -358,10 +356,10 @@ void BandStorePanel::Poll() {
                 Message msg(
                     MetadataLoadedMsg::Type(),
                     DataNode(empty, kDataArray),
-                    _e1,
+                    DataNode(0),
                     DataNode(gNullStr),
-                    _e1,
-                    _e1
+                    DataNode(0),
+                    DataNode(0)
                 );
                 msg[2] = DataNode(mLastRequest.c_str());
                 msg[3] = DataNode(

@@ -55,8 +55,8 @@ void BoxMapLighting::ApplyQueuedLights(Hmx::Color * __restrict color, const Vect
         ApplyLight(mQueued_Spot, *v3);
         ApplyLight(mQueued_Point, *v3);
     }
-    ApplyLight(mQueued_Directional);
     unsigned int idx = gLightIndex;
+    ApplyLight(mQueued_Directional);
 
     if (idx != 0) {
         float c0r = color[0].red;

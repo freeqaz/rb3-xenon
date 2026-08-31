@@ -67,33 +67,31 @@ void RndSoftParticleBuffer::BlurSurface() {
         float texW = (float)(long long)dstTex->Width();
         float texH = (float)(long long)dstTex->Height();
         Hmx::Rect rect(0.0f, 0.0f, texW, texH);
-        TheShaderMgr.SetNumTaps(5);
         float invW = 1.0f / texW;
         float invH = 1.0f / texH;
 
-        for (int i = 0; 5 > i; i++) {
+        for (int i = 0; i < 5; i++) {
             float weight = kBlurOffsets[i * 2 + 0];
             float offset = kBlurOffsets[i * 2 + 1];
 
             float scaleU, scaleV;
-            if (!(!(pass & 1))) {
-                scaleU = invW * 0.5f;
-                scaleV = offset * invH;
-            } else {
+            if (!(pass & 1)) {
                 scaleU = offset * invW;
                 scaleV = invH * 0.5f;
+            } else {
+                scaleU = invW * 0.5f;
+                scaleV = offset * invH;
             }
 
             Vector4 uvScale(scaleU, scaleV, 1.0f, 1.0f);
-            auto _tmp1 = (PShaderConstant)(0x8a + i);
-            TheShaderMgr.SetPConstant(_tmp1, uvScale);
+            TheShaderMgr.SetPConstant((PShaderConstant)(0x8a + i), uvScale);
 
             Vector4 uvWeight(weight, weight, weight, weight);
             TheShaderMgr.SetPConstant((PShaderConstant)(0x9a + i), uvWeight);
         }
 
-        auto _tmp0 = Hmx::Color(1, 1, 1);
-        TheNgRnd.DrawRect(rect, workMat, kBlurShader, _tmp0, nullptr, nullptr);
+        TheShaderMgr.SetNumTaps(5);
+        TheNgRnd.DrawRect(rect, workMat, kBlurShader, Hmx::Color(1, 1, 1), nullptr, nullptr);
         TheShaderMgr.SetNumTaps(1);
         dstTex->FinishDrawTarget();
     }

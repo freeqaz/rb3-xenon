@@ -73,17 +73,15 @@ void UIListMesh::Draw(
     if (mMesh) {
         float somefloat = 1.0f;
         RndMat *themat = 0;
-        auto _tmp0 = TheLoadMgr.EditMode();
-        if (_tmp0) {
+        if (TheLoadMgr.EditMode()) {
             themat = mMesh->Mat();
             if (themat)
                 somefloat = themat->Alpha();
         }
-        bool _cond = TheLoadMgr.EditMode();
         Transform xfm1 = mMesh->LocalXfm();
         UIListSlot::Draw(drawstate, liststate, tf, compstate, box, cmd);
         mMesh->SetLocalXfm(xfm1);
-        if (_cond) {
+        if (TheLoadMgr.EditMode()) {
             mMesh->SetMat(themat);
             if (themat) {
                 themat->SetAlpha(somefloat);

@@ -992,12 +992,14 @@ void ObjectDir::Iterate(DataArray *arr, bool b) {
         s2 = a2->Sym(0);
         s8 = a2->Sym(1);
     }
+    static DataArray *objects = SystemConfig("objects");
+    objects->FindArray(s2);
     DataNode *var = arr->Var(3);
-    SystemConfig("objects")->FindArray(s2);
     DataNode varNode(*var);
-        for (ObjDirItr<Hmx::Object> it(this, b); it != nullptr; ++it) {
+    Symbol first;
+    for (ObjDirItr<Hmx::Object> it(this, b); it != nullptr; ++it) {
         bool bbb;
-                                Symbol first = it->ClassName();
+                first = it->ClassName();
         std::pair<Symbol, Symbol> key = std::make_pair(first, s2);
         std::map<std::pair<Symbol, Symbol>, bool>::iterator superclassIt =
             sSuperClassMap.find(key);
