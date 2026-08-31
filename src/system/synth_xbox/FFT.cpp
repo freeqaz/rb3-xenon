@@ -121,6 +121,7 @@ int CalculateSinCosTable(long n, float* table) {
     }
 
     long count = n / 4;
+    long half = n / 2;
     double twoPi = 6.2831854820251465;
     long j = 0;
     for (long i = 0; i < count; ++i, j += 2) {
@@ -129,8 +130,8 @@ int CalculateSinCosTable(long n, float* table) {
         float sv = (float)sin(angle);
         table[j] = cv;
         table[j + 1] = sv;
-        table[j + (n / 2)] = -sv;
-        table[j + (n / 2) + 1] = cv;
+        table[j + half] = -sv;
+        table[j + half + 1] = cv;
     }
     return 0;
 }
@@ -386,11 +387,11 @@ extern "C" {
 
 
 int fft_matrix_forward_columnwise(float* data, long size, float* context) {
-    XMVECTOR v_zero;
     int ret = 0;
+    int power = 1;
 
     // Declare all VMX types upfront to ensure proper register allocation
-    int power = 1;
+    XMVECTOR v_zero;
     XMVECTOR v_sign;
     XMVECTOR v_sin2a;
     XMVECTOR v_sin2;
@@ -460,9 +461,9 @@ int fft_matrix_forward_columnwise(float* data, long size, float* context) {
     v_sign = *(XMVECTOR *)__vmx_bf8000003f800000bf8000003f800000;
 
     // Initialize permutation masks - these will be constructed with lis/ori
-    perm_lo.u[2] = 0x10111213;
-    perm_lo.u[1] = 0x04050607;
     perm_lo.u[0] = 0x00010203;
+    perm_lo.u[1] = 0x04050607;
+    perm_lo.u[2] = 0x10111213;
     perm_lo.u[3] = 0x14151617;
 
     perm_hi.u[0] = 0x08090A0B;
@@ -535,6 +536,7 @@ int fft_matrix_forward_columnwise(float* data, long size, float* context) {
             w_re2 = v_cos_merged;
             w_im2 = __vmaddfp(v_sign, v_sin_merged, v_zero);
 
+            float* dst1 = temp;
             float* dst2 = temp2;
             char* src_data = (char*)data_ptr;
             int k = 0;
@@ -587,8 +589,8 @@ int fft_matrix_forward_columnwise(float* data, long size, float* context) {
                     out_lo = __vperm(r1, r2, pm_lo_v);
                     out_hi = __vperm(r1, r2, pm_hi_v);
 
-                    __stvx(out_lo, temp, 0);
-                    temp += 4;
+                    __stvx(out_lo, dst1, 0);
+                    dst1 += 4;
                     __stvx(out_hi, dst2, 0);
                     dst2 += 4;
                     src_data += data_stride;

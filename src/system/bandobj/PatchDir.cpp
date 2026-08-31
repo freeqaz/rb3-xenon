@@ -676,8 +676,7 @@ void PatchDir::LoadRemote(IntPacker &packer) {
 
 void PatchDir::DrawShowing() {
     TheUI->GetCam()->Select();
-    auto _tmp0 = mLayers.end();
-    for (std::vector<PatchLayer>::iterator it = mLayers.begin(); it != _tmp0;
+    for (std::vector<PatchLayer>::iterator it = mLayers.begin(); it != mLayers.end();
          ++it) {
         (*it).Draw();
     }

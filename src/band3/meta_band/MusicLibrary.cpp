@@ -1839,16 +1839,14 @@ void MusicLibrary::AppendToSetlist(int i) {
 }
 
 void MusicLibrary::RemoveLastSongFromSetlist() {
-    RemoveLastSongFromSetlistMsg msg;
-    auto _tmp1 = mSetlist.size();
-    if (_tmp1) {
+    if (mSetlist.size()) {
         if (ContentDir()) {
-            SetSyncDirty(-1, false);
             mSetlist.pop_back();
             unk12c = true;
+            SetSyncDirty(-1, false);
         } else {
-            auto _tmp0 = TheSessionMgr->GetLeaderUser();
-            TheSessionMgr->SendMsg(_tmp0, msg, kReliable);
+            RemoveLastSongFromSetlistMsg msg;
+            TheSessionMgr->SendMsg(TheSessionMgr->GetLeaderUser(), msg, kReliable);
         }
     }
 }

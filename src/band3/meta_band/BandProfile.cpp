@@ -672,19 +672,13 @@ void BandProfile::SetHardcoreIconLevel(int level) {
 }
 
 TourBand *BandProfile::GetTourBand() { return mTourBand; }
-template <class _T>
-__declspec(noinline) auto _outline_GetName(_T* _obj) -> decltype(_obj->GetName()) {
-    return _obj->GetName();
-}
-
 
 String BandProfile::GetBandName() const {
-    auto _e0 = _outline_GetName(mTourBand);
-    if (strlen(_e0) == 0) {
+    if (strlen(mTourBand->GetName()) == 0) {
         String strName = GetName();
         return MakeString(Localize(band_default_name, nullptr), strName.c_str());
     } else
-        return _e0;
+        return mTourBand->GetName();
 }
 
 bool BandProfile::HasBandNameBeenSet() const { return strlen(mTourBand->GetName()); }

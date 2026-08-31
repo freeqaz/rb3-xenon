@@ -263,8 +263,7 @@ void Game::LoadSong() {
     if (fader)
         fader->SetVal(0);
     BeatMaster * &_ref0 = mMaster;
-    auto _tmp2 = TheGameMode->InMode("practice");
-    _ref0->GetAudio()->SetPracticeMode(_tmp2);
+    _ref0->GetAudio()->SetPracticeMode(TheGameMode->InMode("practice"));
     RELEASE(mSongInfo);
         _ref0->Load(mSongInfo = new SongInfoCopy(TheSongMgr.SongAudioData(songSym)), 4, cfgList, false, i2, nullptr);
 }
