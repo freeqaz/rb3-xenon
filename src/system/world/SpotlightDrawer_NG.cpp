@@ -620,6 +620,45 @@ void NgSpotlightDrawer::RenderScene() {
     }
 }
 
+namespace {
+
+// Slides a beam corner along `dir` by `scale`.  `dir` arrives by value: retail
+// copies the whole 16-byte Vector3 (padding included) into a fresh stack slot
+// at every one of the five corner sites, which is what produces the
+// lwz/lwz/lwz/lwz + stw/stw/stw/stw runs that dominate this function.
+void SlideCorner(Vector3 &pt, Vector3 dir, float scale) {
+    pt.x += dir.x * scale;
+    pt.y += dir.y * scale;
+    pt.z += dir.z * scale;
+}
+
+void SlideCornerBack(Vector3 &pt, Vector3 dir, float scale) {
+    pt.x -= dir.x * scale;
+    pt.y -= dir.y * scale;
+    pt.z -= dir.z * scale;
+}
+
+// Normal of the plane through the eye and the silhouette edge a..b.  Both
+// endpoints arrive by value for the same reason as above.
+void EyeEdgePlane(Vector3 a, Vector3 b, const Vector3 &eye, Vector3 &dst) {
+    dst.Set(
+        (a.y - eye.y) * (b.z - eye.z) - (a.z - eye.z) * (b.y - eye.y),
+        (a.z - eye.z) * (b.x - eye.x) - (a.x - eye.x) * (b.z - eye.z),
+        (a.x - eye.x) * (b.y - eye.y) - (a.y - eye.y) * (b.x - eye.x)
+    );
+}
+
+void NormalizeCopy(Vector3 v, Vector3 &dst) { Normalize(v, dst); }
+
+}
+
+// Builds the two silhouette planes of the beam's cross section and hands the
+// shader the plane equations (divided through by the plane's projection onto
+// the bisector) plus the view-angle visibility fade.
+//
+// Everything here is Vector3-valued: retail works with whole vectors, copies
+// them field-wise into the corner locals, and only drops to scalars for the
+// final shader constants.
 void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &def) {
     Vector3 lightPos;
     GetLightPosition(sl, lightPos);
@@ -627,204 +666,127 @@ void NgSpotlightDrawer::SetupXSection(Spotlight *sl, const Spotlight::BeamDef &d
     const Transform &camXfm = mSpotCam->WorldXfm();
     mSpotCam->WorldXfm();
 
-    const Transform &slXfm = sl->WorldXfm();
+    // The beam points down the spotlight's local +Y axis.
+    const Vector3 &beamDir = sl->WorldXfm().m.y;
 
-    // Full 3D direction from camera to light
     Vector3 toCam = lightPos;
     toCam -= camXfm.v;
 
-    // Save un-normalized copy
-    Vector3 toCamOrig = toCam;
-    Normalize(toCam, toCam);
+    Vector3 viewDir = toCam;
+    Normalize(viewDir, viewDir);
 
-    // Spotlight direction (m.y row of spotlight world transform)
-    Vector3 slDir = slXfm.m.y;
-
-    // Cross product components: slDir x (lightPos.x, toCamOrig.y, toCamOrig.z)
-    float cmpY = slDir.y * toCamOrig.z;
+    // Screen-horizontal axis of the beam's billboard.
     Vector3 perp;
-    perp.x = slDir.x * toCamOrig.z - slDir.z * lightPos.x;
-    float cmpX = slDir.z * toCamOrig.y;
-    perp.y = slDir.y * lightPos.x - slDir.x * toCamOrig.y;
+    Cross(viewDir, beamDir, perp);
     Normalize(perp, perp);
 
-    // Beam radii and length
     Vector2 radii = def.NGRadii();
     float topR = radii.x;
     float botR = radii.y;
-
-    float cc = cmpX - cmpY;
-    float ccTop = cc * topR;
-    float ccBot = cc * botR;
     float len = def.mLength;
 
-    // Copy lightPos to stack
-    Vector3 lp = lightPos;
-    // Copy perp to stack
-    Vector3 perpC = perp;
+    Vector3 topRight = lightPos;
+    SlideCorner(topRight, perp, topR);
 
-    // Top-right corner (y,z in world)
-    float trY = lightPos.y + perp.x * topR;
-    float trZ = lightPos.z + perp.y * topR;
+    Vector3 botCenter = lightPos;
+    SlideCorner(botCenter, beamDir, len);
 
-    // Bottom center
-    float bcX = lightPos.x + slDir.x * len;
-    float bcY = lightPos.y + slDir.y * len;
-    float bcZ = lightPos.z + slDir.z * len;
+    Vector3 topLeft = lightPos;
+    SlideCornerBack(topLeft, perp, topR);
 
-    // Copy slDir to stack
-    Vector3 slDirC = slDir;
+    Vector3 botRight = botCenter;
+    SlideCorner(botRight, perp, botR);
 
-    // Top-left corner (y,z)
-    float tlY = lightPos.y - perp.x * topR;
-    float tlZ = lightPos.z - perp.y * topR;
+    Vector3 botLeft = botCenter;
+    SlideCornerBack(botLeft, perp, botR);
 
-    // Camera world pos
-    float cvx = camXfm.v.x;
-    float cvy = camXfm.v.y;
-    float cvz = camXfm.v.z;
+    Vector3 rightPlane;
+    EyeEdgePlane(topRight, botRight, camXfm.v, rightPlane);
+    Normalize(rightPlane, rightPlane);
 
-    float trX = lightPos.x + ccTop;
-    float trRx = trX - cvx;
-    float tlX = lightPos.x - ccTop;
+    Vector3 leftPlane;
+    EyeEdgePlane(topLeft, botLeft, camXfm.v, leftPlane);
+    Normalize(leftPlane, leftPlane);
 
-    // Bottom-right
-    float brRx = (ccBot + bcX) - cvx;
-    float brY = bcY + perp.x * botR;
-    float brZ = bcZ + perp.y * botR;
+    // Plane constants: the eye lies on both planes, so d == dot(eye, n).
+    float rightD = camXfm.v.x * rightPlane.x
+        + (camXfm.v.y * rightPlane.y + camXfm.v.z * rightPlane.z);
+    float leftD = camXfm.v.x * leftPlane.x
+        + (camXfm.v.y * leftPlane.y + camXfm.v.z * leftPlane.z);
 
-    // Bottom-left
-    float blX = bcX - ccBot;
-    float blY = bcY - perp.x * botR;
-    float blZ = bcZ - perp.y * botR;
+    // Bisector of the two silhouette planes.
+    Vector3 bisector = rightPlane;
+    bisector += leftPlane;
 
-    // Save topRight y,z
-    float trYs = trY;
-    float trZs = trZ;
+    Vector3 axis;
+    NormalizeCopy(bisector, axis);
 
-    // Plane 1 edges relative to camera
-    float e1y = trY - cvy;
-    float e1z = trZ - cvz;
-    float e2y = brY - cvy;
-    float e2z = brZ - cvz;
-
-    // Plane 1 normal (x,y components of cross product)
-    Vector3 pn1;
-    pn1.x = e1z * brRx - e2z * trRx;
-    pn1.y = e2y * trRx - e1y * brRx;
-    Normalize(pn1, pn1);
-
-    // Plane 2 edges relative to camera
-    float e3y = tlY - cvy;
-    float e3z = tlZ - cvz;
-
-    // Copy bottom-left
-    Vector3 blC;
-    blC.x = blY;
-    blC.y = blZ;
-
-    float e4z = blZ - cvz;
-    float e4y = blY - cvy;
-
-    float tlRx = tlX - cvx;
-    float blRx = blX - cvx;
-
-    // Plane 2 normal
-    Vector3 pn2;
-    pn2.x = e3z * blRx - e4z * tlRx;
-    pn2.y = e4y * tlRx - e3y * blRx;
-    Normalize(pn2, pn2);
-
-    // Cross z-components
-    float n1x = pn1.x;
-    float n1y = pn1.y;
-    float n1z = e1y * e2z - e1z * e2y;
-    float d1 = cvx * n1z + (cvy * n1x + cvz * n1y);
-
-    float n2x = pn2.x;
-    float n2y = pn2.y;
-    float n2z = e3y * e4z - e3z * e4y;
-    float d2 = cvx * n2z + (cvy * n2x + cvz * n2y);
-
-    // Combined normal
-    Vector3 comb;
-    comb.x = n1x + n2x;
-    comb.y = n1y + n2y;
-
-    Vector3 combC;
-    combC.x = comb.x;
-    combC.y = comb.y;
-    Normalize(combC, pn1);
-
-    // Inverse distances
-    float dist1 = trYs * n1x + (n1z * lightPos.x + trZs * n1y);
-    float inv1 = 0.0f;
-    if (dist1 != 0.0f) {
-        inv1 = 1.0f / dist1;
+    float rightCos = Dot(rightPlane, axis);
+    float invRight;
+    if (rightCos == 0.0f) {
+        invRight = 0.0f;
+    } else {
+        invRight = 1.0f / rightCos;
     }
 
-    float dist2 = trYs * n2x + (n2z * lightPos.x + trZs * n2y);
-    float inv2 = 0.0f;
-    if (dist2 != 0.0f) {
-        inv2 = 1.0f / dist2;
+    float leftCos = Dot(leftPlane, axis);
+    float invLeft;
+    if (leftCos == 0.0f) {
+        invLeft = 0.0f;
+    } else {
+        invLeft = 1.0f / leftCos;
     }
 
-    float pw = inv2 * d2;
-    float pz = inv1 * d1;
-    float px1 = n1z * inv1;
-    float px2 = n2z * inv2;
+    Vector4 leftEq(
+        leftPlane.x * invLeft,
+        leftPlane.y * invLeft,
+        leftPlane.z * invLeft,
+        invLeft * leftD
+    );
+    Vector4 rightEq(
+        rightPlane.x * invRight,
+        rightPlane.y * invRight,
+        rightPlane.z * invRight,
+        invRight * rightD
+    );
 
+    // Narrow end of the cone, and the distance from the apex to the light.
     float minR = botR;
     if ((topR - botR) < 0.0f) {
         minR = topR;
     }
 
-    Vector3 pn1s;
-    pn1s.x = pn1.x;
-    pn1s.y = pn1.y;
-
-    Vector3 pn2s;
-    pn2s.x = pn2.x;
-    pn2s.y = pn2.y;
-
-    float py1 = pn1.x * inv1;
-    float pyy1 = pn1.y * inv1;
-    float py2 = pn2.x * inv2;
-    float pyy2 = pn2.y * inv2;
-
-    float visOff = 0.0f;
+    float apexDist = 0.0f;
     if (0.0f < botR) {
-        visOff = (len * minR) / (botR - minR);
+        apexDist = (len * minR) / (botR - minR);
     }
 
-    float halfA = (botR * 0.5f) / (len + visOff);
-    float dotD = slDir.z * toCamOrig.z
-        + (slDir.y * toCamOrig.y + slDir.x * lightPos.x);
-    float sq = halfA * halfA;
+    float halfAngle = (botR * 0.5f) / (len + apexDist);
+    float axisDot = Dot(beamDir, viewDir);
+    float sq = halfAngle * halfAngle;
     float fade = (1.0f - sq) / (sq + 1.0f);
 
-    if (dotD <= 0.0f) {
-        dotD = -dotD;
+    if (axisDot <= 0.0f) {
+        axisDot = -axisDot;
     }
 
-    float vis = 0.0f;
-    if (dotD < fade) {
-        float diff = fade - dotD;
-        vis = 1.0f;
-        if (diff < 0.02f) {
-            float t = -(diff * 50.0f - 1.0f);
+    float vis;
+    if (axisDot < fade) {
+        float slack = fade - axisDot;
+        if (slack < 0.02f) {
+            float t = -(slack * 50.0f - 1.0f);
             vis = -(t * t * t * t - 1.0f);
+        } else {
+            vis = 1.0f;
         }
+    } else {
+        vis = 0.0f;
     }
 
-    Vector4 c56(vis, 0.0f, 0.0f, 0.0f);
-    TheShaderMgr.SetPConstant((PShaderConstant)0x56, c56);
-
-    Vector4 c57(px1, py1, pyy1, pz);
-    TheShaderMgr.SetPConstant((PShaderConstant)0x57, c57);
-
-    Vector4 c58(px2, py2, pyy2, pw);
-    TheShaderMgr.SetPConstant((PShaderConstant)0x58, c58);
+    Vector4 visConst(vis, 0.0f, 0.0f, 0.0f);
+    TheShaderMgr.SetPConstant((PShaderConstant)0x56, visConst);
+    TheShaderMgr.SetPConstant((PShaderConstant)0x57, rightEq);
+    TheShaderMgr.SetPConstant((PShaderConstant)0x58, leftEq);
 
     SetXSectionTexture(def);
 }
