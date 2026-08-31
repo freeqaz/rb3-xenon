@@ -538,36 +538,36 @@ void NgMat::RefreshState() {
         break;
     }
 
-    // Second blend switch - set unk2d4 and unk2d8-2e4
+    // Second blend switch - set unk234 and unk238..unk244
     switch (mBlend) {
     case kBlendDest:
         break;
     case kBlendSrc:
-        unk2d4 = 0;
+        unk234 = 0;
         break;
     case kBlendAdd:
     case kBlendSrcAlphaAdd:
     case kBlendSubtract:
-        unk2d8 = 0.0f;
-        unk2dc = 0.0f;
-        unk2e0 = 0.0f;
-        unk2e4 = 0.0f;
-        unk2d4 = 2;
+        unk238 = 0.0f;
+        unk23c = 0.0f;
+        unk240 = 0.0f;
+        unk244 = 0.0f;
+        unk234 = 2;
         break;
     case kBlendSrcAlpha:
     case kPreMultAlpha:
-        unk2d8 = 0.0f;
-        unk2dc = 0.0f;
-        unk2e0 = 0.0f;
-        unk2e4 = 0.0f;
-        unk2d4 = 1;
+        unk238 = 0.0f;
+        unk23c = 0.0f;
+        unk240 = 0.0f;
+        unk244 = 0.0f;
+        unk234 = 1;
         break;
     case kBlendMultiply:
-        unk2d8 = 1.0f;
-        unk2dc = 1.0f;
-        unk2e0 = 1.0f;
-        unk2e4 = 1.0f;
-        unk2d4 = 2;
+        unk238 = 1.0f;
+        unk23c = 1.0f;
+        unk240 = 1.0f;
+        unk244 = 1.0f;
+        unk234 = 2;
         break;
     default:
         MILO_ASSERT(false, 0x139);
