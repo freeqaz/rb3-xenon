@@ -114,7 +114,18 @@ have** (DC3 is newer and added it). Blast radius is small — `Mat.h` + `Mat.cpp
 29 references — but it is a *feature removal*, not a layout edit, and it shifts
 every RndMat subclass.
 
-**DELIBERATELY NOT DONE.** Removing the feature needs its own lane and a full
+> **DONE — 2026-08-13, same day, by lane MAT-1 (`32f4fdb1`).** The handoff below
+> was executed: `sizeof(RndMat)` is 396, `NgMat::NewObject` emits `li r3, 0x250`
+> and matches at 100%, and `RefreshState`'s uniform +16 collapsed exactly as
+> predicted. Re-verified 2026-08-31 (`lane-ngmat-layout`) against retail
+> displacements and against `tools/header_offset_audit.py`, which now reports
+> **zero** findings for `Mat_NG.h`. ⚠ The audit snapshot
+> `docs/decomp/header_offset_audit_2026-08-18.json` still lists 16 NgMat rows at a
+> **uniform +160** — that is a *comment-vs-compiled* delta captured five days after
+> this fix landed, i.e. stale DC3 offsets in the header text, **not** a live layout
+> bug. Do not refile it as one; the comments were corrected 2026-08-31.
+
+**DELIBERATELY NOT DONE (superseded — see above).** Removing the feature needs its own lane and a full
 whole-binary A/B; a rushed removal could regress the whole material family. The
 target is exact and pre-measured: `sizeof(RndMat)` must become **396**, which
 takes `NgMat` to 592 and should collapse `RefreshState`'s uniform +16.
