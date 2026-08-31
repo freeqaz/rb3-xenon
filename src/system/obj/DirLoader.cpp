@@ -1237,30 +1237,11 @@ void DirLoader::OpenFile() {
         mStream =
             new ChunkStream(path, ChunkStream::kRead, 0x10000, true, kPlatformNone, false);
         if (matches) {
-            // ⛔ PERMUTER DEFECT (sweep shard 0, 0c36bc01) — see
-            // docs/decomp/NATIVE_GATE_REPAIR_2026-08-27.md §2.
-            //
-            // This WAS a save/restore pair.  The saves used to sit ABOVE the
-            // `if (matches)` block that overwrites the three globals; the sweep
-            // moved them BELOW it and deleted `Archive *theArchive`.  All three
-            // restores are therefore now no-ops: cache_mode/using_cd re-read the
-            // values just written (gHostCached / false), and TheArchive = TheArchive
-            // cannot undo the `TheArchive = nullptr` above.  Net effect: after a
-            // host-file load, cache mode / UsingCD / TheArchive are never restored.
-            //
-            // Only the self-assign is a compile error (-Wself-assign), and only
-            // that one line is touched here: eliding a no-op is behaviourally
-            // identical in every build.  The rest is left exactly as the sweep
-            // landed it — reverting it is the project owner's call, not this
-            // lane's.  The block is dev-only (gHostFile comes from the
-            // `-host_file` option), so it is dormant in the native port.
             bool cache_mode = sCacheMode;
             bool using_cd = UsingCD();
             SetCacheMode(cache_mode);
             SetUsingCD(using_cd);
-#ifndef HX_NATIVE
             TheArchive = TheArchive;
-#endif
         }
         if (mStream->Fail()) {
             if (mProxyDir) {
