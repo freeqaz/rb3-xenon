@@ -2068,9 +2068,9 @@ CharSleeve.cpp:
 	.pdata      start:0x822069A8 end:0x82206A18
 	.pdata      start:0x82206A18 end:0x82206A20
 	.pdata      start:0x82206A20 end:0x82206A30
-	.text       start:0x82375D10 end:0x82375D50
 	.text       start:0x823CEE60 end:0x823CF61C
 	.text       start:0x823CF918 end:0x823CF948
+	.text       start:0x823CF948 end:0x823CF970
 	.text       start:0x823CF970 end:0x823CFAAC
 	.text       start:0x823CFAE0 end:0x823CFAEC
 	.text       start:0x823CFAF8 end:0x823CFBA0
@@ -2090,10 +2090,11 @@ CharUpperTwist.cpp:
 	.pdata      start:0x82206200 end:0x82206210
 	.pdata      start:0x8220FD20 end:0x8220FD28
 	.text       start:0x82329FD8 end:0x8232A0F0
-	.text       start:0x8232A120 end:0x8232A3A8
+	.text       start:0x8232A12C end:0x8232A3A8
 	.text       start:0x8232A438 end:0x8232A4B0
 	.text       start:0x823C69B0 end:0x823C6E30
 	.text       start:0x823C6E30 end:0x823C6E60
+	.text       start:0x823C6E60 end:0x823C6FE8
 	.text       start:0x823C70E8 end:0x823C7204
 	.text       start:0x823C73F8 end:0x823C7558
 	.text       start:0x823C7620 end:0x823C7768
@@ -3087,7 +3088,6 @@ CharDriver.cpp:
 	.text       start:0x823CED00 end:0x823CED44
 	.text       start:0x823CEDE4 end:0x823CEE60
 	.text       start:0x823CF61C end:0x823CF918
-	.text       start:0x823CF948 end:0x823CF970
 	.text       start:0x823CFAAC end:0x823CFAE0
 	.text       start:0x823CFAEC end:0x823CFAF8
 
@@ -5821,13 +5821,13 @@ CharServoBone.cpp:
 	.text       start:0x823758A8 end:0x823759C4
 	.text       start:0x823759C8 end:0x82375CE0
 	.text       start:0x82375CE0 end:0x82375D10
+	.text       start:0x82375D10 end:0x82375D50
 	.text       start:0x82375D50 end:0x82375F08
 	.text       start:0x82375F08 end:0x82376010
 	.text       start:0x82376010 end:0x8237608C
 	.text       start:0x82376090 end:0x82376178
 	.text       start:0x82376178 end:0x82376D3C
 	.text       start:0x823CE614 end:0x823CE668
-	.text       start:0x823CE698 end:0x823CE6C0
 	.text       start:0x82545988 end:0x82545A70
 	.text       start:0x826047A0 end:0x82604840
 	.text       start:0x82604840 end:0x82604868
@@ -7625,11 +7625,11 @@ CharIKSliderMidi.cpp:
 	.pdata      start:0x82206580 end:0x82206588
 	.pdata      start:0x82206588 end:0x82206658
 	.pdata      start:0x82208AC8 end:0x82208B40
-	.text       start:0x823C6E60 end:0x823C6FE8
 	.text       start:0x823CAB00 end:0x823CAB98
 	.text       start:0x823CAB98 end:0x823CAF10
 	.text       start:0x823CAF10 end:0x823CB0C8
 	.text       start:0x823CB0C8 end:0x823CB0F8
+	.text       start:0x823CB0F8 end:0x823CB2A0
 	.text       start:0x823CB2A0 end:0x823CB34C
 	.text       start:0x823CB350 end:0x823CBF28
 	.text       start:0x823F0310 end:0x823F0A3C
@@ -7975,9 +7975,9 @@ CharNeckTwist.cpp:
 	.pdata      start:0x82206918 end:0x82206920
 	.text       start:0x823C7768 end:0x823C7848
 	.text       start:0x823C7848 end:0x823C7908
-	.text       start:0x823CB0F8 end:0x823CB2A0
 	.text       start:0x823CE3D0 end:0x823CE614
 	.text       start:0x823CE668 end:0x823CE698
+	.text       start:0x823CE698 end:0x823CE6C0
 	.text       start:0x823CE838 end:0x823CE8B0
 	.text       start:0x823CE8B0 end:0x823CE92C
 	.text       start:0x823CE930 end:0x823CE9C0
@@ -13366,6 +13366,7 @@ system/bandobj/DialogDisplay.cpp:
 	.text       start:0x82329B20 end:0x82329B98
 	.text       start:0x82329B98 end:0x82329FD8
 	.text       start:0x8232A0F0 end:0x8232A120
+	.text       start:0x8232A120 end:0x8232A12C
 	.text       start:0x8232A3A8 end:0x8232A438
 	.text       start:0x8232A4B0 end:0x8232ABF8
 	.text       start:0x8232ABF8 end:0x8232AC50
