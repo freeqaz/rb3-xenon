@@ -25,6 +25,9 @@ import struct
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import obj_pairing  # noqa: E402
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -316,6 +319,10 @@ def main():
                         help='Original .obj directory')
     parser.add_argument('--src-dir', default='build/45410914/src',
                         help='Decomp .obj directory')
+    parser.add_argument('--objdiff-config', default=None,
+                        help='objdiff.json to take the authoritative '
+                             'target/base pairing from (default: repo root). '
+                             'See scripts/obj_pairing.py.')
     parser.add_argument('files', nargs='*',
                         help='Specific .obj files to patch (relative paths)')
     parser.add_argument('--check', action='store_true',
@@ -334,6 +341,14 @@ def main():
     obj_dir = Path(args.obj_dir)
     src_dir = Path(args.src_dir)
 
+    # ★ PAIRING COMES FROM objdiff.json, NOT FROM THE RELPATH (lane PAIRFIX).
+    # See scripts/obj_pairing.py: `obj_dir / rel` reached 344 of the 1,045
+    # declared compiled objects on this repo and skipped the other 701 in
+    # silence.
+    pairing = obj_pairing.ObjPairing(
+        Path(__file__).resolve().parent.parent, obj_dir, src_dir,
+        args.objdiff_config)
+
     if args.batch:
         decomp_objs = sorted(glob.glob(str(src_dir / '**/*.obj'), recursive=True))
     else:
@@ -342,29 +357,36 @@ def main():
     total_files = 0
     total_patches = 0
     patched_files = 0
+    unpaired = 0
 
     for decomp_path in decomp_objs:
         rel = os.path.relpath(decomp_path, src_dir)
-        orig_path = obj_dir / rel
-        if not orig_path.exists():
+        orig_paths = pairing.target_paths_for(rel)
+        if not orig_paths:
+            unpaired += 1
             continue
 
         total_files += 1
-        num_patches, details = patch_obj_file(
-            decomp_path, str(orig_path), apply=args.apply, verbose=args.verbose)
-
-        if num_patches > 0:
-            patched_files += 1
-            total_patches += num_patches
-            if args.verbose:
-                print(f'{rel}: {num_patches} patches')
+        file_patches = 0
+        for orig_path in orig_paths:
+            num_patches, details = patch_obj_file(
+                decomp_path, str(orig_path), apply=args.apply,
+                verbose=args.verbose)
+            file_patches += num_patches
+            if num_patches and args.verbose:
+                print(f'{rel} <- {orig_path.name}: {num_patches} patches')
                 for d in details:
                     print(d)
+
+        if file_patches > 0:
+            patched_files += 1
+            total_patches += file_patches
 
     mode = 'APPLIED' if args.apply else 'DRY RUN'
     print(f'\n[{mode}] {total_files} files checked, '
           f'{patched_files} files patched, '
-          f'{total_patches} total symbol patches')
+          f'{total_patches} total symbol patches '
+          f'({unpaired} on-disk objects had no declared target)')
 
     if not args.apply and total_patches > 0:
         print('Run with --apply to modify files.')

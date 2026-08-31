@@ -84,6 +84,10 @@ class Fixture:
         for d in (self.src, self.obj, self.scripts):
             d.mkdir(parents=True, exist_ok=True)
         shutil.copy(VERIFY, self.scripts / "verify_objs_patched.py")
+        # The verifier derives coverage from the patchers' OWN pairing module
+        # rather than reimplementing the rule, so the fixture needs it too.
+        shutil.copy(REPO / "scripts" / "obj_pairing.py",
+                    self.scripts / "obj_pairing.py")
         self.decomp = []
         for i in range(n_decomp):
             p = self.src / f"d{i}.obj"
@@ -103,15 +107,27 @@ class Fixture:
         for name in PATCHERS:
             (self.scripts / name).write_text(STUB)
 
-    def run(self, *args, rc_overrides=None):
+    def run(self, *args, rc_overrides=None, min_declared=1):
+        """Invoke the verifier against this fixture.
+
+        `min_declared` defaults to 1 because a 3-object fixture cannot satisfy
+        the real tree's 900-object vacuity floor.  Lowering it here is safe
+        ONLY because `test_the_real_min_declared_floor_is_armed` asserts that
+        the DEFAULT floor still rejects this same fixture -- without that
+        control, passing the flag everywhere would silently disarm the check
+        for the whole suite.
+        """
         env = dict(os.environ, RB3_VERSION=BUILD_ID,
-                   PATCH_STUB_LOG=str(self.log))
+                   PATCH_STUB_LOG=str(self.log), PYTHONDONTWRITEBYTECODE="1")
         for k, v in (rc_overrides or {}).items():
             env[f"PATCH_STUB_RC_{k.upper()}"] = str(v)
         if self.log.exists():
             self.log.unlink()
+        if min_declared is not None:
+            args = (*args, "--min-declared", str(min_declared))
         return subprocess.run(
-            [sys.executable, str(self.scripts / "verify_objs_patched.py"),
+            [sys.executable, "-B",
+             str(self.scripts / "verify_objs_patched.py"),
              "--repo", str(self.root), *args],
             capture_output=True, text=True, env=env, cwd=str(self.root))
 
@@ -265,19 +281,61 @@ class PatchStateTests(unittest.TestCase):
     # ── coverage reporting: a green light must state its denominator ──────
 
     def test_manifest_records_pairing_coverage(self):
+        """The manifest must state what the green light was worth.
+
+        Schema is MANIFEST_VERSION 2: counts are over DISTINCT COMPILED
+        OBJECTS, not objdiff.json units.  v1 counted units, which
+        double-counted the three objects the real tree declares twice and
+        reported "347 of 1048" for a loop that examined 344 of 1045.
+        """
         self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
         doc = json.loads((self.fx.build / "patch_state.json").read_text())
+        self.assertEqual(doc["manifest_version"], 2)
         cov = doc["pairing_coverage"]
-        self.assertEqual(cov["declared_pairs"], 3)
         # The fixture points all three units at t0.obj while their base objs
-        # are d0/d1/d2 -- so relpath pairing reaches none of them. That is the
-        # real repo's defect in miniature (347 of 1048 reachable), and asserting
-        # the number keeps the coverage report from silently becoming a
-        # constant.
-        self.assertEqual(cov["relpath_reachable"], 0)
-        self.assertEqual(cov["invisible"], 3)
+        # are d0/d1/d2, so relpath pairing reaches NONE of them -- the real
+        # repo's defect in miniature.  Asserting the 0 is what keeps this from
+        # degenerating into a test of a constant.
+        self.assertEqual(cov["relpath_only_reachable"], 0,
+                         "fixture stopped reproducing the relpath blindness")
+        self.assertEqual(cov["objects_declared"], 3)
+        self.assertEqual(cov["objects_paired"], 3,
+                         "objdiff.json pairing failed to reach the population "
+                         "relpath keying could not")
+        self.assertEqual(cov["declared_unpaired"], [])
         self.assertEqual(doc["n_decomp_objects"], 3)
         self.assertEqual(doc["n_target_objects"], 2)
+
+    def test_unpairable_declared_object_fails_the_build(self):
+        """A declared object with no target must be an ERROR, not a low number.
+
+        The whole defect class: an unpaired object is UNEXAMINED, and every
+        pairing-driven pass reports it exactly as it reports a clean one.
+        """
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)  # control
+
+        (self.fx.build / "patch_state.json").unlink()
+        (self.fx.build / "obj" / "t0.obj").unlink()                       # sabotage
+        red = self.fx.run("--check", "--emit")
+        self.assertNotEqual(red.returncode, 0)
+        self.assertIn("PAIRING IS INCOMPLETE", red.stderr)
+        self.assertIn("UNEXAMINED", red.stderr)
+        self.assertFalse((self.fx.build / "patch_state.json").exists(),
+                         "a manifest was written over an unverifiable pairing")
+
+    def test_the_real_min_declared_floor_is_armed(self):
+        """The rest of this suite passes --min-declared 1; prove that is a
+        fixture accommodation and not a disarmed check.
+
+        Without this control, someone could set DEFAULT_MIN_DECLARED to 0 and
+        every test here would still be green.
+        """
+        self.assertEqual(self.fx.run("--check").returncode, 0)   # with the flag
+        default = self.fx.run("--check", min_declared=None)      # without it
+        self.assertNotEqual(default.returncode, 0,
+                            "the default vacuity floor accepts a 3-object "
+                            "tree -- it is not a floor")
+        self.assertIn("vacuous", default.stderr)
 
 
 class PatchGuardTests(unittest.TestCase):
@@ -304,7 +362,8 @@ class PatchGuardTests(unittest.TestCase):
                    PATCH_STUB_LOG=str(self.fx.log))
         subprocess.run([sys.executable,
                         str(self.fx.scripts / "verify_objs_patched.py"),
-                        "--repo", str(self.fx.root), "--check", "--emit"],
+                        "--repo", str(self.fx.root), "--check", "--emit",
+                        "--min-declared", "1"],
                        check=True, capture_output=True, env=env,
                        cwd=str(self.fx.root))
         # CONTROL: clean tree returns a note and does NOT raise.
