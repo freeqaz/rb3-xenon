@@ -71,8 +71,19 @@ public:
     virtual bool Swing(int slot, bool guitar, bool provisional, GemHitFlags flags) = 0;
     virtual void NonStrumSwing(int slot, bool button_down, bool solo) = 0;
     virtual void FretButtonDown(int slot) = 0;
-    virtual void RGFretButtonDown(int) {}
+    // ★ Slot order proven on RETAIL BYTES (lane SETDIFF, 2026-08-31), NOT from
+    // an oracle: retail `TrackWatcher::FretButtonUp` is the forwarder at
+    // 0x8279d768, which dispatches through `lwz r11, 0x2c(r11)` == slot 11.
+    // It is identified without any map name by `BeatMatcher::FretButtonUp`
+    // (anchored by its own "(%2d%10.1f UP\t%d)\n" format string) doing
+    // `bl 0x8279d768`.  Corroborated by Joypad/Keyboard, whose retail slot 12
+    // is the universal empty stub 0x826c3888 -- i.e. the inherited
+    // RGFretButtonDown{} -- while their FretButtonUp bodies are non-empty.
+    // ⚠ Do NOT "fix" this back to RGFretButtonDown-first: that ordering came
+    // from BeatMatchControllerSink, an UNRELATED class TrackWatcherImpl does
+    // not derive from.
     virtual void FretButtonUp(int slot) = 0;
+    virtual void RGFretButtonDown(int) {}
     virtual void OutOfRangeSwing() {}
     virtual void SetGemsPlayedUntil(int end_gem);
     virtual void Enable(bool);
