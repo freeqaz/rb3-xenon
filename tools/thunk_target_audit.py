@@ -37,8 +37,22 @@ below 100 and every one of them is exactly 12 B => the whole vein is 1,536 B.
 
 **After this lane's own repairs the same run reads 1,552 thunks / CONSISTENT
 1,305 (99.5%) / INCONSISTENT 116 (3.4%) / vein 1,344 B** -- i.e. 12 rows moved
-INCONSISTENT -> CONSISTENT and 8 misnamed holders were nulled.  That is what you
-should see today.
+INCONSISTENT -> CONSISTENT and 8 misnamed holders were nulled.
+
+⛔ **EVERY FIGURE ABOVE WAS COMPUTED OVER 72% OF THE POPULATION** -- `decode_thunk`
+handled only the 3-instruction adjustor form and missed 611 thunks (28.2%); see
+its docstring.  Re-measured at `05ff76aa` with the generalized decoder
+(lane SLOTMAP, 2026-08-31), whole binary, freshly built tree:
+
+    adjustor thunks in map                             2,164   (was 1,553)
+    CONSISTENT  (the control)  1,835 rows -- 1,827 at fuzzy==100  (99.6%)
+    INCONSISTENT                 113 rows --     4 at fuzzy==100  ( 3.1%)
+    TARGET_UNNAMED                199   IRREDUCIBLE (fold hub)  17
+    vein size                  1,564 B across 126 sub-100 rows
+
+The separation is **32x** and the control could still have failed, so the
+instrument survives the population correction intact -- what changed is its
+REACH, never its validity.  That is what you should see today.
 
 ⚠ Re-run `--validate` and reproduce the numbers before acting.  They MOVE as the
 map is corrected, so treat any figure quoted here or in a brief as a hypothesis
@@ -166,17 +180,49 @@ def prefix(sym):
 
 
 def decode_thunk(u32, va):
-    """Branch target of the adjustor thunk at `va`, or None if not one."""
+    """Branch target of the adjustor thunk at `va`, or None if not one.
+
+    ⛔ THIS USED TO HANDLE ONLY THE 3-INSTRUCTION FORM AND UNDERCOUNTED BY 28.2%
+    (lane SLOTMAP, 2026-08-31).  MSVC emits a FOURTH instruction whenever the
+    adjustment beyond the vtordisp is nonzero:
+
+        lwz  r11,-4(rN)
+        subf rN,r11,rN
+        addi rN,rN,-M        <-- present only when M != 0; WAS NOT DECODED
+        b    <the real body>
+
+    Measured over `scripts/target_symbol_map.json` on retail `band.exe`:
+    3-insn-only decoder finds **1,553** thunks, this one finds **2,164** -- so
+    **611 adjustor thunks (28.2%) were invisible**, and every `--validate`
+    figure in the docstring above was computed over 72% of the population.
+    The missed rows are exactly the ones whose mangled name carries a nonzero
+    displacement token (`$4PPPPPPPM@DM@`, `@CCE@`, `@BHI@` ...) rather than
+    `$4PPPPPPPM@A@`; reading them as "not a thunk" is silent, and it biased the
+    census toward the zero-displacement (primary-base) stratum.
+
+    ⚠ The `addi` must be recognised by SHAPE (opcode 14 with RT==RA==the same
+    `this` register), not by a fixed word: M varies per class, so a constant
+    would rebuild the same blind spot one displacement narrower.
+    """
     reg = ADJ_LOAD.get(u32(va))
     if reg is None or u32(va + 4) != ADJ_SUBF[reg]:
         return None
-    i2 = u32(va + 8)
-    if (i2 >> 26) != BRANCH_OP:
+    at = va + 8
+    w = u32(at)
+    if w is None:
         return None
-    off = i2 & 0x03FFFFFC
+    # optional `addi rN,rN,-M` -- opcode 14, RT == RA == reg
+    if (w >> 26) == 14 and ((w >> 21) & 31) == reg and ((w >> 16) & 31) == reg:
+        at += 4
+        w = u32(at)
+        if w is None:
+            return None
+    if (w >> 26) != BRANCH_OP or (w & 1):   # unconditional `b`; LK set is a CALL
+        return None
+    off = w & 0x03FFFFFC
     if off & 0x02000000:
         off -= 0x04000000
-    return (va + 8 + off) & 0xFFFFFFFF
+    return (at + off) & 0xFFFFFFFF
 
 
 def vtable_index(R):
