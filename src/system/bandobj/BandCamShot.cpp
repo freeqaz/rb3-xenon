@@ -503,15 +503,15 @@ void BandCamShot::Store() {
 }
 
 void BandCamShot::View() {
-    int b;
+    bool b;
     FOREACH (it, mTargets) {
         Target &cur = *it;
         RndTransformable *t;
-        b = 0;
+        b = false;
         if (!(*it).mTarget.Null()) {
             t = GetTargetCache(cur.mTarget)->unk4;
             if (t)
-                b = 1;
+                b = true;
         }
         if (b) {
             TeleportTarget(t, cur.mXfm, false);

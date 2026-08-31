@@ -342,14 +342,13 @@ bool VocalPart::IsPhraseMarkerAtEnd(const VocalPhrase *const &p) const {
 
 bool VocalPart::IsEmptyPhrase(const VocalPhrase *const &p) const {
     const VocalPhrase *phrase = p;
-    auto _val0 = mVocalNoteList;
-    const VocalPhrase *end = _val0->mPhrases.data() + _val0->mPhrases.size();
+    const VocalPhrase *end = mVocalNoteList->mPhrases.data() + mVocalNoteList->mPhrases.size();
     if (phrase == end) return true;
     if (phrase->mTambourinePhrase) return false;
     if (phrase->unk10 != phrase->unk14) return false;
     int idx = phrase->unk10 - 1;
     if (idx >= 0) {
-        const VocalNote &note = _val0->mNotes[idx];
+        const VocalNote &note = mVocalNoteList->mNotes[idx];
         if (note.mMs + note.mDurationMs > phrase->unk0) return false;
     }
     return true;
@@ -379,7 +378,7 @@ bool VocalPart::InTambourinePhrase() const {
     bool result = false;
     VocalNoteList *list = mVocalNoteList;
     const VocalPhrase *phrase = mThisPhrase;
-    if (list->mPhrases.data() + list->mPhrases.size() != phrase && phrase->mTambourinePhrase)
+    if (phrase != list->mPhrases.data() + list->mPhrases.size() && phrase->mTambourinePhrase)
         result = true;
     return result;
 }

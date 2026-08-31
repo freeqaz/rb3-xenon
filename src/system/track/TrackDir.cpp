@@ -79,9 +79,7 @@ void TrackDir::SyncObjects() {
 }
 
 void TrackDir::SetupKeyShifting(RndDir *rnddir) {
-    auto _tmp1 = rnddir->Find<RndTransformable>("rotator_cam.trans", true);
-    if (rnddir)
-        mRotatorCam = _tmp1;
+    mRotatorCam = rnddir->Find<RndTransformable>("rotator_cam.trans", true);
     float order = 1 / rnddir->LocalXfm().m.x.x;
     unk2d8.Reset();
     Scale(Vector3(order, 1.0f, 1.0f), unk2d8.m, unk2d8.m);

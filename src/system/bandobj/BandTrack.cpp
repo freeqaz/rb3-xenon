@@ -878,11 +878,11 @@ void BandTrack::SetCrowdRating(float f, CrowdMeterState state) {
 }
 
 void BandTrack::DisablePlayer(int i) {
-    unsigned char disconnected;
+    bool disconnected;
     if (mParent)
         disconnected = mParent->PlayerDisconnected();
     else
-        disconnected = 0;
+        disconnected = false;
     if (mDisabled && disconnected && mFailedFeedback) {
         mFailedFeedback->HandleType(reset_msg);
         unkd8 = new MessageTask(mFailedFeedback, disconnected_msg);
@@ -906,7 +906,7 @@ void BandTrack::DisablePlayer(int i) {
     if (mParent)
         mParent->SetGemsEnabled(-1.0f);
     if (dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())) {
-        unsigned char atStart = (unsigned char)(mParent && mParent->PlayerDisconnectedAtStart());
+        bool atStart = mParent && mParent->PlayerDisconnectedAtStart();
         int idx = mTrackIdx;
         dynamic_cast<TrackPanelDirBase *>(ThisDir()->Dir())->DisablePlayer(idx, atStart);
     }

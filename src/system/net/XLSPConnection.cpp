@@ -73,8 +73,7 @@ void XLSPConnection::SetState(State s) {
         State oldState = mState;
         State newState = s;
         bool skipCleanup = false;
-                switch (oldState) {
-            case 1:
+        if (oldState == 1) {
             if (mEnumHandle != INVALID_HANDLE_VALUE) {
                 if (mXOverlapped.InternalLow == ERROR_IO_PENDING) {
                     if (newState == 5) {
@@ -96,15 +95,12 @@ void XLSPConnection::SetState(State s) {
                     mEnumBuffer = nullptr;
                 }
             }
-            break;
-            case 2:
+        } else if (oldState == 2) {
             if (newState != 3) {
                 SecureDisconnect(*(in_addr *)&unk44);
             }
-            break;
-            case 3:
+        } else if (oldState == 3) {
             SecureDisconnect(*(in_addr *)&unk44);
-            break;
         }
 
         mState = newState;

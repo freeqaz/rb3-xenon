@@ -1395,17 +1395,19 @@ BEGIN_LOADS(CamShot)
 END_LOADS
 
 void CamShot::StartAnim() {
-    START_AUTO_TIMER("cam_switch");
     CAMERA_LOG("** %s CamShot::StartAnim() start\n", Name());
+    START_AUTO_TIMER("cam_switch");
     static Message msg("start_shot");
-    WorldDir *crowdDir = GetCrowdDir();
     Export(msg, true);
-    mLastNext = 0;
+    WorldDir *crowdDir = GetCrowdDir();
     if (crowdDir) {
         crowdDir->SetCrowds(mCrowds);
-        TheHamWardrobe->ForceCrowdAnimationStart(mCrowdStateOverride);
+        if (TheHamWardrobe) {
+            TheHamWardrobe->ForceCrowdAnimationStart(mCrowdStateOverride);
+        }
     }
     mShotOver = false;
+    mLastNext = 0;
     mLastPrev = 0;
     mShotStarted = true;
     mLastDesiredShakeOffset.Zero();
@@ -1429,8 +1431,10 @@ void CamShot::StartAnim() {
 void CamShot::EndAnim() {
     CAMERA_LOG("** %s CamShot::EndAnim() start\n", Name());
     UnHide();
+    if (TheHamWardrobe) {
+        TheHamWardrobe->ForceCrowdAnimationEnd();
+    }
     static Message msg("stop_shot");
-    TheHamWardrobe->ForceCrowdAnimationEnd();
     Export(msg, true);
     EndAnims(mAnims);
     CAMERA_LOG("** %s CamShot::EndAnim() stop\n", Name());
