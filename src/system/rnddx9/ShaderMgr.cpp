@@ -265,6 +265,21 @@ void DxShaderMgr::SetVConstant(VShaderConstant vsc, RndTex *tex) {
     }
 }
 
+// ★ This body was MISSING entirely (declared in both ShaderMgr.h's, defined
+// nowhere), and the gap was CONCEALED by a wrong map name: retail 0x82735bf0
+// was pinned as SetPConstant(bool), so our SetPConstant(bool) scored 100%
+// against the VERTEX function.  It read 100% only because the callee is an
+// unnamed placeholder, which name_check forgives -- objdiff is structurally
+// unable to tell these two apart.  Settled on retail bytes: 0x82735bf0 and
+// 0x82735e88 are byte-identical except their `bl`, and the two callees differ
+// in exactly one instruction, `addi r11, r11, 0x9e0` vs `0x9e4`.  The final
+// index is ((StartRegister>>5) + K)*4, so K=0x9e0 -> 0x2780 == m_Constants
+// (0x480) + VertexShaderB (0x2300), K=0x9e4 -> 0x2790 == PixelShaderB (0x2310).
+// => 0x8285d248 is SetVertexShaderConstantB, so slot 11 is the V overload.
+void DxShaderMgr::SetVConstant(VShaderConstant vsc, bool b) {
+    BOOL val = b;
+    D3DDevice_SetVertexShaderConstantB(TheDxRnd.Device(), vsc, &val, 1);
+}
 void DxShaderMgr::SetPConstant(PShaderConstant psc, bool b) {
     BOOL val = b;
     D3DDevice_SetPixelShaderConstantB(TheDxRnd.Device(), psc, &val, 1);
