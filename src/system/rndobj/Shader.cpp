@@ -460,23 +460,25 @@ u64 RndShaderSimple::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 }
 
 u64 RndShaderDrawRect::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return 0;
-    int hasDiffuse = mat->GetDiffuseTex() != nullptr;
-    bool prelit = mat->Prelit();
+    // Retail RB3 X360: occlusion is raw Rnd::Mode 3 (dc3's enum shifted it to
+    // 4), and there are no HiResScreen / ResourceCached terms, so the mask
+    // clears only bit 22.
+    if (TheRnd.DrawMode() == (Rnd::Mode)3) return 0;
+    u64 opts = (((u64)(bool)mat->GetDiffuseTex() & 1)
+        | (u64)(mat->Prelit() & 1) << 4) << 4;
     bool offscreen;
-    if (!b) {
-        offscreen = TheNgRnd.Offscreen();
-    } else {
+    if (b) {
         offscreen = TheShaderMgr.GetUnk41();
+    } else {
+        offscreen = TheNgRnd.Offscreen();
     }
-    u64 pseudoHDR = 0;
+    u64 pseudoHDR;
     if (!offscreen && mat->AllowHDR()) {
         pseudoHDR = 1;
+    } else {
+        pseudoHDR = 0;
     }
-    return ((((u64)(TheHiResScreen.IsActive() & 1) << 2
-        | (u64)(TheRnd.ResourceCached() & 1)) << 28
-        | pseudoHDR) << 22)
-        | (((u64)(prelit & 1) << 4 | (u64)hasDiffuse) << 4);
+    return ((pseudoHDR & 1) << 22) | (opts & ~(1ULL << 22));
 }
 
 u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
