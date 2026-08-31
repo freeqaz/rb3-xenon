@@ -17,16 +17,11 @@
 Plane RndTransformable::sShadowPlane;
 #endif
 
-template <class _T>
-__declspec(noinline) auto _outline_Reset(_T* _obj) -> decltype(_obj->Reset()) {
-    return _obj->Reset();
-}
-
 RndTransformable::RndTransformable()
     : mParent(this), mTarget(this), mConstraint(kConstraintNone), mPreserveScale(false),
       mDirty(true) {
-    _outline_Reset(&mLocalXfm);
-    _outline_Reset(&mWorldXfm);
+    mLocalXfm.Reset();
+    mWorldXfm.Reset();
 #ifdef HX_NATIVE
     mWorldWriterTag = kWorldNeverWritten; // X18 diagnostic, see Trans.h
     mWorldPubCaller = nullptr;
@@ -704,7 +699,7 @@ const Transform &RndTransformable::WorldXfm_Force() {
         mWorldXfm = mLocalXfm;
     } else if (mConstraint == kConstraintParentWorld) {
         mWorldXfm = mParent->WorldXfm();
-    } else if (!!(mConstraint) == kConstraintLocalRotate) {
+    } else if (mConstraint == kConstraintLocalRotate) {
         Multiply(mLocalXfm.v, mParent->WorldXfm(), mWorldXfm.v);
         mWorldXfm.m = mLocalXfm.m;
     } else if (mConstraint == kConstraintNoParentRotation) {
@@ -721,10 +716,10 @@ const Transform &RndTransformable::WorldXfm_Force() {
 }
 
 void RndTransformable::ApplyDynamicConstraint() {
-    if (!!(mConstraint) == kConstraintTargetWorld) {
+    if (mConstraint == kConstraintTargetWorld) {
         if (mTarget)
             mWorldXfm = mTarget->WorldXfm();
-    } else if (mTarget && mConstraint == kConstraintShadowTarget) {
+    } else if (mConstraint == kConstraintShadowTarget) {
         Transform tf;
         if (mTarget) {
             Transpose(mTarget->WorldXfm(), tf);
