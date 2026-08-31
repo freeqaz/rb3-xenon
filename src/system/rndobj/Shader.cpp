@@ -412,16 +412,18 @@ u64 RndShaderVelocity::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 }
 
 u64 RndShaderUnwrapUV::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    return ((u64)(mat->GetDiffuseTex() != nullptr)
-        | 0x10
-        | ((u64)(TheHiResScreen.IsActive() & 1) << 48)) << 4;
+    // Retail RB3 X360 has no HiResScreen term here (a later-engine addition).
+    u64 opts = ((u64)(bool)mat->GetDiffuseTex() & 1) | 0x10;
+    return opts << 4;
 }
 
 u64 RndShaderDepthVolume::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    return (((u64)(TheHiResScreen.IsActive() & 1) << 29
-        | (u64)(TheRnd.DrawMode() == Rnd::kDrawShadowColor)) << 23)
-        | (((u64)(TheShaderMgr.BoneCount() != 0) << 11
-        | (u64)(TheShaderMgr.unk1c & 3)) << 1);
+    // Retail RB3 X360 has no HiResScreen term (so the low-half mask clears only
+    // bit 23, not dc3's bits 23+52) and gates on raw Rnd::Mode 2.
+    u64 skinned = (u64)(bool)TheShaderMgr.BoneCount() & 1;
+    u64 opts = (((u64)(uint)TheShaderMgr.unk1c & ~0xFFFFFFFCULL) | skinned << 11) << 1;
+    u64 shadow = (u64)(TheRnd.DrawMode() == (Rnd::Mode)2) & 1;
+    return (shadow << 23) | (opts & ~(1ULL << 23));
 }
 
 u64 RndShaderSimple::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
