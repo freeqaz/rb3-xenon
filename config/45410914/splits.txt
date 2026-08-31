@@ -749,6 +749,7 @@ VocalTrackDir.cpp:
 	.text       start:0x822FD2F4 end:0x822FE750
 	.text       start:0x822FE750 end:0x822FE780
 	.text       start:0x822FE780 end:0x822FE7F8
+	.text       start:0x822FE7F8 end:0x822FE804
 	.text       start:0x822FE804 end:0x822FE820
 	.text       start:0x822FE820 end:0x822FE9C8
 	.text       start:0x822FE9C8 end:0x822FFAA0
@@ -760,7 +761,8 @@ VocalTrackDir.cpp:
 	.text       start:0x823000D0 end:0x823028E8
 	.text       start:0x823028E8 end:0x823038A0
 	.text       start:0x827F3544 end:0x827F3568
-	.text       start:0x827F4278 end:0x827F42E0
+	.text       start:0x827F4278 end:0x827F4288
+	.text       start:0x827F4298 end:0x827F42E0
 	.text       start:0x827F443C end:0x827F4478
 	.text       start:0x827F4778 end:0x827F4910
 
@@ -991,7 +993,6 @@ StarDisplay.cpp:
 	.text       start:0x8231E660 end:0x8231E6A8
 	.text       start:0x8231E6EC end:0x8231E728
 	.text       start:0x8231E734 end:0x8231E748
-	.text       start:0x8231E758 end:0x8231E778
 	.text       start:0x8231E788 end:0x8231E8F8
 
 BandStarDisplay.cpp:
@@ -1085,6 +1086,7 @@ StreakMeter.cpp:
 	.text       start:0x822D9D70 end:0x822D9DA0
 	.text       start:0x822D9DA0 end:0x822D9DB0
 	.text       start:0x822D9DC0 end:0x822D9E20
+	.text       start:0x822D9E20 end:0x822D9FA4
 	.text       start:0x822D9FA4 end:0x822D9FD8
 	.text       start:0x822DA010 end:0x822DA628
 	.text       start:0x822DA628 end:0x822DA778
@@ -3328,7 +3330,6 @@ Character.cpp:
 	.text       start:0x822A6024 end:0x822A60A8
 	.text       start:0x822A6AB0 end:0x822A6AF8
 	.text       start:0x822A6AF8 end:0x822A6C18
-	.text       start:0x822FE7F8 end:0x822FE804
 	.text       start:0x8236D2C8 end:0x8236D408
 	.text       start:0x8236D450 end:0x8236D4E4
 	.text       start:0x8236D4E8 end:0x8236E8B0
@@ -3776,7 +3777,6 @@ Waypoint.cpp:
 	.text       start:0x822CC2C8 end:0x822CC2D4
 	.text       start:0x822CCC98 end:0x822CCCA4
 	.text       start:0x822D9DB0 end:0x822D9DC0
-	.text       start:0x822D9E20 end:0x822D9FA4
 	.text       start:0x822D9FD8 end:0x822DA010
 	.text       start:0x823BE360 end:0x823BE46C
 	.text       start:0x823DA758 end:0x823DCFB0
@@ -4456,6 +4456,7 @@ UILabel.cpp:
 	.text       start:0x827F3180 end:0x827F33D4
 	.text       start:0x827F33D8 end:0x827F3544
 	.text       start:0x827F3568 end:0x827F4278
+	.text       start:0x827F4288 end:0x827F4298
 	.text       start:0x827F42E0 end:0x827F443C
 	.text       start:0x827F4478 end:0x827F4778
 	.text       start:0x827F4910 end:0x827F4B64
@@ -13446,6 +13447,7 @@ system/bandobj/ReviewDisplay.cpp:
 	.text       start:0x8231E6A8 end:0x8231E6EC
 	.text       start:0x8231E728 end:0x8231E734
 	.text       start:0x8231E748 end:0x8231E758
+	.text       start:0x8231E758 end:0x8231E778
 	.text       start:0x8231E778 end:0x8231E788
 	.text       start:0x8231E8F8 end:0x8231EA20
 	.text       start:0x8231EAA8 end:0x8231EFA8
