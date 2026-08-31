@@ -49,6 +49,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_TARGET_DIR = PROJECT_ROOT / "build" / "45410914" / "obj"
 DEFAULT_BASE_DIR = PROJECT_ROOT / "build" / "45410914" / "src"
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import obj_pairing  # noqa: E402
+
 IMAGE_FILE_MACHINE_POWERPCBE_LE = 0x01F2  # COFF header is little-endian
 
 
@@ -431,6 +434,9 @@ def process_batch(args):
         print(f"ERROR: base .obj directory not found: {base_dir}", file=sys.stderr)
         sys.exit(1)
 
+    pairing = obj_pairing.ObjPairing(
+        PROJECT_ROOT, target_dir, base_dir, args.objdiff_config)
+
     if args.files:
         obj_rel_paths = args.files
     else:
@@ -439,6 +445,7 @@ def process_batch(args):
             rel = os.path.relpath(base_path, base_dir)
             obj_rel_paths.append(rel)
 
+    unpaired = 0
     total_files = 0
     files_renamed = 0
     total_renames = 0
@@ -450,54 +457,69 @@ def process_batch(args):
 
     for rel in obj_rel_paths:
         base_path = base_dir / rel
-        target_path = target_dir / rel
-        if not base_path.exists() or not target_path.exists():
+        if not base_path.exists():
+            continue
+        # ★ PAIRING COMES FROM objdiff.json, NOT FROM THE RELPATH (lane
+        # PAIRFIX).  `target_dir / rel` existed for 344 of the 1,045 declared
+        # compiled objects here; the other 701 hit the `continue` and were
+        # counted as nothing at all.  See scripts/obj_pairing.py.
+        target_paths = pairing.target_paths_for(rel)
+        if not target_paths:
+            unpaired += 1
             continue
 
         total_files += 1
-        try:
-            result = patch_obj_pair(
-                str(target_path),
-                str(base_path),
-                apply=args.apply,
-                verbose=args.verbose,
-            )
-        except Exception as e:
-            if args.verbose:
-                print(f'  {rel}: ERROR {e}')
-            continue
+        file_renames = 0
+        # One pass per declared target: identical to the old single-target call
+        # for the 1,042 unambiguous objects, and for the three whose retail TU
+        # was split across two target objects it consults both halves.
+        for target_path in target_paths:
+            try:
+                result = patch_obj_pair(
+                    str(target_path),
+                    str(base_path),
+                    apply=args.apply,
+                    verbose=args.verbose,
+                )
+            except Exception as e:
+                if args.verbose:
+                    print(f'  {rel} <- {target_path.name}: ERROR {e}')
+                continue
 
-        if result['num_renamed'] > 0:
-            files_renamed += 1
-            total_renames += result['num_renamed']
-            for old, new, strategy in result['applied']:
-                by_strategy[strategy] += 1
-                all_applied.append({
-                    'unit': rel,
-                    'old': old,
-                    'new': new,
-                    'strategy': strategy,
-                })
-            per_file_summary.append({
-                'unit': rel,
-                'renamed': result['num_renamed'],
-            })
-            if args.verbose:
-                print(f'{rel}: {result["num_renamed"]} renamed')
+            if result['num_renamed'] > 0:
+                file_renames += result['num_renamed']
+                total_renames += result['num_renamed']
                 for old, new, strategy in result['applied']:
-                    print(f'  [{strategy}] {old}')
-                    print(f'       -> {new}')
+                    by_strategy[strategy] += 1
+                    all_applied.append({
+                        'unit': rel,
+                        'target': target_path.name,
+                        'old': old,
+                        'new': new,
+                        'strategy': strategy,
+                    })
+                if args.verbose:
+                    print(f'{rel} <- {target_path.name}: '
+                          f'{result["num_renamed"]} renamed')
+                    for old, new, strategy in result['applied']:
+                        print(f'  [{strategy}] {old}')
+                        print(f'       -> {new}')
 
-        total_verify_fails += len(result['verify_fails'])
-        total_skipped += len(result['skipped'])
-        if args.verbose and result['verify_fails']:
-            for old, new, reason in result['verify_fails']:
-                print(f'  {rel}: verify FAIL {old} -> {new}: {reason}')
+            total_verify_fails += len(result['verify_fails'])
+            total_skipped += len(result['skipped'])
+            if args.verbose and result['verify_fails']:
+                for old, new, reason in result['verify_fails']:
+                    print(f'  {rel}: verify FAIL {old} -> {new}: {reason}')
+
+        if file_renames:
+            files_renamed += 1
+            per_file_summary.append({'unit': rel, 'renamed': file_renames})
 
     mode = 'APPLIED' if args.apply else 'DRY RUN'
     print(f'\n[{mode}] Processed {total_files} .obj pairs, '
           f'renamed {total_renames} atexit symbols '
-          f'across {files_renamed} files')
+          f'across {files_renamed} files '
+          f'({unpaired} on-disk objects had no declared target)')
     print(f'  unique 1:1 matches: {by_strategy["unique"]}')
     print(f'  positional (collision) matches: {by_strategy["positional"]}')
     print(f'  verify failures (bytes differ): {total_verify_fails}')
@@ -605,6 +627,10 @@ def main():
                         help='Target (original) .obj directory')
     parser.add_argument('--base-dir', default=str(DEFAULT_BASE_DIR),
                         help='Base (decomp) .obj directory')
+    parser.add_argument('--objdiff-config', default=None,
+                        help='objdiff.json to take the authoritative '
+                             'target/base pairing from (default: repo root). '
+                             'See scripts/obj_pairing.py.')
     parser.add_argument('--stats-json',
                         help='Write detailed stats to this JSON file')
     parser.add_argument('--selftest', action='store_true',
