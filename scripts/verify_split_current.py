@@ -121,6 +121,27 @@ class StaleSplitError(RuntimeError):
     """The target object tree does not correspond to the current split config."""
 
 
+class SplitRewroteItsInputError(RuntimeError):
+    """`dtk split` modified a file it reads, so its output is not a fixed point.
+
+    This project's build-system contract is that ``dtk <fmt> split`` must not
+    modify its own inputs -- the depfile edge names them, so an input the split
+    rewrites makes the edge dirty again the moment it finishes.
+
+    It went undetected for weeks because the symptom is not a build failure, it
+    is a WORKING-TREE MODIFICATION, and a working-tree modification in a shared
+    checkout reads as somebody's work in progress.  `config/45410914/splits.txt`
+    carried one, three lanes were told to leave it alone, and it turned out to
+    be generated churn: dtk re-derives every `.pdata` split from the `.text`
+    split that owns the function each entry describes, and four hand-written
+    `.pdata` ranges named the wrong TU.  dtk was right every build and said so
+    only by rewriting the file.
+
+    Recovery is one build: the split has already written the corrected file, so
+    the retry is a fixed point and passes.  Commit what it wrote.
+    """
+
+
 # --------------------------------------------------------------------------
 # Discovery: never assume this repo's layout, read it out of the build system
 # --------------------------------------------------------------------------
@@ -422,6 +443,35 @@ def ensure_split_current(project_dir: Path | str, *, wait_seconds: float = 180.0
             time.sleep(2.0)
 
 
+def _report_self_rewrite(project_dir: Path, build_dir: Path, was: dict | None) -> int:
+    """Exit 1 if the split changed a file it reads.  Called from ``--complete``.
+
+    ``was`` is the ``running`` record written by ``--begin``; the ``complete``
+    record has just been written over it, so re-read it rather than trusting a
+    cached copy.
+    """
+    if not isinstance(was, dict) or was.get("state") != STATE_RUNNING:
+        # No bracket to compare against (first split in a fresh tree, or a
+        # split not run through --begin).  Silence here is honest: this check
+        # has nothing to say, and saying nothing is not the same as passing.
+        return 0
+    now = read_stamp(project_dir, build_dir) or {}
+    drift = _describe_drift(was.get("inputs") or {}, now.get("inputs") or {})
+    if not drift:
+        return 0
+    print(
+        "[split-guard] THE SPLIT REWROTE ITS OWN INPUT -- its output is not a "
+        "fixed point of its input.\n"
+        + "\n".join(drift)
+        + "\n\n"
+        + SplitRewroteItsInputError.__doc__.strip()
+        + "\n\nThe corrected file is on disk now. Inspect it, commit it, and "
+          "the next build passes.",
+        file=sys.stderr,
+    )
+    return 1
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--project-dir", default=str(REPO_ROOT))
@@ -433,6 +483,10 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument("--check", action="store_true",
                       help="Exit 1 if the target objects do not match the config")
     ap.add_argument("--quiet", action="store_true")
+    ap.add_argument("--no-fixed-point-check", action="store_true",
+                    help="With --complete: do not fail when the split rewrote "
+                         "one of its own inputs. For deliberately re-deriving "
+                         "generated config in one build instead of two.")
     ap.add_argument("--stamp-out", default=None,
                     help="With --check: write a digest of the verified state to "
                          "this path, but ONLY when it differs. The ninja edge is "
@@ -451,9 +505,17 @@ def main(argv: list[str] | None = None) -> int:
                   file=sys.stderr)
             return 0
         state = STATE_RUNNING if args.begin else STATE_COMPLETE
+        # Read the `running` record BEFORE overwriting it: --complete's whole
+        # opportunity to notice a self-rewritten input is the difference
+        # between the two.
+        was = read_stamp(project_dir, edge[0]) if args.complete else None
         p = write_stamp(project_dir, edge[0], state)
         if not args.quiet:
             print(f"[split-guard] {state}: {p}")
+        if args.complete and not args.no_fixed_point_check:
+            rc = _report_self_rewrite(project_dir, edge[0], was)
+            if rc:
+                return rc
         return 0
 
     try:
