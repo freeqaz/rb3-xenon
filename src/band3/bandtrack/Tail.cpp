@@ -229,7 +229,8 @@ void Tail::UpdateVerts(float alpha, bool active) {
     int used_sections = capInc + midSections;
     MILO_ASSERT(used_sections <= total_sections, 0x1C3);
 
-    int vertCount = mTemplate.GetRequiredVertCount(used_sections);
+    GemRepTemplate &templ = mTemplate;
+    int vertCount = templ.GetRequiredVertCount(used_sections);
     bool resized = false;
     RndMesh::VertVector &verts = mTailGeomOwner->Verts();
     if (vertCount != verts.size()) {
@@ -237,8 +238,9 @@ void Tail::UpdateVerts(float alpha, bool active) {
         resized = true;
     }
 
+    RndMesh::Vert *tailBegin = &templ.mTailVerts[0];
     RndMesh::Vert *out = verts.begin();
-    RndMesh::Vert *tailEnd = &mTemplate.mTailVerts[mTemplate.mTailVerts.size()];
+    RndMesh::Vert *tailEnd = &templ.mTailVerts[templ.mTailVerts.size()];
     float yWorld = unk10;
     float curY = 0;
 
@@ -251,7 +253,7 @@ void Tail::UpdateVerts(float alpha, bool active) {
     }
 
     float zScale = 1.0f;
-    for (RndMesh::Vert *src = &mTemplate.mTailVerts[0]; src != tailEnd; ++src, ++out) {
+    for (RndMesh::Vert *src = tailBegin; src != tailEnd; ++src, ++out) {
         out->pos.y = 0;
         out->pos.x = scaleX * (src->pos.x + baseOfs);
         out->pos.z = src->pos.z * zScale;
@@ -271,7 +273,7 @@ void Tail::UpdateVerts(float alpha, bool active) {
         if (mSlideInfo.unk0) {
             ofs += mInterpolator.Eval(yWorld);
         }
-        for (RndMesh::Vert *src = &mTemplate.mTailVerts[0]; src != tailEnd; ++src, ++out) {
+        for (RndMesh::Vert *src = tailBegin; src != tailEnd; ++src, ++out) {
             out->pos.y = curY;
             out->pos.x = scaleX * (src->pos.x + ofs);
             out->pos.z = src->pos.z * zScale;
@@ -295,15 +297,14 @@ void Tail::UpdateVerts(float alpha, bool active) {
         if (mSlideInfo.unk0) {
             ofs += mInterpolator.Eval(yWorld);
         }
-        RndMesh::Vert *csrc = &mTemplate.mCapVerts[0];
-        RndMesh::Vert *cend = &mTemplate.mCapVerts[mTemplate.mCapVerts.size()];
-        RndMesh::Vert *_it = out;
-        for (; csrc != cend; ++csrc, ++_it) {
-            _it->pos.y = curY;
-            _it->pos.x = scaleX * (csrc->pos.x + ofs);
-            _it->pos.z = csrc->pos.z * zScale;
-            _it->tex.x = csrc->tex.x;
-            _it->tex.y = csrc->tex.y;
+        RndMesh::Vert *csrc = &templ.mCapVerts[0];
+        RndMesh::Vert *cend = &templ.mCapVerts[templ.mCapVerts.size()];
+        for (; csrc != cend; ++csrc, ++out) {
+            out->pos.y = curY;
+            out->pos.x = scaleX * (csrc->pos.x + ofs);
+            out->pos.z = csrc->pos.z * zScale;
+            out->tex.x = csrc->tex.x;
+            out->tex.y = csrc->tex.y;
         }
     }
     MILO_ASSERT(out == verts.end(), 0x219);

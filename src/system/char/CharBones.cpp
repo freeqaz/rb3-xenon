@@ -1109,7 +1109,6 @@ complain:
 
 // MARK: RotateTo
 void CharBones::RotateTo(CharBones &dst, float f) const {
-    char _slotpad[8]; (void)_slotpad;
     const Bone *src = mBones.begin();
     if (src == mBones.end()) return;
 
@@ -1130,7 +1129,7 @@ void CharBones::RotateTo(CharBones &dst, float f) const {
                     ddata++;
                 }
                 src++;
-                ddata->x += ((float)(long long)sdata[0] * (0.039674062f * f));
+                ddata->x += (float)(long long)sdata[0] * 0.039674062f * f;
                 ddata->y += (float)(long long)sy * 0.039674062f * f;
                 ddata->z += (float)sz * 0.039674062f * f;
                 if (src == src_end) goto rotateto_quat;
@@ -1181,7 +1180,7 @@ rotateto_quat:
                 float sy = sq.y * f;
                 sq.z *= f;
                 if (sq.w < 0.0f) {
-                    sq.w = -((1.0f - f) - sq.w * f);
+                    sq.w = sq.w * f - (1.0f - f);
                 } else {
                     sq.w = sq.w * f + (1.0f - f);
                 }

@@ -467,16 +467,12 @@ bool MetaPerformer::IsSetComplete() const {
 }
 
 bool MetaPerformer::PartPlaysInSet(Symbol s) const {
-    volatile int _slotpad = 0; (void)_slotpad;
-    auto& _ref1 = mSongMgr;
-    auto& _ref0 = mSongs;
-    for (std::vector<Symbol>::const_iterator it = _ref0.begin(); it != _ref0.end();
+    for (std::vector<Symbol>::const_iterator it = mSongs.begin(); it != mSongs.end();
          ++it) {
         if (*it == gNullStr || *it == any || *it == random)
             return true;
-        auto _tmp1 = _ref1->GetSongIDFromShortName(*it, true);
         BandSongMetadata *data =
-            (BandSongMetadata *)_ref1->Data(_tmp1
+            (BandSongMetadata *)mSongMgr->Data(mSongMgr->GetSongIDFromShortName(*it, true)
             );
         if (data && data->HasPart(s, false))
             return true;
@@ -499,15 +495,13 @@ bool MetaPerformer::VocalHarmonyInSong() const {
 
 int MetaPerformer::GetSetlistMaxVocalParts() const {
     int parts = 1;
-    auto& _ref0 = mSongs;
-    for (std::vector<Symbol>::const_iterator it = _ref0.begin(); it != _ref0.end();
+    for (std::vector<Symbol>::const_iterator it = mSongs.begin(); it != mSongs.end();
          ++it) {
         if (*it == gNullStr || *it == any || *it == random)
             continue;
         else {
-            auto _tmp2 = mSongMgr->GetSongIDFromShortName(*it, true);
             BandSongMetadata *data = (BandSongMetadata *)mSongMgr->Data(
-                _tmp2
+                mSongMgr->GetSongIDFromShortName(*it, true)
             );
             if (data) {
                 int dataparts = data->NumVocalParts();
@@ -661,25 +655,16 @@ bool MetaPerformer::CanUpdateScoreLeaderboards() {
 
 int MetaPerformer::GetHighestDifficultyForPart(Symbol s) const {
     int diff = 0;
-    auto& _ref0 = mSongs;
-    {
-        auto it = _ref0.begin();
-        if (it != _ref0.end()) {
-            do {
+    FOREACH (it, mSongs) {
         if (*it == gNullStr || *it == any || *it == random)
             return -1;
-        auto _tmp0 = mSongMgr->GetSongIDFromShortName(*it, true);
         BandSongMetadata *data =
-            (BandSongMetadata *)mSongMgr->Data(_tmp0
+            (BandSongMetadata *)mSongMgr->Data(mSongMgr->GetSongIDFromShortName(*it, true)
             );
         if (data && data->HasPart(s, false)) {
             if (diff < mSongMgr->GetPartDifficulty(*it, s)) {
                 diff = mSongMgr->GetPartDifficulty(*it, s);
             }
-        }
-    
-                ++it;
-            } while (it != _ref0.end());
         }
     }
     return diff;
