@@ -511,11 +511,7 @@ u64 RndShaderParticles::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     if (b) {
         fadeOut = mat->FadeOut();
     } else {
-        if (!env->FadeOut() || env->FadeEnd() == env->FadeStart()) {
-            fadeOut = false;
-        } else {
-            fadeOut = true;
-        }
+        fadeOut = env->FadeOut() && env->FadeEnd() != env->FadeStart();
     }
     u64 pseudoHDR;
     if (!fadeOut) {
