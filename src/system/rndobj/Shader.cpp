@@ -906,29 +906,29 @@ u64 RndShaderStandard::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
 }
 
 u64 RndShaderPostProc::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    bool v2a = TheShaderMgr.unk2a;
     bool v2e = TheShaderMgr.unk2e;
     bool v25 = TheShaderMgr.unk25;
-    bool v39 = TheShaderMgr.unk39;
     bool v3d = TheShaderMgr.unk3d;
+    bool v39 = TheShaderMgr.unk39;
     bool v3f = TheShaderMgr.unk3f;
-    bool v29 = TheShaderMgr.unk29;
+    bool v28 = TheShaderMgr.unk28;
+    bool v3e = TheShaderMgr.unk3e;
+    bool v2a = TheShaderMgr.unk2a;
+    bool v3a = TheShaderMgr.unk3a;
     bool v2d = TheShaderMgr.unk2d;
     bool v26 = TheShaderMgr.unk26;
     bool v27 = TheShaderMgr.unk27;
-    bool v28 = TheShaderMgr.unk28;
     bool v2f = TheShaderMgr.unk2f;
     bool v30 = TheShaderMgr.unk30;
     bool v2c = TheShaderMgr.unk2c;
     bool v31 = TheShaderMgr.unk31;
+    bool v29 = TheShaderMgr.unk29;
     bool v2b = TheShaderMgr.unk2b;
     uint v34 = TheShaderMgr.unk34;
     bool v38 = TheShaderMgr.unk38;
-    bool v3a = TheShaderMgr.unk3a;
     bool v3b = TheShaderMgr.unk3b;
     bool v3c = TheShaderMgr.unk3c;
-    bool v3e = TheShaderMgr.unk3e;
-    TheShaderMgr.unk29 = false;
+    TheShaderMgr.unk2a = false;
     TheShaderMgr.unk2d = false;
     TheShaderMgr.unk2e = false;
     TheShaderMgr.unk26 = false;
@@ -939,32 +939,29 @@ u64 RndShaderPostProc::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     TheShaderMgr.unk2c = false;
     TheShaderMgr.unk31 = false;
     TheShaderMgr.unk25 = false;
+    TheShaderMgr.unk29 = false;
     TheShaderMgr.unk2b = false;
     TheShaderMgr.unk38 = false;
     TheShaderMgr.unk39 = false;
     TheShaderMgr.unk3a = false;
-    TheShaderMgr.unk2a = false;
     TheShaderMgr.unk3b = false;
     TheShaderMgr.unk3c = false;
     TheShaderMgr.unk3d = false;
     TheShaderMgr.unk34 = 0;
     TheShaderMgr.unk3e = false;
     TheShaderMgr.unk3f = false;
-    return ((((((((((((((((((((((((u64)(v2a & 1) << 10
-        | (u64)(TheHiResScreen.IsActive() & 1)) << 1 | (u64)(v25 & 1)) << 4 | (u64)(v2e & 1))
-        << 2 | (u64)(v3f & 1)) << 2 | (u64)(v3d & 1)) << 1 | (u64)(v39 & 1)) << 5
-        | (u64)(v28 & 1)) << 1 | (u64)(v3e & 1)) << 0xb
-        | (u64)(v3a & 1)) << 1 | (u64)(v38 & 1)) << 2
-        | (u64)(v34 & 3)) << 1 | (u64)(v29 & 1)) << 6 | (u64)(v3c & 1)) << 1
-        | (u64)(v31 & 1)) << 6 | (u64)(v3b & 1)) << 1 | (u64)(v2c & 1)) << 1 | (u64)(v30 & 1))
-        << 1 | (u64)(v2f & 1)) << 1 | (u64)(v27 & 1)) << 1 | (u64)(v26 & 1)) << 1
-        | (u64)(v2d & 1)) << 1 | (u64)(v2b & 1)) << 1);
+    // Retail RB3 X360 carries no HiResScreen bit in this chain; every other
+    // field keeps its relative position.
+    // Retail RB3 X360: no HiResScreen bit, and unk2a/unk2d sit at different
+    // places in the chain than dc3's later-engine version.
+    return (((((((((((((((((((((((u64)(v25 & 1) << 4 | (u64)(v2e & 1)) << 2 | (u64)(v3f & 1)) << 2 | (u64)(v3d & 1)) << 1 | (u64)(v39 & 1)) << 5 | (u64)(v28 & 1)) << 1 | (u64)(v3e & 1)) << 11 | (u64)(v3a & 1)) << 1 | (u64)(v38 & 1)) << 2 | (u64)(v34 & 3)) << 1 | (u64)(v2d & 1)) << 1 | (u64)(v29 & 1)) << 5 | (u64)(v3c & 1)) << 1 | (u64)(v31 & 1)) << 6 | (u64)(v3b & 1)) << 1 | (u64)(v2c & 1)) << 1 | (u64)(v30 & 1)) << 1 | (u64)(v2f & 1)) << 1 | (u64)(v27 & 1)) << 1 | (u64)(v26 & 1)) << 1 | (u64)(v2a & 1)) << 1 | (u64)(v2b & 1)) << 1);
 }
 
 u64 RndShaderFur::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     RndEnviron *env = RndEnviron::Current();
     u64 skinned = (u64)(TheShaderMgr.BoneCount() != 0) << 0xc;
-    if (TheRnd.DrawMode() == Rnd::kDrawOcclusion) return skinned;
+    // Retail RB3 X360: occlusion is raw Rnd::Mode 3.
+    if (TheRnd.DrawMode() == (Rnd::Mode)3) return skinned;
     int hasDiffuse = mat->GetDiffuseTex() != nullptr;
     bool prelit = mat->Prelit();
     u64 hasRealLights;
@@ -1054,10 +1051,10 @@ u64 RndShaderFur::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     if (fadeOut && !fog) {
         Vector4 fadeParams(mat->unk238, mat->unk23c, mat->unk240, mat->unk244);
         TheShaderMgr.SetPConstant((PShaderConstant)0x68, fadeParams);
-        opts |= ((s64)mat->unk234 & 3U) << 0x1a;
+        opts = (opts & ~(3ULL << 0x1a)) | (((s64)mat->unk234 & 3) << 0x1a);
     }
-    return (((u64)(TheHiResScreen.IsActive() & 1) << 2
-        | (u64)(TheRnd.ResourceCached() & 1)) << 0x32) | opts;
+    // Retail carries no HiResScreen / ResourceCached bits.
+    return opts;
 }
 
 u64 RndShaderSyncTrack::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
