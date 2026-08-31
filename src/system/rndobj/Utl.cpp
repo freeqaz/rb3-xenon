@@ -1589,7 +1589,7 @@ void ComputeFaceTangentBasis(RndMesh *m, int faceIdx, Hmx::Matrix3 &outBasis) {
                         bool zeroUV31 = du31 == 0.0f && dv31 == 0.0f;
                         if (!zeroUV31) {
                             float crossX = dz31 * dy21 - dy31 * dz21;
-                            float crossY = dz31 * dx21 - dx31 * dz21;
+                            float crossY = dx31 * dz21 - dz31 * dx21;
                             float crossZ = dy31 * dx21 - dx31 * dy21;
                             Hmx::Matrix3 edgeMat(
                                 Vector3(dx21, dy21, dz21),
