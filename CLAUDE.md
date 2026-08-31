@@ -1390,6 +1390,40 @@ across this lane's sabotage cycles. Two clean builds here do not differ at all.
      read 97.7–99.3, i.e. lanes grinding already-complete rows. **Fixed in
      `mcp_server.py`**; `run_objdiff`/`run_diff_inspect` now replicate the
      grader's config and agree exactly.
+     ✅✅ **AND NOW FIXED FOR EVERY CALLER, IN THE PROJECT CONFIG (2026-08-31).**
+     The `mcp_server.py` fix covered the MCP tools and nothing else — a bare
+     `bin/objdiff-cli diff` (the command in half of `docs/plans/`), a `--batch`
+     sweep, permuter scoring and any new script all still read `diff`'s own base
+     config. **`objdiff.json`'s `options` block is the one place BOTH CLI entry
+     points read unconditionally**, and it now pins **all four** divergent keys
+     (`functionRelocDiffs=name_check`, `combineDataSections=true`,
+     `combineTextSections=true`, `ppc.calculatePoolRelocations=false`) in
+     `tools/project.py`. Whole-binary sweep on this repo at `26576070`, objdiff
+     4.2.8, full build first: of **47,208 comparable rows** (22,009 unpaired =
+     agreement, 123 `base_unit` = a different question), **102 functions /
+     55,604 B disagreed**, report higher on 100 and `diff` higher on 2, up to
+     **65.20 pp**; one 308 B row read exactly 100.0 in `report.json` and <100
+     through `diff`. `ppc.calculatePoolRelocations` alone explains 102/102 — but
+     the two `combine*` keys are **not inert**: applied without it they ADD two
+     disagreements, so pin all four. Charged rows can be two *textually
+     identical* instructions, because the "relocation" is a synthesized display
+     annotation (`arch/ppc/mod.rs:819 make_fake_pool_reloc`) reconstructed from
+     each object's own symbol table, and `reloc_eq`'s `_ => return false` arm
+     charges a **target-only** one under every ruler except `none`. **No
+     recorded number moved** (42,274 / 3,772,560 / 36.819992% / fuzzy 48.921097
+     before and after; objdiff's own `Report cache: 3091 hits, 0 misses`
+     independently certifies the resolved report config is unchanged), and the
+     re-sweep leaves **0**. Upstream objdiff, not a fork bug (`0c9e552`,
+     2025-05-07, `report.rs` only) — `bin/objdiff-cli` is a symlink shared with
+     `../rb3` (151 fns / 224,892 B) and `../dc3-decomp` (155 fns / 120,728 B),
+     and all three are now fixed the same way, **config-only, no tool rebuild**.
+     Guard: `python3 scripts/verify_ruler_agreement.py --check` (~0.2 s) and
+     `--selftest` (flips the knob back and *requires* failure; exits 5 "vacuous"
+     rather than passing on an empty probe — verified: 3,320 witnesses agree,
+     31 disagree under the flip, and a witness-free unit exits 5). Also wired
+     into ninja as `CHECK RULER AGREEMENT`, gating `REPORT`; verified failing by
+     deleting one pin. Full write-up:
+     [docs/decomp/patterns/two-objdiff-entry-points-two-rulers.md](docs/decomp/patterns/two-objdiff-entry-points-two-rulers.md).
   ⛔⛔ **THE "`diff_inspect.py` + `stack_layout.py` RUN AT `DataValue`" CLAIM IS
   REFUTED — and the mechanism that broke it also broke `mcp_server.py` the other
   way** (lane MCPRULER-1, 2026-08-14). Both facts follow from one line:

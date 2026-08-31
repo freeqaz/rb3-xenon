@@ -546,6 +546,15 @@ def generate_build_ninja(
     split_guard_script = Path("scripts") / "verify_split_current.py"
     split_stamp = build_path / "split_inputs.stamp"
     split_checked = build_path / "split_current_checked.stamp"
+    # The ruler-agreement guard. `objdiff-cli report generate` and
+    # `objdiff-cli diff` carry DIFFERENT hardcoded base configs (report.rs:581
+    # vs diff.rs:1070/1807) and BOTH layer objdiff.json's `options` on top, so
+    # `options` is the only place that can make them agree. When it pinned only
+    # `functionRelocDiffs` the two paths disagreed on 102 functions / 55,604 B
+    # here, always with the per-function path LOW. See
+    # scripts/verify_ruler_agreement.py.
+    ruler_guard_script = Path("scripts") / "verify_ruler_agreement.py"
+    ruler_checked = build_path / "ruler_agreement_checked.stamp"
     build_tools_path = config.build_dir / "tools"
     download_tool = config.tools_dir / "download_tool.py"
     n.rule(
@@ -1746,6 +1755,33 @@ def generate_build_ninja(
             implicit=[str(split_guard_script), "always"],
         )
 
+        n.comment("Assert both objdiff-cli entry points resolve the same ruler")
+        # `--pins-only`, deliberately. The stronger form of this check compares
+        # objdiff.json against report.json's own provenance.diff_config, and
+        # that assertion is legitimately FALSE for exactly one build: the first
+        # one after a deliberate ruler change, whose whole job is to replace
+        # the report it would be checked against. Gating REPORT on it would
+        # deadlock. The pins themselves have no legitimate transient, so that
+        # is what the build edge asserts; the report cross-check stays a manual
+        # / CI step (`--check`, and `--selftest` for the negative control).
+        #
+        # Input is objdiff.json, not `always`: the check is a pure function of
+        # that file, which configure.py rewrites whenever the options block
+        # moves. write-if-changed + restat keeps the stamp from dirtying REPORT
+        # on a quiet tree.
+        n.rule(
+            name="ruler_agreement_check",
+            command=(f"$python {ruler_guard_script} --check --pins-only --quiet"
+                     f" --stamp-out $out"),
+            description="CHECK RULER AGREEMENT",
+            restat=True,
+        )
+        n.build(
+            outputs=str(ruler_checked),
+            rule="ruler_agreement_check",
+            implicit=[str(ruler_guard_script), "objdiff.json"],
+        )
+
         ###
         # BELT AND BRACES: purge the report-cache sidecars when the alias map
         # moves. As of 2026-08-13 this edge is REDUNDANT, and it stays anyway.
@@ -1839,6 +1875,12 @@ def generate_build_ninja(
             # none of it. Without this the report is free to measure objects
             # the config on disk did not produce.
             str(split_checked),
+            # ... and on the ruler-agreement check, because objdiff.json's
+            # `options` block is the ONLY place that makes `report generate`
+            # and `diff` score the same way, and a regenerated objdiff.json
+            # that lost the pins is silent: the report stays correct while
+            # every per-function reading drifts LOW beneath it.
+            str(ruler_checked),
         ]
         if config.custom_build_steps and "post-compile" in config.custom_build_steps:
             report_implicit.append("post-compile")
@@ -2185,8 +2227,74 @@ def generate_objdiff_config(
         # objdiff after the purge edge fired: none 42.220000% (4,357,396 B,
         # 44,055 complete), name_check 32.462280% (3,350,332 B, 36,593 complete).
         # The stale figure was 136,212 matched bytes low.
+        #
+        # ── ALL FOUR KEYS, not just the ruler (2026-08-31) ──────────────────
+        # `objdiff-cli report generate` and `objdiff-cli diff` carry DIFFERENT
+        # hardcoded base configs, and neither is the schema default:
+        #
+        #   report generate (report.rs:581)  functionRelocDiffs=none,
+        #                                    combineDataSections=true,
+        #                                    combineTextSections=true,
+        #                                    ppc.calculatePoolRelocations=false
+        #   diff (diff.rs:1070, --batch at diff.rs:1807)
+        #                                    functionRelocDiffs=data_value,
+        #                                    and the other three at their SCHEMA
+        #                                    defaults: false / false / TRUE
+        #
+        # Both then layer THIS block on top, so pinning only `functionRelocDiffs`
+        # fixed the ruler the two paths argue about most visibly and left them
+        # disagreeing on the other three.
+        #
+        # `ppc.calculatePoolRelocations` is the one that bites. It SYNTHESIZES
+        # `R_PPC_NONE` "fake" relocations for pooled data loads
+        # (objdiff-core/src/arch/ppc/mod.rs:819 make_fake_pool_reloc; the schema
+        # calls them "fake relocations" in as many words), reconstructed per
+        # object from THAT OBJECT'S OWN symbol table. A dtk-carved target obj --
+        # a whole linked data section with anonymous `lbl_*` labels -- and our
+        # MSVC per-TU COMDAT obj do not reconstruct the same set. `reloc_eq`
+        # (objdiff-core/src/diff/code.rs:1330-1338) forgives a BASE-only
+        # synthesized relocation under `name_check` but its `_ => return false`
+        # arm charges a TARGET-only one under every ruler except `none`. The
+        # visible symptom is a charged mismatch row on two TEXTUALLY IDENTICAL
+        # instructions.
+        #
+        # Measured whole-binary on this repo (rb3-xenon), 2026-08-31, one
+        # worktree, one objdiff-cli 4.2.8 (358c715835cc, xxh3 9b2bb6f1f3a21062),
+        # full ninja before reading report.json, `diff --batch` over every
+        # uniquely-named function in the report:
+        #
+        #   comparable rows (a real percent on both sides): 47,208
+        #     (22,009 further rows are unpaired -- batch null, report 0.0 --
+        #      which is AGREEMENT, and 123 carry the batch path's disclosed
+        #      cross-unit `base_unit` COMDAT fallback, a different question)
+        #   disagreements: 102 functions / 55,604 bytes
+        #   direction: report higher on 100, diff higher on 2
+        #   magnitude: up to 65.20 pp
+        #   1 of them (308 B) reads exactly 100.0 in report.json and <100
+        #     through `diff` -- the class where a lane refuses a promotion for a
+        #     reason that does not exist
+        #
+        # Attribution over those 102: `ppc.calculatePoolRelocations` alone
+        # explains 102/102. The other two are NOT inert and must be pinned with
+        # it: `combineDataSections`+`combineTextSections` applied WITHOUT the
+        # pool key ADD two fresh disagreements (`kdTree<Triangle>::Intersect`,
+        # `DataVarName`). All four together -> 0 disagreements.
+        #
+        # This is upstream objdiff, not a fork bug: the three extra report-side
+        # values arrive in 0c9e552 "Combine sections when generating report"
+        # (Luke Street, 2025-05-07), which touched report.rs only.
+        # `bin/objdiff-cli` is a symlink shared with ../rb3 and ../dc3-decomp,
+        # so all three repos were exposed; the fix is config-only in each and
+        # needs no tool rebuild. Found in dc3-decomp (155 fns / 120,728 B);
+        # ../rb3 measures 151 fns / 224,892 B.
+        #
+        # Pinning these changed NO recorded number here -- see the guard's
+        # docstring and scripts/verify_ruler_agreement.py.
         "options": {
             "functionRelocDiffs": "name_check",
+            "combineDataSections": True,
+            "combineTextSections": True,
+            "ppc.calculatePoolRelocations": False,
         },
     }
 
