@@ -1749,10 +1749,21 @@ def generate_build_ninja(
             description="CHECK SPLIT CURRENT",
             restat=True,
         )
+        # `split_inputs.stamp` is an implicit OUTPUT of the split edge, so
+        # naming it here does two things that `always` alone cannot:
+        #
+        #   ordering -- without it ninja is free to run this check BEFORE the
+        #   split in the same invocation, where it would vouch for the OLD
+        #   recorded state and pass;
+        #   dirtiness -- the stamp carries the split's pid and unix_time, so
+        #   its digest moves on every split RUN, not merely on every split
+        #   whose config inputs changed. That is the signal downstream edges
+        #   need, because what a split rewrites is build/<v>/obj/** -- an
+        #   undeclared output nothing else in the graph stats.
         n.build(
             outputs=str(split_checked),
             rule="split_current_check",
-            implicit=[str(split_guard_script), "always"],
+            implicit=[str(split_guard_script), str(split_stamp), "always"],
         )
 
         n.comment("Assert both objdiff-cli entry points resolve the same ruler")
