@@ -70,13 +70,14 @@ bool NextSongPanel::Exiting() const {
     // drops the r31 save, cascades regswap r30<->r31, flips bge<->blt (100% -> 79.1%). Leave as-is.
     bool ret = false;
     if (!UIPanel::Exiting()) {
-        float uisecs = TheTaskMgr.UISeconds();
         float mintimeprop = Property("min_time", true)->Float();
+        float uisecs = TheTaskMgr.UISeconds();
         if (!(uisecs - mEnterTime < mintimeprop))
             goto done;
     }
-    done:
-    return ret = true;
+    ret = true;
+done:
+    return ret;
 }
 
 void NextSongPanel::FinishLoad() {

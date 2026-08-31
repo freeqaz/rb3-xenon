@@ -211,7 +211,7 @@ void SpotlightDrawer::DrawAdditional(
     SpotlightDrawer::SpotlightEntry *const &spotEnd
 ) {
     MILO_ASSERT(spotIter != spotEnd, 0x298);
-    for (; spotIter != spotEnd; ++spotIter) {
+    for (; spotEnd != spotIter; ++spotIter) {
         Spotlight *sl = spotIter->mSpotlight;
         auto _tmp0 = sl->GetAdditionalObjects();
         FOREACH (it, _tmp0) {
@@ -400,7 +400,8 @@ void SpotlightDrawer::ApplyLightingApprox(BoxMapLighting &boxMap, float f2) cons
 
 void SpotlightDrawer::DrawShadow() {
     std::vector<Spotlight *>::iterator it = sShadowSpots.begin();
-    for (; it != sShadowSpots.end(); ++it) {
+    std::vector<Spotlight *>::iterator itEnd = sShadowSpots.end();
+    for (; it != itEnd; ++it) {
         Spotlight *shadowSpot = *it;
         MILO_ASSERT(shadowSpot->GetTarget() && shadowSpot->TargetShadow(), 0x288);
         RndDrawable *draw = dynamic_cast<RndDrawable *>(shadowSpot->GetTarget());

@@ -30,13 +30,13 @@
 // Computes shifted dot products of buf with itself, output to ss.
 // ss[i] = sum_{j} buf[j] * buf[j + i] for i in [0, vlen) where vlen = len/2.
 void ShiftedDotProduct(const float *buf, int len, float *ss, bool fast) {
-    unsigned int vlen = len / 2;
+    int vlen = len / 2;
     MILO_ASSERT((vlen & 15) == 0, 0x135);
 
     if (fast) {
         // Retail: VMX128, four ss[] outputs per outer iteration. Not
         // reconstructible from the Wii paired-single oracle (see note above).
-        for (int i = 0; i < (int)vlen; i += 4) {
+        for (int i = 0; i < vlen; i += 4) {
             float acc[4];
             acc[0] = acc[1] = acc[2] = acc[3] = 0.0f;
             for (int j = 0; j < vlen; j++) {
