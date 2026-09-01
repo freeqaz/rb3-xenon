@@ -357,10 +357,25 @@ __all__ = [
 # scripts/analysis/ruler.py → scripts/analysis → scripts → <tool repo root>
 _TOOL_REPO = Path(__file__).resolve().parent.parent.parent
 
+# ⚠ THIS LIST IS THE GUARD'S ENTIRE FIELD OF VIEW, AND AN OMISSION FROM IT IS
+# INVISIBLE (lane T2-RULER, 2026-09-01).  MCPRULER-1's merge message concluded
+# that mcp_server.py was "the LONE hardcoder".  It was not:
+# `tools/crossing_worklist.py` (lane DQ-3, 2026-08-03) had the identical
+# hardcoded `-c` and simply was not on this list, so the guard passed cleanly for
+# eighteen days over a tool that priced every row on `none` while banding them on
+# the graded ruler.  A guard that only checks the files someone remembered is a
+# guard whose coverage is a memory, not a property.
+#
+# ⇒ When you add a consumer of objdiff-cli anywhere in this repo, ADD IT HERE.
+#   `command grep -rln "objdiff-cli" tools/ scripts/` is the population to check
+#   this list against; the guard cannot enumerate it for you, because a file that
+#   shells out to a `bin/objdiff-cli` path built at runtime is not textually
+#   distinguishable from one that does not.
 _CONSUMERS = (
     "scripts/orchestrator/mcp_server.py",
     "scripts/analysis/diff_inspect.py",
     "scripts/analysis/stack_layout.py",
+    "tools/crossing_worklist.py",
 )
 
 
