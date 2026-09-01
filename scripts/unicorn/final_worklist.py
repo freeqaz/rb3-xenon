@@ -46,6 +46,8 @@ sys.path.insert(0, os.path.join(PROJECT_ROOT, "scripts", "unicorn"))
 
 from scripts.unicorn_runner.coff import COFFParser
 from scripts.unicorn_runner.run import resolve_unit, _run_comparison_core
+from scripts.unicorn_runner.extractor import (extract_from_decomp,
+                                              extract_from_original)
 from characterize_callarg import region_of
 from analyze_refresh import load_report_100, ARTIFACT_CLASSES
 
@@ -131,12 +133,34 @@ def main():
                 tally["no_detail"] += 1
                 continue
             tier, why = tier_of(b.result.details, r["div_class"])
+
+            # Hard screen. If our function body and retail's are BYTE
+            # IDENTICAL, emulation is deterministic over identical code, so
+            # the divergence cannot come from our instructions -- it is
+            # entirely attributable to how the RELOCATION TARGETS were
+            # mocked. Combined with the measured (rdata -> globals) region
+            # pattern that is the artifact, not a bug in our source.
+            # (Caveat kept honest: a genuinely WRONG CALLEE also lives here,
+            # since a `bl` encodes identically and only the reloc target
+            # differs -- such a case shows up as call_count or as differing
+            # trampoline targets, not as a data-pointer region flip.)
+            try:
+                db, _dr = extract_from_decomp(dc, r["symbol"])
+                ob, _or = extract_from_original(oc, r["symbol"])
+                identical = (db is not None and ob is not None
+                             and bytes(db) == bytes(ob))
+            except Exception:
+                identical = False
+            if identical:
+                tier = "TIER3_SUSPECT"
+                why = "BYTE-IDENTICAL body; divergence is reloc-target " \
+                      "mocking only -- " + why
             tally[tier] += 1
             out_rows.append({
                 "tier": tier, "symbol": r["symbol"], "unit": runit,
                 "size": size, "fuzzy": f"{fz:.2f}", "mpn": f"{mpn:.2f}",
                 "div_class": r["div_class"], "confidence": r["confidence"],
-                "why": why,
+                "bytes_identical": int(identical), "why": why,
             })
 
     order = {"TIER1_STRONG": 0, "TIER2_CANDIDATE": 1, "TIER3_SUSPECT": 2}
