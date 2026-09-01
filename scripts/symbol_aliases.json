@@ -11636,10 +11636,8 @@
   {
    "name": "E?$ObjDirItr",
    "address": "0x824afa78",
-   "survivor": "??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ",
-   "folded": [
-    "??E?$ObjDirItr@VSpotlightDrawer@@@@QAAAAV0@XZ"
-   ],
+   "survivor": "??E?$ObjDirItr@VSpotlightDrawer@@@@QAAAAV0@XZ",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -11647,6 +11645,13 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
+    },
+    {
+     "spelling": "??E?$ObjDirItr@VSpotlightDrawer@@@@QAAAAV0@XZ",
+     "lane": "coordinator 2026-09-01, following lane S2-CONTAINER",
+     "class": "DISTINCT_ADDRESSES_CANNOT_FOLD",
+     "disposition": "withdrawn; survivor corrected to the map's name at this address",
+     "reason": "S2-CONTAINER re-adjudicated both addresses on retail bytes (ObjDirItr<T>::operator++ must call Advance<T>; Advance<T> loads a per-T ??_R0 RTTI descriptor naming the filter type in plain text). The map now places ObjDirItr<Object> at 0x823587b0 and ObjDirItr<SpotlightDrawer> at 0x824afa78 -- two distinct addresses, so they did not fold. The group had survivor=<Object> with <SpotlightDrawer> folded into it; after the repair the folded spelling IS the survivor at this address, which is degenerate. S2's retail-byte RTTI evidence outranks this group's automated T1 tier -- the self-confirming class W33/W34 documented. Withdrawal A/B'd at Delta 0 on every key."
     }
    ],
    "repair": {
