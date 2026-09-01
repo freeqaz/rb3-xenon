@@ -335,6 +335,38 @@ means: **the native port is the goal, and the highest-value work above
 (container types, fold adjudication as bug-finder, unicorn coverage, runtime
 gates) is exactly the work that makes native correct.**
 
+## 7a. EXECUTION LOG — what the first tooling/structural wave actually measured
+
+Eight lanes ran 2026-09-01 (four survey + six execution). Landed results, and
+**every one of them corrected something in this document or in my brief**:
+
+| lane | outcome |
+|---|---|
+| **T3-LEDGER** | ✅ `tools/progress_ledger.py`. Corrected §1: the `mpn` collapse is objdiff **4.2.3→4.2.5**, not 4.2.8, and `total_code` has taken **~24** values, not 3. Recovered a **gitignored 249-row series** `scope_map.py` has written since 07-29 |
+| **S1-FOLDTOOL** | ✅ `tools/s1_fold_family.py` — and **REFUTED item 3** (§4a): fold class ~99% irreducible, floor ≈4.1 kB. Also caught my briefed figure as a **two-population composite** |
+| **T2-RULER** | ✅ `crossing_worklist.py` priced on `none` while classifying on graded: **79.08% of rows mispriced**, 33.2% of advertised bytes were phantoms. Root cause: the file was **absent from `ruler.py`'s `_CONSUMERS`**, so the regression guard passed cleanly for 18 days. Also found **3 of 10 human-ratified "known positive" pins were never pure** — they were ratified *on the wrong ruler* |
+| **S2-CONTAINER** | ✅ **+10 fns / +1,936 B**, all MAP repairs on retail-byte RTTI evidence. Refuted 2 of 4 briefed shapes as fold noise, then **corrected its own headline**: high unit-spread does NOT distinguish folding from a wrong name on a popular callee (that misread hid its largest win, +1,136 B) |
+| **S3-ABLATE** | ✅ alias exposure **811,492 B / 7.92 pp** — memberships fell 65%, bytes moved 0.85%. **My Δ`matched_functions`==0 validity check EXPIRED** (objdiff `b14ba45`, 08-20). Found the **CI gate RED on main** |
+| **S4-UNICORN** | ✅ matched-but-wrong **1,017 → ~6 (99.2% artifact)**. **~31% of EQUIVALENT verdicts are not evidence** (both sides erroring at the same PC is laundered into a positive). Killed the two most attractive "bugs" by byte-identity. My brief wrongly listed `cap_exhausted` as a real-bug class: **+542 phantom rows** |
+| **S5-NATIVE** | ✅ native **PASS 18/18, 0 SKIPs** on a cold worktree. My briefed forced-failure controls **do not exist** (env vars, not flags) and misspelling them passes **silently green**. `main_score2.cpp` returns 0 unconditionally while printing DIVERGENT |
+
+**Coordinator-level lesson, three instances in one session:** my briefs were wrong
+three times (composite figure, expired validity check, non-existent controls,
+`cap_exhausted` class), and **every error was caught by the lane, not by me** —
+because each brief demanded a control that could fail. A brief that says "verify
+before building on this" is worth more than a brief that is correct.
+
+⚠ **Two integrity events worth propagating:**
+1. **The fleet-shared `objdiff-cli` was rebuilt at 08:59 mid-session**
+   (`358c715835cc` → `210aab60ca30`). It is a symlink shared by three repos.
+   Detected because T2's `--self-break` returned **rc=4 VOID** naming the moved
+   binary rather than a verdict. S2 and S3 each re-measured on one pinned
+   binary; deltas measured across the boundary **must not be summed**.
+2. **A map repair and the alias file are COUPLED.** Merging S2 turned the alias
+   CI gate red (0 → 2 contradicted) because its map renames orphaned two
+   `survivor` spellings. Caught only by re-running the gate **after** the merge.
+   ⇒ **Re-run `icf_alias_finder --validate` after landing any map change.**
+
 ## 8. Lane records
 
 Full survey transcripts are session artifacts (not committed); their key
