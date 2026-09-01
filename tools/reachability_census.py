@@ -34,13 +34,19 @@ matched_functions as count(mpn==100).  It exits 1 if any of those disagree.
 
 ⛔ A fresh worktree's reflinked target objs are PRE-RENAMER, so every retail
 mangled name reads ABSENT until you build -- silently, and the failure agrees
-with your prior.  BUILD FIRST.
+with your prior.  BUILD FIRST.  This is no longer advice: `scripts/analysis/
+freshness.py` now REFUSES the run (exit 2, no numbers) unless report.json and
+the objects on disk provably correspond.  Measured on a fresh unbuilt worktree
+2026-09-01: 1,823 target objects differed from the manifest.
 
 Usage:
     python3 tools/reachability_census.py [project_dir] [--charges] [--top N]
 
-    --charges  also run objdiff over every named row with 0 < fuzzy < 100 and
-               classify its charges (slow: ~700 unit invocations).
+    --charges      also run objdiff over every named row with 0 < fuzzy < 100
+                   and classify its charges (slow: ~700 unit invocations).
+    --allow-stale  override the freshness refusal, with a loud banner.  For
+                   deliberate analysis of a known-stale artifact ONLY -- the
+                   output is not a measurement.
 """
 import argparse
 import collections
@@ -188,8 +194,29 @@ def main():
     ap.add_argument("project", nargs="?", default=".")
     ap.add_argument("--charges", action="store_true")
     ap.add_argument("--top", type=int, default=25)
+    ap.add_argument("--allow-stale", action="store_true",
+                    help="measure even if report.json and the objects on disk "
+                         "do not provably correspond (loud banner; NOT a "
+                         "measurement)")
     a = ap.parse_args()
     proj = Path(a.project).resolve()
+
+    # Load the PROJECT's own analysis package -- this tool is routinely pointed
+    # at a worktree other than the checkout it lives in, and the answer must
+    # describe the tree being measured.
+    sys.path.insert(0, str(proj))
+    from scripts.analysis import freshness
+
+    # FRESHNESS PRECONDITION.  This tool reads report.json AND (with --charges)
+    # re-diffs the objects on disk, and it is the correspondence between those
+    # two that every number below rests on.  Nothing used to assert it.
+    try:
+        note = freshness.ensure_measurable(
+            proj, allow_stale=a.allow_stale, consumer="reachability census")
+    except freshness.StaleTreeError as exc:
+        print(f"REFUSED: {exc}", file=sys.stderr)
+        return 2
+    print(f"== freshness == {note}\n")
 
     rep, m, rows = load_rows(proj)
     ok, totf, totc, mc = self_validate(m, rows)
@@ -216,8 +243,7 @@ def main():
         return 0
 
     # ---- charge-classify every NAMED row with 0 < fuzzy < 100 ----
-    sys.path.insert(0, str(proj))
-    from scripts.analysis import ruler as ruler_mod
+    from scripts.analysis import ruler as ruler_mod  # proj is already on sys.path
     rk = ruler_mod.resolve_ruler(proj)
     print("\n== ruler ==\n" + rk.banner())
 
