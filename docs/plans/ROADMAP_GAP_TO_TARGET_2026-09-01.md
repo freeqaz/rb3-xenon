@@ -397,10 +397,24 @@ before building on this" is worth more than a brief that is correct.
    Detected because T2's `--self-break` returned **rc=4 VOID** naming the moved
    binary rather than a verdict. S2 and S3 each re-measured on one pinned
    binary; deltas measured across the boundary **must not be summed**.
-2. **A map repair and the alias file are COUPLED.** Merging S2 turned the alias
-   CI gate red (0 → 2 contradicted) because its map renames orphaned two
-   `survivor` spellings. Caught only by re-running the gate **after** the merge.
-   ⇒ **Re-run `icf_alias_finder --validate` after landing any map change.**
+2. **A map repair and the alias file are COUPLED, and the coupling is INVISIBLE
+   UNTIL THE SPLIT RE-RUNS.** The alias CI gate went red **three times** off one
+   lane's map renames: once pre-existing (`SetJump`), once on merging S2, and
+   once **only after a full rebuild** — because `obj_target_symbol_renamer` is a
+   *pre-compile* step, so a map edit does not reach the **target objs** until the
+   split re-runs, and my first two "green" verifications were reading
+   **pre-rename** objects. The gate was right every time; my verification window
+   was too early twice.
+   ⇒ **Re-run `icf_alias_finder --validate` after landing any map change AND
+   after a full `ninja-locked` — never before.** All three repairs measured
+   **Δ0** (binary-pinned `ab_measure`, both legs settled), so this is free
+   accuracy; a red CI gate over the ~7.9 pp forgiveness mechanism is not.
+   ★ Adjudication rule: **retail-byte evidence outranks an automated alias
+   tier.** The `SetJump` group is the self-confirming class in its purest form —
+   its `address` field was one symbol's while its `survivor` named the other, so
+   its recorded T1 test **compared a symbol against itself** and was true by
+   construction. Two spellings at two distinct addresses **did not fold**; that
+   is the one direction an address-keyed map can settle.
 
 ## 8. Lane records
 
