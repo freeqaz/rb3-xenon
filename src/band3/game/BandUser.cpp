@@ -545,21 +545,21 @@ BEGIN_HANDLERS(LocalBandUser)
     HANDLE_CHECK(0x3CC)
 END_HANDLERS
 
+// Retail @ 0x8268B4E8: after the vbase/vtordisp preamble the whole body is
+// three zero stores (`stw r29, 0x8/0xc/0x10(r30)`), `operator new(0x84)`,
+// TourCharRemote's ctor, and `stw r3, 0x4(r30)`.  There is NO
+// `TheWiiFriendMgr.AddSink` -- the Wii friends-list sink is absent from the
+// 360 build, which is the same finding as the dropped mFriendsConsoleCodes.
 RemoteBandUser::RemoteBandUser()
-    : unk19(), unk1a(), mCurrentInstrumentCareerScore(), mCurrentHardcoreIconLevel(),
+    : mCurrentInstrumentCareerScore(), mCurrentHardcoreIconLevel(),
       mCymbalConfiguration() {
-#ifndef HX_NATIVE
-    TheWiiFriendMgr.AddSink(this, WiiFriendsListChangedMsg::Type());
-#endif
     mRemoteChar = new TourCharRemote();
 }
 
-RemoteBandUser::~RemoteBandUser() {
-#ifndef HX_NATIVE
-    TheWiiFriendMgr.RemoveSink(this, WiiFriendsListChangedMsg::Type());
-#endif
-    delete mRemoteChar;
-}
+// Retail @ 0x8268B718: restores the three vbase vftables + vtordisps, then
+// `lwz r11, -0x14(r3)` (= mRemoteChar at complete+0x4), null-check, virtual
+// deleting-dtor call.  No `RemoveSink`, matching the ctor.
+RemoteBandUser::~RemoteBandUser() { delete mRemoteChar; }
 
 LocalBandUser *RemoteBandUser::GetLocalBandUser() {
     MILO_FAIL("Bad Conversion");
@@ -583,9 +583,6 @@ int RemoteBandUser::GetCurrentHardcoreIconLevel() const {
     return mCurrentHardcoreIconLevel;
 }
 int RemoteBandUser::GetCymbalConfiguration() const { return mCymbalConfiguration; }
-const std::vector<unsigned long long> &RemoteBandUser::GetFriendsConsoleCodes() const {
-    return mFriendsConsoleCodes;
-}
 
 void RemoteBandUser::Reset() {
     BandUser::Reset();
@@ -646,19 +643,13 @@ void RemoteBandUser::SyncLoad(BinStream &bs, unsigned int mask) {
         bs >> cymbalCfg;
         mCymbalConfiguration = cymbalCfg;
     }
-    if (mask & 0x80) {
-        bs >> unk1a;
-        unsigned int count;
-        bs >> count;
-        mFriendsConsoleCodes.clear();
-        MILO_LOG("Remote console codes:\n");
-        for (unsigned int i = 0; i < count; i++) {
-            unsigned long long code;
-            bs >> code;
-            mFriendsConsoleCodes.push_back(code);
-            MILO_LOG("\t%llu\n", code);
-        }
-    }
+    // ⛔ A `if (mask & 0x80) { ... mFriendsConsoleCodes ... }` block used to
+    // follow, ported from rb3-Wii.  RETAIL 360 DOES NOT HAVE IT: the target
+    // body ends at the `mCymbalConfiguration` store and is 740 bytes against
+    // our 856 -- a 116-byte gap that is exactly the 29 instructions objdiff
+    // reported as pure `insert` rows (the `rlwinm. r11, r29, 0, 24, 24` mask
+    // test, the `vector::erase`/`push_back` calls and the read loop).  The
+    // vector it wrote into is gone from the class for the same reason.
 }
 
 DataNode RemoteBandUser::OnMsg(const WiiFriendsListChangedMsg &msg) {
@@ -667,8 +658,13 @@ DataNode RemoteBandUser::OnMsg(const WiiFriendsListChangedMsg &msg) {
     return 1;
 }
 
+// rb3-Wii guards this with a `bool unk18` member that retail 360 does not have
+// (see the layout block in BandUser.h), so the guard is dropped rather than
+// invented.  Nothing reaches this function on 360 or on native anyway: the
+// only caller is OnMsg(WiiFriendsListChangedMsg), and retail's ctor registers
+// no WiiFriendMgr sink.  Unmeasured -- no target-side pairing exists.
 void RemoteBandUser::ShowCustomCharacter() {
-    if (unk18 && mChar != mRemoteChar && mOnlineID->GetIsValid()) {
+    if (mChar != mRemoteChar && mOnlineID->GetIsValid()) {
         int id = 0;
         WiiFriendList wfl;
         TheWiiFriendMgr.GetCachedFriends(&wfl);
