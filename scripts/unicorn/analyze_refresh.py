@@ -34,13 +34,22 @@ from collections import Counter, defaultdict
 # do not invent new labels.
 REAL_CLASSES = {
     "logic", "call_count", "call_arg", "return_value", "object_memory",
-    "error", "wild_jump_match", "cap_exhausted", "cap_exhausted_decomp",
+    "error", "wild_jump_match",
+}
+# NOTE on cap_exhausted*: the S4 brief listed `cap_exhausted` among the REAL
+# bug classes. The in-tree record disagrees and wins -- the harness author's
+# own note on the 2026-07-16 run reads "cap_exhausted* 2511 = emulation-cap
+# ARTIFACT, not real divergence -- FILTER IT OUT when hunting bugs", and the
+# semantics agree: both sides hitting the instruction cap is an INDETERMINATE
+# result, not evidence that behaviour differs. Counting it as a real bug
+# inflated this worklist by 542 of 870 rows.
+INDETERMINATE_CLASSES = {
+    "cap_exhausted", "cap_exhausted_decomp", "cap_exhausted_orig",
 }
 ARTIFACT_CLASSES = {
     "build_env", "regalloc", "merged_call", "merged_arg", "stack_layout",
-    "fpr_precision", "orig_error", "cap_exhausted_orig",
-    "unmapped_access_mismatch",
-}
+    "fpr_precision", "orig_error", "unmapped_access_mismatch",
+} | INDETERMINATE_CLASSES
 
 
 def load_report_100(report_path):
@@ -189,6 +198,10 @@ def main():
         print(f"  {k:22s} {v}")
     both100 = [w for w in worklist if w["fuzzy"] >= 100.0 and w["mpn"] >= 100.0]
     print(f"  of which BOTH rulers 100%: {len(both100)}")
+    ncap = sum(1 for r in fresh.values()
+               if r["verdict"] == "DIVERGENT"
+               and r["div_class"] in INDETERMINATE_CLASSES)
+    print(f"  (excluded as INDETERMINATE, cap-exhausted: {ncap} rows corpus-wide)")
 
     if args.out:
         with open(args.out, "w") as f:
