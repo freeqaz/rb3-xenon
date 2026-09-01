@@ -23,6 +23,16 @@ standing figure (lane ALIAS-2, 2026-08-16, `64088f62`) was **818,416 B /
 retired memberships were carrying essentially nothing; the file is now 2.8×
 denser in value per membership. The mechanism as a whole is unchanged in size.
 
+This corroborates `97771c75` (2026-08-19) rather than merely agreeing with it:
+that commit retired **9,395 memberships (15,162 → 5,767) for −4,128 B** as a
+*fabrication* class — the generator emitted "the transitive closure over
+body-identity witnesses as one group per survivor candidate", i.e. N groups at N
+distinct retail addresses each claiming the same M folded spellings, so at least
+N−1 of every N was fabricated. It kept the emptied groups (never pruned),
+exactly as the standing rule requires. ⇒ **A membership count was never a proxy
+for exposure**, and the 9,858 memberships lost since 08-16 account for only
+6,924 B — **0.7 B per membership** against a surviving average of 152 B.
+
 Share of the score that rests on it, at this tree:
 
 | measure | absolute | rests on aliases | share |
@@ -149,13 +159,62 @@ different addresses — which refutes the fold. Its evidence line is T1 only.
 
 ⚠ **This is a live CI failure**, not a local artifact: `--validate` is wired at
 `.github/workflows/build.yml:132`, and this worktree's alias file is
-byte-identical to main's (sha256 `7b41c0e756c55235`). The historical record has
+byte-identical to main's (sha256 `7b41c0e756c55235`). Checked for drift rather
+than assumed — this lane branched at `897b9763` and main has since advanced to
+`292c82e3`, but **none of the 10 intervening commits touched any of
+`--validate`'s three inputs** (`scripts/symbol_aliases.json`,
+`config/45410914/splits.txt`, `scripts/target_symbol_map.json`), so the verdict
+applies to main as it stands. The historical record has
 this gate PASSing with 0 contradicted on 2026-08-14 and 2026-08-17, so it is a
 regression. The likely mechanism is the documented one: a **map identification
 landed and exposed a wrong alias** — naming an anonymous address pays in bug
 exposure, not bytes.
 
-## Concentration over groups
+## Concentration — over ROWS (complete) and over GROUPS (sampled)
+
+### Over rows — COMPLETE, not sampled
+
+All 4,996 fallen rows are known exactly from the FULL-vs-EMPTY leg, so this
+needs no sweep and carries no sampling error:
+
+| | share of 811,492 B |
+|---|---:|
+| top 1 row | 1.09% |
+| top 10 rows | 7.22% |
+| top 50 rows | 17.44% |
+| top 100 rows | 23.92% |
+| top 250 rows | 35.68% |
+| top 500 rows | 47.64% |
+| top 1,000 rows | 62.96% |
+| top 2,000 rows | 79.75% |
+
+**The forgiveness is DIFFUSE.** Median fallen row is **76 B**, mean 162 B, max
+8,840 B; it takes ~1,000 of 4,996 rows to reach two-thirds of the bytes. There
+is no small set of rows to attack.
+
+By unit it is equally spread: **680 units** carry fallen bytes, top 10 units =
+15.2%, top 100 = 58.6%.
+
+The head is a single recognisable family — large `DataNode` message
+dispatchers, which are exactly the functions with the most `bl` sites and so the
+most relocation-name charges:
+
+| row | bytes |
+|---|---:|
+| `RockCentral::RecordPerformance` | 8,840 |
+| `MetaPerformer::Handle` | 7,504 |
+| `OvershellSlot::UpdateView` | 6,900 |
+| `SaveLoadManager::GetDialogMsg` | 6,592 |
+| `inflate` | 5,296 |
+| `Player::Handle` | 5,228 |
+| `Campaign::Handle` | 4,996 |
+| `VocalPlayer::Handle` | 4,936 |
+| `BandDirector::Handle` | 4,732 |
+
+All nine are `MPN_TOO` — i.e. under today's ruler these are rows where removing
+the alias costs a **function**, not just bytes.
+
+### Over groups — SAMPLED, and the sample cannot settle the top-N shares
 
 <!--CONCENTRATION-->
 
