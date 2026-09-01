@@ -497,6 +497,8 @@ def audit(units: List[PUnit], amap: Dict[int, str], rb3wii: Set[str],
           dc3: Set[str], args) -> dict:
     pin_index = PinIndex(units)
     stems = {u.name for u in units}
+    # src -> unit, for the GAINCELL test below (see F8_host_already_pairs).
+    unit_by_src: Dict[str, PUnit] = {u.src: u for u in units}
     vas = sorted(amap)
     head_list_by_va: Dict[int, List[str]] = {
         va: head_classes(name) for va, name in amap.items()}
@@ -794,6 +796,30 @@ def audit(units: List[PUnit], amap: Dict[int, str], rb3wii: Set[str],
             # already compiled and map entries exist")
             defined = sum(1 for _, nm2 in named_all
                           if u.obj and nm2 in u.obj.defined)
+
+            # ---- GAINCELL: can a re-home pay AT ALL? -------------------
+            # objdiff pairs target<->base BY NAME PER UNIT, so moving an
+            # address to us pays through exactly ONE channel: names OUR obj
+            # defines that the HOST's obj does not.  If that set is empty the
+            # host already pairs everything and the move is Delta 0 at best --
+            # and NEGATIVE where the asymmetry runs backwards (lane
+            # SHAREDBOUND measured Rnd's host defining 43/44 against our 0, so
+            # a re-home would have DESTROYED 43 pairings).
+            #
+            # Measured 2026-09-01: GAINCELL == 0 on ALL 29 INTERLEAVE rows,
+            # every one of them genuine retail COMDAT layout rather than a
+            # mis-pin.  The house repair for these is SOURCE-side --
+            # `#include "the.cpp"`, already applied at 254 sites tree-wide --
+            # never a pin move.  Filing them as candidates cost a full lane.
+            gaincell = None
+            if location.startswith("INTERLEAVE:") and u.obj:
+                host_u = unit_by_src.get(host_src)
+                if host_u is not None and host_u.obj:
+                    gaincell = sum(
+                        1 for _, nm2 in named_all
+                        if nm2 in u.obj.defined
+                        and nm2 not in host_u.obj.defined)
+
             row = {**ustats, "sig": sig, "action": action,
                    "range": {"lo": hx(plo), "hi": hx(phi)},
                    "cluster": {"lo": hx(clo), "hi": hx(chi), "n_own": n,
@@ -805,8 +831,39 @@ def audit(units: List[PUnit], amap: Dict[int, str], rb3wii: Set[str],
                    "location": location, "flags": flags,
                    "prev_pin": pin_desc(prev_pin), "next_pin": pin_desc(next_pin),
                    "est": est_str(len(subs_all), len(named_all))}
+            if gaincell is not None:
+                row["gaincell"] = gaincell
             if named_all and defined == 0:
                 row["flags"] = flags + ["obj_defines_none_yet"]
+            if gaincell == 0:
+                # Both branches are unpayable TODAY, but for different reasons
+                # and with different futures -- do not collapse them.  A
+                # drained-vein verdict is only as broad as its cause (lane
+                # THUNK3, 2026-09-01: a closure scoped to one operation
+                # silently blocked +16 fns of work under another).
+                if defined == 0:
+                    # We compile nothing of this cluster yet, so of course we
+                    # transfer nothing.  REOPENS on its own once the source
+                    # lands -- this is a "not yet", not a structural refutation.
+                    row["reason"] = "F8a_we_define_nothing_yet"
+                    row["detail"] = (
+                        "GAINCELL=0 because our obj defines 0/%d cluster "
+                        "names -- unpayable TODAY, but re-check once this "
+                        "source is compiled." % len(named_all))
+                else:
+                    # We define them AND the host defines them too: the host
+                    # already pairs everything a re-home could transfer.
+                    # Structural, and it does not reopen.
+                    row["reason"] = "F8_host_already_pairs"
+                    row["detail"] = (
+                        "GAINCELL=0 with our obj defining %d/%d: %s's obj "
+                        "defines every one of them too, so a re-home "
+                        "transfers no pairing and can only lose them.  "
+                        "Genuine COMDAT interleave; the repair, if any, is "
+                        "source-side (#include the .cpp)."
+                        % (defined, len(named_all), host_src))
+                filtered.append(row)
+                continue
             if ("stub_farm_risk" in flags or "no_compiled_obj" in flags
                     or "thin_obj_EV_low" in flags):
                 row["reason"] = ("F6_stub_farm" if "stub_farm_risk" in flags
