@@ -215,10 +215,24 @@ def main():
              if k.startswith('0x') and isinstance(v, str)}
     named_thunks = {va: t for va, t in
                     ((va, decode_thunk(R.u32, va)) for va in names) if t is not None}
-    if len(named_thunks) != 2164:
-        sys.exit('VACUOUS: decode_thunk over map = %d, expected 2164 (tree not built?)'
+    # ⚠ This count is NOT invariant -- it is a property of the MAP, and it moves
+    # by +1 every time a thunk address is named.  It was 2164 at `dc605388` and
+    # 2165 after this lane named 0x825720c8.  Treated as a sanity band, never an
+    # equality: an equality here fired on the lane's own correct edit.
+    if not 2000 <= len(named_thunks) <= 2400:
+        sys.exit('VACUOUS: decode_thunk over map = %d, outside the sanity band'
                  % len(named_thunks))
-    print('guards OK: word_refs(0x823591e8)=%d  in-map adjustor thunks=%d'
+    # THE guard that matters for a name-keyed analysis: a reflinked worktree's
+    # target objs are PRE-RENAMER, so every retail mangled name reads "absent"
+    # until the first build.  Prove the renamer ran by finding a renamed symbol
+    # in a target obj (dtk emits only `fn_<ADDR>` before the renamer).
+    probe_obj = 'build/45410914/obj/MetaPanel.obj'
+    probe_sym = '??_EAppLabel@@$4PPPPPPPM@CFM@AAPAXI@Z'
+    if probe_sym not in coff_defined(probe_obj):
+        sys.exit('VACUOUS: %s does not define %s -- the target objs are '
+                 'PRE-RENAMER (build the worktree first)' % (probe_obj, probe_sym))
+    print('guards OK: word_refs(0x823591e8)=%d  in-map adjustor thunks=%d  '
+          'renamer HAS run (target obj carries a mangled name)'
           % (g, len(named_thunks)))
 
     held = {}
@@ -297,12 +311,36 @@ def main():
                  '(%d vs %d)' % (fan[0x823591e8], g))
     print('fan-in index built; agrees with word_refs on the guard hub (%d)' % fan[0x823591e8])
 
+    # O(1) .text word reader.  `decode_thunk` only ever reads .text (a thunk
+    # body lives there), and RetailRtti.u32 walks the section list on EVERY
+    # call, which dominates a scan over every .rdata word.  Cross-checked
+    # against R.u32 on a known thunk before use, so the fast path cannot
+    # silently disagree with the shipped reader.
+    tsec = [s for s in R.sections if s.name == '.text'][0]
+    tlo, traw, trs = tsec.va, tsec.rawptr, tsec.rawsize
+    twords = struct.unpack_from('>%dI' % (trs // 4), R.data, traw)
+
+    def fu32(va):
+        if tlo <= va < tlo + trs and not (va & 3):
+            return twords[(va - tlo) >> 2]
+        return None
+
+    probe = 0x825720b8   # a known adjustor thunk
+    if fu32(probe) != R.u32(probe) or fu32(probe) != 0x8164FFFC:
+        sys.exit('VACUOUS: fast .text reader disagrees with RetailRtti.u32')
+    print('fast .text reader agrees with RetailRtti.u32 on the probe thunk')
+
     refs = vtable_index(R)
+    print('vtable_index: %d distinct referenced addresses' % len(refs))
     rows, buckets = [], collections.Counter()
+    seen = 0
     for va, sites in sorted(refs.items()):
+        seen += 1
+        if seen % 100000 == 0:
+            print('  ... scanned %d/%d referenced addresses' % (seen, len(refs)))
         if va in names:
             continue                          # named -> the other instruments own it
-        body = decode_thunk(R.u32, va)
+        body = decode_thunk(fu32, va)
         if body is None:
             continue
         buckets['unnamed adjustor thunks referenced by a vtable'] += 1
@@ -315,7 +353,7 @@ def main():
         if not bn:
             buckets['  excluded: BODY UNNAMED (identification wall)'] += 1
             continue
-        want = derive_thunk_name(bn, thunk_displacement(R.u32, va))
+        want = derive_thunk_name(bn, thunk_displacement(fu32, va))
         if want is None:
             buckets['  excluded: body name is not a virtual member function'] += 1
             continue
