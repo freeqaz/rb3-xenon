@@ -1,4 +1,6 @@
 {
+ "0x8232ecb0": "??_EBandWardrobe@@$4PPPPPPPM@A@AAPAXI@Z",
+ "0x8238f970": "??_ECharClipGroup@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x8231e768": "?SetTypeDef@UIComponent@@$4PPPPPPPM@M@AAXPAVDataArray@@@Z",
  "0x8231f5a8": "?Handle@ReviewDisplay@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82375d20": "?Copy@CharServoBone@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
@@ -1863,9 +1865,9 @@
  "0x822ab878": "??_EOutfitConfig@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x822ab888": "?Highlight@RndDrawable@@$4PPPPPPPM@KA@AAXXZ",
  "0x822ab8a0": "?SetType@OutfitConfig@@UAAXVSymbol@@@Z",
- "0x822aba00": "??_ECharClipGroup@@$4PPPPPPPM@A@AAPAXI@Z",
+ "0x822aba00": "?SetType@OutfitConfig@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x822aba20": "?PreSave@OutfitConfig@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
- "0x822aba30": "??_EBandWardrobe@@$4PPPPPPPM@A@AAPAXI@Z",
+ "0x822aba30": "?Save@OutfitConfig@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x822abc10": "??_DOutfitConfig@@QAAXXZ",
  "0x822abc80": "??4?$ObjVector@VPiercing@OutfitConfig@@@@QAAXABV0@@Z",
  "0x822abd60": "?_M_fill_insert@?$vector@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNode@?$ObjPtrVec@VRndDrawable@@VObjectDir@@@@IABU34@@Z",
