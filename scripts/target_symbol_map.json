@@ -15492,7 +15492,6 @@
  "0x8268b148": "?ProfileName@BandUser@@QBAPBDXZ",
  "0x8268b1f0": "?FinalRelease@CSpPhoneConverter@NUISPEECH@@QAAXXZ",
  "0x8268b220": "?UpdateData@BandUser@@QAAXI@Z",
- "0x8268b2a0": "?GetRemoteBandUser@RemoteBandUser@@UAAPAV1@XZ",
  "0x8268b2a8": "?HasAsFriend@LocalBandUser@@QBA_NPAVBandUser@@@Z",
  "0x8268b340": "?SetHasSeenRealGuitarPrompt@LocalBandUser@@QAAXXZ",
  "0x8268b350": "?SetOvershellFocus@LocalBandUser@@QAAXPBD@Z",
@@ -15510,7 +15509,7 @@
  "0x8268b8d8": null,
  "0x8268b8e8": "??_ERemoteBandUser@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x8268b8f8": "?GetCurrentHardcoreIconLevel@RemoteBandUser@@$4PPPPPPPM@A@BAHXZ",
- "0x8268b928": "??_ELocalBandUser@@$4PPPPPPPM@A@AAPAXI@Z",
+ "0x8268b928": "?GetRemoteBandUser@RemoteBandUser@@$4PPPPPPPM@A@AAPAV1@XZ",
  "0x8268b938": "?GetCymbalConfiguration@RemoteBandUser@@$4PPPPPPPM@A@BAHXZ",
  "0x8268b948": "??_DBandUser@@QAAXXZ",
  "0x8268b9a0": "?NewObject@UIPanel@@SAPAVObject@Hmx@@XZ",
@@ -15560,7 +15559,6 @@
  "0x8268eab8": "??_GNullLocalBandUser@@UAAPAXI@Z",
  "0x8268ed50": "?SyncProperty@BandUser@@$4PPPPPPPM@PPPPPPCE@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8268ed70": "?GetLocalBandUser@RemoteBandUser@@$4PPPPPPPM@A@BAPAVLocalBandUser@@XZ",
- "0x8268ee00": "?SyncSave@BandUser@@$R4CI@7PPPPPPPM@JI@BAXAAVBinStream@@I@Z",
  "0x8268efd0": "?NewLocalBandUser@BandUser@@SAPAVLocalBandUser@@XZ",
  "0x8268f050": "?NewNullLocalBandUser@BandUser@@SAPAVNullLocalBandUser@@XZ",
  "0x8268f1a8": "?ControllerTypeToTrackType@@YA?AW4TrackType@@W4ControllerType@@_N@Z",
@@ -30138,5 +30136,7 @@
  "0x8233c398": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBH_N@2@U?$_Select1st@U?$pair@$$CBH_N@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBH_N@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBH_N@2@@Z",
  "0x8233c668": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBH_N@2@U?$_Select1st@U?$pair@$$CBH_N@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBH_N@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBH_N@2@@Z",
  "0x827035f0": "?SetJump@StandardStream@@UAAXMMPBD@Z",
- "0x8270ff88": "?DebugText@MetaMusicLoader@@UAAPBDXZ"
+ "0x8270ff88": "?DebugText@MetaMusicLoader@@UAAPBDXZ",
+ "0x8268c450": "?SyncSave@BandUser@@$R4BI@7PPPPPPPM@JI@BAXAAVBinStream@@I@Z",
+ "0x8268b7c8": "?GetRemoteBandUser@RemoteBandUser@@UAAPAV1@XZ"
 }
