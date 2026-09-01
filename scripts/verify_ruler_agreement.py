@@ -252,6 +252,36 @@ def load_report_rows(repo: Path, units: tuple[str, ...] | None) -> dict[str, tup
     return {k: v for k, v in rows.items() if seen[k] == 1}
 
 
+def require_fresh(repo: Path, allow_stale: bool) -> None:
+    """Refuse to compare live diffs against a report that may not describe them.
+
+    `--verify-scores`/`--selftest` re-diff the objects ON DISK and compare them
+    against scores taken from `report.json` at some PAST moment.  That is only
+    a ruler comparison if the two correspond; otherwise it is a comparison of
+    two different object sets wearing a ruler's clothes, and it reads LOW in
+    one direction (an unpatched object costs a matched function 100.0 -> 99.7).
+
+    Measured on an unbuilt worktree 2026-09-01: `unresolved` goes 0 -> 1,374
+    and `--selftest` exits 5 blaming its WITNESS_UNITS for having "rotted",
+    telling the reader to refresh them.  The witnesses were fine; the tree was
+    pre-renamer.  Acting on that advice would have damaged a working gate.
+
+    ⚠ Deliberately NOT applied to `--check`.  That is a ninja edge gating the
+    REPORT rule, and its whole point (see check_config) is that it must remain
+    runnable during the one build that regenerates report.json.  Gating it on
+    report.json's freshness would deadlock the build.
+    """
+    sys.path.insert(0, str(repo))
+    from scripts.analysis import freshness
+    try:
+        note = freshness.ensure_measurable(
+            repo, allow_stale=allow_stale, consumer="verify_ruler_agreement")
+    except freshness.StaleTreeError as exc:
+        print(f"REFUSED: {exc}", file=sys.stderr)
+        raise SystemExit(2)
+    print(f"freshness: {note}")
+
+
 def verify_scores(repo: Path, units: tuple[str, ...] | None, extra_config: list[str]) -> dict:
     rows = load_report_rows(repo, units)
     scores = batch_scores(repo, sorted(rows), extra_config)
@@ -338,6 +368,13 @@ def main() -> int:
         help="with --verify-scores/--selftest: every unit, not just the witness units",
     )
     ap.add_argument("--json-out", help="write the disagreement set to this path")
+    ap.add_argument(
+        "--allow-stale",
+        action="store_true",
+        help="with --verify-scores/--selftest: run even if report.json and the "
+        "objects on disk do not provably correspond (loud banner; the result "
+        "is NOT a ruler verdict)",
+    )
     args = ap.parse_args()
 
     repo = Path(args.repo).resolve()
@@ -360,6 +397,11 @@ def main() -> int:
             rc |= check_config(repo, args.pins_only, args.stamp_out)
 
     units = None if args.all else WITNESS_UNITS
+
+    # Both score paths re-diff live objects against report.json, so both need
+    # the correspondence asserted first. `--check` deliberately does not.
+    if args.verify_scores or args.selftest:
+        require_fresh(repo, args.allow_stale)
 
     if args.verify_scores:
         res = verify_scores(repo, units, [])
