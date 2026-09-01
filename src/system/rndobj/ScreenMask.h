@@ -24,7 +24,7 @@ protected:
     RndScreenMask();
 
     /** "Material to draw on full screen quad" */
-    ObjPtr<RndMat> mMat; // 0x40
+    ObjPtr<RndMat> mMat; // 0x24
     /** "Color of full screen quad" */
     Hmx::Color mColor; // 0x30
     /** "The area of the screen in normalized coordinates (0 to 1) to draw into." */

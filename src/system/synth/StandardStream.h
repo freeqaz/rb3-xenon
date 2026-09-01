@@ -25,8 +25,8 @@ public:
         float mSlipSpeed; // 0x4
         bool mSlipEnabled; // 0x8
         ADSRImpl mADSR; // 0xc
-        FaderGroup mFaders; // 0x30
-        ObjPtr<FxSend> mFxSend; // 0x48
+        FaderGroup mFaders; // 0x34
+        ObjPtr<FxSend> mFxSend; // 0x4c
     };
     StandardStream(File *, float, float, Symbol, bool, bool);
     // Stream

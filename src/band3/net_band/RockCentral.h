@@ -167,10 +167,10 @@ public:
     DataNode OnMsg(const SigninChangedMsg &);
     DataNode OnMsg(const InviteReceivedMsg &);
 
-    DataResultList mConfigResultList; // 0x1c
-    Quazal::RBBinaryDataClient *mRBBinaryData; // 0x34
-    Quazal::RBTestClient *mRBTest; // 0x38
-    int mState; // 0x3c - anon enum State
+    DataResultList mConfigResultList; // 0x18
+    Quazal::RBBinaryDataClient *mRBBinaryData; // 0x30
+    Quazal::RBTestClient *mRBTest; // 0x34
+    int mState; // 0x38 - anon enum State
     Timer mTime; // 0x40
     float mRetryTime; // 0x70
     JobMgr mJobMgr; // 0x74
@@ -188,7 +188,7 @@ public:
     // re-bases the vbtable displacement so ~RockCentral matches retail. See
     // fixwave-2.
     int mPadTU5_a8[6]; // was Timer unka8 (0x30); Wii-only, unreferenced
-    WiiMessageList *unkd8; // 0xd8
+    WiiMessageList *unkd8; // 0xc0
     bool unk110;
     bool unk111;
     bool unk112;

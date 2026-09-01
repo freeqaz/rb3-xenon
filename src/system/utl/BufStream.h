@@ -29,7 +29,7 @@ private:
     int mSize; // 0x18
     StreamChecksumValidator *mChecksum; // 0x1c
     int mBytesChecksummed; // 0x20
-    String mName; // 0x28
+    String mName; // 0x24
 
     virtual void ReadImpl(void *, int);
     virtual void WriteImpl(const void *, int);

@@ -41,20 +41,20 @@ protected:
     // radius1: "middle radius for the center of the cuff, should be at the cuff line"
     // offset2: "Outer offset, usually positive, the outside of the cuff"
     // radius2: "Outer radius, usually the largest, the outside of the cuff"
-    Shape mShape[3]; // 0xc0, 0xc8, 0xd0
+    Shape mShape[3]; // 0xb4, 0xc8, 0xd0
     /** "Outside radius, should encompass
         the biggest thing on the outside, biggest one wins.
         For incompressible things like big boots should be the biggest part.
         For soft things like cloth should just be radius1" */
-    float mOuterRadius; // 0xd8
+    float mOuterRadius; // 0xcc
     /** "Is the inside open or closed, open is good for things like gauntlets" */
-    bool mOpenEnd; // 0xdc
+    bool mOpenEnd; // 0xd0
     /** "meshes to never deform" */
-    ObjPtrList<RndMesh> mIgnore; // 0xe0
+    ObjPtrList<RndMesh> mIgnore; // 0xd4
     /** "The bone of interest, like bone_R-knee for boot and pant cuffs" */
-    ObjPtr<RndTransformable> mBone; // 0xf4
+    ObjPtr<RndTransformable> mBone; // 0xe8
     /** "How much smaller to make the radius along Y, must be < 1". Ranges from 0 to 1. */
-    float mEccentricity; // 0x108
+    float mEccentricity; // 0xf4
     /** "The outfit category to cuff against, must be set to work" */
-    Symbol mCategory; // 0x10c
+    Symbol mCategory; // 0xf8
 };

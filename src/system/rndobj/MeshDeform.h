@@ -109,8 +109,8 @@ protected:
 
     /** "The mesh we will change, set you can make a zero vert meshdeform
         just to clean up mutable character meshes" */
-    ObjPtr<RndMesh> mMesh; // 0x2c
-    Transform mMeshInverse; // 0x40
+    ObjPtr<RndMesh> mMesh; // 0x28
+    Transform mMeshInverse; // 0x34
     ObjVector<BoneDesc> mBones; // 0x74
     VertArray mVerts; // 0x84
     bool mSkipInverse;

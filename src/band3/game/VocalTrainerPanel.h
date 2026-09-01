@@ -25,16 +25,16 @@ public:
     void
     CopyPhrasesImp(const std::vector<VocalPhrase> &, std::vector<VocalPhrase> &, int, int, int &);
 
-    std::vector<VocalPhrase> mPatternPhrases[3]; // 0x54
-    std::vector<VocalPhrase> mPatternLyricPhrases[2]; // 0x6c
-    std::vector<VocalNote> mPatternNotes[3]; // 0x7c
+    std::vector<VocalPhrase> mPatternPhrases[3]; // 0x60
+    std::vector<VocalPhrase> mPatternLyricPhrases[2]; // 0x84
+    std::vector<VocalNote> mPatternNotes[3]; // 0x9c
     VocalTrack *mTrack; // 0xc0
     VocalPlayer *mVocalPlayer; // 0xc4
     int unk9c;
     int unka0;
     int unka4;
     VocalNoteList *unka8[3]; // 0xd4
-    VocalNoteList *unkb4[3]; // 0xb4
+    VocalNoteList *unkb4[3]; // 0xe0
     bool unkc0;
     bool unkc1;
     int unkc4;

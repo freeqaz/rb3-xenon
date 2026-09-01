@@ -36,11 +36,11 @@ public:
     void SortPolls();
 
     /** "Ordered list of CharPollables, will be polled in this order." */
-    ObjPtrList<CharPollable> mPolls; // 0x28
+    ObjPtrList<CharPollable> mPolls; // 0x20
     /** "Explicit thing I am changed by, to force sorting, if set, ignores polls" */
-    ObjPtr<CharPollable> mChangedBy; // 0x3c
+    ObjPtr<CharPollable> mChangedBy; // 0x34
     /** "Explicit thing I change, to force sorting, if set, ignores polls" */
-    ObjPtr<CharPollable> mChanges; // 0x50
+    ObjPtr<CharPollable> mChanges; // 0x40
 
 protected:
     CharPollGroup();

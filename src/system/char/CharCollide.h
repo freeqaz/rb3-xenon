@@ -72,31 +72,31 @@ protected:
 
     /** "Type of collision" */
     Shape mShape; // 0xb4
-    int mFlags; // 0xc4
+    int mFlags; // 0xb8
     /** "Optional mesh that will deform, used to resize ourselves.
         If this is set, make sure you are not parented to any bone with scale,
         such as an exo bone" */
-    ObjPtr<RndMesh> mMesh; // 0xc8
-    CSHA1::Digest mDigest; // 0xdc
-    CharCollideStruct unkStructs[8]; // 0xe0
+    ObjPtr<RndMesh> mMesh; // 0xbc
+    CSHA1::Digest mDigest; // 0xc8
+    CharCollideStruct unkStructs[8]; // 0xdc
     /** radius0: "Radius of the sphere, or of length0 hemisphere if cigar" */
     /** radius1: "cigar: Radius of length1 hemisphere" */
-    float mOrigRadius[2]; // 0x190
+    float mOrigRadius[2]; // 0x17c
     /** length0: "cigar: placement of radius0 hemisphere along X axis,
         must be < than length0, not used for sphere shapes" */
     /** length1: "cigar: placement of radius1 hemisphere along X axis,
         must be >= length0" */
-    float mOrigLength[2]; // 0x198
-    Transform unk1a0; // 0x1a0
-    float mCurRadius[2]; // 0x1e0
-    float mCurLength[2]; // 0x1e8
+    float mOrigLength[2]; // 0x184
+    Transform unk1a0; // 0x18c
+    float mCurRadius[2]; // 0x1cc
+    float mCurLength[2]; // 0x1d4
     /** "For spheres + cigars, finds mesh points along positive y axis (the green one),
         makes a better fit for spheres where only one side should be the fit,
         like for chest and back collision volumes" */
-    bool mMeshYBias; // 0x1f0
-    float unk1f4; // 0x1f4
-    float unk1f8; // 0x1f8
-    Vector3 unk1fc; // 0x1fc
+    bool mMeshYBias; // 0x1dc
+    float unk1f4; // 0x1e0
+    float unk1f8; // 0x1e4
+    Vector3 unk1fc; // 0x1e8
     Vector3 unk20c; // 0x1f8
 };
 

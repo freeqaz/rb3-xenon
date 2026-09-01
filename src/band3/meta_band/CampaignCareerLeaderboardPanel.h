@@ -26,7 +26,7 @@ public:
     NEW_OBJ(CampaignCareerLeaderboardPanel);
     static void Init() { REGISTER_OBJ_FACTORY(CampaignCareerLeaderboardPanel); }
 
-    PlayerCampaignCareerLeaderboard *mCampaignCareerLeaderboardProvider; // 0x3c
-    ScoreType mScoreType; // 0x40
-    bool mUseDLC; // 0x44
+    PlayerCampaignCareerLeaderboard *mCampaignCareerLeaderboardProvider; // 0x40
+    ScoreType mScoreType; // 0x44
+    bool mUseDLC; // 0x48
 };

@@ -9,7 +9,7 @@
 
 struct OldMMInst {
     Transform mOldXfm; // 0x0
-    Hmx::Color mOldColor; // 0x30
+    Hmx::Color mOldColor; // 0x40
 };
 
 inline BinStream &operator>>(BinStream &bs, OldMMInst &inst) {

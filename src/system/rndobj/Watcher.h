@@ -20,6 +20,6 @@ private:
     DataNode OnAdd(const DataArray *);
     DataNode OnRemove(const DataArray *);
 
-    RndOverlay *mOverlay; // 0x2c
-    std::vector<std::pair<DataArray *, DataNode> > mWatches; // 0x30
+    RndOverlay *mOverlay; // 0x28
+    std::vector<std::pair<DataArray *, DataNode> > mWatches; // 0x2c
 };

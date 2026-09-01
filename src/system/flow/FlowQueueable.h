@@ -29,10 +29,10 @@ protected:
     FlowQueueable();
 
     /** "Determines how we handle re-triggering of this label" */
-    QueueState mInterrupt; // 0x5c
+    QueueState mInterrupt; // 0x60
 #ifdef HX_NATIVE
     ObjPtrList<Hmx::Object> mListeners; // ring-tracked, auto-nullifies on listener destruction
 #else
-    std::list<Hmx::Object *> mListeners; // 0x60
+    std::list<Hmx::Object *> mListeners; // 0x64
 #endif
 };

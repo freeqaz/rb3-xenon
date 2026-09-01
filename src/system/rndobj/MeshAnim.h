@@ -48,9 +48,9 @@ protected:
     RndMeshAnim();
 
     ObjPtr<RndMesh> mMesh; // 0x10
-    Keys<std::vector<Vector3>, std::vector<RndMesh::Vert> > mVertPointsKeys; // 0x24
-    Keys<std::vector<Vector3>, std::vector<RndMesh::Vert> > mVertNormalsKeys; // 0x30
-    Keys<std::vector<Vector2>, std::vector<RndMesh::Vert> > mVertTexsKeys; // 0x3c
-    Keys<std::vector<Hmx::Color>, std::vector<RndMesh::Vert> > mVertColorsKeys; // 0x48
-    ObjOwnerPtr<RndMeshAnim> mKeysOwner; // 0x54
+    Keys<std::vector<Vector3>, std::vector<RndMesh::Vert> > mVertPointsKeys; // 0x1c
+    Keys<std::vector<Vector3>, std::vector<RndMesh::Vert> > mVertNormalsKeys; // 0x28
+    Keys<std::vector<Vector2>, std::vector<RndMesh::Vert> > mVertTexsKeys; // 0x34
+    Keys<std::vector<Hmx::Color>, std::vector<RndMesh::Vert> > mVertColorsKeys; // 0x40
+    ObjOwnerPtr<RndMeshAnim> mKeysOwner; // 0x4c
 };

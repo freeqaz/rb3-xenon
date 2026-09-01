@@ -38,17 +38,17 @@ protected:
     SynthEmitter();
 
     /** "sfx this emitter should play" */
-    ObjPtr<Sfx> mSfx; // 0x108
-    ObjPtr<SfxInst> mInst; // 0x11c
+    ObjPtr<Sfx> mSfx; // 0xe0
+    ObjPtr<SfxInst> mInst; // 0xec
     /** "object representing the listener's position" */
-    ObjPtr<RndTransformable> mListener; // 0x130
-    bool mEnabled; // 0x144
+    ObjPtr<RndTransformable> mListener; // 0xf8
+    bool mEnabled; // 0x104
     /** "volume and pan are fixed inside this radius." */
-    float mRadInner; // 0x148
+    float mRadInner; // 0x108
     /** "the sound starts playing when you cross inside this radius." */
-    float mRadOuter; // 0x14c
+    float mRadOuter; // 0x10c
     /** "volume at inner radius (and inside)" */
-    float mVolInner; // 0x150
+    float mVolInner; // 0x110
     /** "volume at outer radius, in dB" */
-    float mVolOuter; // 0x154
+    float mVolOuter; // 0x114
 };

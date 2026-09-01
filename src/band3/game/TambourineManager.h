@@ -63,7 +63,7 @@ public:
 #ifdef HX_NATIVE
     bool unk74; // native-only mic-mute state
 #endif
-    int unk78; // 0x78 (retail 0x88)
-    int unk7c; // 0x7c (retail 0x8c)
-    std::vector<int> mGemStates; // 0x80 (retail 0x90)
+    int unk78; // 0x88 (retail 0x88)
+    int unk7c; // 0x8c (retail 0x8c)
+    std::vector<int> mGemStates; // 0x90 (retail 0x90)
 };

@@ -37,11 +37,11 @@ protected:
 
     void OnChoiceTypeChanged();
 
-    ObjPtrVec<FlowNode> mChoiceHistory; // 0x5c
+    ObjPtrVec<FlowNode> mChoiceHistory; // 0x60
     /** "Style of choice made" */
-    ChoiceType mChoiceType; // 0x78
+    ChoiceType mChoiceType; // 0x7c
     /** "The child to pick (0 is first child)" */
-    int mIndex; // 0x7c
+    int mIndex; // 0x80
     /** "0 to 1 value representing the chance this node runs when activated" */
-    float mChance; // 0x80
+    float mChance; // 0x84
 };

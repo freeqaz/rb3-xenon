@@ -19,5 +19,5 @@ protected:
     virtual bool _ReadDone();
     virtual void _Close();
 
-    int mFd; // 0x34
+    int mFd; // 0x38
 };

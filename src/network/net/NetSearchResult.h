@@ -18,8 +18,8 @@ public:
     static NetSearchResult *New();
     int NumOpenSlots() const { return mNumOpenSlots; }
 
-    SessionData *mSessionData; // 0x1c
-    MatchmakingSettings *mSettings; // 0x20
-    int mNumOpenSlots; // 0x24
-    String mHostName; // 0x28
+    SessionData *mSessionData; // 0x28
+    MatchmakingSettings *mSettings; // 0x2c
+    int mNumOpenSlots; // 0x30
+    String mHostName; // 0x34
 };

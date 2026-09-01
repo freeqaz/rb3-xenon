@@ -42,7 +42,7 @@ public:
         }
 
         ObjPtr<UIColor> mColorOverride; // 0x0
-        ResourceDirPtr<UILabelDir> mFontResource; // 0x14
+        ResourceDirPtr<UILabelDir> mFontResource; // 0xc
     };
     friend bool __cdecl PropSync(LabelStyle &, DataNode &, DataArray *, int, PropOp);
     friend bool __cdecl

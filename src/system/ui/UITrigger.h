@@ -36,7 +36,7 @@ protected:
     UITrigger();
 
     bool mBlockTransition; // 0x114
-    ObjPtr<Hmx::Object> mCallbackObject; // 0x120
+    ObjPtr<Hmx::Object> mCallbackObject; // 0x118
     float mStartTime; // 0x124
     float mEndTime; // 0x128
     bool mDone; // 0x12c

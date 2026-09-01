@@ -34,10 +34,10 @@ public:
     OBJ_MEM_OVERLOAD(0x17)
     NEW_OBJ(FlowTimer)
 
-    int mStopMode; // 0x5c
-    ObjPtr<Task> mTask; // 0x60
-    int mRate; // 0x74
-    float mTotalTime; // 0x78
+    int mStopMode; // 0x60
+    ObjPtr<Task> mTask; // 0x64
+    int mRate; // 0x70
+    float mTotalTime; // 0x74
 
 protected:
     FlowTimer();
@@ -53,8 +53,8 @@ public:
     POOL_OVERLOAD(EventTask, 0x12)
 
 protected:
-    ObjPtr<FlowTimer> mOwner; // 0x2c
-    ObjPtrVec<FlowNode> *mChildNodes; // 0x40
-    ObjPtrVec<FlowNode>::iterator mCurNode; // 0x44
-    float mDuration; // 0x48
+    ObjPtr<FlowTimer> mOwner; // 0x28
+    ObjPtrVec<FlowNode> *mChildNodes; // 0x34
+    ObjPtrVec<FlowNode>::iterator mCurNode; // 0x38
+    float mDuration; // 0x3c
 };

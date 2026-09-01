@@ -65,7 +65,7 @@ protected:
     /** The Mat to animate. */
     ObjPtr<RndMat> mMat; // 0x10
     /** The MatAnim that owns all of these keys. */
-    ObjOwnerPtr<RndMatAnim> mKeysOwner; // 0x24
+    ObjOwnerPtr<RndMatAnim> mKeysOwner; // 0x1c
     /** The collection of Color keys. */
     Keys<Hmx::Color, Hmx::Color> mColorKeys; // 0x28
     /** The collection of alpha keys. */

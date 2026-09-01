@@ -29,7 +29,7 @@ public:
     bool IsBattle() const;
 
     float mMarqueeRotationMs; // 0x40
-    Timer mMarqueeTimer; // 0x40
+    Timer mMarqueeTimer; // 0x48
     unsigned int mCurrentSongIx; // 0x78
-    int unk74; // 0x74
+    int unk74; // 0x7c
 };

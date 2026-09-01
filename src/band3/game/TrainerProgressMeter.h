@@ -17,9 +17,9 @@ public:
     std::vector<bool> mCompleted; // 0x0
     RndDir *mProgressMeter; // 0x14
     RndMesh *mBar; // 0x18
-    Transform mBarTrans; // 0x10
+    Transform mBarTrans; // 0x1c
     RndMesh *mGlow; // 0x5c
-    Transform mGlowTrans; // 0x44
+    Transform mGlowTrans; // 0x60
     RndMesh *mBoxes; // 0xa0
     int mCurrent; // 0xa4
 };

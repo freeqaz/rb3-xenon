@@ -59,13 +59,13 @@ protected:
     FilePath mCharFilePath; // 0xd4
     ObjPtr<RndDir> mPreviewChar; // 0xe0
     /** "Pick a clip to play" */
-    ObjPtr<CharClip> mPreviewClip; // 0x108
+    ObjPtr<CharClip> mPreviewClip; // 0xec
     /** "Flags for filtering preview clip" */
-    int mFilterFlags; // 0x11c
+    int mFilterFlags; // 0xf8
     /** "bpm for clip playing" */
-    int mBpm; // 0x120
+    int mBpm; // 0xfc
     /** "Allow preview character to move around and walk?" */
-    bool mPreviewWalk; // 0x124
+    bool mPreviewWalk; // 0x100
     /** "Set this to view drummer play anims" */
-    ObjPtr<CharClip> mStillClip; // 0x128
+    ObjPtr<CharClip> mStillClip; // 0x104
 };

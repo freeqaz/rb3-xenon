@@ -45,5 +45,5 @@ public:
     void CancelSongRankingRequest();
 
     std::hash_map<int, std::pair<int, bool> > mRankings; // 0x50 (retail: hash_map, 100 buckets)
-    DataResultList mDataResults; // 0x54
+    DataResultList mDataResults; // 0x6c
 };

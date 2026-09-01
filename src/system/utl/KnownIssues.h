@@ -18,10 +18,10 @@ private:
     /** The known issue's name. */
     String mName; // 0x0
     /** The known issue's description. */
-    String mDescription; // 0x8
-    float unk_0x10; // 0x10
+    String mDescription; // 0xc
+    float unk_0x10; // 0x18
     /** Whether or not to display the known issue. */
-    bool mDisplay; // 0x14
+    bool mDisplay; // 0x1c
 };
 
 extern KnownIssues TheKnownIssues;

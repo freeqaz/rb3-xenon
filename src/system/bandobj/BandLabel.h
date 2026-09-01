@@ -37,7 +37,7 @@ public:
 
     Keys<float, float> unk1dc; // 0x238
     Symbol unk1e4; // 0x244
-    String unk1e8; // 0x1e8
+    String unk1e8; // 0x248
     bool unk1f4; // 0x254
     // Retail vbase trailing reserve (see AppLabel::Handle vtordisp evidence):
     // retail AppLabel's Hmx::Object virtual base sits at 0x25C into the

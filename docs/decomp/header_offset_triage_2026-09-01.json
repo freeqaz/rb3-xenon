@@ -1,0 +1,3760 @@
+{
+ "UNWITNESSED": [
+  {
+   "class": "ADSR",
+   "header": "src/system/synth/ADSR.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "AsyncFileHolmes",
+   "header": "src/system/os/AsyncFileHolmes_p.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Attractor",
+   "header": "src/system/rndobj/Part.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "AudioDucker",
+   "header": "src/system/synth/AudioDucker.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "AudioDuckerTrigger",
+   "header": "src/system/synth/AudioDucker.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Automator",
+   "header": "src/system/ui/UI.h",
+   "rows": 10,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "BeatClock",
+   "header": "src/system/world/BeatClock.h",
+   "rows": 10,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "BinkMovieImpl",
+   "header": "src/system/moviebink/BinkMovieImpl.h",
+   "rows": 28,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "BitmapOverride",
+   "header": "src/system/world/Dir.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "BustAMoveData",
+   "header": "src/system/hamobj/BustAMoveData.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "CallContext",
+   "header": "src/network/Core/CallContext.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "CallContextRegister",
+   "header": "src/network/Core/CallContextRegister.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "CallbackFile",
+   "header": "src/system/os/ContentMgr.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "CameraTilt",
+   "header": "src/system/gesture/CameraTilt.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "ChannelParams",
+   "header": "src/system/synth/StandardStream.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "CharFeedback",
+   "header": "src/system/hamobj/CharFeedback.h",
+   "rows": 7,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Cheat",
+   "header": "src/system/ui/CheatProvider.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "ChordPreview",
+   "header": "src/band3/game/ChordPreview.h",
+   "rows": 10,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "ClipGraphGenerator",
+   "header": "src/system/char/ClipGraphGen.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "CrossSec",
+   "header": "src/system/bandobj/ChordShapeGenerator.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "CustomPlaylist",
+   "header": "src/meta_ham/Playlist.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DanceRemixer",
+   "header": "src/system/hamobj/DanceRemixer.h",
+   "rows": 7,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DancerSkeleton",
+   "header": "src/system/hamobj/DancerSkeleton.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DataNodeObjTrack",
+   "header": "src/system/obj/Object.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DebugGraph",
+   "header": "src/system/utl/DebugGraph.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DefaultDetectionVolume",
+   "header": "src/system/world/DefaultPhysicsManager.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DefaultPhysicsManager",
+   "header": "src/system/world/DefaultPhysicsManager.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Delta",
+   "header": "src/system/bandobj/BandFaceDeform.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DemuxEventHandler",
+   "header": "src/network/Extensions/DemuxEventHandler.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DepthBuffer3D",
+   "header": "src/system/gesture/DepthBuffer3D.h",
+   "rows": 45,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DifficultyInfo",
+   "header": "src/system/beatmatch/SongParser.h",
+   "rows": 19,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DingoJob",
+   "header": "src/system/net/DingoJob.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DingoServer",
+   "header": "src/system/net/DingoSvr.h",
+   "rows": 12,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DingoSvrXbox",
+   "header": "src/system/net/DingoSvr_Xbox.h",
+   "rows": 11,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DistEntry",
+   "header": "src/system/char/ClipDistMap.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DrumMap",
+   "header": "src/system/beatmatch/DrumMap.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "DynamicPropertyEntry",
+   "header": "src/system/flow/Flow.h",
+   "rows": 8,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "EnrolledPlayer",
+   "header": "src/meta_ham/SkeletonIdentifier.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "EventSinkElem",
+   "header": "src/system/obj/Msg.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "EventTask",
+   "header": "src/system/flow/FlowTimer.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "ExtraTail",
+   "header": "src/band3/game/TrainerGemTab.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "EyeDesc",
+   "header": "src/system/char/CharEyes.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FingerDesc",
+   "header": "src/system/char/CharIKFingers.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FitnessFilterObj",
+   "header": "src/system/gesture/FitnessFilter.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowCommand",
+   "header": "src/system/flow/FlowCommand.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowDistance",
+   "header": "src/system/flow/FlowDistance.h",
+   "rows": 10,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowEventListener",
+   "header": "src/system/flow/FlowEventListener.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowIf",
+   "header": "src/system/flow/FlowIf.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowLabel",
+   "header": "src/system/flow/FlowLabel.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowManager",
+   "header": "src/system/flow/FlowManager.h",
+   "rows": 15,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowNode",
+   "header": "src/system/flow/FlowNode.h",
+   "rows": 5,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowOnStop",
+   "header": "src/system/flow/FlowOnStop.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowOutPort",
+   "header": "src/system/flow/FlowOutPort.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowPickOne",
+   "header": "src/system/flow/FlowPickOne.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowQueueable",
+   "header": "src/system/flow/FlowQueueable.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowRun",
+   "header": "src/system/flow/FlowRun.h",
+   "rows": 5,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowSequence",
+   "header": "src/system/flow/FlowSequence.h",
+   "rows": 5,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowSetProperty",
+   "header": "src/system/flow/FlowSetProperty.h",
+   "rows": 13,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowSlider",
+   "header": "src/system/flow/FlowSlider.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowSound",
+   "header": "src/system/flow/FlowSound.h",
+   "rows": 13,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowSwitch",
+   "header": "src/system/flow/FlowSwitch.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowSwitchCase",
+   "header": "src/system/flow/FlowSwitchCase.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowTimer",
+   "header": "src/system/flow/FlowTimer.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FlowValueCase",
+   "header": "src/system/flow/FlowValueCase.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FreestyleMotionFilter",
+   "header": "src/system/gesture/FreestyleMotionFilter.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "FreestyleMoveRecorder",
+   "header": "src/system/hamobj/FreestyleMoveRecorder.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "GestureMgr",
+   "header": "src/system/gesture/GestureMgr.h",
+   "rows": 17,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Grammar",
+   "header": "src/system/gesture/SpeechMgr.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamAudio",
+   "header": "src/system/hamobj/HamAudio.h",
+   "rows": 21,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamBattleData",
+   "header": "src/system/hamobj/HamBattleData.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamCharacter",
+   "header": "src/system/hamobj/HamCharacter.h",
+   "rows": 21,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamDirector",
+   "header": "src/system/hamobj/HamDirector.h",
+   "rows": 80,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamDriver",
+   "header": "src/system/hamobj/HamDriver.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamGameData",
+   "header": "src/system/hamobj/HamGameData.h",
+   "rows": 7,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamIKEffector",
+   "header": "src/system/hamobj/HamIKEffector.h",
+   "rows": 9,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamIconMan",
+   "header": "src/system/hamobj/HamIconMan.h",
+   "rows": 9,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamListRibbon",
+   "header": "src/system/hamobj/HamListRibbon.h",
+   "rows": 26,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamMaster",
+   "header": "src/system/hamobj/HamMaster.h",
+   "rows": 24,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamNavList",
+   "header": "src/system/hamobj/HamNavList.h",
+   "rows": 33,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamNavProvider",
+   "header": "src/system/hamobj/HamNavProvider.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamPartyJumpData",
+   "header": "src/system/hamobj/HamPartyJumpData.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamPhotoDisplay",
+   "header": "src/system/hamobj/HamPhotoDisplay.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamPhraseMeter",
+   "header": "src/system/hamobj/HamPhraseMeter.h",
+   "rows": 8,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamPlayerData",
+   "header": "src/system/hamobj/HamPlayerData.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamRegulate",
+   "header": "src/system/hamobj/HamRegulate.h",
+   "rows": 8,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamRibbon",
+   "header": "src/system/hamobj/HamRibbon.h",
+   "rows": 16,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamSkeletonConverter",
+   "header": "src/system/hamobj/HamSkeletonConverter.h",
+   "rows": 14,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamSongMetadata",
+   "header": "src/meta_ham/HamSongMetadata.h",
+   "rows": 25,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamSupereasyData",
+   "header": "src/system/hamobj/HamSupereasyData.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HamVisDir",
+   "header": "src/system/hamobj/HamVisDir.h",
+   "rows": 14,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HandRaisedGestureFilter",
+   "header": "src/system/gesture/HandRaisedGestureFilter.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HandsUpGestureFilter",
+   "header": "src/system/gesture/HandsUpGestureFilter.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HolmesInput",
+   "header": "src/system/os/HolmesKeyboard.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HttpPost",
+   "header": "src/system/net/HttpGet.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "HttpReqCurl",
+   "header": "src/system/net/HttpReqCurl.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "JobCreateProfile",
+   "header": "src/network/net/Jobs_Wii.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "KnownIssues",
+   "header": "src/system/utl/KnownIssues.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "LabelStyle",
+   "header": "src/system/ui/UILabel.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MetaPerformerHook",
+   "header": "src/meta_ham/MetaPerformer.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MetagameStats",
+   "header": "src/meta_ham/MetagameStats.h",
+   "rows": 5,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MeterEffectMonitor",
+   "header": "src/system/synth/MeterEffectMonitor.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MiniGameMgr",
+   "header": "src/system/hamobj/MiniGameMgr.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MocapSkeletonIterator",
+   "header": "src/system/hamobj/MocapSkeletonIterator.h",
+   "rows": 5,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MoveDir",
+   "header": "src/system/hamobj/MoveDir.h",
+   "rows": 40,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MoveGraph",
+   "header": "src/system/hamobj/MoveGraph.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MoveMgr",
+   "header": "src/system/hamobj/MoveMgr.h",
+   "rows": 23,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MovePlayerData",
+   "header": "src/system/hamobj/MoveDir.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MoveRating",
+   "header": "src/system/gesture/SkeletonClip.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "MultiMeshWidgetImp",
+   "header": "src/system/track/TrackWidgetImp.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "NavigationSkeletonDir",
+   "header": "src/system/gesture/NavigationSkeletonDir.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Net",
+   "header": "src/network/net/Net.h",
+   "rows": 10,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "NetLoaderXbox",
+   "header": "src/system/utl/NetLoader_Xbox.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "NetSearchResult",
+   "header": "src/network/net/NetSearchResult.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "NowBar",
+   "header": "src/band3/bandtrack/NowBar.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "OSCValue",
+   "header": "src/system/utl/OSCMessenger.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "OldMMInst",
+   "header": "src/system/rndobj/MultiMesh.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Operation",
+   "header": "src/network/Core/Operation.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "OriginalChoreoRemixer",
+   "header": "src/system/hamobj/OriginalChoreoRemixer.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Output",
+   "header": "src/system/hamobj/FilterQueue.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PeriodicJob",
+   "header": "src/network/Core/PeriodicJob.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PhotoSpotlightPositioner",
+   "header": "src/system/hamobj/PhotoSpotlightPositioner.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PhysicsManager",
+   "header": "src/system/world/PhysicsManager.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PhysicsVolume",
+   "header": "src/system/world/PhysicsVolume.h",
+   "rows": 9,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PlayerCampaignCareerLeaderboard",
+   "header": "src/band3/meta_band/CampaignLeaderboards.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PlayerCampaignGoalLeaderboard",
+   "header": "src/band3/meta_band/CampaignLeaderboards.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PoseFatalities",
+   "header": "src/system/hamobj/PoseFatalities.h",
+   "rows": 9,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PracticeOptionsProvider",
+   "header": "src/system/hamobj/PracticeOptionsProvider.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PresetOverride",
+   "header": "src/system/world/Dir.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PropTriggerDefn",
+   "header": "src/system/flow/FlowTrigger.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Properties",
+   "header": "src/band3/game/Game.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "PropertyTask",
+   "header": "src/system/flow/FlowSetProperty.h",
+   "rows": 10,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "ProxyCall",
+   "header": "src/system/rndobj/EventTrigger.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "QSimpleEvent",
+   "header": "src/network/Core/StateMachine.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Recenter",
+   "header": "src/system/char/CharBoneDir.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "RecordedFrame",
+   "header": "src/system/gesture/SkeletonClip.h",
+   "rows": 8,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "RhythmBattle",
+   "header": "src/system/hamobj/RhythmBattle.h",
+   "rows": 40,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "RhythmBattlePlayer",
+   "header": "src/system/hamobj/RhythmBattlePlayer.h",
+   "rows": 57,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "RndFont3d",
+   "header": "src/system/rndobj/Font.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "RndPostProcMgr",
+   "header": "src/system/rndobj/PostProcMgr.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "RndRibbon",
+   "header": "src/system/rndobj/Ribbon.h",
+   "rows": 14,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SchedulerWorkerThread",
+   "header": "src/network/Core/Scheduler.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "ScrollAnims",
+   "header": "src/system/hamobj/HamListRibbon.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SearchSettings",
+   "header": "src/network/net/MatchmakingSettings.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Selection",
+   "header": "src/network/ObjDup/Selection.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SessionSearcher",
+   "header": "src/network/net/SessionSearcher.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SessionSettings",
+   "header": "src/network/net/MatchmakingSettings.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SkeletonDir",
+   "header": "src/system/gesture/SkeletonDir.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SkeletonExtentTracker",
+   "header": "src/system/gesture/SkeletonExtentTracker.h",
+   "rows": 5,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SkeletonIdentifier",
+   "header": "src/meta_ham/SkeletonIdentifier.h",
+   "rows": 8,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SkeletonUpdate",
+   "header": "src/system/gesture/SkeletonUpdate.h",
+   "rows": 15,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SkeletonViz",
+   "header": "src/system/gesture/SkeletonViz.h",
+   "rows": 17,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SongCollision",
+   "header": "src/system/hamobj/SongCollision.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SongDifficultyDisplay",
+   "header": "src/system/hamobj/SongDifficultyDisplay.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SongLayout",
+   "header": "src/system/hamobj/SongLayout.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Sound",
+   "header": "src/system/synth/Sound.h",
+   "rows": 13,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "StandInProvider",
+   "header": "src/band3/meta_band/StandInProvider.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "StandingStillGestureFilter",
+   "header": "src/system/gesture/StandingStillGestureFilter.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "StarsDisplay",
+   "header": "src/system/hamobj/StarsDisplay.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "StateMachine",
+   "header": "src/network/Core/StateMachine.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "Step",
+   "header": "src/network/Core/StepSequenceJob.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "StoreMetadataManager",
+   "header": "src/system/meta/StorePackedMetadata.h",
+   "rows": 17,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "StreamReceiverFile",
+   "header": "src/system/synth/StreamReceiverFile.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "StreamRecorder",
+   "header": "src/system/gesture/StreamRecorder.h",
+   "rows": 17,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "StreamRenderer",
+   "header": "src/system/gesture/StreamRenderer.h",
+   "rows": 38,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SuperEasyRemixer",
+   "header": "src/system/hamobj/SuperEasyRemixer.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SuperFormatString",
+   "header": "src/system/utl/SuperFormatString.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "SystemComponent",
+   "header": "src/network/Core/SystemComponent.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "ThreeDSound",
+   "header": "src/system/synth/ThreeDSound.h",
+   "rows": 21,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "ThreeDSoundManager",
+   "header": "src/system/world/ThreeDSoundManager.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "TimedSignal",
+   "header": "src/network/Core/TimedSignals.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "TourDescEntry",
+   "header": "src/band3/tour/TourDesc.h",
+   "rows": 5,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "TransConstraint",
+   "header": "src/system/hamobj/TransConstraint.h",
+   "rows": 7,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "TransformArea",
+   "header": "src/system/hamobj/HamCamTransform.h",
+   "rows": 4,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "TransitionPath",
+   "header": "src/network/Core/StateMachine.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "TypeCreatorPair",
+   "header": "src/network/net/NetMessage.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "UpdateMasterProfileFriendsListJob",
+   "header": "src/band3/net_band/RockCentralJobs.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "VocalFrameSpewData",
+   "header": "src/band3/game/VocalPlayer.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "VocalOverlay",
+   "header": "src/band3/game/VocalOverlay.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "VocalScoreHistory",
+   "header": "src/band3/game/VocalScoreHistory.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "VoiceChannelMember",
+   "header": "src/network/Extensions/VoiceChannelMember.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "VoiceChatMgr",
+   "header": "src/network/net/VoiceChatMgr.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "WaveToTurnOnLight",
+   "header": "src/system/gesture/WaveToTurnOnLight.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "WebSvcMgr",
+   "header": "src/system/net/WebSvcMgr.h",
+   "rows": 2,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "WebSvcMgrCurl",
+   "header": "src/system/net/WebSvcMgrCurl.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "WiiFriend",
+   "header": "src/network/net/WiiFriendMgr.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "WiiFriendMgr",
+   "header": "src/network/net/WiiFriendMgr.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "WiiMessenger",
+   "header": "src/network/net/WiiMessenger.h",
+   "rows": 6,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "WiiProfile",
+   "header": "src/system/meta/WiiProfileMgr.h",
+   "rows": 5,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "WorkVerts",
+   "header": "src/system/bandobj/BandPatchMesh.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "WorldCrowd3DCharHandle",
+   "header": "src/system/world/Crowd3DCharHandle.h",
+   "rows": 3,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "XboxMultipleItemsPurchaser",
+   "header": "src/system/meta/StorePurchaser.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "XboxPurchaser",
+   "header": "src/system/meta/StorePurchaser.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  },
+  {
+   "class": "_DS_ChannelMembers",
+   "header": "src/network/Extensions/ChannelMembersDDL.h",
+   "rows": 1,
+   "functions": 0,
+   "best_pct": null
+  }
+ ],
+ "WITNESSED_LAYOUT_OK": [
+  {
+   "class": "AccomplishmentDiscSongConditional",
+   "header": "src/band3/meta_band/AccomplishmentDiscSongConditional.h",
+   "rows": 1,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AccomplishmentOneShot",
+   "header": "src/band3/meta_band/AccomplishmentOneShot.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AccomplishmentPanel",
+   "header": "src/band3/meta_band/AccomplishmentPanel.h",
+   "rows": 8,
+   "functions": 57,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AccomplishmentPlayerConditional",
+   "header": "src/band3/meta_band/AccomplishmentPlayerConditional.h",
+   "rows": 1,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AccomplishmentProgress",
+   "header": "src/band3/meta_band/AccomplishmentProgress.h",
+   "rows": 24,
+   "functions": 88,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AccomplishmentSetlist",
+   "header": "src/band3/meta_band/AccomplishmentSetlist.h",
+   "rows": 1,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AccomplishmentSongFilterConditional",
+   "header": "src/band3/meta_band/AccomplishmentSongFilterConditional.h",
+   "rows": 1,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AccomplishmentTrainerCategoryConditional",
+   "header": "src/band3/meta_band/AccomplishmentTrainerCategoryConditional.h",
+   "rows": 1,
+   "functions": 6,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AccuracyFocusTracker",
+   "header": "src/band3/game/FocusTracker.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ActionElement",
+   "header": "src/system/ui/InlineHelp.h",
+   "rows": 1,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Archive",
+   "header": "src/system/os/Archive.h",
+   "rows": 5,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Asset",
+   "header": "src/band3/meta_band/Asset.h",
+   "rows": 3,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AssetProvider",
+   "header": "src/band3/meta_band/AssetProvider.h",
+   "rows": 2,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "AsyncFileWin",
+   "header": "src/system/os/AsyncFile_Win.h",
+   "rows": 1,
+   "functions": 6,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Band",
+   "header": "src/band3/game/Band.h",
+   "rows": 10,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandButton",
+   "header": "src/system/bandobj/BandButton.h",
+   "rows": 3,
+   "functions": 23,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandCharacter",
+   "header": "src/system/bandobj/BandCharacter.h",
+   "rows": 44,
+   "functions": 100,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandConfiguration",
+   "header": "src/system/bandobj/BandConfiguration.h",
+   "rows": 1,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandCrowdMeter",
+   "header": "src/system/bandobj/BandCrowdMeter.h",
+   "rows": 17,
+   "functions": 45,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandDirector",
+   "header": "src/system/bandobj/BandDirector.h",
+   "rows": 30,
+   "functions": 76,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandFaceDeform",
+   "header": "src/system/bandobj/BandFaceDeform.h",
+   "rows": 1,
+   "functions": 14,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandHighlight",
+   "header": "src/system/bandobj/BandHighlight.h",
+   "rows": 3,
+   "functions": 28,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandLabel",
+   "header": "src/system/bandobj/BandLabel.h",
+   "rows": 1,
+   "functions": 16,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandLeadMeter",
+   "header": "src/system/bandobj/BandLeadMeter.h",
+   "rows": 12,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandList",
+   "header": "src/system/bandobj/BandList.h",
+   "rows": 25,
+   "functions": 46,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandPatchMesh",
+   "header": "src/system/bandobj/BandPatchMesh.h",
+   "rows": 3,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandPerformer",
+   "header": "src/band3/game/BandPerformer.h",
+   "rows": 1,
+   "functions": 23,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandProfile",
+   "header": "src/band3/meta_band/BandProfile.h",
+   "rows": 3,
+   "functions": 66,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandScoreboard",
+   "header": "src/system/bandobj/BandScoreboard.h",
+   "rows": 3,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandSongPref",
+   "header": "src/system/bandobj/BandSongPref.h",
+   "rows": 4,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandStarDisplay",
+   "header": "src/system/bandobj/BandStarDisplay.h",
+   "rows": 7,
+   "functions": 14,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandSwatch",
+   "header": "src/system/bandobj/BandSwatch.h",
+   "rows": 1,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandUser",
+   "header": "src/band3/game/BandUser.h",
+   "rows": 7,
+   "functions": 34,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandUserMgr",
+   "header": "src/band3/game/BandUserMgr.h",
+   "rows": 5,
+   "functions": 38,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BandWardrobe",
+   "header": "src/system/bandobj/BandWardrobe.h",
+   "rows": 11,
+   "functions": 54,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BaseGuitarTrackWatcherImpl",
+   "header": "src/system/beatmatch/BaseGuitarTrackWatcherImpl.h",
+   "rows": 6,
+   "functions": 19,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BattleSavedSetlist",
+   "header": "src/band3/meta_band/SavedSetlist.h",
+   "rows": 3,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BeamDef",
+   "header": "src/system/world/Spotlight.h",
+   "rows": 1,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BeatMatchController",
+   "header": "src/system/beatmatch/BeatMatchController.h",
+   "rows": 3,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BeatMatcher",
+   "header": "src/system/beatmatch/BeatMatcher.h",
+   "rows": 18,
+   "functions": 67,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BinkClip",
+   "header": "src/system/synth/BinkClip.h",
+   "rows": 14,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BoxMapLighting",
+   "header": "src/system/rndobj/BoxMap.h",
+   "rows": 1,
+   "functions": 7,
+   "best_pct": 100.0
+  },
+  {
+   "class": "BufStream",
+   "header": "src/system/utl/BufStream.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ButtonGuitarController",
+   "header": "src/system/beatmatch/ButtonGuitarController.h",
+   "rows": 1,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CacheIDXbox",
+   "header": "src/system/utl/Cache_Xbox.h",
+   "rows": 1,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CacheMgrXbox",
+   "header": "src/system/utl/CacheMgr_Xbox.h",
+   "rows": 1,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CalibrationPanel",
+   "header": "src/band3/meta_band/Calibration.h",
+   "rows": 2,
+   "functions": 27,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CalibrationWelcomePanel",
+   "header": "src/band3/meta_band/Calibration.h",
+   "rows": 1,
+   "functions": 10,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CamShot",
+   "header": "src/system/world/CameraShot.h",
+   "rows": 33,
+   "functions": 38,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CamShotCrowd",
+   "header": "src/system/world/CameraShot.h",
+   "rows": 1,
+   "functions": 7,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CamShotFrame",
+   "header": "src/system/world/CameraShot.h",
+   "rows": 2,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Campaign",
+   "header": "src/band3/meta_band/Campaign.h",
+   "rows": 5,
+   "functions": 57,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CampaignCareerLeaderboardPanel",
+   "header": "src/band3/meta_band/CampaignCareerLeaderboardPanel.h",
+   "rows": 3,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CampaignGoalsLeaderboardChoiceProvider",
+   "header": "src/band3/meta_band/CampaignGoalsLeaderboardChoicePanel.h",
+   "rows": 1,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CampaignGoalsLeaderboardPanel",
+   "header": "src/band3/meta_band/CampaignGoalsLeaderboardPanel.h",
+   "rows": 1,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharBone",
+   "header": "src/system/char/CharBone.h",
+   "rows": 3,
+   "functions": 23,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharBoneTwist",
+   "header": "src/system/char/CharBoneTwist.h",
+   "rows": 2,
+   "functions": 16,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharBonesBlender",
+   "header": "src/system/char/CharBonesBlender.h",
+   "rows": 1,
+   "functions": 21,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharCache",
+   "header": "src/band3/meta_band/CharCache.h",
+   "rows": 1,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharClipSet",
+   "header": "src/system/char/CharClipSet.h",
+   "rows": 5,
+   "functions": 28,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharCollide",
+   "header": "src/system/char/CharCollide.h",
+   "rows": 13,
+   "functions": 16,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharCuff",
+   "header": "src/system/char/CharCuff.h",
+   "rows": 7,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharDef",
+   "header": "src/system/world/Crowd.h",
+   "rows": 1,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharDriver",
+   "header": "src/system/char/CharDriver.h",
+   "rows": 14,
+   "functions": 40,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharDriverMidi",
+   "header": "src/system/char/CharDriverMidi.h",
+   "rows": 5,
+   "functions": 21,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharFaceServo",
+   "header": "src/system/char/CharFaceServo.h",
+   "rows": 10,
+   "functions": 25,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharForeTwist",
+   "header": "src/system/char/CharForeTwist.h",
+   "rows": 3,
+   "functions": 12,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharGuitarString",
+   "header": "src/system/char/CharGuitarString.h",
+   "rows": 3,
+   "functions": 16,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharHair",
+   "header": "src/system/char/CharHair.h",
+   "rows": 6,
+   "functions": 82,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharIKFingers",
+   "header": "src/system/char/CharIKFingers.h",
+   "rows": 25,
+   "functions": 36,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharIKHand",
+   "header": "src/system/char/CharIKHand.h",
+   "rows": 6,
+   "functions": 37,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharIKMidi",
+   "header": "src/system/char/CharIKMidi.h",
+   "rows": 1,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharIKRod",
+   "header": "src/system/char/CharIKRod.h",
+   "rows": 4,
+   "functions": 18,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharIKSliderMidi",
+   "header": "src/system/char/CharIKSliderMidi.h",
+   "rows": 1,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharInterest",
+   "header": "src/system/char/CharInterest.h",
+   "rows": 9,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharKeyHandMidi",
+   "header": "src/system/bandobj/CharKeyHandMidi.h",
+   "rows": 10,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharLipSyncDriver",
+   "header": "src/system/char/CharLipSyncDriver.h",
+   "rows": 12,
+   "functions": 20,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharLookAt",
+   "header": "src/system/char/CharLookAt.h",
+   "rows": 12,
+   "functions": 19,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharMeshCacheMgr",
+   "header": "src/system/char/CharMeshCacheMgr.h",
+   "rows": 1,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharMeshHide",
+   "header": "src/system/char/CharMeshHide.h",
+   "rows": 1,
+   "functions": 30,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharMirror",
+   "header": "src/system/char/CharMirror.h",
+   "rows": 1,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharNeckTwist",
+   "header": "src/system/char/CharNeckTwist.h",
+   "rows": 1,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharPollGroup",
+   "header": "src/system/char/CharPollGroup.h",
+   "rows": 3,
+   "functions": 19,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharPosConstraint",
+   "header": "src/system/char/CharPosConstraint.h",
+   "rows": 1,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharSignalApplier",
+   "header": "src/system/char/CharSignalApplier.h",
+   "rows": 7,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharSleeve",
+   "header": "src/system/char/CharSleeve.h",
+   "rows": 11,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharTransDraw",
+   "header": "src/system/char/CharTransDraw.h",
+   "rows": 1,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharUpperTwist",
+   "header": "src/system/char/CharUpperTwist.h",
+   "rows": 3,
+   "functions": 10,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Character",
+   "header": "src/system/char/Character.h",
+   "rows": 18,
+   "functions": 72,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharacterCreatorPanel",
+   "header": "src/band3/meta_band/CharacterCreatorPanel.h",
+   "rows": 5,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CharacterTest",
+   "header": "src/system/char/CharacterTest.h",
+   "rows": 8,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CheatsManager",
+   "header": "src/system/utl/Cheats.h",
+   "rows": 8,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CheckboxDisplay",
+   "header": "src/system/bandobj/CheckboxDisplay.h",
+   "rows": 1,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ChordShapeGenerator",
+   "header": "src/system/bandobj/ChordShapeGenerator.h",
+   "rows": 19,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ChordbookPanel",
+   "header": "src/band3/game/ChordbookPanel.h",
+   "rows": 6,
+   "functions": 31,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ClipPredict",
+   "header": "src/system/char/CharUtl.h",
+   "rows": 2,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ClosetMgr",
+   "header": "src/band3/meta_band/ClosetMgr.h",
+   "rows": 2,
+   "functions": 34,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ContentMgr",
+   "header": "src/system/os/ContentMgr.h",
+   "rows": 6,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "CrowdMeterIcon",
+   "header": "src/system/bandobj/CrowdMeterIcon.h",
+   "rows": 15,
+   "functions": 25,
+   "best_pct": 100.0
+  },
+  {
+   "class": "DirLoader",
+   "header": "src/system/obj/DirLoader.h",
+   "rows": 8,
+   "functions": 18,
+   "best_pct": 100.0
+  },
+  {
+   "class": "DuplicatedObject",
+   "header": "src/network/ObjDup/DuplicatedObject.h",
+   "rows": 7,
+   "functions": 7,
+   "best_pct": 100.0
+  },
+  {
+   "class": "DxMesh",
+   "header": "src/system/rnddx9/Mesh.h",
+   "rows": 2,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "DxMovie",
+   "header": "src/system/rnddx9/Movie.h",
+   "rows": 1,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "DxMultiMesh",
+   "header": "src/system/rnddx9/MultiMesh.h",
+   "rows": 3,
+   "functions": 7,
+   "best_pct": 100.0
+  },
+  {
+   "class": "DxRnd",
+   "header": "src/system/rnddx9/Rnd.h",
+   "rows": 7,
+   "functions": 47,
+   "best_pct": 100.0
+  },
+  {
+   "class": "EditSetlistPanel",
+   "header": "src/band3/meta_band/EditSetlistPanel.h",
+   "rows": 5,
+   "functions": 38,
+   "best_pct": 100.0
+  },
+  {
+   "class": "EndingBonus",
+   "header": "src/system/bandobj/EndingBonus.h",
+   "rows": 12,
+   "functions": 43,
+   "best_pct": 100.0
+  },
+  {
+   "class": "EventSink",
+   "header": "src/system/obj/Msg.h",
+   "rows": 1,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "EventTrigger",
+   "header": "src/system/rndobj/EventTrigger.h",
+   "rows": 9,
+   "functions": 88,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FaceOptionsProvider",
+   "header": "src/band3/meta_band/FaceOptionsProvider.h",
+   "rows": 1,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Fader",
+   "header": "src/system/synth/Faders.h",
+   "rows": 1,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FileLoader",
+   "header": "src/system/utl/Loader.h",
+   "rows": 2,
+   "functions": 7,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FileMergerOrganizer",
+   "header": "src/system/char/FileMergerOrganizer.h",
+   "rows": 1,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FingerShape",
+   "header": "src/system/bandobj/FingerShape.h",
+   "rows": 5,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Flow",
+   "header": "src/system/flow/Flow.h",
+   "rows": 8,
+   "functions": 10,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FlowAnimate",
+   "header": "src/system/flow/FlowAnimate.h",
+   "rows": 21,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FlowTrigger",
+   "header": "src/system/flow/FlowTrigger.h",
+   "rows": 7,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FocusTracker",
+   "header": "src/band3/game/FocusTracker.h",
+   "rows": 2,
+   "functions": 16,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FunctionSortNode",
+   "header": "src/band3/meta_band/SongSortNode.h",
+   "rows": 2,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FxSend",
+   "header": "src/system/synth/FxSend.h",
+   "rows": 2,
+   "functions": 16,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FxSendMeterEffect",
+   "header": "src/system/synth/FxSendMeterEffect.h",
+   "rows": 2,
+   "functions": 10,
+   "best_pct": 100.0
+  },
+  {
+   "class": "FxSendWah",
+   "header": "src/system/synth/FxSendWah.h",
+   "rows": 1,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Game",
+   "header": "src/band3/game/Game.h",
+   "rows": 29,
+   "functions": 74,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GameConfig",
+   "header": "src/band3/game/GameConfig.h",
+   "rows": 5,
+   "functions": 23,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GameMicManager",
+   "header": "src/band3/game/GameMicManager.h",
+   "rows": 3,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GemManager",
+   "header": "src/band3/bandtrack/GemManager.h",
+   "rows": 10,
+   "functions": 54,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GemPlayer",
+   "header": "src/band3/game/GemPlayer.h",
+   "rows": 47,
+   "functions": 133,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GemSmasher",
+   "header": "src/band3/bandtrack/GemSmasher.h",
+   "rows": 3,
+   "functions": 18,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GemTrack",
+   "header": "src/band3/bandtrack/GemTrack.h",
+   "rows": 2,
+   "functions": 45,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GemTrackDir",
+   "header": "src/system/bandobj/GemTrackDir.h",
+   "rows": 53,
+   "functions": 70,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GemTrackResourceManager",
+   "header": "src/system/bandobj/GemTrackResourceManager.h",
+   "rows": 1,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GemTrainerPanel",
+   "header": "src/band3/game/GemTrainerPanel.h",
+   "rows": 12,
+   "functions": 32,
+   "best_pct": 100.0
+  },
+  {
+   "class": "GuitarController",
+   "header": "src/system/beatmatch/GuitarController.h",
+   "rows": 2,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "HDCache",
+   "header": "src/system/os/HDCache.h",
+   "rows": 1,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "HamCamShot",
+   "header": "src/system/hamobj/HamCamShot.h",
+   "rows": 24,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "HamLabel",
+   "header": "src/system/hamobj/HamLabel.h",
+   "rows": 5,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "HamMove",
+   "header": "src/system/hamobj/HamMove.h",
+   "rows": 24,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "HeaderSortNode",
+   "header": "src/band3/meta_band/SongSortNode.h",
+   "rows": 3,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "HitTracker",
+   "header": "src/band3/game/HitTracker.h",
+   "rows": 2,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "JoinRequestMsg",
+   "header": "src/network/net/SessionMessages.h",
+   "rows": 1,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "JoypadData",
+   "header": "src/system/os/Joypad.h",
+   "rows": 1,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "KeyboardTrackWatcherImpl",
+   "header": "src/system/beatmatch/KeyboardTrackWatcherImpl.h",
+   "rows": 2,
+   "functions": 18,
+   "best_pct": 100.0
+  },
+  {
+   "class": "KeysFx",
+   "header": "src/band3/game/KeysFx.h",
+   "rows": 1,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Leaderboard",
+   "header": "src/band3/meta_band/Leaderboard.h",
+   "rows": 3,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "LessonMgr",
+   "header": "src/band3/meta_band/LessonMgr.h",
+   "rows": 3,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "LightHue",
+   "header": "src/system/world/LightHue.h",
+   "rows": 2,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "LinearInterpolator",
+   "header": "src/system/math/Interp.h",
+   "rows": 1,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "LocalSavedSetlist",
+   "header": "src/band3/meta_band/SavedSetlist.h",
+   "rows": 1,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "LocalePanel",
+   "header": "src/system/ui/LocalePanel.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Lyric",
+   "header": "src/band3/bandtrack/Lyric.h",
+   "rows": 11,
+   "functions": 6,
+   "best_pct": 100.0
+  },
+  {
+   "class": "LyricPlate",
+   "header": "src/band3/bandtrack/Lyric.h",
+   "rows": 10,
+   "functions": 12,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MainHubMessageProvider",
+   "header": "src/band3/meta_band/MainHubMessageProvider.h",
+   "rows": 4,
+   "functions": 6,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MainHubPanel",
+   "header": "src/band3/meta_band/MainHubPanel.h",
+   "rows": 1,
+   "functions": 28,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ManageBandPanel",
+   "header": "src/band3/meta_band/ManageBandPanel.h",
+   "rows": 2,
+   "functions": 20,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MasterAudio",
+   "header": "src/system/beatmatch/MasterAudio.h",
+   "rows": 15,
+   "functions": 57,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MatOverride",
+   "header": "src/system/world/Dir.h",
+   "rows": 2,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MemTracker",
+   "header": "src/system/utl/MemTracker.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MemcardXbox",
+   "header": "src/system/os/Memcard_Xbox.h",
+   "rows": 6,
+   "functions": 12,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MessageTask",
+   "header": "src/system/obj/Task.h",
+   "rows": 1,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MetaMusic",
+   "header": "src/system/synth/MetaMusic.h",
+   "rows": 5,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MetaMusicLoader",
+   "header": "src/system/synth/MetaMusic.h",
+   "rows": 2,
+   "functions": 6,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MetaPerformer",
+   "header": "src/meta_ham/MetaPerformer.h",
+   "rows": 1,
+   "functions": 73,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MeterDisplay",
+   "header": "src/system/hamobj/MeterDisplay.h",
+   "rows": 3,
+   "functions": 21,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MicClientMapper",
+   "header": "src/system/synth/MicClientMapper.h",
+   "rows": 1,
+   "functions": 6,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MicNull",
+   "header": "src/system/synth/MicNull.h",
+   "rows": 1,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MidiInstrument",
+   "header": "src/system/synth/MidiInstrument.h",
+   "rows": 2,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MoviePanel",
+   "header": "src/system/meta/MoviePanel.h",
+   "rows": 7,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MusicLibrary",
+   "header": "src/band3/meta_band/MusicLibrary.h",
+   "rows": 24,
+   "functions": 102,
+   "best_pct": 100.0
+  },
+  {
+   "class": "MusicLibraryNetSetlists",
+   "header": "src/band3/meta_band/MusicLibraryNetSetlists.h",
+   "rows": 1,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "NetCacheMgr",
+   "header": "src/system/utl/NetCacheMgr.h",
+   "rows": 1,
+   "functions": 22,
+   "best_pct": 100.0
+  },
+  {
+   "class": "NetLoader",
+   "header": "src/system/utl/NetLoader.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "NetSavedSetlist",
+   "header": "src/band3/meta_band/SavedSetlist.h",
+   "rows": 3,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "NetSession",
+   "header": "src/network/net/NetSession.h",
+   "rows": 8,
+   "functions": 38,
+   "best_pct": 100.0
+  },
+  {
+   "class": "NetSync",
+   "header": "src/band3/meta_band/NetSync.h",
+   "rows": 4,
+   "functions": 21,
+   "best_pct": 100.0
+  },
+  {
+   "class": "NextSongPanel",
+   "header": "src/band3/meta_band/NextSongPanel.h",
+   "rows": 2,
+   "functions": 21,
+   "best_pct": 100.0
+  },
+  {
+   "class": "NgPostProc",
+   "header": "src/system/rndobj/PostProc_NG.h",
+   "rows": 6,
+   "functions": 32,
+   "best_pct": 100.0
+  },
+  {
+   "class": "NoteTube",
+   "header": "src/system/bandobj/NoteTube.h",
+   "rows": 9,
+   "functions": 6,
+   "best_pct": 100.0
+  },
+  {
+   "class": "NoteVoiceInst",
+   "header": "src/system/synth/MidiInstrument.h",
+   "rows": 7,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Object",
+   "header": "src/system/obj/Object.h",
+   "rows": 3,
+   "functions": 28,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ObjectDir",
+   "header": "src/system/obj/Dir.h",
+   "rows": 3,
+   "functions": 128,
+   "best_pct": 100.0
+  },
+  {
+   "class": "OutfitConfig",
+   "header": "src/system/bandobj/OutfitConfig.h",
+   "rows": 13,
+   "functions": 90,
+   "best_pct": 100.0
+  },
+  {
+   "class": "OverdriveMeter",
+   "header": "src/system/bandobj/OverdriveMeter.h",
+   "rows": 1,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "OverdriveTracker",
+   "header": "src/band3/game/OverdriveTracker.h",
+   "rows": 3,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "OvershellPanel",
+   "header": "src/band3/meta_band/OvershellPanel.h",
+   "rows": 10,
+   "functions": 77,
+   "best_pct": 100.0
+  },
+  {
+   "class": "OvershellSlot",
+   "header": "src/band3/meta_band/OvershellSlot.h",
+   "rows": 3,
+   "functions": 95,
+   "best_pct": 100.0
+  },
+  {
+   "class": "OvershellSlotState",
+   "header": "src/band3/meta_band/OvershellSlotState.h",
+   "rows": 2,
+   "functions": 19,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PassiveMessageQueue",
+   "header": "src/band3/meta_band/PassiveMessenger.h",
+   "rows": 1,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PassiveMessenger",
+   "header": "src/band3/meta_band/PassiveMessenger.h",
+   "rows": 2,
+   "functions": 18,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PatchPanel",
+   "header": "src/band3/meta_band/PatchPanel.h",
+   "rows": 1,
+   "functions": 23,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PatchRenderer",
+   "header": "src/system/bandobj/PatchRenderer.h",
+   "rows": 5,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PerfectSectionTracker",
+   "header": "src/band3/game/PerfectSectionTracker.h",
+   "rows": 4,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PerformanceData",
+   "header": "src/band3/meta_band/PerformanceData.h",
+   "rows": 3,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PhraseAnalyzer",
+   "header": "src/system/beatmatch/PhraseAnalyzer.h",
+   "rows": 2,
+   "functions": 6,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Piercing",
+   "header": "src/system/bandobj/OutfitConfig.h",
+   "rows": 1,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PitchArrow",
+   "header": "src/system/bandobj/PitchArrow.h",
+   "rows": 31,
+   "functions": 32,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PlatformMgr",
+   "header": "src/system/os/PlatformMgr.h",
+   "rows": 1,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PlayBack",
+   "header": "src/system/char/CharLipSync.h",
+   "rows": 3,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Player",
+   "header": "src/band3/game/Player.h",
+   "rows": 12,
+   "functions": 60,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PlayerTrackConfigList",
+   "header": "src/system/beatmatch/PlayerTrackConfig.h",
+   "rows": 3,
+   "functions": 23,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PracticeSectionProvider",
+   "header": "src/band3/game/PracticeSectionProvider.h",
+   "rows": 1,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PrefabMgr",
+   "header": "src/band3/meta_band/PrefabMgr.h",
+   "rows": 3,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "PropKeys",
+   "header": "src/system/rndobj/PropKeys.h",
+   "rows": 2,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RGTrainerPanel",
+   "header": "src/band3/game/RGTrainerPanel.h",
+   "rows": 6,
+   "functions": 32,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RandomGroupSeq",
+   "header": "src/system/synth/Sequence.h",
+   "rows": 1,
+   "functions": 14,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RandomGroupSeqInst",
+   "header": "src/system/synth/Sequence_p.h",
+   "rows": 1,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RealGuitarController",
+   "header": "src/system/beatmatch/RealGuitarController.h",
+   "rows": 2,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RealGuitarGemPlayer",
+   "header": "src/band3/game/RealGuitarGemPlayer.h",
+   "rows": 1,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RealGuitarTrackWatcherImpl",
+   "header": "src/system/beatmatch/RealGuitarTrackWatcherImpl.h",
+   "rows": 2,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RhythmDetector",
+   "header": "src/system/hamobj/RhythmDetector.h",
+   "rows": 20,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Rnd",
+   "header": "src/system/rndobj/Rnd.h",
+   "rows": 5,
+   "functions": 56,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndAmbientOcclusion",
+   "header": "src/system/rndobj/AmbientOcclusion.h",
+   "rows": 9,
+   "functions": 32,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndAnimFilter",
+   "header": "src/system/rndobj/AnimFilter.h",
+   "rows": 7,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndCam",
+   "header": "src/system/rndobj/Cam.h",
+   "rows": 14,
+   "functions": 36,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndCamAnim",
+   "header": "src/system/rndobj/CamAnim.h",
+   "rows": 2,
+   "functions": 20,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndConsole",
+   "header": "src/system/rndobj/Console.h",
+   "rows": 1,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndCubeTex",
+   "header": "src/system/rndobj/CubeTex.h",
+   "rows": 3,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndDir",
+   "header": "src/system/rndobj/Dir.h",
+   "rows": 1,
+   "functions": 129,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndFlare",
+   "header": "src/system/rndobj/Flare.h",
+   "rows": 2,
+   "functions": 27,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndFur",
+   "header": "src/system/rndobj/Fur.h",
+   "rows": 2,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndGenerator",
+   "header": "src/system/rndobj/Gen.h",
+   "rows": 16,
+   "functions": 40,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndLight",
+   "header": "src/system/rndobj/Lit.h",
+   "rows": 17,
+   "functions": 32,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndLightAnim",
+   "header": "src/system/rndobj/LitAnim.h",
+   "rows": 1,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndLine",
+   "header": "src/system/rndobj/Line.h",
+   "rows": 2,
+   "functions": 45,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndMatAnim",
+   "header": "src/system/rndobj/MatAnim.h",
+   "rows": 1,
+   "functions": 37,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndMesh",
+   "header": "src/system/rndobj/Mesh.h",
+   "rows": 2,
+   "functions": 120,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndMeshAnim",
+   "header": "src/system/rndobj/MeshAnim.h",
+   "rows": 5,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndMeshDeform",
+   "header": "src/system/rndobj/MeshDeform.h",
+   "rows": 2,
+   "functions": 32,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndMovie",
+   "header": "src/system/rndobj/Movie.h",
+   "rows": 1,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndPartLauncher",
+   "header": "src/system/rndobj/PartLauncher.h",
+   "rows": 4,
+   "functions": 19,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndParticleSys",
+   "header": "src/system/rndobj/Part.h",
+   "rows": 54,
+   "functions": 77,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndParticleSysAnim",
+   "header": "src/system/rndobj/PartAnim.h",
+   "rows": 1,
+   "functions": 23,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndPostProc",
+   "header": "src/system/rndobj/PostProc.h",
+   "rows": 5,
+   "functions": 25,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndScreenMask",
+   "header": "src/system/rndobj/ScreenMask.h",
+   "rows": 1,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndSet",
+   "header": "src/system/rndobj/Set.h",
+   "rows": 1,
+   "functions": 12,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndTex",
+   "header": "src/system/rndobj/Tex.h",
+   "rows": 3,
+   "functions": 21,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndTexBlendController",
+   "header": "src/system/rndobj/TexBlendController.h",
+   "rows": 4,
+   "functions": 16,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndTexBlender",
+   "header": "src/system/rndobj/TexBlender.h",
+   "rows": 8,
+   "functions": 18,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndTransAnim",
+   "header": "src/system/rndobj/TransAnim.h",
+   "rows": 10,
+   "functions": 38,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndTransProxy",
+   "header": "src/system/rndobj/TransProxy.h",
+   "rows": 1,
+   "functions": 19,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RockCentral",
+   "header": "src/band3/net_band/RockCentral.h",
+   "rows": 5,
+   "functions": 51,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SampleInst360",
+   "header": "src/system/synth_xbox/SampleInst360.h",
+   "rows": 1,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SampleZone",
+   "header": "src/system/synth/SampleZone.h",
+   "rows": 1,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SavedSetlist",
+   "header": "src/band3/meta_band/SavedSetlist.h",
+   "rows": 2,
+   "functions": 7,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Scoring",
+   "header": "src/band3/game/Scoring.h",
+   "rows": 1,
+   "functions": 29,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ScriptTask",
+   "header": "src/system/obj/Task.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SelectDifficultyPanel",
+   "header": "src/band3/meta_band/SelectDifficultyPanel.h",
+   "rows": 2,
+   "functions": 14,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Sequence",
+   "header": "src/system/synth/Sequence.h",
+   "rows": 2,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Server",
+   "header": "src/network/net/Server.h",
+   "rows": 4,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SetlistScoresProvider",
+   "header": "src/band3/meta_band/HeaderPerformanceProvider.h",
+   "rows": 3,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SetlistToStorePanel",
+   "header": "src/band3/meta_band/SetlistToStorePanel.h",
+   "rows": 1,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Sfx",
+   "header": "src/system/synth/Sfx.h",
+   "rows": 1,
+   "functions": 15,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SfxMap",
+   "header": "src/system/synth/Sfx.h",
+   "rows": 1,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "ShortcutNode",
+   "header": "src/band3/meta_band/SongSortNode.h",
+   "rows": 1,
+   "functions": 10,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SigninScreen",
+   "header": "src/band3/meta_band/SigninScreen.h",
+   "rows": 1,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Singer",
+   "header": "src/band3/game/Singer.h",
+   "rows": 4,
+   "functions": 36,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Sink",
+   "header": "src/system/obj/Msg.h",
+   "rows": 1,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SkeletonClip",
+   "header": "src/system/gesture/SkeletonClip.h",
+   "rows": 8,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SongData",
+   "header": "src/system/beatmatch/SongData.h",
+   "rows": 6,
+   "functions": 66,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SongMetadata",
+   "header": "src/system/meta/SongMetadata.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SongParser",
+   "header": "src/system/beatmatch/SongParser.h",
+   "rows": 43,
+   "functions": 61,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SongRecord",
+   "header": "src/band3/meta_band/SongRecord.h",
+   "rows": 4,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SongSortByRank",
+   "header": "src/band3/meta_band/SongSortByRank.h",
+   "rows": 1,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SpotDrawParams",
+   "header": "src/system/world/SpotlightDrawer.h",
+   "rows": 2,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Spotlight",
+   "header": "src/system/world/Spotlight.h",
+   "rows": 27,
+   "functions": 69,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SpotlightDrawer",
+   "header": "src/system/world/SpotlightDrawer.h",
+   "rows": 1,
+   "functions": 74,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SpotlightEntry",
+   "header": "src/system/world/LightPreset.h",
+   "rows": 1,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "StarDisplay",
+   "header": "src/system/bandobj/StarDisplay.h",
+   "rows": 2,
+   "functions": 31,
+   "best_pct": 100.0
+  },
+  {
+   "class": "StartTransitionMsg",
+   "header": "src/band3/game/UITransitionNetMsgs.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Stats",
+   "header": "src/band3/game/Stats.h",
+   "rows": 28,
+   "functions": 72,
+   "best_pct": 100.0
+  },
+  {
+   "class": "StickerProvider",
+   "header": "src/band3/meta_band/PatchPanel.h",
+   "rows": 1,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "StoreInfoPanel",
+   "header": "src/band3/meta_band/StoreInfoPanel.h",
+   "rows": 1,
+   "functions": 28,
+   "best_pct": 100.0
+  },
+  {
+   "class": "StoreMainPanel",
+   "header": "src/band3/meta_band/StoreMainPanel.h",
+   "rows": 1,
+   "functions": 26,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Strand",
+   "header": "src/system/char/CharHair.h",
+   "rows": 2,
+   "functions": 4,
+   "best_pct": 100.0
+  },
+  {
+   "class": "StreakMeter",
+   "header": "src/system/bandobj/StreakMeter.h",
+   "rows": 31,
+   "functions": 33,
+   "best_pct": 100.0
+  },
+  {
+   "class": "StreamReceiver360",
+   "header": "src/system/synth_xbox/StreamReceiver360.h",
+   "rows": 12,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Synchronizable",
+   "header": "src/network/net/Synchronize.h",
+   "rows": 1,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Synth",
+   "header": "src/system/synth/Synth.h",
+   "rows": 4,
+   "functions": 29,
+   "best_pct": 100.0
+  },
+  {
+   "class": "SynthEmitter",
+   "header": "src/system/synth/Emitter.h",
+   "rows": 8,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TalkyMatcher",
+   "header": "src/system/synth/VoiceBeat.h",
+   "rows": 2,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TambourineManager",
+   "header": "src/band3/game/TambourineManager.h",
+   "rows": 3,
+   "functions": 6,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TaskMgr",
+   "header": "src/system/obj/Task.h",
+   "rows": 5,
+   "functions": 22,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TexMovie",
+   "header": "src/system/movie/TexMovie.h",
+   "rows": 2,
+   "functions": 25,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TokenRedemptionPanel",
+   "header": "src/band3/meta_band/TokenRedemptionPanel.h",
+   "rows": 2,
+   "functions": 14,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Tour",
+   "header": "src/band3/tour/Tour.h",
+   "rows": 9,
+   "functions": 32,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TourPerformerImpl",
+   "header": "src/band3/tour/TourPerformer.h",
+   "rows": 1,
+   "functions": 12,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TourProgress",
+   "header": "src/band3/tour/TourProgress.h",
+   "rows": 4,
+   "functions": 44,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Track",
+   "header": "src/band3/bandtrack/Track.h",
+   "rows": 2,
+   "functions": 32,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TrackPanelDir",
+   "header": "src/system/bandobj/TrackPanelDir.h",
+   "rows": 12,
+   "functions": 49,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TrackPanelDirBase",
+   "header": "src/system/bandobj/TrackPanelDirBase.h",
+   "rows": 17,
+   "functions": 22,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TrackWatcher",
+   "header": "src/system/beatmatch/TrackWatcher.h",
+   "rows": 1,
+   "functions": 21,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TrackWatcherImpl",
+   "header": "src/system/beatmatch/TrackWatcherImpl.h",
+   "rows": 29,
+   "functions": 61,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Tracker",
+   "header": "src/band3/game/Tracker.h",
+   "rows": 1,
+   "functions": 22,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TrainerGemTab",
+   "header": "src/band3/game/TrainerGemTab.h",
+   "rows": 5,
+   "functions": 10,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TrainerProgressMeter",
+   "header": "src/band3/game/TrainerProgressMeter.h",
+   "rows": 2,
+   "functions": 5,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TrainingMgr",
+   "header": "src/band3/meta_band/TrainingMgr.h",
+   "rows": 2,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "TrainingPanel",
+   "header": "src/band3/meta_band/TrainingPanel.h",
+   "rows": 2,
+   "functions": 19,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UGCPurchasePanel",
+   "header": "src/band3/meta_band/UGCPurchasePanel.h",
+   "rows": 2,
+   "functions": 17,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UILabelDir",
+   "header": "src/system/ui/UILabelDir.h",
+   "rows": 2,
+   "functions": 7,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIList",
+   "header": "src/system/ui/UIList.h",
+   "rows": 15,
+   "functions": 70,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIListArrow",
+   "header": "src/system/ui/UIListArrow.h",
+   "rows": 2,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIListDir",
+   "header": "src/system/ui/UIListDir.h",
+   "rows": 1,
+   "functions": 31,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIListHighlight",
+   "header": "src/system/ui/UIListHighlight.h",
+   "rows": 1,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIListMesh",
+   "header": "src/system/ui/UIListMesh.h",
+   "rows": 2,
+   "functions": 10,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIListSlot",
+   "header": "src/system/ui/UIListSlot.h",
+   "rows": 1,
+   "functions": 16,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIListSubList",
+   "header": "src/system/ui/UIListSubList.h",
+   "rows": 1,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIListWidget",
+   "header": "src/system/ui/UIListWidget.h",
+   "rows": 3,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIPicture",
+   "header": "src/system/ui/UIPicture.h",
+   "rows": 6,
+   "functions": 22,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIScreen",
+   "header": "src/system/ui/UIScreen.h",
+   "rows": 4,
+   "functions": 23,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UIStats",
+   "header": "src/band3/meta_band/UIStats.h",
+   "rows": 7,
+   "functions": 9,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UITransitionHandler",
+   "header": "src/system/ui/UITransitionHandler.h",
+   "rows": 1,
+   "functions": 10,
+   "best_pct": 100.0
+  },
+  {
+   "class": "UITrigger",
+   "header": "src/system/ui/UITrigger.h",
+   "rows": 1,
+   "functions": 24,
+   "best_pct": 100.0
+  },
+  {
+   "class": "User",
+   "header": "src/system/os/User.h",
+   "rows": 1,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "VirtualKeyboard",
+   "header": "src/system/os/VirtualKeyboard.h",
+   "rows": 1,
+   "functions": 3,
+   "best_pct": 100.0
+  },
+  {
+   "class": "VocalNoteList",
+   "header": "src/system/beatmatch/VocalNote.h",
+   "rows": 2,
+   "functions": 16,
+   "best_pct": 100.0
+  },
+  {
+   "class": "VocalPart",
+   "header": "src/band3/game/VocalPart.h",
+   "rows": 11,
+   "functions": 34,
+   "best_pct": 100.0
+  },
+  {
+   "class": "VocalPlayer",
+   "header": "src/band3/game/VocalPlayer.h",
+   "rows": 27,
+   "functions": 94,
+   "best_pct": 100.0
+  },
+  {
+   "class": "VocalTrack",
+   "header": "src/band3/bandtrack/VocalTrack.h",
+   "rows": 34,
+   "functions": 79,
+   "best_pct": 100.0
+  },
+  {
+   "class": "VocalTrainerPanel",
+   "header": "src/band3/game/VocalTrainerPanel.h",
+   "rows": 4,
+   "functions": 13,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Watcher",
+   "header": "src/system/rndobj/Watcher.h",
+   "rows": 2,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Waypoint",
+   "header": "src/system/char/Waypoint.h",
+   "rows": 2,
+   "functions": 28,
+   "best_pct": 100.0
+  },
+  {
+   "class": "WorldCrowd",
+   "header": "src/system/world/Crowd.h",
+   "rows": 3,
+   "functions": 87,
+   "best_pct": 100.0
+  },
+  {
+   "class": "XLSPConnection",
+   "header": "src/system/net/XLSPConnection.h",
+   "rows": 1,
+   "functions": 8,
+   "best_pct": 100.0
+  },
+  {
+   "class": "XboxContent",
+   "header": "src/system/os/ContentMgr_Xbox.h",
+   "rows": 2,
+   "functions": 10,
+   "best_pct": 100.0
+  }
+ ],
+ "NEEDS_INSTRUCTION_WITNESS": [
+  {
+   "class": "CheatProvider",
+   "header": "src/system/ui/CheatProvider.h",
+   "rows": 4,
+   "functions": 2,
+   "best_pct": 99.6875
+  },
+  {
+   "class": "DataLoader",
+   "header": "src/system/obj/DataFile.h",
+   "rows": 2,
+   "functions": 7,
+   "best_pct": 100.0
+  },
+  {
+   "class": "DataPointMgr",
+   "header": "src/system/utl/DataPointMgr.h",
+   "rows": 2,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "DataResult",
+   "header": "src/band3/net_band/DataResults.h",
+   "rows": 2,
+   "functions": 1,
+   "best_pct": 0.0
+  },
+  {
+   "class": "DxTex",
+   "header": "src/system/rnddx9/Tex.h",
+   "rows": 6,
+   "functions": 7,
+   "best_pct": 0.0
+  },
+  {
+   "class": "GemStatus",
+   "header": "src/band3/game/GemPlayer.h",
+   "rows": 2,
+   "functions": 1,
+   "best_pct": 99.78261
+  },
+  {
+   "class": "HAQManager",
+   "header": "src/system/meta/HAQManager.h",
+   "rows": 1,
+   "functions": 2,
+   "best_pct": 37.19355
+  },
+  {
+   "class": "HamScrollSpeedIndicator",
+   "header": "src/system/hamobj/HamScrollSpeedIndicator.h",
+   "rows": 6,
+   "functions": 2,
+   "best_pct": 100.0
+  },
+  {
+   "class": "HiResScreen",
+   "header": "src/system/rndobj/HiResScreen.h",
+   "rows": 8,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "HttpReq",
+   "header": "src/system/net/HttpReq.h",
+   "rows": 3,
+   "functions": 1,
+   "best_pct": 100.0
+  },
+  {
+   "class": "Interpolator",
+   "header": "src/system/math/Interp.h",
+   "rows": 1,
+   "functions": 2,
+   "best_pct": 0.0
+  },
+  {
+   "class": "Merger",
+   "header": "src/system/char/FileMerger.h",
+   "rows": 9,
+   "functions": 1,
+   "best_pct": 86.5
+  },
+  {
+   "class": "MeshVert",
+   "header": "src/system/bandobj/BandPatchMesh.h",
+   "rows": 3,
+   "functions": 1,
+   "best_pct": 96.06504
+  },
+  {
+   "class": "RemoteBandUser",
+   "header": "src/band3/game/BandUser.h",
+   "rows": 5,
+   "functions": 11,
+   "best_pct": 100.0
+  },
+  {
+   "class": "RndShockwave",
+   "header": "src/system/rndobj/Shockwave.h",
+   "rows": 4,
+   "functions": 1,
+   "best_pct": 98.333336
+  },
+  {
+   "class": "Scheduler",
+   "header": "src/network/Core/Scheduler.h",
+   "rows": 5,
+   "functions": 26,
+   "best_pct": 0.0
+  },
+  {
+   "class": "SpeechMgr",
+   "header": "src/system/gesture/SpeechMgr.h",
+   "rows": 9,
+   "functions": 5,
+   "best_pct": 99.666664
+  },
+  {
+   "class": "TexProc",
+   "header": "src/system/rndobj/TexProc.h",
+   "rows": 11,
+   "functions": 1,
+   "best_pct": 95.0
+  },
+  {
+   "class": "TransformCrowd",
+   "header": "src/system/hamobj/HamCamTransform.h",
+   "rows": 1,
+   "functions": 1,
+   "best_pct": 78.63158
+  },
+  {
+   "class": "WebSvcRequest",
+   "header": "src/system/net/WebSvcReq.h",
+   "rows": 9,
+   "functions": 1,
+   "best_pct": 100.0
+  }
+ ]
+}

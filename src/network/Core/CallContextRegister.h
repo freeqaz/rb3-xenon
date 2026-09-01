@@ -30,8 +30,8 @@ namespace Quazal {
         static const char *type() { return "CallContextRegister"; }
 
         qMap<unsigned int, CallContext *> m_mapCallContextes; // 0x18
-        unsigned int m_uiNextID; // 0x30
+        unsigned int m_uiNextID; // 0x34
         MethodCallJob<CallContextRegister, int, PeriodicJob>
-            *m_pCheckExpiredCallsJob; // 0x34
+            *m_pCheckExpiredCallsJob; // 0x38
     };
 }

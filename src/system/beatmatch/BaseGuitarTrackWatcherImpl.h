@@ -45,14 +45,14 @@ public:
     void SetLastNoStrumGem(float, int);
     bool CanHopo(int) const;
 
-    float mLastLateGemHit; // 0xc0
-    int mLastNoStrumGemHit; // 0xc4
-    int mLastNoStrumGemSwung; // 0xc8
+    float mLastLateGemHit; // 0xcc
+    int mLastNoStrumGemHit; // 0xd0
+    int mLastNoStrumGemSwung; // 0xd4
     float mMostRecentHit; // 0xd8
     int mGemNotFretted; // 0xdc
-    int mFretWhenStrummed; // 0xd4
+    int mFretWhenStrummed; // 0xe0
     float mFretWaitTimeout; // 0xe4
     bool mHarmlessSwing; // 0xe8
-    float mFretSlop; // 0xe0
-    GemHitFlags mBaseGuitarFlags; // 0xe4
+    float mFretSlop; // 0xec
+    GemHitFlags mBaseGuitarFlags; // 0xf0
 };

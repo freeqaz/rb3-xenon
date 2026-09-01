@@ -106,28 +106,28 @@ public:
     void AddSetlistOffer(int);
     void ClearSetlistOffers();
 
-    unsigned int mFlags;                // 0x1c
-    int mLoadingState;                  // 0x20
-    int mContentSize;                   // 0x24
-    String mBasePath;                   // 0x28
-    void *mVersion;                     // 0x34
-    StoreStringTable *mStringTable;     // 0x38
-    void *mSongTable;                   // 0x3c
-    void *mOfferTable;                  // 0x40
-    void *mRbnOfferTable;               // 0x44
-    void *mPageTable;                   // 0x48
-    void *mCurrentPage;                 // 0x4c
-    StoreMarqueeTable *mMarqueeTable;   // 0x50
-    void *mRedemptionsTable;            // 0x54
-    std::map<unsigned long long, void *> unk58;  // 0x58
+    unsigned int mFlags;                // 0x28
+    int mLoadingState;                  // 0x2c
+    int mContentSize;                   // 0x30
+    String mBasePath;                   // 0x34
+    void *mVersion;                     // 0x40
+    StoreStringTable *mStringTable;     // 0x44
+    void *mSongTable;                   // 0x48
+    void *mOfferTable;                  // 0x4c
+    void *mRbnOfferTable;               // 0x50
+    void *mPageTable;                   // 0x54
+    void *mCurrentPage;                 // 0x58
+    StoreMarqueeTable *mMarqueeTable;   // 0x5c
+    void *mRedemptionsTable;            // 0x60
+    std::map<unsigned long long, void *> unk58;  // 0x64
     int unk70;
     int unk74;
     int unk78;
     int unk7c;
     int unk80;
-    int mErrorMsg;                      // 0x84
-    unsigned long long unk88;           // 0x88
-    unsigned short unk90;               // 0x90
+    int mErrorMsg;                      // 0x90
+    unsigned long long unk88;           // 0x98
+    unsigned short unk90;               // 0xa0
     int unk94;
     std::list<std::pair<unsigned long long, unsigned short> > unk98;
     int unka0;

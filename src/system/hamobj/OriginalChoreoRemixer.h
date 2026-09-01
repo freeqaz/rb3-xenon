@@ -38,12 +38,12 @@ protected:
     void SaveOriginalMoveParents();
     void BridgeGapsInMoveParents(int);
 
-    std::vector<const MoveVariant *> mMoveVariantsByDiff[kNumDifficultiesDC2]; // 0x9c
-    std::vector<const MoveParent *> mMoveParentsByDiff[kNumDifficultiesDC2]; // 0xc0
+    std::vector<const MoveVariant *> mMoveVariantsByDiff[kNumDifficultiesDC2]; // 0x98
+    std::vector<const MoveParent *> mMoveParentsByDiff[kNumDifficultiesDC2]; // 0xbc
     // by num players
-    Difficulty mDesiredDiffs[2]; // 0xe4
-    std::vector<int> unkec[2]; // 0xec
+    Difficulty mDesiredDiffs[2]; // 0xe0
+    std::vector<int> unkec[2]; // 0xe8
 
-    int mIntroMoveIndex; // 0x104 - index of first non-rest move
-    int mFinalPoseMoveIndex; // 0x108 - index of final pose move
+    int mIntroMoveIndex; // 0x100 - index of first non-rest move
+    int mFinalPoseMoveIndex; // 0x104 - index of final pose move
 };

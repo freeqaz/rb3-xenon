@@ -45,7 +45,7 @@ public:
     void Clear();
     void SetPublic(bool);
 
-    bool mPublic; // 0x3c
+    bool mPublic; // 0x48
 };
 
 class SearchSettings : public MatchmakingSettings {
@@ -53,5 +53,5 @@ public:
     SearchSettings(int, bool, int);
     virtual ~SearchSettings() {}
 
-    int mQueryID; // 0x20
+    int mQueryID; // 0x28
 };

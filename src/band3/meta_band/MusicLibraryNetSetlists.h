@@ -36,7 +36,7 @@ public:
     bool mSucceeded; // 0x29
     std::vector<NetSavedSetlist *> unk20;
     std::vector<NetSavedSetlist *> unk28;
-    DataResultList mDataResults; // 0x30
+    DataResultList mDataResults; // 0x44
     bool unk48;
     RndTex *mPendingSetlistArt; // 0x60
     Symbol unk50;

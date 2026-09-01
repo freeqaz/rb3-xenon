@@ -37,12 +37,12 @@ public:
     static void Init();
     static void Terminate();
 
-    bool unk1c; // 0x1c - mSelectSwitch
+    bool unk1c; // 0x28 - mSelectSwitch
     UIScreen *mDestinationScreen; // 0x2c
     int mDestinationDepth; // 0x30
-    bool unk28; // 0x28 - mForceAllowTransitions
-    bool unk29; // 0x29 - mForceDisableMessages
-    LockStepMgr *mUILockStep; // 0x2c
+    bool unk28; // 0x34 - mForceAllowTransitions
+    bool unk29; // 0x35 - mForceDisableMessages
+    LockStepMgr *mUILockStep; // 0x38
 };
 
 extern NetSync *TheNetSync;

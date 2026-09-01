@@ -74,12 +74,12 @@ protected:
     /** "Tint at hair ends" */
     Hmx::Color mEndsTint; // 0x5c
     /** "Detail map for finer fur.  Only the alpha channel is used." */
-    ObjPtr<RndTex> mFurDetail; // 0x70
+    ObjPtr<RndTex> mFurDetail; // 0x6c
     /** "Tiling for fur detail map.
         UVs of fur_detail are multiplied by this value."
         Ranges from 2.0e-2 to 100.
     */
     float mFurTiling; // 0x78
     /** "Wind Object, if set, blows on the fur." */
-    ObjPtr<RndWind> mWind; // 0x88
+    ObjPtr<RndWind> mWind; // 0x7c
 };

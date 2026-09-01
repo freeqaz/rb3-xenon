@@ -57,21 +57,21 @@ public:
     static void Init() { Register(); }
     static void Register() { REGISTER_OBJ_FACTORY(BinkClip) }
 
-    FilePath mFile; // 0x28
-    float mVolume; // 0x34
-    bool mLoop; // 0x38
-    bool mPreload; // 0x39
-    int mUnk3c; // 0x3c — retail RB3-360 member absent from the rb3-Wii decomp (member-delta R1)
+    FilePath mFile; // 0x34
+    float mVolume; // 0x40
+    bool mLoop; // 0x44
+    bool mPreload; // 0x45
+    int mUnk3c; // 0x48 — retail RB3-360 member absent from the rb3-Wii decomp (member-delta R1)
     StandardStream *mStream; // 0x4c
-    float mPlaybackVolumeOffset; // 0x44
-    void *mData; // 0x48
-    int mSize; // 0x4c
-    FileLoader *mLoader; // 0x50
-    std::vector<Fader *> mFaders; // 0x54
-    std::vector<PanInfo> mPanInfo; // 0x5c
-    Fader *mFadeOutFader; // 0x64
-    bool mFadingOut; // 0x68
+    float mPlaybackVolumeOffset; // 0x50
+    void *mData; // 0x54
+    int mSize; // 0x58
+    FileLoader *mLoader; // 0x5c
+    std::vector<Fader *> mFaders; // 0x60
+    std::vector<PanInfo> mPanInfo; // 0x6c
+    Fader *mFadeOutFader; // 0x78
+    bool mFadingOut; // 0x7c
     bool mUnloadWhenFinishedPlaying; // 0x7d
     bool mPlaying; // 0x7e
-    Loader *mStreamLoader; // 0x6c
+    Loader *mStreamLoader; // 0x80
 };

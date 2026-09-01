@@ -1,8 +1,23 @@
 # Tree-wide header offset audit — 2026-08-18
 
-> **STATUS (2026-08-18): CURRENT.** First systematic sweep of `// 0xHEX` header
-> comments against the compiler. **1,170/1,170 TUs, 0 failed.** Raw findings:
-> `header_offset_audit_2026-08-18.json`. Tool: `tools/header_offset_audit.py`.
+> ⛔ **STATUS (2026-09-01): SUPERSEDED — DO NOT TRIAGE THIS ARTIFACT.**
+> `header_offset_audit_2026-08-18.json` was produced by a version of
+> `audit_header()` carrying a **fourth** defect of the same family as the three
+> in §2: a base class's member was allowed to shadow the derived class's own
+> member of the same name, so the row was reported against the BASE offset —
+> and `--fix-header` writes rows back. Found on dc3-decomp (`21db38da9`) while
+> porting this tooling there, fixed here in `f68f5276`. Measured A/B over the
+> identical cached layouts: **23 of this artifact's rows are that artifact**,
+> **6 of them on comments that are CORRECT** (e.g.
+> `SyncGameStartPanel::mState // 0x3c` would have been rewritten to the
+> inherited `0x20`). Current sweep and triage:
+> [HEADER_OFFSET_AUDIT_2026-09-01.md](HEADER_OFFSET_AUDIT_2026-09-01.md),
+> raw findings `header_offset_audit_2026-09-01.json`.
+>
+> *Historical status (2026-08-18): CURRENT.* First systematic sweep of `// 0xHEX`
+> header comments against the compiler. **1,170/1,170 TUs, 0 failed.** Raw
+> findings: `header_offset_audit_2026-08-18.json`. Tool:
+> `tools/header_offset_audit.py`.
 > ⛔ **The headline number is a DISAGREEMENT count, not a defect count** — read
 > §3 before acting on it.
 

@@ -10,6 +10,6 @@ public:
     const char *FinalStr();
 
 private:
-    bool mTokensOnly; // 0x1014
-    bool mHasPercentFormat; // 0x1015
+    bool mTokensOnly; // 0x814
+    bool mHasPercentFormat; // 0x815
 };

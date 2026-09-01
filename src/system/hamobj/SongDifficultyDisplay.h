@@ -37,6 +37,6 @@ protected:
 
     void Update();
 
-    ObjPtr<RndAnimatable> mAnimation; // 0x44
-    ResourceDirPtr<RndDir> mResourceDir; // 0x58
+    ObjPtr<RndAnimatable> mAnimation; // 0x140
+    ResourceDirPtr<RndDir> mResourceDir; // 0x14c
 };

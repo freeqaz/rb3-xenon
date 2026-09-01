@@ -59,16 +59,16 @@ protected:
     CharFeedback();
 
     /** "Character for displaying filter feedback" */
-    ObjPtr<Character> mTarget; // 0x48
+    ObjPtr<Character> mTarget; // 0x2c
     /** "Mat to show on the character" */
-    ObjPtr<RndMat> mFailMat; // 0x5c
+    ObjPtr<RndMat> mFailMat; // 0x38
     /** "Min time a node must be failing to start flash" */
-    float mFailTriggerSecs; // 0x70
+    float mFailTriggerSecs; // 0x44
     /** "Min time a node must be flashing to stop" */
-    float mMinFailSecs; // 0x74
+    float mMinFailSecs; // 0x48
     /** "Time (secs) to fade in/out" */
-    float mFadeSecs; // 0x78
-    LimbState mLimbStates[4]; // 0x7c
+    float mFadeSecs; // 0x4c
+    LimbState mLimbStates[4]; // 0x50
     /** "Test limb(s) for debugging" */
-    FeedbackLimbs mTestLimbs; // 0xfc
+    FeedbackLimbs mTestLimbs; // 0xb0
 };

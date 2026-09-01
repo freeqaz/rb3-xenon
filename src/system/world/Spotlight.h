@@ -77,7 +77,7 @@ public:
         /** "Objects that create cutout shadow in the beam." */
         ObjPtrList<RndDrawable> mCutouts; // 0x4c
         /** "The material to use for the beam/cone" */
-        ObjPtr<RndMat> mMat; // 0x68
+        ObjPtr<RndMat> mMat; // 0x60
     };
     // Hmx::Object
     virtual ~Spotlight();
@@ -162,63 +162,63 @@ protected:
     static void BuildBoard();
 
     /** "Material to use for the floor spot" */
-    ObjPtr<RndMat> mSpotMaterial; // 0x108
-    RndFlare *mFlare; // 0x11c
+    ObjPtr<RndMat> mSpotMaterial; // 0xe0
+    RndFlare *mFlare; // 0xec
     /** "Whether the flare is enabled (keyframed by light presets)" */
-    bool mFlareEnabled; // 0x120
+    bool mFlareEnabled; // 0xf0
     /** "Whether the flare performs a visiblity test (or is always visible)" */
-    bool mFlareVisibilityTest; // 0x121
+    bool mFlareVisibilityTest; // 0xf1
     /** "Offset of flare along spotlight trajectory" */
-    float mFlareOffset; // 0x124
+    float mFlareOffset; // 0xf4
     /** "Scale of the floor disc" */
-    float mSpotScale; // 0x128
+    float mSpotScale; // 0xf8
     /** "Height offset of the floor disc" */
-    float mSpotHeight; // 0x12c
+    float mSpotHeight; // 0xfc
     Transform mFloorSpotXfm; // 0x100
-    Transform mLensXfm; // 0x170
+    Transform mLensXfm; // 0x140
     /** "Color of the spotlight" */
-    Hmx::Color mColor; // 0x1b0
+    Hmx::Color mColor; // 0x180
     /** "Intensity of the spotlight" */
-    float mIntensity; // 0x1c0
+    float mIntensity; // 0x190
     /** "Master for light color and intensity" */
-    ObjOwnerPtr<Spotlight> mColorOwner; // 0x1c4
+    ObjOwnerPtr<Spotlight> mColorOwner; // 0x194
     /** "Size of the lens billboard" */
-    float mLensSize; // 0x1d8
+    float mLensSize; // 0x1a0
     /** "Offset of the lens billboard" */
-    float mLensOffset; // 0x1dc
+    float mLensOffset; // 0x1a4
     /** "Material to use for the lens" */
-    ObjPtr<RndMat> mLensMaterial; // 0x1e0
+    ObjPtr<RndMat> mLensMaterial; // 0x1a8
     BeamDef mBeam; // 0x1b4
-    ObjPtrList<RndLight> mSlaves; // 0x270
+    ObjPtrList<RndLight> mSlaves; // 0x220
     /** "Optional light can mesh to use" */
-    ObjPtr<RndMesh> mLightCanMesh; // 0x284
-    Transform mLightCanXfm; // 0x298
+    ObjPtr<RndMesh> mLightCanMesh; // 0x234
+    Transform mLightCanXfm; // 0x240
     /** "Offset of light can along beam trajectory" */
-    float mLightCanOffset; // 0x2d8
+    float mLightCanOffset; // 0x280
     /** "Object to target spotlight.
         Note that it's easier to move a targetted spotlight
         in World space when in Milo." */
-    ObjPtr<RndTransformable> mTarget; // 0x2dc
+    ObjPtr<RndTransformable> mTarget; // 0x284
     bool mTargetLoaded; // true if mTarget loaded successfully
     /** "Reference object for floor height, uses spot target if not set" */
-    ObjPtr<RndTransformable> mSpotTarget; // 0x2f4
+    ObjPtr<RndTransformable> mSpotTarget; // 0x294
     /** Cached floor spot target Z coordinate, sentinel -1e33 when unset */
     float mFloorSpotTargetZ;
     /** "Whether the target should cast a shadow" */
-    bool mTargetShadow; // 0x30c
+    bool mTargetShadow; // 0x2a4
     /** "Can't optimize render end of render batching of light can with others" */
-    bool mLightCanSort; // 0x30d
+    bool mLightCanSort; // 0x2a5
     Hmx::Matrix3 mOrientMatrix;
     bool mSnapToTarget;
     /** "0-1, controls how fast spotlight moves to reach target" */
-    float mDampingConstant; // 0x344
+    float mDampingConstant; // 0x2dc
     /** "Additional objects that should be drawn by the spotlight." */
-    ObjPtrList<RndDrawable> mAdditionalObjects; // 0x348
+    ObjPtrList<RndDrawable> mAdditionalObjects; // 0x2e0
     Vector3 mLastTargetPos;
     /** "Whether this spotlight coloring should be animated by light presets." */
-    bool mAnimateColorFromPreset; // 0x36c
+    bool mAnimateColorFromPreset; // 0x304
     /** "Whether this spotlight position/rotation should be animated by light presets." */
-    bool mAnimateOrientationFromPreset; // 0x36d
-    bool mUpdating; // 0x36e
+    bool mAnimateOrientationFromPreset; // 0x305
+    bool mUpdating; // 0x306
     Hmx::Quat mDampQuat;
 };

@@ -20,5 +20,5 @@ public:
 protected:
     HamPartyJumpData();
 
-    std::vector<std::pair<int, int> > mJumps; // 0x2c
+    std::vector<std::pair<int, int> > mJumps; // 0x28
 };

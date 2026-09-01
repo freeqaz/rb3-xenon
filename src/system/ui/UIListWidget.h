@@ -102,9 +102,9 @@ protected:
 
     float mDrawOrder; // 0x28
     float mDisabledAlphaScale; // 0x2c
-    ObjPtr<UIColor> mDefaultColor; // 0x34
-    std::vector<std::vector<ObjPtr<UIColor> > > mColors; // 0x48 - a vector of vectors of
+    ObjPtr<UIColor> mDefaultColor; // 0x30
+    std::vector<std::vector<ObjPtr<UIColor> > > mColors; // 0x3c - a vector of vectors of
                                                          // ObjPtrs...wonderful
     UIListWidgetDrawType mWidgetDrawType; // 0x48
-    UIList *mParentList; // 0x58
+    UIList *mParentList; // 0x4c
 };

@@ -50,13 +50,13 @@ protected:
     const MoveParent *GetMoveParent(int, int);
     void AddRoutineMove(int, int, const MoveParent *, const MoveVariant *);
 
-    int mTotalMeasures; // 0x2c
-    std::set<const MoveVariant *> mPendingVariants; // 0x30
-    unsigned char mNeedsUpdate; // 0x48
-    int mFromMeasure; // 0x4c
-    int mToMeasure; // 0x50
-    std::map<int, int> mJumpMap; // 0x54
-    std::set<int> mUnscoredMeasures[2]; // 0x6c
+    int mTotalMeasures; // 0x28
+    std::set<const MoveVariant *> mPendingVariants; // 0x2c
+    unsigned char mNeedsUpdate; // 0x44
+    int mFromMeasure; // 0x48
+    int mToMeasure; // 0x4c
+    std::map<int, int> mJumpMap; // 0x50
+    std::set<int> mUnscoredMeasures[2]; // 0x68
 };
 
 void BuildSetOfPrevAdjacentMoveParents(std::set<const MoveParent *> &, const std::set<const MoveParent *> &);

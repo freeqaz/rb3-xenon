@@ -71,22 +71,22 @@ public:
     void SetFrontParent(RndGroup *grp) { mFrontParent = grp; }
     void SetXPos(float pos) { mXPos = pos; }
 
-    bool mPitched; // 0x1c
-    int mPart; // 0x20
+    bool mPitched; // 0x28
+    int mPart; // 0x2c
     bool unk_0x24;
-    int mGlowLevel; // 0x28
+    int mGlowLevel; // 0x34
     u8 unk_0x2C, unk_0x2D;
     float unk_0x30, unk_0x34;
-    float mEndX; // 0x38
-    RndMat *mBackMat; // 0x3c
-    RndMat *mFrontMat; // 0x40
+    float mEndX; // 0x44
+    RndMat *mBackMat; // 0x48
+    RndMat *mFrontMat; // 0x4c
     TubePlate *mBackPlate; // 0x50
     TubePlate *mFrontPlate; // 0x54
-    RndGroup *mBackParent; // 0x4c
-    RndGroup *mFrontParent; // 0x50
+    RndGroup *mBackParent; // 0x58
+    RndGroup *mFrontParent; // 0x5c
     float mXPos; // 0x60
     std::vector<Vector3> mPoints; // 0x64
-    float mAlpha; // 0x60
+    float mAlpha; // 0x70
 };
 
 #endif // BANDOBJ_NOTETUBE_H

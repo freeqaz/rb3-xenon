@@ -128,7 +128,7 @@ protected:
     int mState;
     bool mHasFailed;
     NetCacheMgrFailType mFailType; // 0x30
-    String mXLSPFilter; // 0x38
+    String mXLSPFilter; // 0x34
     unsigned int mServiceId; // 0x40
     // NB: RB3 has no mServiceIDObtained flag here (DC3-newer addition). RB3's
     // GetServiceId() is a trivial `return mServiceId;` (fn_82B3DB10), so the

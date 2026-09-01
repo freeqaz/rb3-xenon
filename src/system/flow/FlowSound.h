@@ -42,26 +42,26 @@ protected:
     void OnMarkerEvent(Symbol);
 
     /** "do not wait for sound to finish before finishing flow execution" */
-    bool mImmediateRelease; // 0x5c
+    bool mImmediateRelease; // 0x60
     /** "How should we handle stop requests?" */
-    StopMode mStopMode; // 0x60
-    bool mHasMarkerFired; // 0x64
-    int mStopMarkerType; // 0x68
-    bool mStopRequested; // 0x6c
+    StopMode mStopMode; // 0x64
+    bool mHasMarkerFired; // 0x68
+    int mStopMarkerType; // 0x6c
+    bool mStopRequested; // 0x70
     /** "The sound file to play" */
-    FlowPtr<Sound> mSound; // 0x70
+    FlowPtr<Sound> mSound; // 0x74
     /** "Volume of the sound, in Db" */
-    float mVolume; // 0x90
+    float mVolume; // 0x8c
     /** "pitch adjustment of the sound in semitones" */
-    float mTranspose; // 0x94
+    float mTranspose; // 0x90
     /** "Pan of the sound, -4 to +4" */
-    float mPan; // 0x98
-    bool mIsPlaying; // 0x9c
+    float mPan; // 0x94
+    bool mIsPlaying; // 0x98
     /** "If true, we stop all instances of this sound from playing" */
-    bool mForceStop; // 0x9d
+    bool mForceStop; // 0x99
     /** "Do we pass on running intensity to volume?" */
-    bool mUseIntensity; // 0x9e
-    float mCurrentIntensity; // 0xa0
+    bool mUseIntensity; // 0x9a
+    float mCurrentIntensity; // 0x9c
     // RB3 retail FlowSound: sizeof(FlowSound)==0xd4 (new(0xd4)). Compiler-verified
     // layout (cl.exe /d1reportSingleClassLayoutFlowSound) shows the vtordisp +
     // vbase-Object tail after this member is a fixed 0x2c bytes, so this pad must

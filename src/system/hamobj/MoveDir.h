@@ -41,12 +41,12 @@ public:
             mFeedbackMode = 0;
         }
         ObjPtr<HamMove> mCurMove; // 0x0
-        std::vector<DetectFrame> mDetectFrames; // 0x14
-        std::vector<HamMoveKey> mMoveKeys; // 0x20
-        int mFeedbackMode; // 0x2c
-        HamPhraseMeter *mPhraseMeter; // 0x30
-        CharFeedback *mFeedback; // 0x34
-        RndDrawable *mTextFeedback; // 0x38
+        std::vector<DetectFrame> mDetectFrames; // 0xc
+        std::vector<HamMoveKey> mMoveKeys; // 0x18
+        int mFeedbackMode; // 0x24
+        HamPhraseMeter *mPhraseMeter; // 0x28
+        CharFeedback *mFeedback; // 0x2c
+        RndDrawable *mTextFeedback; // 0x30
     };
     // Hmx::Object
     virtual ~MoveDir();
@@ -143,58 +143,58 @@ protected:
 
     virtual void MiloUpdate();
 
-    FilterVersion *mFilterVer; // 0x288
+    FilterVersion *mFilterVer; // 0x250
     /** "Show debugging overlay for the current HamMove" */
-    bool mShowMoveOverlay; // 0x28c
+    bool mShowMoveOverlay; // 0x254
     /** "Types of error nodes to show" */
     /** "Specific joints to display debug viz for" */
     /** A bitmask of ErrorNodeType enums */
-    int mErrorNodeInfo; // 0x290
+    int mErrorNodeInfo; // 0x258
     /** "Clip to play back in sync with the song" */
-    ObjPtr<SkeletonClip> mPlayClip; // 0x294
+    ObjPtr<SkeletonClip> mPlayClip; // 0x25c
     /** "Clip to use for song recording" */
-    ObjPtr<SkeletonClip> mRecordClip; // 0x2a8
-    ObjPtr<SkeletonClip> mAlternateRecordClip; // 0x2bc
-    ObjPtr<SkeletonClip> mSkeletonRecordClip; // 0x2d0
-    int unk2e4; // 0x2e4
+    ObjPtr<SkeletonClip> mRecordClip; // 0x268
+    ObjPtr<SkeletonClip> mAlternateRecordClip; // 0x274
+    ObjPtr<SkeletonClip> mSkeletonRecordClip; // 0x280
+    int unk2e4; // 0x28c
     /** "If set, report will be limited to this move" */
-    ObjPtr<HamMove> mReportMove; // 0x2e8
+    ObjPtr<HamMove> mReportMove; // 0x290
     /** "The pre-recorded .clp file to import" */
-    String mImportClipPath; // 0x2fc
-    bool mFiltersEnabled; // 0x304
-    Hmx::Object *mGamePanel; // 0x308
-    float unk30c; // 0x30c
-    float mDebugLoopMarker; // 0x310
-    FilterQueue *mFilterQueue; // 0x314
-    MovePlayerData mMovePlayerData[2]; // 0x318
-    MoveAsyncDetector *mAsyncDetector; // 0x390
-    DirLoader *mUpdateLoader; // 0x394
-    std::list<ObjDirPtr<UILabelDir> > mUpdateFonts; // 0x398
+    String mImportClipPath; // 0x29c
+    bool mFiltersEnabled; // 0x2a8
+    Hmx::Object *mGamePanel; // 0x2ac
+    float unk30c; // 0x2b0
+    float mDebugLoopMarker; // 0x2b4
+    FilterQueue *mFilterQueue; // 0x2b8
+    MovePlayerData mMovePlayerData[2]; // 0x2bc
+    MoveAsyncDetector *mAsyncDetector; // 0x324
+    DirLoader *mUpdateLoader; // 0x328
+    std::list<ObjDirPtr<UILabelDir> > mUpdateFonts; // 0x32c
     /** Smoothed normalized results of the current move. */
-    DoubleExponentialSmoother mCurMoveSmoothers[2]; // 0x3a0
+    DoubleExponentialSmoother mCurMoveSmoothers[2]; // 0x334
 
     // current move stuffs vs last move stuffs?
-    HamMove *filler[2]; // 0x3c8
-    HamMove *mCurMove[2]; // 0x3d0
-    float mCurMoveNormalizedResult[2]; // 0x3d8
-    float mPrevMoveNormalizedResult[2]; // 0x3e8
-    MoveRating mCurMoveRating[2]; // 0x3e0
-    int mPrevMoveRating[2]; // 0x3f0
+    HamMove *filler[2]; // 0x35c
+    HamMove *mCurMove[2]; // 0x364
+    float mCurMoveNormalizedResult[2]; // 0x36c
+    float mPrevMoveNormalizedResult[2]; // 0x374
+    MoveRating mCurMoveRating[2]; // 0x37c
+    int mPrevMoveRating[2]; // 0x384
 
-    int mFinishingMoveMeasure; // 0x3f8
-    RndOverlay *mMoveOverlay; // 0x3fc
-    ObjPtr<DancerSequence> mDancerSeq; // 0x400
-    DancerSkeleton *unk414; // 0x414
-    SkeletonViz *mSkeletonViz; // 0x418
-    const DetectFrame *mShowErrorFrames; // 0x41c
+    int mFinishingMoveMeasure; // 0x38c
+    RndOverlay *mMoveOverlay; // 0x390
+    ObjPtr<DancerSequence> mDancerSeq; // 0x394
+    DancerSkeleton *unk414; // 0x3a0
+    SkeletonViz *mSkeletonViz; // 0x3a4
+    const DetectFrame *mShowErrorFrames; // 0x3a8
     /** "Offset debug skeleton by latency offset" */
-    bool mDebugLatencyOffset; // 0x420
-    Skeleton mDebugSkeleton; // 0x424
-    bool mDebugLoop; // 0xef8
-    float mLastPollMs; // 0xefc
+    bool mDebugLatencyOffset; // 0x3ac
+    Skeleton mDebugSkeleton; // 0x3b0
+    bool mDebugLoop; // 0xe84
+    float mLastPollMs; // 0xe88
     /** "Show collision debug" */
-    bool mDebugCollision; // 0xf00
-    Transform unkf04[2]; // 0xf04
-    int unkf84; // 0xf84
-    std::set<DetectFrame *> unkf88; // 0xf88
+    bool mDebugCollision; // 0xe8c
+    Transform unkf04[2]; // 0xe90
+    int unkf84; // 0xf10
+    std::set<DetectFrame *> unkf88; // 0xf14
 };

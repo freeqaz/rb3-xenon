@@ -23,7 +23,7 @@ public:
 
     static void Init();
 
-    ObjDirPtr<ObjectDir> unk1c; // 0x1c
+    ObjDirPtr<ObjectDir> unk1c; // 0x28
     bool unk28; // 0x34
 };
 

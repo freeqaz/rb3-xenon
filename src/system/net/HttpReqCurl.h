@@ -27,8 +27,8 @@ private:
     char *mBuffer; // 0x58 - file the output should be written to
     unsigned int mBufferLength; // 0x5c
     String mSSLCertPath; // 0x60
-    String mSSLCertName; // 0x68
-    unsigned short mSSLVerifyPeer; // 0x70
-    unsigned short mSSLVerifyHost; // 0x72
-    unsigned int mTimeoutMs; // 0x74
+    String mSSLCertName; // 0x6c
+    unsigned short mSSLVerifyPeer; // 0x78
+    unsigned short mSSLVerifyHost; // 0x7a
+    unsigned int mTimeoutMs; // 0x7c
 };

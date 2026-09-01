@@ -53,59 +53,59 @@ private:
     static int sHamSaveVer;
 
     /** The song's name. */
-    String mName; // 0x50
+    String mName; // 0x4c
     /** The song's artist(s). */
     String mArtist; // 0x58
-    String unk60; // 0x60
+    String unk60; // 0x64
     /** The song's album. */
-    String mAlbumName; // 0x68
+    String mAlbumName; // 0x70
     /** Is this song a Wavegroup cover? */
-    bool mIsCover; // 0x70
+    bool mIsCover; // 0x7c
     /** Is this song a medley/mashup? Leftover from DC1. */
-    bool mIsMedley; // 0x71
+    bool mIsMedley; // 0x7d
     /** Is authoring complete for this song?
         Marked FALSE for unreleased DLC and TRUE for everything else. */
-    bool mIsComplete; // 0x72
+    bool mIsComplete; // 0x7e
     /** Is this song fake? (i.e. hide it from the song select menu) */
-    bool mIsFake; // 0x73
+    bool mIsFake; // 0x7f
     /** The song's rank. The higher the number, the more difficult this song is. */
-    float mRank; // 0x74
+    float mRank; // 0x80
     /** The song's rating (i.e. family friendly, supervision required).
         In DC, everything is marked 2 (supervision required). */
-    short mRating; // 0x78
+    short mRating; // 0x84
     /** The assigned character for this song. Leftover from DC1.
         Unused in DC3 in favor of default/backup characters below. */
-    Symbol mCharacter; // 0x7c
+    Symbol mCharacter; // 0x88
     /** The assigned gender for this song. Should match the character. */
-    HamGender mGender; // 0x80
+    HamGender mGender; // 0x8c
     /** The length of this song, in ms. */
-    int mLength; // 0x84
+    int mLength; // 0x90
     /** The overall BPM of this song. */
-    int mBpm; // 0x88
+    int mBpm; // 0x94
     /** Does this song have extra authoring files via an alternate path? */
-    bool mAlternatePath; // 0x8c
+    bool mAlternatePath; // 0x98
     /** This song's English pronunciations. */
-    std::vector<String> mPronunciations; // 0x90
+    std::vector<String> mPronunciations; // 0x9c
     /** This song's pronunciations in other languages. */
-    std::vector<PronunciationsLoc> mPronunciationsLocalized; // 0x9c
+    std::vector<PronunciationsLoc> mPronunciationsLocalized; // 0xa8
     /** This song's authored midi events. */
-    std::map<int, Symbol> mMidiEvents; // 0xa8
+    std::map<int, Symbol> mMidiEvents; // 0xb4
     /** The assigned character/outfit combo for this song. */
-    Symbol mDefaultChar; // 0xc0
+    Symbol mDefaultChar; // 0xcc
     /** The fallback outfit for the assigned character,
         in case the original outfit is locked. */
-    Symbol mDefaultCharAlt; // 0xc4
+    Symbol mDefaultCharAlt; // 0xd0
     /** The fallback character/outfit combo for this song,
         in case the original character is locked. */
-    Symbol mBackupChar; // 0xc8
+    Symbol mBackupChar; // 0xd4
     /** The fallback outfit for the fallback character,
         in case the fallback's original outfit is locked. */
-    Symbol mBackupCharAlt; // 0xcc
+    Symbol mBackupCharAlt; // 0xd8
     /** The assigned venue for this song. */
-    Symbol mVenue; // 0xd0
+    Symbol mVenue; // 0xdc
     /** The fallback venue for this song, in case the original venue is locked. */
-    Symbol mBackupVenue; // 0xd4
+    Symbol mBackupVenue; // 0xe0
     /** The year this song came out. */
-    int mYearReleased; // 0xd8
-    int mDJIntensityRank; // 0xdc
+    int mYearReleased; // 0xe4
+    int mDJIntensityRank; // 0xe8
 };

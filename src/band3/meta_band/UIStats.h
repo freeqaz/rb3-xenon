@@ -27,14 +27,14 @@ public:
     DataNode OnMsg(const UIComponentFocusChangeMsg &);
     DataNode OnMsg(const UIScreenChangeMsg &);
 
-    bool mPublishingPad; // 0x1c
+    bool mPublishingPad; // 0x28
     Symbol mLastMode; // 0x2c
-    unsigned char mLastWasParticipating[4]; // 0x24
-    OnlineID mLastPadID[4]; // 0x28
-    String mLastBreedString[4]; // 0x48
-    OnlineID mLastRemoteID[4]; // 0x78
-    int mLastControllerType[4]; // 0x98
-    int mLastDroppedScreen; // 0xa8
+    unsigned char mLastWasParticipating[4]; // 0x30
+    OnlineID mLastPadID[4]; // 0x38
+    String mLastBreedString[4]; // 0x78
+    OnlineID mLastRemoteID[4]; // 0xa8
+    int mLastControllerType[4]; // 0xe8
+    int mLastDroppedScreen; // 0xf8
     int mLastPublishTime; // 0xfc
     void *mPadLogBuffer; // 0x100
     void *mPadLogWritePtr; // 0x104

@@ -45,49 +45,49 @@ protected:
     void ResetAnim();
     void OnAnimEvent(Symbol);
 
-    ObjOwnerPtr<AnimTask> mAnimTask; // 0x5c
+    ObjOwnerPtr<AnimTask> mAnimTask; // 0x60
     /** "Anim object to animate" */
-    FlowPtr<RndAnimatable> mAnim; // 0x70
+    FlowPtr<RndAnimatable> mAnim; // 0x6c
     /** "How should we handle stop requests?" */
-    StopMode mStopMode; // 0x90
-    bool mBetweenStopMarkers; // 0x94
-    int mDeferredStopMode; // 0x98
+    StopMode mStopMode; // 0x84
+    bool mBetweenStopMarkers; // 0x88
+    int mDeferredStopMode; // 0x8c
     /** "Blend time, does not work on Property Animations!" */
-    float mBlend; // 0x9c
+    float mBlend; // 0x90
     /** "wait until current animation finishes before starting" */
-    bool mWait; // 0xa0
+    bool mWait; // 0x94
     /** "delay in units before starting this animation" */
-    float mDelay; // 0xa4
+    float mDelay; // 0x98
     /** "Enable animation filtering" */
-    bool mEnable; // 0xa8
+    bool mEnable; // 0x9c
     /** "Rate to animate" */
-    RndAnimatable::Rate mRate; // 0xac
+    RndAnimatable::Rate mRate; // 0xa0
     /** "Start frame of animation" */
-    float mStart; // 0xb0
+    float mStart; // 0xa4
     /** "End frame of animation" */
-    float mEnd; // 0xb4
+    float mEnd; // 0xa8
     /** "Period of animation if non-zero" */
-    float mPeriod; // 0xb8
+    float mPeriod; // 0xac
     /** "Scale of animation" */
-    float mScale; // 0xbc
+    float mScale; // 0xb0
     /** "How the animation is played". Possible options:
         (range "Play from [start] frame to [end] frame, then stop")
         (loop "Loop animation from [start] to [end] frame")
         (dest "Play from current frame to [end] frame")
     */
-    Symbol mType; // 0xc0
-    bool mStopDeferred; // 0xc4
+    Symbol mType; // 0xb4
+    bool mStopDeferred; // 0xb8
     /** "Easing to apply to animation" */
-    EaseType mEase; // 0xc8
+    EaseType mEase; // 0xbc
     /** "Modifier to easing equation" */
-    float mEasePower; // 0xcc
+    float mEasePower; // 0xc0
     /** "Wraps animation frame values into range rather than clamping them.
     This will make the animation loop when the frame is out of range." */
-    bool mWrap; // 0xd0
+    bool mWrap; // 0xc4
     /** "If true, Flow will not track/stop or otherwise affect this animation again." */
-    bool mImmediateRelease; // 0xd1
+    bool mImmediateRelease; // 0xc5
     // See FlowDistance.h: retail RB3 sizes FlowNode-derived objects 0x10 larger
     // than dc3's newer layout; trailing pad in the virtual-Hmx::Object region.
     // NewObject size immediate (0x104) confirms via the sizeof oracle.
-    char _retailTrailingPad[16]; // 0xd4
+    char _retailTrailingPad[16]; // 0xc6
 };

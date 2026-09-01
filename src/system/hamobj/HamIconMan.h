@@ -29,14 +29,14 @@ public:
 protected:
     HamIconMan();
 
-    ObjPtr<RndTex> mTexture; // 0x50
-    float mStartBeat; // 0x64
-    float mEndBeat; // 0x68
-    float mOffset; // 0x6c
+    ObjPtr<RndTex> mTexture; // 0x34
+    float mStartBeat; // 0x40
+    float mEndBeat; // 0x44
+    float mOffset; // 0x48
     /** "Difficulty for iconman to be dancing" */
-    Difficulty mDifficulty; // 0x70
-    Symbol mMoveName; // 0x74
-    ObjPtr<CharClip> mCharClip; // 0x78
-    float mBPMOverride; // 0x8c
-    bool mPlayIntroTransition; // 0x90
+    Difficulty mDifficulty; // 0x4c
+    Symbol mMoveName; // 0x50
+    ObjPtr<CharClip> mCharClip; // 0x54
+    float mBPMOverride; // 0x60
+    bool mPlayIntroTransition; // 0x64
 };

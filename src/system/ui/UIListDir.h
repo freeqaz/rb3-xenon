@@ -77,7 +77,7 @@ protected:
     float mScrollHighlightChange; // 0x1f0
     /** "draw widgets in preview mode?" */
     bool mTestMode; // 0x1f4
-    UIListState mTestState; // 0x218
+    UIListState mTestState; // 0x1f8
     /** "total number of data elements" */
     int mTestNumData; // 0x240
     /** "test gaps between elements". Ranges from 0 to 1000. */

@@ -23,8 +23,8 @@ public:
         // layout don't depend on the allocator, and STLport vector is the same
         // size regardless, so drop the 2nd arg on every target.
         std::vector<Edge> mEdges; // 0x0
-        std::set<unsigned short> mVerts; // 0x8
-        float mXOffset; // 0x20
+        std::set<unsigned short> mVerts; // 0xc
+        float mXOffset; // 0x24
     };
 
     ChordShapeGenerator();
@@ -122,26 +122,26 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(ChordShapeGenerator)
 
-    ObjPtr<RndMesh> mFingerSrcMesh; // 0x1c
-    ObjPtr<RndMesh> mChordSrcMesh; // 0x28
-    ObjPtr<RndTransformable> mBaseXSection; // 0x34
-    ObjPtr<RndTransformable> mContourXSection; // 0x40
-    ObjPtr<RndTransformable> mBaseHeight; // 0x4c
+    ObjPtr<RndMesh> mFingerSrcMesh; // 0x28
+    ObjPtr<RndMesh> mChordSrcMesh; // 0x34
+    ObjPtr<RndTransformable> mBaseXSection; // 0x40
+    ObjPtr<RndTransformable> mContourXSection; // 0x4c
+    ObjPtr<RndTransformable> mBaseHeight; // 0x58
     int mNumSlots; // 0x64
     std::vector<int> mStringFrets; // 0x68
-    std::vector<bool> unk64; // 0x64
-    ObjPtr<RndTransformable> mString0; // 0x6c
-    ObjPtr<RndTransformable> mString1; // 0x78
-    ObjPtr<RndTransformable> mString2; // 0x84
-    ObjPtr<RndTransformable> mString3; // 0x90
-    ObjPtr<RndTransformable> mString4; // 0x9c
-    ObjPtr<RndTransformable> mString5; // 0xa8
+    std::vector<bool> unk64; // 0x74
+    ObjPtr<RndTransformable> mString0; // 0x88
+    ObjPtr<RndTransformable> mString1; // 0x94
+    ObjPtr<RndTransformable> mString2; // 0xa0
+    ObjPtr<RndTransformable> mString3; // 0xac
+    ObjPtr<RndTransformable> mString4; // 0xb8
+    ObjPtr<RndTransformable> mString5; // 0xc4
     std::vector<float> mFretHeights; // 0xd0
-    std::vector<float> mGradeDistances; // 0xbc
-    RndMesh *mSource; // 0xc4
-    float mBaseXVal; // 0xc8
-    float mContourXVal; // 0xcc
-    float mBaseHeightVal; // 0xd0
-    CrossSec sec1; // 0xd4
-    CrossSec sec2; // 0xf8
+    std::vector<float> mGradeDistances; // 0xdc
+    RndMesh *mSource; // 0xe8
+    float mBaseXVal; // 0xec
+    float mContourXVal; // 0xf0
+    float mBaseHeightVal; // 0xf4
+    CrossSec sec1; // 0xf8
+    CrossSec sec2; // 0x120
 };

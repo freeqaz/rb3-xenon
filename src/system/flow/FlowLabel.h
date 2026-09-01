@@ -29,5 +29,5 @@ public:
 protected:
     FlowLabel();
 
-    Symbol mLabel; // 0x68
+    Symbol mLabel; // 0x6c
 };

@@ -55,7 +55,7 @@ private:
 protected:
     virtual void Start(WebSvcRequest *req);
 
-    CURLM *mCurlMultiHandle; // 0x4c
+    CURLM *mCurlMultiHandle; // 0x48
 };
 
 extern WebSvcMgrCurl gWebSvcMgr;

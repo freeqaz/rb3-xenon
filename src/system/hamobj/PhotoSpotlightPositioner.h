@@ -30,5 +30,5 @@ protected:
 
     int mPlayer; // 0x8
     ObjPtr<RndGroup> mSpotlight; // 0xc
-    ObjPtr<RndMesh> mRefImage; // 0x20
+    ObjPtr<RndMesh> mRefImage; // 0x18
 };

@@ -40,7 +40,7 @@ private:
     void *mEnumBuffer;
     DWORD mEnumBufferSize;
     int unk24;
-    XOVERLAPPED mXOverlapped; // 0x28
+    XOVERLAPPED mXOverlapped; // 0x2c
     int unk44;
     // NB: retail RB3-360's XLSPConnection is 0x4c (76) bytes, ending here --
     // verified via NetCacheMgrInit's `new NetCacheMgrXbox()` allocation size

@@ -30,5 +30,5 @@ public:
     const RGState &GetRGState() const;
     void SetRGState(const RGState &);
 
-    RGState mRGState; // 0x40c
+    RGState mRGState; // 0x43c
 };

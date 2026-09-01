@@ -15,6 +15,6 @@ namespace Quazal {
 
         VoiceChannel *m_pChannel; // 0x4
         qVector<int> m_vSinkDevices; // 0x8
-        bool m_bAutoOpen; // 0x10
+        bool m_bAutoOpen; // 0x14
     };
 }

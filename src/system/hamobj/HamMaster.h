@@ -61,30 +61,30 @@ private:
     void CheckBeat();
     void CheckLevels();
 
-    HamSongData *mSongData; // 0x30
-    HamAudio *mAudio; // 0x34
-    MidiParserMgr *mMidiParserMgr; // 0x38
-    SongInfo *mSongInfo; // 0x3c
-    HamMasterLoader *mLoader; // 0x40
-    bool mSyncLoad; // 0x44
-    bool mLoaded; // 0x45
-    float mSongMs; // 0x48
-    float mStreamMs; // 0x4c
-    bool mStreamJumped; // 0x50
-    float mPreJumpMs; // 0x54
-    float mPostJumpMs; // 0x58
-    float mStreamMsAtJump; // 0x5c
-    SongPos mSongPos; // 0x60
-    SongPos mPrevSongPos; // 0x78
-    std::vector<int> mSubmixIdxs; // 0x90
-    float unk9c; // 0x9c
-    float unka0; // 0xa0
-    float unka4; // 0xa4
-    std::list<Vector2> mLevelHistory; // 0xa8
-    int unkb0; // 0xb0
-    int mLastBeatIndex; // 0xb4
-    int mBeatCount; // 0xb8
-    bool mMetronome; // 0xbc
+    HamSongData *mSongData; // 0x2c
+    HamAudio *mAudio; // 0x30
+    MidiParserMgr *mMidiParserMgr; // 0x34
+    SongInfo *mSongInfo; // 0x38
+    HamMasterLoader *mLoader; // 0x3c
+    bool mSyncLoad; // 0x40
+    bool mLoaded; // 0x41
+    float mSongMs; // 0x44
+    float mStreamMs; // 0x48
+    bool mStreamJumped; // 0x4c
+    float mPreJumpMs; // 0x50
+    float mPostJumpMs; // 0x54
+    float mStreamMsAtJump; // 0x58
+    SongPos mSongPos; // 0x5c
+    SongPos mPrevSongPos; // 0x70
+    std::vector<int> mSubmixIdxs; // 0x84
+    float unk9c; // 0x90
+    float unka0; // 0x94
+    float unka4; // 0x98
+    std::list<Vector2> mLevelHistory; // 0x9c
+    int unkb0; // 0xa4
+    int mLastBeatIndex; // 0xa8
+    int mBeatCount; // 0xac
+    bool mMetronome; // 0xb0
 };
 
 extern HamMaster *TheMaster;

@@ -76,21 +76,21 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(TrackPanelDir)
 
-    int unk244; // 0x244
-    int mTestMultiplier; // 0x248
+    int unk244; // 0x2b4
+    int mTestMultiplier; // 0x2b8
     int unk24c; // 0x2bc
-    int unk250; // 0x250
-    int unk254; // 0x254
-    ObjPtr<VocalTrackDir> mVocalTrack; // 0x258
-    ObjPtr<BandCrowdMeter> mCrowdMeter; // 0x264
-    ObjPtr<RndDir> mBandScoreMultiplier; // 0x270
-    ObjPtr<EventTrigger> mBandScoreMultiplierTrig; // 0x27c
-    ObjPtr<EndingBonus> mEndingBonus; // 0x288
-    ObjPtr<RndDir> mScoreboard; // 0x294
-    ObjPtr<RndGroup> mPulseAnimGrp; // 0x2a0
+    int unk250; // 0x2c0
+    int unk254; // 0x2c4
+    ObjPtr<VocalTrackDir> mVocalTrack; // 0x2c8
+    ObjPtr<BandCrowdMeter> mCrowdMeter; // 0x2d4
+    ObjPtr<RndDir> mBandScoreMultiplier; // 0x2e0
+    ObjPtr<EventTrigger> mBandScoreMultiplierTrig; // 0x2ec
+    ObjPtr<EndingBonus> mEndingBonus; // 0x2f8
+    ObjPtr<RndDir> mScoreboard; // 0x304
+    ObjPtr<RndGroup> mPulseAnimGrp; // 0x310
     bool unk2ac; // 0x31c
     bool unk2ad; // 0x31d
-    bool mTracksExtended; // 0x2ae
+    bool mTracksExtended; // 0x31e
     // Retail X360 stores this as a RAW owning pointer (4 bytes at this+0x320),
     // not an ObjPtr: the ctor emits a single `stw r0, 0x320(this)` with no
     // ObjRef construction, and ~TrackPanelDir plain-deletes it. (rb3-Wii's dev

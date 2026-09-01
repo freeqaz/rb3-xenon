@@ -53,15 +53,15 @@ private:
     void UpdateMatchingPose(int);
     void OnFatalResult(int, bool);
 
-    bool mInFatality[2]; // 0x2c
-    int mFatalStartBeats[2]; // 0x30 - per player
-    int mFatalEndBeat; // 0x38
-    int mComboStartBeat[2]; // 0x3c - beat-relative combo start per player
-    int mFatalityPoseIndex[2]; // 0x44 - 1-8 random pose index
-    Skeleton mPlayerSkeletons[2]; // 0x4c
-    float mFatalityProgress[2]; // 0x15f4 - accumulates completion progress per player
-    float mHoldDuration; // 0x15fc - default 0.5f, loaded from OSC /holdduration
-    FreestyleMoveRecorder mRecorder; // 0x1600
+    bool mInFatality[2]; // 0x28
+    int mFatalStartBeats[2]; // 0x2c - per player
+    int mFatalEndBeat; // 0x34
+    int mComboStartBeat[2]; // 0x38 - beat-relative combo start per player
+    int mFatalityPoseIndex[2]; // 0x40 - 1-8 random pose index
+    Skeleton mPlayerSkeletons[2]; // 0x48
+    float mFatalityProgress[2]; // 0x15f0 - accumulates completion progress per player
+    float mHoldDuration; // 0x15f8 - default 0.5f, loaded from OSC /holdduration
+    FreestyleMoveRecorder mRecorder; // 0x15fc
     float unk1710[2];
     float unk1718[2];
     bool mMatchingActive[2]; // 0x1720 - tracks active matching state per player

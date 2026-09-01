@@ -71,25 +71,25 @@ protected:
     void ComputeElbowPullAndQuat(QuatXfm &, const Transform &, const Vector3 &);
 
     /** "pointer to a HamIKSkeleton object" */
-    ObjPtr<HamIKSkeleton> mSkeleton; // 0x30
+    ObjPtr<HamIKSkeleton> mSkeleton; // 0x28
     /** "The character end effector or prop to be constrained.
         When hilit, the big red circles are the "'natural"' 'positions,'
         the blue circles are the desired 'destination,'
         and the green circle is where it was 'IK\qd' to.
         Each "target" shows up as an axis display
         with the current weight shown next to 'it."' */
-    ObjPtr<RndTransformable> mEffector; // 0x44
+    ObjPtr<RndTransformable> mEffector; // 0x34
     /** "The actual trans to IK to constraints.
         Effector is still the thing that gets moved, if NULL, same as effector" */
-    ObjPtr<RndTransformable> mFinger; // 0x58
+    ObjPtr<RndTransformable> mFinger; // 0x40
     /** "for pelvis/feet specifies a ground plane height" */
-    ObjPtr<RndTransformable> mGround; // 0x6c
+    ObjPtr<RndTransformable> mGround; // 0x4c
     /** "More constraints to evaluate" */
-    ObjPtr<HamIKEffector> mMore; // 0x80
+    ObjPtr<HamIKEffector> mMore; // 0x58
     /** "Can call others to do ik on the same bone before doing shoulder fixup" */
-    ObjPtr<CharPollable> mOther; // 0x94
+    ObjPtr<CharPollable> mOther; // 0x64
     /** "If hand, pointer to elbow object" */
-    ObjPtr<HamIKEffector> mElbow; // 0xa8
-    ObjVector<Constraint> mConstraints; // 0xbc
-    ObjPtr<Character> mCharacter; // 0xcc
+    ObjPtr<HamIKEffector> mElbow; // 0x70
+    ObjVector<Constraint> mConstraints; // 0x7c
+    ObjPtr<Character> mCharacter; // 0x8c
 };

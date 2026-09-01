@@ -14,7 +14,7 @@ public:
     virtual bool CanBeLaunched() const;
     virtual bool HasSpecificSongsToLaunch() const;
 
-    Symbol mSetlist; // 0x74
+    Symbol mSetlist; // 0x90
     ScoreType mInstrument; // 0x94
     Difficulty mDifficulty; // 0x98
     int mMinStars; // 0x9c

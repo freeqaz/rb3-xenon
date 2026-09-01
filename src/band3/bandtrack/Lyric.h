@@ -27,19 +27,19 @@ public:
     String mText; // 0x2c
     bool mPitched; // 0x38
     std::vector<const VocalNote *> mVocalNotes; // 0x3c
-    int mLead; // 0x44
-    bool mWordEnd; // 0x48
-    bool mChunkEnd; // 0x49
-    int mDeployIdx; // 0x4c
-    bool mAfterMidPhraseShift; // 0x50
+    int mLead; // 0x48
+    bool mWordEnd; // 0x4c
+    bool mChunkEnd; // 0x4d
+    int mDeployIdx; // 0x50
+    bool mAfterMidPhraseShift; // 0x54
     Vector3 mBeginPos; // 0x58
     float mXWidth; // 0x68
-    float mHighlightMs; // 0x64
-    float mActiveMs; // 0x68
-    float mEndMs; // 0x6c
-    float mInvalidateMs; // 0x70
-    bool mPhraseEnd; // 0x74
-    Hmx::Color mLastColor; // 0x78
+    float mHighlightMs; // 0x6c
+    float mActiveMs; // 0x70
+    float mEndMs; // 0x74
+    float mInvalidateMs; // 0x78
+    bool mPhraseEnd; // 0x7c
+    Hmx::Color mLastColor; // 0x80
 };
 
 class LyricPlate : public Hmx::Object {
@@ -68,16 +68,16 @@ public:
     int mNumCharsUsed; // 0x2c
     RndText *mText; // 0x30
     std::vector<Lyric *> mSyllables; // 0x34
-    Hmx::Color mPreviewColor; // 0x3c
-    Hmx::Color mActiveColor; // 0x4c
-    Hmx::Color mNowColor; // 0x5c
-    Hmx::Color mPastColor; // 0x6c
-    Hmx::Color mPreviewPhonemeColor; // 0x7c
-    Hmx::Color mActivePhonemeColor; // 0x8c
-    Hmx::Color mNowPhonemeColor; // 0x9c
-    Hmx::Color mPastPhonemeColor; // 0xac
-    RndText::Style mPitchedStyle; // 0xbc
-    RndText::Style mUnpitchedStyle; // 0xd4
+    Hmx::Color mPreviewColor; // 0x40
+    Hmx::Color mActiveColor; // 0x50
+    Hmx::Color mNowColor; // 0x60
+    Hmx::Color mPastColor; // 0x70
+    Hmx::Color mPreviewPhonemeColor; // 0x80
+    Hmx::Color mActivePhonemeColor; // 0x90
+    Hmx::Color mNowPhonemeColor; // 0xa0
+    Hmx::Color mPastPhonemeColor; // 0xb0
+    RndText::Style mPitchedStyle; // 0xc0
+    RndText::Style mUnpitchedStyle; // 0xe4
     float mInvalidateMs; // 0x108
     bool mBaked; // 0x10c
     bool mNeedSync; // 0x10d

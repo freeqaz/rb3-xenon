@@ -83,24 +83,24 @@ public:
 
     std::vector<IconData> mIconData; // 0x1dc
     bool mMaxed; // 0x1e8
-    float mPeakValue; // 0x198
+    float mPeakValue; // 0x1ec
     bool mDisabled; // 0x1f0
-    std::vector<Hmx::Color> mLevelColors; // 0x1a0
-    int mExcitement; // 0x1a8 - excitementlevel
+    std::vector<Hmx::Color> mLevelColors; // 0x1f4
+    int mExcitement; // 0x200 - excitementlevel
     TrackPanelInterface *mTrackPanel; // 0x204
-    ObjPtrList<RndGroup> mOrderedPeaks; // 0x1b0
-    ObjPtr<EventTrigger> mBandEnergyDeployTrig; // 0x1c0
-    ObjPtr<EventTrigger> mBandEnergyStopTrig; // 0x1cc
-    ObjPtr<EventTrigger> mDisabledStartTrig; // 0x1d8
-    ObjPtr<EventTrigger> mDisabledStopTrig; // 0x1e4
-    ObjPtr<EventTrigger> mShowPeakArrowTrig; // 0x1f0
-    ObjPtr<EventTrigger> mHidePeakArrowTrig; // 0x1fc
+    ObjPtrList<RndGroup> mOrderedPeaks; // 0x208
+    ObjPtr<EventTrigger> mBandEnergyDeployTrig; // 0x21c
+    ObjPtr<EventTrigger> mBandEnergyStopTrig; // 0x228
+    ObjPtr<EventTrigger> mDisabledStartTrig; // 0x234
+    ObjPtr<EventTrigger> mDisabledStopTrig; // 0x240
+    ObjPtr<EventTrigger> mShowPeakArrowTrig; // 0x24c
+    ObjPtr<EventTrigger> mHidePeakArrowTrig; // 0x258
     std::vector<ObjPtr<EventTrigger> > mExcitementTrigs; // 0x264
-    ObjPtr<EventTrigger> mCanJoinTrig; // 0x210
-    ObjPtr<EventTrigger> mCannotJoinTrig; // 0x21c
-    ObjPtr<EventTrigger> mJoinInvalidTrig; // 0x228
-    int unk234; // 0x234
-    ObjPtr<RndMatAnim> mCrowdMeterAnim; // 0x238
-    float mValue; // 0x244
-    float mIconValues[5]; // 0x248
+    ObjPtr<EventTrigger> mCanJoinTrig; // 0x270
+    ObjPtr<EventTrigger> mCannotJoinTrig; // 0x27c
+    ObjPtr<EventTrigger> mJoinInvalidTrig; // 0x288
+    int unk234; // 0x294
+    ObjPtr<RndMatAnim> mCrowdMeterAnim; // 0x298
+    float mValue; // 0x2a4
+    float mIconValues[5]; // 0x2a8
 };

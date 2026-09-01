@@ -186,18 +186,18 @@ public:
     SessionData *mData; // 0x1c
     std::vector<User *> mUsers; // 0x20
     LocalUser *mLocalHost; // 0x2c
-    SessionData *mJoinData; // 0x2c
-    SessionSettings *mSettings; // 0x30
-    JobMgr mJobMgr; // 0x34
-    int mCurrentStateJobID; // 0x44
+    SessionData *mJoinData; // 0x30
+    SessionSettings *mSettings; // 0x34
+    JobMgr mJobMgr; // 0x38
+    int mCurrentStateJobID; // 0x48
     GameState mGameState; // 0x4c
-    JoinResultMsg *mRevertingJoinResult; // 0x4c
-    std::vector<int> mStillArbitrating; // 0x50
+    JoinResultMsg *mRevertingJoinResult; // 0x50
+    std::vector<int> mStillArbitrating; // 0x54
     Quazal::Time *mGameStartTime; // 0x60
-    int mGameStartDelay; // 0x5c
+    int mGameStartDelay; // 0x64
     SessionState mState; // 0x68
     bool mOnlineEnabled; // 0x6c
-    QuazalSession *mQNet; // 0x68
+    QuazalSession *mQNet; // 0x70
 };
 
 extern NetSession *TheNetSession;

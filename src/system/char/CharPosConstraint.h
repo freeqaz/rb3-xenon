@@ -34,7 +34,7 @@ protected:
     /** "Bone to be higher than" */
     ObjPtr<RndTransformable> mSrc; // 0x8
     /** "Bones to constrain" */
-    ObjPtrList<RndTransformable> mTargets; // 0x1c
+    ObjPtrList<RndTransformable> mTargets; // 0x14
     /** "Bounding box, make min > max to ignore that dimension" */
     Box mBox; // 0x28
 };

@@ -28,14 +28,14 @@ public:
 
     static void SystemCheckCallback(char const *, char const *, unsigned int);
 
-    NetGameData *mGameData; // 0x1c
-    NetSession *mSession; // 0x20
-    SessionSearcher *mSearcher; // 0x24
-    Server *mServer; // 0x28
-    NetworkEmulator *mEmulator; // 0x2c
-    VoiceChatMgr *mVoiceChatMgr; // 0x30
-    SyncStore *mSyncStore; // 0x34
-    unsigned char *mThreadStack; // 0x38
+    NetGameData *mGameData; // 0x28
+    NetSession *mSession; // 0x2c
+    SessionSearcher *mSearcher; // 0x30
+    Server *mServer; // 0x34
+    NetworkEmulator *mEmulator; // 0x38
+    VoiceChatMgr *mVoiceChatMgr; // 0x3c
+    SyncStore *mSyncStore; // 0x40
+    unsigned char *mThreadStack; // 0x44
     int unk3c;
     int unk40;
     int unk44;
@@ -46,8 +46,8 @@ public:
     // (0x20), which is BEFORE this field, so the thread representation does not
     // affect its codegen. Keep an opaque byte span of the Wii size so the few
     // trailing members keep their offsets until the network layer is ported.
-    unsigned char mThread[0x360 - 0x48]; // 0x48
-    RndOverlay *mNetOverlay; // 0x360
+    unsigned char mThread[0x360 - 0x48]; // 0x54
+    RndOverlay *mNetOverlay; // 0x36c
 };
 
 void TerminateTheNet();

@@ -30,7 +30,7 @@ public:
 
     ObjPtr<CharServoBone> mServo; // 0x20
     ObjPtr<CharServoBone> mMirrorServo; // 0x2c
-    CharBonesAlloc mBones; // 0x50
+    CharBonesAlloc mBones; // 0x38
     std::vector<MirrorOp> mOps; // 0xb8
 
     void SetServo(CharServoBone *);

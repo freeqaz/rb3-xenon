@@ -94,30 +94,30 @@ public:
         }
 
         std::vector<GemInProgress> mGemsInProgress; // 0x0
-        bool mActivePlayers; // 0x8
-        int mForceHopoOnStart; // 0xc
-        int mForceHopoOnEnd; // 0x10
-        int mForceHopoOffStart; // 0x14
-        int mForceHopoOffEnd; // 0x18
+        bool mActivePlayers; // 0xc
+        int mForceHopoOnStart; // 0x10
+        int mForceHopoOnEnd; // 0x14
+        int mForceHopoOffStart; // 0x18
+        int mForceHopoOffEnd; // 0x1c
 
         // RG string info?
-        RGGemInfo mRGGemsInfo[6]; // 0x1c, 0x38, 0x54, 0x70, 0x8c, 0xa8
+        RGGemInfo mRGGemsInfo[6]; // 0x20, 0x38, 0x54, 0x70, 0x8c, 0xa8
 
-        int mRGArpeggioStartTick; // 0xc4
+        int mRGArpeggioStartTick; // 0xc8
         int unkc8, unkcc;
 
-        RGStrumType mRGAreaStrumType; // 0xd0
-        int mRGAreaStrumStartTick; // 0xd4
-        int mRGAreaStrumEndTick; // 0xd8
-        int mRGLooseStrumStartTick; // 0xdc
-        int mRGLooseStrumEndTick; // 0xe0
-        char mRGChordText[64]; // 0xe4
-        int mRGChordTextTick; // 0x124
-        int mRGChordNumsStartTick; // 0x128
-        int mRGChordNumsEndTick; // 0x12c
-        int mRGLeftHandSlideStartTick; // 0x130
-        int mRGLeftHandSlideEndTick; // 0x134
-        bool mRGFlipSlideDirection; // 0x138
+        RGStrumType mRGAreaStrumType; // 0xd4
+        int mRGAreaStrumStartTick; // 0xd8
+        int mRGAreaStrumEndTick; // 0xdc
+        int mRGLooseStrumStartTick; // 0xe0
+        int mRGLooseStrumEndTick; // 0xe4
+        char mRGChordText[64]; // 0xe8
+        int mRGChordTextTick; // 0x128
+        int mRGChordNumsStartTick; // 0x12c
+        int mRGChordNumsEndTick; // 0x130
+        int mRGLeftHandSlideStartTick; // 0x134
+        int mRGLeftHandSlideEndTick; // 0x138
+        bool mRGFlipSlideDirection; // 0x13c
     };
 
     SongParser(InternalSongParserSink &, int, TempoMap *&, MeasureMap *&, int);
@@ -248,36 +248,36 @@ public:
     bool mMerging; // 0x34
     std::vector<MidiReceiver *> mReceivers; // 0x38
     InternalSongParserSink *mSink; // 0x44
-    SongInfo *mSongInfo; // 0x44
-    DataArray *mTrackNameMapping; // 0x48
-    int mNumPlayers; // 0x4c
+    SongInfo *mSongInfo; // 0x48
+    DataArray *mTrackNameMapping; // 0x4c
+    int mNumPlayers; // 0x50
     int mNumDifficulties; // 0x54
     int mTrack; // 0x58
-    int mCurTrackIndex; // 0x58
-    int mTrackPartNum; // 0x5c
-    int mNextRealTrack; // 0x60
-    int mNextFakeTrack; // 0x64
-    DataArray *mSubMixes; // 0x68
+    int mCurTrackIndex; // 0x5c
+    int mTrackPartNum; // 0x60
+    int mNextRealTrack; // 0x64
+    int mNextFakeTrack; // 0x68
+    DataArray *mSubMixes; // 0x6c
     DataArray *mRollIntervals; // 0x70
     DataArray *mTrillIntervals; // 0x74
-    std::vector<PartInfo> mParts; // 0x74
+    std::vector<PartInfo> mParts; // 0x78
     std::vector<DifficultyInfo> mDifficultyInfos; // 0x84
     int mCommonPhraseInProgress; // 0x90
     int mSoloPhraseInProgress; // 0x94
     int mDrumFillInProgress; // 0x98
     int mRollInProgress; // 0x9c
     int mTrillInProgress; // 0xa0
-    int mPlayerFocusInProgress[2]; // 0x98, 0x9c
+    int mPlayerFocusInProgress[2]; // 0xa4, 0x9c
     unsigned char mTrillMask; // 0xac
     unsigned char mRollMask; // 0xad
-    std::vector<unsigned int> mRollSlotsArray; // 0xa4
-    std::vector<std::pair<int, int> > mTrillSlotsArray; // 0xac
-    std::vector<RGRollChord> mRGRollArray; // 0xb4
-    std::vector<RGTrill> mRGTrillArray; // 0xbc
+    std::vector<unsigned int> mRollSlotsArray; // 0xb0
+    std::vector<std::pair<int, int> > mTrillSlotsArray; // 0xbc
+    std::vector<RGRollChord> mRGRollArray; // 0xc8
+    std::vector<RGTrill> mRGTrillArray; // 0xd4
     int mVocalRangeShiftStartTick; // 0xe0
     int mSoloPhraseEndTick; // 0xe4
     int mDrumFillEndTick; // 0xe8
-    int mNumSoloPhrases; // 0xd0
+    int mNumSoloPhrases; // 0xec
     enum {
         kIgnore = 0,
         kGems = 1,
@@ -286,48 +286,48 @@ public:
         kEvents = 4,
         kRealGuitar = 5
     } mState; // 0xd4
-    Symbol mTrackName; // 0xd8
+    Symbol mTrackName; // 0xf4
     TrackType mTrackType; // 0xf8
-    PartInfo *mTrackPart; // 0xe0
-    bool mTrackAllowsHopos; // 0xe4
+    PartInfo *mTrackPart; // 0xfc
+    bool mTrackAllowsHopos; // 0x100
     int mKeyboardDifficulty; // 0x104
-    int mKeyboardRangeFirstPitch; // 0xec
-    int mKeyboardRangeSecondPitch; // 0xf0
-    int mKeyboardRangeStartTick; // 0xf4
-    float mKeyboardRangeShiftDuration; // 0xf8
+    int mKeyboardRangeFirstPitch; // 0x108
+    int mKeyboardRangeSecondPitch; // 0x10c
+    int mKeyboardRangeStartTick; // 0x110
+    float mKeyboardRangeShiftDuration; // 0x114
     unsigned int mCurrentFillLanes; // 0x118
     unsigned int mCurrentCymbalSlots; // 0x11c
-    bool mIgnoreGemDurations; // 0x104
-    bool mSeparateParts; // 0x105
-    std::list<TrackType> mDrumStyleInstruments; // 0x108
-    std::list<TrackType> mVocalStyleInstruments; // 0x110
+    bool mIgnoreGemDurations; // 0x120
+    bool mSeparateParts; // 0x121
+    std::list<TrackType> mDrumStyleInstruments; // 0x124
+    std::list<TrackType> mVocalStyleInstruments; // 0x12c
     bool mDrumStyleGems; // 0x134
-    bool mForceDrumStyleGems; // 0x119
+    bool mForceDrumStyleGems; // 0x135
     int mSectionStartTick; // 0x138
     int mSectionEndTick; // 0x13c
-    std::vector<Symbol> mTrackNames; // 0x124
-    bool mLyricPitchSet; // 0x12c
-    bool mLyricTextSet; // 0x12d
-    bool mLyricBends; // 0x12e
-    int mNextLyricTextTick; // 0x130
-    String mNextLyric; // 0x134
-    VocalNote mCurVocalNote; // 0x140
-    VocalNote mPrevVocalNote; // 0x174
-    ReadingState mReadingState; // 0x1a8
-    int mNumDrumChannels; // 0x1ac
+    std::vector<Symbol> mTrackNames; // 0x140
+    bool mLyricPitchSet; // 0x14c
+    bool mLyricTextSet; // 0x14d
+    bool mLyricBends; // 0x14e
+    int mNextLyricTextTick; // 0x150
+    String mNextLyric; // 0x154
+    VocalNote mCurVocalNote; // 0x160
+    VocalNote mPrevVocalNote; // 0x194
+    ReadingState mReadingState; // 0x1c8
+    int mNumDrumChannels; // 0x1cc
     int mDrumSubmixDifficultyMask; // 0x1d0
-    bool mReportedMissingDrumSubmix[4]; // 0x1b4, 0x1b5, 0x1b6, 0x1b7
+    bool mReportedMissingDrumSubmix[4]; // 0x1d4, 0x1b5, 0x1b6, 0x1b7
     int mCodaStartTick; // 0x1d8
     int mCodaEndTick; // 0x1dc
     int mSoloGemDifficultyMask; // 0x1e0
     int mVocalPhraseStartTick; // 0x1e4
     int mLastTambourineGemTick; // 0x1e8
     int mLastTambourineAutoTick; // 0x1ec
-    int mLastBeatTick; // 0x1d0
-    int mLastBeatType; // 0x1d4
-    bool mHaveBeatFailure; // 0x1d8
-    int mPartToReadIdx; // 0x1dc
-    unsigned char mSoloPitch; // 0x1e0
+    int mLastBeatTick; // 0x1f0
+    int mLastBeatType; // 0x1f4
+    bool mHaveBeatFailure; // 0x1f8
+    int mPartToReadIdx; // 0x1fc
+    unsigned char mSoloPitch; // 0x200
     int mRGHandPos; // 0x204
     int mRGRootNote; // 0x208
     int mChordMarkupMedInProgress; // 0x20c

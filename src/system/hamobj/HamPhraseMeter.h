@@ -30,18 +30,18 @@ public:
 
 protected:
     /** "what do animate" */
-    ObjPtr<RndAnimatable> mAnim; // 0x1fc
+    ObjPtr<RndAnimatable> mAnim; // 0x1dc
     /** "Current rating frac (for testing)". Ranges from 0 to 1. */
-    float mRatingFrac; // 0x210
+    float mRatingFrac; // 0x1e8
     /** "Current rating symbol (for testing)".
         Options are (move_perfect move_awesome move_ok move_bad) */
-    Symbol mRating; // 0x214
+    Symbol mRating; // 0x1ec
     /** "Desired animation speed (frames per beat)" */
-    float mDesiredFPB; // 0x218
+    float mDesiredFPB; // 0x1f0
     /** "Value of the first frame of a perfect rating" */
-    float mFirstPerfectFrame; // 0x21c
-    float mTargetFrame; // 0x220
-    float mCurrentFPB; // 0x224
+    float mFirstPerfectFrame; // 0x1f4
+    float mTargetFrame; // 0x1f8
+    float mCurrentFPB; // 0x1fc
     /** "Player index this phrase meter is for". Is either 0 or 1. */
-    int mPlayerIndex; // 0x228
+    int mPlayerIndex; // 0x200
 };

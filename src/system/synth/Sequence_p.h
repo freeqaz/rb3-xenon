@@ -52,7 +52,7 @@ protected:
     virtual void Poll();
     virtual void StartImpl();
 
-    int mNumSeqs; // 0x40
+    int mNumSeqs; // 0x50
     ObjVector<ObjPtr<SeqInst> >::iterator mIt; // 0x54
 };
 

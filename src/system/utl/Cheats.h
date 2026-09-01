@@ -71,16 +71,16 @@ private:
     DataNode OnMsg(KeyboardKeyMsg const &);
 
 protected:
-    std::vector<LongJoyCheat> mLongJoyCheats; // 0x2c
-    std::vector<QuickJoyCheat> mQuickJoyCheats[2]; // 0x38
+    std::vector<LongJoyCheat> mLongJoyCheats; // 0x28
+    std::vector<QuickJoyCheat> mQuickJoyCheats[2]; // 0x34
     std::vector<KeyCheat> mKeyCheats; // 0x4c
-    Symbol mSymMode; // 0x5c
-    std::vector<QuickJoyCheat *> mJoyCheatPtrsMode[2]; // 0x60
+    Symbol mSymMode; // 0x58
+    std::vector<QuickJoyCheat *> mJoyCheatPtrsMode[2]; // 0x5c
     std::vector<KeyCheat *> mKeyCheatPtrsMode; // 0x74
-    Timer mLastButtonTime; // 0x88
-    bool mKeyCheatsEnabled; // 0xb8
-    bool mJoyCheatsEnabled; // 0xb9
-    bool mUnlockAll; // 0xba
+    Timer mLastButtonTime; // 0x80
+    bool mKeyCheatsEnabled; // 0xb0
+    bool mJoyCheatsEnabled; // 0xb1
+    bool mUnlockAll; // 0xb2
     std::list<CheatLog> mBuffer; // 0xb4
     int mMaxBuffer; // 0xbc
 #ifdef HX_NATIVE

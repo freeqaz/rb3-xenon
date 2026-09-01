@@ -17,10 +17,10 @@ public:
     NEW_OBJ(ClipGraphGenerator);
 
 protected:
-    const DataArray *mTypeData; // 0x2c
-    ClipDistMap *mDmap; // 0x30
-    CharClip *mClipA; // 0x34
-    CharClip *mClipB; // 0x38
+    const DataArray *mTypeData; // 0x28
+    ClipDistMap *mDmap; // 0x2c
+    CharClip *mClipA; // 0x30
+    CharClip *mClipB; // 0x34
 
     DataNode OnGenerateTransitions(DataArray *);
 };

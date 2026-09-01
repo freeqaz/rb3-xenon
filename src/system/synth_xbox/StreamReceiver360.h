@@ -39,20 +39,20 @@ private:
 #ifdef HX_NATIVE
     std::list<Voice *> mPendingVoices; // 0x802C
 #else
-    stlpmtx_std::list<Voice *, stlpmtx_std::StlNodeAlloc<Voice *>> mPendingVoices; // 0x802C
+    stlpmtx_std::list<Voice *, stlpmtx_std::StlNodeAlloc<Voice *>> mPendingVoices; // 0x1802c
 #endif
 
-    unsigned char *mStreamBuf; // 0x8034
-    Voice *mSlipVoice;          // 0x8038
-    Voice *mVoice;             // 0x803C
-    int mSampleRate;           // 0x8040
-    int mNumBufs;              // 0x8044
-    float mVolume;             // 0x8048
-    float mPan;                // 0x804C
-    float mSpeed;              // 0x8050
-    ADSRImpl mADSR;            // 0x8054
-    int mFxSend;                // 0x8078
-    bool mTagged;               // 0x807C
+    unsigned char *mStreamBuf; // 0x18034
+    Voice *mSlipVoice;          // 0x18038
+    Voice *mVoice;             // 0x1803c
+    int mSampleRate;           // 0x18040
+    int mNumBufs;              // 0x18044
+    float mVolume;             // 0x18048
+    float mPan;                // 0x1804c
+    float mSpeed;              // 0x18050
+    ADSRImpl mADSR;            // 0x18054
+    int mFxSend;                // 0x1807c
+    bool mTagged;               // 0x18080
 };
 
 StreamReceiver *New360Receiver(int, int, bool, int);

@@ -69,14 +69,14 @@ protected:
     float mElbowSwing; // 0x54
     /** "Turn this on to do IK calcs even if weight is 0" */
     bool mAlwaysIKElbow; // 0x58
-    bool mHandChanged; // 0x71
+    bool mHandChanged; // 0x59
     /** "Are we allowed to pull the shoulder to reach goal,
         or do we lock the elbow when goal is too far?" */
-    bool mPullShoulder; // 0x72
-    Vector3 mWorldDst; // 0x74
-    float mInv2ab; // 0x84 - precomputed: 1/(2*forearm*hand), law-of-cosines IK denominator inverse
-    float mAABB; // 0x88 - precomputed: forearm^2 + hand^2, law-of-cosines constant
-    float mAAPlusBB; // 0x8c - total arm reach: forearm + hand
+    bool mPullShoulder; // 0x5a
+    Vector3 mWorldDst; // 0x5c
+    float mInv2ab; // 0x6c - precomputed: 1/(2*forearm*hand), law-of-cosines IK denominator inverse
+    float mAABB; // 0x70 - precomputed: forearm^2 + hand^2, law-of-cosines constant
+    float mAAPlusBB; // 0x74 - total arm reach: forearm + hand
     /** "Constrain the wrist rotation to be believable" */
     bool mConstraintWrist; // 0x78
     /** "Constrain wrist rotation to this angle (in radians)" */

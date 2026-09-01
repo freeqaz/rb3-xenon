@@ -71,10 +71,10 @@ public:
     static void Init() { REGISTER_OBJ_FACTORY(ManageBandPanel); }
 
     ManageBandState mManageBandState; // 0x3c
-    int unk3c; // 0x3c
+    int unk3c; // 0x40
     int mSelectedStandIn; // 0x44
     StandInProvider *mStandInProvider; // 0x48
     CharProvider *mCharProvider; // 0x4c
     BandProfile *mProfile; // 0x50
-    VignetteViewerProvider *mHistoryProvider; // 0x50
+    VignetteViewerProvider *mHistoryProvider; // 0x54
 };

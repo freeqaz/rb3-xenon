@@ -36,7 +36,7 @@ public:
 
 class MessageTask : public Task {
 private:
-    ObjOwnerPtr<Hmx::Object> mObj; // 0x2c
+    ObjOwnerPtr<Hmx::Object> mObj; // 0x28
     DataArray *mMsg; // 0x34
 public:
     MessageTask(Hmx::Object *, DataArray *);
@@ -63,7 +63,7 @@ public:
 protected:
     std::list<Var> mVars; // 0x28
     std::list<Hmx::Object *> mObjects; // 0x30
-    ObjOwnerPtr<Hmx::Object> mThis; // 0x3c
+    ObjOwnerPtr<Hmx::Object> mThis; // 0x38
     DataArray *mScript; // 0x44
     bool mOnce; // 0x48
 
@@ -185,12 +185,12 @@ private:
     DataNode OnTimeTilNext(DataArray *);
 
     TaskTimeline *mTimelines; // 0x28
-    SongPos mSongPos; // 0x30
+    SongPos mSongPos; // 0x2c
     bool mAutoSecondsBeats; // 0x40
-    int unk4c; // 0x4c
-    Timer mTime; // 0x50
-    float mAVOffset; // 0x80
-    std::vector<ObjPtr<Task> > unk84; // 0x84
+    int unk4c; // 0x44
+    Timer mTime; // 0x48
+    float mAVOffset; // 0x78
+    std::vector<ObjPtr<Task> > unk84; // 0x7c
 };
 
 extern TaskMgr TheTaskMgr;

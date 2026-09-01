@@ -23,7 +23,7 @@ public:
 
     String mDisplayedString; // 0x0
     std::vector<String> mSingerStrings; // 0xc
-    String mFooterString; // 0x14
-    float unk20; // 0x20
-    float unk24; // 0x24
+    String mFooterString; // 0x18
+    float unk20; // 0x24
+    float unk24; // 0x28
 };

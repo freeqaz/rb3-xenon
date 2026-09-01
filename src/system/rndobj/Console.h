@@ -44,7 +44,7 @@ private:
     int mMaxBuffer; // 0x40
     int mTabLen; // 0x44
     int mCursor; // 0x48
-    Hmx::Object *mKeyboardOverride; // 0x50
+    Hmx::Object *mKeyboardOverride; // 0x4c
     bool mPumpMsgs; // 0x50
     DataArray *mDebugging; // 0x54
     int mLevel; // 0x58

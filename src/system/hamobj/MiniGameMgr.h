@@ -29,12 +29,12 @@ public:
     static void Init();
 
 protected:
-    int mNumMovesNeeded; // 0x2c
-    int mBlockingFactor; // 0x30
-    Symbol mCategory; // 0x34
-    std::vector<const MoveVariant *> mValidMoves; // 0x38
-    std::vector<const MoveVariant *> mInvalidMoves; // 0x44
-    std::vector<const MoveVariant *> mMovePool; // 0x50
+    int mNumMovesNeeded; // 0x28
+    int mBlockingFactor; // 0x2c
+    Symbol mCategory; // 0x30
+    std::vector<const MoveVariant *> mValidMoves; // 0x34
+    std::vector<const MoveVariant *> mInvalidMoves; // 0x40
+    std::vector<const MoveVariant *> mMovePool; // 0x4c
 };
 
 extern MiniGameMgr *TheMiniGameMgr;

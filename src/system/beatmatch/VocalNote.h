@@ -134,8 +134,8 @@ public:
     std::vector<VocalNote> mNotes; // 0x18
     std::vector<int> mTambourineGems; // 0x24
     std::vector<std::pair<float, float> > mFreestyleSections; // 0x30
-    Symbol mTrackName; // 0x28
+    Symbol mTrackName; // 0x3c
     SongData *mSongData; // 0x40
     DataArray *mFreestyleMinDuration; // 0x44
-    DataArray *mFreestylePad; // 0x34
+    DataArray *mFreestylePad; // 0x48
 };

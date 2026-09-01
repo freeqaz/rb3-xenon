@@ -46,16 +46,16 @@ protected:
     /** "The mesh object to render to the texture.
         This should be an unskinned mesh with UV coordinates
         that match the source mesh" */
-    ObjPtr<RndMesh> mMesh; // 0x2c
+    ObjPtr<RndMesh> mMesh; // 0x28
     /** "The first object to use as a distance reference" */
-    ObjPtr<RndTransformable> mObject1; // 0x40
+    ObjPtr<RndTransformable> mObject1; // 0x34
     /** "The second object to use as a distance reference" */
-    ObjPtr<RndTransformable> mObject2; // 0x54
+    ObjPtr<RndTransformable> mObject2; // 0x40
     /** "The base distance used to compute which blending to use" */
     float mReferenceDistance; // 0x4c
     /** "The distance where the 'near' texture map will be fully visible" */
     float mMinDistance; // 0x50
     /** "The distance where the 'far' texture map will be fully visible" */
     float mMaxDistance; // 0x54
-    ObjPtr<RndTex> mTex; // 0x74
+    ObjPtr<RndTex> mTex; // 0x58
 };

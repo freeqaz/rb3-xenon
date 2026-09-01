@@ -279,8 +279,8 @@ public:
     DELETE_OVERLOAD
 
     std::vector<RndMultiMesh *> mMultiMeshes; // 0x4
-    const ObjPtrList<RndMesh> &mMeshes; // 0xc
-    bool unk10; // 0x10
+    const ObjPtrList<RndMesh> &mMeshes; // 0x10
+    bool unk10; // 0x14
 };
 
 class ImmediateWidgetImp : public TrackWidgetImp<RndMultiMesh::Instance> {

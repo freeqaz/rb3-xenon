@@ -19,6 +19,6 @@ public:
     bool InqCompletedLessons(BandProfile *, std::vector<Symbol> &) const;
     void Configure(DataArray *);
 
-    Symbol mCategory; // 0x7c
+    Symbol mCategory; // 0x98
     int mNumLessons; // 0x9c
 };

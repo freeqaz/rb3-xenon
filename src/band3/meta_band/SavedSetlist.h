@@ -48,8 +48,8 @@ public:
 
     String mTitle; // 0x4
     std::vector<int> mSongs; // 0x10
-    DateTime mDateTime; // 0x18
-    String mDescription; // 0x20
+    DateTime mDateTime; // 0x1c
+    String mDescription; // 0x24
 };
 
 class InternalSavedSetlist : public SavedSetlist {
@@ -92,11 +92,11 @@ public:
     void AddSongTitle(const char *);
 
     SetlistType mSetlistType; // 0x30
-    String mOwner; // 0x30
-    OnlineID mOID; // 0x3c
+    String mOwner; // 0x34
+    OnlineID mOID; // 0x40
     bool unk44;
     String unk48;
-    String mGuid; // 0x54
+    String mGuid; // 0x60
     std::vector<String> mSongTitles; // 0x6c
 };
 
@@ -122,9 +122,9 @@ public:
     virtual Symbol GetIdentifyingToken() const;
     virtual bool IsBattle() const { return true; }
 
-    int mID; // 0x68
-    ScoreType unk6c; // 0x6c - score type?
-    int mBattleTimeLeft; // 0x70
+    int mID; // 0x78
+    ScoreType unk6c; // 0x7c - score type?
+    int mBattleTimeLeft; // 0x80
 };
 
 class LocalSavedSetlist : public SavedSetlist,
@@ -181,7 +181,7 @@ public:
     BandProfile *mOwnerProfile; // 0x4c
     bool mIsShared; // 0x50
     bool mNeedsUpload; // 0x51
-    HxGuid mGuid; // 0x50
+    HxGuid mGuid; // 0x54
     PatchDescriptor mArt; // 0x64
     int unk68; // 0x6c
 };

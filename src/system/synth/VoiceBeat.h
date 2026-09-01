@@ -69,6 +69,6 @@ public:
     void Analyze(const short *, int, float);
 
     VoiceBeat mVoiceBeat; // 0x0
-    EventTracker mRefEvents; // 0x168
-    float mBuffer[4096]; // 0x19c
+    EventTracker mRefEvents; // 0x170
+    float mBuffer[4096]; // 0x1c8
 };

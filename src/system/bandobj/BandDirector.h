@@ -186,38 +186,38 @@ public:
     static DataArray *sPropArr;
     static float sMotionBlurBlendAmount;
 
-    ObjDirPtr<RndDir> mChars; // 0x28
-    ObjPtr<RndPropAnim> mPropAnim; // 0x34
-    ObjPtr<FileMerger> mMerger; // 0x40
-    ObjPtr<WorldDir> mCurWorld; // 0x4c
+    ObjDirPtr<RndDir> mChars; // 0x2c
+    ObjPtr<RndPropAnim> mPropAnim; // 0x38
+    ObjPtr<FileMerger> mMerger; // 0x44
+    ObjPtr<WorldDir> mCurWorld; // 0x50
     bool unk58; // 0x5c
-    int mNumPlayersFailed; // 0x5c
-    int mExcitement; // 0x60 - ExcitementLevel?
-    Symbol mForceAttention[4]; // 0x64
-    ObjPtr<RndPostProc> mWorldPostProc; // 0x74
-    ObjPtr<RndPostProc> mCamPostProc; // 0x80
-    ObjPtr<RndPostProc> mPostProcA; // 0x8c
-    ObjPtr<RndPostProc> mPostProcB; // 0x98
-    float mPostProcBlend; // 0xa4
-    Symbol mLightPresetCatA; // 0xa8
-    Symbol mLightPresetCatB; // 0xac
-    float mLightPresetCatBlend; // 0xb0
-    bool mLightPresetInterpEnabled; // 0xb4
-    bool mDisabled; // 0xb5
-    bool mAsyncLoad; // 0xb6
-    ObjPtr<BandCamShot> mCurShot; // 0xb8
-    ObjPtr<BandCamShot> mNextShot; // 0xc4
-    ObjPtr<BandCamShot> mIntroShot; // 0xd0
-    Symbol mShotCategory; // 0xdc
+    int mNumPlayersFailed; // 0x60
+    int mExcitement; // 0x64 - ExcitementLevel?
+    Symbol mForceAttention[4]; // 0x68
+    ObjPtr<RndPostProc> mWorldPostProc; // 0x78
+    ObjPtr<RndPostProc> mCamPostProc; // 0x84
+    ObjPtr<RndPostProc> mPostProcA; // 0x90
+    ObjPtr<RndPostProc> mPostProcB; // 0x9c
+    float mPostProcBlend; // 0xa8
+    Symbol mLightPresetCatA; // 0xac
+    Symbol mLightPresetCatB; // 0xb0
+    float mLightPresetCatBlend; // 0xb4
+    bool mLightPresetInterpEnabled; // 0xb8
+    bool mDisabled; // 0xb9
+    bool mAsyncLoad; // 0xba
+    ObjPtr<BandCamShot> mCurShot; // 0xbc
+    ObjPtr<BandCamShot> mNextShot; // 0xc8
+    ObjPtr<BandCamShot> mIntroShot; // 0xd4
+    Symbol mShotCategory; // 0xe0
     float unke0; // 0xe4
-    bool mDisablePicking; // 0xe4
-    bool unke5; // 0xe5 - enable world polling?
-    Keys<DircutEntry, DircutEntry> mDircuts; // 0xe8 (retail vector start this+0xec)
-    VenueLoader mVenue; // 0xf0
-    Keys<Symbol, Symbol> unk100; // 0x100
-    float unk108; // 0x108
-    float mEndOfSongSec; // 0x10c
-    bool unk110; // 0x110
+    bool mDisablePicking; // 0xe8
+    bool unke5; // 0xe9 - enable world polling?
+    Keys<DircutEntry, DircutEntry> mDircuts; // 0xec (retail vector start this+0xec)
+    VenueLoader mVenue; // 0xf8
+    Keys<Symbol, Symbol> unk100; // 0x108
+    float unk108; // 0x114
+    float mEndOfSongSec; // 0x118
+    bool unk110; // 0x11c
     // The 16 "TU5-inserted" bytes belong HERE, before mSongPref -- not at the
     // tail where they were parked. Evidence (lane CR-2): retail's SyncProperty
     // (0x82294824) reads mSongPref as `lwz r11, -0x8(r23)` with r23 == this+0x138

@@ -139,29 +139,29 @@ public:
     TrackDir *mTrackDir; // 0x0
     const TrackConfig &mTrackConfig; // 0x4
     std::vector<Gem> mGems; // 0x8
-    DataArray *mGemData; // 0x10
+    DataArray *mGemData; // 0x14
     float mGemsEnabledStart;
     std::vector<Extent> mMissedPhrases; // 0x1c
-    std::list<HitGem> mHitGems; // 0x20
+    std::list<HitGem> mHitGems; // 0x28
     int mBegin; // 0x30
     int mEnd; // 0x34
-    GemRepTemplate mTemplate; // 0x30
-    DataArray *mConfig; // 0xb4
-    bool unkb8; // 0xb8
+    GemRepTemplate mTemplate; // 0x38
+    DataArray *mConfig; // 0xc0
+    bool unkb8; // 0xc4
     NowBar *mNowBar; // 0xc8
-    bool mBonusGems; // 0xc0
-    bool mInCoda; // 0xc1
+    bool mBonusGems; // 0xcc
+    bool mInCoda; // 0xcd
     float unkc4;
     float unkc8;
     float unkcc;
-    std::list<int> mDisabledSlotsList; // 0xd0
+    std::list<int> mDisabledSlotsList; // 0xdc
     std::vector<TrackWidget *> unkd8;
-    std::map<Symbol, TrackWidget *> mWidgets; // 0xe0
+    std::map<Symbol, TrackWidget *> mWidgets; // 0xf0
     RndGroup *mTailsGrp; // 0x108
     int unkfc;
     int unk100;
     int unk104;
-    unsigned int mEnabledSlots; // 0x108
+    unsigned int mEnabledSlots; // 0x118
     int unk10c;
     std::vector<ArpeggioPhrase> mArpeggioPhrases; // 0x120
     int mNextArpeggioPhrase;

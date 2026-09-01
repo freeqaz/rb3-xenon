@@ -16,6 +16,6 @@ public:
     void InitializeTrackerDesc(TrackerDesc &) const;
     bool HasSpecificSongsToLaunch() const;
 
-    Symbol mOneShotSong; // 0x7c
+    Symbol mOneShotSong; // 0x98
     int mOneShotPlayerMin; // 0x9c
 };

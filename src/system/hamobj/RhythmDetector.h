@@ -79,27 +79,27 @@ protected:
     int mSkeletonID; // 0x10
     std::list<Frame> mFrameHistory; // 0x14
     Frame mCurrentFrame; // 0x1c
-    std::vector<Frame> mAnalysisFrames1; // 0x2c
-    std::vector<Frame> mAnalysisFrames2; // 0x38
-    float mBeats; // 0x44
-    float mGroove; // 0x48
-    float mRhythmDecay; // 0x4c
-    int mFold; // 0x50
-    float mToleranceFactor; // 0x54
-    Vector3 mDirection; // 0x58
-    float mFrameCount; // 0x68 - frame counter
-    DebugGraph *mDebugGraphA; // 0x6c
-    DebugGraph *mDebugGraphB; // 0x70
-    DebugGraph *mDebugGraphC; // 0x74
-    DebugGraph *mDebugGraphD; // 0x78
-    DebugGraph *mDebugGraphE; // 0x7c
-    int mDivergenceCounter; // 0x80
+    std::vector<Frame> mAnalysisFrames1; // 0x30
+    std::vector<Frame> mAnalysisFrames2; // 0x3c
+    float mBeats; // 0x48
+    float mGroove; // 0x4c
+    float mRhythmDecay; // 0x50
+    int mFold; // 0x54
+    float mToleranceFactor; // 0x58
+    Vector3 mDirection; // 0x5c
+    float mFrameCount; // 0x6c - frame counter
+    DebugGraph *mDebugGraphA; // 0x70
+    DebugGraph *mDebugGraphB; // 0x74
+    DebugGraph *mDebugGraphC; // 0x78
+    DebugGraph *mDebugGraphD; // 0x7c
+    DebugGraph *mDebugGraphE; // 0x80
+    int mDivergenceCounter; // 0x84
     PaddedJointPos mJointBuffer[8][kNumJoints]; // 0x84 - circular buffer of joint snapshots
-    float mTimestamps[8]; // 0xa84 - cached beat timestamps
-    int mBufferIndex; // 0xaa4 - circular buffer write index
-    float mLastBeatTime; // 0xaa8 - last beat time at recording start
-    PaddedJointPos unkaac[kNumJoints]; // 0xaac
-    RecordData mRecordData; // 0xbec
+    float mTimestamps[8]; // 0xa88 - cached beat timestamps
+    int mBufferIndex; // 0xaa8 - circular buffer write index
+    float mLastBeatTime; // 0xaac - last beat time at recording start
+    PaddedJointPos unkaac[kNumJoints]; // 0xab0
+    RecordData mRecordData; // 0xbf0
 
 private:
     void AddFrame(BaseSkeleton const &);

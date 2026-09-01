@@ -37,18 +37,18 @@ public:
         /** "Name for the property" */
         String mName; // 0x0
         /** "type of the property" */
-        PropType mType; // 0x8
-        DataNode mDefaultVal; // 0xc
+        PropType mType; // 0xc
+        DataNode mDefaultVal; // 0x10
         /** "Help string for the user" */
-        String mHelp; // 0x14
+        String mHelp; // 0x18
         /** "Is this property exposed to the proxy using this flow?" */
-        bool mExposed; // 0x1c
-        Symbol mObjectClass; // 0x20
-        DataNode mSymbolList; // 0x24
-        Symbol mObjectType; // 0x2c
+        bool mExposed; // 0x24
+        Symbol mObjectClass; // 0x28
+        DataNode mSymbolList; // 0x2c
+        Symbol mObjectType; // 0x34
         /** TU5 inserted ~80 bytes of additional members here (layout-correct
          *  placeholder; retail sizeof(DynamicPropertyEntry) == 0x88). */
-        char mUnkTU5_0x30[0x50]; // 0x30
+        char mUnkTU5_0x30[0x50]; // 0x38
     };
     // Hmx::Object
     virtual ~Flow();
@@ -110,16 +110,16 @@ protected:
 
     static bool sReflectingProperty;
 
-    ObjVector<DynamicPropertyEntry> mDynamicProperties; // 0x10c
-    ObjPtrVec<FlowLabel> mFlowLabels; // 0x11c
-    ObjPtrVec<FlowOutPort> mFlowOutPorts; // 0x138
-    ObjPtrVec<Hmx::Object> mObjects; // 0x154
-    int mStartMode; // 0x170
+    ObjVector<DynamicPropertyEntry> mDynamicProperties; // 0x114
+    ObjPtrVec<FlowLabel> mFlowLabels; // 0x124
+    ObjPtrVec<FlowOutPort> mFlowOutPorts; // 0x140
+    ObjPtrVec<Hmx::Object> mObjects; // 0x15c
+    int mStartMode; // 0x178
     /** "Are we hidden from run nodes?" */
-    bool mPrivate; // 0x174
+    bool mPrivate; // 0x17c
     /** "force things to stop immediately?" */
-    bool mHardStop; // 0x175
-    int mParamApplyCount; // 0x178
+    bool mHardStop; // 0x17d
+    int mParamApplyCount; // 0x180
 };
 
 // FLOW_PROPANIM_COMMANDS_ENUM

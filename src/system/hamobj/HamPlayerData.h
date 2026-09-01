@@ -57,7 +57,7 @@ private:
     void SetSkeletonTrackingID(int);
 
 protected:
-    String mCurrentDancer; // 0x2c - set from available dancers list front
+    String mCurrentDancer; // 0x28 - set from available dancers list front
     std::vector<String> mAvailableDancers; // 0x34 - populated from dancer data
     int mPlayerIndex; // 0x40 - initialized from constructor parameter
     Symbol mChar; // 0x44
@@ -70,7 +70,7 @@ protected:
     int mSkeletonTrackingID; // 0x60
     Symbol mAutoplay; // 0x64
     ObjPtr<PropertyEventProvider> mProvider; // 0x68
-    int mPadNum; // 0x7c
-    int mSameRatingCount; // 0x80
-    int mLastRatingIdx; // 0x84
+    int mPadNum; // 0x74
+    int mSameRatingCount; // 0x78
+    int mLastRatingIdx; // 0x7c
 };

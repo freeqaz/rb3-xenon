@@ -90,12 +90,12 @@ private:
     std::vector<FileEntry> mFileEntries; // 0x28
     ArkHash mHashTable; // 0x34
     String mBasename; // 0x48
-    Mode mMode; // 0x50
-    unsigned int mMaxArkfileSize; // 0x54
-    bool mIsPatched; // 0x58
+    Mode mMode; // 0x54
+    unsigned int mMaxArkfileSize; // 0x58
+    bool mIsPatched; // 0x5c
     HxGuid mGuid; // 0x60
-    const int *mPermissionCodes; // 0x6c
-    int mPermissionCount; // 0x70
+    const int *mPermissionCodes; // 0x70
+    int mPermissionCount; // 0x74
 };
 
 extern Archive *TheArchive;

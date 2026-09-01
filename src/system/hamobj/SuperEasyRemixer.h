@@ -32,7 +32,7 @@ protected:
     void SaveSuperEasyMoveParents();
     void DumpSongLayout();
 
-    std::vector<const MoveParent *> mSuperEasyParents; // 0x10c
-    std::vector<const MoveVariant *> mSuperEasyVariants; // 0x118
-    bool mDataError; // 0x124
+    std::vector<const MoveParent *> mSuperEasyParents; // 0x108
+    std::vector<const MoveVariant *> mSuperEasyVariants; // 0x114
+    bool mDataError; // 0x120
 };
