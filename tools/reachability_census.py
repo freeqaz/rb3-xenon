@@ -60,9 +60,15 @@ def F(x, d=0.0):
     return d if x is None else float(x)
 
 
-def load_rows(proj):
-    rep = json.load(open(Path(proj) / "build/45410914/report.json"))
-    m = rep["measures"]
+def rows_from_report(rep):
+    """Flatten a parsed report.json into the row list this census reasons over.
+
+    Split out of load_rows() so a caller holding an ARBITRARY report.json (a
+    historical snapshot, an A/B leg) gets the identical partition -- see
+    tools/progress_ledger.py.  Keeping one implementation is the point: a second
+    copy of this logic would drift into a second ruler, which is the exact
+    disease docs/decomp/patterns/two-objdiff-entry-points-two-rulers.md records.
+    """
     rows = []
     for u in rep["units"]:
         md = u.get("metadata") or {}
@@ -76,7 +82,36 @@ def load_rows(proj):
                 fuzzy=F(f.get("fuzzy_match_percent")),
                 mpn=F(f.get("match_percent_normalized")),
             ))
-    return rep, m, rows
+    return rows
+
+
+def load_rows(proj):
+    rep = json.load(open(Path(proj) / "build/45410914/report.json"))
+    return rep, rep["measures"], rows_from_report(rep)
+
+
+def partition_rows(rows):
+    """Bucket every below-100 row into the gap strata.  Returns {label: [row]}.
+
+    NOTE the buckets are keyed on `fuzzy`, because `matched_code` keys on
+    `fuzzy == 100` and is ALL-OR-NOTHING per row.  Do NOT re-key this on `mpn`:
+    the two are different rulers and 219+ rows sit at mpn==100 with fuzzy<100.
+    """
+    strata = collections.OrderedDict()
+    for r in rows:
+        if r["fuzzy"] >= 100.0:
+            continue
+        if r["fuzzy"] == 0.0:
+            if r["name"].startswith(PLACEHOLDER):
+                k = "IDENTIFICATION-BLOCKED (placeholder name, cannot pair)"
+            elif r["src"] is None:
+                k = "NO SOURCE (xdk/vendor -- out of scope)"
+            else:
+                k = "NAMED, 0% (paired name but no credit)"
+        else:
+            k = "PARTIAL (0<fuzzy<100)  <- the only credited residual"
+        strata.setdefault(k, []).append(r)
+    return strata
 
 
 def self_validate(m, rows):
@@ -155,20 +190,7 @@ def main():
     def ph(n):
         return n.startswith(PLACEHOLDER)
 
-    strata = collections.OrderedDict()
-    for r in rows:
-        if r["fuzzy"] >= 100.0:
-            continue
-        if r["fuzzy"] == 0.0:
-            if ph(r["name"]):
-                k = "IDENTIFICATION-BLOCKED (placeholder name, cannot pair)"
-            elif r["src"] is None:
-                k = "NO SOURCE (xdk/vendor -- out of scope)"
-            else:
-                k = "NAMED, 0% (paired name but no credit)"
-        else:
-            k = "PARTIAL (0<fuzzy<100)  <- the only credited residual"
-        strata.setdefault(k, []).append(r)
+    strata = partition_rows(rows)
 
     print("=== GAP PARTITION (size-if-it-crosses) ===")
     print(f"{'STRATUM':<56}{'rows':>7}{'bytes':>13}{'%gap':>8}{'%total':>8}")
