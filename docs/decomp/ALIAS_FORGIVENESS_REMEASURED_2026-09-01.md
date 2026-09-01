@@ -124,6 +124,39 @@ Two mutations — pruning groups outright vs emptying `folded: []` — give an
 identical delta, so the standing "never prune" rule costs nothing in
 measurement fidelity.
 
+## Tool provenance — the fleet `objdiff-cli` was swapped mid-lane, and it was NEUTRAL here
+
+`bin/objdiff-cli` symlinks to the fleet-shared
+`../objdiff/target/release/objdiff-cli`, which was **rebuilt at 08:59:42 today**,
+mid-lane (`358c715835cc` → `210aab60ca30`; file sha256 now
+`ee78f52f68469805…`). This lane's first pass ran **before** the swap and the
+per-group sweep ran **across** it, so the numbers could not be attributed to a
+tool state as measured.
+
+Handled by re-measuring rather than reconciling. The lane rebased onto current
+main (`3ed3b213`) — which touched **only `tools/` and `docs/`, zero `src/` or
+`config/`, so the tree's code is unchanged — rebuilt, and re-ran **both legs on
+the current binary**. `report.json` now self-declares
+`tool_commit 210aab60ca30` / `tool_binary_hash faf3390631a58473` / version
+4.2.8.
+
+| | pre-swap (`358c7158`) | post-swap (`210aab60`) |
+|---|---:|---:|
+| FULL `matched_code` | 3,772,988 (36.824165%) | 3,772,988 (36.824165%) |
+| EMPTY `matched_code` | 2,961,496 (28.904047%) | 2,961,496 (28.904047%) |
+| Δ | −811,492 B / −7.920118 pp / +3,154 fns | −811,492 B / −7.920118 pp / +3,154 fns |
+| fallen rows | 4,996 | 4,996 — **set-identical** |
+| `none` ruler Δ | 0 / 0 / 0 | 0 / 0 / 0 |
+
+⇒ **The swap is demonstrated inert for this measurement**, by set equality of
+the fall sets and not by assuming a rebuild is neutral. Every headline figure in
+this document is from the **post-swap** run, both legs on `210aab60ca30`.
+
+⚠ The per-group sweep's baseline predates the swap. Its numbers are reported
+above as **bounds** anyway, and the binding limitation is the 27.3% sample size,
+not the tool question — but they are the one artifact here not re-measured
+end-to-end on the new binary, and are labelled provisional for that reason.
+
 ## `icf_alias_finder.py --validate` — RED, and honest
 
 **`VALIDATE: FAIL`, rc=1** — 1,369 map-consistent, 219 tolerated, **1
@@ -214,9 +247,53 @@ most relocation-name charges:
 All nine are `MPN_TOO` — i.e. under today's ruler these are rows where removing
 the alias costs a **function**, not just bytes.
 
-### Over groups — SAMPLED, and the sample cannot settle the top-N shares
+### Over groups — a 27.3% sample; top-N shares reported as BOUNDS, not estimates
 
-<!--CONCENTRATION-->
+Per-group ablation was run over a **seeded shuffle** of the 1,107 groups that
+have ≥1 folded spelling, so any prefix is an unbiased random sample. It reached
+**302 / 1,107 (27.3%)** before the lane closed. (The other 484 groups already
+carry `folded: []`; their delta is 0 **by construction**, not by measurement.)
+
+What the sample settles:
+
+* **39.1% ± 4.7% of live groups forgive >0 bytes ⇒ ~433 of 1,107.** GROUNDED-1
+  measured **448 of 1,493** — so the *count* of paying groups is essentially
+  unchanged even though the file lost 64.9% of its memberships.
+* distribution of per-group necessity bytes over the 302 sampled:
+  **184 forgive 0** · 21 forgive 1–99 B · 75 forgive 100–999 B · 17 forgive
+  1k–9k B · **5 forgive ≥10k B**.
+
+**The head, measured directly (no extrapolation).** These are *lower bounds* on
+the population's top-N shares, since a bigger unsampled group can only raise
+them:
+
+| rank | group | rows | bytes | Δfns | folded | share of 811,492 B |
+|---|---|---:|---:|---:|---:|---:|
+| 1 | `operator_new_alloc_thunk` | 370 | **77,640** | 371 | 121 | **≥ 9.57%** |
+| 2 | `SetObjConcrete` | 142 | 41,192 | 146 | 33 | |
+| 3 | `PoolAlloc` | 98 | 26,872 | 100 | 1 | top 3 ≥ **17.96%** |
+| 4 | `0DataNode` | 6 | 11,648 | 6 | 38 | |
+| 5 | `clear` | 52 | 10,864 | 52 | 55 | top 10 ≥ **23.27%** |
+
+⚠ **The sample CANNOT settle GROUNDED-1's "top 10 = 55.6% / top 100 = 96.4%"
+statistic, and must not be quoted against it.** That statistic is a share of the
+*sum of per-group necessity bytes*, whose denominator grows as more groups are
+measured — so computing it inside a partial sample is **biased high by
+construction**. At n = 302 the population's top-10 maps to roughly the sample's
+top-3, i.e. the estimate would rest on three groups. What *is* sound is the
+union-coverage bound above and the ~433-group count.
+
+⚠ Per-group necessity bytes **OVERLAP and must never be summed as a partition**:
+a row needing two groups is counted under both. The sampled sum extrapolates to
+~926,141 B against a measured total of 811,492 B, and that excess *is* the
+overlap.
+
+⇒ **Pricing rule.** Two facts point opposite ways and both hold: the bytes are
+**diffuse over rows** (median 76 B; ~1,000 of 4,996 rows to reach two-thirds)
+but **concentrated over groups** (one group, `operator_new_alloc_thunk`, carries
+≥9.6% of the whole mechanism, and ~433 groups carry all of it). So fold work
+should be priced **per group, never per row** — and the allocator/`Obj`
+thunk families are where the mechanism actually lives.
 
 ## What this lane did NOT verify
 
@@ -235,6 +312,17 @@ the alias costs a **function**, not just bytes.
 * **Did not investigate why `--validate` regressed** beyond identifying the
   contradicted group — the commit that introduced the conflicting map name was
   not bisected.
+* **Did not complete the per-group sweep** — 302 of 1,107 (27.3%). The full
+  sweep is ~1,107 legs; the machine was under load average 60–105 from a
+  concurrent grinding lane, giving 6–13 s/leg against the ~2.5 s the ALIAS-2 doc
+  records. Top-N *share* statistics are therefore unsettled; only the bounds and
+  the ~433-group count above are claimed.
+* **Did not re-run the per-group sweep on the post-swap binary** (see tool
+  provenance above).
+* **Did not read the instruction-level diff of any fallen row.** The claim that
+  the `MPN_TOO` channel is the `b14ba45` mechanism rests on the `none` ruler
+  being exactly flat plus the fork's source and commit date — a complete causal
+  chain, but not a per-row confirmation.
 
 ## Reproducing
 
