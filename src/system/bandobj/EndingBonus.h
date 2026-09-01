@@ -70,17 +70,17 @@ public:
 
     bool mSuppressUnisonDisplay; // 0x1dc
     bool mInUnison; // 0x1dd
-    int mScore; // 0x190
-    bool mSucceeded; // 0x194
-    ObjPtr<Task> mCodaEndTask; // 0x198
-    std::vector<TrackInstrument> mTrackOrder; // 0x1a4
+    int mScore; // 0x1e0
+    bool mSucceeded; // 0x1e4
+    ObjPtr<Task> mCodaEndTask; // 0x1e8
+    std::vector<TrackInstrument> mTrackOrder; // 0x1f4
     std::vector<MiniIconData> mIconData; // 0x200
-    ObjPtr<BandLabel> mScoreLabel; // 0x1b4
-    ObjPtr<EventTrigger> mUnisonStartTrig; // 0x1c0
-    ObjPtr<EventTrigger> mUnisonEndTrig; // 0x1cc
-    ObjPtr<EventTrigger> mUnisonSucceedTrig; // 0x1d8
-    ObjPtr<EventTrigger> mStartTrig; // 0x1e4
-    ObjPtr<EventTrigger> mEndTrig; // 0x1f0
-    ObjPtr<EventTrigger> mSucceedTrig; // 0x1fc
-    ObjPtr<EventTrigger> mResetTrig; // 0x208
+    ObjPtr<BandLabel> mScoreLabel; // 0x20c
+    ObjPtr<EventTrigger> mUnisonStartTrig; // 0x218
+    ObjPtr<EventTrigger> mUnisonEndTrig; // 0x224
+    ObjPtr<EventTrigger> mUnisonSucceedTrig; // 0x230
+    ObjPtr<EventTrigger> mStartTrig; // 0x23c
+    ObjPtr<EventTrigger> mEndTrig; // 0x248
+    ObjPtr<EventTrigger> mSucceedTrig; // 0x254
+    ObjPtr<EventTrigger> mResetTrig; // 0x260
 };

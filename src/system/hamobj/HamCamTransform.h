@@ -33,12 +33,12 @@ public:
     /** "New origin for area" */
     ObjPtr<RndTransformable> mArea; // 0x0
     /** "Camera shots to be moved to this area" */
-    ObjPtrList<HamCamShot> mCamshots; // 0x14
+    ObjPtrList<HamCamShot> mCamshots; // 0xc
     /** "Anim to be run for these cam shots" */
-    ObjPtrList<RndAnimatable> mAnims; // 0x28
-    ObjVector<TransformCrowd> mCrowds; // 0x3c
+    ObjPtrList<RndAnimatable> mAnims; // 0x20
+    ObjVector<TransformCrowd> mCrowds; // 0x34
     /** "Flow to execute for the setup of these camshots" */
-    ObjPtr<Flow> mFlow; // 0x4c
+    ObjPtr<Flow> mFlow; // 0x44
     // Retail sizeof(TransformArea)==0x70 (verified from 4 STL stride sites:
     // _M_erase/_M_fill_insert/resize emit li r10,0x70 / addi r31,r31,0x70 and
     // ~TransformArea fn_822921A0 destroys members at 0x0,0xc,0x18,0x24,0x30,

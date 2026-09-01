@@ -223,7 +223,7 @@ public:
     std::vector<GameGemDB *> mGemDBs; // 0xb0
     std::vector<PhraseDB *> mPhraseDBs; // 0xbc
     PhraseAnalyzer *mPhraseAnalyzer; // 0xc8
-    int mLoadingVocalNoteListIndex; // 0x98
+    int mLoadingVocalNoteListIndex; // 0xcc
     std::vector<VocalNoteList *> mVocalNoteLists; // 0xd0
     std::vector<BackupTrack *> mBackupTracks; // 0xdc
     std::vector<FakeTrack *> mFakeTracks; // 0xe8
@@ -233,15 +233,15 @@ public:
     TuningOffsetList *mTuningOffsetList; // 0x100
     std::vector<float> mVocalFeatureVectorTimes; // 0x104
     std::vector<float> mVocalFeatureVectorPeaks; // 0x110
-    float mLastGemTime; // 0xd4
+    float mLastGemTime; // 0x11c
     MemStream *mMemStream; // 0x120
     SongParser *mSongParser; // 0x124
     PlayerTrackConfigList *mPlayerTrackConfigList; // 0x128
-    String mSongPath; // 0xe4
-    std::map<int, float> mRangeShifts; // 0xf0
+    String mSongPath; // 0x12c
+    std::map<int, float> mRangeShifts; // 0x138
     std::vector<RangeSection> mRangeSections; // 0x150
-    std::vector<std::vector<RangeSection> > mKeyboardRangeSections; // 0x110
-    GameGemList *mGems; // 0x118
+    std::vector<std::vector<RangeSection> > mKeyboardRangeSections; // 0x15c
+    GameGemList *mGems; // 0x168
     int mHopoThreshold; // 0x16c
     bool mDetailedGrid; // 0x170
 };

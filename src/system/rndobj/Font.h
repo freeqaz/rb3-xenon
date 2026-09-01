@@ -357,12 +357,12 @@ protected:
 
     void Clear();
 
-    ObjPtr<RndMat> mMat; // 0x44
-    ObjOwnerPtr<RndFont3d> mTextureOwner; // 0x58
-    Vector3 mCellSize; // 0x6c
-    Vector3 mInvCellSize; // 0x7c
-    Vector3 unk8c; // 0x8c
-    std::map<unsigned short, CharInfo *> mCharInfoMap; // 0x9c
+    ObjPtr<RndMat> mMat; // 0x40
+    ObjOwnerPtr<RndFont3d> mTextureOwner; // 0x4c
+    Vector3 mCellSize; // 0x58
+    Vector3 mInvCellSize; // 0x68
+    Vector3 unk8c; // 0x78
+    std::map<unsigned short, CharInfo *> mCharInfoMap; // 0x88
 };
 
 // Single-page, per the rb3-Wii oracle. The DC3 page-indexed form

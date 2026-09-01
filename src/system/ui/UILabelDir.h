@@ -57,7 +57,7 @@ protected:
     UILabelDir();
 
     /** "color to use when no other color is defined for a state" */
-    ObjPtr<UIColor> mDefaultColor; // 0x2f0
+    ObjPtr<UIColor> mDefaultColor; // 0x2c0
     /** The colors to use depending on the label's state.
      * This vector is expected to be of size UIComponent::kNumStates.
      * Original _objects descriptions:
@@ -67,7 +67,7 @@ protected:
      * "color when label is selecting"
      * "color when label is selected"
      */
-    std::vector<ObjPtr<UIColor> > mColors; // 0x304
+    std::vector<ObjPtr<UIColor> > mColors; // 0x2cc
     ObjPtr<RndText> mTextObj;
     ObjPtr<RndAnimatable> mFocusAnim;
     ObjPtr<RndAnimatable> mPulseAnim;

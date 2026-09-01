@@ -8,7 +8,7 @@
 // if you have any better names please by all means
 struct Delta {
     char unk0; // 0x0
-    unsigned short num; // 0x1
+    unsigned short num; // 0x2
 
     static unsigned int offset(unsigned short us) { return us * 3 + 4; }
 
@@ -61,5 +61,5 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(BandFaceDeform)
 
-    std::vector<DeltaArray> mFrames; // 0x1c
+    std::vector<DeltaArray> mFrames; // 0x28
 };

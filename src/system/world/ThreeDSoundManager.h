@@ -33,8 +33,8 @@ private:
     Transform mLastListenerXfm; // 0x18
     /** "Position of the listener for 3D sounds.  None defaults to the current camera." */
     ObjPtr<RndTransformable> mListener; // 0x58
-    bool mListenerDirty; // 0x6c
+    bool mListenerDirty; // 0x64
     /** "Change in frequency due to doppler shift is raised to this power.
         0 is no doppler shift, 0.5 is half normal shift, 2 is twice normal, etc." */
-    float mDopplerPower; // 0x70
+    float mDopplerPower; // 0x68
 };

@@ -29,6 +29,6 @@ public:
     DataArray *mAllMetadata; // 0x48
     std::vector<int> mSongs; // 0x4c
     std::vector<String> mSongNames; // 0x58
-    int unk54; // 0x54
+    int unk54; // 0x64
     Timer unk58; // 0x68
 };

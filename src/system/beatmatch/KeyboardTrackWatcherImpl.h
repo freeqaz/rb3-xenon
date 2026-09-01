@@ -45,8 +45,8 @@ public:
     int mHeldGem; // 0xe0
     unsigned int mHeldSlots; // 0xe4
     unsigned int mDownKeys; // 0xe8
-    float mMissWindowMs; // 0xe0
-    float mLastMissTimeMs; // 0xe4
+    float mMissWindowMs; // 0xec
+    float mLastMissTimeMs; // 0xf0
     float mFatFingerWindowMs; // 0xf4
     std::vector<FatFingerData> mFatFingerDatas; // 0xf8
 };

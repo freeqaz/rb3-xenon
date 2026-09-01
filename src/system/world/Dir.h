@@ -33,7 +33,7 @@ public:
         /** "Subdir preset to modify" */
         ObjPtr<LightPreset> preset; // 0x0
         /** "Hue texture to use" */
-        ObjPtr<LightHue> hue; // 0x14
+        ObjPtr<LightHue> hue; // 0xc
     };
 
     struct BitmapOverride {
@@ -43,7 +43,7 @@ public:
         /** "Subdir texture to replace" */
         ObjPtr<RndTex> original; // 0x0
         /** "Curdir texture to replace with" */
-        ObjPtr<RndTex> replacement; // 0x14
+        ObjPtr<RndTex> replacement; // 0xc
     };
 
     struct MatOverride {
@@ -53,8 +53,8 @@ public:
         /** "Subdir mesh to modify" */
         ObjPtr<RndMesh> mesh; // 0x0
         /** "Curdir material to set" */
-        ObjPtr<RndMat> mat; // 0x14
-        ObjPtr<RndMat> mat2; // 0x28
+        ObjPtr<RndMat> mat; // 0xc
+        ObjPtr<RndMat> mat2; // 0x18
     };
 
     WorldDir();

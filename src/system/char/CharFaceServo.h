@@ -52,10 +52,10 @@ protected:
     virtual void ReallocateInternal() { CharBonesMeshes::ReallocateInternal(); }
 
     /** "pointer to visemes, must contain Blink and Base" */
-    ObjPtr<ObjectDir> mClips; // 0x7c
+    ObjPtr<ObjectDir> mClips; // 0x74
     /** "Which clip type it can support" */
-    Symbol mClipType; // 0x90
-    ObjPtr<CharClip> mBaseClip; // 0x94
+    Symbol mClipType; // 0x80
+    ObjPtr<CharClip> mBaseClip; // 0x84
     /** "Blink clip, used to close the left eye" */
     Symbol mBlinkClipLeftName; // 0x90
     /** "A second clip that contributes to closing the left eye" */
@@ -64,13 +64,13 @@ protected:
     Symbol mBlinkClipRightName; // 0x98
     /** "A second clip that contributes to closing the right eye" */
     Symbol mBlinkClipRightName2; // 0x9c
-    ObjPtr<CharClip> mBlinkClipLeft; // 0xb8
-    ObjPtr<CharClip> mBlinkClipLeft2; // 0xcc
-    ObjPtr<CharClip> mBlinkClipRight; // 0xe0
-    ObjPtr<CharClip> mBlinkClipRight2; // 0xf4
-    float mBlinkWeightLeft; // 0x108
-    float mBlinkWeightRight; // 0x10c
-    bool mNeedScaleDown; // 0x110
+    ObjPtr<CharClip> mBlinkClipLeft; // 0xa0
+    ObjPtr<CharClip> mBlinkClipLeft2; // 0xac
+    ObjPtr<CharClip> mBlinkClipRight; // 0xb8
+    ObjPtr<CharClip> mBlinkClipRight2; // 0xc4
+    float mBlinkWeightLeft; // 0xd0
+    float mBlinkWeightRight; // 0xd4
+    bool mNeedScaleDown; // 0xd8
     float mProceduralBlinkWeight; // 0xdc
     bool mAppliedProceduralBlink; // 0xe0
 };

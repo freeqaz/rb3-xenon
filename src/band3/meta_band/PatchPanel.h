@@ -65,7 +65,7 @@ public:
     RndMat *mStickerMat; // 0x2c
     std::vector<RndMat *> mStickerMats; // 0x30
     std::vector<PatchSticker *> *mStickers; // 0x3c
-    Symbol unk30; // 0x30
+    Symbol unk30; // 0x40
 };
 
 class PatchPanel : public UIPanel {
@@ -144,7 +144,7 @@ public:
     float mUndoScaleY; // 0xe0
     float mUndoDeformFrame; // 0xe4
     Symbol mUndoStickerCategory; // 0xe8
-    int mUndoStickerIdx; // 0xe4
+    int mUndoStickerIdx; // 0xec
 };
 
 int ConvertToLayerIndex(PatchDir *, int);

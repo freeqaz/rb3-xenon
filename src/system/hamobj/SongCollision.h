@@ -96,5 +96,5 @@ protected:
     // indexed by difficulty, then beat
     // so mData[kDifficultyExpert][4] is
     // the BeatCollisionData for expert difficulty at beat 4
-    std::vector<BeatCollisionData> mData[kNumDifficulties]; // 0x2c
+    std::vector<BeatCollisionData> mData[kNumDifficulties]; // 0x28
 };

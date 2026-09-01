@@ -47,9 +47,9 @@ protected:
     // NB the previous "// 0x14 / 0x28 / 0x3c" comments were wrong on both the
     // order and the stride -- do not trust header offset comments here.
     /** "The upper arm twist1 bone" */
-    ObjPtr<RndTransformable> mTwist1; // 0x10
+    ObjPtr<RndTransformable> mTwist1; // 0x8
     /** "The upper arm twist2 bone" */
-    ObjPtr<RndTransformable> mTwist2; // 0x1c
+    ObjPtr<RndTransformable> mTwist2; // 0x14
     /** "The upper arm bone" */
-    ObjPtr<RndTransformable> mUpperArm; // 0x28
+    ObjPtr<RndTransformable> mUpperArm; // 0x20
 };

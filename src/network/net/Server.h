@@ -78,12 +78,12 @@ public:
     }
 
     CriticalSection mLogoutCritSec; // 0x1c
-    int mLoginState; // 0x38 - enum
+    int mLoginState; // 0x3c - enum
     const char *mKey; // 0x40
-    String mAddress; // 0x40
+    String mAddress; // 0x44
     int mPort; // 0x50
-    int mPadLoggingIn; // 0x50
-    unsigned int mPlayerIDLoggingIn; // 0x54
+    int mPadLoggingIn; // 0x54
+    unsigned int mPlayerIDLoggingIn; // 0x58
     unsigned int mPlayerIDs[4]; // 0x5c
 };
 

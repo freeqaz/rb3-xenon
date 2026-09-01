@@ -162,7 +162,7 @@ protected:
     Hmx::CRC unk2c; // 0x2c
 #endif
     /** The bitmap associated with this texture. */
-    RndBitmap mBitmap; // 0x2c
+    RndBitmap mBitmap; // 0x28
     float mMipMapK; // 0x44
     /** The texture's type. */
     Type mType; // 0x48
@@ -173,7 +173,7 @@ protected:
     /** The texture's bits per pixel. */
     int mBpp; // 0x54
     /** The texture's file. */
-    FilePath mFilepath; // 0x64
+    FilePath mFilepath; // 0x58
     /** The number of mips in this texture's mipmap. */
     int mNumMips; // 0x64
     /** Unused. Presumably, whether to use specialized computations for the PS3. */
@@ -190,7 +190,7 @@ protected:
     // with `lbz r11, 0x68(r30)`, so mOptimizeForPS3 is at 0x68 and mIsPowerOf2
     // takes 0x69. Declared last => no existing member offset moves.
     bool mIsPowerOf2; // 0x69
-    FileLoader *mLoader; // 0x74
+    FileLoader *mLoader; // 0x6c
 };
 
 TextStream &operator<<(TextStream &, RndTex::Type);

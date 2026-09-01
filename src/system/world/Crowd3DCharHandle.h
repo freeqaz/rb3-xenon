@@ -32,7 +32,7 @@ public:
 protected:
     WorldCrowd3DCharHandle();
 
-    WorldCrowd *mCrowd; // 0x100
-    std::list<WorldCrowd::CharData>::iterator mCharItr; // 0x104
-    int mCharIdx; // 0x108
+    WorldCrowd *mCrowd; // 0xd8
+    std::list<WorldCrowd::CharData>::iterator mCharItr; // 0xdc
+    int mCharIdx; // 0xe0
 };

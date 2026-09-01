@@ -76,13 +76,13 @@ public:
     std::vector<int> mTrackOccupied; // 0x24
     std::vector<PlayerTrackConfig> mConfigs; // 0x30
     bool mAutoVocals; // 0x3c
-    bool mUseVocalHarmony; // 0x29
+    bool mUseVocalHarmony; // 0x3d
     bool mUseRealDrums; // 0x3e
     bool mDiscoUnflip; // 0x3f
     bool unk2c; // 0x40
     unsigned int mGameCymbalLanes; // 0x44
-    bool mUseGHDrums; // 0x34
+    bool mUseGHDrums; // 0x48
     int mDefaultDifficulty; // 0x4c
-    bool mNeedsProcessing; // 0x3c
+    bool mNeedsProcessing; // 0x50
     bool mProcessed; // 0x51
 };

@@ -62,7 +62,7 @@ public:
         ObjOwnerPtr<ObjectDir> mProxy; // 0x0
         Symbol mCall; // 0xc
         /** "event trigger to fire" */
-        ObjOwnerPtr<EventTrigger> mEvent; // 0x18
+        ObjOwnerPtr<EventTrigger> mEvent; // 0x10
     };
 
     struct HideDelay {
@@ -143,17 +143,17 @@ protected:
         and delay fire until this handler is called" */
     std::list<Symbol> mWaitForEvents; // 0x9c
     ObjPtr<EventTrigger> mNextLink; // 0xa4
-    Symbol mHandler; // 0xb8
-    ObjPtrList<RndPartLauncher> mPartLaunchers; // 0xbc
+    Symbol mHandler; // 0xb0
+    ObjPtrList<RndPartLauncher> mPartLaunchers; // 0xb4
     bool mParticleTriggerConverted; // 0xc8
-    TriggerAnim mAnimTrigger; // 0xd4
-    float mAnimFrame; // 0xd8
+    TriggerAnim mAnimTrigger; // 0xcc
+    float mAnimFrame; // 0xd0
     bool mEnabled; // 0xd4
     bool mEnabledAtStart; // 0xd5
-    bool mWaiting; // 0xde
-    ObjPtrList<RndDrawable> mHidden; // 0xe0
-    ObjPtrList<RndDrawable> mShown; // 0xf4
+    bool mWaiting; // 0xd6
+    ObjPtrList<RndDrawable> mHidden; // 0xd8
+    ObjPtrList<RndDrawable> mShown; // 0xec
     bool mTriggered; // 0x100
-    TriggerOrder mTriggerOrder; // 0x10c
-    int mLastTriggerIndex; // 0x110
+    TriggerOrder mTriggerOrder; // 0x104
+    int mLastTriggerIndex; // 0x108
 };

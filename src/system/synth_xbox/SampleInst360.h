@@ -26,5 +26,5 @@ protected:
 
 private:
     Voice *mVoice; // 0x54
-    int unk_ac; // 0xac
+    int unk_ac; // 0x58
 };

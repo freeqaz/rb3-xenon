@@ -42,7 +42,7 @@ public:
     TrackWatcherImpl *mImpl; // 0x0
     std::vector<BeatMatchSink *> mSinks; // 0x4
     int mTrack; // 0x10
-    bool mIndependentSlots; // 0x10
+    bool mIndependentSlots; // 0x14
     UserGuid mUserGuid; // 0x18
     int mPlayerSlot; // 0x28
     Symbol mControllerType; // 0x2c

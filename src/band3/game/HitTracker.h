@@ -14,7 +14,7 @@ public:
     void PrintStats() const;
 
     std::vector<int> mHits; // 0x4
-    int mKeys[128]; // 0xc
-    int mRGStrums[6]; // 0x20c
+    int mKeys[128]; // 0x10
+    int mRGStrums[6]; // 0x210
     int mRGFrets[6][20]; // 0x228
 };

@@ -21,7 +21,7 @@ namespace Quazal {
             virtual void Initialize() {}
             virtual void Work() { m_pScheduler->Dispatch(0x64, 1); }
 
-            Scheduler *m_pScheduler; // 0x24
+            Scheduler *m_pScheduler; // 0x28
         };
 
         Scheduler(unsigned char, SchedulerWorkerThread *);

@@ -54,5 +54,5 @@ protected:
     HamBattleData();
 
     /** "Steps for the dance battle" */
-    std::vector<BattleStep> mSteps; // 0x2c
+    std::vector<BattleStep> mSteps; // 0x28
 };

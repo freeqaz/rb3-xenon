@@ -41,9 +41,9 @@ protected:
     UIListArrow();
 
     /** "arrow mesh to draw/transform" */
-    ObjPtr<RndMesh> mMesh; // 0x5c
+    ObjPtr<RndMesh> mMesh; // 0x50
     /** "animation to play on scroll" */
-    ObjPtr<RndAnimatable> mScrollAnim; // 0x70
+    ObjPtr<RndAnimatable> mScrollAnim; // 0x5c
     /** "whether to position relative to first or last element" */
     UIListArrowPosition mPosition; // 0x68
     /** "show only when list is scrollable" */

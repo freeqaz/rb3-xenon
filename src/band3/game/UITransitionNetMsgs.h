@@ -26,7 +26,7 @@ public:
 
     UIScreen *GetScreen() const;
 
-    String mScreenName; // 0x1c
+    String mScreenName; // 0x18
 };
 
 class NetGotoScreenMsg : public StartTransitionMsg {

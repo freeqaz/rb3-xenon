@@ -160,7 +160,7 @@ private:
     void DoneLoading();
     void LoadStream();
 
-    File *mFile; // 0x18
+    File *mFile; // 0x1c
     BinStream *mStream; // 0x20
     const char *mBuffer; // 0x24
     int mBufLen; // 0x28
@@ -168,7 +168,7 @@ private:
     bool mTemp; // 0x2d
     bool mWarn; // 0x2e
     int mFlags; // 0x30
-    String mFilename; // 0x30
+    String mFilename; // 0x34
     int mBytesLoaded; // 0x40
     int mChunkSize; // 0x44
     FileLoaderStateFunc mState; // 0x48

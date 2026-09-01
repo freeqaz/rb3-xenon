@@ -95,8 +95,8 @@ protected:
     void SetClipMapRecurse(Layer *);
 
     /** "The CharBones object to add into." */
-    ObjPtr<CharBonesObject> mBones; // 0x30
-    LayerArray mLayers; // 0x44
-    float mDisplayBeat; // 0x78 - current beat position for display
-    std::map<CharClip *, float> mClipTimingMap; // 0x7c - clip timing cache
+    ObjPtr<CharBonesObject> mBones; // 0x28
+    LayerArray mLayers; // 0x34
+    float mDisplayBeat; // 0x68 - current beat position for display
+    std::map<CharClip *, float> mClipTimingMap; // 0x6c - clip timing cache
 };

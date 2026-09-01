@@ -20,7 +20,7 @@ public:
     void Update(AssetType, AssetBoutique);
     static bool SortAssetsByIndex(Symbol, Symbol);
 
-    BandProfile *mProfile; // 0x20
+    BandProfile *mProfile; // 0x2c
     std::vector<Symbol> mAssets; // 0x30
-    AssetGender mGender; // 0x2c
+    AssetGender mGender; // 0x3c
 };

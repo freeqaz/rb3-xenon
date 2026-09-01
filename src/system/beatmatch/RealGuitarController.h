@@ -30,7 +30,7 @@ public:
     int OnMsg(const StringStoppedMsg &) { return 0; }
 
     bool mDisabled; // 0x48
-    int unk40; // 0x40 - usbmidiguitar* mguitar?
+    int unk40; // 0x4c - usbmidiguitar* mguitar?
     BeatMatchControllerSink *mSink; // 0x50
-    int mStrings[kNumRGStrings]; // 0x48
+    int mStrings[kNumRGStrings]; // 0x54
 };

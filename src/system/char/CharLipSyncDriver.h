@@ -74,34 +74,34 @@ protected:
     // Matches rb3-Wii oracle field order (each 360 offset = Wii offset - 4).
 
     /** "The lipsync file to use" */
-    ObjPtr<CharLipSync> mLipSync; // 0x24
+    ObjPtr<CharLipSync> mLipSync; // 0x28
     /** "pointer to the visemes" */
-    ObjPtr<ObjectDir> mClips; // 0x30
+    ObjPtr<ObjectDir> mClips; // 0x34
     ObjPtr<CharClip> mBlinkClip; // 0x40
     /** "Will use this song if set, except for blinks" */
     ObjPtr<CharLipSyncDriver> mSongOwner; // 0x4c
     /** "offset within song in seconds, resets on song change" */
-    float mSongOffset; // 0x54
+    float mSongOffset; // 0x58
     /** "should we loop this song, resets on song change" */
-    bool mLoop; // 0x58
-    CharLipSync::PlayBack *mMainPlayback; // 0x5c (Wii: mSongPlayer)
+    bool mLoop; // 0x5c
+    CharLipSync::PlayBack *mMainPlayback; // 0x60 (Wii: mSongPlayer)
     /** "The CharBones object to add or blend into." */
-    ObjPtr<CharBonesObject> mBones; // 0x60
+    ObjPtr<CharBonesObject> mBones; // 0x64
     /** "Test charclip to apply, does nothing else" */
-    ObjPtr<CharClip> mTestClip; // 0x6c
+    ObjPtr<CharClip> mTestClip; // 0x70
     /** "weight to apply this clip with" */
     float mTestWeight; // 0x7c
     /** "default clip to be used as the override - maybe be overriden programatically" */
-    ObjPtr<CharClip> mOverrideClip; // 0x7c
+    ObjPtr<CharClip> mOverrideClip; // 0x80
     /** "weight to blend override clip. this is mostly here for testing,
         because its likely to be set programatically." */
-    float mOverrideWeight; // 0x88
+    float mOverrideWeight; // 0x8c
     /** "an optional clipset that provides list of clips to override face with -
         viseme clipset is used otherwise" */
-    ObjPtr<ObjectDir> mOverrideOptions; // 0x8c
+    ObjPtr<ObjectDir> mOverrideOptions; // 0x90
     /** "is the override clip applied addtively on top of face mocap?
         If false, it will blend." */
-    bool mApplyOverrideAdditively; // 0x98
+    bool mApplyOverrideAdditively; // 0x9c
     /** "This will be used instead of the song, if set" */
-    ObjPtr<CharDriver> mAlternateDriver; // 0x9c
+    ObjPtr<CharDriver> mAlternateDriver; // 0xa0
 };

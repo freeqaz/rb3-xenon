@@ -62,9 +62,9 @@ public:
         // still raw in DC3, which is the same asymmetry.
         CharLipSync *mLipSync; // 0xc
         ObjPtr<ObjectDir> mClips; // 0x10
-        int mIndex; // 0x34
-        int mOldIndex; // 0x38
-        int mFrame; // 0x3c
+        int mIndex; // 0x1c
+        int mOldIndex; // 0x20
+        int mFrame; // 0x24
     };
 
     // Hmx::Object

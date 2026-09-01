@@ -90,7 +90,7 @@ public:
     MainHubState mHubState; // 0x3c
     MainHubOverride mHubOverride; // 0x40
     MainHubMessageProvider *mMessageProvider; // 0x44
-    int mCurrentMessage; // 0x44
+    int mCurrentMessage; // 0x48
     float mMessageRotationMs; // 0x4c
     Timer mMessageTimer; // 0x50
     BandMachineMgr *mMachineMgr; // 0x80

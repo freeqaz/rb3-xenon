@@ -247,24 +247,24 @@ public:
     std::vector<ChannelData *> mChannelData; // 0x7c
     TrackDataCollection mTrackData; // 0x88
     bool mPlayingInCommon; // 0x94
-    float mMultiplayerStereoScale; // 0x84
-    float mMultiplayerVolume; // 0x88
+    float mMultiplayerStereoScale; // 0x98
+    float mMultiplayerVolume; // 0x9c
     float mMultiplayerCommonVolume; // 0xa0
-    float mPlayerAtten; // 0x90
-    float mBackgroundVolume; // 0x94
-    float mMuteVolume; // 0x98
-    float mVocalMuteVolume; // 0x9c
-    float mPassVolume; // 0xa0
-    float mUnplayedVolume; // 0xa4
-    float mCueVolume; // 0xa8
-    float mPracticeVolume; // 0xac
-    float mRemoteVolume; // 0xb0
-    float mMasterVolume; // 0xb4
+    float mPlayerAtten; // 0xa4
+    float mBackgroundVolume; // 0xa8
+    float mMuteVolume; // 0xac
+    float mVocalMuteVolume; // 0xb0
+    float mPassVolume; // 0xb4
+    float mUnplayedVolume; // 0xb8
+    float mCueVolume; // 0xbc
+    float mPracticeVolume; // 0xc0
+    float mRemoteVolume; // 0xc4
+    float mMasterVolume; // 0xc8
 
     bool mMuteMaster; // 0xcc
     bool mMuckWithPitch; // 0xcd
 
-    PitchMucker *mPitchMucker; // 0xbc - PitchMucker*
-    bool mWhammyEnabled; // 0xc0
-    float mTimeOffset; // 0xc4
+    PitchMucker *mPitchMucker; // 0xd0 - PitchMucker*
+    bool mWhammyEnabled; // 0xd4
+    float mTimeOffset; // 0xd8
 };

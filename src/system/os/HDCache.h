@@ -44,7 +44,7 @@ private:
     File *mHdr[2]; // 0x48
     MemStream *mHdrBuf; // 0x50
     String mHdrFmt; // 0x54
-    String mFileFmt; // 0x5c
+    String mFileFmt; // 0x60
     bool unk64; // 0x6c
 };
 

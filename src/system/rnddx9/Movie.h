@@ -27,7 +27,7 @@ private:
     SIVideo mVideo; // 0x2c
     void *mFrameBuf;
     int mNumFrames;
-    File *mStream; // 0x4c
+    File *mStream; // 0x48
     int mStreamDataOffset;
     int mBufOffset;
     void *mReadPtr;

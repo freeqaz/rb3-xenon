@@ -50,7 +50,7 @@ public:
     int unkc;
     unsigned long long mConsoleCode; // 0x10
     std::vector<WiiFriendProfile *> unk18; // 0x18
-    WiiFriendProfile *mMasterProfile; // 0x20
+    WiiFriendProfile *mMasterProfile; // 0x24
     int unk24;
 };
 
@@ -93,9 +93,9 @@ public:
 
     static String GetMasterProfileName(unsigned long long);
 
-    JobDeleteOrphanedProfiles *unk1c; // 0x1c
-    JobEnumerateFriends *unk20; // 0x20
-    WiiFriendList unk24; // 0x24
+    JobDeleteOrphanedProfiles *unk1c; // 0x18
+    JobEnumerateFriends *unk20; // 0x1c
+    WiiFriendList unk24; // 0x20
     bool unk2c;
     bool unk2d; // 0x2d - has_nwc24_lib_failed
     Timer unk30; // 0x30

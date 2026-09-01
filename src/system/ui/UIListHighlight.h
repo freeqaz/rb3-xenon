@@ -34,5 +34,5 @@ protected:
     UIListHighlight();
 
     /** "arrow mesh to draw/transform" */
-    ObjPtr<RndMesh> mMesh; // 0x5c
+    ObjPtr<RndMesh> mMesh; // 0x50
 };

@@ -23,6 +23,6 @@ public:
 protected:
     FxSendMeterEffect();
 
-    bool mResetPeaks; // 0x60
-    std::vector<LevelData> mChannels; // 0x64
+    bool mResetPeaks; // 0x54
+    std::vector<LevelData> mChannels; // 0x58
 };

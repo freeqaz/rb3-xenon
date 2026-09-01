@@ -28,7 +28,7 @@ public:
     NEW_OBJ(CharTransDraw);
 
     /** "The Characters whose translucent bits we will draw" */
-    ObjPtrList<Character> mChars; // 0x40
+    ObjPtrList<Character> mChars; // 0x24
     // NO `bool mForceDraw` IN RB3 RETAIL -- a DC3-era addition.  Evidence:
     //  (1) rb3-Wii's CharTransDraw (RB3's OWN engine generation) declares only
     //      mChars and its BEGIN_PROPSYNCS has only SYNC_PROP(chars, mChars);

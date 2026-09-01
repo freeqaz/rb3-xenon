@@ -66,12 +66,12 @@ public:
     wchar_t *DisplayName() { return mDisplayName; }
 
 protected:
-    char mFileName[XCONTENT_MAX_FILENAME_LENGTH]; // 0x2c
-    wchar_t mDisplayName[XCONTENT_MAX_DISPLAYNAME_LENGTH]; // 0x56
-    bool mSelectorPending; // 0x156
-    Hmx::Object *mSelectorCallback; // 0x158
-    DWORD mSelectedDevice; // 0x15c
-    XOVERLAPPED mXOverlapped; // 0x160
+    char mFileName[XCONTENT_MAX_FILENAME_LENGTH]; // 0x28
+    wchar_t mDisplayName[XCONTENT_MAX_DISPLAYNAME_LENGTH]; // 0x52
+    bool mSelectorPending; // 0x152
+    Hmx::Object *mSelectorCallback; // 0x154
+    DWORD mSelectedDevice; // 0x158
+    XOVERLAPPED mXOverlapped; // 0x15c
 };
 
 extern MemcardXbox TheMC;

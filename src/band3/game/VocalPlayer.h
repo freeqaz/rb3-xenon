@@ -100,7 +100,7 @@ public:
     float mMs; // 0x0
     float mCompMs; // 0x4
     std::vector<VocalFrameSingerData> mSingerData; // 0x8
-    std::vector<VocalFramePartData> mPartData; // 0x10
+    std::vector<VocalFramePartData> mPartData; // 0x14
 };
 
 class VocalPlayer : public Player, public RndOverlay::Callback {
@@ -256,55 +256,55 @@ public:
 
     DataNode OnMidiParser(DataArray *);
 
-    Performer *mBandPerformer; // 0x2cc
-    bool mSpoofed; // 0x2d0
+    Performer *mBandPerformer; // 0x304
+    bool mSpoofed; // 0x308
     VocalTrack *mTrack; // 0x30c
-    bool mAutoPlay; // 0x2d8
-    float mVocalPartBias; // 0x2dc
+    bool mAutoPlay; // 0x310
+    float mVocalPartBias; // 0x314
     int unk2e0;
     int unk2e4;
     int unk2e8;
     float unk2ec;
-    float mNextPacketSendTime; // 0x2f0
-    float mMaxDetune; // 0x2f4
-    float mPacketPeriodMs; // 0x2f8
+    float mNextPacketSendTime; // 0x328
+    float mMaxDetune; // 0x32c
+    float mPacketPeriodMs; // 0x330
     float unk2fc;
     float unk300;
     float unk304;
-    float mTrackWrappingMargin; // 0x308
+    float mTrackWrappingMargin; // 0x340
     float mPitchMaximumDistance; // 0x344
     float mSynapseProximitySolo; // 0x348
     float mSynapseFocusSolo; // 0x34c
     float mSynapseProximityHarmony; // 0x350
     float mSynapseFocusHarmony; // 0x354
-    DataArray *mFreestyleDeploymentTimes; // 0x320
-    DataArray *mFreestyleMinDurations; // 0x324
-    int mLastDeploymentSinger; // 0x328
+    DataArray *mFreestyleDeploymentTimes; // 0x358
+    DataArray *mFreestyleMinDurations; // 0x35c
+    int mLastDeploymentSinger; // 0x360
     int mPhraseValue; // 0x364
-    DataArray *mPartScoreMultipliers; // 0x330
-    DataArray *mRatingThresholds; // 0x334
-    float mNonpitchStickiness; // 0x338
-    bool mCouldChat; // 0x33c
-    float mCodaEndMs; // 0x340
+    DataArray *mPartScoreMultipliers; // 0x368
+    DataArray *mRatingThresholds; // 0x36c
+    float mNonpitchStickiness; // 0x370
+    bool mCouldChat; // 0x374
+    float mCodaEndMs; // 0x378
     bool unk344;
-    float mTuningOffset; // 0x348
+    float mTuningOffset; // 0x380
     float unk34c;
     std::vector<Singer *> mSingers; // 0x388
     std::vector<VocalPart *> mVocalParts; // 0x394
     std::vector<MicClientID> mInitialMicClientIDs; // 0x3a0
-    int mInitialMicCount; // 0x368
+    int mInitialMicCount; // 0x3ac
     int unk36c;
     int unk370;
-    int mPhraseActivePartCount; // 0x374
-    float mPhrasePercentageTotal; // 0x378
-    int mPhrasePercentageCount; // 0x37c
+    int mPhraseActivePartCount; // 0x3b8
+    float mPhrasePercentageTotal; // 0x3bc
+    int mPhrasePercentageCount; // 0x3c0
     RndOverlay *mOverlay; // 0x3c4
-    VocalOverlay *mVocalOverlay; // 0x384
-    bool mScoringEnabled; // 0x388
-    TambourineManager mTambourineManager; // 0x38c
-    float mSectionStartPhrasePercentageTotal; // 0x414
-    int mSectionStartPhrasePercentageCount; // 0x418
-    float mSectionStartScore; // 0x41c
+    VocalOverlay *mVocalOverlay; // 0x3c8
+    bool mScoringEnabled; // 0x3cc
+    TambourineManager mTambourineManager; // 0x3d0
+    float mSectionStartPhrasePercentageTotal; // 0x46c
+    int mSectionStartPhrasePercentageCount; // 0x470
+    float mSectionStartScore; // 0x474
     // mFrameSpewData/mFrameSpewStream are DC3-only debug frame-spew members.
     // Retail rb3-xenon has NO frame-spew feature at all (no "frame_spew" /
     // "toggle_frame_spew" / OutputHeader strings in default.xex; retail

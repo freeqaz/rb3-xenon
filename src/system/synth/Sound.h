@@ -85,30 +85,30 @@ protected:
     /** "Effect chain to use" */
     ObjPtr<FxSend> mSend; // 0x24
     /** "Reverb send for this sfx". Ranges from -96 to 20. */
-    float mReverbMixDb; // 0x38
+    float mReverbMixDb; // 0x30
     /** "Enable reverb send (SynthSample only)" */
-    bool mReverbEnable; // 0x3c
-    bool unk3d; // 0x3c
+    bool mReverbEnable; // 0x34
+    bool unk3d; // 0x35
     /** "Which sample to play" */
-    ObjPtr<SynthSample> mSynthSample; // 0x40
+    ObjPtr<SynthSample> mSynthSample; // 0x38
     /** "Which sample to play" */
-    ObjPtr<MoggClip> mMoggClip; // 0x54
+    ObjPtr<MoggClip> mMoggClip; // 0x44
     /** "Envelope for this sound (SynthSample only)" */
-    ObjPtr<ADSR> mEnvelope; // 0x68
-    FaderGroup mFaders; // 0x7c
-    AudioDuckerGroup mDuckers; // 0x94
+    ObjPtr<ADSR> mEnvelope; // 0x50
+    FaderGroup mFaders; // 0x5c
+    AudioDuckerGroup mDuckers; // 0x74
     /** "Loop this sample" */
-    bool mLoop; // 0xa4
+    bool mLoop; // 0x84
     /** "Start of the loop, in samples. Ignored if 'looped' is unchecked." */
-    int mLoopStart; // 0xa8
+    int mLoopStart; // 0x88
     /** "End of the loop, in samples.  Use -1 for the end of the sample." */
-    int mLoopEnd; // 0xac
+    int mLoopEnd; // 0x8c
     /** "Maximum number of times this sound can be playing simultaneously.
         Use 0 for no limit. (SynthSample only)" */
-    int mMaxPolyphony; // 0xb0
+    int mMaxPolyphony; // 0x90
     bool mIsSynthSample;
     ObjPtr<Hmx::Object> mEventReceiver;
-    std::list<DelayArgs *> mDelayArgs; // 0xcc
+    std::list<DelayArgs *> mDelayArgs; // 0xa4
 };
 
 #include "obj/Msg.h"

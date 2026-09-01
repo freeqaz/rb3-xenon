@@ -50,13 +50,13 @@ namespace Quazal {
 
         static CriticalSection s_csRefCount;
 
-        unsigned short m_uiRefCount; // 0x1c
-        unsigned short m_uiRelevanceCount; // 0x1e
-        MasterStationRef m_refMasterStation; // 0x20
-        unsigned short m_uiFlags; // 0x2c
-        Selection m_setDuplicationSet; // 0x30
-        DOHandle m_dohMyself; // 0x50
-        Selection m_setCachedDuplicationSet; // 0x54
+        unsigned short m_uiRefCount; // 0xc
+        unsigned short m_uiRelevanceCount; // 0xe
+        MasterStationRef m_refMasterStation; // 0x10
+        unsigned short m_uiFlags; // 0x20
+        Selection m_setDuplicationSet; // 0x24
+        DOHandle m_dohMyself; // 0x48
+        Selection m_setCachedDuplicationSet; // 0x4c
     };
 
 }

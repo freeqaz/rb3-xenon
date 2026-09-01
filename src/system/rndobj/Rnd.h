@@ -312,11 +312,11 @@ protected:
     DataNode OnToggleShowMetaMatErrors(const DataArray *);
     DataNode OnToggleShowShaderErrors(const DataArray *);
 
-    Hmx::Color mClearColor; // 0x30
-    int mWidth; // 0x40
-    int mHeight; // 0x44
-    int mScreenBpp; // 0x48
-    int mDrawCount; // 0x4c
+    Hmx::Color mClearColor; // 0x2c
+    int mWidth; // 0x3c
+    int mHeight; // 0x40
+    int mScreenBpp; // 0x44
+    int mDrawCount; // 0x48
     Timer mDrawTimer; // 0x50
     // Retail X360/RB3 layout (verified via Rnd ctor fn_82402FA0 + OnShowConsole
     // loading mConsole at 0x90): the four overlay pointers sit at 0x80..0x8c

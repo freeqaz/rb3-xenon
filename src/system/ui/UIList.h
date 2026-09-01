@@ -134,7 +134,7 @@ protected:
     // mResource->Dir() in PostLoad — NOT DC3's ResourceDirPtr<UIListDir>
     // (the DC3-newer divergence). The raw pointer is 0xc bytes smaller than
     // ResourceDirPtr, shrinking mWidgets/mListState back to retail offsets.
-    UIListDir *mListDir; // 0x8c
+    UIListDir *mListDir; // 0x178
     std::vector<UIListWidget *> mWidgets;
     UIListState mListState;
     // RB3 retail load-revision tracker, between mListState and mDataProvider
@@ -142,27 +142,27 @@ protected:
     int mUIListRev;
     DataProvider *mDataProvider;
     /** "Num data to show (only for milo)". Ranges from 1 to 1000. */
-    int mNumData; // 0xfc
+    int mNumData; // 0x1d8
     /** "Allow scrolling by pages?" */
-    bool mPaginate; // 0x100
-    LocalUser *mUser; // 0x104
-    UIList *mParent; // 0x108
+    bool mPaginate; // 0x1dc
+    LocalUser *mUser; // 0x1e0
+    UIList *mParent; // 0x1e4
     /** "labels to be filled in by list provider at runtime" */
-    ObjPtrList<UILabel> mExtendedLabelEntries; // 0x10c
+    ObjPtrList<UILabel> mExtendedLabelEntries; // 0x1e8
     /** "meshes to be filled in by list provider at runtime" */
-    ObjPtrList<RndMesh> mExtendedMeshEntries; // 0x120
+    ObjPtrList<RndMesh> mExtendedMeshEntries; // 0x1fc
     /** "custom objects to be filled in by list provider at runtime" */
-    ObjPtrList<Hmx::Object> mExtendedCustomEntries; // 0x134
+    ObjPtrList<Hmx::Object> mExtendedCustomEntries; // 0x210
     /** "Time to pause when auto scroll changes directions (seconds)".
         Ranges from 0 to 100. */
-    float mAutoScrollPause; // 0x148
+    float mAutoScrollPause; // 0x224
     /** "Should this list send UIComponentScroll* messages while auto-scrolling?" */
-    bool mAutoScrollSendMsgs; // 0x14c
-    int mAutoScrollDir; // 0x150
-    bool mAutoScrolling; // 0x154
-    float mAutoScrollTimer; // 0x158
-    bool mDrawManuallyControlledWidgets; // 0x15c
-    bool mAllowHighlight; // 0x15d
+    bool mAutoScrollSendMsgs; // 0x228
+    int mAutoScrollDir; // 0x22c
+    bool mAutoScrolling; // 0x230
+    float mAutoScrollTimer; // 0x234
+    bool mDrawManuallyControlledWidgets; // 0x238
+    bool mAllowHighlight; // 0x239
     /** "Allow multiple instances of same option to be displayed?" */
     bool mLimitCircularDisplayNumToDataNum; // 0x23a
 #ifdef HX_NATIVE

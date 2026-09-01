@@ -38,7 +38,7 @@ protected:
     bool mAutoWah; // 0x6c
     float mFrequency; // 0x70
     /** "Dump". */
-    float mDump; // 0x68
+    float mDump; // 0x74
     /** "Sync wah to song tempo?" */
     bool mTempoSync; // 0x78
     /** "Note value of delay". Sync type options: (sixteenth eighth dotted_eighth quarter

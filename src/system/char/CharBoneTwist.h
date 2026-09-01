@@ -30,7 +30,7 @@ protected:
     CharBoneTwist();
 
     /** "Bone to move" */
-    ObjPtr<RndTransformable> mBone; // 0x28
+    ObjPtr<RndTransformable> mBone; // 0x20
     /** "Targets to average to point bone at" */
-    ObjPtrList<RndTransformable> mTargets; // 0x3c
+    ObjPtrList<RndTransformable> mTargets; // 0x2c
 };

@@ -58,26 +58,26 @@ public:
     int GetNumLoops() const;
     int NumGems() const { return mPattern.size(); }
 
-    std::vector<GameGem> mPattern; // 0x54
+    std::vector<GameGem> mPattern; // 0x60
     GemPlayer *mGemPlayer; // 0x6c
-    GameGemList *mGameGemLists[kNumDifficulties]; // 0x60
-    GemTrack *mTrack; // 0x70
+    GameGemList *mGameGemLists[kNumDifficulties]; // 0x70
+    GemTrack *mTrack; // 0x80
     GemManager *mGemManager; // 0x84
-    Difficulty mDifficulty; // 0x78
+    Difficulty mDifficulty; // 0x88
     LocalBandUser *mLocalUser; // 0x8c
-    int mWriteTick; // 0x80
+    int mWriteTick; // 0x90
     int mScoreTick; // 0x94
-    std::vector<GameGem> mSongGems[kNumDifficulties]; // 0x88
-    bool mAddBeatMask; // 0x80
-    bool mAddBeatMaskImmediately; // 0xa9
-    int mNumLoops; // 0xac
+    std::vector<GameGem> mSongGems[kNumDifficulties]; // 0x98
+    bool mAddBeatMask; // 0xc8
+    bool mAddBeatMaskImmediately; // 0xc9
+    int mNumLoops; // 0xcc
     int unkb0;
-    TrainerGemTab *mTab; // 0xb4
-    Metronome *mMetronome; // 0xb8
+    TrainerGemTab *mTab; // 0xd4
+    Metronome *mMetronome; // 0xd8
     float unkbc;
     float unkc0;
     float unkc4;
-    bool mDrawTab; // 0xc8
+    bool mDrawTab; // 0xe8
     bool unkc9;
     int unkcc;
     bool unkd0;

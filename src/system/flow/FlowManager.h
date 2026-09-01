@@ -19,21 +19,21 @@ public:
 protected:
     bool unk2c;
     bool mExecuting;
-    std::map<FlowNode *, FlowNode::QueueState> mFlowQueue; // 0x30
-    ObjPtrVec<FlowNode> mPollables; // 0x48
-    std::map<Symbol, DataNode> mEventTimes; // 0x64
-    float mFrameTimeAccumulator; // 0x7c
-    float mPeakFrameTime; // 0x80
-    RndOverlay *mFlowOverlay; // 0x84
-    RndOverlay *mFlowPeakOverlay; // 0x88
-    RndOverlay *mFlowTaskOverlay; // 0x8c
-    RndOverlay *mFlowEventOverlay; // 0x90
-    int mFrameCounterModulo; // 0x94
-    float mFrameTimeSamples[60]; // 0x98
-    float mAvgFrameTime; // 0x188
-    float mLastFrameTime; // 0x18c
-    float mElapsedTime; // 0x190
-    DataNode mPeakFrameInfo; // 0x194
+    std::map<FlowNode *, FlowNode::QueueState> mFlowQueue; // 0x2c
+    ObjPtrVec<FlowNode> mPollables; // 0x44
+    std::map<Symbol, DataNode> mEventTimes; // 0x60
+    float mFrameTimeAccumulator; // 0x78
+    float mPeakFrameTime; // 0x7c
+    RndOverlay *mFlowOverlay; // 0x80
+    RndOverlay *mFlowPeakOverlay; // 0x84
+    RndOverlay *mFlowTaskOverlay; // 0x88
+    RndOverlay *mFlowEventOverlay; // 0x8c
+    int mFrameCounterModulo; // 0x90
+    float mFrameTimeSamples[60]; // 0x94
+    float mAvgFrameTime; // 0x184
+    float mLastFrameTime; // 0x188
+    float mElapsedTime; // 0x18c
+    DataNode mPeakFrameInfo; // 0x190
 };
 
 extern FlowManager *TheFlowMgr;

@@ -109,5 +109,5 @@ public:
     void StuffMeshes(ObjPtrList<RndMesh, ObjectDir> &);
 
     std::vector<MeshCacher *> mCache; // 0x4
-    bool mDisabled; // 0xc
+    bool mDisabled; // 0x10
 };

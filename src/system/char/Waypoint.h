@@ -54,7 +54,7 @@ protected:
     Waypoint();
 
     /** "Flags for this waypoint, should be a bitfield per app" */
-    int mFlags; // 0xc0
+    int mFlags; // 0xb4
     /** "Radius within we can stop from a walk, or be tethered to" */
     float mRadius; // 0xb8
     /** "If positive, makes this shape a box with radius the x axis X half width,
@@ -62,7 +62,7 @@ protected:
     float mYRadius; // 0xbc
     /** "Angular slop in degrees away from y axis" */
     float mAngRadius; // 0xc0
-    int mPad; // 0xd0
+    int mPad; // 0xc4
     /** "degrees beyond ang radius you can never rotate past, if >= 0".
         Ranges from -1 to 360. */
     float mStrictAngDelta; // 0xc8

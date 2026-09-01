@@ -99,21 +99,21 @@ public:
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
-    float mViewTimeEasy; // 0x1d8
-    float mViewTimeExpert; // 0x1dc
-    float mNetTrackAlpha; // 0x1e0
-    float mPulseOffset; // 0x1e4
-    ObjPtr<Hmx::Object> mConfiguration; // 0x1e8
-    ObjPtrList<RndTransformable> mConfigurableObjects; // 0x1f4
-    std::vector<TrackInstrument> mInstruments; // 0x204
-    ObjVector<ObjPtr<BandTrack> > mTracks; // 0x20c
-    ObjVector<ObjPtr<RndDir> > mGemTracks; // 0x218  (GemTrackDir; RndDir keeps layout, avoids header tail)
-    bool unk224; // 0x224
-    TrackPanelInterface *mTrackPanel; // 0x228
-    ObjPtr<RndDir> mApplauseMeter; // 0x22c
-    RndDir *mBandLogoRival; // 0x238
-    RndDir *mBandLogo; // 0x23c
-    bool mPerformanceMode; // 0x240
-    bool mDoubleSpeedActive; // 0x241
-    bool mIndependentTrackSpeeds; // 0x242
+    float mViewTimeEasy; // 0x238
+    float mViewTimeExpert; // 0x23c
+    float mNetTrackAlpha; // 0x240
+    float mPulseOffset; // 0x244
+    ObjPtr<Hmx::Object> mConfiguration; // 0x248
+    ObjPtrList<RndTransformable> mConfigurableObjects; // 0x254
+    std::vector<TrackInstrument> mInstruments; // 0x268
+    ObjVector<ObjPtr<BandTrack> > mTracks; // 0x274
+    ObjVector<ObjPtr<RndDir> > mGemTracks; // 0x284  (GemTrackDir; RndDir keeps layout, avoids header tail)
+    bool unk224; // 0x294
+    TrackPanelInterface *mTrackPanel; // 0x298
+    ObjPtr<RndDir> mApplauseMeter; // 0x29c
+    RndDir *mBandLogoRival; // 0x2a8
+    RndDir *mBandLogo; // 0x2ac
+    bool mPerformanceMode; // 0x2b0
+    bool mDoubleSpeedActive; // 0x2b1
+    bool mIndependentTrackSpeeds; // 0x2b2
 };

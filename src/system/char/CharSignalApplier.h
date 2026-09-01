@@ -42,13 +42,13 @@ public:
 protected:
     CharSignalApplier();
 
-    float mSignal; // 0x28 - current signal value
-    float mSignalMin; // 0x2c
-    float mSignalMax; // 0x30
-    bool mDoSmoothing; // 0x34
-    float mSmoothIncrement; // 0x38
-    float mSmoothedSignal; // 0x3c
-    ObjVector<CharSignalApplier::BoneOp> mBoneOps; // 0x40
+    float mSignal; // 0x20 - current signal value
+    float mSignalMin; // 0x24
+    float mSignalMax; // 0x28
+    bool mDoSmoothing; // 0x2c
+    float mSmoothIncrement; // 0x30
+    float mSmoothedSignal; // 0x34
+    ObjVector<CharSignalApplier::BoneOp> mBoneOps; // 0x38
 };
 
 bool PropSync(CharSignalApplier::BoneOp &, DataNode &, DataArray *, int, PropOp);

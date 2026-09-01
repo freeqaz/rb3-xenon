@@ -40,5 +40,5 @@ protected:
     float mPreviewStartTime; // 0x3c
     float mPreviewEndTime; // 0x40
     DataArraySongInfo *mSongInfo; // 0x44
-    int mAge; // 0x4c - used for song cache?
+    int mAge; // 0x48 - used for song cache?
 };

@@ -58,13 +58,13 @@ protected:
 
     /** "If non null, the bone which looks at along its Y axis,
         otherwise equal to the pivot" */
-    ObjPtr<RndTransformable> mSource; // 0x30
+    ObjPtr<RndTransformable> mSource; // 0x28
     /** "The thing that pivots" */
-    ObjPtr<RndTransformable> mPivot; // 0x44
+    ObjPtr<RndTransformable> mPivot; // 0x34
     /** "The thing to look at" */
-    ObjPtr<RndTransformable> mTarget; // 0x58
+    ObjPtr<RndTransformable> mTarget; // 0x40
     /** "Seconds of lag when moving the source" */
-    float mHalfTime; // 0x6c
+    float mHalfTime; // 0x4c
     /** "Degrees of min allowable yaw, looking left". Ranges from -80 to 80. */
     float mMinYaw; // 0x50
     /** "Degrees of max allowable yaw, looking right". Ranges from -80 to 80. */
@@ -74,17 +74,17 @@ protected:
     /** "Degrees of max allowable pitch, looking up". Ranges from -80 to 80. */
     float mMaxPitch; // 0x5c
     /** "Degrees of yaw to start auto-weight, -1 means no auto-weight" */
-    float mMinWeightYaw; // 0x80
+    float mMinWeightYaw; // 0x60
     /** "Degrees of yaw to stop auto-weight, must be greater than mMinWeightYaw" */
-    float mMaxWeightYaw; // 0x84
+    float mMaxWeightYaw; // 0x64
     /** "Max speed in weight/sec that the auto-weight can change" */
-    float mWeightYawSpeed; // 0x88
-    Vector3 mPivotLookTarget; // 0x8c
-    float mPivotLookWeight; // 0x9c
+    float mWeightYawSpeed; // 0x68
+    Vector3 mPivotLookTarget; // 0x6c
+    float mPivotLookWeight; // 0x7c
     /** "radius in degrees of filtered source motion that's allowed through" */
-    float mSourceRadius; // 0xa0
-    Vector3 unka4; // 0xa4
-    Box mLookLimits; // 0xb4
+    float mSourceRadius; // 0x80
+    Vector3 unka4; // 0x84
+    Box mLookLimits; // 0x94
     /** "Graphically show the extreme ranges of motion" */
     bool mShowRange; // 0xb4
     // NOTE: retail RB3-360 (MILO_DEBUG off) does NOT contain the three

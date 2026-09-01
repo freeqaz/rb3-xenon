@@ -71,13 +71,13 @@ public:
     void StartPulseAnims(float);
     int GetTrackNum() const;
 
-    TrackConfig mTrackConfig; // 0x1c
+    TrackConfig mTrackConfig; // 0x28
     float mLastRating; // 0x58
     CrowdMeterState mLastRatingState; // 0x5c
     bool unk50; // 0x60
     int mLastStreakCount; // 0x64
     int mSlotIdx; // 0x68
-    GameplayOptions *mGameplayOptions; // 0x5c
+    GameplayOptions *mGameplayOptions; // 0x6c
     bool mIntroPlaying; // 0x70
     float mIntroEndMs; // 0x74
 };

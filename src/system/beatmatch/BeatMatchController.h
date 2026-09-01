@@ -49,10 +49,10 @@ public:
     void SetMapping(BeatMatchControllerGemMapping m) { mGemMapping = m; }
 
     User *mUser; // 0x28
-    int mForceMercuryBut; // 0x20
+    int mForceMercuryBut; // 0x2c
     bool mLefty; // 0x30
-    bool unk25; // 0x25
-    BeatMatchControllerGemMapping mGemMapping; // 0x28
+    bool unk25; // 0x31
+    BeatMatchControllerGemMapping mGemMapping; // 0x34
     HitSink *mHitSink; // 0x38
     DataArray *mSlots; // 0x3c
     DataArray *mLeftySlots; // 0x40

@@ -35,11 +35,11 @@ public:
 
     float mNumStars; // 0x1dc
     ObjVector<ObjPtr<RndDir> > mStars; // 0x1e0
-    ObjVector<ObjPtr<RndAnimatable> > mStarSweepAnims; // 0x19c
-    ObjVector<ObjPtr<EventTrigger> > mStarFullTriggers; // 0x1a8
-    ObjVector<ObjPtr<EventTrigger> > mStarGoldTriggers; // 0x1b4
-    ObjPtr<RndAnimatable> mStarOffsetAnim; // 0x1c0
-    ObjPtr<Sequence> mEarnStarSfx; // 0x1cc
-    ObjPtr<Sequence> mEarnSpadeSfx; // 0x1d8
-    Symbol mStarType; // 0x1e4
+    ObjVector<ObjPtr<RndAnimatable> > mStarSweepAnims; // 0x1f0
+    ObjVector<ObjPtr<EventTrigger> > mStarFullTriggers; // 0x200
+    ObjVector<ObjPtr<EventTrigger> > mStarGoldTriggers; // 0x210
+    ObjPtr<RndAnimatable> mStarOffsetAnim; // 0x220
+    ObjPtr<Sequence> mEarnStarSfx; // 0x22c
+    ObjPtr<Sequence> mEarnSpadeSfx; // 0x238
+    Symbol mStarType; // 0x244
 };

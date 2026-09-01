@@ -67,11 +67,11 @@ protected:
     DataNode OnGetRecvMeshes(DataArray *);
 
     /** "These objects will NOT cast shadows." */
-    ObjPtrList<Hmx::Object> mDontCastAO; // 0x2c
+    ObjPtrList<Hmx::Object> mDontCastAO; // 0x28
     /** "These objects will NOT receive shadows." */
-    ObjPtrList<Hmx::Object> mDontReceiveAO; // 0x40
+    ObjPtrList<Hmx::Object> mDontReceiveAO; // 0x3c
     /** "These objects will be automatically tessellated." */
-    ObjPtrList<Hmx::Object> mTessellate; // 0x54
+    ObjPtrList<Hmx::Object> mTessellate; // 0x50
     /** "Ignore transparent objects when casting shadows." */
     bool mIgnoreTransparent; // 0x64
     /** "Ignore prelit materials when receiving shadows." */
@@ -99,11 +99,11 @@ protected:
     /** "Triangles smaller than this size will not be split any further."
         Ranges from 0.1 to 500. */
     float mTessellateTriSmall; // 0x78
-    std::vector<RndMesh *> mObjectsCast; // 0x80
-    std::vector<RndMesh *> mObjectsReceive; // 0x8c
-    std::vector<RndMesh *> mObjectsTessellate; // 0x98
-    std::vector<Triangle> mTriList; // 0xa4
-    kdTree<Triangle> *mTree; // 0xb0
+    std::vector<RndMesh *> mObjectsCast; // 0x7c
+    std::vector<RndMesh *> mObjectsReceive; // 0x88
+    std::vector<RndMesh *> mObjectsTessellate; // 0x94
+    std::vector<Triangle> mTriList; // 0xa0
+    kdTree<Triangle> *mTree; // 0xac
     Quality mQuality; // 0xb0
-    std::vector<Vector3> mSampleDirs; // 0xb8
+    std::vector<Vector3> mSampleDirs; // 0xb4
 };

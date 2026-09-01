@@ -23,12 +23,12 @@ public:
 
     DataNode OnMsg(const RemoteUserLeftMsg &);
 
-    Quazal::SpeexCodec *mCodec; // 0x1c
-    Quazal::DemuxEventHandler *mReceiver; // 0x20
+    Quazal::SpeexCodec *mCodec; // 0x18
+    Quazal::DemuxEventHandler *mReceiver; // 0x1c
     Quazal::VoiceChannel *unk24;
     int unk28;
     bool unk2c;
-    std::vector<User *> unk30; // 0x30
+    std::vector<User *> unk30; // 0x2c
     std::vector<User *> unk38;
     bool unk40;
     bool unk41;

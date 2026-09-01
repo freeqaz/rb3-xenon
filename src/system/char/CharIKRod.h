@@ -44,14 +44,14 @@ protected:
     /** "Left end of the rod" */
     ObjPtr<RndTransformable> mLeftEnd; // 0x8
     /** "Right end of the rod" */
-    ObjPtr<RndTransformable> mRightEnd; // 0x1c
+    ObjPtr<RndTransformable> mRightEnd; // 0x14
     /** "Fraction of the way dest is from left (0) to right(1)" */
     float mDestPos; // 0x20
     /** "Take the z axis from this bone rather than from rod end delta" */
-    ObjPtr<RndTransformable> mSideAxis; // 0x34
+    ObjPtr<RndTransformable> mSideAxis; // 0x24
     /** "Force the dest to be vertically upright" */
     bool mVertical; // 0x30
     /** "The bone to set" */
-    ObjPtr<RndTransformable> mDest; // 0x4c
-    Transform mXfm; // 0x60
+    ObjPtr<RndTransformable> mDest; // 0x34
+    Transform mXfm; // 0x40
 };

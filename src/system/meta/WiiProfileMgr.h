@@ -12,11 +12,11 @@ public:
     virtual ~WiiProfile() {}
     virtual DataNode Handle(DataArray *, bool) { return DataNode(kDataUnhandled, 0); }
 
-    char mSlot;    // 0x1C
-    unsigned int mId;    // 0x20
-    unsigned int mFlags; // 0x24
-    int mHasSeenFirstTimeInstrumentFlags; // 0x28
-    char mProfileName[48]; // 0x2c
+    char mSlot;    // 0x28
+    unsigned int mId;    // 0x2c
+    unsigned int mFlags; // 0x30
+    int mHasSeenFirstTimeInstrumentFlags; // 0x34
+    char mProfileName[48]; // 0x38
 
     static int SaveSize() { return 0; }
 };

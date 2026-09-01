@@ -123,34 +123,34 @@ protected:
 
     static CharClip *sSkeletonClips[kNumSkeletons];
 
-    String mCampaignVO; // 0x2d8
-    Hmx::Object *mCampaignVOBank; // 0x2e0
-    ObjectDir *mCampaignVODir; // 0x2e4
-    FileMerger *mFileMerger; // 0x2e8
+    String mCampaignVO; // 0x268
+    Hmx::Object *mCampaignVOBank; // 0x274
+    ObjectDir *mCampaignVODir; // 0x278
+    FileMerger *mFileMerger; // 0x27c
     /** "which character to look like" */
-    Symbol mOutfit; // 0x2ec
-    Waypoint *mWaypoint; // 0x2f0
+    Symbol mOutfit; // 0x280
+    Waypoint *mWaypoint; // 0x284
     /** "where to load outfits from" */
-    Symbol mOutfitDir; // 0x2f4
-    bool mIsCampaignChar; // 0x2f8
+    Symbol mOutfitDir; // 0x288
+    bool mIsCampaignChar; // 0x28c
     /** "Draws a 6 foot square box around the character teleport point" */
-    bool mShowBox; // 0x2f9
-    bool mNeedsAcquirePose; // 0x2fa
-    ObjPtr<CharEyes> mEyes; // 0x2fc
+    bool mShowBox; // 0x28d
+    bool mNeedsAcquirePose; // 0x28e
+    ObjPtr<CharEyes> mEyes; // 0x290
     /** "Gender of this character" */
-    HamGender mGender; // 0x310
-    int mAnimationState; // 0x314 - animation regulator state, initialized to 0
+    HamGender mGender; // 0x29c
+    int mAnimationState; // 0x2a0 - animation regulator state, initialized to 0
     /** "Updates the character's animation even though showing is set to FALSE.
         Useful for rendering the character to a texture." */
-    bool mPollWhenHidden; // 0x318
+    bool mPollWhenHidden; // 0x2a4
     /** "True if the internal TexBlenders are working." */
-    bool mTexBlendersActive; // 0x319
-    ObjPtrList<CharWeightable> mIKEffectors; // 0x31c
-    float mBaseLipsyncOffset; // 0x330
-    ObjectDir *mNeutralSkelDir; // 0x334
-    CharServoBone *mSkeletonBones; // 0x338
-    ObjPtr<RndMesh> mCrewCardMesh; // 0x33c
-    bool mUseCameraSkeleton; // 0x350
+    bool mTexBlendersActive; // 0x2a5
+    ObjPtrList<CharWeightable> mIKEffectors; // 0x2a8
+    float mBaseLipsyncOffset; // 0x2bc
+    ObjectDir *mNeutralSkelDir; // 0x2c0
+    CharServoBone *mSkeletonBones; // 0x2c4
+    ObjPtr<RndMesh> mCrewCardMesh; // 0x2c8
+    bool mUseCameraSkeleton; // 0x2d4
     /** "Props to show and hide for cut scenes". In DC3 this lived on the base
         Character; RB3 retail's base Character has no showable-props member (the
         "showable_props"/"prop_N_showing" property strings are absent from the

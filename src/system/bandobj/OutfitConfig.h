@@ -28,7 +28,7 @@ public:
         ObjPtr<RndTransformable> mPiercing; // 0x0
         Transform unkc; // 0xc
         bool mReskin; // 0x4c
-        ObjVector<Piece> mPieces; // 0x40
+        ObjVector<Piece> mPieces; // 0x50
     };
 
     class MatSwap {
@@ -162,20 +162,20 @@ public:
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
-    int mColors[3]; // 0x20, 0x24, 0x28
-    ObjVector<MatSwap> mMats; // 0x2c
-    int unk38; // 0x38
-    int unk3c; // 0x3c
+    int mColors[3]; // 0x24, 0x24, 0x28
+    ObjVector<MatSwap> mMats; // 0x30
+    int unk38; // 0x40
+    int unk3c; // 0x44
     std::vector<MeshAO> mMeshAO; // 0x48
-    bool mComputeAO; // 0x48
-    ObjVector<BandPatchMesh> mPatches; // 0x4c
-    bool mPermaProject; // 0x58
-    ObjVector<Piercing> mPiercings; // 0x5c
-    ObjPtr<RndTexBlender> mTexBlender; // 0x68
-    ObjPtr<RndTexBlender> mWrinkleBlender; // 0x74
-    ObjVector<Overlay> mOverlays; // 0x80
-    ObjPtr<RndMat> mBandLogo; // 0x8c
-    CSHA1::Digest mDigest; // 0x98
+    bool mComputeAO; // 0x54
+    ObjVector<BandPatchMesh> mPatches; // 0x58
+    bool mPermaProject; // 0x68
+    ObjVector<Piercing> mPiercings; // 0x6c
+    ObjPtr<RndTexBlender> mTexBlender; // 0x7c
+    ObjPtr<RndTexBlender> mWrinkleBlender; // 0x88
+    ObjVector<Overlay> mOverlays; // 0x94
+    ObjPtr<RndMat> mBandLogo; // 0xa4
+    CSHA1::Digest mDigest; // 0xb0
 };
 
 class OldMatOption {

@@ -38,9 +38,9 @@ protected:
     virtual RndTransformable *RootTrans();
 
     /** "mesh to draw/transform" */
-    ObjPtr<RndMesh> mMesh; // 0x78
+    ObjPtr<RndMesh> mMesh; // 0x70
     /** "default material" */
-    ObjPtr<RndMat> mDefaultMat; // 0x8c
+    ObjPtr<RndMat> mDefaultMat; // 0x7c
 };
 
 class UIListMeshElement : public UIListSlotElement {

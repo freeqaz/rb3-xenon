@@ -54,26 +54,26 @@ private:
     void DeleteFaders();
     void SetLoop(float, float, Stream *);
 
-    FileLoader *mFileLoader; // 0x30
-    char *mRawBuffer; // 0x34
-    int mRawBufferSize; // 0x38
-    SongInfo *mSongInfo; // 0x3c
-    Stream *mSongStream; // 0x40
-    Stream *mStreams[2]; // 0x44
-    bool mReady; // 0x4c
-    Fader *mMasterFader; // 0x50
-    float mMasterVolume; // 0x54
-    bool mMuteMaster; // 0x58
-    bool mFXSendApplied; // 0x59
-    float mCrossfadeStartTime; // 0x5c
-    float mCrossfadeEndTime; // 0x60
-    float mCrossfadeDuration; // 0x64
-    int mCrossfadePending; // 0x68
+    FileLoader *mFileLoader; // 0x2c
+    char *mRawBuffer; // 0x30
+    int mRawBufferSize; // 0x34
+    SongInfo *mSongInfo; // 0x38
+    Stream *mSongStream; // 0x3c
+    Stream *mStreams[2]; // 0x40
+    bool mReady; // 0x48
+    Fader *mMasterFader; // 0x4c
+    float mMasterVolume; // 0x50
+    bool mMuteMaster; // 0x54
+    bool mFXSendApplied; // 0x55
+    float mCrossfadeStartTime; // 0x58
+    float mCrossfadeEndTime; // 0x5c
+    float mCrossfadeDuration; // 0x60
+    int mCrossfadePending; // 0x64
     float mActiveCrossfadeEnd;
-    float mActiveCrossfadeStart; // 0x70
-    float mActiveCrossfadeDuration; // 0x74
-    int mCrossfadeState; // 0x78
-    Fader *mCrossFaders[2]; // 0x7c
-    std::vector<Fader *> mChannelFaders; // 0x84
-    std::map<Symbol, Fader *> mTrackFaders; // 0x90
+    float mActiveCrossfadeStart; // 0x6c
+    float mActiveCrossfadeDuration; // 0x70
+    int mCrossfadeState; // 0x74
+    Fader *mCrossFaders[2]; // 0x78
+    std::vector<Fader *> mChannelFaders; // 0x80
+    std::map<Symbol, Fader *> mTrackFaders; // 0x8c
 };

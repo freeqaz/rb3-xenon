@@ -62,11 +62,11 @@ private:
     unsigned long mLicenseBits; // 0x140
     bool mValidLicenseBits; // 0x144
     String mRoot; // 0x148
-    String mContentPath; // 0x150
+    String mContentPath; // 0x154
     State mState; // 0x160
     int mPadNum; // 0x164
     bool mPendingDelete; // 0x168
-    bool mCorrupt; // 0x161
+    bool mCorrupt; // 0x169
     Symbol mFilename; // 0x16c
     unsigned int mLRM; // 0x170
 };

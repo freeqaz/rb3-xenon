@@ -66,7 +66,7 @@ public:
 
     DataNode OnMsg(const DWCProfanityResultMsg &);
 
-    Quazal::String unk74; // 0x74
+    Quazal::String unk74; // 0x88
     int unk78;
     int unk7c;
     Quazal::ProtocolCallContext unk80;

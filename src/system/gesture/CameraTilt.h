@@ -28,7 +28,7 @@ public:
 protected:
     DataNode OnMsg(const UIChangedMsg &);
 
-    bool mScanActive; // 0x2c
+    bool mScanActive; // 0x28
     Timer mTimer; // 0x30
     float mElapsedMs; // 0x60
     float mAngle; // 0x64

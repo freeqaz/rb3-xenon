@@ -22,5 +22,5 @@ public:
 
     unsigned int mDirtyMask; // 0x4
     std::vector<UserGuid> mDirtyUsers; // 0x8
-    String mTag; // 0x10
+    String mTag; // 0x14
 };

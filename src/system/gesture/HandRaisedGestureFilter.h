@@ -32,8 +32,8 @@ public:
 protected:
     HandRaisedGestureFilter();
 
-    bool mHandRaised; // 0x2c
-    int mRaisedMs; // 0x30
-    int mRequiredMs; // 0x34
-    StandingStillGestureFilter mStandingStillFilter; // 0x38
+    bool mHandRaised; // 0x28
+    int mRaisedMs; // 0x2c
+    int mRequiredMs; // 0x30
+    StandingStillGestureFilter mStandingStillFilter; // 0x34
 };

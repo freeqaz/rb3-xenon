@@ -54,10 +54,10 @@ public:
     EventTrigger *mStopBurnTrig; // 0x48
     EventTrigger *mHitFillTrig; // 0x4c
     std::vector<EventTrigger *> mHitTriggers; // 0x50
-    EventTrigger *mPressTrig; // 0x58
-    EventTrigger *mReleaseTrig; // 0x5C
+    EventTrigger *mPressTrig; // 0x5c
+    EventTrigger *mReleaseTrig; // 0x60
     EventTrigger *mMissAfterRelease; // 0x64
-    RndMesh *mGemSmasherGlow; // 0x64
+    RndMesh *mGemSmasherGlow; // 0x68
     bool mGlowing; // 0x6c
     bool mBurning; // 0x6d
     bool mIsKeyboardTrack; // 0x6e

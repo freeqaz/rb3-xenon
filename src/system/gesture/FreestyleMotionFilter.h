@@ -20,5 +20,5 @@ public:
     float mVelocityThreshold;
     float mMoveTime;
     float mMovementAmount;
-    bool mIsActive; // 0x38
+    bool mIsActive; // 0x34
 };

@@ -41,5 +41,5 @@ protected:
     float mMaxValue; // 0x40
     float mThresholdValue; // 0x44
     String mGraphName; // 0x48
-    bool mIsVisible; // 0x50
+    bool mIsVisible; // 0x54
 };

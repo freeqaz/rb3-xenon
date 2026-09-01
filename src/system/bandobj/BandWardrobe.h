@@ -106,26 +106,26 @@ public:
     DELETE_OVERLOAD;
 
     ObjDirPtr<ObjectDir> unk8; // 0x4
-    ObjDirPtr<ObjectDir> unk14; // 0x14
-    ObjPtr<FileMerger> unk20; // 0x20
+    ObjDirPtr<ObjectDir> unk14; // 0x10
+    ObjPtr<FileMerger> unk20; // 0x1c
     std::list<Symbol> unk2c; // 0x28
-    TargetNames mVignetteNames; // 0x34
-    TargetNames mClosetNames; // 0x44
-    TargetNames mVenueNames; // 0x54
+    TargetNames mVignetteNames; // 0x30
+    TargetNames mClosetNames; // 0x40
+    TargetNames mVenueNames; // 0x50
     TargetNames *mCurNames; // 0x60
-    BandCharacter *mTargets[4]; // 0x68
+    BandCharacter *mTargets[4]; // 0x64
     Symbol unk78; // 0x74
     bool unk7c; // 0x78
-    ObjectDir *mVenueDir; // 0x80 - dir
+    ObjectDir *mVenueDir; // 0x7c - dir
     Symbol mGenre; // 0x80
     Symbol mTempo; // 0x84
     Symbol mVocalGender; // 0x88
-    ObjPtr<Hmx::Object> mModeSink; // 0x90
+    ObjPtr<Hmx::Object> mModeSink; // 0x8c
     bool mShotSetPlayMode; // 0x98
     bool mPlayShot5; // 0x99
-    Symbol mDemandLoad; // 0xa0
-    Symbol mPlayerForcedFocuses[4]; // 0xa4
-    bool mPlayerEnableBlinks[4]; // 0xb4
+    Symbol mDemandLoad; // 0x9c
+    Symbol mPlayerForcedFocuses[4]; // 0xa0
+    bool mPlayerEnableBlinks[4]; // 0xb0
 };
 
 extern BandWardrobe *TheBandWardrobe;

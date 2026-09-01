@@ -72,5 +72,5 @@ protected:
     std::vector<UIListSlotElement *> mElements; // 0x50
     UIListSlotDrawType mSlotDrawType; // 0x5c
     UIListSlotElement *mNextElement; // 0x60
-    String mMatchName; // 0x70
+    String mMatchName; // 0x64
 };

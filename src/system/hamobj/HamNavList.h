@@ -159,52 +159,52 @@ protected:
     void Update();
     void SetControllerFocus(int);
 
-    NavInputType mNavInputType; // 0x60
-    std::vector<UIListWidget *> mListWidgets; // 0x64
-    UIListState mListState; // 0x70
-    std::vector<HamListRibbonDrawState> mRibbonDrawStates; // 0xb8
+    NavInputType mNavInputType; // 0x15c
+    std::vector<UIListWidget *> mListWidgets; // 0x160
+    UIListState mListState; // 0x16c
+    std::vector<HamListRibbonDrawState> mRibbonDrawStates; // 0x1b4
     /** "Mode for animations" */
-    HamListRibbon::RibbonMode mRibbonMode; // 0xc4
-    bool unkc8; // 0xc8
+    HamListRibbon::RibbonMode mRibbonMode; // 0x1c0
+    bool unkc8; // 0x1c4
     /** "HamListRibbon resource file" */
-    ResourceDirPtr<HamListRibbon> mListRibbonResource; // 0xcc
+    ResourceDirPtr<HamListRibbon> mListRibbonResource; // 0x1c8
     /** "HamListRibbon resource file" */
-    ResourceDirPtr<HamListRibbon> mHeaderRibbonResource; // 0xe4
+    ResourceDirPtr<HamListRibbon> mHeaderRibbonResource; // 0x1d8
     /** "UIListDir resource file" */
-    ResourceDirPtr<UIListDir> mListDirResource; // 0xfc
+    ResourceDirPtr<UIListDir> mListDirResource; // 0x1e8
     /** "HamScrollSpeedIndicator resource file" */
-    ResourceDirPtr<HamScrollSpeedIndicator> mScrollSpeedIndicatorResource; // 0x114
-    ObjPtr<HamNavProvider> mNavProvider; // 0x12c
-    ObjPtr<RndAnimatable> mScrollSpeedAnim; // 0x140
-    bool mPendingEnterAnim; // 0x154
+    ResourceDirPtr<HamScrollSpeedIndicator> mScrollSpeedIndicatorResource; // 0x1f8
+    ObjPtr<HamNavProvider> mNavProvider; // 0x208
+    ObjPtr<RndAnimatable> mScrollSpeedAnim; // 0x214
+    bool mPendingEnterAnim; // 0x220
     /** "Skip the enter anim altogether" */
-    bool mSkipEnterAnim; // 0x155
+    bool mSkipEnterAnim; // 0x221
     /** "Don't automatically play the enter anim when this component enters" */
-    bool mSuppressAutomaticEnter; // 0x156
-    bool mTestEnteringOverride; // 0x157
-    float mHandHeight; // 0x158
-    DoubleExponentialSmoother mSlideSmoother; // 0x15c
-    DoubleExponentialSmoother mDisengageSmoother; // 0x170
-    DirectionGestureFilter *mDirectionGestureFilter; // 0x184
-    HandHeightGestureFilter *mHandHeightFilter; // 0x188
-    int mSkeletonTrackingID; // 0x18c
+    bool mSuppressAutomaticEnter; // 0x222
+    bool mTestEnteringOverride; // 0x223
+    float mHandHeight; // 0x224
+    DoubleExponentialSmoother mSlideSmoother; // 0x228
+    DoubleExponentialSmoother mDisengageSmoother; // 0x23c
+    DirectionGestureFilter *mDirectionGestureFilter; // 0x250
+    HandHeightGestureFilter *mHandHeightFilter; // 0x254
+    int mSkeletonTrackingID; // 0x258
     HamScrollBehavior mScrollBehavior;
-    bool mDisableSlideSound; // 0x1e4
-    bool mDisableSelectSound; // 0x1e5
-    bool mEnabled; // 0x1e6
-    bool mSelectionEnabled; // 0x1e7
+    bool mDisableSlideSound; // 0x2b0
+    bool mDisableSelectSound; // 0x2b1
+    bool mEnabled; // 0x2b2
+    bool mSelectionEnabled; // 0x2b3
     /** "Automatically tie this navlist to the active skeleton" */
-    bool mAlwaysUseActiveSkeleton; // 0x1e8
+    bool mAlwaysUseActiveSkeleton; // 0x2b4
     /** "This list can only be used when it is focused" */
-    bool mOnlyUseWhenFocused; // 0x1e9
-    float mScrollSettleTime; // 0x1ec
-    bool mRefreshPending; // 0x1f0
-    Symbol mSelectDoneSymbol; // 0x1f4
+    bool mOnlyUseWhenFocused; // 0x2b5
+    float mScrollSettleTime; // 0x2b8
+    bool mRefreshPending; // 0x2bc
+    Symbol mSelectDoneSymbol; // 0x2c0
     int mSelectDoneIndex;
     bool mSelectDoneSelecting;
     bool mWasInDoubleUserMode;
     bool mHighButtonMode;
     /** "Elements that match these will be bigger than the other elements" */
-    std::vector<Symbol> mBigElements; // 0x200
-    std::vector<unsigned int> mBigElementIndices; // 0x20c
+    std::vector<Symbol> mBigElements; // 0x2cc
+    std::vector<unsigned int> mBigElementIndices; // 0x2d8
 };

@@ -216,21 +216,21 @@ public:
         Sink() {}
         Sink(Hmx::Object *o, SinkMode m) : obj(o), mode(m) {}
         Hmx::Object *obj;   // 0x0
-        SinkMode mode;      // 0x4
+        SinkMode mode;      // 0xc
         void Export(DataArray *);
     };
 
     struct EventSinkElem : public Sink {
         EventSinkElem() {}
         EventSinkElem(Hmx::Object *o, SinkMode m, Symbol s) : Sink(o, m), handler(s) {}
-        Symbol handler;     // 0x8
+        Symbol handler;     // 0x10
     };
 
     struct EventSink {
         EventSink() {}
         EventSink(Symbol s) : ev(s) {}
         Symbol ev;          // 0x0
-        std::list<EventSinkElem> sinks; // 0x4
+        std::list<EventSinkElem> sinks; // 0x8
         void Add(Hmx::Object *, SinkMode, Symbol, bool);
         void Remove(Hmx::Object *, MsgSource *, bool);
     };

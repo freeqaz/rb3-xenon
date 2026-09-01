@@ -25,6 +25,6 @@ protected:
     virtual void StartSendImpl(unsigned char *, int, int);
     virtual bool SendDoneImpl() { return true; }
 
-    unsigned char *mTargetBuffer; // 0x802c
-    int mBufSize; // 0x8030
+    unsigned char *mTargetBuffer; // 0x1802c
+    int mBufSize; // 0x18030
 };

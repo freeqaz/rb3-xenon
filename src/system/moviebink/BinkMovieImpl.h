@@ -67,32 +67,32 @@ private:
     void* mLoader;        // 0x04 - async loader, checked in IsLoading/Ready
     void* mLoader2;       // 0x08 - fallback loader, checked in IsLoading/Ready
     String mFilename;     // 0x0C
-    int mBink;            // 0x14 - BINK* handle, non-zero when open
-    bool mLoop;           // 0x18
-    int mWidth;           // 0x1C
-    int mHeight;          // 0x20
-    bool mReady;          // 0x24
-    char mRect[0x18];     // 0x28 - uninitialized region (SetRect)
-    int mFrame;           // 0x40
-    int mNumFrames;       // 0x44
-    int mMsPerFrame;      // 0x48
-    bool mPaused;         // 0x4C
-    Timer mPlayTimer;     // 0x50
-    Timer mLoadTimer;     // 0x80
-    int mVolume;          // 0xB0
-    int mVolumeTarget;    // 0xB4
-    void* mHandle;        // 0xB8
-    int mTreeColor;       // 0xBC - RB-tree _M_color
-    int mTreeParent;      // 0xC0 - RB-tree _M_parent
-    void* mTreeLeft;      // 0xC4 - RB-tree _M_left
-    void* mTreeRight;     // 0xC8 - RB-tree _M_right
-    int mTreeCount;       // 0xCC - RB-tree _M_node_count
-    bool mOpen;           // 0xD0
-    char _padD1[3];       // 0xD1 - align to 0xD4
-    bool mEndianSwapped;  // 0xD4
-    bool mHasAudio;       // 0xD5
-    unsigned int mThreadId; // 0xD8
-    int unkDC;            // 0xDC
-    int mBinkVolume;      // 0xE0 - Bink volume level (0x8000 = max)
-    int mBufferOffset;    // 0xE4
+    int mBink;            // 0x18 - BINK* handle, non-zero when open
+    bool mLoop;           // 0x1c
+    int mWidth;           // 0x20
+    int mHeight;          // 0x24
+    bool mReady;          // 0x28
+    char mRect[0x18];     // 0x29 - uninitialized region (SetRect)
+    int mFrame;           // 0x44
+    int mNumFrames;       // 0x48
+    int mMsPerFrame;      // 0x4c
+    bool mPaused;         // 0x50
+    Timer mPlayTimer;     // 0x58
+    Timer mLoadTimer;     // 0x88
+    int mVolume;          // 0xb8
+    int mVolumeTarget;    // 0xbc
+    void* mHandle;        // 0xc0
+    int mTreeColor;       // 0xc4 - RB-tree _M_color
+    int mTreeParent;      // 0xc8 - RB-tree _M_parent
+    void* mTreeLeft;      // 0xcc - RB-tree _M_left
+    void* mTreeRight;     // 0xd0 - RB-tree _M_right
+    int mTreeCount;       // 0xd4 - RB-tree _M_node_count
+    bool mOpen;           // 0xd8
+    char _padD1[3];       // 0xd9 - align to 0xD4
+    bool mEndianSwapped;  // 0xdc
+    bool mHasAudio;       // 0xdd
+    unsigned int mThreadId; // 0xe0
+    int unkDC;            // 0xe4
+    int mBinkVolume;      // 0xe8 - Bink volume level (0x8000 = max)
+    int mBufferOffset;    // 0xec
 };

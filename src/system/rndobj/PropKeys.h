@@ -316,8 +316,8 @@ protected:
     /** The handler name of any propagated interp messages. */
     Symbol mInterpHandler; // 0x24
     /** The index of the last keyframe that was modified. */
-    int mLastKeyFrameIndex; // 0x30
-    bool unk34; // 0x34
+    int mLastKeyFrameIndex; // 0x28
+    bool unk34; // 0x2c
 };
 
 /** A collection of float keys to animate on its target object's properties. */

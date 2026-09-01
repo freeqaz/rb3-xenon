@@ -39,16 +39,16 @@ protected:
     /** "The trans parent" */
     ObjPtr<RndTransformable> mParent; // 0x10
     /** "The trans child" */
-    ObjPtr<RndTransformable> mChild; // 0x24
+    ObjPtr<RndTransformable> mChild; // 0x1c
     /** "Dimensions of cube in which child transform is not updated" */
-    Vector3 mStaticCube; // 0x38
+    Vector3 mStaticCube; // 0x28
     /** "Track x/y/z-axis to parent?" */
-    bool mTracks[3]; // 0x48
+    bool mTracks[3]; // 0x38
     /** "Speed of tracking in inches/second". Ranges from 1 to 10000. */
-    float mSpeed; // 0x4c
+    float mSpeed; // 0x3c
     /** "Whether or not to interpolate scale along with position" */
-    bool mAffectScale; // 0x50
+    bool mAffectScale; // 0x40
     /** "Whether or not to use UI timing.  Default is to use game time." */
-    bool mUseUITime; // 0x51
-    bool mEnabled; // 0x52
+    bool mUseUITime; // 0x41
+    bool mEnabled; // 0x42
 };

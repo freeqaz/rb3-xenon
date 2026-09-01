@@ -146,13 +146,13 @@ public:
     static LeaderboardMode ModeToLeaderboardMode(Mode);
     static int sPageSize;
 
-    DataResultList mDataResultList; // 0x20
+    DataResultList mDataResultList; // 0x2c
     std::vector<LeaderboardRow> mLeaderboardRows; // 0x44
     int unk40; // 0x50
     bool mHasStats; // 0x54
     Mode mMode; // 0x58
-    EntityID mEntityID; // 0x4c
-    HxGuid mNetBandGuid; // 0x5c
+    EntityID mEntityID; // 0x60
+    HxGuid mNetBandGuid; // 0x78
     Callback *mCallback; // 0x88
     LeaderboardShortcutProvider *mShortcutProvider; // 0x8c
     EnumState mEnumState; // 0x90

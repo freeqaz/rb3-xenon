@@ -51,26 +51,26 @@ protected:
     static RndMat *sBlendMaterial;
 
     /** "The base texture map" */
-    ObjPtr<RndTex> mBaseMap; // 0x40
+    ObjPtr<RndTex> mBaseMap; // 0x24
     /** "The texture map to use when the constraints are closer
         than the default distance" */
-    ObjPtr<RndTex> mNearMap; // 0x54
+    ObjPtr<RndTex> mNearMap; // 0x30
     /** "The texture map to use when the constraints are further
         than the default distance" */
-    ObjPtr<RndTex> mFarMap; // 0x68
+    ObjPtr<RndTex> mFarMap; // 0x3c
     /** "The final result output texture" */
-    ObjPtr<RndTex> mOutputTextures; // 0x7c
+    ObjPtr<RndTex> mOutputTextures; // 0x48
     /** "The list of controller objects used to render
         pieces of a mesh to the output texture" */
-    ObjPtrList<RndTexBlendController> mControllerList; // 0x90
+    ObjPtrList<RndTexBlendController> mControllerList; // 0x54
     /** "The owner of this texture blend.
         This is used to determine if the texture blend is visible.
         For example, if this texture blend is used in the head object of a character,
         set the owner to be the head object." */
-    ObjPtr<RndDrawable> mOwner; // 0xa4
+    ObjPtr<RndDrawable> mOwner; // 0x68
     /** "Global strength of the blending effect for each controller".
         Ranges from 0 to 1. */
-    float mControllerInfluence; // 0xb8
-    int mRenderedStates; // 0xbc
+    float mControllerInfluence; // 0x74
+    int mRenderedStates; // 0x78
     bool unkc0;
 };

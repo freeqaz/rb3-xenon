@@ -19,6 +19,6 @@ namespace Quazal {
         void AddSourceTo(Message *, Time, bool);
         void CallOperationOnVars(Operation::_Event, void *);
 
-        qList<VoiceChannelMember> m_dsMemberList; // 0x4
+        qList<VoiceChannelMember> m_dsMemberList; // 0x0
     };
 }

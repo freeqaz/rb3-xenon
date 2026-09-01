@@ -77,7 +77,7 @@ public:
         unsigned int
     );
 
-    PurchaseState mState; // 0x38
+    PurchaseState mState; // 0x34
     u32 unk3c;
     unsigned long long mOfferID;
     int mUserIndex;
@@ -103,7 +103,7 @@ public:
         int, std::vector<unsigned long long> &, Symbol, unsigned int
     );
 
-    PurchaseState mState;                  // 0x38 - Current purchase state
+    PurchaseState mState;                  // 0x34 - Current purchase state
     std::vector<unsigned long long> mOfferIDs; // Offer IDs to purchase
     int mUserIndex;                             // User index
     DWORD mSelectedCount;                       // Count of items selected by user

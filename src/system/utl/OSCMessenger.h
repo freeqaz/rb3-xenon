@@ -7,9 +7,9 @@ class OSCMessenger {
 public:
     struct OSCValue {
         String mAddress; // 0x0
-        char buffer[0x80]; // 0x8
-        char mType; // 0x88
-        bool mHasNewValue; // 0x89
+        char buffer[0x80]; // 0xc
+        char mType; // 0x8c
+        bool mHasNewValue; // 0x8d
     };
     virtual ~OSCMessenger();
 

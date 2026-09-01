@@ -10,7 +10,7 @@ namespace Quazal {
 
         void Trace(unsigned int) const;
 
-        DOHandle m_dohMemberStation; // 0x4
-        DOHandle m_dohAssociatedDO; // 0x8
+        DOHandle m_dohMemberStation; // 0xc
+        DOHandle m_dohAssociatedDO; // 0x10
     };
 }

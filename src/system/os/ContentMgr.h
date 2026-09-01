@@ -121,7 +121,7 @@ public:
         FilePath mFile; // 0x0
         Callback *mCallback; // 0xc
         ContentLocT mLocation; // 0x10
-        String mName; // 0x10
+        String mName; // 0x14
     };
 
     ContentMgr() {}
@@ -186,14 +186,14 @@ protected:
         kContentMgrState6 = 6,
         kContentMgrState7 = 7
     } mState; // 0x2c
-    std::list<Callback *> mCallbacks; // 0x30
+    std::list<Callback *> mCallbacks; // 0x2c
     std::list<Content *> mContents; // 0x34
-    std::list<String> mExtraContents; // 0x40
+    std::list<String> mExtraContents; // 0x3c
     bool mDirty; // 0x44
-    Loader *mLoader; // 0x4c
-    Callback *mCallback; // 0x50
-    ContentLocT mLocation; // 0x54
-    String mName; // 0x58
+    Loader *mLoader; // 0x48
+    Callback *mCallback; // 0x4c
+    ContentLocT mLocation; // 0x50
+    String mName; // 0x54
     int mRootLoaded; // 0x60
     std::list<CallbackFile> mCallbackFiles; // 0x64
     Hmx::Object *mReadFailureHandler; // 0x6c

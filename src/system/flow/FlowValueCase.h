@@ -23,5 +23,5 @@ protected:
     FlowValueCase();
 
     /** "Key frame value" */
-    float mValue; // 0x5c
+    float mValue; // 0x60
 };

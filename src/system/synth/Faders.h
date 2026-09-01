@@ -52,7 +52,7 @@ public:
     Symbol mLocalName; // 0x30
     std::set<FaderGroup *> mClients; // 0x34
     Mode mMode; // 0x4c
-    float mTranspose; // 0x44
+    float mTranspose; // 0x50
 };
 
 class FaderTask {

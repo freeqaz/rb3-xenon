@@ -31,16 +31,16 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(BandLeadMeter)
 
-    ObjPtr<RndAnimatable> mNeedleAnim; // 0x18c
-    ObjPtr<RndAnimatable> mLogoGlowAnim; // 0x198
-    ObjPtr<RndMesh> mGlowMesh1; // 0x1a4
-    ObjPtr<RndMesh> mGlowMesh2; // 0x1b0
-    ObjPtr<RndAnimatable> mPeggedAnim1; // 0x1bc
-    ObjPtr<RndAnimatable> mPeggedAnim2; // 0x1c8
-    ObjPtr<RndMesh> mLensMesh; // 0x1d4
-    ObjPtr<RndMat> mLensMatNeutral; // 0x1e0
-    ObjPtr<RndMat> mLensMat1; // 0x1ec
-    ObjPtr<RndMat> mLensMat2; // 0x1f8
-    int unk204; // 0x204
-    int mScoreDiff; // 0x208
+    ObjPtr<RndAnimatable> mNeedleAnim; // 0x1dc
+    ObjPtr<RndAnimatable> mLogoGlowAnim; // 0x1e8
+    ObjPtr<RndMesh> mGlowMesh1; // 0x1f4
+    ObjPtr<RndMesh> mGlowMesh2; // 0x200
+    ObjPtr<RndAnimatable> mPeggedAnim1; // 0x20c
+    ObjPtr<RndAnimatable> mPeggedAnim2; // 0x218
+    ObjPtr<RndMesh> mLensMesh; // 0x224
+    ObjPtr<RndMat> mLensMatNeutral; // 0x230
+    ObjPtr<RndMat> mLensMat1; // 0x23c
+    ObjPtr<RndMat> mLensMat2; // 0x248
+    int unk204; // 0x254
+    int mScoreDiff; // 0x258
 };

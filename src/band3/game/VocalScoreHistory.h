@@ -42,6 +42,6 @@ public:
     int unk10;
     int unk14;
     float unk18;
-    int mOctaveOffset; // 0x1c
+    int mOctaveOffset; // 0x20
     bool unk20;
 };

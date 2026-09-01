@@ -48,21 +48,21 @@ protected:
     /** "Sound object to which this BeatClock's time is synchronized." */
     ObjPtr<Sound> mSound; // 0xc
     /** "beats per minute" */
-    float mBeatsPerMinute; // 0x20
+    float mBeatsPerMinute; // 0x18
     /** "beats per measure" */
-    int mBeatsPerMeasure; // 0x24
+    int mBeatsPerMeasure; // 0x1c
     /** "Measures per phrase.  Use 0 to disable phrases." */
-    int mMeasuresPerPhrase; // 0x28
+    int mMeasuresPerPhrase; // 0x20
     /** "uses the global task mgr time if true" */
-    bool mUseGlobal; // 0x2c
+    bool mUseGlobal; // 0x24
     /** The current song position. (MBT, phrase, etc) */
-    SongPos mSongPos; // 0x30
+    SongPos mSongPos; // 0x28
     /** "Current 16th note subdivision of the beat" */
-    int mSubDivision; // 0x48
+    int mSubDivision; // 0x3c
     /** "Total seconds" */
-    float mTotalSeconds; // 0x4c
-    float unk50; // 0x50
-    bool mIsRunning; // 0x54
+    float mTotalSeconds; // 0x40
+    float unk50; // 0x44
+    bool mIsRunning; // 0x48
     /** "which timeline does this beatclock run on?" */
-    TaskUnits mTimeline; // 0x58
+    TaskUnits mTimeline; // 0x4c
 };

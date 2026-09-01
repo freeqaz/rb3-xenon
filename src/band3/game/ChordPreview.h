@@ -20,14 +20,14 @@ public:
     };
     void Start(Symbol);
 
-    StreamData mStreamData[3]; // 0x20
-    Fader *mGuitarFader; // 0x68
-    Fader *mSilenceFader; // 0x6c
-    int mNumChannels; // 0x70
-    float mFadeMs; // 0x74
-    Symbol mSong; // 0x78
-    Symbol mSongContent; // 0x7c
-    float mStartMs; // 0x80
-    float mEndMs; // 0x84
-    bool mRegisteredWithCM; // 0x88
+    StreamData mStreamData[3]; // 0x2c
+    Fader *mGuitarFader; // 0x74
+    Fader *mSilenceFader; // 0x78
+    int mNumChannels; // 0x7c
+    float mFadeMs; // 0x80
+    Symbol mSong; // 0x84
+    Symbol mSongContent; // 0x88
+    float mStartMs; // 0x8c
+    float mEndMs; // 0x90
+    bool mRegisteredWithCM; // 0x94
 };

@@ -146,43 +146,43 @@ protected:
 
     static std::list<TargetCache> sCache;
 
-    ObjList<Target> mTargets; // 0x284
+    ObjList<Target> mTargets; // 0x250
     /** "30fps reg: minimum time this shot can last,
         DCuts: time past zero time in which the shot can be interupted" */
-    int mMinTime; // 0x290
+    int mMinTime; // 0x25c
     /** "30fps maximum duration for this shot, 0 is infinite" */
-    int mMaxTime; // 0x294
+    int mMaxTime; // 0x260
     /** "synchronization time for this camshot" */
-    float mZeroTime; // 0x298
+    float mZeroTime; // 0x264
     /** "Flag to determine player configuration" */
-    HamPlayerFlags mPlayerFlag; // 0x29c
+    HamPlayerFlags mPlayerFlag; // 0x268
     /** "Next camshots, in order" */
-    ObjPtrList<HamCamShot> mNextShots; // 0x2a0
-    ObjPtrList<HamCamShot>::iterator mNextShotIt; // 0x2b4
-    ObjPtr<HamCamShot> mCurrentShot; // 0x2b8
-    float mNextShotOffset; // 0x2cc
-    float mNextShotDuration; // 0x2d0
-    bool mInSetFrame; // 0x2d4
-    float mTotalDuration; // 0x2d8
-    bool mListingShots; // 0x2dc
-    bool mTargetsFlipped; // 0x2dd
+    ObjPtrList<HamCamShot> mNextShots; // 0x26c
+    ObjPtrList<HamCamShot>::iterator mNextShotIt; // 0x280
+    ObjPtr<HamCamShot> mCurrentShot; // 0x284
+    float mNextShotOffset; // 0x290
+    float mNextShotDuration; // 0x294
+    bool mInSetFrame; // 0x298
+    float mTotalDuration; // 0x29c
+    bool mListingShots; // 0x2a0
+    bool mTargetsFlipped; // 0x2a1
     /** "Anims set throughout this shot and any next shots
         Not valid entries for a next shot." */
-    ObjPtrList<RndAnimatable> mMasterAnims; // 0x2e0
-    int mOriginalSizeNextShots; // 0x2f4
-    ObjPtrList<RndDrawable> mFlipHideList; // 0x2f8
+    ObjPtrList<RndAnimatable> mMasterAnims; // 0x2a4
+    int mOriginalSizeNextShots; // 0x2b8
+    ObjPtrList<RndDrawable> mFlipHideList; // 0x2bc
     ObjPtrList<RndDrawable> mFlipShowList; // 0x30c
-    ObjPtrList<RndDrawable> mFlipGenHideList; // 0x320
-    std::vector<RndDrawable *> mFlipGenHideVector; // 0x334
-    ObjPtrList<RndDrawable> mFlipDrawOverrides; // 0x340
-    ObjPtrList<RndDrawable> mFlipPostProcOverrides; // 0x354
-    ObjPtrList<RndDrawable> mFlipEndHideList; // 0x368
-    std::vector<RndDrawable *> mFlipEndShowVector; // 0x37c
+    ObjPtrList<RndDrawable> mFlipGenHideList; // 0x2e4
+    std::vector<RndDrawable *> mFlipGenHideVector; // 0x2f8
+    ObjPtrList<RndDrawable> mFlipDrawOverrides; // 0x304
+    ObjPtrList<RndDrawable> mFlipPostProcOverrides; // 0x318
+    ObjPtrList<RndDrawable> mFlipEndHideList; // 0x32c
+    std::vector<RndDrawable *> mFlipEndShowVector; // 0x340
     // NB(rb3-xenon): retail CamShot::mGenHideVector is HX_NATIVE-guarded (dropped
     // from X360 layout). HamCamShot carries its own copy so SetFrameEx /
     // CreateFlippedShowHideList can assign/iterate it in the X360 build.
     std::vector<RndDrawable *> mGenHideVector;
-    bool mFlipActive; // 0x388
+    bool mFlipActive; // 0x358
 };
 
 class HamCharacter;

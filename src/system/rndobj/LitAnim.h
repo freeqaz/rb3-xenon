@@ -41,5 +41,5 @@ protected:
     /** "The frames and corresponding color at each frame" */
     Keys<Hmx::Color, Hmx::Color> mColorKeys; // 0x1c
     /** "Owner of the keys, usually myself" */
-    ObjOwnerPtr<RndLightAnim> mKeysOwner; // 0x24
+    ObjOwnerPtr<RndLightAnim> mKeysOwner; // 0x28
 };

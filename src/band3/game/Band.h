@@ -81,16 +81,16 @@ public:
     std::vector<Player *> mActivePlayers; // 0x2c
     std::vector<float> mCrowdRatings; // 0x38
     float unk30; // 0x44
-    int mAccumulatedScore; // 0x34
-    float mTotalStars; // 0x38
-    int unk3c; // 0x3c
-    bool unk40; // 0x40
-    int unk44; // 0x44
-    int mBonusLevel; // 0x48
-    int mMultiplier; // 0x4c
-    int mMaxMultiplier; // 0x50
-    float mMsWithMultiplier; // 0x54
-    float mMsWhenMultiplierStarted; // 0x58
+    int mAccumulatedScore; // 0x48
+    float mTotalStars; // 0x4c
+    int unk3c; // 0x50
+    bool unk40; // 0x54
+    int unk44; // 0x58
+    int mBonusLevel; // 0x5c
+    int mMultiplier; // 0x60
+    int mMaxMultiplier; // 0x64
+    float mMsWithMultiplier; // 0x68
+    float mMsWhenMultiplierStarted; // 0x6c
     bool mMultiplierActive; // 0x70
     char unk60; // 0x71 (byte; packs into mMultiplierActive word so mMaxBonusLevel lands at 0x74)
     int mMaxBonusLevel; // 0x74

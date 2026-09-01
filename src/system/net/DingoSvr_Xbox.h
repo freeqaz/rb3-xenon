@@ -42,19 +42,19 @@ protected:
 
     int mXLSPState;
     int unkb4;
-    XUID mXUID; // 0xb8
-    String mUserName; // 0xc0
+    XUID mXUID; // 0xc8
+    String mUserName; // 0xd0
     XLSPConnection mXLSPConnection;
-    String mXLSPFilter; // 0x140
+    String mXLSPFilter; // 0x128
     int mDingoServiceId;
-    JobMgr mJobMgr; // 0x14c
-    int mJobState; // 0x15c - tracks current job: 0=idle, 1=making, 2=joining, 3=starting, 4=writing, 5=ending, 6=leaving, 7=deleting
-    u64 mScoreXUID; // 0x160 - XUID for leaderboard score submission
-    u64 mCareerScore; // 0x168 - career score value to submit
-    HANDLE mSessionHandle; // 0x170
-    float mMsBetweenReconnDingo; // 0x174
-    unsigned int mLeaderboardID; // 0x178
-    unsigned int mLeaderboardScorePropID; // 0x17c
+    JobMgr mJobMgr; // 0x138
+    int mJobState; // 0x148 - tracks current job: 0=idle, 1=making, 2=joining, 3=starting, 4=writing, 5=ending, 6=leaving, 7=deleting
+    u64 mScoreXUID; // 0x150 - XUID for leaderboard score submission
+    u64 mCareerScore; // 0x158 - career score value to submit
+    HANDLE mSessionHandle; // 0x160
+    float mMsBetweenReconnDingo; // 0x164
+    unsigned int mLeaderboardID; // 0x168
+    unsigned int mLeaderboardScorePropID; // 0x16c
     // Not present at these offsets in retail -- this unit is NonMatching /
     // unpinned (config/45410914/objects.json), so exact layout below this
     // point is not yet load-bearing. mReconnectTimer moved here from

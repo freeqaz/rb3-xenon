@@ -130,45 +130,45 @@ protected:
     bool IsCheatWinning() const;
 
     /** "Move to mirror" */
-    ObjPtr<HamMove> mMirror; // 0x30
+    ObjPtr<HamMove> mMirror; // 0x20
     /** "Texture to describe the move" */
-    ObjPtr<RndTex> mTex; // 0x44
-    ObjPtr<RndTex> mSmallTex; // 0x58
+    ObjPtr<RndTex> mTex; // 0x2c
+    ObjPtr<RndTex> mSmallTex; // 0x38
     /** "Texture state describes how to display the tex" */
-    TexState mTexState; // 0x6c
-    std::vector<MoveFrame> mMoveFrames; // 0x70
+    TexState mTexState; // 0x44
+    std::vector<MoveFrame> mMoveFrames; // 0x48
     /** "True if this is move is scored.
         False if it's a rest or some kind of indicator (like freestyle)" */
-    bool mScored; // 0x7c
+    bool mScored; // 0x54
     /** "True if this move is a paradiddle" */
-    bool mParadiddle; // 0x7d
+    bool mParadiddle; // 0x55
     /** "True if this move is the final pose in the song" */
-    bool mFinalPose; // 0x7e
+    bool mFinalPose; // 0x56
     /** "Prevent the Guide Gesture from appearing for the duration of this move" */
-    bool mSuppressGuide; // 0x7f
+    bool mSuppressGuide; // 0x57
     /** "Prevent the Practice Options from appearing for the duration of this move" */
-    bool mSuppressPracticeOptions; // 0x80
+    bool mSuppressPracticeOptions; // 0x58
     /** "Prevent this move from appear in the dance battle minigame" */
-    bool mOmitMinigame; // 0x81
-    std::vector<LocalizedName> mLocalizedNames; // 0x84
-    const char *mDisplayName; // 0x90
-    Difficulty mDifficulty; // 0x94
-    Symbol mVerb; // 0x98
-    Symbol mMoveSound; // 0x9c
-    std::vector<float> mRatingStates; // 0xa0
+    bool mOmitMinigame; // 0x59
+    std::vector<LocalizedName> mLocalizedNames; // 0x5c
+    const char *mDisplayName; // 0x68
+    Difficulty mDifficulty; // 0x6c
+    Symbol mVerb; // 0x70
+    Symbol mMoveSound; // 0x74
+    std::vector<float> mRatingStates; // 0x78
     /** "Whether to use shoudler displacements for detection" - specific to Ham1! */
-    bool mShoulderDisplacements; // 0xac
+    bool mShoulderDisplacements; // 0x84
     /** "Generated threshold for super perfect"/
         "perfect/flawless"/"awesome/nice"/"ok/almost" */
-    float mThresholds[kNumMoveRatings]; // 0xb0
+    float mThresholds[kNumMoveRatings]; // 0x88
     /** "Override threshold for super perfect /
         perfect/flawless / awesome/nice / ok/almost (0 means no override)" */
-    float mOverrides[kNumMoveRatings]; // 0xc0
-    bool mDirty; // 0xd0
+    float mOverrides[kNumMoveRatings]; // 0x98
+    bool mDirty; // 0xa8
     /** "id used when comparing to other moves" */
-    Hmx::CRC mConfusabilityID; // 0xd4
-    std::map<Hmx::CRC, float> mConfusabilities; // 0xd8
-    ObjPtr<DancerSequence> mDancerSeq; // 0xf0
+    Hmx::CRC mConfusabilityID; // 0xac
+    std::map<Hmx::CRC, float> mConfusabilities; // 0xb0
+    ObjPtr<DancerSequence> mDancerSeq; // 0xc8
 };
 
 struct HamMoveKey {

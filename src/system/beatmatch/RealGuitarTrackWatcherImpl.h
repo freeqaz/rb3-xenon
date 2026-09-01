@@ -34,8 +34,8 @@ public:
         return i == trill.mFrets[0] ? trill.mFrets[1] : trill.mFrets[0];
     }
 
-    RGGemMatcher mMatcher; // 0xe8
-    float unk1f0; // 0x1f0 - mLastMissTime
+    RGGemMatcher mMatcher; // 0xf4
+    float unk1f0; // 0x1fc - mLastMissTime
     float mMissWindowMs; // 0x200
     bool mIs22Fret; // 0x204
 };

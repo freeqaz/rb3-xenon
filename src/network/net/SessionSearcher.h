@@ -27,5 +27,5 @@ public:
     NetSearchResult *mLastInviteResult; // 0x1c
     bool mSearching; // 0x20
     std::vector<NetSearchResult *> mSearchList; // 0x24
-    int mNextResult; // 0x2c
+    int mNextResult; // 0x30
 };

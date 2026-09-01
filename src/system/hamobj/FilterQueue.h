@@ -49,7 +49,7 @@ private:
     struct Output {
         float songSpeed; // 0x0
         MoveMode moveMode; // 0x4
-        std::vector<FilterOutputFrame> frames; // 0x20
+        std::vector<FilterOutputFrame> frames; // 0x8
     };
 
     QueuedJob mQueuedJob; // 0x0

@@ -23,7 +23,7 @@ public:
 protected:
     HandsUpGestureFilter();
 
-    bool mHandsUp; // 0x2c
-    int mRaisedMs; // 0x30
-    int mRequiredMs; // 0x34
+    bool mHandsUp; // 0x28
+    int mRaisedMs; // 0x2c
+    int mRequiredMs; // 0x30
 };

@@ -18,7 +18,7 @@ namespace Quazal {
             ~Step() {}
 
             JobStateFunc mState; // 0x0
-            const char *mName; // 0xc
+            const char *mName; // 0x8
         };
         StepSequenceJob(const DebugString &);
         virtual ~StepSequenceJob();

@@ -27,11 +27,11 @@ public:
     Symbol GetAnimGenre() const { return mAnimGenre; }
 
     /** "Who should sing the vocal part2?" Can choose from guitar, bass, drum */
-    Symbol mPart2Instrument; // 0x1c
+    Symbol mPart2Instrument; // 0x28
     /** "Who should sing the vocal part3?" Can choose from guitar, bass, drum */
-    Symbol mPart3Instrument; // 0x20
+    Symbol mPart3Instrument; // 0x2c
     /** "Who should sing the vocal part4?" Can choose from guitar, bass, drum */
-    Symbol mPart4Instrument; // 0x24
+    Symbol mPart4Instrument; // 0x30
     /** "Animation genre for the song" Can choose from banger, dramatic, rocker, spazz */
-    Symbol mAnimGenre; // 0x28
+    Symbol mAnimGenre; // 0x34
 };

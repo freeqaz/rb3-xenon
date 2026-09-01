@@ -21,7 +21,7 @@ namespace Quazal {
             virtual ~QSimpleEvent() {}
             virtual unsigned short GetSignal() const { return m_uiSignal; }
 
-            unsigned short m_uiSignal; // 0x6
+            unsigned short m_uiSignal; // 0x8
         };
 
         // Type for a pointer to a member function that takes QEvent and returns void
@@ -33,7 +33,7 @@ namespace Quazal {
         class TransitionPath {
         public:
             StateFuncFactory actions[8]; // 0x0..0x5F
-            unsigned short myActions;    // 0x60
+            unsigned short myActions;    // 0x20
         };
 
         StateMachine(StateFunc);
@@ -52,7 +52,7 @@ namespace Quazal {
         }
 
         StateFuncFactory mCurrentState; // 0x4
-        StateFuncFactory mSourceState; // 0x10
+        StateFuncFactory mSourceState; // 0x8
     };
 
 }

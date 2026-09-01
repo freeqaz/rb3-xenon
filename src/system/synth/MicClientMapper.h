@@ -46,5 +46,5 @@ protected:
     MicManagerInterface *mMicManager; // 0x0
     std::vector<MicMappingData> mMappingData; // 0x4
     std::vector<PlayerMappingData> mPlayers; // 0x10
-    int mNumPlayers; // 0x14
+    int mNumPlayers; // 0x1c
 };

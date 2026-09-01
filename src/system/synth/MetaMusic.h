@@ -36,8 +36,8 @@ public:
     void LoadFile();
     void OpenFile();
 
-    File *mFile; // 0x18
-    int &mBytesRead; // 0x1c
+    File *mFile; // 0x1c
+    int &mBytesRead; // 0x20
     unsigned char *mBuf; // 0x24
     int mBufSize; // 0x28
     MetaMusicLoaderStateFunc mState; // 0x2c
@@ -74,7 +74,7 @@ public:
     float mVolume; // 0x34
     bool mPlayFromBuffer; // 0x38
     bool mRndHeap; // 0x39
-    String mFilename; // 0x30
+    String mFilename; // 0x3c
     MemHandle *mBufferH; // 0x48
     unsigned char *mBuf; // 0x4c
     File *mFile; // 0x50
@@ -87,10 +87,10 @@ public:
     MetaMusicLoader *mLoader; // 0x7c
     std::vector<ObjDirPtr<ObjectDir> > unk70; // 0x80
     bool unk78; // 0x8c
-    DataArray *m_CurrentFxConfig; // 0x7c
-    DataArray *unk80; // 0x80
-    int unk84; // 0x84
+    DataArray *m_CurrentFxConfig; // 0x90
+    DataArray *unk80; // 0x94
+    int unk84; // 0x98
     const char *unk88; // 0x9c
     bool unk8c; // 0xa0
-    std::vector<int> mStartTimes; // 0x90 - basing this off of the ChooseStartMs function
+    std::vector<int> mStartTimes; // 0xa4 - basing this off of the ChooseStartMs function
 };

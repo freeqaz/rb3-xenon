@@ -38,7 +38,7 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(OverdriveMeter)
 
-    State mState; // 0x18c
+    State mState; // 0x1dc
     ObjPtr<EventTrigger> mResetTrig;
     ObjPtr<EventTrigger> mSpotlightPhraseSuccessTrig;
     ObjPtr<EventTrigger> mBeDeployingTrig;
