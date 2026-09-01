@@ -23,7 +23,7 @@ class NetMessageFactory {
 public:
     struct TypeCreatorPair {
         String mType; // 0x0
-        NetMessageFunc *mCreator; // 0x4
+        NetMessageFunc *mCreator; // 0xc
     };
 
     NetMessageFactory() {}

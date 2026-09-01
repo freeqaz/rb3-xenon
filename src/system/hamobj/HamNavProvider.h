@@ -101,6 +101,6 @@ protected:
     DataNode OnSetEnabled(const DataArray *);
     DataNode OnSetFormatArgs(const DataArray *);
 
-    std::vector<NavItem> mNavItems; // 0x30
-    HamNavList *mNavList; // 0x3c
+    std::vector<NavItem> mNavItems; // 0x2c
+    HamNavList *mNavList; // 0x38
 };

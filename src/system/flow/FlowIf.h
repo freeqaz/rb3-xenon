@@ -23,9 +23,9 @@ protected:
     FlowIf();
 
     /** "left hand value in comparison" */
-    DataNodeObjTrack mValue1; // 0x5c
+    DataNodeObjTrack mValue1; // 0x60
     /** "right hand value in comparison" */
-    DataNodeObjTrack mValue2; // 0x78
+    DataNodeObjTrack mValue2; // 0x74
     /** "equality case to use for comparison" */
-    OperatorType mOperator; // 0x94
+    OperatorType mOperator; // 0x88
 };

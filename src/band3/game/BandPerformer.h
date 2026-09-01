@@ -31,6 +31,6 @@ public:
     bool NoOneContributingToCrowd() const;
 
     DataArray *unk20c; // 0x240
-    int unk210; // 0x210
+    int unk210; // 0x244
     int unk214; // 0x248
 };

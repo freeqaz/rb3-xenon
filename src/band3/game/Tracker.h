@@ -108,7 +108,7 @@ public:
     TrackerBandDisplay &mBandDisplay; // 0x8
     TrackerBroadcastDisplay &mBroadcastDisplay; // 0xc
     std::vector<TrackerPlayerDisplay> mPlayerDisplays; // 0x10
-    TrackerDesc mDesc; // 0x18
+    TrackerDesc mDesc; // 0x1c
     TrackerSource *mSource; // 0x48
     float unk44;
     Symbol unk48;

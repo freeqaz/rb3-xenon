@@ -96,8 +96,8 @@ protected:
     bool mLinePairs; // 0xed
     /** "Degrees at which the line starts to fold". Ranges from 0 to 180. */
     float mFoldAngle; // 0xf0
-    float mFoldCos; // 0x11c
+    float mFoldCos; // 0xf4
     /** "Material the line uses." */
-    ObjPtr<RndMat> mMat; // 0x120
+    ObjPtr<RndMat> mMat; // 0xf8
     bool mLineUpdate; // 0x104
 };

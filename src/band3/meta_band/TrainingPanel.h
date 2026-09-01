@@ -42,6 +42,6 @@ public:
 
     TrainingState mTrainingState; // 0x3c
     int unk3c;
-    TrainerProvider *mTrainerProvider; // 0x40
-    LessonProvider *mLessonProvider; // 0x44
+    TrainerProvider *mTrainerProvider; // 0x44
+    LessonProvider *mLessonProvider; // 0x48
 };

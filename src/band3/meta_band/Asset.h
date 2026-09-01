@@ -24,7 +24,7 @@ public:
     AssetGender mGender; // 0x0c
     AssetBoutique mBoutique; // 0x10
     std::vector<Symbol> mFinishes; // 0x14
-    bool mPatchable; // 0x1c
-    bool mHidden; // 0x1d
-    int mIndex; // 0x20
+    bool mPatchable; // 0x20
+    bool mHidden; // 0x21
+    int mIndex; // 0x24
 };

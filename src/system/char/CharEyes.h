@@ -34,15 +34,15 @@ public:
         /** "Eye to retarget" */
         ObjOwnerPtr<CharLookAt> mEye; // 0x0
         /** "corresponding upper lid bone, must rotate about Z" */
-        ObjPtr<RndTransformable> mUpperLid; // 0x14
+        ObjPtr<RndTransformable> mUpperLid; // 0xc
         /** "corresponding lower lid bone, must rotate about Z" */
-        ObjPtr<RndTransformable> mLowerLid; // 0x28
+        ObjPtr<RndTransformable> mLowerLid; // 0x18
         /** "optional - child of lower_lid, placed at edge of lower lid geometry.
             It will be used to detect and resolve interpenetration of the lids" */
-        ObjPtr<RndTransformable> mLowerLidBlink; // 0x3c
+        ObjPtr<RndTransformable> mLowerLidBlink; // 0x24
         /** "optional - child of upper_lid, placed at edge of upper lid geometry.
             It will be used to detect and resolve interpenetration of the lids" */
-        ObjPtr<RndTransformable> mUpperLidBlink; // 0x50
+        ObjPtr<RndTransformable> mUpperLidBlink; // 0x30
     };
     struct CharInterestState {
         CharInterestState(Hmx::Object *owner) : mInterest(owner), mRefractoryTime(-1) {}

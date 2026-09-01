@@ -50,5 +50,5 @@ public:
 protected:
     FitnessFilterObj();
 
-    FitnessFilter mFilter; // 0x2c
+    FitnessFilter mFilter; // 0x28
 };

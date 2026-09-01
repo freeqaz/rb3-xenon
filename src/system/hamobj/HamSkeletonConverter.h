@@ -58,20 +58,20 @@ protected:
 
     /** "The CharBones object to add into." */
     ObjPtr<CharBonesObject> mBones; // 0x14
-    int unk28; // 0x28
-    ObjPtr<HamCharacter> mCharacter; // 0x2c
-    Transform unk40; // 0x40
-    PaddedJointPos mJointPositions[kNumJoints]; // 0x80
-    Transform mBoneTransforms[kNumJoints]; // 0x1c0
-    std::vector<RndTransformable *> mBoneMeshes; // 0x6c0
-    RndTransformable *mPelvisMesh; // 0x6cc
-    Transform mPelvisTransform; // 0x6d0
-    PaddedJointPos mLeftHipZAxisInit; // 0x710
-    PaddedJointPos mRightHipZAxisInit; // 0x720
-    PaddedJointPos mLeftHipZAxis; // 0x730
-    PaddedJointPos mRightHipZAxis; // 0x740
-    bool mIsActive; // 0x750
-    bool unk751; // 0x751
+    int unk28; // 0x20
+    ObjPtr<HamCharacter> mCharacter; // 0x24
+    Transform unk40; // 0x30
+    PaddedJointPos mJointPositions[kNumJoints]; // 0x70
+    Transform mBoneTransforms[kNumJoints]; // 0x1b0
+    std::vector<RndTransformable *> mBoneMeshes; // 0x6b0
+    RndTransformable *mPelvisMesh; // 0x6bc
+    Transform mPelvisTransform; // 0x6c0
+    PaddedJointPos mLeftHipZAxisInit; // 0x700
+    PaddedJointPos mRightHipZAxisInit; // 0x710
+    PaddedJointPos mLeftHipZAxis; // 0x720
+    PaddedJointPos mRightHipZAxis; // 0x730
+    bool mIsActive; // 0x740
+    bool unk751; // 0x741
     float unk754;
     float mPelvisInitialZ;
 };

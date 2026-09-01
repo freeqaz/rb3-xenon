@@ -102,10 +102,10 @@ public:
     bool mUpdateShifting; // 0xc6
     bool mEnableShifting; // 0xc7
     std::vector<RangeShift> mRangeShifts; // 0xc8
-    RangeShift *mCurrentRangeShift; // 0xc0
+    RangeShift *mCurrentRangeShift; // 0xd4
     float mRange; // 0xd8
     float mOffset; // 0xdc
     ObjPtr<RndAnimatable> mUpcomingShiftMaskAnim; // 0xe0
-    int mBeatLineSubdivisionTicks; // 0xd8
+    int mBeatLineSubdivisionTicks; // 0xec
     ObjPtrList<Task> mKeyIntroTasks; // 0xf0
 };

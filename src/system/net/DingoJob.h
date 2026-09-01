@@ -36,10 +36,10 @@ protected:
     void ParseResponse();
     void SetDataPoint(const DataPoint &pt);
 
-    int mResult; // 0x7c
-    DataPoint *mDataPoint; // 0x80
+    int mResult; // 0x78
+    DataPoint *mDataPoint; // 0x7c
     void *mContentBuffer;
-    String mResponseStr; // 0x88
+    String mResponseStr; // 0x84
     JsonConverter mJsonReader; // 0x90
     JsonObject *mJsonResponse; // 0xa4
     int mJsonResponseVersion; // 0xa8

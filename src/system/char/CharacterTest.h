@@ -44,17 +44,17 @@ protected:
     /** "The driver to animate" */
     ObjPtr<CharDriver> mDriver; // 0x8
     /** "Clip to play" */
-    ObjPtr<CharClip> mClip1; // 0x1c
+    ObjPtr<CharClip> mClip1; // 0x14
     /** "Clip to transition to, if any" */
-    ObjPtr<CharClip> mClip2; // 0x30
+    ObjPtr<CharClip> mClip2; // 0x20
     /** "If set, group to use as filter for clips" */
-    ObjPtr<CharClipGroup> mFilterGroup; // 0x44
+    ObjPtr<CharClipGroup> mFilterGroup; // 0x2c
     /** "Teleport to this Waypoint" */
-    ObjPtr<Waypoint> mTeleportTo; // 0x58
-    ObjPtrList<Waypoint> mWalkPath; // 0x6c
+    ObjPtr<Waypoint> mTeleportTo; // 0x38
+    ObjPtrList<Waypoint> mWalkPath; // 0x44
     /** "Displays the transition distance map between clip1 and clip2, raw means the raw
      * graph, no nodes". Options are: none, nodes, raw */
-    Symbol mShowDistMap; // 0x80
+    Symbol mShowDistMap; // 0x58
     /** "Which transition to use between clip1 and clip2" */
     int mTransition; // 0x5c
     /** "Cycle through all the transitions" */
@@ -67,10 +67,10 @@ protected:
     bool mShowScreenSize; // 0x63
     bool mShowFootExtents; // 0x64
     /** "Beat threshold at which the transition from clip2 fires" */
-    float mTransEndBeat; // 0x90
+    float mTransEndBeat; // 0x68
     int mTransitionIdx; // 0x6c
     ClipDistMap *mDistMap;
-    RndOverlay *mOverlay; // 0x9c
+    RndOverlay *mOverlay; // 0x74
 };
 
 bool PropSync(CharacterTest &, DataNode &, DataArray *, int, PropOp);

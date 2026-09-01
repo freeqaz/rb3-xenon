@@ -61,11 +61,11 @@ protected:
     int mRotationContext; // 0x34
     /** "If set will exactly track this target during keyframe acquisition, used for IK
      * bones" */
-    ObjPtr<CharBone> mTarget; // 0x3c
+    ObjPtr<CharBone> mTarget; // 0x38
     /** "array of contexts and corresponding bone weights" */
-    std::list<WeightContext> mWeights; // 0x50
+    std::list<WeightContext> mWeights; // 0x44
     /** "Object to specify trans info" */
-    ObjPtr<RndTransformable> mTrans; // 0x58
+    ObjPtr<RndTransformable> mTrans; // 0x4c
     /** "When baking out facing, use this as a top-level bone (like the pelvis)" */
     bool mBakeOutAsTopLevel; // 0x58
 };

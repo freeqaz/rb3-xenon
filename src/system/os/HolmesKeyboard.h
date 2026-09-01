@@ -18,8 +18,8 @@ public:
     void LoadJoypad(BinStream &);
 
 private:
-    int unk2c; // 0x2c
-    MemStream *mJoypadStream; // 0x30
-    MemStream *mKeyboardStream; // 0x34
-    CWnd *mCWnd; // 0x38
+    int unk2c; // 0x28
+    MemStream *mJoypadStream; // 0x2c
+    MemStream *mKeyboardStream; // 0x30
+    CWnd *mCWnd; // 0x34
 };

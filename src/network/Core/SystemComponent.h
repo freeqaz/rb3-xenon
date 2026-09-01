@@ -49,7 +49,7 @@ namespace Quazal {
         virtual bool EndTermination() { return true; } // 0x3C
         virtual bool ValidTransition(_State); // 0x40
         virtual bool UseIsAllowed(); // 0x44
-        virtual _State TestState() { return mState; } // 0x48
+        virtual _State TestState() { return mState; } // 0xc
         virtual void DoWork() {} // 0x4C
 
         void SetName(const Quazal::String &);

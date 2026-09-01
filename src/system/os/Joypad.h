@@ -226,7 +226,7 @@ public:
     class LocalUser *mUser; // 0x44
     bool mConnected; // 0x48
     bool mVibrateEnabled; // 0x49
-    bool mHasCapFlag1, mIsWireless, unk4c; // 0x4a, 0x4b, 0x4c
+    bool mHasCapFlag1, mIsWireless, unk4c; // 0x4c, 0x4b, 0x4c
     bool mHasAnalogSticks; // 0x4d (retail: stb 0x4d in JoypadIsControllerTypePadNum; Wii-era bool, dc3 changed to int mNumAnalogSticks)
     bool mTranslateSticks; // 0x4e
     int mIgnoreButtonMask; // 0x50

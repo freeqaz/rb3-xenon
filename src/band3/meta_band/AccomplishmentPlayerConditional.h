@@ -23,5 +23,5 @@ public:
         const;
 
     SongSortMgr::SongFilter mLaunchFilter; // 0x98
-    Symbol mLaunchPartDifficultySym; // 0x90
+    Symbol mLaunchPartDifficultySym; // 0xb4
 };

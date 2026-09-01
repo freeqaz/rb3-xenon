@@ -36,6 +36,6 @@ public:
     bool mDisabled; // 0x48
     bool mShifted; // 0x49
     unsigned int mSlotMask; // 0x4c
-    int unk44; // 0x44
+    int unk44; // 0x50
     BeatMatchControllerSink *mSink; // 0x54
 };

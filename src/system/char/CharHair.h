@@ -71,8 +71,8 @@ public:
             because mostly models are authored under gravitational load" */
         float mAngle; // 0x10
         ObjVector<Point> mPoints; // 0x14
-        Hmx::Matrix3 mBaseMat; // 0x20
-        Hmx::Matrix3 mRootMat; // 0x44
+        Hmx::Matrix3 mBaseMat; // 0x24
+        Hmx::Matrix3 mRootMat; // 0x54
         int mHookupFlags; // 0x84
     };
     // Hmx::Object
@@ -138,15 +138,15 @@ protected:
     /** "If using sides, determines how far out it could go" */
     float mMaxSlack; // 0x2c
     ObjVector<Strand> mStrands; // 0x30
-    int mReset; // 0x3c
+    int mReset; // 0x40
     /** "Simulate physics or not" */
     bool mSimulate; // 0x44
-    bool mUsePostProc; // 0x41
-    ObjPtr<Character> mMe; // 0x44
+    bool mUsePostProc; // 0x45
+    ObjPtr<Character> mMe; // 0x48
     /** "wind object to use" */
-    ObjPtr<RndWind> mWind; // 0x50
-    ObjPtrList<CharCollide> mCollides; // 0x5c
-    bool mManagedHookup; // 0x6c
+    ObjPtr<RndWind> mWind; // 0x54
+    ObjPtrList<CharCollide> mCollides; // 0x60
+    bool mManagedHookup; // 0x74
 };
 
 inline BinStream &operator<<(BinStream &bs, const CharHair::Strand &s) {

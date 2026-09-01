@@ -32,5 +32,5 @@ protected:
     /** "CharBones to blend into" */
     ObjPtr<CharBonesObject> mDest; // 0x60
     /** "What type of clip we can accommodate" */
-    Symbol mClipType; // 0x74
+    Symbol mClipType; // 0x6c
 };

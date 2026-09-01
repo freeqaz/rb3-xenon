@@ -299,10 +299,10 @@ public:
 
     bool unk40; // 0x50
     MusicLibraryTask mTask; // 0x54
-    SongSortMgr::SongFilter mFilter; // 0x7c
+    SongSortMgr::SongFilter mFilter; // 0x94
     ViewSettingsProvider *mViewSettingsProvider; // 0xb0
     SongPreview &mSongPreview; // 0xb4
-    Timer mSongPreviewTimer; // 0x98
+    Timer mSongPreviewTimer; // 0xb8
     float mSongPreviewDelay; // 0xe8
     Symbol mLastSongPreview; // 0xec
     int mCurrentHighlightIndex; // 0xf0
@@ -313,35 +313,35 @@ public:
     SongSortType unke4;
     SongSortType unke8;
     bool unkec;
-    RndMat *mHeaderMat; // 0xf0
-    RndMat *mSubheaderMat; // 0xf4
-    RndMat *mFunctionMat; // 0xf8
-    RndMat *mFunctionSetlistMat; // 0xfc
-    RndMat *mRockCentralMat; // 0x100
-    RndMat *mDiscMatEven; // 0x104
-    RndMat *mDiscMatOdd; // 0x108
-    RndMat *mDlcMatEven; // 0x10c
-    RndMat *mDlcMatOdd; // 0x110
+    RndMat *mHeaderMat; // 0x110
+    RndMat *mSubheaderMat; // 0x114
+    RndMat *mFunctionMat; // 0x118
+    RndMat *mFunctionSetlistMat; // 0x11c
+    RndMat *mRockCentralMat; // 0x120
+    RndMat *mDiscMatEven; // 0x124
+    RndMat *mDiscMatOdd; // 0x128
+    RndMat *mDlcMatEven; // 0x12c
+    RndMat *mDlcMatOdd; // 0x130
     RndMat *mStoreMatEven; // 0x134
     RndMat *mStoreMatOdd; // 0x138
-    RndMat *mUgcMatEven; // 0x11c
-    RndMat *mUgcMatOdd; // 0x120
+    RndMat *mUgcMatEven; // 0x13c
+    RndMat *mUgcMatOdd; // 0x140
     RndMat *mSetlistMatEven; // 0x144
     RndMat *mSetlistMatOdd; // 0x148
     bool unk12c;
     bool unk12d;
-    std::vector<int> mSetlist; // 0x130
-    SetlistProvider *mSetlistProvider; // 0x138
-    SavedSetlist *mCurrentSetlist; // 0x13c
-    DataResultList mResults; // 0x140
-    MusicLibraryNetSetlists *mNetSetlists; // 0x158
+    std::vector<int> mSetlist; // 0x150
+    SetlistProvider *mSetlistProvider; // 0x15c
+    SavedSetlist *mCurrentSetlist; // 0x160
+    DataResultList mResults; // 0x164
+    MusicLibraryNetSetlists *mNetSetlists; // 0x17c
     bool unk15c;
-    SetlistScoresProvider *mSetlistScoresProvider; // 0x160
-    bool mHasHeaderData; // 0x164
-    int mHeaderCareerScore; // 0x168
-    short mHeaderCareerInstrumentMask; // 0x16c
-    int mHeaderCareerStars; // 0x170
-    int mHeaderPossibleStars; // 0x174 (compiled: 0x198)
+    SetlistScoresProvider *mSetlistScoresProvider; // 0x184
+    bool mHasHeaderData; // 0x188
+    int mHeaderCareerScore; // 0x18c
+    short mHeaderCareerInstrumentMask; // 0x190
+    int mHeaderCareerStars; // 0x194
+    int mHeaderPossibleStars; // 0x198 (compiled: 0x198)
     /** Retail-only tail fields (0x19c/0x1a0), absent from the Wii dev branch.
         NOTE: retail's ctor does NOT initialize these (verified: no other
         stores to 0x19c/0x1a0 in the unit); they are set by the op-starter

@@ -20,6 +20,6 @@ public:
 
     const std::vector<DynamicTex *> &mIcons; // 0x2c
     Symbol mGender; // 0x30
-    String mFaceOption; // 0x28
+    String mFaceOption; // 0x34
     int mFaceOptionCount; // 0x40
 };

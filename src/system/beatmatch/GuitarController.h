@@ -36,9 +36,9 @@ public:
     void ReconcileFretState();
 
     bool mDisabled; // 0x48
-    bool mAutoSoloButtons; // 0x3d
+    bool mAutoSoloButtons; // 0x49
     unsigned int mFretMask; // 0x4c
-    int mShiftButtonMask; // 0x44
+    int mShiftButtonMask; // 0x50
     BeatMatchControllerSink *mSink; // 0x54
     ControllerStyle mControllerStyle; // 0x58
     std::vector<int> mStrumBarButtons; // 0x5c

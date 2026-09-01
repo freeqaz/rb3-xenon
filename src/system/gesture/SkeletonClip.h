@@ -29,14 +29,14 @@ struct RecordedFrame {
     int mFrameNumber;                        // 0x00
     int mElapsedMs;                          // 0x04
     Vector3 mFloorNormal;                    // 0x08
-    Hmx::Color mFloorClipPlane;              // 0x14
-    bool mIsTracked;                         // 0x24
-    PaddedJointPos mJointPositions[kNumClipJoints]; // 0x28
-    int mJointTrackingState[kNumClipJoints];        // 0x58
-    int mQualityFlags;                       // 0x64
-    int mTrackingID;                         // 0x68
-    float mUnkTU5_0x6c;                      // 0x6c (retail float)
-    float mSongSeconds;                      // 0x70/0x74
+    Hmx::Color mFloorClipPlane;              // 0x18
+    bool mIsTracked;                         // 0x28
+    PaddedJointPos mJointPositions[kNumClipJoints]; // 0x2c
+    int mJointTrackingState[kNumClipJoints];        // 0x5c
+    int mQualityFlags;                       // 0x68
+    int mTrackingID;                         // 0x6c
+    float mUnkTU5_0x6c;                      // 0x70 (retail float)
+    float mSongSeconds;                      // 0x74/0x74
 };
 
 class SkeletonClip : public CameraInput,
@@ -46,8 +46,8 @@ class SkeletonClip : public CameraInput,
 public:
     struct MoveRating {
         String mName; // 0x0
-        Symbol mExpected; // 0x8
-        int mWeightType; // 0xc
+        Symbol mExpected; // 0xc
+        int mWeightType; // 0x10
     };
     // Hmx::Object
     virtual ~SkeletonClip();
@@ -129,16 +129,16 @@ protected:
     Symbol mSong; // 0x1208
     Difficulty mDifficulty; // 0x120c
     String mBuild; // 0x1210
-    Symbol mDefaultRating; // 0x1218
-    int mWeighted; // 0x121c
-    int mOverrideDiff; // 0x1220
-    std::vector<MoveRating> mMoveRatings; // 0x1224
+    Symbol mDefaultRating; // 0x121c
+    int mWeighted; // 0x1220
+    int mOverrideDiff; // 0x1224
+    std::vector<MoveRating> mMoveRatings; // 0x1228
     bool mRecordSuspended;
     bool mIsRecording;
-    FileStream *mFileStream; // 0x1234
-    String mFile; // 0x1238
-    int mPlaybackFrame; // 0x1240
-    bool mAutoplay; // 0x1244
+    FileStream *mFileStream; // 0x1238
+    String mFile; // 0x123c
+    int mPlaybackFrame; // 0x1248
+    bool mAutoplay; // 0x124c
 };
 
 void ReserveFrames();

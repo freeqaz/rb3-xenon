@@ -121,28 +121,28 @@ public:
     std::vector<float> unk50; // 0x54
     DrumPlayer *mDrumPlayer; // 0x60
     int mCurTrack; // 0x64
-    bool unk60; // 0x60
-    SongPos mSongPos; // 0x64
+    bool unk60; // 0x68
+    SongPos mSongPos; // 0x6c
     float mNow; // 0x80
     int mTick; // 0x84
-    float mLastSwing; // 0x80
-    float mLastReleaseSwing; // 0x84
-    bool unk88; // 0x88
-    int mLastVelocityBucket; // 0x8c
-    float mRawMercurySwitchState; // 0x90
+    float mLastSwing; // 0x88
+    float mLastReleaseSwing; // 0x8c
+    bool unk88; // 0x90
+    int mLastVelocityBucket; // 0x94
+    float mRawMercurySwitchState; // 0x98
     bool mMercurySwitchState; // 0x9c
-    bool mForceMercurySwitch; // 0x95
+    bool mForceMercurySwitch; // 0x9d
     float mSyncOffset; // 0xa0
-    bool mDrivingPitchBendExternally; // 0x9c
+    bool mDrivingPitchBendExternally; // 0xa4
     int mFillStartTick; // 0xa8
-    int mLastFillEndTick; // 0xa4
-    int mCodaStartTick; // 0xa8
-    bool unkac; // 0xac
-    bool mAutoplay; // 0xad
+    int mLastFillEndTick; // 0xac
+    int mCodaStartTick; // 0xb0
+    bool unkac; // 0xb4
+    bool mAutoplay; // 0xb5
     bool mForceFill; // 0xb6
-    bool mNoFills; // 0xaf
-    bool mFillAudio; // 0xb0
-    FillLogic mFillLogic; // 0xb4
-    bool mEnableWhammy; // 0xb8
-    bool mEnableCapStrip; // 0xb9
+    bool mNoFills; // 0xb7
+    bool mFillAudio; // 0xb8
+    FillLogic mFillLogic; // 0xbc
+    bool mEnableWhammy; // 0xc0
+    bool mEnableCapStrip; // 0xc1
 };

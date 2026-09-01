@@ -199,8 +199,8 @@ protected:
         at 0x58 ends at 0x64, the bool takes 0x64, and 3 bytes of padding land
         mColorXfm at 0x68 -- EXACTLY where it already is. So this swap does NOT
         shift mColorXfm and does not reopen CE-1's cascade. */
-    ObjPtr<RndTex> mLuminanceMap; // 0x58..0x64
-    bool mForceCurrentInterp; // 0x64
+    ObjPtr<RndTex> mLuminanceMap; // 0x54..0x64
+    bool mForceCurrentInterp; // 0x60
     /** "Hue: -180 to 180, 0.0 is neutral" */
     /** "Saturation: -100 to 100, 0.0 is neutral" */
     /** "Lightness: -100 to 100, 0.0 is neutral" */
@@ -234,7 +234,7 @@ protected:
     Vector2 mFlickerModBounds; // 0x114
     /** "Min and max number of seconds for a light to dark cycle" */
     Vector2 mFlickerTimeBounds; // 0x11c
-    Vector2 mFlickerSeconds; // 0x11c
+    Vector2 mFlickerSeconds; // 0x124
     float mColorModulation; // 0x12c
     /** "X and Y tiling of the noise map" */
     Vector2 mNoiseBaseScale; // 0x130
@@ -247,7 +247,7 @@ protected:
         using an Overlay blend mode." */
     bool mNoiseMidtone; // 0x141
     /** "Optional noise bitmap" */
-    ObjPtr<RndTex> mNoiseMap; // 0x13c
+    ObjPtr<RndTex> mNoiseMap; // 0x144
     /** "Min pixel value to leave trails [0..1]". Ranges from 0 to 1. */
     float mTrailThreshold; // 0x150
     /** "Seconds for the trails to last" */
@@ -306,7 +306,7 @@ protected:
 
     /** "Full-screen refraction settings" */
     /** "This is a normal map used to distort the screen." */
-    ObjPtr<RndTex> mRefractMap; // 0x1cc
+    ObjPtr<RndTex> mRefractMap; // 0x1c4
     /** "The distance to refract each pixel of the screen. This can also be negative to
      * reverse the direction. Set to zero to disable." */
     float mRefractDist; // 0x1d0

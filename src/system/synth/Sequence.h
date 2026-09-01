@@ -43,7 +43,7 @@ protected:
     void OnTriggerSound(int);
     DataNode OnPlay(DataArray *);
 
-    ObjPtrList<SeqInst> mInsts; // 0x38
+    ObjPtrList<SeqInst> mInsts; // 0x34
     /** "Average volume this sequence will be played at, in dB" */
     float mAvgVol; // 0x48
     /** "Amount to vary the volume above and below the average, in dB" */
@@ -56,7 +56,7 @@ protected:
     float mAvgPan; // 0x58
     /** "Amount to vary the pan" */
     float mPanSpread; // 0x5c
-    FaderGroup mFaders; // 0x64
+    FaderGroup mFaders; // 0x60
     /** "If false, this sequence will play to its end and can't be stopped prematurely"
      */
     bool mCanStop; // 0x78
@@ -146,7 +146,7 @@ protected:
     bool mAllowRepeats; // 0x94
     int mNextIndex; // 0x98
     int mForceChooseIndex; // 0x9c
-    std::list<int> mPlayHistory; // 0xa4
+    std::list<int> mPlayHistory; // 0xa0
 };
 
 /** "Plays all of its child sequences at random intervals" */

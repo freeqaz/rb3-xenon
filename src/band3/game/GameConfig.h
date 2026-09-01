@@ -47,11 +47,11 @@ public:
     float GetSongLimitMs() const { return mSongLimitMs; }
 
     PlayerTrackConfigList *mPlayerTrackConfigList; // 0x28
-    PracticeSectionProvider *mPracticeSectionProvider; // 0x20
-    float mSongLimitMs; // 0x24
-    int mPracticeSections[2]; // 0x28
-    int mPracticeSpeed; // 0x30
-    bool mPracticeMode; // 0x34
+    PracticeSectionProvider *mPracticeSectionProvider; // 0x2c
+    float mSongLimitMs; // 0x30
+    int mPracticeSections[2]; // 0x34
+    int mPracticeSpeed; // 0x3c
+    bool mPracticeMode; // 0x40
 };
 
 extern GameConfig *TheGameConfig;

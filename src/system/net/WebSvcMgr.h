@@ -53,8 +53,8 @@ protected:
     NetAddress
     ResolveHostname(const char *hostname, const char *domain, unsigned short port);
 
-    std::list<WebSvcRequest *> mRequests; // 0x2c
-    std::map<String, NetAddress> mHostCache; // 0x34
+    std::list<WebSvcRequest *> mRequests; // 0x28
+    std::map<String, NetAddress> mHostCache; // 0x30
 };
 
 extern WebSvcMgr &TheWebSvcMgr;

@@ -52,8 +52,8 @@ public:
     int mStars; // 0x14c
     int mTotalStars; // 0x150
     RndText::Alignment mAlignment; // 0x154
-    Symbol mIconOverride; // 0x124
-    Symbol mEmptyIconOverride; // 0x128
+    Symbol mIconOverride; // 0x158
+    Symbol mEmptyIconOverride; // 0x15c
 };
 
 #endif // BANDOBJ_STARDISPLAY_H

@@ -148,21 +148,21 @@ protected:
     /** The Trans to animate. */
     ObjPtr<RndTransformable> mTrans; // 0x10
     /** Whether or not to use spline interpolation for the trans keys. */
-    bool mTransSpline; // 0x24
+    bool mTransSpline; // 0x1c
     /** Whether or not to use spline interpolation for the scale keys. */
-    bool mScaleSpline; // 0x25
+    bool mScaleSpline; // 0x1d
     /** Whether or not to use slerp interpolation for the rot keys. */
-    bool mRotSlerp; // 0x26
+    bool mRotSlerp; // 0x1e
     /** Whether or not to use spline interpolation for the rot keys. */
-    bool mRotSpline; // 0x27
+    bool mRotSpline; // 0x1f
     /** The collection of rotation keys. */
-    Keys<Hmx::Quat, Hmx::Quat> mRotKeys; // 0x28
+    Keys<Hmx::Quat, Hmx::Quat> mRotKeys; // 0x20
     /** The collection of position keys. */
-    Keys<Vector3, Vector3> mTransKeys; // 0x34
+    Keys<Vector3, Vector3> mTransKeys; // 0x2c
     /** The collection of scale keys. */
-    Keys<Vector3, Vector3> mScaleKeys; // 0x40
+    Keys<Vector3, Vector3> mScaleKeys; // 0x38
     /** The TransAnim that owns all of these keys. */
-    ObjOwnerPtr<RndTransAnim> mKeysOwner; // 0x4c
-    bool mRepeatTrans; // 0x60
-    bool mFollowPath; // 0x61
+    ObjOwnerPtr<RndTransAnim> mKeysOwner; // 0x44
+    bool mRepeatTrans; // 0x50
+    bool mFollowPath; // 0x51
 };

@@ -263,15 +263,15 @@ public:
     static void Init() { REGISTER_OBJ_FACTORY(AccomplishmentPanel); }
 
     CareerState mCareerState; // 0x54
-    Symbol mGoal; // 0x50
-    Symbol mGroup; // 0x54
-    Symbol mCategory; // 0x58
+    Symbol mGoal; // 0x58
+    Symbol mGroup; // 0x5c
+    Symbol mCategory; // 0x60
     AccomplishmentEntryProvider *mAccomplishmentEntryProvider; // 0x64
-    AccomplishmentProvider *mAccomplishmentProvider; // 0x60
-    AccomplishmentCategoryProvider *mAccomplishmentCategoryProvider; // 0x64
-    AccomplishmentGroupProvider *mAccomplishmentGroupProvider; // 0x68
-    UIGridProvider *mAccomplishmentGridProvider; // 0x6c
-    LocalBandUser *mOtherUserToView; // 0x70
+    AccomplishmentProvider *mAccomplishmentProvider; // 0x68
+    AccomplishmentCategoryProvider *mAccomplishmentCategoryProvider; // 0x6c
+    AccomplishmentGroupProvider *mAccomplishmentGroupProvider; // 0x70
+    UIGridProvider *mAccomplishmentGridProvider; // 0x74
+    LocalBandUser *mOtherUserToView; // 0x78
 };
 
 bool IsAccomplishmentSecret(Accomplishment *, const BandProfile *);

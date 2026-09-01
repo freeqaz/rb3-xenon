@@ -33,13 +33,13 @@ protected:
     void UseLastValueChanged();
 
     /** "the value we're transitioning to" */
-    DataNodeObjTrack mToValue; // 0x5c
+    DataNodeObjTrack mToValue; // 0x60
     /** "the value we're transitioning from" */
-    DataNodeObjTrack mFromValue; // 0x78
+    DataNodeObjTrack mFromValue; // 0x74
     /** "equality case to use for comparison" */
-    OperatorType mOperator; // 0x94
+    OperatorType mOperator; // 0x88
     /** "Use the last value to compare against" */
-    bool mUseLastValue; // 0x98
-    bool mUnregisterParent; // 0x99
-    bool mContinuous; // 0x9a
+    bool mUseLastValue; // 0x8c
+    bool mUnregisterParent; // 0x8d
+    bool mContinuous; // 0x8e
 };

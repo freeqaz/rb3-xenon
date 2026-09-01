@@ -14,7 +14,7 @@ public:
 
         /** "The object providing the properties" */
         FlowPtr<Hmx::Object> mProvider; // 0x0
-        DataNode mProperty; // 0x20 - property?
+        DataNode mProperty; // 0x18 - property?
     };
     // Hmx::Object
     virtual ~FlowTrigger();
@@ -41,16 +41,16 @@ protected:
     void UnregisterEvents();
 
     /** "The Object which I listen to for events" */
-    FlowPtr<Hmx::Object> mEventProvider; // 0x68
+    FlowPtr<Hmx::Object> mEventProvider; // 0x6c
     /** "Events which run this flow" */
-    std::list<Symbol> mTriggerEvents; // 0x88
+    std::list<Symbol> mTriggerEvents; // 0x84
     /** "Events which stop this flow" */
-    std::list<Symbol> mStopEvents; // 0x90
-    ObjList<PropTriggerDefn> mTriggerProperties; // 0x98
-    ObjList<PropTriggerDefn> mStopProperties; // 0xa4
+    std::list<Symbol> mStopEvents; // 0x8c
+    ObjList<PropTriggerDefn> mTriggerProperties; // 0x94
+    ObjList<PropTriggerDefn> mStopProperties; // 0xa0
     /** "force things to stop immediately?" */
-    bool mHardStop; // 0xb0
-    bool mAutoRegister; // 0xb1
+    bool mHardStop; // 0xac
+    bool mAutoRegister; // 0xad
 };
 
 inline BinStream &operator<<(BinStream &bs, const FlowTrigger::PropTriggerDefn &defn) {

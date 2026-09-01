@@ -144,72 +144,72 @@ public:
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(GemTrackDir)
 
-    int mNumTracks; // 0x484
-    int unk488; // 0x488
-    int mGemTrackDirID; // 0x48c
-    int mKickPassCounter; // 0x490
-    int unk494; // 0x494
-    float mStreakMeterOffset; // 0x498
-    float mStreakMeterTilt; // 0x49c
-    float mTrackPitch; // 0x4a0
-    ObjPtr<RndDir> mEffectSelector; // 0x4a4
-    ObjPtr<RndGroup> mRotater; // 0x4b0
-    ObjPtr<RndTex> mSurfaceTexture; // 0x4bc
-    ObjPtr<RndMesh> mSurfaceMesh; // 0x4c8
-    ObjPtr<RndMat> mSurfaceMat; // 0x4d4
-    ObjPtr<RndEnviron> mTrackEnv; // 0x4e0
-    ObjPtr<RndEnviron> mTrackMissGemsEnv; // 0x4ec
-    ObjPtr<RndCam> mGameCam; // 0x4f8
-    ObjPtr<EventTrigger> mPeakStateOnTrig; // 0x504
-    ObjPtr<EventTrigger> mPeakStateOffTrig; // 0x510
-    ObjPtr<EventTrigger> mPeakStopImmediateTrig; // 0x51c
-    ObjPtr<EventTrigger> mBassSuperStreakOnTrig; // 0x528
-    ObjPtr<EventTrigger> mBassSuperStreakOffTrig; // 0x534
-    ObjPtr<EventTrigger> mBassSSOffImmediateTrig; // 0x540
-    ObjPtr<EventTrigger> mKickDrummerTrig; // 0x54c
-    ObjPtr<EventTrigger> mKickDrummerResetTrig; // 0x558
-    ObjPtr<EventTrigger> mSpotlightPhraseSuccessTrig; // 0x564
-    std::vector<ObjPtr<RndPropAnim> > mGemMashAnims; // 0x570
-    std::vector<ObjPtr<RndPropAnim> > mDrumMashAnims; // 0x578
-    std::vector<ObjPtr<RndPropAnim> > mFillLaneAnims; // 0x580
-    std::vector<ObjPtr<RndPropAnim> > mRealGuitarMashAnims; // 0x588
+    int mNumTracks; // 0x520
+    int unk488; // 0x524
+    int mGemTrackDirID; // 0x528
+    int mKickPassCounter; // 0x52c
+    int unk494; // 0x530
+    float mStreakMeterOffset; // 0x534
+    float mStreakMeterTilt; // 0x538
+    float mTrackPitch; // 0x53c
+    ObjPtr<RndDir> mEffectSelector; // 0x540
+    ObjPtr<RndGroup> mRotater; // 0x54c
+    ObjPtr<RndTex> mSurfaceTexture; // 0x558
+    ObjPtr<RndMesh> mSurfaceMesh; // 0x564
+    ObjPtr<RndMat> mSurfaceMat; // 0x570
+    ObjPtr<RndEnviron> mTrackEnv; // 0x57c
+    ObjPtr<RndEnviron> mTrackMissGemsEnv; // 0x588
+    ObjPtr<RndCam> mGameCam; // 0x594
+    ObjPtr<EventTrigger> mPeakStateOnTrig; // 0x5a0
+    ObjPtr<EventTrigger> mPeakStateOffTrig; // 0x5ac
+    ObjPtr<EventTrigger> mPeakStopImmediateTrig; // 0x5b8
+    ObjPtr<EventTrigger> mBassSuperStreakOnTrig; // 0x5c4
+    ObjPtr<EventTrigger> mBassSuperStreakOffTrig; // 0x5d0
+    ObjPtr<EventTrigger> mBassSSOffImmediateTrig; // 0x5dc
+    ObjPtr<EventTrigger> mKickDrummerTrig; // 0x5e8
+    ObjPtr<EventTrigger> mKickDrummerResetTrig; // 0x5f4
+    ObjPtr<EventTrigger> mSpotlightPhraseSuccessTrig; // 0x600
+    std::vector<ObjPtr<RndPropAnim> > mGemMashAnims; // 0x60c
+    std::vector<ObjPtr<RndPropAnim> > mDrumMashAnims; // 0x618
+    std::vector<ObjPtr<RndPropAnim> > mFillLaneAnims; // 0x624
+    std::vector<ObjPtr<RndPropAnim> > mRealGuitarMashAnims; // 0x630
     std::vector<
         std::pair<ObjPtr<EventTrigger>, ObjPtr<EventTrigger> > >
         mDrumRollTrigs; // 0x63c
     std::vector<
         std::pair<ObjPtr<EventTrigger>, ObjPtr<EventTrigger> > >
         mTrillTrigs; // 0x648
-    std::vector<ObjPtr<EventTrigger> > mFillHitTrigs; // 0x5a0
-    ObjPtr<EventTrigger> mDrumFillResetTrig; // 0x5a8
-    ObjPtr<RndPropAnim> mDrumMash2ndPassActivateAnim; // 0x5b4
-    ObjPtr<RndGroup> mDrumMashHitAnimGrp; // 0x5c0
-    ObjPtr<RndGroup> mFillColorsGrp; // 0x5cc
-    ObjPtr<RndPropAnim> mLodAnim; // 0x5d8
-    ObjPtr<RndDir> mSmasherPlate; // 0x5e4
-    ObjPtrList<TrackWidget, ObjectDir> mGlowWidgets; // 0x5f0
-    ObjPtr<Task> unk600; // 0x600
-    ObjPtr<Task> unk60c; // 0x60c
-    ObjPtr<Task> unk618; // 0x618
-    ObjPtr<Task> unk624; // 0x624
-    ObjPtr<RndMesh> mGemWhiteMesh; // 0x630
-    ObjPtr<EventTrigger> mMissOutofRangeRightTrig; // 0x63c
-    ObjPtr<EventTrigger> mMissOutofRangeLeftTrig; // 0x648
-    ObjPtr<RndAnimatable> unk654; // 0x654
-    ObjPtr<RndAnimatable> mKeysShiftAnim; // 0x660
-    ObjPtr<RndPropAnim> mKeysMashAnim; // 0x66c
+    std::vector<ObjPtr<EventTrigger> > mFillHitTrigs; // 0x654
+    ObjPtr<EventTrigger> mDrumFillResetTrig; // 0x660
+    ObjPtr<RndPropAnim> mDrumMash2ndPassActivateAnim; // 0x66c
+    ObjPtr<RndGroup> mDrumMashHitAnimGrp; // 0x678
+    ObjPtr<RndGroup> mFillColorsGrp; // 0x684
+    ObjPtr<RndPropAnim> mLodAnim; // 0x690
+    ObjPtr<RndDir> mSmasherPlate; // 0x69c
+    ObjPtrList<TrackWidget, ObjectDir> mGlowWidgets; // 0x6a8
+    ObjPtr<Task> unk600; // 0x6bc
+    ObjPtr<Task> unk60c; // 0x6c8
+    ObjPtr<Task> unk618; // 0x6d4
+    ObjPtr<Task> unk624; // 0x6e0
+    ObjPtr<RndMesh> mGemWhiteMesh; // 0x6ec
+    ObjPtr<EventTrigger> mMissOutofRangeRightTrig; // 0x6f8
+    ObjPtr<EventTrigger> mMissOutofRangeLeftTrig; // 0x704
+    ObjPtr<RndAnimatable> unk654; // 0x710
+    ObjPtr<RndAnimatable> mKeysShiftAnim; // 0x71c
+    ObjPtr<RndPropAnim> mKeysMashAnim; // 0x728
     float mKeyRange; // 0x734
     float mKeyOffset; // 0x738
     std::vector<RndDir *> unk680; // 0x73c
     std::vector<EventTrigger *> unk688; // 0x748
     std::vector<EventTrigger *> unk690; // 0x754
     FingerShape *mFingerShape; // 0x760
-    std::vector<float> mFretPosOffsets; // 0x69c
-    float mChordLabelPosOffset; // 0x6a4
-    ObjPtr<ChordShapeGenerator> mChordShapeGen; // 0x6a8
-    std::map<unsigned int, std::pair<int, RndMesh *> > unk6b4; // 0x6b4
-    std::map<unsigned int, std::pair<int, RndMesh *> > unk6cc; // 0x6cc
+    std::vector<float> mFretPosOffsets; // 0x764
+    float mChordLabelPosOffset; // 0x770
+    ObjPtr<ChordShapeGenerator> mChordShapeGen; // 0x774
+    std::map<unsigned int, std::pair<int, RndMesh *> > unk6b4; // 0x780
+    std::map<unsigned int, std::pair<int, RndMesh *> > unk6cc; // 0x798
     ArpeggioShapePool *mArpShapePool; // 0x7b0
-    bool unk6e8; // 0x6e8
+    bool unk6e8; // 0x7b4
     // Retail RB3-360 (MILO_DEBUG off) ends here: sizeof == 0x6ec. rb3-Wii (dev)
     // gates 4 more members under MILO_DEBUG (mFakeFingerShape,
     // mCycleFakeFingerShapes, mRandomShapeFrameCount, RGState mRGState) — removed

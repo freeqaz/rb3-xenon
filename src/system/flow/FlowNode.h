@@ -100,11 +100,11 @@ protected:
 
     bool mDebugOutput; // 0x8
     String mDebugComment; // 0xc
-    ObjPtrVec<FlowNode> mChildNodes; // 0x14
-    ObjPtrList<FlowNode> mRunningNodes; // 0x30
-    FlowNode *mFlowParent; // 0x44
-    ObjVector<DrivenPropertyEntry> mDrivenPropEntries; // 0x48
-    bool mStopRequested; // 0x58
+    ObjPtrVec<FlowNode> mChildNodes; // 0x18
+    ObjPtrList<FlowNode> mRunningNodes; // 0x34
+    FlowNode *mFlowParent; // 0x48
+    ObjVector<DrivenPropertyEntry> mDrivenPropEntries; // 0x4c
+    bool mStopRequested; // 0x5c
 };
 
 #define FLOW_LOG(...)                                                                    \

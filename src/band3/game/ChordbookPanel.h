@@ -93,16 +93,16 @@ public:
     int unk70;
     int unk74;
     unsigned int mNumChords; // 0x7c
-    ChordInfo mChords[20]; // 0x7c
+    ChordInfo mChords[20]; // 0x80
     bool unk66c; // 0x670
     int unk670;
     bool unk674;
-    unsigned char mFret[6]; // 0x675
-    float mStringSwings[6]; // 0x67c
+    unsigned char mFret[6]; // 0x679
+    float mStringSwings[6]; // 0x680
     unsigned char mCorrect; // 0x698
     unsigned char mInUse; // 0x699
     unsigned char mStrum; // 0x69a
-    FingerStep mStep[5]; // 0x698
+    FingerStep mStep[5]; // 0x69c
     ChordPreview *mChordPreview; // 0x6c4
     bool unk6c4;
     bool unk6c5;
@@ -112,7 +112,7 @@ public:
     int unk6d4;
     int unk6d8;
     TrainerProgressMeter *mProgressMeter; // 0x6e0
-    RGState mState; // 0x6e0
+    RGState mState; // 0x6e4
     bool mRelearnChords; // 0x6fc
-    bool mLefty; // 0x6f9
+    bool mLefty; // 0x6fd
 };

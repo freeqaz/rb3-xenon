@@ -55,13 +55,13 @@ public:
     Movie &GetMovie() { return mMovie; }
 
 protected:
-    ObjOwnerPtr<RndTex> mTex; // 0x48 ObjOwnerPtr | 0x54, RndTex
+    ObjOwnerPtr<RndTex> mTex; // 0x2c ObjOwnerPtr | 0x54, RndTex
     bool mLoop;
     bool mEntered;
     bool mIsLocalized;
     bool mPaused;
     FilePath sRoot;
-    Movie mMovie; // 0x68
+    Movie mMovie; // 0x48
 
     TexMovie();
     // RB3 retail's TexMovie::DoBeginMovieFromFile takes no LoaderPos (the

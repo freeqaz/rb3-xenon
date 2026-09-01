@@ -46,7 +46,7 @@ public:
             return nullptr;
     }
 
-    std::vector<Symbol> mEntries; // 0x20
+    std::vector<Symbol> mEntries; // 0x2c
     const std::vector<DynamicTex *> &mIcons; // 0x38
 };
 

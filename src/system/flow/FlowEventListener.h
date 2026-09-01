@@ -28,8 +28,8 @@ protected:
 
     bool mListening;
     /** "When true, we will start our children when we begin listening for events" */
-    bool mStartOnActivate; // 0xb5
+    bool mStartOnActivate; // 0xb1
     /** "How many events do we process before disabling ourselves? 0 is infinite" */
-    int mEventCount; // 0xb8
+    int mEventCount; // 0xb4
     int mEventsFired;
 };

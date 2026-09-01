@@ -39,5 +39,5 @@ protected:
     /** "Loop this movie?" */
     bool mLoop; // 0x1d
     /** "Texture to animate." */
-    ObjOwnerPtr<RndTex> mTex; // 0x1c
+    ObjOwnerPtr<RndTex> mTex; // 0x20
 };

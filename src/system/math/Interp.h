@@ -38,7 +38,7 @@ public:
 
     void Reset(float, float, float, float);
 
-    float mSlope, mB; // 0x14 0x18
+    float mSlope, mB; // 0x18 0x18
 };
 
 class ExpInterpolator : public Interpolator {

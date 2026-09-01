@@ -6,7 +6,7 @@ private:
     Hmx::Object *mPobjKeyboardCallback; // 0x28
     bool mCallbackReady; // 0x2c
     bool mMsgOk; // 0x2d
-    String mCallbackMsg; // 0x34
+    String mCallbackMsg; // 0x30
 
     void PlatformPoll();
     const char *GetInputString();

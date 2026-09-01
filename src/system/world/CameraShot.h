@@ -89,9 +89,9 @@ public:
     Vector3 mLastTargetPos; // 0x98
     /** "Parent that the camera should attach itself to" */
     ObjPtr<RndTransformable> mParent; // 0xa8
-    Transform mTargetXfm; // 0xbc
+    Transform mTargetXfm; // 0xb4
     /** "The focal point when calculated depth of field" */
-    ObjPtr<RndTransformable> mFocalTarget; // 0xfc
+    ObjPtr<RndTransformable> mFocalTarget; // 0xf4
     /** "Whether to take the parent object's rotation into account" */
     bool mUseParentRotation; // 0x100
     /** "Only parent on the first frame" */
@@ -125,7 +125,7 @@ public:
     ObjPtr<WorldCrowd> mCrowd; // 0x0
     /** "How to rotate crowd" */
     CrowdRotate mCrowdRotate; // 0xc
-    std::vector<std::pair<int, int> > m3DCharIndices; // 0x18
+    std::vector<std::pair<int, int> > m3DCharIndices; // 0x10
     CamShot *mCamShot; // 0x1c
 };
 
@@ -242,17 +242,17 @@ protected:
     /** "If looping true, which keyframe to loop to." */
     int mLoopKeyframe; // 0x24
     /** "Near clipping plane for the camera" */
-    float mNearPlane; // 0xe8
+    float mNearPlane; // 0x28
     /** "Far clipping plane for the camera" */
-    float mFarPlane; // 0xec
+    float mFarPlane; // 0x2c
     /** "Whether to use depth-of-field effect on platforms that support it" */
-    bool mUseDepthOfField; // 0xf0
+    bool mUseDepthOfField; // 0x30
     /** "Filter amount" */
-    float mFilter; // 0xf4
+    float mFilter; // 0x34
     /** "Height above target's base at which to clamp camera" */
-    float mClampHeight; // 0xf8
+    float mClampHeight; // 0x38
     /** "Category for shot-picking" */
-    Symbol mCategory; // 0xfc
+    Symbol mCategory; // 0x3c
     // NB(rb3-xenon): member ORDER below is reconstructed from retail
     // CamShot::Save's own this-relative offsets (r30 == this + 0x260, so
     // member_off == 0x260 - subtrahend). Retail has a 4-byte member at 0x100
@@ -273,42 +273,42 @@ protected:
         Options are: (none bad ok great
             skills_bad skills_ok skills_great
             realtime_idle realtime_bad realtime_ok realtime_great) */
-    Symbol mCrowdStateOverride; // 0x100
+    Symbol mCrowdStateOverride; // 0x40
     /** "animatables to be driven with the same frame" */
-    ObjPtrList<RndAnimatable> mAnims; // 0x104
+    ObjPtrList<RndAnimatable> mAnims; // 0x44
     /** "Optional camera path to use" */
-    ObjPtr<RndTransAnim> mPath; // 0x118
-    float mPathFrame; // 0x12c
+    ObjPtr<RndTransAnim> mPath; // 0x58
+    float mPathFrame; // 0x64
     /** "Limit this shot to given platform" - the options are kPlatformNone/PS3/Xbox */
-    Platform mPlatform; // 0x130
+    Platform mPlatform; // 0x68
     /** "List of objects to hide while this camera shot is active,
         shows them when done" */
-    ObjPtrList<RndDrawable> mHideList; // 0x134
+    ObjPtrList<RndDrawable> mHideList; // 0x6c
     /** "List of objects to show while this camera shot is active,
         hides them when done" */
-    ObjPtrList<RndDrawable> mShowList; // 0x148
+    ObjPtrList<RndDrawable> mShowList; // 0x80
     /** "Automatically generated list of objects to hide while this camera shot is active,
         shows them when done.  Not editable" */
-    ObjPtrList<RndDrawable> mGenHideList; // 0x15c
+    ObjPtrList<RndDrawable> mGenHideList; // 0x94
 #ifdef HX_NATIVE
     // NB(rb3-xenon): DC3-only std::vector mirror used by HamCamShot in the
     // native build. Retail RB3 has no HamCamShot, so this field is absent in
     // the matching layout — guarded out to keep CamShot size correct.
     std::vector<RndDrawable *> mGenHideVector;
 #endif
-    ObjPtr<RndDir> mParentDir; // 0x168
+    ObjPtr<RndDir> mParentDir; // 0xa8
     /** "List of objects to draw in order instead of whole world" */
-    ObjPtrList<RndDrawable> mDrawOverrides; // 0x174
+    ObjPtrList<RndDrawable> mDrawOverrides; // 0xb4
     /** "List of objects to draw after post-processing" */
-    ObjPtrList<RndDrawable> mPostProcOverrides; // 0x188
-    ObjVector<CamShotCrowd> mCrowds; // 0x19c
+    ObjPtrList<RndDrawable> mPostProcOverrides; // 0xc8
+    ObjVector<CamShotCrowd> mCrowds; // 0xdc
     /** "global per-pixel setting for PS3" */
-    bool mPS3PerPixel; // 0x1cc
+    bool mPS3PerPixel; // 0xec
     /** "The spotlight to get glow settings from" */
-    ObjPtr<Spotlight> mGlowSpot; // 0x1d0
-    int mFlags; // 0x1e4
-    ObjPtrList<RndDrawable> mEndHideList; // 0x1e8
-    ObjPtrList<RndDrawable> mEndShowList; // 0x1fc
+    ObjPtr<Spotlight> mGlowSpot; // 0xf0
+    int mFlags; // 0xfc
+    ObjPtrList<RndDrawable> mEndHideList; // 0x100
+    ObjPtrList<RndDrawable> mEndShowList; // 0x114
     // ⛔ ORDER IS LOAD-BEARING AND WAS WRONG UNTIL 2026-09-01.  These four
     // Vector3s were declared Desired-first, which is invisible to sizeof (four
     // 0x10 vectors in either order) and therefore survived a 100.0%,
@@ -318,21 +318,21 @@ protected:
     // did the mirror image -- the two PAIRS swapped, with mShakeVelocity
     // (0x168) and mShakeAngVelocity (0x178) identical on both sides, which is
     // what rules out a whole-class shift.
-    Vector3 mLastShakeOffset; // 0x128
-    Vector3 mLastShakeAngOffset; // 0x138
-    Vector3 mLastDesiredShakeOffset; // 0x148
-    Vector3 mLastDesiredShakeAngOffset; // 0x158
+    Vector3 mLastShakeOffset; // 0x148
+    Vector3 mLastShakeAngOffset; // 0x158
+    Vector3 mLastDesiredShakeOffset; // 0x128
+    Vector3 mLastDesiredShakeAngOffset; // 0x138
     Vector3 mShakeVelocity; // 0x168
     Vector3 mShakeAngVelocity; // 0x178
-    CamShotFrame *mLastNext; // 0x270
-    CamShotFrame *mLastPrev; // 0x274
+    CamShotFrame *mLastNext; // 0x188
+    CamShotFrame *mLastPrev; // 0x18c
     /** "duration of the camshot" */
     float mDuration; // 0x190
     /** "disabled bits" */
-    int mDisabled; // 0x27c
-    bool mShotStarted; // 0x280
-    bool mShotOver; // 0x281
-    bool mHidden; // 0x282
+    int mDisabled; // 0x194
+    bool mShotStarted; // 0x198
+    bool mShotOver; // 0x199
+    bool mHidden; // 0x19a
     bool mSetFrameActive;
 };
 

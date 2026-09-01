@@ -12,5 +12,5 @@ public:
 
     void Reload(BandProfile *);
 
-    BandProfile *mProfile; // 0x20
+    BandProfile *mProfile; // 0x2c
 };

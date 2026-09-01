@@ -32,7 +32,7 @@ public:
     NEW_OBJ(LocalePanel)
 
 protected:
-    std::vector<Entry> mEntries; // 0x3c
+    std::vector<Entry> mEntries; // 0x40
 
 private:
     Symbol TokenForLabel(UILabel *);

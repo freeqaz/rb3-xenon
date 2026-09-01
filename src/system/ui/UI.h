@@ -194,17 +194,17 @@ private:
     void FillButtonMsg(ButtonDownMsg &, int);
     DataNode OnCheatInvoked(DataArray const *);
 
-    UIManager &mUIManager; // 0x2c
-    DataArray *mScreenScripts; // 0x30
-    DataArray *mRecord; // 0x34
-    String mRecordPath; // 0x38
+    UIManager &mUIManager; // 0x28
+    DataArray *mScreenScripts; // 0x2c
+    DataArray *mRecord; // 0x30
+    String mRecordPath; // 0x34
     String mAutoPath; // 0x40
-    DataArray *mCurScript; // 0x48
-    int mCurScreenIndex; // 0x4c
-    int mCurMsgIndex; // 0x50
-    int mFramesSinceAdvance; // 0x54
-    bool mSkipNextQuickCheat; // 0x58
-    std::list<Symbol> mCustomMsgs; // 0x5c
+    DataArray *mCurScript; // 0x4c
+    int mCurScreenIndex; // 0x50
+    int mCurMsgIndex; // 0x54
+    int mFramesSinceAdvance; // 0x58
+    bool mSkipNextQuickCheat; // 0x5c
+    std::list<Symbol> mCustomMsgs; // 0x60
 };
 
 // #define UI_CHANGED_MSG (ui_changed ($showing))

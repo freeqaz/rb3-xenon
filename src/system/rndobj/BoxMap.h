@@ -91,6 +91,6 @@ private:
     static Vector3 sAxisDir[6];
 
     BoxLightArray<LightParams_Directional, 50> mQueued_Directional; // 0x0
-    BoxLightArray<LightParams_Point, 50> mQueued_Point; // 0x5644
+    BoxLightArray<LightParams_Point, 50> mQueued_Point; // 0x644
     BoxLightArray<LightParams_Spot, 50> mQueued_Spot; // 0xe18
 };

@@ -41,8 +41,8 @@ public:
     DataNode OnMsg(const RockCentralOpCompleteMsg &);
 
     int mRedemptionState; // 0x40
-    String mActiveToken; // 0x40
-    DataResultList mResultList; // 0x4c
+    String mActiveToken; // 0x44
+    DataResultList mResultList; // 0x50
     std::vector<String> mListData; // 0x68
     // Xbox-retail-only: the offer-ID list handed to XboxEnumeration. Absent from
     // the rb3-Wii oracle (Wii uses the TheStoreMetadata.mRedemptionsTable global).

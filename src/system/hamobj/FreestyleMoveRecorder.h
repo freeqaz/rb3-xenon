@@ -91,18 +91,18 @@ private:
     String mClipName;
     FreestyleMoveFrame *mRecordingFrames;
     int mRecordingFrameCount;
-    int mLastFrameIndex; // 0x20 - initialized to -1
+    int mLastFrameIndex; // 0x24 - initialized to -1
     int mMaxFrames;
     float mRecordPos;
     float mPlaybackPos;
-    float mDefaultTimeout; // 0x30 - initialized to 15
-    int mPlaybackIndex; // 0x34 - initialized to -1, playback position
+    float mDefaultTimeout; // 0x34 - initialized to 15
+    int mPlaybackIndex; // 0x38 - initialized to -1, playback position
     bool mRecording;
-    bool mPlaybackActive; // 0x39
-    Symbol mRecordingTarget; // 0x3c
+    bool mPlaybackActive; // 0x3d
+    Symbol mRecordingTarget; // 0x40
     int unk40;
     int mSkeletonIndex;
-    FreestyleMove mTakes[4]; // 0x48
+    FreestyleMove mTakes[4]; // 0x4c
     int mCurrentTakeIndex;
     RndTex *mPlayerPalette;
     FreestyleMoveFrame *mFrameBuffer;

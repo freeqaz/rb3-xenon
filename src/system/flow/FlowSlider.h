@@ -37,15 +37,15 @@ protected:
     void UpdateActivations();
 
     /** "Do we listen for changes on our value property?" */
-    bool mPersistent; // 0x74
+    bool mPersistent; // 0x78
     /** "If true, we run all children regardless of intensity.
         If false, we stop and start them based on intensity" */
-    bool mAlwaysRun; // 0x75
+    bool mAlwaysRun; // 0x79
     /** "position on slider" */
-    float mValue; // 0x78
+    float mValue; // 0x7c
     /** "Easing to apply to slider intensity output" */
-    EaseType mEaseType; // 0x7c
+    EaseType mEaseType; // 0x80
     /** "Modifier to easing equation" */
-    float mEasePower; // 0x80
-    EaseFunc *mEaseFunc; // 0x84
+    float mEasePower; // 0x84
+    EaseFunc *mEaseFunc; // 0x88
 };

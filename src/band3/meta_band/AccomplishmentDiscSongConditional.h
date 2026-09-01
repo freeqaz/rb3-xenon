@@ -19,6 +19,6 @@ public:
     void Configure(DataArray *);
     bool InqSongs(std::vector<Symbol> &, bool) const;
 
-    SongSortMgr::SongFilter mFilter; // 0x7c
+    SongSortMgr::SongFilter mFilter; // 0x98
     Symbol mPartDifficultySym; // 0xb4
 };

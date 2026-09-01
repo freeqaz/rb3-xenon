@@ -43,11 +43,11 @@ protected:
     virtual void FinishValueChange();
     virtual bool IsEmptyValue() const { return mText->RawText() == gNullStr; }
 
-    Keys<float, float> mCountKeys; // 0x168
-    Symbol mCountToken; // 0x174
-    String mPendingText; // 0x178
-    bool mPendingMarkup; // 0x180
-    bool mCanHaveFocus; // 0x181
+    Keys<float, float> mCountKeys; // 0x238
+    Symbol mCountToken; // 0x244
+    String mPendingText; // 0x248
+    bool mPendingMarkup; // 0x254
+    bool mCanHaveFocus; // 0x255
 };
 
 DECLARE_MESSAGE(HamLabelCountDoneMsg, "count_done")

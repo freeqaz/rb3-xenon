@@ -65,7 +65,7 @@ protected:
 
     std::list<OrganizedFileMerger> mOrganizedFileMergers; // 0x2c
     OrganizedFileMerger *mActiveOrg; // 0x34
-    FileMergerOrganizerLoader *mStartOrg; // 0x3c
+    FileMergerOrganizerLoader *mStartOrg; // 0x38
 };
 
 extern FileMergerOrganizer *TheFileMergerOrganizer;

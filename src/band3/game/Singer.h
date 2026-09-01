@@ -153,7 +153,7 @@ public:
 
     VocalPlayer *mPlayer; // 0x0
     MicClientID mMicClientID; // 0x4
-    bool unkc; // 0x8 — usage unknown
+    bool unkc; // 0xc — usage unknown
     int mSingerIndex; // 0x10
     bool unk14; // 0x14 — usage unknown
     char *unk18; // 0x18 — pointer, possibly to talk/talky data (released in dtor)
@@ -198,12 +198,12 @@ public:
     float mAutoplayVariationMagnitude; // 0x254
     float mAutoplayOffset; // 0x258
     std::vector<VocalScoreHistory> mScoreHistories; // 0x25c
-    std::vector<VocalScoreCache> mScoreCaches; // 0x264
+    std::vector<VocalScoreCache> mScoreCaches; // 0x268
     std::vector<SingerResultsData> mResultsData; // 0x274
     std::vector<AmbiguousData> mAmbiguousData; // 0x280
-    TambourineDetector mTambourineDetector; // 0x27c
+    TambourineDetector mTambourineDetector; // 0x28c
     float mPitchDeviationMean; // 0x2ac
     float mPitchDeviationDev; // 0x2b0
     int mPitchDeviationFrameCount; // 0x2b4
-    TalkyMatcher *mTalkyMatcher; // 0x2a8
+    TalkyMatcher *mTalkyMatcher; // 0x2b8
 };

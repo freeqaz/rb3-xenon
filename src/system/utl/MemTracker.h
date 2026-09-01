@@ -88,7 +88,7 @@ public:
     String unk181ac; // previous file name (stack push/pop)
     String unk181b4; // current object name
 private:
-    char mAllocInfoName[64]; // 0x181bc
+    char mAllocInfoName[64]; // 0x181c4
 };
 
 void MemTrackInit(int, int, bool);

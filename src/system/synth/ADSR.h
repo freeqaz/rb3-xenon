@@ -161,7 +161,7 @@ public:
 protected:
     ADSR();
 
-    ADSRImpl mADSR; // 0x2c
+    ADSRImpl mADSR; // 0x28
 };
 
 BinStream &operator<<(BinStream &, const ADSRImpl &);

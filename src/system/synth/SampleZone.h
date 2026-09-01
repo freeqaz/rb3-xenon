@@ -42,7 +42,7 @@ private:
     int mMaxVel; // 0x24
     /** "Which core's digital FX should be used in playing this sample" */
     FXCore mFXCore; // 0x28
-    ADSRImpl mADSR; // 0x34
+    ADSRImpl mADSR; // 0x2c
 };
 
 BinStream &operator<<(BinStream &, const SampleZone &);

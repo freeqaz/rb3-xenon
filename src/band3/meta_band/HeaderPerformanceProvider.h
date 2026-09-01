@@ -29,7 +29,7 @@ public:
     std::vector<int> unk20; // 0x2c
     std::vector<int> unk28; // 0x38
     std::vector<unsigned short> unk30; // 0x44
-    std::vector<String> unk38; // 0x38
-    BandProfile *mProfile; // 0x40
-    ScoreType mScoreType; // 0x44
+    std::vector<String> unk38; // 0x50
+    BandProfile *mProfile; // 0x5c
+    ScoreType mScoreType; // 0x60
 };

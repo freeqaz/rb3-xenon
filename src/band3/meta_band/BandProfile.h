@@ -171,7 +171,7 @@ public:
     SongStatusMgr *mScores; // 0x50
     std::vector<LocalSavedSetlist *> mSavedSetlists; // 0x54
     std::vector<StandIn> mStandIns; // 0x60
-    HxGuid unk5c; // 0x5c
+    HxGuid unk5c; // 0x6c
     // unk6c (mLastPrefabCharUsed) sits HERE, exactly as on Wii — an earlier
     // hypothesis relocated it below mAccomplishmentProgress to shift this whole
     // block -4.  That was wrong: the retail target reads mCampaignKeys at 0x80,
@@ -197,13 +197,13 @@ public:
     DataResultList unk754;
     DataResultList unk76c;
     int mPerformanceDataUploadContextID; // 0x7c4
-    PerformanceData mPerformanceDataList[50]; // 0x788
+    PerformanceData mPerformanceDataList[50]; // 0x7c8
     int unk6f70;
     int unk6f74;
     // (Was `int unk6f78pad;` — a tail compensator for the missing `unk748`
     // above.  Now that unk748 is restored the tail lands correctly without it,
     // so the +4 is paid once, in the right place.)
-    ProfileAssets mProfileAssets; // 0x6f78
+    ProfileAssets mProfileAssets; // 0x7c38
     int unk6fb4;
     int unk6fb8;
     ProfilePicture *mProfilePicture; // 0x7c7c

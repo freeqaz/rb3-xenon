@@ -35,5 +35,5 @@ public:
     static void Init() { REGISTER_OBJ_FACTORY(CampaignGoalsLeaderboardPanel); }
 
     PlayerCampaignGoalLeaderboard *mCampaignGoalsLeaderboardProvider; // 0x40
-    Symbol mGoal; // 0x40
+    Symbol mGoal; // 0x44
 };

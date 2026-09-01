@@ -178,7 +178,7 @@ protected:
     int mEnrollmentIndex[2]; // 0x8
     std::vector<int> mNumCompleted; // 0x10
     int mNumRestarts; // 0x1c
-    const HamSongMgr &mSongMgr; // 0x20
+    const HamSongMgr &mSongMgr; // 0x80
     Instarank *mInstarank; // 0x24
     bool mNoFail; // 0x28
     DateTime mGameplayTimerStart; // 0x29
@@ -247,6 +247,6 @@ public:
     MetaPerformer *Current();
 
 protected:
-    QuickplayPerformer *mQuickplayPerformer; // 0x2c
-    CampaignPerformer *mCampaignPerformer; // 0x30
+    QuickplayPerformer *mQuickplayPerformer; // 0x28
+    CampaignPerformer *mCampaignPerformer; // 0x2c
 };

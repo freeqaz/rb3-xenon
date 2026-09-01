@@ -43,15 +43,15 @@ protected:
     void PlayMovie();
     void ChooseMovie();
 
-    bool mPreload; // 0x38
-    bool mAudio; // 0x39
-    bool mLoop; // 0x3a
-    bool mFillWidth; // 0x3b
-    int mLanguage; // 0x3c
-    const char *mCurrentMovie; // 0x40
+    bool mPreload; // 0x3c
+    bool mAudio; // 0x3d
+    bool mLoop; // 0x3e
+    bool mFillWidth; // 0x3f
+    int mLanguage; // 0x40
+    const char *mCurrentMovie; // 0x44
     std::vector<const char *> mMovies; // 0x48
     std::list<const char *> mRecent; // 0x54
-    Movie mMovie; // 0x58
+    Movie mMovie; // 0x5c
     DataLoader *mSubtitlesLoader; // 0x60
     DataArray *mSubtitles; // 0x64
     int mCurrentSubtitleIndex; // 0x68

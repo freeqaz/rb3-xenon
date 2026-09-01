@@ -27,5 +27,5 @@ protected:
 
     virtual void MiloUpdate();
 
-    DirectionGestureFilterSingleUser *mDirectionGestureFilter; // 0x284
+    DirectionGestureFilterSingleUser *mDirectionGestureFilter; // 0x24c
 };

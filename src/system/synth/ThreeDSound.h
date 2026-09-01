@@ -83,32 +83,32 @@ private:
 protected:
     ThreeDSound();
 
-    bool mIsLooping; // 0x194
-    bool unk195; // 0x195
-    float mDelayedVolume; // 0x198
-    float mDelayedPan; // 0x19c
-    float mDelayedTranspose; // 0x1a0
-    Hmx::Object *mDelayedOwner; // 0x1a4
-    float mDelayMs; // 0x1a8
+    bool mIsLooping; // 0x160
+    bool unk195; // 0x161
+    float mDelayedVolume; // 0x164
+    float mDelayedPan; // 0x168
+    float mDelayedTranspose; // 0x16c
+    Hmx::Object *mDelayedOwner; // 0x170
+    float mDelayMs; // 0x174
     /** "Equation used to determine falloff.
         See http://deki/Projects/Tool_Projects/Milo/Flow/Easing_equations" */
-    EaseType mFalloffType; // 0x1ac
+    EaseType mFalloffType; // 0x178
     /** "Optional parameter for falloff equation". Ranges from 0 to 100. */
-    float mFalloffParameter; // 0x1b0
+    float mFalloffParameter; // 0x17c
     /** "Distance before any falloff is applied". Ranges from 0 to mSilenceDistance. */
-    float mMinFalloffDistance; // 0x1b4
+    float mMinFalloffDistance; // 0x180
     /** "Distance at which this sound is silent".
         Ranges from mMinFalloffDistance to 2147483647. */
-    float mSilenceDistance; // 0x1b8
+    float mSilenceDistance; // 0x184
     /** "Enable the doppler effect on this object" */
-    bool mDopplerEnabled; // 0x1bc
-    bool mPanEnabled; // 0x1bd
-    int mShape; // 0x1c0
-    float mRadius; // 0x1c4
-    Fader *mDistanceFader; // 0x1c8
-    Transform mSavedWorldTransform; // 0x1cc
-    float unk20c; // 0x20c
-    float unk210; // 0x210
-    float mDopplerPower; // 0x214
-    bool mStartedPlaying; // 0x218
+    bool mDopplerEnabled; // 0x188
+    bool mPanEnabled; // 0x189
+    int mShape; // 0x18c
+    float mRadius; // 0x190
+    Fader *mDistanceFader; // 0x194
+    Transform mSavedWorldTransform; // 0x198
+    float unk20c; // 0x1d8
+    float unk210; // 0x1dc
+    float mDopplerPower; // 0x1e0
+    bool mStartedPlaying; // 0x1e4
 };

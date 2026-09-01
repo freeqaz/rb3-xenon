@@ -28,5 +28,5 @@ public:
     bool LaneOff(int, int);
     void UpdateLanes(int, int);
 
-    int mCurrentLanes; // 0x14
+    int mCurrentLanes; // 0x1c
 };

@@ -53,20 +53,20 @@ protected:
     /** "Animatable object that receives filtered frame" */
     ObjPtr<RndAnimatable> mAnim; // 0x10
     /** "Alternative to scale, overriden period of animation" */
-    float mPeriod; // 0x24
+    float mPeriod; // 0x1c
     /** "Overriden start frame of animation" */
     float mStart; // 0x20
     /** "Overriden end frame of animation" */
     float mEnd; // 0x24
     /** "Multiplier to speed of animation" */
-    float mScale; // 0x30
+    float mScale; // 0x28
     /** "Amount to offset frame for animation" */
-    float mOffset; // 0x34
+    float mOffset; // 0x2c
     /** "Snap frame to nearest multiple" */
-    float mSnap; // 0x38
+    float mSnap; // 0x30
     /** "Jitter frame randomly up to this amount" */
-    float mJitter; // 0x3c
-    float mJitterFrame; // 0x40
+    float mJitter; // 0x34
+    float mJitterFrame; // 0x38
     /** "How to treat the frame outside of start and end" (range, loop or shuttle) */
-    Type mType; // 0x44
+    Type mType; // 0x3c
 };

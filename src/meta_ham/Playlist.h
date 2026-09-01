@@ -71,7 +71,7 @@ public:
     virtual ~CustomPlaylist();
     virtual bool IsCustom() const { return true; } // 0x4
     virtual void SetOnlineID(int id) { mOnlineID = id; } // 0x8
-    virtual int GetOnlineID() { return mOnlineID; } // 0xc
+    virtual int GetOnlineID() { return mOnlineID; } // 0x28
     virtual bool IsDirty() { return false; } // 0x10
     // FixedSizeSaveable
     virtual void SaveFixed(FixedSizeSaveableStream &) const;

@@ -111,17 +111,17 @@ public:
     void InitializeMusicLibraryTaskForArtist(MusicLibrary::MusicLibraryTask &, int, const char *, Symbol);
     void CreateAndSubmitMusicLibraryTask(int, Symbol, Symbol, Symbol, Symbol, bool);
 
-    const SongMgr &mSongMgr; // 0x1c
-    BandUserMgr &mBandUserMgr; // 0x20
+    const SongMgr &mSongMgr; // 0x28
+    BandUserMgr &mBandUserMgr; // 0x2c
     TourPerformerImpl *m_pTourPerformer; // 0x30
     TourProgress *m_pTourProgress; // 0x34
-    std::map<Symbol, TourProperty *> m_mapTourProperties; // 0x2c
-    std::vector<TourStatusEntry> m_vTourStatus; // 0x44
-    TourWeightManager mWeightManager; // 0x4c
-    std::map<Symbol, TourDesc *> m_mapTourDesc; // 0x68
-    BandProfile *m_pProfile; // 0x80
-    bool unk84; // 0x84
-    bool mTourShowPostSeldiffScreen; // 0x85
+    std::map<Symbol, TourProperty *> m_mapTourProperties; // 0x38
+    std::vector<TourStatusEntry> m_vTourStatus; // 0x50
+    TourWeightManager mWeightManager; // 0x5c
+    std::map<Symbol, TourDesc *> m_mapTourDesc; // 0x7c
+    BandProfile *m_pProfile; // 0x94
+    bool unk84; // 0x98
+    bool mTourShowPostSeldiffScreen; // 0x99
 };
 
 extern Tour *TheTour;

@@ -75,17 +75,17 @@ public:
     NEW_OBJ(EditSetlistPanel);
     static void Init() { REGISTER_OBJ_FACTORY(EditSetlistPanel); }
 
-    String mSetlistName; // 0x38
-    String mSetlistDescription; // 0x44
-    ScoreType unk50; // 0x50
+    String mSetlistName; // 0x3c
+    String mSetlistDescription; // 0x48
+    ScoreType unk50; // 0x54
     int unk54;
     int unk58;
-    PatchDescriptor mSetlistArt; // 0x5c
+    PatchDescriptor mSetlistArt; // 0x60
     bool unk64;
     DataResultList unk68;
     int unk80;
     int unk84;
-    BandProfile *mProfile; // 0x88
+    BandProfile *mProfile; // 0x8c
     LocalSavedSetlist *mEditingSetlist; // 0x90
     unsigned short **unk90;
     char *unk94;

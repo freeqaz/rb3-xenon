@@ -28,9 +28,9 @@ public:
 
     int mPurchaseState; // 0x3c
     LocalBandUser *mUser; // 0x40
-    Symbol mSong; // 0x40
+    Symbol mSong; // 0x44
     const char *mOfferID; // 0x48
     StorePurchaser *mPurchaser; // 0x4c
     bool unk4c; // 0x50
-    DataResultList mResultList; // 0x50
+    DataResultList mResultList; // 0x54
 };

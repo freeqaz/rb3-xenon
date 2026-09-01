@@ -18,7 +18,7 @@ public:
         Symbol mPrimaryToken; // 0x4
         Symbol mSecondaryToken; // 0x8
         String mPrimaryStr; // 0xc
-        String mSecondaryStr; // 0x14
+        String mSecondaryStr; // 0x18
 
         ~ActionElement();
         ActionElement();

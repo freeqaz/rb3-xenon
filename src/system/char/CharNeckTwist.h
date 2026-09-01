@@ -28,5 +28,5 @@ protected:
     /** "The twist bone, neck must be parent of" */
     ObjPtr<RndTransformable> mTwist; // 0x8
     /** "The head bone, must be descendent of neck" */
-    ObjPtr<RndTransformable> mHead; // 0x1c
+    ObjPtr<RndTransformable> mHead; // 0x14
 };

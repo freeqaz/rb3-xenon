@@ -19,7 +19,7 @@ public:
     } // 0x10
     virtual bool IsTracked() const { return mTracked != 0; } // 0x14
     virtual int QualityFlags() const { return 0; } // 0x18
-    virtual int ElapsedMs() const { return mElapsedMs; } // 0x1c
+    virtual int ElapsedMs() const { return mElapsedMs; } // 0x2d0
     virtual void CameraToPlayerXfm(SkeletonCoordSys, Transform &) const; // 0x20
     virtual void CamJointPositions(Vector3 *) const; // 0x28
     virtual void CamBoneLengths(float *) const; // 0x2c

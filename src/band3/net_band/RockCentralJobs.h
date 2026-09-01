@@ -58,8 +58,8 @@ public:
     DataNode OnMsg(const RockCentralOpCompleteMsg &);
 
     int unk24;
-    WiiFriendList unk28; // 0x28
-    std::vector<Friend *> mFriends; // 0x30
+    WiiFriendList unk28; // 0x34
+    std::vector<Friend *> mFriends; // 0x40
     DataResultList unk38;
-    int mState; // 0x50
+    int mState; // 0x64
 };

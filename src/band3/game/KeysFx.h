@@ -18,7 +18,7 @@ public:
     TrackType mTrackType; // 0x28
     int unk20; // 0x2c
     ObjDirPtr<ObjectDir> mFxDir; // 0x30
-    bool unk30; // 0x30
+    bool unk30; // 0x3c
     bool unk31; // 0x3d
     float unk34; // 0x40
 };

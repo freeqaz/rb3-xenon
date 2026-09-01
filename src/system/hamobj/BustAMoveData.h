@@ -32,5 +32,5 @@ public:
 protected:
     BustAMoveData();
 
-    std::vector<BAMPhrase> mPhrases; // 0x2c
+    std::vector<BAMPhrase> mPhrases; // 0x28
 };

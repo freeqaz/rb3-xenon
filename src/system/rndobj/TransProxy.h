@@ -32,7 +32,7 @@ protected:
     RndTransProxy();
 
     /** "Proxy object this will look into." */
-    ObjPtr<ObjectDir> mProxy; // 0xc0
+    ObjPtr<ObjectDir> mProxy; // 0xb4
     /** "The part inside it" */
     Symbol mPart; // 0xc0
 };

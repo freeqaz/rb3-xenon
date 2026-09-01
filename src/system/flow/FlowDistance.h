@@ -38,23 +38,23 @@ protected:
     FlowDistance();
 
     /** "First object to compare" */
-    FlowPtr<RndTransformable> mObj1; // 0x5c
+    FlowPtr<RndTransformable> mObj1; // 0x60
     /** "Second object to compare" */
-    FlowPtr<RndTransformable> mObj2; // 0x7c
+    FlowPtr<RndTransformable> mObj2; // 0x78
     /** "Distance for comparison" */
-    float mDistance; // 0x9c
+    float mDistance; // 0x90
     /** "Is the node persistent?" */
-    bool mPersistent; // 0xa0
-    bool mPolling; // 0xa1
-    bool mOutOfRange; // 0xa2
+    bool mPersistent; // 0x94
+    bool mPolling; // 0x95
+    bool mOutOfRange; // 0x96
     /** "Run children when closer than distance value" */
-    bool mRunInRange; // 0xa3
+    bool mRunInRange; // 0x97
     /** "Applies current distance to flow intensity, closer being higher intensity" */
-    bool mDriveIntensity; // 0xa4
-    float mIntensityScale; // 0xa8
+    bool mDriveIntensity; // 0x98
+    float mIntensityScale; // 0x9c
     // Retail RB3 sizes FlowNode-derived objects 0x10 larger than dc3's (newer)
     // engine layout; the extra 16 bytes sit in the trailing virtual-Hmx::Object
     // region and are not referenced by any accessor (all field functions match).
     // NewObject/??_G size immediates (0xdc) confirm this via the sizeof oracle.
-    char _retailTrailingPad[16]; // 0xac
+    char _retailTrailingPad[16]; // 0xa0
 };

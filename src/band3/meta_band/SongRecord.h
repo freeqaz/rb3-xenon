@@ -91,10 +91,10 @@ public:
     bool mRestricted; // real 0x2e
     std::map<Symbol, int> mTier; // 0x30
     ScoreType mActiveScoreType; // 0x48
-    int mScores[11]; // 0x40
-    Difficulty mDiffs[11]; // 0x6c
-    int mStars[11]; // 0x98
-    int mNotesPct[11]; // 0xc4
+    int mScores[11]; // 0x4c
+    Difficulty mDiffs[11]; // 0x78
+    int mStars[11]; // 0xa4
+    int mNotesPct[11]; // 0xd0
     short mBandInstrumentMask; // 0xfc
     int mReview; // 0x100
     int mPlays; // 0x104

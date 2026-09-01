@@ -56,8 +56,8 @@ public:
     int unk88; // 0x94
     int unk8c; // 0x98
     std::map<TrackerPlayerID, int> mFocusCountMap; // 0x9c
-    TrackerMultiplierMap unka8; // 0xa8
-    int unkc4; // 0xc4
+    TrackerMultiplierMap unka8; // 0xb4
+    int unkc4; // 0xd0
     bool unkc8; // 0xd4
 };
 
@@ -119,5 +119,5 @@ public:
     int unkdc;
     float unke4;
     bool unke8;
-    TrackerSectionManager mSectionManager; // 0xec
+    TrackerSectionManager mSectionManager; // 0xf8
 };

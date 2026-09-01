@@ -62,26 +62,26 @@ protected:
     SkeletonViz();
 
     /** "Draw skeleton from Natal camera perspective?" */
-    bool mUsePhysicalCam; // 0x108
+    bool mUsePhysicalCam; // 0xe0
     /** "Degrees to rotation physical camera around skeleton".
         Ranges from -360 to 360. */
-    float mPhysicalCamRotation; // 0x10c
-    float mCurrentCamRotation; // 0x110
+    float mPhysicalCamRotation; // 0xe4
+    float mCurrentCamRotation; // 0xe8
     /** "Which coordinate system axes to draw" */
-    SkeletonCoordSys mAxesCoordSys; // 0x114
-    RndLine *mBoneLines[kNumBones]; // 0x118
-    RndLine *mUtlLine; // 0x164
-    ObjDirPtr<ObjectDir> mResource; // 0x168
-    RndEnviron *mSkeletonEnv; // 0x17c
-    RndMesh *mCamMesh; // 0x180
-    RndMesh *mJointMesh; // 0x184
-    RndMesh *mSphereMesh; // 0x188
-    RndMat *mJointMat; // 0x18c
-    RndCam *mPhysicalCam; // 0x190
-    Transform unk194; // 0x194
-    Transform unk1d4; // 0x1d4
-    float mLineWidthScale; // 0x214
-    bool unk218; // 0x218
+    SkeletonCoordSys mAxesCoordSys; // 0xec
+    RndLine *mBoneLines[kNumBones]; // 0xf0
+    RndLine *mUtlLine; // 0x13c
+    ObjDirPtr<ObjectDir> mResource; // 0x140
+    RndEnviron *mSkeletonEnv; // 0x14c
+    RndMesh *mCamMesh; // 0x150
+    RndMesh *mJointMesh; // 0x154
+    RndMesh *mSphereMesh; // 0x158
+    RndMat *mJointMat; // 0x15c
+    RndCam *mPhysicalCam; // 0x160
+    Transform unk194; // 0x164
+    Transform unk1d4; // 0x1a4
+    float mLineWidthScale; // 0x1e4
+    bool unk218; // 0x1e8
 };
 
 extern SkeletonViz *TheSkeletonViz;

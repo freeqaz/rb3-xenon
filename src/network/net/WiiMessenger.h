@@ -54,18 +54,18 @@ public:
     void SendMessage(int, const char *, const char *, Hmx::Object *, int);
     void Poll();
 
-    JobSendMessage *unk1c; // 0x1c
-    WiiMessageRecord *unk20; // 0x20
+    JobSendMessage *unk1c; // 0x18
+    WiiMessageRecord *unk20; // 0x1c
     int unk24;
     int unk28;
-    JobEnumerateMessages *unk2c; // 0x2c
+    JobEnumerateMessages *unk2c; // 0x28
     Timer unk30;
     WiiMessageList *unk60;
     Hmx::Object *unk64;
     WiiMessageList unk68;
-    Quazal::qList<unsigned int> *unk70; // 0x70
-    Quazal::qList<unsigned int> *unk74; // 0x74
-    int unk78; // 0x78 - ProtocolCallContext*
+    Quazal::qList<unsigned int> *unk70; // 0x74
+    Quazal::qList<unsigned int> *unk74; // 0x78
+    int unk78; // 0x7c - ProtocolCallContext*
 };
 
 extern WiiMessenger TheWiiMessenger;

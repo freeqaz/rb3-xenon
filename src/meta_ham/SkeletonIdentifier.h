@@ -33,7 +33,7 @@ public:
 
         int mPadNum; // 0x0 - padnum/user index
         String mName; // 0x4
-        int mEnrollmentIndex; // 0xc
+        int mEnrollmentIndex; // 0x10
     };
 
     SkeletonIdentifier();
@@ -64,15 +64,15 @@ private:
     DataNode OnMsg(const SkeletonEnrollmentChangedMsg &);
     DataNode OnMsg(const SkeletonIdentifiedMsg &);
 
-    IdentityStatus mIdentityStatus; // 0x2c
-    int mTrackingSkelIndex; // 0x30 - skeleton idx
-    int mIdentifyingPlayerIndex; // 0x34 - player from skeleton
-    int mWaitingPlayerIndex; // 0x38
-    int mCorrectingPlayerIndex; // 0x3c
-    int mCorrectionTrackingID; // 0x40 - skeleton tracking id
-    int mIdentificationTimeout; // 0x44
+    IdentityStatus mIdentityStatus; // 0x28
+    int mTrackingSkelIndex; // 0x2c - skeleton idx
+    int mIdentifyingPlayerIndex; // 0x30 - player from skeleton
+    int mWaitingPlayerIndex; // 0x34
+    int mCorrectingPlayerIndex; // 0x38
+    int mCorrectionTrackingID; // 0x3c - skeleton tracking id
+    int mIdentificationTimeout; // 0x40
     EnrolledPlayer mEnrolledPlayers[8];
-    bool mDrawDebug; // 0xc8
+    bool mDrawDebug; // 0xe4
 };
 
 String EnrollmentIndexString(int idx);

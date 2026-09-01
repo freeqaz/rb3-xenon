@@ -164,10 +164,10 @@ private:
 
     int mInited;
     D3DDevice *mD3DDevice; // 0x1c4
-    int mRenderThreadId; // 0x228
+    int mRenderThreadId; // 0x1c8
     void *mFocusWindow;
     D3DDEVTYPE mDeviceType; // 0x1d0
-    D3DPRESENT_PARAMETERS mPresentParams; // 0x234
+    D3DPRESENT_PARAMETERS mPresentParams; // 0x1d4
     std::list<DxObject *> mDxObjects;
     int unk2b8;
     int unk2bc;
@@ -180,7 +180,7 @@ private:
     u8 mReverseZ;
     std::vector<D3DResource *> mPendingReleases; // 0x2a4
     std::vector<D3DBaseTexture *> mPendingDeletes; // 0x2b0
-    XVIDEO_MODE mVideoMode; // 0x31c
+    XVIDEO_MODE mVideoMode; // 0x2bc
     bool mTilingActive;
     bool unk34d;
     D3DTexture *mFrontBuffers[2]; // 0x2f0
@@ -201,14 +201,14 @@ private:
     D3DSurface *mOffscreenDepth;
     D3DTexture *mPreProcessBuffer; // 0x330
     D3DTexture *mPostProcessBuffer; // 0x334
-    DxTex *mPreProcessTex; // 0x398
-    DxTex *mPostProcessTex; // 0x39c
-    DxTex *mPreDepthTex; // 0x3a0
+    DxTex *mPreProcessTex; // 0x338
+    DxTex *mPostProcessTex; // 0x33c
+    DxTex *mPreDepthTex; // 0x340
     bool mPostProcDone;
     unsigned int mEdramBase;
     unsigned int mEdramHzBase;
     int mNumTiles; // 0x350
-    D3DRECT mTileRect; // 0x3b4
+    D3DRECT mTileRect; // 0x354
     int unk3c4;
     int unk3c8;
     int unk3cc;

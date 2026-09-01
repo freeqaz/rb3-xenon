@@ -130,9 +130,9 @@ protected:
     void StartSending();
     void Sending();
 
-    const char *mContent; // 0x88
-    unsigned int mContentLength; // 0x8c
-    int mBytesRemaining; // 0x90
-    String mRequestHeaders; // 0x94
+    const char *mContent; // 0x78
+    unsigned int mContentLength; // 0x7c
+    int mBytesRemaining; // 0x80
+    String mRequestHeaders; // 0x84
     int mHeaderLength;
 };

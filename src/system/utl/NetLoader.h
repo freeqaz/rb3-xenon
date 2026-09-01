@@ -35,7 +35,7 @@ protected:
     String mStrRemotePath; // 0x4
     bool mIsLoaded; // 0x10
     char *mBuffer; // 0x14
-    int unk14; // 0x14
+    int unk14; // 0x18
     int mSize; // 0x1c
     NetLoaderFailType mFailType; // 0x20
 };

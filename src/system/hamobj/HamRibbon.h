@@ -39,20 +39,20 @@ protected:
     void SetActive(bool);
     void ExposeMesh();
 
-    bool mCreateTrans; // 0x48
-    float mLastTime; // 0x4c
-    int mNumSides; // 0x50
-    RndMesh *mMesh; // 0x54
-    ObjPtr<RndMat> mMat; // 0x58
-    float mWidth; // 0x6c
-    int mDirtyFlags; // 0x70
-    bool mActive; // 0x74
-    ObjPtrList<RndTransformable> mSegTrans; // 0x78
-    Keys<Transform, Transform> mChaseKeys; // 0x8c
-    int mNumSegments; // 0x98
-    float mDecay; // 0x9c
-    ObjPtr<RndTransformable> mFollowA; // 0xa0
-    ObjPtr<RndTransformable> mFollowB; // 0xb4
-    float mFollowWeight; // 0xc8
-    bool mTaper; // 0xcc
+    bool mCreateTrans; // 0x2c
+    float mLastTime; // 0x30
+    int mNumSides; // 0x34
+    RndMesh *mMesh; // 0x38
+    ObjPtr<RndMat> mMat; // 0x3c
+    float mWidth; // 0x48
+    int mDirtyFlags; // 0x4c
+    bool mActive; // 0x50
+    ObjPtrList<RndTransformable> mSegTrans; // 0x54
+    Keys<Transform, Transform> mChaseKeys; // 0x68
+    int mNumSegments; // 0x74
+    float mDecay; // 0x78
+    ObjPtr<RndTransformable> mFollowA; // 0x7c
+    ObjPtr<RndTransformable> mFollowB; // 0x88
+    float mFollowWeight; // 0x94
+    bool mTaper; // 0x98
 };

@@ -12,6 +12,6 @@ namespace Quazal {
         void SetFlags(unsigned char);
 
         qMap<DOHandle, class DuplicatedObject *> m_map; // 0x4
-        unsigned char m_byFlags; // 0x18;
+        unsigned char m_byFlags; // 0x20;
     };
 }

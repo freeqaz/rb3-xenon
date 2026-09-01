@@ -24,8 +24,8 @@ public:
     static void Init();
 
 protected:
-    float mWaveProgress; // 0x2c
-    bool mWaveStateEnabled; // 0x30
+    float mWaveProgress; // 0x28
+    bool mWaveStateEnabled; // 0x2c
     int unk34;
     Timer mTimer; // 0x38
     bool mPaused; // 0x68

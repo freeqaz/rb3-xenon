@@ -81,7 +81,7 @@ public:
     const char *ShortcutStr();
     int GetIndex() const { return mIndex; }
 
-    int mIndex; // 0x24
+    int mIndex; // 0x30
     Symbol mToken; // 0x34
     bool mLocalizeToken; // 0x38
     DateTime *mDateTime; // 0x3c
@@ -140,9 +140,9 @@ public:
     virtual const char *GetAlbumArtPath();
     virtual void Insert(LeafSortNode *, NodeSort *, bool);
 
-    bool mCover; // 0x34 - cover
-    int unk38; // 0x38 - disc count
-    int unk3c; // 0x3c - download count
+    bool mCover; // 0x40 - cover
+    int unk38; // 0x44 - disc count
+    int unk3c; // 0x48 - download count
     Symbol mToken; // 0x4c
     bool mLocalizeToken; // 0x50
     DateTime *mDateTime; // 0x54
@@ -191,8 +191,8 @@ public:
     virtual const char *GetShortcutStr() { return gNullStr; }
 
     bool mActive; // 0x40
-    String mArtPath; // 0x38
-    String mRowMatPath; // 0x44
+    String mArtPath; // 0x44
+    String mRowMatPath; // 0x50
     Symbol mToken; // 0x5c
     Symbol mByline; // 0x60
 };

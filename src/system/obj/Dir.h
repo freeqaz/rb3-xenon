@@ -438,7 +438,7 @@ protected:
     bool mProxyOverride; // 0x48 (X360) — String is 0xC so this lands at 0x48
     /** "How is this Proxy inlined?".
         RB3 retail stores this as a single bool (rb3-Wii oracle:
-        `bool mInlineProxy; // 0x45`, `AllowsInlineProxy() { return mInlineProxy; }`),
+        `bool mInlineProxy; // 0x49`, `AllowsInlineProxy() { return mInlineProxy; }`),
         NOT a 4-byte InlineDirType enum. The enum form is a DC3-era divergence
         that over-sizes ObjectDir by +4. Verified from the retail binary:
         TransferLoaderState (fn_82729200) copies String mProxyFile@0x3c, a single
@@ -483,8 +483,8 @@ protected:
     // mIsSubDir@0x5c, mCurViewportID@0x8c, mCurCam@0x94.)
     Hmx::Object *unk8c; // 0x90
     Hmx::Object *mCurCam; // 0x94
-    int mAlwaysInlined; // 0x90 (X360) / 0x94 (native)
-    const char *mAlwaysInlineHash; // 0x94 (X360) / 0x98 (native)
+    int mAlwaysInlined; // 0x98 (X360) / 0x94 (native)
+    const char *mAlwaysInlineHash; // 0x9c (X360) / 0x98 (native)
 
     ObjectDir();
     static ObjectDir *sMainDir;

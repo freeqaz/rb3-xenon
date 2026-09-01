@@ -83,21 +83,21 @@ protected:
     DataNode OnSetPathVar(const DataArray *);
     DataNode OnGenerate(const DataArray *);
 
-    std::list<Instance> mInstances; // 0x110
-    ObjPtr<RndTransAnim> mPath; // 0x118
-    float mPathStartFrame; // 0x12c
-    float mPathEndFrame; // 0x130
-    ObjPtr<RndMesh> mMesh; // 0x134
-    ObjPtr<RndMultiMesh> mMultiMesh; // 0x148
-    ObjPtr<RndParticleSys> mParticleSys; // 0x15c
-    float mNextFrameGen; // 0x170
-    float mRateGenLow; // 0x174
-    float mRateGenHigh; // 0x178
-    float mScaleGenLow; // 0x17c
-    float mScaleGenHigh; // 0x180
+    std::list<Instance> mInstances; // 0xe8
+    ObjPtr<RndTransAnim> mPath; // 0xf0
+    float mPathStartFrame; // 0xfc
+    float mPathEndFrame; // 0x100
+    ObjPtr<RndMesh> mMesh; // 0x104
+    ObjPtr<RndMultiMesh> mMultiMesh; // 0x110
+    ObjPtr<RndParticleSys> mParticleSys; // 0x11c
+    float mNextFrameGen; // 0x128
+    float mRateGenLow; // 0x12c
+    float mRateGenHigh; // 0x130
+    float mScaleGenLow; // 0x134
+    float mScaleGenHigh; // 0x138
     float mPathVarMaxX; // 0x13c
-    float mPathVarMaxY; // 0x188
-    float mPathVarMaxZ; // 0x18c
-    RndParticle *mCurParticle; // 0x190
-    RndMultiMesh::InstanceList::iterator mCurMultiMesh; // 0x194
+    float mPathVarMaxY; // 0x140
+    float mPathVarMaxZ; // 0x144
+    RndParticle *mCurParticle; // 0x148
+    RndMultiMesh::InstanceList::iterator mCurMultiMesh; // 0x14c
 };

@@ -36,10 +36,10 @@ protected:
     void CopyPropsFromPart();
 
     ObjPtr<RndParticleSys> mPart; // 0x8
-    ObjPtr<RndTransformable> mTrans; // 0x1c
-    ObjPtr<RndMesh> mMeshEmitter; // 0x30
+    ObjPtr<RndTransformable> mTrans; // 0x14
+    ObjPtr<RndMesh> mMeshEmitter; // 0x20
     int mNumParts; // 0x2c
-    Vector2 mEmitRate; // 0x48
-    float mEmitCount; // 0x50
+    Vector2 mEmitRate; // 0x30
+    float mEmitCount; // 0x38
     PartOverride mPartOverride; // 0x3c
 };

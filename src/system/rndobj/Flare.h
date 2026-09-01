@@ -55,14 +55,14 @@ protected:
     /** "Size of the flare" */
     Vector2 mSizes; // 0xdc
     /** "Material to use for the flare" */
-    ObjPtr<RndMat> mMat; // 0x10C
+    ObjPtr<RndMat> mMat; // 0xe4
     /** "Range of the flare" */
     Vector2 mRange; // 0xf0
     float mOffset; // 0xf8
     /** "Steps for the flare". Ranges from 1 to 10000. */
     int mSteps; // 0xfc
     int mStep; // 0x100
-    Hmx::Rect mArea; // 0x134
+    Hmx::Rect mArea; // 0x104
     float mOcclusionResult; // 0x114
     bool mOcclusionReady; // 0x118
     bool mOcclusionPending; // 0x119

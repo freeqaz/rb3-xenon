@@ -44,10 +44,10 @@ protected:
     void Update();
     void SetStars(int);
 
-    ResourceDirPtr<ObjectDir> mResourceDir; // 0x48
-    HamLabel *mStarsLabel; // 0x60
-    HamLabel *mDiffLabel; // 0x64
-    HamLabel *mNoFlashcardsLabel; // 0x68
-    bool mShowUnplayedSong; // 0x6c
-    float mAlpha; // 0x70
+    ResourceDirPtr<ObjectDir> mResourceDir; // 0x144
+    HamLabel *mStarsLabel; // 0x154
+    HamLabel *mDiffLabel; // 0x158
+    HamLabel *mNoFlashcardsLabel; // 0x15c
+    bool mShowUnplayedSong; // 0x160
+    float mAlpha; // 0x164
 };

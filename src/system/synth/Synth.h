@@ -190,11 +190,11 @@ protected:
     // faders, and mCommonBank's ObjDirPtr is a full 0xc bytes — so mMasterFader
     // is at 0x68, not the 0x74 this layout produces.
     std::list<ObjectDir *> unk5c; // 0x5c (DC3-only)
-    ObjDirPtr<ObjectDir> mCommonBank; // 0x64
-    std::list<SampleInst *> mZombieInsts; // 0x78
+    ObjDirPtr<ObjectDir> mCommonBank; // 0x5c
+    std::list<SampleInst *> mZombieInsts; // 0x54
     Fader *mMasterFader; // 0x68
-    Fader *mSfxFader; // 0x84
-    Fader *mMidiInstrumentFader; // 0x88
+    Fader *mSfxFader; // 0x6c
+    Fader *mMidiInstrumentFader; // 0x70
 #else
     // Retail RB3-360 layout (default). VERIFIED from the retail binary
     // (2026-07-02): Synth ctor fn_826E2F10, Init fn_826E2668, Terminate

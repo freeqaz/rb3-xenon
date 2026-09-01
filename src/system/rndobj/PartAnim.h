@@ -46,5 +46,5 @@ protected:
     Keys<Vector2, Vector2> mSpeedKeys; // 0x40
     Keys<Vector2, Vector2> mLifeKeys; // 0x4c
     Keys<Vector2, Vector2> mStartSizeKeys; // 0x58
-    ObjOwnerPtr<RndParticleSysAnim> mKeysOwner; // 0x6c
+    ObjOwnerPtr<RndParticleSysAnim> mKeysOwner; // 0x64
 };

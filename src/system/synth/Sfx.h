@@ -39,7 +39,7 @@ private:
     float mTranspose; // 0x14
     /** "Which core's digital FX should be used in playing this sample" */
     FXCore mFXCore; // 0x18
-    ADSRImpl mADSR; // 0x24
+    ADSRImpl mADSR; // 0x1c
 };
 
 BinStream &operator<<(BinStream &, const SfxMap &);
@@ -116,7 +116,7 @@ protected:
     ObjVector<SfxMap> mMaps; // 0x7c
     ObjVector<MoggClipMap> mMoggClipMaps; // 0x8c
     /** "Effect chain to use" */
-    ObjPtr<FxSend> mSend; // 0xa0
+    ObjPtr<FxSend> mSend; // 0x9c
     /** "Reverb send for this sfx" */
     float mReverbMixDb; // 0xa8
     /** "Enable reverb send" */

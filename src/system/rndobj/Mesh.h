@@ -333,10 +333,10 @@ protected:
     /** This mesh's faces. */
     std::vector<Face> mFaces; // 0xe4
     /** "Material used for rendering the Mesh" */
-    ObjPtr<RndMat> mMat; // 0x11c
+    ObjPtr<RndMat> mMat; // 0xf0
     std::vector<unsigned char> mPatches; // 0xfc
     /** "Geometry owner for the mesh" */
-    ObjOwnerPtr<RndMesh> mGeomOwner; // 0x13c
+    ObjOwnerPtr<RndMesh> mGeomOwner; // 0x108
     /** This mesh's bones. */
     ObjVector<RndBone> mBones; // 0x114
     int mMutable; // 0x124

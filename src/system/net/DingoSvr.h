@@ -89,22 +89,22 @@ protected:
     bool InitAndAddJob(DingoJob *job, bool immediate, bool delay);
     bool Authenticate(int padnum, const char *url);
 
-    AuthState mAuthState; // 0x2c
-    String mHostName; // 0x30
+    AuthState mAuthState; // 0x28
+    String mHostName; // 0x2c
     unsigned int mIPAddr; // 0x38
     unsigned int mPort; // 0x3c
     String unk40; // 0x40
-    String mAuthUrl; // 0x48
+    String mAuthUrl; // 0x4c
     String unk50;
-    String mLocale; // 0x58
-    String mLanguage; // 0x60
-    String mUserAgent; // 0x68
-    int mPendingPadNum; // 0x70 - pad index currently being authenticated
-    int mAuthedPadNum; // 0x74 - pad index of authenticated user, -1 if none
-    bool mPadAuthed[4]; // 0x78
-    OnlineID mOnlineId; // 0x80
-    std::vector<String> mDisabledUrls; // 0x98
-    std::vector<DingoJob *> mDelayedJobs; // 0xa4
+    String mLocale; // 0x64
+    String mLanguage; // 0x70
+    String mUserAgent; // 0x7c
+    int mPendingPadNum; // 0x88 - pad index currently being authenticated
+    int mAuthedPadNum; // 0x8c - pad index of authenticated user, -1 if none
+    bool mPadAuthed[4]; // 0x90
+    OnlineID mOnlineId; // 0x98
+    std::vector<String> mDisabledUrls; // 0xa8
+    std::vector<DingoJob *> mDelayedJobs; // 0xb4
 };
 
 extern DingoServer &TheServer;

@@ -145,8 +145,8 @@ public:
 
     DataNode HandleMsg(const Message &);
 
-    OvershellSlotStateID mStateID; // 0x1c
-    OvershellSlot *mSlot; // 0x20
+    OvershellSlotStateID mStateID; // 0x28
+    OvershellSlot *mSlot; // 0x2c
 };
 
 class OvershellSlotStateMgr {

@@ -36,10 +36,10 @@ protected:
     /** "The hand bone" */
     ObjPtr<RndTransformable> mHand; // 0x10
     /** "The twist2 bone" */
-    ObjPtr<RndTransformable> mTwist2; // 0x24
+    ObjPtr<RndTransformable> mTwist2; // 0x1c
     /** "Usually 180 for right hand, 0 for left hand" */
-    float mOffset; // 0x38
+    float mOffset; // 0x28
     /** "Biases the angle before dividing by 3,
         typically 45 on the left hand, -45 on the right." */
-    float mBias; // 0x3c
+    float mBias; // 0x2c
 };

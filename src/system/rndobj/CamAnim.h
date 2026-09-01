@@ -41,7 +41,7 @@ protected:
     /** The Cam to animate. */
     ObjPtr<RndCam> mCam; // 0x10
     /** The collection of FOV keys. */
-    Keys<float, float> mFovKeys; // 0x24
+    Keys<float, float> mFovKeys; // 0x1c
     /** The CamAnim that owns all of these keys. */
-    ObjOwnerPtr<RndCamAnim> mKeysOwner; // 0x30
+    ObjOwnerPtr<RndCamAnim> mKeysOwner; // 0x28
 };

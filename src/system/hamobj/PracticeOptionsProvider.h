@@ -40,8 +40,8 @@ public:
 protected:
     PracticeOptionsProvider();
 
-    RndMat *mPracticeMats[kNumPracticeOptions]; // 0x40
-    Symbol mPracticeOptions[kNumPracticeOptions]; // 0x50
+    RndMat *mPracticeMats[kNumPracticeOptions]; // 0x3c
+    Symbol mPracticeOptions[kNumPracticeOptions]; // 0x4c
     bool unk60;
-    bool mDisablePrevious; // 0x61
+    bool mDisablePrevious; // 0x5d
 };

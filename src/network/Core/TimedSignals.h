@@ -32,9 +32,9 @@ namespace Quazal {
             m_oTimeInterval = interval;
         }
 
-        int m_oTimeInterval; // 0x4
-        Time m_oTime; // 0x8
-        Signal m_eSignal; // 0x10
-        String m_strName; // 0x14
+        int m_oTimeInterval; // 0x8
+        Time m_oTime; // 0x10
+        Signal m_eSignal; // 0x18
+        String m_strName; // 0x1c
     };
 }

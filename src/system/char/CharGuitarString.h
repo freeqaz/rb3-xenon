@@ -34,9 +34,9 @@ protected:
     /** "nut object" */
     ObjPtr<RndTransformable> mNut; // 0xc
     /** "bridge object" */
-    ObjPtr<RndTransformable> mBridge; // 0x20
+    ObjPtr<RndTransformable> mBridge; // 0x18
     /** "object to move between nut and bridge" */
-    ObjPtr<RndTransformable> mBend; // 0x34
+    ObjPtr<RndTransformable> mBend; // 0x24
     /** "object to follow" */
-    ObjPtr<RndTransformable> mTarget; // 0x48
+    ObjPtr<RndTransformable> mTarget; // 0x30
 };
