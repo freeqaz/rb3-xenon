@@ -228,6 +228,66 @@ class FreshnessTest(unittest.TestCase):
         f.order(report_newer=False)          # would fail with need_report
         self.assertNotIn("report.json OK", f.check(need_report=False))
 
+    # ---- tool identity + alias map: the non-object staleness axes ----------
+    def _with_tool(self, f, commit="deadbeefcafe", xxh3="9b2bb6f1f3a21062",
+                   live_xxh3="9b2bb6f1f3a21062", map_rel=None):
+        """Give the fixture a fake objdiff-cli whose --version we control."""
+        cli = self.root / "bin" / "objdiff-cli"
+        cli.parent.mkdir(parents=True, exist_ok=True)
+        cli.write_text("#!/bin/sh\n"
+                       f'echo "objdiff-cli 4.2.8 ({commit}, xxh3 {live_xxh3})"\n')
+        cli.chmod(0o755)
+        prov = {"tool_binary_hash": xxh3, "tool_commit": commit}
+        if map_rel:
+            prov["map_file"] = map_rel
+            prov["map_file_entries"] = 5449
+        doc = json.loads((self.root / BUILD / "report.json").read_text())
+        doc["provenance"] = prov
+        (self.root / BUILD / "report.json").write_text(json.dumps(doc))
+        f.order(report_newer=True)
+
+    def test_tool_swap_refused_then_matching_tool_passes(self):
+        f = Fixture(self.root)
+        self._with_tool(f, live_xxh3="faf3390631a58473")   # rebuilt under us
+        with self.assertRaises(freshness.StaleTreeError) as cm:
+            f.check()
+        msg = str(cm.exception)
+        self.assertIn("STALE TOOL", msg)
+        self.assertIn("9b2bb6f1f3a21062", msg)             # names BOTH rulers
+        self.assertIn("faf3390631a58473", msg)
+        self._with_tool(f)                                 # control: same tool
+        self.assertIn("tool OK", f.check())
+
+    def test_absent_report_tool_identity_is_declared_unverifiable(self):
+        """No provenance is NOT agreement -- it must say so out loud."""
+        f = Fixture(self.root)
+        f.order(report_newer=True)
+        self.assertIn("tool identity UNVERIFIABLE", f.check())
+
+    def test_alias_map_newer_than_report_refused(self):
+        f = Fixture(self.root)
+        m = self.root / BUILD / "icf_aliases.map"
+        m.write_text("alias map")
+        self._with_tool(f, map_rel=f"{BUILD}/icf_aliases.map")
+        self.assertIn("alias map OK", f.check())           # control first
+        r = (self.root / BUILD / "report.json").stat().st_mtime
+        os.utime(m, (r + 120, r + 120))                    # edited out of graph
+        with self.assertRaises(freshness.StaleTreeError) as cm:
+            f.check()
+        self.assertIn("STALE ALIAS MAP", str(cm.exception))
+
+    def test_every_stale_subject_is_named_not_just_the_first(self):
+        """Two axes stale at once must both appear, or the remedy is wrong."""
+        f = Fixture(self.root)
+        self._with_tool(f, live_xxh3="faf3390631a58473")
+        os.environ["STUB_GUARD_FAIL"] = "1"                # objects stale too
+        with self.assertRaises(freshness.StaleTreeError) as cm:
+            f.check()
+        msg = str(cm.exception)
+        self.assertIn("STALE TOOL", msg)
+        self.assertIn("STALE OBJECTS", msg)
+        self.assertIn("2 stale input(s)", msg)
+
     def test_allow_stale_banners_the_cause_and_does_not_claim_freshness(self):
         import contextlib
         import io

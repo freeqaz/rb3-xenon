@@ -46,10 +46,33 @@ What it checks, and why each one
     correspondence argument: (2) proves the objects still hold the content they
     held at manifest time T, and (4) proves the report was generated at or
     after T, so it scored that content.
+5.  TOOL IDENTITY -- `report.json`'s `provenance.tool_binary_hash` vs the
+    binary a live diff will actually run.  Objects are not the only global
+    input: `bin/objdiff-cli` is a SYMLINK into ../objdiff shared with ../rb3
+    and ../dc3-decomp, so any of the three rebuilding it silently re-rulers the
+    other two.  Measured 2026-09-01: rebuilt at 08:59 under running lanes,
+    while this tree's report.json was written at 08:25.  A ruler change alone
+    has moved `matched_code` by 817 kB / 7.9 pp with zero source change.
+6.  ALIAS MAP -- the ICF equivalence map is an INPUT TO THE SCORE (~818 kB /
+    7.9 pp of `matched_code` is alias forgiveness), so a map edited after the
+    report is a staleness axis in its own right.
+
+Checks 2-6 are COLLECTED, not short-circuited, and the refusal names every
+stale subject.  "Stale" without a subject sends the next lane to rebuild the
+wrong thing; naming only the first of two is the same defect one step later.
 
 `build=False` is not optional politeness: this helper must never trigger a
 build.  It reads manifests.  A guard that costs five minutes is a guard people
 route around.
+
+⚠ Two hashes, two algorithms, and ONE of them is not reproducible here.
+`tool_binary_hash` and `map_file_hash` are both **xxh3_64**, and this
+interpreter has no xxhash module.  So the tool is asked for its own identity
+(`--version` prints `(<commit>, xxh3 <hash>)`) and the map is checked by MTIME
+against the report instead.  Guessing was tried and is worse than no check:
+`sha256[:16]` of the live binary is `ee78f52f...` where its true xxh3 is
+`faf33906...`, and the same guess called an alias map "changed" whose mtime is
+ten days OLDER than the report -- a check that refuses every tree forever.
 
 Using it
 --------
@@ -67,6 +90,8 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -159,6 +184,101 @@ def _check_report(build: Path, manifest_path: Path) -> tuple[Path, str]:
                   f"{n_units} units, not older than the manifest)")
 
 
+def _live_tool_identity(project_dir: Path) -> tuple[str, str]:
+    """Ask objdiff-cli what it is.  Do NOT recompute its hash.
+
+    `tool_binary_hash` is **xxh3_64** of the binary
+    (objdiff-cli/src/build_id.rs `binary_hash`), not sha256, and Python here has
+    no xxhash module.  Reimplementing it would be a second copy of a hash
+    function whose only job is to agree with the first -- and a guessed
+    algorithm is worse than no check: `sha256[:16]` of this very binary is
+    `ee78f52f...` where the tool's own answer is `faf33906...`, so a check built
+    on the guess would have refused EVERY tree, forever, which is a gate that
+    gets switched off within the hour.
+
+    `--version` prints `objdiff-cli 4.2.8 (210aab60ca30, xxh3 faf3390631a58473)`.
+    """
+    cli = project_dir / "bin" / "objdiff-cli"
+    if not cli.exists():
+        raise StaleTreeError(
+            f"STALE TOOL: {cli} does not exist, so the ruler that would score "
+            f"a live diff cannot be identified at all.")
+    try:
+        proc = subprocess.run([str(cli), "--version"], capture_output=True,
+                              text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise StaleTreeError(f"STALE TOOL: `{cli} --version` failed: {exc}") from None
+    m = re.search(r"\(([0-9a-f]+),\s*xxh3\s+([0-9a-f]+)\)", proc.stdout or "")
+    if not m:
+        raise StaleTreeError(
+            f"STALE TOOL: could not parse an identity out of `{cli} --version` "
+            f"({(proc.stdout or '').strip()!r}). Refusing rather than skipping "
+            f"the check, because a check that silently no-ops is the failure "
+            f"mode this module exists to prevent.")
+    return m.group(1), m.group(2)          # (commit, xxh3)
+
+
+def _check_tool(project_dir: Path, prov: dict) -> str:
+    """The ruler that WROTE report.json vs the one a live diff will USE.
+
+    A tool swap alone moved matched_code 817 kB / 7.9 pp with zero source change
+    (the 2026-08-12 name_check flip), and the shared binary is rebuilt out from
+    under running lanes -- `bin/objdiff-cli` is a symlink into ../objdiff shared
+    with ../rb3 and ../dc3-decomp, so ANY of the three rebuilding it re-rulers
+    the other two silently.  Measured 2026-09-01: rebuilt at 08:59 while this
+    tree's report.json was written at 08:25.
+    """
+    want_hash = prov.get("tool_binary_hash")
+    want_commit = prov.get("tool_commit")
+    if not want_hash:
+        # proto3 JSON omits defaults, so an absent key is "the report carries no
+        # ruler identity" -- which is exactly the state this check cannot see
+        # through.  Say so; do not read it as agreement.
+        return "tool identity UNVERIFIABLE (report.json carries no tool_binary_hash)"
+    commit, xxh3 = _live_tool_identity(project_dir)
+    if xxh3 != want_hash:
+        raise StaleTreeError(
+            f"STALE TOOL: report.json was produced by objdiff-cli "
+            f"{want_commit or '?'} (xxh3 {want_hash}), but the binary a live "
+            f"diff will use is {commit} (xxh3 {xxh3}). The report and any "
+            f"fresh diff are then scored by DIFFERENT RULERS -- a ruler change "
+            f"alone has moved matched_code by 817 kB / 7.9 pp with no source "
+            f"change. Regenerate report.json (`./tools/ninja-locked`).")
+    return f"tool OK (objdiff-cli {commit} xxh3 {xxh3[:8]}…)"
+
+
+def _check_alias_map(project_dir: Path, build: Path, prov: dict,
+                     report_mtime: float) -> str:
+    """The ICF alias map is an INPUT TO THE SCORE, so it is a staleness axis too.
+
+    It supplies the symbol equivalences deciding which target symbol a base
+    symbol may pair with -- ~818 kB / 7.9 pp of `matched_code` rests on that
+    forgiveness -- and objdiff records its hash in provenance for exactly this
+    reason.
+
+    ⚠ Checked by MTIME, not by hash, and that is deliberate: `map_file_hash` is
+    xxh3_64 (report.rs:651) and this interpreter has no xxhash.  A guessed hash
+    would have read "DIFFER" on a map whose mtime is ten days OLDER than the
+    report -- i.e. a permanent false alarm.  The map is a declared input of the
+    REPORT edge, so anything that legitimately changes it also regenerates the
+    report; a map NEWER than the report therefore means an out-of-graph edit.
+    """
+    rel = prov.get("map_file")
+    if not rel:
+        return ""
+    path = project_dir / rel
+    if not path.exists():
+        raise StaleTreeError(
+            f"STALE ALIAS MAP: report.json says it scored against {rel}, which "
+            f"is now absent. Every ICF fold-alias it forgave is unverifiable.")
+    if path.stat().st_mtime > report_mtime:
+        raise StaleTreeError(
+            f"STALE ALIAS MAP: {rel} was modified AFTER report.json was "
+            f"written, so the report's scores rest on alias forgiveness that is "
+            f"no longer what a live diff would apply. Regenerate report.json.")
+    return f"alias map OK ({prov.get('map_file_entries', '?')} entries, not newer than the report)"
+
+
 def _patch_guard(project_dir: Path):
     """Load the tree's OWN patch_guard, not this checkout's.
 
@@ -192,17 +312,53 @@ def ensure_measurable(project_dir, *, need_report: bool = True,
         notes = [f"manifest {doc.get('generated_utc')} / "
                  f"{int(doc.get('n_objects') or 0):,} objects"]
 
+        # Every remaining check is an independent staleness AXIS, and they are
+        # collected rather than short-circuited.  "Stale" without a subject
+        # sends the next lane to rebuild the wrong thing; naming only the first
+        # of two stale inputs is the same defect one step later.
+        stale: list[str] = []
+
+        def run(fn):
+            try:
+                note = fn()
+            except StaleTreeError as exc:
+                stale.append(str(exc))
+            else:
+                if note:
+                    notes.append(note)
+
         guard = _patch_guard(project_dir)
-        try:
-            # build=False: this is a READ-ONLY precondition. It verifies; it
-            # must not compile.
-            notes.append(guard.ensure_patched_tree(project_dir, build=False))
-        except guard.UnpatchedTreeError as exc:
-            raise StaleTreeError(str(exc)) from None
+
+        def objects():
+            try:
+                # build=False: a READ-ONLY precondition. It verifies; it must
+                # not compile.
+                return guard.ensure_patched_tree(project_dir, build=False)
+            except guard.UnpatchedTreeError as exc:
+                raise StaleTreeError(f"STALE OBJECTS: {exc}") from None
+
+        run(objects)
 
         if need_report:
-            _, note = _check_report(build, manifest_path)
-            notes.append(note)
+            report_mtime = (build / "report.json").stat().st_mtime \
+                if (build / "report.json").exists() else 0.0
+            prov = {}
+            if (build / "report.json").exists():
+                try:
+                    prov = (json.loads((build / "report.json").read_text())
+                            .get("provenance") or {})
+                except (OSError, json.JSONDecodeError):
+                    prov = {}
+            run(lambda: _check_report(build, manifest_path)[1])
+            run(lambda: _check_tool(project_dir, prov))
+            run(lambda: _check_alias_map(project_dir, build, prov, report_mtime))
+
+        if stale:
+            subjects = ", ".join(sorted(
+                {s.split(":")[0] for s in stale if ":" in s})) or "MULTIPLE"
+            raise StaleTreeError(
+                f"{len(stale)} stale input(s) -- {subjects}\n\n"
+                + "\n\n".join(stale))
     except StaleTreeError as exc:
         if not allow_stale:
             raise
