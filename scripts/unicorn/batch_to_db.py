@@ -16,7 +16,7 @@ import argparse
 import os
 import sys
 import time
-from concurrent.futures import ProcessPoolExecutor
+import multiprocessing as mp
 from datetime import datetime, timezone
 
 # Add project root to path
@@ -138,7 +138,7 @@ def process_unit(name, decomp_path, orig_path, timeout=5_000_000):
 
 
 def _worker(args):
-    """Top-level worker for ProcessPoolExecutor (must be picklable)."""
+    """Top-level worker for the process pool (must be picklable)."""
     name, decomp_path, orig_path, timeout = args
     try:
         results = process_unit(name, decomp_path, orig_path, timeout)
@@ -305,8 +305,16 @@ def main():
                   file=sys.stderr)
     else:
         # Multi-threaded: collect results per unit, write to DB in main thread
-        with ProcessPoolExecutor(max_workers=args.jobs) as pool:
-            for name, results, error in pool.map(_worker, work):
+        # maxtasksperchild is load-bearing, not tuning. Each comparison
+        # constructs Unicorn engine instances; a long-lived worker eventually
+        # fails to mmap a translator buffer ("Could not allocate dynamic
+        # translator buffer") and dies, and ProcessPoolExecutor turns that
+        # into a BrokenProcessPool that takes the ENTIRE run down with it --
+        # measured on 2026-09-01 at 600/1045 units, losing every result.
+        # Recycling workers bounds the exposure. Python 3.10's
+        # ProcessPoolExecutor has no max_tasks_per_child, hence mp.Pool.
+        with mp.Pool(processes=args.jobs, maxtasksperchild=8) as pool:
+            for name, results, error in pool.imap_unordered(_worker, work):
                 done += 1
 
                 if error:
