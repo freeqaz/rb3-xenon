@@ -40,7 +40,7 @@ protected:
     /** "animation kicked off before [transition]" */
     ObjPtr<RndAnimatable> mInAnim; // 0x4
     /** "animation kicked off after [transition]" */
-    ObjPtr<RndAnimatable> mOutAnim; // 0x18
+    ObjPtr<RndAnimatable> mOutAnim; // 0x10
     /** The current transition animation state. */
     UITransitionAnimationState mAnimationState; // 0x1c
     bool mChangePending; // 0x20

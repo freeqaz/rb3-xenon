@@ -43,7 +43,7 @@ public:
     int mCurrentEntry; // 0x50
     float mDisplayRate; // 0x54
     float mCrossfadeDuration; // 0x58
-    RndMat *mCoverArtMats[6]; // 0x54
+    RndMat *mCoverArtMats[6]; // 0x5c
     bool unk6c; // 0x74
     RndTex *mNoneTex; // 0x78
     std::vector<RndTex *> mCoverArtTexs; // 0x7c

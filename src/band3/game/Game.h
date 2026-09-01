@@ -119,7 +119,7 @@ public:
         // unchanged. Placed at the tail because no loss function reads a late
         // Properties bool; only its count matters for layout.
         // TODO: identify + relocate to the real insertion point.
-        bool mUnkTU5_prop19; // 0x19 (new in TU5)
+        bool mUnkTU5_prop19; // 0x1b (new in TU5)
     };
     Game();
     virtual ~Game();
@@ -266,10 +266,10 @@ public:
     // released in the dtor under the same guard. See the class comment above.
     UnkTU5GuidePitchOwner *mUnkTU5GuidePitch; // 0x48
     SongPos mSongPos; // 0x4c
-    SongDB *mSongDB; // 0x54
-    SongInfo *mSongInfo; // 0x58
+    SongDB *mSongDB; // 0x60
+    SongInfo *mSongInfo; // 0x64
     BeatMaster *mMaster; // 0x68
-    std::vector<Player *> mAllActivePlayers; // 0x60
+    std::vector<Player *> mAllActivePlayers; // 0x6c
     // Retail places mRealtime at this+0x78 and unk6f at this+0x79 (proven by
     // Game::HandleAudioLoad reading lbz 0x78 / stb 0x79). With mAllActivePlayers
     // ending at 0x74, mRealtime must be the 5th bool of this run (index 4), so
@@ -277,14 +277,14 @@ public:
     // and mRealtime — unk6b/unk6c (DC3/Wii-era extras) sit AFTER unk6f, absorbed
     // by the alignment pad before mTimeOffset@0x7c. Reordering (not deleting)
     // keeps their ctor init + accessors valid while fixing the +2 bool shift.
-    bool mIsPaused; // 0x74
-    bool mGameWantsPause; // 0x75
-    bool mOvershellWantsPause; // 0x76
-    bool mPauseTime; // 0x77
+    bool mIsPaused; // 0x78
+    bool mGameWantsPause; // 0x79
+    bool mOvershellWantsPause; // 0x7a
+    bool mPauseTime; // 0x7b
     bool mRealtime; // 0x7c
     bool unk6f; // 0x7d
-    bool unk6b; // 0x7a (pad region)
-    bool unk6c; // 0x7b (pad region) - screen saver?
+    bool unk6b; // 0x7e (pad region)
+    bool unk6c; // 0x7f (pad region) - screen saver?
     float mTimeOffset; // 0x80
     // TU5: a new 4-byte member sits between mTimeOffset and mTime. Proven by
     // Game::Poll reading mTimeOffset at 0x80 (+4) but mTime (Timer) at 0x88
@@ -295,41 +295,41 @@ public:
     // vs the old Wii-era annotations here. Proven by the retail getter
     // fn_82659CD8 (= Game::HasIntro): `lbz r3, 0xb0(r3)`, called on
     // GamePanel::mGame in GamePanel::StartGame (target 0x826773F4).
-    Timer mTime; // 0x80 (0x30 bytes on 360)
-    bool mHasIntro; // 0xb0 (Wii: 0xa8)
-    float mLastPollMs; // 0xb4 (Wii: 0xac)
+    Timer mTime; // 0x88 (0x30 bytes on 360)
+    bool mHasIntro; // 0xb8 (Wii: 0xa8)
+    float mLastPollMs; // 0xbc (Wii: 0xac)
     // Retail packs mMuckWithPitch with the mNeverAllowInput/unkb9 bool group
     // (Wii interleaved it with mMusicSpeed, wasting 4 bytes of alignment pad),
     // so mLoadState lands at 0xcc rather than 0xd0.
-    float mMusicSpeed; // 0xb8
-    bool mNeverAllowInput; // 0xbc
-    bool mMuckWithPitch; // 0xbd
-    bool unkb9; // 0xbe
-    int mDemoMaxPctComplete; // 0xc0
-    float mDemoMaxMs; // 0xc4
-    bool unkc4; // 0xc8
+    float mMusicSpeed; // 0xc0
+    bool mNeverAllowInput; // 0xc4
+    bool mMuckWithPitch; // 0xc5
+    bool unkb9; // 0xc6
+    int mDemoMaxPctComplete; // 0xc8
+    float mDemoMaxMs; // 0xcc
+    bool unkc4; // 0xd0
     LoadState mLoadState; // 0xd4
-    EndGameResult mResult; // 0xcc
-    Band *mBand; // 0xd0
-    Shuttle *mShuttle; // 0xd4
+    EndGameResult mResult; // 0xd8
+    Band *mBand; // 0xdc
+    Shuttle *mShuttle; // 0xe0
     float unkd8;
-    float unkdc; // 0xdc - mRollbackEndMs?
-    ATanInterpolator mInterpolator; // 0xe0
+    float unkdc; // 0xe8 - mRollbackEndMs?
+    ATanInterpolator mInterpolator; // 0xec
     float unk11c;
     bool unk120;
-    bool mSkippedSong; // 0x121
+    bool mSkippedSong; // 0x12d
     float unk124;
-    float mResumeTime; // 0x128
-    bool mInvalidScore; // 0x12c
+    float mResumeTime; // 0x134
+    bool mInvalidScore; // 0x138
     float unk130;
     float unk134;
     bool unk138;
-    bool mDrumFillsMod; // 0x139
+    bool mDrumFillsMod; // 0x145
     int unk13c;
     float unk140;
     TrackerManager *mTrackerManager; // 0x150
     bool unk148;
-    float mDisablePauseMs; // 0x14c
+    float mDisablePauseMs; // 0x158
     bool unk150;
     std::vector<BandUser *> unk154;
 };

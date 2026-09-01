@@ -24,11 +24,11 @@ public:
     OBJ_MEM_OVERLOAD(0x14)
     NEW_OBJ(CharDriverMidi);
 
-    bool mActive; // 0xe0 - set true in Enter(), controls clip lookup vs default clip
-    Symbol mParser; // 0xe4
-    Symbol mFlagParser; // 0xe8
-    int mClipFlags; // 0xec
-    float mBlendOverridePct; // 0xf0
+    bool mActive; // 0x8c - set true in Enter(), controls clip lookup vs default clip
+    Symbol mParser; // 0x90
+    Symbol mFlagParser; // 0x94
+    int mClipFlags; // 0x98
+    float mBlendOverridePct; // 0x9c
 
 protected:
     CharDriverMidi();

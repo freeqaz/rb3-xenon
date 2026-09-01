@@ -76,7 +76,7 @@ protected:
     static int gRev;
 
     CubeTexProperties props; // 0x28
-    CubeTexProperties moreprops[kNumCubeFaces]; // 0x40
-    FilePath mFile[kNumCubeFaces]; // 0xb8
-    RndBitmap mBitmap[kNumCubeFaces]; // 0xe8
+    CubeTexProperties moreprops[kNumCubeFaces]; // 0x3c
+    FilePath mFile[kNumCubeFaces]; // 0xb4
+    RndBitmap mBitmap[kNumCubeFaces]; // 0xfc
 };

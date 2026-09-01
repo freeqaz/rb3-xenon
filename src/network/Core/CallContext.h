@@ -34,7 +34,7 @@ namespace Quazal {
         _State unkc; // 0xc
         qList<int> unk10; // 0x10
         qVector<int> unk18; // 0x18
-        qResult unk20; // 0x20
+        qResult unk20; // 0x24
         int unk30;
         int unk34;
         int unk38;

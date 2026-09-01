@@ -175,38 +175,38 @@ public:
     int mLastGemHit; // 0x28
     bool mIsCurrentTrack; // 0x2c
     std::vector<GemInProgress> mGemsInProgress; // 0x30
-    float mSyncOffset; // 0x38
-    bool mSucceeding; // 0x3c
-    bool mEnabled; // 0x3d
-    std::vector<BeatMatchSink *> mSinks; // 0x40
+    float mSyncOffset; // 0x3c
+    bool mSucceeding; // 0x40
+    bool mEnabled; // 0x41
+    std::vector<BeatMatchSink *> mSinks; // 0x44
     SongData *mSongData; // 0x50
-    bool mTrillSucceeding; // 0x4c
-    int mTrillNextSlot; // 0x50
-    float mTrillLastFretMs; // 0x54
-    float mTrillIntervalMs; // 0x58
-    DataArray *mRollIntervalsConfig; // 0x5c
-    int mTrack; // 0x60
-    bool mButtonMashingMode; // 0x64
+    bool mTrillSucceeding; // 0x54
+    int mTrillNextSlot; // 0x58
+    float mTrillLastFretMs; // 0x5c
+    float mTrillIntervalMs; // 0x60
+    DataArray *mRollIntervalsConfig; // 0x64
+    int mTrack; // 0x68
+    bool mButtonMashingMode; // 0x6c
     int mLastGemPassed; // 0x70
-    int mLastGemSeen; // 0x6c
-    float mLastMiss; // 0x70
-    bool mCheating; // 0x74
-    bool mAutoplayCoda; // 0x75
-    int mCheatError; // 0x78
-    int mNextCheatError; // 0x7c
-    float mLastCheatCodaSwing; // 0x80
-    int mNextGemToAutoplay; // 0x84
-    float mAutoplayAccuracy; // 0x88
-    int mCymbalAutoplayMs; // 0x8c
-    GemHitFlags mLastPlayedHitFlags; // 0x90
+    int mLastGemSeen; // 0x74
+    float mLastMiss; // 0x78
+    bool mCheating; // 0x7c
+    bool mAutoplayCoda; // 0x7d
+    int mCheatError; // 0x80
+    int mNextCheatError; // 0x84
+    float mLastCheatCodaSwing; // 0x88
+    int mNextGemToAutoplay; // 0x8c
+    float mAutoplayAccuracy; // 0x90
+    int mCymbalAutoplayMs; // 0x94
+    GemHitFlags mLastPlayedHitFlags; // 0x98
     bool mPitchBendReady; // 0x9c
-    int mPitchBendRange; // 0x98
-    int mPitchBendMsToFull; // 0x9c
-    float mPitchBendMsHit; // 0xa0
+    int mPitchBendRange; // 0xa0
+    int mPitchBendMsToFull; // 0xa4
+    float mPitchBendMsHit; // 0xa8
     float mBiggestWhammy; // 0xac
-    std::vector<float> mRollSlotsLastSwingMs; // 0xa8
-    int mRollActiveSlots; // 0xb0
-    float mRollIntervalMs; // 0xb4
+    std::vector<float> mRollSlotsLastSwingMs; // 0xb0
+    int mRollActiveSlots; // 0xbc
+    float mRollIntervalMs; // 0xc0
     int mRollEndTick; // 0xc4
-    DataArray *mTrillIntervalsConfig; // 0xbc
+    DataArray *mTrillIntervalsConfig; // 0xc8
 };

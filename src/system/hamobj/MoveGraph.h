@@ -52,9 +52,9 @@ public:
 private:
     MoveParent *GetNonConstMoveParent(Symbol) const;
 
-    std::map<Symbol, MoveParent *> mMoveParents; // 0x2c
-    std::map<Symbol, MoveVariant *> mMoveVariants; // 0x44
-    DataArrayPtr mLayoutData; // 0x5c
+    std::map<Symbol, MoveParent *> mMoveParents; // 0x28
+    std::map<Symbol, MoveVariant *> mMoveVariants; // 0x40
+    DataArrayPtr mLayoutData; // 0x58
 };
 
 class MoveParent {

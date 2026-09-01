@@ -232,16 +232,16 @@ public:
     DataNode OnSendNetGameplayMsgToPlayer(DataArray *);
 
     PlayerParams *mParams; // 0x258
-    PlayerBehavior *mBehavior; // 0x22c
+    PlayerBehavior *mBehavior; // 0x25c
     BandUser *mUser; // 0x260
-    CommonPhraseCapturer *mCommonPhraseCapturer; // 0x234
-    bool mRemote; // 0x238
-    String mPlayerName; // 0x23c
-    int mTrackNum; // 0x248
+    CommonPhraseCapturer *mCommonPhraseCapturer; // 0x264
+    bool mRemote; // 0x268
+    String mPlayerName; // 0x26c
+    int mTrackNum; // 0x278
     TrackType mTrackType; // 0x27c
     EnabledState mEnabledState; // 0x280
     int mTimesFailed; // 0x284
-    float mEnableMs; // 0x258
+    float mEnableMs; // 0x288
     float unk25c;
     std::vector<Extent VECTOR_SIZE_SMALL> unk260;
     bool mIsInCoda;
@@ -249,8 +249,8 @@ public:
     bool mDeployingBandEnergy; // 0x2a4
     int unk274;
     int unk278;
-    bool mPhraseBonus; // 0x27c
-    BeatMaster *mBeatMaster; // 0x280
+    bool mPhraseBonus; // 0x2b0
+    BeatMaster *mBeatMaster; // 0x2b4
     float unk284;
     bool unk288;
     int unk28c;
@@ -260,13 +260,13 @@ public:
     float unk29c;
     int unk2a0;
     float unk2a4;
-    bool mDisconnectedAtStart; // 0x2a8
+    bool mDisconnectedAtStart; // 0x2dc
     bool unk2a9;
     int unk2ac;
     bool unk2b0;
-    bool mPermanentOverdrive; // 0x2b1
-    bool mHasFinishedCoda; // 0x2b2
-    bool mHasBlownCoda; // 0x2b3
+    bool mPermanentOverdrive; // 0x2e5
+    bool mHasFinishedCoda; // 0x2e6
+    bool mHasBlownCoda; // 0x2e7
     int unk2b4;
     int unk2b8;
     int unk2bc;

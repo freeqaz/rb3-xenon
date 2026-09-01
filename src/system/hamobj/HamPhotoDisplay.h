@@ -28,8 +28,8 @@ private:
     void DrawPhotoMesh(RndMesh *, int);
 
 protected:
-    ObjPtr<RndMesh> mMesh1; // 0x1fc
-    ObjPtr<RndMesh> mMesh2; // 0x210
-    int mIndex1; // 0x224
-    int mIndex2; // 0x228
+    ObjPtr<RndMesh> mMesh1; // 0x1dc
+    ObjPtr<RndMesh> mMesh2; // 0x1e8
+    int mIndex1; // 0x1f4
+    int mIndex2; // 0x1f8
 };

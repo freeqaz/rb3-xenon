@@ -33,5 +33,5 @@ protected:
     HamSupereasyData();
 
     /** "Routine for Supereasy difficulty." */
-    std::vector<HamSupereasyMeasure> mRoutine; // 0x2c
+    std::vector<HamSupereasyMeasure> mRoutine; // 0x28
 };

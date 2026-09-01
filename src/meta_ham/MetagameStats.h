@@ -125,9 +125,9 @@ private:
     Symbol SetTitleByThreshold(int, DataArray *) const;
     Symbol SetTitleForFavorite(int, int, DataArray *) const;
 
-    int mCountStats[kNumCountStats]; // 0x38
-    FavoriteStat mFavoriteStats[kNumFavoriteStats]; // 0x94
-    DataArray *mStatsCfg; // 0x13c
-    int mTotalTimePlayedMs; // 0x140
-    bool mDirty; // 0x144
+    int mCountStats[kNumCountStats]; // 0x34
+    FavoriteStat mFavoriteStats[kNumFavoriteStats]; // 0x90
+    DataArray *mStatsCfg; // 0x138
+    int mTotalTimePlayedMs; // 0x13c
+    bool mDirty; // 0x140
 };

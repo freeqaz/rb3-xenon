@@ -24,10 +24,10 @@ protected:
     virtual void AddCollidable(Hmx::Object *, ObjectDir *, bool);
     virtual void RemoveCollidable(Hmx::Object *);
 
-    ObjPtrList<Hmx::Object> mCollidables; // 0x40
-    std::map<Hmx::Object *, ObjectDir *> mCollidableDirs; // 0x54
-    std::list<RndMesh *> mActiveCollidables; // 0x6c
-    std::list<RndMesh *> mInactiveCollidables; // 0x74
+    ObjPtrList<Hmx::Object> mCollidables; // 0x3c
+    std::map<Hmx::Object *, ObjectDir *> mCollidableDirs; // 0x50
+    std::list<RndMesh *> mActiveCollidables; // 0x68
+    std::list<RndMesh *> mInactiveCollidables; // 0x70
 };
 
 class RayCastDefaultContainer : public RayCastContainer {
@@ -52,6 +52,6 @@ public:
     virtual void Release() { delete this; }
 
 protected:
-    DetectionVolumeListener *mListener; // 0x2c
-    bool mActiveState; // 0x30
+    DetectionVolumeListener *mListener; // 0x28
+    bool mActiveState; // 0x2c
 };

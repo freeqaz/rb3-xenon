@@ -50,13 +50,13 @@ public:
 protected:
     HamGameData();
 
-    Symbol mVenue; // 0x2c
-    Symbol mSong; // 0x30
-    bool mPlayerSidesLocked; // 0x34
-    bool mInTimeyWimey; // 0x35
-    ObjVector<HamPlayerData *> mPlayers; // 0x38
-    DateTime unk48; // 0x48
-    int unk50; // 0x50
+    Symbol mVenue; // 0x28
+    Symbol mSong; // 0x2c
+    bool mPlayerSidesLocked; // 0x30
+    bool mInTimeyWimey; // 0x31
+    ObjVector<HamPlayerData *> mPlayers; // 0x34
+    DateTime unk48; // 0x44
+    int unk50; // 0x4c
 };
 
 extern HamGameData *TheGameData;

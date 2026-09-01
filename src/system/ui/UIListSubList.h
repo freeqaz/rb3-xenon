@@ -37,7 +37,7 @@ protected:
     UIListSubList();
 
     /** "sub list template" */
-    ObjPtr<UIList> mList; // 0x78
+    ObjPtr<UIList> mList; // 0x70
 };
 
 class UIListSubListElement : public UIListSlotElement {

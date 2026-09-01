@@ -33,17 +33,17 @@ public:
     NEW_OBJ(CharSleeve)
 
     ObjPtr<RndTransformable> mSleeve; // 0x10
-    ObjPtr<RndTransformable> mTopSleeve; // 0x24
-    Vector3 mPos; // 0x38
-    Vector3 mLastPos; // 0x48
-    float mLastDT; // 0x58
-    float mInertia; // 0x5c
-    float mGravity; // 0x60
-    float mRange; // 0x64
-    float mNegLength; // 0x68
-    float mPosLength; // 0x6c
-    float mStiffness; // 0x70
-    ObjPtr<Character> mMe; // 0x74
+    ObjPtr<RndTransformable> mTopSleeve; // 0x1c
+    Vector3 mPos; // 0x28
+    Vector3 mLastPos; // 0x38
+    float mLastDT; // 0x48
+    float mInertia; // 0x4c
+    float mGravity; // 0x50
+    float mRange; // 0x54
+    float mNegLength; // 0x58
+    float mPosLength; // 0x5c
+    float mStiffness; // 0x60
+    ObjPtr<Character> mMe; // 0x64
 
 protected:
     CharSleeve();

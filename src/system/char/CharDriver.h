@@ -102,30 +102,30 @@ protected:
     float Display(float);
 
     /** "The CharBones object to add or blend into." */
-    ObjPtr<CharBonesObject> mBones; // 0x30 / -0xb4
+    ObjPtr<CharBonesObject> mBones; // 0x28 / -0xb4
     /** "pointer to clips object" */
-    ObjPtr<ObjectDir> mClips; // 0x44 / -0xa0
-    CharClipDriver *mFirst; // 0x58 / -0x8c
+    ObjPtr<ObjectDir> mClips; // 0x34 / -0xa0
+    CharClipDriver *mFirst; // 0x40 / -0x8c
     /** "Pick a clip to play" */
-    ObjPtr<CharClip> mTestClip; // 0x5c / -0x88
-    ObjPtr<Hmx::Object> mDefaultClip; // 0x70
+    ObjPtr<CharClip> mTestClip; // 0x44 / -0x88
+    ObjPtr<Hmx::Object> mDefaultClip; // 0x50
 #ifdef HX_NATIVE
     // DC3-only: retail RB3 X360 CharDriver has no clip-group member (the +0x24
     // oversize is this ObjPtr + mClipWeightMap below). Wii retail also lacks it.
     ObjPtr<CharClipGroup> mClipGroup;
 #endif
     /** "If true, plays the default_clip_or_group whenever starved" */
-    bool mDefaultPlayStarved; // 0x98 / -0x74
+    bool mDefaultPlayStarved; // 0x5c / -0x74
     Symbol mStarvedHandler;
-    DataNode mLastNode; // 0xa0
-    float mOldBeat; // 0xa8
-    bool mRealign; // 0xac / -0x38
-    float mBeatScale; // 0xb0
-    float mBlendWidth; // 0xb4 / -0x30
-    Symbol mClipType; // 0xb8 / -0x2c
-    ApplyMode mApply; // 0xbc / -0x28;
+    DataNode mLastNode; // 0x64
+    float mOldBeat; // 0x6c
+    bool mRealign; // 0x70 / -0x38
+    float mBeatScale; // 0x74
+    float mBlendWidth; // 0x78 / -0x30
+    Symbol mClipType; // 0x7c / -0x2c
+    ApplyMode mApply; // 0x80 / -0x28;
     CharBonesAlloc *mInternalBones; // 0x84
-    bool mPlayMultipleClips; // 0xc4 / -0x20
+    bool mPlayMultipleClips; // 0x88 / -0x20
 #ifdef HX_NATIVE
     // DC3-only: retail RB3 X360 CharDriver has no clip-weight map (part of the
     // +0x24 oversize; retail dtor destroys 4 ObjPtrs and no map).

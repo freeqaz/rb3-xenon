@@ -26,8 +26,8 @@ public:
     float mHalfDistance; // 0x1c
     float mLightingInfluence; // 0x20
     ObjPtr<RndTex> mTexture; // 0x24
-    ObjPtr<RndDrawable> mProxy; // 0x38
-    SpotlightDrawer *mOwner; // 0x4c
+    ObjPtr<RndDrawable> mProxy; // 0x30
+    SpotlightDrawer *mOwner; // 0x3c
 };
 
 /** "A SpotlightDrawer draws spotlights." */
@@ -119,7 +119,7 @@ protected:
     static bool sHaveFlares;
     static bool sNoBeams;
 
-    SpotDrawParams mParams; // 0x44
+    SpotDrawParams mParams; // 0x28
 };
 
 class ByColor {

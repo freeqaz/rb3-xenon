@@ -43,7 +43,7 @@ protected:
     Transform mLocalXfm; // 0x34
     Transform mOldLocalXfm; // 0x74
     float mFrac; // 0xb4
-    float mFracPerBeat; // 0xd0
+    float mFracPerBeat; // 0xb8
     bool mSpotChanged; // 0xbc
     /** "Weightable to change animation between frets" */
     ObjPtr<CharWeightable> mAnimBlender; // 0xc0

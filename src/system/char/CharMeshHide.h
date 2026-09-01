@@ -34,6 +34,6 @@ public:
 protected:
     CharMeshHide();
 
-    ObjVector<Hide> mHides; // 0x2c
+    ObjVector<Hide> mHides; // 0x28
     int mFlags; // 0x38
 };

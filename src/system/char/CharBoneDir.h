@@ -18,7 +18,7 @@ public:
         /** "bones to recenter, ie, bone_pelvis" */
         ObjPtrList<CharBone> mTargets; // 0x0
         /** "bones to average to find the new center" */
-        ObjPtrList<CharBone> mAverage; // 0x10
+        ObjPtrList<CharBone> mAverage; // 0x14
         /** "Slide the character over the course of the clip.  If false, just uses the
          * start of the clip" */
         bool mSlide; // 0x28

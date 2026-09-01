@@ -84,7 +84,7 @@ public:
     std::vector<StreakList> mStreakEnergyLists; // 0x84
     int unk88;
     DataArray *mConfig; // 0x94
-    OverdriveConfig mOverdriveConfig; // 0x90
+    OverdriveConfig mOverdriveConfig; // 0x98
     float mCommonPhraseReward; // 0xb8
     float mCommonPhrasePenalty; // 0xbc
     mutable std::vector<int> mStarThresholds; // 0xc0

@@ -30,9 +30,9 @@ public:
     static void InitResources();
     static void Terminate();
 
-    ObjPtr<RndMat> mBackMat; // 0x78
-    ObjPtr<RndMat> mOverlayMat; // 0x84
-    RndEnviron *unk90; // 0x90
-    Symbol mTestMode; // 0x94
-    Symbol mPosition; // 0x98
+    ObjPtr<RndMat> mBackMat; // 0x7c
+    ObjPtr<RndMat> mOverlayMat; // 0x88
+    RndEnviron *unk90; // 0x94
+    Symbol mTestMode; // 0x98
+    Symbol mPosition; // 0x9c
 };

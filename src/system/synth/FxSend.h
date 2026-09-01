@@ -63,7 +63,7 @@ protected:
     bool CheckChain(FxSend *, int);
 
     /** "The next effect in the chain" */
-    ObjOwnerPtr<FxSend> mNextSend; // 0x2c
+    ObjOwnerPtr<FxSend> mNextSend; // 0x28
     /** "The relative order that this send is processed compared to other sends." Ranges
      * from 0 to 9. */
     int mStage; // 0x34
@@ -79,7 +79,7 @@ protected:
     float mReverbMixDb; // 0x48
     /** "Enable reverb send" */
     bool mReverbEnable; // 0x4c
-    bool mEnableUpdates; // 0x59
+    bool mEnableUpdates; // 0x4d
     /** "Which channels the FX applies to" */
     SendChannels mChannels; // 0x50
 };

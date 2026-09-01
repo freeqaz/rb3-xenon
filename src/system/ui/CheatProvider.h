@@ -16,9 +16,9 @@ public:
         /** The key(s) to press to activate this cheat. */
         String mKey; // 0x0
         /** A quick description of what this cheat does. */
-        String mDesc; // 0x8
+        String mDesc; // 0xc
         /** The script performing this cheat. */
-        DataArray *mScript; // 0x10
+        DataArray *mScript; // 0x18
     };
 
     CheatProvider();

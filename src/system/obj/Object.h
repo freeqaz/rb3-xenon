@@ -1271,7 +1271,7 @@ public:
 
 protected:
     ObjPtr<Hmx::Object> mObj; // 0x0
-    DataNode mNode; // 0x14
+    DataNode mNode; // 0xc
 };
 
 #pragma endregion
@@ -1907,7 +1907,7 @@ namespace Hmx {
          *  Formatted in the style of:
          *  ( (name1 {handler1}) (name2 {handler2}) (name3 {handler3}) )
          */
-        DataArray *mTypeDef; // 0x14 (native) / 0x10 (X360)
+        DataArray *mTypeDef; // 0x10 (native) / 0x10 (X360)
         /** A note about this Object, useful for debugging. */
         /** "Just a note describing the object, stripped out of shipping assets,
             so don't make code rely on this" */
@@ -1918,9 +1918,9 @@ namespace Hmx {
 #endif
         /** This Object's name. */
         /** "name of the object" */
-        const char *mName; // 0x20 (native) / 0x18 (X360)
+        const char *mName; // 0x18 (native) / 0x18 (X360)
         /** The ObjectDir in which this Object resides. */
-        ObjectDir *mDir; // 0x24 (native) / 0x1c (X360)
+        ObjectDir *mDir; // 0x1c (native) / 0x1c (X360)
         /** "Sinks for messages sent to me" */
         // Retail X360: mSinks does not exist in the Object dtor (fn_82738050).
         // mSinks is absent from the retail binary layout; development/tool feature only.

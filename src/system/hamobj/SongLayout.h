@@ -86,8 +86,8 @@ protected:
     DataNode AddSection(DataArray *);
 
     /** "Patterns of a song layout section" */
-    std::vector<SongPattern> mSongPatterns; // 0x2c
+    std::vector<SongPattern> mSongPatterns; // 0x28
     /** "Sections of a song layout" */
-    std::vector<SongSection> mSongSections; // 0x38
-    std::vector<MoveReplacer> mMoveReplacers; // 0x44
+    std::vector<SongSection> mSongSections; // 0x34
+    std::vector<MoveReplacer> mMoveReplacers; // 0x40
 };

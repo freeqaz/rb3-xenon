@@ -72,7 +72,7 @@ public:
     int unk70[4]; // 0x78
     bool unk80[4];
     bool unk84[4];
-    RndGroup *mScrollGroups[4]; // 0x88
+    RndGroup *mScrollGroups[4]; // 0x90
     bool unk98; // 0xa0
-    std::vector<UILabel *> mDetailLabels; // 0x9c
+    std::vector<UILabel *> mDetailLabels; // 0xa4
 };

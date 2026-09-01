@@ -30,7 +30,7 @@ private:
 protected:
     LightHue();
 
-    FileLoader *mLoader; // 0x2c
-    FilePath mPath; // 0x30
+    FileLoader *mLoader; // 0x28
+    FilePath mPath; // 0x2c
     Keys<Vector3, Vector3> mKeys; // 0x38
 };

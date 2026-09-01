@@ -59,49 +59,49 @@ private:
 
     /** "instruction display" */
     ObjPtr<HamLabel> mCommandLabel; // 0x8
-    ObjPtr<HamLabel> mIntroLine2Label; // 0x1c
+    ObjPtr<HamLabel> mIntroLine2Label; // 0x14
     /** "player 0 object" */
-    ObjPtr<RhythmBattlePlayer> mPlayerOne; // 0x30
+    ObjPtr<RhythmBattlePlayer> mPlayerOne; // 0x20
     /** "player 1 object" */
-    ObjPtr<RhythmBattlePlayer> mPlayerTwo; // 0x44
-    ObjPtr<RndTransformable> mBoxyLeadHeadTrans; // 0x58
-    ObjPtr<RndAnimatable> mIntroAnim; // 0x6c
-    ObjPtr<RndAnimatable> mBattleEndAnim; // 0x80
-    ObjPtr<RndAnimatable> unk94; // 0x94
-    ObjPtr<RndAnimatable> mSwagJack1BarP2ToP1Anim; // 0xa8
-    ObjPtr<RndAnimatable> mSwagJack1BarP1ToP2Anim; // 0xbc
-    ObjPtr<RndAnimatable> mSwagJack2BarP2ToP1Anim; // 0xd0
-    ObjPtr<RndAnimatable> mSwagJack2BarP1ToP2Anim; // 0xe4
-    bool mGoofy; // 0xf8
+    ObjPtr<RhythmBattlePlayer> mPlayerTwo; // 0x2c
+    ObjPtr<RndTransformable> mBoxyLeadHeadTrans; // 0x38
+    ObjPtr<RndAnimatable> mIntroAnim; // 0x44
+    ObjPtr<RndAnimatable> mBattleEndAnim; // 0x50
+    ObjPtr<RndAnimatable> unk94; // 0x5c
+    ObjPtr<RndAnimatable> mSwagJack1BarP2ToP1Anim; // 0x68
+    ObjPtr<RndAnimatable> mSwagJack1BarP1ToP2Anim; // 0x74
+    ObjPtr<RndAnimatable> mSwagJack2BarP2ToP1Anim; // 0x80
+    ObjPtr<RndAnimatable> mSwagJack2BarP1ToP2Anim; // 0x8c
+    bool mGoofy; // 0x98
     /** "is this keep the beat, or just groove tech experience" */
-    bool mFullKTB; // 0xf9
-    bool mFinale; // 0xfa
-    bool mActive; // 0xfb
-    bool mIntroAnimStarted; // 0xfc
-    bool mIsGrooveMode; // 0xfd
-    bool mHalftimePlayed; // 0xfe
-    bool mAlmostOverPlayed; // 0xff
-    bool mBattleStarted; // 0x100
-    bool mBattleFinished; // 0x101
-    bool mPaused; // 0x102
-    float mStartBeat; // 0x104
-    float mEndBeat; // 0x108
-    float mMindControlIntensity; // 0x10c
-    float mMindControlTimer; // 0x110
-    float mHalftimeBeat; // 0x114
-    float mAlmostOverBeat; // 0x118
-    int mMoveKeyCount; // 0x11c
-    float unk120; // 0x120
-    int mSwagJackState; // 0x124 - RhythmBattleJackState
-    int mSwagJackCounter; // 0x128
-    Symbol mLeader; // 0x12c
-    FreestyleMoveRecorder *mMoveRecorder; // 0x130
-    std::vector<ArchiveSkeleton> mSkeletonHistory; // 0x134
-    int mJackCooldown; // 0x140
-    int mLastBeatTracked; // 0x144
-    int mFinaleSequenceTimer; // 0x148
-    int mFinalePhaseIndex; // 0x14c
-    std::vector<Symbol> mFinaleVOQueue; // 0x150
+    bool mFullKTB; // 0x99
+    bool mFinale; // 0x9a
+    bool mActive; // 0x9b
+    bool mIntroAnimStarted; // 0x9c
+    bool mIsGrooveMode; // 0x9d
+    bool mHalftimePlayed; // 0x9e
+    bool mAlmostOverPlayed; // 0x9f
+    bool mBattleStarted; // 0xa0
+    bool mBattleFinished; // 0xa1
+    bool mPaused; // 0xa2
+    float mStartBeat; // 0xa4
+    float mEndBeat; // 0xa8
+    float mMindControlIntensity; // 0xac
+    float mMindControlTimer; // 0xb0
+    float mHalftimeBeat; // 0xb4
+    float mAlmostOverBeat; // 0xb8
+    int mMoveKeyCount; // 0xbc
+    float unk120; // 0xc0
+    int mSwagJackState; // 0xc4 - RhythmBattleJackState
+    int mSwagJackCounter; // 0xc8
+    Symbol mLeader; // 0xcc
+    FreestyleMoveRecorder *mMoveRecorder; // 0xd0
+    std::vector<ArchiveSkeleton> mSkeletonHistory; // 0xd4
+    int mJackCooldown; // 0xe0
+    int mLastBeatTracked; // 0xe4
+    int mFinaleSequenceTimer; // 0xe8
+    int mFinalePhaseIndex; // 0xec
+    std::vector<Symbol> mFinaleVOQueue; // 0xf0
 };
 
 void SetJump(int, int);

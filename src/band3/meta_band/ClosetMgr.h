@@ -112,12 +112,12 @@ public:
     CharData *mPreviousCharacter; // 0x2c
     BandCharacter *mBandCharacter; // 0x30
     BandCharDesc *mBandCharDesc; // 0x34
-    BandCharDesc *unk3c; // 0x3c - preview desc
+    BandCharDesc *unk3c; // 0x38 - preview desc
     ClosetPanel *mCurrentClosetPanel; // 0x3c
     Symbol unk44;
     BandCharDesc::OutfitPiece *mCurrentOutfitPiece; // 0x44
     OutfitConfig *mCurrentOutfitConfig; // 0x48
-    AssetStore mAssetStore; // 0x50 (360: base+0x4c) - sizeof 0x4c
+    AssetStore mAssetStore; // 0x4c (360: base+0x4c) - sizeof 0x4c
     PatchDescriptor unk50;
     Symbol mReturnScreen; // 0xa0
     Symbol mGender; // 0xa4

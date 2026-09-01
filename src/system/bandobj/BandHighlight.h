@@ -44,12 +44,12 @@ public:
     Vector3 unk10c; // 0x140
     Vector3 unk118; // 0x150
     float unk124;
-    float mAnimDuration; // 0x128
-    BandLabel *mHelpTextLabel; // 0x12c
+    float mAnimDuration; // 0x164
+    BandLabel *mHelpTextLabel; // 0x168
     Vector3 unk130; // 0x16c
     Vector3 unk13c; // 0x17c
     RndTransformable *unk148; // 0x18c
-    std::vector<RndMat *> mMirrorMats; // 0x14c
+    std::vector<RndMat *> mMirrorMats; // 0x190
     UIComponent *unk154; // 0x19c
     int unk158; // 0x1a0
 };

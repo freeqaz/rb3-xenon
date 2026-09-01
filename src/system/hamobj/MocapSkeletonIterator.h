@@ -21,12 +21,12 @@ private:
 
     HamCharacter *mDancer; // 0x4c
     CharCameraInput mInput; // 0x50
-    int mStartFrame; // 0x24b0
-    int mEndFrame; // 0x24b4
+    int mStartFrame; // 0x24ac
+    int mEndFrame; // 0x24b0
     int mCurrentFrame;
     float mPrevFrame;
     int unk24c0;
-    Skeleton mSkeleton; // 0x24c4
-    float mSavedSeconds; // 0x2f98
-    Transform mSavedXfm; // 0x2f9c
+    Skeleton mSkeleton; // 0x24c0
+    float mSavedSeconds; // 0x2f94
+    Transform mSavedXfm; // 0x2f98
 };

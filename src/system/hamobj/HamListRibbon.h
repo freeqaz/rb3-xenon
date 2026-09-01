@@ -49,9 +49,9 @@ public:
         void Load(BinStreamRev &);
 
         ObjPtr<RndAnimatable> mScrollAnim; // 0x0
-        ObjPtr<RndAnimatable> mScrollActive; // 0x14
-        ObjPtr<RndAnimatable> mScrollFade; // 0x28
-        ObjPtr<RndAnimatable> mScrollFaded; // 0x3c
+        ObjPtr<RndAnimatable> mScrollActive; // 0xc
+        ObjPtr<RndAnimatable> mScrollFade; // 0x18
+        ObjPtr<RndAnimatable> mScrollFaded; // 0x24
     };
     HamListRibbon();
     // Hmx::Object
@@ -106,40 +106,40 @@ private:
     DataNode OnEnterBlacklightMode(const DataArray *);
     DataNode OnExitBlacklightMode(const DataArray *);
 
-    ScrollAnims mScrollAnims; // 0x1fc
+    ScrollAnims mScrollAnims; // 0x1dc
     /** "(Milo only) Draw as a test list?" */
-    bool mTestMode; // 0x24c
+    bool mTestMode; // 0x20c
     /** "(Milo only) If test_mode is on, how many to draw" */
-    int mTestNumDisplay; // 0x250
+    int mTestNumDisplay; // 0x210
     /** "(Milo only) If test_mode is on, which element is highlighted" */
-    int mTestSelectedIndex; // 0x254
+    int mTestSelectedIndex; // 0x214
     /** "How far apart elements should be spaced" */
-    float mSpacing; // 0x258
+    float mSpacing; // 0x218
     /** "Mode for animations" */
-    RibbonMode mMode; // 0x25c
+    RibbonMode mMode; // 0x21c
     /** "(Milo only) Test enter anim?" */
-    bool mTestEntering; // 0x260
+    bool mTestEntering; // 0x220
     /** "Minimum number of ribbons to show" */
-    int mPaddedSize; // 0x264
+    int mPaddedSize; // 0x224
     /** "Spacing between padded ribbons" */
-    float mPaddedSpacing; // 0x268
-    bool mSelectToggle; // 0x26c
-    ObjPtr<RndAnimatable> mSwellAnim; // 0x270
-    ObjPtr<RndAnimatable> mSlideAnim; // 0x284
-    ObjPtr<RndAnimatable> mSelectAnim; // 0x298
-    ObjPtr<RndAnimatable> mSelectToggleAnim; // 0x2ac
-    ObjPtr<RndAnimatable> mSelectInactiveAnim; // 0x2c0
-    ObjPtr<RndAnimatable> mSelectAllAnim; // 0x2d4
-    ObjPtr<RndAnimatable> mDisengageAnim; // 0x2e8
-    ObjPtr<RndAnimatable> mEnterAnim; // 0x2fc
+    float mPaddedSpacing; // 0x228
+    bool mSelectToggle; // 0x22c
+    ObjPtr<RndAnimatable> mSwellAnim; // 0x230
+    ObjPtr<RndAnimatable> mSlideAnim; // 0x23c
+    ObjPtr<RndAnimatable> mSelectAnim; // 0x248
+    ObjPtr<RndAnimatable> mSelectToggleAnim; // 0x254
+    ObjPtr<RndAnimatable> mSelectInactiveAnim; // 0x260
+    ObjPtr<RndAnimatable> mSelectAllAnim; // 0x26c
+    ObjPtr<RndAnimatable> mDisengageAnim; // 0x278
+    ObjPtr<RndAnimatable> mEnterAnim; // 0x284
     /** "Where the label goes" */
-    ObjPtr<HamLabel> mLabelPlaceholder; // 0x310
-    ObjPtrVec<Flow> mHighlightSounds; // 0x324
-    ObjPtrVec<Flow> mSelectSounds; // 0x340
+    ObjPtr<HamLabel> mLabelPlaceholder; // 0x290
+    ObjPtrVec<Flow> mHighlightSounds; // 0x29c
+    ObjPtrVec<Flow> mSelectSounds; // 0x2b8
     /** "Flow to play on enter" */
-    ObjPtr<Flow> mEnterFlow; // 0x35c
-    ObjPtr<Sound> mSlideSound; // 0x370
-    ObjPtr<RndAnimatable> mSlideSoundAnim; // 0x384
-    ObjPtr<Sound> mScrollSound; // 0x398
-    ObjPtr<RndAnimatable> mScrollSoundAnim; // 0x3ac
+    ObjPtr<Flow> mEnterFlow; // 0x2d4
+    ObjPtr<Sound> mSlideSound; // 0x2e0
+    ObjPtr<RndAnimatable> mSlideSoundAnim; // 0x2ec
+    ObjPtr<Sound> mScrollSound; // 0x2f8
+    ObjPtr<RndAnimatable> mScrollSoundAnim; // 0x304
 };

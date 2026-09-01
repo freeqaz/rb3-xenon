@@ -10,7 +10,7 @@ public:
     virtual void EnumerateRankRange(int, int);
     virtual void GetStats();
 
-    Symbol mGoal; // 0x84
+    Symbol mGoal; // 0xa0
 };
 
 class PlayerCampaignCareerLeaderboard : public PlayerLeaderboard {
@@ -23,6 +23,6 @@ public:
 
     void SetScoreType(ScoreType);
 
-    ScoreType mScoreType; // 0x84
-    bool mUseDLC; // 0x88
+    ScoreType mScoreType; // 0xa0
+    bool mUseDLC; // 0xa4
 };

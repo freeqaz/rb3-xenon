@@ -218,40 +218,40 @@ protected:
     // the vec form later; RB3 retail (and the rb3-Wii oracle) use the single-
     // pointer form, which shrinks Character by 0x20 and shifts every member
     // after the shadow groups down toward the retail offsets.
-    ObjVector<Lod> mLods; // 0x1fc
-    int mLastLod; // 0x20c
+    ObjVector<Lod> mLods; // 0x1dc
+    int mLastLod; // 0x1ec
     /** "Forces LOD, kLODPerFrame is normal behavior of picking per frame,
         the others force the lod (0 is highest res lod, 2 is lowest res lod)" */
-    LODType mForceLod; // 0x210
+    LODType mForceLod; // 0x1f0
     /** "Group containing shadow geometry" */
-    ObjPtr<RndGroup> mShadow; // 0x214
+    ObjPtr<RndGroup> mShadow; // 0x1f4
     /** "translucency group to show independent of lod. Drawables in it are
         guaranteed to be drawn last." */
-    ObjPtr<RndGroup> mTransGroup; // 0x220
+    ObjPtr<RndGroup> mTransGroup; // 0x200
     CharDriver *mDriver; // 0x20c
     /** "Whether this character should be self-shadowed." */
-    bool mSelfShadow; // 0x230
+    bool mSelfShadow; // 0x210
     /** "Does the character have a spot-light cutout?" */
-    bool mSpotCutout; // 0x231
+    bool mSpotCutout; // 0x211
     /** "Does the character render a floor shadow?" */
-    bool mFloorShadow; // 0x232
+    bool mFloorShadow; // 0x212
     /** "Base for bounding sphere, such as bone_pelvis.mesh" */
-    ObjOwnerPtr<RndTransformable> mSphereBase; // 0x234
+    ObjOwnerPtr<RndTransformable> mSphereBase; // 0x214
     /** "bounding sphere for the character, fixed" */
-    Sphere mBounding; // 0x248
-    std::vector<ShadowBone *> mShadowBones; // 0x25c
-    PollState mPollState; // 0x268
+    Sphere mBounding; // 0x220
+    std::vector<ShadowBone *> mShadowBones; // 0x234
+    PollState mPollState; // 0x240
     /** "Test Character by animating it" */
-    CharacterTest *mTest; // 0x26c
+    CharacterTest *mTest; // 0x244
     /** "if true, is frozen in place, no polling happens" */
-    bool mFrozen; // 0x270
-    DrawMode mDrawMode; // 0x274
+    bool mFrozen; // 0x248
+    DrawMode mDrawMode; // 0x24c
     bool mTeleported; // 0x250
     /** "select an interest object here and select 'force_interest' below
         to force the character to look at it." */
-    Symbol mInterestToForce; // 0x27c
-    ObjPtr<RndEnviron> unk2a0; // 0x280
-    Vector3 *unk2b4; // 0x294
+    Symbol mInterestToForce; // 0x254
+    ObjPtr<RndEnviron> unk2a0; // 0x258
+    Vector3 *unk2b4; // 0x264
     // NOTE: DC3 has a `DrawPtrVec mShowableProps` (showable_props) and a
     // `bool mDebugDrawInterestObjects` here. RB3 retail has NEITHER: the
     // "showable_props" / "prop_N_showing" / "debug_draw_interest_objects"

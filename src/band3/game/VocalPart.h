@@ -106,20 +106,20 @@ public:
     float unk54;
     int unk58;
     const VocalPhrase *mThisPhrase; // 0x60
-    int mPhraseValue; // 0x60
-    float mSlop; // 0x64
-    float mPitchSigma; // 0x68
-    float mPitchMaximumDistance; // 0x6c
-    float mPitchHitMultiplier; // 0x70
-    float mNonPitchHitMultiplier; // 0x74
-    float mShortNoteThresh; // 0x78
-    float mShortNoteMult; // 0x7c
-    float mNoteLengthFactor; // 0x80
+    int mPhraseValue; // 0x64
+    float mSlop; // 0x68
+    float mPitchSigma; // 0x6c
+    float mPitchMaximumDistance; // 0x70
+    float mPitchHitMultiplier; // 0x74
+    float mNonPitchHitMultiplier; // 0x78
+    float mShortNoteThresh; // 0x7c
+    float mShortNoteMult; // 0x80
+    float mNoteLengthFactor; // 0x84
     float unk84;
     int unk88;
     int mSpotlightPhraseID; // 0x90
-    float mNonPitchEasyMultiplier; // 0x90
-    float mPhraseScoreCapGrowth; // 0x94
+    float mNonPitchEasyMultiplier; // 0x94
+    float mPhraseScoreCapGrowth; // 0x98
     int unk98;
     float unk9c;
     float unka0;

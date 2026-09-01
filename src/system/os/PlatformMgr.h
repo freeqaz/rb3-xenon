@@ -225,7 +225,7 @@ public:
     // (0x68), so this costs no sizeof change. The true retail offset is still UNKNOWN —
     // SetDiskError is not identified in the retail binary, so this is a placement of
     // convenience, not ground truth.
-    DiskError mDiskError;   // 0x64 (placeholder home; NOT verified against retail)
+    DiskError mDiskError;   // 0x40 (placeholder home; NOT verified against retail)
     void RegionInit();
     void PreInit();
     DWORD

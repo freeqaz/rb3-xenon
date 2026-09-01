@@ -28,6 +28,6 @@ public:
     RndDir *GetFreeSmasherPlate(TrackInstrument);
     void ReleaseSmasherPlate(RndDir *);
 
-    ObjPtr<ObjectDir> unk1c; // 0x1c
+    ObjPtr<ObjectDir> unk1c; // 0x28
     std::vector<SmasherPlateInfo> unk28; // 0x34
 };

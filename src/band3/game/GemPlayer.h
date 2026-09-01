@@ -457,54 +457,54 @@ public:
 
     const SongPos &GetSongPos() const { return mMatcher->mSongPos; }
 
-    Performer *mBandPerformer; // 0x2cc
-    GemStatus *mGemStatus; // 0x2d0
-    DataArray *mDrumSlotWeights; // 0x2d4
-    Symbol mDrumSlotWeightMapping; // 0x2d8
-    DataArray *mDrumCymbalPointBonus; // 0x2dc
-    unsigned int mGameCymbalLanes; // 0x2e0
-    std::vector<HeldNote> mHeldNotes; // 0x2e4
-    bool mFill; // 0x2ec
-    bool mForceFill; // 0x2ed
-    int mLastFillHitTick; // 0x2f0
+    Performer *mBandPerformer; // 0x304
+    GemStatus *mGemStatus; // 0x308
+    DataArray *mDrumSlotWeights; // 0x30c
+    Symbol mDrumSlotWeightMapping; // 0x310
+    DataArray *mDrumCymbalPointBonus; // 0x314
+    unsigned int mGameCymbalLanes; // 0x318
+    std::vector<HeldNote> mHeldNotes; // 0x31c
+    bool mFill; // 0x328
+    bool mForceFill; // 0x329
+    int mLastFillHitTick; // 0x32c
     int unk2f4;
-    int mNumFillSwings; // 0x2f8
-    int mNumCrashFillReadyHits; // 0x2fc
-    bool mUseFills; // 0x300
+    int mNumFillSwings; // 0x334
+    int mNumCrashFillReadyHits; // 0x338
+    bool mUseFills; // 0x33c
     bool unk301;
-    std::pair<int, int> mTrillSlots; // 0x304
+    std::pair<int, int> mTrillSlots; // 0x340
     int unk30c;
     int unk310;
     bool unk314;
     bool unk315;
     bool unk316;
-    int mCodaPoints; // 0x318
-    float mLastCodaSwing[6]; // 0x31c
-    float mCodaPointRate; // 0x334
-    float mCodaMashPeriod; // 0x338
-    bool mMercurySwitchEnabled; // 0x33c
+    int mCodaPoints; // 0x354
+    float mLastCodaSwing[6]; // 0x358
+    float mCodaPointRate; // 0x370
+    float mCodaMashPeriod; // 0x374
+    bool mMercurySwitchEnabled; // 0x378
     bool unk33d;
-    bool mWhammyOverdriveEnabled; // 0x33e
-    RndOverlay *mOverlay; // 0x340
-    RndOverlay *mGuitarOverlay; // 0x344
+    bool mWhammyOverdriveEnabled; // 0x37a
+    RndOverlay *mOverlay; // 0x37c
+    RndOverlay *mGuitarOverlay; // 0x380
     bool unk348;
-    float mWhammySpeedThreshold; // 0x34c
-    float mWhammySpeedTimeout; // 0x350
+    float mWhammySpeedThreshold; // 0x388
+    float mWhammySpeedTimeout; // 0x38c
     float unk354;
     float unk358;
     float unk35c;
-    float mLastTimeWhammyVelWasHigh; // 0x360
+    float mLastTimeWhammyVelWasHigh; // 0x39c
     float unk364;
-    GemTrack *mTrack; // 0x368
+    GemTrack *mTrack; // 0x3a4
     BeatMatchController *mController; // 0x3a8
     Symbol mControllerType; // 0x3ac
     BeatMatcher *mMatcher; // 0x3b0
-    float mSyncOffset; // 0x378
+    float mSyncOffset; // 0x3b4
     GuitarFx *mGuitarFx; // 0x3b8
-    KeysFx *mKeysFx; // 0x380
-    int mFxPos; // 0x384
+    KeysFx *mKeysFx; // 0x3bc
+    int mFxPos; // 0x3c0
     bool unk388;
-    FxSendPitchShift *mPitchShift; // 0x38c
+    FxSendPitchShift *mPitchShift; // 0x3c8
     float unk390;
     float unk394;
     int unk398;
@@ -514,27 +514,27 @@ public:
     // these 16 bytes are absent in the retail layout — verified against the
     // retail disassembly (member-delta R1). Everything below is therefore 0x10
     // lower than the old Wii-derived comments.
-    float unk3ac; // 0x3a0
-    float mAutoMissSoundTimeoutMs; // 0x3a4
-    float mFirstGemMs; // 0x3a8
-    bool mAnnoyingMode; // 0x3ac
-    bool unk3b9; // 0x3ad
-    int unk3bc; // 0x3b0
-    int unk3c0; // 0x3b4
-    int mAutoMissSoundTimeoutGems; // 0x3b8
-    int mAutoMissSoundTimeoutGemsRemote; // 0x3bc
-    StatCollector mStatCollector; // 0x3c0
+    float unk3ac; // 0x3d8
+    float mAutoMissSoundTimeoutMs; // 0x3dc
+    float mFirstGemMs; // 0x3e0
+    bool mAnnoyingMode; // 0x3e4
+    bool unk3b9; // 0x3e5
+    int unk3bc; // 0x3e8
+    int unk3c0; // 0x3ec
+    int mAutoMissSoundTimeoutGems; // 0x3f0
+    int mAutoMissSoundTimeoutGemsRemote; // 0x3f4
+    StatCollector mStatCollector; // 0x3f8
     bool unk3d8;
     int unk3dc;
     bool unk3e0;
     bool unk3e1;
-    int mSectionStartHitCount; // 0x3e4
-    int mSectionStartMissCount; // 0x3e8
-    float mSectionStartScore; // 0x3ec
-    int mSustainsReleased; // 0x3f0
-    int mSustainHeld; // 0x3f4
-    int mSustainsReleasedBeforePopup; // 0x3f8
-    std::vector<UpcomingFretRelease> mUpcomingFretReleases; // 0x3fc
+    int mSectionStartHitCount; // 0x410
+    int mSectionStartMissCount; // 0x414
+    float mSectionStartScore; // 0x418
+    int mSustainsReleased; // 0x41c
+    int mSustainHeld; // 0x420
+    int mSustainsReleasedBeforePopup; // 0x424
+    std::vector<UpcomingFretRelease> mUpcomingFretReleases; // 0x428
     int unk404;
     bool unk408;
 };

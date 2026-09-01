@@ -106,7 +106,7 @@ public:
     NEW_OBJ(CharacterCreatorPanel);
     static void Init() { REGISTER_OBJ_FACTORY(CharacterCreatorPanel); }
 
-    CharCreatorState mCharCreatorState; // 0x4C
+    CharCreatorState mCharCreatorState; // 0x54
     // Retail keys this with an STLport hash_map, not the Wii build's std::map:
     // ??0CharacterCreatorPanel@@QAA@XZ does `addi r3, r30, 0x58` then
     // `bl ??0?$hash_map@...@stlpmtx_std@@QAA@XZ` (retail 0x8255D480, body
@@ -138,8 +138,8 @@ public:
     UIGridProvider *mFaceOptionsGridProvider; // 0x90
     EyebrowsProvider *mEyebrowsProvider; // 0x94
     UIGridProvider *mEyebrowsGridProvider; // 0x98
-    Symbol mGender; // 0x90
-    Symbol mOutfit; // 0x94
-    bool mGenderChanged; // 0x98
-    bool mWaitingToFinalize; // 0x99
+    Symbol mGender; // 0x9c
+    Symbol mOutfit; // 0xa0
+    bool mGenderChanged; // 0xa4
+    bool mWaitingToFinalize; // 0xa5
 };

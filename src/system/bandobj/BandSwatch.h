@@ -33,5 +33,5 @@ public:
     static ColorPalette *sDummyPalette;
 
     std::vector<UIColor *> unk1e8; // 0x23c
-    ObjPtr<ColorPalette> mColorPalette; // 0x1f0
+    ObjPtr<ColorPalette> mColorPalette; // 0x248
 };

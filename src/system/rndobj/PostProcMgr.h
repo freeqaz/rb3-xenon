@@ -40,8 +40,8 @@ protected:
     /** "Primary postproc to use.  When blending,
         the blend result will be written into this postproc." */
     ObjPtr<RndPostProc> mSelectedPostProc; // 0x8
-    RndPostProc *mBlendFromPostProc; // 0x1c - scratch postproc for blend source state
-    ObjPtr<RndPostProc> mBlendToPostProc; // 0x20 - target postproc for current blend
-    float mBlendDuration; // 0x34
-    float mBlendStartTime; // 0x38
+    RndPostProc *mBlendFromPostProc; // 0x14 - scratch postproc for blend source state
+    ObjPtr<RndPostProc> mBlendToPostProc; // 0x18 - target postproc for current blend
+    float mBlendDuration; // 0x24
+    float mBlendStartTime; // 0x28
 };

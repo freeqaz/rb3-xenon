@@ -97,16 +97,16 @@ private:
 
     DirLoaderStateFunc mState; // 0x20
     class String mRoot; // 0x28
-    bool mOwnStream; // 0x30
+    bool mOwnStream; // 0x34
     BinStream *mStream; // 0x38
     int mRev; // 0x3c
     int mCounter; // 0x40
-    ObjPtrList<Hmx::Object> mObjects; // 0x40
-    Callback *mCallback; // 0x54
-    class ObjectDir *mDir; // 0x58
-    bool mPostLoad; // 0x5c
-    bool mLoadDir; // 0x5d
-    bool mDeleteSelf; // 0x5e
+    ObjPtrList<Hmx::Object> mObjects; // 0x44
+    Callback *mCallback; // 0x58
+    class ObjectDir *mDir; // 0x5c
+    bool mPostLoad; // 0x60
+    bool mLoadDir; // 0x61
+    bool mDeleteSelf; // 0x62
     const char *mProxyName; // 0x64 (compiler-verified)
 #ifndef HX_NATIVE
     // 0x68 (compiler-verified). RETAIL-ADJUDICATED, not inferred from the header
@@ -123,7 +123,7 @@ private:
     Timer mTimer; // 0x70 (compiler-verified)
     bool mAccessed;
     bool mForceFailCallback;
-    bool mHasEditorDir; // 0x9a - gates ReadEditorDirDead in LoadObjs
+    bool mHasEditorDir; // 0xa2 - gates ReadEditorDirDead in LoadObjs
     bool mSubDir;
 #ifdef HX_NATIVE
     // mParentDir + the ObjOwnerPtr-owning mProxyDir below are a native-port-only

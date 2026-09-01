@@ -48,8 +48,8 @@ private:
 
         Symbol mName; // 0x0
         String mFile; // 0x4
-        NUI_SPEECH_GRAMMAR mGrammar; // 0x8
-        bool mLoaded; // 0x14
+        NUI_SPEECH_GRAMMAR mGrammar; // 0x10
+        bool mLoaded; // 0x18
     };
 
     bool GetSpeechLanguage(NUI_SPEECH_LANGUAGE &) const;

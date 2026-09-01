@@ -39,5 +39,5 @@ private:
     CacheIDXbox *mCacheIDXbox; // 0x44
     XCONTENT_DATA mContentData; // 0x48
     String mStrCacheName; // 0x17c
-    String mUTF8CacheDescription; // 0x184
+    String mUTF8CacheDescription; // 0x188
 };

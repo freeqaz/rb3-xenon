@@ -50,14 +50,14 @@ public:
     ObjPtr<RndTransformable> mFirstSpot; // 0x34
     ObjPtr<RndTransformable> mSecondSpot; // 0x40
     std::vector<Vector3> unk4c; // 0x4c
-    std::vector<Vector3> unk54; // 0x54
-    std::vector<KeyboardKey> unk5c; // 0x5c
-    int unk64; // 0x64
-    int unk68; // 0x68
-    std::vector<int> unk6c; // 0x6c
-    int unk74; // 0x74
-    bool unk78; // 0x78
-    ObjPtr<Character> unk7c; // 0x7c
-    float unk88; // 0x88
-    bool mIsRightHand; // 0x8c
+    std::vector<Vector3> unk54; // 0x58
+    std::vector<KeyboardKey> unk5c; // 0x64
+    int unk64; // 0x70
+    int unk68; // 0x74
+    std::vector<int> unk6c; // 0x78
+    int unk74; // 0x84
+    bool unk78; // 0x88
+    ObjPtr<Character> unk7c; // 0x8c
+    float unk88; // 0x98
+    bool mIsRightHand; // 0x9c
 };

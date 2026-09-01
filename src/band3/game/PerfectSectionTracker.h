@@ -59,10 +59,10 @@ public:
     void HandleInExtent(float, int);
     bool HandleExitExtent(float, int, bool);
 
-    const char *unk58; // 0x58
-    std::map<TrackType, PlayerStreakData> unk5c; // 0x5c
-    std::map<TrackType, bool> unk74; // 0x74
-    std::map<TrackType, int> unk8c; // 0x8c
+    const char *unk58; // 0x64
+    std::map<TrackType, PlayerStreakData> unk5c; // 0x68
+    std::map<TrackType, bool> unk74; // 0x80
+    std::map<TrackType, int> unk8c; // 0x98
     std::vector<SectionData> mSectionData; // 0xb0
     int unkac;
     float unkb0;

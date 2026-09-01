@@ -41,32 +41,32 @@ protected:
     void ExposeMesh(void);
     void SetActive(bool);
 
-    float mLastTime; // 0x48
+    float mLastTime; // 0x2c
     /** "Number of sides, the more sides, the more cylindrical it is".
         Ranges from 3 to 20. */
-    int mNumSides; // 0x4c
-    RndMesh *mMesh; // 0x50
+    int mNumSides; // 0x30
+    RndMesh *mMesh; // 0x34
     /** "Material to use" */
-    ObjPtr<RndMat> mMat; // 0x54
+    ObjPtr<RndMat> mMat; // 0x38
     /** "Width of the tube" */
-    float mWidth; // 0x68
-    int mDirty; // 0x6c
-    bool mActive; // 0x70
-    Keys<Transform, Transform> mTransforms; // 0x74
+    float mWidth; // 0x44
+    int mDirty; // 0x48
+    bool mActive; // 0x4c
+    Keys<Transform, Transform> mTransforms; // 0x50
     /** "Number of segments it's built out of". Ranges from 0 to 1000. */
-    int mNumSegments; // 0x80
+    int mNumSegments; // 0x5c
     /** "The ribbon ends after this many seconds.
         Each segment gets an equal fraction of this time".
         Ranges from 1e-3 to 10. */
-    float mDecay; // 0x84
+    float mDecay; // 0x60
     /** "Which Trans to follow" */
-    ObjPtr<RndTransformable> mFollowA; // 0x88
+    ObjPtr<RndTransformable> mFollowA; // 0x64
     /** "Another Trans to follow" */
-    ObjPtr<RndTransformable> mFollowB; // 0x9c
+    ObjPtr<RndTransformable> mFollowB; // 0x70
     /** "Interpolates the follow point between [follow_a] and [follow_b],
         so for example .5 gives you the average of those two positions".
         Ranges from 0 to 1. */
-    float mFollowWeight; // 0xb0
+    float mFollowWeight; // 0x7c
     /** "Tapers the end if true, otherwise is squared off" */
-    bool mTaper; // 0xb4
+    bool mTaper; // 0x80
 };

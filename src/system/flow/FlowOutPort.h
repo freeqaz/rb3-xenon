@@ -30,11 +30,11 @@ protected:
     void UpdatePortMapping();
 
     /** "Name to show when encapsulated" */
-    String mLabel; // 0x5c
+    String mLabel; // 0x60
     /** "do not wait around for the label to finish?" */
-    bool mImmediateRelease; // 0x64
+    bool mImmediateRelease; // 0x6c
     /** "When true, we request the label to stop instead of running it" */
-    bool mStop; // 0x65
+    bool mStop; // 0x6d
     /** "Is this port exposed for possible linking?" */
-    bool mExposed; // 0x66
+    bool mExposed; // 0x6e
 };

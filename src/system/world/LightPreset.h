@@ -86,7 +86,7 @@ public:
         unsigned char mFlags; // 0x8
         ObjPtr<RndTransformable> mTarget; // 0xc
         Hmx::Quat mRotation; // 0x18
-        Hmx::Matrix3 mRotationMatrix; // 0x30
+        Hmx::Matrix3 mRotationMatrix; // 0x28
     };
 
     struct SpotlightDrawerEntry {

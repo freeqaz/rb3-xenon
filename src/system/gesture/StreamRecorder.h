@@ -75,22 +75,22 @@ protected:
     DataNode OnStartRecording(DataArray *);
     DataNode OnReset(DataArray *);
 
-    ObjPtr<RndDir> mInputDir; // 0x4c
-    ObjPtr<RndTexRenderer> mTexRenderer; // 0x60
-    ObjPtrVec<RndTex> mBuffers; // 0x74
-    ObjPtr<RndMat> mOutputMat; // 0x90
-    int mMaxFrames; // 0xa4
-    int mOutputWidth; // 0xa8
-    int mOutputHeight; // 0xac
-    int mFramesRecorded; // 0xb0
+    ObjPtr<RndDir> mInputDir; // 0x30
+    ObjPtr<RndTexRenderer> mTexRenderer; // 0x3c
+    ObjPtrVec<RndTex> mBuffers; // 0x48
+    ObjPtr<RndMat> mOutputMat; // 0x64
+    int mMaxFrames; // 0x70
+    int mOutputWidth; // 0x74
+    int mOutputHeight; // 0x78
+    int mFramesRecorded; // 0x7c
     int unkb4;
-    int mDebugFrame; // 0xb8
-    int mPlaybackSpeed; // 0xbc - actually an enum StreamPlaybackSpeed
-    float mRecordingPos; // 0xc0
-    float mPlaybackPos; // 0xc4
-    float mPausedPos; // 0xc8
-    std::list<int> mCompressQueue; // 0xcc
-    bool mUseAlpha; // 0xd4
-    int mStopDelay; // 0xd8
-    int mStopTimer; // 0xdc
+    int mDebugFrame; // 0x84
+    int mPlaybackSpeed; // 0x88 - actually an enum StreamPlaybackSpeed
+    float mRecordingPos; // 0x8c
+    float mPlaybackPos; // 0x90
+    float mPausedPos; // 0x94
+    std::list<int> mCompressQueue; // 0x98
+    bool mUseAlpha; // 0xa0
+    int mStopDelay; // 0xa4
+    int mStopTimer; // 0xa8
 };

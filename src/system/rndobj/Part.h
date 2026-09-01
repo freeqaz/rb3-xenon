@@ -134,7 +134,7 @@ public:
     /** "Attracts/repulses particles" */
     ObjPtr<RndTransformable> mAttractor; // 0x0
     /** "Positive value means attract particles, negative means repulse" */
-    float mStrength; // 0x14
+    float mStrength; // 0xc
 };
 
 /** "A ParticleSys object generates, animates, and draws large
@@ -327,57 +327,57 @@ protected:
 
     Type mType; // 0xf0
     /** "maximum number of particles". Ranges from 0 to 3072. */
-    int mMaxParticles; // 0x11c
-    RndParticle *mPersistentParticles; // 0x120
+    int mMaxParticles; // 0xf4
+    RndParticle *mPersistentParticles; // 0xf8
     RndParticle *mFreeParticles; // 0xfc
     RndParticle *mActiveParticles; // 0x100
     int mNumActive; // 0x104
-    float mEmitCount; // 0x130
+    float mEmitCount; // 0x108
     bool mFrameDrive; // 0x10c
     float mLastFrame;
     int mDrawCount;
     /** "Freezes the particle motion when they are offscreen, CPU savings" */
-    bool mPauseOffscreen; // 0x140
+    bool mPauseOffscreen; // 0x118
     float mPausedTime;
-    Vector2 mBubblePeriod; // 0x148
-    Vector2 mBubbleSize; // 0x150
+    Vector2 mBubblePeriod; // 0x120
+    Vector2 mBubbleSize; // 0x128
     /** "Frame range of particle life." */
-    Vector2 mLife; // 0x158
+    Vector2 mLife; // 0x130
     /** "Min point and max point, in object coordinates,
         of box region that particles are emitted from." */
-    Vector3 mBoxExtent1; // 0x160
+    Vector3 mBoxExtent1; // 0x138
     /** "Min point and max point, in object coordinates,
         of box region that particles are emitted from." */
-    Vector3 mBoxExtent2; // 0x170
+    Vector3 mBoxExtent2; // 0x148
     /** "Speed range, in world units per frame, of particles." */
-    Vector2 mSpeed; // 0x180
+    Vector2 mSpeed; // 0x158
     Vector2 mPitch; // 0x160
-    Vector2 mYaw; // 0x190
+    Vector2 mYaw; // 0x168
     /** "Frame range to generate particles." */
-    Vector2 mEmitRate; // 0x198
+    Vector2 mEmitRate; // 0x170
     /** "Size range, in world units, of particles." */
-    Vector2 mStartSize; // 0x1a0
+    Vector2 mStartSize; // 0x178
     /** "Change in size of particles, in world units." */
-    Vector2 mDeltaSize; // 0x1a8
+    Vector2 mDeltaSize; // 0x180
     /** "Random color ranges for start and end color of particles." */
-    Hmx::Color mStartColorLow; // 0x1b0
+    Hmx::Color mStartColorLow; // 0x188
     /** "Random color ranges for start and end color of particles." */
-    Hmx::Color mStartColorHigh; // 0x1c0
+    Hmx::Color mStartColorHigh; // 0x198
     /** "Random color ranges for start and end color of particles." */
-    Hmx::Color mEndColorLow; // 0x1d0
+    Hmx::Color mEndColorLow; // 0x1a8
     /** "Random color ranges for start and end color of particles." */
-    Hmx::Color mEndColorHigh; // 0x1e0
-    ObjPtr<RndMesh> mMeshEmitter; // 0x1f0
+    Hmx::Color mEndColorHigh; // 0x1b8
+    ObjPtr<RndMesh> mMeshEmitter; // 0x1c8
     /** "material for particle system" */
-    ObjPtr<RndMat> mMat; // 0x204
+    ObjPtr<RndMat> mMat; // 0x1d4
     bool mPreserveParticles; // 0x1e0
-    Transform mRelativeXfm; // 0x21c
-    Transform mLastWorldXfm; // 0x25c
+    Transform mRelativeXfm; // 0x1e4
+    Transform mLastWorldXfm; // 0x224
     /** "If [motion_parent] is set, is amount to make movement relative to it,
         0-1, 1 being fully relative to the parent" */
-    float mRelativeMotion; // 0x29c
+    float mRelativeMotion; // 0x264
     /** "Makes particles move relative to this Trans" */
-    ObjOwnerPtr<RndTransformable> mMotionParent; // 0x2a0
+    ObjOwnerPtr<RndTransformable> mMotionParent; // 0x268
 #ifdef HX_NATIVE
     // DC3 (newer engine) caches the motion-parent's per-frame world-space delta
     // to feed birth-momentum. Retail RB3 has no birth momentum, so this Vector3
@@ -389,36 +389,36 @@ protected:
 #endif
     /** "Specify a collide plane to reflect particles.
         Used to bounce particles off surfaces." */
-    ObjPtr<RndTransformable> mBounce; // 0x2c4
+    ObjPtr<RndTransformable> mBounce; // 0x274
     /** "Force direction in world coordinates,
         in units per frame added to each particle's velocity.
         Can be used for gravity." */
-    Vector3 mForceDir; // 0x2d8
-    float mDrag; // 0x2e8
-    bool mBubble; // 0x2ec
+    Vector3 mForceDir; // 0x280
+    float mDrag; // 0x290
+    bool mBubble; // 0x294
     /** "Spawns particles on enter, so we start out with particles there" */
-    bool mFastForward; // 0x2ed
+    bool mFastForward; // 0x295
     bool mNeedForward; // 0x296
-    bool mRotate; // 0x2ef
-    Vector2 mRPM; // 0x2f0
-    float mRPMDrag; // 0x2f8
-    bool mRandomDirection; // 0x2fc
-    Vector2 mStartOffset; // 0x300
-    Vector2 mEndOffset; // 0x308
-    bool mAlignWithVelocity; // 0x310
-    bool mStretchWithVelocity; // 0x311
-    bool mConstantArea; // 0x312
-    bool mPerspectiveStretch; // 0x313
-    float mStretchScale; // 0x314
+    bool mRotate; // 0x297
+    Vector2 mRPM; // 0x298
+    float mRPMDrag; // 0x2a0
+    bool mRandomDirection; // 0x2a4
+    Vector2 mStartOffset; // 0x2a8
+    Vector2 mEndOffset; // 0x2b0
+    bool mAlignWithVelocity; // 0x2b8
+    bool mStretchWithVelocity; // 0x2b9
+    bool mConstantArea; // 0x2ba
+    bool mPerspectiveStretch; // 0x2bb
+    float mStretchScale; // 0x2bc
     /** "Ratio of screen height to width" */
-    float mScreenAspect; // 0x318
-    int mSubSamples; // 0x31c
-    Transform mSubSampleXfm; // 0x320
-    float mGrowRatio; // 0x360
-    float mShrinkRatio; // 0x364
-    float mMidColorRatio; // 0x368
-    Hmx::Color mMidColorLow; // 0x36c
-    Hmx::Color mMidColorHigh; // 0x37c
+    float mScreenAspect; // 0x2c0
+    int mSubSamples; // 0x2c4
+    Transform mSubSampleXfm; // 0x2c8
+    float mGrowRatio; // 0x308
+    float mShrinkRatio; // 0x30c
+    float mMidColorRatio; // 0x310
+    Hmx::Color mMidColorLow; // 0x314
+    Hmx::Color mMidColorHigh; // 0x324
 #ifdef HX_NATIVE
     // DC3 (newer engine) birth-momentum feature. Retail RB3 has no birth
     // momentum, so these two fields (bool padded to 4 + float = +0x08) do NOT
@@ -435,13 +435,13 @@ protected:
         relative to the motion parent. Fancy property must be true." */
     float mBirthMomentumAmount; // 0x390
 #endif
-    std::vector<Burst> mBursts; // 0x394
-    int mMaxBurst; // 0x3a0
-    float mTimeTillBurst; // 0x3a4
-    Vector2 mBurstInterval; // 0x3a8
+    std::vector<Burst> mBursts; // 0x334
+    int mMaxBurst; // 0x340
+    float mTimeTillBurst; // 0x344
+    Vector2 mBurstInterval; // 0x348
     Vector2 mBurstPeak; // 0x350
-    Vector2 mBurstLength; // 0x3b8
-    int mExplicitParts; // 0x3c0
+    Vector2 mBurstLength; // 0x358
+    int mExplicitParts; // 0x360
     float mElapsedTime; // 0x364
 #ifdef HX_NATIVE
     // DC3 (newer engine) UV-tile-animation + particle-attractor block. Retail RB3

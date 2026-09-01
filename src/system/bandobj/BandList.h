@@ -102,29 +102,29 @@ public:
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
-    int mBandListRev; // 0x1e8
-    std::map<int, AnimState> mAnimStates; // 0x1ec
-    std::map<int, float> mStartTimes; // 0x204
-    std::map<int, float> mFrames; // 0x21c
-    std::map<int, RevealState> mRevealStates; // 0x234
-    std::map<int, float> mRevealStartTimes; // 0x24c
-    std::map<int, bool> unk264; // 0x264
-    ObjPtr<RndTransAnim> mFocusAnim; // 0x27c
-    ObjPtr<RndTransAnim> mPulseAnim; // 0x288
-    ObjPtr<RndTransAnim> mRevealAnim; // 0x294
-    ObjPtr<RndTransAnim> mConcealAnim; // 0x2a0
-    ObjPtr<Sequence> mRevealSound; // 0x2ac
-    ObjPtr<Sequence> mConcealSound; // 0x2b8
-    float mRevealSoundDelay; // 0x2c4
-    float mConcealSoundDelay; // 0x2c8
-    float mRevealStartDelay; // 0x2cc
-    float mRevealEntryDelay; // 0x2d0
-    float mRevealScale; // 0x2d4
-    float mConcealStartDelay; // 0x2d8
-    float mConcealEntryDelay; // 0x2dc
-    float mConcealScale; // 0x2e0
-    bool mAutoReveal; // 0x2e4
-    BandListState mBandListState; // 0x2e8
-    float mShouldbeRevealedTimeStamp; // 0x2ec
-    ObjVector<HighlightObject> mHighlightObjects; // 0x2f0
+    int mBandListRev; // 0x23c
+    std::map<int, AnimState> mAnimStates; // 0x240
+    std::map<int, float> mStartTimes; // 0x258
+    std::map<int, float> mFrames; // 0x270
+    std::map<int, RevealState> mRevealStates; // 0x288
+    std::map<int, float> mRevealStartTimes; // 0x2a0
+    std::map<int, bool> unk264; // 0x2b8
+    ObjPtr<RndTransAnim> mFocusAnim; // 0x2d0
+    ObjPtr<RndTransAnim> mPulseAnim; // 0x2dc
+    ObjPtr<RndTransAnim> mRevealAnim; // 0x2e8
+    ObjPtr<RndTransAnim> mConcealAnim; // 0x2f4
+    ObjPtr<Sequence> mRevealSound; // 0x300
+    ObjPtr<Sequence> mConcealSound; // 0x30c
+    float mRevealSoundDelay; // 0x318
+    float mConcealSoundDelay; // 0x31c
+    float mRevealStartDelay; // 0x320
+    float mRevealEntryDelay; // 0x324
+    float mRevealScale; // 0x328
+    float mConcealStartDelay; // 0x32c
+    float mConcealEntryDelay; // 0x330
+    float mConcealScale; // 0x334
+    bool mAutoReveal; // 0x338
+    BandListState mBandListState; // 0x33c
+    float mShouldbeRevealedTimeStamp; // 0x340
+    ObjVector<HighlightObject> mHighlightObjects; // 0x344
 };

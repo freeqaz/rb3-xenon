@@ -60,8 +60,8 @@ protected:
     static D3DVertexDeclaration *sMutableSkinnedVertexDecl;
 
     std::vector<Transform> unk190;
-    int mNumVerts; // 0x19c
-    int mNumFaces; // 0x1a0
+    int mNumVerts; // 0x15c
+    int mNumFaces; // 0x160
     VertexBufferData unk1a4;
     D3DResource *unk1ac;
     D3DResource *unk1b0;

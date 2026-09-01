@@ -41,12 +41,12 @@ protected:
     void OnTargetChange();
 
     /** "Allows you to target flows inside of proxies" */
-    FlowPtr<ObjectDir> mTargetDir; // 0x5c
+    FlowPtr<ObjectDir> mTargetDir; // 0x60
     /** "Flow to start or stop" */
-    FlowPtr<Flow> mTarget; // 0x7c
-    String mTargetName; // 0x9c
+    FlowPtr<Flow> mTarget; // 0x78
+    String mTargetName; // 0x90
     /** "Stop instead of starting the target flow?" */
-    bool mStop; // 0xa4
+    bool mStop; // 0x9c
     /** "If true, we don't track the running state of the target flow" */
-    bool mImmediateRelease; // 0xa5
+    bool mImmediateRelease; // 0x9d
 };

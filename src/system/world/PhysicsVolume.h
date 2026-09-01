@@ -105,26 +105,26 @@ protected:
     DataNode OnSetTangentialForce(const DataArray *);
     DataNode OnIterateOverlaps(const DataArray *);
 
-    ObjPtr<DetectionVolume> mDetectionVolume; // 0x10c
+    ObjPtr<DetectionVolume> mDetectionVolume; // 0xe4
     /** "Volume type generated from PhysicsVolume's transform" */
-    PhysicsVolumeType mShapeType; // 0x120
+    PhysicsVolumeType mShapeType; // 0xf0
     int mOverlapCount;
     Vector3 unk128;
     /** "Directional force applied to overlapping physics objects" */
-    Vector3 mDirectionalForce; // 0x138
+    Vector3 mDirectionalForce; // 0x108
     /** "Flattened planar tangential force applied to overlapping physics objects;
         y is forward/backward, x is outward/inward, z is upward/downward" */
-    Vector3 mTangentialForce; // 0x148
+    Vector3 mTangentialForce; // 0x118
     /** "Directional velocity set on overlapping physics objects" */
-    Vector3 mDirectionalVelocity; // 0x158
+    Vector3 mDirectionalVelocity; // 0x128
     /** "Radial force applied to overlapping physics objects" */
-    float mRadialForce; // 0x168
+    float mRadialForce; // 0x138
     /** "What type of collision meshes does this physics volume detect collision with?"
         Options are restricted to the enums that start with "kCollidePhysics". */
-    CollisionFilter mFilter; // 0x16c
+    CollisionFilter mFilter; // 0x13c
     /** "Are we active?" */
-    bool mActive; // 0x170
+    bool mActive; // 0x140
     /** "calls 'while_has_overlaps' handler while
         there are collision objects overlapping the volume" */
-    bool mReportOnOverlaps; // 0x171
+    bool mReportOnOverlaps; // 0x141
 };

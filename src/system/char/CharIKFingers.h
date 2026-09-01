@@ -29,9 +29,9 @@ public:
         Vector3 mTargetWorldPos; // 0x8
         Vector3 mRefWorldPos; // 0x18
         ObjPtr<RndTransformable> mFinger01; // 0x28
-        ObjPtr<RndTransformable> mFinger02; // 0x3c
-        ObjPtr<RndTransformable> mFinger03; // 0x50
-        ObjPtr<RndTransformable> mFingertip; // 0x64
+        ObjPtr<RndTransformable> mFinger02; // 0x34
+        ObjPtr<RndTransformable> mFinger03; // 0x40
+        ObjPtr<RndTransformable> mFingertip; // 0x4c
         float mDestFinger02Angle; // 0x58
         float mDestFinger03Angle; // 0x5c
         float mCurFinger02Angle; // 0x60
@@ -71,38 +71,38 @@ protected:
     void MoveFinger(FingerNum);
     void FixSingleFinger(RndTransformable *, RndTransformable *, RndTransformable *);
 
-    ObjPtr<RndTransformable> mHand; // 0x30
-    ObjPtr<RndTransformable> mForeArm; // 0x44
-    ObjPtr<RndTransformable> mUpperArm; // 0x58
-    int mBlendInFrames; // 0x6c
-    int mBlendOutFrames; // 0x70
-    bool mResetHandDest; // 0x74
-    bool mResetCurHandTrans; // 0x75
-    Transform mCurHandTrans; // 0x78
-    Transform mDestHandTrans; // 0xb8
-    float mFingerCurledLength; // 0xf8
-    Vector3 mDestForwardVector; // 0xfc
-    Vector3 mCurForwardVector; // 0x10c
+    ObjPtr<RndTransformable> mHand; // 0x28
+    ObjPtr<RndTransformable> mForeArm; // 0x34
+    ObjPtr<RndTransformable> mUpperArm; // 0x40
+    int mBlendInFrames; // 0x4c
+    int mBlendOutFrames; // 0x50
+    bool mResetHandDest; // 0x54
+    bool mResetCurHandTrans; // 0x55
+    Transform mCurHandTrans; // 0x58
+    Transform mDestHandTrans; // 0x98
+    float mFingerCurledLength; // 0xd8
+    Vector3 mDestForwardVector; // 0xdc
+    Vector3 mCurForwardVector; // 0xec
     /** "Starting hand offset from keyboard." */
-    Vector3 mHandKeyboardOffset; // 0x11c
-    Hmx::Matrix3 mtx; // 0x12c
+    Vector3 mHandKeyboardOffset; // 0xfc
+    Hmx::Matrix3 mtx; // 0x10c
     /** "how much to move forward when pinky or thumb is engaged" */
-    float mHandMoveForward; // 0x15c
+    float mHandMoveForward; // 0x13c
     /** "how much to rotate the hand (radians) when pinky is engaged" */
-    float mHandPinkyRotation; // 0x160
+    float mHandPinkyRotation; // 0x140
     /** "how much to rotate the hand (radians) when thumb is engaged" */
-    float mHandThumbRotation; // 0x164
+    float mHandThumbRotation; // 0x144
     /** "x offset for right/left hands from average destination position for fingers" */
-    float mHandDestOffset; // 0x168
+    float mHandDestOffset; // 0x148
     /** "Does this run the right or left hand?" */
-    bool mIsRightHand; // 0x16c
-    bool mMoveHand; // 0x16d
-    bool mIsSetup; // 0x16e
+    bool mIsRightHand; // 0x14c
+    bool mMoveHand; // 0x14d
+    bool mIsSetup; // 0x14e
     std::vector<FingerDesc> mFingers; // 0x150
-    float mInv2ab; // 0x17c
-    float mAAPlusBB; // 0x180
+    float mInv2ab; // 0x15c
+    float mAAPlusBB; // 0x160
     /** "This trans will be set to the desired hand position." */
-    ObjPtr<RndTransformable> mOutputTrans; // 0x184
+    ObjPtr<RndTransformable> mOutputTrans; // 0x164
     /** "A keyboard bone so we can calculate in local space. use rh/lh targets." */
-    ObjPtr<RndTransformable> mKeyboardRefBone; // 0x198
+    ObjPtr<RndTransformable> mKeyboardRefBone; // 0x170
 };

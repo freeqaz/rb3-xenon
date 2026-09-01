@@ -78,7 +78,7 @@ public:
     float mMessageDuration; // 0x8
     std::list<PassiveMessage *> mQueue; // 0xc
     Hmx::Object *mCallback; // 0x14
-    Timer mTimer; // 0x14
+    Timer mTimer; // 0x18
 };
 
 class PassiveMessagesPanel : public UIPanel {
@@ -170,8 +170,8 @@ public:
     DataNode OnMsg(const InviteSentMsg &);
     DataNode OnMsg(const InviteReceivedMsg &);
 
-    bool unk1c; // 0x1c
-    Timer mTimer; // 0x20
+    bool unk1c; // 0x28
+    Timer mTimer; // 0x30
 };
 
 extern PassiveMessenger *ThePassiveMessenger;

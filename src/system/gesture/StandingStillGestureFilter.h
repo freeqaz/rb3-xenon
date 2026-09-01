@@ -28,10 +28,10 @@ public:
     int RaisedMs() const { return mRaisedMs; }
 
 private:
-    bool mStandingStill; // 0x2c
-    int mRaisedMs; // 0x30
-    int mRequiredMs; // 0x34
-    Vector3 unk38; // 0x38
+    bool mStandingStill; // 0x28
+    int mRaisedMs; // 0x2c
+    int mRequiredMs; // 0x30
+    Vector3 unk38; // 0x34
     float mForwardFacingCutoff; // 0x44
     bool unk48;
 };

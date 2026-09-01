@@ -27,5 +27,5 @@ public:
     bool mMustBeMultiplayerCapable; // 0x4e
     bool mHandleSignOuts; // 0x4f
     bool mLimitUserSignin; // 0x50
-    bool unk41; // 0x41 - mSigninMsgDuringGuide?
+    bool unk41; // 0x51 - mSigninMsgDuringGuide?
 };

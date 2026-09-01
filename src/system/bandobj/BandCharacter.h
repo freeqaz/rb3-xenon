@@ -242,58 +242,58 @@ public:
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
-    int mPlayFlags; // 0x450
-    ObjPtr<CharDriver> unk454; // 0x454
+    int mPlayFlags; // 0x4ac
+    ObjPtr<CharDriver> unk454; // 0x4b0
     CharDriver *mAddDriver; // 0x4bc
     CharDriver *mFaceDriver; // 0x4c0
     char mGroupName[64]; // 0x4c4
-    char mFaceGroupName[64]; // 0x4a8
+    char mFaceGroupName[64]; // 0x504
     char mOverrideGroup[64]; // 0x544
-    bool mForceNextGroup; // 0x528
-    bool mForceVertical; // 0x529
-    ObjPtr<Character> mOutfitDir; // 0x52c
-    ObjPtr<Character> mInstDir; // 0x538
-    Symbol mTempo; // 0x544
+    bool mForceNextGroup; // 0x584
+    bool mForceVertical; // 0x585
+    ObjPtr<Character> mOutfitDir; // 0x588
+    ObjPtr<Character> mInstDir; // 0x594
+    Symbol mTempo; // 0x5a0
     FileMerger *mFileMerger; // 0x5a4
     RndOverlay *mOverlay; // 0x5a8
-    ObjPtr<CharLookAt> mHeadLookAt; // 0x550
-    ObjPtr<CharLookAt> mNeckLookAt; // 0x55c
-    ObjPtr<CharEyes> mEyes; // 0x568
-    bool unk574; // 0x574
-    ObjOwnerPtr<BandCharDesc> mTestPrefab; // 0x578
-    Symbol mGenre; // 0x584
-    Symbol mDrumVenue; // 0x588
-    Symbol mTestTourEndingVenue; // 0x58c
+    ObjPtr<CharLookAt> mHeadLookAt; // 0x5ac
+    ObjPtr<CharLookAt> mNeckLookAt; // 0x5b8
+    ObjPtr<CharEyes> mEyes; // 0x5c4
+    bool unk574; // 0x5d0
+    ObjOwnerPtr<BandCharDesc> mTestPrefab; // 0x5d4
+    Symbol mGenre; // 0x5e0
+    Symbol mDrumVenue; // 0x5e4
+    Symbol mTestTourEndingVenue; // 0x5e8
     Symbol mInstrumentType; // 0x5ec
-    ObjPtr<Waypoint> unk594; // 0x594
+    ObjPtr<Waypoint> unk594; // 0x5f0
     bool mInCloset; // 0x5fc
-    bool unk5a1; // 0x5a1
-    bool unk5a2; // 0x5a2
-    bool unk5a3; // 0x5a3
-    ObjPtr<CharWeightSetter> mSingalongWeight; // 0x5a4
-    ObjPtrList<CharMeshHide> unk5b0; // 0x5b0
-    ObjPtrList<CharIKScale> unk5c0; // 0x5c0
-    ObjPtrList<CharIKHand> unk5d0; // 0x5d0
-    ObjPtrList<CharCollide> unk5e0; // 0x5e0
-    ObjPtrList<CharHair> unk5f0; // 0x5f0
-    ObjPtrList<CharCuff> unk600; // 0x600
-    ObjPtrList<RndMeshDeform> unk610; // 0x610
-    ObjPtrList<OutfitConfig> unk620; // 0x620
-    ObjPtrList<OutfitConfig> unk630; // 0x630
-    ObjPtrList<CharBoneOffset> unk640; // 0x640
-    ObjPtrList<CharIKMidi> unk650; // 0x650
-    ObjPtrList<CharDriverMidi> unk660; // 0x660
-    ObjPtrList<CharKeyHandMidi> unk670; // 0x670
-    ObjPtr<RndMesh> unk680; // 0x680
-    ObjPtr<RndMesh> unk68c; // 0x68c
-    ObjPtr<RndMesh> unk698; // 0x698
-    ObjPtr<RndMesh> unk6a4; // 0x6a4
-    ObjPtr<CharWeightable> unk6b0; // 0x6b0
-    bool mUseMicStandClips; // 0x6bc
-    bool unk6bd; // 0x6bd
-    ObjPtr<BandCharacter> unk6c0; // 0x6c0
-    std::list<String> mDircuts; // 0x6cc
-    bool mInTourEnding; // 0x6d4
+    bool unk5a1; // 0x5fd
+    bool unk5a2; // 0x5fe
+    bool unk5a3; // 0x5ff
+    ObjPtr<CharWeightSetter> mSingalongWeight; // 0x600
+    ObjPtrList<CharMeshHide> unk5b0; // 0x60c
+    ObjPtrList<CharIKScale> unk5c0; // 0x620
+    ObjPtrList<CharIKHand> unk5d0; // 0x634
+    ObjPtrList<CharCollide> unk5e0; // 0x648
+    ObjPtrList<CharHair> unk5f0; // 0x65c
+    ObjPtrList<CharCuff> unk600; // 0x670
+    ObjPtrList<RndMeshDeform> unk610; // 0x684
+    ObjPtrList<OutfitConfig> unk620; // 0x698
+    ObjPtrList<OutfitConfig> unk630; // 0x6ac
+    ObjPtrList<CharBoneOffset> unk640; // 0x6c0
+    ObjPtrList<CharIKMidi> unk650; // 0x6d4
+    ObjPtrList<CharDriverMidi> unk660; // 0x6e8
+    ObjPtrList<CharKeyHandMidi> unk670; // 0x6fc
+    ObjPtr<RndMesh> unk680; // 0x710
+    ObjPtr<RndMesh> unk68c; // 0x71c
+    ObjPtr<RndMesh> unk698; // 0x728
+    ObjPtr<RndMesh> unk6a4; // 0x734
+    ObjPtr<CharWeightable> unk6b0; // 0x740
+    bool mUseMicStandClips; // 0x74c
+    bool unk6bd; // 0x74d
+    ObjPtr<BandCharacter> unk6c0; // 0x750
+    std::list<String> mDircuts; // 0x75c
+    bool mInTourEnding; // 0x764
     std::list<int> mCompressedTextureIDs; // 0x768 (retail: precedes unk6d8; see below)
     std::list<BoneState> unk6e4; // 0x770
     CharDriver *unk6ec; // 0x778

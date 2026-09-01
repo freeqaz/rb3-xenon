@@ -17,7 +17,7 @@ public:
 
     float beat; // 0x0
     std::vector<Vector3> bones; // 0x4
-    float facing[4]; // 0xc
+    float facing[4]; // 0x10
 };
 
 class ClipDistMap {

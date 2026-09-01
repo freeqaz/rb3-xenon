@@ -66,10 +66,10 @@ protected:
 
     std::list<PanelRef> mPanelList; // 0x28
     UIPanel *mFocusPanel; // 0x30
-    DataArray *mBack; // 0x38
-    bool mClearVram; // 0x3c
-    bool mShowing; // 0x3d
-    int mScreenId; // 0x40
+    DataArray *mBack; // 0x34
+    bool mClearVram; // 0x38
+    bool mShowing; // 0x39
+    int mScreenId; // 0x3c
 };
 
 #include "obj/Msg.h"

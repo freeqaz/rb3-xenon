@@ -37,7 +37,7 @@ public:
 
     short mRecentBuf[0x600]; // 0xc
     short mContinuousBuf[0x600]; // 0xc0c
-    char filler[0x4224]; // 0x120c
+    char filler[0x4224]; // 0x180c
     Timer mTimer; // 0x5a30
     short mBuf[10000]; // 0x5a60
 };

@@ -34,7 +34,7 @@ public:
 
     StoreOffer *mOffer; // 0x48 (retail: raw StoreOffer*, not ObjPtr)
     std::vector<RecommendedEntry> mRecommendations; // 0x4c, 0x50, 0x52
-    DataNetLoader *mLoader; // 0x54
+    DataNetLoader *mLoader; // 0x58
     int mCurRecommendationIdx; // 0x5c
     bool unk5c; // 0x60
     std::vector<RndTex *> mCoverArtTexs; // 0x64

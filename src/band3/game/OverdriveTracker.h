@@ -36,8 +36,8 @@ public:
     void LocalEndDeployStreak(float);
     void RemoteEndDeployStreak(Player *, int);
 
-    std::map<TrackerPlayerID, DeployData> unk58; // 0x58
-    TrackerMultiplierMap unk70; // 0x70
+    std::map<TrackerPlayerID, DeployData> unk58; // 0x64
+    TrackerMultiplierMap unk70; // 0x7c
     float unk8c;
     float unk90;
     float unk94;
@@ -47,5 +47,5 @@ public:
     float unka4;
     int unka8;
     float unkac;
-    bool unkb0; // 0xb0
+    bool unkb0; // 0xbc
 };

@@ -19,10 +19,10 @@ public:
     std::vector<RndAnimatable *> mContourHeightAnims; // 0xc
     std::vector<RndAnimatable *> mContourAngleAnims; // 0x18
     RGState *mLastState; // 0x24
-    RndAnimatable *mFretNumberShowAnim; // 0x1c
-    RndAnimatable *mFretNumberPositionAnim; // 0x20
-    RndText *mFretNumberText; // 0x24
-    int mLastFretNumber; // 0x28
-    float mAnimPeriod; // 0x2c
+    RndAnimatable *mFretNumberShowAnim; // 0x28
+    RndAnimatable *mFretNumberPositionAnim; // 0x2c
+    RndText *mFretNumberText; // 0x30
+    int mLastFretNumber; // 0x34
+    float mAnimPeriod; // 0x38
     bool mLefty; // 0x3c
 };

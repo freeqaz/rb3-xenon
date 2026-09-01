@@ -34,13 +34,13 @@ public:
     static void Init();
     static void Terminate();
 
-    ObjDirPtr<ObjectDir> unk20; // 0x20
+    ObjDirPtr<ObjectDir> unk20; // 0x1c
     bool unk2c;
     bool unk2d;
     bool unk2e;
     bool unk2f;
-    float mSynapseProximity; // 0x30
-    float mSynapseFocus; // 0x34
+    float mSynapseProximity; // 0x2c
+    float mSynapseFocus; // 0x30
     int mMicCount; // 0x34
     std::vector<GameMic *> mMics; // 0x38
 #ifdef HX_NATIVE

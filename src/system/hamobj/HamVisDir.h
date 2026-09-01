@@ -49,27 +49,27 @@ protected:
     void CalcArmLengths(std::vector<float> &, const Skeleton &);
     void UpdateGestureFilter(const Skeleton &, int);
 
-    Transform unk284; // 0x284
-    FreestyleMotionFilter *mFilter; // 0x2c4
-    bool mRunning; // 0x2c8
+    Transform unk284; // 0x24c
+    FreestyleMotionFilter *mFilter; // 0x28c
+    bool mRunning; // 0x290
 
     // maybe this all here is a struct in itself
-    std::vector<unsigned int> unk2cc; // 0x2cc
-    int unk2d8; // 0x2d8
-    int unk2dc; // 0x2dc
+    std::vector<unsigned int> unk2cc; // 0x294
+    int unk2d8; // 0x2a0
+    int unk2dc; // 0x2a4
 
     /** "Animated from 0 - 100, depending on player one's hand height" */
-    ObjPtr<RndAnimatable> mPlayer1Right; // 0x2e0
+    ObjPtr<RndAnimatable> mPlayer1Right; // 0x2a8
     /** "Animated from 0 - 100, depending on player one's hand height" */
-    ObjPtr<RndAnimatable> mPlayer1Left; // 0x2f4
+    ObjPtr<RndAnimatable> mPlayer1Left; // 0x2b4
     /** "Animated from 0 - 100, depending on player two's hand height" */
-    ObjPtr<RndAnimatable> mPlayer2Right; // 0x308
+    ObjPtr<RndAnimatable> mPlayer2Right; // 0x2c0
     /** "Animated from 0 - 100, depending on player two's hand height" */
-    ObjPtr<RndAnimatable> mPlayer2Left; // 0x31c
+    ObjPtr<RndAnimatable> mPlayer2Left; // 0x2cc
     /** "Allow Milo anim bar to drive the gesture propanim frame,
         not the player's skeleton." */
-    bool mMiloManualFrame; // 0x330
-    float mGrooviness; // 0x334
-    PoseOwner mSquatPoses[2]; // 0x338
-    PoseOwner mYPoses[2]; // 0x358
+    bool mMiloManualFrame; // 0x2d8
+    float mGrooviness; // 0x2dc
+    PoseOwner mSquatPoses[2]; // 0x2e0
+    PoseOwner mYPoses[2]; // 0x300
 };

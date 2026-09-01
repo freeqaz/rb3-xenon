@@ -123,12 +123,12 @@ protected:
     DataNode OnGetVelocity(const DataArray *);
     DataNode OnApplyForce(const DataArray *);
 
-    RndDir *mDir; // 0x2c
-    float mPhysicsClampTime; // 0x30
-    bool mSynced; // 0x34
-    bool unk35; // 0x35
-    float unk38; // 0x38
-    int unk3c; // 0x3c
+    RndDir *mDir; // 0x28
+    float mPhysicsClampTime; // 0x2c
+    bool mSynced; // 0x30
+    bool unk35; // 0x31
+    float unk38; // 0x34
+    int unk3c; // 0x38
 };
 
 typedef PhysicsManager *PhysicsManagerCreator(RndDir *);

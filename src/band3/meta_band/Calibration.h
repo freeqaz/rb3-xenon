@@ -91,8 +91,8 @@ public:
     int unk98;
     int mPad; // 0xa4
     bool unka0; // maybe char instead?
-    float unka4[5]; // 0xa4
-    float unkb8[5]; // 0xb8
+    float unka4[5]; // 0xac
+    float unkb8[5]; // 0xc0
     bool unkcc;
     float unkd0;
     float unkd4;
@@ -141,5 +141,5 @@ public:
     NEW_OBJ(CalibrationWelcomePanel);
     static void Init() { REGISTER_OBJ_FACTORY(CalibrationWelcomePanel); }
 
-    CalibrationModesProvider mModesProvider; // 0x38
+    CalibrationModesProvider mModesProvider; // 0x3c
 };

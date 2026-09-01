@@ -69,21 +69,21 @@ protected:
     int PackedColor() const;
     void SetPackedColor(int, float);
 
-    Hmx::Color mColor; // 0xc0
-    ObjOwnerPtr<RndLight> mColorOwner; // 0xd0
-    float mRange; // 0xe4
-    float mFalloffStart; // 0xe8
-    Type mType; // 0xec
-    bool mAnimateColorFromPreset; // 0xf0
-    bool mAnimatePositionFromPreset; // 0xf1
-    bool mAnimateRangeFromPreset; // 0xf2
-    bool mShowing; // 0xf3
-    ObjPtr<RndTex> mTexture; // 0xf4
-    ObjPtr<RndCubeTex> mCubeTexture; // 0x108
-    ObjPtrList<RndDrawable> *mShadowOverride; // 0x11c
-    ObjPtrList<RndDrawable> mShadowObjects; // 0x120
-    Transform mTextureXfm; // 0x134
-    float mTopRadius; // 0x174
-    float mBotRadius; // 0x178
-    int mProjectedBlend; // 0x17c
+    Hmx::Color mColor; // 0xb4
+    ObjOwnerPtr<RndLight> mColorOwner; // 0xc4
+    float mRange; // 0xd0
+    float mFalloffStart; // 0xd4
+    Type mType; // 0xd8
+    bool mAnimateColorFromPreset; // 0xdc
+    bool mAnimatePositionFromPreset; // 0xdd
+    bool mAnimateRangeFromPreset; // 0xde
+    bool mShowing; // 0xdf
+    ObjPtr<RndTex> mTexture; // 0xe0
+    ObjPtr<RndCubeTex> mCubeTexture; // 0xec
+    ObjPtrList<RndDrawable> *mShadowOverride; // 0xf8
+    ObjPtrList<RndDrawable> mShadowObjects; // 0xfc
+    Transform mTextureXfm; // 0x110
+    float mTopRadius; // 0x150
+    float mBotRadius; // 0x154
+    int mProjectedBlend; // 0x158
 };

@@ -42,18 +42,18 @@ protected:
 
     RndAnimatable *mMeterAnim; // 0x140
     /** "length of value change animation, in seconds" */
-    float mAnimPeriod; // 0x48
+    float mAnimPeriod; // 0x144
     float unk4c; // 0x4c
     int unk50; // 0x50
     BandLabel *unk54; // 0x54
     /** "whether or not to show text" */
-    bool mShowText; // 0x58
+    bool mShowText; // 0x154
     /** "whether or not to show text in percentage form" */
     bool mPercentageText; // 0x155
     /** "whether or not to hide denominator" */
     bool mHideDenominator; // 0x156
     /** "Localization token to use for wrapper" */
-    Symbol mWrapperText; // 0x5c
+    Symbol mWrapperText; // 0x158
     /** "current value of meter" */
     int mCurrentValue; // 0x15c
     /** "max value of meter" */

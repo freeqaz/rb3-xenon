@@ -154,50 +154,50 @@ public:
     DataNode OnGetDisplayMode(const DataArray *);
     DataNode OnSetDisplayMode(const DataArray *);
 
-    bool unk68; // 0x68
+    bool unk68; // 0x78
     VocalStyle mVocalStyleOverride; // 0x7c
-    int unk70; // 0x70
+    int unk70; // 0x80
     float unk74; // 0x84
     float unk78; // 0x88
-    int unk7c; // 0x7c
-    ObjPtr<VocalTrackDir> mDir; // 0x80
-    ObjPtr<VocalPlayer> mPlayer; // 0x8c
+    int unk7c; // 0x8c
+    ObjPtr<VocalTrackDir> mDir; // 0x90
+    ObjPtr<VocalPlayer> mPlayer; // 0x9c
     std::deque<LyricPlate *> mLyricsLead; // 0xa8
     std::deque<LyricPlate *> mLyricsHarmony; // 0xd0
-    float mPhraseStartMs; // 0xe8
-    float mPhraseEndMs; // 0xec
-    float mNextPhraseEndMs; // 0xf0
+    float mPhraseStartMs; // 0xf8
+    float mPhraseEndMs; // 0xfc
+    float mNextPhraseEndMs; // 0x100
     int unkf4;
     int unkf8;
     int unkfc;
     int unk100;
     int unk104;
     int unk108;
-    int mNextScrollNote[3]; // 0x10c
-    int mNextDeployZone[2]; // 0x118
-    int mCurLyricPhrase[2]; // 0x120
-    bool unk128; // 0x128
-    std::vector<std::deque<TubePlate *> > mFrontTubePlates; // 0x12c
-    std::vector<std::deque<TubePlate *> > mBackTubePlates; // 0x134
-    std::vector<std::deque<TubePlate *> > mPhonemeTubePlates; // 0x13c
-    std::deque<TubePlate *> mLeadDeployPlates; // 0x144
-    std::deque<TubePlate *> mHarmonyDeployPlates; // 0x16c
-    std::vector<RndMesh *> mMeshPool; // 0x194
-    int unk19c; // 0x19c
-    std::deque<std::pair<RndMesh *, float> > unk1a0; // 0x1a0
-    ObjPtr<RndGroup> unk1c8; // 0x1c8
-    TambourineGemPool *mTambourineGemPool; // 0x1d4
-    std::deque<TambourineGem *> mTambourineGems; // 0x1d8
-    VocalParam mCharOptParam; // 0x200 - vocal param
-    int mCharOptMicID; // 0x204
-    int unk208; // 0x208
-    int unk20c; // 0x20c
-    int unk210; // 0x210
-    std::deque<RangeShift> mRangeShifts; // 0x214
-    float unk23c; // 0x23c
-    float unk240; // 0x240
-    std::deque<LyricShift> mLeadLyricShifts; // 0x244
-    std::deque<LyricShift> mHarmonyLyricShifts; // 0x26c
+    int mNextScrollNote[3]; // 0x11c
+    int mNextDeployZone[2]; // 0x128
+    int mCurLyricPhrase[2]; // 0x130
+    bool unk128; // 0x138
+    std::vector<std::deque<TubePlate *> > mFrontTubePlates; // 0x13c
+    std::vector<std::deque<TubePlate *> > mBackTubePlates; // 0x148
+    std::vector<std::deque<TubePlate *> > mPhonemeTubePlates; // 0x154
+    std::deque<TubePlate *> mLeadDeployPlates; // 0x160
+    std::deque<TubePlate *> mHarmonyDeployPlates; // 0x188
+    std::vector<RndMesh *> mMeshPool; // 0x1b0
+    int unk19c; // 0x1bc
+    std::deque<std::pair<RndMesh *, float> > unk1a0; // 0x1c0
+    ObjPtr<RndGroup> unk1c8; // 0x1e8
+    TambourineGemPool *mTambourineGemPool; // 0x1f4
+    std::deque<TambourineGem *> mTambourineGems; // 0x1f8
+    VocalParam mCharOptParam; // 0x220 - vocal param
+    int mCharOptMicID; // 0x224
+    int unk208; // 0x228
+    int unk20c; // 0x22c
+    int unk210; // 0x230
+    std::deque<RangeShift> mRangeShifts; // 0x234
+    float unk23c; // 0x25c
+    float unk240; // 0x260
+    std::deque<LyricShift> mLeadLyricShifts; // 0x264
+    std::deque<LyricShift> mHarmonyLyricShifts; // 0x28c
     float unk294;
     float unk298;
     float unk29c;
@@ -206,7 +206,7 @@ public:
     float unk2a8;
     float unk2ac;
     float unk2b0;
-    VocalNoteList *mAlternateNoteList[3]; // 0x2b4
+    VocalNoteList *mAlternateNoteList[3]; // 0x2d4
     float mStaticDeployZoneXSize; // 0x2e0
     float mStaticDeployBufferX; // 0x2e4
     float mStaticDeployMarginX; // 0x2e8

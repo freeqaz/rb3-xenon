@@ -33,8 +33,8 @@ public:
     NEW_OVERLOAD;
     DELETE_OVERLOAD;
 
-    RndAnimatable *mFocusAnim; // 0x1bc - might be a RndPropAnim* instead?
-    RndAnimatable *mPulseAnim; // 0x1c0 - might be a RndPropAnim* instead?
-    Task *mAnimTask; // 0x1c4 - Task*
+    RndAnimatable *mFocusAnim; // 0x214 - might be a RndPropAnim* instead?
+    RndAnimatable *mPulseAnim; // 0x218 - might be a RndPropAnim* instead?
+    Task *mAnimTask; // 0x21c - Task*
     float mStartTime; // 0x220
 };

@@ -102,32 +102,32 @@ private:
 
     DataNode OnFindVariants(DataArray *);
 
-    Keys<Symbol, Symbol> *mClipPropKeys[kNumDifficultiesDC2]; // 0x2c
-    int mLoadsInProgress; // 0x38 - tracks in-progress loads
-    Keys<Symbol, Symbol> *mPracticePropKeys; // 0x3c
-    SongLayout *mCurrentSongLayout; // 0x40
-    SongLayout *mDefaultSongLayout; // 0x44
-    Keys<Symbol, Symbol> *mMovePropKeys[kNumDifficultiesDC2]; // 0x48
-    std::map<int, MoveVariant *> unk54[kNumDifficultiesDC2]; // 0x54
-    MoveDir *mMovesDir; // 0x9c
-    int mLoadingProgressCounter; // 0xa0 - loading progress counter, set to 0 multiple times
-    MoveGraph mMoveGraph; // 0xa4
-    std::set<const MoveVariant *> mVariants; // 0x104
+    Keys<Symbol, Symbol> *mClipPropKeys[kNumDifficultiesDC2]; // 0x28
+    int mLoadsInProgress; // 0x34 - tracks in-progress loads
+    Keys<Symbol, Symbol> *mPracticePropKeys; // 0x38
+    SongLayout *mCurrentSongLayout; // 0x3c
+    SongLayout *mDefaultSongLayout; // 0x40
+    Keys<Symbol, Symbol> *mMovePropKeys[kNumDifficultiesDC2]; // 0x44
+    std::map<int, MoveVariant *> unk54[kNumDifficultiesDC2]; // 0x50
+    MoveDir *mMovesDir; // 0x98
+    int mLoadingProgressCounter; // 0x9c - loading progress counter, set to 0 multiple times
+    MoveGraph mMoveGraph; // 0xa0
+    std::set<const MoveVariant *> mVariants; // 0xfc
     // indexed by number of players
-    std::vector<const MoveParent *> mMoveParents[2]; // 0x11c
+    std::vector<const MoveParent *> mMoveParents[2]; // 0x114
     // indexed by number of players
-    std::vector<const MoveVariant *> mPreferredVariants[2]; // 0x134
-    Symbol mCurrentSong; // 0x14c
+    std::vector<const MoveVariant *> mPreferredVariants[2]; // 0x12c
+    Symbol mCurrentSong; // 0x144
     // indexed by number of players
-    std::vector<std::pair<const MoveVariant *, const MoveVariant *> > mRoutineMeasures[2]; // 0x150
-    bool mRoutineLoaded; // 0x168
-    std::vector<MoveChoiceSet> mChoiceSets; // 0x16c
-    std::vector<CategoryData> mGenres; // 0x178 - genre data
-    std::vector<CategoryData> mEras; // 0x184 - era data
-    std::vector<CategoryData> mFilteredGenres; // 0x190 - also genre data
-    std::vector<CategoryData> mFilteredEras; // 0x19c - also era data
-    ObjectDir *mMoveDataDir; // 0x1a8
-    SuperEasyRemixer *mSuperEasyRemixer; // 0x1ac
+    std::vector<std::pair<const MoveVariant *, const MoveVariant *> > mRoutineMeasures[2]; // 0x148
+    bool mRoutineLoaded; // 0x160
+    std::vector<MoveChoiceSet> mChoiceSets; // 0x164
+    std::vector<CategoryData> mGenres; // 0x170 - genre data
+    std::vector<CategoryData> mEras; // 0x17c - era data
+    std::vector<CategoryData> mFilteredGenres; // 0x188 - also genre data
+    std::vector<CategoryData> mFilteredEras; // 0x194 - also era data
+    ObjectDir *mMoveDataDir; // 0x1a0
+    SuperEasyRemixer *mSuperEasyRemixer; // 0x1a4
 };
 
 extern MoveMgr *TheMoveMgr;

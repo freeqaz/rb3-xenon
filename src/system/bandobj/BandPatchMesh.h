@@ -81,7 +81,7 @@ public:
         std::vector<RndMesh::Vert *> unk18;
         std::vector<unsigned short> unk20;
         std::vector<MeshFace> unk28;
-        RndMesh *mMesh; // 0x30
+        RndMesh *mMesh; // 0x44
         Vector2 unk34;
         Vector2 unk3c;
         Vector2 unk44;
@@ -110,9 +110,9 @@ public:
     static unsigned short gAltRev;
 
     ObjVector<MeshPair> mMeshes; // 0x0
-    bool mRenderTo; // 0xc
-    ObjPtr<RndTransformable> mSrc; // 0x10
-    int mCategory; // 0x1c
+    bool mRenderTo; // 0x10
+    ObjPtr<RndTransformable> mSrc; // 0x14
+    int mCategory; // 0x20
 };
 
 bool PropSync(BandPatchMesh &, DataNode &, DataArray *, int, PropOp);

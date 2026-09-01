@@ -27,7 +27,7 @@ protected:
     DataNode GetHandlerDef();
 
     /** "The object which I'm going to trigger a handler on" */
-    FlowPtr<Hmx::Object> mObject; // 0x5c
+    FlowPtr<Hmx::Object> mObject; // 0x60
     /** "Handler to fire on the target object" */
-    Symbol mHandler; // 0x7c
+    Symbol mHandler; // 0x78
 };

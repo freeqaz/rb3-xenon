@@ -37,7 +37,7 @@ protected:
     DataNode OnAllowedObjects(DataArray *);
 
     /** The list of allowed objects. */
-    ObjPtrList<Hmx::Object> mObjects; // 0x2c
+    ObjPtrList<Hmx::Object> mObjects; // 0x28
     /** The collection of properties that allowed objects must have. */
     std::vector<Symbol> mProps; // 0x3c
 };

@@ -48,7 +48,7 @@ public:
             characters won't be placed within this range" */
         float mRadius; // 0x14
         bool mUseRandomColor; // 0x18
-        ObjPtrList<RndMat> mMats; // 0x24
+        ObjPtrList<RndMat> mMats; // 0x1c
     };
 
     struct CharData {
@@ -130,7 +130,7 @@ protected:
     /** "Number of characters to place" */
     int mNum; // 0x44
     CrowdRotate mCrowdRotate; // 0x48
-    Vector3 mCenter; // 0x70
+    Vector3 mCenter; // 0x4c
     /** "Makes crowd be 3D regardless of the CamShot" */
     bool mForce3DCrowd; // 0x5c
     /** "Shows only the 3D crowd, but ONLY in Milo
@@ -140,9 +140,9 @@ protected:
     float mFlatFullness; // 0x64
     int mLod; // 0x68
     /** "The environ to render the imposter billboards with" */
-    ObjPtr<RndEnviron> mEnviron; // 0x90
+    ObjPtr<RndEnviron> mEnviron; // 0x6c
     /** "The environ used when rendering the 3D crowd set by a cam shot" */
-    ObjPtr<RndEnviron> mEnviron3D; // 0xa4
+    ObjPtr<RndEnviron> mEnviron3D; // 0x78
     /** "Optional crowd facing focus when rotate is set to kCrowdRotateNone" */
     ObjPtr<RndTransformable> mFocus; // 0x84
     // NOTE: DC3 (newer) has `LODType mCharForceLod; // 0xcc` + `int unkd0; // 0xd0`

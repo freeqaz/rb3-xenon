@@ -21,7 +21,7 @@ public:
 
 private:
     String mStrCacheName; // 0x4
-    XCONTENT_DATA mContentData; // 0xc
+    XCONTENT_DATA mContentData; // 0x10
 };
 
 class CacheXbox : public Cache, public ThreadCallback {

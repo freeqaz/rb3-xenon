@@ -38,8 +38,8 @@ public:
 
     DataNode mMessages; // 0x2c
     MainHubPanel *mMainHub; // 0x34
-    TickerData mRoleStanding; // 0x2c
-    TickerData mBandStanding; // 0x38
-    TickerData mBattleStanding; // 0x44
-    String mUnlinkedMotd; // 0x50
+    TickerData mRoleStanding; // 0x38
+    TickerData mBandStanding; // 0x44
+    TickerData mBattleStanding; // 0x50
+    String mUnlinkedMotd; // 0x5c
 };

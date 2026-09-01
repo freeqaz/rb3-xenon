@@ -99,7 +99,7 @@ protected:
     /** "List of all the polls" */
     std::vector<RndPollable *> mPolls; // 0x1c0
     /** The dedicated RndEnviron for this dir. */
-    ObjPtr<RndEnviron> mEnv; // 0x1e4
+    ObjPtr<RndEnviron> mEnv; // 0x1cc
     /** "Test event" */
     Symbol mTestEvent; // 0x1d8
 };

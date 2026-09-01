@@ -126,24 +126,24 @@ private:
     static float sConfidenceLossThreshold;
     static float sConfidenceRegainThreshold;
 
-    int unk30[NUM_SKELETONS]; // 0x30 - maybe this is SkeletonJoint?
-    LiveCameraInput *mLiveCamInput; // 0x48
-    Skeleton mSkeletons[NUM_SKELETONS]; // 0x4c
-    IdentityInfo mIdentityInfos[NUM_SKELETONS]; // 0x4144
-    SkeletonQualityFilter mFilters[NUM_SKELETONS]; // 0x41a4
-    bool mTrackingAllSkeletons; // 0x424c
-    SkeletonRecoverer mRecoverer; // 0x4250
-    int mPauseOnSkeletonLossMode; // 0x425c - cycles 0/1/2 via TogglePauseOnSkeletonLoss
-    int mActiveSkelTrackingID; // 0x4260 - active skeleton tracking ID
-    int mPlayerSkeletonIDs[2]; // 0x4264
-    bool mIDEnabled; // 0x426c
-    bool mInControllerMode; // 0x426d
-    bool mInVoiceMode; // 0x426e
-    bool mGesturingWithVoice; // 0x426f
-    bool mInDoubleUserMode; // 0x4270
-    bool mInShellMode; // 0x4271 - true when not in gameplay panel
+    int unk30[NUM_SKELETONS]; // 0x2c - maybe this is SkeletonJoint?
+    LiveCameraInput *mLiveCamInput; // 0x44
+    Skeleton mSkeletons[NUM_SKELETONS]; // 0x48
+    IdentityInfo mIdentityInfos[NUM_SKELETONS]; // 0x4140
+    SkeletonQualityFilter mFilters[NUM_SKELETONS]; // 0x41a0
+    bool mTrackingAllSkeletons; // 0x4248
+    SkeletonRecoverer mRecoverer; // 0x424c
+    int mPauseOnSkeletonLossMode; // 0x4258 - cycles 0/1/2 via TogglePauseOnSkeletonLoss
+    int mActiveSkelTrackingID; // 0x425c - active skeleton tracking ID
+    int mPlayerSkeletonIDs[2]; // 0x4260
+    bool mIDEnabled; // 0x4268
+    bool mInControllerMode; // 0x4269
+    bool mInVoiceMode; // 0x426a
+    bool mGesturingWithVoice; // 0x426b
+    bool mInDoubleUserMode; // 0x426c
+    bool mInShellMode; // 0x426d - true when not in gameplay panel
     RndDir *mDebugDir;
-    XOVERLAPPED mOverlapped; // 0x4278
+    XOVERLAPPED mOverlapped; // 0x4274
 };
 
 extern GestureMgr *TheGestureMgr;
