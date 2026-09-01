@@ -11578,6 +11578,7 @@
  "0x82570390": "?NewObject@ParentalControlPanel@@SAPAVObject@Hmx@@XZ",
  "0x82570428": "?StaticClassName@AppLabel@@SA?AVSymbol@@XZ",
  "0x825704a8": "??0AppLabel@@QAA@XZ",
+ "0x82570650": "?ClassName@AppLabel@@UBA?AVSymbol@@XZ",
  "0x82570688": "?StaticClassName@VoiceoverPanel@@SA?AVSymbol@@XZ",
  "0x82570708": "?NewObject@VoiceoverPanel@@SAPAVObject@Hmx@@XZ",
  "0x825707a0": "?StaticClassName@RetryAudioPanel@@SA?AVSymbol@@XZ",
