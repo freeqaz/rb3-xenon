@@ -249,3 +249,6 @@ scripts/unicorn_runner/*.so
 # pipeline was deliberately stripped 2026-07-30). This symlink is a convenience
 # handle only -- never track it or anything under it here.
 docs-synth
+
+# class_layout_report per-TU layout cache (tools/header_offset_audit_par.py)
+.layout_cache/
