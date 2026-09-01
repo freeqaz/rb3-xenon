@@ -254,9 +254,14 @@ repaired during the survey (TU0 phantom ranges; crash-on-valid-input).
 
 1. ✅ **DONE (lane T1-FRESH)** — **Freshness precondition on
    measurement-consuming tools.** `scripts/analysis/freshness.py` reuses
-   `patch_guard.ensure_patched_tree(build=False)` and adds the two things the
-   manifest cannot answer: a NON-VACUITY floor, and "report.json is
-   non-vacuous and not older than the manifest". Wired into
+   `patch_guard.ensure_patched_tree(build=False)` and adds the four things the
+   manifest cannot answer: a NON-VACUITY floor; "report.json is non-vacuous and
+   not older than the manifest"; **TOOL IDENTITY** (`provenance.tool_binary_hash`
+   vs the binary a live diff will run); and the **ICF ALIAS MAP** not being
+   newer than the report. Every stale subject is named
+   (`STALE OBJECTS`/`STALE TOOL`/`STALE ALIAS MAP`/…), collected rather than
+   short-circuited — "stale" without a subject sends the next lane to rebuild
+   the wrong thing. Wired into
    `reachability_census` and `verify_ruler_agreement --verify-scores/--selftest`
    (**not** `--check` — that is a ninja edge gating REPORT and would deadlock).
    Raises rather than returning a number; `--allow-stale` overrides behind a
@@ -266,6 +271,23 @@ repaired during the survey (TU0 phantom ranges; crash-on-valid-input).
    `OK: 0 decomp, 0 target objects match` and exits **0** on an empty manifest —
    and the gate must be **content-keyed, not mtime-keyed** (380 objects in a
    fresh worktree were newer than report.json and byte-identical to it).
+   ⛔ **An objects-only gate would have passed this tree while it was
+   unmeasurable**: the shared `bin/objdiff-cli` (a symlink into ../objdiff,
+   shared with ../rb3 and ../dc3-decomp) was rebuilt at 08:59 under running
+   lanes while the report dated from 08:25 — which is why item 3's provenance
+   record and this gate agree that the tool and alias-map hashes are the
+   discriminators. ⚠ Both are **xxh3_64**, so the tool is asked for its own
+   identity (`--version`) and the map is checked by mtime; a `sha256[:16]`
+   guess reads `ee78f52f…` where the truth is `faf33906…` and would refuse
+   every tree forever.
+   ⚠ **The commissioning diagnosis was NOT confirmed.** `--selftest`'s red
+   state did not reproduce: it measured GREEN (3,323 examined / 0 disagree /
+   31 control, byte-identical) on a settled worktree, on main, with the new
+   binary against an OLD report, and with the new binary against a fresh one.
+   What IS measured is that an **unbuilt** worktree makes it exit 5 VACUOUS
+   while blaming its own `WITNESS_UNITS`, and that a tree with 2 genuinely
+   unpatched objects was passed by `--verify-scores` at **rc=0** — so the
+   score comparison cannot detect an unpatched tree; only the manifest can.
 2. **Fix `crossing_worklist.py`'s ruler** (~5 lines): line ~396 hardcodes
    `functionRelocDiffs=none`, so the tree's only size-if-it-crosses ranker
    systematically over-reports rows as source-reachable — the exact
