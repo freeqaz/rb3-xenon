@@ -140,6 +140,51 @@ Two corrections to the recorded framing first:
   families = 178,764 B (34.8%); 58% of instances are same-method template
   siblings (`push_back`/`insert`/`~`/`_M_fill_insert`…). Proof is per-pair;
   tooling is per-family.
+  > ⛔⛔ **REFUTED SAME DAY — see §4a. The class is ~99% irreducible, and the
+  > figure above is a COMPOSITE OF TWO POPULATIONS that no artifact contains.**
+
+### §4a — the fold class is NOT an investment item (lane S1-FOLDTOOL, merge `0facddf1`)
+
+The roadmap's original #3 item is **refuted by the very instrument it asked
+for**. `tools/s1_fold_family.py` adjudicated the top 20 families (427,320 B =
+65.6% of class E, 1,182 pairs) on retail bytes:
+**REFUTED 795 (67.3%) · UNDECIDED 376 (31.8%) · PROVEN_FOLD 11 (0.9%)**.
+
+Priced by ROW (because `matched_code` is all-or-nothing per row):
+
+| | bytes | % of covered |
+|---|---:|---:|
+| **FLOOR** — rows whose every pair is proven today | **2,480** | 0.64% |
+| CEILING — if *every* UNDECIDED pair were also a fold | 123,860 | 31.78% |
+| **HARD-REFUTED** — ≥1 pair proven NOT a fold ⇒ can never cross | 236,448 | 60.67% |
+
+Extrapolated to the full class: **floor ≈ 4.1 kB, ceiling ≈ 207 kB** — and the
+ceiling is the measurement's own uncertainty, not a prize (collecting it needs
+the anonymous-operand resolver W33 asked for, which nobody has built). 93.7% of
+refutations rest on direct body evidence, not on map correctness.
+
+⛔ **My briefed figure was a COMPOSITE.** "2,183 rows / 1,735 pairs /
+650,480 B" takes its **bytes** from the 8,131-row placeholder-inclusive
+population and its **row/pair counts** from the 3,427-row named-only one.
+Separated, each leg reproduces to ~0.1%: named-only **2,181 rows / 1,732 pairs
+/ 514,984 B**; placeholder-inclusive **651,116 B**. A coordinator brief fused
+two populations and the fused number survived into a roadmap — the standing
+`READ THE IN-TREE RECORD FIRST` failure, in a plan document this time.
+
+★★★★★ **The tool was wrong first, in the direction that MANUFACTURES work.**
+Its first revision refuted 222 pairs as "identical bodies, different callee
+name" — but retail's `push_back<pair<VocalPhrase*,VocalPart*>>` calls a helper
+the map names `_M_insert_overflow_aux<vector<MicClientID>>`, and **one retail
+body naming two unrelated `T` is impossible without folding**. It was charging
+the linker's arbitrary survivor-name coin-flip as a source defect; the evidence
+for the fold sat inside the very string used to refute it. The fix cost real
+refuting power (negative control REFUTED 11→4), stated rather than hidden.
+
+**Accuracy payoff, which is the class's real value:** of the hard-refuted 60.67%,
+**245 pairs are thunk-vs-real-function** — retail calls a 188 B `MemFree` where
+we call a 4-byte forwarder. That is inline/thunk POLICY, not folding; the whole
+`MemFree` family is **159/159 refuted**. Any future work here is a
+correctness/inline-policy lane, not a fold lane.
 
 Whole-gap partition (sums to 6,473,112 B exactly; % of gap-below-100%):
 
@@ -148,7 +193,7 @@ Whole-gap partition (sums to 6,473,112 B exactly; % of gap-below-100%):
 | irreducible/out-of-scope — XDK vendor | 2,090,904 | 32.3% | nothing in scope |
 | largely unreachable — `auto_*` unattributed | 1,677,528 | 25.9% | identification (adjudicated ~dead; ~0.2% residual) |
 | grind — missing bodies in pairable units (anon 0%) | 1,322,732 | 20.4% | **porting real bodies** from oracles (mostly Quazal-flavored; triage needed) |
-| **structural — ICF fold adjudication (E class)** | 650,480 | 10.0% | family-mechanized retail-byte proof; integrity-gated |
+| ~~structural — ICF fold adjudication (E class)~~ **⛔ REFUTED §4a: ~99% irreducible, floor ≈4.1 kB** | 650,480 | 10.0% | ~~family-mechanized retail-byte proof~~ → reclassify as (d) irreducible; residue is an inline/thunk-policy correctness lane |
 | grind — body divergence entangled with regalloc (C/D) | 475,832 | 7.4% | per-function, hardest class; fund only where oracle > our source |
 | permuter-shaped (pure register), DEFERRED | 84,548 | 1.3% | permuter — measured 0/66 conversion so far |
 | mixed name+other (F) | 66,192 | 1.0% | case-by-case |
@@ -261,7 +306,7 @@ XDK out of scope except pinning + mem-mgmt subset):
 |---|---|---|---|
 | 1 | **Tooling items 1–4** (freshness, crossing ruler, ledger, census fix) | trust in every future number | days, not weeks; do first |
 | 2 | **Container-type divergence sweep** (87.5 kB, 442 rows, 262 units) | bytes + accuracy + native correctness | per-pair retail-byte adjudication; expect some map-error outcomes |
-| 3 | **ICF fold family adjudication** (650 kB gross; top-10 families 179 kB) | the largest addressable slice | build tool (item 5) first; integrity-gated; expect a large UNDECIDED/irreducible residue — prior related stratum measured ~91% irreducible, so pre-register conservative yields |
+| ~~3~~ | ⛔ **ICF fold family adjudication — DO NOT FUND** | ~~the largest addressable slice~~ **floor ≈4.1 kB** | **Refuted by its own instrument the day it was proposed** (§4a, merge `0facddf1`): 67.3% of pairs REFUTED, 0.9% proven, 60.67% of covered bytes can NEVER cross. The tool is built and shipped (`tools/s1_fold_family.py`) — use it to REFUSE fold claims, not to hunt bytes. The ~91%-irreducible prior was right and the pre-registration was too generous |
 | 4 | **Missing-body porting triage** (1.32 MB anon-zero in pairable units) | the only big vein left | triage FIRST: how much is Quazal (low value per directive) vs HMX game code with an rb3-Wii oracle; fund only the oracle-backed slice |
 | 5 | **Clean source levers + close-to-crossing grind** (~56 kB + the ≤3-charge heads) | steady small wins | the existence of a pre-registration control is the screen — human judgement, not a sweep |
 | 6 | **Native runtime instrumentation + unicorn refresh** (tooling 6, 8) | serves the actual goal directly | "matched but wrong" is what native surfaces |
