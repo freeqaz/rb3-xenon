@@ -296,19 +296,40 @@ def main():
         sys.exit('splits parse produced overlaps -- refusing')
     P = PinIndex(blocks)
 
+    # ⛔ NEVER key a splits<->objdiff join on basename().  24 objdiff unit
+    # basenames COLLIDE (`Movie` in rnddx9/ and rndobj/, `Utl` three ways,
+    # `Rnd`, `Dir`, `Synth`, the FxSend* pairs ...), and CLAUDE.md records that
+    # slip breaking four consecutive lanes' scans.  Join on the FULL stem, and
+    # fall back to a basename only when it is UNAMBIGUOUS -- otherwise report
+    # NO_BASE_OBJ rather than silently consulting the wrong object.
     cfg = json.load(open('objdiff.json'))
-    base_by_unit = {}
+    by_stem, by_base = {}, collections.defaultdict(list)
     for u in cfg['units']:
         bp = u.get('base_path')
-        if bp:
-            base_by_unit[os.path.basename(u['name'])] = bp
+        if not bp:
+            continue
+        stem = u['name'].split('/', 1)[1] if '/' in u['name'] else u['name']
+        by_stem[stem] = bp
+        by_base[os.path.basename(u['name'])].append(bp)
     objcache = {}
 
     def base_defines(unit_path, sym):
-        key = os.path.splitext(os.path.basename(unit_path))[0]
-        bp = base_by_unit.get(key)
-        if not bp:
-            return None                      # unit has no base obj at all
+        stem = os.path.splitext(unit_path)[0]
+        bp = by_stem.get(stem)
+        if bp is None:                       # splits paths are not uniformly rooted
+            for pre in ('src/', ''):
+                cand = stem[len(pre):] if pre and stem.startswith(pre) else stem
+                for k in by_stem:
+                    if k == cand or k.endswith('/' + cand):
+                        bp = by_stem[k]
+                        break
+                if bp:
+                    break
+        if bp is None:
+            hits = by_base.get(os.path.basename(stem), [])
+            if len(hits) != 1:
+                return None                  # absent, or AMBIGUOUS -> refuse
+            bp = hits[0]
         if bp not in objcache:
             objcache[bp] = coff_defined(bp)
         return sym in objcache[bp]
