@@ -13,9 +13,9 @@ default/AccomplishmentSongFilterConditional	2220	22	2668	25
 default/AccuracyTracker	1512	12	1512	12
 default/Achievements	928	11	1464	18
 default/AllocInfo	456	7	620	10
-default/AmbientOcclusion	10928	109	28536	147
-default/Anim	12056	158	23704	209
-default/AnimFilter	4768	44	5528	48
+default/AmbientOcclusion	11316	110	28536	147
+default/Anim	12224	160	23704	209
+default/AnimFilter	5232	45	5528	48
 default/AppChild	1192	14	1192	14
 default/AppInlineHelp	4336	53	8316	74
 default/AppLabel	18768	181	21020	193
@@ -191,7 +191,7 @@ default/DeployCountTracker	3772	29	5084	33
 default/DepthBuffer3D	2464	42	9160	92
 default/DingoSvr	88	3	300	5
 default/DirLoader	9228	131	23176	205
-default/DirUnloader	644	14	1612	21
+default/DirUnloader	936	15	1612	21
 default/DisplayEvents	944	3	944	3
 default/DistortionEffect	40	2	208	4
 default/Draw	5032	52	5784	56
@@ -332,7 +332,7 @@ default/LabelShrinkWrapper	2340	33	4396	47
 default/LayerDir	6960	102	11536	120
 default/Leaderboard	6920	73	10888	91
 default/LightHue	7396	74	9528	89
-default/LightPreset	35856	321	57740	397
+default/LightPreset	35940	322	57740	397
 default/LightPresetManager	2712	28	5652	46
 default/Line	8312	62	13356	78
 default/Lit	7964	71	9860	80
@@ -1439,7 +1439,7 @@ default/system/meta/StoreArtLoaderPanel	1152	11	1220	12
 default/system/midi/MidiReceiver	24	1	104	3
 default/system/midi/MidiVarLen	140	2	140	2
 default/system/net/HttpReq	20	1	20	1
-default/system/obj/Dir	15564	159	27536	200
+default/system/obj/Dir	16020	162	27536	200
 default/system/obj/Utl	1500	21	4288	24
 default/system/os/UsbMidiGuitar	1300	24	3296	33
 default/system/rnddx9/CubeTex	5888	100	13232	150
@@ -1452,7 +1452,7 @@ default/system/rndobj/Movie	3128	36	4212	48
 default/system/rndobj/PostProcMgr	0	0	68	1
 default/system/rndobj/Rnd	18420	289	34660	329
 default/system/rndobj/SoftParticles	2284	26	2468	28
-default/system/rndobj/Utl	15288	134	45020	210
+default/system/rndobj/Utl	15372	135	45020	210
 default/system/synth/FxSend	4160	36	6212	48
 default/system/synth/FxSendBitCrush	280	3	608	5
 default/system/synth/FxSendChorus	2452	18	2452	18
