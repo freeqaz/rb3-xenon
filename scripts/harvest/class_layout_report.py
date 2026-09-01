@@ -287,7 +287,26 @@ def build_command(project_dir, obj, cls, scratch_obj, use_pch=False, all_classes
     if line is None:
         raise SystemExit(f"no cl.exe edge found for {obj}")
 
-    argv = shlex.split(line)
+    # ---- A COMPILE EDGE MAY BE A SHELL PIPELINE, NOT A BARE ARGV.  rb3-xenon's
+    # is bare (`<env> objcache exec ... -- wibo cl.exe ...`) so the loop below is
+    # the identity here, but DC3's is
+    #   `cd <srcdir> && <wibo> ... cl.exe ... f.cpp && python3 obj_..._patcher.py`
+    # and this generalisation is what let the same tool run on both.  Two
+    # consequences when the `cd` form appears: the source operand is RELATIVE to
+    # that directory, so the layout compile must run from there; and a trailing
+    # `&&` post-processing stage has to be dropped -- it would run against /Fo's
+    # scratch object, and it is not part of the compile whose layout we asked
+    # about.  Returning the cwd alongside argv/env keeps the shape in ONE place
+    # instead of leaking into every caller.
+    cwd = project_dir
+    segs = [s.strip() for s in re.split(r"\s+&&\s+", line)]
+    if segs and segs[0].startswith("cd "):
+        cwd = shlex.split(segs[0])[1]
+        segs = segs[1:]
+    seg = next((s for s in segs if "cl.exe" in s), None)
+    if seg is None:
+        raise SystemExit(f"no cl.exe stage in the compile pipeline for {obj}")
+    argv = shlex.split(seg)
     # strip everything up to and including the objcache `exec ... --` prefix
     if "exec" in argv and "--" in argv:
         argv = argv[argv.index("--") + 1:]
@@ -331,7 +350,7 @@ def build_command(project_dir, obj, cls, scratch_obj, use_pch=False, all_classes
         # One compile, every class in the TU.  The flag takes no operand, so the
         # empty-name ICE below cannot apply to it.
         out.insert(-1, "/d1reportAllClassLayout")
-        return out, env
+        return out, env, cwd
 
     # A BARE `/d1reportSingleClassLayout` (empty `cls`) makes the MSVC front end
     # dereference a NULL class-name string and die.  Verified 2026-07-30 (lane BR-1):
@@ -349,7 +368,7 @@ def build_command(project_dir, obj, cls, scratch_obj, use_pch=False, all_classes
             f"SIGSEGV under wibo). Pass a real class name, or use --all-classes-flag\n"
             f"semantics via /d1reportAllClassLayout if you want every class.")
     out.insert(-1, "/d1reportSingleClassLayout" + cls)
-    return out, env
+    return out, env, cwd
 
 
 # ------------------------------------------------------- the three-label gate
@@ -406,12 +425,12 @@ def run_report(project_dir, cls, tu=None, verbose=False,
                 f"could not find a compiled TU in which '{cls}' is complete.\n"
                 f"pass --tu <path.cpp> explicitly.")
     with tempfile.TemporaryDirectory(dir=os.path.expanduser("~/tmp")) as td:
-        argv, env = build_command(project_dir, obj, cls, os.path.join(td, "layout.obj"),
-                                  use_pch=use_pch, all_classes=all_classes,
-                                  break_pch=break_pch)
+        argv, env, cwd = build_command(project_dir, obj, cls, os.path.join(td, "layout.obj"),
+                                       use_pch=use_pch, all_classes=all_classes,
+                                       break_pch=break_pch)
         if verbose:
             print("# " + " ".join(shlex.quote(a) for a in argv), file=sys.stderr)
-        p = subprocess.run(argv, cwd=project_dir, capture_output=True, text=True, env=env)
+        p = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, env=env)
     text = p.stdout + p.stderr
     # NEVER fail silently.  This return code used to be discarded, which is why a
     # crashed cl.exe surfaced as "emits nothing, exits 0" instead of an error.
@@ -591,7 +610,25 @@ def audit_header(project_dir, header, cls_info, cls=None):
     path = os.path.join(project_dir, header)
     if not os.path.exists(path):
         return []
+    # ⛔ OWN-SCOPE MEMBERS WIN OVER INHERITED ONES OF THE SAME NAME.
+    # `members` is offset-ordered and includes every base sub-object's members,
+    # so a plain `setdefault` lets a BASE member shadow the derived class's own
+    # member of the same name -- and the comment being audited is inside the
+    # DERIVED class's body (the span scoping above guarantees that), so it is
+    # about the derived member.  Found on DC3 2026-09-01 while porting this
+    # tool there: `Spotlight::mTarget // 0x2dc` is CORRECT (the compiler
+    # agrees), but the inherited `RndTransformable::mTarget` at 0xe4 came first
+    # in offset order and the row was reported wrong by -504.  47 of 176 raw
+    # rows on that tree were this family alone.
+    # ⇒ `--fix-header` WRITES THESE ROWS BACK, so the bug would have REWRITTEN
+    # CORRECT COMMENTS TO WRONG VALUES -- the same silent-corruption shape the
+    # cross-class scoping fix above exists to prevent, and the reason this fix
+    # was ported back here before anyone ran the fixer on this tree.
     real = {}
+    for m in cls_info["members"]:
+        if m.get("in_base"):
+            continue
+        real.setdefault(m["name"].lstrip("*&"), m["offset"])
     for m in cls_info["members"]:
         real.setdefault(m["name"].lstrip("*&"), m["offset"])
 
@@ -844,6 +881,44 @@ def run_selftest(project_dir, sabotage=None, verbose=False):
     print(f"  [INFO] E. live PCH path: {live}")
     print( "         Not a control: this flips with the on-disk PCH.  /Y- makes "
            "the tool\n         immune to BOTH states, which is the point.")
+
+    # -- F  ★ SHADOWED-BASE-MEMBER REGRESSION PIN.  Offline, deterministic, and
+    #       SELF-SABOTAGING: the leg re-implements the OLD rule (plain
+    #       setdefault over the offset-ordered member list, which lets the base
+    #       sub-object's same-named member win) and REQUIRES it to give the
+    #       wrong answer.  A leg that only asserted the fixed behaviour would
+    #       pass on a tool where `members` happened to be empty.
+    #
+    #       The shape is real: `Spotlight::mTarget // 0x2dc` is the derived
+    #       class's own ObjPtr, but `RndTransformable::mTarget` is inherited at
+    #       a much lower offset and comes FIRST in offset order.  Before the fix
+    #       the audit reported Spotlight's comment against the BASE offset --
+    #       and `--fix-header` WRITES ROWS BACK, so it would have overwritten a
+    #       correct comment with a wrong value.  Found on DC3 2026-09-01 (47 of
+    #       176 raw rows there were this family) and ported back here before
+    #       anyone ran the fixer on this tree.
+    with tempfile.TemporaryDirectory(dir=os.path.expanduser("~/tmp")) as td:
+        hdr_rel = "shadow_probe.h"
+        with open(os.path.join(td, hdr_rel), "w") as fh:
+            fh.write("class Derived : public Base {\n"
+                     "    int mTarget; // 0x2dc\n"
+                     "};\n")
+        info = {"name": "Derived", "size": 0x300, "members": [
+            {"name": "mTarget", "offset": 0xE4, "in_base": ["Base"]},
+            {"name": "mTarget", "offset": 0x2DC, "in_base": []},
+        ]}
+        got = audit_header(td, hdr_rel, info, "Derived")
+        # the buggy rule, reconstructed here so the control cannot be vacuous
+        old_real = {}
+        for m in info["members"]:
+            old_real.setdefault(m["name"], m["offset"])
+        old_would_flag = old_real["mTarget"] != 0x2DC
+        chk("F. shadowed base member: derived's own offset wins "
+            "(and the OLD rule provably did not)",
+            got == [] and old_would_flag and old_real["mTarget"] == 0xE4,
+            f"fixed rule rows={got!r} (want []); old rule resolved mTarget to "
+            f"0x{old_real['mTarget']:x} and would have flagged={old_would_flag} "
+            f"(want 0xe4 / True -- i.e. it would have rewritten 0x2dc to 0xe4)")
 
     nfail = 0
     for name, ok, detail in rows:
