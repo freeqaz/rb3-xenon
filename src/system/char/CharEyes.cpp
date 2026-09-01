@@ -1339,7 +1339,7 @@ void CharEyes::ProceduralBlinkUpdate() {
         mFaceServo->SetProceduralBlinkWeight(blinkWeight);
     } else if (elapsed < 0.3f) {
         // Opening phase
-        float t = Clamp(0.0f, 1.0f, 1.0f - (elapsed - 0.115f) * 5.405405f);
+        float t = Clamp(0.0f, 1.0f, 1.0f - (elapsed - 0.115f) * 5.4054055f);
         auto blinkWeight = EaseSigmoid(t, 0.0f, 0.0f);
         mFaceServo->SetProceduralBlinkWeight(blinkWeight);
         mTarget = mHeadForward;
