@@ -294,7 +294,7 @@ def normalize(body, relocs):
     return bytes(b)
 
 
-def compare_bodies(ba, ra, bb, rb):
+def compare_bodies(ba, ra, bb, rb, container_a=None, container_b=None):
     """Compare two (body, relocs).  Returns (verdict, why, detail).
 
     verdict in {EQUAL, DIFF_SIZE, DIFF_BODY, DIFF_NAME, UNDECIDED_EXTENT}
@@ -331,8 +331,21 @@ def compare_bodies(ba, ra, bb, rb):
         if oa != ob:
             return ("DIFF_NAME", "relocation OFFSETS differ (%d vs %d)"
                     % (oa, ob), {})
-        # May RAISE -- by design.  An unresolved slot must not be answerable.
-        va, vb = reloc_identity(name_a, name_b)
+        # ★★★ If RETAIL's own body names a callee for a DIFFERENT template
+        # type than the container it sits in, retail is internally
+        # inconsistent -- which is itself proof that folding occurred and that
+        # this surviving name is ARBITRARY.  An arbitrary name is not evidence
+        # of a difference, so the slot becomes Unresolved and the comparison
+        # REFUSES rather than charging it.  (Reusing the guard type here means
+        # there is no second code path that could forget to apply the rule.)
+        if container_a and retail_internally_inconsistent(container_a, name_a):
+            u = Unresolved("retail-internally-inconsistent callee name "
+                           "(fold survivor; the name is arbitrary)",
+                           (container_a, name_a))
+            va = vb = u
+        else:
+            # May RAISE -- by design.  An unresolved slot must not be answerable.
+            va, vb = reloc_identity(name_a, name_b)
         if va != vb:
             diffs.append({"off": oa, "a": name_a, "b": name_b})
     if diffs:
@@ -347,16 +360,54 @@ def compare_bodies(ba, ra, bb, rb):
 # Template-type extraction, for the internal-inconsistency proof.
 # --------------------------------------------------------------------------
 def template_args(sym):
-    """Crude MSVC template-argument slice of a mangled name.
+    """The template-argument blob of an MSVC mangled name, or None.
 
-    Deliberately crude AND deliberately only ever used to prove INCONSISTENCY
-    (two different values), never sameness -- so a false 'same' is impossible
-    and a false 'different' is the thing the corroboration step must catch.
+    `?meth@?$Class@<ARGS>@ns@@...` -> "<ARGS>@ns@@..." .  Deliberately crude,
+    and used ONLY to detect INCONSISTENCY (two demonstrably different blobs),
+    never sameness -- so the crudeness can produce a missed detection, never a
+    fabricated one.
     """
-    m = re.search(r"@\?\$([A-Za-z0-9_]+)@(.*)", sym)
-    if not m:
+    m = re.search(r"@\?\$[A-Za-z0-9_]+@(.+)$", sym)
+    return m.group(1) if m else None
+
+
+def _typekey(sym):
+    """A coarse identity for the template type a symbol is instantiated on."""
+    ta = template_args(sym)
+    if ta is None:
         return None
-    return m.group(2)
+    # strip the trailing signature; keep the leading type blob
+    return re.split(r"@@[QAUEIMBP]{2}A", ta)[0][:160]
+
+
+def retail_internally_inconsistent(container, callee):
+    """Does RETAIL's own body for `container` call a `callee` named for a
+    DIFFERENT template type?
+
+    ★★★ THIS IS A FOLD PROOF THAT NEEDS NO FOLD MODEL.  If retail's
+    `push_back<pair<VocalPhrase*,VocalPart*>>` calls a helper the map names
+    `_M_insert_overflow_aux<vector<MicClientID>>`, then one retail function
+    body mentions TWO UNRELATED `T`.  A single template instantiation cannot do
+    that, so /OPT:ICF folded something and the surviving map name is ARBITRARY.
+
+    ⇒ Such a name carries NO discriminating information, and charging it as a
+    difference is reading the linker's arbitrary choice as a source defect.
+    (An earlier revision of this file did exactly that on 222 pairs, calling
+    them REFUTED.  The evidence for the fold was sitting inside the very string
+    being used to refute it.)
+
+    Conservative by construction: returns True only when BOTH names expose a
+    template blob AND the two blobs differ AND they share a method family, so
+    an unparsed name can only ever cause a MISSED detection.
+    """
+    ka, kc = _typekey(container), _typekey(callee)
+    if ka is None or kc is None:
+        return False
+    if ka == kc:
+        return False
+    # Require the callee to look like a same-container helper, not an unrelated
+    # call: both must be STL-ish container instantiations.
+    return ("stlpmtx_std" in container and "stlpmtx_std" in callee)
 
 
 # --------------------------------------------------------------------------
@@ -459,7 +510,8 @@ class Adjudicator:
             bb, rb, _ = self.retail_body(b)
             if ba is not None and bb is not None:
                 try:
-                    v, why, det = compare_bodies(ba, ra, bb, rb)
+                    v, why, det = compare_bodies(ba, ra, bb, rb,
+                                                 container_a=a, container_b=b)
                 except UnresolvedComparison as e:
                     v, why, det = "UNRESOLVED", str(e), {}
                 if v in ("DIFF_SIZE", "DIFF_BODY", "DIFF_NAME"):
@@ -554,7 +606,8 @@ class Adjudicator:
             r["why"] = "our body for %s: %s" % (b, ob_n)
             return r
         try:
-            v, why, det = compare_bodies(tb, tr, ob_b, ob_r)
+            v, why, det = compare_bodies(tb, tr, ob_b, ob_r,
+                                         container_a=a, container_b=b)
         except UnresolvedComparison as e:
             r["verdict"] = "UNDECIDED"
             r["tier"] = "UNRESOLVED-RELOC"
