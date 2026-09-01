@@ -50,13 +50,44 @@ sys.path.insert(0, HERE)
 from header_offset_audit import tus_from_ninja  # noqa: E402
 
 
+def newest_header_mtime(project_dir):
+    """Newest mtime of any header under src/.  Cached per process."""
+    if not hasattr(newest_header_mtime, "_v"):
+        newest = 0.0
+        for root, dirs, files in os.walk(os.path.join(project_dir, "src")):
+            dirs[:] = [d for d in dirs if d not in ("stlport", "xdk")]
+            for fn in files:
+                if fn.endswith((".h", ".hpp")):
+                    try:
+                        newest = max(newest, os.stat(os.path.join(root, fn)).st_mtime)
+                    except OSError:
+                        pass
+        newest_header_mtime._v = newest
+    return newest_header_mtime._v
+
+
 def layout_for_tu(project_dir, tu, cache_dir):
-    """Parsed layout for one TU, from cache or from one bulk compile."""
+    """Parsed layout for one TU, from cache or from one bulk compile.
+
+    ⛔ A CACHE ENTRY IS INVALIDATED BY ANY HEADER EDIT, NOT JUST ITS OWN TU'S.
+    Measured 2026-09-01, and it silently produced WRONG ROWS that --fix-header
+    then wrote: after CameraShot.h's shake members were reordered, deleting
+    ONLY `src_system_world_CameraShot.cpp.json.gz` was not enough -- phase 2
+    takes each class from the FIRST cached TU that reports it, and some other
+    TU that includes CameraShot.h still held the pre-reorder layout.  The audit
+    duly "corrected" four freshly-correct comments back to the old offsets.
+    So the invalidation is deliberately coarse: newest header mtime anywhere
+    under src/.  A header edit costs a full phase 1 again; a RULE change (the
+    thing the cache exists for) still costs nothing.
+    """
     cp = os.path.join(cache_dir, tu.replace("/", "_") + ".json.gz")
     if os.path.exists(cp):
         try:
             with gzip.open(cp, "rt") as fh:
-                return json.load(fh), None
+                cached = json.load(fh)
+            if cached.get("_headers_mtime", 0) >= newest_header_mtime(project_dir):
+                return cached, None
+            os.unlink(cp)                      # a header moved under it
         except (OSError, json.JSONDecodeError):
             os.unlink(cp)                      # torn cache entry -- recompute
     r = subprocess.run(
@@ -73,7 +104,8 @@ def layout_for_tu(project_dir, tu, cache_dir):
     if parsed.get("status") == "COMPILE_FAILED":
         return None, "COMPILE_FAILED"
     # Cache only what phase 2 reads, or the cache is ~10x larger than it needs.
-    slim = {"classes": {k: {"name": v.get("name"), "size": v.get("size"),
+    slim = {"_headers_mtime": newest_header_mtime(project_dir),
+            "classes": {k: {"name": v.get("name"), "size": v.get("size"),
                             "members": v.get("members") or []}
                         for k, v in (parsed.get("classes") or {}).items()
                         if isinstance(v, dict) and v.get("members")}}
@@ -153,7 +185,7 @@ def main():
     hidx = build_header_index(pd)
     print(f"  {len(hidx)} classes declared in src/ headers", flush=True)
 
-    findings, seen_class, no_header, not_ours = {}, {}, set(), set()
+    findings, seen_class, no_header, not_ours, stale = {}, {}, set(), set(), []
     for tu in tus:
         cp = os.path.join(cache, tu.replace("/", "_") + ".json.gz")
         if not os.path.exists(cp):
@@ -162,6 +194,9 @@ def main():
             with gzip.open(cp, "rt") as fh:
                 parsed = json.load(fh)
         except (OSError, json.JSONDecodeError):
+            continue
+        if parsed.get("_headers_mtime", 0) < newest_header_mtime(pd):
+            stale.append(tu)
             continue
         for cls, info in (parsed.get("classes") or {}).items():
             if cls in seen_class:
@@ -182,6 +217,10 @@ def main():
     total = sum(len(r) for h in findings.values() for r in h.values())
     print("\n" + "=" * 72)
     print(f"TUs                 : {len(tus)}  (compile failures {len(failed)})")
+    if stale:
+        print(f"⛔ STALE CACHE ENTRIES SKIPPED: {len(stale)} -- a header was edited\n"
+              f"   after they were written, so their layouts describe the OLD source.\n"
+              f"   Re-run WITHOUT --phase2-only.  First few: {stale[:5]}")
     print(f"classes examined    : {len(seen_class)}")
     print(f"classes w/o header  : {len(no_header)}")
     print(f"headers with rows   : {len(findings)}")
