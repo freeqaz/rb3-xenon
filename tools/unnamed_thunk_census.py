@@ -82,7 +82,17 @@ VTORDISP = 'PPPPPPPM@'          # the encoding of -4; decode_thunk only accepts 
 
 
 def enc_number(n):
-    """MSVC's mangled non-negative number grammar."""
+    """MSVC's mangled non-negative number grammar.
+
+    ⛔ MUST REJECT NEGATIVES.  `while n: n >>= 4` NEVER TERMINATES for n < 0 in
+    Python (-1 >> 4 == -1), so a negative displacement span-locked the census in
+    an infinite string-concatenation loop at 98% CPU with no output -- it looked
+    like an O(n^2) scan, not a hang.  The --validate control could NOT catch it:
+    no already-NAMED thunk has a positive `addi`, so the pathology exists only
+    in the unnamed population the control does not reach.
+    """
+    if n is None or n < 0:
+        return None
     if n == 0:
         return 'A@'
     if 1 <= n <= 10:
@@ -95,14 +105,19 @@ def enc_number(n):
 
 
 def thunk_displacement(u32, va):
-    """The `addi rN,rN,-M` displacement of the thunk at `va` (0 if absent)."""
+    """The `addi rN,rN,-M` displacement of the thunk at `va` (0 if absent).
+
+    Returns None for an `addi` that ADDS -- MSVC's adjustor thunk always
+    subtracts, so a positive immediate means this is not the modelled form and
+    the row must be excluded rather than given a fabricated spelling.
+    """
     reg = 3 if u32(va) == 0x8163FFFC else 4
     w = u32(va + 8)
     if (w >> 26) == 14 and ((w >> 21) & 31) == reg and ((w >> 16) & 31) == reg:
         imm = w & 0xFFFF
         if imm & 0x8000:
             imm -= 0x10000
-        return -imm
+        return -imm if imm <= 0 else None
     return 0
 
 
@@ -121,12 +136,15 @@ def derive_thunk_name(body_name, disp):
         return None
     if head.startswith('??_G'):          # vector deleting dtor thunk -> ??_E
         head = '??_E' + head[4:]
+    num = enc_number(disp)
+    if num is None:                      # non-modelled (adding) displacement
+        return None
     # NB: enc_number already emits its own '@' terminator for the 0 and >10
     # forms.  Appending another one produced a malformed spelling that matched
     # NOTHING -- and therefore classified every candidate PIN_GATED, i.e. it
     # manufactured a clean "this population is unadjudicable" verdict.  The
     # --validate control caught it at 0/1960; do not remove that control.
-    return head + tok + VTORDISP + enc_number(disp) + rest[1:]
+    return head + tok + VTORDISP + num + rest[1:]
 
 
 # ---------------------------------------------------------------- splits (BLOCK level)
@@ -336,7 +354,7 @@ def main():
     seen = 0
     for va, sites in sorted(refs.items()):
         seen += 1
-        if seen % 100000 == 0:
+        if seen % 20000 == 0:
             print('  ... scanned %d/%d referenced addresses' % (seen, len(refs)))
         if va in names:
             continue                          # named -> the other instruments own it
