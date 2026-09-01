@@ -50,9 +50,12 @@ HAZARDS HANDLED (each learned expensively, all recorded in CLAUDE.md)
   * report.json is protobuf-JSON: numerics are sometimes JSON STRINGS and
     DEFAULTS ARE OMITTED.  Every read goes through I()/F() with a default; a
     naive d['matched_code'] raises KeyError and a naive `+` CONCATENATES.
-  * `total_code` is NOT a constant.  It has taken THREE values in four weeks
-    (10,688,688 -> 10,320,664 -> 10,245,956).  It is read from the key, never
-    hardcoded, and a change in it is a first-class verdict class.
+  * `total_code` is NOT a constant.  This lane's brief said it took THREE
+    values in four weeks; the recovered scope_map trace shows **~24 distinct
+    values** between 2026-07-29 and 2026-09-01, wobbling by ~100 B constantly
+    with a handful of large steps (-95,100 on 08-04; -325,804 on 08-09;
+    -74,708 on 08-18).  It is read from the key, NEVER hardcoded, and a change
+    in it is a first-class verdict class rather than noise to smooth over.
   * A RECONSTRUCTED figure is not a MEASURED one.  Rows carry kind=measured vs
     kind=reconstructed and the classifier REFUSES to reason past missing
     evidence -- it returns INDETERMINATE and says which evidence it lacked.
@@ -375,6 +378,103 @@ def cmd_record(a):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
+# backfill -- headline figures with NO report.json behind them
+# ═══════════════════════════════════════════════════════════════════════════
+
+def cmd_backfill(a):
+    """Record a RECONSTRUCTED row from a dated figure in the docs/README record.
+
+    These rows exist so the series starts populated rather than in six weeks.
+    They are NOT measurements and the ledger says so in three places: kind,
+    source, and derived_fields.  A reconstructed row carries NO provenance, so
+    classify() will return INDETERMINATE across it unless unit-level evidence
+    corroborates -- which is the correct answer, not a limitation.
+    """
+    existing = {r["snapshot_id"] for r in load_ledger(a.ledger)}
+    if a.id in existing and not a.replace:
+        print(f"REFUSED: snapshot_id {a.id} already in the ledger",
+              file=sys.stderr)
+        return 2
+    if not a.source:
+        print("REFUSED: a reconstructed row MUST cite where the figure came "
+              "from (--source 'file:line' or 'commit README table')",
+              file=sys.stderr)
+        return 2
+
+    tc, tf = a.total_code, a.total_functions
+    mc, derived = a.matched_code, []
+    if mc is None and a.matched_code_percent is not None and tc:
+        mc = int(round(tc * a.matched_code_percent / 100.0))
+        derived.append("matched_code (from matched_code_percent x total_code -- "
+                       "a DERIVED byte count, not a read one)")
+    measures = {k: 0 for k in MEASURE_KEYS_INT}
+    measures.update({k: 0.0 for k in MEASURE_KEYS_FLT})
+    measures["total_code"] = tc or 0
+    measures["total_functions"] = tf or 0
+    measures["matched_code"] = mc or 0
+    measures["matched_functions"] = a.matched_functions or 0
+    measures["masked_equal_functions"] = a.masked_equal or 0
+    measures["matched_code_percent"] = (
+        a.matched_code_percent if a.matched_code_percent is not None
+        else (100.0 * mc / tc if (mc and tc) else 0.0))
+    measures["matched_functions_percent"] = (
+        100.0 * a.matched_functions / tf
+        if (a.matched_functions and tf) else 0.0)
+    measures["honest_matched_functions"] = (measures["matched_functions"]
+                                            - measures["masked_equal_functions"])
+    unknown = [k for k in ("total_code", "total_functions", "matched_code",
+                           "matched_functions")
+               if not measures[k]]
+    if a.masked_equal is None:
+        # Without masked_equal the honest floor (matched - masked) cannot be
+        # formed.  Leaving it equal to matched_functions would silently invent
+        # a ~22,900-function improvement out of an absence.
+        unknown.append("masked_equal_functions")
+        measures["honest_matched_functions"] = 0
+
+    prov = {f: None for f in PROV_FIELDS}
+    prov.update({"diff_config": None, "map_file": None, "present": False})
+    if a.ruler or a.tool_version:
+        # A ruler asserted from the docs record is still a RECONSTRUCTION.
+        prov["ruler"], prov["tool_version"] = a.ruler, a.tool_version
+        prov["present"] = bool(a.ruler and a.tool_version)
+        derived.append("provenance asserted from prose, not read from a "
+                       "report.json provenance block")
+
+    row = collections.OrderedDict()
+    row["schema"] = SCHEMA
+    row["snapshot_id"] = a.id
+    row["kind"] = "reconstructed"
+    row["commit"] = git("rev-parse", a.commit) if a.commit else None
+    row["commit_date"] = a.date
+    row["commit_subject"] = None
+    row["recorded_at"] = datetime.datetime.now().astimezone().isoformat(
+        timespec="seconds")
+    row["source"] = a.source
+    row["report_sha256"] = None
+    row["measures"] = measures
+    row["strata"] = None
+    row["provenance"] = prov
+    row["note"] = a.note or ""
+    row["derived_fields"] = derived
+    row["unknown_fields"] = unknown
+    row["units_file"] = None
+
+    if a.dry_run:
+        print(json.dumps(row, indent=1))
+        return 0
+    if a.id in existing and a.replace:
+        p = Path(a.ledger) if a.ledger else LEDGER
+        keep = [r for r in load_ledger(a.ledger) if r["snapshot_id"] != a.id]
+        p.write_text("".join(json.dumps(r, sort_keys=False) + "\n" for r in keep))
+    append_ledger(row, a.ledger)
+    print(f"backfilled {a.id} [reconstructed] from {a.source}"
+          + (f"\n  DERIVED: {'; '.join(derived)}" if derived else "")
+          + (f"\n  UNKNOWN (recorded as 0): {', '.join(unknown)}" if unknown else ""))
+    return 0
+
+
+# ═══════════════════════════════════════════════════════════════════════════
 # list
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -384,21 +484,31 @@ def cmd_list(a):
         print("ledger is empty")
         return 0
     rows.sort(key=lambda r: (r.get("commit_date") or r.get("recorded_at") or ""))
-    print(f"{'ID':<16}{'KIND':<15}{'DATE':<12}{'matched_fns':>12}"
+    w = max(16, max(len(r["snapshot_id"]) for r in rows) + 2)
+    print(f"{'ID':<{w}}{'KIND':<15}{'DATE':<12}{'matched_fns':>12}"
           f"{'matched_code':>14}{'total_code':>13}{'code%':>9}"
           f"{'objdiff':>9}  {'ruler':<12}")
-    print("-" * 122)
+    print("-" * (w + 106))
     for r in rows:
         m = r.get("measures") or {}
-        p = r.get("provenance") or {}
+        pv = r.get("provenance") or {}
+        unk = set(r.get("unknown_fields") or [])
         d = (r.get("commit_date") or r.get("recorded_at") or "")[:10]
-        print(f"{r['snapshot_id']:<16}{r.get('kind','?'):<15}{d:<12}"
-              f"{m.get('matched_functions',0):>12,}"
-              f"{m.get('matched_code',0):>14,}"
-              f"{m.get('total_code',0):>13,}"
-              f"{m.get('matched_code_percent',0):>9.4f}"
-              f"{str(p.get('tool_version') or '-'):>9}  "
-              f"{str(p.get('ruler') or '-'):<12}")
+
+        def cell(key, width, fmt=",", unknown_mark="?"):
+            # An UNKNOWN measure must never render as a confident 0.
+            if key in unk:
+                return f"{unknown_mark:>{width}}"
+            v = m.get(key, 0)
+            return f"{v:>{width}{fmt}}"
+
+        print(f"{r['snapshot_id']:<{w}}{r.get('kind','?'):<15}{d:<12}"
+              f"{cell('matched_functions', 12)}"
+              f"{cell('matched_code', 14)}"
+              f"{cell('total_code', 13)}"
+              f"{cell('matched_code_percent', 9, '.4f')}"
+              f"{str(pv.get('tool_version') or '-'):>9}  "
+              f"{str(pv.get('ruler') or '-'):<12}")
     print("\nmatched_fns is the mpn ruler; matched_code is the fuzzy ruler. "
           "They are NOT the same measure.")
     print("kind=reconstructed rows are NOT measurements -- see each row's "
@@ -439,19 +549,53 @@ def classify(a_row, b_row, deep=None, units_a=None, units_b=None):
     pa, pb = a_row.get("provenance") or {}, b_row.get("provenance") or {}
     ev, used, missing = collections.OrderedDict(), [], []
 
+    # ⛔ A backfilled row records an UNKNOWN measure as 0.  Differencing against
+    # that 0 fabricates a colossal delta out of an absence -- exactly the
+    # measured-vs-reconstructed conflation this tool exists to prevent.  Refuse
+    # instead.
+    unk = set(a_row.get("unknown_fields") or []) | set(
+        b_row.get("unknown_fields") or [])
+    # Per-field, not all-or-nothing: a row that knows matched_functions but not
+    # total_functions is still worth something, provided the tool says which
+    # comparisons it could not make.
+    if {"matched_code", "matched_functions"} <= unk:
+        return dict(
+            verdict="INDETERMINATE",
+            reasons=["neither score is known on one endpoint; there is nothing "
+                     "to compare. A 0 here means UNKNOWN, and differencing "
+                     "against an absence fabricates a delta."],
+            evidence={"deltas": {"status": f"REFUSED (unknown: {sorted(unk)})"}},
+            evidence_used=[], evidence_missing=["measures"] + sorted(unk))
+
     d_mf = mb.get("matched_functions", 0) - ma.get("matched_functions", 0)
     d_mc = mb.get("matched_code", 0) - ma.get("matched_code", 0)
     d_tc = mb.get("total_code", 0) - ma.get("total_code", 0)
     d_tf = mb.get("total_functions", 0) - ma.get("total_functions", 0)
     d_pct = mb.get("matched_code_percent", 0) - ma.get("matched_code_percent", 0)
-    d_honest = (mb.get("honest_matched_functions", 0)
-                - ma.get("honest_matched_functions", 0))
+    d_honest = (None if "masked_equal_functions" in (
+                    set(a_row.get("unknown_fields") or [])
+                    | set(b_row.get("unknown_fields") or []))
+                else mb.get("honest_matched_functions", 0)
+                     - ma.get("honest_matched_functions", 0))
 
+    # A field UNKNOWN on either endpoint yields no delta at all -- never a 0.
+    d_mf = None if "matched_functions" in unk else d_mf
+    d_mc = None if "matched_code" in unk else d_mc
+    d_tc = None if "total_code" in unk else d_tc
+    d_tf = None if "total_functions" in unk else d_tf
     ev["deltas"] = {"matched_functions (mpn ruler)": d_mf,
                     "matched_code (fuzzy ruler)": d_mc,
                     "matched_code_percent": round(d_pct, 6),
                     "honest_matched_functions": d_honest,
                     "total_code": d_tc, "total_functions": d_tf}
+    if unk:
+        ev["deltas"]["UNKNOWN_ON_AN_ENDPOINT"] = sorted(unk)
+        missing.append("measures:" + ",".join(sorted(unk)))
+    # Downstream arithmetic uses 0 for an absent delta but the SIGNAL flags
+    # below are gated on the field actually being known.
+    kn_mf, kn_mc = d_mf is not None, d_mc is not None
+    kn_tc, kn_tf = d_tc is not None, d_tf is not None
+    z_mf, z_mc = (d_mf or 0), (d_mc or 0)
 
     # ── E1 provenance: DIRECT evidence of an instrument change ──
     if pa.get("present") and pb.get("present"):
@@ -469,25 +613,54 @@ def classify(a_row, b_row, deep=None, units_a=None, units_b=None):
         prov_changed, prov_known = False, False
 
     # ── E2 denominator ──
-    ev["denominator"] = {"status": "COMPARED", "d_total_code": d_tc,
-                         "d_total_functions": d_tf,
+    ev["denominator"] = {"status": ("COMPARED" if (kn_tc and kn_tf)
+                                    else "PARTIAL (a denominator field is "
+                                         "unknown on an endpoint)"),
+                         "d_total_code": d_tc, "d_total_functions": d_tf,
                          "note": ("total_code has taken three values in four "
                                   "weeks; a move here is a DENOMINATOR event, "
                                   "not necessarily a regression")}
     used.append("denominator")
-    denom_changed = bool(d_tc or d_tf)
+    # MATERIALITY: the recovered trace shows total_code wobbling by ~100 B
+    # between ordinary landings.  A sub-threshold wobble is REPORTED but is not
+    # allowed to become a verdict component, or a -16 B jitter outranks a
+    # -785,380 B ruler flip (measured: it did, on the 2026-08-13 pair).
+    denom_moved = bool(d_tc or d_tf)
+    denom_changed = bool(abs(d_tc or 0) >= SIG_BYTES
+                         or abs(d_tf or 0) >= SIG_FNS)
+    denom_known = kn_tc and kn_tf
+    ev["denominator"]["material"] = denom_changed
+    ev["denominator"]["materiality_threshold_bytes"] = SIG_BYTES
 
     # ── E3 ruler decoupling: the two rulers moving apart ──
-    opposite = (d_mf > SIG_FNS and d_mc < -SIG_BYTES) or \
-               (d_mf < -SIG_FNS and d_mc > SIG_BYTES)
-    decoupled = abs(d_mf) > SIG_FNS and abs(d_mc) < SIG_BYTES
+    both_scores_known = kn_mf and kn_mc
+    opposite = both_scores_known and (
+        (z_mf > SIG_FNS and z_mc < -SIG_BYTES) or
+        (z_mf < -SIG_FNS and z_mc > SIG_BYTES))
+    decoupled = both_scores_known and (abs(z_mf) > SIG_FNS
+                                       and abs(z_mc) < SIG_BYTES)
+    # ── the MIRROR IMAGE, and the shape of the 2026-08-13 name_check flip:
+    # matched_code moves by ~1% of the binary while matched_functions is flat.
+    # CLAUDE.md measured that flip at -817,184 B with matched_functions
+    # BIT-IDENTICAL.  Source work cannot do this: only the arg-only stratum
+    # (mpn==100, fuzzy<100) can move bytes without moving functions, and that
+    # stratum is documented ~91% irreducible.  Threshold is 1% of total_code,
+    # READ from the row -- never a hardcoded byte count.
+    big = max(1, int(0.01 * (mb.get("total_code") or ma.get("total_code") or 0)))
+    bytes_moved_fns_flat = both_scores_known and (abs(z_mc) >= big
+                                                  and abs(z_mf) < SIG_FNS)
     ev["ruler_decoupling"] = {
-        "status": "COMPARED", "opposite_signs": opposite,
+        "status": ("COMPARED" if both_scores_known
+                   else "UNAVAILABLE (needs BOTH rulers known on both "
+                        "endpoints)"),
+        "opposite_signs": opposite,
         "fns_moved_bytes_flat": decoupled,
+        "bytes_moved_fns_flat": bytes_moved_fns_flat,
+        "big_byte_threshold_1pct_total_code": big,
         "note": ("matched_functions counts mpn==100; matched_code sums "
                  "fuzzy==100. Opposite signs at scale is not a shape ordinary "
                  "source work produces.")}
-    used.append("ruler_decoupling")
+    (used if both_scores_known else missing).append("ruler_decoupling")
 
     # ── E4 unit diffusion ──
     if units_a and units_b:
@@ -530,9 +703,22 @@ def classify(a_row, b_row, deep=None, units_a=None, units_b=None):
 
     # ── verdict cascade ────────────────────────────────────────────────
     reasons, components = [], []
-    scores_moved = bool(d_mf or d_mc)
+    scores_moved = bool(z_mf or z_mc)
 
-    if not scores_moved and not denom_changed and not prov_changed:
+    if denom_moved and not denom_changed:
+        reasons.append(f"denominator moved (total_code {(d_tc or 0):+,} B, "
+                       f"total_functions {(d_tf or 0):+,}) but BELOW the "
+                       f"materiality thresholds ({SIG_BYTES:,} B / {SIG_FNS} "
+                       f"fns) -- reported, not treated as a denominator event; "
+                       f"both wobble routinely between landings")
+    # A denominator move that is far too small to account for the score move is
+    # not an explanation, and must not be allowed to masquerade as one.
+    if denom_changed and kn_mf and abs(z_mf) > 10 * max(1, abs(d_tf or 0)):
+        reasons.append(f"NOTE: matched_functions moved {z_mf:+,} but "
+                       f"total_functions only {(d_tf or 0):+,} -- the "
+                       f"denominator move is far too small to account for it, "
+                       f"so something else is also in play")
+    if not scores_moved and not denom_moved and not prov_changed:
         return dict(verdict="NO_CHANGE",
                     reasons=["no measure and no provenance field moved"],
                     evidence=ev, evidence_used=used, evidence_missing=missing)
@@ -544,18 +730,26 @@ def classify(a_row, b_row, deep=None, units_a=None, units_b=None):
                        + " -- this is DIRECT evidence the instrument changed")
     if denom_changed:
         components.append("DENOMINATOR_CHANGE")
-        reasons.append(f"denominator moved: total_code {d_tc:+,}, "
-                       f"total_functions {d_tf:+,} -- scores are not comparable "
+        reasons.append(f"denominator moved: total_code {(d_tc or 0):+,}, "
+                       f"total_functions {(d_tf or 0):+,} -- scores are not comparable "
                        f"as absolutes across this boundary")
     if opposite:
         reasons.append(f"the two rulers moved in OPPOSITE directions "
-                       f"(matched_functions {d_mf:+,} vs matched_code "
-                       f"{d_mc:+,} B) -- source work does not do this at scale")
+                       f"(matched_functions {z_mf:+,} vs matched_code "
+                       f"{z_mc:+,} B) -- source work does not do this at scale")
         if "RULER_OR_TOOL_CHANGE" not in components:
             components.append("RULER_OR_TOOL_CHANGE")
     elif decoupled:
-        reasons.append(f"matched_functions moved {d_mf:+,} while matched_code "
-                       f"stayed flat ({d_mc:+,} B) -- an mpn-only movement")
+        reasons.append(f"matched_functions moved {z_mf:+,} while matched_code "
+                       f"stayed flat ({z_mc:+,} B) -- an mpn-only movement")
+    if bytes_moved_fns_flat:
+        reasons.append(f"matched_code moved {z_mc:+,} B (>= 1% of total_code) "
+                       f"while matched_functions stayed flat ({z_mf:+,}) -- "
+                       f"only the arg-only stratum can move bytes without "
+                       f"moving functions, and it is ~91% irreducible; this is "
+                       f"the shape of the 2026-08-13 name_check flip")
+        if "RULER_OR_TOOL_CHANGE" not in components:
+            components.append("RULER_OR_TOOL_CHANGE")
     if fuzzy_identical_share is not None and fuzzy_identical_share >= 0.9:
         reasons.append(f"{fuzzy_identical_share:.1%} of rows that fell out of "
                        f"mpn==100 have BIT-IDENTICAL fuzzy -- source work "
@@ -593,7 +787,7 @@ def classify(a_row, b_row, deep=None, units_a=None, units_b=None):
         # We could not RULE OUT a tool change.  Only strong corroboration
         # licenses a source verdict; otherwise say so rather than guess.
         if concentrated and not diffuse:
-            v = "SOURCE_PROGRESS" if (d_mc >= 0 and d_mf >= 0) else "REGRESSION"
+            v = "SOURCE_PROGRESS" if (z_mc >= 0 and z_mf >= 0) else "REGRESSION"
             reasons.append("provenance unavailable, but the movement is "
                            "concentrated in few units, which a ruler change "
                            "does not produce -- verdict rests on diffusion "
@@ -607,21 +801,28 @@ def classify(a_row, b_row, deep=None, units_a=None, units_b=None):
         return dict(verdict="INDETERMINATE", reasons=reasons, evidence=ev,
                     evidence_used=used, evidence_missing=missing)
 
-    if d_mc >= 0 and d_mf >= 0:
+    if not both_scores_known:
+        reasons.append("only one of the two rulers is known on this pair; a "
+                       "SOURCE vs REGRESSION call needs both, because "
+                       "matched_functions (mpn) and matched_code (fuzzy) move "
+                       "independently by construction")
+        return dict(verdict="INDETERMINATE", reasons=reasons, evidence=ev,
+                    evidence_used=used, evidence_missing=missing)
+    if z_mc >= 0 and z_mf >= 0:
         reasons.append(f"instrument identical on all {len(PROV_FIELDS)} "
                        f"provenance fields, denominator identical, both rulers "
-                       f"non-negative ({d_mf:+,} fns / {d_mc:+,} B)")
+                       f"non-negative ({z_mf:+,} fns / {z_mc:+,} B)")
         return dict(verdict="SOURCE_PROGRESS", reasons=reasons, evidence=ev,
                     evidence_used=used, evidence_missing=missing)
-    if d_mc <= 0 and d_mf <= 0:
+    if z_mc <= 0 and z_mf <= 0:
         reasons.append(f"instrument identical on all {len(PROV_FIELDS)} "
                        f"provenance fields, denominator identical, and both "
-                       f"rulers fell ({d_mf:+,} fns / {d_mc:+,} B) -- nothing "
+                       f"rulers fell ({z_mf:+,} fns / {z_mc:+,} B) -- nothing "
                        f"external explains it")
         return dict(verdict="REGRESSION", reasons=reasons, evidence=ev,
                     evidence_used=used, evidence_missing=missing)
     reasons.append(f"instrument and denominator identical, but the two rulers "
-                   f"disagree in sign ({d_mf:+,} fns / {d_mc:+,} B) -- "
+                   f"disagree in sign ({z_mf:+,} fns / {z_mc:+,} B) -- "
                    f"expected when a change moves mpn without moving fuzzy or "
                    f"vice versa; adjudicate per row")
     return dict(verdict="MIXED", reasons=reasons, evidence=ev,
@@ -659,8 +860,14 @@ def print_verdict(a_row, b_row, v):
     d = v["evidence"]["deltas"]
     print("\nDELTAS (each labelled with its ruler):")
     for k, val in d.items():
-        print(f"  {k:<38} {val:+,}" if isinstance(val, int)
-              else f"  {k:<38} {val:+}")
+        if val is None:
+            # UNKNOWN on an endpoint -- never render an absence as a 0 delta.
+            print(f"  {k:<38} (unknown on an endpoint -- not differenced)")
+        elif isinstance(val, bool) or not isinstance(val, (int, float)):
+            print(f"  {k:<38} {val}")
+        else:
+            print(f"  {k:<38} {val:+,}" if isinstance(val, int)
+                  else f"  {k:<38} {val:+}")
     print(f"\nVERDICT: {v['verdict']}"
           + (f"   confidence={v['confidence']}" if v.get("confidence") else ""))
     print("\nWHY:")
@@ -782,6 +989,17 @@ def _cases():
         ("opposite rulers: fns fell while bytes rose (the 44,514 event shape)",
          _snap("A", **base), _snap("B", mf=39_800, mc=3_714_000),
          "RULER_OR_TOOL_CHANGE", {}),
+        ("name_check flip shape: matched_code -785,380 B, matched_functions "
+         "+21 (real 2026-08-13 event, NO provenance recorded at the time)",
+         _snap("A", mf=44_248, mc=4_340_756, tc=10_320_692, prov=False),
+         _snap("B", mf=44_269, mc=3_555_376, tc=10_320_692, prov=False),
+         "RULER_OR_TOOL_CHANGE", {}),
+        ("NEGATIVE CONTROL: endpoint's matched_code is UNKNOWN (recorded 0) -- "
+         "differencing against an absence must be refused, not scored",
+         dict(_snap("A", mf=42_000, mc=0, prov=False, kind="reconstructed"),
+              unknown_fields=["matched_code"]),
+         _snap("B", mf=42_400, mc=3_740_000),
+         "INDETERMINATE", {}),
     ]
 
 
@@ -848,6 +1066,25 @@ def main():
     r.add_argument("--allow-unreconciled", action="store_true",
                    help="record even if the report fails self-validation (loud)")
     r.set_defaults(fn=cmd_record)
+
+    b = sub.add_parser("backfill", help="record a RECONSTRUCTED row from a "
+                                        "dated figure (no report.json)")
+    b.add_argument("--id", required=True)
+    b.add_argument("--date", help="ISO date of the figure")
+    b.add_argument("--commit")
+    b.add_argument("--source", help="REQUIRED: where the figure came from")
+    b.add_argument("--note")
+    b.add_argument("--matched-functions", type=int)
+    b.add_argument("--matched-code", type=int)
+    b.add_argument("--matched-code-percent", type=float)
+    b.add_argument("--total-code", type=int)
+    b.add_argument("--total-functions", type=int)
+    b.add_argument("--masked-equal", type=int)
+    b.add_argument("--ruler", help="asserted from prose; still reconstructed")
+    b.add_argument("--tool-version")
+    b.add_argument("--replace", action="store_true")
+    b.add_argument("--dry-run", action="store_true")
+    b.set_defaults(fn=cmd_backfill)
 
     l = sub.add_parser("list", help="print the series")
     l.set_defaults(fn=cmd_list)
