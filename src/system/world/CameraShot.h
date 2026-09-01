@@ -318,10 +318,10 @@ protected:
     // did the mirror image -- the two PAIRS swapped, with mShakeVelocity
     // (0x168) and mShakeAngVelocity (0x178) identical on both sides, which is
     // what rules out a whole-class shift.
-    Vector3 mLastShakeOffset; // 0x148
-    Vector3 mLastShakeAngOffset; // 0x158
-    Vector3 mLastDesiredShakeOffset; // 0x128
-    Vector3 mLastDesiredShakeAngOffset; // 0x138
+    Vector3 mLastShakeOffset; // 0x128
+    Vector3 mLastShakeAngOffset; // 0x138
+    Vector3 mLastDesiredShakeOffset; // 0x148
+    Vector3 mLastDesiredShakeAngOffset; // 0x158
     Vector3 mShakeVelocity; // 0x168
     Vector3 mShakeAngVelocity; // 0x178
     CamShotFrame *mLastNext; // 0x188
