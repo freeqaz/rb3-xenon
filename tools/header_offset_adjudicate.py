@@ -83,14 +83,23 @@ def main():
             flagged[cls.split("::")[-1]] = (hdr, rows)
 
     rep = json.load(open(args.report))
-    # class -> list of (unit, symbol, pct)
+    # class -> list of (unit, symbol, pct, size)
     by_cls = collections.defaultdict(list)
     for u in rep["units"]:
         for f in (u.get("functions") or []):
             sym = f["name"]
             pct = f.get("match_percent_normalized")
+            size = int(f.get("size") or 0)
             for c in classes_in_symbol(sym) & flagged.keys():
-                by_cls[c].append((u["name"], sym, pct))
+                by_cls[c].append((u["name"], sym, pct, size))
+
+    # ⚠ A PERFECT *TRIVIAL* FUNCTION WITNESSES NOTHING.  `?GetX@C@@QBAHXZ`
+    # compiling to `lwz r3,0x8(r3); blr` is 100% in a thousand classes and is
+    # very likely ICF-folded with a hundred unrelated ones; it says nothing
+    # about the class's layout beyond the one offset it happens to load.  The
+    # witness therefore has to be a function with a real body.  MIN_WITNESS_SIZE
+    # is deliberately conservative (0x40 = 16 instructions).
+    MIN_WITNESS_SIZE = 0x40
 
     buckets = collections.defaultdict(list)
     for cls, (hdr, rows) in sorted(flagged.items()):
@@ -98,9 +107,10 @@ def main():
         if not fns:
             buckets["UNWITNESSED"].append((cls, hdr, len(rows), 0, None))
             continue
-        best = max(f[2] for f in fns if f[2] is not None) if any(
-            f[2] is not None for f in fns) else None
-        if best is not None and best >= 100.0:
+        perfect = [f for f in fns
+                   if f[2] is not None and f[2] >= 100.0 and f[3] >= MIN_WITNESS_SIZE]
+        best = max((f[2] for f in fns if f[2] is not None), default=None)
+        if perfect:
             buckets["WITNESSED_LAYOUT_OK"].append((cls, hdr, len(rows), len(fns), best))
         else:
             buckets["NEEDS_INSTRUCTION_WITNESS"].append(
