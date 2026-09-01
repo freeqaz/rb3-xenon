@@ -64399,10 +64399,17 @@
    "name": "SetJump",
    "address": "0x827029d8",
    "survivor": "?SetJump@StandardStream@@UAAXMMPBD@Z",
-   "folded": [
-    "?UpdateTimeByFiltering@StandardStream@@UAAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?UpdateTimeByFiltering@StandardStream@@UAAXXZ",
+     "lane": "S3-ABLATE / coordinator 2026-09-01",
+     "class": "DISTINCT_ADDRESSES_CANNOT_FOLD",
+     "disposition": "withdrawn",
+     "reason": "target_symbol_map.json places the two spellings at DIFFERENT addresses -- 0x827029d8 is ?UpdateTimeByFiltering@ and 0x827035f0 is ?SetJump@ -- and functions at two distinct addresses did not fold. The group is additionally self-inconsistent: its `address` is UpdateTimeByFiltering's, while `survivor` names SetJump, so the recorded T1 evidence (retail bytes at the survivor address vs our compiled body for the folded spelling) compared UpdateTimeByFiltering against ITSELF and was true by construction. Withdrawn, not pruned, per a745039e."
+    }
+   ]
   },
   {
    "name": "Process",
