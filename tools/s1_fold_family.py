@@ -93,6 +93,45 @@ R-NAME    Bodies equal but a resolved (non-placeholder) relocation target
 ⛔ THIS TOOL INSTALLS NOTHING.  Existing alias coverage is REPORTED, never
 applied -- those groups are the thing under audit, and applying them would let a
 fabricated alias validate itself.
+
+═══════════════════════════════════════════════════════════════════════════════
+MEASURED RESULT, lane S1-FOLDTOOL, 2026-09-01 (HEAD 897b9763, ruler name_check,
+total_code 10,245,956 / matched_code 3,772,988 = 36.824165%)
+═══════════════════════════════════════════════════════════════════════════════
+⛔⛔ THE CLASS IS ~99% IRREDUCIBLE BY FOLD PROOF.  DO NOT RE-FUND IT AS A BYTE
+LEVER.
+
+Top 20 families = 427,320 B = 65.6% of class E; 1,182 distinct pairs:
+
+    REFUTED 795 (67.3%) · UNDECIDED 376 (31.8%) · PROVEN_FOLD 11 (0.9%)
+
+Priced by ROW (matched_code is ALL-OR-NOTHING, so a row pays only if EVERY one
+of its charged pairs closes), over the 389,732 B of fully-covered rows:
+
+    FLOOR   -- rows all of whose pairs are PROVEN today   2,480 B   0.64%
+    CEILING -- if EVERY undecided pair were also a fold 123,860 B  31.78%
+    HARD-REFUTED -- >=1 pair proven NOT a fold          236,448 B  60.67%
+
+Extrapolated to the whole 651,116 B class: floor ~4.1 kB, ceiling ~207 kB.
+⚠ The CEILING is NOT a prize -- it is this measurement's own uncertainty, and
+collecting it needs an instrument that does not exist (resolving retail's
+ANONYMOUS operands to their data content: vtable / RTTI identity).  W33 named
+that as the only way its own OURS_UNMAPPED class could ever be settled, and it
+still has not been built.
+
+★ 60.67% is HARD-REFUTED: those rows contain at least one pair proven NOT to be
+a fold, so no alias can ever cross them.  Their value is ACCURACY, not bytes --
+each is a MAP error or a WRONG CALLEE.  Two clean sub-classes fell out:
+  * 245 pairs where one side is a <=8 B THUNK against a real function
+    (e.g. retail calls `?MemFree@@YAXPAX@Z` (188 B) where we call a 4-byte
+    `??3RndCam@@SAXPAX@Z` forwarder).  Inline/thunk POLICY, not a fold.
+    The whole `MemFree` family is 159/159 REFUTED.
+  * `dtor:ObjRefConcrete` 159/167 REFUTED -- W33 refuted this same family on
+    its own stratum, independently, for the same reason.
+
+⚠ NOT VERIFIED HERE: no alias was installed and no whole-binary A/B was run, so
+"the row would cross" rests on the all-or-nothing model, not on a measurement.
+The 34.4% tail of class E outside the top 20 families is unadjudicated.
 """
 import argparse
 import collections
