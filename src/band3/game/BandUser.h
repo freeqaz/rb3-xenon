@@ -153,14 +153,25 @@ public:
     String mOvershellFocus; // 0x24
     CharData *mChar; // 0x30 - CharData*
     GameplayOptions mGameplayOptions; // 0x34
-    bool mAutoplay; // 0x70
-    Symbol mPreviousAward; // 0x74
-    float mLastHitFraction; // 0x78
-    Track *mTrack; // 0x7c
+    // ⚠ The seven comments below used to be a UNIFORM 12 (0xc) LOW -- 0x70,
+    // 0x74, 0x78, 0x7c, 0x84, 0x85, 0x86, with only mPlayer's 0x8c correct.
+    // That is a rb3-Wii-era offset set with gaps at 0x80/0x88, and it is a
+    // COMMENT defect, not a layout defect: retail's own arithmetic forbids the
+    // alternative.  RemoteBandUser's vbtable (retail .rdata lbl_820E02E4) puts
+    // BandUser at 0x5c and RemoteUser at 0xf4, its ctor puts the RemoteUser
+    // vtordisp at 0xf0, and User is 0x40 wide, so the BandUser subobject is
+    // EXACTLY 0xf0 - 0x5c = 0x94 -- which only closes with the contiguous
+    // 0x7c..0x92 tail below.  Independently, retail's RemoteBandUser::SyncLoad
+    // reads mPlayer at BandUser+0x8c (`lwz r10, -0x68(r10)` against
+    // this = complete + 0xf4), agreeing with the one comment that was right.
+    bool mAutoplay; // 0x7c
+    Symbol mPreviousAward; // 0x80
+    float mLastHitFraction; // 0x84
+    Track *mTrack; // 0x88
     Player *mPlayer; // 0x8c
-    bool mParticipating; // 0x84
-    bool mIsWiiRemoteController; // 0x85
-    bool mJustDisconnected; // 0x86
+    bool mParticipating; // 0x90
+    bool mIsWiiRemoteController; // 0x91
+    bool mJustDisconnected; // 0x92
 };
 
 class LocalBandUser : public virtual BandUser, public virtual LocalUser {
