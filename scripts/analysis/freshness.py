@@ -20,11 +20,30 @@ target objects newer than the `report.json` sitting beside them.
 The failure is not an error.  It is a plausible, one-directional LOW number:
 an unpatched object costs a matched function 100.0 -> 99.7 and a unit
 -2.006 pp, with no warning anywhere (see scripts/orchestrator/patch_guard.py
-for the measured table).  `scripts/verify_ruler_agreement.py --selftest` was
-red for exactly this reason -- 10 disagreements, 7 of them on rows report.json
-scored at 100.0 -- and went green with 0 disagreements on a settled tree with
-no code change, while the control flip still produced 31.  It was diagnosing
-a ruler regression that did not exist.
+for the measured table).
+
+⚠ HONESTY NOTE ON THE MOTIVATING INCIDENT.  This module was commissioned to
+fix a red `verify_ruler_agreement.py --selftest` (10 disagreements / 1,980 B,
+7 of them on rows report.json scored at exactly 100.0), on the hypothesis that
+it was a stale tree rather than a ruler regression.  **That red state was NOT
+reproduced.**  The selftest measured GREEN -- 3,323 examined, 0 disagreements,
+31 control-flip disagreements, byte-identical figures -- under all four states
+constructible on 2026-09-01: settled worktree, repo main, new objdiff binary
+against an OLD report, and new binary against a fresh report.  So the stale-
+tree hypothesis is CONSISTENT with the incident but is not confirmed by it,
+and the rival tool-swap hypothesis is REFUTED for that binary pair.
+
+What IS measured, and what actually justifies this module:
+  * an UNBUILT worktree makes `--selftest` exit 5 VACUOUS with `unresolved`
+    0 -> 1,374, and its own remedy blames the WITNESS_UNITS for having
+    "rotted" and tells you to refresh them.  The witnesses were fine; the tree
+    was pre-renamer.  Acting on that advice damages a working gate.
+  * a tree with 2 genuinely unpatched objects (2 pending dynamic_init + 1
+    eh_boundary) was passed CLEANLY by `--verify-scores` at rc=0, 0
+    disagreements.  ⇒ the score comparison is not a detector of an unpatched
+    tree; only the manifest is.
+That second point is the argument for a precondition regardless of what the
+original red turns out to have been.
 
 What it checks, and why each one
 --------------------------------
