@@ -274,14 +274,42 @@ def is_stl_or_template(mangled: str) -> bool:
 # ---------------------------------------------------------------------------
 
 class Unit:
-    __slots__ = ("name", "src", "text_lo", "text_hi", "asm_path")
+    __slots__ = ("name", "src", "text_lo", "text_hi", "blocks", "asm_path")
 
     def __init__(self, name: str, src: str):
         self.name = name          # display name e.g. "BandIKEffector"
         self.src = src            # splits header e.g. "BandIKEffector.cpp"
+        # EVERY .text block this unit pins, in file order.  A unit is
+        # frequently multi-block: 728 of 1,275 pinned units are, and the
+        # blocks are NOT contiguous -- other units' code sits in the gaps.
+        self.blocks: List[Tuple[int, int]] = []
+        # Convenience SPAN over all blocks (min lo, max hi).
+        # ⛔ text_lo..text_hi is a SPAN, NOT a membership test: for a
+        # multi-block unit it covers the gaps, which belong to OTHER units.
+        # Use .blocks for "does this unit own address X" and for sizing.
         self.text_lo: Optional[int] = None
         self.text_hi: Optional[int] = None
         self.asm_path: Optional[Path] = None
+
+    @property
+    def text_size(self) -> int:
+        """Bytes actually pinned -- sum of blocks, gaps EXCLUDED."""
+        return sum(hi - lo for lo, hi in self.blocks)
+
+    def contains(self, va: int) -> bool:
+        """Does this unit actually pin `va`?
+
+        ⛔ Use this, NEVER ``text_lo <= va < text_hi``.  The span covers the
+        gaps between blocks, and those gaps hold OTHER units' code.  Measured
+        2026-09-01: the span over all units totals 1,059,650,240 B against
+        8,702,784 B actually pinned -- a 122x over-claim -- and substituting
+        the span for a membership test inflated map_lint's own findings from
+        1,390 / 335 to 2,897,124 / 3,258,160.
+        """
+        for lo, hi in self.blocks:
+            if lo <= va < hi:
+                return True
+        return False
 
 
 def parse_splits(path: Path) -> List[Unit]:
@@ -314,8 +342,16 @@ def parse_splits(path: Path) -> List[Unit]:
                 continue
             m = re.match(r"\s*\.text\s+start:0x([0-9A-Fa-f]+)\s+end:0x([0-9A-Fa-f]+)", line)
             if m:
-                cur.text_lo = int(m.group(1), 16)
-                cur.text_hi = int(m.group(2), 16)
+                # ⛔ ACCUMULATE.  This used to ASSIGN, so a multi-block unit
+                # kept only its LAST .text block and every earlier one
+                # vanished silently -- 60.9% of all pinned .text (5,298,476 B
+                # over 728 units) was invisible to every consumer, including
+                # PinIndex.at() and pin_size.  Measured 2026-09-01.
+                cur.blocks.append((int(m.group(1), 16), int(m.group(2), 16)))
+    for u in units:
+        if u.blocks:
+            u.text_lo = min(lo for lo, _ in u.blocks)
+            u.text_hi = max(hi for _, hi in u.blocks)
     return [u for u in units if u.text_lo is not None]
 
 
@@ -576,7 +612,7 @@ def unit_class_majorities(units: List[Unit],
     for u in units:
         cc: Counter = Counter()
         for va, name in amap.items():
-            if u.text_lo <= va < u.text_hi:
+            if u.contains(va):
                 cls = mangled_classes(name)
                 if cls:
                     cc[cls[0]] += 1
@@ -857,7 +893,7 @@ def main() -> int:
     for u in units:
         in_range = sorted(
             ((va, name) for va, name in amap.items()
-             if u.text_lo <= va < u.text_hi),
+             if u.contains(va)),
             key=lambda t: t[0])
         if not in_range:
             continue

@@ -283,13 +283,16 @@ class ObjStats:
 # ---------------------------------------------------------------------------
 
 class PUnit:
-    __slots__ = ("src", "name", "lo", "hi", "own", "obj", "report",
+    __slots__ = ("src", "name", "lo", "hi", "blocks", "own", "obj", "report",
                  "source_path", "majority")
 
-    def __init__(self, src: str, lo: int, hi: int):
+    def __init__(self, src: str, lo: int, hi: int, blocks=None):
         self.src = src                                  # F7: the join key
         self.name = re.sub(r"\.cpp$", "", os.path.basename(src))
+        # lo/hi is the SPAN (covers gaps owned by other units); blocks is the
+        # truth.  See map_lint.Unit -- 728 of 1,275 units are multi-block.
         self.lo, self.hi = lo, hi
+        self.blocks = list(blocks) if blocks else [(lo, hi)]
         self.own: Set[str] = set()
         self.obj: Optional[ObjStats] = None
         self.report: Optional[dict] = None
@@ -298,7 +301,15 @@ class PUnit:
 
     @property
     def pin_size(self) -> int:
-        return self.hi - self.lo
+        """Bytes actually pinned -- sum of blocks, gaps EXCLUDED.
+
+        Was ``self.hi - self.lo``, which for a multi-block unit measured only
+        the LAST block (because map_lint dropped the others), and would now
+        over-measure by every gap if it used the span.  Both are wrong; the
+        sum is right.  pin_size feeds the A (sliver/under-pin) and B
+        (over-pin) detectors, so 728 units were being screened on a wrong size.
+        """
+        return sum(hi - lo for lo, hi in self.blocks)
 
 
 def base_stem(stem: str) -> Optional[str]:
@@ -349,7 +360,7 @@ def _dc3_franchise(name: str) -> bool:
 def build_units(splits_path: Path, report_path: Optional[Path],
                 obj_root: Path, amap: Dict[int, str]) -> List[PUnit]:
     raw = map_lint.parse_splits(splits_path)
-    units = [PUnit(u.src, u.text_lo, u.text_hi) for u in raw]
+    units = [PUnit(u.src, u.text_lo, u.text_hi, u.blocks) for u in raw]
 
     # report join: "default/" + src minus .cpp (path-keyed, F7)
     runits: Dict[str, dict] = {}
@@ -453,7 +464,11 @@ def cluster_vas(entries: List[Tuple[int, str]], gap: int) -> List[List[Tuple[int
 
 class PinIndex:
     def __init__(self, units: List[PUnit]):
-        self.spans = sorted((u.lo, u.hi, u) for u in units)
+        # One span PER BLOCK, not per unit.  Indexing by (lo, hi) span made
+        # at() claim every gap between a multi-block unit's blocks -- code
+        # that belongs to OTHER units -- and made gap_around() blind to any
+        # gap interior to a unit.
+        self.spans = sorted((b0, b1, u) for u in units for b0, b1 in u.blocks)
         self.los = [s[0] for s in self.spans]
 
     def at(self, va: int) -> Optional[PUnit]:
@@ -523,7 +538,12 @@ def audit(units: List[PUnit], amap: Dict[int, str], rb3wii: Set[str],
         tf = rep_m.get("total_functions") or 0
         ustats = {
             "unit": u.name, "src": u.src,
-            "pin": {"lo": hx(u.lo), "hi": hx(u.hi), "size": hx(u.pin_size)},
+            # ⚠ size != hi - lo for a multi-block unit, and that is CORRECT:
+            # lo/hi is the SPAN (gaps included, and the gaps belong to other
+            # units), size is the bytes actually pinned.  nblocks says which
+            # kind of row you are looking at -- do not "fix" the mismatch.
+            "pin": {"lo": hx(u.lo), "hi": hx(u.hi), "size": hx(u.pin_size),
+                    "nblocks": len(u.blocks)},
             "mf": mf, "tf": tf,
             "obj": ({"path": str(u.obj.path.relative_to(PROJECT_ROOT)),
                      "total_text": hx(u.obj.total_text),
