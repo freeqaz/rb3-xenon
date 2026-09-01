@@ -147,6 +147,8 @@ def main():
     ap.add_argument("-o", "--out", default=os.path.expanduser(
         "~/tmp/unicorn_equivalence_audit.csv"))
     ap.add_argument("--timeout", type=int, default=5_000_000)
+    ap.add_argument("--resume", action="store_true",
+                    help="skip units already present in the output CSV")
     args = ap.parse_args()
 
     if args.unit:
@@ -155,12 +157,32 @@ def main():
     else:
         units = get_all_units(PROJECT_ROOT)
     jobs = min(args.jobs, 4)
-    print(f"auditing {len(units)} units with {jobs} workers -> {args.out}")
 
-    tasks = [(n, d, o, args.timeout) for (n, d, o) in units]
+    # Resume support. Rows are flushed per unit (see below), so a run killed
+    # by the box -- or by Unicorn failing to mmap its translator buffer under
+    # memory pressure -- leaves usable partial results instead of nothing.
+    done_units = set()
     all_rows = []
+    if args.resume and os.path.exists(args.out):
+        with open(args.out) as f:
+            for r in csv.DictReader(f):
+                done_units.add(r["unit"])
+                all_rows.append(r)
+        print(f"resume: {len(done_units)} units already done "
+              f"({len(all_rows)} rows)")
+        units = [u for u in units if u[0] not in done_units]
+
+    print(f"auditing {len(units)} units with {jobs} workers -> {args.out}")
+    tasks = [(n, d, o, args.timeout) for (n, d, o) in units]
     t0 = time.time()
     done = 0
+    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
+    append = args.resume and os.path.exists(args.out)
+    out_fh = open(args.out, "a" if append else "w", newline="")
+    writer = csv.DictWriter(out_fh, fieldnames=FIELDS)
+    if not append:
+        writer.writeheader()
+        out_fh.flush()
     # maxtasksperchild is load-bearing, not tuning: each comparison builds
     # Unicorn engine instances, and a long-lived worker eventually dies with
     # "Could not allocate dynamic translator buffer", taking the whole run
@@ -172,15 +194,13 @@ def main():
             if err:
                 print(f"  ERROR {name}: {err}", file=sys.stderr)
             all_rows.extend(rows)
+            writer.writerows(rows)
+            out_fh.flush()   # checkpoint: never lose a completed unit
             if done % 100 == 0:
                 print(f"  {done}/{len(units)} units, {len(all_rows)} fns, "
                       f"{time.time() - t0:.0f}s")
 
-    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
-    with open(args.out, "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=FIELDS)
-        w.writeheader()
-        w.writerows(all_rows)
+    out_fh.close()
 
     ev = {}
     for r in all_rows:
