@@ -83,6 +83,32 @@ Usage
             --report-a <a.json> --report-b <b.json>
     python3 tools/progress_ledger.py selftest [--prove-can-fail]
 
+KNOWN-ANSWER TESTS (all three reproduced on delivery; see the commit log)
+────────────────────────────────────────────────────────────────────────
+  1. `25dd39b41192 -> 897b9763ef4a` (objdiff 4.2.3 -> 4.2.8, 12 days apart)
+     => RULER_OR_TOOL_CHANGE on four independent lines, reproducing the survey
+     lane's forensics unprompted: 2,214 rows left `mpn==100` and 2,193 (99.05%)
+     kept a BIT-IDENTICAL `fuzzy`.
+  2. `ctl-ruler-none -> ctl-ruler-namecheck` -- a PURE ruler A/B, same tree,
+     same tool binary, same alias map.  -674,936 B / -6.539656 pp with
+     `matched_functions` BIT-IDENTICAL.  => RULER_OR_TOOL_CHANGE.
+  3. `ctl-objdiff-423 -> ctl-objdiff-425` -- the tool boundary in a 99-MINUTE
+     window: -2,321 functions, +3,812 bytes, denominator and `masked_equal`
+     both bit-identical.  => RULER_OR_TOOL_CHANGE.  This pins the collapse to
+     **4.2.3 -> 4.2.5**, not to 4.2.8; the chain was 4.2.3/4.2.5/4.2.6/4.2.7/
+     4.2.8.  It is also LARGER than the 12-day figure, i.e. real source work
+     recovered ~100 functions in between -- progress that the headline hid.
+
+⚠ TWO TRAPS FOR ANYONE EXTENDING THE BACKFILL
+  * `functionRelocDiffs` was `name_check` on BOTH sides of test 1, and all 22
+    `diff_config` keys were identical.  Only tool_version/commit/binary_hash and
+    the alias map moved.  **A tracker watching only the ruler string would have
+    called that SOURCE WORK.**
+  * Reports written before 2026-08-12 carry **no `provenance` block at all**, so
+    every pair spanning that date is INDETERMINATE by construction unless
+    unit-level evidence corroborates.  That is the honest answer, not a gap to
+    paper over by guessing the ruler from the percentage level.
+
 Exit codes: 0 ok / 1 error or selftest failure / 2 refusal (precondition).
 """
 import argparse
