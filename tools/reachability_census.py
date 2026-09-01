@@ -160,10 +160,23 @@ def profile(rec):
 
 
 def verdict(r):
-    """ALL-OR-NOTHING: the row crosses only if EVERY charge class can close."""
+    """ALL-OR-NOTHING: the row crosses only if EVERY charge class can close.
+
+    ⚠ Reads `name_chg`, NOT `name`.  `name` is the row's SYMBOL NAME, carried
+    all the way from report.json, and it is the identity half of the
+    (unit, name) key the coverage check and the top-N printer both rely on.
+    An earlier revision assigned the name-charge COUNT over it so that this
+    function could read `r["name"]`, which silently:
+      * made the coverage self-check compare int keys against str keys, so it
+        could never pass -- it printed "profiled N/N rows, MISSING N" and a
+        FALSE "treat results as a LOWER bound" warning in the same breath, and
+      * killed the SOURCE_LEVER printer with `'int' object is not subscriptable`.
+    The charge counts and the row identity live in DISJOINT keys for that
+    reason; do not merge them back.
+    """
     if r["reg"] > 0:
         return "WALLED_REG (permuter OFF)"
-    if r["name"] > 0:
+    if r["name_chg"] > 0:
         return "NAME_ADJUDICATION"
     if r["hard"] or r["imm"] or r["br"]:
         return "SOURCE_LEVER"
@@ -243,11 +256,16 @@ def main():
                 continue
             h, n, g, im, b, kinds = profile(rec)
             r = dict(want[key])
+            # Charge counts go in their OWN keys; `name` stays the symbol name
+            # (see verdict()).  `reg` does not collide, `name_chg` is the one
+            # that would.
             r.update(hard=h, name_chg=n, reg=g, imm=im, br=b, kinds=dict(kinds))
-            r["reg"], r["name"] = g, n  # verdict() reads these
             out.append(r)
 
-    # coverage: a silently dropped row would UNDERSTATE charges
+    # coverage: a silently dropped row would UNDERSTATE charges.  Both sides of
+    # this comparison must be (unit:str, symbol:str) or it cannot ever agree.
+    assert all(isinstance(r["name"], str) for r in out), \
+        "row identity was overwritten -- the coverage check below is vacuous"
     got = {(r["unit"], r["name"]) for r in out}
     miss = [v for k, v in want.items() if k not in got]
     print(f"\n== COVERAGE == profiled {len(out)}/{len(want)} rows, "
