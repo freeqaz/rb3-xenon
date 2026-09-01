@@ -74,15 +74,62 @@ INSTRUMENT DISCIPLINE (docs/decomp/INSTRUMENT_DESIGN.md)
    which makes the control a tautology.  See CONTROL SUBJECTS below.
  * shape 4 (a control that cannot fail is not a passing control) -- a pin that
    has left the population is reported DISARMED and exits 3, never PASS.
- * RULER SPLIT -- `objdiff-cli diff` and `objdiff-cli report generate` do NOT
-   agree: 123/1,727 rows (7.1%) differ, ALWAYS with report >= diff, up to
-   +14.75 pp.  Band membership is therefore taken from report.json (the
-   authoritative ruler, per CLAUDE.md) and the tool REFUSES if the split would
-   move >2% of rows across the band boundary.
+ * RULER SPLIT -- see THE RULER DEFECT below.  Band membership is taken from
+   report.json (the authoritative ruler, per CLAUDE.md) and the PRICING is now
+   taken on the same ruler, resolved at runtime.  The tool still REFUSES if the
+   two disagree enough to move >2% of rows across the band boundary.
  * INPUT STABILITY -- a run whose inputs moved under it has MEASURED NOTHING,
    and saying "nothing was measured" is not the same as saying "the regression
    is back".  VOID is a third outcome with its own exit code.  See the INPUT
    STABILITY block below.
+
+THE RULER DEFECT (lane T2-RULER, 2026-09-01) -- FIXED HERE
+==========================================================
+Until this change, line ~396 passed objdiff-cli a hardcoded argv pair -- the flag
+`-c` followed by `functionRelocDiffs=none` -- alongside `--include-instructions`.
+
+⚠ Written WITHOUT the literal quoted-argv adjacency on purpose: ruler.py's
+regression guard is a TEXT SEARCH over its consumers, and it cannot distinguish a
+file that DOCUMENTS the defect from one that HAS it.  Spelling the old line out
+verbatim here made this file fail the very guard it was just added to.  If you
+quote it again, quote it in prose like this.
+
+That constant was written by lane DQ-3 on 2026-08-03, when `none` really was the
+grading ruler.  On 2026-08-12 (`d04c83df`) the project shipped
+`options = {"functionRelocDiffs": "name_check"}` in objdiff.json, and because
+`objdiff-cli diff` applies `-c` LAST (diff.rs:959) -- AFTER the project's
+`options` block (diff.rs:953) -- the hardcoded flag did not merely duplicate the
+default, it ACTIVELY OVERRODE the shipped ruler on every single row.
+
+Lane MCPRULER-1 (2026-08-14) fixed exactly this in scripts/orchestrator/
+mcp_server.py and concluded mcp_server.py was "the LONE hardcoder".  It was not:
+THIS FILE predates that sweep and was missed by it.
+
+Why it mattered here specifically, and why this tool was the DANGEROUS one:
+  * BAND MEMBERSHIP came from report.json -- the GRADED ruler (`name_check`).
+  * PRICING (the instruction diff that decides `mm`, the class, and therefore
+    whether a row is "N mismatches from crossing") came from `diff` on `none`.
+  * Under `none`, every relocation-NAME charge is UNCHARGED -- the whole ICF
+    fold-alias / wrong-callee class simply does not appear as a mismatched
+    instruction.  So a row whose real charge list is "3 insert/delete + 2
+    relocation-name" was priced as `mm=3` and advertised as a source-reachable
+    prize, when closing all three instructions buys `mpn` 100 and EXACTLY ZERO
+    BYTES (matched_code keys on fuzzy == 100).
+  * That is the `?Handle@CustomizePanel@@` failure named in CLAUDE.md, which
+    misled three consecutive lanes.
+
+⇒ The ruler is now RESOLVED AT RUNTIME from report.json's
+`provenance.diff_config` via scripts/analysis/ruler.py -- never hardcoded, because
+a second hardcoded constant rots on exactly the same silent schedule.  `none` and
+`data_value` survive as EXPLICIT opt-ins (`--ruler`), and every percentage this
+tool prints is labelled with the ruler that produced it.
+
+⚠ THE DIFF CACHE IS KEYED ON THE RULER.  It has to be: tools/structural_
+decompose.py and tools/shape_families.py share this cache directory by default,
+so without the ruler in the key a graded run would be silently served `none`-ruler
+entries -- the identical defect, laundered through a cache and therefore
+invisible.  CACHE_FORMAT was bumped to 3 and every entry now carries the config
+it was minted under.
 
 EXIT CODES
 ----------
@@ -103,12 +150,22 @@ USAGE
     python3 tools/crossing_worklist.py --census        [--project-dir DIR]
     python3 tools/crossing_worklist.py --adjudicate    [--max-mismatch 3]
     python3 tools/crossing_worklist.py --reclaim
+
+    # pricing ruler: `graded` (default, == report.json) / `none` / `data_value`
+    python3 tools/crossing_worklist.py --adjudicate --ruler none
 """
 import argparse, collections, hashlib, json, os, re, subprocess, sys, threading, time
 import concurrent.futures as cf
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ANON = re.compile(r'^fn_[0-9A-Fa-f]{8}$')
+
+# The ruler is READ FROM THE ARTIFACT THE GRADING RUN WROTE, never hardcoded.
+# See THE RULER DEFECT above and scripts/analysis/ruler.py for the full argument.
+sys.path.insert(0, os.path.join(REPO, 'scripts'))
+from analysis.ruler import (  # noqa: E402
+    RULER_GRADED, RULER_NONE, VALID_RULERS, resolve_ruler,
+)
 
 CMP_OPS = {'cmpw', 'cmplw', 'cmpd', 'cmpld', 'fcmpu', 'fcmpo'}
 ARITH_OPS = {'add', 'addc', 'and', 'or', 'xor', 'eqv', 'nand', 'nor', 'mullw',
@@ -154,20 +211,50 @@ ARITH_OPS = {'add', 'addc', 'and', 'or', 'xor', 'eqv', 'nand', 'nor', 'mullw',
 # single diff_arg row, same opcode, register operands swapped), not by asking
 # classify_arms.  Anonymous-namespace symbols (`?A0x<hash>@`) are excluded on
 # purpose: that hash is build-dependent, so it is not a stable pin.
+#
+# ⛔⛔ RE-RATIFIED ON THE GRADED RULER (lane T2-RULER, 2026-09-01).  THREE OF THE
+# TEN PINS BELOW WERE NOT PURE AND NEVER HAD BEEN -- they were ratified by a human
+# reading a diff taken on the `none` ruler, which does not show relocation-NAME
+# charges at all.  So the human really did read the diff, and the diff really was
+# incomplete: the ratification was honest and the instrument was not.
+#
+# ⇒ A HUMAN-RATIFIED CONTROL IS ONLY AS GOOD AS THE RULER IT WAS RATIFIED ON.
+#   When a ruler changes, every pinned known positive must be RE-READ, not
+#   inherited.  Re-reading is what found `?ParseNode@@YA_NXZ` calling a
+#   completely different function from retail (below) -- a real divergence that
+#   had been sitting inside a "known GOOD row" for a month.
+#
+# Each surviving pin below was re-read by hand on `functionRelocDiffs=name_check`
+# and shows EXACTLY ONE mismatched instruction: same opcode, register operands
+# transposed, `argtypes == ['register']`, and NO 'symbol' arg anywhere in the row.
 KNOWN_CMP = (
     '?DeterminePhraseTimes@VocalNoteList@@QAAXABVTempoMap@@@Z',        # cmplw cr6,r30,r10 <- r10,r30
-    '?Dispatch@EnterFlowMsg@@UAAXXZ',                                  # cmpw  cr6,r3,r11  <- r11,r3
     '?MaybeAutoplayFutureCymbal@TrackWatcherImpl@@QAAXH@Z',            # cmpw  cr6,r11,r10 <- r10,r11
     '?SetState@NetSession@@QAAXW4SessionState@1@@Z',                   # cmplw cr6,r11,r10 <- r10,r11
     '?TrackNumOfExactType@PlayerTrackConfigList@@QAAHW4TrackType@@@Z',  # cmpw  cr6,r8,r4   <- r4,r8
 )
 KNOWN_ARITH = (
-    '?ParseNode@@YA_NXZ',                                              # add   r3,r30,r11  <- r11,r30
-    '?Update@MicInputArrow@@UAAXXZ',                                   # add   r3,r11,r28  <- r28,r11
     '?HandlePhraseEnd@VocalPart@@QAAXAAHAAM10M@Z',                     # mullw r10,r29,r3  <- r3,r29
     '?Poll@BandIKEffector@@UAAXXZ',                                    # fmuls f0,f11,f0   <- f0,f11
     '?ProcessInPlace@Synapse@1DSP@@QAAXIPAM@Z',                        # add   r3,r11,r29  <- r29,r11
 )
+
+# WITHDRAWN, with the reason, rather than deleted -- so that a future lane reading
+# a `none`-ruler diff does not "rediscover" them as clean positives and re-pin
+# them.  A withdrawal record is cheaper than the second discovery.
+WITHDRAWN_PINS = {
+    # ⚠ NOT a fold-alias pair: retail calls a DESTRUCTOR, we call a file reader.
+    #    Two `bl` sites, both charged only on the graded ruler.  This is a real
+    #    wrong-callee divergence that the `none` ruler concealed inside a row
+    #    this file advertised as a verified-good ARITH_COMMUTE example.
+    '?ParseNode@@YA_NXZ':
+        "graded: {ARITH_COMMUTE:1, SYMBOL:2} -- 2x `bl`, target "
+        "??1Queue@@QAA@XZ vs base ?ReadEmbeddedFile@@YAPAVDataArray@@PBD_N@Z",
+    '?Update@MicInputArrow@@UAAXXZ':
+        "graded: {ARITH_COMMUTE:1, SYMBOL:6} -- six relocation-name charges",
+    '?Dispatch@EnterFlowMsg@@UAAXXZ':
+        "graded: {CMP_REVERSAL:1, SYMBOL:1} -- one relocation-name charge",
+}
 
 
 def report_path(project_dir):
@@ -265,7 +352,13 @@ EXIT_FAIL, EXIT_DISARMED, EXIT_VOID = 2, 3, 4
 # Cache format version.  v1 entries were the raw diff blob with no record of
 # which build produced them; they are not evidence about the current tree and
 # are recomputed rather than trusted.
-CACHE_FORMAT = 2
+#
+# v3 (lane T2-RULER) adds the RULER to both the cache key and the stamp.  Every
+# v2 entry in every shared cache directory was minted on `none` -- the defect --
+# so they are not evidence about the graded ruler either, and the version bump
+# retires them wholesale rather than serving them.  A cached measurement is only
+# comparable to a fresh one if it was taken with the same instrument.
+CACHE_FORMAT = 3
 
 # Pause before retrying a miss.  Paid only by misses.
 RETRY_PAUSE_S = 0.25
@@ -371,14 +464,36 @@ class Counters:
         return self._c[k]
 
 
-def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=None):
+def ruler_key(ruler):
+    """Stable short digest of the FULL diff config, for cache keying."""
+    return hashlib.md5(
+        json.dumps(ruler.config, sort_keys=True).encode()).hexdigest()[:10]
+
+
+def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=None,
+             ruler=None):
     """Run objdiff-cli via argv ONLY -- never through a shell.  See shape 2 above.
 
     Retries a miss once and stamps the cache with the unit's object signature;
     see mechanisms 1 and 2 in the INPUT STABILITY block.
+
+    `ruler` is a scripts/analysis/ruler.Ruler.  It defaults to the GRADED ruler
+    resolved from report.json, so the two in-repo importers of this module
+    (tools/structural_decompose.py, tools/shape_families.py) inherit the fix
+    without an edit -- the same "inherit the guard for free" property `stab`
+    already has.  It is NEVER a hardcoded constant; see THE RULER DEFECT.
     """
+    if ruler is None:
+        ruler = resolve_ruler(project_dir)          # memoized on report.json mtime
     os.makedirs(cache_dir, exist_ok=True)
-    h = hashlib.md5((sym + '\x00' + unit).encode()).hexdigest()[:20]
+    rk = ruler_key(ruler)
+    # ⚠ The ruler is part of the KEY, not merely the stamp.  A `none` entry and a
+    # `name_check` entry for the same symbol are two DIFFERENT measurements that
+    # routinely disagree on the mismatch COUNT, not just the percent (measured on
+    # ?Handle@OvershellSlot@@: 0 / 2 / 641 sites at none / name_check /
+    # data_value).  Sharing one key would let a cache launder the exact defect
+    # this change exists to remove.
+    h = hashlib.md5((sym + '\x00' + unit + '\x00' + rk).encode()).hexdigest()[:20]
     p = os.path.join(cache_dir, h + '.json')
     if os.path.exists(p) and os.path.getsize(p) > 0:
         try:
@@ -386,14 +501,16 @@ def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=
         except ValueError:
             blob = None
         if (isinstance(blob, dict) and blob.get('_cw_cache') == CACHE_FORMAT
+                and blob.get('ruler') == rk
                 and (unit_sig is None or blob.get('inputs') == unit_sig)):
             return blob['diff']
-        # v1 entry, torn write, or a stamp from a different build: not evidence
-        # about THIS tree.  Fall through and recompute.
+        # v1/v2 entry, torn write, a stamp from a different build, or an entry
+        # minted under a different ruler: not evidence about THIS tree measured
+        # with THIS instrument.  Fall through and recompute.
         if stats is not None:
             stats.bump('cache_stale')
     argv = [objdiff_bin(project_dir), 'diff', sym, '-u', unit,
-            '--include-instructions', '-c', 'functionRelocDiffs=none', '-f', 'json']
+            '--include-instructions', *ruler.args, '-f', 'json']
     for attempt in range(retries + 1):
         r = subprocess.run(argv, cwd=project_dir, capture_output=True)
         if r.returncode == 0 and r.stdout.strip():
@@ -404,7 +521,8 @@ def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=
             # reads back as a miss -- i.e. as the very defect being guarded.
             tmp = f'{p}.{os.getpid()}.tmp'
             with open(tmp, 'w') as fh:
-                json.dump({'_cw_cache': CACHE_FORMAT, 'inputs': unit_sig, 'diff': d}, fh)
+                json.dump({'_cw_cache': CACHE_FORMAT, 'inputs': unit_sig,
+                           'ruler': rk, 'ruler_config': ruler.config, 'diff': d}, fh)
             os.replace(tmp, p)
             return d
         if stats is not None:
@@ -417,7 +535,7 @@ def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=
     return None
 
 
-def diff_many(project_dir, rows, cache_dir, stab=None, stats=None, workers=8):
+def diff_many(project_dir, rows, cache_dir, stab=None, stats=None, workers=8, ruler=None):
     """diff_many_tolerant, but a miss is terminal -- with the RIGHT diagnosis.
 
     A partial dump yields a plausible but WRONG census (shape 2), so this never
@@ -437,7 +555,7 @@ def diff_many(project_dir, rows, cache_dir, stab=None, stats=None, workers=8):
     """
     if stab is None:
         stab = InputStability(project_dir)      # must be built BEFORE the pass
-    out = diff_many_tolerant(project_dir, rows, cache_dir, stab, stats, workers)
+    out = diff_many_tolerant(project_dir, rows, cache_dir, stab, stats, workers, ruler)
     stab.recheck()
     miss = [r for r, o in zip(rows, out) if o is None]
     stable_miss = [r for r in miss if not stab.row_moved(r['unit'])]
@@ -469,7 +587,8 @@ def diff_many(project_dir, rows, cache_dir, stab=None, stats=None, workers=8):
     return out
 
 
-def diff_many_tolerant(project_dir, rows, cache_dir, stab=None, stats=None, workers=8):
+def diff_many_tolerant(project_dir, rows, cache_dir, stab=None, stats=None, workers=8,
+                       ruler=None):
     """diff_many, but hands the misses back as DATA instead of exiting on them.
 
     cmd_adjudicate must REFUSE on a partial dump -- a plausible but WRONG
@@ -482,9 +601,14 @@ def diff_many_tolerant(project_dir, rows, cache_dir, stab=None, stats=None, work
     together they reproduce diff_many's guarantee, so nothing is given up).
     """
     sig = stab.unit_sig if stab is not None else (lambda _u: None)
+    # Resolve ONCE, here, and pass the same object to every worker: a pass whose
+    # rows were measured on two different rulers is not a measurement at all.
+    if ruler is None:
+        ruler = resolve_ruler(project_dir)
     with cf.ThreadPoolExecutor(max_workers=workers) as ex:
         return list(ex.map(lambda r: diff_one(project_dir, r['sym'], r['unit'], cache_dir,
-                                              unit_sig=sig(r['unit']), stats=stats), rows))
+                                              unit_sig=sig(r['unit']), stats=stats,
+                                              ruler=ruler), rows))
 
 
 def classify_arms(diff):
@@ -526,25 +650,74 @@ def classify_arms(diff):
     return arms
 
 
-def ruler_gate(rows, diffs):
-    """`diff` and `report generate` disagree. Quantify, and refuse if it matters."""
+def ruler_split(rows, diffs):
+    """Measure the `diff`-vs-`report generate` disagreement, BOTH WAYS.
+
+    ⚠ The old version tracked only `max(report - diff)` and called it "worst".
+    That is one-sided, and it was blind in exactly the direction the ruler defect
+    produced: pricing on `none` makes `diff` read HIGHER than the graded report
+    (relocation-NAME charges are uncharged there), so `report - diff` is negative
+    on every affected row and the printed "worst" stayed pinned at `+0.00` while
+    thousands of rows disagreed.  A one-sided instrument reports health when the
+    error runs the other way.  Both directions are measured now.
+    """
     dis = flip = 0
-    worst = 0.0
+    worst_rpt_high = worst_diff_high = 0.0
     for r, d in zip(rows, diffs):
-        db = d['fuzzy_match_percent']
+        # protobuf-JSON omits defaults: an absent fuzzy_match_percent is 0.0.
+        db = float((d or {}).get('fuzzy_match_percent') or 0.0)
         if abs(db - r['fz']) > 1e-3:
             dis += 1
-            worst = max(worst, r['fz'] - db)
+            worst_rpt_high = max(worst_rpt_high, r['fz'] - db)
+            worst_diff_high = max(worst_diff_high, db - r['fz'])
             if (r['fz'] >= 95) != (db >= 95):
                 flip += 1
-    print(f"RULER SPLIT: diff-vs-report disagreements {dis}/{len(rows)} "
-          f"({100*dis/len(rows):.1f}%), worst report-minus-diff {worst:+.2f} pp, "
-          f"band flips {flip} ({100*flip/len(rows):.2f}%)")
-    if flip / max(len(rows), 1) >= 0.02:
+    return dis, flip, worst_rpt_high, worst_diff_high
+
+
+def ruler_gate(rows, diffs, ruler=None):
+    """Quantify the pricing-vs-population ruler split, and refuse if it matters.
+
+    On the GRADED ruler this should now read ~0 disagreements: band membership
+    (report.json) and pricing (`diff`) are the same instrument, which is the
+    whole point of the fix.  A non-trivial split here means the pricing ruler has
+    drifted from the grader again -- read it as an alarm, not as background.
+
+    Under an EXPLICIT `--ruler none`/`data_value` opt-in the split is EXPECTED and
+    is the reason the opt-in exists, so it is reported loudly and NOT refused --
+    refusing there would make the opt-in unusable.  The row band still comes from
+    report.json, so such a run is deliberately mixing two rulers and says so.
+    """
+    dis, flip, worst_rpt_high, worst_diff_high = ruler_split(rows, diffs)
+    n = max(len(rows), 1)
+    print(f"RULER SPLIT: pricing-vs-report disagreements {dis}/{len(rows)} "
+          f"({100*dis/n:.1f}%), worst report-above-pricing {worst_rpt_high:+.2f} pp, "
+          f"worst pricing-above-report {worst_diff_high:+.2f} pp, "
+          f"band flips {flip} ({100*flip/n:.2f}%)")
+    if ruler is not None and ruler.selector != RULER_GRADED:
+        print(f"  ⚠ pricing is on the **{ruler.reloc_mode}** ruler by explicit "
+              f"--ruler={ruler.selector}, but the row BAND comes from report.json "
+              f"(**{ruler.graded_reloc_mode}**).\n"
+              f"    This run deliberately mixes two rulers; the split above is the "
+              f"EXPECTED consequence, not a defect.\n"
+              f"    Do not read `mm` or the class census here as the graded "
+              f"reachability of a row.")
+        return
+    if flip / n >= 0.02:
         sys.exit('REFUSE: ruler split would move >=2% of rows across the band boundary.')
 
 
+def print_ruler(ruler):
+    """A percentage without its ruler is not a measurement.  Say it every time."""
+    print(ruler.banner())
+    print()
+
+
 def cmd_census(a):
+    # The census reads report.json ONLY -- no `diff` call -- so it is already on
+    # the graded ruler by construction.  It is labelled anyway: a reader cannot
+    # tell "graded by construction" from "graded by luck" without being told.
+    print_ruler(resolve_ruler(a.project_dir, a.ruler))
     M, rows = load_rows(a.project_dir)
     TOT = sum(r['size'] for r in rows)
     print(f"report: total_code {int(M['total_code']):,}  total_functions {M['total_functions']:,}  "
@@ -572,16 +745,19 @@ def cmd_adjudicate(a):
     mislabelled was the worse option: the operator reads "REFUSE: 10/3618 diffs
     produced no output" as a defect in the tool or the tree, and the next real
     partial dump reads the same way."""
+    ruler = resolve_ruler(a.project_dir, a.ruler)
+    print_ruler(ruler)
     M, rows = load_rows(a.project_dir)
     stab = InputStability(a.project_dir)
     stats = Counters()
     cache = os.path.join(a.cache_dir, 'diffs')
-    print(f"diffing {len(rows)} rows (cache {cache}) ...", file=sys.stderr)
-    diffs = diff_many(a.project_dir, rows, cache, stab, stats)
+    print(f"diffing {len(rows)} rows on ruler `{ruler.reloc_mode}` "
+          f"(cache {cache}) ...", file=sys.stderr)
+    diffs = diff_many(a.project_dir, rows, cache, stab, stats, ruler=ruler)
     if stats['rescued_by_retry']:
         print(f"note: {stats['rescued_by_retry']} row(s) missed on the first attempt and "
               f"resolved on retry (transient, not a defect)", file=sys.stderr)
-    ruler_gate(rows, diffs)
+    ruler_gate(rows, diffs, ruler)
     for r, d in zip(rows, diffs):
         r['arms'] = classify_arms(d)
         r['mm'] = len(r['arms'])
@@ -590,8 +766,17 @@ def cmd_adjudicate(a):
 
     sel = [r for r in rows if 0 < r['mm'] <= a.max_mismatch]
     TB = sum(r['size'] for r in sel)
-    print(f"\n=== worklist: rows with <= {a.max_mismatch} real mismatches: "
-          f"{len(sel)} rows / {TB:,} B ===")
+    print(f"\n=== worklist: rows with <= {a.max_mismatch} real mismatches "
+          f"[ruler {ruler.reloc_mode}]: {len(sel)} rows / {TB:,} B ===")
+    nsym = sum(1 for r in sel if 'SYMBOL' in r['arms'])
+    bsym = sum(r['size'] for r in sel if 'SYMBOL' in r['arms'])
+    print(f"  of which {nsym} rows / {bsym:,} B carry >=1 relocation-NAME charge "
+          f"(class SYMBOL).\n"
+          f"  Those are NOT plain source work: a SYMBOL charge is a wrong callee OR "
+          f"an ICF fold-alias,\n"
+          f"  and an unproven fold cannot be closed by editing instructions. On the "
+          f"`none` ruler they were\n"
+          f"  INVISIBLE -- see THE RULER DEFECT at the top of this file.")
     cb, cn = collections.Counter(), collections.Counter()
     for r in sel:
         cb[r['cls']] += r['size']; cn[r['cls']] += 1
@@ -608,13 +793,19 @@ def cmd_adjudicate(a):
         print(f"  PURE {label:<15} {len(p):>4} rows {v:>8,} B  "
               f"({100*v/int(M['total_code']):.4f} pp)   {note}")
 
-    print(f"\n=== top {a.top} of the worklist by size-if-it-crosses ===")
+    print(f"\n=== top {a.top} of the worklist by size-if-it-crosses "
+          f"[ruler {ruler.reloc_mode}] ===")
+    print("  'sym' column marks rows carrying a relocation-NAME charge: their prize "
+          "is NOT collectable\n  by instruction edits alone.")
     for r in sorted(sel, key=lambda r: -r['size'])[:a.top]:
-        print(f"{r['size']:>7} B  mm={r['mm']}  fz={r['fz']:>7.3f}  {r['cls']:<16} "
+        flag = 'sym' if 'SYMBOL' in r['arms'] else '   '
+        print(f"{r['size']:>7} B  mm={r['mm']} {flag} fz={r['fz']:>7.3f}  {r['cls']:<16} "
               f"{r['unit'][:32]:<32} {r['sym'][:58]}")
 
 
 def cmd_reclaim(a):
+    # report.json only, no `diff` call -- graded by construction, labelled anyway.
+    print_ruler(resolve_ruler(a.project_dir, a.ruler))
     d = json.load(open(report_path(a.project_dir)))
     units = []
     for u in d['units']:
@@ -688,6 +879,18 @@ def cmd_selftest(a):
     fails = []
     disarmed = []
     voids = []
+
+    # ── the pricing ruler ────────────────────────────────────────────────────
+    # `--self-break` REINSTATES THE ORIGINAL DEFECT rather than simulating it: it
+    # forces pricing onto `none` while the row band still comes from the graded
+    # report.json, which is bit-for-bit what line ~396 used to do.  An end-to-end
+    # sabotage is worth more than a flag that pokes a boolean, because it also
+    # proves the control would have caught the historical bug.
+    graded = resolve_ruler(a.project_dir, RULER_GRADED)
+    ruler = resolve_ruler(a.project_dir, RULER_NONE) if a.self_break \
+        else resolve_ruler(a.project_dir, a.ruler)
+    print_ruler(ruler)
+
     M, rows = load_rows(a.project_dir)
     by = {r['sym']: r for r in rows}
     unit_of = {r['sym']: r['unit'] for r in rows}
@@ -702,7 +905,7 @@ def cmd_selftest(a):
     # ONE diff pass over the whole sub-100 population; every control below
     # reads it.  Misses are DATA here rather than a REFUSE -- see the docstring
     # of diff_many_tolerant for why the selftest must not abort on them.
-    diffs = diff_many_tolerant(a.project_dir, rows, cache, stab, stats)
+    diffs = diff_many_tolerant(a.project_dir, rows, cache, stab, stats, ruler=ruler)
     stab.recheck()
     diff_of = {r['sym']: d for r, d in zip(rows, diffs)}
     if stats['rescued_by_retry']:
@@ -865,6 +1068,56 @@ def cmd_selftest(a):
         elif not ok:
             fails.append(msg)
 
+    # -- control 5 (lane T2-RULER): THE PRICING RULER IS THE GRADED RULER.
+    #
+    #    This is the regression guard for the defect described in THE RULER
+    #    DEFECT.  It is deliberately TWO checks, because either one alone can be
+    #    satisfied while the tool is still lying:
+    #
+    #      5a is a pure CONFIG check -- it would have caught the historical bug
+    #         on the day objdiff.json shipped `name_check`, with no diffs at all.
+    #      5b is the MEASURED consequence.  A config that reads right while the
+    #         diffs come back on another ruler (a stale cache entry, an argv
+    #         ordering surprise, a future `-c` creeping back in) fails here and
+    #         passes 5a.  5b is what makes 5a more than a restatement of itself.
+    #
+    #    ⚠ VACUITY GUARD.  `--self-break` works by forcing pricing to `none`.  If
+    #    the project ever ships `none` AS the graded ruler again, that sabotage
+    #    is a NO-OP and this control would pass under --self-break -- a control
+    #    that cannot fail.  That case is reported DISARMED (exit 3), never PASS,
+    #    following the house idiom in tools/screen_gate.py.
+    if a.self_break and graded.reloc_mode == RULER_NONE:
+        print(f"  DISARMED  control 5 (pricing ruler == graded ruler): the graded "
+              f"ruler IS `{RULER_NONE}`, so --self-break's sabotage is a no-op")
+        disarmed.append('control 5 (ruler): the graded ruler is `none`, so the '
+                        '--self-break sabotage (force pricing to `none`) changes '
+                        'nothing and the control cannot fail. Re-express the '
+                        'sabotage against whatever the graded ruler then is -- do '
+                        'not read a PASS here.')
+    else:
+        ok_a = ruler.reloc_mode == graded.reloc_mode
+        print(f"  {mark(ok_a)}  control 5a (pricing ruler == graded ruler): "
+              f"pricing `{ruler.reloc_mode}` vs report.json `{graded.reloc_mode}`"
+              f"  [{graded.source}]")
+        verdict('control 5a (pricing ruler == graded ruler)', ok_a,
+                f'PRICING ON THE WRONG RULER: rows are banded by report.json on '
+                f'`{graded.reloc_mode}` but priced by `diff` on `{ruler.reloc_mode}`, so '
+                f'relocation-NAME charges are counted by one half of this tool and not '
+                f'the other')
+
+        # 5b: the measured consequence, over every row whose diff resolved.
+        paired = [(r, diff_of[r['sym']]) for r in rows if diff_of.get(r['sym']) is not None]
+        dis, flip, w_rpt, w_prc = ruler_split([r for r, _ in paired], [d for _, d in paired])
+        share = dis / max(len(paired), 1)
+        ok_b = share < 0.01
+        print(f"  {mark(ok_b)}  control 5b (pricing agrees with report.json): "
+              f"{dis}/{len(paired)} rows disagree ({100*share:.2f}%), worst "
+              f"report-above-pricing {w_rpt:+.2f} pp, pricing-above-report {w_prc:+.2f} pp")
+        verdict('control 5b (pricing agrees with report.json)', ok_b,
+                f'{dis}/{len(paired)} rows ({100*share:.2f}%) score differently under the '
+                f'pricing ruler than under the grader -- the two halves of this tool are '
+                f'measuring with different instruments')
+
     print()
     stab.report()
     print(f'controls: {len(fails)} failed, {len(voids)} void, {len(disarmed)} disarmed')
@@ -920,12 +1173,21 @@ def main():
     ap.add_argument('--adjudicate', action='store_true')
     ap.add_argument('--reclaim', action='store_true')
     ap.add_argument('--selftest', action='store_true')
+    ap.add_argument('--ruler', default=RULER_GRADED, choices=list(VALID_RULERS),
+                    help='which diff ruler to PRICE on. `graded` (DEFAULT) is read at '
+                         'runtime from report.json\'s provenance.diff_config, so it is '
+                         'the same instrument the grader used and the same one the row '
+                         'band comes from. `none` and `data_value` are explicit opt-ins '
+                         'that change exactly one key; they deliberately MIX rulers '
+                         '(band from report.json, pricing from the opt-in) and say so')
     ap.add_argument('--self-break', action='store_true',
                     help='sabotage the controls to prove they can FAIL. Run it on a '
                          'SETTLED tree: on a tree a peer is rebuilding, the sabotaged '
                          'controls come back VOID (4) rather than FAIL (2), because '
                          'that is the honest reading of a run whose inputs moved -- '
-                         'the lever is not broken, the tree was')
+                         'the lever is not broken, the tree was. NOTE it also forces '
+                         'pricing onto `none`, reinstating the historical ruler defect '
+                         'end-to-end so control 5 is proven able to catch it')
     a = ap.parse_args()
     if not os.path.exists(report_path(a.project_dir)):
         sys.exit(f'REFUSE: no report.json under {a.project_dir}. Build first.')
