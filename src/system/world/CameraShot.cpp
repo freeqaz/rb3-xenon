@@ -66,10 +66,14 @@ AutoPrepTarget::AutoPrepTarget(CamShotFrame &frame)
     mFrame->mZoomFOV = 0;
     mShot->mFilter = 0.0f;
     mShot->mClampHeight = -1.0f;
-    mShot->mLastShakeOffset.Set(0.0f, 0.0f, 0.0f);
-    mShot->mLastShakeAngOffset.Set(0.0f, 0.0f, 0.0f);
+    // Statement order follows the target's store order (0x148, 0x158, 0x128,
+    // 0x138) -- i.e. Desired first.  Before the CameraShot.h declaration order
+    // was corrected this read Last-first and still matched, because the two
+    // errors cancelled HERE while diverging in ?Shake@CamShot@@.
     mShot->mLastDesiredShakeOffset.Set(0.0f, 0.0f, 0.0f);
     mShot->mLastDesiredShakeAngOffset.Set(0.0f, 0.0f, 0.0f);
+    mShot->mLastShakeOffset.Set(0.0f, 0.0f, 0.0f);
+    mShot->mLastShakeAngOffset.Set(0.0f, 0.0f, 0.0f);
     sChanging = true;
     mFrame->UpdateTarget();
     mShot->SetFrame(mFrame->mFrame, 1.0f);
@@ -944,9 +948,9 @@ CamShot::CamShot()
       mPlatform(kPlatformNone), mHideList(this), mShowList(this), mGenHideList(this),
       mParentDir(this), mDrawOverrides(this), mPostProcOverrides(this), mCrowds(this),
       mPS3PerPixel(true), mGlowSpot(this), mFlags(0),
-      mEndHideList(this), mEndShowList(this), mLastDesiredShakeOffset(0, 0, 0),
-      mLastDesiredShakeAngOffset(0, 0, 0), mLastShakeOffset(0, 0, 0),
-      mLastShakeAngOffset(0, 0, 0), mShakeVelocity(0, 0, 0), mShakeAngVelocity(0, 0, 0), mLastNext(0),
+      mEndHideList(this), mEndShowList(this), mLastShakeOffset(0, 0, 0),
+      mLastShakeAngOffset(0, 0, 0), mLastDesiredShakeOffset(0, 0, 0),
+      mLastDesiredShakeAngOffset(0, 0, 0), mShakeVelocity(0, 0, 0), mShakeAngVelocity(0, 0, 0), mLastNext(0),
       mLastPrev(0), mDuration(0), mDisabled(0), mShotStarted(1), mShotOver(0), mHidden(0),
       mSetFrameActive(0) {}
 

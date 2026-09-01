@@ -309,12 +309,21 @@ protected:
     int mFlags; // 0x1e4
     ObjPtrList<RndDrawable> mEndHideList; // 0x1e8
     ObjPtrList<RndDrawable> mEndShowList; // 0x1fc
-    Vector3 mLastDesiredShakeOffset; // 0x210
-    Vector3 mLastDesiredShakeAngOffset; // 0x220
-    Vector3 mLastShakeOffset; // 0x230
-    Vector3 mLastShakeAngOffset; // 0x240
-    Vector3 mShakeVelocity; // 0x250
-    Vector3 mShakeAngVelocity; // 0x260
+    // ⛔ ORDER IS LOAD-BEARING AND WAS WRONG UNTIL 2026-09-01.  These four
+    // Vector3s were declared Desired-first, which is invisible to sizeof (four
+    // 0x10 vectors in either order) and therefore survived a 100.0%,
+    // zero-mismatch `?NewObject@CamShot@@` whose `li r3, 0x1c8` matches retail
+    // exactly.  ?Shake@CamShot@@ is the witness: retail accumulates the random
+    // shake into 0x148/0x158 and springs it into 0x128/0x138, while our build
+    // did the mirror image -- the two PAIRS swapped, with mShakeVelocity
+    // (0x168) and mShakeAngVelocity (0x178) identical on both sides, which is
+    // what rules out a whole-class shift.
+    Vector3 mLastShakeOffset; // 0x128
+    Vector3 mLastShakeAngOffset; // 0x138
+    Vector3 mLastDesiredShakeOffset; // 0x148
+    Vector3 mLastDesiredShakeAngOffset; // 0x158
+    Vector3 mShakeVelocity; // 0x168
+    Vector3 mShakeAngVelocity; // 0x178
     CamShotFrame *mLastNext; // 0x270
     CamShotFrame *mLastPrev; // 0x274
     /** "duration of the camshot" */
