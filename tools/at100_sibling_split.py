@@ -20,6 +20,45 @@ CAVEAT, stated because it bounds the claim: "same template" is decided by
 demangling the mangled name's leading identifier, which is a syntactic test. It
 proves the two names are sibling instantiations; it does NOT by itself say WHICH
 map row (caller or callee) is misassigned.
+
+⛔⛔ SCOPE BUG -- THE "MAP DEFECT" LABEL BELOW IS OVER-BROAD, MEASURED
+=====================================================================
+(lane S2-CONTAINER, 2026-09-01.)
+
+The structural argument above is sound ONLY WHEN THE CALLER IS ITSELF AN
+INSTANTIATION OF THE SAME TEMPLATE FAMILY, so that the callee's template
+arguments are forced by the caller's own. `classify(t, b)` NEVER EXAMINES THE
+CALLER -- it sees only the two callee names -- so it applies the argument to
+every charged site regardless.
+
+When the caller is an ORDINARY function, the element type is chosen by a
+DECLARATION, not by the caller's template arguments:
+
+    struct Foo { ObjPtrList<Object>       mThings; };   // ours
+    struct Foo { ObjPtrList<CharInterest> mThings; };   // retail
+    void Foo::Bar() { mThings.push_back(x); }           // ordinary caller
+
+Our source emits a call to the <Object> instantiation and retail's to the
+<CharInterest> one, and the cause is a WRONG HEADER DECLARATION -- a source
+defect, fully representable, and fixable by one header edit.
+
+MEASURED on the charged sibling-type population of this tree
+(tools/container_type_census.py, 1,856 charged sites at the shipped ruler):
+
+    CALLER_ORDINARY   1,666 sites  (89.8%)   <- argument does NOT apply
+    CALLER_SIBLING      190 sites  (10.2%)   <- argument DOES apply
+
+So ~90% of what this tool prints as "MAP DEFECT (source structurally cannot do
+this)" is a population where a source defect IS structurally possible. Read the
+STRUCT bucket as "sibling-instantiation shape", NOT as an adjudication, and
+split it on the caller before spending anything. A confident-wrong "unfixable"
+label is the failure mode this project's record says closes veins permanently.
+
+⚠ And note the converse, also measured: a CALLER_ORDINARY row is NOT thereby a
+source defect either. Lane S2-CONTAINER adjudicated one on retail bytes
+(ObjDirItr<RndAnimatable>/<RndPollable>, commit 25aff13a) and it was a MAP
+defect with our source correct. Both readings stay open; only evidence closes
+them.
 """
 import collections, json, os, re, sys
 
@@ -82,13 +121,22 @@ for t, b, cl, n in w2:
 STRUCT = {"SIBLING_TEMPLATE_FN", "SIBLING_SAME_CLASS"}
 print("\n%-26s %6s %6s" % ("category", "pairs", "sites"))
 for c, n in cat.most_common():
-    flag = "  <-- MAP DEFECT (source structurally cannot do this)" if c in STRUCT else ""
+    flag = ("  <-- sibling shape; MAP DEFECT *ONLY IF THE CALLER IS A SIBLING "
+            "INSTANTIATION* -- not checked here, and ~90% of charged sites are "
+            "ordinary callers where a source defect IS possible (see docstring)"
+            if c in STRUCT else "")
     print("%-26s %6d %6d%s" % (c, n, cats[c], flag))
 
 sp = sum(cat[c] for c in STRUCT); ss = sum(cats[c] for c in STRUCT)
-print("\nSTRUCTURALLY-IMPOSSIBLE-AS-SOURCE-DEFECT: %d pairs (%.1f%%) / %d sites (%.1f%%)"
+print("\nSIBLING-INSTANTIATION SHAPE: %d pairs (%.1f%%) / %d sites (%.1f%%)"
       % (sp, 100.0 * sp / len(w2), ss, 100.0 * ss / sum(n for *_x, n in w2)))
-print("remaining CANDIDATE SOURCE DEFECTS       : %d pairs / %d sites"
+print("  ⚠ NOT an adjudication. This was labelled "
+      "STRUCTURALLY-IMPOSSIBLE-AS-SOURCE-DEFECT until 2026-09-01; that is true "
+      "only where the CALLER is a sibling instantiation too, which this tool "
+      "does not check. Measured on this tree: 89.8% of charged sibling-type "
+      "sites have an ORDINARY caller, where a wrong member declaration IS "
+      "representable. Split on the caller before believing it.")
+print("pairs OUTSIDE the sibling shape          : %d pairs / %d sites"
       % (len(w2) - sp, sum(n for *_x, n in w2) - ss))
 
 for c in ("DIFFERENT_MEMBER", "SAME_MEMBER_DIFF_CLASS", "DIFFERENT_TEMPLATE_FN",
