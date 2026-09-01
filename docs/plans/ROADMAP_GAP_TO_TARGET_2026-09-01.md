@@ -252,11 +252,42 @@ repaired during the survey (TU0 phantom ranges; crash-on-valid-input).
 
 **Build these (ranked, all cheap):**
 
-1. **Freshness precondition on measurement-consuming tools** (~40 lines).
-   `patch_state.json` + `--verify-manifest` (0.26 s, no toolchain) already
-   answers "is this tree measurable?" — call it and refuse on drift in
-   `verify_ruler_agreement --verify-scores`, `reachability_census`, and any
-   new tool. This week's incident is the demonstration.
+1. ✅ **DONE (lane T1-FRESH)** — **Freshness precondition on
+   measurement-consuming tools.** `scripts/analysis/freshness.py` reuses
+   `patch_guard.ensure_patched_tree(build=False)` and adds the four things the
+   manifest cannot answer: a NON-VACUITY floor; "report.json is non-vacuous and
+   not older than the manifest"; **TOOL IDENTITY** (`provenance.tool_binary_hash`
+   vs the binary a live diff will run); and the **ICF ALIAS MAP** not being
+   newer than the report. Every stale subject is named
+   (`STALE OBJECTS`/`STALE TOOL`/`STALE ALIAS MAP`/…), collected rather than
+   short-circuited — "stale" without a subject sends the next lane to rebuild
+   the wrong thing. Wired into
+   `reachability_census` and `verify_ruler_agreement --verify-scores/--selftest`
+   (**not** `--check` — that is a ninja edge gating REPORT and would deadlock).
+   Raises rather than returning a number; `--allow-stale` overrides behind a
+   banner; `scripts/test_freshness.py` proves each guard can fail by mutation.
+   ⚠ Two corrections to this item as written: the floor is **load-bearing, not
+   belt-and-braces** — `verify_objs_patched --verify-manifest` prints
+   `OK: 0 decomp, 0 target objects match` and exits **0** on an empty manifest —
+   and the gate must be **content-keyed, not mtime-keyed** (380 objects in a
+   fresh worktree were newer than report.json and byte-identical to it).
+   ⛔ **An objects-only gate would have passed this tree while it was
+   unmeasurable**: the shared `bin/objdiff-cli` (a symlink into ../objdiff,
+   shared with ../rb3 and ../dc3-decomp) was rebuilt at 08:59 under running
+   lanes while the report dated from 08:25 — which is why item 3's provenance
+   record and this gate agree that the tool and alias-map hashes are the
+   discriminators. ⚠ Both are **xxh3_64**, so the tool is asked for its own
+   identity (`--version`) and the map is checked by mtime; a `sha256[:16]`
+   guess reads `ee78f52f…` where the truth is `faf33906…` and would refuse
+   every tree forever.
+   ⚠ **The commissioning diagnosis was NOT confirmed.** `--selftest`'s red
+   state did not reproduce: it measured GREEN (3,323 examined / 0 disagree /
+   31 control, byte-identical) on a settled worktree, on main, with the new
+   binary against an OLD report, and with the new binary against a fresh one.
+   What IS measured is that an **unbuilt** worktree makes it exit 5 VACUOUS
+   while blaming its own `WITNESS_UNITS`, and that a tree with 2 genuinely
+   unpatched objects was passed by `--verify-scores` at **rc=0** — so the
+   score comparison cannot detect an unpatched tree; only the manifest can.
 2. **Fix `crossing_worklist.py`'s ruler** (~5 lines): line ~396 hardcodes
    `functionRelocDiffs=none`, so the tree's only size-if-it-crosses ranker
    systematically over-reports rows as source-reachable — the exact
@@ -278,10 +309,14 @@ repaired during the survey (TU0 phantom ranges; crash-on-valid-input).
    `scope_map.py` has been writing since 07-29 while gitignored**, i.e.
    invisible institutional memory of exactly the kind that has twice caused
    duplicate lane funding.
-4. **Fix `reachability_census.py`'s variable clobber** (~5 lines, line ~250
-   `r["reg"], r["name"] = g, n`): aggregates are valid but the coverage
-   self-check can never pass and the SOURCE_LEVER printer crashes.
-   (Recorded-not-patched in CAMPAIGN_STATE; two survey lanes hit it.)
+4. ✅ **DONE (lane T1-FRESH)** — **`reachability_census.py`'s variable
+   clobber.** `verdict()` now reads `name_chg`, the key the same `update(...)`
+   already wrote, so the counts and the row identity never share a key. The
+   `reg` half of that assignment was always a no-op. Measurement-neutral by
+   construction (verdict read `(g, n)` before and reads `(g, n)` after) and
+   verified by measuring the CHARGE CLASSES table immediately before and after
+   the edit on one settled tree. Coverage now genuinely passes **and** can
+   still fail; the SOURCE_LEVER printer runs for the first time.
 5. **Fold-adjudication family tool** (the enabler for §4's structural slice):
    per-family retail-byte COMDAT proof for the top template families, with
    the W33/W34 rule baked in (**never mask a relocation; unresolvable ⇒
