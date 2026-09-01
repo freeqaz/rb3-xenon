@@ -263,12 +263,21 @@ repaired during the survey (TU0 phantom ranges; crash-on-valid-input).
    `CustomizePanel` failure that misled three lanes — while *looking* like
    the trustworthy tool because it has a selftest. Import
    `scripts/analysis/ruler.py`, re-run its selftest.
-3. **Longitudinal gap ledger** (~150 lines + landing hook): append
-   `reachability_census`'s strata + headline keys per merge commit
-   (`decomp.db.landing_snapshot` exists but holds 2 snapshots from July).
-   This is the instrument that would have distinguished the 44,514→42,276
-   tool artifact from a regression in minutes instead of a survey lane —
-   nothing in the tree can currently tell those apart.
+3. ✅ **DONE — longitudinal gap ledger** (`tools/progress_ledger.py`, merge
+   `ceb9eaf2`; first production snapshot `412e3f85`). Records headline
+   measures + gap strata + **tool provenance** (objdiff version/commit/binary
+   hash, resolved `diff_config`, AND the ICF alias-map hash — the last two
+   were the actual discriminators) keyed by merge commit. Verdicts:
+   SOURCE_PROGRESS / RULER_OR_TOOL_CHANGE / DENOMINATOR_CHANGE / REGRESSION /
+   INDETERMINATE, each naming the evidence used *and the evidence missing*.
+   Known-answer test passes in production. Refuses without an explicit key
+   (rc=2, fail-closed). **It corrected two of this doc's own claims**: the
+   `mpn` collapse is objdiff **4.2.3→4.2.5** in a 99-minute window (not
+   4.2.8), and `total_code` has taken **~24** distinct values, not 3 — from
+   `build/45410914/progress_history.jsonl`, a **249-row series
+   `scope_map.py` has been writing since 07-29 while gitignored**, i.e.
+   invisible institutional memory of exactly the kind that has twice caused
+   duplicate lane funding.
 4. **Fix `reachability_census.py`'s variable clobber** (~5 lines, line ~250
    `r["reg"], r["name"] = g, n`): aggregates are valid but the coverage
    self-check can never pass and the SOURCE_LEVER printer crashes.
