@@ -230,10 +230,11 @@ public:
     virtual LocalBandUser *GetLocalBandUser() const;
     virtual RemoteBandUser *GetRemoteBandUser();
     virtual RemoteBandUser *GetRemoteBandUser() const;
-    // Not virtual -- see LocalBandUser's copy and the block on
-    // BandUser::GetRemoteBandUser.  This class is the one that actually holds
-    // the data (mFriendsConsoleCodes below), so the member stays.
-    const std::vector<unsigned long long> &GetFriendsConsoleCodes() const;
+    // ⛔ `GetFriendsConsoleCodes` USED TO BE DECLARED HERE TOO, backed by a
+    // `std::vector<unsigned long long> mFriendsConsoleCodes` member.  RETAIL
+    // 360 HAS NEITHER -- see the layout block below.  The old comment claiming
+    // "this class is the one that actually holds the data, so the member
+    // stays" is REFUTED by retail's own constructor.
     virtual int GetCurrentInstrumentCareerScore() const;
     virtual int GetCurrentHardcoreIconLevel() const;
     virtual int GetCymbalConfiguration() const;
@@ -244,14 +245,53 @@ public:
 
     DataNode OnMsg(const WiiFriendsListChangedMsg &);
 
-    TourCharRemote *mRemoteChar; // 0xc
-    std::vector<unsigned long long> mFriendsConsoleCodes; // 0x10
-    bool unk18;
-    bool unk19;
-    bool unk1a;
-    int mCurrentInstrumentCareerScore; // 0x1c
-    int mCurrentHardcoreIconLevel; // 0x20
-    unsigned int mCymbalConfiguration; // 0x24
+    // ★ RETAIL 360 LAYOUT, WITNESSED INSTRUCTION-BY-INSTRUCTION, NOT INFERRED.
+    // Source: retail `RemoteBandUser::RemoteBandUser` @ 0x8268B4E8 and
+    // `RemoteBandUser::~RemoteBandUser` @ 0x8268B718 (both currently unnamed in
+    // scripts/target_symbol_map.json; identified by their vbase-ctor callees
+    // -- fn_82523900 = User::User, fn_8268AA10 = BandUser::BandUser,
+    // fn_82523BF8 = ??0RemoteUser@@QAA@XZ, which no other class in this TU
+    // constructs).  The ctor builds its vbases at
+    //     addi r3, r3, 0x18   ; bl <User::User>
+    //     addi r3, r30, 0x5c  ; bl <BandUser::BandUser>
+    //     addi r3, r30, 0xf4  ; bl <RemoteUser::RemoteUser>
+    // and initialises the vtordisps with the SAME three constants
+    // (`subi r11, r11, 0x18 / 0x5c / 0xf4`), so:
+    //
+    //     0x00  {vbptr}
+    //     0x04  mRemoteChar
+    //     0x08  mCurrentInstrumentCareerScore   \  the ctor's only member
+    //     0x0c  mCurrentHardcoreIconLevel        }  stores are three zero
+    //     0x10  mCymbalConfiguration            /   words at 0x8/0xc/0x10
+    //     0x14  (vtordisp for vbase User)      0x18  User      (size 0x40)
+    //     0x58  (vtordisp for vbase BandUser)  0x5c  BandUser  (size 0x94)
+    //     0xf0  (vtordisp for vbase RemoteUser) 0xf4 RemoteUser (size 0x14)
+    //     sizeof = 0x108
+    //
+    // ⛔ THE 12-BYTE `std::vector<unsigned long long> mFriendsConsoleCodes` AND
+    // THE THREE `bool unk18/unk19/unk1a` (4 bytes with padding) THAT USED TO
+    // LIVE HERE ARE A rb3-Wii CARRY-OVER THAT RETAIL 360 COMPILED OUT -- the
+    // same disease as `ControllerType mControllerTypeOverride` on
+    // LocalBandUser above.  Together they made this class's own block 0x24
+    // instead of 0x14 and pushed EVERY virtual base down by 0x10, which is
+    // what `RemoteBandUser::SyncLoad` was reporting: retail
+    // `subic. r11, r3, 0xf4` against our `0x104`, plus 17 `-0xf4(r31)` vs
+    // `-0x104(r31)` pairs.
+    //
+    // ⚠ Two things HID this for as long as they did, and both are traps worth
+    // remembering.  (1) The three getters below are byte-identical on both
+    // sides (`lwz r3, -0x54/-0x50/-0x4c(r3)`) and read 100.0%, because their
+    // `this` is the BandUser subobject and BOTH the member offset and the
+    // BandUser offset moved by the same 0x10 -- two errors cancelling.
+    // (2) The target-side symbol map names an 8-byte `subi r3,r3,0x6c` body
+    // `?GetRemoteBandUser@RemoteBandUser@@UAAPAV1@XZ`; retail's real one is
+    // `subi r3,r3,0x5c` (BandUser at 0x5c), exactly as the vtable read
+    // recorded on BandUser::GetRemoteBandUser above.  That row is a MAP
+    // defect, not evidence for 0x6c.
+    TourCharRemote *mRemoteChar; // 0x4
+    int mCurrentInstrumentCareerScore; // 0x8
+    int mCurrentHardcoreIconLevel; // 0xc
+    unsigned int mCymbalConfiguration; // 0x10
 };
 
 class NullLocalBandUser : public LocalBandUser {
