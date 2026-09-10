@@ -43,10 +43,19 @@ struct XAUDIO2_VOICE_STATE { /* Size=0x10 */
     /* 0x0008 */ UINT64 SamplesPlayed;
 };
 
-struct XAUDIO2_VOICE_DETAILS { /* Size=0xc */
+// NOTE: four fields, not the three of the desktop XAudio2 2.x SDK.  Evidence is
+// from the sibling dc3-decomp tree (Dance Central 3, title 373307D9), NOT from
+// RB3's own binary: DC3's Voice::UpdateMix (?UpdateMix@Voice@@AAAXXZ, at DC3
+// 0x82E373B8) fills one of these via GetVoiceDetails and then reads offset **8**,
+// compares the result against 6 / 2 / 1 and hands it to SetOutputMatrix as
+// DestinationChannels.  That value is a channel count, so InputChannels sits at
+// 0x8 and there is a second flags word at 0x4.  Same XDK, so the layout carries
+// over; nothing in this tree reads the struct, so the correction is inert here.
+struct XAUDIO2_VOICE_DETAILS { /* Size=0x10 */
     /* 0x0000 */ UINT32 CreationFlags;
-    /* 0x0004 */ UINT32 InputChannels;
-    /* 0x0008 */ UINT32 InputSampleRate;
+    /* 0x0004 */ UINT32 ActiveFlags;
+    /* 0x0008 */ UINT32 InputChannels;
+    /* 0x000c */ UINT32 InputSampleRate;
 };
 
 struct XAUDIO2_EFFECT_DESCRIPTOR { /* Size=0xc */
