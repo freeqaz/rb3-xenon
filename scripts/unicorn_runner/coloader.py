@@ -197,14 +197,27 @@ def _has_bctr_switch(code_bytes, relocs, coff):
     return False
 
 
-def build_coload_layout(root_symbol, root_bytes,
+def build_coload_layout(root_symbol, decomp_root_bytes, orig_root_bytes,
                         common_callees, decomp_callees, orig_callees,
                         decomp_coff, orig_coff):
     """Build sequential layout for root + co-loaded callees.
 
+    The layout is shared by both sides, so every slot must be sized by the
+    LARGER of the two sides' bytes. Callee slots always did that; the root slot
+    did not — it was sized `len(root_bytes)` from the decomp side alone. Any
+    function whose original is longer than our decomp (i.e. any sub-100% match
+    with an intra-TU callee) therefore had the first co-loaded callee laid down
+    over the original's tail: 56 bytes / 14 instructions for the PropertyTask
+    ctor (924 orig vs 868 decomp), 12 for the CharCameraInput ctor. Both sides
+    then crash in the corrupted tail, differently, and the runner reports
+    `error_mismatch` — a divergence manufactured entirely by the harness, and
+    one that is invisible at 100% match, so it concentrates precisely on the
+    sub-100% frontier the sweeps measure.
+
     Args:
         root_symbol: mangled symbol name of the root function
-        root_bytes: bytes of the root function (used for sizing the root slot)
+        decomp_root_bytes: the decomp side's bytes for the root function
+        orig_root_bytes: the original side's bytes for the root function
         common_callees: set of symbol names present in both decomp and orig
         decomp_callees: dict of symbol_name -> (bytes, relocs) from decomp
         orig_callees: dict of symbol_name -> (bytes, relocs) from orig
@@ -232,7 +245,7 @@ def build_coload_layout(root_symbol, root_bytes,
         return None
 
     # Build layout: root at offset 0, callees after (4-byte aligned)
-    root_size = len(root_bytes)
+    root_size = max(len(decomp_root_bytes), len(orig_root_bytes))
     symbol_offsets = {root_symbol: 0}
 
     offset = (root_size + 3) & ~3  # 4-byte align after root
