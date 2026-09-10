@@ -70,6 +70,12 @@
 #include "utl/TimeConversion.h"
 #include "world/Dir.h"
 #include <cstdio>
+#ifdef HX_NATIVE
+// INT_MAX (used below) arrives transitively through MSVC's CRT headers in the
+// X360 match build but not through libc++. HX_NATIVE-guarded, so the match
+// build's preprocessed text is unchanged.
+#include <climits>
+#endif
 
 class DeltaTracker;
 DeltaTracker *sTracker = nullptr;
