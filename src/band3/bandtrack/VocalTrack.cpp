@@ -57,7 +57,7 @@ int maxFacesInPlate;
 int maxNumLyricPlates;
 bool dumpLyricShifts;
 bool sDumpLyricPlates;
-bool sDumpPlateStates;
+static bool sDumpPlateStates;
 bool gDebugSpew;
 
 MicClientID sNullMicClientID(-1, -1);
