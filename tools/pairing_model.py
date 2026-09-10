@@ -130,7 +130,11 @@ def credit_at_ruler(root, names_units, selector):
     """
     if selector == "graded":
         return None                     # report.json already carries it
-    rargs, _lbl = cp.ruler_args(root, selector)
+    rargs, lbl = cp.ruler_args(root, selector)
+    # Do not discard the label: this path runs ONLY on an explicit non-graded
+    # ruler (graded returns above), so every percentage it produces is an
+    # upper/lower bound rather than the graded score, and must say so.
+    print(f"[ruler] {lbl}", file=sys.stderr)
     out = {}
     for nm, unit in names_units:
         d, _err = cp.run_diff(root, nm, unit, rargs,

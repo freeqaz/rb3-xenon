@@ -20,6 +20,9 @@ def main():
     unit = sys.argv[2]
     sym = sys.argv[3]
     rk = ruler_mod.resolve_ruler(proj)
+    # Disclose the ruler next to the numbers it produced. A percentage without
+    # its ruler is how `none`-priced rows were read as graded for 18 days.
+    print(rk.banner(), file=sys.stderr)
     cli = str(proj / "bin/objdiff-cli")
     cmd = [cli, "diff", "-p", str(proj), "-u", unit, "--batch",
            "-f", "json", "-o", "-", "--include-instructions"] + rk.args

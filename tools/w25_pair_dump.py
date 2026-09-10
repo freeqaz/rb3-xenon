@@ -28,6 +28,9 @@ def main():
     proj = Path(sys.argv[1]).resolve()
     pattern = sys.argv[2] if len(sys.argv) > 2 else "UI"
     rk = ruler_mod.resolve_ruler(proj)
+    # Disclose the ruler next to the numbers it produced. A percentage without
+    # its ruler is how `none`-priced rows were read as graded for 18 days.
+    print(rk.banner(), file=sys.stderr)
     rep = json.load(open(proj / "build/45410914/report.json"))
     units = [u for u in rep["units"] if pattern in u.get("name", "")]
 
