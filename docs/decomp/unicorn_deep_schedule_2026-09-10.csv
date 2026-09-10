@@ -1,0 +1,9 @@
+unit,symbol,div_class,confidence,before_evidence,fuzzy,mpn,size,byte_identical,screen
+default/BandPatchMesh,??0PatchPair@MeshPair@BandPatchMesh@@QAA@PAVObject@Hmx@@@Z,call_count,stable_divergent,divergent,33.29,34.12,96,0,SURVIVES_BOTH_SCREENS
+default/BandPatchMesh,?resize@?$vector@VMeshFace@BandPatchMesh@@V?$StlNodeAlloc@VMeshFace@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVMeshFace@BandPatchMesh@@@Z,object_memory,stable_divergent,divergent,12.52,13.83,92,0,SURVIVES_BOTH_SCREENS
+default/ExternalMic,?processGain@ExternalMic@@QAAJK@Z,call_count,input_sensitive,divergent,100.00,100.00,140,1,BYTE_IDENTICAL_ARTIFACT
+default/Song,??0?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z,unmapped_access_mismatch,stable_divergent,divergent,97.24,97.76,116,0,SURVIVES_BOTH_SCREENS
+default/StorePurchaser,??$_M_allocate_and_copy@PB_K@?$vector@_KV?$StlNodeAlloc@_K@stlpmtx_std@@@stlpmtx_std@@IAAPA_KIPB_K0@Z,call_count,stable_divergent,divergent,31.00,33.00,60,0,SURVIVES_BOTH_SCREENS
+default/StringConversion,?Latin1ToUtf8@?A0xfea654e8@@YAXPBDPADI@Z,call_count,stable_divergent,divergent,0.00,0.62,64,0,SURVIVES_BOTH_SCREENS
+default/TypeProps,??E?$ObjDirItr@VObjectDir@@@@QAAAAV0@XZ,call_count,stable_divergent,divergent,78.32,80.14,88,0,SURVIVES_BOTH_SCREENS
+default/TypeProps,?ReplaceObject@TypeProps@@AAAXAAVDataNode@@PAVObject@Hmx@@1@Z,call_count,stable_divergent,divergent,48.40,49.23,120,0,SURVIVES_BOTH_SCREENS
