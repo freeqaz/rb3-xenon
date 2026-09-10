@@ -11,7 +11,9 @@ from dataclasses import dataclass
 
 from .coloader import adjust_relocs_to_layout, partition_relocs
 from .memory_map import CODE_BASE
-from .patcher import assign_addresses, patch_function, rewrite_ppc64_insns, prepare_switch_tables, prepare_data_sections
+from .patcher import (assign_addresses, patch_function, rewrite_ppc64_insns,
+                      prepare_switch_tables, prepare_data_sections,
+                      seed_image_globals)
 
 
 @dataclass
@@ -21,6 +23,9 @@ class PreparedSide:
     trampolines: dict      # symbol -> trampoline addr (external only)
     func_size: int          # Execution size (combined for coload, code len otherwise)
     rdata_bytes: bytes | None  # Switch table data for RDATA_BASE, if any
+    # GLOBAL address -> initial bytes, for globals this .obj does not define
+    # but the shipped image does (see patcher.seed_image_globals).
+    globals_init: dict = None
 
 
 def prepare_side(code_bytes, relocs, coff, symbol, side_class):
@@ -49,6 +54,12 @@ def prepare_side(code_bytes, relocs, coff, symbol, side_class):
     trampolines, globals_map = assign_addresses(relocs)
     globals_map.update(rdata_override)
 
+    # Fill in globals this .obj does not define from the shipped image, so both
+    # sides start from the same initial global memory. Must run before
+    # patch_function: it may relocate a large symbol into the RDATA buffer.
+    rdata_bytes, globals_init = seed_image_globals(
+        coff, relocs, globals_map, rdata_bytes)
+
     patch_function(code, relocs, trampolines, globals_map, CODE_BASE)
 
     return PreparedSide(
@@ -56,6 +67,7 @@ def prepare_side(code_bytes, relocs, coff, symbol, side_class):
         trampolines=trampolines,
         func_size=len(code),
         rdata_bytes=rdata_bytes,
+        globals_init=globals_init,
     )
 
 
@@ -109,6 +121,10 @@ def prepare_coloaded_side(root_bytes, root_relocs, coff, symbol, side_class,
 
     ext_globals.update(rdata_override)
 
+    # Same image seeding as the non-coload path, over the combined reloc set.
+    rdata_bytes, globals_init = seed_image_globals(
+        coff, all_relocs, ext_globals, rdata_bytes)
+
     # Merge: external trampolines + intra-TU real addresses
     merged_targets = dict(ext_trampolines)
     merged_targets.update(intra_tu_addrs)
@@ -121,4 +137,5 @@ def prepare_coloaded_side(root_bytes, root_relocs, coff, symbol, side_class,
         trampolines=ext_trampolines,
         func_size=layout.total_size,
         rdata_bytes=rdata_bytes,
+        globals_init=globals_init,
     )
