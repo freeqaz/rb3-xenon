@@ -501,7 +501,7 @@ void UIListState::SetSelectedSimulateScroll(int i) {
         }
         while (SelectedNoWrap() != showing) {
             int nowrap = SelectedNoWrap();
-            int dir = nowrap - showing > 0 ? 1 : -1;
+            int dir = showing - nowrap > 0 ? 1 : -1;
             Scroll(dir, true);
             mStepTime = -1.0f;
             mStepPercent = 0.0f;
