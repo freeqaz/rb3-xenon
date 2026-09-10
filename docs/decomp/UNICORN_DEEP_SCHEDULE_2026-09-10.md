@@ -172,6 +172,84 @@ All 7 survivors are functions the metric **already** calls broken (fuzzy 0.00 �
 97.24). The oracle is agreeing with objdiff, not contradicting it. Full rows:
 `docs/decomp/unicorn_deep_schedule_2026-09-10.csv`.
 
+## 5a. The full corpus — the deeper schedule made the broader run CHEAP
+
+The harness that **wedged on a 51-unit sample** before the port audits **all
+1,045 units / 22,718 functions in 256 seconds**. That is **2.9×** S4's coverage
+(7,816 functions over 650 units, which needed a 72-minute window and stalled
+twice).
+
+| evidence | corpus | S4 |
+|---|---:|---:|
+| `equiv_real` | 14,169 (62.4%) | 3,292 (42.1%) |
+| `divergent` | 5,465 (24.1%) | 3,038 (38.9%) |
+| `equiv_matching_err` | 3,048 (13.4%) | 1,471 (18.8%) |
+| shared-error share of EQUIVALENT | **17.7%** | 30.9% |
+
+```
+5,465 DIVERGENT
+ → 5,032 artifact class / cap_exhausted     (data_layout alone: 3,755)
+ =   433 real-class candidates
+ →    84 byte-identical bodies (PROOF)
+ =   349 survive both screens
+ →    40 SCORE 100%  ⇐ the matched-but-wrong worklist
+```
+
+**`logic` does not appear in the corpus distribution at all — 0 of 22,718.**
+
+## 5b. ⛔ THE 40 IS AN UPPER BOUND, NOT A BUG COUNT
+
+The largest coherent cluster in it — **15 `object_memory` rows on engine and
+panel constructors, every one at 100.00/100.00** — looked exactly like the
+dropped-initializer class dc3 found seven of. **It dissolves on inspection**,
+and it reveals a screen gap rather than a bug:
+
+| sub-population | rows | what the differing words actually are |
+|---|---:|---|
+| constant **0x2C** delta at object `+0x0` | 6 | `RndFlare/RndLine/RndLight/RndScreenMask/RndText/SpotlightEnder`. The delta is **identical (44) across six unrelated classes** — the signature of a systematic harness offset, not six independent source bugs. |
+| decomp stores a real float, orig stores **exactly 0** | 4 | 754.0f, −100000.0f, −8.0f, 0.007f vs `0x00000000`. This is the *literal* signature dc3 documents for float-literal asymmetry (the original side's `__real@…` is an undefined external ⇒ loads 0.0f). Residual coverage gap in `_synthesize_float_constants`, not a decomp defect. |
+| decomp negative scalar vs orig **GLOBAL** pointer | 5 | one side has the symbol as data, the other as an extern — placement, not value. |
+
+⇒ **Three artifact mechanisms, none of which the `data_layout` screen catches**,
+because that screen requires *every* differing word to be a harness-assigned
+address and these all carry one word that is a **scalar**. The decisive case:
+**arithmetic on two harness-assigned addresses produces a scalar**, which
+escapes a region test by construction.
+
+This is S4's lesson recurring one level up, and it is the single most
+transferable finding here: **a divergence class label is the detector restating
+its own input.** The 40 must be adjudicated on retail bytes before any of it is
+called a bug — and the first 15 examined did not survive.
+
+## 5c. The new schedules — one win, one measured negative
+
+Over the same pinned 51 units / 524 functions (`schedule_legs.py`):
+
+| leg | `equiv_real` | `divergent` | `equiv_matching_err` | verdict |
+|---|---:|---:|---:|---|
+| `zero` (default) | 307 | 129 | 88 | baseline |
+| **`outparam`** | 285 | **160 (+24%)** | **79 (−10%)** | **WIN** |
+| `sentinel` | 289 | 127 (flat) | **108 (+23%)** | **negative** |
+| `typed` (1 unit) | = zero | = zero | = zero | null, and *applied* |
+
+* **`outparam` is vindicated at scale** — more divergence exposed *and* fewer
+  shared crashes — and it independently surfaced **one matched-but-wrong row
+  the default schedule never sees** (`__unguarded_partition<MoveDetector*>`,
+  80 B, 100/100). ⚠ This **overturns the negative I first drew from
+  `?ToQuat@ByteQuat@@`**, which was simply an unrepresentative fixture: it dies
+  at instruction 12 with zero calls logged and never reaches its out-param
+  store. Choose an out-param fixture on "does it actually execute", not on
+  inheritance from a prior lane.
+* **`sentinel` is a measured negative.** It paid exactly the price registered in
+  advance (crashes +23%, because every word is non-zero so pointer members hold
+  garbage instead of NULL) and bought **no** additional divergence. Non-uniform
+  fill is therefore *not* the missing ingredient S4 hoped for. It looked
+  promising on a single unit (+2 divergences on `CharBones`) and flattened at
+  51 units — a reminder to size a schedule on the corpus, not on a fixture.
+* **`typed` is a genuine null, not a vacuity**: `fixture_note` reads
+  `typed:CharBones`, proving the fixture applied rather than silently falling
+  back to zero-fill.
+
 ## 6. decomp.db was NOT written
 
 Same call as S4's, for the same reasons plus one more: the DB is shared with
@@ -203,3 +281,40 @@ venv/bin/python scripts/unicorn/deep_schedule_report.py \
 ⚠ Run `image_selfcheck.py` **before** believing any seeding result: the image
 loader degrades quietly, so "image never opened" and "seeding changed nothing"
 produce the identical null and the null agrees with the comfortable prior.
+
+## 8. NOT verified — read this before building on any of the above
+
+* **25 of the 40 matched-but-wrong rows were never adjudicated.** I examined
+  the 15-row `object_memory` cluster and all 15 dissolved (§5b). The **16
+  `call_count`** rows carry the standing inline-policy caveat — retail inlining
+  a helper we call out of line produces identical behaviour and a different
+  call count — and `has_icf_folded_callsites` catches only the folding it can
+  see. **Do not brief any of them as a bug**; two of them
+  (`?finalize@MD5@Quazal@@`, `??1AppMiniLeaderboardDisplay@@`) were already
+  S4's TIER1 and are still unadjudicated after two lanes.
+* **The `outparam` leg was run on 51 units, not the corpus.** It is the one
+  schedule that measurably wins, and it found a matched-but-wrong row the
+  default misses, so a full-corpus `outparam` run is the highest-value next
+  measurement. It was not run here.
+* **`sentinel` and `typed` are under-measured** — 51 units and 1 unit
+  respectively. `typed`'s null is real but narrow.
+* **No source was changed and no A/B was run.** The brief permitted 1–2
+  demonstration fixes; I made none, because **nothing reached the bar**. The
+  only cluster I adjudicated turned out to be artifact, and fixing an
+  unadjudicated `call_count` row would have been exactly the mistake this lane
+  exists to prevent. `src/` is untouched, as instructed.
+* **The three screen gaps in §5b are diagnosed, not fixed.** In particular
+  `_synthesize_float_constants` has a residual coverage gap (four rows where
+  the original stores exactly `0x00000000` against our real float).
+* **The 3,048 corpus `equiv_matching_err` rows are not characterised.** They
+  are the remaining wall and they are an **emulator** problem, not a schedule
+  problem — the canonical shape dies on an instruction Unicorn will not
+  execute. Nobody has counted which instructions.
+* **`decomp.db` was not written** (§6), and **`test_prober`'s single failure
+  predates this lane** and is untouched.
+* **Main's build tree was never built or diffed by this lane.** Every build was
+  a full `./tools/ninja-locked` in `~/tmp/wt-u1sched`; `objdiff-cli` and
+  `run_objdiff` were never invoked at all. The `fuzzy`/`mpn` half of the
+  worklist was read from this worktree's `report.json`, and the worktree
+  verifies as a patched fixed point (`tree_sha256=d568d3736ef0757f`) both
+  before and after the run.
