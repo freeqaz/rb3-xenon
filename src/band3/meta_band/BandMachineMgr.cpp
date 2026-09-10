@@ -107,7 +107,7 @@ namespace {
                 for (std::vector<RemoteBandUser *>::iterator it = remoteusers.begin();
                      it != remoteusers.end();
                      ) {
-                    if (mMachineID == (*it)->mMachineID) {
+                    if ((*it)->mMachineID == mMachineID) {
                         it = remoteusers.erase(it);
                     } else
                         ++it;
