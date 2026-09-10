@@ -149,6 +149,16 @@ def main():
     ap.add_argument("--timeout", type=int, default=5_000_000)
     ap.add_argument("--resume", action="store_true",
                     help="skip units already present in the output CSV")
+    ap.add_argument("--sample-every", type=int, default=None, metavar="N",
+                    help="audit every Nth unit of the NAME-SORTED unit list. "
+                         "A full 1,045-unit run is too expensive to repeat, "
+                         "and an A/B needs the SAME units on both legs -- "
+                         "name-sorted striding is deterministic and spreads "
+                         "across directories, unlike a prefix (which would "
+                         "sample one subsystem) or a random draw (which would "
+                         "not reproduce).")
+    ap.add_argument("--units-file", default=None,
+                    help="file of unit names, one per line; overrides sampling")
     args = ap.parse_args()
 
     if args.unit:
@@ -156,6 +166,25 @@ def main():
         units = [(args.unit, d, o)]
     else:
         units = get_all_units(PROJECT_ROOT)
+
+    if args.units_file:
+        wanted = set()
+        with open(args.units_file) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    wanted.add(line)
+        units = [u for u in units if u[0] in wanted]
+        missing = wanted - {u[0] for u in units}
+        if missing:
+            print(f"WARNING: {len(missing)} named units are not probeable "
+                  f"(no target/base obj pair): {sorted(missing)[:5]}",
+                  file=sys.stderr)
+    elif args.sample_every and args.sample_every > 1:
+        units = sorted(units, key=lambda u: u[0])[::args.sample_every]
+        print(f"sampling every {args.sample_every}th unit (name-sorted): "
+              f"{len(units)} units")
+
     jobs = min(args.jobs, 4)
 
     # Resume support. Rows are flushed per unit (see below), so a run killed
