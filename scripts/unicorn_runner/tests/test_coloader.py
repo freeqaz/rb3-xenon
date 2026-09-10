@@ -407,7 +407,7 @@ class TestBuildLayout(unittest.TestCase):
         }
         common = {"CalleeA", "CalleeB"}
 
-        layout = self.build_layout("Root", root_bytes, common,
+        layout = self.build_layout("Root", root_bytes, root_bytes, common,
                                     decomp_callees, orig_callees, coff, coff)
         self.assertIsNotNone(layout)
         self.assertEqual(layout.symbol_offsets["Root"], 0)
@@ -427,7 +427,7 @@ class TestBuildLayout(unittest.TestCase):
         decomp_callees = {"A": (a_bytes, [])}
         orig_callees = {"A": (a_bytes, [])}
 
-        layout = self.build_layout("Root", root_bytes, {"A"},
+        layout = self.build_layout("Root", root_bytes, root_bytes, {"A"},
                                     decomp_callees, orig_callees, coff, coff)
         self.assertIsNotNone(layout)
         self.assertEqual(layout.symbol_offsets["Root"], 0)
@@ -445,7 +445,7 @@ class TestBuildLayout(unittest.TestCase):
         decomp_callees = {"A": (a_decomp, [])}
         orig_callees = {"A": (a_orig, [])}
 
-        layout = self.build_layout("Root", root_bytes, {"A"},
+        layout = self.build_layout("Root", root_bytes, root_bytes, {"A"},
                                     decomp_callees, orig_callees, coff, coff)
         self.assertIsNotNone(layout)
         self.assertEqual(layout.symbol_offsets["A"], 8)
@@ -461,7 +461,7 @@ class TestBuildLayout(unittest.TestCase):
         decomp_callees = {"Big": (big_bytes, [])}
         orig_callees = {"Big": (big_bytes, [])}
 
-        layout = self.build_layout("Root", root_bytes, {"Big"},
+        layout = self.build_layout("Root", root_bytes, root_bytes, {"Big"},
                                     decomp_callees, orig_callees, coff, coff)
         self.assertIsNone(layout)
 
@@ -469,8 +469,58 @@ class TestBuildLayout(unittest.TestCase):
         """No common callees returns None."""
         coff = _make_coff_with_text_symbols([("Root", 0)])
         root_bytes = assemble(ppc_li(3, 0), ppc_blr())
-        layout = self.build_layout("Root", root_bytes, set(), {}, {}, coff, coff)
+        layout = self.build_layout("Root", root_bytes, root_bytes, set(), {}, {},
+                                   coff, coff)
         self.assertIsNone(layout)
+
+    def test_root_slot_sized_by_the_larger_side(self):
+        """A longer original must not be overwritten by the first callee.
+
+        The root slot used to be sized from the decomp bytes alone, so any
+        function whose original is longer -- every sub-100% match with an
+        intra-TU callee -- had its original's tail overwritten by the callee
+        laid down after it. Both sides then crashed in the wreckage, in
+        different ways, and the runner called it `error_mismatch`.
+        """
+        coff = _make_coff_with_text_symbols([("Root", 0), ("A", 200)])
+
+        decomp_root = b'\xDD' * 40
+        orig_root = b'\x00' * 96          # 56 bytes longer, as PropertyTask's is
+        callee = assemble(ppc_li(3, 1), ppc_blr())
+
+        layout = self.build_layout("Root", decomp_root, orig_root, {"A"},
+                                   {"A": (callee, [])}, {"A": (callee, [])},
+                                   coff, coff)
+
+        self.assertIsNotNone(layout)
+        self.assertEqual(layout.symbol_offsets["A"], 96)
+        self.assertEqual(layout.total_size, 104)
+
+    def test_longer_original_tail_survives_layout(self):
+        """End to end through prepare_coloaded_side: the tail is still there."""
+        from scripts.unicorn_runner.builder import prepare_coloaded_side
+        from scripts.unicorn_runner.memory_map import CODE_BASE
+
+        coff = _make_coff_with_text_symbols([("Root", 0), ("A", 200)])
+
+        decomp_root = assemble(*([ppc_li(3, 0)] * 9), ppc_blr())   # 40 bytes
+        tail = assemble(*([ppc_li(4, 7)] * 13), ppc_blr())         # 56 bytes
+        orig_root = decomp_root + tail                             # 96 bytes
+        callee = assemble(ppc_li(3, 1), ppc_blr())
+
+        layout = self.build_layout("Root", decomp_root, orig_root, {"A"},
+                                   {"A": (callee, [])}, {"A": (callee, [])},
+                                   coff, coff)
+        self.assertIsNotNone(layout)
+
+        side = prepare_coloaded_side(
+            orig_root, [], coff, "Root", None,
+            {"A": (callee, [])}, layout,
+            {"Root": CODE_BASE, "A": CODE_BASE + layout.symbol_offsets["A"]})
+
+        self.assertEqual(bytes(side.code[:len(orig_root)]), orig_root)
+        off = layout.symbol_offsets["A"]
+        self.assertEqual(bytes(side.code[off:off + len(callee)]), callee)
 
 
 class TestPartitionRelocs(unittest.TestCase):

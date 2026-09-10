@@ -33,7 +33,9 @@ from .memory_map import (
     STACK_BASE, OBJECT_BASE, GLOBAL_BASE, TRAMPOLINE_BASE, CODE_BASE,
     RDATA_BASE, VTABLE_BASE, SENTINEL_ADDR, REGION_SIZE, STACK_INIT,
     MSR_FP_BIT, TRAMPOLINE_STUB, VTABLE_SLOTS, VTABLE_TRAMP_OFFSET,
+    HELPER_BASE,
 )
+from .save_helpers import helper_region
 
 
 class ExecutionResult:
@@ -52,11 +54,18 @@ class ExecutionResult:
         accesses in suspicious regions (page 0, kernel range). Used by
         the comparator to fingerprint null-deref-style divergences that
         would otherwise be hidden by on-demand page mapping.
+    globals_initial: the GLOBAL region as it looked BEFORE execution. Not
+        necessarily all-fill any more: globals this side's .obj does not
+        define are seeded from the shipped image, and the two sides do not
+        seed the same slots (one side may define the symbol and read it from
+        .data instead). The comparator needs the starting point to tell "this
+        word differs because the function wrote something different" from
+        "this word differs because only one side has a constant parked here".
     """
 
     def __init__(self, call_log, r3, f1, object_memory, globals_memory,
                  error=None, terminated_normally=False, cap_exhausted=False,
-                 final_pc=0, unmapped_log=None):
+                 final_pc=0, unmapped_log=None, globals_initial=None):
         self.call_log = call_log
         self.r3 = r3
         self.f1 = f1
@@ -67,6 +76,7 @@ class ExecutionResult:
         self.cap_exhausted = cap_exhausted
         self.final_pc = final_pc
         self.unmapped_log = unmapped_log or []
+        self.globals_initial = globals_initial
 
 
 # Call log tuple indices (flat tuple instead of nested dicts for speed).
@@ -99,7 +109,25 @@ _ZERO_PAGE = bytes(0x1000)
 
 _DATA_REGIONS = (STACK_BASE, OBJECT_BASE, GLOBAL_BASE, VTABLE_BASE)
 _ALL_REGIONS = (STACK_BASE, OBJECT_BASE, GLOBAL_BASE,
-                TRAMPOLINE_BASE, CODE_BASE, VTABLE_BASE)
+                TRAMPOLINE_BASE, CODE_BASE, VTABLE_BASE, HELPER_BASE)
+
+# Regions that hold executable image: the function under test plus its
+# co-loaded callees (CODE), the external-call stubs (TRAMPOLINE), and the
+# register save/restore helper bodies (HELPER). PC sitting in ANY of them when
+# the instruction cap fires means the function had not finished.
+#
+# This used to be gated on the ROOT function's byte range alone, so a side
+# spinning just as hard as the other but caught inside a trampoline at that
+# instant was recorded terminated_normally=True. That is how 52 of 59 purely
+# SYMMETRIC infinite loops got filed as one-sided `cap_exhausted_decomp`:
+# the class was decided by loop-body phase alignment, not by behaviour.
+_EXECUTABLE_REGIONS = (CODE_BASE, TRAMPOLINE_BASE, HELPER_BASE)
+
+
+def _in_executable_image(pc):
+    """True if `pc` is anywhere in the loaded image (code, stubs, helpers)."""
+    pc &= 0xFFFFFFFF
+    return any(base <= pc < base + REGION_SIZE for base in _EXECUTABLE_REGIONS)
 
 
 class UnicornEngine:
@@ -109,11 +137,21 @@ class UnicornEngine:
     between executions. Avoids the ~50ms Uc() teardown cost per function.
     """
 
+    # Number of engines that hold an open native Unicorn handle (and therefore
+    # a multi-megabyte QEMU translator buffer). Tests assert this stays bounded;
+    # it is the only leak metric that is deterministic, since a *closed* engine
+    # can still linger as a Python shell until the cycle collector runs.
+    live_engines = 0
+
     def __init__(self):
         self._mu = Uc(UC_ARCH_PPC, UC_MODE_PPC32 + UC_MODE_BIG_ENDIAN)
+        UnicornEngine.live_engines += 1
+        self._closed = False
+        self._hook_handles = []
         for base in _ALL_REGIONS:
             self._mu.mem_map(base, REGION_SIZE)
 
+        self._helper_region = helper_region()
         self._rdata_mapped = False
         self._ondemand_pages = set()
         # Phase 3.1: pages in suspicious ranges (null/kernel) that we
@@ -163,12 +201,84 @@ class UnicornEngine:
                 TRAMPOLINE_BASE + REGION_SIZE - 1,
                 CODE_BASE)
         else:
-            self._mu.hook_add(
+            self._hook_handles.append(self._mu.hook_add(
                 UC_HOOK_BLOCK, self._on_trampoline,
-                begin=TRAMPOLINE_BASE, end=TRAMPOLINE_BASE + REGION_SIZE - 1)
-        self._mu.hook_add(
+                begin=TRAMPOLINE_BASE, end=TRAMPOLINE_BASE + REGION_SIZE - 1))
+        self._hook_handles.append(self._mu.hook_add(
             UC_HOOK_MEM_READ_UNMAPPED | UC_HOOK_MEM_WRITE_UNMAPPED,
-            self._on_unmapped)
+            self._on_unmapped))
+
+    # ---- deterministic teardown -------------------------------------------
+    #
+    # A Uc instance owns a multi-megabyte native translator buffer that
+    # Python's GC heuristics cannot see: to the collector a dead engine looks
+    # like a handful of small objects, so it feels no pressure to run. And the
+    # engine is only ever reclaimable by the *cycle* collector, never by
+    # refcounting, because hook_add() stores a ctypes wrapper around a BOUND
+    # METHOD of this object in Uc._callbacks:
+    #
+    #     UnicornEngine._mu -> Uc._callbacks[h] -> self._on_trampoline -> self
+    #
+    # execute_function() built one engine per call and dropped it, so dead
+    # engines accumulated until QEMU refused to allocate another buffer:
+    # "Could not allocate dynamic translator buffer", reproducibly at ~22 live
+    # Uc objects. close() breaks the cycle (hook_del removes the callback from
+    # Uc._callbacks) and then runs Uc's own weakref finalizer, which calls
+    # uc_close() and frees the native buffer right now instead of whenever the
+    # collector happens to notice.
+    def close(self):
+        """Release the native Unicorn engine. Idempotent; safe after use."""
+        if self._closed:
+            return
+        self._closed = True
+        UnicornEngine.live_engines -= 1
+
+        mu, self._mu = self._mu, None
+        if mu is None:
+            return
+
+        for handle in self._hook_handles:
+            try:
+                mu.hook_del(handle)
+            except Exception:
+                pass
+        self._hook_handles = []
+
+        # Drop every remaining engine->self edge before releasing the handle.
+        callbacks = getattr(mu, "_callbacks", None)
+        if callbacks is not None:
+            callbacks.clear()
+
+        # Uc registers weakref.finalize(self, Uc.release_handle, self._uch) in
+        # its constructor; calling that finalizer is the supported way to run
+        # uc_close() early, and it is a no-op if it has already fired.
+        finalizer = getattr(mu, "_Uc__finalizer", None)
+        if finalizer is not None:
+            finalizer()
+        else:                      # pragma: no cover — older bindings
+            release = getattr(mu, "release_handle", None)
+            uch = getattr(mu, "_uch", None)
+            if release is not None and uch is not None:
+                release(uch)
+
+        self._uch = None
+        self._batch_ptrs = None
+        self._batch_vals = None
+        self._batch_regs = None
+        self._batch_count = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        self.close()
+        return False
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
 
     def _on_trampoline(self, uc, address, size, user_data):
         if address & 7:
@@ -179,14 +289,28 @@ class UnicornEngine:
         uclib.uc_reg_read_batch(
             self._uch, self._batch_regs, self._batch_ptrs, self._batch_count)
         vals = self._batch_vals
+        # ctypes.c_int is SIGNED, and CODE_BASE is 0x80000000, so LR reads back
+        # negative here and the subtraction produced e.g. -4294967264 where the
+        # call-site offset is 0x20. The C hook does not have this bug -- it
+        # casts to uint32_t (`_trampoline_hook.c:52`) -- so the two paths
+        # disagreed on the same input, and only the Python one was wrong.
+        #
+        # It mattered: check_call_targets() looks the offset up in a dict keyed
+        # by real offsets, so under the Python fallback every lookup missed and
+        # the wrong-callee warning was silently lost entirely. The .so is
+        # gitignored and setup_worktree.sh does not build it, so every fresh
+        # worktree took this degraded path.
+        #
+        # Mask exactly as the C hook does, so the two implementations agree
+        # field for field.
         entry = (
             len(self._call_log),
             address,
-            vals[0].value - self._code_base_plus4,
-            vals[1].value,
-            vals[2].value,
-            vals[3].value,
-            vals[4].value,
+            (vals[0].value - self._code_base_plus4) & 0xFFFFFFFF,
+            vals[1].value & 0xFFFFFFFF,
+            vals[2].value & 0xFFFFFFFF,
+            vals[3].value & 0xFFFFFFFF,
+            vals[4].value & 0xFFFFFFFF,
         )
         self._call_log.append(entry)
 
@@ -257,14 +381,22 @@ class UnicornEngine:
 
     def execute(self, patched_code, trampolines, func_size, timeout=5_000_000,
                 verbose=False, rdata_bytes=None, fill_pattern=None,
-                max_insns=50_000, object_memory=None, arg_registers=None):
+                max_insns=50_000, object_memory=None, arg_registers=None,
+                globals_init=None):
         """Execute a patched function, resetting state from any previous run.
 
         Same interface as the standalone execute_function().
         max_insns caps instruction count to prevent runaway loops from
         dominating batch time via expensive Python hook callbacks.
         arg_registers: optional dict mapping register IDs to values (e.g., {UC_PPC_REG_4: 1})
+        globals_init: optional {address: bytes} written into the GLOBAL region
+            after the fill. Carries the shipped image's content for globals the
+            executing .obj does not define (patcher.seed_image_globals), so a
+            static like kSampleRate reads 48000.0f on the side whose .obj has
+            it only as an extern, instead of 0.
         """
+        if self._closed:
+            raise RuntimeError("UnicornEngine.execute() called after close()")
         mu = self._mu
 
         # Reset execution context
@@ -296,6 +428,24 @@ class UnicornEngine:
             mu.mem_write(base, fill_buf)
         mu.mem_write(CODE_BASE, _ZERO_REGION)
         mu.mem_write(TRAMPOLINE_BASE, _ZERO_REGION)
+        # Reinstall the register save/restore helper bodies. Rewritten every
+        # run rather than once at map time so a stray store into 0x8003xxxx in
+        # one function cannot silently poison the next one.
+        mu.mem_write(HELPER_BASE, self._helper_region)
+
+        # Seed globals whose content comes from the shipped image. After the
+        # fill (so it is not clobbered) and before execution. The same edits
+        # are replayed into a host-side copy so the comparator knows what this
+        # side started from without paying a second 64KB mem_read.
+        globals_initial = fill_buf
+        if globals_init:
+            seeded = bytearray(fill_buf)
+            for addr, data in globals_init.items():
+                data = bytes(data)
+                mu.mem_write(addr, data)
+                off = addr - GLOBAL_BASE
+                seeded[off:off + len(data)] = data
+            globals_initial = bytes(seeded)
 
         # Reset on-demand mapped pages
         page_fill = self._get_fill_page(fill_pattern)
@@ -304,6 +454,15 @@ class UnicornEngine:
 
         # RDATA region
         if rdata_bytes is not None:
+            # The RDATA window is REGION_SIZE and nothing upstream clamps the
+            # packed data-section buffer to it. Unicorn would happily write
+            # past the end into whatever is mapped next, so refuse instead:
+            # a loud harness error beats silently rewriting the region above.
+            # (Measured max across the 1,838-function frontier: 0x63C0.)
+            if len(rdata_bytes) > REGION_SIZE:
+                raise ValueError(
+                    f"rdata buffer is {len(rdata_bytes):#x} bytes, exceeds the "
+                    f"{REGION_SIZE:#x} RDATA window")
             if not self._rdata_mapped:
                 mu.mem_map(RDATA_BASE, REGION_SIZE)
                 self._rdata_mapped = True
@@ -316,9 +475,12 @@ class UnicornEngine:
         # Load function code
         mu.mem_write(CODE_BASE, bytes(patched_code))
 
-        # Write trampoline stubs
+        # Write trampoline stubs. Save/restore-helper symbols resolve to the
+        # HELPER region (patcher.assign_addresses), where a real body already
+        # sits — stubbing those addresses would overwrite it.
         for addr in trampolines.values():
-            mu.mem_write(addr, TRAMPOLINE_STUB)
+            if TRAMPOLINE_BASE <= addr < TRAMPOLINE_BASE + REGION_SIZE:
+                mu.mem_write(addr, TRAMPOLINE_STUB)
 
         # Override object region with typed memory if provided
         if object_memory is not None:
@@ -361,15 +523,18 @@ class UnicornEngine:
             # 1. We reached the function's end address (CODE_BASE+func_size).
             #    The function ran off the end without a blr — unusual but
             #    occasionally happens with tail calls; treat as normal.
-            # 2. We hit the instruction count cap. PC will be somewhere
-            #    inside the function. This is the cap_exhausted case —
-            #    the function did not actually finish, so we can't trust
-            #    the captured state.
-            pc_after = mu.reg_read(UC_PPC_REG_PC)
-            if CODE_BASE <= pc_after < CODE_BASE + func_size:
+            # 2. We hit the instruction count cap. PC will be somewhere in
+            #    the loaded image — inside the root function, inside a
+            #    co-loaded callee, in a trampoline stub, or in a save/restore
+            #    helper. All four mean the function did not finish, so we
+            #    can't trust the captured state.
+            pc_after = mu.reg_read(UC_PPC_REG_PC) & 0xFFFFFFFF
+            if pc_after == (CODE_BASE + func_size) & 0xFFFFFFFF:
+                # Reached the emu_start terminator: ran off the end.
+                terminated_normally = True
+            elif _in_executable_image(pc_after):
                 cap_exhausted = True
             else:
-                # PC at or past the function-end terminator.
                 terminated_normally = True
         except UcError as e:
             if e.errno == UC_ERR_FETCH_UNMAPPED:
@@ -413,20 +578,26 @@ class UnicornEngine:
             cap_exhausted=cap_exhausted,
             final_pc=final_pc,
             unmapped_log=list(self._unmapped_log),
+            globals_initial=globals_initial,
         )
 
 
 def execute_function(patched_code, trampolines, func_size, timeout=5_000_000,
                      verbose=False, rdata_bytes=None, fill_pattern=None,
-                     max_insns=50_000, object_memory=None, arg_registers=None):
+                     max_insns=50_000, object_memory=None, arg_registers=None,
+                     globals_init=None):
     """Execute a patched function in Unicorn and return the result.
 
-    Standalone version — creates a fresh engine each call.
+    Standalone version — creates a fresh engine each call and closes it before
+    returning. The close is not optional: without it the dead engines pile up
+    (see UnicornEngine.close) and the process dies with "Could not allocate
+    dynamic translator buffer" after a couple of dozen calls.
     For batch use, prefer UnicornEngine for reuse across functions.
     """
-    engine = UnicornEngine()
-    return engine.execute(patched_code, trampolines, func_size,
-                          timeout=timeout, verbose=verbose,
-                          rdata_bytes=rdata_bytes, fill_pattern=fill_pattern,
-                          max_insns=max_insns, object_memory=object_memory,
-                          arg_registers=arg_registers)
+    with UnicornEngine() as engine:
+        return engine.execute(patched_code, trampolines, func_size,
+                              timeout=timeout, verbose=verbose,
+                              rdata_bytes=rdata_bytes, fill_pattern=fill_pattern,
+                              max_insns=max_insns, object_memory=object_memory,
+                              arg_registers=arg_registers,
+                              globals_init=globals_init)

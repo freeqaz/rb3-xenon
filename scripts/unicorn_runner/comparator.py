@@ -8,7 +8,43 @@ import struct
 # scope, and this module is pure logic over recorded results. Importing engine
 # here made all 41 comparator tests fail on a box without the emulator.
 from .call_log import CL_INDEX, CL_TRAMP_ADDR, CL_SRC_OFFSET, CL_R3, CL_R4, CL_R5, CL_R6
-from .memory_map import STACK_BASE, OBJECT_BASE, GLOBAL_BASE, REGION_SIZE
+from .memory_map import (STACK_BASE, OBJECT_BASE, GLOBAL_BASE, REGION_SIZE,
+                         RDATA_BASE, TRAMPOLINE_BASE)
+from .rettype import return_type_class
+
+
+# Regions whose addresses are assigned by the harness, independently per side.
+#
+# assign_addresses() walks each side's relocation list in that side's own order,
+# and prepare_data_sections() packs each side's data sections in that side's own
+# COFF section order. The decomp .obj (MSVC emit order) and the original .obj
+# (splitter-recovered order) therefore hand the SAME symbol DIFFERENT addresses.
+# A raw compare of any value drawn from these regions is meaningless: it is
+# reporting where the harness happened to put a thing, not what the code did
+# with it. Only STACK_BASE and OBJECT_BASE are laid out identically on both
+# sides and so carry real signal.
+_HARNESS_LAID_OUT_REGIONS = (GLOBAL_BASE, RDATA_BASE, TRAMPOLINE_BASE)
+
+
+def _u32(value):
+    """Normalise a register value to unsigned 32-bit.
+
+    The two call-log implementations disagree on signedness: the C trampoline
+    hook yields unsigned words, the pure-Python fallback yields Python ints that
+    can be negative. Every region test here compares against unsigned bases, so
+    an address at or above 0x80000000 -- which is ALL of CODE, TRAMPOLINE and
+    RDATA -- silently failed every check whenever the Python path was in use.
+    That is why the pre-existing GLOBAL_BASE tests appeared to work (0x30000000
+    is positive) while nothing above 2GB was ever recognised.
+    """
+    return value & 0xFFFFFFFF
+
+
+def _is_harness_address(value):
+    """True if `value` points into a region the harness lays out per-side."""
+    value = _u32(value)
+    return any(base <= value < base + REGION_SIZE
+               for base in _HARNESS_LAID_OUT_REGIONS)
 
 
 class ComparisonResult:
@@ -89,6 +125,46 @@ def compare_memory(decomp_mem, orig_mem, base, size):
     return diffs
 
 
+def compare_written_memory(decomp_mem, orig_mem, decomp_init, orig_init,
+                           base, size):
+    """Compare two memory regions, ignoring words neither side wrote.
+
+    The GLOBAL region no longer starts identical on both sides. A symbol the
+    .obj does not define is seeded with the shipped image's content in its
+    GLOBAL slot (patcher.seed_image_globals), and the sides do not seed the
+    same slots -- when the decomp defines `kSampleRate` in .data it reads the
+    constant from RDATA, while the original, which has it only as an extern,
+    has 48000.0f parked in GLOBAL slot 0. Raw-diffing the region would report
+    that as a memory divergence, which is backwards: the seeding exists to
+    make the two sides AGREE about the value.
+
+    So a word only counts if at least one side actually changed it from its
+    own starting point. Untouched words differ solely in where the harness
+    parked a constant, which is the same non-signal as the `data_layout`
+    class.
+
+    Falls back to a plain compare when a side has no recorded initial image.
+    """
+    if decomp_init is None or orig_init is None:
+        return compare_memory(decomp_mem, orig_mem, base, size)
+
+    if decomp_mem[:size] == orig_mem[:size]:
+        return []
+
+    diffs = []
+    for i in range(0, size, 4):
+        dw_d = struct.unpack_from(">I", decomp_mem, i)[0]
+        dw_o = struct.unpack_from(">I", orig_mem, i)[0]
+        if dw_d == dw_o:
+            continue
+        init_d = struct.unpack_from(">I", decomp_init, i)[0]
+        init_o = struct.unpack_from(">I", orig_init, i)[0]
+        if dw_d == init_d and dw_o == init_o:
+            continue          # neither side wrote here — placement, not logic
+        diffs.append((base + i, dw_d, dw_o))
+    return diffs
+
+
 def unmapped_fingerprint(unmapped_log):
     """Hash the set of suspicious unmapped accesses for cross-side comparison.
 
@@ -131,7 +207,42 @@ def check_call_targets(decomp_relocs, orig_relocs, decomp_log, orig_log):
     return warnings
 
 
-def compare(decomp_result, orig_result, decomp_relocs, orig_relocs):
+def has_icf_folded_callsites(decomp_relocs, orig_relocs):
+    """True if the original folded call sites that the decomp keeps distinct.
+
+    Identical COMDAT Folding does not always show up as a `merged_<addr>`
+    placeholder. When the linker folds several template instantiations with
+    identical bodies, the splitter recovers ONE of the real names and points
+    every folded call site at it. RndDir::RemovingObject is the clean example:
+    the decomp calls VectorRemove<RndDrawable*>, <RndPollable*> (twice) and
+    <RndAnimatable*> at +0x24/+0x30/+0x3C/+0x48, and the original calls
+    VectorRemove<RndAnimatable*> at all four.
+
+    That wrecks the co-loader, which loads intra-TU callees as real code
+    (unlogged) and leaves the rest as logged trampolines. On the original side
+    all four sites match the co-loaded symbol and log nothing; on the decomp
+    side only one does, so three extra trampoline calls appear and the runner
+    reports a call_count divergence for two functions that are both 100%
+    assembly matches. `has_merged` misses it because no name starts with
+    `merged_`.
+
+    Detection: some symbol on the original side is the target of several call
+    sites that the decomp side aims at DIFFERENT symbols.
+    """
+    d_by_off = {r["offset"]: r["symbol_name"]
+                for r in (decomp_relocs or []) if r["type_name"] == "REL24"}
+    o_by_off = {r["offset"]: r["symbol_name"]
+                for r in (orig_relocs or []) if r["type_name"] == "REL24"}
+
+    decomp_names_per_orig_name = {}
+    for off in set(d_by_off) & set(o_by_off):
+        decomp_names_per_orig_name.setdefault(o_by_off[off], set()).add(d_by_off[off])
+
+    return any(len(v) > 1 for v in decomp_names_per_orig_name.values())
+
+
+def compare(decomp_result, orig_result, decomp_relocs, orig_relocs,
+            symbol=None, demangled=None):
     """Compare two execution results and produce a verdict.
 
     Args:
@@ -139,6 +250,11 @@ def compare(decomp_result, orig_result, decomp_relocs, orig_relocs):
         orig_result: ExecutionResult from original
         decomp_relocs: list of decomp relocations (for diagnostics)
         orig_relocs: list of original relocations (for diagnostics)
+        symbol: optional mangled symbol. Supplying it makes the return-value
+            comparison ABI-correct: r3 is only the return register for
+            integer/pointer returns, f1 for float/double, and NEITHER for void.
+            Omitting it reproduces the old, return-type-blind behaviour.
+        demangled: optional pre-demangled signature (skips the subprocess)
 
     Returns:
         ComparisonResult with verdict and details
@@ -220,28 +336,74 @@ def compare(decomp_result, orig_result, decomp_relocs, orig_relocs):
     if verdict == "DIVERGENT":
         return ComparisonResult(verdict, details)
 
-    # Primary: return value comparison
-    if decomp_result.r3 != orig_result.r3:
-        return ComparisonResult("DIVERGENT", {
-            "reason": "return_value_mismatch",
-            "decomp_r3": decomp_result.r3,
-            "orig_r3": orig_result.r3,
-        })
+    # Primary: return value comparison.
+    #
+    # WHICH register carries the return value depends on the return type, and
+    # this used to be checked without consulting it: r3 first, unconditionally,
+    # f1 only if r3 matched. Two consequences, both real (see rettype.py):
+    #   - a void function's r3 is scratch, so any difference was reported as a
+    #     `return_value` bug;
+    #   - a float function returns in f1, and its scratch r3 short-circuited the
+    #     f1 check below, so a GENUINE fp return divergence was mislabelled.
+    # With `symbol` known we compare the ABI register first and demote a
+    # difference in the other one to `scratch_return_reg_mismatch` -- still
+    # DIVERGENT, so nothing gets quieter, just correctly named.
+    ret_class = return_type_class(symbol, demangled) if (symbol or demangled) else None
 
-    # Primary: float return value comparison
-    if decomp_result.f1 != orig_result.f1:
-        return ComparisonResult("DIVERGENT", {
-            "reason": "fpr_return_mismatch",
-            "decomp_f1": decomp_result.f1,
-            "orig_f1": orig_result.f1,
-        })
+    r3_differs = decomp_result.r3 != orig_result.r3
+    f1_differs = decomp_result.f1 != orig_result.f1
+
+    r3_detail = {
+        "decomp_r3": decomp_result.r3,
+        "orig_r3": orig_result.r3,
+    }
+    f1_detail = {
+        "decomp_f1": decomp_result.f1,
+        "orig_f1": orig_result.f1,
+    }
+
+    if ret_class is None:
+        # Unknown return type (C symbols, ctors/dtors -- a ctor really does
+        # return `this` in r3). Reproduce the historical order exactly.
+        if r3_differs:
+            return ComparisonResult("DIVERGENT",
+                                    {"reason": "return_value_mismatch", **r3_detail})
+        if f1_differs:
+            return ComparisonResult("DIVERGENT",
+                                    {"reason": "fpr_return_mismatch", **f1_detail})
+    else:
+        abi_reg = {"int": "r3", "float": "f1", "void": None}[ret_class]
+        # Carry the resolved class in `details` so classify_divergence() sees it
+        # without every one of the 8 call sites having to thread the symbol.
+        if abi_reg == "r3" and r3_differs:
+            return ComparisonResult("DIVERGENT",
+                                    {"reason": "return_value_mismatch",
+                                     "return_type_class": ret_class, **r3_detail})
+        if abi_reg == "f1" and f1_differs:
+            return ComparisonResult("DIVERGENT",
+                                    {"reason": "fpr_return_mismatch",
+                                     "return_type_class": ret_class, **f1_detail})
+        # Anything left differing is a NON-return register. Still DIVERGENT --
+        # the two sides did leave different garbage behind, and suppressing that
+        # would make the oracle quieter, which is the opposite of the fix. It is
+        # just not a return-value bug, and must not be filed as one.
+        if r3_differs or f1_differs:
+            detail = {
+                "reason": "scratch_return_reg_mismatch",
+                "return_type_class": ret_class,
+                "scratch_reg": "r3" if r3_differs else "f1",
+            }
+            detail.update(r3_detail if r3_differs else f1_detail)
+            return ComparisonResult("DIVERGENT", detail)
 
     # Primary: memory comparison
     obj_diffs = compare_memory(
         decomp_result.object_memory, orig_result.object_memory,
         OBJECT_BASE, REGION_SIZE)
-    globals_diffs = compare_memory(
+    globals_diffs = compare_written_memory(
         decomp_result.globals_memory, orig_result.globals_memory,
+        getattr(decomp_result, "globals_initial", None),
+        getattr(orig_result, "globals_initial", None),
         GLOBAL_BASE, REGION_SIZE)
 
     if obj_diffs or globals_diffs:
@@ -289,7 +451,8 @@ def compare(decomp_result, orig_result, decomp_relocs, orig_relocs):
     return ComparisonResult("EQUIVALENT", details, warnings)
 
 
-def classify_divergence(result, decomp_result, orig_result, decomp_relocs, orig_relocs, enrichment=None):
+def classify_divergence(result, decomp_result, orig_result, decomp_relocs, orig_relocs,
+                        enrichment=None, symbol=None, demangled=None):
     """Classify a DIVERGENT result into a root-cause category.
 
     Args:
@@ -297,6 +460,11 @@ def classify_divergence(result, decomp_result, orig_result, decomp_relocs, orig_
             - has_linker_merged: bool — whether objdiff detected merged symbols
             (This supplements the warnings-based detection which only works
             for EQUIVALENT results.)
+        symbol / demangled: optional. Used to check whether r3 is actually this
+            function's return register before calling an r3 difference a
+            `return_value` bug. This is a SAFETY NET as well as a feature: it
+            fires even when the caller reached `compare()` without a symbol, so
+            an old `return_value_mismatch` reason still gets re-classified.
 
     Returns one of:
         'build_env'     — __FILE__ string differences or merged symbol calls
@@ -308,11 +476,20 @@ def classify_divergence(result, decomp_result, orig_result, decomp_relocs, orig_
         'stack_layout'  — call_arg_mismatch with stack-region values (hard to fix)
         'fpr_precision' — float return value differs (FMA/precision, unfixable)
         'object_memory' — memory_mismatch with object region diffs (maybe fixable)
+        'data_layout'   — the only differing values are addresses the harness
+                          assigns independently per side (GLOBAL / RDATA /
+                          TRAMPOLINE). Same operand, different placement.
+                          ARTIFACT — do not chase these as decomp bugs.
         'error'         — execution error on decomp side (real bug)
         'orig_error'    — execution error on original side only (test infra, unfixable)
         'call_count'    — call count mismatch without merged indicators (real bug)
         'call_arg'      — call arg mismatch not matched by other rules (real bug)
-        'return_value'  — integer return value mismatch (real bug)
+        'return_value'  — integer/pointer return value mismatch (real bug).
+                          Only assigned once the return type says r3 IS the
+                          return register.
+        'scratch_return_reg' — r3 (or f1) differs on a function that does not
+                          return in that register: void returns nothing, float
+                          returns in f1. ARTIFACT — not a return-value bug.
         'logic'         — remaining fallthrough (should be minimal)
     """
     if result.verdict != "DIVERGENT":
@@ -332,6 +509,10 @@ def classify_divergence(result, decomp_result, orig_result, decomp_relocs, orig_
             if r.get("symbol_name", "").startswith("merged_"):
                 has_merged = True
                 break
+    # ...and for ICF folding that the splitter recorded under a real name
+    # rather than a merged_ placeholder (see has_icf_folded_callsites).
+    if not has_merged and has_icf_folded_callsites(decomp_relocs, orig_relocs):
+        has_merged = True
 
     # Error-based divergences — distinguish orig-only (unfixable) from decomp (real bug)
     if reason == "orig_error":
@@ -365,19 +546,19 @@ def classify_divergence(result, decomp_result, orig_result, decomp_relocs, orig_
         diff_regs = [r for r in ("r3", "r4", "r5", "r6")
                      if d_args.get(r) != o_args.get(r)]
 
-        # Check if ALL differing args point to globals region (string refs)
-        all_globals = True
-        for reg in diff_regs:
-            d_val = d_args.get(reg, 0)
-            o_val = o_args.get(reg, 0)
-            d_in_globals = GLOBAL_BASE <= d_val < GLOBAL_BASE + REGION_SIZE
-            o_in_globals = GLOBAL_BASE <= o_val < GLOBAL_BASE + REGION_SIZE
-            if not (d_in_globals and o_in_globals):
-                all_globals = False
-                break
-
-        if all_globals:
-            return "build_env"
+        # If EVERY differing arg is an address the harness assigned per-side,
+        # the two sides are passing the same operand and only the harness's
+        # placement of it differs. Not a decomp defect. (This used to check
+        # GLOBAL_BASE alone and call it build_env; RDATA_BASE was missing, so
+        # every pointer-to-string-literal argument -- the single most common
+        # shape in this codebase -- fell through and was reported as a real
+        # call_arg bug. Resolving both sides' addresses back to symbols showed
+        # 61 of 68 such rows denote the identical symbol or byte-identical
+        # string.)
+        if all(_is_harness_address(d_args.get(reg, 0))
+               and _is_harness_address(o_args.get(reg, 0))
+               for reg in diff_regs):
+            return "data_layout"
 
         # Check if merged symbol warning covers the mismatching call
         if has_merged:
@@ -438,23 +619,49 @@ def classify_divergence(result, decomp_result, orig_result, decomp_relocs, orig_
             return "merged_call"
         return "call_count"
 
+    if reason == "scratch_return_reg_mismatch":
+        return "scratch_return_reg"
+
     if reason == "return_value_mismatch":
-        # Check if both values are globals-region pointers (string return)
+        # r3 is only the return register for integer/pointer returns. void
+        # returns nothing and float/double returns in f1, so an r3 difference
+        # there is leftover scratch, not a wrong return value. Measured
+        # 2026-08-19: 5 of the 10 `return_value` rows were exactly this
+        # (4 void, 1 float).
+        #
+        # `return_type_class` is normally already in details -- compare() puts
+        # it there so the eight call sites do not each have to thread a symbol.
+        # The symbol/demangled kwargs are the safety net for results produced
+        # by an older compare() (e.g. re-classifying rows already in the DB).
+        rc = details.get("return_type_class")
+        if rc is None and (symbol or demangled):
+            rc = return_type_class(symbol, demangled)
+        if rc in ("void", "float"):
+            return "scratch_return_reg"
+        # A returned pointer into a harness-laid-out region says nothing: both
+        # sides returned the same object, the harness just put it elsewhere.
+        # DataNode::DataTypeString is the canonical example -- 100% match,
+        # returns 0x8002009E vs 0x80020000, both the same string literal.
         d_r3 = details.get("decomp_r3", 0)
         o_r3 = details.get("orig_r3", 0)
-        if (GLOBAL_BASE <= d_r3 < GLOBAL_BASE + REGION_SIZE
-                and GLOBAL_BASE <= o_r3 < GLOBAL_BASE + REGION_SIZE):
-            return "build_env"
+        if _is_harness_address(d_r3) and _is_harness_address(o_r3):
+            return "data_layout"
         return "return_value"
 
     if reason == "memory_mismatch":
-        # Memory diffs in globals region could be string-related
         obj_diffs = details.get("object_diffs", [])
         glob_diffs = details.get("globals_diffs", [])
         if not obj_diffs and glob_diffs:
             # Only globals diffs — could be __FILE__ written to memory
             return "build_env"
         if obj_diffs:
+            # A stored word that is a harness-assigned address on both sides is
+            # the same pointer under two placements. This is what every
+            # ??_G / ??1 destructor row was: the vtable pointer store, decomp
+            # 0x80020004 vs orig 0x80020000.
+            if all(_is_harness_address(d) and _is_harness_address(o)
+                   for _addr, d, o in obj_diffs):
+                return "data_layout"
             return "object_memory"
         return "logic"
 
@@ -606,6 +813,19 @@ def format_result(result, decomp_result, orig_result, decomp_relocs, orig_relocs
             lines.append(f"  Float return value mismatch (f1):")
             lines.append(f"    Decomp: f1 = 0x{result.details['decomp_f1']:016X}")
             lines.append(f"    Original: f1 = 0x{result.details['orig_f1']:016X}")
+
+        elif reason == "scratch_return_reg_mismatch":
+            reg = result.details.get("scratch_reg", "r3")
+            rc = result.details.get("return_type_class", "?")
+            lines.append(f"  Scratch register {reg} differs "
+                       f"(return type is '{rc}', so {reg} is NOT the return "
+                       f"register -- not a return-value bug):")
+            for side in ("decomp", "orig"):
+                key = f"{side}_{reg}"
+                if key in result.details:
+                    width = 16 if reg == "f1" else 8
+                    lines.append(f"    {side.capitalize()}: {reg} = "
+                               f"0x{result.details[key]:0{width}X}")
 
         elif reason == "memory_mismatch":
             obj_diffs = result.details.get("object_diffs", [])
