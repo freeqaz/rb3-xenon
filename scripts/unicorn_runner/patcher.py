@@ -1,8 +1,11 @@
 """Relocation patching for the Unicorn Function Runner."""
 
+import re
 import struct
 
-from .memory_map import TRAMPOLINE_BASE, GLOBAL_BASE, RDATA_BASE
+from .image import get_global_image
+from .memory_map import TRAMPOLINE_BASE, GLOBAL_BASE, RDATA_BASE, REGION_SIZE
+from .save_helpers import helper_address
 
 
 def rewrite_ppc64_insns(code):
@@ -40,6 +43,15 @@ def assign_addresses(relocs):
     """Assign Unicorn addresses to all relocation targets.
 
     Returns (trampolines, globals_map) dicts mapping symbol_name -> address.
+
+    MSVC's register save/restore helpers are the one exception: they resolve
+    to a fixed address in the HELPER region, where save_helpers has installed
+    the real body. They are NOT given a trampoline slot, for two reasons.
+    A `li r3,0; blr` stub is catastrophic for them (see save_helpers), and the
+    slot numbering itself is per-side: the two sides do not agree on which
+    functions need `__savegprlr_N`, so letting the helpers consume slots
+    shifted every later symbol's trampoline address on one side only, and the
+    prologue call showed up in the call log as a call the function had made.
     """
     trampolines = {}   # symbol_name -> trampoline address
     globals_map = {}    # symbol_name -> global slot address
@@ -50,6 +62,10 @@ def assign_addresses(relocs):
         sym = reloc["symbol_name"]
         if reloc["type_name"] in ("REL24", "REL14"):
             if sym not in trampolines:
+                helper = helper_address(sym)
+                if helper is not None:
+                    trampolines[sym] = helper
+                    continue
                 trampolines[sym] = next_trampoline
                 next_trampoline += 8   # each stub is 8 bytes
         elif reloc["type_name"] in ("REFHI", "REFLO"):
@@ -191,9 +207,6 @@ def prepare_data_sections(coff, relocs, existing_rdata_bytes=None, existing_over
                         data_sections[sec_idx] = set()
                     data_sections[sec_idx].add(reloc["symbol_name"])
 
-    if not data_sections:
-        return existing_rdata_bytes, existing_override or {}
-
     # Start after any existing rdata content
     base_rdata = bytearray()
     if existing_rdata_bytes:
@@ -222,10 +235,173 @@ def prepare_data_sections(coff, relocs, existing_rdata_bytes=None, existing_over
 
         base_rdata.extend(sec_data)
 
+    _synthesize_float_constants(coff, relocs, base_rdata, globals_override)
+
     if len(base_rdata) == 0:
         return None, globals_override
 
     return bytes(base_rdata), globals_override
+
+
+# MSVC names a floating-point literal pool entry after its own bytes:
+# `__real@3f800000` IS 1.0f, `__real@3ff0000000000000` IS 1.0. The hex digits
+# are the big-endian value, which is what the Xenon loads.
+_REAL_RE = re.compile(r'^__real@([0-9a-fA-F]{8}|[0-9a-fA-F]{16})$')
+
+
+def _synthesize_float_constants(coff, relocs, base_rdata, globals_override):
+    """Materialise `__real@…` constants that this COFF does not define.
+
+    The decomp .obj defines its float literals in a real `.rdata` section, so
+    the loop above maps them and the decomp side loads the right values. The
+    *original* .obj — reconstructed by the splitter from the XEX — carries them
+    as UNDEFINED externals (section 0). Nothing mapped them, so they landed in a
+    plain zero-filled GLOBAL slot and the original side loaded 0.0f wherever the
+    decomp loaded 1.0f, -1.0f, 1e30f, …
+
+    That is a harness asymmetry, not a decomp bug, and it was the single largest
+    source of DIVERGENT verdicts in the database: it makes the original compute
+    different arithmetic, take different branches (whole `wild_jump_match`
+    clusters), and store different words into the object. Since the mangled name
+    carries the bytes, we can rebuild the constant exactly without the section.
+
+    Only fills symbols that are undefined here AND not already mapped, so the
+    decomp side — where these are real defined data — is untouched.
+    """
+    wanted = []
+    seen = set()
+    for reloc in relocs:
+        if reloc["type_name"] not in ("REFHI", "REFLO", "ADDR32"):
+            continue
+        name = reloc["symbol_name"]
+        if name in globals_override or name in seen:
+            continue
+        m = _REAL_RE.match(name)
+        if not m:
+            continue
+        sym = coff.symbol_map.get(name)
+        if sym and sym.get('section', 0) > 0:
+            continue          # genuinely defined in this object; leave it alone
+        seen.add(name)
+        wanted.append((name, bytes.fromhex(m.group(1))))
+
+    for name, raw in wanted:
+        align = len(raw)      # 4 for float, 8 for double
+        pad = (-len(base_rdata)) % align
+        base_rdata.extend(b'\x00' * pad)
+        globals_override[name] = RDATA_BASE + len(base_rdata)
+        base_rdata.extend(raw)
+
+
+# Symbols this big are not "a constant the two sides disagree about"; they are
+# tables, and copying one into a 64KB region would crowd out everything else.
+_MAX_SEEDED_SYMBOL = 4096
+
+# Leave the tail of the RDATA region free so a later switch table or string
+# still fits after seeding.
+_RDATA_SEED_BUDGET = REGION_SIZE - 0x2000
+
+
+def seed_image_globals(coff, relocs, globals_map, rdata_bytes, image=None):
+    """Give symbols this .obj does not define their content from the image.
+
+    The harness's picture of a global comes from whichever .obj is in front of
+    it, and the two sides do not define the same set. The decomp compiles one
+    .cpp, so `static float kSampleRate = 48000.0f` is real .data. The splitter,
+    carving the same function out of the linked image, emits kSampleRate as an
+    UNDEFINED external because the word lives in some other split object. The
+    undefined side got a zero-filled slot, so the original divided by zero
+    while the decomp divided by 48000, and the runner blamed the decomp.
+
+    So: any REFHI/REFLO/ADDR32 target that this .obj leaves undefined, and that
+    the shipped image knows, is seeded with the image's bytes at that symbol's
+    address. Both sides then start from one initial global image.
+
+    NOT seeded:
+
+    * Symbols this .obj DEFINES -- including in .bss. `float sZoom;` compiled to
+      a zero .bss word while the original holds 0x3F800000 is a real dropped
+      initializer (4f8b6e036 found seven of them, all behaviourally live and
+      all invisible to objdiff). Overwriting our own definition with the
+      image's would erase exactly that signal, so a defined symbol always
+      keeps the bytes its own .obj gave it.
+    * Symbols whose image content is all zero -- seeding is a no-op, and not
+      moving them keeps the address assignment untouched.
+    * Symbols whose content is (or contains) a pointer into the image. The
+      harness maps no image memory, so such a pointer aims at an on-demand
+      zero page; null is the truer answer and is what every other pointer in
+      the fixture already is. See GlobalImage.contains_image_pointer.
+
+    Placement mirrors what the value is for:
+
+    * <= 4 bytes stays in its GLOBAL slot, seeded in place, so that a STORE to
+      the global still lands in the region the comparator diffs. Scalars are
+      the overwhelming majority (723 of 749 decomp-side seeds in a 60-unit
+      survey) and are the shape that gets written.
+    * larger objects -- in practice string literals, since anything made of
+      pointers is excluded above -- move into the RDATA buffer, the only place
+      with room for them. Writes there are not compared, which is acceptable
+      for string literals and much cheaper than the alternative: resizing
+      GLOBAL slots would perturb the per-side address assignment that the
+      cross-side call-arg alignment depends on.
+
+    Mutates globals_map for relocated symbols. Returns (rdata_bytes,
+    globals_init) where globals_init maps a GLOBAL address to the bytes to
+    write there before execution.
+    """
+    if image is None:
+        image = get_global_image()
+    globals_init = {}
+    if not getattr(image, "available", False):
+        return rdata_bytes, globals_init
+
+    buf = bytearray(rdata_bytes) if rdata_bytes else bytearray()
+    started_empty = not rdata_bytes
+    grew = False
+
+    seen = set()
+    for reloc in relocs:
+        if reloc["type_name"] not in ("REFHI", "REFLO", "ADDR32"):
+            continue
+        name = reloc["symbol_name"]
+        if name in seen:
+            continue
+        seen.add(name)
+
+        addr = globals_map.get(name)
+        if addr is None or not (GLOBAL_BASE <= addr < GLOBAL_BASE + REGION_SIZE):
+            continue          # already backed by real data on this side
+
+        sym = coff.symbol_map.get(name)
+        if sym is not None and sym.get("section", 0) > 0:
+            continue          # this .obj defines it — its bytes win
+
+        entry = image.lookup(name)
+        if entry is None or not (0 < entry.size <= _MAX_SEEDED_SYMBOL):
+            continue
+
+        content = image.read(entry.address, entry.size)
+        if not content or not any(content):
+            continue          # zero in the image: the slot is already right
+        if image.contains_image_pointer(content):
+            continue          # a pointer we cannot honour; zero is truer
+
+        if entry.size <= 4:
+            globals_init[addr] = content
+            continue
+
+        align = 8 if entry.size >= 8 else 4
+        pad = (-len(buf)) % align
+        if len(buf) + pad + entry.size > _RDATA_SEED_BUDGET:
+            continue          # no room; leave it zero rather than corrupt data
+        buf.extend(b"\x00" * pad)
+        globals_map[name] = RDATA_BASE + len(buf)
+        buf.extend(content)
+        grew = True
+
+    if started_empty and not grew:
+        return rdata_bytes, globals_init
+    return bytes(buf), globals_init
 
 
 def prepare_switch_tables(coff, func_symbol, relocs, code_base):

@@ -268,5 +268,78 @@ class TestExecuteFunction(unittest.TestCase):
         self.assertEqual(result.call_log[0][CL_TRAMP_ADDR], expected_tramp)
 
 
+@unittest.skipUnless(HAS_UNICORN, SKIP_REASON)
+class TestEngineLifecycle(unittest.TestCase):
+    """Engines must release their native handle deterministically.
+
+    A Uc instance owns a QEMU translator buffer of several MB. Because
+    hook_add() parks a bound method of the engine inside Uc._callbacks, the
+    pair is only ever reclaimable by the *cycle* collector -- which, seeing
+    nothing but a few small Python objects, is in no hurry to run. Every
+    _run_comparison_core() call ran two execute_function() calls, each of
+    which built an engine and dropped it, so any process that compared more
+    than a handful of functions died with
+
+        Could not allocate dynamic translator buffer
+
+    at roughly 22 live engines. These tests pin the fix: execute_function()
+    closes what it opens, and a closed engine is inert.
+    """
+
+    def setUp(self):
+        from scripts.unicorn_runner.engine import UnicornEngine
+        self.UnicornEngine = UnicornEngine
+
+    def test_execute_function_leaves_no_open_engine(self):
+        """40 sequential executions never leave an open engine behind."""
+        from scripts.unicorn_runner.engine import execute_function
+        baseline = self.UnicornEngine.live_engines
+        peak = baseline
+        for _ in range(40):
+            code = bytearray(make_simple_function())
+            result = execute_function(code, {}, len(code))
+            self.assertEqual(result.r3, 42)
+            peak = max(peak, self.UnicornEngine.live_engines)
+        # Not "bounded by some slack": execute_function opens exactly one
+        # engine and closes it before returning, so the count is back at the
+        # baseline after every single call.
+        self.assertEqual(peak, baseline)
+        self.assertEqual(self.UnicornEngine.live_engines, baseline)
+
+    def test_context_manager_closes(self):
+        baseline = self.UnicornEngine.live_engines
+        with self.UnicornEngine() as engine:
+            self.assertEqual(self.UnicornEngine.live_engines, baseline + 1)
+            code = bytearray(make_simple_function())
+            self.assertEqual(engine.execute(code, {}, len(code)).r3, 42)
+        self.assertEqual(self.UnicornEngine.live_engines, baseline)
+
+    def test_close_is_idempotent(self):
+        baseline = self.UnicornEngine.live_engines
+        engine = self.UnicornEngine()
+        engine.close()
+        engine.close()
+        engine.close()
+        self.assertEqual(self.UnicornEngine.live_engines, baseline)
+
+    def test_execute_after_close_raises(self):
+        engine = self.UnicornEngine()
+        engine.close()
+        code = bytearray(make_simple_function())
+        with self.assertRaises(RuntimeError):
+            engine.execute(code, {}, len(code))
+
+    def test_reused_engine_stays_single(self):
+        """The batch path (one engine, many functions) opens exactly one."""
+        baseline = self.UnicornEngine.live_engines
+        with self.UnicornEngine() as engine:
+            for _ in range(40):
+                code = bytearray(make_simple_function())
+                self.assertEqual(engine.execute(code, {}, len(code)).r3, 42)
+                self.assertEqual(
+                    self.UnicornEngine.live_engines, baseline + 1)
+        self.assertEqual(self.UnicornEngine.live_engines, baseline)
+
+
 if __name__ == "__main__":
     unittest.main()
