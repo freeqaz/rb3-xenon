@@ -699,8 +699,13 @@ void TrackPanel::Draw() {
         // BandRnd::ClearDepthForOverlay implements this; the base Rnd no-op makes
         // it a harmless call on backends that don't (Wii match build skips this
         // whole block). Opt-out: RB3_NO_TRACK_DEPTH_CLEAR=1.
-        if (TheRnd)
-            TheRnd->ClearDepthForOverlay();
+        // `extern Rnd &TheRnd` (rndobj/Rnd.h:402) is a REFERENCE, so the
+        // `if (TheRnd)` / `TheRnd->` spelling this block shipped with could
+        // never compile. It was never caught because TrackPanel.cpp reaches no
+        // native target (lane L4-NATIVESCATTER): an HX_NATIVE-only feature that
+        // had never once been through a compiler. Rnd::ClearDepthForOverlay is
+        // a virtual no-op on the base and is overridden by WgpuRnd.
+        TheRnd.ClearDepthForOverlay();
 #endif
         UIPanel::Draw();
     }
