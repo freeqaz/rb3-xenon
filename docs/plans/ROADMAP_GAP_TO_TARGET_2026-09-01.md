@@ -32,7 +32,15 @@
 > - ✅ **P1-BODYTRIAGE** (merge `4483c213`) — §7 item 4 **REFUTED: DO NOT FUND.**
 >   The oracle-backed slice is **1 unit / 52 bytes**. See §7 item 4 and §3's
 >   correction below.
-> - ⏳ **U1-DEEPSCHED** — §6 item 8's residue, still running.
+> - ✅ **U1-DEEPSCHED** (merge `1b45fc5b`) — §6 item 8's residue CLOSED, and it
+>   **inverted the framing**: the fixture was **BROKEN, not shallow**. On the
+>   repaired fixture, genuine `logic`-class divergences are **0 of 22,718**, and
+>   the lane audited its own 40-row headline down to an **upper bound** after
+>   all 15 rows of its largest cluster dissolved.
+>
+> ⇒ **All three lanes returned refutations.** Every workstream this roadmap
+> proposed has now been measured, and the ones with the largest advertised
+> prizes were the ones that died. That is the document working as intended.
 >
 > ⛔ **AND §0'S INCIDENT RECURRED DURING THIS WAVE, LARGER: 642 of 1,205 decomp
 > objects drifted** in main, "produced OUTSIDE the full build graph" — the
@@ -440,6 +448,42 @@ repaired during the survey (TU0 phantom ranges; crash-on-valid-input).
    coverage limit** (zero-fill + 0xCD only; out-params `r4/r5/r6` = NULL; DC3's
    typed/hostile mocks unrun). **The outstanding work is a DEEPER schedule, not
    a broader run** — which is exactly what U1 is testing.
+
+   > ⛔⛔ **U1 ANSWERED IT AND INVERTED THE FRAMING (merge `1b45fc5b`): the
+   > fixture was BROKEN, not shallow — and one mechanism produced BOTH of S4's
+   > headline pathologies.** MSVC on Xenon calls out-of-line register
+   > save/restore helpers as external REL24 targets, and the harness stubbed
+   > every one with a generic `li r3,0; blr`. So `bl __savegprlr_29` **destroyed
+   > the incoming `this` at the SECOND instruction of the function, on both
+   > sides**, while the tail `b __restgprlr_29` returned to a stale LR, making
+   > functions re-enter their own tail and spin to the cap. **Every verdict S4
+   > produced sits on that fixture.** Eight fixes ported and verified in THIS
+   > binary — all 72 GPR/FPR helper bodies byte-identical to `band.exe` at RB3's
+   > own addresses (29 tests, 0 skipped).
+   > ★ **The port did not buy its verdicts by desensitising the instrument**:
+   > `ClearBones` catches 3/4 single-instruction deletions before the port and
+   > **still 3/4 after**. And the deeper schedule made the *broader* run cheap —
+   > the harness that wedged on 51 units now audits **all 1,045 units / 22,718
+   > functions in 256 s**, 2.9× S4's coverage.
+   > **RESULT: genuine `logic`-class divergences = 0 of 22,718**, on a fixture
+   > that no longer destroys `this`. Shared-error laundering 30.9% → **17.7%**
+   > by fixing CAUSES, with the verdict deliberately NOT flipped (that would
+   > convert 88 harness failures into 88 fake bug reports).
+   > ★★★ **And it audited its own headline out of existence**: all 15 rows of
+   > its `object_memory` cluster dissolve (6 a constant `0x2C` across six
+   > unrelated classes, 4 float-literal asymmetry, 5 scalar-vs-GLOBAL), each
+   > escaping the `data_layout` screen **by construction** — so **40 is an UPPER
+   > BOUND, not a bug count**, and no fix was attempted because nothing reached
+   > the bar.
+   > ⚠ **Fleet-reach defect found on the way**: the C hook's pure-Python
+   > fallback has a signedness bug that makes every call-target lookup miss, so
+   > the **wrong-callee warning is silently lost entirely** — and the `.so` is
+   > gitignored and `setup_worktree.sh` does not build it, so **every fresh
+   > worktree takes that degraded path by default**.
+   > **Highest-value next measurement:** the full-corpus `outparam` run — it is
+   > the one addition that WON (+24% divergence, −10% crashes, and one
+   > matched-but-wrong row the default schedule never sees) and it has only been
+   > run on 51 of 1,045 units.
 
 **Explicitly not worth building** (GAP-D, with reasons in its record): a
 native golden-image comparator (no ground truth exists; invariant oracles are
