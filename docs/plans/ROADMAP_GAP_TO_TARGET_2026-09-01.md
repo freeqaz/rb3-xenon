@@ -22,12 +22,28 @@
 > item 6 is **UNBLOCKED** — the GPU works again, verified *functionally*
 > (`vkCreateInstance` → `VK_SUCCESS`, 2 devices) rather than by version string,
 > after the NVIDIA kernel module was reloaded to 610.57.04 on a package update
-> with **no reboot**. Three lanes dispatched against the remaining plan:
-> **N1-GPUGATES** (§6 item 6 — the ~24 render gates nobody has ever seen, plus
-> the three forced-failure controls S5 could not demonstrate), **P1-BODYTRIAGE**
-> (§7 item 4 — the only large vein left, triaged by ORACLE availability, with
-> DO-NOT-FUND an acceptable answer), and **U1-DEEPSCHED** (§6 item 8's residue —
-> the `logic` class is a SCHEDULE limit, not a coverage limit).
+> with **no reboot**. Three lanes ran against the remaining plan; **two have
+> landed and both returned refutations**:
+> - ✅ **N1-GPUGATES** (merge `a18a9885`) — §6 item 6 CLOSED. `verdict=PASS
+>   18/18, 0 SKIPs, runtime 3/3, 37 gates, 0 failed`. Found that
+>   `native_health.sh` was **crediting a control over a PRE-EXISTING RED** (the
+>   same-breakage-twice trap as a configuration mismatch). Link gate wired into
+>   CI; `ALLOW_INCOMPLETE` proved unable to mask a break.
+> - ✅ **P1-BODYTRIAGE** (merge `4483c213`) — §7 item 4 **REFUTED: DO NOT FUND.**
+>   The oracle-backed slice is **1 unit / 52 bytes**. See §7 item 4 and §3's
+>   correction below.
+> - ⏳ **U1-DEEPSCHED** — §6 item 8's residue, still running.
+>
+> ⛔ **AND §0'S INCIDENT RECURRED DURING THIS WAVE, LARGER: 642 of 1,205 decomp
+> objects drifted** in main, "produced OUTSIDE the full build graph" — the
+> `NEVER ninja <one>.obj` / `objdiff-cli --build` hazard again, at 2.6× the
+> scale of the 244 recorded in §0. It was invisible until asked, and a
+> measurement taken on that tree reads LOW one-directionally. ★ **The alias CI
+> gate's own class split moved under it** (`STALE_SPELLING` 82 → 88,
+> map-consistent 1370 → 1364) with **no map or alias change** — i.e.
+> `icf_alias_finder --validate` guards the ~7.9 pp forgiveness mechanism with
+> **no freshness precondition**. T1's guard covers 2 tools of ~35; this is the
+> next one that needs it.
 
 ## 0. Incident found and repaired during the survey
 
@@ -130,6 +146,22 @@ the extreme is Quazal scaffolds: `PRUDPEndPoint` retail owns 67 symbols, our
 7-line `namespace Quazal {}` obj owns 0), **~13% is fold-ambiguous by
 construction** (body byte-duplicated inside its own target obj), and the
 genuinely-nameable bijective residual is **~21 kB ≈ 0.2% of total_code**.
+
+> ⛔⛔ **THE TWO PERCENTAGES ABOVE ARE REFUTED (lane P1-BODYTRIAGE, merge
+> `4483c213`). The vein's SIZE reproduces (1,319,540 B, 0.24% from the figure
+> above); its COMPOSITION inverts.** Measured: **17.7% is unwritten, not ~71%**
+> — 82.3% is **divergence in code we already hold** — and fold-ambiguous is
+> **3.9%** (10.0% at the loosest definition), not ~13%. Quazal is **17.9%** of
+> the vein, not its flavour (engine 51.9%, game 26.1%).
+> ★ **And the 17.7% was never new**: lane GRIND-1 measured the same ~17% on
+> 2026-08-14, and it sat in
+> `docs/decomp/bodywrite-surface-repriced-GRIND1-2026-08-14.md` the whole time.
+> That is `READ THE IN-TREE RECORD FIRST` failing in a coordinator brief for the
+> second time in this document's life — the first put a two-population composite
+> figure into §4a.
+> **The §3 CONCLUSION is unaffected and in fact strengthened**: identification
+> still cannot be a byte lever, and the vein it pointed at is now measured
+> unfundable for a *different* reason — we mostly hold the code and it diverges.
 
 Every bulk identification channel is measured dead (GAP-B channel table:
 BinDiff decoy-null p95=1.000 ⇒ no threshold exists; BSim precision 0.16–0.36;
@@ -432,9 +464,26 @@ XDK out of scope except pinning + mem-mgmt subset):
 | 7 | **Permuter un-deferral** — only after §5's three preconditions | ≤0.75 pp ceiling, historically 0 conversion | cheapest path may be hand-work on its top-5 rows instead |
 | — | Identification waves, ceiling-raising, autoid re-runs, vtable order sweeps, `SOURCE_INSDEL` re-sweeps, dual-heading splits merge | **do not fund** | each has a dated refutation; see GAP-B/C ledgers and the drained table in CAMPAIGN_STATE |
 
-**Honest bottom line on the matching metric:** from 59.9% of reachable, the
-fully-addressable in-scope remainder (structural + controlled grind +
-permuter ceiling, taking measured irreducibility rates at face value) is
+**Honest bottom line on the matching metric — REVISED 2026-09-10, DOWNWARD.**
+The original estimate below was **explicitly premised on two veins that have
+since BOTH been refuted by their own instruments**: the fold class (§4a, ~99%
+irreducible, floor ≈4.1 kB) and the missing-body vein (§7 item 4, oracle-backed
+slice = 1 unit / 52 B). With both gone, the *identified* remaining levers are
+container-type divergence (~87.5 kB, and lane S2 showed its wins were **map**
+repairs rather than source work), clean source levers (~56 kB), and the
+permuter ceiling (~76.5 kB / 0.75 pp, at a measured historical conversion of
+**0 for 66**). That is **≈220 kB ≈ 2.1 pp of `total_code` at 100% conversion**,
+and no conversion rate in this project's record supports anything near 100%.
+⇒ **Read the realistic figure as low single-digit tenths of a pp, not +6–12 pp**
+— and note this is the third time a headline forecast here has had to be revised
+down after the vein behind it was measured rather than assumed.
+★ **The conclusion this document already drew is unchanged and now better
+supported**: the metric is close to its practical ceiling, and the remaining
+value is **accuracy and the native port**, not bytes.
+
+*Original text, kept because the correction is the record:* from 59.9% of
+reachable, the fully-addressable in-scope remainder (structural + controlled
+grind + permuter ceiling, taking measured irreducibility rates at face value) is
 plausibly **+6–12 pp of total_code over a long campaign**, dominated by how
 much of the fold class proves and how much of the missing-body vein is
 oracle-backed. 100% of the reachable ceiling is not attainable —
