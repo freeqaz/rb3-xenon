@@ -9,6 +9,25 @@
 > its derivation; per the standing rule, RE-MEASURE these before building on
 > them — the denominator has now taken three distinct values in four weeks
 > (10,688,688 → 10,320,664 → 10,245,956).
+>
+> ⛔ **CORRECTION to the line above (lane T3-LEDGER): `total_code` has taken
+> ~24 distinct values, not three** — it wobbles ~100 B routinely. The source is
+> `build/45410914/progress_history.jsonl`, a 249-row series `tools/scope_map.py`
+> has been writing since 2026-07-29 **while gitignored**, i.e. invisible. Never
+> memorise the denominator; read the key.
+>
+> **RESUMED 2026-09-10.** Tree unchanged since 09-01 (0 commits in the gap,
+> patch-state green, `report.json` `tool_commit 032122696555` == `../objdiff`
+> HEAD, so no tool drift this time). Items 1–5, 7 and 8 of §6 are **DONE**;
+> item 6 is **UNBLOCKED** — the GPU works again, verified *functionally*
+> (`vkCreateInstance` → `VK_SUCCESS`, 2 devices) rather than by version string,
+> after the NVIDIA kernel module was reloaded to 610.57.04 on a package update
+> with **no reboot**. Three lanes dispatched against the remaining plan:
+> **N1-GPUGATES** (§6 item 6 — the ~24 render gates nobody has ever seen, plus
+> the three forced-failure controls S5 could not demonstrate), **P1-BODYTRIAGE**
+> (§7 item 4 — the only large vein left, triaged by ORACLE availability, with
+> DO-NOT-FUND an acceptable answer), and **U1-DEEPSCHED** (§6 item 8's residue —
+> the `logic` class is a SCHEDULE limit, not a coverage limit).
 
 ## 0. Incident found and repaired during the survey
 
@@ -288,12 +307,30 @@ repaired during the survey (TU0 phantom ranges; crash-on-valid-input).
    while blaming its own `WITNESS_UNITS`, and that a tree with 2 genuinely
    unpatched objects was passed by `--verify-scores` at **rc=0** — so the
    score comparison cannot detect an unpatched tree; only the manifest can.
-2. **Fix `crossing_worklist.py`'s ruler** (~5 lines): line ~396 hardcodes
-   `functionRelocDiffs=none`, so the tree's only size-if-it-crosses ranker
-   systematically over-reports rows as source-reachable — the exact
-   `CustomizePanel` failure that misled three lanes — while *looking* like
-   the trustworthy tool because it has a selftest. Import
-   `scripts/analysis/ruler.py`, re-run its selftest.
+2. ✅ **DONE (lane T2-RULER, merge `017f46b7`)** — the size-if-it-crosses
+   ranker was pricing on `none` while banding on the graded ruler. Measured on
+   one settled tree, inputs held still: **2,710 of 3,427 rows (79.08%)
+   mispriced before, 0/3,427 after**; 4,531 charges were invisible; the PURE
+   SYMBOL class went 3 rows/2,364 B → **2,184 rows/517,348 B**. Of the rows it
+   advertised at `mm≤3`, **33.2% of the bytes carried a relocation-name charge
+   the ranker could not see.**
+   ★ **The dominant failure was INVISIBILITY, not over-advertising**: 2,181
+   rows read `mm==0` under `none` — literally "no mismatches" — and the
+   `0 < mm` filter silently dropped them.
+   ⛔ **Root cause of an 18-day miss**: the file was **absent from
+   `ruler.py`'s `_CONSUMERS` list**, so the regression guard passed cleanly
+   over an identical defect. Now listed, and proved able to fail on it.
+   ⛔ **3 of 10 human-ratified "known positive" pins were never pure** — they
+   were ratified by a human reading the diff **on the `none` ruler**; one hides
+   a real wrong-callee divergence inside a row advertised as verified-good.
+   *A human-ratified control is only as good as the ruler it was ratified on.*
+   Verified independently by the coordinator on a stable binary: `--selftest`
+   **PASS rc=0** (0/3,414 disagree) and `--selftest --self-break` **FAIL rc=2**
+   (8 controls red, 0 void, inputs held still).
+   **Follow-up landed 2026-09-10 (`dd4dd0ae`)**: three further tools
+   (`w25_charge_detail`, `w25_pair_dump`, `pairing_model`) computed on the
+   resolved ruler and never disclosed it — `pairing_model` had the label in
+   hand and discarded it into `_lbl`. All three now print the banner.
 3. ✅ **DONE — longitudinal gap ledger** (`tools/progress_ledger.py`, merge
    `ceb9eaf2`; first production snapshot `412e3f85`). Records headline
    measures + gap strata + **tool provenance** (objdiff version/commit/binary
@@ -317,22 +354,60 @@ repaired during the survey (TU0 phantom ranges; crash-on-valid-input).
    verified by measuring the CHARGE CLASSES table immediately before and after
    the edit on one settled tree. Coverage now genuinely passes **and** can
    still fail; the SOURCE_LEVER printer runs for the first time.
-5. **Fold-adjudication family tool** (the enabler for §4's structural slice):
-   per-family retail-byte COMDAT proof for the top template families, with
-   the W33/W34 rule baked in (**never mask a relocation; unresolvable ⇒
-   UNDECIDED**) and `ALIAS_SUSPECT` integrity gates. This is the one
-   *new* instrument the roadmap needs.
-6. **Native runtime measurement on a schedule** (see §7): the link gate is
-   solid but proves LINK, not RUN; real runtime oracles exist in
-   `main_render.cpp`/`main_milo.cpp` (~25 gates, forced-failure controls) but
-   are manual and uncollected. Cheapest win: run them + `scatter_audit.py` on
-   a cadence and record results (scatter drift 42→47 went unnoticed).
-7. **Re-run the alias ablation** (not a build — a measurement): the 7.93 pp
-   forgiveness figure predates a 65% membership collapse.
-8. **Refresh unicorn behavioral coverage**: 7,960 verdicts, all from one
-   72-minute window on 2026-07-16 (11.5% of rows); six weeks of landings
-   carry no verdict. This is the instrument class that catches "matched but
-   wrong" — the defect class that breaks native.
+5. ✅ **BUILT — AND IT REFUTED ITS OWN USE CASE** (lane S1-FOLDTOOL, merge
+   `0facddf1`, `tools/s1_fold_family.py`). Per-family retail-byte COMDAT proof
+   with the W33/W34 rule baked in (**never mask a relocation; unresolvable ⇒
+   UNDECIDED**). It was commissioned as "the enabler for §4's structural
+   slice"; it measured that slice at **~99% irreducible** (§4a: floor ≈4.1 kB,
+   60.67% of covered bytes provably unable to cross).
+   ⇒ **Its standing role is a REFUSAL instrument — use it to refuse a fold
+   claim, not to hunt bytes.** Validation: body mutation flips 5/5,
+   relocation-NAME mutation flips 5/5 to `DIFF_NAME` (proving names are not
+   masked), 24 recorded withdrawals → **0 wrongly proven**, empty or absent
+   population → rc=3.
+   ★ It was **wrong first, in the direction that manufactures work** — 222
+   pairs refuted as source defects when retail's single body named two
+   unrelated `T`, i.e. the callee was itself a fold survivor wearing the
+   linker's arbitrary name. Fixed via the internal-inconsistency route, at a
+   stated cost in refuting power (control REFUTED 11→4).
+6. ⏳ **UNBLOCKED 2026-09-10, IN FLIGHT (lane N1-GPUGATES)** — **Native runtime
+   measurement.** The link gate proves LINK, not RUN; real runtime oracles
+   exist in `main_render.cpp`/`main_milo.cpp` (~25 gates, forced-failure
+   controls) but were manual and uncollected, and `tools/native_health.sh`
+   (lane S5, merge `c07cab85`) could only reach **3 of ~27** render gates
+   because the GPU was down (`verdict=INCOMPLETE … unrunnable=rb3-render:nogpu
+   rc=3`).
+   ★ **The GPU is fixed and it was NOT the reboot I flagged**: the NVIDIA
+   kernel module was reloaded to **610.57.04** on a package update, matching
+   userspace, with **no reboot** (box up since 2026-08-22). Verified
+   **functionally, not by version string** — `vkCreateInstance` returns
+   `VK_SUCCESS` and enumerates 2 devices, where on 09-01 that exact call
+   returned NULL. *A matching version string is a proxy; the call is the
+   thing.*
+   **CI decision made (coordinator): wire the LINK GATE ONLY**, with
+   `NATIVE_GATE_ALLOW_INCOMPLETE=1`. CI has no ark and no GPU, so runtime gates
+   would permanently SKIP and train everyone to ignore the job; the link gate
+   catches the ODR/undefined-symbol class the X360 build is structurally blind
+   to and has caught main broken **four times**. Runtime sweep stays on-demand.
+7. ✅ **DONE (lane S3-ABLATE, merge `e6f16afd`)** — alias ablation re-measured:
+   **811,492 B / 7.920118 pp**, 1,591 groups / 5,338 memberships.
+   ★ **Memberships fell 65% while the byte exposure moved 0.85%** — the retired
+   9,858 were worth 0.7 B each against a surviving average of 152 B, so **a
+   membership count was never a proxy for exposure**. Price fold work PER
+   GROUP: only ~433 of 1,107 sampled groups forgive anything at all.
+8. ✅ **DONE, and deepening IN FLIGHT (lane S4-UNICORN, merge `83eba972`;
+   lane U1-DEEPSCHED running)** — behavioural coverage refreshed to **62.2% of
+   units**, and the headline was **refuted by its own instrument**: the
+   matched-but-wrong worklist is **1,017 → ~6 (99.2% artifact)**, killed by a
+   mock-region screen and a byte-identity proof (596 of 942 DIVERGENT-at-100
+   rows have byte-identical bodies; identical code cannot emulate differently).
+   ⛔ **~31% of EQUIVALENT verdicts are NOT EVIDENCE** — `comparator.py:186`
+   returns EQUIVALENT when both sides hit the same error at the same PC, and
+   verdict counts structurally cannot see this.
+   ⇒ **The `logic` class is still 0 and that is a SCHEDULE limit, not a
+   coverage limit** (zero-fill + 0xCD only; out-params `r4/r5/r6` = NULL; DC3's
+   typed/hostile mocks unrun). **The outstanding work is a DEEPER schedule, not
+   a broader run** — which is exactly what U1 is testing.
 
 **Explicitly not worth building** (GAP-D, with reasons in its record): a
 native golden-image comparator (no ground truth exists; invariant oracles are
