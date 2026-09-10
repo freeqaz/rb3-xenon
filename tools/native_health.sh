@@ -16,6 +16,17 @@
 # 27 gates on this machine because the host's Vulkan ICD is broken, and no
 # artifact anywhere recorded the fact.
 #
+# ✅ RESOLVED 2026-09-10 (lane N1-GPUGATES): the NVIDIA module was reloaded on a
+# package update -- no reboot -- and rb3-render now runs to completion. Verified
+# FUNCTIONALLY, not by version string: vkCreateInstance returns VK_SUCCESS and
+# enumerates 2 physical devices.
+#
+# ⛔ And the first run on a working GPU immediately refuted this script's own
+# selftest: `render-stale` was being credited as a WORKING CONTROL over a
+# PRE-EXISTING RED, because the pair it checked was the WRONG PAIR. See the
+# delta-scored handpose block below -- that defect is the single most important
+# thing this file has produced, and it was invisible while the GPU was broken.
+#
 # `tools/scatter_audit.py` had the same disease in the other direction: it still
 # RAN, and its headline count had drifted 42 -> 47 unnoticed, because the 42 was
 # recorded in a dated plan doc (docs/plans/x10-band-geometry-2026-08-03.md:188)
@@ -73,7 +84,8 @@ emit() {  # verdict link link_ver link_exp link_skip runtime rt_ran rt_tot
     echo "NATIVE_HEALTH_RESULT verdict=$1 link=$2 link_verified=$3 link_expected=$4" \
          "link_skipped=$5 runtime=$6 runtime_ran=$7 runtime_total=$8" \
          "gates_pass=$9 gates_fail=${10} unrunnable=${11} selftest=${12}" \
-         "scatter_unlinked=${13} scatter_dirb=${14} scatter_multihost=${15} rc=${16}"
+         "scatter_unlinked=${13} scatter_dirb=${14} scatter_multihost=${15} rc=${16}" \
+         "handpose_controls=${17:--} handpose_baseline_fail=${18:--}"
 }
 
 SELFTEST=0
@@ -205,6 +217,7 @@ run_target rb3-render "$ASSETS" "$LOGDIR/native_health_render_out_$SLUG"
 # just be the same breakage twice). Same discipline as the house rule "check a
 # witness CAN DISCRIMINATE before it BLOCKS work".
 selftest="SKIPPED"
+hp_ok=0; hp_tot=0; hp_base="-"; hp_ctl="-"
 if [ $SELFTEST -eq 1 ]; then
     echo
     echo "--- selftest: do the negative controls GO RED? ---"
@@ -249,18 +262,102 @@ if [ $SELFTEST -eq 1 ]; then
     else
         echo "  SKIP  milo-badpath -- binary or assets absent"; st_skip=$((st_skip + 1))
     fi
-    # The three RB3_HANDPOSE_* controls live PAST main_render.cpp's NO-GPU
-    # return, so they are only meaningful on a box with a working Vulkan ICD.
-    # Reported SKIP -- never green -- when they cannot run.
+    # ---- THE THREE RB3_HANDPOSE_* CONTROLS, DELTA-SCORED -------------------
+    # ⛔⛔ `rc != 0 && failures > 0` IS NOT A VALID CREDIT FOR THESE, and scoring
+    # them that way reported a WORKING CONTROL over a PRE-EXISTING RED for the
+    # whole life of this script. Measured the first time the box had a working
+    # GPU (lane N1-GPUGATES, 2026-09-10): `render-stale` was credited on rc=1
+    # with 7 failures while the UNPERTURBED --hand-audit baseline was ALREADY
+    # rc=1 with 5. The control was scored on breakage it did not cause.
+    #
+    # Two independent defects produced that, both now measured:
+    #  1. The positive rb3-render run above does NOT pass --hand-audit, so it
+    #     contains ZERO handpose gates. `was_green` therefore compared two
+    #     DIFFERENT CONFIGURATIONS -- the absent-vs-absent trap wearing the
+    #     pair-check as a costume. The pair rule was right; its subject was not.
+    #  2. The DEFAULT cell set cannot host this control at all:
+    #     ui/track/gen/tracksystem_meshes is 130 STATIC meshes with no skeleton,
+    #     so four handpose gates are structurally vacuous there (4 of those 5
+    #     baseline failures). Only a cell with a real figure can be a baseline.
+    #
+    # So: baseline on a cell that HAS a figure, and credit a control ONLY for
+    # failures it ADDS OVER that baseline. Measured on crowd_female01:
+    #     PERTURB +0  re-composes by construction -- INERT BY DESIGN
+    #     PUBLISH +1  the bone LEAVES the COMPOSED population (6 -> 5)
+    #     STALE   +2  stale-but-COMPOSED; worst dev == the injected 1.0 on
+    #                 bone_L-hand.mesh, which is X18's entire reason to exist
+    HP_CELL="char/crowd/gen/crowd_female01.milo_xbox"
     if [ -x "$NB/rb3-render" ] && [ -d "$ASSETS" ] \
        && ! printf '%s\n' "${unrunnable[@]+"${unrunnable[@]}"}" | G -q 'rb3-render:nogpu'; then
-        probe render-stale rb3-render env RB3_HANDPOSE_STALE=1.0 \
-            "$NB/rb3-render" "$ASSETS" "$LOGDIR/native_health_st_render_$SLUG" --hand-audit
+        hp_blog="$LOGDIR/native_health_hp_baseline_$SLUG.log"
+        "$NB/rb3-render" "$ASSETS" "$LOGDIR/native_health_hp_baseline_out_$SLUG" \
+            "$HP_CELL" --hand-audit > "$hp_blog" 2>&1
+        hp_base=$(G -c '^  \[FAIL\] ' "$hp_blog"); hp_base=${hp_base:-0}
+        hp_bp=$(G -c '^  \[PASS\] ' "$hp_blog"); hp_bp=${hp_bp:-0}
+        if [ "$hp_bp" -eq 0 ]; then
+            # Same anti-vacuity rule as run_target: a run that emitted no verdict
+            # measured NOTHING, and every delta taken against it is meaningless.
+            echo "  SKIP  handpose controls -- the --hand-audit baseline emitted NO gate"
+            echo "        lines; it measured nothing, so no delta against it can mean anything."
+            st_skip=$((st_skip + 3)); hp_tot=3
+        else
+            echo "  handpose baseline ($HP_CELL): $hp_bp pass / $hp_base KNOWN-RED"
+            G '^  \[FAIL\] ' "$hp_blog" | cut -c1-96 | sed 's/^/          known-red: /'
+            hp_probe() {   # label, ENV VAR, expectation: RED | INERT
+                local label="$1" var="$2" expect="$3"
+                local log="$LOGDIR/native_health_hp_${label}_$SLUG.log"
+                # ⚠ argv written out in full. main_render.cpp:4965's loop ends in a
+                # bare `else pos.push_back(argv[i])`, so a misspelled flag becomes a
+                # POSITIONAL arkPath and the renderer draws the WRONG THING at rc=0.
+                env "$var=1.0" "$NB/rb3-render" "$ASSETS" \
+                    "$LOGDIR/native_health_hp_${label}_out_$SLUG" "$HP_CELL" \
+                    --hand-audit > "$log" 2>&1
+                local f d act
+                f=$(G -c '^  \[FAIL\] ' "$log"); f=${f:-0}; d=$((f - hp_base))
+                act=$(G -c "$var=.* ACTIVE" "$log"); act=${act:-0}
+                hp_tot=$((hp_tot + 1))
+                if [ "$expect" = "RED" ]; then
+                    if [ "$d" -gt 0 ]; then
+                        echo "  RED   $label ($var) -- +$d gate(s) OVER BASELINE (control WORKS)"
+                        hp_ok=$((hp_ok + 1)); st_ok=$((st_ok + 1))
+                    else
+                        echo "  GREEN $label ($var) -- delta $d over baseline: THE CONTROL DID NOT FIRE."
+                        echo "        The gate it guards is VACUOUS until this is fixed."
+                        st_bad=$((st_bad + 1))
+                    fi
+                else
+                    # INERT BY DESIGN -- and "nothing happened" is ALSO what a
+                    # silently-ignored env var looks like, so delta==0 alone would
+                    # pass for a DELETED feature. The activation line is the
+                    # witness that the perturbation was actually APPLIED.
+                    if [ "$act" -gt 0 ] && [ "$d" -eq 0 ]; then
+                        echo "  INERT $label ($var) -- APPLIED (activation line present) and delta 0:"
+                        echo "        the DOCUMENTED prediction (main_render.cpp:2821-2833). SetLocalXfm"
+                        echo "        re-composes, so the tag stays COMPOSED. A control on the"
+                        echo "        MEASUREMENT, not on the verdict."
+                        hp_ok=$((hp_ok + 1)); st_ok=$((st_ok + 1))
+                    elif [ "$act" -eq 0 ]; then
+                        echo "  GREEN $label ($var) -- NO activation line: the env var never reached the"
+                        echo "        code. VACUOUS -- this arm would pass for a DELETED feature."
+                        st_bad=$((st_bad + 1))
+                    else
+                        echo "  GREEN $label ($var) -- delta $d, but the documented prediction is 0."
+                        echo "        The mechanism has CHANGED; re-derive it before trusting either."
+                        st_bad=$((st_bad + 1))
+                    fi
+                fi
+                echo "        log: $log"
+            }
+            hp_probe render-perturb RB3_HANDPOSE_PERTURB INERT
+            hp_probe render-publish RB3_HANDPOSE_PUBLISH RED
+            hp_probe render-stale   RB3_HANDPOSE_STALE   RED
+        fi
     else
-        echo "  SKIP  render-stale (RB3_HANDPOSE_STALE) -- rb3-render cannot reach its"
-        echo "        pose gates here (no GPU). NOT a pass: this control is UNDEMONSTRATED."
-        st_skip=$((st_skip + 1))
+        echo "  SKIP  handpose controls (PERTURB/PUBLISH/STALE) -- rb3-render cannot"
+        echo "        reach its pose gates here. NOT a pass: these are UNDEMONSTRATED."
+        st_skip=$((st_skip + 3)); hp_tot=3
     fi
+    hp_ctl="$hp_ok/$hp_tot"
     if   [ $st_bad -gt 0 ]; then selftest="FAIL"
     elif [ $st_ok -eq 0 ];  then selftest="VACUOUS"   # nothing was demonstrated
     elif [ $st_skip -gt 0 ]; then selftest="PARTIAL"
@@ -329,5 +426,5 @@ esac
 emit "$verdict" "$link_verdict" "$link_ver" "$link_exp" "$link_skip" \
      "$runtime_verdict" "$rt_ran" "$rt_total" "$gates_pass" "$gates_fail" \
      "$(if [ ${#unrunnable[@]} -gt 0 ]; then IFS=,; echo "${unrunnable[*]}"; else echo none; fi)" \
-     "$selftest" "$sc_unlinked" "$sc_b" "$sc_multi" "$rc"
+     "$selftest" "$sc_unlinked" "$sc_b" "$sc_multi" "$rc" "$hp_ctl" "$hp_base"
 exit $rc

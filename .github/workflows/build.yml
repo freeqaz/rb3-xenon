@@ -148,6 +148,39 @@ jobs:
     - name: symbols.txt fixpoint guard
       run: python3 tools/symbols_fixpoint_guard.py -v --ci --version ${{ matrix.version }}
 
+    # Guard: the NATIVE build is the ONLY build in this project that LINKS, so it
+    # is the only instrument that can see ODR violations, duplicate symbols,
+    # missing definitions and ILP32-only constructs. The X360 match build
+    # compiles TUs and diffs objects -- it NEVER links -- so that whole defect
+    # class is STRUCTURALLY INVISIBLE to every other step in this workflow, and
+    # it has silently broken `main` FOUR times (X4a, X4d x2, MILOKEEP-1). Native
+    # coverage in CI before this step was literally zero (`grep -ci native` = 0).
+    #
+    # ONLY the LINK gate runs here, deliberately. The runtime gates need the
+    # ~4 GB retail ark and a GPU, neither of which exists in this container, so
+    # they would be PERMANENTLY SKIPPED -- and a job that always skips is a job
+    # everyone learns to ignore. The runtime sweep (tools/native_health.sh) stays
+    # an explicit ON-DEMAND target, never a build edge; see
+    # docs/decomp/NATIVE_HEALTH.md for the cadence and the committed baseline.
+    #
+    # NATIVE_GATE_ALLOW_INCOMPLETE=1 forces rc=0 when a target is SKIPPED because
+    # milo-native-engine / Dawn cannot exist here. It does NOT weaken the gate:
+    # the FAIL branch (native_build_gate.sh:519) exits 1 BEFORE the ALLOW branch
+    # (:546) is ever reached, so a genuine break still fails the job. That is
+    # DEMONSTRATED, not assumed -- lane N1-GPUGATES appended an `#error` to a
+    # native TU with this variable set and measured:
+    #   NATIVE_GATE_RESULT verdict=FAIL expected=18 verified=1 skipped=0 partial=0 failed=17 rc=1
+    #
+    # ⚠ If this container lacks cmake/clang entirely the gate exits 2 (UNRUNNABLE)
+    # and the job fails LOUDLY rather than passing vacuously. That is the correct
+    # direction for a gate, but it is the most likely first-run failure mode here.
+    # Fix the container; do NOT add `|| true`, which silently restores zero
+    # coverage while leaving a green check that looks like evidence.
+    - name: Native link gate
+      env:
+        NATIVE_GATE_ALLOW_INCOMPLETE: "1"
+      run: ./tools/native_build_gate.sh .
+
     # # Upload map files
     # - name: Upload map
     #   uses: actions/upload-artifact@v4
