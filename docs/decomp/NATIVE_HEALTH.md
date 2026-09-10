@@ -269,3 +269,242 @@ Do **not** add the sweep to the default `ninja` build: a cold native build is
 - **Any X360 matching-build effect.** This lane edited only `tools/`, `docs/` and
   `.github/`, and **no `src/`**, so the matching metric is untouched by
   construction.
+
+---
+
+# 2026-09-10 — lane L4-NATIVESCATTER: the 47 scatter guests, classified and 31 wired
+
+**Appended, not restructured.** Everything above is lane N1-GPUGATES' record and
+stands. This section closes the two items N1 listed as not verified: *"whether
+the 47 unlinked scatter guests matter"* and *"`scatter_audit.py`'s own
+correctness"*. Both turned out to be real.
+
+Rebased onto main after N1 landed (`a18a9885`). Result line from this branch:
+
+```
+NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=18 link_expected=18 link_skipped=0 runtime=PASS runtime_ran=3 runtime_total=3 gates_pass=37 gates_fail=0 unrunnable=none selftest=PASS scatter_unlinked=16 scatter_dirb=0 scatter_multihost=23 rc=0 handpose_controls=3/3 handpose_baseline_fail=1
+```
+
+**Identical to N1's line in every field except `scatter_unlinked`: 47 → 16.**
+The link gate, all 37 runtime gates, the 3/3 handpose controls and the tracked
+baseline red are unchanged by wiring 31 TUs — which is the result that licenses
+the wiring, not a formality.
+
+⚠ **N1's control correction supersedes this lane's first reading, and this lane's
+own data agrees with N1.** Before rebasing, the pre-N1 tool reported
+`render-stale ... 7 gate(s) failed (control WORKS)`. N1 showed one of those was a
+**pre-existing** red (`handpose-measured-hand-geometry`) and that stale is really
+**+2 over baseline**. The old absolute count was over-credit. Nothing here
+contradicts N1.
+
+## They had ONE cause, not 47
+
+Every one of the 47 was unlinked for the same reason, measured per file: **the
+guest's only unconditional scatter host is itself compiled in no target.** Not
+one was unlinked by a platform filter on *itself*.
+
+The host/guest pairings are retail COMDAT placement and therefore arbitrary —
+`synth/MidiInstrument.cpp` hosts `bandtrack/GemTrack.cpp`, `rnddx9/CubeTex.cpp`
+hosts `meta_band/AppLabel.cpp`, `bandobj/BandSwatch.cpp` hosts
+`rnddx9/Rnd_Xbox.cpp`. ⇒ **A guest's fitness for the native build has nothing to
+do with its host's**, so "compile the host" is the wrong fix; compiling the
+guest **standalone** is the right one, and it is safe *precisely because* the
+host is absent (nothing else emits those bodies).
+
+## Method — three measurements per candidate
+
+1. **Compiles standalone** under the target's own flags (`clang -fsyntax-only`)?
+   42 of 47 did.
+2. **Does its scatter closure collide** with anything `rb3-milo` already
+   compiles or emits? Predicted analytically, then confirmed by the linker.
+3. **Does it link** — 0 undefined *and* 0 multiple definitions?
+
+**NOT ONE of the 31 needed a stub.** Across the whole wave the link reported
+**0 undefined references**; every failure was a *collision*, never a missing
+symbol. There is no STUB-NEEDED-to-wire class here — not the expected outcome,
+and the reason the "record the undefined symbols" column below is empty.
+
+⚠ **"Wired" means compiled and presented to the linker, NOT present in the
+image.** These targets carry `-Wl,--gc-sections`, so unreferenced sections are
+dropped and the binaries do not grow — `nm` finds none of the new classes in
+`rb3-render`. What is bought is that the **ODR / undefined-symbol /
+does-it-even-compile** class is now covered for 31 TUs, exactly the class the
+X360 match build is structurally blind to. Do **not** read this as "the native
+port now runs this code".
+
+## Counts
+
+| disposition | n |
+|---|---:|
+| **WIRE — wired this lane** | **31** |
+| PLATFORM-ONLY — must stay out | 12 |
+| STUB-NEEDED / BLOCKED | 2 |
+| REAL DEFECT — deliberately not papered over | 1 |
+| FALSE POSITIVE — never was unlinked | 1 |
+| **total** | **47** |
+
+**UNKNOWN: 0.** Every file has a measured disposition.
+
+## ⛔ Yes, they mattered: a native-only feature that had never compiled
+
+`bandtrack/TrackPanel.cpp` carried an `#ifdef HX_NATIVE` block — the note-highway
+depth-composite fix, with a written rationale and its own
+`RB3_NO_TRACK_DEPTH_CLEAR` opt-out documented in place — that spelled
+`extern Rnd &TheRnd` (a **reference**, `rndobj/Rnd.h:402`) as
+`if (TheRnd) TheRnd->ClearDepthForOverlay()`. **That cannot compile.** Nobody
+found out because the file reaches no native target.
+
+⇒ That is the concrete answer to N1's open question. Fixed inside the existing
+`HX_NATIVE` guard.
+
+## ⚠ `meta_band/MainHubPanel.cpp` — a real defect, recorded rather than silenced
+
+`MainHubPanel.cpp:414` reads `if (node8d8.Str() != "")` where `Str()` returns
+`const char*`: a **pointer compared against a string literal's address**, always
+true, so an empty MOTD still reaches `AddUnlinkedMotd`. `-Werror=string-compare`
+(one of the curated real-bug diagnostics in `DECOMP_FLAGS`) catches it.
+
+**Deliberately NOT fixed.** Retail MSVC compiles the same pointer comparison, so
+retail behaves this way; "correcting" it would diverge from the target, and
+silencing the diagnostic to get the TU wired would hide a real bug to buy a
+number. **This needs a decision (stay bug-compatible vs. correct it), not a
+workaround.**
+
+## Per-file disposition
+
+| file | disposition | why |
+|---|---|---|
+| `src/band3/bandtrack/GemTrack.cpp` | FALSE POSITIVE | already emitted by `ui/UIList.cpp` behind a self-`#define`d sentinel (`UILIST_SW3_PRIMARY_TU`) that `scatter_audit.py` cannot see |
+| `src/band3/meta_band/CriticalUserListener.cpp` | STUB/BLOCKED | double-emits `flow/FlowManager.cpp`, already emitted by `char/CharBonesMeshes.cpp` — a multi_host guest, so no standalone-prune can resolve it. Measured: `multiple definition of TheFlowMgr`, `FlowManager::FlowManager()` |
+| `src/band3/meta_band/MainHubPanel.cpp` | REAL DEFECT | `MainHubPanel.cpp:414` `node8d8.Str() != ""` compares a `const char*` against a literal — always true. Caught by `-Werror=string-compare`. Retail has the same bug, so this is NOT silently "fixed": see below |
+| `src/band3/meta_band/SongUpgradeMgr.cpp` | STUB-NEEDED | `SongUpgradeMgr.h:27` uses STLport `_STLP_TEMPLATE_NULL`; defining it is necessary but NOT sufficient — `hash` is not declared in `namespace stlpmtx_std` natively, so it needs a real primary-template shim |
+| `src/system/gesture/LiveCameraInput.cpp` | PLATFORM-ONLY | Kinect NUI (`NuiInitialize`, `E_NUI_DATABASE_NOT_FOUND`) |
+| `src/system/rnddx9/Cam.cpp` | PLATFORM-ONLY | DX9 RndCam; native uses the dc3 Wgpu backend |
+| `src/system/rnddx9/Lit.cpp` | PLATFORM-ONLY | DX9 RndLight |
+| `src/system/rnddx9/Mat.cpp` | PLATFORM-ONLY | DX9 RndMat |
+| `src/system/rnddx9/Mesh.cpp` | PLATFORM-ONLY | DX9 RndMesh |
+| `src/system/rnddx9/MultiMesh.cpp` | PLATFORM-ONLY | DX9 RndMultiMesh |
+| `src/system/rnddx9/Part.cpp` | PLATFORM-ONLY | DX9 RndParticleSys |
+| `src/system/rnddx9/Rnd_Xbox.cpp` | PLATFORM-ONLY | the DX9/Xbox Rnd itself; also `_Xbox.cpp` platform-filtered |
+| `src/system/synth/Mic.cpp` | PLATFORM-ONLY | real mic capture device; MicNull.cpp is the portable half and IS wired |
+| `src/system/synth_xbox/FftIpp.cpp` | PLATFORM-ONLY | Intel IPP FFT, Xbox-only audio analysis |
+| `src/system/synth_xbox/StreamReceiver360.cpp` | PLATFORM-ONLY | X360 XAudio2 stream receiver |
+| `src/system/synth_xbox/soundtouch/source/SoundTouch/RateTransposer.cpp` | PLATFORM-ONLY | vendored SoundTouch under the Xbox synth tree |
+| `src/band3/bandtrack/GemRepTemplate.cpp` | **WIRE** ✅ |  |
+| `src/band3/bandtrack/TrackConfig.cpp` | **WIRE** ✅ |  |
+| `src/band3/bandtrack/TrackPanel.cpp` | **WIRE** ✅ |  |
+| `src/band3/game/ChordbookPanel.cpp` | **WIRE** ✅ |  |
+| `src/band3/game/DirectInstrument.cpp` | **WIRE** ✅ |  |
+| `src/band3/game/Game.cpp` | **WIRE** ✅ |  |
+| `src/band3/game/GemPlayer.cpp` | **WIRE** ✅ |  |
+| `src/band3/game/NetGameMsgs.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/AccomplishmentManager.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/AccomplishmentPlayerConditional.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/AccomplishmentProgress.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/AccomplishmentSongListConditional.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/AccomplishmentTrainerConditional.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/AppLabel.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/SessionUsersProviders.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/SongSortByPlays.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/SongSortMgr.cpp` | **WIRE** ✅ |  |
+| `src/band3/meta_band/Utl.cpp` | **WIRE** ✅ |  |
+| `src/system/bandobj/BandCrowdMeter.cpp` | **WIRE** ✅ |  |
+| `src/system/bandobj/BandList.cpp` | **WIRE** ✅ |  |
+| `src/system/hamobj/DancerSequence.cpp` | **WIRE** ✅ |  |
+| `src/system/hamobj/HamBattleData.cpp` | **WIRE** ✅ |  |
+| `src/system/hamobj/HamLabel.cpp` | **WIRE** ✅ |  |
+| `src/system/hamobj/HamNavProvider.cpp` | **WIRE** ✅ |  |
+| `src/system/hamobj/HamRibbon.cpp` | **WIRE** ✅ |  |
+| `src/system/meta/ConnectionStatusPanel.cpp` | **WIRE** ✅ |  |
+| `src/system/meta/Meta.cpp` | **WIRE** ✅ |  |
+| `src/system/meta/MetaMusicManager.cpp` | **WIRE** ✅ |  |
+| `src/system/net/WebSvcMgr.cpp` | **WIRE** ✅ |  |
+| `src/system/synth/FxSendWah.cpp` | **WIRE** ✅ |  |
+| `src/system/synth/MicNull.cpp` | **WIRE** ✅ |  |
+
+### What PLATFORM-ONLY rests on
+
+`rnddx9/*` implement `RndCam`/`RndMesh`/`RndMat`/`RndPart`/`RndMultiMesh` against
+D3D9. The native build replaces that entire layer with the dc3 WebGPU backend, so
+adding them would duplicate the renderer, and `native/CMakeLists.txt` already
+filters `(Dx9|DX9|Wgpu|D3D|Xenon)` out of `MILO_FORK_SOURCES` as standing policy.
+⚠ They pass `-fsyntax-only` — **compiling is not the test**; the test is that they
+are the wrong implementation of a class the engine already supplies.
+
+## `scatter_audit.py` IS wrong — by exactly one file
+
+N1 listed its correctness as untested. `tools/scatter_emitted_truth.py` (new)
+tests it by asking the **compiler**: `clang++ -M` resolves every conditional
+exactly as the real compile does, with commands from `ninja -t compdb` so each
+TU gets its own target's defines.
+
+`scatter_audit` traverses **unconditional** `#include "x.cpp"` edges only. But an
+edge can sit behind `#ifdef SENTINEL` where the host `#define`s SENTINEL a few
+lines above itself — the idiom that fires the include when the host is the
+PRIMARY TU and keeps it inert when the host is itself scatter-included.
+`src/system/ui/UIList.cpp:7` does this for `bandtrack/GemTrack.cpp`. The state
+machine sees `#ifdef`, files it conditional, never traverses it, and reports
+GemTrack as unlinked — **while the linker already defines GemTrack's every symbol
+out of `UIList.cpp.o`.** Found the hard way: wiring GemTrack produced 65
+`multiple definition` errors.
+
+Measured, 541 preprocess jobs, **0 failures** (a failure would read as "emits
+nothing" — a vacuous pass — so failures are reported, not counted):
+
+| | |
+|---|---:|
+| unlinked per `scatter_audit` (uncond-only) | 47 |
+| unlinked per compiler truth | **46** |
+| **false positives** | **1** (`bandtrack/GemTrack.cpp`) |
+| instrument disagreements | 10 (5 files × 2 targets) |
+
+★ **I expected a large false-positive class and was WRONG — it is one file.** The
+mechanism is real, the magnitude is small, and both halves belong in the record.
+All 10 disagreements are **one-directional**: the audit under-counts emission and
+can therefore only *over*-report "unlinked". It never fabricates emission, which
+is the reassuring direction for a conservative instrument.
+
+⇒ The honest headline is **16 reported / 15 genuinely unlinked**, and every one
+of the 15 is either platform-only or carries a recorded reason below.
+
+## ✅ `main_score2.cpp` no longer returns 0 unconditionally
+
+N1's "did NOT verify" list still reads *"`main_score2.cpp`'s unconditional
+`return 0` — still vacuous, untouched."* **Fixed on this branch** (commit
+`native(score2): make the scoring cross-check a gate that can actually FAIL`):
+the two cross-checks emit the house `  [PASS]/[FAIL]` contract, the verdict
+reaches `main`'s return, and a real CLI flag `--force-divergent` demonstrates it
+red.
+
+| invocation | rc | observed |
+|---|---:|---|
+| (none) | **0** | 3 gates pass |
+| `--force-divergent` | **1** | exactly **2** gates FAIL; `scenB-longest-streak` still passes ⇒ **targeted, not blanket** |
+| `--forcedivergent` (typo) | **2** | **REFUSED** |
+
+That third row is why this is a flag and not an env var: the old parser was
+`argv[1] == "guitar"` with everything else silently ignored — the same
+false-green shape as the handpose env vars. It now rejects unknown arguments.
+
+## What this lane did NOT do
+
+- **Did not touch `tools/native_health.sh` or restructure this document.** N1's
+  tool and text are authoritative; this is an append.
+- **Did not wire `main_score2` into `native_health.sh`'s runtime list**, though it
+  now has the contract for it. `native_health.sh:159`'s comment still describes
+  `main_score2` as vacuous and is now stale — a one-line follow-up owned by
+  whoever next edits that tool.
+- **Did not resolve `MainHubPanel.cpp`** (needs a bug-compatibility decision) or
+  **`SongUpgradeMgr.cpp`** (needs a `stlpmtx_std::hash` primary-template shim for
+  native; defining `_STLP_TEMPLATE_NULL` alone is necessary but not sufficient —
+  measured).
+- **Did not attempt `CriticalUserListener.cpp`.** It double-emits
+  `flow/FlowManager.cpp`, already emitted by `char/CharBonesMeshes.cpp`; as a
+  `multi_host` guest no standalone-prune can resolve it. Resolving it means
+  editing the scatter graph, not the build.
+- **Did not measure any X360 effect, because none is possible.** The only `src/`
+  edits are `bandtrack/TrackPanel.cpp` and `game/GemPlayer.cpp`, both **inside
+  `#ifdef HX_NATIVE`**. The match build never defines `HX_NATIVE`, so its
+  preprocessed text is byte-identical and an A/B would be absent-vs-absent by
+  construction. Match-neutral by a **preprocessor property, not by measurement**.
+- **Did not re-check the 23 multi-host guests**, unchanged at 23 throughout.

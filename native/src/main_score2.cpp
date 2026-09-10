@@ -207,6 +207,37 @@ static const char *TrackName(TrackType t) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// GATE CONTRACT (lane L4-NATIVESCATTER, 2026-09-10)
+//
+// This binary used to print MATCH/DIVERGENT and `return 0` UNCONDITIONALLY --
+// a gate that CANNOT FAIL, which is worse than no gate at all: it advertises
+// coverage it does not have. docs/decomp/NATIVE_HEALTH.md flagged it and
+// deliberately refused to count it among the runtime instruments until the
+// verdict reached main's return. It now does.
+//
+// The output format is the SAME `  [PASS]/[FAIL] name — detail` contract that
+// rb3-ark/rb3-milo/rb3-render emit, because tools/native_health.sh counts
+// verdicts by grepping exactly `^  \[PASS\] ` / `^  \[FAIL\] `. A private
+// spelling here would be invisible to the collector.
+// ---------------------------------------------------------------------------
+static int gFailures = 0;
+
+static void Gate(const char *name, bool ok, const char *detail) {
+    printf("  [%s] %s%s%s\n", ok ? "PASS" : "FAIL", name,
+           detail && *detail ? " — " : "", detail ? detail : "");
+    if (!ok) gFailures++;
+}
+
+// NEGATIVE CONTROL. A gate nobody has shown able to go RED is worth nothing,
+// so `--force-divergent` perturbs the M5 transcription side by one point and
+// the cross-check gates MUST then fail. It is a real CLI FLAG, not an env var:
+// docs/decomp/NATIVE_HEALTH.md records that rb3-render's three RB3_HANDPOSE_*
+// controls are env vars whose flag-spellings are swallowed as positional args
+// and pass SILENTLY GREEN. Unknown options are rejected below (rc=2) so this
+// control cannot be misspelled into a false pass.
+static int gForceDivergent = 0;
+
 int main(int argc, char **argv) {
     InitMakeString();
     Symbol::Init();
@@ -240,7 +271,21 @@ int main(int argc, char **argv) {
 
     // --- Choose the instrument (default bass, matching M5's picked track) ---
     TrackType ty = kTrackBass;
-    if (argc >= 2 && std::string(argv[1]) == "guitar") ty = kTrackGuitar;
+    for (int i = 1; i < argc; i++) {
+        std::string a(argv[i]);
+        if (a == "guitar") ty = kTrackGuitar;
+        else if (a == "bass") ty = kTrackBass;
+        else if (a == "--force-divergent") gForceDivergent = 1;
+        else {
+            // Never swallow an unrecognised token. The sibling renderer's
+            // `else pos.push_back(argv[i])` arm is precisely how a misspelled
+            // control becomes a positional argument and the run passes green.
+            fprintf(stderr, "rb3-score2: unknown argument '%s'\n"
+                            "usage: rb3-score2 [guitar|bass] [--force-divergent]\n",
+                    argv[i]);
+            return 2;
+        }
+    }
     Symbol streakSym = Symbol(TrackName(ty));
     int maxMult = (ty == kTrackBass || ty == kTrackRealBass) ? 6 : 4;
 
@@ -279,9 +324,17 @@ int main(int argc, char **argv) {
                k, player.ScoreI(), player.StreakI(), player.IndividualMult(),
                m5.Score(), m5.Streak(), m5.IndividualMultiplier());
     }
-    printf("  cross-check: REAL score=%d vs M5 score=%d  -> %s\n\n",
-           player.ScoreI(), m5.Score(),
-           player.ScoreI() == m5.Score() ? "MATCH" : "DIVERGENT");
+    {
+        // The control perturbs the M5 side only, so a red here is attributable
+        // to the comparison and not to both engines breaking together.
+        if (gForceDivergent) m5.OnHit(1);
+        char d[160];
+        snprintf(d, sizeof d, "REAL score=%d vs M5 score=%d%s",
+                 player.ScoreI(), m5.Score(),
+                 gForceDivergent ? " (--force-divergent: M5 perturbed)" : "");
+        Gate("scenA-real-vs-m5-score", player.ScoreI() == m5.Score(), d);
+        printf("\n");
+    }
 
     // === Scenario B: full multiplier ramp + mid-run drop, REAL chain vs M5 ===
     // No overdrive here so both engines stay in the same (individual-multiplier)
@@ -306,9 +359,17 @@ int main(int argc, char **argv) {
             lastMult = rm;
         }
     }
-    printf("  final: REAL score=%d longestStreak=%d   |   M5 score=%d longestStreak=%d  -> %s\n",
-           run.ScoreI(), run.LongestStreakI(), m5run.Score(), m5run.LongestStreak(),
-           run.ScoreI() == m5run.Score() ? "MATCH" : "DIVERGENT");
+    if (gForceDivergent) m5run.OnHit(1);
+    printf("  final: REAL score=%d longestStreak=%d   |   M5 score=%d longestStreak=%d\n",
+           run.ScoreI(), run.LongestStreakI(), m5run.Score(), m5run.LongestStreak());
+    {
+        char d[160];
+        snprintf(d, sizeof d, "REAL score=%d vs M5 score=%d over %d gems",
+                 run.ScoreI(), m5run.Score(), kN);
+        Gate("scenB-real-vs-m5-score", run.ScoreI() == m5run.Score(), d);
+        Gate("scenB-longest-streak", run.LongestStreakI() == m5run.LongestStreak(),
+             "REAL vs M5 longest streak");
+    }
 
     // === Scenario C: REAL band-energy deploy arithmetic =====================
     // Player::GetMultiplier's band/overdrive arm: with mDeployingBandEnergy set
@@ -345,6 +406,10 @@ int main(int argc, char **argv) {
     printf("  mAccuracy (sum of raw head points)         = %d\n", st.mAccuracy);
     printf("  (M5's score_engine tracks none of these — real Stats is new state.)\n");
 
-    printf("\nDone.\n");
+    if (gFailures) {
+        printf("\nRESULT: FAILED (%d gate(s))\n", gFailures);
+        return 1;
+    }
+    printf("\nRESULT: OK (all gates passed)\nDone.\n");
     return 0;
 }

@@ -1353,6 +1353,89 @@ if(EXISTS "${MILO_ENGINE_PATH}/src/platform/NativeSettings.h")
 # (X3, load-and-draw). Factored out rather than copied so the two targets cannot
 # drift: the ONLY differences between them are the driver TU, the engine link,
 # and RB3_ENGINE_RENDER (which retires the stub bodies the engine supplies).
+# ---- L4: the scatter guests that reached NO native target ------------------
+# tools/scatter_audit.py reported 47 files that are neither compiled standalone
+# in any target nor emitted by any scatter host any target compiles. Lane
+# S5-NATIVE recorded the count (drifted 42 -> 47 over a month, unnoticed);
+# docs/decomp/NATIVE_HEALTH.md explicitly left "whether they matter" unverified.
+#
+# They are all unlinked for ONE reason, measured per-file: the guest's only
+# unconditional scatter host is itself compiled in no target. The pairings are
+# retail COMDAT placement, so they are arbitrary -- synth/MidiInstrument.cpp
+# hosts bandtrack/GemTrack.cpp, rnddx9/CubeTex.cpp hosts meta_band/AppLabel.cpp
+# -- which means a guest's fitness for the native build has nothing whatever to
+# do with its host's. Compiling each one STANDALONE is therefore the fix, and it
+# is safe precisely BECAUSE the host is absent (nothing else emits these bodies).
+#
+# Every entry below was measured, not assumed:
+#   * compiles standalone under this target's flags (clang -fsyntax-only), and
+#   * its own scatter closure collides with nothing rb3-milo already emits, and
+#   * the link is clean -- 0 undefined references AND 0 multiple definitions.
+# None of them needed a stub of any kind. --gc-sections (already on these two
+# targets) drops whatever stays unreferenced, so the shipped image does not
+# grow; what is bought is that the ODR / undefined-symbol / "does it even
+# compile" class is finally COVERED for 31 TUs the X360 build cannot check.
+#
+# Deliberately NOT here, with the reason recorded in docs/decomp/NATIVE_HEALTH.md:
+# the 12 platform-only guests (rnddx9 x7 -- the DX9 renderer this build replaces
+# with the Wgpu backend; synth_xbox x3; synth/Mic.cpp; gesture/LiveCameraInput.cpp
+# -- Kinect NUI), meta_band/CriticalUserListener.cpp (double-emits
+# flow/FlowManager.cpp, which char/CharBonesMeshes.cpp already emits -- a
+# multi_host guest, so no standalone-prune can resolve it),
+# meta_band/SongUpgradeMgr.cpp and meta_band/MainHubPanel.cpp (both need a real
+# source decision, see the doc), and bandtrack/GemTrack.cpp (NOT actually
+# unlinked -- ui/UIList.cpp already emits it behind a self-defined sentinel that
+# scatter_audit.py cannot see; see tools/scatter_emitted_truth.py).
+set(L4_SCATTER_WIRE
+    # --- src/band3/meta_band (RB3 game layer) --------------------------------
+    # AccomplishmentProgress drags net/WebSvcMgr.cpp and AccomplishmentTrainer-
+    # Conditional drags AccomplishmentPlayerConditional; both are also listed
+    # below and ScatterIncludes.cmake prunes their standalone compiles (it
+    # prints "[scatter] ... not compiling ... standalone"). That is the dedupe
+    # working, not a conflict -- verified in the configure log.
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentManager.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentPlayerConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentProgress.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentSongListConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentTrainerConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AppLabel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SessionUsersProviders.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortByPlays.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/Utl.cpp
+    # --- src/band3/game -----------------------------------------------------
+    ${REPO_ROOT}/src/band3/game/ChordbookPanel.cpp
+    ${REPO_ROOT}/src/band3/game/DirectInstrument.cpp
+    ${REPO_ROOT}/src/band3/game/Game.cpp
+    ${REPO_ROOT}/src/band3/game/NetGameMsgs.cpp
+    # Needed <climits> for INT_MAX under libc++ (HX_NATIVE-guarded in the file).
+    ${REPO_ROOT}/src/band3/game/GemPlayer.cpp
+    # --- src/band3/bandtrack ------------------------------------------------
+    ${REPO_ROOT}/src/band3/bandtrack/GemRepTemplate.cpp
+    ${REPO_ROOT}/src/band3/bandtrack/TrackConfig.cpp
+    # TrackPanel carried an #ifdef HX_NATIVE block (the note-highway depth
+    # composite) that could NEVER have compiled -- it spelled the `Rnd &TheRnd`
+    # reference as a pointer. Being unlinked is exactly why nobody found out.
+    ${REPO_ROOT}/src/band3/bandtrack/TrackPanel.cpp
+    # --- src/system/hamobj (no target compiled ANY hamobj TU before this) ----
+    ${REPO_ROOT}/src/system/hamobj/DancerSequence.cpp
+    ${REPO_ROOT}/src/system/hamobj/HamBattleData.cpp
+    ${REPO_ROOT}/src/system/hamobj/HamLabel.cpp
+    ${REPO_ROOT}/src/system/hamobj/HamNavProvider.cpp
+    ${REPO_ROOT}/src/system/hamobj/HamRibbon.cpp
+    # --- src/system/bandobj / meta / synth / net ----------------------------
+    ${REPO_ROOT}/src/system/bandobj/BandCrowdMeter.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandList.cpp
+    ${REPO_ROOT}/src/system/meta/ConnectionStatusPanel.cpp
+    ${REPO_ROOT}/src/system/meta/Meta.cpp
+    ${REPO_ROOT}/src/system/meta/MetaMusicManager.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendWah.cpp
+    # MicNull is the NULL capture backend -- the portable half of synth/Mic.cpp,
+    # which stays out as platform-only.
+    ${REPO_ROOT}/src/system/synth/MicNull.cpp
+    ${REPO_ROOT}/src/system/net/WebSvcMgr.cpp
+)
+
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
     ${ENGINE_SOURCES}
@@ -1413,6 +1496,7 @@ set(MILO_TARGET_COMMON_SOURCES
     # putting them there broke 8 of 18 targets that compile no char/ or bandobj.
     ${CMAKE_SOURCE_DIR}/src/x7_band_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
+    ${L4_SCATTER_WIRE}
 )
 
 rb3_add_executable(rb3-milo
