@@ -596,7 +596,7 @@ int NextSongPanel::CountOrCreateExpandedDetails(int slot, DataArrayPtr &ptr, boo
                     if (b)
                         count++;
                     else
-                        ptr.Node(count++) =
+                        ptr->Node(count++) =
                             DataArrayPtr(left_label, generic_string, curinfo.unk0);
 
                     if (b)
