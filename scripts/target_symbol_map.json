@@ -2727,7 +2727,7 @@
  "0x822e84f0": "?EnterCoda@GemTrackDir@@UAAXXZ",
  "0x822e89b8": "?ClearChordMeshRefCounts@GemTrackDir@@UAAXXZ",
  "0x822e8a20": "?erase_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAIABI@Z",
- "0x822e8a78": "?_M_insert@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V1@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@V1@@2@00@Z",
+ "0x822e8a78": "??$PropSync@VTrackWidget@@@@YA_NAAV?$ObjPtrList@VTrackWidget@@VObjectDir@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x822e8cb8": null,
  "0x822e8d98": "?GetChordMesh@GemTrackDir@@UAAPAVRndMesh@@I_N@Z",
  "0x822e8df8": "?SyncProperty@GemTrackDir@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
