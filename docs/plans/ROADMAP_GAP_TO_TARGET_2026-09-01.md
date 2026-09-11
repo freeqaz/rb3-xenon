@@ -920,3 +920,86 @@ FOLDPROVE-2 state where every name lookup reads "absent" and any negative is
 vacuous. `verify_objs_patched` does **not** catch it — it covers the
 post-compile passes, not the pre-compile renamer. Run the guard LAST, or
 rebuild after it.
+
+## 7f. EXECUTION LOG — sixth wave (2026-09-11, coordinator session 3cdd3c)
+
+Four lanes off `50fd112d`. Every merge `--no-ff` after a full main build, with
+the manifest, alias and native gates **re-run by the coordinator on merged
+main**, never relayed.
+
+| lane | merge | Δ fns | Δ bytes | what it was, in one line |
+|---|---|---:|---:|---|
+| D XAPO data | `eed04bd5` | −1 | −84 | **`.data` IS NOT IN THE DENOMINATOR**; a PHANTOM UNIT was financing two false 100% rows; 11 of 29 initialisers are Quazal. `masked_equal` −5 ⇒ **honest +4** |
+| C tier 4/5 | `2d3c46f2` | 0 | 0 | two real native RENDERING bugs; **80.6% of the tier carries a register-only charge ⇒ the body surface is 31 kB, not 265 kB** |
+| A DataInitFuncs | `da05c172` | +3 | +8,040 | the largest single row crosses 71.4467 → 100.0; cause was **MSVC's INLINE BUDGET** (69 of 154 sites), not the list |
+| B Object.cpp TU | `68ebb835` | +16 | +768 | TU reunified on **EH-funclet** evidence; three instruments vacuous **toward caution** |
+| **wave** | `50fd112d` → `68ebb835` | **+18** | **+8,724** | **42,658 / 3,851,188 B / 37.587395% → 42,676 / 3,859,912 B / 37.672540%** |
+
+Every lane composed to the byte. The main-to-main figure also spans another
+session's `guardorder` merge; per-lane deltas are provenance, not addends.
+
+**★★ THE WAVE'S RESULT IS A CORRECTION TO THIS DOCUMENT'S OWN FORECAST.** §7e
+sent lane C after "tiers 4/5, 71% of the stratum's bytes". Lane C regenerated
+the population, corrected the figure to **76.5%**, then classified all **25,763
+charged sites individually** and found:
+
+| class | rows | bytes |
+|---|---:|---:|
+| SOURCE-CLEAN | 67 | 31,224 |
+| ALIAS-BLOCKED (ICF folds) | 31 | 24,016 |
+| MIXED (≥1 register-only charge) | 369 | **228,928** |
+
+⇒ **80.6% of tier-4/5 bytes are permuter-deferred by standing directive, so the
+body-lane surface there is ELEVEN PERCENT of the tier.** A "265 kB of bodies"
+line item in a roadmap is a **31 kB** line item once priced. Lane B's item 2 is
+the same shape one level down: a *perfect* source port of `AddRef`/`Release`
+lands both rows one charged relocation-name site below 100 and bills **0 B**,
+because the map names those callees by ICF-survivor spellings — **uncollectable
+by source work, and correctly deferred rather than attempted.**
+
+**★★★ VACUITY NOW HAS BOTH DIRECTIONS ON THE RECORD.** Lane B's first three
+funclet-pairability instruments each reported "0 partners" — *including in
+DirLoader, where the rows demonstrably pair today* — because
+`tools/coff_bodies_ext.py` skips `__unwind$*` (13 candidates vs 103 in the COFF
+string table). **Had the lane trusted that negative it would have refused a
++648 B move.** A vacuity agreeing with CAUTION is as expensive as one agreeing
+with HOPE and far easier to accept. The control that caught it was required to
+**reproduce the current state** (TP=85, FN=0) — the same construction that
+caught W4-G's census control and W5-B's four wrong figures.
+
+**Native-path bugs fixed.** The rim light was uploaded to shader register **61**
+where retail uses **63**, so the rim term sampled whatever c63 held while c61
+was clobbered. `NgStats`' 14th field is `mSpotlights` (0x34), not DC3's
+`mMultiMeshBatches` (0x2c) — the native overlay showed a counter nothing
+increments, and every later field was shifted +4 for all consumers; it also
+corrects a factually wrong comment that asserted the opposite.
+
+**Two more instrument findings worth the next wave's time.** `.text$yc` rank
+mirrors `.text` rank monotonically over 20 anchors — it turns "which TU owns
+this initialiser" into a bounded interval — **with a paired negative that is
+why it is trustworthy**: our `.bss` permutation differs and would have
+mis-assigned 3 of 5. And withdrawing an alias **costs only if the charge it
+forgave survives the same commit** (group 432 withdrew at exactly 0 because the
+same commit renamed the site to what our source already spelled).
+
+**Wave-7 candidates, each with evidence in a lane record:** `FileMakePath`
+`0x82516B10` (792 B at fuzzy 5.64, the largest priced prize left in
+`default/File`); the `_S_sort` alias group (11 rows / 4,712 B on one survivor —
+the best-concentrated alias target found); `AddRef`/`Release` (needs the
+`mRefs` retype across 15 files **and** a T1 adjudication into groups 1481/11);
+`0x823c8908`, a map defect needing a **re-home** not a rename (`CharTransDraw.cpp`
+has no `splits.txt` entry, so renaming alone pins it at 0% forever); our
+`?Load@FxSendBitCrush@@` **is** retail's `FxSendDistortion::Load`, worth +144 B;
+DirLoader's 9 remaining blocks (68 of 203 rows still read 0 — is its home now
+complete?); `RndEnviron` layout (1,056 B / 204 sites) and `Spotlight`'s +0x10
+shift (904 B); auditing the rest of `ShaderMgr.h` for DC3 renumbering, since one
+register was already wrong.
+
+⚠ **Two jeff defect classes are now characterised and BOTH have their pin
+workaround measured dead.** W5-D's: truncation at an 8-byte re-seed, 159 sites,
+strands one instruction (pin workaround 2/156). W6-A's `FileGetPath`: a
+*distinct* class — over-carve, contiguous, **zero** stranded bytes, and cutting
+the block at exactly the function bounds gives a byte-identical carve.
+`.pdata` cannot arbitrate either: those spans are leaf-stratum with no record.
+Both are jeff-side, and jeff's release binary is the **live fleet splitter**
+shared with two sibling repos — characterise, never deploy.
