@@ -644,3 +644,17 @@ void CopyTypeProperties(Hmx::Object *from, Hmx::Object *to) {
         }
     }
 }
+
+// rb3-Wii obj/Utl.cpp:382 (DC3 dropped it). Retail keeps it in the DirLoader
+// TU at 0x82757FC0: lower both, `find('*') != npos ? FileMatch : contains`.
+// Callers: DataMatchPattern / DataMatchAnyPattern (obj/DataFunc.cpp).
+bool StringMatchesFilter(const char *c1, const char *c2) {
+    String lower1(c1);
+    String lower2(c2);
+    lower1.ToLower();
+    lower2.ToLower();
+    if (lower2.find('*') != String::npos)
+        return FileMatch(lower1.c_str(), lower2.c_str());
+    else
+        return lower1.contains(lower2.c_str());
+}
