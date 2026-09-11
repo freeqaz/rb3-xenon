@@ -134,14 +134,16 @@ void SynthEmitter::Poll() {
                     return;
                 }
             }
-            if (len > mRadInner) {
-                float slope = (mVolOuter - mVolInner) / (mRadOuter - mRadInner);
-                float vol = slope * len + (mVolInner - slope * mRadInner);
+            float radInner = mRadInner;
+            if (len > radInner) {
+                float slope = (mVolOuter - mVolInner) / (mRadOuter - radInner);
+                float vol = slope * len + (mVolInner - slope * radInner);
                 mInst->SetVolume(vol);
             } else {
                 mInst->SetVolume(mVolInner);
             }
-            mInst->SetTranspose(atan2f(v80.x, v80.y) * 1.2732395f);
+            float pan = 2.0f - atan2f(v80.y, v80.x) * 1.2732395f;
+            mInst->SetPan(pan);
             if (needStart) {
                 mInst->Start();
             }
