@@ -773,11 +773,13 @@ DEF_DATA_FUNC(DataWarn) {
 }
 
 DEF_DATA_FUNC(DataNotify) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     String str;
     for (int i = 1; i < array->Size(); i++) {
         array->Evaluate(i).Print(str, true);
     }
     TheDebug.Notify(str.c_str());
+#endif
     return 0;
 }
 
@@ -799,12 +801,14 @@ DEF_DATA_FUNC(DataNotifyBeta) {
 }
 
 DEF_DATA_FUNC(DataFail) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     String str;
     for (int i = 1; i < array->Size(); i++) {
         array->Evaluate(i).Print(str, true);
     }
     TheDebug << MakeString("%d\n", array->Line());
     TheDebug.Fail(str.c_str(), nullptr);
+#endif
     return 0;
 }
 
@@ -1485,6 +1489,7 @@ DEF_DATA_FUNC(DataObjectList) {
 }
 
 DEF_DATA_FUNC(DataDisableNotify) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (array->Size() > 1) {
         TheDebug.SetDisabled(true);
         for (int i = 1; i < array->Size(); i++) {
@@ -1494,12 +1499,14 @@ DEF_DATA_FUNC(DataDisableNotify) {
     } else {
         TheDebug << MakeString("invalid # of arguments...\n");
     }
+#endif
     return 0;
 }
 
 void ScriptDebugModal(Debug::ModalType &, FixedString &, bool) {}
 
 DEF_DATA_FUNC(DataFilterNotify) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     if (array->Size() > 3) {
         bool restore = !TheDebug.CheckModalCallback(ScriptDebugModal);
         if (restore) {
@@ -1522,6 +1529,7 @@ DEF_DATA_FUNC(DataFilterNotify) {
     } else {
         MILO_LOG("invalid # of arguments...\n");
     }
+#endif
     return 0;
 }
 
@@ -1641,11 +1649,13 @@ __forceinline void DataRegisterFunc(Symbol s, DataFunc *func) {
 }
 
 DEF_DATA_FUNC(DataNotifyOnce) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     String str;
     for (int i = 1; i < array->Size(); i++) {
         array->Evaluate(i).Print(str, true);
     }
     MILO_NOTIFY_ONCE(str.c_str())
+#endif
     return 0;
 }
 
