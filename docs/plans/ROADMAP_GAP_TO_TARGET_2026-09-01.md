@@ -49,6 +49,8 @@
 > measurement taken on that tree reads LOW one-directionally. ★ **The alias CI
 > gate's own class split moved under it** (`STALE_SPELLING` 82 → 88,
 > map-consistent 1370 → 1364) with **no map or alias change** — i.e.
+> ⚠ *(2026-09-11: the "outside the build graph" reading of this 642-object
+> drift is RETRACTED as evidence — see the correction under §7b.)*
 > `icf_alias_finder --validate` guards the ~7.9 pp forgiveness mechanism with
 > **no freshness precondition**. T1's guard covers 2 tools of ~35; this is the
 > next one that needs it.
@@ -653,3 +655,25 @@ the shared tree.
 **Unattributed:** main's 1,196-object rewrite at 23:31 UTC. All seven lanes
 answered the audit "no" (worktree-scoped throughout); `REPO_ROOT` being unset
 for plain subagents remains the exposure the peer identified.
+
+> ⚠ **CORRECTION 2026-09-11 01:20 UTC (peer coordinator rb3-xenon-3d, from
+> stamp mtimes; accepted here).** The evidence behind BOTH drift incidents in
+> this document — the 642-object one in the §0 banner and the 1,196-object one
+> above — **does not discriminate corruption from a build in progress.** A full
+> `./tools/ninja-locked` rewrites objects progressively and rewrites
+> `patch_state.json` only at its terminal verify edge, and
+> `verify_objs_patched.py --verify-manifest` never takes `.ninja-build.lock`,
+> so **any sample taken while a build runs reads "objects changed, manifest
+> stale" and the tool prints "produced OUTSIDE the full build graph" as a
+> statement of fact it cannot observe.** A third drift, 37 objects at 01:07 UTC
+> on 09-11, was reproduced as exactly this: it was this coordinator's own
+> full build, sampled mid-flight. The 23:31 event's signature (1,204 of 1,205
+> objects sharing one mtime minute, at objcache speed) is at least as
+> consistent with a build in progress as with a targeted-build rewrite. ⇒ The
+> MCP main-fallback (`mcp_server.py` project_dir resolution, `REPO_ROOT`
+> unset for plain subagents) is **still a real path and is being hardened by
+> lane W3-F on its own merits** — but it is no longer *evidenced* by these
+> incidents. **Pre-merge rule until GATE-DISC lands its BUILD-IN-PROGRESS
+> verdict: a red `--verify-manifest` is read only after confirming no build
+> holds `.ninja-build.lock`.** The peer also notes its own first exoneration
+> probe (recent mtimes) was vacuous — the patchers preserve mtime by design.
