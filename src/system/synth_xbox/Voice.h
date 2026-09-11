@@ -96,7 +96,7 @@ private:
     void UpdateSends();
     void SafeRestart();
     void SetSendImpl(FxSend360 *);
-    __declspec(noinline) void dispose(int *, unsigned int);
+    __declspec(noinline) void dispose(PoolVoice *, unsigned int);
     long createOrReuse(PoolVoice *, unsigned int &, tWAVEFORMATEX &, XAUDIO2_VOICE_SENDS *);
 };
 
