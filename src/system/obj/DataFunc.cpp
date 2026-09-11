@@ -1633,7 +1633,7 @@ DEF_DATA_FUNC(DataMergeDirs) {
 
 void DataTermFuncs() { gDataFuncs.clear(); }
 
-void DataRegisterFunc(Symbol s, DataFunc *func) {
+__forceinline void DataRegisterFunc(Symbol s, DataFunc *func) {
     const std::map<Symbol, DataFunc *>::iterator it = gDataFuncs.find(s);
     if (it != gDataFuncs.end() && it->second != func)
         MILO_FAIL("Can't register different func %s", s);
