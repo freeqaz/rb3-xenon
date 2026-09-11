@@ -401,6 +401,83 @@ def cmd_null(a):
     return e
 
 
+def cmd_withheld(a):
+    """List rows whose EVERY charged site is a relocation NAME.
+
+    ★ SUCCESSOR TO `scripts/atexit_fuzzy_verify.py`'s WITHHELD REPORT (lane W4-F,
+    2026-09-11).  That tool drove objdiff on a hardcoded
+    `functionRelocDiffs=none`, wrote `verdict=COMPLETE` off it, and was retired
+    here; the one part of it worth keeping was the report it printed for rows the
+    PERMISSIVE ruler would have closed and the graded ruler withholds, because
+    that is what kept the `??__FsFrames` wrong-callee class visible instead of
+    silently dropped.
+
+    This is that report, generalised three ways:
+      * WHOLE BINARY, not the 56 `??__F` rows -- 1,982 of 3,226 sub-100 rows
+        measured at `3ab3f494`, ~35x the coverage.
+      * ONE RULER.  A row whose every charge is a relocation-name arg reads 100
+        under `none` BY CONSTRUCTION, so the class needs no second objdiff leg;
+        the old tool paid for a whole control run to learn the same thing.
+      * IT NAMES THE CALLEE PAIR.  The old report printed only fuzzy/equal
+        percentages, so adjudicating a row meant re-deriving the divergence by
+        hand.
+
+    ⚠ These rows are CANDIDATES, not defects.  objdiff cannot separate `folded`
+    from `wrong` (CLAUDE.md), so each is one of: an unrecorded ICF fold (fix =
+    prove the alias on retail bytes), or a genuine wrong callee (fix = source).
+    The `fold-suspect` column flags a target name that is already the SURVIVOR of
+    a group in `scripts/symbol_aliases.json`, which is the cheap discriminator --
+    CLAUDE.md's "grep symbol_aliases.json BEFORE believing a reloc-name find".
+    Never close one of these on this report alone."""
+    M, rows = build(a.project_dir, a.cache_dir, a.regnorm, a.max_mismatch)
+    survivors = _alias_survivors(a.project_dir)
+
+    sel = []
+    for r in rows:
+        pairs = []
+        for i in (r['diff'].get('instructions') or []):
+            mt = i.get('match_type')
+            if mt in (None, 'equal'):
+                continue
+            args = (i.get('diff_breakdown') or {}).get('arguments') or []
+            if mt != 'diff_arg' or {x.get('arg_type') for x in args} != {'symbol'}:
+                pairs = None
+                break
+            ts = [x.get('value') for x in (i.get('target') or {}).get('typed_args') or []
+                  if x.get('type') == 'Symbol']
+            bs = [x.get('value') for x in (i.get('base') or {}).get('typed_args') or []
+                  if x.get('type') == 'Symbol']
+            pairs.append((ts[0] if ts else '?', bs[0] if bs else '?'))
+        if pairs:
+            sel.append((r, pairs))
+
+    tot = sum(r['size'] for r, _ in sel)
+    print(f"rows whose EVERY charge is a relocation NAME: {len(sel)} rows / {tot:,} B "
+          f"({100*tot/int(M['total_code']):.4f} pp of total_code)")
+    print("  = the class that reads 100 under `functionRelocDiffs=none` and is "
+          "withheld by the grader.\n  CANDIDATES for wrong-callee or unrecorded "
+          "ICF fold -- adjudicate on retail bytes, never close from this list.\n")
+    print(f"{'bytes':>7} {'fuzzy':>8}  {'fold?':<11} unit / symbol")
+    for r, pairs in sorted(sel, key=lambda x: -x[0]['size'])[:a.top]:
+        flag = 'fold-suspect' if any(t in survivors for t, _ in pairs) else '-'
+        print(f"{r['size']:7d} {r['fz']:8.3f}  {flag:<11} {r['unit']} / {r['sym'][:66]}")
+        for t, b in pairs[:3]:
+            print(f"{'':>7} {'':>8}  target {t[:82]}")
+            print(f"{'':>7} {'':>8}  base   {b[:82]}")
+    if len(sel) > a.top:
+        print(f"  ... {len(sel)-a.top} more (raise --top)")
+
+
+def _alias_survivors(project_dir):
+    """Survivor names from scripts/symbol_aliases.json, or () if absent."""
+    p = os.path.join(project_dir, 'scripts', 'symbol_aliases.json')
+    if not os.path.exists(p):
+        return frozenset()
+    with open(p) as fh:
+        d = json.load(fh)
+    return frozenset(g.get('survivor') for g in (d.get('groups') or []) if g.get('survivor'))
+
+
 def cmd_show(a):
     M, rows = build(a.project_dir, a.cache_dir, a.regnorm, a.max_mismatch)
     for sig, v in group(rows).items():
@@ -568,6 +645,9 @@ def main():
     ap.add_argument('--regnorm', action='store_true',
                     help='renumber registers per instruction pair (coarser grouping)')
     ap.add_argument('--families', action='store_true')
+    ap.add_argument('--withheld', action='store_true',
+                    help='rows whose every charge is a relocation NAME '
+                         '(successor to atexit_fuzzy_verify.py WITHHELD)')
     ap.add_argument('--vs-matchtype', action='store_true')
     ap.add_argument('--null', action='store_true')
     ap.add_argument('--show')
@@ -584,6 +664,8 @@ def main():
         cmd_vs_matchtype(a)
     elif a.show:
         cmd_show(a)
+    elif a.withheld:
+        cmd_withheld(a)
     elif a.families:
         cmd_families(a)
     else:
