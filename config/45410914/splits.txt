@@ -7876,13 +7876,17 @@ CharBoneOffset.cpp:
 CharWeightable.cpp:
 	.pdata      start:0x82204CD8 end:0x82204D20
 	.pdata      start:0x82204D38 end:0x82204D60
+	.pdata      start:0x82204D68 end:0x82204D70
 	.text       start:0x823AE918 end:0x823AEE20
 	.text       start:0x823AEF98 end:0x823AF210
+	.text       start:0x823AF2B8 end:0x823AF310
 
 CharPollGroup.cpp:
-	.pdata      start:0x82204D60 end:0x82204EC0
+	.pdata      start:0x82204D60 end:0x82204D68
+	.pdata      start:0x82204D70 end:0x82204EC0
 	.pdata      start:0x82204EE0 end:0x82204EF8
-	.text       start:0x823AF210 end:0x823B08CC
+	.text       start:0x823AF210 end:0x823AF2B8
+	.text       start:0x823AF310 end:0x823B08CC
 	.text       start:0x823B0B00 end:0x823B0C78
 
 FlowValueCase.cpp:
