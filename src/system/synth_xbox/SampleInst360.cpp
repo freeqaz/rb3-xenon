@@ -19,13 +19,16 @@ SampleInst360::~SampleInst360() {
     }
 }
 
-bool SampleInst360::IsPlaying() const { return false; }
+// Retail 0x82B6E118 is `lwz r3, 0x54(r3); b ?IsPlaying@Voice@@` -- it forwards to the
+// voice; the `return false` this tree carried made every sample instance report
+// stopped (lane W4-D).
+bool SampleInst360::IsPlaying() const { return mVoice->IsPlaying(); }
 
 void SampleInst360::SetFXCore(FXCore core) {}
 
 void SampleInst360::StartImpl() { mVoice->Start(); }
 
-void SampleInst360::StopImpl(bool b) { mVoice->Stop(b); }
+void SampleInst360::StopImpl(bool) { mVoice->Stop(); } // retail 0x82B6E108: `lwz r3, 0x54(r3); b Voice::Stop`
 
 void SampleInst360::SetVolumeImpl(float vol) { mVoice->SetVolume(vol); }
 
