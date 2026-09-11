@@ -43,19 +43,29 @@ struct XAUDIO2_VOICE_STATE { /* Size=0x10 */
     /* 0x0008 */ UINT64 SamplesPlayed;
 };
 
-// NOTE: four fields, not the three of the desktop XAudio2 2.x SDK.  Evidence is
-// from the sibling dc3-decomp tree (Dance Central 3, title 373307D9), NOT from
-// RB3's own binary: DC3's Voice::UpdateMix (?UpdateMix@Voice@@AAAXXZ, at DC3
-// 0x82E373B8) fills one of these via GetVoiceDetails and then reads offset **8**,
-// compares the result against 6 / 2 / 1 and hands it to SetOutputMatrix as
-// DestinationChannels.  That value is a channel count, so InputChannels sits at
-// 0x8 and there is a second flags word at 0x4.  Same XDK, so the layout carries
-// over; nothing in this tree reads the struct, so the correction is inert here.
-struct XAUDIO2_VOICE_DETAILS { /* Size=0x10 */
+// THREE fields on RB3's XDK.  This corrects the four-field layout this header
+// carried between 6c5d2d50 and now, and it is corrected from RB3's OWN binary
+// rather than from a sibling tree.
+//
+// The four-field note was inferred from dc3-decomp: DC3's
+// ?UpdateMix@Voice@@AAAXXZ (DC3 0x82E373B8) fills one of these via
+// GetVoiceDetails and reads offset **8** as the channel count, so on DC3's XDK
+// there is an extra ActiveFlags word at 0x4.  That inference was sound about
+// DC3 and its one unchecked step was "same XDK, so the layout carries over".
+// It does not.  RB3's own ?UpdateMix@Voice@@AAAXXZ (retail 0x82B65510) does
+// `addi r4, r1, 0x58` / GetVoiceDetails / **`lwz r28, 0x5c(r1)`** -- offset
+// **4** -- and then compares that value against 6 / 2 / 1 and passes it to
+// SetOutputMatrix as DestinationChannels.  Same field, same use, one word
+// earlier.  RB3 retail is cl 10224 and DC3 is cl 11886 (see
+// docs/decomp/xdk-11164-compiler.md); the two XDKs genuinely differ here, which
+// is the early-XAudio2 layout gaining ActiveFlags later.
+//
+// Nothing else in this tree reads the fields -- every other mention passes the
+// struct by pointer -- so the blast radius is Voice::UpdateMix alone.
+struct XAUDIO2_VOICE_DETAILS { /* Size=0xc */
     /* 0x0000 */ UINT32 CreationFlags;
-    /* 0x0004 */ UINT32 ActiveFlags;
-    /* 0x0008 */ UINT32 InputChannels;
-    /* 0x000c */ UINT32 InputSampleRate;
+    /* 0x0004 */ UINT32 InputChannels;
+    /* 0x0008 */ UINT32 InputSampleRate;
 };
 
 struct XAUDIO2_EFFECT_DESCRIPTOR { /* Size=0xc */
