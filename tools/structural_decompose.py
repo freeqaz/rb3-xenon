@@ -76,8 +76,12 @@ INSTRUMENT DISCIPLINE (docs/decomp/INSTRUMENT_DESIGN.md)
    that BOTH the transposed and non-transposed populations are non-empty.  A
    degenerate classifier that called everything one thing fails loudly.
  * The transposition test compares opcode + non-symbol args only; symbol args
-   are relocations and are score-invisible under functionRelocDiffs=none, so
-   including them would make two identical instructions look different.
+   are relocations, and including them would make two instructions that differ
+   only by which instantiation they call look different.
+   ⚠ NOT because they are unscored -- "score-invisible under
+   functionRelocDiffs=none" was true when this was written and died on
+   2026-08-12 (`d04c83df`, the name_check flip).  See `key()` below, which
+   carries this and a second, larger defect inherited from this tool's sibling.
 
 USAGE
 -----
@@ -92,7 +96,34 @@ import crossing_worklist as C  # noqa: E402
 
 def key(side):
     """opcode + register/immediate args.  Symbol args are relocations and are
-    masked by functionRelocDiffs=none, so they must NOT participate."""
+    EXCLUDED so that one defect across instantiations still compares equal.
+
+    ⚠ TWO KNOWN DEFECTS IN THIS FUNCTION, BOTH LEFT UNFIXED ON PURPOSE (lane
+    SCRIPT-ROT, 2026-09-11) -- changing this key changes every classification the
+    tool has produced, which needs its own validated lane.  Read them before you
+    trust a ranking out of this module.
+
+    1. THE STATED RATIONALE IS DEAD.  "Masked by functionRelocDiffs=none" stopped
+       being true on 2026-08-12 (`d04c83df`, the name_check flip), and
+       crossing_worklist -- this module's diff source -- now resolves the GRADED
+       ruler at runtime.  Under name_check a Symbol arg IS charged, so the
+       transposition test below is structurally blind to a wrong-callee
+       divergence.  The exclusion may still be right FOR GROUPING; it is no
+       longer free.
+
+    2. THE ARG-TYPE TUPLE BELOW IS THE ONE ITS SIBLING TOOL REFUTED.
+       `tools/shape_families.py` carries a ⚠ header recording that
+       ('Register','Signed','Unsigned','Opaque') was its own first draft and was
+       WRONG: `Opaque` is NOT a type objdiff emits -- the real name is `Other`,
+       which is where SHIFT AND MASK AMOUNTS live -- and `BranchDest` was
+       excluded on the same bad "it's masked" theory though an intra-function
+       branch destination is a real scored difference.  There, the effect was not
+       a lost row here or there: it INVENTED FAMILIES AT THE TOP OF THE RANKING
+       (20 rows / 2,016 B of pure artifact) and nothing errored.  shape_families
+       fixed it to ('Register','Signed','Unsigned','Other','BranchDest') and
+       added its CONTROL 5 to make it fail loudly.  THIS MODULE NEVER GOT EITHER.
+       So `Opaque` matches nothing, and shift/mask amounts and branch targets are
+       silently invisible to `key()`."""
     if not side:
         return None
     args = tuple(str(a.get('value')) for a in (side.get('typed_args') or [])
