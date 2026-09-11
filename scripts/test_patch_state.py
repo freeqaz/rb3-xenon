@@ -83,6 +83,22 @@ class Fixture:
         self.scripts = tmp / "scripts"
         for d in (self.src, self.obj, self.scripts):
             d.mkdir(parents=True, exist_ok=True)
+        # BUILD INPUTS -- the source side, as opposed to the object side above.
+        # Without these the build-owed tests would compare an empty input map
+        # against an empty one and pass no matter what the code did: the
+        # vacuity this file's header warns about, in the tests written to
+        # prevent it.  `test_the_input_enumeration_sees_the_real_repo` is the
+        # control that this synthetic set is an accommodation and not a
+        # disarmed check.
+        self.srcdir = tmp / "src" / "band3"
+        self.srcdir.mkdir(parents=True, exist_ok=True)
+        self.source = self.srcdir / "Thing.cpp"
+        self.source.write_text("int thing() { return 1; }\n")
+        (self.srcdir / "Thing.h").write_text("int thing();\n")
+        # Vendored debris of the kind `src/` really carries (measured: 214 of
+        # 3,674 files are non-compilable). A build cannot read it, so changing
+        # it must never owe a build.
+        (self.srcdir / "README.txt").write_text("not a build input\n")
         shutil.copy(VERIFY, self.scripts / "verify_objs_patched.py")
         # The verifier derives coverage from the patchers' OWN pairing module
         # rather than reimplementing the rule, so the fixture needs it too.
@@ -319,6 +335,222 @@ class PatchStateTests(unittest.TestCase):
         self.assertIn("CAUSE UNDETERMINED", red.stderr)
         self.assertNotIn("OUTSIDE the full build graph", red.stderr)
 
+    # ── "a patched fixed point" vs "built from the source in the tree" ────
+    #
+    # The v3 provenance block is consulted ONLY inside the content-differs
+    # path, so it can explain a difference and never manufacture one.  That is
+    # a good property and it is also the blind spot: A MERGE WITHOUT A BUILD
+    # moves the source and rewrites no object, so the scan finds nothing to
+    # explain and returns 0.  Hit in production 2026-09-11 (a lane merged
+    # +9 fns / +80 B unbuilt; a ledger snapshot off the "clean" tree read
+    # 42,505 where the built tree reads 42,514).
+    #
+    # Both directions are tested, and the negative control is the harder half:
+    # committing is constant in this repo, so a check that fires on every
+    # commit is one people switch off.
+
+    def test_a_source_change_without_a_build_is_BUILD_OWED(self):
+        """rc=6: objects perfect, inputs moved.  The production defect."""
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        # CONTROL: unchanged tree reads GREEN, so the red below is attributable
+        # to the source edit and not to a verifier that reds on everything.
+        green = self.fx.run("--verify-manifest")
+        self.assertEqual(green.returncode, 0, green.stdout + green.stderr)
+
+        self.fx.source.write_text("int thing() { return 2; }\n")
+        red = self.fx.run("--verify-manifest")
+        self.assertEqual(red.returncode, 6, red.stdout + red.stderr)
+        # Evidence, not the code: assert the FILE is named and the verdict is
+        # the stale one.  rc=6 alone would also be satisfied by a check that
+        # returned 6 unconditionally.
+        self.assertIn("BUILD OWED", red.stderr)
+        self.assertIn("src/band3/Thing.cpp", red.stderr)
+        # ...and it must NOT accuse the objects, which are perfect.  This is
+        # the whole lesson of the rc=1-for-everything bug that preceded it.
+        self.assertNotIn("OUTSIDE the full build graph", red.stderr)
+
+        # CONTROL: restoring the source restores GREEN, proving the detector
+        # tracked the content and not some one-way latch.
+        self.fx.source.write_text("int thing() { return 1; }\n")
+        self.assertEqual(self.fx.run("--verify-manifest").returncode, 0)
+
+    def test_a_docs_only_commit_that_moves_HEAD_still_reads_CLEAN(self):
+        """The negative control, and the reason the signal is not git HEAD.
+
+        Docs, roadmap, ledger and memory commits move HEAD constantly here and
+        change no object.  patch_guard turns every non-zero into a hard
+        refusal, so a verdict keyed on HEAD would not annoy somebody -- it
+        would stop measurement across the fleet until it was disabled.
+        """
+        git = ["git", "-c", "user.email=t@t", "-c", "user.name=t"]
+        run = lambda *a: subprocess.run(git + list(a), cwd=str(self.fx.root),
+                                        capture_output=True, text=True)
+        if run("init", "-q").returncode != 0:          # no git -> nothing to test
+            self.skipTest("git unavailable")
+        run("add", "-A")
+        run("commit", "-q", "-m", "init")
+
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        doc = json.loads((self.fx.build / "patch_state.json").read_text())
+        head_before = doc["provenance"]["git_head"]
+        # ANTI-VACUITY: if git were not actually working, both HEADs would be
+        # None, the HEAD term would be inert, and this test would pass while
+        # proving nothing about HEAD at all.
+        self.assertIsNotNone(head_before, "fixture is not a working git repo")
+
+        (self.fx.root / "NOTES.md").write_text("a docs commit\n")
+        run("add", "-A")
+        run("commit", "-q", "-m", "docs: a roadmap note")
+        head_after = run("rev-parse", "HEAD").stdout.strip()
+        self.assertNotEqual(head_before, head_after,
+                            "HEAD did not move -- the control is vacuous")
+
+        clean = self.fx.run("--verify-manifest")
+        self.assertEqual(clean.returncode, 0, clean.stdout + clean.stderr)
+        self.assertNotIn("BUILD OWED", clean.stderr)
+
+        # ...and the SAME repo, same moved HEAD, plus a source edit IS owed --
+        # so the green above is "no build input moved" and not "this verifier
+        # cannot go red once git is involved".
+        self.fx.source.write_text("int thing() { return 3; }\n")
+        run("add", "-A")
+        run("commit", "-q", "-m", "src: a real change")
+        owed = self.fx.run("--verify-manifest")
+        self.assertEqual(owed.returncode, 6, owed.stdout + owed.stderr)
+        self.assertIn("src/band3/Thing.cpp", owed.stderr)
+
+    def test_a_non_compilable_file_under_src_does_not_owe_a_build(self):
+        """`src/` carries vendored .txt/.am/.jpg debris no build can read.
+
+        Hashing it would make a stray README owe a rebuild -- the nuisance
+        mode that gets gates disabled.
+        """
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        (self.fx.srcdir / "README.txt").write_text("edited prose\n")
+        clean = self.fx.run("--verify-manifest")
+        self.assertEqual(clean.returncode, 0, clean.stdout + clean.stderr)
+        # CONTROL: a .h in the same directory DOES owe one, so the green above
+        # is the extension filter and not a check that ignores src/ entirely.
+        (self.fx.srcdir / "Thing.h").write_text("int thing(); // changed\n")
+        red = self.fx.run("--verify-manifest")
+        self.assertEqual(red.returncode, 6, red.stdout + red.stderr)
+        self.assertIn("Thing.h", red.stderr)
+
+    def test_a_config_pin_change_owes_a_build_even_though_ninja_is_blind(self):
+        """splits.txt is ninja-invisible -- measured: a content change to it
+        produces 0 ninja edges, which is why CLAUDE.md's recipe is
+        `touch config.yml && ninja`.  A ninja-derived staleness signal cannot
+        see this class at all; the recorded digest can.
+        """
+        cfg = self.fx.root / "config" / BUILD_ID
+        cfg.mkdir(parents=True, exist_ok=True)
+        (cfg / "splits.txt").write_text("Foo.cpp:\n    .text start:0x1 end:0x2\n")
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        self.assertEqual(self.fx.run("--verify-manifest").returncode, 0)  # control
+
+        (cfg / "splits.txt").write_text("Foo.cpp:\n    .text start:0x1 end:0x9\n")
+        red = self.fx.run("--verify-manifest")
+        self.assertEqual(red.returncode, 6, red.stdout + red.stderr)
+        self.assertIn("splits.txt", red.stderr)
+        self.assertIn("config.yml", red.stderr)   # the remedy for this class
+
+    def test_a_build_in_flight_outranks_BUILD_OWED(self):
+        """A running build IS the owed build: say 5, not 6.
+
+        Telling a caller to start a build against a tree that is being
+        rewritten is the advice most likely to produce the corrupt-looking
+        state this file spent a lane learning not to accuse.
+        """
+        import fcntl
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        self.fx.source.write_text("int thing() { return 4; }\n")
+        self.assertEqual(self.fx.run("--verify-manifest").returncode, 6)  # control
+
+        fd = os.open(str(self.fx.root / ".ninja-build.lock"),
+                     os.O_CREAT | os.O_RDWR, 0o644)
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            busy = self.fx.run("--verify-manifest")
+        finally:
+            os.close(fd)
+        self.assertEqual(busy.returncode, 5, busy.stdout + busy.stderr)
+        self.assertIn("BUILD IN PROGRESS", busy.stderr)
+        # ...and reverts to 6 once the lock is released, so 5 is attributable
+        # to the lock and not to the source edit.
+        self.assertEqual(self.fx.run("--verify-manifest").returncode, 6)
+
+    def test_object_drift_outranks_BUILD_OWED(self):
+        """If something rewrote an OBJECT, that is the bigger statement.
+
+        rc=6 says "nothing has been rewritten, the tree is merely behind". It
+        must not absorb the case where an object actually moved -- that is
+        rc=4, and collapsing them would hide a targeted single-.obj build
+        behind an ordinary pending rebuild.
+        """
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        self.fx.source.write_text("int thing() { return 5; }\n")
+        self.fx.decomp[0].write_bytes(b"RAW-COMPILER-OUTPUT")
+        red = self.fx.run("--verify-manifest")
+        self.assertEqual(red.returncode, 4, red.stdout + red.stderr)
+        self.assertIn("REBUILD IS PENDING", red.stderr)
+        self.assertIn("d0.obj", red.stderr)
+        self.assertNotIn("BUILD OWED", red.stderr)
+
+    def test_a_v3_manifest_says_UNESTABLISHED_not_clean_and_not_red(self):
+        """An older manifest genuinely cannot answer the question.
+
+        It must not guess either way: going red would fail every tree in the
+        fleet until it rebuilt, and going silently green is the blind spot
+        itself, restored and wearing a green light.
+        """
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        mpath = self.fx.build / "patch_state.json"
+        doc = json.loads(mpath.read_text())
+        doc["manifest_version"] = 3
+        doc["provenance"].pop("build_inputs")
+        doc["provenance"]["split_inputs"] = {
+            f"config/{BUILD_ID}/splits.txt": None}
+        mpath.write_text(json.dumps(doc))
+
+        self.fx.source.write_text("int thing() { return 6; }\n")
+        res = self.fx.run("--verify-manifest")
+        self.assertEqual(res.returncode, 0, res.stdout + res.stderr)
+        self.assertIn("could not be established", res.stderr)
+        self.assertNotIn("BUILD OWED", res.stderr)
+        # CONTROL: the v3 manifest still catches OBJECT drift at full strength
+        # -- the compatibility path must not be a disabled verifier.
+        self.fx.decomp[0].write_bytes(b"RAW")
+        red = self.fx.run("--verify-manifest")
+        self.assertEqual(red.returncode, 1, red.stdout + red.stderr)
+        self.assertIn("d0.obj", red.stderr)
+
+    def test_the_input_enumeration_sees_the_real_repo(self):
+        """The anti-vacuity control for the whole feature.
+
+        Every build-owed test above compares a recorded input map against a
+        recomputed one. If the enumeration returned nothing on a real tree,
+        both maps would be empty, every comparison would agree, and the entire
+        feature would be a green light that checks nothing -- while this file's
+        synthetic fixtures still passed. So assert against THIS repo.
+        """
+        sys.path.insert(0, str(REPO / "scripts"))
+        import verify_objs_patched as v
+        files = v.build_input_files(REPO)
+        rels = {str(p.relative_to(REPO)) for p in files}
+        self.assertGreater(len(files), 1000,
+                           "build-input enumeration is vacuous on the real repo")
+        self.assertIn(f"config/{BUILD_ID}/splits.txt", rels)
+        self.assertIn("configure.py", rels)
+        self.assertIn("scripts/obj_anon_ns_patcher.py", rels)
+        self.assertTrue(any(r.endswith(".cpp") and r.startswith("src/")
+                            for r in rels), "no src/ sources enumerated")
+        # ...and the exclusions are real, not aspirational.
+        self.assertNotIn(f"config/{BUILD_ID}/scope_map.json", rels,
+                         "hashing a file the BUILD rewrites makes every build "
+                         "owe another build")
+        self.assertNotIn("scripts/verify_objs_patched.py", rels,
+                         "the observer must not be one of its own inputs")
+
     # ── the --check half: orchestration over the six real passes ──────────
 
     def test_check_runs_every_patcher(self):
@@ -372,9 +604,15 @@ class PatchStateTests(unittest.TestCase):
         """
         self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
         doc = json.loads((self.fx.build / "patch_state.json").read_text())
-        self.assertEqual(doc["manifest_version"], 3)
-        self.assertIn("split_inputs", doc["provenance"])
+        self.assertEqual(doc["manifest_version"], 4)
         self.assertIn("git_head", doc["provenance"])
+        # v4: `split_inputs` (3 files, enough to EXPLAIN a difference) is
+        # superseded by `build_inputs` (every file that decides what a build
+        # produces, enough to DETECT one).
+        self.assertIn("build_inputs", doc["provenance"])
+        self.assertIn(f"src/band3/Thing.cpp", doc["provenance"]["build_inputs"])
+        self.assertEqual(doc["provenance"]["n_build_inputs"],
+                         len(doc["provenance"]["build_inputs"]))
         cov = doc["pairing_coverage"]
         # The fixture points all three units at t0.obj while their base objs
         # are d0/d1/d2, so relpath pairing reaches NONE of them -- the real
@@ -461,6 +699,38 @@ class PatchGuardTests(unittest.TestCase):
         # for an unrelated reason (missing file, bad path, timeout).
         self.assertIn("d0.obj", str(cm.exception))
         self.assertIn("REFUSING TO MEASURE", str(cm.exception))
+
+    def test_build_owed_refuses_AND_is_not_called_corruption(self):
+        """The guard must refuse on rc=6 -- and say the right thing.
+
+        Refusing is the easy half. The hard half is the explanation: these
+        objects are PERFECT, so the raw-compiler-output accusation this guard
+        used to print for every non-zero would be exactly the defect lane
+        GATE-DISC removed from the verifier -- asserting a mechanism it has
+        not observed. Two investigations were opened off that message and both
+        concluded wrongly.
+        """
+        env = dict(os.environ, RB3_VERSION=BUILD_ID,
+                   PATCH_STUB_LOG=str(self.fx.log))
+        subprocess.run([sys.executable,
+                        str(self.fx.scripts / "verify_objs_patched.py"),
+                        "--repo", str(self.fx.root), "--check", "--emit",
+                        "--min-declared", "1"],
+                       check=True, capture_output=True, env=env,
+                       cwd=str(self.fx.root))
+        # CONTROL: clean tree returns a note and does NOT raise.
+        self.assertIn("verified",
+                      self.pg.ensure_patched_tree(self.fx.root, build=False))
+
+        self.fx.source.write_text("int thing() { return 99; }\n")
+        with self.assertRaises(self.pg.UnpatchedTreeError) as cm:
+            self.pg.ensure_patched_tree(self.fx.root, build=False)
+        msg = str(cm.exception)
+        self.assertIn("BUILD IS OWED", msg)
+        self.assertIn("src/band3/Thing.cpp", msg)
+        # The objects are a fixed point. Saying otherwise sends the reader
+        # hunting a corruption that is not there.
+        self.assertNotIn("describes raw compiler output", msg)
 
     def test_reads_custom_make_from_objdiff_json(self):
         """rb3-xenon's custom_make is tools/ninja-locked, not bare ninja.
