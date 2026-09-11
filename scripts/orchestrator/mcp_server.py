@@ -732,33 +732,6 @@ class DecompMCPServer:
                     },
                 ),
                 Tool(
-                    name="run_analyze_function",
-                    description="Run enriched function analysis combining objdiff with struct offset resolution. Returns detailed diff with field names for offset mismatches. Detects unfixable patterns (struct offsets, merged calls, etc.).\n\n⚠️ CRITICAL: Pass project_dir parameter when in a worktree or your edits won't be tested!",
-                    inputSchema={
-                        "type": "object",
-                        "properties": {
-                            "symbol": {
-                                "type": "string",
-                                "description": "Function symbol (mangled or demangled name)",
-                            },
-                            "resolve_offsets": {
-                                "type": "boolean",
-                                "description": "Resolve struct field names for offset mismatches (default: true)",
-                            },
-                            "output_format": {
-                                "type": "string",
-                                "enum": ["markdown", "json"],
-                                "description": "Output format (default: markdown)",
-                            },
-                            "project_dir": {
-                                "type": "string",
-                                "description": "Project directory to build from. Pass your worktree directory here to test your changes.",
-                            },
-                        },
-                        "required": ["symbol", "project_dir"],
-                    },
-                ),
-                Tool(
                     name="run_diff_inspect",
                     description="Deep analysis of WHY a function doesn't match. Provides root cause diagnosis, cluster analysis, register swap detection, offset analysis, replace categorization, and before/after comparison. Use after run_objdiff when you need deeper insight into mismatches.\n\n⚠️ CRITICAL: Pass project_dir parameter when in a worktree!",
                     inputSchema={
@@ -900,8 +873,6 @@ class DecompMCPServer:
                 return await self._lookup_dc3(arguments)
             elif name == "run_objdiff":
                 return await self._run_objdiff(arguments)
-            elif name == "run_analyze_function":
-                return await self._run_analyze_function(arguments)
             elif name == "run_diff_inspect":
                 return await self._run_diff_inspect(arguments)
             elif name == "lookup_struct_offset":
@@ -2179,126 +2150,37 @@ class DecompMCPServer:
         except Exception as e:
             return [TextContent(type="text", text=f"Error running objdiff: {e}")]
 
-    async def _run_analyze_function(self, args: dict) -> list[TextContent]:
-        """
-        Handle run_analyze_function tool call.
-
-        Runs analyze_function.py which combines objdiff output with struct
-        offset resolution from the header database.
-        """
-        symbol = args.get("symbol", "")
-        resolve_offsets = args.get("resolve_offsets", True)
-        output_format = args.get("output_format", "markdown")
-        project_dir_arg = args.get("project_dir", None)
-
-        if not symbol:
-            return [TextContent(type="text", text="Error: No symbol provided.")]
-
-        if symbol.startswith("merged_"):
-            return [TextContent(type="text", text=f"Error: {symbol} is a linker ICF artifact (merged symbol), not a real function. "
-                                "Use lookup_merged_symbol to see what real symbols share this address.")]
-
-        # Extract parameter type hint for disambiguation
-        symbol, _param_hint = _extract_param_hint(symbol)
-
-        # Determine which project directory to use -- see resolve_project_dir.
-        # There is no main-repo fallback any more: an omitted project_dir is a
-        # REFUSAL, not a silent measurement of the shared tree.
-        try:
-            project_dir = resolve_project_dir(project_dir_arg, self.project_root)
-        except ProjectDirRefusal as e:
-            return [TextContent(type="text", text=f"Error: {e}")]
-
-        # Find analyze-function script in the determined project directory
-        analyze_script = project_dir / "bin" / "analyze-function"
-
-        if not analyze_script.exists():
-            return [TextContent(
-                type="text",
-                text=f"Error: analyze-function not found at {analyze_script}"
-            )]
-
-        # Same guard as run_objdiff / run_diff_inspect: analyze-function shells
-        # out to a build-and-score path, and reading an UNPATCHED object
-        # describes raw compiler output rather than the shape this project
-        # matches against. This handler was the one of the three that never had
-        # it. (It is also, today, dead: `bin/analyze-function` does not exist in
-        # this checkout at all, so every call has always returned the
-        # not-found error above. The guard is here so that resurrecting the
-        # script does not resurrect the gap.)
-        try:
-            ensure_patched_tree(project_dir)
-        except UnpatchedTreeError as e:
-            return [TextContent(type="text", text=f"Error: {e}")]
-
-        # Build command
-        cmd = [str(analyze_script), symbol]
-
-        if resolve_offsets:
-            cmd.append("--resolve-offsets")
-
-        if output_format == "json":
-            cmd.extend(["-f", "json"])
-        else:
-            cmd.extend(["-f", "markdown"])
-
-        try:
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=300,  # 5 minute timeout
-                cwd=str(project_dir),
-            )
-
-            output = result.stdout
-            if result.stderr:
-                filtered_stderr = _filter_build_output(result.stderr)
-                if filtered_stderr:
-                    output += f"\n\n[stderr]\n{filtered_stderr}"
-
-            if result.returncode != 0:
-                return [TextContent(
-                    type="text",
-                    text=f"Error (exit code {result.returncode}):\n{output}"
-                )]
-
-            # Count lines
-            lines = output.split("\n")
-            line_count = len(lines)
-
-            if line_count < MAX_INLINE_LINES:
-                # Return inline
-                if output_format == "json":
-                    return [TextContent(type="text", text=f"```json\n{output}\n```")]
-                else:
-                    return [TextContent(type="text", text=output)]
-            else:
-                # Write to file in the project directory being tested
-                analysis_dir = project_dir / "function_analysis"
-                analysis_dir.mkdir(exist_ok=True, parents=True)
-
-                safe_symbol = symbol.replace("?", "_Q_").replace("@", "_A_").replace("<", "_L_").replace(">", "_R_")
-                ext = "json" if output_format == "json" else "md"
-                output_file = analysis_dir / f"analyze_{safe_symbol}.{ext}"
-
-                with open(output_file, "w") as f:
-                    f.write(output)
-
-                return [TextContent(
-                    type="text",
-                    text=f"""Output is large ({line_count} lines). Written to file.
-
-**File:** `{output_file.relative_to(project_dir)}`
-
-Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
-"""
-                )]
-
-        except subprocess.TimeoutExpired:
-            return [TextContent(type="text", text="Error: analyze-function timed out after 5 minutes.")]
-        except Exception as e:
-            return [TextContent(type="text", text=f"Error running analyze-function: {e}")]
+    # ⛔ `run_analyze_function` / `_run_analyze_function` REMOVED (lane W4-F,
+    # 2026-09-11).  It was an ADVERTISED MCP TOOL THAT COULD NEVER RUN: the
+    # handler shelled out to `<project_dir>/bin/analyze-function`, which has
+    # never existed in this repo -- no such file, and no commit ever added or
+    # deleted one (`git log --all -- bin/analyze-function` is empty).  The
+    # advertisement was ported from DC3, where `bin/analyze-function` and
+    # `tools/analyze_function.py` do exist, without the tool.  So every call
+    # returned `Error: analyze-function not found`, after the model had paid to
+    # choose it off the tool list -- a dead advertisement is worse than an absent
+    # one, because the model cannot tell.
+    #
+    # WIRING IT WAS CONSIDERED AND REJECTED, with reasons:
+    #   * DC3's implementation is 2,657 lines and imports `requests` to drive a
+    #     LIVE Ghidra MCP HTTP service, plus sqlite; it also carries DC3-specific
+    #     objdiff asm-format compatibility branches ("pre-fdc5113 flat
+    #     comparison-join").  That is an unvalidated 2.6 kLOC port, not hygiene.
+    #   * Its advertised capability is already covered here by `run_diff_inspect`
+    #     (modes `offsets` / `diagnose`) plus `lookup_struct_offset`.
+    #   * Its headline promise -- "resolve struct field names for offset
+    #     mismatches" -- is served in DC3 by the struct DB, whose offsets come
+    #     from hand-written `// 0xHEX` header comments that CLAUDE.md records as
+    #     measurably WRONG (CharEyes.h: 20 wrong offsets; SaveLoadManager.h:
+    #     uniformly +4 stale).  `lookup_struct_offset` was deliberately moved to
+    #     ask the COMPILER (`/d1reportSingleClassLayout`) for exactly that
+    #     reason.  Resurrecting a tool that prints comment-derived field names
+    #     with confidence would walk that fix backwards.
+    #
+    # `scripts/orchestrator/test_advertised_tools.py` now asserts that every
+    # advertised tool has a handler AND that no handler references a repo
+    # executable that does not exist, so this class of defect cannot return
+    # silently.
 
     async def _run_diff_inspect(self, args: dict) -> list[TextContent]:
         """
