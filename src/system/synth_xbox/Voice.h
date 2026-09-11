@@ -41,6 +41,9 @@ public:
     void SetSpeed(float);
 
     int GetVoice();
+    /** Retail has no stored channel count -- InitVoiceParameters computes
+     *  `mStereo ? 2 : 1` inline (0x82B652E0).  Only 1 and 2 are reachable. */
+    int NumChannels() const { return mStereo ? 2 : 1; }
 
     static int sHeadsetTarget;
     void Init(bool);
@@ -67,12 +70,19 @@ public:
     float mReverbMixDb; // 0x44 - reverb mix in dB
     bool unk48; // 0x48
     bool mSynchronized; // 0x49 - requires synchronized voice start
-    short mChannels; // 0x4a - channel count. 2 bytes (not int): keeps mTagState and
-                     // mSourceVoice at retail's true (tighter) offsets. Verified via
-                     // Ghidra decompile of ~Voice (target 0x82b662e8): mSourceVoice
-                     // reads at this+0x50; and StreamReceiver360::Tag()'s objdiff
-                     // shows target/base off:+4 on the mTagState store (real 0x4c).
-                     // No unk54 filler either -- mTagState(int) ends exactly at 0x50.
+    // 0x4a/0x4b were one `short mChannels` until now.  They are TWO BOOLS.
+    // Retail never touches either as a halfword: across the whole Voice.cpp
+    // target listing every access to 0x4a and 0x4b is an `lbz`/`stb`, and
+    // InitVoiceParameters (retail 0x82B652E0) derives the wave format's channel
+    // count from 0x4a as `lbz` / `cntlzw` / `extrwi` / `xori` / `addi r11,r11,1`
+    // -- i.e. literally `mStereo ? 2 : 1`.  A `short` at 0x4a would make
+    // `lbz 0x4a` the big-endian HIGH byte, which is 0 for every channel count
+    // retail supports, so the three `if (lbz 0x4a)` branches would be dead code.
+    // The offsets are unchanged, so the mTagState/mSourceVoice evidence the old
+    // comment cited (Ghidra ~Voice at 0x82b662e8, StreamReceiver360::Tag) still
+    // holds exactly as before.
+    bool mStereo; // 0x4a
+    bool unk4b; // 0x4b - gates the no-output-voice SetOutputMatrix in UpdateMix
     int mTagState; // 0x4c - stream tag state
     int mSourceVoice; // 0x50 - IXAudio2SourceVoice* (as int for vtable dispatch)
     int mEnvelopeEffect; // 0x54 - XAPO envelope generator (PoolVoice.eg)
