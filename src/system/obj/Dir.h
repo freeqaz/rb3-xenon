@@ -502,9 +502,13 @@ public:
     virtual void Copy(const Hmx::Object *, CopyType);
     virtual void Load(BinStream &);
     virtual void PostSave(BinStream &);
-    virtual void SetName(const char *name, ObjectDir *dir) {
-        Hmx::Object::SetName(name, dir);
-    }
+    // NO SetName override here. DC3's Dir.h declares a pure forwarder
+    // (`virtual void SetName(const char*, ObjectDir*) { Hmx::Object::SetName(name, dir); }`);
+    // RB3 retail does not: every ObjectDir-descendant vtable in band.exe holds
+    // Hmx::Object::SetName (0x8275a5c0, shared by all 584 Object-derived tables)
+    // at the Object slot 16, and the retail map has zero `SetName@ObjectDir`
+    // symbols (DC3's own map has 20). rb3-Wii's Dir.h has none either. Lane
+    // W3-E 2026-09-11, tools/vtable_inherit_sweep.py (29 classes charged).
     virtual ObjectDir *DataDir() { return this; }
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
