@@ -793,7 +793,10 @@ DataNode BandCamShot::OnListAnimGroups(const DataArray *da) {
                 : Dir();
             return ObjectList(thedir, "CharClipGroup", true);
         } else {
-            handled = DataNode(new DataArray(1), kDataArray);
+            {
+                DataNode tmp(new DataArray(1), kDataArray);
+                handled = tmp;
+            }
             handled.Array()->Node(0) = Symbol();
             return handled;
         }
