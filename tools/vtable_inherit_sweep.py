@@ -112,15 +112,40 @@ def method_key(sym):
     return s[:i] + '|' + s[j + 3:]
 
 
-def classify_slots(slots, occ, addr2name, hier_this, addr_tables, hier_by_vt):
+def _op_nonvirtual(sym):
+    """`??Y String@@QAA...` -- the `??<op>` family carries its access letter
+    right after the first `@@`; icf_fold_safe.access_class declines these, so
+    a NON-virtual operator sitting in a vtable slot (String[1] was named
+    `operator+=(Symbol)`, a `Q`) would otherwise be charged.  ctor/dtor codes
+    are skipped: their letter is not an access class."""
+    if not sym or not sym.startswith('??') or sym.startswith(('??0', '??1', '??_G', '??_E')):
+        return False
+    i = sym.find('@@')
+    return i > 0 and i + 2 < len(sym) and sym[i + 2] in 'QAIS'
+
+
+def classify_slots(slots, occ, addr2name, hier_this, addr_tables, hier_by_vt,
+                   within_max=None):
     """Fold-safe Slots for one retail table, inheritance-aware.
 
     Returns (slots, provenance) where provenance[i] is 'inherited' for a slot
     the plain sweep would have excluded as folded_across and this tool admits.
+
+    ⚠ `within_max[w]` is the LARGEST per-table multiplicity of `w` over EVERY
+    retail table, not just this one.  First run of this tool charged five
+    UIListProvider descendants at slot 16: the base table holds 0x822ad928 in
+    slots 15 AND 16 (ComponentStateOverride and ElementStateOverride are both
+    `return s;`, ICF-folded, map names the survivor Component...), but a
+    derived class that overrides slot 15 leaves the survivor ONCE in its own
+    table, so a per-table check passed it and the tool manufactured a defect.
+    An address that is ambiguous anywhere is ambiguous everywhere.
     """
     within = collections.Counter(w for (_va, w, _p) in slots)
     out, prov = [], {}
     for idx, (_va, w, _p) in enumerate(slots):
+        if within_max and within_max.get(w, 1) != 1:
+            out.append(ifs.Slot(addr=w, reason='folded_within'))
+            continue
         if occ.get(w, 0) != 1:
             nm = addr2name.get("0x%08x" % w)
             holders = addr_tables.get(w, ())
@@ -137,7 +162,7 @@ def classify_slots(slots, occ, addr2name, hier_this, addr_tables, hier_by_vt):
         nm = addr2name.get("0x%08x" % w)
         if not nm:
             out.append(ifs.Slot(addr=w, reason='unnamed'))
-        elif ifs.name_is_nonvirtual(nm):
+        elif ifs.name_is_nonvirtual(nm) or _op_nonvirtual(nm):
             out.append(ifs.Slot(name=ifs.normalize_dtor(nm), addr=w,
                                 reason='nonvirtual_name'))
         elif not ifs.name_owned_by(nm, hier_this):
@@ -154,7 +179,9 @@ def compare(retail_sl, our_sl):
     # override-fold conservatism: same method, different owner -> withhold
     real, same_method = [], []
     for (i, r, o) in mism:
-        if method_key(r.name) == method_key(o.name):
+        if (method_key(r.name) == method_key(o.name)
+                or (method_key(r.name).split('|')[0] == method_key(o.name).split('|')[0]
+                    and ifs.mangled_class(r.name) != ifs.mangled_class(o.name))):
             same_method.append((i, r, o))
         else:
             real.append((i, r, o))
@@ -171,7 +198,7 @@ def compare(retail_sl, our_sl):
 
 
 def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
-                addr_tables, hier_by_vt, n_vtables=1):
+                addr_tables, hier_by_vt, n_vtables=1, within_max=None):
     bare = V.bare_class(cls_rtti)
     sub_off, _sub_base = V.retail_subobject_base(R, vt_va)
     base = dict(cls=bare, rtti=cls_rtti, vt_va=vt_va, retail_slots=len(slots),
@@ -181,7 +208,7 @@ def sweep_class(R, cls_rtti, vt_va, slots, occ, addr2name, project_dir,
         return base
     hier = hier_by_vt[vt_va]
     retail_sl, prov = classify_slots(slots, occ, addr2name, hier,
-                                     addr_tables, hier_by_vt)
+                                     addr_tables, hier_by_vt, within_max)
     txt = [(s.va, s.va + s.rawsize) for s in R.sections if s.name == '.text'][0]
     retail_sl = ifs.mark_thunk_twins(
         retail_sl, lambda va: R.u32(va) if txt[0] <= va < txt[1] else None)
@@ -231,10 +258,13 @@ def load_all(project_dir):
     occ = ifs.fold_counts(tables)
     hier_by_vt = {va: (V.hierarchy_names(R, va) | {V.bare_class(n)}) for va, n in vts}
     addr_tables = collections.defaultdict(set)
+    within_max = collections.Counter()
     for va, slots in tables.items():
-        for (_sva, w, _p) in slots:
+        per = collections.Counter(w for (_sva, w, _p) in slots)
+        for w, c in per.items():
             addr_tables[w].add(va)
-    return R, addr2name, vts, tables, occ, hier_by_vt, addr_tables
+            within_max[w] = max(within_max[w], c)
+    return R, addr2name, vts, tables, occ, hier_by_vt, addr_tables, within_max
 
 
 def selftest():
@@ -274,6 +304,25 @@ def selftest():
     chk('method_key keeps signature',
         method_key('?A@Base@@UAAXXZ') == method_key('?A@Base@@UAAXH@Z'), False)
     chk('method_key dtor', method_key('??_GFoo@@UAAPAXI@Z'), '??_G|AAPAXI@Z')
+    chk('op nonvirtual', _op_nonvirtual('??YString@@QAAAAV0@VSymbol@@@Z'), True)
+    chk('op virtual dtor not flagged', _op_nonvirtual('??_GFoo@@UAAPAXI@Z'), False)
+    # within_max: Base table holds 0x50 in two slots (fold of two `return s`
+    # virtuals); Derived overrides one of them, so 0x50 appears ONCE there.
+    t2 = {100: [(0, 0x50, True), (4, 0x50, True)], 200: [(0, 0x60, True), (4, 0x50, True)]}
+    o2 = ifs.fold_counts(t2); at2 = collections.defaultdict(set); wm = collections.Counter()
+    for va, sl in t2.items():
+        per = collections.Counter(w for (_s, w, _p) in sl)
+        for w, c in per.items():
+            at2[w].add(va); wm[w] = max(wm[w], c)
+    n2 = {"0x00000050": "?A@Base@@UBAXXZ", "0x00000060": "?A@Derived@@UBAXXZ"}
+    h2 = {100: {'Base'}, 200: {'Derived', 'Base'}}
+    sl2, _ = classify_slots(t2[200], o2, n2, h2[200], at2, h2, within_max=wm)
+    chk('cross-table within-fold excluded', sl2[1].reason, 'folded_within')
+    sl3, _ = classify_slots(t2[200], o2, n2, h2[200], at2, h2)   # old behaviour
+    chk('...and WAS charged without within_max', sl3[1].comparable, True)
+    v3, *_rest = compare([ifs.Slot(name='?SetLightType@DxLight@@UAAXW4Type@RndLight@@@Z'), ifs.Slot(name='?B@X@@UAAXXZ'), ifs.Slot(name='?C@X@@UAAXXZ')],
+                         [ifs.Slot(name='?SetLightType@RndLight@@UAAXW4Type@1@@Z'), ifs.Slot(name='?B@X@@UAAXXZ'), ifs.Slot(name='?C@X@@UAAXXZ')])
+    chk('backref-spelled override fold withheld', v3, 'SAME')
     # compare: transposition charged; same-method-other-owner withheld
     r = [ifs.Slot(name='?A@B@@UAAXXZ'), ifs.Slot(name='?C@B@@UAAXH@Z'),
          ifs.Slot(name='?D@B@@UAAXXZ')]
@@ -288,7 +337,7 @@ def selftest():
         for f in fails:
             print("  " + f)
         return 1
-    print("SELFTEST OK (9 checks)")
+    print("SELFTEST OK (15 checks)")
     return 0
 
 
@@ -305,7 +354,7 @@ def main():
     if args.selftest:
         return selftest()
 
-    R, addr2name, vts, tables, occ, hier_by_vt, addr_tables = load_all(args.project_dir)
+    R, addr2name, vts, tables, occ, hier_by_vt, addr_tables, within_max = load_all(args.project_dir)
     sel = vts
     if args.cls:
         sel = [(va, n) for va, n in vts if V.bare_class(n) == args.cls]
@@ -322,7 +371,8 @@ def main():
     results = []
     for va, n in sel:
         r = sweep_class(R, n, va, tables[va], occ, addr2name, args.project_dir,
-                        addr_tables, hier_by_vt, n_vtables=nvt[V.bare_class(n)])
+                        addr_tables, hier_by_vt, n_vtables=nvt[V.bare_class(n)],
+                        within_max=within_max)
         r['n_descendant_tables'] = desc[V.bare_class(n)]
         results.append(r)
 
