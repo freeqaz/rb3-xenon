@@ -82,8 +82,9 @@ Object.cpp:
 	.pdata      start:0x8223C4F8 end:0x8223C500
 	.pdata      start:0x8223C510 end:0x8223C518
 	.pdata      start:0x8223C540 end:0x8223C548
+	.pdata      start:0x8223C570 end:0x8223C578
 	.pdata      start:0x8223C5A0 end:0x8223C5C0
-	.pdata      start:0x8223C630 end:0x8223C638
+	.pdata      start:0x8223C628 end:0x8223C638
 	.pdata      start:0x8223C718 end:0x8223C748
 	.pdata      start:0x8223C760 end:0x8223C768
 	.text       start:0x82272DB8 end:0x82272E68
@@ -97,8 +98,9 @@ Object.cpp:
 	.text       start:0x8275AC60 end:0x8275ADE4
 	.text       start:0x8275AE40 end:0x8275AF00
 	.text       start:0x8275B090 end:0x8275B150
+	.text       start:0x8275B378 end:0x8275B410
 	.text       start:0x8275B6A0 end:0x8275B864
-	.text       start:0x8275BD78 end:0x8275C7DC
+	.text       start:0x8275BD08 end:0x8275C7DC
 	.text       start:0x8275CB88 end:0x8275CE4C
 	.text       start:0x8275CFF8 end:0x8275D03C
 
@@ -5680,8 +5682,9 @@ DirLoader.cpp:
 	.pdata      start:0x8223C4E8 end:0x8223C4F8
 	.pdata      start:0x8223C500 end:0x8223C510
 	.pdata      start:0x8223C518 end:0x8223C540
-	.pdata      start:0x8223C548 end:0x8223C5A0
-	.pdata      start:0x8223C5C8 end:0x8223C630
+	.pdata      start:0x8223C548 end:0x8223C570
+	.pdata      start:0x8223C578 end:0x8223C5A0
+	.pdata      start:0x8223C5C8 end:0x8223C628
 	.pdata      start:0x8223C638 end:0x8223C718
 	.pdata      start:0x8223F158 end:0x8223F160
 	.text       start:0x8274DFD0 end:0x8274E02C
@@ -5696,9 +5699,10 @@ DirLoader.cpp:
 	.text       start:0x8275AB8C end:0x8275AC60
 	.text       start:0x8275ADE4 end:0x8275AE40
 	.text       start:0x8275AF00 end:0x8275B090
-	.text       start:0x8275B150 end:0x8275B6A0
+	.text       start:0x8275B150 end:0x8275B378
+	.text       start:0x8275B410 end:0x8275B6A0
 	.text       start:0x8275B864 end:0x8275B868
-	.text       start:0x8275B8B0 end:0x8275BD78
+	.text       start:0x8275B8B0 end:0x8275BD08
 	.text       start:0x8275C7DC end:0x8275CB84
 	.text       start:0x8278F3B8 end:0x8278F414
 
