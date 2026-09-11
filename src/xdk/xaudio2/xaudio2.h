@@ -87,10 +87,22 @@ struct XAUDIO2_FILTER_PARAMETERS { /* Size=0xc */
 
 struct IXAudio2Voice;
 
+// Byte-packed, like the rest of the XDK's XAudio2 structures.  Same size and
+// field offsets either way; what alignment 1 changes is that MSVC copy-
+// constructs one through memcpy instead of a pair of word loads.  RB3 RETAIL
+// does exactly that: ??$__uninitialized_copy@PAUXAUDIO2_SEND_DESCRIPTOR
+// (0x82B5C710), ??$__uninitialized_fill_n@... (0x82B5C828) and
+// ?push_back@?$vector@UXAUDIO2_SEND_DESCRIPTOR (0x82B5D3B0) each copy an
+// element with `li r5, 0x8` / `bl memcpy` (fn_8282A900).  The pack was present
+// in dc3-decomp's copy of this header (same finding on DC3's binary) and was
+// dropped when the header was ported here; without it those three rows read
+// 47.1 / 40.8 / 53.8 (lane W3-D, 2026-09-11).
+#pragma pack(push, 1)
 struct XAUDIO2_SEND_DESCRIPTOR { /* Size=0x8 */
     /* 0x0000 */ UINT32 Flags;
     /* 0x0004 */ IXAudio2Voice *pOutputVoice;
 };
+#pragma pack(pop)
 
 struct XAUDIO2_VOICE_SENDS { /* Size=0x8 */
     /* 0x0000 */ UINT32 SendCount;
