@@ -171,7 +171,7 @@ default/CustomizePanel	10348	204	24980	237
 default/CymbalSelectionProvider	788	13	1436	19
 default/DOFProc	16	1	16	1
 default/DOFProc_NG	1124	16	3080	19
-default/DataArray	4668	41	6124	49
+default/DataArray	4748	48	6124	49
 default/DataArraySongInfo	2780	39	6280	45
 default/DataEventList	2804	28	4256	37
 default/DataFile	6716	83	13884	121
@@ -383,7 +383,7 @@ default/MicClientMapper	832	10	1660	18
 default/MicInputArrow	3416	47	5536	52
 default/MicNull	336	3	548	5
 default/MidiInstrument	7052	82	10824	116
-default/MidiParser	18196	156	27288	227
+default/MidiParser	18196	158	27288	227
 default/MidiParserMgr	4160	46	5336	54
 default/MidiReader	4808	43	6716	51
 default/MidiSynth	7576	80	10820	96
