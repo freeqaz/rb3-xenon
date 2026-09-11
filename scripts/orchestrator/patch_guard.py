@@ -44,6 +44,34 @@ the manifest.  If either half fails, raise -- callers must surface the error
 instead of diffing.  Silently answering low is the behaviour being removed; it
 is not to be replaced with silently answering some other way.
 
+★ This guard REFUSES on BUILD OWED (verifier rc=6), and the choice is
+deliberate rather than incidental
+--------------------------------------------------------------------------
+rc=6 says the objects are a perfect patched fixed point that was compiled from
+SOURCE THAT IS NO LONGER IN THE TREE -- a merge without a build.  Refusing is
+right for the same reason every other refusal here is: the number would be
+reported under the current source's name while describing the previous
+source's objects.  That is not a slightly stale measurement, it is a
+mislabelled one, and it is strictly harder to detect afterwards than a low
+number (recorded 2026-09-11: a ledger snapshot off such a tree read 42,505
+matched functions where the built tree read 42,514, and nothing in the tree
+disagreed with it).
+
+What it costs, checked before choosing it:
+
+*   `build=True` (the default, and every orchestrator path) builds
+    `post-compile` FIRST, which compiles the changed TUs and re-emits the
+    manifest -- so the state that produces rc=6 is repaired before the
+    assertion runs and the refusal is unreachable on that path.
+*   `build=False` is the read-only look, and there rc=6 is exactly the case
+    worth refusing: the caller asked not to build and the tree is behind.
+
+So the refusal fires precisely where a measurement would be mislabelled, and
+nowhere else.  The residual is a tree whose changed inputs feed no compile
+edge at all -- ninja does no work, the manifest is not re-emitted, and the
+verdict persists; `_refusal_headline`/the remedy text below name the bounded
+re-baseline for that case and its precondition.
+
 `post-compile` reaches every object through `all_source`, so the specific
 `.obj` a caller cares about is still compiled first; the patch stamps then
 re-fire because the patchers preserve each object's mtime, which is what makes
@@ -141,6 +169,50 @@ def _tail(text: str, n: int = 25) -> str:
     return "\n".join(lines[-n:])
 
 
+#: The verifier's exit codes are each a DIFFERENT statement (see its module
+#: docstring).  This guard refuses on all of them -- every one means the number
+#: you are about to read describes something other than the tree you think you
+#: are measuring -- but it must not describe them all the same way.
+#:
+#: ⛔ It used to.  Every non-zero got the raw-compiler-output accusation, which
+#: is precisely the disease lane GATE-DISC removed from the verifier itself:
+#: asserting a mechanism the tool has not observed.  Two investigations were
+#: opened off that message and both concluded wrongly.  A guard that refuses
+#: correctly and explains wrongly still costs a lane its afternoon.
+_REFUSAL_HEADLINES = {
+    6: ("a BUILD IS OWED. Its objects are a verified patched fixed point and "
+        "match their manifest exactly -- nothing is corrupt -- but a build "
+        "INPUT has changed since they were compiled, so they were built from "
+        "SOURCE THAT IS NO LONGER IN THE TREE. Measuring here reports the "
+        "previous state of the source under the current state's name (recorded "
+        "2026-09-11: a ledger snapshot off such a tree read 42,505 matched "
+        "functions where the built tree read 42,514)."),
+    5: ("a BUILD IS IN FLIGHT. tools/ninja-locked holds the build lock, so "
+        "these objects are being rewritten as they are read. Nothing is wrong "
+        "and nothing is adjudicable -- wait and retry."),
+    4: ("a REBUILD IS PENDING. The tree advanced since the manifest was "
+        "written AND the objects have already moved, so they belong to a "
+        "different state of the tree than anything measured from them would "
+        "be attributed to."),
+    2: ("its patch state has NEVER been established -- there is no manifest "
+        "in this build tree at all."),
+    3: ("the patcher PAIRING IS VACUOUS, so a green light from it would carry "
+        "no information about the population it claims to cover."),
+}
+
+_DEFAULT_REFUSAL = (
+    "its objects are not a verified fixed point of the post-compile patchers, "
+    "so every symbol name, storage class and relocation in them describes raw "
+    "compiler output. A diff taken here reads LOW and one-directional "
+    "(measured -2.006 pp of unit matched_code, and one 400-byte function "
+    "100.0 -> 99.7, on ONE object)."
+)
+
+
+def _refusal_headline(rc: int) -> str:
+    return _REFUSAL_HEADLINES.get(rc, _DEFAULT_REFUSAL)
+
+
 def ensure_patched_tree(project_dir: Path | str, *, build: bool = True) -> str:
     """Bring `project_dir`'s object tree to the post-compile fixed point.
 
@@ -220,21 +292,40 @@ def ensure_patched_tree(project_dir: Path | str, *, build: bool = True) -> str:
         ) from None
 
     if proc.returncode != 0:
-        remedy = (
-            "Run `./tools/ninja-locked` in that directory, then retry."
-            if not build else
-            "`post-compile` ran and the tree STILL does not match its "
-            "manifest -- that is a regression of the build graph itself, not "
-            "a stale tree."
-        )
+        if not build:
+            remedy = "Run `./tools/ninja-locked` in that directory, then retry."
+        elif proc.returncode == 6:
+            # ⚠ The one case where "the build graph has regressed" would be a
+            # WRONG accusation.  `post-compile` re-emits the manifest only if
+            # it does work, and ninja is blind to some build inputs by design
+            # -- measured: a splits.txt CONTENT change produces 0 ninja edges,
+            # and a source file no TU compiles or includes produces none
+            # either.  So a build that legitimately did nothing leaves the
+            # manifest describing the older inputs.
+            remedy = (
+                "`post-compile` ran and the inputs STILL disagree. If that "
+                "build reported `no work to do`, then by the build system's "
+                "own dependency knowledge these objects ARE current and the "
+                "changed inputs are ones no compile edge consumes -- re-"
+                "baseline with `python3 scripts/verify_objs_patched.py "
+                "--check --emit`, which re-verifies the patch fixed point "
+                "before recording the new input state.\n"
+                "⛔ Run that ONLY after a full build reports no work. Running "
+                "it over a tree that genuinely owes compiles records stale "
+                "objects as the reference state and restores the exact blind "
+                "spot this check exists to close.\n"
+                "If a config pin moved, the split is ninja-invisible: "
+                "`touch config/<version>/config.yml` first."
+            )
+        else:
+            remedy = (
+                "`post-compile` ran and the tree STILL does not match its "
+                "manifest -- that is a regression of the build graph itself, "
+                "not a stale tree."
+            )
         raise UnpatchedTreeError(
-            f"REFUSING TO MEASURE {project_dir}: its objects are not a "
-            f"verified fixed point of the post-compile patchers, so every "
-            f"symbol name, storage class and relocation in them describes raw "
-            f"compiler output. A diff taken here reads LOW and "
-            f"one-directional (measured -2.006 pp of unit matched_code, and "
-            f"one 400-byte function 100.0 -> 99.7, on ONE object).\n\n"
-            f"{_tail(proc.stderr) or _tail(proc.stdout)}\n\n{remedy}"
+            f"REFUSING TO MEASURE {project_dir}: {_refusal_headline(proc.returncode)}"
+            f"\n\n{_tail(proc.stderr) or _tail(proc.stdout)}\n\n{remedy}"
         )
 
     notes.append((proc.stdout or proc.stderr or "").strip() or "patch state verified")
