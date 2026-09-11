@@ -545,7 +545,14 @@ void DrawAccessories<LensExtract>(
 
 void SpotlightDrawer::DrawWorld() {
 #ifdef HX_NATIVE
-    // NgStats has no mSpotlights in RB3 retail (DC3-newer field); track natively.
+    // CORRECTED (lane W6-C): RB3 retail DOES have NgStats::mSpotlights, at
+    // 0x34 -- retail's overlay prints it as "spotlights %d" (string @0x8219B770,
+    // one occurrence in band.exe), and NgRnd::UpdateOverlay reads 0x34 for it.
+    // See src/system/rndobj/Stats_NG.h. What is still unknown is WHERE retail
+    // updates it: this function is NOT the site -- retail's DrawWorld
+    // @0x824D7C18 opens straight on the sLights/sCans emptiness test with no
+    // NgStats access at all -- so the running max stays a native-only static
+    // here until the real update site is identified.
     static int sSpotlightStat = 0;
     int numLights = sLights.size();
     if (numLights < sSpotlightStat) {
