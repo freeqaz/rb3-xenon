@@ -32,33 +32,68 @@
 # scripts/unicorn_runner/unicorn_dep.py. The seven entries below are what those
 # 45 were HIDING.
 
-# ── scripts/unicorn_runner/tests ──────────────────────────────────────────────
+# ── HOW THIS FILE IS KEPT HONEST ──────────────────────────────────────────────
+#
+# CI runs `scripts/test_tools.py --ci --strict-manifest`, and --strict-manifest
+# makes a STALE entry — one listed here that now PASSES — a BUILD FAILURE. So an
+# entry cannot outlive the breakage it records: whoever fixes the test must
+# delete its line in the same change, or CI stays red. That is the whole
+# maintenance protocol, and it is enforced rather than advertised.
+#
+# The alternative was to let stale entries be merely *reported*, which is what
+# this file did until 2026-09-11 — and it had rotted: SIX of its seven entries
+# had started passing and nobody had pruned them (lane TESTCI). A printed
+# warning nobody acts on is the rotting gate this repo keeps finding.
+#
+# ⚠ CONSEQUENCE, ACCEPTED DELIBERATELY: an entry for a test that is red in one
+# environment and green in another is stale *somewhere* and therefore fatal
+# *somewhere*. Do NOT record that class here — use CI_DESELECT in
+# scripts/test_tools.py, which is not judged in either environment.
 
-# [drift] classify_divergence's taxonomy and the tests' expectations disagree,
-# and they disagree in ONE direction: the tests assert the coarse two-value
-# vocabulary ("logic" / "build_env") while the shipped comparator returns the
-# refined ~20-value one it grew ("merged_call", "call_count", "error",
-# "fpr_precision", "merged_arg", ...). Both files arrived in the same commit
-# (06022df7, "port DC3 behavioral-probe harness for TU5 divergence probing"), so
-# these six have never passed in this repo — the ported test file is an older
-# revision than the ported code. The fix is to update the expectations to the
-# shipped enum, which needs someone who knows which of the fine-grained classes
-# each case is meant to land in; it is NOT a code bug.
-#   expects build_env, gets merged_call
-scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_build_env_call_count_merged
-#   expects build_env, gets merged_arg
-scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_build_env_merged_symbol_warning
-#   expects logic, gets call_count
-scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_logic_call_count_no_merged
-#   expects logic, gets error
-scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_logic_decomp_error
-#   expects logic, gets error
-scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_logic_error_mismatch
-#   expects logic, gets fpr_precision
-scripts/unicorn_runner/tests/test_comparator.py::TestClassifyDivergence::test_logic_fpr_mismatch
+# ── scripts/unicorn_runner/tests ──────────────────────────────────────────────
+#
+# ⛔ REMOVED 2026-09-11 (lane TESTCI): the six
+# test_comparator.py::TestClassifyDivergence entries — test_build_env_call_count_merged,
+# test_build_env_merged_symbol_warning, test_logic_call_count_no_merged,
+# test_logic_decomp_error, test_logic_error_mismatch, test_logic_fpr_mismatch.
+#
+# They recorded classify_divergence's taxonomy disagreeing with the tests'
+# expectations (the coarse "logic"/"build_env" vocabulary vs the refined
+# ~20-value one the comparator grew). That disagreement is GONE: the whole
+# TestClassifyDivergence class now passes, 13/13, measured directly and
+# confirmed by the runner reporting all six as STALE on both a built tree and a
+# pristine checkout. Somebody reconciled the expectations and did not prune the
+# list — exactly the rot the --strict-manifest rule above now prevents.
 
 # [drift] same commit, same shape, different module: the test asserts the string
 # "Equiv fills:" appears in format_probe_result's output; prober.py:454 now
 # writes "  Runs: N (x equiv, y div, z err)" instead. A display-string
 # expectation the formatter moved past.
 scripts/unicorn_runner/tests/test_prober.py::TestFormatProbeResult::test_format_input_sensitive
+
+# ── tools ─────────────────────────────────────────────────────────────────────
+
+# [drift] A FLOOR assertion over a LIVE DATA FILE that map lanes legitimately
+# shrink. The test reads the committed scripts/target_symbol_map.json and
+# asserts `claimed_by_grain["bijection_arbitrary"] >= 939`; the population is
+# now 929. Measured 2026-09-11 (lane TESTCI) identically on two different
+# revisions of the map — 656bb7b9 and a93d7a93 — so this is a real repo-wide
+# red, not one worktree's drift. The sibling floor (icf_arbitrary >= 28) is
+# still satisfied at 31.
+#
+# It is [drift], not [bug]: 929 < 939 is what legitimate map repair LOOKS like.
+# Removing a wrong name is the documented, paid-for work of the map lanes
+# (docs: map/name economics — a wrong name is financed by its callers), and
+# recent commits on main are exactly that (DataInt back to retail,
+# StringMatchesFilter restored, Object::AddRef/Release named from retail bytes).
+# The floor was written against a population those lanes then reduced.
+#
+# ⚠ THE COST OF THIS ENTRY, STATED PLAINLY: while it is listed, CI will NOT
+# catch a further shrink of this population, including one that is a genuine
+# regression. That is a real hole and the reason to close it soon.
+#
+# FIX = re-derive the floor and edit the assertion in
+# tools/test_comdat_retail_verify.py, then delete this line. NOT done here: that
+# file belongs to the map/alias lanes, which were live in this tree while this
+# lane ran, and scripts/target_symbol_map.json was explicitly off-limits.
+tools/test_comdat_retail_verify.py::test_the_real_map_populations_are_bound_as_floors
