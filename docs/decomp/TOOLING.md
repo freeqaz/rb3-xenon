@@ -231,18 +231,30 @@ list, re-run it after `scripts/prune_orphan_asm.py` before believing it.
    so objdiff can pair target↔base **by name**. Without a map entry, a pinned game
    TU reads a false 0%.
 
-**post-compile** (5 steps, on OUR compiled objs, **serialized** via stamp chaining —
-each stamp is an implicit input of the next, because all five read-modify-write the
-same obj set and concurrent runs lose each other's writes):
+**post-compile** (**6 steps**, on OUR compiled objs, **serialized** via stamp chaining —
+each stamp is an implicit input of the next, because the first five read-modify-write
+the same obj set and concurrent runs lose each other's writes):
 2. `obj_anon_ns_patcher.py` — anonymous-namespace hashes (MSVC derives them from
    machine name + source path)
 3. `obj_dynamic_init_patcher.py` — `??__E` dynamic initializers STATIC→EXTERNAL
 4. `obj_guard_patcher.py` — `$S` → `??_B` static-init guards
 5. `obj_bool_mangle_patcher.py` — bool back-reference mangling
 6. `obj_atexit_scope_patcher.py` — `??__F` atexit scope counters (fuzzy)
+7. `obj_eh_boundary_patcher.py` — EH-funclet extent boundaries. **LAST in the chain
+   deliberately**: it only *appends* a boundary symbol and never renames one, so it
+   cannot disturb the five name-rewriting passes above.
+
+⚠ **This list said "5 steps" and omitted #7 until lane PATCH-LIVE (2026-09-11).**
+`obj_eh_boundary_patcher.py` was added after the list was written, and the same
+omission was live in `CLAUDE.md` and in `configure.py`'s own chain comment ("The
+five obj patchers…") at the same time — i.e. every place that names the chain
+undercounted it, so nothing cross-checked anything. The count is load-bearing:
+`verify_objs_patched.py --check` exists specifically to catch "someone added a
+seventh patcher and forgot the edge", and a reader auditing that guarantee against
+a five-item list is auditing the wrong chain.
 
 **NOT wired** (enable per-function by hand): `obj_regswap_patcher.py`,
-`obj_transplant_patcher.py`. This matches CLAUDE.md's claim exactly.
+`obj_transplant_patcher.py`.
 
 ---
 

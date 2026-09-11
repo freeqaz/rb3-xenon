@@ -743,7 +743,11 @@ config.custom_build_steps = {
             },
         },
     ],
-    # The five obj patchers each read-modify-write the SAME build/**/*.obj
+    # The SIX obj patchers (this comment said "five" until lane PATCH-LIVE,
+    # 2026-09-11 -- obj_eh_boundary_patcher was added below without updating
+    # it, and CLAUDE.md + docs/decomp/TOOLING.md undercounted identically, so
+    # no site cross-checked any other).  The first FIVE each read-modify-write
+    # the SAME build/**/*.obj
     # set, so they MUST be serialized: with only `order_only: all_source`
     # ninja runs them concurrently, and a reader can catch a file another
     # patcher is rewriting (transient truncation -> parse crash), or two
@@ -808,7 +812,14 @@ config.custom_build_steps = {
             ],
             "variables": {
                 "cmd": "python3 scripts/obj_guard_patcher.py --batch --apply",
-                "desc": "PATCH $S guard variables to match ??_B naming",
+                # `$$S` -> ninja renders `$S`.  A BARE `$S` here is a ninja
+                # ESCAPE SEQUENCE: ninja ate it and the build printed
+                # "PATCH  guard variables ...", deleting the very token that
+                # names the pass.  Found by lane PATCH-LIVE when a harness
+                # matching this description reported the guard edge as never
+                # having run -- a false negative on a string the build does
+                # not emit.
+                "desc": "PATCH $$S guard variables to match ??_B naming",
             },
         },
         {
