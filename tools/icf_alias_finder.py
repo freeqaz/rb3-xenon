@@ -315,6 +315,10 @@ REFUSAL_REASONS = {
         "no compiled objs were indexed under build/45410914/src",
     "INCOMPLETE_COMPILED_INDEX":
         "objdiff.json names base objs that the compiled-obj scan did not reach",
+    "STALE_TREE":
+        "the build tree is not a verified fixed point of the six post-compile "
+        "patchers, which ARE part of the ruler -- so this classification would "
+        "describe the BUILD STATE, not the alias data",
 }
 
 
@@ -377,7 +381,64 @@ def cmd_validate(args=None) -> int:
     compiled = compiled_obj_symbol_index(compiled_paths)
     target_objs = target_obj_symbol_index()
 
+    # ── FRESHNESS PRECONDITION ────────────────────────────────────────────────
+    # This gate reads the COMPILED and TARGET objs on disk, and the six
+    # post-compile patchers are PART OF THE RULER.  On a tree whose patchers did
+    # not run, the classification describes the BUILD STATE rather than the
+    # alias data -- exactly what `preconditions()` already refuses for other
+    # reasons.
+    #
+    # Measured 2026-09-10, and this is why the check exists: on a drifted `main`
+    # this gate's split moved (STALE_SPELLING 82 -> 88, map-consistent
+    # 1370 -> 1364) with NO map change and NO alias change, then returned to
+    # EXACTLY 82 / 1370 once the tree was settled -- a pre-registered prediction
+    # confirmed to the digit.  The VERDICT (0 contradicted) held both times; the
+    # SUB-COUNTS did not, and nothing warned anyone.
+    #
+    # need_report=False ON PURPOSE: cmd_validate never reads report.json (only
+    # cmd_scan/cmd_report do, at :613 and :677), so the report-mtime and
+    # tool-identity axes would refuse for reasons this gate does not depend on
+    # -- and this runs in CI, where a false refusal is worse than no check.
+    #
+    # It is NOT inside preconditions(): that is driven by FROZEN fixtures in
+    # --selftest, and reaching the real filesystem from there would make a
+    # hermetic test environment-dependent.
+    stale_detail = None
+    sys.path.insert(0, str(PROJECT_ROOT))
+    try:
+        from scripts.analysis import freshness
+    except ImportError:
+        freshness = None          # helper absent: do not manufacture a refusal
+    if freshness is not None:
+        # Probe with allow_stale=False ALWAYS, so we learn whether the tree is
+        # actually stale, and only then decide what --allow-stale means.
+        #
+        # The obvious shape -- passing allow_stale straight through -- printed
+        # "freshness refusal OVERRIDDEN" on a HEALTHY tree, i.e. the banner
+        # asserted an override that never happened. It was caught by a test of
+        # mine that was itself vacuous: a concurrent repair had already settled
+        # the tree, so the override path was never exercised and the run
+        # returned exactly the expected output for entirely the wrong reason.
+        note = None
+        try:
+            note = freshness.ensure_measurable(
+                PROJECT_ROOT, need_report=False, allow_stale=False,
+                consumer="icf alias validate")
+        except freshness.StaleTreeError as exc:
+            if getattr(args, "allow_stale", False):
+                print("!! --allow-stale: a REAL freshness refusal was "
+                      "OVERRIDDEN. The sub-counts below may describe the "
+                      "BUILD STATE, not the alias data:", file=sys.stderr)
+                print(f"   {exc}", file=sys.stderr)
+                note = "OVERRIDDEN by --allow-stale (tree is NOT measurable)"
+            else:
+                stale_detail = str(exc)
+        if note:
+            print(f"== freshness == {note}", file=sys.stderr)
+
     refusals = preconditions(groups, target_objs, compiled_paths, base_paths)
+    if stale_detail:
+        refusals.insert(0, ("STALE_TREE", stale_detail))
     if refusals:
         print("REFUSING: the instrument does not have its inputs -- a verdict here "
               "would describe the BUILD/DATA STATE, not the alias data.",
@@ -731,6 +792,10 @@ def main() -> int:
     ap.add_argument("--json", default=None, help="write the --validate classification to PATH")
     ap.add_argument("--selftest", action="store_true",
                     help="prove each --validate precondition can fire (frozen fixtures)")
+    ap.add_argument("--allow-stale", action="store_true",
+                    help="override the freshness refusal, with a loud banner. For "
+                         "deliberate analysis of a known-stale tree ONLY -- never "
+                         "in CI, and never to get past a refusal you did not read")
     args = ap.parse_args()
     if args.selftest:
         return _selftest()
