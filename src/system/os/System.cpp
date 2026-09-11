@@ -114,9 +114,12 @@ Symbol PlatformSymbol(Platform pform) {
 bool UsingCD() { return gUsingCD; }
 void SetUsingCD(bool b) { gUsingCD = b; }
 
-DataArray *SystemConfig() { return gSystemConfig; }
-
 #ifdef HX_NATIVE
+// SystemConfig() lives in Debug.cpp for the X360 match build: retail places
+// it at 0x8250FEF8 between SetUsingCD and the SystemConfig(Symbol...) overloads,
+// i.e. inside Debug.cpp's TU (lane W3-A, 2026-09-11). The native build keeps
+// its copy here because Debug.cpp's block is #ifndef HX_NATIVE.
+DataArray *SystemConfig() { return gSystemConfig; }
 // A missing config section is FATAL on X360 by design: DataArray::FindArray's
 // fail=true path MILO_FAILs and returns null, and the caller dereferences it
 // immediately -- which is fine there, because the shipped merged config always

@@ -677,7 +677,9 @@ DEF_DATA_FUNC(DataLocalize) {
 }
 
 DEF_DATA_FUNC(DataLocalizeSeparatedInt) {
-    return LocalizeSeparatedInt(array->Int(1), TheLocale);
+    // retail calls the 1-arg overload (?LocalizeSeparatedInt@@YAPBDH@Z), as rb3-Wii does;
+    // the 2-arg form is DC3-newer (lane W3-A, 2026-09-11)
+    return LocalizeSeparatedInt(array->Int(1));
 }
 
 DEF_DATA_FUNC(DataLocalizeFloat) { return LocalizeFloat(array->Str(1), array->Float(2)); }
