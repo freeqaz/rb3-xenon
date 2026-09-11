@@ -113,6 +113,17 @@ SCRIPT_ARM: list[dict] = [
     # that file's header for the `.pyc` staleness trap this class of harness
     # falls into.
     {"path": "scripts/sabotage_obj_pairing.py", "timeout": 300},
+    # The negative control for scripts/orchestrator/test_project_dir_guard.py:
+    # it restores the main-repo fallback (and six sibling defects) in an
+    # extracted SANDBOX copy of mcp_server.py's guard region and requires the
+    # named test to go red for each, plus a NULL arm that must break nothing.
+    # Registered here for the same reason as its sibling above: it is the only
+    # thing that proves those assertions can fail, and a control run once by
+    # hand and never again is not a control.
+    #
+    # Safe next to a build fleet: it never writes to the checkout (the sandbox
+    # is a fresh temp dir per arm) and it does not build.
+    {"path": "scripts/sabotage_project_dir_guard.py", "timeout": 300},
 ]
 
 # ── deliberate exclusions ─────────────────────────────────────────────────────
