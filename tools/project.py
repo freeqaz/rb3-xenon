@@ -518,7 +518,6 @@ def generate_build_ninja(
     # drift out of step with the edge's declared implicit inputs.
     icf_map_path = build_path / "icf_aliases.map"
     icf_map_checked = build_path / "icf_aliases_checked.stamp"
-    icf_map_purged = build_path / "icf_aliases_cache_purged.stamp"
     # Global NAME-injectivity assertion over scripts/target_symbol_map.json.
     # Same shape and same neighbourhood as icf_alias_map_checked because it is
     # the same class of defect one file over; see its edge below.
@@ -1548,6 +1547,51 @@ def generate_build_ninja(
         )
 
         ###
+        # OPT-IN: `ninja guards` -- a local caller for the CI-ONLY guards.
+        #
+        # NOTHING DEPENDS ON THIS EDGE, deliberately. It is not an input of
+        # `all_source`, of report.json, or of `progress` (the default target,
+        # set by n.default() further down). Two of the guards it runs are slow
+        # -- the native gate builds 18 targets, and the symbols.txt fixpoint
+        # guard FORCES its own re-split -- and a guard that makes every build
+        # slower is a guard someone turns off.
+        #
+        # The gap it closes (lane GATE-DISC, 2026-09-11): all eight CI guards
+        # had ZERO build.ninja references, while the six in-graph check stamps
+        # are ALSO exercised by CI. So the in-graph half was checked twice and
+        # the CI half only ever ran on a push -- meaning a local agent never ran
+        # `tools/icf_alias_finder.py --validate`, the only defence of
+        # scripts/symbol_aliases.json. Under the shipped name_check ruler an
+        # alias is pure forgiveness, so an unproven one lifts matched_code BY
+        # CONSTRUCTION and the `none` control cannot catch it; it is the one
+        # data file here where "the score went up" is not evidence of anything.
+        #
+        # `always` as an implicit input + a stamp output: the edge must re-run
+        # on every invocation (a guard skipped because its stamp looks fresh is
+        # not a guard), and the stamp exists only so ninja has an output to own.
+        # `pool = console` so the slow guards stream instead of buffering to the
+        # end. The runner itself owns all per-guard rc semantics -- notably the
+        # --self-break polarity (rc=0 == the proof SUCCEEDED), the exit-2
+        # "could not run" class, and the native gate's 0-SKIP rule.
+        ###
+        guards_script = Path("tools") / "run_ci_guards.sh"
+        guards_stamp = build_path / "ci_guards.stamp"
+        n.comment("Run the CI-only guards locally (opt-in: `ninja guards`)")
+        n.rule(
+            name="ci_guards",
+            command=f"{guards_script} --version {config.version} && touch $out",
+            description="RUN CI GUARDS",
+            pool="console",
+        )
+        n.build(
+            outputs=str(guards_stamp),
+            rule="ci_guards",
+            implicit=[str(guards_script), "always"],
+        )
+        n.build(outputs="guards", rule="phony", inputs=str(guards_stamp))
+        n.newline()
+
+        ###
         # *** THE RENDERED ICF-ALIAS MAP IS AN INPUT OF THE REPORT. ***
         # objdiff.json names `map_file` -> build/<version>/icf_aliases.map, and
         # that map -- not scripts/symbol_aliases.json -- is the file objdiff reads
@@ -1561,14 +1605,15 @@ def generate_build_ninja(
         # are deliberately identical in shape here; dc3's copy of this comment is
         # in its own tools/project.py.
         #
-        # THREE edges, because one of them cannot see everything:
+        # TWO edges, because one of them cannot see everything. (There were
+        # THREE until 2026-09-11: an `icf_alias_map_purge` edge rm'd the report
+        # cache sidecars on a map change. objdiff's cache key covers the map
+        # itself now, so that edge was measured redundant and removed -- see the
+        # tombstone below, which carries the reproduction.)
         #
         #   icf_alias_map          renders the map when the JSON or the generator
         #                          is newer. This is the edge that makes "edit the
         #                          JSON, run ninja" sufficient.
-        #   icf_alias_map_purge    invalidates the report caches when the map's
-        #                          CONTENT moved -- see its own comment below,
-        #                          which is the same defect one layer down.
         #   icf_alias_map_checked  re-derives the map content and FAILS THE BUILD
         #                          if the file on disk disagrees. It runs on every
         #                          build (`always`) because the three ways this map
@@ -1794,59 +1839,59 @@ def generate_build_ninja(
         )
 
         ###
-        # BELT AND BRACES: purge the report-cache sidecars when the alias map
-        # moves. As of 2026-08-13 this edge is REDUNDANT, and it stays anyway.
+        # TOMBSTONE (lane CLEANUP, 2026-09-11): there was an
+        # `icf_alias_map_purge` edge here. It ran
+        # `rm -f build/<v>/report.cache build/<v>/baseline.cache && touch $out`
+        # whenever the rendered alias map's bytes moved, and it was an implicit
+        # input of report.json. It is GONE, and this is why.
         #
-        # The history it was built for: `report generate -o X.json` writes a
-        # sidecar `X.cache` and seeds the next run from it, and its key used to be
-        # `ReportCache::hash_unit` (objdiff-cli/src/cmd/report.rs) over the target
-        # obj bytes, the base obj bytes, the `-c` args, and the project/unit
-        # `options` blocks -- with `map_file`, and the CONTENT of the map it names,
-        # in none of them. So making the map an input of the report edge was
-        # necessary and NOT sufficient: measured on dc3 2026-08-12, with that input
-        # wired, editing the alias JSON re-rendered the map, re-ran REPORT, and
-        # report.json still served the pre-change answer out of cache -- the
-        # original defect one layer down. This repo paid for it too: see the
-        # CORRECTED note on the `name_check` figures below, whose stale read came
-        # out of exactly this sidecar.
+        # The defect it was built for was real: `report generate -o X.json`
+        # writes a sidecar `X.cache` and seeds the next run from it, and its key
+        # (`ReportCache::hash_unit`, objdiff-cli/src/cmd/report.rs) used to cover
+        # the target obj bytes, the base obj bytes and the `options` blocks --
+        # with `map_file`, and the CONTENT of the map it names, in NONE of them.
+        # So making the map an input of the REPORT edge was necessary and not
+        # sufficient: on dc3 2026-08-12, with that input wired, editing the alias
+        # JSON re-rendered the map, re-ran REPORT, and report.json still served
+        # the pre-change answer. A +198-complete-function change measured as +0.
         #
-        # THE UPSTREAM FIX LANDED. The objdiff fork now folds the map file's
-        # content hash -- and the resolved diff config, and the objdiff-cli
-        # binary's own xxh3 -- into the cache key, and every generated report
-        # carries a `provenance` block naming all three plus `cache_hits`. A stale
-        # entry can no longer be served under a changed map. So the purge below can
-        # no longer be the thing that saves a measurement.
+        # The upstream fix landed 2026-08-13: hash_unit now folds the map file's
+        # content hash (plus the resolved diff config and objdiff-cli's own xxh3)
+        # into EVERY unit key. The purge edge has been dead code since.
         #
-        # Kept regardless, for two reasons: it costs one `rm -f` on a rebuild that
-        # only fires when the RENDERED map bytes actually changed (the generator
-        # writes only on change, with `restat` above), so a touched-but-identical
-        # JSON still costs nobody a re-diff; and it keeps the build correct against
-        # an older objdiff-cli, which this repo does not pin. That second reason is
-        # weaker than it was: as of 2026-08-13 every objdiff-cli path in this repo
-        # (`bin/`, `build/tools/`, `build/tools/release/`) is a symlink onto the one
-        # shared build, so reaching an older binary now takes a deliberate act
-        # rather than a path choice. Measurement code stays; a redundant guard is
-        # cheap.
+        # REMOVING it needs more than reading that source, because a mechanism
+        # present in a file is not a property of the shipped binary, and the
+        # obvious 3-leg experiment is VACUOUS if the cache is not actually live
+        # at the path under test -- every leg then reads cold and "proves"
+        # invalidation that never happened. So the reproduction carries a CONTROL
+        # leg. Measured here at 3ab3f494 on ONE cache file, the purge edge never
+        # firing (objdiff-cli driven by hand), 1,591 alias groups:
+        #
+        #   leg 1a  real map, cold cache    0 hits / 3086 misses  3,834,712 B
+        #   leg 1b  real map AGAIN          3086 HITS / 0 misses  3,834,712 B  <- CONTROL
+        #   leg 2   map EMPTIED             0 hits / 3086 misses  3,007,800 B
+        #   leg 3   real map restored       3086 HITS / 0 misses  3,834,712 B  EXACTLY
+        #
+        # Leg 1b is what makes the rest mean anything: the cache demonstrably
+        # serves this path, so leg 2's total miss is the MAP CHANGE invalidating
+        # the key and nothing else. Leg 3 returning to leg 1's value to the byte
+        # -- while HITTING -- is the stronger half: the emptied-map run did not
+        # displace the real-map entries, so both keyings coexist in one cache
+        # file, which happens only if the map hash is IN the key.
+        #
+        # Then the same property end-to-end THROUGH NINJA with the edge already
+        # removed (the only form that actually protects anyone): emptying
+        # scripts/symbol_aliases.json and running `ninja` moved report.json, and
+        # restoring it returned every measure to its exact prior value. Numbers
+        # in the lane's commit message.
+        #
+        # ⚠ If you are re-adding this edge, measure first. It was kept once "for
+        # an older objdiff-cli, which this repo does not pin" -- but every
+        # objdiff-cli path here (`bin/`, `build/tools/`, `build/tools/release/`)
+        # is a symlink onto one shared build, so reaching an older binary takes a
+        # deliberate act. A cache that ignores the map would show up as leg 2
+        # HITTING; that is the one observation that would bring this edge back.
         ###
-        n.comment("Purge report caches on an alias-map change "
-                  "(redundant since the upstream map-keyed cache landed)")
-        icf_purge_targets = " ".join(
-            str(p.with_suffix(".cache"))
-            # `baseline.json` by literal name: it is defined further down, and it
-            # gets the same treatment as the report's.
-            for p in (report_path, build_path / "baseline.json")
-        )
-        n.rule(
-            name="icf_alias_map_purge",
-            command=f"rm -f {icf_purge_targets} && touch $out",
-            description="PURGE REPORT CACHE (alias map changed)",
-        )
-        n.build(
-            outputs=str(icf_map_purged),
-            rule="icf_alias_map_purge",
-            implicit=[str(icf_map_path)],
-        )
-        n.newline()
 
         # Generate progress report
         ###
@@ -1879,7 +1924,7 @@ def generate_build_ninja(
         # a read-only pass over one JSON.
         report_implicit: List[str | Path] = [
             objdiff, "objdiff.json", "all_source",
-            str(icf_map_path), str(icf_map_purged),
+            str(icf_map_path),
             str(mapinj_checked), str(renamed_checked),
             # ... and on the split-currency check, because the TARGET side of
             # every diff in this report is written by an edge that declares
@@ -2232,7 +2277,7 @@ def generate_objdiff_config(
         # the `.cache` sidecar, which had units in it diffed under an older
         # configuration -- at the time the key covered neither `map_file` nor the
         # binary (as of 2026-08-13 it covers both, plus the resolved config; see
-        # the icf_alias_map_purge edge above), and the alias set is 1,440 groups
+        # the purge-edge TOMBSTONE above), and the alias set is 1,440 groups
         # today. Re-measured on this tree with the caches purged, on pinned
         # objdiff main 745b7e3, and independently reproduced by the build's own
         # objdiff after the purge edge fired: none 42.220000% (4,357,396 B,
@@ -2325,7 +2370,7 @@ def generate_objdiff_config(
     # This render is the BOOTSTRAP ONLY. It is NOT what keeps the map fresh:
     # configure runs only when configure.py, this file, or a config/ input
     # changes, and scripts/symbol_aliases.json is none of those. The
-    # `icf_alias_map` / `icf_alias_map_purge` / `icf_alias_map_checked` edges
+    # `icf_alias_map` / `icf_alias_map_checked` edges
     # above own freshness; the design comment there is the one place per repo
     # this rule is written down.
     icf_map = config.build_dir / config.version / "icf_aliases.map"
