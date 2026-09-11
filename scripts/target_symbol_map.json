@@ -10325,7 +10325,7 @@
  "0x82516fc0": "??0?$_Vector_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VString@@@1@@Z",
  "0x82517020": "?OnSynchProc@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82517058": "?OnFileRoot@@YA?AVDataNode@@PAVDataArray@@@Z",
- "0x82517090": "?OnFileGetExt@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82517090": "?OnFileGetDrive@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x825171b0": "?OnFileMatch@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82517208": "?OnFileAbsolutePath@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82517268": "?OnWithFileRoot@@YA?AVDataNode@@PAVDataArray@@@Z",
@@ -30197,5 +30197,10 @@
  "0x82c43540": "??__E?m_regProps@?$CSampleXAPOBase@VHeadsetPlaybackEffect@@UHeadsetPlaybackEffectParams@@@ATG@@0UXAPO_REGISTRATION_PROPERTIES@@A@@YAXXZ",
  "0x82c435d0": "??__E?m_regProps@?$CSampleXAPOBase@VEnvelopeGenerator@@UEnvelopeGeneratorParams@@@ATG@@0UXAPO_REGISTRATION_PROPERTIES@@A@@YAXXZ",
  "0x82c43660": "??__E?m_regProps@?$CSampleXAPOBase@VPitchShiftEffect@@UPitchShiftEffectParams@@@ATG@@0UXAPO_REGISTRATION_PROPERTIES@@A@@YAXXZ",
- "0x82c436f0": "??__E?m_regProps@?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@0UXAPO_REGISTRATION_PROPERTIES@@A@@YAXXZ"
+ "0x82c436f0": "??__E?m_regProps@?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@0UXAPO_REGISTRATION_PROPERTIES@@A@@YAXXZ",
+ "0x825170d8": "?OnFileGetPath@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82517120": "?OnFileGetBase@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82517168": "?OnFileGetExt@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82516680": "FileGetDrive",
+ "0x825167a8": "FileGetName"
 }

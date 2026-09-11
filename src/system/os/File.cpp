@@ -147,8 +147,13 @@ const char *FileGetDriveBuf(const char *iFilepath, char *oBuf) {
 
 const char *FileGetDrive(const char *file) {
     static char drive[256];
-    MainThread();
-    return FileGetDriveBuf(file, drive);
+    const char *p = strchr(file, ':');
+    if (p != 0) {
+        strncpy(drive, file, p - file);
+        drive[p - file] = '\0';
+    } else
+        drive[0] = '\0';
+    return drive;
 }
 
 const char *FileGetPathBuf(const char *file, char *path) {
@@ -175,8 +180,25 @@ const char *FileGetPathBuf(const char *file, char *path) {
 
 const char *FileGetPath(const char *file) {
     static char static_path[256];
-    MainThread();
-    return FileGetPathBuf(file, static_path);
+    char *p2;
+    if (file != 0) {
+        strcpy(static_path, file);
+        p2 = static_path + strlen(static_path);
+        p2--;
+        while (p2 >= static_path && *p2 != '/' && *p2 != '\\') {
+            p2--;
+        }
+        if (p2 >= static_path) {
+            if ((p2 == static_path) || (p2[-1] == ':'))
+                p2[1] = '\0';
+            else
+                *p2 = '\0';
+            return static_path;
+        }
+    }
+    *static_path = '.';
+    static_path[1] = '\0';
+    return static_path;
 }
 
 const char *FileGetBaseBuf(const char *file, char *base) {
@@ -195,8 +217,17 @@ const char *FileGetBaseBuf(const char *file, char *base) {
 
 const char *FileGetBase(const char *file) {
     static char my_path[256];
-    MainThread();
-    return FileGetBaseBuf(file, my_path);
+    const char *dir;
+    char *ext;
+    dir = strrchr(file, '/');
+    if ((dir != 0) || (dir = strrchr(file, '\\'), (dir != 0)))
+        strcpy(my_path, dir + 1);
+    else
+        strcpy(my_path, file);
+    ext = strrchr(my_path, '.');
+    if (ext != 0)
+        *ext = 0;
+    return my_path;
 }
 
 const char *FileGetExt(const char *root) {
@@ -212,15 +243,13 @@ const char *FileGetExt(const char *root) {
 }
 
 const char *FileGetName(const char *file) {
-    const char *dir;
-    dir = strrchr(file, '/');
-    if (dir == 0) {
-        dir = strrchr(file, '\\');
-        if (dir == 0) {
-            return file;
-        }
-    }
-    return dir + 1;
+    static char path[256];
+    const char *dir = strrchr(file, '/');
+    if ((dir != 0) || (dir = strrchr(file, '\\'), (dir != 0)))
+        strcpy(path, dir + 1);
+    else
+        strcpy(path, file);
+    return path;
 }
 
 static bool FileMatchInternal(const char *arg0, const char *arg1, bool arg2) {
@@ -359,24 +388,9 @@ String UniqueFilename(const char *c1, const char *c2) {
     return ret;
 }
 
-DataNode OnFileGetDrive(DataArray *da) {
-    static char drive[256];
-    const char *str = da->Str(1);
-    MainThread();
-    return FileGetDriveBuf(str, drive);
-}
-DataNode OnFileGetPath(DataArray *da) {
-    static char static_path[256];
-    const char *str = da->Str(1);
-    MainThread();
-    return FileGetPathBuf(str, static_path);
-}
-DataNode OnFileGetBase(DataArray *da) {
-    static char my_path[256];
-    const char *str = da->Str(1);
-    MainThread();
-    return FileGetBaseBuf(str, my_path);
-}
+DataNode OnFileGetDrive(DataArray *da) { return FileGetDrive(da->Str(1)); }
+DataNode OnFileGetPath(DataArray *da) { return FileGetPath(da->Str(1)); }
+DataNode OnFileGetBase(DataArray *da) { return FileGetBase(da->Str(1)); }
 DataNode OnFileAbsolutePath(DataArray *da) {
     return FileMakePath(da->Str(1), da->Str(2));
 }
