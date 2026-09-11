@@ -1379,13 +1379,25 @@ if(EXISTS "${MILO_ENGINE_PATH}/src/platform/NativeSettings.h")
 # Deliberately NOT here, with the reason recorded in docs/decomp/NATIVE_HEALTH.md:
 # the 12 platform-only guests (rnddx9 x7 -- the DX9 renderer this build replaces
 # with the Wgpu backend; synth_xbox x3; synth/Mic.cpp; gesture/LiveCameraInput.cpp
-# -- Kinect NUI), meta_band/CriticalUserListener.cpp (double-emits
-# flow/FlowManager.cpp, which char/CharBonesMeshes.cpp already emits -- a
-# multi_host guest, so no standalone-prune can resolve it),
-# meta_band/SongUpgradeMgr.cpp and meta_band/MainHubPanel.cpp (both need a real
-# source decision, see the doc), and bandtrack/GemTrack.cpp (NOT actually
+# -- Kinect NUI), and bandtrack/GemTrack.cpp (NOT actually
 # unlinked -- ui/UIList.cpp already emits it behind a self-defined sentinel that
 # scatter_audit.py cannot see; see tools/scatter_emitted_truth.py).
+#
+# W3-G closed the three that L4 left needing a source decision -- they are wired
+# below, each with its decision recorded at the source site rather than only here:
+#   * MainHubPanel.cpp       -- retail's `Str() != ""` really is a pointer compare
+#                               and really is always true at that site; the bug is
+#                               observable (ClearData() does not reset the motd), so
+#                               native gets the corrected behaviour under HX_NATIVE.
+#   * SongUpgradeMgr.cpp     -- needed the std::hash<Symbol> specialization this
+#                               tree already carries in NextSongPanel.h and
+#                               meta/FixedSizeSaveableStream.h, NOT an stlpmtx_std
+#                               shim (that would compile and then be ignored).
+#   * CriticalUserListener.cpp -- its flow/FlowManager.cpp scatter-include is now
+#                               #if !HX_NATIVE; the direct second host is
+#                               bandtrack/GemManager.cpp (CharBonesMeshes reaches
+#                               FlowManager only through it), and that chain still
+#                               supplies the bodies natively.
 set(L4_SCATTER_WIRE
     # --- src/band3/meta_band (RB3 game layer) --------------------------------
     # AccomplishmentProgress drags net/WebSvcMgr.cpp and AccomplishmentTrainer-
@@ -1399,6 +1411,10 @@ set(L4_SCATTER_WIRE
     ${REPO_ROOT}/src/band3/meta_band/AccomplishmentSongListConditional.cpp
     ${REPO_ROOT}/src/band3/meta_band/AccomplishmentTrainerConditional.cpp
     ${REPO_ROOT}/src/band3/meta_band/AppLabel.cpp
+    # --- W3-G: the three L4 left as "needs a source decision" ----------------
+    ${REPO_ROOT}/src/band3/meta_band/CriticalUserListener.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MainHubPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongUpgradeMgr.cpp
     ${REPO_ROOT}/src/band3/meta_band/SessionUsersProviders.cpp
     ${REPO_ROOT}/src/band3/meta_band/SongSortByPlays.cpp
     ${REPO_ROOT}/src/band3/meta_band/SongSortMgr.cpp
