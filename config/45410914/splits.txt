@@ -2088,23 +2088,23 @@ CharUpperTwist.cpp:
 	.pdata      start:0x821FD278 end:0x821FD2A8
 	.pdata      start:0x821FD2B0 end:0x821FD2D8
 	.pdata      start:0x821FD2E0 end:0x821FD2E8
+	.pdata      start:0x821FD358 end:0x821FD360
 	.pdata      start:0x82206138 end:0x82206180
 	.pdata      start:0x82206180 end:0x82206188
 	.pdata      start:0x82206188 end:0x82206198
 	.pdata      start:0x822061B0 end:0x822061C0
 	.pdata      start:0x822061D8 end:0x822061E0
 	.pdata      start:0x82206200 end:0x82206210
-	.pdata      start:0x8220FD20 end:0x8220FD28
 	.text       start:0x82329FD8 end:0x8232A0F0
 	.text       start:0x8232A12C end:0x8232A3A8
 	.text       start:0x8232A438 end:0x8232A4B0
+	.text       start:0x8232AC50 end:0x8232ACA0
 	.text       start:0x823C69B0 end:0x823C6E30
 	.text       start:0x823C6E30 end:0x823C6E60
 	.text       start:0x823C6E60 end:0x823C6FE8
 	.text       start:0x823C70E8 end:0x823C7204
 	.text       start:0x823C73F8 end:0x823C7558
 	.text       start:0x823C7620 end:0x823C7768
-	.text       start:0x82479100 end:0x82479144
 
 FlowIf.cpp:
 	.pdata      start:0x82206198 end:0x822061B0
@@ -5214,6 +5214,7 @@ system/rndobj/Movie.cpp:
 	.pdata      start:0x8220FCB0 end:0x8220FCB8
 	.pdata      start:0x8220FCB8 end:0x8220FCD0
 	.pdata      start:0x8220FCD0 end:0x8220FD20
+	.pdata      start:0x8220FD20 end:0x8220FD28
 	.pdata      start:0x82213AE8 end:0x82213AF0
 	.text       start:0x82478038 end:0x824781A0
 	.text       start:0x824781A0 end:0x82478420
@@ -5223,6 +5224,7 @@ system/rndobj/Movie.cpp:
 	.text       start:0x82478980 end:0x82478A28
 	.text       start:0x82478A28 end:0x82478B90
 	.text       start:0x82478B90 end:0x82479100
+	.text       start:0x82479100 end:0x82479144
 	.text       start:0x824C5E90 end:0x824C5EC0
 
 MultiMesh.cpp:
@@ -13178,10 +13180,6 @@ system/hamobj/MiniLeaderboardDisplay.cpp:
 	.text       start:0x8231A138 end:0x8231A260
 	.text       start:0x8231A260 end:0x8231A488
 	.text       start:0x8231A488 end:0x8231A4F8
-
-system/rndobj/PostProcMgr.cpp:
-	.pdata      start:0x821FD358 end:0x821FD360
-	.text       start:0x8232AC50 end:0x8232ACA0
 
 system/ui/UIProxy.cpp:
 	.pdata      start:0x82247DD8 end:0x82247EF8
