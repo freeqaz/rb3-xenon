@@ -371,13 +371,16 @@ void Voice::blockingStart(bool b) {
     mState = 3;
 }
 
-// Retail 0x82B64D60 never reads its bool: there is no immediate-stop arm here.
-// The only immediate IXAudio2SourceVoice::Stop (vtable +0x50) in Voice.cpp is
-// the one ~Voice issues inline before dispose().  The parameter is kept
-// because retail's callers still pass it (SampleInst360::StopImpl(bool) is
-// `lwz r3,0x54(r3); b fn_82B64D60`, r4 untouched) and DC3's map spells this
-// ?Stop@Voice@@QAAX_N@Z; dc3's two-arm body is DC3's, not RB3's.
-void Voice::Stop(bool /* immediate -- ignored by retail */) {
+// Retail 0x82B64D60 takes NO parameter: StreamReceiver360::SlipStop
+// (0x82B6C240) calls it with r4 unset (`lwz r3, 0x0(r31); bl fn_82B64D60`),
+// which a `Stop(false)` could not compile to, and SampleInst360::StopImpl's
+// `lwz r3, 0x54(r3); b fn_82B64D60` is a tail call either way.  There is no
+// immediate-stop arm; the only immediate IXAudio2SourceVoice::Stop (slot 0x50)
+// in Voice.cpp is the one ~Voice issues inline before dispose().  DC3's map
+// spells this ?Stop@Voice@@QAAX_N@Z with a two-arm body; that is DC3's.
+// (Lane W3-D kept the bool on the DC3 spelling; lane W4-D removed it on the
+// SlipStop evidence and renamed the map row to ?Stop@Voice@@QAAXXZ.)
+void Voice::Stop() {
     if (mSourceVoice) {
         MILO_ASSERT(mEnvelopeParams, 0x14d);
         *(float *)((int *)mEnvelopeParams + 2) = 1.0f;

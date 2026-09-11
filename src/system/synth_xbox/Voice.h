@@ -24,7 +24,7 @@ public:
     void InitSourceBuffer(XAUDIO2_BUFFER &);
     int GetAddr();
     void SetData(void const *, int, int);
-    void Stop(bool);
+    void Stop(); // retail: NO parameter (see Voice.cpp)
     void InitVoiceParameters(XMA2WAVEFORMATEX &, XAUDIO2_BUFFER);
     void SetSampleRate(int);
     void SetLoopRegion(int, int);
