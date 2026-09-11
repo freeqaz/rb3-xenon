@@ -68,6 +68,75 @@ jobs:
             --binutils /binutils --compilers /compilers
         ninja all_source progress build/${{ matrix.version }}/report.json
 
+    # THE PYTHON TEST SUITES.  Until 2026-09-11 this workflow contained no
+    # `pytest`, no `unittest` and no `test_tools` -- verified by grep, 0 hits
+    # each -- so NOT ONE of this repo's 37 tracked test files ran in CI.  The
+    # eight guards below ran; the test suites did not.  `scripts/test_tools.py`
+    # existed precisely to be that caller and itself had no caller: the same
+    # defect class the guards keep finding (a check nobody invokes), at the
+    # largest scale in the repo.  The single exception was
+    # tools/test_icf_fold_safe.py, run directly by its own step further down.
+    #
+    # WHY HERE, IMMEDIATELY AFTER BUILD -- measured, not assumed.  The lane is
+    # NOT build-independent.  Run against a tracked-files-only export of HEAD
+    # (i.e. exactly what `actions/checkout` leaves), three tests fail that pass
+    # on a built tree: test_container_crossing_criterion needs
+    # build/<v>/report.json, test_verdict_identity drives the real batch_check
+    # (which calls ensure_patched_tree on the live tree), and
+    # scripts/test_split_guard.py exits 1 with "could not find a split edge"
+    # without build.ninja.  Placing this before Build would manufacture four
+    # red suites that are not broken.
+    #
+    # And it goes BEFORE the other guards, not after, because three of them
+    # deliberately PERTURB the tree: the symbols.txt fixpoint guard forces its
+    # own re-split (rewriting symbols.txt and the target objs) and its
+    # `--self-break` leg plants a violation.  Several tests here assert the
+    # tree is a patched FIXED POINT, so running them downstream of that would
+    # make their colour depend on step ordering -- which is not a regression
+    # signal.  A pristine post-Build tree is the one state in this job where
+    # their verdict means what it says.
+    #
+    # `--strict-manifest` IS THE POINT, not a flourish.  scripts/test_tools.py
+    # tolerates a checked-in list of known-bad tests
+    # (scripts/test_tools_known_bad.txt) so that pre-existing breakage is inert
+    # while a NEW failure is loud -- without it this step would be red on day
+    # one and reverted by the first person it blocked.  But an allow-list that
+    # only ever grows is itself a rotting gate, and this one HAD rotted: six of
+    # its seven entries had started passing and nobody had pruned them.
+    # --strict-manifest makes a STALE entry fatal, so whoever fixes a test must
+    # delete its line in the same change.  The list can now only shrink.
+    #
+    # `--ci` applies CI_DESELECT: tests that pass on a developer tree and
+    # cannot pass in this container for ENVIRONMENT reasons.  It holds exactly
+    # one entry -- test_advertised_tools' bin/objdiff-cli check, which asserts a
+    # symlink that is gitignored (.gitignore:145) and created by nothing in the
+    # build, so it is structurally absent after checkout.  A known-bad entry
+    # cannot express that class: an entry green here and red there is STALE in
+    # one of the two environments, and under --strict-manifest that is fatal in
+    # the other direction.  Deselected tests are judged nowhere.  Both lists
+    # print themselves with reasons on every run; keep them at zero if you can.
+    #
+    # Runtime measured on this box: 60 s on a settled built tree (the state CI
+    # is in here), of which the collect-only sweep is ~6 s.  A first run on a
+    # tree that OWES a build reads 128 s, because test_verdict_identity's
+    # batch_check leg calls ensure_patched_tree(build=True) and ninja actually
+    # runs; after Build that is a no-op.  No subset is taken -- the whole lane
+    # runs, and every omission is one of the two printed lists above.
+    #
+    # ⚠ THIS STEP REQUIRES pytest IN THE BUILD CONTAINER, which nothing in this
+    # workflow needed before.  If it is absent the runner does NOT limp: it
+    # exits 1 up front with `FATAL: ... -m pytest is unavailable` and names the
+    # remedy, rather than reporting five BROKEN roots and reading like the lane
+    # itself is broken.  That is the most likely first-run failure here.  Fix
+    # the container; do not weaken the step.
+    #
+    # ⚠ Do NOT add `|| true`, and do not "fix" a red here by deleting the test.
+    # Both restore zero coverage while leaving a green check that looks like
+    # evidence.  The correct responses are: fix the code, or add a classified
+    # line to scripts/test_tools_known_bad.txt saying what is broken and why.
+    - name: Python test lane
+      run: python3 scripts/test_tools.py --ci --strict-manifest
+
     # Guard: the scope-cache gate must DISCRIMINATE.  `validate-addrs`
     # recomputes its address invariants from report.json and for months never
     # opened config/45410914/scope_map.json at all, so it reported PASS/exit 0
