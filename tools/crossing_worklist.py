@@ -358,7 +358,33 @@ EXIT_FAIL, EXIT_DISARMED, EXIT_VOID = 2, 3, 4
 # so they are not evidence about the graded ruler either, and the version bump
 # retires them wholesale rather than serving them.  A cached measurement is only
 # comparable to a fresh one if it was taken with the same instrument.
-CACHE_FORMAT = 3
+#
+# v4 (lane W3-F) finishes that sentence.  v3 said "the same instrument" and then
+# keyed only on the RULER -- which is the instrument's *configuration*, not the
+# instrument.  `bin/objdiff-cli` is a symlink into a shared build tree that three
+# repos share, and it is swapped IN PLACE: main's log records two swaps in one
+# day (`the second objdiff swap of the day is SCORE-NEUTRAL on this binary`).  A
+# swap changes what a diff MEANS -- mismatch counts and charged-site kinds are
+# tool-version-dependent -- while leaving `sym`, `unit` and the ruler key
+# identical, so v3 served a pre-swap entry to a post-swap run without a word.
+# InputStability already VOIDs a run whose objdiff-cli moves MID-run; that says
+# nothing about an entry minted last week by a different binary.
+#
+# The key now carries BOTH identities, because they can disagree:
+#   * report.json `provenance.tool_binary_hash` -- the binary that produced the
+#     POPULATION and the prices we rank against, and
+#   * the content hash of the LIVE bin/objdiff-cli -- the binary that actually
+#     mints this entry.
+# Keying on the report's hash alone (the obvious reading) would miss precisely
+# the case that motivates this: a binary swapped under a report.json that nobody
+# has regenerated yet.
+#
+# WHAT HAPPENS TO THE OLD ENTRIES: nothing is deleted.  The key CHANGED, so v3
+# files are never opened again -- they are unreachable, not stale-and-served.
+# Measured 2026-09-11 the shared dir held 11,120 entries / 420 MB, so this is
+# real disk: `cache_note()` prints the size and the reclaim command on every
+# run.  Deleting them is safe and costs one re-mint pass (~7 min at 8 workers).
+CACHE_FORMAT = 4
 
 # Pause before retrying a miss.  Paid only by misses.
 RETRY_PAUSE_S = 0.25
@@ -470,6 +496,95 @@ def ruler_key(ruler):
         json.dumps(ruler.config, sort_keys=True).encode()).hexdigest()[:10]
 
 
+_INSTRUMENT_CACHE = {}
+
+
+def instrument_key(project_dir):
+    """Short digest identifying the objdiff BINARY a cache entry was minted by.
+
+    Memoized per project dir: the live binary is tens of MB and this is asked
+    once per cached row.  See CACHE_FORMAT v4 for why the ruler is not enough.
+
+    Deliberately NOT tolerant of a missing binary or a missing provenance block.
+    An unknown instrument keys as the literal `unknown`, which is a DIFFERENT
+    key from every known one, so the failure mode is "recompute", never "serve an
+    entry minted by an instrument we cannot name".
+    """
+    key = str(project_dir)
+    if key in _INSTRUMENT_CACHE:
+        return _INSTRUMENT_CACHE[key]
+    parts = []
+    try:
+        with open(report_path(project_dir)) as fh:
+            prov = (json.load(fh).get('provenance') or {})
+        parts.append('rpt=' + str(prov.get('tool_binary_hash', 'unknown')))
+        parts.append('ver=' + str(prov.get('tool_version', 'unknown')))
+    except (OSError, ValueError):
+        parts.append('rpt=unknown')
+    live = _content_sig(os.path.realpath(objdiff_bin(project_dir)))
+    parts.append('live=' + (live or 'unknown'))
+    out = hashlib.md5('\x00'.join(parts).encode()).hexdigest()[:10]
+    _INSTRUMENT_CACHE[key] = out
+    return out
+
+
+#: `--self-break` sets this to the WIDTH THE COLUMN USED TO HAVE, reinstating the
+#: original defect rather than simulating it -- the same idiom the pricing
+#: sabotage uses.  Production code never sets it.
+SELF_BREAK_SYM_TRUNC = None
+
+#: The name that paid for this.  Lane L5-SYMBOLHEADS handoff 5: briefed as
+#: `...PAVLocalBandUser@@@Z` (63 chars) after a silent 58-char cut was completed
+#: to a plausible terminator; the real name is 65 chars and ends `@@_N@Z`.  Kept
+#: as a CONSTANT so the control cannot be weakened into passing on a short name.
+L5_TRUNCATION_WITNESS = (
+    '?SelectNode@MusicLibrary@@QAAXPAVSortNode@@PAVLocalBandUser@@_N@Z')
+OLD_SYM_COLUMN = 58
+
+
+def format_worklist_row(r):
+    """Render one worklist row.  THE SYMBOL IS NEVER TRUNCATED -- see the block
+    at the call site for the row this cost.  Pure, so --selftest can assert on
+    it without a tree, a diff or a cache."""
+    flag = 'sym' if 'SYMBOL' in r['arms'] else '   '
+    sym = r['sym']
+    if SELF_BREAK_SYM_TRUNC:
+        sym = sym[:SELF_BREAK_SYM_TRUNC]
+    return (f"{r['size']:>7} B  mm={r['mm']} {flag} fz={r['fz']:>7.3f}  "
+            f"{r['cls']:<16} {r['unit']:<32} {sym}")
+
+
+_CACHE_NOTE_DONE = set()
+
+
+def cache_note(cache_dir, out=None):
+    """Say once, per dir, how much unreachable cache is lying around.
+
+    A version bump that silently orphans 420 MB is a disk leak nobody is told
+    about.  This is a NOTE, never a refusal: an orphan entry cannot corrupt a
+    measurement (it is unreachable by construction), it only costs space.
+    """
+    out = sys.stderr if out is None else out
+    d = os.path.abspath(cache_dir)
+    if d in _CACHE_NOTE_DONE or not os.path.isdir(d):
+        return
+    _CACHE_NOTE_DONE.add(d)
+    n = tot = 0
+    with os.scandir(d) as it:
+        for e in it:
+            if e.name.endswith('.json'):
+                n += 1
+                try:
+                    tot += e.stat().st_size
+                except OSError:
+                    pass
+    if n:
+        print(f'[cache] {n:,} entr(ies), {tot/1e6:.0f} MB in {d}. Entries minted '
+              f'before CACHE_FORMAT {CACHE_FORMAT} (different ruler or objdiff '
+              f'binary) are UNREACHABLE, not served -- `rm -rf {d}` to reclaim.',
+              file=out)
+
+
 def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=None,
              ruler=None):
     """Run objdiff-cli via argv ONLY -- never through a shell.  See shape 2 above.
@@ -485,15 +600,19 @@ def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=
     """
     if ruler is None:
         ruler = resolve_ruler(project_dir)          # memoized on report.json mtime
+    cache_note(cache_dir)
     os.makedirs(cache_dir, exist_ok=True)
     rk = ruler_key(ruler)
+    ik = instrument_key(project_dir)
     # ⚠ The ruler is part of the KEY, not merely the stamp.  A `none` entry and a
     # `name_check` entry for the same symbol are two DIFFERENT measurements that
     # routinely disagree on the mismatch COUNT, not just the percent (measured on
     # ?Handle@OvershellSlot@@: 0 / 2 / 641 sites at none / name_check /
     # data_value).  Sharing one key would let a cache launder the exact defect
     # this change exists to remove.
-    h = hashlib.md5((sym + '\x00' + unit + '\x00' + rk).encode()).hexdigest()[:20]
+    h = hashlib.md5(
+        (sym + '\x00' + unit + '\x00' + rk + '\x00' + ik).encode()
+    ).hexdigest()[:20]
     p = os.path.join(cache_dir, h + '.json')
     if os.path.exists(p) and os.path.getsize(p) > 0:
         try:
@@ -502,11 +621,13 @@ def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=
             blob = None
         if (isinstance(blob, dict) and blob.get('_cw_cache') == CACHE_FORMAT
                 and blob.get('ruler') == rk
+                and blob.get('instrument') == ik
                 and (unit_sig is None or blob.get('inputs') == unit_sig)):
             return blob['diff']
-        # v1/v2 entry, torn write, a stamp from a different build, or an entry
-        # minted under a different ruler: not evidence about THIS tree measured
-        # with THIS instrument.  Fall through and recompute.
+        # v1/v2/v3 entry, torn write, a stamp from a different build, or an
+        # entry minted under a different ruler or by a different objdiff BINARY:
+        # not evidence about THIS tree measured with THIS instrument.  Fall
+        # through and recompute.
         if stats is not None:
             stats.bump('cache_stale')
     argv = [objdiff_bin(project_dir), 'diff', sym, '-u', unit,
@@ -522,7 +643,8 @@ def diff_one(project_dir, sym, unit, cache_dir, unit_sig=None, retries=1, stats=
             tmp = f'{p}.{os.getpid()}.tmp'
             with open(tmp, 'w') as fh:
                 json.dump({'_cw_cache': CACHE_FORMAT, 'inputs': unit_sig,
-                           'ruler': rk, 'ruler_config': ruler.config, 'diff': d}, fh)
+                           'ruler': rk, 'ruler_config': ruler.config,
+                           'instrument': ik, 'diff': d}, fh)
             os.replace(tmp, p)
             return d
         if stats is not None:
@@ -563,7 +685,8 @@ def diff_many(project_dir, rows, cache_dir, stab=None, stats=None, workers=8, ru
         stab.report(sys.stderr)
         if stable_miss:
             for r in stable_miss[:5]:
-                print(f'    STABLE MISS: {r["unit"]}  {r["sym"][:70]}', file=sys.stderr)
+                # full name: this is the symbol a reader must re-run by hand.
+                print(f'    STABLE MISS: {r["unit"]}  {r["sym"]}', file=sys.stderr)
             sys.exit(f'REFUSE: {len(miss)}/{len(rows)} diffs produced no output, '
                      f'{len(stable_miss)} of them on inputs that did NOT move. '
                      f'A partial dump yields a plausible but WRONG census (shape 2).')
@@ -797,10 +920,28 @@ def cmd_adjudicate(a):
           f"[ruler {ruler.reloc_mode}] ===")
     print("  'sym' column marks rows carrying a relocation-NAME charge: their prize "
           "is NOT collectable\n  by instruction edits alone.")
+    # ⛔ NEVER TRUNCATE THE SYMBOL.  This column used to print `r['sym'][:58]`
+    # and it cost lane L5-SYMBOLHEADS a row (handoff 5,
+    # docs/decomp/SYMBOL_HEADS_2026-09-10.md): row 12's real name is
+    # `?SelectNode@MusicLibrary@@QAAXPAVSortNode@@PAVLocalBandUser@@_N@Z` (65
+    # chars) and the cut landed mid-token at `...PAVLocalBandUse`.
+    #
+    # ★ THE CUT WAS SILENT, AND THAT IS THE ACTUAL DEFECT.  A reader handed a
+    # name ending mid-token does not see "truncated", they see a mangled name --
+    # so the name was RECONSTRUCTED to a plausible terminator,
+    # `...PAVLocalBandUser@@@Z`, which is well-formed, 63 chars, and WRONG in its
+    # last 5 characters.  objdiff then answers "Symbol not found in target",
+    # which reads like a PHANTOM ROW (a dtk mis-carve -- a class this project
+    # really has) rather than like a copy error, so the row is written off
+    # instead of retried.  Verified: the briefed string and the real one share
+    # exactly the first 58 characters.
+    #
+    # An ellipsis marker would be an improvement and is still not enough: these
+    # names are COPY-PASTE INPUT to objdiff-cli and to the map, so anything less
+    # than the full name is unusable.  Alignment is not worth a wrong symbol;
+    # the symbol goes LAST on the line so a long one cannot misalign a column.
     for r in sorted(sel, key=lambda r: -r['size'])[:a.top]:
-        flag = 'sym' if 'SYMBOL' in r['arms'] else '   '
-        print(f"{r['size']:>7} B  mm={r['mm']} {flag} fz={r['fz']:>7.3f}  {r['cls']:<16} "
-              f"{r['unit'][:32]:<32} {r['sym'][:58]}")
+        print(format_worklist_row(r))
 
 
 def cmd_reclaim(a):
@@ -887,6 +1028,11 @@ def cmd_selftest(a):
     # sabotage is worth more than a flag that pokes a boolean, because it also
     # proves the control would have caught the historical bug.
     graded = resolve_ruler(a.project_dir, RULER_GRADED)
+    if a.self_break:
+        # reinstate the symbol-column truncation too, so the control below has
+        # something real to catch (see SELF_BREAK_SYM_TRUNC).
+        globals()['SELF_BREAK_SYM_TRUNC'] = OLD_SYM_COLUMN
+
     ruler = resolve_ruler(a.project_dir, RULER_NONE) if a.self_break \
         else resolve_ruler(a.project_dir, a.ruler)
     print_ruler(ruler)
@@ -924,7 +1070,9 @@ def cmd_selftest(a):
         if stable:
             print(f"  FAIL  {name}: {message(len(stable), len(subjects))}")
             for s in stable[:5]:
-                print(f"          {s[:86]}")
+                # full name: a control's FAIL names the symbol a human must
+                # re-run, and 86 chars cuts real mangled names mid-token.
+                print(f"          {s}")
             fails.append(message(len(stable), len(subjects)))
         else:
             print(f"  VOID  {name}: {moved_message(len(subjects))}")
@@ -1045,8 +1193,10 @@ def cmd_selftest(a):
                 print(f"            a self-selected known positive is a tautology, "
                       f"not a control:")
                 for s in nominees[:5]:
+                    # full name: this line is a PIN CANDIDATE a human is being
+                    # asked to verify in the diff, so it must be paste-able.
                     print(f"              fz={by[s]['fz']:>7.3f} {by[s]['size']:>6} B  "
-                          f"{by[s]['unit'][:30]:<30} {s[:70]}")
+                          f"{by[s]['unit']:<30} {s}")
             disarmed.append(f'control 1b (shape 1, known positive {want}): all '
                             f'{len(pins)} pinned symbol(s) have left the sub-100 '
                             f'population -- re-pin to a {want} row a HUMAN has '
@@ -1058,7 +1208,7 @@ def cmd_selftest(a):
         moved = (not ok) and stab.row_moved(unit_of.get(sym, ''))
         print(f"  {'PASS' if ok else 'VOID' if moved else 'FAIL'}  "
               f"control 1b (known positive {want}): "
-              f"{sym[:38]}... -> {sorted(set(arms))}"
+              f"{sym} -> {sorted(set(arms))}"
               f"{'' if len(live) == len(pins) else f'  [{len(live)}/{len(pins)} pins live]'}")
         msg = f'known positive {sym} classified {sorted(set(arms))}, expected pure {want}'
         if moved:
@@ -1126,6 +1276,37 @@ def cmd_selftest(a):
     # A stable-tree failure is real evidence and is never downgraded to
     # "nothing was measured" -- a guard that voids everything is worse than no
     # guard at all.
+    # -- control 6 (shape 3): THE SYMBOL COLUMN MUST NOT TRUNCATE.
+    #    Lane L5-SYMBOLHEADS lost row 12 to a silent 58-char cut: the name was
+    #    completed to a plausible mangled terminator and objdiff answered
+    #    "Symbol not found in target", which reads like a PHANTOM ROW rather
+    #    than a copy error.  This control cannot rot -- its subject is a
+    #    CONSTANT 65-char name, not a pin into the live population, so it stays
+    #    armed after every upstream fix (unlike controls 1b/2, which disarm).
+    #
+    #    It is also deliberately a RENDERING test, not a string-length test:
+    #    the defect was in what got PRINTED, and a `len()` assertion on the row
+    #    dict would have passed throughout.
+    witness = {'size': 2260, 'mm': 1, 'arms': ['SYMBOL'], 'fz': 99.5,
+               'cls': 'SYMBOL', 'unit': 'default/MusicLibrary',
+               'sym': L5_TRUNCATION_WITNESS}
+    assert len(L5_TRUNCATION_WITNESS) > OLD_SYM_COLUMN, (
+        'the witness is shorter than the old column -- this control could not '
+        'fail even with the defect reinstated, which is a vacuous control')
+    line = format_worklist_row(witness)
+    if L5_TRUNCATION_WITNESS in line:
+        print('  PASS  control 6 (symbol column prints the FULL name): '
+              f'{len(L5_TRUNCATION_WITNESS)}-char witness survives rendering')
+    else:
+        print('  FAIL  control 6 (symbol column prints the FULL name): rendered '
+              f'line does not contain the {len(L5_TRUNCATION_WITNESS)}-char '
+              f'witness -- a truncated symbol is UNUSABLE as objdiff input and '
+              f'reads as a phantom row')
+        print(f'          rendered: {line}')
+        fails.append('control 6: the symbol column truncated a '
+                     f'{len(L5_TRUNCATION_WITNESS)}-char mangled name (lane '
+                     'L5-SYMBOLHEADS handoff 5)')
+
     if fails:
         print('SELFTEST FAILED:')
         for f in fails:

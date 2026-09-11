@@ -65,6 +65,125 @@ from analysis.ruler import (
     VALID_RULERS,
     resolve_ruler,
 )
+
+
+# ── which tree do we measure? ─────────────────────────────────────────────────
+# One resolver for every build-and-score tool, because this used to be three
+# hand-copied copies that had already DRIFTED: `run_objdiff` and
+# `run_analyze_function` fell back to the server's own repo root, while
+# `run_diff_inspect` had been hardened to refuse. A rule enforced in two of
+# three places is not a rule.
+#
+# WHY A REFUSAL AND NOT A FALLBACK. The server is launched from the SHARED main
+# checkout (`.mcp.json` lives there), so `self.project_root` is main for the
+# whole fleet. A subagent that omits `project_dir` and has no `REPO_ROOT` in its
+# environment therefore silently:
+#   * measured MAIN instead of its own edits -- answering a question nobody
+#     asked, in a shape indistinguishable from "your change did nothing", and
+#   * BUILT in the shared tree, concurrently with whoever owns it.
+# Both are the documented hazard in CLAUDE.md ("Without project_dir, the tool
+# tests the main repo code instead of your changes"), and a doc string is not an
+# enforcement mechanism.
+#
+# An EXPLICIT `project_dir` pointing at main is refused too, not just an absent
+# one. It is the same measurement of the same shared tree; the only difference
+# is whether the caller typed it, and a hazard is not neutralised by being
+# spelled out. It is also the one route by which a tool that already REQUIRED
+# `project_dir` (`run_diff_inspect`, and `asm_listing` under it) could still
+# reach main.
+#
+# THE OPT-IN IS DELIBERATELY AN ENV VAR, NOT AN ARGUMENT. Measuring main is a
+# legitimate coordinator action (that is how a landed delta is confirmed), but
+# it is a property of the SESSION, not of one call: a tool argument would be
+# reachable by any model that read this docstring and wanted its call to
+# succeed, whereas the env var has to be set by whoever launched the server.
+MAIN_REPO_OPT_IN = "RB3_MCP_ALLOW_MAIN"
+
+_TRUE = {"1", "true", "yes", "on"}
+
+
+class ProjectDirRefusal(Exception):
+    """`project_dir` did not name a tree this server is willing to build in."""
+
+
+def _opt_in_to_main(env):
+    return str(env.get(MAIN_REPO_OPT_IN, "")).strip().lower() in _TRUE
+
+
+def resolve_project_dir(project_dir_arg, main_repo, env=None):
+    """Return the Path to build/measure in, or raise `ProjectDirRefusal`.
+
+    Pure and injectable on purpose -- `main_repo` and `env` are arguments, not
+    globals -- so the refusal can be tested without a server, an MCP client, or
+    a second checkout. The previous logic was only reachable through a live
+    handler, which is why it was never tested and why the drift above survived.
+
+    Precedence: explicit argument > `REPO_ROOT` (set by agent_runner.py to the
+    agent's worktree) > refuse. Note the last step: there is no third tier any
+    more. `self.project_root` is no longer a silent default.
+    """
+    env = os.environ if env is None else env
+    allow_main = _opt_in_to_main(env)
+    main_resolved = Path(main_repo).resolve()
+
+    def _check(p, origin):
+        if not p.exists():
+            raise ProjectDirRefusal(
+                f"project_dir does not exist: {p} (from {origin})")
+        if p.resolve() == main_resolved and not allow_main:
+            raise ProjectDirRefusal(
+                f"REFUSING to build in the shared main checkout {main_resolved} "
+                f"(from {origin}).\n\n"
+                f"This tool BUILDS before it scores. Building in main rewrites "
+                f"objects other sessions are measuring against, and the number "
+                f"you would get back describes MAIN's source, not your edits -- "
+                f"a wrong answer shaped exactly like 'my change did nothing'.\n\n"
+                f"Pass project_dir=<your worktree> (see "
+                f"scripts/setup_worktree.sh). If you genuinely mean to measure "
+                f"main, set {MAIN_REPO_OPT_IN}=1 in the SERVER's environment.")
+        return p
+
+    if project_dir_arg:
+        return _check(Path(project_dir_arg), "project_dir argument")
+    repo_root = env.get("REPO_ROOT")
+    if repo_root:
+        return _check(Path(repo_root), "REPO_ROOT environment variable")
+    if allow_main:
+        return _check(main_resolved, f"{MAIN_REPO_OPT_IN} opt-in")
+    raise ProjectDirRefusal(
+        "project_dir is REQUIRED and was not given, and REPO_ROOT is unset.\n\n"
+        "There is deliberately no fallback: the old one resolved to the shared "
+        "main checkout, so an omitted argument silently built in main and "
+        "measured somebody else's tree.\n\n"
+        f"Pass project_dir=<your worktree>, or set {MAIN_REPO_OPT_IN}=1 in the "
+        "server's environment to measure main on purpose.")
+
+
+class CompileRedirectRefusal(Exception):
+    """ninja's command did not name the object, so its output cannot be moved."""
+
+
+def redirect_compile_object(compile_cmd, obj_target, dest):
+    """Point a `ninja -t commands` compile line at `dest` instead of the tree.
+
+    `ninja -t commands <obj>` returns the REAL command, which writes to the
+    tree's own object (`/Fo<path>`, plus `--fo <path>` under objcache). Any
+    caller that re-runs it for a side effect -- /FAs listings, /Z7 debug
+    recompiles -- overwrites a PATCHED object with raw compiler output, outside
+    the build graph, and leaves it with an mtime NEWER than its inputs so ninja
+    never repairs it.
+
+    Raises rather than returning the command unchanged when the object path is
+    absent: "could not redirect" must not degrade into "wrote to the tree".
+    """
+    n = compile_cmd.count(obj_target)
+    if not n:
+        raise CompileRedirectRefusal(
+            f"the object path `{obj_target}` does not appear in ninja's "
+            f"command, so its output cannot be redirected away from the build "
+            f"tree. Compiling it as-is would overwrite a patched object "
+            f"outside the build graph.")
+    return compile_cmd.replace(obj_target, str(dest)), n
 try:
     from tools.merged_symbols import MergedSymbolLookup
 except ImportError:
@@ -1742,21 +1861,13 @@ class DecompMCPServer:
         # Extract parameter type hint for disambiguation (e.g., "Set(BaseSkeleton*)" → "Set", hint="BaseSkeleton*")
         symbol, param_hint = _extract_param_hint(symbol)
 
-        # Determine which project directory to use
-        # Priority: explicit project_dir arg > REPO_ROOT env var > main repo fallback
-        # REPO_ROOT is set by agent_runner.py to the agent's worktree, ensuring
-        # builds test the agent's edits even if project_dir is omitted.
-        if project_dir_arg:
-            project_dir = Path(project_dir_arg)
-            if not project_dir.exists():
-                return [TextContent(
-                    type="text",
-                    text=f"Error: project_dir does not exist: {project_dir}"
-                )]
-        elif os.environ.get("REPO_ROOT"):
-            project_dir = Path(os.environ["REPO_ROOT"])
-        else:
-            project_dir = self.project_root
+        # Determine which project directory to use -- see resolve_project_dir.
+        # There is no main-repo fallback any more: an omitted project_dir is a
+        # REFUSAL, not a silent measurement of the shared tree.
+        try:
+            project_dir = resolve_project_dir(project_dir_arg, self.project_root)
+        except ProjectDirRefusal as e:
+            return [TextContent(type="text", text=f"Error: {e}")]
 
         # Find objdiff-cli in the determined project directory
         objdiff_cli = project_dir / "bin" / "objdiff-cli"
@@ -2090,21 +2201,13 @@ class DecompMCPServer:
         # Extract parameter type hint for disambiguation
         symbol, _param_hint = _extract_param_hint(symbol)
 
-        # Determine which project directory to use
-        # Priority: explicit project_dir arg > REPO_ROOT env var > main repo fallback
-        # REPO_ROOT is set by agent_runner.py to the agent's worktree, ensuring
-        # builds test the agent's edits even if project_dir is omitted.
-        if project_dir_arg:
-            project_dir = Path(project_dir_arg)
-            if not project_dir.exists():
-                return [TextContent(
-                    type="text",
-                    text=f"Error: project_dir does not exist: {project_dir}"
-                )]
-        elif os.environ.get("REPO_ROOT"):
-            project_dir = Path(os.environ["REPO_ROOT"])
-        else:
-            project_dir = self.project_root
+        # Determine which project directory to use -- see resolve_project_dir.
+        # There is no main-repo fallback any more: an omitted project_dir is a
+        # REFUSAL, not a silent measurement of the shared tree.
+        try:
+            project_dir = resolve_project_dir(project_dir_arg, self.project_root)
+        except ProjectDirRefusal as e:
+            return [TextContent(type="text", text=f"Error: {e}")]
 
         # Find analyze-function script in the determined project directory
         analyze_script = project_dir / "bin" / "analyze-function"
@@ -2114,6 +2217,19 @@ class DecompMCPServer:
                 type="text",
                 text=f"Error: analyze-function not found at {analyze_script}"
             )]
+
+        # Same guard as run_objdiff / run_diff_inspect: analyze-function shells
+        # out to a build-and-score path, and reading an UNPATCHED object
+        # describes raw compiler output rather than the shape this project
+        # matches against. This handler was the one of the three that never had
+        # it. (It is also, today, dead: `bin/analyze-function` does not exist in
+        # this checkout at all, so every call has always returned the
+        # not-found error above. The guard is here so that resurrecting the
+        # script does not resurrect the gap.)
+        try:
+            ensure_patched_tree(project_dir)
+        except UnpatchedTreeError as e:
+            return [TextContent(type="text", text=f"Error: {e}")]
 
         # Build command
         cmd = [str(analyze_script), symbol]
@@ -2210,12 +2326,12 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
         # Extract parameter type hint for disambiguation
         symbol, _param_hint = _extract_param_hint(symbol)
 
-        # Require project_dir — no silent fallback to main repo
-        if not project_dir_arg:
-            return [TextContent(type="text", text="Error: project_dir is required. Pass your worktree directory so builds test your changes.")]
-        project_dir = Path(project_dir_arg)
-        if not project_dir.exists():
-            return [TextContent(type="text", text=f"Error: project_dir does not exist: {project_dir}")]
+        # Require project_dir -- and refuse main, which this copy of the check
+        # did not do. See resolve_project_dir.
+        try:
+            project_dir = resolve_project_dir(project_dir_arg, self.project_root)
+        except ProjectDirRefusal as e:
+            return [TextContent(type="text", text=f"Error: {e}")]
 
         # Every objdiff invocation below dropped its `--build --incremental`,
         # because that pair is `ninja <one .obj>` and stops one edge short of
@@ -2647,6 +2763,29 @@ Use the Read tool to view: `Read {output_file.relative_to(project_dir)}`
         # 4. Add /FAs flag and redirect output to temp file
         asm_dir = Path(_tempfile.mkdtemp(dir="/tmp/claude-1000"))
         asm_output = asm_dir / "listing.asm"
+
+        # ⛔ REDIRECT THE OBJECT, TOO. `ninja -t commands` hands back the REAL
+        # command, which carries `/Fo<the tree's own .obj>` (and, under
+        # objcache, `--fo <the same path>`). Running it verbatim overwrote the
+        # tree's PATCHED object with raw compiler output -- the six
+        # post-compile patchers are downstream edges and do not re-run -- and it
+        # is WORSE than the `ninja <one>.obj` hazard CLAUDE.md documents,
+        # because the fresh object's mtime is NEWER than its inputs, so ninja
+        # then considers it up to date and never rebuilds it. The tree stays
+        # silently unpatched until something unrelated invalidates that edge,
+        # and every measurement taken from it is biased low.
+        #
+        # Verified on this repo: the emitted command for
+        # build/45410914/src/system/obj/Object.obj contains
+        # `--fo build/.../Object.obj` and `/Fobuild/.../Object.obj`.
+        obj_redirect = asm_dir / "listing.obj"
+        try:
+            compile_cmd, _n_redirect = redirect_compile_object(
+                compile_cmd, obj_target, obj_redirect)
+        except CompileRedirectRefusal as e:
+            return [TextContent(
+                type="text",
+                text=f"Error: refusing to run the /FAs compile -- {e}")]
 
         # Add /FAs and /Fa<path> to the compile command
         compile_cmd = compile_cmd + f" /FAs /Fa{asm_output}"
