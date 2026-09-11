@@ -85,24 +85,37 @@ DirLoader::DirLoader(
     ObjectDir *dir2
 #endif
 )
-    : Loader(fp, pos), mOwnStream(false), mStream(stream), mRev(0), mCounter(0),
+    // NOTE(lane W4-A): no mRev(0) / mCounter(0) -- retail's ctor (0x82755AF8)
+    // stores nothing at 0x3c/0x40 and rb3-Wii's initializer list has neither;
+    // both are stream-read (LoadHeader / LoadObjs) before any read. The
+    // mHasEditorDir / mSubDir members and their initializers are DC3-newer
+    // (absent from rb3-Wii; retail stores only 0xa0/0xa1 here), kept for the
+    // native build only.
+    : Loader(fp, pos), mOwnStream(false), mStream(stream),
       mObjects(nullptr, kObjListAllowNull), mCallback(cb), mDir(dir), mPostLoad(false),
       mLoadDir(true), mDeleteSelf(false), mProxyName(nullptr),
 #ifndef HX_NATIVE
       // declaration order: mProxyDir now sits at 0x68, before mAccessed
       mProxyDir(nullptr),
 #endif
-      mAccessed(0), mForceFailCallback(0),
-      mHasEditorDir(0), mSubDir(bbb)
+      mAccessed(0), mForceFailCallback(0)
 #ifdef HX_NATIVE
       ,
-      mParentDir(dir2), mProxyDir(this)
+      mHasEditorDir(0), mSubDir(bbb), mParentDir(dir2), mProxyDir(this)
 #endif
 {
     if (dir) {
         mDeleteSelf = true;
         mProxyName = dir->Name();
         mProxyDir = dir->Dir();
+#ifndef HX_NATIVE
+        // rb3-Wii: `if (dDir) mProxyDir->AddRef(this);` -- retail's ctor calls
+        // the out-of-line AddRef(ObjRefOwner*) (fn_8275BD08: RefOwner() vcall,
+        // compare with this, list insert) right here. Natively mProxyDir is an
+        // ObjOwnerPtr that does its own bookkeeping.
+        if (mProxyDir)
+            mProxyDir->AddRef(this);
+#endif
         mDir->SetLoader(this);
     }
     if (!stream && !dir && !bbb) {
@@ -116,18 +129,12 @@ DirLoader::DirLoader(
             }
         }
     }
-    if (fp.empty()) {
-        mRoot = FilePath::Root();
-    } else {
-        const char *filePath = FileGetPath(mFile.c_str());
-        char buf[256];
-        strcpy(buf, filePath);
-        int bufLen = strlen(buf);
-        if (bufLen > 4 && streq("/gen", buf + bufLen - 4)) {
-            buf[bufLen - 4] = '\0';
-        }
-        mRoot = FileMakePath(FileRoot(), buf);
-    }
+    // NOTE(lane W4-A): mRoot is NOT derived here. DC3 (newer) moved the
+    // FileGetPath / "/gen"-strip / FileMakePath(FileRoot(), ...) block into the
+    // ctor; RB3 retail (0x82755AF8 ctor ends at `mState = &OpenFile`) and
+    // rb3-Wii derive it in OpenFile(), i.e. when the loader is actually polled
+    // and FileRoot() is whatever is current THEN -- not whatever FilePathTracker
+    // a parent LoadDir() happens to hold at construction time.
     mState = &DirLoader::OpenFile;
 }
 
@@ -141,7 +148,13 @@ DirLoader::~DirLoader() {
             RELEASE(mDir);
         }
     }
+#ifndef HX_NATIVE
+    // rb3-Wii: `if (mProxyDir) mProxyDir->Release(this);` (pairs the ctor AddRef)
+    if (mProxyDir)
+        mProxyDir->Release(this);
+#else
     mProxyDir = nullptr;
+#endif
     if (mCallback && mForceFailCallback) {
         mCallback->FailedLoading(this);
         mCallback = 0;
@@ -576,9 +589,14 @@ void DirLoader::Cleanup(const char *str) {
         }
         if (IsLoaded() && mDir) {
             AutoGlitchReport report(50.0f, SyncObjectsGlitchCB, mDir);
+#ifdef HX_NATIVE
+            // DC3-newer (rb3-Wii has no SetSubDirFlag here); native-only.
             mDir->SetSubDirFlag(mSubDir);
             mDir->SyncObjects();
             mDir->SetSubDirFlag(false);
+#else
+            mDir->SyncObjects();
+#endif
         }
     }
     mState = &DirLoader::DoneLoading;
@@ -946,9 +964,12 @@ void DirLoader::LoadObjs() {
         } else if (mRev == 0x1f) {
             ReadEditorDirDead(*mStream);
         }
+#ifdef HX_NATIVE
+        // DC3-newer (rev 0x20 editor dir); rb3-Wii has no mHasEditorDir.
         if (mHasEditorDir && mRev > 0x1f) {
             ReadEditorDirDead(*mStream);
         }
+#endif
     }
     Cleanup(nullptr);
     std::list<Loader *> &loaders = TheLoadMgr.Loading();
@@ -1218,11 +1239,32 @@ void DirLoader::LoadHeader() {
 
 void DirLoader::OpenFile() {
     mTimer.Start();
+    // Retail derives mRoot HERE (0x82755A38: `lbz *mFile; beq -> sRoot;
+    // FileGetPath -> strip "/gen" -> FileMakePath(FileRoot(), buf)`), not in
+    // the ctor -- see the ctor note. Spelled as rb3-Wii spells it.
+    const char *fileStr = mFile.c_str();
+    if (*fileStr == '\0') {
+        mRoot = FilePath::Root();
+    } else {
+        char buf[256];
+        strcpy(buf, FileGetPath(fileStr));
+        int len = strlen(buf) - 4;
+        if (len > 0 && streq("/gen", buf + len)) {
+            buf[len] = '\0';
+        }
+        mRoot = FileMakePath(FileRoot(), buf);
+    }
     if (mStream == nullptr) {
         Archive *theArchive = TheArchive;
+        // Retail restores with `li r3,1; bl SetUsingCD` and never calls
+        // UsingCD(): the MILO_DEBUG read is dev-only (rb3-Wii #ifdef MILO_DEBUG),
+        // and MILO_DEBUG is force-defined tree-wide -- house pattern.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         bool using_cd = UsingCD();
+#else
+        bool using_cd = true;
+#endif
         bool cache_mode = sCacheMode;
-        const char *fileStr = mFile.c_str();
         bool matches = gHostFile && FileMatch(fileStr, gHostFile);
         if (matches) {
             SetCacheMode(gHostCached);
