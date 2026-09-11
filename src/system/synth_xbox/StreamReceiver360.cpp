@@ -23,7 +23,8 @@ StreamReceiver360::StreamReceiver360(int sampleRate, int numBuffers, bool slip)
     mStreamBuf = (unsigned char *)MemAlloc(
         numBuffers * 0xC000, "StreamReceiver.cpp", 0x33, "StreamBuffer", 0);
 
-    mVoice = new Voice(false, 1, false);
+    // Retail 0x82B6BD68 passes (0, 1, 0) = (xma, SYNCHRONIZED, stereo): stream voices sync-start.
+    mVoice = new Voice(false, true, false);
 
     mVoice->SetData(mStreamBuf, numBuffers * 0xC000, 0);
     mVoice->SetLoopRegion(0, -1);
@@ -110,20 +111,20 @@ void StreamReceiver360::Poll() {
 void StreamReceiver360::SetSlipOffset(float f) {
     MILO_ASSERT(mSlipEnabled, 0xC5);
     SlipStop();
-    Voice *v = (Voice *)PoolAlloc(0x7c, 0x7c, "e:\\lazer_build_gmc1\\system\\src\\synth360\\Voice.h", 0x28, "Voice");
-    if (v) {
-        v = new (v) Voice(false, 1, false);
-    }
-    mSlipVoice = v;
+    // Retail 0x82B6BD68: `li r4, 0x74; bl PoolAlloc` then the (0,1,0) ctor -- a
+    // plain `new Voice` of RB3's 0x74-byte Voice (dc3's is 0x7c, and the
+    // dc3-derived PoolAlloc(0x7c, ...) spelling this carried was a real
+    // over-allocation).  Stream voices are the SYNCHRONIZED ones.
+    mSlipVoice = new Voice(false, true, false);
     if (mTagged) {
         Tag();
     }
-    mSlipVoice->SetData(mStreamBuf, mNumBufs << 14, 0);
+    mSlipVoice->SetData(mStreamBuf, mNumBufs * 0xC000, 0); // retail: 0xC000-byte buffers (mullw by 0xc000), not dc3's 16 KB
     mSlipVoice->SetLoopRegion(0, -1);
     mSlipVoice->SetSampleRate(mSampleRate);
     int cursor = GetPlayCursor();
     int halfCursor = cursor / 2;
-    int halfBuf = (mNumBufs << 14) / 2;
+    int halfBuf = (mNumBufs * 0xC000) / 2;
     int startSamp;
     if (halfBuf == 0) {
         startSamp = 0;
@@ -145,7 +146,7 @@ void StreamReceiver360::SetSlipOffset(float f) {
 void StreamReceiver360::SlipStop() {
     MILO_ASSERT(mSlipEnabled, 0xEC);
     if (mSlipVoice != 0) {
-        mSlipVoice->Stop(false);
+        mSlipVoice->Stop(); // retail 0x82B6C240: r4 is never set -- Voice::Stop() takes no argument
         mPendingVoices.push_back(mSlipVoice);
         mSlipVoice = 0;
     }
@@ -163,7 +164,7 @@ float StreamReceiver360::GetSlipOffset() {
     if (mSlipVoice != 0) {
         int mainAddr = mVoice->GetAddr();
         int slipAddr = mSlipVoice->GetAddr();
-        float halfBuf = (float)(mNumBufs << 14) * 0.5f;
+        float halfBuf = (float)(mNumBufs * 0xC000) * 0.5f; // retail 0x82B6BF90: `ori r10, 0xc000; mullw`
         float neg = -halfBuf;
         float slipOff = Mod((float)(slipAddr - mainAddr) - neg, halfBuf - neg) + neg;
         return ((slipOff * 0.5f) / (float)mSampleRate) * 1000.0f;
@@ -187,7 +188,7 @@ void StreamReceiver360::PlayImpl() {
 }
 
 void StreamReceiver360::StartSendImpl(unsigned char *buf, int len, int idx) {
-    XMemCpy((idx << 14) + mStreamBuf, buf, len);
+    XMemCpy((idx * 0xC000) + mStreamBuf, buf, len); // retail 0x82B6BB08: `mullw r10, r6, 0xc000`
 }
 
 bool StreamReceiver360::SendDoneImpl() {

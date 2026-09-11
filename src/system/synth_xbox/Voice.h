@@ -13,18 +13,18 @@ struct PoolVoice {
     int egParams;           // 0x08 - envelope effect parameters
     tWAVEFORMATEX wfx;     // 0x0c - cached wave format (0x12 bytes)
     short pad1e;            // 0x1e - padding
-    int disposeTick;        // 0x20 - GetTickCount() timestamp for GC
+    unsigned int disposeTick; // 0x20 - GetTickCount() timestamp for GC (DWORD: the thread entry loads it with `lwz`, no `extsw`)
 };
 
 class Voice {
 public:
     POOL_OVERLOAD(Voice, 0x28);
-    Voice(bool, int, bool);
+    Voice(bool xma, bool synchronized, bool stereo); // retail (bool,bool,bool), see the ctor
     ~Voice();
     void InitSourceBuffer(XAUDIO2_BUFFER &);
     int GetAddr();
     void SetData(void const *, int, int);
-    void Stop(bool);
+    void Stop(); // retail: NO parameter (see Voice.cpp)
     void InitVoiceParameters(XMA2WAVEFORMATEX &, XAUDIO2_BUFFER);
     void SetSampleRate(int);
     void SetLoopRegion(int, int);
@@ -40,7 +40,7 @@ public:
     static bool HasPendingVoices();
     void SetSpeed(float);
 
-    int GetVoice();
+    IXAudio2SourceVoice *GetVoice() { return (IXAudio2SourceVoice *)mSourceVoice; }
     /** Retail has no stored channel count -- InitVoiceParameters computes
      *  `mStereo ? 2 : 1` inline (0x82B652E0).  Only 1 and 2 are reachable. */
     int NumChannels() const { return mStereo ? 2 : 1; }
@@ -89,7 +89,7 @@ public:
     void *mEnvelopeParams; // 0x58 - envelope effect parameters (PoolVoice.egParams)
     tWAVEFORMATEX mWaveFormat; // 0x5c - cached wave format (0x12 bytes, copied in createOrReuse)
     short mPadding76; // 0x6e - alignment padding
-    int mDisposeTick; // 0x70 - GetTickCount() timestamp for voice GC
+    unsigned int mDisposeTick; // 0x70 - GetTickCount() timestamp for voice GC (mirrors PoolVoice::disposeTick)
 
 private:
     void UpdateMix();
@@ -102,6 +102,6 @@ private:
 
 unsigned long StartVoiceThreadEntry(void *);
 void StopSynchronizedVoices();
-void TerminateVoiceThread();
+// No TerminateVoiceThread / gShutdownVoiceThread in RB3 retail -- see Voice.cpp.
 
 extern bool gHasPendingStopCommits;
