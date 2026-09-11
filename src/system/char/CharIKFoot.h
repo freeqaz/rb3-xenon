@@ -25,7 +25,7 @@ public:
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
     virtual void SetName(const char *, ObjectDir *);
 
-    OBJ_MEM_OVERLOAD(0x1A)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1A)
     NEW_OBJ(CharIKFoot)
 
     RndTransformable *GetData() const { return mData; }

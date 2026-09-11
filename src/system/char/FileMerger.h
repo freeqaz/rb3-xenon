@@ -116,7 +116,7 @@ public:
     // OriginalPathable
     virtual bool OriginalPath(Hmx::Object *, String &);
 
-    OBJ_MEM_OVERLOAD(0x17)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x17)
     NEW_OBJ(FileMerger);
 
     static FileMerger *sFmDeleting;

@@ -92,7 +92,7 @@ public:
     virtual void Enter();
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
 
-    OBJ_MEM_OVERLOAD(0x22)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x22)
     NEW_OBJ(CharHair)
 
     void FreezePoseRaw();
