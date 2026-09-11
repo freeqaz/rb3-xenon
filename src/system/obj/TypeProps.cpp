@@ -266,8 +266,7 @@ void TypeProps::ClearAll() {
     }
 }
 
-DataArray *TypeProps::GetArray(Symbol prop) {
-    DataArray *typeDef = mOwner->TypeDef();
+DataArray *TypeProps::GetArray(Symbol prop, DataArray *typeDef) {
     DataNode *n = KeyValue(prop, false);
     DataArray *ret;
     if (!n) {
@@ -290,8 +289,8 @@ DataArray *TypeProps::GetArray(Symbol prop) {
     return ret;
 }
 
-void TypeProps::SetArrayValue(Symbol key, int i, const DataNode &value) {
-    DataArray *arr = GetArray(key);
+void TypeProps::SetArrayValue(Symbol key, int i, const DataNode &value, DataArray *typeDef) {
+    DataArray *arr = GetArray(key, typeDef);
 #ifdef HX_NATIVE
     if (!arr) {
         MILO_WARN("TypeProps::SetArrayValue: null array for key %s", key);
@@ -304,6 +303,8 @@ void TypeProps::SetArrayValue(Symbol key, int i, const DataNode &value) {
         if (obj) {
 #ifdef HX_NATIVE
             mObjects.remove(obj);
+#else
+            obj->Release(this); // retail X360: the TypeProps is the ObjRefOwner
 #endif
         }
     }
@@ -313,33 +314,39 @@ void TypeProps::SetArrayValue(Symbol key, int i, const DataNode &value) {
         if (obj) {
 #ifdef HX_NATIVE
             mObjects.push_back(obj);
+#else
+            obj->AddRef(this);
 #endif
         }
     }
 }
 
-void TypeProps::RemoveArrayValue(Symbol prop, int i) {
-    DataArray *a = GetArray(prop);
+void TypeProps::RemoveArrayValue(Symbol prop, int i, DataArray *typeDef) {
+    DataArray *a = GetArray(prop, typeDef);
     DataNode &n = a->Node(i);
     if (n.Type() == kDataObject) {
         Hmx::Object *obj = n.UncheckedObj();
         if (obj) {
 #ifdef HX_NATIVE
             mObjects.remove(obj);
+#else
+            obj->Release(this); // retail X360: the TypeProps is the ObjRefOwner
 #endif
         }
     }
     a->Remove(i);
 }
 
-void TypeProps::InsertArrayValue(Symbol key, int i, const DataNode &value) {
-    DataArray *arr = GetArray(key);
+void TypeProps::InsertArrayValue(Symbol key, int i, const DataNode &value, DataArray *typeDef) {
+    DataArray *arr = GetArray(key, typeDef);
     arr->Insert(i, value);
     if (value.Type() == kDataObject) {
         Hmx::Object *obj = value.UncheckedObj();
         if (obj) {
 #ifdef HX_NATIVE
             mObjects.push_back(obj);
+#else
+            obj->AddRef(this);
 #endif
         }
     }
