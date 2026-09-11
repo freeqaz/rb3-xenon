@@ -159,9 +159,33 @@ class Fail(Exception):
 
 
 def run(cmd, cwd, capture=True, timeout=1800, env=None):
-    p = subprocess.run(cmd, cwd=str(cwd), text=True, timeout=timeout, env=env,
-                       stdout=subprocess.PIPE if capture else None,
-                       stderr=subprocess.STDOUT if capture else None)
+    # A TIMEOUT IS NOT DRIFT.  subprocess.TimeoutExpired used to escape this
+    # helper as a traceback, and Python exits 1 on an uncaught exception --
+    # which is this guard's DRIFT verdict ("symbols.txt is not at the
+    # fixpoint, here is the re-carve").  On a shared machine the overwhelmingly
+    # likely cause of a timeout is BUILD-LOCK CONTENTION with a concurrent
+    # lane, not a real re-carve, so the old behaviour turned "somebody else was
+    # building" into a confident claim of drift.  Route it to the refusal path
+    # (rc=2) instead: not a pass, not a failure, no verdict reached -- the same
+    # idiom as the other refusals here, and what tools/run_ci_guards.sh already
+    # classifies as BLOCKED.  Found by the peer coordinator's CI-guard lane,
+    # which hit an 1800 s timeout waiting on seven concurrent worktrees.
+    try:
+        p = subprocess.run(cmd, cwd=str(cwd), text=True, timeout=timeout,
+                           env=env,
+                           stdout=subprocess.PIPE if capture else None,
+                           stderr=subprocess.STDOUT if capture else None)
+    except subprocess.TimeoutExpired as e:
+        partial = e.output or b"" if isinstance(e.output, bytes) else (e.output or "")
+        if isinstance(partial, bytes):
+            partial = partial.decode("utf-8", "replace")
+        raise Fail(
+            f"TIMEOUT after {timeout}s running {' '.join(map(str, cmd))!r} in "
+            f"{cwd}. NO VERDICT WAS REACHED -- this is NOT symbols.txt drift. "
+            f"On this machine the usual cause is build-lock contention with a "
+            f"concurrent lane; re-run when the lock is quiet, or raise the "
+            f"timeout. Last output: {partial.strip()[-400:]!r}"
+        ) from e
     return p.returncode, (p.stdout or "")
 
 
