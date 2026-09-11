@@ -1276,7 +1276,7 @@ def cmd_selftest(a):
     # A stable-tree failure is real evidence and is never downgraded to
     # "nothing was measured" -- a guard that voids everything is worse than no
     # guard at all.
-    # -- control 5 (shape 3): THE SYMBOL COLUMN MUST NOT TRUNCATE.
+    # -- control 6 (shape 3): THE SYMBOL COLUMN MUST NOT TRUNCATE.
     #    Lane L5-SYMBOLHEADS lost row 12 to a silent 58-char cut: the name was
     #    completed to a plausible mangled terminator and objdiff answered
     #    "Symbol not found in target", which reads like a PHANTOM ROW rather
@@ -1295,15 +1295,15 @@ def cmd_selftest(a):
         'fail even with the defect reinstated, which is a vacuous control')
     line = format_worklist_row(witness)
     if L5_TRUNCATION_WITNESS in line:
-        print('  PASS  control 5 (symbol column prints the FULL name): '
+        print('  PASS  control 6 (symbol column prints the FULL name): '
               f'{len(L5_TRUNCATION_WITNESS)}-char witness survives rendering')
     else:
-        print('  FAIL  control 5 (symbol column prints the FULL name): rendered '
+        print('  FAIL  control 6 (symbol column prints the FULL name): rendered '
               f'line does not contain the {len(L5_TRUNCATION_WITNESS)}-char '
               f'witness -- a truncated symbol is UNUSABLE as objdiff input and '
               f'reads as a phantom row')
         print(f'          rendered: {line}')
-        fails.append('control 5: the symbol column truncated a '
+        fails.append('control 6: the symbol column truncated a '
                      f'{len(L5_TRUNCATION_WITNESS)}-char mangled name (lane '
                      'L5-SYMBOLHEADS handoff 5)')
 
