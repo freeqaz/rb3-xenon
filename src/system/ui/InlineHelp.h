@@ -41,7 +41,10 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
-    virtual void SetTypeDef(DataArray *);
+    // NO SetTypeDef override: retail's vtable slot dispatches UIComponent::SetTypeDef
+    // (AppInlineHelp slot 15 -> 0x823258f0 -> 0x827fe658; LabelShrinkWrapper -> 0x8231c7d8 -> same).
+    // DC3 added an override that calls Hmx::Object::SetTypeDef + Update() and thereby
+    // SKIPS UIComponent::SetTypeDef; rb3-Wii has none. Lane W3-E 2026-09-11.
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     // RndDrawable

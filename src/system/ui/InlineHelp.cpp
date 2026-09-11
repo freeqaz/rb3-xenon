@@ -194,11 +194,6 @@ BEGIN_LOADS(InlineHelp)
     PostLoad(bs);
 END_LOADS
 
-void InlineHelp::SetTypeDef(DataArray *d) {
-    Hmx::Object::SetTypeDef(d);
-    Update();
-}
-
 INIT_REVS(5, 0)
 
 void InlineHelp::PreLoad(BinStream &bs) {
