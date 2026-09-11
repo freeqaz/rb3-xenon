@@ -64296,10 +64296,15 @@
    "name": "1NetCacheMgrXbox",
    "address": "0x8245d4c0",
    "survivor": "??1NetCacheMgrXbox@@UAA@XZ",
-   "folded": [
-    "??1RndWind@@UAA@XZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??1RndWind@@UAA@XZ",
+     "lane": "W5-D PINCHANNEL 2026-09-11",
+     "claim": "REFUTED as a fold: it is a MAP DEFECT. ??_GNetCacheMgrXbox@0x827d7560 calls 0x827d7360, NOT this address -- a class's ??_G calls its own ??1, so NetCacheMgrXbox's dtor is at 0x827d7360 and cannot also be folded here. ??_GRndWind@0x8245dcc0 calls THIS address. The group's own T1 evidence (retail bytes here are byte-identical to our compiled ??1RndWind) is proof the address IS RndWind's dtor, not proof of a fold. 0 census sites, so withdrawing is Delta 0; left in place because after the map repair the group would begin forgiving a genuinely wrong callee."
+    }
+   ]
   },
   {
    "name": "Jump",
