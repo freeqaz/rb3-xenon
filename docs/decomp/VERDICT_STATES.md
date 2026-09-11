@@ -119,7 +119,7 @@ Every other value gets these rows wrong, and one of them is dangerous:
    tool** whenever an agent's symbol lookup fails — so the server would answer
    "did you mean …?" with the one target the agent must not work. Severity is
    moderate, not fatal: every downstream WRITE seam refuses
-   (`report_result`, `batch_check`, `atexit_fuzzy_verify`,
+   (`report_result`, `batch_check`,
    `sync_match_percent`, `refresh_permuter_db`), so an agent could be pointed
    at the row but could not bank a crack on it. The false-crack gate held; the
    "never offered" claim did not. The Ghidra case
@@ -261,8 +261,10 @@ Do all of this, or you have shipped `''` again:
    computed by *subtraction*, so a state you forget silently lands there.
 4. Decide whether the writers may stamp over it: `scripts/batch_check.py`,
    `scripts/sync_match_percent.py` (`--promote`),
-   `tools/refresh_permuter_db.py`, `scripts/atexit_fuzzy_verify.py`
-   (`--mark-at-limit`), `mcp_server._report_result`.
+   `tools/refresh_permuter_db.py`, `mcp_server._report_result`.
+   (`scripts/atexit_fuzzy_verify.py` (`--mark-at-limit`) was a fifth write seam
+   until lane W4-F, 2026-09-11, retired it; `--mark-at-limit` was deliberately
+   not ported -- see `docs/decomp/TOOLING4_2026-09-11.md`.)
 5. Add tests to `scripts/orchestrator/test_verdict_identity.py` — one per
    filter, not one in aggregate.
 

@@ -371,24 +371,33 @@ _TOOL_REPO = Path(__file__).resolve().parent.parent.parent
 #   this list against; the guard cannot enumerate it for you, because a file that
 #   shells out to a `bin/objdiff-cli` path built at runtime is not textually
 #   distinguishable from one that does not.
-# ⚠ `scripts/atexit_fuzzy_verify.py` (added lane ATEXIT-RULER, 2026-09-11) is the
+# ⚠ `scripts/atexit_fuzzy_verify.py` (added lane ATEXIT-RULER, 2026-09-11) was the
 # THIRD omission from this list, and the worst-consequenced: it did not merely
 # report a percentage on the wrong ruler, it WROTE `verdict=COMPLETE` off one,
 # and COMPLETE closes a row. It was ported from DC3 on 2026-05-27 and never
-# revisited across the name_check flip. Measured on this tree, its `none` gate
-# fires on `??__FsFrames@@YAXXZ` at graded fuzzy 98.571 -- where the charged
-# sites are a real named callee divergence (retail destroys
-# `ObjDirPtr<ObjectDir>`, we destroy `vector<RecordedFrame>`), i.e. exactly the
-# class `none` cannot see.
+# revisited across the name_check flip. Its `none` gate fired on
+# `??__FsFrames@@YAXXZ` at graded fuzzy 98.571 -- where the charged sites were a
+# real named callee divergence (retail destroys `ObjDirPtr<ObjectDir>`, we
+# destroy `vector<RecordedFrame>`), i.e. exactly the class `none` cannot see.
 #
 # ⇒ The rule this keeps re-teaching: a tool that WRITES a verdict off a ruler
 #   belongs on this list before one that merely prints a number.
+#
+# ★ THAT TOOL IS RETIRED (lane W4-F, 2026-09-11) and is deliberately NOT in the
+# tuple below -- `scripts/test_ruler_consumers.py::test_every_listed_consumer_exists`
+# fails on a listed path that does not exist, because a list naming a deleted
+# file overstates its own coverage. Its legitimate promotions were always
+# redundant with `scripts/sync_match_percent.py --promote` (verified: that keys
+# on report.json's own `fuzzy_match_percent == 100`, so it is graded by
+# construction and applies to every symbol, `??__F` included); its only unique
+# capability was the false promotion recorded above. The WITHHELD report that
+# kept this defect class VISIBLE lives on as `tools/shape_families.py --withheld`,
+# generalised from 56 `??__F` rows to the whole binary.
 _CONSUMERS = (
     "scripts/orchestrator/mcp_server.py",
     "scripts/analysis/diff_inspect.py",
     "scripts/analysis/stack_layout.py",
     "tools/crossing_worklist.py",
-    "scripts/atexit_fuzzy_verify.py",
 )
 
 
