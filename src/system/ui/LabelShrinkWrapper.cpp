@@ -61,11 +61,6 @@ BEGIN_LOADS(LabelShrinkWrapper)
     PostLoad(bs);
 END_LOADS
 
-void LabelShrinkWrapper::SetTypeDef(DataArray *d) {
-    Hmx::Object::SetTypeDef(d);
-    Update();
-}
-
 INIT_REVS(0, 0)
 
 void LabelShrinkWrapper::PreLoad(BinStream &bs) {
