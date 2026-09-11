@@ -5933,23 +5933,23 @@ band3/meta_band/ContentLoadingPanel.cpp:
 	.pdata      start:0x82228F40 end:0x82228F48
 	.pdata      start:0x82228F48 end:0x82228F60
 	.pdata      start:0x82228F60 end:0x82228F90
+	.pdata      start:0x82228F90 end:0x82228F98
 	.pdata      start:0x82228F98 end:0x82229008
 	.pdata      start:0x82229028 end:0x82229030
-	.pdata      start:0x82240DC8 end:0x82240DD0
 	.text       start:0x82613A20 end:0x82613B18
 	.text       start:0x82613B18 end:0x82613B78
 	.text       start:0x82613B78 end:0x82613DB8
 	.text       start:0x82613DB8 end:0x82614098
+	.text       start:0x82614098 end:0x826140EC
 	.text       start:0x826140F0 end:0x826146D0
 	.text       start:0x82614830 end:0x826148C0
-	.text       start:0x827AF108 end:0x827AF15C
 
 CreditsPanel.cpp:
-	.pdata      start:0x82228F90 end:0x82228F98
 	.pdata      start:0x82240D40 end:0x82240DC8
+	.pdata      start:0x82240DC8 end:0x82240DD0
 	.pdata      start:0x82240DD0 end:0x82240E30
-	.text       start:0x82614098 end:0x826140EC
 	.text       start:0x827AE8F8 end:0x827AF108
+	.text       start:0x827AF108 end:0x827AF15C
 	.text       start:0x827AF15C end:0x827AF8AC
 
 HeldButtonPanel.cpp:
