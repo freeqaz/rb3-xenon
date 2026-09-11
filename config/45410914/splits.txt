@@ -768,6 +768,7 @@ VocalTrackDir.cpp:
 
 BandCrowdMeter.cpp:
 	.pdata      start:0x821F1F48 end:0x821F1F58
+	.pdata      start:0x821F6288 end:0x821F6290
 	.pdata      start:0x821F6398 end:0x821F63C8
 	.pdata      start:0x821F63C8 end:0x821F63D8
 	.pdata      start:0x821F63D8 end:0x821F63E0
@@ -786,6 +787,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F6778 end:0x821F6848
 	.pdata      start:0x82208430 end:0x82208438
 	.text       start:0x8227A328 end:0x8227A3A8
+	.text       start:0x822BB4E8 end:0x822BB78C
 	.text       start:0x822BC1F8 end:0x822BC448
 	.text       start:0x822BC448 end:0x822BC518
 	.text       start:0x822BC518 end:0x822BC6E8
@@ -3765,14 +3767,16 @@ system/rndobj/SoftParticles.cpp:
 	.text       start:0x824945E0 end:0x82494FD8
 
 Waypoint.cpp:
-	.pdata      start:0x821F6280 end:0x821F62E0
+	.pdata      start:0x821F6280 end:0x821F6288
+	.pdata      start:0x821F6290 end:0x821F62E0
 	.pdata      start:0x821F7278 end:0x821F7280
 	.pdata      start:0x82205970 end:0x82205978
 	.pdata      start:0x822073E8 end:0x82207630
 	.pdata      start:0x82207638 end:0x82207640
 	.pdata      start:0x82237D10 end:0x82237D18
 	.pdata      start:0x82237D40 end:0x82237D48
-	.text       start:0x822BB448 end:0x822BB900
+	.text       start:0x822BB448 end:0x822BB4E8
+	.text       start:0x822BB78C end:0x822BB900
 	.text       start:0x822CB008 end:0x822CB014
 	.text       start:0x822CB828 end:0x822CB89C
 	.text       start:0x822CC2C8 end:0x822CC2D4
@@ -7872,13 +7876,17 @@ CharBoneOffset.cpp:
 CharWeightable.cpp:
 	.pdata      start:0x82204CD8 end:0x82204D20
 	.pdata      start:0x82204D38 end:0x82204D60
+	.pdata      start:0x82204D68 end:0x82204D70
 	.text       start:0x823AE918 end:0x823AEE20
 	.text       start:0x823AEF98 end:0x823AF210
+	.text       start:0x823AF2B8 end:0x823AF310
 
 CharPollGroup.cpp:
-	.pdata      start:0x82204D60 end:0x82204EC0
+	.pdata      start:0x82204D60 end:0x82204D68
+	.pdata      start:0x82204D70 end:0x82204EC0
 	.pdata      start:0x82204EE0 end:0x82204EF8
-	.text       start:0x823AF210 end:0x823B08CC
+	.text       start:0x823AF210 end:0x823AF2B8
+	.text       start:0x823AF310 end:0x823B08CC
 	.text       start:0x823B0B00 end:0x823B0C78
 
 FlowValueCase.cpp:
@@ -8959,11 +8967,9 @@ band3/meta_band/UIStats.cpp:
 	.text       start:0x82560660 end:0x82560B08
 
 band3/meta_band/NewAwardPanel.cpp:
-	.pdata      start:0x8222A458 end:0x8222A460
 	.pdata      start:0x8222A468 end:0x8222A628
 	.pdata      start:0x8222A638 end:0x8222A658
 	.pdata      start:0x8222A660 end:0x8222A700
-	.text       start:0x82627118 end:0x82627170
 	.text       start:0x82627238 end:0x82628C38
 	.text       start:0x82628D94 end:0x82628F40
 	.text       start:0x82628F84 end:0x82629878
@@ -11895,12 +11901,11 @@ ChecksumAlgorithm.cpp:
 	.text       start:0x82B22720 end:0x82B22838
 
 AccomplishmentSongConditional.cpp:
-	.pdata      start:0x822265A8 end:0x822266C8
 	.pdata      start:0x8222EC18 end:0x8222EC28
 	.pdata      start:0x8222EC28 end:0x8222EC80
 	.pdata      start:0x8222EC80 end:0x8222EC98
 	.pdata      start:0x8222EC98 end:0x8222ED88
-	.text       start:0x825EB0AC end:0x825EC508
+	.text       start:0x825EC4F8 end:0x825EC508
 	.text       start:0x82669848 end:0x82669918
 	.text       start:0x82669918 end:0x82669DF8
 	.text       start:0x82669DF8 end:0x82669F20
@@ -13386,9 +13391,9 @@ band3/meta_band/OutfitProvider.cpp:
 
 band3/meta_band/MultiSelectListPanel.cpp:
 	.pdata      start:0x8222A3D8 end:0x8222A418
-	.pdata      start:0x8222A460 end:0x8222A468
+	.pdata      start:0x8222A458 end:0x8222A468
 	.text       start:0x82626A40 end:0x82626E50
-	.text       start:0x82627170 end:0x82627238
+	.text       start:0x82627118 end:0x82627238
 
 band3/meta_band/SetlistSortByLocation.cpp:
 	.pdata      start:0x82223B40 end:0x82223C00
@@ -13402,9 +13407,9 @@ band3/meta_band/SaveLoadStatusPanel.cpp:
 
 band3/meta_band/RetryAudioPanel.cpp:
 	.pdata      start:0x8222AD88 end:0x8222ADD0
-	.pdata      start:0x8222ADE0 end:0x8222AED0
+	.pdata      start:0x8222ADE0 end:0x8222AE58
 	.text       start:0x82630228 end:0x82630690
-	.text       start:0x82630778 end:0x826319F4
+	.text       start:0x82630778 end:0x82631130
 
 band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp:
 	.pdata      start:0x82226F30 end:0x82226F50
