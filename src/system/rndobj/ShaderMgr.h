@@ -25,7 +25,13 @@ enum VShaderConstant {
     kVS_ShockwavePos = 0x1E,
     kVS_ShockwaveNormal = 0x1F,
     kVS_ShockwaveParams = 0x20,
-    kVS_RimColor = 0x3d,
+    // Retail RB3 X360: 0x3f, NOT DC3's 0x3d. `NgMat::SetRegularShaderConst`
+    // @0x824A9918 builds the rim Vector4 from mRimRGB (fsel-clamping .alpha
+    // against 0.5f, exactly our source) and passes `li r4, 0x3f` to the
+    // SetVConstant(VShaderConstant, const Vector4&) vtable slot 0x24 -- and
+    // the very next call is `li r4, 0xf` (kPS_NgMatCustom) for mRimMap, which
+    // pins the source line. The function contains ZERO references to 0x3d.
+    kVS_RimColor = 0x3f,
     kVS_BoxMapLight0 = 0x50,
     kVS_WorldTransform = 0x5c,
 };
@@ -51,7 +57,10 @@ enum PShaderConstant {
     kPS_Specular2 = 0x13,
     kPS_FurGeometry = 0x32,
     kPS_FurShell = 0x33,
-    kPS_RimColor = 0x3d,
+    // Retail RB3 X360: 0x3f (see kVS_RimColor above). Same function, the
+    // SetPConstant(PShaderConstant, const Vector4&) vtable slot 0x40 site,
+    // also `li r4, 0x3f`. DC3 renumbered these two registers to 0x3d.
+    kPS_RimColor = 0x3f,
     kPS_TexProcFrequency = 0x40,
     kPS_TexProcAmplitude = 0x41,
     kPS_TexProcPhase = 0x42,
