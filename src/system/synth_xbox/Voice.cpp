@@ -113,10 +113,8 @@ long Voice::createOrReuse(
     MILO_ASSERT(pPoolVoice->egParams == 0, 0x1c3);
     pPoolVoice->egParams = (int)new EnvelopeGeneratorParams;
 
-    // chain before desc: retail keeps the chain at r31+0x58 and the descriptor
-    // at r31+0x60 (declaration order is what places them).
-    XAUDIO2_EFFECT_CHAIN effectChain;
     XAUDIO2_EFFECT_DESCRIPTOR effectDesc;
+    XAUDIO2_EFFECT_CHAIN effectChain;
     effectDesc.InitialState = 0;
     effectChain.EffectCount = 1;
     effectDesc.pEffect = (IUnknown *)pPoolVoice->eg;
@@ -146,11 +144,7 @@ long Voice::createOrReuse(
     }
     gVoiceCounters[0]++;
     memcpy(&pPoolVoice->wfx, &wfx, 0x12);
-    if (sends == 0 || sends->SendCount <= 0) {
-        unk4b = true;
-    } else {
-        unk4b = false;
-    }
+    unk4b = (sends == 0 || sends->SendCount <= 0);
     MemPopTemp();
     return hr;
 }
@@ -171,11 +165,14 @@ void Voice::dispose(PoolVoice *voice, unsigned int) {
         unk4b = false;
     }
     voice->disposeTick = GetTickCount() - 500000;
-    gVoiceGC.Enter();
-    s_voiceGC.push_back(*voice);
-    gVoiceCounters[0]--;
-    gVoiceCounters[1]++;
-    gVoiceGC.Exit();
+    {
+        // retail: `stw r28,0x50(r31)` + inlined Enter/Exit + a funclet, i.e. a
+        // CritSecTracker on gVoiceGC, not bare Enter()/Exit() calls.
+        CritSecTracker tracker(&gVoiceGC);
+        s_voiceGC.push_back(*voice);
+        gVoiceCounters[1]++; // [1]++ before [0]-- : retail loads [1] into the lower register
+        gVoiceCounters[0]--;
+    }
     voice->eg = 0;
     voice->egParams = 0;
     voice->sourceVoice = 0;
