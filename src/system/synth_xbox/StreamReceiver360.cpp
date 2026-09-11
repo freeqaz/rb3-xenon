@@ -23,7 +23,8 @@ StreamReceiver360::StreamReceiver360(int sampleRate, int numBuffers, bool slip)
     mStreamBuf = (unsigned char *)MemAlloc(
         numBuffers * 0xC000, "StreamReceiver.cpp", 0x33, "StreamBuffer", 0);
 
-    mVoice = new Voice(false, 1, false);
+    // Retail 0x82B6BD68 passes (0, 1, 0) = (xma, SYNCHRONIZED, stereo): stream voices sync-start.
+    mVoice = new Voice(false, true, false);
 
     mVoice->SetData(mStreamBuf, numBuffers * 0xC000, 0);
     mVoice->SetLoopRegion(0, -1);
@@ -112,7 +113,7 @@ void StreamReceiver360::SetSlipOffset(float f) {
     SlipStop();
     Voice *v = (Voice *)PoolAlloc(0x7c, 0x7c, "e:\\lazer_build_gmc1\\system\\src\\synth360\\Voice.h", 0x28, "Voice");
     if (v) {
-        v = new (v) Voice(false, 1, false);
+        v = new (v) Voice(false, true, false); // retail 0x82B6C2B8: (0, 1, 0)
     }
     mSlipVoice = v;
     if (mTagged) {

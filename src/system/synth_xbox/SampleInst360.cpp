@@ -3,7 +3,8 @@
 
 SampleInst360::SampleInst360(SynthSample360 *sample, bool loop, int startSample, int endSample)
     : SampleInst(sample) {
-    mVoice = new Voice(sample->IsXMA(), sample->GetNumChannels(), false);
+    // Retail 0x82B6DFB8 passes (IsXMA(), 0, 0): no channel-count call at all.
+    mVoice = new Voice(sample->IsXMA(), false, false);
     mVoice->SetSampleRate(sample->GetSampleRate());
     mVoice->SetData((const void *)sample->GetDataAddr(), sample->GetNumBytes(), sample->GetNumSamples());
     if (loop) {

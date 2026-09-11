@@ -17,9 +17,18 @@
 #include "xdk/xapilibi/xbase.h"
 #include "xdk/xapilibi/xbox.h"
 
-HANDLE gEvent;
-HANDLE gVoiceThread;
-int Voice::sHeadsetTarget;
+// Retail keeps these two in initialised .data (0x82CA69BC sHeadsetTarget = -1,
+// 0x82CA69C0 gEvent = INVALID_HANDLE_VALUE), not .bss: the ctor (0x82B66B20)
+// tests `cmpwi cr6, r11, -1` on gEvent before creating the voice thread, so a
+// zero-initialised gEvent would never create it (the state this tree was in).
+// There is NO gVoiceThread global in retail -- CreateThread's result stays in
+// r30 and is never stored -- and nothing in Voice.s calls
+// WaitForSingleObject/CloseHandle outside the thread entry, so RB3 has neither
+// TerminateVoiceThread nor gShutdownVoiceThread (0x82E120C4 is
+// gHasPendingStopCommits: read by StopSynchronizedVoices, set by Pause).  dc3
+// carries all three; RB3 does not.  (Lane W4-D, 2026-09-11.)
+HANDLE gEvent = INVALID_HANDLE_VALUE;
+int Voice::sHeadsetTarget = -1;
 CriticalSection gLockPendingLists;
 CriticalSection gVoiceGC;
 std::list<Voice *> gPendingVoices;
@@ -29,7 +38,6 @@ std::list<Voice *> gInProgressSyncVoices;
 std::deque<PoolVoice> s_voiceGC;
 std::deque<PoolVoice> s_voiceGCInProgress;
 
-bool gShutdownVoiceThread = false;
 bool gCommitSyncVoices = false;
 int gCommitTag = 0;
 bool gHasPendingStopCommits = false;
@@ -44,23 +52,32 @@ typedef HRESULT (*EndLoopFunc)(int *, int);
 
 int Voice::GetVoice() { return mSourceVoice; }
 
-Voice::Voice(bool b1, int i, bool b2)
+// Retail 0x82B66B20 (296 B).  The signature is (bool, bool, bool), not dc3's
+// (bool, int, bool): r5 is stored straight to mSynchronized (`stb r5, 0x49`)
+// and r6 to mStereo (`stb r6, 0x4a`) with no `i > 1` compare anywhere, and the
+// four retail call sites agree -- Mic 0x82B607C8 (0,0,0), SampleInst360
+// 0x82B6DFB8 (IsXMA(),0,0) with NO channel-count call, StreamReceiver360
+// 0x82B6BD68 / 0x82B6C2B8 (0,1,0).  So RB3's song-stream voices are the
+// SYNCHRONIZED ones (the gPendingSyncVoices machinery), and mStereo is never
+// set by any retail caller.  CreateThread's handle is a local (`mr r30, r3`,
+// never stored) -- see the note on the globals above.
+Voice::Voice(bool xma, bool synchronized, bool stereo)
     : mState(0), mBuffer(0), mAudioBytes(0), mNumSamples(0), mSampleRate(0), mStartSamp(0), mLoopStart(-1),
       mLoopEnd(-1), mVolume(1.0f), mPan(0), mSpeed(1.0f), mAttackRate(0.001f), mReleaseRate(0.001f),
-      mXMA(b1), mFxSend(), mReverbEnabled(false), mReverbMixDb(-96.0f), unk48(false), mSynchronized(b2),
-      mStereo(i > 1), unk4b(false), mTagState(0) {
+      mXMA(xma), mFxSend(), mReverbEnabled(false), mReverbMixDb(-96.0f), unk48(false),
+      mSynchronized(synchronized), mStereo(stereo), unk4b(false), mTagState(0) {
     mEnvelopeEffect = 0;
     mEnvelopeParams = 0;
     mSourceVoice = 0;
     if (gEvent == INVALID_HANDLE_VALUE) {
         gEvent = CreateEventA(0, 0, 0, 0);
         MILO_ASSERT(gEvent, 0xfa);
-        gVoiceThread = CreateThread(0, 0x10000, StartVoiceThreadEntry, 0, 4, 0);
-        MILO_ASSERT(gVoiceThread, 0xff);
-        SetThreadPriority(gVoiceThread, 0xf);
-        DWORD ret = XSetThreadProcessor(gVoiceThread, 2);
+        HANDLE thread = CreateThread(0, 0x10000, StartVoiceThreadEntry, 0, 4, 0);
+        MILO_ASSERT(thread, 0xff);
+        SetThreadPriority(thread, 0xf);
+        DWORD ret = XSetThreadProcessor(thread, 2);
         MILO_ASSERT(ret != -1, 0x107);
-        ret = ResumeThread(gVoiceThread);
+        ret = ResumeThread(thread);
         MILO_ASSERT(ret != -1, 0x10c);
     }
 }
@@ -98,9 +115,13 @@ Voice::~Voice() {
 //     not a channel count;
 //   * no hr-failure arm (no snprintf / MemPrintOverview / MILO_FAIL) -- the
 //     return value is hr itself (`mr r28,r3` ... `mr r3,r28`);
-//   * unk4b = (sends == 0 || sends->SendCount <= 0): `cmplwi r27,0; beq ->1;
-//     lwz r11,0(r27); cmplwi r11,0; li r11,0; ble ->1; stb r11,0x4b(r24)`.
-//     dc3 stores the OPPOSITE polarity (SendCount > 0).
+//   * unk4b = (sends == 0 || sends->SendCount > 0): `cmplwi r27,0; beq ->1;
+//     lwz r11,0(r27); cmplwi r11,0; li r11,0; ble ->store 0; ->1: li 1; stb`.
+//     (Lane W3-D read the second term as `<= 0`; the `ble` lands on the
+//     store-ZERO arm, so SendCount == 0 clears the flag and SendCount > 0 sets
+//     it -- the SAME polarity as dc3's unk54.  That misreading was the
+//     `ble`/`bgt` residual W3-D left at 99.9, and a behavioural bug: dispose()
+//     was detaching exactly the voices that had no output to detach from.)
 // CreateSourceVoice is IXAudio2 slot 0x20 with (this, ppVoice, pFormat, 0,
 // f1=maxFreqRatio, 0, sends, &chain); the critsec is TheXboxSynth+0x88
 // (`addic. r30, r11, 0x88` / Enter ... Exit) and MemPushTemp/MemPopTemp
@@ -144,7 +165,7 @@ long Voice::createOrReuse(
     }
     gVoiceCounters[0]++;
     memcpy(&pPoolVoice->wfx, &wfx, 0x12);
-    unk4b = (sends == 0 || sends->SendCount <= 0);
+    unk4b = (sends == 0 || sends->SendCount > 0);
     MemPopTemp();
     return hr;
 }
@@ -238,6 +259,9 @@ void Voice::EndLoop() {
 
 void Voice::Start() { blockingStart(false); }
 
+// Retail 0x82B64D20 (64 B): `bytes / 2` (signed: srawi + addze), then halved
+// again when mStereo (`lbz 0x4a` / `beqlr`).  dc3 divides by mChannels; RB3 has
+// no channel count, only the bool.
 void Voice::SetData(const void *buffer, int bytes, int i) {
     MILO_ASSERT(buffer, 299);
     MILO_ASSERT(bytes >= 0, 300);
@@ -248,9 +272,8 @@ void Voice::SetData(const void *buffer, int bytes, int i) {
     } else {
         MILO_ASSERT(!mXMA, 0x136);
         mNumSamples = bytes / 2;
-        if (1 < NumChannels()) {
-            MILO_ASSERT((mNumSamples & (NumChannels())) == 0, 0x13a);
-            mNumSamples = mNumSamples / NumChannels();
+        if (mStereo) {
+            mNumSamples = mNumSamples / 2;
         }
     }
 }
@@ -303,47 +326,26 @@ void StopSynchronizedVoices() {
     gLockPendingLists.Exit();
 }
 
-void TerminateVoiceThread() {
-    gShutdownVoiceThread = true;
-    if (gEvent != INVALID_HANDLE_VALUE) {
-        SetEvent(gEvent);
-    }
-    if (gVoiceThread != INVALID_HANDLE_VALUE) {
-        WaitForSingleObject(gVoiceThread, 500);
-        CloseHandle(gVoiceThread);
-    }
-}
-
+// Retail 0x82B66038 (148 B): no shutdown flag (none exists in RB3), a
+// CritSecTracker on gLockPendingLists, and the two O(n) list sizes summed then
+// tested `!= 0` (`add r11, r9, r8; subic; subfe`).
 bool Voice::HasPendingVoices() {
-    if (gShutdownVoiceThread)
-        return false;
-    gLockPendingLists.Enter();
-    int count1 = 0;
-    for (std::list<Voice *>::iterator it = gPendingVoices.begin();
-         it != gPendingVoices.end(); ++it) {
-        count1++;
-    }
-    int count2 = 0;
-    for (std::list<Voice *>::iterator it = gPendingSyncVoices.begin();
-         it != gPendingSyncVoices.end(); ++it) {
-        count2++;
-    }
-    bool result = (count1 + count2) > 0;
-    gLockPendingLists.Exit();
-    return result;
+    CritSecTracker t(&gLockPendingLists);
+    return gPendingVoices.size() + gPendingSyncVoices.size() != 0;
 }
 
+// Retail 0x82B66630 (116 B): no shutdown flag and no OutputVoice() guard (dc3
+// has both); a CritSecTracker on gLockPendingLists (`stw r28, 0x50(r31)` + the
+// EH funclet fn_82B666A4), Init, IXAudio2SourceVoice::Start(0, mSynchronized)
+// via slot 0x4c, mState = 3.
 void Voice::blockingStart(bool b) {
-    if (gShutdownVoiceThread || (unsigned int)TheXboxSynth->unkcc == 0)
-        return;
-    gLockPendingLists.Enter();
+    CritSecTracker t(&gLockPendingLists);
     Init(b);
     int *pVoice = (int *)mSourceVoice;
-    HRESULT hr =
-        ((HRESULT(*)(int *, int, int))(*(int *)(*(int *)pVoice + 0x4c)))(pVoice, 0, mSynchronized != 0);
+    bool sync = mSynchronized != 0;
+    HRESULT hr = ((HRESULT(*)(int *, int, bool))(*(int *)(*(int *)pVoice + 0x4c)))(pVoice, 0, sync);
     MILO_ASSERT(SUCCEEDED(hr), 0x29b);
     mState = 3;
-    gLockPendingLists.Exit();
 }
 
 // Retail 0x82B64D60 never reads its bool: there is no immediate-stop arm here.
@@ -636,6 +638,12 @@ void Voice::SafeRestart() {
     mState = 3;
 }
 
+// Retail 0x82B65160 (208 B).  Not dc3's mChannels arithmetic: the mono byte
+// address `(addr % (mAudioBytes/2)) << 1` is computed first (into a temp --
+// `subf r10` keeps r11 = addr intact), then, if mStereo, addr itself is reduced
+// modulo mAudioBytes/4 and the result is `addr << 2`.  Both modulos are
+// UNSIGNED (`divwu` + `twllei` div-by-zero trap) on a signed-divided size
+// (`srawi` + `addze`), and SamplesPlayed is truncated to 32 bits (`clrrwi 0`).
 int Voice::GetAddr() {
     if (mSourceVoice == 0 || mXMA)
         return 0;
@@ -644,17 +652,18 @@ int Voice::GetAddr() {
     XAUDIO2_VOICE_STATE state;
     ((void (*)(int *, XAUDIO2_VOICE_STATE *))(*(int *)(*(int *)pVoice + 0x64)))(pVoice, &state);
 
-    int addr = mStartSamp + (unsigned int)state.SamplesPlayed;
-    const void *buf = mBuffer;
-    if (buf != 0) {
-        int bytesPerSample = NumChannels() * 2;
-        int samplesInBuffer = mAudioBytes / bytesPerSample;
-        unsigned int uaddr = (unsigned int)addr;
-        addr = (int)(uaddr - (uaddr / (unsigned int)samplesInBuffer) * (unsigned int)samplesInBuffer) * NumChannels();
-    } else {
-        addr = NumChannels() * addr;
+    unsigned int addr = mStartSamp + (unsigned int)state.SamplesPlayed;
+    int ret = addr << 1;
+    if (mBuffer != 0) {
+        ret = (addr % (mAudioBytes / 2)) << 1;
     }
-    return addr << 1;
+    if (mStereo) {
+        if (mBuffer != 0) {
+            addr = addr % (mAudioBytes / 4);
+        }
+        ret = addr << 2;
+    }
+    return ret;
 }
 
 bool Voice::IsPlaying() {
@@ -840,23 +849,44 @@ void Voice::InitVoiceParameters(XMA2WAVEFORMATEX &fmt, XAUDIO2_BUFFER buf) {
     }
 }
 
+// Retail 0x82B666D8 (972 B), written from the listing.  Where it is NOT dc3's:
+//   * `for (;;)` -- there is no gShutdownVoiceThread in RB3 (no byte global in
+//     0x82E120C4..C7 other than gHasPendingStopCommits / gCommitSyncVoices /
+//     gWasCommitSyncVoices is referenced anywhere in Voice.s), so the loop has
+//     no exit test and the function never returns;
+//   * the GC drain moves at most TWO voices per wake-up (`cmpwi cr6, r30, 2`),
+//     not four;
+//   * the tick age is computed in 64-bit with an explicit wrap-around fix-up
+//     (`rldicl r28,r10,0,32` / `subf` / `cmpdi`+`add 1<<32` / `cmpdi r11,0x32`),
+//     i.e. `(__int64)now - (__int64)tick`, `+= 2^32 if negative`, `< 50 && != 0`;
+//   * PoolFree is the 2-arg X360 overload (`?PoolFree@@YAXHPAX@Z`, fn_827BADB0);
+//   * three CritSecTrackers (funclets fn_82B66AA4/ACC/AF4 on r31+0x58/0x5c/0x60)
+//     -- gLockPendingLists, gVoiceGC, and the null-checked Synth360+0x88
+//     (`addic. r29, r11, 0x88`), the same idiom createOrReuse uses;
+//   * the drain iterates a COPY of s_voiceGC.begin() (r31+0x70) against
+//     s_voiceGC.end() while popping the front -- retail's shape, kept verbatim.
+// What it shares with dc3 and not with the body this tree carried before: the
+// tick-age gate, DestroyVoice (slot 0x48, no args) with NO null check on
+// sourceVoice, and the `delete`-shaped envelope release (only the deleting
+// destructor call is guarded; the field clears and the params free are not).
 unsigned long StartVoiceThreadEntry(void *) {
-    rolling++;
-    WaitForSingleObject(gEvent, INFINITE);
-    while (!gShutdownVoiceThread) {
-        gLockPendingLists.Enter();
-        gInProgressVoices = gPendingVoices;
-        gPendingVoices.clear();
+    for (;;) {
+        rolling++;
+        WaitForSingleObject(gEvent, INFINITE);
+        {
+            CritSecTracker t(&gLockPendingLists);
+            gInProgressVoices = gPendingVoices;
+            gPendingVoices.clear();
 
-        gWasCommitSyncVoices = false;
-        if (gCommitSyncVoices) {
-            gCommitSyncVoices = false;
-            gWasCommitSyncVoices = true;
-            gWasCommitTag = gCommitTag;
-            gInProgressSyncVoices = gPendingSyncVoices;
-            gPendingSyncVoices.clear();
+            gWasCommitSyncVoices = false;
+            if (gCommitSyncVoices) {
+                gCommitSyncVoices = false;
+                gWasCommitSyncVoices = true;
+                gWasCommitTag = gCommitTag;
+                gInProgressSyncVoices = gPendingSyncVoices;
+                gPendingSyncVoices.clear();
+            }
         }
-        gLockPendingLists.Exit();
 
         if (gInProgressVoices.size() > 0) {
             for (std::list<Voice *>::iterator it = gInProgressVoices.begin();
@@ -875,46 +905,51 @@ unsigned long StartVoiceThreadEntry(void *) {
         }
 
         if (gWasCommitSyncVoices && TheXboxSynth) {
-            int *pMasterVoice = (int *)TheXboxSynth->unkc8;
-            HRESULT hr =
-                ((HRESULT(*)(int *, int))(*(int *)(*(int *)pMasterVoice + 0x34)))(pMasterVoice, 0);
+            // IXAudio2::CommitChanges(0) -- slot 0x34 of the engine at Synth360+0xc8.
+            int *pEngine = (int *)TheXboxSynth->unkc8;
+            HRESULT hr = ((HRESULT(*)(int *, int))(*(int *)(*(int *)pEngine + 0x34)))(pEngine, 0);
             MILO_ASSERT(SUCCEEDED(hr), 0x76);
         }
 
-        // Process voice garbage collection
-        gVoiceGC.Enter();
-        int gcCount = 0;
-        while (!s_voiceGC.empty() && gcCount < 4) {
-            s_voiceGCInProgress.push_back(s_voiceGC.front());
-            s_voiceGC.pop_front();
-            gcCount++;
+        {
+            CritSecTracker t(&gVoiceGC);
+            int gcCount = 0;
+            unsigned int now = GetTickCount() - 500000;
+            for (std::deque<PoolVoice>::iterator it = s_voiceGC.begin(); it != s_voiceGC.end(); ++it) {
+                __int64 age = (__int64)now - (__int64)s_voiceGC.front().disposeTick;
+                if (age < 0) {
+                    age += 0x100000000LL;
+                }
+                if (age < 50 && age != 0) {
+                    break;
+                }
+                s_voiceGCInProgress.push_back(s_voiceGC.front());
+                s_voiceGC.pop_front();
+                gVoiceCounters[1]--;
+                if (++gcCount >= 2) {
+                    break;
+                }
+            }
         }
-        gVoiceGC.Exit();
 
-        if (TheXboxSynth) {
-            CriticalSection *cs = &TheXboxSynth->unk88;
-            cs->Enter();
+        {
+            CritSecTracker t(&TheXboxSynth->unk88);
             for (std::deque<PoolVoice>::iterator it = s_voiceGCInProgress.begin();
                  it != s_voiceGCInProgress.end(); ++it) {
                 PoolVoice &pv = *it;
-                if (pv.sourceVoice) {
-                    int *pSv = (int *)pv.sourceVoice;
-                    ((void (*)(int *, int))(*(int *)(*(int *)pSv + 0x48)))(pSv, 0);
-                }
+                // IXAudio2Voice::DestroyVoice() -- slot 0x48, no arguments, no null check.
+                int *pSv = (int *)pv.sourceVoice;
+                ((void (*)(int *))(*(int *)(*(int *)pSv + 0x48)))(pSv);
                 if (pv.eg) {
                     int *pEg = (int *)pv.eg;
                     ((void (*)(int *, int))(*(int *)(*(int *)pEg + 0x38)))(pEg, 1);
-                    pv.eg = 0;
-                    PoolFree(0x10, (void *)pv.egParams, __FILE__, 0x1e, "EnvelopeGeneratorParams");
-                    pv.egParams = 0;
                 }
+                pv.eg = 0;
+                PoolFree(0x10, (void *)pv.egParams);
+                pv.egParams = 0;
             }
-            cs->Exit();
         }
         s_voiceGCInProgress.clear();
-
-        rolling++;
-        WaitForSingleObject(gEvent, INFINITE);
     }
     return 0;
 }
