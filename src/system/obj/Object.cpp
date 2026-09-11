@@ -11,6 +11,7 @@
 #include "os/Platform.h"
 #include "os/System.h"
 #include "utl/BinStream.h"
+#include "utl/MemMgr.h"
 #include "utl/Symbol.h"
 
 #ifdef HX_NATIVE
@@ -174,12 +175,16 @@ Hmx::Object::Object()
 }
 
 Hmx::Object::~Object() {
-    MILO_ASSERT_FMT(MainThread(), "Can't delete objects outside of the main thread");
+    // Retail X360 (0x8275CBF0) EVALUATES this assert's condition: `bl MainThread`
+    // survives with its result unused. MILO_ASSERT_FMT's sizeof() form never ran it.
+    MILO_ASSERT(MainThread(), 0xA7);
     if (mTypeDef) {
         mTypeDef->Release();
         mTypeDef = nullptr;
     }
+#ifdef HX_NATIVE
     ClearAllTypeProps();
+#endif
     RemoveFromDir();
 #ifdef HX_NATIVE
     RELEASE(mSinks);
@@ -195,17 +200,29 @@ Hmx::Object::~Object() {
         ReplaceRefs(nullptr);
     sDeleting = old;
 #else
-    // Retail X360 (fn_82738050): walk mRefs, dispatch Replace(this, 0) on each
-    // node's ring-ref (vtable slot +8), then free all 0xc pool nodes.
-    for (ObjRef *it = mRefs.next; it != &mRefs; it = it->next) {
-        RefPtrOf(it)->Replace(reinterpret_cast<ObjRef *>(this), nullptr);
+    // Retail X360 (0x8275CBF0, lane W5-A): no explicit ClearAll -- ~TypeProps
+    // (fn_82274048 == { ClearAll(); }) runs as the implicit member destructor
+    // AFTER this body. The ref walk reads `next` BEFORE dispatching Replace,
+    // since Replace(this, 0) may unlink the node it is called on. The note is
+    // an owned pool string (see SetNote) and is freed here; the ring itself is
+    // retail's std::list<ObjRefOwner*> member dtor (`_List_base::clear` folded
+    // onto a SynthPollable* instantiation) -- ours is the explicit ObjRingFree.
+    for (ObjRef *it = mRefs.next; it != &mRefs;) {
+        ObjRef *cur = it;
+        it = it->next;
+        RefPtrOf(cur)->Replace(reinterpret_cast<ObjRef *>(this), nullptr);
     }
     sDeleting = old;
-    ObjRingFree(&mRefs);
+    if (mNote != gNullStr) {
+        MemOrPoolFreeSTL(strlen(mNote) + 1, (void *)mNote);
+    }
 #endif
     if (gDataThis == this) {
         gDataThis = nullptr;
     }
+#ifndef HX_NATIVE
+    ObjRingFree(&mRefs);
+#endif
 }
 
 void Hmx::Object::Replace(ObjRef *from, Hmx::Object *to) {
@@ -328,12 +345,41 @@ void Hmx::Object::SaveRest(BinStream &bs) {
 #endif
 }
 
+#ifndef HX_NATIVE
+// Retail X360 (0x8275A898, lane W5-A): kCopyFromMax returns; SetNote COPIES the
+// note (fn_8275A500 -- Object owns its note string); same-class => SetTypeDef +
+// an UNCONDITIONAL TypeProps assignment (DC3's "either side has props" guard is
+// absent); else the warn's arguments are evaluated in rb3-Wii's hoisted order
+// (o->ClassName(), ClassName(), o->Type()) with the emission stripped.
+void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
+    if (ty == kCopyFromMax)
+        return;
+    SetNote(o->Note());
+    if (ClassName() == o->ClassName()) {
+        SetTypeDef(o->TypeDef());
+        mTypeProps = o->mTypeProps;
+    } else if (o->TypeDef() || TypeDef()) {
+        Symbol className = o->ClassName();
+        const char *selfname = Name();
+        Symbol selfclass = ClassName();
+        const char *objname = o->Name();
+        Symbol typ = o->Type();
+        MILO_NOTIFY(
+            "Can't copy type \"%s\" or type props of %s to %s, different classes %s and %s",
+            typ,
+            selfname,
+            objname,
+            selfclass,
+            className
+        );
+    }
+}
+#else
 void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
     if (ty != kCopyFromMax) {
         mNote = o->Note();
         if (ClassName() == o->ClassName()) {
             SetTypeDef(o->TypeDef());
-#ifdef HX_NATIVE
             if (o->HasTypeProps() && !mTypeProps) {
                 mTypeProps = new TypeProps(this);
             } else if (!o->HasTypeProps()) {
@@ -344,12 +390,6 @@ void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
             if (mTypeProps) {
                 *mTypeProps = *o->mTypeProps;
             }
-#else
-            // Retail X360: TypeProps is inline, copy directly
-            if (o->HasTypeProps() || mTypeProps.HasProps()) {
-                mTypeProps = o->mTypeProps;
-            }
-#endif
         } else if (o->TypeDef() || TypeDef()) {
             MILO_NOTIFY(
                 "Can't copy type \"%s\" or type props of %s to %s, different classes %s and %s",
@@ -362,6 +402,7 @@ void Hmx::Object::Copy(const Hmx::Object *o, CopyType ty) {
         }
     }
 }
+#endif
 
 void Hmx::Object::Load(BinStream &bs) {
     LoadType(bs);
@@ -400,12 +441,7 @@ void Hmx::Object::LoadRest(BinStream &bs) {
         // Retail stores mNote as const char* into a memory pool.
         String noteStr;
         d >> noteStr;
-        if (!noteStr.empty()) {
-            unsigned int len = noteStr.length() + 1;
-            char *buf = (char *)MemAlloc(len, __FILE__, __LINE__, "Object::mNote", 0);
-            memcpy(buf, noteStr.c_str(), len);
-            mNote = buf;
-        }
+        SetNote(noteStr.c_str()); // pool-owned copy, freed by ~Object/SetNote
     }
 #endif
 }
@@ -854,10 +890,10 @@ void Hmx::Object::RemoveProperty(DataArray *prop) {
         MILO_ASSERT(prop->Size() == 2, 0x235);
 #ifdef HX_NATIVE
         if (mTypeProps) {
-            mTypeProps->RemoveArrayValue(prop->Sym(0), prop->Int(1));
+            mTypeProps->RemoveArrayValue(prop->Sym(0), prop->Int(1), mTypeDef);
         }
 #else
-        mTypeProps.RemoveArrayValue(prop->Sym(0), prop->Int(1));
+        mTypeProps.RemoveArrayValue(prop->Sym(0), prop->Int(1), mTypeDef);
 #endif
     }
 }
@@ -878,11 +914,26 @@ void Hmx::Object::PropertyClear(DataArray *propArr) {
     cloned->Release();
 }
 
+#ifndef HX_NATIVE
+// Retail X360 (0x8275A650, lane W5-A): RB3 has no property-change export and no
+// sink handler here -- that is DC3 machinery. SetArrayValue takes the owner's
+// TypeDef as its 4th argument (r7 = this->mTypeDef at the retail call site).
+void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
+    if (!SyncProperty((DataNode &)val, prop, 0, kPropSet)) {
+        Symbol key = prop->Sym(0);
+        if (prop->Size() == 1) {
+            mTypeProps.SetKeyValue(key, val, true);
+        } else {
+            MILO_ASSERT(prop->Size() == 2, 0x1C4);
+            mTypeProps.SetArrayValue(key, prop->Int(1), val, mTypeDef);
+        }
+    }
+}
+#else
 void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
     const DataNode *prop_n = nullptr;
     DataNode n;
     Symbol handler;
-#ifdef HX_NATIVE
     if (mSinks) {
         handler = mSinks->GetPropSyncHandler(prop);
         if (!handler.Null()) {
@@ -892,10 +943,8 @@ void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
             }
         }
     }
-#endif
     if (!SyncProperty((DataNode &)val, prop, 0, kPropSet)) {
         Symbol key = prop->Sym(0);
-#ifdef HX_NATIVE
         if (!mTypeProps) {
             mTypeProps = new TypeProps(this);
         }
@@ -903,16 +952,8 @@ void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
             mTypeProps->SetKeyValue(key, val, true);
         } else {
             MILO_ASSERT(prop->Size() == 2, 0x1C4);
-            mTypeProps->SetArrayValue(key, prop->Int(1), val);
+            mTypeProps->SetArrayValue(key, prop->Int(1), val, mTypeDef);
         }
-#else
-        if (prop->Size() == 1) {
-            mTypeProps.SetKeyValue(key, val, true);
-        } else {
-            MILO_ASSERT(prop->Size() == 2, 0x1C4);
-            mTypeProps.SetArrayValue(key, prop->Int(1), val);
-        }
-#endif
         if (prop_n && val.Equal(n, nullptr, false)) {
             handler = Symbol();
         }
@@ -926,6 +967,7 @@ void Hmx::Object::SetProperty(DataArray *prop, const DataNode &val) {
     }
     ExportPropertyChange(prop, handler);
 }
+#endif
 
 void Hmx::Object::SetProperty(Symbol prop, const DataNode &val) {
 #ifdef HX_NATIVE
@@ -952,9 +994,9 @@ void Hmx::Object::InsertProperty(DataArray *prop, const DataNode &val) {
         if (!mTypeProps) {
             mTypeProps = new TypeProps(this);
         }
-        mTypeProps->InsertArrayValue(prop->Sym(0), prop->Int(1), val);
+        mTypeProps->InsertArrayValue(prop->Sym(0), prop->Int(1), val, mTypeDef);
 #else
-        mTypeProps.InsertArrayValue(prop->Sym(0), prop->Int(1), val);
+        mTypeProps.InsertArrayValue(prop->Sym(0), prop->Int(1), val, mTypeDef);
 #endif
     }
 }
@@ -991,7 +1033,26 @@ void Hmx::Object::RegisterFactory(Symbol name, ObjectFunc *func) {
 // (16.00.10224.00) -- moving the definition doesn't help, and
 // __declspec(noinline) is not a substitute (see OvershellSlot.cpp:1874).
 #pragma auto_inline(off)
+#ifdef HX_NATIVE
 void Hmx::Object::SetNote(const char *note) { mNote = note; }
+#else
+// Retail X360 (fn_8275A500, lane W5-A): Object OWNS its note. Free the old pool
+// copy (unless gNullStr) by strlen+1, pool-alloc strlen+1 for the new one and
+// strcpy it in (MSVC inlines the byte loop), or fall back to gNullStr for a
+// null/empty note. ~Object frees it the same way; Load routes through here.
+void Hmx::Object::SetNote(const char *note) {
+    if (mNote != gNullStr) {
+        MemOrPoolFreeSTL(strlen(mNote) + 1, (void *)mNote);
+    }
+    if (note && *note) {
+        char *buf = (char *)MemOrPoolAllocSTL(strlen(note) + 1);
+        mNote = buf;
+        strcpy(buf, note);
+    } else {
+        mNote = gNullStr;
+    }
+}
+#endif
 #pragma auto_inline(on)
 
 void Hmx::Object::RemoveFromDir() {
@@ -1031,7 +1092,9 @@ DataNode Hmx::Object::HandleType(DataArray *msg) {
         handler = mTypeDef->FindArray(t, false);
     }
     if (handler) {
-        MessageTimer timer(this, t);
+#ifdef HX_NATIVE
+        MessageTimer timer(this, t); // retail X360 (0x8275ABD8) has no timer here
+#endif
         return handler->ExecuteScript(1, this, (const DataArray *)msg, 2);
     }
     return DATA_UNHANDLED;
