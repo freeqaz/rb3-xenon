@@ -127,9 +127,42 @@ Ported from dc3 (`2f35703d0`) and deliberately not identical:
 4.  **It drives builds through `custom_make`.**  Not this file's job, but its
     sibling patch_guard.py's -- noted here because bare `ninja` on this repo
     races the SPLIT->configure loop that tools/ninja-locked exists to prevent.
+
+Exit codes -- every non-zero state is a DIFFERENT statement
+-----------------------------------------------------------
+    0   the objects on disk are the ones this tree was verified patched over
+    1   CORRUPTION, or an undeterminable cause.  Same git HEAD, same split
+        inputs, no build running -- and the content differs anyway.
+    2   no manifest at all: this tree has never been verified patched
+    3   the pairing is VACUOUS (objdiff.json declares too few objects to make
+        a green light mean anything)
+    4   REBUILD PENDING: the tree ADVANCED (git HEAD or a split input moved)
+        since the manifest was written, so the objects belong to a different
+        state.  Not measurable, but nothing is wrong.
+    5   BUILD IN PROGRESS: `tools/ninja-locked`'s flock is held, so a build is
+        rewriting these objects as the check runs.
+
+⛔ Codes 4 and 5 exist because this tool USED TO ASSERT A MECHANISM IT CANNOT
+OBSERVE.  It printed "produced OUTSIDE the full build graph ... the
+post-compile patch passes never ran on it" for ANY content difference.  On
+2026-09-11 a lane sampled `main` 2m40s into an ordinary full build -- the
+build lock was held, the build completed normally at 01:10:56 -- and got that
+accusation at rc=1.  It cost two separate investigations, and BOTH diagnoses
+reached from the message were wrong (the first blamed an MCP tool writing to
+the shared tree; the second blamed a benign "pending rebuild", which is also
+wrong, because a merge changes SOURCE and not objects, so content differing
+always means something did write them).  A check that cries corruption
+whenever the tree is busy fires hardest exactly when a shared tree is busiest,
+and is the kind of check people learn to skip.
+
+⚠ The accusation itself is NOT weakened.  It is now CONDITIONED: rc=1 is
+reached only after establishing that no build holds the lock and that the
+tree is at the same state the manifest was taken over.  Those two facts are
+printed with it, so the reader can check the reasoning rather than trust it.
 """
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
@@ -158,7 +191,13 @@ PATCHERS = [
 #: produced by scripts/obj_pairing.py, the same module the patchers pair with.
 #: A reader that finds v1 is reading a manifest whose coverage block
 #: double-counted the three multi-target objects.
-MANIFEST_VERSION = 2
+#:
+#: 3 (lane GATE-DISC): added the `provenance` block -- git HEAD plus the hashes
+#: of the split inputs -- recording the tree state the manifest was taken over.
+#: A reader that finds v2 or lower is reading a manifest that CANNOT say why an
+#: object differs, only that it does, and `--verify-manifest` reports the cause
+#: as UNDETERMINED rather than guessing one.
+MANIFEST_VERSION = 3
 
 
 def build_dir(repo: Path) -> Path:
@@ -192,6 +231,109 @@ def sha256(path: Path) -> str:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+# ── is a build running, and what state was the manifest taken over? ─────────
+
+
+#: The lock `tools/ninja-locked` holds for the DURATION of a build
+#: (`exec 9>"$REPO/.ninja-build.lock"` then `flock`).
+BUILD_LOCK_NAME = ".ninja-build.lock"
+
+
+def build_lock_held(repo: Path) -> bool:
+    """True if a build currently holds tools/ninja-locked's flock.
+
+    ⛔ Consulted by `--verify-manifest` ONLY, and that restriction is
+    load-bearing: `--check`/`--emit` run as a ninja edge INSIDE the build that
+    holds this lock, so probing there would see it held on EVERY build and
+    refuse forever.  Do not "helpfully" extend this to them.
+
+    The probe is SHARED and non-blocking: it fails immediately when a builder
+    holds the exclusive lock, and is released before returning, so it can
+    neither block a build nor be mistaken for one by a concurrent probe.
+
+    An absent lock file means no build has ever run through the wrapper here.
+    That is "no evidence of a build", not "a build is running" -- returning
+    True there would make every fresh tree unverifiable.
+    """
+    p = repo / BUILD_LOCK_NAME
+    if not p.exists():
+        return False
+    try:
+        fd = os.open(str(p), os.O_RDONLY)
+    except OSError:
+        return False
+    try:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_SH | fcntl.LOCK_NB)
+        except OSError:
+            return True
+        fcntl.flock(fd, fcntl.LOCK_UN)
+        return False
+    finally:
+        os.close(fd)
+
+
+def split_input_relpaths() -> tuple:
+    """The files whose content decides what a build PRODUCES.
+
+    Not a general "did the source change" check -- source changes alone do not
+    rewrite objects.  These three are the inputs that make the dtk split emit
+    DIFFERENT target objects and the renamer install different names, which is
+    the drift a consumer actually trips over after a merge.
+    """
+    return (
+        f"config/{VERSION}/splits.txt",
+        f"config/{VERSION}/symbols.txt",
+        "scripts/target_symbol_map.json",
+    )
+
+
+def _git_head(repo: Path):
+    try:
+        p = subprocess.run(["git", "rev-parse", "HEAD"], cwd=str(repo),
+                           capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return (p.stdout.strip() or None) if p.returncode == 0 else None
+
+
+def current_provenance(repo: Path) -> dict:
+    """The tree state a manifest is being taken over."""
+    return {
+        "git_head": _git_head(repo),
+        "split_inputs": {
+            rel: (sha256(repo / rel) if (repo / rel).is_file() else None)
+            for rel in split_input_relpaths()
+        },
+    }
+
+
+def provenance_moved(recorded: dict, current: dict) -> list:
+    """-> reasons the tree ADVANCED since `recorded`; empty means it did not.
+
+    An empty list is the only condition under which "content differs"
+    licenses the word corruption.
+
+    ⚠ `None` on either side is UNKNOWN, not different.  An absent git, or a
+    config path this version does not use, must never manufacture a reason --
+    that would turn every such tree into a permanent "rebuild pending" and
+    disarm the corruption branch entirely.
+    """
+    out = []
+    was_head, now_head = recorded.get("git_head"), current.get("git_head")
+    if was_head and now_head and was_head != now_head:
+        out.append(f"git HEAD {was_head[:8]} -> {now_head[:8]}")
+    rec = recorded.get("split_inputs") or {}
+    cur = current.get("split_inputs") or {}
+    for rel in sorted(set(rec) | set(cur)):
+        was, now = rec.get(rel), cur.get(rel)
+        if was is not None and now is not None and was != now:
+            out.append(f"{rel} changed since the manifest was written")
+        elif (was is None) != (now is None):
+            out.append(f"{rel} {'appeared' if was is None else 'disappeared'}")
+    return out
 
 
 # ── coverage: what a green --check is actually worth ────────────────────────
@@ -336,6 +478,11 @@ def emit(repo: Path) -> int:
         # Recorded so a consumer reading this file knows what the green light
         # was worth, without having to re-derive it.
         "pairing_coverage": pairing_coverage(repo),
+        # The tree state these hashes were taken over.  Without it a later
+        # disagreement can only be REPORTED, never EXPLAINED -- and this tool
+        # used to explain it anyway, by asserting a mechanism it had no way to
+        # observe.  See the exit-code table in this module's docstring.
+        "provenance": current_provenance(repo),
         "objects": decomp,
         "target_objects": target,
     }
@@ -355,6 +502,10 @@ def verify_manifest(repo: Path, quiet: bool = False) -> int:
     This is the check a CONSUMER of the tree runs.  It needs no toolchain, no
     compiler and no COFF parsing -- only the manifest and the objects -- and,
     unlike `--check`, it does not depend on any patcher still being active.
+
+    A disagreement is reported as one of THREE different things -- a build in
+    flight (5), a tree that has advanced (4), or corruption (1).  See the
+    exit-code table in this module's docstring for why that separation exists.
     """
     mpath = build_dir(repo) / "patch_state.json"
     if not mpath.exists():
@@ -363,6 +514,11 @@ def verify_manifest(repo: Path, quiet: bool = False) -> int:
               file=sys.stderr)
         return 2
     doc = json.loads(mpath.read_text())
+
+    # Sampled BEFORE the scan and again after it.  tools/ninja-locked holds the
+    # lock for a whole build, so any build overlapping this scan is visible at
+    # one of the two samples; one sample alone races the build's own start.
+    lock_before = build_lock_held(repo)
 
     sections = (
         ("decomp", doc.get("objects") or {}, decomp_objects(repo),
@@ -396,8 +552,39 @@ def verify_manifest(repo: Path, quiet: bool = False) -> int:
                   f"(tree_sha256={doc['tree_sha256'][:16]})")
         return 0
 
+    n_diff = sum(len(d) + len(m) + len(e) for _, _, _, d, m, e in report)
+
+    # A build was in flight across this scan: the objects were being rewritten
+    # BY the build system.  Neither a pass nor corruption -- and on a shared
+    # tree with concurrent lanes this is the commonest way the check is reached
+    # at all, so it must be said FIRST and said plainly.
+    if lock_before or build_lock_held(repo):
+        print("=" * 72, file=sys.stderr)
+        print("BUILD IN PROGRESS -- THIS TREE IS BEING REWRITTEN RIGHT NOW",
+              file=sys.stderr)
+        print("=" * 72, file=sys.stderr)
+        print(f"{n_diff} object(s) disagree with the manifest written "
+              f"{doc.get('generated_utc')}, and tools/ninja-locked's build "
+              f"lock ({BUILD_LOCK_NAME}) is HELD -- a build is rewriting them "
+              f"as this ran.\n\n"
+              f"This is NOT a pass and NOT corruption: the tree is simply not "
+              f"in a state anyone can adjudicate. Wait for the build to "
+              f"finish and re-run.", file=sys.stderr)
+        return 5
+
+    # Only now is a disagreement worth explaining.  `moved` is None when the
+    # manifest predates provenance recording -- an unknown cause, which is
+    # reported as unknown rather than guessed.
+    moved = None
+    recorded_prov = doc.get("provenance")
+    if isinstance(recorded_prov, dict):
+        moved = provenance_moved(recorded_prov, current_provenance(repo))
+
     print("=" * 72, file=sys.stderr)
-    print("BUILD TREE DRIFTED SINCE IT WAS LAST VERIFIED PATCHED", file=sys.stderr)
+    print("BUILD TREE ADVANCED -- A REBUILD IS PENDING" if moved else
+          "BUILD TREE DRIFTED -- CAUSE UNDETERMINED" if moved is None else
+          "BUILD TREE DRIFTED SINCE IT WAS LAST VERIFIED PATCHED",
+          file=sys.stderr)
     print("=" * 72, file=sys.stderr)
     print(f"manifest written {doc.get('generated_utc')} over "
           f"{doc.get('n_objects')} objects", file=sys.stderr)
@@ -413,10 +600,36 @@ def verify_manifest(repo: Path, quiet: bool = False) -> int:
                     print(f"      {r}", file=sys.stderr)
                 if len(rows) > 10:
                     print(f"      ... and {len(rows) - 10} more", file=sys.stderr)
-    print("\nA DECOMP object that changed without the manifest being rewritten "
-          "was produced OUTSIDE the full build graph (a targeted "
-          "`ninja build/.../Foo.obj`, or `objdiff-cli --build` without "
-          "--full-build), so the post-compile patch passes never ran on it.\n"
+    if moved:
+        print("\nThe inputs that decide what a build PRODUCES have moved since "
+              "this manifest was written:\n  " + "\n  ".join(moved)
+              + "\n\nSo these objects belong to a different state of the tree "
+                "than the manifest describes, and a build is owed. Run "
+                "`./tools/ninja-locked` and re-check.\n"
+                "This is an ordinary pending rebuild and NOT evidence that "
+                "anything was corrupted -- but it is equally NOT a licence to "
+                "measure: the objects and the manifest still describe "
+                "different trees.", file=sys.stderr)
+        return 4
+
+    if moved is None:
+        print(f"\nThis manifest is schema v{doc.get('manifest_version')}, which "
+              f"predates provenance recording (v{MANIFEST_VERSION} records git "
+              f"HEAD and the split-input hashes), so WHY these objects differ "
+              f"cannot be established FROM IT -- and guessing a cause here is "
+              f"exactly the defect this branch exists to avoid.\n"
+              f"Re-run a full `./tools/ninja-locked`; the manifest it writes "
+              f"can tell a pending rebuild from a corrupted tree.",
+              file=sys.stderr)
+        return 1
+
+    print("\nNo build holds the build lock, and the tree is at the SAME state "
+          "this manifest was taken over -- same git HEAD, same split inputs. "
+          "So these objects were rewritten by something OUTSIDE the full build "
+          "graph.\n"
+          "A DECOMP object in that state was produced by a targeted "
+          "`ninja build/.../Foo.obj`, or by `objdiff-cli --build` without "
+          "--full-build, so the post-compile patch passes never ran on it.\n"
           "A TARGET object that drifted means the dtk split re-ran, or the "
           "pre-compile symbol renamer has not run since it did -- in which "
           "state every mangled-name lookup answers 'absent' and any negative "
