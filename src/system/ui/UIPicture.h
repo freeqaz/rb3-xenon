@@ -26,7 +26,7 @@ public:
     virtual void Exit();
 
     NEW_OBJ(UIPicture)
-    OBJ_MEM_OVERLOAD(0x23)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x23)
 
     void SetTex(FilePath const &);
     void SetHookTex(bool);

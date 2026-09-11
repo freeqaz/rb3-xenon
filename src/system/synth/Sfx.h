@@ -104,7 +104,7 @@ public:
     ObjVector<SfxMap> &SfxMaps() { return mMaps; }
     ObjVector<MoggClipMap> &MoggClipMaps() { return mMoggClipMaps; }
 
-    OBJ_MEM_OVERLOAD(0x1E);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1E);
     NEW_OBJ(Sfx);
     static void Init() { REGISTER_OBJ_FACTORY(Sfx) }
 

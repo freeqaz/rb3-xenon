@@ -174,7 +174,7 @@ public:
     virtual void SetFrame(float, float);
     virtual float EndFrame() { return mEndFrame; }
 
-    OBJ_MEM_OVERLOAD(0x1B)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1B)
     NEW_OBJ(LightPreset)
     void SetHue(LightHue *hue) { mHue = hue; }
     Symbol Category() const { return mCategory; }

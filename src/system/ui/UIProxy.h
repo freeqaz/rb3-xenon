@@ -39,7 +39,7 @@ public:
     virtual void Poll();
 
     NEW_OBJ(UIProxy)
-    OBJ_MEM_OVERLOAD(0x10F)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x10F)
 
     void UpdateDir();
     void SyncDir();

@@ -40,7 +40,7 @@ public:
     // header (which would flip other TUs' INIT_REVS macro arity — see BandWardrobe.h).
     static unsigned short gRev;
     static unsigned short gAltRev;
-    OBJ_MEM_OVERLOAD(0x12)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x12)
     NEW_OBJ(BandIKEffector)
     static void Init() { REGISTER_OBJ_FACTORY(BandIKEffector); }
 

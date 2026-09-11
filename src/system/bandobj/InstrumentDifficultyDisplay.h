@@ -43,7 +43,7 @@ public:
     // NEW_OVERLOAD instead emits a noinline class `operator new` (one `bl`,
     // `stw r3,0x50(r31)`) that retail has no function row for at all.
     // See the measured note at utl/MemMgr.h:285.
-    OBJ_MEM_OVERLOAD(0x28);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x28);
 
     RndPropAnim *mDifficultyAnim;
     RndMesh *mVocalPartMesh;

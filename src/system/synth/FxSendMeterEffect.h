@@ -15,7 +15,7 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0x11);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x11);
     NEW_OBJ(FxSendMeterEffect)
 
     float ChannelData(int);
