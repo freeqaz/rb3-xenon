@@ -612,3 +612,44 @@ ruler. GAP-C flagged two stale in-tree claims not fixed by the survey
 (CLAUDE.md dual-heading paragraph superseded by `b341d7ab`'s −40 B
 measurement; `reachability_census.py:~250` clobber) — tooling item 4 and a
 doc pass own these.
+
+## 7b. EXECUTION LOG — second wave (2026-09-10/11, coordinator session 3cdd3c)
+
+Seven lanes dispatched off `5aa1cb7a` from §7's live items, all landed by
+`--no-ff`, each measured by `ab_measure` with the prediction pre-registered.
+Headline `017f46b7` → `28a540b3`: **42,305 → 42,435 fns, 3,774,924 →
+3,819,096 B, 36.843063% → 37.274178% (+130 / +44,172 B / +0.431 pp)**, every
+step reconciled to the byte in `progress_ledger.jsonl`. Manifest, alias gate
+(0 contradicted) and native gate (18/18, 0 SKIPs) all PASS on the merged tree.
+
+| lane | merge | outcome |
+|---|---|---|
+| **L7-CONTAINER2** | `0ad1e302` | **+107 fns / +21,968 B**, every win a MAP repair: 30 `~ObjRefConcrete<T>` names were a *scrambled bijection*, settled by reading each dtor's `??_7` reloc → `??_R4` → `??_R0` type string from retail. **Zero header bugs** — §4's "our headers use the generic form" hypothesis found no instance; our source was right and the map wrong. ⛔ `container_type_census`'s `NOFOLD` inherits a measured **43–75% map error rate** on the addresses it consults — read it as "not refuted by the map" |
+| **L5-SYMBOLHEADS** | `28a540b3` | **+11 fns / +16,964 B** from 4 map repairs; **0 PROVEN_FOLD** in the top 19 SYMBOL heads, no alias licensed. Found `TrackWatcherImpl` slots 6/18 **transposed in both header and map** (cancelling to a clean 100% while `SetAutoplayError` called `Restart`). ⛔ `s1_fold_family.py` was failing as a clean negative (shared cache path, rc=1 not rc=3) — fixed. Rule: **caller COUNT, not row size, predicts a map row's yield** (one rename crossed five rows) |
+| **L6-STRUCTHEADS** | `cdc294fb` | **8 of 17 crossed, +4,944 B / +13 matched (+4 honest)**, two behavioural bugs at `mpn` 100 both sides (UIListState scrolled the wrong direction; BandDirector post-proc nesting). CustomizePanel (5,036 B) probed once more, worse; W37's refusal stands |
+| **L1-UNICORNFIX** | `c4dfac8e` | S4's 8 rows adjudicated on bytes (all survive U1's fixture refutation): 1 REAL_BUG (`~AppMiniLeaderboardDisplay` unconditional SetProvider, +284 B), 2 `$4` thunk rows were wrong MAP names not layout bugs (+12 B / −1 fn deliberate), 5 artifacts. 33 of U1's 40 score-100 rows are byte-identical with relocs masked |
+| **L4-NATIVESCATTER** | `62b300be` | 31 of 47 unlinked scatter guests wired standalone, **47 → 16**; all 47 had one cause (host in no target). `scatter_audit.py` over-reports by exactly one file. Found an `#ifdef HX_NATIVE` feature that had never been compiled |
+| **L2-BODYTRIAGE** | `89670f76` | Redirected when p1 landed; corroborates p1 to the byte. Adjudicated the 8 MIS-PIN SUSPECTS: 3 confirmed, 2 REFUTED (hull test cannot work on a fragmented pin), precision 37.5%. **DuplicatedObject is not an accuracy target** (12/12 blocks in the /Od band). No pin moved |
+| **L3-NEXTSONG** | `032217ff` | The 12,220 B head did **not** cross: both charges are integer operand-order commutes (ARITH_COMMUTE, inert), one closed, Δ0. Handoff |
+
+**What this wave says about §7:** item 2 (container-type) paid **+21,968 B** but
+as MAP work, not header work — the "one header declaration fix pays every call
+site" framing was wrong in every tested instance; the SYMBOL class outside it
+paid +16,964 B through misidentification repair, again map. The realistic
+figure in §1's revised forecast ("low single-digit tenths of a pp") was met in
+one wave (+0.431 pp), dominated by map repair on retail-byte evidence. The
+accuracy yield — one vtable transposition, three behavioural bugs, a
+scatter-guest feature that had never compiled — is the part that reaches the
+native port.
+
+**Two coordinator errors, recorded:** the queued "dispatch #556" task from my
+own compaction summary was already landed (`b341d7ab`, −40 B) and under §7's
+"do not fund" — re-validate a paused coordinator's pending task against `git
+log` and this document before dispatching. And a `git commit --amend` on a
+shared main rewrote the peer coordinator's `u1-deepsched` merge (`2f08c770`
+is that merge, mislabelled; record recovered at `37dc1ebe`). Never amend on
+the shared tree.
+
+**Unattributed:** main's 1,196-object rewrite at 23:31 UTC. All seven lanes
+answered the audit "no" (worktree-scoped throughout); `REPO_ROOT` being unset
+for plain subagents remains the exposure the peer identified.
