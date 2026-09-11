@@ -1817,10 +1817,14 @@ public:
     DataNode &Value(int idx) const;
     void ClearKeyValue(Symbol key);
     void SetKeyValue(Symbol key, const DataNode &value, bool);
-    DataArray *GetArray(Symbol prop);
-    void SetArrayValue(Symbol prop, int i, const DataNode &value);
-    void RemoveArrayValue(Symbol prop, int i);
-    void InsertArrayValue(Symbol prop, int i, const DataNode &value);
+    // RB3 retail X360 (GetArray 0x827664F8, SetArrayValue 0x827665D0,
+    // InsertArrayValue 0x827666B0; lane W5-A): the owner's TypeDef arrives as an
+    // ARGUMENT -- rb3-Wii's shape -- where DC3's GetArray reads mOwner->TypeDef()
+    // itself. Same semantics, retail arity (callers pass their own mTypeDef).
+    DataArray *GetArray(Symbol prop, DataArray *typeDef);
+    void SetArrayValue(Symbol prop, int i, const DataNode &value, DataArray *typeDef);
+    void RemoveArrayValue(Symbol prop, int i, DataArray *typeDef);
+    void InsertArrayValue(Symbol prop, int i, const DataNode &value, DataArray *typeDef);
     void Load(BinStreamRev &d);
     TypeProps &operator=(const TypeProps &);
     void Save(BinStream &d);
