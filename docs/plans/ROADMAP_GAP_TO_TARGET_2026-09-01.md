@@ -677,3 +677,67 @@ for plain subagents remains the exposure the peer identified.
 > verdict: a red `--verify-manifest` is read only after confirming no build
 > holds `.ninja-build.lock`.** The peer also notes its own first exoneration
 > probe (recent mtimes) was vacuous — the patchers preserve mtime by design.
+
+## 7c. EXECUTION LOG — third wave (2026-09-11, coordinator session 3cdd3c)
+
+Goal restated by the user at the start of this wave: *match the bytes AND fix
+bugs in the critical paths the native port uses.* Seven lanes, each in its own
+`~/tmp/wt-w3-*` worktree, each landed `--no-ff` after a full main build with
+manifest, alias and (where `src/` moved) native gates green. Every merge
+message carries its own pre-registered-vs-measured table; every merge has a
+ledger snapshot. Base for the wave was the third session's `814e3a60`.
+
+| lane | merge | Δ fns | Δ bytes | what it was, in one line |
+|---|---|---:|---:|---|
+| G native handoffs | `52a89cca` | 0 | 0 | four L4 handoffs closed; a real retail MOTD-wipe bug corrected natively; two records corrected (FlowManager's direct host, the SongUpgradeMgr shim) |
+| B map vein | `d02467a6` | +6 | +976 | ObjPtr CTOR family; the dtor family L7 opened is CLEAN (0/71); bare naming is a dud (13× over-prediction); L5's 0x823a4fa8 is not a function |
+| F tooling | `a4aed958` | 0 | 0 | MCP refuses the main tree (7/7 sabotage); asm-listing replay defect fixed; whole symbol names; census on coverage — L7's "3.1×" measured 0.95× |
+| C re-homes | `136a632d` | −13 | +292 | +1 honest; −14 masked funclet credits surrendered (pins were manufacturing 100% rows for foreign code); two records refuted |
+| A wrong-callee | `59d502a6` | +55 | +10,520 | 471 native-linked TUs enumerated; nine defects, eight MAP, one DC3-newer overload; **no runtime-affecting wrong callee in native-linked code** |
+| D XAudio2 layout | `cbbd1f8f` | +15 | +1,608 | three XDK-version layout differences proven on retail; a fabricated alias withdrawn; Voice.cpp's pin short by 0x8B4 B |
+| E vtable | `fbaef26e` | +3 | +224 | `vtable_inherit_sweep.py` (control fails both ways; 21,132 slots un-excluded); GemPlayer NoteOn/NoteOff MAP transposition; two DC3-only virtuals removed from headers, one a native-visible skipped dispatch |
+| **wave** | `814e3a60` → `fbaef26e` | **+66** | **+13,620** | **42,439 / 3,821,092 B / 37.293660% → 42,505 / 3,834,712 B / 37.426590% (+0.132930 pp)** |
+
+Every composition reconciled exactly on the merged build, including A over C
+and D over A where both edited `splits.txt` (one trailing-append conflict in
+the map, resolved by keeping both sides).
+
+**What reached the native port.** MainHubPanel's MOTD wipe (retail pointer
+compare, always true; native corrected with a compiled opt-out); InlineHelp /
+LabelShrinkWrapper skipping `UIComponent::SetTypeDef` (DC3-only overrides, now
+removed); the one-arg `LocalizeSeparatedInt` in DataFunc; `ObjectDir::SetName`
+forwarder removed from 29 vtables. Lane A's headline finding is negative and
+load-bearing: on the charged-relocation stratum in the 471 native-linked TUs,
+every divergence was the MAP wrong and our source right, except one DC3-newer
+overload.
+
+**Instruments this wave leaves behind.** `tools/native_linked_tus.py` (the
+native TU set, compiler-truth), `tools/vtable_inherit_sweep.py` (inheritance-
+aware fold exclusion), the MCP `resolve_project_dir()` refusal, cache v4 and
+whole names in `crossing_worklist.py`, the coverage criterion in
+`container_type_census.py`.
+
+**Coordinator errors this wave.** (1) Briefs went stale WITHIN THE HOUR: a
+third session (commits as `freeqaz`, indistinguishable from the peer by
+authorship) landed two of my briefed items between planning and dispatch, and
+I addressed the peer coordinator as their owner. Rule adopted: re-read
+`git log` immediately before each dispatch and have lanes assert their base.
+(2) I read a red `--verify-manifest` as corruption twice; the peer showed the
+verifier cannot distinguish a build in progress, and my ledger commit
+`4f0ec650` stated the wrong mechanism (git note + §7b correction). GATE-DISC's
+three-verdict verifier (`9468ed0e`) retires the ambiguity.
+
+**Surfaced for the user, not taken.** Lane D recommends deleting
+`src/system/synth/Sound.cpp`, `ThreeDSound.cpp`, `ThreeDSound.h` (zero
+includers, zero compile edges, zero retail presence, two confirmed text bugs)
+and keeping `Sound.h` under a DC3-only banner; the peer's earlier claim that
+nothing includes them is wrong for the header. Deletion is the user's call.
+
+**Wave-4 candidates, recorded in memory with their evidence:** `eh_boundary`
+WHY-not-THAT (peer handoff); `atexit_fuzzy_verify.py` retirement; Object::
+AddRef/Release naming (0x8275bd08 / 0x8275b378) after a caller census; the
+67-row `??_G` cross-class dtor census; the `$4PPPPPPPM@A@` adjustor off-by-one
+family; InlineHelp Copy/PreLoad re-homes; the RetryAudioPanel lower half;
+CharWeightable off `OBJ_MEM_OVERLOAD`; `FxSendReverb360::SyncEffectParams`
+pinned as `sslgen.c`; the 0x82749630 certain −100 B; the two ranker importers'
+Symbol-arg blindness (fix together).
