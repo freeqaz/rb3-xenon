@@ -85,18 +85,39 @@ public:
     int mOld;
 };
 #else
-// Retail/match: the no-arg temp-allocation scope guard. The retail RB3-360 XEX
-// compiles BOTH the engine `MemTemp tmp;` spelling and the game-code
-// `MemDoTempAllocations m(true, false);` spelling down to ONE out-of-line
-// no-arg RAII guard (ctor fn_82797500, dtor fn_827975C8): it locks
-// gMemStackLock, captures the current heap's strategy into mOld, and forces the
-// heap to MemHeap::kLastFit for the duration of the scope; the dtor restores
-// mOld. There is NO MemPushTemp/MemTempRefs mechanism (that is a DC3-newer
-// divergence) and NO `enabled` static in retail. Every call site is just
-// `addi r3, <frame>; bl <ctor>` with no argument regs — verified across
-// MidiParser/DataArray/Tex/CameraManager/SongDB. MemDoTempAllocations is a
-// typedef alias of the same guard so the (true,false) game call sites collapse
-// to the no-arg form. HX_NATIVE keeps the legacy push/pop form above.
+// ⛔ THE COMMENT THAT USED TO SIT HERE WAS STALE AND CONTRADICTED THE CODE
+// BELOW IT.  It claimed retail folds BOTH spellings into ONE out-of-line no-arg
+// guard, that `MemDoTempAllocations` is "a typedef alias of the same guard",
+// and that "there is NO MemPushTemp/MemTempRefs mechanism (that is a DC3-newer
+// divergence)".  All three are refuted by this repo's own target:
+//
+//   * `?MemPushTemp@@YAXXZ` IS a named retail function — 0x827BC270, 48 bytes,
+//     100.0% matched in report.json — and 0x827BC2A0 is its pop (identical body,
+//     `subi` where push has `addi` on ThreadMemStack(true)+0x44).  The mechanism
+//     exists in RB3 retail; it is not a DC3-era addition.
+//   * 59 retail functions call 0x827BC270 directly, every one of them with a
+//     BARE `bl` and no `addi r3, <frame>` this-setup — the empty-class shape
+//     modelled by `MemDoTempAllocations` below, NOT the out-of-line shape.
+//   * the ctor/dtor addresses it cited, fn_82797500 / fn_827975C8, no longer
+//     denote functions at all: both fall INSIDE fn_82797298 (TrackWatcherImpl,
+//     size 0x438) in the current config/45410914/symbols.txt.  They are left
+//     over from an older split and must not be quoted as evidence.
+//
+// That stale text is also what made a dc3 lane report this header as carrying
+// dc3's `MemTemp`/`MemDoTempAllocations` fabrication.  It does not: the class
+// below IS already the real inline header guard (dc3's end state), and its
+// 4-byte `??1MemDoTempAllocations@@QAA@XZ` COMDAT is emitted and paired today.
+//
+// What is NOT settled, and is deliberately left alone: whether the out-of-line
+// `MemTemp` guard below exists in RB3 retail at all.  No retail address is
+// identified for its ctor or dtor, and none of its remaining call sites
+// (ObjectDir::Reserve, RndDir::HarvestPollables, HamSongData::Load,
+// MidiParser::ParseNote, RndShaderMgr::PreInit, MidiParserMgr::OnNewTrack) is
+// named in scripts/target_symbol_map.json, so none can be adjudicated on bytes.
+// Collapsing it into the guard below measures NET POSITIVE whole-binary
+// (+11 matched / +80 B / +1 honest), so it is a live suspect — but it needs a
+// per-site retail adjudication, not a metric-led deletion.  See the commit that
+// added this comment.  MemHeap.h befriends it for mStrategy access.
 struct MemTemp {
     MemTemp();
     ~MemTemp();

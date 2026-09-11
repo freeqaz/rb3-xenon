@@ -480,7 +480,11 @@ void DataArray::Load(BinStream &bs) {
     short size;
     bs >> size;
     {
-        MemTemp tmp;
+        // All five guards in this function are the EMPTY MemDoTempAllocations,
+        // not the out-of-line MemTemp.  Retail's DataArray::Load is the only
+        // function in DataArray.s that calls ?MemPushTemp@@YAXXZ and it calls it
+        // exactly FIVE times, with no `addi r3, <frame>` this-setup at any site.
+        MemDoTempAllocations tmp;
         Resize(size);
     }
     bs >> mLine;
@@ -500,7 +504,7 @@ void DataArray::Load(BinStream &bs) {
             && (array = DataGetMacro(node.UncheckedSym())) != 0) {
             size += array->Size() - 1;
             {
-                MemTemp tmp;
+                MemDoTempAllocations tmp;
                 Resize(size);
             }
             for (int j = 0; j < array->Size(); j++) {
@@ -573,7 +577,7 @@ void DataArray::Load(BinStream &bs) {
             if (node.Type() == kDataInclude) {
                 size += macro->Size() - 1;
                 {
-                    MemTemp tmp;
+                    MemDoTempAllocations tmp;
                     Resize(size);
                 }
                 for (int j = 0; j < macro->Size(); j++) {
@@ -585,14 +589,14 @@ void DataArray::Load(BinStream &bs) {
                 }
                 int remaining = size - i - 1;
                 {
-                    MemTemp tmp;
+                    MemDoTempAllocations tmp;
                     Resize(i);
                 }
                 DataMergeTags(this, macro);
                 i = mSize;
                 size = mSize + remaining;
                 {
-                    MemTemp tmp;
+                    MemDoTempAllocations tmp;
                     Resize(size);
                 }
             }
