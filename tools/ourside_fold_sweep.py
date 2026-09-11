@@ -106,7 +106,16 @@ def main():
     in_group = collections.defaultdict(set)
     for g in ali["groups"]:
         for nm in [g["survivor"]] + list(g.get("folded", [])):
-            in_group[nm].add(g["address"].lower())
+            # 51 groups (ALIAS-REPAIR 2026-08-19, UNDER_PARTITIONED_ICF_CLOSURE)
+            # carry address=None by design -- "no retail address is known for
+            # this class, so it renders into no map bucket".  Use a sentinel
+            # rather than skipping: such a group makes no ADDRESS claim, but it
+            # does mean `nm` is already folded to some other survivor, and the
+            # only consumer of in_group turns a non-empty set into a REFUSE.
+            # The sentinel never equals a real "0x%08x", so this is fail-closed
+            # -- it can only refuse more pairs, never admit more.
+            in_group[nm].add(g["address"].lower()
+                             if g.get("address") else "<no-address>")
 
     # our COMDATs, keyed by (raw, relocs)
     ours = collections.defaultdict(lambda: collections.defaultdict(list))
@@ -278,7 +287,8 @@ def main():
         # symbol sharing an address.  So a second group at A would be
         # semantically identical to merging -- merging is what keeps the file's
         # invariant true.
-        by_addr = {g["address"].lower(): g for g in ali["groups"]}
+        by_addr = {g["address"].lower(): g for g in ali["groups"]
+                   if g.get("address")}
         n = added = merged = skipped = 0
         for (S, A), folded in sorted(groups.items()):
             folded = sorted(set(folded))
