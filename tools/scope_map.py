@@ -1789,10 +1789,23 @@ def _by_live(scope_by_addr, prov_by_addr, funcs):
            of shrinking the denominator until the number looks good.
 
     Measured on b574f653: `sp` truthy reproduces NOOBJ-1's PAIRABLE census
-    EXACTLY -- 1,045 units / 6,512,524 B pairable vs 3,808,140 B not -- so this
-    split is the 63.10% reachable ceiling, localized per tier. It is also
+    EXACTLY -- 1,045 units / 6,512,524 B pairable vs 3,808,140 B not. It is also
     CACHE-INDEPENDENT (it reads report.json, not scope_map.json), so it stays
     correct even under the stale-cache banner.
+
+    ⚠ THOSE BYTES ARE A DATED READING, NOT A CONSTANT, AND THE "63.10% REACHABLE
+    CEILING" THIS DOCSTRING USED TO ASSERT IN THE PRESENT TENSE IS SUPERSEDED.
+    Re-measured 2026-09-11 (lane SCRIPT-ROT) on this same partition, straight
+    from report.json: still **1,045** pairable units -- the unit COUNT
+    reproduces exactly -- but **6,476,884 B pairable / 3,769,072 B not**, against
+    a `total_code` of **10,245,956** (itself moved from NOOBJ-1's 10,320,664).
+    That is **63.214%** raw, not 63.10%. Only the bytes drift, because pins
+    reattribute them; see CLAUDE.md's pin-neutrality note.
+    ⇒ And 63.x is the RAW figure in any case: subtract the ~180,196 B
+    map-scaffold class (units whose base obj defines only 1-2 symbols) and the
+    honest ceiling is ~61.1%. CLAUDE.md's standing rule governs -- the ceiling
+    MOVES BOTH WAYS, so recompute this split from report.json and NEVER quote a
+    ceiling out of this docstring.
 
     `guess` counts the UNPINNED subset whose tier came from an adjacency/name
     inference (see _is_guess) -- the slice carrying AUTOID-1's 33.76% FP rate.
