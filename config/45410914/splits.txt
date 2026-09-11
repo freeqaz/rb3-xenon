@@ -828,7 +828,8 @@ CrowdAudio.cpp:
 	.pdata      start:0x821FB8C8 end:0x821FB908
 	.pdata      start:0x821FB908 end:0x821FBB08
 	.pdata      start:0x821FBB10 end:0x821FBB98
-	.pdata      start:0x821FBBA8 end:0x821FBC18
+	.pdata      start:0x821FBBA8 end:0x821FBBB8
+	.pdata      start:0x821FBBC0 end:0x821FBC18
 	.pdata      start:0x821FBC18 end:0x821FBC50
 	.pdata      start:0x821FBDC0 end:0x821FBDC8
 	.pdata      start:0x821FBDC8 end:0x821FBDE8
@@ -837,7 +838,8 @@ CrowdAudio.cpp:
 	.text       start:0x82310F28 end:0x82311240
 	.text       start:0x82311240 end:0x823134F8
 	.text       start:0x8231355C end:0x82313DB0
-	.text       start:0x82313E28 end:0x8231433C
+	.text       start:0x82313E28 end:0x82313F00
+	.text       start:0x82313F98 end:0x8231433C
 	.text       start:0x823143A8 end:0x823148C0
 	.text       start:0x82315CB8 end:0x82315D38
 	.text       start:0x82315D38 end:0x82315F80
@@ -3924,7 +3926,6 @@ HamRibbon.cpp:
 
 MoveAsyncDetector.cpp:
 	.pdata      start:0x821FBF88 end:0x821FBF90
-	.pdata      start:0x821FBF90 end:0x821FBF98
 	.pdata      start:0x821FBFE8 end:0x821FBFF0
 	.pdata      start:0x821FC010 end:0x821FC040
 	.pdata      start:0x821FEC68 end:0x821FEC70
@@ -3934,7 +3935,6 @@ MoveAsyncDetector.cpp:
 	.pdata      start:0x82234690 end:0x82234698
 	.text       start:0x823178F8 end:0x82317900
 	.text       start:0x82317970 end:0x82317998
-	.text       start:0x823179A4 end:0x82317AA0
 	.text       start:0x82317B94 end:0x82317B98
 	.text       start:0x82317F7C end:0x82318000
 	.text       start:0x82318074 end:0x82318078
@@ -6771,6 +6771,7 @@ Profile.cpp:
 InlineHelp.cpp:
 	.pdata      start:0x821F1D58 end:0x821F1D60
 	.pdata      start:0x821F7FB0 end:0x821F7FB8
+	.pdata      start:0x821FBBB8 end:0x821FBBC0
 	.pdata      start:0x821FBC50 end:0x821FBD90
 	.pdata      start:0x821FBD90 end:0x821FBD98
 	.pdata      start:0x821FBD98 end:0x821FBDA8
@@ -6787,8 +6788,10 @@ InlineHelp.cpp:
 	.pdata      start:0x821FBEC0 end:0x821FBF48
 	.pdata      start:0x821FBF48 end:0x821FBF50
 	.pdata      start:0x821FBF80 end:0x821FBF88
+	.pdata      start:0x821FBF90 end:0x821FBF98
 	.text       start:0x822784A8 end:0x822784E4
 	.text       start:0x822D8D78 end:0x822D8EC8
+	.text       start:0x82313F00 end:0x82313F98
 	.text       start:0x823148C0 end:0x82315974
 	.text       start:0x82315978 end:0x823159E8
 	.text       start:0x823159E8 end:0x82315A88
@@ -6806,6 +6809,7 @@ InlineHelp.cpp:
 	.text       start:0x82317540 end:0x823175C0
 	.text       start:0x82317900 end:0x82317970
 	.text       start:0x82317998 end:0x823179A4
+	.text       start:0x823179A4 end:0x82317AA0
 
 PreloadPanel.cpp:
 	.pdata      start:0x82241268 end:0x82241270
