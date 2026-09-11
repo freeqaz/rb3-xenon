@@ -765,10 +765,15 @@ The `obj_atexit_scope_patcher.py` tool fixes this via fuzzy symbol matching:
 # Rename base .obj atexit destructors to match target scope counters
 python3 scripts/obj_atexit_scope_patcher.py --batch --apply
 
-# Verify newly matching ??__F destructors. DRY-RUN FIRST and read the
-# WITHHELD report -- it names rows a permissive ruler would have closed.
-python3 scripts/atexit_fuzzy_verify.py
-python3 scripts/atexit_fuzzy_verify.py --apply    # only after reading the above
+# Promote newly matching ??__F destructors. This is the ORDINARY promoter --
+# it keys on report.json's own `fuzzy_match_percent == 100`, so it is graded by
+# construction; there is no atexit-specific promoter any more (see below).
+python3 scripts/sync_match_percent.py --dry-run
+python3 scripts/sync_match_percent.py --promote
+
+# The WITHHELD class -- rows a permissive ruler would have closed and the grader
+# withholds, i.e. candidate wrong callees. Read it; never close from it.
+python3 tools/shape_families.py --withheld
 
 # Run the self-tests for the canonical key parser
 python3 scripts/obj_atexit_scope_patcher.py --selftest
@@ -783,7 +788,9 @@ python3 scripts/obj_atexit_scope_patcher.py --selftest
 4. Verifies byte-equality of the function bodies before renaming
 5. Symbol renames only (machine code + relocations unchanged); storage class stays STATIC so the linker never sees these names, preserving link integrity
 
-`atexit_fuzzy_verify.py` then scores each `??__F` row on the **graded** ruler — resolved at runtime from `report.json`'s `provenance.diff_config` via `scripts/analysis/ruler.py`, never hardcoded — and marks the function COMPLETE with `verdict_reason='atexit_fuzzy_scope_match'` only when `fuzzy_match_percent >= 100` **and** `instruction_summary.equal_percent >= 100` **and** `base_size > 0`. It **refuses to `--apply`** when the ruler could not be read from a grading run.
+★ **`atexit_fuzzy_verify.py` is RETIRED (lane W4-F, 2026-09-11) — the commands above replace it, and this text used to instruct `--apply`.** It scored each `??__F` row itself and wrote `verdict=COMPLETE` with `verdict_reason='atexit_fuzzy_scope_match'`. After lane ATEXIT-RULER fixed its ruler there was nothing left that `scripts/sync_match_percent.py --promote` did not already do: that promoter keys on `report.json`'s own `fuzzy_match_percent == 100`, which is graded by construction and applies to every symbol including `??__F`, and the patcher above runs as a **wired post-compile ninja step**, so `report.json` already reflects the patched objects. Blast radius of the deletion was **zero** — no row in `decomp.db` ever carried that `verdict_reason` (re-verified with an escaped `LIKE`; `_` is a single-char wildcard in SQLite, and unescaped the `??__F` prefix matches 125 rows instead of 13).
+
+⚠ **Two capabilities were handled explicitly rather than dropped silently.** The **WITHHELD report** — rows the permissive `none` ruler would have closed and the grader withholds — is the part worth keeping, because it is what made the `??__FsFrames` wrong-callee class visible; it now lives as **`tools/shape_families.py --withheld`**, generalised from 56 `??__F` rows to the whole binary (**1,973 rows / 450,752 B / 4.40 pp of `total_code`** at `3ab3f494`) and it names the **callee pair** rather than only a percentage. **`--mark-at-limit` was deliberately NOT ported**: it stamped `AT_LIMIT` on `fuzzy >= 95` atexit rows with `verdict_reason='atexit_relocation_noise'`, which is exactly the label MPNGAP-1 refuted (*"an `AT_LIMIT` label on a row whose only penalties are relocation-name args carries no information"*), and **0 rows in `decomp.db` ever carried it**. Porting it would have re-armed a vein-closing verdict nobody had ever used.
 
 ⛔ **This paragraph used to describe `functionRelocDiffs=none` as correct here, and it was wrong (corrected lane ATEXIT-RULER, 2026-09-11).** The stated justification — "the target uses `lbl_<addr>` vs base `?<var>@?<scope>@...`, so relocation names must be ignored" — is falsified twice over:
 
