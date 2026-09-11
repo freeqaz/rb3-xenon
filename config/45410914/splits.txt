@@ -76,15 +76,23 @@ Object.cpp:
 	.pdata      start:0x821F1870 end:0x821F1878
 	.pdata      start:0x821F1958 end:0x821F1960
 	.pdata      start:0x821FFDB8 end:0x821FFDC8
+	.pdata      start:0x8223C488 end:0x8223C4A0
 	.pdata      start:0x8223C4A0 end:0x8223C4A8
 	.pdata      start:0x8223C4A8 end:0x8223C4E0
 	.pdata      start:0x8223C4E0 end:0x8223C4E8
+	.pdata      start:0x8223C4E8 end:0x8223C4F8
 	.pdata      start:0x8223C4F8 end:0x8223C500
+	.pdata      start:0x8223C500 end:0x8223C510
 	.pdata      start:0x8223C510 end:0x8223C518
+	.pdata      start:0x8223C518 end:0x8223C540
 	.pdata      start:0x8223C540 end:0x8223C548
+	.pdata      start:0x8223C548 end:0x8223C570
 	.pdata      start:0x8223C570 end:0x8223C578
+	.pdata      start:0x8223C578 end:0x8223C5A0
 	.pdata      start:0x8223C5A0 end:0x8223C5C0
+	.pdata      start:0x8223C5C8 end:0x8223C628
 	.pdata      start:0x8223C628 end:0x8223C638
+	.pdata      start:0x8223C638 end:0x8223C718
 	.pdata      start:0x8223C718 end:0x8223C748
 	.pdata      start:0x8223C760 end:0x8223C768
 	.text       start:0x82272DB8 end:0x82272E68
@@ -92,15 +100,24 @@ Object.cpp:
 	.text       start:0x82359F28 end:0x8235A020
 	.text       start:0x82637670 end:0x82637678
 	.text       start:0x82638B50 end:0x82638B54
+	.text       start:0x8275A384 end:0x8275A5C0
 	.text       start:0x8275A5C0 end:0x8275A64C
 	.text       start:0x8275A64C end:0x8275AB18
 	.text       start:0x8275AB18 end:0x8275AB8C
+	.text       start:0x8275AB8C end:0x8275AC60
 	.text       start:0x8275AC60 end:0x8275ADE4
+	.text       start:0x8275ADE4 end:0x8275AE40
 	.text       start:0x8275AE40 end:0x8275AF00
+	.text       start:0x8275AF00 end:0x8275B090
 	.text       start:0x8275B090 end:0x8275B150
+	.text       start:0x8275B150 end:0x8275B378
 	.text       start:0x8275B378 end:0x8275B410
+	.text       start:0x8275B410 end:0x8275B6A0
 	.text       start:0x8275B6A0 end:0x8275B864
+	.text       start:0x8275B864 end:0x8275B868
+	.text       start:0x8275B8B0 end:0x8275BD08
 	.text       start:0x8275BD08 end:0x8275C7DC
+	.text       start:0x8275C7DC end:0x8275CB84
 	.text       start:0x8275CB88 end:0x8275CE4C
 	.text       start:0x8275CFF8 end:0x8275D03C
 
@@ -5672,14 +5689,6 @@ DirLoader.cpp:
 	.pdata      start:0x8223C328 end:0x8223C348
 	.pdata      start:0x8223C350 end:0x8223C3D0
 	.pdata      start:0x8223C3D8 end:0x8223C3F8
-	.pdata      start:0x8223C488 end:0x8223C4A0
-	.pdata      start:0x8223C4E8 end:0x8223C4F8
-	.pdata      start:0x8223C500 end:0x8223C510
-	.pdata      start:0x8223C518 end:0x8223C540
-	.pdata      start:0x8223C548 end:0x8223C570
-	.pdata      start:0x8223C578 end:0x8223C5A0
-	.pdata      start:0x8223C5C8 end:0x8223C628
-	.pdata      start:0x8223C638 end:0x8223C718
 	.pdata      start:0x8223F158 end:0x8223F160
 	.text       start:0x8274DFD0 end:0x8274E02C
 	.text       start:0x82754A00 end:0x82754C78
@@ -5689,15 +5698,6 @@ DirLoader.cpp:
 	.text       start:0x82758BD4 end:0x82758EB0
 	.text       start:0x827590A8 end:0x82759618
 	.text       start:0x827596F4 end:0x82759978
-	.text       start:0x8275A384 end:0x8275A5C0
-	.text       start:0x8275AB8C end:0x8275AC60
-	.text       start:0x8275ADE4 end:0x8275AE40
-	.text       start:0x8275AF00 end:0x8275B090
-	.text       start:0x8275B150 end:0x8275B378
-	.text       start:0x8275B410 end:0x8275B6A0
-	.text       start:0x8275B864 end:0x8275B868
-	.text       start:0x8275B8B0 end:0x8275BD08
-	.text       start:0x8275C7DC end:0x8275CB84
 	.text       start:0x8278F3B8 end:0x8278F414
 
 LabelShrinkWrapper.cpp:
