@@ -1989,7 +1989,7 @@
  "0x822b1e60": "?erase@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTargetCache@BandCamShot@@U?$_Nonconst_traits@VTargetCache@BandCamShot@@@stlpmtx_std@@@2@U32@@Z",
  "0x822b1ec0": "??1?$ObjPtrList@VBandCamShot@@VObjectDir@@@@UAA@XZ",
  "0x822b1f40": "??_G?$ObjPtrList@VBandCamShot@@VObjectDir@@@@UAAPAXI@Z",
- "0x822b1f90": "?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@2@U32@ABQAVRndAnimatable@@@Z",
+ "0x822b1f90": "?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTargetCache@BandCamShot@@U?$_Nonconst_traits@VTargetCache@BandCamShot@@@stlpmtx_std@@@2@U32@ABVTargetCache@BandCamShot@@@Z",
  "0x822b1ff8": "?Advance@?$ObjDirItr@VBandCamShot@@@@AAAXXZ",
  "0x822b20d0": "?clear@?$_List_base@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
  "0x822b2130": "??$PropSync@VRndEnviron@@@@YA_NAAV?$ObjPtr@VRndEnviron@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
