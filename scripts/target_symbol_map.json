@@ -18497,6 +18497,7 @@
  "0x82748bc8": "?Handle@TaskMgr@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x827493d0": "??$_Copy_Construct@UEventSink@MsgSource@@@stlpmtx_std@@YAXPAUEventSink@MsgSource@@ABU12@@Z",
  "0x827494d0": "?_M_create_node@?$list@UEventSinkElem@MsgSinks@@V?$StlNodeAlloc@UEventSinkElem@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUEventSinkElem@MsgSinks@@@Z",
+ "0x82749550": "?_M_create_node@?$list@UEventSink@MsgSource@@V?$StlNodeAlloc@UEventSink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUEventSink@MsgSource@@@Z",
  "0x827495c8": "?insert@?$list@UEventSinkElem@MsgSinks@@V?$StlNodeAlloc@UEventSinkElem@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UEventSinkElem@MsgSinks@@U?$_Nonconst_traits@UEventSinkElem@MsgSinks@@@stlpmtx_std@@@2@U32@ABUEventSinkElem@MsgSinks@@@Z",
  "0x82749630": "?insert@?$list@UEventSink@MsgSource@@V?$StlNodeAlloc@UEventSink@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UEventSink@MsgSource@@U?$_Nonconst_traits@UEventSink@MsgSource@@@stlpmtx_std@@@2@U32@ABUEventSink@MsgSource@@@Z",
  "0x82749698": "?clear@?$_List_base@UTaskInfo@TaskTimeline@@V?$StlNodeAlloc@UTaskInfo@TaskTimeline@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",

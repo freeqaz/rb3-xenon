@@ -2750,7 +2750,6 @@ EventTrigger.cpp:
 	.pdata      start:0x82213E38 end:0x82213E40
 	.pdata      start:0x82214230 end:0x82214250
 	.pdata      start:0x822142B0 end:0x822142B8
-	.pdata      start:0x8223B618 end:0x8223B620
 	.pdata      start:0x8223BA68 end:0x8223BA70
 	.text       start:0x8249B188 end:0x8249B200
 	.text       start:0x8249B204 end:0x8249B220
@@ -2776,7 +2775,6 @@ EventTrigger.cpp:
 	.text       start:0x824C9AB8 end:0x824C9B24
 	.text       start:0x824CD738 end:0x824CD818
 	.text       start:0x824CDCE8 end:0x824CDD38
-	.text       start:0x82749630 end:0x82749694
 	.text       start:0x8274DF40 end:0x8274DFA0
 
 MeshAnim.cpp:
@@ -6349,6 +6347,7 @@ Msg.cpp:
 	.pdata      start:0x8223B5D0 end:0x8223B5F0
 	.pdata      start:0x8223B5F0 end:0x8223B610
 	.pdata      start:0x8223B610 end:0x8223B618
+	.pdata      start:0x8223B618 end:0x8223B620
 	.pdata      start:0x8223CF88 end:0x8223CF90
 	.pdata      start:0x8223CFA0 end:0x8223CFA8
 	.pdata      start:0x8223CFA8 end:0x8223CFB0
@@ -6382,6 +6381,7 @@ Msg.cpp:
 	.text       start:0x82749360 end:0x827494D0
 	.text       start:0x827494D0 end:0x827495C8
 	.text       start:0x827495C8 end:0x8274962C
+	.text       start:0x82749630 end:0x82749694
 	.text       start:0x82766770 end:0x82766828
 	.text       start:0x827668E8 end:0x8276696C
 	.text       start:0x82766970 end:0x82766A9C
