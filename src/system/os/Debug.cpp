@@ -459,6 +459,11 @@ extern Symbol gSystemLocale;
 
 void SetUsingCD(bool b) { gUsingCD = b; }
 
+// Retail defines the no-arg SystemConfig() here (0x8250FEF8), not in System.cpp;
+// the map had this address as ??__EgNotifies and SystemConfig at 0x82569E78,
+// which is AssetMgr::GetAssetMgr (lane W3-A, 2026-09-11).
+DataArray *SystemConfig() { return gSystemConfig; }
+
 DataArray *SystemConfig(Symbol s) {
     DataArray *result = gSystemConfig->FindArray(s);
     result->SetContextPath(s.Str());
