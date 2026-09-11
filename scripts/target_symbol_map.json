@@ -30168,5 +30168,7 @@
  "0x82b66630": "?blockingStart@Voice@@QAAX_N@Z",
  "0x82b666d8": "?StartVoiceThreadEntry@@YAKPAX@Z",
  "0x82b66b20": "??0Voice@@QAA@_NH0@Z",
- "0x82b661f0": "?dispose@Voice@@AAAXPAUPoolVoice@@I@Z"
+ "0x82b661f0": "?dispose@Voice@@AAAXPAUPoolVoice@@I@Z",
+ "0x8275bd08": "?AddRef@Object@Hmx@@QAAXPAVObjRefOwner@@@Z",
+ "0x8275b378": "?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z"
 }
