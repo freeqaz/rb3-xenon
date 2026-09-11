@@ -56,10 +56,25 @@ ROOTS = [
 PLATFORM_EXCLUDE = re.compile(r"_(Xbox|Win|Wii|X360)\.cpp$")
 GFX_EXCLUDE = re.compile(r"(Dx9|DX9|Wgpu|D3D|Xenon)")
 
+# ⚠ BOTH of these must stay aligned with _rb3_scatter_scan in
+# native/cmake/ScatterIncludes.cmake, and until 2026-09-11 they were NOT: this
+# module matched `#include "x.cpp"` ANYWHERE on a line and stripped no comments,
+# while the cmake module is line-anchored (`\n[ \t]*#`) and strips /* */ first.
+# The consequence was not theoretical. src/system/char/FileMerger.cpp:15 carries
+# the prose `// \`#include "rndobj/Morph.cpp"\` further down)`, and this scanner
+# counted that COMMENT as a real second edge -- so rndobj/Morph.cpp was reported
+# as a multi_host guest whose two "unconditional hosts" were FileMerger.cpp
+# listed TWICE. The build never saw it; only the audit did.
+#
+# Exactly the bug class that broke the native link from a comment-only commit
+# (`6c087cbd`, see the ScatterIncludes.cmake header) -- and the reason this file
+# must not merely CLAIM agreement with the module, as the docstring below did.
 DIRECTIVE = re.compile(
-    r'#[ \t]*(if[a-z]*[^\n]*|endif|include[ \t]*"[^"]*\.cpp")'
+    r'\n[ \t]*#[ \t]*(if[a-z]*[^\n]*|endif|include[ \t]*"[^"]*\.cpp")'
 )
 INC = re.compile(r'#[ \t]*include[ \t]*"([^"]+)"')
+# The cmake module's C-comment strip, transcribed.
+BLOCK_COMMENT = re.compile(r"/\*[^*]*\*+(?:[^/*][^*]*\*+)*/")
 
 _scan_cache = {}
 
@@ -81,6 +96,10 @@ def scan(path):
         _scan_cache[path] = r
         return r
 
+    # Same order as the cmake module: strip /* */ first, then prepend a newline so
+    # a directive on line 1 can still match the line-anchored DIRECTIVE pattern.
+    content = "\n" + BLOCK_COMMENT.sub("", content)
+
     stack = []
     uncond, cond, hx = [], [], []
     for d in DIRECTIVE.findall(content):
@@ -101,6 +120,20 @@ def scan(path):
                 cond.append(inc)
                 if 1 in stack:
                     hx.append(inc)
+
+    # ANTI-VACUITY, same as the cmake module: a non-empty stack at EOF means this
+    # scanner's model of the file is wrong, so every include it called conditional
+    # is unreliable. Only worth saying for a file that has a .cpp include at all,
+    # since that is the only case where the misclassification changes a decision.
+    if stack and (uncond or cond):
+        print(
+            f"WARNING [scatter_audit] {path}: #if/#endif do not balance "
+            f"(depth {len(stack)} at EOF) -- this file's scatter-includes may be "
+            f"MISCLASSIFIED as conditional. Usual cause: preprocessor-looking "
+            f"text inside a comment.",
+            file=sys.stderr,
+        )
+
     r = (uncond, cond, hx)
     _scan_cache[path] = r
     return r
