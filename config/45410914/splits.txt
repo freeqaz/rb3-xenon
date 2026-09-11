@@ -1712,6 +1712,7 @@ TexBlender.cpp:
 	.pdata      start:0x82210B58 end:0x82210CC0
 	.pdata      start:0x82210CC0 end:0x82210CC8
 	.pdata      start:0x82210CC8 end:0x82210D08
+	.pdata      start:0x82210D08 end:0x82210D10
 	.pdata      start:0x82210D10 end:0x82210D70
 	.pdata      start:0x82211000 end:0x82211008
 	.pdata      start:0x822110D8 end:0x822110E0
@@ -1720,6 +1721,7 @@ TexBlender.cpp:
 	.text       start:0x82489B70 end:0x8248B4A8
 	.text       start:0x8248B4A8 end:0x8248B784
 	.text       start:0x8248B784 end:0x8248B930
+	.text       start:0x8248B930 end:0x8248B980
 	.text       start:0x8248B980 end:0x8248C5E4
 	.text       start:0x82490100 end:0x82490130
 	.text       start:0x82491480 end:0x824914CC
@@ -5071,8 +5073,6 @@ MeterDisplay.cpp:
 	.pdata      start:0x821FC308 end:0x821FC338
 	.pdata      start:0x821FC338 end:0x821FC340
 	.pdata      start:0x821FC340 end:0x821FC410
-	.pdata      start:0x82210D08 end:0x82210D10
-	.pdata      start:0x8223A7B0 end:0x8223A7B8
 	.text       start:0x8231A4F8 end:0x8231A578
 	.text       start:0x8231A688 end:0x8231A868
 	.text       start:0x8231A868 end:0x8231B1B8
@@ -5081,8 +5081,6 @@ MeterDisplay.cpp:
 	.text       start:0x8231B3B0 end:0x8231B700
 	.text       start:0x8231B700 end:0x8231B794
 	.text       start:0x8231B794 end:0x8231C150
-	.text       start:0x8248B930 end:0x8248B980
-	.text       start:0x82738A48 end:0x82738AB4
 
 WaveFile.cpp:
 	.pdata      start:0x821F4860 end:0x821F4868
@@ -7067,10 +7065,12 @@ system/rnddx9/Rnd.cpp:
 Rnd_Xbox.cpp:
 	.pdata      start:0x82200120 end:0x82200128
 	.pdata      start:0x8223A6F8 end:0x8223A7B0
+	.pdata      start:0x8223A7B0 end:0x8223A7B8
 	.pdata      start:0x8223A7B8 end:0x8223A800
 	.pdata      start:0x8223A810 end:0x8223AAE8
 	.text       start:0x8235CC80 end:0x8235CCC8
 	.text       start:0x827378B8 end:0x82738A48
+	.text       start:0x82738A48 end:0x82738AB4
 	.text       start:0x82738AB4 end:0x82739020
 	.text       start:0x82739078 end:0x82739080
 	.text       start:0x827390D8 end:0x8273CA70
