@@ -276,8 +276,7 @@ void BandDirector::Poll() {
             }
             LightPresetMgr()->Poll();
         }
-    }
-    if (mWorldPostProc) {
+        if (mWorldPostProc) {
         const char *presets = "";
         const RndPostProc *p1 = nullptr;
         const RndPostProc *p2 = nullptr;
@@ -312,6 +311,7 @@ void BandDirector::Poll() {
             (void)ifps; // mEmulateFPS direct write not available; cheat ignored.
         }
 #endif
+        }
     }
 }
 

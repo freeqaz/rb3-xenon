@@ -164,7 +164,26 @@ float BandCrowdMeter::GetPeakValue() {
     return f3;
 }
 
+// Retail (fn_822BB4E8, the callee of every GetTrackInstrument site in
+// BandCrowdMeter::Handle) is NOT a leaf over the global Symbols: it guards ten
+// function-local `static Symbol`s (guard word + ten `bl ??0Symbol@@QAA@PBD@Z`,
+// saving r19-r31), declared in the order below and compared in the order
+// below -- note real_bass (6) is tested BEFORE real_keys (7) although it is
+// declared after it. Because that body clobbers r4, retail's Handle re-sets
+// `mr r4, r30` AFTER the call; our previous leaf body left r4 untouched and
+// MSVC's intra-TU register-usage tracking hoisted the `mr` ABOVE the call,
+// which was Handle's only pair of charges (lane L6-STRUCTHEADS).
 TrackInstrument GetTrackInstrument(Symbol s) {
+    static Symbol guitar("guitar");
+    static Symbol drum("drum");
+    static Symbol bass("bass");
+    static Symbol vocals("vocals");
+    static Symbol keys("keys");
+    static Symbol real_guitar("real_guitar");
+    static Symbol real_keys("real_keys");
+    static Symbol real_bass("real_bass");
+    static Symbol pending("pending");
+    static Symbol pending_vocals("pending_vocals");
     if (s == guitar)
         return kInstGuitar;
     else if (s == drum)
