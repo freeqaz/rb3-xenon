@@ -476,7 +476,12 @@ void MidiParser::PushIdle(float start, float end, int at, Symbol idleMessage) {
         node = arr;
         arr->Release();
     }
-    MemTemp tmp;
+    // Retail PushIdle (0x827E7198) guards this InsertEvent with the EMPTY
+    // MemDoTempAllocations guard, not the out-of-line MemTemp: 0x827E6D4C is a
+    // bare `bl fn_827BC270` (?MemPushTemp@@YAXXZ) with no `addi r3, <frame>`
+    // this-setup, paired with a bare `bl fn_827BC2A0` at 0x827E6D68 after the
+    // InsertEvent call.  Same shape as InsertDataEvent below.
+    MemDoTempAllocations tmp;
     mEvents->InsertEvent(start, end, node, at);
 }
 
