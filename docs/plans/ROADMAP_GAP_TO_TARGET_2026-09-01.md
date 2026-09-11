@@ -741,3 +741,102 @@ family; InlineHelp Copy/PreLoad re-homes; the RetryAudioPanel lower half;
 CharWeightable off `OBJ_MEM_OVERLOAD`; `FxSendReverb360::SyncEffectParams`
 pinned as `sslgen.c`; the 0x82749630 certain −100 B; the two ranker importers'
 Symbol-arg blindness (fix together).
+
+## 7d. EXECUTION LOG — fourth wave (2026-09-11, coordinator session 3cdd3c)
+
+Seven lanes off `3ab3f494`, each in its own `~/tmp/wt-w4-*` worktree, each
+landed `--no-ff` after a full main build with the manifest, alias and (where
+`src/` moved) native gates re-run BY THE COORDINATOR on merged main rather than
+relayed from the lane. Every merge carries its own pre-registered-vs-measured
+table; every merge has a ledger snapshot.
+
+| lane | merge | Δ fns | Δ bytes | what it was, in one line |
+|---|---|---:|---:|---|
+| E eh_boundary WHY | `10bf877d` | 0 | 0 | the patcher is SUPERSEDED by objdiff `b76f376`, not broken; retire only behind `tools/check_objdiff_eh_prefix.py`, whose red leg was run |
+| G allocator | `e5b814a5` | +74 | +5,624 | the briefed lever was wrong: the operator delete is `noinline` and retail INLINES it; a per-class variant macro, never a flip |
+| C re-homes | `ae204835` | −2 | +292 | `0x823a4fa8` IS a function — a stackless leaf; naming it took a row 0 → 98.5%; three wave-3 figures refuted |
+| F tooling | `19f06c76` | 0 | 0 | the wrong-callee class OWNED THE TOP of both rankers as artifact; 3 of 5 controls were RED ON ARRIVAL; atexit verifier retired, WITHHELD kept |
+| B map | `9d81f415` | +11 | +388 | the `??_G` census is a third its headline (42/67 legitimate); the best-evidenced rename REFUSED on pairability |
+| A native logic | `a93d7a93` | +9 | +1,928 | five real native-path bugs, incl. a sub-loader capturing its PARENT's root, and three DTA builtins absent natively |
+| — guard fix | `b931e58e` | 0 | 0 | a TIMEOUT in `symbols_fixpoint_guard` was exiting 1 = its DRIFT verdict; lock contention read as drift |
+| D Voice bodies | `3e6b698a` | +21 | +2,672 | fourteen bodies from retail; the ctor SIGNATURE was wrong; dc3's polarity was right where W3-D inverted it |
+| **wave** | `3ab3f494` → `3e6b698a` | **+113** | **+12,808** | **42,514 / 3,834,792 B / 37.427372% → 42,627 / 3,847,588 B / 37.552258%** |
+
+⚠ The wave total is measured main-to-main and therefore INCLUDES three other
+sessions' merges that landed inside the window (memtemp-ab, memtemp-names, and
+the build-owed/cleanup verifier work). Per-lane deltas are each lane's own
+measurement against its own base; they do not sum to the wave figure and are
+not meant to. Lane D's case is the explicit one: it measured +4,548 B, and its
+`0x82345030` map row landed independently from another session mid-flight, so
+only +2,672 B of it was still on the table at merge time. **The ledger
+absolutes are the authority; per-lane deltas are provenance.**
+
+**What reached the native port.** A sub-loader constructed inside a parent's
+path tracker captured the PARENT's root instead of the current one, because the
+newer sibling engine moved that derivation into a constructor. Three
+data-language builtins that retail registers were absent from our native build
+(registry diffed name-by-name out of `.rdata`: 154 vs our 151). A song-info
+copy set one field where retail sets five, so a defaulted copy carried garbage
+thresholds and volumes. An integer parser accepted a string kind retail
+rejects. `synth_xbox/` is excluded from the native build, so lane D's fourteen
+bodies pay in bytes and accuracy only — stated, not glossed.
+
+**Four instruments this wave leaves behind.**
+`tools/check_objdiff_eh_prefix.py` (asserts a redundancy that depends on a
+hand-swapped binary; rc=2 on a rolled-back objdiff, rc=5 vacuous),
+`tools/test_fixpoint_guard_timeout.py` (four tests, two of them NEGATIVE arms
+so the positives mean something), the coverage criterion and whole names in the
+ranker chain, and the `5/N` charge screen below.
+
+**★ The reusable result of the wave is a screen, not a byte figure: ONE
+relocation-name charge costs exactly `5/N` pp of fuzzy, N = size/4.** So a row
+at 99.773 on 88 B has one charge and 99.545 has two — the charge count is
+readable off the percentage with no diff at all. It scored 35/35 selecting a
+population after a mispredicted row exposed the need for it.
+
+**★★ And the wave's load-bearing negative: FOUR CONSECUTIVE MAP LANES FOUND
+ZERO SOURCE BUGS.** L7, W3-B, W4-B and W4-G each adjudicated their rows to MAP
+or FOLD, never SOURCE_WRONG. Combined with W3-A's finding that the
+charged-relocation stratum in native-linked code is all map error, the
+conclusion is that **the identification channel, not the source channel, is
+where the remaining metric lives — while the BUG channel is in bodies**, which
+is exactly where lane A found its five.
+
+**Coordinator errors this wave.** (1) I attributed two merges to the peer
+coordinator by author name; every session commits as `freeqaz` and a third
+session had landed them. The durable record was written attribution-free
+("another session merged…") and only the peer messages were wrong; the rule now
+recorded is NAME THE MERGE SHA, NEVER THE SESSION. (2) I read a red
+`--verify-manifest` as corruption; it cannot distinguish a build in progress,
+and the tree I sampled was mid-build. (3) I recorded a ledger snapshot off a
+tree whose report was stale because another session had merged without
+building — the ledger tool REFUSED my contradictory re-record and pointed me at
+`--replace`, which is the tool working. (4) I ran `symbols_fixpoint_guard` in
+the shared main tree and it refused with rc=2, correctly, because it forces a
+split; the guard is worktree-only by design.
+
+**Process failure worth a rule.** Two lanes (G, and G's pattern again in D's
+watchers) burned large budget on background waits whose `pgrep -f ninja`
+matched OTHER lanes' concurrent builds, so they never fired. Lane G returned
+twice with no report at all. **A subagent's background wait cannot wake it
+after its turn ends; wait on a PID you launched, in the FOREGROUND
+(`tail --pid=<pid> -f /dev/null`).** Lane D was then killed outright by a rate
+limit mid-turn, having already committed its work and its record but never
+reaching its gate — so the coordinator verified its tree independently instead
+of trusting the branch.
+
+**Still open for the user, carried from wave 3 and NOT taken:** deleting
+`src/system/synth/Sound.cpp`, `ThreeDSound.cpp`, `ThreeDSound.h` (zero
+includers, zero compile edges, zero retail presence, two confirmed text bugs),
+keeping `Sound.h` under a DC3-only banner since it has seven includers.
+
+**Wave-5 candidates, each with its evidence in a lane record:** the twelve XAPO
+`m_regProps` dynamic initialisers in the `.text$yc` tail block (identified by
+lane D, needs splits + `__uuidof` source); `OnFileGetBase`/`OnFileGetPath` as
+one coherent source+map+alias wave (lane G's H1); the ~161 unadjudicable
+allocator classes; `FileGetBase` at fuzzy 29.917; the three new top ranker
+families each one bit from a verdict (lane F); the `?Handle@` dispatch-ORDER
+class that no fold explains (PlatformMgr, OvershellPanel, OvershellSlot); jeff's
+158 symbol-extent truncations (lane C sized it at +32 B for the first); the pin
+channel lane B says is undrained where its map channel is not; and tiers 4/5 of
+lane A's stratum, 71% of its bytes, untouched.
