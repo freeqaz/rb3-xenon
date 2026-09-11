@@ -1,7 +1,7 @@
 #pragma once
 
 #include "xdk/xaudio2/xaudio2.h"
-class WahEffect {
+class __declspec(uuid("20f3eb49-ff6b-41a0-8a09-3531a3501ae1")) WahEffect {
 public:
     struct Params {
         // Default initializers match the DC3 target (bypass/resonance/upperFreq/lowerFreq/

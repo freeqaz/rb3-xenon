@@ -100,8 +100,9 @@ namespace ATG {
     template <class Effect, typename Params>
     class CSampleXAPOBase : public CXAPOParametersBase {
     private:
-        // TODO: how am i supposed to instantiate this
-        // if every Effect has a different guid?
+        // One definition (below the class) serves every effect: the CLSID comes
+        // from __uuidof(Effect), so each instantiation picks up the uuid
+        // attribute declared on its own effect class.
         static XAPO_REGISTRATION_PROPERTIES m_regProps;
 
     public:
@@ -162,5 +163,38 @@ namespace ATG {
 
         Params mParams[3]; // 0x40
         WAVEFORMATEX mWav; // 0x58
+    };
+
+    // The XAPO registration block, recovered from retail band.exe. Without it
+    // every effect registers with a null CLSID, an empty FriendlyName, version
+    // 0.0, no flags and a buffer-count range of [0,0] -- i.e. non-functional.
+    //
+    // Read out of the target: the CLSID and L"SampleAPO" sit in .data (twelve
+    // objects, 0x82CA4D40..0x82CA82C8), and everything from +0x24 onward is
+    // written by the per-effect ??__E?m_regProps dynamic initializer (twelve
+    // 0x90-byte bodies at 0x82C42DA0..0x82C43070 and 0x82C43390..0x82C436F0) --
+    // memset(+0x24, 0, 0x1ec), memcpy of the pooled 0x50-byte
+    // L"Copyright (C)2008 Microsoft Corporation" literal (0x82194C68, shared by
+    // all twelve) into CopyrightInfo, memset(+0x260, 0, 0x1b0), then the seven
+    // scalars below.
+    //
+    // __uuidof(Effect) IS THE REASON THAT SPLIT EXISTS. MSVC constant-folds an
+    // aggregate initializer up to the first element it cannot fold; a __uuidof
+    // operand is not foldable here, so the compiler emits only the leading 0x24
+    // bytes into .data and generates the dynamic initializer for the rest --
+    // exactly the shipped shape. Substituting a literal GUID folds the whole
+    // 0x42c block into .data and emits no ??__E at all.
+    template <class Effect, typename Params>
+    XAPO_REGISTRATION_PROPERTIES CSampleXAPOBase<Effect, Params>::m_regProps = {
+        __uuidof(Effect),
+        L"SampleAPO",
+        L"Copyright (C)2008 Microsoft Corporation",
+        1, // MajorVersion
+        0, // MinorVersion
+        0x3f, // all six XAPO_FLAG_* bits: XAPOBASE_DEFAULT_FLAG | INPLACE_REQUIRED
+        1, // MinInputBufferCount
+        1, // MaxInputBufferCount
+        1, // MinOutputBufferCount
+        1, // MaxOutputBufferCount
     };
 }

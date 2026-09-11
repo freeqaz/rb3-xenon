@@ -9,7 +9,7 @@
 // flags at 0x2C/0x40/0x58/0x6C/0x84), Reset fn_82B828E8 (zeros 0x9C..0x108),
 // and the StandardEffect<EQEffect> ctor size immediate (was +0x240 with the
 // DC3 layout; 0x34C - 0x10C = 0x240 exactly).
-class EQEffect {
+class __declspec(uuid("0e0f3600-b28e-4434-810d-21b8be740619")) EQEffect {
 public:
     // size 0x30 (RB3: two band params fewer than DC3's 0x38)
     struct Params {

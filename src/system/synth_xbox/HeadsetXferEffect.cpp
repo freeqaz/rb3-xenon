@@ -1,8 +1,10 @@
 #include "HeadsetXferEffect.h"
 #include <string.h>
 
-XAPO_REGISTRATION_PROPERTIES
-ATG::CSampleXAPOBase<HeadsetXferEffect, HeadsetXferEffectParams>::m_regProps;
+// m_regProps is implicitly instantiated from the primary template in
+// xdk/xaudio2/xapobase.h via __uuidof(HeadsetXferEffect) -- see HeadsetXferEffect.h for the uuid.
+// It used to be defined here WITHOUT an initializer, which emitted a zeroed
+// .bss block and no ??__E dynamic initializer at all; retail has thirteen.
 
 HeadsetXferEffect::HeadsetXferEffect() {
     mState = 0;
