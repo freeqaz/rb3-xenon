@@ -86,7 +86,7 @@ public:
     virtual void CopyMembers(const UIComponent *, Hmx::Object::CopyType); // slot 18, 0x48
     virtual void Update();                                       // slot 19, 0x4c
 
-    OBJ_MEM_OVERLOAD(0x19);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x19);
     NEW_OBJ(UIComponent)
 
     State GetState() { return mState; }

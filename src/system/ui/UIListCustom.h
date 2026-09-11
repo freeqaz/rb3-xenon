@@ -18,7 +18,7 @@ public:
     void SetObject(Hmx::Object *);
 
     NEW_OBJ(UIListCustom)
-    OBJ_MEM_OVERLOAD(0x1a)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1a)
 
 protected:
     UIListCustom();

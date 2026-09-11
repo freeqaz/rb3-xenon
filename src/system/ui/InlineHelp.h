@@ -54,7 +54,7 @@ public:
     virtual void Enter();
 
     NEW_OBJ(InlineHelp)
-    OBJ_MEM_OVERLOAD(0x16)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x16)
 
     static void Init();
 

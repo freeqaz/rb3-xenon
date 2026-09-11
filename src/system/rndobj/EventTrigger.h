@@ -95,7 +95,7 @@ public:
     virtual void BasicReset();
     virtual DataArray *SupportedEvents();
 
-    OBJ_MEM_OVERLOAD(0x17);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x17);
     NEW_OBJ(EventTrigger);
 
     void SetNextLink(EventTrigger *);

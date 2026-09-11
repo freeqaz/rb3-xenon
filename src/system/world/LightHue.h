@@ -18,7 +18,7 @@ public:
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0x15)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x15)
     NEW_OBJ(LightHue)
 
     void TranslateColor(Hmx::Color const &, Hmx::Color &);

@@ -24,7 +24,7 @@ public:
     virtual void Enter();
 
     NEW_OBJ(UITrigger)
-    OBJ_MEM_OVERLOAD(0x14)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x14)
 
     bool IsDone() const;
     bool IsBlocking() const;
