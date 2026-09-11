@@ -13407,9 +13407,9 @@ band3/meta_band/SaveLoadStatusPanel.cpp:
 
 band3/meta_band/RetryAudioPanel.cpp:
 	.pdata      start:0x8222AD88 end:0x8222ADD0
-	.pdata      start:0x8222ADE0 end:0x8222AED0
+	.pdata      start:0x8222ADE0 end:0x8222AE58
 	.text       start:0x82630228 end:0x82630690
-	.text       start:0x82630778 end:0x826319F4
+	.text       start:0x82630778 end:0x82631130
 
 band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp:
 	.pdata      start:0x82226F30 end:0x82226F50
