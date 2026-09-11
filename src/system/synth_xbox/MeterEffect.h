@@ -5,7 +5,7 @@ struct MeterEffectParams {
     void *unk0;
 };
 
-class MeterEffect : public ATG::CSampleXAPOBase<MeterEffect, MeterEffectParams> {
+class __declspec(uuid("b4d4c8aa-a20d-40a1-84a7-64193551a9cc")) MeterEffect : public ATG::CSampleXAPOBase<MeterEffect, MeterEffectParams> {
 public:
     MeterEffect();
 

@@ -1,52 +1,13 @@
 #pragma once
 #include "synth_xbox/FxSendSynapse.h"
+#include "xdk/xaudio2/xapobase.h"
 
-struct XAPO_REGISTRATION_PROPERTIES;
-
-// CXAPOBase: base class for XAPO processing
-// Offset 0x00, size 0x20 bytes (vtable + 0x1c data)
-class CXAPOBase {
-public:
-    virtual void CXAPOBase_virt0();
-
-private:
-    char mCXAPOBasePad[0x1c];
-};
-
-// IXAPOParameters: interface for XAPO parameter get/set
-class IXAPOParameters {
-public:
-    virtual void IXAPOParameters_virt0();
-};
-
-// CXAPOParametersBase: inherits CXAPOBase + IXAPOParameters
-// Total size: 0x40 bytes
-class CXAPOParametersBase : public CXAPOBase, public IXAPOParameters {
-public:
-    CXAPOParametersBase(const XAPO_REGISTRATION_PROPERTIES* pRegProps, unsigned char* pParamBlocks, unsigned int uParamBlockByteSize, int fProducer);
-    virtual ~CXAPOParametersBase();
-
-private:
-    char mCXAPOParametersBasePad[0x1c]; // data from 0x24 to 0x3f
-};
-
-namespace ATG {
-
-template <typename T, typename Params>
-class CSampleXAPOBase : public CXAPOParametersBase {
-protected:
-    virtual ~CSampleXAPOBase() {}
-    __declspec(noinline) CSampleXAPOBase();
-    virtual void OnSetParameters(const Params& params) = 0;
-    virtual void DoProcess(const Params& params, unsigned int* arg1, float& arg2, unsigned int arg3, unsigned int arg4) = 0;
-
-private:
-    static XAPO_REGISTRATION_PROPERTIES m_regProps;
-    Params m_paramBlocks[3]; // 3 parameter blocks for triple-buffering (offset 0x40)
-    char m_extra[0x14]; // remaining state (offset 0x154 to 0x168)
-};
-
-} // namespace ATG
+// This header used to redeclare CXAPOBase, IXAPOParameters, CXAPOParametersBase
+// and a SECOND ATG::CSampleXAPOBase with a different DoProcess signature -- an
+// ODR violation against xdk/xaudio2/xapobase.h, and factually wrong: retail
+// .rdata carries exactly ONE ?$CSampleXAPOBase template, with thirteen
+// instantiations, and its SynapseAPO one is
+//   .?AV?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@
 
 namespace DSP {
 
@@ -54,18 +15,28 @@ namespace Synapse {
 class Synapse;
 }
 
-class SynapseAPO : public ATG::CSampleXAPOBase<SynapseAPO, SynapseAPOParams> {
+// CLSID read directly out of retail band.exe: the registration block at
+// 0x82CA8768 opens with {03004D97-D165-4CC0-ABDD-6A98F04E6EB7}, and its ??__E
+// dynamic initializer is at 0x82C436F0. DC3 carries the same uuid.
+class __declspec(uuid("03004d97-d165-4cc0-abdd-6a98f04e6eb7")) SynapseAPO
+    : public ATG::CSampleXAPOBase<SynapseAPO, SynapseAPOParams> {
 public:
     SynapseAPO();
     virtual ~SynapseAPO();
     void SetSamplingRate(float rate);
-    void DoProcess(const SynapseAPOParams& params, unsigned int* arg1, float& arg2, unsigned int arg3, unsigned int arg4);
+    // Signature taken from retail's own mangled name, not from our old guess:
+    // ?DoProcess@SynapseAPO@DSP@@UAAXABUSynapseAPOParams@2@PIAMII@Z
+    //   => (const SynapseAPOParams &, float *__restrict, unsigned, unsigned)
+    // We used to declare (const Params &, unsigned int *, float &, unsigned,
+    // unsigned), which mangles differently and therefore paired with nothing.
+    virtual void
+    DoProcess(const SynapseAPOParams &, float *__restrict, unsigned int, unsigned int);
 
 private:
-    void OnSetParameters(const SynapseAPOParams& params);
+    virtual void OnSetParameters(const SynapseAPOParams &);
 
-    Synapse::Synapse* mSynapse;   // at offset 0x168
-    SynapseAPOParams mParams;     // at offset 0x16c
+    Synapse::Synapse *mSynapse; // at offset 0x168
+    SynapseAPOParams mParams; // at offset 0x16c
 };
 
-}  // namespace DSP
+} // namespace DSP

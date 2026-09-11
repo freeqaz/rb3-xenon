@@ -2,8 +2,10 @@
 #include "math/Decibels.h"
 #include "os/Debug.h"
 
-XAPO_REGISTRATION_PROPERTIES
-ATG::CSampleXAPOBase<EnvelopeGenerator, EnvelopeGeneratorParams>::m_regProps;
+// m_regProps is implicitly instantiated from the primary template in
+// xdk/xaudio2/xapobase.h via __uuidof(EnvelopeGenerator) -- see EnvelopeGenerator.h for the uuid.
+// It used to be defined here WITHOUT an initializer, which emitted a zeroed
+// .bss block and no ??__E dynamic initializer at all; retail has thirteen.
 
 EnvelopeGenerator::EnvelopeGenerator() : unk8c(0) {
     EnvelopeGeneratorParams p;
