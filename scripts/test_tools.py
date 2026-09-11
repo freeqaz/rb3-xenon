@@ -53,16 +53,49 @@ and exits non-zero — so adding a test directory is a two-line change here, not
 silent escape. A manifest entry that now PASSES is reported as STALE, so the
 manifest cannot rot in the other direction either.
 
+⚠ THAT CHECK HAD A BLIND SPOT, closed 2026-09-11 (lane TESTCI): it equated
+"claimed by a root" with "run". Three tracked files were `main()`-style, so
+pytest collected ZERO tests from each — the lane imported them (executing their
+module-level side effects) and asked them nothing — while ``coverage_gaps()``
+reported 0. A file that counts as covered while contributing nothing is worse
+than one reported UNCOVERED: it is an escape hatch that does not print. A
+``--collect-only`` sweep (~6 s) now reports those as HOLLOW and exits non-zero.
+
+CI
+--
+``.github/workflows/build.yml`` runs this lane with ``--ci --strict-manifest``
+immediately after the Build step. ``--strict-manifest`` is deliberate: it makes
+a known-bad entry that has started passing FATAL, so the allow-list must shrink
+as tests are fixed rather than rotting into a list nobody prunes. ``--ci``
+applies ``CI_DESELECT``, the explicit list of tests that pass on a developer
+tree and cannot pass in the container for environment reasons.
+
+Placement is after Build because the lane is NOT build-independent — measured,
+not assumed. On a tracked-files-only export of HEAD three tests fail that pass
+on a built tree (they need ``build/<v>/report.json``, ``build.ninja``, or a
+settled tree for ``patch_guard``), and ``scripts/test_split_guard.py`` exits 1
+without ``build.ninja``.
+
+⚠ RUNNING THE LANE TAKES THE BUILD LOCK. ``test_verdict_identity.py::
+test_batch_check_does_not_select_it`` drives the real ``scripts/batch_check.py``,
+which calls ``ensure_patched_tree(PROJECT_ROOT)`` at line 87 with the default
+``build=True`` — i.e. it runs ninja. Measured: the orchestrator root took 87 s
+on a tree that owed a build and 16 s once settled. That is harmless in CI and in
+your own worktree, but do NOT run this lane in the shared main checkout while
+other lanes are building.
+
 Usage
 -----
     python3 scripts/test_tools.py                 # whole lane
     python3 scripts/test_tools.py --root tools
     python3 scripts/test_tools.py --list
     python3 scripts/test_tools.py --strict-manifest   # stale entries are fatal
+    python3 scripts/test_tools.py --ci                # apply CI_DESELECT
     python3 scripts/test_tools.py --no-script-arm     # pytest roots only
+    python3 scripts/test_tools.py --no-hollow-check   # skip the collect sweep
 
 Exit codes: 0 = no NEW failure; 1 = new failure, timeout, broken root, script
-failure, or uncovered file.
+failure, uncovered file, or hollow file.
 """
 
 from __future__ import annotations
@@ -124,12 +157,122 @@ SCRIPT_ARM: list[dict] = [
     # Safe next to a build fleet: it never writes to the checkout (the sandbox
     # is a fresh temp dir per arm) and it does not build.
     {"path": "scripts/sabotage_project_dir_guard.py", "timeout": 300},
+    # Sabotage suite for scripts/verify_split_current.py: every GREEN is paired
+    # with a RED produced by breaking the specific thing that GREEN covers, and
+    # every RED is checked for the RIGHT REASON. Registered 2026-09-11 (lane
+    # TESTCI): it is named test_*.py, so `coverage_gaps` counted it as covered
+    # by the `scripts` root -- but pytest collects ZERO tests from it, so the
+    # lane imported it and ran nothing. Measured: rc=0 in ~1 s on a configured
+    # tree.
+    #
+    # Works against a scratch COPY of the repo's config and build metadata,
+    # never the tree itself, so it is safe beside a build fleet. It DOES need
+    # `build.ninja` (it locates the split edge there) and exits 1 with
+    # `FATAL: could not find a split edge` without one -- loudly, not silently,
+    # which is why it is safe to register rather than exclude. See the CI step
+    # in .github/workflows/build.yml for why that forces placement after Build.
+    {"path": "scripts/test_split_guard.py", "timeout": 300},
+    # Fold-poisoning regression gate, fixtures are real retail bytes. Same
+    # discovery as its sibling above: zero tests collected, so the lane was
+    # importing it and asking it nothing.
+    #
+    # Measured environment-independent (rc=0 both on a built tree and on a
+    # pristine tracked-files-only checkout), so it is safe anywhere in the
+    # workflow.
+    #
+    # ⚠ DELIBERATE DUPLICATION: .github/workflows/build.yml ALSO runs this file
+    # directly, twice (plain, then `--self-break`). That is not redundant
+    # bookkeeping to clean up -- the `--self-break` leg is the proof the gate
+    # can fail, which this runner does not perform, and the direct step keeps
+    # working if this runner is ever removed. The overlap costs ~1 s.
+    {"path": "tools/test_icf_fold_safe.py", "timeout": 300},
 ]
 
 # ── deliberate exclusions ─────────────────────────────────────────────────────
 # Every entry needs a reason. Printed on every run.
 EXCLUDED: list[dict] = [
-    # (none in this repo as of 2026-08-17.)
+    # ⛔ STATE-DEPENDENT AGAINST THE LIVE SHARED TREE. This is the one tracked
+    # test file in the repo that reads the REAL build directory
+    # (`REPO / "build"`, line 56) and then MUTATES it: it plants sabotage into
+    # `build/<v>/split_inputs.stamp`, drives
+    # `patch_guard.ensure_patched_tree(REPO, build=False)` against it, and
+    # restores in a `finally`. Its assertions are good -- it proves the guard
+    # RAISES rather than merely warning, which is the right end of that
+    # question -- but its subject is global mutable state.
+    #
+    # Registered here rather than in SCRIPT_ARM for two measured reasons:
+    #
+    #   1. Every existing SCRIPT_ARM entry advertises "never writes to the
+    #      checkout", because this repo runs a fleet of concurrent lanes. This
+    #      file writes to the shared build tree. Running the lane would then
+    #      race any lane mid-build, and a `finally` does not survive SIGKILL.
+    #   2. Its verdict depends on whether the tree happens to owe a build, so
+    #      in CI it would depend on STEP ORDERING -- and three later steps in
+    #      build.yml deliberately perturb the tree (the symbols.txt fixpoint
+    #      guard forces its own re-split, and its `--self-break` leg plants a
+    #      violation). A test whose colour depends on which guard ran first is
+    #      not a regression signal.
+    #
+    # ⚠ It was ALREADY inert before this lane, silently: pytest collects zero
+    # tests from it, so the `scripts` root imported it (running its
+    # module-level `os.environ[SPLIT_WAIT_ENV] = "3"`) and called nothing.
+    # Excluding it changes no coverage; it makes the absence VISIBLE, which is
+    # the point of this list.
+    #
+    # ⇒ THE FIX IS TO POINT IT AT A FIXTURE, not to soften `patch_guard` --
+    # the guard is correct and the test is the wrong end. `test_patch_state.py`
+    # (26 tests) and `test_split_guard.py` both already build a scratch tree
+    # and assert against that; this file is the odd one out and should follow
+    # them. Not done here: it rewrites a test this lane does not own.
+    {"path": "scripts/test_patch_guard_split_hook.py",
+     "why": "mutates the LIVE shared build tree (plants into "
+            "build/<v>/split_inputs.stamp) and its verdict depends on whether "
+            "the tree owes a build -- flaky beside a build fleet, and "
+            "order-dependent in CI. Fix = give it a fixture like "
+            "test_patch_state.py does. Already collected 0 tests, so nothing "
+            "is lost by excluding it."},
+]
+
+# ── CI deselections (`--ci` only) ─────────────────────────────────────────────
+# Tests that pass on a DEVELOPER tree and cannot pass in the CI container, for
+# a reason that is a property of the ENVIRONMENT rather than of the code. Each
+# is deselected from the pytest run under `--ci`, and printed with its reason on
+# every run, exactly like EXCLUDED.
+#
+# WHY THIS IS NOT A KNOWN-BAD ENTRY. The manifest is a single static list read
+# in both environments, so an entry for a test that passes locally and fails in
+# CI is STALE locally the moment it is added -- and `--strict-manifest` (which
+# CI passes, so the allow-list cannot rot) would then make it fatal in the other
+# direction. A deselected test is simply not judged anywhere, which is the
+# honest shape for "green here, red there".
+#
+# ⚠ KEEP THIS LIST AT ZERO IF YOU CAN. Every entry is coverage CI does not have.
+# Prefer fixing the environment gap over recording it.
+CI_DESELECT: list[dict] = [
+    # Asserts that every `<dir> / "bin" / "<name>"` in mcp_server.py names a
+    # file that exists -- a real invariant on a developer tree, where
+    # `bin/objdiff-cli` is a hand-made symlink onto the shared
+    # ../objdiff/target/release build.
+    #
+    # That symlink is EXPLICITLY GITIGNORED (.gitignore:145 `/bin/objdiff-cli`,
+    # verified with `git check-ignore -v`), and nothing in configure.py or
+    # tools/project.py creates it -- the build resolves objdiff to an absolute
+    # fork path or to build/tools/, never through `bin/`. So on a fresh
+    # `actions/checkout` the directory is empty and this test fails with
+    # `handler(s) reference bin/ executable(s) that do not exist:
+    # ['objdiff-cli']` no matter where in the workflow it runs. Measured on a
+    # tracked-files-only export of HEAD (lane TESTCI, 2026-09-11).
+    #
+    # It is deselected rather than "fixed" because the invariant it defends is
+    # about the developer/MCP environment, which CI does not have and does not
+    # need: nothing in build.yml runs mcp_server.py. Creating the symlink in CI
+    # to make it green would be fabricating the precondition rather than
+    # testing it.
+    {"id": "scripts/orchestrator/test_advertised_tools.py::"
+           "test_no_handler_shells_out_to_a_missing_repo_executable",
+     "why": "needs bin/objdiff-cli, which is gitignored (.gitignore:145) and "
+            "created by nothing in the build -- structurally absent on a fresh "
+            "checkout. Passes on a developer tree; env, not code."},
 ]
 
 TEST_FILE_RE = re.compile(r"(^|/)(test_[^/]*\.py|[^/]*_test\.py)$")
@@ -216,9 +359,15 @@ def manifest_match(entry: str, observed: str) -> bool:
 
 # ── running ───────────────────────────────────────────────────────────────────
 
-def run_root(root: dict, python: str, extra: list[str], log_dir: Path) -> dict:
-    cmd = [python, "-m", "pytest", "-q", "--tb=no", "-rEf",
-           "--continue-on-collection-errors", "-p", "no:cacheprovider"]
+def root_selection_args(root: dict) -> list[str]:
+    """The --ignore/--deselect args for a root.
+
+    Factored out so the real run and the hollow-coverage sweep below build the
+    SAME selection. If the sweep could drift from the run it would report on a
+    population the lane never executes, which is the vacuity this whole file
+    exists to prevent.
+    """
+    args: list[str] = []
     ignores = list(root.get("ignore", []))
     if SELF.startswith(root["path"].rstrip("/") + "/"):
         ignores.append(SELF)
@@ -229,9 +378,73 @@ def run_root(root: dict, python: str, extra: list[str], log_dir: Path) -> dict:
         if p.startswith(root["path"].rstrip("/") + "/") and p not in ignores:
             ignores.append(p)
     for ig in ignores:
-        cmd.append(f"--ignore={ig}")
+        args.append(f"--ignore={ig}")
     for ds in root.get("deselect", []):
-        cmd.extend(["--deselect", ds])
+        args.extend(["--deselect", ds])
+    return args
+
+
+def collected_files(root: dict, python: str) -> tuple[set[str], set[str]]:
+    """(files pytest collects >=1 test from, files that ERRORED at collection).
+
+    A `--collect-only` pass with the run's own selection. Cheap: the whole
+    sweep measured ~6 s across all five roots (lane TESTCI, 2026-09-11).
+    """
+    cmd = [python, "-m", "pytest", "--collect-only", "-q",
+           "--continue-on-collection-errors", "-p", "no:cacheprovider"]
+    cmd += root_selection_args(root)
+    cmd.append(root["path"])
+    proc = subprocess.run(cmd, cwd=REPO_ROOT, capture_output=True, text=True)
+    have: set[str] = set()
+    errored: set[str] = set()
+    for line in _strip_ansi(proc.stdout + proc.stderr).splitlines():
+        line = line.strip()
+        if "::" in line and not line.startswith(("FAILED", "ERROR", "<")):
+            have.add(line.split("::", 1)[0])
+        m = SUMMARY_RE.match(line)
+        if m and line.startswith("ERROR"):
+            errored.add(m.group(2).split("::", 1)[0])
+    return have, errored
+
+
+def hollow_files(roots: list[dict], python: str,
+                 known_bad: list[str]) -> list[str]:
+    """Tracked test files a pytest root CLAIMS but collects ZERO tests from.
+
+    The gap this closes, found 2026-09-11 (lane TESTCI): `coverage_gaps()`
+    returned 0 while THREE files were being imported and asked nothing --
+    `test_patch_guard_split_hook.py`, `test_split_guard.py` and
+    `tools/test_icf_fold_safe.py` are all `main()`-style, so pytest collected
+    0 tests from each. The anti-staleness check could not see it, because
+    "claimed by a root" was treated as "run". A file counted as covered while
+    contributing nothing is strictly worse than one reported UNCOVERED: it is
+    an escape hatch that does not print.
+
+    A file that ERRORED at collection is NOT hollow -- it is a different,
+    already-reported failure -- and neither is one the known-bad manifest
+    covers, so a manifested collection error does not also fire here.
+    """
+    handled = {e["path"] for e in SCRIPT_ARM} | {e["path"] for e in EXCLUDED}
+    tracked = [f for f in tracked_test_files() if f not in handled]
+    hollow: list[str] = []
+    for root in roots:
+        mine = [f for f in tracked if _claimed_by_a_root(f, [root])]
+        if not mine:
+            continue
+        have, errored = collected_files(root, python)
+        for f in mine:
+            if f in have or f in errored:
+                continue
+            if any(manifest_match(e, f) for e in known_bad):
+                continue
+            hollow.append(f)
+    return sorted(set(hollow))
+
+
+def run_root(root: dict, python: str, extra: list[str], log_dir: Path) -> dict:
+    cmd = [python, "-m", "pytest", "-q", "--tb=no", "-rEf",
+           "--continue-on-collection-errors", "-p", "no:cacheprovider"]
+    cmd += root_selection_args(root)
     cmd.append(root["path"])
     cmd.extend(extra)
 
@@ -319,6 +532,12 @@ def main() -> int:
                     help="a known-bad entry that now PASSES is fatal too")
     ap.add_argument("--no-script-arm", action="store_true",
                     help="skip the main()-style self-checks")
+    ap.add_argument("--ci", action="store_true",
+                    help="apply the CI_DESELECT list (tests that cannot pass "
+                         "in the CI container for environment reasons)")
+    ap.add_argument("--no-hollow-check", action="store_true",
+                    help="skip the collect-only sweep that finds test files a "
+                         "root claims but collects zero tests from (~6s)")
     ap.add_argument("--verbose-failures", action="store_true",
                     help="dump each failing root's output")
     ap.add_argument("--log-dir", default=None,
@@ -329,6 +548,20 @@ def main() -> int:
     args = ap.parse_args()
 
     roots = discover_roots()
+    if args.ci:
+        # Attach each CI deselection to the root that owns it. An id naming a
+        # file no root claims is a FATAL config error, not a silent no-op --
+        # otherwise a renamed test would quietly stop being deselected and the
+        # list would rot without saying so.
+        for entry in CI_DESELECT:
+            path = entry["id"].split("::", 1)[0]
+            owners = [r for r in roots if _claimed_by_a_root(path, [r])]
+            if not owners:
+                print(f"CI_DESELECT names a test no root claims: {entry['id']}",
+                      file=sys.stderr)
+                return 1
+            for r in owners:
+                r.setdefault("deselect", []).append(entry["id"])
     if args.list:
         for r in roots:
             ig = f"  (ignore: {', '.join(r['ignore'])})" if r.get("ignore") else ""
@@ -337,6 +570,8 @@ def main() -> int:
             print(f"script  {e['path']}   timeout={e.get('timeout', 300)}s")
         for e in EXCLUDED:
             print(f"EXCL    {e['path']}   {e['why']}")
+        for e in CI_DESELECT:
+            print(f"CI-DESEL {e['id']}\n         {e['why']}")
         return 0
     if args.root:
         wanted = {p.rstrip("/") for p in args.root}
@@ -344,6 +579,22 @@ def main() -> int:
         if not roots:
             print(f"no such root: {args.root}", file=sys.stderr)
             return 1
+
+    # Preflight: without pytest every root comes back BROKEN with `rc=1`, five
+    # times over. That is loud, which is the right direction -- but it reads as
+    # "the lane is broken" rather than "this environment has no pytest", and a
+    # confusing red is the kind that gets a CI step reverted instead of fixed.
+    # Say it once, plainly, and name the remedy.
+    probe = subprocess.run([args.python, "-m", "pytest", "--version"],
+                           capture_output=True, text=True)
+    if probe.returncode != 0:
+        print(f"FATAL: `{args.python} -m pytest` is unavailable, so this lane "
+              f"cannot run any pytest root.\n"
+              f"       Install pytest in this environment (in CI: the build "
+              f"container needs it).\n"
+              f"       {(probe.stderr or probe.stdout).strip().splitlines()[-1] if (probe.stderr or probe.stdout).strip() else ''}",
+              file=sys.stderr)
+        return 1
 
     known_bad = load_manifest()
     gaps = coverage_gaps(discover_roots())
@@ -376,6 +627,10 @@ def main() -> int:
         print(f"  [{state:>7}] {res['path']:<44} rc={res['rc']} "
               f"{res['last']} ({res['elapsed']:.0f}s)", flush=True)
 
+    hollow: list[str] = []
+    if not args.no_hollow_check:
+        hollow = hollow_files(roots, args.python, known_bad)
+
     print()
     if EXCLUDED:
         print(f"EXCLUDED — tracked test-named files this lane does NOT run "
@@ -387,12 +642,16 @@ def main() -> int:
 
     deselected = [(r["path"], d) for r in roots for d in r.get("deselect", [])]
     if deselected:
+        why_of = {e["id"]: e["why"] for e in CI_DESELECT}
         print(f"DESELECTED — the known-bad manifest cannot cover these, "
-              f"because a manifested test still RUNS (these hang, or corrupt "
-              f"the tree). Reasons are in {Path(__file__).name}, STATIC_ROOTS "
+              f"because a manifested test still RUNS (these hang, corrupt the "
+              f"tree, or are green here and red there). Reasons are in "
+              f"{Path(__file__).name}, STATIC_ROOTS / CI_DESELECT "
               f"({len(deselected)}):")
         for _root, d in deselected:
             print(f"    {d}")
+            if d in why_of:
+                print(f"        {why_of[d]}")
         print()
 
     new_failures: list[str] = []
@@ -470,6 +729,16 @@ def main() -> int:
         for g in gaps:
             print(f"    {g}")
         print()
+    if hollow:
+        print(f"HOLLOW coverage — a pytest root CLAIMS these tracked test "
+              f"files, so they are NOT reported as uncovered, but pytest "
+              f"collects ZERO tests from each: the lane imports them and asks "
+              f"them nothing. Either they are main()-style (add them to "
+              f"SCRIPT_ARM) or their tests stopped being collected. Do not "
+              f"leave them claimed-but-silent ({len(hollow)}):")
+        for f in hollow:
+            print(f"    {f}")
+        print()
     if timeouts:
         print(f"TIMEOUT ({len(timeouts)}): " + ", ".join(timeouts) + "\n")
     if broken:
@@ -500,13 +769,22 @@ def main() -> int:
                 body = res["log"].read_text(errors="replace")[-40_000:]
                 print(f"───── {res['path']} ─────\n{_strip_ansi(body)}\n")
 
-    bad = bool(new_failures or gaps or timeouts or broken or script_failed
-               or (args.strict_manifest and stale))
+    bad = bool(new_failures or gaps or hollow or timeouts or broken
+               or script_failed or (args.strict_manifest and stale))
     print("RESULT: " + ("FAIL" if bad else "PASS")
           + f"  (new={len(new_failures)} timeout={len(timeouts)} "
             f"broken={len(broken)} script-fail={len(script_failed)} "
-            f"uncovered={len(gaps)} stale={len(stale)} "
+            f"uncovered={len(gaps)} hollow={len(hollow)} stale={len(stale)} "
             f"known-bad-hit={len(expected_hit)})")
+    # Name the failing suites on the last line too: a CI log is read from the
+    # bottom, and "RESULT: FAIL" with no subject sends the reader hunting.
+    if bad:
+        subjects = sorted({f.split("::", 1)[0] for f in new_failures}
+                          | {p for p, _ in script_failed}
+                          | set(timeouts) | {r for r, _ in broken}
+                          | set(hollow) | set(gaps)
+                          | (set(stale) if args.strict_manifest else set()))
+        print("FAILING: " + ", ".join(subjects))
     return 1 if bad else 0
 
 
