@@ -30200,5 +30200,7 @@
  "0x82c436f0": "??__E?m_regProps@?$CSampleXAPOBase@VSynapseAPO@DSP@@USynapseAPOParams@2@@ATG@@0UXAPO_REGISTRATION_PROPERTIES@@A@@YAXXZ",
  "0x825170d8": "?OnFileGetPath@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82517120": "?OnFileGetBase@@YA?AVDataNode@@PAVDataArray@@@Z",
- "0x82517168": "?OnFileGetExt@@YA?AVDataNode@@PAVDataArray@@@Z"
+ "0x82517168": "?OnFileGetExt@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82516680": "FileGetDrive",
+ "0x825167a8": "FileGetName"
 }

@@ -243,15 +243,13 @@ const char *FileGetExt(const char *root) {
 }
 
 const char *FileGetName(const char *file) {
-    const char *dir;
-    dir = strrchr(file, '/');
-    if (dir == 0) {
-        dir = strrchr(file, '\\');
-        if (dir == 0) {
-            return file;
-        }
-    }
-    return dir + 1;
+    static char path[256];
+    const char *dir = strrchr(file, '/');
+    if ((dir != 0) || (dir = strrchr(file, '\\'), (dir != 0)))
+        strcpy(path, dir + 1);
+    else
+        strcpy(path, file);
+    return path;
 }
 
 static bool FileMatchInternal(const char *arg0, const char *arg1, bool arg2) {
