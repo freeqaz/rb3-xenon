@@ -1571,9 +1571,62 @@ DataNode Hmx::Object::HandleType(DataArray *msg) {
         handler = mTypeDef->FindArray(t, false);
     }
     if (handler) {
-        MessageTimer timer(this, t);
+#ifdef HX_NATIVE
+        MessageTimer timer(this, t); // retail X360 (0x8275ABD8) has no timer here
+#endif
         return handler->ExecuteScript(1, this, (const DataArray *)msg, 2);
     }
     return DATA_UNHANDLED;
+}
+
+// Lane W5-A: four more Object.cpp members whose retail bodies sit inside this
+// unit's pins (0x8275A384-0x8275CB84 alternates Object.cpp code with the blocks
+// laneU handed to DirLoader by n_wrong; AddRef 0x8275BD08 and Release 0x8275B378
+// read 0% here because DirLoader.obj did not define them). Bodies are the
+// Object.cpp ones verbatim; canonical definitions stay in Object.cpp.
+#include "utl/PoolAlloc.h"
+void ObjRingInsert(ObjRef *head, ObjRefOwner *ref);
+
+void Hmx::Object::AddRef(ObjRefOwner *ref) {
+    if (ref->RefOwner() != this)
+        ObjRingInsert(&mRefs, ref);
+}
+
+void Hmx::Object::Release(ObjRefOwner *ref) {
+    if (this != sDeleting && ref->RefOwner() != this) {
+        for (ObjRef *it = mRefs.next; it != &mRefs; it = it->next) {
+            if (RefPtrOf(it) == ref) {
+                it->prev->next = it->next;
+                it->next->prev = it->prev;
+                PoolFree(sizeof(ObjRefNode), it);
+                return;
+            }
+        }
+    }
+}
+
+void Hmx::Object::RemoveFromDir() {
+    if (mDir && mDir != sDeleting) {
+        mDir->RemovingObject(this);
+        ObjectDir::Entry *entry = mDir->FindEntry(mName, false);
+        if (!entry || entry->obj != this) {
+            MILO_FAIL("No entry for %s in %s", PathName(this), PathName(mDir));
+        }
+
+        entry->obj = nullptr;
+    }
+}
+
+void Hmx::Object::SetNote(const char *note) {
+    if (mNote != gNullStr) {
+        MemOrPoolFreeSTL(strlen(mNote) + 1, (void *)mNote);
+    }
+    if (note && *note) {
+        char *buf = (char *)MemOrPoolAllocSTL(strlen(note) + 1);
+        mNote = buf;
+        strcpy(buf, note);
+    } else {
+        mNote = gNullStr;
+    }
 }
 #endif
