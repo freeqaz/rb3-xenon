@@ -14187,6 +14187,7 @@
  "0x826305b0": "?Load@RetryAudioPanel@@UAAXXZ",
  "0x82630620": "?SetType@RetryAudioPanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x82630630": "??_GRetryAudioPanel@@UAAPAXI@Z",
+ "0x82630790": "?PollForLoading@RetryAudioPanel@@UAAXXZ",
  "0x82630690": null,
  "0x82631a20": "??0SaveLoadStatusPanel@@QAA@XZ",
  "0x82631b40": "?ClassName@SaveLoadStatusPanel@@UBA?AVSymbol@@XZ",
