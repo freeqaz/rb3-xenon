@@ -195,8 +195,17 @@ const char *FileGetBaseBuf(const char *file, char *base) {
 
 const char *FileGetBase(const char *file) {
     static char my_path[256];
-    MainThread();
-    return FileGetBaseBuf(file, my_path);
+    const char *dir;
+    char *ext;
+    dir = strrchr(file, '/');
+    if ((dir != 0) || (dir = strrchr(file, '\\'), (dir != 0)))
+        strcpy(my_path, dir + 1);
+    else
+        strcpy(my_path, file);
+    ext = strrchr(my_path, '.');
+    if (ext != 0)
+        *ext = 0;
+    return my_path;
 }
 
 const char *FileGetExt(const char *root) {
@@ -359,24 +368,9 @@ String UniqueFilename(const char *c1, const char *c2) {
     return ret;
 }
 
-DataNode OnFileGetDrive(DataArray *da) {
-    static char drive[256];
-    const char *str = da->Str(1);
-    MainThread();
-    return FileGetDriveBuf(str, drive);
-}
-DataNode OnFileGetPath(DataArray *da) {
-    static char static_path[256];
-    const char *str = da->Str(1);
-    MainThread();
-    return FileGetPathBuf(str, static_path);
-}
-DataNode OnFileGetBase(DataArray *da) {
-    static char my_path[256];
-    const char *str = da->Str(1);
-    MainThread();
-    return FileGetBaseBuf(str, my_path);
-}
+DataNode OnFileGetDrive(DataArray *da) { return FileGetDrive(da->Str(1)); }
+DataNode OnFileGetPath(DataArray *da) { return FileGetPath(da->Str(1)); }
+DataNode OnFileGetBase(DataArray *da) { return FileGetBase(da->Str(1)); }
 DataNode OnFileAbsolutePath(DataArray *da) {
     return FileMakePath(da->Str(1), da->Str(2));
 }
