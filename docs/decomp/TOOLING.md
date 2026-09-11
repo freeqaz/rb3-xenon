@@ -231,18 +231,45 @@ list, re-run it after `scripts/prune_orphan_asm.py` before believing it.
    so objdiff can pair target↔base **by name**. Without a map entry, a pinned game
    TU reads a false 0%.
 
-**post-compile** (5 steps, on OUR compiled objs, **serialized** via stamp chaining —
-each stamp is an implicit input of the next, because all five read-modify-write the
-same obj set and concurrent runs lose each other's writes):
+**post-compile** (**6 steps**, on OUR compiled objs, **serialized** via stamp chaining —
+each stamp is an implicit input of the next, because the first five read-modify-write
+the same obj set and concurrent runs lose each other's writes):
 2. `obj_anon_ns_patcher.py` — anonymous-namespace hashes (MSVC derives them from
    machine name + source path)
 3. `obj_dynamic_init_patcher.py` — `??__E` dynamic initializers STATIC→EXTERNAL
 4. `obj_guard_patcher.py` — `$S` → `??_B` static-init guards
 5. `obj_bool_mangle_patcher.py` — bool back-reference mangling
 6. `obj_atexit_scope_patcher.py` — `??__F` atexit scope counters (fuzzy)
+7. `obj_eh_boundary_patcher.py` — EH-funclet extent boundaries. **LAST in the chain
+   deliberately**: it only *appends* a boundary symbol and never renames one, so it
+   cannot disturb the five name-rewriting passes above.
 
-**NOT wired** (enable per-function by hand): `obj_regswap_patcher.py`,
-`obj_transplant_patcher.py`. This matches CLAUDE.md's claim exactly.
+⚠ **This list said "5 steps" and omitted #7 until lane PATCH-LIVE (2026-09-11).**
+`obj_eh_boundary_patcher.py` was added after the list was written, and the same
+omission was live in `CLAUDE.md` and in `configure.py`'s own chain comment ("The
+five obj patchers…") at the same time — i.e. every place that names the chain
+undercounted it, so nothing cross-checked anything. The count is load-bearing:
+`verify_objs_patched.py --check` exists specifically to catch "someone added a
+seventh patcher and forgot the edge", and a reader auditing that guarantee against
+a five-item list is auditing the wrong chain.
+
+**NOT wired**: `obj_regswap_patcher.py`, `obj_transplant_patcher.py`.
+⛔ **"enable per-function by hand" is NOT currently true — both are BITROTTED**
+(measured, lane PATCH-LIVE 2026-09-11). Each resolves our compiled object under
+**DC3's title ID**, inherited from the 2026-05-26 dc3 scaffold and never
+retargeted: `obj_regswap_patcher.py:766,774` and `obj_transplant_patcher.py:47,55`
+build `PROJECT_ROOT/build/373307D9/...` instead of `build/45410914/...`, and they
+flatten the unit to a bare basename rather than the source-tree path. Run against
+a real symbol they get as far as *analysing* it and then fail to find the file:
+
+    regswap:    {"match_before": 99.99673, "patches_found": 1,
+                 "error": "obj not found: .../build/373307D9/src/NextSongPanel.obj"}
+    transplant: ERROR: Decomp .obj not found: .../build/373307D9/src/NextSongPanel.obj
+
+★ Note *which half* works: regswap's objdiff integration and ruler resolution are
+**fine** — it computed a real match% and found a real patch. Only the output path
+is wrong. So this is a small, well-localised repair, not a rewrite. No wired pass
+hardcodes a title ID (checked, as the control).
 
 ---
 
@@ -509,9 +536,9 @@ Machine-generated from an AST parse + a real `--help` run per argparse tool.
 | `obj_bool_mangle_patcher.py` | WORKING | Post-build patcher: fix bool parameter back-reference mangling. Our MSVC compiler caches `bool` (_N) in the parameter back-reference table, | --help | **YES** |
 | `obj_dynamic_init_patcher.py` | WORKING | Post-build patcher to promote ??__E dynamic initializer symbols from STATIC to EXTERNAL. MSVC emits ??__E symbols (C++ dynamic initializers for global | --help | n/a |
 | `obj_guard_patcher.py` | WORKING | Post-build patcher: convert $S guard variables to ??_B format. Compares decomp .obj files against original .obj files and renames | --help | **YES** |
-| `obj_regswap_patcher.py` | WORKING | Post-compilation .obj register swap patcher. Patches PowerPC register fields in COFF .obj files to fix register swap | --help | n/a |
+| `obj_regswap_patcher.py` | ⛔ BITROTTED | Post-compilation .obj register swap patcher. Patches PowerPC register fields in COFF .obj files to fix register swap. **Resolves our obj under DC3's title id `373307D9` (lines 766, 774) so it can never find it on this repo** — analysis works, the write fails | **real --dry-run on a live symbol** (2026-09-11); the old "WORKING" rested on `--help` alone | n/a |
 | `obj_target_symbol_renamer.py` | WORKING | Post-SPLIT patcher: rename anonymous `fn_<addr>` symbols in dtk-split target .obj files to their MSVC-mangled equivalents. | --help | **YES** |
-| `obj_transplant_patcher.py` | WORKING | Post-build .obj transplant patcher. Replaces a function's COFF section data with the original .obj's machine code, | --help | n/a |
+| `obj_transplant_patcher.py` | ⛔ BITROTTED | Post-build .obj transplant patcher. Replaces a function's COFF section data with the original .obj's machine code. **Resolves both objs under DC3's title id `373307D9` (lines 47, 55)**; also calls `decomp.db` for unit lookup, which does not exist in a worktree | **real --dry-run on a live symbol** (2026-09-11); the old "WORKING" rested on `--help` alone | n/a |
 | `permuter_targets.py` | WORKING | rank the permuter's work queue from report.json. The source permuter (the `decomp_synth` package, wired via the `permute` skill) mechanizes | --help | n/a |
 | `prune_orphan_asm.py` | WORKING | Delete orphaned `build/<title>/asm/*.s` files -- the stale-carve trap. WHY THIS EXISTS | --help | **YES** |
 | `recon.py` | WORKING | Unified function reconnaissance — single command for full function intel. Combines: | --help | n/a |
