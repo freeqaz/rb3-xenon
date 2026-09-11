@@ -30170,5 +30170,9 @@
  "0x82b66b20": "??0Voice@@QAA@_NH0@Z",
  "0x82b661f0": "?dispose@Voice@@AAAXPAUPoolVoice@@I@Z",
  "0x8275bd08": "?AddRef@Object@Hmx@@QAAXPAVObjRefOwner@@@Z",
- "0x8275b378": "?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z"
+ "0x8275b378": "?Release@Object@Hmx@@QAAXPAVObjRefOwner@@@Z",
+ "0x82757fc0": "?StringMatchesFilter@@YA_NPBD0@Z",
+ "0x82761d08": "?DataMatchPattern@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x82761d60": "?DataMatchAnyPattern@@YA?AVDataNode@@PAVDataArray@@@Z",
+ "0x8275f8b0": "?DataInt@@YA?AVDataNode@@PAVDataArray@@@Z"
 }
