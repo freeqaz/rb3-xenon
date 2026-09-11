@@ -40,7 +40,7 @@ public:
     static bool HasPendingVoices();
     void SetSpeed(float);
 
-    int GetVoice();
+    IXAudio2SourceVoice *GetVoice() { return (IXAudio2SourceVoice *)mSourceVoice; }
     /** Retail has no stored channel count -- InitVoiceParameters computes
      *  `mStereo ? 2 : 1` inline (0x82B652E0).  Only 1 and 2 are reachable. */
     int NumChannels() const { return mStereo ? 2 : 1; }

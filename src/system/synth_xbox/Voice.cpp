@@ -43,14 +43,22 @@ int gCommitTag = 0;
 bool gHasPendingStopCommits = false;
 bool gWasCommitSyncVoices = false;
 int gWasCommitTag = 0;
-static int gVoiceCounters[2]; // retail 0x82E120BC: createOrReuse does [0]++
+// Two adjacent internal statics, NOT an `int[2]` (dc3's spelling): retail's
+// thread entry reaches the second one through its OWN `lis r16, lbl_82E120C0@ha`
+// / `lwz r11, lbl_82E120C0@l(r16)` pair, while dispose co-addresses both from
+// one base (`lis r9; addi r8; lwz @l(r9); lwz 0x4(r8)`).  An array element is
+// always formed as `&array` + displacement by this compiler (measured with both
+// `static int[2]` and `int[2]`: base + `0x4(r16)` and one extra `addi`), so the
+// direct form can only come from a scalar.  Names are ours; retail's are unknown
+// (.bss, unnamed).  createOrReuse: gVoicesLive++; dispose: gVoicesLive--,
+// gVoicesInGC++; thread entry: gVoicesInGC--.
+static int gVoicesLive;   // 0x82E120BC
+static int gVoicesInGC;   // 0x82E120C0
 int rolling = 0;
 void StartSynchronizedVoices();
 
 typedef void (*PoolVoiceCallFunc)(int*, int, int);
 typedef HRESULT (*EndLoopFunc)(int *, int);
-
-int Voice::GetVoice() { return mSourceVoice; }
 
 // Retail 0x82B66B20 (296 B).  The signature is (bool, bool, bool), not dc3's
 // (bool, int, bool): r5 is stored straight to mSynchronized (`stb r5, 0x49`)
@@ -134,15 +142,31 @@ long Voice::createOrReuse(
     MILO_ASSERT(pPoolVoice->egParams == 0, 0x1c3);
     pPoolVoice->egParams = (int)new EnvelopeGeneratorParams;
 
-    XAUDIO2_EFFECT_DESCRIPTOR effectDesc;
+    // Retail's store order is 0x68, 0x64, 0x60, 0x58, 0x5c (OutputChannels,
+    // InitialState, pEffect, EffectCount, pEffectDescriptors).  Declaration
+    // order was measured inert for this (lane W3-D); ASSIGNMENT order is the
+    // lever, with one twist: MSVC hoists a store of the already-materialised
+    // r25 (= 1) one position earlier than its source position (measured twice:
+    // EffectCount 2nd->1st, then 4th->2nd), so retail's source has EffectCount
+    // LAST and the hoist lands it fourth.
+    // Retail's store order is 0x68, 0x64, 0x60 (the descriptor, REVERSE field
+    // order = an aggregate initialiser), then 0x58, 0x5c (the chain, assigned).
+    // Measured: with the descriptor assigned field-by-field this compiler pulls
+    // the first chain store up to second place whatever the source order, and
+    // declaration order is inert (four orders tried).  Only the aggregate form
+    // keeps all three descriptor stores ahead of the chain's.
+    XAUDIO2_EFFECT_DESCRIPTOR effectDesc = { (IUnknown *)pPoolVoice->eg, 0, 1 };
     XAUDIO2_EFFECT_CHAIN effectChain;
-    effectDesc.InitialState = 0;
     effectChain.EffectCount = 1;
-    effectDesc.pEffect = (IUnknown *)pPoolVoice->eg;
-    effectDesc.OutputChannels = 1;
     effectChain.pEffectDescriptors = &effectDesc;
 
-    MemPushTemp();
+    // Retail brackets the engine call with the no-arg temp-allocation GUARD
+    // OBJECT, not bare MemPushTemp()/MemPopTemp() calls: its EH funclet
+    // fn_82B64F38 destroys an object at r31+0x6c (`addi r3, r31, 0x6c; bl
+    // fn_82345030`, and fn_82345030 is the 4-byte `b fn_827BC2A0` = the
+    // out-of-line ~MemDoTempAllocations).  The inline ctor/dtor still emit the
+    // bare `bl fn_827BC270` / `bl fn_827BC2A0` on the normal path.
+    MemDoTempAllocations tempAlloc;
 
     HRESULT hr;
     {
@@ -163,10 +187,9 @@ long Voice::createOrReuse(
             pEngine, pPoolVoice, &wfx, 0, 4.0f, 0, sends, &effectChain
         );
     }
-    gVoiceCounters[0]++;
+    gVoicesLive++;
     memcpy(&pPoolVoice->wfx, &wfx, 0x12);
     unk4b = (sends == 0 || sends->SendCount > 0);
-    MemPopTemp();
     return hr;
 }
 
@@ -191,8 +214,8 @@ void Voice::dispose(PoolVoice *voice, unsigned int) {
         // CritSecTracker on gVoiceGC, not bare Enter()/Exit() calls.
         CritSecTracker tracker(&gVoiceGC);
         s_voiceGC.push_back(*voice);
-        gVoiceCounters[1]++; // [1]++ before [0]-- : retail loads [1] into the lower register
-        gVoiceCounters[0]--;
+        gVoicesInGC++; // before gVoicesLive-- : retail loads the GC count into the lower register
+        gVoicesLive--;
     }
     voice->eg = 0;
     voice->egParams = 0;
@@ -379,10 +402,7 @@ void Voice::Pause(bool b) {
         MILO_ASSERT(GetVoice(), 0x2b4);
         if (b) {
             gHasPendingStopCommits = true;
-            int *pVoice = (int *)mSourceVoice;
-            bool sync = mSynchronized;
-            HRESULT hr =
-                ((HRESULT(*)(int *, int, int))(*(int *)(*(int *)pVoice + 0x50)))(pVoice, 0, sync ? 2 : 0);
+            HRESULT hr = ((IXAudio2SourceVoice *)mSourceVoice)->Stop(0, mSynchronized ? 2 : 0);
             MILO_ASSERT(SUCCEEDED(hr), 700);
             mState = 4;
         } else {
@@ -393,9 +413,7 @@ void Voice::Pause(bool b) {
 
 void Voice::SetSpeed(float speed) {
     float min_speed = 0.01f;
-    float *pSpeed = &speed;
-    if (speed <= min_speed)
-        pSpeed = &min_speed;
+    float *pSpeed = (speed > min_speed) ? &speed : &min_speed; // retail: `bgt` skips the &min_speed override
     float clamped = *pSpeed;
     float max_speed = 2.0f;
     if (clamped > max_speed && mXMA) {
@@ -704,9 +722,16 @@ bool Voice::IsPlaying() {
     return params.unkc == 0.0f;
 }
 
+// Retail 0x82B663A8 (600 B).  Where it is NOT dc3's Init:
+//   * no `if (!TheXboxSynth->OutputVoice()) return;` early-out -- the body
+//     starts straight at `clrlwi. r11, r4, 24` / `stw r26(1), 0x4(r3)`;
+//   * the dry send's output voice is `mFxSend ? mFxSend->unk4 : 0` with NO
+//     mastering-voice fallback (`beq -> mr r11, r27(0)`), so a voice with no
+//     FxSend gets no explicit send and XAudio2 default-routes it;
+//   * `voiceSends.pSends` is the vector's data pointer UNCONDITIONALLY
+//     (`stw r28, 0x5c(r31)` before the count is even computed) -- dc3's
+//     `count ? data : 0` ternary costs four instructions retail does not have.
 void Voice::Init(bool b) {
-    if ((unsigned int)TheXboxSynth->unkcc == 0)
-        return;
     if (!b) {
         mState = 1;
     }
@@ -724,12 +749,7 @@ void Voice::Init(bool b) {
     // Build send descriptors
     XAUDIO2_SEND_DESCRIPTOR sendDesc;
     sendDesc.Flags = 0;
-    IXAudio2Voice *outputVoice;
-    if (mFxSend) {
-        outputVoice = (IXAudio2Voice *)(*(int *)((char *)mFxSend + 4));
-    } else {
-        outputVoice = (IXAudio2Voice *)TheXboxSynth->unkcc;
-    }
+    IXAudio2Voice *outputVoice = (IXAudio2Voice *)(mFxSend ? mFxSend->unk4 : 0);
     sendDesc.pOutputVoice = outputVoice;
 
     std::vector<XAUDIO2_SEND_DESCRIPTOR> sends;
@@ -754,11 +774,10 @@ void Voice::Init(bool b) {
         pOldData = sends.data();
     }
 
-    // Build voice sends structure
-    int sendCount = ((char *)sends.end() - (char *)pOldData) >> 3;
+    // Build voice sends structure -- pSends first and unconditional (retail).
     XAUDIO2_VOICE_SENDS voiceSends;
-    voiceSends.SendCount = sendCount;
-    voiceSends.pSends = (sendCount != 0) ? pOldData : 0;
+    voiceSends.pSends = pOldData;
+    voiceSends.SendCount = ((char *)sends.end() - (char *)pOldData) >> 3;
 
     // Initialize source buffer and voice parameters
     XAUDIO2_BUFFER audioBuffer;
@@ -783,11 +802,11 @@ void Voice::Init(bool b) {
     );
     MILO_ASSERT(SUCCEEDED(hr), 0x1a3);
 
-    // Update mix and frequency
+    // Update mix and frequency.  Retail tests the voice as a POINTER here
+    // (`cmplwi r3, 0x0`, unsigned), unlike GetAddr/UpdateMix's signed `cmpwi`.
     UpdateMix();
-    if (mSourceVoice) {
-        pVoice = (int *)mSourceVoice;
-        ((void (*)(int *, float, int))(*(int *)(*(int *)pVoice + 0x68)))(pVoice, mSpeed, 0);
+    if (GetVoice()) {
+        GetVoice()->SetFrequencyRatio(mSpeed, 0);
     }
 
     // Set envelope parameters
@@ -904,11 +923,14 @@ unsigned long StartVoiceThreadEntry(void *) {
             gInProgressSyncVoices.clear();
         }
 
-        if (gWasCommitSyncVoices && TheXboxSynth) {
+        if (gWasCommitSyncVoices) {
+            Synth360 *synth = TheXboxSynth;
+            if (synth) {
             // IXAudio2::CommitChanges(0) -- slot 0x34 of the engine at Synth360+0xc8.
-            int *pEngine = (int *)TheXboxSynth->unkc8;
+            int *pEngine = (int *)synth->unkc8;
             HRESULT hr = ((HRESULT(*)(int *, int))(*(int *)(*(int *)pEngine + 0x34)))(pEngine, 0);
             MILO_ASSERT(SUCCEEDED(hr), 0x76);
+            }
         }
 
         {
@@ -925,7 +947,7 @@ unsigned long StartVoiceThreadEntry(void *) {
                 }
                 s_voiceGCInProgress.push_back(s_voiceGC.front());
                 s_voiceGC.pop_front();
-                gVoiceCounters[1]--;
+                gVoicesInGC--;
                 if (++gcCount >= 2) {
                     break;
                 }
@@ -940,10 +962,9 @@ unsigned long StartVoiceThreadEntry(void *) {
                 // IXAudio2Voice::DestroyVoice() -- slot 0x48, no arguments, no null check.
                 int *pSv = (int *)pv.sourceVoice;
                 ((void (*)(int *))(*(int *)(*(int *)pSv + 0x48)))(pSv);
-                if (pv.eg) {
-                    int *pEg = (int *)pv.eg;
-                    ((void (*)(int *, int))(*(int *)(*(int *)pEg + 0x38)))(pEg, 1);
-                }
+                // `delete`: slot 14 (0x38) is EnvelopeGenerator's deleting
+                // destructor; retail's null test is UNSIGNED (`cmplwi cr6`).
+                delete (EnvelopeGenerator *)pv.eg;
                 pv.eg = 0;
                 PoolFree(0x10, (void *)pv.egParams);
                 pv.egParams = 0;
