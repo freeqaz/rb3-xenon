@@ -261,6 +261,45 @@ a tool that could not start** — worth noting whenever a handoff names a tool.
 
 ---
 
+## 6b. ⚠ `tools/symbols_fixpoint_guard.py` LEAVES THE TREE UN-RENAMED — gate ORDER matters
+
+Found while running this lane's own gate list, isolated with a one-variable
+control on `build/45410914/obj/File.obj`:
+
+| step | mangled symbols in the target obj |
+|---|---|
+| after a full `./tools/ninja-locked` | **70** |
+| after `scripts/verify_split_current.py --check` | 70 (harmless) |
+| after `tools/symbols_fixpoint_guard.py` | **0** |
+
+The guard re-runs the dtk split, which rewrites every target `.obj` in
+`build/45410914/obj/` — and the **pre-compile** `obj_target_symbol_renamer` does
+not re-run, so the objs revert to anonymous `fn_<addr>` symbols. That is
+exactly the FOLDPROVE-2 state in which *every mangled-name lookup answers
+"absent"* and any name-keyed negative result is vacuous.
+
+It bit this lane immediately: `tools/icf_alias_finder.py --validate`, run after
+the guard, **REFUSED (exit 2)** with `UNRENAMED_TARGET_OBJS`. The validator's
+own vacuity guard caught it — which is the only reason this was noticed rather
+than becoming a confident wrong answer.
+
+⇒ **Run `symbols_fixpoint_guard.py` LAST, or follow it with
+`rm build/45410914/target_objs_renamed_checked.stamp && touch
+config/45410914/config.yml && ./tools/ninja-locked`.** Two things that do NOT
+protect you:
+
+- `verify_objs_patched.py --check` / `--verify-manifest` pass happily in the
+  degraded state; they cover the six **post-compile** passes on decomp objs, not
+  the **pre-compile** renamer on target objs. (In this lane's batch the manifest
+  check merely happened to run *before* the guard.)
+- The guard prints `SPLIT ran`, which reads as a reassurance. It is the tell.
+
+The re-split is byte-neutral once the renamer runs again — `tree_sha256`
+returned to `55e5d6afae2487d1` and `report.json` to the identical
+`42646 / 3,850,120 / 37.576970%` — so nothing here invalidates a measurement
+taken *before* the guard, which is where all of §5's readings were taken
+(target objs rewritten 06:39:59, `report.json` written 06:39:27).
+
 ## 7. What this lane did NOT do
 
 - ⛔ **Did not install any alias group**, and did not edit
@@ -294,3 +333,4 @@ a tool that could not start** — worth noting whenever a handoff names a tool.
 | H3 | `?DataInitFuncs@@` 8,068 B at fuzzy 71.45, badly misaligned | §6 — a symbol operand pairs against an immediate; gates H2 |
 | H4 | The remaining `MainThread();` sites in `File.cpp` are unaudited | §7 — the four audited ones were all spurious, so the prior is that more are |
 | H5 | `target_symbol_map.json` carries a non-`{addr:name}` key | §4 — `_bijection_arbitrary`; assert the `indent=1` round-trip before writing |
+| H6 | `symbols_fixpoint_guard.py` degrades the tree for every name-keyed instrument | §6b — isolated 70 -> 0 mangled syms; run it last or rebuild after |
