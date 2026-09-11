@@ -2,11 +2,9 @@
 #include "Synapse_dsp.h"
 #include <string.h>
 
-extern "C" void XMemSet(void* dst, int val, int size);
-
-struct XAPO_REGISTRATION_PROPERTIES {
-    char data[0x58];
-};
+// The local `struct XAPO_REGISTRATION_PROPERTIES { char data[0x58]; };` that used
+// to sit here was a stub of the WRONG SIZE (the real one is 0x42c) and an ODR
+// violation against xdk/xaudio2/xapo.h. Gone with the duplicate base classes.
 
 namespace DSP {
 
@@ -64,22 +62,13 @@ void SynapseAPO::OnSetParameters(const SynapseAPOParams& params) {
     memcpy(&mParams, &params, sizeof(SynapseAPOParams));
 }
 
-void SynapseAPO::DoProcess(const SynapseAPOParams& params, unsigned int* arg1, float& arg2, unsigned int arg3, unsigned int arg4) {}
+void SynapseAPO::DoProcess(
+    const SynapseAPOParams &, float *__restrict, unsigned int, unsigned int
+) {}
 
 }  // namespace DSP
 
-namespace ATG {
-
-template <>
-XAPO_REGISTRATION_PROPERTIES CSampleXAPOBase<DSP::SynapseAPO, DSP::SynapseAPOParams>::m_regProps;
-
-template <typename Derived, typename Params>
-CSampleXAPOBase<Derived, Params>::CSampleXAPOBase()
-    : CXAPOParametersBase(&m_regProps, (unsigned char*)m_paramBlocks, sizeof(Params), 0)
-{
-    XMemSet(m_paramBlocks, 0, sizeof(Params) * 3);
-}
-
-template class CSampleXAPOBase<DSP::SynapseAPO, DSP::SynapseAPOParams>;
-
-} // namespace ATG
+// m_regProps and the CSampleXAPOBase ctor now come from the shared primary
+// template in xdk/xaudio2/xapobase.h. m_regProps used to be declared here as an
+// UNINITIALIZED explicit specialization, which emitted a zeroed .bss block and
+// no ??__E dynamic initializer at all; retail has one, at 0x82C436F0.

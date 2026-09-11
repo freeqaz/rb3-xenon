@@ -1,7 +1,7 @@
 #pragma once
 #include "xdk/xaudio2/xaudio2.h"
 
-class CompressionEffect {
+class __declspec(uuid("48dd642e-dd9d-4ed0-81aa-0bc5f0a13c40")) CompressionEffect {
 public:
     struct Params {
         // RB3 default preset — verified against the target CSampleXAPOBase<CompressionEffect>

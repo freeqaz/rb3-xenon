@@ -6,7 +6,7 @@ struct GainEffectParams {};
 
 // Remote-talker chat gain XAPO, applied to remote-voice playback. The static
 // sGain holds the linear gain applied in DoProcess. size 0x58.
-class GainEffect : public ATG::CSampleXAPOBase<GainEffect, GainEffectParams> {
+class __declspec(uuid("b4d4c8aa-a20d-40a1-84a7-64193551a9bc")) GainEffect : public ATG::CSampleXAPOBase<GainEffect, GainEffectParams> {
 public:
     GainEffect();
     virtual void DoProcess(
