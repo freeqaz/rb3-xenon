@@ -1290,7 +1290,10 @@ void Rnd::DrawPreClear() {
                     gRndTextureEvent = (void *)first->tex;
                     RndTex *newTex;
                     {
-                        MemTemp tmp;
+                        // Retail DrawPreClear (0x824158B8) is one of the 59
+                        // functions that call ?MemPushTemp@@YAXXZ directly, i.e.
+                        // the EMPTY guard, not the out-of-line MemTemp.
+                        MemDoTempAllocations tmp;
                         newTex = Hmx::Object::New<RndTex>();
                     }
                     ReplaceObject((Hmx::Object *)gRndTextureEvent, newTex, false, false, false);
