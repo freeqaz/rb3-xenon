@@ -472,6 +472,22 @@ def _report_self_rewrite(project_dir: Path, build_dir: Path, was: dict | None) -
     return 1
 
 
+#: Environment equivalent of ``--no-fixed-point-check``.
+#:
+#: The split is invoked by a ninja RULE whose command line is baked into
+#: ``build.ninja``.  A caller that deliberately re-derives generated config --
+#: ``tools/symbols_fixpoint_guard.py``, which PLANTS a symbols.txt violation and
+#: then owns the verdict about it -- therefore cannot pass ``--no-fixed-point-check``
+#: to that rule without regenerating the build file, which is a far larger and
+#: more dangerous mutation than the thing it is trying to express.  An
+#: environment variable crosses the ninja boundary; an argument does not.
+#:
+#: It is never silent: taking this path always prints WHY the fixed-point check
+#: was skipped, on stderr, regardless of ``--quiet``.  A suppression you cannot
+#: see in the log is indistinguishable from a check that passed.
+NO_FIXED_POINT_ENV = "SPLIT_GUARD_NO_FIXED_POINT_CHECK"
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--project-dir", default=str(REPO_ROOT))
@@ -486,7 +502,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--no-fixed-point-check", action="store_true",
                     help="With --complete: do not fail when the split rewrote "
                          "one of its own inputs. For deliberately re-deriving "
-                         "generated config in one build instead of two.")
+                         "generated config in one build instead of two. "
+                         f"Also settable as {NO_FIXED_POINT_ENV}=1 in the "
+                         "environment, which is the only way to reach the split "
+                         "rule baked into build.ninja; either way the skip is "
+                         "announced on stderr.")
     ap.add_argument("--stamp-out", default=None,
                     help="With --check: write a digest of the verified state to "
                          "this path, but ONLY when it differs. The ninja edge is "
@@ -512,10 +532,25 @@ def main(argv: list[str] | None = None) -> int:
         p = write_stamp(project_dir, edge[0], state)
         if not args.quiet:
             print(f"[split-guard] {state}: {p}")
-        if args.complete and not args.no_fixed_point_check:
-            rc = _report_self_rewrite(project_dir, edge[0], was)
-            if rc:
-                return rc
+        if args.complete:
+            env_skip = os.environ.get(NO_FIXED_POINT_ENV) == "1"
+            if args.no_fixed_point_check or env_skip:
+                # Loud on stderr even under --quiet: the ninja rule passes
+                # --quiet, and a safety check that switched itself off without
+                # saying so in the build log is exactly the kind of silent
+                # suppression this file exists to prevent.
+                why = (f"{NO_FIXED_POINT_ENV}=1 in the environment"
+                       if env_skip else "--no-fixed-point-check")
+                print(f"[split-guard] fixed-point check SKIPPED ({why}). The "
+                      f"caller has declared it is deliberately re-deriving "
+                      f"generated config and owns the verdict about any "
+                      f"rewrite. This run therefore vouches for NOTHING about "
+                      f"whether the split is a fixed point of its input.",
+                      file=sys.stderr)
+            else:
+                rc = _report_self_rewrite(project_dir, edge[0], was)
+                if rc:
+                    return rc
         return 0
 
     try:

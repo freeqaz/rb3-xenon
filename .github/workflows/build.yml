@@ -143,10 +143,33 @@ jobs:
     # The guard FORCES its own re-split (~10s) rather than trusting that the
     # Build step split: a plain `git diff --quiet` CANNOT FAIL when SPLIT did not
     # run, which is how lane DA-1's first check passed vacuously.  It fails
-    # loudly if the SPLIT edge is absent.  Prove it can fail:
-    #   python3 tools/symbols_fixpoint_guard.py --self-break
+    # loudly if the SPLIT edge is absent.
+    #
+    # The proof that it can fail is now RUN, as its own step, instead of being
+    # advertised in this comment.  It was advertised here from 2026-08-22 to
+    # 2026-09-11 and it ROTTED: the forced split tripped the split rule's OWN
+    # fixed-point bracket (scripts/verify_split_current.py --complete, "THE
+    # SPLIT REWROTE ITS OWN INPUT" -- because "the split rewrote symbols.txt" is
+    # exactly what this guard plants and then measures), ninja returned 1, and
+    # every --self-break run died at exit 2 without ever reaching a verdict.
+    # Nothing noticed, because the gate it vouches for kept passing and
+    # therefore kept LOOKING proven.  A self-proof nobody executes is a claim,
+    # not a proof.  (Lane SELFPROOF, 2026-09-11; the fix is
+    # SPLIT_GUARD_NO_FIXED_POINT_CHECK=1, scoped to the guard's own forced split
+    # and announced on stderr -- ordinary builds keep the bracket armed, proved
+    # by mutating an input under both settings: exit 1 armed, exit 0 suppressed.)
+    #
+    # ⚠ POLARITY: --self-break exits 0 when the PROOF SUCCEEDED -- the guard
+    # detected the planted violation -- and 1 when the guard is VACUOUS.  Same
+    # convention as the ICF fold-poisoning --self-break step above.  For the
+    # proof-of-the-proof (does --self-break's exit code depend on the plant at
+    # all, or merely on the run completing?) run `--prove-can-fail` by hand; it
+    # costs a third split, so it is not wired here.
     - name: symbols.txt fixpoint guard
       run: python3 tools/symbols_fixpoint_guard.py -v --ci --version ${{ matrix.version }}
+
+    - name: symbols.txt fixpoint guard -- prove it can fail
+      run: python3 tools/symbols_fixpoint_guard.py -v --ci --self-break --version ${{ matrix.version }}
 
     # Guard: the NATIVE build is the ONLY build in this project that LINKS, so it
     # is the only instrument that can see ODR violations, duplicate symbols,
