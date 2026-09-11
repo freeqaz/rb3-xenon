@@ -1,5 +1,6 @@
 #include "utl/SongInfoCopy.h"
 #include "utl/Symbol.h"
+#include "os/System.h"
 #include <algorithm>
 
 Symbol SongInfoCopy::GetName() const { return mName; }
@@ -73,7 +74,23 @@ const char *SongInfoCopy::GetExtraMidiFile(int idx) const {
     return mExtraMidiFiles[idx].c_str();
 }
 
-SongInfoCopy::SongInfoCopy() { mName = gNullStr; }
+// rb3-Wii utl/SongInfoCopy.cpp:44; retail 0x827D1628 (648 B) stores
+// mNumVocalParts=1, zeroes the threshold/volumes and reads beatmatcher config.
+// Ours only set mName -- a default-constructed copy carried an uninitialized
+// hopo threshold and mute volumes.
+SongInfoCopy::SongInfoCopy() : mName(), mBaseFileName(), mPackageName() {
+    mName = gNullStr;
+    mNumVocalParts = 1;
+    mHopoThreshold = 0;
+    mMuteVolume = 0.0f;
+    mVocalMuteVolume = 0.0f;
+    DataArray *cfg = SystemConfig()->FindArray("beatmatcher", false);
+    if (cfg) {
+        mHopoThreshold = cfg->FindArray("parser")->FindInt("hopo_threshold");
+        mMuteVolume = cfg->FindArray("audio")->FindFloat("mute_volume");
+        mVocalMuteVolume = cfg->FindArray("audio")->FindFloat("mute_volume_vocals");
+    }
+}
 
 SongInfoCopy::~SongInfoCopy() {}
 
