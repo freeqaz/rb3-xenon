@@ -21,13 +21,31 @@
 // char* word identity (matches retail: lwz key; divwu). Guarded so a TU that
 // also includes another hash<Symbol> header (e.g. via BandSongMgr.h) doesn't
 // ODR-clash.
+// Natively this header must supply the specialization ITSELF. The guard below is
+// first-include-wins, and the usual supplier -- meta/FixedSizeSaveableStream.h,
+// which already carries the HX_NATIVE split -- is not in this header's include
+// chain, so nothing defines RB3_HASH_SYMBOL_DEFINED before line 85's
+// hash_map<Symbol, vector<int>> member instantiates. Same situation, same fix as
+// NextSongPanel.h. (`stlpmtx_std` and `_STLP_TEMPLATE_NULL` are STLport spellings
+// that do not exist natively, and natively hash_map aliases std::unordered_map,
+// which consults std::hash<K> -- so an stlpmtx_std shim would compile and then be
+// ignored, leaving unordered_map's is_copy_constructible<std::hash<Symbol>>
+// static_assert to fire anyway.)
 #ifndef RB3_HASH_SYMBOL_DEFINED
 #define RB3_HASH_SYMBOL_DEFINED
+#if HX_NATIVE
+namespace std {
+template <> struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#else
 namespace stlpmtx_std {
 _STLP_TEMPLATE_NULL struct hash<Symbol> {
     size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
 };
 }
+#endif
 #endif
 
 class SongUpgradeData {

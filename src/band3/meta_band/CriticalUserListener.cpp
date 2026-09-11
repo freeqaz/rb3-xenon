@@ -76,8 +76,27 @@ BEGIN_HANDLERS(CriticalUserListener)
 END_HANDLERS
 
 // sw2 scatter-include (default/CriticalUserListener <- flow/FlowManager.cpp)
+//
+// flow/FlowManager.cpp has TWO unconditional scatter hosts -- this file and
+// band3/bandtrack/GemManager.cpp:1648 -- which is the whole reason this TU could
+// not be wired natively (scatter_audit.py multi_host; measured `multiple
+// definition of TheFlowMgr` / `FlowManager::FlowManager()`).
+//
+// ⚠ The record in docs/decomp/NATIVE_HEALTH.md says the other emitter is
+// char/CharBonesMeshes.cpp. That is true only TRANSITIVELY: CharBonesMeshes.cpp:213
+// hosts bandtrack/GemManager.cpp, which hosts FlowManager.cpp. The DIRECT second
+// host -- the one a fix has to be aimed at -- is GemManager.cpp.
+//
+// Guard THIS copy rather than GemManager's: the CharBonesMeshes -> GemManager ->
+// FlowManager chain already links in every target today, so leaving it alone is
+// the minimal change, and natively FlowManager's bodies still arrive from there.
+// The match build never defines HX_NATIVE, so retail COMDAT placement -- the only
+// thing the scatter graph exists to reproduce for objdiff scoring -- is byte-for-
+// byte unaffected. This is the tree's standard idiom (~60 other sites).
+#if !HX_NATIVE // native: skip X360 scatter/COMDAT-pairing include
 #define gRev gRev_FlowManager
 #define gAltRev gAltRev_FlowManager
 #include "flow/FlowManager.cpp"
 #undef gRev
 #undef gAltRev
+#endif
