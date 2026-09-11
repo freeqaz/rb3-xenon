@@ -1,10 +1,12 @@
 #include "synth_xbox/Voice.h"
+#include "synth_xbox/EnvelopeGenerator.h"
 #include "synth_xbox/FxSend.h"
 #include "synth_xbox/Synth.h"
 #include "math/Decibels.h"
 #include "math/Utl.h"
 #include "os/CritSec.h"
 #include "os/Debug.h"
+#include "utl/MemMgr.h"
 #include "os/Timer.h"
 #include <deque>
 #include <list>
@@ -33,6 +35,7 @@ int gCommitTag = 0;
 bool gHasPendingStopCommits = false;
 bool gWasCommitSyncVoices = false;
 int gWasCommitTag = 0;
+static int gVoiceCounters[2]; // retail 0x82E120BC: createOrReuse does [0]++
 int rolling = 0;
 void StartSynchronizedVoices();
 
@@ -83,17 +86,93 @@ Voice::~Voice() {
         int *pVar2 = (int *)(*pVar1);
         PoolVoiceCallFunc fn = (PoolVoiceCallFunc)(*(int *)((int)pVar2 + 0x50));
         fn(pVar1, 0, 0);
-        dispose((int *)&mSourceVoice, unk0);
+        dispose((PoolVoice *)&mSourceVoice, unk0);
     }
 }
 
-void Voice::dispose(int *pv, unsigned int) {
-    PoolVoice *voice = (PoolVoice *)pv;
+// Written from retail 0x82B64DD8 (312 B); declared and called (Init) but never
+// defined in this tree until now -- the match build only compiles, so nothing
+// could flag it.  Four places it is NOT dc3's:
+//   * no `if (!TheXboxSynth->OutputVoice()) return 0;` early-out;
+//   * effectDesc.OutputChannels is the literal 1 (`li r25,1; stw r25,0x68(r31)`),
+//     not a channel count;
+//   * no hr-failure arm (no snprintf / MemPrintOverview / MILO_FAIL) -- the
+//     return value is hr itself (`mr r28,r3` ... `mr r3,r28`);
+//   * unk4b = (sends == 0 || sends->SendCount <= 0): `cmplwi r27,0; beq ->1;
+//     lwz r11,0(r27); cmplwi r11,0; li r11,0; ble ->1; stb r11,0x4b(r24)`.
+//     dc3 stores the OPPOSITE polarity (SendCount > 0).
+// CreateSourceVoice is IXAudio2 slot 0x20 with (this, ppVoice, pFormat, 0,
+// f1=maxFreqRatio, 0, sends, &chain); the critsec is TheXboxSynth+0x88
+// (`addic. r30, r11, 0x88` / Enter ... Exit) and MemPushTemp/MemPopTemp
+// bracket the whole thing (fn_827BC270 / fn_827BC2A0).
+long Voice::createOrReuse(
+    PoolVoice *pPoolVoice, unsigned int &, tWAVEFORMATEX &wfx, XAUDIO2_VOICE_SENDS *sends
+) {
+    MILO_ASSERT(pPoolVoice->eg == 0, 0x1c1);
+    pPoolVoice->eg = (int)new EnvelopeGenerator();
+    MILO_ASSERT(pPoolVoice->egParams == 0, 0x1c3);
+    pPoolVoice->egParams = (int)new EnvelopeGeneratorParams;
+
+    XAUDIO2_EFFECT_DESCRIPTOR effectDesc;
+    XAUDIO2_EFFECT_CHAIN effectChain;
+    effectDesc.InitialState = 0;
+    effectChain.EffectCount = 1;
+    effectDesc.pEffect = (IUnknown *)pPoolVoice->eg;
+    effectDesc.OutputChannels = 1;
+    effectChain.pEffectDescriptors = &effectDesc;
+
+    MemPushTemp();
+
+    HRESULT hr;
+    {
+        // CritSecTracker: ctor Enter / dtor Exit both inlined, the pointer kept
+        // at r31+0x50 for the EH funclet (fn_82B64F60 -> ??1CritSecTracker@@).
+        CritSecTracker tracker(&TheXboxSynth->unk88);
+        int *pEngine = (int *)TheXboxSynth->unkc8;
+        hr = ((HRESULT(*)(
+            int *,
+            PoolVoice *,
+            tWAVEFORMATEX *,
+            int,
+            float,
+            int,
+            XAUDIO2_VOICE_SENDS *,
+            XAUDIO2_EFFECT_CHAIN *
+        ))(*(int *)(*(int *)pEngine + 0x20)))(
+            pEngine, pPoolVoice, &wfx, 0, 4.0f, 0, sends, &effectChain
+        );
+    }
+    gVoiceCounters[0]++;
+    memcpy(&pPoolVoice->wfx, &wfx, 0x12);
+    unk4b = (sends == 0 || sends->SendCount <= 0);
+    MemPopTemp();
+    return hr;
+}
+
+// Retail 0x82B661F0 (248 B; it was pinned under Lit.cpp until lane W3-D).  Two
+// things the old body here did not do: when unk4b is set (the voice was
+// created with no output voice) retail detaches it with an EMPTY
+// XAUDIO2_VOICE_SENDS {0,0} via SetOutputVoices (slot 0x4) and clears unk4b
+// before pooling; and the two voice counters at 0x82E120BC move inside the GC
+// lock ([0]--, [1]++).
+void Voice::dispose(PoolVoice *voice, unsigned int) {
     ((IXAudio2SourceVoice *)voice->sourceVoice)->FlushSourceBuffers();
+    if (unk4b) {
+        XAUDIO2_VOICE_SENDS emptySends;
+        emptySends.SendCount = 0;
+        emptySends.pSends = 0;
+        ((IXAudio2SourceVoice *)voice->sourceVoice)->SetOutputVoices(&emptySends);
+        unk4b = false;
+    }
     voice->disposeTick = GetTickCount() - 500000;
-    gVoiceGC.Enter();
-    s_voiceGC.push_back(*voice);
-    gVoiceGC.Exit();
+    {
+        // retail: `stw r28,0x50(r31)` + inlined Enter/Exit + a funclet, i.e. a
+        // CritSecTracker on gVoiceGC, not bare Enter()/Exit() calls.
+        CritSecTracker tracker(&gVoiceGC);
+        s_voiceGC.push_back(*voice);
+        gVoiceCounters[1]++; // [1]++ before [0]-- : retail loads [1] into the lower register
+        gVoiceCounters[0]--;
+    }
     voice->eg = 0;
     voice->egParams = 0;
     voice->sourceVoice = 0;
@@ -111,9 +190,11 @@ void Voice::SetLoopRegion(int loopStart, int loopEnd) {
     mLoopEnd = loopEnd;
 }
 
+// Retail 0x82B65C58 is eight bytes: `stb r4, 0x40(r3); b UpdateSends`.  There
+// is no early-out compare -- the compare this function used to carry was
+// StreakMeter::CombineMultipliers' shape (0x822D8610, bool at this+0x1e8),
+// which the map had mislabelled as this function (lane W3-D, 2026-09-11).
 void Voice::SetReverbEnable(bool b) {
-    if (mReverbEnabled == b)
-        return;
     mReverbEnabled = b;
     UpdateSends();
 }
@@ -265,20 +346,21 @@ void Voice::blockingStart(bool b) {
     gLockPendingLists.Exit();
 }
 
-void Voice::Stop(bool immediate) {
+// Retail 0x82B64D60 never reads its bool: there is no immediate-stop arm here.
+// The only immediate IXAudio2SourceVoice::Stop (vtable +0x50) in Voice.cpp is
+// the one ~Voice issues inline before dispose().  The parameter is kept
+// because retail's callers still pass it (SampleInst360::StopImpl(bool) is
+// `lwz r3,0x54(r3); b fn_82B64D60`, r4 untouched) and DC3's map spells this
+// ?Stop@Voice@@QAAX_N@Z; dc3's two-arm body is DC3's, not RB3's.
+void Voice::Stop(bool /* immediate -- ignored by retail */) {
     if (mSourceVoice) {
-        if (immediate) {
-            int *pVoice = (int *)mSourceVoice;
-            ((void (*)(int *, int, int))(*(int *)(*(int *)pVoice + 0x50)))(pVoice, 0, 0);
-        } else {
-            MILO_ASSERT(mEnvelopeParams, 0x14d);
-            *(float *)((int *)mEnvelopeParams + 2) = 1.0f;
-            int *pVoice = (int *)mSourceVoice;
-            HRESULT hr = ((HRESULT(*)(int *, int, int, int, int))(*(int *)(*(int *)pVoice + 0x18)))(
-                pVoice, 0, (int)mEnvelopeParams, 0x10, 0
-            );
-            MILO_ASSERT(SUCCEEDED(hr), 0x150);
-        }
+        MILO_ASSERT(mEnvelopeParams, 0x14d);
+        *(float *)((int *)mEnvelopeParams + 2) = 1.0f;
+        int *pVoice = (int *)mSourceVoice;
+        HRESULT hr = ((HRESULT(*)(int *, int, int, int, int))(*(int *)(*(int *)pVoice + 0x18)))(
+            pVoice, 0, (int)mEnvelopeParams, 0x10, 0
+        );
+        MILO_ASSERT(SUCCEEDED(hr), 0x150);
     }
     mState = 1;
 }
@@ -560,7 +642,7 @@ int Voice::GetAddr() {
 
     int *pVoice = (int *)mSourceVoice;
     XAUDIO2_VOICE_STATE state;
-    ((void (*)(int *, XAUDIO2_VOICE_STATE *, int))(*(int *)(*(int *)pVoice + 0x64)))(pVoice, &state, 0);
+    ((void (*)(int *, XAUDIO2_VOICE_STATE *))(*(int *)(*(int *)pVoice + 0x64)))(pVoice, &state);
 
     int addr = mStartSamp + (unsigned int)state.SamplesPlayed;
     const void *buf = mBuffer;
@@ -578,19 +660,39 @@ int Voice::GetAddr() {
 bool Voice::IsPlaying() {
     if (mState == 2)
         return true;
-    if (!mSourceVoice || mState == 1)
+    int voice = mSourceVoice; // retail tests this as a signed int (cmpwi), not a pointer
+    if (voice == 0)
+        return false;
+    int *pVoice = (int *)voice;
+    if (mState == 1)
         return false;
     if (mState == 4)
         return true;
 
-    int state[4] = {0, 0, 0, 0};
-    int *pVoice = (int *)mSourceVoice;
-    ((void (*)(int *, int *, int))(*(int *)(*(int *)pVoice + 100)))(pVoice, state, 0);
-
-    if (state[0] == 0 && state[1] == 0 && state[2] == 0)
+    // Retail 0x82B65058: GetState (vtable +0x64), and "not playing" only when
+    // BuffersQueued (+4) and the 64-bit SamplesPlayed (+8) are BOTH zero.
+    // Otherwise the answer comes from the envelope generator: read its
+    // 0x10-byte parameter block back (GetEffectParameters, +0x1c) under the
+    // synth's critical section (this+0x88, TryEnter/Exit) and report playing
+    // while the last word is still 0.0f -- the release-done flag.  The old
+    // body here tested three words of the state struct and never consulted the
+    // envelope at all; dc3's body has retail's shape exactly.
+    XAUDIO2_VOICE_STATE state;
+    ((void (*)(int *, XAUDIO2_VOICE_STATE *))(*(int *)(*(int *)pVoice + 0x64)))(pVoice, &state);
+    if (state.BuffersQueued == 0 && state.SamplesPlayed == 0)
         return false;
 
-    return true;
+    EnvelopeGeneratorParams params;
+    params.unkc = 0.0f;
+    if (TheXboxSynth->unk88.TryEnter()) {
+        pVoice = (int *)mSourceVoice; // retail reloads this+0x50 here (GetVoice())
+        HRESULT hr = ((HRESULT(*)(int *, int, void *, int))(*(int *)(*(int *)pVoice + 0x1c)))(
+            pVoice, 0, &params, 0x10
+        );
+        TheXboxSynth->unk88.Exit();
+        MILO_ASSERT(SUCCEEDED(hr), 0x2ff);
+    }
+    return params.unkc == 0.0f;
 }
 
 void Voice::Init(bool b) {

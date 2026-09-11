@@ -87,10 +87,22 @@ struct XAUDIO2_FILTER_PARAMETERS { /* Size=0xc */
 
 struct IXAudio2Voice;
 
+// Byte-packed, like the rest of the XDK's XAudio2 structures.  Same size and
+// field offsets either way; what alignment 1 changes is that MSVC copy-
+// constructs one through memcpy instead of a pair of word loads.  RB3 RETAIL
+// does exactly that: ??$__uninitialized_copy@PAUXAUDIO2_SEND_DESCRIPTOR
+// (0x82B5C710), ??$__uninitialized_fill_n@... (0x82B5C828) and
+// ?push_back@?$vector@UXAUDIO2_SEND_DESCRIPTOR (0x82B5D3B0) each copy an
+// element with `li r5, 0x8` / `bl memcpy` (fn_8282A900).  The pack was present
+// in dc3-decomp's copy of this header (same finding on DC3's binary) and was
+// dropped when the header was ported here; without it those three rows read
+// 47.1 / 40.8 / 53.8 (lane W3-D, 2026-09-11).
+#pragma pack(push, 1)
 struct XAUDIO2_SEND_DESCRIPTOR { /* Size=0x8 */
     /* 0x0000 */ UINT32 Flags;
     /* 0x0004 */ IXAudio2Voice *pOutputVoice;
 };
+#pragma pack(pop)
 
 struct XAUDIO2_VOICE_SENDS { /* Size=0x8 */
     /* 0x0000 */ UINT32 SendCount;
@@ -192,7 +204,13 @@ struct IXAudio2SourceVoice : public IXAudio2Voice { /* Size=0x4 */
     virtual HRESULT FlushSourceBuffers();
     virtual HRESULT Discontinuity();
     virtual HRESULT ExitLoop(UINT32);
-    virtual void GetState(XAUDIO2_VOICE_STATE *, UINT32);
+    // ONE parameter on RB3's XDK.  The `Flags` argument (XAUDIO2_VOICE_NOSAMPLESPLAYED)
+    // is an XAudio2 2.8-era addition that DC3's XDK has and RB3's does not:
+    // every retail GetState call on the synth path -- ?IsPlaying@Voice@@ 0x82B65058
+    // (`addi r4,r1,0x50; lwz r11,0x64(r11); mtctr; bctrl`) and ?GetAddr@Voice@@
+    // 0x82B65160 (same) -- sets r4 only, and our two-argument spelling emitted a
+    // dead `li r5, 0x0` at each site (lane W3-D, 2026-09-11).
+    virtual void GetState(XAUDIO2_VOICE_STATE *);
     virtual HRESULT SetFrequencyRatio(float, UINT32);
     virtual void GetFrequencyRatio(float *);
     virtual HRESULT SetSourceSampleRate(UINT32);

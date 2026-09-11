@@ -14726,13 +14726,24 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
   },
   {
-   "name": "SetReverbEnable",
+   "name": "CombineMultipliers",
    "address": "0x822d8610",
-   "survivor": "?SetReverbEnable@Voice@@QAAX_N@Z",
-   "folded": [
-    "?CombineMultipliers@StreakMeter@@QAAX_N@Z"
+   "survivor": "?CombineMultipliers@StreakMeter@@QAAX_N@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?SetReverbEnable@Voice@@QAAX_N@Z",
+     "lane": "W3-D 2026-09-11",
+     "class": "WRONG_SURVIVOR_IDENTITY",
+     "disposition": "survivor_reassigned"
+    }
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "repair": {
+    "class": "WRONG_SURVIVOR_IDENTITY",
+    "lane": "W3-D 2026-09-11",
+    "why": "The body at 0x822d8610 (lbz/cmplw/beqlr/stb at this+0x1e8, tail-call ?MultiplierChanged@StreakMeter@@ at 0x822d8210, between two StreakMeter.cpp .text pins) IS StreakMeter::CombineMultipliers(bool). It cannot be Voice::SetReverbEnable: sizeof(Voice)==0x74 so no member exists at 0x1e8, and retail's real Voice::SetReverbEnable is fn_82B65C58 (`stb r4,0x40(r3); b UpdateSends` -- no compare), reached by SampleInst360's `lwz r3,0x54(r3); b fn_82B65C58` thunk. The two bodies are not identical, so /OPT:ICF could not have folded them. T1 passed only because OUR Voice::SetReverbEnable carried a compare retail does not have, i.e. the alias was financed by our own source defect. Map row 0x822d8610 renamed to CombineMultipliers, 0x82b65c58 named SetReverbEnable, the Voice.cpp pin over 0x822D8610 re-homed to StreakMeter.cpp, and the source compare removed."
+   }
   },
   {
    "name": "$__uninitialized_fill_n",
