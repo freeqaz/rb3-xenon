@@ -5378,7 +5378,7 @@
  "0x823a4e18": "?PollDeps@CharBoneOffset@@UAAXAAV?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@0@Z",
  "0x823a4ec8": "?GetFPS@CharHair@@IAAMXZ",
  "0x823a4f40": "?Set@?$ObjPtrList@VCharCollide@@VObjectDir@@@@QAAXViterator@1@PAVCharCollide@@@Z",
- "0x823a4fa8": "?Link@?$ObjPtrList@VCharCollide@@VObjectDir@@@@AAAXViterator@1@PAUNode@1@@Z",
+ "0x823a4fa8": "?GetRadius@CharCollide@@QBAMABVVector3@@AAV2@@Z",
  "0x823a50b0": "?SyncWorldState@CharCollide@@QAAXXZ",
  "0x823a51c0": "?SetAngle@Strand@CharHair@@QAAXM@Z",
  "0x823a5210": "?SetName@CharHair@@UAAXPBDPAVObjectDir@@@Z",
