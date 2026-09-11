@@ -77,7 +77,7 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0x1E)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1E)
     NEW_OBJ(CharLipSync)
 
     float Duration() { return (float)(mFrames - 1) / 30.0f; }

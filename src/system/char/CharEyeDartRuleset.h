@@ -54,7 +54,7 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0x16)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x16)
     NEW_OBJ(CharEyeDartRuleset)
 
     friend class CharEyes;

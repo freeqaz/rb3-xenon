@@ -307,6 +307,12 @@ void operator delete[](void *mem) noexcept;
         MemFree(v, __FILE__, line_num, StaticClassName().Str());                         \
     }
 
+// Retail inlines the class operator delete for OBJ_MEM_OVERLOAD classes (see the
+// match-build definition below). Native has no noinline to drop, so the variant
+// is identical to OBJ_MEM_OVERLOAD here; it exists so the char/ headers can name
+// one spelling on both targets.
+#define OBJ_MEM_OVERLOAD_INLINE_DEL(line_num) OBJ_MEM_OVERLOAD(line_num)
+
 #define MEM_OVERLOAD(class_name, line_num)                                               \
     static void *operator new(size_t s) {                                                \
         return MemAlloc(s, __FILE__, line_num, #class_name, 0);                          \
@@ -366,6 +372,34 @@ void operator delete[](void *mem);
     }                                                                                    \
     static void *operator new(unsigned int s, void *place) { return place; }             \
     __declspec(noinline) static void operator delete(void *v) {                          \
+        MemFree(v, __FILE__, line_num, StaticClassName().Str());                         \
+    }
+
+// OBJ_MEM_OVERLOAD_INLINE_DEL -- OBJ_MEM_OVERLOAD with an INLINABLE operator
+// delete. MEASURED IN RETAIL (lane W4-G, 2026-09-11): the `MemFree(ptr, ...)`
+// macro above discards every debug argument, so this body is literally
+// `{ (MemFree)(v); }` and MSVC /Ob2 inlines it into the deleting destructor,
+// emitting a DIRECT `bl ?MemFree@@YAXPAX@Z`. `__declspec(noinline)` instead
+// forces a `bl ??3<Class>@@SAXPAX@Z`, which is what our ??_G bodies were doing.
+// Census over every named ??_G in the retail .text (868 bodies): classes that
+// carry OBJ_MEM_OVERLOAD inline the delete 71 times out of 75 adjudicable
+// (94.7%) against 15.7% for every other class, and within char/ units the split
+// is 31/31 OBJ_MEM_OVERLOAD vs 8/39 for their neighbours -- the macro, not the
+// directory, predicts retail's policy. The 631 bodies that DO call an
+// out-of-line delete all reach ONE ICF survivor, ??3BinStream@@SAXPAX@Z, which
+// alias group 1540 forgives; those classes must KEEP plain OBJ_MEM_OVERLOAD or
+// they trade a forgiven name for a charged MemFree. Retail keeps the
+// out-of-line COMDAT too (e.g. ??3CharEyeDartRuleset@@SAXPAX@Z, 4 B `b MemFree`)
+// -- emitting it and inlining it at the call site are not exclusive, which is
+// exactly what a normal inline operator delete does and what noinline forbids.
+#define OBJ_MEM_OVERLOAD_INLINE_DEL(line_num)                                            \
+    static void *operator new(unsigned int s) {                                          \
+        (void)StaticClassName().Str();                                                   \
+        void *mem = (MemAlloc)(s, 0);                                                    \
+        return mem;                                                                      \
+    }                                                                                    \
+    static void *operator new(unsigned int s, void *place) { return place; }             \
+    static void operator delete(void *v) {                                               \
         MemFree(v, __FILE__, line_num, StaticClassName().Str());                         \
     }
 

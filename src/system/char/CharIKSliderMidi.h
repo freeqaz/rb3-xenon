@@ -27,7 +27,7 @@ public:
     virtual void Enter();
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
 
-    OBJ_MEM_OVERLOAD(0x1E)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1E)
     NEW_OBJ(CharIKSliderMidi)
 
     void SetFraction(float, float);

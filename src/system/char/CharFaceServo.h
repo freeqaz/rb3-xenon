@@ -28,7 +28,7 @@ public:
     // CharBonesMeshes
     virtual void ScaleAdd(CharClip *, float, float, float);
 
-    OBJ_MEM_OVERLOAD(0x16)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x16)
     NEW_OBJ(CharFaceServo)
 
     friend class CharEyes;

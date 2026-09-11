@@ -78,7 +78,7 @@ public:
     virtual void ListPollChildren(std::list<RndPollable *> &) const;
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
 
-    OBJ_MEM_OVERLOAD(0x20)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x20)
     NEW_OBJ(CharEyes)
 
     void SetInterestFilterFlags(int i) { mInterestFilterFlags = i; }
