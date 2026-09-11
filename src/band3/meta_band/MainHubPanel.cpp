@@ -411,7 +411,53 @@ DataNode MainHubPanel::OnMsg(const RockCentralOpCompleteMsg &msg) {
             DataNode node8d8;
             mMessageProvider->ClearData();
             res->GetDataResultValue("motd", node8d8);
+            // RETAIL COMPARES THE POINTER, NOT THE STRING -- and unlike the many
+            // `Symbol != ""` sites nearby (Symbol::operator==(const char*) does a
+            // real strcmp, utl/Symbol.h) this one is a raw `const char*` compare.
+            // Retail fn_82621EA0
+            // (?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z),
+            // at 0x825C41AC in build/45410914/asm/MainHubPanel.s:
+            //     bl   fn_8274B000              ; DataNode::Str(NULL)
+            //     lis  r11, lbl_82000C55@ha
+            //     addi r11, r11, lbl_82000C55@l
+            //     cmplw cr6, r3, r11            ; POINTER compare
+            //     beq  cr6, .L_825C41D4         ; skip AddUnlinkedMotd
+            // lbl_82000C55 is `.rdata:0x82000C55 size:0x1` (symbols.txt:337) -- the
+            // /GF-pooled "" -- and it is the SAME object gNullStr points at:
+            // gNullStr lives at 0x82C71838 (retail Symbol::Symbol(const char*)'s
+            // null path loads `lwz r11, lbl_82C71838@l(r11)`), and the initialized
+            // word there in orig/45410914/band.exe reads 0x82000C55.
+            //
+            // So the test can only ever succeed for an interned EMPTY SYMBOL. This
+            // node is a kDataString: DataResults' JSON 's' column builds it through
+            // JsonString::GetValue() -> DataNode(const char *), which does
+            // `mValue.array = new DataArray(c, strlen(c)+1)`, and
+            // DataArray(const void *, int) heap-allocates (NodesAlloc + memcpy);
+            // DataNode::Str() then returns that heap pointer. A heap pointer is
+            // never 0x82000C55, so IN RETAIL THIS CONDITION IS ALWAYS TRUE and
+            // AddUnlinkedMotd runs even for an empty MOTD.
+            //
+            // That is OBSERVABLE, not merely redundant. The consumer does re-check
+            // (`IsUnlinkedMotdAvailable() { return !mUnlinkedMotd.empty(); }`), but
+            // MainHubMessageProvider::ClearData() resets the three standings and
+            // deliberately does NOT reset mUnlinkedMotd -- so a refresh whose motd
+            // came back empty OVERWRITES the previously displayed message with ""
+            // where the source plainly means to leave it alone. Genuine bug.
+            //
+            // Match build: keep retail's comparison verbatim, codegen must not move.
+            // Native: do what the source means. Define RB3_BUGCOMPAT_MOTD_PTRCMP to
+            // get retail's always-true behaviour back for an A/B against the game.
+#if defined(HX_NATIVE) && !defined(RB3_BUGCOMPAT_MOTD_PTRCMP)
+            const char *motd = node8d8.Str();
+            if (motd != nullptr && *motd != '\0') {
+#elif defined(HX_NATIVE)
+            // Retail's exact test, spelled as the pointer compare it actually is
+            // (gNullStr IS the "" the match build's literal resolves to), so the
+            // opt-out still builds under -Werror=string-compare.
+            if (node8d8.Str() != gNullStr) {
+#else
             if (node8d8.Str() != "") {
+#endif
                 mMessageProvider->AddUnlinkedMotd(node8d8.Str());
             }
             res->GetDataResultValue("role_id", node8b8);
