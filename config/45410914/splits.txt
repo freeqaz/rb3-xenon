@@ -1081,7 +1081,7 @@ StreakMeter.cpp:
 	.text       start:0x822D7A50 end:0x822D7C28
 	.text       start:0x822D7C28 end:0x822D8210
 	.text       start:0x822D8210 end:0x822D8460
-	.text       start:0x822D8630 end:0x822D8690
+	.text       start:0x822D8610 end:0x822D8690
 	.text       start:0x822D8690 end:0x822D8704
 	.text       start:0x822D8708 end:0x822D8818
 	.text       start:0x822D8818 end:0x822D8CC0
@@ -6980,7 +6980,6 @@ Lit.cpp:
 	.pdata      start:0x82211630 end:0x82211638
 	.pdata      start:0x82211638 end:0x822116E0
 	.pdata      start:0x822116E0 end:0x822117E0
-	.pdata      start:0x8225B270 end:0x8225B280
 	.text       start:0x82497AE8 end:0x82497B60
 	.text       start:0x82497B6C end:0x82497BB0
 	.text       start:0x82497BB0 end:0x82497C5C
@@ -6988,7 +6987,6 @@ Lit.cpp:
 	.text       start:0x824981E0 end:0x82498380
 	.text       start:0x82498380 end:0x82498D80
 	.text       start:0x82498D80 end:0x8249A120
-	.text       start:0x82B661F0 end:0x82B662E8
 
 sslgen.c:
 	.pdata      start:0x8225B3A8 end:0x8225B3B0
@@ -7125,12 +7123,9 @@ system/rnddx9/ShaderMgr.cpp:
 	.text       start:0x82733CB0 end:0x82736EE8
 
 Voice.cpp:
-	.pdata      start:0x8225B188 end:0x8225B270
-	.pdata      start:0x8225B280 end:0x8225B288
+	.pdata      start:0x8225B188 end:0x8225B2D0
 	.pdata      start:0x822619E0 end:0x82261B00
-	.text       start:0x822D8610 end:0x822D862C
-	.text       start:0x82B64C20 end:0x82B661F0
-	.text       start:0x82B662E8 end:0x82B6639C
+	.text       start:0x82B64C20 end:0x82B66C50
 	.text       start:0x82C42958 end:0x82C436F0
 
 BinStream.cpp:
@@ -7140,8 +7135,8 @@ BinStream.cpp:
 	.text       start:0x827C4DE8 end:0x827C55E8
 
 ExternalMic.cpp:
-	.pdata      start:0x8225B288 end:0x8225B358
-	.text       start:0x82B6639C end:0x82B67A80
+	.pdata      start:0x8225B2D0 end:0x8225B358
+	.text       start:0x82B66C50 end:0x82B67A80
 
 Compress.cpp:
 	.pdata      start:0x82242D48 end:0x82242D58
