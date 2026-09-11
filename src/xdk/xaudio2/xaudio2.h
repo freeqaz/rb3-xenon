@@ -204,7 +204,13 @@ struct IXAudio2SourceVoice : public IXAudio2Voice { /* Size=0x4 */
     virtual HRESULT FlushSourceBuffers();
     virtual HRESULT Discontinuity();
     virtual HRESULT ExitLoop(UINT32);
-    virtual void GetState(XAUDIO2_VOICE_STATE *, UINT32);
+    // ONE parameter on RB3's XDK.  The `Flags` argument (XAUDIO2_VOICE_NOSAMPLESPLAYED)
+    // is an XAudio2 2.8-era addition that DC3's XDK has and RB3's does not:
+    // every retail GetState call on the synth path -- ?IsPlaying@Voice@@ 0x82B65058
+    // (`addi r4,r1,0x50; lwz r11,0x64(r11); mtctr; bctrl`) and ?GetAddr@Voice@@
+    // 0x82B65160 (same) -- sets r4 only, and our two-argument spelling emitted a
+    // dead `li r5, 0x0` at each site (lane W3-D, 2026-09-11).
+    virtual void GetState(XAUDIO2_VOICE_STATE *);
     virtual HRESULT SetFrequencyRatio(float, UINT32);
     virtual void GetFrequencyRatio(float *);
     virtual HRESULT SetSourceSampleRate(UINT32);
