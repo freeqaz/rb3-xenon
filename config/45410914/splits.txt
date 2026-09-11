@@ -768,6 +768,7 @@ VocalTrackDir.cpp:
 
 BandCrowdMeter.cpp:
 	.pdata      start:0x821F1F48 end:0x821F1F58
+	.pdata      start:0x821F6288 end:0x821F6290
 	.pdata      start:0x821F6398 end:0x821F63C8
 	.pdata      start:0x821F63C8 end:0x821F63D8
 	.pdata      start:0x821F63D8 end:0x821F63E0
@@ -786,6 +787,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F6778 end:0x821F6848
 	.pdata      start:0x82208430 end:0x82208438
 	.text       start:0x8227A328 end:0x8227A3A8
+	.text       start:0x822BB4E8 end:0x822BB78C
 	.text       start:0x822BC1F8 end:0x822BC448
 	.text       start:0x822BC448 end:0x822BC518
 	.text       start:0x822BC518 end:0x822BC6E8
@@ -3765,14 +3767,16 @@ system/rndobj/SoftParticles.cpp:
 	.text       start:0x824945E0 end:0x82494FD8
 
 Waypoint.cpp:
-	.pdata      start:0x821F6280 end:0x821F62E0
+	.pdata      start:0x821F6280 end:0x821F6288
+	.pdata      start:0x821F6290 end:0x821F62E0
 	.pdata      start:0x821F7278 end:0x821F7280
 	.pdata      start:0x82205970 end:0x82205978
 	.pdata      start:0x822073E8 end:0x82207630
 	.pdata      start:0x82207638 end:0x82207640
 	.pdata      start:0x82237D10 end:0x82237D18
 	.pdata      start:0x82237D40 end:0x82237D48
-	.text       start:0x822BB448 end:0x822BB900
+	.text       start:0x822BB448 end:0x822BB4E8
+	.text       start:0x822BB78C end:0x822BB900
 	.text       start:0x822CB008 end:0x822CB014
 	.text       start:0x822CB828 end:0x822CB89C
 	.text       start:0x822CC2C8 end:0x822CC2D4
