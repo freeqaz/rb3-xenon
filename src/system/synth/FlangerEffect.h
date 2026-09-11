@@ -1,7 +1,7 @@
 #pragma once
 #include "xdk/xaudio2/xaudio2.h"
 
-class FlangerEffect {
+class __declspec(uuid("443a5bb5-2bd8-45fe-ace8-3b512d6cbe68")) FlangerEffect {
 public:
     struct Params {
         Params() : unk0(false) {}

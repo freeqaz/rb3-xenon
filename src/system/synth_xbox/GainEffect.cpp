@@ -2,8 +2,10 @@
 #include "xdk/LIBCMT/vectorintrinsics.h"
 #include <string.h>
 
-XAPO_REGISTRATION_PROPERTIES
-ATG::CSampleXAPOBase<GainEffect, GainEffectParams>::m_regProps;
+// m_regProps is implicitly instantiated from the primary template in
+// xdk/xaudio2/xapobase.h via __uuidof(GainEffect) -- see GainEffect.h for the uuid.
+// It used to be defined here WITHOUT an initializer, which emitted a zeroed
+// .bss block and no ??__E dynamic initializer at all; retail has thirteen.
 
 float GainEffect::sGain = 1.0f;
 

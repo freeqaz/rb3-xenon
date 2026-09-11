@@ -1,7 +1,7 @@
 #pragma once
 
 #include "xdk/xaudio2/xaudio2.h"
-class DistortionEffect {
+class __declspec(uuid("a46688f1-a161-452f-af1c-3e6380456bda")) DistortionEffect {
 public:
     struct Params {
         Params() : unk0(false) {}

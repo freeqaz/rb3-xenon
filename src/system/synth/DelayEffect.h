@@ -1,7 +1,7 @@
 #pragma once
 #include "xdk/xaudio2/xaudio2.h"
 
-class DelayEffect {
+class __declspec(uuid("24be678a-c537-4c1c-a82f-164cfb06e7a6")) DelayEffect {
 public:
     struct Params {
         Params() : unk0(false) {}

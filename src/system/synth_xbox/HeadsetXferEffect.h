@@ -10,7 +10,7 @@ struct HeadsetXferEffectParams {
 
 // HeadsetXferEffect: Audio processing effect for headset voice transfer (global namespace)
 // Layout: Base class data (0x00-0x5F), then effect-specific members
-class HeadsetXferEffect : public ATG::CSampleXAPOBase<HeadsetXferEffect, HeadsetXferEffectParams> {
+class __declspec(uuid("b4d4c8aa-a20d-40a1-84a7-64193551a9be")) HeadsetXferEffect : public ATG::CSampleXAPOBase<HeadsetXferEffect, HeadsetXferEffectParams> {
 public:
     HeadsetXferEffect();
 
