@@ -7353,11 +7353,9 @@ system/synth/FxSendMeterEffect.cpp:
 
 system/synth/FxSendDistortion.cpp:
 	.pdata      start:0x82238A98 end:0x82238AA0
-	.pdata      start:0x82239940 end:0x82239950
-	.pdata      start:0x82239978 end:0x82239988
+	.pdata      start:0x82239940 end:0x82239988
 	.text       start:0x82712FB0 end:0x82713020
-	.text       start:0x827212E8 end:0x82721370
-	.text       start:0x827215F0 end:0x82721718
+	.text       start:0x827212E8 end:0x82721718
 
 system/synth_xbox/FxSendMeterEffect.cpp:
 	.pdata      start:0x8225B058 end:0x8225B0E0
@@ -7627,12 +7625,6 @@ PostProcer.cpp:
 	.pdata      start:0x82215938 end:0x82215950
 	.text       start:0x824E9D20 end:0x824E9ED0
 
-system/synth/FxSendBitCrush.cpp:
-	.pdata      start:0x82238A68 end:0x82238A88
-	.pdata      start:0x82239950 end:0x82239958
-	.text       start:0x82712CA0 end:0x82712E88
-	.text       start:0x82721370 end:0x82721400
-
 CharDriverMidi.cpp:
 	.pdata      start:0x82206658 end:0x822066B0
 	.pdata      start:0x822066B0 end:0x82206760
@@ -7703,14 +7695,10 @@ CharIKScale.cpp:
 	.text       start:0x82451F74 end:0x82451F98
 
 system/synth/FxSendPitchShift.cpp:
-	.pdata      start:0x82238A58 end:0x82238A68
-	.pdata      start:0x82238A88 end:0x82238A98
+	.pdata      start:0x82238A58 end:0x82238A98
 	.pdata      start:0x82238AA0 end:0x82238AA8
-	.pdata      start:0x82239958 end:0x82239978
-	.text       start:0x82712C28 end:0x82712CA0
-	.text       start:0x82712E88 end:0x82712FB0
+	.text       start:0x82712C28 end:0x82712FB0
 	.text       start:0x82713020 end:0x827130B0
-	.text       start:0x82721400 end:0x827215F0
 
 ClipCollide.cpp:
 	.pdata      start:0x822091C8 end:0x822091E8
