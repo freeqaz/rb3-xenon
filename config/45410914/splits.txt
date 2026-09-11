@@ -11901,12 +11901,11 @@ ChecksumAlgorithm.cpp:
 	.text       start:0x82B22720 end:0x82B22838
 
 AccomplishmentSongConditional.cpp:
-	.pdata      start:0x822265A8 end:0x822266C8
 	.pdata      start:0x8222EC18 end:0x8222EC28
 	.pdata      start:0x8222EC28 end:0x8222EC80
 	.pdata      start:0x8222EC80 end:0x8222EC98
 	.pdata      start:0x8222EC98 end:0x8222ED88
-	.text       start:0x825EB0AC end:0x825EC508
+	.text       start:0x825EC4F8 end:0x825EC508
 	.text       start:0x82669848 end:0x82669918
 	.text       start:0x82669918 end:0x82669DF8
 	.text       start:0x82669DF8 end:0x82669F20
