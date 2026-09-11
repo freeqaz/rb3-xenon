@@ -30,7 +30,7 @@ public:
     virtual void Load(BinStream &);
 
     NEW_OBJ(UIFontImporter)
-    OBJ_MEM_OVERLOAD(0x2A);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x2A);
 
     void ImportSettingsFromFont(RndFont *);
     Symbol GetMatVariationName(unsigned int) const;

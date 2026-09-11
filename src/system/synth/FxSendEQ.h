@@ -14,7 +14,7 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0xF);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0xF);
     NEW_OBJ(FxSendEQ)
 
 #ifdef HX_NATIVE

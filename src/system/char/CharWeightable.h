@@ -66,7 +66,7 @@ public:
     void SetWeightOwner(CharWeightable *o) { mWeightOwner = o ? o : this; }
     CharWeightable *WeightOwner() { return mWeightOwner; }
 
-    OBJ_MEM_OVERLOAD(0x12)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x12)
     NEW_OBJ(CharWeightable)
 
 protected:

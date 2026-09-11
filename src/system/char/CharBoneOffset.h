@@ -21,7 +21,7 @@ public:
     // RndHighlightable
     virtual void Highlight() {}
 
-    OBJ_MEM_OVERLOAD(0x16)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x16)
     NEW_OBJ(CharBoneOffset)
 
     void ApplyToLocal();

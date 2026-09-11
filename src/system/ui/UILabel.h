@@ -103,7 +103,7 @@ public:
         MILO_ASSERT(false, 0x50);
     }
 
-    OBJ_MEM_OVERLOAD(0x26);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x26);
     NEW_OBJ(UILabel)
 
     static void Init();

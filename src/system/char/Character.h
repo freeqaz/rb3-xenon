@@ -141,7 +141,7 @@ public:
     virtual void SetInterestFilterFlags(int);
     virtual void ClearInterestFilterFlags();
 
-    OBJ_MEM_OVERLOAD(0x57)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x57)
     NEW_OBJ(Character)
 
     void SetSphereBase(RndTransformable *);

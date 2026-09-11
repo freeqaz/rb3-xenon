@@ -20,7 +20,7 @@ public:
     UILabel *ElementLabel(int) const;
 
     NEW_OBJ(UIListLabel)
-    OBJ_MEM_OVERLOAD(0x11)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x11)
 
     friend class UIListLabelElement;
 

@@ -25,7 +25,7 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0x1B);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1B);
     NEW_OBJ(CharBone);
 
     int PositionContext() const { return mPositionContext; }

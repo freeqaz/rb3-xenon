@@ -38,7 +38,7 @@ public:
     // ScrollSelect
     virtual int SelectedAux() const;
 
-    OBJ_MEM_OVERLOAD(0x18);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x18);
     NEW_OBJ(UISlider)
     static void Init();
 

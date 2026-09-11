@@ -65,7 +65,7 @@ public:
     void Unload();
 #endif
 
-    OBJ_MEM_OVERLOAD(0x25)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x25)
 
     void SyncState();
     float GetBeat();
