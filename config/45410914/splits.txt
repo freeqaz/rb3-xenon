@@ -8967,11 +8967,9 @@ band3/meta_band/UIStats.cpp:
 	.text       start:0x82560660 end:0x82560B08
 
 band3/meta_band/NewAwardPanel.cpp:
-	.pdata      start:0x8222A458 end:0x8222A460
 	.pdata      start:0x8222A468 end:0x8222A628
 	.pdata      start:0x8222A638 end:0x8222A658
 	.pdata      start:0x8222A660 end:0x8222A700
-	.text       start:0x82627118 end:0x82627170
 	.text       start:0x82627238 end:0x82628C38
 	.text       start:0x82628D94 end:0x82628F40
 	.text       start:0x82628F84 end:0x82629878
@@ -13394,9 +13392,9 @@ band3/meta_band/OutfitProvider.cpp:
 
 band3/meta_band/MultiSelectListPanel.cpp:
 	.pdata      start:0x8222A3D8 end:0x8222A418
-	.pdata      start:0x8222A460 end:0x8222A468
+	.pdata      start:0x8222A458 end:0x8222A468
 	.text       start:0x82626A40 end:0x82626E50
-	.text       start:0x82627170 end:0x82627238
+	.text       start:0x82627118 end:0x82627238
 
 band3/meta_band/SetlistSortByLocation.cpp:
 	.pdata      start:0x82223B40 end:0x82223C00
