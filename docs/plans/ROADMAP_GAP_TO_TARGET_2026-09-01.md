@@ -840,3 +840,83 @@ class that no fold explains (PlatformMgr, OvershellPanel, OvershellSlot); jeff's
 158 symbol-extent truncations (lane C sized it at +32 B for the first); the pin
 channel lane B says is undrained where its map channel is not; and tiers 4/5 of
 lane A's stratum, 71% of its bytes, untouched.
+
+## 7e. EXECUTION LOG — fifth wave (2026-09-11, coordinator session 3cdd3c)
+
+Four lanes off `a8fdfd65`, weighted at BODIES on wave 4's evidence that the
+identification channel is where the metric lives while the bug channel is in
+bodies. Every merge `--no-ff` after a full main build, with the manifest, alias
+and native gates **re-run by the coordinator on merged main**, never relayed.
+
+| lane | merge | Δ fns | Δ bytes | what it was, in one line |
+|---|---|---:|---:|---|
+| B XAPO regProps | `8825b103` | +13 | +1,872 | there are THIRTEEN, not twelve; four briefed figures wrong; three real source bugs, incl. a method whose wrong signature paired with NOTHING |
+| D pin channel | `48301ac2` | +9 | +540 | a fabricated alias withdrawn — its own T1 evidence convicts the MAP; wave 4's refutation here was CIRCULAR; jeff's carve rule characterised in three measurements |
+| A native bodies | `4b81a2aa` | +3 | +528 | **PARTIAL** — lane killed by an API safeguards error; only its one measured commit landed, WIP preserved unlanded |
+| C FileGetBase | `d428c212` | +6 | +660 | a map row reading a FALSE 100%; a tool that had crashed on every run for three weeks; a proven alias deliberately NOT installed |
+| **wave** | `a8fdfd65` → `d428c212` | **+31** | **+3,600** | **42,627 / 3,847,588 B / 37.552258% → 42,658 / 3,851,188 B / 37.587395%** |
+
+Every lane composed to the byte on the merged build. ⚠ As in §7d, the
+main-to-main figure also spans another session's merges inside the window
+(`testci`); per-lane deltas are provenance, not addends.
+
+**★ The wave's theme is instruments convicting themselves.** Lane B found four
+of its five briefed figures wrong, including the count in its own title. Lane D
+found that wave 4's refutation rested on a circular test — "the callee's pin
+matches its name", when the pin had been placed to match the name — and
+withdrew an alias whose tier-1 evidence, read properly, convicts the map.
+Lane C found a map row reading a **false 100%** (the only differing thing was
+an unnamed callee, which objdiff forgives) and a tool that had **crashed on
+every run since 2026-08-19**, which is what a previous lane's handoff had
+pointed it at. ⇒ **A handoff names a target, not a working instrument. Check
+the instrument starts before trusting its silence.**
+
+**★★ Two prediction misses that were worth more than hits.** Lane C's step 0
+went the WRONG WAY: deleting a discarded call made the function a leaf
+tail-call, so MSVC emitted 12 B against a 192 B target — proving the prior
+29.9% was mostly prologue coincidence and that **MSVC will not inline a
+40-instruction helper, so retail's source never called one**. Its step 2 missed
+because MSVC inlined our tiny wrappers into their callers; the next step was
+written off that miss and hit exactly. Lane D's +40 B overshoot was three
+`??_E` thunks crossing with the `??_G` bodies — wave 4's collateral family with
+the OPPOSITE SIGN.
+
+**★★★ PAIRING IS NOT MATCHING** (lane D): two rows moved off a **false 0.000**
+to a genuine 69.68 / 77.34 while billing zero bytes. A 0.000 there never meant
+"unmatched", it meant **unscoreable** — and the 252 B is now a visible
+body-port target instead of an invisible one.
+
+**Native-path bugs fixed.** Reference counting on X360 object-array properties
+did nothing where the native branch uses a container (the match build cannot
+surface that alone); a type-properties accessor took its owner's type
+definition by argument in retail where our inherited version read it through
+the owner; thirteen audio-effect registrations would have registered with a
+null identifier, no flags and zero buffer counts, four of them uninitialised
+and nine never defined at all.
+
+**Two lanes died to infrastructure, not to their work.** W5-A was terminated by
+an API safeguards rejection mid-turn and W4-D by a rate limit. Both had
+committed real work first. The rule that saved both: **commit measured work
+immediately; a lane that dies between measuring and committing loses the
+measurement.** W5-A's ten uncommitted files are preserved at
+`~/tmp/w5a-handoff/w5a-uncommitted.patch`, unlanded because unmeasured, and a
+future lane should RE-DERIVE rather than apply them blind.
+
+**Wave-6 candidates, each with evidence in a lane record:** `?DataInitFuncs@@`
+(8,068 B at fuzzy 71.45, badly misaligned — it gates lane C's proven alias);
+`FileGetPath` `0x82516550`, a CARVING fix where our body already matches; the
+29 remaining `.text$yc` dynamic initialisers and the unpinned 13.4 kB of
+`.data` behind lane B's thirteen; the two remaining `??_G` islands ⚠ **with
+alias group 432, which unlike 1013 DOES forgive a site**; the AddRef/Release
+252 B body-port lane D made visible; retail's `Object.cpp` TU reunification
+(`0x8275A384`–`0x8275D03C`, currently split across DirLoader's pins); jeff's
+159-site carve seam (characterised, **pin workaround measured impossible at
+2/156**); and tiers 4/5 of the body stratum, still 71% of its bytes.
+
+⚠ **And a tool interaction the next pin lane must know:**
+`tools/symbols_fixpoint_guard.py` leaves target objs **un-renamed** (70 mangled
+symbols → 0) because it re-splits without the pre-compile renamer. That is the
+FOLDPROVE-2 state where every name lookup reads "absent" and any negative is
+vacuous. `verify_objs_patched` does **not** catch it — it covers the
+post-compile passes, not the pre-compile renamer. Run the guard LAST, or
+rebuild after it.
