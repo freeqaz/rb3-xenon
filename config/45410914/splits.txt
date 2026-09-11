@@ -6988,10 +6988,6 @@ Lit.cpp:
 	.text       start:0x82498380 end:0x82498D80
 	.text       start:0x82498D80 end:0x8249A120
 
-sslgen.c:
-	.pdata      start:0x8225B3A8 end:0x8225B3B0
-	.text       start:0x82B68070 end:0x82B68D40
-
 Synapse_dsp.cpp:
 	.pdata      start:0x821F1810 end:0x821F1818
 	.pdata      start:0x821F8668 end:0x821F8670
@@ -7641,9 +7637,11 @@ system/synth_xbox/FxSendReverb.cpp:
 	.pdata      start:0x8225B358 end:0x8225B370
 	.pdata      start:0x8225B370 end:0x8225B380
 	.pdata      start:0x8225B380 end:0x8225B3A8
+	.pdata      start:0x8225B3A8 end:0x8225B3B0
 	.text       start:0x82B67A80 end:0x82B67B50
 	.text       start:0x82B67B50 end:0x82B67BD8
 	.text       start:0x82B67BD8 end:0x82B68070
+	.text       start:0x82B68070 end:0x82B68D40
 
 MovieSys.cpp:
 	.text       start:0x827A88A8 end:0x827A88E0
