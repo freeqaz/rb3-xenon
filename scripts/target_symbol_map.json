@@ -30202,5 +30202,10 @@
  "0x82517120": "?OnFileGetBase@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82517168": "?OnFileGetExt@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82516680": "FileGetDrive",
- "0x825167a8": "FileGetName"
+ "0x825167a8": "FileGetName",
+ "0x82c43340": "??__EgMics@?A0x0298b308@@YAXXZ",
+ "0x82c43350": "??__E?mMicMasters@ExternalMicClientMgr@@0V?$vector@PAVExternalMicClientProxy@@V?$StlNodeAlloc@PAVExternalMicClientProxy@@@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
+ "0x82c43360": "??__E?mDevToMicMaster@ExternalMicClientMgr@@0V?$vector@KV?$StlNodeAlloc@K@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
+ "0x82c43370": "??__E?mMicMasterToDev@ExternalMicClientMgr@@0V?$vector@KV?$StlNodeAlloc@K@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
+ "0x82c43380": "??__E?mAssocMicXbox@ExternalMicClientMgr@@0V?$vector@PAVMicXbox@@V?$StlNodeAlloc@PAVMicXbox@@@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ"
 }
