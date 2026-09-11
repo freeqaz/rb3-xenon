@@ -131,6 +131,42 @@ jobs:
     - name: ICF alias grounding guard
       run: python3 tools/icf_alias_finder.py --validate
 
+    # Guards: TWO passes in this repo have been RETIRED as redundant, and both
+    # redundancies are properties of the PREBUILT objdiff-cli binary rather than
+    # of anything committed here.  That binary lives at
+    # ../objdiff/target/release/objdiff-cli, is shared by symlink with ../rb3 and
+    # ../dc3-decomp, is swapped and rolled back by hand as routine, and is pinned
+    # and verified by NOTHING.  Roll it back past the relevant commit and the
+    # retired pass is silently un-retired -- and both failures present as a WRONG
+    # SCORE, never as an error, which is the class this repo keeps getting bitten
+    # by.
+    #
+    #   check_objdiff_map_cache   the report cache must key on the ICF alias map
+    #                             (objdiff 345778c).  Guards the DELETED
+    #                             `icf_aliases_cache_purged` edge -- without the
+    #                             property, editing scripts/symbol_aliases.json
+    #                             re-renders the map, re-runs REPORT, and serves
+    #                             the PRE-CHANGE answer out of the sidecar cache.
+    #                             That cost dc3 a +198-function measurement.
+    #   check_objdiff_eh_prefix   objdiff must bound a function at the MSVC EH
+    #                             funclet prefix itself (objdiff b76f376).
+    #                             Guards the retired obj_eh_boundary_patcher --
+    #                             worth 147 fns / 22,844 B if it regresses.
+    #
+    # Both treat a vacuous probe as its own exit code (5), because an instrument
+    # that cannot tell its own silence from a pass is worse than no instrument.
+    # Both have had their RED leg exercised against a deliberately-built pre-fix
+    # binary, not merely asserted: map_cache reads rc=0 on the live binary and
+    # rc=2 on 345778c^ (the warm cache hands back the previous answer under a
+    # changed map -- the defect, in the flesh).
+    #
+    # Runs AFTER Build: both read built objects, and map_cache needs the rendered
+    # build/<version>/icf_aliases.map.
+    - name: Retired-pass redundancy guards (objdiff properties)
+      run: |
+        python3 tools/check_objdiff_map_cache.py
+        python3 tools/check_objdiff_eh_prefix.py
+
     # Guard: config/<version>/symbols.txt is BOTH an input to dtk's SPLIT and an
     # output of it, so "correct" means FIXED POINT.  When the committed file is
     # off jeff's fixpoint, dtk carves function boundaries it would immediately
