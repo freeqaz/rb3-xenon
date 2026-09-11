@@ -914,12 +914,68 @@ across this lane's sabotage cycles. Two clean builds here do not differ at all.
   goes through it.
 
 ⚠ **One honest limit on the green light, measured; the second one is now fixed:**
-1. **Three of the six passes are idle** — `guard`, `bool_mangle` and
-   `atexit_scope` patch **0 files repo-wide** in APPLY mode on a fully built
-   tree *(re-measured 2026-08-31 over the full 1,045-object population, not the
-   344 the old pairing could see)*. A green `--check` is earned by three
-   passes, not six. (This is why `patch_guard` asserts the *manifest*, which is
-   content-keyed and does not depend on any pass still being active.)
+1. ⛔⛔ **"Three of the six passes are idle — measured on a fully built tree" was
+   a VACUOUS MEASUREMENT, and it is now CORRECTED (lane PATCH-LIVE, 2026-09-11).**
+   A fully built tree is **BY DEFINITION a fixed point of all six passes**, so
+   every pass reports 0 there and the measurement **cannot come out any other
+   way** — it restates `--check`'s own success criterion. The honest instrument
+   is a tree whose objects were **freshly compiled and not yet patched**
+   (`rm -rf build/45410914/src` + drop the patch stamps, then `ninja all_source`;
+   objcache serves the COMPILER's output, which is pre-patch by construction).
+   Freshness was proved by byte-comparison, not assumed — `Object.obj` and
+   `Str.obj` differ from their patched snapshots — and the dry-run census then
+   agreed **exactly** with the APPLY counts in the next build's log:
+
+   | pass | files patched | symbols | ablation value |
+   |---|---:|---:|---|
+   | `anon_ns` | **49** | 1,413 replacements | **+82 fns / +14,604 B / +0.142533 pp** |
+   | `dynamic_init` | **188** | 422 `??__E` | 0 |
+   | `guard` | **10** | 11 | 0 |
+   | `bool_mangle` | **0** | 0 | 0 |
+   | `atexit_scope` | **0** | 0 | 0 |
+   | `eh_boundary` | **577** | 6,395 boundaries | 0 |
+
+   ⇒ **`guard` IS NOT IDLE** — it patches 10 files / 11 symbols on every fresh
+   compile. Only **`bool_mangle` and `atexit_scope`** are genuinely inactive.
+   And the guard population is **growing, not draining**: PAIRFIX's 7 files are
+   all still pending, plus **FaceHairProvider, LessonMgr (×2) and TourProperty**
+   arrived since. They are storage-class-only fixes (`class 3->2`, the name
+   unchanged), so their worth is **link/storage-class correctness, not the
+   metric** — which is why PAIRFIX correctly measured them at Δ0 and why that
+   Δ0 is **not** grounds for retiring the pass.
+
+   ★★★ **VALUE, measured by ABLATION on the whole binary — only ONE of the six
+   moves the metric.** Each pass was removed from the chain individually (its
+   command replaced by `true`, so the stamp chain, edge order and dirtiness
+   stay bit-identical), objects force-recompiled unpatched, `report.json` +
+   `report.cache` wiped, full `./tools/ninja-locked`, ruler `name_check`:
+
+   > baseline **42,439 fns / 3,821,092 B / 37.293660% / fuzzy 48.959442**
+   > — ablating `anon_ns` costs **−82 fns / −14,604 B / −0.142533 pp**;
+   > ablating **each of the other five costs EXACTLY 0.000000 on all four
+   > measures**.
+
+   ⚠ **`eh_boundary` does 6,395 real symbol appends across 577 files and buys
+   ZERO.** Its docstring still advertises a ceiling of **+166 matched /
+   +0.271162 pp**, measured by lane CM-3 on **2026-08-02** — i.e. **before the
+   2026-08-12 `name_check` flip** and before objdiff 4.2.8. That number is
+   **stale, not wrong-at-the-time**. Do not cite it.
+   ⚠ **Two controls make these zeros trustworthy rather than a broken rig.**
+   (a) The ablation is *proved to have taken*: each non-ablated pass echoes a
+   marker injected into its own command, and the ablated one cannot, so
+   "did nothing" is distinguished from "never ran". The first version of that
+   detector keyed on ninja's `description` and produced a **false negative on
+   the BASELINE** — `desc = PATCH $S guard variables…` carries an **unescaped
+   `$`**, and `$S` is a ninja escape, so the log never contains the string
+   being matched. A detector keyed on text the build never emits can only
+   answer "did not run", which on an ablation run is the hoped-for answer.
+   (b) The rig has **zero build nondeterminism**: two structurally different
+   full builds (warm-incremental, and after `rm -rf src`) produced measures
+   identical to the last digit, so a delta here is 100% patcher effect.
+   ⇒ A green `--check` is earned by **four** active passes, not three and not
+   six — and only **one** of them is defending the score. (This is why
+   `patch_guard` asserts the *manifest*, which is content-keyed and does not
+   depend on any pass still being active.)
 2. ~~Those same three pair target↔base by RELPATH~~ — **FIXED, lane PAIRFIX
    (2026-08-31). `scripts/obj_pairing.py` now owns the pairing for all three,
    from `objdiff.json`.**
@@ -1730,13 +1786,34 @@ cited ranges had drifted by hundreds of lines):
   `scripts/target_symbol_map.json`, so objdiff can pair target↔base by name. (Game
   entries are generated by `tools/gen_game_target_map.py` from the rb3-Wii oracle;
   without a map entry a pinned game TU reads a false 0%.)
-- **post-compile** (on our compiled obj) — `anon_ns` (anonymous-namespace hashes,
-  which MSVC derives from machine name + source path), `dynamic_init` (`??__E`
-  STATIC→EXTERNAL), `guard` (`$S`→`??_B` static-init guards), `bool_mangle` (bool
-  back-ref mangling), `atexit_scope` (`??__F` scope counters).
+- **post-compile** (on our compiled obj) — **SIX passes, not five**: `anon_ns`
+  (anonymous-namespace hashes, which MSVC derives from machine name + source
+  path), `dynamic_init` (`??__E` STATIC→EXTERNAL), `guard` (`$S`→`??_B`
+  static-init guards), `bool_mangle` (bool back-ref mangling), `atexit_scope`
+  (`??__F` scope counters), and `eh_boundary` (EH-funclet extent boundaries —
+  **last**, because it only *appends* a symbol and never renames one, so it
+  cannot disturb the five name-rewriting passes).
+  ⚠ **This bullet listed only five until lane PATCH-LIVE (2026-09-11)**, as did
+  `docs/decomp/TOOLING.md` and `configure.py`'s own chain comment ("The five obj
+  patchers…"). All three undercounted the same way, so no site cross-checked any
+  other — and `verify_objs_patched.py --check` exists precisely to catch "someone
+  added a pass and forgot the edge", a guarantee you cannot audit against a
+  wrong-length list.
 
-`regswap` + `transplant` exist in `scripts/` but are **not** in the wired list (enable
-per-function when needed). The "guard-thunk wall" that drags game-unit fuzzy down
+`regswap` + `transplant` exist in `scripts/` but are **not** in the wired list.
+⛔ **They are NOT "enable per-function when needed" — both are BITROTTED**
+(measured by running them, lane PATCH-LIVE 2026-09-11; a `--help` that exits 0
+proves argparse imports, not that a tool works, and that is exactly what the
+old "WORKING" status in `docs/decomp/TOOLING.md` rested on). Both resolve our
+compiled object under **DC3's title ID** — `build/373307D9/...` instead of
+`build/45410914/...` — inherited from the 2026-05-26 dc3 scaffold commit and
+never retargeted (`obj_regswap_patcher.py:766,774`,
+`obj_transplant_patcher.py:47,55`); transplant additionally needs `decomp.db`,
+which does not exist in a worktree. ★ The damage is shallow and worth saying:
+regswap's objdiff integration is **fine** (on a live symbol it returned
+`match_before 99.99673, patches_found 1`) and only the output path is wrong.
+No wired pass hardcodes a title ID — that was checked as the control.
+The "guard-thunk wall" that drags game-unit fuzzy down
 (retail emits `??__E`/`??__F`/guard thunks our objs don't pair) is what these address.
 
 ### Identification tooling

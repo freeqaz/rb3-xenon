@@ -35,6 +35,14 @@ DataArraySongInfo and LocaleOrdinal.  `bool_mangle` and `atexit_scope` had 0
 pending over the full 1,045 (they are genuinely idle here, which is worth
 knowing and is reported rather than hidden).
 
+★ Re-measured on FRESHLY COMPILED objects (lane PATCH-LIVE, 2026-09-11): that
+guard population is **GROWING, NOT DRAINING** -- now **10 files / 11 symbols**.
+The original 7 are all still there, joined by FaceHairProvider, LessonMgr (x2)
+and TourProperty.  So this pairing fix keeps paying as source lands; it was not
+a one-off backlog that got cleared.  `bool_mangle` and `atexit_scope` re-measure
+at 0 on fresh objects too, so their idleness is a real property and not an
+artifact of measuring a settled tree.
+
 `obj_anon_ns_patcher.py` already read objdiff.json (lane CN-1) and is the model
 this generalises; it is left alone deliberately -- its pairing already reaches
 the whole population -- but it shares the ambiguity below.

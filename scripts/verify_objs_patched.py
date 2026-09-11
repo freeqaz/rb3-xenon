@@ -57,11 +57,36 @@ Two checks, because there are two ways to reach the degraded state
 
 ★ Why the manifest is the load-bearing half here, more than it is on dc3
 -----------------------------------------------------------------------
-`--check` can only be as good as the passes it re-runs, and on rb3-xenon
-THREE OF THE SIX PASSES ARE CURRENTLY IDLE.  Measured on a fully built tree in
-APPLY mode: `guard` 0 files, `bool_mangle` 0 files, `atexit_scope` 0 files.  So
-a green `--check` is earned by three passes, not six, and a sabotage that only
-those three would notice would slip past it.
+`--check` can only be as good as the passes it re-runs, and on rb3-xenon TWO of
+the six are idle.
+
+⛔⛔ THIS PARAGRAPH USED TO SAY *THREE*, "measured on a fully built tree in APPLY
+mode: `guard` 0 files, `bool_mangle` 0 files, `atexit_scope` 0 files".  THAT
+MEASUREMENT WAS VACUOUS (corrected by lane PATCH-LIVE, 2026-09-11).  A fully
+built tree is BY DEFINITION a fixed point of all six passes, so EVERY pass
+reports 0 on one -- the observation restates this file's own success criterion
+and cannot come out any other way.
+
+Measured instead on FRESHLY COMPILED, provably unpatched objects (`rm -rf
+build/<v>/src` + drop the patch stamps, then `ninja all_source`; objcache serves
+the compiler's own output, which is pre-patch by construction; freshness
+confirmed by byte-comparing objects against their patched snapshots):
+
+    anon_ns       49 files / 1,413 replacements
+    dynamic_init 188 files /   422 ??__E symbols
+    guard         10 files /    11 symbols     <-- NOT idle
+    bool_mangle    0 files                     <-- genuinely idle
+    atexit_scope   0 files                     <-- genuinely idle
+    eh_boundary  577 files / 6,395 boundaries
+
+So a green `--check` is earned by FOUR passes, not three and not six, and a
+sabotage that only `bool_mangle`/`atexit_scope` would notice slips past it.
+
+`guard`'s 11 pending symbols are storage-class-only (`class 3->2`, name
+unchanged) and are worth 0 on report.json -- which is NOT grounds to retire it,
+because its job is linker visibility, not the metric.  The population is also
+growing rather than draining: PAIRFIX's 7 files are all still pending and
+FaceHairProvider, LessonMgr (x2) and TourProperty have joined them.
 
 The manifest has no such dependence: it is content-keyed, so ANY object that
 changed without the full graph re-running is caught regardless of which pass
@@ -89,10 +114,13 @@ Ported from dc3 (`2f35703d0`) and deliberately not identical:
     build time; what it cannot do is answer a consumer who is not running
     ninja.)
 
-3.  **It states its denominators, and now ENFORCES them.**  Three of the six
-    passes are idle (`guard`/`bool_mangle`/`atexit_scope` all report 0 pending
-    on a fully built tree), so a green `--check` is earned by three passes, not
-    six.  Those same three used to pair target-to-base by RELPATH.
+3.  **It states its denominators, and now ENFORCES them.**  TWO of the six
+    passes are idle -- `bool_mangle` and `atexit_scope` -- so a green `--check`
+    is earned by four passes, not six.  (This item used to say THREE, counting
+    `guard`, on the strength of "all report 0 pending on a fully built tree";
+    see the correction above -- on a fully built tree ALL SIX report 0, so that
+    sentence distinguished nothing.  On fresh objects `guard` patches 10 files
+    / 11 symbols.)  Those same three used to pair target-to-base by RELPATH.
 
     ⚠ **The figure this file used to carry -- "347 of the 1,048 pairs, 3
     mispaired" -- was measured against the wrong denominator and is corrected
