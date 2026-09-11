@@ -790,7 +790,10 @@ DEF_DATA_FUNC(DataNotifyBeta) {
     for (int i = 1; i < array->Size(); i++) {
         array->Evaluate(i).Print(str, true);
     }
-    MILO_NOTIFY_BETA(str.c_str());
+    // MILO_NOTIFY_BETA expands to `DebugBeta() << ...` natively and DebugBeta is
+    // not declared there (native gate FAILed 17/18 on it, lane W4-A); use the
+    // same notifier DataNotify uses.
+    TheDebug.Notify(str.c_str());
 #endif
     return 0;
 }
