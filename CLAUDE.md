@@ -1800,8 +1800,20 @@ cited ranges had drifted by hundreds of lines):
   added a pass and forgot the edge", a guarantee you cannot audit against a
   wrong-length list.
 
-`regswap` + `transplant` exist in `scripts/` but are **not** in the wired list (enable
-per-function when needed). The "guard-thunk wall" that drags game-unit fuzzy down
+`regswap` + `transplant` exist in `scripts/` but are **not** in the wired list.
+⛔ **They are NOT "enable per-function when needed" — both are BITROTTED**
+(measured by running them, lane PATCH-LIVE 2026-09-11; a `--help` that exits 0
+proves argparse imports, not that a tool works, and that is exactly what the
+old "WORKING" status in `docs/decomp/TOOLING.md` rested on). Both resolve our
+compiled object under **DC3's title ID** — `build/373307D9/...` instead of
+`build/45410914/...` — inherited from the 2026-05-26 dc3 scaffold commit and
+never retargeted (`obj_regswap_patcher.py:766,774`,
+`obj_transplant_patcher.py:47,55`); transplant additionally needs `decomp.db`,
+which does not exist in a worktree. ★ The damage is shallow and worth saying:
+regswap's objdiff integration is **fine** (on a live symbol it returned
+`match_before 99.99673, patches_found 1`) and only the output path is wrong.
+No wired pass hardcodes a title ID — that was checked as the control.
+The "guard-thunk wall" that drags game-unit fuzzy down
 (retail emits `??__E`/`??__F`/guard thunks our objs don't pair) is what these address.
 
 ### Identification tooling

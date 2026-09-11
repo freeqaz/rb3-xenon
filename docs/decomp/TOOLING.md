@@ -253,8 +253,23 @@ undercounted it, so nothing cross-checked anything. The count is load-bearing:
 seventh patcher and forgot the edge", and a reader auditing that guarantee against
 a five-item list is auditing the wrong chain.
 
-**NOT wired** (enable per-function by hand): `obj_regswap_patcher.py`,
-`obj_transplant_patcher.py`.
+**NOT wired**: `obj_regswap_patcher.py`, `obj_transplant_patcher.py`.
+⛔ **"enable per-function by hand" is NOT currently true — both are BITROTTED**
+(measured, lane PATCH-LIVE 2026-09-11). Each resolves our compiled object under
+**DC3's title ID**, inherited from the 2026-05-26 dc3 scaffold and never
+retargeted: `obj_regswap_patcher.py:766,774` and `obj_transplant_patcher.py:47,55`
+build `PROJECT_ROOT/build/373307D9/...` instead of `build/45410914/...`, and they
+flatten the unit to a bare basename rather than the source-tree path. Run against
+a real symbol they get as far as *analysing* it and then fail to find the file:
+
+    regswap:    {"match_before": 99.99673, "patches_found": 1,
+                 "error": "obj not found: .../build/373307D9/src/NextSongPanel.obj"}
+    transplant: ERROR: Decomp .obj not found: .../build/373307D9/src/NextSongPanel.obj
+
+★ Note *which half* works: regswap's objdiff integration and ruler resolution are
+**fine** — it computed a real match% and found a real patch. Only the output path
+is wrong. So this is a small, well-localised repair, not a rewrite. No wired pass
+hardcodes a title ID (checked, as the control).
 
 ---
 
@@ -521,9 +536,9 @@ Machine-generated from an AST parse + a real `--help` run per argparse tool.
 | `obj_bool_mangle_patcher.py` | WORKING | Post-build patcher: fix bool parameter back-reference mangling. Our MSVC compiler caches `bool` (_N) in the parameter back-reference table, | --help | **YES** |
 | `obj_dynamic_init_patcher.py` | WORKING | Post-build patcher to promote ??__E dynamic initializer symbols from STATIC to EXTERNAL. MSVC emits ??__E symbols (C++ dynamic initializers for global | --help | n/a |
 | `obj_guard_patcher.py` | WORKING | Post-build patcher: convert $S guard variables to ??_B format. Compares decomp .obj files against original .obj files and renames | --help | **YES** |
-| `obj_regswap_patcher.py` | WORKING | Post-compilation .obj register swap patcher. Patches PowerPC register fields in COFF .obj files to fix register swap | --help | n/a |
+| `obj_regswap_patcher.py` | ⛔ BITROTTED | Post-compilation .obj register swap patcher. Patches PowerPC register fields in COFF .obj files to fix register swap. **Resolves our obj under DC3's title id `373307D9` (lines 766, 774) so it can never find it on this repo** — analysis works, the write fails | **real --dry-run on a live symbol** (2026-09-11); the old "WORKING" rested on `--help` alone | n/a |
 | `obj_target_symbol_renamer.py` | WORKING | Post-SPLIT patcher: rename anonymous `fn_<addr>` symbols in dtk-split target .obj files to their MSVC-mangled equivalents. | --help | **YES** |
-| `obj_transplant_patcher.py` | WORKING | Post-build .obj transplant patcher. Replaces a function's COFF section data with the original .obj's machine code, | --help | n/a |
+| `obj_transplant_patcher.py` | ⛔ BITROTTED | Post-build .obj transplant patcher. Replaces a function's COFF section data with the original .obj's machine code. **Resolves both objs under DC3's title id `373307D9` (lines 47, 55)**; also calls `decomp.db` for unit lookup, which does not exist in a worktree | **real --dry-run on a live symbol** (2026-09-11); the old "WORKING" rested on `--help` alone | n/a |
 | `permuter_targets.py` | WORKING | rank the permuter's work queue from report.json. The source permuter (the `decomp_synth` package, wired via the `permute` skill) mechanizes | --help | n/a |
 | `prune_orphan_asm.py` | WORKING | Delete orphaned `build/<title>/asm/*.s` files -- the stale-carve trap. WHY THIS EXISTS | --help | **YES** |
 | `recon.py` | WORKING | Unified function reconnaissance — single command for full function intel. Combines: | --help | n/a |
