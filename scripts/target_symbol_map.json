@@ -11007,7 +11007,7 @@
  "0x8253cd90": "?Text@MusicLibrary@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
  "0x8253d328": "?PushHighlightToScreen@MusicLibrary@@QAAX_N@Z",
  "0x8253d5b8": "?PushFilterToScreen@MusicLibrary@@QAAXXZ",
- "0x8253d820": "?RemoveLastSongFromSetlist@MusicLibrary@@QAAXXZ",
+ "0x8253d820": "?PushSetlistToScreen@MusicLibrary@@QAAXXZ",
  "0x8253d940": "?PushSonglistToScreen@MusicLibrary@@QAAXXZ",
  "0x8253da28": "?PushSetlistSaveDialog@MusicLibrary@@QAAXXZ",
  "0x8253db00": "?PushHeaderDataToScreen@MusicLibrary@@QAAXXZ",
