@@ -135,6 +135,7 @@ The 34.4% tail of class E outside the top 20 families is unadjudicated.
 """
 import argparse
 import collections
+import hashlib
 import json
 import re
 import subprocess
@@ -457,8 +458,21 @@ def build_index(dirs, cache, force=False):
     cp = Path(cache)
     if cp.exists() and not force:
         try:
-            return {k: [Path(p) for p in v]
-                    for k, v in json.loads(cp.read_text()).items()}
+            idx = {k: [Path(p) for p in v]
+                   for k, v in json.loads(cp.read_text()).items()}
+            # ⛔ A cache whose obj paths no longer exist is NOT evidence about
+            # THIS tree.  Lane L5-SYMBOLHEADS hit a cache minted on 2026-09-01
+            # in ~/tmp/wt-s1fold (since deleted): every retail_body() lookup
+            # raised FileNotFoundError and the tool exited 1 -- NOT the rc=3
+            # fail-closed it advertises.  The benign case is the deleted tree;
+            # had that worktree still EXISTED the tool would have adjudicated
+            # against ANOTHER TREE's objects and emitted confident verdicts.
+            # So verify before trusting, and rebuild rather than raise.
+            for paths in idx.values():
+                if paths and not paths[0].exists():
+                    raise FileNotFoundError(str(paths[0]))
+                break
+            return idx
         except Exception:
             pass
     idx = collections.defaultdict(list)
@@ -501,7 +515,11 @@ def alias_covers(a, b):
 class Adjudicator:
     def __init__(self, proj):
         self.proj = Path(proj).resolve()
-        cachedir = Path.home() / "tmp" / "s1fold-cache"
+        # ⛔ KEY THE CACHE BY PROJECT.  It used to be one shared directory, so
+        # every worktree silently reused whichever tree populated it first --
+        # a cross-tree contamination channel with no symptom (see build_index).
+        cachedir = (Path.home() / "tmp" / "s1fold-cache" /
+                    hashlib.sha256(str(self.proj).encode()).hexdigest()[:16])
         self.tidx = build_index([self.proj / "build/45410914/obj"],
                                 cachedir / "target_idx.json")
         self.oidx = build_index([self.proj / "build/45410914/src"],
