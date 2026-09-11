@@ -1590,7 +1590,9 @@ TDStretch.cpp:
 
 SynapseAPO.cpp:
 	.pdata      start:0x8225B790 end:0x8225B7F0
+	.pdata      start:0x82261B00 end:0x82261B08
 	.text       start:0x82B6DA40 end:0x82B6DFAC
+	.text       start:0x82C436F0 end:0x82C43780
 
 inflate.c:
 	.pdata      start:0x8225A4D0 end:0x8225A4F0
@@ -5377,14 +5379,14 @@ SpotlightDrawer.cpp:
 	.pdata      start:0x82214660 end:0x82214670
 	.pdata      start:0x82214830 end:0x822149F0
 	.pdata      start:0x822149F8 end:0x82214A98
-	.pdata      start:0x82261B00 end:0x82261B10
+	.pdata      start:0x82261B08 end:0x82261B10
 	.text       start:0x82308478 end:0x82308710
 	.text       start:0x82308C88 end:0x82308CEC
 	.text       start:0x824D1750 end:0x824D17B0
 	.text       start:0x824D17BC end:0x824D1848
 	.text       start:0x824D4C28 end:0x824D6F68
 	.text       start:0x824D6FDC end:0x824D7FC8
-	.text       start:0x82C436F0 end:0x82C437B8
+	.text       start:0x82C43780 end:0x82C437B8
 
 Spotlight.cpp:
 	.pdata      start:0x82213248 end:0x82213250
