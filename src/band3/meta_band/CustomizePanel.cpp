@@ -545,6 +545,25 @@ void CustomizePanel::UpdateAssetProvider() {
 // whether retail's source called a MEMBER or a NON-MEMBER at that site — a
 // source-level fact no source diff and no oracle can see.  Pair it with the
 // trailing `clrlwi`, which witnesses that an inlined callee RETURNED bool.
+//
+// ── lane L6-STRUCTHEADS (2026-09-11): ONE STRUCTURAL PROBE, NEGATIVE.  W37's
+//    priced refusal stands; nothing below reopens the spelling program.
+//
+// Re-priced first on this tree: report.json fuzzy == mpn == 99.92057, one
+// charged site `[530] delete: clrlwi r11,r11,24`, no reloc-name charge (the
+// coordinator's T2 measurement agrees: mm 1 -> 1 on both rulers).
+//
+// The single shape the five prior lanes never tried is making the
+// has_patch -> has_license merge a SOURCE-level phi instead of relying on the
+// backend's tail-merge: `int _bv;` at the top of Handle, the has_license arm
+// as `_bv = HasLicense(_msg->Sym(2)); _bool_tail: return DataNode(_bv != 0);`
+// and the has_patch arm as `_bv = FindPatchIndex(...) + 1; goto _bool_tail;`
+// (a jump INTO the has_license if-body, which C++ allows past a static).
+// Measured WORSE: 99.921 -> 99.277 (C4533 warning, layout perturbed, and
+// STILL no mask on the subfe).  So an explicit phi of raw ints feeding one
+// `!= 0` is range-analysed to 0/1 exactly like the merged tail was -- the
+// mask is not a property of the phi.  Reverted; only the compiler/codegen
+// channel W37 named remains.
 void CustomizePanel::UpdateMakeupProvider(Symbol type) {
     // retail fn_82614E60 is 0x80 bytes and is CALLED (not inlined) from the
     // update_makeup_provider arm. Its body is: two guarded function-local

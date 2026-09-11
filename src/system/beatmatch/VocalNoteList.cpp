@@ -257,7 +257,7 @@ void VocalNoteList::NotesDone(const TempoMap &tmap, bool b) {
 }
 
 void VocalNoteList::DeterminePhraseTimes(const TempoMap &tmap) {
-    for (unsigned int i = 0; mPhrases.size() != i; i++) {
+    for (unsigned int i = 0; i != mPhrases.size(); i++) {
 #ifdef HX_NATIVE
         // libstdc++'s vector::iterator is a class type, not a raw pointer, so
         // (a) we can't assign begin() + i to T*, and (b) vector::insert wants

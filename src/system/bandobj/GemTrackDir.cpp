@@ -1092,7 +1092,7 @@ void GemTrackDir::DeleteUnusedChordMeshes() {
     std::map<unsigned int, std::pair<int, RndMesh *> >::iterator it;
     for (it = unk6b4.begin(); it != unk6b4.end(); ++it) {
     }
-    for (it = unk6b4.begin(); unk6b4.end() != it;) {
+    for (it = unk6b4.begin(); it != unk6b4.end();) {
         if (it->second.first == 0) {
             RndMesh *chordMesh = it->second.second;
             std::map<unsigned int, std::pair<int, RndMesh *> >::iterator arpIt
