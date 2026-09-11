@@ -225,9 +225,17 @@ void ExternalMicClientMgr::OnMicDisconnected(unsigned long dev) {
     }
 }
 
-// sw2 scatter-include (default/ExternalMic <- bandobj/OutfitConfig.cpp)
+// sw2 scatter-include (default/ExternalMic <- bandobj/OutfitConfig.cpp).
+// What this supplies to ExternalMic.obj is the vector<int> template COMDATs
+// retail's ExternalMic TU also emitted (??$_M_allocate_and_copy@PBH@... and a
+// funclet twin at 0x82B6779C).  It used to be credited with pairing
+// ??2OutfitConfig@@SAPAXI@Z at 0x82b66c48 as well; that 8-byte body is
+// `li r4,0; b blockingStart` = ?Start@Voice@@QAAXXZ, and is now named so
+// (lane W3-D, 2026-09-11).  Removing the include was measured at -92 B on the
+// two legitimate rows, so it stays.
 #define gRev gRev_OutfitConfig
 #define gAltRev gAltRev_OutfitConfig
 #include "bandobj/OutfitConfig.cpp"
 #undef gRev
 #undef gAltRev
+
