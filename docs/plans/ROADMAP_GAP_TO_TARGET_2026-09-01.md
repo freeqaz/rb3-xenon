@@ -52,6 +52,24 @@
 > `icf_alias_finder --validate` guards the ~7.9 pp forgiveness mechanism with
 > **no freshness precondition**. T1's guard covers 2 tools of ~35; this is the
 > next one that needs it.
+>
+> ✅ **DONE — the gate now refuses a stale tree** (`STALE_TREE`, exit 2, same
+> idiom as its existing refusals). `need_report=False` on purpose, since
+> `cmd_validate` never reads `report.json`, so the report-mtime and
+> tool-identity axes cannot false-refuse in CI; and it sits in `cmd_validate`
+> rather than `preconditions()`, which is frozen-fixture-driven and must stay
+> hermetic. Verified both directions with real exit codes: healthy main rc=0
+> (`PASS 1370/219/0`), a genuinely stale worktree rc=2 naming the tree,
+> `--allow-stale` overriding a REAL refusal, and `--selftest` still green with
+> all five pre-existing controls firing on their own reasons.
+> ★ **It caught real drift on its first production run** — `main` drifted a
+> THIRD time at 23:54 (27 objects, `system/synth/*`), corroborated independently
+> by `verify_objs_patched --verify-manifest` rc=1.
+> ⛔ **And my first version was wrong in the flattering direction**: it printed
+> "freshness refusal OVERRIDDEN" on a HEALTHY tree — asserting an override that
+> never happened — and I found it only because **my own test of it was vacuous**
+> (a concurrent repair had settled the tree, so the override path was never
+> exercised and the run returned exactly what I expected for the wrong reason).
 
 ## 0. Incident found and repaired during the survey
 
