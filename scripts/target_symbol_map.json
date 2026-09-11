@@ -17820,6 +17820,7 @@
  "0x8271e038": "??1?$ObjRefConcrete@VSfxInst@@VObjectDir@@@@UAA@XZ",
  "0x8271e128": "??_G?$ObjPtr@VSfx@@@@UAAPAXI@Z",
  "0x8271e178": "??_G?$ObjPtr@VSfxInst@@@@UAAPAXI@Z",
+ "0x8271e1c8": "?Poll@SynthEmitter@@UAAXXZ",
  "0x8271e3a0": "??1SynthEmitter@@UAA@XZ",
  "0x8271e558": "?ClassName@SynthEmitter@@UBA?AVSymbol@@XZ",
  "0x8271e588": "?Highlight@SynthEmitter@@UAAXXZ",
