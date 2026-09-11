@@ -147,8 +147,13 @@ const char *FileGetDriveBuf(const char *iFilepath, char *oBuf) {
 
 const char *FileGetDrive(const char *file) {
     static char drive[256];
-    MainThread();
-    return FileGetDriveBuf(file, drive);
+    const char *p = strchr(file, ':');
+    if (p != 0) {
+        strncpy(drive, file, p - file);
+        drive[p - file] = '\0';
+    } else
+        drive[0] = '\0';
+    return drive;
 }
 
 const char *FileGetPathBuf(const char *file, char *path) {
@@ -175,8 +180,25 @@ const char *FileGetPathBuf(const char *file, char *path) {
 
 const char *FileGetPath(const char *file) {
     static char static_path[256];
-    MainThread();
-    return FileGetPathBuf(file, static_path);
+    char *p2;
+    if (file != 0) {
+        strcpy(static_path, file);
+        p2 = static_path + strlen(static_path);
+        p2--;
+        while (p2 >= static_path && *p2 != '/' && *p2 != '\\') {
+            p2--;
+        }
+        if (p2 >= static_path) {
+            if ((p2 == static_path) || (p2[-1] == ':'))
+                p2[1] = '\0';
+            else
+                *p2 = '\0';
+            return static_path;
+        }
+    }
+    *static_path = '.';
+    static_path[1] = '\0';
+    return static_path;
 }
 
 const char *FileGetBaseBuf(const char *file, char *base) {
