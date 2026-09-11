@@ -551,16 +551,17 @@ DEF_DATA_FUNC(DataAsc) {
     return *str;
 }
 
+// Retail 0x8275F8B0 / rb3-Wii: only kDataSymbol goes through atoi (UncheckedStr,
+// no Str() call); the kDataString arm was DC3-newer. A string node falls to
+// LiteralFloat like retail.
 DEF_DATA_FUNC(DataInt) {
     const DataNode &n = array->Evaluate(1);
-    DataType t = n.Type();
-    if (t == kDataSymbol || t == kDataString) {
-        return atoi(n.Str());
-    } else if (t == kDataObject || t == kDataInt) {
+    if (n.Type() == kDataSymbol)
+        return atoi(n.UncheckedStr());
+    else if (n.Type() == kDataObject || n.Type() == kDataInt)
         return n.UncheckedInt();
-    } else {
+    else
         return (int)n.LiteralFloat(array);
-    }
 }
 
 DEF_DATA_FUNC(DataRound) { return Round(array->Evaluate(1).LiteralFloat()); }
@@ -777,6 +778,23 @@ DEF_DATA_FUNC(DataNotify) {
         array->Evaluate(i).Print(str, true);
     }
     TheDebug.Notify(str.c_str());
+    return 0;
+}
+
+// rb3-Wii DataFunc.cpp:734. Retail's body is `return 0` (folded by ICF onto
+// ??0DataNode@@QAA@XZ, which is where the registry points) -- the MILO_DEBUG
+// print is dev-only and MILO_DEBUG is force-defined tree-wide.
+DEF_DATA_FUNC(DataNotifyBeta) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    String str;
+    for (int i = 1; i < array->Size(); i++) {
+        array->Evaluate(i).Print(str, true);
+    }
+    // MILO_NOTIFY_BETA expands to `DebugBeta() << ...` natively and DebugBeta is
+    // not declared there (native gate FAILed 17/18 on it, lane W4-A); use the
+    // same notifier DataNotify uses.
+    TheDebug.Notify(str.c_str());
+#endif
     return 0;
 }
 
@@ -1192,6 +1210,23 @@ DEF_DATA_FUNC(DataHasAnySubStr) {
     for (int i = 0; i < a->Size(); i++) {
         const char *haystack = a->Str(i);
         if (strstr(array->Str(1), haystack))
+            return 1;
+    }
+    return 0;
+}
+
+// Retail 0x82761D08 / 0x82761D60 (absent from rb3-Wii DataFunc.cpp and from
+// DC3): `match_pattern` = StringMatchesFilter(Str(1), Str(2));
+// `match_any_pattern` = any of Array(2)'s strings matches Str(1).
+DEF_DATA_FUNC(DataMatchPattern) {
+    return StringMatchesFilter(array->Str(1), array->Str(2));
+}
+
+DEF_DATA_FUNC(DataMatchAnyPattern) {
+    DataArray *a = array->Array(2);
+    for (int i = 0; i < a->Size(); i++) {
+        const char *pattern = a->Str(i);
+        if (StringMatchesFilter(array->Str(1), pattern))
             return 1;
     }
     return 0;
@@ -1689,6 +1724,7 @@ void DataInitFuncs() {
     DataRegisterFunc("random", DataRandom);
     DataRegisterFunc("random_seed", DataRandomSeed);
     DataRegisterFunc("notify", DataNotify);
+    DataRegisterFunc("notify_beta", DataNotifyBeta);
     DataRegisterFunc("fail", DataFail);
     DataRegisterFunc("notify_once", DataNotifyOnce);
     DataRegisterFunc("switch", DataSwitch);
@@ -1726,6 +1762,8 @@ void DataInitFuncs() {
     DataRegisterFunc("dirname", DataDirname);
     DataRegisterFunc("has_substr", DataHasSubStr);
     DataRegisterFunc("has_any_substr", DataHasAnySubStr);
+    DataRegisterFunc("match_pattern", DataMatchPattern);
+    DataRegisterFunc("match_any_pattern", DataMatchAnyPattern);
     DataRegisterFunc("find_substr", DataFindSubStr);
     DataRegisterFunc("strlen", DataStrlen);
     DataRegisterFunc("str_elem", DataStrElem);

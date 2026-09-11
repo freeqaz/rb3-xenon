@@ -55,6 +55,7 @@ bool RecurseSuperClassesSearch(Symbol classSym, Symbol searchClass);
  * @returns True if child is a subclass of parent, false if not.
  */
 bool IsASubclass(Symbol child, Symbol parent);
+bool StringMatchesFilter(const char *, const char *);
 
 DataNode MakeFileList(const char *, bool, FileCallbackFunc *);
 DataNode MakeFileListFullPath(const char *);
