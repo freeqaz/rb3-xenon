@@ -12731,10 +12731,16 @@
    "name": "_DMeterDisplay",
    "address": "0x82738a48",
    "survivor": "??_DMeterDisplay@@QAAXXZ",
-   "folded": [
-    "??_DDxMesh@@QAAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??_DDxMesh@@QAAXXZ",
+     "lane": "W6-B 2026-09-11",
+     "class": "SURVIVOR_NAME_INHERITED_FROM_MAP",
+     "disposition": "withdrawn -- the T1 evidence proves 0x82738a48 IS DxMesh's ??_D, not that DxMesh folded into MeterDisplay's. Same defect as group 1013 (lane W5-D). The map row is renamed to ??_DDxMesh@@QAAXXZ in the same commit, so the one forgiven site is now genuinely correct."
+    }
+   ]
   },
   {
    "name": "1CSequentialReadMem",
