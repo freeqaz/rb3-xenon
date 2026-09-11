@@ -371,11 +371,24 @@ _TOOL_REPO = Path(__file__).resolve().parent.parent.parent
 #   this list against; the guard cannot enumerate it for you, because a file that
 #   shells out to a `bin/objdiff-cli` path built at runtime is not textually
 #   distinguishable from one that does not.
+# ⚠ `scripts/atexit_fuzzy_verify.py` (added lane ATEXIT-RULER, 2026-09-11) is the
+# THIRD omission from this list, and the worst-consequenced: it did not merely
+# report a percentage on the wrong ruler, it WROTE `verdict=COMPLETE` off one,
+# and COMPLETE closes a row. It was ported from DC3 on 2026-05-27 and never
+# revisited across the name_check flip. Measured on this tree, its `none` gate
+# fires on `??__FsFrames@@YAXXZ` at graded fuzzy 98.571 -- where the charged
+# sites are a real named callee divergence (retail destroys
+# `ObjDirPtr<ObjectDir>`, we destroy `vector<RecordedFrame>`), i.e. exactly the
+# class `none` cannot see.
+#
+# ⇒ The rule this keeps re-teaching: a tool that WRITES a verdict off a ruler
+#   belongs on this list before one that merely prints a number.
 _CONSUMERS = (
     "scripts/orchestrator/mcp_server.py",
     "scripts/analysis/diff_inspect.py",
     "scripts/analysis/stack_layout.py",
     "tools/crossing_worklist.py",
+    "scripts/atexit_fuzzy_verify.py",
 )
 
 
