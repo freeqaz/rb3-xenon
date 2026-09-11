@@ -63,6 +63,41 @@ already matched retail's 13-instruction form byte for byte: the budget was the
 `__forceinline` on the definition (one line) took the row to **99.93555** with
 **zero** insert/delete instructions remaining.
 
+### 1.0 ⛔ The force had to be SCOPED — the native gate caught what the match build cannot
+
+The pre-registered risk on step 1 was *"`__forceinline` may remove the
+out-of-line `?DataRegisterFunc@@` symbol"*. I checked it, saw the symbol still
+present in `build/45410914/src/system/obj/DataFunc.obj` and still scoring
+100.0, and recorded the risk as not materialised. **That check was right for
+the match build and wrong for the link**, because I checked the MSVC object and
+the defect lives in clang.
+
+`tools/native_build_gate.sh` then returned:
+
+```
+NATIVE_GATE_RESULT verdict=FAIL expected=18 verified=1 skipped=0 partial=0 failed=17 rc=1
+  undefined reference to `DataRegisterFunc(Symbol, DataNode (*)(DataArray*))'
+    Symbol.cpp:(.text._ZN6Symbol4InitEv+0x4a)   File.cpp:(.text.FileInit+0x76)
+    BlockMgr.cpp:(.text._ZN8BlockMgr4InitEv+0x118)   Dir.cpp   MessageTimer.cpp
+```
+
+clang accepts `__forceinline` in MS-compatibility mode and gives it **`inline`
+linkage**, so with every use inlined it emits **no out-of-line body at all**;
+MSVC emits one anyway. The ~8 other TUs that call `DataRegisterFunc` then have
+nothing to link against. 17 of 18 native targets failed.
+
+Fixed by scoping the force to the match build
+(`#ifdef HX_NATIVE` ⇒ empty, else `__forceinline`), which leaves the native
+build with an ordinary out-of-line function. Match build **byte-unchanged**:
+42,661 / 3,859,228 / 37.665863 %, `?DataInitFuncs@@` 100.0 and
+`?DataRegisterFunc@@` 100.0 both still.
+
+⇒ **A symbol-presence check on the MSVC obj does not clear a linkage risk.**
+This is exactly the class CLAUDE.md says the matching build is structurally
+incapable of catching — "a change that matches perfectly can still leave an
+undefined symbol that only a linker sees" — and it is the fifth time the gate
+has caught this family. Do not treat an inline-policy change as match-local.
+
 ### 1.1 Correcting W4-A's reading of this function
 
 W4-A recorded *"a `__forceinline` helper DID reproduce retail's distinct 8-byte

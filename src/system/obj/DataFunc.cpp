@@ -1641,7 +1641,20 @@ DEF_DATA_FUNC(DataMergeDirs) {
 
 void DataTermFuncs() { gDataFuncs.clear(); }
 
-__forceinline void DataRegisterFunc(Symbol s, DataFunc *func) {
+// Retail inlines this body at ALL 154 DataInitFuncs registration sites; without
+// the force MSVC's per-caller inline budget stops at site 69 of 154 and
+// ?DataInitFuncs@@ misaligns (lane W6-A: 71.45 vs 100).
+// ~ Scoped to the match build on purpose. clang gives __forceinline `inline`
+// linkage and then emits NO out-of-line body, so the ~8 other TUs that call
+// DataRegisterFunc (Symbol::Init, FileInit, BlockMgr::Init, Dir, MessageTimer,
+// ...) fail to link natively -- measured, native gate FAIL 17/18.
+#ifdef HX_NATIVE
+#define DATA_REGISTER_FUNC_FORCE
+#else
+#define DATA_REGISTER_FUNC_FORCE __forceinline
+#endif
+
+DATA_REGISTER_FUNC_FORCE void DataRegisterFunc(Symbol s, DataFunc *func) {
     const std::map<Symbol, DataFunc *>::iterator it = gDataFuncs.find(s);
     if (it != gDataFuncs.end() && it->second != func)
         MILO_FAIL("Can't register different func %s", s);
