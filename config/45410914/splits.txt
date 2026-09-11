@@ -1839,31 +1839,45 @@ CharFaceServo.cpp:
 
 GainEffect.cpp:
 	.pdata      start:0x8225B6B8 end:0x8225B6E0
+	.pdata      start:0x82261AE0 end:0x82261AE8
 	.text       start:0x82B6CAF8 end:0x82B6CDC0
+	.text       start:0x82C434B0 end:0x82C43540
 
 HeadsetPlaybackEffect.cpp:
 	.pdata      start:0x8225B6E0 end:0x8225B710
+	.pdata      start:0x82261AE8 end:0x82261AF0
 	.text       start:0x82B6CDC0 end:0x82B6D020
+	.text       start:0x82C43540 end:0x82C435D0
 
 EnvelopeGenerator.cpp:
 	.pdata      start:0x8225B710 end:0x8225B748
+	.pdata      start:0x82261AF0 end:0x82261AF8
 	.text       start:0x82B6D020 end:0x82B6D5C0
+	.text       start:0x82C435D0 end:0x82C43660
 
 PitchShiftEffect.cpp:
 	.pdata      start:0x8225B748 end:0x8225B790
+	.pdata      start:0x82261AF8 end:0x82261B00
 	.text       start:0x82B6D5C0 end:0x82B6DA3C
+	.text       start:0x82C43660 end:0x82C436F0
 
 system/synth_xbox/FxSendDistortion.cpp:
 	.pdata      start:0x8225AD10 end:0x8225ADB8
+	.pdata      start:0x82261A68 end:0x82261A70
 	.text       start:0x82B61488 end:0x82B61C40
+	.text       start:0x82C42E30 end:0x82C42EC0
 
 system/synth_xbox/FxSendEQ.cpp:
 	.pdata      start:0x8225AF68 end:0x8225B010
+	.pdata      start:0x82261A80 end:0x82261A88
 	.text       start:0x82B630C0 end:0x82B638D0
+	.text       start:0x82C42FE0 end:0x82C43070
 
 system/synth_xbox/FxSendChorus.cpp:
 	.pdata      start:0x8225AE60 end:0x8225AF00
+	.pdata      start:0x82261A78 end:0x82261A80
 	.text       start:0x82B62450 end:0x82B62C60
+	.text       start:0x82C42F50 end:0x82C42FE0
 
 system/synth_xbox/FxSendFlanger.cpp:
 	.pdata      start:0x8225B010 end:0x8225B058
@@ -2193,7 +2207,9 @@ FilterCoeffs.cpp:
 
 HeadsetXferEffect.cpp:
 	.pdata      start:0x8225B578 end:0x8225B5B8
+	.pdata      start:0x82261AD8 end:0x82261AE0
 	.text       start:0x82B6B73C end:0x82B6BA78
+	.text       start:0x82C43420 end:0x82C434B0
 
 StreamReceiver360.cpp:
 	.pdata      start:0x8225B5B8 end:0x8225B660
@@ -2874,7 +2890,9 @@ system/rndobj/Rnd.cpp:
 
 MeterEffect.cpp:
 	.pdata      start:0x8225B558 end:0x8225B578
+	.pdata      start:0x82261AD0 end:0x82261AD8
 	.text       start:0x82B6B4F0 end:0x82B6B73C
+	.text       start:0x82C43390 end:0x82C43420
 
 UI.cpp:
 	.pdata      start:0x821FC240 end:0x821FC250
@@ -3070,7 +3088,9 @@ UIListWidget.cpp:
 
 system/synth_xbox/Synth.cpp:
 	.pdata      start:0x8225A590 end:0x8225AA38
+	.pdata      start:0x82261A60 end:0x82261A68
 	.text       start:0x82B59F78 end:0x82B5E040
+	.text       start:0x82C42DA0 end:0x82C42E30
 
 CharDriver.cpp:
 	.pdata      start:0x82201D90 end:0x82201D98
@@ -6239,7 +6259,9 @@ Emitter.cpp:
 
 system/synth_xbox/FxSendDelay.cpp:
 	.pdata      start:0x8225ADB8 end:0x8225AE60
+	.pdata      start:0x82261A70 end:0x82261A78
 	.text       start:0x82B61C40 end:0x82B62450
+	.text       start:0x82C42EC0 end:0x82C42F50
 
 ADSR.cpp:
 	.pdata      start:0x8223A158 end:0x8223A160
@@ -6973,7 +6995,9 @@ Mic.cpp:
 
 FxSendWah.cpp:
 	.pdata      start:0x8225B0E0 end:0x8225B188
+	.pdata      start:0x82261A88 end:0x82261A90
 	.text       start:0x82B64298 end:0x82B64C20
+	.text       start:0x82C43070 end:0x82C43100
 
 Lit.cpp:
 	.pdata      start:0x822115D8 end:0x822115F0
@@ -7122,9 +7146,11 @@ system/rnddx9/ShaderMgr.cpp:
 
 Voice.cpp:
 	.pdata      start:0x8225B188 end:0x8225B2D0
-	.pdata      start:0x822619E0 end:0x82261B00
+	.pdata      start:0x822619E0 end:0x82261A60
+	.pdata      start:0x82261A90 end:0x82261AD0
 	.text       start:0x82B64C20 end:0x82B66C50
-	.text       start:0x82C42958 end:0x82C436F0
+	.text       start:0x82C42958 end:0x82C42DA0
+	.text       start:0x82C43100 end:0x82C43390
 
 BinStream.cpp:
 	.pdata      start:0x82242388 end:0x82242420
