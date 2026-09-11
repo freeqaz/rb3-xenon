@@ -2830,7 +2830,13 @@
     "??0VertexBufferData@DxMesh@@QAA@XZ",
     "??0VocalEvent@MidiParser@@QAA@XZ",
     "??0_Bit_iterator_base@stlpmtx_std@@QAA@XZ",
+    "?DataDisableNotify@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "?DataFail@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "?DataFilterNotify@@YA?AVDataNode@@PAVDataArray@@@Z",
     "?DataNop@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "?DataNotify@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "?DataNotifyBeta@@YA?AVDataNode@@PAVDataArray@@@Z",
+    "?DataNotifyOnce@@YA?AVDataNode@@PAVDataArray@@@Z",
     "?ForeachKeyframe@RndPropAnim@@QAA?AVDataNode@@PBVDataArray@@@Z",
     "?Handle@HolmesInput@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
     "?OnFileMerged@HamDirector@@IAA?AVDataNode@@PAVDataArray@@@Z",
@@ -2849,7 +2855,7 @@
     "?OnSetSize@RndTex@@IAA?AVDataNode@@HH@Z",
     "?OnShowFontPicker@UIFontImporter@@IAA?AVDataNode@@PAVDataArray@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 40, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 39 folded spelling(s), 11 census sites over 3 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 40, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 39 folded spelling(s), 11 census sites over 3 functions. | Lane W6-A, hand-verified T1 on retail bytes (2026-09-11). Retail's ?DataInitFuncs@@ registry stores a relocation to the survivor address at all six of the notify/notify_beta/fail/notify_once/disable_notify/filter_notify registration sites. Retail bytes at 0x8228d358 decode to 39600000 91630000 91630004 4e800020 (li r11,0; stw r11,0(r3); stw r11,4(r3); blr) and each folded spelling's COMDAT in our compiled DataFunc.obj is that same 16-byte body with relocs=[] -- byte-IDENTICAL AND relocation-identical, which is the linker's own /OPT:ICF condition. Nothing is masked (there are no relocations), so the flat-T1 vacuity caveat does not apply. The identity is discriminating, not trivial: the sibling ??0DataNode@@QAA@PAV0@@Z is 39600002 90830000 ... and differs. Prerequisite b79191fd gated the five live bodies to retail's `return 0`; before it these spellings were NOT identical and the membership would have been fabricated."
   },
   {
    "name": "MemOrPoolFreeSTL",
@@ -73415,6 +73421,15 @@
     "?HasAsset@AssetMgr@@QBA_NVSymbol@@@Z"
    ],
    "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+  },
+  {
+   "name": "OnFileGetBase",
+   "address": "0x82517120",
+   "survivor": "?OnFileGetBase@@YA?AVDataNode@@PAVDataArray@@@Z",
+   "folded": [
+    "?DataBasename@@YA?AVDataNode@@PAVDataArray@@@Z"
+   ],
+   "evidence": "Lane W6-A, hand-verified T1 (2026-09-11); proof first established by lane W5-C (docs/decomp/FILEGETBASE_2026-09-11.md section 6) and reproduced byte-for-byte here. Our ?DataBasename@@ COMDAT (DataFunc.obj) and our ?OnFileGetBase@@ COMDAT (os/File.obj) are both 72 B, sha256 636b3dd852dde8dc, with the IDENTICAL three relocations compared BY TARGET NAME: (28,?Str@DataNode@@QBAPBDPBVDataArray@@@Z), (32,FileGetBase), (44,??0DataNode@@QAA@PBD@Z). Byte- AND relocation-identical is the linker's own /OPT:ICF condition, and retail's body at 0x82517120 IS that COMDAT. Corroborated map-independently by TWO retail registration tables: File.s registers \"file_get_base\"->fn_82517120 and DataFunc.s registers \"basename\"->fn_82517120 (W5-C section 2, with a reproduced known-answer control for the DataFunc.s off-by-one). W5-C proved this and deliberately did NOT install it because ?DataInitFuncs@@ was misaligned and its one aligned row pitched retail's symbol against a base-side immediate 84, which no alias can forgive; e17a776c realigned the function and the site is now a symbol-vs-symbol diff_arg charge, so the alias finally forgives a real charge."
   }
  ]
 }
