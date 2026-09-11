@@ -197,8 +197,26 @@ ARGT = ('Register', 'Signed', 'Unsigned', 'Other', 'BranchDest')
 
 
 def side_sig(side, regmap=None):
-    """opcode + non-symbol args.  Symbol args are relocations => masked by
-    functionRelocDiffs=none, so they must NOT participate (see header)."""
+    """opcode + non-symbol args.  Symbol args are relocations and are EXCLUDED so
+    that ONE defect replicated across template instantiations still groups into a
+    single family (see header).
+
+    ⚠ THE EXCLUSION'S ORIGINAL RATIONALE IS DEAD -- do not re-derive anything
+    from it.  It used to read "Symbol args are masked by functionRelocDiffs=none,
+    so dropping them is free".  This project shipped
+    `functionRelocDiffs=name_check` on 2026-08-12 (`d04c83df`), and
+    crossing_worklist -- the module that produces the diffs fed to this function
+    -- now resolves the GRADED ruler at runtime, so those diffs DO carry charged
+    Symbol args.  The GROUPING rationale above survives on its own merits; the
+    "it costs nothing" one does not.
+
+    CONSEQUENCE, deliberately left unfixed here because changing the shape key
+    changes every ranking this tool has ever produced and needs its own
+    validated lane: a row whose ONLY charge is a relocation NAME -- the
+    wrong-callee class, which CLAUDE.md calls the most valuable class of real fix
+    we have -- renders IDENTICALLY on both sides and is invisible to this
+    ranker.  See CONTROL 5, whose tolerance of exactly that case still cites the
+    dead rationale."""
     if not side:
         return None
     out = []
@@ -418,7 +436,19 @@ def cmd_selftest(a):
             if t is not None and t == b:
                 blind[repr(sh)] += 1
     # A blind shape in ONE row cannot form a family, so it is harmless noise (it
-    # is the residual Symbol-only `replace`, which the ruler masks anyway).  The
+    # is the residual Symbol-only `replace`).
+    #
+    # ⚠ THAT TOLERANCE IS STILL CORRECT, BUT ITS STATED REASON IS DEAD (lane
+    # SCRIPT-ROT, 2026-09-11).  This comment used to end "...which the ruler masks
+    # anyway".  The ruler does NOT mask it: `functionRelocDiffs=name_check` shipped
+    # 2026-08-12 (`d04c83df`) and CHARGES a relocation-name difference, and
+    # crossing_worklist now resolves the graded ruler at runtime.  So a single-row
+    # blind shape is not a free pass -- it is a row whose only charge is a
+    # relocation NAME, i.e. the wrong-callee class, sitting unranked and
+    # unreported.  The >= min_rows FAILURE below is unaffected and still fires
+    # correctly; what was wrong was only the reason for waving the singletons
+    # through.  Treat the singleton count printed below as a WORKLIST, not as
+    # noise.  See side_sig's docstring.  The
     # hazard is a blind shape spanning >= 2 rows: that MANUFACTURES a family out
     # of rows sharing nothing but an opcode.  Scope the failure to that.
     bad = {k: n for k, n in blind.items() if n >= a.min_rows}
