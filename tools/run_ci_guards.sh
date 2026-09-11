@@ -53,6 +53,78 @@
 # Every guard is run even after an earlier one fails; failures are summarised at
 # the end. One guard's failure must never swallow another's.
 #
+# ...AND A FOURTH, WHICH IS NOT ABOUT THE REPO AT ALL
+# ---------------------------------------------------
+#   MISSPEC  the REGISTRY BELOW is mis-specified        -> rc=3, and NO guard runs
+#
+# The three outcomes above are claims about the repo: a guard ran and vouched,
+# objected, or couldn't. A mis-ordered registry is none of those -- nothing was
+# measured, and the thing that is broken is this file. It gets its own code
+# rather than being folded into an existing one, for a reason that is about
+# AFFORDANCE and is worth stating:
+#
+#   * rc=1 FAIL would assert that the REPO is broken. It isn't; we never looked.
+#   * rc=2 BLOCKED is the environmental bucket -- lock held, deps missing, tree
+#     unsettled -- and this runner's own docs tell you to shrug and re-run when
+#     the tree is quiet. A mis-specification is NOT transient and re-running
+#     fixes it exactly never. Filing it under the code people have learned to
+#     re-run is how it would get re-run forever.
+#
+# Same move `native_build_gate.sh` made when it split rc=3 out of rc=0 for "ran
+# but does NOT vouch": a state that was being collapsed into a neighbour gets
+# its own code the moment the two want different reactions from you.
+#
+# THE ORDERING INVARIANT (why the registry order is not cosmetic)
+# --------------------------------------------------------------
+# `symbols_fixpoint_guard.py` forces a re-split to do its job, and that forced
+# split rm's `build/<v>/target_symbol_renames.stamp` and then builds only
+# `build/<v>/config.json` -- the SPLIT edge, which stops one edge short of the
+# PRE-compile `obj_target_symbol_renamer`. So it hands back a tree whose dtk
+# target objs carry dtk's anonymous `fn_<addr>` symbols instead of MSVC mangled
+# names. That is the FOLDPROVE-2 state CLAUDE.md documents, and its signature is
+# the dangerous one: every retail mangled-name lookup answers "absent", so a
+# guard reading those names does not error -- it returns a confident NEGATIVE.
+# A vacuity that AGREES WITH YOUR PRIOR is the hardest kind to catch.
+#
+# ⚠ `scripts/verify_objs_patched.py` does NOT cover this. It asserts the six
+# POST-compile passes are at a fixed point. The renamer is PRE-compile and is
+# not in its population, so the tree can be a verified patched fixed point and
+# still be de-renamed.
+#
+# Hence two TRAITS on every registry row, and one assertion over them:
+#
+#   needs-renamed  this guard reads retail MANGLED NAMES out of the dtk-split
+#                  target objs. On a pre-renamer tree its result is VACUOUS (or,
+#                  if it is honest enough to notice, a spurious BLOCKED).
+#   derenames      this guard LEAVES the target objs pre-renamer.
+#
+#   ASSERTION: no `needs-renamed` guard may be scheduled after any `derenames`
+#   guard. Checked over the whole declared registry, before anything runs.
+#
+# The order today satisfies this BY ACCIDENT, not by construction -- 08/09/10
+# read names, 11/12 de-rename, and nothing but luck kept them in that order. A
+# comment asking the next person to be careful is not enforcement; this repo's
+# own record is that written warnings lose to a plausible-looking reorder. So
+# the constraint is given to the data as a property and asserted mechanically.
+#
+# ⚠ It is asserted over the DECLARED registry, NOT over the filtered schedule of
+# one invocation. If it only checked what this run will execute, `--fast` --
+# which skips both de-renaming guards, and is the invocation everyone actually
+# types -- would go green over a mis-ordered registry forever. A gate that
+# passes in the common case and fires only in the rare one is not a gate.
+#
+# ⛔ ON VIOLATION THE RUNNER FAILS; IT DOES NOT REORDER. Silently repairing a
+# mis-specification would hide that somebody introduced one, and the next person
+# to read the registry would see an order the runner does not actually use.
+#
+# ⚠ KNOWN SCOPE LIMIT, stated rather than left to be discovered: this invariant
+# constrains ONLY the renamer hazard. It says nothing about how long a guard
+# holds the shared ninja lock, so it would happily PERMIT moving the lock-taking
+# `native_link_gate` (18 native targets, ~105s warm) earlier in the order. On a
+# busy box that is a real regression in contention and this check would not
+# object. `native_link_gate` is last DELIBERATELY, for lock cost, not safety --
+# do not "optimise" it earlier.
+#
 # PER-GUARD rc SEMANTICS THAT ARE EASY TO GET BACKWARDS (all three are real)
 # -------------------------------------------------------------------------
 #  * `icf_alias_finder.py --validate` exits 2 [STALE_TREE] on an unsettled tree.
@@ -115,7 +187,9 @@ while [ $# -gt 0 ]; do
         --logdir)  LOGDIR="${2:-}"; shift 2 ;;
         --fast)    FAST=1; shift ;;
         --list)    LIST=1; shift ;;
-        -h|--help) sed -n '2,80p' "$0"; exit 0 ;;
+        # Print the WHOLE leading comment block, however long it grows. The old
+        # fixed `sed -n '2,80p'` silently truncated the moment the header did.
+        -h|--help) awk 'NR>1 && !/^#/{exit} NR>1{sub(/^#[ ]?/,""); print}' "$0"; exit 0 ;;
         *) echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
     esac
 done
@@ -129,57 +203,140 @@ done
 #                 nothing, which is NOT a pass), else FAIL.  The convention used
 #                 by the "is this retired pass still redundant?" guards.
 #       native    parse NATIVE_GATE_RESULT; require verdict=PASS AND skipped=0
-declare -a G_ID G_MODE G_SPEED G_DESC G_CMD
-add() { G_ID+=("$1"); G_MODE+=("$2"); G_SPEED+=("$3"); G_DESC+=("$4"); G_CMD+=("$5"); }
+#
+# traits: comma-separated, `-` for none. See THE ORDERING INVARIANT above.
+#       needs-renamed  reads retail MANGLED NAMES from the dtk-split target objs
+#                      => VACUOUS on a pre-renamer tree
+#       derenames      leaves the target objs pre-renamer
+declare -a G_ID G_MODE G_SPEED G_TRAITS G_DESC G_CMD
+add() { G_ID+=("$1"); G_MODE+=("$2"); G_SPEED+=("$3"); G_TRAITS+=("$4")
+        G_DESC+=("$5"); G_CMD+=("$6"); }
 
-add grep_binary            plain     fast \
+# Rows 1-7 are fixture-driven: each synthesises its own COFF symbol list, binary
+# probe or address->name dict rather than reading the build tree, so a
+# de-renamed tree cannot affect them. That is measured, not assumed -- it is why
+# they are `-` and not defensively tagged. Over-tagging is its own defect: it
+# would forbid orderings that are perfectly safe.
+add grep_binary            plain     fast -   \
     "binary-scan methods can still FIND things in binaries (a blind grep yields only false negatives)" \
     "python3 tools/grep_binary_guard.py -v"
-add source_category_self   plain     fast \
+add source_category_self   plain     fast -   \
     "progress_category classifier still DISCRIMINATES (23 known answers, 9 negatives)" \
     "python3 tools/source_category.py selftest"
-add source_category_audit  plain     fast \
+add source_category_audit  plain     fast -   \
     "every declared object's category agrees with its source PATH" \
     "python3 tools/source_category.py audit"
-add scope_map_selftest     plain     fast \
+add scope_map_selftest     plain     fast -   \
     "scope-cache gate fails stale/dead fixtures AND passes the correct one (the control is half the evidence)" \
     "python3 tools/scope_map.py selftest"
-add reloc_symidx           plain     fast \
+add reloc_symidx           plain     fast -   \
     "COFF relocation SymbolTableIndex resolves through AUX records (only 20.99% resolve without the correction)" \
     "python3 tools/reloc_symidx_guard.py -v"
-add icf_fold_safe          plain     fast \
+add icf_fold_safe          plain     fast -   \
     "ICF fold-poisoning: the unsafe name comparison RAISES instead of conflating folded with wrong" \
     "python3 tools/test_icf_fold_safe.py"
-add icf_fold_safe_break    selfbreak fast \
+add icf_fold_safe_break    selfbreak fast -   \
     "...and prove THAT guard can fail (polarity: rc=0 == the proof SUCCEEDED)" \
     "python3 tools/test_icf_fold_safe.py --self-break"
-add icf_alias_validate     refusable fast \
+# needs-renamed: resolves every alias-group member against the NAMES live in the
+# target objs. It is honest enough to notice (STALE_TREE -> exit 2 -> BLOCKED),
+# so here the de-renamed tree costs a real verdict rather than faking one --
+# still a loss, since this is the only defence scripts/symbol_aliases.json has.
+add icf_alias_validate     refusable fast needs-renamed \
     "every ICF alias group in scripts/symbol_aliases.json is grounded (the ONLY defence of that file)" \
     "python3 tools/icf_alias_finder.py --validate"
-add objdiff_map_cache      property  fast \
+# needs-renamed: its probe project points at the LIVE target/base objs, and the
+# property it measures is whether emptying the alias map changes the report. On
+# a de-renamed tree the map's mangled names match nothing, both legs agree, and
+# the probe stops measuring the cache key -- silently.
+add objdiff_map_cache      property  fast needs-renamed \
     "the consumed objdiff keys its report cache on the ALIAS MAP (~25s; guards the deleted icf_aliases_cache_purged edge)" \
     "python3 tools/check_objdiff_map_cache.py ${CI_GUARDS_OBJDIFF:+--objdiff $CI_GUARDS_OBJDIFF}"
-add objdiff_eh_prefix      property  fast \
+# needs-renamed: picks a witness from report.json and diffs target-vs-base BY
+# MANGLED SYMBOL NAME. Pre-renamer, the target side has no such symbol.
+add objdiff_eh_prefix      property  fast needs-renamed \
     "the consumed objdiff bounds the MSVC EH funclet prefix itself (guards the retired obj_eh_boundary_patcher)" \
     "python3 tools/check_objdiff_eh_prefix.py ${CI_GUARDS_OBJDIFF:+--objdiff $CI_GUARDS_OBJDIFF}"
-add symbols_fixpoint       refusable SLOW \
+# derenames: force_split() rm's the renamer stamp and builds only config.json --
+# the SPLIT edge, one edge short of the PRE-compile renamer. The tree is handed
+# back pre-renamer and STAYS that way after this runner exits.
+add symbols_fixpoint       refusable SLOW derenames \
     "config/<v>/symbols.txt is at dtk's FIXED POINT (forces its own re-split, ~10s+)" \
     "python3 tools/symbols_fixpoint_guard.py -v --version $VERSION"
-add symbols_fixpoint_break selfbreak SLOW \
+# derenames: same forced split, and additionally PLANTS a symbols.txt violation.
+add symbols_fixpoint_break selfbreak SLOW derenames \
     "...and prove THAT guard can fail (polarity: rc=0 == the proof SUCCEEDED)" \
     "python3 tools/symbols_fixpoint_guard.py -v --self-break --version $VERSION"
-add native_link_gate       native    SLOW \
+# Reads no retail names, so the invariant permits it ANYWHERE -- but it builds 18
+# native targets and holds the shared ninja lock while it does. LAST ON PURPOSE.
+add native_link_gate       native    SLOW -   \
     "the native build LINKS -- the only instrument here that can see ODR/undefined-symbol breaks" \
     "./tools/native_build_gate.sh ."
 
 in_csv() { case ",$2," in *",$1,"*) return 0 ;; *) return 1 ;; esac; }
 
+# ---- the ordering invariant -------------------------------------------------
+# Walk the DECLARED registry once. Remember the first `derenames` guard seen;
+# every later `needs-renamed` guard is a violation, reported against it (the
+# earliest de-renamer is the one that would actually have poisoned the tree).
+MISSPEC=()
+_first_deren=-1
+for i in "${!G_ID[@]}"; do
+    if in_csv derenames "${G_TRAITS[$i]}" && [ "$_first_deren" -lt 0 ]; then
+        _first_deren=$i
+    fi
+    if in_csv needs-renamed "${G_TRAITS[$i]}" && [ "$_first_deren" -ge 0 ]; then
+        MISSPEC+=("[$((_first_deren+1))] ${G_ID[$_first_deren]} (derenames) is scheduled BEFORE [$((i+1))] ${G_ID[$i]} (needs-renamed)")
+    fi
+done
+
+# Printed to stderr -- this is an error about THIS FILE, and must survive a
+# caller that only greps stdout. The machine-readable line still goes to stdout
+# so anything parsing CI_GUARDS_RESULT sees a verdict it does not recognise
+# rather than seeing nothing at all.
+print_misspec() {
+    {
+        echo
+        echo "=== REGISTRY MIS-SPECIFIED -- NO GUARD WAS RUN ==="
+        for v in "${MISSPEC[@]}"; do echo "  ⛔ $v"; done
+        echo
+        echo "  A 'derenames' guard forces a re-split that leaves the dtk target objs"
+        echo "  carrying anonymous fn_<addr> symbols (the renamer is a PRE-compile step"
+        echo "  and the forced split stops one edge short of it). Any later guard that"
+        echo "  reads retail MANGLED NAMES then looks them up in a tree where they are"
+        echo "  all absent -- and reports a confident NEGATIVE, not an error."
+        echo
+        echo "  Fix the ORDER in the registry (move the needs-renamed guard earlier, or"
+        echo "  the derenaming one later). This runner will NOT reorder for you: doing"
+        echo "  so would hide that the registry is wrong and leave you reading an order"
+        echo "  that is not the one being executed."
+        echo "  If a needs-renamed guard genuinely MUST run after a de-renaming one,"
+        echo "  that is a deliberate decision to pay for a rebuild -- add an explicit"
+        echo "  restore step and re-tag; do not relax the assertion."
+    } >&2
+}
+
 if [ "$LIST" -eq 1 ]; then
-    printf "%-26s %-10s %-5s %s\n" ID MODE SPEED DESCRIPTION
+    printf "%-26s %-10s %-5s %-14s %s\n" ID MODE SPEED TRAITS DESCRIPTION
     for i in "${!G_ID[@]}"; do
-        printf "%-26s %-10s %-5s %s\n" "${G_ID[$i]}" "${G_MODE[$i]}" "${G_SPEED[$i]}" "${G_DESC[$i]}"
+        printf "%-26s %-10s %-5s %-14s %s\n" "${G_ID[$i]}" "${G_MODE[$i]}" \
+               "${G_SPEED[$i]}" "${G_TRAITS[$i]}" "${G_DESC[$i]}"
     done
+    # --list stays USEFUL when the registry is broken -- you print the table
+    # precisely to diagnose it -- so the table comes out first and the verdict
+    # is carried by the exit code.
+    if [ "${#MISSPEC[@]}" -gt 0 ]; then
+        print_misspec
+        echo "CI_GUARDS_RESULT verdict=MISSPEC total=0 passed=0 failed=0 blocked=0 skipped=0 rc=3"
+        exit 3
+    fi
     exit 0
+fi
+
+if [ "${#MISSPEC[@]}" -gt 0 ]; then
+    print_misspec
+    echo "CI_GUARDS_RESULT verdict=MISSPEC total=0 passed=0 failed=0 blocked=0 skipped=0 rc=3"
+    exit 3
 fi
 
 mkdir -p "$LOGDIR" || { echo "cannot create logdir $LOGDIR" >&2; exit 2; }
@@ -194,11 +351,11 @@ total=0; passed=0; failed=0; blocked=0; skipped=0
 # Explicitly empty, not merely declared: `${#arr[@]:-0}` is a BAD SUBSTITUTION in
 # bash (caught by actually running the red leg -- the FAILED: line silently never
 # printed, which would have hidden exactly what this runner exists to surface).
-FAILED_IDS=(); BLOCKED_IDS=()
+FAILED_IDS=(); BLOCKED_IDS=(); DERENAMED_BY=()
 
 for i in "${!G_ID[@]}"; do
     id="${G_ID[$i]}"; mode="${G_MODE[$i]}"; speed="${G_SPEED[$i]}"
-    desc="${G_DESC[$i]}"; cmd="${G_CMD[$i]}"
+    traits="${G_TRAITS[$i]}"; desc="${G_DESC[$i]}"; cmd="${G_CMD[$i]}"
 
     if [ -n "$ONLY" ] && ! in_csv "$id" "$ONLY"; then skipped=$((skipped+1)); continue; fi
     if [ -n "$SKIP" ] && in_csv "$id" "$SKIP"; then
@@ -238,6 +395,9 @@ for i in "${!G_ID[@]}"; do
     eval "$cmd" > "$log" 2>&1
     rc=$?
     secs=$((SECONDS - t0))
+    # The ordering invariant protects guards WITHIN this run. It cannot protect
+    # whatever you run NEXT, because the de-renamed tree outlives this process.
+    in_csv derenames "$traits" && DERENAMED_BY+=("$id")
 
     note=""
     case "$mode" in
@@ -326,6 +486,16 @@ fi
 echo "=== SUMMARY ==="
 [ "${#FAILED_IDS[@]}"  -gt 0 ] && echo "FAILED:  ${FAILED_IDS[*]}"
 [ "${#BLOCKED_IDS[@]}" -gt 0 ] && echo "BLOCKED: ${BLOCKED_IDS[*]} (could not run / does not vouch -- NOT passes)"
+if [ "${#DERENAMED_BY[@]}" -gt 0 ]; then
+    echo "⚠ TREE LEFT PRE-RENAMER by: ${DERENAMED_BY[*]}"
+    echo "  Its forced re-split removed the renamer stamp and stopped one edge short"
+    echo "  of the PRE-compile obj_target_symbol_renamer, so the dtk target objs now"
+    echo "  carry anonymous fn_<addr> symbols. ANY retail mangled-name lookup you run"
+    echo "  next -- by hand or by tool -- will answer \"absent\" and look like a clean"
+    echo "  negative. scripts/verify_objs_patched.py will NOT catch this (it covers"
+    echo "  the six POST-compile passes; the renamer is not one of them)."
+    echo "  Build before measuring:  ./tools/ninja-locked"
+fi
 echo "logs:    $LOGDIR"
 # The one machine-readable surface. Same shape as NATIVE_GATE_RESULT, and for
 # the same reason: the prose verdict is easy to relay wrongly.
