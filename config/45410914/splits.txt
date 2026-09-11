@@ -5310,7 +5310,6 @@ Sfx.cpp:
 	.pdata      start:0x822377E8 end:0x82237878
 	.pdata      start:0x822391B0 end:0x82239410
 	.pdata      start:0x82239418 end:0x82239658
-	.pdata      start:0x82239668 end:0x82239670
 	.pdata      start:0x82239710 end:0x82239730
 	.text       start:0x826FE080 end:0x826FE4A8
 	.text       start:0x826FE4A8 end:0x826FE514
@@ -5323,7 +5322,6 @@ Sfx.cpp:
 	.text       start:0x8271A0C8 end:0x8271C1F0
 	.text       start:0x8271C254 end:0x8271E128
 	.text       start:0x8271E174 end:0x8271E178
-	.text       start:0x8271E1C4 end:0x8271E3A0
 	.text       start:0x8271ECA4 end:0x8271EEF0
 
 PropSync.cpp:
@@ -6225,12 +6223,12 @@ WebSvcMgr.cpp:
 
 Emitter.cpp:
 	.pdata      start:0x82239658 end:0x82239660
-	.pdata      start:0x82239660 end:0x82239668
+	.pdata      start:0x82239660 end:0x82239670
 	.pdata      start:0x82239670 end:0x822396F8
 	.pdata      start:0x822396F8 end:0x82239710
 	.pdata      start:0x82239730 end:0x82239788
 	.text       start:0x8271E128 end:0x8271E174
-	.text       start:0x8271E178 end:0x8271E1C4
+	.text       start:0x8271E178 end:0x8271E3A0
 	.text       start:0x8271E3A0 end:0x8271EC2C
 	.text       start:0x8271EC2C end:0x8271ECA4
 	.text       start:0x8271EEF0 end:0x8271F550
