@@ -324,31 +324,24 @@ def test_batch_check_does_not_select_it(db, monkeypatch, tmp_path):
     assert iu_sym not in fake.symbols, "batch_check selected the IU row"
 
 
-def test_atexit_verify_does_not_select_it(db, monkeypatch, tmp_path):
-    """Drives the REAL scripts/atexit_fuzzy_verify.py.
-
-    With --mark-at-limit this tool stamps AT_LIMIT, i.e. certifies a floor.
-    Certifying a floor against a body not established to be the function is the
-    2026-08-13 mis-certification exactly. Positive control as above.
-    """
-    conn = sqlite3.connect(db)
-    conn.execute("DELETE FROM functions WHERE id NOT IN (1, 4)")
-    conn.execute("UPDATE functions SET unit='default/Only', "
-                 "symbol='??__F' || CAST(id AS TEXT) || '@@YAXXZ'")
-    conn.commit()
-    iu_sym, open_sym = (conn.execute(
-        "SELECT symbol FROM functions WHERE id=?", (i,)).fetchone()[0] for i in (4, 1))
-
-    av = _load_real("_laneS_atexit", "atexit_fuzzy_verify.py")
-    fake = _FakeRun()
-    monkeypatch.setattr(av, "DB_PATH", db)
-    monkeypatch.setattr(av, "OBJDIFF_CLI", tmp_path)
-    monkeypatch.setattr(av, "subprocess", type("S", (), {"run": fake,
-                                                         "TimeoutExpired": TimeoutError})())
-    av.verify(None, apply=False, mark_at_limit=True)
-
-    assert open_sym in fake.symbols, "positive control failed: no row was reached"
-    assert iu_sym not in fake.symbols, "atexit_fuzzy_verify selected the IU row"
+# ⛔ `test_atexit_verify_does_not_select_it` REMOVED (lane W4-F, 2026-09-11).
+# Its subject, `scripts/atexit_fuzzy_verify.py`, is retired: its only unique
+# capability was a promotion on the permissive `functionRelocDiffs=none` ruler
+# (lane ATEXIT-RULER, 13015e35), and every legitimate promotion it could make is
+# already made by `scripts/sync_match_percent.py --promote`, which is covered by
+# its own leg in this file.
+#
+# ⚠ What that test guarded is NOT lost, and this note exists so nobody
+# reintroduces the gap: the tool's `--mark-at-limit` stamped AT_LIMIT (a FLOOR
+# certification) and the test proved it skipped IDENTITY_UNESTABLISHED rows,
+# whose bodies are not established to be those functions -- the 2026-08-13
+# mis-certification. `--mark-at-limit` was deliberately NOT ported to any
+# surviving tool (see docs/decomp/TOOLING4_2026-09-11.md): it stamped AT_LIMIT on
+# `fuzzy >= 95` atexit rows with `verdict_reason='atexit_relocation_noise'`,
+# which is precisely the label MPNGAP-1 refuted -- "an AT_LIMIT label on a row
+# whose only penalties are relocation-name args carries no information". 0 rows
+# in decomp.db ever carried that reason. Porting it would have re-armed a
+# vein-closing verdict nobody had used.
 
 
 def _shipped_ghidra_export_sql() -> str:
