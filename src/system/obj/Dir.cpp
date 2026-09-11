@@ -992,12 +992,20 @@ void ObjectDir::Iterate(DataArray *arr, bool b) {
         s2 = a2->Sym(0);
         s8 = a2->Sym(1);
     }
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+    // rb3-Wii: `#ifdef MILO_DEBUG` -- retail 0x8274FCE8 has no SystemConfig
+    // lookup here; MILO_DEBUG is force-defined tree-wide (house pattern).
     static DataArray *objects = SystemConfig("objects");
     objects->FindArray(s2);
+#endif
     DataNode *var = arr->Var(3);
     DataNode varNode(*var);
+#ifdef HX_NATIVE
+    // DC3-newer (superclass memo); retail calls IsASubclass per object.
     Symbol first;
+#endif
     for (ObjDirItr<Hmx::Object> it(this, b); it != nullptr; ++it) {
+#ifdef HX_NATIVE
         bool bbb;
                 first = it->ClassName();
         std::pair<Symbol, Symbol> key = std::make_pair(first, s2);
@@ -1008,6 +1016,9 @@ void ObjectDir::Iterate(DataArray *arr, bool b) {
             sSuperClassMap[key] = bbb;
         } else
             bbb = superclassIt->second;
+#else
+        bool bbb = IsASubclass(it->ClassName(), s2);
+#endif
         if (bbb && (s8.Null() || it->Type() == s8)) {
             *var = &*it;
             for (int i = 4; i < arr->Size(); i++) {
