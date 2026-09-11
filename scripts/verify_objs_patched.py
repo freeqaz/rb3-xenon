@@ -156,19 +156,92 @@ Ported from dc3 (`2f35703d0`) and deliberately not identical:
     sibling patch_guard.py's -- noted here because bare `ninja` on this repo
     races the SPLIT->configure loop that tools/ninja-locked exists to prevent.
 
+★★ THE QUESTION A GREEN LIGHT ANSWERS -- AND THE ONE IT USED TO DUCK
+--------------------------------------------------------------------
+Two different statements share the word "clean", and every caller assumes the
+second one when it reads rc=0:
+
+    (a) these objects are a PATCHED FIXED POINT          <- what was measured
+    (b) these objects were BUILT FROM THE SOURCE         <- what was assumed
+        THAT IS IN THE TREE RIGHT NOW
+
+⛔ A MERGE WITHOUT A BUILD satisfies (a) and breaks (b), and until 2026-09-11
+this file could not tell them apart.  The v3 provenance block records git HEAD
+and the split inputs, but it is consulted ONLY inside the content-differs path
+-- by design, so a reason can EXPLAIN a difference and never manufacture one.
+A merge that moves HEAD rewrites no object, so the scan found nothing to
+explain and returned 0 before provenance was ever read.
+
+Hit for real, 2026-09-11: a source lane was merged (+9 functions / +80 B) with
+no build, `--verify-manifest` returned 0, and a peer session recorded a ledger
+snapshot off that "clean" tree -- 42,505 matched functions where the built tree
+reads 42,514.  The tool answered the question it was asked; the reader asked
+the wrong one.
+
+So rc=0 now also asserts (b), via an explicit BUILD-INPUT DIGEST recorded in
+the manifest (schema v4) and recompared on every `--verify-manifest`.
+
+★ Why the signal is NOT git HEAD -- this is the whole design
+-----------------------------------------------------------
+Committing is standing-authorized and constant in this repo: docs commits,
+roadmap commits, ledger commits, memory-adjacent commits.  A verdict that
+fires on every commit is one people learn to ignore or flag past, and
+scripts/orchestrator/patch_guard.py turns EVERY non-zero into a hard refusal
+-- so a chatty code here does not annoy somebody, it stops measurement.
+
+The precise question is not "did HEAD move" but "would a build produce
+different objects than the ones on disk".  That is decided by CONTENT, and
+only by the content of files a build actually consumes.  HEAD survives in
+`provenance` and still appears as a REASON on the already-different path,
+where it can only explain; it is deliberately absent from the clean-path
+check, which is the one that could manufacture a verdict.
+
+⛔ And it is NOT ninja, which is the obvious answer and was measured wrong
+here.  All four legs on this repo, worktree off main `8b9a4d4b`, immediately
+after a full settled build that reads rc=0 green:
+
+    ninja -n post-compile   3 edges pending on a JUST-BUILT tree
+    ninja -n all_source     2 edges pending; 4 with one stale .cpp
+    (CHECK SPLIT CURRENT and PATCH target ... are unconditionally dirty)
+
+So as a staleness count its PASS line is UNREACHABLE -- vacuity #1 of
+`project_build_probe_vacuities_2026-08-01`, reproduced on the X360 graph.  It
+discriminates only against a hardcoded floor ("more than 2 edges"), and that
+floor moves the moment configure.py gains a step.  Two further measurements
+killed it outright:
+
+  * A `splits.txt` CONTENT change produces **0** ninja edges (which is why
+    CLAUDE.md's recipe is `touch config.yml && ninja`).  Ninja is structurally
+    blind to an input class that decides what the target objects contain.
+  * `ninja -n` OVER-reports downstream of an always-run edge because a dry run
+    cannot do restat pruning: it listed the VERIFY/emit edge as pending on a
+    settled tree, while three consecutive real builds left the manifest's
+    `generated_utc` untouched.
+
+Mtime is out for the same class of reason: `scripts/setup_worktree.sh` stamps
+every tracked file in a worktree to 2020-01-01, so "input newer than object"
+is meaningless in exactly the trees every lane works in.
+
 Exit codes -- every non-zero state is a DIFFERENT statement
 -----------------------------------------------------------
-    0   the objects on disk are the ones this tree was verified patched over
-    1   CORRUPTION, or an undeterminable cause.  Same git HEAD, same split
+    0   the objects on disk are the ones this tree was verified patched over,
+        AND they were built from the build inputs now in the tree
+    1   CORRUPTION, or an undeterminable cause.  Same git HEAD, same build
         inputs, no build running -- and the content differs anyway.
     2   no manifest at all: this tree has never been verified patched
     3   the pairing is VACUOUS (objdiff.json declares too few objects to make
         a green light mean anything)
-    4   REBUILD PENDING: the tree ADVANCED (git HEAD or a split input moved)
-        since the manifest was written, so the objects belong to a different
-        state.  Not measurable, but nothing is wrong.
+    4   REBUILD PENDING: the tree ADVANCED (git HEAD or a build input moved)
+        since the manifest was written, AND the objects differ -- so they
+        belong to a different state.  Not measurable, but nothing is wrong.
     5   BUILD IN PROGRESS: `tools/ninja-locked`'s flock is held, so a build is
         rewriting these objects as the check runs.
+    6   BUILD OWED: every object matches the manifest exactly -- nothing is
+        corrupt, nothing was patched outside the graph -- but a build INPUT
+        moved, so these objects were compiled from source that is no longer
+        here.  4 and 6 are both "a build is owed"; they are separate because
+        they license different conclusions.  4 means something already
+        rewrote objects; 6 means nothing has, and the tree is merely BEHIND.
 
 ⛔ Codes 4 and 5 exist because this tool USED TO ASSERT A MECHANISM IT CANNOT
 OBSERVE.  It printed "produced OUTSIDE the full build graph ... the
@@ -225,7 +298,15 @@ PATCHERS = [
 #: A reader that finds v2 or lower is reading a manifest that CANNOT say why an
 #: object differs, only that it does, and `--verify-manifest` reports the cause
 #: as UNDETERMINED rather than guessing one.
-MANIFEST_VERSION = 3
+#:
+#: 4 (lane BUILD-OWED): `provenance.split_inputs` (3 files) is superseded by
+#: `provenance.build_inputs` -- a hash of EVERY file whose content decides what
+#: a build would produce.  That is what lets rc=0 mean "built from the source
+#: in this tree" and not merely "a patched fixed point".  A reader that finds
+#: v3 or lower gets the honest non-answer: the build-owed question is reported
+#: as UNESTABLISHED (and rc is unaffected), never guessed at, because a v3
+#: manifest genuinely does not record the inputs to compare against.
+MANIFEST_VERSION = 4
 
 
 def build_dir(repo: Path) -> Path:
@@ -303,19 +384,87 @@ def build_lock_held(repo: Path) -> bool:
         os.close(fd)
 
 
-def split_input_relpaths() -> tuple:
-    """The files whose content decides what a build PRODUCES.
+#: Extensions a compile edge can consume.  `src/` also carries vendored
+#: `.am`/`.doc`/`.txt`/`.jpg`/`.vcproj` debris (measured: 3,674 files total,
+#: 3,460 of them compilable), and a build cannot read any of it -- including
+#: those would make a stray README fire a rebuild-owed verdict, which is the
+#: nuisance mode this whole design exists to avoid.
+BUILD_INPUT_EXTS = frozenset({
+    ".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx",
+    ".inc", ".ipp", ".s", ".asm",
+})
 
-    Not a general "did the source change" check -- source changes alone do not
-    rewrite objects.  These three are the inputs that make the dtk split emit
-    DIFFERENT target objects and the renamer install different names, which is
-    the drift a consumer actually trips over after a merge.
+
+def pinned_build_input_relpaths() -> tuple:
+    """Named build inputs outside `src/`, enumerated rather than globbed.
+
+    ⚠ A glob over `config/<VERSION>/**` would be WRONG and was measured wrong:
+    that directory also holds `scope_map.json` and `scope_map.json.bak`, both
+    REWRITTEN BY THE BUILD ITSELF (mtime 02:55 on a build that started 02:54),
+    plus dtk's generated `config.json`.  Hashing a build's own outputs as if
+    they were its inputs makes every build owe another build -- a gate that
+    cannot go green.  So each entry here is a file a HUMAN or a LANE edits.
+
+    Three groups, and each earns its place by changing what a build produces:
+
+      * the config PINS -- objects.json decides what is compiled, splits.txt
+        and symbols.txt decide how the target objects are carved, build.sha1
+        identifies the binary they are carved from, config.yml is the file
+        CLAUDE.md tells you to touch to force a re-split.
+      * the WIRING -- configure.py, tools/project.py and tools/defines_common.py
+        between them own the cflags, the include order, the PCH eligibility and
+        the edge list.
+      * the OBJECT REWRITERS -- the six post-compile patchers, the pre-compile
+        target renamer, and the pairing module all three of them share.  A
+        changed patcher means the objects on disk were post-processed by a
+        different program than the one now in the tree.
+
+    `verify_objs_patched.py` itself is deliberately EXCLUDED: it rewrites no
+    object, it only observes them.  Including it would mean every edit to this
+    file declared every tree in the fleet to owe a build, which is a pure
+    nuisance signal carrying no statement about object state.
     """
     return (
+        f"config/{VERSION}/objects.json",
         f"config/{VERSION}/splits.txt",
         f"config/{VERSION}/symbols.txt",
+        f"config/{VERSION}/config.yml",
+        f"config/{VERSION}/build.sha1",
         "scripts/target_symbol_map.json",
+        "configure.py",
+        "tools/project.py",
+        "tools/defines_common.py",
+        "scripts/obj_target_symbol_renamer.py",
+        "scripts/obj_pairing.py",
+        *(f"scripts/{name}" for name in PATCHERS),
     )
+
+
+def build_input_files(repo: Path) -> list:
+    """Every file whose CONTENT decides what a build would produce.
+
+    Content, never mtime: `scripts/setup_worktree.sh` stamps every tracked file
+    in a worktree to 2020-01-01, so an mtime comparison is not merely noisy
+    here, it is inverted -- every source looks older than every object in
+    exactly the trees lanes work in.
+
+    Deliberately NOT narrowed to `objects.json`'s declared sources.  CLAUDE.md
+    records the trap: `rnddx9/Cam.cpp` is absent from objects.json and is still
+    a build input, because three TUs `#include` it.  Nothing short of the
+    preprocessor knows the real closure, so this errs wide.  The cost of erring
+    wide is one no-op build; the cost of erring narrow is the silent stale
+    measurement this check exists to stop.
+    """
+    files = []
+    src = repo / "src"
+    if src.is_dir():
+        files.extend(p for p in src.rglob("*")
+                     if p.is_file() and p.suffix.lower() in BUILD_INPUT_EXTS)
+    for rel in pinned_build_input_relpaths():
+        p = repo / rel
+        if p.is_file():
+            files.append(p)
+    return sorted(set(files))
 
 
 def _git_head(repo: Path):
@@ -327,15 +476,74 @@ def _git_head(repo: Path):
     return (p.stdout.strip() or None) if p.returncode == 0 else None
 
 
+def current_build_inputs(repo: Path) -> dict:
+    """`{relpath: sha256}` over :func:`build_input_files`.
+
+    Measured cost on this repo: 3,460 files / 24.3 MB walked and hashed in
+    0.058 s, against the ~0.56 s the object scan already costs.  There is
+    nothing to buy by sampling, truncating or caching it.
+    """
+    return {str(p.relative_to(repo)): sha256(p) for p in build_input_files(repo)}
+
+
 def current_provenance(repo: Path) -> dict:
     """The tree state a manifest is being taken over."""
+    inputs = current_build_inputs(repo)
     return {
         "git_head": _git_head(repo),
-        "split_inputs": {
-            rel: (sha256(repo / rel) if (repo / rel).is_file() else None)
-            for rel in split_input_relpaths()
-        },
+        "build_inputs": inputs,
+        # A one-line summary so a human eyeballing the manifest, or a tool that
+        # only wants "same or not", need not diff 3,460 entries.
+        "build_input_digest": hashlib.sha256(
+            "".join(f"{k}:{v}\n" for k, v in sorted(inputs.items())).encode()
+        ).hexdigest(),
+        "n_build_inputs": len(inputs),
     }
+
+
+def _recorded_build_inputs(recorded: dict):
+    """The recorded input map, or None if this manifest cannot supply one.
+
+    v3 recorded three `split_inputs` and no build inputs.  It is returned as
+    None rather than as an empty map on purpose: an empty map compares equal to
+    nothing and would read as "no inputs moved", i.e. the pre-v4 blind spot,
+    silently restored and now wearing a green light.  Cannot-establish must not
+    be spelled the same way as established-clean.
+    """
+    inputs = recorded.get("build_inputs")
+    return inputs if isinstance(inputs, dict) else None
+
+
+def _input_diff(rec: dict, cur: dict) -> list:
+    """-> one human reason per input file that differs."""
+    out = []
+    for rel in sorted(set(rec) | set(cur)):
+        was, now = rec.get(rel), cur.get(rel)
+        if was is None:
+            out.append(f"{rel} is NEW since the manifest was written")
+        elif now is None:
+            out.append(f"{rel} has been REMOVED since the manifest was written")
+        elif was != now:
+            out.append(f"{rel} changed since the manifest was written")
+    return out
+
+
+def build_owed(recorded: dict, current: dict):
+    """-> reasons a build is owed, `[]` if none, or None if unestablishable.
+
+    ★ DELIBERATELY FREE OF git HEAD, and that is the entire point of this
+    function existing separately from :func:`provenance_moved`.  This one runs
+    on the CLEAN path, where it is the only thing that can turn a green light
+    red -- so every term in it must be a thing that changes what a build
+    PRODUCES.  HEAD is not: docs, roadmap, ledger and memory commits move it
+    constantly and change no object.  A verdict that fires on those would be
+    switched off within a week, and patch_guard would refuse measurement until
+    somebody did.
+    """
+    rec = _recorded_build_inputs(recorded)
+    if rec is None:
+        return None
+    return _input_diff(rec, current.get("build_inputs") or {})
 
 
 def provenance_moved(recorded: dict, current: dict) -> list:
@@ -343,6 +551,10 @@ def provenance_moved(recorded: dict, current: dict) -> list:
 
     An empty list is the only condition under which "content differs"
     licenses the word corruption.
+
+    This runs only AFTER a difference has been found in the objects, so here a
+    reason can only ever EXPLAIN one -- which is why git HEAD is admissible in
+    this function and inadmissible in :func:`build_owed`.
 
     ⚠ `None` on either side is UNKNOWN, not different.  An absent git, or a
     config path this version does not use, must never manufacture a reason --
@@ -353,14 +565,18 @@ def provenance_moved(recorded: dict, current: dict) -> list:
     was_head, now_head = recorded.get("git_head"), current.get("git_head")
     if was_head and now_head and was_head != now_head:
         out.append(f"git HEAD {was_head[:8]} -> {now_head[:8]}")
-    rec = recorded.get("split_inputs") or {}
-    cur = current.get("split_inputs") or {}
-    for rel in sorted(set(rec) | set(cur)):
-        was, now = rec.get(rel), cur.get(rel)
-        if was is not None and now is not None and was != now:
-            out.append(f"{rel} changed since the manifest was written")
-        elif (was is None) != (now is None):
-            out.append(f"{rel} {'appeared' if was is None else 'disappeared'}")
+    rec = _recorded_build_inputs(recorded)
+    if rec is not None:
+        out.extend(_input_diff(rec, current.get("build_inputs") or {}))
+    else:
+        # v3 compatibility: three files, and `None` meaning "not recorded".
+        rec3 = recorded.get("split_inputs") or {}
+        cur3 = {rel: (current.get("build_inputs") or {}).get(rel)
+                for rel in rec3}
+        for rel in sorted(rec3):
+            was, now = rec3.get(rel), cur3.get(rel)
+            if was is not None and now is not None and was != now:
+                out.append(f"{rel} changed since the manifest was written")
     return out
 
 
@@ -519,8 +735,8 @@ def emit(repo: Path) -> int:
     tmp.write_text(json.dumps(doc, indent=1, sort_keys=True))
     tmp.replace(out)
     print(f"[patch-state] {len(decomp)} decomp + {len(target)} target objects "
-          f"verified patched, tree_sha256={tree[:16]} "
-          f"-> {out.relative_to(repo)}")
+          f"verified patched over {doc['provenance']['n_build_inputs']} build "
+          f"inputs, tree_sha256={tree[:16]} -> {out.relative_to(repo)}")
     return 0
 
 
@@ -534,6 +750,10 @@ def verify_manifest(repo: Path, quiet: bool = False) -> int:
     A disagreement is reported as one of THREE different things -- a build in
     flight (5), a tree that has advanced (4), or corruption (1).  See the
     exit-code table in this module's docstring for why that separation exists.
+
+    AGREEMENT is reported as one of two: clean (0), or BUILD OWED (6) when the
+    objects agree with the manifest perfectly and the build INPUTS do not.  A
+    merge without a build lands there, and it used to land on 0.
     """
     mpath = build_dir(repo) / "patch_state.json"
     if not mpath.exists():
@@ -573,11 +793,75 @@ def verify_manifest(repo: Path, quiet: bool = False) -> int:
         report.append((label, blurb, len(recorded), drift, missing, extra))
 
     if not bad:
+        # Every object is exactly the one this tree was verified patched over.
+        # That is statement (a) in this module's docstring, and it is NOT the
+        # statement a caller reads off rc=0.  Statement (b) -- that these
+        # objects were built from the source now in the tree -- is a question
+        # about the INPUT side, and nothing above has looked at it.
+        recorded_prov = doc.get("provenance")
+        owed = (build_owed(recorded_prov, current_provenance(repo))
+                if isinstance(recorded_prov, dict) else None)
+
+        if owed:
+            # A build already running IS the owed build.  Say that instead:
+            # it is equally non-zero, and it tells the caller to wait rather
+            # than to start a second build against a tree in motion.
+            if lock_before or build_lock_held(repo):
+                print("=" * 72, file=sys.stderr)
+                print("BUILD IN PROGRESS -- INPUTS HAVE MOVED AND A BUILD IS "
+                      "ALREADY RUNNING", file=sys.stderr)
+                print("=" * 72, file=sys.stderr)
+                print(f"{len(owed)} build input(s) differ from the state these "
+                      f"objects were compiled from, and tools/ninja-locked's "
+                      f"build lock ({BUILD_LOCK_NAME}) is HELD. Wait for that "
+                      f"build to finish and re-run.", file=sys.stderr)
+                return 5
+            print("=" * 72, file=sys.stderr)
+            print("BUILD OWED -- THESE OBJECTS PREDATE THE SOURCE IN THIS TREE",
+                  file=sys.stderr)
+            print("=" * 72, file=sys.stderr)
+            print(f"Every one of {doc.get('n_objects')} objects matches the "
+                  f"manifest written {doc.get('generated_utc')} EXACTLY, so "
+                  f"nothing is corrupt and nothing was patched outside the "
+                  f"build graph.\n"
+                  f"What moved is the INPUT side: {len(owed)} file(s) whose "
+                  f"content decides what a build produces differ from the "
+                  f"state these objects were compiled from.\n", file=sys.stderr)
+            for r in owed[:10]:
+                print(f"    {r}", file=sys.stderr)
+            if len(owed) > 10:
+                print(f"    ... and {len(owed) - 10} more", file=sys.stderr)
+            print("\nSo report.json, measure_progress.sh and every score read "
+                  "from this tree describe SOURCE THAT IS NO LONGER HERE. "
+                  "Recorded 2026-09-11: a source lane was merged (+9 functions "
+                  "/ +80 B) without a build, this check returned 0, and a "
+                  "ledger snapshot taken off it read 42,505 matched functions "
+                  "where the built tree reads 42,514.\n"
+                  "\nFix: `./tools/ninja-locked`, then re-run this check.\n"
+                  "If a config pin above moved (splits.txt / symbols.txt), the "
+                  "split is ninja-invisible by design -- measured: a splits.txt "
+                  "content change produces 0 ninja edges -- so use CLAUDE.md's "
+                  "recipe: `touch config/" + VERSION + "/config.yml` first.",
+                  file=sys.stderr)
+            return 6
+
         if not quiet:
             counts = ", ".join(f"{n} {label}" for label, _, n, *_ in report)
             print(f"[patch-state] OK: {counts} objects match "
                   f"{doc['generated_utc']} "
                   f"(tree_sha256={doc['tree_sha256'][:16]})")
+        if owed is None:
+            # Not a failure -- a stated limit.  Printed even under --quiet and
+            # on stderr, because the alternative is a green light that quietly
+            # means less than the reader thinks, which is the exact defect this
+            # version exists to remove.  One build clears it.
+            print(f"[patch-state] NOTE: whether a build is OWED could not be "
+                  f"established -- this manifest is schema "
+                  f"v{doc.get('manifest_version')}, which predates build-input "
+                  f"recording (v{MANIFEST_VERSION}). The objects are verified; "
+                  f"whether they were built from the source now in this tree "
+                  f"is UNKNOWN. Run `./tools/ninja-locked` to re-baseline.",
+                  file=sys.stderr)
         return 0
 
     n_diff = sum(len(d) + len(m) + len(e) for _, _, _, d, m, e in report)
@@ -652,7 +936,7 @@ def verify_manifest(repo: Path, quiet: bool = False) -> int:
         return 1
 
     print("\nNo build holds the build lock, and the tree is at the SAME state "
-          "this manifest was taken over -- same git HEAD, same split inputs. "
+          "this manifest was taken over -- same git HEAD, same build inputs. "
           "So these objects were rewritten by something OUTSIDE the full build "
           "graph.\n"
           "A DECOMP object in that state was produced by a targeted "
