@@ -282,11 +282,16 @@ in_csv() { case ",$2," in *",$1,"*) return 0 ;; *) return 1 ;; esac; }
 MISSPEC=()
 _first_deren=-1
 for i in "${!G_ID[@]}"; do
-    if in_csv derenames "${G_TRAITS[$i]}" && [ "$_first_deren" -lt 0 ]; then
-        _first_deren=$i
-    fi
+    # needs-renamed is tested FIRST, against the state BEFORE this guard runs.
+    # Order matters: a guard tagged BOTH (reads the names, THEN perturbs) is
+    # perfectly safe, and testing after the update would make it flag ITSELF --
+    # a check that forbids a safe ordering is as much a defect as one that
+    # permits an unsafe one.
     if in_csv needs-renamed "${G_TRAITS[$i]}" && [ "$_first_deren" -ge 0 ]; then
         MISSPEC+=("[$((_first_deren+1))] ${G_ID[$_first_deren]} (derenames) is scheduled BEFORE [$((i+1))] ${G_ID[$i]} (needs-renamed)")
+    fi
+    if in_csv derenames "${G_TRAITS[$i]}" && [ "$_first_deren" -lt 0 ]; then
+        _first_deren=$i
     fi
 done
 
