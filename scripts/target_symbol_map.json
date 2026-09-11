@@ -26742,6 +26742,7 @@
  "0x82b65048": "?SetLoopRegion@Voice@@QAAXHH@Z",
  "0x82b65230": "?SafeRestart@Voice@@AAAXXZ",
  "0x82b65288": "?_M_destroy_nodes@?$_Deque_base@UPoolVoice@@V?$StlNodeAlloc@UPoolVoice@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAPAUPoolVoice@@0@Z",
+ "0x82b652e0": "?InitVoiceParameters@Voice@@QAAXAAUXMA2WAVEFORMATEX@@UXAUDIO2_BUFFER@@@Z",
  "0x82b65428": "?Pause@Voice@@QAAX_N@Z",
  "0x82b65510": "?UpdateMix@Voice@@AAAXXZ",
  "0x82b65940": "?SetReverbMixDb@Voice@@QAAXM@Z",

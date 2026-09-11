@@ -693,23 +693,30 @@ void Voice::Init(bool b) {
 
 void Voice::InitVoiceParameters(XMA2WAVEFORMATEX &fmt, XAUDIO2_BUFFER buf) {
     if (mXMA) {
+        // Retail (0x82B652E0) HARDCODES a mono XMA2 stream: nChannels, nBlockAlign
+        // and ChannelMask are all literals here (`li r10,1` / `li r29,2` /
+        // `li r11,4` -> sth 0x2 / sth 0xc / stw 0x14), with no branch on the
+        // channel count at all.  We used to write NumChannels(), the derived
+        // (nChannels * wBitsPerSample) / 8, and a three-way ChannelMask arm
+        // including a 5-channel 0x60f case; RB3 retail has no such arm, and the
+        // difference was worth 67 percentage points on this function (32.7 ->
+        // 100.0) and 80 bytes of extra code.  So an XMA2 voice is always
+        // announced to XAudio2 as 1 channel / SPEAKER_FRONT_CENTER even when
+        // mStereo is set -- the stereo case is only honoured on the PCM path
+        // below.  Left exactly as retail has it.  No HX_NATIVE arm is needed:
+        // native/CMakeLists.txt excludes all of synth_xbox from the native build
+        // (platform-only guest), so nothing natively depends on the 5.1 spelling.
         fmt.wfx.wFormatTag = 0x166;
-        fmt.wfx.nChannels = NumChannels();
+        fmt.wfx.nChannels = 1;
         fmt.wfx.nSamplesPerSec = mSampleRate;
         fmt.wfx.wBitsPerSample = 0x10;
+        fmt.wfx.nBlockAlign = 2;
         fmt.wfx.cbSize = 0x22;
         fmt.NumStreams = 1;
-        fmt.wfx.nBlockAlign = (fmt.wfx.nChannels * fmt.wfx.wBitsPerSample) / 8;
-        if (NumChannels() == 1) {
-            fmt.ChannelMask = 4;
-        } else if (NumChannels() == 2) {
-            fmt.ChannelMask = 3;
-        } else if (NumChannels() == 5) {
-            fmt.ChannelMask = 0x60f;
-        }
+        fmt.ChannelMask = 4;
         fmt.SamplesEncoded = mNumSamples;
-        fmt.PlayBegin = buf.PlayBegin;
         fmt.BytesPerBlock = 0x10000;
+        fmt.PlayBegin = buf.PlayBegin;
         fmt.PlayLength = buf.PlayLength;
         fmt.LoopBegin = buf.LoopBegin;
         fmt.LoopLength = buf.LoopLength;
@@ -718,6 +725,9 @@ void Voice::InitVoiceParameters(XMA2WAVEFORMATEX &fmt, XAUDIO2_BUFFER buf) {
         float duration = (float)(long long)mAudioBytes * 1.5258789e-05f;
         fmt.BlockCount = (unsigned short)ceil(duration);
     } else {
+        // The PCM path DOES honour the channel count -- retail derives it from
+        // mStereo at 0x4a inline (`lbz` / `cntlzw` / `extrwi` / `xori` /
+        // `addi r11,r11,1`), which is what NumChannels() spells.
         fmt.wfx.wFormatTag = 1;
         fmt.wfx.nChannels = NumChannels();
         fmt.wfx.nSamplesPerSec = mSampleRate;
