@@ -5525,7 +5525,6 @@ System.cpp:
 	.pdata      start:0x822619D8 end:0x822619E0
 	.text       start:0x825100C8 end:0x825101EC
 	.text       start:0x82510510 end:0x82510588
-	.text       start:0x82569E78 end:0x82569E88
 	.text       start:0x82C42910 end:0x82C42958
 
 DataEventList.cpp:
@@ -8821,6 +8820,7 @@ band3/meta_band/LessonMgr.cpp:
 
 band3/meta_band/AssetMgr.cpp:
 	.pdata      start:0x8221D880 end:0x8221D9D0
+	.text       start:0x82569E78 end:0x82569E88
 	.text       start:0x8256A298 end:0x8256B4C8
 
 band3/meta_band/ProfileAssets.cpp:
