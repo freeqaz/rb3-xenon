@@ -17633,7 +17633,7 @@
  "0x82712af8": "?Load@FxSendSynapse@@UAAXAAVBinStream@@@Z",
  "0x82712c28": "??0FxSendPitchShift@@IAA@XZ",
  "0x82712c70": "?ClassName@FxSendPitchShift@@UBA?AVSymbol@@XZ",
- "0x82712ca0": "?Copy@FxSendBitCrush@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x82712ca0": "?Copy@FxSendPitchShift@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x82712e88": "?SyncProperty@FxSendPitchShift@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82712fb0": "?Save@FxSendDistortion@@UAAXAAVBinStream@@@Z",
  "0x82713020": "?Load@FxSendPitchShift@@UAAXAAVBinStream@@@Z",
@@ -17882,8 +17882,8 @@
  "0x827212e8": "??0FxSendDistortion@@IAA@XZ",
  "0x82721330": "?ClassName@FxSendDistortion@@UBA?AVSymbol@@XZ",
  "0x82721360": "??1FxSendDistortion@@UAA@XZ",
- "0x82721370": "?Load@FxSendBitCrush@@UAAXAAVBinStream@@@Z",
- "0x82721400": "?Copy@FxSendPitchShift@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
+ "0x82721370": "?Load@FxSendDistortion@@UAAXAAVBinStream@@@Z",
+ "0x82721400": "?Copy@FxSendDistortion@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x827215f0": "?SyncProperty@FxSendDistortion@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82721718": "??0FxSendCompress@@IAA@XZ",
  "0x827217a8": "?ClassName@FxSendCompress@@UBA?AVSymbol@@XZ",
@@ -30202,5 +30202,10 @@
  "0x82517120": "?OnFileGetBase@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82517168": "?OnFileGetExt@@YA?AVDataNode@@PAVDataArray@@@Z",
  "0x82516680": "FileGetDrive",
- "0x825167a8": "FileGetName"
+ "0x825167a8": "FileGetName",
+ "0x82c43340": "??__EgMics@?A0x0298b308@@YAXXZ",
+ "0x82c43350": "??__E?mMicMasters@ExternalMicClientMgr@@0V?$vector@PAVExternalMicClientProxy@@V?$StlNodeAlloc@PAVExternalMicClientProxy@@@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
+ "0x82c43360": "??__E?mDevToMicMaster@ExternalMicClientMgr@@0V?$vector@KV?$StlNodeAlloc@K@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
+ "0x82c43370": "??__E?mMicMasterToDev@ExternalMicClientMgr@@0V?$vector@KV?$StlNodeAlloc@K@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
+ "0x82c43380": "??__E?mAssocMicXbox@ExternalMicClientMgr@@0V?$vector@PAVMicXbox@@V?$StlNodeAlloc@PAVMicXbox@@@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ"
 }
