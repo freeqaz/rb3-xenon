@@ -239,6 +239,86 @@ class PatchStateTests(unittest.TestCase):
         self.assertEqual(red.returncode, 2, red.stdout + red.stderr)
         self.assertIn("never been verified patched", red.stderr)
 
+    # ── WHY an object differs: three causes, three verdicts ───────────────
+    #
+    # This tool used to print ONE explanation for every disagreement -- "produced
+    # OUTSIDE the full build graph ... the post-compile patch passes never ran on
+    # it" -- which is a MECHANISM IT CANNOT OBSERVE.  On 2026-09-11 a lane
+    # sampled main 2m40s into an ordinary full build and got that accusation; two
+    # investigations were opened off the message and both concluded wrongly.
+    # Each test below pairs its verdict with the SAME drift under the other
+    # condition, so a verifier that collapsed the three back into one fails here.
+
+    def test_a_build_in_flight_is_a_DISTINCT_verdict_not_an_accusation(self):
+        """rc=5: a held build lock means the tree is not adjudicable at all."""
+        import fcntl
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        self.fx.decomp[0].write_bytes(b"REWRITTEN-BY-A-BUILD")
+
+        # CONTROL: with no build running, this very same drift IS corruption.
+        # Without it, a verifier that always returned 5 would pass below.
+        lone = self.fx.run("--verify-manifest")
+        self.assertEqual(lone.returncode, 1, lone.stdout + lone.stderr)
+        self.assertIn("OUTSIDE the full build graph", lone.stderr)
+
+        fd = os.open(str(self.fx.root / ".ninja-build.lock"),
+                     os.O_CREAT | os.O_RDWR, 0o644)
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            busy = self.fx.run("--verify-manifest")
+        finally:
+            os.close(fd)
+        self.assertEqual(busy.returncode, 5, busy.stdout + busy.stderr)
+        self.assertIn("BUILD IN PROGRESS", busy.stderr)
+        self.assertNotIn("OUTSIDE the full build graph", busy.stderr)
+
+        # ...and it reverts to corruption once the lock is released, so rc=5 is
+        # attributable to the LOCK and not to the mutation.
+        self.assertEqual(self.fx.run("--verify-manifest").returncode, 1)
+
+    def test_tree_advanced_is_REBUILD_PENDING_not_corruption(self):
+        """rc=4: a merge moves the split inputs, and the next build rewrites
+        objects legitimately.  The discriminator is recorded IN the manifest,
+        so it describes the state the hashes were taken over."""
+        cfg = self.fx.root / "config" / BUILD_ID
+        cfg.mkdir(parents=True, exist_ok=True)
+        splits = cfg / "splits.txt"
+        splits.write_text("Foo.cpp:\n    .text start:0x82000000 end:0x82000010\n")
+
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        self.fx.decomp[0].write_bytes(b"REBUILT-AT-A-NEW-STATE")
+
+        # CONTROL: identical drift, split inputs UNCHANGED -> still corruption.
+        same = self.fx.run("--verify-manifest")
+        self.assertEqual(same.returncode, 1, same.stdout + same.stderr)
+        self.assertIn("OUTSIDE the full build graph", same.stderr)
+
+        splits.write_text("Foo.cpp:\n    .text start:0x82000000 end:0x82000020\n")
+        moved = self.fx.run("--verify-manifest")
+        self.assertEqual(moved.returncode, 4, moved.stdout + moved.stderr)
+        self.assertIn("REBUILD IS PENDING", moved.stderr)
+        self.assertIn("splits.txt", moved.stderr)
+        self.assertNotIn("OUTSIDE the full build graph", moved.stderr)
+
+    def test_a_provenanceless_manifest_says_UNDETERMINED_rather_than_guessing(self):
+        """A pre-v3 manifest cannot say WHY, so the tool must not say why.
+
+        Still rc=1 -- the safe direction -- but without an accusation it has no
+        evidence for.
+        """
+        self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
+        mpath = self.fx.build / "patch_state.json"
+        doc = json.loads(mpath.read_text())
+        doc.pop("provenance")
+        doc["manifest_version"] = 2
+        mpath.write_text(json.dumps(doc))
+        self.fx.decomp[0].write_bytes(b"RAW")
+
+        red = self.fx.run("--verify-manifest")
+        self.assertEqual(red.returncode, 1, red.stdout + red.stderr)
+        self.assertIn("CAUSE UNDETERMINED", red.stderr)
+        self.assertNotIn("OUTSIDE the full build graph", red.stderr)
+
     # ── the --check half: orchestration over the six real passes ──────────
 
     def test_check_runs_every_patcher(self):
@@ -283,14 +363,18 @@ class PatchStateTests(unittest.TestCase):
     def test_manifest_records_pairing_coverage(self):
         """The manifest must state what the green light was worth.
 
-        Schema is MANIFEST_VERSION 2: counts are over DISTINCT COMPILED
-        OBJECTS, not objdiff.json units.  v1 counted units, which
+        Schema is MANIFEST_VERSION 3: counts are over DISTINCT COMPILED
+        OBJECTS, not objdiff.json units (v1 counted units, which
         double-counted the three objects the real tree declares twice and
-        reported "347 of 1048" for a loop that examined 344 of 1045.
+        reported "347 of 1048" for a loop that examined 344 of 1045), and v3
+        adds the `provenance` block that lets a later disagreement be
+        EXPLAINED rather than guessed at.
         """
         self.assertEqual(self.fx.run("--check", "--emit").returncode, 0)
         doc = json.loads((self.fx.build / "patch_state.json").read_text())
-        self.assertEqual(doc["manifest_version"], 2)
+        self.assertEqual(doc["manifest_version"], 3)
+        self.assertIn("split_inputs", doc["provenance"])
+        self.assertIn("git_head", doc["provenance"])
         cov = doc["pairing_coverage"]
         # The fixture points all three units at t0.obj while their base objs
         # are d0/d1/d2, so relpath pairing reaches NONE of them -- the real
