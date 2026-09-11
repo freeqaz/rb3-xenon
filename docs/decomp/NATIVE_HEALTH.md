@@ -508,3 +508,296 @@ false-green shape as the handpose env vars. It now rejects unknown arguments.
   preprocessed text is byte-identical and an A/B would be absent-vs-absent by
   construction. Match-neutral by a **preprocessor property, not by measurement**.
 - **Did not re-check the 23 multi-host guests**, unchanged at 23 throughout.
+
+---
+
+# 2026-09-11 — lane W3-G: the four recorded handoffs, closed
+
+**Appended, not restructured.** N1-GPUGATES' and L4-NATIVESCATTER's sections above
+stand as written. This section closes every item on L4's "What this lane did NOT
+do" list: the `MainHubPanel.cpp` bug-compatibility decision, the
+`SongUpgradeMgr.cpp` hash shim, `CriticalUserListener.cpp`'s multi-host guest, and
+the stale `native_health.sh:159` comment.
+
+Branch `w3-native-handoffs`, worktree `~/tmp/wt-w3-g`, off `814e3a60`.
+
+## The baseline line
+
+Reproduced L4's line **field for field** before touching anything — including
+`scatter_multihost=23`, the figure this lane was briefed with:
+
+```
+NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=18 link_expected=18 link_skipped=0 runtime=PASS runtime_ran=3 runtime_total=3 gates_pass=37 gates_fail=0 unrunnable=none selftest=PASS scatter_unlinked=16 scatter_dirb=0 scatter_multihost=23 rc=0 handpose_controls=3/3 handpose_baseline_fail=1
+```
+
+After:
+
+```
+NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=18 link_expected=18 link_skipped=0 runtime=PASS runtime_ran=4 runtime_total=4 gates_pass=40 gates_fail=0 unrunnable=none selftest=PASS scatter_unlinked=14 scatter_dirb=0 scatter_multihost=21 rc=0 handpose_controls=3/3 handpose_baseline_fail=1
+```
+
+| measure | 2026-09-10 (L4) | **2026-09-11 (W3-G)** | note |
+|---|---:|---:|---|
+| link targets verified | 18 / 18 | **18 / 18** | 0 skipped, 0 failed |
+| runtime targets exercised | 3 / 3 | **4 / 4** | `rb3-score2` wired |
+| runtime gates passed | 37 | **40** | +3 from `rb3-score2` |
+| runtime gates failed | 0 | **0** | |
+| negative controls RED | 4 (+1 inert-by-design) | **5** (+1) | `score2-divergent` added |
+| scatter guests reaching NO target | 16 | **14** | −3 wired, **+1 correction** |
+| scatter direction B | 0 | **0** | |
+| scatter multi-host guests | 23 | **21** | −1 real, −1 false positive |
+| `handpose_baseline_fail` | 1 | **1** | the tracked genuine red, untouched |
+
+⚠ Nothing was added to the contract line; only existing field values moved. The
+tracked handpose red is neither fixed nor masked — re-read deliberately, because a
+lane that moves four things should be able to say which numbers did *not* move.
+
+## 1. `MainHubPanel.cpp:414` — retail's pointer compare, adjudicated on retail bytes
+
+**L4's finding was right and its characterisation was incomplete, in a way that
+changes the decision.** L4 wrote: *"a pointer compared against a string literal's
+address, always true"*. Pointer compare: confirmed. "Always true": **true here, but
+not for the reason the phrasing implies, and not true of the expression in
+general** — which had to be settled before calling it a bug.
+
+Retail `fn_82621EA0`
+(`?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVRockCentralOpCompleteMsg@@@Z`,
+`build/45410914/asm/MainHubPanel.s`, at `0x825C41AC`):
+
+```
+bl    fn_8274B000            ; ?Str@DataNode@@QBAPBDPBVDataArray@@@Z, arg NULL
+lis   r11, lbl_82000C55@ha
+addi  r11, r11, lbl_82000C55@l
+cmplw cr6, r3, r11           ; POINTER compare
+beq   cr6, .L_825C41D4       ; skip AddUnlinkedMotd
+```
+
+⛔ **`lbl_82000C55` is not an anonymous literal — it is the object `gNullStr`
+points at, so `Str() == ""` CAN succeed.** `config/45410914/symbols.txt:337` has it
+as `.rdata:0x82000C55 size:0x1` (the `/GF`-pooled `""`, tail-merged onto a NUL
+inside the literal pool), referenced **696×** across the split asm. Retail
+`Symbol::Symbol(const char *)` (`fn_827C0728`) takes `.L_827C079C` for
+null-or-empty and loads `gNullStr` from **`0x82C71838`**; the initialized word
+there in `orig/45410914/band.exe` reads **`0x82000C55`** (via the PE section table,
+`.data` file offset `0xc5f438`). So for an interned **empty Symbol**, whose `mStr`
+*is* `gNullStr`, the comparison is correct. The neighbouring `Symbol != ""` sites
+are outright fine — `Symbol::operator==(const char *)` does a real `strcmp`.
+
+⇒ It is vacuous at **this** site for a different reason: **the node is a
+`kDataString`.** `DataResults.cpp`'s JSON `'s'` column goes
+`JsonString::GetValue()` → `DataNode(const char *)` →
+`mValue.array = new DataArray(c, strlen(c) + 1)`, and `DataArray(const void *, int)`
+does `NodesAlloc` + `memcpy`. `DataNode::Str()` returns that **heap** pointer,
+never a `.rdata` address. Always true; `AddUnlinkedMotd` runs on an empty MOTD.
+
+★ **And it is OBSERVABLE, which is what makes it a bug rather than
+correct-by-accident — I expected the opposite and was wrong.** The consumer does
+re-check (`IsUnlinkedMotdAvailable() { return !mUnlinkedMotd.empty(); }`), which
+looks like it renders the guard redundant. But
+`MainHubMessageProvider::ClearData()` resets the three standings and **does not
+reset `mUnlinkedMotd`** — so a refresh whose motd comes back empty **overwrites a
+previously displayed message with `""`** where the source plainly means to leave it
+standing. The difference only manifests on the *second* `RockCentralOpCompleteMsg`.
+
+**Decision — match build bug-compatible, native corrected:**
+
+| build | behaviour |
+|---|---|
+| X360 match | retail's comparison **verbatim**; codegen must not move |
+| native (default) | `*Str() != '\0'` — what the source means |
+| native `-DRB3_BUGCOMPAT_MOTD_PTRCMP` | retail's always-true form, spelled `!= gNullStr` |
+
+The opt-out is spelled as the pointer compare it really is so it builds under
+`-Werror=string-compare`, and — unlike `TrackPanel.cpp:701`'s
+`RB3_NO_TRACK_DEPTH_CLEAR`, which is documented and **implemented nowhere** (grep:
+one hit, the comment) — **it was compiled**: both native arms measured `rc=0`
+under the target's own flags.
+
+## 2. `SongUpgradeMgr.h` — the shim goes in `std`, not `stlpmtx_std`
+
+**L4's measurement was right and its prescription was wrong.** L4 recorded *"needs
+a real `stlpmtx_std::hash` primary-template shim; defining `_STLP_TEMPLATE_NULL`
+alone is necessary but not sufficient — measured"*. Compiling the TU with the
+target's own flags gives three errors, and **the third names a different
+namespace**:
+
+```
+SongUpgradeMgr.h:27:1:  unknown type name '_STLP_TEMPLATE_NULL'
+SongUpgradeMgr.h:27:28: explicit specialization of undeclared template struct 'hash'
+bits/hashtable.h:210:   static assertion failed ...
+    'std::is_copy_constructible<std::hash<Symbol>>::value'
+    ... in instantiation of 'std::unordered_map<Symbol, std::vector<int>>'
+    requested from SongUpgradeMgr.h:85
+```
+
+Natively `hash_map` aliases `std::unordered_map`, which consults **`std::hash<K>`**.
+An `stlpmtx_std` shim would compile and then be consulted by nothing, leaving the
+static_assert on the unspecialized `std::hash<Symbol>` to fire anyway — i.e. **the
+prescribed fix would have silenced two errors of three and looked like progress.**
+
+⇒ **The answer was already in the tree, twice, and neither copy was cited:**
+`NextSongPanel.h:16` and `meta/FixedSizeSaveableStream.h:17` both carry the
+`#if HX_NATIVE` → `namespace std { template <> struct hash<Symbol> }` / `#else` →
+`stlpmtx_std` split, and `FixedSizeSaveableStream.h`'s own comment states the
+mechanism. Transcribed verbatim. This header fails only because it is not in that
+supplier's include chain and `RB3_HASH_SYMBOL_DEFINED` is first-include-wins — the
+identical situation `NextSongPanel.h` documents for itself.
+
+⚠ **Side finding:** that also explains why `AccomplishmentManager.h`'s
+`stlpmtx_std`-only block compiles natively today — a supplier defines the guard
+first. Those blocks are **dead natively, not correct**, and are latent on include
+order. Census of headers still carrying the `stlpmtx_std`-only form:
+`AccomplishmentManager.h`, `AccomplishmentProgress.h`, `AssetMgr.h`, `Campaign.h`,
+`InterstitialMgr.h`, `LessonMgr.h`, `LicenseMgr.h`, `TourPerformerLocal.h`,
+`TourPropertyCollection.h`. Not touched — see "did NOT do".
+
+## 3. `CriticalUserListener.cpp` — a multi-host guest IS resolvable, by a guard
+
+**Two corrections to the record, both load-bearing for anyone aiming a fix.**
+
+⛔ **The direct second host is `bandtrack/GemManager.cpp:1648`, NOT
+`char/CharBonesMeshes.cpp`.** L4's table and this lane's brief both name
+CharBonesMeshes; that is true only **transitively** —
+`CharBonesMeshes.cpp:213` hosts `GemManager.cpp`, which hosts `FlowManager.cpp`.
+`scatter_audit`'s own `multi_host` row says GemManager + CriticalUserListener. A
+lane briefed off the prose would have edited the wrong file.
+
+⛔ **"As a `multi_host` guest no standalone-prune can resolve it" is true and
+beside the point.** Prune is not the only lever. Making one of the two edges
+**conditional on `HX_NATIVE`** removes the native duplicate while leaving the
+match build's preprocessed text untouched — the tree's standard idiom at **~60
+other sites**, spelled `#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing
+include`, and one `ScatterIncludes.cmake` explicitly recognises (`_cond_hx`) as
+*"a deliberate, understood decision"*.
+
+Guarded **this** copy rather than GemManager's: the
+CharBonesMeshes → GemManager → FlowManager chain links in every target today, so
+leaving it alone is the minimal change and FlowManager's bodies still arrive from
+there natively. Retail COMDAT placement — the only thing the scatter graph exists
+to reproduce for objdiff scoring — is unaffected by construction.
+
+All three TUs wired into `L4_SCATTER_WIRE`. Measured: both targets build `rc=0`,
+**0 errors, 0 undefined references, 0 multiple definitions**; `ScatterIncludes`
+conditional-include warnings **4 before / 4 after**, all pre-existing and all about
+`bandobj/BandCamShot.cpp` (see "did NOT do").
+
+### ⚠ `scatter_audit.py` did NOT mirror `ScatterIncludes.cmake`, and a comment proved it
+
+Its docstring claimed the scan was *"byte-for-byte the same state machine as
+`_rb3_scatter_scan`"*. **It was not.** The cmake module strips `/* */` and anchors
+every directive at line start (`\n[ \t]*#`) — hardening added after `6c087cbd`,
+where the prose `// #ifdef HX_NATIVE and the match build never defines it.`
+desynced the `#if` stack and broke the native link. The Python sibling was never
+hardened: it matched `#if…` and `#include "x.cpp"` **anywhere on a line**.
+
+| # | consequence | measured |
+|---|---|---|
+| 1 | **False multi-host.** `char/FileMerger.cpp:15` carries the prose `` // `#include "rndobj/Morph.cpp"` further down) ``. Counted as a real edge ⇒ `rndobj/Morph.cpp` reported as a multi-host guest whose two "unconditional hosts" were **FileMerger.cpp listed twice** — impossible in a graph, visible in the output. | multi_host 22 → **21** |
+| 2 | **`6c087cbd` itself, inside the instrument.** `net_band/RockCentral.cpp:357` is the comment `// #ifndef HX_NATIVE (online subsystem). …`. The old regex matched it, pushed an HX_NATIVE frame, and **never popped it**, so every directive from line 357 to EOF was classified conditional-and-HX-guarded — including the plainly unconditional `#include "meta/StoreOffer.cpp"` at 1989. | unlinked 13 → **14** |
+
+★ **That `+1` is a CORRECTION, not a regression, and it is the surprise of the
+lane** — I predicted the multi-host drop and did not predict this. Fixing the
+regex moves that edge `'hx'` → `'uncond'`, and `meta/StoreOffer.cpp` genuinely
+reaches no native target: its only host is `RockCentral.cpp`, which has **0
+compile edges** in `ninja -t compdb`. The old tool hid a real row behind a
+misclassification.
+⚠ **Note the direction.** The misclassification made an *unconditional* edge look
+HX-guarded, i.e. it **under**-reported `unlinked` — the opposite of the
+one-directional over-reporting L4 measured for the `UIList.cpp` sentinel class. So
+`scatter_audit`'s errors are **not** all conservative, and the "it can only
+over-report unlinked" reassurance does not hold in general.
+
+Also ported the module's anti-vacuity `#if`/`#endif` balance check, and **showed it
+discriminates** rather than merely adding it: run against `RockCentral.cpp` it
+fires on the old scanner (depth 1 at EOF) and is silent on the fixed one (depth 0).
+The whole-tree run now emits no balance warning.
+
+⚠ **The build was never affected** — the cmake module was already correct; only the
+audit's report was wrong. Which is the durable lesson: **a docstring's claim that
+two instruments agree is not agreement**, and this one went unchecked long enough
+to mis-aim a lane briefing (item 3 above).
+
+## 4. `native_health.sh:159` — the comment, and `main_score2` wired in
+
+L4 left this as *"a one-line follow-up owned by whoever next edits that tool"*. It
+was more than one line. Contract re-verified before wiring rather than trusted:
+
+| invocation | rc | gates |
+|---|---:|---|
+| (none) | **0** | 3 `[PASS]`, 0 `[FAIL]` |
+| `--force-divergent` | **1** | 1 `[PASS]`, 2 `[FAIL]` — `scenB-longest-streak` survives ⇒ targeted |
+| `--forcedivergent` | **2** | unknown argument **REFUSED** |
+
+Three changes: `run_target` gained an optional leading **`--no-assets`**;
+`run_target --no-assets rb3-score2`; and a **`score2-divergent` probe in
+`--selftest`**, landing with the gate rather than after it.
+
+★ `--no-assets` is not cosmetic. `rb3-score2` is pure arithmetic against the M5
+`score_engine` transcription and needs neither the ~4 GB ark nor a GPU. Without
+the flag it would be reported `noassets` UNRUNNABLE on an asset-less box, and
+`native_health.sh:399` turns **any** unrunnable entry into `runtime=INCOMPLETE` —
+so the assets gate would have suppressed the one runtime instrument that could
+ever run in CI.
+
+## Measured — X360 match build: Δ0, and NOT absent-vs-absent
+
+Every `src/` edit is inside `#if defined(HX_NATIVE)` / `#if !HX_NATIVE`, so L4's
+"match-neutral by preprocessor property" argument applies. **Measured anyway**,
+because the edits add ~40 comment lines and shift every subsequent line number
+(`__LINE__`: 0 hits in all edited files, checked first).
+
+`tools/ab_measure.py --worktree ~/tmp/wt-w3-g --patch <src-revert>`, run dir
+`.ab_measure_runs/20260911-012949-w3g-src-hxnative-neutrality-4190508`, patch
+`25884b0b4d2169c1`, objdiff-cli `a5c35b15d7d46ac4`, ruler `name_check`, both legs
+settled:
+
+```
+leg A: matched=42439 masked=22924 honest=19515 code%=37.293660  (recompiles: 0, settled)
+leg B: matched=42439 masked=22924 honest=19515 code%=37.293660  (recompiles: 152, patch_steps=6)
+Δmatched=+0  Δmasked_equal=+0  Δhonest=+0  Δcode%=+0.000000pp  Δcode_bytes=+0
+Δfuzzy=+0.000000pp   (legA 48.959442 -> legB 48.959442)
+units at 100% [mpn]: 150 -> 150 ; [all-rows-fuzzy]: 123 -> 123
+```
+
+★ **The 152 recompiles are the point, not a detail.** `SongUpgradeMgr.h` cascades
+through `BandSongMgr.h`, so leg B really did rebuild 152 TUs and still moved
+nothing — which is what distinguishes a measured Δ0 from the absent-vs-absent Δ0 a
+patch to an uncompiled file would have produced. All three files are in
+`config/45410914/objects.json` (checked before the run).
+
+## What this lane did NOT do
+
+- **Did not fix the genuine `handpose-measured-hand-geometry` red.** Still
+  `handpose_baseline_fail=1`, still needs an asset/oracle lane. Untouched and
+  re-confirmed unchanged.
+- **Did not fix the 4 vacuous handpose failures on the static-mesh cell** in
+  `main_render.cpp`, nor the 4 remaining `ScatterIncludes.cmake:236` warnings about
+  `bandobj/BandCamShot.cpp` conditionally including `rndobj/EventTrigger.cpp` and
+  `char/CharIKScale.cpp` while both are also compiled standalone. Those are
+  pre-existing (4 before, 4 after) and are a **real latent duplicate-definition
+  hazard the module is explicitly warning about** — the next scatter lane's best
+  target.
+- **Did not repair the 9 headers still carrying the `stlpmtx_std`-only
+  `hash<Symbol>` block** (list in item 2). They compile today only because a
+  supplier header wins the `RB3_HASH_SYMBOL_DEFINED` race; they are latent on
+  include order, and each is a one-line transcription of the split now in
+  `SongUpgradeMgr.h`.
+- **Did not implement `RB3_NO_TRACK_DEPTH_CLEAR`** (`TrackPanel.cpp:701`). Grep
+  finds exactly one hit — the comment promising it. A documented opt-out that does
+  not exist is the defect this lane's own opt-out was compiled to avoid; fixing
+  someone else's was out of scope.
+- **Did not reduce the remaining 21 multi-host guests.** Every one was surveyed
+  (`Tail.cpp`, `Utl.cpp`, `BandWardrobe.cpp` with three hosts, `PropSync.cpp` with
+  three, …) and none is blocking a target today, so a broad `#if !HX_NATIVE` sweep
+  would be risk without a measured benefit. The lever is now known and cheap when
+  one *does* block something.
+- **Did not wire the 12 platform-only guests or `GemTrack.cpp`.** L4's dispositions
+  stand unchanged and unre-examined.
+- **Did not audit the other 14 gateless targets.** `rb3-score2` is now the fourth
+  with a real contract; the remaining 14 still have ad-hoc printing.
+- **Did not run `scatter_emitted_truth.py` after the regex fix.** The compiler-truth
+  instrument's 46-vs-47 figure was L4's; this lane's fix should move the
+  `scatter_audit` side of that comparison toward it, but the re-run was not done,
+  so the "1 false positive" figure is **not** re-validated.
+- **Did not touch `MILO_ENGINE_PIN`**, and filed no engine change request — nothing
+  this lane found needs one.
