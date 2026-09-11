@@ -2,6 +2,7 @@
  "0x822b1680": "??0?$ObjPtr@VObjectDir@@@@QAA@ABV0@@Z",
  "0x822d3f18": "??0?$ObjPtr@VUnisonIcon@@@@QAA@ABV0@@Z",
  "0x823047c8": "??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z",
+ "0x823af2b8": "??_GCharWeightable@@UAAPAXI@Z",
  "0x822bb4e8": "?GetTrackInstrument@@YA?AW4TrackInstrument@@VSymbol@@@Z",
  "0x8232ecb0": "??_EBandWardrobe@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x8238f970": "??_ECharClipGroup@@$4PPPPPPPM@A@AAPAXI@Z",
