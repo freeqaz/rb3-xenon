@@ -765,8 +765,10 @@ The `obj_atexit_scope_patcher.py` tool fixes this via fuzzy symbol matching:
 # Rename base .obj atexit destructors to match target scope counters
 python3 scripts/obj_atexit_scope_patcher.py --batch --apply
 
-# Verify and auto-mark newly matching ??__F destructors as COMPLETE
-python3 scripts/atexit_fuzzy_verify.py --apply
+# Verify newly matching ??__F destructors. DRY-RUN FIRST and read the
+# WITHHELD report -- it names rows a permissive ruler would have closed.
+python3 scripts/atexit_fuzzy_verify.py
+python3 scripts/atexit_fuzzy_verify.py --apply    # only after reading the above
 
 # Run the self-tests for the canonical key parser
 python3 scripts/obj_atexit_scope_patcher.py --selftest
@@ -781,9 +783,18 @@ python3 scripts/obj_atexit_scope_patcher.py --selftest
 4. Verifies byte-equality of the function bodies before renaming
 5. Symbol renames only (machine code + relocations unchanged); storage class stays STATIC so the linker never sees these names, preserving link integrity
 
-`atexit_fuzzy_verify.py` then runs objdiff with `functionRelocDiffs=none` to ignore remaining address-relocation noise (target uses `lbl_<addr>` vs base uses `?<var>@?<scope>@...` for the static-local data pointer). When `instruction_summary.equal_percent == 100.0` and `base_size > 0`, it marks the function as COMPLETE with `verdict_reason='atexit_fuzzy_scope_match'`.
+`atexit_fuzzy_verify.py` then scores each `??__F` row on the **graded** ruler — resolved at runtime from `report.json`'s `provenance.diff_config` via `scripts/analysis/ruler.py`, never hardcoded — and marks the function COMPLETE with `verdict_reason='atexit_fuzzy_scope_match'` only when `fuzzy_match_percent >= 100` **and** `instruction_summary.equal_percent >= 100` **and** `base_size > 0`. It **refuses to `--apply`** when the ruler could not be read from a grading run.
 
-**Results:** 264 atexit symbols renamed across 118 files, 262 functions auto-promoted to COMPLETE (remaining 89 are genuine stubs where our C++ source is missing the static declaration entirely). Registered as a post-compile step in `configure.py` so it runs automatically on every `ninja` build.
+⛔ **This paragraph used to describe `functionRelocDiffs=none` as correct here, and it was wrong (corrected lane ATEXIT-RULER, 2026-09-11).** The stated justification — "the target uses `lbl_<addr>` vs base `?<var>@?<scope>@...`, so relocation names must be ignored" — is falsified twice over:
+
+- objdiff **already** forgives a genuine `lbl_<addr>` target under `name_check`. `is_placeholder_symbol_name` (objdiff-core `diff/code.rs:998`) covers `fn_`/`lbl_`/`jumptable_`/`code_`/`data_`/`bss_`/`rdata_`/`vftable_`, and `reloc_eq` returns true whenever the **left (= target)** name is one, regardless of our spelling. If the premise held, `none` would buy nothing.
+- Measured over all **56** `??__F` rows in `report.json`, the rulers disagree on **2**, and on `??__FsFrames@@YAXXZ` (SkeletonClip, 28 B) the disagreement manufactured a false verdict: `none` reads `equal_percent = 100.00` ⇒ COMPLETE, while the graded ruler reads `equal_percent = 71.43` / `fuzzy = 98.571`. The two charged `diff_arg` sites are a **real named callee divergence** — retail destroys `ObjDirPtr<ObjectDir>`, we destroy `vector<RecordedFrame>` — i.e. precisely the wrong-callee class `none` is structurally blind to.
+
+A permissive ruler must never be able to close a row. The `none` reading is still taken as a **control** and reported under `WITHHELD`, so any row it would have promoted is surfaced as a candidate wrong-callee defect instead of being silently closed.
+
+⚠ **Redundancy:** every row this tool can *legitimately* promote is already promoted by `scripts/sync_match_percent.py --promote`, which keys on `report.json`'s own `fuzzy_match_percent == 100` and is graded by construction. The scope patcher runs as a wired post-compile ninja step, so `report.json` already reflects the patched objects. Consider retiring this tool; it is kept for `--mark-at-limit` and as a documented write seam.
+
+**Results:** 264 atexit symbols renamed across 118 files, 262 functions auto-promoted to COMPLETE (remaining 89 are genuine stubs). ⛔ **These figures are DC3's, inherited verbatim when the tooling was ported (`d97d0985`, 2026-05-27) — they have never been true of rb3-xenon.** This tree has **56** `??__F` rows in `report.json` (3 at graded `fuzzy == 100`) and **13** in `decomp.db`, and **no row has ever carried `verdict_reason='atexit_fuzzy_scope_match'`** — the verifier has never been run with `--apply` here. The *patcher* is registered as a post-compile step in `configure.py` and does run on every `ninja` build; the *verifier* is in no build edge and is driven only by this recipe.
 
 ---
 
