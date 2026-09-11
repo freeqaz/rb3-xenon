@@ -7152,7 +7152,7 @@ Voice.cpp:
 	.pdata      start:0x82261A90 end:0x82261AD0
 	.text       start:0x82B64C20 end:0x82B66C50
 	.text       start:0x82C42958 end:0x82C42DA0
-	.text       start:0x82C43100 end:0x82C43390
+	.text       start:0x82C43100 end:0x82C43340
 
 BinStream.cpp:
 	.pdata      start:0x82242388 end:0x82242420
@@ -7163,6 +7163,7 @@ BinStream.cpp:
 ExternalMic.cpp:
 	.pdata      start:0x8225B2D0 end:0x8225B358
 	.text       start:0x82B66C50 end:0x82B67A80
+	.text       start:0x82C43340 end:0x82C43390
 
 Compress.cpp:
 	.pdata      start:0x82242D48 end:0x82242D58
