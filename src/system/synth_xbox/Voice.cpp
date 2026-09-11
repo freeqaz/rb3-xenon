@@ -471,6 +471,81 @@ void Voice::UpdateMix() {
     }
 }
 
+// Reconstructed from retail 0x82B65948 (272 B).  Declared in Voice.h and called
+// from SetReverbEnable and SetSendImpl, but defined in NO translation unit until
+// now -- the X360 match build only compiles, so a missing definition is invisible
+// to it.  Every line below is read off retail's own listing.
+void Voice::UpdateSends() {
+    // Retail compares the STORED int, signed (`cmpwi`), exactly as UpdateMix does.
+    if (mSourceVoice == 0)
+        return;
+
+    XAUDIO2_VOICE_SENDS voiceSends;
+    XAUDIO2_SEND_DESCRIPTOR sendDesc;
+
+    // Flags is cleared BEFORE the output-voice lookup -- retail issues
+    // `li r30,0` / `stw r30, 0x58(r1)` ahead of the mFxSend test, so the
+    // assignment cannot be folded into a struct initialiser after it.
+    sendDesc.Flags = 0;
+    IXAudio2Voice *outputVoice = (IXAudio2Voice *)(mFxSend ? mFxSend->unk4 : 0);
+    sendDesc.pOutputVoice = outputVoice;
+    voiceSends.SendCount = 1;
+    voiceSends.pSends = &sendDesc;
+
+    if (mReverbEnabled) {
+        // reverbDesc is scoped, not sendDesc[1].  Retail overlays it on the
+        // same 8-byte slot (r1+0x60) as the empty XAUDIO2_VOICE_SENDS in the
+        // other arm below, which only happens if both are inner-scope locals;
+        // a function-scope `XAUDIO2_SEND_DESCRIPTOR sends[2]` reserves its slot
+        // for the whole frame and pushes the empty one to its own (measured:
+        // that spelling scores 94.1%, this one 100.0%).
+        XAUDIO2_SEND_DESCRIPTOR reverbDesc;
+        reverbDesc.Flags = 0;
+        reverbDesc.pOutputVoice = (IXAudio2Voice *)TheXboxSynth->unkd4;
+        voiceSends.SendCount = 1;
+        voiceSends.pSends = &reverbDesc;
+        // SHIPPING BUG, reproduced verbatim.  pSends still points at reverbDesc
+        // when the count goes to 2, so XAudio2 reads a second descriptor from
+        // the 8 uninitialised bytes past it (r1+0x68).  The layout shows the
+        // intent: sendDesc is at r1+0x58 and reverbDesc at r1+0x60, i.e. already
+        // adjacent and in the right order, so `pSends = &sendDesc` with count 2
+        // would have been correct.  Retail stores to voiceSends.pSends at
+        // exactly two sites (0x822D93A8 and 0x822D93D0) and neither is on this
+        // path -- it is the re-point above that was never undone, not a missing
+        // store objdiff could be hiding.  Effect: with reverb ON and an FxSend
+        // output voice present, the dry send is dropped and a garbage send takes
+        // its place.
+        // The ternary is spelled out again rather than reusing outputVoice
+        // because retail re-loads mFxSend->unk4 here (`lwz r11, 0x4(r10)`) while
+        // keeping the first result live in r9 for the test further down; the cast
+        // is load-bearing -- unk4 is an int, and an uncast test compiles to a
+        // signed `cmpwi` where retail has `cmplwi`.
+        if ((IXAudio2Voice *)(mFxSend ? mFxSend->unk4 : 0))
+            voiceSends.SendCount = 2;
+    }
+
+    int *pVoice = (int *)mSourceVoice;
+    // IXAudio2Voice::SetOutputVoices is vtable+0x4.
+    if (outputVoice == 0 && !mReverbEnabled) {
+        XAUDIO2_VOICE_SENDS emptySends;
+        emptySends.pSends = 0;
+        emptySends.SendCount = 0;
+        ((void (*)(int *, XAUDIO2_VOICE_SENDS *))(*(int *)(*(int *)pVoice + 0x4)))(
+            pVoice, &emptySends
+        );
+        unk4b = false;
+        unk48 = false;
+    } else {
+        ((void (*)(int *, XAUDIO2_VOICE_SENDS *))(*(int *)(*(int *)pVoice + 0x4)))(
+            pVoice, &voiceSends
+        );
+        unk4b = true;
+        if (mReverbEnabled)
+            unk48 = true;
+    }
+    UpdateMix();
+}
+
 void Voice::SafeRestart() {
     MILO_ASSERT(mSourceVoice, 0x471);
     int *pVoice = (int *)mSourceVoice;
