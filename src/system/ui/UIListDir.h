@@ -64,7 +64,7 @@ public:
     void CreateElements(UIList *, std::vector<UIListWidget *> &, int);
 
     NEW_OBJ(UIListDir)
-    OBJ_MEM_OVERLOAD(0x1b)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1b)
 
 protected:
     /** "scroll direction of list" */

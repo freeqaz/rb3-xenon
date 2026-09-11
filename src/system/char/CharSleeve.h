@@ -29,7 +29,7 @@ public:
     // RndHighlightable
     virtual void Highlight();
 
-    OBJ_MEM_OVERLOAD(0x1E)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1E)
     NEW_OBJ(CharSleeve)
 
     ObjPtr<RndTransformable> mSleeve; // 0x10

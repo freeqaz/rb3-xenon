@@ -24,7 +24,7 @@ public:
     // UIComponent
     UICOMP_DC3_VIRTUAL void OldResourcePreload(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0x11)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x11)
     NEW_OBJ(MiniLeaderboardDisplay)
     static void Init();
 

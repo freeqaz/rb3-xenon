@@ -33,7 +33,7 @@ public:
 #endif
     virtual float LengthMs() const { return 0; }
 
-    OBJ_MEM_OVERLOAD(0x18);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x18);
 
     int GetNumChannels() const;
     int GetSampleRate() const;

@@ -40,7 +40,7 @@ public:
     void Regulate();
     void SetRegulateWaypoint(Waypoint *wp) { mRegulate = wp; }
 
-    OBJ_MEM_OVERLOAD(0x1B)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1B)
     NEW_OBJ(CharServoBone)
 
     RndTransformable *mPelvis; // 0x7c

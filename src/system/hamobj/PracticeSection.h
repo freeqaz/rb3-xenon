@@ -48,7 +48,7 @@ public:
     virtual float StartFrame();
     virtual float EndFrame();
 
-    OBJ_MEM_OVERLOAD(0x2D)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x2D)
     NEW_OBJ(PracticeSection)
 
     const std::vector<PracticeStep> &Steps() const;

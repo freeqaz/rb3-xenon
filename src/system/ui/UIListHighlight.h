@@ -28,7 +28,7 @@ public:
     );
 
     NEW_OBJ(UIListHighlight)
-    OBJ_MEM_OVERLOAD(0x11)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x11)
 
 protected:
     UIListHighlight();

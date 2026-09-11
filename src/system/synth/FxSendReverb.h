@@ -15,7 +15,7 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
 
-    OBJ_MEM_OVERLOAD(0x10);
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x10);
     NEW_OBJ(FxSendReverb)
 
     static unsigned short gRevs[3];

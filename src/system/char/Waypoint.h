@@ -20,7 +20,7 @@ public:
     virtual void Load(BinStream &);
     virtual void Highlight();
 
-    OBJ_MEM_OVERLOAD(0x14)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x14)
     NEW_OBJ(Waypoint)
     void SetRadius(float r) { mRadius = r; }
     void SetStrictRadiusDelta(float r) { mStrictRadiusDelta = r; }

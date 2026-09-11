@@ -21,7 +21,7 @@ public:
     virtual void Enter();
     virtual void Exit();
 
-    OBJ_MEM_OVERLOAD(0x14)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x14)
     NEW_OBJ(CharDriverMidi);
 
     bool mActive; // 0x8c - set true in Enter(), controls clip lookup vs default clip
