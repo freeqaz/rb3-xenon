@@ -1,6 +1,7 @@
 #include "synth_xbox/Voice.h"
 #include "synth_xbox/FxSend.h"
 #include "synth_xbox/Synth.h"
+#include "math/Decibels.h"
 #include "math/Utl.h"
 #include "os/CritSec.h"
 #include "os/Debug.h"
@@ -44,7 +45,7 @@ Voice::Voice(bool b1, int i, bool b2)
     : mState(0), mBuffer(0), mAudioBytes(0), mNumSamples(0), mSampleRate(0), mStartSamp(0), mLoopStart(-1),
       mLoopEnd(-1), mVolume(1.0f), mPan(0), mSpeed(1.0f), mAttackRate(0.001f), mReleaseRate(0.001f),
       mXMA(b1), mFxSend(), mReverbEnabled(false), mReverbMixDb(-96.0f), unk48(false), mSynchronized(b2),
-      mChannels(i), mTagState(0) {
+      mStereo(i > 1), unk4b(false), mTagState(0) {
     mEnvelopeEffect = 0;
     mEnvelopeParams = 0;
     mSourceVoice = 0;
@@ -166,9 +167,9 @@ void Voice::SetData(const void *buffer, int bytes, int i) {
     } else {
         MILO_ASSERT(!mXMA, 0x136);
         mNumSamples = bytes / 2;
-        if (1 < mChannels) {
-            MILO_ASSERT((mNumSamples & (mChannels)) == 0, 0x13a);
-            mNumSamples = mNumSamples / mChannels;
+        if (1 < NumChannels()) {
+            MILO_ASSERT((mNumSamples & (NumChannels())) == 0, 0x13a);
+            mNumSamples = mNumSamples / NumChannels();
         }
     }
 }
@@ -342,6 +343,134 @@ void Voice::SetSendImpl(FxSend360 *send) {
     UpdateSends();
 }
 
+// Reconstructed from retail 0x82B65510 (936 B).  Not ported from dc3: dc3's
+// Voice::UpdateMix is materially different (its mChannels>1 arm builds a
+// 12-entry matrix, and both of its output-voice lookups fall back to
+// TheXboxSynth->OutputVoice(); retail here has neither).  What the two DO
+// share is the 5.1 pan ring -- identical constants, identical arc order --
+// and the cos/cos shipping bug in the 2-channel reverb send.
+void Voice::UpdateMix() {
+    // Retail compares the STORED int, not a pointer: `cmpwi`, signed.
+    if (mSourceVoice == 0)
+        return;
+
+    if (mStereo) {
+        // Stereo source: no panning law at all, just the gain.
+        // IXAudio2Voice::SetVolume is vtable+0x30.
+        int *pVoice = (int *)mSourceVoice;
+        ((void (*)(int *, float, int))(*(int *)(*(int *)pVoice + 0x30)))(pVoice, mVolume, 0);
+        return;
+    }
+
+    int destChannels = 6;
+    // ...whereas the output voice IS compared as a pointer: `cmplwi`.  Both
+    // output-voice tests below re-evaluate the ternary rather than caching it,
+    // which is what retail does (it loads mFxSend and its unk4 twice per site).
+    if ((int *)(mFxSend ? mFxSend->unk4 : 0) != 0) {
+        XAUDIO2_VOICE_DETAILS details;
+        int *pOut = (int *)(mFxSend ? mFxSend->unk4 : 0);
+        // IXAudio2Voice::GetVoiceDetails is vtable+0x0.
+        ((void (*)(int *, XAUDIO2_VOICE_DETAILS *))(*(int *)(*(int *)pOut + 0x0)))(
+            pOut, &details
+        );
+        destChannels = details.InputChannels;
+    }
+
+    float levels[6];
+    for (int i = 0; i < 6; i++) {
+        levels[i] = 0.0f;
+    }
+
+    // Constant-power pan around the 5.1 ring.  mPan runs -4..4; the ring is
+    // six arcs, each interpolating between two speakers.  Deliberately left
+    // uninitialised on the paths retail leaves them uninitialised on -- the
+    // reverb block below reads them back unconditionally, which is how retail
+    // behaves and is why they are function-scope.
+    int loChannel, hiChannel;
+    float loPan, hiPan;
+    if (destChannels == 6 || destChannels == 2) {
+        if (mPan < -3.0f) {
+            loPan = -3.0f;
+            loChannel = 4;
+            hiChannel = 5;
+            hiPan = -5.0f;
+        } else if (mPan < -1.0f) {
+            loPan = -1.0f;
+            loChannel = 0;
+            hiChannel = 4;
+            hiPan = -3.0f;
+        } else if (mPan < 0.0f) {
+            loPan = -1.0f;
+            loChannel = 0;
+            hiChannel = 2;
+            hiPan = 0.0f;
+        } else if (mPan < 1.0f) {
+            loChannel = 2;
+            loPan = 0.0f;
+            hiChannel = 1;
+            hiPan = 1.0f;
+        } else if (mPan < 3.0f) {
+            loChannel = 1;
+            loPan = 1.0f;
+            hiChannel = 5;
+            hiPan = 3.0f;
+        } else {
+            loPan = 3.0f;
+            loChannel = 5;
+            hiChannel = 4;
+            hiPan = 5.0f;
+        }
+        float angle = (mPan - loPan) / (hiPan - loPan) * 1.5707964f;
+        if (destChannels == 6) {
+            levels[loChannel] = (float)cos(angle) * mVolume;
+            levels[hiChannel] = (float)sin(angle) * mVolume;
+        } else {
+            levels[0] = (float)cos(angle) * mVolume;
+            // Shipping-game bug, reproduced verbatim: the right channel gets
+            // cos() a second time instead of sin(), so a 2-channel send is
+            // correlated rather than panned.  Both call sites in retail
+            // resolve to the same `cos` (0x8282B570); `sin` is 0x8282B490 and
+            // is only reached from the 6-channel arm above.
+            levels[1] = (float)cos(angle) * mVolume;
+        }
+    } else if (destChannels == 1) {
+        levels[0] = mVolume;
+    }
+
+    if ((int *)(mFxSend ? mFxSend->unk4 : 0) == 0) {
+        if (unk4b) {
+            // IXAudio2Voice::SetOutputMatrix is vtable+0x40.
+            int *pVoice = (int *)mSourceVoice;
+            ((void (*)(int *, int, int, int, float *, int))(
+                *(int *)(*(int *)pVoice + 0x40)
+            ))(pVoice, 0, 1, 6, levels, 0);
+        }
+    } else {
+        int *pVoice = (int *)mSourceVoice;
+        ((void (*)(int *, int, int, int, float *, int))(
+            *(int *)(*(int *)pVoice + 0x40)
+        ))(pVoice, mFxSend ? mFxSend->unk4 : 0, 1, destChannels, levels, 0);
+    }
+
+    if (mReverbEnabled && unk48) {
+        float ratio = DbToRatio(mReverbMixDb);
+        for (int i = 0; i < 6; i++) {
+            levels[i] = 0.0f;
+        }
+        float angle = (mPan - loPan) / (hiPan - loPan) * 1.5707964f;
+        if (destChannels == 6) {
+            levels[loChannel] = (float)cos(angle) * ratio;
+            levels[hiChannel] = (float)sin(angle) * ratio;
+        } else {
+            levels[0] = (float)cos(angle) * ratio;
+            levels[1] = (float)cos(angle) * ratio;
+        }
+        ((void (*)(int *, int, int, int, float *, int))(
+            *(int *)(*(int *)(int *)mSourceVoice + 0x40)
+        ))((int *)mSourceVoice, TheXboxSynth->unkd4, 1, destChannels, levels, 0);
+    }
+}
+
 void Voice::SafeRestart() {
     MILO_ASSERT(mSourceVoice, 0x471);
     int *pVoice = (int *)mSourceVoice;
@@ -361,12 +490,12 @@ int Voice::GetAddr() {
     int addr = mStartSamp + (unsigned int)state.SamplesPlayed;
     const void *buf = mBuffer;
     if (buf != 0) {
-        int bytesPerSample = mChannels * 2;
+        int bytesPerSample = NumChannels() * 2;
         int samplesInBuffer = mAudioBytes / bytesPerSample;
         unsigned int uaddr = (unsigned int)addr;
-        addr = (int)(uaddr - (uaddr / (unsigned int)samplesInBuffer) * (unsigned int)samplesInBuffer) * mChannels;
+        addr = (int)(uaddr - (uaddr / (unsigned int)samplesInBuffer) * (unsigned int)samplesInBuffer) * NumChannels();
     } else {
-        addr = mChannels * addr;
+        addr = NumChannels() * addr;
     }
     return addr << 1;
 }
@@ -490,17 +619,17 @@ void Voice::Init(bool b) {
 void Voice::InitVoiceParameters(XMA2WAVEFORMATEX &fmt, XAUDIO2_BUFFER buf) {
     if (mXMA) {
         fmt.wfx.wFormatTag = 0x166;
-        fmt.wfx.nChannels = mChannels;
+        fmt.wfx.nChannels = NumChannels();
         fmt.wfx.nSamplesPerSec = mSampleRate;
         fmt.wfx.wBitsPerSample = 0x10;
         fmt.wfx.cbSize = 0x22;
         fmt.NumStreams = 1;
         fmt.wfx.nBlockAlign = (fmt.wfx.nChannels * fmt.wfx.wBitsPerSample) / 8;
-        if (mChannels == 1) {
+        if (NumChannels() == 1) {
             fmt.ChannelMask = 4;
-        } else if (mChannels == 2) {
+        } else if (NumChannels() == 2) {
             fmt.ChannelMask = 3;
-        } else if (mChannels == 5) {
+        } else if (NumChannels() == 5) {
             fmt.ChannelMask = 0x60f;
         }
         fmt.SamplesEncoded = mNumSamples;
@@ -515,7 +644,7 @@ void Voice::InitVoiceParameters(XMA2WAVEFORMATEX &fmt, XAUDIO2_BUFFER buf) {
         fmt.BlockCount = (unsigned short)ceil(duration);
     } else {
         fmt.wfx.wFormatTag = 1;
-        fmt.wfx.nChannels = mChannels;
+        fmt.wfx.nChannels = NumChannels();
         fmt.wfx.nSamplesPerSec = mSampleRate;
         fmt.wfx.wBitsPerSample = 16;
         fmt.wfx.nBlockAlign = (fmt.wfx.nChannels * fmt.wfx.wBitsPerSample) / 8;
