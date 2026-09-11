@@ -94,40 +94,52 @@ sys.path.insert(0, os.path.join(REPO, 'tools'))
 import crossing_worklist as C  # noqa: E402
 
 
+# Which typed_arg kinds participate in an instruction's identity.
+#
+# ★ BOTH DEFECTS THIS TUPLE CARRIED ARE FIXED (lane W4-F, 2026-09-11).  Until
+# then it read ('Register','Signed','Unsigned','Opaque'), which its own sibling
+# `tools/shape_families.py` had already refuted and fixed WITHOUT this module
+# getting the change.  Measured ground truth: over 4,000 cached objdiff diffs the
+# ONLY arg types objdiff emits are
+#     Register  Symbol  Signed  BranchDest  Other  Unsigned
+# and `Opaque` occurs EXACTLY ZERO TIMES.  So the old tuple silently discarded
+# THREE live kinds, not one: `Other` (where shift and mask amounts live, e.g.
+# {'type':'Other','value':'24'} on `clrlwi.`), `BranchDest` (a real scored
+# intra-function branch target), and `Symbol` (relocations -- charged since
+# `d04c83df` shipped name_check on 2026-08-12, and actually PRESENT in these
+# diffs since `d1b4f708` put crossing_worklist on the graded ruler).
+#
+# WHY THAT MATTERED HERE, which is NOT how it mattered in shape_families.  This
+# tuple feeds exactly one consumer: `transposed_pairs`, which asks "are these two
+# adjacent mismatches literally the same two instructions, reordered?" and whose
+# ALL-transposed bucket is labelled `scheduling, nothing missing` -- a DISMISSAL.
+# Every discarded arg kind makes two DIFFERENT instructions compare EQUAL, so the
+# blindness runs one way: it manufactures false transpositions and dismisses real
+# divergences as scheduling noise.  A reordering that ALSO changes the callee --
+# the `??__FsFrames` shape, retail destroying `ObjDirPtr<ObjectDir>` where we
+# destroy `vector<RecordedFrame>` -- was read as pure scheduling.
+ARGT = ('Register', 'Signed', 'Unsigned', 'Other', 'BranchDest', 'Symbol')
+
+
 def key(side):
-    """opcode + register/immediate args.  Symbol args are relocations and are
-    EXCLUDED so that one defect across instantiations still compares equal.
+    """opcode + all scored args (see ARGT), symbol names LITERAL.
 
-    ⚠ TWO KNOWN DEFECTS IN THIS FUNCTION, BOTH LEFT UNFIXED ON PURPOSE (lane
-    SCRIPT-ROT, 2026-09-11) -- changing this key changes every classification the
-    tool has produced, which needs its own validated lane.  Read them before you
-    trust a ranking out of this module.
+    Literal, not normalised, and for a different reason than in shape_families.
+    That tool groups ACROSS rows, so it had to weigh fragmenting template
+    instantiations.  This one compares two instructions WITHIN one row and asks
+    whether they are the same instruction moved.  If retail's call goes to `Foo`
+    and ours goes to `Bar`, they are not the same instruction and the pair is not
+    a transposition -- so the literal name is the whole point.
 
-    1. THE STATED RATIONALE IS DEAD.  "Masked by functionRelocDiffs=none" stopped
-       being true on 2026-08-12 (`d04c83df`, the name_check flip), and
-       crossing_worklist -- this module's diff source -- now resolves the GRADED
-       ruler at runtime.  Under name_check a Symbol arg IS charged, so the
-       transposition test below is structurally blind to a wrong-callee
-       divergence.  The exclusion may still be right FOR GROUPING; it is no
-       longer free.
-
-    2. THE ARG-TYPE TUPLE BELOW IS THE ONE ITS SIBLING TOOL REFUTED.
-       `tools/shape_families.py` carries a ⚠ header recording that
-       ('Register','Signed','Unsigned','Opaque') was its own first draft and was
-       WRONG: `Opaque` is NOT a type objdiff emits -- the real name is `Other`,
-       which is where SHIFT AND MASK AMOUNTS live -- and `BranchDest` was
-       excluded on the same bad "it's masked" theory though an intra-function
-       branch destination is a real scored difference.  There, the effect was not
-       a lost row here or there: it INVENTED FAMILIES AT THE TOP OF THE RANKING
-       (20 rows / 2,016 B of pure artifact) and nothing errored.  shape_families
-       fixed it to ('Register','Signed','Unsigned','Other','BranchDest') and
-       added its CONTROL 5 to make it fail loudly.  THIS MODULE NEVER GOT EITHER.
-       So `Opaque` matches nothing, and shift/mask amounts and branch targets are
-       silently invisible to `key()`."""
+    ⚠ DELIBERATE ASYMMETRY: a folded-alias callee (our spelling differs from
+    retail's but both resolve to one function) will now read as a genuine
+    divergence rather than as scheduling.  That is the safe direction -- it
+    routes the row to a human instead of dismissing it -- and it is the direction
+    CLAUDE.md asks for, since objdiff cannot separate `folded` from `wrong`."""
     if not side:
         return None
     args = tuple(str(a.get('value')) for a in (side.get('typed_args') or [])
-                 if a.get('type') in ('Register', 'Signed', 'Unsigned', 'Opaque'))
+                 if a.get('type') in ARGT)
     return (side.get('opcode'), args)
 
 
@@ -147,6 +159,94 @@ def transposed_pairs(diff):
             n += 1
             used.update((i, j))
     return n, len(bad)
+
+
+# ---------------------------------------------------------------------------
+# FIXTURE CONTROL for the transposition detector (lane W4-F, 2026-09-11).
+#
+# WHY A FIXTURE AND NOT THE LIVE POPULATION.  `--selftest` used to assert
+# `buckets['ALL'] > 0` -- "no transposed rows -- transposition test is vacuous".
+# That asserts a property of the POPULATION, not of the tool, so it cannot tell
+# a BROKEN detector from a population that simply has no transpositions left.
+# It was already RED on arrival at `3ab3f494` for the second reason (0 ALL /
+# 0 SOME / 79 NONE), i.e. the campaign draining the class made the tool's own
+# control unsatisfiable.  A control that goes red when the work SUCCEEDS teaches
+# a lane to ignore it.  These fixtures pin the detector itself, so the live
+# counts can be reported as information instead of as a pass/fail.
+def _side(op, args):
+    return {'opcode': op, 'typed_args': [{'type': t, 'value': str(v)} for t, v in args]}
+
+
+def _reordered(a, b):
+    """A 2-instruction diff holding `a` then `b` on the target side and the same
+    two, swapped, on the base side -- the exact shape `transposed_pairs` hunts."""
+    return {'instructions': [
+        {'match_type': 'replace', 'target': a[0], 'base': b[1]},
+        {'match_type': 'replace', 'target': b[0], 'base': a[1]},
+    ]}
+
+
+def _fixtures():
+    """(name, diff, expect_new, expect_old, why).
+
+    `expect_old` is what the pre-W4-F key -- ('Register','Signed','Unsigned',
+    'Opaque') -- scored, and it is the half that makes this a CONTROL rather than
+    a restatement: every refusal fixture was a FALSE TRANSPOSITION before, so the
+    fixtures demonstrate the behaviour CHANGED, in the intended direction."""
+    lwz = (_side('lwz', [('Register', 'r4')]),) * 2
+    f = []
+    # ANTI-VACUITY ARM: a genuine register-only transposition must STILL be
+    # detected.  Without this, a key that refused everything would "pass" each
+    # refusal fixture below and look like a perfect fix.
+    addi = (_side('addi', [('Register', 'r3')]),) * 2
+    f.append(('genuine transposition (register-only)', _reordered(addi, lwz), 1, 1,
+              'same two instructions, reordered -- really is scheduling'))
+    # Symbol: a reorder that ALSO changes the callee is not scheduling.
+    bl_t = _side('bl', [('Symbol', '??1?$ObjDirPtr@VObjectDir@@@@UAA@XZ')])
+    bl_b = _side('bl', [('Symbol', '??1?$vector@URecordedFrame@@@@UAA@XZ')])
+    f.append(('reorder + DIFFERENT callee (Symbol)', _reordered((bl_t, bl_b), lwz), 0, 1,
+              'the ??__FsFrames shape: a wrong callee dismissed as scheduling'))
+    # Other: shift/mask amounts live here.
+    sh_t = _side('clrlwi.', [('Register', 'r3'), ('Other', '24')])
+    sh_b = _side('clrlwi.', [('Register', 'r3'), ('Other', '16')])
+    f.append(('reorder + DIFFERENT shift amount (Other)', _reordered((sh_t, sh_b), lwz), 0, 1,
+              'a mask width is a real divergence, not a reordering'))
+    # BranchDest: a real scored intra-function target.
+    br_t = _side('beq', [('BranchDest', 500)])
+    br_b = _side('beq', [('BranchDest', 132)])
+    f.append(('reorder + DIFFERENT branch target (BranchDest)', _reordered((br_t, br_b), lwz), 0, 1,
+              'a different branch destination is not a reordering'))
+    return f
+
+
+def _old_key(side):
+    """The pre-W4-F key, kept ONLY so the fixtures can show what changed."""
+    if not side:
+        return None
+    args = tuple(str(a.get('value')) for a in (side.get('typed_args') or [])
+                 if a.get('type') in ('Register', 'Signed', 'Unsigned', 'Opaque'))
+    return (side.get('opcode'), args)
+
+
+def run_fixture_control(verbose=True):
+    """Return (ok, lines).  Pins the detector against synthetic diffs."""
+    global key
+    lines, ok = [], True
+    for name, diff, exp_new, exp_old, why in _fixtures():
+        got_new = transposed_pairs(diff)[0]
+        real, key = key, _old_key
+        try:
+            got_old = transposed_pairs(diff)[0]
+        finally:
+            key = real
+        good = (got_new == exp_new and got_old == exp_old)
+        ok &= good
+        lines.append(f"  {'PASS' if good else 'FAIL'}  fixture: {name}\n"
+                     f"           new key -> {got_new} transposition(s) (expect {exp_new}); "
+                     f"old key -> {got_old} (expect {exp_old})   [{why}]")
+    if verbose:
+        print('\n'.join(lines))
+    return ok, lines
 
 
 def collect(project_dir, max_mm, cache_dir):
@@ -203,13 +303,42 @@ def main():
           f"{sum(r['size'] for r in struct)} B")
 
     if a.selftest:
+        fails = []
         # shape 3: a degenerate one-label classifier must fail here.
-        assert len(shapes_r) >= 3, f'only {len(shapes_r)} match_type shape(s) -- one-label classifier?'
-        assert buckets['ALL'] > 0, 'no transposed rows -- transposition test is vacuous'
-        assert buckets['NONE'] > 0, 'every row transposed -- transposition test is vacuous'
-        assert 0 < pure < len(struct), 'insert/delete is all-or-nothing -- decomposition is vacuous'
-        print("\nSELFTEST PASSED (>=3 shapes; both transposed and non-transposed "
-              "populations non-empty; insert/delete is a proper subset)")
+        ok = len(shapes_r) >= 3
+        print(f"\n  {'PASS' if ok else 'FAIL'}  control 1 (not a one-label classifier): "
+              f"{len(shapes_r)} distinct match_type shapes")
+        if not ok:
+            fails.append(f'only {len(shapes_r)} match_type shape(s) -- one-label classifier?')
+
+        ok = 0 < pure < len(struct)
+        print(f"  {'PASS' if ok else 'FAIL'}  control 2 (insert/delete is a proper subset): "
+              f"{pure}/{len(struct)} rows")
+        if not ok:
+            fails.append('insert/delete is all-or-nothing -- decomposition is vacuous')
+
+        # control 3: the DETECTOR, pinned against synthetic diffs.
+        #
+        # ⚠ This replaces `assert buckets['ALL'] > 0`, which asserted a property
+        # of the live POPULATION and so could not distinguish a broken detector
+        # from a population with no transpositions left.  It was already failing
+        # for the second reason.  The live buckets are still PRINTED above --
+        # read them as information, not as a gate.
+        print(f"  -- transposition detector, fixture-pinned "
+              f"(live population: ALL={buckets['ALL']} SOME={buckets['SOME']} "
+              f"NONE={buckets['NONE']}, not a gate) --")
+        ok, _ = run_fixture_control()
+        if not ok:
+            fails.append('transposition detector fixtures failed -- key() or '
+                         'transposed_pairs regressed')
+
+        if fails:
+            print('\nSELFTEST FAILED:')
+            for f in fails:
+                print(f'  - {f}')
+            sys.exit(2)
+        print("\nSELFTEST PASSED (>=3 match_type shapes; insert/delete a proper "
+              "subset; transposition detector verified against fixtures)")
 
 
 if __name__ == '__main__':

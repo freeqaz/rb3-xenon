@@ -193,30 +193,50 @@ import crossing_worklist as C  # noqa: E402
 # had one such mismatch collapsed into a single N-row "family": 15 rows of `beq cr6`
 # ranked #2 by fan-out, plus `srawi`/`slwi` families, 20 rows / 2,016 B of pure
 # artifact.  Nothing errored.  See CONTROL 5 below, which now makes this fail loudly.
-ARGT = ('Register', 'Signed', 'Unsigned', 'Other', 'BranchDest')
+#
+# ★ `Symbol` ADMITTED 2026-09-11 (lane W4-F).  It was excluded on the rationale
+# "masked by functionRelocDiffs=none, so dropping it is free", which died with
+# `d04c83df` (2026-08-12) and was finally made load-bearing by `d1b4f708`, which
+# made crossing_worklist -- this module's diff source -- resolve the GRADED ruler.
+# The exclusion was not merely a blind spot.  MEASURED on the tree at `3ab3f494`:
+# 1,982 of 3,226 sub-100 rows (61.4%) / 461,400 B (42.6%) carry NOTHING BUT
+# relocation-name charges, so under `none` they rendered as zero mismatches and
+# were dropped by `if not sig: continue`.  The ruler flip INJECTED all of them,
+# and with `Symbol` dropped every one of them rendered as a bare `bl` on BOTH
+# sides -- collapsing 1,387 rows / 295,264 B into a single manufactured "family"
+# that ranked #1 by bytes and swallowed 56.4% of the population.  Three of the
+# five controls below were RED on arrival because of it (3, 4 and 5).
+#
+# ⚠ LITERAL names, NOT a positional placeholder.  Normalising each symbol to an
+# `@0`/`@1` token (the device `regnorm` uses for registers) was measured and
+# REJECTED: it repairs CONTROL 5 (blind shapes 5 -> 0) while leaving the 1,387-row
+# family exactly intact, because every "target calls something, base calls
+# something else" `bl` still renders identically.  It fixes the symptom the
+# control names and not the defect.
+# The standing objection to literal names -- that they fragment one defect
+# replicated across template instantiations, which is what this tool exists to
+# group -- is REFUTED BY MEASUREMENT on this population: the old key's genuine
+# (non-artifact) families cover 657 rows, literal names cover 731 in 232
+# families with a largest family of 21.  Literal grouping finds MORE real
+# structure, not less, because rows now group by WHICH callee pair differs --
+# which is the defect, and the unit of one fix.
+ARGT = ('Register', 'Signed', 'Unsigned', 'Other', 'BranchDest', 'Symbol')
 
 
 def side_sig(side, regmap=None):
-    """opcode + non-symbol args.  Symbol args are relocations and are EXCLUDED so
-    that ONE defect replicated across template instantiations still groups into a
-    single family (see header).
+    """opcode + args, INCLUDING relocation (`Symbol`) args -- see ARGT.
 
-    ⚠ THE EXCLUSION'S ORIGINAL RATIONALE IS DEAD -- do not re-derive anything
-    from it.  It used to read "Symbol args are masked by functionRelocDiffs=none,
-    so dropping them is free".  This project shipped
-    `functionRelocDiffs=name_check` on 2026-08-12 (`d04c83df`), and
-    crossing_worklist -- the module that produces the diffs fed to this function
-    -- now resolves the GRADED ruler at runtime, so those diffs DO carry charged
-    Symbol args.  The GROUPING rationale above survives on its own merits; the
-    "it costs nothing" one does not.
+    Symbol args used to be excluded here, on two rationales that both failed:
+    "they are masked by functionRelocDiffs=none so it is free" (dead since
+    `d04c83df`, 2026-08-12) and "excluding them groups one defect across template
+    instantiations".  The first is simply false now.  The second is a real
+    concern that was MEASURED and came out the other way -- literal names find
+    MORE genuine families on this population, because a wrong-callee row's defect
+    IS the callee pair.  Full figures and the rejected placeholder alternative are
+    in the ARGT comment above; do not re-derive either rationale from memory.
 
-    CONSEQUENCE, deliberately left unfixed here because changing the shape key
-    changes every ranking this tool has ever produced and needs its own
-    validated lane: a row whose ONLY charge is a relocation NAME -- the
-    wrong-callee class, which CLAUDE.md calls the most valuable class of real fix
-    we have -- renders IDENTICALLY on both sides and is invisible to this
-    ranker.  See CONTROL 5, whose tolerance of exactly that case still cites the
-    dead rationale."""
+    Registers are still optionally renumbered (`regnorm`); symbols are NOT
+    normalised, deliberately."""
     if not side:
         return None
     out = []
@@ -337,8 +357,19 @@ def cmd_vs_matchtype(a):
 
 
 def cmd_null(a):
-    """Is 'N families of size >= 2' more than random grouping would give?"""
+    """Is 'N families of size >= 2' more than random grouping would give?
+
+    `mm_floor`/`mm_ceil` (optional) restrict the rows considered to those with
+    that many mismatches.  They exist because this null is only informative where
+    a row HAS co-occurring shapes to scramble -- see control 4.  `quiet`
+    suppresses the printout so the control can call it several times.
+    """
     M, rows = build(a.project_dir, a.cache_dir, a.regnorm, a.max_mismatch)
+    lo, hi = getattr(a, 'mm_floor', None), getattr(a, 'mm_ceil', None)
+    if lo is not None:
+        rows = [r for r in rows if len(r['shapes']) >= lo]
+    if hi is not None:
+        rows = [r for r in rows if len(r['shapes']) <= hi]
     g = group(rows)
     obs_f = sum(1 for v in g.values() if len(v) >= a.min_rows)
     obs_r = sum(len(v) for v in g.values() if len(v) >= a.min_rows)
@@ -360,12 +391,13 @@ def cmd_null(a):
         fc.append(sum(1 for v in gg.values() if len(v) >= a.min_rows))
         rc.append(sum(len(v) for v in gg.values() if len(v) >= a.min_rows))
         bc.append(sum(sum(r['size'] for r in v) for v in gg.values() if len(v) >= a.min_rows))
-    print(f"OBSERVED  families {obs_f:>5}   rows-in-families {obs_r:>5}   bytes {obs_b:>9,}")
-    print(f"NULL(x{a.trials}) families {sum(fc)/len(fc):>7.1f} rows-in-families "
-          f"{sum(rc)/len(rc):>7.1f}  bytes {sum(bc)/len(bc):>11,.0f}")
     e = obs_b / max(sum(bc) / len(bc), 1e-9)
-    print(f"\nenrichment (bytes): {e:.2f}x   -- signature identity is detecting real")
-    print("shared structure only if this is well above 1.")
+    if not getattr(a, 'quiet', False):
+        print(f"OBSERVED  families {obs_f:>5}   rows-in-families {obs_r:>5}   bytes {obs_b:>9,}")
+        print(f"NULL(x{a.trials}) families {sum(fc)/len(fc):>7.1f} rows-in-families "
+              f"{sum(rc)/len(rc):>7.1f}  bytes {sum(bc)/len(bc):>11,.0f}")
+        print(f"\nenrichment (bytes): {e:.2f}x   -- signature identity is detecting real")
+        print("shared structure only if this is well above 1.")
     return e
 
 
@@ -435,22 +467,21 @@ def cmd_selftest(a):
                 continue        # one side is legitimately absent
             if t is not None and t == b:
                 blind[repr(sh)] += 1
-    # A blind shape in ONE row cannot form a family, so it is harmless noise (it
-    # is the residual Symbol-only `replace`).
+    # A blind shape in ONE row cannot form a family, so it is tolerated here; the
+    # hazard this control exists for is a blind shape spanning >= 2 rows, which
+    # MANUFACTURES a family out of rows sharing nothing but an opcode.
     #
-    # ⚠ THAT TOLERANCE IS STILL CORRECT, BUT ITS STATED REASON IS DEAD (lane
-    # SCRIPT-ROT, 2026-09-11).  This comment used to end "...which the ruler masks
-    # anyway".  The ruler does NOT mask it: `functionRelocDiffs=name_check` shipped
-    # 2026-08-12 (`d04c83df`) and CHARGES a relocation-name difference, and
-    # crossing_worklist now resolves the graded ruler at runtime.  So a single-row
-    # blind shape is not a free pass -- it is a row whose only charge is a
-    # relocation NAME, i.e. the wrong-callee class, sitting unranked and
-    # unreported.  The >= min_rows FAILURE below is unaffected and still fires
-    # correctly; what was wrong was only the reason for waving the singletons
-    # through.  Treat the singleton count printed below as a WORKLIST, not as
-    # noise.  See side_sig's docstring.  The
-    # hazard is a blind shape spanning >= 2 rows: that MANUFACTURES a family out
-    # of rows sharing nothing but an opcode.  Scope the failure to that.
+    # ★ HISTORY, because this control DID ITS JOB and the finding is worth
+    # keeping (lane W4-F, 2026-09-11).  The singletons were waved through on the
+    # reason "which the ruler masks anyway" -- false since `d04c83df`.  When
+    # `d1b4f708` put crossing_worklist on the graded ruler, the wrong-callee class
+    # arrived in the population en masse and this control went RED exactly as
+    # designed: 9 family-forming blind shapes, the largest
+    # `('diff_arg', ('bl', ()), ('bl', ()))` spanning 2,461 rows.  Admitting
+    # `Symbol` to ARGT drives that to 0.  The lesson is that the FAILURE was
+    # correct and the TOLERANCE's stated reason was the rotten part -- so do not
+    # widen this tolerance to quiet a future red without first asking what the
+    # shape function has gone blind to.
     bad = {k: n for k, n in blind.items() if n >= a.min_rows}
     ok = not bad
     print(f"  {'PASS' if ok else 'FAIL'}  control 5 (no BLIND shape spans >= {a.min_rows} rows): "
@@ -462,12 +493,60 @@ def cmd_selftest(a):
                      f'cannot see what differs there, so those families are artifacts')
 
     # control 4 (shape 1, must-be-able-to-fail): the null must show enrichment.
+    #
+    # ★ SCOPED + SELF-CALIBRATED 2026-09-11 (lane W4-F).  It used to run the null
+    # over the WHOLE population against a flat `> 1.5`, and both halves were
+    # broken.  This is NOT the threshold being moved to let this lane's change
+    # pass -- the rewritten control scores the defective keys BELOW its threshold
+    # too (figures below), which the old one did not.
+    #
+    # (a) THE NULL IS VACUOUS -- AND BIASED -- ON mm==1 ROWS, WHICH ARE 69.7% OF
+    #     THE POPULATION.  `cmd_null` rebuilds a row's signature by drawing shapes
+    #     independently from the global pool, i.e. it destroys WHICH SHAPES
+    #     CO-OCCUR IN A ROW.  A one-shape row has no co-occurrence to destroy, so
+    #     the null draws from the same marginal the observed shape came from and
+    #     is testing a distribution against itself.  Measured on those rows:
+    #     observed 151,856 B vs null 250,506 B = 0.61x -- the null produces MORE
+    #     than reality, because sampling with replacement concentrates the common
+    #     shapes harder than the data does.  Diluting the real signal with that
+    #     arm pinned the aggregate near 1.00x whatever the shape function did.
+    #
+    # (b) `> 1.5` COULD NOT FAIL FOR THE CASE IT EXISTS TO CATCH.  Measured on the
+    #     mm>=2 subpopulation where the null has power:
+    #         this key (Symbol admitted)          241.72x
+    #         pre-W4-F key (Symbol dropped)         3.83x
+    #         refuted first draft (`Opaque`)        3.77x
+    #         SABOTAGE: opcode only, no args        1.87x   <- would PASS at 1.5
+    #     A degenerate signature function cleared the old bar.  Note also that the
+    #     old aggregate read 1.30x BEFORE this lane and 1.00x after: that 1.30 was
+    #     not health, it was the 1,387-row artifact family inflating the OBSERVED
+    #     side deterministically while the null spread those rows by probability.
+    #
+    # So: gate on the subpopulation where the null can discriminate, and calibrate
+    # the bar against a deliberately degenerate key computed on the same rows
+    # rather than against a constant someone can quietly tune.
     if not a.skip_null:
-        e = cmd_null(argparse.Namespace(**{**vars(a), 'trials': 20}))
-        ok = e > 1.5
-        print(f"  {'PASS' if ok else 'FAIL'}  control 4 (enrichment over permutation null): {e:.2f}x")
+        e_all = cmd_null(argparse.Namespace(**{**vars(a), 'trials': 20}))
+        e1 = cmd_null(argparse.Namespace(**{**vars(a), 'trials': 20,
+                                            'mm_floor': 1, 'mm_ceil': 1, 'quiet': True}))
+        e2 = cmd_null(argparse.Namespace(**{**vars(a), 'trials': 20,
+                                            'mm_floor': 2, 'quiet': True}))
+        saved, globals()['ARGT'] = ARGT, ()
+        try:
+            e_sab = cmd_null(argparse.Namespace(**{**vars(a), 'trials': 20,
+                                                   'mm_floor': 2, 'quiet': True}))
+        finally:
+            globals()['ARGT'] = saved
+        ok = e2 >= 10.0 and e2 >= 3.0 * e_sab
+        print(f"  {'PASS' if ok else 'FAIL'}  control 4 (enrichment over permutation null, "
+              f"scoped to mm>=2 where the null has power): {e2:.2f}x")
+        print(f"           calibration: degenerate opcode-only key on the same rows "
+              f"= {e_sab:.2f}x (bar: >=10x and >=3x that)")
+        print(f"           information, NOT gated: mm==1 arm {e1:.2f}x "
+              f"(vacuous by construction -- see comment), whole population {e_all:.2f}x")
         if not ok:
-            fails.append(f'enrichment {e:.2f}x -- signature identity is not detecting structure')
+            fails.append(f'scoped enrichment {e2:.2f}x vs degenerate {e_sab:.2f}x -- '
+                         f'signature identity is not detecting structure')
 
     print()
     if fails:
