@@ -154,10 +154,24 @@ else
 fi
 
 # --------------------------------------------------------------- RUNTIME ----
-# Each entry: <target> <argv...>. Only the three targets that HAVE Gate()
-# machinery; the other 15 have ad-hoc pass/fail printing and no common contract
-# (see docs/decomp/NATIVE_HEALTH.md -- main_score2 in particular prints
-# MATCH/DIVERGENT and returns 0 UNCONDITIONALLY, so it cannot be read as a gate).
+# Each entry: [--no-assets] <target> <argv...>. Only the targets that emit the
+# house `  [PASS]/[FAIL]` contract AND propagate the verdict to their exit code;
+# the remaining 14 have ad-hoc printing and no common contract.
+#
+# ⚠ This comment used to end with "-- main_score2 in particular prints
+# MATCH/DIVERGENT and returns 0 UNCONDITIONALLY, so it cannot be read as a gate".
+# That was true when N1-GPUGATES wrote it and STALE from 2026-09-10, when
+# L4-NATIVESCATTER gave main_score2.cpp the contract and a real --force-divergent
+# flag. It is wired in below. Re-verified here before wiring, rather than trusted:
+#   (none)              rc=0, 3 [PASS], 0 [FAIL]
+#   --force-divergent   rc=1, 1 [PASS], 2 [FAIL]  (scenB-longest-streak still
+#                       passes => targeted, not a blanket red)
+#   --forcedivergent    rc=2  (unknown argument REFUSED, not silently ignored)
+# rb3-score2 is pure arithmetic against the M5 score_engine transcription: it
+# needs neither assets nor a GPU, which is why it is the one runtime instrument
+# that can run on a box without the ~4 GB ark -- hence --no-assets, so the assets
+# gate does not report it UNRUNNABLE (and drag the verdict to INCOMPLETE) for a
+# dependency it does not have.
 echo
 echo "--- runtime gates ---"
 NB="$DIR/native/build"
@@ -165,14 +179,16 @@ gates_pass=0; gates_fail=0; rt_ran=0; rt_total=0; unrunnable=(); green=()
 
 # Count gate verdict lines, and REFUSE to call a zero-gate run a pass.
 # A binary that prints nothing has not passed; it has not been measured.
-run_target() {  # name, then argv
+run_target() {  # [--no-assets] name, then argv
+    local need_assets=1
+    if [ "${1:-}" = "--no-assets" ]; then need_assets=0; shift; fi
     local name="$1"; shift
     rt_total=$((rt_total + 1))
     if [ ! -x "$NB/$name" ]; then
         echo "  UNRUNNABLE $name -- no executable (the link gate above is the authority on why)"
         unrunnable+=("$name:nobinary"); return
     fi
-    if [ ! -d "$ASSETS" ]; then
+    if [ "$need_assets" -eq 1 ] && [ ! -d "$ASSETS" ]; then
         echo "  UNRUNNABLE $name -- assets absent at $ASSETS (set RB3_ASSETS)"
         unrunnable+=("$name:noassets"); return
     fi
@@ -210,6 +226,7 @@ run_target() {  # name, then argv
 run_target rb3-milo "$ASSETS" ui/track/gen/tracksystem_meshes.milo_xbox
 run_target rb3-ark  "$ASSETS" "$ARK_REF"
 run_target rb3-render "$ASSETS" "$LOGDIR/native_health_render_out_$SLUG"
+run_target --no-assets rb3-score2
 
 # -------------------------------------------------------------- SELFTEST ----
 # Does each negative control actually go RED? The PAIR is the control: the
@@ -261,6 +278,15 @@ if [ $SELFTEST -eq 1 ]; then
         probe milo-badpath rb3-milo "$NB/rb3-milo" "$ASSETS" ui/track/gen/NO_SUCH_FILE.milo_xbox
     else
         echo "  SKIP  milo-badpath -- binary or assets absent"; st_skip=$((st_skip + 1))
+    fi
+    # A gate is worth nothing until something has shown it can go red, and this
+    # one is newly wired, so it gets its control in the same commit. No assets
+    # guard: rb3-score2 needs none. --force-divergent perturbs the M5 side only,
+    # so the expected red is 2 of 3 gates with scenB-longest-streak surviving.
+    if [ -x "$NB/rb3-score2" ]; then
+        probe score2-divergent rb3-score2 "$NB/rb3-score2" --force-divergent
+    else
+        echo "  SKIP  score2-divergent -- binary absent"; st_skip=$((st_skip + 1))
     fi
     # ---- THE THREE RB3_HANDPOSE_* CONTROLS, DELTA-SCORED -------------------
     # ⛔⛔ `rc != 0 && failures > 0` IS NOT A VALID CREDIT FOR THESE, and scoring
