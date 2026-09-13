@@ -1438,3 +1438,172 @@ Other candidates, from the lanes' own handoffs:
   `ThreeDSound.h` (zero includers, zero compile edges, zero retail presence, two
   confirmed text bugs), keeping `Sound.h` under a DC3-only banner for its seven
   includers.
+
+## 7k. EXECUTION LOG — eleventh wave (2026-09-13, coordinator session 3cdd3c)
+
+Dispatched off `77cac933` (42,766 fns / 3,874,292 B / 37.812890%). Four lanes;
+**three landed, D outstanding at time of writing.** Main also absorbed **four
+peer merges** from another session mid-wave, each of which arrived unbuilt and
+was built and recorded by me so the composition chain stays unbroken.
+
+| lane | branch | merge | predicted | measured | verdict |
+|---|---|---|---|---|---|
+| A prove the Init folds | `w11-init-folds` | `7aac40e2` | +9 / +4,848 B · +2 / +1,908 B | **+11 / +6,756 B** | both exact |
+| B the 59.09 cluster | `w11-init-cluster` | `15bd7da8` | 4 legs | **+10 / +1,508 B** | all four exact |
+| C ctor inline sweep | `w11-ctor-inline-sweep` | `c0b47e9f` | 0 · +596 B · +5/+324 B | **+10 / +920 B** | all three exact |
+| D alias unmapped | `w11-alias-unmapped` | — | — | *(outstanding)* | — |
+| *(peer)* thunk-readjud-3 | — | `bb51be8f` | — | **Δ0 / Δ0** | expected |
+| *(peer)* thunk-readjud-4 | — | `1fd041a1` | (+5 / +724 B) | **+5 / +724 B** | exact |
+| *(peer)* thunk3-sividoc | — | `cfe959c8` | — | docs-only | — |
+
+**My three lanes: +31 fns / +9,184 B.** With the peer merges, main moved
+`77cac933` → `1fd041a1` = 42,766 → **42,802 fns**, 3,874,292 → **3,884,200 B**,
+37.812890% → **37.909590%**.
+
+**Every prediction in this wave was exact.** Nine pre-registered changes across
+three lanes, zero misses — the first wave with that record. Every composition
+was re-measured by me on merged main with per-unit attribution; no unit fell off
+100% in any lane.
+
+### The wave's most valuable output is that it corrected ME twice
+
+**1. The pricing screen cannot identify a charge KIND.** In §7j I priced three
+`Init` rows at "five relocation-name charges guarding 4,760 B" and called the
+integer charge counts "a third independent confirmation of the screen". Lane B
+refuted the inference: **the decomposition is not unique**, since
+`100/N == 20 × (5/N) == 100 × (1/N)`. My "one relocation-name charge" reading of
+`?BandInit@@` is numerically **indistinguishable from five immediate charges**,
+and on large rows the screen cannot discriminate at all.
+⇒ **The screen prices a target; only retail bytes identify the charge.** The
+arithmetic happened to be right here — lane A's byte-level proof is what
+established that, not the arithmetic itself.
+
+**2. My brief misclassified one of the three rows and undercounted the prize.**
+Of the three, only **two** were the insert fold (`BandCharacter` 1,008 B + `UI`
+1,916 B = 2,924 B). **`?PreInit@Rnd@@` is a MAP defect**, a different class
+entirely — settled on the `??_R4` Complete Object Locator behind the vtable that
+ctor stores, which spells `.?AVDOFProc@@`. And the fold's reach is **4,848 B
+across NINE rows**, not my three: `TheDebug.AddExitCallback()` sits in every
+subsystem's `Init()` aggregator. The seven I missed are `Game`, `Waypoint`,
+`Graph`, `GameMicManager`, `BandUserMgr`, `UsbMidiGuitar`, `PatchDir`.
+
+### The constraint that paid: proving beats retyping
+
+Lane A was told to **prove the folds and NOT retype our containers** to make the
+names agree. It did, and **`src/` was never touched**: our COMDATs are raw
+byte-identical to retail at two levels (`insert` 100 B, `_M_create_node` 64 B),
+each carrying one relocation, bottoming out at an already-landed
+`MemOrPoolAlloc` fold. Refusing the retype cost nothing and bought 6,756 B.
+
+### Findings worth carrying
+
+- **Six rows on an identical score were one missing call** (B):
+  `TheUI->InitResources("<ClassName>")` plus a `Symbol` ctor — nine
+  instructions, with the `.rdata` argument literally the class name. Per-unit
+  shows it cleanly: **seven units at exactly +88 B each.** Order was read
+  per-class off the asm against a 14-row positive control carrying **both**
+  orders, not assumed.
+- ★ **And the vein is CLOSED, stated as such** (B): exactly **23** retail bodies
+  call `InitResources` across all 3,083 `.s` including the 1,810 `auto_*`; 15
+  already matched, 7 were the cluster, 1 unnamed. **There is no eighth.**
+- ★ **A screen that fires 113 times and means 2** (B): arg 2 of
+  `RegisterFactory` can only be `X::NewObject`; of 322 sites 113 disagree, but
+  **111 are merely UNNAMED forgiven placeholders** and exactly **two** are
+  mis-named. Exactly the shape that gets briefed as a backlog by someone who
+  does not read the breakdown.
+- **A handoff can be right about the machinery and wrong about the reason** (C),
+  and taking it literally would have dropped 596 B. W10-C claimed the one-arg
+  `DEFER_OWNER` branch would let `Gen`'s ctor sites diverge from `Load`'s; it
+  cannot, since Gen's four sites are spelled *two*-arg. It works because
+  **`Load`'s site is a LOCAL, not a MEMBER** — `DEFER_OWNER` moves member stores
+  past the *enclosing class's* vptr store, and a local has none. ⇒ **members are
+  sensitive to `DEFER_OWNER`; locals are not.**
+- **`PartLauncher`'s residual is an EH-FRAME difference, not a store-shape
+  wall** (C) — one surplus EH-state store displaces three EH temps `0x50`→`0x54`,
+  a 340 B frame against retail's 328. Probably a class, not a row.
+- **An isolation control held this time, and that is not the same as being
+  sound** (C). The lane flagged its own Δ0 header control as isolation-only and
+  told me to re-verify; I did, and only four units moved. It holds because no TU
+  defines both macros, so the branch is never textually selected — not because
+  isolation controls generalise. W10-C's did not.
+
+### Lanes that recorded their own vacuous instruments
+
+- **A's first population control was vacuous AND agreed with its prior** — the
+  hardest kind. It masked the `+0x24` discriminator, counted 48 addresses, and
+  read a decisive refutation that also matched a standing one. **Masking the
+  discriminator and then counting answers nothing.** The control that works
+  *resolves* the destination: 48 inserts → 48 **distinct** `_M_create_node`
+  destinations, 0 shared, and exactly **one** masked-identical `create_node`
+  image-wide — the same scanner returning 48 and 1, so it discriminates.
+- **B's lowercase-hex search of the `.s` tree returned a clean decisive NOTHING**
+  for 5 of 7 bodies, because `.fn` labels are **uppercase**.
+- **B's own "byte-exact pin hole" framing was near-worthless** — a census found
+  **915** such holes tree-wide. The body adjudication justified the change; the
+  hole only said where to look.
+- **C's inherited screen counted `bl` BY NAME**, so an unnamed retail callee was
+  invisible and "retail inlines" read identically to "retail calls an
+  unidentified address". Rebuilt on `objdiff-cli diff --format json` and
+  validated against a known-answer fixture including a **negative** delta, plus
+  `237/237` rows with `instructions × 4 == size` on both sides so a zero is a
+  real zero.
+- **Two tools crashed outright on the 51 landed `address: null` alias groups**
+  (A), and in the merge tool **the naive repair would have merged all 51 into
+  one.** Fixed. Recorded but not fixed: `icf_alias_merge.py --strict` is
+  unusable, refusing on 82 pre-existing multi-address names, so the merge tool's
+  only safety flag cannot be enabled by anybody.
+
+### ⛔ My own instrument error: every `rc=0` I printed this session was vacuous
+
+I ran gates as `python3 <gate> 2>&1 | tail -2; echo "rc=$?"`. **`$?` there is
+`tail`'s exit status**, and `tail` essentially always exits 0 — so the printed
+`rc=0` **could not have come out any other way**. Same family as the
+build-probe vacuities already in CLAUDE.md.
+
+Caught only by contradiction: the manifest printed
+`Fix: ./tools/ninja-locked, then re-run this check` while I printed `rc=0`. Run
+properly it returns **rc=6 (BUILD OWED)** and `--validate` returns **rc=2
+(REFUSED — explicitly NOT a pass and NOT a failure)**.
+
+**No landed conclusion changes**, because I also quoted every tool's own verdict
+TEXT, which is the real signal — and that is precisely why the house rule says
+to paste `NATIVE_GATE_RESULT ...` verbatim rather than paraphrase. But the rc
+figures attached were not measurements.
+⇒ **Redirect to a file and test `$?` on the next line. Never read an exit code
+through a pipe.**
+
+### Shared-tree bookkeeping, now a standing hazard
+
+Four peer merges landed mid-wave, one of them (`1fd041a1`) editing
+`target_symbol_map.json` **after** my W11-B build, which correctly drove the
+manifest to rc=6. My W11-B figures came from a build that *was* current at
+`15bd7da8` and matched prediction to the digit, so the snapshot is keyed to
+`15bd7da8` — **the SHA I actually built** — not to whatever `HEAD` had become.
+⇒ **In a shared tree, `HEAD` is not a stable identifier for the thing you just
+measured.** Capture the SHA before the build and pass that literal downstream.
+
+### Wave 12 candidates
+
+- **The EH-frame wall** (C): 516 B across two rows, `PartLauncher` and
+  `EventTrigger::Anim`, one surplus EH-state store shifting three temps by 4.
+  Likely a *class*, not two rows.
+- **`?Handle@CustomizePanel@@` re-prices to ONE insert/delete away (5,036 B)**
+  (B), not the 3+2 that RESIDUAL-1 recorded on 2026-08-14. ⚠ Verify against its
+  charged-site list before briefing it — that row has been mis-briefed to three
+  consecutive lanes already.
+- **The coupled `0x82466000` change** (A): it is misnamed, `MetaPerformer.cpp`
+  mis-pins the 112 B sliver `[0x82466000,0x82466070)` (nearest sibling 1.1 MB
+  away, while `DOFProc.cpp` pins the 16 bytes immediately after), and alias
+  **group 331 is a `MAP_DEFECT_INVERTED_CONCLUSION`** riding on it, its
+  fuzzy-100 financed by a forgiven placeholder vtable relocation. **One change,
+  taken whole** — renaming without re-homing is a pure −60 B.
+- **`0x82574348` is `?NewObject@MetaPanel@@`, reading a FALSE 100.0** carried by
+  placeholder forgiveness (B). Fixing it likely **costs 100 B** to buy accuracy
+  — its own measured lane, not bundled behind positives.
+- `FileMerger::Merger` (216 B, screened clean, cheapest unclaimed row — needs
+  its defining TU located) and the 14 mixed positive-delta `??0` rows (C).
+- `RecursePatternInternal` (892 B), `default/File`'s last prize.
+- Still-open user decision, carried since wave 3 and deliberately untaken:
+  whether to delete `src/system/synth/Sound.cpp`, `ThreeDSound.cpp` and
+  `ThreeDSound.h`, keeping `Sound.h` under a DC3-only banner for its seven
+  includers.
