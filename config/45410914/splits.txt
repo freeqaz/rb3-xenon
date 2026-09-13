@@ -7601,7 +7601,8 @@ JsonMemory.cpp:
 	.text       start:0x82C30B08 end:0x82C30B58
 
 DOFProc.cpp:
-	.text       start:0x82466070 end:0x82466080
+	.pdata      start:0x8220ED18 end:0x8220ED28
+	.text       start:0x82466000 end:0x82466080
 
 System_Xbox.cpp:
 	.pdata      start:0x82218738 end:0x82218740
@@ -10000,7 +10001,6 @@ TrackerManager.cpp:
 	.text       start:0x82694200 end:0x82694858
 
 MetaPerformer.cpp:
-	.pdata      start:0x8220ED18 end:0x8220ED28
 	.pdata      start:0x8221D100 end:0x8221D108
 	.pdata      start:0x8221EC78 end:0x8221ECD0
 	.pdata      start:0x8221ECF0 end:0x8221ED98
@@ -10043,7 +10043,6 @@ MetaPerformer.cpp:
 	.pdata      start:0x8221F458 end:0x8221F698
 	.pdata      start:0x8221F698 end:0x8221F6C8
 	.pdata      start:0x82237C18 end:0x82237C20
-	.text       start:0x82466000 end:0x82466070
 	.text       start:0x82563258 end:0x825632BC
 	.text       start:0x8257AA00 end:0x8257AD18
 	.text       start:0x8257AF3C end:0x8257AF48

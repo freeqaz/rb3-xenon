@@ -11208,9 +11208,7 @@
    "name": "0QuickplayPerformerImpl",
    "address": "0x82466000",
    "survivor": "??0QuickplayPerformerImpl@@QAA@XZ",
-   "folded": [
-    "??0DOFProc@@QAA@XZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 8 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -11254,6 +11252,13 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
+    },
+    {
+     "spelling": "??0DOFProc@@QAA@XZ",
+     "lane": "W12-C 2026-09-13",
+     "class": "MAP_DEFECT_INVERTED_CONCLUSION",
+     "disposition": "withdrawn_map_repaired",
+     "reason": "Byte evidence CORRECT, conclusion INVERTED: 0x82466000 IS DOFProc::DOFProc(), not a fold of it into QuickplayPerformerImpl. Four independent proofs: (1) retail RTTI vt-4 -> ??_R4 -> type descriptor 0x82c707d0 = '.?AVDOFProc@@' (W11-A); (2) the dtor at 0x82466070, ALREADY named ??1DOFProc@@UAA@XZ and matching fuzzy 100, stores the SAME vtable lbl_8206AEB4 as 0x82466000 -- one ctor and one dtor storing one vtable are one class, and this proof needs no RTTI at all; (3) that vtable's slots 0/4/5 (0x82466240, 0x82466040, 0x82466120) align exactly with our ??_E / ClassName / SetType slots, so the region IS DOFProc's code; (4) DOFProc_NG.obj -- DOFProc's OWN subclass -- relocates its ctor to this address. The apparent fold existed ONLY because both classes' empty ctors are reloc-identical to retail and differ solely in the stored vtable, whose operand retail spells lbl_8206AEB4 -- a PLACEHOLDER that name_check FORGIVES. So the fuzzy 100 was never evidence for either name. The map row was repaired to ??0DOFProc@@QAA@XZ and the 112 B sliver re-homed MetaPerformer.cpp -> DOFProc.cpp in the SAME commit, so the two sites this group forgave (?NewObject@DOFProc@@ 72 B in Rnd, ??0NgDOFProc@@QAA@XZ 280 B in DOFProc_NG) now compare equal LITERALLY, with no alias. Withdrawing this group alone, without the rename, would have cost -352 B. Nothing pruned."
     }
    ],
    "repair": {
