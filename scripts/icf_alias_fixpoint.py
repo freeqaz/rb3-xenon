@@ -458,8 +458,14 @@ def main() -> int:
     # folded name that the installed set already places elsewhere, and drop a
     # delta group whose survivor is a folded member of some other group.
     inst_addr = {}
-    for g in installed:
-        a = g["address"].lower()
+    for gi, g in enumerate(installed):
+        # 51 landed groups carry `address: null` (see ALIAS_DURABILITY_2026-09-13
+        # H1).  `.lower()` on that raised AttributeError and killed the run AFTER
+        # the adjudication had finished -- a crash in the reporting path, not the
+        # gate.  A null address is given a per-group SENTINEL rather than being
+        # skipped: an unknown address must never compare EQUAL to a delta group's
+        # address, so this can only ever DROP a candidate, never admit one.
+        a = (g.get("address") or ("\0null#%d" % gi)).lower()
         inst_addr[g["survivor"]] = a
         for f in g.get("folded", []):
             inst_addr[f] = a
