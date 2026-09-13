@@ -2,6 +2,29 @@
 // `bl`) but keeps ObjPtr<Hmx::Object>'s out of line.  The define is TU-WIDE, so
 // the two Hmx::Object sites in Load are spelled with the explicit two-arg ctor,
 // which stays declared-only/out-of-line.  Must precede every include.
+//
+// -- CORRECTION (lane W10-C, 2026-09-13) ------------------------------------
+// The ctor comment below claims retail's ??0RndGenerator@@ CALLS its four
+// ObjPtr ctors OUT OF LINE. That is REFUTED on retail bytes. Count `bl` on both
+// sides of the ctor: retail has 5, we emit 9 -- the four ObjPtr ctors are the
+// difference, i.e. retail inlines all four. The claim was inferred from a
+// METRIC (81.3% -> 61.1% when inlined), and obj/Object.h documents exactly why
+// that inference is unsafe: inlining in the WRONG STORE SHAPE scores worse than
+// not inlining at all (cf. RndMultiMeshProxy, 84.8% inlined vs 92.7% called).
+// Proof: DEFER_OWNER + INLINE_OWNER_CTOR_EH with one-arg spellings takes this
+// ctor to a byte-exact 100.0%.
+//
+// It is NOT applied, because it is net-negative on the whole binary -- every
+// gate here is TU-WIDE and Load's ObjPtr<RndCam> one-arg site is currently
+// byte-exact, so any gate that fixes the ctor also reshapes Load:
+//     DEFER_OWNER + INLINE_OWNER_CTOR_EH : ctor 100.0, Load 100 -> 95.17, -416 B
+//     INLINE_OWNER_CTOR + DEFER_OBJECT   : ctor  98.55, Load 100 -> 99.05, -972 B
+// (whole-binary, measured against 42758 / 3,872,460.)
+// The 596 B ctor is REACHABLE but needs machinery that does not exist yet: a
+// DEFER_OWNER branch on the ONE-ARG in-class ObjPtr ctor, so the ctor's four
+// one-arg sites can take retail's {vptr-lis, mOwner, mObject, ...} order while
+// Load's one-arg ObjPtr<RndCam> site keeps the shape it already matches with.
+// Do not re-derive the refutation from the metric; it will lie the same way.
 #define RB3_OBJPTR_INLINE_OWNER_CTOR 1
 #include "rndobj/Gen.h"
 #include "math/Geo.h"
