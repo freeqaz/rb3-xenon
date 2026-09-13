@@ -4,6 +4,12 @@
 // extent census shows delta ~= -16 * (surplus bl) for this TU's ctor,
 // i.e. one un-inlined ObjPtr ctor per surplus call.
 #define RB3_OBJPTR_FORCEINLINE_CTOR
+// PER-TU (lane W11-C): retail also inlines this TU's owner-only ObjOwnerPtr
+// site. ??0Anim@EventTrigger@@: `bl` retail 2 vs our 3, the single ours-only
+// callee being ??0?$ObjOwnerPtr@VRndAnimatable@@@@ -- i.e. Anim::mAnim(o).
+// W10-C's ObjOwnerPtr lever requires BOTH of these macros.
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT 1
 
 #include "rndobj/EventTrigger.h"
 #include "math/Easing.h"

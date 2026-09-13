@@ -481,7 +481,48 @@ public:
     // This is the metric-fitted-build-config check (cf. W9 MILO_MESSAGE_TIMERS):
     // the define survives it on binary evidence, the granularity did not.
 #ifdef RB3_OBJPTR_INLINE_OWNER_CTOR
-#ifdef RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
+#ifdef RB3_TU_OBJPTR_DEFER_OWNER
+    // ---- PER-TU: DEFER-**BOTH** owner-only ctor (lane W11-C) ---------------
+    // The one-arg analogue of the DEFER-BOTH two-arg body in obj/ObjPtr_p.h,
+    // and the exact sibling of the DEFER_OBJECT branch just below: same three
+    // stores, same values, the guard still always folds because mObject is the
+    // literal nullptr -- only the ORDER differs.
+    //
+    // Why a THIRD one-arg shape. There are three retail store orders behind the
+    // single decision "retail inlines this ctor", and picking the wrong one
+    // leaves a row stranded in the high 80s LOOKING like a scheduler wall:
+    //     plain (below)   {mOwner, vptr-lis, mObject, vptr-addi, vptr-store}
+    //     DEFER_OBJECT    {mOwner, vptr-lis, mObject, vptr-addi, vptr-store}
+    //     DEFER_OWNER     {vptr-lis, mOwner, mObject, vptr-addi, vptr-store}
+    // mOwner coming from the BASE mem-init list sits in the base ctor's
+    // scheduling region and is free to float ABOVE the derived vptr
+    // materialization; only a store written in the DERIVED body, over a base
+    // ctor that initialized nothing, is pinned after it. Identical mechanism to
+    // the one DEFER_OBJECT documents for mObject, applied to mOwner as well.
+    //
+    // Before this branch, DEFER_OWNER order was reachable only by pairing
+    // RB3_TU_OBJPTR_DEFER_OWNER with RB3_OBJPTR_INLINE_OWNER_CTOR_EH, which
+    // resolves to the FORCE-INLINED TWO-ARG ctor further down. That destroys
+    // the per-site opt-out documented above -- with the two-arg overload
+    // force-inlined, `mFoo(this, nullptr)` no longer buys a real `bl`, so a TU
+    // whose sites disagree cannot express the disagreement at all. Reaching
+    // DEFER_OWNER through the ONE-ARG ctor instead leaves the two-arg overload
+    // declared-only/out-of-line, so the opt-out survives.
+    //
+    // The AddRef arm is retained for the same reason the two sibling branches
+    // retain it: with a literal nullptr it constant-folds to nothing, but the
+    // front end has already opened an EH region for the partially-constructed
+    // base subobject, and that region is what bounds the inlined ctor's `this`
+    // temp. Dropping it costs the match (measured on CharClipSet: 100.0 ->
+    // 96.6). Inert for every TU that does not define BOTH macros -- as of this
+    // lane, no TU in the tree does, so adding it is a no-op by construction.
+    ObjPtr(Hmx::Object *owner) : ObjRefConcrete<T>() {
+        this->mOwner = owner;
+        this->mObject = nullptr;
+        if (this->mObject)
+            this->mObject->AddRef(this);
+    }
+#elif defined(RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT)
     // ---- PER-TU: retail's real owner-only ctor SHAPE (lane NCCC f70) -------
     // Semantically identical to the empty-bodied form below -- same three
     // stores, same values, and the guard always folds because mObject is the
