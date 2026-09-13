@@ -409,6 +409,13 @@ Native gate: **NOT REQUIRED and reported below anyway.** This lane touches no
 the native build. It was run regardless because the brief asks for the verbatim
 line and a cheap gate is worth more than an argument about applicability.
 
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+Full coverage, `skipped=0`, on the **first** run — W13-B's first-run-STALE
+anomaly did not recur here, so no re-run was needed to earn the PASS.
+
 ---
 
 ## What this lane deliberately did NOT do
