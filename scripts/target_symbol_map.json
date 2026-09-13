@@ -16013,7 +16013,7 @@
  "0x826a55b0": "?RemoteAlreadySaved@Player@@QAAXH@Z",
  "0x826a5600": "?UpdateEnergy@Player@@QAAXABVSongPos@@@Z",
  "0x826a5738": "?Handle@Player@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x826a75c8": "??0GemPlayer@@QAA@PAVBandUser@@PAVBeatMaster@@PAVBand@@HPAVBandPerformer@@@Z",
+ "0x826a75c8": "??0Player@@QAA@PAVBandUser@@PAVBand@@HPAVBeatMaster@@@Z",
  "0x826a79d0": "?SetTrack@Player@@UAAXH@Z",
  "0x826a79d8": "??_EPlayer@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x826a79e8": "?Handle@Player@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
@@ -21508,7 +21508,7 @@
  "0x827ffa00": "??$__uninitialized_fill_n@PAVUIMesh@UIComponent@@IV12@@stlpmtx_std@@YAPAVUIMesh@UIComponent@@PAV12@IABV12@ABU__false_type@0@@Z",
  "0x827ffa50": "??$__uninitialized_copy@PAVUIMesh@UIComponent@@PAV12@@stlpmtx_std@@YAPAVUIMesh@UIComponent@@PAV12@00ABU__false_type@0@@Z",
  "0x827ffaa8": "?Poll@UIComponent@@UAAXXZ",
- "0x827ffad8": "??0RndTransformable@@IAA@XZ",
+ "0x827ffad8": "??0UIComponent@@IAA@XZ",
  "0x827ffea8": "?ClassName@UIComponent@@UBA?AVSymbol@@XZ",
  "0x827ffed8": "?Load@UIComponent@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x827ffee8": "?ClassName@UIComponent@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
@@ -30206,5 +30206,6 @@
  "0x82c43370": "??__E?mMicMasterToDev@ExternalMicClientMgr@@0V?$vector@KV?$StlNodeAlloc@K@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
  "0x82c43380": "??__E?mAssocMicXbox@ExternalMicClientMgr@@0V?$vector@PAVMicXbox@@V?$StlNodeAlloc@PAVMicXbox@@@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
  "0x82517718": "FileRelativePath",
- "0x82514b78": "?IsUserAGuest@PlatformMgr@@QBA_NPBVLocalUser@@@Z"
+ "0x82514b78": "?IsUserAGuest@PlatformMgr@@QBA_NPBVLocalUser@@@Z",
+ "0x823f9b50": "??0RndTransformable@@IAA@XZ"
 }
