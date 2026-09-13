@@ -5497,13 +5497,11 @@ Common_Xbox.cpp:
 	.text       start:0x82BBA0C8 end:0x82BBA168
 
 UsbMidiGuitarMsgs.cpp:
-	.pdata      start:0x82218918 end:0x82218938
-	.pdata      start:0x82219968 end:0x82219B18
+	.pdata      start:0x82219968 end:0x82219B38
 	.pdata      start:0x82219B38 end:0x82219B60
 	.pdata      start:0x82219B60 end:0x82219B68
 	.pdata      start:0x82219B68 end:0x82219B98
-	.text       start:0x8251CBE0 end:0x8251CD08
-	.text       start:0x8252E530 end:0x8252F3E8
+	.text       start:0x8252E530 end:0x8252F510
 	.text       start:0x8252F510 end:0x8252F680
 	.text       start:0x8252F680 end:0x8252F748
 	.text       start:0x8252F748 end:0x8252F870
@@ -8089,10 +8087,10 @@ Shockwave.cpp:
 PlatformMgr.cpp:
 	.pdata      start:0x822180E8 end:0x82218100
 	.pdata      start:0x82218100 end:0x82218308
-	.pdata      start:0x82219B18 end:0x82219B38
+	.pdata      start:0x82218918 end:0x82218938
 	.text       start:0x82514858 end:0x82514968
 	.text       start:0x82514968 end:0x825164A8
-	.text       start:0x8252F3E8 end:0x8252F510
+	.text       start:0x8251CBE0 end:0x8251CD08
 	.text       start:0x8267B460 end:0x8267B478
 	.text       start:0x82B93F48 end:0x82B93F50
 
