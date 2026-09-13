@@ -19,8 +19,13 @@ void DOFProc::Init() {
 
 void DOFProc::Terminate() {
     RELEASE(TheDOFProc);
+#ifdef HX_NATIVE
+    // DC3-era addition; RB3 retail's DOFProc::Terminate (0x82466080) is 80 B
+    // and does nothing but RELEASE(TheDOFProc) -- no DataVariable, no static
+    // guard, and no EH funclet.  Kept for native behaviour only.
     static DataNode &n = DataVariable("the_dof_proc");
     n = NULL_OBJ;
+#endif
 }
 
 BEGIN_HANDLERS(DOFProc)
