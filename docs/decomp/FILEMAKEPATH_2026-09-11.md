@@ -205,8 +205,19 @@ Fully attributed, and it sums exactly:
 | `fn_825181A4` `fn_825181CC` `fn_82518234` `fn_8251825C` `fn_825182AC` `fn_825182D4` | 99.9 → 100 | +240 |
 | `fn_825181F4` | 95.6875 → 100 | +64 |
 | `fn_825182FC` | **0.0 → 100** (previously unpaired) | +64 |
-| `?RecursePatternInternal@@` | mpn 86.964 → **100**, fuzzy → 99.9776 | +0 |
+| `fn_82518284` | mpn 99.9 → **100** (fuzzy only 99.5) | +0 |
+| `?RecursePatternInternal@@` | 85.8655 → **99.97758** on BOTH rulers | +0 |
 | | | **+368 B / +9 fns** |
+
+⛔ **CORRECTION, caught by reading `report.json` instead of the tool's
+display: `?RecursePatternInternal@@` crossed NEITHER ruler.** Its mpn is
+**99.97758**, identical to its fuzzy — yet `run_objdiff` printed
+*"Match: 100.0% canonical"*, because that display **rounds**. All **nine**
+matched functions are therefore anonymous rows in `default/File`, and the row
+this lane actually worked contributes **zero to both headline measures**.
+CLAUDE.md's rule — *never trust a displayed 100, read `fuzzy_match_percent`
+from `report.json`* — fired on me here, and it also invalidated the +1 I had
+pre-registered *for the right reason but on a mis-read ruler*.
 
 **Δmasked_equal is also +9, so every one is a funclet byte-signature pairing,
 not an honest match** (Δhonest +0). Reshaping the String lifetimes changed
@@ -222,7 +233,8 @@ prediction.
 One relocation-name charge costs `5/N` pp with `N = size/4`. For this row
 `N = 892/4 = 223`, so one charge = `5/223 = 0.022422` pp ⇒ predicted
 **99.977578**. Measured **99.9776**. ⇒ **exactly one charge remains**, and it
-is worth the full **892 B**. This is the instrument the brief prescribed, and
+is worth the full **892 B** *plus* the row's own `+1 matched function`, since
+mpn is pinned to the same 99.97758 by that same charge. This is the instrument the brief prescribed, and
 it is what makes §4's handoff a priced prize rather than a hope.
 
 ---
@@ -339,7 +351,7 @@ immediately after measuring.
 | # | step | kind | predicted | measured | |
 |---|---|---|---|---|---|
 | 1 | `FileMakePath` body port | source | fuzzy ≥ 90; bytes **bimodal** +792 or +0 | fuzzy **5.641414 → 94.5**, **Δ0 / Δ0** | ✓ (lower branch, as pre-registered) |
-| 2 | `RecursePatternInternal` ×5 fixes | source | +1 fn / +0 B | **+9 fns / +368 B** | ✗ §2.1 — funclet channel unmodelled |
+| 2 | `RecursePatternInternal` ×5 fixes | source | +1 fn / +0 B | **+9 fns / +368 B** | ✗ §2.1 — right total sign, wrong mechanism: the +1 I predicted did NOT happen and 9 unmodelled funclet rows did |
 | | **lane total** | | | **+9 fns / +368 B / +0.003592 pp** | |
 
 Sub-predictions inside step 1, all measured: the `c`-hoist lever **hit**
@@ -377,7 +389,7 @@ caller-inlining upside **refuted** (Δ0).
 
 | # | handoff | evidence in hand |
 |---|---|---|
-| H1 | **`vector<String>::~vector` into alias group `0x822d8cc0`** — closes `RecursePatternInternal` to 100 | §4; priced **892 B**, exactly one charge, `5/223` confirmed to the digit; group already exists on T1 with a sibling member |
+| H1 | **`vector<String>::~vector` into alias group `0x822d8cc0`** — closes `RecursePatternInternal` to 100 | §4; priced **892 B + 1 fn**, exactly one charge, `5/223` confirmed to the digit; group already exists on T1 with a sibling member. Today the row scores 99.97758 on BOTH rulers and pays **nothing** |
 | H2 | **`FileRelativePath` `fn_82517718`: body-port THEN name** — 904 B, largest remaining in the unit | §5; identification reproduced, caller population costed at 35 sites / 30 callers, §1 is the worked template |
 | H3 | **`NewFile` `fn_825173E0`** — replace the `Notify` branch with `MILO_ASSERT(MainThread(), …)`; needs a map name first to be measurable | §3.1; retail discards the result, and `NewFile` occurs **0** times in `band.exe` |
 | H4 | **`FileMakePath`'s last 33** — the `strtok` peel + the r11 tail cursor | §1.3; four spellings refuted, so this needs a different mechanism, not another rewrite |
@@ -406,6 +418,11 @@ caller-inlining upside **refuted** (Δ0).
   lanes have now measured File.obj's anonymous EH funclets re-pairing as
   collateral — W6-A at −160 B, this lane at **+368 B and 8 of the 9 crossings**.
   A prediction that models only the row you edited will keep missing.
+* ⛔ **`run_objdiff`'s percentage ROUNDS, and 99.97758 prints as `100.0%
+  canonical`.** I recorded a false mpn crossing from it and only caught it by
+  re-deriving the +9 from `report.json`'s archived A/B legs. An A/B's Δmatched
+  being *correct in total* does not mean your attribution of it is — check
+  which rows moved, on the ruler that counts them.
 * **The `5/N` screen turns a residual into a price.** 99.9776 on a 892 B row is
   not "nearly done, unclear what is left" — it is *exactly one relocation-name
   charge worth exactly 892 B*, which is what makes H1 fundable.
