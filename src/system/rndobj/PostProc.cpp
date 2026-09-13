@@ -269,6 +269,13 @@ BEGIN_SAVES(RndPostProc)
     bs << mBloomColor;
     bs << mBloomIntensity;
     bs << mBloomThreshold;
+    // Retail streams ObjPtr<RndTex> mLuminanceMap (this+0x54) here, via the
+    // same operator<< instantiation (fn_8238B5B8) as mNoiseMap/mGradientMap/
+    // mRefractMap. Corroborated on BOTH sides: ?Save@RndPostProc@@ makes FOUR
+    // ObjPtr<RndTex> writes (0x54/0x144/0x1a8/0x1c4) and ?Load@RndPostProc@@
+    // (fn_82430FD0) makes FOUR ObjRefConcrete<RndTex,ObjectDir>::Load reads.
+    // Our source wrote only three -- the field was absent, not reordered.
+    bs << mLuminanceMap;
     mColorXfm.Save(bs);
     bs << mFlickerModBounds << mFlickerTimeBounds;
     bs << mNoiseBaseScale << mNoiseTopScale << mNoiseIntensity << mNoiseStationary;

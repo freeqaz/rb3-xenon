@@ -797,54 +797,68 @@ const char *FileMakePath(const char *root, const char *file) {
 }
 
 const char *FileLocalize(const char *iFilename, char *buffer) {
-    GfxMode mode = GetGfxMode();
-    bool isOg = (mode == kNewGfx);
-    if (!SystemLocale().Null() || isOg) {
-        Symbol lang2 = SystemLocale();
-        if (!lang2.Null()) {
-            for (const char *p = iFilename; *p != '\0'; p++) {
-                if (*p == '/' && p[1] == 'e' && p[2] == 'n' && p[3] == 'g'
-                    && p[4] == '/') {
-                    static char mybuffer[256];
-                    if (!buffer)
-                        buffer = mybuffer;
-                    strcpy(buffer, iFilename);
-                    if (!HongKongExceptionMet()
-                        || (strstr(iFilename, "locale") == 0
-                            && strstr(iFilename, "ui/eng") == 0)) {
-                        Symbol lang3 = SystemLocale();
-                        const char *langStr = lang3.Str();
-                        buffer[p + 1 - iFilename] = langStr[0];
-                        buffer[p + 2 - iFilename] = langStr[1];
-                        buffer[p + 3 - iFilename] = langStr[2];
-                    } else {
-                        buffer[p + 1 - iFilename] = 'e';
-                        buffer[p + 2 - iFilename] = 'n';
-                        buffer[p + 3 - iFilename] = 'g';
-                    }
-                    return buffer;
-                }
-            }
-        }
-        if (isOg) {
-            for (const char *p = iFilename; *p != '\0'; p++) {
-                if (*p == '/' && p[1] == 'o' && p[2] == 'g' && p[3] == '/') {
-                    if (buffer == iFilename) {
-                        ((char *)p)[1] = 'n';
-                        return iFilename;
-                    }
-                    if (!buffer) {
-                        static char mybuffer[256];
-                        buffer = mybuffer;
-                    }
-                    strcpy(buffer, iFilename);
-                    buffer[p + 1 - iFilename] = 'n';
-                    return buffer;
-                }
+    // Ported from retail fn_82516E28 (408 B, 13 relocations).  Retail's whole
+    // callee inventory is ?SystemLocale@@ x3 and NOTHING else; its only data
+    // relocations are one hi/lo pair to gNullStr (lbl_82C71838) and one to a
+    // single static buffer (lbl_82CCA5B0).  Our inherited body carried, and
+    // retail does not have:
+    //   * GetGfxMode()/kNewGfx gating -- so retail's "/og/" scan is
+    //     UNCONDITIONAL, not gated on an "is new gfx" flag;
+    //   * a HongKongExceptionMet() branch with two strstr("locale")/
+    //     strstr("ui/eng") probes and an "eng" fallback write;
+    //   * TWO distinct function-local statics (?N@ and ?CC@ scopes) where
+    //     retail hoists ONE into r28 at entry and uses it from both sites;
+    //   * an early `return buffer` after the /eng/ splice.  Retail falls
+    //     THROUGH with result = buffer and then runs the /og/ scan over the
+    //     already-modified buffer, so a path containing both "/eng/" and
+    //     "/og/" gets both edits.  Ours returned after the first.
+    // Neither GetGfxMode() nor HongKongExceptionMet() could have folded away in
+    // retail's build -- GetGfxMode returns the runtime global gGfxMode and
+    // HongKongExceptionMet is an extern -- so these are not optimisation
+    // artefacts: they are DC3-newer source that RB3-360 retail did not have.
+    static char mybuffer[256];
+    const char *result = iFilename;
+
+    // Retail emits TWO back-to-back ?SystemLocale@@ calls into the same sret
+    // slot (r1+0x50) at +0x18 and +0x20 and tests only the second.  The first
+    // is evaluated and discarded; an extern call returning by value cannot be
+    // elided.  Reproduced literally rather than reconstructed from a guess at
+    // the original condition.
+    SystemLocale();
+    if (!SystemLocale().Null()) {
+        for (const char *p = result; *p != '\0'; p++) {
+            if (*p == '/' && p[1] == 'e' && p[2] == 'n' && p[3] == 'g'
+                && p[4] == '/') {
+                if (!buffer)
+                    buffer = mybuffer;
+                strcpy(buffer, result);
+                char *q = buffer + (p - result);
+                const char *langStr = SystemLocale().Str();
+                q[1] = langStr[0];
+                q[2] = langStr[1];
+                q[3] = langStr[2];
+                result = buffer;
+                break;
             }
         }
     }
-    return iFilename;
+
+    for (const char *p = result; *p != '\0'; p++) {
+        if (*p == '/' && p[1] == 'o' && p[2] == 'g' && p[3] == '/') {
+            if (buffer == result) {
+                ((char *)p)[1] = 'n';
+            } else {
+                if (!buffer)
+                    buffer = mybuffer;
+                strcpy(buffer, result);
+                buffer[(p - result) + 1] = 'n';
+                result = buffer;
+            }
+            break;
+        }
+    }
+
+    return result;
 }
 
 bool FileDiscSpinUp() { return TheBlockMgr.SpinUp(); }
@@ -852,24 +866,42 @@ bool FileDiscSpinUp() { return TheBlockMgr.SpinUp(); }
 bool FileReadOnly(const char *filepath) { return true; }
 
 File *NewFile(const char *iFilename, int iMode) {
-    const char *filename;
-    int mode;
-    File *result;
-
-    filename = iFilename;
-    mode = iMode;
-    result = nullptr;
-
+    // Ported from retail fn_825173E0 (424 B, 27 relocations).  Four constructs
+    // our inherited body carried that retail's does NOT:
+    //   * (RETAINED, see below) a gNullFiles / new NullFile() early-out;
+    //   * a TheDebug.Notify branch -- retail calls MainThread() at +24 and
+    //     DISCARDS r3 with no test following, which is MILO_ASSERT(cond,line)
+    //     compiling to ((void)(cond)): the extern call still evaluates, the
+    //     Notify does not exist;
+    //   * a UsingCD() call in the ArkFile guard (retail tests only mode bits);
+    //   * a null check around Fail() -- retail calls result->Fail() through the
+    //     vtable unconditionally, including on the mem==0 path.
+    // ⛔ MEASURED NEGATIVE -- do NOT delete this branch to match retail's
+    // NewFile.  Retail's fn_825173E0 provably has no gNullFiles/NullFile path
+    // (424 B, 27 relocations, no operator new, no NullFile vtable relocation),
+    // and removing ours took our body to a near-exact 416 B / 27.  But it is
+    // the ONLY thing in this TU that forces NullFile's vtable -- and with it
+    // NullFile::Write, NullFile::ReadDone, File::~File and File::Filename --
+    // to be emitted into File.obj.  Retail's File.obj DOES define all four
+    // (they are pinned, named and were scoring 100), so retail's File.cpp
+    // instantiates NullFile somewhere we have not yet located.  Deleting the
+    // branch therefore made our object define FEWER symbols than retail's:
+    // A/B measured -4 matched functions / -88 B (8+16+48+16, exact).
+    // ⇒ Locating retail's real NullFile emission site is a PREREQUISITE for
+    // finishing this body port, and hence for naming 0x825173E0.
     if (gNullFiles) {
         return new NullFile();
     }
 
-    if (!MainThread()) {
-        TheDebug.Notify("NewFile(%s) from MainThread()");
-    }
+    MILO_ASSERT(MainThread(), 0x2FE);
+
+    File *result = nullptr;
 
     if ((iFilename != nullptr) && (*iFilename != '\0')) {
+        const char *filename = iFilename;
+        int mode = iMode;
         char localized[256];
+
         if (mode & 0x2) {
             filename = FileLocalize(iFilename, localized);
         }
@@ -878,38 +910,44 @@ File *NewFile(const char *iFilename, int iMode) {
             mode |= 0x10000;
         }
 
-        int mode_check = mode & 0x2;
-        if ((mode_check == 0) || (mode & 0x20000)
-            || ((result = FileCache::GetFileAll(filename)) == nullptr)) {
-            if ((UsingCD() != 0) && (mode_check != 0) && !(mode & 0x10000)) {
-                void *mem = _MemAllocTemp(sizeof(ArkFile), __FILE__, 0x19, "ArkFile", 0);
-                if (mem != nullptr) {
-                    result = new (mem) ArkFile(filename, mode);
-                } else {
-                    result = nullptr;
-                }
+        if ((mode & 0x2) && !(mode & 0x20000)) {
+            File *cached = FileCache::GetFileAll(filename);
+            if (cached != nullptr) {
+                return cached;
+            }
+        }
+
+        if ((mode & 0x2) && !(mode & 0x10000)) {
+            void *mem = _MemAllocTemp(sizeof(ArkFile), __FILE__, 0x19, "ArkFile", 0);
+            if (mem != nullptr) {
+                result = new (mem) ArkFile(filename, mode);
             } else {
-                mode &= ~0x4000;
-                result = AsyncFile::New(filename, mode);
+                result = nullptr;
             }
+        } else {
+            mode &= ~0x4000;
+            result = AsyncFile::New(filename, mode);
+        }
 
-            if (result != nullptr) {
-                if (result->Fail()) {
-                    delete result;
-                    return nullptr;
-                }
+        if (result->Fail()) {
+            delete result;
+            return nullptr;
+        }
 
-                if ((gOpenCaptureFile != nullptr) && (mode & 0x2) && !(mode & 0x20000)) {
-                    char path_buf[256];
-                    sprintf(path_buf, "./%s", FileMakePath(".", filename));
-                    const char *ptr = path_buf;
-                    while (*ptr != '\0') {
-                        ptr++;
-                    }
-                    gOpenCaptureFile->Write(path_buf, (ptr - path_buf) - 1);
-                    gOpenCaptureFile->Flush();
-                }
+        if ((gOpenCaptureFile != nullptr) && (mode & 0x2)) {
+            char path_buf[256];
+            // Retail's format literal is lbl_82087CB0 = "'%s'\n" (the "./%s"
+            // we had is not in the binary), and its strlen loop increments
+            // BEFORE the test (`lbz; addi; cmplwi; bne`), so p ends at
+            // buf+strlen+1 and the trailing -1 yields strlen.  Our
+            // test-before-increment form yielded strlen-1 -- one byte short,
+            // a real off-by-one in the capture log, not just a shape diff.
+            sprintf(path_buf, "'%s'\n", FileMakePath(".", filename));
+            const char *ptr = path_buf;
+            while (*ptr++) {
             }
+            gOpenCaptureFile->Write(path_buf, (ptr - path_buf) - 1);
+            gOpenCaptureFile->Flush();
         }
     }
 
