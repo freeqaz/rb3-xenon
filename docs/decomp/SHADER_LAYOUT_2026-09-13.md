@@ -416,6 +416,48 @@ like a failure and is not.
 | `none` control | — | **+316 B** — moves *with* the graded ruler, so this is a real pairing gain, not alias forgiveness |
 | units at 100% | — | **+1 on both rulers**, mechanism `NEW_UNIT` (`default/CharTransDraw`, 2 rows); **0 fell off** |
 
+### 5.1 ⛔ The same defect exists as a FABRICATED ICF ALIAS, and it is still in the tree
+
+`scripts/symbol_aliases.json` carries a group at **exactly this address**:
+
+```json
+{ "name": "SetType",
+  "address": "0x823c8908",
+  "survivor": "?SetType@CharBlendBone@@UAAXVSymbol@@@Z",
+  "folded":  ["?SetType@CharTransDraw@@UAAXVSymbol@@@Z"],
+  "evidence": "... Evidence tier(s) T1. T1 = RB3 retail bytes at the survivor
+               address are byte-identical (modulo relocated fields, >=4 words,
+               >=50% unmasked) to our compiled body for the folded spelling ..." }
+```
+
+**The T1 measurement is correct and its conclusion is inverted.** Retail's bytes
+at `0x823C8908` really are byte-identical to our compiled `CharTransDraw::SetType`
+— *because the address simply **is** `CharTransDraw::SetType`.* That is identity,
+not folding. The builder assumed the map's name for the address
+(`CharBlendBone`) was right and reached for a fold to explain the match with a
+different spelling; W6-C's vbase evidence forecloses the fold outright
+(`CharTransDraw` vbase adjustor **0x3c**, `CharBlendBone` **0x34** — different
+code, so ICF cannot have merged them).
+
+★ This is the campaign's own "count right, cause wrong" pattern, and the
+CLAUDE.md warning that **a fold is what a wrong name looks like**, caught from
+the opposite direction: the *map defect* and the *fabricated alias* are one
+error with two symptoms, and fixing only the map leaves the other half in place.
+
+**State after this lane's re-home:** the group's `survivor` no longer matches the
+map's name for that address, so the group is now **map-inconsistent as well as
+fabricated**. Nothing was resting on it — the A/B moved `matched_code` by +316 B
+with the `none` control moving *identically*, which is the signature of a real
+pairing gain rather than alias forgiveness, and `ab_measure` raised no
+ALIAS_SUSPECT. But the declared fold can now *forgive a genuine wrong callee* at
+real `CharBlendBone::SetType` call sites, which is an integrity hazard rather
+than a scoring one.
+
+**NOT withdrawn by this lane**, deliberately: withdrawing a group is its own
+change needing its own A/B and its own gate run, and the house rule is to record
+a withdrawal (`folded: []` plus a `withdrawn` record) rather than prune. Handoff
+§7.1.
+
 ---
 
 ## 6. Negatives, and what this lane did NOT do
@@ -439,20 +481,29 @@ like a failure and is not.
 
 ## 7. Handoffs
 
-1. **Pin `TexProc.cpp`, `Spline.cpp`, `StreamRenderer.cpp`, `Shockwave.cpp`
+**7.1 (do this first) — withdraw the fabricated `0x823c8908` alias group**
+(§5.1). Evidence is complete and the fold is *disproved*, not merely
+unsupported. Use the neutrality-preserving form: keep the group, set
+`folded: []`, add a `withdrawn` record citing the vbase 0x3c/0x34 argument and
+this lane's re-home; do not prune. Expect Δ≈0 (nothing rested on it) — land it
+for the integrity, not the bytes. ⚠ Its T1 evidence string is *not* wrong about
+the bytes, so a re-run of `icf_alias_build.py` will regenerate it: the generator
+needs the map fix to propagate, or it will re-fabricate the group.
+
+2. **Pin `TexProc.cpp`, `Spline.cpp`, `StreamRenderer.cpp`, `Shockwave.cpp`
    `.text`** — this is the *only* thing blocking the last 8 shader registers
    (§1.4). `RndSpline::PrepareShader`, `RndShockwave::PrepareShader`,
    `TexProc::SetRegisters` and `StreamRenderer::DrawToTexture` are all absent
    from `target_symbol_map.json`; identifying them also makes those registers
    auditable for free.
-2. **`RndEnviron` full-class port** (§2) — rev `0x10` → `0x25`, ~20 → ~49
+3. **`RndEnviron` full-class port** (§2) — rev `0x10` → `0x25`, ~20 → ~49
    streamed fields, `Save`/`Load`/`SyncProperty` together. Highest-value
    renderer-correctness item outstanding. Start from the offset list in §2; do
    **not** start from `Env.h`'s TU0-era comment.
-3. ~~`Spotlight` +0x10~~ — **CLOSED, refuted** (§3.2). 13/13 offsets match; the
+4. ~~`Spotlight` +0x10~~ — **CLOSED, refuted** (§3.2). 13/13 offsets match; the
    shift was the frame pointer. Anyone re-running W6-C's MEMBER_OFFSET screen
    should add a base-register filter first, or it will re-manufacture this.
-4. **Correct `Env.h`'s header comment** — it cites three TU0 addresses, one of
+5. **Correct `Env.h`'s header comment** — it cites three TU0 addresses, one of
    which (`fn_823F51C0`) is not a function in TU5 at all.
-5. **`_S_sort` alias group** — still open, still the best-concentrated alias
+6. **`_S_sort` alias group** — still open, still the best-concentrated alias
    target (W6-C handoff 2).
