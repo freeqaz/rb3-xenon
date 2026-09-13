@@ -3575,7 +3575,6 @@ VorbisReader.cpp:
 
 TexMovie.cpp:
 	.pdata      start:0x8220D400 end:0x8220D408
-	.pdata      start:0x822332B8 end:0x822332C0
 	.pdata      start:0x8223AFD0 end:0x8223AFE0
 	.pdata      start:0x8223B280 end:0x8223B298
 	.pdata      start:0x8223B298 end:0x8223B2A0
@@ -3584,7 +3583,6 @@ TexMovie.cpp:
 	.pdata      start:0x8223B2B0 end:0x8223B3D8
 	.text       start:0x822B9308 end:0x822B9314
 	.text       start:0x824444E8 end:0x82444528
-	.text       start:0x826B03D8 end:0x826B04B8
 	.text       start:0x82742B90 end:0x82742C08
 	.text       start:0x82746168 end:0x82746174
 	.text       start:0x82746178 end:0x82746368
@@ -8508,16 +8506,12 @@ band3/game/VocalTrainerPanel.cpp:
 	.text       start:0x826B99E0 end:0x826B9ABC
 
 band3/game/RGTrainerPanel.cpp:
-	.pdata      start:0x822330A0 end:0x822330B0
-	.pdata      start:0x822330B0 end:0x822332B8
-	.pdata      start:0x822332C0 end:0x82233358
+	.pdata      start:0x82233098 end:0x822330B0
+	.pdata      start:0x822330B0 end:0x82233358
 	.pdata      start:0x82233358 end:0x82233408
-	.pdata      start:0x82249DC8 end:0x82249DD0
-	.text       start:0x826ADC68 end:0x826ADD68
-	.text       start:0x826ADD68 end:0x826B03D8
-	.text       start:0x826B04B8 end:0x826B1350
+	.text       start:0x826ADC38 end:0x826ADD68
+	.text       start:0x826ADD68 end:0x826B1350
 	.text       start:0x826B1350 end:0x826B1C30
-	.text       start:0x82874718 end:0x82874744
 
 band3/game/TrainerPanel.cpp:
 	.pdata      start:0x822347D8 end:0x822347E0
@@ -9315,7 +9309,7 @@ band3/game/GemTrainerPanel.cpp:
 	.pdata      start:0x82232F20 end:0x82232F28
 	.pdata      start:0x82232F28 end:0x82232F30
 	.pdata      start:0x82232F30 end:0x82232F38
-	.pdata      start:0x82232F38 end:0x822330A0
+	.pdata      start:0x82232F38 end:0x82233098
 	.text       start:0x826A9EC0 end:0x826AA968
 	.text       start:0x826AAAB0 end:0x826AABB4
 	.text       start:0x826AB31C end:0x826AB49C
@@ -9329,7 +9323,7 @@ band3/game/GemTrainerPanel.cpp:
 	.text       start:0x826AC1A0 end:0x826AC1E4
 	.text       start:0x826AC1E8 end:0x826AC318
 	.text       start:0x826AC318 end:0x826AC678
-	.text       start:0x826AC678 end:0x826ADC68
+	.text       start:0x826AC678 end:0x826ADC38
 
 band3/game/Tracker.cpp:
 	.pdata      start:0x821F6F08 end:0x821F6F10
