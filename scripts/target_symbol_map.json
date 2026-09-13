@@ -30210,5 +30210,14 @@
  "0x82517718": "FileRelativePath",
  "0x82514b78": "?IsUserAGuest@PlatformMgr@@QBA_NPBVLocalUser@@@Z",
  "0x823f9b50": "??0RndTransformable@@IAA@XZ",
- "0x826adc38": "?Exit@RGTrainerPanel@@UAAXXZ"
+ "0x826adc38": "?Exit@RGTrainerPanel@@UAAXXZ",
+ "0x8231a498": "?Init@MiniLeaderboardDisplay@@SAXXZ",
+ "0x8231b848": "?Init@MeterDisplay@@SAXXZ",
+ "0x82342148": "?Init@BandLabel@@SAXXZ",
+ "0x82457d98": "?Init@RndText@@SAXXZ",
+ "0x8273fc70": "?Init@DxMultiMesh@@SAXXZ",
+ "0x8280a570": "?Init@UISlider@@SAXXZ",
+ "0x8280fad0": "?Init@UIButton@@SAXXZ",
+ "0x82827970": "?Init@LabelShrinkWrapper@@SAXXZ",
+ "0x82828fc0": "?Init@LabelNumberTicker@@SAXXZ"
 }
