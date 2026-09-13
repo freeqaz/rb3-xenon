@@ -124,7 +124,11 @@ void ProTrainerPanel::NewDifficulty(int i1, int i2) {
 }
 
 RGTrainerPanel::RGTrainerPanel()
-    : mLegendMode(0), unke5(0), mLegendGemID(-1), unkec(-1.0f), mLefty(0), mIsBass(0) {}
+    // ⚠ `unke5` (0x10d) is DELIBERATELY absent from this init list: retail's ctor
+    // stores 0x10c, 0x110, 0x114, 0x118 and 0x274 and NEVER touches 0x10d.
+    // Initialising it emitted an extra `stb r29, 0x10d(r30)` that misaligned the
+    // mLefty store (idx42 diff_arg + idx45 insert = the whole 1.80357 deficit).
+    : mLegendMode(0), mLegendGemID(-1), unkec(-1.0f), mLefty(0), mIsBass(0) {}
 
 RGTrainerPanel::~RGTrainerPanel() {}
 
