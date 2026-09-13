@@ -20370,7 +20370,7 @@
  "0x827bca50": "?MemOrPoolFreeSTL@@YAXHPAX@Z",
  "0x827bcff0": "?_MemAllocTemp@@YAPAXHH@Z",
  "0x827bd080": "?MemRealloc@@YAPAXPAXHPBDH1H@Z",
- "0x827bd208": "?MemOrPoolAlloc@@YAPAXHPBDH0@Z",
+ "0x827bd208": "?MemOrPoolAlloc@@YAPAXH@Z",
  "0x827bd230": "?MemResizeElem@@YAPAXAAPAXAAHPAXHHPBDH3@Z",
  "0x827bd2f0": "??2CriticalSection@@SAPAXI@Z",
  "0x827bd690": "??AString@@QAAAADI@Z",
