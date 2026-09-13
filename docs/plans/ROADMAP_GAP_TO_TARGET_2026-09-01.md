@@ -1178,3 +1178,92 @@ spelling at two addresses); the ~38 kB fold stratum, blocked on regenerating
 287); `RndPostProc::Save` at 96.36 with `?Load@RndPostProc@@` also absent from
 the map; `NewFile` (port then name — naming is non-negative but valueless
 today); and `?transform@MD5@Quazal@@`, the inverse inline disease.
+
+## 7i. EXECUTION LOG — ninth wave (2026-09-13, coordinator session 3cdd3c)
+
+Four lanes off `1d560c2b`. Gates re-run by the coordinator on merged main after
+every landing.
+
+| lane | merge | Δ fns | Δ bytes | what it was, in one line |
+|---|---|---:|---:|---|
+| B map integrity | `e05f124f` | 0 | 0 | both questions were ONE: a forgiven anonymous relocation makes **every permutation of a name family score 100** |
+| D alias hygiene | `c6711597` | −6 | −808 | the −74 was **−46,520 B blind** and −808 B adjudicated; **69 of 74 withdrawals were wrong** |
+| C PostProc bodies | `457155b2` | 0 | 0 | three Δ0 ports; the **failed** fourth is the result: deleting code retail lacks cost −4 fns |
+| A spatial screen | `88c944d4` | +16 | +6,400 | the **map-relative** screen finds what the pin-relative one cannot **by construction** |
+| **wave** | `1d560c2b` → `88c944d4` | **+10** | **+5,592** | **42,739 / 3,865,716 B / 37.729187% → 42,749 / 3,871,308 B / 37.783768%** |
+
+**★★★★★ THE ONE INSTRUMENT WORTH TAKING FORWARD.** `map_lint --check
+class_mixing` is **pin-relative**, and a self-consistent defect — where the pin
+was moved to agree with the wrong name — makes the owner match the unit family,
+so it is **invisible there by construction**. `tools/spatial_map_screen.py` is
+**map-relative** and never reads `splits.txt`: a row fires when it sits outside
+its owner's home cluster and inside another owner's unbroken run. One fire was
+worth **+16 fns / +6,400 B**. Its controls run on **every scan**, not only under
+`--selftest` (positive: revert the known defect in memory and *require* it to
+fire; negative; vacuity floors), failure is exit 3 with **no findings emitted**,
+and `--break-control` proves each one fails. **Measured FP 66.7% adjudicated,
+81.0% conservative bound** — stratum fixed *before* adjudication, folds counted
+as FP, no threshold moved after. ⇒ **The FP rate is high and the SELECTIVITY is
+the point: 21 candidates out of 17,482 rows.**
+
+**★★★★ THE SCORING MECHANISM THAT MAKES MAP DEFECTS SELF-FUNDING.** When
+byte-identical bodies differ in exactly one relocation whose retail target is an
+**anonymous placeholder**, `name_check` forgives that field — so **every
+permutation of the map's names scores `fuzzy == 100`. The score does not merely
+stay silent; it PAYS FOR THE WRONG ANSWER.** Four `PlatformMgr` wrappers were
+all wrong at 100.0; three `list<T*>::insert` rows are provably wrong at 100.0
+(300 B of false credit) while the one **genuine** pointer insert scores **0.0**.
+⇒ **A 100 on a member of a byte-identical family is not evidence of its name.**
+
+**★★★★★ PRICING SCREEN — COMPLETE, ALL THREE RATES MEASURED** (supersedes §7g
+and §7h): per charged **argument**, `N = size/4` —
+
+| charge kind | cost |
+|---|---|
+| relocation-NAME arg | `5/N` |
+| REGISTER arg | `5/N` |
+| IMMEDIATE arg | **`1/N`** |
+| full mismatch (insert/delete) | `100/N` |
+
+The immediate rate was pinned exactly: 32 charges predicted 99.878788, measured
+**99.878784**. ⚠ `mpn` excludes register arg diffs but **charges symbol ones**,
+so `mpn == fuzzy` is the **fold-stratum signature**, not an instruction defect.
+
+**★★★★★ "RETAIL'S F DOES NOT CONTAIN X" DOES NOT LICENSE "DELETE X FROM THE
+TU."** Deleting a branch retail's `NewFile` provably lacks brought our body to
+416 B/27 relocs against retail's 424/27 with the relocation multiset matching
+1:1 — and cost **−4 matched functions / −88 B**, because that branch was the
+TU's only `NullFile` instantiation and retail's `File.obj` defines all four lost
+COMDATs. **Coupled through COMDAT emission, not through F's own code.**
+Companion: **naming an address is a claim about OUR symbol table too** —
+`?Load@RndPostProc@@` is identified four ways and still **not nameable**,
+because retail takes `(BinStream&, ushort)` where ours takes `(BinStreamRev&)`.
+
+**★★★★ PRICE THE BLIND COST BEFORE THE EVENT, NOT DURING IT.** §7h flagged an
+unpriced −74. Blind it was **−46,520 B / −160 fns**; adjudicated it is **−808 B**,
+because **69 of the 74 withdrawals were wrong** — made by a sweep that resolved
+operands through the ICF congruence over **our own build** when the folding
+happened in **retail's link**. 65 reversed (protecting 45,712 B), 9 enacted
+exactly as predicted. ⚠ And **104 CONTRADICTED memberships remain LIVE
+ledger-wide while `--validate` reports 0 contradicted, because it measures
+map-consistency, not folding.** Do **not** bulk-withdraw.
+
+**Coordinator error, and the lane named it before I did.** W9-A mispredicted
+both its fixes, in opposite directions, because **it never checked the caller
+population** — a rule already in CLAUDE.md. `??0UIComponent@@` has 16 subclass
+ctors (+6,400 B against a predicted ceiling of +1,200); `??0Player@@` has 2
+(measured 0). **Caller COUNT, not row size, predicts a map repair's yield.**
+My own brief also said the `PlatformMgr` repair was four rows; it was **five**,
+and a four-row fix would have discarded a correct but *displaced* name.
+
+**Wave-10 candidates:** run the spatial screen's remaining 18 unadjudicated
+fires; `??0UIComponent@@` (496 B @ 81.07) and `??0RndTransformable@@` (512 B @
+73.94), correctly paired for the first time; the **allocator debug-overload
+stratum**, which blocks the `char*` alias and everything under the STL container
+layer; `0x824e0f68` → `list<OldMMInst>::insert`, proven by its *named*
+create_node and charging at 99.8 so unlike its siblings **this one should pay**;
+the 104 live CONTRADICTED memberships, individually; locating retail's
+`NullFile` instantiation site (it blocks finishing `NewFile`); restructuring
+`LoadRev` then naming `0x82430FD0` (1,728 + 192 B); and `?transform@MD5@Quazal@@`,
+still unexplored. ⚠ `tools/dc3_map.py` resolves its map via a worktree-relative
+sibling — the `60837907` bug class, still live.
