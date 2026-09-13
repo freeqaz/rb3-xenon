@@ -1229,9 +1229,9 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             }
 
             // Sort priorities (most negative = highest priority first)
-            FacePriority *priEnd = &priorities[0] + priorities.size();
-            FacePriority *priBegin = &priorities[0];
-            std::sort(priEnd, priBegin);
+            FacePriority *priEnd = priorities.end();
+            FacePriority *priBegin = priorities.begin();
+            std::sort(priBegin, priEnd);
 
             // Phase 2: Process priority faces — split all 3 edges
             unsigned int priCount = priEnd - priBegin;
