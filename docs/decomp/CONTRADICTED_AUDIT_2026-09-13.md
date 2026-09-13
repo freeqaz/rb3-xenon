@@ -445,3 +445,133 @@ the override mechanism on positive retail-byte fold evidence.
 6. **H1 remains the root cause** and is further evidenced: groups 612 and 638 are
    two survivors carrying the *same* 40 refuted spellings each, which is the
    under-partitioned-closure signature rather than 80 independent defects.
+
+---
+
+## 12. Coordinator adjudication of handoff #2 — REFUTED, and it was a dangerous one
+
+Added at merge time (`8404984b`), by the coordinator, before dispatching it as
+work. Handoff #2 above reads:
+
+> ⚠ `0x827cfc90` (group 1353) looks like a struct-layout defect wearing an
+> alias. […] If these two really are one retail body, our `Profile` dirty-flag
+> member is **4 bytes too low**. […] Cheap to check with
+> `scripts/harvest/class_layout_report.py Profile`.
+
+**It is refuted. `Profile::mDirty` is at `0xc` in retail, proven from retail's
+own vtable. Do not move it.**
+
+This matters more than an ordinary dead end, because the prescribed "fix" was
+destructive: `Profile` is a base class with many subclasses, and `mDirty` is
+followed by `mPadNum` (`0x10`) and `mState` (`0x14`). Moving `mDirty` to `0x10`
+to satisfy the handoff would have displaced both, plus every subclass member
+after them.
+
+### The handoff undermines its own premise
+
+Its conditional is *"if these two really are one retail body"* — but this
+lane's own verdict on group 1353 is **FABRICATED**, i.e. they are **not** one
+body. On the lane's own finding, retail's `?PostDownload@NetLoader@@` says
+nothing whatsoever about `Profile`'s layout. The conditional never fires.
+
+### Independent evidence 1 — retail contains `0xc` bodies of its own
+
+Scanning all of retail `.text` (`0x82270000`, 10,341,948 B) for the exact
+three-instruction shape `li r11,1; stb r11,N(r3); blr` finds **17 bodies at 15
+distinct offsets**:
+
+| N | count | addresses |
+|---|---:|---|
+| `0x6` | 1 | `0x8278b428` |
+| `0x9` | 1 | `0x8268b340` |
+| **`0xc`** | **2** | **`0x827a4fb0`, `0x827cb8ec`** |
+| `0x10` | 2 | `0x827cc384`, `0x827cfc90` |
+| `0x14` | 1 | `0x8270b940` |
+| (10 more) | 10 | `0x38 0x3c 0x66 0x6c 0xb1 0xcd 0x1f0 0x39a 0x3e4 0xffc0` |
+
+Positive control: the scan finds `0x827cfc90` and classifies it as the `0x10`
+form, which is what §… reported independently — so the instrument
+discriminates rather than returning whatever was hoped for. ⇒ a `0xc` dirty
+flag is **ordinary in retail**, not anomalous. That alone removes the premise.
+
+⚠ Note these 12-byte leaf stubs touch neither stack nor LR, so they carry **no
+unwind record** and are excluded by construction from CD-7's ICF census
+(AUDIT-NC's scope bound). Two surviving `0xc` copies is therefore *not*
+evidence against ICF — that census never covered this stratum.
+
+### Independent evidence 2 — the compiler
+
+`scripts/harvest/class_layout_report.py Profile` (authoritative; the `// 0xHEX`
+header comments are measurably wrong elsewhere, so this was not taken on trust):
+
+```
+=== Profile   sizeof = 68 (0x44) ===
+  0x8     {vbptr}
+  0xc     mDirty          <padding 3 byte(s)>
+  0x10    mPadNum
+  0x14    ProfileSaveState mState
+```
+
+So **our** `MakeDirty` legitimately emits `stb r11,0xc(r3)`. This establishes
+what we do, not yet what retail does.
+
+### Independent evidence 3 — retail's own vtable settles it ★
+
+`Profile::DeleteAll()` is declared `virtual` and is inline `{ mDirty = true; }`
+(`src/system/meta/Profile.h:26`) — the *same* three instructions as
+`MakeDirty`, but reachable through a data structure retail publishes. It is
+**vtable slot 7**.
+
+Scanning `.rdata` for pointers to each candidate body finds exactly one vtable
+containing `0x827a4fb0`, at `.rdata 0x821121a4`, and it aligns slot-for-slot
+with the compiler's `Profile@FixedSizeSaveable@` vtable:
+
+| idx | our layout report | retail slot | |
+|---:|---|---|---|
+| −1 | (RTTI Complete Object Locator) | `0x821ebbf4` → `.rdata` | ✅ COL precedes every vtable |
+| 0 | `Profile::{dtor}` | `??_GProfile@@UAAPAXI@Z` | ✅ **exact name** |
+| 1 | `FixedSizeSaveable::SaveFixed` | `0x828299b8` | — |
+| 2 | `FixedSizeSaveable::LoadFixed` | `0x828299b8` | — |
+| 3 | `Profile::HasCheated {return false;}` | `?GetCrowdMeter@TrackPanelDirBase@@` | ✅ folded `return 0` survivor |
+| 4 | `Profile::IsUnsaved` | `?IsUnsaved@Profile@@UBA_NXZ` | ✅ **exact name** |
+| 5 | `Profile::SaveLoadComplete` | `?SaveLoadComplete@Profile@@UAAXW4ProfileSaveState@@@Z` | ✅ **exact name** |
+| 6 | `Profile::HasSomethingToUpload {return false;}` | `?GetCrowdMeter@TrackPanelDirBase@@` | ✅ folded `return 0` survivor |
+| **7** | **`Profile::DeleteAll {mDirty = true;}`** | **`0x827a4fb0` = `li r11,1; stb r11,0xc(r3); blr`** | ★★★ |
+| 8 | `Profile::PreLoad {}` | folded empty-function survivor | ✅ |
+
+Three exact `Profile` mangled names land at exactly indices 0, 4 and 5; the
+COL pointer sits immediately before index 0; the two `{return false;}` slots
+both resolve to the same folded survivor, as ICF requires. This is not a
+coincidental window — it is `Profile`'s vtable.
+
+⇒ **Retail's `Profile::DeleteAll` stores `1` to `0xc(this)`. `DeleteAll` is
+`mDirty = true`. Therefore retail's `Profile::mDirty` is at `0xc`.** Our layout
+is correct and the handoff is closed.
+
+Corroboration from a fourth direction: `0x827a4fb0` sits inside the `Profile`
+TU's own `.text` cluster, between the map-named `?SaveLoadComplete@Profile@@`
+(`0x827a4f48`) and `?IsUnsaved@Profile@@` (`0x827a4f58`) and `??_GProfile@@`
+(`0x827a52e0`).
+
+### What this strengthens, and what it does not
+
+It **strengthens the lane's FABRICATED verdict on g1353** with a reason the
+lane did not have: `Profile::MakeDirty` *cannot* be the `0x10` body, because
+`Profile`'s dirty flag is provably at `0xc`. The withdrawal was right.
+
+It does **not** license naming `0x827a4fb0`. Our `MakeDirty`, `DeleteAll` and
+(in part) `~Profile` are byte-identical three-instruction bodies that ICF folds
+into one survivor, so *which* spelling that address "is" was destroyed by the
+folding — the irreducible ICF-survivor case. Naming it would be a bet that
+converts a forgiven placeholder call site into a checked one, for no established
+gain. Left unnamed and open, deliberately.
+
+### The reusable lesson
+
+**A handoff stated as a conditional must be checked against its own lane's
+verdict before it is dispatched.** This one asked a downstream reader to act on
+an antecedent the same document had already declared false, and the prescribed
+action was destructive to a widely-inherited base class. The check cost four
+cheap probes and no build. ⇒ *read the detector's own verdict text before
+briefing its rows as work* — the same rule SHAREDBOUND recorded, firing again
+one document later.
