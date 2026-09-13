@@ -2010,3 +2010,128 @@ PASS on merged main.
   it cannot perturb the build tree or the six obj patchers.
 - Still-open user decision, carried since wave 3: whether to delete
   `src/system/synth/Sound.cpp`, `ThreeDSound.cpp`, `ThreeDSound.h`.
+
+## 7n. EXECUTION LOG — fourteenth wave (2026-09-13/14, coordinator session 3cdd3c)
+
+Dispatched off `90be524c`. All three lanes landed. Closed at `ca95db7f`.
+
+| lane | merge | predicted | measured |
+|---|---|---|---|
+| A name the unpaired rows | `ca95db7f` | Δ0, Δfuzzy +0.02…+0.05 | **Δ0, +0.031406pp** |
+| B empty-EXTRN sweep | `5a05874d` | — (no `src/`) | **Δ0**, 0 of 112 |
+| C swapped names + sweep | `31ebd0d6` | +6 / +984 B | **+6 / +984 B** |
+
+**Wave total: +6 fns / +984 B**, `90be524c` → `ca95db7f` = 42,840 → **42,846**,
+3,891,704 → **3,892,688 B**, 37.982830% → **37.992430%**. One unit completed
+(`UsbMidiGuitarMsgs`, 70/70 rows, 4724/4724 B).
+
+### The wave's real output: 5,320 B made MEASURABLE, and two hypotheses replaced
+
+**A named `0x82491918` and `0x824f5b68`, buying ZERO bytes exactly as
+pre-registered** — and making W13-A's two already-confirmed bug fixes visible to
+the ruler for the first time. `Tessellate` 0 → **64.15** (4,796 B) and
+`QuatSpline` 0 → **65.80** (524 B), both verified by me on merged main.
+
+★ **The naming evidence generalises and is stronger than a mangling match:** each
+call site is reached from a caller row **already at fuzzy 100**, with the branch
+at the **same section offset in a same-sized section** on both sides. *If
+retail's branch went anywhere else, those callers could not be at 100* — the
+caller row's own perfection is the witness. The same fact discharged the
+downside before any edit (three sites, two at fuzzy 100 worth −392 B if our
+spelling differed; our base objects already spelled the identical name at the
+identical offset).
+
+★★ **The control worth reusing: a per-row sweep of all 69,219 rows** showing the
+only changes are the two renames — **0 common rows better, 0 worse.** That is
+how you prove a map edit did nothing else; the whole-binary Δ cannot resolve a
+small row at all.
+
+**C refuted the swap hypothesis and found a SIX-CYCLE.** `0x8252e6b0` was
+correct and untouched — the anomaly had been read from the wrong end. It never
+presented as an off-by-one because the map had two entries transposed *inside*
+the window, absorbing a step. Verified by a self-witnessing construct:
+`DECLARE_MESSAGE(C,"s")` emits a `Type()` referencing a unique literal, so all
+eleven names checked 11/11 against their own strings — and **the callee names
+the ctor.** Genuinely coupled: the pins were swapped in mirror image, so a
+names-only edit would put two names in units that cannot define them, reading 0%
+forever. **Third coupled map change this session where half is worse than none.**
+
+**B returned a bounded negative on the class I sent it after: 0 of 112
+examined.** `Rnd::Terminate` is a **singleton, not the head of a vein.**
+
+### Instrument findings — three, and all three are about controls
+
+- ⛔⛔ **A CHECK THAT CANNOT DISTINGUISH "BROKEN" FROM "CORRECT" IS NOT A
+  CONTROL, even when it is the obvious one to reach for.** B's first validity
+  check ("does retail's destination name match our callee?") returned **0%**,
+  which reads exactly like a broken scan — but 0% is **the only answer a working
+  instrument can give**, because the ICF fold survivor's name is arbitrary. It
+  nearly discarded a sound sweep. The two checks that *do* discriminate both
+  passed (caller body lengths 111/112 equal; independent re-decode of all 20
+  suspects agreeing with the relocation chain 20/20).
+- ★ **Report precision WITH its denominator.** B: 1,843 direct call sites → 112
+  **examined** (1,731 unpairable, 1,645 of them because objdiff pairs by NAME and
+  retail's counterpart is anonymous) → 20 fired = **17.9% of examined**. Quoting
+  "20 of 1,843" would have understated the rate **16×**.
+- ★ **An ABSOLUTE name-injectivity assertion fires on a clean tree** (2 licensed
+  duplicates) and refused a correct edit. **The working assertion is the DELTA.**
+- Also: a `.text` move **will** fail its first build on `.pdata` drift — that is
+  dtk re-deriving, not an error, and `ab_measure` correctly **refused (exit 2)**
+  rather than measuring it.
+
+### Two veins closed with reasons, not shrugs
+
+- **The declaration-order sweep is DRAINED**: ~2,300 sites, 33 automated flags,
+  **33/33 refuted by hand**. ⇒ **Inverting an output-parameter call is usually
+  UNCOMPILABLE** (const input slot, or type mismatch), so **the compiler is
+  already the detector**; wave 13 found the only two shapes that slip past
+  (same-type non-const lvalues) and they are now exhaustively enumerated. **Do
+  not re-fund a textual sweep** — the instrument is the asm signature (retail
+  setting up `r4` before `r3` at a 2-arg `bl`) over the split `.s` files, no
+  build required.
+- **12 of B's 20 hits cannot be wrong-callees at all** — adjustor-thunk callers,
+  and a vtordisp thunk forwards *by definition* to the method it names. And the
+  4 masked non-thunk rows are **not porting mistakes**: all four are `{}` in
+  rb3-Wii too, with retail-360 carrying Xbox-only bodies (Gamerpic rewards,
+  string censoring) the Wii dev build never had — the "we do not hold the body"
+  class by a new route.
+
+### ⛔ A correction to my own brief
+
+I wrote *"expect Δ0, silence is a pass"* for both of C's tasks. Right for the
+sweep, **WRONG for the map repair**: a relocation-**name** charge **is** scored
+by `name_check`, so Δ0 there would have meant the edit never reached the build.
+**I over-generalised the register-arg-blindness rule to a different mechanism.**
+The lane pre-registered a positive sign *against* my instruction and was right.
+
+### A block neither oracle has
+
+A's Task 2: the missing 552 B of `Tessellate` is retail testing a
+`batcher.batching` data variable per mesh and, unless batching, sending
+`"record"` and `"update_objects"` to the global `"milo"` object.
+**`batcher.batching` appears NOWHERE in dc3-decomp or rb3-Wii** — that absence
+is *why* our source was short, since we inherited dc3's newer trimmed version.
+Reconstructed from retail bytes alone.
+⚠ **Honest shortfall:** 57.44 → 64.15, **below** the lane's own predicted 65–85
+band, and we now emit 4,932 B against retail's 4,796 — **overshooting by 136 B**
+having been 552 B short. The logic is present; the residual is
+regalloc/stack/funclet shape.
+
+### Wave 15 candidates
+
+- ★ **The CIRCULAR-PIN HAZARD** (C's handoff, highest value): a plausible map
+  name justifies a pin, and the pin then corroborates the name — a
+  self-consistent wrong pair, very unlikely to be unique. Key the lane on **"does
+  this function's callee set agree with the unit it is pinned to"**.
+- **`default/MatAnim`'s `_M_allocate_and_copy` row is a wrong map name** (target
+  1,160 B calling `QuatSpline`; ours 160 B calling `MemOrPoolAllocSTL`) — 5.59%
+  fuzzy explained. Needs its own caller census.
+- **B's 6 map defects** making objdiff compare our `Save` thunk against retail's
+  `??_E` thunk (needs vtables), and its 6 genuine `UNIMPLEMENTED_BODY` rows.
+- `Tessellate`'s 136 B overshoot and `QuatSpline`'s remaining 34% — both
+  stack/regalloc class, permuter off by directive.
+- A one-line comment at `AmbientOcclusion.cpp:1232`, where the declarations are
+  *deliberately* `(end, begin)` with a correct call — that site **will re-flag on
+  any future textual scan**.
+- Still-open user decision, carried since wave 3: whether to delete
+  `src/system/synth/Sound.cpp`, `ThreeDSound.cpp`, `ThreeDSound.h`.
