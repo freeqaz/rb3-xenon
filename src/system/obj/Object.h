@@ -796,7 +796,55 @@ public:
 template <class T>
 class ObjOwnerPtr : public ObjRefConcrete<T> {
 public:
+#if defined(RB3_OBJOWNERPTR_INLINE_OWNER_CTOR)                                 \
+    && defined(RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT)
+    // ---- PER-TU: inline owner-only ctor, ObjOwnerPtr edition ---------------
+    // The exact analogue of RB3_OBJPTR_INLINE_OWNER_CTOR +
+    // RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT (see the long note on ObjPtr
+    // above); everything that note establishes about why BOTH halves are
+    // load-bearing applies verbatim here, because the emitted shape is the
+    // same three stores through the same ObjRefConcrete base.
+    //
+    // It exists because retail inlines owner-only ObjOwnerPtr sites too, and
+    // until now only ObjPtr had a lever. Binary evidence, retail
+    // ??0RndTransformable@@IAA@XZ at mParent (0x8):
+    //     addi r11, r11, 0x4      ; owner = ring-adjusted this
+    //     stw  r11, 0xc(r30)      ; mOwner  @ +4
+    //     lis  r11, <ObjOwnerPtr<RndTransformable> vtable>@h
+    //     stw  r29, 0x10(r30)     ; mObject @ +8 = 0
+    //     addi r11, r11, <...>@l
+    //     stw  r11, 0x8(r30)      ; vtable  @ +0
+    // i.e. {mOwner, vptr-lis, mObject, vptr-addi, vptr-store} -- the
+    // DEFER_OBJECT order, not the mem-init order -- and retail additionally
+    // stores &mParent to the EH temp slot (addi r9,r30,0x8; stw r9,0x50(r31)),
+    // the inlined-ctor EH-state signature the ObjPtr note describes. Hence the
+    // deliberately dead `if (mObject) AddRef(...)` arm: mObject is the literal
+    // nullptr so the branch folds away, but the front end still opens the EH
+    // region that bounds the temp's live range.
+    //
+    // The arm is spelled with OwnerRef() rather than `this` on purpose --
+    // ObjOwnerPtr's ring-ref is mOwner, not this (cf. SetOwnerObj in
+    // obj/ObjPtr_p.h). Dead either way, but a reader should not learn the
+    // wrong ring discipline from it.
+    //
+    // Gated on BOTH defines: the owner-only ObjRefConcrete base ctor this
+    // needs exists only under RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT, so
+    // requiring it makes a half-opted-in TU a compile error rather than a
+    // silent fallback to the out-of-line call.
+    //
+    // As with ObjPtr, the two-arg overload LOSES its default argument while
+    // the gate is on, so the one-arg call is unambiguous and a site wanting
+    // retail's out-of-line form opts back out with `mFoo(this, nullptr)`.
+    ObjOwnerPtr(ObjRefOwner *owner)
+        : ObjRefConcrete<T>(reinterpret_cast<Hmx::Object *>(owner)) {
+        this->mObject = nullptr;
+        if (this->mObject)
+            this->mObject->AddRef(OwnerRef());
+    }
+    ObjOwnerPtr(ObjRefOwner *owner, T *ptr);
+#else
     ObjOwnerPtr(ObjRefOwner *owner, T *ptr = nullptr);
+#endif
     ObjOwnerPtr(const ObjOwnerPtr &o);
     ~ObjOwnerPtr();
     ObjRefOwner *OwnerRef() const {
