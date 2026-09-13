@@ -4904,12 +4904,12 @@
    "address": "0x8252e068",
    "survivor": "?Size@ArkFile@@UAAHXZ",
    "folded": [
-    "?MinDisplay@UIListState@@QBAHXZ",
-    "?GetTrackType@BandUser@@QBA?AW4TrackType@@XZ",
+    "?GetFilename@MidiReader@@QBAPBDXZ",
+    "?GetOp@CacheMgr@@IAA?AW4OpType@1@XZ",
     "?GetPadNum@Profile@@QBAHXZ",
     "?GetRemotePath@NetCacheLoader@@QBAPBDXZ",
-    "?GetFilename@MidiReader@@QBAPBDXZ",
-    "?GetOp@CacheMgr@@IAA?AW4OpType@1@XZ"
+    "?GetTrackType@BandUser@@QBA?AW4TrackType@@XZ",
+    "?MinDisplay@UIListState@@QBAHXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 117, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions. INCOMPLETE-1 (2026-08-14): 5 spelling(s) added by CHARGED-SITE enumeration -- the group existed but was a SUBSET, the same blind spot ONMSG-1 found (a pairwise comparator finds only SOME members). Each added spelling is map-absent, same-size, byte-identical to retail at the survivor address modulo relocated fields with relocation target names agreeing (flat T1 or chase), and passes a retail-UNIQUENESS gate: the body occupies exactly ONE retail address, so the alias cannot forgive a wrong callee. witness=PROVEN_flatT1"
   },
@@ -5264,8 +5264,8 @@
    "survivor": "??4?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
    "folded": [
     "??4?$vector@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
-    "??4?$vector@VMultiplierInfo@Stats@@V?$StlNodeAlloc@VMultiplierInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
-    "??4?$vector@V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
+    "??4?$vector@V?$Key@VQuat@Hmx@@@@V?$StlNodeAlloc@V?$Key@VQuat@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$vector@VMultiplierInfo@Stats@@V?$StlNodeAlloc@VMultiplierInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions. INCOMPLETE-1 (2026-08-14): 2 spelling(s) added by CHARGED-SITE enumeration -- the group existed but was a SUBSET, the same blind spot ONMSG-1 found (a pairwise comparator finds only SOME members). Each added spelling is map-absent, same-size, byte-identical to retail at the survivor address modulo relocated fields with relocation target names agreeing (flat T1 or chase), and passes a retail-UNIQUENESS gate: the body occupies exactly ONE retail address, so the alias cannot forgive a wrong callee. witness=PROVEN_chase"
   },
@@ -10074,10 +10074,10 @@
    "address": "0x825390e0",
    "survivor": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectMsg@@@Z",
    "folded": [
-    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectDoneMsg@@@Z",
-    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
     "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
-    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z"
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z",
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
+    "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentSelectDoneMsg@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | LANE W25-UI (2026-08-17) ADDED 3 SPELLINGS -- UIComponentFocusChangeMsg / ButtonDownMsg / ButtonUpMsg -- AND THE ORDER OF OPERATIONS IS THE WHOLE POINT. tools/dispatch_fold_enum.py on Handle@BandUI @0x82539210 shows FIVE arms calling 0x825390E0 while constructing five classes read from RETAIL BYTES via the COL at vtable[-1] (0x82539838 FocusChange, 0x825399B4 ButtonDown, 0x82539A2C ButtonUp, 0x82539AA4 Select = the map-resident survivor, 0x82539B1C SelectDone). One address cannot be five distinct handlers. BUT THAT ALONE DOES NOT LICENSE AN ALIAS: it is equally consistent with retail having ONE handler and OUR source wrongly carrying five. tools/w25_fold_proof.py settled it against us -- our three bodies were 64 B / 4 relocs (calling ?Print@HAQManager@@ plus __savegprlr_29/__restgprlr_29) vs the survivor's 52 B / 1 reloc, and DIFFERENT-SIZE COMDATS CANNOT FOLD. So the alias was WITHDRAWN and the real defect fixed instead: three stale HAQManager::Print calls removed from src/band3/meta_band/BandUI.cpp (the same HAQ strip already recorded in that file for two sibling handlers). AFTER that fix all five COMDATs are 52 B / 1 reloc, byte- AND relocation-identical, which IS /OPT:ICF's own condition -- so the fold is real and this alias forgives a naming artifact rather than hiding a behavioural divergence. Installed BEFORE the fix it would have bought the same 3,564 B while concealing the Print call, and the `none` control could not have caught it (it ignores relocation names and reads +0 either way, so its flatness is the hazard's signature, not a clearance). Body carries 1 relocation, so this is not the zero-reloc cheap-identity case. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident.",
    "withdrawn": [],
@@ -59463,9 +59463,9 @@
    "address": "0x82451ff8",
    "survivor": "??$__push_heap@PAUGroupDrawDist@@HU1@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@HHU1@P6A_NABU1@2@Z@Z",
    "folded": [
+    "??$__push_heap@PAUCuePoint@?A0x81ddebd1@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@HHU12@P6A_NABU12@2@Z@Z",
     "??$__push_heap@PAUCuePoint@?A0xe9afadec@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0xe9afadec@@HHU12@P6A_NABU12@2@Z@Z",
-    "??$__push_heap@PAUFilter@FilterViewSetting@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@HHU12@P6A_NABU12@2@Z@Z",
-    "??$__push_heap@PAUCuePoint@?A0x81ddebd1@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@HHU12@P6A_NABU12@2@Z@Z"
+    "??$__push_heap@PAUFilter@FilterViewSetting@@HU12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@HHU12@P6A_NABU12@2@Z@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions. INCOMPLETE-1 (2026-08-14): 1 spelling(s) added by CHARGED-SITE enumeration -- the group existed but was a SUBSET, the same blind spot ONMSG-1 found (a pairwise comparator finds only SOME members). Each added spelling is map-absent, same-size, byte-identical to retail at the survivor address modulo relocated fields with relocation target names agreeing (flat T1 or chase), and passes a retail-UNIQUENESS gate: the body occupies exactly ONE retail address, so the alias cannot forgive a wrong callee. witness=PROVEN_flatT1"
   },
@@ -72485,9 +72485,10 @@
    "address": "0x82520150",
    "survivor": "?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAUDep@CharPollableSorter@@@Z",
    "folded": [
+    "?_M_create_node@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQ6AXXZ@Z",
     "?_M_create_node@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVCharClip@@@Z"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1].  | ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
   },
   {
    "name": "$_S_remove_if",
@@ -72539,11 +72540,12 @@
    "address": "0x823d14c0",
    "survivor": "?insert@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObject@Hmx@@U?$_Nonconst_traits@PAVObject@Hmx@@@stlpmtx_std@@@2@U32@ABQAVObject@Hmx@@@Z",
    "folded": [
+    "?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z",
     "?insert@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PADU?$_Nonconst_traits@PAD@stlpmtx_std@@@2@U32@ABQAD@Z",
     "?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z",
     "?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z"
    ],
-   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x823d14c0 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z residual CF2, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]  ++ W10-B 2026-09-13: survivor RE-SEATED onto the map-resident spelling and list<char*>::insert added. (a) The group previously had ZERO map-resident members -- survivor CharClip* is absent from target_symbol_map.json -- so it violated the one-map-resident-symbol invariant and could not forgive retail's own name at its own address. Object* IS the map name at 0x823d14c0. (b) Whole-binary retail-byte population control, re-derived this lane over .pdata-authoritative extents: of 235 insert-shaped bodies (100 B / 25 instr / exactly 1 bl) carrying 149 distinct _M_create_node targets, EXACTLY ONE create_node is pointer-element (0x82520150: 0xc alloc, word copy, no ctor) and it feeds EXACTLY ONE insert, 0x823d14c0. A no-fold world needs one address per pointer T; the image has one for all of them. Negative control reproduces: list<bool> (0x8274d128) also allocates 0xc but copies with a BYTE op and sits at its own create_node 0x8274cf60. (c) tools/icf_pair_adjudicate.py --chase now returns PROVEN for insert<Object*>/insert<char*>, every level SLOT-FOLD-OK."
+   "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x823d14c0 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z residual CF2, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]  ++ W10-B 2026-09-13: survivor RE-SEATED onto the map-resident spelling and list<char*>::insert added. (a) The group previously had ZERO map-resident members -- survivor CharClip* is absent from target_symbol_map.json -- so it violated the one-map-resident-symbol invariant and could not forgive retail's own name at its own address. Object* IS the map name at 0x823d14c0. (b) Whole-binary retail-byte population control, re-derived this lane over .pdata-authoritative extents: of 235 insert-shaped bodies (100 B / 25 instr / exactly 1 bl) carrying 149 distinct _M_create_node targets, EXACTLY ONE create_node is pointer-element (0x82520150: 0xc alloc, word copy, no ctor) and it feeds EXACTLY ONE insert, 0x823d14c0. A no-fold world needs one address per pointer T; the image has one for all of them. Negative control reproduces: list<bool> (0x8274d128) also allocates 0xc but copies with a BYTE op and sits at its own create_node 0x8274cf60. (c) tools/icf_pair_adjudicate.py --chase now returns PROVEN for insert<Object*>/insert<char*>, every level SLOT-FOLD-OK. | ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [2]. "
   },
   {
    "name": "insert",
@@ -72897,12 +72899,12 @@
    "address": "0x8274a9a8",
    "survivor": "??BDataArrayPtr@@QBAPAVDataArray@@XZ",
    "folded": [
-    "?GetBandUser@TrackConfig@@QBAPBVBandUser@@XZ",
-    "?Var@DataNode@@QBAPAV1@PBVDataArray@@@Z",
     "?Command@DataNode@@QBAPAVDataArray@@PBV2@@Z",
-    "?LiteralInt@DataNode@@QBAHPBVDataArray@@@Z",
+    "?Func@DataNode@@QBAP6A?AV1@PAVDataArray@@@ZPBV2@@Z",
+    "?GetBandUser@TrackConfig@@QBAPBVBandUser@@XZ",
     "?LiteralArray@DataNode@@QBAPAVDataArray@@PBV2@@Z",
-    "?Func@DataNode@@QBAP6A?AV1@PAVDataArray@@@ZPBV2@@Z"
+    "?LiteralInt@DataNode@@QBAHPBVDataArray@@@Z",
+    "?Var@DataNode@@QBAPAV1@PBVDataArray@@@Z"
    ],
    "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8274a9a8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 228 against 39 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies. INCOMPLETE-1 (2026-08-14): 5 spelling(s) added by CHARGED-SITE enumeration -- the group existed but was a SUBSET, the same blind spot ONMSG-1 found (a pairwise comparator finds only SOME members). Each added spelling is map-absent, same-size, byte-identical to retail at the survivor address modulo relocated fields with relocation target names agreeing (flat T1 or chase), and passes a retail-UNIQUENESS gate: the body occupies exactly ONE retail address, so the alias cannot forgive a wrong callee. witness=PROVEN_flatT1"
   },
