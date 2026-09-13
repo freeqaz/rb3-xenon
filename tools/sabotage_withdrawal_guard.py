@@ -31,16 +31,12 @@ GEN = ROOT / "tools" / "icf_alias_build.py"
 MOD = ROOT / "tools" / "alias_withdrawals.py"
 LEDGER = ROOT / "scripts" / "symbol_aliases.json"
 
-# (name, file, old, new, expectation)
+# (name, file, old, new, expectation) -- each MUST make the guard fail.
 DEFECTS = [
-    ("lookup_always_misses", MOD,
-     "        w = self.by_survivor.get((survivor, spelling))",
-     "        w = None  # SABOTAGE",
-     "every denial silently misses; all withdrawn memberships regrow"),
-    ("address_index_dropped", MOD,
-     "            if w.address:\n                self.by_address.setdefault((w.address, w.spelling), w)",
-     "            if False:  # SABOTAGE\n                self.by_address.setdefault((w.address, w.spelling), w)",
-     "address-keyed denials miss; the null-address/renamed-survivor class regrows"),
+    ("lookup_disabled", MOD,
+     '        """Return the Withdrawal denying (survivor|address, spelling), or None."""',
+     '        """SABOTAGE"""\n        return None',
+     "no denial resolves at all; every withdrawn membership regrows"),
     ("generation_gate_removed", GEN,
      "        if ledger is not None:\n            _w = ledger.lookup(t, addr_of.get(t), b)",
      "        if False:  # SABOTAGE\n            _w = ledger.lookup(t, addr_of.get(t), b)",
@@ -53,6 +49,30 @@ DEFECTS = [
      "    if len(out) < min_records:",
      "    if False:  # SABOTAGE",
      "an EMPTY ledger no longer refuses -- the guard runs unprotected, silently"),
+]
+
+# ★ NOT defects -- MEASUREMENTS.  The denylist keys on (survivor, spelling) OR
+# (address, spelling), and disabling EITHER key alone was measured GREEN: the
+# other key still catches everything, because `lookup` falls through from one to
+# the other.  That is not a vacuous control, it is a fact about the data --
+# all 110 exposed memberships are matched by BOTH keys, so the union is
+# REDUNDANT on this tree rather than currently load-bearing.
+#
+# The redundancy is kept deliberately: each key covers a failure mode the other
+# cannot (51 groups have `address: null`; the map-repair classes RENAME the
+# survivor at a fixed address), and both are cheap.  But "we keep it for a case
+# that has not happened yet" is the honest description, and a control that
+# demanded RED here would have to be rigged to get it.  These probes report the
+# overlap instead of asserting it.
+REDUNDANCY_PROBES = [
+    ("survivor_index_dropped", MOD,
+     "            self.by_survivor.setdefault((w.survivor, w.spelling), w)",
+     "            pass  # SABOTAGE",
+     "how much does the ADDRESS key catch on its own?"),
+    ("address_index_dropped", MOD,
+     "            if w.address:\n                self.by_address.setdefault((w.address, w.spelling), w)",
+     "            if False:  # SABOTAGE\n                self.by_address.setdefault((w.address, w.spelling), w)",
+     "how much does the SURVIVOR key catch on its own?"),
 ]
 
 
@@ -163,6 +183,21 @@ def main():
                                     "RED (control works)" if red else
                                     "GREEN -- THIS DEFECT DID NOT FAIL"))
         results.append((name, red, detail))
+
+    print("\n=== REDUNDANCY PROBES (informational -- GREEN is the expected, "
+          "reported result) ===")
+    for d in REDUNDANCY_PROBES:
+        name = d[0]
+        apply_defect(d)
+        try:
+            rc, _log = run_gen(a, a.scratch + "/%s.json" % name)
+            n = exposure(a.scratch + "/%s.json" % name)
+        finally:
+            restore()
+        print("  %-24s %s -> withdrawn-live=%d %s"
+              % (name, d[4], n,
+                 "(the other key covers it entirely)" if n == 0 else
+                 "(%d NOT covered by the other key)" % n))
 
     print("\n=== SUMMARY ===")
     for n, red, det in results:
