@@ -68776,10 +68776,16 @@
    "name": "SetType",
    "address": "0x823c8908",
    "survivor": "?SetType@CharBlendBone@@UAAXVSymbol@@@Z",
-   "folded": [
-    "?SetType@CharTransDraw@@UAAXVSymbol@@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?SetType@CharTransDraw@@UAAXVSymbol@@@Z",
+     "lane": "W7-D 2026-09-13",
+     "class": "MAP_DEFECT_INVERTED_CONCLUSION",
+     "reason": "The T1 BYTE evidence is correct and its CONCLUSION is inverted. Retail@0x823c8908 IS CharTransDraw::SetType -- not a fold of two functions. Decisive on retail bytes: our two bodies are identical EXCEPT in their vbase displacement words, CharBlendBone spelling 817effd0/386bffd0/357effcc vs CharTransDraw 817effc8/386bffc8/357effc4, a delta of exactly 8 = the 0x3c-vs-0x34 vbase split. Retail carries the ffc8/ffc4 form, i.e. CharTransDraw. Because the two bodies DIFFER, no ICF could ever have folded them, so the question is foreclosed before the bytes are read. Found by lane W7-C (docs/decomp/SHADER_LAYOUT_2026-09-13.md 7.1), which fixed the MAP half at 89a3ad8b (+1 fn / +316 B); this is the alias half. GENERATOR DEFECT: tools/icf_alias_build.py T1 asks whether retail bytes at the SURVIVOR ADDRESS match our body for the FOLDED spelling -- a rule that cannot distinguish \"two functions folded\" from \"the map misnamed this address\", so it inherits every map defect BY CONSTRUCTION."
+    }
+   ]
   },
   {
    "name": "_M_clear",
