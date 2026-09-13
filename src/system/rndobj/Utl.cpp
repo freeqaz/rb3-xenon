@@ -1065,11 +1065,15 @@ void UtilDrawCigar(
     do {
         float latVal = (float)iIdx * anglePi6;
         float sinLatPi2 = FastSin(latVal + anglePiHalf);
-        double r0 = (double)(radii[0] * sinLatPi2);
+        // Single-precision in retail: every radius/sine product in
+        // fn_8243A868 is an `fmuls`, and both of the function's two `frsp`
+        // belong to the two `fcfid` int->float casts, so none is
+        // attributable to a double intermediate.
+        float r0 = radii[0] * sinLatPi2;
         float sinLat = FastSin(latVal);
         float h0 = sinLat * radii[0];
         float sinLatPi2b = FastSin(latVal + anglePiHalf);
-        double r1 = (double)(sinLatPi2b * radii[1]);
+        float r1 = sinLatPi2b * radii[1];
         float sinLatb = FastSin(latVal);
         float h0b = sLen0 - h0;
         int iLon = 0;
@@ -1077,17 +1081,15 @@ void UtilDrawCigar(
         do {
             float lonVal = (float)iLon * angle2Pi;
             float sinLon = FastSin((float)iLon * angle2Pi);
-            double sinLonD = (double)sinLon;
             float sinLonPi2 = FastSin(lonVal + anglePiHalf);
-            double sinLonPi2D = (double)sinLonPi2;
             int idx = (iLatSum + iLon) * 4;
-            Vector3 v1(h0b, (float)(sinLonPi2D * r0), (float)(sinLonD * r0));
+            Vector3 v1(h0b, sinLonPi2 * r0, sinLon * r0);
             Multiply(v1, basis, *(Vector3 *)&verts1c0[idx]);
             // Retail's v2 uses the SAME phase convention as v1: the stores at
             // 0x74/0x78 read f22 (the lonVal+pi/2 sine) then f21 (the plain
             // lonVal sine), exactly as v1's 0x84/0x88 do.  Ours had y/z
             // swapped, rotating the second ring 90 degrees in that plane.
-            Vector3 v2(h1, (float)(sinLonPi2D * r1), (float)(sinLonD * r1));
+            Vector3 v2(h1, sinLonPi2 * r1, sinLon * r1);
             Multiply(v2, basis, *(Vector3 *)&verts2e0[idx]);
             iLon = iLon + 1;
         } while (iLon < 6);
