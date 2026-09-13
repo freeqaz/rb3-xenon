@@ -3139,6 +3139,7 @@ CharDriver.cpp:
 PostProc.cpp:
 	.pdata      start:0x8220C570 end:0x8220C578
 	.pdata      start:0x8220C578 end:0x8220C640
+	.pdata      start:0x8220C640 end:0x8220C648
 	.pdata      start:0x8220C648 end:0x8220C650
 	.pdata      start:0x8220C650 end:0x8220C6A0
 	.pdata      start:0x8220C6A0 end:0x8220C6B0
@@ -3147,6 +3148,7 @@ PostProc.cpp:
 	.pdata      start:0x8220CB08 end:0x8220CB30
 	.text       start:0x8242EC18 end:0x8242EC80
 	.text       start:0x8242EC80 end:0x824302B0
+	.text       start:0x824302B0 end:0x824306D0
 	.text       start:0x824306D0 end:0x82430970
 	.text       start:0x82430970 end:0x82430E10
 	.text       start:0x82430E10 end:0x82430EF0
@@ -5107,7 +5109,6 @@ Env.cpp:
 	.pdata      start:0x8220A280 end:0x8220A2B0
 	.pdata      start:0x8220A2B0 end:0x8220A2B8
 	.pdata      start:0x8220A2B8 end:0x8220A448
-	.pdata      start:0x8220C640 end:0x8220C648
 	.pdata      start:0x82212CF0 end:0x82212CF8
 	.text       start:0x82407948 end:0x824079B8
 	.text       start:0x824079B8 end:0x824079C4
@@ -5119,7 +5120,6 @@ Env.cpp:
 	.text       start:0x82409610 end:0x824098E8
 	.text       start:0x824098E8 end:0x82409AC4
 	.text       start:0x82409AC4 end:0x8240B050
-	.text       start:0x824302B0 end:0x824306D0
 	.text       start:0x824B5570 end:0x824B55A0
 
 BaseMaterial.cpp:
