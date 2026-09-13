@@ -253,6 +253,68 @@ blind to it.** These fixes were landed on merit, exactly as the brief directed.
 
 ---
 
+## Per-row attribution — where the Δ0 actually came from
+
+The whole-binary Δ0 hides two real, opposite movements. Read this table, not the
+headline:
+
+| row | mpn before → after | fuzzy before → after |
+|---|---|---|
+| `?Poll@UsbMidiGuitar@@SAXXZ` | 99.077170 → **99.913185** | 98.562700 → **99.816720** |
+| `?GetBlendState@RndTexBlendController@@...` | 94.460785 → **93.872550** | 94.411766 → **93.774510** |
+
+**The argument-order fix worked and is large** (+0.84 mpn / +1.25 fuzzy on a
+1244 B row). It bought **zero bytes** only because `matched_code` is
+all-or-nothing per row at `fuzzy == 100`, and the row stops just short.
+
+**The smoothstep fix costs 0.637 pp of fuzzy on its row, and it is kept
+anyway.** The constants are not in doubt — they were read out of retail
+`.rdata`. What differs is the instruction FORM the compiler chooses:
+
+```
+target (retail):  lfs f13, lbl_8201FEB0    (= -2.0)
+                  fmuls  f0, f11, f0       ; t2*3.0
+                  fmadds f0, f12, f13, f0  ; t3*(-2.0) + that
+
+base (ours):      lfs f13, __real@40400000 (= 3.0)
+                  fmuls  f0, f12, f0       ; t3*2.0
+                  fmsubs f0, f11, f13, f0  ; t2*3.0 - that
+```
+
+Both compute `3t^2 - 2t^3`. MSVC folded the negation into `fmsubs` against a
+**positive** 2.0 instead of keeping `-2.0` in `.rdata`. The old, arithmetically
+*wrong* `2t^2 + 3t^3` happened to produce retail's `fmadds` shape, which is why
+being right scores slightly worse here. Per the standing directive that accuracy
+beats the headline percentage, the correct constants stay.
+
+### ⚠ A pre-registered prediction that FAILED
+
+dc3 spells the same expression `blend = t3 * (-2.0f) + t2 * 3.0f` — negated term
+first. Predicted: that operand order would make `t2*3.0f` the addend and restore
+retail's `fmadds`, lifting the row back above 94.411766.
+
+**Measured: exactly identical.** `mpn 93.87255 / fuzzy 93.77451` on *both* legs
+of a second A/B, Δfuzzy `+0.000000pp` whole-binary.
+
+⇒ **operand order in the source is INERT here** — MSVC canonicalises both
+spellings to the same `fmsubs` form under `/fp:fast`. Whatever produces retail's
+`fmadds`, it is not the order the terms are written in. Do not re-try this;
+the remaining gap is a codegen-form residual, which is permuter-class work and
+OFF by directive.
+
+dc3's spelling was **kept** despite measuring identical, purely to reduce
+divergence from the engine oracle on a shared file. That is a tie-break on
+provenance, explicitly not on the metric.
+
+⚠ Note the whole-binary Δfuzzy of `+0.000000pp` for round 2 does **not** by
+itself show the edit was inert: a 408 B row moving 2 pp is worth ~0.0000008 pp
+of a 10.3 MB denominator, an order of magnitude below the six-decimal print. The
+inertness was established from the **per-row** figures in the archived leg
+reports, not from the headline. Round 1's `+0.000076pp` came almost entirely
+from `Poll`.
+
+---
+
 ## ⛔ Tooling defect found: `ab_measure` SILENTLY DELETES untracked files created during the run
 
 **This lane lost its own deliverable to it, and the log said the restore was
