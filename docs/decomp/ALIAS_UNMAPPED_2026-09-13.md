@@ -470,3 +470,37 @@ lane and it is the highest-leverage handoff here.
   any map-only patch and it licenses nothing in either direction: `none`
   ignores relocation names, so a fabricated alias produces the identical shape.
   The license is always the retail-byte adjudication.
+
+---
+
+## 10. Post-lane composition check
+
+`main` advanced **`77cac933` → `a27b176a`** while this lane ran, and one of the
+new commits (`d40af4fe`, W11-A's `list<T*>::insert` fold) edits
+**`scripts/symbol_aliases.json`** — this lane's only functional file — while
+four others edit `scripts/target_symbol_map.json`, which every screen here keys
+on. W10-C's rule applies: *a clean textual rebase is not evidence a result
+survived composition.* So it was checked semantically, not textually:
+
+| check | result |
+|---|---|
+| my 13 same-`T` pairs already aliased on `main` | **0** — no semantic overlap with W11-A |
+| the 13 map addresses this analysis keys on, changed on `main` | **0** — no drift |
+| group count on `main` | 1,595 (= this lane's base); this branch is 1,603 |
+
+⇒ the two landed changes are **independent of everything that landed
+underneath them**, and their measured deltas should compose. They have **not**
+been re-measured on `a27b176a`; the lane's contribution remains the sum of its
+two in-run deltas.
+
+⚠ `git diff --stat main..HEAD` on this branch lists **30 files**, including
+deletions of other lanes' documents. That is the artifact W10-B §9 records —
+`main` having advanced, not a real footprint. Against the merge-base the true
+footprint is **2 files**:
+
+```
+docs/decomp/ALIAS_UNMAPPED_2026-09-13.md | 472 +++++
+scripts/symbol_aliases.json              | 143 ++++--
+```
+
+**Always take the footprint against `git merge-base main HEAD`.**
