@@ -359,6 +359,26 @@ cost is zero bytes, zero functions and 0.000178pp of fuzzy — the same call
 MAPID-1 made when naming `0x827BCD38` cost −1,656 B. Standing directive is
 accuracy over headline.
 
+### 5.3 The deltas reproduce exactly after rebase
+
+Both changes were measured against base `1d560c2b`; the branch was then rebased
+onto main `0d1d13a3` (which had landed `w9-postproc-bodies` and one further map
+row, `0x82514B78` — resolved by re-applying this lane's two rows onto upstream's
+file programmatically and re-asserting the `json.dumps(indent=1)+"\n"`
+round-trip, so both lanes' rows survive).
+
+| | matched_functions | matched_code | matched_code_percent |
+|---|---:|---:|---:|
+| main `0d1d13a3` | 42,733 | 3,864,908 | 37.721302 |
+| this branch, full build | **42,749** | **3,871,308** | **37.783768** |
+| **delta** | **+16** | **+6,400** | **+0.062466pp** |
+
+Identical to the A/B verdict on the old base, to the last digit — so the
+measurement composed across the rebase rather than being re-derived from it.
+Tree verified a fixed point (`ninja` EXIT=0, `splits.txt` not rewritten,
+`verify_objs_patched.py --verify-manifest` OK: 1,205 decomp / 3,085 target
+objects).
+
 ---
 
 ## 6. What this lane did NOT do
