@@ -280,6 +280,30 @@ final full build reads `matched_functions` **42,752**, `matched_code`
 **49.142780**, i.e. +3 / +196 / +0.001912pp / +0.008220pp on the baseline, which
 is the arithmetic sum of the four runs.
 
+### 4.0 The deltas compose across the rebase
+
+The branch was measured against base `dee126a1` and then rebased onto main
+`e782d1b0`, which had landed lane W10-D (89 alias-membership withdrawals,
+**−696 B / −7 fns**, `8404984b`). After the rebase and a full build:
+
+| | matched_functions | matched_code | matched_code_percent |
+|---|---:|---:|---:|
+| my base `dee126a1` | 42,749 | 3,871,308 | 37.783768 |
+| this branch, pre-rebase | 42,752 | 3,871,504 | 37.785680 |
+| main `e782d1b0` (= base − W10-D) | 42,742 | 3,870,612 | — |
+| **this branch, post-rebase** | **42,745** | **3,870,808** | **37.778885** |
+
+`3,870,612 + 196 = 3,870,808` and `42,742 + 3 = 42,745` — the lane's
+**+3 / +196** survives verbatim on top of a main that moved *downwards* for an
+unrelated and deliberate accuracy reason. ⚠ The headline `matched_code_percent`
+therefore **fell** between the two builds (37.785680 → 37.778885) while this
+lane added bytes; attributing that drop to this branch would be wrong, and it is
+exactly why deltas compose and absolutes do not.
+
+Post-rebase gates: `icf_alias_finder.py --validate` **PASS, 0 contradicted**
+(1,357 map-consistent / 236 tolerated / 1,595 total);
+`verify_objs_patched.py --verify-manifest` **OK** (1,205 decomp, 3,083 target).
+
 ### 4.1 Two predictions landed on the nose, and both for the same reason
 
 Changes 2 and 3b were predicted *exactly*, from the charge arithmetic rather
