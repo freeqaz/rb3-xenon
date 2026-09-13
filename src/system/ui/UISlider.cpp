@@ -159,7 +159,10 @@ void UISlider::SetFrame(float frame) {
 
 int UISlider::Current() const { return mCurrent; }
 
-void UISlider::Init() { REGISTER_OBJ_FACTORY(UISlider) }
+void UISlider::Init() {
+    TheUI->InitResources("UISlider");
+    REGISTER_OBJ_FACTORY(UISlider)
+}
 
 void UISlider::Update() {
     if (TypeDef()) {

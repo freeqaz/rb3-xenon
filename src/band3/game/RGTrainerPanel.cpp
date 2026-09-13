@@ -124,7 +124,11 @@ void ProTrainerPanel::NewDifficulty(int i1, int i2) {
 }
 
 RGTrainerPanel::RGTrainerPanel()
-    : mLegendMode(0), unke5(0), mLegendGemID(-1), unkec(-1.0f), mLefty(0), mIsBass(0) {}
+    // ⚠ `unke5` (0x10d) is DELIBERATELY absent from this init list: retail's ctor
+    // stores 0x10c, 0x110, 0x114, 0x118 and 0x274 and NEVER touches 0x10d.
+    // Initialising it emitted an extra `stb r29, 0x10d(r30)` that misaligned the
+    // mLefty store (idx42 diff_arg + idx45 insert = the whole 1.80357 deficit).
+    : mLegendMode(0), mLegendGemID(-1), unkec(-1.0f), mLefty(0), mIsBass(0) {}
 
 RGTrainerPanel::~RGTrainerPanel() {}
 
@@ -174,10 +178,6 @@ void RGTrainerPanel::Exit() {
 void RGTrainerPanel::Poll() {
     GemTrainerPanel::Poll();
     if (mGemPlayer) {
-        if (unke5) {
-            SetLegendModeImpl(mLegendMode);
-            unke5 = false;
-        }
         if (mLegendMode) {
             HandleChordLegend(true);
         }
@@ -661,7 +661,7 @@ END_HANDLERS
 
 BEGIN_HANDLERS(RGTrainerPanel)
     HANDLE_EXPR(get_fret, GetFret(_msg->Int(2), _msg->Int(3)))
-    HANDLE_ACTION(set_legend_mode, SetLegendMode(_msg->Int(2)))
+    HANDLE_ACTION(set_legend_mode, SetLegendModeImpl(_msg->Int(2)))
     HANDLE_EXPR(get_legend_mode, GetLegendMode())
     HANDLE_ACTION(set_legend_gem_id, SetLegendGemID(_msg->Int(2)))
     HANDLE_SUPERCLASS(ProTrainerPanel)

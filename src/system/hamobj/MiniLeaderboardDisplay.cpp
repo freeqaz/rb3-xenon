@@ -3,6 +3,7 @@
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "ui/LabelShrinkWrapper.h"
+#include "ui/UI.h"
 #include "ui/UIComponent.h"
 #include "ui/UIResource.h" // lane NCCC-0731-ab7e/f8/sonnet: for UIResource::Dir(); UIComponent.h only fwd-declares it
 
@@ -81,6 +82,9 @@ void LabelShrinkWrapper::OldResourcePreload(BinStream &bs) {
     // lane BQ-2 gave MeterDisplay::OldResourcePreload.
 }
 
-void MiniLeaderboardDisplay::Init() { REGISTER_OBJ_FACTORY(MiniLeaderboardDisplay); }
+void MiniLeaderboardDisplay::Init() {
+    REGISTER_OBJ_FACTORY(MiniLeaderboardDisplay);
+    TheUI->InitResources("MiniLeaderboardDisplay");
+}
 
 void MiniLeaderboardDisplay::Update() {}

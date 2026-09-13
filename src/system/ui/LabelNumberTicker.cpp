@@ -3,6 +3,7 @@
 #include "UIComponent.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
+#include "ui/UI.h"
 #include "utl/BinStream.h"
 #include "utl/Locale.h"
 #include "utl/MBT.h"
@@ -58,7 +59,10 @@ void LabelNumberTicker::PostLoad(BinStream &bs) {
     UIComponent::PostLoad(bs);
 }
 
-void LabelNumberTicker::Init() { REGISTER_OBJ_FACTORY(LabelNumberTicker) }
+void LabelNumberTicker::Init() {
+    REGISTER_OBJ_FACTORY(LabelNumberTicker)
+    TheUI->InitResources("LabelNumberTicker");
+}
 
 void LabelNumberTicker::UpdateDisplay() {
     if (mLabel) {
