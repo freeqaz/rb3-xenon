@@ -1,3 +1,10 @@
+// Retail inlines ObjPtr<RndTransformable>'s two-arg ctor at every member-init
+// site of ??0CharLookAt@@IAA@XZ and calls it ZERO times; we emitted 3
+// out-of-line `bl`, leaving the ctor at fuzzy 73.30%.  Retail's inlined form is
+// the three-store sequence around lbl_82017A34.  Found by
+// tools/inline_budget_sweep.py (lane W7-B).  This dir is PCH-excluded, so the
+// #define precedes the header include.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "char/CharLookAt.h"
 #include "char/Char.h"
 #include "char/CharWeightable.h"
