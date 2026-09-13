@@ -1864,3 +1864,149 @@ its premise is tested here. Diff the function before porting the patch.**
   metric-neutral.
 - Still-open user decision, carried since wave 3: whether to delete
   `src/system/synth/Sound.cpp`, `ThreeDSound.cpp`, `ThreeDSound.h`.
+
+## 7m. EXECUTION LOG — thirteenth wave (2026-09-13, coordinator session 3cdd3c)
+
+Dispatched off `49b5a79f` on five cross-repo leads from a dc3-decomp session,
+every one treated as a **hypothesis about our binary** and adjudicated against
+RB3 retail bytes. All three lanes landed, plus a shared-tool fix. Closed at
+`fc5338f1` (+ `4ba4aa64`).
+
+| lane | merge | predicted | measured |
+|---|---|---|---|
+| A swapped args | `d4564ac5` | Δ0 | **Δ0** |
+| B float / arg-order | `6d0244f5` | Δ0 | **Δ0** |
+| C cigar + DOFProc name | `fc5338f1` | +1 / +80 B | **+1 / +80 B** |
+| — `ab_measure` restore fix | `4ba4aa64` | n/a | selftest ALL PASS |
+
+**Wave total: +1 fn / +80 B.** Main `49b5a79f` → `fc5338f1` = 42,839 →
+**42,840**, 3,891,624 → **3,891,704 B**. Every prediction exact.
+
+### ★ The wave's yield is SIX confirmed defects, and the score can see almost none of them
+
+| defect | status | metric |
+|---|---|---|
+| `std::sort(end, begin)` in AmbientOcclusion (UB as written) | CONFIRMED | Δ0 — row unpaired |
+| `NormalizeTo` overwriting its own output (`Key.cpp`) | CONFIRMED | Δ0 — row unpaired |
+| `2t² + 3t³` where retail has `3t² − 2t³` | CONFIRMED | **−0.637 pp** |
+| messages built `(pad, value)`, retail is `(value, pad)` | CONFIRMED | +1.25 pp, 0 B |
+| second cigar ring rotated 90° (y/z phase swap) | CONFIRMED | **exactly 0** |
+| `DOFProc::Terminate` carrying a DC3-era block retail lacks | CONFIRMED | +1 / +80 B |
+
+Three independent reasons the metric is blind here, and they must not be
+conflated: **rows can be UNPAIRED** (`fuzzy 0 / mpn 0` — no edit inside them can
+score at all); a swapped argument pair is a **register** arg diff, which `mpn`
+excludes **by construction**; and `matched_code` is **all-or-nothing at
+`fuzzy == 100`**, so a large sub-100 gain buys nothing.
+
+⇒ **`UtilDrawCigar` gained 7.97 pp (82.63761 → 90.61009) for ZERO bytes.**
+⚠ Its remaining ~9.4 pp is **UNDIAGNOSED, not at-limit** — do not file it.
+
+★★ **And being right can COST.** Correcting the easing curve moved
+`GetBlendState` **94.412 → 93.775**: retail keeps `-2.0` in `.rdata` and uses
+`fmadds`, MSVC folds the correct negation into `fmsubs` against a positive 2.0,
+so the arithmetically **wrong** `2t² + 3t³` merely happened to reproduce
+retail's instruction shape. Kept, per accuracy over headline.
+
+### Two refutations, both from lanes refuting their own leads
+
+- **The Kinect float lead is REFUTED FOR RB3 because its own positive control
+  FAILED.** Of 66 float literals *shared* by both trees, only **4** exist
+  anywhere in the 14 MB image (`0.0/0.5/1.0/2.3`). So the negative on the
+  suspects proves nothing; the finding is that **the body is not in RB3 at any
+  coefficient** — RB3 is not a Kinect title — corroborated by the pinned span
+  performing **zero float loads of any kind**. The `joint[1]` change is labelled
+  **DC3-grounded, explicitly not an RB3 adjudication**.
+- **`FacePriority`'s member order is CORRECT**, refuted by the lane that raised
+  the suspicion (retail int at `+0`, float at `+4`, confirmed independently by
+  the comparator's `lfs f13,0x4(r3)` at stride 8).
+
+### Of dc3's three cigar shaping changes, RB3's bytes support TWO
+
+Exactly why the brief said re-derive rather than inherit — **both failures are
+instructive**:
+- **Claim 1 is the whole payload (+6.60 pp) but its stated REASON is wrong.**
+  dc3's "no `frsp`" is not literally true — there are two — and both belong to
+  `fcfid` int→float casts, so neither is attributable to double arithmetic.
+  **Right change, wrong rationale.**
+- **Claim 2 is REJECTED: a CORRECT DIAGNOSIS with an INEFFECTIVE REMEDY.** RB3
+  *does* contract twice elsewhere (in the `sqrtf` scale), so dc3's blanket claim
+  is wrong; at the `h1` site RB3 genuinely does not contract and **we do** — but
+  four spellings all emit `fmadds=3` under a standalone `/FAs` probe. Inert at
+  the **codegen** level, not merely below the metric's resolution.
+  ⇒ **A true diagnosis does not imply an available lever.**
+
+### ★★ Both prior forecasts on `0x82466080` were wrong, in opposite directions, and one was mine
+
+W12-C said "≈0 B" and was right that the call site is forgiven either way. My
+brief said "should now pay" and was right about the sign. **Neither priced the
+third ingredient:** our `DOFProc::Terminate` carried a DC3-era `DataVariable`
+block retail lacks — **256 B against retail's 80** — so pinning and naming alone
+pairs a row **that still cannot match**. Three coupled parts: source + splits
+re-home + map row. Result verified here: the row now reads **80 B at 100.0/100.0**.
+
+Two side results: **`lbl_82CC6368` IS `TheDOFProc`** (the open question my own
+`Rnd::Terminate` adjudication left), proven twice over; and **dtk corroborated
+the re-home unprompted**, merging DOFProc's `.pdata` and stripping `Mat.cpp`'s —
+the unwind record followed the function, an independent witness from a tool
+nobody asked.
+
+### Measurement and instrument findings
+
+- ★★★ **A whole-binary Δfuzzy of `+0.000000pp` DOES NOT ESTABLISH INERTNESS.** A
+  408 B row moving 2 pp is ~`0.0000008 pp` against a 10.3 MB denominator — an
+  order of magnitude **below the six-decimal print**. Inertness must come from
+  per-row figures. Reading `0.000000` as "nothing happened" is reading the print
+  precision, not the tree.
+- ⛔ **A scan reported "0 `bl` callees" in a 4,260-byte function.** Vacuous:
+  capstone's PPC decoder stops at the first undecodable word and never reached
+  the call at `0x52c`, while the relocation table said `nrel=127`.
+  ⇒ **DRIVE OBJECT SCANS OFF THE RELOCATION TABLE, NEVER A LINEAR DISASSEMBLY.**
+- ⚠ **The native gate FAILED on a fresh worktree's FIRST run** (16/18, two
+  targets STALE) with `rc=0` and **zero** error or linker lines. `ninja -d
+  explain` named `cmake.verify_globs` / `VerifyGlobs.cmake_force`: CMake's
+  `CONFIGURE_DEPENDS` glob verification is still dirty right after the initial
+  configure. **Not fully disentangled** — a confounding edit to a file linked by
+  exactly those two targets landed between runs, n=1 each way, no clean control.
+  ⇒ **A first-run STALE with `rc=0` and no error lines must be RE-RUN before it
+  is believed.** This does **not** relax the 0-SKIPs rule, which is the opposite
+  failure. My own gate passed 18/18 on the first run in main, consistent with the
+  fresh-worktree diagnosis.
+- **A fourth source comment refuted by bytes in three waves** (`"retail arg
+  order: (pad, value)"` — retail is the reverse in all ten constructions).
+- **A pre-registered prediction FAILED and is recorded so nobody re-tries it:**
+  dc3's operand spelling measured **byte-identical** on both legs; MSVC
+  canonicalises both, so source operand order is inert there.
+
+### `ab_measure` restore fix (`4ba4aa64`)
+
+Two lanes lost their deliverable in one day to a silent untracked-file deletion,
+**both while being told `verified: true`**. The verification re-read only the
+**tracked** diff, so it could not fail in the direction the damage occurs.
+★ The two fixes have **different scope** and conflating them would overclaim:
+the **print** (now naming every deleted path) is what prevents the loss; the
+**predicate** cannot — after a successful removal the untracked sets match by
+construction — but it closes the separate hole where a **failed** removal still
+reported verified. Both proved to discriminate before landing; `--selftest` ALL
+PASS on merged main.
+
+### Wave 14 candidates
+
+- **Name `0x82491918` and `0x824f5b68`** — that makes W13-A's two rows pairable
+  and its two confirmed fixes finally measurable. Highest-value follow-up.
+- **`0x8252f3e8` / `0x8252e6b0`** — `SigninChangedMsg` is almost certainly
+  misnamed and the two names may be **SWAPPED**, making it a coupled change where
+  half is worse than none. ⚠ Grep `symbol_aliases.json` by **ADDRESS** first.
+- **The empty-EXTRN sweep: 182 candidates** (game 41, meta_band 22, hamobj 13,
+  world 13, …). Every one emits a `bl` that cannot be inlined across a TU
+  boundary, which is what let `Rnd::Terminate`'s wrong callee pair and be
+  forgiven. ★ Rank by retail's paired destination **size** — ours is 4 bytes of
+  `blr`, so any materially larger retail destination is a candidate, and only the
+  survivors need decoding. The "retail destination is also trivial" rows are the
+  in-pass control.
+- `Tessellate`'s remaining 552 B; a tree-wide sweep of other `NormalizeTo` /
+  `std::sort` call sites for the same swap.
+- Adopt the standalone `/FAs` probe (~20 s) as the loop for codegen questions —
+  it cannot perturb the build tree or the six obj patchers.
+- Still-open user decision, carried since wave 3: whether to delete
+  `src/system/synth/Sound.cpp`, `ThreeDSound.cpp`, `ThreeDSound.h`.
