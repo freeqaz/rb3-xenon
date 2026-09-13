@@ -64,6 +64,8 @@ sys.path.insert(0, str(PROJECT_ROOT / "tools"))
 from icf_fold_evidence import function_bodies, masked_body  # noqa: E402
 from coff_bodies_ext import function_bodies_ext             # noqa: E402
 from icf_alias_finder import coff_referenced_symbols        # noqa: E402
+from alias_withdrawals import (load_ledger, load_overrides, overridden,
+                               VacuousLedger)                # noqa: E402
 
 sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "harvest"))
 try:
@@ -220,9 +222,46 @@ def main() -> int:
     ap.add_argument("--loose-placeholders", action="store_true",
                     help="restore the pre-CD-9 blanket retail-placeholder tolerance "
                          "(UNSOUND -- for A/B measurement of the gate only)")
+    ap.add_argument("--withdrawals", default=str(PROJECT_ROOT / "scripts" / "symbol_aliases.json"),
+                    help="★ W8-A. The WITHDRAWAL LEDGER, consulted as a DENYLIST: a "
+                         "(survivor|address, spelling) membership carrying a `withdrawn` "
+                         "record is never re-emitted. Defaults to the shipped "
+                         "scripts/symbol_aliases.json and is read INDEPENDENTLY of "
+                         "--merge -- a run without --merge must still be protected, or "
+                         "the guard is one forgotten flag away from vacuous.")
+    ap.add_argument("--allow-withdrawn", default="",
+                    help="JSON file re-admitting specific withdrawn memberships. Each "
+                         "entry must NAME the record it overrides (matching "
+                         "`overrides_class`) and carry a `reason`; see "
+                         "tools/alias_withdrawals.py:load_overrides. There is "
+                         "deliberately no blanket allow-all.")
+    ap.add_argument("--no-withdrawal-guard", action="store_true",
+                    help="DISABLE the withdrawal denylist entirely (for measuring the "
+                         "guard's own effect -- it is what re-fabricates withdrawn "
+                         "aliases, so never use it to produce a landed file)")
     args = ap.parse_args()
     tiers = {int(x) for x in args.tiers.split(",") if x.strip()}
     strict = not args.loose_placeholders
+
+    # ★ W8-A: the withdrawal ledger, loaded BEFORE any adjudication so a broken
+    # ledger refuses the run instead of quietly producing an unprotected file.
+    ledger, allow_wd = None, {}
+    if args.no_withdrawal_guard:
+        print("!! WITHDRAWAL GUARD DISABLED (--no-withdrawal-guard): withdrawn "
+              "memberships WILL be re-emitted. Do not land this file.",
+              file=sys.stderr)
+    else:
+        try:
+            ledger = load_ledger(args.withdrawals)
+        except VacuousLedger as e:
+            sys.exit("REFUSING: %s" % e)
+        allow_wd = load_overrides(args.allow_withdrawn, ledger)
+        _nover = len({id(v) for v in allow_wd.values()})
+        print("withdrawal guard: %d record(s) from %s%s"
+              % (len(ledger), ledger.path,
+                 "" if not _nover else "; %d explicit override(s)" % _nover),
+              file=sys.stderr)
+    wd_gen, wd_carry, wd_over = [], [], []
 
     ev = json.loads(Path(args.evidence).read_text())
     dc3 = ev["dc3_addr"]
@@ -464,6 +503,23 @@ def main() -> int:
             ssites[_k] += n
             why[(t, b)] = _k
             continue
+        # ★ W8-A WITHDRAWAL DENYLIST -- deliberately the LAST gate, immediately
+        # before ACCEPT.  Placed first it would also absorb pairs that some other
+        # gate would have rejected anyway, and `reject_withdrawn` would overstate
+        # what the ledger is actually holding back.  Here the bucket means exactly
+        # "passed every evidence gate, and was stopped only by an adjudication a
+        # human already made" -- which is the number worth reporting.
+        if ledger is not None:
+            _w = ledger.lookup(t, addr_of.get(t), b)
+            if _w is not None:
+                _ov = overridden(allow_wd, t, addr_of.get(t), b)
+                if _ov is None:
+                    stats["reject_withdrawn"] += 1
+                    ssites["reject_withdrawn"] += n
+                    why[(t, b)] = "reject_withdrawn"
+                    wd_gen.append((_w, tier, n))
+                    continue
+                wd_over.append((_w, _ov, tier))
         stats[f"ACCEPT_T{tier}"] += 1
         ssites[f"ACCEPT_T{tier}"] += n
         why[(t, b)] = f"ACCEPT_T{tier}"
@@ -609,6 +665,25 @@ def main() -> int:
                 return "survivor not named in any live target obj (gate c)"
             return None
 
+        # ★ W8-A. The carry-forward path needs the denylist too, and for a
+        # DIFFERENT reason than the generation path: the shipped file itself
+        # contains 74 memberships that are simultaneously live in `folded` and
+        # named in a `withdrawn` record at the same address (10 of them are also
+        # the SURVIVOR of another group, which violates this generator's own
+        # one-survivor-per-group invariant).  Without this, `--merge` would
+        # launder that pre-existing ledger inconsistency forward on every run.
+        def _wd_denied(g, f):
+            if ledger is None:
+                return False
+            w = ledger.lookup(g["survivor"], g.get("address"), f)
+            if w is None:
+                return False
+            if overridden(allow_wd, g["survivor"], g.get("address"), f) is not None:
+                wd_over.append((w, None, "carry"))
+                return False
+            wd_carry.append(w)
+            return True
+
         def _carry_member_veto(f):
             if f in target_named:
                 return "folded spelling named in target objs -- retail kept BOTH (gate c)"
@@ -646,6 +721,8 @@ def main() -> int:
                         print("  !! landed alias NOT carried, validator gate: %s\n"
                               "       survivor %s\n       folded   %s"
                               % (mveto, g["survivor"], f), file=sys.stderr)
+                        continue
+                    if _wd_denied(g, f):
                         continue
                     w = why.get((g["survivor"], f))
                     if w is None:
@@ -692,6 +769,8 @@ def main() -> int:
                 continue
             kept_f = []
             for f in g["folded"]:
+                if _wd_denied(g, f):
+                    continue
                 mveto = _carry_member_veto(f)
                 if mveto is not None:
                     drop_gm += 1
@@ -714,6 +793,25 @@ def main() -> int:
               "member carry-forward: %d never-adjudicated kept, %d REFUTED and "
               "dropped; validator-gate drops: %d group(s), %d member(s)"
               % (kept, merged, kept_m, drop_m, drop_g, drop_gm))
+
+    # ★ W8-A. Report what the ledger held back.  A guard whose effect is
+    # invisible cannot be distinguished from a guard that did not run -- and
+    # "0 suppressed" is exactly what a vacuous load looks like, which is why
+    # load_ledger refuses an empty ledger rather than reaching this line with
+    # nothing to say.
+    if ledger is not None:
+        _cls = collections.Counter(w.cls for w, _, _ in wd_gen)
+        _cls_c = collections.Counter(w.cls for w in wd_carry)
+        print("\nwithdrawal guard: %d membership(s) SUPPRESSED at generation "
+              "(would otherwise have been ACCEPTed), %d SUPPRESSED at "
+              "--merge carry-forward, %d re-admitted by explicit override"
+              % (len(wd_gen), len(wd_carry), len(wd_over)))
+        for label, c in (("generation", _cls), ("carry-forward", _cls_c)):
+            for k, v in c.most_common():
+                print("     %-14s %-44s %5d" % (label, k, v))
+        for w, _ov, _t in wd_over:
+            print("  .. OVERRIDDEN, re-admitted by --allow-withdrawn:\n       %s"
+                  % w.describe(), file=sys.stderr)
 
     if args.worklist:
         # ★ CD-9 DELIVERABLE. What is left after aliasing is NOT "noise" -- lane CD-7
