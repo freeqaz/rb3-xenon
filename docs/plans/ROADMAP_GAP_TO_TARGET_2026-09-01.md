@@ -1715,3 +1715,152 @@ sibling repo's fix is evidence about *that* repo until its premise is tested
 here. Two of three briefed items were already-correct on this tree, and one of
 those was described as a live bug. **Diff the function before porting the
 patch.**
+
+## 7l. EXECUTION LOG — twelfth wave (2026-09-13, coordinator session 3cdd3c)
+
+Dispatched off `96c3a685` (42,766 / 3,874,292 B). All four lanes landed, plus a
+coordinator fix adjudicating W12-C's handoff. Closed at `afdd72f7`.
+
+| lane | merge | predicted | measured | verdict |
+|---|---|---|---|---|
+| A EH frame | `18dc042d` | +328 B | **+4 / +328 B** | bytes exact |
+| B CustomizePanel + false 100 | `f95665a1` | Δ0 | **Δ0** | exact |
+| C DOFProc rehome | `1dbfe2a9` | +1/+48 · +2/+160 | **+4 / +460 B** | stage 1 exact, stage 2 missed |
+| D vendor-band screen | `afdd72f7` | 4 registered | **+13 / +4,132 B** | 3 exact, 1 diagnosed |
+| — Rnd::Terminate (mine) | `afdd72f7` | Δ0 | **Δ0** | exact, 2nd attempt |
+
+**Wave total: +21 fns / +4,920 B.** Main `96c3a685` → `afdd72f7` = 42,766 →
+**42,839 fns**, 3,874,292 → **3,891,624 B**, 37.812890% → **37.982048%**.
+
+### Two screens I briefed as high-yield were refuted with controls
+
+**VB-1 is a bounded negative and the band is BETTER than baseline** (D). 214
+vendor-band STLport-template map rows of 3,399, byte-corroborated **163 =
+76.2%**, against a **non-vendor control of 71.5%**. Proven defects **2 =
+0.93%**. `≥ 0x82A00000` is not a band but **three regions**, and the one holding
+all four originating blockers is owned by VocalTrack, Synth, GemManager,
+TrackPanel, Mic, GemTrack, PostProc_NG, Lit_NG — game and engine code.
+⇒ W11-D saw a defect-rich band because it adjudicated rows **it had already been
+blocked by** — a *selection effect*, which I then propagated into a dispatch
+brief as a yield estimate. **Second measured instance of "an address band is not
+a provenance classifier."** Do not re-screen.
+
+**The EH-frame "class" is a diagnosis, not a lever** (A). 15 of the 16 rows
+sharing PartLauncher's shape have retail `maxState == 1`; PartLauncher is the
+only one with real retail cleanup states *and* an unprotected body. And A
+refuted two premises of my own brief: `EventTrigger::Anim` is **not this defect**
+(`target_size == base_size == 188`, and the store W11-C read as ours-only is on
+**both** sides), so the briefed "516 B if both cross" was never one fix; and the
+"+12 B frame" symptom screen I proposed **under-counts by construction**, since
+a surplus EH state only costs mainline bytes when it forces a flag store.
+
+### The wave's best result is a row nobody could see was broken
+
+★ **`?Terminate@Rnd@@UAAXXZ` scored a clean fuzzy 100 while calling the wrong
+function.** Retail has exactly ONE `bl` in that slot — `+0x5c` → `0x82466080`,
+80 bytes, decoding to `RELEASE(global at 0x82CC6368)` = `DOFProc::Terminate`'s
+`RELEASE(TheDOFProc)`, sitting immediately after DOFProc's dtor.
+`?Terminate@RndMat@@SAXXZ` is a **different** function at `0x82553fc8`, not
+called from here. The `#ifdef HX_NATIVE` guard was **exactly backwards**: it
+excluded the call retail makes and kept the one it does not.
+
+**It cost nothing on the metric because `0x82466080` is UNNAMED and `name_check`
+forgives placeholder targets.** Our `RndMat::Terminate` is literally `{}` but
+EXTRN, so it still emitted a `bl`, which paired against retail's — wrong callee,
+zero charge, clean 100.
+⇒ **"our `bl` pairs with an unnamed retail target" is a far sharper query for
+metric-invisible defects than any source diff**, because the score cannot see
+that class by construction.
+
+★★ **Two attempts, and only the measurement separated them.** Adding
+`DOFProc::Terminate` while keeping `RndMat::Terminate` measured **−1 fn /
+−180 B** — exactly the extra `bl`, two calls where retail has one. **Replacing**
+measured **+0 / +0**. Reading alone would not have caught the difference.
+
+⚠ **And dc3 is NOT the oracle for this line.** A dc3 session measured its own
+`Rnd::Terminate` at 46/46 under `name_check` with the call *unguarded*, and
+dc3's source calls **both** functions — one `bl` more than RB3 retail has.
+**Porting dc3's shape verbatim IS the −180 B leg.** Both sides match their own
+target and still differ: a genuine engine divergence between the titles, not a
+decomp error in either. The standing caveat that dc3-decomp postdates RB3 earned
+its keep twice today.
+
+⛔ **Scope correction I owe the record: this is NOT a native-path fix, and I
+said it was.** The guard meant `HX_NATIVE` already took the DOFProc branch, so
+the native port was correct all along; the defect was **match-build-only**. What
+it buys is accuracy, removal of a false 100, and an unblock — W12-C measured
+naming `0x82466080` at −180 B *before* the source fix, and it should now pay.
+
+### Rules the lanes established
+
+- ⛔ **A relocation-name "contradiction" is not evidence until you grep
+  `symbol_aliases.json`** (D). The lane had a refusal *drafted* before finding
+  the address is a T1-proven 19-member fold group containing the very spelling
+  it was about to reject. Applying the existing rule converted a false refusal
+  into the lane's **entire yield**.
+- ⛔ **Before re-homing a map row, grep the alias file for its ADDRESS, not its
+  NAME** (D). Run 1 measured +836 against a predicted +3,852; the *gain* was
+  right (all 29 crossed) and the gap was an unscreened **loss of 3,080 B** from
+  orphaning the alias group anchored there. A name-keyed reverse-risk census
+  (1,442 rows, answer 0) **structurally cannot see it**.
+- ★ **The `bl` inline screen is two-stage** (D): it says *whether* retail
+  inlines, never *which* store order. The plain gate scored **below not inlining
+  at all** (76.09 → 67.96) before `DEFER_OWNER` reached 100.0 — W11-C's
+  members-vs-locals lesson recurring one lane later.
+- ★ **A retirement is only valid on the tree it was measured on** (B). This is
+  why `?Handle@CustomizePanel@@` reopened four times: each prior account was
+  correct when written and never re-derived. It is now priced definitively —
+  **one instruction, +1 fn AND +5,036 B, NOT reachable from source**, closed at
+  class level by a transplant of the exact retail construct that emits no mask.
+  Both clauses are needed; cheap-looking *and* valuable is what reopens a row.
+- ★ **When a misidentification is between two classes with byte-identical
+  generated bodies, the correction prices at ZERO, not at the row's size** (B).
+- ★ **Retail's compiler knew a ctor could not throw and ours could not, because
+  it arrives as `EXTRN`** (A) — `PartOverride() throw()`, which the DC3 oracle
+  already spells. Retail `FuncInfo maxState=6` with one IP2State entry past the
+  last instruction; ours 7.
+- ★ **Coupling demonstrated, not asserted** (C): withdrawing alias group 331
+  *alone* priced at −352 B and measured **0** once the rename made it redundant.
+
+### Instrument defects the lanes found in themselves
+
+- C's hand COFF comparator read `SizeOfRawData` as a function extent and
+  over-read 40 B into the next function, returning a confident `BODY DIFFERS` —
+  the same one-sided over-read STLPORT-1 records. It named the row anyway **for
+  accuracy, expecting zero bytes**, and collected 252 B its own instrument had
+  written off.
+- B's clean decisive nothing was **its own regex bug**, not the documented grep
+  shim. Reaching for the known hazard would have mis-attributed it; the symptoms
+  are identical.
+- `ab_measure`'s end-of-run restore **deleted a lane's untracked doc** written
+  into the worktree mid-run, and the next `>>` silently produced a half-file —
+  caught only because `wc -l` went *down* after an append. Write deliverables to
+  `~/tmp` or commit immediately.
+
+### Cross-repo intake (a dc3-decomp session)
+
+Three findings offered, **tested literally, one transferred**: `UtilDrawCigar`
+confirmed (our row reads `82.63761` to the digit, our source is dc3's pre-fix
+version exactly, and the y/z sine-phase swap between the two rings is real) —
+**queued, not yet run**; `__frsqrte` already correct here; and the
+`CharIKFingers` finding **did not describe this tree**, which dc3's own history
+then confirmed (`143dab01f`) as a dc3-only defect their fix brought *to* where
+rb3-xenon already was. ⇒ **A sibling repo's fix is evidence about that repo until
+its premise is tested here. Diff the function before porting the patch.**
+
+### Wave 13 candidates
+
+- **`UtilDrawCigar`** (872 B @ 82.63761): land the y/z phase swap on correctness;
+  adjudicate the three codegen-shaping changes against **RB3** retail bytes,
+  since dc3's justification cites DC3's listing.
+- **Name `0x82466080`** now that `Rnd::Terminate` is fixed — measured at −180 B
+  before the source fix, should now pay.
+- The 13 other mixed `??0` rows (`BandDirector`, `BandCharacter` 2,180 B), each
+  needing its own callee breakdown; ⚠ W11-C's screen is now one TU stale.
+- `EventTrigger::Anim` (188 B) — characterised as scheduler-bound, permuter off.
+- Char3D / `0x82b9b590` (+192 B), the one open row of the VB-1 residue.
+- Re-home the `0x82b74600` pin — `~GranularSynth` compiles into `Synapse_dsp.obj`
+  so a 136 B row stays unpairable until moved. A splits lane, **not**
+  metric-neutral.
+- Still-open user decision, carried since wave 3: whether to delete
+  `src/system/synth/Sound.cpp`, `ThreeDSound.cpp`, `ThreeDSound.h`.
