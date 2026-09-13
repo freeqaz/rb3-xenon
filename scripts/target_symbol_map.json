@@ -3963,7 +3963,7 @@
  "0x82341b48": "?SyncProperty@BandLabel@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82341b60": "??4?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x82341d50": "??0BandLabel@@QAA@XZ",
- "0x82341ff8": "??_GSpotlightDrawer@@UAAPAXI@Z",
+ "0x82341ff8": "?NewObject@BandLabel@@SAPAVObject@Hmx@@XZ",
  "0x82342090": null,
  "0x823421a8": "?Type@UIComponentFocusChangeMsg@@SA?AVSymbol@@XZ",
  "0x82342228": "?StaticClassName@BandHighlight@@SA?AVSymbol@@XZ",

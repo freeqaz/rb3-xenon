@@ -6,6 +6,7 @@
 #include "obj/Task.h"
 #include "os/Debug.h"
 #include "rndobj/Anim.h"
+#include "ui/UI.h"
 #include "ui/UIComponent.h"
 #include "ui/UIResource.h" // laneBQ2: for UIResource::Dir(); UIComponent.h only fwd-declares it
 #include "utl/BinStream.h"
@@ -130,7 +131,10 @@ void MeterDisplay::Update() {
     mMeterAnim = dir->Find<RndAnimatable>(typeDef->FindStr(meter_anim), true);
 }
 
-void MeterDisplay::Init() { REGISTER_OBJ_FACTORY(MeterDisplay); }
+void MeterDisplay::Init() {
+    REGISTER_OBJ_FACTORY(MeterDisplay);
+    TheUI->InitResources("MeterDisplay");
+}
 
 void MeterDisplay::AnimateToValue(int x, int y) {
     unk50 = Min(x, mMaxValue);
