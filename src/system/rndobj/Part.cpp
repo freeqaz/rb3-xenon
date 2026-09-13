@@ -77,7 +77,7 @@ BinStream &operator>>(BinStream &bs, RndParticle &p) {
     return bs;
 }
 
-PartOverride::PartOverride()
+PartOverride::PartOverride() throw()
     : mask(0), life(0), speed(0), deltaSize(0), startColor(0), midColor(0), endColor(0),
       pitch(0, 0), yaw(0, 0), mesh(0), box(Vector3(0, 0, 0), Vector3(0, 0, 0)) {}
 
