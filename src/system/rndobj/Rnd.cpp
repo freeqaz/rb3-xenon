@@ -511,12 +511,28 @@ void Rnd::Terminate() {
     TheDebug.RemoveExitCallback(TerminateCallback);
     RndOverlay::Terminate();
     RndMultiMesh::Terminate();
-#ifdef HX_NATIVE
-    // DC3-era addition (also present in rb3-Wii dev); retail RB3-360 does not
-    // call DOFProc::Terminate here — its teardown goes straight to RndMat.
+    // Retail calls DOFProc::Terminate HERE, and does NOT call RndMat::Terminate
+    // at all.  Both halves are read off retail bytes, not inferred:
+    // ?Terminate@Rnd@@ (0x8240ee48) has exactly ONE bl in this slot -- +0x5c to
+    // 0x82466080 -- and nothing further until +0x88.  0x82466080 is 80 bytes
+    // (blr at +0x4c) and its body is RELEASE(global at 0x82CC6368): null-check,
+    // virtual call with r4=1, store null back.  That is DOFProc::Terminate's
+    // RELEASE(TheDOFProc), and it sits immediately after DOFProc's dtor at
+    // 0x82466070 inside DOFProc's own TU cluster.  ?Terminate@RndMat@@SAXXZ is
+    // a DIFFERENT function, mapped at 0x82553fc8, not called from here.
+    //
+    // The guard that used to stand here had it exactly backwards: it excluded
+    // the call retail makes and kept the one retail does not.  That cost
+    // nothing on the metric because 0x82466080 is unnamed and name_check
+    // FORGIVES placeholder targets -- so the row scored a false fuzzy 100 with
+    // the wrong callee.
+    //
+    // ⚠ dc3 is NOT the oracle for this line.  dc3's Rnd::Terminate calls BOTH
+    // DOFProc::Terminate and RndMat::Terminate, one bl more than RB3 retail
+    // has.  Porting dc3's shape verbatim was measured here at -1 fn / -180 B,
+    // exactly that extra call.  Dropping RndMat::Terminate is behaviourally
+    // inert -- it is `{}`.
     DOFProc::Terminate();
-#endif
-    RndMat::Terminate();
     SetName(nullptr, nullptr);
     HANDLE *handles = &gRndThread;
     SetEvent(handles[1]);
