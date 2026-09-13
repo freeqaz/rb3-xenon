@@ -529,10 +529,89 @@ const char *FileRelativePathBuf(const char *iRoot, const char *iFilepath, char *
     return iFilepath;
 }
 
-const char *FileRelativePath(const char *root, const char *filepath) {
-    MainThread();
+// Retail RB3-Xbox holds the WHOLE relative-path body in fn_82517718 (904 B)
+// against an unconditional static; this is not FileRelativePathBuf inlined.
+// Three independent tells, none of which needs a build:
+//   * the -0x2a0 frame is exactly 0x70 locals + 0x100 rootBuf + 0x100 fpBuf +
+//     0x30 param area, leaving NO room for a third 256-byte buffer (the same
+//     frame arithmetic that settled FileMakePath for lane W7-A);
+//   * r5 is never read, so retail's is the TWO-arg form our File.h declares;
+//   * the tail is `mr r3,r30`, where r30 holds iFilepath on the two early-out
+//     paths and lbl_82CCA6B0 -- the static -- on the success path.
+// Its only callees are strtok x4, list::insert x2, list::erase x4 and
+// _List_base::clear x2: there is NO bl to MainThread(), so that site is
+// SPURIOUS here exactly as lane W6-A's audit found for the other File.cpp
+// sites, and it is deleted rather than wrapped (MILO_ASSERT still EVALUATES
+// its argument in this build, and MainThread() is an extern call MSVC cannot
+// elide -- lane W5-C).
+// FileRelativePathBuf below has no caller outside this file, but it stays for
+// the reason W5-C kept FileGetBaseBuf: an unreferenced COMDAT does not score,
+// and deleting it is a native-visible API change. The two bodies are
+// deliberate duplicates -- keep them in sync. Lane W8-D.
+const char *FileRelativePath(const char *iRoot, const char *iFilepath) {
+    MILO_ASSERT(iRoot, 0x38d);
+    MILO_ASSERT(iFilepath, 0x38e);
     static char relative[256];
-    return FileRelativePathBuf(root, filepath, relative);
+    if (*iFilepath != '\0') {
+        char rootBuf[256];
+        char fpBuf[256];
+        strcpy(rootBuf, iRoot);
+        strcpy(fpBuf, iFilepath);
+
+        std::list<char *> rootToks;
+        std::list<char *> fpToks;
+
+        char *rootTok = strtok(rootBuf, "/");
+        if (rootTok != nullptr) {
+            do {
+                rootToks.push_back(rootTok);
+                rootTok = strtok(nullptr, "/");
+            } while (rootTok != nullptr);
+        }
+
+        char *fpTok = strtok(fpBuf, "/");
+        if (fpTok != nullptr) {
+            do {
+                fpToks.push_back(fpTok);
+                fpTok = strtok(nullptr, "/");
+            } while (fpTok != nullptr);
+        }
+
+        if (!fpToks.empty() && !rootToks.empty()) {
+            // Retail compares root FIRST: the inlined strcmp loop loads
+            // 0x8(r7) (rootToks.front()) into r11 and computes `subf r9,r6,r9`
+            // = root_char - fp_char, so root is the left-hand argument.
+            if (strcmp(rootToks.front(), fpToks.front()) == 0) {
+                while (rootToks.size() > 0 && fpToks.size() > 0
+                       && strcmp(rootToks.front(), fpToks.front()) == 0) {
+                    rootToks.pop_front();
+                    fpToks.pop_front();
+                }
+
+                char *p = relative;
+                while (rootToks.size() > 0) {
+                    if (p != relative)
+                        *p++ = '/';
+                    *p++ = '.';
+                    *p++ = '.';
+                    rootToks.pop_front();
+                }
+                while (fpToks.size() > 0) {
+                    if (p != relative)
+                        *p++ = '/';
+                    for (const char *pp = fpToks.front(); *pp != '\0'; pp++)
+                        *p++ = *pp;
+                    fpToks.pop_front();
+                }
+                MILO_ASSERT(p - relative < File::MaxFileNameLen, 0x3d9);
+                if (p == relative)
+                    *p++ = '.';
+                *p = '\0';
+                return relative;
+            }
+        }
+    }
+    return iFilepath;
 }
 
 const char *FileMakePathBuf(const char *root, const char *file, char *buffer) {
