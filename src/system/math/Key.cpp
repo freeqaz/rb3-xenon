@@ -138,8 +138,8 @@ void QuatSpline(
         Hmx::Quat nextQuat = next->value;
         Hmx::Quat q88 = idx == 0 ? prevQuat : keys[idx - 1].value;
         Hmx::Quat q58 = idx + 1 == keys.size() - 1 ? nextQuat : keys[idx + 2].value;
-        NormalizeTo(q88, prevQuat);
-        NormalizeTo(nextQuat, prevQuat);
+        NormalizeTo(prevQuat, q88);
+        NormalizeTo(prevQuat, nextQuat);
         NormalizeTo(prevQuat, q58);
         int i = 0;
         while (i < 4) {
