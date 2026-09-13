@@ -1508,7 +1508,7 @@
  "0x8228b318": "??_DBandCharacter@@QAAXXZ",
  "0x8228b380": "?Handle@BandCharacter@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8228c868": "?Handle@BandCharacter@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x8228c878": "?Init@BandCamShot@@SAXXZ",
+ "0x8228c878": "?Init@BandCharacter@@SAXXZ",
  "0x8228c908": "?StaticClassName@RndPollable@@SA?AVSymbol@@XZ",
  "0x8228c980": "?ClassName@RndPollable@@UBA?AVSymbol@@XZ",
  "0x8228c9b8": "?StaticClassName@RndPropAnim@@SA?AVSymbol@@XZ",
