@@ -6855,7 +6855,7 @@
  "0x8240e7c0": "?StaticClassName@RndTexBlendController@@SA?AVSymbol@@XZ",
  "0x8240e840": "?StaticClassName@RndTexBlender@@SA?AVSymbol@@XZ",
  "0x8240e8c0": "?Type@KeyboardKeyMsg@@SA?AVSymbol@@XZ",
- "0x8240e9c0": "?NewObject@Object@Hmx@@SAPAV12@XZ",
+ "0x8240e9c0": "?NewObject@DOFProc@@SAPAVObject@Hmx@@XZ",
  "0x8240ea38": "?StaticClassName@RndTransProxy@@SA?AVSymbol@@XZ",
  "0x8240eab8": "?StaticClassName@RndAmbientOcclusion@@SA?AVSymbol@@XZ",
  "0x8240eb38": "?StaticClassName@RndMotionBlur@@SA?AVSymbol@@XZ",
