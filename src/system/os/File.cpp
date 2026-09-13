@@ -611,10 +611,110 @@ const char *FileMakePathBuf(const char *root, const char *file, char *buffer) {
     return buffer;
 }
 
+// Retail RB3-Xbox has NO out-of-line 3-arg helper on this path: fn_82516B10 is
+// 792 B and holds the whole body against an unconditional static, calling the
+// ONE-arg FileGetDrive (`mr r3,r31; bl fn_82516680` -- r4 is never set) with no
+// `char driveBuf[256]` local (its 0x200 frame is exactly 0x50 saves + 0x80
+// dirs[32] + 0x100 buf[256] + 0x30 param area; a driveBuf would force >=0x300).
+// So this is NOT FileMakePathBuf inlined -- MSVC at /O1 will not inline a
+// 198-instruction helper anyway (lane W5-C measured the limit at ~40) -- it is
+// retail's own body. FileMakePathBuf below is a DC3 refactor that RB3 did not
+// have; it is kept because DirLoader/File_Win/the native port call it, so the
+// two bodies are deliberate duplicates. Keep them in sync. Lane W7-A.
 const char *FileMakePath(const char *root, const char *file) {
-    MainThread();
+    MILO_ASSERT(root, 0x300);
+    MILO_ASSERT(file, 0x301);
     static char static_buffer[256];
-    return FileMakePathBuf(root, file, static_buffer);
+    char buf[256];
+    if (file >= static_buffer && file < static_buffer + File::MaxFileNameLen) {
+        strcpy(buf, file);
+        file = buf;
+    } else if (root >= static_buffer && root < static_buffer + File::MaxFileNameLen) {
+        strcpy(buf, root);
+        root = buf;
+    }
+    const char *fileDrive = FileGetDrive(file);
+    if (*fileDrive != '\0') {
+        file += strlen(fileDrive) + 1;
+    }
+    // `c` is assigned on EVERY path and never pre-initialized: retail's r31
+    // holds `file` and is then recycled as the cursor (`.L_82347E5C: mr r31,r28`
+    // is a join-point assignment). Hoisting `char *c = static_buffer;` above the
+    // branch makes the initial value live across the whole chain and costs a
+    // SIXTH callee-saved register -- measured as `insert: mr r30,r27` plus a
+    // uniform r28/r29/r30 -> r27/r28/r29 shift over 63 arguments. Lane W7-A.
+    char *c;
+    if (*file == '/' || *file == '\\' || *file == '\0') {
+        if (*fileDrive != '\0') {
+            sprintf(static_buffer, "%s:%s", fileDrive, file);
+            c = static_buffer + strlen(fileDrive) + 1;
+        } else {
+            const char *rootDrive = FileGetDrive(root);
+            if (*rootDrive != '\0') {
+                sprintf(static_buffer, "%s:%s", rootDrive, file);
+                c = static_buffer + strlen(rootDrive) + 1;
+            } else {
+                strcpy(static_buffer, file);
+                c = static_buffer;
+            }
+        }
+    } else {
+        sprintf(static_buffer, "%s/%s", root, file);
+        const char *rootDrive = FileGetDrive(root);
+        if (*rootDrive != '\0') {
+            c = static_buffer + strlen(rootDrive) + 1;
+        } else {
+            c = static_buffer;
+        }
+    }
+    FileNormalizePath(static_buffer);
+    bool curSlash = (*c == '/');
+    const char *dirs[32];
+    const char **endDir = &dirs[0];
+    // ONE strtok call site, not two: retail enters the loop at the call
+    // (`b .L_82347EE4`) and feeds NULL on later iterations from the join point
+    // `.L_82347EE0: li r3, 0x0`. Written as `p = strtok(c,"/"); while(p) { ...;
+    // p = strtok(0,"/"); }` MSVC emits two call sites and does not merge them.
+    // Lane W7-A.
+    // ⛔ The peeled first strtok call (retail emits ONE call site, entered by
+    // `b .L_82347EE4`, with `.L_82347EE0: li r3,0` feeding NULL on the back
+    // edge) is NOT reachable from the source loop shape. Four spellings were
+    // measured BYTE-IDENTICAL: this one; `while ((p = strtok(arg,"/")) != 0)`;
+    // `for(;;) { p = strtok(arg,"/"); if (!p) break; ... }`; and a `goto` into
+    // a do/while, which cannot be guard-duplicated at source level at all.
+    // MSVC normalises the CFG and re-derives the peel every time. Lane W7-A.
+    char *p = strtok(c, "/");
+    while (p != nullptr) {
+        if (*p != '.')
+            *endDir++ = p;
+        else if (p[1] == '.' && p[2] == '\0') {
+            if (endDir != dirs && *endDir[-1] != '.')
+                endDir--;
+            else
+                *endDir++ = p;
+        }
+        p = strtok(nullptr, "/");
+    }
+    MILO_ASSERT(endDir - dirs <= 32, 0x35c);
+    if (endDir == dirs) {
+        if (curSlash) {
+            *c++ = '/';
+        } else {
+            *c++ = '.';
+        }
+    } else {
+        for (const char **dir = (const char **)&dirs[0]; dir != endDir; dir++) {
+            if (dir != dirs || curSlash) {
+                *c++ = '/';
+            }
+            for (char *p = (char *)*dir; *p != '\0'; p++) {
+                *c++ = *p;
+            }
+        }
+    }
+    MILO_ASSERT(c - static_buffer < File::MaxFileNameLen, 0x372);
+    *c = '\0';
+    return static_buffer;
 }
 
 const char *FileLocalize(const char *iFilename, char *buffer) {
