@@ -68,9 +68,12 @@ void RndEnviron::Save(BinStream &bs) {
     bs << mFogEnable;
     bs << mAnimateFromPreset;
     bs << mFadeOut;
-    bs << mFadeStart;
-    bs << mFadeEnd;
-    bs << mFadeMax;
+    // Chained deliberately: retail stages these three through THREE DISTINCT
+    // scratch slots (mFadeStart->0x58(r1), mFadeEnd->0x54, mFadeMax->0x5c),
+    // which is what one full-expression's simultaneously-live temporaries
+    // produce.  Split into three statements MSVC reuses a single slot.  Same
+    // shape as dc3-decomp's Env.cpp.
+    bs << mFadeStart << mFadeEnd << mFadeMax;
     bs << mFadeRef << mLRFade;
     bs << mAmbientFogOwner;
     bs << mUseColorAdjust;
