@@ -122,13 +122,14 @@ in-pass positive controls:
 |---|---|
 | literals **shared** by both trees (the control) | **4 of 66** |
 | the 4 that hit | `0.0`, `0.5`, `1.0`, `2.3` — trivially common |
-| the 62 distinctive joint constants | **0** |
+| the 62 distinctive constants (joint positions, floor plane, clip plane) | **0** |
 | our two suspects (`0.127627`, `0.178946`) | **0** |
 | dc3's two (`0.127672`, `0.178935`) | **0** |
 
 ⛔ **The control FAILS, so the negative on the two suspects carries no
 independent information — and that is the finding, not a caveat.**
-`StubSkeletonData`'s body is not in RB3 retail at any coefficient. RB3 is not a
+`StubSkeletonData`'s body — and the constructor's floor-plane data with it —
+is not in RB3 retail at any coefficient. RB3 is not a
 Kinect title; this TU is a DC3 import.
 
 Three reasons the zeros are not an instrument error:
