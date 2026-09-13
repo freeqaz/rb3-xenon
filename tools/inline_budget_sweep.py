@@ -64,6 +64,24 @@ S_TOL = 0.35            # slop in s from prologue/epilogue overhead
 P_SLOP = 2              # slop in P from the run boundary
 
 
+def name_tokens(mangled):
+    """First two '@'-separated tokens of an MSVC mangled name: the function
+    identifier and its immediately enclosing scope."""
+    return tuple(mangled.lstrip('?').split('@')[:2])
+
+
+def same_helper(a, b):
+    """True when two mangled names are the same helper differing only in
+    template instantiation (`list<Content*>::insert` vs
+    `list<Hmx::Object*>::insert`).  MEASURED false-positive mechanism, twice:
+    ?StartRefresh@XboxContentMgr@@ (charged `diff_arg` rows -- which is why the
+    `equal`-row rule does not catch it) and ?SetName@CharIKFingers@@ (`equal`
+    rows).  Retail DOES make the call at those rows, so nothing was un-inlined;
+    the divergence is the container/template element type."""
+    ta, tb = name_tokens(a), name_tokens(b)
+    return ta == tb and ta[0] != ''
+
+
 def aligned_prefix(rows):
     """Longest contiguous run of rows that keep the 1:1 correspondence."""
     best = cur = start = best_start = 0
@@ -89,17 +107,27 @@ def helper_candidates(rows):
             if not s or s['opcode'] != 'bl':
                 continue
             for ta in s.get('typed_args', []):
-                if ta['type'] in ('Reloc', 'Symbol', 'BranchDest'):
-                    if side == 'base':
-                        base[str(ta['value'])].append((r['match_type'], 0))
-                    else:
-                        tgt[str(ta['value'])] += 1
+                if ta['type'] not in ('Reloc', 'Symbol', 'BranchDest'):
+                    continue
+                if side == 'base':
+                    # what, if anything, does retail call on this same row?
+                    t = r.get('target')
+                    peer = None
+                    if t and t.get('opcode') == 'bl':
+                        for tb in t.get('typed_args', []):
+                            if tb['type'] in ('Reloc', 'Symbol', 'BranchDest'):
+                                peer = str(tb['value'])
+                                break
+                    base[str(ta['value'])].append((r['match_type'], peer))
+                else:
+                    tgt[str(ta['value'])] += 1
     out = []
     for h, occ in base.items():
         if tgt.get(h, 0):
             continue
         kinds = collections.Counter(m for m, _ in occ)
-        out.append((h, len(occ), kinds))
+        sibling = sum(1 for _, peer in occ if peer and same_helper(h, peer))
+        out.append((h, len(occ), kinds, sibling))
     out.sort(key=lambda x: -x[1])
     return out
 
@@ -128,11 +156,13 @@ def verdict(a):
         return None, 'C2_aligned_throughout'
     if a['insdel'] / R < MIN_INSDEL_FRAC:
         return None, 'C3_not_misaligned'
-    for h, K, kinds in a['helpers']:
+    for h, K, kinds, sibling in a['helpers']:
         if K < MIN_K:
             continue
         if kinds.get('equal', 0):
             continue                       # retail calls it here -> fold/template, not un-inlined
+        if sibling:
+            continue                       # C6: retail calls the SAME helper, other template args
         raw = (R - P) / K
         for s in {int(raw), round(raw), int(raw) + 1}:
             if s < 2 or abs(raw - s) > S_TOL:
@@ -150,7 +180,7 @@ def verdict(a):
 # whatever you point it at, so each fixture below asserts a DIFFERENT clause and
 # the suite fails loudly if any clause silently stops discriminating.
 def _fix(size, pattern, helper='?H@@YAXXZ', hkind='diff_arg', hcount=0,
-         tgt_extra=None, hsep=False):
+         tgt_extra=None, hsep=False, hpeer=None):
     """pattern: list of (match_type, count).  helper calls appended as hkind."""
     rows = []
     for mt, n in pattern:
@@ -162,8 +192,11 @@ def _fix(size, pattern, helper='?H@@YAXXZ', hkind='diff_arg', hcount=0,
             rows.append({'match_type': 'delete',
                          'target': {'opcode': 'nop', 'args': '', 'typed_args': []},
                          'base': None})
+        peer = ({'opcode': 'bl', 'args': hpeer,
+                 'typed_args': [{'type': 'Reloc', 'value': hpeer}]} if hpeer else
+                {'opcode': 'nop', 'args': '', 'typed_args': []})
         rows.append({'match_type': hkind,
-                     'target': {'opcode': 'nop', 'args': '', 'typed_args': []} if hkind != 'insert' else None,
+                     'target': peer if hkind != 'insert' else None,
                      'base': {'opcode': 'bl', 'args': helper,
                               'typed_args': [{'type': 'Reloc', 'value': helper}]}})
     for _ in range(tgt_extra or 0):
@@ -234,6 +267,24 @@ def selftest():
     neg_id = _fix(4000, [('diff_arg', 900), ('delete', 1), ('diff_arg', 95)],
                   hcount=4, hsep=True)
     cases.append(('too_little_insdel_does_not_fire', neg_id, False))
+
+    # 13. NEGATIVE: retail calls the SAME helper at every one of the K rows,
+    #     differing only in template argument -- `list<Content*>::insert` vs
+    #     `list<Hmx::Object*>::insert`.  Nothing was un-inlined.  MEASURED false
+    #     positive: ?StartRefresh@XboxContentMgr@@, 932 B, fuzzy 69.38, which
+    #     survives the `equal`-row rule because its rows are charged `diff_arg`.
+    neg_sib = _fix(8068, [('diff_arg', 898), ('delete', 400)], hcount=85,
+                   helper='?insert@?$list@PAVContent@@V?$Stl@@',
+                   hpeer='?insert@?$list@PAVObject@Hmx@@V?$Stl@@')
+    cases.append(('sibling_instantiation_does_not_fire', neg_sib, False))
+    # 14. POSITIVE CONTROL for 13: the same geometry where retail's row calls a
+    #     GENUINELY different function (W6-A: our ?DataRegisterFunc@@ against
+    #     retail's inlined ??A?$map@...) must still fire, so C6 cannot be
+    #     satisfied by "the target row happens to hold any bl at all".
+    pos_peer = _fix(8068, [('diff_arg', 898), ('delete', 400)], hcount=85,
+                    helper='?DataRegisterFunc@@YAXVSymbol@@',
+                    hpeer='??A?$map@VSymbol@@P6APAVObject@@')
+    cases.append(('different_callee_still_fires', pos_peer, True))
 
     ok = True
     for name, fx, want in cases:
