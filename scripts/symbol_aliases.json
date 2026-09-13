@@ -5281,11 +5281,15 @@
   {
    "name": "$_Param_Construct",
    "address": "0x827dacf0",
-   "survivor": "??$_Param_Construct@UInlinedDir@ObjectDir@@U12@@stlpmtx_std@@YAXPAUInlinedDir@ObjectDir@@ABU12@@Z",
+   "survivor": "??$_Param_Construct@VCacheDirEntry@@V1@@stlpmtx_std@@YAXPAVCacheDirEntry@@ABV1@@Z",
    "folded": [
     "??$_Copy_Construct@VCacheDirEntry@@@stlpmtx_std@@YAXPAVCacheDirEntry@@ABV1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
+   "repair": {
+    "w11d_moved_out": "Lane W11-D moved `??$_Param_Construct@UInlinedDir@ObjectDir@@U12@@stlpmtx_std@@YAXPAUInlinedDir@ObjectDir@@ABU12@@Z` OUT of this group to 0x82750120, where it is PROVEN on retail bytes (FLAT T1). This group's address is not where that body lives. The membership forgave 0 charged sites at the time of the move.",
+    "w11d": "Lane W11-D (2026-09-13). SAME-T _Param_Construct/_Copy_Construct fold, adjudicated FLAT T1 PROVEN on retail bytes (60 B, 1 relocation, reloc_tally {}); 13 cross-T decoys from the same family all REFUTED, so the verdict rests on the per-T copy-ctor relocation target and not on the family's shared masked body (112 retail / 270 our bodytwins). The moved spelling was previously parked in an UNANCHORED group (its survivor is absent from target_symbol_map.json), i.e. at a GUESSED address; a body lives at exactly one address, and this one is proven. The old membership forgave 0 charged sites, verified before the move."
+   }
   },
   {
    "name": "insert",
@@ -8825,12 +8829,14 @@
   {
    "name": "$_Copy_Construct",
    "address": "0x82ba3298",
-   "survivor": "??$_Copy_Construct@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
+   "survivor": "??$_Copy_Construct@V?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@0@ABV10@@Z",
    "folded": [
-    "??$_Copy_Construct@V?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@0@ABV10@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 2 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 2 census sites over 1 functions.",
+   "repair": {
+    "w11d_moved_out": "Lane W11-D moved `??$_Copy_Construct@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z` OUT of this group to 0x8232fb50, where it is PROVEN on retail bytes (FLAT T1). This group's address is not where that body lives. The membership forgave 0 charged sites at the time of the move."
+   }
   },
   {
    "name": "$__destroy_range",
@@ -9895,12 +9901,14 @@
   {
    "name": "$_Param_Construct",
    "address": "0x822bcec0",
-   "survivor": "??$_Param_Construct@VCamShotCrowd@@V1@@stlpmtx_std@@YAXPAVCamShotCrowd@@ABV1@@Z",
+   "survivor": "??$_Copy_Construct@VIconData@BandCrowdMeter@@@stlpmtx_std@@YAXPAVIconData@BandCrowdMeter@@ABV12@@Z",
    "folded": [
-    "??$_Copy_Construct@VIconData@BandCrowdMeter@@@stlpmtx_std@@YAXPAVIconData@BandCrowdMeter@@ABV12@@Z",
     "??$_Param_Construct@VIconData@BandCrowdMeter@@V12@@stlpmtx_std@@YAXPAVIconData@BandCrowdMeter@@ABV12@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
+   "repair": {
+    "w11d_moved_out": "Lane W11-D moved `??$_Param_Construct@VCamShotCrowd@@V1@@stlpmtx_std@@YAXPAVCamShotCrowd@@ABV1@@Z` OUT of this group to 0x824c3680, where it is PROVEN on retail bytes (FLAT T1). This group's address is not where that body lives. The membership forgave 0 charged sites at the time of the move."
+   }
   },
   {
    "name": "KeyGreaterEq",
@@ -11438,7 +11446,8 @@
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
+    "??$_Copy_Construct@VFlowMathOp@@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -13367,11 +13376,15 @@
   {
    "name": "$_Copy_Construct",
    "address": "0x8271c2d8",
-   "survivor": "??$_Copy_Construct@UDebugGraph@?A0xfa5cc2c6@@@stlpmtx_std@@YAXPAUDebugGraph@?A0xfa5cc2c6@@ABU12@@Z",
+   "survivor": "??$_Param_Construct@VMoggClipMap@@V1@@stlpmtx_std@@YAXPAVMoggClipMap@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@VMoggClipMap@@@stlpmtx_std@@YAXPAVMoggClipMap@@ABV1@@Z"
+    "??$_Copy_Construct@VMoggClipMap@@@stlpmtx_std@@YAXPAVMoggClipMap@@ABV1@@Z",
+    "??$_Copy_Construct@UDebugGraph@?A0xfa5cc2c6@@@stlpmtx_std@@YAXPAUDebugGraph@?A0xfa5cc2c6@@ABU12@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "repair": {
+    "w11d": "Lane W11-D: promoted the MAP-RESIDENT name at this group's own address to `survivor`; the previous survivor ??$_Copy_Construct@UDebugGraph@?A0xfa5cc2c6@@@stlpmtx_std@@YAXPAUDebugGraph@?A0xfa5cc2c6@@ABU12@@Z is NOT in target_symbol_map.json and is retained as a folded spelling (it is in no compiled obj today, so it forgives 0; CLAUDE.md records that pruning zero-forgiving spellings cost +94,616 B to reverse)."
+   }
   },
   {
    "name": "_M_clear",
@@ -31491,9 +31504,8 @@
   {
    "name": "$_Param_Construct",
    "address": "0x822d70e0",
-   "survivor": "??$_Param_Construct@VCacheDirEntry@@V1@@stlpmtx_std@@YAXPAVCacheDirEntry@@ABV1@@Z",
+   "survivor": "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
    "folded": [
-    "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
@@ -32260,7 +32272,10 @@
      "callee_layer": "CALLEE_BYTES_DIFFER",
      "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
     }
-   ]
+   ],
+   "repair": {
+    "w11d_moved_out": "Lane W11-D moved `??$_Param_Construct@VCacheDirEntry@@V1@@stlpmtx_std@@YAXPAVCacheDirEntry@@ABV1@@Z` OUT of this group to 0x827dacf0, where it is PROVEN on retail bytes (FLAT T1). This group's address is not where that body lives. The membership forgave 0 charged sites at the time of the move."
+   }
   },
   {
    "name": "0ColorPalette",
@@ -41894,7 +41909,8 @@
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
+    "??$_Copy_Construct@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -42139,7 +42155,10 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "repair": {
+    "w11d": "Lane W11-D (2026-09-13). SAME-T _Param_Construct/_Copy_Construct fold, adjudicated FLAT T1 PROVEN on retail bytes (60 B, 1 relocation, reloc_tally {}); 13 cross-T decoys from the same family all REFUTED, so the verdict rests on the per-T copy-ctor relocation target and not on the family's shared masked body (112 retail / 270 our bodytwins). The moved spelling was previously parked in an UNANCHORED group (its survivor is absent from target_symbol_map.json), i.e. at a GUESSED address; a body lives at exactly one address, and this one is proven. The old membership forgave 0 charged sites, verified before the move."
+   }
   },
   {
    "name": "FinishValueChange",
@@ -50336,15 +50355,17 @@
   {
    "name": "$_Copy_Construct",
    "address": "0x822c9048",
-   "survivor": "??$_Copy_Construct@UVocalEvent@MidiParser@@@stlpmtx_std@@YAXPAUVocalEvent@MidiParser@@ABU12@@Z",
+   "survivor": "??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
    "folded": [
-    "??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
     "??$_Copy_Construct@USink@MsgSinks@@@stlpmtx_std@@YAXPAUSink@MsgSinks@@ABU12@@Z",
     "??$_Copy_Construct@VTransformCrowd@@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z",
     "??$_Param_Construct@UObjVersion@@U1@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
     "??$_Param_Construct@VTransformCrowd@@V1@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 0 census sites over 1 functions.",
+   "repair": {
+    "w11d_moved_out": "Lane W11-D moved `??$_Copy_Construct@UVocalEvent@MidiParser@@@stlpmtx_std@@YAXPAUVocalEvent@MidiParser@@ABU12@@Z` OUT of this group to 0x827eb7e0, where it is PROVEN on retail bytes (FLAT T1). This group's address is not where that body lives. The membership forgave 0 charged sites at the time of the move."
+   }
   },
   {
    "name": "Cancelled",
@@ -65778,12 +65799,14 @@
   {
    "name": "$_Param_Construct",
    "address": "0x822784a8",
-   "survivor": "??$_Param_Construct@UActionElement@InlineHelp@@U12@@stlpmtx_std@@YAXPAUActionElement@InlineHelp@@ABU12@@Z",
+   "survivor": "??$_Copy_Construct@VPatchLayer@@@stlpmtx_std@@YAXPAVPatchLayer@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@VPatchLayer@@@stlpmtx_std@@YAXPAVPatchLayer@@ABV1@@Z",
     "??$_Param_Construct@VPatchLayer@@V1@@stlpmtx_std@@YAXPAVPatchLayer@@ABV1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
+   "repair": {
+    "w11d_moved_out": "Lane W11-D moved `??$_Param_Construct@UActionElement@InlineHelp@@U12@@stlpmtx_std@@YAXPAUActionElement@InlineHelp@@ABU12@@Z` OUT of this group to 0x82314c90, where it is PROVEN on retail bytes (FLAT T1). This group's address is not where that body lives. The membership forgave 0 charged sites at the time of the move."
+   }
   },
   {
    "name": "1?$_Vector_base",
@@ -74977,6 +75000,78 @@
    ],
    "evidence": "Lane W7-D, T1 on retail bytes (2026-09-13). Our COMDAT for the folded spelling and our COMDAT for the survivor are both 92 B, sha256 270e305acf75c137, with IDENTICAL relocations compared BY TARGET NAME: (4,__savegprlr_29), (44,??4?$vector@U?$pair@HM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HM@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z), (88,__restgprlr_29). Retail@0x82656a00 corroborates (same size; every non-relocated word equal as a full 32-bit value). Every relocation target is TYPE-INDEPENDENT, which is why this family folds where list<T*>::insert / vector<T>::resize / ~list<T> do NOT (those carry a per-T callee -- _M_create_node<T>, _M_fill_insert<T>, _List_base<T>::clear -- and retail keeps 4, 48 and 11 of them respectively at DISTINCT addresses). Injective: the map places the folded spelling at no other address. Population control: no other retail address carries a branch-masked-identical body.",
    "lane": "W7-D"
+  },
+  {
+   "name": "$_Copy_Construct",
+   "address": "0x823a0cf8",
+   "survivor": "??$_Copy_Construct@VHide@CharMeshHide@@@stlpmtx_std@@YAXPAVHide@CharMeshHide@@ABV12@@Z",
+   "folded": [
+    "??$_Param_Construct@VHide@CharMeshHide@@V12@@stlpmtx_std@@YAXPAVHide@CharMeshHide@@ABV12@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13), H4 audit. SAME-T _Param_Construct/_Copy_Construct fold. STLport _construct.h defines _Copy_Construct<Tp>(Tp*,const Tp&) and _Param_Construct<T1,T2>(T1*,const T2&) with IDENTICAL bodies -- both are `new(__p) T(__val)` -- so for T1==T2==Tp the two spellings compile to the same code AND the same relocation (that T's copy constructor), which is /OPT:ICF's fold condition exactly. Adjudicated on RETAIL BYTES with tools/icf_pair_adjudicate.py: FLAT T1 PROVEN (60 B both sides, 1 relocation, reloc_tally {}). CONTROL: 13 cross-T decoys built from the same family all REFUTED ('masked bodies match but relocation TARGETS disagree'), so the PROVEN verdict rests on the per-T copy-ctor target and not on the family's shared shape (112 retail / 270 our bodytwins share that masked body)."
+  },
+  {
+   "name": "$_Copy_Construct",
+   "address": "0x82356360",
+   "survivor": "??$_Copy_Construct@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@YAXPAVSmasherPlateInfo@GemTrackResourceManager@@ABV12@@Z",
+   "folded": [
+    "??$_Param_Construct@VSmasherPlateInfo@GemTrackResourceManager@@V12@@stlpmtx_std@@YAXPAVSmasherPlateInfo@GemTrackResourceManager@@ABV12@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13), H4 audit. SAME-T _Param_Construct/_Copy_Construct fold. STLport _construct.h defines _Copy_Construct<Tp>(Tp*,const Tp&) and _Param_Construct<T1,T2>(T1*,const T2&) with IDENTICAL bodies -- both are `new(__p) T(__val)` -- so for T1==T2==Tp the two spellings compile to the same code AND the same relocation (that T's copy constructor), which is /OPT:ICF's fold condition exactly. Adjudicated on RETAIL BYTES with tools/icf_pair_adjudicate.py: FLAT T1 PROVEN (60 B both sides, 1 relocation, reloc_tally {}). CONTROL: 13 cross-T decoys built from the same family all REFUTED ('masked bodies match but relocation TARGETS disagree'), so the PROVEN verdict rests on the per-T copy-ctor target and not on the family's shared shape (112 retail / 270 our bodytwins share that masked body)."
+  },
+  {
+   "name": "$_Param_Construct",
+   "address": "0x823864a8",
+   "survivor": "??$_Param_Construct@UEyeDesc@CharEyes@@U12@@stlpmtx_std@@YAXPAUEyeDesc@CharEyes@@ABU12@@Z",
+   "folded": [
+    "??$_Copy_Construct@UEyeDesc@CharEyes@@@stlpmtx_std@@YAXPAUEyeDesc@CharEyes@@ABU12@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13), H4 audit. SAME-T _Param_Construct/_Copy_Construct fold. STLport _construct.h defines _Copy_Construct<Tp>(Tp*,const Tp&) and _Param_Construct<T1,T2>(T1*,const T2&) with IDENTICAL bodies -- both are `new(__p) T(__val)` -- so for T1==T2==Tp the two spellings compile to the same code AND the same relocation (that T's copy constructor), which is /OPT:ICF's fold condition exactly. Adjudicated on RETAIL BYTES with tools/icf_pair_adjudicate.py: FLAT T1 PROVEN (60 B both sides, 1 relocation, reloc_tally {}). CONTROL: 13 cross-T decoys built from the same family all REFUTED ('masked bodies match but relocation TARGETS disagree'), so the PROVEN verdict rests on the per-T copy-ctor target and not on the family's shared shape (112 retail / 270 our bodytwins share that masked body)."
+  },
+  {
+   "name": "$_Param_Construct",
+   "address": "0x82718e98",
+   "survivor": "??$_Param_Construct@VMidiChannel@@V1@@stlpmtx_std@@YAXPAVMidiChannel@@ABV1@@Z",
+   "folded": [
+    "??$_Copy_Construct@VMidiChannel@@@stlpmtx_std@@YAXPAVMidiChannel@@ABV1@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13), H4 audit. SAME-T _Param_Construct/_Copy_Construct fold. STLport _construct.h defines _Copy_Construct<Tp>(Tp*,const Tp&) and _Param_Construct<T1,T2>(T1*,const T2&) with IDENTICAL bodies -- both are `new(__p) T(__val)` -- so for T1==T2==Tp the two spellings compile to the same code AND the same relocation (that T's copy constructor), which is /OPT:ICF's fold condition exactly. Adjudicated on RETAIL BYTES with tools/icf_pair_adjudicate.py: FLAT T1 PROVEN (60 B both sides, 1 relocation, reloc_tally {}). CONTROL: 13 cross-T decoys built from the same family all REFUTED ('masked bodies match but relocation TARGETS disagree'), so the PROVEN verdict rests on the per-T copy-ctor target and not on the family's shared shape (112 retail / 270 our bodytwins share that masked body)."
+  },
+  {
+   "name": "$_Copy_Construct",
+   "address": "0x82314c90",
+   "survivor": "??$_Copy_Construct@UActionElement@InlineHelp@@@stlpmtx_std@@YAXPAUActionElement@InlineHelp@@ABU12@@Z",
+   "folded": [
+    "??$_Param_Construct@UActionElement@InlineHelp@@U12@@stlpmtx_std@@YAXPAUActionElement@InlineHelp@@ABU12@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13). SAME-T _Param_Construct/_Copy_Construct fold, adjudicated FLAT T1 PROVEN on retail bytes (60 B, 1 relocation, reloc_tally {}); 13 cross-T decoys from the same family all REFUTED, so the verdict rests on the per-T copy-ctor relocation target and not on the family's shared masked body (112 retail / 270 our bodytwins). The moved spelling was previously parked in an UNANCHORED group (its survivor is absent from target_symbol_map.json), i.e. at a GUESSED address; a body lives at exactly one address, and this one is proven. The old membership forgave 0 charged sites, verified before the move."
+  },
+  {
+   "name": "$_Copy_Construct",
+   "address": "0x82750120",
+   "survivor": "??$_Copy_Construct@UInlinedDir@ObjectDir@@@stlpmtx_std@@YAXPAUInlinedDir@ObjectDir@@ABU12@@Z",
+   "folded": [
+    "??$_Param_Construct@UInlinedDir@ObjectDir@@U12@@stlpmtx_std@@YAXPAUInlinedDir@ObjectDir@@ABU12@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13). SAME-T _Param_Construct/_Copy_Construct fold, adjudicated FLAT T1 PROVEN on retail bytes (60 B, 1 relocation, reloc_tally {}); 13 cross-T decoys from the same family all REFUTED, so the verdict rests on the per-T copy-ctor relocation target and not on the family's shared masked body (112 retail / 270 our bodytwins). The moved spelling was previously parked in an UNANCHORED group (its survivor is absent from target_symbol_map.json), i.e. at a GUESSED address; a body lives at exactly one address, and this one is proven. The old membership forgave 0 charged sites, verified before the move."
+  },
+  {
+   "name": "$_Copy_Construct",
+   "address": "0x824c3680",
+   "survivor": "??$_Copy_Construct@VCamShotCrowd@@@stlpmtx_std@@YAXPAVCamShotCrowd@@ABV1@@Z",
+   "folded": [
+    "??$_Param_Construct@VCamShotCrowd@@V1@@stlpmtx_std@@YAXPAVCamShotCrowd@@ABV1@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13). SAME-T _Param_Construct/_Copy_Construct fold, adjudicated FLAT T1 PROVEN on retail bytes (60 B, 1 relocation, reloc_tally {}); 13 cross-T decoys from the same family all REFUTED, so the verdict rests on the per-T copy-ctor relocation target and not on the family's shared masked body (112 retail / 270 our bodytwins). The moved spelling was previously parked in an UNANCHORED group (its survivor is absent from target_symbol_map.json), i.e. at a GUESSED address; a body lives at exactly one address, and this one is proven. The old membership forgave 0 charged sites, verified before the move."
+  },
+  {
+   "name": "$_Param_Construct",
+   "address": "0x827eb7e0",
+   "survivor": "??$_Param_Construct@UVocalEvent@MidiParser@@U12@@stlpmtx_std@@YAXPAUVocalEvent@MidiParser@@ABU12@@Z",
+   "folded": [
+    "??$_Copy_Construct@UVocalEvent@MidiParser@@@stlpmtx_std@@YAXPAUVocalEvent@MidiParser@@ABU12@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13). SAME-T _Param_Construct/_Copy_Construct fold, adjudicated FLAT T1 PROVEN on retail bytes (60 B, 1 relocation, reloc_tally {}); 13 cross-T decoys from the same family all REFUTED, so the verdict rests on the per-T copy-ctor relocation target and not on the family's shared masked body (112 retail / 270 our bodytwins). The moved spelling was previously parked in an UNANCHORED group (its survivor is absent from target_symbol_map.json), i.e. at a GUESSED address; a body lives at exactly one address, and this one is proven. The old membership forgave 0 charged sites, verified before the move."
   }
  ]
 }
