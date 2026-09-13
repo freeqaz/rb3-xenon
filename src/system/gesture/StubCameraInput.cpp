@@ -41,7 +41,7 @@ void StubCameraInput::StubSkeletonData(SkeletonData &data, const Vector3 &vec) {
     data.mHipCenter.Set(0.0f, 0.5f, 2.3f);
     ((Vector3 &)data.mHipCenter) += vec;
     data.mJointPositions[0].Set(0.126847f, 0.111759f, 2.264718f);
-    data.mJointPositions[1].Set(0.127627f, 0.178946f, 2.32085f);
+    data.mJointPositions[1].Set(0.127672f, 0.178935f, 2.32085f);
     data.mJointPositions[2].Set(0.13937f, 0.554082f, 2.307118f);
     data.mJointPositions[3].Set(0.140168f, 0.734258f, 2.252467f);
     data.mJointPositions[4].Set(-0.046645f, 0.45371f, 2.323363f);
