@@ -49,6 +49,22 @@ mean "retail's body is real and ours is empty" (UNIMPLEMENTED_BODY), never
 "we call the wrong thing".  Classified apart -- conflating them overstates the
 wrong-callee class, which is the class the lane was funded to find.
 
+⚠ BUT `UNIMPLEMENTED_BODY` IS NOT SELF-ADJUDICATING -- IT NEEDS A DECODE.
+Measured (W14-B): of 12 such rows, only 6 were genuine missing bodies.  The
+other 6 had a destination that ALREADY CARRIES A DIFFERENT NAME, and decoding
+proved the DESTINATION name right and the THUNK name wrong -- e.g. a
+`?Save@BandTrack@@$4...` thunk pointing at `0x8234fca8`, which is unambiguously
+a deleting destructor (dtor calls, `rlwinm` isolating flag&1, `beq` over
+`MemFree`).  Those are MAP DEFECTS on the thunk row, and because objdiff pairs
+by name they make our `Save` thunk compare against retail's `??_E` thunk -- a
+meaningless comparison in both directions.
+
+  ★ THE TELL: if a thunk's destination already carries a DIFFERENT name,
+    suspect the THUNK.  If the destination is UNNAMED, it is usually the real
+    method and our body is genuinely missing.  This tool reports both as
+    `UNIMPLEMENTED_BODY` and CANNOT distinguish them; decode before believing
+    either.  See docs/decomp/EMPTY_EXTRN_SWEEP_2026-09-14.md §4.
+
 Usage:
     python3 tools/empty_extrn_sweep.py [--json OUT] [--project-dir DIR]
 
