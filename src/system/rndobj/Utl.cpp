@@ -1109,10 +1109,8 @@ void UtilDrawCigar(
     do {
         int iJ = 0;
         int iK = 5;
-        int iJcur;
         do {
-            iJcur = iJ;
-            int p1 = (iRing * 6 + iJcur) * 4;
+            int p1 = (iRing * 6 + iJ) * 4;
             int p2 = (iRing * 6 + iK) * 4;
             TheRnd.DrawLine(
                 *(Vector3 *)&verts2e0[p1], *(Vector3 *)&verts2e0[p2], col, false
@@ -1134,9 +1132,12 @@ void UtilDrawCigar(
                 pBottom = (Vector3 *)&verts1c0[p1 + 6 * 4];
             }
             TheRnd.DrawLine(*(Vector3 *)&verts1c0[p1], *pBottom, col, false);
-            iJ = iJcur + 1;
-            iK = iJcur;
-        } while (iJcur + 1 < 6);
+            // iK trails iJ by one.  RB3's loop tail is `mr r11,r27` then
+            // `addi r27,r27,1` then `cmpwi cr6,r27,6` -- iK takes the old iJ
+            // with no staged temp, and the compare is on the INCREMENTED iJ.
+            iK = iJ;
+            iJ = iJ + 1;
+        } while (iJ < 6);
         iRing = iRing + 1;
     } while (iRing < 3);
 }
