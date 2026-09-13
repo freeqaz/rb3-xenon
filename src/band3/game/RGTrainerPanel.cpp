@@ -36,11 +36,15 @@
 
 RGTrainerPanel *TheRGTrainerPanel;
 
-// Retail-360's RGTrainerPanel::Exit() clears a 1-BYTE data flag (stb), not the
-// TheRGTrainerPanel pointer (stw) the rb3-Wii dev build assigns: the target's
-// sole store is `stb 0, 0x82E0E30F` and nothing in the whole retail binary ever
-// reads that byte back (no lbz/lwz anywhere), so it is a write-only flag.
-static bool sRGTrainerPanelActive;
+// W10-A: the "retail clears a 1-BYTE flag (stb)" note that stood here was read
+// off a MIS-ATTRIBUTED body. 0x82874718 is a D3D XBM capture helper (it sits
+// between XBMEndCapture and XBMBeginCapture and calls the former); the map named
+// it ?Exit@RGTrainerPanel@@ and our Exit happens to compile to the same generic
+// 11-instruction skeleton, so it scored 10-of-11 against an unrelated function.
+// The REAL Exit is 0x826ADC38: `GemTrainerPanel::Exit(); stw 0 -> 0x82E02A94`,
+// and Enter (0x826B08D8) does `stw this -> 0x82E02A94` -- the SAME global. So
+// retail clears the TheRGTrainerPanel POINTER, exactly as the rb3-Wii oracle
+// says, and the flag this file used to clear never existed.
 
 void ProTrainerPanel::Enter() {
     GemTrainerPanel::Enter();
@@ -164,7 +168,7 @@ void RGTrainerPanel::Enter() {
 
 void RGTrainerPanel::Exit() {
     GemTrainerPanel::Exit();
-    sRGTrainerPanelActive = false;
+    TheRGTrainerPanel = NULL;
 }
 
 void RGTrainerPanel::Poll() {
