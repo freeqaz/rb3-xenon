@@ -16127,7 +16127,7 @@
  "0x826afd38": "??_GProTrainerPanel@@UAAPAXI@Z",
  "0x826afd80": "?HandleChordLegend@RGTrainerPanel@@QAAX_N@Z",
  "0x826b0130": "?Poll@RGTrainerPanel@@UAAXXZ",
- "0x826b03d8": "??0TexMovie@@IAA@XZ",
+ "0x826b03d8": "??0RGTrainerPanel@@QAA@XZ",
  "0x826b0580": "?ClassName@RGTrainerPanel@@UBA?AVSymbol@@XZ",
  "0x826b05b0": "?DataDir@UIPanel@@$4PPPPPPPM@CDM@AAPAVObjectDir@@XZ",
  "0x826b05c0": "?SetTypeDef@UIPanel@@$4PPPPPPPM@CDM@AAXPAVDataArray@@@Z",

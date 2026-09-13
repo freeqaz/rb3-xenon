@@ -3575,7 +3575,6 @@ VorbisReader.cpp:
 
 TexMovie.cpp:
 	.pdata      start:0x8220D400 end:0x8220D408
-	.pdata      start:0x822332B8 end:0x822332C0
 	.pdata      start:0x8223AFD0 end:0x8223AFE0
 	.pdata      start:0x8223B280 end:0x8223B298
 	.pdata      start:0x8223B298 end:0x8223B2A0
@@ -3584,7 +3583,6 @@ TexMovie.cpp:
 	.pdata      start:0x8223B2B0 end:0x8223B3D8
 	.text       start:0x822B9308 end:0x822B9314
 	.text       start:0x824444E8 end:0x82444528
-	.text       start:0x826B03D8 end:0x826B04B8
 	.text       start:0x82742B90 end:0x82742C08
 	.text       start:0x82746168 end:0x82746174
 	.text       start:0x82746178 end:0x82746368
@@ -8509,13 +8507,11 @@ band3/game/VocalTrainerPanel.cpp:
 
 band3/game/RGTrainerPanel.cpp:
 	.pdata      start:0x822330A0 end:0x822330B0
-	.pdata      start:0x822330B0 end:0x822332B8
-	.pdata      start:0x822332C0 end:0x82233358
+	.pdata      start:0x822330B0 end:0x82233358
 	.pdata      start:0x82233358 end:0x82233408
 	.pdata      start:0x82249DC8 end:0x82249DD0
 	.text       start:0x826ADC68 end:0x826ADD68
-	.text       start:0x826ADD68 end:0x826B03D8
-	.text       start:0x826B04B8 end:0x826B1350
+	.text       start:0x826ADD68 end:0x826B1350
 	.text       start:0x826B1350 end:0x826B1C30
 	.text       start:0x82874718 end:0x82874744
 
