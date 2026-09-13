@@ -38,9 +38,11 @@ graded ruler.  All percentages below are graded and **unrounded, read from
   as.**  All four reproduce to five decimals at this base, and all four are
   dominated by **relocation-NAME (fold) charges**, so they belong to W7-D's
   alias vein, not to a source-porting lane.
-* ★ `?Handle@PlatformMgr@@` (3,112 B, 7 charges) is a **PROVEN NON-FOLD** on
-  retail bytes, by W7-D's own rule — and therefore either our dispatch order or
-  the map is wrong.  Characterised, **not** edited.
+* ★★★ `?Handle@PlatformMgr@@` (3,112 B, 7 charges) is a **PROVEN NON-FOLD** by
+  W7-D's own rule, and the follow-through **settles it: our source is RIGHT and
+  `target_symbol_map.json` is WRONG**, on two of four rows proven from retail
+  bytes with a map-independent anchor (an XAM entrypoint constant).  Not edited
+  — the repair is a coupled 4-row map change and only 2 rows are proven.
 * ⛔ `?Handle@CustomizePanel@@` (5,036 B, 1 charge) is **documented drained by
   four prior lanes in the source file itself**.  Not reopened.
 
@@ -305,13 +307,75 @@ certainly real folds: they are `void f(this)` slots where we call `EnableXMP`,
 with every other trivial body in the image and leaves an arbitrary survivor name
 (here an `ObjPtr<MoggClip>` dtor and an `StlNodeAlloc` ctor).
 
-**Not edited — and deliberately.**  Settling map-vs-source needs the identity of
-the four inner callees `fn_8251BFA8 / CA08 / BFE8 / C118`, which are *unnamed*;
-they resolve one level further to XAM import thunks off `lbl_82E11E98`
-(slots `+0x4` and `+0x10`) and to `fn_82514988` = `?IsSignedIn@PlatformMgr@@`.
-That is a tractable identification but a **map** repair, and CLAUDE.md prices a
-map edit's delta as **80.5% un-pairing / 19.5% cascade** — the wrong instrument
-to reach for on a 3,112 B row at the end of a lane.  **Handoff, §6.**
+#### ★★★ SETTLED: OUR SOURCE IS RIGHT AND THE MAP IS WRONG — proven on retail bytes, map-independently
+
+The four wrappers are distinguished only by their inner `bl`, so identifying the
+*inner* callees identifies the wrappers.  Reading them in full
+(`build/45410914/asm/MoggClipMap.s`) gives two **airtight, map-independent**
+identifications — each anchored on an argument *constant*, which no map row can
+influence:
+
+**`fn_8251CA08` is `PlatformMgr::ShowOfferUI(int)`.**
+```
+bl fn_82514988          ; IsSignedIn(padNum)   [map-named, corroborating only]
+clrlwi. r11, r3, 24 / beq
+li r6, -0x1 / li r5, 0x0 / li r4, 0x4 / mr r3, r31 / bl fn_8283D728
+```
+That is `XShowMarketplaceUI(padNum, 4, 0, -1)`, and
+`XSHOWMARKETPLACEUI_ENTRYPOINT_CONTENTLIST_BACKGROUND == 0x0004`
+(`src/xdk/xapilibi/xbase.h:211`) — the literal 4/0/−1 triple our
+`ShowOfferUI(int)` passes at `PlatformMgr_Xbox.cpp:237-239`.  No other
+`PlatformMgr` method has that signature.
+
+**`fn_8251BFE8` is `PlatformMgr::ShowPartyUI(int)`.**
+```
+li r30, 0x1             ; unsigned long ret = 1;
+bl fn_82514988 / clrlwi. / beq
+mr r3, r31 / bl fn_82B54168 / subic r11,r3,1 / subfe r30,r11,r3
+.L: clrlwi / cntlzw / extrwi r3, r11, 1, 26      ; return ret == 0;
+```
+The `ret = 1` default plus a `return ret == 0` tail is unique to
+`ShowPartyUI` (`PlatformMgr_Xbox.cpp:162-175`); every sibling returns `void`.
+
+Propagating up through the wrappers:
+
+| retail addr | **true identity (proven)** | `target_symbol_map.json` says | Handle slot | **we call** |
+|---|---|---|---|---|
+| `0x82514D00` | **`ShowOfferUI(const LocalUser*)`** | `?IsUserAGuest@PlatformMgr@@` ⛔ | [544] | `ShowOfferUI` ✅ |
+| `0x82514D48` | **`ShowUserPartyUI(const LocalUser*)`** | `?ShowOfferUI@PlatformMgr@@` ⛔ | [448] | `ShowUserPartyUI` ✅ |
+
+⇒ **On both settled slots our dispatch is CORRECT and the map row is WRONG.**
+By elimination the remaining two (`0x82514CB8` ↔ [417], `0x82514D90` ↔ [514])
+are `ShowUserFriendsUI` and `InviteUserParty` — exactly what we call there — so
+all four charges are almost certainly map defects, and the map's four names sit
+on these bodies in a **permutation**.  Note the corroborating detail that
+`?ShowUserPartyUI@PlatformMgr@@QAA_NPBVLocalUser@@@Z` has **no map entry at
+all**: the namer had five identically-shaped wrappers and four names to place.
+
+⚠ **This is only visible because the callee name is charged.**  The dispatch
+comparison at each slot loads a `Symbol` through a **`lbl_`** data relocation on
+retail's side, and `name_check` *forgives* placeholder targets — so a genuinely
+crossed symbol→handler mapping would be **invisible** here.  The name charge is
+the only channel through which this class of defect can surface at all, which is
+CLAUDE.md's "naming pays in BUG EXPOSURE, not bytes" running in reverse.
+
+**Still not edited, and here is the reason it would be wrong to.**  The repair is
+four coupled `target_symbol_map.json` rows and only **two are proven**.  Renaming
+`0x82514D00` to `ShowOfferUI` while `0x82514D48` still carries that name puts one
+spelling at two addresses — precisely the state
+`comdat_fold_gate.py` refuses on, and it would break the map's bijection.  A
+partial fix is not a smaller fix here, it is a different and worse one.  Complete
+the cycle first by identifying `fn_8251BFA8` and `fn_8251C118` (their XAM stubs
+are `lbl_82E11E98 + 0x4` / `+ 0x10`), then land all four together with a forced
+re-split A/B.  **Handoff, §6.**
+
+⚠ **Side-finding, unrelated to the charge and worth a separate lane:** retail's
+`ShowOfferUI` / `ShowPartyUI` bodies have **no `sXShowCallback` / NUI branch at
+all** — `fn_8251CA08` calls `XShowMarketplaceUI` unconditionally after the
+sign-in check.  Our source carries an `if (sXShowCallback(ul)) XShowNui…UI(…)`
+arm in all three (`PlatformMgr_Xbox.cpp:142-175, 227-240`).  RB3 predates Kinect;
+that arm looks like inherited DC3 code, and those three functions cannot match
+while it is present.
 
 ### 4.4 The fold stratum at the top of the census
 
@@ -415,12 +479,16 @@ tie-break rather than a source-visible property.
 
 ## 6. Handoffs, in priority order
 
-1. ★★ **`?Handle@PlatformMgr@@`, 3,112 B — a real open defect, fully
-   characterised.**  Identify `fn_8251BFA8 / 8251CA08 / 8251BFE8 / 8251C118`
-   (each is `IsSignedIn(padNum)` + a NUI/plain XAM pair off `lbl_82E11E98`) and
-   the answer says whether our `BEGIN_HANDLERS` order or four
-   `target_symbol_map.json` rows are wrong.  The anchor is map-independent — the
-   XAM import ordinals — which is what makes it worth doing properly.
+1. ★★★ **`?Handle@PlatformMgr@@`, 3,112 B — a proven MAP defect, half-repaired
+   and ready to finish.**  §4.3 settles `0x82514D00` = `ShowOfferUI` and
+   `0x82514D48` = `ShowUserPartyUI` on retail bytes.  Remaining work: identify
+   `fn_8251BFA8` and `fn_8251C118` (XAM stubs `lbl_82E11E98 + 0x4` / `+ 0x10`)
+   to close the 4-cycle, then land all four `target_symbol_map.json` rows in one
+   edit with a forced re-split A/B.  **Do not land a partial rename** — two of
+   the four names would collide at two addresses.
+1b. ⚠ **`PlatformMgr_Xbox.cpp`'s NUI arms** (§4.3 side-finding) — retail has no
+   `sXShowCallback` branch in `ShowOfferUI`/`ShowPartyUI`/`ShowFriendsUI`.
+   Separate, and it blocks those three functions independently of the map.
 2. ★★ **The fold stratum, §4.4** — ~38 kB across six rows, all needing
    `comdat_fold_gate.py`.  The prerequisite is a `none`-ruler `report.json` so
    `wrong_callee_triage.py` can regenerate its worklist (the committed one is
