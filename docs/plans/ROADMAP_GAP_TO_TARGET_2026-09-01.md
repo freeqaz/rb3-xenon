@@ -1003,3 +1003,87 @@ the block at exactly the function bounds gives a byte-identical carve.
 `.pdata` cannot arbitrate either: those spans are leaf-stratum with no record.
 Both are jeff-side, and jeff's release binary is the **live fleet splitter**
 shared with two sibling repos — characterise, never deploy.
+
+## 7g. EXECUTION LOG — seventh wave (2026-09-13, coordinator session 3cdd3c)
+
+Four lanes off `3a6bfe40`. Every merge `--no-ff` after a full main build, with
+the manifest, alias and native gates **re-run by the coordinator on merged
+main**, never relayed.
+
+| lane | merge | Δ fns | Δ bytes | what it was, in one line |
+|---|---|---:|---:|---|
+| C shader/layout | `89a3ad8b` | +1 | +316 | a spotlight beam OCCLUDED ITS OWN LENS FLARE; the "+0x10 struct shift" was the FRAME POINTER; RimColor was the only renumbering |
+| B inline sweep | `11a38cee` | +36 | +864 | **34 of 36 are `masked_equal` ⇒ honest +2**; detector ships with a MEASURED 50% FP rate; its best result is the leg it REVERTED |
+| A FileMakePath | `ed58a3fa` | +9 | +368 | the inline-budget hypothesis REFUTED here (181 of 200 rows `delete`); five retail-proven defects; **`run_objdiff` ROUNDS 99.97758 → "100.0"** |
+| D alias vein | `d6dd9320` | +16 | +3,756 | 12 proven folds, both figures exact; **all three briefed targets REFUSED**; a predictive rule for the vein |
+| **wave** | `3a6bfe40` → `d6dd9320` | **+62** | **+5,304** | **42,676 / 3,859,912 B / 37.672540% → 42,738 / 3,865,216 B / 37.724308%** |
+
+**★★★★★ THE WAVE'S RESULT IS A PREDICTIVE RULE, AND IT IS THE FIRST ONE THIS
+CAMPAIGN HAS PRODUCED FOR THE ALIAS MECHANISM: A FAMILY FOLDS IFF ITS
+RELOCATION TARGETS ARE TYPE-INDEPENDENT.** Everything installable relocates
+only to symbols that do not vary with `T` (`__savegprlr_29`, `Object::AddRef`,
+`MemAlloc`/`MemFree`, `MemOrPoolAllocSTL`). Everything refused carries a per-`T`
+callee — and retail keeps **48, 4 and 11** of those at *distinct* addresses.
+That is CD-7 re-derived as something you apply **before** building: read the
+relocation list, predict aliasability. Corollary that closed a briefed item
+outright: **a layout difference forecloses a fold before any byte is read** —
+two `SetType` bodies differing only in vbase displacement by exactly 8 cannot
+have folded, whatever their bytes say.
+
+**Three briefed alias targets refused, one of them expensive to have believed.**
+`AddRef`/`Release` was briefed (by §7f, from lane W6-B) as needing "the `mRefs`
+retype across 15 files AND a T1 adjudication". The adjudication says the
+retype **bills exactly zero**: five `list<T*>::insert` sit at five distinct
+addresses differing in one `bl` whose targets are 64 B vs 72 B, and the `erase`
+side is 84 B vs 96 B, which cannot fold at all. ⇒ **Do not fund that retype for
+metric reasons.** `_S_sort` was also 8 rows / 3,424 B on this tree, not the
+briefed 11 / 4,712 — main had moved under the brief.
+
+**⛔⛔ AN INTEGRITY HAZARD THAT OUTRANKS EVERY BYTE IN THIS WAVE:**
+`scripts/icf_alias_build.py` **has zero references to `withdrawn`**. The
+withdrawal ledger is not a generator input and `--merge` is additive only, so
+**all 563 withdrawal records — including the three fabricated aliases this
+campaign has withdrawn in three consecutive waves — are only as durable as
+"nobody re-runs the generator."** Only a *map* fix blocks regeneration, and
+only where the differing words are unrelocated. **This is wave-8's first item.**
+
+**Two more instrument defects, both of which had already produced a wrong
+belief before they were caught.** `run_objdiff` prints `100.0% canonical` for
+**99.97758** — it rounds — and a lane recorded a false crossing off that
+display, catching it only by re-deriving from archived A/B legs. And the `5/N`
+screen **over-predicts ~5× for a differing IMMEDIATE** (predicted +0.0221 pp,
+measured +0.004424 pp): it is calibrated for a relocation-name charge, which is
+a *full* mismatch. Both are now in the standing notes.
+
+**★★ And the wave's best single result is a REVERT.** Lane B's joint
+`BandCharacter`+`BandDirector` run read **+14 matched while bytes went −128**:
+one file made its own row worse *and* broke an unrelated perfect row
+(`?Add@ObjKeys@@` 100.0 → 69.625). Per-unit attribution caught it; **the
+whole-binary headline actively concealed it.** Had the lane stopped at +14 it
+would have landed a byte regression while reporting a gain. Same lesson as
+lane B's own honest headline: **+36 matched with 34 `masked_equal` is +2.**
+
+**Native-path bugs fixed.** A spotlight's volumetric beam was suppressed in the
+wrong pass, so natively it occluded its own lens flare on every beamed
+spotlight. `RndEnviron` is a **21-revision schema gap** (retail `li r11, 0x25`
+vs our `0x10`; 49 streamed offsets vs ~20), so every RB3 `.milo` environment
+desynchronises after the first absent field — diagnosed, not yet ported.
+
+**Wave-8 candidates:** the `icf_alias_build.py` durability fix (H1, above,
+first); the tier-B ObjPtr rows at ≥99.7% (`Load@OutfitConfig` 99.88,
+`SetupScore@BandScoreboard` 99.89, `RandomGroupSeqInst` ctor 99.91,
+`StreakMeter` dtor 99.75) — one or two charges from crossing; `FileRelativePath`
+body-port **then** name (904 B; naming costed at 35 sites / 30 callers / 22
+files, so body first); `vector<String>::~vector` into existing group
+`0x822d8cc0` (892 B + 1 fn, T1 sibling already present); the `RndEnviron` port;
+`?transform@MD5@Quazal@@`, the **inverse** inline disease (retail calls a helper
+4× where we call once); and `?Load@RndMesh@@` (3,452 B at 88.19) ⚠ in
+`rndobj/`, the perturbation-prone directory that lane B just priced at 128 B.
+
+⚠ **Two operational rules earned this wave, both about `ab_measure`:** it
+**deletes untracked files created while it runs**, and **editing the worktree
+mid-run gets silently wiped by its leg-A checkout**. Do not touch the tree
+while a measurement is in flight. Separately, the harness caps any shell call
+at **600 s regardless of the timeout requested**, so `tail --pid` on a long
+build is always reaped and `pgrep -f ninja` matches *other lanes'* builds —
+launch detached and poll an `EXIT=` sentinel.
