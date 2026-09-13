@@ -1,3 +1,10 @@
+// Retail inlines ObjPtr<RndTransformable>'s two-arg ctor at every member-init
+// site of ??0CamShotFrame@@QAA@PAVObject@Hmx@@@Z and calls it ZERO times; we emitted 2
+// out-of-line `bl`, leaving the ctor at fuzzy 68.39%.  Retail's inlined form is
+// the three-store sequence around lbl_82017A34.  Found by
+// tools/inline_budget_sweep.py (lane W7-B).  This dir is PCH-excluded, so the
+// #define precedes the header include.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "world/CameraShot.h"
 #include "hamobj/HamWardrobe.h"
 #include "math/Interp.h"
