@@ -10303,10 +10303,10 @@
  "0x82514a88": "?IsUserSignedIntoLive@PlatformMgr@@QBA_NPBVLocalUser@@@Z",
  "0x82514ad0": "?IsAnyUserSignedIntoLive@PlatformMgr@@QBA_NXZ",
  "0x82514b30": "?UserHasOnlinePrivilege@PlatformMgr@@QBA_NPBVLocalUser@@@Z",
- "0x82514cb8": "?InviteUserParty@PlatformMgr@@QAAXPBVLocalUser@@@Z",
- "0x82514d00": "?IsUserAGuest@PlatformMgr@@QBA_NPBVLocalUser@@@Z",
- "0x82514d48": "?ShowOfferUI@PlatformMgr@@QAAXPBVLocalUser@@@Z",
- "0x82514d90": "?ShowUserFriendsUI@PlatformMgr@@QAAXPBVLocalUser@@@Z",
+ "0x82514cb8": "?ShowUserFriendsUI@PlatformMgr@@QAAXPBVLocalUser@@@Z",
+ "0x82514d00": "?ShowOfferUI@PlatformMgr@@QAAXPBVLocalUser@@@Z",
+ "0x82514d48": "?ShowUserPartyUI@PlatformMgr@@QAA_NPBVLocalUser@@@Z",
+ "0x82514d90": "?InviteUserParty@PlatformMgr@@QAAXPBVLocalUser@@@Z",
  "0x82514dd8": "?GetOwnerUserOfGuestUser@PlatformMgr@@QAAPAVLocalUser@@PAV2@@Z",
  "0x82514e30": "?SymbolToPlatformRegion@@YA?AW4PlatformRegion@@VSymbol@@@Z",
  "0x82514ea0": "?UTF8FilterKeyboardString@@YAXPADHPBD@Z",
@@ -29618,10 +29618,6 @@
   "0x824ed3f8",
   "0x824f6fa8",
   "0x824f6fc8",
-  "0x82514cb8",
-  "0x82514d00",
-  "0x82514d48",
-  "0x82514d90",
   "0x82523ae0",
   "0x82523af0",
   "0x8252a658",
@@ -30209,5 +30205,6 @@
  "0x82c43360": "??__E?mDevToMicMaster@ExternalMicClientMgr@@0V?$vector@KV?$StlNodeAlloc@K@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
  "0x82c43370": "??__E?mMicMasterToDev@ExternalMicClientMgr@@0V?$vector@KV?$StlNodeAlloc@K@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
  "0x82c43380": "??__E?mAssocMicXbox@ExternalMicClientMgr@@0V?$vector@PAVMicXbox@@V?$StlNodeAlloc@PAVMicXbox@@@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
- "0x82517718": "FileRelativePath"
+ "0x82517718": "FileRelativePath",
+ "0x82514b78": "?IsUserAGuest@PlatformMgr@@QBA_NPBVLocalUser@@@Z"
 }
