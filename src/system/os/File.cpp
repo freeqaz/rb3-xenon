@@ -870,7 +870,14 @@ void RecursePatternInternal(
 
     // If recurse enabled and no & wildcard: check for path-separator past splitPos
     if (recurse && ampPos == (int)FixedString::npos) {
-        int pttnLen = (int)pttn.length() - 1;
+        // Retail keeps pttn.length() ITSELF in r28 (`clrrwi r28,r11,0`), not
+        // length()-1: we emitted an extra `subi r28,r11,0x1` and paid for it in
+        // flipped strictness (`ble`/`bgt` where retail has `blt`/`bge`) and an
+        // extra `addi r6,r11,1` on the substr count. rb3-Wii (File.cpp:589) has
+        // the length()-1 form -- retail-Xbox differs from the Wii oracle here,
+        // as it also does on the recomputed dirs.size() and the 1-arg
+        // FileGetPath above. Retail bytes outrank the oracle. Lane W7-A.
+        int pttnLen = (int)pttn.length();
         // Walk forward from splitPos looking for path separator
         int forwardPos = splitPos;
         while (forwardPos < pttnLen && pttn[forwardPos] != '/'
@@ -891,7 +898,7 @@ void RecursePatternInternal(
             // Behaviourally identical: pttnLen is length()-1, so the count
             // (pttnLen+1)-forwardPos is exactly length()-forwardPos, i.e. "to end".
             String subPattern = pttn.substr(
-                (unsigned int)forwardPos, (unsigned int)(pttnLen + 1) - forwardPos
+                (unsigned int)forwardPos, (unsigned int)pttnLen - forwardPos
             );
             pttn = pttn.substr(0, (unsigned int)forwardPos);
 
@@ -902,13 +909,19 @@ void RecursePatternInternal(
                 gDirList.erase(gDirList.begin(), gDirList.end());
             }
 
-            MainThread();
-            static char pathBuf[256];
-            const char *dirBase = FileGetPathBuf(pttn.c_str(), pathBuf);
+            // Retail's fn_82517E28 makes ZERO calls to MainThread (fn_824A4C10)
+            // and exactly ONE `bl fn_82516550` = the ONE-arg FileGetPath, which
+            // owns its own static (lbl_82CCA0B0). So neither the MainThread()
+            // nor a local `static char pathBuf[256]` is retail's. Lane W7-A.
+            const char *dirBase = FileGetPath(pttn.c_str());
             pttn = dirBase;
 
-            unsigned int numDirs = dirs.size();
-            for (unsigned int i = 0; i < numDirs; i++) {
+            // Retail RECOMPUTES dirs.size() every iteration -- the loop test is
+            // `lwz 0x74(r31); lwz 0x70(r31); subf; divw r11,r11,r27; cmplw` =
+            // (end-begin)/sizeof(String) INSIDE the loop, with 12 in r27 -- where
+            // hoisting it into `numDirs` gives a countdown (`subic. r30,r30,1`).
+            // Lane W7-A.
+            for (unsigned int i = 0; i < dirs.size(); i++) {
                 const char *combined = MakeString(
                     "%s/%s%s", pttn, dirs[i], subPattern
                 );
@@ -919,16 +932,23 @@ void RecursePatternInternal(
     }
 
     // Walk backward from splitPos to find last path separator
+    // Retail's LOOP walks down to -1 (`subic. r30,r30,0x1` / `bge` back-edge,
+    // so pttn[0] IS examined) but its final TEST is still `pos > 0`
+    // (`cmpwi cr6,r30,0x0` / `bgt`). The two halves take DIFFERENT bounds --
+    // flipping both together re-inverted the test. Lane W7-A.
     int pos = splitPos;
-    while (pos > 0 && pttn[pos] != '/' && pttn[pos] != '\\') {
+    while (pos >= 0 && pttn[pos] != '/' && pttn[pos] != '\\') {
         pos--;
     }
+    // A conditional EXPRESSION yielding a String temporary in both arms, not an
+    // if/else of two assignments. Retail constructs `String(".")` at 0xa0
+    // (`bl ??0String@@QAA@PBD@Z`, bit 0) or the substr temp at 0xb0 (bit 1),
+    // assigns via ??4String@@QAAAAV0@ABV0@@Z, then destroys whichever was built
+    // -- driven by MSVC's conditional-destruction bitmask at 0x54(r31)
+    // (`li r30,1` / `li r30,2` / `rlwinm.` tests / `rlwinm` clears). Two plain
+    // assignments need no temporary and emit no bitmask at all. Lane W7-A.
     String dirStr;
-    if (pos <= 0) {
-        dirStr = ".";
-    } else {
-        dirStr = pttn.substr(0, (unsigned int)pos);
-    }
+    dirStr = (pos <= 0) ? String(".") : pttn.substr(0, (unsigned int)pos);
     FileEnumerate(dirStr.c_str(), cb, recurse, pttn.c_str(), recurse_dirs);
 }
 #endif
