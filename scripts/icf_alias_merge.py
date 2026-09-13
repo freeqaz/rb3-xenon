@@ -42,8 +42,14 @@ def main() -> int:
 
     by_addr = {}
     order = []
-    for g in base.get("groups", []):
-        a = g["address"].lower()
+    for gi, g in enumerate(base.get("groups", [])):
+        # 51 landed groups carry `address: null` (ALIAS_DURABILITY_2026-09-13 H1).
+        # `.lower()` on that crashed the merge outright.  Bucketing them all under
+        # one shared key would be WORSE than the crash -- every null-address group
+        # would be folded into a single group -- so each gets a unique sentinel.
+        # The sentinel is the dict KEY only; `dict(g)` keeps `address: None`, so
+        # the value written back out is unchanged.
+        a = (g.get("address") or ("\0null#%d" % gi)).lower()
         if a not in by_addr:
             by_addr[a] = dict(g)
             by_addr[a]["folded"] = list(g.get("folded", []))
@@ -53,6 +59,9 @@ def main() -> int:
 
     added_groups = added_names = 0
     for g in delta.get("groups", []):
+        if not g.get("address"):
+            sys.exit("delta group %r has no address; refusing to merge it blind"
+                     % g.get("survivor"))
         a = g["address"].lower()
         if a in by_addr:
             cur = by_addr[a]
