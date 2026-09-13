@@ -241,7 +241,82 @@ Pre-registered: `?PreInit@Rnd@@` crosses (**+1,836 B / +1 fn**), and the 72 B
 (**+72 B / +1 fn**) ⇒ **+1,908 B / +2 fns, 0 units off**. Floor if the 72 B row
 misses: +1,836 / +1.
 
-<!--MEASURED-->
+Measured:
+
+```
+Δmatched=+2  Δmasked_equal=+0  Δhonest=+2  Δcode%=+0.018619pp  Δcode_bytes=+1908
+unit improvements: 1 unit(s), sum +2
+    +2  default/system/rndobj/Rnd  (289->291)
+unit net (ALL units) = +2   vs whole-binary Δmatched = +2
+units at 100% [mpn]:   163 -> 163  (0 reached, 0 fell off)
+units at 100% [fuzzy]: 135 -> 135  (0 reached, 0 fell off)
+```
+
+**Exact on both axes**, and the decomposition was confirmed by an instrument I
+had not counted on. `ab_measure`'s `none`-ruler control moved **+72 B** and was
+flagged `REAL_PAIRING`:
+
+> `none` MOVED (+72 B) — a REAL pairing change, not a naming artifact: a
+> first-naming of an anon address pairs a body that never paired.
+
+`none` ignores relocation names, so it is structurally blind to the 1,836 B
+`PreInit` crossing and can only see the 72 B row that genuinely *re-paired*.
++72 is exactly that row. So the two halves of the prediction — 1,836 name-only
+plus 72 real-pairing — are separated by an instrument that cannot conflate them.
+
+★ **The 72 B currently reaches 100 through alias group 331, which §4.1 refutes.**
+That is not a defect in this change: under the RTTI-proven reading, `0x82466000`
+*is* `DOFProc::DOFProc()`, so once handoff 1 lands and the address is renamed the
+site compares equal with **no alias at all** and the row keeps its 100 for the
+right reason. Group 331 is coinciding with the truth, not creating it. The
+1,836 B `PreInit` crossing does not depend on group 331 in any way.
+
+## 5.1 Branch total
+
+| | Δmatched_functions | Δmatched_code |
+|---|---:|---:|
+| change 1 — `list<T*>::insert` fold | +9 | +4,848 B |
+| change 2 — `0x8240e9c0` map rename | +2 | +1,908 B |
+| **branch total** | **+11** | **+6,756 B** |
+
+Both legs measured on the same pinned `objdiff-cli` (`sha256:a5c35b15d7d46ac4`),
+and change 2's leg A equals change 1's leg B exactly (`matched=42775`,
+`code%=37.860207`), so the two deltas compose. `matched_functions` 42,766 →
+42,777; `matched_code_percent` 37.812890 → 37.878826 (**+0.065936 pp**).
+Zero regressions and zero units off 100% in either run.
+
+
+## 5.2 Gates, verbatim
+
+Full `./tools/ninja-locked` (never a targeted `.obj` — the six post-compile
+patchers are part of the ruler), `EXIT=0`, log `~/tmp/rb3_build_w11a.log`.
+
+```
+[patch-state] OK: 1205 decomp, 3083 target objects match 2026-09-13T06:24:35Z (tree_sha256=1c48710d1b4bfce5)
+```
+
+```
+VALIDATE: PASS -- 1352 map-consistent, 241 tolerated (enumerated above), 0 contradicted, 1595 total
+```
+
+`tools/native_build_gate.sh` **not run, and not required**: the branch touches
+no `src/` and no `config/` (`git diff --name-only 77cac933..HEAD` → 3 files under
+`scripts/`, 1 doc; grep for `^(src/|config/)` returns 0).
+
+Third, independent confirmation that the two deltas compose — `report.json` read
+off the final built tree rather than from an A/B leg:
+
+| | matched_functions | matched_code | matched_code_percent |
+|---|---:|---:|---:|
+| main `77cac933` | 42,766 | 3,874,292 | 37.812890 |
+| branch tip | **42,777** | **3,881,048** | **37.878826** |
+| delta | **+11** | **+6,756 B** | +0.065936 pp |
+
+⚠ Pre-renamer sanity check, run *before* any name-keyed analysis, because a
+fresh worktree's reflinked target objs carry the objs but not the renamer's
+effect and every retail mangled name would read "absent": 3,083 target objs in
+both trees, `?Init@UIManager@@UAAXXZ` present in `UI.obj`, and the build's own
+`[renamed-check] 25537/29045 map names present in 3083 target objs = 87.9%`.
 
 ## 6. Handoffs
 
