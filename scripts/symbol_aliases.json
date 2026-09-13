@@ -379,12 +379,6 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 11 folded spelling(s), 137 census sites over 6 functions.",
    "withdrawn": [
     {
-     "spelling": "??$MakeString@H@@YAPBDPBDH@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
      "spelling": "??$MakeString@I@@YAPBDPBDI@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
@@ -409,12 +403,6 @@
      "disposition": "repartitioned"
     },
     {
-     "spelling": "??$MakeString@VSymbol@@@@YAPBDPBDVSymbol@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
      "spelling": "??$MakeString@W4BlendEaseMode@CamShotFrame@@@@YAPBDPBDW4BlendEaseMode@CamShotFrame@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
@@ -422,18 +410,6 @@
     },
     {
      "spelling": "??$MakeString@W4QueueState@FlowNode@@@@YAPBDPBDW4QueueState@FlowNode@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$MakeString@W4TrackInstrument@@@@YAPBDPBDW4TrackInstrument@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$MakeString@_K@@YAPBDPBD_K@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "repartitioned"
@@ -460,7 +436,65 @@
      "??$MakeString@_K@@YAPBDPBD_K@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$MakeString@H@@YAPBDPBDH@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@H@@YAPBDPBDH@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@VSymbol@@@@YAPBDPBDVSymbol@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@VSymbol@@@@YAPBDPBDVSymbol@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@W4TrackInstrument@@@@YAPBDPBDW4TrackInstrument@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@W4TrackInstrument@@@@YAPBDPBDW4TrackInstrument@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@_K@@YAPBDPBD_K@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@_K@@YAPBDPBD_K@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$MakeString",
@@ -831,19 +865,7 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 15 folded spelling(s), 29 census sites over 4 functions.",
    "withdrawn": [
     {
-     "spelling": "??$MakeString@HPBD@@YAPBDPBDH0@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
      "spelling": "??$MakeString@HVSymbol@@@@YAPBDPBDHVSymbol@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$MakeString@KH@@YAPBDPBDKH@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "repartitioned"
@@ -861,25 +883,7 @@
      "disposition": "repartitioned"
     },
     {
-     "spelling": "??$MakeString@PBDH@@YAPBDPBD0H@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
      "spelling": "??$MakeString@PBDI@@YAPBDPBD0I@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$MakeString@PBDJ@@YAPBDPBD0J@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$MakeString@PBDVSymbol@@@@YAPBDPBD0VSymbol@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "repartitioned"
@@ -898,18 +902,6 @@
     },
     {
      "spelling": "??$MakeString@VSymbol@@PBD@@YAPBDPBDVSymbol@@0@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??$MakeString@VSymbol@@V1@@@YAPBDPBDVSymbol@@1@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$MakeString@W4JoinResponseError@@H@@YAPBDPBDW4JoinResponseError@@H@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
@@ -951,7 +943,107 @@
      "??$MakeString@W4JoinResponseError@@H@@YAPBDPBDW4JoinResponseError@@H@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$MakeString@HPBD@@YAPBDPBDH0@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@HPBD@@YAPBDPBDH0@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@KH@@YAPBDPBDKH@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@KH@@YAPBDPBDKH@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PBDH@@YAPBDPBD0H@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDH@@YAPBDPBD0H@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PBDJ@@YAPBDPBD0J@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDJ@@YAPBDPBD0J@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PBDVSymbol@@@@YAPBDPBD0VSymbol@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDVSymbol@@@@YAPBDPBD0VSymbol@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@VSymbol@@V1@@@YAPBDPBDVSymbol@@1@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@VSymbol@@V1@@@YAPBDPBDVSymbol@@1@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@W4JoinResponseError@@H@@YAPBDPBDW4JoinResponseError@@H@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@W4JoinResponseError@@H@@YAPBDPBDW4JoinResponseError@@H@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$MakeString",
@@ -1059,14 +1151,7 @@
     "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 32, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 27 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -1084,7 +1169,23 @@
      "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "SetOwnerObj",
@@ -1220,25 +1321,7 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 20 census sites over 5 functions.",
    "withdrawn": [
     {
-     "spelling": "??$MakeString@HHH@@YAPBDPBDHHH@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??$MakeString@HHPBD@@YAPBDPBDHH0@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
      "spelling": "??$MakeString@HPAUXNDNS@@PBD@@YAPBDPBDHPAUXNDNS@@0@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??$MakeString@HPBDPBD@@YAPBDPBDH00@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
@@ -1262,31 +1345,7 @@
      "disposition": "dropped_singleton"
     },
     {
-     "spelling": "??$MakeString@PADHH@@YAPBDPBDPADHH@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$MakeString@PADPBDPAD@@YAPBDPBDPAD01@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
      "spelling": "??$MakeString@PAHHH@@YAPBDPBDPAHHH@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??$MakeString@PBDHH@@YAPBDPBD0HH@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$MakeString@PBDHI@@YAPBDPBD0HI@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
@@ -1299,18 +1358,6 @@
     },
     {
      "spelling": "??$MakeString@PBDPBDH@@YAPBDPBD00H@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??$MakeString@PBDPBDPBD@@YAPBDPBD000@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$MakeString@PBDPBDVSymbol@@@@YAPBDPBD00VSymbol@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
@@ -1332,12 +1379,6 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??$MakeString@VSymbol@@V1@V1@@@YAPBDPBDVSymbol@@11@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
     }
    ],
    "repair": {
@@ -1381,7 +1422,149 @@
      "??$MakeString@VSymbol@@V1@V1@@@YAPBDPBDVSymbol@@11@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$MakeString@HHH@@YAPBDPBDHHH@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@HHH@@YAPBDPBDHHH@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@HHPBD@@YAPBDPBDHH0@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@HHPBD@@YAPBDPBDHH0@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@HPBDPBD@@YAPBDPBDH00@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@HPBDPBD@@YAPBDPBDH00@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PADHH@@YAPBDPBDPADHH@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PADHH@@YAPBDPBDPADHH@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PADPBDPAD@@YAPBDPBDPAD01@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PADPBDPAD@@YAPBDPBDPAD01@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PBDHH@@YAPBDPBD0HH@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDHH@@YAPBDPBD0HH@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PBDHI@@YAPBDPBD0HI@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDHI@@YAPBDPBD0HI@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PBDPBDPBD@@YAPBDPBD000@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDPBDPBD@@YAPBDPBD000@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PBDPBDVSymbol@@@@YAPBDPBD00VSymbol@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDPBDVSymbol@@@@YAPBDPBD00VSymbol@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@VSymbol@@V1@V1@@@YAPBDPBDVSymbol@@11@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@VSymbol@@V1@V1@@@YAPBDPBDVSymbol@@11@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$MakeString",
@@ -1483,31 +1666,7 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 34, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 46 folded spelling(s), 16 census sites over 4 functions.",
    "withdrawn": [
     {
-     "spelling": "?clear@?$ObjPtrList@VCharBone@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
      "spelling": "?clear@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "?clear@?$ObjPtrList@VFader@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "?clear@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "?clear@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@QAAXXZ",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "repartitioned"
@@ -1519,43 +1678,7 @@
      "disposition": "repartitioned"
     },
     {
-     "spelling": "?clear@?$ObjPtrList@VRndFont@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "?clear@?$ObjPtrList@VRndMat@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
      "spelling": "?clear@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "?clear@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "?clear@?$ObjPtrList@VSeqInst@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "?clear@?$ObjPtrList@VSequence@@VObjectDir@@@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "repartitioned"
@@ -1587,7 +1710,149 @@
      "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharBone@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VCharBone@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VFader@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VFader@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndFont@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VRndFont@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndMat@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VRndMat@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VSeqInst@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VSeqInst@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VSequence@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VSequence@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "clear",
@@ -3029,14 +3294,7 @@
     "?clear@?$_List_base@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 7 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "?clear@?$_List_base@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -3054,7 +3312,23 @@
      "?clear@?$_List_base@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "?clear@?$_List_base@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?clear@?$_List_base@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "SetAutoplayError",
@@ -3192,22 +3466,10 @@
      "disposition": "dropped_singleton"
     },
     {
-     "spelling": "??$MakeString@PBDHHH@@YAPBDPBD0HHH@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
      "spelling": "??$MakeString@PBDKKH@@YAPBDPBD0KKH@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??$MakeString@PBDPBDPBDPBD@@YAPBDPBD0000@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
     },
     {
      "spelling": "??$MakeString@PBDPBDPBDVSymbol@@@@YAPBDPBD000VSymbol@@@Z",
@@ -3256,7 +3518,37 @@
      "??$MakeString@PBDPBDPBDPBD@@YAPBDPBD0000@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$MakeString@PBDHHH@@YAPBDPBD0HHH@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDHHH@@YAPBDPBD0HHH@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    },
+    {
+     "spelling": "??$MakeString@PBDPBDPBDPBD@@YAPBDPBD0000@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDPBDPBDPBD@@YAPBDPBD0000@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$MakeString",
@@ -4676,20 +4968,7 @@
     "??$_Param_Construct@UGoalAcquisitionInfo@@U1@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 3 census sites over 2 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$_Copy_Construct@UGoalAcquisitionInfo@@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
-     "spelling": "??$_Param_Construct@UGoalAcquisitionInfo@@U1@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -4708,7 +4987,37 @@
      "??$_Param_Construct@UGoalAcquisitionInfo@@U1@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$_Copy_Construct@UGoalAcquisitionInfo@@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$_Copy_Construct@UGoalAcquisitionInfo@@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    },
+    {
+     "spelling": "??$_Param_Construct@UGoalAcquisitionInfo@@U1@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$_Param_Construct@UGoalAcquisitionInfo@@U1@@stlpmtx_std@@YAXPAUGoalAcquisitionInfo@@ABU1@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$_Param_Construct",
@@ -4820,12 +5129,6 @@
      "disposition": "dropped_singleton"
     },
     {
-     "spelling": "??$MakeString@VString@@I@@YAPBDPBDVString@@I@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
      "spelling": "??$MakeString@VString@@VSymbol@@@@YAPBDPBDVString@@VSymbol@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
@@ -4850,7 +5153,23 @@
      "??$MakeString@VString@@I@@YAPBDPBDVString@@I@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$MakeString@VString@@I@@YAPBDPBDVString@@I@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@VString@@I@@YAPBDPBDVString@@I@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$MakeString",
@@ -6567,12 +6886,6 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??_DInstarank@@QAAXXZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
     }
    ],
    "repair": {
@@ -6594,7 +6907,23 @@
      "??_DInstarank@@QAAXXZ"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??_DInstarank@@QAAXXZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??_DInstarank@@QAAXXZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "insert",
@@ -8385,14 +8714,7 @@
     "??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -8410,7 +8732,23 @@
      "??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$_Param_Construct",
@@ -8549,14 +8887,7 @@
     "??$__lower_bound@PAVSymbol@@V1@VGoalCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VGoalCmp@@PAH@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$__lower_bound@PAVSymbol@@V1@VGoalCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VGoalCmp@@PAH@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -8574,7 +8905,23 @@
      "??$__lower_bound@PAVSymbol@@V1@VGoalCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VGoalCmp@@PAH@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$__lower_bound@PAVSymbol@@V1@VGoalCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VGoalCmp@@PAH@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$__lower_bound@PAVSymbol@@V1@VGoalCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VGoalCmp@@PAH@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$__merge_sort_loop",
@@ -8584,14 +8931,7 @@
     "??$__merge_sort_loop@PAVSymbol@@PAV1@HVGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVGoalCmp@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$__merge_sort_loop@PAVSymbol@@PAV1@HVGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVGoalCmp@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -8609,7 +8949,23 @@
      "??$__merge_sort_loop@PAVSymbol@@PAV1@HVGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVGoalCmp@@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$__merge_sort_loop@PAVSymbol@@PAV1@HVGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVGoalCmp@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$__merge_sort_loop@PAVSymbol@@PAV1@HVGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVGoalCmp@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$for_each",
@@ -9581,14 +9937,7 @@
     "??0RemoteMachineLeftMsg@@QAA@PAVRemoteBandMachine@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??0RemoteMachineLeftMsg@@QAA@PAVRemoteBandMachine@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -9606,7 +9955,23 @@
      "??0RemoteMachineLeftMsg@@QAA@PAVRemoteBandMachine@@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??0RemoteMachineLeftMsg@@QAA@PAVRemoteBandMachine@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??0RemoteMachineLeftMsg@@QAA@PAVRemoteBandMachine@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "0SyncMachineMsg",
@@ -9625,14 +9990,7 @@
     "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -9650,7 +10008,23 @@
      "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$__make_heap@PAPAVVert@RndMesh@@USortByZ@@PAV12@H@stlpmtx_std@@YAXPAPAVVert@RndMesh@@0USortByZ@@0PAH@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "0?$_Rb_tree",
@@ -9706,27 +10080,52 @@
     "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | LANE W25-UI (2026-08-17) ADDED 3 SPELLINGS -- UIComponentFocusChangeMsg / ButtonDownMsg / ButtonUpMsg -- AND THE ORDER OF OPERATIONS IS THE WHOLE POINT. tools/dispatch_fold_enum.py on Handle@BandUI @0x82539210 shows FIVE arms calling 0x825390E0 while constructing five classes read from RETAIL BYTES via the COL at vtable[-1] (0x82539838 FocusChange, 0x825399B4 ButtonDown, 0x82539A2C ButtonUp, 0x82539AA4 Select = the map-resident survivor, 0x82539B1C SelectDone). One address cannot be five distinct handlers. BUT THAT ALONE DOES NOT LICENSE AN ALIAS: it is equally consistent with retail having ONE handler and OUR source wrongly carrying five. tools/w25_fold_proof.py settled it against us -- our three bodies were 64 B / 4 relocs (calling ?Print@HAQManager@@ plus __savegprlr_29/__restgprlr_29) vs the survivor's 52 B / 1 reloc, and DIFFERENT-SIZE COMDATS CANNOT FOLD. So the alias was WITHDRAWN and the real defect fixed instead: three stale HAQManager::Print calls removed from src/band3/meta_band/BandUI.cpp (the same HAQ strip already recorded in that file for two sibling handlers). AFTER that fix all five COMDATs are 52 B / 1 reloc, byte- AND relocation-identical, which IS /OPT:ICF's own condition -- so the fold is real and this alias forgives a naming artifact rather than hiding a behavioural divergence. Installed BEFORE the fix it would have bought the same 3,564 B while concealing the Print call, and the `none` control could not have caught it (it ignores relocation names and reads +0 either way, so its flatness is the hazard's signature, not a clearance). Body carries 1 relocation, so this is not the zero-reloc cheap-identity case. | RETAIL DISPATCH ENUMERATION (lane ONMSG-1, 2026-08-14). Proven by INTERNAL INCONSISTENCY, needing no fold model or body comparator: the retail Handle dispatcher itself calls ONE address from N arms that each construct a PROVABLY DIFFERENT message type, the type identified from retail bytes via the MSVC Complete Object Locator at vtable[-1] (COL+12 -> type descriptor, TD+8 -> literal .?AV<Class>@@ name). One address cannot be N distinct handlers, so the fold is real and the surviving map name is arbitrary among the class. The dispatcher enumerates the fold class EXHAUSTIVELY, which is why these members were missing from the byte-comparator-derived group. CONTROL: the same enumeration reproduces the existing gated groups at 0x825b5620 (3/3) and 0x82538160 (5/5) EXACTLY, and agrees with the existing target_symbol_map on 20 of 22 sibling-controller dispatch arms -- it is not an 'everything is incomplete' oracle. Gate: exactly one map-resident survivor; every spelling added here is NOT map-resident.",
-   "withdrawn": [
+   "withdrawn": [],
+   "restored": [
     {
      "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
-     "lane": "ALIAS-2 2026-08-16",
-     "class": "SURVIVOR_SIZE_MISMATCH",
-     "why": "our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs",
-     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonDownMsg@@@Z",
+       "lane": "ALIAS-2 2026-08-16",
+       "class": "SURVIVOR_SIZE_MISMATCH",
+       "why": "our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs",
+       "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+      }
+     ]
     },
     {
      "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z",
-     "lane": "ALIAS-2 2026-08-16",
-     "class": "SURVIVOR_SIZE_MISMATCH",
-     "why": "our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs",
-     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVButtonUpMsg@@@Z",
+       "lane": "ALIAS-2 2026-08-16",
+       "class": "SURVIVOR_SIZE_MISMATCH",
+       "why": "our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs",
+       "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+      }
+     ]
     },
     {
      "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
-     "lane": "ALIAS-2 2026-08-16",
-     "class": "SURVIVOR_SIZE_MISMATCH",
-     "why": "our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs",
-     "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?OnMsg@BandUI@@QAA?AVDataNode@@ABVUIComponentFocusChangeMsg@@@Z",
+       "lane": "ALIAS-2 2026-08-16",
+       "class": "SURVIVOR_SIZE_MISMATCH",
+       "why": "our(S)=52 B vs our(F)=64 B [retail(S)=52] -- our own build gives them different-sized COMDATs",
+       "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+      }
+     ]
     }
    ]
   },
@@ -10425,12 +10824,6 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
-     "spelling": "??$_Destroy_Range@PAVStrand@CharHair@@@stlpmtx_std@@YAXPAVStrand@CharHair@@0@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
      "spelling": "??$__destroy_range@PAVStrand@CharHair@@V12@@stlpmtx_std@@YAXPAVStrand@CharHair@@00@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
@@ -10454,7 +10847,23 @@
      "??$_Destroy_Range@PAVStrand@CharHair@@@stlpmtx_std@@YAXPAVStrand@CharHair@@0@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$_Destroy_Range@PAVStrand@CharHair@@@stlpmtx_std@@YAXPAVStrand@CharHair@@0@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$_Destroy_Range@PAVStrand@CharHair@@@stlpmtx_std@@YAXPAVStrand@CharHair@@0@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$_Destroy_Range",
@@ -10479,14 +10888,7 @@
     "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -10504,7 +10906,23 @@
      "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??4?$ObjList@VPracticeSectionMapping@SongSectionController@@@@QAAXABV0@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "_GCharIKFoot",
@@ -10788,12 +11206,6 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 8 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
-     "spelling": "??0DOFProc@@QAA@XZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    },
-    {
      "spelling": "??0DetectionVolume@@QAA@XZ",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
@@ -10860,7 +11272,23 @@
      "??0DOFProc@@QAA@XZ"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??0DOFProc@@QAA@XZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??0DOFProc@@QAA@XZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "push_back",
@@ -10895,14 +11323,7 @@
     "?find_last_of@String@@QBAIPBD@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "?find_last_of@String@@QBAIPBD@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -10920,7 +11341,23 @@
      "?find_last_of@String@@QBAIPBD@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "?find_last_of@String@@QBAIPBD@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "?find_last_of@String@@QBAIPBD@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "_GTextFile",
@@ -11496,14 +11933,7 @@
     "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -11521,7 +11951,23 @@
      "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??4?$ObjDirPtr@VHamListRibbon@@@@QAAAAV0@PAVHamListRibbon@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "_GHeldButtonPanel",
@@ -12325,13 +12771,22 @@
     "??0?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions. | Lane W7-D, T1 on retail bytes (2026-09-13). Our COMDAT for the folded spelling and for the survivor are both 104 B, sha256 4478a32028f209d7, with ZERO relocations -- so nothing is masked and the comparison is total (the DATAINITFUNCS anti-vacuity condition). Retail@0x8235c608 corroborates the body exactly. Injective; no other retail address carries a branch-masked-identical body. Deliberately installed against the house --install-min-relocs 1 default: that filter's stated rationale is that an UNIMPLEMENTED STUB compiles to a bare 4-byte `blr`, which cannot describe a 104 B pure-computation body. NOTE the measured limit: retail holds a bare `blr` at 6 DISTINCT addresses unfolded, so identity does not entail folding -- this rests on corroboration + injectivity, as the other installs do.",
-   "withdrawn": [
+   "withdrawn": [],
+   "restored": [
     {
      "spelling": "??0?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
-     "why": "different body SIZE (8 vs 104) -- cannot be one COMDAT",
-     "lane": "GROUNDED-1 2026-08-14",
-     "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (8 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
-     "superseded_by": "ALIAS-2 2026-08-16"
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??0?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@IAA@V?$__move_source@U?$_Rb_tree_base@PBVMoveParent@@V?$StlNodeAlloc@PBVMoveParent@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+       "why": "different body SIZE (8 vs 104) -- cannot be one COMDAT",
+       "lane": "GROUNDED-1 2026-08-14",
+       "note": "CORRECTED by ALIAS-2 2026-08-16. The original reason -- 'different body SIZE (different body SIZE (8 vs 104) -- cannot be one COMDAT) -- cannot be one COMDAT ... we instantiate a different overload' -- compared RETAIL's survivor against OUR folded spelling, which are two different builds. Measured WITHIN our build, our(survivor) == our(folded) == same B, so the two spellings are NOT different-sized COMDATs and that argument does not refute the fold. The real divergence is that our STLport emits the whole __uninitialized_copy / _M_allocate_and_copy family UNIFORMLY +8 B vs retail (52 of 57 and 43 of 47 size-differing same-name pairs). \u21d2 This is ONE shared source defect in the STLport copy helpers, NOT a per-pair wrong overload. The membership stays WITHDRAWN because refuting a refutation yields UNPROVEN, not PROVEN; do not re-add it without positive fold evidence.",
+       "superseded_by": "ALIAS-2 2026-08-16"
+      }
+     ]
     }
    ]
   },
@@ -12343,14 +12798,7 @@
     "??4?$ObjVector@VOverlay@OutfitConfig@@@@QAAXABV0@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??4?$ObjVector@VOverlay@OutfitConfig@@@@QAAXABV0@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -12368,7 +12816,23 @@
      "??4?$ObjVector@VOverlay@OutfitConfig@@@@QAAXABV0@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??4?$ObjVector@VOverlay@OutfitConfig@@@@QAAXABV0@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??4?$ObjVector@VOverlay@OutfitConfig@@@@QAAXABV0@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "1?$vector",
@@ -12818,12 +13282,6 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??0SfxSeq@@QAA@XZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
     }
    ],
    "repair": {
@@ -12844,7 +13302,23 @@
      "??0SfxSeq@@QAA@XZ"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??0SfxSeq@@QAA@XZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??0SfxSeq@@QAA@XZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "Load",
@@ -12890,14 +13364,7 @@
     "??$MakeString@PBDPBD_KPBDPBDVSymbol@@@@YAPBDPBD00_K00VSymbol@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$MakeString@PBDPBD_KPBDPBDVSymbol@@@@YAPBDPBD00_K00VSymbol@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -12915,7 +13382,23 @@
      "??$MakeString@PBDPBD_KPBDPBDVSymbol@@@@YAPBDPBD00_K00VSymbol@@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$MakeString@PBDPBD_KPBDPBDVSymbol@@@@YAPBDPBD00_K00VSymbol@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@PBDPBD_KPBDPBDVSymbol@@@@YAPBDPBD00_K00VSymbol@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "_GRndSoftParticleBuffer",
@@ -13029,14 +13512,7 @@
     "??$_Copy_Construct@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@YAXPAVContentPoolMapping@SongSectionController@@ABV12@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$_Copy_Construct@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@YAXPAVContentPoolMapping@SongSectionController@@ABV12@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -13054,7 +13530,23 @@
      "??$_Copy_Construct@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@YAXPAVContentPoolMapping@SongSectionController@@ABV12@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$_Copy_Construct@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@YAXPAVContentPoolMapping@SongSectionController@@ABV12@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$_Copy_Construct@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@YAXPAVContentPoolMapping@SongSectionController@@ABV12@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "insert",
@@ -13843,14 +14335,7 @@
     "??$MakeString@HMHI@@YAPBDPBDHMHI@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$MakeString@HMHI@@YAPBDPBDHMHI@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -13868,7 +14353,23 @@
      "??$MakeString@HMHI@@YAPBDPBDHMHI@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$MakeString@HMHI@@YAPBDPBDHMHI@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@HMHI@@YAPBDPBDHMHI@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "GetVocalPartPercentage",
@@ -14419,12 +14920,6 @@
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
-     "spelling": "??$_Copy_Construct@VData@MultiplayerAnalyzer@@@stlpmtx_std@@YAXPAVData@MultiplayerAnalyzer@@ABV12@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
-    },
-    {
      "spelling": "??$_Param_Construct@VData@MultiplayerAnalyzer@@V12@@stlpmtx_std@@YAXPAVData@MultiplayerAnalyzer@@ABV12@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
@@ -14448,7 +14943,23 @@
      "??$_Copy_Construct@VData@MultiplayerAnalyzer@@@stlpmtx_std@@YAXPAVData@MultiplayerAnalyzer@@ABV12@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$_Copy_Construct@VData@MultiplayerAnalyzer@@@stlpmtx_std@@YAXPAVData@MultiplayerAnalyzer@@ABV12@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$_Copy_Construct@VData@MultiplayerAnalyzer@@@stlpmtx_std@@YAXPAVData@MultiplayerAnalyzer@@ABV12@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "repartitioned"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$_Param_Construct",
@@ -14543,14 +15054,7 @@
     "??$__linear_insert@PAVSymbol@@V1@VGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VGoalCmp@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$__linear_insert@PAVSymbol@@V1@VGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VGoalCmp@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -14568,7 +15072,23 @@
      "??$__linear_insert@PAVSymbol@@V1@VGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VGoalCmp@@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$__linear_insert@PAVSymbol@@V1@VGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VGoalCmp@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$__linear_insert@PAVSymbol@@V1@VGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VGoalCmp@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$__merge_backward",
@@ -14578,14 +15098,7 @@
     "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VGoalCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VGoalCmp@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VGoalCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VGoalCmp@@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -14603,7 +15116,23 @@
      "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VGoalCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VGoalCmp@@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VGoalCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VGoalCmp@@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VGoalCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VGoalCmp@@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "GetStandIn",
@@ -14667,14 +15196,7 @@
     "??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVString@@ABV?$StlNodeAlloc@VString@@@1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVString@@ABV?$StlNodeAlloc@VString@@@1@@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -14692,7 +15214,23 @@
      "??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVString@@ABV?$StlNodeAlloc@VString@@@1@@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVString@@ABV?$StlNodeAlloc@VString@@@1@@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVString@@ABV?$StlNodeAlloc@VString@@@1@@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "$__unguarded_linear_insert",
@@ -61558,14 +62096,7 @@
     "??$MakeString@IE@@YAPBDPBDIE@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??$MakeString@IE@@YAPBDPBDIE@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -61583,7 +62114,23 @@
      "??$MakeString@IE@@YAPBDPBDIE@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$MakeString@IE@@YAPBDPBDIE@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@IE@@YAPBDPBDIE@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "RemoveKey",
@@ -64926,14 +65473,7 @@
     "??1NetLoaderStub@@UAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [
-    {
-     "spelling": "??1NetLoaderStub@@UAA@XZ",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
-    }
-   ],
+   "withdrawn": [],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -64951,7 +65491,23 @@
      "??1NetLoaderStub@@UAA@XZ"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??1NetLoaderStub@@UAA@XZ",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??1NetLoaderStub@@UAA@XZ",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "Name",
@@ -68963,12 +69519,6 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
-    },
-    {
-     "spelling": "??$MakeString@VSymbol@@MPBD@@YAPBDPBDVSymbol@@M0@Z",
-     "lane": "ALIAS-REPAIR 2026-08-19",
-     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
     }
    ],
    "repair": {
@@ -68989,7 +69539,23 @@
      "??$MakeString@VSymbol@@MPBD@@YAPBDPBDVSymbol@@M0@Z"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
-   }
+   },
+   "restored": [
+    {
+     "spelling": "??$MakeString@VSymbol@@MPBD@@YAPBDPBDVSymbol@@M0@Z",
+     "lane": "W9-D 2026-09-13",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)",
+     "why_the_original_premise_failed": "H2's live-and-withdrawn contradiction resolved in favour of the LIVE membership. The withdrawal came from the ALIAS-REPAIR 2026-08-19 partition sweep, whose predicate resolves operands through the ICF congruence over OUR OWN BUILD -- but ICF happened in RETAIL's link, so that predicate is unsound in this direction (the same objection recorded against the star->clique union at revert 760cb450). Re-adjudicated here on retail bytes at the L1_T1 layer, which is flat and non-circular: it does NOT close over the fold class under test, unlike the L2_RECURSIVE 'fixpoint via chase' layer whose 4 memberships this lane left withdrawn. Retail bytes outrank an our-build predicate.",
+     "superseded_records": [
+      {
+       "spelling": "??$MakeString@VSymbol@@MPBD@@YAPBDPBDVSymbol@@M0@Z",
+       "lane": "ALIAS-REPAIR 2026-08-19",
+       "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+       "disposition": "dropped_singleton"
+      }
+     ]
+    }
+   ]
   },
   {
    "name": "clear",
