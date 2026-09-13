@@ -11438,7 +11438,8 @@
     "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
+    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
+    "??$_Copy_Construct@VFlowMathOp@@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
@@ -13367,11 +13368,15 @@
   {
    "name": "$_Copy_Construct",
    "address": "0x8271c2d8",
-   "survivor": "??$_Copy_Construct@UDebugGraph@?A0xfa5cc2c6@@@stlpmtx_std@@YAXPAUDebugGraph@?A0xfa5cc2c6@@ABU12@@Z",
+   "survivor": "??$_Param_Construct@VMoggClipMap@@V1@@stlpmtx_std@@YAXPAVMoggClipMap@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@VMoggClipMap@@@stlpmtx_std@@YAXPAVMoggClipMap@@ABV1@@Z"
+    "??$_Copy_Construct@VMoggClipMap@@@stlpmtx_std@@YAXPAVMoggClipMap@@ABV1@@Z",
+    "??$_Copy_Construct@UDebugGraph@?A0xfa5cc2c6@@@stlpmtx_std@@YAXPAUDebugGraph@?A0xfa5cc2c6@@ABU12@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "repair": {
+    "w11d": "Lane W11-D: promoted the MAP-RESIDENT name at this group's own address to `survivor`; the previous survivor ??$_Copy_Construct@UDebugGraph@?A0xfa5cc2c6@@@stlpmtx_std@@YAXPAUDebugGraph@?A0xfa5cc2c6@@ABU12@@Z is NOT in target_symbol_map.json and is retained as a folded spelling (it is in no compiled obj today, so it forgives 0; CLAUDE.md records that pruning zero-forgiving spellings cost +94,616 B to reverse)."
+   }
   },
   {
    "name": "_M_clear",
@@ -74977,6 +74982,42 @@
    ],
    "evidence": "Lane W7-D, T1 on retail bytes (2026-09-13). Our COMDAT for the folded spelling and our COMDAT for the survivor are both 92 B, sha256 270e305acf75c137, with IDENTICAL relocations compared BY TARGET NAME: (4,__savegprlr_29), (44,??4?$vector@U?$pair@HM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HM@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z), (88,__restgprlr_29). Retail@0x82656a00 corroborates (same size; every non-relocated word equal as a full 32-bit value). Every relocation target is TYPE-INDEPENDENT, which is why this family folds where list<T*>::insert / vector<T>::resize / ~list<T> do NOT (those carry a per-T callee -- _M_create_node<T>, _M_fill_insert<T>, _List_base<T>::clear -- and retail keeps 4, 48 and 11 of them respectively at DISTINCT addresses). Injective: the map places the folded spelling at no other address. Population control: no other retail address carries a branch-masked-identical body.",
    "lane": "W7-D"
+  },
+  {
+   "name": "$_Copy_Construct",
+   "address": "0x823a0cf8",
+   "survivor": "??$_Copy_Construct@VHide@CharMeshHide@@@stlpmtx_std@@YAXPAVHide@CharMeshHide@@ABV12@@Z",
+   "folded": [
+    "??$_Param_Construct@VHide@CharMeshHide@@V12@@stlpmtx_std@@YAXPAVHide@CharMeshHide@@ABV12@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13), H4 audit. SAME-T _Param_Construct/_Copy_Construct fold. STLport _construct.h defines _Copy_Construct<Tp>(Tp*,const Tp&) and _Param_Construct<T1,T2>(T1*,const T2&) with IDENTICAL bodies -- both are `new(__p) T(__val)` -- so for T1==T2==Tp the two spellings compile to the same code AND the same relocation (that T's copy constructor), which is /OPT:ICF's fold condition exactly. Adjudicated on RETAIL BYTES with tools/icf_pair_adjudicate.py: FLAT T1 PROVEN (60 B both sides, 1 relocation, reloc_tally {}). CONTROL: 13 cross-T decoys built from the same family all REFUTED ('masked bodies match but relocation TARGETS disagree'), so the PROVEN verdict rests on the per-T copy-ctor target and not on the family's shared shape (112 retail / 270 our bodytwins share that masked body)."
+  },
+  {
+   "name": "$_Copy_Construct",
+   "address": "0x82356360",
+   "survivor": "??$_Copy_Construct@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@YAXPAVSmasherPlateInfo@GemTrackResourceManager@@ABV12@@Z",
+   "folded": [
+    "??$_Param_Construct@VSmasherPlateInfo@GemTrackResourceManager@@V12@@stlpmtx_std@@YAXPAVSmasherPlateInfo@GemTrackResourceManager@@ABV12@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13), H4 audit. SAME-T _Param_Construct/_Copy_Construct fold. STLport _construct.h defines _Copy_Construct<Tp>(Tp*,const Tp&) and _Param_Construct<T1,T2>(T1*,const T2&) with IDENTICAL bodies -- both are `new(__p) T(__val)` -- so for T1==T2==Tp the two spellings compile to the same code AND the same relocation (that T's copy constructor), which is /OPT:ICF's fold condition exactly. Adjudicated on RETAIL BYTES with tools/icf_pair_adjudicate.py: FLAT T1 PROVEN (60 B both sides, 1 relocation, reloc_tally {}). CONTROL: 13 cross-T decoys built from the same family all REFUTED ('masked bodies match but relocation TARGETS disagree'), so the PROVEN verdict rests on the per-T copy-ctor target and not on the family's shared shape (112 retail / 270 our bodytwins share that masked body)."
+  },
+  {
+   "name": "$_Param_Construct",
+   "address": "0x823864a8",
+   "survivor": "??$_Param_Construct@UEyeDesc@CharEyes@@U12@@stlpmtx_std@@YAXPAUEyeDesc@CharEyes@@ABU12@@Z",
+   "folded": [
+    "??$_Copy_Construct@UEyeDesc@CharEyes@@@stlpmtx_std@@YAXPAUEyeDesc@CharEyes@@ABU12@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13), H4 audit. SAME-T _Param_Construct/_Copy_Construct fold. STLport _construct.h defines _Copy_Construct<Tp>(Tp*,const Tp&) and _Param_Construct<T1,T2>(T1*,const T2&) with IDENTICAL bodies -- both are `new(__p) T(__val)` -- so for T1==T2==Tp the two spellings compile to the same code AND the same relocation (that T's copy constructor), which is /OPT:ICF's fold condition exactly. Adjudicated on RETAIL BYTES with tools/icf_pair_adjudicate.py: FLAT T1 PROVEN (60 B both sides, 1 relocation, reloc_tally {}). CONTROL: 13 cross-T decoys built from the same family all REFUTED ('masked bodies match but relocation TARGETS disagree'), so the PROVEN verdict rests on the per-T copy-ctor target and not on the family's shared shape (112 retail / 270 our bodytwins share that masked body)."
+  },
+  {
+   "name": "$_Param_Construct",
+   "address": "0x82718e98",
+   "survivor": "??$_Param_Construct@VMidiChannel@@V1@@stlpmtx_std@@YAXPAVMidiChannel@@ABV1@@Z",
+   "folded": [
+    "??$_Copy_Construct@VMidiChannel@@@stlpmtx_std@@YAXPAVMidiChannel@@ABV1@@Z"
+   ],
+   "evidence": "Lane W11-D (2026-09-13), H4 audit. SAME-T _Param_Construct/_Copy_Construct fold. STLport _construct.h defines _Copy_Construct<Tp>(Tp*,const Tp&) and _Param_Construct<T1,T2>(T1*,const T2&) with IDENTICAL bodies -- both are `new(__p) T(__val)` -- so for T1==T2==Tp the two spellings compile to the same code AND the same relocation (that T's copy constructor), which is /OPT:ICF's fold condition exactly. Adjudicated on RETAIL BYTES with tools/icf_pair_adjudicate.py: FLAT T1 PROVEN (60 B both sides, 1 relocation, reloc_tally {}). CONTROL: 13 cross-T decoys built from the same family all REFUTED ('masked bodies match but relocation TARGETS disagree'), so the PROVEN verdict rests on the per-T copy-ctor target and not on the family's shared shape (112 retail / 270 our bodytwins share that masked body)."
   }
  ]
 }
