@@ -547,7 +547,15 @@ void Spotlight::DrawShowing() {
             sDiskMesh->DrawShowing();
         }
         auto& _ref3 = mBeam;
-        if (_ref3.mBeam && TheRnd.DrawMode() != 5) {
+        // Retail RB3 X360 suppresses the beam in kDrawOcclusion (4), NOT
+        // kDrawOcclusionDepth (5). Spotlight::DrawShowing @0x824D95B0 loads
+        // TheRnd.mDrawMode (`lwz r11, 0xfc(r11)` off lbl_82C76B68) and does
+        // `cmpwi cr6, r11, 0x4` / `beq cr6, <skip>` immediately after the
+        // null-test on mBeam.mBeam and immediately before the slot-0x14
+        // (DrawShowing) bctrl -- so the guarded call is this one and the
+        // constant is 4. The function contains exactly two cmpwi immediates,
+        // 0x0 and 0x4; 0x5 appears nowhere in it.
+        if (_ref3.mBeam && TheRnd.DrawMode() != Rnd::kDrawOcclusion) {
             _ref3.mBeam->DrawShowing();
         }
         if (mFlare && mFlare->GetMat()) {
