@@ -502,3 +502,50 @@ twice over — `unsigned` is a 4 B POD, so its node would allocate `0xc` and cal
 * ★ **Re-derive, never inherit.** W9-B's load-bearing conclusion reproduced; its
   population *figures* did not (48/48 vs 235/149), because a gate's
   `retail_bodytwins` count had been read as a whole-image scan.
+
+---
+
+## 9. Post-rebase composition check
+
+`main` moved **twice** while this lane ran — to `c5297f13` (W10-C) and then to
+`654dc785` (W10-A) — and **both** of those lanes edited
+`scripts/symbol_aliases.json` and `scripts/target_symbol_map.json`, the same two
+files this lane changes. W10-C's own ledger line warns that *"the lane's
+inertness control does NOT survive composition"*, so a clean textual rebase is
+not evidence of a surviving result.
+
+⚠ The first rebase landed on `c5297f13` and `git diff main..HEAD` then showed my
+branch *deleting* W10-A's doc and reverting `splits.txt` — an artifact of `main`
+having advanced again between the rebase and the diff, not a real defect.
+**Re-check `git log` immediately before AND after rebasing**; the footprint diff
+is the check that catches it (it should list only your own files, and it now
+lists exactly four).
+
+Re-verified on the rebased tree (full build after `touch config.yml`, which
+cascades ~975 objects because W10-C touched `src/system/obj/Object.h`, a PCH
+input):
+
+```
+BUILD_EXIT=0
+VALIDATE: PASS -- 1352 map-consistent, 241 tolerated, 0 contradicted, 1595 total
+whole binary: matched_functions 42,761   matched_code 3,874,256 B
+              matched_code_percent 37.812540   fuzzy 49.143147
+```
+
+Every row this lane moved is still at `fuzzy 100.00000` after composition:
+
+| row | size | |
+|---|---:|---|
+| `FileRelativePath` (`default/File`) | 904 | ✓ W8-D's prize, collected |
+| `?MemOrPoolAlloc@@YAPAXH@Z` (`default/MemMgr`) | 36 | ✓ |
+| `insert<OldMMInst>` (`default/Crowd`) | 100 | ✓ |
+| `insert<BandCamShot::Target>` (`default/BandCamShot`) | 100 | ✓ |
+| `insert<EventAnim::EventCall>` (`default/BandCamShot`) | 100 | ✓ |
+| `PropSync<BandCamShot::Target>` ×2 | 396 ×2 | ✓ the caller cascade |
+| `list<EventCall>::list` | 116 | ✓ |
+
+⚠ **The lane's contribution is the SUM OF ITS FOUR MEASURED DELTAS
+(+1,864 B / +5 fns), not a subtraction against this absolute.** Deltas compose;
+absolutes do not. `42,761 / 3,874,256` is a *different tree* — it carries W10-A
+and W10-C as well — and differencing it against this lane's leg A would silently
+bill their work to this lane.
