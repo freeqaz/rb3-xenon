@@ -1,3 +1,9 @@
+// Retail inlines ObjPtr<RndTransformable>'s two-arg ctor at all five member-init
+// sites of ??0CharIKFingers@@ (mHand, mForeArm, mUpperArm, ...); without the
+// force MSVC emits `bl ??0?$ObjPtr@VRndTransformable@@@@QAA@PAVObject@Hmx@@...`
+// five times and the ctor misaligns (64.61%).  Retail makes ZERO calls to that
+// ctor in this body.  Found by tools/inline_budget_sweep.py (lane W7-B).
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "char/CharIKFingers.h"
 #include "char/CharWeightable.h"
 #include "math/Mtx.h"
