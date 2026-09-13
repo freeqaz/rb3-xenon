@@ -152,25 +152,25 @@ void UsbMidiGuitar::Poll() {
                 int connAcc = proData->mPitchBend;
                 if (connAcc != TheGuitar->GetConnectedAccessory(i)) {
                     TheGuitar->SetConnectedAccessories(i, connAcc);
-                    RGConnectedAccessoriesMsg caMsg(i, connAcc); // retail arg order: (pad, value)
+                    RGConnectedAccessoriesMsg caMsg(connAcc, i); // retail arg order: (value, pad)
                     SendMessage(caMsg);
                 }
                 int pitchBend = proData->mPitchBend;
                 if (pitchBend != TheGuitar->GetPitchBend(i)) {
                     TheGuitar->SetPitchBend(i, pitchBend);
-                    RGPitchBendMsg pbMsg(i, pitchBend); // retail arg order: (pad, value)
+                    RGPitchBendMsg pbMsg(pitchBend, i); // retail arg order: (value, pad)
                     SendMessage(pbMsg);
                 }
                 int muting = proData->mMuting;
                 if (muting != TheGuitar->GetMuting(i)) {
                     TheGuitar->SetMuting(i, muting);
-                    RGMutingMsg mutMsg(i, muting); // retail arg order: (pad, value)
+                    RGMutingMsg mutMsg(muting, i); // retail arg order: (value, pad)
                     SendMessage(mutMsg);
                 }
                 bool stompBox = proData->mStompBox;
                 if (stompBox != TheGuitar->GetStompBox(i)) {
                     TheGuitar->SetStompBox(i, stompBox);
-                    RGStompBoxMsg sbMsg(i, stompBox); // retail arg order: (pad, value)
+                    RGStompBoxMsg sbMsg(stompBox, i); // retail arg order: (value, pad)
                     SendMessage(sbMsg);
                 }
                 unsigned char *pgRaw = (unsigned char *)proData;
@@ -178,7 +178,7 @@ void UsbMidiGuitar::Poll() {
                     + (pgRaw[0xb] >> 6 & 2) + (pgRaw[0xc] >> 5 & 4);
                 if (programChange != TheGuitar->GetProgramChange(i)) {
                     TheGuitar->SetProgramChange(i, programChange);
-                    RGProgramChangeMsg pcMsg(i, programChange); // retail arg order: (pad, value)
+                    RGProgramChangeMsg pcMsg(programChange, i); // retail arg order: (value, pad)
                     SendMessage(pcMsg);
                 }
             }
