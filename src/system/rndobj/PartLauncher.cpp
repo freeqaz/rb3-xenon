@@ -11,6 +11,8 @@
 // on direct binary evidence, never on match improvement alone.
 // rndobj/ is PCH-excluded, so this #define precedes the Object.h include.
 #define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_DEFER_OWNER 1
+
 #include "rndobj/PartLauncher.h"
 #include "math/Rand.h"
 #include "obj/Object.h"
@@ -30,7 +32,7 @@ static struct {
 #define gRev gRevs_PartLauncher.rev
 
 RndPartLauncher::RndPartLauncher()
-    : mPart(this, 0), mTrans(this, 0), mMeshEmitter(this, 0), mNumParts(0),
+    : mPart(this), mTrans(this), mMeshEmitter(this), mNumParts(0),
       mEmitRate(0.0f, 0.0f), mEmitCount(0.0f)
 {
 }
