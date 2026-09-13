@@ -106,7 +106,18 @@ private:
 
 class PartOverride {
 public:
-    PartOverride();
+    // throw() is load-bearing, not decoration -- and this is the DC3 oracle's
+    // spelling (dc3-decomp/src/system/rndobj/Part.h:85), which our port dropped.
+    // Binary evidence, read out of retail's own C++ EH metadata rather than off
+    // the metric: RndPartLauncher's ctor (fn_8244FD48) has FuncInfo.maxState 6
+    // and a ONE-entry IP-to-state map that does not cover the
+    // `bl ??0PartOverride@@QAA@XZ` call, i.e. retail's compiler knew that call
+    // could not throw.  Ours had maxState 7 and a second IP2State entry putting
+    // the call in state 6, which costs an EH state for mMeshEmitter's ObjPtr,
+    // a virtual-base-constructed flag store (`li r11,1; stw r11,0x50(r31)`),
+    // a `this` home store, and displaces all four cleanup temps 0x50 -> 0x54.
+    // See docs/decomp/EH_FRAME_2026-09-13.md.
+    PartOverride() throw();
 
     unsigned int mask; // 0x0
     float life; // 0x4
