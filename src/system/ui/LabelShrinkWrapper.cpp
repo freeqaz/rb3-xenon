@@ -6,6 +6,7 @@
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "rndobj/Mesh.h"
+#include "ui/UI.h"
 #include "ui/UILabel.h"
 #include "ui/UIPanel.h"
 #include "ui/UIResource.h" // laneBS1: for UIResource::Dir(); UIComponent.h only fwd-declares it
@@ -117,7 +118,10 @@ void LabelShrinkWrapper::Update() {
     MILO_ASSERT(m_pBottomRightBone, 0xcb);
 }
 
-void LabelShrinkWrapper::Init() { REGISTER_OBJ_FACTORY(LabelShrinkWrapper) }
+void LabelShrinkWrapper::Init() {
+    REGISTER_OBJ_FACTORY(LabelShrinkWrapper)
+    TheUI->InitResources("LabelShrinkWrapper");
+}
 
 void LabelShrinkWrapper::UpdateAndDrawWrapper() {
     // NOTE(laneBS1): ported from the rb3-Wii RB3 oracle

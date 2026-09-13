@@ -1,5 +1,6 @@
 #include "ui/UIButton.h"
 #include "obj/Object.h"
+#include "ui/UI.h"
 #include "ui/UILabel.h"
 #include "utl/BinStream.h"
 
@@ -48,4 +49,7 @@ END_HANDLERS
 
 UIButton::UIButton() {}
 
-void UIButton::Init() { REGISTER_OBJ_FACTORY(UIButton) }
+void UIButton::Init() {
+    TheUI->InitResources("UIButton");
+    REGISTER_OBJ_FACTORY(UIButton)
+}
