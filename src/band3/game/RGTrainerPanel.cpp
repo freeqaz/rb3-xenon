@@ -178,10 +178,6 @@ void RGTrainerPanel::Exit() {
 void RGTrainerPanel::Poll() {
     GemTrainerPanel::Poll();
     if (mGemPlayer) {
-        if (unke5) {
-            SetLegendModeImpl(mLegendMode);
-            unke5 = false;
-        }
         if (mLegendMode) {
             HandleChordLegend(true);
         }
@@ -665,7 +661,7 @@ END_HANDLERS
 
 BEGIN_HANDLERS(RGTrainerPanel)
     HANDLE_EXPR(get_fret, GetFret(_msg->Int(2), _msg->Int(3)))
-    HANDLE_ACTION(set_legend_mode, SetLegendMode(_msg->Int(2)))
+    HANDLE_ACTION(set_legend_mode, SetLegendModeImpl(_msg->Int(2)))
     HANDLE_EXPR(get_legend_mode, GetLegendMode())
     HANDLE_ACTION(set_legend_gem_id, SetLegendGemID(_msg->Int(2)))
     HANDLE_SUPERCLASS(ProTrainerPanel)
