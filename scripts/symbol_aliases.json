@@ -12601,10 +12601,22 @@
    "address": "0x82713ad8",
    "survivor": "??$_Copy_Construct@VSampleZone@@@stlpmtx_std@@YAXPAVSampleZone@@ABV1@@Z",
    "folded": [
-    "??$_Param_Construct@VSampleZone@@V1@@stlpmtx_std@@YAXPAVSampleZone@@ABV1@@Z",
-    "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z"
+    "??$_Param_Construct@VSampleZone@@V1@@stlpmtx_std@@YAXPAVSampleZone@@ABV1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_Param_Construct@ULocalizedName@HamMove@@U12@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0SampleZone@@QAA@ABV0@@Z vs ??0LocalizedName@HamMove@@QAA@ABU01@@Z | DIFFERENT METHOD called: ??0SampleZone@@QAA@ABV0@@Z vs ??0LocalizedName@HamMove@@QAA@ABU01@@Z",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    }
+   ]
   },
   {
    "name": "_GMidiParser",
@@ -13464,11 +13476,33 @@
    "address": "0x82576320",
    "survivor": "??$__uninitialized_copy@PAU?$pair@MM@stlpmtx_std@@PAU12@@stlpmtx_std@@YAPAU?$pair@MM@0@PAU10@00ABU__false_type@0@@Z",
    "folded": [
-    "??$__uninitialized_copy@PBU?$pair@MM@stlpmtx_std@@PAU12@@stlpmtx_std@@YAPAU?$pair@MM@0@PBU10@0PAU10@ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PBUXUSER_ACHIEVEMENT@@PAU1@@stlpmtx_std@@YAPAUXUSER_ACHIEVEMENT@@PBU1@0PAU1@ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PBVVector2@@PAV1@@stlpmtx_std@@YAPAVVector2@@PBV1@0PAV1@ABU__false_type@0@@Z"
+    "??$__uninitialized_copy@PBU?$pair@MM@stlpmtx_std@@PAU12@@stlpmtx_std@@YAPAU?$pair@MM@0@PBU10@0PAU10@ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PBUXUSER_ACHIEVEMENT@@PAU1@@stlpmtx_std@@YAPAUXUSER_ACHIEVEMENT@@PBU1@0PAU1@ABU__false_type@0@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "a NON-relocated instruction word differs, so the bodies are genuinely different code",
+     "adjudicator_detail": "word differs @0x10 | template-twin slots only; retail shows no internal inconsistency",
+     "callee_layer": "NONRELOC_WORD",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$__uninitialized_copy@PBVVector2@@PAV1@@stlpmtx_std@@YAPAVVector2@@PBV1@0PAV1@ABU__false_type@0@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "a NON-relocated instruction word differs, so the bodies are genuinely different code",
+     "adjudicator_detail": "word differs @0x10 | template-twin slots only; retail shows no internal inconsistency",
+     "callee_layer": "NONRELOC_WORD",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    }
+   ]
   },
   {
    "name": "_M_clear_after_move",
@@ -25850,10 +25884,7 @@
    "survivor": "??0NgMat@@QAA@XZ",
    "folded": [
     "??0ClientProtocol@Quazal@@QAA@I@Z",
-    "??0DisplacementNode@@QAA@W4ErrorNodeType@@PBVDataArray@@@Z",
-    "??0DxShaderInclude@@QAA@XZ",
-    "??0Ham1FilterVersion@@QAA@W4FilterVersionType@@PBVDataArray@@@Z",
-    "??0Ham2FilterVersion@@QAA@W4FilterVersionType@@PBVDataArray@@@Z"
+    "??0DxShaderInclude@@QAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 13 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -25912,6 +25943,39 @@
      "class": "CALLEE_SIZE_MISMATCH",
      "why": "callees @0x14 differ in OUR build: ??0RndMat@@IAA@XZ(716 B) vs ??0ContentMgr@@QAA@XZ(176 B)",
      "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??0DisplacementNode@@QAA@W4ErrorNodeType@@PBVDataArray@@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x14: ??0RndMat@@IAA@XZ vs ??0BaseDisplacementNode@@QAA@W4ErrorNodeType@@PBVD | DIFFERENT METHOD called: ??0RndMat@@IAA@XZ vs ??0BaseDisplacementNode@@QAA@W4ErrorNodeType@@PBVData",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??0Ham1FilterVersion@@QAA@W4FilterVersionType@@PBVDataArray@@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x14: ??0RndMat@@IAA@XZ vs ??0FilterVersion@@IAA@W4FilterVersionType@@PBVData | DIFFERENT METHOD called: ??0RndMat@@IAA@XZ vs ??0FilterVersion@@IAA@W4FilterVersionType@@PBVDataArr",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??0Ham2FilterVersion@@QAA@W4FilterVersionType@@PBVDataArray@@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x14: ??0RndMat@@IAA@XZ vs ??0FilterVersion@@IAA@W4FilterVersionType@@PBVData | DIFFERENT METHOD called: ??0RndMat@@IAA@XZ vs ??0FilterVersion@@IAA@W4FilterVersionType@@PBVDataArr",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
     }
    ]
   },
@@ -31429,54 +31493,16 @@
    "address": "0x822d70e0",
    "survivor": "??$_Param_Construct@VCacheDirEntry@@V1@@stlpmtx_std@@YAXPAVCacheDirEntry@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
-    "??$_Copy_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
-    "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
+    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -31815,6 +31841,424 @@
      "class": "CALLEE_SIZE_MISMATCH",
      "why": "callees @0x24 differ in OUR build: ??0CacheDirEntry@@QAA@ABV0@@Z(84 B) vs ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV01(56 B)",
      "note": "Refuted WITHIN OUR BUILD: our own compiler gives these two spellings (or their callees) different-sized COMDATs, which cannot be one COMDAT under /OPT:ICF in any build. Do NOT re-add."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@ | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$pair@$$CBVString@@V1@@st",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_s | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$pair@V?$ObjPtr@VEventTri",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in relocation count/offsets/targets (not merely in name), so they cannot fold",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0LocalizedName@HamMove@@QAA@ABU01@@Z | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0LocalizedName@HamMove@@QAA@ABU01@@Z",
+     "callee_layer": "CALLEE_BYTES_DIFFER",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlow@@VObjectDir@@@@QAA@ABU01 | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlow@@VO",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowLabe",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@QAA@A | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowNode",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@QA | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowOutP",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@Q | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamChara",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamMove@@VObjectDir@@@@QAA@AB | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamMove@",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VObject@H",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@ | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRhythmDe",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRndTex@@",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@ | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRndTrans",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VSpotligh",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed ; CORROBORATED source-independently: the two callees sit at DISTINCT retail addresses in the map",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_s | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$_Rb_tree@VSymbol@@U?$les",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeS | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$vector@VRangeSection@@V?",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in relocation count/offsets/targets (not merely in name), so they cannot fold",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z",
+     "callee_layer": "CALLEE_BYTES_DIFFER",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VSpotligh",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_s | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$pair@V?$ObjPtr@VEventTri",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in relocation count/offsets/targets (not merely in name), so they cannot fold",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0BoneOp@CharSignalApplier@@QAA@ABU01",
+     "callee_layer": "CALLEE_BYTES_DIFFER",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in relocation count/offsets/targets (not merely in name), so they cannot fold",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0MoveReplacer@@QAA@ABU0@@Z | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0MoveReplacer@@QAA@ABU0@@Z",
+     "callee_layer": "CALLEE_BYTES_DIFFER",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlow@@VObjectDir@@@@QAA@ABU01 | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlow@@VO",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowLabe",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@QAA@A | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowNode",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@QA | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowOutP",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@Q | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamChara",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamMove@@VObjectDir@@@@QAA@AB | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamMove@",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VObject@H",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@ | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRhythmDe",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRndTex@@",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VSpotligh",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CB | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$_Rb_tree@HU?$less@H@stlp",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed ; CORROBORATED source-independently: the two callees sit at DISTINCT retail addresses in the map",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_s | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$_Rb_tree@VSymbol@@U?$les",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed ; CORROBORATED source-independently: the two callees sit at DISTINCT retail addresses in the map",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$_Rb_tree@PBVMoveParent@@",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$vector@V?$RangedData@I@?$RangedDataCollection | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$vector@V?$RangedData@I@?",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$vector@V?$RangedData@VRGTrill@@@?$RangedDataC | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$vector@V?$RangedData@VRG",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeS | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0?$vector@VRangeSection@@V?",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in relocation count/offsets/targets (not merely in name), so they cannot fold",
+     "adjudicator_detail": "target names differ @0x24: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z | DIFFERENT METHOD called: ??0CacheDirEntry@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z",
+     "callee_layer": "CALLEE_BYTES_DIFFER",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
     }
    ]
   },
@@ -38050,54 +38494,16 @@
    "address": "0x82304870",
    "survivor": "??$_Param_Construct@V?$ObjPtr@VBandTrack@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VBandTrack@@@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
-    "??$_Copy_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@VBandPatchMesh@@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
-    "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
-    "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z",
-    "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z"
+    "??$_Param_Construct@VBandPatchMesh@@V1@@stlpmtx_std@@YAXPAVBandPatchMesh@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -38340,6 +38746,424 @@
      "spelling": "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@ | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$pair@$$C",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_s | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$pair@V?$",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0LocalizedName@HamMove@@QAA@ABU01@@Z | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0LocalizedName@HamMove@",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlow@@VObjectDir@@@@QAA@ABU01 | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@QAA@A | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@QA | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@Q | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamMove@@VObjectDir@@@@QAA@AB | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@ | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@ | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed ; CORROBORATED source-independently: the two callees sit at DISTINCT retail addresses in the map",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_s | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$_Rb_tree",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeS | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$vector@V",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VHighlightObject@@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@U?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@0@ABU10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$pair@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_s | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$pair@V?$",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0BoneOp@CharSignalAp",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0MoveReplacer@@QAA@ABU0@@Z | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0MoveReplacer@@QAA@ABU0@@Z",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlow@@VObjectDir@@@@QAA@ABU01 | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@QAA@A | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@QA | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@Q | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VHamMove@@VObjectDir@@@@QAA@AB | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@ | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@QAA@ | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0Node@?$Obj",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CB | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$_Rb_tree",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed ; CORROBORATED source-independently: the two callees sit at DISTINCT retail addresses in the map",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_s | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$_Rb_tree",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed ; CORROBORATED source-independently: the two callees sit at DISTINCT retail addresses in the map",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$_Rb_tree",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$vector@V?$RangedData@I@?$RangedDataCollection | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$vector@V",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$vector@V?$RangedData@VRGTrill@@@?$RangedDataC | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$vector@V",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeS | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0?$vector@V",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@VHighlightObject@@V1@@stlpmtx_std@@YAXPAVHighlightObject@@ABV1@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed",
+     "adjudicator_detail": "target names differ @0x24: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z | DIFFERENT METHOD called: ??0?$ObjPtr@VBandTrack@@@@QAA@ABV0@@Z vs ??0HighlightObject@@QAA@ABV0@@Z",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
@@ -52466,9 +53290,7 @@
    "name": "$_Param_Construct",
    "address": "0x822a46c8",
    "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
-   "folded": [
-    "??$_Param_Construct@VTransformArea@@V1@@stlpmtx_std@@YAXPAVTransformArea@@ABV1@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -52482,6 +53304,17 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "repartitioned"
+    },
+    {
+     "spelling": "??$_Param_Construct@VTransformArea@@V1@@stlpmtx_std@@YAXPAVTransformArea@@ABV1@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the per-T callees differ in COMDAT SIZE, so they cannot be one COMDAT; the parent fold is foreclosed ; CORROBORATED source-independently: the two callees sit at DISTINCT retail addresses in the map",
+     "adjudicator_detail": "target names differ @0x24: ??0MatSwap@OutfitConfig@@QAA@ABV01@@Z vs ??0TransformArea@@QAA@ABV0@@Z | DIFFERENT METHOD called: ??0MatSwap@OutfitConfig@@QAA@ABV01@@Z vs ??0TransformArea@@QAA@ABV0@@Z",
+     "callee_layer": "CALLEE_SIZE_DIFFERS",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
     }
    ],
    "repair": {
@@ -55215,10 +56048,21 @@
    "name": "DataDir",
    "address": "0x827b6c78",
    "survivor": "?DataDir@UIPanel@@$4PPPPPPPM@EM@AAPAVObjectDir@@XZ",
-   "folded": [
-    "?Load@UIPanel@@$4PPPPPPPM@EE@AAXAAVBinStream@@@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?Load@UIPanel@@$4PPPPPPPM@EE@AAXAAVBinStream@@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "a NON-relocated instruction word differs, so the bodies are genuinely different code",
+     "adjudicator_detail": "word differs @0x8 | DIFFERENT METHOD called: ?DataDir@UIPanel@@UAAPAVObjectDir@@XZ vs ?Load@UIPanel@@UAAXAAVBinStream@@@Z",
+     "callee_layer": "NONRELOC_WORD",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    }
+   ]
   },
   {
    "name": "$Find",
@@ -70212,10 +71056,21 @@
    "name": "PostDownload",
    "address": "0x827cfc90",
    "survivor": "?PostDownload@NetLoader@@IAAXXZ",
-   "folded": [
-    "?MakeDirty@Profile@@QAAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T3. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?MakeDirty@Profile@@QAAXXZ",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "a NON-relocated instruction word differs, so the bodies are genuinely different code",
+     "adjudicator_detail": "word differs @0x4 | template-twin slots only; retail shows no internal inconsistency",
+     "callee_layer": "NONRELOC_WORD",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    }
+   ]
   },
   {
    "name": "0PostProcessor",
@@ -73977,29 +74832,72 @@
    "name": "consensus_partition",
    "address": "0x827ed198",
    "survivor": "??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PBV1@0PAV1@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PBUCompEv@DataEventList@@PAU12@@stlpmtx_std@@YAPAUCompEv@DataEventList@@PBU12@0PAU12@ABU__false_type@0@@Z"
-   ],
-   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+   "folded": [],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_copy@PBUCompEv@DataEventList@@PAU12@@stlpmtx_std@@YAPAUCompEv@DataEventList@@PBU12@0PAU12@ABU__false_type@0@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the two bodies differ in SIZE, so they cannot be one COMDAT",
+     "adjudicator_detail": "size 96 vs 64 | different body SIZE -- cannot be one COMDAT",
+     "callee_layer": "HARD_SIZE",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    }
+   ]
   },
   {
    "name": "consensus_partition",
    "address": "0x823d3b38",
    "survivor": "??$__uninitialized_fill_n@PAVString@@IV1@@stlpmtx_std@@YAPAVString@@PAV1@IABV1@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAVVector2@@IV1@@stlpmtx_std@@YAPAVVector2@@PAV1@IABV1@ABU__false_type@0@@Z"
-   ],
-   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+   "folded": [],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAVVector2@@IV1@@stlpmtx_std@@YAPAVVector2@@PAV1@IABV1@ABU__false_type@0@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the two bodies differ in SIZE, so they cannot be one COMDAT",
+     "adjudicator_detail": "size 96 vs 48 | different body SIZE -- cannot be one COMDAT",
+     "callee_layer": "HARD_SIZE",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    }
+   ]
   },
   {
    "name": "consensus_partition",
    "address": "0x826989e0",
    "survivor": "??$_Copy_Construct@VSingerStats@@@stlpmtx_std@@YAXPAVSingerStats@@ABV1@@Z",
-   "folded": [
-    "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
-    "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z"
-   ],
-   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/."
+   "folded": [],
+   "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/.",
+   "withdrawn": [
+    {
+     "spelling": "??$_Copy_Construct@UFrame@RhythmDetector@@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the two bodies differ in SIZE, so they cannot be one COMDAT",
+     "adjudicator_detail": "size 68 vs 60 | different body SIZE -- cannot be one COMDAT",
+     "callee_layer": "HARD_SIZE",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UFrame@RhythmDetector@@U12@@stlpmtx_std@@YAXPAUFrame@RhythmDetector@@ABU12@@Z",
+     "lane": "W10-D 2026-09-13",
+     "class": "CONTRADICTED_ON_RETAIL_BYTES",
+     "disposition": "withdrawn",
+     "verdict": "FOLD FABRICATED -- foreclosed on retail bytes",
+     "why": "the two bodies differ in SIZE, so they cannot be one COMDAT",
+     "adjudicator_detail": "size 68 vs 60 | different body SIZE -- cannot be one COMDAT",
+     "callee_layer": "HARD_SIZE",
+     "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    }
+   ]
   },
   {
    "name": "consensus_partition",
