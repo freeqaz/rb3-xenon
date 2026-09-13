@@ -1087,3 +1087,94 @@ while a measurement is in flight. Separately, the harness caps any shell call
 at **600 s regardless of the timeout requested**, so `tail --pid` on a long
 build is always reaped and `pgrep -f ninja` matches *other lanes'* builds —
 launch detached and poll an `EXIT=` sentinel.
+
+## 7h. EXECUTION LOG — eighth wave (2026-09-13, coordinator session 3cdd3c)
+
+Four lanes off `2fc2552a`. Gates re-run by the coordinator on merged main after
+every landing, never relayed.
+
+| lane | merge | Δ fns | Δ bytes | what it was, in one line |
+|---|---|---:|---:|---|
+| B near-crossings | `1b6c1a6c` | 0 | 0 | the band below 100 is a **NAMING frontier**: 163,812 B symbol-only vs **~588 B** of live source work |
+| D FileRelativePath | `933636ce` | 0 | 0 | ported **BYTE-EXACT** and named; **both** briefed alias installs refused |
+| A alias durability | `a93d8a45` | 0 | 0 | withdrawals are now a generator **input**; exposure **110 memberships**, measured |
+| C RndEnviron | `0e3cc8b5` | +1 | +500 | **the briefed 21-revision gap DOES NOT EXIST** — a map defect, and the prior witness could not discriminate |
+| **wave** | `2fc2552a` → `0e3cc8b5` | **+1** | **+500** | **42,738 / 3,865,216 B / 37.724308% → 42,739 / 3,865,716 B / 37.729187%** |
+
+**★★★ READ THAT +1 CORRECTLY: this was the most valuable wave of the campaign
+and it moved the headline by one function.** Three of the four lanes were
+byte-neutral *by design or by refusal*, and what they produced instead is the
+first honest map of what remains.
+
+**★★★★★ THE BAND BELOW 100 IS A NAMING FRONTIER, NOT A PORTING ONE**
+(`tools/near_crossing_census.py`). 5,499 paired rows at `99.5 ≤ fuzzy < 100` =
+**734,308 B = 7.167% of `total_code`**. Of the 200 largest: **138 rows /
+163,812 B symbol-only (relocation-NAME / fold)**, 31 mixed, 29 register-only,
+and **2 rows / 5,624 B insert/delete-only** — one of which is documented
+drained by four prior lanes. **The live source-porting surface at the top of
+that band is ≈588 B.** ⇒ Do not fund a body-porting lane here. Corollary
+already proven twice this wave: a *perfect* byte-exact port (lane D's 904 B)
+pays **zero** when its residual is two names whose folds cannot be proven.
+
+**★★★★ THE `5/N` SCREEN, FINAL FORM** (supersedes §7g's version): exact at
+**1.000 pp per charged ARGUMENT**, max deviation 0.002 over 33 rows; the unit
+is the **argument**, not the instruction; it is **equally exact for `register`
+args**, so it prices COUNT and says nothing about KIND; **a full mismatch is
+`100/N`, 20× that**; and it is scoped to all-`diff_arg` rows. **And `mpn`
+excludes `register` arg diffs but CHARGES `symbol` ones ⇒ `mpn == fuzzy` is the
+SIGNATURE OF THE FOLD STRATUM**, not evidence of an instruction-level defect —
+which is precisely why §7g briefed four symbol-dominated rows as porting work.
+
+**★★★★★ A NEW FAILURE CLASS: THE NON-DISCRIMINATING WITNESS.** §7g recorded
+that lane W7-C "audited identity FIRST and confirmed it" before diagnosing
+`RndEnviron`. Its witness was *"calls `RndColorXfm::Save` + `Hmx::Object::Save`"*
+— and **`RndPostProc` also owns a colour xfm, so both candidates satisfy it.**
+The witness was not mis-read; it could not tell them apart. `0x824302B0` is
+`RndPostProc::Save`, the real `RndEnviron::Save` sat unnamed already streaming
+our exact 22 fields, and **the 21-revision gap never existed.** ⛔ The defect
+was **self-reinforcing**: splits had a hole punched at exactly that range, so
+the wrong NAME justified the wrong PIN and the PIN made the NAME score.
+★ The cheap general screen is **spatial** — `/O1` without LTCG preserves TU
+grouping, so a row outside its class's `.text` cluster but inside another
+class's unbroken run is a candidate map defect. It found this in one query, and
+**screening the map for more of them is now a funded wave-9 item.**
+
+**Two inherited claims corrected, both mine to relay.** §7g's "every RB3 `.milo`
+environment desynchronises after the first absent field" is **false** — our
+`Load` implements all 16 revision gates and matches on all 22 offsets, so the
+"check every consumer" set was empty. The real defect was **write-side only**
+(we emitted revision `0x10`, DC3's newer value, where retail writes `0xF`):
+**fidelity, not corruption.** And §7g's `AddRef`/`Release` item, already
+downgraded once, is now closed: lane D's adjudication shows the alias that
+would pay it is **unprovable**, not merely unproven.
+
+**⛔ THE COORDINATOR'S OWN VACUOUS PROBE, recorded because it is the sixth
+instance this session and the first committed by me.** Before dispatching lane
+A I "confirmed" the hazard with
+`grep -c withdrawn scripts/icf_alias_build.py || echo "0 refs (confirms H1)"`.
+**That path does not exist** — the generator is `tools/icf_alias_build.py`.
+grep printed nothing, exited 2, my `||` branch fired, and I recorded the
+reassuring message as confirmation. The conclusion was right for a reason the
+check never established. ★ **A probe whose failure mode prints the answer you
+expect is not a probe.**
+
+**Alias integrity, now durable.** Withdrawals are a generator input; exposure
+was **110 memberships** (72 laundered by `--merge`, 38 newly re-fabricated),
+not the "563" I briefed — withdrawals are per-**membership**, and the 564
+groups hold **10,058 records**. The file's own `_comment` warning about 9,395
+growing back is **~670× overstated**; only 14 do. Sabotage 4/4 RED, re-run by
+the coordinator on main. ⚠ **H2 is an unpriced −74 event**: 74 memberships are
+simultaneously live and withdrawn, 10 of them breaking the generator's
+one-survivor invariant, and a future regeneration will silently drop them.
+**Price it before the next regeneration, not during one.**
+
+**Wave-9 candidates:** the spatial map-defect screen (above, first — it is the
+cheapest instrument this campaign has found); H2's −74 pricing; the PlatformMgr
+four-name cycle (3,112 B, two of four proven — a partial rename would put one
+spelling at two addresses); the ~38 kB fold stratum, blocked on regenerating
+`wrong_callee_triage.py`'s worklist against a `none`-ruler report; whether
+`0x823d14c0` is mis-named, which is map-integrity not alias work and unlocks
+904 B (⚠ a map rename is the wrong instrument: it fixes 2 charges and creates
+287); `RndPostProc::Save` at 96.36 with `?Load@RndPostProc@@` also absent from
+the map; `NewFile` (port then name — naming is non-negative but valueless
+today); and `?transform@MD5@Quazal@@`, the inverse inline disease.
