@@ -3,6 +3,7 @@
 #include "math/Mtx.h"
 #include "obj/Data.h"
 #include "obj/Dir.h"
+#include "obj/Msg.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "rndobj/Dir.h"
@@ -1642,10 +1643,25 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
         *outTessTime = tessTime;
     timer.Restart();
 
-    // Sync all meshes
+    // Sync all meshes, and notify the "milo" tool object so the editor records
+    // the AO result. Retail RB3-360 has this block; NEITHER oracle does (dc3's
+    // AmbientOcclusion.cpp and rb3-Wii's both stop at Sync), so it is
+    // reconstructed from retail bytes -- see docs/decomp/NAME_UNPAIRED_2026-09-14.md.
     for (std::vector<RndMesh *>::iterator it = mObjectsTessellate.begin();
          it != mObjectsTessellate.end(); ++it) {
-        (*it)->Sync(0x3f);
+        RndMesh *mesh = *it;
+        mesh->Sync(0x3f);
+        bool batching = false;
+        if (DataVarExists("batcher.batching")) {
+            batching = DataVariable("batcher.batching").Int(0) != 0;
+        }
+        Hmx::Object *milo = ObjectDir::Main()->FindObject("milo", false);
+        if (milo && !batching) {
+            milo->Handle(
+                Message("record", DataNode(mesh), DataNode("Ambient Occlusion")), true
+            );
+            milo->Handle(Message("update_objects", DataNode(1)), true);
+        }
     }
 
     // Print patching time
