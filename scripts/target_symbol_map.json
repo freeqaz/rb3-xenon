@@ -16013,7 +16013,7 @@
  "0x826a55b0": "?RemoteAlreadySaved@Player@@QAAXH@Z",
  "0x826a5600": "?UpdateEnergy@Player@@QAAXABVSongPos@@@Z",
  "0x826a5738": "?Handle@Player@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x826a75c8": "??0GemPlayer@@QAA@PAVBandUser@@PAVBeatMaster@@PAVBand@@HPAVBandPerformer@@@Z",
+ "0x826a75c8": "??0Player@@QAA@PAVBandUser@@PAVBand@@HPAVBeatMaster@@@Z",
  "0x826a79d0": "?SetTrack@Player@@UAAXH@Z",
  "0x826a79d8": "??_EPlayer@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x826a79e8": "?Handle@Player@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
