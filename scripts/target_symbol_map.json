@@ -22710,7 +22710,7 @@
  "0x82873998": "?XBMAllocateFrameMemory@D3D@@YAXIPAXPAPAXPAW4MEMORYREGION@1@@Z",
  "0x82873b20": "?XBMCreateContext@D3D@@YAJPAVCDevice@1@PAUD3DBaseTexture@@PBD@Z",
  "0x828742f8": "?XBMEndCapture@D3D@@YAXPAVCDevice@1@@Z",
- "0x82874718": "?Exit@RGTrainerPanel@@UAAXXZ",
+ "0x82874718": null,
  "0x82874748": "?XBMBeginCapture@D3D@@YAHPAVCDevice@1@PAUD3DBaseTexture@@PBD@Z",
  "0x82874ab0": "?XBMCaptureFrame@D3D@@YAXPAVCDevice@1@PAUD3DBaseTexture@@@Z",
  "0x82875370": "?XBMProcessSwap@D3D@@YAXPAVCDevice@1@PAUD3DBaseTexture@@@Z",
@@ -30209,5 +30209,6 @@
  "0x82c43380": "??__E?mAssocMicXbox@ExternalMicClientMgr@@0V?$vector@PAVMicXbox@@V?$StlNodeAlloc@PAVMicXbox@@@stlpmtx_std@@@stlpmtx_std@@A@@YAXXZ",
  "0x82517718": "FileRelativePath",
  "0x82514b78": "?IsUserAGuest@PlatformMgr@@QBA_NPBVLocalUser@@@Z",
- "0x823f9b50": "??0RndTransformable@@IAA@XZ"
+ "0x823f9b50": "??0RndTransformable@@IAA@XZ",
+ "0x826adc38": "?Exit@RGTrainerPanel@@UAAXXZ"
 }
