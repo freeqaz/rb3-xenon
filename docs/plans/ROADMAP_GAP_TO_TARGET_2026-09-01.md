@@ -1267,3 +1267,174 @@ the 104 live CONTRADICTED memberships, individually; locating retail's
 `LoadRev` then naming `0x82430FD0` (1,728 + 192 B); and `?transform@MD5@Quazal@@`,
 still unexplored. ⚠ `tools/dc3_map.py` resolves its map via a worktree-relative
 sibling — the `60837907` bug class, still live.
+
+## 7j. EXECUTION LOG — tenth wave (2026-09-13, coordinator session 3cdd3c)
+
+Dispatched off `dee126a1` (42,749 fns / 3,871,308 B / 37.783768%). Four lanes,
+all four landed. Closed at `b2677de3`, which includes one merge that was not
+mine.
+
+| lane | branch | merge | predicted | measured | verdict |
+|---|---|---|---|---|---|
+| A spatial fires | `w10-spatial-fires` | `654dc785` | +3 / +196 B | **+3 / +196 B** | exact |
+| B allocator stratum | `w10-allocator-stratum` | `fbfc6229` | see below | **+5 / +1,864 B** | exact vs composed |
+| C base-class bodies | `w10-base-bodies` | `c5297f13` | +9 / +1,152 B | **+11 / +1,584 B** | +2 / +432 B collateral |
+| D contradicted memberships | `w10-contradicted` | `8404984b` | −7 / −696 B | **−7 / −696 B** | exact, deliberate |
+| — *(peer merge, not this wave)* | `thunk-readjudication-2` | `b2677de3` | (+36 B claimed) | **+5 / +36 B** | +36 B exact |
+
+**Wave total (my four lanes): +12 fns / +2,948 B.** Main moved
+`dee126a1` → `fbfc6229` = 42,749 → 42,761 fns, 3,871,308 → 3,874,256 B,
+37.783768% → 37.812540%. With the peer merge, main closes at **42,766 /
+3,874,292 / 37.812890%**.
+
+Every composition was re-measured by me on merged main and reconciled to the
+byte; every gate was re-run rather than relayed.
+
+### The wave's real output is three corrections, not the 2,948 bytes
+
+**1. There was never an allocator blocker (B).** Two waves treated the
+`MemOrPoolAlloc` 4-arg-vs-1-arg question as a hard blocker on the `char*` alias
+and on W8-D's 904 B. The evidence for it was **a misread recursion trace**:
+W9-B's four `SLOT-REFUTED` frames are *one* leaf failure printed once per stack
+level as the recursion unwinds. Arity never entered into it, and the leaf
+refusal is itself empty — both sides identical in every byte, resolving the same
+single relocation on both sides, refused only by a `size < 16` vacuity guard.
+⇒ **A vacuity guard is a claim about what masking hides; it does not apply when
+nothing is masked.** Same shape as flat T1 understating provability by 27 pp.
+
+I propagated that misreading into the wave-10 brief, so the correction lands
+against my own dispatch as much as against W9-B.
+
+The witness I warned might not exist **does** exist, and not where the brief
+looked. The *callee* genuinely cannot discriminate — a release-stripped 4-arg
+form is byte-identical to a 1-arg form. The **call sites** can, because the
+debug arguments are compile-time constants and there is no LTCG:
+`MemOrPoolAlloc` is **1 arg** (401 of 403 sites write only `r3`; `r4`/`r5`/`r6`
+at **zero**), `PoolAlloc` is **2**, with 5 of 7 map arities reproducing as the
+control. **Map defect, not source.** `FileRelativePath` reads 100.0/100.0 on
+904 B as a result — W8-D's prize, stranded two waves.
+
+**2. Adjudicating beats sweeping, and now it is priced (D).** Withdrawing all
+104 live CONTRADICTED memberships blind costs **−5,384 B**; withdrawing only the
+89 that retail bytes foreclose costs **−696 B**. **Adjudication protected
+4,688 B = 87.1% of the exposure.** The three classes sum to the blind total
+exactly (696 + 552 + 4,136 = 5,384), which was not guaranteed — a row can be
+charged by more than one pair, so the partition adding up is a real check.
+⇒ the W9-D rule ("69 of 74 withdrawals were wrong") generalises at 35× scale.
+
+**3. A lane's inertness control does not survive composition (C).** W10-C
+pre-registered that its `obj/Object.h` change recompiled 956 TUs while exactly
+one unit moved, and argued 955 units at Δ0 *proved* the new `#ifdef` inert. On
+merged main **fourteen** units moved, not three. The control was correctly run;
+it simply answered a different question — one change in isolation, in one
+worktree. The mechanism is legible: the repeated **+40 B across six unrelated
+units** is one **shared template COMDAT** resolving differently, exactly the
+hazard `gate_liveness.py` records. ⇒ **an isolation control licenses nothing
+about the composed merge.** Units at 100% went 162 → 163 with **zero** falling
+off, and `default/FileStream` crossed — a completion nobody predicted.
+
+### Coordinator adjudication: handoff refuted before dispatch
+
+W10-D's handoff #2 asked a future lane to move `Profile::mDirty` up 4 bytes.
+**Refuted, and it was destructive** — `Profile` is a base class with many
+subclasses, and `mDirty` is followed by `mPadNum` and `mState`.
+
+Its conditional (*"if these two really are one retail body"*) was already
+falsified by the same document's FABRICATED verdict. Independently: retail
+`.text` contains **17 bodies of shape `li r11,1; stb r11,N(r3); blr` at 15
+distinct offsets, two of them at `0xc`**; the compiler puts `mDirty` at `0xc`;
+and — decisively — retail's own **`Profile` vtable at `.rdata 0x821121a4`** has
+an RTTI COL pointer before index 0, `??_GProfile@@` at 0, `?IsUnsaved@Profile@@`
+at 4, `?SaveLoadComplete@Profile@@` at 5, and **slot 7 =
+`0x827a4fb0` = `stb r11,0xc(r3)`**. Slot 7 is `Profile::DeleteAll`, which is
+literally `{ mDirty = true; }`. ⇒ **retail's `Profile::mDirty` is at `0xc`.**
+Recorded in `docs/decomp/CONTRADICTED_AUDIT_2026-09-13.md` §12.
+⇒ **a handoff stated as a conditional must be checked against its own lane's
+verdict before it is dispatched.**
+
+### Instrument findings worth carrying
+
+- **The bare-vs-nested `splits.txt` trap took its FIFTH consecutive lane** (A).
+  W9-A deferred `0x826B03D8` because "RGTrainerPanel.cpp has no `.text` pin"; it
+  has **five**, under a nested heading, so a `^RGTrainerPanel.cpp:` grep returns
+  zero. It concealed a byte-exact circular pin hole.
+- **A Milo `X::Init()` states its own identity** (A) — it registers
+  `X::StaticClassName()`. Screening every `RegisterFactory` body found 3
+  mis-named and 17 unnamed rows, including one *inside its owner's own run*,
+  which no spatial rule can see. The lane recorded its own false alarm:
+  `?Register@BandWardrobe@@` legitimately has that body, so only a **class**
+  disagreement is a defect.
+- **A mis-named map row presents to the alias builder as a fold candidate** (A).
+  `symbol_aliases.json` groups[249]/[1105] carried T1 retail-byte evidence for
+  exactly the two rows this lane renamed. Both tools reasoned correctly about
+  the right observation with the wrong model.
+- **"Retail inlines this" is only half a diagnosis** (C). Three retail shapes
+  hide behind one inline decision. `UIListArrow` reached 88.42 on the
+  UIComponent/Trans pair and stopped — it wanted `DEFER_OWNER`, not
+  `DEFER_OBJECT`. Pick wrong and the row reads like a scheduler wall, which is
+  the shape that gets a row wrongly deferred as permuter-bound.
+- **Price renames on their CALLERS, not their own rows** (B). C4 predicted
+  −200 B and measured +708 B; two `PropSync<T>` caller rows paid +792 B. The
+  `none` ruler returned exactly the predicted −200, so **the two rulers
+  disagreeing was the signal.**
+- **Three lanes recorded self-refutations that a results-only report would have
+  hidden**: A's screen FP rate moved in *both* directions on recomputation
+  (68.4% adjudicated, 71.4% conservative) after a first draft claimed both
+  improved; B's first census returned a confident **0** because it filtered on
+  `.pdata extent == 100` when the extent is 104 (alignment padding); C's first
+  screen counted `bl` **by name**, so an unnamed retail callee was invisible and
+  "retail inlines" read identically to "retail calls an unidentified address".
+
+### My own bookkeeping errors this wave
+
+- A ledger note lost the word `none` to **zsh backtick command substitution**
+  inside a double-quoted string, leaving a sentence that reads as coherent and
+  means nothing. Notes now go through a quoted heredoc.
+- The retry keyed a W10-B note to **another session's commit**, because `HEAD`
+  moved under me mid-sequence, and carried measures from a `report.json` built
+  at *my* commit — a stale read. ⇒ **in a shared tree, `HEAD` is not a stable
+  identifier for the thing you just measured. Key a snapshot to the SHA you
+  built.** Both corrected in `49face65` rather than quietly fixed.
+- I staged a ledger sidecar with a directory-form `git add` against the standing
+  rule; the staged set was verified to be exactly the two intended files and
+  then restaged by explicit path.
+
+### Wave 11 candidates, priced
+
+★ **The three `Init` bodies are the best-priced target in the tree right now.**
+All three have `mpn == fuzzy`, the fold-stratum signature, so their only charges
+are relocation-name arguments. Applying the measured rate (a relocation-name arg
+costs `5/N` pp, `N = size/4`) gives an **integer** charge count to four decimal
+places on all three — a third independent confirmation of the pricing screen:
+
+| row | size | 100 − fuzzy | charges | prize |
+|---|---:|---:|---:|---:|
+| `?BandInit@@YAXXZ` | 1,008 B | 0.01984 | **1** | 1,008 B |
+| `?PreInit@Rnd@@UAAXXZ` | 1,836 B | 0.03268 | **3** | 1,836 B |
+| `?Init@UIManager@@UAAXXZ` | 1,916 B | 0.01044 | **1** | 1,916 B |
+
+**Five relocation-name charges stand between us and 4,760 B.** ⚠ W10-A's
+instruction stands: these are the ICF **fold** shape (`list<Object*>` vs
+`list<void(*)()>`) — **do NOT change our container types; prove the folds.**
+`matched_code` is all-or-nothing per row, so each row needs *all* its charges
+cleared.
+
+Other candidates, from the lanes' own handoffs:
+
+- `??0RGTrainerPanel@@` now paired at **98.19643**, 224 B behind ~one
+  instruction (A).
+- **H4 from B: audit alias groups with NO map-resident member** — C1's had none
+  and that alone was worth 116 B.
+- A `DEFER_OWNER` branch on the one-arg in-class `ObjPtr` ctor, which unblocks
+  Gen's 596 B; shared header, wants a PCH-cascade control (C).
+- Re-screen with C's `bl`-count instrument beyond `ui/` and `rndobj/`: **239**
+  paired sub-100 `??0` rows binary-wide against the 26 screened.
+- The 9 named `Init` bodies now sit six-on-**exactly** 59.090908 — one
+  systematic cause across six UI/ham classes, a force-multiplier body fix that
+  could not be asked about while those rows were anonymous (A).
+- `RecursePatternInternal` (892 B) is `default/File`'s last prize (B).
+- Still-open user decision, carried since wave 3 and deliberately untaken:
+  whether to delete `src/system/synth/Sound.cpp`, `ThreeDSound.cpp` and
+  `ThreeDSound.h` (zero includers, zero compile edges, zero retail presence, two
+  confirmed text bugs), keeping `Sound.h` under a DC3-only banner for its seven
+  includers.
