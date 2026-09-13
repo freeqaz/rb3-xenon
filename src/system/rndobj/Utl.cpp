@@ -1083,7 +1083,11 @@ void UtilDrawCigar(
             int idx = (iLatSum + iLon) * 4;
             Vector3 v1(h0b, (float)(sinLonPi2D * r0), (float)(sinLonD * r0));
             Multiply(v1, basis, *(Vector3 *)&verts1c0[idx]);
-            Vector3 v2(h1, (float)(sinLonD * r1), (float)(sinLonPi2D * r1));
+            // Retail's v2 uses the SAME phase convention as v1: the stores at
+            // 0x74/0x78 read f22 (the lonVal+pi/2 sine) then f21 (the plain
+            // lonVal sine), exactly as v1's 0x84/0x88 do.  Ours had y/z
+            // swapped, rotating the second ring 90 degrees in that plane.
+            Vector3 v2(h1, (float)(sinLonPi2D * r1), (float)(sinLonD * r1));
             Multiply(v2, basis, *(Vector3 *)&verts2e0[idx]);
             iLon = iLon + 1;
         } while (iLon < 6);
