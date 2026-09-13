@@ -260,7 +260,11 @@ BEGIN_PROPSYNCS(RndPostProc)
 END_PROPSYNCS
 
 BEGIN_SAVES(RndPostProc)
-    SAVE_REVS(0x25, 2)
+    // RB3-360 retail writes a bare `li r11, 0x25` at the head of
+    // ?Save@RndPostProc@@ (0x824302B0) -- i.e. packRevs(alt=0, rev=0x25) = 0x25.
+    // Our inherited alt-rev of 2 emitted `lis r11,0x2; ori r11,r11,0x25` = 0x20025,
+    // a revision word the retail game never writes.
+    SAVE_REVS(0x25, 0)
     SAVE_SUPERCLASS(Hmx::Object)
     bs << mBloomColor;
     bs << mBloomIntensity;
