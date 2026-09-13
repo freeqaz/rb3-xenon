@@ -1,3 +1,5 @@
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT 1
 #include "ui/UIComponent.h"
 #include "obj/Dir.h"
 #include "obj/Object.h"
@@ -37,9 +39,19 @@ void UIComponent::Enter() {
 void UIComponent::Exit() { RndPollable::Exit(); }
 
 UIComponent::UIComponent()
-    : mState(kNormal), mNavRight(this), mNavDown(this), mSelectingUser(nullptr),
+    : mState(kNormal), mNavRight(this), mNavDown(this),
+#ifdef HX_NATIVE
+      // Retail's ??0UIComponent@@IAA@XZ leaves mSelectingUser (0xfc)
+      // UNINITIALIZED: it stores 0 to 0xf8 (mNavDown.mObject) and then to
+      // 0x100 (mSelectScreen), never to 0xfc -- read off retail bytes, and
+      // the offset is compiler-verified (/d1reportSingleClassLayout), not a
+      // header comment. Keep the initialization for the native runtime, where
+      // an indeterminate LocalUser* is a real hazard, and omit it in the match
+      // build so the store does not exist.
+      mSelectingUser(nullptr),
+#endif
       mSelectScreen(nullptr), mSelected(0), mResource(nullptr),
-      mResourceName(), mResourceDir(), mResourcePath(), mLoading(0),
+      mResourceName(), mResourceDir(nullptr), mResourcePath(), mLoading(0),
       mSelectCancelled(0) {}
 
 UIComponent::~UIComponent() {

@@ -1,3 +1,6 @@
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT 1
+#define RB3_OBJOWNERPTR_INLINE_OWNER_CTOR 1
 #include "rndobj/Trans.h"
 #include "Trans.h"
 #include "rndobj/Cam.h"
