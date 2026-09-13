@@ -13,7 +13,7 @@
 // Retail RB3-360 RndEnviron derives DIRECTLY from Hmx::Object — NOT from
 // RndTransformable + RndDrawable (DC3's newer lineage). Verified from the retail
 // machine code:
-//   * RndEnviron::Save (fn_823F51C0) streams members starting at 0x28 — exactly
+//   * RndEnviron::Save (fn_82407E58) streams members starting at 0x28 — exactly
 //     where the Hmx::Object base ends (vtable@0, mTypeProps@4..0x10, mTypeDef@0x10,
 //     mNote@0x14, mName@0x18, mDir@0x1c, mRefs ring@0x20 = size 0x28). A
 //     RndTransformable+RndDrawable base would push the first member to ~0xd8.
@@ -21,11 +21,26 @@
 //     owner pointer at [env+0x7c] (ObjOwnerPtr mAmbientFogOwner@0x74, .Ptr()@0x7c)
 //     and the owned env's fog floats at +0x84/+0x88 — DC3's layout had these
 //     ~0xB0 higher (mAmbientFogOwner@0x14c).
-//   * RndEnviron::OnRemoveAllLights (fn_823F5430) compares [this+0x7c] to confirm
-//     mAmbientFogOwner.Ptr()@0x7c.
-//   * The ctor (fn_823F5BB8) + Save + SyncProperty pin the tail: three byte-packed
+//   * RndEnviron::Replace (fn_824080C8) compares [this+0x7c] to confirm
+//     mAmbientFogOwner.Ptr()@0x7c, then dynamic_casts and reads env->[+0x7c].
+//     (This witness used to be credited to OnRemoveAllLights, which has NO
+//     standalone body in TU5 — /O1 /Ob2 inlines its three list clears.)
+//   * The ctor (??0RndEnviron@@IAA@XZ, fn_824086F8) + Save + SyncProperty pin the
+//     tail: three byte-packed
 //     bools @0x15c/0x15d/0x15e, mAOStrength@0x160, Timer@0x168, tail floats
 //     @0x198..0x1a4, mUseToneMapping@0x1a8.
+// ADDRESSES CORRECTED 2026-09-13 (lane W8-C).  The three cited above were TU0-era
+// (fn_823F51C0 / fn_823F5430 / fn_823F5BB8) and main has targeted TU5 since
+// 2026-07-15, so none of them resolved; fn_823F51C0 is not a function at all in
+// this tree.  The LAYOUT claims in this block are unchanged because they were
+// right: every offset above is confirmed both by retail's Save (fn_82407E58) and
+// Load (fn_82409348) and by cl.exe /d1reportSingleClassLayoutRndEnviron
+// (sizeof = 0x1b0).
+// ⚠ 0x824302B0 is NOT RndEnviron::Save.  It is ?Save@RndPostProc@@ — it sits inside
+// an unbroken run of RndPostProc methods, writes revision 0x25 (RndPostProc's, which
+// our own PostProc.cpp already declared) and streams out to 0x208.  The map named it
+// RndEnviron::Save and splits.txt pinned it into Env.cpp to match; both are repaired.
+// Reading it as RndEnviron produced a phantom "21-revision schema gap".
 // rb3-Wii's Env.h is the same Hmx::Object lineage; retail differs only by the
 // larger 0x28 Object base (Wii's is 0x1c) and by carrying mNumLights*/mHasPointCubeTex
 // in the NgEnviron subclass rather than in RndEnviron itself.
