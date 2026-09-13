@@ -126,6 +126,39 @@ def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
                     survivor, our_name))
         return False
     if vacuous(rt) or vacuous(ob):
+        # ★ W10-B.  The vacuity guard exists because a MASKED comparison of a
+        # tiny body is non-discriminating: a 4-byte `b X` compares equal to
+        # every other 4-byte `b Y` once the displacement is masked out.  That
+        # reasoning is about what MASKING HIDES, and it simply does not apply
+        # when nothing is hidden -- if the bodies are byte-identical AND every
+        # relocation agrees on offset, type AND TARGET NAME, then the two
+        # COMDATs satisfy /OPT:ICF's own folding condition exactly and there is
+        # no masked field left for a coincidence to occupy.  Refusing here is
+        # not conservative, it is vacuous in the other direction.
+        #
+        # MEASURED: this is what blocked `list<char*>::insert` for two lanes
+        # (W8-D, W9-B).  The chase walks cleanly through BOTH allocator levels
+        # -- their bodies match -- and dies on the 8-byte `operator new` thunk
+        # ??2CriticalSection@@SAPAXI@Z / ??2ChunkAllocator@@SAPAXI@Z, whose two
+        # sides are identical in every byte and whose single relocation names
+        # `?MemAlloc@@YAPAXHH@Z` on BOTH sides.  W9-B read the resulting chain
+        # of SLOT-REFUTED frames -- which are only the leaf failure propagating
+        # back up the recursion -- as an "allocator debug-overload" blocker.  It
+        # never was one.
+        #
+        # The 8-byte class is exactly what tools/alloc_fold_gate.py was built to
+        # adjudicate ("Eight bytes is BETTER evidence than four, not worse"), and
+        # its --shape-census measured the discrimination: 712 retail 8-byte
+        # <word>+<branch> bodies carry 707 distinct (word, destination) combos,
+        # so the destination does all the work.  Here both destinations are the
+        # same NAME, which is the strongest agreement available, not a blur.
+        #
+        # STRICTNESS: full equality is required, relocation target names
+        # INCLUDED.  A vacuous pair whose reloc names differ still REFUSES, so
+        # this cannot admit a template twin -- see --chasetest's in-family decoy.
+        if rt[0] == ob[0] and list(rt[1]) == list(ob[1]):
+            out.append((depth, "VACUOUS-BUT-IDENTICAL", survivor, our_name))
+            return True
         out.append((depth, "VACUOUS", survivor, our_name))
         return False
     if rt[0] != ob[0]:
