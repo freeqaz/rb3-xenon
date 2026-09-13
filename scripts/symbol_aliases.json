@@ -12099,14 +12099,18 @@
      "spelling": "??E?$ObjDirItr@VSpotlightDrawer@@@@QAAAAV0@XZ",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
+     "disposition": "dropped_singleton",
+     "w9d_withdrawn_from_survivor": "??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ",
+     "w9d_note": "Self-referential ONLY because the group's `survivor` was later rewritten to this same spelling by the S2-CONTAINER map repair; at the time this record was written the survivor was ??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ. See the group's `w9d_h4_diagnosis`."
     },
     {
      "spelling": "??E?$ObjDirItr@VSpotlightDrawer@@@@QAAAAV0@XZ",
      "lane": "coordinator 2026-09-01, following lane S2-CONTAINER",
      "class": "DISTINCT_ADDRESSES_CANNOT_FOLD",
      "disposition": "withdrawn; survivor corrected to the map's name at this address",
-     "reason": "S2-CONTAINER re-adjudicated both addresses on retail bytes (ObjDirItr<T>::operator++ must call Advance<T>; Advance<T> loads a per-T ??_R0 RTTI descriptor naming the filter type in plain text). The map now places ObjDirItr<Object> at 0x823587b0 and ObjDirItr<SpotlightDrawer> at 0x824afa78 -- two distinct addresses, so they did not fold. The group had survivor=<Object> with <SpotlightDrawer> folded into it; after the repair the folded spelling IS the survivor at this address, which is degenerate. S2's retail-byte RTTI evidence outranks this group's automated T1 tier -- the self-confirming class W33/W34 documented. Withdrawal A/B'd at Delta 0 on every key."
+     "reason": "S2-CONTAINER re-adjudicated both addresses on retail bytes (ObjDirItr<T>::operator++ must call Advance<T>; Advance<T> loads a per-T ??_R0 RTTI descriptor naming the filter type in plain text). The map now places ObjDirItr<Object> at 0x823587b0 and ObjDirItr<SpotlightDrawer> at 0x824afa78 -- two distinct addresses, so they did not fold. The group had survivor=<Object> with <SpotlightDrawer> folded into it; after the repair the folded spelling IS the survivor at this address, which is degenerate. S2's retail-byte RTTI evidence outranks this group's automated T1 tier -- the self-confirming class W33/W34 documented. Withdrawal A/B'd at Delta 0 on every key.",
+     "w9d_withdrawn_from_survivor": "??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ",
+     "w9d_note": "Self-referential ONLY because the group's `survivor` was later rewritten to this same spelling by the S2-CONTAINER map repair; at the time this record was written the survivor was ??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ. See the group's `w9d_h4_diagnosis`."
     }
    ],
    "repair": {
@@ -12126,6 +12130,16 @@
      "??E?$ObjDirItr@VSpotlightDrawer@@@@QAAAAV0@XZ"
     ],
     "basis": "retail_fold=proven_fold: our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address, so retail holds a single body in the masked class and both spellings denote it"
+   },
+   "w9d_h4_diagnosis": {
+    "lane": "W9-D 2026-09-13",
+    "symptom": "both withdrawal records name a `spelling` EQUAL to the group's `survivor`, i.e. a group recorded as folding a spelling into itself (W8-A handoff H4).",
+    "root_cause": "NOT a degenerate generator input. It is a SURVIVOR-RENAME SHADOW: the group was emitted with survivor=??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ and ??E?$ObjDirItr@VSpotlightDrawer@@@@QAAAAV0@XZ folded into it. The S2-CONTAINER map repair then split the two instantiations across distinct addresses and the group's `survivor` field was rewritten to the map's name AT THIS ADDRESS -- which is the folded spelling. The withdrawal records name the folded side and were never rewritten, so survivor and spelling collapsed onto one symbol. The record is correct in substance; only its survivor CONTEXT was rewritten underneath it.",
+    "withdrawn_from_survivor": "??E?$ObjDirItr@VObject@Hmx@@@@QAAAAV0@XZ",
+    "evidence": "target_symbol_map.json places ObjDirItr<SpotlightDrawer> at 0x824afa78 (== this group's survivor) and ObjDirItr<Object> at 0x823587b0. Two distinct retail addresses, so they did not fold -- which is what DISTINCT_ADDRESSES_CANNOT_FOLD records. S2-CONTAINER's underlying retail-byte argument stands: ObjDirItr<T>::operator++ must call Advance<T>, and Advance<T> loads a per-T ??_R0 RTTI descriptor naming the filter type in plain text -- a type-DEPENDENT relocation target, which forecloses a fold before any byte is read (W7-D).",
+    "impact": "INERT, measured. `folded` is empty, so gen_symbol_alias_map.py emits a single symbol at this address and a one-symbol bucket is no equivalence: this group forgives 0 B. The group the withdrawal originally constrained no longer exists (there is NO group at 0x823587b0), so there is nowhere to re-home it to.",
+    "why_not_deleted": "Nothing is pruned. These two records are the only surviving trace of the ALIAS-REPAIR and S2-CONTAINER adjudications at this address, and the residual denial is PROTECTIVE: keyed (address, spelling) it would stop a future regeneration from proposing ObjDirItr<SpotlightDrawer> as a FOLDED spelling at 0x824afa78, where S2-CONTAINER proved it is the SURVIVOR.",
+    "action": "annotation only -- no membership, no map row and no rendered byte changes."
    }
   },
   {
