@@ -114,7 +114,7 @@ the score; only the masked case is silent.
 
 | class | n | metric-visible? | is it the briefed wrong-callee class? |
 |---|---:|---|---|
-| `UNIMPLEMENTED_BODY` (thunk-pinned) | **12** | 6 charged / 6 masked | **No — structurally impossible** |
+| `UNIMPLEMENTED_BODY` (thunk-pinned) | **12** → **6** + 6 map defects (§4) | 6 masked | **No — structurally impossible** |
 | `SUSPECT_MASKED` (non-thunk, dest unnamed) | **4** | no — silent | No — same callee, absent body |
 | `SUSPECT_CHARGED` (non-thunk, dest named) | **4** | yes — already charged | 1 arguable, 2 map-defect suspects, 1 discarded |
 | **wrong callee, masked (the target class)** | **0** | — | — |
@@ -176,12 +176,12 @@ is a real decomp job, not an edit — deliberately **not** attempted here (§6).
   is the one row with `lenmatch=False`, so its offset pairing is invalid and I
   **discard it**. The first is a map-defect suspect (§4).
 
-## 4. Secondary finding: 6 map names contradicted by a vtordisp thunk
+## 4. ⛔ I PREDICTED THE WRONG SIDE, AND THE BYTES SETTLED IT — the 12 thunk rows split 6/6
 
 6 of the 12 thunk rows have a **named** destination, and in every case the name
 is a **different method of the same class**:
 
-| thunk (map) | branches to | map calls it |
+| thunk (map name) | branches to | map calls the destination |
 |---|---|---|
 | `?Copy@BandTrack@@$4…` | `0x82351fc0` (1580 B) | `?SyncProperty@BandTrack@@` |
 | `?Highlight@Waypoint@@$4…` | `0x823dce48` (356 B) | `?Load@Waypoint@@` |
@@ -190,22 +190,43 @@ is a **different method of the same class**:
 | `?Load@BandTrack@@$4…` | `0x822ead70` (104 B) | `?PostLoad@GemTrackDir@@` |
 | `?Save@BandTrack@@$4…` | `0x8234fca8` (68 B) | `??_GBandTrack@@UAAPAXI@Z` |
 
-A `Save` thunk cannot forward to a deleting destructor. Since the thunks are
-verified real vtordisp thunks *by their bytes*, and the thunk→target relation is
-definitional, **one of the two map names in each row is wrong** — most likely the
-destination's.
+**I wrote that the destination name was "most likely" the wrong one. That was
+backwards, and decoding refuted it in one step.**
 
-⚠ **I did not adjudicate which side is wrong.** Settling it needs the retail
-vtable per class, which is a lane of its own. I record the contradiction and the
-evidence, not a verdict — and note the within-class regularity (every wrong name
-is a sibling method) is suggestive of a systematic boundary shift, which is a
-hypothesis, **not** a measurement.
+`0x8234fca8` is unambiguously a **deleting destructor**: two dtor calls
+(`0x822e50b0`, then `??1Object@Hmx@@UAA@XZ`), `rlwinm r11,r29,0,31,31` isolating
+`flag & 1`, a `beq` over `?MemFree@@YAXPAX@Z`. Textbook `??_G`. Confirmed on a
+second row: `0x823dce48` calls `?ReadEndian@BinStream@@` — it really is a
+`Load`.
 
-⛔ **And do NOT "fix" this by naming the 6 unnamed destinations in §3.2/§4.**
-Naming an anonymous address converts a **forgiven** call site into a **charged**
-one. Because our bodies are empty and retail's are not, naming first would
-*cost* bytes — precisely the ordering error W12-C priced at −180 B for
-`0x82466080`. **Fix the body first, then name.**
+⇒ **The DESTINATION names are right; the THUNK names are wrong.** These 6 are
+**map defects on the thunk row**, not missing bodies. A vtordisp thunk pointing
+at `??_G` is a `??_E`-family thunk that the map mis-labelled `?Save@…$4…`.
+
+⚠ **Consequence for the pairing, and it is the reason this matters:** objdiff
+pairs by name, so such a row compares **our `Save` thunk against retail's `??_E`
+thunk**. The comparison is meaningless in both directions — nothing about our
+`Save` body can be inferred from it.
+
+### 4.1 The other 6 thunk rows ARE genuine missing bodies — also decoded
+
+The 6 whose destination is **unnamed** survive the same test:
+
+* `0x8233c4e0` (388 B) — `li r11, 0x16` (revision 22) → `?WriteEndian@BinStream@@`
+  → `?Save@UIList@@UAAXAAVBinStream@@@Z` (the base class) → members. That is
+  `BandList::Save`, exactly as its thunk claims.
+* `0x822cdc80` (128 B) — `li r11, 0x1` (revision 1) → `WriteEndian`. That is
+  `BandScoreboard::Save`.
+
+⇒ **`UNIMPLEMENTED_BODY` = 6, not 12.** The tool cannot make this split by
+itself (it needs a decode), so it reports all 12 in one class and this section is
+the adjudication. ★ **The named-destination sub-stratum is the map-defect tell:
+if a thunk's destination already carries a DIFFERENT name, suspect the thunk.**
+
+⛔ **Do NOT name the 6 unnamed destinations.** Naming an anonymous address turns
+a **forgiven** call site into a **charged** one; our bodies are empty and
+retail's are not, so naming first would *cost* bytes — the ordering error W12-C
+priced at −180 B for `0x82466080`. **Fix the body first, then name.**
 
 ## 5. The 9 unpaired-offset rows — mostly an artifact, one live question
 
@@ -243,9 +264,39 @@ bodies are **96 bytes** yet retail has no call at that offset (ours calls
    `BandList::Save` (388 B), `WorldInstance::PreSave` (136 B),
    `BandScoreboard::Save` (128 B), `OverdriveMeter::Save` (96 B),
    `BandSwatch::Save` (80 B), `EventAnim::Save` (68 B).
-3. **6 contradicted map rows** (§4) — needs per-class retail vtables.
+3. **6 mis-named vtordisp thunk rows in the map** (§4) — the destination names
+   are proven correct, so the THUNK rows are what need repair. Each currently
+   makes objdiff compare two unrelated thunks.
 4. **The `HX_NATIVE`-gated sink system** (§3.3) — charged, so it is visible to the
    score and can be prioritised against other charged work normally.
 
 ## 8. Gates, verbatim
 
+```
+$ ./tools/ninja-locked                       # full build, never a targeted .obj
+EXIT=0
+[renamed-check] 25534/29048 map names present in 3083 target objs = 87.9% (floor 40%)
+```
+
+```
+$ python3 scripts/verify_objs_patched.py --verify-manifest
+[patch-state] OK: 1205 decomp, 3083 target objects match 2026-09-13T08:20:09Z (tree_sha256=d5ce200bcc66e4ff)
+```
+
+```
+$ python3 tools/icf_alias_finder.py --validate
+VALIDATE: PASS -- 1362 map-consistent, 239 tolerated (enumerated above), 0 contradicted, 1603 total
+```
+
+```
+$ tools/native_build_gate.sh .
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+⚠ The renamer check was run **before** any name-keyed analysis, not after: a
+fresh worktree's reflinked target objs are pre-renamer and every mangled name
+would read "absent", producing a confident vacuous null. 25,534/29,048 present.
+
+**Branch tip** `w14-empty-extrn-sweep`. Files touched: `tools/empty_extrn_sweep.py`,
+`docs/decomp/EMPTY_EXTRN_SWEEP_2026-09-14.md`. **No `src/`, no `config/`, no
+`scripts/` — the metric is untouched by construction.**
