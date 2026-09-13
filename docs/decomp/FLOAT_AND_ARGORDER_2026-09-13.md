@@ -375,6 +375,55 @@ them before the run starts.
 
 ---
 
+## ⚠ The native gate FAILED on its first run in this fresh worktree, then PASSed
+
+Recorded because a spurious FAIL is the mirror image of the documented false-PASS
+hazard, and a lane that believes it will go hunting a breakage that is not there.
+
+Run 1, immediately after the worktree's **first** `cmake` configure:
+
+```
+  STALE     rb3-milo -- a binary exists but ninja does not consider it up to date (rc=0). It is NOT attributable to this run.
+  STALE     rb3-render -- ...
+NATIVE_GATE_RESULT verdict=FAIL expected=18 verified=16 skipped=0 partial=0 failed=2 rc=1
+```
+
+with `build: rc=0, 0 error line(s) + 0 linker diagnostic(s), 0 failed edge(s)`
+— i.e. **nothing failed to compile or link**, and both binaries were in fact
+written by that run (mtimes matched the other 16). Asking ninja directly:
+
+```
+$ ninja -d explain -n rb3-milo
+ninja explain: .../CMakeFiles/VerifyGlobs.cmake_force is dirty
+ninja explain: .../CMakeFiles/cmake.verify_globs is dirty
+[1/2] Re-running CMake...
+```
+
+⇒ CMake's `CONFIGURE_DEPENDS` glob verification was still dirty right after the
+initial configure, and `rb3-milo` / `rb3-render` are the two targets whose
+sources come from those globs. They therefore read as "not up to date"
+*immediately after being built*. Run 2 (this lane's final gate) reports
+**PASS 18/18, skipped=0, rc=0**, with those two relinking cleanly.
+
+⚠ **What I cannot separate, stated rather than glossed:** a round-2 source edit
+to `rndobj/TexBlendController.cpp` landed between the two gate runs, and that
+file is linked by exactly `rb3-milo` and `rb3-render` and by none of the other
+16 — so run 2's relink of precisely those two targets is *also* fully explained
+by the edit alone. The `ninja -d explain` output above is direct evidence for
+the glob mechanism at the time it was captured, but this lane ran an n=1 FAIL
+and an n=1 PASS with a confounder between them and did not build the clean
+control (a second gate run on an untouched fresh worktree).
+
+**Operational rule that follows regardless of which cause dominates:** a STALE
+verdict on the **first** gate run in a fresh worktree, with `rc=0` and zero
+error/linker lines, should be **re-run before it is believed**. The gate's own
+wording — *"It is NOT attributable to this run"* — is the tell that it is
+reporting a staleness bookkeeping state, not a build failure. Note this does
+**not** relax the standing `0 SKIPs` rule, which is about the opposite failure
+and still applies in full.
+
+---
+
 ## Side findings — flagged, deliberately NOT acted on
 
 **A likely wrong map name.** The 10th ctor called from `Poll` is `0x8252f3e8`,
