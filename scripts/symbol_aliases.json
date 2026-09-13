@@ -8653,16 +8653,17 @@
    "name": "0DancerSequence",
    "address": "0x827b7800",
    "survivor": "??0DancerSequence@@IAA@XZ",
-   "folded": [
-    "??0StoreArtLoaderPanel@@QAA@XZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
    "withdrawn": [
     {
      "spelling": "??0StoreArtLoaderPanel@@QAA@XZ",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
+     "disposition": "dropped_singleton",
+     "w9d_confirmed": "NEEDS_SOURCE",
+     "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. Not adjudicable: our build has no body for this spelling ('absent'), so no retail-byte evidence can license it. Measured to forgive 0 B today, so enacting the withdrawal is free; re-admit via the override mechanism if source later lands AND the fold is proven on retail bytes.",
+     "w9d_lane": "W9-D 2026-09-13"
     }
    ],
    "repair": {
@@ -8810,16 +8811,17 @@
    "name": "insert",
    "address": "0x822b1f90",
    "survivor": "?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@2@U32@ABQAVRndAnimatable@@@Z",
-   "folded": [
-    "?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTargetCache@BandCamShot@@U?$_Nonconst_traits@VTargetCache@BandCamShot@@@stlpmtx_std@@@2@U32@ABVTargetCache@BandCamShot@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 53, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "withdrawn": [
     {
      "spelling": "?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VTargetCache@BandCamShot@@U?$_Nonconst_traits@VTargetCache@BandCamShot@@@stlpmtx_std@@@2@U32@ABVTargetCache@BandCamShot@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
+     "disposition": "dropped_singleton",
+     "w9d_confirmed": "NEEDS_SOURCE",
+     "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. Not adjudicable: our build has no body for this spelling ('absent'), so no retail-byte evidence can license it. Measured to forgive 0 B today, so enacting the withdrawal is free; re-admit via the override mechanism if source later lands AND the fold is proven on retail bytes.",
+     "w9d_lane": "W9-D 2026-09-13"
     }
    ],
    "repair": {
@@ -70098,19 +70100,17 @@
    "name": "_M_erase",
    "address": "0x822cb828",
    "survivor": "?_M_erase@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjOwnerPtr@VWaypoint@@@@PAV3@0ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VBandTrack@@@@PAV3@0ABU__false_type@2@@Z",
-    "?_M_erase@?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndGroup@@@@PAV3@0ABU__false_type@2@@Z",
-    "?_M_erase@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPartLauncher@@@@PAV3@0ABU__false_type@2@@Z",
-    "?_M_erase@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPropAnim@@@@PAV3@0ABU__false_type@2@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
    "withdrawn": [
     {
      "spelling": "?_M_erase@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VBandTrack@@@@PAV3@0ABU__false_type@2@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
+     "disposition": "repartitioned",
+     "w9d_confirmed": "L2_RECURSIVE_FIXPOINT_ONLY",
+     "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. Proven ONLY by L2_RECURSIVE ('ICF fixpoint via chase') -- name equality closed under the very fold class in question. That is the circularity FIXPOINT_ROOT_DIFFERS names, and a fixpoint cannot outrank the recorded UNDER_PARTITIONED_ICF_CLOSURE refutation. Flat L1_T1 does NOT prove it.",
+     "w9d_lane": "W9-D 2026-09-13"
     },
     {
      "spelling": "?_M_erase@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VEventTrigger@@@@PAV3@0ABU__false_type@2@@Z",
@@ -70134,7 +70134,10 @@
      "spelling": "?_M_erase@?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndGroup@@@@PAV3@0ABU__false_type@2@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
+     "disposition": "repartitioned",
+     "w9d_confirmed": "L2_RECURSIVE_FIXPOINT_ONLY",
+     "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. Proven ONLY by L2_RECURSIVE ('ICF fixpoint via chase') -- name equality closed under the very fold class in question. That is the circularity FIXPOINT_ROOT_DIFFERS names, and a fixpoint cannot outrank the recorded UNDER_PARTITIONED_ICF_CLOSURE refutation. Flat L1_T1 does NOT prove it.",
+     "w9d_lane": "W9-D 2026-09-13"
     },
     {
      "spelling": "?_M_erase@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndMesh@@@@PAV3@0ABU__false_type@2@@Z",
@@ -70146,13 +70149,19 @@
      "spelling": "?_M_erase@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPartLauncher@@@@PAV3@0ABU__false_type@2@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
+     "disposition": "repartitioned",
+     "w9d_confirmed": "L2_RECURSIVE_FIXPOINT_ONLY",
+     "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. Proven ONLY by L2_RECURSIVE ('ICF fixpoint via chase') -- name equality closed under the very fold class in question. That is the circularity FIXPOINT_ROOT_DIFFERS names, and a fixpoint cannot outrank the recorded UNDER_PARTITIONED_ICF_CLOSURE refutation. Flat L1_T1 does NOT prove it.",
+     "w9d_lane": "W9-D 2026-09-13"
     },
     {
      "spelling": "?_M_erase@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPropAnim@@@@PAV3@0ABU__false_type@2@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "repartitioned"
+     "disposition": "repartitioned",
+     "w9d_confirmed": "L2_RECURSIVE_FIXPOINT_ONLY",
+     "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. Proven ONLY by L2_RECURSIVE ('ICF fixpoint via chase') -- name equality closed under the very fold class in question. That is the circularity FIXPOINT_ROOT_DIFFERS names, and a fixpoint cannot outrank the recorded UNDER_PARTITIONED_ICF_CLOSURE refutation. Flat L1_T1 does NOT prove it.",
+     "w9d_lane": "W9-D 2026-09-13"
     }
    ],
    "repair": {
@@ -73035,9 +73044,7 @@
    "name": "CVEIN1___unguarded_linear_insert",
    "address": "0x8280af88",
    "survivor": "??$__unguarded_linear_insert@PAPAVUIListWidget@@PAV1@UWidgetDrawSort@?A0x530db9db@@@stlpmtx_std@@YAXPAPAVUIListWidget@@PAV1@UWidgetDrawSort@?A0x530db9db@@@Z",
-   "folded": [
-    "??$__unguarded_linear_insert@PAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 2,
    "retail_callers": [
@@ -73050,7 +73057,10 @@
      "spelling": "??$__unguarded_linear_insert@PAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAXPAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
+     "disposition": "dropped_singleton",
+     "w9d_confirmed": "CONTRADICTED",
+     "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. L3 refutes the fold: the two bodies call DIFFERENT comparator functors (retail names ??RWidgetDrawSort@?A0x530db9db@@ where our folded spelling names its own per-T sort predicate). A type-DEPENDENT relocation target means retail kept them at distinct addresses -- W7-D's rule, which forecloses a fold before any byte is read.",
+     "w9d_lane": "W9-D 2026-09-13"
     }
    ],
    "repair": {
@@ -73076,9 +73086,7 @@
    "name": "CVEIN1___median",
    "address": "0x8280aed8",
    "survivor": "??$__median@PAVUIListWidget@@UWidgetDrawSort@?A0x4c78cf70@@@stlpmtx_std@@YAABQAVUIListWidget@@ABQAV1@00UWidgetDrawSort@?A0x4c78cf70@@@Z",
-   "folded": [
-    "??$__median@PAVUILabel@@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAABQAVUILabel@@ABQAV1@00ULabelSort@?A0x15e3583a@@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 1,
    "retail_callers": [
@@ -73090,7 +73098,10 @@
      "spelling": "??$__median@PAVUILabel@@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAABQAVUILabel@@ABQAV1@00ULabelSort@?A0x15e3583a@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
+     "disposition": "dropped_singleton",
+     "w9d_confirmed": "CONTRADICTED",
+     "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. L3 refutes the fold: the two bodies call DIFFERENT comparator functors (retail names ??RWidgetDrawSort@?A0x530db9db@@ where our folded spelling names its own per-T sort predicate). A type-DEPENDENT relocation target means retail kept them at distinct addresses -- W7-D's rule, which forecloses a fold before any byte is read.",
+     "w9d_lane": "W9-D 2026-09-13"
     }
    ],
    "repair": {
@@ -73116,9 +73127,7 @@
    "name": "CVEIN1___unguarded_partition",
    "address": "0x8280c480",
    "survivor": "??$__unguarded_partition@PAPAVUIListWidget@@PAV1@UWidgetDrawSort@?A0x4c78cf70@@@stlpmtx_std@@YAPAPAVUIListWidget@@PAPAV1@0PAV1@UWidgetDrawSort@?A0x4c78cf70@@@Z",
-   "folded": [
-    "??$__unguarded_partition@PAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAPAPAVUILabel@@PAPAV1@0PAV1@ULabelSort@?A0x15e3583a@@@Z"
-   ],
+   "folded": [],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 1,
    "retail_callers": [
@@ -73130,7 +73139,10 @@
      "spelling": "??$__unguarded_partition@PAPAVUILabel@@PAV1@ULabelSort@?A0x15e3583a@@@stlpmtx_std@@YAPAPAVUILabel@@PAPAV1@0PAV1@ULabelSort@?A0x15e3583a@@@Z",
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-     "disposition": "dropped_singleton"
+     "disposition": "dropped_singleton",
+     "w9d_confirmed": "CONTRADICTED",
+     "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. L3 refutes the fold: the two bodies call DIFFERENT comparator functors (retail names ??RWidgetDrawSort@?A0x530db9db@@ where our folded spelling names its own per-T sort predicate). A type-DEPENDENT relocation target means retail kept them at distinct addresses -- W7-D's rule, which forecloses a fold before any byte is read.",
+     "w9d_lane": "W9-D 2026-09-13"
     }
    ],
    "repair": {
