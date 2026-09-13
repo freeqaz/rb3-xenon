@@ -4962,14 +4962,14 @@ UIComponent.cpp:
 	.pdata      start:0x8222A418 end:0x8222A438
 	.pdata      start:0x82245930 end:0x82245940
 	.pdata      start:0x82245940 end:0x82245AC0
-	.pdata      start:0x82245AC8 end:0x82245C10
+	.pdata      start:0x82245AC0 end:0x82245C10
 	.text       start:0x8230BE48 end:0x8230BF30
 	.text       start:0x82343940 end:0x82343944
 	.text       start:0x825738B8 end:0x82573904
 	.text       start:0x82626E50 end:0x82626FB8
 	.text       start:0x827FE250 end:0x827FE2D0
 	.text       start:0x827FE2D0 end:0x827FFAD8
-	.text       start:0x827FFCC8 end:0x828012E0
+	.text       start:0x827FFAD8 end:0x828012E0
 	.text       start:0x828175E8 end:0x828175EC
 
 MemMgr.cpp:
@@ -6916,7 +6916,6 @@ Trans.cpp:
 	.pdata      start:0x822095A0 end:0x822095A8
 	.pdata      start:0x822095A8 end:0x822095B0
 	.pdata      start:0x822095B0 end:0x82209720
-	.pdata      start:0x82245AC0 end:0x82245AC8
 	.text       start:0x822BDD10 end:0x822BDDB0
 	.text       start:0x823F71E0 end:0x823F76C8
 	.text       start:0x823F76C8 end:0x823F78B0
@@ -6942,7 +6941,6 @@ Trans.cpp:
 	.text       start:0x823FA890 end:0x823FA920
 	.text       start:0x823FA920 end:0x823FAAA0
 	.text       start:0x823FAAA0 end:0x823FBDE8
-	.text       start:0x827FFAD8 end:0x827FFCC8
 
 MeshDeform.cpp:
 	.pdata      start:0x821FEB78 end:0x821FEB88
