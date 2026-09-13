@@ -5853,14 +5853,12 @@ Mat.cpp:
 	.pdata      start:0x8220CB00 end:0x8220CB08
 	.pdata      start:0x8220CB30 end:0x8220CD28
 	.pdata      start:0x8220CD28 end:0x8220CD30
-	.pdata      start:0x8220ED28 end:0x8220ED30
 	.pdata      start:0x8221C160 end:0x8221C168
 	.pdata      start:0x82228218 end:0x82228228
 	.text       start:0x824361A0 end:0x824361DC
 	.text       start:0x824361E0 end:0x82436278
 	.text       start:0x82436488 end:0x82438138
 	.text       start:0x82438138 end:0x824382D4
-	.text       start:0x82466080 end:0x824660D0
 	.text       start:0x82553FC8 end:0x82554028
 	.text       start:0x826067C0 end:0x826068A8
 
@@ -7601,10 +7599,8 @@ JsonMemory.cpp:
 	.text       start:0x82C30B08 end:0x82C30B58
 
 DOFProc.cpp:
-	.pdata      start:0x8220ED18 end:0x8220ED28
-	.pdata      start:0x8220ED30 end:0x8220ED50
-	.text       start:0x82466000 end:0x82466080
-	.text       start:0x824660D0 end:0x82466298
+	.pdata      start:0x8220ED18 end:0x8220ED50
+	.text       start:0x82466000 end:0x82466298
 
 System_Xbox.cpp:
 	.pdata      start:0x82218738 end:0x82218740

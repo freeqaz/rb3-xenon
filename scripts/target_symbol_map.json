@@ -30227,5 +30227,6 @@
  "0x8293e0a0": "XShaderPDBBuilder_AddSourceFile",
  "0x82c4c9bc": "NetDll_WSACloseEvent",
  "0x82827970": "?Init@LabelShrinkWrapper@@SAXXZ",
- "0x82828fc0": "?Init@LabelNumberTicker@@SAXXZ"
+ "0x82828fc0": "?Init@LabelNumberTicker@@SAXXZ",
+ "0x82466080": "?Terminate@DOFProc@@SAXXZ"
 }
