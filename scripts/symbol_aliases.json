@@ -4496,11 +4496,11 @@
   {
    "name": "1?$vector",
    "address": "0x822d8cc0",
-   "survivor": "??1?$vector@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [
     "??1?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 13, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 13, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions. RE-ANCHORED 2026-09-13 (lane W12-D): the survivor was ??1?$vector@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@... purely because that was the map name at this address, and that name is WRONG -- retail here is 136 B with element stride 0xc while our ObjPtrVec::Node vector is 132 B with stride 0x10, and different-size COMDATs cannot fold. The map row is now ??1?$vector@VString@@..., so the survivor follows it; the ObjDirPtr<ObjectDir> membership and its T1 evidence are UNCHANGED (String and ObjDirPtr<ObjectDir> are both 12 B and their __destroy_range_aux helpers are both members of the T1 fold group at 0x82710808, so the two ~vector<T> bodies are identical including relocations). ObjPtrVec::Node is NOT added as a folded spelling: it cannot fold on size, and a charge census over every sub-100 row of all 10 objs defining it found 0 sites where our source calls it and retail calls this address."
   },
   {
    "name": "push_back",

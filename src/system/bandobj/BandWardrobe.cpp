@@ -1,3 +1,12 @@
+// FileMerger::Merger's ctor is defined inline in char/FileMerger.h and its
+// out-of-line copy lands in THIS TU (report row ??0Merger@FileMerger@@QAA@
+// PAVObject@Hmx@@@Z, default/BandWardrobe, 216 B).  W11-C's bl-count screen
+// found exactly one ours-only callee on it -- the ObjPtr<ObjectDir> owner ctor
+// for mDir(o) -- i.e. retail INLINES that ctor and we call it.  The gate must
+// sit before the first include: obj/Object.h is pulled in transitively by line
+// 1, and ObjPtr_p.h's template body is textually fixed at that first inclusion.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_DEFER_OWNER 1
 #include "bandobj/BandWardrobe.h"
 #include "bandobj/BandCharDesc.h"
 #include "bandobj/BandDirector.h"
