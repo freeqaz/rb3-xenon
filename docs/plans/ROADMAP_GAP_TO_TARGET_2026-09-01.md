@@ -1663,3 +1663,55 @@ were right and the coordinator's priors were wrong each time, which is the
 argument for briefs that carry *evidence and constraints* rather than
 conclusions: every one of these corrections came from a lane that was told to
 prove something rather than to apply something.
+
+### Inbound cross-repo findings from a dc3-decomp lane (2026-09-13) — verified, 1 of 3 transfers
+
+A dc3-decomp session offered three shared-engine findings. **Tested literally
+against main `96c3a685` before accepting any of them.** Recorded here because
+two do NOT hold on this tree, and a future lane should not re-derive that.
+
+**1. `UtilDrawCigar` — CONFIRMED, queued as a lane.** Our row reads mpn
+**82.63761**, the briefed figure to the digit (872 B, `default/system/rndobj/Utl`).
+Diffing our `src/system/rndobj/Utl.cpp` against dc3's shows **our source is
+dc3's pre-fix version exactly**, so its four changes apply as a clean patch.
+
+★ **The headline is a REAL BUG and it was confirmed independently, not taken on
+trust.** Our two rings use opposite y/z phase conventions:
+```
+v1(h0b, sinLonPi2 * r0, sinLon    * r0)   // y = cos-phase, z = plain
+v2(h1,  sinLon    * r1, sinLonPi2 * r1)   // y = plain,     z = cos-phase  <-- swapped
+```
+so the second ring is rotated 90° in that plane. dc3's fix makes `v2` match
+`v1`. **Land that on correctness whatever it measures.** The other three changes
+are codegen shaping (`double`→`float` to stop an `frsp` at each use; splitting
+`h1` into two statements to block an `fmadds` contraction; a loop-induction
+restructure) — ⚠ **adjudicate those against RB3 retail bytes**, because dc3's
+stated justification cites *DC3's* target listing and our target is a different
+binary. dc3 reports reaching 90.61 on its own copy.
+
+**2. `__frsqrte` — already correct here, no action.**
+`src/xdk/LIBCMT/ppcintrinsics.h:12` declares `double __frsqrte(double)`, and so
+does dc3's line 12. The briefing lane flagged this as probably already-correct
+and it was.
+
+**3. `CharIKFingers::CalculateFingerDest` — DOES NOT DESCRIBE THIS TREE.** The
+briefed defects were "curl quaternion angle 2× too large" plus "a spurious
+negation after `acos` making the 0.87f clamp fire every frame". **Neither
+exists here, or in dc3's current source.** A full diff of the function shows
+ours and dc3's are identical *except one operand ordering* in the `acos`
+denominator (ours `len02 * 2.0f * lenTip`, dc3 `len02 * lenTip * 2.0f`). Our
+curl is `curl03.Set(f1z, (2.0f * PI - 2.0f * angle02) * 0.5f)`, which reduces to
+**π − angle02** — a correct half-angle — and our line 367 is character-identical
+to dc3's line 344.
+⇒ **The reading that fits is that dc3 had a divergence and the fix brought dc3
+to where rb3-xenon already was**, i.e. a dc3-specific defect rather than a
+shared-engine one. Consistent with the standing caveat that **dc3-decomp
+postdates RB3 and its engine code carries subtle behavioural differences — "dc3
+is correct for RB3" is never assumed.** Nothing to port but the operand reorder,
+worth testing as pure codegen shaping on our row (mpn 90.38909, 1,100 B).
+
+⇒ **The general lesson, and it cuts both ways across the shared engine:** a
+sibling repo's fix is evidence about *that* repo until its premise is tested
+here. Two of three briefed items were already-correct on this tree, and one of
+those was described as a live bug. **Diff the function before porting the
+patch.**
