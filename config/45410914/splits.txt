@@ -4662,7 +4662,6 @@ CharBlendBone.cpp:
 	.pdata      start:0x82205E18 end:0x82205E28
 	.pdata      start:0x82205E30 end:0x82205EB0
 	.pdata      start:0x82205EB0 end:0x82205F10
-	.pdata      start:0x82206330 end:0x82206340
 	.text       start:0x823B40C0 end:0x823B40E0
 	.text       start:0x823B40F0 end:0x823B40F8
 	.text       start:0x823C3458 end:0x823C35CC
@@ -4670,6 +4669,9 @@ CharBlendBone.cpp:
 	.text       start:0x823C3828 end:0x823C38E8
 	.text       start:0x823C3954 end:0x823C40F0
 	.text       start:0x823C40F0 end:0x823C4608
+
+CharTransDraw.cpp:
+	.pdata      start:0x82206330 end:0x82206340
 	.text       start:0x823C8908 end:0x823C8A64
 
 CharForeTwist.cpp:

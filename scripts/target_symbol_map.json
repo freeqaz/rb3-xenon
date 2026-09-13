@@ -5900,7 +5900,7 @@
  "0x823c8488": "??_G?$ObjPtrList@VCharacter@@VObjectDir@@@@UAAPAXI@Z",
  "0x823c88e0": "??_EScreenshot@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x823c88f0": "?Highlight@RndDrawable@@$4PPPPPPPM@BE@AAXXZ",
- "0x823c8908": "?SetType@CharBlendBone@@UAAXVSymbol@@@Z",
+ "0x823c8908": "?SetType@CharTransDraw@@UAAXVSymbol@@@Z",
  "0x823c8a68": "?Save@Screenshot@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x823c8a78": "?Handle@Screenshot@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x823c8fc0": "??_ERndDrawable@@UAAPAXI@Z",
