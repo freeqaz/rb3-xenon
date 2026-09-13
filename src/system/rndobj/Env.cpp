@@ -51,8 +51,16 @@ const Transform &RndEnviron::ColorXfm() const {
         return ident;
 }
 
+// RB3-360 retail save revision for RndEnviron is 0xF, read from a mutable .data
+// int (retail: `lis r11, lbl_82C6FB08@ha; lwz r11, lbl_82C6FB08@l(r11)` at the head
+// of Save, and lbl_82C6FB08 holds 0x0000000F).  DC3 -- which is NEWER -- writes an
+// immediate 0x10; that is where our old `bs << 0x10` came from.  Same house pattern
+// as rndobj/Draw.cpp's gSaveRev_RndDrawable = 3, whose retail global lbl_82C6FB04
+// sits 4 bytes earlier in .data and whose Save is a 100% match.
+static int gSaveRev_RndEnviron = 0xF;
+
 void RndEnviron::Save(BinStream &bs) {
-    bs << 0x10;
+    bs << gSaveRev_RndEnviron;
     SAVE_SUPERCLASS(Hmx::Object);
     bs << mLightsReal << mLightsApprox;
     bs << (const Vector4 &)mAmbientColor << mFogStart << mFogEnd
