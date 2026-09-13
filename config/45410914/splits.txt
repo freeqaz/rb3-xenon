@@ -4403,7 +4403,6 @@ MoveMgr.cpp:
 	.pdata      start:0x821F76D0 end:0x821F7838
 	.pdata      start:0x821F7840 end:0x821F7938
 	.pdata      start:0x821F7940 end:0x821F7948
-	.pdata      start:0x821FE8F8 end:0x821FE900
 	.pdata      start:0x821FEC60 end:0x821FEC68
 	.pdata      start:0x821FED08 end:0x821FED18
 	.pdata      start:0x821FED28 end:0x821FED48
@@ -4413,7 +4412,6 @@ MoveMgr.cpp:
 	.text       start:0x822D1768 end:0x822D2C28
 	.text       start:0x822D2C80 end:0x822D2D58
 	.text       start:0x822D3910 end:0x822D3928
-	.text       start:0x82341FF8 end:0x82342068
 	.text       start:0x82347218 end:0x82347284
 	.text       start:0x82347E80 end:0x82348048
 	.text       start:0x82348260 end:0x82348420
@@ -12275,14 +12273,12 @@ HttpGet.cpp:
 BandLabel.cpp:
 	.pdata      start:0x821FE7A0 end:0x821FE7A8
 	.pdata      start:0x821FE7B0 end:0x821FE7B8
-	.pdata      start:0x821FE7B8 end:0x821FE8F8
-	.pdata      start:0x821FE900 end:0x821FE918
+	.pdata      start:0x821FE7B8 end:0x821FE918
 	.pdata      start:0x821FE958 end:0x821FE960
 	.pdata      start:0x8222E918 end:0x8222E948
 	.text       start:0x823405F8 end:0x8234066C
 	.text       start:0x823406E8 end:0x82340740
-	.text       start:0x82340740 end:0x82341FF8
-	.text       start:0x82342068 end:0x823421A8
+	.text       start:0x82340740 end:0x823421A8
 	.text       start:0x82342220 end:0x82342228
 	.text       start:0x82342438 end:0x823424A4
 	.text       start:0x826663F0 end:0x82666648
