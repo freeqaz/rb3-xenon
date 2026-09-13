@@ -11701,7 +11701,7 @@
  "0x82573bc8": "?SetType@SetlistToStorePanel@@UAAXVSymbol@@@Z",
  "0x82573d28": "?SetType@SetlistToStorePanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x82573e68": "?NewObject@BandScreen@@SAPAVObject@Hmx@@XZ",
- "0x82574348": "?NewObject@FlowAnimate@@SAPAVObject@Hmx@@XZ",
+ "0x82574348": "?NewObject@MetaPanel@@SAPAVObject@Hmx@@XZ",
  "0x825744e8": "?ClassName@CalibrationWelcomePanel@@UBA?AVSymbol@@XZ",
  "0x82574528": "?Handle@CalibrationWelcomePanel@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82574538": "?Load@UIPanel@@$4PPPPPPPM@EI@AAXAAVBinStream@@@Z",
