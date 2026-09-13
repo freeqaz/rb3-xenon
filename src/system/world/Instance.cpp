@@ -1,3 +1,12 @@
+// PER-TU (lane W11-C): retail INLINES SharedGroup's owner-only ObjPtr site.
+// Binary evidence, ??0SharedGroup@@QAA@PAVRndGroup@@@Z: `bl` count retail 3 vs
+// our 4, and the single ours-only callee is
+// ??0?$ObjPtr@VWorldInstance@@@@QAA@PAVObject@Hmx@@PAVWorldInstance@@@Z --
+// i.e. exactly the mPollMaster(this) member. world/ is PCH-excluded, so these
+// #defines precede the Object.h include.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR 1
+#define RB3_TU_OBJPTR_DEFER_OWNER 1
+
 #include "world/Instance.h"
 #include "math/Rot.h"
 #include "obj/Dir.h"
