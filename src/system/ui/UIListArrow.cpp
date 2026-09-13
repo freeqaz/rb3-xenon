@@ -1,3 +1,5 @@
+#define RB3_TU_OBJPTR_DEFER_OWNER
+#define RB3_OBJPTR_INLINE_OWNER_CTOR_EH
 #include "ui/UIListArrow.h"
 #include "math/Easing.h"
 #include "obj/Object.h"
