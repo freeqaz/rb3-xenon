@@ -1441,27 +1441,27 @@ Other candidates, from the lanes' own handoffs:
 
 ## 7k. EXECUTION LOG — eleventh wave (2026-09-13, coordinator session 3cdd3c)
 
-Dispatched off `77cac933` (42,766 fns / 3,874,292 B / 37.812890%). Four lanes;
-**three landed, D outstanding at time of writing.** Main also absorbed **four
-peer merges** from another session mid-wave, each of which arrived unbuilt and
-was built and recorded by me so the composition chain stays unbroken.
+Dispatched off `77cac933` (42,766 fns / 3,874,292 B / 37.812890%). **All four
+lanes landed.** Main also absorbed **four peer merges** from another session
+mid-wave, each of which arrived unbuilt and was built and recorded by me so the
+composition chain stays unbroken.
 
 | lane | branch | merge | predicted | measured | verdict |
 |---|---|---|---|---|---|
 | A prove the Init folds | `w11-init-folds` | `7aac40e2` | +9 / +4,848 B · +2 / +1,908 B | **+11 / +6,756 B** | both exact |
 | B the 59.09 cluster | `w11-init-cluster` | `15bd7da8` | 4 legs | **+10 / +1,508 B** | all four exact |
 | C ctor inline sweep | `w11-ctor-inline-sweep` | `c0b47e9f` | 0 · +596 B · +5/+324 B | **+10 / +920 B** | all three exact |
-| D alias unmapped | `w11-alias-unmapped` | — | — | *(outstanding)* | — |
+| D alias unmapped | `w11-alias-unmapped` | `91370b40` | +712 B/+5 · +1,792 B/+11 | **+16 / +2,504 B** | both exact |
 | *(peer)* thunk-readjud-3 | — | `bb51be8f` | — | **Δ0 / Δ0** | expected |
 | *(peer)* thunk-readjud-4 | — | `1fd041a1` | (+5 / +724 B) | **+5 / +724 B** | exact |
 | *(peer)* thunk3-sividoc | — | `cfe959c8` | — | docs-only | — |
 
-**My three lanes: +31 fns / +9,184 B.** With the peer merges, main moved
-`77cac933` → `1fd041a1` = 42,766 → **42,802 fns**, 3,874,292 → **3,884,200 B**,
-37.812890% → **37.909590%**.
+**My four lanes: +47 fns / +11,688 B.** With the peer merges, main moved
+`77cac933` → `91370b40` = 42,766 → **42,818 fns**, 3,874,292 → **3,886,704 B**,
+37.812890% → **37.934030%**.
 
-**Every prediction in this wave was exact.** Nine pre-registered changes across
-three lanes, zero misses — the first wave with that record. Every composition
+**Every prediction in this wave was exact.** ELEVEN pre-registered changes
+across four lanes, zero misses — the first wave with that record. Every composition
 was re-measured by me on merged main with per-unit attribution; no unit fell off
 100% in any lane.
 
@@ -1607,3 +1607,59 @@ measured.** Capture the SHA before the build and pass that literal downstream.
   whether to delete `src/system/synth/Sound.cpp`, `ThreeDSound.cpp` and
   `ThreeDSound.h`, keeping `Sound.h` under a DC3-only banner for its seven
   includers.
+
+### 7k addendum — lane D, and a third correction to my own brief
+
+**D landed at `91370b40`: +16 fns / +2,504 B, both changes exact.** I briefed
+H4 ("audit alias groups with no map-resident member") as the lane's
+highest-value item. That named the right **observation** and the wrong **unit
+of work**.
+
+The group-side screen finds 130 rows of which exactly **two** are payable.
+Turning it around to the **charge side** — *what charged pairs would such a
+repair close?* — found a class instead: **13 `_Param_Construct<T>` /
+`_Copy_Construct<T>` same-`T` pairs over 21 sites**, where STLport emits the
+identical body `new(__p) T(__val)` with the same relocation, which is
+`/OPT:ICF`'s fold condition exactly. **The group screen missed 11 of the 13**,
+because it required our spelling to already *be* a member — and the best
+candidates were in no group at all.
+⇒ **A screen defined over the artifact you happen to hold is not a screen over
+the thing you are trying to find.**
+
+13/13 proven on retail bytes with **13/13 cross-`T` decoys refuted** — the decoy
+arm is load-bearing, since this family shares its masked body **112 ways out of
+270**.
+
+★ **A structural blind spot in the alias gate**, worth more than the bytes:
+`classify_group`'s *"not named ⇒ UNWITNESSED"* short-circuit fires **before**
+the fatal *"survivor not in tmap"* branch, so **`0 contradicted` says nothing
+about this class.** Second time this campaign a green alias verdict has proved
+scoped far narrower than it reads — the first being `--validate` measuring
+map-consistency rather than folding.
+
+**Four refusals, three of which correct my brief:** H6 is worth **+3,084 B /
++11 fns over 12 rows**, not the 892 B I briefed (the briefed "one relocation
+name" was 15 raw charges, 14 placeholder-forgiven) — chase-proven and **still
+refused**, because the bl-caller census the file demands as its license
+*denies* it (`0x82b74600` has 3 callers, so not the uncallable-junk class). H1
+is not the Δ0 one-liner I briefed: a rename alone would **unpair** the row, and
+`PoolAlloc.h`'s stated reason for the 5-arg form is **stale** — every 5-arg
+call site is `HX_NATIVE`-only today. H5 is probably not a defect at all (both
+`LevelData` addresses are vendor-band, where `/Gy`-off makes duplicate
+instantiations legitimate). Char3D (+192 B) proved `0x82b9b590` constructs
+`LocalePanel::Entry`, but identifying it means reading the callee's name out of
+the very map under audit.
+
+★ **VB-1, cheap and cross-cutting:** four of the blockers were **vendor-band**
+(≥ `0x82A00000`) map rows naming Milo STLport templates, while only 4 of 118
+`_Construct` rows live there. A high-yield screen for a map lane.
+
+### Scorecard for the wave, honestly stated
+
+Eleven pre-registered changes, eleven exact. But **my dispatch brief was
+corrected in three of the four lanes** — the charge-kind inference (A and B),
+the row classification and prize scope (A), and the unit of work (D). The lanes
+were right and the coordinator's priors were wrong each time, which is the
+argument for briefs that carry *evidence and constraints* rather than
+conclusions: every one of these corrections came from a lane that was told to
+prove something rather than to apply something.
