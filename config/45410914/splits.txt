@@ -3505,7 +3505,6 @@ Flow.cpp:
 	.pdata      start:0x82204968 end:0x82204970
 	.pdata      start:0x82204AE8 end:0x82204B10
 	.pdata      start:0x82204B70 end:0x82204B78
-	.pdata      start:0x8221E698 end:0x8221E6A8
 	.pdata      start:0x8221E768 end:0x8221E780
 	.pdata      start:0x82238D98 end:0x82238DA0
 	.text       start:0x822A6528 end:0x822A6580
@@ -3514,7 +3513,6 @@ Flow.cpp:
 	.text       start:0x823A94F0 end:0x823A9540
 	.text       start:0x823AAD78 end:0x823AB020
 	.text       start:0x823AB598 end:0x823AB618
-	.text       start:0x82574348 end:0x825743E0
 	.text       start:0x82574D90 end:0x825754B0
 	.text       start:0x82715C88 end:0x82715CCC
 
@@ -11457,7 +11455,7 @@ MetaPanel.cpp:
 	.pdata      start:0x8221E580 end:0x8221E5A0
 	.pdata      start:0x8221E5A0 end:0x8221E5A8
 	.pdata      start:0x8221E5A8 end:0x8221E5C8
-	.pdata      start:0x8221E5D0 end:0x8221E698
+	.pdata      start:0x8221E5D0 end:0x8221E6A8
 	.pdata      start:0x8221E6B8 end:0x8221E708
 	.pdata      start:0x8221E718 end:0x8221E720
 	.pdata      start:0x8221E728 end:0x8221E768
@@ -11475,7 +11473,7 @@ MetaPanel.cpp:
 	.text       start:0x82573470 end:0x825736C4
 	.text       start:0x825736C8 end:0x82573700
 	.text       start:0x82573700 end:0x825738B8
-	.text       start:0x82573904 end:0x82574348
+	.text       start:0x82573904 end:0x825743E0
 	.text       start:0x825744B8 end:0x825748A0
 	.text       start:0x82574938 end:0x825749E4
 	.text       start:0x82574A28 end:0x82574D90
