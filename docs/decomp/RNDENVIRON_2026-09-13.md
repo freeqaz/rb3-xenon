@@ -322,6 +322,28 @@ What was actually wrong, and is now fixed:
 - The load-path run is therefore a **no-regression** check, not a demonstration
   of the fix: `Load` is byte-for-byte unchanged by this lane.
 
+**What was actually run (native build `EXIT=0`, `rb3-render` linked; data at
+`~/tmp/dlcroot`):**
+
+| invocation | result |
+|---|---|
+| default X3 cells (`tracksystem_meshes`, `crowd_female01`), `--frames 1` | **rc=0**, 2 PNGs `[PASS]` — engine healthy with this lane's changes |
+| `world/venue/arena/arena_02/props/gen/backwall_angles_02.milo_xbox` | scene **loads**, 4/4 meshes drawn; `[FAIL] image-not-empty` (coverage 0.00%) — a camera/framing assertion, **not** a load failure |
+| `world/venue/small_club/small_club_01/gen/small_club_01.milo_xbox` | **SIGSEGV (rc=139)** in `WorldInstance` rev-stack handling — `rev stack $this mismatch` on `amp_fnr_bassman` between the venue's `.milo` and the shared `world/shared/amps/` instance, then a `String chars 259440589 > 128` blowup |
+
+⚠ **Every scene tried reported `environ: SYNTHETIC (scene has no RndEnviron)` or
+`postproc: none selected`, so `RndEnviron::Load` was NOT observed executing on
+real data.** I am not claiming load-path coverage I did not get.
+
+★ **The `small_club_01` crash is pre-existing and structurally cannot be this
+lane's**, and the argument is stronger than "it looks unrelated": all three
+source edits live in `RndEnviron::Save`, `RndPostProc::Save` and a comment
+block. **`Save` is never called by the loader** — there is no path from
+`.milo` parsing to either function. The crash is in `WorldInstance`'s nested-
+instance rev stack. The default-cell `rc=0` is the corroborating control.
+⇒ Fixing the `WorldInstance` rev-stack desync is the prerequisite for ever
+exercising a real venue `RndEnviron` natively, and is a native-lane handoff.
+
 ---
 
 ## 6. What this lane did NOT do
