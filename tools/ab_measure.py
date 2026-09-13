@@ -1253,17 +1253,43 @@ class TreeGuard:
                         "ok": False, "action": "reapply_failed",
                         "snapshot": str(self.pre_path), "git_output": out[-2000:]}
                     return self.outcome
-            # verify by re-reading, never by assuming the commands worked
+            # Verify by re-reading, never by assuming the commands worked.
+            #
+            # ⛔ The tracked diff ALONE is not a verification. This restore
+            # DELETES untracked files the run introduced, and a tracked-diff
+            # comparison cannot fail in that direction by construction -- so
+            # `verified: true` used to be reported over a lane's deleted
+            # deliverable. Two lanes lost work that way (W12-B and W13-B,
+            # 2026-09-13) before anyone noticed, because the console line
+            # counted only `checked_out`. A check that cannot fail where the
+            # damage happens is the vacuity class CLAUDE.md catalogues.
+            #
+            # `_untracked()` reads `git status --porcelain` `??` lines, which
+            # respect .gitignore, so build artifacts do not enter this set and
+            # the equality is safe to require.
             now = self._diff()
-            ok = (now == self.pre_diff)
+            untracked_now = self._untracked()
+            diff_ok = (now == self.pre_diff)
+            untracked_ok = (set(untracked_now) == set(self.pre_untracked))
+            ok = diff_ok and untracked_ok
             self.outcome = {"ok": ok, "action": "restored",
                             "verified": ok,
+                            "verified_tracked_diff": diff_ok,
+                            "verified_untracked_set": untracked_ok,
                             "snapshot": str(self.pre_path),
                             "checked_out": plan["checkout_paths"],
                             "removed": plan["remove_paths"]}
             if not ok:
-                self.outcome["note"] = ("post-restore diff still differs from "
-                                        "the captured pre-run diff")
+                why = []
+                if not diff_ok:
+                    why.append("post-restore diff still differs from the "
+                               "captured pre-run diff")
+                if not untracked_ok:
+                    why.append(
+                        "untracked set differs from pre-run: still-present "
+                        f"{sorted(set(untracked_now) - set(self.pre_untracked))}, "
+                        f"missing {sorted(set(self.pre_untracked) - set(untracked_now))}")
+                self.outcome["note"] = "; ".join(why)
             return self.outcome
         except Exception as e:                      # never let cleanup escape
             self.outcome = {"ok": False, "action": "error", "error": repr(e),
@@ -1299,7 +1325,23 @@ class TreeGuard:
         elif res.get("ok"):
             n = len(res.get("checked_out", []))
             print(f"  [tree] restored to the pre-run state ({n} path(s), "
-                  "verified by re-reading the diff)")
+                  "verified by re-reading the diff AND the untracked set)")
+            # Say what was DELETED. Untracked files created during a run are
+            # frequently a lane's entire deliverable, and silence here reads
+            # as "nothing happened".
+            removed = res.get("removed") or []
+            if removed:
+                print("\n  ┏━━ ⚠ UNTRACKED FILES DELETED BY THE RESTORE "
+                      "━━━━━━━━━━━━━━━━")
+                for r in removed:
+                    print(f"  ┃  D {r}")
+                print("  ┃  These were created DURING the run, so the restore "
+                      "removed them.")
+                print("  ┃  If any was your deliverable, it is GONE -- write "
+                      "run-time deliverables")
+                print("  ┃  to ~/tmp and copy them in afterwards.")
+                print("  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                      "━━━━━")
         else:
             print("\n  ┏━━ ⚠⚠ COULD NOT RESTORE THE WORKTREE ⚠⚠ "
                   "━━━━━━━━━━━━━━━━━━━", file=sys.stderr)
