@@ -1,3 +1,10 @@
+// Retail inlines ObjPtr<RndTransformable>'s two-arg ctor at both member-init
+// sites of this ctor (mTwist, mHead); without the force MSVC emits
+// `bl ??0?$ObjPtr@VRndTransformable@@@@QAA@PAVObject@Hmx@@...` twice and
+// ??0CharNeckTwist@@ misaligns (69.57%).  Found by tools/inline_budget_sweep.py
+// (lane W7-B); same per-TU lever as CharServoBone/CharIKHead/CharMeshHide.
+// char/ is PCH-excluded, so this #define precedes the header include.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "char/CharNeckTwist.h"
 #include "math/Mtx.h"
 #include "math/Rot.h"

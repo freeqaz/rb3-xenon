@@ -1,3 +1,8 @@
+// Retail inlines the ObjPtr two-arg ctor at every member-init site of
+// ??0BandCharacter@@QAA@XZ -- retail makes ZERO such calls and we emitted 14,
+// leaving the ctor at fuzzy 77.97%.  Found by tools/inline_budget_sweep.py
+// (lane W7-B).  bandobj/ is PCH-excluded, so this precedes the header include.
+#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
 #include "bandobj/BandCharacter.h"
 #include "obj/ObjMacros.h"
 #include "decomp.h"
