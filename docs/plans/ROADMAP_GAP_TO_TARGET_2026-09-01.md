@@ -2133,5 +2133,15 @@ regalloc/stack/funclet shape.
 - A one-line comment at `AmbientOcclusion.cpp:1232`, where the declarations are
   *deliberately* `(end, begin)` with a correct call — that site **will re-flag on
   any future textual scan**.
+  ✅ **First instance arrived the same day**: a dc3-decomp cross-repo token
+  differ (~47k function pairs) forwarded it as "`std::sort(priEnd, priBegin)`,
+  first/last reversed". Its `ARG_SWAP` pass cannot tell a call from a
+  declaration. Adjudicated as a false re-flag here; the peer recorded the
+  reading rule ("if the flagged arguments are declared on the preceding lines,
+  it is declaration order and inert") in dc3-decomp
+  `scripts/analysis/xrepo_audit.py` (`638a17085`). Of the five leads in that
+  batch, four were fixes already landed here (`135f6a9e`, `2a531e2f`) read from
+  a stale checkout — a landed fix is indistinguishable from a live defect to a
+  differ over two working copies unless the sweep states the revision it read.
 - Still-open user decision, carried since wave 3: whether to delete
   `src/system/synth/Sound.cpp`, `ThreeDSound.cpp`, `ThreeDSound.h`.
