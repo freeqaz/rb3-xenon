@@ -30413,5 +30413,7 @@
  "0x824c8f68": "??6@YAAAVBinStream@@AAV0@ABVEventCall@EventAnim@@@Z",
  "0x824c9478": "??6@YAAAVBinStream@@AAV0@ABVKeyFrame@EventAnim@@@Z",
  "0x824c94d0": "??$?6VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x824c9540": "?Save@EventAnim@@UAAXAAVBinStream@@@Z"
+ "0x824c9540": "?Save@EventAnim@@UAAXAAVBinStream@@@Z",
+ "0x82403728": "?Export@RndDir@@UAAXPAVDataArray@@_N@Z",
+ "0x823f94e8": "?Replace@RndTransformable@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z"
 }
