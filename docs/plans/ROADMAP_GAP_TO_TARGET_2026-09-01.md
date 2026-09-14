@@ -2261,7 +2261,7 @@ row keyed to the merge SHA, pushed). Two are still running.
 | **W16-C** NextSongPanel commute escalation (fable) | `a427ff73` | **+0 / +12,220 B** (predicted exactly; +0.1193 pp) | W15-C's "ARITH_COMMUTE proved inert" tested ONE textual lever and inferred canonicalisation; retail refutes the inference INSIDE THE SAME FUNCTION (BASE-first at two strength-reduced `&mNodes[count]` sites, IV-first at three, identical 7-instruction schedule); operand order is per-function optimisation-HISTORY dependent (40 `/FAs` compiles: 0/1/2 unrelated sites ahead keep BASE, 3 or 4 flip, non-monotone; a codegen-free temporary MSVC creates then eliminates shifts two sites together); fix is a byte-identical `Symbol` temp at the goals loop + the oracle spelling restored at the section site; `none` control moves identically ⇒ instruction fix, not alias; no closed-form rule derived — the doc records the screening harness instead. **Third Opus "unfixable" to cross on Fable this session** |
 
 Ledger: 42,846 / 3,892,688 B / 37.992 % (`bbcf979b`, wave start) →
-**43,108 / 3,920,752 B / 38.2664 %** (ledger row `a427ff73`; W15-D, W15-E, W15-F, W16-A and W16-C each additive to the byte). `total_code` 10,245,956
+**43,108 / 3,920,752 B / 38.2663 %** (ledger row `a427ff73`; W15-D, W15-E, W15-F, W16-A and W16-C each additive to the byte). `total_code` 10,245,956
 throughout — none of it is denominator movement.
 
 ### Three corrections to the coordinator's own briefs
