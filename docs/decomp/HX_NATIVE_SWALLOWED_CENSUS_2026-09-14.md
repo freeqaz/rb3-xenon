@@ -446,14 +446,10 @@ in `99ea4e82`.
 
 Sized and left on the table, with evidence:
 
-- `?DrawRect@DxRnd@@UAAXABVRect@Hmx@@PAVRndMat@@W4ShaderType@@ABVColor@3@PBV63@4@Z`
-  — **1,512 B**. The 6-param overload is **declared** at `src/system/rnddx9/Rnd.h:57`
-  and **defined nowhere**. DC3 has a fully-annotated oracle body at
-  `../dc3-decomp/src/system/rnddx9/Rnd.cpp:452` (~150 lines, `struct RectVert`,
-  `mReverseZ`, an explicit register-pinning comment on
-  `RndShaderMgr &shaderMgr = TheShaderMgr;`). **Largest single remaining prize in
-  this vein.** W15-F measured 5 of 7 dc3 engine body-ports byte-exact first try, so
-  the prior here is good.
+- ✅ **DONE — `?DrawRect@DxRnd@@UAAXABVRect@Hmx@@PAVRndMat@@W4ShaderType@@ABVColor@3@PBV63@4@Z`,
+  1,512 B, ported in `2f7d50a4`.** See "The DrawRect port" below: **+1 fn / +0 B**,
+  row now fuzzy **99.64286** / mpn **100.0**, residual is a pure register
+  permutation.
 - `?DoCompress@DxTex@@QAAXPAX@Z` — **284 B**, declared in `rnddx9/Tex.h`, defined
   nowhere.
 - `?TexelsPitch@DxTex@@UBAIXZ` — **80 B**, now pairs after `99ea4e82` but sits at
@@ -478,3 +474,71 @@ The brief states **17** non-XDK `.cpp` files are neither declared in
 `objects.json` nor `#include`d by any compiled TU. Re-derived here: **16**.
 Not load-bearing for any conclusion, but the figure is now measured twice and
 disagrees — re-derive it rather than inheriting either number.
+
+
+## The DrawRect port (`2f7d50a4`) — and the residual nobody should re-hunt blind
+
+`DxRnd::DrawRect` (6-param) was **declared** at `src/system/rnddx9/Rnd.h:57` and
+**defined nowhere in the tree**; the 5-param overload at `Rnd.cpp:44` forwards to
+it. Retail's 1,512 B row therefore read **fuzzy 0 / mpn 0** — unpaired, nothing to
+pair with. Ported from the DC3 oracle (`../dc3-decomp/src/system/rnddx9/Rnd.cpp:452`),
+which is matched there. Every dependency was checked to exist in our tree with
+identical spellings *before* writing — DC3 is the newer engine, so a missing member
+is the expected failure mode. `#include "rndobj/Cam.h"` had to be added.
+
+| | |
+|---|---|
+| predicted | +1 fn / +1,512 B (byte-exact) **or** +0 fns / +0 B (partial) |
+| **measured** | **+1 fn / +0 B** — ⚠ **a MISS**: a combination I did not pre-register |
+| row | fuzzy **0 → 99.64286**, mpn **0 → 100.0**, 378/378 instructions |
+
+⚠ **The miss is the lesson, and it is a targeting lesson.** `mpn` excludes arg-only
+penalties; `matched_code` keys on `fuzzy == 100` and is **all-or-nothing per row**.
+So a body port can cross into `matched_functions` while yielding **exactly zero
+bytes**. That is not an exotic case — it is the single most common landing spot for
+a body port, and it belongs in every pre-registration as a third outcome.
+
+### What the retail bytes show
+
+All 25 charged sites are `diff_arg` **register renumbering** — zero relocation-name
+charges, zero instruction differences:
+
+| value | retail | ours |
+|---|---|---|
+| `mat` | r28 | r27 |
+| `this` | r27 | r26 |
+| `shader` | r25 | r24 |
+| `shaderMgr` (`TheShaderMgr` ptr) | **r24** (allocated last) | **r28** (allocated first) |
+
+Our `RndShaderMgr &shaderMgr` binding takes the **highest** callee-saved slot and
+pushes all four parameters down by one. Retail gives it the **lowest**, i.e. the
+shortest / latest live range.
+
+### What was tried
+
+**Variant B — drop the local reference, call `TheShaderMgr` directly.** Pre-registered
+as: should stop it holding a long-lived callee-saved slot ⇒ fuzzy 100. **Measured
+WORSE and reverted**: fuzzy 99.64286 → **99.33334**, mpn 100.0 → **99.46561**,
+`matched_functions` 42,879 → **42,878** (the +1 fn is lost). ⇒ **DC3's annotation
+that the local reference is load-bearing holds for RB3 too**, which is worth
+recording: the oracle's *codegen* comments transferred even though its register
+*numbering* did not.
+
+### The untested hypothesis
+
+Retail materialises the `TheShaderMgr` pointer **later** than we do. Variant B moved
+it in the wrong direction (earlier, by reloading), and hoisting to the top of the
+function — the other placement DC3 documents — moves it earlier still, so both
+obvious placements are the wrong sign. The untested hypothesis is that the ordering
+of the two adjacent calls (`SetVConstant` then `SetTransform`) is what pins the live
+range, and that retail's order differs; testing it means changing call order, which
+is a **behavioural** change and was not attempted on a row that is already at
+mpn 100.
+
+⛔ **Do NOT re-open this as a hand register-permutation sweep.** The permuter is OFF
+by standing user directive, and CLAUDE.md records hand permutation as drained
+(12+ byte-identical variants across 4 functions, two zero-gain beam sweeps).
+`REGISTER_SWAP` is a symptom, not a diagnosis — but here `mpn == 100` with 378/378
+instructions equal, which is the shape CLAUDE.md describes as *structurally* pure
+regalloc rather than a masked source defect. The 1,512 B is collectable only by
+whatever makes the allocator agree.
