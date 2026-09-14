@@ -118,12 +118,14 @@ void PlatformMgr::UpdateSigninState() {
     XUID oldCache[4];
     memcpy(oldCache, mXuidCache, sizeof(oldCache));
     int i;
-    mSigninMask = 0;
     // Retail 0x8251c620 zeroes 0x20 (mSigninChangeMask) beside 0x1c and
     // lbl_82CCA8F0 -- `stw r30,0x20(r3)` -- exactly as DC3 records for its own
-    // image (W16-M S3C, 2026-09-14). Without it the mask is sticky.
-    mSigninChangeMask = 0;
+    // image (W16-M S3C, 2026-09-14). Without it the mask is sticky. The store
+    // ORDER is retail's (sameGuest, changeMask, mask -- the reverse of DC3's
+    // spelling); cl 10224 emits these three in source order (W16-M S3C3).
     mSigninSameGuest = 0;
+    mSigninChangeMask = 0;
+    mSigninMask = 0;
     for (i = 0; i < 4; i++) {
         if (XUserGetSigninState(i) != 0) {
             XUSER_SIGNIN_INFO info = {};
