@@ -834,23 +834,31 @@ void PlatformMgr::Poll() {
         if (res != ERROR_IO_INCOMPLETE) {
             static PlatformMgrOpCompleteMsg msg(false);
             if (res == ERROR_SUCCESS) {
-                // W16-M V5: retail's induction variable is mFriendsBuffer + 8 (the
+                // W16-M V6: retail's induction variable is mFriendsBuffer + 8 (the
                 // szGamertag field) stepping sizeof(XONLINE_FRIEND): dwFriendState is
-                // read at +0x10 and xuid at -0x8 from it. An explicit pointer IV is
+                // read at +0x10 and xuid at -0x8 from it.  An explicit pointer IV is
                 // pinned by the compiler while an indexed form is re-based to the
                 // struct start (V2..V4 measured), so iterate one gamertag cursor.
+                // Retail forms that cursor AFTER the zero-trip guard while the buffer
+                // load and i = 0 precede it, which is a source-level guard around a
+                // do/while, not a for loop (V5 measured the for-loop placement).
                 // (offsetof() is unusable: LIBCMT/stddef.h's macro mis-parenthesises.)
-                const char *gamertag = ((XONLINE_FRIEND *)mFriendsBuffer)->szGamertag;
-                for (unsigned long i = 0; i < numFriends; i++, gamertag += sizeof(XONLINE_FRIEND)) {
-                    DWORD state = *(const DWORD *)(gamertag + 0x10); // dwFriendState
-                    if (!(state & XONLINE_FRIENDSTATE_FLAG_SENTREQUEST)
-                        && !(state & XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST)) {
-                        Friend *f = new Friend();
-                        String name(gamertag);
-                        f->SetName(name);
-                        f->mXUID = *(const XUID *)(gamertag - 8); // xuid
-                        mFriendsList->push_back(f);
-                    }
+                unsigned long i = 0;
+                XONLINE_FRIEND *pFriends = (XONLINE_FRIEND *)mFriendsBuffer;
+                if (i < numFriends) {
+                    const char *gamertag = pFriends->szGamertag;
+                    do {
+                        DWORD state = *(const DWORD *)(gamertag + 0x10); // dwFriendState
+                        if (!(state & XONLINE_FRIENDSTATE_FLAG_SENTREQUEST)
+                            && !(state & XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST)) {
+                            Friend *f = new Friend();
+                            String name(gamertag);
+                            f->SetName(name);
+                            f->mXUID = *(const XUID *)(gamertag - 8); // xuid
+                            mFriendsList->push_back(f);
+                        }
+                        gamertag += sizeof(XONLINE_FRIEND);
+                    } while (++i < numFriends);
                 }
                 msg[0] = true;
             } else {
