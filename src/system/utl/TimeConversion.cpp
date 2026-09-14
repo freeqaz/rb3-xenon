@@ -18,6 +18,18 @@ float MsToBeat(float ms) {
         return 0;
 }
 
+// Retail X360 0x827C9110 is 24 B / 6 instructions -- lis/lwz TheTempoMap, lwz
+// vtable, lwz +0x4 (TickToTime), mtctr, bctr -- the unguarded tail-call twin of
+// MsToTick above (which takes vtable +0x8, TimeToTick).  It sits between MsToBeat
+// (0x827C90D0) and BeatToMs (0x827C9128) in retail, i.e. in TimeConversion.h's
+// declaration order, so it is emitted here rather than appended.
+//
+// This function was DECLARED in TimeConversion.h and never DEFINED anywhere in the
+// tree: every TickToMs() call site in src/ referenced an undefined symbol, which
+// only survives because the match build never links.  (TickToSeconds(float) and
+// BeatToTick(float) are still in that state -- see the lane W15-E write-up.)
+float TickToMs(float tick) { return TheTempoMap->TickToTime(tick); }
+
 float BeatToMs(float beat) {
     if (TheBeatMap && TheTempoMap) {
         return TheTempoMap->TickToTime(TheBeatMap->BeatToTick(beat));
