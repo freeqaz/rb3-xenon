@@ -212,7 +212,15 @@ void MainHubPanel::PrepareProfilesAndMessages() {
 bool MainHubPanel::CheckProfileForTicker() {
     BandProfile *profile = TheProfileMgr.GetPrimaryProfile();
     if (profile && TheServer.IsConnected()) {
-        if (TheServer.GetPlayerID(profile->GetPadNum()))
+        // Retail X360 (fn_8261FF10) closes this test with `cmplwi r3, 0x0` -- an
+        // UNSIGNED zero test -- on the value returned by Server vtable slot 0x1c
+        // (GetPlayerID).  The return type stays `int`: four other retail sites
+        // test the same slot with signed `cmpwi` and are already 100% with
+        // `int GetPlayerID(int)` (MetaPerformer x3, SongStatusMgr, per lane
+        // W16-B), so widening the declaration would break them.  Only this call
+        // site is in an unsigned context, and the cast reproduces exactly that.
+        // Same shape as RockCentral.cpp:285 (lane W16-B).  (Lane W16-AN.)
+        if ((unsigned int)TheServer.GetPlayerID(profile->GetPadNum()) != 0)
             return true;
     }
     return false;
