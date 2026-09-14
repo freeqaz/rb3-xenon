@@ -100,14 +100,27 @@ objdiff pairs our `Copy` thunk with retail's `PreLoad` thunk by name, the 3-word
 
 **Certified by `tools/ab_measure.py --revert cffe6f7a` (both legs settled, both at a `symbols.txt` split fixed point, leg B `renamer_patched=1822`): the commit is worth `Δmatched=+218  Δhonest=+218  Δcode_bytes=+4,056  Δcode%=+0.039589pp`, `units at 100% (mpn) 165 → 166`, `Δfuzzy −0.002786pp`, `total_code` unchanged (the tool prints the revert direction, −218/−4,056; leg A = with commit 43,072 / 38.048534 %, leg B = reverted 42,854 / 38.008945 %).** Pre-registered: thunks **+209 / +2,508** exactly, bodies 0 ± cascade; measured thunks came in at +210 (one extra from the `Copy@BandTrack` empty-fold alias added after pre-registration, predicted +1/+12 at that point), and the body/caller cascade added the remaining ~+1.5 kB net **including** the predicted downside — `?Save@BandLabel@@UAA` (100 B) fell from a false 100 to 4.0 %. `[control none] Δ−28 B` against `−4,056` on name_check: the wrong-callee-fix shape; the patch carries splits, so `ab_measure` correctly marks the alias-shape control NOT_APPLICABLE. `tools/icf_alias_finder.py --validate`: PASS, 0 contradicted.
 
-Per-unit attribution (leg A − leg B, from the archived reports):
+Per-unit attribution (leg A − leg B, from the archived reports, read from each unit's `measures` block — my first reader looked at the top level, read zeros, and produced an empty table; caught before the report, fixed here):
 
 | unit | Δfn | ΔB |
 |---|---:|---:|
+| default/PitchArrow | +2 | +452 |
+| default/BandLeadMeter | +2 | +448 |
+| default/Instance | +1 | +252 |
+| default/LayerDir | +1 | +176 |
+| default/UISlider | +2 | +160 |
+| default/VocalTrackDir | +2 | +160 |
+| default/CharInterest | +9 | +108 |
+| default/SpotlightEnder | +8 | +96 |
+| default/Anim | +6 | +72 |
+| default/CharBlendBone | +6 | +72 |
+| default/PanelDir | +6 | +72 |
+| default/CharTransDraw | +6 | +72 |
+| default/system/bandobj/ReviewDisplay | +5 | +60 |
+| default/system/rndobj/Movie | +5 | +60 |
+| default/LitAnim | +4 | +48 |
 
-0 units moved in total; negative rows: 
-Unit reaching 100 % (mpn): []
-
+106 units moved (ΣΔfn +218, ΣΔB +4056); top 15 shown. **Units that LOSE with the commit** (8): `default/HamCharacter` (-1 fn / -12 B), `default/CharLipSync` (-1 fn / -12 B), `default/MetaMusic` (-1 fn / -12 B), `default/TrackWatcherImpl` (-1 fn / -12 B), `default/PostProcer` (-1 fn / -12 B), `default/HamScrollSpeedIndicator` (-3 fn / -36 B), `default/CharIKRod` (-4 fn / -48 B), `default/BandLabel` (-2 fn / -112 B) — these are the rows whose correct name has no pairable home yet (or whose pairing was a false 100), listed in §5.
 
 ## 5. Handoffs
 
