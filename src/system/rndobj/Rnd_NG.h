@@ -24,6 +24,11 @@ public:
         float MaxZ; // 0x14
     };
     struct RndPointTest {
+        // The value vector::resize fills with.  DxRnd::DoPointTests (retail
+        // fn_8273D0A0) builds it on the stack at 0x58(r1) as {0, -1, -1} and
+        // hands it to _M_fill_insert; a value-initialised (all-zero) struct
+        // would store three zeros instead.
+        RndPointTest() : mFlare(nullptr), mPointQueryIdx(-1), mAreaQueryIdx(-1) {}
         RndFlare *mFlare; // 0x0
         unsigned int mPointQueryIdx; // 0x4
         unsigned int mAreaQueryIdx; // 0x8
