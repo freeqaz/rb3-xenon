@@ -216,3 +216,12 @@ were previously UNPAIRED and now pair:
 5. **Rows C–G** — adjudicated IRREDUCIBLE, see §1. No rename is safe: the
    thunk-side base spellings have no retail address, so renaming makes the rows
    permanently 0%.
+
+## 6. Native gate
+
+`src/` changed (four files), so the gate is required. Run last, from the
+worktree, after every other action:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
