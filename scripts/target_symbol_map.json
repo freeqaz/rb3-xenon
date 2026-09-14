@@ -13767,7 +13767,7 @@
  "0x8260fce0": "?Enter@CharacterCreatorPanel@@UAAXXZ",
  "0x8260fd58": "?Exit@CharacterCreatorPanel@@UAAXXZ",
  "0x82610040": "?GetRandomEyebrows@CharacterCreatorPanel@@QAA?AVSymbol@@XZ",
- "0x826101b8": "??1?$map@HPAVUIComponent@@U?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+ "0x826101b8": "??1?$hash_map@HPAVUIComponent@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
  "0x826101c8": "??1CharacterCreatorPanel@@UAA@XZ",
  "0x826102a0": "?ClassName@CharacterCreatorPanel@@UBA?AVSymbol@@XZ",
  "0x826102d0": "?DataDir@UIPanel@@$4PPPPPPPM@GM@AAPAVObjectDir@@XZ",
@@ -30469,5 +30469,6 @@
  "0x825f4258": "?DataDir@UIPanel@@$4PPPPPPPM@BM@AAPAVObjectDir@@XZ",
  "0x825f4268": "?SetTypeDef@UIPanel@@$4PPPPPPPM@BM@AAXPAVDataArray@@@Z",
  "0x825f57c0": "??0CampaignSongInfoPanel@@QAA@XZ",
- "0x823c8cf0": "??_DCharTransDraw@@QAAXXZ"
+ "0x823c8cf0": "??_DCharTransDraw@@QAAXXZ",
+ "0x826100f8": "??1?$hashtable@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
 }
