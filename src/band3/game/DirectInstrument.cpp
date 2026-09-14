@@ -12,8 +12,7 @@ DirectInstrument::DirectInstrument()
     DataArray *sounddotinstruments = SystemConfig("sound", "instruments");
     const char *path = sounddotinstruments->FindStr("chamberlin");
     mVolume = SystemConfig("sound")->FindInt("direct_instrument_volume");
-    FilePath fp(".", path);
-    mDir.LoadFile(fp, 1, true, kLoadFront, false);
+    mDir.LoadFile(FilePath(".", path), 1, true, kLoadFront, false);
 }
 
 DirectInstrument::~DirectInstrument() { Disable(); }
