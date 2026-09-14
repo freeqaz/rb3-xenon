@@ -30501,5 +30501,6 @@
  "0x823eae00": "?AllocateNetSearchResults@SessionSearcher@@QAAXXZ",
  "0x823eb328": "??0SessionSearcher@@QAA@XZ",
  "0x822c5580": "?resize@?$ObjVector@VConstraint@BandIKEffector@@@@QAAXI@Z",
- "0x825b2ea0": "?ResolveAutoSignInStates@OvershellPanel@@QAAXXZ"
+ "0x825b2ea0": "?ResolveAutoSignInStates@OvershellPanel@@QAAXXZ",
+ "0x825b2ff0": "?ResolveChooseProfileStates@OvershellPanel@@QAAXXZ"
 }
