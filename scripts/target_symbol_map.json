@@ -10080,6 +10080,8 @@
  "0x824f77f8": "?Update@IdUpdater@@UAAXPAVMessage@@@Z",
  "0x824f7ac0": "??1RockCentral@@UAA@XZ",
  "0x824f7be8": "?OnMsg@RockCentral@@QAA?AVDataNode@@ABVConnectionStatusChangedMsg@@@Z",
+ "0x824f7c98": "?OnMsg@RockCentral@@QAA?AVDataNode@@ABVUserLoginMsg@@@Z",
+ "0x824f7d48": "?OnMsg@RockCentral@@QAA?AVDataNode@@ABVProfileChangedMsg@@@Z",
  "0x824f7e50": "?ExecuteConfig@RockCentral@@QAAXPBD@Z",
  "0x824f7ff8": "?SendFailure@RockCentral@@SAXPAVObject@Hmx@@HH@Z",
  "0x824f80b8": "??$?0PBDH@?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@QAA@ABU?$pair@PBDH@1@@Z",
