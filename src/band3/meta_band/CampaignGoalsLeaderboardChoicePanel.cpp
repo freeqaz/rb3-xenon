@@ -79,6 +79,13 @@ _STLP_END_NAMESPACE
 GoalCmp::GoalCmp(const AccomplishmentManager *mgr) : m_pAccomplishmentMgr(mgr) {}
 
 bool GoalCmp::operator()(Symbol lhs, Symbol rhs) const {
+    // Retail materialises a FUNCTION-LOCAL static here, not the extern global
+    // `campaign_metascore` that the rb3-Wii dev source (and our port of it) used:
+    // retail 0x825F32A8 tests an init guard at 0x82E00398, constructs storage at
+    // 0x82E00394 via ??0Symbol@@QAA@PBD@Z from the .rdata literal at 0x820A32E8
+    // ("campaign_metascore"), and rolls the guard back in the EH funclet at
+    // 0x825F3358. The oracle is wrong here and the retail bytes are right.
+    static Symbol campaign_metascore("campaign_metascore");
     if (lhs == campaign_metascore)
         return true;
     else if (rhs == campaign_metascore)
