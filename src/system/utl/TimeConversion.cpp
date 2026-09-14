@@ -44,13 +44,20 @@ float BeatToTick(float beat) { return TheBeatMap->BeatToTick(beat); }
 
 float TickToBeat(int tick) { return TheBeatMap->Beat(tick); }
 
-// NOTE: retail has a 36 B function at 0x827C91A0, between TickToBeat and
-// SecondsToBeat, whose body is `TheTempoMap->TimeToTick(f1 * 1000.0f)` as a tail
-// call -- i.e. seconds-to-tick.  Neither TimeConversion.h (ours, rb3-Wii or DC3)
-// declares such a function and its single retail caller (GamePanel, 0x82695178)
-// is unidentified, so it is deliberately left ANONYMOUS in target_symbol_map.json
-// rather than given an invented name.  The map used to call it ??__ETheLocale,
-// which was wrong (Locale.cpp's dynamic initialiser is not in this cluster).
+// Retail X360 0x827C91A0 is 36 B / 9 instructions: lis/lwz TheTempoMap, lfs
+// 1000.0f (lbl_820010B4), fmuls f1, lwz vtable, lwz +0x8 (TimeToTick), mtctr,
+// bctr -- MsToTick inlined into a seconds->tick tail call, the exact twin of
+// SecondsToBeat below.  Its single retail caller is GamePanel::UpdateNowBar
+// (0x82695178; lane W16-AT ported that body and needs this call shape -- an
+// inline `TheTempoMap->TimeToTick(sec * 1000)` at the call site would emit the
+// vcall in GamePanel instead of a `bl`).  The NAME is convention-derived from
+// SecondsToBeat/TickToSeconds; no header (ours, rb3-Wii or DC3) declares it, so
+// the map row 0x827c91a0 is deliberately left ANONYMOUS rather than given this
+// invented name (under name_check a placeholder callee is already forgiven at
+// the GamePanel call site; naming it would be a bet, not a proof).  The map
+// used to call it ??__ETheLocale, which was wrong (Locale.cpp's dynamic
+// initialiser is not in this cluster).
+float SecondsToTick(float sec) { return MsToTick(sec * 1000); }
 
 // Retail X360 0x827C91C8 is 76 B: fmuls f1 by 1000.0f, TheTempoMap vcall +0x8,
 // then `bl BeatMap::Beat(float)` -- MsToBeat inlined, unguarded.
