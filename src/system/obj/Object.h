@@ -922,10 +922,23 @@ inline bool RefIs(ObjRef *from, const P &member) {
     return from == static_cast<ObjRef *>(const_cast<P *>(&member));
 #else
     // X360: the ring dispatches the owner's Replace with the dying Hmx::Object*
-    // as `from`. Compare against the held object's raw address. (MI/vbase cases
-    // can false-negative here, but these are NonMatching consumer ring paths.)
-    return reinterpret_cast<void *>(from)
-        == reinterpret_cast<void *>(const_cast<P &>(member).Ptr());
+    // as `from`, and retail compares it against the pointee's Hmx::Object
+    // SUBOBJECT -- i.e. the C++ upcast, not the raw held address.  Proven on
+    // retail bytes across the whole Replace family (lane W16-Q): every body
+    // whose held type reaches Hmx::Object through a virtual base emits MSVC's
+    // null-checked vbptr/vbtable adjust
+    //     if (p) p = (char*)p + 4 + *(*(p+4)+4);
+    // before the compare -- RndMatAnim 0x824619d8, RndEnvAnim 0x82486ad0,
+    // RndTransAnim 0x8245e440, RndLightAnim 0x82471518, CharWeightable
+    // 0x823ae888, CharBonesMeshes 0x8237b338, RndTransformable 0x823f94e8.
+    // Where Hmx::Object sits at offset 0 the upcast is a no-op and MSVC emits
+    // nothing extra, which is why RndMovie 0x82478128 and TexMovie 0x827461a0
+    // compare the held pointer directly -- those are NOT counterexamples.
+    // The held object is written on the LEFT because that is retail's operand
+    // order (`cmplw cr6, upcast, from`); see the W16-O v1/v2 split on
+    // RndTransformable::Replace, where the order alone was worth 124 B.
+    return static_cast<Hmx::Object *>(const_cast<P &>(member).Ptr())
+        == reinterpret_cast<Hmx::Object *>(from);
 #endif
 }
 
