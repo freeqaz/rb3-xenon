@@ -591,9 +591,14 @@ void DxRnd::SetShaderRegisterAlloc(RegisterAlloc s) {
             D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0, 0);
             break;
         case 1:
-            D3DDevice_SetShaderGPRAllocation(
-                mD3DDevice, 0, mDefaultVSRegAlloc, mDefaultPSRegAlloc
-            );
+            // Literal 0x20/0x60, NOT mDefaultVSRegAlloc/mDefaultPSRegAlloc.
+            // DC3 promoted these two to configurable members; RB3 retail did
+            // not have them yet.  Witness: SetShaderRegisterAlloc has no
+            // standalone COMDAT in retail (it is absent from report.json), so
+            // it is only ever seen inlined -- and the inlined copy inside
+            // BeginDrawing at 0x8273CEF0 emits `li r5,0x20; li r6,0x60`, while
+            // NOTHING in the whole of Rnd_Xbox.s ever loads 0x3a4/0x3a8/0x3ac.
+            D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0x20, 0x60);
             break;
         case 2:
             D3DDevice_SetShaderGPRAllocation(mD3DDevice, 0, 0x10, 0x70);
@@ -1051,6 +1056,73 @@ void DxRnd::ReleaseAutoRelease() {
     }
     mPendingDeletes.clear();
     mPendingDeletes.swap(stillBoundTextures);
+}
+
+// Retail 0x8273CEF0 (396 B).  W16-V refused to pin this on adjacency because it
+// opens with a bit test on a global at 0x82E04FFC that DC3's BeginDrawing does
+// not have.  That global is not a render-state member: it is the MSVC local-
+// static initialisation GUARD BIT for the `cpuTimer` static below, with the
+// Timer* itself at 0x82E04FF8.  Retail proves it by construction --
+//   lwz r11,0x4ffc(r10); clrlwi. r9,r11,31; bne <skip>; ori r11,r11,1; stw ...
+//   addi r3,r31,0x50; addi r4,lbl_820010B0; bl ??0Symbol@@QAA@PBD@Z
+//   lwz r3,0(r3);            bl ?GetTimer@AutoTimer@@SAPAVTimer@@VSymbol@@@Z
+//   stw r3,0x4ff8(r11)
+// -- test bit 0, set bit 0, run the initialiser once, store the pointer.  Note
+// the Symbol temporary: RB3's AutoTimer::GetTimer takes a *Symbol* (our
+// os/Timer.h:293 agrees), where DC3's takes a const char*, so the ctor call is
+// part of the argument and not a separate statement.
+//
+// DC3 IS NEWER and its BeginDrawing has four such statics plus mPrintGlitches /
+// MILO_LOG glitch reporting, mCaptureNextFrame / PIXCaptureGpuFrame, and
+// mGSTiming / PerfCounters.  None of that is in retail's 396 bytes -- there is
+// exactly ONE guard bit and ONE Timer* store, and no Timer::Start/Stop call at
+// all -- so this is DC3's body with the later additions removed, not a port.
+//
+// The three virtual calls are read off the compiler's own vtable report rather
+// than guessed: lwz r11,0(r3) then +0xe4 / +0x118 / +0x120 are slots 57 / 70 /
+// 72 = Rnd::DrawPreClear / DxRnd::Resume / NgRnd::ResetStats.  The four members
+// are compiler-verified too: 0x2c mClearColor, 0x1c4 mD3DDevice, 0x398
+// mSuspended, 0x39c mRegAlloc.
+//
+// The colour pack is MakeColor's: retail scales by 255.0f (lbl_82033A50 =
+// 0x437F0000) via fmuls/fctidz and then splices with
+//   rlwimi r8,r11,8,16,23 ; clrlwi r11,r8,16 ; rlwimi r7,r11,8,0,23
+// which is (red&0xFF)<<16 | (green&0xFF)<<8 | (blue&0xFF).  The Z argument is
+// lbl_82000D78 = 0.0f, i.e. the literal 0 of the existing 8-argument call form
+// already used at lines 426 and 653.
+void DxRnd::BeginDrawing() {
+    static Timer *cpuTimer = AutoTimer::GetTimer("cpu");
+    if (mSuspended) {
+        Resume();
+    }
+    Present();
+    if (MainThread()) {
+        ReleaseAutoRelease();
+    }
+    Rnd::BeginDrawing();
+    DrawPreClear();
+    Hmx::Color clearColor = mClearColor;
+    // NOT MakeColor(): that helper packs alpha as a fourth channel (Rnd.h:248),
+    // and retail loads exactly THREE floats here -- lfs f13,0x60 / f12,0x64 /
+    // f11,0x68 = red/green/blue, three fmuls, three fctidz.  MakeColor's alpha
+    // term shows up as a surplus `lfs f10,0x64(r31)` + `fmuls`.  The splice
+    // rlwimi r8,r11,8,16,23 ; clrlwi r11,r8,16 ; rlwimi r7,r11,8,0,23 is
+    // exactly the RGB expression below.
+    D3DDevice_Clear(
+        mD3DDevice,
+        0,
+        nullptr,
+        0x31,
+        ((unsigned long)(clearColor.red * 255.0f) & 0xFF) << 16
+            | ((unsigned long)(clearColor.green * 255.0f) & 0xFF) << 8
+            | ((unsigned long)(clearColor.blue * 255.0f) & 0xFF),
+        0,
+        0,
+        0
+    );
+    SetShaderRegisterAlloc((RegisterAlloc)1);
+    ResetStats();
+    NgMat::SetCurrent(nullptr);
 }
 
 // COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
