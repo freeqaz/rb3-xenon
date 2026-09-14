@@ -48,9 +48,22 @@ BEGIN_HANDLERS(RndLightAnim)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(RndLightAnim)
+#ifdef HX_NATIVE
+    /* RB3-360 retail enumerates NO properties here -- these three are DC3-era
+     * additions, exactly as lane CP-2 proved for the sibling RndCamAnim.
+     * Proof (lane W16-U, 2026-09-14) is retail's own ICF geometry, not oracle
+     * agreement: retail's vtordisp thunk 0x824863E8 is shared by
+     * ?SyncProperty@RndCamAnim@@ and ?SyncProperty@RndLightAnim@@ and branches
+     * to 0x82485880, a 120 B body that is masked-EQUAL to our RndCamAnim
+     * version -- two calls only, DataNode::Sym then
+     * RndAnimatable::SyncProperty.  Our 392 B body's three ??0Symbol@@
+     * constructions and three PropSync calls have no room in it.
+     * Kept for the native port, which edits object properties through
+     * SyncProperty. */
     SYNC_PROP(light, mLight)
     SYNC_PROP(color_keys, mColorKeys)
     SYNC_PROP(keys_owner, mKeysOwner)
+#endif
     SYNC_SUPERCLASS(RndAnimatable)
 #ifdef HX_NATIVE
     // RB3-360 retail SyncProperty chain stops at the immediate superclass;
