@@ -19,6 +19,9 @@ relocs, size) shape reproducing those two contradictions, plus controls:
     mode=off             -> every contradiction ACCEPTED -- proves the verdict is
                             the gate's, and that `off` really is the old behaviour
     survivor not compiled (None) -> None (cannot be checked; counted, not refused)
+    name-variant target inside ONE alias class (eq=) -> ACCEPT; the same shape
+                            with a target in NO class -> REFUSE, naming the pair
+    retail `lbl_` rdata placeholder vs our `__real@` literal -> ACCEPT
 
 Exit 0 on pass, 1 on any failed expectation.  Registered in scripts/test_tools.py.
 """
@@ -95,6 +98,51 @@ def main():
     print("CONTROL: survivor spelling not compiled by us (None) / retail missing")
     expect("st=None", B.survivor_self_check(rt, None, mode="strict"), want_none=True)
     expect("rt=None", B.survivor_self_check(None, st, mode="strict"), want_none=True)
+
+    # ★ W16-AE calibration: the first cut compared target NAMES literally and
+    # over-refused 279 landed groups whose callees were name-VARIANT members of
+    # one fold class (PreloadPanel: retail ??3BinStream vs ours ??3@YAXPAX@Z,
+    # both in the 0x8240ddb0 operator-delete group; report.json scores it 100).
+    # The gate must accept under the SAME equivalence objdiff applies, and must
+    # STILL refuse a target in no class (AppLabel: retail ?MemFree vs ours
+    # ??3BandLabel; report.json charges it, 99.74).
+    print("EQUIVALENCE: reloc target differs by NAME only, both in one alias class")
+    eq = {"??3BinStream@@SAXPAX@Z": "??3BinStream@@SAXPAX@Z",
+          "??3@YAXPAX@Z": "??3BinStream@@SAXPAX@Z",
+          "??3BandLabel@@SAXPAX@Z": "??3BinStream@@SAXPAX@Z"}
+    rt = rec(84, [(0x1c, "??_DPreloadPanel@@QAAXXZ", "REL24"), (0x2c, "??3BinStream@@SAXPAX@Z", "REL24")], 9)
+    st = rec(84, [(0x1c, "??_DPreloadPanel@@QAAXXZ", "REL24"), (0x2c, "??3@YAXPAX@Z", "REL24")], 9)
+    mp = frozenset({"??3BinStream@@SAXPAX@Z", "??3@YAXPAX@Z", "?MemFree@@YAXPAX@Z", "??3BandLabel@@SAXPAX@Z"})
+    expect("with eq (accept)", B.survivor_self_check(rt, st, mapped=mp, mode="shape", eq=eq), want_none=True)
+    expect("without eq (literal names refuse -- the over-refusal)",
+           B.survivor_self_check(rt, st, mapped=mp, mode="shape", eq=None), want_none=False)
+    print("EQUIVALENCE CONTROL: target in NO class must still be refused (AppLabel MemFree case)")
+    rt = rec(76, [(0x1c, "??_DAppLabel@@QAAXXZ", "REL24"), (0x2c, "?MemFree@@YAXPAX@Z", "REL24")], 10)
+    st = rec(76, [(0x1c, "??_DAppLabel@@QAAXXZ", "REL24"), (0x2c, "??3BandLabel@@SAXPAX@Z", "REL24")], 10)
+    got = B.survivor_self_check(rt, st, mapped=mp, mode="shape", eq=eq)
+    expect("with eq (refuse)", got, want_none=False)
+    if got is not None and "?MemFree@@YAXPAX@Z" not in got:
+        print("  FAIL  refusal must NAME the differing pair; got: %s" % got); fails += 1
+    print("EQUIVALENCE: retail rdata placeholder lbl_ vs our __real@ literal (AtFrame<Symbol>)")
+    rt = rec(260, [(0x8, "lbl_82000D78", "ADDR16_HA"), (0xc, "lbl_82000D78", "ADDR16_LO")], 11)
+    st = rec(260, [(0x8, "__real@00000000", "ADDR16_HA"), (0xc, "__real@00000000", "ADDR16_LO")], 11)
+    expect("placeholder vs literal (accept)", B.survivor_self_check(rt, st, mapped=mp, mode="shape", eq=eq), want_none=True)
+    print("load_equivalences / canon_relocs round-trip on a synthetic aliases file")
+    import json, tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".json", dir=os.path.expanduser("~/tmp"), delete=False) as fh:
+        json.dump({"groups": [{"survivor": "S", "folded": ["F1", "F2"]}, {"survivor": "S2", "folded": ["F1"]}]}, fh)
+        tmp = fh.name
+    try:
+        e = B.load_equivalences(tmp)
+        ok = e == {"S": "S", "F1": "S", "F2": "S", "S2": "S2"}
+        print("  %s  load_equivalences first-class-wins -> %s" % ("ok " if ok else "FAIL", e)); fails += 0 if ok else 1
+        c = B.canon_relocs(("b", [(0, "F2", "REL24"), (4, "zz", "REL24")], 8), e)
+        ok = c[1] == [(0, "S", "REL24"), (4, "zz", "REL24")]
+        print("  %s  canon_relocs rewrites members, leaves strangers -> %s" % ("ok " if ok else "FAIL", c[1])); fails += 0 if ok else 1
+        ok = B.load_equivalences("none") == {} and B.load_equivalences("") == {}
+        print("  %s  load_equivalences('none'/'') -> {}" % ("ok " if ok else "FAIL")); fails += 0 if ok else 1
+    finally:
+        os.unlink(tmp)
 
     print("\n%s (%d failure(s))" % ("PASS" if fails == 0 else "FAIL", fails))
     return 0 if fails == 0 else 1
