@@ -57,7 +57,7 @@ public:
     void UpdateDeltaTimeOverlay();
     void UpdateLatency();
     void PlayBandDiedCue();
-    void SendRestartGameNetMsg(bool);
+    void SendRestartGameNetMsg();
     void SendResumeNoScoreGameNetMsg(float);
     void ToggleInstrumentSynth();
     void ClearDrawGlitch();

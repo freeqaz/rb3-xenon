@@ -1,0 +1,55 @@
+{
+  "_comment": "Alias proposals from lane W16-AP (GamePanel unit closure, 2026-09-14). W16-AP is barred from editing scripts/symbol_aliases.json, which lane W16-AL owns, so these are filed as a proposal instead. Each entry names an EXISTING group by survivor address and proposes ADDING one folded spelling to it. Nothing here is a new group. Every claim below was measured in ~/tmp/wt-w16-ap at branch w16-ap; re-run the evidence before applying -- do not apply on the strength of this file alone.",
+  "proposals": [
+    {
+      "id": "W16AP-1",
+      "group_address": "0x826c3888",
+      "existing_survivor": "??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z",
+      "add_folded": "?PrintStats@HitTracker@@QBAXXZ",
+      "tier": "FT-EMPTY + positional",
+      "unlocks": "default/GamePanel::?Handle@GamePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z -- 1812 B, currently fuzzy 99.9890 AND mpn 99.9890 behind this ONE charged site and nothing else (base size == target size == 1812).",
+      "evidence": [
+        "Our compiled ?PrintStats@HitTracker@@QBAXXZ is a .text COMDAT of raw size 4 whose bytes are 4e800020 -- a bare blr with no relocations. Read out of build/45410914/src/band3/game/HitTracker.obj, not inferred.",
+        "It is empty because its entire body is MILO_LOG calls (src/band3/game/HitTracker.cpp:41-60) and the MILO_* family is #ifdef HX_NATIVE, which the match build never defines.",
+        "Retail's body at the survivor address 0x826c3888 is likewise a single blr (build/45410914/asm/GemPlayer.s, keyed on the .fn symbol, NOT the synthetic address column). Independently corroborated: RestartGameMsg's vtable lbl_820DBFAC points BOTH its Save and Load slots at this same address.",
+        "POSITIONAL, and this is the non-vacuous half -- byte identity alone proves little between two empty bodies. In Handle, the immediately following HANDLE_ACTION loads the SAME member (`lwz r3, -0x10(r27)` at idx 297, identical on both sides) and calls ?Reset@HitTracker@@QAAXXZ at idx 298, a name BOTH SIDES ALREADY AGREE ON. So the pointer at -0x10(r27) is a HitTracker*, and the charged call at idx 280 is a HitTracker method on that same pointer, at the source position of HANDLE_ACTION(print_hit_stats, mHitTracker->PrintStats())."
+      ],
+      "caveat": "FT-EMPTY is the honest tier for the byte half: an empty body is identical to every other empty body, so the fold is real but byte comparison alone cannot single out PrintStats. The positional witness is what discriminates."
+    },
+    {
+      "id": "W16AP-2",
+      "group_address": "0x82823340",
+      "existing_survivor": "?IsLoaded@?$ObjDirPtr@VUILabelDir@@@@QBA_NXZ",
+      "add_folded": "?IsLoaded@?$ObjDirPtr@VObjectDir@@@@QBA_NXZ",
+      "tier": "T1 (non-vacuous: zero relocations on our side, so nothing is masked)",
+      "unlocks": "prerequisite for W16AP-3",
+      "evidence": [
+        "Our compiled ?IsLoaded@?$ObjDirPtr@VObjectDir@@@@QBA_NXZ (build/45410914/src/band3/game/DirectInstrument.obj) is 96 bytes with ZERO relocations.",
+        "Retail's body at 0x82823340 is 96 bytes. Compared programmatically word-for-word, not by eye: IDENTICAL on all 96 bytes.",
+        "Because our side carries NO relocation at all, there is nothing for the comparison to mask -- this is the case where flat T1 is fully informative rather than understating.",
+        "ObjDirPtr<T>::IsLoaded is a header template whose body does not depend on T (it tests the dir pointer and dispatches through a vtable slot via bctrl, no T-dependent relocation), so every instantiation compiles to these same 96 bytes and all of them fold onto one survivor.",
+        "MAP-CONSISTENCY control: the map contains EXACTLY ONE ?IsLoaded@?$ObjDirPtr@...@@QBA_NXZ row in the whole binary (0x82823340). No second address places a rival instantiation, so nothing in the image contradicts the fold."
+      ]
+    },
+    {
+      "id": "W16AP-3",
+      "group_address": "0x826ccb48",
+      "existing_survivor": "??$_Destroy@UGrammar@SpeechMgr@@@stlpmtx_std@@YAXPAUGrammar@SpeechMgr@@@Z",
+      "add_folded": "?IsLoaded@DirectInstrument@@QAA_NXZ",
+      "tier": "T1, conditional on W16AP-2",
+      "unlocks": "default/GamePanel::?IsLoaded@GamePanel@@UBA_NXZ -- 124 B, currently fuzzy 99.8387 behind this ONE charged site.",
+      "evidence": [
+        "Our compiled ?IsLoaded@DirectInstrument@@QAA_NXZ is 8 bytes: 38630004 4bfffffc = `addi r3, r3, 0x4; b <reloc>`, with exactly 1 relocation whose target symbol is ?IsLoaded@?$ObjDirPtr@VObjectDir@@@@QBA_NXZ.",
+        "Retail's body at 0x826ccb48 is 8 bytes: `addi r3, r3, 0x4; b fn_82823340`, and the map names 0x82823340 = ?IsLoaded@?$ObjDirPtr@VUILabelDir@@@@QBA_NXZ.",
+        "First word byte-identical; second word is the same instruction differing only in its relocated displacement. So the two thunks fold IF AND ONLY IF their branch destinations are the same function -- which is exactly what W16AP-2 proves. Apply W16AP-2 and W16AP-3 together or neither.",
+        "DirectInstrument::IsLoaded is `return mDir.IsLoaded();` over ObjDirPtr<ObjectDir> mDir at offset 4 (src/band3/game/DirectInstrument.h), which is why it compiles to a +4 adjust and a tail call."
+      ]
+    }
+  ],
+  "explicitly_not_proposed": {
+    "symbol": "??0Splash@@QAA@XZ at 0x826ccc10",
+    "context": "default/GamePanel::??0GamePanel@@QAA@XZ (468 B, fuzzy 99.9573) has exactly one charged site: target `bl ??0Splash@@QAA@XZ` where we emit `bl ??0DirectInstrument@@QAA@XZ`.",
+    "why_not": "This does NOT look like a fold and no alias should be invented for it. Retail's ??0Splash@@QAA@XZ is 328 B (report.json, unit default/Splash) while our ??0DirectInstrument@@QAA@XZ COMDAT is ~420 B, and MSVC folds only identical COMDATs -- different sizes cannot fold. Independently, default/Splash's own row for ??0Splash@@QAA@XZ sits at fuzzy 6.890244, i.e. our Splash source does not produce that body either. Two spellings that neither fold nor self-match is the signature of a MIS-IDENTIFIED ADDRESS, not of ICF. Adding an alias here would lift name_check by construction and bury a real identification defect. Flagged for a map/identification lane instead -- see the mis-pin/mis-name section of docs/decomp/W16AP_GAMEPANEL_UNIT_CLOSURE_2026-09-14.md.",
+    "size_caveat": "The ~420 B figure is our own COFF reader's COMDAT span and may over-count (lane STLPORT-1 measured exactly this reader class billing a successor symbol's EH funclet prefix into the span). The 92 B gap is far larger than that artifact, and the 6.89 % self-match is an independent second witness, so the conclusion does not rest on the size alone -- but re-derive the size before acting on it."
+  }
+}

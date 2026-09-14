@@ -168,6 +168,13 @@ void GamePanel::CreateGame() {
 #endif
     RELEASE(mGame);
     mGame = new Game();
+    // Retail materialises a FUNCTION-LOCAL static Symbol here (guard word
+    // lbl_82E0260C bit 0x1, instance lbl_82E02608, string lbl_820E2608 ==
+    // "disable_pause_ms", plus a ??__F atexit thunk), emitted at this exact
+    // declaration point -- immediately after the mGame store and before the
+    // Property call. The rb3-Wii oracle uses the file-scope extern from
+    // Symbols2.h:1146, which is the wrong spelling for this image.
+    static Symbol disable_pause_ms("disable_pause_ms");
     mGame->mDisablePauseMs = Property(disable_pause_ms, true)->Float();
 }
 
@@ -592,8 +599,8 @@ void GamePanel::ClearDrawGlitch() {
     }
 }
 
-void GamePanel::SendRestartGameNetMsg(bool b1) {
-    RestartGameMsg msg(b1);
+void GamePanel::SendRestartGameNetMsg() {
+    RestartGameMsg msg;
     TheNetSession->SendMsgToAll(msg, kReliable);
 }
 
@@ -636,7 +643,7 @@ BEGIN_HANDLERS(GamePanel)
     HANDLE_EXPR(is_playing, mGameState == kGamePlaying)
     HANDLE_ACTION(start_game, StartGame())
     HANDLE(start_load_song, OnStartLoadSong)
-    HANDLE_ACTION(send_restart_game_net_msg, SendRestartGameNetMsg(_msg->Int(2)))
+    HANDLE_ACTION(send_restart_game_net_msg, SendRestartGameNetMsg())
     HANDLE_ACTION(
         send_resume_no_score_game_net_msg, SendResumeNoScoreGameNetMsg(_msg->Float(2))
     )
