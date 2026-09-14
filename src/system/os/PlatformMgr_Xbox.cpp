@@ -96,10 +96,10 @@ PlatformMgr::PlatformMgr() {
 
     mJobMgr = new JobMgr(this);
 
-    mXuidCache[0] = 0;
-    mXuidCache[1] = 0;
-    mXuidCache[2] = 0;
-    mXuidCache[3] = 0;
+    // Retail's tail is four `std r29` through ONE lis/addi pair with no zero
+    // copies -- the /Oi memset intrinsic; four scalar stores materialised
+    // three `mr rN,r29` (W16-M S3A2).
+    memset(mXuidCache, 0, sizeof(mXuidCache));
     // DC3-only: `XOVERLAPPED mOverlapped` is part of DC3's XSocial block, which
     // lane NCCC removed from PlatformMgr.h on RETAIL-BYTE evidence -- retail's
     // member block runs 0x1c..0x47 (44 B), proven by PlatformMgr::Handle
@@ -110,16 +110,36 @@ PlatformMgr::PlatformMgr() {
 bool PlatformMgr::IsEthernetCableConnected() { return XNetGetEthernetLinkStatus() != 0; }
 
 void PlatformMgr::UpdateSigninState() {
-    XUID oldCache[4] = { mXuidCache[0], mXuidCache[1], mXuidCache[2], mXuidCache[3] };
+    // Retail captures oldCache as a BLOCK copy (four ld through the
+    // mXuidCache base into r8/r7/r6/r9, `mr r9,r27; ld r9,0x18(r9)`, then four
+    // std through r10 = r1+0x50) -- the /Oi memcpy intrinsic. DC3's
+    // initializer-list spelling compiles to scalar ld/std pairs on cl 10224
+    // (W16-M S3C2).
+    XUID oldCache[4];
+    memcpy(oldCache, mXuidCache, sizeof(oldCache));
     int i;
     mSigninMask = 0;
+    // Retail 0x8251c620 zeroes 0x20 (mSigninChangeMask) beside 0x1c and
+    // lbl_82CCA8F0 -- `stw r30,0x20(r3)` -- exactly as DC3 records for its own
+    // image (W16-M S3C, 2026-09-14). Without it the mask is sticky.
+    mSigninChangeMask = 0;
     mSigninSameGuest = 0;
     for (i = 0; i < 4; i++) {
         if (XUserGetSigninState(i) != 0) {
             XUSER_SIGNIN_INFO info = {};
             mSigninMask |= (1 << i);
-            XUserGetSigninInfo(i, 2, &info);
-            XUserGetXUID(i, &info.xuid);
+            // Retail consumes both XUSER results as a branchless select
+            // (`subic r11,r3,1; ld r10,0x70(r1); subfe; and` after each bl)
+            // and only calls XUserGetXUID when the first left the xuid ZERO
+            // (`cmpldi cr6,r11,0; bne`). Same shape as DC3 0x825D3E68.
+            if (XUserGetSigninInfo(i, 2, &info) != 0) {
+                info.xuid = 0;
+            }
+            if (info.xuid == 0) {
+                if (XUserGetXUID(i, &info.xuid) != 0) {
+                    info.xuid = 0;
+                }
+            }
             mXuidCache[i] = info.xuid;
         } else {
             mXuidCache[i] = 0;
