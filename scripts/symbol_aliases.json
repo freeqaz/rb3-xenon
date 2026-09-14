@@ -9470,11 +9470,18 @@
    "name": "$__lower_bound",
    "address": "0x825f3480",
    "survivor": "??$__lower_bound@PAVSymbol@@V1@VAccomplishmentCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VAccomplishmentCmp@@PAH@Z",
-   "folded": [
-    "??$__lower_bound@PAVSymbol@@V1@VGoalCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VGoalCmp@@PAH@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$__lower_bound@PAVSymbol@@V1@VGoalCmp@@H@stlpmtx_std@@YAPAVSymbol@@PAV1@0ABV1@VGoalCmp@@PAH@Z",
+     "lane": "W16-AL 2026-09-14",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "verdict": "CONTRADICTED: target names differ @0x3c: ??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z vs ??RGoalCmp@@QBA_NVSymbol@@0@Z",
+     "why": "W16-AL 2026-09-14. REFUTED ON RETAIL BYTES; withdrawn, not pruned. Three independent instruments agree and none of them is the one that installed this: (1) BOTH spellings are map-resident at DISTINCT retail addresses (0x825f3480 for the withdrawn spelling's group address vs 0x825f7638 for the other member). A linked image resolves each COMDAT symbol to exactly ONE definition, so two spellings named at two VAs did not fold -- this is also why tools/icf_alias_finder.py --validate has been failing this group FATALLY ('target objs name 2 members'). (2) The two RETAIL bodies are the same size with 112 B both sides, 0 of 28 words differ, but their RELOCATION TARGETS differ. MSVC /OPT:ICF folds only COMDATs identical INCLUDING RELOCATIONS, so shape identity with differing relocations is precisely the population that does NOT fold -- the documented _List_base<T>::clear case (42 addresses, reloc-identical surplus 0, because members differ in per-T callee targets). (3) tools/alias_forgiveness_audit.Sides.verdict() returns CONTRADICTED: target names differ @0x3c: ??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z vs ??RGoalCmp@@QBA_NVSymbol@@0@Z. WHY THIS OVERRIDES THE TWO PRIOR RESTORATIONS, engaged rather than ignored: ALIAS-REPAIR 2026-08-19 withdrew this membership; RELOC-RECONCILE 2026-08-20 restored it on the basis that 'our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address'; W9-D 2026-09-13 restored it again as 'FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)'. W9-D's rebuttal of ALIAS-REPAIR is ACCEPTED and is not what is being overturned -- ALIAS-REPAIR's predicate did resolve operands through the ICF congruence over OUR OWN build, and ICF happened in RETAIL's link, so it was unsound in that direction. What does not survive is the POSITIVE claim. Both restorations establish that OUR compiled body for the withdrawn spelling is correctly identified with RETAIL's body at this group's address -- which is a correct IDENTIFICATION of one function, and says nothing about whether the OTHER member folded onto it. Run today on a fully built worktree, the same adjudicator at the same flat L1_T1 layer returns CONTRADICTED and names the differing relocation, so the recorded verdict does not reproduce. Checked and excluded as the explanation: the comparators are NOT themselves aliased (Sides.equiv('??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z', '??RGoalCmp@@QBA_NVSymbol@@0@Z') is False), so L1_T1 is not passing through a second alias and this is not a circular closure -- it simply disagrees. WHAT THE ALIAS WAS DOING: it fires only where retail names one comparator's instantiation and we name the other's. Those are different functions with different comparison predicates, so every site it forgave was a wrong-callee defect, not naming noise. Retained with folded:[] per standing doctrine -- a membership removed without a withdrawn record is a clobber, and a prior prune of this class cost +94,616 B to reverse."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -9514,11 +9521,18 @@
    "name": "$__merge_sort_loop",
    "address": "0x825f3c58",
    "survivor": "??$__merge_sort_loop@PAVSymbol@@PAV1@HVAccomplishmentCategoryCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVAccomplishmentCategoryCmp@@@Z",
-   "folded": [
-    "??$__merge_sort_loop@PAVSymbol@@PAV1@HVGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVGoalCmp@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$__merge_sort_loop@PAVSymbol@@PAV1@HVGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@00HVGoalCmp@@@Z",
+     "lane": "W16-AL 2026-09-14",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "verdict": "CONTRADICTED: relocation target names differ -- ??$merge@...VAccomplishmentCategoryCmp@@... vs ??$merge@...VGoalCmp@@... at both call sites",
+     "why": "W16-AL 2026-09-14. REFUTED ON RETAIL BYTES; withdrawn, not pruned. Three independent instruments agree and none of them is the one that installed this: (1) BOTH spellings are map-resident at DISTINCT retail addresses (0x825f3c58 for the withdrawn spelling's group address vs 0x825f9e18 for the other member). A linked image resolves each COMDAT symbol to exactly ONE definition, so two spellings named at two VAs did not fold -- this is also why tools/icf_alias_finder.py --validate has been failing this group FATALLY ('target objs name 2 members'). (2) The two RETAIL bodies are the same size with 172 B both sides, 0 of 43 words differ, but their RELOCATION TARGETS differ. MSVC /OPT:ICF folds only COMDATs identical INCLUDING RELOCATIONS, so shape identity with differing relocations is precisely the population that does NOT fold -- the documented _List_base<T>::clear case (42 addresses, reloc-identical surplus 0, because members differ in per-T callee targets). (3) tools/alias_forgiveness_audit.Sides.verdict() returns CONTRADICTED: relocation target names differ -- ??$merge@...VAccomplishmentCategoryCmp@@... vs ??$merge@...VGoalCmp@@... at both call sites. WHY THIS OVERRIDES THE TWO PRIOR RESTORATIONS, engaged rather than ignored: ALIAS-REPAIR 2026-08-19 withdrew this membership; RELOC-RECONCILE 2026-08-20 restored it on the basis that 'our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address'; W9-D 2026-09-13 restored it again as 'FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)'. W9-D's rebuttal of ALIAS-REPAIR is ACCEPTED and is not what is being overturned -- ALIAS-REPAIR's predicate did resolve operands through the ICF congruence over OUR OWN build, and ICF happened in RETAIL's link, so it was unsound in that direction. What does not survive is the POSITIVE claim. Both restorations establish that OUR compiled body for the withdrawn spelling is correctly identified with RETAIL's body at this group's address -- which is a correct IDENTIFICATION of one function, and says nothing about whether the OTHER member folded onto it. Run today on a fully built worktree, the same adjudicator at the same flat L1_T1 layer returns CONTRADICTED and names the differing relocation, so the recorded verdict does not reproduce. Checked and excluded as the explanation: the comparators are NOT themselves aliased (Sides.equiv('??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z', '??RGoalCmp@@QBA_NVSymbol@@0@Z') is False), so L1_T1 is not passing through a second alias and this is not a circular closure -- it simply disagrees. WHAT THE ALIAS WAS DOING: it fires only where retail names one comparator's instantiation and we name the other's. Those are different functions with different comparison predicates, so every site it forgave was a wrong-callee defect, not naming noise. Retained with folded:[] per standing doctrine -- a membership removed without a withdrawn record is a clobber, and a prior prune of this class cost +94,616 B to reverse."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -16274,11 +16288,18 @@
    "name": "$__linear_insert",
    "address": "0x825f3db8",
    "survivor": "??$__linear_insert@PAVSymbol@@V1@VAccomplishmentCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VAccomplishmentCmp@@@Z",
-   "folded": [
-    "??$__linear_insert@PAVSymbol@@V1@VGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VGoalCmp@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$__linear_insert@PAVSymbol@@V1@VGoalCmp@@@stlpmtx_std@@YAXPAVSymbol@@0V1@VGoalCmp@@@Z",
+     "lane": "W16-AL 2026-09-14",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "verdict": "CONTRADICTED: target names differ @0x2c: ??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z vs ??RGoalCmp@@QBA_NVSymbol@@0@Z",
+     "why": "W16-AL 2026-09-14. REFUTED ON RETAIL BYTES; withdrawn, not pruned. Three independent instruments agree and none of them is the one that installed this: (1) BOTH spellings are map-resident at DISTINCT retail addresses (0x825f3db8 for the withdrawn spelling's group address vs 0x825faba0 for the other member). A linked image resolves each COMDAT symbol to exactly ONE definition, so two spellings named at two VAs did not fold -- this is also why tools/icf_alias_finder.py --validate has been failing this group FATALLY ('target objs name 2 members'). (2) The two RETAIL bodies are the same size with 128 B both sides, 0 of 32 words differ; the recursive callee ??$__unguarded_linear_insert@...Cmp@@ also differs per comparator, but their RELOCATION TARGETS differ. MSVC /OPT:ICF folds only COMDATs identical INCLUDING RELOCATIONS, so shape identity with differing relocations is precisely the population that does NOT fold -- the documented _List_base<T>::clear case (42 addresses, reloc-identical surplus 0, because members differ in per-T callee targets). (3) tools/alias_forgiveness_audit.Sides.verdict() returns CONTRADICTED: target names differ @0x2c: ??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z vs ??RGoalCmp@@QBA_NVSymbol@@0@Z. WHY THIS OVERRIDES THE TWO PRIOR RESTORATIONS, engaged rather than ignored: ALIAS-REPAIR 2026-08-19 withdrew this membership; RELOC-RECONCILE 2026-08-20 restored it on the basis that 'our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address'; W9-D 2026-09-13 restored it again as 'FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)'. W9-D's rebuttal of ALIAS-REPAIR is ACCEPTED and is not what is being overturned -- ALIAS-REPAIR's predicate did resolve operands through the ICF congruence over OUR OWN build, and ICF happened in RETAIL's link, so it was unsound in that direction. What does not survive is the POSITIVE claim. Both restorations establish that OUR compiled body for the withdrawn spelling is correctly identified with RETAIL's body at this group's address -- which is a correct IDENTIFICATION of one function, and says nothing about whether the OTHER member folded onto it. Run today on a fully built worktree, the same adjudicator at the same flat L1_T1 layer returns CONTRADICTED and names the differing relocation, so the recorded verdict does not reproduce. Checked and excluded as the explanation: the comparators are NOT themselves aliased (Sides.equiv('??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z', '??RGoalCmp@@QBA_NVSymbol@@0@Z') is False), so L1_T1 is not passing through a second alias and this is not a circular closure -- it simply disagrees. WHAT THE ALIAS WAS DOING: it fires only where retail names one comparator's instantiation and we name the other's. Those are different functions with different comparison predicates, so every site it forgave was a wrong-callee defect, not naming noise. Retained with folded:[] per standing doctrine -- a membership removed without a withdrawn record is a clobber, and a prior prune of this class cost +94,616 B to reverse."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -16318,11 +16339,18 @@
    "name": "$__merge_backward",
    "address": "0x825f3e38",
    "survivor": "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VAccomplishmentCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VAccomplishmentCmp@@@Z",
-   "folded": [
-    "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VGoalCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VGoalCmp@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$__merge_backward@PAVSymbol@@PAV1@PAV1@VGoalCmp@@@stlpmtx_std@@YAPAVSymbol@@PAV1@0000VGoalCmp@@@Z",
+     "lane": "W16-AL 2026-09-14",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "verdict": "CONTRADICTED: relocation target names differ -- ??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z vs ??RGoalCmp@@QBA_NVSymbol@@0@Z",
+     "why": "W16-AL 2026-09-14. REFUTED ON RETAIL BYTES; withdrawn, not pruned. Three independent instruments agree and none of them is the one that installed this: (1) BOTH spellings are map-resident at DISTINCT retail addresses (0x825f3e38 for the withdrawn spelling's group address vs 0x825fac20 for the other member). A linked image resolves each COMDAT symbol to exactly ONE definition, so two spellings named at two VAs did not fold -- this is also why tools/icf_alias_finder.py --validate has been failing this group FATALLY ('target objs name 2 members'). (2) The two RETAIL bodies are the same size with 312 B both sides, 0 of 78 words differ, but their RELOCATION TARGETS differ. MSVC /OPT:ICF folds only COMDATs identical INCLUDING RELOCATIONS, so shape identity with differing relocations is precisely the population that does NOT fold -- the documented _List_base<T>::clear case (42 addresses, reloc-identical surplus 0, because members differ in per-T callee targets). (3) tools/alias_forgiveness_audit.Sides.verdict() returns CONTRADICTED: relocation target names differ -- ??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z vs ??RGoalCmp@@QBA_NVSymbol@@0@Z. WHY THIS OVERRIDES THE TWO PRIOR RESTORATIONS, engaged rather than ignored: ALIAS-REPAIR 2026-08-19 withdrew this membership; RELOC-RECONCILE 2026-08-20 restored it on the basis that 'our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address'; W9-D 2026-09-13 restored it again as 'FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)'. W9-D's rebuttal of ALIAS-REPAIR is ACCEPTED and is not what is being overturned -- ALIAS-REPAIR's predicate did resolve operands through the ICF congruence over OUR OWN build, and ICF happened in RETAIL's link, so it was unsound in that direction. What does not survive is the POSITIVE claim. Both restorations establish that OUR compiled body for the withdrawn spelling is correctly identified with RETAIL's body at this group's address -- which is a correct IDENTIFICATION of one function, and says nothing about whether the OTHER member folded onto it. Run today on a fully built worktree, the same adjudicator at the same flat L1_T1 layer returns CONTRADICTED and names the differing relocation, so the recorded verdict does not reproduce. Checked and excluded as the explanation: the comparators are NOT themselves aliased (Sides.equiv('??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z', '??RGoalCmp@@QBA_NVSymbol@@0@Z') is False), so L1_T1 is not passing through a second alias and this is not a circular closure -- it simply disagrees. WHAT THE ALIAS WAS DOING: it fires only where retail names one comparator's instantiation and we name the other's. Those are different functions with different comparison predicates, so every site it forgave was a wrong-callee defect, not naming noise. Retained with folded:[] per standing doctrine -- a membership removed without a withdrawn record is a clobber, and a prior prune of this class cost +94,616 B to reverse."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -74452,10 +74480,18 @@
    "name": "SetTypeDef",
    "address": "0x82808f88",
    "survivor": "?SetTypeDef@UIPanel@@$4PPPPPPPM@BM@AAXPAVDataArray@@@Z",
-   "folded": [
-    "?Highlight@RndDir@@$4PPPPPPPM@FM@AAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?Highlight@RndDir@@$4PPPPPPPM@FM@AAXXZ",
+     "lane": "W16-AL 2026-09-14",
+     "class": "NOT_A_FOLD_DISTINCT_RETAIL_ADDRESSES",
+     "disposition": "withdrawn",
+     "verdict": "CONTRADICTED: word differs @0x8 | DIFFERENT METHOD called: ?SetTypeDef@UIPanel@@UAAXPAVDataArray@@@Z vs ?Highlight@RndDir@@UAAXXZ",
+     "why": "W16-AL 2026-09-14. REFUTED ON RETAIL BYTES; withdrawn, not pruned. Three independent instruments agree and none of them is the one that installed this: (1) BOTH spellings are map-resident at DISTINCT retail addresses (0x82808f88 for the withdrawn spelling's group address vs 0x825f4268 for the other member). A linked image resolves each COMDAT symbol to exactly ONE definition, so two spellings named at two VAs did not fold -- this is also why tools/icf_alias_finder.py --validate has been failing this group FATALLY ('target objs name 2 members'). (2) The two RETAIL bodies are the same size with 16 B both sides, 1 of 4 words differs -- the $4 adjustor displacements themselves differ (BM@ vs FM@), but their RELOCATION TARGETS differ. MSVC /OPT:ICF folds only COMDATs identical INCLUDING RELOCATIONS, so shape identity with differing relocations is precisely the population that does NOT fold -- the documented _List_base<T>::clear case (42 addresses, reloc-identical surplus 0, because members differ in per-T callee targets). (3) tools/alias_forgiveness_audit.Sides.verdict() returns CONTRADICTED: word differs @0x8 | DIFFERENT METHOD called: ?SetTypeDef@UIPanel@@UAAXPAVDataArray@@@Z vs ?Highlight@RndDir@@UAAXXZ. WHY THIS OVERRIDES THE TWO PRIOR RESTORATIONS, engaged rather than ignored: ALIAS-REPAIR 2026-08-19 withdrew this membership; RELOC-RECONCILE 2026-08-20 restored it on the basis that 'our compiled body for the name matches exactly ONE .pdata function start in the retail image, and it is this group's address'; W9-D 2026-09-13 restored it again as 'FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity with relocation TARGET NAMES compared)'. W9-D's rebuttal of ALIAS-REPAIR is ACCEPTED and is not what is being overturned -- ALIAS-REPAIR's predicate did resolve operands through the ICF congruence over OUR OWN build, and ICF happened in RETAIL's link, so it was unsound in that direction. What does not survive is the POSITIVE claim. Both restorations establish that OUR compiled body for the withdrawn spelling is correctly identified with RETAIL's body at this group's address -- which is a correct IDENTIFICATION of one function, and says nothing about whether the OTHER member folded onto it. Run today on a fully built worktree, the same adjudicator at the same flat L1_T1 layer returns CONTRADICTED and names the differing relocation, so the recorded verdict does not reproduce. Checked and excluded as the explanation: the comparators are NOT themselves aliased (Sides.equiv('??RAccomplishmentCmp@@QBA_NVSymbol@@0@Z', '??RGoalCmp@@QBA_NVSymbol@@0@Z') is False), so L1_T1 is not passing through a second alias and this is not a circular closure -- it simply disagrees. WHAT THE ALIAS WAS DOING: it fires only where retail names one comparator's instantiation and we name the other's. Those are different functions with different comparison predicates, so every site it forgave was a wrong-callee defect, not naming noise. Retained with folded:[] per standing doctrine -- a membership removed without a withdrawn record is a clobber, and a prior prune of this class cost +94,616 B to reverse."
+    }
+   ]
   },
   {
    "name": "$__destroy_range_aux",
