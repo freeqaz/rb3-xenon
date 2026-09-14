@@ -235,10 +235,152 @@ diagnosed and reported, not absorbed.
 
 ### MEASURED
 
-_(filled in after the build)_
+Full build rc=0, set-diff of the `fuzzy == 100` row set, measured against the
+post-item-1 state (43272 / 3960772):
+
+    matched_functions  43272 -> 43281      (+9)
+    matched_code       3960772 -> 3961860  (+1,088 B)
+
+**Prediction exact on both measures.** All ten rows crossed to `fuzzy == 100`
+for their full size, and the caller side moved by exactly 0.
+
+| # | addr | unit | predicted | measured |
+|---|---|---|---|---|
+| 1 | `0x82b9b1f8` | GemManager | +92 B | +92 B ✓ |
+| 2 | `0x823ff400` | Tex | +268 B | +268 B ✓ |
+| 3 | `0x822b4bd0` | BandCamShot | +76 B | +76 B ✓ |
+| 4 | `0x827fb758` | UIList | +60 B | +60 B ✓ |
+| 5 | `0x82336af8` | BandCharDesc | +40 B | +40 B ✓ |
+| 6 | `0x825c2430` | BandMachineMgr | +132 B | +132 B ✓ |
+| 7 | `0x827bd990` | Str | +116 B | +116 B ✓ |
+| 8 | `0x8266c440` | TexBlender | +36 B | +36 B ✓ |
+| 9 | `0x826e3ce8` | VocalPlayer | +136 B | +136 B ✓ |
+| 10 | `0x82826b10` | LabelShrinkWrapper | +132 B | +132 B ✓ |
+
+Two rows read as LOST in the set-diff and **neither is a regression**:
+
+- fuzzy `-40 B  default/Waypoint :: fn_823DCC54` — item 1's already-diagnosed EH
+  funclet reassignment, carried in because the diff is against the lane baseline.
+- mpn `-36 B  default/TexBlender :: ~vector<pair<RndTexBlendController*,float>>`
+  — the **same address under its old name**. Report rows are keyed by
+  (unit, symbol), so a rename necessarily reads as one row leaving and one
+  arriving. This is also exactly why the function delta is +9 and not +10: that
+  row was already at `mpn == 100` before the rename, which the prediction table
+  states for row 8.
+
+`python3 tools/icf_alias_finder.py --validate`: **PASS**, 0 CONTRADICTED
+(1,383 map-consistent, 248 tolerated, 1,632 total).
+
+Committed `52f1cc51`; prediction pre-registered in `373adf05`.
+
+---
+
+## Item 4 — W16-Q's three scattered bodies: DECLINED, with the evidence
+
+Located precisely. All three are anonymous `fuzzy == 0` rows sitting in a
+**neighbouring** unit:
+
+| body | row | size |
+|---|---|---|
+| `CharWeightable` | `default/CharEyes :: fn_823AE888` | 144 B |
+| `CharBonesMeshes` | `default/Rot :: fn_8237B338` | 216 B |
+| `RndLightAnim` | `default/MeshAnim :: fn_82471518` | 140 B |
+
+The mechanism is pairability, not source quality: the retail address is pinned
+into the neighbouring unit, while our definition lives in a different TU, so the
+neighbour's base obj cannot define the symbol and **objdiff pairs by name**.
+Total upside if all three then matched: **500 B**.
+
+Declined, for three reasons I want on the record rather than a shrug:
+
+1. The fix is a **scatter-include** of a whole TU into its neighbour
+   (`CharWeightable.cpp` → `CharEyes.cpp`, etc.). That duplicates *every* symbol
+   in the included TU into the neighbour's object, which is precisely the shape
+   that broke the native link in the `mtx.cpp` / `TexRenderer.cpp` incident.
+2. It is a **splits/build-wiring decision with its own blast radius**, which
+   W16-Q explicitly considered and deferred for the same reason. Re-homing the
+   pin instead is not cheaper — CLAUDE.md records that re-homing an
+   already-pinned address is *not* metric-neutral, and the address sits inside a
+   contiguous retail TU block, so moving the pin would carve the neighbour.
+3. It additionally needs a map name for each anonymous address, and naming an
+   anonymous address **converts forgiven call sites into checked ones** — a bet
+   that pays in bug exposure rather than bytes (MAPID-1).
+
+500 B is not worth spending this lane's remaining budget on a change I could not
+then gate properly. Handing it on intact.
+
+**One finding worth passing along:** W16-Q listed `CharBonesMeshes` 216 B as a
+*fourth* unpairable body, but `?SyncProperty@CharBonesMeshes@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z`
+(216 B) now reads `fuzzy == 100` in `default/CharBonesMeshes`. The
+216 B still-unpaired row is the separate anonymous one in `default/Rot` above.
+A lane picking this up should re-derive the three rows rather than inherit
+W16-Q's list — the ceiling moves both ways.
 
 ---
 
 ## What I did NOT do
 
-_(filled in at the end)_
+- **Did not touch `scripts/symbol_aliases.json`'s `survivor`/`folded` to resolve
+  item 1.** The brief forbids it and the aliases are proven; all four fixes are
+  in source.
+- **Did not withdraw the two real item-2 divergences**
+  (`??_GGemTrainerLoopPanel`, `??_GTourChallengeResultsPanel`). The argument for
+  withdrawal is a *size* argument, and the STLPORT-1 trap is exactly a size
+  argument made with a one-sided reader — a size test cancels the artifact on
+  both sides. A withdrawal needs a two-sided normalization I did not build.
+- **Did not touch `0x827f42a8`** (the SIZE row), per the brief.
+- **Did not touch group gi=24 at `0x822dea78`.** It carries W16-I's restored
+  `set<TrackWidget*>::clear` membership from `dcd8d6fe`; it is not in this batch.
+- **Did not re-home the other 164 `IDENTIFICATION_NOT_A_FOLD` rows.** Their new
+  spelling is not defined in the same base obj, so a rename would un-pair them
+  permanently (0% at any source quality). They need source or pinning work
+  first, not a map edit.
+- **Did not act on the 4 not-actionable item-2 rows** — two are vendor/middleware
+  with absent source (out of scope by standing directive), two are a copy ctor
+  that is simply never instantiated, where manufacturing a use site would be
+  metric fitting rather than a fix.
+- **Did not attempt item 4** (reasons above).
+- **Did not re-audit the remaining T1 alias memberships** for the same
+  identification-vs-fold confusion. W16-Q flagged that the T1 instrument is
+  structurally one-sided, so others may carry the same error; that is a
+  lane-sized sweep, not a tail-end task.
+
+---
+
+## Gates
+
+Run in the worktree, in order, as the lane's last actions after the last source
+edit. Gate lines pasted verbatim, not paraphrased.
+
+1. Full build: `BUILD rc=0` (`~/tmp/rb3_build_w16u_3.log`).
+2. `python3 scripts/verify_ruler_agreement.py --check` → rc=0:
+
+       OK: both objdiff-cli entry points resolve the same ruler.
+
+3. `python3 scripts/verify_objs_patched.py --verify-manifest` → rc=0:
+
+       [patch-state] OK: 1210 decomp, 3093 target objects match 2026-09-14T14:47:58Z (tree_sha256=30c06d36c0be09b7)
+
+4. `tools/native_build_gate.sh` → rc=0:
+
+       NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+
+   `skipped=0` as required.
+
+---
+
+## Lane totals
+
+| | matched_functions | matched_code |
+|---|---|---|
+| baseline (`631973b1`) | 43,272 | 3,960,812 |
+| after item 1 (`af0d4c1e`) | 43,272 | 3,960,772 |
+| after item 3 (`52f1cc51`) | **43,281** | **3,961,860** |
+| **lane net** | **+9** | **+1,048 B** |
+
+The lane net byte figure is +1,048 rather than +1,088 because item 1 cost 40 B
+to a funclet reassignment while closing four genuine our-side divergences at
+proven retail folds. Under the standing rule that is the correct trade and it is
+landed on merit: `mpn` is arg-blind and cannot register a wrong-body fix, so the
+four item-1 corrections are worth exactly 0 to the metric and everything to
+correctness.
