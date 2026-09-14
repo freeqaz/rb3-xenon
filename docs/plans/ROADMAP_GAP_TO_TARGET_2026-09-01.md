@@ -2256,10 +2256,10 @@ row keyed to the merge SHA, pushed). Two are still running.
 | **W15-A** circular-pin census (opus) | `5b14bc86` | **Δ0** (as pre-registered; tree hash moved, SPLIT ran) | the plurality-vote form of the census is NOISE (1.38× / 1.51×); internal linkage is the proof; refuted its own anon-hash premise; 2 pins repaired |
 | **W15-F** PlatformMgr_Xbox wiring + region (opus) | `318a09c6` | **+12 / +1,160 B** | `PlatformMgr_Xbox.cpp` (728 lines) was in-tree and absent from `objects.json` — `tools/project.py` drops the edge silently; **5 of 7 dc3 body-ports were byte-exact on the first try**; 2 blocks re-homed, `.pdata` re-derived by dtk unprompted; 11 retail PlatformMgr rows 0 → pairable, 9 at 100 |
 | W15-D coupled thunk permutation (fable) | running | — | the six `Save`-vs-`??_E` rows as one permutation + 81/236 vtordisp disagreements |
-| W15-E RockCentral Handle + Movie map (opus) | running | — | `?Handle@RockCentral@@` 1,296 B; `Init@Movie` ↔ `TickToMs` across 27 sites; `0x825df840` |
+| **W15-E** RockCentral Handle + Movie map (opus) | `c52f2af6` | **+11 / +4,256 B** | `0x827c9110` is `TickToMs`, not `Movie::Init` — both names compile to the SAME 24 B thunk and the row read a FALSE 100 (ruler structurally blind; settled on retail bytes of the neighbour `BeatToMs`); `TickToMs` was declared and **defined nowhere**; `0x825df840` is `OvershellSlot::RemoveUser`, our body carried Wii-only `TheWiiProfileMgr.RemovePad()` — a behavioural bug on Xbox, 40.41 → 100; `Handle@RockCentral` Δ0 → **escalated to Fable (W16-B)** |
 
 Ledger: 42,846 / 3,892,688 B / 37.992 % (`bbcf979b`, wave start) →
-**42,872 / 3,899,792 B / 38.0618 %** (`6e6d8d61`). `total_code` 10,245,956
+**42,883 / 3,904,048 B / 38.1033 %** (`41b59e05`; W15-E and W15-F additive to the byte). `total_code` 10,245,956
 throughout — none of it is denominator movement.
 
 ### Three corrections to the coordinator's own briefs
@@ -2295,6 +2295,16 @@ CLI/DLL code retail never shipped, two are plausible retail TUs
 (`world/BeatClock.cpp` 6.4 kB, `synth/AudioDucker.cpp` 2.9 kB). The
 `HX_NATIVE`-swallowed half is unsized and is wave 16's first lane.
 
+A third face of the same class surfaced in W15-E: **symbols DECLARED in a
+header and DEFINED NOWHERE** (`TickToMs`, and still `TickToSeconds`,
+`BeatToTick`; W15-C's `PlayableBy__9VocalNoteCFi` was the same). Every
+caller compiles against an undefined external, and the match build never
+links, so nothing complains — the row sits unpaired and the callers carry a
+name charge each. `TickToMs` alone was worth +9 fns / +4,000 B once
+defined. A whole-tree sweep for declared-but-undefined externals
+(compile-side symbol table vs. any definition in a compiled TU) is a lever
+nobody has run; queued below.
+
 ### Wave 16 dispatch
 
 | lane | model | task | expectation |
@@ -2302,6 +2312,8 @@ CLI/DLL code retail never shipped, two are plausible retail TUs
 | **W16-A** swallowed definitions (dispatched) | opus | census every DEFINITION under `src/{system,band3,network}` whose enclosing preprocessor state includes `HX_NATIVE`; classify RETAIL_HAS_IT / NATIVE_ONLY / UNKNOWN on retail evidence; un-gate and port the first class per-site (never blanket); plus wire-and-pin `BeatClock.cpp` / `AudioDucker.cpp` if retail has them. Instrument: `tools/hx_native_swallowed_census.py` with a `--selftest` that can fail | +bytes where a correct body was merely invisible; a NATIVE_ONLY list so nobody re-hunts |
 | queued (fable) | fable | `CountOrCreateExpandedDetails@NextSongPanel` — 12,220 B behind one commuted `add`; `ARITH_COMMUTE` "proved inert" is exactly the label to audit | either the row crosses or the reason it cannot is written on retail bytes |
 | queued (opus) | opus | PlatformMgr follow-ups from W15-F: `GetName` 88.9 (3-arg `Localize` per dc3 vs RB3's verified 2-arg form, `Locale.h`), `ShowGamercard` 35.8, the `0x8251CED0` DingoSvr / DingoSvr_Xbox pin, and the seven COMDAT-hosting blocks under the "which of OUR objects emits it" rule | small positive; one pin repair |
+| **W16-B** escalation (dispatched) | fable | `Handle@RockCentral` 1,296 B: W15-E called the 28 residual charges scheduling noise, but they are 6/6 correlated with our `OnMsg` overloads being STUBS and the in-source note claiming the handlers are outside the pinned range is false (`fn_824F7C98` / `fn_824F7D48` are in `RockCentral.s`, folded for UserLogin + FriendsListChanged); port the bodies, fix the grouping, re-price; also define `TickToSeconds` / `BeatToTick`, and `AttemptRemoveUser@OvershellSlot` (same Wii-contamination class) | the label dissolves or the residue is characterised on retail bytes |
+| queued (opus) | opus | whole-tree sweep for declared-but-undefined externals under `src/{system,band3,network}` (see above); define from retail bytes where a row exists | +bytes per definition, caller cascade |
 | queued (opus) | opus | ContextChecker `0x8275B868` sliver (the name is the suspect) and W14-B's six `UNIMPLEMENTED_BODY` rows (body first, then name) | bug exposure |
 | escalation slot | fable | anything an Opus lane reports as unfixable, with the Opus report attached | — |
 
