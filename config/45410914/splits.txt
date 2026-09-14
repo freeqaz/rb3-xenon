@@ -1961,11 +1961,9 @@ HxGuid.cpp:
 
 StringTable.cpp:
 	.pdata      start:0x822420D8 end:0x822420E0
-	.pdata      start:0x82242748 end:0x82242790
-	.pdata      start:0x82242790 end:0x82242808
+	.pdata      start:0x82242748 end:0x82242808
 	.text       start:0x827C2780 end:0x827C28D4
-	.text       start:0x827C8C88 end:0x827C9180
-	.text       start:0x827C918C end:0x827C97C8
+	.text       start:0x827C8C88 end:0x827C97C8
 
 TempoMap.cpp:
 	.pdata      start:0x82243048 end:0x82243050
@@ -10283,7 +10281,6 @@ MetaPerformer.cpp:
 	.text       start:0x82584B58 end:0x82585458
 	.text       start:0x82585458 end:0x82585548
 	.text       start:0x82704BB8 end:0x82704C38
-	.text       start:0x827C9180 end:0x827C918C
 
 Performer.cpp:
 	.pdata      start:0x8222D8D0 end:0x8222D8E0
