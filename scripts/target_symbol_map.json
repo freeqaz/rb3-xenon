@@ -30437,5 +30437,8 @@
  "0x8283eae0": "XMountUtilityDrive",
  "0x8251d378": "?Init@PlatformMgr@@QAAXXZ",
  "0x8283d810": "XNotifyCreateListener",
- "0x82531980": "?Init@WinSockSocket@@SAXXZ"
+ "0x82531980": "?Init@WinSockSocket@@SAXXZ",
+ "0x826663f0": "??_GFriendsProvider@@UAAPAXI@Z",
+ "0x826662f0": "??1FriendsProvider@@UAA@XZ",
+ "0x82666288": "??_EFriendsProvider@@W3AAPAXI@Z"
 }
