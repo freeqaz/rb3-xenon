@@ -1,0 +1,66 @@
+[
+ {
+  "group_index": 561,
+  "census_gi": 563,
+  "addr": "0x8246efa8",
+  "bytes": 112,
+  "class": "RETAIL_WITNESS_REFUTED_GUARD_CLEARED",
+  "spelling": "?_M_clear_after_move@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+ },
+ {
+  "group_index": 940,
+  "census_gi": 942,
+  "addr": "0x8229ee78",
+  "bytes": 80,
+  "class": "RETAIL_WITNESS_REFUTED_GUARD_CLEARED",
+  "spelling": "??$_Copy_Construct@UAutoPropEntry@PropertyEventListener@@@stlpmtx_std@@YAXPAUAutoPropEntry@PropertyEventListener@@ABU12@@Z"
+ },
+ {
+  "group_index": 940,
+  "census_gi": 942,
+  "addr": "0x8229ee78",
+  "bytes": 80,
+  "class": "RETAIL_WITNESS_REFUTED_GUARD_CLEARED",
+  "spelling": "??$_Param_Construct@UAutoPropEntry@PropertyEventListener@@U12@@stlpmtx_std@@YAXPAUAutoPropEntry@PropertyEventListener@@ABU12@@Z"
+ },
+ {
+  "group_index": 336,
+  "census_gi": 338,
+  "addr": "0x822cdc18",
+  "bytes": 60,
+  "class": "RETAIL_WITNESS_REFUTED_GUARD_CLEARED",
+  "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z"
+ },
+ {
+  "group_index": 562,
+  "census_gi": 564,
+  "addr": "0x82706208",
+  "bytes": 60,
+  "class": "RETAIL_WITNESS_REFUTED_GUARD_CLEARED",
+  "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z"
+ },
+ {
+  "group_index": 581,
+  "census_gi": 583,
+  "addr": "0x822cb4d8",
+  "bytes": 60,
+  "class": "RETAIL_WITNESS_REFUTED_GUARD_CLEARED",
+  "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z"
+ },
+ {
+  "group_index": 587,
+  "census_gi": 589,
+  "addr": "0x822bc3d8",
+  "bytes": 60,
+  "class": "RETAIL_WITNESS_REFUTED_GUARD_CLEARED",
+  "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z"
+ },
+ {
+  "group_index": 623,
+  "census_gi": 625,
+  "addr": "0x822bc368",
+  "bytes": 60,
+  "class": "RETAIL_WITNESS_REFUTED_GUARD_CLEARED",
+  "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z"
+ }
+]
