@@ -1169,6 +1169,7 @@
             "band3/game/VocalScoreHistory.cpp": "NonMatching",
             "band3/game/Scoring.cpp": "NonMatching",
             "band3/game/ScoreTracker.cpp": "NonMatching",
+            "band3/game/Shuttle.cpp": "NonMatching",
             "band3/game/FreestylePanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

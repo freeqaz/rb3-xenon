@@ -176,3 +176,20 @@ void _fake(void) {
     BufLock<struct D3DVertexBuffer> buf(nullptr, 0);
     BufLock<struct D3DIndexBuffer> buf2(nullptr, 0);
 }
+
+// Retail 0x82737F30, 68 B. DECLARED in Mesh.h since the DC3 port and never
+// DEFINED anywhere in the tree, while the inline `~VertexBufferData()` right
+// above the declaration calls it -- so every TU that destroys a
+// VertexBufferData has carried an unresolved external. (It never fired: the
+// match build only compiles, and the native build does not glob rnddx9.)
+// Body read off the retail bytes, which are unambiguous:
+//   lwz r4,0(r3)         -- arg = this->buffer, the FIRST word
+//   addi r3, TheDxRnd    -- the global at 0x82E04B38
+//   bl ?AutoRelease@DxRnd@@QAAXPAUD3DResource@@@Z   (out-of-line, not inlined)
+//   li r11,0; stw r11,0(r31); stw r11,4(r31)        -- zero BOTH words
+// i.e. exactly the DX_RELEASE idiom followed by `size = 0`, and it confirms
+// the VertexBufferData layout in Mesh.h (buffer at +0, size at +4).
+void DxMesh::VertexBufferData::Release() {
+    DX_RELEASE(buffer);
+    size = 0;
+}
