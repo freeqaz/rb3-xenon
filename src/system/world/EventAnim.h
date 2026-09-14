@@ -70,3 +70,5 @@ public:
 
 BinStream &operator>>(BinStream &bs, EventAnim::EventCall &e);
 BinStream &operator>>(BinStream &bs, EventAnim::KeyFrame &k);
+BinStream &operator<<(BinStream &bs, const EventAnim::EventCall &e);
+BinStream &operator<<(BinStream &bs, const EventAnim::KeyFrame &k);

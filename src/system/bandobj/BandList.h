@@ -7,6 +7,7 @@ class HighlightObject {
 public:
     HighlightObject(Hmx::Object *);
     void Load(BinStream &);
+    void Save(BinStream &) const;
 
     static int sRev;
 
@@ -15,6 +16,8 @@ public:
     float mYOffset; // 0x10
     float mZOffset; // 0x14
 };
+
+BinStream &operator<<(BinStream &bs, const HighlightObject &o);
 
 class BandList : public UIList {
 public:
