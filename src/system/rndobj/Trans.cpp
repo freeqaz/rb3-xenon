@@ -55,11 +55,28 @@ RndTransformable::~RndTransformable() {
 }
 
 void RndTransformable::Replace(ObjRef *from, Hmx::Object *to) {
-    if (RefIs(from, mParent)) {
+    // Retail (0x823F94E8) compares `from` against the pointee's Hmx::Object
+    // SUBOBJECT, not its raw RndTransformable*. Object is a VIRTUAL BASE of
+    // RndTransformable at +0xb8 (compiler layout, /d1reportSingleClassLayout),
+    // so retail emits the null-checked vbptr/vbtable upcast
+    //   r11 = mParent.mObject; if (r11) r11 += 4 + *(*(r11+4)+4);
+    // before the compare. RefIs()'s X360 branch compares the RAW Ptr(), which
+    // is 0xb8 bytes off for this class -- the "MI/vbase cases can
+    // false-negative here" case its own comment admits. That is a behavioural
+    // bug, not only a matching one, so the upcast is spelled out here.
+    if (reinterpret_cast<void *>(static_cast<Hmx::Object *>(mParent.Ptr()))
+        == reinterpret_cast<void *>(from)) {
         SetTransParent(dynamic_cast<RndTransformable *>(to), false);
         return;
-    } else
-        Hmx::Object::Replace(from, to);
+    }
+    // Retail has exactly one `bl` besides __RTDynamicCast (SetTransParent):
+    // there is NO else-arm. Hmx::Object::Replace is empty in the match build
+    // (its whole body is #ifdef HX_NATIVE, Object.cpp:228) but, with no LTCG,
+    // calling it would still emit a bl retail does not have. Kept for native,
+    // where the base forwards to mSinks.
+#ifdef HX_NATIVE
+    Hmx::Object::Replace(from, to);
+#endif
 }
 
 BEGIN_HANDLERS(RndTransformable)

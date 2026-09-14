@@ -79,7 +79,13 @@ BEGIN_LOADS(RndDir)
 END_LOADS
 
 void RndDir::Export(DataArray *a, bool b2) {
-    Hmx::Object::Export(a, b2);
+    // Retail chains to the INTERMEDIATE base MsgSource, not straight to
+    // Hmx::Object: it reaches the subobject with a fixed `subi r3, r3, 0x34`
+    // and calls ?Export@MsgSource@@UAAXPAVDataArray@@_N@Z. Spelling
+    // Hmx::Object::Export here instead made MSVC emit the 4-instruction
+    // virtual-base cast (MsgSource : public virtual Hmx::Object, so Object is
+    // only reachable through the vbtable) and call the wrong override.
+    MsgSource::Export(a, b2);
     for (int i = 0; i < mSubDirs.size(); i++) {
         if (mSubDirs[i]) {
             mSubDirs[i]->Export(a, false);

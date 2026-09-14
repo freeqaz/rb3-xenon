@@ -994,11 +994,11 @@ SongSectionController.cpp:
 StarDisplay.cpp:
 	.pdata      start:0x821FBB98 end:0x821FBBA8
 	.pdata      start:0x821FC410 end:0x821FC4F8
-	.pdata      start:0x821FC508 end:0x821FC698
+	.pdata      start:0x821FC508 end:0x821FC690
 	.pdata      start:0x821FC6B8 end:0x821FC6C8
 	.text       start:0x82313DB0 end:0x82313E28
 	.text       start:0x8231C150 end:0x8231CFC8
-	.text       start:0x8231D060 end:0x8231E588
+	.text       start:0x8231D060 end:0x8231E550
 	.text       start:0x8231E6A4 end:0x8231E6A8
 	.text       start:0x8231E6EC end:0x8231E708
 	.text       start:0x8231E718 end:0x8231E728
@@ -13426,12 +13426,12 @@ band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp:
 	.text       start:0x825F5700 end:0x825F5898
 
 system/bandobj/ReviewDisplay.cpp:
-	.pdata      start:0x821FC698 end:0x821FC6B0
+	.pdata      start:0x821FC690 end:0x821FC6B0
 	.pdata      start:0x821FC6B0 end:0x821FC6B8
 	.pdata      start:0x821FC6C8 end:0x821FC6D0
 	.pdata      start:0x821FC6E0 end:0x821FC748
 	.pdata      start:0x821FC758 end:0x821FC7B8
-	.text       start:0x8231E588 end:0x8231E6A4
+	.text       start:0x8231E550 end:0x8231E6A4
 	.text       start:0x8231E6A8 end:0x8231E6EC
 	.text       start:0x8231E708 end:0x8231E718
 	.text       start:0x8231E728 end:0x8231E734
