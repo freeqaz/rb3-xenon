@@ -298,6 +298,7 @@ BandScoreboard.cpp:
 	.pdata      start:0x821F1980 end:0x821F1990
 	.pdata      start:0x821F1FB8 end:0x821F1FC8
 	.pdata      start:0x821F7498 end:0x821F74A0
+	.pdata      start:0x821F74C8 end:0x821F74D0
 	.pdata      start:0x821F74D0 end:0x821F74E8
 	.pdata      start:0x821F7530 end:0x821F7570
 	.pdata      start:0x821F7570 end:0x821F75D8
@@ -306,6 +307,7 @@ BandScoreboard.cpp:
 	.text       start:0x82274290 end:0x822743EC
 	.text       start:0x8227A6A8 end:0x8227A728
 	.text       start:0x822CDA30 end:0x822CDA7C
+	.text       start:0x822CDC80 end:0x822CDD00
 	.text       start:0x822CDD00 end:0x822CDE70
 	.text       start:0x822CE3A8 end:0x822CE6A8
 	.text       start:0x822CE6A8 end:0x822CEC70
@@ -1062,7 +1064,11 @@ StreakMeter.cpp:
 	.pdata      start:0x821F7F48 end:0x821F7FA0
 	.pdata      start:0x821F7FB8 end:0x821F8140
 	.pdata      start:0x821F8140 end:0x821F8150
-	.pdata      start:0x821F8150 end:0x821F82D8
+	.pdata      start:0x821F8150 end:0x821F8218
+	.pdata      start:0x821F8218 end:0x821F8230
+	.pdata      start:0x821F8230 end:0x821F8288
+	.pdata      start:0x821F8288 end:0x821F82B8
+	.pdata      start:0x821F82C0 end:0x821F82D8
 	.text       start:0x822CB014 end:0x822CB018
 	.text       start:0x822CB074 end:0x822CB2D8
 	.text       start:0x822CB428 end:0x822CB828
@@ -1086,7 +1092,11 @@ StreakMeter.cpp:
 	.text       start:0x822D9DC0 end:0x822D9FE4
 	.text       start:0x822D9FE8 end:0x822D9FF4
 	.text       start:0x822D9FF8 end:0x822DA004
-	.text       start:0x822DA010 end:0x822DB298
+	.text       start:0x822DA010 end:0x822DA628
+	.text       start:0x822DA628 end:0x822DA778
+	.text       start:0x822DA778 end:0x822DAAF0
+	.text       start:0x822DAAF0 end:0x822DB0F8
+	.text       start:0x822DB150 end:0x822DB298
 
 CriticalUserListener.cpp:
 	.pdata      start:0x82224F78 end:0x82225020
@@ -3957,9 +3967,7 @@ CharIKFingers.cpp:
 	.text       start:0x823B45A0 end:0x823B4B3C
 
 HamPhotoDisplay.cpp:
-	.pdata      start:0x821F74C8 end:0x821F74D0
 	.pdata      start:0x821F79E0 end:0x821F79E8
-	.text       start:0x822CDC80 end:0x822CDD00
 	.text       start:0x822D38B0 end:0x822D3900
 
 HamRibbon.cpp:
@@ -12644,8 +12652,10 @@ band3/meta_band/SessionMgr.cpp:
 
 OverdriveMeter.cpp:
 	.pdata      start:0x821F2040 end:0x821F2050
+	.pdata      start:0x821F82B8 end:0x821F82C0
 	.pdata      start:0x821F82D8 end:0x821F8470
 	.text       start:0x8227AB48 end:0x8227ABC8
+	.text       start:0x822DB0F8 end:0x822DB150
 	.text       start:0x822DB298 end:0x822DC7B0
 
 system/beatmatch/BeatMatchUtl.cpp:
