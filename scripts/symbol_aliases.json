@@ -648,9 +648,10 @@
     "?push_back@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAAXABH@Z",
     "?push_back@?$vector@PAVFriend@@V?$StlNodeAlloc@PAVFriend@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVFriend@@@Z",
     "?push_back@?$vector@PAUD3DResource@@V?$StlNodeAlloc@PAUD3DResource@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAUD3DResource@@@Z",
-    "?push_back@?$vector@PAUD3DBaseTexture@@V?$StlNodeAlloc@PAUD3DBaseTexture@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAUD3DBaseTexture@@@Z"
+    "?push_back@?$vector@PAUD3DBaseTexture@@V?$StlNodeAlloc@PAUD3DBaseTexture@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAUD3DBaseTexture@@@Z",
+    "?push_back@?$vector@PAVNetSearchResult@@V?$StlNodeAlloc@PAVNetSearchResult@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVNetSearchResult@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 136, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 47 census sites over 1 functions. W16-M (2026-09-14): push_back<Friend*> added on CHASED T1 -- tools/icf_pair_adjudicate.py --survivor 0x82b5f808 --ours <Friend* spelling> --chase: flat T1 REFUTED (template twin, 112 B both sides; retail carries 2 body-twins, this survivor and push_back<Symbol> -- so shape alone cannot pick), CHASED T1 PROVEN: the only differing relocation slot is _M_insert_overflow<Friend*> vs <int>, whose chain (MemOrPoolAlloc/MemOrPoolAllocSTL -> PoolAlloc -> ??2CriticalSection/??2ChunkAllocator) folds slot-by-slot. Retail Poll's own `bl` at the site resolves to 0x82b5f808 (this survivor, NOT the Symbol twin), read from the retail displacement, so the name at the site is the survivor by construction. W16-Z 2026-09-14: +2 memberships (vector<D3DResource*>, vector<D3DBaseTexture*>), CHASED T1 PROVEN by tools/icf_pair_adjudicate.py --chase. Flat T1 is REFUTED for these (\"masked bodies match but relocation TARGETS disagree\"): the only differing slot is _M_insert_overflow, whose per-T instantiations themselves fold (SLOT-FOLD-OK), and recursively MemOrPoolAlloc/MemOrPoolAllocSTL, PoolAlloc 2-arg/5-arg, and operator new. A fold enabling a fold. --chasetest was run first and its IN-FAMILY DECOY is REFUTED under chase, so the instrument discriminates. Witnessed by the retail bl at 0x8273CC08+0xe8/+0x180 (DxRnd::ReleaseAutoRelease)."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 136, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 47 census sites over 1 functions. W16-M (2026-09-14): push_back<Friend*> added on CHASED T1 -- tools/icf_pair_adjudicate.py --survivor 0x82b5f808 --ours <Friend* spelling> --chase: flat T1 REFUTED (template twin, 112 B both sides; retail carries 2 body-twins, this survivor and push_back<Symbol> -- so shape alone cannot pick), CHASED T1 PROVEN: the only differing relocation slot is _M_insert_overflow<Friend*> vs <int>, whose chain (MemOrPoolAlloc/MemOrPoolAllocSTL -> PoolAlloc -> ??2CriticalSection/??2ChunkAllocator) folds slot-by-slot. Retail Poll's own `bl` at the site resolves to 0x82b5f808 (this survivor, NOT the Symbol twin), read from the retail displacement, so the name at the site is the survivor by construction. W16-Z 2026-09-14: +2 memberships (vector<D3DResource*>, vector<D3DBaseTexture*>), CHASED T1 PROVEN by tools/icf_pair_adjudicate.py --chase. Flat T1 is REFUTED for these (\"masked bodies match but relocation TARGETS disagree\"): the only differing slot is _M_insert_overflow, whose per-T instantiations themselves fold (SLOT-FOLD-OK), and recursively MemOrPoolAlloc/MemOrPoolAllocSTL, PoolAlloc 2-arg/5-arg, and operator new. A fold enabling a fold. --chasetest was run first and its IN-FAMILY DECOY is REFUTED under chase, so the instrument discriminates. Witnessed by the retail bl at 0x8273CC08+0xe8/+0x180 (DxRnd::ReleaseAutoRelease). W16-AE 2026-09-14: push_back<NetSearchResult*> added on CHASED T1 (tools/icf_pair_adjudicate.py --chase, 112 B both sides; flat T1 REFUTED as template twin; the one differing slot _M_insert_overflow<NetSearchResult*> vs <int> chains MemOrPoolAlloc/MemOrPoolAllocSTL -> PoolAlloc -> ??2CriticalSection/??2ChunkAllocator, every slot SLOT-FOLD-OK). Callers: SessionSearcher::GetSearchResults / UpdateSearchList (network/net/SessionSearcher.cpp, ported this lane)."
   },
   {
    "name": "erase",
@@ -80402,9 +80403,10 @@
     "??1UserLoginMsg@@UAA@XZ",
     "??1VirtualKeyboardResultMsg@@UAA@XZ",
     "??1VoiceChatDisabledMsg@@UAA@XZ",
-    "??1XMPStateChangedMsg@@UAA@XZ"
+    "??1XMPStateChangedMsg@@UAA@XZ",
+    "??1InviteAcceptedMsg@@UAA@XZ"
    ],
-   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823426f8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 475 against 282 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823426f8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 475 against 282 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies. W16-AE 2026-09-14: ??1InviteAcceptedMsg@@UAA@XZ added on our-side COMDAT identity (tools/comdat_bytes.py over build/45410914/src/network/net/SessionSearcher.obj): fn bytes AND all 5 relocations (??_7Message@@6B@ x2, ?Release@DataArray@@QAAXXZ) identical to our ??1Message@@UAA@XZ COMDAT, 24 B each -- the /OPT:ICF condition; retail T1 is VACUOUS on a 6-word body (>50% masked). Caller: fn_823EB228 (SessionSearcher::Handle funclet path)."
   },
   {
    "name": "ourside_comdat_identity",
@@ -82958,6 +82960,33 @@
     "?PhysicalFree@@YAXPAX@Z"
    ],
    "evidence": "Lane W16-Z 2026-09-14. FLAT T1 PROVEN by tools/icf_pair_adjudicate.py (retail_size 84 == our_size 84, n_relocs 9, reloc_tally {'tolerated_placeholder': 2}), and our_bodytwins==2 confirms the two spellings fold in OUR build as well. The 4-argument tracked overload ignores p2/p3/p4, so both spellings compile to the same body and MSVC folds them; the map therefore shows only the tracked name. Retail-byte witness for the 1-argument call: BOTH call sites of 0x822733B8 in the pinned asm (?ReleaseAutoRelease@DxRnd@@QAAXXZ at 0x8273CC08 and fn_82B6A828 in ContextChecker) set ONLY r3 before the bl, and r4-r6 are volatile across the call immediately preceding. This group was only provable AFTER the source defect it exposed was fixed: our PhysicalFree was 76 bytes / two calls, missing the MemTrackFree that retail's 84-byte body makes -- flat T1 was REFUTED ('masked bodies DIFFER') until src/Memory_Xbox.cpp was corrected in this lane."
+  },
+  {
+   "name": "DeleteAll",
+   "address": "0x825cfdd0",
+   "survivor": "??$DeleteAll@V?$vector@PAVNetSavedSetlist@@V?$StlNodeAlloc@PAVNetSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVNetSavedSetlist@@V?$StlNodeAlloc@PAVNetSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [
+    "??$DeleteAll@V?$vector@PAVNetSearchResult@@V?$StlNodeAlloc@PAVNetSearchResult@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVNetSearchResult@@V?$StlNodeAlloc@PAVNetSearchResult@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "evidence": "W16-AE 2026-09-14: DeleteAll<vector<NetSearchResult*>> folds onto the map-resident survivor DeleteAll<vector<NetSavedSetlist*>> at 0x825cfdd0 on CHASED T1 (tools/icf_pair_adjudicate.py --chase, 84 B both sides; flat T1 REFUTED as template twin; differing slots for_each<PoseElement*,Delete> vs <NetSearchResult*,Delete> and vector<unsigned>::erase vs vector<NetSearchResult*>::erase both SLOT-FOLD-OK). Callers: ~SessionSearcher / StartSearching / ClearSearchResults (network/net/SessionSearcher.cpp)."
+  },
+  {
+   "name": "sort",
+   "address": "0x822bed18",
+   "survivor": "??$sort@PAPAVRndPollable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@0P6A_NPBV1@1@Z@Z",
+   "folded": [
+    "??$sort@PAPAVNetSearchResult@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVNetSearchResult@@0P6A_NPBV1@1@Z@Z"
+   ],
+   "evidence": "W16-AE 2026-09-14: sort<NetSearchResult**,bool(*)(const NetSearchResult*,const NetSearchResult*)> folds onto the map-resident survivor sort<RndPollable**,...> at 0x822bed18 on CHASED T1 (tools/icf_pair_adjudicate.py --chase, 112 B both sides; flat T1 REFUTED as template twin; the __introsort_loop / __adjust_heap / sort_heap / __partial_sort slots are SLOT-FOLD-OK, __introsort_loop self-recursion CYCLE-ASSUMED coinductively). Caller: SessionSearcher::StopSearching."
+  },
+  {
+   "name": "UpdateSearchList",
+   "address": "0x823eb5d8",
+   "survivor": "?UpdateSearchList@SessionSearcher@@QAAXPAVNetSearchResult@@@Z",
+   "folded": [
+    "?AddTambourineGem@VocalNoteList@@QAAXH@Z"
+   ],
+   "evidence": "W16-AE 2026-09-14: VocalNoteList::AddTambourineGem(int) folds onto SessionSearcher::UpdateSearchList(NetSearchResult*) at 0x823eb5d8 on CHASED T1 (tools/icf_pair_adjudicate.py --chase, 44 B both sides; flat T1 REFUTED because the single call slot differs by name, push_back<ChatReceiver*> survivor vs our push_back<int>, which is an existing proven fold of the 0x82b5f808 group -- SLOT-FOLD-OK). Until this lane the map named 0x823eb5d8 AddTambourineGem (a circular VocalNoteList.cpp pin); the address is inside network/net/SessionSearcher.cpp and the survivor is UpdateSearchList. Caller: SongData::OnTambourineGem (its 20 B fell out when the wrong name was corrected; this membership restores it truthfully)."
   }
  ]
 }
