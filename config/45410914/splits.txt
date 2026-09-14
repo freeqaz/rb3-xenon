@@ -1961,8 +1961,7 @@ HxGuid.cpp:
 
 StringTable.cpp:
 	.pdata      start:0x822420D8 end:0x822420E0
-	.pdata      start:0x82242748 end:0x82242790
-	.pdata      start:0x82242790 end:0x82242808
+	.pdata      start:0x82242748 end:0x82242808
 	.text       start:0x827C2780 end:0x827C28D4
 	.text       start:0x827C8C88 end:0x827C97C8
 
