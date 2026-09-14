@@ -26,4 +26,5 @@ public:
 
 DECLARE_MESSAGE(FriendsListChangedMsg, "friends_list_changed")
 FriendsListChangedMsg(int i) : Message(Type(), i) {}
+int GetPadNum() const { return mData->Int(2); }
 END_MESSAGE

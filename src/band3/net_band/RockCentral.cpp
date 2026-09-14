@@ -253,21 +253,33 @@ DataNode RockCentral::OnMsg(const ServerStatusChangedMsg &msg) {
     return 1;
 }
 
-// NOTE (rb3-xenon port): the friend-list / Wii-profile OnMsg handlers below are
-// Wii-only (UpdateFriendsListJob / WiiProfileMgr / the Wii DeleteUserComplete
-// queue). None are in the pinned retail-Xbox range; stubbed for compilation.
+// NOTE (rb3-xenon, lane W16-B): these three handlers ARE in the pinned
+// retail-Xbox range (an earlier note here claimed otherwise — it was false).
+// Retail calls ONE body, fn_824F7C98 (0x80 B), for BOTH UserLoginMsg and
+// FriendsListChangedMsg — an ICF fold, so the two handlers are the same source
+// text: queue an UpdateFriendsListJob for the message's pad. The rb3-Wii DEV
+// oracle's UserLogin body (WiiProfileMgr PID check, MILO_WARN, unk112) and its
+// FriendsListChanged second job (UpdateMasterProfileFriendsListJob, Wii-only —
+// see RockCentralJobs.cpp) are NOT in the retail bytes. ProfileChangedMsg is
+// fn_824F7D48 (0xD8 B) and matches the oracle body exactly.
 DataNode RockCentral::OnMsg(const UserLoginMsg &msg) {
-    UpdateOnlineStatus();
+    mJobMgr.QueueJob(new UpdateFriendsListJob(msg.GetPadNum()));
     return 1;
 }
 
 DECOMP_FORCEACTIVE(RockCentral, "")
 
 DataNode RockCentral::OnMsg(const FriendsListChangedMsg &msg) {
+    mJobMgr.QueueJob(new UpdateFriendsListJob(msg.GetPadNum()));
     return 1;
 }
 
 DataNode RockCentral::OnMsg(const ProfileChangedMsg &msg) {
+    BandProfile *p = msg.GetProfile();
+    int padnum = p->GetPadNum();
+    if (p->HasValidSaveData() && TheNet.GetServer()->GetPlayerID(padnum)) {
+        mJobMgr.QueueJob(new UpdateFriendsListJob(padnum));
+    }
     return 1;
 }
 
