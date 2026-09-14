@@ -20,7 +20,7 @@ typedef int ptrdiff_t;
 // NOTE (lane W16-P, 2026-09-14): this was `((int)&((T *)0->mem))`, which parses as
 // `(T *)(0->mem)` -- `->` binds tighter than the cast -- so ANY expansion is a hard
 // compile error, not merely a wrong value. Measured: no compiled TU expands it today
-// (the only two call sites, curl memdebug.c:270/301, are under `#ifdef CURLDEBUG` and
+// (the only two call sites, curl memdebug.c:270/301, sit behind a CURLDEBUG guard and
 // that TU is in neither objects.json nor the ninja graph), which is why the tree builds.
 #define offsetof(T, mem) ((int)&(((T *)0)->mem))
 
