@@ -14898,7 +14898,7 @@
  "0x82665598": "?Handle@StoreOfferProvider@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82665d98": "??_GStoreOfferProvider@@UAAPAXI@Z",
  "0x82666160": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
- "0x826662e0": "?IsScrolling@UIList@@QBA_NXZ",
+ "0x826662e0": "?Reload@FriendsProvider@@QAAXXZ",
  "0x82666648": "??RCompareCharacters@CharProvider@@QBA_NABVCharacterEntry@1@0@Z",
  "0x826666e8": "??$__median@VCharacterEntry@CharProvider@@UCompareCharacters@2@@stlpmtx_std@@YAABVCharacterEntry@CharProvider@@ABV12@00UCompareCharacters@2@@Z",
  "0x82666798": "??$__unguarded_linear_insert@PAVCharacterEntry@CharProvider@@V12@UCompareCharacters@2@@stlpmtx_std@@YAXPAVCharacterEntry@CharProvider@@V12@UCompareCharacters@2@@Z",

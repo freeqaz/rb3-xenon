@@ -395,7 +395,7 @@ void RockCentral::GetTickerInfo(
         INIT_DATAPOINT("ticker/info/get");
         ADD_DATA_PAIR(pid, server->GetPlayerID(profile->GetPadNum()));
         ADD_DATA_PAIR(role_id, (char)s);
-        ADD_DATA_PAIR(locale, SystemLanguage());
+        ADD_DATA_PAIR(locale, SystemLocale());
         RECORD_DATA_POINT(0, results, o);
     }
 }
@@ -767,7 +767,7 @@ void RockCentral::RecordScore(
             // Retail declares locale and region as two SEPARATE later statements,
             // each right before its own use (guard bits are checked there).
             static Symbol locale("locale");
-            ADD_DATA_PAIR(locale, SystemLanguage());
+            ADD_DATA_PAIR(locale, SystemLocale());
             static Symbol region("region");
             PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
             if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
@@ -1301,7 +1301,7 @@ void RockCentral::GetAllSonglists(
             ADD_BUFFER_PAIR(buf, playerIds[i], "pid%03d", i);
         }
         DP_KEY(locale);
-        ADD_DATA_PAIR(locale, SystemLanguage());
+        ADD_DATA_PAIR(locale, SystemLocale());
         DP_KEY(region);
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
         if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
@@ -1329,7 +1329,7 @@ void RockCentral::GetClosedBattles(
             ADD_BUFFER_PAIR(buf, playerIds[i], "pid%03d", i);
         }
         DP_KEY(locale);
-        ADD_DATA_PAIR(locale, SystemLanguage());
+        ADD_DATA_PAIR(locale, SystemLocale());
         DP_KEY(region);
         PlatformRegion regionEnum = ThePlatformMgr.GetRegion();
         if (regionEnum == kRegionNA || regionEnum == kRegionEurope) {
