@@ -22,12 +22,20 @@ const char *FakeSongMgr::MidiFile(const SongInfo *sinfo) {
     return GetPath(sinfo, ".mid");
 }
 
-#ifdef HX_NATIVE
-// M4: the real SongData::SongFullPath() (native rb3-hit) falls back to
-// MidiFullPath when mSongPath is empty. Our tree's FakeSongMgr is a slimmed
-// native reimplementation that lacked this; add it (adapted to our File.h's
-// 2-arg FileMakePath). Gated so the X360 decomp/match build is unaffected.
+// M4 added this for native rb3-hit, where SongData::SongFullPath() falls back
+// to MidiFullPath when mSongPath is empty, and gated it `#ifdef HX_NATIVE` "so
+// the X360 decomp/match build is unaffected".
+//
+// ⚠ THAT GATE WAS WRONG, and un-gating is the fix rather than a native-only
+// nicety: retail HAS this function -- ?MidiFullPath@FakeSongMgr@@SAPBDPBVSongInfo@@@Z,
+// 64 B, the only unmatched row in the whole FakeSongMgr unit -- and
+// SongData::SongFullPath() at beatmatch/SongData.cpp:1244 calls it
+// UNCONDITIONALLY, under no gate at all.  Because the match build compiles but
+// never LINKS, that call was simply a dangling UNDEF external that nothing
+// could report; the only symptom was the retail row sitting at fuzzy 0 with no
+// definition anywhere to pair against.  Same class as DataArray::Release
+// (W15-B, 4c35e0f3).  Native behaviour is unchanged: HX_NATIVE builds compiled
+// this before and still do.
 const char *FakeSongMgr::MidiFullPath(const SongInfo *sinfo) {
     return FileMakePath(FileRoot(), GetPath(sinfo, ".mid"));
 }
-#endif
