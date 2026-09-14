@@ -242,6 +242,17 @@ Exit codes -- every non-zero state is a DIFFERENT statement
         here.  4 and 6 are both "a build is owed"; they are separate because
         they license different conclusions.  4 means something already
         rewrote objects; 6 means nothing has, and the tree is merely BEHIND.
+    7   DENYLIST NOT APPLIED: an address in target_symbol_map.json's
+        `_denylist` still carries its mangled name in a TARGET object
+        (the pre-compile renamer's refusal did not reach the built tree), or
+        the denylist is malformed, or the check could not be made non-vacuous.
+        Lane W16-AE (2026-09-14).  The renamer HAS honoured `_denylist` since
+        f3fe9ab1, but nothing verified that the refusal reached the objs:
+        the pre-f3fe9ab1 "declared and ignored" state passed every gate
+        there was.  This is an EFFECT check on the objs, not a JSON invariant
+        -- four denylisted addresses deliberately keep a live string value so
+        the refuted hypothesis stays on the record, and a JSON-only check
+        would fail the tree for exactly the right data.
 
 ⛔ Codes 4 and 5 exist because this tool USED TO ASSERT A MECHANISM IT CANNOT
 OBSERVE.  It printed "produced OUTSIDE the full build graph ... the
@@ -653,10 +664,120 @@ def check_pairing(repo: Path, quiet: bool = False,
     return 0
 
 
+def map_path(repo: Path) -> Path:
+    return repo / "scripts" / "target_symbol_map.json"
+
+
+def check_denylist_applied(repo: Path, mpath=None, quiet: bool = False) -> int:
+    """★ W16-AE.  Did the renamer's `_denylist` refusal REACH the target objs?
+
+    For every `_denylist` address whose map row still carries a string name v
+    (the deliberate keep-the-hypothesis-on-record state), scan the symbol
+    table of every dtk-split TARGET object:
+
+        v present in any target obj AND placeholder fn_/lbl_<ADDR> absent
+        from all                       -> VIOLATION (the binding is live)
+        v present AND placeholder present -> WARN (two objs disagree; not a
+                                          live binding, but not clean)
+        v absent                       -> refused as declared
+
+    Vacuity guards: a malformed `_denylist` (not a list of 0x-strings) and a
+    tree with no target objects both return non-zero rather than 0 -- the
+    check must not be able to pass by having nothing to look at.  An empty
+    denylist is a data state and is reported as a NOTE.
+    Non-zero return is 7 (see the exit-code table)."""
+    mpath = Path(mpath) if mpath else map_path(repo)
+    try:
+        doc = json.loads(mpath.read_text())
+    except (OSError, ValueError) as e:
+        print(f"REFUSE(denylist): cannot read {mpath}: {e}", file=sys.stderr)
+        return 7
+    dl = doc.get("_denylist")
+    if not isinstance(dl, list) or not all(
+            isinstance(a, str) and len(a) == 10 and a.startswith("0x") and
+            all(c in "0123456789abcdef" for c in a[2:]) for a in dl):
+        print(f"REFUSE(denylist): {mpath.name} `_denylist` is not a list of "
+              f"lowercase 0x-addresses: {dl!r}", file=sys.stderr)
+        return 7
+    if not dl:
+        if not quiet:
+            print("[denylist] NOTE: `_denylist` is empty -- nothing to verify")
+        return 0
+    live = {a: doc.get(a) for a in dl if isinstance(doc.get(a), str)}
+    objs = target_objects(repo)
+    if not objs:
+        print(f"REFUSE(denylist): no target objects under {target_dir(repo)} "
+              f"-- the check would be vacuous", file=sys.stderr)
+        return 7
+    sys.path.insert(0, str(repo / "scripts"))
+    from obj_target_symbol_renamer import parse_coff_symbols  # noqa: E402
+    names = set(live.values())
+    ph = {}
+    for a in live:
+        n = int(a, 16)
+        ph["fn_%08X" % n] = a
+        ph["lbl_%08X" % n] = a
+    name_hits, ph_hits, n_syms = {}, {}, 0
+    for o in objs:
+        try:
+            syms = parse_coff_symbols(o.read_bytes())
+        except Exception as e:  # a corrupt obj is a finding, not a skip
+            print(f"REFUSE(denylist): cannot parse {o}: {e}", file=sys.stderr)
+            return 7
+        n_syms += len(syms)
+        rel = str(o.relative_to(repo))
+        for sym in syms:
+            nm = sym[0]
+            if nm in names:
+                name_hits.setdefault(nm, []).append(rel)
+            elif nm in ph:
+                ph_hits.setdefault(ph[nm], []).append(rel)
+    if n_syms == 0:
+        print(f"REFUSE(denylist): {len(objs)} target objects carry 0 symbols "
+              f"-- the check would be vacuous", file=sys.stderr)
+        return 7
+    bad, warn = [], []
+    for a, v in sorted(live.items()):
+        if v in name_hits and a not in ph_hits:
+            bad.append((a, v, name_hits[v]))
+        elif v in name_hits:
+            warn.append((a, v, name_hits[v], ph_hits[a]))
+    for a, v, where, phw in warn:
+        print(f"[denylist] WARN {a}: name {v[:70]} present in {where[:3]} while "
+              f"placeholder also present in {phw[:3]} -- two target objs "
+              f"disagree", file=sys.stderr)
+    if not bad:
+        if not quiet:
+            print(f"[denylist] OK: {len(dl)} denylisted address(es), "
+                  f"{len(live)} with a live map string, none named in "
+                  f"{len(objs)} target objects ({n_syms} symbols scanned)")
+        return 0
+    print("=" * 72, file=sys.stderr)
+    print("DENYLIST NOT APPLIED -- A REFUSED BINDING IS LIVE IN THE TARGET OBJS",
+          file=sys.stderr)
+    print("=" * 72, file=sys.stderr)
+    for a, v, where in bad:
+        print(f"  {a}  {v}\n      named in: {', '.join(where[:6])}"
+              + (f" (+{len(where) - 6})" if len(where) > 6 else ""),
+              file=sys.stderr)
+    print("\nEach address above is in target_symbol_map.json `_denylist`, yet a "
+          "dtk-split target object still DEFINES or REFERENCES its mangled "
+          "name and no fn_/lbl_ placeholder for it survives anywhere. The "
+          "pre-compile renamer (scripts/obj_target_symbol_renamer.py) refuses "
+          "denylisted rows, so either it did not run since the map changed "
+          "(`touch config/" + VERSION + "/config.yml` + full build), or a "
+          "different tool wrote the name. Adjudicate before measuring.",
+          file=sys.stderr)
+    return 7
+
+
 def run_check(repo: Path, quiet: bool = False,
               min_declared: int = DEFAULT_MIN_DECLARED) -> int:
     """Dry-run every patcher; non-zero if the tree is not a fixed point."""
     rc = check_pairing(repo, quiet=quiet, min_declared=min_declared)
+    if rc:
+        return rc
+    rc = check_denylist_applied(repo, quiet=quiet)  # ★ W16-AE
     if rc:
         return rc
     failures = []
@@ -845,6 +966,12 @@ def verify_manifest(repo: Path, quiet: bool = False) -> int:
                   file=sys.stderr)
             return 6
 
+        # ★ W16-AE: the consumer-side chain gets the denylist EFFECT check
+        # too -- a tree can be a perfect fixed point of the patchers and still
+        # carry a binding the map refuses.
+        rc = check_denylist_applied(repo, quiet=quiet)
+        if rc:
+            return rc
         if not quiet:
             counts = ", ".join(f"{n} {label}" for label, _, n, *_ in report)
             print(f"[patch-state] OK: {counts} objects match "
@@ -970,9 +1097,19 @@ def main() -> int:
                          "real tree disarms the vacuity check, which is the "
                          "one thing a green light cannot tell you about "
                          "itself." % DEFAULT_MIN_DECLARED)
+    ap.add_argument("--check-denylist", action="store_true",
+                    help="★ W16-AE: only verify that every target_symbol_map.json "
+                         "`_denylist` address is really un-named in the target "
+                         "objs (also run inside --check and --verify-manifest)")
+    ap.add_argument("--map", default=None,
+                    help="target_symbol_map.json to read the denylist from "
+                         "(default: <repo>/scripts/target_symbol_map.json; a "
+                         "mutation test passes a sandbox copy here)")
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()
     repo = Path(a.repo).resolve()
+    if a.check_denylist:
+        return check_denylist_applied(repo, mpath=a.map, quiet=a.quiet)
     if not (a.check or a.emit or a.verify_manifest):
         a.check = a.emit = True
     rc = 0

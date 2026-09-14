@@ -5,11 +5,6 @@
 LogFile::LogFile(const char *file_pattern)
     : mFilePattern(file_pattern), mSerialNumber(0), mDirty(0), mFile(0), mActive(0) {}
 
-LogFile::~LogFile() {
-    delete mFile;
-    mFile = 0;
-}
-
 void LogFile::Reset() { AdvanceFile(); }
 
 void LogFile::Print(const char *str) {
