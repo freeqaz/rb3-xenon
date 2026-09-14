@@ -306,11 +306,31 @@ ANON_HASH_RE = re.compile(r"\?A0x([0-9a-fA-F]+)@")
 def anon_scope_hash(name: str):
     """The anon-namespace hash iff it is the SYMBOL'S OWN scope.
 
-    ★ The anon-namespace hash is a PER-TU FINGERPRINT: MSVC derives it from the
-    machine name + source path, so two TUs never share one.  Every symbol
-    carrying hash H therefore belongs to exactly ONE retail TU -- an
-    attribution channel completely independent of splits.txt and of the map's
-    plausibility.
+    ⛔⛔ THE "ONE TU = ONE ANON HASH" MODEL IS REFUTED ON THIS MAP -- MEASURED,
+    AND IT WAS THIS TOOL'S OWN FOUNDING PREMISE (lane W15-A, 2026-09-14).
+    In principle MSVC derives `?A0x<hash>` per TU, so a hash should be a TU
+    fingerprint.  Measured here it is not: **10 of 39 units carrying file-static
+    anon symbols carry TWO OR MORE DISTINCT hashes**, and `BandMachineMgr.cpp`
+    carries **SIX** for methods of the same two classes (`SyncMachineMsg`,
+    `SyncLocalMachineMsg`) at ADJACENT addresses 0x825C1F28..0x825C36D8 -- which
+    one TU's emission cannot produce.
+
+    The reason is structural and unfixable: retail `band.exe` HAS NO SYMBOL
+    TABLE, so no `?A0x` hash in `scripts/target_symbol_map.json` was ever read
+    from retail.  Each was inherited from whichever ORACLE supplied that name
+    (DC3 bindiff, the rb3-Wii oracle, fingerprint_match).  Hash EQUALITY is
+    therefore a statement about the oracle's TU layout, NOT about retail's, and
+    it cannot be validated against retail even in principle.
+
+    ⇒ hash grouping is CORROBORATION ONLY.  It is kept because it is a cheap way
+    to SURFACE candidates, and it is reported, never asserted.
+
+    ★ What survives, and what every verdict in this tool actually rests on, is a
+    property of the NAME'S STRUCTURE and not of the hash's VALUE: a function in
+    an anonymous namespace has INTERNAL LINKAGE, so the linker cannot resolve a
+    reference to it from another TU.  Therefore ITS CALLER IS IN ITS TU.  That
+    argument is unaffected by the refutation above, and it is what proved
+    0x82529890 (see commit "0x82529890 is Joypad_Xbox.cpp").
 
     ⛔ BUT ONLY IF THE HASH IS THE SYMBOL'S OWN SCOPE.  In
     `??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@...` the
@@ -729,7 +749,8 @@ def main(argv=None):
         a(f"    {k:6d} edges  fan-in {fi:4d}  {nm[:78]}")
     a("")
 
-    a("## S0 -- ANON-NAMESPACE TU FINGERPRINT (the strongest channel)")
+    a("## S0 -- ANON-HASH GROUPING (CORROBORATION ONLY -- premise refuted, see "
+      "anon_scope_hash docstring: 10 of 39 units carry >=2 hashes)")
     a("")
     groups, split = anon_hash_groups(c)
     a(f"file-static anon-ns hashes (symbol's own scope, unassignable excluded): {len(groups)}")
