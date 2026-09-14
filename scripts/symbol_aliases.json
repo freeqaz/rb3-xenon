@@ -83258,6 +83258,16 @@
    ],
    "evidence": "W16-AE 2026-09-14 (Item 4). Retail vtordisp thunk at 0x827f42a8 (??_EUIButton@@$4PPPPPPPM@A@AAPAXI@Z, 2 words) branches to 0x827f5348, which the map names ??_GUILabel@@UAAPAXI@Z. ??_GUIButton@@UAAPAXI@Z is T1-proven against the retail bytes at 0x827f5348 by tools/icf_pair_adjudicate.py --chase (deleting dtors of UIButton and UILabel are body- and reloc-identical after the ??1 chain folds). ??_E{UIButton,UILabel}@@UAAPAXI@Z are COFF WEAK EXTERNALs whose default is the corresponding ??_G spelling (the vector-deleting dtor is the scalar one when no array form is emitted), so a call site spelling ??_E resolves to the same COMDAT. Tier T1 for the ??_G member; the ??_E members rest on the weak-external default, not on separate bytes.",
    "withdrawn": []
+  },
+  {
+   "name": "$hashtable_assign_Symbol",
+   "address": "0x825af110",
+   "survivor": "??4?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": [
+    "??4?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
+   ],
+   "evidence": "W16-AQ 2026-09-14, item 1(b). The <Symbol,int> instantiation of hashtable::operator= folded into the <Symbol,DataArray*> one. Proven on RETAIL BYTES, in this order, so no step reads the map for its own answer: (1) retail ?SetToursPlayedMap@TourProgress@@ (0x823643e8) and ?SetTourMostStarsMap@TourProgress@@ (0x823643a8) each `bl 0x825af110`, read by disassembling the retail image, not by consulting target_symbol_map.json. (2) Retail's 80 B body at 0x825af110 is byte-identical INCLUDING relocation names to our compiled <Symbol,DataArray*> operator=: that spelling is a row in default/band3/meta_band/InterstitialMgr at fuzzy 100.0 under the shipped name_check ruler. (3) The container those two setters assign to is a hash_map<Symbol,int>, established independently of this group by the dtor channel -- ??1TourProgress (0x82362d70) calls 0x826100f8 twice, and that 104 B body is byte-identical (fuzzy 100.0, default/CharacterCreatorPanel) to our compiled hashtable dtor, while _Rb_tree has no bucket vector to free. (4) Our two operator= COMDATs are both 80 B with IDENTICAL RAW BYTES, differing only in two relocations, to the per-T ?clear@?$hashtable@ and ?_M_copy_from@?$hashtable@; those per-T callees fold in turn -- our two ?clear@?$hashtable@ COMDATs are 96 B and likewise raw-identical, and retail's single hashtable::clear at 0x8260ffd8 is exactly 96 B. So one retail address demonstrably serves both instantiations, which is what a fold is; the two spellings are not merely similar bodies at distinct addresses (the documented non-fold signature). Tier T1 for the survivor identity; the folded member rests on steps (1)+(4). Predicted +2 fns / +120 B (the two 60 B setters, each behind exactly this one relocation-name charge).",
+   "withdrawn": []
   }
  ]
 }
