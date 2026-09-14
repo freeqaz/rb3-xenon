@@ -806,6 +806,21 @@ void DxRnd::CreatePostTextures() {
 
 static DWORD sPointTestFence = -1;
 
+// Retail keeps the occlusion manager pointer in a callee-saved register
+// across CreateQuery into BeginQuery (r26 in the point block, r28 in the
+// area block) and only reloads `this->mOcclusionQueryMgr` for EndQuery.
+// CreateQuery/BeginQuery call virtuals, so MSVC's mod/ref cannot keep a
+// member load live across them -- the cached pointer has to be a source
+// local whose scope ends exactly after BeginQuery, i.e. the parameter of
+// an inlined helper.
+static inline bool CreateAndBeginQuery(RndOcclusionQueryMgr *mgr, unsigned int &idx) {
+    bool ok = mgr->CreateQuery(idx);
+    if (ok) {
+        mgr->BeginQuery(idx);
+    }
+    return ok;
+}
+
 void DxRnd::DoPointTests() {
     // Block on previous fence if set
     if (sPointTestFence != (DWORD)-1) {
@@ -813,10 +828,10 @@ void DxRnd::DoPointTests() {
         sPointTestFence = -1;
     }
 
-    // Early out if no occlusion query manager or hi-res screen is active
+    // Early out if no occlusion query manager.  DC3 additionally tests
+    // TheHiResScreen.IsActive() here; RB3 retail (fn_8273D0A0) has no
+    // reference to TheHiResScreen anywhere in the body.
     if (!mOcclusionQueryMgr)
-        return;
-    if (TheHiResScreen.IsActive())
         return;
 
     // Process query results from previous frame.
@@ -869,8 +884,13 @@ void DxRnd::DoPointTests() {
     TheShaderMgr.SetTransform(xfm);
 
     // Setup view matrix.  Retail passes the Matrix4 constructor's return
-    // value (`mr r5, r3`) straight to SetVConstant -- an unnamed temporary.
-    TheShaderMgr.SetVConstant(kVS_ViewProjMatrix, Hmx::Matrix4(xfm));
+    // value (`mr r5, r3`) straight to SetVConstant -- an unnamed temporary --
+    // and keeps the manager object (r31) and its vtable (r29) live across the
+    // external Matrix4 ctor.  Same construct as rnddx9/Rnd.cpp BeginDrawing:
+    // a local reference declared HERE, not hoisted, is what keeps the pointer
+    // in a callee-saved register instead of reloading the global.
+    RndShaderMgr &shaderMgr = TheShaderMgr;
+    shaderMgr.SetVConstant(kVS_ViewProjMatrix, Hmx::Matrix4(xfm));
 
     // Setup shader state
     RndShader::SelectConfig(nullptr, kStandardShader, false);
@@ -932,10 +952,7 @@ void DxRnd::DoPointTests() {
             // across CreateQuery into BeginQuery, and gates BeginQuery and
             // DrawVerticesUP+EndQuery with TWO separate tests of the same
             // bool (r25), reloading the index from 0x0(r27) each time.
-            bool ok = mOcclusionQueryMgr->CreateQuery(test.mPointQueryIdx);
-            if (ok) {
-                mOcclusionQueryMgr->BeginQuery(test.mPointQueryIdx);
-            }
+            bool ok = CreateAndBeginQuery(mOcclusionQueryMgr, test.mPointQueryIdx);
             if (ok) {
                 D3DDevice_DrawVerticesUP(mD3DDevice, D3DPT_POINTLIST, 1, &vtx, sizeof(PointVertex));
                 mOcclusionQueryMgr->EndQuery(test.mPointQueryIdx);
@@ -974,10 +991,7 @@ void DxRnd::DoPointTests() {
             verts[3].x = test.mFlare->GetArea().w + verts[0].x;
             verts[3].y = test.mFlare->GetArea().h + verts[3].y;
 
-            bool ok = mOcclusionQueryMgr->CreateQuery(test.mAreaQueryIdx);
-            if (ok) {
-                mOcclusionQueryMgr->BeginQuery(test.mAreaQueryIdx);
-            }
+            bool ok = CreateAndBeginQuery(mOcclusionQueryMgr, test.mAreaQueryIdx);
             if (ok) {
                 D3DDevice_DrawVerticesUP(mD3DDevice, D3DPT_TRIANGLESTRIP, 4, verts, sizeof(QuadVertex));
                 mOcclusionQueryMgr->EndQuery(test.mAreaQueryIdx);
