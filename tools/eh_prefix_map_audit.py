@@ -106,7 +106,11 @@ def main():
     retail = Retail(os.path.join(root, 'orig/45410914/band.exe'))
     lens = retail.pdata_lengths()
     tmap = json.load(open(os.path.join(root, 'scripts/target_symbol_map.json')))
-    rows = {k: v for k, v in tmap.items() if k.startswith('0x')}
+    # isinstance(v, str) drops the deliberate `null` tombstones (109 rows): they name
+    # nothing, so they can neither BE an EH-prefix defect nor belong in the
+    # 'map rows' denominator this tool prints.
+    rows = {k: v for k, v in tmap.items()
+            if k.startswith('0x') and isinstance(v, str)}
 
     def is_prefix(a):
         b = retail.read(a, 8)
