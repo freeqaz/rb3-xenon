@@ -297,13 +297,23 @@ def main():
             other = in_group.get(f, set()) - {f"0x{SURVIVOR_VA:08x}"}
             assert not other, f"INJECTIVITY: {f} already aliased at {sorted(other)}"
         assert SURVIVOR not in folded
+        addr = f"0x{SURVIVOR_VA:08x}"
+        # Preserve the existing group's `withdrawn` records and never re-admit
+        # a withdrawn spelling: ALIAS-2 withdrew four SURVIVOR_SIZE_MISMATCH
+        # spellings with "Do NOT re-add", and a rebuild-from-scratch here used
+        # to drop that record silently.
+        prev = [g for g in ali["groups"] if (g.get("address") or "").lower() == addr]
+        withdrawn = [w for g in prev for w in g.get("withdrawn", [])]
+        banned = {w["spelling"] for w in withdrawn}
+        folded = [f for f in folded if f not in banned]
         ali["groups"] = [g for g in ali["groups"]
-                         if g["address"].lower() != f"0x{SURVIVOR_VA:08x}"]
+                         if (g.get("address") or "").lower() != addr]
         ali["groups"].append({
             "name": "operator_new_alloc_thunk",
-            "address": f"0x{SURVIVOR_VA:08x}",
+            "address": addr,
             "survivor": SURVIVOR,
             "folded": folded,
+            **({"withdrawn": withdrawn} if withdrawn else {}),
             "evidence": (
                 "tools/alloc_fold_gate.py -- 8-byte allocator-thunk fold class. "
                 "Every folded spelling's COMDAT is byte- AND relocation-identical "
