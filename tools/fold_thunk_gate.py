@@ -307,7 +307,12 @@ def main():
     rows = []
     for r in pairs:
         S, F = r["target"], r["base"]
-        sa, fa = int(r["target_addr"], 16), int(r["base_addr"], 16)
+        sa = int(r["target_addr"], 16)
+        # A folded spelling with NO map row (base_addr null) is the docstring's
+        # first FT1 case -- "addr(F) is absent from the map ... nothing
+        # contradicts" -- and used to crash here on int(None, 16) instead of
+        # taking that path (W16-AE 2026-09-14, InputMgr::{Set,Clear}InvalidMessageSink).
+        fa = int(r["base_addr"], 16) if r.get("base_addr") else None
         row = dict(survivor=S, folded=F, sites=r["sites"],
                    survivor_addr=r["target_addr"], folded_map_addr=r["base_addr"],
                    survivor_fanin=r["target_fanin"])
@@ -350,10 +355,18 @@ def main():
             continue
 
         # second gate: retail's own definition of F
-        fw, ft, ferr = retail.canon(fa)
-        f_refs = retail.refs["total"][fa]
-        row["retail_F_refs"] = retail.ref_note(fa)
-        if ferr:
+        if fa is None:
+            row["retail_F_refs"] = "n/a (no map row)"
+            row["retail_F"] = "%s has no map row: retail's map places it nowhere, nothing contradicts" % F
+            tier, disc = "FT1", None
+            fw, ft, ferr = None, None, None
+        else:
+            fw, ft, ferr = retail.canon(fa)
+            f_refs = retail.refs["total"][fa]
+            row["retail_F_refs"] = retail.ref_note(fa)
+        if fa is None:
+            pass
+        elif ferr:
             row["retail_F"] = "no body at %s (%s)" % (r["base_addr"], ferr)
             tier, disc = "FT2", "map parks %s at %s with no symbols.txt extent" % (F, r["base_addr"])
         elif (fw, ft) == (rw, rt):
@@ -452,15 +465,17 @@ def install(groups, path):
         if S in existing:
             g = existing[S]
             before = (sorted(g.get("folded", [])), g.get("evidence", ""))
-            if g.get("evidence", "").startswith(OWNED):
-                # a group this tool owns: regenerate it wholesale so a change in the
-                # evidence rules shows up in the file instead of silently not applying
-                g["folded"] = sorted(folded)
-                g["evidence"] = ev
-            else:
-                g["folded"] = sorted(set(g.get("folded", [])) | set(folded))
-                if sorted(g["folded"]) != before[0]:
-                    g["evidence"] = g.get("evidence", "") + " || " + ev
+            # UNION, never replace -- for owned and hand-edited groups alike.  This
+            # used to "regenerate wholesale" any group whose evidence starts with
+            # OWNED, which on a PARTIAL worklist silently dropped every membership
+            # not in that run (measured 2026-09-14, lane W16-AE: a two-pair
+            # worklist against group 0x826c3888 discarded its five prior members
+            # and the hand-appended W15-D / W16-J evidence records).  A membership
+            # may only leave a group via a `withdrawn` record; a regeneration that
+            # wants to shrink one must write that record, not overwrite the list.
+            g["folded"] = sorted(set(g.get("folded", [])) | set(folded))
+            if sorted(g["folded"]) != before[0]:
+                g["evidence"] = g.get("evidence", "") + " || " + ev
             if (sorted(g["folded"]), g["evidence"]) != before:
                 updated += 1
         else:
@@ -483,11 +498,13 @@ def install(groups, path):
             "is not retail's copy of our symbol. Do NOT re-add a score-based discredit: a low "
             "`none` score says two bodies differ, never which of them is misnamed. See "
             "docs/plans/fold-thunk-alias-gate-2026-08-12.md.")
-    doc["_comment"] = [c for c in doc["_comment"]
-                       if not (isinstance(c, str) and c.startswith("FOLD-THUNK TIER"))]
-    if note not in doc["_comment"]:
+    # Leave an existing FOLD-THUNK TIER comment line where it is (rewriting it
+    # moved the line and churned the whole file); only add one if none exists.
+    if not any(isinstance(c, str) and c.startswith("FOLD-THUNK TIER") for c in doc["_comment"]):
         doc["_comment"].append(note)
-    path.write_text(json.dumps(doc, indent=2))
+    # House round-trip for scripts/symbol_aliases.json: indent=1 + trailing
+    # newline.  indent=2 re-serialised all 76k lines on every install.
+    path.write_text(json.dumps(doc, indent=1) + "\n")
     print("installed: %d new group(s), %d updated; %d total" % (added, updated, len(doc["groups"])))
 
 
