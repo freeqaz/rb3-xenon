@@ -349,7 +349,6 @@ BandCamShot.cpp:
 	.pdata      start:0x8220E198 end:0x8220E1A8
 	.pdata      start:0x82213890 end:0x82213898
 	.pdata      start:0x822138E8 end:0x822138F0
-	.pdata      start:0x82213DD0 end:0x82213DD8
 	.pdata      start:0x82230A00 end:0x82230A08
 	.pdata      start:0x82230B78 end:0x82230B88
 	.pdata      start:0x82233B40 end:0x82233B48
@@ -361,7 +360,6 @@ BandCamShot.cpp:
 	.text       start:0x82456BBC end:0x82456CA4
 	.text       start:0x824C3E08 end:0x824C3E68
 	.text       start:0x824C4528 end:0x824C4670
-	.text       start:0x824C93C0 end:0x824C942C
 	.text       start:0x826856F0 end:0x82685750
 	.text       start:0x826870D0 end:0x82687170
 	.text       start:0x826B8C38 end:0x826B8C9C
@@ -10920,7 +10918,7 @@ EventAnim.cpp:
 	.pdata      start:0x82213D88 end:0x82213DA0
 	.pdata      start:0x82213DA0 end:0x82213DA8
 	.pdata      start:0x82213DA8 end:0x82213DB0
-	.pdata      start:0x82213DB0 end:0x82213DD0
+	.pdata      start:0x82213DB0 end:0x82213DD8
 	.pdata      start:0x82213DD8 end:0x82213DF0
 	.pdata      start:0x82213E20 end:0x82213E28
 	.pdata      start:0x82213E28 end:0x82213E30
@@ -10939,7 +10937,7 @@ EventAnim.cpp:
 	.text       start:0x824C9118 end:0x824C9130
 	.text       start:0x824C9130 end:0x824C919C
 	.text       start:0x824C91A0 end:0x824C9204
-	.text       start:0x824C9208 end:0x824C93C0
+	.text       start:0x824C9208 end:0x824C942C
 	.text       start:0x824C9430 end:0x824C95F0
 	.text       start:0x824C9918 end:0x824C99A8
 	.text       start:0x824C99A8 end:0x824C99F4

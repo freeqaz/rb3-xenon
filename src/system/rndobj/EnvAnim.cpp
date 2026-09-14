@@ -23,6 +23,14 @@ ObjRefConcrete<RndEnvAnim, ObjectDir>::~ObjRefConcrete() {
 }
 #endif
 
+// Retail (0x82486ad0) has NO Hmx::Object::Replace fallback -- the body's only
+// calls are __RTDynamicCast and SetOwnerObj, then blr.  Hmx::Object::Replace is
+// EMPTY in the match build (its whole body is #ifdef HX_NATIVE, Object.cpp:228),
+// but with no LTCG an empty out-of-line callee still costs a real `bl`, and
+// there is no such `bl` in the retail body.  Kept under HX_NATIVE, where the
+// base really does forward to mSinks.
+// The body shape here was already retail's; only the fallback arm was surplus.
+// `addi r11,r3,64` = mKeysOwner at 0x40, `subi r4,r31,80` = vbase at 0x50.
 void RndEnvAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
     if (RefIs(ref, mKeysOwner)) {
         if (!obj)
@@ -31,7 +39,9 @@ void RndEnvAnim::Replace(ObjRef *ref, Hmx::Object *obj) {
             mKeysOwner.SetOwnerObj(dynamic_cast<RndEnvAnim *>(obj)->mKeysOwner.Ptr());
         return;
     }
+#ifdef HX_NATIVE
     Hmx::Object::Replace(ref, obj);
+#endif
 }
 
 BEGIN_HANDLERS(RndEnvAnim)

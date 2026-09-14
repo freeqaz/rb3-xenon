@@ -13,15 +13,22 @@ void TrueColor::ExposureRecipe::SetGlobalGain(float f) { mField_0x08 = f; }
 
 CharWeightable::CharWeightable() : mWeight(1), mWeightOwner(this, this) {}
 
+// Retail 0x823ae888 (144 B).  Two corrections, both read off the bytes:
+//  1. There is NO Hmx::Object::Replace fallback -- the only calls are
+//     __RTDynamicCast and SetOwnerObj (x2), then blr.
+//  2. The `restore to this` arm is NOT the else of the match; it is a SECOND,
+//     UNCONDITIONAL statement.  Retail re-reads the member after the assignment
+//     (`lwz r11,-8(r31); cmpwi r11,0` at 0x823ae8ec) and both paths fall into
+//     it -- the non-match branch at 0x823ae8c0 lands exactly there.  So a
+//     Replace that did not target mWeightOwner can still repair a null one.
 void CharWeightable::Replace(ObjRef *ref, Hmx::Object *obj) {
-    if (RefIs(ref, mWeightOwner)) {
-        if (!mWeightOwner.SetObj(obj)) {
-            mWeightOwner = this;
-        }
-        return;
-    } else {
-        Hmx::Object::Replace(ref, obj);
-    }
+    if (RefIs(ref, mWeightOwner))
+        mWeightOwner.SetOwnerObj(dynamic_cast<CharWeightable *>(obj));
+    if (!mWeightOwner.Ptr())
+        mWeightOwner.SetOwnerObj(this);
+#ifdef HX_NATIVE
+    Hmx::Object::Replace(ref, obj);
+#endif
 }
 
 BEGIN_HANDLERS(CharWeightable)
