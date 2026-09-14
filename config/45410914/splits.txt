@@ -6288,13 +6288,11 @@ StreamReceiver.cpp:
 	.text       start:0x8272A4F0 end:0x8272A8B8
 
 MoggClipMap.cpp:
-	.pdata      start:0x82218858 end:0x82218918
 	.pdata      start:0x82239410 end:0x82239418
 	.pdata      start:0x8223A248 end:0x8223A260
 	.pdata      start:0x8223A260 end:0x8223A268
 	.pdata      start:0x8223A268 end:0x8223A270
 	.pdata      start:0x8223A270 end:0x8223A280
-	.text       start:0x8251BFA8 end:0x8251CBE0
 	.text       start:0x8271C1F0 end:0x8271C254
 	.text       start:0x8272AFB8 end:0x8272B140
 	.text       start:0x8272B140 end:0x8272B1E0
@@ -7191,12 +7189,12 @@ Env_NG.cpp:
 	.text       start:0x82B86FD0 end:0x82B87E90
 
 MemcardMgr_Xbox.cpp:
-	.pdata      start:0x822187E8 end:0x82218858
+	.pdata      start:0x822187E8 end:0x82218808
 	.pdata      start:0x822189A0 end:0x822189F8
 	.pdata      start:0x82240A18 end:0x82240A28
 	.pdata      start:0x82240A28 end:0x82240A30
 	.pdata      start:0x82240A30 end:0x82240B80
-	.text       start:0x8251BB00 end:0x8251BFA8
+	.text       start:0x8251BB00 end:0x8251BBF0
 	.text       start:0x8251D0E0 end:0x8251D4C8
 	.text       start:0x82553478 end:0x82553484
 	.text       start:0x827AB8E8 end:0x827ABA48
@@ -8096,6 +8094,12 @@ PlatformMgr.cpp:
 	.text       start:0x8251CBE0 end:0x8251CD08
 	.text       start:0x8267B460 end:0x8267B478
 	.text       start:0x82B93F48 end:0x82B93F50
+
+PlatformMgr_Xbox.cpp:
+	.pdata      start:0x82218808 end:0x82218858
+	.pdata      start:0x82218858 end:0x82218918
+	.text       start:0x8251BBF0 end:0x8251BFA8
+	.text       start:0x8251BFA8 end:0x8251CBE0
 
 FlowCommand.cpp:
 	.pdata      start:0x82207D28 end:0x82207D30
