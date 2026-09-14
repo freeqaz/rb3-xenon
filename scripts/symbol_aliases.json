@@ -74940,10 +74940,19 @@
    "name": "_DScreenshot",
    "address": "0x82824a58",
    "survivor": "??_DScreenshot@@QAAXXZ",
-   "folded": [
-    "??_DCharTransDraw@@QAAXXZ"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??_DCharTransDraw@@QAAXXZ",
+     "lane": "W16-AH 2026-09-14",
+     "class": "FOLD_REFUTED_BY_CALLER_BRANCH",
+     "disposition": "withdrawn",
+     "witness_verdict_before": "WITNESS_INCONCLUSIVE",
+     "refuting_caller": "??_GCharTransDraw@@UAAPAXI@Z @ 0x823c8fc0, branch +0x20 -> 0x823c8cf0",
+     "evidence": "FOLD REFUTED BY THE FOLDED CLASS'S OWN CALLER. This membership asserts that our ??_DCharTransDraw@@QAAXXZ folded into the survivor ??_DScreenshot@@QAAXXZ at retail 0x82824a58. Retail's ??_GCharTransDraw@@UAAPAXI@Z is map-named at 0x823c8fc0, is 80 bytes, and has exactly TWO branch sites: +0x20 -> 0x823c8cf0 and +0x30 -> ?MemFree@@YAXPAX@Z. Our ??_GCharTransDraw@@UAAPAXI@Z calls ??_DCharTransDraw@@QAAXXZ at +32 (0x20) and ??3CharTransDraw@@SAXPAX@Z at +48 (0x30), so the second site corroborates the offset correspondence independently (class operator delete <-> MemFree). CharTransDraw's OWN vector deleting destructor therefore calls 0x823c8cf0, NOT the survivor at 0x82824a58 -- had the asserted fold happened, that call would go to the survivor. This argument does not depend on what 0x823c8cf0 is named. Corroboration: our ??_DCharTransDraw body compares EQ to retail's 108 bytes at 0x823c8cf0 under retail_compare, 0x823c8cf0 IS a .pdata BeginAddress, and it was an anonymous 0%-scoring row (fn_823C8CF0) before this lane named it. Note the masked-equality that created this membership is EXPECTED and not evidence of folding: ??_DCharTransDraw, ??_DScreenshot and ??_DRndMultiMesh are byte-indistinguishable under retail_compare precisely because their one discriminating bl (each calls its OWN ??1) targets an address the map does not name -- which is the UNDECIDED_MASKED blind spot W16-AD built the fold witness for. Retail kept three copies, mapped at 0x823c8cf0, 0x82824a58 and 0x82469fc8; the latter two are independently map-named and score fuzzy==100 today. The callee-level witness returned INCONCLUSIVE_NOT_BEGIN (the decoded ??1CharTransDraw destination 0x823c8a88 is 20 bytes and is not a .pdata BeginAddress, so it cannot be compared as a function) -- this withdrawal rests on the CALLER branch, which is a separate and sufficient instrument, not on that witness. Withdrawal predicted 0 B / 0 rows NON-VACUOUSLY (1 call site examined, in a report row, retail names N at it, 0 charged) and measured Delta 0."
+    }
+   ]
   },
   {
    "name": "NewObject",
