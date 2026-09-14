@@ -186,9 +186,22 @@ void MainHubPanel::ReloadMessages() {
     }
     if (profile) {
         if (user) {
-        if (TheServer.GetPlayerID(profile->GetPadNum())) {
+            // Retail fn_82621AC0 has NO Server::GetPlayerID test here.  Two
+            // independent proofs on retail bytes: (a) a unit-wide scan for the
+            // GetPlayerID vtable slot (`lwz r11, 0x1c(...)` + bctrl) finds it
+            // ONLY in CheckProfileForTicker (fn_8261FF10) and SetMainHubOverride
+            // (fn_82622648), never in fn_82621AC0; (b) lbl_82C6EB50 (TheServer)
+            // does not appear among fn_82621AC0's data references at all.
+            // Retail goes straight from GetUserFromPad to user->GetTrackType().
+            // The rb3-Wii DEV oracle gates the ticker request on a server login;
+            // RB3 X360 retail does not.  (Lane W16-AN.)
             TrackType ty = user->GetTrackType();
-            if (ty - 10U <= 2) {
+            // Retail emits THREE explicit equality compares here -- `cmpwi 0xa`
+            // / beq, `cmpwi 0xb` / beq, `cmpwi 0xc` / bne -- not the unsigned
+            // range trick.  `ty - 10U <= 2` compiles to `subi 0xa` + `cmplwi 2`
+            // + `bgt`, which is 3 charged instructions and 4 deletes.
+            if (ty == kTrackNone || ty == kTrackPending
+                || ty == kTrackPendingVocals) {
                 bool randBool = RandomInt(0, 2) != 0;
                 ty = ControllerTypeToTrackType(
                     user->ConnectedControllerType(), randBool
@@ -204,7 +217,6 @@ void MainHubPanel::ReloadMessages() {
                 unkc0 = sty;
                 TheRockCentral.GetTickerInfo(profile, sty, mLabelUpdateResults, this);
             }
-        }
         }
     }
 }
@@ -626,10 +638,10 @@ const char *MainHubPanel::GetMotd() {
         // `|| ThePlatformMgr.IsOnlineRestricted()` was a genuine extra test.
         if (!ThePlatformMgr.IsEthernetCableConnected()) {
             return Localize(message_motd_noconnection, nullptr);
-        } else if (ThePlatformMgr.IsConnected()) {
-            return Localize(message_motd, nullptr);
-        } else {
+        } else if (!ThePlatformMgr.IsConnected()) {
             return Localize(message_motd_signin, nullptr);
+        } else {
+            return Localize(message_motd, nullptr);
         }
     }
     return motd;
