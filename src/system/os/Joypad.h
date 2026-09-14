@@ -246,23 +246,21 @@ public:
     Hmx::Object *mBreedCallback; // 0x7c - callback object for breed data read/write results
     BreedData mBreedData; // 0x80
     BreedData *mBreedDataDest; // 0x8c
-    int unk98; // 0x90 (member names in this tail are historical/dc3-inherited; comments are the true offsets)
-    int mSuppressWriteCallback; // 0x94
-    int unka0; // 0x98
-    int unka4; // 0x9c
-    int unka8; // 0xa0
+    // EEPROM ("breed data") write state machine, driven by JoypadPollCommon.
+    // Layout is DC3's minus 8 (RB3 has no mNumAnalogSticks pair); every
+    // offset below was read off retail JoypadPollCommon (0x82526A00) and
+    // JoypadHandleEepromWriteResponse. sizeof(JoypadData) must stay 0xd4 =
+    // retail gJoypadData element stride.
+    int mEepromWriteState; // 0x90
+    int mEepromBytesLeft; // 0x94
+    int mEepromTotalBytes; // 0x98
+    int mEepromChunkSize; // 0x9c
+    int mEepromTimeout; // 0xa0
     int unkac; // 0xa4
-    int unkb0; // 0xa8
-    int unkb4; // 0xac
-    int unkb8; // 0xb0
-    int unkbc; // 0xb4
-    bool mEepromWriteDone; // 0xb8
-    int unkc4; // 0xbc
-    int unkc8; // 0xc0
-    int unkcc; // 0xc4
-    int unkd0; // 0xc8
-    int unkd4; // 0xcc (restored from dc3; keeps sizeof(JoypadData)=0xd4 = retail element stride — REQUIRED)
-    int unkd8; // 0xd0
+    unsigned char mEepromData[0x10]; // 0xa8 - source bytes for the write
+    bool mEepromWriteDone; // 0xb8 - set by JoypadHandleEepromWriteResponse
+    unsigned char mEepromPacket[0x14]; // 0xb9 - outgoing packet handed to requestBreedWrite
+    int mLastActivityMs; // 0xd0
 
     JoypadData();
     float GetAxis(Symbol) const;
@@ -294,6 +292,22 @@ extern "C" {
 void JoypadInitCommon(DataArray *);
 void JoypadTerminateCommon();
 void JoypadPollCommon();
+// Platform back end (Joypad_Xbox.cpp / Joypad_Xinput.cpp). Retail 0x82529af8, 168 B.
+int ReadSingleJoypad(
+    int pad,
+    unsigned int *buttons,
+    char *lx,
+    char *ly,
+    char *rx,
+    char *ry,
+    char *lt,
+    char *rt,
+    float *sensors,
+    float *pressures,
+    unsigned char *pro_guitar
+);
+// Retail 0x82529af0: a 4 B `b XamInputSendStayAliveRequest` tail call.
+void JoypadSendKeepAlive(int pad_mask);
 bool JoypadIsCalbertGuitar(int);
 int JoypadGetUsersPadNum(const LocalUser *);
 LocalUser *JoypadGetUserFromPadNum(int);

@@ -74,6 +74,11 @@ void JoypadTerminate() {
 
 void JoypadPoll() { JoypadPollCommon(); }
 
+// Retail 0x82529af0: a single `b XamInputSendStayAliveRequest` (import stub
+// fn_82C4BC7C). The map used to name this address
+// ReceiveUpstreamCalbertResponse, which cannot be right -- that body logs.
+void JoypadSendKeepAlive(int pad_mask) { XamInputSendStayAliveRequest(pad_mask); }
+
 JoypadType SetupHXKeytar(int, const XINPUT_CAPABILITIES &c) {
     if ((c.Gamepad.sThumbLY & 0xFFF0U) == 0x1730) {
         return kJoypadXboxMidiBoxKeyboard;

@@ -1,12 +1,16 @@
 #include "os/Joypad.h"
+#include <algorithm>
 #include "obj/Data.h"
 #include "obj/DataFunc.h"
 #include "obj/Msg.h"
 #include "os/Debug.h"
 #include "obj/Object.h"
 #include "os/JoypadMsgs.h"
+#include "os/PlatformMgr.h"
 #include "os/System.h"
 #include "os/User.h"
+#include "os/UsbMidiGuitar.h"
+#include "os/UsbMidiKeyboard.h"
 
 namespace {
     class KeyboardJoypadExporter {
@@ -32,6 +36,13 @@ namespace {
     KeyboardJoypadExporter *gKeyboardExporter; // 0x24
     JoypadData gJoypadData[kNumJoypads]; // 0x28
 
+    // A newly-pressed button plus the velocity bucket it was hit with;
+    // JoypadPollCommon keeps the four loudest hits of a frame sorted here.
+    struct ButtonVelocity {
+        JoypadButton mButton; // 0x0
+        int mBucket; // 0x4
+    };
+
     int gKeepaliveThresholdMs = 0x7FFFFFFF;
     bool gExportMsgs = true;
     unsigned int gNotifyMask = 0x8F0;
@@ -44,8 +55,8 @@ JoypadData::JoypadData()
       mYellowCymbalMask(0), mBlueCymbalMask(0), mSecondaryPedalMask(0), mCymbalMask(0),
       mIsDrum(false), mType(kJoypadNone), mControllerType(), mDistFromRest(0),
       mHasGreenCymbal(false), mHasYellowCymbal(false), mHasBlueCymbal(false),
-      mHasSecondaryPedal(false), mBreedCallback(0), mBreedDataDest(0), mSuppressWriteCallback(0), unka0(0), unka4(0),
-      unka8(0), unkac(0), mEepromWriteDone(0) {
+      mHasSecondaryPedal(false), mBreedCallback(0), mBreedDataDest(0), mEepromBytesLeft(0), mEepromTotalBytes(0),
+      mEepromChunkSize(0), mEepromTimeout(0), unkac(0), mEepromWriteDone(0) {
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             mSticks[i][j] = 0;
@@ -501,6 +512,300 @@ JoypadAction ButtonToAction(JoypadButton btn, Symbol sym) {
     }
 }
 
+// Retail 0x82526A00 (2,468 B). Ported from DC3's JoypadPollCommon with the
+// RB3 deltas read off the retail bytes:
+//   - the stick gate is the bool JoypadData::mHasAnalogSticks (lbz 0x4d),
+//     not DC3's `mNumAnalogSticks > k`;
+//   - gHolmesPressed is stored as a constant 0 (HolmesClientPollJoypad is
+//     compiled out of the retail 360 build; no such body exists);
+//   - the keep-alive callee is the 4 B JoypadSendKeepAlive thunk at
+//     0x82529af0 (the map used to call that address
+//     ReceiveUpstreamCalbertResponse, which is a MILO_LOG body and cannot be a
+//     one-instruction tail call);
+//   - JoypadConnectionMsg's ctor takes 3 args (user, connected, padType) --
+//     retail loads only r4..r6 at both sites; DC3's 4th pad-index arg is absent.
+void JoypadPollCommon() {
+    if (!gJoypadLibInitialized) {
+        MILO_NOTIFY(" Can't call JoypadPoll before initialization...");
+    } else {
+        char sticks[kNumAnalogSticks][2];
+        char triggers[2];
+        float sensors[3];
+        float pressures[kNumPressureButtons] = { 0 };
+        unsigned char pro_guitar[sizeof(ProGuitarData)] = { 0 };
+        unsigned int currButtons = 0;
+
+        for (int i = 0; i < kNumJoypads; i++) {
+            if (gJoypadDisabled[i])
+                continue;
+            JoypadData &data = gJoypadData[i];
+
+            // The back end wants the last known stick positions as signed bytes.
+            for (int k = 0; k < kNumAnalogSticks; k++) {
+                int x = (int)(data.mSticks[k][0] * 127.0f);
+                if (x > 127)
+                    x = 127;
+                else if (x < -128)
+                    x = -128;
+                sticks[k][0] = x;
+                int y = (int)(data.mSticks[k][1] * 127.0f);
+                if (y > 127)
+                    y = 127;
+                else if (y < -128)
+                    y = -128;
+                sticks[k][1] = y;
+            }
+            for (int s = 0; s < 3; s++)
+                sensors[s] = 0;
+            for (int p = 0; p < kNumPressureButtons; p++)
+                pressures[p] = 0.0f;
+            for (int j = 0; j < (int)sizeof(ProGuitarData); j++)
+                pro_guitar[j] = 0;
+
+            bool changed = false;
+            int padType = ReadSingleJoypad(
+                i,
+                &currButtons,
+                &sticks[0][0],
+                &sticks[0][1],
+                &sticks[1][0],
+                &sticks[1][1],
+                &triggers[0],
+                &triggers[1],
+                sensors,
+                pressures,
+                pro_guitar
+            );
+
+            // The target really does take a full 0xd4-byte copy of the pad here
+            // (memcpy at 0x120(r1)) and then tests only mEepromBytesLeft on the
+            // copy while the state machine below mutates the live struct.
+            JoypadData padData = data;
+            if (padData.mEepromBytesLeft > 0) {
+                switch (gJoypadData[i].mEepromWriteState) {
+                case 0:
+                    gJoypadData[i].mEepromPacket[0] = 0xAD;
+                    gJoypadData[i].mEepromPacket[1] = 0xDE;
+                    gJoypadData[i].mEepromPacket[2] = 0;
+                    gJoypadData[i].mEepromPacket[3] = 0;
+                    for (int j = 0; j < gJoypadData[i].mEepromChunkSize; j += 2) {
+                        gJoypadData[i].mEepromPacket[j + 4] = 0x55;
+                        gJoypadData[i].mEepromPacket[j + 5] = 0xAA;
+                    }
+                    gJoypadData[i].mEepromWriteDone = false;
+                    requestBreedWrite(i, gJoypadData[i].mEepromPacket);
+                    gJoypadData[i].mEepromWriteState = 1;
+                    gJoypadData[i].mEepromTimeout = 0x78;
+                    break;
+                case 2: {
+                    int offset =
+                        gJoypadData[i].mEepromTotalBytes - gJoypadData[i].mEepromBytesLeft;
+                    int len = std::min(
+                        gJoypadData[i].mEepromBytesLeft, gJoypadData[i].mEepromChunkSize
+                    );
+                    gJoypadData[i].mEepromPacket[0] = offset;
+                    gJoypadData[i].mEepromPacket[1] = 0;
+                    gJoypadData[i].mEepromPacket[2] = gJoypadData[i].mEepromTotalBytes;
+                    gJoypadData[i].mEepromPacket[3] = len;
+                    memset(&gJoypadData[i].mEepromPacket[4], 0, 0x10);
+                    for (int j = 0; j < len; j += 2) {
+                        gJoypadData[i].mEepromPacket[j + 4] = gJoypadData[i].mEepromData[offset];
+                        gJoypadData[i].mEepromPacket[j + 5] =
+                            gJoypadData[i].mEepromData[offset + 1];
+                        offset += 2;
+                    }
+                    gJoypadData[i].mEepromBytesLeft -= len;
+                    gJoypadData[i].mEepromWriteDone = false;
+                    requestBreedWrite(i, gJoypadData[i].mEepromPacket);
+                    gJoypadData[i].mEepromWriteState = 3;
+                    gJoypadData[i].mEepromTimeout = 0x78;
+                    break;
+                }
+                case 1:
+                case 3:
+                    if (gJoypadData[i].mEepromWriteDone) {
+                        gJoypadData[i].mEepromWriteState = 2;
+                    } else if (--gJoypadData[i].mEepromTimeout <= 0) {
+                        gJoypadData[i].mEepromWriteState = 4;
+                    }
+                    break;
+                }
+            }
+
+            LocalUser *user = data.mUser;
+            bool justDisconnected = false;
+            bool justConnected = false;
+            if (SystemMs() - data.mLastActivityMs > gKeepaliveThresholdMs) {
+                padType = kJoypadNone;
+                data.mLastActivityMs = SystemMs() + 0x7FFFFFFF;
+            }
+            if (padType == kJoypadNone) {
+                if (data.mConnected) {
+                    currButtons = 0;
+                    justDisconnected = true;
+                    data.mConnected = false;
+                } else {
+                    continue;
+                }
+            } else {
+                if (!data.mConnected) {
+                    data.mControllerType = Symbol();
+                    justConnected = true;
+                    data.mConnected = true;
+                }
+                data.mType = (JoypadType)padType;
+            }
+            if (data.mControllerType.Null()) {
+                // Called for the side effect: it fills in mControllerType and the
+                // per-type masks. The returned Symbol is discarded.
+                Symbol type = JoypadControllerTypePadNum(i);
+            }
+
+            for (int k = 0; k < kNumAnalogSticks; k++) {
+                float x;
+                float y;
+                if (data.mHasAnalogSticks) {
+                    x = sticks[k][0] / 127.0f;
+                    y = sticks[k][1] / 127.0f;
+                } else {
+                    x = 0.0f;
+                    y = 0.0f;
+                }
+                data.mSticks[k][0] = x;
+                data.mSticks[k][1] = y;
+            }
+            for (int t = 0; t < 2; t++) {
+                float v = triggers[t] / 127.0f;
+                changed |= data.mTriggers[t] != v;
+                data.mTriggers[t] = v;
+            }
+            memcpy(data.mSensors, sensors, sizeof(sensors));
+            for (int p = 0; p < kNumPressureButtons; p++) {
+                changed |= data.mPressures[p] != pressures[p];
+                data.mPressures[p] = pressures[p];
+            }
+
+            bool hasProGuitar =
+                padType != kJoypadDigital && padType != kJoypadAnalog
+                && padType != kJoypadDualShock;
+            for (int j = 0; j < (int)sizeof(ProGuitarData); j++) {
+                unsigned char *pro_dst = (unsigned char *)&data.mProGuitarData;
+                changed |= hasProGuitar && pro_dst[j] != pro_guitar[j];
+                pro_dst[j] = pro_guitar[j];
+            }
+
+            if (data.mTranslateSticks)
+                TranslateSticksToButs(data, currButtons);
+            currButtons &= ~data.mIgnoreButtonMask;
+            unsigned int newBtnDowns = (currButtons ^ data.mButtons) & currButtons;
+            unsigned int newBtnUps = (currButtons ^ data.mButtons) & ~currButtons;
+            if (changed || (currButtons ^ data.mButtons) != 0
+                || ThePlatformMgr.GuideShowing()) {
+                data.mLastActivityMs = SystemMs();
+            }
+
+            bool ignore_dup_and_down = false;
+            {
+                unsigned int changedBits = data.mButtons ^ currButtons;
+                data.mNewPressed = changedBits & currButtons;
+                data.mNewReleased = changedBits & data.mButtons;
+                data.mButtons = currButtons;
+            }
+            if ((data.mGreenCymbalMask & currButtons) == data.mGreenCymbalMask)
+                data.mHasGreenCymbal = true;
+            if ((data.mYellowCymbalMask & currButtons) == data.mYellowCymbalMask)
+                data.mHasYellowCymbal = true;
+            if ((data.mBlueCymbalMask & currButtons) == data.mBlueCymbalMask)
+                data.mHasBlueCymbal = true;
+            if (data.mSecondaryPedalMask & currButtons)
+                data.mHasSecondaryPedal = true;
+            if (data.mIsDrum && (data.mCymbalMask & currButtons) == data.mCymbalMask)
+                ignore_dup_and_down = true;
+
+            ButtonVelocity button_velocities[4];
+            for (int e = 0; e < 4; e++) {
+                button_velocities[e].mButton = (JoypadButton)kPad_NumButtons;
+                button_velocities[e].mBucket = 0;
+            }
+
+            for (int but = 0; but < kPad_NumButtons; but++) {
+                if (newBtnUps & 1 << but) {
+                    if (!ignore_dup_and_down || (but != kPad_DUp && but != kPad_DDown)) {
+                        JoypadButton joybut = (JoypadButton)but;
+                        ButtonUpMsg msg(
+                            user, joybut, ButtonToAction(joybut, data.mControllerType), i
+                        );
+                        Export(msg);
+                    }
+                } else if (newBtnDowns & 1 << but) {
+                    if (!ignore_dup_and_down || (but != kPad_DUp && but != kPad_DDown)) {
+                        JoypadButton joybut = (JoypadButton)but;
+                        int bucket = ButtonToVelocityBucket(&data, joybut);
+                        if (bucket == 0) {
+                            ButtonDownMsg msg(
+                                user, joybut, ButtonToAction(joybut, data.mControllerType), i
+                            );
+                            Export(msg);
+                        } else {
+                            for (int e = 0; e < 4; e++) {
+                                if (bucket > button_velocities[e].mBucket) {
+                                    if (e < 3) {
+                                        for (int f = 3; f > e; f--)
+                                            button_velocities[f] = button_velocities[f - 1];
+                                    }
+                                    button_velocities[e].mButton = joybut;
+                                    button_velocities[e].mBucket = bucket;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int e = 0; e < 4; e++) {
+                if (button_velocities[e].mBucket == 0)
+                    break;
+                JoypadButton joybut = button_velocities[e].mButton;
+                ButtonDownMsg msg(user, joybut, ButtonToAction(joybut, data.mControllerType), i);
+                Export(msg);
+            }
+
+            MILO_ASSERT(!(justDisconnected && justConnected), 0x405);
+
+            if (justDisconnected) {
+                data.mType = kJoypadNone;
+                JoypadConnectionMsg msg(user, false, padType);
+                Export(msg);
+            } else if (justConnected) {
+                JoypadConnectionMsg msg(user, true, padType);
+                Export(msg);
+                data.mLastActivityMs = SystemMs() + 0x7FFFFFFF;
+            }
+        }
+
+        UsbMidiGuitar::Poll();
+        UsbMidiKeyboard::Poll();
+
+        if (gPadsToKeepAlive != 0) {
+            if (gKeepAliveCountdown == 0) {
+                for (int p = 0; p < kNumJoypads; p++) {
+                    if (1 << p & gPadsToKeepAlive)
+                        gJoypadData[p].mLastActivityMs = SystemMs();
+                }
+                JoypadSendKeepAlive(gPadsToKeepAlive);
+                gKeepAliveCountdown = 600;
+                gPadsToKeepAlive = gPadsToKeepAliveNext;
+            } else {
+                gKeepAliveCountdown--;
+            }
+        }
+        // Retail: `stw r20(=0), gHolmesPressed` -- the Holmes joypad poll is
+        // compiled out of the 360 retail build.
+        gHolmesPressed = 0;
+    }
+}
+
 void JoypadPushThroughMsg(const Message &msg) { Export(msg); }
 
 void JoypadHandleBreedDataResponse(int pad) {
@@ -516,7 +821,7 @@ void JoypadHandleBreedDataResponse(int pad) {
 
 void JoypadHandleEepromWriteResponse(int pad, JoypadBreedDataStatus status) {
     gJoypadData[pad].mEepromWriteDone = true;
-    if (!gJoypadData[pad].mSuppressWriteCallback) {
+    if (!gJoypadData[pad].mEepromBytesLeft) {
         JoypadBreedDataWriteMsg msg(gJoypadData[pad].mUser, status);
         if (gJoypadData[pad].mBreedCallback) {
             gJoypadData[pad].mBreedCallback->Handle(msg, true);
