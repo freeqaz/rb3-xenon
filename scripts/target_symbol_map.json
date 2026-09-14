@@ -7854,7 +7854,7 @@
  "0x8245ed48": "?EndFrame@RndTransAnim@@UAAMXZ",
  "0x8245edc8": "?StartFrame@RndTransAnim@@UAAMXZ",
  "0x8245ee08": "??$__uninitialized_copy@PAUBone@CharBones@@PAU12@@stlpmtx_std@@YAPAUBone@CharBones@@PAU12@00ABU__false_type@0@@Z",
- "0x8245ee48": "??$_M_allocate_and_copy@PBV?$Key@VColor@Hmx@@@@@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VColor@Hmx@@@@IPBV2@0@Z",
+ "0x8245ee48": "?MakeTransform@RndTransAnim@@QAAXMAAVTransform@@_NM@Z",
  "0x8245f2d0": "?SetFrame@RndTransAnim@@UAAXMM@Z",
  "0x8245f410": "??4?$vector@V?$Key@VColor@Hmx@@@@V?$StlNodeAlloc@V?$Key@VColor@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x8245f570": "?OnRemoveRotKeys@RndTransAnim@@IAA?AVDataNode@@PBVDataArray@@@Z",
