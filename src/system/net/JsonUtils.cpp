@@ -30,6 +30,11 @@ int JsonObject::Int() const {
     return json_object_get_int(mObject);
 }
 
+double JsonObject::Double() const {
+    MILO_ASSERT(GetType() == kType_Double, 0x32);
+    return json_object_get_double(mObject);
+}
+
 #pragma endregion JsonObject
 #pragma region JsonArray
 
