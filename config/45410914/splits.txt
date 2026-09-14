@@ -7572,7 +7572,6 @@ UIButton.cpp:
 
 JsonMemory.cpp:
 	.pdata      start:0x82260FA8 end:0x82260FB0
-	.text       start:0x82682688 end:0x826826A4
 	.text       start:0x82C30B08 end:0x82C30B58
 
 DOFProc.cpp:
@@ -13267,8 +13266,7 @@ band3/meta_band/BandStoreOffer.cpp:
 
 band3/game/BandUserMgr.cpp:
 	.pdata      start:0x82230718 end:0x82230970
-	.text       start:0x82682668 end:0x82682684
-	.text       start:0x826826A8 end:0x82684E88
+	.text       start:0x82682668 end:0x82684E88
 
 system/utl/LogFile.cpp:
 	.pdata      start:0x822429B8 end:0x822429E8
