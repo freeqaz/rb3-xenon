@@ -20837,7 +20837,7 @@
  "0x827d2458": "??_GSongInfoCopy@@UAAPAXI@Z",
  "0x827d24a8": "??0SongInfo@@QAA@XZ",
  "0x827d24b8": "??_GSongInfo@@UAAPAXI@Z",
- "0x827d2500": "?_M_throw_length_error@?$_String_base@DV?$allocator@D@stlpmtx_std@@@stlpmtx_std@@IBAXXZ",
+ "0x827d2500": "?SetTheTempoMap@@YAXPAVTempoMap@@@Z",
  "0x827d2528": "?TickToTime@SimpleTempoMap@@UBAMM@Z",
  "0x827d2538": "?TimeToTick@SimpleTempoMap@@UBAMM@Z",
  "0x827d2548": "?GetTempo@SimpleTempoMap@@UBAMH@Z",
