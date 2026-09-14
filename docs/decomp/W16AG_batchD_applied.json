@@ -1,0 +1,26 @@
+[
+ {
+  "group_index": 678,
+  "census_gi": 680,
+  "addr": "0x823c9178",
+  "bytes": 60,
+  "class": "RETAIL_WITNESS_REFUTED",
+  "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z"
+ },
+ {
+  "group_index": 723,
+  "census_gi": 725,
+  "addr": "0x822c9048",
+  "bytes": 60,
+  "class": "RETAIL_WITNESS_REFUTED",
+  "spelling": "??$_Copy_Construct@VTransformCrowd@@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z"
+ },
+ {
+  "group_index": 723,
+  "census_gi": 725,
+  "addr": "0x822c9048",
+  "bytes": 60,
+  "class": "RETAIL_WITNESS_REFUTED",
+  "spelling": "??$_Param_Construct@VTransformCrowd@@V1@@stlpmtx_std@@YAXPAVTransformCrowd@@ABV1@@Z"
+ }
+]
