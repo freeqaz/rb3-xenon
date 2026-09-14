@@ -375,3 +375,51 @@ pinned.** This is a body-port job, not a crossing job — handed on.
   `AttemptRemoveUser`.
 - Did not rebase onto or merge `w15-c`; this branch is based on `main`
   (`b9e32547`) exactly as briefed.
+
+---
+
+## 7. The native gate caught a real defect this lane created
+
+Defining `float TickToMs(float)` for the match build turned
+`native/src/m3_symbols.cpp`'s shim into a **duplicate definition**:
+
+```
+before  NATIVE_GATE_RESULT verdict=FAIL expected=18 verified=8 skipped=0 partial=0 failed=10 rc=1
+after   NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+Ten targets failed to link (`rb3-crowd rb3-gem rb3-harmony rb3-hit
+rb3-score{,2,3,4} rb3-vocal{,2}`). **The X360 match build cannot see this
+class** — it compiles `src/` and never links, which is precisely why
+`TickToMs` could stay undefined in the first place. Fixed by removing the
+now-redundant shim (commit `f8ca2b3c`).
+
+★ **And the collision is itself a third independent confirmation of §1.** The
+shim's body was derived by an earlier native lane **from the rb3-Wii oracle**,
+with a comment stating that `TimeConversion.cpp` "never defines the float
+overload (only the int inline that forwards to it)". This lane derived the same
+body **from retail bytes** at `0x827C9110`, while proving the map name wrong.
+Both are `return TheTempoMap->TickToTime(f);`. Two independent derivations, one
+from the oracle and one from the binary, neither aware of the other.
+
+---
+
+## 8. Final state
+
+```
+matched_functions   42,871      matched_code    3,902,888 B
+matched_code_percent 38.091984  fuzzy           49.200638
+```
+
+patch fixed point verified (`OK: 1205 decomp, 3083 target objects match`,
+`tree_sha256=663f6b0292f4cb58`).
+
+Lane total vs base `b9e32547`: **+11 fns / +4,256 B / +0.041538 pp**.
+
+| commit | change |
+|---|---|
+| `4d4c3c2f` | `0x827c9110` → `?TickToMs@@YAMM@Z` + define it — +9 / +4,000 B |
+| `9fdd3641` | `0x825df840` → `?RemoveUser@OvershellSlot@@` + drop 2 oracle statements — +2 / +256 B |
+| `b29d778f` | `ForceLogout` comparison order — Δ0, accuracy |
+| `132c4f48`, `06ca6ff2` | this document (and a self-correction to it) |
+| `f8ca2b3c` | native shim removal — gate back to PASS 18/18 |
