@@ -3536,22 +3536,20 @@ BandSwatch.cpp:
 	.pdata      start:0x821F5390 end:0x821F5398
 	.pdata      start:0x821F53B8 end:0x821F54C0
 	.pdata      start:0x821F54C0 end:0x821F54C8
-	.pdata      start:0x821F54C8 end:0x821F5600
+	.pdata      start:0x821F54C8 end:0x821F5608
 	.text       start:0x822ACA10 end:0x822ACA88
 	.text       start:0x822ACA94 end:0x822ACAF8
 	.text       start:0x822ACFDC end:0x822ADE90
 	.text       start:0x822ADE90 end:0x822ADED8
-	.text       start:0x822ADED8 end:0x822AF178
+	.text       start:0x822ADED8 end:0x822AF1C8
 
 CharInterest.cpp:
-	.pdata      start:0x821F5600 end:0x821F5608
 	.pdata      start:0x822058C0 end:0x82205938
 	.pdata      start:0x82205938 end:0x82205940
 	.pdata      start:0x82205950 end:0x82205970
 	.pdata      start:0x82205998 end:0x822059A0
 	.pdata      start:0x822059B0 end:0x822059B8
 	.pdata      start:0x82205A08 end:0x82205A10
-	.text       start:0x822AF178 end:0x822AF1C8
 	.text       start:0x823BD400 end:0x823BDE6C
 	.text       start:0x823BDE70 end:0x823BDEA0
 	.text       start:0x823BDEB0 end:0x823BDEBC
