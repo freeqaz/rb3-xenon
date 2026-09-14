@@ -277,7 +277,13 @@ DataNode RockCentral::OnMsg(const FriendsListChangedMsg &msg) {
 DataNode RockCentral::OnMsg(const ProfileChangedMsg &msg) {
     BandProfile *p = msg.GetProfile();
     int padnum = p->GetPadNum();
-    if (p->HasValidSaveData() && TheNet.GetServer()->GetPlayerID(padnum)) {
+    // Retail X360 (fn_824F7D48) tests GetPlayerID's result with `cmplwi` (an
+    // UNSIGNED zero test) here, while the same virtual slot is tested with `cmpwi`
+    // at four other retail sites that are already 100% with `int GetPlayerID(int)`
+    // (MetaPerformer x3, SongStatusMgr).  So the return type is int and this site
+    // tested it in an unsigned context; the cast reproduces that.  (Lane W16-B.)
+    if (p->HasValidSaveData()
+        && (unsigned int)TheNet.GetServer()->GetPlayerID(padnum) != 0) {
         mJobMgr.QueueJob(new UpdateFriendsListJob(padnum));
     }
     return 1;
