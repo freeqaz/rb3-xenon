@@ -660,6 +660,7 @@
             "system/rndobj/Shockwave.cpp": "NonMatching",
             "system/flow/FlowSound.cpp": "NonMatching",
             "system/os/PlatformMgr.cpp": "NonMatching",
+            "system/os/PlatformMgr_Xbox.cpp": "NonMatching",
             "system/flow/FlowCommand.cpp": "NonMatching",
             "system/os/ContentMgr.cpp": "NonMatching",
             "system/flow/FlowOutPort.cpp": "NonMatching",

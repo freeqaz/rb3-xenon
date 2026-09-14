@@ -5,6 +5,8 @@
 #include "os/OnlineID.h"
 #include "utl/DataPointMgr.h"
 #include "utl/GlitchFinder.h"
+#include "utl/Locale.h"
+#include "xdk/xparty/xparty.h"
 #include "xdk/XAPILIB.h"
 #include "xdk/XBC.h"
 #include "xdk/XMP.h"
@@ -13,11 +15,22 @@
 #include "xdk/xapilibi/winerror.h"
 #include "xdk/xapilibi/xbox.h"
 
+// SmartGlass is a DC3-era (2012) feature that RB3 retail DOES NOT HAVE:
+// `smart_glass_msg` occurs 0 times in orig/45410914/band.exe, and the retail
+// map carries no SmartGlass symbol. The SmartGlass code below is therefore
+// DC3-only and can never match; the message class is declared FILE-LOCALLY
+// (not in the shared PlatformMgr.h) so it cascades to nothing.
+DECLARE_MESSAGE(SmartGlassMsg, "smart_glass_msg")
+    SmartGlassMsg(int id, DataArray *a) : Message(Type(), id, a) {}
+END_MESSAGE
+
 // Forward declarations for merged functions
 extern void* merged_DataArrayNode(void*, int);
 extern void* merged_82610090(const void*, unsigned int*);
 
-struct XSTORAGE_ENUMERATE_RESULTS;
+// XSTORAGE_ENUMERATE_RESULTS is a TYPEDEF of struct _XSTORAGE_ENUMERATE_RESULTS
+// (xdk/xonline/xonline.h), now reachable via xdk/xparty/xparty.h; the old
+// `struct XSTORAGE_ENUMERATE_RESULTS;` forward decl declared a DIFFERENT tag.
 enum ServiceIdState {};
 
 namespace {
@@ -75,7 +88,11 @@ PlatformMgr::PlatformMgr() {
     mListSize = 0;
     mUserID = -1;
     mResult = 0;
-    mOverlapped.hEvent = 0;
+    // DC3-only: `XOVERLAPPED mOverlapped` is part of DC3's XSocial block, which
+    // lane NCCC removed from PlatformMgr.h on RETAIL-BYTE evidence -- retail's
+    // member block runs 0x1c..0x47 (44 B), proven by PlatformMgr::Handle
+    // (0x825152e0) opening `subi r3,r25,0x4c` to recover the PlatformMgr*.
+    // The XSocial block does not fit. See PlatformMgr.h's size-budget note.
 }
 
 bool PlatformMgr::IsEthernetCableConnected() { return XNetGetEthernetLinkStatus() != 0; }
@@ -137,6 +154,32 @@ void PlatformMgr::SetPadPresence(int padNum, int i2) const {
     if (padNum != -1 && ThePlatformMgr.IsSignedIn(padNum)) {
         XUserSetContext(padNum, 0x8001, i2);
     }
+}
+
+void PlatformMgr::SetPadProperty(int padNum, int propertyId, unsigned short const *value) const {
+    if (padNum != -1 && ThePlatformMgr.IsSignedIn(padNum)) {
+        int byteLength = wcslen((const wchar_t *)value) * 2;
+        if (byteLength > 0x7E) {
+            byteLength = 0x7E;
+        }
+        XUserSetPropertyEx(padNum, propertyId, byteLength, value, 0);
+    }
+}
+
+bool PlatformMgr::IsInParty() {
+    HRESULT noPartyResult = 0x807D0003;
+    HRESULT result = noPartyResult;
+    if (IsSignedIntoLive(0) || IsSignedIntoLive(1) || IsSignedIntoLive(2) || IsSignedIntoLive(3)) {
+        XPARTY_USER_LIST userList;
+        result = XPartyGetUserList(&userList);
+    }
+    return result != noPartyResult;
+}
+
+bool PlatformMgr::IsInPartyWithOthers() {
+    XPARTY_USER_LIST userList;
+    bool result = IsInParty() && (XPartyGetUserList(&userList), (int)userList.dwUserCount > 1);
+    return result;
 }
 
 void PlatformMgr::ShowFriendsUI(int padNum) {
@@ -275,6 +318,92 @@ void PlatformMgr::RegionInit() {
     } else {
         SetRegion(kRegionNA);
     }
+}
+
+namespace {
+    int GetPadNumFromXuid(unsigned __int64 xuid) {
+        XUSER_SIGNIN_INFO info;
+        for (int pad = 0; pad < 4; pad++) {
+            memset(&info, 0, sizeof(info));
+            XUserGetSigninInfo(pad, 1, &info);
+            if (xuid == info.xuid) {
+                return pad;
+            }
+            memset(&info, 0, sizeof(info));
+            XUserGetSigninInfo(pad, 2, &info);
+            if (xuid == info.xuid) {
+                return pad;
+            }
+            memset(&info, 0, sizeof(info));
+            XUserGetXUID(pad, &info.xuid);
+            if (xuid == info.xuid) {
+                return pad;
+            }
+        }
+        return -1;
+    }
+
+    bool XPrivilegeCheck(_XPRIVILEGE_TYPE priv1, _XPRIVILEGE_TYPE priv2, unsigned __int64 xuid) {
+        BOOL result = 0;
+        XUserCheckPrivilege(0xFF, priv1, &result);
+        if (result == 0) {
+            XUserCheckPrivilege(0xFF, priv2, &result);
+            if (result == 0) {
+                return false;
+            }
+            for (int i = 0; i < 4; i++) {
+                if (XUserCheckPrivilege(i, priv1, &result) == 0 && result == 0
+                    && XUserAreUsersFriends(i, &xuid, 1, &result, 0) == 0 && result == 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
+
+const char *PlatformMgr::GetName(int padNum) const {
+    if (IsSignedIn(padNum)) {
+        char name[16];
+        int ret = XUserGetName(padNum, name, 16);
+        if (ret == 0) {
+            return MakeString(name);
+        }
+    }
+    static Symbol player("player");
+    return MakeString("%s %i", Localize(player, 0, TheLocale), padNum + 1);
+}
+
+// Retail RB3 has NO ShowGamercardForPadNum: the map's only gamercard row is
+// ?ShowGamercard@PlatformMgr@@QAA?AW4ShowGamercardResult@@PAVLocalUser@@PBVOnlineID@@@Z
+// at 0x8251c960, and its extent is 248 B (0x8251c960..0x8251ca58) -- far too
+// large for a thin pad-num wrapper. So RB3 carries the FULL body on the
+// LocalUser overload; DC3's split into ForPadNum is a later refactor.
+ShowGamercardResult PlatformMgr::ShowGamercard(LocalUser *pUser, const OnlineID *onlineID) {
+    MILO_ASSERT(pUser, 0x7C6);
+    MILO_ASSERT(onlineID, 0x7C6);
+    int padNum = pUser->GetPadNum();
+    unsigned long trackingID;
+    if (!onlineID->GetIsValid()) {
+        return kShowGamercardResult_Failed;
+    }
+    if (!IsSignedIntoLive(padNum)) {
+        return kShowGamercardResult_NotSignedIn;
+    }
+    XUID xuid = onlineID->GetXUID();
+    if (!XPrivilegeCheck(XPRIVILEGE_PROFILE_VIEWING, XPRIVILEGE_PROFILE_VIEWING_FRIENDS_ONLY, xuid)) {
+        return kShowGamercardResult_PrivilegeFailed;
+    }
+    DWORD ret;
+    if (sXShowCallback(trackingID)) {
+        ret = XShowNuiGamerCardUI(trackingID, padNum, xuid);
+    } else {
+        ret = XShowGamerCardUI(padNum, xuid);
+    }
+    if (ret != 0) {
+        return kShowGamercardResult_Failed;
+    }
+    return kShowGamercardResult_Success;
 }
 
 namespace {
