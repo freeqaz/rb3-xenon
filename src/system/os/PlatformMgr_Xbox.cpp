@@ -61,12 +61,25 @@ namespace {
 }
 
 PlatformMgr::PlatformMgr() {
+    // Store set and order follow retail 0x8251c320 (W16-M S3A, 2026-09-14):
+    // 13 member stores at 0x1c..0x44 (incl. mHasHardDrive=false @0x27 and
+    // mRBNMemberPadNum=-1 @0x28, which the DC3-derived body lacked), then the
+    // SEVEN anonymous-namespace statics retail zeroes (lbl_82CCA8F0/E8/E4/DC/
+    // E0/D8/EC = mSigninSameGuest, mFriendsEnum, mFriendsBuffer,
+    // mFriendsCallback, mFriendsAsync, mFriendsList, mListener), `new JobMgr`
+    // (li r3,0x10; bl ??2CriticalSection survivor), and only THEN mXuidCache
+    // (four `std 0` at lbl_82CCA8B8). Retail initialises NONE of DC3's XSocial
+    // storage statics (mServiceIDOverlapped/2, mStorageList, mPathLen,
+    // mServiceIdState, mListSize, mUserID, mResult) -- their stores were the
+    // 22-instruction insert cluster charged at 68.8%.
     mSigninMask = 0;
-    mScreenSaver = true;
     mSigninChangeMask = 0;
     mGuideShowing = false;
     mConfirmCancelSwapped = false;
     mConnected = false;
+    mHasHardDrive = false;
+    mRBNMemberPadNum = -1;
+    mScreenSaver = true;
     mRegion = kRegionNone;
     mDiskError = kNoDiskError;
     unk3d = false;
@@ -83,18 +96,10 @@ PlatformMgr::PlatformMgr() {
 
     mJobMgr = new JobMgr(this);
 
-    mServiceIDOverlapped = 0;
     mXuidCache[0] = 0;
-    mServiceIDOverlapped2 = 0;
-    mStorageList = 0;
-    mPathLen = 0x200;
     mXuidCache[1] = 0;
     mXuidCache[2] = 0;
     mXuidCache[3] = 0;
-    mServiceIdState = (ServiceIdState)0;
-    mListSize = 0;
-    mUserID = -1;
-    mResult = 0;
     // DC3-only: `XOVERLAPPED mOverlapped` is part of DC3's XSocial block, which
     // lane NCCC removed from PlatformMgr.h on RETAIL-BYTE evidence -- retail's
     // member block runs 0x1c..0x47 (44 B), proven by PlatformMgr::Handle
