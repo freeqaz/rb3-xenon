@@ -195,6 +195,20 @@ DWORD XMarketplaceCreateOfferEnumeratorByOffering(
 HANDLE XNotifyCreateListener(QWORD qwAreas);
 void XNotifyPositionUI(DWORD dwPosition);
 BOOL XNotifyGetNext(HANDLE hNotification, DWORD dwMsgFilter, DWORD *pdwId, ULONG *pParam);
+
+// XNotifyGetNext notification ids (ported from dc3-decomp xdk/xapilibi/xbox.h;
+// values are the XDK's, DC3 verified them against ham_xbox_r). RB3 retail's
+// PlatformMgr::Poll (0x8251DAB8) switches on exactly this set (no NUI ids).
+#define XN_SYS_UI 0x00000009
+#define XN_SYS_SIGNINCHANGED 0x0000000A
+#define XN_SYS_STORAGEDEVICESCHANGED 0x0000000B
+#define XN_LIVE_CONNECTIONCHANGED 0x02000001
+#define XN_LIVE_INVITE_ACCEPTED 0x02000002
+#define XN_LIVE_CONTENT_INSTALLED 0x02000007
+#define XN_FRIENDS_FRIEND_ADDED 0x04000002
+#define XN_FRIENDS_FRIEND_REMOVED 0x04000003
+#define XN_XMP_STATECHANGED 0x0A000001
+#define XN_PARTY_MEMBERS_CHANGED 0x0E040002
 DWORD XUserSetPropertyEx(
     DWORD dwUserIndex,
     DWORD dwPropertyId,

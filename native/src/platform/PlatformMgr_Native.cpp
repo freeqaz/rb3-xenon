@@ -15,7 +15,9 @@ PlatformMgr::PlatformMgr() {
     mConnected = false;
     mRegion = kRegionNone;
     mDiskError = kNoDiskError;
-    unk69 = false;
+    unk3d = false;
+    mRBNCheckInProgress = 0;
+    mRBNCheckRerun = 0;
     mJobMgr = new JobMgr(this);
     // NOTE: the DC3-only XOVERLAPPED mOverlapped member was removed from
     // os/PlatformMgr.h on 2026-07-31 (lane NCCC f59 — the member block size is
@@ -25,6 +27,10 @@ PlatformMgr::PlatformMgr() {
 PlatformMgr::~PlatformMgr() {
     delete mJobMgr;
 }
+
+// ThreadCallback (retail vtable 0x82088A4C). No Live privileges on the host.
+int PlatformMgr::ThreadStart() { return -1; }
+void PlatformMgr::ThreadDone(int) {}
 
 // Platform-specific methods (Xbox stubs)
 void PlatformMgr::Init() {}
