@@ -171,6 +171,12 @@ void MainHubPanel::Unload() {
 void MainHubPanel::RefreshData() { PrepareProfilesAndMessages(); }
 
 void MainHubPanel::ReloadMessages() {
+    // Retail fn_82621AC0 opens with a guarded local-static Symbol init from
+    // "messages_per_session" (lbl_820C6670 -> lbl_82E010C4, guard lbl_82E010C8)
+    // BEFORE `stb r11, 0xb8`.  Nothing in the body reads it; a static with a
+    // non-trivial ctor is emitted regardless, so the construction is what is
+    // observable.  Shadows the extern of the same name in utl/Symbols4.h.
+    static Symbol messages_per_session("messages_per_session");
     unkb8 = false;
     UpdateMessageProvider();
     LocalBandUser *user = nullptr;
@@ -212,7 +218,8 @@ void MainHubPanel::PrepareProfilesAndMessages() {
         }
     } else {
         mCurrentMessage = 0;
-        HandleType(refresh_message_provider_msg);
+        static Message refresh_message_provider("refresh_message_provider");
+        HandleType(refresh_message_provider);
     }
     UpdateHeader();
 }
@@ -289,6 +296,11 @@ void MainHubPanel::SetMainHubOverride(MainHubOverride oride) {
 }
 
 void MainHubPanel::StartFinding() {
+    // Retail fn_82622748: guard lbl_82E010E0 bit 0x1 inits a local static Symbol
+    // from "mod_auto_vocals" (lbl_8203FA74) BEFORE the IsModifierActive call;
+    // bit 0x2 inits "error_find_players_with_auto_vocals" (lbl_820C6860) lazily
+    // inside the else arm.  Both shadow externs of the same name.
+    static Symbol mod_auto_vocals("mod_auto_vocals");
     if (!TheModifierMgr->IsModifierActive(mod_auto_vocals)) {
         Matchmaker *maker = TheSessionMgr->GetMatchmaker();
         OvershellPanel *panel = TheBandUI.GetOvershell();
@@ -302,6 +314,9 @@ void MainHubPanel::StartFinding() {
         }
     } else {
         SetMainHubOverride(kMainHubOverride_None);
+        static Symbol error_find_players_with_auto_vocals(
+            "error_find_players_with_auto_vocals"
+        );
         TheUIEventMgr->TriggerEvent(error_find_players_with_auto_vocals, nullptr);
     }
 }
@@ -309,7 +324,8 @@ void MainHubPanel::StartFinding() {
 DataNode MainHubPanel::OnMsg(const OvershellOverrideEndedMsg &msg) {
     if (msg.GetOverrideFlowType() == 2 && mHubOverride == kMainHubOverride_Finding) {
         if (msg.Cancelled()) {
-            HandleType(cancel_find_override_msg);
+            static Message cancel_find_override("cancel_find_override");
+            HandleType(cancel_find_override);
         } else {
             MILO_ASSERT(mHubState == kMainHubState_Quickplay || mHubState == kMainHubState_Tour, 0x1B7);
             TheSessionMgr->GetMatchmaker()->FindPlayers(
@@ -372,18 +388,21 @@ DataNode MainHubPanel::OnMsg(const ProcessedJoinRequestMsg &) {
 
 DataNode MainHubPanel::OnMsg(const NewRemoteMachineMsg &) {
     CheckStartWaitingLock();
-    HandleType(update_finding_help_msg);
+    static Message update_finding_help("update_finding_help");
+    HandleType(update_finding_help);
     return 1;
 }
 
 DataNode MainHubPanel::OnMsg(const RemoteMachineLeftMsg &) {
     CheckStartWaitingLock();
-    HandleType(update_finding_help_msg);
+    static Message update_finding_help("update_finding_help");
+    HandleType(update_finding_help);
     return 1;
 }
 
 DataNode MainHubPanel::OnMsg(const SessionMgrUpdatedMsg &) {
-    HandleType(update_finding_help_msg);
+    static Message update_finding_help("update_finding_help");
+    HandleType(update_finding_help);
     return 1;
 }
 
@@ -589,15 +608,28 @@ void MainHubPanel::SetMotd(const char *motd) {
 }
 
 const char *MainHubPanel::GetMotd() {
+    // Retail fn_82620540 inits three local static Symbols at the top under one
+    // shared guard word (lbl_82E01058), in this declaration order: bit 0x1
+    // "message_motd", bit 0x2 "message_motd_signin", bit 0x4
+    // "message_motd_noconnection".  All three precede `lwz r3, 0x90` (mMotd).
+    static Symbol message_motd("message_motd");
+    static Symbol message_motd_signin("message_motd_signin");
+    static Symbol message_motd_noconnection("message_motd_noconnection");
     const char *motd = mMotd.c_str();
     if (strlen(motd) == 0) {
-        if (!ThePlatformMgr.IsEthernetCableConnected()
-            || ThePlatformMgr.IsOnlineRestricted()) {
+        // Retail makes exactly ONE call here (bl fn_8251BE08 ==
+        // ?IsEthernetCableConnected@PlatformMgr@@) and then reads `lbz r11,
+        // 0x26(r30)` inline -- that is IsConnected(), which is
+        // `{ return mConnected; }` in the header.  There is NO
+        // IsOnlineRestricted() call: it is declared out-of-line
+        // (os/PlatformMgr.h:252) so it could not have been inlined away.  Our
+        // `|| ThePlatformMgr.IsOnlineRestricted()` was a genuine extra test.
+        if (!ThePlatformMgr.IsEthernetCableConnected()) {
             return Localize(message_motd_noconnection, nullptr);
-        } else if (!ThePlatformMgr.IsConnected()) {
-            return Localize(message_motd_signin, nullptr);
-        } else {
+        } else if (ThePlatformMgr.IsConnected()) {
             return Localize(message_motd, nullptr);
+        } else {
+            return Localize(message_motd_signin, nullptr);
         }
     }
     return motd;
