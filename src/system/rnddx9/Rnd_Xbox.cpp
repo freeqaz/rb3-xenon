@@ -972,8 +972,11 @@ void DxRnd::DoPointTests() {
         test.mAreaQueryIdx = -1;
         test.mPointQueryIdx = -1;
 
-        // Point test
-        if (flare->GetPointTest()) {
+        // Point test.  Retail tests the flare READ BACK from `test.mFlare`
+        // (the store is forwarded, leaving `clrrwi r11, r10, 0` -- the
+        // 64->32 zero-extension of a forwarded 32-bit load), the same
+        // spelling as the area test below, which reloads it after the calls.
+        if (test.mFlare->GetPointTest()) {
             vtx.x = (float)it->x;
             vtx.y = (float)it->y;
             vtx.z = (float)it->z * 5.9604651881e-08f;
