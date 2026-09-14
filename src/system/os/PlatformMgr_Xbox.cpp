@@ -14,6 +14,11 @@
 #include "xdk/NUI.h"
 #include "xdk/xapilibi/winerror.h"
 #include "xdk/xapilibi/xbox.h"
+#include "xdk/XONLINE.h"
+#include "os/ThreadCall.h"
+#include "meta/ConnectionStatusPanel.h"
+#include "ui/UI.h"
+#include "net/NetSession.h"
 
 // SmartGlass is a DC3-era (2012) feature that RB3 retail DOES NOT HAVE:
 // `smart_glass_msg` occurs 0 times in orig/45410914/band.exe, and the retail
@@ -64,7 +69,9 @@ PlatformMgr::PlatformMgr() {
     mConnected = false;
     mRegion = kRegionNone;
     mDiskError = kNoDiskError;
-    unk69 = false;
+    unk3d = false;
+    mRBNCheckInProgress = 0;
+    mRBNCheckRerun = 0;
 
     mSigninSameGuest = 0;
     mFriendsEnum = 0;
@@ -646,6 +653,195 @@ DataNode PlatformMgr::OnSignInUsers(DataArray *msg) {
 
 void PlatformMgr::SmartGlassSend(unsigned long clientID, const DataArray *arr) {
     XbcSendMsg(clientID, arr);
+}
+
+// ---------------------------------------------------------------------------
+// Retail bodies ported 2026-09-14 (lane W16-G) from band.exe 0x8251BBF0..0x8251E448.
+// Each function below is a transcription of the named retail address; see
+// docs/decomp/VTABLE_SLOT_DIVERGENCES_2026-09-14.md for the byte evidence.
+// ---------------------------------------------------------------------------
+
+// 0x8251BD98
+Friend::Friend() {}
+
+// 0x8251C5A0: CloseHandle(mListener); XOnlineCleanup(); then ~MsgSource.
+PlatformMgr::~PlatformMgr() {
+    CloseHandle(mListener);
+    XOnlineCleanup();
+}
+
+// 0x8251C8A8: RBN-member probe run on the ThreadCall worker. Returns the first
+// pad whose profile has XPRIVILEGE_CONTENT_AUTHOR (0xDE), else -1; returns 0
+// without probing when no check is in progress.
+int PlatformMgr::ThreadStart() {
+    if (mRBNCheckInProgress != 1)
+        return 0;
+    for (int i = 0; i < 4; i++) {
+        BOOL result = 0;
+        if (XUserCheckPrivilege(i, XPRIVILEGE_CONTENT_AUTHOR, &result) == 0 && result)
+            return i;
+    }
+    return -1;
+}
+
+// 0x8251C928: main-thread completion; re-runs the probe if a sign-in change
+// landed while it was in flight.
+void PlatformMgr::ThreadDone(int result) {
+    int rerun = mRBNCheckRerun;
+    mRBNMemberPadNum = result;
+    mRBNCheckInProgress = 0;
+    mRBNCheckRerun = 0;
+    if (rerun == 1)
+        StartRBNMemberCheck();
+}
+
+// 0x8251D538
+void PlatformMgr::EnumerateFriends(int padNum, std::vector<Friend *> &friends, Hmx::Object *callback) {
+    unsigned long cb;
+    bool failed = false;
+    if (XFriendsCreateEnumerator(padNum, 0, 100, &cb, &mFriendsEnum) != ERROR_SUCCESS) {
+        failed = true;
+    } else {
+        mFriendsBuffer = new char[cb];
+        XOVERLAPPED *async = new XOVERLAPPED;
+        mFriendsAsync = async;
+        memset(async, 0, sizeof(XOVERLAPPED));
+        if (XEnumerate(mFriendsEnum, mFriendsBuffer, cb, 0, async) != ERROR_IO_PENDING) {
+            failed = true;
+        }
+    }
+    if (failed) {
+        if (mFriendsEnum) {
+            CloseHandle(mFriendsEnum);
+            mFriendsEnum = 0;
+        }
+        RELEASE(mFriendsBuffer);
+        RELEASE(mFriendsAsync);
+        static PlatformMgrOpCompleteMsg msg(false);
+        callback->Handle(msg, true);
+    } else {
+        mFriendsCallback = callback;
+        mFriendsList = &friends;
+    }
+}
+
+// 0x8251DAB8 (1844 B). Retail's Poll is the XNotify pump plus the friends
+// enumeration completion; it has NO NUI cases, no SmartGlass poll and no
+// service-id state machine (those are DC3 additions).
+void PlatformMgr::Poll() {
+    mJobMgr->Poll();
+    static bool sConnectPending;
+    unsigned long param;
+    unsigned long id;
+    while (XNotifyGetNext(mListener, 0, &id, &param)) {
+        switch (id) {
+        case XN_SYS_UI: {
+            mGuideShowing = param != 0;
+            UIChangedMsg msg(mGuideShowing);
+            Handle(msg, false);
+            break;
+        }
+        case XN_SYS_SIGNINCHANGED: {
+            UpdateSigninState();
+            if (mRBNCheckInProgress == 0) {
+                StartRBNMemberCheck();
+            } else {
+                mRBNCheckRerun = 1;
+            }
+            if (sConnectPending && mSigninMask != 0) {
+                mConnected = true;
+                sConnectPending = false;
+                ConnectionStatusChangedMsg msg(true);
+                Handle(msg, false);
+            }
+            {
+                SigninChangedMsg msg(mSigninMask, mSigninChangeMask);
+                Handle(msg, false);
+            }
+            break;
+        }
+        case XN_SYS_STORAGEDEVICESCHANGED: {
+            StorageChangedMsg msg;
+            Handle(msg, false);
+            break;
+        }
+        case XN_LIVE_CONNECTIONCHANGED: {
+            bool wasConnected = mConnected;
+            sConnectPending = false;
+            mConnected = param == XONLINE_S_LOGON_CONNECTION_ESTABLISHED;
+            if (wasConnected != mConnected) {
+                if (mConnected && mSigninMask == 0) {
+                    mConnected = false;
+                    sConnectPending = true;
+                } else {
+                    ConnectionStatusChangedMsg msg(mConnected);
+                    Handle(msg, false);
+                }
+            }
+            break;
+        }
+        case XN_LIVE_INVITE_ACCEPTED: {
+            InviteAcceptedMsg msg(param, 0, false);
+            Handle(msg, false);
+            break;
+        }
+        case XN_LIVE_CONTENT_INSTALLED: {
+            ContentInstalledMsg msg;
+            Handle(msg, false);
+            break;
+        }
+        case XN_FRIENDS_FRIEND_ADDED:
+        case XN_FRIENDS_FRIEND_REMOVED: {
+            FriendsListChangedMsg msg(param);
+            Handle(msg, false);
+            break;
+        }
+        case XN_XMP_STATECHANGED: {
+            XMPStateChangedMsg msg(param);
+            Handle(msg, false);
+            break;
+        }
+        case XN_PARTY_MEMBERS_CHANGED: {
+            PartyMembersChangedMsg msg;
+            Handle(msg, false);
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
+    if (mFriendsEnum) {
+        unsigned long numFriends;
+        XOVERLAPPED *async = (XOVERLAPPED *)mFriendsAsync;
+        unsigned long res = XGetOverlappedResult(async, &numFriends, false);
+        if (res != ERROR_IO_INCOMPLETE) {
+            static PlatformMgrOpCompleteMsg msg(false);
+            if (res == ERROR_SUCCESS) {
+                XONLINE_FRIEND *xf = (XONLINE_FRIEND *)mFriendsBuffer;
+                for (unsigned long i = 0; i < numFriends; i++, xf++) {
+                    if (!(xf->dwFriendState & XONLINE_FRIENDSTATE_FLAG_SENTREQUEST)
+                        && !(xf->dwFriendState & XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST)) {
+                        Friend *f = new Friend();
+                        String name(xf->szGamertag);
+                        f->SetName(name);
+                        f->mXUID = xf->xuid;
+                        mFriendsList->push_back(f);
+                    }
+                }
+                msg[0] = true;
+            } else {
+                msg[0] = false;
+            }
+            mFriendsCallback->Handle(msg, true);
+            mFriendsCallback = 0;
+            mFriendsList = 0;
+            RELEASE(mFriendsBuffer);
+            RELEASE(mFriendsAsync);
+            CloseHandle(mFriendsEnum);
+            mFriendsEnum = 0;
+        }
+    }
 }
 
 #include "utl/JobMgr.h"

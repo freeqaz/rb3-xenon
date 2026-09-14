@@ -12,6 +12,9 @@ typedef struct _XTITLE_SERVER_INFO { /* Size=0xd0 */
     /* 0x0004 */ char pad[0xcc];
 } XTITLE_SERVER_INFO;
 
+/* The XN_LIVE_CONNECTIONCHANGED parameter that means "logged on". */
+#define XONLINE_S_LOGON_CONNECTION_ESTABLISHED 0x001510F0L
+
 enum XONLINE_NAT_TYPE {
     XONLINE_NAT_OPEN = 0x0001,
     XONLINE_NAT_MODERATE = 0x0002,
@@ -84,6 +87,26 @@ DWORD XSessionLeaveLocal(
     DWORD dwUserCount,
     const DWORD *pdwUserIndexes,
     XOVERLAPPED *pXOverlapped
+);
+#define XONLINE_GAMERTAG_SIZE 16
+#define XONLINE_FRIENDSTATE_FLAG_SENTREQUEST 0x40000000
+#define XONLINE_FRIENDSTATE_FLAG_RECEIVEDREQUEST 0x80000000
+
+#pragma pack(push, 4)
+typedef struct _XONLINE_FRIEND { /* Size=0xc4 */
+    XUID xuid;
+    CHAR szGamertag[XONLINE_GAMERTAG_SIZE];
+    DWORD dwFriendState; /* 0x18 */
+    BYTE pad[0xa8];
+} XONLINE_FRIEND;
+#pragma pack(pop)
+
+DWORD XFriendsCreateEnumerator(
+    DWORD dwUserIndex,
+    DWORD dwStartingIndex,
+    DWORD dwFriendsToReturn,
+    DWORD *pcbBuffer,
+    HANDLE *ph
 );
 DWORD XOnlineStartup();
 DWORD XOnlineCleanup();
