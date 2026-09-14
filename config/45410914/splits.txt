@@ -2356,6 +2356,18 @@ crc32.c:
 	.pdata      start:0x8225A550 end:0x8225A558
 	.text       start:0x82B58218 end:0x82B58594
 
+inffast.c:
+	.pdata      start:0x8225A538 end:0x8225A540
+	.text       start:0x82B57818 end:0x82B57C20
+
+inftrees.c:
+	.pdata      start:0x8225A540 end:0x8225A548
+	.text       start:0x82B57C20 end:0x82B58098
+
+trees.c:
+	.pdata      start:0x8225A558 end:0x8225A590
+	.text       start:0x82B58594 end:0x82B59F78
+
 CharBoneDir.cpp:
 	.pdata      start:0x821F2070 end:0x821F2080
 	.pdata      start:0x821F2428 end:0x821F2438
