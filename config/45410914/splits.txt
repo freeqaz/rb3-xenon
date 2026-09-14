@@ -5600,6 +5600,12 @@ ThreeDSoundManager.cpp:
 	.text       start:0x8256B4C8 end:0x8256B544
 	.text       start:0x8256B544 end:0x8256B570
 
+FriendsProvider.cpp:
+	.pdata      start:0x8222E8E0 end:0x8222E8F0
+	.pdata      start:0x8222E8F8 end:0x8222E920
+	.text       start:0x826661CC end:0x82666290
+	.text       start:0x826662E0 end:0x8266643C
+
 UIList.cpp:
 	.pdata      start:0x82228318 end:0x82228340
 	.pdata      start:0x82228348 end:0x82228380
@@ -5608,8 +5614,7 @@ UIList.cpp:
 	.pdata      start:0x8222A440 end:0x8222A458
 	.pdata      start:0x8222E888 end:0x8222E890
 	.pdata      start:0x8222E898 end:0x8222E8D8
-	.pdata      start:0x8222E8E0 end:0x8222E8F8
-	.pdata      start:0x8222E8F8 end:0x8222E918
+	.pdata      start:0x8222E8F0 end:0x8222E8F8
 	.pdata      start:0x8223D5A0 end:0x8223D5A8
 	.pdata      start:0x8223DDE8 end:0x8223DDF8
 	.pdata      start:0x8223DE48 end:0x8223DE50
@@ -5631,8 +5636,7 @@ UIList.cpp:
 	.text       start:0x8262709C end:0x82627118
 	.text       start:0x82665D6C end:0x82665D98
 	.text       start:0x82665DE4 end:0x82666160
-	.text       start:0x826661CC end:0x826662E0
-	.text       start:0x826662E0 end:0x826663F0
+	.text       start:0x82666290 end:0x826662E0
 	.text       start:0x8276CB20 end:0x8276CB80
 	.text       start:0x82775B70 end:0x82775DC0
 	.text       start:0x82776698 end:0x827767F0
@@ -12255,12 +12259,12 @@ BandLabel.cpp:
 	.pdata      start:0x821FE7A0 end:0x821FE7A8
 	.pdata      start:0x821FE7A8 end:0x821FE918
 	.pdata      start:0x821FE958 end:0x821FE960
-	.pdata      start:0x8222E918 end:0x8222E948
+	.pdata      start:0x8222E920 end:0x8222E948
 	.text       start:0x823405F8 end:0x8234066C
 	.text       start:0x82340670 end:0x823421A8
 	.text       start:0x82342220 end:0x82342228
 	.text       start:0x82342438 end:0x823424A4
-	.text       start:0x826663F0 end:0x82666648
+	.text       start:0x8266643C end:0x82666648
 
 band3/meta_band/PassiveMessenger.cpp:
 	.pdata      start:0x82218A40 end:0x82218A50
