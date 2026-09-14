@@ -1,0 +1,302 @@
+[
+ {
+  "gi": 338,
+  "addr": "0x822cdc18",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "c_N": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "c_S": "??0FlowMathOp@@QAA@ABV0@@Z",
+  "c_N_retail": "0x8229dc70",
+  "c_S_retail": "0x822cdb70",
+  "tier_N": null,
+  "guards": {
+   "a_is_pdata_begin": true,
+   "b_is_pdata_begin": true,
+   "a_size": 120,
+   "b_size": 120,
+   "bodies_relocnorm_identical": true,
+   "verdict": "INCONCLUSIVE_TWIN"
+  },
+  "len_N": 120,
+  "len_S": 120,
+  "n_diff_words": 1,
+  "strict": "SEPARATE",
+  "diff_detail": [
+   {
+    "word_index": 9,
+    "byte_off": 36,
+    "N": "('W', 963344948)",
+    "S": "('W', 963318148)",
+    "kind": "non-branch word"
+   }
+  ],
+  "why": "1 of 30 words differ once branch displacements are resolved to absolute destinations (first at +0x24) -> the two COMDATs are NOT identical including call targets, so /OPT:ICF could not have folded them: NOT the CD-7 51-surplus class"
+ },
+ {
+  "gi": 563,
+  "addr": "0x8246efa8",
+  "bytes": 112,
+  "survivor": "?_M_clear@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "folded": "?_M_clear_after_move@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "c_N": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
+  "c_S": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
+  "c_N_retail": "0x8246eb78",
+  "c_S_retail": "0x8246ebe0",
+  "tier_N": null,
+  "guards": {
+   "a_is_pdata_begin": true,
+   "b_is_pdata_begin": true,
+   "a_size": 100,
+   "b_size": 100,
+   "bodies_relocnorm_identical": true,
+   "verdict": "INCONCLUSIVE_TWIN"
+  },
+  "len_N": 100,
+  "len_S": 100,
+  "n_diff_words": 1,
+  "strict": "SEPARATE",
+  "diff_detail": [
+   {
+    "word_index": 11,
+    "byte_off": 44,
+    "N": "('B-call', 2188853576, 1)",
+    "S": "('B-call', 2188853472, 1)",
+    "kind": "external call target"
+   }
+  ],
+  "why": "1 of 25 words differ once branch displacements are resolved to absolute destinations (first at +0x2c) -> the two COMDATs are NOT identical including call targets, so /OPT:ICF could not have folded them: NOT the CD-7 51-surplus class"
+ },
+ {
+  "gi": 564,
+  "addr": "0x82706208",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VSeqInst@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VSeqInst@@@@ABV1@@Z",
+  "folded": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+  "c_N": "??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z",
+  "c_S": "??0?$ObjPtr@VSeqInst@@@@QAA@ABV0@@Z",
+  "c_N_retail": "0x8229d898",
+  "c_S_retail": "0x82706170",
+  "tier_N": null,
+  "guards": {
+   "a_is_pdata_begin": true,
+   "b_is_pdata_begin": true,
+   "a_size": 104,
+   "b_size": 104,
+   "bodies_relocnorm_identical": true,
+   "verdict": "INCONCLUSIVE_TWIN"
+  },
+  "len_N": 104,
+  "len_S": 104,
+  "n_diff_words": 2,
+  "strict": "SEPARATE",
+  "diff_detail": [
+   {
+    "word_index": 8,
+    "byte_off": 32,
+    "N": "('W', 1029734913)",
+    "S": "('W', 1029734914)",
+    "kind": "non-branch word"
+   },
+   {
+    "word_index": 9,
+    "byte_off": 36,
+    "N": "('W', 963344624)",
+    "S": "('W', 963316820)",
+    "kind": "non-branch word"
+   }
+  ],
+  "why": "2 of 26 words differ once branch displacements are resolved to absolute destinations (first at +0x20) -> the two COMDATs are NOT identical including call targets, so /OPT:ICF could not have folded them: NOT the CD-7 51-surplus class"
+ },
+ {
+  "gi": 583,
+  "addr": "0x822cb4d8",
+  "bytes": 60,
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndPartLauncher@@@@ABV1@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "c_N": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "c_S": "??0?$ObjPtr@VRndPartLauncher@@@@QAA@ABV0@@Z",
+  "c_N_retail": "0x8229dc70",
+  "c_S_retail": "0x822cb430",
+  "tier_N": null,
+  "guards": {
+   "a_is_pdata_begin": true,
+   "b_is_pdata_begin": true,
+   "a_size": 120,
+   "b_size": 120,
+   "bodies_relocnorm_identical": true,
+   "verdict": "INCONCLUSIVE_TWIN"
+  },
+  "len_N": 120,
+  "len_S": 120,
+  "n_diff_words": 2,
+  "strict": "SEPARATE",
+  "diff_detail": [
+   {
+    "word_index": 8,
+    "byte_off": 32,
+    "N": "('W', 1029734913)",
+    "S": "('W', 1029734914)",
+    "kind": "non-branch word"
+   },
+   {
+    "word_index": 9,
+    "byte_off": 36,
+    "N": "('W', 963344948)",
+    "S": "('W', 963367884)",
+    "kind": "non-branch word"
+   }
+  ],
+  "why": "2 of 30 words differ once branch displacements are resolved to absolute destinations (first at +0x20) -> the two COMDATs are NOT identical including call targets, so /OPT:ICF could not have folded them: NOT the CD-7 51-surplus class"
+ },
+ {
+  "gi": 589,
+  "addr": "0x822bc3d8",
+  "bytes": 60,
+  "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndGroup@@@@ABV1@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "c_N": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "c_S": "??0?$ObjPtr@VRndGroup@@@@QAA@ABV0@@Z",
+  "c_N_retail": "0x8229dc70",
+  "c_S_retail": "0x822bc158",
+  "tier_N": null,
+  "guards": {
+   "a_is_pdata_begin": true,
+   "b_is_pdata_begin": true,
+   "a_size": 120,
+   "b_size": 120,
+   "bodies_relocnorm_identical": true,
+   "verdict": "INCONCLUSIVE_TWIN"
+  },
+  "len_N": 120,
+  "len_S": 120,
+  "n_diff_words": 2,
+  "strict": "SEPARATE",
+  "diff_detail": [
+   {
+    "word_index": 8,
+    "byte_off": 32,
+    "N": "('W', 1029734913)",
+    "S": "('W', 1029734914)",
+    "kind": "non-branch word"
+   },
+   {
+    "word_index": 9,
+    "byte_off": 36,
+    "N": "('W', 963344948)",
+    "S": "('W', 963370196)",
+    "kind": "non-branch word"
+   }
+  ],
+  "why": "2 of 30 words differ once branch displacements are resolved to absolute destinations (first at +0x20) -> the two COMDATs are NOT identical including call targets, so /OPT:ICF could not have folded them: NOT the CD-7 51-surplus class"
+ },
+ {
+  "gi": 625,
+  "addr": "0x822bc368",
+  "bytes": 60,
+  "survivor": "??$_Param_Construct@V?$ObjPtr@VEventTrigger@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VEventTrigger@@@@ABV1@@Z",
+  "folded": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
+  "c_N": "??0Node@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@QAA@ABU01@@Z",
+  "c_S": "??0?$ObjPtr@VEventTrigger@@@@QAA@ABV0@@Z",
+  "c_N_retail": "0x8229dc70",
+  "c_S_retail": "0x822b1728",
+  "tier_N": null,
+  "guards": {
+   "a_is_pdata_begin": true,
+   "b_is_pdata_begin": true,
+   "a_size": 120,
+   "b_size": 120,
+   "bodies_relocnorm_identical": true,
+   "verdict": "INCONCLUSIVE_TWIN"
+  },
+  "len_N": 120,
+  "len_S": 120,
+  "n_diff_words": 2,
+  "strict": "SEPARATE",
+  "diff_detail": [
+   {
+    "word_index": 8,
+    "byte_off": 32,
+    "N": "('W', 1029734913)",
+    "S": "('W', 1029734914)",
+    "kind": "non-branch word"
+   },
+   {
+    "word_index": 9,
+    "byte_off": 36,
+    "N": "('W', 963344948)",
+    "S": "('W', 963361332)",
+    "kind": "non-branch word"
+   }
+  ],
+  "why": "2 of 30 words differ once branch displacements are resolved to absolute destinations (first at +0x20) -> the two COMDATs are NOT identical including call targets, so /OPT:ICF could not have folded them: NOT the CD-7 51-surplus class"
+ },
+ {
+  "gi": 942,
+  "addr": "0x8229ee78",
+  "bytes": 80,
+  "survivor": "??$_Copy_Construct@VOverlay@OutfitConfig@@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z",
+  "folded": "??$_Copy_Construct@UAutoPropEntry@PropertyEventListener@@@stlpmtx_std@@YAXPAUAutoPropEntry@PropertyEventListener@@ABU12@@Z",
+  "c_N": "??0?$ObjPtr@VObject@Hmx@@@@QAA@ABV0@@Z",
+  "c_S": "??0?$ObjPtr@VRndTex@@@@QAA@ABV0@@Z",
+  "c_N_retail": "0x8228d530",
+  "c_S_retail": "0x8229d898",
+  "tier_N": null,
+  "guards": {
+   "a_is_pdata_begin": true,
+   "b_is_pdata_begin": true,
+   "a_size": 104,
+   "b_size": 104,
+   "bodies_relocnorm_identical": true,
+   "verdict": "INCONCLUSIVE_TWIN"
+  },
+  "len_N": 104,
+  "len_S": 104,
+  "n_diff_words": 1,
+  "strict": "SEPARATE",
+  "diff_detail": [
+   {
+    "word_index": 9,
+    "byte_off": 36,
+    "N": "('W', 963330484)",
+    "S": "('W', 963344624)",
+    "kind": "non-branch word"
+   }
+  ],
+  "why": "1 of 26 words differ once branch displacements are resolved to absolute destinations (first at +0x24) -> the two COMDATs are NOT identical including call targets, so /OPT:ICF could not have folded them: NOT the CD-7 51-surplus class"
+ },
+ {
+  "gi": 942,
+  "addr": "0x8229ee78",
+  "bytes": 80,
+  "survivor": "??$_Copy_Construct@VOverlay@OutfitConfig@@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z",
+  "folded": "??$_Param_Construct@UAutoPropEntry@PropertyEventListener@@U12@@stlpmtx_std@@YAXPAUAutoPropEntry@PropertyEventListener@@ABU12@@Z",
+  "c_N": "??0?$ObjPtr@VObject@Hmx@@@@QAA@ABV0@@Z",
+  "c_S": "??0?$ObjPtr@VRndTex@@@@QAA@ABV0@@Z",
+  "c_N_retail": "0x8228d530",
+  "c_S_retail": "0x8229d898",
+  "tier_N": null,
+  "guards": {
+   "a_is_pdata_begin": true,
+   "b_is_pdata_begin": true,
+   "a_size": 104,
+   "b_size": 104,
+   "bodies_relocnorm_identical": true,
+   "verdict": "INCONCLUSIVE_TWIN"
+  },
+  "len_N": 104,
+  "len_S": 104,
+  "n_diff_words": 1,
+  "strict": "SEPARATE",
+  "diff_detail": [
+   {
+    "word_index": 9,
+    "byte_off": 36,
+    "N": "('W', 963330484)",
+    "S": "('W', 963344624)",
+    "kind": "non-branch word"
+   }
+  ],
+  "why": "1 of 26 words differ once branch displacements are resolved to absolute destinations (first at +0x24) -> the two COMDATs are NOT identical including call targets, so /OPT:ICF could not have folded them: NOT the CD-7 51-surplus class"
+ }
+]
