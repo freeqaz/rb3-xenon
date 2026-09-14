@@ -10227,6 +10227,12 @@ BandSongMetadata.cpp:
 	.text       start:0x825A4340 end:0x825A4778
 
 BandUser.cpp:
+	.pdata      start:0x82215958 end:0x82215960
+	.pdata      start:0x82218FF0 end:0x82219018
+	.pdata      start:0x82230F78 end:0x82230FA8
+	.pdata      start:0x82230FA8 end:0x82231030
+	.pdata      start:0x82231038 end:0x82231100
+	.pdata      start:0x82231110 end:0x82231368
 	.text       start:0x824E9F20 end:0x824EA034
 	.text       start:0x82523BF8 end:0x82523EB8
 	.text       start:0x8268AC08 end:0x8268AEC4
