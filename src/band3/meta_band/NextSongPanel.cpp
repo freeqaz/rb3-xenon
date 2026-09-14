@@ -86,9 +86,14 @@ void NextSongPanel::FinishLoad() {
     //     mDir->Find<...>("highscore_1.lbl", true) -> +0x1bc = 1.0f
     // The +0x1bc field falls inside UILabel's still-unreconstructed retail tail
     // (UILabel.h `mUnkTU5Tail`), so it is written through a byte offset rather
-    // than a named member. The Find<T> instantiation is ICF-folded in retail
-    // (its symbol reads as Find<RndAnimatable>); any T emits identical code.
-    *(float *)((char *)mDir->Find<UILabel>("highscore_1.lbl", true) + 0x1BC) = 1.0f;
+    // than a named member.
+    // laneW15-C: retail's callee here is ??$Find@VBandLabel@@@ObjectDir@@, so
+    // the object really is a BandLabel. (The older note claiming the symbol
+    // "reads as Find<RndAnimatable>" no longer matches the map.) BandLabel's
+    // OWN members start at 0x238, so 0x1BC is still inside UILabel's tail and
+    // stays a byte poke; BandLabel derives UILabel FIRST, so the cast address
+    // is unchanged and this is behaviourally identical.
+    *(float *)((char *)mDir->Find<BandLabel>("highscore_1.lbl", true) + 0x1BC) = 1.0f;
     static Symbol details_page_size("details_page_size");
     static Symbol details_footer_size("details_footer_size");
     static Symbol details_scroll_step("details_scroll_step");
