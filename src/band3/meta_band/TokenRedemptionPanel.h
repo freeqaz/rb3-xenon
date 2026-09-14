@@ -10,14 +10,25 @@ class StorePurchaser; // forward-decl to avoid kSuccess enum collision with net/
 
 class TokenRedemptionPanel : public UIListProvider, public UIPanel {
 public:
+    // Retail-360 state values, read off retail bytes -- the rb3-Wii oracle's
+    // gapped 0,2,3,5,6,7,8 is WRONG for this binary. Witnessed stores/compares
+    // at mRedemptionState (this+0x40) in band3/meta_band/TokenRedemptionPanel.s:
+    //   fn_8263FAA0 GetOffersForToken        stw 1
+    //   fn_82640288 OnMsg(RockCentralOpComplete) stw 2, stw 4, cmpwi 3
+    //   fn_8263F948 GetPreviousOffersForUser stw 3
+    //   fn_8263FEB0 EnumerateOffers          cmpwi 4
+    //   fn_8263FB98 ShowPurchaseUIForOffer   stw 5   (creates mPurchaser)
+    // i.e. retail's enum is CONTIGUOUS. kReportingPurchase is unwitnessed --
+    // only its VALUE is observable from bytes and no site emits it, so 6 is the
+    // contiguous continuation, not a measurement.
     enum RedemptionState {
         kIdle = 0,
-        kRequestingOffers = 2,
-        kEnumeratingOffers = 3,
-        kRequestingPreviousOffers = 5,
-        kEnumeratingPreviousOffers = 6,
-        kPurchasing = 7,
-        kReportingPurchase = 8
+        kRequestingOffers = 1,
+        kEnumeratingOffers = 2,
+        kRequestingPreviousOffers = 3,
+        kEnumeratingPreviousOffers = 4,
+        kPurchasing = 5,
+        kReportingPurchase = 6
     };
     TokenRedemptionPanel();
     virtual ~TokenRedemptionPanel() {}

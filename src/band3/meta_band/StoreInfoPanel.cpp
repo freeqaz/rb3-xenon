@@ -1,6 +1,7 @@
 #include "decomp.h"
 #include "meta_band/StoreInfoPanel.h"
 #include "meta/StoreArtLoaderPanel.h"
+#include "meta/StorePanel.h"
 #include "meta_band/BandStoreOffer.h"
 #include "net/Net.h"
 #include "obj/Data.h"
@@ -145,10 +146,31 @@ bool StoreInfoPanel::ParseRecommendations(DataArray *data) {
 void StoreInfoPanel::GetRecommendationIndexPath(const char *cc, String &str) {
     static const char *pathFmt = "dlc_store/%s/%s/related/%s.dta";
     Symbol regionSym = PlatformRegionToSymbol(ThePlatformMgr.GetRegion());
-    str = MakeString(pathFmt, regionSym, SystemLanguage(), cc);
+    // RETAIL-PROVEN, lane W16-L: the second %s is SystemLocale(), converted to
+    // const char*, not SystemLanguage() passed as a Symbol.  Two independent
+    // charges said so: the callee relocation names ?SystemLocale@@YA?AVSymbol@@XZ
+    // (0x82510040 -- ?SystemLanguage@@ is not in the map at any address, and
+    // there is no alias, so this is not an ICF fold), and the MakeString
+    // instantiation is ??$MakeString@VSymbol@@PBDPBD@@ (Symbol, const char*,
+    // const char*) against our ??$MakeString@VSymbol@@V1@PBD@@ (Symbol, Symbol,
+    // const char*).  Symbol::Str() is inline `return mStr`, so the instruction
+    // stream is unchanged -- only the two relocation names move.
+    str = MakeString(pathFmt, regionSym, SystemLocale().Str(), cc);
     Server *server = TheNet.GetServer();
     if (server && server->IsConnected()) {
-        str += MakeString("?pid=%u", server->GetMasterProfileID());
+        // RETAIL-PROVEN CALLEE (lane W16-L, 2026-09-14).  The rb3-Wii oracle has
+        // `server->GetMasterProfileID()` (Server vtable slot 17, dispatch 0x44,
+        // no arguments).  Retail fn_82638D58 instead does
+        //   bl  StorePanel::Instance()          (fn_827B53A8)
+        //   lwz r11,0(r3); lwz r11,0x44(r11)    -> StoreUser()   (slot 17)
+        //   lwz r11,0(r3); lwz r11,0x00(r11)    -> GetPadNum()   (LocalUser slot 0)
+        //   lwz r11,0x1c(r29)                   -> Server slot 7 = GetPlayerID(int)
+        // i.e. it passes a pad number in r4 to the ONE-ARG Server virtual.  The
+        // Wii build had no such call; this is a 360-only divergence, so the
+        // oracle is wrong here and retail bytes win.
+        str += MakeString(
+            "?pid=%u", server->GetPlayerID(StorePanel::Instance()->StoreUser()->GetPadNum())
+        );
     }
 }
 

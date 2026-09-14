@@ -10423,7 +10423,7 @@
  "0x8251bf18": "?SetPadPresence@PlatformMgr@@QBAXHH@Z",
  "0x8251c048": "?IsInParty@PlatformMgr@@QAA_NXZ",
  "0x8251c0d0": "?IsInPartyWithOthers@PlatformMgr@@QAA_NXZ",
- "0x8251c170": "??1?$ObjPtr@VMoggClip@@@@UAA@XZ",
+ "0x8251c170": "?EnableXMP@PlatformMgr@@QAAXXZ",
  "0x8251c180": "?SetScreenSaver@PlatformMgr@@QAAX_N@Z",
  "0x8251c248": "?GetPadNumFromXuid@?A0x8a9ffbf2@@YAH_K@Z",
  "0x8251c840": "?SetPadProperty@PlatformMgr@@QBAXHHPBG@Z",
@@ -30403,5 +30403,10 @@
  "0x82812058": "?SyncProperty@UILabelDir@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82812068": "?PostLoad@UILabelDir@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x822d3918": "?PostLoad@EndingBonus@@UAAXAAVBinStream@@@Z",
- "0x822d3910": "?PreLoad@EndingBonus@@UAAXAAVBinStream@@@Z"
+ "0x822d3910": "?PreLoad@EndingBonus@@UAAXAAVBinStream@@@Z",
+ "0x82638d58": "?GetRecommendationIndexPath@StoreInfoPanel@@QAAXPBDAAVString@@@Z",
+ "0x8263faa0": "?GetOffersForToken@TokenRedemptionPanel@@QAAXPBDPAVLocalBandUser@@@Z",
+ "0x8263f948": "?GetPreviousOffersForUser@TokenRedemptionPanel@@QAAXPAVLocalBandUser@@@Z",
+ "0x8263fb98": "?ShowPurchaseUIForOffer@TokenRedemptionPanel@@QAAXHPAVLocalBandUser@@@Z",
+ "0x82812028": "?DataDir@ObjectDir@@$4PPPPPPPM@CLE@AAPAV1@XZ"
 }

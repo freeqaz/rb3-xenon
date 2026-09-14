@@ -47,17 +47,17 @@ UNPOOL_DATA
 void TokenRedemptionPanel::Poll() {
     UIPanel::Poll();
     switch (mRedemptionState) {
-    case 3:
-    case 6:
+    case kEnumeratingOffers:
+    case kEnumeratingPreviousOffers:
         MILO_ASSERT(mEnumeration, 0x4A);
         mEnumeration->Poll();
         if (!mEnumeration->IsEnumerating()) {
             bool succ = mEnumeration->IsSuccess();
-            if (!succ && mRedemptionState == 6) {
+            if (!succ && mRedemptionState == kEnumeratingPreviousOffers) {
                 succ = true;
             }
             if (succ) {
-                if (mRedemptionState != 6) {
+                if (mRedemptionState != kEnumeratingPreviousOffers) {
                     static Message token_msg("token_redemption_msg", gNullStr);
                     token_msg[0] = token_redemption_ready;
                     HandleType(token_msg);
@@ -67,7 +67,7 @@ void TokenRedemptionPanel::Poll() {
                 }
             } else {
                 static Message token_msg("token_redemption_msg", gNullStr);
-                if (mRedemptionState == 6) {
+                if (mRedemptionState == kEnumeratingPreviousOffers) {
                     token_msg[0] = token_error_no_previous_offers;
                 } else {
                     token_msg[0] = token_redemption_error;
@@ -78,7 +78,7 @@ void TokenRedemptionPanel::Poll() {
             RELEASE(mEnumeration);
         }
         break;
-    case 7:
+    case kPurchasing:
         MILO_ASSERT(mPurchaser, 0xA8);
         mPurchaser->Poll();
         if (!mPurchaser->IsPurchasing()) {
@@ -113,18 +113,37 @@ void TokenRedemptionPanel::Unload() {
     UIPanel::Unload();
 }
 
+// Retail fn_8263FAA0. The rb3-Wii oracle reads `TheServer.GetMasterProfileID()`;
+// retail's 360 body instead dispatches Server slot 5 (0x14) IsConnected() and,
+// only when connected, slot 7 (0x1c) GetPlayerID(user->GetPadNum()) -- the pad
+// number arriving in r4 from a vbtable-adjusted slot-0 vcall on the user:
+//     lwz  r3, lbl_82C6EB50@l(r30)   ; TheServer (a reference => pointer load)
+//     lwz  r11,0x0(r3); lwz r11,0x14(r11); bctrl        ; IsConnected()
+//     clrlwi. r11,r3,24 ; beq .L_8251DC54               ; id stays 0 if offline
+//     lwz  r10,0x4(r29); lwz r10,0xc(r10); add r11,r10,r29
+//     addi r3,r11,0x4 ; lwz r11,0x4(r11); lwz r11,0x0(r11); bctrl ; GetPadNum()
+//     lwz  r11,0x1c(r28) ; mr r4,r3 ; r3 = TheServer ; bctrl       ; GetPlayerID
+// Same wrong-callee bug W16-G found in StoreInfoPanel::GetRecommendationIndexPath,
+// and the same one in GetPreviousOffersForUser / ShowPurchaseUIForOffer below.
 void TokenRedemptionPanel::GetOffersForToken(const char *token, LocalBandUser *user) {
     mActiveToken = token;
     mResultList.Clear();
-    int id = TheServer.GetMasterProfileID();
-    mRedemptionState = 2;
+    int id = 0;
+    if (TheServer.IsConnected()) {
+        id = TheServer.GetPlayerID(user->GetPadNum());
+    }
+    mRedemptionState = kRequestingOffers;
     TheRockCentral.RedeemToken(id, mActiveToken.c_str(), mResultList, this);
 }
 
+// Retail fn_8263F948 -- identical server shape to GetOffersForToken above.
 void TokenRedemptionPanel::GetPreviousOffersForUser(LocalBandUser *user) {
     mResultList.Clear();
-    int id = TheServer.GetMasterProfileID();
-    mRedemptionState = 5;
+    int id = 0;
+    if (TheServer.IsConnected()) {
+        id = TheServer.GetPlayerID(user->GetPadNum());
+    }
+    mRedemptionState = kRequestingPreviousOffers;
     TheRockCentral.GetRedeemedTokensByPlayer(id, mResultList, this);
 }
 
@@ -144,7 +163,7 @@ void TokenRedemptionPanel::EnumerateOffers(LocalBandUser *user) {
     int count = offerIds.size();
     if (count == 0) {
         static Message token_msg("token_redemption_msg", gNullStr);
-        if (mRedemptionState == 6) {
+        if (mRedemptionState == kEnumeratingPreviousOffers) {
             token_msg[0] = token_error_no_previous_offers;
         } else {
             token_msg[0] = token_redemption_error;
@@ -168,7 +187,7 @@ void TokenRedemptionPanel::ShowPurchaseUIForOffer(int ix, LocalBandUser *user) {
         server->GetPlayerID(user->GetPadNum());
     }
     mPurchaser = NULL;
-    mRedemptionState = kReportingPurchase;
+    mRedemptionState = kPurchasing; // retail fn_8263FB98 stores 5
 }
 
 DataNode TokenRedemptionPanel::OnMsg(const ButtonDownMsg &msg) {
