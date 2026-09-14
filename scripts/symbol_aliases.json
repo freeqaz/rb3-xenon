@@ -75331,6 +75331,15 @@
     "??_EUIPanel@@$4PPPPPPPM@A@AAPAXI@Z"
    ],
    "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['GemTrainerLoopPanel', 64, 0], ['TourChallengeResultsPanel', 64, 0], ['TrackPanelInterface', 64, 0], ['UIPanel', 64, 0]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x82b908e8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "OnMsg",
+   "address": "0x824f7c98",
+   "survivor": "?OnMsg@RockCentral@@QAA?AVDataNode@@ABVUserLoginMsg@@@Z",
+   "folded": [
+    "?OnMsg@RockCentral@@QAA?AVDataNode@@ABVFriendsListChangedMsg@@@Z"
+   ],
+   "evidence": "Lane W16-B (2026-09-14), RockCentral OnMsg escalation. T1 on retail bytes: retail ?Handle@RockCentral (0x82289A50 and 0x82289AC8 in asm/RockCentral.s) calls ONE body, fn_824F7C98 (128 B), from BOTH the UserLoginMsg and the FriendsListChangedMsg HANDLE_MESSAGE blocks -- there is no second body anywhere in the pinned range, so retail folded the two overloads. Our two compiled COMDATs in RockCentral.obj are byte-identical (128 B, sha256 2131fa6a64042225..., identical relocation lists: __savegprlr_26, ??2Job@@SAPAXI@Z, ?Int@DataNode@@QBAHPBVDataArray@@@Z, ??0UpdateFriendsListJob@@QAA@H@Z, ?QueueJob@JobMgr@@QAAXPAVJob@@@Z, __restgprlr_26), which is /OPT:ICF's fold condition exactly, and the survivor spelling reads fuzzy 100 against 0x824F7C98 once named (report.json, build 2 of this lane). Source: both handlers are `mJobMgr.QueueJob(new UpdateFriendsListJob(msg.GetPadNum())); return 1;` -- the rb3-Wii oracle's UserLogin body (TheWiiProfileMgr etc.) and its second FriendsListChanged job are Wii-only and absent from retail Xbox bytes."
   }
  ]
 }
