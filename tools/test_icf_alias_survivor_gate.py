@@ -1,0 +1,104 @@
+#!/usr/bin/env python3
+"""Unit test for tools/icf_alias_build.py's SURVIVOR SELF-CHECK (lane W16-AE).
+
+WHAT IT GUARDS.  Tier-1 alias generation verified the FOLDED spelling's
+compiled COMDAT against the retail body and then trusted the map for the
+SURVIVOR's name -- ours.get(survivor) was never consulted.  Two landed "T1"
+groups the pair adjudicator refutes came out of exactly that blind spot:
+
+    0x82b9b1f8  retail 64 B WITH a bl to _M_erase   vs our survivor 92 B, 0 relocs
+    0x82336af8  retail 40 B / 5 relocs               vs our survivor swap<...> 28 B / 0
+
+The fixtures below are SYNTHETIC records in the builder's own (masked_body,
+relocs, size) shape reproducing those two contradictions, plus controls:
+
+    identical survivor   -> must be ACCEPTED (None) -- the gate is not "refuse all"
+    same size/relocs, words differ, mode=shape -> ACCEPT (an imperfect port of the
+                            right function is not a wrong identity); mode=strict
+                            -> REFUSE
+    mode=off             -> every contradiction ACCEPTED -- proves the verdict is
+                            the gate's, and that `off` really is the old behaviour
+    survivor not compiled (None) -> None (cannot be checked; counted, not refused)
+
+Exit 0 on pass, 1 on any failed expectation.  Registered in scripts/test_tools.py.
+"""
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+import icf_alias_build as B  # noqa: E402
+
+
+def rec(size, relocs, seed):
+    # non-vacuous body: distinct non-zero words so the vacuity guard cannot trip
+    body = bytes(((seed * 7 + i * 13) % 251) + 1 for i in range(size))
+    return (body, list(relocs), size)
+
+
+def main():
+    fails = 0
+
+    def expect(label, got, want_none):
+        nonlocal fails
+        ok = (got is None) == want_none
+        print("  %s  %-58s -> %s" % ("ok " if ok else "FAIL", label,
+                                      "ACCEPT" if got is None else "REFUSE: " + got))
+        if not ok:
+            fails += 1
+
+    # sanity: fixtures are non-vacuous, else every verdict below is vacuous
+    for r in (rec(64, [(0x30, "?_M_erase@x@@AAAXXZ", "REL24")], 1), rec(92, [], 2),
+              rec(40, [(0x4, "a", "ADDR16_HA"), (0x8, "a", "ADDR16_LO"), (0x10, "b", "REL24"),
+                       (0x18, "c", "REL24"), (0x20, "d", "REL24")], 3), rec(28, [], 4)):
+        if B.vacuous(r):
+            print("FAIL fixture is vacuous: size=%d relocs=%d" % (r[2], len(r[1])))
+            fails += 1
+
+    print("case 0x82b9b1f8 shape: retail 64 B + bl _M_erase vs our survivor 92 B reloc-free")
+    rt = rec(64, [(0x30, "?_M_erase@x@@AAAXXZ", "REL24")], 1)
+    st = rec(92, [], 2)
+    expect("mode=shape", B.survivor_self_check(rt, st, mode="shape"), want_none=False)
+    expect("mode=strict", B.survivor_self_check(rt, st, mode="strict"), want_none=False)
+    expect("mode=off (old behaviour)", B.survivor_self_check(rt, st, mode="off"), want_none=True)
+
+    print("case 0x82336af8 shape: retail 40 B / 5 relocs vs our survivor 28 B / 0 relocs")
+    rt = rec(40, [(0x4, "a", "ADDR16_HA"), (0x8, "a", "ADDR16_LO"), (0x10, "b", "REL24"),
+                  (0x18, "c", "REL24"), (0x20, "d", "REL24")], 3)
+    st = rec(28, [], 4)
+    expect("mode=shape", B.survivor_self_check(rt, st, mode="shape"), want_none=False)
+    expect("mode=off (old behaviour)", B.survivor_self_check(rt, st, mode="off"), want_none=True)
+
+    print("same size, reloc COUNT differs (40 B: 5 vs 4)")
+    st = rec(40, rt[1][:4], 5)
+    expect("mode=shape", B.survivor_self_check(rt, st, mode="shape"), want_none=False)
+
+    print("same size and count, reloc SHAPE differs (offset 0x10 -> 0x14)")
+    st = rec(40, [rt[1][0], rt[1][1], (0x14, "b", "REL24"), rt[1][3], rt[1][4]], 6)
+    expect("mode=shape", B.survivor_self_check(rt, st, mode="shape"), want_none=False)
+
+    print("same size/count/shape, reloc TARGET differs (b -> zz), both mapped names")
+    st = rec(40, [rt[1][0], rt[1][1], (0x10, "zz", "REL24"), rt[1][3], rt[1][4]], 7)
+    expect("mode=shape", B.survivor_self_check(rt, st, mapped=frozenset({"b", "zz"}), mode="shape"),
+           want_none=False)
+
+    print("CONTROL: survivor byte- and reloc-identical to retail")
+    st = (rt[0], list(rt[1]), rt[2])
+    expect("mode=shape", B.survivor_self_check(rt, st, mode="shape"), want_none=True)
+    expect("mode=strict", B.survivor_self_check(rt, st, mode="strict"), want_none=True)
+
+    print("CONTROL: same size/relocs, masked body WORDS differ (imperfect port of the right fn)")
+    st = rec(40, list(rt[1]), 8)
+    expect("mode=shape (accept)", B.survivor_self_check(rt, st, mode="shape"), want_none=True)
+    expect("mode=strict (refuse)", B.survivor_self_check(rt, st, mode="strict"), want_none=False)
+
+    print("CONTROL: survivor spelling not compiled by us (None) / retail missing")
+    expect("st=None", B.survivor_self_check(rt, None, mode="strict"), want_none=True)
+    expect("rt=None", B.survivor_self_check(None, st, mode="strict"), want_none=True)
+
+    print("\n%s (%d failure(s))" % ("PASS" if fails == 0 else "FAIL", fails))
+    return 0 if fails == 0 else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
