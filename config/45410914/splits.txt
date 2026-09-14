@@ -7249,6 +7249,10 @@ AllocInfo.cpp:
 	.text       start:0x827D7048 end:0x827D7290
 	.text       start:0x827D7290 end:0x827D72D0
 
+system/rnddx9/Utl.cpp:
+	.pdata      start:0x8223AB48 end:0x8223AB58
+	.text       start:0x8273D658 end:0x8273D7C8
+
 system/rnddx9/CubeTex.cpp:
 	.pdata      start:0x8223AB58 end:0x8223ABA8
 	.pdata      start:0x8223ABB8 end:0x8223ABC0

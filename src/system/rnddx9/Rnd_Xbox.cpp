@@ -806,6 +806,37 @@ void DxRnd::CreatePostTextures() {
 
 static DWORD sPointTestFence = -1;
 
+// Retail keeps the occlusion manager pointer in a callee-saved register
+// across CreateQuery into BeginQuery (r26 in the point block, r28 in the
+// area block) and only reloads `this->mOcclusionQueryMgr` for EndQuery.
+// CreateQuery/BeginQuery call virtuals, so MSVC's mod/ref cannot keep a
+// member load live across them -- the cached pointer has to be a source
+// local whose scope ends exactly after BeginQuery, i.e. the parameter of
+// an inlined helper.
+static inline bool CreateAndBeginQuery(RndOcclusionQueryMgr *mgr, unsigned int &idx) {
+    bool ok = mgr->CreateQuery(idx);
+    if (ok) {
+        mgr->BeginQuery(idx);
+    }
+    return ok;
+}
+
+// Same shape at the top of the function: retail loads the manager once per
+// pair, loads its vtable BEFORE the store through it (0x1804 / 0x1808), and
+// only reloads `this->mOcclusionQueryMgr` between the two pairs (a virtual
+// call intervened).  A member store cannot keep `this->member` live in MSVC,
+// so each pair is an inlined wrapper whose `this` is the cached pointer.
+// Retail (and DC3 retail) dispatch slot 0x20 (OnEndFrame) BEFORE slot 0x1c
+// (OnBeginFrame).
+static inline void EndQueryFrame(RndOcclusionQueryMgr *mgr) {
+    mgr->ToggleFrameIndex();
+    mgr->OnEndFrame();
+}
+static inline void BeginQueryFrame(RndOcclusionQueryMgr *mgr) {
+    mgr->IncrementFrameCounter();
+    mgr->OnBeginFrame();
+}
+
 void DxRnd::DoPointTests() {
     // Block on previous fence if set
     if (sPointTestFence != (DWORD)-1) {
@@ -813,40 +844,45 @@ void DxRnd::DoPointTests() {
         sPointTestFence = -1;
     }
 
-    // Early out if no occlusion query manager or hi-res screen is active
-    auto& _ref0 = mOcclusionQueryMgr;
-    if (!_ref0)
-        return;
-    if (TheHiResScreen.IsActive())
+    // Early out if no occlusion query manager.  DC3 additionally tests
+    // TheHiResScreen.IsActive() here; RB3 retail (fn_8273D0A0) has no
+    // reference to TheHiResScreen anywhere in the body.
+    if (!mOcclusionQueryMgr)
         return;
 
-    // Process query results from previous frame
+    // Process query results from previous frame.
+    // Retail (fn_8273D0A0) loads `it->mFlare` ONCE per branch and uses it for
+    // both stores; writing `it->mFlare->` twice makes MSVC reload it because
+    // the first store may alias the pointer.  The visibility bool is computed
+    // BEFORE the flare pointer is loaded, so it is a local of its own.
     for (std::vector<RndPointTest>::iterator it = mPointTestQueries.begin(); it !=mPointTestQueries.end(); ++it) {
         unsigned int result;
-        if (_ref0->GetQueryResults(it->mPointQueryIdx, result)) {
-            it->mFlare->SetOcclusionReady(true);
-            it->mFlare->SetVisible(result != 0);
+        if (mOcclusionQueryMgr->GetQueryResults(it->mPointQueryIdx, result)) {
+            bool visible = result != 0;
+            RndFlare *flare = it->mFlare;
+            flare->SetOcclusionReady(true);
+            flare->SetVisible(visible);
         }
-        if (_ref0->GetQueryResults(it->mAreaQueryIdx, result)) {
-            it->mFlare->SetOcclusionResult((float)(int)result);
-            it->mFlare->SetOcclusionReady(true);
+        if (mOcclusionQueryMgr->GetQueryResults(it->mAreaQueryIdx, result)) {
+            RndFlare *flare = it->mFlare;
+            flare->SetOcclusionResult((float)(int)result);
+            flare->SetOcclusionReady(true);
         }
     }
 
-    // Update frame index - both direct manipulation and virtual call
-    _ref0->ToggleFrameIndex();
-    _ref0->OnBeginFrame();
-    _ref0->IncrementFrameCounter();
-    _ref0->OnEndFrame();
+    // Update frame index.  Retail (and DC3 retail, 0x8261B04C/0x8261B06C)
+    // dispatches vtable slot 0x20 BEFORE slot 0x1c: with the compiler-verified
+    // slot layout (7 = OnBeginFrame @0x1c, 8 = OnEndFrame @0x20) the
+    // byte-faithful call order is End, increment, Begin.
+    EndQueryFrame(mOcclusionQueryMgr);
+    BeginQueryFrame(mOcclusionQueryMgr);
 
-    // Count point tests needed
-    int numTests = 0;
-    for (std::list<PointTest>::iterator it = mPointTests.begin(); it !=mPointTests.end(); ++it) {
-        numTests++;
-    }
-
-    // Resize mPointTestQueries to match mPointTests count
-    mPointTestQueries.resize(numTests);
+    // Resize mPointTestQueries to match mPointTests count.  Retail inlines
+    // resize() (erase arm / _M_fill_insert arm) and builds the fill value
+    // {0, -1, -1} on the stack at 0x58(r1) -- RndPointTest's default ctor --
+    // BEFORE the list::size() node walk: right-to-left argument evaluation of
+    // the two-argument resize, not the one-argument form (whose temp follows).
+    mPointTestQueries.resize(mPointTests.size(), RndPointTest());
 
     // Early out if no point tests
     if (mPointTests.empty())
@@ -857,9 +893,18 @@ void DxRnd::DoPointTests() {
     xfm.Reset();
     TheShaderMgr.SetTransform(xfm);
 
-    // Setup view matrix
-    Hmx::Matrix4 viewMtx(xfm);
-    TheShaderMgr.SetVConstant(kVS_ViewProjMatrix, viewMtx);
+    // Setup view matrix.  Retail passes the Matrix4 constructor's return
+    // value (`mr r5, r3`) straight to SetVConstant -- an unnamed temporary --
+    // and keeps the manager object (r31) and its vtable (r29) live across the
+    // external Matrix4 ctor.  Same construct as rnddx9/Rnd.cpp BeginDrawing:
+    // a local reference declared HERE, not hoisted, is what keeps the pointer
+    // in a callee-saved register instead of reloading the global.
+    RndShaderMgr &shaderMgr = TheShaderMgr;
+    // The temporary must stay UNNAMED (V4's named local and V5's const&
+    // binding both lost the `mr r5, r3` shape); what keeps it out of the
+    // loop's `verts` slot is that `vtx`/`verts` below are function-scope
+    // locals, which a statement-level temporary cannot be overlaid with.
+    shaderMgr.SetVConstant(kVS_ViewProjMatrix, Hmx::Matrix4(xfm));
 
     // Setup shader state
     RndShader::SelectConfig(nullptr, kStandardShader, false);
@@ -873,8 +918,12 @@ void DxRnd::DoPointTests() {
     D3DDevice_SetRenderState_ZWriteEnable(TheDxRnd.Device(), 0);
     D3DDevice_SetRenderState_ZEnable(TheDxRnd.Device(), 1);
 
-    // Set z-compare function based on mReverseZ
-    D3DDevice_SetRenderState_ZFunc(TheDxRnd.Device(), (D3DCMPFUNC)(mReverseZ ? 3 : 1));
+    // Set z-compare function based on mReverseZ.  Retail bool-ifies
+    // mReverseZ, masks with 3 (`clrlwi r11, r11, 30`) and adds 1, so the two
+    // values are 4 and 1 = D3DCMP_GREATER / D3DCMP_LESS on the 360 enum.
+    D3DDevice_SetRenderState_ZFunc(
+        TheDxRnd.Device(), (D3DCMPFUNC)(mReverseZ ? D3DCMP_GREATER : D3DCMP_LESS)
+    );
 
     // Set point size
     float pointSize = 1.0f;
@@ -882,78 +931,108 @@ void DxRnd::DoPointTests() {
     D3DDevice_SetRenderState_ViewportEnable(TheDxRnd.Device(), 0);
     D3DDevice_SetRenderState_HalfPixelOffset(TheDxRnd.Device(), 1);
 
+    // The vertex scratch buffers live OUTSIDE the loop in retail.  Two
+    // independent witnesses on the retail bytes: (1) the point block is a
+    // strict store->load chain (`it->y` is never hoisted above the `vtx.x`
+    // store) -- a loop-body local's address has not escaped yet at block
+    // entry, so the compiler would hoist; a function-scope local's address
+    // escaped through DrawVerticesUP on the previous iteration, so it must
+    // not.  (2) the Matrix4 temporary above keeps its own slot (0x130) and
+    // the z-conversion temp lands after `verts` (0xe0), which is impossible
+    // if `verts` were in a disjoint inner scope the temporaries could share.
+    struct PointVertex {
+        float x, y, z;
+        float w;
+        DWORD color;
+    };
+    struct QuadVertex {
+        float x, y, z;
+        float w;
+        DWORD color;
+    };
+    PointVertex vtx;
+    QuadVertex verts[4];
+
     // Process each point test
     int idx = 0;
-    for (std::list<PointTest>::iterator it = mPointTests.begin(); it !=mPointTests.end(); ++it, ++idx) {
+    for (std::list<PointTest>::iterator it = mPointTests.begin(); it !=mPointTests.end(); ++it) {
 #ifdef HX_NATIVE
+        // Retail RB3 has no stats increment in this loop (nothing touches a
+        // global between the loop head and the flare's mPointTest load).
         TheNgStats->mFlares++;
 #endif
 
         RndFlare *flare = it->mFlare;
-        RndPointTest &test = mPointTestQueries[idx];
-        test.mPointQueryIdx = -1;
-        test.mAreaQueryIdx = -1;
+        // Retail bumps the strength-reduced idx*12 (`addi r21, r21, 0xc`)
+        // right after the element address is formed, at the loop HEAD -- the
+        // post-increment lives in the subscript, not in the for-increment.
+        RndPointTest &test = mPointTestQueries[idx++];
+        // Retail stores mFlare FIRST, then the area -1, then the point -1.
         test.mFlare = flare;
+        test.mAreaQueryIdx = -1;
+        test.mPointQueryIdx = -1;
 
-        // Point test
-        if (flare->GetPointTest()) {
-            struct PointVertex {
-                float x, y, z;
-                float w;
-                DWORD color;
-            };
-            PointVertex vtx;
+        // Point test.  Retail tests the flare READ BACK from `test.mFlare`
+        // (the store is forwarded, leaving `clrrwi r11, r10, 0` -- the
+        // 64->32 zero-extension of a forwarded 32-bit load), the same
+        // spelling as the area test below, which reloads it after the calls.
+        if (test.mFlare->GetPointTest()) {
             vtx.x = (float)it->x;
             vtx.y = (float)it->y;
             vtx.z = (float)it->z * 5.9604651881e-08f;
             vtx.w = 1.0f;
             vtx.color = 0;
 
-            unsigned int queryIdx;
-            if (_ref0->CreateQuery(queryIdx)) {
-                test.mPointQueryIdx = queryIdx;
-                _ref0->BeginQuery(test.mPointQueryIdx);
+            // Retail hands CreateQuery the MEMBER by reference (`addi r27,
+            // r28, 4` / `mr r4, r27`), keeps the cached manager (r26) live
+            // across CreateQuery into BeginQuery, and gates BeginQuery and
+            // DrawVerticesUP+EndQuery with TWO separate tests of the same
+            // bool (r25), reloading the index from 0x0(r27) each time.
+            bool ok = CreateAndBeginQuery(mOcclusionQueryMgr, test.mPointQueryIdx);
+            if (ok) {
                 D3DDevice_DrawVerticesUP(mD3DDevice, D3DPT_POINTLIST, 1, &vtx, sizeof(PointVertex));
-                _ref0->EndQuery(test.mPointQueryIdx);
+                mOcclusionQueryMgr->EndQuery(test.mPointQueryIdx);
             }
         }
 
-        // Area test
-        if (flare->GetAreaTest()) {
-            struct QuadVertex {
-                float x, y, z;
-                float w;
-                DWORD color;
-            };
-            float z = (float)it->z * 5.9604651881e-08f;
-            QuadVertex verts[4];
-
-            // Initialize vertices
-            verts[0].x = flare->GetArea().x;
-            verts[0].y = flare->GetArea().y;
-            verts[0].z = z;
+        // Area test.  Retail reloads the flare from `test.mFlare`
+        // (`lwz r11, 0x0(r28)`), not from the `flare` local, and that ONE
+        // load (r11) serves the condition, the area block and the else arm
+        // (0x118 and 0xda are stored off the same register).
+        RndFlare *areaFlare = test.mFlare;
+        if (areaFlare->GetAreaTest()) {
+            // The rect is held BY REFERENCE (`addi r10, r11, 0x104`) across
+            // the copy loops, which clobber the flare register: w/h are read
+            // as 0xc(r10)/0x8(r10), not 0x110/0x10c off the flare.
+            const Hmx::Rect &area = areaFlare->GetArea();
+            verts[0].x = area.x;
+            verts[0].y = area.y;
+            verts[0].z = (float)it->z * 5.9604651881e-08f;
             verts[0].w = 1.0f;
             verts[0].color = 0;
 
+            // Every copy is `verts[n] = verts[0]` (a 5-word lwzu/stwu loop)
+            // and the adjusted components are read back from verts[0], not
+            // from the copy -- except verts[3].y, which reloads its own slot.
+            // Every `fadds` takes the RECT term first.
             verts[1] = verts[0];
-            verts[1].y += flare->GetArea().h;
+            verts[1].y = area.h + verts[0].y;
 
             verts[2] = verts[0];
-            verts[2].x += flare->GetArea().w;
+            verts[2].x = area.w + verts[0].x;
 
-            verts[3] = verts[1];
-            verts[3].x += flare->GetArea().w;
+            verts[3] = verts[0];
+            verts[3].x = area.w + verts[0].x;
+            verts[3].y = area.h + verts[3].y;
 
-            unsigned int queryIdx;
-            if (_ref0->CreateQuery(queryIdx)) {
-                test.mAreaQueryIdx = queryIdx;
-                _ref0->BeginQuery(test.mAreaQueryIdx);
+            bool ok = CreateAndBeginQuery(mOcclusionQueryMgr, test.mAreaQueryIdx);
+            if (ok) {
                 D3DDevice_DrawVerticesUP(mD3DDevice, D3DPT_TRIANGLESTRIP, 4, verts, sizeof(QuadVertex));
-                _ref0->EndQuery(test.mAreaQueryIdx);
+                mOcclusionQueryMgr->EndQuery(test.mAreaQueryIdx);
             }
         } else {
-            flare->SetOcclusionReady(true);
-            flare->SetVisible(true);
+            areaFlare->SetOcclusionReady(true);
+            areaFlare->SetVisible(true);
         }
     }
 
