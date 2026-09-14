@@ -587,6 +587,7 @@
             "system/rnddx9/Rnd.cpp": "NonMatching",
             "system/rnddx9/Rnd_Xbox.cpp": "NonMatching",
             "system/rnddx9/ShaderMgr.cpp": "NonMatching",
+            "system/rnddx9/Utl.cpp": "NonMatching",
             "system/rndobj/CubeTex.cpp": "NonMatching",
             "system/rndobj/DOFProc.cpp": "NonMatching",
             "system/rndobj/Env_NG.cpp": "NonMatching",
