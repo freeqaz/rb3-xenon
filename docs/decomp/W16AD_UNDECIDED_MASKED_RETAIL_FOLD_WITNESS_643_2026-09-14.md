@@ -433,3 +433,39 @@ INCONCLUSIVE is not REFUTED, and the Item 2 batch cap of 20 was already spent.
 | `0f059717` | 20 withdrawals (`gi`-keying defect fixed; `w16s_ablate.py` fixed with it) |
 | `dcf8ab78` | Item 3 — four Accomplishment map-row swaps, +680 B measured exactly as predicted |
 | `5983542c` | Item 4 + guard conservatism audit |
+
+---
+
+## 9. Gates — run in the brief's order as the last actions
+
+```
+GATE1 BUILD rc=0
+GATE2 python3 scripts/verify_ruler_agreement.py --check       rc=0
+      OK: both objdiff-cli entry points resolve the same ruler.
+GATE3 python3 scripts/verify_objs_patched.py --verify-manifest rc=0
+      [patch-state] OK: 1212 decomp, 3115 target objects match
+      (tree_sha256=d73dda45e6ddb9e6)
+GATE4 tools/native_build_gate.sh
+```
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+`skipped=0` as required.
+
+> The only edit made after the gate run is this section — documentation text,
+> which is not a build input and cannot affect any of the four gates.
+
+## 10. Lane-internal before / after
+
+| | `matched_functions` | `matched_code` |
+|---|---:|---:|
+| lane baseline (main `f78859c3`) | 43,302 | 3,988,880 |
+| Item 2 — 20 withdrawals | 43,302 | 3,988,880 (Δ0 / Δ0, pre-registered as Δ0) |
+| Item 3 — 4 map swaps | **43,308** | **3,989,560** (+6 / +680, predicted exactly) |
+| **lane final** | **43,308** | **3,989,560** |
+
+Net lane delta: **+6 functions / +680 B**, all of it from Item 3. The lane's
+principal product is not those bytes — it is the **63 refuted memberships** and
+the instrument that found them.
