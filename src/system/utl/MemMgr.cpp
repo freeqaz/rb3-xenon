@@ -885,7 +885,15 @@ MemHandle *_MemAllocH(int size) {
     MILO_ASSERT(heap != NULL, 0xb27);
     // Parenthesized (MemAlloc) bypasses the debug-arity macro in MemMgr.h,
     // which would otherwise force align 0; retail passes 0x10 (li r4,0x10).
+    // Under HX_NATIVE the real MemAlloc is the 5-arg debug allocator (the
+    // 2-arg retail overload is `#ifndef HX_NATIVE`), so the native arm spells
+    // the debug form with the same 0x10 align -- same shape as MemRealloc
+    // above. The match arm is the retail 2-arg call, byte-for-byte.
+#ifdef HX_NATIVE
+    void *data = (MemAlloc)(((size - 1) & ~0xF) + 0x20, __FILE__, __LINE__, "MemAllocH", 0x10);
+#else
     void *data = (MemAlloc)(((size - 1) & ~0xF) + 0x20, 0x10);
+#endif
     // Retail has an explicit `li r3,0` else-arm after the PoolAlloc null test:
     // that is MSVC's null check on a throw() placement operator new, so the
     // source is the single new-expression, not rb3-Wii's `if (h) new (h) ...`.
