@@ -30504,5 +30504,13 @@
  "0x825b2ea0": "?ResolveAutoSignInStates@OvershellPanel@@QAAXXZ",
  "0x825b2ff0": "?ResolveChooseProfileStates@OvershellPanel@@QAAXXZ",
  "0x824ce130": "?insert@?$list@UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UMatOverride@WorldDir@@U?$_Nonconst_traits@UMatOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUMatOverride@WorldDir@@@Z",
- "0x8230e658": "?erase@?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPracticeSectionMapping@SongSectionController@@U?$_Nonconst_traits@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@2@U32@0@Z"
+ "0x8230e658": "?erase@?$list@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPracticeSectionMapping@SongSectionController@@U?$_Nonconst_traits@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@2@U32@0@Z",
+ "0x826213c0": "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVSessionMgrUpdatedMsg@@@Z",
+ "0x82622748": "?StartFinding@MainHubPanel@@QAAXXZ",
+ "0x82622de8": "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVRemoteMachineLeftMsg@@@Z",
+ "0x82621ac0": "?ReloadMessages@MainHubPanel@@QAAXXZ",
+ "0x82622d00": "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVNewRemoteMachineMsg@@@Z",
+ "0x82620540": "?GetMotd@MainHubPanel@@QAAPBDXZ",
+ "0x82620f38": "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVOvershellOverrideEndedMsg@@@Z",
+ "0x82621c70": "?PrepareProfilesAndMessages@MainHubPanel@@QAAXXZ"
 }
