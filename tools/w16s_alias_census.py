@@ -66,9 +66,13 @@ VERDICTS (one per live membership N under survivor S at address X)
                             discriminate; claim nothing.
   CONTRADICTED_ON_RETAIL    our N != our S and our N != retail@X.
   NEEDS_SOURCE              our S absent from our build -> undecidable our-side.
-  STALE_SPELLING            our N absent from our build.  ⛔ DO NOT PRUNE --
-                            these become live as porting advances; a prior prune
-                            cost +94,616 B to reverse.
+  REFERENCED_UNDEFINED      no COMDAT defines N, but our objs reference it.
+                            LIVE -- reloc_eq compares target NAMES.
+  ABSENT_FROM_BUILD         N appears nowhere in our objs.  ⛔ STILL DO NOT PRUNE
+                            -- these become live as porting advances; a prior
+                            prune cost +94,616 B to reverse.
+  DATA_*                    N is a data COMDAT (vtable / RTTI).  Same fold
+                            question our-side; no .pdata extent to compare.
 
 A NEGATIVE THAT AGREES WITH YOUR PRIOR IS THE HARDEST KIND TO CATCH
 ===================================================================
@@ -98,6 +102,7 @@ def our_comdat_index():
     """name -> set of (raw_bytes, reloc_tuple) over every compiled obj."""
     ours = collections.defaultdict(set)
     fns = collections.defaultdict(set)
+    data = collections.defaultdict(set)
     where = collections.defaultdict(set)
     for p in glob.glob(str(ROOT / "build" / BUILD_ID / "src" / "**" / "*.obj"),
                        recursive=True):
@@ -107,6 +112,16 @@ def our_comdat_index():
             continue
         for n, v in c.items():
             if not v.get("is_code"):
+                # ⛔ DATA COMDATs are NOT out of scope -- 143 of the 289
+                # spellings this census first called STALE_SPELLING are
+                # `??_7X@@6B@` VTABLES, live data symbols our build defines.
+                # /OPT:ICF folds identical data COMDATs too, and objdiff's
+                # reloc_eq does not care whether a relocation target is code.
+                # Labelling them "stale" would license exactly the prune the
+                # house rule forbids (a prior one cost +94,616 B to reverse).
+                drel = tuple(sorted((o, s, t) for o, s, t in (v["relocs"] or [])
+                                    if s != "@comp.id"))
+                data[n].add((v["raw"], drel))
                 continue
             rel = tuple(sorted((o, s, t) for o, s, t in (v["relocs"] or [])
                                if s != "@comp.id"))
@@ -119,7 +134,7 @@ def our_comdat_index():
                                 if s != "@comp.id"))
             fns[n].add((v["fn_raw"], frel))
             where[n].add(p)
-    return ours, fns, where
+    return ours, fns, data, where
 
 
 def retail_compare(img, size, byva, va, raw, rel):
@@ -206,7 +221,26 @@ def main():
     for va, n in byva.items():
         byname[n].add(va)
 
-    ours, fns, where = our_comdat_index()
+    ours, fns, data, where = our_comdat_index()
+    # ---- REFERENCE index.  objdiff's reloc_eq compares relocation TARGET
+    # NAMES, and a relocation may name a symbol NO obj of ours defines (we
+    # compile, we never link).  So "our build defines no COMDAT for N" is NOT
+    # "N is inert": 143 of the 289 spellings this census first called
+    # STALE_SPELLING are `??_7X@@6B@` vtables referenced but not defined, and
+    # ABLATING that class cost -8 fns / -8,936 B -- a null that FAILED to be
+    # null.  Liveness is REFERENCE, not definition.
+    from scripts.analysis.coffx import read_coff as _rc
+    refs = set()
+    for _p in glob.glob(str(ROOT / "build" / BUILD_ID / "src" / "**" / "*.obj"),
+                        recursive=True):
+        try:
+            _s, _sy = _rc(Path(_p).read_bytes())
+        except Exception:
+            continue
+        if _sy:
+            refs.update(x.name for x in _sy)
+    print("[our build] %d names in obj symbol tables (defs + undefined externs)"
+          % len(refs))
     print("[our build] %d distinct code COMDAT names" % len(ours))
 
     ali = json.loads((ROOT / "scripts" / "symbol_aliases.json").read_text())
@@ -230,9 +264,35 @@ def main():
                    "survivor": S, "folded": N,
                    "evidence_head": ev[:46]}
             if not fv:
-                rec.update(verdict="STALE_SPELLING",
-                           detail="our build defines no COMDAT for the folded "
-                                  "spelling", bytes=0)
+                dv, dsv = data.get(N), data.get(S)
+                if dv:
+                    # data symbol (vtable / RTTI / jump table).  Same fold
+                    # question, our-side, no retail .pdata extent to compare to.
+                    rec["bytes"] = max(len(r) for r, _ in dv)
+                    if dsv and (dv & dsv):
+                        rec.update(verdict="DATA_FOLD_CONFIRMED",
+                                   detail="our DATA COMDAT for N == our DATA "
+                                          "COMDAT for S incl. reloc target names")
+                    elif dsv:
+                        rec.update(verdict="DATA_DIFFERS",
+                                   detail="both are data COMDATs in our build "
+                                          "and they are NOT identical")
+                    else:
+                        rec.update(verdict="DATA_NEEDS_SOURCE",
+                                   detail="N is a data COMDAT; our build has no "
+                                          "COMDAT for the survivor")
+                    out.append(rec)
+                    continue
+                if N in refs:
+                    rec.update(verdict="REFERENCED_UNDEFINED",
+                               detail="no COMDAT defines N, but our objs REFERENCE "
+                                      "it -- reloc_eq compares target NAMES, so "
+                                      "this membership is LIVE", bytes=0)
+                else:
+                    rec.update(verdict="ABSENT_FROM_BUILD",
+                               detail="N appears nowhere in our objs, defined or "
+                                      "referenced. ⛔ STILL DO NOT PRUNE -- these "
+                                      "become live as porting advances", bytes=0)
                 out.append(rec)
                 continue
             rec["bytes"] = max(len(r) for r, _ in (fvf or fv))
