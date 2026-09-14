@@ -4404,12 +4404,12 @@
  "0x82362f88": "?LoadFixed@TourProgress@@UAAXAAVFixedSizeSaveableStream@@H@Z",
  "0x82363038": "?ResetTourData@TourProgress@@QAAXXZ",
  "0x823630f8": "?Handle@TourProgress@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x82363eb0": "??$?5VSymbol@@H@@YAAAVBinStream@@AAV0@AAV?$map@VSymbol@@HU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
+ "0x82363eb0": "??$?5VSymbol@@H@@YAAAVBinStream@@AAV0@AAV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
  "0x82363f30": "?Handle@TourProgress@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82363f40": "?SyncLoad@TourProgress@@QAAXAAVBinStream@@@Z",
  "0x82364350": "??_GTourProgress@@UAAPAXI@Z",
- "0x823643a8": "?SetTourMostStarsMap@TourProgress@@QAAXABV?$map@VSymbol@@HU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
- "0x823643e8": "?SetToursPlayedMap@TourProgress@@QAAXABV?$map@VSymbol@@HU?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
+ "0x823643a8": "?SetTourMostStarsMap@TourProgress@@QAAXABV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
+ "0x823643e8": "?SetToursPlayedMap@TourProgress@@QAAXABV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z",
  "0x82364428": "??0TourCondition@@QAA@XZ",
  "0x82364440": "??1TourCondition@@UAA@XZ",
  "0x823644b0": "??_GTourCondition@@UAAPAXI@Z",
@@ -30525,5 +30525,6 @@
  "0x82694b00": "?SendRestartGameNetMsg@GamePanel@@QAAXXZ",
  "0x82695178": "?UpdateNowBar@GamePanel@@QAAXXZ",
  "0x827421b8": "??0Splash@@QAA@XZ",
- "0x824a2008": "?resize@?$ObjList@UProxyCall@EventTrigger@@@@QAAXI@Z"
+ "0x824a2008": "?resize@?$ObjList@UProxyCall@EventTrigger@@@@QAAXI@Z",
+ "0x823629b0": "??$?6VSymbol@@H@@YAAAVBinStream@@AAV0@ABV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@@Z"
 }
