@@ -1148,6 +1148,7 @@
    "address": "0x822dea78",
    "survivor": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
    "folded": [
+    "?clear@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAAXXZ",
     "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 32, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 27 census sites over 1 functions.",
@@ -1184,6 +1185,16 @@
        "disposition": "dropped_singleton"
       }
      ]
+    }
+   ],
+   "added": [
+    {
+     "spelling": "?clear@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-I 2026-09-14",
+     "verdict": "FOLD -- PROVEN on retail bytes, flat L1_T1 (byte identity, relocation TARGET NAMES compared), with a FAILING negative control",
+     "evidence": "Two-level T1 gate against the RETAIL IMAGE, not against another spelling. LEVEL 1: retail .pdata extent at 0x822dea78 is 80 B; our compiled COMDAT for this spelling (system/char/CharBonesMeshes.obj) is 80 B with ZERO unmasked differing words; its single relocation, at +0x24, is its own _M_erase. LEVEL 1 ALONE IS VACUOUS -- every _Rb_tree::clear body is identical except that one relocation, so all three candidate spellings pass it. LEVEL 2 (the discriminating level): retail's bl at +36 lands on 0x822dd9a0, .pdata extent 92 B; our _M_erase for this spelling is 92 B with ZERO unmasked diffs, and its relocation target names match retail's structure (self-recursion at +0x28, ?MemOrPoolFreeSTL@@YAXHPAX@Z at +0x38). NEGATIVE CONTROL, required to fail and DOES: the survivor's own map<Symbol,CharLipSync*> instantiation differs from retail at +48 in a real unmasked word -- li r3,24 (map node: 16 B base + 8 B pair<const Symbol,CharLipSync*>) vs retail's li r3,20 (set node: 16 B base + 4 B value).",
+     "corroboration": "The group's other folded member, set<Symbol>::clear (restored by lane W9-D on the same flat L1_T1 basis), is the POSITIVE control and passes the identical two-level test with li r3,20. set<Symbol> and set<TrackWidget*> share a 4-byte value type, hence one node size, one node deallocator call and one body; /OPT:ICF folds them legitimately.",
+     "note_on_the_survivor": "The survivor spelling is provably NOT the body at this address (node-size control above): it is a wrong map name that happens to be the bucket key. Renaming it is a SEPARATE, riskier edit -- CharLipSync.obj defines no set-family spelling, so a rename without a re-home would un-pair the row (CLAUDE.md: proving a name wrong does not make renaming safe). Recorded as a follow-on lead, NOT done here."
     }
    ]
   },
