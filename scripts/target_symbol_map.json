@@ -8946,13 +8946,13 @@
  "0x824a3858": "??_GEventTrigger@@UAAPAXI@Z",
  "0x824a38a8": "?LoadOldAnim@EventTrigger@@IAAXAAVBinStream@@PAVRndAnimatable@@@Z",
  "0x824a3a10": "?LoadOldEvent@EventTrigger@@IAAXAAVBinStreamRev@@PAVObject@Hmx@@PBDPAVObjectDir@@@Z",
- "0x824a4518": null,
- "0x824a45c8": "??4?$list@UAnim@EventTrigger@@V?$StlNodeAlloc@UAnim@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+ "0x824a4518": "??4?$list@UAnim@EventTrigger@@V?$StlNodeAlloc@UAnim@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+ "0x824a45c8": "??4?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x824a4678": "??4?$list@UHideDelay@EventTrigger@@V?$StlNodeAlloc@UHideDelay@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x824a4728": "??_EFlowTrigger@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x824a4738": "?Init@EventTrigger@@SAXXZ",
- "0x824a4790": null,
- "0x824a4800": "??4?$ObjList@UAnim@EventTrigger@@@@QAAXABV0@@Z",
+ "0x824a4790": "??4?$ObjList@UAnim@EventTrigger@@@@QAAXABV0@@Z",
+ "0x824a4800": "??4?$ObjList@UProxyCall@EventTrigger@@@@QAAXABV0@@Z",
  "0x824a4870": "??4?$ObjList@UHideDelay@EventTrigger@@@@QAAXABV0@@Z",
  "0x824a48e0": "?Copy@EventTrigger@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x824a4a28": "?Copy@EventTrigger@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
@@ -30524,5 +30524,6 @@
  "0x82696b48": "?Handle@GamePanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82694b00": "?SendRestartGameNetMsg@GamePanel@@QAAXXZ",
  "0x82695178": "?UpdateNowBar@GamePanel@@QAAXXZ",
- "0x827421b8": "??0Splash@@QAA@XZ"
+ "0x827421b8": "??0Splash@@QAA@XZ",
+ "0x824a2008": "?resize@?$ObjList@UProxyCall@EventTrigger@@@@QAAXI@Z"
 }
