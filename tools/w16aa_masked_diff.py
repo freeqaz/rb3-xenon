@@ -108,6 +108,70 @@ def classify(off, our_word, img, byva, va, size):
     return info
 
 
+def pick_census_rep(vs, img, size, byva, va, closure):
+    """Select EXACTLY the variant the census's verdict rests on.
+
+    ⛔ REPRESENTATIVE SELECTION IS LOAD-BEARING.  The census does not diff the
+    LONGEST variant; it walks each side's variants (longest first) and stops at
+    the FIRST that compares EQ to retail@X.  Diffing a different variant than
+    the one the verdict rests on describes a pair the census never compared --
+    it produced `masked_bytes_equal=False` on gi=109, which is impossible for a
+    genuine UNDECIDED and is how the slip was caught.  Returns
+    ((raw, rel), reached_EQ).
+    """
+    best = None
+    for raw, rel in sorted(vs, key=lambda kv: (-len(kv[0]), kv[0], kv[1])):
+        v, _d, _mo = CEN.retail_compare(img, size, byva, va, raw, rel, closure)
+        if v == "EQ":
+            return (raw, rel), True
+        if best is None:
+            best = (raw, rel)
+    return best, False
+
+
+def analyze(r, fns, where, img, size, byva, closure):
+    """One UNDECIDED_MASKED census row -> its discriminators + channel split.
+
+    Lifted verbatim out of main() (lane W16-AD) so the retail-side fold witness
+    reuses this selection instead of re-implementing it; behaviour is asserted
+    unchanged against a pre-refactor snapshot of `w16aa_masked_diff.py 12`.
+    """
+    N, S = r["folded"], r["survivor"]
+    va = int(r["addr"], 16)
+    fv, sv = fns.get(N), fns.get(S)
+    rec = {"gi": r["gi"], "addr": r["addr"], "bytes": r["bytes"],
+           "survivor": S, "folded": N}
+    if not fv or not sv:
+        rec["status"] = "MISSING_COMDAT"
+        return rec
+    (nraw, nrel), nEQ = pick_census_rep(fv, img, size, byva, va, closure)
+    (sraw, srel), sEQ = pick_census_rep(sv, img, size, byva, va, closure)
+    rec["N_reaches_EQ_vs_retail"] = nEQ
+    rec["S_reaches_EQ_vs_retail"] = sEQ
+    rec["N_variants"], rec["S_variants"] = len(fv), len(sv)
+    rec["our_N_obj"] = sorted(where[N])[0].split("/src/")[-1]
+    rec["our_S_obj"] = sorted(where[S])[0].split("/src/")[-1]
+    rec["len_N"], rec["len_S"] = len(nraw), len(sraw)
+    rec["masked_bytes_equal"] = (masked(nraw, nrel) == masked(sraw, srel))
+    shapeN = tuple((o, t) for o, _s, t in nrel)
+    shapeS = tuple((o, t) for o, _s, t in srel)
+    rec["reloc_shape_equal"] = (shapeN == shapeS)
+    dN = {o: s for o, s, _t in nrel}
+    dS = {o: s for o, s, _t in srel}
+    diffs = []
+    for off in sorted(set(dN) | set(dS)):
+        a, b = dN.get(off), dS.get(off)
+        if a != b:
+            w = struct.unpack_from(">I", nraw, off)[0] if off + 4 <= len(nraw) else 0
+            c = classify(off, w, img, byva, va, size)
+            c["N_target"], c["S_target"] = a, b
+            diffs.append(c)
+    rec["discriminators"] = diffs
+    rec["n_discriminators"] = len(diffs)
+    rec["channels"] = dict(collections.Counter(d.get("channel", "?") for d in diffs))
+    return rec
+
+
 def main():
     census = json.load(open(ROOT / "docs/decomp/W16S_alias_census_2026-09-14.json"))
     um = [r for r in census if r["verdict"] == "UNDECIDED_MASKED"]
@@ -136,62 +200,7 @@ def main():
         seen.add(key)
         if len(out) >= topn:
             break
-        N, S = r["folded"], r["survivor"]
-        va = int(r["addr"], 16)
-        fv, sv = fns.get(N), fns.get(S)
-        rec = {"gi": r["gi"], "addr": r["addr"], "bytes": r["bytes"],
-               "survivor": S, "folded": N}
-        if not fv or not sv:
-            rec["status"] = "MISSING_COMDAT"
-            out.append(rec)
-            continue
-        # ⛔ REPRESENTATIVE SELECTION IS LOAD-BEARING.  The census does not diff
-        # the LONGEST variant; it walks each side's variants (longest first) and
-        # stops at the FIRST that compares EQ to retail@X.  Diffing a different
-        # variant than the one the verdict rests on describes a pair the census
-        # never compared -- it produced `masked_bytes_equal=False` on gi=109,
-        # which is impossible for a genuine UNDECIDED and is how the slip was
-        # caught.  Select exactly as the census does, and SAY when no variant
-        # of a side reaches EQ.
-        def pick(vs):
-            best = None
-            for raw, rel in sorted(vs, key=lambda kv: (-len(kv[0]), kv[0], kv[1])):
-                v, _d, _mo = CEN.retail_compare(img, size, byva, va, raw, rel, closure)
-                if v == "EQ":
-                    return (raw, rel), True
-                if best is None:
-                    best = (raw, rel)
-            return best, False
-        (nraw, nrel), nEQ = pick(fv)
-        (sraw, srel), sEQ = pick(sv)
-        rec["N_reaches_EQ_vs_retail"] = nEQ
-        rec["S_reaches_EQ_vs_retail"] = sEQ
-        rec["N_variants"], rec["S_variants"] = len(fv), len(sv)
-        rec["our_N_obj"] = sorted(where[N])[0].split("/src/")[-1]
-        rec["our_S_obj"] = sorted(where[S])[0].split("/src/")[-1]
-        rec["len_N"], rec["len_S"] = len(nraw), len(sraw)
-        if masked(nraw, nrel) != masked(sraw, srel):
-            rec["masked_bytes_equal"] = False
-        else:
-            rec["masked_bytes_equal"] = True
-        shapeN = tuple((o, t) for o, _s, t in nrel)
-        shapeS = tuple((o, t) for o, _s, t in srel)
-        rec["reloc_shape_equal"] = (shapeN == shapeS)
-        dN = {o: s for o, s, _t in nrel}
-        dS = {o: s for o, s, _t in srel}
-        diffs = []
-        for off in sorted(set(dN) | set(dS)):
-            a, b = dN.get(off), dS.get(off)
-            if a != b:
-                w = struct.unpack_from(">I", nraw, off)[0] if off + 4 <= len(nraw) else 0
-                c = classify(off, w, img, byva, va, size)
-                c["N_target"], c["S_target"] = a, b
-                diffs.append(c)
-        rec["discriminators"] = diffs
-        rec["n_discriminators"] = len(diffs)
-        chans = collections.Counter(d.get("channel", "?") for d in diffs)
-        rec["channels"] = dict(chans)
-        out.append(rec)
+        out.append(analyze(r, fns, where, img, size, byva, closure))
     print(json.dumps(out, indent=1))
 
 
