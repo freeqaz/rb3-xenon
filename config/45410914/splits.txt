@@ -7815,7 +7815,7 @@ BandIKEffector.cpp:
 	.text       start:0x822C1E90 end:0x822C2198
 	.text       start:0x822C24B8 end:0x822C27B0
 	.text       start:0x822C2934 end:0x822C5580
-	.text       start:0x822C57C8 end:0x822C5AF0
+	.text       start:0x822C57B8 end:0x822C5AF0
 
 MidiInstrument.cpp:
 	.pdata      start:0x821F6C38 end:0x821F6C40
@@ -7829,7 +7829,7 @@ MidiInstrument.cpp:
 	.pdata      start:0x82238DA0 end:0x82238DB8
 	.pdata      start:0x82238DB8 end:0x82238DD8
 	.pdata      start:0x82238DD8 end:0x82238E28
-	.text       start:0x822C5758 end:0x822C57C8
+	.text       start:0x822C5758 end:0x822C57B8
 	.text       start:0x823E3E38 end:0x823E3F58
 	.text       start:0x823E3FC8 end:0x823E4020
 	.text       start:0x827130B0 end:0x82714854
@@ -7880,14 +7880,14 @@ CharWeightable.cpp:
 	.text       start:0x823AE918 end:0x823AEE20
 	.text       start:0x823AEF98 end:0x823AF210
 	.text       start:0x823AF210 end:0x823AF21C
-	.text       start:0x823AF2B8 end:0x823AF310
+	.text       start:0x823AF2A8 end:0x823AF310
 
 CharPollGroup.cpp:
 	.pdata      start:0x82204D60 end:0x82204D68
 	.pdata      start:0x82204D70 end:0x82204EC0
 	.pdata      start:0x82204EE0 end:0x82204EF8
 	.text       start:0x823AF21C end:0x823AF220
-	.text       start:0x823AF22C end:0x823AF2B8
+	.text       start:0x823AF22C end:0x823AF2A8
 	.text       start:0x823AF310 end:0x823B08CC
 	.text       start:0x823B0B00 end:0x823B0C78
 
@@ -12530,6 +12530,7 @@ GamePanel.cpp:
 	.text       start:0x82694B70 end:0x826969E8
 	.text       start:0x826969E8 end:0x82696A38
 	.text       start:0x82696A38 end:0x82697484
+	.text       start:0x82697528 end:0x82697534
 
 system/synth/FxSendDelay.cpp:
 	.pdata      start:0x822398B8 end:0x822398D8
@@ -13006,6 +13007,11 @@ system/ui/UILabelDir.cpp:
 	.text       start:0x8280FC74 end:0x8280FCF0
 	.text       start:0x8280FCFC end:0x828101A0
 	.text       start:0x828101A0 end:0x82812014
+	.text       start:0x82812018 end:0x82812024
+	.text       start:0x82812038 end:0x82812044
+	.text       start:0x82812048 end:0x82812054
+	.text       start:0x82812058 end:0x82812064
+	.text       start:0x82812068 end:0x82812074
 	.text       start:0x82812080 end:0x828121E8
 	.text       start:0x82812398 end:0x828123A4
 	.text       start:0x82812500 end:0x82812508
