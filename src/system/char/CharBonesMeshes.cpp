@@ -31,7 +31,18 @@ void CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
             }
         }
     }
+    // Retail 0x8237b338 (212 B) has NO Hmx::Object::Replace fallback: the only
+    // calls are __RTDynamicCast and SetOwnerObj, then blr.
+    // NOT fixed here (the row is unpairable -- retail placed this COMDAT inside
+    // Rot.cpp's pinned span, so it can never pair from CharBonesMeshes.obj):
+    // retail's guard member at Object-0x8 is an owning wrapper whose held
+    // pointer is compared through the vbase upcast, not the raw `mDummyMesh`
+    // pointer we carry, and the element stride is 12 (= sizeof ObjOwnerPtr).
+    // Changing the member's type is a struct change with native-build reach and
+    // no metric upside while the row stays unpaired; recorded, not done.
+#ifdef HX_NATIVE
     Hmx::Object::Replace(ref, obj);
+#endif
 }
 
 void CharBonesMeshes::ReallocateInternal() {

@@ -16,21 +16,29 @@
 
 RndLightAnim::RndLightAnim() : mLight(this), mKeysOwner(this, this) {}
 
+// Retail (0x82471518) has NO Hmx::Object::Replace fallback -- the body's only
+// calls are __RTDynamicCast and SetOwnerObj, then blr.  Hmx::Object::Replace is
+// EMPTY in the match build (its whole body is #ifdef HX_NATIVE, Object.cpp:228),
+// but with no LTCG an empty out-of-line callee still costs a real `bl`, and
+// there is no such `bl` in the retail body.  Kept under HX_NATIVE, where the
+// base really does forward to mSinks.
+// Retail also tests mKeysOwner, NOT mLight: the compared member is the held
+// pointer at Object-0x8, i.e. mKeysOwner.mObject (mKeysOwner at 0x28, vbase at
+// 0x38 per /d1reportSingleClassLayout -- so Object-0x8 == this+0x30 == the
+// ObjOwnerPtr's mObject).  `addi r11,r3,40` on the cast result is mKeysOwner
+// again, and `subi r4,r31,56` is the vbase.  Same body as the RndEnvAnim /
+// RndMatAnim / RndTransAnim triple.
 void RndLightAnim::Replace(ObjRef *from, Hmx::Object *to) {
-    if (RefIs(from, mLight)) {
-        if (!(mKeysOwner != this)) {
-            RndLightAnim *litTo = dynamic_cast<RndLightAnim *>(to);
-            if (litTo) {
-                mKeysOwner = litTo;
-            } else
-                mKeysOwner = this;
-        } else {
-            mKeysOwner = this;
-        }
-    } else {
-        Hmx::Object::Replace(from, to);
+    if (RefIs(from, mKeysOwner)) {
+        if (!to)
+            mKeysOwner.SetOwnerObj(this);
+        else
+            mKeysOwner.SetOwnerObj(dynamic_cast<RndLightAnim *>(to)->mKeysOwner.Ptr());
+        return;
     }
-    return;
+#ifdef HX_NATIVE
+    Hmx::Object::Replace(from, to);
+#endif
 }
 
 BEGIN_HANDLERS(RndLightAnim)

@@ -8,13 +8,24 @@
 
 RndMovie::RndMovie() : mStream(false), mLoop(true), mTex(this) {}
 
+// Retail (0x82478128) has NO Hmx::Object::Replace fallback -- the body's only
+// calls are __RTDynamicCast and SetOwnerObj, then blr.  Hmx::Object::Replace is
+// EMPTY in the match build (its whole body is #ifdef HX_NATIVE, Object.cpp:228),
+// but with no LTCG an empty out-of-line callee still costs a real `bl`, and
+// there is no such `bl` in the retail body.  Kept under HX_NATIVE, where the
+// base really does forward to mSinks.
+// Retail compares the held pointer RAW here (lwz r10,-8(r11); cmplw r10,r4)
+// with no vbtable adjust, and calls SetTex through the vtable slot at +40 --
+// both consistent with our source once RefIs() upcasts (the upcast is a no-op
+// when Hmx::Object sits at offset 0 in the pointee, as it does for RndTex).
 void RndMovie::Replace(ObjRef *from, Hmx::Object *to) {
     if (RefIs(from, mTex)) {
         SetTex(dynamic_cast<RndTex *>(to));
         return;
-    } else {
-        Hmx::Object::Replace(from, to);
     }
+#ifdef HX_NATIVE
+    Hmx::Object::Replace(from, to);
+#endif
 }
 
 BEGIN_HANDLERS(RndMovie)
