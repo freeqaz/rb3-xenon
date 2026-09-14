@@ -1733,7 +1733,7 @@ UIPanel.cpp:
 	.text       start:0x82573450 end:0x82573464
 	.text       start:0x82573468 end:0x82573470
 	.text       start:0x828027C0 end:0x828027E8
-	.text       start:0x82812508 end:0x82812558
+	.text       start:0x82812510 end:0x82812558
 	.text       start:0x82812558 end:0x82814450
 
 LightHue.cpp:
@@ -2914,7 +2914,6 @@ MeterEffect.cpp:
 UI.cpp:
 	.pdata      start:0x821FC240 end:0x821FC250
 	.pdata      start:0x82209000 end:0x82209158
-	.pdata      start:0x82218938 end:0x82218968
 	.pdata      start:0x82231030 end:0x82231038
 	.pdata      start:0x82245D60 end:0x82245D70
 	.pdata      start:0x82245D70 end:0x82245D78
@@ -2934,7 +2933,6 @@ UI.cpp:
 	.pdata      start:0x8225C5F8 end:0x8225C680
 	.text       start:0x8231A578 end:0x8231A688
 	.text       start:0x823F4A30 end:0x823F5C98
-	.text       start:0x8251CD08 end:0x8251CED0
 	.text       start:0x8268B9A0 end:0x8268B9EC
 	.text       start:0x828024B0 end:0x82802530
 	.text       start:0x82802530 end:0x82802588
@@ -4237,13 +4235,11 @@ HamNavList.cpp:
 	.pdata      start:0x821FE2A0 end:0x821FE2B8
 	.pdata      start:0x821FE2D8 end:0x821FE2E0
 	.pdata      start:0x82215988 end:0x82215990
-	.pdata      start:0x82218988 end:0x822189A0
 	.pdata      start:0x82236EE0 end:0x82236EE8
 	.pdata      start:0x822471E8 end:0x822471F0
 	.text       start:0x8233B258 end:0x8233B348
 	.text       start:0x8233B4B0 end:0x8233B4F4
 	.text       start:0x824EA220 end:0x824EA298
-	.text       start:0x8251D000 end:0x8251D0E0
 	.text       start:0x826F7CC8 end:0x826F7E50
 	.text       start:0x82817A68 end:0x82817AE8
 
@@ -4568,9 +4564,7 @@ Ham.cpp:
 
 HamCharacter.cpp:
 	.pdata      start:0x82246BF8 end:0x82246C40
-	.pdata      start:0x82246C40 end:0x82246C58
 	.text       start:0x828121E8 end:0x82812398
-	.text       start:0x828123A4 end:0x82812500
 
 MoveDir.cpp:
 	.pdata      start:0x821F1920 end:0x821F1928
@@ -4913,8 +4907,6 @@ CharBonesMeshes.cpp:
 	.text       start:0x82433FD0 end:0x82434150
 
 DingoSvr.cpp:
-	.pdata      start:0x82218968 end:0x82218988
-	.text       start:0x8251CED0 end:0x8251D000
 	.text       start:0x827AB2C0 end:0x827AB2C8
 
 HamSongData.cpp:
@@ -6231,8 +6223,8 @@ Emitter.cpp:
 	.text       start:0x8271E178 end:0x8271E3A0
 	.text       start:0x8271E3A0 end:0x8271EC2C
 	.text       start:0x8271EC2C end:0x8271ECA4
-	.text       start:0x8271EEE8 end:0x8271EEF0
-	.text       start:0x8271EEF0 end:0x8271F550
+	.text       start:0x8271EEE8 end:0x8271EEF4
+	.text       start:0x8271EEF8 end:0x8271F550
 	.text       start:0x8271F550 end:0x8271F55C
 	.text       start:0x8271F560 end:0x8271F56C
 	.text       start:0x8271F570 end:0x8271F57C
@@ -7185,12 +7177,10 @@ Env_NG.cpp:
 
 MemcardMgr_Xbox.cpp:
 	.pdata      start:0x822187E8 end:0x82218808
-	.pdata      start:0x822189A0 end:0x822189F8
 	.pdata      start:0x82240A18 end:0x82240A28
 	.pdata      start:0x82240A28 end:0x82240A30
 	.pdata      start:0x82240A30 end:0x82240B80
 	.text       start:0x8251BB00 end:0x8251BBF0
-	.text       start:0x8251D0E0 end:0x8251D4C8
 	.text       start:0x82553478 end:0x82553484
 	.text       start:0x827AB8E8 end:0x827ABA48
 	.text       start:0x827ABA48 end:0x827ABB14
@@ -8080,18 +8070,30 @@ Shockwave.cpp:
 PlatformMgr.cpp:
 	.pdata      start:0x822180E8 end:0x82218100
 	.pdata      start:0x82218100 end:0x82218308
-	.pdata      start:0x82218918 end:0x82218938
 	.text       start:0x82514858 end:0x82514968
 	.text       start:0x82514968 end:0x825164A8
-	.text       start:0x8251CBE0 end:0x8251CD08
 	.text       start:0x8267B460 end:0x8267B478
 	.text       start:0x82B93F48 end:0x82B93F50
 
 PlatformMgr_Xbox.cpp:
 	.pdata      start:0x82218808 end:0x82218858
 	.pdata      start:0x82218858 end:0x82218918
+	.pdata      start:0x82218918 end:0x82218938
+	.pdata      start:0x82218938 end:0x82218968
+	.pdata      start:0x82218968 end:0x82218988
+	.pdata      start:0x82218988 end:0x822189A0
+	.pdata      start:0x822189A0 end:0x822189F8
+	.pdata      start:0x822189F8 end:0x82218A28
+	.pdata      start:0x82218A50 end:0x82218AD0
 	.text       start:0x8251BBF0 end:0x8251BFA8
 	.text       start:0x8251BFA8 end:0x8251CBE0
+	.text       start:0x8251CBE0 end:0x8251CD08
+	.text       start:0x8251CD08 end:0x8251CED0
+	.text       start:0x8251CED0 end:0x8251D000
+	.text       start:0x8251D000 end:0x8251D0E0
+	.text       start:0x8251D0E0 end:0x8251D4C8
+	.text       start:0x8251D4C8 end:0x8251D8A4
+	.text       start:0x8251DAB0 end:0x8251E448
 
 FlowCommand.cpp:
 	.pdata      start:0x82207D28 end:0x82207D30
@@ -9237,10 +9239,8 @@ band3/meta_band/ParentalControlPanel.cpp:
 	.text       start:0x8262EE18 end:0x8262F304
 
 GameMicManager.cpp:
-	.pdata      start:0x822189F8 end:0x82218A28
 	.pdata      start:0x82230590 end:0x82230610
 	.pdata      start:0x82230610 end:0x82230718
-	.text       start:0x8251D4C8 end:0x8251D8A4
 	.text       start:0x8268117C end:0x82681864
 	.text       start:0x82681864 end:0x82682668
 
@@ -13010,6 +13010,7 @@ system/ui/UILabelDir.cpp:
 	.pdata      start:0x82246960 end:0x822469B0
 	.pdata      start:0x822469B0 end:0x82246BD0
 	.pdata      start:0x82246BD0 end:0x82246BF8
+	.pdata      start:0x82246C40 end:0x82246C58
 	.text       start:0x8280FC74 end:0x8280FCF0
 	.text       start:0x8280FCFC end:0x828101A0
 	.text       start:0x828101A0 end:0x82812014
@@ -13020,7 +13021,8 @@ system/ui/UILabelDir.cpp:
 	.text       start:0x82812068 end:0x82812074
 	.text       start:0x82812080 end:0x828121E8
 	.text       start:0x82812398 end:0x828123A4
-	.text       start:0x82812500 end:0x82812508
+	.text       start:0x828123A4 end:0x82812500
+	.text       start:0x82812500 end:0x8281250C
 
 system/gesture/DrawUtl.cpp:
 	.pdata      start:0x82228148 end:0x82228158

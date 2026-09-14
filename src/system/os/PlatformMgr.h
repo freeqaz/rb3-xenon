@@ -5,6 +5,7 @@
 #include "obj/Object.h"
 #include "os/ContentMgr.h"
 #include "os/OnlineID.h"
+#include "os/ThreadCall.h"
 #include "os/Timer.h"
 #include "os/User.h"
 #include "stl/_vector.h"
@@ -73,11 +74,20 @@ typedef bool XCallbackFunc(unsigned long &);
 // ThePlatformMgr.AddSink/RemoveSink call site in the binary.
 //
 // Ground truth (Ghidra default_tu5.xex, ThePlatformMgr @ 0x82cc9d1c):
-//   class PlatformMgr : public MsgSource, public ContentMgr::Callback
-//   (rb3-Wii lineage). MSVC hoists Callback (the vftable base) to primary:
-//   Callback vfptr@0x0 | MsgSource@0x4 (vbptr@0x4, mSinks@0x8,
-//   mEventSinks@0x10, mExporting@0x18) | members@0x1c | virtual Hmx::Object
-//   at tail. Hence IsSignedIn (0x82514988) reads this+0x1c (mSigninMask),
+//   class PlatformMgr : public MsgSource, public ThreadCallback
+//   MSVC hoists the first vfptr-bearing base to primary:
+//   ThreadCallback vfptr@0x0 | MsgSource@0x4 (vbptr@0x4, mSinks@0x8,
+//   mEventSinks@0x10, mExporting@0x18) | members@0x1c | vtordisp@0x48 |
+//   virtual Hmx::Object at 0x4c.
+//   ⚠ Until 2026-09-14 (lane W16-G) this line read `ContentMgr::Callback`.
+//   The hoisting mechanism was right, the base identity was WRONG: retail's
+//   offset-0 vtable at 0x82088A4C has exactly 3 slots
+//   [0x8251D4D8 ??_GPlatformMgr, 0x8251C8A8 ThreadStart, 0x8251C928 ThreadDone]
+//   — ThreadCallback's shape (ContentMgr::Callback has 14). The ctor
+//   (0x8251C320) stores that vtable, the dtor (0x8251C5A0) re-stores the
+//   ThreadCallback vtable 0x820889AC before calling ~MsgSource, and ThreadStart
+//   is the RBN-member XUserCheckPrivilege(0xDE) probe run via ThreadCall(this).
+//   Nothing in the binary registers ThePlatformMgr as a content callback. Hence IsSignedIn (0x82514988) reads this+0x1c (mSigninMask),
 //   CheckForLostConnection reads +0x26 (mConnected), SetScreenSaver
 //   (0x8251c180) writes this+0x2c (mScreenSaver).
 //
@@ -88,7 +98,7 @@ typedef bool XCallbackFunc(unsigned long &);
 // 12-byte address-of-global accessor) — heuristic-pairing noise, not real
 // losses. The DC3-only XSocial members are parked at the tail of the member
 // block; do not move them back ahead of the retail members.
-class PlatformMgr : public MsgSource, public ContentMgr::Callback {
+class PlatformMgr : public MsgSource, public ThreadCallback {
 private:
     // Retail RB3-360 layout (Ghidra default_tu5.xex): Callback vfptr@0x0
     // (MSVC hoists the vftable-carrying base to primary), MsgSource@0x4
@@ -112,9 +122,16 @@ private:
     PlatformRegion mRegion;     // 0x30 (retail SetRegion writes/reads this+0x30 — ground truth from
                                 //       the objdiff TARGET obj for SetRegion itself, verified 2026-07-30;
                                 //       NOT from Ghidra like the other offsets on this page)
-    JobMgr *mJobMgr;            // 0x34
-    bool unk68;                 // 0x38
-    bool unk69;                 // 0x39
+    DiskError mDiskError;       // 0x34 (retail SetDiskError 0x82516320 `stw r4,0x34(r3)`; ctor 0x8251C320 zeroes it)
+    JobMgr *mJobMgr;            // 0x38 (ctor: `li r3,0x10; bl operator new` then `stw r3,0x38(r30)`)
+    bool unk3c;                 // 0x3c (not written by the ctor)
+    bool unk3d;                 // 0x3d (ctor `stb 0,0x3d`)
+public:
+    bool mNetworkPlay;          // 0x3e — RB3 GameMode writes online_play_required here (offset unverified)
+    bool mIsRestarting;         // 0x3f — RestartGameMsg::Dispatch via SetIsRestarting (offset unverified)
+private:
+    int mRBNCheckInProgress;    // 0x40 (ThreadStart 0x8251C8A8 `lwz r11,0x40(r3); cmpwi 1`; ctor zeroes)
+    int mRBNCheckRerun;         // 0x44 (ThreadDone 0x8251C928 `lwz r11,0x44(r3)`; ctor zeroes)
     // ★ SIZE IS LOAD-BEARING (2026-07-31, lane NCCC f59/opus). The retail member
     // block runs 0x1c..0x47 inclusive — 44 bytes — putting the vtordisp at 0x48
     // and the virtual Hmx::Object base's vfptr at 0x4c. Ground truth: retail
@@ -122,6 +139,9 @@ private:
     // and opens `mr r25,r4` / `subi r3,r25,0x4c` to recover the PlatformMgr*.
     // Our block used to run to 0xa0 (vbase at 0xa4), which biased EVERY
     // this-relative access in Handle by exactly 0x58 = 88 bytes.
+    // 2026-09-14 (W16-G): 0x34..0x47 re-derived from the retail ctor/dtor/
+    // ThreadStart/ThreadDone/SetDiskError bodies (see per-member notes); the
+    // block still ends at 0x48. Verified with class_layout_report.py.
     // The DC3-only XSocial block (mHasXSocialPhotoPost, mHasXSocialLinkPost,
     // XOVERLAPPED mOverlapped, int unk4c = 36 bytes) and the Wii-only
     // `Timer mTimer` (48 bytes + 4 pad = 52) were removed here to give back
@@ -129,15 +149,32 @@ private:
     // PlatformMgr_Xbox.cpp (their only user) is not in objects.json.
     // ⚠ Do not add members above the vbase without re-checking this budget.
     DataNode OnSignInUsers(DataArray *);
+    // Inlined by retail into ThreadDone (0x8251C928) and Poll's
+    // XN_SYS_SIGNINCHANGED case: `stw 0,0x44; stw 1,0x40; stw -1,0x28; b ThreadCall`.
+    void StartRBNMemberCheck() {
+        mRBNCheckRerun = 0;
+        mRBNCheckInProgress = 1;
+        mRBNMemberPadNum = -1;
+        ThreadCall(this);
+    }
 
 public:
-    bool unkce6b; // TODO: needs correct X360 offset (Wii 0xce6b = content maturity flag)
-    bool mNetworkPlay; // RB3 GameMode writes online_play_required here
-    bool mIsRestarting; // RB3 RestartGameMsg::Dispatch sets this via SetIsRestarting
+    // Wii-only content-maturity flag (Wii 0xce6b). Retail-360's member block
+    // (0x1c..0x47) has no room for it, so it is static: zero object storage,
+    // meta_band/Utl.cpp's reference keeps compiling. Defined in PlatformMgr.cpp
+    // under HX_NATIVE (the match build never links it).
+    static bool unkce6b;
     void SetIsRestarting(bool b) { mIsRestarting = b; }
     // Hmx::Object
     virtual ~PlatformMgr();
     virtual DataNode Handle(DataArray *, bool);
+    // ThreadCallback (retail vtable 0x82088A4C slots 1-2). ThreadStart probes
+    // pads 0-3 for XPRIVILEGE_CONTENT_AUTHOR (0xDE) and returns the first pad
+    // that has it, -1 if none, 0 if no check is in progress; ThreadDone stores
+    // that into mRBNMemberPadNum and re-runs the probe if a sign-in change
+    // arrived while it was running.
+    virtual int ThreadStart();
+    virtual void ThreadDone(int);
 
     static XCallbackFunc *sXShowCallback;
 
@@ -220,12 +257,6 @@ public:
     void QueueEnumJob(Job *);
     void CancelEnumJob(int);
     void Init();
-    // Rehomed from 0x28 (see mRBNMemberPadNum above): retail's 0x28 is the RBN pad num.
-    // 0x64 is existing tail padding between mHomeMenuWii (0x60) and the 8-aligned mTimer
-    // (0x68), so this costs no sizeof change. The true retail offset is still UNKNOWN —
-    // SetDiskError is not identified in the retail binary, so this is a placement of
-    // convenience, not ground truth.
-    DiskError mDiskError;   // 0x40 (placeholder home; NOT verified against retail)
     void RegionInit();
     void PreInit();
     DWORD
@@ -239,11 +270,10 @@ public:
     // Declaration-only; append-only — does not alter existing PlatformMgr layout.
     void RegisterSignInserCallback(SignInUserCallbackFunc *);
 
-    // Wii-origin data members referenced by ported meta_band/OvershellPanel.
-    // Added at the end to avoid disturbing the existing X360 layout; these are
-    // never accessed in a matching TU.
-    HomeMenu *mHomeMenuWii; // 0x44 — last member; block ends at 0x48 (see the
-                            // "SIZE IS LOAD-BEARING" note above).
+    // Wii-origin data member referenced by ported meta_band/OvershellPanel.
+    // Retail-360's 0x44 is mRBNCheckRerun (see above), so this is static —
+    // zero object storage; defined in PlatformMgr.cpp under HX_NATIVE.
+    static HomeMenu *mHomeMenuWii;
     // `Timer mTimer` was an INSTANCE member (48B) until 2026-07-31; it pushed the
     // virtual Hmx::Object base from retail's 0x4c out to 0xa4. Retail-360's member
     // block is only 44 bytes (0x1c..0x47), which physically cannot hold a 48-byte
@@ -271,9 +301,20 @@ int GetChangedMask() const { return mData->Int(3); }
 END_MESSAGE
 
 DECLARE_MESSAGE(StorageChangedMsg, "storage_changed")
+StorageChangedMsg() : Message(Type()) {}
 END_MESSAGE
 
 DECLARE_MESSAGE(PartyMembersChangedMsg, "party_members_changed")
+PartyMembersChangedMsg() : Message(Type()) {}
+END_MESSAGE
+
+// Sent from PlatformMgr::Poll on XN_XMP_STATECHANGED (retail ctor 0x8251CED0,
+// 132 B, previously map-named ??0ServerStatusChangedMsg — W16-E escalation).
+// Lived in band3/meta_band/MetaPanel.h until 2026-09-14; MetaPanel.cpp still
+// sees it through os/PlatformMgr.h.
+DECLARE_MESSAGE(XMPStateChangedMsg, "xmp_state_changed")
+XMPStateChangedMsg(int i) : Message(Type(), i) {}
+bool Success() const { return mData->Int(2); }
 END_MESSAGE
 
 DECLARE_MESSAGE(EnumerateMessagesCompleteMsg, "enumerate_messages_complete")
@@ -287,9 +328,9 @@ bool IsProfane() const { return mData->Int(2); }
 bool Success() const { return mData->Int(2); }
 END_MESSAGE
 
-// Wii platform-mgr op-complete message — referenced by RockCentralJobs.h / the
-// friend-list jobs. On Xbox 360 this is never sent; declared to satisfy the type.
+// Sent to the EnumerateFriends callback (retail ctor 0x8251D2A0 takes bool:
+// `static PlatformMgrOpCompleteMsg msg(false)` in EnumerateFriends and Poll).
 DECLARE_MESSAGE(PlatformMgrOpCompleteMsg, "platform_mgr_op_complete")
-PlatformMgrOpCompleteMsg(int i) : Message(Type(), i) {}
+PlatformMgrOpCompleteMsg(bool b) : Message(Type(), b) {}
 bool Success() const { return mData->Int(2); }
 END_MESSAGE

@@ -18,6 +18,8 @@ XCallbackFunc *PlatformMgr::sXShowCallback;
 // (2026-07-31). Guarded like sXShowCallback above: the match build never links,
 // so emitting storage here would only add COMDATs retail's obj does not have.
 Timer PlatformMgr::mTimer;
+HomeMenu *PlatformMgr::mHomeMenuWii;
+bool PlatformMgr::unkce6b;
 #endif
 
 PlatformMgr ThePlatformMgr;

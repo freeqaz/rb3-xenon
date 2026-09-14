@@ -13,11 +13,8 @@
 
 class CurrentScreenChangedMsg;
 
-DECLARE_MESSAGE(XMPStateChangedMsg, "xmp_state_changed")
-XMPStateChangedMsg(int i) : Message(Type(), i) {}
-bool Success() const { return mData->Int(2); }
-END_MESSAGE
-
+// XMPStateChangedMsg moved to os/PlatformMgr.h (2026-09-14, W16-G): it is
+// PlatformMgr::Poll that sends it, and MetaPanel.cpp includes os/PlatformMgr.h.
 class MetaPanel : public UIPanel {
 public:
     MetaPanel();
