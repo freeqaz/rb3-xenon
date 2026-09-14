@@ -66,6 +66,33 @@ def comdats(path):
         names[i] = nm
         recs.append((i, nm, val, secnum, sclass, naux))
         i += 1 + naux
+    # ---- FUNCTION-EXTENT BOUNDARIES (lane W16-S, 2026-09-14).
+    # `body = whole[val:]` runs to the END OF THE SECTION, and an EH-bearing
+    # MSVC /Gy COMDAT holds the function AND its trailing `__unwind$` funclet in
+    # one section.  So `size`/`raw` bill the funclet into the body, while a
+    # retail extent from .pdata is the FUNCTION ONLY.  That is a ONE-SIDED
+    # reader artifact: it CANCELS when both sides are read this way (our-N vs
+    # our-S) and does NOT cancel against retail, where it manufactures a
+    # confident size "contradiction".  Measured: 587 alias memberships over 30
+    # STLport addresses, every one a constant -44 B == the `__unwind$` funclet
+    # (`_Copy_Construct` @0x823d3ac8: section 112, val 8, funclet at 68 =>
+    # function is [8,68) = 60 B = retail's .pdata extent exactly).
+    # Same family as STLPORT-1's phantom "+8 B STLport source bug".
+    #
+    # ADDITIVE ONLY: `size`/`raw`/`bytes`/`relocs` keep their old meanings so no
+    # existing consumer changes behaviour.  New keys `fn_size`/`fn_raw`/
+    # `fn_relocs`/`fn_bounded` carry the function-only extent; use THOSE for any
+    # comparison against retail.
+    FUNCLET = ("__unwind$", "__catch$", "__ehhandler$", "__unwindfunclet$",
+               "__tryblocktable$", "__ehfuncinfo$", "$EH")
+    bounds = {}          # secnum -> sorted list of candidate end offsets
+    for (i, nm, val, secnum, sclass, naux) in recs:
+        if secnum <= 0:
+            continue
+        # class 6 (LABEL: $M…, $LN…) sits INSIDE the body -- never a boundary.
+        if sclass == EXTERNAL or (sclass == 3 and nm.startswith(FUNCLET)):
+            bounds.setdefault(secnum, []).append(val)
+
     out = {}
     for (i, nm, val, secnum, sclass, naux) in recs:
         if secnum <= 0 or sclass != EXTERNAL or secnum > len(sec):
@@ -82,6 +109,9 @@ def comdats(path):
                 raw[k] = 0
         body = whole[val:]
         rel_rebased = sorted((o - val, n, t) for (o, n, t) in rel if o >= val)
+        nxt = [v for v in bounds.get(secnum, []) if v > val]
+        end = min(nxt) if nxt else size
+        fn_body = whole[val:end]
         out[nm] = {
             "section": sname, "section_size": size, "value": val,
             "size": len(body),
@@ -89,6 +119,13 @@ def comdats(path):
             "bytes": bytes(raw[val:]),       # relocated fields zeroed (dc3-compatible)
             "relocs": rel_rebased,           # offsets relative to the definition
             "is_code": bool(chars & 0x20),
+            # function-only extent -- USE THESE AGAINST RETAIL (see note above)
+            "fn_end": end,
+            "fn_size": len(fn_body),
+            "fn_raw": fn_body,
+            "fn_relocs": [(o, n, t) for (o, n, t) in rel_rebased
+                          if o < len(fn_body)],
+            "fn_bounded": bool(nxt),         # False => no boundary symbol found
         }
     return out
 
