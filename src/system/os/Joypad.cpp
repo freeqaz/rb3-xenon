@@ -314,6 +314,13 @@ bool JoypadIsCalbertGuitar(int padNum) {
         return false;
 }
 
+// Retail 44 B, named in the map (unit default/Joypad). DECLARED at Joypad.h:348
+// and defined in NO translation unit -- our port of this file dropped exactly
+// this one function while keeping its neighbour below. Restored from the
+// rb3-Wii oracle (../rb3/src/system/os/Joypad.cpp:594), which places it
+// immediately before UserHasGHDrums, as here.
+bool UserHasController(LocalUser *user) { return GetUsersPadNum(user) != -1; }
+
 bool UserHasGHDrums(LocalUser *user) {
     int padNum = GetUsersPadNum(user);
     if (padNum != -1) {

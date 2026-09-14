@@ -11,6 +11,33 @@
 
 std::vector<DxTex *> gAllTextures;
 
+// Scratch/destination bookkeeping for the DXT compression path.  File-local in
+// retail (no map row of its own); layout taken from the dc3 oracle
+// (../dc3-decomp/src/system/rnddx9/Tex.cpp:29).
+struct CompressLevel {
+    D3DSurface *scratchSurface; // 0x0
+    D3DLOCKED_RECT scratchLock; // 0x4
+    D3DSURFACE_DESC scratchDesc; // 0xc
+    D3DSurface *textureSurface; // 0x2c
+    D3DLOCKED_RECT textureLock; // 0x30
+    D3DSURFACE_DESC textureDesc; // 0x38
+};
+
+struct CompressDesc {
+    D3DTexture *texture; // 0x0
+    // ⚠ dc3 declares this `RndTex::AlphaCompress alpha` -- an enum, so 4 bytes,
+    // which compiles to `lwz` + signed `cmpwi`.  RETAIL LOADS A BYTE:
+    // `lbz r11,0x4(r30); cmplwi r11,0x0` at 0x82734148+29.  The field is
+    // byte-sized and compared UNSIGNED, so the oracle is wrong about its width.
+    // It still holds three values (0/1/2 -- StartCompress tests `== 2`), so it
+    // is a u8, not a bool.  3 pad bytes follow; `unk8` stays at 0x8 either way.
+    u8 alpha; // 0x4
+    int unk8; // 0x8
+    D3DFORMAT format; // 0xc
+    void *tiledBuffer; // 0x10
+    CompressLevel levels[16]; // 0x14
+};
+
 DxTex::DxTex()
     : mFormat((D3DFORMAT)-1), mTexture(0), unk84(0), mRenderTarget(0), mDepthRT(0),
       mMovieBufIdx(0), mLockedRect(), unka4(0), unka8(0), unkac(0) {
@@ -31,6 +58,56 @@ void DxTex::Compress(AlphaCompress a) {
     void *v = StartCompress(a);
     DoCompress(v);
     FinishCompress(v);
+}
+
+// Retail 0x82734148 (284 B), named in the map, previously fuzzy 0 for want of
+// any definition to pair with: DECLARED at rnddx9/Tex.h and defined in NO
+// translation unit.  StartCompress / FinishCompress are undefined the same way
+// but carry no named retail row (objdiff pairs by NAME, so a `fn_` row cannot
+// pair with our mangled symbol) -- they are deliberately left undefined so this
+// change measures exactly one thing.
+// Ported from ../dc3-decomp/src/system/rnddx9/Tex.cpp:150.
+void DxTex::DoCompress(void *p) {
+    CompressDesc *desc = (CompressDesc *)p;
+    int numLevels = D3DBaseTexture_GetLevelCount(mTexture);
+    for (int i = 0; i < numLevels; i++) {
+        CompressLevel &level = desc->levels[i];
+        int rowPitch = level.scratchDesc.Width * 4;
+        XGUntileTextureLevel(
+            level.scratchDesc.Width,
+            level.scratchDesc.Height,
+            desc->unk8,
+            mFormat & 0x3f,
+            1,
+            desc->tiledBuffer,
+            rowPitch,
+            nullptr,
+            level.scratchLock.pBits,
+            nullptr
+        );
+        if ((int)desc->alpha == 0) {
+            unsigned int *texel = (unsigned int *)desc->tiledBuffer;
+            unsigned int *end =
+                texel + level.scratchDesc.Width * level.scratchDesc.Height;
+            for (; texel < end; texel++) {
+                *texel |= 0xff000000;
+            }
+        }
+        XGCompressSurface(
+            level.textureLock.pBits,
+            level.textureLock.Pitch,
+            level.textureDesc.Width,
+            level.textureDesc.Height,
+            desc->format,
+            0,
+            desc->tiledBuffer,
+            rowPitch,
+            (D3DFORMAT)0x18280086,
+            0,
+            0,
+            0.5f
+        );
+    }
 }
 
 void DxTex::SetDeviceTex(D3DTexture *tex) {
