@@ -109,8 +109,16 @@ void MainHubPanel::Enter() {
 void MainHubPanel::Poll() {
     UIPanel::Poll();
     if (mMessageTimer.Running()) {
-        mMessageTimer.Split();
-        if (mMessageTimer.Ms() > mMessageRotationMs) {
+        // Retail (fn_82622550) makes ONE out-of-line call here --
+        // `bl fn_82270188` == ?SplitMs@Timer@@QAAMXZ -- and compares its float
+        // return directly against mMessageRotationMs (`lfs f0, 0x4c(r30)`).
+        // Split() and Ms() are both header-inline, so spelling them separately
+        // emits the __mftb sequence and the CyclesToMs float math inline in
+        // place of that single `bl`, which is the whole of this row's gap.
+        // NOTE the rb3-Wii oracle is WRONG for retail X360 here: it spells this
+        // `Timer::CyclesToMs(mMessageTimer.mCycles)`.  Retail bytes outrank the
+        // oracle.  (Lane W16-AN.)
+        if (mMessageTimer.SplitMs() > mMessageRotationMs) {
             mMessageTimer.Restart();
             int num = mMessageProvider->NumData();
             if (num == 0) {
@@ -163,6 +171,12 @@ void MainHubPanel::Unload() {
 void MainHubPanel::RefreshData() { PrepareProfilesAndMessages(); }
 
 void MainHubPanel::ReloadMessages() {
+    // Retail fn_82621AC0 opens with a guarded local-static Symbol init from
+    // "messages_per_session" (lbl_820C6670 -> lbl_82E010C4, guard lbl_82E010C8)
+    // BEFORE `stb r11, 0xb8`.  Nothing in the body reads it; a static with a
+    // non-trivial ctor is emitted regardless, so the construction is what is
+    // observable.  Shadows the extern of the same name in utl/Symbols4.h.
+    static Symbol messages_per_session("messages_per_session");
     unkb8 = false;
     UpdateMessageProvider();
     LocalBandUser *user = nullptr;
@@ -172,9 +186,22 @@ void MainHubPanel::ReloadMessages() {
     }
     if (profile) {
         if (user) {
-        if (TheServer.GetPlayerID(profile->GetPadNum())) {
+            // Retail fn_82621AC0 has NO Server::GetPlayerID test here.  Two
+            // independent proofs on retail bytes: (a) a unit-wide scan for the
+            // GetPlayerID vtable slot (`lwz r11, 0x1c(...)` + bctrl) finds it
+            // ONLY in CheckProfileForTicker (fn_8261FF10) and SetMainHubOverride
+            // (fn_82622648), never in fn_82621AC0; (b) lbl_82C6EB50 (TheServer)
+            // does not appear among fn_82621AC0's data references at all.
+            // Retail goes straight from GetUserFromPad to user->GetTrackType().
+            // The rb3-Wii DEV oracle gates the ticker request on a server login;
+            // RB3 X360 retail does not.  (Lane W16-AN.)
             TrackType ty = user->GetTrackType();
-            if (ty - 10U <= 2) {
+            // Retail emits THREE explicit equality compares here -- `cmpwi 0xa`
+            // / beq, `cmpwi 0xb` / beq, `cmpwi 0xc` / bne -- not the unsigned
+            // range trick.  `ty - 10U <= 2` compiles to `subi 0xa` + `cmplwi 2`
+            // + `bgt`, which is 3 charged instructions and 4 deletes.
+            if (ty == kTrackNone || ty == kTrackPending
+                || ty == kTrackPendingVocals) {
                 bool randBool = RandomInt(0, 2) != 0;
                 ty = ControllerTypeToTrackType(
                     user->ConnectedControllerType(), randBool
@@ -191,7 +218,6 @@ void MainHubPanel::ReloadMessages() {
                 TheRockCentral.GetTickerInfo(profile, sty, mLabelUpdateResults, this);
             }
         }
-        }
     }
 }
 
@@ -204,7 +230,8 @@ void MainHubPanel::PrepareProfilesAndMessages() {
         }
     } else {
         mCurrentMessage = 0;
-        HandleType(refresh_message_provider_msg);
+        static Message refresh_message_provider("refresh_message_provider");
+        HandleType(refresh_message_provider);
     }
     UpdateHeader();
 }
@@ -212,7 +239,15 @@ void MainHubPanel::PrepareProfilesAndMessages() {
 bool MainHubPanel::CheckProfileForTicker() {
     BandProfile *profile = TheProfileMgr.GetPrimaryProfile();
     if (profile && TheServer.IsConnected()) {
-        if (TheServer.GetPlayerID(profile->GetPadNum()))
+        // Retail X360 (fn_8261FF10) closes this test with `cmplwi r3, 0x0` -- an
+        // UNSIGNED zero test -- on the value returned by Server vtable slot 0x1c
+        // (GetPlayerID).  The return type stays `int`: four other retail sites
+        // test the same slot with signed `cmpwi` and are already 100% with
+        // `int GetPlayerID(int)` (MetaPerformer x3, SongStatusMgr, per lane
+        // W16-B), so widening the declaration would break them.  Only this call
+        // site is in an unsigned context, and the cast reproduces exactly that.
+        // Same shape as RockCentral.cpp:285 (lane W16-B).  (Lane W16-AN.)
+        if ((unsigned int)TheServer.GetPlayerID(profile->GetPadNum()) != 0)
             return true;
     }
     return false;
@@ -273,6 +308,11 @@ void MainHubPanel::SetMainHubOverride(MainHubOverride oride) {
 }
 
 void MainHubPanel::StartFinding() {
+    // Retail fn_82622748: guard lbl_82E010E0 bit 0x1 inits a local static Symbol
+    // from "mod_auto_vocals" (lbl_8203FA74) BEFORE the IsModifierActive call;
+    // bit 0x2 inits "error_find_players_with_auto_vocals" (lbl_820C6860) lazily
+    // inside the else arm.  Both shadow externs of the same name.
+    static Symbol mod_auto_vocals("mod_auto_vocals");
     if (!TheModifierMgr->IsModifierActive(mod_auto_vocals)) {
         Matchmaker *maker = TheSessionMgr->GetMatchmaker();
         OvershellPanel *panel = TheBandUI.GetOvershell();
@@ -286,6 +326,9 @@ void MainHubPanel::StartFinding() {
         }
     } else {
         SetMainHubOverride(kMainHubOverride_None);
+        static Symbol error_find_players_with_auto_vocals(
+            "error_find_players_with_auto_vocals"
+        );
         TheUIEventMgr->TriggerEvent(error_find_players_with_auto_vocals, nullptr);
     }
 }
@@ -293,7 +336,8 @@ void MainHubPanel::StartFinding() {
 DataNode MainHubPanel::OnMsg(const OvershellOverrideEndedMsg &msg) {
     if (msg.GetOverrideFlowType() == 2 && mHubOverride == kMainHubOverride_Finding) {
         if (msg.Cancelled()) {
-            HandleType(cancel_find_override_msg);
+            static Message cancel_find_override("cancel_find_override");
+            HandleType(cancel_find_override);
         } else {
             MILO_ASSERT(mHubState == kMainHubState_Quickplay || mHubState == kMainHubState_Tour, 0x1B7);
             TheSessionMgr->GetMatchmaker()->FindPlayers(
@@ -356,18 +400,21 @@ DataNode MainHubPanel::OnMsg(const ProcessedJoinRequestMsg &) {
 
 DataNode MainHubPanel::OnMsg(const NewRemoteMachineMsg &) {
     CheckStartWaitingLock();
-    HandleType(update_finding_help_msg);
+    static Message update_finding_help("update_finding_help");
+    HandleType(update_finding_help);
     return 1;
 }
 
 DataNode MainHubPanel::OnMsg(const RemoteMachineLeftMsg &) {
     CheckStartWaitingLock();
-    HandleType(update_finding_help_msg);
+    static Message update_finding_help("update_finding_help");
+    HandleType(update_finding_help);
     return 1;
 }
 
 DataNode MainHubPanel::OnMsg(const SessionMgrUpdatedMsg &) {
-    HandleType(update_finding_help_msg);
+    static Message update_finding_help("update_finding_help");
+    HandleType(update_finding_help);
     return 1;
 }
 
@@ -573,10 +620,23 @@ void MainHubPanel::SetMotd(const char *motd) {
 }
 
 const char *MainHubPanel::GetMotd() {
+    // Retail fn_82620540 inits three local static Symbols at the top under one
+    // shared guard word (lbl_82E01058), in this declaration order: bit 0x1
+    // "message_motd", bit 0x2 "message_motd_signin", bit 0x4
+    // "message_motd_noconnection".  All three precede `lwz r3, 0x90` (mMotd).
+    static Symbol message_motd("message_motd");
+    static Symbol message_motd_signin("message_motd_signin");
+    static Symbol message_motd_noconnection("message_motd_noconnection");
     const char *motd = mMotd.c_str();
     if (strlen(motd) == 0) {
-        if (!ThePlatformMgr.IsEthernetCableConnected()
-            || ThePlatformMgr.IsOnlineRestricted()) {
+        // Retail makes exactly ONE call here (bl fn_8251BE08 ==
+        // ?IsEthernetCableConnected@PlatformMgr@@) and then reads `lbz r11,
+        // 0x26(r30)` inline -- that is IsConnected(), which is
+        // `{ return mConnected; }` in the header.  There is NO
+        // IsOnlineRestricted() call: it is declared out-of-line
+        // (os/PlatformMgr.h:252) so it could not have been inlined away.  Our
+        // `|| ThePlatformMgr.IsOnlineRestricted()` was a genuine extra test.
+        if (!ThePlatformMgr.IsEthernetCableConnected()) {
             return Localize(message_motd_noconnection, nullptr);
         } else if (!ThePlatformMgr.IsConnected()) {
             return Localize(message_motd_signin, nullptr);

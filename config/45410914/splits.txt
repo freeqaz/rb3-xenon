@@ -5774,10 +5774,6 @@ AssetTypes.cpp:
 	.text       start:0x825EDE68 end:0x825EDE90
 	.text       start:0x825EDE9C end:0x825EF6D8
 
-PhysicsManager.cpp:
-	.pdata      start:0x82227110 end:0x82227128
-	.text       start:0x825F5BF4 end:0x825F5D28
-
 CharServoBone.cpp:
 	.pdata      start:0x821FFC50 end:0x821FFC58
 	.pdata      start:0x82201C40 end:0x82201C48
@@ -11029,6 +11025,7 @@ CampaignSongInfoPanel.cpp:
 	.pdata      start:0x822270D0 end:0x822270E0
 	.pdata      start:0x822270E0 end:0x822270E8
 	.pdata      start:0x82227108 end:0x82227110
+	.pdata      start:0x82227110 end:0x82227128
 	.pdata      start:0x82227128 end:0x82227230
 	.pdata      start:0x82227230 end:0x82227278
 	.text       start:0x825F57C0 end:0x825F5898
@@ -11036,6 +11033,7 @@ CampaignSongInfoPanel.cpp:
 	.text       start:0x825F5958 end:0x825F5968
 	.text       start:0x825F5B78 end:0x825F5B84
 	.text       start:0x825F5B88 end:0x825F5BF4
+	.text       start:0x825F5BF4 end:0x825F5D28
 	.text       start:0x825F5D28 end:0x825F6B00
 	.text       start:0x825F6B00 end:0x825F6F20
 	.text       start:0x82603A78 end:0x82603A84
