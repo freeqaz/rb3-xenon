@@ -192,6 +192,10 @@ SCRIPT_ARM: list[dict] = [
     # retail).  Synthetic records; includes mode=off controls so the verdict is
     # shown to be the gate's.
     {"path": "tools/test_icf_alias_survivor_gate.py", "timeout": 120},
+    # W16-AE (2026-09-14): the DENYLIST EFFECT check in verify_objs_patched.py
+    # (tree passes; a sandbox map with 0x82553fc8 re-denylisted must exit 7 and
+    # name it; null copy passes; malformed denylist exits 7).
+    {"path": "scripts/test_denylist_applied.py", "timeout": 300},
 ]
 
 # ── deliberate exclusions ─────────────────────────────────────────────────────
