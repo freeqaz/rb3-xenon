@@ -30512,5 +30512,7 @@
  "0x82622d00": "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVNewRemoteMachineMsg@@@Z",
  "0x82620540": "?GetMotd@MainHubPanel@@QAAPBDXZ",
  "0x82620f38": "?OnMsg@MainHubPanel@@QAA?AVDataNode@@ABVOvershellOverrideEndedMsg@@@Z",
- "0x82621c70": "?PrepareProfilesAndMessages@MainHubPanel@@QAAXXZ"
+ "0x82621c70": "?PrepareProfilesAndMessages@MainHubPanel@@QAAXXZ",
+ "0x825f5bf8": "?SelectedScoreType@CampaignSongInfoPanel@@QBA?AW4ScoreType@@XZ",
+ "0x825f5c60": "?GetCareerScore@CampaignSongInfoPanel@@QBAHXZ"
 }
