@@ -1,0 +1,62 @@
+{
+  "_lane": "W16-AU",
+  "_date": "2026-09-14",
+  "_for": "W16-AV (owns scripts/target_symbol_map.json and scripts/symbol_aliases.json)",
+  "_note": "W16-AU is barred from editing the map and alias files. These are PROPOSALS. Both are adjudicated on RETAIL BYTES, not on map consistency and not on a match percentage. Both addresses were re-homed by W16-AU in the same lane, so the base obj that would have to define each proposed name IS now the unit's base obj -- the rename is the only remaining blocker. Re-measure; do not inherit these figures.",
+  "_branch": "w16-au",
+  "alias_proposals": [],
+  "_alias_note": "NONE. Neither finding is a fold. Both are wrong map names on addresses whose true identity is settled on retail bytes, so the honest instrument is a rename, not an alias -- an alias would forgive the charge instead of fixing it.",
+  "map_rename_proposals": [
+    {
+      "id": "AU-1",
+      "address": "0x826ccb48",
+      "size_B": 8,
+      "map_name_now": "??$_Destroy@UGrammar@SpeechMgr@@@stlpmtx_std@@YAXPAUGrammar@SpeechMgr@@@Z",
+      "proposed_name": "?IsLoaded@DirectInstrument@@QAA_NXZ",
+      "unit_now": "default/band3/game/DirectInstrument",
+      "unit_now_note": "re-homed by W16-AU commit b03866d2; before that it was pinned to band3/game/TrainerPanel.cpp",
+      "base_obj_defines_proposed_name": true,
+      "base_obj": "build/45410914/src/band3/game/DirectInstrument.obj section 91, rawsize 8",
+      "evidence": [
+        "RETAIL BYTES at 0x826ccb48 = 38630004 481567f4 = `addi r3, r3, 4` then `b 0x82823340` (unconditional, LK=0, i.e. a tail call).",
+        "0x82823340 is map-named ?IsLoaded@?$ObjDirPtr@VUILabelDir@@@@QBA_NXZ -- an ObjDirPtr<T>::IsLoaded ICF survivor, and ?IsLoaded@?$ObjDirPtr@VObjectDir@@... is ALREADY a member of a group in scripts/symbol_aliases.json (checked before proposing, per the CLAUDE.md rule).",
+        "DirectInstrument's layout is `int mVolume` at +0 then `ObjDirPtr<ObjectDir> mDir` at +4, so `return mDir.IsLoaded();` is exactly `addi r3,r3,4` + tail-call ObjDirPtr<ObjectDir>::IsLoaded. src/band3/game/DirectInstrument.h declares `bool IsLoaded();`.",
+        "OUR COMDAT is 38630004 4bfffffc -- the same `addi r3,r3,4` plus a branch carrying an unresolved relocation. Identical modulo the relocation.",
+        "CALLER ADJUDICATION: a whole-.text scan for branches targeting 0x826ccb48 finds EXACTLY ONE, a `bl` at 0x82694c04, which lies inside ?IsLoaded@GamePanel@@UBA_NXZ (0x82694bb8, 124 B). GamePanel::IsLoaded calling DirectInstrument::IsLoaded is coherent; GamePanel::IsLoaded calling _Destroy<Grammar> is not.",
+        "So the CURRENT name is financed by ZERO call sites at this address -- the un-pairing risk that normally dominates a map edit (CLAUDE.md: 80.5% of a map edit's delta) is structurally absent here."
+      ],
+      "expected_value": "+8 B / +1 fn. The row currently reads fuzzy 0 in default/band3/game/DirectInstrument because the unit's base obj cannot define a SpeechMgr symbol. UNMEASURED by W16-AU -- this is a prediction, not a result.",
+      "coordination_flag": "The caller side lands in GamePanel, which W16-AT owns this wave. The rename itself touches only the map row; no GamePanel source change is implied.",
+      "what_would_refute_this": "A retail branch to 0x826ccb48 from inside SpeechMgr code (there is none), or evidence that SpeechMgr::Grammar's destructor is itself at 0x82823340 (it is not -- that address is an ObjDirPtr<T>::IsLoaded)."
+    },
+    {
+      "id": "AU-2",
+      "address": "0x82682688",
+      "size_B": 28,
+      "map_name_now": "JsonRealloc",
+      "proposed_name": "?GetLocalBandUser@BandUserMgr@@SAPAVLocalBandUser@@PAVLocalUser@@@Z",
+      "unit_now": "default/band3/game/BandUserMgr",
+      "unit_now_note": "re-homed by W16-AU commit 2909dec1; before that it was pinned to JsonMemory.cpp",
+      "base_obj_defines_proposed_name": true,
+      "base_obj": "build/45410914/src/band3/game/BandUserMgr.obj section 236, rawsize 28 -- byte-size-identical to retail's 28 B",
+      "evidence": [
+        "RETAIL BYTES at 0x82682688 decode to: lis r11,0x82c7 / lis r10,0x82c7 / addi r6,r11,0x2528 / addi r5,r10,-0x1950 / li r7,0 / li r4,0 / b 0x8282A0C8.",
+        "0x8282A0C8 is map-named __RTDynamicCast. Its ABI is (r3 ptr, r4 VfDelta, r5 SrcType, r6 TargetType, r7 isReference).",
+        "r6 = 0x82c72528 and r5 = 0x82c6e6b0. Reading those ??_R0 TypeDescriptors out of .rdata in Python gives the names `.?AVLocalBandUser@@` and `.?AVLocalUser@@` respectively. So the body IS dynamic_cast<LocalBandUser*>(LocalUser*), with VfDelta 0 and isReference 0.",
+        "SOURCE: src/band3/game/BandUserMgr.cpp:88-89 is verbatim `LocalBandUser *BandUserMgr::GetLocalBandUser(LocalUser *u) { return dynamic_cast<LocalBandUser *>(u); }`, and src/band3/game/BandUserMgr.h:63 declares it `static`, which fixes the mangling to SA (not QAA).",
+        "GEOMETRY, an independent corroboration: 0x82682688 is sandwiched between its own two siblings -- 0x82682668 ?GetBandUser@BandUserMgr@@SAPAVBandUser@@PAVUser@@@Z (fuzzy 100.0) and 0x826826A8 ?GetRemoteBandUser@BandUserMgr@@SAPAVRemoteBandUser@@PAVRemoteUser@@@Z (fuzzy 100.0). Three consecutive 28 B __RTDynamicCast thunks; the middle one can only be the Local one.",
+        "The CURRENT name is refuted by the same bytes: a 28 B RTTI cast thunk is not a memory reallocator."
+      ],
+      "expected_value": "+28 B / +1 fn. Both flanking siblings are already at fuzzy 100.0 with identical structure, so this is a well-grounded prediction -- but it is still UNMEASURED by W16-AU.",
+      "beware": "This row scores fuzzy 97.14 / mpn 99.29 against OUR JsonRealloc, and that is a trap, not a near-match. Our JsonRealloc is `lis/lis/addi/addi/li/li/b MemRealloc` and the retail thunk is `lis/lis/addi/addi/li/li/b __RTDynamicCast` -- the SAME seven-opcode sequence, differing only in register fields and relocation-masked immediates. Do not read the 97% as support for the JsonRealloc name; grinding it to 100 would produce a byte-perfect match of the wrong function.",
+      "side_note": "The real JsonRealloc's retail address is unidentified. After W16-AU's re-home, default/JsonMemory is 1/1 fns and 80/80 B -- a completed unit -- and our JsonRealloc base symbol is simply unpaired.",
+      "what_would_refute_this": "A different ??_R0 decode for 0x82c72528 / 0x82c6e6b0, or a retail branch to 0x82682688 from JSON/allocator code (the address's callers were not enumerated for this one; AU-1's caller scan was, and this row's identity does not rest on callers)."
+    }
+  ],
+  "_totals": {
+    "proposed_rows": 2,
+    "predicted_B_if_both_land": 36,
+    "predicted_fns_if_both_land": 2,
+    "_caveat": "Predictions, not measurements. Both are small; their value is accuracy and bug-exposure rather than headline bytes, per the standing directive."
+  }
+}
