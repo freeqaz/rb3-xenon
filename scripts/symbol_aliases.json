@@ -73367,9 +73367,10 @@
    "address": "0x826c3888",
    "survivor": "??$?0H@?$StlNodeAlloc@V?$_List_node@H@stlpmtx_std@@@stlpmtx_std@@QAA@ABV?$StlNodeAlloc@H@1@@Z",
    "folded": [
-    "??3@YAXPAX0@Z"
+    "??3@YAXPAX0@Z",
+    "?Copy@BandTrack@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z"
    ],
-   "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT-EMPTY. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x826c3888 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 1116 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (zero .text fan-in, or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so the fold is real but the byte comparison is vacuous. 1 folded spelling(s), 154 charged name_check sites. Per spelling: [??3@YAXPAX0@Z FT-EMPTY, 154 sites: map parks ??3@YAXPAX0@Z at 0x82333e14 with no symbols.txt extent | body carries no relocation: the fold is real but the byte comparison is vacuous]"
+   "evidence": "Fold-thunk alias group derived by tools/fold_thunk_gate.py. Evidence tier(s) FT-EMPTY. Our compiled COMDAT for each folded spelling below is byte-identical to the RETAIL body at the survivor address 0x826c3888 once relocation-carrying fields are masked, with every relocated branch destination RESOLVED through the map and NAME-equal rather than masked away; the survivor takes 1116 direct branches across .text. FT1=retail's map places the folded spelling on the same body or nowhere. FT2=it places it on a different body the image itself discredits (zero .text fan-in, or no symbols.txt extent -- padding or a mid-function word). FT3=it places it on a HOMONYM, a distinct function under another module that legitimately carries the same mangled name, witnessed by dc3's leaked ham_xbox_r.map. FT-EMPTY=the body carries no relocation at all, so the fold is real but the byte comparison is vacuous. 1 folded spelling(s), 154 charged name_check sites. Per spelling: [??3@YAXPAX0@Z FT-EMPTY, 154 sites: map parks ??3@YAXPAX0@Z at 0x82333e14 with no symbols.txt extent | body carries no relocation: the fold is real but the byte comparison is vacuous] [W15-D 2026-09-14, VT1: retail BandTrack Object-subobject vtable (0x8203a104, offset 280) slot 9 = Copy holds the folded vtordisp thunk 0x8234ebc8, whose branch destination is this empty-body survivor; our compiled ?Copy@BandTrack@@UAA... is a bare blr (W14-B). Fold proven by vtable geometry, byte comparison vacuous (FT-EMPTY).]"
   },
   {
    "address": "0x8240ddb0",
@@ -75077,6 +75078,259 @@
     "??$_Copy_Construct@UVocalEvent@MidiParser@@@stlpmtx_std@@YAXPAUVocalEvent@MidiParser@@ABU12@@Z"
    ],
    "evidence": "Lane W11-D (2026-09-13). SAME-T _Param_Construct/_Copy_Construct fold, adjudicated FLAT T1 PROVEN on retail bytes (60 B, 1 relocation, reloc_tally {}); 13 cross-T decoys from the same family all REFUTED, so the verdict rests on the per-T copy-ctor relocation target and not on the family's shared masked body (112 retail / 270 our bodytwins). The moved spelling was previously parked in an UNANCHORED group (its survivor is absent from target_symbol_map.json), i.e. at a GUESSED address; a body lives at exactly one address, and this one is proven. The old membership forgave 0 charged sites, verified before the move."
+  },
+  {
+   "name": "thunk-fold 0x8227db70",
+   "address": "0x8227db70",
+   "survivor": "?ClassName@BandCharDescTest@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
+   "folded": [
+    "?ClassName@RndTransformableRemover@@$4PPPPPPPM@A@BA?AVSymbol@@XZ"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['BandCharDescTest', 568, 4], ['RndTransformableRemover', 184, 4]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x82692978 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82316428",
+   "address": "0x82316428",
+   "survivor": "??_GInlineHelp@@$4PPPPPPPM@A@AAPAXI@Z",
+   "folded": [
+    "??_EInlineHelp@@$4PPPPPPPM@A@AAPAXI@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['InlineHelp', 384, 0]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x82316c70 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x8231a920",
+   "address": "0x8231a920",
+   "survivor": "?Load@MeterDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "folded": [
+    "?Load@ScoreDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['AppScoreDisplay', 360, 10], ['MeterDisplay', 360, 10], ['ScoreDisplay', 360, 10]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x8231a768 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x8231fb40",
+   "address": "0x8231fb40",
+   "survivor": "?PostLoad@ScoreDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "folded": [
+    "?PostLoad@MeterDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['AppScoreDisplay', 360, 19], ['MeterDisplay', 360, 19], ['ScoreDisplay', 360, 19]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x8231f748 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x8234ebc8",
+   "address": "0x8234ebc8",
+   "survivor": "?Copy@BandTrack@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+   "folded": [
+    "?Copy@RndMultiMeshProxy@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+    "?Copy@Song@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z",
+    "?Highlight@Waypoint@@$4PPPPPPPM@A@AAXXZ",
+    "?Load@BandTrack@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+    "?Load@RndMultiMeshProxy@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+    "?PostSave@OutfitConfig@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+    "?Replace@BandDirector@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+    "?Save@BandTrack@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+    "?Save@RndMultiMeshProxy@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['BandDirector', 312, 2], ['BandSong', 136, 9], ['BandTrack', 280, 8], ['BandTrack', 280, 9], ['BandTrack', 280, 10], ['OutfitConfig', 200, 12], ['RndMultiMeshProxy', 236, 8], ['RndMultiMeshProxy', 236, 9], ['RndMultiMeshProxy', 236, 10], ['RndPollAnim', 72, 1], ['RndPollAnim', 72, 2], ['RndPollAnim', 72, 3], ['Song', 136, 9], ['Waypoint', 272, 0], ['WorldInstance', 500, 11]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x826c3888 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition). [W15-D: `?PreSave@WorldInstance@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z` withheld -- the map places that spelling at a second address; validator refuses a two-homed member, adjudicate that row first.]"
+  },
+  {
+   "name": "thunk-fold 0x823af220",
+   "address": "0x823af220",
+   "survivor": "?Handle@CharData@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+   "folded": [
+    "?Handle@CharWeightable@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['CharData', 28, 6], ['CharWeightable', 28, 6]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x823aee98 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x823c4608",
+   "address": "0x823c4608",
+   "survivor": "?Handle@CharForeTwist@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+   "folded": [
+    "?Handle@CharBlendBone@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['CharBlendBone', 52, 6], ['CharForeTwist', 52, 6]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x823c3360 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x823c7328",
+   "address": "0x823c7328",
+   "survivor": "?Handle@CharBoneOffset@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+   "folded": [
+    "?Handle@CharUpperTwist@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['CharBoneOffset', 48, 6], ['CharUpperTwist', 48, 6]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x823c7210 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x823c8a78",
+   "address": "0x823c8a78",
+   "survivor": "?Handle@Screenshot@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
+   "folded": [
+    "?Handle@CharTransDraw@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['CharTransDraw', 60, 6], ['Screenshot', 60, 6]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x823c8198 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x823d6938",
+   "address": "0x823d6938",
+   "survivor": "??_ERndTransformableRemover@@$4PPPPPPPM@A@AAPAXI@Z",
+   "folded": [
+    "??_ERndTransformable@@$4PPPPPPPM@A@AAPAXI@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['RndTransformable', 184, 0], ['RndTransformableRemover', 184, 0]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x823d6cf0 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x824863e8",
+   "address": "0x824863e8",
+   "survivor": "?SyncProperty@RndCamAnim@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "folded": [
+    "?SyncProperty@RndLightAnim@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['RndCamAnim', 56, 7], ['RndLightAnim', 56, 7]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x82485880 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82493ca0",
+   "address": "0x82493ca0",
+   "survivor": "?Save@RndMotionBlur@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "folded": [
+    "?Save@CharTransDraw@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['CharTransDraw', 60, 8], ['RndMotionBlur', 60, 8]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x82493840 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82523ae0",
+   "address": "0x82523ae0",
+   "survivor": "?IsLocal@LocalUser@@$4PPPPPPPM@A@BA_NXZ",
+   "folded": [
+    "?IsNullUser@NullLocalBandUser@@$4PPPPPPPM@A@BA_NXZ"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['AutoplayAuditionUser', 112, 0], ['AutoplayAuditionUser', 112, 1], ['AutoplayAuditionUser', 264, 1], ['LocalUser', 16, 23], ['NullLocalBandUser', 40, 28]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x82533618 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82523af0",
+   "address": "0x82523af0",
+   "survivor": "?GetLocalUser@LocalUser@@$4PPPPPPPM@A@AAPAV1@XZ",
+   "folded": [
+    "?GetLocalUser@LocalUser@@$4PPPPPPPM@A@BAPBV1@XZ"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['LocalUser', 16, 24], ['LocalUser', 16, 25]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x82523758 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82523ce0",
+   "address": "0x82523ce0",
+   "survivor": "?GetRemoteUser@RemoteUser@@$4PPPPPPPM@A@AAPAV1@XZ",
+   "folded": [
+    "?GetRemoteUser@RemoteUser@@$4PPPPPPPM@A@BAPBV1@XZ"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['RemoteUser', 24, 26], ['RemoteUser', 24, 27]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x825238f0 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x825ed5a0",
+   "address": "0x825ed5a0",
+   "survivor": "??_EClosetPanel@@$4PPPPPPPM@A@AAPAXI@Z",
+   "folded": [
+    "??_EInterstitialPanel@@$4PPPPPPPM@A@AAPAXI@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['ClosetPanel', 164, 0], ['InterstitialPanel', 164, 0]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x825ed890 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x8268b8a8",
+   "address": "0x8268b8a8",
+   "survivor": "?CanSaveData@NullLocalBandUser@@$4PPPPPPPM@A@BA_NXZ",
+   "folded": [
+    "?GetLocalBandUser@RemoteBandUser@@$4PPPPPPPM@A@AAPAVLocalBandUser@@XZ",
+    "?GetLocalUser@RemoteUser@@$4PPPPPPPM@A@AAPAVLocalUser@@XZ",
+    "?GetLocalUser@RemoteUser@@$4PPPPPPPM@A@BAPBVLocalUser@@XZ",
+    "?GetRemoteBandUser@LocalBandUser@@$4PPPPPPPM@A@AAPAVRemoteBandUser@@XZ",
+    "?GetRemoteBandUser@LocalBandUser@@$4PPPPPPPM@A@BAPAVRemoteBandUser@@XZ",
+    "?GetRemoteUser@LocalUser@@$4PPPPPPPM@A@AAPAVRemoteUser@@XZ",
+    "?GetRemoteUser@LocalUser@@$4PPPPPPPM@A@BAPBVRemoteUser@@XZ",
+    "?IsJoypadConnected@NullLocalBandUser@@$4PPPPPPPM@A@BA_NXZ",
+    "?IsLocal@RemoteUser@@$4PPPPPPPM@A@BA_NXZ",
+    "?IsNullUser@BandUser@@$4PPPPPPPM@A@BA_NXZ"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['AutoplayAuditionUser', 264, 2], ['AutoplayAuditionUser', 264, 3], ['AutoplayAuditionUser', 264, 4], ['AutoplayAuditionUser', 264, 5], ['BandUser', 152, 28], ['LocalBandUser', 108, 8], ['LocalBandUser', 108, 9], ['LocalUser', 16, 26], ['LocalUser', 16, 27], ['NullLocalBandUser', 108, 8], ['NullLocalBandUser', 108, 9], ['NullLocalBandUser', 260, 1], ['NullLocalBandUser', 260, 6], ['RemoteBandUser', 92, 6], ['RemoteBandUser', 92, 7], ['RemoteUser', 24, 23], ['RemoteUser', 24, 24], ['RemoteUser', 24, 25]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x823591e8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition). [W15-D: `?GetLocalBandUser@RemoteBandUser@@$4PPPPPPPM@A@BAPAVLocalBandUser@@XZ` withheld -- the map places that spelling at a second address; validator refuses a two-homed member, adjudicate that row first.]"
+  },
+  {
+   "name": "thunk-fold 0x8268b928",
+   "address": "0x8268b928",
+   "survivor": "?GetRemoteBandUser@RemoteBandUser@@$4PPPPPPPM@A@AAPAV1@XZ",
+   "folded": [
+    "?GetRemoteBandUser@RemoteBandUser@@$4PPPPPPPM@A@BAPAV1@XZ"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['RemoteBandUser', 92, 8], ['RemoteBandUser', 92, 9]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x8268b7c8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x8268e398",
+   "address": "0x8268e398",
+   "survivor": "?GetLocalBandUser@LocalBandUser@@$4PPPPPPPM@A@AAPAV1@XZ",
+   "folded": [
+    "?GetLocalBandUser@LocalBandUser@@$4PPPPPPPM@A@BAPAV1@XZ"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['LocalBandUser', 108, 6], ['LocalBandUser', 108, 7], ['NullLocalBandUser', 108, 6], ['NullLocalBandUser', 108, 7]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x8268b2a0 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x827f42a8",
+   "address": "0x827f42a8",
+   "survivor": "??_EUIButton@@$4PPPPPPPM@A@AAPAXI@Z",
+   "folded": [
+    "??_EUILabel@@$4PPPPPPPM@A@AAPAXI@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['UIButton', 536, 0], ['UILabel', 536, 0]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x827f5348 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x8280f688",
+   "address": "0x8280f688",
+   "survivor": "?Load@UIButton@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "folded": [
+    "?Load@UILabel@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['UIButton', 536, 10], ['UILabel', 536, 10]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x8280f410 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82823728",
+   "address": "0x82823728",
+   "survivor": "?Load@UIPicture@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "folded": [
+    "?Load@UIProxy@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['UIPicture', 420, 10], ['UIProxy', 420, 10]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x828232c8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82826e08",
+   "address": "0x82826e08",
+   "survivor": "?PostLoad@LabelShrinkWrapper@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "folded": [
+    "?PostLoad@StarDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['LabelShrinkWrapper', 356, 19], ['StarDisplay', 356, 19]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x828268d8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82826e28",
+   "address": "0x82826e28",
+   "survivor": "??_GLabelShrinkWrapper@@$4PPPPPPPM@A@AAPAXI@Z",
+   "folded": [
+    "??_ELabelShrinkWrapper@@$4PPPPPPPM@A@AAPAXI@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['LabelShrinkWrapper', 356, 0]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x828279c8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82826e38",
+   "address": "0x82826e38",
+   "survivor": "?Load@LabelShrinkWrapper@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "folded": [
+    "?Load@StarDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['LabelShrinkWrapper', 356, 10], ['StarDisplay', 356, 10]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x8231c3d8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
+  },
+  {
+   "name": "thunk-fold 0x82b908d8",
+   "address": "0x82b908d8",
+   "survivor": "??_ETrackPanelInterface@@$4PPPPPPPM@A@AAPAXI@Z",
+   "folded": [
+    "??_EGemTrainerLoopPanel@@$4PPPPPPPM@A@AAPAXI@Z",
+    "??_ETourChallengeResultsPanel@@$4PPPPPPPM@A@AAPAXI@Z",
+    "??_EUIPanel@@$4PPPPPPPM@A@AAPAXI@Z"
+   ],
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['GemTrainerLoopPanel', 64, 0], ['TourChallengeResultsPanel', 64, 0], ['TrackPanelInterface', 64, 0], ['UIPanel', 64, 0]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x82b908e8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
   }
  ]
 }
