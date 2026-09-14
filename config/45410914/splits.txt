@@ -13020,6 +13020,7 @@ system/ui/UILabelDir.cpp:
 	.text       start:0x8280FCFC end:0x828101A0
 	.text       start:0x828101A0 end:0x82812014
 	.text       start:0x82812018 end:0x82812024
+	.text       start:0x82812028 end:0x82812038
 	.text       start:0x82812038 end:0x82812044
 	.text       start:0x82812048 end:0x82812054
 	.text       start:0x82812058 end:0x82812064
