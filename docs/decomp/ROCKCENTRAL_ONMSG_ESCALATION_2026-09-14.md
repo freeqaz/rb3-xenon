@@ -151,4 +151,8 @@ re-scored against the clean build-2 snapshot (24 changed rows = build 3's 23 +
 
 ## Native gate
 
-TBD-gate
+Run at `e0291633` (docs-only commits after it), log `~/tmp/gate_native_w16b.log`:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
