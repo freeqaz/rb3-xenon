@@ -43,10 +43,14 @@ namespace {
         int mBucket; // 0x4
     };
 
+    // Retail .data at 0x82C71AFC holds 0x7fffffff (DC3 initialises to -1).
+    // Probed 2026-09-14: external linkage, volatile, and extern-defined-elsewhere
+    // all leave the lis hoisted into r14 -- linkage is inert for that residual.
     int gKeepaliveThresholdMs = 0x7FFFFFFF;
     bool gExportMsgs = true;
     unsigned int gNotifyMask = 0x8F0;
 }
+
 
 JoypadData::JoypadData()
     : mButtons(0), mNewPressed(0), mNewReleased(0), mUser(nullptr), mConnected(false),
